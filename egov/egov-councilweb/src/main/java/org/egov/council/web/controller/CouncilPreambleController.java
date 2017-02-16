@@ -44,6 +44,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ValidationUtils;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -156,6 +157,7 @@ public class CouncilPreambleController extends GenericWorkFlowController {
             final HttpServletRequest request,
             final RedirectAttributes redirectAttrs,
             @RequestParam String workFlowAction) {
+        validatePreamble(councilPreamble,errors);
         if (errors.hasErrors()) {
             prepareWorkFlowOnLoad(model, councilPreamble);
             return COUNCILPREAMBLE_NEW;
@@ -226,13 +228,19 @@ public class CouncilPreambleController extends GenericWorkFlowController {
         prepareWorkFlowOnLoad(model, councilPreamble);
         return COUNCILPREAMBLE_RESULT;
     }
-
+    public void validatePreamble(final CouncilPreamble councilPreamble,final BindingResult errors){
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "department", "notempty.preamble.department");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "gistOfPreamble", "notempty.preamble.gistOfPreamble");
+        if(councilPreamble.getAttachments().getSize() == 0 && councilPreamble.getFilestoreid() == null)
+        errors.rejectValue("attachments", "notempty.preamble.attachments");
+    }
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     public String update(@Valid @ModelAttribute final CouncilPreamble councilPreamble,
             final Model model, @RequestParam final MultipartFile attachments,
             final BindingResult errors, final HttpServletRequest request,
             final RedirectAttributes redirectAttrs,
             @RequestParam String workFlowAction) {
+        validatePreamble(councilPreamble,errors);
         if (errors.hasErrors()) {
             prepareWorkFlowOnLoad(model, councilPreamble);
             model.addAttribute(CURRENT_STATE, councilPreamble
