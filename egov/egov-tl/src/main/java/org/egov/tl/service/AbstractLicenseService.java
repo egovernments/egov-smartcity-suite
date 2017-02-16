@@ -120,9 +120,9 @@ import static org.egov.tl.utils.Constants.PUBLIC_HEALTH_DEPT;
 public abstract class AbstractLicenseService<T extends License> {
 
     public static final String ARREAR = "arrear";
-    public static final BigDecimal ONE_HUNDRED = new BigDecimal(100);
     private static final String CURRENT = "current";
     private static final String PENALTY = "penalty";
+
     @Autowired
     @Qualifier("entityQueryService")
     protected PersistenceService entityQueryService;
@@ -167,14 +167,19 @@ public abstract class AbstractLicenseService<T extends License> {
 
     @Autowired
     protected LicenseStatusService licenseStatusService;
+
     @Autowired
     protected LicenseAppTypeService licenseAppTypeService;
+
     @Autowired
     protected PositionMasterService positionMasterService;
+
     @Autowired
     protected NatureOfBusinessService natureOfBusinessService;
+
     @Autowired
     private EgwStatusHibernateDAO egwStatusHibernateDAO;
+
     @Autowired
     private PenaltyRatesService penaltyRatesService;
 
@@ -185,10 +190,6 @@ public abstract class AbstractLicenseService<T extends License> {
     private DepartmentService departmentService;
     @Autowired
     private DesignationService designationService;
-
-    public static BigDecimal percentage(BigDecimal base, BigDecimal pct) {
-        return base.multiply(pct).divide(ONE_HUNDRED);
-    }
 
     protected abstract LicenseAppType getLicenseApplicationTypeForRenew();
 
@@ -311,8 +312,7 @@ public abstract class AbstractLicenseService<T extends License> {
     }
 
     @Transactional
-    public BigDecimal recalculateDemand(final List<FeeMatrixDetail> feeList, final T license) {
-        BigDecimal totalAmount = ZERO;
+    public void recalculateDemand(final List<FeeMatrixDetail> feeList, final T license) {
         final LicenseDemand licenseDemand = license.getCurrentDemand();
         // Recalculating current demand detail according to fee matrix
         for (final EgDemandDetails dmd : licenseDemand.getEgDemandDetails())
@@ -322,10 +322,8 @@ public abstract class AbstractLicenseService<T extends License> {
                                 .equalsIgnoreCase(fm.getFeeMatrix().getFeeType().getName())) {
                     dmd.setAmount(fm.getAmount().setScale(0, RoundingMode.HALF_UP));
                     dmd.setAmtCollected(ZERO);
-                    totalAmount = totalAmount.add(fm.getAmount().setScale(0, RoundingMode.HALF_UP));
                 }
         this.recalculateBaseDemand(licenseDemand);
-        return totalAmount;
     }
 
     @Transactional
