@@ -136,6 +136,7 @@ public class CreateAdvertisementController extends HoardingControllerSupport {
         advertisementPermitDetail.getAdvertisement().setStatus(AdvertisementStatus.WORKFLOW_IN_PROGRESS);
         if (resultBinder.hasErrors()) {
             WorkflowContainer workFlowContainer = new WorkflowContainer();
+            model.addAttribute("isEmployee", advertisementWorkFlowService.isEmployee(securityUtils.getCurrentUser()));
             workFlowContainer.setAdditionalRule(AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE);
             prepareWorkflow(model, advertisementPermitDetail, workFlowContainer);
             model.addAttribute("additionalRule", AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE);

@@ -48,6 +48,7 @@ import static org.egov.adtax.utils.constants.AdvertisementTaxConstants.ADTAX_WOR
 import static org.egov.adtax.utils.constants.AdvertisementTaxConstants.MODULE_NAME;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -98,7 +99,7 @@ public class AdvertisementWorkFlowService {
         String appConfigKey = ADTAX_WORKFLOWDESIGNATION;
         final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(MODULE_NAME,
                 appConfigKey);
-        return null != appConfigValue ? appConfigValue.get(0).getValue() : null;
+        return !appConfigValue.isEmpty() ? appConfigValue.get(0).getValue() : null;
     }
 
     /**
@@ -107,12 +108,9 @@ public class AdvertisementWorkFlowService {
      * @return
      */
     public String getDepartmentForWorkFlow() {
-        String department = "";
         final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(MODULE_NAME,
                 ADTAX_WORKFLOWDEPARTEMENT);
-        if (null != appConfigValue && !appConfigValue.isEmpty())
-            department = appConfigValue.get(0).getValue();
-        return department;
+        return !appConfigValue.isEmpty() ? appConfigValue.get(0).getValue() : null;
     }
 
     /**
@@ -124,7 +122,7 @@ public class AdvertisementWorkFlowService {
     public Boolean isEmployee(final User user) {
         for (final Role role : user.getRoles()) {
             for (final AppConfigValues appconfig : getThirdPartyUserRoles()) {
-                if (role != null && role.getName().equals(appconfig.getValue()))
+                if (role != null && appconfig != null && role.getName().equals(appconfig.getValue()))
                     return false;
             }
         }
@@ -137,12 +135,9 @@ public class AdvertisementWorkFlowService {
      * @return
      */
     public List<AppConfigValues> getThirdPartyUserRoles() {
-
         final List<AppConfigValues> appConfigValueList = appConfigValuesService.getConfigValuesByModuleAndKey(
                 MODULE_NAME, ADTAX_ROLEFORNONEMPLOYEE);
-
-        return !appConfigValueList.isEmpty() ? appConfigValueList : null;
-
+        return !appConfigValueList.isEmpty() ? appConfigValueList : Collections.emptyList();
     }
 
     /**
@@ -154,9 +149,9 @@ public class AdvertisementWorkFlowService {
     public Boolean isCscOperator(final User user) {
         final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(MODULE_NAME,
                 ADTAX_ROLEFORNONEMPLOYEE);
-        String rolesForNonEmployee = appConfigValue.get(0).getValue();
+        String rolesForNonEmployee = !appConfigValue.isEmpty() ? appConfigValue.get(0).getValue() : null;
         for (final Role role : user.getRoles()) {
-            if (role != null && role.getName().equalsIgnoreCase(rolesForNonEmployee))
+            if (role != null && rolesForNonEmployee != null && role.getName().equalsIgnoreCase(rolesForNonEmployee))
                 return true;
         }
         return false;
@@ -170,7 +165,7 @@ public class AdvertisementWorkFlowService {
     public String getDesignationForCscOperatorWorkFlow() {
         final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(MODULE_NAME,
                 ADTAX_WORKFLOWDESIGNATION_FOR_CSCOPERATOR);
-        return null != appConfigValue ? appConfigValue.get(0).getValue() : null;
+        return !appConfigValue.isEmpty() ? appConfigValue.get(0).getValue() : null;
     }
 
     /**
@@ -179,12 +174,9 @@ public class AdvertisementWorkFlowService {
      * @return
      */
     public String getDepartmentForCscOperatorWorkFlow() {
-        String department = "";
         final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(MODULE_NAME,
                 ADTAX_WORKFLOWDEPARTEMENT_FOR_CSCOPERATOR);
-        if (null != appConfigValue && !appConfigValue.isEmpty())
-            department = appConfigValue.get(0).getValue();
-        return department;
+        return !appConfigValue.isEmpty() ? appConfigValue.get(0).getValue() : null;
     }
 
     public Assignment getAssignmentByDeptDesigElecWard(final AdvertisementPermitDetail advertisementPermitDetail) {
@@ -197,8 +189,8 @@ public class AdvertisementWorkFlowService {
             for (final String desg : designation) {
                 Long deptId = departmentService.getDepartmentByName(dept).getId();
                 Long desgId = designationService.getDesignationByName(desg).getId();
-                Long boundaryId = (advertisementPermitDetail.getAdvertisement() != null
-                        && advertisementPermitDetail.getAdvertisement().getElectionWard() != null)
+                Long boundaryId = advertisementPermitDetail.getAdvertisement() != null
+                        && advertisementPermitDetail.getAdvertisement().getElectionWard() != null
                                 ? advertisementPermitDetail.getAdvertisement().getElectionWard().getId() : null;
 
                 if (boundaryId == null)
