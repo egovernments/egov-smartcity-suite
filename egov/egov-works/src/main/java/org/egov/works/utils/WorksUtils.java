@@ -48,6 +48,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.egov.commons.EgwStatus;
+import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.PositionMasterService;
@@ -66,6 +67,7 @@ import org.egov.works.lineestimate.entity.enums.LineEstimateStatus;
 import org.egov.works.lineestimate.repository.DocumentDetailsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -90,6 +92,9 @@ public class WorksUtils {
 
     @Autowired
     private WorksApplicationProperties worksApplicationProperties;
+
+    @Autowired
+    private EgwStatusHibernateDAO egwStatusHibernateDAO;
 
     @Autowired
     private DepartmentService departmentService;
@@ -230,5 +235,10 @@ public class WorksUtils {
                 return approverDepartment.getId();
         }
         return null;
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
+    public EgwStatus getStatusByModuleAndCode(final String moduleType, final String code) {
+        return egwStatusHibernateDAO.getStatusByModuleAndCode(moduleType, code);
     }
 }

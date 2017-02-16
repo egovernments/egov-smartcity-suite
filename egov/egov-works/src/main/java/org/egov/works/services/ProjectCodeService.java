@@ -39,21 +39,29 @@
  */
 package org.egov.works.services;
 
-import org.egov.commons.service.EntityTypeService;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import org.egov.commons.Accountdetailkey;
+import org.egov.commons.Accountdetailtype;
+import org.egov.commons.dao.AccountdetailkeyHibernateDAO;
+import org.egov.commons.dao.AccountdetailtypeHibernateDAO;
 import org.egov.commons.exception.NoSuchObjectException;
+import org.egov.commons.service.EntityTypeService;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.abstractestimate.entity.AssetsForEstimate;
 import org.egov.works.models.estimate.ProjectCode;
+import org.egov.works.utils.WorksConstants;
+import org.egov.works.utils.WorksUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ProjectCodeService extends PersistenceService<ProjectCode, Long> implements EntityTypeService {
@@ -64,6 +72,15 @@ public class ProjectCodeService extends PersistenceService<ProjectCode, Long> im
 
     @Autowired
     private PersistenceService<AssetsForEstimate, Long> assetsForEstimateService;
+
+    @Autowired
+    private WorksUtils worksUtils;
+
+    @Autowired
+    private AccountdetailtypeHibernateDAO accountdetailtypeHibernateDAO;
+
+    @Autowired
+    private AccountdetailkeyHibernateDAO accountdetailkeyHibernateDAO;
 
     @Override
     public List<ProjectCode> getAllActiveEntities(final Integer accountDetailTypeId) {
@@ -187,4 +204,34 @@ public class ProjectCodeService extends PersistenceService<ProjectCode, Long> im
         final String query = "from ProjectCode as p where upper(p.code) = '" + code.toUpperCase() + "'";
         return find(query);
     }
+
+    public ProjectCode findActiveProjectCodeByCode(final String code) {
+        return find("from ProjectCode as p where active=true and upper(p.code) = ?", code.toUpperCase());
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void createProjectCode(final String code, final String name) {
+        final ProjectCode projectCode = new ProjectCode();
+        projectCode.setCode(code);
+        projectCode.setCodeName(name);
+        projectCode.setDescription(name);
+        projectCode.setActive(true);
+        projectCode.setEgwStatus(worksUtils.getStatusByModuleAndCode(
+                ProjectCode.class.getSimpleName(), WorksConstants.DEFAULT_PROJECTCODE_STATUS));
+        persist(projectCode);
+        createAccountDetailKey(projectCode);
+    }
+
+    protected void createAccountDetailKey(final ProjectCode proj) {
+        final Accountdetailtype accountdetailtype = accountdetailtypeHibernateDAO
+                .getAccountdetailtypeByName(WorksConstants.PROJECTCODE);
+        final Accountdetailkey adk = new Accountdetailkey();
+        adk.setGroupid(1);
+        adk.setDetailkey(proj.getId().intValue());
+        adk.setDetailname(accountdetailtype.getAttributename());
+        adk.setAccountdetailtype(accountdetailtype);
+        accountdetailkeyHibernateDAO.create(adk);
+
+    }
+
 }
