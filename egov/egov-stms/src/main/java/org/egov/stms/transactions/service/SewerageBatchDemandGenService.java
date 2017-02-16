@@ -102,15 +102,18 @@ public class SewerageBatchDemandGenService {
         Integer[] recordsResult = null;
 
         List<SewerageTaxBatchDemandGenerate> sewerageBatchDmdGenResult = findActiveBatchDemands();
-        LOGGER.info("SewerageBatchDmdGenResult " + sewerageBatchDmdGenResult.size());
+        if (LOGGER.isInfoEnabled()) {
+            LOGGER.info("SewerageBatchDmdGenResult " + sewerageBatchDmdGenResult.size());
+        }
         List<SewerageApplicationDetails> sewerageApplnsDetails = new ArrayList<>();
         if (!sewerageBatchDmdGenResult.isEmpty()) {
 
             final AppConfigValues totalRecordToFeatch = appConfigValuesService.getConfigValuesByModuleAndKey(
                     SewerageTaxConstants.MODULE_NAME, SewerageTaxConstants.TOTALRESULTTOBEFETCH).get(0);
-            LOGGER.info("*************************************** totalRecordToFeatch records "
-                    + totalRecordToFeatch.getValue());
-
+            if (LOGGER.isInfoEnabled()) {
+                LOGGER.info(
+                        "*************************************** totalRecordToFeatch records " + totalRecordToFeatch.getValue());
+            }
             SewerageTaxBatchDemandGenerate sewerageDmdGen = sewerageBatchDmdGenResult.get(0);
 
             /*

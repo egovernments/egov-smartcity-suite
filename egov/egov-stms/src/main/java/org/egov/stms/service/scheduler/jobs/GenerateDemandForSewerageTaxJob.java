@@ -55,14 +55,13 @@ public class GenerateDemandForSewerageTaxJob extends AbstractQuartzJob {
 
     @Override
     public void executeJob() {
-
-        LOGGER.info("*************************************** GenerateDemandForSewerageTaxJob started ");
-
+        if (LOGGER.isInfoEnabled()) {
+            LOGGER.info("*************************************** GenerateDemandForSewerageTaxJob started ");
+        }
         int totalRecordsProcessed = sewerageBatchDemandGenService.generateSewerageDemandForNextFinYear();
-
-        LOGGER.info("*************************************** End GenerateDemandForSewerageTaxJob. Total records "
-                + totalRecordsProcessed);
-
+        if (LOGGER.isInfoEnabled())
+            LOGGER.info("*************************************** End GenerateDemandForSewerageTaxJob. Total records "
+                    + totalRecordsProcessed);
     }
 
 }
