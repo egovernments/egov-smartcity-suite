@@ -1,0 +1,1 @@
+INSERT INTO eg_roleaction(actionid, roleid) values ((select id from eg_action where name = 'BifurcateAssessment-Form'), (Select id from eg_role where name='CSC Operator'));
