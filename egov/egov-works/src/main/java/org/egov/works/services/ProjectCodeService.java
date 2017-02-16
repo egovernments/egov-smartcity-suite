@@ -66,10 +66,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class ProjectCodeService extends PersistenceService<ProjectCode, Long> implements EntityTypeService {
 
-    public ProjectCodeService() {
-        super(ProjectCode.class);
-    }
-
     @Autowired
     private PersistenceService<AssetsForEstimate, Long> assetsForEstimateService;
 
@@ -81,6 +77,10 @@ public class ProjectCodeService extends PersistenceService<ProjectCode, Long> im
 
     @Autowired
     private AccountdetailkeyHibernateDAO accountdetailkeyHibernateDAO;
+
+    public ProjectCodeService() {
+        super(ProjectCode.class);
+    }
 
     @Override
     public List<ProjectCode> getAllActiveEntities(final Integer accountDetailTypeId) {
