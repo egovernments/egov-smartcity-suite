@@ -118,7 +118,7 @@ public class SearchForm {
         if (userRoles.contains(Constants.ROLE_BILLCOLLECTOR) && license.canCollectFee())
             licenseActions.add("Collect Fees");
         else if (userRoles.contains(Constants.TL_CREATOR_ROLENAME) || userRoles.contains(Constants.TL_APPROVER_ROLENAME)) {
-            if (license.isStatusActive())
+            if (license.isStatusActive() && !license.isLegacy())
                 licenseActions.add("Print Certificate");
             if (license.getStatus().getStatusCode().equals(Constants.STATUS_UNDERWORKFLOW))
                 licenseActions.add("Print Provisional Certificate");
