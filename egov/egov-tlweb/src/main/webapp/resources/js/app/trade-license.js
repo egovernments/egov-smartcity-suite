@@ -81,6 +81,11 @@ function getZoneWard(){
         cache: false,
         dataType: "json",
         success: function (response) {
+            if(response.results.boundaries.length < 1) {
+                bootbox.alert("Could not find ward for Locality : "+$('#boundary').find(":selected").text());
+                $('#boundary').val('-1');
+                return;
+            }
             $.each(response.results.boundaries, function (j, boundary) {
                 if (boundary.wardId) {
                     $('#wardName').val(boundary.wardName);
@@ -89,7 +94,8 @@ function getZoneWard(){
             });
         },
         error: function (response) {
-            bootbox.alert("No boundary details mapped for locality")
+            bootbootbox.alert("Could not find ward for Locality : "+$('#boundary').find(":selected").text());
+            $('#boundary').val('-1');
         }
     });
 }
