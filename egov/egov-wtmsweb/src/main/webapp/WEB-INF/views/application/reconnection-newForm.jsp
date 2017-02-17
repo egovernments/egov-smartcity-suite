@@ -113,7 +113,7 @@
 					
 </form:form>
 <script>
-if($('#noJAORSAMessage').val()!='')
+if($('#noJAORSAMessage') && $('#noJAORSAMessage').val())
 	bootbox.alert($('#noJAORSAMessage').val());
 
 if($('#validationMessage').val()!='')
