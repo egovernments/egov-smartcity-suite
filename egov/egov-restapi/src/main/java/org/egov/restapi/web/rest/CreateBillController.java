@@ -102,9 +102,9 @@ public class CreateBillController {
             return JsonConvertor.convert(errorList);
         }
         try {
-            final ErrorDetails errorDetails = billService.validateBillDetails(billRegister);
-            if (null != errorDetails)
-                return JsonConvertor.convert(errorDetails);
+            final List<ErrorDetails> errors = billService.validateBillRegister(billRegister);
+            if (!errors.isEmpty())
+                return JsonConvertor.convert(errors);
             else {
                 egBillregister = new EgBillregister();
                 billService.createProjectCode(billRegister);

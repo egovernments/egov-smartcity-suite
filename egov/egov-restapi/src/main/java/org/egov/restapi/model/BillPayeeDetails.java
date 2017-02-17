@@ -55,6 +55,10 @@ public class BillPayeeDetails implements Serializable {
 
     private String accountDetailKey;
 
+    private BigDecimal debitAmount;
+
+    private BigDecimal creditAmount;
+
     public String getGlcode() {
         return glcode;
     }
@@ -94,9 +98,4 @@ public class BillPayeeDetails implements Serializable {
     public void setCreditAmount(final BigDecimal creditAmount) {
         this.creditAmount = creditAmount;
     }
-
-    private BigDecimal debitAmount;
-
-    private BigDecimal creditAmount;
-
 }

@@ -55,6 +55,8 @@ public class BillDetails implements Serializable {
 
     private BigDecimal creditAmount;
 
+    private BigDecimal netPayable;
+
     public String getGlcode() {
         return glcode;
     }
@@ -77,5 +79,13 @@ public class BillDetails implements Serializable {
 
     public void setCreditAmount(final BigDecimal creditAmount) {
         this.creditAmount = creditAmount;
+    }
+
+    public BigDecimal getNetPayable() {
+        return netPayable;
+    }
+
+    public void setNetPayable(final BigDecimal netPayable) {
+        this.netPayable = netPayable;
     }
 }

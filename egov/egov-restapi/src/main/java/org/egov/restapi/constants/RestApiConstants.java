@@ -350,16 +350,43 @@ public class RestApiConstants {
     public static final String THIRD_PARTY_ERR_CODE_NO_FUND = "EGF-REST-6";
     public static final String THIRD_PARTY_ERR_MSG_NO_FUND = "Fund is required";
 
-    public static final String THIRD_PARTY_ERR_CODE_NO_DEBITCOA = "EGF-REST-7";
-    public static final String THIRD_PARTY_ERR_MSG_NO_DEBITCOA = "Debit COA is required";
-
-    public static final String THIRD_PARTY_ERR_CODE_NO_CREDITCOA = "EGF-REST-8";
-    public static final String THIRD_PARTY_ERR_MSG_NO_CREDITCOA = "Credit COA is required";
+    public static final String THIRD_PARTY_ERR_CODE_NO_DETAIL_GLCODE = "EGF-REST-7";
+    public static final String THIRD_PARTY_ERR_MSG_NO_DETAIL_GLCODE = "Glcode is required for Bill Details";
 
     public static final String THIRD_PARTY_ERR_CODE_NO_CREDITAMOUNT = "EGF-REST-9";
     public static final String THIRD_PARTY_ERR_MSG_NO_CREDITAMOUNT = "Credit Amount is required";
 
     public static final String THIRD_PARTY_ERR_CODE_NO_DEBITAMOUNT = "EGF-REST-10";
     public static final String THIRD_PARTY_ERR_MSG_NO_DEBITAMOUNT = "Debit Amount is required";
+
+    public static final String THIRD_PARTY_ERR_CODE_NO_DETAILS = "EGF-REST-11";
+    public static final String THIRD_PARTY_ERR_MSG_NO_DETAILS = "Bill Details are required";
+
+    public static final String THIRD_PARTY_ERR_CODE_EITHER_CREDIT_DEBIT = "EGF-REST-12";
+    public static final String THIRD_PARTY_ERR_MSG_EITHER_CREDIT_DEBIT = "Either Credit or Debit Amount is required for the bill detail";
+
+    public static final String THIRD_PARTY_ERR_CODE_NOTEQUAL_CREDIT_DEBIT = "EGF-REST-13";
+    public static final String THIRD_PARTY_ERR_MSG_NOTEQUAL_CREDIT_DEBIT = "Debit and Credit amounts should be equal";
+
+    public static final String THIRD_PARTY_ERR_CODE_NO_NAMEOFWORK = "EGF-REST-14";
+    public static final String THIRD_PARTY_ERR_MSG_NO_NAMEOFWORK = "Name of Work is required";
+
+    public static final String THIRD_PARTY_ERR_CODE_NO_PAYTO = "EGF-REST-15";
+    public static final String THIRD_PARTY_ERR_MSG_NO_PAYTO = "Pay To is required";
+
+    public static final String THIRD_PARTY_ERR_CODE_NO_BILLAMOUNT = "EGF-REST-16";
+    public static final String THIRD_PARTY_ERR_MSG_NO_BILLAMOUNT = "Bill Amount is required";
+
+    public static final String THIRD_PARTY_ERR_CODE_NO_PAYEE_GLCODE = "EGF-REST-17";
+    public static final String THIRD_PARTY_ERR_MSG_NO_PAYEE_GLCODE = "Glcode is required for Bill Payee Details";
+
+    public static final String THIRD_PARTY_ERR_CODE_NO_PAYEE_ACCOUNTTYPE = "EGF-REST-18";
+    public static final String THIRD_PARTY_ERR_MSG_NO_PAYEE_ACCOUNTTYPE = "Account Detail Type required for Bill Payee Details";
+
+    public static final String THIRD_PARTY_ERR_CODE_NO_PAYEE_ACCOUNTKEY = "EGF-REST-19";
+    public static final String THIRD_PARTY_ERR_MSG_NO_PAYEE_ACCOUNTKEY = "Account Detail Key required for Bill Payee Details";
+
+    public static final String THIRD_PARTY_ERR_CODE_PAYEE_EITHER_CREDIT_DEBIT = "EGF-REST-20";
+    public static final String THIRD_PARTY_ERR_MSG_PAYEE_EITHER_CREDIT_DEBIT = "Either Credit or Debit Amount is required for the bill payee detail";
 
 }
