@@ -119,10 +119,16 @@
 														<s:if test="#stat.index == 0">
 															<c:set value="${finyear}" var="startfinyear"/>
 														</s:if>
+														<c:set value="" var="readonly"/>
+                                                        <c:set value="" var="onclick"/>
+														<s:if test="#stat.index > 5">
+															<c:set value="return false" var="onclick"/>
+                                                            <c:set value="readonly='readonly'" var="readonly"/>
+														</s:if>
 														<td><input type="text"  name="" class="form-control feeyear" readonly="readonly" value="${finyear}" tabindex="-1"/></td>
-														<td><input type="text" name="legacyInstallmentwiseFees[${LIFee.key}]" class="form-control patternvalidation feeamount"  value="${LIFee.value}" data-pattern="number"/> </td>
+														<td><input type="text" name="legacyInstallmentwiseFees[${LIFee.key}]" ${readonly} class="form-control patternvalidation feeamount"  value="${LIFee.value}" data-pattern="number"/> </td>
 														<td class="text-center">
-														<s:checkbox name="legacyFeePayStatus[%{#attr.LIFee.key}]" class="case"></s:checkbox>
+                                                            <s:checkbox name="legacyFeePayStatus[%{#attr.LIFee.key}]" class="case" onclick="%{#attr.onclick}"></s:checkbox>
 														</td>
 													</tr>
 												</s:iterator>
