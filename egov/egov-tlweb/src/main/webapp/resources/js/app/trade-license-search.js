@@ -430,7 +430,7 @@ $("#btnsearch").click(
     						},{
     							"sTitle" : "Actions",
     				        	  "render" : function(data,type,row) {
-    				        		  var option = "<option>Select from Below</option>";
+    				        		  var option = "<option value=''>Select from Below</option>";
     				        		  $.each(JSON.parse(row.actions),function(key,value){
     		    			             option+= "<option>"+value.key+"</option>";
     		    			         });
@@ -466,5 +466,5 @@ function goToAction(obj, id){
 		window.open("/tl/demandnotice/report?licenseId=" + id, 'dn' + id, 'scrollbars=yes,width=1000,height=700,status=yes');
 	else if (obj.options[obj.selectedIndex].innerHTML == 'Closure')
 		window.open("../viewtradelicense/viewTradeLicense-closure.action?id="+id,  'vt'+id, 'scrollbars=yes,width=1000,height=700,status=yes');
-
+	$(obj).val('');
 }

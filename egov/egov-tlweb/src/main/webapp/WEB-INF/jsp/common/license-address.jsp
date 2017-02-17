@@ -42,7 +42,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <script>
     $(document).ready(function () {
-        $('#boundary').change(function () {
+        $('#boundary').blur(function () {
             getZoneWard();
         });
         <s:if test="%{hasErrors() || mode=='view' || mode=='edit'}">

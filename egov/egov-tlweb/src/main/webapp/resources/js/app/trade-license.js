@@ -38,28 +38,28 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-function showHideAgreement(){
-    if(document.getElementById("showAgreementDtl").checked){
-        document.getElementById("agreementSec").style.display="";
+function showHideAgreement() {
+    if (document.getElementById("showAgreementDtl").checked) {
+        document.getElementById("agreementSec").style.display = "";
     } else {
-        document.getElementById("agreementSec").style.display="none";
-        document.getElementById("agreementDate").value="";
-        document.getElementById("agreementDocNo").value="";
+        document.getElementById("agreementSec").style.display = "none";
+        document.getElementById("agreementDate").value = "";
+        document.getElementById("agreementDocNo").value = "";
     }
 }
 
-function getUom(){
+function getUom() {
     jQuery.ajax({
         url: "/tl/feeType/uom-by-subcategory",
         type: "GET",
         data: {
-            subCategoryId : jQuery('#subCategory').val(),
-            feeTypeId :  jQuery('#feeTypeId').val()
+            subCategoryId: jQuery('#subCategory').val(),
+            feeTypeId: jQuery('#feeTypeId').val()
         },
         cache: false,
         dataType: "json",
         success: function (response) {
-            if(response.length > 0)
+            if (response.length > 0)
                 jQuery('#uom').val(response[0].uom.name);
             else {
                 jQuery('#uom').val('');
@@ -69,35 +69,40 @@ function getUom(){
     });
 }
 
-function getZoneWard(){
+function getZoneWard() {
     $('#wardName').val("");
     $('#parentBoundary').val("");
-    $.ajax({
-        url: "/egi/boundary/ajaxBoundary-blockByLocality.action",
-        type: "GET",
-        data: {
-            locality : $('#boundary').val()
-        },
-        cache: false,
-        dataType: "json",
-        success: function (response) {
-            if(response.results.boundaries.length < 1) {
-                bootbox.alert("Could not find ward for Locality : "+$('#boundary').find(":selected").text());
-                $('#boundary').val('-1');
-                return;
-            }
-            $.each(response.results.boundaries, function (j, boundary) {
-                if (boundary.wardId) {
-                    $('#wardName').val(boundary.wardName);
-                    $('#parentBoundary').val(boundary.wardId);
+    if ($('#boundary').val() != '-1') {
+        $.ajax({
+            url: "/egi/boundary/ajaxBoundary-blockByLocality.action",
+            type: "GET",
+            data: {
+                locality: $('#boundary').val()
+            },
+            cache: false,
+            dataType: "json",
+            success: function (response) {
+                if (response.results.boundaries.length < 1) {
+                    bootbox.alert("Could not find ward for Locality : " + $('#boundary').find(":selected").text());
+                    $('#boundary').val('-1');
+                    return;
                 }
-            });
-        },
-        error: function (response) {
-            bootbootbox.alert("Could not find ward for Locality : "+$('#boundary').find(":selected").text());
-            $('#boundary').val('-1');
-        }
-    });
+                $.each(response.results.boundaries, function (j, boundary) {
+                    if (boundary.wardId) {
+                        $('#wardName').val(boundary.wardName);
+                        $('#parentBoundary').val(boundary.wardId);
+                    } else {
+                        bootbox.alert("Could not find ward for Locality : " + $('#boundary').find(":selected").text());
+                        $('#boundary').val('-1');
+                    }
+                });
+            },
+            error: function (response) {
+                bootbootbox.alert("Could not find ward for Locality : " + $('#boundary').find(":selected").text());
+                $('#boundary').val('-1');
+            }
+        });
+    }
 }
 
 // Calls propertytax REST api to retrieve property details for an assessment no
@@ -145,7 +150,6 @@ function resetOnPropertyNumChange() {
     $("#wardName").val("");
     $("#address").val("");
 }
-
 
 
 function checkLength(obj, val) {
