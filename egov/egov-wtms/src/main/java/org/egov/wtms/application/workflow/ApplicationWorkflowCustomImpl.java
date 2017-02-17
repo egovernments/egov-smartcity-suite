@@ -160,7 +160,31 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                 wfInitiator = assignmentService
                         .getPrimaryAssignmentForUser(waterConnectionDetails.getCreatedBy().getId());
         }
-        if (WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction)) {
+        if(workFlowAction!=null && WaterTaxConstants.WFLOW_ACTION_STEP_CANCEL.equalsIgnoreCase(workFlowAction)){
+            if (wfInitiator.equals(userAssignment)) {
+                waterConnectionDetails.setConnectionStatus(ConnectionStatus.INACTIVE);
+                if(waterConnectionDetails.getStatus()!=null && waterConnectionDetails.getStatus().getCode()
+                        .equals(WaterTaxConstants.APPLICATION_STATUS_VERIFIED))
+                {
+                    final EgDemand demand = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
+                    if (demand != null) {
+                        WaterDemandConnection waterDemandConnection = waterDemandConnectionService
+                                .findByWaterConnectionDetailsAndDemand(waterConnectionDetails, demand);
+                        demand.setIsHistory("Y");
+                        demand.setModifiedDate(new Date());
+                        waterDemandConnection.setDemand(demand);
+                        waterDemandConnectionService.updateWaterDemandConnection(waterDemandConnection);
+                    }
+                }
+                waterConnectionDetails.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
+                        WaterTaxConstants.APPLICATION_STATUS_CANCELLED, WaterTaxConstants.MODULETYPE));
+                waterConnectionDetails.transition(true).end().withSenderName(user.getUsername() + "::" + user.getName())
+                        .withComments(approvalComent).withDateInfo(currentDate.toDate()).withNatureOfTask(natureOfwork);
+                waterConnectionSmsAndEmailService.sendSmsAndEmailOnRejection(waterConnectionDetails, approvalComent);
+               waterConnectionDetailsService.updateIndexes(waterConnectionDetails, null);
+            } 
+        }
+        else if (WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction)) {
             if (wfInitiator.equals(userAssignment)) {
                 waterConnectionDetails.setConnectionStatus(ConnectionStatus.INACTIVE);
                 if(waterConnectionDetails.getStatus()!=null && waterConnectionDetails.getStatus().getCode()
