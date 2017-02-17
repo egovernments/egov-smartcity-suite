@@ -42,20 +42,23 @@ package org.egov.wtms.web.controller.application;
 import java.io.ByteArrayInputStream;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.WordUtils;
+import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
+import org.egov.eis.service.DesignationService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.pims.commons.Designation;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.OwnerName;
 import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
@@ -101,6 +104,9 @@ public class WorkOrderController {
     @Autowired
     @Qualifier("fileStoreService")
     protected FileStoreService fileStoreService;
+    
+    @Autowired
+    private DesignationService designationService;
     @Autowired
     private AssignmentService assignmentService;
 
@@ -134,11 +140,12 @@ public class WorkOrderController {
             final String doorno[] = assessmentDetails.getPropertyAddress().split(",");
             String ownerName = "";
             double total = 0;
-            final Set<User> users = assignmentService.getUsersByDesignationsAndCurrentDate(WaterTaxConstants.DESG_COMM);
             String commissionerName = "";
-            for (final User user : users)
-                commissionerName = user.getName();
-
+            Designation desgn=designationService.getDesignationByName(WaterTaxConstants.DESG_COMM_NAME);
+            if(desgn!=null){
+                List<Assignment>assignList=assignmentService.getAllActiveAssignments(desgn.getId());
+                commissionerName = !assignList.isEmpty()?assignList.get(0).getEmployee().getName():"";
+            }
             for (final OwnerName names : assessmentDetails.getOwnerNames()) {
                 ownerName = names.getOwnerName();
                 break;

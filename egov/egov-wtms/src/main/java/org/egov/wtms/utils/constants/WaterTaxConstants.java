@@ -276,6 +276,7 @@ public class WaterTaxConstants {
     public static final String CURRENTYEAR_SECOND_HALF = "Current 2nd Half";
     public static final String GLCODE_FOR_ADVANCE = "3504106";
     public static final String [] DESG_COMM = {"Commissioner"};
+    public static final String  DESG_COMM_NAME = "Commissioner";
 
     public static final List<String> ORDERED_DEMAND_RSNS_LIST = Arrays.asList(WATERTAXREASONCODE,
             DEMANDRSN_CODE_ADVANCE);
