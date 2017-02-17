@@ -52,7 +52,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import static org.egov.tl.entity.enums.ProcessStatus.COMPLETED;
 import static org.egov.tl.entity.enums.ProcessStatus.INCOMPLETE;
-import static org.egov.tl.entity.enums.ProcessStatus.INPROGRESS;
 
 @Service
 @Transactional(readOnly = true)
@@ -80,7 +79,7 @@ public class DemandGenerationLogService {
 
     @Transactional
     public DemandGenerationLog createDemandGenerationLog(String installmentYearRange) {
-        return demandGenerationLogRepository.saveAndFlush(new DemandGenerationLog(installmentYearRange));
+        return demandGenerationLogRepository.save(new DemandGenerationLog(installmentYearRange));
     }
 
 
@@ -94,7 +93,7 @@ public class DemandGenerationLogService {
             }
         }
         demandGenerationLog.setExecutionStatus(COMPLETED);
-        return demandGenerationLogRepository.saveAndFlush(demandGenerationLog);
+        return demandGenerationLogRepository.save(demandGenerationLog);
     }
 
     @Transactional
@@ -108,19 +107,13 @@ public class DemandGenerationLogService {
             logDetail.setDemandGenerationLog(demandGenerationLog);
             logDetail.setStatus(ProcessStatus.INPROGRESS);
             demandGenerationLog.getDetails().add(logDetail);
-            logDetail = demandGenerationLogDetailRepository.saveAndFlush(logDetail);
         }
         return logDetail;
     }
 
     @Transactional
-    public DemandGenerationLogDetail completeDemandGenerationLogDetail(DemandGenerationLogDetail demandGenerationLogDetail) {
-        return demandGenerationLogDetailRepository.saveAndFlush(demandGenerationLogDetail);
-    }
-
-    @Transactional
-    public DemandGenerationLogDetail updateDemandGenerationLogDetailOnException(DemandGenerationLogDetail logDetail,
-                                                                                RuntimeException exception) {
+    public void updateDemandGenerationLogDetailOnException(DemandGenerationLog demandGenerationLog,
+                                                           DemandGenerationLogDetail logDetail, RuntimeException exception) {
         String error;
         if (exception instanceof ValidationException)
             error = ((ValidationException) exception).getErrors().get(0).getMessage();
@@ -128,8 +121,6 @@ public class DemandGenerationLogService {
             error = "Error : " + exception;
         logDetail.setStatus(INCOMPLETE);
         logDetail.setDetail(error);
-        logDetail.getDemandGenerationLog().setDemandGenerationStatus(INCOMPLETE);
-        return completeDemandGenerationLogDetail(logDetail);
+        demandGenerationLog.setDemandGenerationStatus(INCOMPLETE);
     }
-
 }
