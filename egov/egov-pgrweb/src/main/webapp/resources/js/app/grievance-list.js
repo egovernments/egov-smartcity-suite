@@ -81,8 +81,7 @@ $(document).ready(function() {
 			} ,{
 				"mData" : "dueDate",
 				"sTitle" : "Due Date"
-			}],
-			  "aaSorting": [[1, 'asc']]
+			}]
 		});
 });
 
