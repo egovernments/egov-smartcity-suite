@@ -99,12 +99,22 @@ public class BillService {
         return errorDetails;
     }
 
-    public void populateEgBillregister(final EgBillregister egBillregister, final BillRegister billRegister)
-            throws ClassNotFoundException {
-        final EgBillregistermis egBillregistermis = new EgBillregistermis();
+    public void populateBillRegister(final EgBillregister egBillregister, final BillRegister billRegister) throws ClassNotFoundException {
+        populateEgBillregister(egBillregister, billRegister);
+        populateEgBillregisterMis(egBillregister, billRegister);
+
+        for (final BillDetails details : billRegister.getBillDetails())
+            populateEgBilldetails(egBillregister, details, billRegister);
+    }
+
+    private void populateEgBillregister(final EgBillregister egBillregister, final BillRegister billRegister) {
         egBillregister.setBilldate(billRegister.getBillDate());
         egBillregister.setBilltype(billRegister.getBillType());
+        egBillregister.setBillamount(billRegister.getBillAmount());
+    }
 
+    private void populateEgBillregisterMis(final EgBillregister egBillregister, final BillRegister billRegister) {
+        final EgBillregistermis egBillregistermis = new EgBillregistermis();
         egBillregistermis.setFunction(functionService.findByCode(billRegister.getFunctionCode()));
         egBillregistermis.setFund(fundService.findByCode(billRegister.getFundCode()));
         egBillregistermis.setScheme(schemeService.findByCode(billRegister.getSchemeCode()));
@@ -116,46 +126,51 @@ public class BillService {
         egBillregistermis.setPartyBillDate(billRegister.getPartyBillDate());
 
         egBillregister.setEgBillregistermis(egBillregistermis);
+    }
 
-        for (final BillDetails details : billRegister.getBillDetails()) {
-            final EgBilldetails egBilldetails = new EgBilldetails();
-            egBilldetails.setGlcodeid(BigDecimal.valueOf(chartOfAccountsService.getByGlCode(details.getGlcode()).getId()));
-            egBilldetails.setCreditamount(details.getCreditAmount());
-            egBilldetails.setDebitamount(details.getDebitAmount());
-            egBilldetails.setEgBillregister(egBillregister);
-            egBilldetails.setLastupdatedtime(new Date());
-            for (final BillPayeeDetails payeeDetails : billRegister.getBillPayeeDetails()) {
-                final EgBillPayeedetails billPayeedetails = new EgBillPayeedetails();
-                if (payeeDetails.getGlcode() != null && payeeDetails.getGlcode().equals(details.getGlcode())) {
-                    billPayeedetails.setCreditAmount(payeeDetails.getCreditAmount());
-                    billPayeedetails.setDebitAmount(payeeDetails.getDebitAmount());
-                    final Accountdetailtype detailType = accountdetailtypeService
-                            .findByDescription(payeeDetails.getAccountDetailType());
-                    billPayeedetails.setAccountDetailTypeId(detailType.getId());
-                    if (payeeDetails.getAccountDetailType() != null) {
-                        List<EntityType> entities;
-                        final String table = detailType.getFullQualifiedName();
-                        final Class<?> service = Class.forName(table);
-                        String simpleName = service.getSimpleName();
-                        simpleName = simpleName.substring(0, 1).toLowerCase() + simpleName.substring(1) + "Service";
+    private void populateEgBilldetails(final EgBillregister egBillregister, final BillDetails details,
+            final BillRegister billRegister) throws ClassNotFoundException {
+        final EgBilldetails egBilldetails = new EgBilldetails();
+        egBilldetails.setGlcodeid(BigDecimal.valueOf(chartOfAccountsService.getByGlCode(details.getGlcode()).getId()));
+        egBilldetails.setCreditamount(details.getCreditAmount());
+        egBilldetails.setDebitamount(details.getDebitAmount());
+        egBilldetails.setEgBillregister(egBillregister);
+        egBilldetails.setLastupdatedtime(new Date());
+        egBilldetails.setFunctionid(BigDecimal.valueOf(egBillregister.getEgBillregistermis().getFunction().getId()));
+        for (final BillPayeeDetails payeeDetails : billRegister.getBillPayeeDetails())
+            populateEgBillPayeedetails(egBilldetails, payeeDetails, details, billRegister);
+        egBillregister.addEgBilldetailes(egBilldetails);
+    }
 
-                        final EntityTypeService entityService = (EntityTypeService) applicationContext.getBean(simpleName);
-                        entities = (List<EntityType>) entityService
-                                .filterActiveEntities(billRegister.getProjectCode(), 10, detailType.getId());
-                        if (entities.isEmpty())
-                            entities = (List<EntityType>) entityService
-                                    .filterActiveEntities(billRegister.getPayTo(), 10, detailType.getId());
-                        billPayeedetails.setAccountDetailKeyId(entities.get(0).getEntityId());
-                    }
-                    billPayeedetails.setEgBilldetailsId(egBilldetails);
-                    billPayeedetails.setLastUpdatedTime(new Date());
-                    egBilldetails.addEgBillPayeedetail(billPayeedetails);
-                }
+    @SuppressWarnings("unchecked")
+    private void populateEgBillPayeedetails(final EgBilldetails egBilldetails, final BillPayeeDetails payeeDetails,
+            final BillDetails details, final BillRegister billRegister) throws ClassNotFoundException {
+        final EgBillPayeedetails billPayeedetails = new EgBillPayeedetails();
+        if (payeeDetails.getGlcode() != null && payeeDetails.getGlcode().equals(details.getGlcode())) {
+            billPayeedetails.setCreditAmount(details.getCreditAmount());
+            billPayeedetails.setDebitAmount(details.getDebitAmount());
+            final Accountdetailtype detailType = accountdetailtypeService
+                    .findByName(payeeDetails.getAccountDetailType());
+            billPayeedetails.setAccountDetailTypeId(detailType.getId());
+            if (payeeDetails.getAccountDetailType() != null) {
+                List<EntityType> entities;
+                final String table = detailType.getFullQualifiedName();
+                final Class<?> service = Class.forName(table);
+                String simpleName = service.getSimpleName();
+                simpleName = simpleName.substring(0, 1).toLowerCase() + simpleName.substring(1) + "Service";
+
+                final EntityTypeService entityService = (EntityTypeService) applicationContext.getBean(simpleName);
+                entities = (List<EntityType>) entityService
+                        .filterActiveEntities(billRegister.getProjectCode(), 10, detailType.getId());
+                if (entities.isEmpty())
+                    entities = (List<EntityType>) entityService
+                            .filterActiveEntities(billRegister.getPayTo(), 10, detailType.getId());
+                billPayeedetails.setAccountDetailKeyId(entities.get(0).getEntityId());
             }
-            egBillregister.addEgBilldetailes(egBilldetails);
+            billPayeedetails.setEgBilldetailsId(egBilldetails);
+            billPayeedetails.setLastUpdatedTime(new Date());
+            egBilldetails.addEgBillPayeedetail(billPayeedetails);
         }
-
-        egBillregister.setBillamount(billRegister.getBillAmount());
     }
 
     public void createProjectCode(final BillRegister billRegister) {

@@ -108,7 +108,7 @@ public class CreateBillController {
             else {
                 egBillregister = new EgBillregister();
                 billService.createProjectCode(billRegister);
-                billService.populateEgBillregister(egBillregister, billRegister);
+                billService.populateBillRegister(egBillregister, billRegister);
                 savedBillregister = billService.createBill(egBillregister);
                 responseJson = savedBillregister.getBillnumber();
             }

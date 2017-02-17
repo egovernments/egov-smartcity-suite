@@ -134,8 +134,4 @@ public class AccountdetailtypeService {
     public List<Accountdetailtype> findByGlcodeId(final Long glcodeId) {
         return accountdetailtypeRepository.findByGlcodeId(glcodeId);
     }
-
-    public Accountdetailtype findByDescription(final String description) {
-        return accountdetailtypeRepository.findByDescription(description);
-    }
 }

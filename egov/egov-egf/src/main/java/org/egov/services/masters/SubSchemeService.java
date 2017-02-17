@@ -44,14 +44,8 @@ import java.util.List;
 import org.egov.commons.SubScheme;
 import org.egov.infstr.services.PersistenceService;
 import org.hibernate.Query;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 public class SubSchemeService extends PersistenceService<SubScheme, Integer> {
-
-    @Autowired
-    @Qualifier("persistenceService")
-    protected PersistenceService persistenceService;
 
     public SubSchemeService() {
         super(SubScheme.class);
@@ -69,6 +63,9 @@ public class SubSchemeService extends PersistenceService<SubScheme, Integer> {
     }
 
     public SubScheme findByCode(final String code) {
-        return (SubScheme) persistenceService.find(" from Scheme where code = ? ", code);
+        final Query query = getSession().createQuery(" from Scheme where code = :code ");
+
+        query.setString("code", code);
+        return (SubScheme) query.uniqueResult();
     }
 }
