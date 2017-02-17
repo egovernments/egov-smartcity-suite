@@ -135,6 +135,7 @@ $('#searchrecord').click(function(e){
 						  { "data" : "applicationNumber", "title": "Application No."},
 						  { "data" : "applicationFromDate", "title": "Application Date"},
 						  { "data" : "agencyName", "title": "Agency"},
+						  { "data" : "ownerDetail", "title": "Owner Detail"},
 						  { "data" : "pendingDemandAmount", "title": "Amount"},
 						  { "data" : "penaltyAmount", "title": "Penalty Amount"},
 						  { "data" : "status", "title": "Hoarding Status"},

@@ -56,7 +56,13 @@
                         <div class="col-sm-3 add-margin">
                             <input type="text" id="agencyTypeAhead" class="form-control typeahead" autocomplete="off">
                         <form:hidden path="agency" id="agencyId" value="${advertisementPermitDetail.agency}" />
-                        </div> 
+                        </div>
+                         <label class="col-sm-2 control-label text-left"><spring:message code="lbl.owner.Details"/></label>
+                        <div class="col-sm-3 add-margin">
+                            <form:input type="text" class="form-control" id="ownerDetail" path="ownerDetail"/>
+							<form:errors path="ownerDetail" cssClass="error-msg"/>
+                        </div>	 
+                        
                     </div>
                     <div class="form-group">
                         <label class="col-sm-3 control-label text-right"><spring:message code="lbl.hoarding.category"/></label>

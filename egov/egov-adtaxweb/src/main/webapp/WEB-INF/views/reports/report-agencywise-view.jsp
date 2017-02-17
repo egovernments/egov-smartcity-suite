@@ -65,6 +65,7 @@
 											<th><spring:message code="lbl.srl.no"/></th>
 											<th><spring:message code="lbl.advertisement.application.no"/></th>
 											<th><spring:message code="lbl.advertisement.permission.no"></spring:message></th>
+											<th><spring:message code="lbl.owner.Details"></spring:message></th>
 											<th><spring:message code="lbl.hoarding.category"/></th>
 											<th><spring:message code="lbl.hoarding.subcategory"/></th>
 											<th><spring:message code="lbl.hoardingReport.demandAmount"/></th>
@@ -83,6 +84,7 @@
 												<td align="right" >${status.index+1}</td>
 												<td align="right">${dcb.applicationNumber}</td>
 												<td align="right">${dcb.permissionNumber}</td>
+												<td align="right">${dcb.ownerDetail}</td>
 												<td align="right">${dcb.category}</td>
 												<td align="right">${dcb.subcategory}</td>
 												<td align="right">${dcb.demandAmount}</td>

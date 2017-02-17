@@ -171,6 +171,7 @@ $('#searchagencywise').click(function(e){
 								   },
 								   "title": "Agency"
 							  },
+							  { "data" : "ownerDetail", "title": "Owner Details","visible":false},
 							  { "data" : "totalHoardingInAgency", "title": "No.of hoarding"},
 							  { "data" : "penaltyAmount", "title": "Penalty Amount"},
 							  { "data" : "totalDemand", "title": "TotalDemand"},
@@ -183,11 +184,12 @@ $('#searchagencywise').click(function(e){
 		e.preventDefault();
 	});
 
-function reportFunction(id,category,subcategory,zone,ward)
+function reportFunction(id,category,subcategory,zone,ward,ownerDetail)
 {
 	var category=document.getElementById("categories").value;
 	var subcategory=document.getElementById("subcategories").value;
 	var zone = document.getElementById("zoneList").value;
 	var ward = document.getElementById("wardlist").value;
-	window.open("/adtax/reports/report-view?id="+id+"&category="+category+"&subcategory="+subcategory+"&zone="+zone+"&ward="+ward,'_blank',"width=800, height=600 , scrollbars=yes");
+	var ownerDetail = document.getElementById("ownerDetail").value;
+	window.open("/adtax/reports/report-view?id="+id+"&category="+category+"&subcategory="+subcategory+"&zone="+zone+"&ward="+ward+"&ownerDetail="+ownerDetail,'_blank',"width=800, height=600 , scrollbars=yes");
 }

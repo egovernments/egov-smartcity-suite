@@ -46,6 +46,7 @@ import org.egov.adtax.search.contract.HoardingSearch;
 import org.egov.infra.utils.DateUtils;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
 
 import javax.persistence.EntityManager;
@@ -101,7 +102,8 @@ public class AdvertisementPermitDetailRepositoryImpl implements AdvertisementPer
         hoardingCriteria.add(Restrictions.eq("permit.isActive", Boolean.TRUE));
         
         hoardingCriteria.add(Restrictions.eq("advertisement.status", AdvertisementStatus.ACTIVE));
-        
+        if (hoardingSearch.getOwnerDetail() != null)
+            hoardingCriteria.add(Restrictions.ilike("ownerDetail", hoardingSearch.getOwnerDetail(),MatchMode.ANYWHERE));
         return hoardingCriteria.list();
     }
 
@@ -166,6 +168,10 @@ public class AdvertisementPermitDetailRepositoryImpl implements AdvertisementPer
             if (advertisementPermitDetail.getAdvertisement().getRevenueInspector() != null)
                 hoardingCriteria.add(Restrictions.eq("advertisement.revenueInspector.id",
                         advertisementPermitDetail.getAdvertisement().getRevenueInspector().getId()));
+            if(advertisementPermitDetail.getOwnerDetail() != null){
+                hoardingCriteria.add(Restrictions.ilike("ownerDetail",advertisementPermitDetail.getOwnerDetail(),MatchMode.ANYWHERE));
+                
+            }
             
             hoardingCriteria
                 .add(Restrictions.eq("isActive",true));// permit status is active.
@@ -287,6 +293,10 @@ public class AdvertisementPermitDetailRepositoryImpl implements AdvertisementPer
             if (advertisementPermitDetail.getAdvertisement().getRevenueInspector() != null)
                 hoardingCriteria.add(Restrictions.eq("advertisement.revenueInspector.id",
                         advertisementPermitDetail.getAdvertisement().getRevenueInspector().getId()));
+            if(advertisementPermitDetail.getOwnerDetail() != null){
+                hoardingCriteria.add(Restrictions.ilike("ownerDetail",advertisementPermitDetail.getOwnerDetail(),MatchMode.ANYWHERE));
+                
+            }
             if (advertisementPermitDetail.getAdvertisement().getStatus() != null)
                 hoardingCriteria
                         .add(Restrictions.eq("advertisement.status", advertisementPermitDetail.getAdvertisement().getStatus()));

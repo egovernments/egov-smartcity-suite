@@ -111,20 +111,24 @@ public class AgencyReportController extends GenericController {
     @RequestMapping(value = "/report-view", method = GET)
     public String agencywiseReport(@RequestParam("id") final String id, @RequestParam("category") final String category,
             @RequestParam("subcategory") final String subcategory, @RequestParam("zone") final String zone,
-            @RequestParam("ward") final String ward, final Model model) {
+            @RequestParam("ward") final String ward,@RequestParam("ownerDetail") final String ownerDetail, final Model model) {
         Long categoryid = (category != null) ? Long.parseLong(category) : null;
         Long subcategoryid = (subcategory != null) ? Long.parseLong(subcategory) : null;
         Long zoneid = (zone != null) ? Long.parseLong(zone) : null;
         Long wardid = (ward != null) ? Long.parseLong(ward) : null;
         final List<AdvertisementPermitDetail> advertisementPermitDetail = advertisementPermitDetailService
-                .getAdvertisementPermitDetailBySearchParam(Long.parseLong(id), categoryid, subcategoryid, zoneid, wardid);
+                .getAdvertisementPermitDetailBySearchParam(Long.parseLong(id), categoryid, subcategoryid, zoneid, wardid,ownerDetail);
+        if(advertisementPermitDetail!=null && !advertisementPermitDetail.isEmpty())
         model.addAttribute("agency", advertisementPermitDetail.get(0).getAgency().getName());
+        else
+            model.addAttribute("agency", "");
         model.addAttribute("dcbResult", getAgencyWiseDCBResult(advertisementPermitDetail));
         return "report-agencywise-view";
     }
 
     private List<HoardingDcbReport> getAgencyWiseDCBResult(final List<AdvertisementPermitDetail> advertisementPermitDetail) {
         List<HoardingDcbReport> HoardingDcbReportResults = new ArrayList<>();
+        
         for (AdvertisementPermitDetail advpermitdetail : advertisementPermitDetail) {
             if (advpermitdetail.getAgency() != null && advpermitdetail.getAdvertisement() != null
                     && advpermitdetail.getAdvertisement().getDemandId() != null) {
@@ -142,6 +146,7 @@ public class AgencyReportController extends GenericController {
                 hoardingReport.setAgencyName(advpermitdetail.getAgency().getName());
                 hoardingReport.setCategory(advpermitdetail.getAdvertisement().getCategory().getName());
                 hoardingReport.setSubcategory(advpermitdetail.getAdvertisement().getSubCategory().getDescription());
+                hoardingReport.setOwnerDetail(advpermitdetail.getOwnerDetail() );
                 HoardingDcbReportResults.add(hoardingReport);
             }
         }

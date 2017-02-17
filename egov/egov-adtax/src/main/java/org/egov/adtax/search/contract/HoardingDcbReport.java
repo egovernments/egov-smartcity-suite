@@ -60,6 +60,7 @@ public class HoardingDcbReport {
     private String subcategory;
     private String locality;
     private String ward;
+    private String ownerDetail;
     private String agencyName;
     private BigDecimal totalDemandAmount;
     private BigDecimal arrearAmount = BigDecimal.ZERO.setScale(2, BigDecimal.ROUND_HALF_EVEN);
@@ -68,6 +69,15 @@ public class HoardingDcbReport {
     private BigDecimal collectedPenaltyAmount = BigDecimal.ZERO.setScale(2, BigDecimal.ROUND_HALF_EVEN);
     private Map<Date, String> collectReceiptMap = new HashMap<Date, String>();
     
+    
+    
+    
+    public String getOwnerDetail() {
+        return ownerDetail;
+    }
+    public void setOwnerDetail(String ownerDetail) {
+        this.ownerDetail = ownerDetail;
+    }
     public String getDemandReason() {
         return demandReason;
     }

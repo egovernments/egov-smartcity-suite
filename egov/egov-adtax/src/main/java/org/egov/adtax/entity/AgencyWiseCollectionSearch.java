@@ -50,7 +50,7 @@ public class AgencyWiseCollectionSearch {
     private BigDecimal penaltyAmount;
     private BigDecimal totalAmount;
     
-    
+    private String ownerDetail;
     private String advertisementNumber;
     private String applicationNumber;
     private Long advertisementPermitId;
@@ -58,6 +58,15 @@ public class AgencyWiseCollectionSearch {
     private boolean selectedForCollection=false; 
     
     
+    
+    public String getOwnerDetail() {
+        return ownerDetail;
+    }
+
+    public void setOwnerDetail(String ownerDetail) {
+        this.ownerDetail = ownerDetail;
+    }
+
     public BigDecimal getTotalAmount() {
         return (penaltyAmount!=null? (pendingDemandAmount!=null? penaltyAmount.add(pendingDemandAmount):penaltyAmount):
             (pendingDemandAmount!=null? pendingDemandAmount:BigDecimal.ZERO) );

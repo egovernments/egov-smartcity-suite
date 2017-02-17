@@ -61,9 +61,16 @@ public class HoardingAgencyWiseSearch {
     private Long subCategory;
     private Long adminBoundaryParent;
     private Long adminBoundary;
+    private String ownerDetail;
 
     
     
+    public String getOwnerDetail() {
+        return ownerDetail;
+    }
+    public void setOwnerDetail(String ownerDetail) {
+        this.ownerDetail = ownerDetail;
+    }
     public String getAgencyName() {
         return agencyName;
     }

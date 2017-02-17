@@ -313,6 +313,7 @@ public class AgencyWiseCollectionService {
                     demandWiseFeeDetail.get(AdvertisementTaxConstants.PENDINGDEMANDAMOUNT).compareTo(BigDecimal.ZERO) > 0) {
                 agencyWiseCollectionSearchResult.setAdvertisementNumber(advertisementPermitDetail.getAdvertisement()
                         .getAdvertisementNumber());
+                agencyWiseCollectionSearchResult.setOwnerDetail(advertisementPermitDetail.getOwnerDetail());
                 agencyWiseCollectionSearchResult.setAdvertisementPermitId(advertisementPermitDetail.getId());
                 agencyWiseCollectionSearchResult
                         .setAgencyName(advertisementPermitDetail.getAgency() != null ? advertisementPermitDetail

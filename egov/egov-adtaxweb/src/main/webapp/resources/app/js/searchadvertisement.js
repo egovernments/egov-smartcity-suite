@@ -169,7 +169,7 @@ $(document).ready(function(){
 			"ajax": "/adtax/hoarding/getsearch-adtax-result?"+$("#adtaxsearchform").serialize(),
 			"columns" : [
 			              { "data" : "agencyName", "title": "Agency"},
-			              { "data" : "ownerDetail", "title": "Owner Name"},
+			              { "data" : "ownerDetail", "title": "Owner Detail"},
 						  { "data" : "advertisementNumber", "title":"Advertisement No."},
 						  { "data" : "applicationNumber", "title": "Application No."},
 						  { "data" : "applicationFromDate", "title": "Application Date"},

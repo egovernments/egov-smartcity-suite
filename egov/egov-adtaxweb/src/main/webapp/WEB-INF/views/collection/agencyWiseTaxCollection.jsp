@@ -157,6 +157,7 @@
 						<thead>
 							<tr>
 								<th><spring:message code="lbl.hoarding.no" /></th>
+								<th>Owner Detail</th>
 								<th><spring:message code="lbl.advertisement.application.no" /></th>
 								<th><spring:message code="lbl.hoardingReport.taxReason" /></th>
 								<th><spring:message code="lbl.penalty" /></th>
@@ -182,7 +183,12 @@
 										value="${contact.advertisementNumber}" maxlength="20"
 										name="agencyWiseCollectionList[${status.index}].advertisementNumber"
 										autocomplete="off" readonly="readonly"></td>
-
+										<td><input type="text"
+										class="form-control patternvalidation "
+										id="agencyWiseCollectionListAppNumber[${status.index}]"
+										value="${contact.ownerDetail}" maxlength="19"
+										name="agencyWiseCollectionList[${status.index}].applicationNumber"
+										autocomplete="off" readonly="readonly"></td>
 
 									<td><input type="text"
 										class="form-control patternvalidation "
