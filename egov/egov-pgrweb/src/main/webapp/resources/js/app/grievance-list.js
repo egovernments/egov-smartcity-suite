@@ -82,7 +82,7 @@ $(document).ready(function() {
 				"mData" : "dueDate",
 				"sTitle" : "Due Date"
 			}],
-			  "aaSorting": [[2, 'desc']] 
+			  "aaSorting": [[1, 'asc']]
 		});
 });
 
