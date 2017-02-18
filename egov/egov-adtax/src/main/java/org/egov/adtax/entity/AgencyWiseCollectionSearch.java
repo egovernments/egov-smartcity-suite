@@ -49,7 +49,7 @@ public class AgencyWiseCollectionSearch {
     private BigDecimal pendingDemandAmount;
     private BigDecimal penaltyAmount;
     private BigDecimal additionalTaxAmount;
-
+    private BigDecimal totalAmount;
     private String ownerDetail;
     private String advertisementNumber;
     private String applicationNumber;
@@ -75,6 +75,7 @@ public class AgencyWiseCollectionSearch {
     }
 
     public void setTotalAmount(final BigDecimal totalAmount) {
+        this.totalAmount = totalAmount;
     }
 
     public boolean isSelectedForCollection() {

@@ -838,7 +838,8 @@ public class AdvertisementDemandService {
         BigDecimal totalDemand = BigDecimal.ZERO;
         BigDecimal totalCollection = BigDecimal.ZERO;
         BigDecimal totalPending = BigDecimal.ZERO;
-        BigDecimal penaltyAmount = BigDecimal.ZERO, additionalTaxAmount = BigDecimal.ZERO;
+        BigDecimal penaltyAmount = BigDecimal.ZERO;
+        BigDecimal additionalTaxAmount = BigDecimal.ZERO;
         if (advPermitDetail != null && advPermitDetail.getAdvertisement() != null
                 && advPermitDetail.getAdvertisement().getDemandId() != null) {
             for (final EgDemandDetails demandDtl : advPermitDetail.getAdvertisement().getDemandId().getEgDemandDetails()) {

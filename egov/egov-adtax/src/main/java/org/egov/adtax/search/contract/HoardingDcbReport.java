@@ -61,6 +61,7 @@ public class HoardingDcbReport {
     private String locality;
     private String ward;
     private String agencyName;
+    private String ownerDetail;
     private BigDecimal totalDemandAmount;
     private BigDecimal arrearAmount = BigDecimal.ZERO.setScale(2, BigDecimal.ROUND_HALF_EVEN);
     private BigDecimal collectedArrearAmount = BigDecimal.ZERO.setScale(2, BigDecimal.ROUND_HALF_EVEN);
@@ -70,15 +71,21 @@ public class HoardingDcbReport {
     private BigDecimal additionalTaxAmount = BigDecimal.ZERO.setScale(2, BigDecimal.ROUND_HALF_EVEN);
     private BigDecimal collectedAdditionalTaxAmount = BigDecimal.ZERO.setScale(2, BigDecimal.ROUND_HALF_EVEN);
 
+    
+    public String getOwnerDetail() {
+        return ownerDetail;
+    }
+
+    public void setOwnerDetail(String ownerDetail) {
+        this.ownerDetail = ownerDetail;
+    }
+
     public BigDecimal getCollectedAdditionalTaxAmount() {
         return collectedAdditionalTaxAmount;
     }
 
     public void setCollectedAdditionalTaxAmount(final BigDecimal collectedAdditionalTaxAmount) {
         this.collectedAdditionalTaxAmount = collectedAdditionalTaxAmount;
-    }
-
-    public void setOwnerDetail(final String ownerDetail) {
     }
 
     public BigDecimal getAdditionalTaxAmount() {
