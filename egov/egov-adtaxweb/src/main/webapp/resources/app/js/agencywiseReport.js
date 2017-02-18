@@ -174,6 +174,7 @@ $('#searchagencywise').click(function(e){
 							  { "data" : "ownerDetail", "title": "Owner Details","visible":false},
 							  { "data" : "totalHoardingInAgency", "title": "No.of hoarding"},
 							  { "data" : "penaltyAmount", "title": "Penalty Amount"},
+							  { "data" : "additionalTaxAmount", "title": "Additional Tax"},							  
 							  { "data" : "totalDemand", "title": "TotalDemand"},
 							  { "data" : "collectedAmount", "title": "Collected Amount"},
 							  { "data" : "pendingAmount", "title": "Pending Amount"},

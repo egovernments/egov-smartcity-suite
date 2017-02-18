@@ -72,6 +72,7 @@
 											<th><spring:message code="lbl.hoardingReport.collectedAmt"/></th>
 											<th><spring:message code="lbl.agencywise.pendingAmount"/></th>
 											<th><spring:message code="lbl.agencywise.penaltyAmount"/></th>
+											<th><spring:message code="lbl.additionalTax"/></th>
 										</tr>
 									</thead>
 									<tbody>
@@ -79,6 +80,7 @@
 										<c:set var="totalCollectionAmount" value="${0}"/>
 										<c:set var="totalPendingAmount" value="${0}"/>
 										<c:set var="totalPenaltyAmount" value="${0}"/>
+										<c:set var="totalAdditionalTaxAmount" value="${0}"/>
 										<c:forEach var="dcb" items="${dcbResult}" varStatus="status" >	
 											<tr class="odd" role="row">
 												<td align="right" >${status.index+1}</td>
@@ -91,10 +93,13 @@
 												<td align="right">${dcb.collectedAmount}</td>
 												<td align="right">${dcb.pendingAmount}</td>
 												<td align="right">${dcb.penaltyAmount}</td>
+												<td align="right">${dcb.additionalTaxAmount}</td>
 												<c:set var="totalDemandAmount" value="${totalDemandAmount + dcb.demandAmount}" />
 												<c:set var="totalCollectionAmount" value="${totalCollectionAmount+dcb.collectedAmount}" />
 												<c:set var="totalPendingAmount" value="${totalPendingAmount+dcb.pendingAmount}" />
 												<c:set var="totalPenaltyAmount" value="${totalPenaltyAmount+dcb.penaltyAmount}" />
+												<c:set var="totalAdditionalTaxAmount" value="${totalAdditionalTaxAmount+dcb.additionalTaxAmount}" />
+												
 											</tr>
 										</c:forEach> 
 										<tfoot>
@@ -107,6 +112,7 @@
 											<td align="right"><span style="font-weight: bolder;">${totalCollectionAmount}</span></td>
 											<td align="right"><span style="font-weight: bolder;">${totalPendingAmount}</span></td>
 											<td align="right"><span style="font-weight: bolder;">${totalPenaltyAmount}</span></td>
+											<td align="right"><span style="font-weight: bolder;">${totalAdditionalTaxAmount}</span></td>
 										</tfoot>
 									</tbody>
 								</table>

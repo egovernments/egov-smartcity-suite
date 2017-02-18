@@ -46,12 +46,14 @@ import java.util.Map;
 
 import org.egov.adtax.entity.AdvertisementAdditionalTaxRate;
 import org.egov.adtax.entity.AdvertisementPermitDetail;
+import org.egov.commons.Installment;
 import org.egov.demand.model.EgDemandDetails;
 
 public interface AdvertisementAdditionalTaxCalculator {
 
     Map<String, BigDecimal> getAdditionalTaxes(AdvertisementPermitDetail advPermitDetail);
-
-    BigDecimal getAdditionalTaxAmountByPassingDemandDetailAndAdditionalTaxes(AdvertisementPermitDetail advPermitDetail, EgDemandDetails demandDtl,
+    BigDecimal getTotalAdditionalTaxesByPassingAdvertisementPermit(AdvertisementPermitDetail advPermitDetail);
+    BigDecimal getAdditionalTaxAmountByPassingDemandDetailAndAdditionalTaxes( EgDemandDetails demandDtl,
             List<AdvertisementAdditionalTaxRate> additionalTaxRates);
+    Map<Installment, BigDecimal> getAdditionalTaxesByInstallment(AdvertisementPermitDetail activeAdvertisementPermit);
 }

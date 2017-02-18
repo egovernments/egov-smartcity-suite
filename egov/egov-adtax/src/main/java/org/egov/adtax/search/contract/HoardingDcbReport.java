@@ -51,8 +51,8 @@ public class HoardingDcbReport {
     private BigDecimal demandAmount = BigDecimal.ZERO;
     private BigDecimal penaltyAmount = BigDecimal.ZERO.setScale(2, BigDecimal.ROUND_HALF_EVEN);
     private BigDecimal collectedAmount = BigDecimal.ZERO.setScale(2, BigDecimal.ROUND_HALF_EVEN);
-    private String  payeeName;
-    private String  receiptNumber;
+    private String payeeName;
+    private String receiptNumber;
     private BigDecimal pendingAmount;
     private String applicationNumber;
     private String permissionNumber;
@@ -60,7 +60,6 @@ public class HoardingDcbReport {
     private String subcategory;
     private String locality;
     private String ward;
-    private String ownerDetail;
     private String agencyName;
     private BigDecimal totalDemandAmount;
     private BigDecimal arrearAmount = BigDecimal.ZERO.setScale(2, BigDecimal.ROUND_HALF_EVEN);
@@ -68,140 +67,193 @@ public class HoardingDcbReport {
     private BigDecimal collectedDemandAmount = BigDecimal.ZERO.setScale(2, BigDecimal.ROUND_HALF_EVEN);
     private BigDecimal collectedPenaltyAmount = BigDecimal.ZERO.setScale(2, BigDecimal.ROUND_HALF_EVEN);
     private Map<Date, String> collectReceiptMap = new HashMap<Date, String>();
-    
-    
-    
-    
-    public String getOwnerDetail() {
-        return ownerDetail;
+    private BigDecimal additionalTaxAmount = BigDecimal.ZERO.setScale(2, BigDecimal.ROUND_HALF_EVEN);
+    private BigDecimal collectedAdditionalTaxAmount = BigDecimal.ZERO.setScale(2, BigDecimal.ROUND_HALF_EVEN);
+
+    public BigDecimal getCollectedAdditionalTaxAmount() {
+        return collectedAdditionalTaxAmount;
     }
-    public void setOwnerDetail(String ownerDetail) {
-        this.ownerDetail = ownerDetail;
+
+    public void setCollectedAdditionalTaxAmount(final BigDecimal collectedAdditionalTaxAmount) {
+        this.collectedAdditionalTaxAmount = collectedAdditionalTaxAmount;
     }
+
+    public void setOwnerDetail(final String ownerDetail) {
+    }
+
+    public BigDecimal getAdditionalTaxAmount() {
+        return additionalTaxAmount;
+    }
+
+    public void setAdditionalTaxAmount(final BigDecimal additionalTaxAmount) {
+        this.additionalTaxAmount = additionalTaxAmount;
+    }
+
     public String getDemandReason() {
         return demandReason;
     }
-    public void setDemandReason(String demandReason) {
+
+    public void setDemandReason(final String demandReason) {
         this.demandReason = demandReason;
     }
+
     public String getInstallmentYearDescription() {
         return installmentYearDescription;
     }
-    public void setInstallmentYearDescription(String installmentYearDescription) {
+
+    public void setInstallmentYearDescription(final String installmentYearDescription) {
         this.installmentYearDescription = installmentYearDescription;
     }
+
     public BigDecimal getDemandAmount() {
         return demandAmount;
     }
-    public void setDemandAmount(BigDecimal demandAmount) {
+
+    public void setDemandAmount(final BigDecimal demandAmount) {
         this.demandAmount = demandAmount;
     }
+
     public BigDecimal getPenaltyAmount() {
         return penaltyAmount;
     }
-    public void setPenaltyAmount(BigDecimal penaltyAmount) {
+
+    public void setPenaltyAmount(final BigDecimal penaltyAmount) {
         this.penaltyAmount = penaltyAmount;
     }
+
     public BigDecimal getCollectedAmount() {
         return collectedAmount;
     }
-    public void setCollectedAmount(BigDecimal collectedAmount) {
+
+    public void setCollectedAmount(final BigDecimal collectedAmount) {
         this.collectedAmount = collectedAmount;
     }
+
     public String getPayeeName() {
         return payeeName;
     }
-    public void setPayeeName(String payeeName) {
+
+    public void setPayeeName(final String payeeName) {
         this.payeeName = payeeName;
     }
+
     public String getReceiptNumber() {
         return receiptNumber;
     }
-    public void setReceiptNumber(String receiptNumber) {
+
+    public void setReceiptNumber(final String receiptNumber) {
         this.receiptNumber = receiptNumber;
     }
+
     public BigDecimal getPendingAmount() {
         return pendingAmount;
     }
-    public void setPendingAmount(BigDecimal pendingAmount) {
+
+    public void setPendingAmount(final BigDecimal pendingAmount) {
         this.pendingAmount = pendingAmount;
     }
+
     public String getApplicationNumber() {
         return applicationNumber;
     }
-    public void setApplicationNumber(String applicationNumber) {
+
+    public void setApplicationNumber(final String applicationNumber) {
         this.applicationNumber = applicationNumber;
     }
+
     public String getAgencyName() {
         return agencyName;
     }
-    public void setAgencyName(String agencyName) {
+
+    public void setAgencyName(final String agencyName) {
         this.agencyName = agencyName;
     }
+
     public String getCategory() {
         return category;
     }
-    public void setCategory(String category) {
+
+    public void setCategory(final String category) {
         this.category = category;
     }
+
     public String getSubcategory() {
         return subcategory;
     }
-    public void setSubcategory(String subcategory) {
+
+    public void setSubcategory(final String subcategory) {
         this.subcategory = subcategory;
     }
+
     public String getLocality() {
         return locality;
     }
-    public void setLocality(String locality) {
+
+    public void setLocality(final String locality) {
         this.locality = locality;
     }
+
     public String getWard() {
         return ward;
     }
-    public void setWard(String ward) {
+
+    public void setWard(final String ward) {
         this.ward = ward;
     }
+
     public String getPermissionNumber() {
         return permissionNumber;
     }
-    public void setPermissionNumber(String permissionNumber) {
+
+    public void setPermissionNumber(final String permissionNumber) {
         this.permissionNumber = permissionNumber;
     }
+
     public BigDecimal getTotalDemandAmount() {
         return totalDemandAmount;
     }
-    public void setTotalDemandAmount(BigDecimal totalDemandAmount) {
+
+    public void setTotalDemandAmount(final BigDecimal totalDemandAmount) {
         this.totalDemandAmount = totalDemandAmount;
     }
+
     public BigDecimal getArrearAmount() {
         return arrearAmount;
     }
-    public void setArrearAmount(BigDecimal arrearAmount) {
+
+    public void setArrearAmount(final BigDecimal arrearAmount) {
         this.arrearAmount = arrearAmount;
     }
+
     public BigDecimal getCollectedArrearAmount() {
         return collectedArrearAmount;
     }
-    public void setCollectedArrearAmount(BigDecimal collectedArrearAmount) {
+
+    public void setCollectedArrearAmount(final BigDecimal collectedArrearAmount) {
         this.collectedArrearAmount = collectedArrearAmount;
     }
+
     public BigDecimal getCollectedDemandAmount() {
         return collectedDemandAmount;
     }
-    public void setCollectedDemandAmount(BigDecimal collectedDemandAmount) {
+
+    public void setCollectedDemandAmount(final BigDecimal collectedDemandAmount) {
         this.collectedDemandAmount = collectedDemandAmount;
     }
+
     public BigDecimal getCollectedPenaltyAmount() {
         return collectedPenaltyAmount;
     }
-    public void setCollectedPenaltyAmount(BigDecimal collectedPenaltyAmount) {
+
+    public void setCollectedPenaltyAmount(final BigDecimal collectedPenaltyAmount) {
         this.collectedPenaltyAmount = collectedPenaltyAmount;
     }
+
     public Map<Date, String> getCollectReceiptMap() {
         return collectReceiptMap;
     }
-    public void setCollectReceiptMap(Map<Date, String> collectReceiptMap) {
+
+    public void setCollectReceiptMap(final Map<Date, String> collectReceiptMap) {
         this.collectReceiptMap = collectReceiptMap;
     }
 }

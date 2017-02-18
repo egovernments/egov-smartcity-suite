@@ -60,6 +60,7 @@ import org.egov.adtax.entity.AdvertisementDemandGenerationLog;
 import org.egov.adtax.entity.AdvertisementPermitDetail;
 import org.egov.adtax.entity.enums.ProcessStatus;
 import org.egov.adtax.repository.AdTaxDemandGenerationLogRepository;
+import org.egov.adtax.service.penalty.AdvertisementAdditionalTaxCalculator;
 import org.egov.adtax.service.penalty.AdvertisementPenaltyCalculator;
 import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
 import org.egov.commons.Installment;
@@ -105,7 +106,8 @@ public class AdvertisementDemandService {
 
     @Autowired
     private AdTaxDemandGenerationLogService adTaxDemandGenerationLogService;
-
+    @Autowired
+    private AdvertisementAdditionalTaxCalculator advertisementAdditionalTaxCalculator;
     @Autowired
     private AdvertisementService advertisementService;
 
@@ -277,6 +279,7 @@ public class AdvertisementDemandService {
 
         BigDecimal penaltyAmt = BigDecimal.ZERO;
         BigDecimal pendingAmount = BigDecimal.ZERO;
+        BigDecimal additionalTaxAmount = BigDecimal.ZERO;
         /**
          * Assumption: We are calculating penalty for total pending amount. If penalty is part of demand, then also we are
          * considering that amount for penalty calculation.
@@ -287,9 +290,13 @@ public class AdvertisementDemandService {
                 if (demandDtl.getAmount().subtract(demandDtl.getAmtCollected()).compareTo(BigDecimal.ZERO) > 0)
                     pendingAmount = pendingAmount.add(demandDtl.getAmount().subtract(demandDtl.getAmtCollected()));
             penaltyAmt = advertisementPenaltyCalculator.calculatePenalty(advPermitDetail);
+            additionalTaxAmount = advertisementAdditionalTaxCalculator
+                    .getTotalAdditionalTaxesByPassingAdvertisementPermit(advPermitDetail);
         }
-        demandFeeType.put(AdvertisementTaxConstants.PENALTYAMOUNT, penaltyAmt);
-        demandFeeType.put(AdvertisementTaxConstants.PENDINGDEMANDAMOUNT, pendingAmount);
+        demandFeeType.put(AdvertisementTaxConstants.PENALTYAMOUNT, penaltyAmt.setScale(0, BigDecimal.ROUND_HALF_UP));
+        demandFeeType.put(AdvertisementTaxConstants.ADDITIONALTAXAMOUNT,
+                additionalTaxAmount.setScale(0, BigDecimal.ROUND_HALF_UP));
+        demandFeeType.put(AdvertisementTaxConstants.PENDINGDEMANDAMOUNT, pendingAmount.setScale(0, BigDecimal.ROUND_HALF_UP));
 
         return demandFeeType;
 
@@ -831,7 +838,7 @@ public class AdvertisementDemandService {
         BigDecimal totalDemand = BigDecimal.ZERO;
         BigDecimal totalCollection = BigDecimal.ZERO;
         BigDecimal totalPending = BigDecimal.ZERO;
-        BigDecimal penaltyAmount = BigDecimal.ZERO;
+        BigDecimal penaltyAmount = BigDecimal.ZERO, additionalTaxAmount = BigDecimal.ZERO;
         if (advPermitDetail != null && advPermitDetail.getAdvertisement() != null
                 && advPermitDetail.getAdvertisement().getDemandId() != null) {
             for (final EgDemandDetails demandDtl : advPermitDetail.getAdvertisement().getDemandId().getEgDemandDetails()) {
@@ -840,6 +847,9 @@ public class AdvertisementDemandService {
                 totalPending = totalPending.add(demandDtl.getAmount().subtract(demandDtl.getAmtCollected()));
             }
             penaltyAmount = advertisementPenaltyCalculator.calculatePenalty(advPermitDetail);
+            additionalTaxAmount = advertisementAdditionalTaxCalculator
+                    .getTotalAdditionalTaxesByPassingAdvertisementPermit(advPermitDetail);
+
         }
         totalDemand = totalDemand.setScale(2, BigDecimal.ROUND_HALF_EVEN);
         totalCollection = totalCollection.setScale(2, BigDecimal.ROUND_HALF_EVEN);
@@ -849,6 +859,7 @@ public class AdvertisementDemandService {
         demandFeeType.put(AdvertisementTaxConstants.TOTAL_DEMAND, totalDemand);
         demandFeeType.put(AdvertisementTaxConstants.TOTALCOLLECTION, totalCollection);
         demandFeeType.put(AdvertisementTaxConstants.PENALTYAMOUNT, penaltyAmount);
+        demandFeeType.put(AdvertisementTaxConstants.ADDITIONALTAXAMOUNT, additionalTaxAmount.setScale(0, BigDecimal.ROUND_HALF_UP)); 
         return demandFeeType;
     }
 

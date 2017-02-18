@@ -275,8 +275,14 @@ public class AdvertisementPermitDetailService {
                                     .get(AdvertisementTaxConstants.PENALTYAMOUNT));
                             hoardingSearchResult.setPendingDemandAmount(demandWiseFeeDetail
                                     .get(AdvertisementTaxConstants.PENDINGDEMANDAMOUNT));
+                            hoardingSearchResult
+                                    .setAdditionalTaxAmount(
+                                            demandWiseFeeDetail.get(AdvertisementTaxConstants.ADDITIONALTAXAMOUNT));
+
                             hoardingSearchResult.setTotalAmount(
-                                    hoardingSearchResult.getPendingDemandAmount().add(hoardingSearchResult.getPenaltyAmount()));
+                                    hoardingSearchResult.getPendingDemandAmount().add(hoardingSearchResult.getPenaltyAmount())
+                                            .add(hoardingSearchResult.getAdditionalTaxAmount() != null
+                                                    ? hoardingSearchResult.getAdditionalTaxAmount() : BigDecimal.ZERO));
                             hoardingSearchResult.setTotalHoardingInAgency(1);
                             hoardingSearchResult.setHordingIdsSearchedByAgency(result.getId().toString());
                             agencyWiseHoardingList.put(result.getAgency().getName(), hoardingSearchResult);
@@ -284,10 +290,14 @@ public class AdvertisementPermitDetailService {
                             final StringBuffer hoardingIds = new StringBuffer();
                             hoardingSearchObj.setPenaltyAmount(hoardingSearchObj.getPenaltyAmount().add(
                                     demandWiseFeeDetail.get(AdvertisementTaxConstants.PENALTYAMOUNT)));
+                            hoardingSearchObj.setAdditionalTaxAmount(hoardingSearchObj.getAdditionalTaxAmount().add(
+                                    demandWiseFeeDetail.get(AdvertisementTaxConstants.ADDITIONALTAXAMOUNT)));
                             hoardingSearchObj.setPendingDemandAmount(hoardingSearchObj.getPendingDemandAmount().add(
                                     demandWiseFeeDetail.get(AdvertisementTaxConstants.PENDINGDEMANDAMOUNT)));
                             hoardingSearchObj.setTotalAmount(
-                                    hoardingSearchObj.getPendingDemandAmount().add(hoardingSearchObj.getPenaltyAmount()));
+                                    hoardingSearchObj.getPendingDemandAmount().add(hoardingSearchObj.getPenaltyAmount())
+                                            .add(hoardingSearchResult.getAdditionalTaxAmount() != null
+                                                    ? hoardingSearchResult.getAdditionalTaxAmount() : BigDecimal.ZERO));
                             hoardingSearchObj.setTotalHoardingInAgency(hoardingSearchObj.getTotalHoardingInAgency() + 1);
 
                             hoardingIds.append(hoardingSearchObj.getHordingIdsSearchedByAgency()).append("~")
@@ -303,8 +313,13 @@ public class AdvertisementPermitDetailService {
                     hoardingSearchResult.setPenaltyAmount(demandWiseFeeDetail.get(AdvertisementTaxConstants.PENALTYAMOUNT));
                     hoardingSearchResult.setPendingDemandAmount(demandWiseFeeDetail
                             .get(AdvertisementTaxConstants.PENDINGDEMANDAMOUNT));
+                    hoardingSearchResult
+                            .setAdditionalTaxAmount(demandWiseFeeDetail.get(AdvertisementTaxConstants.ADDITIONALTAXAMOUNT));
+
                     hoardingSearchResult.setTotalAmount(
-                            hoardingSearchResult.getPendingDemandAmount().add(hoardingSearchResult.getPenaltyAmount()));
+                            hoardingSearchResult.getPendingDemandAmount().add(hoardingSearchResult.getPenaltyAmount())
+                                    .add(hoardingSearchResult.getAdditionalTaxAmount() != null
+                                            ? hoardingSearchResult.getAdditionalTaxAmount() : BigDecimal.ZERO));
                     hoardingSearchResults.add(hoardingSearchResult);
                 }
             }
@@ -442,7 +457,7 @@ public class AdvertisementPermitDetailService {
             hoardingSearchResult.setId(result.getId());
             hoardingSearchResult.setCategoryName(result.getAdvertisement().getCategory().getName());
             hoardingSearchResult.setSubCategoryName(result.getAdvertisement().getSubCategory().getDescription());
-            hoardingSearchResult.setOwnerDetail(result.getOwnerDetail() != null ? result.getOwnerDetail() : ""); 
+            hoardingSearchResult.setOwnerDetail(result.getOwnerDetail() != null ? result.getOwnerDetail() : "");
             if (result.getAdvertisement().getDemandId() != null) {
                 hoardingSearchResult
                         .setFinancialYear(result.getAdvertisement().getDemandId().getEgInstallmentMaster().getDescription());
@@ -457,6 +472,9 @@ public class AdvertisementPermitDetailService {
                                 .get(AdvertisementTaxConstants.PENALTYAMOUNT));
                         hoardingSearchResult.setPendingDemandAmount(demandWiseFeeDetail
                                 .get(AdvertisementTaxConstants.PENDINGDEMANDAMOUNT));
+                        hoardingSearchResult
+                                .setAdditionalTaxAmount(demandWiseFeeDetail.get(AdvertisementTaxConstants.ADDITIONALTAXAMOUNT));
+
                         hoardingSearchResult.setTotalHoardingInAgency(1);
                         hoardingSearchResult.setHordingIdsSearchedByAgency(result.getId().toString());
                         agencyWiseHoardingList.put(result.getAgency().getName(), hoardingSearchResult);
@@ -464,6 +482,8 @@ public class AdvertisementPermitDetailService {
                         final StringBuffer hoardingIds = new StringBuffer();
                         hoardingSearchObj.setPenaltyAmount(hoardingSearchObj.getPenaltyAmount().add(
                                 demandWiseFeeDetail.get(AdvertisementTaxConstants.PENALTYAMOUNT)));
+                        hoardingSearchObj.setAdditionalTaxAmount(hoardingSearchObj.getAdditionalTaxAmount().add(
+                                demandWiseFeeDetail.get(AdvertisementTaxConstants.ADDITIONALTAXAMOUNT)));
                         hoardingSearchObj.setPendingDemandAmount(hoardingSearchObj.getPendingDemandAmount().add(
                                 demandWiseFeeDetail.get(AdvertisementTaxConstants.PENDINGDEMANDAMOUNT)));
                         hoardingSearchObj.setTotalHoardingInAgency(hoardingSearchObj.getTotalHoardingInAgency() + 1);
@@ -478,6 +498,8 @@ public class AdvertisementPermitDetailService {
                     final Map<String, BigDecimal> demandWiseFeeDetail = advertisementDemandService
                             .checkPedingAmountByDemand(result);
                     hoardingSearchResult.setPenaltyAmount(demandWiseFeeDetail.get(AdvertisementTaxConstants.PENALTYAMOUNT));
+                    hoardingSearchResult
+                            .setAdditionalTaxAmount(demandWiseFeeDetail.get(AdvertisementTaxConstants.ADDITIONALTAXAMOUNT));
                     hoardingSearchResult.setPendingDemandAmount(demandWiseFeeDetail
                             .get(AdvertisementTaxConstants.PENDINGDEMANDAMOUNT));
                     hoardingSearchResults.add(hoardingSearchResult);
@@ -514,6 +536,7 @@ public class AdvertisementPermitDetailService {
                 BigDecimal totalCollectedAmount = BigDecimal.ZERO;
                 BigDecimal totalPending = BigDecimal.ZERO;
                 BigDecimal totalPenalty = BigDecimal.ZERO;
+                BigDecimal totalAdditionalTax = BigDecimal.ZERO;
                 final Map<String, BigDecimal> demandWiseFeeDetail = advertisementDemandService
                         .checkPendingAmountByDemand(result);
                 totalDemandAmount = totalDemandAmount.add(demandWiseFeeDetail.get(AdvertisementTaxConstants.TOTAL_DEMAND));
@@ -521,6 +544,9 @@ public class AdvertisementPermitDetailService {
                         .add(demandWiseFeeDetail.get(AdvertisementTaxConstants.TOTALCOLLECTION));
                 totalPending = totalPending.add(demandWiseFeeDetail.get(AdvertisementTaxConstants.PENDINGDEMANDAMOUNT));
                 totalPenalty = totalPenalty.add(demandWiseFeeDetail.get(AdvertisementTaxConstants.PENALTYAMOUNT));
+                totalAdditionalTax = totalAdditionalTax
+                        .add(demandWiseFeeDetail.get(AdvertisementTaxConstants.ADDITIONALTAXAMOUNT));
+
                 final HoardingAgencyWiseSearch hoardingSearchObj = agencyWiseHoardingMap.get(result.getAgency().getName());
                 if (hoardingSearchObj == null) {
                     hoardingSearchResult.setAgency(result.getAgency().getId());
@@ -528,6 +554,7 @@ public class AdvertisementPermitDetailService {
                     hoardingSearchResult.setCollectedAmount(totalCollectedAmount);
                     hoardingSearchResult.setPendingAmount(totalDemandAmount.subtract(totalCollectedAmount));
                     hoardingSearchResult.setPenaltyAmount(totalPenalty);
+                    hoardingSearchResult.setAdditionalTaxAmount(totalAdditionalTax);
                     hoardingSearchResult.setTotalHoardingInAgency(1);
                     hoardingSearchResult.setHordingIdsSearchedByAgency(result.getId().toString());
                     hoardingSearchResult.setOwnerDetail(result.getOwnerDetail() != null ? result.getOwnerDetail() : "");
@@ -543,6 +570,9 @@ public class AdvertisementPermitDetailService {
                             agencyWiseHoardingMap.get(result.getAgency().getName()).getPendingAmount().add(totalPending));
                     hoardingSearchResult.setPenaltyAmount(
                             agencyWiseHoardingMap.get(result.getAgency().getName()).getPenaltyAmount().add(totalPenalty));
+                    hoardingSearchResult.setAdditionalTaxAmount(
+                            agencyWiseHoardingMap.get(result.getAgency().getName()).getAdditionalTaxAmount()
+                                    .add(totalAdditionalTax));
                     hoardingSearchResult.setTotalHoardingInAgency(hoardingSearchObj.getTotalHoardingInAgency() + 1);
                     agencyWiseHoardingMap.put(result.getAgency().getName(), hoardingSearchResult);
                 }
@@ -571,7 +601,7 @@ public class AdvertisementPermitDetailService {
         if (zone != null)
             queryString.append("and B.advertisement.locality.id =:zone");
         if (ownerDetail != null && !"".equals(ownerDetail))
-            queryString.append("and lower(B.ownerDetail)  like '%"+ownerDetail.toLowerCase() +"%'");
+            queryString.append("and lower(B.ownerDetail)  like '%" + ownerDetail.toLowerCase() + "%'");
         if (ward != null)
             queryString.append("and B.advertisement.ward.id =:ward");
         final Query query = entityManager.unwrap(Session.class).createQuery(queryString.toString());
@@ -584,8 +614,9 @@ public class AdvertisementPermitDetailService {
             query.setParameter("subCategory", subcategory);
         if (zone != null)
             query.setParameter("zone", zone);
-       /* if (ownerDetail != null && !"".equals(ownerDetail))
-            query.setParameter("ownerDetail", ownerDetail.toLowerCase());*/
+        /*
+         * if (ownerDetail != null && !"".equals(ownerDetail)) query.setParameter("ownerDetail", ownerDetail.toLowerCase());
+         */
         if (ward != null)
             query.setParameter("ward", ward);
         return query.list();

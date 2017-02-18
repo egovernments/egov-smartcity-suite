@@ -40,9 +40,18 @@
 
 package org.egov.adtax.service;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.egov.adtax.entity.Advertisement;
+import org.egov.adtax.entity.AdvertisementAdditionalTaxRate;
 import org.egov.adtax.repository.AdvertisementRepository;
 import org.egov.adtax.search.contract.HoardingDcbReport;
+import org.egov.adtax.service.penalty.AdvertisementAdditionalTaxCalculator;
 import org.egov.adtax.service.penalty.AdvertisementPenaltyCalculator;
 import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
 import org.egov.collection.integration.services.CollectionIntegrationService;
@@ -53,13 +62,6 @@ import org.egov.demand.model.EgdmCollectedReceipt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @Service
 @Transactional(readOnly = true)
@@ -73,13 +75,26 @@ public class AdvertisementReportService {
 
     @Autowired
     protected CollectionIntegrationService collectionIntegrationService;
-
+    @Autowired
+    private AdvertisementAdditionalTaxCalculator advertisementAdditionalTaxCalculator;
+    @Autowired
+    private AdvertisementAdditinalTaxRateService advertisementAdditinalTaxRateService;
+    
     public List<HoardingDcbReport> getHoardingWiseDCBResult(final Advertisement hoarding) {
         List<HoardingDcbReport> HoardingDcbReportResults = new ArrayList<>();
         Map<Installment, BigDecimal> penaltyAmountMap = new HashMap<Installment, BigDecimal>();
+        Map<Installment, BigDecimal> additionalTaxAmountMap=new HashMap<Installment, BigDecimal>();
+         Map<String, String> additionalTaxes = new HashMap<String, String>();
+         
+         final List<AdvertisementAdditionalTaxRate> additionalTaxRates = advertisementAdditinalTaxRateService
+                 .getAllActiveAdditinalTaxRates();
 
+         for (final AdvertisementAdditionalTaxRate taxRates : additionalTaxRates)
+             additionalTaxes.put(taxRates.getTaxType(), taxRates.getReasonCode());
+         
         if (hoarding != null && hoarding.getDemandId() != null) {
             penaltyAmountMap = advtPenaltyCalculator.getPenaltyByInstallment(hoarding.getActiveAdvertisementPermit());
+            additionalTaxAmountMap=  advertisementAdditionalTaxCalculator.getAdditionalTaxesByInstallment(hoarding.getActiveAdvertisementPermit());
             final HashMap<String, HoardingDcbReport> hoardingwiseMap = new HashMap<String, HoardingDcbReport>();
             HoardingDcbReport hoardingReport = new HoardingDcbReport();
 
@@ -111,6 +126,12 @@ public class AdvertisementReportService {
                         hoardingReport.setPenaltyAmount(demandDtl.getAmount().setScale(2, BigDecimal.ROUND_HALF_EVEN));
                         hoardingReport.setCollectedPenaltyAmount(demandDtl.getAmtCollected().setScale(2, BigDecimal.ROUND_HALF_EVEN));
                     }
+            
+                    if (!additionalTaxes.isEmpty() &&
+                           additionalTaxes.containsValue(demandDtl.getEgDemandReason().getEgDemandReasonMaster().getCode())) {
+                        hoardingReport.setAdditionalTaxAmount(demandDtl.getAmount().setScale(2, BigDecimal.ROUND_HALF_EVEN));
+                        hoardingReport.setCollectedAdditionalTaxAmount(demandDtl.getAmtCollected().setScale(2, BigDecimal.ROUND_HALF_EVEN));
+                    }
 
                     hoardingwiseMap.put(demandDtl.getEgDemandReason().getEgInstallmentMaster().getDescription(), hoardingReport);
                 } else {
@@ -140,6 +161,17 @@ public class AdvertisementReportService {
                                 : demandDtl.getAmtCollected().setScale(2, BigDecimal.ROUND_HALF_EVEN));
 
                     }
+                    
+                    if (!additionalTaxes.isEmpty() &&
+                            additionalTaxes.containsValue(demandDtl.getEgDemandReason().getEgDemandReasonMaster().getCode())) {
+                         hoardingReport.setAdditionalTaxAmount(hoardingReport.getAdditionalTaxAmount() != null
+                                 ? hoardingReport.getAdditionalTaxAmount().add(demandDtl.getAmount().setScale(2, BigDecimal.ROUND_HALF_EVEN))
+                                         :demandDtl.getAmount().setScale(2, BigDecimal.ROUND_HALF_EVEN));
+                         hoardingReport.setCollectedAdditionalTaxAmount(hoardingReport.getCollectedAdditionalTaxAmount() != null
+                                 ? hoardingReport.getCollectedAdditionalTaxAmount().add(demandDtl.getAmtCollected().setScale(2, BigDecimal.ROUND_HALF_EVEN))
+                                         : demandDtl.getAmtCollected().setScale(2, BigDecimal.ROUND_HALF_EVEN));
+                     }
+                    
                     hoardingwiseMap.put(demandDtl.getEgDemandReason().getEgInstallmentMaster().getDescription(), hoardingReport);
                 }
             }
@@ -164,7 +196,15 @@ public class AdvertisementReportService {
                             .get(penaltyMap.getKey().getDescription()).getPenaltyAmount().add(penaltyMap.getValue()));
                 }
             }
+        
+            for (Map.Entry<Installment, BigDecimal> additionataxmap : additionalTaxAmountMap.entrySet()) {
 
+                if (hoardingwiseMap.containsKey(additionataxmap.getKey().getDescription())) {
+                    hoardingwiseMap.get(additionataxmap.getKey().getDescription()).setAdditionalTaxAmount(hoardingwiseMap
+                            .get(additionataxmap.getKey().getDescription()).getAdditionalTaxAmount().add(additionataxmap.getValue()));
+                }
+            }
+            
             if (hoardingwiseMap.size() > 0) {
                 hoardingwiseMap.forEach((key, value) -> {
                     HoardingDcbReportResults.add(value);

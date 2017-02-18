@@ -43,11 +43,12 @@ package org.egov.adtax.entity;
 import java.math.BigDecimal;
 
 public class HoardingAgencyWiseSearch {
-    
+
     private Long agency;
     private String agencyName;
     private BigDecimal pendingDemandAmount;
     private BigDecimal penaltyAmount;
+    private BigDecimal additionalTaxAmount;
     private int totalHoardingInAgency;
     private BigDecimal collectedAmount;
     private String categoryName;
@@ -63,117 +64,156 @@ public class HoardingAgencyWiseSearch {
     private Long adminBoundary;
     private String ownerDetail;
 
-    
-    
+    public BigDecimal getAdditionalTaxAmount() {
+        return additionalTaxAmount;
+    }
+
     public String getOwnerDetail() {
         return ownerDetail;
     }
-    public void setOwnerDetail(String ownerDetail) {
+
+    public void setAdditionalTaxAmount(final BigDecimal additionalTaxAmount) {
+        this.additionalTaxAmount = additionalTaxAmount;
+    }
+
+    public void setOwnerDetail(final String ownerDetail) {
         this.ownerDetail = ownerDetail;
     }
+
     public String getAgencyName() {
         return agencyName;
     }
-    public void setAgencyName(String agencyName) {
+
+    public void setAgencyName(final String agencyName) {
         this.agencyName = agencyName;
     }
+
     public BigDecimal getPendingDemandAmount() {
         return pendingDemandAmount;
     }
-    public void setPendingDemandAmount(BigDecimal pendingDemandAmount) {
+
+    public void setPendingDemandAmount(final BigDecimal pendingDemandAmount) {
         this.pendingDemandAmount = pendingDemandAmount;
     }
+
     public BigDecimal getPenaltyAmount() {
         return penaltyAmount;
     }
-    public void setPenaltyAmount(BigDecimal penaltyAmount) {
+
+    public void setPenaltyAmount(final BigDecimal penaltyAmount) {
         this.penaltyAmount = penaltyAmount;
     }
+
     public int getTotalHoardingInAgency() {
         return totalHoardingInAgency;
     }
-    public void setTotalHoardingInAgency(int totalHoardingInAgency) {
+
+    public void setTotalHoardingInAgency(final int totalHoardingInAgency) {
         this.totalHoardingInAgency = totalHoardingInAgency;
     }
+
     public BigDecimal getCollectedAmount() {
         return collectedAmount;
     }
-    public void setCollectedAmount(BigDecimal collectedAmount) {
+
+    public void setCollectedAmount(final BigDecimal collectedAmount) {
         this.collectedAmount = collectedAmount;
     }
+
     public String getCategoryName() {
         return categoryName;
     }
-    public void setCategoryName(String categoryName) {
+
+    public void setCategoryName(final String categoryName) {
         this.categoryName = categoryName;
     }
+
     public String getSubCategoryName() {
         return subCategoryName;
     }
-    public void setSubCategoryName(String subCategoryName) {
+
+    public void setSubCategoryName(final String subCategoryName) {
         this.subCategoryName = subCategoryName;
     }
+
     public String getFinancialYear() {
         return financialYear;
     }
-    public void setFinancialYear(String financialYear) {
+
+    public void setFinancialYear(final String financialYear) {
         this.financialYear = financialYear;
     }
+
     public String getAdvertisementNumber() {
         return advertisementNumber;
     }
-    public void setAdvertisementNumber(String advertisementNumber) {
+
+    public void setAdvertisementNumber(final String advertisementNumber) {
         this.advertisementNumber = advertisementNumber;
     }
+
     public String getHordingIdsSearchedByAgency() {
         return hordingIdsSearchedByAgency;
     }
-    public void setHordingIdsSearchedByAgency(String hordingIdsSearchedByAgency) {
+
+    public void setHordingIdsSearchedByAgency(final String hordingIdsSearchedByAgency) {
         this.hordingIdsSearchedByAgency = hordingIdsSearchedByAgency;
     }
+
     public Long getAgency() {
         return agency;
     }
-    public void setAgency(Long agency) {
+
+    public void setAgency(final Long agency) {
         this.agency = agency;
     }
+
     public BigDecimal getTotalDemand() {
         return totalDemand;
     }
-    public void setTotalDemand(BigDecimal totalDemand) {
+
+    public void setTotalDemand(final BigDecimal totalDemand) {
         this.totalDemand = totalDemand;
     }
+
     public BigDecimal getPendingAmount() {
         return pendingAmount;
     }
-    public void setPendingAmount(BigDecimal pendingAmount) {
+
+    public void setPendingAmount(final BigDecimal pendingAmount) {
         this.pendingAmount = pendingAmount;
     }
+
     public Long getCategory() {
         return category;
     }
-    public void setCategory(Long category) {
+
+    public void setCategory(final Long category) {
         this.category = category;
     }
+
     public Long getSubCategory() {
         return subCategory;
     }
-    public void setSubCategory(Long subCategory) {
+
+    public void setSubCategory(final Long subCategory) {
         this.subCategory = subCategory;
     }
+
     public Long getAdminBoundaryParent() {
         return adminBoundaryParent;
     }
-    public void setAdminBoundaryParent(Long adminBoundaryParent) {
+
+    public void setAdminBoundaryParent(final Long adminBoundaryParent) {
         this.adminBoundaryParent = adminBoundaryParent;
     }
+
     public Long getAdminBoundary() {
         return adminBoundary;
     }
-    public void setAdminBoundary(Long adminBoundary) {
+
+    public void setAdminBoundary(final Long adminBoundary) {
         this.adminBoundary = adminBoundary;
     }
-    
-  
 
 }

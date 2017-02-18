@@ -57,6 +57,7 @@ public class AdvertisementTaxConstants {
     public static final String DEMANDREASON_PENALTY = "Penalty";
     public static final String PENALTYAMOUNT = "PENALTYAMOUNT";
     public static final String PENDINGDEMANDAMOUNT = "PENDINGDEMANDAMOUNT";
+    public static final String ADDITIONALTAXAMOUNT = "ADDITIONALTAXAMOUNT";
     public static final String AGENCY_PREFIX_CONSUMERCODE = "AGENCY-";
 
     public static final String BOUNDARYTYPE_LOCALITY = "locality";

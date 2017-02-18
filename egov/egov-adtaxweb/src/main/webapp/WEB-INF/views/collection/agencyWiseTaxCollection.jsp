@@ -160,6 +160,7 @@
 								<th>Owner Detail</th>
 								<th><spring:message code="lbl.advertisement.application.no" /></th>
 								<th><spring:message code="lbl.hoardingReport.taxReason" /></th>
+								<th><spring:message code="lbl.additionalTax" /></th>
 								<th><spring:message code="lbl.penalty" /></th>
 								<th><spring:message code="lbl.dcbreport.total" /></th>
 								<th><input type="checkbox" id="selectAll" name="selectAll"
@@ -202,6 +203,12 @@
 										id="agencyWiseCollectionListPendingAmt[${status.index}]"
 										value="${contact.pendingDemandAmount}" maxlength="19"
 										name="agencyWiseCollectionList[${status.index}].pendingDemandAmount"
+										autocomplete="off" readonly="readonly"></td>
+									<td><input type="text"
+										class="form-control patternvalidation "
+										id="agencyWiseCollectionListPendingAmt[${status.index}]"
+										value="${contact.additionalTaxAmount}" maxlength="19"
+										name="agencyWiseCollectionList[${status.index}].additionalTaxAmount"
 										autocomplete="off" readonly="readonly"></td>
 									<td><input type="text"
 										class="form-control patternvalidation"

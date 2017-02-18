@@ -310,6 +310,7 @@ public class AgencyWiseCollectionService {
             final Map<String, BigDecimal> demandWiseFeeDetail = advertisementDemandService
                     .checkPedingAmountByDemand(advertisementPermitDetail);
             if (demandWiseFeeDetail.get(AdvertisementTaxConstants.PENALTYAMOUNT).compareTo(BigDecimal.ZERO) > 0 ||
+                    demandWiseFeeDetail.get(AdvertisementTaxConstants.ADDITIONALTAXAMOUNT).compareTo(BigDecimal.ZERO) > 0 ||
                     demandWiseFeeDetail.get(AdvertisementTaxConstants.PENDINGDEMANDAMOUNT).compareTo(BigDecimal.ZERO) > 0) {
                 agencyWiseCollectionSearchResult.setAdvertisementNumber(advertisementPermitDetail.getAdvertisement()
                         .getAdvertisementNumber());
@@ -323,6 +324,9 @@ public class AgencyWiseCollectionService {
                         .get(AdvertisementTaxConstants.PENALTYAMOUNT));
                 agencyWiseCollectionSearchResult.setPendingDemandAmount(demandWiseFeeDetail
                         .get(AdvertisementTaxConstants.PENDINGDEMANDAMOUNT));
+                agencyWiseCollectionSearchResult
+                        .setAdditionalTaxAmount(demandWiseFeeDetail.get(AdvertisementTaxConstants.ADDITIONALTAXAMOUNT));
+
                 permitDetails.add(agencyWiseCollectionSearchResult);
             }
 

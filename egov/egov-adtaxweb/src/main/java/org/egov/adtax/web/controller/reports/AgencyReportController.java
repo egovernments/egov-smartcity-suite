@@ -141,6 +141,7 @@ public class AgencyReportController extends GenericController {
                 hoardingReport.setCollectedAmount(demandWiseFeeDetail.get(AdvertisementTaxConstants.TOTALCOLLECTION));
                 hoardingReport.setPendingAmount(demandWiseFeeDetail.get(AdvertisementTaxConstants.PENDINGDEMANDAMOUNT));
                 hoardingReport.setPenaltyAmount(demandWiseFeeDetail.get(AdvertisementTaxConstants.PENALTYAMOUNT));
+                hoardingReport.setAdditionalTaxAmount((demandWiseFeeDetail.get(AdvertisementTaxConstants.ADDITIONALTAXAMOUNT)));
                 hoardingReport.setApplicationNumber(advpermitdetail.getApplicationNumber());
                 hoardingReport.setPermissionNumber(advpermitdetail.getPermissionNumber());
                 hoardingReport.setAgencyName(advpermitdetail.getAgency().getName());

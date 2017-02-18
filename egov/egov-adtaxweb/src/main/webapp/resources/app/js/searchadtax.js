@@ -178,6 +178,7 @@ $(document).ready(function(){
 						  { "data" : "agencyName", "title": "Agency"},
 						  { "data" : "ownerDetail", "title": "Owner Detail"},
 						  { "data" : "pendingDemandAmount", "title": "Amount"},
+						  { "data" : "additionalTaxAmount", "title": "Additional Tax"},
 						  { "data" : "penaltyAmount", "title": "Penalty Amount"},
 						  { "data" : "", "title": "Actions","target":-1,"defaultContent": '<button type="button" class="btn btn-xs btn-secondary collect-hoardingWiseFee"><span class="glyphicon glyphicon-edit"></span>&nbsp;Collect</button>&nbsp;'}
 
@@ -199,6 +200,7 @@ $(document).ready(function(){
 							  { "data" : "totalHoardingInAgency", "title": "No.of hoarding"},
 							  { "data" : "ownerDetail","visible": false},
 							  { "data" : "pendingDemandAmount", "title": "Total Amount"},
+							  { "data" : "additionalTaxAmount", "title": "Additional Tax"},
 							  { "data" : "penaltyAmount", "title": "Penalty Amount"},
 							  { "data" : "","title": "Actions", "target":-1,"defaultContent": '<button type="button" class="btn btn-xs btn-secondary collect-agencyWiseFee"><span class="glyphicon glyphicon-edit"></span>&nbsp;Collect</button>&nbsp;'}
 
