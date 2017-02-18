@@ -266,7 +266,7 @@ $(document).ready(function(){
 		console.log("came jursidiction"+$('#locality').val());
 		$.ajax({
 			type: "GET",
-			url: "/egi/boundary/ajaxBoundary-blockByLocality.action",
+			url: "/egi/boundary/ajaxBoundary-blockByLocality",
 			cache: true,
 			dataType: "json",
 			data:{

@@ -48,7 +48,7 @@
 
 function populateBoundaries() {
 	jQuery.ajax({
-		url: "/egi/public/boundary/ajaxBoundary-blockByLocality.action",
+		url: "/egi/public/boundary/ajaxBoundary-blockByLocality",
 		type: "GET",
 		data: {
 			locality : jQuery('#locality').val()

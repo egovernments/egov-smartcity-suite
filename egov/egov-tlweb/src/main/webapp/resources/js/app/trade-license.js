@@ -74,7 +74,7 @@ function getZoneWard() {
     $('#parentBoundary').val("");
     if ($('#boundary').val() != '-1') {
         $.ajax({
-            url: "/egi/boundary/ajaxBoundary-blockByLocality.action",
+            url: "/egi/boundary/ajaxBoundary-blockByLocality",
             type: "GET",
             data: {
                 locality: $('#boundary').val()

@@ -80,7 +80,7 @@ $(document).ready(function(){
 	$('#zoneList').change(function(){
 		$.ajax({
 			type: "GET",
-			url: "/egi/boundary/ajaxBoundary-blockByLocality.action",
+			url: "/egi/boundary/ajaxBoundary-blockByLocality",
 			cache: true,
 			dataType: "json",
 			data:{
