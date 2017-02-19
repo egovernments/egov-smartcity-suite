@@ -67,7 +67,7 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 @ParentPackage("egov")
 public abstract class BaseFormAction extends ActionSupport
-        implements ModelDriven<Object>, ParameterAware, SessionAware, Preparable, RequestAware, ParameterNameAware {
+        implements ModelDriven<Object>,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             ParameterAware, SessionAware, Preparable, RequestAware, ParameterNameAware {
 
     public static final String INDEX = "index";
     public static final String NEW = "new";
@@ -123,11 +123,10 @@ public abstract class BaseFormAction extends ActionSupport
             final String id = ids[0];
             if (isNotBlank(id) && Long.valueOf(id) > 0) {
                 final PropertyDescriptor propDiscriptor = new PropertyDescriptor("id", class1);
-                if(class1!=null && "Fund".equals(class1.getSimpleName()))
-                {
+                if (class1 != null && "Fund".equals(class1.getSimpleName()))
                     setValue(relationshipName, getPersistenceService().load(Integer.valueOf(id), class1));
-                }else  if (propDiscriptor.getPropertyType().isAssignableFrom(Long.class))
-                    setValue(relationshipName, getPersistenceService().load(Long.valueOf(id), class1));
+                else if (propDiscriptor.getPropertyType().isAssignableFrom(Long.class))
+                    setValue(relationshipName, getPersistenceService().getSession().get(class1, Long.valueOf(id)));
                 else
                     setValue(relationshipName, getPersistenceService().load(Integer.valueOf(id), class1));
             }

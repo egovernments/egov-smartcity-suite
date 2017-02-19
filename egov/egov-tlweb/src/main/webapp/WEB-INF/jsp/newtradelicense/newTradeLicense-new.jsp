@@ -67,7 +67,7 @@
                 showMessage('newLicense_error', '<s:text name="newlicense.licenseeaddress.null" />');
                 window.scroll(0, 0);
                 return false;
-            } else if (document.getElementById("boundary").value == '-1') {
+            } else if (document.getElementById("boundary").value == '') {
                 showMessage('newLicense_error', '<s:text name="newlicense.locality.null" />');
                 window.scroll(0, 0);
                 return false;

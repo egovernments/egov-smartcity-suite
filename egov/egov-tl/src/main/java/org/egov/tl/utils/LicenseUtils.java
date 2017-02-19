@@ -40,13 +40,6 @@
 
 package org.egov.tl.utils;
 
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.egov.tl.utils.Constants.TRADELICENSEMODULE;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import org.egov.commons.Installment;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.dao.InstallmentDao;
@@ -54,18 +47,11 @@ import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.DesignationService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
-import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.entity.Department;
-import org.egov.infra.admin.master.entity.HierarchyType;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.AppConfigValueService;
-import org.egov.infra.admin.master.service.BoundaryService;
-import org.egov.infra.admin.master.service.BoundaryTypeService;
 import org.egov.infra.admin.master.service.DepartmentService;
-import org.egov.infra.admin.master.service.HierarchyTypeService;
 import org.egov.infra.admin.master.service.ModuleService;
-import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.tl.entity.License;
@@ -73,26 +59,21 @@ import org.egov.tl.entity.LicenseSubCategory;
 import org.egov.tl.service.LicenseStatusService;
 import org.egov.tl.service.LicenseSubCategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.egov.tl.utils.Constants.TRADELICENSEMODULE;
 
 @Service
 public class LicenseUtils {
-    public static final String ADMIN_HIERARCHY_TYPE = "ADMINISTRATION";
-    private static final String CITY_BOUNDARY_TYPE = "City";
-    @Autowired
-    @Qualifier("persistenceService")
-    private PersistenceService persistenceService;
     @Autowired
     private ModuleService moduleService;
     @Autowired
-    private BoundaryService boundaryService;
-    @Autowired
     private AssignmentService assignmentService;
-    @Autowired
-    private BoundaryTypeService boundaryTypeService;
-    @Autowired
-    private HierarchyTypeService hierarchyTypeService;
     @Autowired
     private DepartmentService departmentService;
     @Autowired
@@ -113,12 +94,6 @@ public class LicenseUtils {
 
     public Module getModule(final String moduleName) {
         return moduleService.getModuleByName(moduleName);
-    }
-
-    public List<Boundary> getAllCity() {
-        final HierarchyType hType = hierarchyTypeService.getHierarchyTypeByName(ADMIN_HIERARCHY_TYPE);
-        final BoundaryType bType = boundaryTypeService.getBoundaryTypeByNameAndHierarchyType(CITY_BOUNDARY_TYPE, hType);
-        return boundaryService.getAllBoundariesByBoundaryTypeId(bType.getId());
     }
 
     public List<LicenseSubCategory> getAllTradeNames(final String simpleName) {

@@ -199,7 +199,7 @@
 					showMessage('enterLicense_error', '<s:text name="newlicense.licenseeaddress.null" />');
 					document.getElementById("licenseeAddress").focus();
 					return false;
-				} else if (document.getElementById("boundary").value == '-1'){
+				} else if (document.getElementById("boundary").value == ''){
 					showMessage('enterLicense_error', '<s:text name="newlicense.locality.null" />');
 					document.getElementById("boundary").focus();
 					return false;

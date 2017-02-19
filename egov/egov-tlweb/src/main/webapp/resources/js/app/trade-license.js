@@ -38,6 +38,37 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
+$(document).ready(function () {
+    $('#boundary').blur(function () {
+        $('#parentBoundary').find('option:gt(0)').remove();
+        if (this.value === '') {
+            return;
+        } else {
+            $.ajax({
+                type: "GET",
+                url: "/egi/boundary/ajaxBoundary-blockByLocality",
+                cache: true,
+                dataType: "json",
+                data: {'locality': this.value}
+            }).done(function (response) {
+                if (response.results.boundaries.length < 1) {
+                    bootbox.alert("Could not find ward for Locality : " + $('#boundary').find(":selected").text());
+                    $('#boundary').val('');
+                    return;
+                }
+                $.each(response.results.boundaries, function (key, boundary) {
+                    $('#parentBoundary').append('<option value="' + boundary.wardId + '">' + boundary.wardName + '</option>');
+                });
+
+                if (parentBoundary != "") {
+                    $("#parentBoundary").val(parentBoundary);
+                    parentBoundary = "";
+                }
+            });
+        }
+    });
+});
+
 function showHideAgreement() {
     if (document.getElementById("showAgreementDtl").checked) {
         document.getElementById("agreementSec").style.display = "";
@@ -69,42 +100,6 @@ function getUom() {
     });
 }
 
-function getZoneWard() {
-    $('#wardName').val("");
-    $('#parentBoundary').val("");
-    if ($('#boundary').val() != '-1') {
-        $.ajax({
-            url: "/egi/boundary/ajaxBoundary-blockByLocality",
-            type: "GET",
-            data: {
-                locality: $('#boundary').val()
-            },
-            cache: false,
-            dataType: "json",
-            success: function (response) {
-                if (response.results.boundaries.length < 1) {
-                    bootbox.alert("Could not find ward for Locality : " + $('#boundary').find(":selected").text());
-                    $('#boundary').val('-1');
-                    return;
-                }
-                $.each(response.results.boundaries, function (j, boundary) {
-                    if (boundary.wardId) {
-                        $('#wardName').val(boundary.wardName);
-                        $('#parentBoundary').val(boundary.wardId);
-                    } else {
-                        bootbox.alert("Could not find ward for Locality : " + $('#boundary').find(":selected").text());
-                        $('#boundary').val('-1');
-                    }
-                });
-            },
-            error: function (response) {
-                bootbootbox.alert("Could not find ward for Locality : " + $('#boundary').find(":selected").text());
-                $('#boundary').val('-1');
-            }
-        });
-    }
-}
-
 // Calls propertytax REST api to retrieve property details for an assessment no
 function getPropertyDetails() {
     var propertyNo = $("#propertyNo").val();
@@ -122,7 +117,6 @@ function getPropertyDetails() {
                 } else {
                     if (data.boundaryDetails != null) {
                         $("#boundary").val(data.boundaryDetails.localityId);
-                        $("#wardName").val(data.boundaryDetails.wardName);
                         $('#parentBoundary').val(data.boundaryDetails.wardId);
                         $("#address").val(data.propertyAddress);
                     }
@@ -146,8 +140,8 @@ function resetOnPropertyNumChange() {
         $("#address").attr("readonly", false);
         $("#boundary").attr("readonly", false);
     }
-    $("#boundary").val(-1);
-    $("#wardName").val("");
+    $("#boundary").val('');
+    $("#parentBoundary").find('option:gt(0)').remove();
     $("#address").val("");
 }
 

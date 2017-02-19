@@ -39,24 +39,6 @@
   --%>
 
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<script>
-    $(document).ready(function () {
-        $('#boundary').blur(function () {
-            getZoneWard();
-        });
-        <s:if test="%{hasErrors() || mode=='view' || mode=='edit'}">
-        if ($('#boundary').val() != '-1') {
-            getZoneWard();
-        }
-        </s:if>
-
-        if ($("#propertyNo") && $("#propertyNo").val() !== "") {
-            resetOnPropertyNumChange();
-            getPropertyDetails();
-        }
-    });
-</script>
 
 <div class="panel-heading custom_form_panel_heading">
     <div class="panel-title"><s:text name='license.location.lbl'/></div>
@@ -71,14 +53,15 @@
     <label class="col-sm-2 control-label text-right"><s:text name='license.locality.lbl'/><span class="mandatory"></span></label>
     <div class="col-sm-3 add-margin">
         <s:select name="boundary" id="boundary" list="dropdownData.localityList"
-                  listKey="id" listValue="name" headerKey="-1" headerValue="%{getText('default.select')}" required="true" value="%{boundary.id}" class="form-control"/>
+                  listKey="id" listValue="name" headerKey="" headerValue="%{getText('default.select')}" required="true" value="%{boundary.id}" class="form-control"/>
     </div>
 </div>
 <div class="form-group">
     <label class="col-sm-3 control-label text-right"><s:text name='license.division'/><span class="mandatory"></span></label>
     <div class="col-sm-3 add-margin">
-        <s:textfield name="ward" id="wardName" value="%{parentBoundary.name}" readonly="true" class="form-control" required="true"/>
-        <s:hidden name="parentBoundary" id="parentBoundary" value="%{parentBoundary.id}" required="true"/>
+        <select name="parentBoundary" id="parentBoundary" class="form-control" required="true">
+            <option value=""><s:text name='default.select'/></option>
+        </select>
     </div>
 </div>
 <div class="form-group">
@@ -93,3 +76,16 @@
         <s:textarea name="address" id="address" maxlength="250" onblur="checkLength(this,250)" class="form-control" required="true"/>
     </div>
 </div>
+<script>
+    var parentBoundary = '${parentBoundary.id}';
+    $(document).ready(function () {
+        if ($('#boundary').val() != '') {
+            $('#boundary').trigger('blur');
+        }
+
+        if ($("#propertyNo") && $("#propertyNo").val() !== "") {
+            resetOnPropertyNumChange();
+            getPropertyDetails();
+        }
+    });
+</script>
