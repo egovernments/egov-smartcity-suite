@@ -43,8 +43,11 @@ import static org.egov.ptis.constants.PropertyTaxConstants. DASHBOARD_GROUPING_U
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -52,6 +55,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
+import org.egov.infra.utils.DateUtils;
 import org.egov.ptis.bean.dashboard.CollReceiptDetails;
 import org.egov.ptis.bean.dashboard.CollectionDetails;
 import org.egov.ptis.bean.dashboard.CollectionDetailsRequest;
@@ -64,6 +68,7 @@ import org.egov.ptis.bean.dashboard.TotalCollectionStats;
 import org.egov.ptis.bean.dashboard.UlbWiseDemandCollection;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.service.dashboard.PropTaxDashboardService;
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -326,7 +331,7 @@ public class CMDashboardController {
     @ResponseBody public Map<String, List<UlbWiseDemandCollection>> getCollectionAnalysisForMIS(@RequestParam("regionName") String regionName, @RequestParam("districtName") String districtName,
             @RequestParam("ulbGrade") String ulbGrade, @RequestParam("ulbCode") String ulbCode, @RequestParam("fromDate") String fromDate,
             @RequestParam("toDate") String toDate, @RequestParam("type") String type, @RequestParam("propertyType") String propertyType, 
-            @RequestParam("intervalType") String intervalType, @RequestParam("month") String month, @RequestParam("year") String year) 
+            @RequestParam("intervalType") String intervalType, @RequestParam("month") String month, @RequestParam("year") String year, @RequestParam("week") String week) 
                     throws IOException {
         CollectionDetailsRequest collectionDetailsRequest = new CollectionDetailsRequest();
         
@@ -340,6 +345,16 @@ public class CMDashboardController {
                 LocalDate endOfMonth = monthStDate.dayOfMonth().withMaximumValue();
                 fromDate = weekStart.toString(PropertyTaxConstants.DATE_FORMAT_YYYYMMDD);
                 toDate = endOfMonth.toString(PropertyTaxConstants.DATE_FORMAT_YYYYMMDD);
+            } else if("day".equalsIgnoreCase(intervalType)){
+                //Prepare the first and last days of the week based on the month, year and week of month values
+                DateTime date = new DateTime().withYear(Integer.parseInt(year)).withMonthOfYear(Integer.parseInt(month));
+                Calendar cal = date.toCalendar(Locale.getDefault());
+                cal.set(Calendar.DAY_OF_WEEK, 2);
+                cal.set(Calendar.WEEK_OF_MONTH, Integer.parseInt(week));
+                DateTime weekStartDate = new DateTime(cal).withMillisOfDay(0);
+                fromDate = weekStartDate.toString(PropertyTaxConstants.DATE_FORMAT_YYYYMMDD);
+                Date weekEndDate = DateUtils.addDays(weekStartDate.toDate(), 6);
+                toDate = PropertyTaxConstants.DATEFORMATTER_YYYY_MM_DD.format(weekEndDate);
             }
         }
         populateCollectionDetailsRequest(collectionDetailsRequest, regionName, districtName, ulbGrade, ulbCode, fromDate, toDate,

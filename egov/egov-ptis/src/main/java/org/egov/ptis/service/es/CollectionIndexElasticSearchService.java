@@ -1919,8 +1919,7 @@ public class CollectionIndexElasticSearchService {
         Map<String, Map<String, BigDecimal>> intervalwiseCollMap = new HashMap<>();
         List<UlbWiseDemandCollection> citywiseCollList = new ArrayList<>();
         /**
-         * For month-wise collections between the date ranges if dates are sent in the request, consider fromDate and toDate+1 ,
-         * else calculate from current year start date till current date+1 day
+         * For collections between 2 dates, consider fromDate and toDate+1 
          */
         if (StringUtils.isNotBlank(collectionDetailsRequest.getFromDate())
                 && StringUtils.isNotBlank(collectionDetailsRequest.getToDate())) {
@@ -1937,6 +1936,8 @@ public class CollectionIndexElasticSearchService {
             prepareMonthlyCollMap(finYearStartDate, finYearEndDate, monthValuesMap, intervalwiseCollMap, cityaggr);
         else if("week".equalsIgnoreCase(intervalType))
             prepareWeeklyCollMap(intervalwiseCollMap, cityaggr);
+        else if("day".equalsIgnoreCase(intervalType))
+            prepareDailyCollMap(intervalwiseCollMap, cityaggr, fromDate);
         
         Long timeTaken = System.currentTimeMillis() - startTime;
         LOGGER.debug("Time taken by getMonthwiseCollectionsForConsecutiveYears() is : "
@@ -1947,6 +1948,8 @@ public class CollectionIndexElasticSearchService {
             setCollDetailsForIntervalType(intervalwiseCollMap, citywiseCollList, DateUtils.getAllFinancialYearMonthsWithFullNames(), intervalType);
         else if("week".equalsIgnoreCase(intervalType))
             setCollDetailsForIntervalType(intervalwiseCollMap, citywiseCollList, getWeeksInMonth(), intervalType);
+        else if("day".equalsIgnoreCase(intervalType))
+            setCollDetailsForIntervalType(intervalwiseCollMap, citywiseCollList, getDaysInAWeek(), intervalType);
         
         timeTaken = System.currentTimeMillis() - startTime;
         LOGGER.debug(
@@ -2025,6 +2028,57 @@ public class CollectionIndexElasticSearchService {
     }
     
     /**
+     * Prepares collection details for each day in a week
+     * @param intervalwiseCollMap
+     * @param cityaggr
+     * @param fromDate
+     */
+    private void prepareDailyCollMap(Map<String, Map<String, BigDecimal>> intervalwiseCollMap, StringTerms cityaggr, Date fromDate) {
+        String day;
+        int noOfDays;
+        String ulbName;
+        Sum aggregateSum;
+        Map<String, BigDecimal> dayWiseCollFromResult;
+        Map<String, BigDecimal> finalDayWiseColl;
+        String resultDateStr;
+        List<String> daysInWeek = new ArrayList<>();
+        Date weekStartDate = fromDate;
+        for (int count = 0; count < 7; count++) {
+            daysInWeek.add(PropertyTaxConstants.DATEFORMATTER_YYYY_MM_DD.format(weekStartDate));
+            weekStartDate = DateUtils.addDays(weekStartDate, 1);
+        }
+
+        for (final Terms.Bucket cityDetailsentry : cityaggr.getBuckets()) {
+            dayWiseCollFromResult = new LinkedHashMap<>();
+            finalDayWiseColl = new LinkedHashMap<>();
+            ulbName = cityDetailsentry.getKeyAsString();
+            noOfDays = 0;
+            Histogram dateaggs = cityDetailsentry.getAggregations().get(DATE_AGG);
+            for (Histogram.Bucket entry : dateaggs.getBuckets()) {
+                resultDateStr = entry.getKeyAsString().split("T")[0];
+                aggregateSum = entry.getAggregations().get("current_total");
+                if (BigDecimal.valueOf(aggregateSum.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP)
+                        .compareTo(BigDecimal.ZERO) > 0)
+                    dayWiseCollFromResult.put(resultDateStr,
+                            BigDecimal.valueOf(aggregateSum.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+            }
+            // Check collections for all days in a week, if collection is not present, 0 will be shown for the corresponding day
+            for (String dates : daysInWeek) {
+                if (noOfDays == 0)
+                    noOfDays = 1;
+                day = "Day " + noOfDays;
+                if (dayWiseCollFromResult.get(dates) == null)
+                    finalDayWiseColl.put(day, BigDecimal.ZERO);
+                else
+                    finalDayWiseColl.put(day, dayWiseCollFromResult.get(dates));
+
+                noOfDays++;
+            }
+            intervalwiseCollMap.put(ulbName, finalDayWiseColl);
+        }
+    }
+    
+    /**
      * Sets collection details for each type of interval type
      * @param collectionMap
      * @param citywiseCollList
@@ -2047,7 +2101,7 @@ public class CollectionIndexElasticSearchService {
             for (Map.Entry<String, BigDecimal> intervalMap : citywise.getValue().entrySet()) {
                 intervalTypeCollMap.put(intervalMap.getKey(), intervalMap.getValue());
             }
-            //Checking for collection of all months 
+            //Checking for collection of all months/weeks/days 
             for (Map.Entry<Integer, String> intervalName : intervalNamesMap.entrySet()) {
                 if(intervalCount == 0)
                     intervalCount = 1;
@@ -2062,7 +2116,7 @@ public class CollectionIndexElasticSearchService {
                 //Fetch the month number based on the month name
                 if("month".equalsIgnoreCase(intervalType))
                     demandCollMIS.setIntervalCount(finYearMonths.get(intervalName.getValue()));
-                else if("week".equalsIgnoreCase(intervalType))
+                else if("week".equalsIgnoreCase(intervalType) || "day".equalsIgnoreCase(intervalType))
                     demandCollMIS.setIntervalCount(intervalCount);
                 
                 demandCollectionMISList.add(demandCollMIS);
@@ -2106,5 +2160,21 @@ public class CollectionIndexElasticSearchService {
         monthMap.put("November", 11);
         monthMap.put("December", 12);
         return monthMap;
+    }
+    
+    /**
+     * API gives all days in a week
+     * @return all days
+     */
+    public Map<Integer, String> getDaysInAWeek() {
+        final Map<Integer, String> daysMap = new HashMap<>();
+        daysMap.put(1, "Day 1");
+        daysMap.put(2, "Day 2");
+        daysMap.put(3, "Day 3");
+        daysMap.put(4, "Day 4");
+        daysMap.put(5, "Day 5");
+        daysMap.put(6, "Day 6");
+        daysMap.put(7, "Day 7");
+        return daysMap;
     }
 }
