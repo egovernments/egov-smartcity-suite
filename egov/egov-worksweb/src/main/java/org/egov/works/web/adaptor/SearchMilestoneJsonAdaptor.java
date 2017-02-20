@@ -77,19 +77,19 @@ public class SearchMilestoneJsonAdaptor implements JsonSerializer<Milestone> {
 
     private void setWorkOrderJsonValues(final JsonObject jsonObject, final WorkOrderEstimate woe) {
         final WorkOrder wo = woe.getWorkOrder();
-        jsonObject.addProperty("agreementAmount",
-                wo != null ? Double.toString(wo.getWorkOrderAmount()) : StringUtils.EMPTY);
-        jsonObject.addProperty("workOrderNumber", wo != null ? wo.getWorkOrderNumber() : StringUtils.EMPTY);
-        jsonObject.addProperty("workOrderId", wo != null ? wo.getId().toString() : StringUtils.EMPTY);
+        if (wo != null) {
+            jsonObject.addProperty("agreementAmount", Double.toString(wo.getWorkOrderAmount()));
+            jsonObject.addProperty("workOrderNumber", wo.getWorkOrderNumber());
+            jsonObject.addProperty("workOrderId", wo.getId().toString());
+        } else {
+            jsonObject.addProperty("agreementAmount", StringUtils.EMPTY);
+            jsonObject.addProperty("workOrderNumber", StringUtils.EMPTY);
+            jsonObject.addProperty("workOrderId", StringUtils.EMPTY);
+        }
     }
 
     private void setAbstractEstimateJsonValues(final JsonObject jsonObject, final AbstractEstimate ae) {
-        jsonObject.addProperty("estimateNumber", ae != null ? ae.getEstimateNumber() : StringUtils.EMPTY);
-        jsonObject.addProperty("workIdentificationNumber",
-                ae != null ? ae.getProjectCode().getCode() : StringUtils.EMPTY);
-        jsonObject.addProperty("nameOfWork", ae != null ? ae.getName() : StringUtils.EMPTY);
-        jsonObject.addProperty("department", ae != null ? ae.getExecutingDepartment().getName() : StringUtils.EMPTY);
-        jsonObject.addProperty("abstractEstimateId", ae != null ? ae.getId().toString() : StringUtils.EMPTY);
+
         if (ae != null) {
             final EgwTypeOfWork typeOfWork = ae.getParentCategory();
             final EgwTypeOfWork subTypeOfWork = ae.getCategory();
@@ -99,6 +99,17 @@ public class SearchMilestoneJsonAdaptor implements JsonSerializer<Milestone> {
                     subTypeOfWork != null ? subTypeOfWork.getName() : StringUtils.EMPTY);
             jsonObject.addProperty("lineEstimateId",
                     led != null ? led.getLineEstimate().getId().toString() : StringUtils.EMPTY);
+            jsonObject.addProperty("estimateNumber", ae.getEstimateNumber());
+            jsonObject.addProperty("workIdentificationNumber", ae.getProjectCode().getCode());
+            jsonObject.addProperty("nameOfWork", ae.getName());
+            jsonObject.addProperty("department", ae.getExecutingDepartment().getName());
+            jsonObject.addProperty("abstractEstimateId", ae.getId().toString());
+        } else {
+            jsonObject.addProperty("estimateNumber", StringUtils.EMPTY);
+            jsonObject.addProperty("workIdentificationNumber", StringUtils.EMPTY);
+            jsonObject.addProperty("nameOfWork", StringUtils.EMPTY);
+            jsonObject.addProperty("department", StringUtils.EMPTY);
+            jsonObject.addProperty("abstractEstimateId", StringUtils.EMPTY);
         }
 
     }

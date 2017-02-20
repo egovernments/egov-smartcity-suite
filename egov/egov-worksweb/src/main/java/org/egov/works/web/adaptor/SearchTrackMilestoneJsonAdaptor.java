@@ -83,11 +83,6 @@ public class SearchTrackMilestoneJsonAdaptor implements JsonSerializer<TrackMile
     }
 
     private void setAbstractEstimateJsonValues(final JsonObject jsonObject, final AbstractEstimate ae) {
-        jsonObject.addProperty("estimateNumber", ae != null ? ae.getEstimateNumber() : StringUtils.EMPTY);
-        jsonObject.addProperty("workIdentificationNumber",
-                ae != null ? ae.getProjectCode().getCode() : StringUtils.EMPTY);
-        jsonObject.addProperty("nameOfWork", ae != null ? ae.getName() : StringUtils.EMPTY);
-        jsonObject.addProperty("department", ae != null ? ae.getExecutingDepartment().getName() : StringUtils.EMPTY);
         if (ae != null) {
             final EgwTypeOfWork typeOfWork = ae.getParentCategory();
             final EgwTypeOfWork subTypeOfWork = ae.getCategory();
@@ -98,6 +93,15 @@ public class SearchTrackMilestoneJsonAdaptor implements JsonSerializer<TrackMile
             jsonObject.addProperty("lineEstimateId",
                     led != null ? led.getLineEstimate().getId().toString() : StringUtils.EMPTY);
             jsonObject.addProperty("abstractEstimateId", ae.getId().toString());
+            jsonObject.addProperty("estimateNumber", ae.getEstimateNumber());
+            jsonObject.addProperty("workIdentificationNumber", ae.getProjectCode().getCode());
+            jsonObject.addProperty("nameOfWork", ae.getName());
+            jsonObject.addProperty("department", ae.getExecutingDepartment().getName());
+        } else {
+            jsonObject.addProperty("estimateNumber", StringUtils.EMPTY);
+            jsonObject.addProperty("workIdentificationNumber", StringUtils.EMPTY);
+            jsonObject.addProperty("nameOfWork", StringUtils.EMPTY);
+            jsonObject.addProperty("department", StringUtils.EMPTY);
         }
     }
 }

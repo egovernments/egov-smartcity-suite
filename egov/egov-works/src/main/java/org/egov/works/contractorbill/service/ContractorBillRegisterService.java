@@ -85,7 +85,6 @@ import org.egov.works.contractorbill.entity.enums.BillTypes;
 import org.egov.works.contractorbill.repository.ContractorBillRegisterRepository;
 import org.egov.works.letterofacceptance.service.WorkOrderActivityService;
 import org.egov.works.lineestimate.entity.DocumentDetails;
-import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.mb.entity.MBDetails;
 import org.egov.works.mb.entity.MBForCancelledBill;
 import org.egov.works.mb.entity.MBHeader;
@@ -121,8 +120,6 @@ public class ContractorBillRegisterService {
     private static final Logger LOG = LoggerFactory.getLogger(ContractorBillRegisterService.class);
 
     private static final String WORKORDERESTIMATE = "workOrderEstimate";
-    private static final String ESTIMATE_ESTIMATENUMBER = "estimate.estimateNumber";
-
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -143,9 +140,6 @@ public class ContractorBillRegisterService {
 
     @Autowired
     private PositionMasterService positionMasterService;
-
-    @Autowired
-    private LineEstimateService lineEstimateService;
 
     private final ScriptService scriptExecutionService;
 
@@ -605,12 +599,9 @@ public class ContractorBillRegisterService {
             if (searchRequestContractorBill.getDepartment() != null)
                 criteria.add(Restrictions.eq("department.id", searchRequestContractorBill.getDepartment()));
             if (searchRequestContractorBill.getWorkOrderNumber() != null) {
-                final List<String> workOrderNumbers = contractorBillRegisterRepository.findWorkOrderNumbersToCancel(
-                        "%" + searchRequestContractorBill.getWorkOrderNumber() + "%",
-                        ContractorBillRegister.BillStatus.APPROVED.toString());
-                if (workOrderNumbers.isEmpty())
-                    workOrderNumbers.add(StringUtils.EMPTY);
-                criteria.add(Restrictions.in("cbrwo.workOrderNumber", workOrderNumbers));
+                criteria.add(Restrictions.and(
+                        Restrictions.eq("cbrwo.workOrderNumber", searchRequestContractorBill.getWorkOrderNumber()),
+                        Restrictions.eq("billstatus", ContractorBillRegister.BillStatus.APPROVED.toString())));
             }
         }
         criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);

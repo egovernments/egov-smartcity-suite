@@ -81,29 +81,33 @@ public class TrackMilestoneJsonAdaptor implements JsonSerializer<Milestone> {
         final LineEstimateDetails led = ae.getLineEstimateDetails();
         final WorkOrder workOrder = milestone.getWorkOrderEstimate().getWorkOrder();
         jsonObject.addProperty("estimateNumber", ae.getEstimateNumber());
-        if(led != null)
+        if (led != null)
             jsonObject.addProperty("lineEstimateDate", sdf.format(led.getLineEstimate().getLineEstimateDate()));
         jsonObject.addProperty("nameOfWork", ae.getName());
         jsonObject.addProperty("projectCode", ae.getProjectCode().getCode());
         jsonObject.addProperty("typeOfWork", ae.getParentCategory().getName());
-        jsonObject.addProperty("subTypeOfWork",
-                ae.getCategory() != null ? ae.getCategory().getName() : StringUtils.EMPTY);
-        jsonObject.addProperty("lineEstimateCreatedBy", led != null ? led.getLineEstimate().getCreatedBy().getName()
-                : StringUtils.EMPTY);
+        if (ae.getCategory() != null)
+            jsonObject.addProperty("subTypeOfWork", ae.getCategory().getName());
+        else
+            jsonObject.addProperty("subTypeOfWork", StringUtils.EMPTY);
+        jsonObject.addProperty("lineEstimateCreatedBy",
+                led != null ? led.getLineEstimate().getCreatedBy().getName() : StringUtils.EMPTY);
         jsonObject.addProperty("department", ae.getExecutingDepartment().getName());
-
-        jsonObject.addProperty("workOrderNumber",
-                workOrder != null ? workOrder.getWorkOrderNumber() : StringUtils.EMPTY);
-        jsonObject.addProperty("workOrderId",
-                workOrder != null ? workOrder.getId().toString() : StringUtils.EMPTY);
-        jsonObject.addProperty("workOrderAmount", workOrder != null ? df.format(workOrder.getWorkOrderAmount())
-                : StringUtils.EMPTY);
-        jsonObject.addProperty("workOrderDate", workOrder != null ? sdf.format(workOrder.getWorkOrderDate())
-                : StringUtils.EMPTY);
-        jsonObject.addProperty("contractorName", workOrder != null ? workOrder.getContractor().getName()
-                : StringUtils.EMPTY);
-        jsonObject.add("activities", !milestone.getActivities().isEmpty()
-                ? getMileStoneActivities(milestone, sdf, sdf2) : new JsonArray());
+        if (workOrder != null) {
+            jsonObject.addProperty("workOrderNumber", workOrder.getWorkOrderNumber());
+            jsonObject.addProperty("workOrderId", workOrder.getId().toString());
+            jsonObject.addProperty("workOrderAmount", df.format(workOrder.getWorkOrderAmount()));
+            jsonObject.addProperty("workOrderDate", df.format(workOrder.getWorkOrderDate()));
+            jsonObject.addProperty("contractorName", workOrder.getContractor().getName());
+        } else {
+            jsonObject.addProperty("workOrderNumber", StringUtils.EMPTY);
+            jsonObject.addProperty("workOrderId", StringUtils.EMPTY);
+            jsonObject.addProperty("workOrderAmount", StringUtils.EMPTY);
+            jsonObject.addProperty("workOrderDate", StringUtils.EMPTY);
+            jsonObject.addProperty("contractorName", StringUtils.EMPTY);
+        }
+        jsonObject.add("activities",
+                !milestone.getActivities().isEmpty() ? getMileStoneActivities(milestone, sdf, sdf2) : new JsonArray());
         setTrackMilestoneActivities(milestone, jsonObject, sdf);
         jsonObject.addProperty("id", milestone.getId());
     }

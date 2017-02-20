@@ -72,10 +72,8 @@ public class SearchLetterOfAcceptanceForOfflineStatusJsonAdaptor implements Json
             final WorkOrder wo = workOrderEstimate.getWorkOrder();
             final LineEstimateDetails led = workOrderEstimate.getEstimate().getLineEstimateDetails();
             setWorkOrderJsonValues(jsonObject, wo);
-            jsonObject.addProperty("estimateNumber",workOrderEstimate.getEstimate().getEstimateNumber());
-
-            jsonObject.addProperty("nameOfWork",workOrderEstimate.getEstimate().getName());
-
+            jsonObject.addProperty("estimateNumber", workOrderEstimate.getEstimate().getEstimateNumber());
+            jsonObject.addProperty("nameOfWork", workOrderEstimate.getEstimate().getName());
             jsonObject.addProperty("lineEstimateId",
                     led != null ? led.getLineEstimate().getId().toString() : StringUtils.EMPTY);
             jsonObject.addProperty("abstractEstimateId", workOrderEstimate.getEstimate().getId());
@@ -85,26 +83,36 @@ public class SearchLetterOfAcceptanceForOfflineStatusJsonAdaptor implements Json
 
     private void setWorkOrderJsonValues(final JsonObject jsonObject, final WorkOrder wo) {
         if (wo != null) {
-            jsonObject.addProperty("workOrderNumber",
-                    wo.getWorkOrderNumber() != null ? wo.getWorkOrderNumber() : StringUtils.EMPTY);
-            jsonObject.addProperty("workOrderDate",
-                    wo.getWorkOrderDate() != null ? wo.getWorkOrderDate().toString() : StringUtils.EMPTY);
-            jsonObject.addProperty("contractor",
-                    wo.getContractor() != null ? wo.getContractor().getName() : StringUtils.EMPTY);
+            if (wo.getWorkOrderNumber() != null)
+                jsonObject.addProperty("workOrderNumber", wo.getWorkOrderNumber());
+            else
+                jsonObject.addProperty("workOrderNumber", StringUtils.EMPTY);
+            if (wo.getWorkOrderDate() != null)
+                jsonObject.addProperty("workOrderDate", wo.getWorkOrderDate().toString());
+            else
+                jsonObject.addProperty("workOrderDate", StringUtils.EMPTY);
+            if (wo.getContractor() != null)
+                jsonObject.addProperty("contractor", wo.getContractor().getName());
+            else
+                jsonObject.addProperty("contractor", StringUtils.EMPTY);
+
             jsonObject.addProperty("workOrderAmount", wo.getWorkOrderAmount());
-
             jsonObject.addProperty("id", wo.getId());
-            final List<OfflineStatus> offlinestatusses = offlineStatusService
-                    .getOfflineStatusByObjectIdAndType(wo.getId(), WorksConstants.WORKORDER);
-            jsonObject.addProperty("statusSize", offlinestatusses.size());
-
-            if (wo.getEgwStatus() != null) {
-                final OfflineStatus offlineStatusses = offlineStatusService
-                        .getLastOfflineStatusByObjectIdAndObjectType(wo.getId(), WorksConstants.WORKORDER);
-                jsonObject.addProperty("status", offlineStatusses != null
-                        ? offlineStatusses.getEgwStatus().getDescription() : wo.getEgwStatus().getDescription());
-            } else
-                jsonObject.addProperty("status", StringUtils.EMPTY);
+            setStatusJsonValues(jsonObject, wo);
         }
+    }
+
+    private void setStatusJsonValues(final JsonObject jsonObject, final WorkOrder wo) {
+        final List<OfflineStatus> offlinestatusses = offlineStatusService
+                .getOfflineStatusByObjectIdAndType(wo.getId(), WorksConstants.WORKORDER);
+        jsonObject.addProperty("statusSize", offlinestatusses.size());
+
+        if (wo.getEgwStatus() != null) {
+            final OfflineStatus offlineStatusses = offlineStatusService
+                    .getLastOfflineStatusByObjectIdAndObjectType(wo.getId(), WorksConstants.WORKORDER);
+            jsonObject.addProperty("status", offlineStatusses != null
+                    ? offlineStatusses.getEgwStatus().getDescription() : wo.getEgwStatus().getDescription());
+        } else
+            jsonObject.addProperty("status", StringUtils.EMPTY);
     }
 }
