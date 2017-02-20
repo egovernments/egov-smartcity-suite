@@ -39,6 +39,8 @@
  */
 package org.egov.lcms.web.controller.transactions;
 
+import java.text.ParseException;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
@@ -85,7 +87,7 @@ public class LegalCaseDisposalController {
     @RequestMapping(value = "/new/", method = RequestMethod.POST)
     public String create(@Valid @ModelAttribute final LegalCaseDisposal legalCaseDisposal, final BindingResult errors,
             @RequestParam("lcNumber") final String lcNumber, final RedirectAttributes redirectAttrs, final Model model,
-            final HttpServletRequest request) {
+            final HttpServletRequest request) throws ParseException {
         final LegalCase legalCase = getLegalCase(lcNumber);
         if (errors.hasErrors()) {
             model.addAttribute("legalcase", legalCase);

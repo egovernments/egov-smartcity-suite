@@ -40,6 +40,7 @@
 package org.egov.lcms.transactions.service;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -104,7 +105,8 @@ public class JudgmentImplService {
     }
 
     @Transactional
-    public void saveOrUpdate(final JudgmentImpl judgmentImpl, final MultipartFile[] files) throws IOException {
+    public void saveOrUpdate(final JudgmentImpl judgmentImpl, final MultipartFile[] files)
+            throws IOException, ParseException {
         persist(judgmentImpl, files);
         if (judgmentImpl.getJudgment().getImplementByDate() != null)
             judgmentImpl.getJudgment().getLegalCase().setNextDate(judgmentImpl.getJudgment().getImplementByDate());
@@ -118,6 +120,8 @@ public class JudgmentImplService {
         judgmentImpl.getJudgment().getLegalCase().setNextDate(judgmentImpl.getDateOfCompliance());
         legalCaseSmsService.sendSmsToOfficerInchargeForJudgmentImpl(judgmentImpl);
         legalCaseSmsService.sendSmsToStandingCounselForJudgmentImpl(judgmentImpl);
+        legalCaseService.updateIndexes(judgmentImpl.getJudgment().getLegalCase(), null, judgmentImpl.getJudgment(),
+                judgmentImpl, null);
         legalCaseService.save(judgmentImpl.getJudgment().getLegalCase());
 
     }

@@ -40,6 +40,7 @@
 package org.egov.lcms.web.controller.transactions;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -105,7 +106,7 @@ public class EditJudgmentController {
     public String update(@Valid @ModelAttribute final Judgment judgment,
             @RequestParam("lcNumber") final String lcNumber, final BindingResult errors,
             @RequestParam("file") final MultipartFile[] files, final HttpServletRequest request, final Model model,
-            final RedirectAttributes redirectAttrs) throws IOException {
+            final RedirectAttributes redirectAttrs) throws IOException, ParseException {
         if (errors.hasErrors()) {
             prepareNewForm(model);
             return "judgment-edit";

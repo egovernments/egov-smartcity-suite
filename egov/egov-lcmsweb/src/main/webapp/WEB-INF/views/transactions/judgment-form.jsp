@@ -101,7 +101,7 @@
 								code="lbl.implementbydate" /> :</label>
 						<div class="col-sm-3 add-margin">
 							<form:input path="implementByDate"
-								class="form-control datepicker" />
+								class="form-control datepicker" data-date-end-date="0d" data-inputmask="'mask': 'd/m/y'"/>
 							<form:errors path="implementByDate" cssClass="error-msg" />
 						</div>
 					</div>

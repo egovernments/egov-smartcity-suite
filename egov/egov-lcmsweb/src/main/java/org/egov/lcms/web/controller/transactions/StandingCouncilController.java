@@ -39,6 +39,7 @@
  */
 package org.egov.lcms.web.controller.transactions;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -88,7 +89,8 @@ public class StandingCouncilController {
     @RequestMapping(value = "/create/", method = RequestMethod.POST)
     public String create(@Valid @ModelAttribute("legalCaseAdvocate") final LegalCaseAdvocate legalCaseAdvocate,
             final BindingResult errors, final RedirectAttributes redirectAttrs,
-            @RequestParam("lcNumber") final String lcNumber, final HttpServletRequest request, final Model model) {
+            @RequestParam("lcNumber") final String lcNumber, final HttpServletRequest request, final Model model)
+            throws ParseException {
         final LegalCase legalCase = getLegalCase(lcNumber);
         if (errors.hasErrors()) {
             model.addAttribute("legalcase", legalCase);

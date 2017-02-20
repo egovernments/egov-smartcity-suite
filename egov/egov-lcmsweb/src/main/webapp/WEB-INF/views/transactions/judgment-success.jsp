@@ -83,7 +83,7 @@
 							<spring:message code="lbl.implementbydate" />
 						</div>
 						<div class="col-sm-3 add-margin view-content">
-							<fmt:formatDate pattern="MM/dd/yyyyy"
+							<fmt:formatDate pattern="dd/MM/yyyy"
 								value="${judgment.implementByDate}" var="implby" />
 							<c:out value="${implby}" />
 						</div>

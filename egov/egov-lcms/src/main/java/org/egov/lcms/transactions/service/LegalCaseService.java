@@ -40,16 +40,23 @@
 package org.egov.lcms.transactions.service;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.lcms.entity.es.LegalCaseDocument;
 import org.egov.lcms.masters.entity.AdvocateMaster;
 import org.egov.lcms.masters.service.AdvocateMasterService;
+import org.egov.lcms.service.es.LegalCaseDocumentService;
 import org.egov.lcms.transactions.entity.BipartisanDetails;
 import org.egov.lcms.transactions.entity.CounterAffidavit;
+import org.egov.lcms.transactions.entity.Judgment;
+import org.egov.lcms.transactions.entity.JudgmentImpl;
 import org.egov.lcms.transactions.entity.LegalCase;
 import org.egov.lcms.transactions.entity.LegalCaseAdvocate;
+import org.egov.lcms.transactions.entity.LegalCaseDisposal;
+import org.egov.lcms.transactions.entity.LegalCaseInterimOrder;
 import org.egov.lcms.transactions.entity.LegalCaseUploadDocuments;
 import org.egov.lcms.transactions.entity.Pwr;
 import org.egov.lcms.transactions.entity.PwrDocuments;
@@ -93,6 +100,9 @@ public class LegalCaseService {
     private ReportStatusRepository reportStatusRepository;
 
     @Autowired
+    private LegalCaseDocumentService legalCaseDocumentService;
+
+    @Autowired
     public LegalCaseService(final LegalCaseRepository legalCaseRepository) {
         this.legalCaseRepository = legalCaseRepository;
 
@@ -111,7 +121,7 @@ public class LegalCaseService {
     }
 
     @Transactional
-    public LegalCase persist(LegalCase legalcase, final MultipartFile[] files) throws IOException {
+    public LegalCase persist(LegalCase legalcase, final MultipartFile[] files) throws IOException, ParseException {
         legalcase.setCaseNumber(
                 legalcase.getCaseNumber() + (legalcase.getWpYear() != null ? "/" + legalcase.getWpYear() : ""));
         legalcase.setStatus(legalCaseUtil.getStatusForModuleAndCode(LcmsConstants.MODULE_TYPE_LEGALCASE,
@@ -121,6 +131,7 @@ public class LegalCaseService {
         setLegalCaseReportStatus(legalcase, legalcase.getPwrList());
         final LegalCase savedlegalcase = legalCaseRepository.save(legalcase);
         legalCaseSmsService.sendSmsToOfficerInchargeForLegalCase(legalcase);
+        updateIndexes(savedlegalcase, null, null, null, null);
         final List<LegalCaseUploadDocuments> documentDetails = getLegalcaseUploadDocumentDetails(savedlegalcase, files);
         if (!documentDetails.isEmpty()) {
             savedlegalcase.setLegalCaseUploadDocuments(documentDetails);
@@ -130,9 +141,10 @@ public class LegalCaseService {
     }
 
     @Transactional
-    public LegalCase update(final LegalCase legalcase, final MultipartFile[] files) throws IOException {
+    public LegalCase update(final LegalCase legalcase, final MultipartFile[] files) throws IOException, ParseException {
         updateCounterAffidavitAndPwr(legalcase, legalcase.getPwrList());
         final LegalCase savedCaAndPwr = legalCaseRepository.save(legalcase);
+        updateIndexes(legalcase, null, null, null, null);
         legalCaseSmsService.sendSmsToOfficerInchargeForCounterAffidavit(legalcase.getCounterAffidavits());
         legalCaseSmsService.sendSmsToOfficerInchargeForPWR(legalcase.getPwrList());
         legalCaseSmsService.sendSmsToStandingCounselForCounterAffidavit(legalcase.getCounterAffidavits());
@@ -243,7 +255,7 @@ public class LegalCaseService {
     }
 
     @Transactional
-    public LegalCase saveStandingCouncilEntity(final LegalCaseAdvocate legalCaseAdvocate) {
+    public LegalCase saveStandingCouncilEntity(final LegalCaseAdvocate legalCaseAdvocate) throws ParseException {
         LegalCaseAdvocate legalCaseAdvocatetemp = null;
         AdvocateMaster seniorLegalMaster = null;
         final AdvocateMaster advocateName = advocateMasterService
@@ -276,7 +288,7 @@ public class LegalCaseService {
             legalCaseAdvocate.getLegalCase().getLegalCaseAdvocates().add(legalCaseAdvocate);
             legalCaseSmsService.sendSmsToStandingCounsel(legalCaseAdvocate);
         }
-
+        updateIndexes(legalCaseAdvocate.getLegalCase(), null, null, null, null);
         return legalCaseRepository.save(legalCaseAdvocate.getLegalCase());
 
     }
@@ -369,6 +381,20 @@ public class LegalCaseService {
     public ReportStatus getReportStatusByCode(final String reportStatusCode) {
         final ReportStatus reportStatus = reportStatusRepository.findByCode(reportStatusCode);
         return reportStatus;
+    }
+
+    public void updateIndexes(final LegalCase legalCase, final LegalCaseInterimOrder legalCaseInterimOrder,
+            final Judgment judgment, final JudgmentImpl judgmentImpl, final LegalCaseDisposal closeCase)
+            throws ParseException {
+        createLegalCaseDocumentIndex(legalCase, legalCaseInterimOrder, judgment, judgmentImpl, closeCase);
+    }
+
+    public LegalCaseDocument createLegalCaseDocumentIndex(final LegalCase legalCase,
+            final LegalCaseInterimOrder legalCaseInterimOrder, final Judgment judgment, final JudgmentImpl judgmentImpl,
+            final LegalCaseDisposal closeCase) throws ParseException {
+        return legalCaseDocumentService.persistLegalCaseDocumentIndex(legalCase, legalCaseInterimOrder, judgment, judgmentImpl,
+                closeCase);
+
     }
 
 }
