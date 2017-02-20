@@ -121,12 +121,12 @@ public class LegalCaseService {
     }
 
     @Transactional
-    public LegalCase persist(LegalCase legalcase, final MultipartFile[] files) throws IOException, ParseException {
+    public LegalCase persist(final LegalCase legalcase, final MultipartFile[] files) throws IOException, ParseException {
         legalcase.setCaseNumber(
                 legalcase.getCaseNumber() + (legalcase.getWpYear() != null ? "/" + legalcase.getWpYear() : ""));
         legalcase.setStatus(legalCaseUtil.getStatusForModuleAndCode(LcmsConstants.MODULE_TYPE_LEGALCASE,
                 LcmsConstants.LEGALCASE_STATUS_CREATED));
-        legalcase = prepareChildEntities(legalcase);
+        prepareChildEntities(legalcase);
         updateNextDate(legalcase, legalcase.getPwrList());
         setLegalCaseReportStatus(legalcase, legalcase.getPwrList());
         final LegalCase savedlegalcase = legalCaseRepository.save(legalcase);
