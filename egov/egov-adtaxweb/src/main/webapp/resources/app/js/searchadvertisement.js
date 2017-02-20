@@ -220,7 +220,7 @@ $(document).ready(function(){
 	$("#adtax_search").on('change','tbody tr td .dropchange',
 			function() {
 			//var applicationNumber = oTable.fnGetData($(this).parent().parent(), 1);
-			var adtaxid= oTable.fnGetData($(this).parent().parent(), 10);
+			var adtaxid= oTable.fnGetData($(this).parent().parent(), 11);
 			//var advertisementNumber = oTable.fnGetData($(this).parent().parent(), 0);
 						if (this.value == 0) {
 							var url = '/adtax/advertisement/permitOrder/'+ adtaxid;
