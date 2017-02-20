@@ -273,7 +273,7 @@ $(document).ready(function(){
 	
 	$("#search-update-result-table").on('click','tbody tr td i.fa-eye',function(e) {
 		var hoardingId = datatbl.fnGetData($(this).parent().parent().parent(),0);
-		var permitId = datatbl.fnGetData($(this).parent().parent().parent(),6);
+		var permitId = datatbl.fnGetData($(this).parent().parent().parent(),7);
 		window.open("view/"+permitId, ''+permitId+'', 'width=900, height=700, top=300, left=150,scrollbars=yes')
 	});
 	
