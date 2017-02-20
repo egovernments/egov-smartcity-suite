@@ -45,79 +45,123 @@
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <div class="row">
 	<div class="col-md-12">
-		<form:form id="agencywisehoardingsearchform" method="get" class="form-horizontal form-groups-bordered" modelAttribute="advertisementPermitDetail" commandName="advertisementPermitDetail">
-	        <div class="panel panel-primary" data-collapsed="0">
-	            <div class="panel-heading">
-	                <div class="panel-title"></div>
-	            </div>
-	            <div class="panel-body custom-form">
-                    <div class="form-group">
-                        <label class="col-sm-3 control-label text-right"><spring:message code="lbl.agency.name"/></label>
-                        <div class="col-sm-3 add-margin">
-                            <input type="text" id="agencyTypeAhead" class="form-control typeahead" autocomplete="off">
-                        <form:hidden path="agency" id="agencyId" value="${advertisementPermitDetail.agency}" />
-                        </div>
-                         <label class="col-sm-2 control-label text-left"><spring:message code="lbl.owner.Details"/></label>
-                        <div class="col-sm-3 add-margin">
-                            <form:input type="text" class="form-control" id="ownerDetail" path="ownerDetail"/>
-							<form:errors path="ownerDetail" cssClass="error-msg"/>
-                        </div>	 
-                        
-                    </div>
-                    <div class="form-group">
-                        <label class="col-sm-3 control-label text-right"><spring:message code="lbl.hoarding.category"/></label>
-                        <div class="col-sm-3 add-margin">
-                   			<form:select path="advertisement.category" id="categories" cssClass="form-control" 
-							cssErrorClass="form-control error">
-								<form:option value=""><spring:message code="lbl.select" /></form:option>
+		<form:form role="form" id="agencywisehoardingsearchform" method="get"
+			class="form-horizontal form-groups-bordered"
+			modelAttribute="advertisementPermitDetail"
+			commandName="advertisementPermitDetail">
+			<div class="panel panel-primary" data-collapsed="0">
+				<div class="panel-heading">
+					<div class="panel-title"></div>
+				</div>
+				<div class="panel-body custom-form">
+					<div class="form-group">
+						<label class="col-sm-3 control-label text-right"><spring:message
+								code="lbl.agency.name" /></label>
+						<div class="col-sm-3 add-margin">
+							<input type="text" id="agencyTypeAhead"
+								class="form-control typeahead" autocomplete="off">
+							<form:hidden path="agency" id="agencyId"
+								value="${advertisementPermitDetail.agency}" />
+						</div>
+						<label class="col-sm-2 control-label text-left"><spring:message
+								code="lbl.owner.Details" /></label>
+						<div class="col-sm-3 add-margin">
+							<form:input type="text" class="form-control" id="ownerDetail"
+								path="ownerDetail" />
+							<form:errors path="ownerDetail" cssClass="error-msg" />
+						</div>
+
+					</div>
+					<div class="form-group">
+						<label class="col-sm-3 control-label text-right"><spring:message
+								code="lbl.hoarding.category" /></label>
+						<div class="col-sm-3 add-margin">
+							<form:select path="advertisement.category" id="categories"
+								cssClass="form-control" cssErrorClass="form-control error">
+								<form:option value="">
+									<spring:message code="lbl.select" />
+								</form:option>
 								<c:forEach items="${hoardingcategories}" var="hoardingcategory">
-                       				<option value="${hoardingcategory.id}"> ${hoardingcategory.name}</option>
-                       			</c:forEach>
+									<option value="${hoardingcategory.id}">
+										${hoardingcategory.name}</option>
+								</c:forEach>
 							</form:select>
-						 	<form:errors path="advertisement.category" cssClass="error-msg"/>
-                        </div>
-                        <label class="col-sm-2 control-label text-right"><spring:message code="lbl.hoarding.subcategory"/></label>
-                        <div class="col-sm-3 add-margin">
-		                  	<form:select path="advertisement.subCategory" id="subcategories" cssClass="form-control" 
-							cssErrorClass="form-control error">
-								<form:option value=""><spring:message code="lbl.select" /></form:option>
+							<form:errors path="advertisement.category" cssClass="error-msg" />
+						</div>
+						<label class="col-sm-2 control-label text-right"><spring:message
+								code="lbl.hoarding.subcategory" /></label>
+						<div class="col-sm-3 add-margin">
+							<form:select path="advertisement.subCategory" id="subcategories"
+								cssClass="form-control" cssErrorClass="form-control error">
+								<form:option value="">
+									<spring:message code="lbl.select" />
+								</form:option>
 								<form:options items="${subCategoryList}" />
-								
+
 							</form:select>
-							<form:errors path="advertisement.subCategory" cssClass="error-msg"/>
-                        </div>
-                    </div>
-                      <div class="form-group">
-						<label class="col-sm-3 control-label text-right"><spring:message code="lbl.locality"/></label>
-					    <div class="col-sm-3 add-margin">
-					    	<form:select path="advertisement.locality" id="zoneList" cssClass="form-control" 
-							cssErrorClass="form-control error">
-								<form:option value=""><spring:message code="lbl.select" /></form:option>
+							<form:errors path="advertisement.subCategory"
+								cssClass="error-msg" />
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-3 control-label text-right"><spring:message
+								code="lbl.locality" /></label>
+						<div class="col-sm-3 add-margin">
+							<form:select path="advertisement.locality" id="zoneList"
+								cssClass="form-control" cssErrorClass="form-control error">
+								<form:option value="">
+									<spring:message code="lbl.select" />
+								</form:option>
 								<c:forEach items="${localities}" var="zone">
-					   				<option value="${zone.id}"> ${zone.name}</option>
-					   			</c:forEach>
+									<option value="${zone.id}">${zone.name}</option>
+								</c:forEach>
 							</form:select>
-					    </div>
-						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.ward"/></label>
-					    <div class="col-sm-3 add-margin">
-							<form:select path="advertisement.ward" id="wardlist" cssClass="form-control" 
-							cssErrorClass="form-control error">
-								<form:option value=""><spring:message code="lbl.select" /></form:option>
+						</div>
+						<label class="col-sm-2 control-label text-right"><spring:message
+								code="lbl.ward" /></label>
+						<div class="col-sm-3 add-margin">
+							<form:select path="advertisement.ward" id="wardlist"
+								cssClass="form-control" cssErrorClass="form-control error">
+								<form:option value="">
+									<spring:message code="lbl.select" />
+								</form:option>
 							</form:select>
 						</div>
 					</div>
-	            </div>
-	        </div>
-        	<div class="row">
-       			<div class="text-center">
-       				<button type="submit" class="btn btn-primary"  id="searchagencywise"><spring:message code="lbl.submit"/></button>
-          		    <button type="reset" id="reset" class="btn btn-default"><spring:message code="lbl.reset"/></button>
-          		    <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a>
-          		</div>
-        	</div>
-        </form:form>
-        <br/>
-        <table class="table table-bordered datatable dt-responsive" id="adtax_searchagencywiserecord"></table>
+				</div>
+			</div>
+			<div class="row">
+				<div class="text-center">
+					<button type="submit" class="btn btn-primary" id="searchagencywise">
+						<spring:message code="lbl.submit" />
+					</button>
+					<button type="reset" id="reset" class="btn btn-default">
+						<spring:message code="lbl.reset" />
+					</button>
+					<a href="javascript:void(0)" class="btn btn-default"
+						onclick="self.close()"><spring:message code="lbl.close" /></a>
+				</div>
+			</div>
+		</form:form>
+		<br />
+		<div class="row display-hide report-section">
+			<div class="col-md-12 form-group">
+				<table class="table table-bordered table-hover multiheadertbl"
+					id="adtax_searchagencywiserecord">
+					<tfoot id="report-footer">
+						<tr>
+							<td>Total</td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+						</tr>
+					</tfoot>
+				</table>
+			</div>
+		</div>
 	</div>
 </div>
 <link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>
