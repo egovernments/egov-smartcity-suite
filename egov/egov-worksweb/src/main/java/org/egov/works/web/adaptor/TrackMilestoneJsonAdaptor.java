@@ -97,7 +97,7 @@ public class TrackMilestoneJsonAdaptor implements JsonSerializer<Milestone> {
             jsonObject.addProperty("workOrderNumber", workOrder.getWorkOrderNumber());
             jsonObject.addProperty("workOrderId", workOrder.getId().toString());
             jsonObject.addProperty("workOrderAmount", df.format(workOrder.getWorkOrderAmount()));
-            jsonObject.addProperty("workOrderDate", df.format(workOrder.getWorkOrderDate()));
+            jsonObject.addProperty("workOrderDate", sdf.format(workOrder.getWorkOrderDate()));
             jsonObject.addProperty("contractorName", workOrder.getContractor().getName());
         } else {
             jsonObject.addProperty("workOrderNumber", StringUtils.EMPTY);
