@@ -107,6 +107,7 @@
 											<td></td>
 											<td></td>
 											<td></td>
+											<td></td>
 											<td align="right"><span style="font-weight: bolder;">TOTAL</span></td>
 											<td align="right"><span style="font-weight: bolder;">${totalDemandAmount}</span></td>
 											<td align="right"><span style="font-weight: bolder;">${totalCollectionAmount}</span></td>
