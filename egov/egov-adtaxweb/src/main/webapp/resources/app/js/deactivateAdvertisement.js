@@ -137,7 +137,7 @@ $('#searchrecord').click(function(e){
 						  { "data" : "agencyName", "title": "Agency"},
 						  { "data" : "ownerDetail", "title": "Owner Detail"},
 						  { "data" : "pendingDemandAmount", "title": "Amount"},
-						  { "data" : "additionalTaxAmount", "title": "Additional Tax"},
+						  { "data" : "additionalTaxAmount", "title": "Additional Tax (Service Tax and Cesses)"},
 						  { "data" : "penaltyAmount", "title": "Penalty Amount"},
 						  { "data" : "status", "title": "Hoarding Status"},
 						  

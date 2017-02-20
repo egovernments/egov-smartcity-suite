@@ -174,7 +174,7 @@ $(document).ready(function(){
 						  { "data" : "applicationNumber", "title": "Application No."},
 						  { "data" : "applicationFromDate", "title": "Application Date"},
 						  { "data" : "pendingDemandAmount", "title": "Amount"},
-						  { "data" : "additionalTaxAmount", "title": "Additional Tax"},
+						  { "data" : "additionalTaxAmount", "title": "Additional Tax (Service Tax and Cesses)"},
 						  { "data" : "penaltyAmount", "title": "Penalty Amount"},
 						  { "data" : "totalAmount", "title": "Total Amount"},
 						  { "data" : "permissionNumber", "visible": false},
