@@ -546,6 +546,7 @@ public interface PropertyTaxConstants {
         private static final long serialVersionUID = 464912402295082366L;
 
         {
+            put(-9,"Cellar");
             put(-3, "Basement-2");
             put(-2, "Basement-1");
             put(-1, "Stilt Floor");
@@ -600,6 +601,7 @@ public interface PropertyTaxConstants {
             put(48, "48th Floor");
             put(49, "49th Floor");
             put(50, "50th Floor");
+            put(99,"Pent House");
         }
     };
 
