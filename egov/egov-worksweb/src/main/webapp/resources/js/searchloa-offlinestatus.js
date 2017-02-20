@@ -185,11 +185,17 @@ function callAjaxSearch() {
 				},
 				"fnRowCallback" : function(row, data, index) {
 					$('td:eq(0)', row).html(index + 1);
-					if (data.estimateNumber != null)
+					if ($("#lineEstimateRequired").val() == 'true' && data.lineEstimateId != '' && data.estimateNumber != ''){
 						$('td:eq(3)', row).html(
 								'<a href="javascript:void(0);" onclick="openLineEstimate(\''
 										+ data.lineEstimateId + '\')">'
 										+ data.estimateNumber + '</a>');
+					}else if(data.abstractEstimateId != '' && data.estimateNumber != ''){
+						$('td:eq(3)', row).html(
+								'<a href="javascript:void(0);" onclick="openAbstractEstimate(\''
+										+ data.abstractEstimateId + '\')">'
+										+ data.estimateNumber + '</a>');
+					}
 					$('td:eq(6)',row).html(parseFloat(Math.round(data.workOrderAmount * 100) / 100).toFixed(2));
 					if (data.statusSize != 6){
 					$('td:eq(8)', row).html(
@@ -240,4 +246,8 @@ function openLineEstimate(lineEstimateId) {
 
 function setStatus(workOrderId){
 	window.open("/egworks/offlinestatus/setstatus-loa/" + workOrderId, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+}
+
+function openAbstractEstimate(id) {
+	window.open("/egworks/abstractestimate/view/"+ id , "", "height=650,width=980,scrollbars=yes,left=0,top=0,status=yes");
 }

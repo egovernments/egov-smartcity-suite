@@ -43,9 +43,12 @@ package org.egov.works.web.adaptor;
 import java.lang.reflect.Type;
 import java.util.List;
 
+import org.egov.infra.utils.StringUtils;
+import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.models.tender.OfflineStatus;
 import org.egov.works.offlinestatus.service.OfflineStatusService;
 import org.egov.works.utils.WorksConstants;
+import org.egov.works.workorder.entity.WorkOrder;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -62,58 +65,46 @@ public class SearchLetterOfAcceptanceForOfflineStatusJsonAdaptor implements Json
     private OfflineStatusService offlineStatusService;
 
     @Override
-    public JsonElement serialize(final WorkOrderEstimate workOrderEstimate, final Type type, final JsonSerializationContext jsc) {
+    public JsonElement serialize(final WorkOrderEstimate workOrderEstimate, final Type type,
+            final JsonSerializationContext jsc) {
         final JsonObject jsonObject = new JsonObject();
         if (workOrderEstimate != null) {
-            if (workOrderEstimate.getWorkOrder().getWorkOrderNumber() != null)
-                jsonObject.addProperty("workOrderNumber", workOrderEstimate.getWorkOrder().getWorkOrderNumber());
-            else
-                jsonObject.addProperty("workOrderNumber", "");
-            if (workOrderEstimate.getWorkOrder().getWorkOrderDate() != null)
-                jsonObject.addProperty("workOrderDate", workOrderEstimate.getWorkOrder().getWorkOrderDate().toString());
-            else
-                jsonObject.addProperty("workOrderDate", "");
-            if (workOrderEstimate.getWorkOrder().getContractor() != null)
-                jsonObject.addProperty("contractor", workOrderEstimate.getWorkOrder().getContractor().getName());
-            else
-                jsonObject.addProperty("contractor", "");
-            if (workOrderEstimate.getWorkOrder().getEgwStatus() != null) {
-                final OfflineStatus offlineStatusses = offlineStatusService.getLastOfflineStatusByObjectIdAndObjectType(
-                        workOrderEstimate.getWorkOrder().getId(), WorksConstants.WORKORDER);
-                if (offlineStatusses != null)
-                    jsonObject.addProperty("status", offlineStatusses.getEgwStatus().getDescription());
-                else
-                    jsonObject.addProperty("status", workOrderEstimate.getWorkOrder().getEgwStatus().getDescription());
-            } else
-                jsonObject.addProperty("status", "");
-            if (workOrderEstimate.getEstimate().getLineEstimateDetails() != null)
-                jsonObject.addProperty("estimateNumber",
-                        workOrderEstimate.getEstimate().getLineEstimateDetails().getEstimateNumber());
-            else
-                jsonObject.addProperty("estimateNumber", workOrderEstimate
-                        .getEstimate().getEstimateNumber());
+            final WorkOrder wo = workOrderEstimate.getWorkOrder();
+            final LineEstimateDetails led = workOrderEstimate.getEstimate().getLineEstimateDetails();
+            setWorkOrderJsonValues(jsonObject, wo);
+            jsonObject.addProperty("estimateNumber",workOrderEstimate.getEstimate().getEstimateNumber());
 
-            if (workOrderEstimate.getEstimate().getLineEstimateDetails() != null)
-                jsonObject.addProperty("nameOfWork", workOrderEstimate.getEstimate()
-                        .getLineEstimateDetails().getNameOfWork());
-            else
-                jsonObject.addProperty("nameOfWork",
-                        workOrderEstimate.getEstimate().getName());
+            jsonObject.addProperty("nameOfWork",workOrderEstimate.getEstimate().getName());
 
-            final List<OfflineStatus> offlinestatusses = offlineStatusService
-                    .getOfflineStatusByObjectIdAndType(workOrderEstimate.getWorkOrder().getId(), WorksConstants.WORKORDER);
-            if (workOrderEstimate.getEstimate().getLineEstimateDetails() != null)
-                jsonObject.addProperty("lineEstimateId",
-                        workOrderEstimate.getEstimate()
-                                .getLineEstimateDetails().getLineEstimate().getId());
-            else
-                jsonObject.addProperty("lineEstimateId", "");
-            jsonObject.addProperty("workOrderAmount", workOrderEstimate.getWorkOrder().getWorkOrderAmount());
-
-            jsonObject.addProperty("id", workOrderEstimate.getWorkOrder().getId());
-            jsonObject.addProperty("statusSize", offlinestatusses.size());
-
+            jsonObject.addProperty("lineEstimateId",
+                    led != null ? led.getLineEstimate().getId().toString() : StringUtils.EMPTY);
+            jsonObject.addProperty("abstractEstimateId", workOrderEstimate.getEstimate().getId());
         }
         return jsonObject;
+    }
+
+    private void setWorkOrderJsonValues(final JsonObject jsonObject, final WorkOrder wo) {
+        if (wo != null) {
+            jsonObject.addProperty("workOrderNumber",
+                    wo.getWorkOrderNumber() != null ? wo.getWorkOrderNumber() : StringUtils.EMPTY);
+            jsonObject.addProperty("workOrderDate",
+                    wo.getWorkOrderDate() != null ? wo.getWorkOrderDate().toString() : StringUtils.EMPTY);
+            jsonObject.addProperty("contractor",
+                    wo.getContractor() != null ? wo.getContractor().getName() : StringUtils.EMPTY);
+            jsonObject.addProperty("workOrderAmount", wo.getWorkOrderAmount());
+
+            jsonObject.addProperty("id", wo.getId());
+            final List<OfflineStatus> offlinestatusses = offlineStatusService
+                    .getOfflineStatusByObjectIdAndType(wo.getId(), WorksConstants.WORKORDER);
+            jsonObject.addProperty("statusSize", offlinestatusses.size());
+
+            if (wo.getEgwStatus() != null) {
+                final OfflineStatus offlineStatusses = offlineStatusService
+                        .getLastOfflineStatusByObjectIdAndObjectType(wo.getId(), WorksConstants.WORKORDER);
+                jsonObject.addProperty("status", offlineStatusses != null
+                        ? offlineStatusses.getEgwStatus().getDescription() : wo.getEgwStatus().getDescription());
+            } else
+                jsonObject.addProperty("status", StringUtils.EMPTY);
+        }
     }
 }

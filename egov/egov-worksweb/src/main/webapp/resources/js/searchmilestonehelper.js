@@ -134,10 +134,14 @@ function callAjaxSearch() {
 				"fnRowCallback" : function(row, data, index) {
 					$('td:eq(0)',row).html('<input type="radio" name="selectCheckbox" value="'+ data.id +'"/>');
 					$('td:eq(1)',row).html(index+1);
-					$('td:eq(2)', row).html(
-							'<a href="javascript:void(0);" onclick="openLineEstimate(\''
-									+ data.lineEstimateId + '\')">'
-									+ data.workIdentificationNumber + '</a>');
+					if($("#lineEstimateRequired").val() == 'true' && data.lineEstimateId != ''){
+						$('td:eq(2)', row).html(
+								'<a href="javascript:void(0);" onclick="openLineEstimate(\''
+										+ data.lineEstimateId + '\')">'
+										+ data.workIdentificationNumber + '</a>');
+					}else{
+						$('td:eq(2)', row).html(data.workIdentificationNumber);
+					}
 					$('td:eq(5)', row).html(
 							'<a href="javascript:void(0);" onclick="openLOA(\''
 									+ data.workOrderId + '\')">'

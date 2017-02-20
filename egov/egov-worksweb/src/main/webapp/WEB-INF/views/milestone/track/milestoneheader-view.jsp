@@ -61,11 +61,13 @@
 					</div>
 					<div class="col-xs-3 add-margin view-content" id="estimateNumber">
 					</div>
-					<div class="col-xs-3 add-margin">
-						<spring:message code="lbl.dateofproposal" />
-					</div>
-					<div class="col-xs-3 add-margin view-content" id="lineEstimateDate">
-					</div>
+					<c:if test="${lineEstimateRequired == true }">
+						<div class="col-xs-3 add-margin">
+							<spring:message code="lbl.dateofproposal" />
+						</div>
+						<div class="col-xs-3 add-margin view-content" id="lineEstimateDate">
+						</div>
+					</c:if>
 				</div>
 				<div class="row add-border">
 					<div class="col-xs-3 add-margin">
@@ -92,11 +94,13 @@
 					</div>
 				</div>
 				<div class="row add-border">
-					<div class="col-xs-3 add-margin">
-						<spring:message code="lbl.estimatepreparedby" />
-					</div>
-					<div class="col-xs-3 add-margin view-content" id="lineEstimateCreatedBy">
-					</div>
+					<c:if test="${lineEstimateRequired == true}">
+						<div class="col-xs-3 add-margin">
+							<spring:message code="lbl.estimatepreparedby" />
+						</div>
+						<div class="col-xs-3 add-margin view-content" id="lineEstimateCreatedBy">
+						</div>
+					</c:if>
 					<div class="col-xs-3 add-margin">
 						<spring:message code="lbl.department" />
 					</div>

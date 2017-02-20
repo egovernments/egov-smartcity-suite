@@ -45,6 +45,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/taglibs/cdn.tld" prefix="cdn"%>
 <div id="searchFormDiv">
+	<input type = "hidden" value = "${lineEstimateRequired }" id = "lineEstimateRequired" />
 	<form:form name="SearchRequest" role="form" action="" modelAttribute="searchRequestMilestone" id="searchRequestMilestone" class="form-horizontal form-groups-bordered">
 		<div class="row">
 			<div class="col-md-12">

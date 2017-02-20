@@ -48,6 +48,7 @@ import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.works.config.properties.WorksApplicationProperties;
 import org.egov.works.contractorbill.entity.SearchRequestContractorBill;
 import org.egov.works.contractorbill.entity.enums.BillTypes;
 import org.egov.works.utils.WorksConstants;
@@ -74,6 +75,9 @@ public class SearchContractorBillController {
 
     @Autowired
     private EgwStatusHibernateDAO egwStatusHibernateDAO;
+    
+    @Autowired
+    private WorksApplicationProperties worksApplicationProperties;
 
     @RequestMapping(value = "/searchcontractorform", method = RequestMethod.GET)
     public String showSearchContractorBill(
@@ -84,6 +88,7 @@ public class SearchContractorBillController {
         if (departments != null && !departments.isEmpty())
             searchRequestContractorBill.setDepartment(departments.get(0).getId());
         model.addAttribute("searchRequestContractorBill", searchRequestContractorBill);
+        model.addAttribute("lineEstimateRequired", worksApplicationProperties.lineEstimateRequired());
         return "searchcontractorbill-search";
     }
 

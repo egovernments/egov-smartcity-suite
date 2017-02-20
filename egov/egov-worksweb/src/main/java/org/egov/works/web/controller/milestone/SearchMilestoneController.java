@@ -47,6 +47,7 @@ import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.works.config.properties.WorksApplicationProperties;
 import org.egov.works.masters.entity.MilestoneTemplate;
 import org.egov.works.milestone.entity.SearchRequestMilestone;
 import org.egov.works.milestone.entity.enums.MilestoneActivityStatus;
@@ -62,6 +63,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Controller
 @RequestMapping(value = "/milestone")
 public class SearchMilestoneController {
+    
+    private static final String LINEESTIMATEREQUIRED = "lineEstimateRequired";
+    private static final String SEARCHREQUESTMILESTONE = "searchRequestMilestone";
 
     @Autowired
     private DepartmentService departmentService;
@@ -77,6 +81,9 @@ public class SearchMilestoneController {
 
     @Autowired
     private TypeOfWorkService typeOfWorkService;
+    
+    @Autowired
+    private WorksApplicationProperties worksApplicationProperties;
 
     @RequestMapping(value = "/search-form", method = RequestMethod.GET)
     public String showSearchMilestoneForm(@ModelAttribute final SearchRequestMilestone searchRequestMilestone,
@@ -86,7 +93,8 @@ public class SearchMilestoneController {
         if (departments != null && !departments.isEmpty())
             searchRequestMilestone.setDepartment(departments.get(0).getId());
         model.addAttribute("currentStatus", MilestoneActivityStatus.values());
-        model.addAttribute("searchRequestMilestone", searchRequestMilestone);
+        model.addAttribute(SEARCHREQUESTMILESTONE, searchRequestMilestone);
+        model.addAttribute(LINEESTIMATEREQUIRED, worksApplicationProperties.lineEstimateRequired());
         return "searchmilestone-form";
     }
 
@@ -111,8 +119,9 @@ public class SearchMilestoneController {
         final List<Department> departments = worksUtils.getUserDepartments(securityUtils.getCurrentUser());
         if (departments != null && !departments.isEmpty())
             searchRequestMilestone.setDepartment(departments.get(0).getId());
-        model.addAttribute("searchRequestMilestone", searchRequestMilestone);
+        model.addAttribute(SEARCHREQUESTMILESTONE, searchRequestMilestone);
         model.addAttribute("egwStatus", egwStatusDAO.getStatusByModule(WorksConstants.MILESTONE_MODULE_KEY));
+        model.addAttribute(LINEESTIMATEREQUIRED, worksApplicationProperties.lineEstimateRequired());
         return "viewMilestone-form";
     }
 
@@ -123,8 +132,9 @@ public class SearchMilestoneController {
         final List<Department> departments = worksUtils.getUserDepartments(securityUtils.getCurrentUser());
         if (departments != null && !departments.isEmpty())
             searchRequestMilestone.setDepartment(departments.get(0).getId());
-        model.addAttribute("searchRequestMilestone", searchRequestMilestone);
+        model.addAttribute(SEARCHREQUESTMILESTONE, searchRequestMilestone);
         model.addAttribute("egwStatus", egwStatusDAO.getStatusByModule(WorksConstants.MILESTONE_MODULE_KEY));
+        model.addAttribute(LINEESTIMATEREQUIRED, worksApplicationProperties.lineEstimateRequired());
         return "searchTrackMilestone-form";
     }
 

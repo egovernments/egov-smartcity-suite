@@ -49,6 +49,7 @@ import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.works.config.properties.WorksApplicationProperties;
 import org.egov.works.letterofacceptance.entity.SearchRequestLetterOfAcceptance;
 import org.egov.works.letterofacceptance.entity.SearchRequestLetterOfAcceptanceForRE;
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
@@ -83,6 +84,9 @@ public class LetterOfAcceptanceSearchController {
 
     @Autowired
     private TypeOfWorkService typeOfWorkService;
+    
+    @Autowired
+    private WorksApplicationProperties worksApplicationProperties;
 
     @RequestMapping(value = "/searchform", method = RequestMethod.GET)
     public String showSearchLineEstimateForm(
@@ -120,6 +124,7 @@ public class LetterOfAcceptanceSearchController {
         if (departments != null && !departments.isEmpty())
             searchRequestLetterOfAcceptance.setDepartmentName(departments.get(0).getId());
         model.addAttribute("searchRequestLetterOfAcceptance", searchRequestLetterOfAcceptance);
+        model.addAttribute("lineEstimateRequired", worksApplicationProperties.lineEstimateRequired());
         return "search-searchmilestone";
     }
 
@@ -162,6 +167,7 @@ public class LetterOfAcceptanceSearchController {
 
         model.addAttribute("egwStatus", newEgwStatuses);
         model.addAttribute("searchRequestLetterOfAcceptance", searchRequestLetterOfAcceptance);
+        model.addAttribute("lineEstimateRequired", worksApplicationProperties.lineEstimateRequired());
         return "setofflinestatus-search";
     }
 

@@ -44,6 +44,7 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 
 import org.egov.infra.exception.ApplicationException;
+import org.egov.works.config.properties.WorksApplicationProperties;
 import org.egov.works.milestone.entity.Milestone;
 import org.egov.works.milestone.service.MilestoneService;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
@@ -71,6 +72,9 @@ public class CreateMilestoneController {
     @Autowired
     @Qualifier("messageSource")
     private MessageSource messageSource;
+    
+    @Autowired
+    private WorksApplicationProperties worksApplicationProperties;
 
     @RequestMapping(value = "/newform", method = RequestMethod.GET)
     public String showNewMilestoneForm(
@@ -87,6 +91,7 @@ public class CreateMilestoneController {
 
         model.addAttribute("workOrderEstimate", workOrderEstimate);
         model.addAttribute("milestone", new Milestone());
+        model.addAttribute("lineEstimateRequired", worksApplicationProperties.lineEstimateRequired());
         return "newMilestone-form";
     }
 

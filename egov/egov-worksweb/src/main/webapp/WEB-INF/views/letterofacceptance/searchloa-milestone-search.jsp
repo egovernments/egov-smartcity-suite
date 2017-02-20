@@ -46,6 +46,7 @@
 <%@ taglib uri="/WEB-INF/taglibs/cdn.tld" prefix="cdn"%>
 <input type="hidden" value="<spring:message code='error.letterofacceptance.select' />" id='selectLOA'>
 <input type="hidden" value="<spring:message code="error.adminfromdate.admintodate" />" id="errorToDateAndFromDate" />
+<input type="hidden" value="${lineEstimateRequired }" id="lineEstimateRequired" />
 <form:form name="SearchRequest" role="form" action="" modelAttribute="searchRequestLetterOfAcceptance" id="searchRequestLetterOfAcceptance" class="form-horizontal form-groups-bordered">
 	<div class="panel panel-primary" data-collapsed="0">
 		<div class="panel-heading">

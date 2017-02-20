@@ -141,10 +141,17 @@ function callAjaxSearch() {
 				},
 				"fnRowCallback" : function(row, data, index) {
 					$('td:eq(0)',row).html(index+1);
-					$('td:eq(1)', row).html(
-							'<a href="javascript:void(0);" onclick="openLineEstimate(\''
-									+ data.lineEstimateId + '\')">'
-									+ data.workIdentificationNumber + '</a>');
+					if($("#lineEstimateRequired").val() == 'true' && data.lineEstimateId != ''){
+						$('td:eq(1)', row).html(
+								'<a href="javascript:void(0);" onclick="openLineEstimate(\''
+										+ data.lineEstimateId + '\')">'
+										+ data.workIdentificationNumber + '</a>');
+					}else if(data.abstractEstimateId != ''){
+						$('td:eq(1)', row).html(
+								'<a href="javascript:void(0);" onclick="openAbstractEstimate(\''
+										+ data.abstractEstimateId + '\')">'
+										+ data.workIdentificationNumber + '</a>');
+					}
 					$('td:eq(4)', row).html(
 							'<a href="javascript:void(0);" onclick="openLOA(\''
 									+ data.workOrderId + '\')">'
@@ -200,4 +207,8 @@ function openLOA(workOrderId) {
 
 function openMilestone(milestoneId) {
 	window.open("/egworks/milestone/viewmilestone/" + milestoneId, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+}
+
+function openAbstractEstimate(id) {
+	window.open("/egworks/abstractestimate/view/"+ id , "", "height=650,width=980,scrollbars=yes,left=0,top=0,status=yes");
 }

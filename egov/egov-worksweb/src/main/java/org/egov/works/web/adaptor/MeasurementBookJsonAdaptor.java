@@ -49,6 +49,7 @@ import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.utils.ApplicationConstant;
+import org.egov.infra.utils.StringUtils;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.abstractestimate.service.MeasurementSheetService;
 import org.egov.works.mb.entity.MBHeader;
@@ -93,88 +94,84 @@ public class MeasurementBookJsonAdaptor implements JsonSerializer<WorkOrderEstim
     public JsonElement serialize(final WorkOrderEstimate workOrderEstimate, final Type type,
             final JsonSerializationContext jsc) {
         final JsonObject jsonObject = new JsonObject();
-        final DecimalFormat df = new DecimalFormat("0.00");
         final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         jsonObject.addProperty("showHistory", false);
         if (workOrderEstimate != null) {
-            jsonObject.addProperty("workOrderEstimateId", workOrderEstimate.getId());
-            if (workOrderEstimate.getEstimate() != null) {
-                final AbstractEstimate estimate = workOrderEstimate.getEstimate();
-                jsonObject.addProperty("estimateNumber", estimate.getEstimateNumber());
-                jsonObject.addProperty("estimateId", estimate.getId());
-                jsonObject.addProperty("projectCode", estimate.getProjectCode().getCode());
-                jsonObject.addProperty("nameOfWork", estimate.getName());
-            } else {
-                jsonObject.addProperty("estimateNumber", "");
-                jsonObject.addProperty("estimateId", "");
-                jsonObject.addProperty("projectCode", "");
-                jsonObject.addProperty("nameOfWork", "");
-            }
-            if (workOrderEstimate.getWorkOrder() != null) {
-                final WorkOrder workOrder = workOrderEstimate.getWorkOrder();
-                jsonObject.addProperty("workOrderNumber", workOrder.getWorkOrderNumber());
-                jsonObject.addProperty("workOrderId", workOrder.getId());
-                jsonObject.addProperty("workOrderAmount", df.format(workOrder.getWorkOrderAmount()));
-                jsonObject.addProperty("contractorName", workOrder.getContractor().getName());
-                jsonObject.addProperty("workOrderAssignedTo", workOrder.getEngineerIncharge().getName());
-                jsonObject.addProperty("tenderFinalisedPercentage", workOrder.getTenderFinalizedPercentage());
-                final OfflineStatus offlineStatus = offlineStatusService
-                        .getOfflineStatusByObjectIdAndObjectTypeAndStatus(workOrder.getId(), WorksConstants.WORKORDER,
-                                OfflineStatuses.WORK_COMMENCED.toString().toUpperCase());
-                if (offlineStatus != null)
-                    jsonObject.addProperty("workCommencedDate", sdf.format(offlineStatus.getStatusDate()));
-                else
-                    jsonObject.addProperty("workCommencedDate", "");
-                final Double totalMBAmountOfMBs = mbHeaderService.getTotalMBAmountOfMBs(null, workOrderEstimate.getId(),
-                        MBHeader.MeasurementBookStatus.CANCELLED.toString());
-                if (totalMBAmountOfMBs != null)
-                    jsonObject.addProperty("totalMBAmountOfMBs", totalMBAmountOfMBs);
-                else
-                    jsonObject.addProperty("totalMBAmountOfMBs", "");
-            } else {
-                jsonObject.addProperty("workOrderNumber", "");
-                jsonObject.addProperty("workOrderId", "");
-                jsonObject.addProperty("workOrderAmount", "");
-                jsonObject.addProperty("contractorName", "");
-                jsonObject.addProperty("workOrderAssignedTo", "");
-                jsonObject.addProperty("tenderFinalisedPercentage", "");
-                jsonObject.addProperty("workCommencedDate", "");
-                jsonObject.addProperty("totalMBAmountOfMBs", "");
-            }
-
-            final List<AppConfigValues> values = appConfigValuesService.getConfigValuesByModuleAndKey(
-                    WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_KEY_MB_QUANTITY_TOLERANCE_LEVEL);
-            final AppConfigValues value = values.get(0);
-
-            jsonObject.addProperty("quantityTolerance", value.getValue());
-
+            setMBJsonValues(workOrderEstimate, jsonObject, sdf);
             final List<MBHeader> previousMBHeaders = mbHeaderService.getPreviousMBHeaders(-1L,
                     workOrderEstimate.getId());
 
-            if (!previousMBHeaders.isEmpty())
-                jsonObject.addProperty("previousMBDate",
-                        sdf.format(previousMBHeaders.get(previousMBHeaders.size() - 1).getMbDate()));
-            else
-                jsonObject.addProperty("previousMBDate", "");
-
-            jsonObject.addProperty("isMeasurementsExist",
-                    measurementSheetService.existsByEstimate(workOrderEstimate.getEstimate().getId()));
-            jsonObject.addProperty("workOrderEstimateId", workOrderEstimate.getId());
-            if (workOrderEstimate.getEstimate().getLineEstimateDetails() != null
-                    && workOrderEstimate.getEstimate().getLineEstimateDetails().getLineEstimate().isSpillOverFlag()) {
-                final SimpleDateFormat fmt = new SimpleDateFormat("dd-MM-yyyy");
-                jsonObject.addProperty("cutOffDate",
-                        worksUtils.getCutOffDate() != null ? sdf.format(worksUtils.getCutOffDate()) : "");
-                jsonObject.addProperty("cutOffDateDisplay",
-                        worksUtils.getCutOffDate() != null ? fmt.format(worksUtils.getCutOffDate()) : "");
-            }
-            jsonObject.addProperty("spillOverFlag",
-                    workOrderEstimate.getEstimate().getLineEstimateDetails().getLineEstimate().isSpillOverFlag());
-            
-            jsonObject.addProperty("additionalRule",
-                    (String) cityService.cityDataAsMap().get(ApplicationConstant.CITY_CORP_GRADE_KEY));
-
+            jsonObject.addProperty("previousMBDate", !previousMBHeaders.isEmpty()
+                    ? sdf.format(previousMBHeaders.get(previousMBHeaders.size() - 1).getMbDate()) : StringUtils.EMPTY);
         }
+        final List<AppConfigValues> values = appConfigValuesService.getConfigValuesByModuleAndKey(
+                WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_KEY_MB_QUANTITY_TOLERANCE_LEVEL);
+        final AppConfigValues value = values.get(0);
+
+        jsonObject.addProperty("quantityTolerance", value.getValue());
+        jsonObject.addProperty("isMeasurementsExist",
+                measurementSheetService.existsByEstimate(workOrderEstimate.getEstimate().getId()));
+        jsonObject.addProperty("workOrderEstimateId", workOrderEstimate.getId());
+        final AbstractEstimate ae = workOrderEstimate.getEstimate();
+        if (ae != null && ae.isSpillOverFlag()) {
+            final SimpleDateFormat fmt = new SimpleDateFormat("dd-MM-yyyy");
+            jsonObject.addProperty("cutOffDate",
+                    worksUtils.getCutOffDate() != null ? sdf.format(worksUtils.getCutOffDate()) : StringUtils.EMPTY);
+            jsonObject.addProperty("cutOffDateDisplay",
+                    worksUtils.getCutOffDate() != null ? fmt.format(worksUtils.getCutOffDate()) : StringUtils.EMPTY);
+            jsonObject.addProperty("spillOverFlag", ae.isSpillOverFlag());
+        }
+
+        jsonObject.addProperty("additionalRule",
+                (String) cityService.cityDataAsMap().get(ApplicationConstant.CITY_CORP_GRADE_KEY));
+
         return jsonObject;
+    }
+
+    private void setMBJsonValues(final WorkOrderEstimate workOrderEstimate, final JsonObject jsonObject,
+            final SimpleDateFormat sdf) {
+        final AbstractEstimate estimate = workOrderEstimate.getEstimate();
+        final WorkOrder workOrder = workOrderEstimate.getWorkOrder();
+        final Double totalMBAmountOfMBs = mbHeaderService.getTotalMBAmountOfMBs(null, workOrderEstimate.getId(),
+                MBHeader.MeasurementBookStatus.CANCELLED.toString());
+        jsonObject.addProperty("workOrderEstimateId", workOrderEstimate.getId());
+        jsonObject.addProperty("estimateNumber",
+                estimate != null ? estimate.getEstimateNumber() : StringUtils.EMPTY);
+        jsonObject.addProperty("estimateId",
+                estimate != null ? estimate.getId().toString() : StringUtils.EMPTY);
+        jsonObject.addProperty("projectCode",
+                estimate != null ? estimate.getProjectCode().getCode() : StringUtils.EMPTY);
+        jsonObject.addProperty("nameOfWork",
+                estimate != null ? estimate.getName() : StringUtils.EMPTY);
+
+        setWorkOrderJsonValues(jsonObject, sdf, workOrder);
+
+        jsonObject.addProperty("totalMBAmountOfMBs", totalMBAmountOfMBs != null ? Double.toString(totalMBAmountOfMBs)
+                : StringUtils.EMPTY);
+    }
+
+    private void setWorkOrderJsonValues(final JsonObject jsonObject, final SimpleDateFormat sdf,
+            final WorkOrder workOrder) {
+        final DecimalFormat df = new DecimalFormat("0.00");
+        jsonObject.addProperty("workOrderNumber",
+                workOrder != null ? workOrder.getWorkOrderNumber() : StringUtils.EMPTY);
+        jsonObject.addProperty("workOrderId",
+                workOrder != null ? workOrder.getId().toString() : StringUtils.EMPTY);
+        jsonObject.addProperty("workOrderAmount", workOrder != null ? df.format(workOrder.getWorkOrderAmount())
+                : StringUtils.EMPTY);
+        jsonObject.addProperty("contractorName",
+                workOrder != null ? workOrder.getContractor().getName() : StringUtils.EMPTY);
+        jsonObject.addProperty("workOrderAssignedTo", workOrder != null ? workOrder.getEngineerIncharge().getName()
+                : StringUtils.EMPTY);
+        jsonObject.addProperty("tenderFinalisedPercentage",
+                workOrder != null ? Double.toString(workOrder.getTenderFinalizedPercentage())
+                        : StringUtils.EMPTY);
+        if (workOrder != null) {
+            final OfflineStatus offlineStatus = offlineStatusService.getOfflineStatusByObjectIdAndObjectTypeAndStatus(
+                    workOrder.getId(), WorksConstants.WORKORDER,
+                    OfflineStatuses.WORK_COMMENCED.toString().toUpperCase());
+            jsonObject.addProperty("workCommencedDate", offlineStatus != null
+                    ? sdf.format(offlineStatus.getStatusDate()) : StringUtils.EMPTY);
+        }
     }
 }

@@ -743,11 +743,11 @@ public class LetterOfAcceptanceService {
 
         if (searchRequestLetterOfAcceptance.getAdminSanctionFromDate() != null)
             queryStr.append(
-                    " and woe.estimate.lineEstimateDetails.lineEstimate.adminSanctionDate >= :adminSanctionFromDate)");
+                    " and woe.estimate.adminSanctionDate >= :adminSanctionFromDate)");
 
         if (searchRequestLetterOfAcceptance.getAdminSanctionToDate() != null)
             queryStr.append(
-                    " and woe.estimate.lineEstimateDetails.lineEstimate.adminSanctionDate <= :adminSanctionToDate)");
+                    " and woe.estimate.adminSanctionDate <= :adminSanctionToDate)");
 
     }
 

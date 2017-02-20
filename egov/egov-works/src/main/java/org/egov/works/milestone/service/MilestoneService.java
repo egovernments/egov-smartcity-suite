@@ -94,17 +94,15 @@ public class MilestoneService {
         final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(Milestone.class)
                 .createAlias("workOrderEstimate", "woe")
                 .createAlias("woe.estimate", "estimate")
-                .createAlias("estimate.lineEstimateDetails", "led")
-                .createAlias("led.lineEstimate", "le")
                 .createAlias("status", "status")
                 .createAlias("woe.workOrder", "wo")
-                .createAlias("led.projectCode", "projectCode")
+                .createAlias("estimate.projectCode", "projectCode")
                 .createAlias("trackMilestone", "tm", JoinType.LEFT_OUTER_JOIN)
                 .createAlias("tm.status", "trackStatus", JoinType.LEFT_OUTER_JOIN);
 
         if (searchRequestMilestone != null) {
             if (searchRequestMilestone.getDepartment() != null)
-                criteria.add(Restrictions.eq("le.executingDepartment.id", searchRequestMilestone.getDepartment()));
+                criteria.add(Restrictions.eq("estimate.executingDepartment.id", searchRequestMilestone.getDepartment()));
             if (searchRequestMilestone.getMilestoneFromDate() != null)
                 criteria.add(Restrictions.ge("createdDate", searchRequestMilestone.getMilestoneFromDate()));
             if (searchRequestMilestone.getMilestoneToDate() != null) {
@@ -114,9 +112,9 @@ public class MilestoneService {
             if (searchRequestMilestone.getStatus() != null)
                 criteria.add(Restrictions.eq("status.code", searchRequestMilestone.getStatus()));
             if (searchRequestMilestone.getSubTypeOfWork() != null)
-                criteria.add(Restrictions.eq("le.subTypeOfWork.id", searchRequestMilestone.getSubTypeOfWork()));
+                criteria.add(Restrictions.eq("estimate.category.id", searchRequestMilestone.getSubTypeOfWork()));
             if (searchRequestMilestone.getTypeOfWork() != null)
-                criteria.add(Restrictions.eq("le.typeOfWork.id", searchRequestMilestone.getTypeOfWork()));
+                criteria.add(Restrictions.eq("estimate.parentCategory.id", searchRequestMilestone.getTypeOfWork()));
             if (searchRequestMilestone.getWorkIdentificationNumber() != null)
                 criteria.add(Restrictions.eq("projectCode.code", searchRequestMilestone.getWorkIdentificationNumber())
                         .ignoreCase());
@@ -138,15 +136,13 @@ public class MilestoneService {
         final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(Milestone.class)
                 .createAlias("workOrderEstimate", "woe")
                 .createAlias("woe.estimate", "estimate")
-                .createAlias("estimate.lineEstimateDetails", "led")
-                .createAlias("led.lineEstimate", "le")
                 .createAlias("status", "status")
                 .createAlias("woe.workOrder", "wo")
-                .createAlias("led.projectCode", "projectCode");
+                .createAlias("estimate.projectCode", "projectCode");
 
         if (searchRequestMilestone != null) {
             if (searchRequestMilestone.getDepartment() != null)
-                criteria.add(Restrictions.eq("le.executingDepartment.id", searchRequestMilestone.getDepartment()));
+                criteria.add(Restrictions.eq("estimate.executingDepartment.id", searchRequestMilestone.getDepartment()));
             if (searchRequestMilestone.getMilestoneFromDate() != null)
                 criteria.add(Restrictions.ge("createdDate", searchRequestMilestone.getMilestoneFromDate()));
             if (searchRequestMilestone.getMilestoneToDate() != null) {
@@ -156,9 +152,9 @@ public class MilestoneService {
             if (searchRequestMilestone.getStatus() != null)
                 criteria.add(Restrictions.eq("status.code", searchRequestMilestone.getStatus()));
             if (searchRequestMilestone.getSubTypeOfWork() != null)
-                criteria.add(Restrictions.eq("le.subTypeOfWork.id", searchRequestMilestone.getSubTypeOfWork()));
+                criteria.add(Restrictions.eq("estimate.category.id", searchRequestMilestone.getSubTypeOfWork()));
             if (searchRequestMilestone.getTypeOfWork() != null)
-                criteria.add(Restrictions.eq("le.typeOfWork.id", searchRequestMilestone.getTypeOfWork()));
+                criteria.add(Restrictions.eq("estimate.parentCategory.id", searchRequestMilestone.getTypeOfWork()));
             if (searchRequestMilestone.getWorkIdentificationNumber() != null)
                 criteria.add(Restrictions.eq("projectCode.code", searchRequestMilestone.getWorkIdentificationNumber())
                         .ignoreCase());
@@ -238,11 +234,10 @@ public class MilestoneService {
         final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(Milestone.class)
                 .createAlias("workOrderEstimate", "woe")
                 .createAlias("woe.estimate", "estimate")
-                .createAlias("estimate.lineEstimateDetails", "led")
                 .createAlias("status", "status")
                 .createAlias("woe.workOrder", "wo")
                 .createAlias("wo.contractor", "contractor")
-                .createAlias("led.projectCode", "projectCode");
+                .createAlias("estimate.projectCode", "projectCode");
 
         if (searchRequestMilestone != null) {
             if (searchRequestMilestone.getWorkIdentificationNumber() != null)

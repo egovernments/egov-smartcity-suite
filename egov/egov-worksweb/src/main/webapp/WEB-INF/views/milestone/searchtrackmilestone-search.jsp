@@ -44,6 +44,7 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="/WEB-INF/taglibs/cdn.tld" prefix="cdn"%>
+<input type = "hidden" value = "${lineEstimateRequired }" id = "lineEstimateRequired" />
 <form:form name="SearchRequest" role="form" action=""
 	modelAttribute="searchRequestMilestone" id="searchRequestMilestone"
 	class="form-horizontal form-groups-bordered">

@@ -44,6 +44,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.egov.infra.exception.ApplicationException;
+import org.egov.works.config.properties.WorksApplicationProperties;
 import org.egov.works.masters.entity.MilestoneTemplate;
 import org.egov.works.masters.entity.MilestoneTemplateActivity;
 import org.egov.works.masters.service.MilestoneTemplateActivityService;
@@ -75,6 +76,9 @@ public class ViewMilestoneController {
 
     @Autowired
     private MilestoneService milestoneService;
+    
+    @Autowired
+    private WorksApplicationProperties worksApplicationProperties;
 
     @RequestMapping(value = "/viewmilestonetemplate/{id}", method = RequestMethod.GET)
     public String viewMilestoneTemplate(@PathVariable final String id, final Model model,
@@ -102,6 +106,7 @@ public class ViewMilestoneController {
             throws ApplicationException {
         final Milestone milestone = milestoneService.getMilestoneById(Long.parseLong(id));
         model.addAttribute("milestone", milestone);
+        model.addAttribute("lineEstimateRequired", worksApplicationProperties.lineEstimateRequired());
         return "milestone-view";
     }
 
@@ -111,6 +116,7 @@ public class ViewMilestoneController {
             throws ApplicationException {
         final TrackMilestone trackMilestone = trackMilestoneService.getTrackMilestoneByMilestoneId(Long.parseLong(id));
         model.addAttribute("trackMilestone", trackMilestone);
+        model.addAttribute("lineEstimateRequired", worksApplicationProperties.lineEstimateRequired());
         return "trackmilestone-view";
     }
 

@@ -63,19 +63,21 @@
 						</div>
 						<div class="col-xs-3 add-margin view-content">
 							<c:out default="N/A"
-								value="${trackMilestone.milestone.workOrderEstimate.estimate.lineEstimateDetails.estimateNumber}"></c:out>
+								value="${trackMilestone.milestone.workOrderEstimate.estimate.estimateNumber}"></c:out>
 							<input type="hidden"
-								value="${trackMilestone.milestone.workOrderEstimate.estimate.lineEstimateDetails.estimateNumber}"
+								value="${trackMilestone.milestone.workOrderEstimate.estimate.estimateNumber}"
 								name="estimateNumber" />
 						</div>
-						<div class="col-xs-3 add-margin">
-							<spring:message code="lbl.dateofproposal" />
-						</div>
-						<div class="col-xs-3 add-margin view-content">
-							<fmt:formatDate
-								value="${trackMilestone.milestone.workOrderEstimate.estimate.lineEstimateDetails.lineEstimate.lineEstimateDate}"
-								pattern="dd/MM/yyyy" />
-						</div>
+						<c:if test="${lineEstimateRequired == true && trackMilestone.milestone.workOrderEstimate.estimate.lineEstimateDetails != null }">
+							<div class="col-xs-3 add-margin">
+								<spring:message code="lbl.dateofproposal" />
+							</div>
+							<div class="col-xs-3 add-margin view-content">
+								<fmt:formatDate
+									value="${trackMilestone.milestone.workOrderEstimate.estimate.lineEstimateDetails.lineEstimate.lineEstimateDate}"
+									pattern="dd/MM/yyyy" />
+							</div>
+						</c:if>
 					</div>
 					<div class="row add-border">
 						<div class="col-xs-3 add-margin">
@@ -83,14 +85,14 @@
 						</div>
 						<div class="col-xs-3 add-margin view-content">
 							<c:out default="N/A"
-								value="${trackMilestone.milestone.workOrderEstimate.estimate.lineEstimateDetails.nameOfWork}"></c:out>
+								value="${trackMilestone.milestone.workOrderEstimate.estimate.name}"></c:out>
 						</div>
 						<div class="col-xs-3 add-margin">
 							<spring:message code="lbl.workidentificationnumber" />
 						</div>
 						<div class="col-xs-3 add-margin view-content">
 							<c:out default="N/A"
-								value="${trackMilestone.milestone.workOrderEstimate.estimate.lineEstimateDetails.projectCode.code}"></c:out>
+								value="${trackMilestone.milestone.workOrderEstimate.estimate.projectCode.code}"></c:out>
 						</div>
 					</div>
 					<div class="row add-border">
@@ -99,30 +101,32 @@
 						</div>
 						<div class="col-xs-3 add-margin view-content">
 							<c:out default="N/A"
-								value="${trackMilestone.milestone.workOrderEstimate.estimate.lineEstimateDetails.lineEstimate.typeOfWork.name}"></c:out>
+								value="${trackMilestone.milestone.workOrderEstimate.estimate.parentCategory.name}"></c:out>
 						</div>
 						<div class="col-xs-3 add-margin">
 							<spring:message code="lbl.subtypeofwork" />
 						</div>
 						<div class="col-xs-3 add-margin view-content">
 							<c:out default="N/A"
-								value="${trackMilestone.milestone.workOrderEstimate.estimate.lineEstimateDetails.lineEstimate.subTypeOfWork.name}"></c:out>
+								value="${trackMilestone.milestone.workOrderEstimate.estimate.category.name}"></c:out>
 						</div>
 					</div>
 					<div class="row add-border">
-						<div class="col-xs-3 add-margin">
-							<spring:message code="lbl.estimatepreparedby" />
-						</div>
-						<div class="col-xs-3 add-margin view-content">
-							<c:out default="N/A"
-								value="${trackMilestone.milestone.workOrderEstimate.estimate.lineEstimateDetails.lineEstimate.createdBy.name}"></c:out>
-						</div>
+						<c:if test="${lineEstimateRequired == true && trackMilestone.milestone.workOrderEstimate.estimate.lineEstimateDetails != null }">
+							<div class="col-xs-3 add-margin">
+								<spring:message code="lbl.estimatepreparedby" />
+							</div>
+							<div class="col-xs-3 add-margin view-content">
+								<c:out default="N/A"
+									value="${trackMilestone.milestone.workOrderEstimate.estimate.lineEstimateDetails.lineEstimate.createdBy.name}"></c:out>
+							</div>
+						</c:if>
 						<div class="col-xs-3 add-margin">
 							<spring:message code="lbl.department" />
 						</div>
 						<div class="col-xs-3 add-margin view-content">
 							<c:out default="N/A"
-								value="${trackMilestone.milestone.workOrderEstimate.estimate.lineEstimateDetails.lineEstimate.executingDepartment.name}"></c:out>
+								value="${trackMilestone.milestone.workOrderEstimate.estimate.executingDepartment.name}"></c:out>
 						</div>
 					</div>
 					<div class="row add-border">

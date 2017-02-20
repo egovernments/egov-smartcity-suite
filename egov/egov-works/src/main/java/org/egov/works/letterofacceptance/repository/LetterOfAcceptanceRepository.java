@@ -109,7 +109,7 @@ public interface LetterOfAcceptanceRepository extends JpaRepository<WorkOrder, L
     List<String> getContractorBillInWorkflowForWorkorder(@Param("workOrderId") Long workOrderId,
             @Param("billstatus1") String billstatus1, @Param("billstatus2") String billstatus2);
 
-    @Query("select distinct(led.projectCode.code) from LineEstimateDetails as led  where upper(led.projectCode.code) like upper(:code) and exists (select distinct(wo.estimateNumber) from WorkOrder as wo where led.estimateNumber = wo.estimateNumber)")
+    @Query("select distinct(ae.projectCode.code) from AbstractEstimate as ae  where upper(ae.projectCode.code) like upper(:code) and exists (select distinct(wo.estimateNumber) from WorkOrder as wo where ae.estimateNumber = wo.estimateNumber)")
     List<String> findWorkIdentificationNumberToCreateMilestone(@Param("code") String code);
 
     @Query("select sum(br.billamount) from EgBillregister as br where br.workOrderEstimate.workOrder.id = (select id from WorkOrder as wo where wo.workOrderNumber = :workOrderNumber and wo.egwStatus.code = :status) and br.billstatus != :billStatus")
@@ -120,7 +120,7 @@ public interface LetterOfAcceptanceRepository extends JpaRepository<WorkOrder, L
     List<String> findWorkOrderNumbersToModifyLoa(@Param("workOrderStatus") String workOrderStatus, @Param("status") String status,
             @Param("billtype") String billtype);
 
-    @Query("select distinct(led.projectCode.code) from LineEstimateDetails as led  where upper(led.projectCode.code) like upper(:code) and exists (select distinct(wo.estimateNumber) from WorkOrder as wo where led.estimateNumber = wo.estimateNumber and egwStatus.code = :status)")
+    @Query("select distinct(ae.projectCode.code) from AbstractEstimate as ae  where upper(ae.projectCode.code) like upper(:code) and exists (select distinct(wo.estimateNumber) from WorkOrder as wo where ae.estimateNumber = wo.estimateNumber and egwStatus.code = :status)")
     List<String> findWorkIdentificationNumbersToSearchLOAToCancel(@Param("code") String code,
             @Param("status") String status);
 

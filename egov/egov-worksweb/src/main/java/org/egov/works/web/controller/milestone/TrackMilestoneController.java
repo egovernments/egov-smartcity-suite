@@ -109,10 +109,9 @@ public class TrackMilestoneController {
     }
 
     @RequestMapping(value = "/track/{id}", method = RequestMethod.POST)
-    public @ResponseBody String create(@ModelAttribute("milestone") final Milestone milestone,
-            final Model model, final BindingResult errors, final HttpServletRequest request, final BindingResult resultBinder,
-            final HttpServletResponse response)
-            throws ApplicationException, IOException {
+    public @ResponseBody String create(@ModelAttribute("milestone") final Milestone milestone, final Model model,
+            final BindingResult errors, final HttpServletRequest request, final BindingResult resultBinder,
+            final HttpServletResponse response) throws ApplicationException {
 
         final String mode = request.getParameter("mode");
         final JsonObject jsonObject = new JsonObject();
@@ -124,10 +123,8 @@ public class TrackMilestoneController {
         }
 
         final Milestone newMilestone = milestoneService.update(milestone);
-
         return messageSource.getMessage("msg.trackmilestone.create.success",
-                new String[] { newMilestone.getWorkOrderEstimate().getEstimate().getLineEstimateDetails().getEstimateNumber() },
-                null);
+                new String[] { newMilestone.getWorkOrderEstimate().getEstimate().getEstimateNumber() }, null);
     }
 
     private void validateTrackMilestone(final Milestone milestone, final JsonObject jsonObject, final String mode) {

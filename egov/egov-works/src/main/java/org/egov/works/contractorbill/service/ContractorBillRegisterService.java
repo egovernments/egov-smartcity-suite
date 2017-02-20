@@ -120,6 +120,9 @@ public class ContractorBillRegisterService {
 
     private static final Logger LOG = LoggerFactory.getLogger(ContractorBillRegisterService.class);
 
+    private static final String WORKORDERESTIMATE = "workOrderEstimate";
+    private static final String ESTIMATE_ESTIMATENUMBER = "estimate.estimateNumber";
+
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -469,12 +472,11 @@ public class ContractorBillRegisterService {
 
     public List<ContractorBillRegister> searchContractorBill(
             final SearchRequestContractorBill searchRequestContractorBill) {
-        // TODO Need TO handle in single query
         final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(ContractorBillRegister.class)
-                .createAlias("workOrderEstimate", "workOrderEstimate")
-                .createAlias("workOrderEstimate.estimate", "estimate")
-                .createAlias("workOrderEstimate.workOrder", "cbrwo")
-                .createAlias("cbrwo.contractor", "cbrwocont");
+                .createAlias(WORKORDERESTIMATE, WORKORDERESTIMATE).createAlias("workOrderEstimate.estimate", "estimate")
+                .createAlias("workOrderEstimate.workOrder", "cbrwo").createAlias("cbrwo.contractor", "cbrwocont")
+                .createAlias("estimate.projectCode", "projectCode")
+                .createAlias("estimate.executingDepartment", "department");
 
         if (searchRequestContractorBill != null) {
             if (searchRequestContractorBill.getBillFromDate() != null)
@@ -488,29 +490,15 @@ public class ContractorBillRegisterService {
                         MatchMode.ANYWHERE));
             if (searchRequestContractorBill.getStatus() != null)
                 criteria.add(Restrictions.eq("billstatus", searchRequestContractorBill.getStatus()));
-            if (searchRequestContractorBill.getWorkIdentificationNumber() != null) {
-                final List<String> estimateNumbersforWIN = lineEstimateService
-                        .getEstimateNumbersForWorkIdentificationNumber(
-                                searchRequestContractorBill.getWorkIdentificationNumber());
-                if (estimateNumbersforWIN.isEmpty())
-                    estimateNumbersforWIN.add("");
-                criteria.add(Restrictions.in("estimate.estimateNumber", estimateNumbersforWIN));
-            }
+            if (searchRequestContractorBill.getWorkIdentificationNumber() != null)
+                criteria.add(
+                        Restrictions.eq("projectCode.code", searchRequestContractorBill.getWorkIdentificationNumber()));
             if (searchRequestContractorBill.getContractorName() != null)
                 criteria.add(Restrictions.eq("cbrwocont.name", searchRequestContractorBill.getContractorName())
                         .ignoreCase());
-            if (searchRequestContractorBill.getDepartment() != null) {
-                final List<String> estimateNumbers = lineEstimateService
-                        .getEstimateNumberForDepartment(searchRequestContractorBill.getDepartment());
-                if (estimateNumbers.isEmpty())
-                    estimateNumbers.add("");
-                criteria.add(Restrictions.in("estimate.estimateNumber", estimateNumbers));
-            }
-            if (searchRequestContractorBill.isSpillOverFlag()) {
-                final List<String> estimateNumbersforSpillOverFlag = lineEstimateService
-                        .getEstimateNumbersForSpillOverFlag(searchRequestContractorBill.isSpillOverFlag());
-                criteria.add(Restrictions.in("estimate.estimateNumber", estimateNumbersforSpillOverFlag));
-            }
+            if (searchRequestContractorBill.getDepartment() != null)
+                criteria.add(Restrictions.eq("department.id", searchRequestContractorBill.getDepartment()));
+            criteria.add(Restrictions.eq("estimate.spillOverFlag", searchRequestContractorBill.isSpillOverFlag()));
         }
         criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
         return criteria.list();
@@ -598,10 +586,12 @@ public class ContractorBillRegisterService {
 
     public List<ContractorBillRegister> searchContractorBillsToCancel(
             final SearchRequestContractorBill searchRequestContractorBill) {
-        // TODO Need TO handle in single query
         final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(ContractorBillRegister.class)
-                .createAlias("workOrderEstimate", "workOrderEstimate")
-                .createAlias("workOrderEstimate.workOrder", "cbrwo");
+                .createAlias(WORKORDERESTIMATE, WORKORDERESTIMATE)
+                .createAlias("workOrderEstimate.workOrder", "cbrwo")
+                .createAlias("workOrderEstimate.estimate", "estimate")
+                .createAlias("estimate.projectCode", "projectCode")
+                .createAlias("estimate.executingDepartment", "department");
 
         if (searchRequestContractorBill != null) {
             if (searchRequestContractorBill.getBillNumber() != null)
@@ -609,27 +599,17 @@ public class ContractorBillRegisterService {
                         MatchMode.ANYWHERE));
             if (searchRequestContractorBill.getStatus() != null)
                 criteria.add(Restrictions.eq("billstatus", searchRequestContractorBill.getStatus()));
-            if (searchRequestContractorBill.getWorkIdentificationNumber() != null) {
-                final List<String> estimateNumbersforWIN = lineEstimateService
-                        .getEstimateNumbersForWorkIdentificationNumber(
-                                searchRequestContractorBill.getWorkIdentificationNumber());
-                if (estimateNumbersforWIN.isEmpty())
-                    estimateNumbersforWIN.add("");
-                criteria.add(Restrictions.in("cbrwo.estimateNumber", estimateNumbersforWIN));
-            }
-            if (searchRequestContractorBill.getDepartment() != null) {
-                final List<String> estimateNumbers = lineEstimateService
-                        .getEstimateNumberForDepartment(searchRequestContractorBill.getDepartment());
-                if (estimateNumbers.isEmpty())
-                    estimateNumbers.add("");
-                criteria.add(Restrictions.in("cbrwo.estimateNumber", estimateNumbers));
-            }
+            if (searchRequestContractorBill.getWorkIdentificationNumber() != null)
+                criteria.add(
+                        Restrictions.eq("projectCode.code", searchRequestContractorBill.getWorkIdentificationNumber()));
+            if (searchRequestContractorBill.getDepartment() != null)
+                criteria.add(Restrictions.eq("department.id", searchRequestContractorBill.getDepartment()));
             if (searchRequestContractorBill.getWorkOrderNumber() != null) {
                 final List<String> workOrderNumbers = contractorBillRegisterRepository.findWorkOrderNumbersToCancel(
                         "%" + searchRequestContractorBill.getWorkOrderNumber() + "%",
                         ContractorBillRegister.BillStatus.APPROVED.toString());
                 if (workOrderNumbers.isEmpty())
-                    workOrderNumbers.add("");
+                    workOrderNumbers.add(StringUtils.EMPTY);
                 criteria.add(Restrictions.in("cbrwo.workOrderNumber", workOrderNumbers));
             }
         }

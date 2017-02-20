@@ -214,15 +214,26 @@ function callAjaxSearch() {
 					"aButtons" : []
 				},
 				"fnRowCallback" : function(row, data, index) {
-					if(data.workOrderAmount != "")
+					if($('#lineEstimateRequired').val() == 'true' && data.workOrderAmount != ""){
 						$('td:eq(10)',row).html(parseFloat(Math.round(data.workOrderAmount * 100) / 100).toFixed(2));
+					}else{
+						if(data.workOrderAmount != "")
+							$('td:eq(9)',row).html(parseFloat(Math.round(data.workOrderAmount * 100) / 100).toFixed(2));
+					}
 					if (data.estimateNumber != null)
 						$('td:eq(0)',row).html('<input type="radio" data='+ data.workOrderEstimateId +' name="selectCheckbox" value="'+ data.workOrderEstimateId +'"/>');
 					$('td:eq(1)', row).html(index + 1);
-					$('td:eq(8)', row).html(
-							'<a href="javascript:void(0);" onclick="openLetterOfAcceptance(\''
-									+ data.workOrderId + '\')">'
-									+ data.workOrderNumber + '</a>');
+					if($('#lineEstimateRequired').val() == 'true'){
+						$('td:eq(8)', row).html(
+								'<a href="javascript:void(0);" onclick="openLetterOfAcceptance(\''
+										+ data.workOrderId + '\')">'
+										+ data.workOrderNumber + '</a>');
+					}else{
+						$('td:eq(7)', row).html(
+								'<a href="javascript:void(0);" onclick="openLetterOfAcceptance(\''
+										+ data.workOrderId + '\')">'
+										+ data.workOrderNumber + '</a>');
+					}
 					$('#createMilestone').show();
 					return row;
 				},
@@ -255,6 +266,10 @@ function callAjaxSearch() {
 						"data" : "workOrderAmount","sClass" : "text-right"
 				} ]
 			});
+	if($('#lineEstimateRequired').val() == 'false') {
+		var oTable = $('#resultTable').DataTable();
+		oTable.column(5).visible(false);
+	}
 }
 
 function openLetterOfAcceptance(workOrderId) {

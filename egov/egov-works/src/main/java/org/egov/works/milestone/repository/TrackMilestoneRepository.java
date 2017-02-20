@@ -50,7 +50,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface TrackMilestoneRepository extends JpaRepository<TrackMilestone, Long> {
 
-    @Query("select distinct(led.projectCode.code) from LineEstimateDetails as led  where upper(led.projectCode.code) like upper(:code) and exists (select distinct(tm.milestone.workOrderEstimate.workOrder.estimateNumber) from TrackMilestone as tm where led.estimateNumber = tm.milestone.workOrderEstimate.workOrder.estimateNumber)")
+    @Query("select distinct(ae.projectCode.code) from AbstractEstimate as ae  where upper(ae.projectCode.code) like upper(:code) and exists (select distinct(tm.milestone.workOrderEstimate.workOrder.estimateNumber) from TrackMilestone as tm where ae.estimateNumber = tm.milestone.workOrderEstimate.workOrder.estimateNumber)")
     List<String> findWorkIdentificationNumbersTrackMilestone(@Param("code") String code);
 
     TrackMilestone findByMilestone_Id(final Long id);

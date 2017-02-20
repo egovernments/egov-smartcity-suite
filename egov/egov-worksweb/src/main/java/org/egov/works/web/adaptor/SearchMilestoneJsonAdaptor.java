@@ -41,7 +41,13 @@ package org.egov.works.web.adaptor;
 
 import java.lang.reflect.Type;
 
+import org.egov.commons.EgwTypeOfWork;
+import org.egov.infra.utils.StringUtils;
+import org.egov.works.abstractestimate.entity.AbstractEstimate;
+import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.milestone.entity.Milestone;
+import org.egov.works.workorder.entity.WorkOrder;
+import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.springframework.stereotype.Component;
 
 import com.google.gson.JsonElement;
@@ -56,51 +62,45 @@ public class SearchMilestoneJsonAdaptor implements JsonSerializer<Milestone> {
     public JsonElement serialize(final Milestone milestone, final Type type, final JsonSerializationContext jsc) {
         final JsonObject jsonObject = new JsonObject();
         if (milestone != null) {
-            if (milestone.getWorkOrderEstimate().getWorkOrder().getEstimateNumber() != null) {
-                jsonObject.addProperty("estimateNumber",
-                        milestone.getWorkOrderEstimate().getEstimate().getEstimateNumber());
-                jsonObject.addProperty("workIdentificationNumber",
-                        milestone.getWorkOrderEstimate().getEstimate().getProjectCode().getCode());
-                jsonObject.addProperty("nameOfWork", milestone.getWorkOrderEstimate().getEstimate().getName());
-                jsonObject.addProperty("department",
-                        milestone.getWorkOrderEstimate().getEstimate().getExecutingDepartment().getName());
-                if (milestone.getWorkOrderEstimate().getEstimate().getParentCategory() != null)
-                    jsonObject.addProperty("typeOfWork",
-                            milestone.getWorkOrderEstimate().getEstimate().getParentCategory().getName());
-                if (milestone.getWorkOrderEstimate().getEstimate().getCategory() != null)
-                    jsonObject.addProperty("subTypeOfWork",
-                            milestone.getWorkOrderEstimate().getEstimate().getCategory().getName());
-                if (milestone.getWorkOrderEstimate().getEstimate().getLineEstimateDetails() != null)
-                    jsonObject.addProperty("lineEstimateId", milestone.getWorkOrderEstimate().getEstimate()
-                            .getLineEstimateDetails().getLineEstimate().getId());
-            } else {
-                jsonObject.addProperty("estimateNumber", "");
-                jsonObject.addProperty("workIdentificationNumber", "");
-                jsonObject.addProperty("nameOfWork", "");
-                jsonObject.addProperty("department", "");
-                jsonObject.addProperty("typeOfWork", "");
-                jsonObject.addProperty("subTypeOfWork", "");
-                jsonObject.addProperty("lineEstimateId", "");
+            final WorkOrderEstimate woe = milestone.getWorkOrderEstimate();
+            if (woe != null) {
+                final AbstractEstimate ae = woe.getEstimate();
+                setAbstractEstimateJsonValues(jsonObject, ae);
+                setWorkOrderJsonValues(jsonObject, woe);
             }
-            if (milestone.getWorkOrderEstimate().getWorkOrder() != null) {
-                jsonObject.addProperty("agreementAmount",
-                        milestone.getWorkOrderEstimate().getWorkOrder().getWorkOrderAmount());
-                jsonObject.addProperty("workOrderNumber",
-                        milestone.getWorkOrderEstimate().getWorkOrder().getWorkOrderNumber());
-                jsonObject.addProperty("workOrderId", milestone.getWorkOrderEstimate().getWorkOrder().getId());
-            } else {
-                jsonObject.addProperty("agreementAmount", "");
-                jsonObject.addProperty("workOrderNumber", "");
-                jsonObject.addProperty("workOrderId", "");
-            }
-            if (milestone.getStatus() != null)
-                jsonObject.addProperty("status", milestone.getStatus().getCode());
-            else
-                jsonObject.addProperty("status", "");
-
+            jsonObject.addProperty("status",
+                    milestone.getStatus() != null ? milestone.getStatus().getCode() : StringUtils.EMPTY);
             jsonObject.addProperty("id", milestone.getId());
-
         }
         return jsonObject;
     }
+
+    private void setWorkOrderJsonValues(final JsonObject jsonObject, final WorkOrderEstimate woe) {
+        final WorkOrder wo = woe.getWorkOrder();
+        jsonObject.addProperty("agreementAmount",
+                wo != null ? Double.toString(wo.getWorkOrderAmount()) : StringUtils.EMPTY);
+        jsonObject.addProperty("workOrderNumber", wo != null ? wo.getWorkOrderNumber() : StringUtils.EMPTY);
+        jsonObject.addProperty("workOrderId", wo != null ? wo.getId().toString() : StringUtils.EMPTY);
+    }
+
+    private void setAbstractEstimateJsonValues(final JsonObject jsonObject, final AbstractEstimate ae) {
+        jsonObject.addProperty("estimateNumber", ae != null ? ae.getEstimateNumber() : StringUtils.EMPTY);
+        jsonObject.addProperty("workIdentificationNumber",
+                ae != null ? ae.getProjectCode().getCode() : StringUtils.EMPTY);
+        jsonObject.addProperty("nameOfWork", ae != null ? ae.getName() : StringUtils.EMPTY);
+        jsonObject.addProperty("department", ae != null ? ae.getExecutingDepartment().getName() : StringUtils.EMPTY);
+        jsonObject.addProperty("abstractEstimateId", ae != null ? ae.getId().toString() : StringUtils.EMPTY);
+        if (ae != null) {
+            final EgwTypeOfWork typeOfWork = ae.getParentCategory();
+            final EgwTypeOfWork subTypeOfWork = ae.getCategory();
+            final LineEstimateDetails led = ae.getLineEstimateDetails();
+            jsonObject.addProperty("typeOfWork", typeOfWork != null ? typeOfWork.getName() : StringUtils.EMPTY);
+            jsonObject.addProperty("subTypeOfWork",
+                    subTypeOfWork != null ? subTypeOfWork.getName() : StringUtils.EMPTY);
+            jsonObject.addProperty("lineEstimateId",
+                    led != null ? led.getLineEstimate().getId().toString() : StringUtils.EMPTY);
+        }
+
+    }
+
 }

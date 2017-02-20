@@ -42,6 +42,8 @@ package org.egov.works.web.adaptor;
 
 import java.lang.reflect.Type;
 
+import org.egov.works.abstractestimate.entity.AbstractEstimate;
+import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.springframework.stereotype.Component;
 
@@ -57,30 +59,23 @@ public class LetterOfAcceptanceForMilestoneJSONAdaptor implements JsonSerializer
     public JsonElement serialize(final WorkOrderEstimate workOrderEstimate, final Type type,
             final JsonSerializationContext jsc) {
         final JsonObject jsonObject = new JsonObject();
-        if (workOrderEstimate != null)
-            if (workOrderEstimate.getWorkOrder().getEstimateNumber() != null) {
-                jsonObject.addProperty("estimateNumber", workOrderEstimate.getEstimate().getEstimateNumber());
-                jsonObject.addProperty("typeOfWork", workOrderEstimate.getEstimate().getLineEstimateDetails()
-                        .getLineEstimate().getTypeOfWork().getName());
-                if (workOrderEstimate.getEstimate().getLineEstimateDetails().getLineEstimate()
-                        .getSubTypeOfWork() != null)
-                    jsonObject.addProperty("subTypeOfWork", workOrderEstimate.getEstimate().getLineEstimateDetails()
-                            .getLineEstimate().getSubTypeOfWork().getName());
-                else
-                    jsonObject.addProperty("subTypeOfWork", "");
-                jsonObject.addProperty("estimateDate", workOrderEstimate.getEstimate().getLineEstimateDetails()
-                        .getLineEstimate().getLineEstimateDate().toString());
-                jsonObject.addProperty("nameOfTheWork",
-                        workOrderEstimate.getEstimate().getLineEstimateDetails().getNameOfWork());
-                jsonObject.addProperty("workIdentificationNumber",
-                        workOrderEstimate.getEstimate().getLineEstimateDetails().getProjectCode().getCode());
-                jsonObject.addProperty("workOrderNumber", workOrderEstimate.getWorkOrder().getWorkOrderNumber());
-                jsonObject.addProperty("workOrderAmount", workOrderEstimate.getWorkOrder().getWorkOrderAmount());
-                jsonObject.addProperty("workOrderDate", workOrderEstimate.getWorkOrder().getWorkOrderDate().toString());
-
-                jsonObject.addProperty("workOrderId", workOrderEstimate.getWorkOrder().getId());
-                jsonObject.addProperty("workOrderEstimateId", workOrderEstimate.getId());
-            }
+        if (workOrderEstimate != null) {
+            final AbstractEstimate ae = workOrderEstimate.getEstimate();
+            final LineEstimateDetails led = ae.getLineEstimateDetails();
+            jsonObject.addProperty("estimateNumber", ae.getEstimateNumber());
+            jsonObject.addProperty("typeOfWork", ae.getParentCategory().getName());
+            jsonObject.addProperty("subTypeOfWork",
+                    ae.getCategory() != null ? ae.getCategory().getName() : org.apache.commons.lang.StringUtils.EMPTY);
+            if (led != null)
+                jsonObject.addProperty("estimateDate", led.getLineEstimate().getLineEstimateDate().toString());
+            jsonObject.addProperty("nameOfTheWork", ae.getName());
+            jsonObject.addProperty("workIdentificationNumber", ae.getProjectCode().getCode());
+            jsonObject.addProperty("workOrderNumber", workOrderEstimate.getWorkOrder().getWorkOrderNumber());
+            jsonObject.addProperty("workOrderAmount", workOrderEstimate.getWorkOrder().getWorkOrderAmount());
+            jsonObject.addProperty("workOrderDate", workOrderEstimate.getWorkOrder().getWorkOrderDate().toString());
+            jsonObject.addProperty("workOrderId", workOrderEstimate.getWorkOrder().getId());
+            jsonObject.addProperty("workOrderEstimateId", workOrderEstimate.getId());
+        }
         return jsonObject;
     }
 }

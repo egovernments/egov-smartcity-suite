@@ -44,11 +44,14 @@ import java.lang.reflect.Type;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 
+import org.egov.infra.utils.StringUtils;
+import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.milestone.entity.Milestone;
 import org.egov.works.milestone.entity.MilestoneActivity;
 import org.egov.works.milestone.entity.TrackMilestone;
 import org.egov.works.milestone.entity.TrackMilestoneActivity;
+import org.egov.works.utils.WorksConstants;
 import org.egov.works.workorder.entity.WorkOrder;
 import org.springframework.stereotype.Component;
 
@@ -67,78 +70,84 @@ public class TrackMilestoneJsonAdaptor implements JsonSerializer<Milestone> {
         final SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd");
         final DecimalFormat df = new DecimalFormat("0.00");
         if (milestone != null) {
-            if (milestone.getWorkOrderEstimate().getEstimate().getLineEstimateDetails() != null) {
-                final LineEstimateDetails led = milestone.getWorkOrderEstimate().getEstimate().getLineEstimateDetails();
-                jsonObject.addProperty("estimateNumber", led.getEstimateNumber());
-                jsonObject.addProperty("lineEstimateDate", sdf.format(led.getLineEstimate().getLineEstimateDate()));
-                jsonObject.addProperty("nameOfWork", led.getNameOfWork());
-                jsonObject.addProperty("projectCode", led.getProjectCode().getCode());
-                jsonObject.addProperty("typeOfWork", led.getLineEstimate().getTypeOfWork().getName());
-                if (led.getLineEstimate().getSubTypeOfWork() != null)
-                    jsonObject.addProperty("subTypeOfWork", led.getLineEstimate().getSubTypeOfWork().getName());
-                jsonObject.addProperty("lineEstimateCreatedBy", led.getLineEstimate().getCreatedBy().getName());
-                jsonObject.addProperty("department", led.getLineEstimate().getExecutingDepartment().getName());
-            } else {
-                jsonObject.addProperty("estimateNumber", "");
-                jsonObject.addProperty("lineEstimateDate", "");
-                jsonObject.addProperty("nameOfWork", "");
-                jsonObject.addProperty("projectCode", "");
-                jsonObject.addProperty("typeOfWork", "");
-                jsonObject.addProperty("subTypeOfWork", "");
-                jsonObject.addProperty("lineEstimateCreatedBy", "");
-                jsonObject.addProperty("department", "");
-            }
-            if (milestone.getWorkOrderEstimate().getWorkOrder() != null) {
-                final WorkOrder workOrder = milestone.getWorkOrderEstimate().getWorkOrder();
-                jsonObject.addProperty("workOrderNumber", workOrder.getWorkOrderNumber());
-                jsonObject.addProperty("workOrderId", workOrder.getId());
-                jsonObject.addProperty("workOrderAmount", df.format(workOrder.getWorkOrderAmount()));
-                jsonObject.addProperty("workOrderDate", sdf.format(workOrder.getWorkOrderDate()));
-                jsonObject.addProperty("contractorName", workOrder.getContractor().getName());
-            } else {
-                jsonObject.addProperty("workOrderNumber", "");
-                jsonObject.addProperty("workOrderId", "");
-                jsonObject.addProperty("workOrderAmount", "");
-                jsonObject.addProperty("workOrderDate", "");
-                jsonObject.addProperty("contractorName", "");
-            }
-            if (!milestone.getActivities().isEmpty()) {
-                final JsonArray jsonArray = new JsonArray();
-                for (final MilestoneActivity ma : milestone.getActivities()) {
-                    final JsonObject child = new JsonObject();
-                    child.addProperty("stageOrderNumber", ma.getStageOrderNo());
-                    child.addProperty("description", ma.getDescription());
-                    child.addProperty("percentage", ma.getPercentage());
-                    child.addProperty("scheduleStartDate", sdf.format(ma.getScheduleStartDate()));
-                    child.addProperty("scheduleEndDate", sdf.format(ma.getScheduleEndDate()));
-                    child.addProperty("hiddenScheduleStartDate", sdf2.format(ma.getScheduleStartDate()));
-                    child.addProperty("hiddenScheduleEndDate", sdf2.format(ma.getScheduleEndDate()));
-                    jsonArray.add(child);
-                }
-                jsonObject.add("activities", jsonArray);
-            } else
-                jsonObject.add("activities", new JsonArray());
-            if (!milestone.getTrackMilestone().isEmpty()) {
-                jsonObject.addProperty("mode", "update");
-                final JsonArray jsonArray = new JsonArray();
-                for (final TrackMilestone ma : milestone.getTrackMilestone())
-                    for (final TrackMilestoneActivity tma : ma.getActivities()) {
-                        final JsonObject child = new JsonObject();
-                        child.addProperty("currentStatus", tma.getStatus());
-                        child.addProperty("completedPercentage", tma.getCompletedPercentage());
-                        if (tma.getCompletionDate() != null)
-                            child.addProperty("completionDate", sdf.format(tma.getCompletionDate()));
-                        child.addProperty("reasonForDelay", tma.getRemarks());
-                        jsonArray.add(child);
-                    }
-                jsonObject.add("trackMilestoneActivities", jsonArray);
-            } else {
-                jsonObject.addProperty("mode", "create");
-                jsonObject.add("trackMilestoneActivities", new JsonArray());
-            }
-
-            jsonObject.addProperty("id", milestone.getId());
+            setMileStoneJsonAdaptorValues(milestone, jsonObject, sdf, sdf2, df);
         }
         return jsonObject;
+    }
+
+    private void setMileStoneJsonAdaptorValues(final Milestone milestone, final JsonObject jsonObject,
+            final SimpleDateFormat sdf, final SimpleDateFormat sdf2, final DecimalFormat df) {
+        final AbstractEstimate ae = milestone.getWorkOrderEstimate().getEstimate();
+        final LineEstimateDetails led = ae.getLineEstimateDetails();
+        final WorkOrder workOrder = milestone.getWorkOrderEstimate().getWorkOrder();
+        jsonObject.addProperty("estimateNumber", ae.getEstimateNumber());
+        if(led != null)
+            jsonObject.addProperty("lineEstimateDate", sdf.format(led.getLineEstimate().getLineEstimateDate()));
+        jsonObject.addProperty("nameOfWork", ae.getName());
+        jsonObject.addProperty("projectCode", ae.getProjectCode().getCode());
+        jsonObject.addProperty("typeOfWork", ae.getParentCategory().getName());
+        jsonObject.addProperty("subTypeOfWork",
+                ae.getCategory() != null ? ae.getCategory().getName() : StringUtils.EMPTY);
+        jsonObject.addProperty("lineEstimateCreatedBy", led != null ? led.getLineEstimate().getCreatedBy().getName()
+                : StringUtils.EMPTY);
+        jsonObject.addProperty("department", ae.getExecutingDepartment().getName());
+
+        jsonObject.addProperty("workOrderNumber",
+                workOrder != null ? workOrder.getWorkOrderNumber() : StringUtils.EMPTY);
+        jsonObject.addProperty("workOrderId",
+                workOrder != null ? workOrder.getId().toString() : StringUtils.EMPTY);
+        jsonObject.addProperty("workOrderAmount", workOrder != null ? df.format(workOrder.getWorkOrderAmount())
+                : StringUtils.EMPTY);
+        jsonObject.addProperty("workOrderDate", workOrder != null ? sdf.format(workOrder.getWorkOrderDate())
+                : StringUtils.EMPTY);
+        jsonObject.addProperty("contractorName", workOrder != null ? workOrder.getContractor().getName()
+                : StringUtils.EMPTY);
+        jsonObject.add("activities", !milestone.getActivities().isEmpty()
+                ? getMileStoneActivities(milestone, sdf, sdf2) : new JsonArray());
+        setTrackMilestoneActivities(milestone, jsonObject, sdf);
+        jsonObject.addProperty("id", milestone.getId());
+    }
+
+    private void setTrackMilestoneActivities(final Milestone milestone, final JsonObject jsonObject,
+            final SimpleDateFormat sdf) {
+        if (!milestone.getTrackMilestone().isEmpty()) {
+            jsonObject.addProperty(WorksConstants.MODE, "update");
+            jsonObject.add("trackMilestoneActivities", getTrackMileStoneActivities(milestone, sdf));
+        } else {
+            jsonObject.addProperty(WorksConstants.MODE, "create");
+            jsonObject.add("trackMilestoneActivities", new JsonArray());
+        }
+    }
+
+    private JsonArray getTrackMileStoneActivities(final Milestone milestone, final SimpleDateFormat sdf) {
+        final JsonArray jsonArray = new JsonArray();
+        for (final TrackMilestone ma : milestone.getTrackMilestone())
+            for (final TrackMilestoneActivity tma : ma.getActivities()) {
+                final JsonObject child = new JsonObject();
+                child.addProperty("currentStatus", tma.getStatus());
+                child.addProperty("completedPercentage", tma.getCompletedPercentage());
+                if (tma.getCompletionDate() != null)
+                    child.addProperty("completionDate", sdf.format(tma.getCompletionDate()));
+                child.addProperty("reasonForDelay", tma.getRemarks());
+                jsonArray.add(child);
+            }
+        return jsonArray;
+    }
+
+    private JsonArray getMileStoneActivities(final Milestone milestone, final SimpleDateFormat sdf,
+            final SimpleDateFormat sdf2) {
+        final JsonArray jsonArray = new JsonArray();
+        for (final MilestoneActivity ma : milestone.getActivities()) {
+            final JsonObject child = new JsonObject();
+            child.addProperty("stageOrderNumber", ma.getStageOrderNo());
+            child.addProperty("description", ma.getDescription());
+            child.addProperty("percentage", ma.getPercentage());
+            child.addProperty("scheduleStartDate", sdf.format(ma.getScheduleStartDate()));
+            child.addProperty("scheduleEndDate", sdf.format(ma.getScheduleEndDate()));
+            child.addProperty("hiddenScheduleStartDate", sdf2.format(ma.getScheduleStartDate()));
+            child.addProperty("hiddenScheduleEndDate", sdf2.format(ma.getScheduleEndDate()));
+            jsonArray.add(child);
+        }
+        return jsonArray;
     }
 }

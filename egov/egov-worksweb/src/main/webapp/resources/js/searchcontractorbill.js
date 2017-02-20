@@ -93,10 +93,17 @@ function callAjaxSearch() {
 				},
 				"fnRowCallback" : function(row, data, index) {
 					$('td:eq(0)', row).html(index + 1);
+					if($("#lineEstimateRequired").val() == 'true' && data.lineEstimateId != '' ){
 					$('td:eq(4)', row).html(
 							'<a href="javascript:void(0);" onclick="openLineEstimate(\''
 									+ data.lineEstimateId + '\')">'
 									+ data.adminSanctionNumber + '</a>');
+					}else if(data.abstractEstimateId != '' ){
+						$('td:eq(4)', row).html(
+								'<a href="javascript:void(0);" onclick="openAbstractEstimate(\''
+										+ data.abstractEstimateId + '\')">'
+										+ data.adminSanctionNumber + '</a>');
+					}
 					$('td:eq(6)', row).html(
 							'<a href="javascript:void(0);" onclick="openLetterOfAcceptance(\''
 									+ data.workOrderId + '\')">'
@@ -260,4 +267,8 @@ function viewContractCertificatePDF() {
 function viewContractCompletionCertificatePDF() {
 	var id = $('#id').val();
 	window.open("/egworks/contractorbill/completioncertificatepdf/" + id, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+}
+
+function openAbstractEstimate(id) {
+	window.open("/egworks/abstractestimate/view/"+ id , "", "height=650,width=980,scrollbars=yes,left=0,top=0,status=yes");
 }

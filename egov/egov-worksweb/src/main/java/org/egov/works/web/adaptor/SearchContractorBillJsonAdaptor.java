@@ -41,8 +41,13 @@ package org.egov.works.web.adaptor;
 
 import java.lang.reflect.Type;
 
+import org.egov.infra.utils.StringUtils;
+import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
+import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.utils.WorksUtils;
+import org.egov.works.workorder.entity.WorkOrder;
+import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -62,69 +67,51 @@ public class SearchContractorBillJsonAdaptor implements JsonSerializer<Contracto
             final JsonSerializationContext jsc) {
         final JsonObject jsonObject = new JsonObject();
         if (contractorBillRegister != null) {
-            if (contractorBillRegister.getBillnumber() != null)
-                jsonObject.addProperty("billNumber", contractorBillRegister.getBillnumber());
-            else
-                jsonObject.addProperty("billNumber", "");
-            if (contractorBillRegister.getBilldate() != null)
-                jsonObject.addProperty("billDate", contractorBillRegister.getBilldate().toString());
-            else
-                jsonObject.addProperty("billDate", "");
-            if (contractorBillRegister.getBilltype() != null)
-                jsonObject.addProperty("billType", contractorBillRegister.getBilltype());
-            else
-                jsonObject.addProperty("billType", "");
-            if (contractorBillRegister.getWorkOrderEstimate().getEstimate().getLineEstimateDetails()
-                    .getLineEstimate() != null)
-                jsonObject.addProperty("adminSanctionNumber", contractorBillRegister.getWorkOrderEstimate().getEstimate()
-                        .getLineEstimateDetails().getLineEstimate().getAdminSanctionNumber());
-            else
-                jsonObject.addProperty("adminSanctionNumber", "");
-
-            if (contractorBillRegister.getWorkOrderEstimate().getEstimate().getLineEstimateDetails()
-                    .getProjectCode() != null)
-                jsonObject.addProperty("workIdentificationNumber", contractorBillRegister.getWorkOrderEstimate()
-                        .getEstimate().getLineEstimateDetails().getProjectCode().getCode());
-            else
-                jsonObject.addProperty("workIdentificationNumber", "");
-            if (contractorBillRegister.getWorkOrderEstimate() != null)
-                jsonObject.addProperty("workOrderNumber",
-                        contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getWorkOrderNumber());
-            else
-                jsonObject.addProperty("workOrderNumber", "");
-            if (contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getContractor() != null)
-                jsonObject.addProperty("contractorName",
-                        contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getContractor().getName());
-            else
-                jsonObject.addProperty("contractorName", "");
-            if (contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getContractor() != null)
-                jsonObject.addProperty("contractorCode",
-                        contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getContractor().getCode());
-            else
-                jsonObject.addProperty("contractorCode", "");
-            if (contractorBillRegister.getBillamount() != null)
-                jsonObject.addProperty("billValue", contractorBillRegister.getBillamount());
-
-            else
-                jsonObject.addProperty("billValue", "");
-
-            if (contractorBillRegister.getBillstatus() != null)
-                jsonObject.addProperty("billStatus", contractorBillRegister.getBillstatus());
-            else
-                jsonObject.addProperty("billStatus", "");
-            if (contractorBillRegister.getState() != null && contractorBillRegister.getState().getOwnerPosition() != null)
-                jsonObject.addProperty("owner",
-                        worksUtils.getApproverName(contractorBillRegister.getState().getOwnerPosition().getId()));
-            else
-                jsonObject.addProperty("owner", "");
-            jsonObject.addProperty("lineEstimateId", contractorBillRegister.getWorkOrderEstimate()
-                    .getEstimate().getLineEstimateDetails().getLineEstimate().getId());
-            jsonObject.addProperty("id", contractorBillRegister.getId());
-            jsonObject.addProperty("workOrderId", contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getId());
-            jsonObject.addProperty("workActivitySize",
-                    contractorBillRegister.getWorkOrderEstimate().getWorkOrderActivities().size());
+            final WorkOrderEstimate woe = contractorBillRegister.getWorkOrderEstimate();
+            final WorkOrder wo = woe.getWorkOrder();
+            final AbstractEstimate ae = woe.getEstimate();
+            final LineEstimateDetails led = ae.getLineEstimateDetails();
+            setContractorBillRegisterJsonValues(contractorBillRegister, jsonObject, ae);
+            jsonObject.addProperty("workIdentificationNumber",
+                    ae.getProjectCode() != null ? ae.getProjectCode().getCode() : StringUtils.EMPTY);
+            setWorkOrderJsonValues(jsonObject, wo);
+            jsonObject.addProperty("lineEstimateId",
+                    led != null ? led.getLineEstimate().getId().toString() : StringUtils.EMPTY);
+            jsonObject.addProperty("workActivitySize", woe.getWorkOrderActivities().size());
+            jsonObject.addProperty("abstractEstimateId", ae.getId());
 
         }
         return jsonObject;
+    }
+
+    private void setContractorBillRegisterJsonValues(final ContractorBillRegister contractorBillRegister,
+            final JsonObject jsonObject, final AbstractEstimate ae) {
+        jsonObject.addProperty("id", contractorBillRegister.getId());
+        jsonObject.addProperty("billNumber", contractorBillRegister.getBillnumber() != null
+                ? contractorBillRegister.getBillnumber() : StringUtils.EMPTY);
+        jsonObject.addProperty("billDate", contractorBillRegister.getBilldate() != null
+                ? contractorBillRegister.getBilldate().toString() : StringUtils.EMPTY);
+        jsonObject.addProperty("billType", contractorBillRegister.getBilltype() != null
+                ? contractorBillRegister.getBilltype() : StringUtils.EMPTY);
+        jsonObject.addProperty("adminSanctionNumber", ae != null ? ae.getEstimateNumber() : StringUtils.EMPTY);
+        jsonObject.addProperty("billValue", contractorBillRegister.getBillamount() != null
+                ? contractorBillRegister.getBillamount().toString() : StringUtils.EMPTY);
+        jsonObject.addProperty("billStatus", contractorBillRegister.getBillstatus() != null
+                ? contractorBillRegister.getBillstatus() : StringUtils.EMPTY);
+        jsonObject.addProperty("owner",
+                contractorBillRegister.getState().getOwnerPosition() != null
+                        ? worksUtils.getApproverName(contractorBillRegister.getState().getOwnerPosition().getId())
+                        : StringUtils.EMPTY);
+    }
+
+    private void setWorkOrderJsonValues(final JsonObject jsonObject, final WorkOrder wo) {
+        jsonObject.addProperty("workOrderNumber", wo != null ? wo.getWorkOrderNumber() : StringUtils.EMPTY);
+        if (wo != null) {
+            jsonObject.addProperty("contractorName",
+                    wo.getContractor() != null ? wo.getContractor().getName() : StringUtils.EMPTY);
+            jsonObject.addProperty("contractorCode",
+                    wo.getContractor() != null ? wo.getContractor().getCode() : StringUtils.EMPTY);
+            jsonObject.addProperty("workOrderId", wo.getId());
+        }
     }
 }
