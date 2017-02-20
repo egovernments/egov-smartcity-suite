@@ -158,12 +158,16 @@ public class AdvertisementPermitDetailRepositoryImpl implements AdvertisementPer
             if (advertisementPermitDetail.getAgency() != null && advertisementPermitDetail.getAgency().getId() != null)
                 hoardingCriteria.add(Restrictions.eq("agency.id", advertisementPermitDetail.getAgency().getId()));
           
-            if (advertisementPermitDetail.getAdvertisement().getStatus() != null)
+            if (advertisementPermitDetail.getAdvertisement().getStatus() != null) {
                 hoardingCriteria
                         .add(Restrictions.eq("advertisement.status", advertisementPermitDetail.getAdvertisement().getStatus()));
-            else
+
+            } else {
                 hoardingCriteria
-                .add(Restrictions.eq("advertisement.status", AdvertisementStatus.ACTIVE));
+                        .add(Restrictions.eq("advertisement.status", AdvertisementStatus.ACTIVE));
+                hoardingCriteria
+                        .add(Restrictions.eq("isActive", true));// permit status is active.
+            }
                 
             if (advertisementPermitDetail.getAdvertisement().getRevenueInspector() != null)
                 hoardingCriteria.add(Restrictions.eq("advertisement.revenueInspector.id",
@@ -173,8 +177,6 @@ public class AdvertisementPermitDetailRepositoryImpl implements AdvertisementPer
                 
             }
             
-            hoardingCriteria
-                .add(Restrictions.eq("isActive",true));// permit status is active.
         }
         //TODO: commented . Check any particular reason for hard coding the status ?
        // hoardingCriteria.add(Restrictions.eq("permitStatus.code", AdvertisementTaxConstants.APPLICATION_STATUS_APPROVED));

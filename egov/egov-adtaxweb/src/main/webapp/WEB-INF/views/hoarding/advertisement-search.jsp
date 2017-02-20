@@ -45,7 +45,7 @@
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <div class="row">
     <div class="col-md-12">
-    	<form:form id="adtaxsearchform" method="post" class="form-horizontal form-groups-bordered" modelAttribute="advertisementPermitDetail" commandName="advertisementPermitDetail">
+    	<form:form role="form" id="adtaxsearchform" method="post" class="form-horizontal form-groups-bordered" modelAttribute="advertisementPermitDetail" commandName="advertisementPermitDetail">
 	        <div class="panel panel-primary" data-collapsed="0">
 	            <div class="panel-heading">
 	                <div class="panel-title"></div>
@@ -149,6 +149,11 @@
 						</div>
 					</div>
 				</div>
+				
+				<div class="mandatory1">
+	                * Note : By default will show only active advertisement and permitdetails records.
+	                </div>
+	                
 	        </div>
         	<div class="row">
        			<div class="text-center">

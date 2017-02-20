@@ -39,7 +39,17 @@
  */
 package org.egov.adtax.web.controller.hoarding;
 
-import com.google.gson.GsonBuilder;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
+import java.io.IOException;
+import java.util.Date;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.io.IOUtils;
 import org.egov.adtax.entity.AdvertisementPermitDetail;
 import org.egov.adtax.entity.SubCategory;
@@ -60,19 +70,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.Date;
-import java.util.List;
-
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import com.google.gson.GsonBuilder;
 
 @Controller
 @RequestMapping("/hoarding")
 public class SearchHoardingController extends GenericController {
+    private static final String RENEWAL_SEARCH = "renewal-search";
+    private static final String HOARDING_SEARCH_FOR_UPDATE = "hoarding-search-for-update";
+    private static final String HOARDING_SEARCH = "hoarding-search";
+    private static final String ADVERTISEMENT_SEARCH = "advertisement-search";
+    private static final String DATA = "{ \"data\":";
     @Autowired
     private FinancialYearDAO financialYearDAO;
     @Autowired
@@ -90,35 +97,38 @@ public class SearchHoardingController extends GenericController {
     }
 
     @RequestMapping(value = "/getsubcategories-by-category", method = GET, produces = APPLICATION_JSON_VALUE)
-    public @ResponseBody List<SubCategory> hoardingSubcategories(@RequestParam final Long categoryId) {
+    @ResponseBody
+    public List<SubCategory> hoardingSubcategories(@RequestParam final Long categoryId) {
         return subCategoryService.getAllActiveSubCategoryByCategoryId(categoryId);
     }
 
     @RequestMapping(value = "/search", method = GET)
     public String search() {
-        return "hoarding-search";
+        return HOARDING_SEARCH;
     }
 
     @RequestMapping(value = "/adtax-search", method = GET)
     public String searchAdtaxForm() {
-        return "advertisement-search";
+        return ADVERTISEMENT_SEARCH;
     }
 
     @RequestMapping(value = "/getsearch-adtax-result", method = GET, produces = APPLICATION_JSON_VALUE)
-    public @ResponseBody void searchAdtaxResult(@ModelAttribute final AdvertisementPermitDetail advertisementPermitDetail,
+    @ResponseBody
+    public void searchAdtaxResult(@ModelAttribute final AdvertisementPermitDetail advertisementPermitDetail,
             final HttpServletRequest request,
             final HttpServletResponse response) throws IOException {
-        IOUtils.write("{ \"data\":" + new GsonBuilder().setDateFormat(applicationProperties.defaultDatePattern()).create()
+        IOUtils.write(DATA + new GsonBuilder().setDateFormat(applicationProperties.defaultDatePattern()).create()
                 .toJson(advertisementPermitDetailService.getAdvertisementSearchResult(advertisementPermitDetail, "Advertisement"))
                 + "}", response.getWriter());
     }
 
     @RequestMapping(value = "/hoarding-search-list", method = GET, produces = APPLICATION_JSON_VALUE)
-    public @ResponseBody void searchResult(@ModelAttribute final AdvertisementPermitDetail advertisementPermitDetail,
+    @ResponseBody
+    public void searchResult(@ModelAttribute final AdvertisementPermitDetail advertisementPermitDetail,
             final HttpServletRequest request,
             final HttpServletResponse response) throws IOException {
         final String searchType = request.getParameter("searchType");
-        IOUtils.write("{ \"data\":" + new GsonBuilder().setDateFormat(applicationProperties.defaultDatePattern()).create()
+        IOUtils.write(DATA + new GsonBuilder().setDateFormat(applicationProperties.defaultDatePattern()).create()
                 .toJson(advertisementPermitDetailService.getAdvertisementSearchResult(advertisementPermitDetail, searchType))
                 + "}", response.getWriter());
     }
@@ -126,24 +136,25 @@ public class SearchHoardingController extends GenericController {
     public String commonSearchResult(final AdvertisementPermitDetail advertisementPermitDetail, final String searchType) {
         final List<HoardingSearch> searchResult = advertisementPermitDetailService
                 .getAdvertisementSearchResult(advertisementPermitDetail, searchType);
-        return new StringBuilder("{ \"data\":").append(searchResult).append("}").toString();
+        return new StringBuilder(DATA).append(searchResult).append("}").toString();
     }
 
     @RequestMapping(value = "findhoarding-for-update", method = GET)
     public String searchHoardingForm(@ModelAttribute final HoardingSearch hoardingSearch) {
-        return "hoarding-search-for-update";
+        return HOARDING_SEARCH_FOR_UPDATE;
     }
 
     @RequestMapping(value = "findhoarding-for-update", method = POST, produces = MediaType.TEXT_PLAIN_VALUE)
-    public @ResponseBody String searchHoarding(@ModelAttribute final HoardingSearch hoardingSearch) {
-        return "{ \"data\":" + new GsonBuilder().setDateFormat(applicationProperties.defaultDatePattern()).create()
+    @ResponseBody
+    public String searchHoarding(@ModelAttribute final HoardingSearch hoardingSearch) {
+        return DATA + new GsonBuilder().setDateFormat(applicationProperties.defaultDatePattern()).create()
                 .toJson(advertisementPermitDetailService.getAdvertisementSearchResult(hoardingSearch, "searchLegacyRecord"))
                 + "}";
     }
 
     @RequestMapping(value = "view/{id}", method = GET)
-    public String viewHoarding(@PathVariable final String id, final Model model, @ModelAttribute AdvertisementPermitDetail advertisementPermitDetail) {
-        advertisementPermitDetail = advertisementPermitDetailService.findBy(Long.valueOf(id));
+    public String viewHoarding(@PathVariable final String id, final Model model) {
+        AdvertisementPermitDetail advertisementPermitDetail = advertisementPermitDetailService.findBy(Long.valueOf(id));
         model.addAttribute("advertisementPermitDetail", advertisementPermitDetail);
         model.addAttribute("arrearTax", advertisementDemandService.getPendingArrearsTax(advertisementPermitDetail));
         model.addAttribute("previousFinancialYear", financialYearDAO.getPreviousFinancialYearByDate(new Date()));
@@ -152,14 +163,15 @@ public class SearchHoardingController extends GenericController {
 
     @RequestMapping(value = "/renewal-search", method = GET)
     public String renewalSearchForm() {
-        return "renewal-search";
+        return RENEWAL_SEARCH;
     }
 
     @RequestMapping(value = "/renewl-search-result", method = GET)
-    public @ResponseBody void renewSearchResult(@ModelAttribute final AdvertisementPermitDetail advertisementPermitDetail,
+    @ResponseBody
+    public void renewSearchResult(@ModelAttribute final AdvertisementPermitDetail advertisementPermitDetail,
             final HttpServletRequest request,
             final HttpServletResponse response) throws IOException {
-        IOUtils.write("{ \"data\":" + new GsonBuilder().setDateFormat(applicationProperties.defaultDatePattern()).create()
+        IOUtils.write(DATA + new GsonBuilder().setDateFormat(applicationProperties.defaultDatePattern()).create()
                 .toJson(advertisementPermitDetailService.getRenewalAdvertisementSearchResult(advertisementPermitDetail,
                         "Advertisement"))
                 + "}", response.getWriter());

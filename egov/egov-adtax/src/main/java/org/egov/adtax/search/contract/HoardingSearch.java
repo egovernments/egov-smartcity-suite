@@ -72,6 +72,8 @@ public class HoardingSearch {
     private String financialYear;
     private String ownerDetail;
     private boolean isLegacy;
+    private String userName;
+    private String pendingAction;
 
     public String getAdvertisementNumber() {
         return advertisementNumber;
@@ -279,6 +281,22 @@ public class HoardingSearch {
 
     public void setAdditionalTaxAmount(final BigDecimal additionalTaxAmount) {
         this.additionalTaxAmount = additionalTaxAmount;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getPendingAction() {
+        return pendingAction;
+    }
+
+    public void setPendingAction(String pendingAction) {
+        this.pendingAction = pendingAction;
     }
 
 }

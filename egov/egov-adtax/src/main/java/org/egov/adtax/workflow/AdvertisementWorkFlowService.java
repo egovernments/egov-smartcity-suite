@@ -321,5 +321,17 @@ public class AdvertisementWorkFlowService {
             }
         return wfInitiator;
     }
-
+    
+    public String getApproverName(final Long approvalPosition) {
+        Assignment assignment = null;
+        List<Assignment> asignList = null;
+        if (approvalPosition != null)
+            assignment = assignmentService.getPrimaryAssignmentForPositionAndDate(approvalPosition, new Date());
+        if (assignment != null) {
+            asignList = new ArrayList<>();
+            asignList.add(assignment);
+        } else if (assignment == null)
+            asignList = assignmentService.getAssignmentsForPosition(approvalPosition, new Date());
+        return !asignList.isEmpty() ? asignList.get(0).getEmployee().getName() : "";
+    }
 }

@@ -55,12 +55,12 @@ import org.egov.adtax.autonumber.AdvertisementPermitNumberGenerator;
 import org.egov.adtax.entity.AdvertisementPermitDetail;
 import org.egov.adtax.entity.HoardingAgencyWiseSearch;
 import org.egov.adtax.entity.enums.AdvertisementStatus;
-import org.egov.adtax.exception.HoardingValidationError;
 import org.egov.adtax.repository.AdvertisementPermitDetailRepository;
 import org.egov.adtax.search.contract.HoardingSearch;
 import org.egov.adtax.service.es.AdvertisementPermitDetailUpdateIndexService;
 import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
 import org.egov.adtax.workflow.AdtaxWorkflowCustomDefaultImpl;
+import org.egov.adtax.workflow.AdvertisementWorkFlowService;
 import org.egov.collection.integration.services.CollectionIntegrationService;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
@@ -84,10 +84,6 @@ public class AdvertisementPermitDetailService {
     @PersistenceContext
     private EntityManager entityManager;
 
-    public Session getCurrentSession() {
-        return entityManager.unwrap(Session.class);
-    }
-
     @Autowired
     protected CollectionIntegrationService collectionIntegrationService;
 
@@ -98,7 +94,7 @@ public class AdvertisementPermitDetailService {
     @Qualifier("adtaxWorkflowCustomDefaultImpl")
     private AdtaxWorkflowCustomDefaultImpl adtaxWorkflowCustomDefaultImpl;
 
-    @Autowired
+    @Autowired  
     private EgwStatusHibernateDAO egwStatusHibernateDAO;
 
     @Autowired
@@ -109,6 +105,13 @@ public class AdvertisementPermitDetailService {
 
     @Autowired
     private AdvertisementPermitDetailUpdateIndexService advertisementPermitDetailUpdateIndexService;
+    
+    @Autowired
+    private AdvertisementWorkFlowService advertisementWorkFlowService;
+    
+    public Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
+    }
 
     @Transactional
     public AdvertisementPermitDetail createAdvertisementPermitDetail(final AdvertisementPermitDetail advertisementPermitDetail,
@@ -143,7 +146,7 @@ public class AdvertisementPermitDetailService {
 
     @Transactional
     public AdvertisementPermitDetail updateAdvertisementPermitDetailForLegacy(
-            final AdvertisementPermitDetail advertisementPermitDetail) throws HoardingValidationError {
+            final AdvertisementPermitDetail advertisementPermitDetail) {
 
         advertisementDemandService.updateDemandForLegacyEntry(advertisementPermitDetail, advertisementPermitDetail
                 .getAdvertisement().getDemandId());
@@ -158,7 +161,7 @@ public class AdvertisementPermitDetailService {
 
     @Transactional
     public AdvertisementPermitDetail updateAdvertisementPermitDetail(
-            final AdvertisementPermitDetail advertisementPermitDetail) throws HoardingValidationError {
+            final AdvertisementPermitDetail advertisementPermitDetail) {
         advertisementPermitDetailRepository.save(advertisementPermitDetail);
         // update index on advertisement deactivation
         advertisementPermitDetailUpdateIndexService.updateAdvertisementPermitDetailIndexes(advertisementPermitDetail);
@@ -168,7 +171,7 @@ public class AdvertisementPermitDetailService {
     @Transactional
     public AdvertisementPermitDetail updateAdvertisementPermitDetail(final AdvertisementPermitDetail advertisementPermitDetail,
             final Long approvalPosition, final String approvalComent, final String additionalRule,
-            final String workFlowAction) throws HoardingValidationError {
+            final String workFlowAction) {
         final boolean anyDemandPendingForCollection = advertisementDemandService
                 .anyDemandPendingForCollection(advertisementPermitDetail);
 
@@ -260,10 +263,11 @@ public class AdvertisementPermitDetailService {
             hoardingSearchResult.setCategoryName(result.getAdvertisement().getCategory().getName());
             hoardingSearchResult.setSubCategoryName(result.getAdvertisement().getSubCategory().getDescription());
             hoardingSearchResult.setOwnerDetail(result.getOwnerDetail() != null ? result.getOwnerDetail() : "");
+            setWorkFlowDetails(result, hoardingSearchResult);
             if (result.getAdvertisement().getDemandId() != null) {
                 hoardingSearchResult
                         .setFinancialYear(result.getAdvertisement().getDemandId().getEgInstallmentMaster().getDescription());
-                if (searchType != null && searchType.equalsIgnoreCase("agency")) {
+                if (searchType != null && "agency".equalsIgnoreCase(searchType)) {
                     if (result.getAgency() != null) {
                         // PASS DEMAND OF EACH HOARDING AND GROUP BY AGENCY WISE.
                         final Map<String, BigDecimal> demandWiseFeeDetail = advertisementDemandService
@@ -333,6 +337,12 @@ public class AdvertisementPermitDetailService {
         }
         return hoardingSearchResults;
 
+    }
+
+    private void setWorkFlowDetails(AdvertisementPermitDetail result, final HoardingSearch hoardingSearchResult) {
+        hoardingSearchResult.setUserName(result.getState() != null && result.getState().getOwnerPosition() != null
+                ? advertisementWorkFlowService.getApproverName(result.getState().getOwnerPosition().getId()) : "");
+        hoardingSearchResult.setPendingAction(result.getState() != null ? result.getState().getNextAction() : "");
     }
 
     public List<HoardingSearch> getAdvertisementSearchResult(final HoardingSearch hoardingSearch, final String hoardingType) {
@@ -461,7 +471,7 @@ public class AdvertisementPermitDetailService {
             if (result.getAdvertisement().getDemandId() != null) {
                 hoardingSearchResult
                         .setFinancialYear(result.getAdvertisement().getDemandId().getEgInstallmentMaster().getDescription());
-                if (searchType != null && searchType.equalsIgnoreCase("agency") && result.getAgency() != null) {
+                if (searchType != null && "agency".equalsIgnoreCase(searchType) && result.getAgency() != null) {
                     // PASS DEMAND OF EACH HOARDING AND GROUP BY AGENCY WISE.
                     final Map<String, BigDecimal> demandWiseFeeDetail = advertisementDemandService
                             .checkPedingAmountByDemand(result);
@@ -588,6 +598,7 @@ public class AdvertisementPermitDetailService {
         return agencyWiseFinalHoardingList;
     }
 
+    @SuppressWarnings("unchecked")
     public List<AdvertisementPermitDetail> getAdvertisementPermitDetailBySearchParam(final Long agencyId, final Long category,
             final Long subcategory, final Long zone, final Long ward, final String ownerDetail) {
 

@@ -87,7 +87,6 @@ $(document).ready(function(){
 				locality : $('#zoneList').val()
 		  	   },
 			success: function (response) {
-				console.log("success"+response);
 				$('#wardlist').empty();
 				$('#wardlist').append($('<option>').text('Select from below').attr('value', ""));
 				$.each(response.results.boundaries, function (j, boundary) {
@@ -97,7 +96,6 @@ $(document).ready(function(){
 				});
 			}, 
 			error: function (response) {
-				console.log("failed");
 			}
 		});
 	});
@@ -115,8 +113,6 @@ $(document).ready(function(){
 			},
 			dataType: "json",
 			success: function (response) {
-				console.log("success"+response);
-				//$("#category").val($('#categories').val());    
 				$('#subcategories').empty();
 				$('#subcategories').append($("<option value=''>Select from below</option>"));
 				$.each(response, function(index, value) {
@@ -125,7 +121,6 @@ $(document).ready(function(){
 				
 			}, 
 			error: function (response) {
-				console.log("failed");
 			}
 		});
 	});
@@ -166,12 +161,25 @@ $(document).ready(function(){
 			             }]
 				
 			},
-			"ajax": "/adtax/hoarding/getsearch-adtax-result?"+$("#adtaxsearchform").serialize(),
+			ajax : {
+				url : "/adtax/hoarding/getsearch-adtax-result",      
+				beforeSend : function() {
+					$('.loader-class').modal('show', {
+						backdrop : 'static'
+					});
+				},
+				"data" : getFormData(jQuery('form')),
+				complete : function() {
+					$('.loader-class').modal('hide');
+				}
+			},
 			"columns" : [
 			              { "data" : "agencyName", "title": "Agency"},
 			              { "data" : "ownerDetail", "title": "Owner Detail"},
 						  { "data" : "advertisementNumber", "title":"Advertisement No."},
 						  { "data" : "applicationNumber", "title": "Application No."},
+						  { "data" : "userName", "title": "User Name"},
+						  { "data" : "pendingAction", "title": "Pending Action"},
 						  { "data" : "applicationFromDate", "title": "Application Date"},
 						  { "data" : "pendingDemandAmount", "title": "Amount"},
 						  { "data" : "additionalTaxAmount", "title": "Additional Tax (Service Tax and Cesses)"},
@@ -193,10 +201,10 @@ $(document).ready(function(){
 				        		   		 }
 				        		   	  } 
 				        		   	 else if(row.permitStatus=="ADTAXAMTPAYMENTPAID" || row.permitStatus=="ADTAXPERMITGENERATED"){
-				        		   		  if(row.isLegacy==true && row.totalAmount==0){
+				        		   		  if(row.isLegacy && row.totalAmount==0){
 				        		   			return ('<select class="dropchange" id="adtaxdropdown" ><option>Select from Below</option><option value="0">Generate Permit Order</option><option value="2">View</option></select>'); 
 				        		   		  }
-				        		   		  else if(row.isLegacy==true && row.totalAmount!=0){
+				        		   		  else if(row.isLegacy && row.totalAmount!=0){
 				        		   			 return ('<select class="dropchange" id="adtaxdropdown" ><option>Select from Below</option><option value="0">Generate Permit Order</option><option value="1">Generate Demand Notice</option><option value="2">View</option></select>');
 				        		   		  }
 				        		   		  else
@@ -219,24 +227,22 @@ $(document).ready(function(){
 
 	$("#adtax_search").on('change','tbody tr td .dropchange',
 			function() {
-			//var applicationNumber = oTable.fnGetData($(this).parent().parent(), 1);
-			var adtaxid= oTable.fnGetData($(this).parent().parent(), 11);
-			//var advertisementNumber = oTable.fnGetData($(this).parent().parent(), 0);
+			var adtaxid= oTable.fnGetData($(this).parent().parent(), 13);
 						if (this.value == 0) {
-							var url = '/adtax/advertisement/permitOrder/'+ adtaxid;
+							var urlForPermit = '/adtax/advertisement/permitOrder/'+ adtaxid;
 							$('#adtaxsearchform').attr('method', 'get');
-							$('#adtaxsearchform').attr('action', url);
-							window.open(url,'window','scrollbars=yes,resizable=yes,height=700,width=800,status=yes');
+							$('#adtaxsearchform').attr('action', urlForPermit);
+							window.open(urlForPermit,'window','scrollbars=yes,resizable=yes,height=700,width=800,status=yes');
 						} else if (this.value == 1) {
-							var url = '/adtax/advertisement/demandNotice/'+ adtaxid;
+							var urlForDemand = '/adtax/advertisement/demandNotice/'+ adtaxid;
 							$('#adtaxsearchform').attr('method', 'get');
-							$('#adtaxsearchform').attr('action', url);
-							window.open(url,'window','scrollbars=yes,resizable=yes,height=700,width=800,status=yes');
+							$('#adtaxsearchform').attr('action', urlForDemand);
+							window.open(urlForDemand,'window','scrollbars=yes,resizable=yes,height=700,width=800,status=yes');
 						} else if (this.value == 2) {
-							var url = '/adtax/hoarding/view/'+ adtaxid;
+							var urlForView = '/adtax/hoarding/view/'+ adtaxid;
 							$('#adtaxsearchform').attr('method', 'get');
-							$('#adtaxsearchform').attr('action', url);
-							window.open(url,'window','scrollbars=yes,resizable=yes,height=700,width=800,status=yes');
+							$('#adtaxsearchform').attr('action', urlForView);
+							window.open(urlForView,'window','scrollbars=yes,resizable=yes,height=700,width=800,status=yes');
 						}
 						
 						}); 
@@ -253,7 +259,18 @@ $(document).ready(function(){
 			"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
 			"autoWidth": false,
 			"bDestroy": true,
-			"ajax": "/adtax/hoarding/renewl-search-result?"+$("#renewalsearchform").serialize(),
+			ajax : {
+				url : "/adtax/hoarding/renewl-search-result",      
+				beforeSend : function() {
+					$('.loader-class').modal('show', {
+						backdrop : 'static'
+					});
+				},
+				"data" : getFormData(jQuery('form')),
+				complete : function() {
+					$('.loader-class').modal('hide');
+				}
+			},
 			"columns" : [
 						  { "data" : "advertisementNumber", "title":"Advertisement No."},
 						  { "data" : "categoryName", "title": "Category"},
@@ -285,3 +302,13 @@ return ('<select class="dropchange" id="renewdropdown" ><option>Select from Belo
 	
 });
 
+function getFormData($form) {
+	var unindexed_array = $form.serializeArray();
+	var indexed_array = {};
+
+	$.map(unindexed_array, function(n, i) {
+		indexed_array[n['name']] = n['value'];
+	});
+
+	return indexed_array;
+}
