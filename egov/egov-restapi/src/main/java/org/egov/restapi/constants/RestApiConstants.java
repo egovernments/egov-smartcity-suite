@@ -332,11 +332,13 @@ public class RestApiConstants {
     public static final String THIRD_PARTY_ACTION_SUCCESS = "EGCL-REST-SUCCESS";
     public static final String THIRD_PARTY_ACTION_FAILURE = "REST-FAILURE";
 
+    public static final String CONTRACTOR_ADVANCE_PURPOSE = "CONTRACTOR_ADVANCE_ACCOUNTCODE";
+
     public static final String THIRD_PARTY_ERR_CODE_NO_DEPARTMENT = "EGF-REST-1";
-    public static final String THIRD_PARTY_ERR_MSG_NO_DEPARTMENT = "Department is required";
+    public static final String THIRD_PARTY_ERR_MSG_NO_DEPARTMENT = "Department is required or the givern Department is not valid";
 
     public static final String THIRD_PARTY_ERR_CODE_NO_FUNCTION = "EGF-REST-2";
-    public static final String THIRD_PARTY_ERR_MSG_NO_FUNCTION = "Function is required";
+    public static final String THIRD_PARTY_ERR_MSG_NO_FUNCTION = "Function is required or the givern Function is not valid";
 
     public static final String THIRD_PARTY_ERR_CODE_NO_WINCODE = "EGF-REST-3";
     public static final String THIRD_PARTY_ERR_MSG_NO_WINCODE = "WIN Code is required";
@@ -348,7 +350,7 @@ public class RestApiConstants {
     public static final String THIRD_PARTY_ERR_MSG_NO_BILLTYPE = "Bill Type is required";
 
     public static final String THIRD_PARTY_ERR_CODE_NO_FUND = "EGF-REST-6";
-    public static final String THIRD_PARTY_ERR_MSG_NO_FUND = "Fund is required";
+    public static final String THIRD_PARTY_ERR_MSG_NO_FUND = "Fund is required or the givern Fund is not valid";
 
     public static final String THIRD_PARTY_ERR_CODE_NO_DETAIL_GLCODE = "EGF-REST-7";
     public static final String THIRD_PARTY_ERR_MSG_NO_DETAIL_GLCODE = "Glcode is required for Bill Details";
@@ -389,4 +391,30 @@ public class RestApiConstants {
     public static final String THIRD_PARTY_ERR_CODE_PAYEE_EITHER_CREDIT_DEBIT = "EGF-REST-20";
     public static final String THIRD_PARTY_ERR_MSG_PAYEE_EITHER_CREDIT_DEBIT = "Either Credit or Debit Amount is required for the bill payee detail";
 
+    public static final String THIRD_PARTY_ERR_CODE_NO_DEBIT_CODE_SUBLEDGER = "EGF-REST-21";
+    public static final String THIRD_PARTY_ERR_MSG_NO_DEBIT_CODE_SUBLEDGER = "Debit code subledger entry not found";
+
+    public static final String THIRD_PARTY_ERR_CODE_AMOUNT_NEGATIVE = "EGF-REST-23";
+    public static final String THIRD_PARTY_ERR_MSG_AMOUNT_NEGATIVE = "Amount can not be less than zero";
+
+    public static final String THIRD_PARTY_ERR_CODE_AMOUNT_SHOULD_GREATER_THAN_ZERO = "EGF-REST-24";
+    public static final String THIRD_PARTY_ERR_MSG_AMOUNT_SHOULD_GREATER_THAN_ZERO = "Amount should be greater than zero";
+
+    public static final String THIRD_PARTY_ERR_CODE_NO_VALID_DETAIL_GLCODE = "EGF-REST-25";
+    public static final String THIRD_PARTY_ERR_MSG_NO_VALID_DETAIL_GLCODE = "Please provide valid Glcode for Bill Details";
+
+    public static final String THIRD_PARTY_ERR_CODE_MIN_DETAILS = "EGF-REST-26";
+    public static final String THIRD_PARTY_ERR_MSG_MIN_DETAILS = "Minimum two glcode details are required";
+
+    public static final String THIRD_PARTY_ERR_CODE_CREDIT_DEBIT_GREATER_ZERO = "EGF-REST-27";
+    public static final String THIRD_PARTY_ERR_MSG_CREDIT_DEBIT_GREATER_ZERO = "Both Debit and Credit amounts can not be greater than zero";
+
+    public static final String THIRD_PARTY_ERR_CODE_NOT_PROJECT_CONTRACTOR_SUBLEDGER = "EGF-REST-28";
+    public static final String THIRD_PARTY_ERR_MSG_NOT_PROJECT_CONTRACTOR_SUBLEDGER = "GL Code should be either Project or Contractor Subledger";
+
+    public static final String THIRD_PARTY_ERR_CODE_PAYEE_GLCODE_NOT_IN_DETAILS = "EGF-REST-29";
+    public static final String THIRD_PARTY_ERR_MSG_PAYEE_GLCODE_NOT_IN_DETAILS = "The given Payee GL code does not exist in Bill details";
+
+    public static final String THIRD_PARTY_ERR_CODE_NOT_ADVANCE_CONTRACTOR_PAYABLE = "EGF-REST-13";
+    public static final String THIRD_PARTY_ERR_MSG_NOT_ADVANCE_CONTRACTOR_PAYABLE = "GL Code purpose should be either Advance payable or Contractor payable";
 }

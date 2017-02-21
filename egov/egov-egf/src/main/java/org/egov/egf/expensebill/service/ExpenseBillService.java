@@ -48,6 +48,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.script.ScriptContext;
 
+import org.apache.commons.lang.StringUtils;
 import org.egov.commons.CChartOfAccountDetail;
 import org.egov.commons.service.ChartOfAccountDetailService;
 import org.egov.commons.service.CheckListService;
@@ -172,9 +173,10 @@ public class ExpenseBillService {
     @Transactional
     public EgBillregister create(final EgBillregister egBillregister, final Long approvalPosition, final String approvalComent,
             final String additionalRule, final String workFlowAction) {
-
-        egBillregister.setBilltype(FinancialConstants.BILLTYPE_FINAL_BILL);
-        egBillregister.setExpendituretype(FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT);
+        if (StringUtils.isBlank(egBillregister.getBilltype()))
+            egBillregister.setBilltype(FinancialConstants.BILLTYPE_FINAL_BILL);
+        if (StringUtils.isBlank(egBillregister.getExpendituretype()))
+            egBillregister.setExpendituretype(FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT);
         egBillregister.setPassedamount(egBillregister.getBillamount());
         egBillregister.getEgBillregistermis().setEgBillregister(egBillregister);
         egBillregister.getEgBillregistermis().setLastupdatedtime(new Date());
@@ -222,6 +224,7 @@ public class ExpenseBillService {
             createExpenseBillRegisterWorkflowTransition(savedEgBillregister, approvalPosition, approvalComent, additionalRule,
                     workFlowAction);
         }
+        // TODO: add the code to handle new screen for view bills of all type
         savedEgBillregister.getEgBillregistermis().setSourcePath(
                 "/EGF/expensebill/view/" + savedEgBillregister.getId().toString());
 

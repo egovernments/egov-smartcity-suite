@@ -41,6 +41,7 @@ package org.egov.restapi.model;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -64,8 +65,8 @@ public class BillRegister implements Serializable {
     private String schemeCode;
     private String subSchemeCode;
     private String fundCode;
-    private List<BillDetails> billDetails;
-    private List<BillPayeeDetails> billPayeeDetails;
+    private List<BillDetails> billDetails = new ArrayList<>();
+    private List<BillPayeeDetails> billPayeeDetails = new ArrayList<>();
 
     public String getProjectCode() {
         return projectCode;
