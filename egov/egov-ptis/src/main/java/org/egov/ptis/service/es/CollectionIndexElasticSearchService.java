@@ -2104,22 +2104,18 @@ public class CollectionIndexElasticSearchService {
     public List<UlbWiseWeeklyDCB> getWeekwiseDCBDetailsAcrossCities(final CollectionDetailsRequest collectionDetailsRequest,
             final String intervalType) {
         final List<UlbWiseWeeklyDCB> ulbWiseDetails = new ArrayList<>();
-        Date fromDate;
-        Date toDate;
+        Date fromDate = null;
+        Date toDate = null;
         String weekName;
         Sum aggregateSum;
-        Map<String, Object[]> weekwiseColl = new LinkedHashMap<>();
+        Map<String, Object[]> weekwiseColl;
         final Map<String, Map<String, Object[]>> weeklyCollMap = new LinkedHashMap<>();
-        final CFinancialYear financialYear = cFinancialYearService.getFinancialYearByDate(new Date());
         if (StringUtils.isNotBlank(collectionDetailsRequest.getFromDate())
                 && StringUtils.isNotBlank(collectionDetailsRequest.getToDate())) {
             fromDate = DateUtils.getDate(collectionDetailsRequest.getFromDate(), DATE_FORMAT_YYYYMMDD);
             toDate = DateUtils.addDays(
                     DateUtils.getDate(collectionDetailsRequest.getToDate(), DATE_FORMAT_YYYYMMDD),
                     1);
-        } else {
-            fromDate = DateUtils.startOfDay(financialYear.getStartingDate());
-            toDate = DateUtils.addDays(new Date(), 1);
         }
 
         final Map<String, BigDecimal> totalDemandMap = getCollectionAndDemandValues(collectionDetailsRequest, fromDate,
@@ -2144,7 +2140,6 @@ public class CollectionIndexElasticSearchService {
                 if (noOfWeeks == 0)
                     noOfWeeks = 1;
                 demandCollValues = new Object[53];
-                entry.getKeyAsString().split("T");
                 weeklyDemand = totalDemand.divide(BigDecimal.valueOf(52), BigDecimal.ROUND_HALF_UP)
                         .multiply(BigDecimal.valueOf(noOfWeeks));
                 weekName = "Week " + noOfWeeks;
@@ -2176,7 +2171,7 @@ public class CollectionIndexElasticSearchService {
         int count;
         for (final Map.Entry<String, Map<String, Object[]>> entry : weeklyCollMap.entrySet()) {
             ulbWiseWeeklyDCB = new UlbWiseWeeklyDCB();
-            count=0;
+            count=1;
             ulbWiseWeeklyDCB.setUlbName(entry.getKey());
             for (final Map.Entry<String, Object[]> weeklyMap : entry.getValue().entrySet()) {
                 demandCollectionMIS = new DemandCollectionMIS();
@@ -2185,15 +2180,15 @@ public class CollectionIndexElasticSearchService {
                 demandCollectionMIS.setDemand(new BigDecimal(weeklyMap.getValue()[1].toString()));
                 if (demandCollectionMIS.getDemand().compareTo(BigDecimal.ZERO) > 0)
                     demandCollectionMIS.setPercent(demandCollectionMIS.getCollection().divide(demandCollectionMIS.getDemand(), 2, RoundingMode.CEILING).multiply(BIGDECIMAL_100));
-                if(count == 0)
+                if(count == 1)
                     ulbWiseWeeklyDCB.setWeek1DCB(demandCollectionMIS);
-                else if(count == 1)
-                    ulbWiseWeeklyDCB.setWeek2DCB(demandCollectionMIS);
                 else if(count == 2)
-                    ulbWiseWeeklyDCB.setWeek3DCB(demandCollectionMIS);
+                    ulbWiseWeeklyDCB.setWeek2DCB(demandCollectionMIS);
                 else if(count == 3)
-                    ulbWiseWeeklyDCB.setWeek4DCB(demandCollectionMIS);
+                    ulbWiseWeeklyDCB.setWeek3DCB(demandCollectionMIS);
                 else if(count == 4)
+                    ulbWiseWeeklyDCB.setWeek4DCB(demandCollectionMIS);
+                else if(count == 5)
                     ulbWiseWeeklyDCB.setWeek5DCB(demandCollectionMIS);
                 count++;
                 
