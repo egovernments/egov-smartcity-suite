@@ -57,7 +57,6 @@ public class FeeMatrixResponseAdaptor implements JsonSerializer<FeeMatrix> {
             feeMatrixResponse.addProperty("id", feeMatrix.getId());
             feeMatrixResponse.addProperty("licenseCategory", feeMatrix.getLicenseCategory().getName());
             feeMatrixResponse.addProperty("subCategory", feeMatrix.getSubCategory().getName());
-            feeMatrixResponse.addProperty("uom", feeMatrix.getUnitOfMeasurement().getName());
             feeMatrixResponse.addProperty("feeType", feeMatrix.getFeeType().getName());
             feeMatrixResponse.addProperty("financialYear", feeMatrix.getFinancialYear().getFinYearRange());
             feeMatrixResponse.addProperty("natureOfBussiness", feeMatrix.getNatureOfBusiness().getName());

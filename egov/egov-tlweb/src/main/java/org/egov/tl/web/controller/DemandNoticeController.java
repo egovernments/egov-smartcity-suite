@@ -42,7 +42,6 @@ package org.egov.tl.web.controller;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentHibDao;
 import org.egov.infra.admin.master.entity.AppConfigValues;
-import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
@@ -86,6 +85,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.egov.infra.utils.ApplicationConstant.CITY_CORP_GRADE_KEY;
 import static org.egov.infra.utils.DateUtils.currentDateToDefaultDateFormat;
 import static org.egov.infra.utils.DateUtils.getDefaultFormattedDate;
 import static org.egov.infra.utils.DateUtils.toYearFormat;
@@ -210,9 +210,9 @@ public class DemandNoticeController {
 
     private void getActDeclarationDetailBasedOnCityGrade(Map<String, Object> reportParams) {
 
-        City city = cityService.getCityByCode(ApplicationThreadLocals.getCityCode());
+        String cityGrade = (String) cityService.cityDataForKey(CITY_CORP_GRADE_KEY);
 
-        if (city != null && city.getGrade().equalsIgnoreCase(CITY_GRADE_CORPORATION)) {
+        if (CITY_GRADE_CORPORATION.equalsIgnoreCase(cityGrade)) {
             List<AppConfigValues> corporationAct = appConfigValueService
                     .getConfigValuesByModuleAndKey(TRADELICENSE_MODULENAME, TL_LICENSE_ACT_CORPORATION);
             reportParams.put("actDeclaration",

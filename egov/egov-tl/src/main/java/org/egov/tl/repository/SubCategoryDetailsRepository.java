@@ -40,17 +40,16 @@
 
 package org.egov.tl.repository;
 
-import java.util.List;
-
 import org.egov.tl.entity.LicenseSubCategoryDetails;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface SubCategoryDetailsRepository extends JpaRepository<LicenseSubCategoryDetails, Long> {
 
+    LicenseSubCategoryDetails findBySubCategoryIdAndFeeTypeId(Long subCategoryId, Long feeTypeId);
+
     List<LicenseSubCategoryDetails> findBySubCategoryId(Long subCategoryId);
-
-    List<LicenseSubCategoryDetails> findBySubCategoryIdAndFeeTypeId(Long subCategoryId, Long feeTypeId);
-
 }

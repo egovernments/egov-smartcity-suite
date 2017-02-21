@@ -61,7 +61,6 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -71,7 +70,7 @@ import java.util.Objects;
 @Table(name = "egtl_feematrix")
 @SequenceGenerator(name = FeeMatrix.SEQ, sequenceName = FeeMatrix.SEQ, allocationSize = 1)
 @CompositeUnique(fields = {"natureOfBusiness", "licenseCategory", "subCategory", "licenseAppType",
-        "financialYear", "feeType", "unitOfMeasurement"}, enableDfltMsg = true, message = "{feematrix.exist}")
+        "financialYear", "feeType"}, enableDfltMsg = true, message = "{feematrix.exist}")
 @CompareDates(fromDate = "effectiveFrom", toDate = "effectiveTo", message = "{feematrix.effective.date.range}")
 public class FeeMatrix extends AbstractAuditable {
     public static final String SEQ = "seq_egtl_feematrix";
@@ -112,11 +111,6 @@ public class FeeMatrix extends AbstractAuditable {
     private CFinancialYear financialYear;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "unitOfMeasurement")
-    private UnitOfMeasurement unitOfMeasurement;
-
-    @NotNull
     @Temporal(TemporalType.TIMESTAMP)
     private Date effectiveFrom;
 
@@ -136,7 +130,7 @@ public class FeeMatrix extends AbstractAuditable {
     }
 
     @Override
-    public void setId(final Long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -144,7 +138,7 @@ public class FeeMatrix extends AbstractAuditable {
         return feeType;
     }
 
-    public void setFeeType(final FeeType feeType) {
+    public void setFeeType(FeeType feeType) {
         this.feeType = feeType;
     }
 
@@ -152,7 +146,7 @@ public class FeeMatrix extends AbstractAuditable {
         return natureOfBusiness;
     }
 
-    public void setNatureOfBusiness(final NatureOfBusiness natureOfBusiness) {
+    public void setNatureOfBusiness(NatureOfBusiness natureOfBusiness) {
         this.natureOfBusiness = natureOfBusiness;
     }
 
@@ -160,7 +154,7 @@ public class FeeMatrix extends AbstractAuditable {
         return licenseCategory;
     }
 
-    public void setLicenseCategory(final LicenseCategory licenseCategory) {
+    public void setLicenseCategory(LicenseCategory licenseCategory) {
         this.licenseCategory = licenseCategory;
     }
 
@@ -168,7 +162,7 @@ public class FeeMatrix extends AbstractAuditable {
         return subCategory;
     }
 
-    public void setSubCategory(final LicenseSubCategory subCategory) {
+    public void setSubCategory(LicenseSubCategory subCategory) {
         this.subCategory = subCategory;
     }
 
@@ -176,27 +170,15 @@ public class FeeMatrix extends AbstractAuditable {
         return licenseAppType;
     }
 
-    public void setLicenseAppType(final LicenseAppType licenseAppType) {
+    public void setLicenseAppType(LicenseAppType licenseAppType) {
         this.licenseAppType = licenseAppType;
-    }
-
-    public UnitOfMeasurement getUnitOfMeasurement() {
-        return unitOfMeasurement;
-    }
-
-    public void setUnitOfMeasurement(final UnitOfMeasurement unitOfMeasurement) {
-        this.unitOfMeasurement = unitOfMeasurement;
-    }
-
-    public BigDecimal getAmount() {
-        return null;
     }
 
     public List<FeeMatrixDetail> getFeeMatrixDetail() {
         return feeMatrixDetail;
     }
 
-    public void setFeeMatrixDetail(final List<FeeMatrixDetail> feeMatrixDetail) {
+    public void setFeeMatrixDetail(List<FeeMatrixDetail> feeMatrixDetail) {
         this.feeMatrixDetail = feeMatrixDetail;
     }
 
@@ -204,7 +186,7 @@ public class FeeMatrix extends AbstractAuditable {
         return financialYear;
     }
 
-    public void setFinancialYear(final CFinancialYear financialYear) {
+    public void setFinancialYear(CFinancialYear financialYear) {
         this.financialYear = financialYear;
     }
 
@@ -212,7 +194,7 @@ public class FeeMatrix extends AbstractAuditable {
         return this.effectiveFrom;
     }
 
-    public void setEffectiveFrom(final Date effectiveFrom) {
+    public void setEffectiveFrom(Date effectiveFrom) {
         this.effectiveFrom = effectiveFrom;
     }
 
@@ -220,29 +202,28 @@ public class FeeMatrix extends AbstractAuditable {
         return effectiveTo;
     }
 
-    public void setEffectiveTo(final Date effectiveTo) {
+    public void setEffectiveTo(Date effectiveTo) {
         this.effectiveTo = effectiveTo;
     }
 
     @Override
-    public boolean equals(final Object o) {
+    public boolean equals(Object o) {
         if (this == o)
             return true;
         if (!(o instanceof FeeMatrix))
             return false;
-        final FeeMatrix feeMatrix = (FeeMatrix) o;
+        FeeMatrix feeMatrix = (FeeMatrix) o;
         return Objects.equals(natureOfBusiness.getId(), feeMatrix.natureOfBusiness.getId()) &&
                 Objects.equals(licenseCategory.getId(), feeMatrix.licenseCategory.getId()) &&
                 Objects.equals(subCategory.getId(), feeMatrix.subCategory.getId()) &&
                 Objects.equals(licenseAppType.getId(), feeMatrix.licenseAppType.getId()) &&
                 Objects.equals(feeType.getId(), feeMatrix.feeType.getId()) &&
-                Objects.equals(financialYear.getId(), feeMatrix.financialYear.getId()) &&
-                Objects.equals(unitOfMeasurement.getId(), feeMatrix.unitOfMeasurement.getId());
+                Objects.equals(financialYear.getId(), feeMatrix.financialYear.getId());
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(natureOfBusiness.getId(), licenseCategory.getId(), subCategory.getId(),
-                licenseAppType.getId(), feeType.getId(), financialYear.getId(), unitOfMeasurement.getId());
+                licenseAppType.getId(), feeType.getId(), financialYear.getId());
     }
 }

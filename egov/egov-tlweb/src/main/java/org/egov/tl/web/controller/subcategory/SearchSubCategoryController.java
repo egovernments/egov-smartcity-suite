@@ -43,26 +43,19 @@ package org.egov.tl.web.controller.subcategory;
 import org.egov.tl.entity.LicenseCategory;
 import org.egov.tl.entity.LicenseSubCategory;
 import org.egov.tl.service.LicenseCategoryService;
-import org.egov.tl.service.LicenseSubCategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
 
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @Controller
 @RequestMapping("/licensesubcategory")
 public class SearchSubCategoryController {
-
-    @Autowired
-    private LicenseSubCategoryService licenseSubCategoryService;
 
     @Autowired
     private LicenseCategoryService licenseCategoryService;
@@ -75,12 +68,6 @@ public class SearchSubCategoryController {
     @ModelAttribute(value = "licenseCategories")
     public List<LicenseCategory> categories() {
         return licenseCategoryService.getCategories();
-    }
-
-    @RequestMapping(value = "/subcategories-by-category", method = GET, produces = APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public List<LicenseSubCategory> getSubCategories(@RequestParam Long categoryId) {
-        return licenseSubCategoryService.getSubCategoriesByCategory(categoryId);
     }
 
     @RequestMapping(value = "/update", method = GET)

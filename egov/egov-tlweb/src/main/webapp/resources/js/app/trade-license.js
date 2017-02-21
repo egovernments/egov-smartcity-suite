@@ -41,9 +41,7 @@
 $(document).ready(function () {
     $('#boundary').blur(function () {
         $('#parentBoundary').find('option:gt(0)').remove();
-        if (this.value === '') {
-            return;
-        } else {
+        if (this.value !== '') {
             $.ajax({
                 type: "GET",
                 url: "/egi/boundary/ajaxBoundary-blockByLocality",
@@ -80,20 +78,20 @@ function showHideAgreement() {
 }
 
 function getUom() {
-    jQuery.ajax({
-        url: "/tl/feeType/uom-by-subcategory",
+    $.ajax({
+        url: "/tl/licensesubcategory/detail-by-feetype",
         type: "GET",
         data: {
-            subCategoryId: jQuery('#subCategory').val(),
-            feeTypeId: jQuery('#feeTypeId').val()
+            subCategoryId: $('#subCategory').val(),
+            feeTypeId: $('#feeTypeId').val()
         },
         cache: false,
         dataType: "json",
         success: function (response) {
-            if (response.length > 0)
-                jQuery('#uom').val(response[0].uom.name);
+            if (response)
+                $('#uom').val(response.uom.name);
             else {
-                jQuery('#uom').val('');
+                $('#uom').val('');
                 bootbox.alert("No UOM mapped for the selected Sub Category");
             }
         }

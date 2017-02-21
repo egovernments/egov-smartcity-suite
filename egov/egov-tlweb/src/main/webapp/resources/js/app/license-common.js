@@ -39,64 +39,66 @@
  */
 
 function refreshInbox() {
-	if(opener && opener.top.document.getElementById('inboxframe')) {
-		opener.top.document.getElementById('inboxframe').contentWindow.egovInbox.refresh();
-	} else if (opener && opener.opener && opener.opener.top.document.getElementById('inboxframe')) {
-		opener.opener.top.document.getElementById('inboxframe').contentWindow.egovInbox.refresh();
-	}
+    if (opener && opener.top.document.getElementById('inboxframe')) {
+        opener.top.document.getElementById('inboxframe').contentWindow.egovInbox.refresh();
+    } else if (opener && opener.opener && opener.opener.top.document.getElementById('inboxframe')) {
+        opener.opener.top.document.getElementById('inboxframe').contentWindow.egovInbox.refresh();
+    }
 }
 
 $(document).ready(function () {
-	
-	$('#category').change(function() {
-	    var val = $(this).val();
-	    var results = [];
-	    $.ajax({
-	        type: "GET",
-	        url: '../licensesubcategory/subcategories-by-category?name=&categoryId=' + val,
-	        dataType: "json",
-	        success: function(data) {
-	        	$.each(data, function(i) {
-	                var obj = {};
-	                obj['id'] = data[i]['id']
-	                obj['text'] = data[i]['name'];
-	                results.push(obj);
-	            });
-                select2initialize($("#subCategory"),results,false);
-	        },
-	        error: function() {
-	        	bootbox.alert('something went wrong on server');
-	        }
-	    });
-	});
+
+    $('#category').change(function () {
+        var val = $(this).val();
+        if (val !== '') {
+            var results = [];
+            $.ajax({
+                type: "GET",
+                url: '../licensesubcategory/by-category',
+                data: {categoryId: val},
+                dataType: "json",
+                success: function (data) {
+                    $.each(data, function (i) {
+                        var obj = {};
+                        obj['id'] = data[i]['id']
+                        obj['text'] = data[i]['name'];
+                        results.push(obj);
+                    });
+                    select2initialize($("#subCategory"), results, false);
+                },
+                error: function () {
+                    bootbox.alert('something went wrong on server');
+                }
+            });
+        }
+    });
 });
 
 function downloadDigisignedLicenseCertificate(signedFileStoreId) {
     var params = [
-        'height='+screen.height,
-        'width='+screen.width,
+        'height=' + screen.height,
+        'width=' + screen.width,
         'fullscreen=yes'
     ].join(',');
-    window.open('/tl/digitalSignature/tradeLicense/downloadSignedLicenseCertificate?signedFileStoreId='+signedFileStoreId, "NoticeWindow", params);
+    window.open('/tl/digitalSignature/tradeLicense/downloadSignedLicenseCertificate?signedFileStoreId=' + signedFileStoreId, "NoticeWindow", params);
 }
 
-function showMessage(id,msg){
-    $('#'+id).show();
-    $('#'+id).text(msg);
+function showMessage(id, msg) {
+    $('#' + id).show();
+    $('#' + id).text(msg);
 }
-function clearMessage(id){
-    $('#'+id).hide();
-    $('#'+id).text('');
+function clearMessage(id) {
+    $('#' + id).hide();
+    $('#' + id).text('');
 }
 
-function toggleFields(flag,excludedFields)
-{
-    for(var i=0;i<document.forms[0].length;i++) {
-        document.forms[0].elements[i].disabled =flag;
+function toggleFields(flag, excludedFields) {
+    for (var i = 0; i < document.forms[0].length; i++) {
+        document.forms[0].elements[i].disabled = flag;
     }
-    for(var j=0;j<excludedFields.length;j++) {
-        if($('#'+excludedFields[j])) {
-        	//Since id can contains space and special character jquery can find by id
+    for (var j = 0; j < excludedFields.length; j++) {
+        if ($('#' + excludedFields[j])) {
+            //Since id can contains space and special character jquery can find by id
             var element = document.getElementById(excludedFields[j]);
             $(element).removeAttr("disabled");
         }

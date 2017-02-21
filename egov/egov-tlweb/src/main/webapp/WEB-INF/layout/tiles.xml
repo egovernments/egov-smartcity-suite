@@ -69,36 +69,6 @@
         <put-attribute name="body" value="/WEB-INF/index.jsp"/>
     </definition>
 
-    <definition name="feetype-new" extends="base_layout">
-        <put-attribute name="page-title" value="title.feetype.new" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/feetype/feetype-new.jsp"/>
-    </definition>
-
-    <definition name="feetype-view" extends="base_layout">
-        <put-attribute name="page-title" value="title.feetype.view" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/feetype/feetype-view.jsp"/>
-    </definition>
-
-    <definition name="feetype-edit" extends="base_layout">
-        <put-attribute name="page-title" value="title.feetype.edit" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/feetype/feetype-edit.jsp"/>
-    </definition>
-
-    <definition name="feetype-new" extends="base_layout">
-        <put-attribute name="page-title" value="title.feetype.new" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/feetype/feetype-new.jsp"/>
-    </definition>
-
-    <definition name="feetype-view" extends="base_layout">
-        <put-attribute name="page-title" value="title.feetype.view" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/feetype/feetype-view.jsp"/>
-    </definition>
-
-    <definition name="feetype-edit" extends="base_layout">
-        <put-attribute name="page-title" value="title.feetype.edit" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/feetype/feetype-edit.jsp"/>
-    </definition>
-
     <definition name="feematrix-create" extends="base_layout">
         <put-attribute name="page-title" value="title.feematrix.new" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/feematrix/feematrix-create.jsp"/>

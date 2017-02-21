@@ -148,24 +148,27 @@
 </div>
 <script>
     $('#subCategory').change(function () {
-        $.ajax({
-            url: "/tl/feeType/uom-by-subcategory",
-            type: "GET",
-            data: {
-                subCategoryId: $('#subCategory').val(),
-                feeTypeId: $('#feeTypeId').val()
-            },
-            cache: false,
-            dataType: "json",
-            success: function (response) {
-                if (response.length > 0)
-                    $('#uom').val(response[0].uom.name);
-                else {
-                    $('#uom').val('');
-                    bootbox.alert("No UOM mapped for the selected Sub Category");
+        $('#uom').val('');
+        if ($('#feeTypeId').val() !== '') {
+            $.ajax({
+                url: "/tl/licensesubcategory/detail-by-feetype",
+                type: "GET",
+                data: {
+                    subCategoryId: $('#subCategory').val(),
+                    feeTypeId: $('#feeTypeId').val()
+                },
+                cache: false,
+                dataType: "json",
+                success: function (response) {
+                    if (response)
+                        $('#uom').val(response.uom.name);
+                    else {
+                        $('#uom').val('');
+                        bootbox.alert("No UOM mapped for the selected Sub Category");
+                    }
                 }
-            }
-        })
+            });
+        }
     });
 
     var parentBoundary = '${model.parentBoundary.id}';

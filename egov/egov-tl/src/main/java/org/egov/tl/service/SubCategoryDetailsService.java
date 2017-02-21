@@ -40,30 +40,26 @@
 
 package org.egov.tl.service;
 
-import java.util.List;
-
 import org.egov.tl.entity.LicenseSubCategoryDetails;
 import org.egov.tl.repository.SubCategoryDetailsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @Transactional(readOnly = true)
 public class SubCategoryDetailsService {
 
-    private final SubCategoryDetailsRepository subCategoryDetailsRepository;
-
     @Autowired
-    public SubCategoryDetailsService(final SubCategoryDetailsRepository subCategoryDetailsRepository) {
-        this.subCategoryDetailsRepository = subCategoryDetailsRepository;
-    }
+    private SubCategoryDetailsRepository subCategoryDetailsRepository;
 
-    public List<LicenseSubCategoryDetails> getFeeTypeDetails(final Long subCategoryId) {
+    public List<LicenseSubCategoryDetails> getSubcategoryDetailsBySubcategoryId(Long subCategoryId) {
         return subCategoryDetailsRepository.findBySubCategoryId(subCategoryId);
     }
 
-    public List<LicenseSubCategoryDetails> getUomDetails(final Long subCategoryId, final Long feeTypeId) {
+    public LicenseSubCategoryDetails getSubcategoryDetailBySubcategoryAndFeeType(Long subCategoryId, Long feeTypeId) {
         return subCategoryDetailsRepository.findBySubCategoryIdAndFeeTypeId(subCategoryId, feeTypeId);
     }
 

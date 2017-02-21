@@ -59,14 +59,14 @@
                             <spring:message code="lbl.licenseapptype"/><span class="mandatory"></span>
                         </label>
                         <div class="col-sm-3 add-margin">
-                            <form:input path="licenseAppType.name" id="licenseAppType" cssClass="form-control" readonly="true" required="required"
+                            <form:input path="licenseAppType.name" id="licenseAppType" cssClass="form-control" readonly="true" required="true"
                                         cssErrorClass="form-control error"/>
                         </div>
                         <label class="col-sm-3 control-label">
                             <spring:message code="lbl.natureofbusiness"/><span class="mandatory"></span>
                         </label>
                         <div class="col-sm-3 add-margin">
-                            <form:input path="natureOfBusiness.name" id="natureOfBusiness" cssClass="form-control" readonly="true" required="required"
+                            <form:input path="natureOfBusiness.name" id="natureOfBusiness" cssClass="form-control" readonly="true" required="true"
                                         cssErrorClass="form-control error"/>
                         </div>
                     </div>
@@ -76,15 +76,24 @@
                             <spring:message code="lbl.licensecategory"/><span class="mandatory"></span>
                         </label>
                         <div class="col-sm-3 add-margin">
-                            <form:input path="licenseCategory.name" id="licenseCategory" cssClass="form-control" readonly="true" required="required"
-                                        cssErrorClass="form-control error"/>
+                            <form:select path="licenseCategory" id="licenseCategory" cssClass="form-control" required="true"
+                                         cssErrorClass="form-control error" disabled="true">
+                                <form:option value="">
+                                    <spring:message code="lbl.select"/>
+                                </form:option>
+                                <form:options items="${licenseCategoryList}" itemValue="id" itemLabel="name"/>
+                            </form:select>
                         </div>
                         <label class="col-sm-3 control-label">
                             <spring:message code="lbl.subcategory"/><span class="mandatory"></span>
                         </label>
                         <div class="col-sm-3 add-margin">
-                            <form:input path="subCategory.name" id="subCategory" cssClass="form-control" readonly="true" required="required"
-                                        cssErrorClass="form-control error"/>
+                            <form:select path="subCategory" id="subCategory" cssClass="form-control select2" required="true"
+                                         cssErrorClass="form-control error select2" disabled="true">
+                                <form:option value="">
+                                    <spring:message code="lbl.select"/>
+                                </form:option>
+                            </form:select>
                         </div>
                     </div>
 
@@ -93,15 +102,18 @@
                             <spring:message code="lbl.feetype"/><span class="mandatory"></span>
                         </label>
                         <div class="col-sm-3 add-margin">
-                            <form:input path="feeType.name" id="feeType" cssClass="form-control" required="required"
-                                        cssErrorClass="form-control error" readonly="true"/>
+                            <form:select path="feeType" id="feeType" cssClass="form-control" required="true"
+                                         cssErrorClass="form-control error" disabled="true">
+                                <form:option value="">
+                                    <spring:message code="lbl.select"/>
+                                </form:option>
+                            </form:select>
                         </div>
                         <label class="col-sm-3 control-label">
-                            <spring:message code="lbl.unitofmeasurement"/><span class="mandatory"></span>
+                            <spring:message code="lbl.unitofmeasurement"/>
                         </label>
                         <div class="col-sm-3 add-margin">
-                            <form:input path="unitOfMeasurement.name" id="unitOfMeasurement" cssClass="form-control" required="required"
-                                        cssErrorClass="form-control error" readonly="true"/>
+                            <form:input path="" id="unitOfMeasurement" class="form-control" disabled="true"/>
                         </div>
                     </div>
 
@@ -110,20 +122,14 @@
                             <spring:message code="lbl.rateType"/>
                         </label>
                         <div class="col-sm-3 add-margin">
-                            <c:set var="rateType" value=""/>
-                            <c:forEach items="${feeMatrix.subCategory.licenseSubCategoryDetails}" var="subCatDetail">
-                                <c:if test="${subCatDetail.feeType.code == feeMatrix.feeType.code}">
-                                    <c:set var="rateType" value="${subCatDetail.rateType}"/>
-                                </c:if>
-                            </c:forEach>
-                            <input id="rateType" value="${rateType}" class="form-control text-left" maxlength="32" readonly="true"/>
+                            <form:input id="rateType" path="" class="form-control text-left" disabled="true"/>
                         </div>
 
                         <label class="col-sm-3 control-label">
                             <spring:message code="lbl.financialyear"/><span class="mandatory"></span>
                         </label>
                         <div class="col-sm-3 add-margin">
-                            <form:input path="financialYear.finYearRange" id="financialYear" cssClass="form-control" readonly="true" required="required"
+                            <form:input path="financialYear.finYearRange" id="financialYear" cssClass="form-control" readonly="true" required="true"
                                         cssErrorClass="form-control error"/>
                         </div>
                     </div>
@@ -192,10 +198,8 @@
     </div>
 </div>
 <script>
-    if ('${feeMatrix.licenseAppType.name}' == 'New') {
-        $(".sameForNewAndRenew").show();
-    }
-    if ('${feeMatrix.natureOfBusiness.name}' == 'Permanent') {
-        $(".sameForPermanentAndTemporary").show();
-    }
+    //for repopulating all autocomplete upon load
+    var subCategory = '${feeMatrix.subCategory.id}';
+    var feeType = '${feeMatrix.feeType.id}';
 </script>
+<script src="<cdn:url  value='/resources/js/app/license-fee-matrix.js?rnd=${app_release_no}'/>"></script>

@@ -59,7 +59,7 @@
                             <spring:message code="lbl.licenseapptype"/><span class="mandatory"></span>
                         </label>
                         <div class="col-sm-3 add-margin">
-                            <form:select path="licenseAppType" id="licenseAppType" cssClass="form-control" required="required"
+                            <form:select path="licenseAppType" id="licenseAppType" cssClass="form-control" required="true"
                                          cssErrorClass="form-control error">
                                 <form:option value="">
                                     <spring:message code="lbl.select"/>
@@ -71,7 +71,7 @@
                             <spring:message code="lbl.natureofbusiness"/><span class="mandatory"></span>
                         </label>
                         <div class="col-sm-3 add-margin">
-                            <form:select path="natureOfBusiness" id="natureOfBusiness" cssClass="form-control" required="required"
+                            <form:select path="natureOfBusiness" id="natureOfBusiness" cssClass="form-control" required="true"
                                          cssErrorClass="form-control error">
                                 <form:option value="">
                                     <spring:message code="lbl.select"/>
@@ -86,7 +86,7 @@
                             <spring:message code="lbl.licensecategory"/><span class="mandatory"></span>
                         </label>
                         <div class="col-sm-3 add-margin">
-                            <form:select path="licenseCategory" id="licenseCategory" cssClass="form-control" required="required"
+                            <form:select path="licenseCategory" id="licenseCategory" cssClass="form-control" required="true"
                                          cssErrorClass="form-control error">
                                 <form:option value="">
                                     <spring:message code="lbl.select"/>
@@ -98,7 +98,7 @@
                             <spring:message code="lbl.subcategory"/><span class="mandatory"></span>
                         </label>
                         <div class="col-sm-3 add-margin">
-                            <form:select path="subCategory" id="subCategory" cssClass="form-control select2" required="required"
+                            <form:select path="subCategory" id="subCategory" cssClass="form-control select2" required="true"
                                          cssErrorClass="form-control error select2">
                                 <form:option value="">
                                     <spring:message code="lbl.select"/>
@@ -112,7 +112,7 @@
                             <spring:message code="lbl.feetype"/><span class="mandatory"></span>
                         </label>
                         <div class="col-sm-3 add-margin">
-                            <form:select path="feeType" id="feeType" cssClass="form-control" required="required"
+                            <form:select path="feeType" id="feeType" cssClass="form-control" required="true"
                                          cssErrorClass="form-control error">
                                 <form:option value="">
                                     <spring:message code="lbl.select"/>
@@ -120,15 +120,10 @@
                             </form:select>
                         </div>
                         <label class="col-sm-3 control-label">
-                            <spring:message code="lbl.unitofmeasurement"/><span class="mandatory"></span>
+                            <spring:message code="lbl.unitofmeasurement"/>
                         </label>
                         <div class="col-sm-3 add-margin">
-                            <form:select path="unitOfMeasurement" id="unitOfMeasurement" cssClass="form-control" required="required"
-                                         cssErrorClass="form-control error" readonly="true">
-                                <form:option value="">
-                                    <spring:message code="lbl.select"/>
-                                </form:option>
-                            </form:select>
+                            <form:input path="" id="unitOfMeasurement" class="form-control" disabled="true"/>
                         </div>
                     </div>
 
@@ -137,14 +132,14 @@
                             <spring:message code="lbl.rateType"/>
                         </label>
                         <div class="col-sm-3 add-margin">
-                            <form:input id="rateType" path="" class="form-control text-left" maxlength="32" readonly="true"/>
+                            <form:input id="rateType" path="" class="form-control text-left" disabled="true"/>
                         </div>
 
                         <label class="col-sm-3 control-label">
                             <spring:message code="lbl.financialyear"/><span class="mandatory"></span>
                         </label>
                         <div class="col-sm-3 add-margin">
-                            <form:select path="financialYear" id="financialYear" cssClass="form-control" required="required"
+                            <form:select path="financialYear" id="financialYear" cssClass="form-control" required="true"
                                          cssErrorClass="form-control error">
                                 <form:option value="">
                                     <spring:message code="lbl.select"/>
@@ -259,7 +254,6 @@
     //for repopulating all autocomplete upon validation error
     var subCategory = '${feeMatrix.subCategory.id}';
     var feeType = '${feeMatrix.feeType.id}';
-    var uom = '${feeMatrix.unitOfMeasurement.id}';
 </script>
 <script src="<cdn:url  value='/resources/js/app/license-fee-matrix.js?rnd=${app_release_no}'/>"></script>
 <script src="<cdn:url  value='/resources/js/app/value-range-checker.js?rnd=${app_release_no}'/>"></script>

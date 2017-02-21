@@ -47,13 +47,6 @@ $(document).ready(function () {
         }
     });
 
-    $('#unitOfMeasurement').click(function () {
-        if ($('#feeType').val() == "") {
-            bootbox.alert("Please Choose Fee Type");
-            return false;
-        }
-    });
-
     $('#financialYear').change(function () {
         var finId = $(this).val();
         var finRange = $("#fin" + finId).val().split("-");
@@ -66,78 +59,73 @@ $(document).ready(function () {
     });
 
     $('#feeType').change(function () {
-        $.ajax({
-            url: "/tl/feeType/uom-by-subcategory?feeTypeId=" + $('#feeType').val() + "&subCategoryId=" + $('#subCategory').val() + "",
-            type: "GET",
-            async: false,
-            dataType: "json",
-            success: function (response) {
-                $('#unitOfMeasurement').empty();
-                $('#unitOfMeasurement').append($("<option value=''>Select</option>"));
-                $.each(response, function (index, value) {
-                    $('#unitOfMeasurement').append("<option value=" + value.uom.id + ">" + value.uom.name + "</option>");
-                    $('#rateType').val(value.rateType);
-                });
-                $("#unitOfMeasurement").prop("selectedIndex", 1);
-            },
-            error: function () {
-            }
-        });
+        $('#unitOfMeasurement').val('');
+        if ($('#feeType').val() !== '') {
+            $.ajax({
+                url: "/tl/licensesubcategory/detail-by-feetype",
+                type: "GET",
+                async: false,
+                dataType: "json",
+                data: {subCategoryId: $('#subCategory').val(), feeTypeId: $('#feeType').val()},
+                success: function (response) {
+                    $('#unitOfMeasurement').val(response.uom.name);
+                    $('#rateType').val(response.rateType);
+                }
+            });
+        }
     });
 
     $('#subCategory').change(function () {
-        $('#unitOfMeasurement').empty();
-        $('#unitOfMeasurement').append($("<option value=''>Select</option>"));
-        $('#rateType').val("");
-        $.ajax({
-            url: "/tl/feeType/feetype-by-subcategory",
-            type: "GET",
-            async: false,
-            data: {
-                subCategoryId: $('#subCategory').val()
-            },
-            dataType: "json",
-            success: function (response) {
-                var feeType = $('#feeType')
-                feeType.find("option:gt(0)").remove();
-                $.each(response, function (index, value) {
-                    feeType.append($('<option>').text(value.feeType.name).attr('value', value.feeType.id));
-                });
+        $('#feeType').find('option:gt(0)').remove();
+        $('#unitOfMeasurement').val('');
+        $('#rateType').val('');
+        if ($('#subCategory').val() !== '') {
+            $.ajax({
+                url: "/tl/licensesubcategory/detail",
+                type: "GET",
+                async: false,
+                dataType: "json",
+                data: {subCategoryId: $('#subCategory').val()},
+                success: function (response) {
+                    var feeType = $('#feeType')
+                    feeType.find("option:gt(0)").remove();
+                    $.each(response, function (index, value) {
+                        feeType.append($('<option>').text(value.feeType.name).attr('value', value.feeType.id));
+                    });
 
-            },
+                },
 
-        })
+            });
+        }
     });
 
     $('#licenseCategory').change(function () {
         var results = [];
-        $('#feeType').empty();
-        $('#feeType').append($("<option value=''>Select</option>"));
-        $('#unitOfMeasurement').empty();
-        $('#unitOfMeasurement').append($("<option value=''>Select</option>"));
-        $('#rateType').val("");
-        $.ajax({
-            url: "/tl/licensesubcategory/subcategories-by-category",
-            type: "GET",
-            async: false,
-            data: {
-                categoryId: $('#licenseCategory').val()
-            },
-            dataType: "json",
-            success: function (data) {
-                $.each(data, function (i) {
-                    var obj = {};
-                    obj['id'] = data[i]['id']
-                    obj['text'] = data[i]['name'];
-                    results.push(obj);
-                });
-                select2initialize($("#subCategory"), results, false);
-            },
+        $('#feeType').find('option:gt(0)').remove();
+        $('#unitOfMeasurement').val('');
+        $('#rateType').val('');
+        if ($('#licenseCategory').val() !== '') {
+            $.ajax({
+                url: "/tl/licensesubcategory/by-category",
+                type: "GET",
+                async: false,
+                dataType: "json",
+                data: {categoryId: $('#licenseCategory').val()},
+                success: function (data) {
+                    $.each(data, function (i) {
+                        var obj = {};
+                        obj['id'] = data[i]['id']
+                        obj['text'] = data[i]['name'];
+                        results.push(obj);
+                    });
+                    select2initialize($("#subCategory"), results, false);
+                },
 
-            error: function () {
-                bootbox.alert('something went wrong on server');
-            }
-        })
+                error: function () {
+                    bootbox.alert('something went wrong on server');
+                }
+            });
+        }
     });
 
     $('#result tbody').on('click', 'tr td .delete-row', function () {
@@ -268,9 +256,6 @@ $(document).ready(function () {
                     "data": "subCategory",
                     "sClass": "text-left"
                 }, {
-                    "data": "uom",
-                    "sClass": "text-left"
-                }, {
                     "data": "feeType",
                     "sClass": "text-right"
                 }, {
@@ -313,10 +298,10 @@ $(document).ready(function () {
     $('#resultTable').on('click', 'tbody tr td.details-control', function () {
         var tr = $(this).closest('tr');
         var row = oTable.row(tr);
-        var collapsed=$(this).find('i').hasClass('fa-plus-circle');
+        var collapsed = $(this).find('i').hasClass('fa-plus-circle');
         $(this).find('i').removeClass('fa-minus-circle');
         $(this).find('i').addClass('fa-plus-circle');
-        if(collapsed)
+        if (collapsed)
             $(this).find('i').toggleClass('fa-plus-circle fa-lg fa-minus-circle fa-lg')
 
         if (row.child.isShown()) {
@@ -346,7 +331,6 @@ $(document).ready(function () {
         $('#subCategory').trigger('change');
         $('#feeType').val(feeType);
         $('#feeType').trigger('change');
-        $('#unitOfMeasurement').val(uom);
     }
 });
 

@@ -40,431 +40,427 @@
 
 var reportdatatable;
 var drillDowntableContainer = $("#tblSearchTrade");
-$(document).ready(function() {
-	// Instantiate the application number Bloodhound suggestion engine
-	var applicationnoengine = new Bloodhound({
-		datumTokenizer: function (datum) {
-			return Bloodhound.tokenizers.whitespace(datum.value);
-		},
-		queryTokenizer: Bloodhound.tokenizers.whitespace,
-		remote: {
-			url:'../search/tradeLicense',
-			replace: function(url,query)
-			{
-				return url+'?searchParamValue='+query+'&searchParamType=ApplicationNumber';
-			},
-			filter: function (data) {
-			// Map the remote source JSON array to a JavaScript object array
-				return $.map(data, function (applicationNumber){	
-					return{
-						name:applicationNumber
-					}	 
-				});
-			}
-		}
-	});
-	
-	// Initialize the Bloodhound suggestion engine
-	applicationnoengine.initialize();
-	
-	// Instantiate the Typeahead UI
-	$('#applicationNumber').typeahead({
-		  hint: false,
-		  highlight: true,
-		  minLength: 3
-		}, {
-		displayKey: 'name',
-		source: applicationnoengine.ttAdapter()
-	}).on('typeahead:selected', function(){            
-		
+$(document).ready(function () {
+    // Instantiate the application number Bloodhound suggestion engine
+    var applicationnoengine = new Bloodhound({
+        datumTokenizer: function (datum) {
+            return Bloodhound.tokenizers.whitespace(datum.value);
+        },
+        queryTokenizer: Bloodhound.tokenizers.whitespace,
+        remote: {
+            url: '../search/tradeLicense',
+            replace: function (url, query) {
+                return url + '?searchParamValue=' + query + '&searchParamType=ApplicationNumber';
+            },
+            filter: function (data) {
+                // Map the remote source JSON array to a JavaScript object array
+                return $.map(data, function (applicationNumber) {
+                    return {
+                        name: applicationNumber
+                    }
+                });
+            }
+        }
     });
-	
-	// Instantiate the license number Bloodhound suggestion engine
-	var licensenoengine = new Bloodhound({
-		datumTokenizer: function (datum) {
-			return Bloodhound.tokenizers.whitespace(datum.value);
-		},
-		queryTokenizer: Bloodhound.tokenizers.whitespace,
-		remote: {
-			url:'../search/tradeLicense',
-			replace: function(url,query)
-			{
-				return url+'?searchParamValue='+query+'&searchParamType=LicenseNumber';
-			},
-			filter: function (data) {
-			// Map the remote source JSON array to a JavaScript object array
-				return $.map(data, function (licenseNumber){	
-					return{
-						name:licenseNumber
-					}	 
-				});
-			}
-		}
-	});
-	// Initialize the Bloodhound suggestion engine
-	licensenoengine.initialize();
-	
-	// Instantiate the Typeahead UI
-	$('#licenseNumber').typeahead({
-		  hint: false,
-		  highlight: true,
-		  minLength: 3
-		}, {
-		displayKey: 'name',
-		source: licensenoengine.ttAdapter()
-	}).on('typeahead:selected', function(){            
-		
+
+    // Initialize the Bloodhound suggestion engine
+    applicationnoengine.initialize();
+
+    // Instantiate the Typeahead UI
+    $('#applicationNumber').typeahead({
+        hint: false,
+        highlight: true,
+        minLength: 3
+    }, {
+        displayKey: 'name',
+        source: applicationnoengine.ttAdapter()
+    }).on('typeahead:selected', function () {
+
     });
-	// Instantiate the old license number Bloodhound suggestion engine
-	var oldlicensenoengine = new Bloodhound({
-		datumTokenizer: function (datum) {
-			return Bloodhound.tokenizers.whitespace(datum.value);
-		},
-		queryTokenizer: Bloodhound.tokenizers.whitespace,
-		remote: {
-			url:'../search/tradeLicense',
-			replace: function(url,query)
-			{
-				return url+'?searchParamValue='+query+'&searchParamType=OldLicenseNumber';
-			},
-			filter: function (data) {
-			// Map the remote source JSON array to a JavaScript object array
-				return $.map(data, function (oldLicenseNumber){	
-					return{
-						name:oldLicenseNumber
-					}	 
-				});
-			}
-		}
-	});
-	// Initialize the Bloodhound suggestion engine
-	oldlicensenoengine.initialize();
-	
-	// Instantiate the Typeahead UI
-	$('#oldLicenseNumber').typeahead({
-		  hint: false,
-		  highlight: true,
-		  minLength: 3
-		}, {
-		displayKey: 'name',
-		source: oldlicensenoengine.ttAdapter()
-	}).on('typeahead:selected', function(){            
-		
+
+    // Instantiate the license number Bloodhound suggestion engine
+    var licensenoengine = new Bloodhound({
+        datumTokenizer: function (datum) {
+            return Bloodhound.tokenizers.whitespace(datum.value);
+        },
+        queryTokenizer: Bloodhound.tokenizers.whitespace,
+        remote: {
+            url: '../search/tradeLicense',
+            replace: function (url, query) {
+                return url + '?searchParamValue=' + query + '&searchParamType=LicenseNumber';
+            },
+            filter: function (data) {
+                // Map the remote source JSON array to a JavaScript object array
+                return $.map(data, function (licenseNumber) {
+                    return {
+                        name: licenseNumber
+                    }
+                });
+            }
+        }
     });
-	
-	// Instantiate the trade title Bloodhound suggestion engine
-	var tradetitleengine = new Bloodhound({
-		datumTokenizer: function (datum) {
-			return Bloodhound.tokenizers.whitespace(datum.value);
-		},
-		queryTokenizer: Bloodhound.tokenizers.whitespace,
-		remote: {
-			url:'../search/tradeLicense',
-			replace: function(url,query)
-			{
-				return url+'?searchParamValue='+query+'&searchParamType=TradeTitle';
-			},
-			filter: function (data) {
-			// Map the remote source JSON array to a JavaScript object array
-				return $.map(data, function (tradeTitle){	
-					return{
-						name:tradeTitle
-					}	 
-				});
-			}
-		}
-	});
-	
-	// Initialize the Bloodhound suggestion engine
-	tradetitleengine.initialize();
-	
-	// Instantiate the Typeahead UI
-	$('#tradeTitle').typeahead({
-		  hint: false,
-		  highlight: true,
-		  minLength: 3
-		}, {
-		displayKey: 'name',
-		source: tradetitleengine.ttAdapter()
-	}).on('typeahead:selected', function(){            
-		
+    // Initialize the Bloodhound suggestion engine
+    licensenoengine.initialize();
+
+    // Instantiate the Typeahead UI
+    $('#licenseNumber').typeahead({
+        hint: false,
+        highlight: true,
+        minLength: 3
+    }, {
+        displayKey: 'name',
+        source: licensenoengine.ttAdapter()
+    }).on('typeahead:selected', function () {
+
     });
-	// Instantiate the trade owner Bloodhound suggestion engine
-	var tradeownerengine = new Bloodhound({
-		datumTokenizer: function (datum) {
-			return Bloodhound.tokenizers.whitespace(datum.value);
-		},
-		queryTokenizer: Bloodhound.tokenizers.whitespace,
-		remote: {
-			url:'../search/tradeLicense',
-			replace: function(url,query)
-			{
-				return url+'?searchParamValue='+query+'&searchParamType=TradeOwnerName';
-			},
-			filter: function (data) {
-			// Map the remote source JSON array to a JavaScript object array
-				return $.map(data, function (tradeOwnerName){	
-					return{
-						name:tradeOwnerName
-					}	 
-				});
-			}
-		}
-	});
-	
-	// Initialize the Bloodhound suggestion engine
-	tradeownerengine.initialize();
-	
-	// Instantiate the Typeahead UI
-	$('#tradeOwnerName').typeahead({
-		  hint: false,
-		  highlight: true,
-		  minLength: 3
-		}, {
-		displayKey: 'name',
-		source: tradeownerengine.ttAdapter()
-	}).on('typeahead:selected', function(){            
-		
+    // Instantiate the old license number Bloodhound suggestion engine
+    var oldlicensenoengine = new Bloodhound({
+        datumTokenizer: function (datum) {
+            return Bloodhound.tokenizers.whitespace(datum.value);
+        },
+        queryTokenizer: Bloodhound.tokenizers.whitespace,
+        remote: {
+            url: '../search/tradeLicense',
+            replace: function (url, query) {
+                return url + '?searchParamValue=' + query + '&searchParamType=OldLicenseNumber';
+            },
+            filter: function (data) {
+                // Map the remote source JSON array to a JavaScript object array
+                return $.map(data, function (oldLicenseNumber) {
+                    return {
+                        name: oldLicenseNumber
+                    }
+                });
+            }
+        }
     });
-	
-	// Instantiate the property assessment Bloodhound suggestion engine
-	var propassessnoengine = new Bloodhound({
-		datumTokenizer: function (datum) {
-			return Bloodhound.tokenizers.whitespace(datum.value);
-		},
-		queryTokenizer: Bloodhound.tokenizers.whitespace,
-		remote: {
-			url:'../search/tradeLicense',
-			replace: function(url,query)
-			{
-				return url+'?searchParamValue='+query+'&searchParamType=PropertyAssessmentNo';
-			},
-			filter: function (data) {
-			// Map the remote source JSON array to a JavaScript object array
-				return $.map(data, function (propertyAssessmentNo){	
-					return{
-						name:propertyAssessmentNo
-					}	 
-				});
-			}
-		}
-	});
-	
+    // Initialize the Bloodhound suggestion engine
+    oldlicensenoengine.initialize();
+
+    // Instantiate the Typeahead UI
+    $('#oldLicenseNumber').typeahead({
+        hint: false,
+        highlight: true,
+        minLength: 3
+    }, {
+        displayKey: 'name',
+        source: oldlicensenoengine.ttAdapter()
+    }).on('typeahead:selected', function () {
+
+    });
+
+    // Instantiate the trade title Bloodhound suggestion engine
+    var tradetitleengine = new Bloodhound({
+        datumTokenizer: function (datum) {
+            return Bloodhound.tokenizers.whitespace(datum.value);
+        },
+        queryTokenizer: Bloodhound.tokenizers.whitespace,
+        remote: {
+            url: '../search/tradeLicense',
+            replace: function (url, query) {
+                return url + '?searchParamValue=' + query + '&searchParamType=TradeTitle';
+            },
+            filter: function (data) {
+                // Map the remote source JSON array to a JavaScript object array
+                return $.map(data, function (tradeTitle) {
+                    return {
+                        name: tradeTitle
+                    }
+                });
+            }
+        }
+    });
+
+    // Initialize the Bloodhound suggestion engine
+    tradetitleengine.initialize();
+
+    // Instantiate the Typeahead UI
+    $('#tradeTitle').typeahead({
+        hint: false,
+        highlight: true,
+        minLength: 3
+    }, {
+        displayKey: 'name',
+        source: tradetitleengine.ttAdapter()
+    }).on('typeahead:selected', function () {
+
+    });
+    // Instantiate the trade owner Bloodhound suggestion engine
+    var tradeownerengine = new Bloodhound({
+        datumTokenizer: function (datum) {
+            return Bloodhound.tokenizers.whitespace(datum.value);
+        },
+        queryTokenizer: Bloodhound.tokenizers.whitespace,
+        remote: {
+            url: '../search/tradeLicense',
+            replace: function (url, query) {
+                return url + '?searchParamValue=' + query + '&searchParamType=TradeOwnerName';
+            },
+            filter: function (data) {
+                // Map the remote source JSON array to a JavaScript object array
+                return $.map(data, function (tradeOwnerName) {
+                    return {
+                        name: tradeOwnerName
+                    }
+                });
+            }
+        }
+    });
+
+    // Initialize the Bloodhound suggestion engine
+    tradeownerengine.initialize();
+
+    // Instantiate the Typeahead UI
+    $('#tradeOwnerName').typeahead({
+        hint: false,
+        highlight: true,
+        minLength: 3
+    }, {
+        displayKey: 'name',
+        source: tradeownerengine.ttAdapter()
+    }).on('typeahead:selected', function () {
+
+    });
+
+    // Instantiate the property assessment Bloodhound suggestion engine
+    var propassessnoengine = new Bloodhound({
+        datumTokenizer: function (datum) {
+            return Bloodhound.tokenizers.whitespace(datum.value);
+        },
+        queryTokenizer: Bloodhound.tokenizers.whitespace,
+        remote: {
+            url: '../search/tradeLicense',
+            replace: function (url, query) {
+                return url + '?searchParamValue=' + query + '&searchParamType=PropertyAssessmentNo';
+            },
+            filter: function (data) {
+                // Map the remote source JSON array to a JavaScript object array
+                return $.map(data, function (propertyAssessmentNo) {
+                    return {
+                        name: propertyAssessmentNo
+                    }
+                });
+            }
+        }
+    });
+
     // Initialize the Bloodhound suggestion engine
     propassessnoengine.initialize();
-    
- // Instantiate the Typeahead UI
-	$('#propertyAssessmentNo').typeahead({
-		  hint: false,
-		  highlight: true,
-		  minLength: 3
-		}, {
-		displayKey: 'name',
-		source: propassessnoengine.ttAdapter()
-	}).on('typeahead:selected', function(){            
-		
-  });
-	
-// Instantiate the mobile number Bloodhound suggestion engine
-	var mobilenoengine = new Bloodhound({
-		datumTokenizer: function (datum) {
-			return Bloodhound.tokenizers.whitespace(datum.value);
-		},
-		queryTokenizer: Bloodhound.tokenizers.whitespace,
-		remote: {
-			url:'../search/tradeLicense',
-			replace: function(url,query)
-			{
-				return url+'?searchParamValue='+query+'&searchParamType=MobileNo';
-			},
-			filter: function (data) {
-			// Map the remote source JSON array to a JavaScript object array
-				return $.map(data, function (mobileNo){	
-					return{
-						name:mobileNo
-					}	 
-				});
-			}
-		}
-	});
-	
-	// Initialize the Bloodhound suggestion engine
-	mobilenoengine.initialize();
-	
-	// Instantiate the Typeahead UI
-	$('#mobileNo').typeahead({
-		  hint: false,
-		  highlight: true,
-		  minLength: 3
-		}, {
-		displayKey: 'name',
-		source: mobilenoengine.ttAdapter()
-	}).on('typeahead:selected', function(){            
-		
- });
-	
-	$('#category').change(function() {
-		    var val = $(this).val();
-		    var results = [];
-		    $.ajax({
-		        type: "GET",
-		        url: '../licensesubcategory/subcategories-by-category?name=&categoryId=' + val,
-		        dataType: "json",
-		        success: function(data) {
-		            $.each(data, function(i) {
-		                var obj = {};
-		                obj['id'] = data[i]['id']
-		                obj['text'] = data[i]['name'];
-		                results.push(obj);
-		            });
-		           
-		            select2initialize($("#subCategory"),results,false);
-		            
-		        },
-		        error: function() {
-		        	bootbox.alert('something went wrong on server');
-		        }
-		    });
-		});
-		
 
-$("#btnsearch").click(
-		function() {
-			
-			var valid = 0;
-			
-			$('form').find('input[type=text],input[type="checkbox"], select').each(function(){
-				if($(this).attr('type') == 'checkbox'){
-					if($(this).is(":checked")) 
-						valid+=1;
-				}else{
-					if($.trim($(this).val()))
-						valid+=1;
-				}
-	        });
-			
-			if(valid > 0){
-            	$('.report-section').show();
-    			var applicationNumber = $('#applicationNumber').val();
-    			var licenseNumber = $('#licenseNumber').val();
-    			var oldLicenseNumber=$('#oldLicenseNumber').val();
-    			var category=$('#category').val();
-    			var subCategory=$('#subCategory').val();
-    			var tradeTitle= $('#tradeTitle').val();
-    			var tradeOwnerName=$('#tradeOwnerName').val();
-    			var propertyAssessmentNo=$('#propertyAssessmentNo').val();
-    			var mobileNo=$('#mobileNo').val();
-    	    	var ownerName = $('#ownerName').val();
-    	    	var status = $('#status').val();
-                var expiryYear=$('#expiryYear').val();
-				var inactive	= $('#inactive').is(":checked");
-    		   reportdatatable = drillDowntableContainer
-    					.dataTable({
-    						ajax : {
-    							url : "../search/searchtrade-search",      
-    							data : {
-    								applicationNumber : applicationNumber,
-    								licenseNumber : licenseNumber,
-    								oldLicenseNumber : oldLicenseNumber,
-    								categoryId : category,
-    								subCategoryId : subCategory,
-    								tradeTitle : tradeTitle,
-    								tradeOwnerName : tradeOwnerName ,
-    								propertyAssessmentNo : propertyAssessmentNo ,
-    								mobileNo : mobileNo ,
-    								ownerName : ownerName,
-    								statusId : status,
-    								expiryYear : expiryYear,
-									inactive : inactive
-    							}
-    						},
-    						"bDestroy" : true,
-    						"autoWidth": false,
-    						"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-xs-3'i><'col-xs-3 col-right'l><'col-xs-3 col-right'<'export-data'T>><'col-xs-3 text-right'p>>",
-    						aaSorting: [],				
-    						columns : [ {
-    							"data" : function(row){
-    									return { name:row.applicationNumber, id:row.licenseId };
-    							},
-    							"render" : function(data, type, row) {
-    								return '<a href="javascript:void(0);" onclick="goToView('+row.licenseId+');" data-hiddenele="licenseId" data-eleval="'
-    										+ data.id + '">' + data.name + '</a>';
-    							},
-    							"sTitle" : "Application Number"
-    						}, {
-    							"data" : "tlNumber",
-    							"sTitle" : "TL Number"
-    						}, {
-    							"data" : "oldTLNumber",
-    							"sTitle" : "Old TL Number"
-    						}, {
-    							"data" : "category",
-    							"sTitle" : "Category"
-    						}, {
-    							"data" : "subCategory",
-    							"sTitle" : "Sub-Category"
-    						}, {
-    							"data" : "tradeTitle",
-    							"sTitle" : "Title of Trade"
-    						}, {
-    							"data" : "tradeOwner",
-    							"sTitle" : "Trade Owner"
-    						}, {
-    							"data" : "mobileNumber",
-    							"sTitle" : "Mobile Number"
-    						}, {
-    							"data" : "propertyAssmntNo",
-    							"sTitle" : "Property Assessment Number"
-    						}, {
-    							"data" : "expiryYear",
-    							"sTitle" : "Financial Year"
-    						}, {
-    							"data" : "status",
-    							"sTitle" : "Application Status"
-    						}, {
-								"data" : "active",
-								"sTitle" : "License Active"
-							},{
-    							"data" : "ownerName",
-    							"sTitle" : "Owner Name"
-    						},{
-    							"sTitle" : "Actions",
-    				        	  "render" : function(data,type,row) {
-    				        		  var option = "<option value=''>Select from Below</option>";
-    				        		  $.each(JSON.parse(row.actions),function(key,value){
-    		    			             option+= "<option>"+value.key+"</option>";
-    		    			         });
-    				        		  return ('<select class="dropchange" id="recordActions" onchange="goToAction(this,'+row.licenseId+')" >'+option+'</select>');
-    				        	   }
-    								}]				
-    					});
-            }else{
-            	$('.report-section').hide();
-            	bootbox.alert('Atleast one search criteria is mandatory!');
+    // Instantiate the Typeahead UI
+    $('#propertyAssessmentNo').typeahead({
+        hint: false,
+        highlight: true,
+        minLength: 3
+    }, {
+        displayKey: 'name',
+        source: propassessnoengine.ttAdapter()
+    }).on('typeahead:selected', function () {
+
+    });
+
+// Instantiate the mobile number Bloodhound suggestion engine
+    var mobilenoengine = new Bloodhound({
+        datumTokenizer: function (datum) {
+            return Bloodhound.tokenizers.whitespace(datum.value);
+        },
+        queryTokenizer: Bloodhound.tokenizers.whitespace,
+        remote: {
+            url: '../search/tradeLicense',
+            replace: function (url, query) {
+                return url + '?searchParamValue=' + query + '&searchParamType=MobileNo';
+            },
+            filter: function (data) {
+                // Map the remote source JSON array to a JavaScript object array
+                return $.map(data, function (mobileNo) {
+                    return {
+                        name: mobileNo
+                    }
+                });
             }
-			
-			
-		}
-   );
+        }
+    });
+
+    // Initialize the Bloodhound suggestion engine
+    mobilenoengine.initialize();
+
+    // Instantiate the Typeahead UI
+    $('#mobileNo').typeahead({
+        hint: false,
+        highlight: true,
+        minLength: 3
+    }, {
+        displayKey: 'name',
+        source: mobilenoengine.ttAdapter()
+    }).on('typeahead:selected', function () {
+
+    });
+
+    $('#category').change(function () {
+        var val = $(this).val();
+        if (val !== '') {
+            var results = [];
+            $.ajax({
+                type: "GET",
+                url: '../licensesubcategory/by-category',
+                data: {categoryId: val},
+                dataType: "json",
+                success: function (data) {
+                    $.each(data, function (i) {
+                        var obj = {};
+                        obj['id'] = data[i]['id']
+                        obj['text'] = data[i]['name'];
+                        results.push(obj);
+                    });
+
+                    select2initialize($("#subCategory"), results, false);
+
+                },
+                error: function () {
+                    bootbox.alert('something went wrong on server');
+                }
+            });
+        }
+    });
+
+
+    $("#btnsearch").click(
+        function () {
+
+            var valid = 0;
+
+            $('form').find('input[type=text],input[type="checkbox"], select').each(function () {
+                if ($(this).attr('type') == 'checkbox') {
+                    if ($(this).is(":checked"))
+                        valid += 1;
+                } else {
+                    if ($.trim($(this).val()))
+                        valid += 1;
+                }
+            });
+
+            if (valid > 0) {
+                $('.report-section').show();
+                var applicationNumber = $('#applicationNumber').val();
+                var licenseNumber = $('#licenseNumber').val();
+                var oldLicenseNumber = $('#oldLicenseNumber').val();
+                var category = $('#category').val();
+                var subCategory = $('#subCategory').val();
+                var tradeTitle = $('#tradeTitle').val();
+                var tradeOwnerName = $('#tradeOwnerName').val();
+                var propertyAssessmentNo = $('#propertyAssessmentNo').val();
+                var mobileNo = $('#mobileNo').val();
+                var ownerName = $('#ownerName').val();
+                var status = $('#status').val();
+                var expiryYear = $('#expiryYear').val();
+                var inactive = $('#inactive').is(":checked");
+                reportdatatable = drillDowntableContainer
+                    .dataTable({
+                        ajax: {
+                            url: "../search/searchtrade-search",
+                            data: {
+                                applicationNumber: applicationNumber,
+                                licenseNumber: licenseNumber,
+                                oldLicenseNumber: oldLicenseNumber,
+                                categoryId: category,
+                                subCategoryId: subCategory,
+                                tradeTitle: tradeTitle,
+                                tradeOwnerName: tradeOwnerName,
+                                propertyAssessmentNo: propertyAssessmentNo,
+                                mobileNo: mobileNo,
+                                ownerName: ownerName,
+                                statusId: status,
+                                expiryYear: expiryYear,
+                                inactive: inactive
+                            }
+                        },
+                        "bDestroy": true,
+                        "autoWidth": false,
+                        "sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-xs-3'i><'col-xs-3 col-right'l><'col-xs-3 col-right'<'export-data'T>><'col-xs-3 text-right'p>>",
+                        aaSorting: [],
+                        columns: [{
+                            "data": function (row) {
+                                return {name: row.applicationNumber, id: row.licenseId};
+                            },
+                            "render": function (data, type, row) {
+                                return '<a href="javascript:void(0);" onclick="goToView(' + row.licenseId + ');" data-hiddenele="licenseId" data-eleval="'
+                                    + data.id + '">' + data.name + '</a>';
+                            },
+                            "sTitle": "Application Number"
+                        }, {
+                            "data": "tlNumber",
+                            "sTitle": "TL Number"
+                        }, {
+                            "data": "oldTLNumber",
+                            "sTitle": "Old TL Number"
+                        }, {
+                            "data": "category",
+                            "sTitle": "Category"
+                        }, {
+                            "data": "subCategory",
+                            "sTitle": "Sub-Category"
+                        }, {
+                            "data": "tradeTitle",
+                            "sTitle": "Title of Trade"
+                        }, {
+                            "data": "tradeOwner",
+                            "sTitle": "Trade Owner"
+                        }, {
+                            "data": "mobileNumber",
+                            "sTitle": "Mobile Number"
+                        }, {
+                            "data": "propertyAssmntNo",
+                            "sTitle": "Property Assessment Number"
+                        }, {
+                            "data": "expiryYear",
+                            "sTitle": "Financial Year"
+                        }, {
+                            "data": "status",
+                            "sTitle": "Application Status"
+                        }, {
+                            "data": "active",
+                            "sTitle": "License Active"
+                        }, {
+                            "data": "ownerName",
+                            "sTitle": "Owner Name"
+                        }, {
+                            "sTitle": "Actions",
+                            "render": function (data, type, row) {
+                                var option = "<option value=''>Select from Below</option>";
+                                $.each(JSON.parse(row.actions), function (key, value) {
+                                    option += "<option>" + value.key + "</option>";
+                                });
+                                return ('<select class="dropchange" id="recordActions" onchange="goToAction(this,' + row.licenseId + ')" >' + option + '</select>');
+                            }
+                        }]
+                    });
+            } else {
+                $('.report-section').hide();
+                bootbox.alert('Atleast one search criteria is mandatory!');
+            }
+
+
+        }
+    );
 });
 function goToView(id) {
-	window.open("../viewtradelicense/viewTradeLicense-view.action?id="+id, '', 'scrollbars=yes,width=1000,height=700,status=yes');
-} 
+    window.open("../viewtradelicense/viewTradeLicense-view.action?id=" + id, '', 'scrollbars=yes,width=1000,height=700,status=yes');
+}
 
-function goToAction(obj, id){
-	if(obj.options[obj.selectedIndex].innerHTML=='View Trade')
-		window.open("../viewtradelicense/viewTradeLicense-view.action?id="+id,  'vt'+id, 'scrollbars=yes,width=1000,height=700,status=yes');
-	else if(obj.options[obj.selectedIndex].innerHTML=='Modify Legacy License')
-		window.open("../entertradelicense/update-form.action?model.id="+id, 'mll'+id, 'scrollbars=yes,width=1000,height=700,status=yes');
-	else if(obj.options[obj.selectedIndex].innerHTML=='Collect Fees')
-		window.open("/tl/integration/licenseBillCollect.action?licenseId="+id, 'cf'+id, 'scrollbars=yes,width=1000,height=700,status=yes');
-	else if(obj.options[obj.selectedIndex].innerHTML=='Print Certificate' || obj.options[obj.selectedIndex].innerHTML=='Print Provisional Certificate')
-		window.open("/tl/viewtradelicense/viewTradeLicense-generateCertificate.action?model.id="+id,  'gc'+id, 'scrollbars=yes,width=1000,height=700,status=yes');
-	else if(obj.options[obj.selectedIndex].innerHTML=='Renew License')
-		window.open("../newtradelicense/newTradeLicense-beforeRenew.action?model.id="+id,  'rl'+id, 'scrollbars=yes,width=1000,height=700,status=yes');
-	else if (obj.options[obj.selectedIndex].innerHTML == 'Generate Demand Notice')
-		window.open("/tl/demandnotice/report?licenseId=" + id, 'dn' + id, 'scrollbars=yes,width=1000,height=700,status=yes');
-	else if (obj.options[obj.selectedIndex].innerHTML == 'Closure')
-		window.open("../viewtradelicense/viewTradeLicense-closure.action?id="+id,  'vt'+id, 'scrollbars=yes,width=1000,height=700,status=yes');
-	$(obj).val('');
+function goToAction(obj, id) {
+    if (obj.options[obj.selectedIndex].innerHTML == 'View Trade')
+        window.open("../viewtradelicense/viewTradeLicense-view.action?id=" + id, 'vt' + id, 'scrollbars=yes,width=1000,height=700,status=yes');
+    else if (obj.options[obj.selectedIndex].innerHTML == 'Modify Legacy License')
+        window.open("../entertradelicense/update-form.action?model.id=" + id, 'mll' + id, 'scrollbars=yes,width=1000,height=700,status=yes');
+    else if (obj.options[obj.selectedIndex].innerHTML == 'Collect Fees')
+        window.open("/tl/integration/licenseBillCollect.action?licenseId=" + id, 'cf' + id, 'scrollbars=yes,width=1000,height=700,status=yes');
+    else if (obj.options[obj.selectedIndex].innerHTML == 'Print Certificate' || obj.options[obj.selectedIndex].innerHTML == 'Print Provisional Certificate')
+        window.open("/tl/viewtradelicense/viewTradeLicense-generateCertificate.action?model.id=" + id, 'gc' + id, 'scrollbars=yes,width=1000,height=700,status=yes');
+    else if (obj.options[obj.selectedIndex].innerHTML == 'Renew License')
+        window.open("../newtradelicense/newTradeLicense-beforeRenew.action?model.id=" + id, 'rl' + id, 'scrollbars=yes,width=1000,height=700,status=yes');
+    else if (obj.options[obj.selectedIndex].innerHTML == 'Generate Demand Notice')
+        window.open("/tl/demandnotice/report?licenseId=" + id, 'dn' + id, 'scrollbars=yes,width=1000,height=700,status=yes');
+    else if (obj.options[obj.selectedIndex].innerHTML == 'Closure')
+        window.open("../viewtradelicense/viewTradeLicense-closure.action?id=" + id, 'vt' + id, 'scrollbars=yes,width=1000,height=700,status=yes');
+    $(obj).val('');
 }
