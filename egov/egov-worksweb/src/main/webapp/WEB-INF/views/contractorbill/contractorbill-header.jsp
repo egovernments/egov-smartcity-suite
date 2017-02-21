@@ -65,7 +65,7 @@
 <div class="form-group">
 	<!-- TODO: remove this condition to make billdate editable after user finishes data entry -->
 	<c:choose>
-		<c:when test="${workOrderEstimate.estimate.lineEstimateDetails!=null && workOrderEstimate.estimate.lineEstimateDetails.lineEstimate.spillOverFlag && mode != 'edit'}">
+		<c:when test="${workOrderEstimate.estimate.spillOverFlag && mode != 'edit'}">
 			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.billdate" /><span class="mandatory"></span></label>
 			<div class="col-sm-3 add-margin">
 				<form:input id="billdate" path="billdate" class="form-control datepicker" data-date-format="dd/mm/yyyy" data-date-end-date="0d" required="required" />

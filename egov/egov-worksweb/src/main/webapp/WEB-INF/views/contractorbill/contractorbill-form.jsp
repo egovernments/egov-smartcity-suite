@@ -51,11 +51,11 @@
 			<form:hidden path="workOrderEstimate.workOrder.id"  name="workOrder" id="workOrderId" value="${workOrderEstimate.workOrder.id}" /> 
 			<input type="hidden"  name="woeId" id="woeId" value="${woeId}" />
 			<input type="hidden" value="${contractorBillRegister.status}" id=billStatus />
-			<input type="hidden" value="${workOrderEstimate.estimate.lineEstimateDetails.lineEstimate.spillOverFlag }" id=spillOverFlag />
+			<input type="hidden" value="${workOrderEstimate.estimate.spillOverFlag }" id=spillOverFlag />
 		
 			<input type="hidden" name="workOrderDate" id="workOrderDate" class="form-control datepicker" maxlength="10" data-inputmask="'mask': 'd/m/y'" data-date-end-date="0d" value='<fmt:formatDate value="${workOrder.workOrderDate}" pattern="dd/MM/yyyy"/>'>
 			<input type="hidden" name="contractorBillId" id="contractorBillId" value="${contractorBillRegister.id}" /> 
-			<input type="hidden" name="isSpillover" id="isSpillOver" value="${workOrderEstimate.estimate.lineEstimateDetails.lineEstimate.spillOverFlag}"/>
+			<input type="hidden" name="isSpillover" id="isSpillOver" value="${workOrderEstimate.estimate.spillOverFlag}"/>
 			<input type="hidden"  name="workOrderEstimateId" id="workOrderEstimateId" value="${workOrderEstimate.id}" /> 
 			<input type="hidden" name="mode" id="mode" value="${mode }" />
 			<input id="errorRetentionMoney" type="hidden" value="<spring:message code="error.accountcode.retention.money" />" />

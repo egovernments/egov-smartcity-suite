@@ -54,7 +54,7 @@
 
 			<input type="hidden" id="id" value="${contractorBillRegister.id }" /> 
 			<input type="hidden" name="mode" id="mode" value="${mode }" />
-			<input type="hidden" name="isSpillover" id="isSpillOver" value="${contractorBillRegister.workOrderEstimate.estimate.lineEstimateDetails.lineEstimate.spillOverFlag}"/>
+			<input type="hidden" name="isSpillover" id="isSpillOver" value="${contractorBillRegister.workOrderEstimate.estimate.spillOverFlag}"/>
 			<input type="hidden" name="contractorBillId" id="contractorBillId" value="${contractorBillRegister.id}" /> 
 			<input type="hidden"  name="workOrderEstimateId" id="workOrderEstimateId" value="${contractorBillRegister.workOrderEstimate.id}" />
 			<input type="hidden" name="isBillEditable" id="isBillEditable" value="${isBillEditable }" /> 

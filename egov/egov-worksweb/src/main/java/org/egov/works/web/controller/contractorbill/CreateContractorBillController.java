@@ -147,6 +147,7 @@ public class CreateContractorBillController extends BaseContractorBillController
         final String woeId = request.getParameter("woeId");
         final WorkOrderEstimate workOrderEstimate = workOrderEstimateService
                 .getWorkOrderEstimateById(Long.valueOf(woeId));
+        final AbstractEstimate estimate = workOrderEstimate.getEstimate();
         contractorBillRegister.setWorkOrderEstimate(workOrderEstimate);
         setDropDownValues(model, contractorBillRegister);
         model.addAttribute("assetValues", workOrderEstimate.getAssetValues());
@@ -167,25 +168,20 @@ public class CreateContractorBillController extends BaseContractorBillController
         model.addAttribute(WorksConstants.MODE, "new");
         model.addAttribute("mbHeaders", mBHeaderService.getMBHeaderBasedOnBillDate(workOrderEstimate.getId(),
                 contractorBillRegister.getBilldate()));
-        // TODO: remove this condition to check if spillover
-        if (workOrderEstimate.getEstimate().getLineEstimateDetails() != null
-                && !workOrderEstimate.getEstimate().getLineEstimateDetails().getLineEstimate().isSpillOverFlag())
+        if (estimate.isSpillOverFlag())
             contractorBillRegister.setBilldate(new Date());
 
         final OfflineStatus offlineStatus = offlineStatusService.getOfflineStatusByObjectIdAndObjectTypeAndStatus(
                 workOrderEstimate.getWorkOrder().getId(), WorksConstants.WORKORDER,
                 OfflineStatuses.WORK_COMMENCED.toString().toUpperCase());
         model.addAttribute("offlinestatusWorkCommencedDate",
-                offlineStatus != null ? offlineStatus.getStatusDate() : "");
+                offlineStatus != null ? offlineStatus.getStatusDate() : StringUtils.EMPTY);
         model.addAttribute("workOrderEstimate", workOrderEstimate);
         model.addAttribute("contractorBillRegister", contractorBillRegister);
-        if (workOrderEstimate.getEstimate().getLineEstimateDetails() != null
-                && workOrderEstimate.getEstimate().getLineEstimateDetails().getLineEstimate().isSpillOverFlag()) {
-            model.addAttribute("cutOffDate", worksUtils.getCutOffDate() != null ? worksUtils.getCutOffDate() : "");
+        if (estimate.isSpillOverFlag()) {
+            model.addAttribute("cutOffDate", worksUtils.getCutOffDate() != null ? worksUtils.getCutOffDate() : StringUtils.EMPTY);
             model.addAttribute("currFinYearStartDate", worksUtils.getFinancialYearByDate(new Date()).getStartingDate());
         }
-
-        final AbstractEstimate estimate = workOrderEstimate.getEstimate();
         if (!estimate.getAbsrtractEstimateDeductions().isEmpty()) {
             contractorBillRegister.getEgBilldetailes().addAll(prepairBillDetailsMap(estimate, model));
             model.addAttribute("billDetailsMap",
@@ -407,11 +403,10 @@ public class CreateContractorBillController extends BaseContractorBillController
                 .getTotalBillAmountByWorkOrder(contractorBillRegister.getWorkOrderEstimate());
         if (totalBillAmount != null)
             totalBillAmountIncludingCurrentBill = totalBillAmountIncludingCurrentBill.add(totalBillAmount);
-        if (workOrderEstimate.getEstimate().getLineEstimateDetails() != null
-                && workOrderEstimate.getEstimate().getLineEstimateDetails().getLineEstimate().isBillsCreated()
-                && workOrderEstimate.getEstimate().getLineEstimateDetails().getGrossAmountBilled() != null)
+        if (workOrderEstimate.getEstimate().isBillsCreated()
+                && workOrderEstimate.getEstimate().getGrossAmountBilled() != null)
             totalBillAmountIncludingCurrentBill = totalBillAmountIncludingCurrentBill
-                    .add(workOrderEstimate.getEstimate().getLineEstimateDetails().getGrossAmountBilled());
+                    .add(workOrderEstimate.getEstimate().getGrossAmountBilled());
         if (totalBillAmountIncludingCurrentBill.doubleValue() > contractorBillRegister.getWorkOrderEstimate()
                 .getWorkOrder().getWorkOrderAmount())
             resultBinder.reject("error.contractorbill.totalbillamount.exceeds.workorderamount", new String[] {
@@ -500,8 +495,7 @@ public class CreateContractorBillController extends BaseContractorBillController
                 resultBinder.rejectValue("workOrderEstimate.workCompletionDate", "error.workcompletiondate.billdate");
         }
 
-        if (workOrderEstimate.getEstimate().getLineEstimateDetails() != null
-                && workOrderEstimate.getEstimate().getLineEstimateDetails().getLineEstimate().isSpillOverFlag()) {
+        if (workOrderEstimate.getEstimate().isSpillOverFlag()) {
             final Date currentFinYearStartDate = worksUtils.getFinancialYearByDate(currentDate).getStartingDate();
             if (contractorBillRegister.getBilldate().after(currentDate))
                 resultBinder.rejectValue("billdate", "error.billdate.futuredate");

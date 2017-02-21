@@ -62,6 +62,7 @@ import org.egov.infra.utils.ApplicationConstant;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.model.bills.EgBilldetails;
 import org.egov.pims.commons.Position;
+import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.contractoradvance.entity.ContractorAdvanceRequisition.ContractorAdvanceRequisitionStatus;
 import org.egov.works.contractoradvance.service.ContractorAdvanceService;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
@@ -264,14 +265,12 @@ public class UpdateContractorBillController extends BaseContractorBillController
         final BigDecimal totalBillAmount = contractorBillRegisterService
                 .getTotalBillAmountByWorkOrderAndNotContractorBillRegister(
                         contractorBillRegister.getWorkOrderEstimate(), contractorBillRegister.getId());
+        final AbstractEstimate ae = workOrderEstimate.getEstimate();
         if (totalBillAmount != null)
             totalBillAmountIncludingCurrentBill = totalBillAmountIncludingCurrentBill.add(totalBillAmount);
 
-        if (workOrderEstimate.getEstimate().getLineEstimateDetails() != null
-                && workOrderEstimate.getEstimate().getLineEstimateDetails().getLineEstimate().isBillsCreated()
-                && workOrderEstimate.getEstimate().getLineEstimateDetails().getGrossAmountBilled() != null)
-            totalBillAmountIncludingCurrentBill = totalBillAmountIncludingCurrentBill
-                    .add(workOrderEstimate.getEstimate().getLineEstimateDetails().getGrossAmountBilled());
+        if (ae.isBillsCreated() && ae.getGrossAmountBilled() != null)
+            totalBillAmountIncludingCurrentBill = totalBillAmountIncludingCurrentBill.add(ae.getGrossAmountBilled());
         if (totalBillAmountIncludingCurrentBill.doubleValue() > workOrderEstimate.getWorkOrder().getWorkOrderAmount())
 
             resultBinder.reject("error.contractorbill.totalbillamount.exceeds.workorderamount",
