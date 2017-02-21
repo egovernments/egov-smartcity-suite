@@ -54,6 +54,7 @@ import org.egov.commons.service.ChartOfAccountDetailService;
 import org.egov.commons.service.CheckListService;
 import org.egov.commons.service.FundService;
 import org.egov.egf.autonumber.ExpenseBillNumberGenerator;
+import org.egov.egf.autonumber.WorksBillNumberGenerator;
 import org.egov.egf.billsubtype.service.EgBillSubTypeService;
 import org.egov.egf.expensebill.repository.ExpenseBillRepository;
 import org.egov.egf.utils.FinancialUtils;
@@ -356,8 +357,13 @@ public class ExpenseBillService {
     }
 
     private String getNextBillNumber(final EgBillregister bill) {
-        final ExpenseBillNumberGenerator b = beanResolver.getAutoNumberServiceFor(ExpenseBillNumberGenerator.class);
-        return b.getNextNumber(bill);
+        if (FinancialConstants.STANDARD_EXPENDITURETYPE_WORKS.equals(bill.getExpendituretype())) {
+            final WorksBillNumberGenerator b = beanResolver.getAutoNumberServiceFor(WorksBillNumberGenerator.class);
+            return b.getNextNumber(bill);
+        } else {
+            final ExpenseBillNumberGenerator b = beanResolver.getAutoNumberServiceFor(ExpenseBillNumberGenerator.class);
+            return b.getNextNumber(bill);
+        }
     }
 
     public void validateSubledgeDetails(EgBillregister egBillregister) {
