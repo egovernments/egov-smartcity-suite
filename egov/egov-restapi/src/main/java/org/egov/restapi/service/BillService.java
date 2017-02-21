@@ -11,6 +11,7 @@ import org.egov.commons.Accountdetailtype;
 import org.egov.commons.CChartOfAccountDetail;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
+import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.commons.service.AccountdetailtypeService;
 import org.egov.commons.service.ChartOfAccountsService;
 import org.egov.commons.service.EntityTypeService;
@@ -75,6 +76,9 @@ public class BillService {
     @Autowired
     private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
 
+    @Autowired
+    private FinancialYearHibernateDAO financialYearHibernateDAO;
+
     private static final String EMPTY = StringUtils.EMPTY;
 
     public List<ErrorDetails> validateBillRegister(final BillRegister billRegister) {
@@ -104,7 +108,15 @@ public class BillService {
             errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_BILLDATE);
             errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_BILLDATE);
             errors.add(errorDetails);
-        }
+        } else
+            try {
+                financialYearHibernateDAO.getFinancialYearByDate(billRegister.getBillDate());
+            } catch (final Exception e) {
+                errorDetails = new ErrorDetails();
+                errorDetails.setErrorCode(e.getMessage());
+                errorDetails.setErrorMessage(e.getMessage());
+                errors.add(errorDetails);
+            }
         if (EMPTY.equals(billRegister.getBillType())) {
             errorDetails = new ErrorDetails();
             errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_BILLTYPE);

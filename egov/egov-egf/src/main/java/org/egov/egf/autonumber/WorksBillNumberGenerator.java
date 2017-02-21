@@ -45,6 +45,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 public interface WorksBillNumberGenerator {
-    public String getNextNumber(EgBillregister br);
+    String getNextNumber(EgBillregister br);
 
 }
