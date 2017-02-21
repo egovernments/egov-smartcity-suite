@@ -83,31 +83,30 @@ public class BillService {
     @Autowired
     private ContractorService contractorService;
 
-    private static final String EMPTY = StringUtils.EMPTY;
-
     public List<ErrorDetails> validateBillRegister(final BillRegister billRegister) {
         final List<ErrorDetails> errors = new ArrayList<>();
         ErrorDetails errorDetails;
-        if (EMPTY.equals(billRegister.getDepartmentCode())
+        if (StringUtils.isBlank(billRegister.getDepartmentCode())
                 || departmentService.getDepartmentByCode(billRegister.getDepartmentCode()) == null) {
             errorDetails = new ErrorDetails();
             errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_DEPARTMENT);
             errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_DEPARTMENT);
             errors.add(errorDetails);
         }
-        if (EMPTY.equals(billRegister.getFunctionCode()) || functionService.findByCode(billRegister.getFunctionCode()) == null) {
+        if (StringUtils.isBlank(billRegister.getFunctionCode())
+                || functionService.findByCode(billRegister.getFunctionCode()) == null) {
             errorDetails = new ErrorDetails();
             errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_FUNCTION);
             errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_FUNCTION);
             errors.add(errorDetails);
         }
-        if (EMPTY.equals(billRegister.getProjectCode())) {
+        if (StringUtils.isBlank(billRegister.getProjectCode())) {
             errorDetails = new ErrorDetails();
             errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_WINCODE);
             errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_WINCODE);
             errors.add(errorDetails);
         }
-        if (EMPTY.equals(billRegister.getBillDate())) {
+        if (billRegister.getBillDate() == null) {
             errorDetails = new ErrorDetails();
             errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_BILLDATE);
             errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_BILLDATE);
@@ -121,25 +120,26 @@ public class BillService {
                 errorDetails.setErrorMessage(e.getMessage());
                 errors.add(errorDetails);
             }
-        if (EMPTY.equals(billRegister.getBillType())) {
+        if (StringUtils.isBlank(billRegister.getBillType())) {
             errorDetails = new ErrorDetails();
             errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_BILLTYPE);
             errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_BILLTYPE);
             errors.add(errorDetails);
         }
-        if (EMPTY.equals(billRegister.getFundCode()) || fundService.findByCode(billRegister.getFundCode()) == null) {
+        if (StringUtils.isBlank(billRegister.getFundCode()) || fundService.findByCode(billRegister.getFundCode()) == null) {
             errorDetails = new ErrorDetails();
             errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_FUND);
             errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_FUND);
             errors.add(errorDetails);
         }
-        if (EMPTY.equals(billRegister.getNameOfWork())) {
+        if (projectCodeService.findActiveProjectCodeByCode(billRegister.getProjectCode()) == null
+                && StringUtils.isBlank(billRegister.getNameOfWork())) {
             errorDetails = new ErrorDetails();
             errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_NAMEOFWORK);
             errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_NAMEOFWORK);
             errors.add(errorDetails);
         }
-        if (EMPTY.equals(billRegister.getPayTo())) {
+        if (StringUtils.isBlank(billRegister.getPayTo())) {
             errorDetails = new ErrorDetails();
             errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_PAYTO);
             errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_PAYTO);
@@ -149,6 +149,20 @@ public class BillService {
             errorDetails = new ErrorDetails();
             errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_BILLAMOUNT);
             errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_BILLAMOUNT);
+            errors.add(errorDetails);
+        }
+        if (StringUtils.isNotBlank(billRegister.getSchemeCode())
+                && schemeService.findByCode(billRegister.getSchemeCode()) == null) {
+            errorDetails = new ErrorDetails();
+            errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_SCHEME);
+            errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_SCHEME);
+            errors.add(errorDetails);
+        }
+        if (StringUtils.isNotBlank(billRegister.getSubSchemeCode())
+                && subSchemeService.findByCode(billRegister.getSubSchemeCode()) == null) {
+            errorDetails = new ErrorDetails();
+            errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_SCHEME);
+            errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_SCHEME);
             errors.add(errorDetails);
         }
         validateBillDetails(billRegister, errors);
@@ -180,7 +194,7 @@ public class BillService {
             BigDecimal creditAmount = BigDecimal.ZERO;
             BigDecimal debitAmount = BigDecimal.ZERO;
             for (final BillDetails billDetails : billRegister.getBillDetails())
-                if (EMPTY.equals(billDetails.getGlcode())) {
+                if (StringUtils.isBlank(billDetails.getGlcode())) {
                     errorDetails = new ErrorDetails();
                     errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_DETAIL_GLCODE);
                     errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_DETAIL_GLCODE);
@@ -292,13 +306,13 @@ public class BillService {
         if (billRegister.getBillPayeeDetails() != null && !billRegister.getBillPayeeDetails().isEmpty())
             for (final BillPayeeDetails billPayeeDetails : billRegister.getBillPayeeDetails()) {
                 Boolean isCOAExistInDetails = false;
-                if (EMPTY.equals(billPayeeDetails.getGlcode())) {
+                if (StringUtils.isBlank(billPayeeDetails.getGlcode())) {
                     errorDetails = new ErrorDetails();
                     errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_PAYEE_GLCODE);
                     errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_PAYEE_GLCODE);
                     errors.add(errorDetails);
                 }
-                if (EMPTY.equals(billPayeeDetails.getAccountDetailType())) {
+                if (StringUtils.isBlank(billPayeeDetails.getAccountDetailType())) {
                     errorDetails = new ErrorDetails();
                     errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_PAYEE_ACCOUNTTYPE);
                     errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_PAYEE_ACCOUNTTYPE);
@@ -306,11 +320,11 @@ public class BillService {
                 } else if (WorksConstants.ACCOUNTDETAIL_TYPE_CONTRACTOR.equals(billPayeeDetails.getAccountDetailType())
                         && contractorService.getContractorByCode(billPayeeDetails.getAccountDetailKey()) == null) {
                     errorDetails = new ErrorDetails();
-                    errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NOT_VALID_CONTRACTOR);
-                    errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NOT_VALID_CONTRACTOR);
+                    errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NOT_EXIST_CONTRACTOR);
+                    errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NOT_EXIST_CONTRACTOR);
                     errors.add(errorDetails);
                 }
-                if (EMPTY.equals(billPayeeDetails.getAccountDetailKey())) {
+                if (StringUtils.isBlank(billPayeeDetails.getAccountDetailKey())) {
                     errorDetails = new ErrorDetails();
                     errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_PAYEE_ACCOUNTKEY);
                     errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_PAYEE_ACCOUNTKEY);
@@ -320,7 +334,8 @@ public class BillService {
                         billPayeeDetails.getDebitAmount() != null && billPayeeDetails.getCreditAmount() != null) {
                     errorDetails = new ErrorDetails();
                     errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_PAYEE_EITHER_CREDIT_DEBIT);
-                    errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_PAYEE_EITHER_CREDIT_DEBIT);
+                    errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_PAYEE_EITHER_CREDIT_DEBIT + " - "
+                            + billPayeeDetails.getGlcode());
                     errors.add(errorDetails);
                 }
                 if (billPayeeDetails.getDebitAmount() == null && billPayeeDetails.getCreditAmount() == null
