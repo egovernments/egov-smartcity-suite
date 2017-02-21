@@ -882,7 +882,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                     argsForTransferee.add(propertyMutation.getDepartmentValue().toString());
                 argsForTransferee
                         .add(propertyMutation.getMutationFee() != null ? propertyMutation.getMutationFee().toString() : "N/A");
-                smsMsgForTransferor = getText("msg.createtransferproperty.sms", argsForTransferor);
+                smsMsgForTransferor = getText("msg.createtransferpropertytransferor.sms", argsForTransferor);
                 smsMsgForTransferee = getText("msg.createtransferproperty.sms", argsForTransferee);
             } else if (mutationState.getValue().equals(WF_STATE_REJECTED)) {
                 argsForTransferor.add(propertyMutation.getFullTranferorName());
@@ -929,7 +929,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                 argsForTransferor.add(propertyMutation.getFullTranferorName());
                 argsForTransferor.add(propertyMutation.getBasicProperty().getUpicNo());
                 argsForTransferor.add(transferOwnerService.getCityName());
-                emailBodyTransferor = getText("body.createtransferproperty", argsForTransferor);
+                emailBodyTransferor = getText("body.createtransferpropertytransferor", argsForTransferor);
                 argsForTransferee.add(propertyMutation.getFullTranfereeName());
                 argsForTransferee.add(propertyMutation.getBasicProperty().getUpicNo());
                 argsForTransferee.add(transferOwnerService.getCityName());
