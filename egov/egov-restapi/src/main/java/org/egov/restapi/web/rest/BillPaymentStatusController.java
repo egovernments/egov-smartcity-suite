@@ -61,8 +61,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class RestBillController {
-    private static final Logger LOG = Logger.getLogger(RestBillController.class);
+public class BillPaymentStatusController {
+    private static final Logger LOG = Logger.getLogger(BillPaymentStatusController.class);
 
     @Autowired
     private EgovCommon egovCommon;
