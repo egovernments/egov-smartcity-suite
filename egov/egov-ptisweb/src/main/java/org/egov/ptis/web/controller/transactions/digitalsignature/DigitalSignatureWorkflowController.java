@@ -43,13 +43,13 @@ import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_ALTER_
 import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_BIFURCATE_ASSESSMENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.AMALGAMATION;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_AMALGAMATION;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_BIFURCATE_ASSESSENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_GRP;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_NEW_ASSESSENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TAX_EXEMTION;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_VACANCY_REMISSION;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_AMALGAMATION;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMOLITION;
 import static org.egov.ptis.constants.PropertyTaxConstants.EXEMPTION;
 import static org.egov.ptis.constants.PropertyTaxConstants.GENERAL_REVISION_PETITION;
@@ -57,10 +57,10 @@ import static org.egov.ptis.constants.PropertyTaxConstants.NEW_ASSESSMENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISHISTORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_EXEMPTION;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_PRINT_NOTICE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_DIGITALLY_SIGNED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_NOTICE_PRINT_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_TRANSFER_NOTICE_PRINT_PENDING;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_PRINT_NOTICE;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -84,7 +84,6 @@ import org.egov.infra.filestore.repository.FileStoreMapperRepository;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.workflow.entity.StateAware;
-import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.constants.PropertyTaxConstants;
@@ -129,6 +128,8 @@ public class DigitalSignatureWorkflowController {
     private static final String GRP = "GRP";
 
     private static final String DIGITAL_SIGNATURE_SUCCESS = "digitalSignature-success";
+
+    private static final String AMALG = "Amalgamation";
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -250,7 +251,8 @@ public class DigitalSignatureWorkflowController {
                                 : property.getCurrentState().getValue().startsWith(STR_DEMOLITION) ? DEMOLITION : property
                                         .getCurrentState().getValue().startsWith(GRP) ? GENERAL_REVISION_PETITION : property
                                                 .getCurrentState().getValue().startsWith(WFLOW_ACTION_NAME_EXEMPTION) ? EXEMPTION
-                                                        : null;
+                                                        : property.getCurrentState().getValue().startsWith(AMALG) ? AMALGAMATION
+                                                                : null;
         if (propertyService.isMeesevaUser(property.getCreatedBy())) {
             property.transition().end();
             property.getBasicProperty().setUnderWorkflow(false);

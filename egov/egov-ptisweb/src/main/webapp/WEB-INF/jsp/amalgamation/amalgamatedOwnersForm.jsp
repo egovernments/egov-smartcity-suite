@@ -72,6 +72,10 @@
 							name="amalgamationOwnersProxy[%{#ownerStatus.index}].owner.type"
 							id="amalgamationOwnersProxy[%{#ownerStatus.index}].owner.type"
 							value="%{amalgamationOwnersProxy[#ownerStatus.index].owner.type}"></s:hidden>
+						<s:hidden
+							name="amalgamationOwnersProxy[%{#ownerStatus.index}].ownerOfParent"
+							id="amalgamationOwnersProxy[%{#ownerStatus.index}].ownerOfParent"
+							value="%{amalgamationOwnersProxy[#ownerStatus.index].ownerOfParent}" cssClass="ownerofparent"></s:hidden>
 						<td><s:textfield
 								name="amalgamationOwnersProxy[%{#ownerStatus.index}].owner.aadhaarNumber"
 								id="aadharNo" size="12" maxlength="12" data-optional="1"
@@ -123,7 +127,7 @@
 							name="addOwnerBtn" class="btn-sm btn-default" alt="addOwnerBtn"
 							onclick="addOwners();"> <i class="fa fa-plus"></i>
 						</span> &nbsp; <span id="delete_owner_row" name="removeOwnerBtn"
-							class="btn-sm btn-default" alt="removeOwnerBtn"> <i
+							class="btn-sm btn-default deleteowner" alt="removeOwnerBtn"> <i
 								class="fa fa-trash"></i>
 						</span></td>
 

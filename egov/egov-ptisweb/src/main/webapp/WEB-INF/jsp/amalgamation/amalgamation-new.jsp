@@ -105,7 +105,7 @@
 							data-collapsed="0">
 							<%@ include file="amalgamationForm.jsp"%>
 							<div class="panel-body custom-form">
-								<%@ include file="../workflow/commonWorkflowMatrix.jsp"%>
+								<%@ include file="../workflow/common-workflowmatrix-new.jsp"%>
 								<%@ include file="../workflow/commonWorkflowMatrix-button.jsp"%>
 							</div>
 						</div>

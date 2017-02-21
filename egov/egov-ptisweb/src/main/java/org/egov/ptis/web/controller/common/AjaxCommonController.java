@@ -83,21 +83,31 @@ public class AjaxCommonController {
      */
     @RequestMapping(value = "/amalgamation/getamalgamatedpropdetails", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public AmalgamatedPropInfo getAmalgamatedPropertyDetails(@RequestParam("assessmentNo") String assessmentNo) {
-        AmalgamatedPropInfo amalgamatedProp = new AmalgamatedPropInfo();
-        BasicProperty basicProp = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
-        BigDecimal totalDue = propService.getTotalPropertyTaxDue(basicProp);
-        for (final PropertyOwnerInfo propOwner : basicProp.getPropertyOwnerInfo()) {
-            final List<Address> addrSet = propOwner.getOwner().getAddress();
-            for (final Address address : addrSet) {
-                amalgamatedProp.setAssessmentNo(assessmentNo);
-                amalgamatedProp.setOwnerName(propOwner.getOwner().getName());
-                amalgamatedProp.setMobileNo(propOwner.getOwner().getMobileNumber());
-                amalgamatedProp.setPropertyAddress(address.toString());
-                amalgamatedProp.setPaymentDone(totalDue.compareTo(BigDecimal.ZERO) == 0 ? true : false);
-                break;
+    public AmalgamatedPropInfo getAmalgamatedPropertyDetails(@RequestParam("assessmentNo") final String assessmentNo) {
+        final AmalgamatedPropInfo amalgamatedProp = new AmalgamatedPropInfo();
+        amalgamatedProp.setValidationMsg("");
+        final BasicProperty basicProp = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
+        if (basicProp.isUnderWorkflow())
+            amalgamatedProp.setValidationMsg("Assessment: " + basicProp.getUpicNo() + " is under workflow!");
+        if (!basicProp.isActive())
+            amalgamatedProp.setValidationMsg("Assessment: " + basicProp.getUpicNo() + " is deactivated!");
+        final BigDecimal totalDue = propService.getTotalPropertyTaxDue(basicProp);
+        final boolean hasDues = totalDue.compareTo(BigDecimal.ZERO) > 0 ? true : false;
+        if (hasDues)
+            amalgamatedProp.setValidationMsg("This property has dues!");
+        else
+            for (final PropertyOwnerInfo propOwner : basicProp.getPropertyOwnerInfo()) {
+                final List<Address> addrSet = propOwner.getOwner().getAddress();
+                for (final Address address : addrSet) {
+                    amalgamatedProp.setAssessmentNo(assessmentNo);
+                    amalgamatedProp.setOwnerName(propOwner.getOwner().getName());
+                    amalgamatedProp.setMobileNo(propOwner.getOwner().getMobileNumber());
+                    amalgamatedProp.setPropertyAddress(address.toString());
+                    amalgamatedProp.setPaymentDone(totalDue.compareTo(BigDecimal.ZERO) == 0 ? true : false);
+                    break;
+                }
             }
-        }
+
         return amalgamatedProp;
     }
 
@@ -108,7 +118,7 @@ public class AjaxCommonController {
      */
     @RequestMapping(value = "/getusagebypropertytype", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public List<PropertyUsage> getUsageByPropertyType(@RequestParam("propTypeCategory") String propTypeCategory) {
+    public List<PropertyUsage> getUsageByPropertyType(@RequestParam("propTypeCategory") final String propTypeCategory) {
         List<PropertyUsage> propUsageList = new ArrayList<>();
         if (propTypeCategory.equals(CATEGORY_MIXED))
             propUsageList = propertyUsageService.getAllActivePropertyUsages();

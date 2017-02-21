@@ -37,7 +37,6 @@
   ~
   ~     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
-
 <div class="panel-heading" style="text-align: center">
 	<div class="panel-title" style="text-align: center">
 		<s:text name="lbl.amalgamation.title" />
@@ -50,6 +49,8 @@
 		</label>
 		<div class="col-sm-3 add-margin">
 			<s:property value="%{basicProp.upicNo}" />
+			<s:hidden id="retainerPropertyId" name="retainerPropertyId" value="%{basicProp.upicNo}" />
+			<s:hidden id="instStartDtId" name="instStartDtId" value="%{instStartDt}" />
 		</div>
 
 		<label class="col-sm-2 control-label text-right"> <s:text
@@ -131,7 +132,9 @@
 	</div>
 </div>
 <s:if test="%{oldPropertyTypeCode!=@org.egov.ptis.constants.PropertyTaxConstants@OWNERSHIP_TYPE_VAC_LAND}">
+	<div class="overflow-x-scroll floors-tbl-freeze-column-div">
 	<%@ include file="builtupPropDetailsForm.jsp"%>
+	</div>
 </s:if>
 
 <s:if test="%{!documentTypes.isEmpty()}">

@@ -54,8 +54,6 @@ jQuery(document).ready(function(){
 
 function setupDefaultLogics(mode)
 {
-	jQuery('#ownerInfoTbl tbody tr:eq(0)').find('input').attr('readonly', 'readonly');
-	jQuery('#ownerInfoTbl tbody tr:eq(0)').find('select').attr('disabled', 'disabled');
 	if(mode == 'edit'){
 		var rowIdx=0;
 		jQuery('#floorDetailsTbl tbody tr').each(function(){
@@ -68,6 +66,14 @@ function setupDefaultLogics(mode)
 		rowIdx = 0;
 		jQuery('#amalgamatedPropertiesTbl tbody tr').each(function(){
 			jQuery('#amalgamatedPropertiesTbl tbody tr:eq('+rowIdx+')').find('.amlgpropownername,.amlgpropmobileno, .amlgpropaddress').attr('readonly','readonly');
+			rowIdx++;
+		});
+		
+		rowIdx = 0;
+		jQuery('#ownerInfoTbl tbody tr').each(function(){
+			
+				jQuery('#ownerInfoTbl tbody tr:eq('+rowIdx+')').find('input').attr('readonly', 'readonly');
+				jQuery('#ownerInfoTbl tbody tr:eq('+rowIdx+')').find('select').attr('disabled', 'disabled');
 			rowIdx++;
 		});
 	}
@@ -164,7 +170,14 @@ function calculatePlinthArea(length, breadth, rowIdx){
 
 jQuery(document).on('blur', ".amlgpropassessmentno", function () {
 
+	var retainerProp=jQuery('#retainerPropertyId').val();
 	var rowIdx=jQuery(this).data('idx');
+	if(retainerProp == jQuery(this).val()){
+		bootbox.alert('Retainer property cannot be used as amalgamated property!');
+		jQuery('#amalgamatedPropertiesTbl tbody tr:eq('+rowIdx+') input').val('');
+		return;
+	}
+
     jQuery.ajax({
         url: "/ptis/common/amalgamation/getamalgamatedpropdetails",
         type: "GET",
@@ -176,15 +189,15 @@ jQuery(document).on('blur', ".amlgpropassessmentno", function () {
         success: function(property){
         	if(property.assessmentNo)
         	{
-        		if(property.paymentDone){
-            		jQuery('#amalgamatedPropertiesTbl tbody tr:eq('+rowIdx+')')
-            			.find('.amlgpropownername').val(property.ownerName);
-            		jQuery('#amalgamatedPropertiesTbl tbody tr:eq('+rowIdx+')')
-        				.find('.amlgpropmobileno').val(property.mobileNo);
-            		jQuery('#amalgamatedPropertiesTbl tbody tr:eq('+rowIdx+')')
-        				.find('.amlgpropaddress').val(property.propertyAddress);
+        		if(property.validationMsg == ''){
+        			jQuery('#amalgamatedPropertiesTbl tbody tr:eq('+rowIdx+')')
+        				.find('.amlgpropownername').val(property.ownerName);
+	        		jQuery('#amalgamatedPropertiesTbl tbody tr:eq('+rowIdx+')')
+	    				.find('.amlgpropmobileno').val(property.mobileNo);
+	        		jQuery('#amalgamatedPropertiesTbl tbody tr:eq('+rowIdx+')')
+	    				.find('.amlgpropaddress').val(property.propertyAddress);
         		} else {
-        			bootbox.alert("This property has dues");
+        			bootbox.alert(property.validationMsg);
         			jQuery('#amalgamatedPropertiesTbl tbody tr:eq('+rowIdx+') input')
         				.val('');
         			return;
@@ -439,7 +452,13 @@ function addOwners()
 			jQuery('#ownerInfoTbl tbody tr:last').find('input').val('');
 }
 
-jQuery(document).on('click',"#delete_owner_row",function (){
+jQuery(document).on('click', ".deleteowner", function () {
+
+	var isOwnerOfParent = jQuery(this).closest('tr').find('.ownerofparent').val();
+	if(isOwnerOfParent === "true"){
+		bootbox.alert("Owners from the retainer property cannot be deleted");
+		return false;
+	}
 	var table = document.getElementById('ownerInfoTbl');
     var rowCount = table.rows.length;
     var counts = rowCount - 1;
@@ -448,11 +467,10 @@ jQuery(document).on('click',"#delete_owner_row",function (){
 		bootbox.alert("This Row cannot be deleted");
 		return false;
 	}else{	
-
-		jQuery(this).closest('tr').remove();		
-		jQuery("#ownerInfoTbl tr:eq(1) td span[alt='AddF']").show();
-		regenerateIndex('ownerInfoTbl');
-		return true;
+			jQuery(this).closest('tr').remove();		
+			jQuery("#ownerInfoTbl tr:eq(1) td span[alt='AddF']").show();
+			regenerateIndex('ownerInfoTbl');
+			return true;
 	}
 });
 
@@ -460,6 +478,12 @@ function addFloors()
 {
 	var tbl = document.getElementById('floorDetailsTbl');
 	var rowO = tbl.rows.length;
+	var today = document.getElementById('instStartDtId').value;
+	/*var dd = today.getDate();
+	var mm = today.getMonth()+1; 
+	var yyyy = today.getFullYear();
+	today = dd+'/'+mm+'/'+yyyy;*/
+	
 	if (rowO <= 50 && document.getElementById('floorDetailsRow') != null) {
 		// get Next Row Index to Generate
 		var nextIdx = tbl.rows.length - 1;
@@ -517,7 +541,11 @@ function addFloors()
 					if (jQuery(this).is("select")) {
 						jQuery(this).prop('selectedIndex', 0);
 					}
-
+					if(jQuery(this).hasClass('occupancydate'))
+					{
+						jQuery(this).val(today);
+					}
+					
 				}).end().appendTo("#floorDetailsTbl");
 
 		jQuery("#floorDetailsTbl tr:last td span[alt='AddF']").hide();

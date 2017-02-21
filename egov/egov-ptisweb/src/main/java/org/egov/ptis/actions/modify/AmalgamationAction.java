@@ -73,6 +73,9 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NEW;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -89,14 +92,15 @@ import org.apache.struts2.convention.annotation.ResultPath;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.Area;
+import org.egov.commons.Installment;
 import org.egov.eis.entity.Assignment;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.persistence.entity.Address;
-import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
-import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.reporting.engine.ReportOutput;
+import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.utils.DateUtils;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.portal.entity.Citizen;
@@ -136,7 +140,6 @@ import org.egov.ptis.master.service.StructureClassificationService;
 import org.egov.ptis.master.service.WallTypeService;
 import org.egov.ptis.master.service.WoodTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 
 @ParentPackage("egov")
 @ResultPath(value = "/WEB-INF/jsp")
@@ -144,7 +147,7 @@ import org.springframework.http.ResponseEntity;
 @Results({ @Result(name = AmalgamationAction.NEW, location = "amalgamation/amalgamation-new.jsp"),
         @Result(name = AmalgamationAction.RESULT_ACK, location = "amalgamation/amalgamation-ack.jsp"),
         @Result(name = AmalgamationAction.VIEW, location = "amalgamation/amalgamation-view.jsp"),
-        @Result(name = AmalgamationAction.NOTICE, location = "amalgamation/amalgamation-notice.jsp")})
+        @Result(name = AmalgamationAction.NOTICE, location = "amalgamation/amalgamation-notice.jsp") })
 public class AmalgamationAction extends PropertyTaxBaseAction {
 
     private static final long serialVersionUID = 1L;
@@ -189,6 +192,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
     private boolean allowEditDocument = Boolean.FALSE;
     private String reportId;
     private Boolean showAckBtn = Boolean.FALSE;
+    private String instStartDt;
 
     @Autowired
     private transient PropertyPersistenceService basicPropertyService;
@@ -221,7 +225,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
     private transient PropertyOccupationService propertyOccupationService;
     @Autowired
     private ReportViewerUtil reportViewerUtil;
-    
+
     public AmalgamationAction() {
         super();
         propertyModel.setPropertyDetail(new BuiltUpProperty());
@@ -239,6 +243,13 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
     @SuppressWarnings("unchecked")
     public void prepare() {
         LOGGER.debug("Entered into preapre, ModelId: " + getModelId());
+        final Map<String, Installment> currYearInstMap = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
+        final Installment currInstFirstHalf = currYearInstMap.get(PropertyTaxConstants.CURRENTYEAR_FIRST_HALF);
+        final DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+        if (DateUtils.between(new Date(), currInstFirstHalf.getFromDate(), currInstFirstHalf.getToDate()))
+            instStartDt = df.format(currInstFirstHalf.getFromDate());
+        else
+            instStartDt = df.format(currYearInstMap.get(PropertyTaxConstants.CURRENTYEAR_SECOND_HALF).getFromDate());
         super.prepare();
         setUserInfo();
         setUserDesignations();
@@ -251,9 +262,8 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
             if (propWF != null) {
                 setProperty(propWF);
                 historyMap = propService.populateHistory(propWF);
-            } else {
+            } else
                 historyMap = propService.populateHistory(basicProp.getActiveProperty());
-            }
         } else if (indexNumber != null && !indexNumber.trim().isEmpty()) {
             setBasicProp((BasicProperty) getPersistenceService().findByNamedQuery(QUERY_BASICPROPERTY_BY_UPICNO,
                     indexNumber));
@@ -320,7 +330,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
 
     private void populateAddress() {
         if (basicProp.getPropertyOwnerInfo() != null
-                && !basicProp.getPropertyOwnerInfo().isEmpty()) {
+                && !basicProp.getPropertyOwnerInfo().isEmpty())
             for (final PropertyOwnerInfo propOwner : basicProp.getPropertyOwnerInfo()) {
                 final List<Address> addrSet = propOwner.getOwner().getAddress();
                 for (final Address address : addrSet) {
@@ -330,8 +340,6 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
                     break;
                 }
             }
-
-        }
     }
 
     private void populatePropertyDetails() {
@@ -362,10 +370,10 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
     private void populateAmalgamations() {
         if (propertyModel.getId() != null && !propertyModel.getBasicProperty().getAmalgamations().isEmpty()) {
             BasicProperty amalBasicProp;
-            for (Amalgamation amal : propertyModel.getBasicProperty().getAmalgamations()) {
+            for (final Amalgamation amal : propertyModel.getBasicProperty().getAmalgamations()) {
                 if (propertyModel.getStatus() == null ||
-                        (propertyModel.getStatus() != null
-                                && propertyModel.getStatus().equals(STATUS_WORKFLOW)))
+                        propertyModel.getStatus() != null
+                                && propertyModel.getStatus().equals(STATUS_WORKFLOW))
                     amalBasicProp = basicPropertyDAO.getBasicPropertyByPropertyID(amal.getAmalgamatedProperty().getUpicNo());
                 else
                     amalBasicProp = basicPropertyDAO
@@ -388,21 +396,21 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
 
     private void populateAmalgamationOwners() {
         AmalgamationOwner amlgOwner;
-        if (propertyModel.getAmalgamationOwners().isEmpty()) {
-            for (PropertyOwnerInfo ownerInfo : basicProp.getPropertyOwnerInfo()) {
+        if (propertyModel.getAmalgamationOwners().isEmpty())
+            for (final PropertyOwnerInfo ownerInfo : basicProp.getPropertyOwnerInfo()) {
+                amlgOwner = new AmalgamationOwner();
+                amlgOwner.setOwner(ownerInfo.getOwner());
+                amlgOwner.setProperty(propertyModel);
+                amlgOwner.setOwnerOfParent(true);
+                propertyModel.getAmalgamationOwnersProxy().add(amlgOwner);
+            }
+        else
+            for (final AmalgamationOwner ownerInfo : propertyModel.getAmalgamationOwners()) {
                 amlgOwner = new AmalgamationOwner();
                 amlgOwner.setOwner(ownerInfo.getOwner());
                 amlgOwner.setProperty(propertyModel);
                 propertyModel.getAmalgamationOwnersProxy().add(amlgOwner);
             }
-        } else {
-            for (AmalgamationOwner ownerInfo : propertyModel.getAmalgamationOwners()) {
-                amlgOwner = new AmalgamationOwner();
-                amlgOwner.setOwner(ownerInfo.getOwner());
-                amlgOwner.setProperty(propertyModel);
-                propertyModel.getAmalgamationOwnersProxy().add(amlgOwner);
-            }
-        }
     }
 
     private void setFloorDetails(final Property property) {
@@ -412,7 +420,11 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         int i = 0;
         for (final Floor flr : floors) {
             if (getModelId() == null)
-                flr.setOccupancyDate(new Date());
+                try {
+                    flr.setOccupancyDate(new SimpleDateFormat("dd/MM/yyyy").parse(instStartDt));
+                } catch (final ParseException e) {
+                    e.printStackTrace();
+                }
             floorNoStr[i] = FLOOR_MAP.get(flr.getFloorNo());
             i++;
         }
@@ -429,7 +441,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         LOGGER.debug("forwardModify: Modify property started " + propertyModel);
         setOldPropertyTypeCode(basicProp.getProperty().getPropertyDetail().getPropertyTypeMaster().getCode());
         validate();
-        long startTimeMillis = System.currentTimeMillis();
+        final long startTimeMillis = System.currentTimeMillis();
         if (getModelId() != null && !getModelId().trim().isEmpty()) {
             propWF = (PropertyImpl) getPersistenceService().findByNamedQuery(QUERY_WORKFLOW_PROPERTYIMPL_BYID,
                     Long.valueOf(getModelId()));
@@ -470,7 +482,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
     }
 
     private void validateVacantLandConversion() {
-        PropertyTypeMaster oldPropTypeMstr = oldProperty.getPropertyDetail().getPropertyTypeMaster();
+        final PropertyTypeMaster oldPropTypeMstr = oldProperty.getPropertyDetail().getPropertyTypeMaster();
         if (propTypeMstr != null && !propTypeMstr.getType().equals(oldPropTypeMstr.getType())
                 && propTypeMstr.getType().equals(OWNERSHIP_TYPE_VAC_LAND_STR))
             addActionError(getText("error.nonVacantToVacant"));
@@ -512,7 +524,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         Amalgamation amalgamatedProp;
         BasicProperty amalBasicProp;
         basicProp.getAmalgamations().clear();
-        for (Amalgamation amlg : basicProp.getAmalgamationsProxy()) {
+        for (final Amalgamation amlg : basicProp.getAmalgamationsProxy()) {
             amalgamatedProp = new Amalgamation();
             amalBasicProp = basicPropertyDAO.getBasicPropertyByPropertyID(amlg.getAssessmentNo());
             amalgamatedProp.setParentProperty(basicProp);
@@ -540,9 +552,8 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         if (checkDesignationsForEdit()) {
             mode = EDIT;
             allowEditDocument = Boolean.TRUE;
-        } else if (checkDesignationsForView()) {
+        } else if (checkDesignationsForView())
             mode = VIEW;
-        }
         final String currWfState = propertyModel.getState().getValue();
         populateFormData();
 
@@ -621,8 +632,8 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
             addActionError(getText("error.amalgamatedprops.required"));
 
         validateOwners();
-        PropertyDetail propertyDetail = propertyModel.getPropertyDetail();
-        Date regDocDate = propertyModel.getBasicProperty().getRegdDocDate();
+        final PropertyDetail propertyDetail = propertyModel.getPropertyDetail();
+        final Date regDocDate = propertyModel.getBasicProperty().getRegdDocDate();
         if (propTypeMstr.getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)) {
             if (propertyDetail != null)
                 validateVacantProperty(propertyDetail, eastBoundary, westBoundary, southBoundary,
@@ -681,7 +692,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         final Character status = STATUS_WORKFLOW;
         final PropertyTypeMaster proptypeMstr = propertyModel.getPropertyDetail().getPropertyTypeMaster();
         propCompletionDate = getCompletionDate(proptypeMstr);
-        PropertyMutationMaster propMutMstr = propertyMutationMasterDAO.getPropertyMutationMasterByCode(modifyRsn);
+        final PropertyMutationMaster propMutMstr = propertyMutationMasterDAO.getPropertyMutationMasterByCode(modifyRsn);
         basicProp.setPropertyMutationMaster(propMutMstr);
         basicProp.setPropOccupationDate(propCompletionDate);
         createAmalgamationOwners(propertyModel, basicProp, basicProp.getAddress());
@@ -761,7 +772,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
                 + ", ownerAddress: " + ownerAddress);
         User user;
         property.getAmalgamationOwners().clear();
-        for (AmalgamationOwner ownerInfo : property.getAmalgamationOwnersProxy()) {
+        for (final AmalgamationOwner ownerInfo : property.getAmalgamationOwnersProxy()) {
             if (ownerInfo != null) {
                 if (StringUtils.isNotBlank(ownerInfo.getOwner().getAadhaarNumber()))
                     user = userService.getUserByAadhaarNumber(ownerInfo.getOwner().getAadhaarNumber());
@@ -838,9 +849,9 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         createPropertyStatusValues();
         propertyModel.setStatus(STATUS_ISACTIVE);
         oldProperty.setStatus(STATUS_ISHISTORY);
-        for (PropertyStatusValues statusValues : basicProp.getPropertyStatusValuesSet())
+        for (final PropertyStatusValues statusValues : basicProp.getPropertyStatusValuesSet())
             basicPropertyService.applyAuditing(statusValues);
-        String clientSpecificDmdBill = propertyTaxCommonUtils.getAppConfigValue(APPCONFIG_CLIENT_SPECIFIC_DMD_BILL,
+        final String clientSpecificDmdBill = propertyTaxCommonUtils.getAppConfigValue(APPCONFIG_CLIENT_SPECIFIC_DMD_BILL,
                 PTMODULENAME);
         if ("Y".equalsIgnoreCase(clientSpecificDmdBill))
             propertyTaxCommonUtils.makeExistingDemandBillInactive(basicProp.getUpicNo());
@@ -861,16 +872,16 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
 
     private void createPropertyStatusValues() {
         Date propCompletionDate;
-        PropertyTypeMaster proptypeMstr = propertyModel.getPropertyDetail().getPropertyTypeMaster();
+        final PropertyTypeMaster proptypeMstr = propertyModel.getPropertyDetail().getPropertyTypeMaster();
         if (!proptypeMstr.getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
             propCompletionDate = propService.getLowestDtOfCompFloorWise(propertyModel.getPropertyDetail()
                     .getFloorDetails());
         else
             propCompletionDate = propertyModel.getPropertyDetail().getDateOfCompletion();
 
-        String[] amalgPropIds = new String[10];
+        final String[] amalgPropIds = new String[10];
         int i = 0;
-        for (Amalgamation amalProp : basicProp.getAmalgamations()) {
+        for (final Amalgamation amalProp : basicProp.getAmalgamations()) {
             amalgPropIds[i] = amalProp.getAmalgamatedProperty().getUpicNo();
             i++;
         }
@@ -906,7 +917,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         LOGGER.debug("reject: BasicProperty: " + basicProperty);
         transitionWorkFlow(propertyModel);
         if (propertyModel.getStatus().equals(PropertyTaxConstants.STATUS_CANCELLED))
-            for (Amalgamation amalProp : basicProp.getAmalgamations())
+            for (final Amalgamation amalProp : basicProp.getAmalgamations())
                 amalProp.getAmalgamatedProperty().setUnderWorkflow(false);
 
         propService.updateIndexes(propertyModel, getApplicationType());
@@ -923,11 +934,11 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         LOGGER.debug("reject: Property rejection ended");
         return RESULT_ACK;
     }
-    
+
     @SkipValidation
     @Action(value = "/amalgamation-printAck")
     public String printAck() {
-        ReportOutput reportOutput = propertyTaxUtil
+        final ReportOutput reportOutput = propertyTaxUtil
                 .generateCitizenCharterAcknowledgement(indexNumber, AMALGAMATION, APPLICATION_TYPE_AMALGAMATION);
         reportId = reportViewerUtil.addReportToTempCache(reportOutput);
         return NOTICE;
@@ -996,7 +1007,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         this.propService = propService;
     }
 
-    public void setSecurityUtils(SecurityUtils securityUtils) {
+    public void setSecurityUtils(final SecurityUtils securityUtils) {
         this.securityUtils = securityUtils;
     }
 
@@ -1020,7 +1031,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         return areaOfPlot;
     }
 
-    public void setAreaOfPlot(String areaOfPlot) {
+    public void setAreaOfPlot(final String areaOfPlot) {
         this.areaOfPlot = areaOfPlot;
     }
 
@@ -1028,7 +1039,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         return propAddress;
     }
 
-    public void setPropAddress(String propAddress) {
+    public void setPropAddress(final String propAddress) {
         this.propAddress = propAddress;
     }
 
@@ -1036,7 +1047,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         return doorNo;
     }
 
-    public void setDoorNo(String doorNo) {
+    public void setDoorNo(final String doorNo) {
         this.doorNo = doorNo;
     }
 
@@ -1044,7 +1055,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         return pinCode;
     }
 
-    public void setPinCode(String pinCode) {
+    public void setPinCode(final String pinCode) {
         this.pinCode = pinCode;
     }
 
@@ -1052,7 +1063,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         return oldProperty;
     }
 
-    public void setOldProperty(PropertyImpl oldProperty) {
+    public void setOldProperty(final PropertyImpl oldProperty) {
         this.oldProperty = oldProperty;
     }
 
@@ -1060,7 +1071,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         return floorTypeId;
     }
 
-    public void setFloorTypeId(Long floorTypeId) {
+    public void setFloorTypeId(final Long floorTypeId) {
         this.floorTypeId = floorTypeId;
     }
 
@@ -1068,7 +1079,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         return roofTypeId;
     }
 
-    public void setRoofTypeId(Long roofTypeId) {
+    public void setRoofTypeId(final Long roofTypeId) {
         this.roofTypeId = roofTypeId;
     }
 
@@ -1076,7 +1087,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         return wallTypeId;
     }
 
-    public void setWallTypeId(Long wallTypeId) {
+    public void setWallTypeId(final Long wallTypeId) {
         this.wallTypeId = wallTypeId;
     }
 
@@ -1084,7 +1095,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         return woodTypeId;
     }
 
-    public void setWoodTypeId(Long woodTypeId) {
+    public void setWoodTypeId(final Long woodTypeId) {
         this.woodTypeId = woodTypeId;
     }
 
@@ -1092,7 +1103,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         return northBoundary;
     }
 
-    public void setNorthBoundary(String northBoundary) {
+    public void setNorthBoundary(final String northBoundary) {
         this.northBoundary = northBoundary;
     }
 
@@ -1100,7 +1111,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         return southBoundary;
     }
 
-    public void setSouthBoundary(String southBoundary) {
+    public void setSouthBoundary(final String southBoundary) {
         this.southBoundary = southBoundary;
     }
 
@@ -1108,7 +1119,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         return eastBoundary;
     }
 
-    public void setEastBoundary(String eastBoundary) {
+    public void setEastBoundary(final String eastBoundary) {
         this.eastBoundary = eastBoundary;
     }
 
@@ -1116,7 +1127,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         return westBoundary;
     }
 
-    public void setWestBoundary(String westBoundary) {
+    public void setWestBoundary(final String westBoundary) {
         this.westBoundary = westBoundary;
     }
 
@@ -1124,7 +1135,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         return propertyCategory;
     }
 
-    public void setPropertyCategory(String propertyCategory) {
+    public void setPropertyCategory(final String propertyCategory) {
         this.propertyCategory = propertyCategory;
     }
 
@@ -1136,7 +1147,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         return docNumber;
     }
 
-    public void setDocNumber(String docNumber) {
+    public void setDocNumber(final String docNumber) {
         this.docNumber = docNumber;
     }
 
@@ -1144,7 +1155,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         return floorNoStr;
     }
 
-    public void setFloorNoStr(String[] floorNoStr) {
+    public void setFloorNoStr(final String[] floorNoStr) {
         this.floorNoStr = floorNoStr;
     }
 
@@ -1152,7 +1163,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         return oldPropertyTypeCode;
     }
 
-    public void setOldPropertyTypeCode(String oldPropertyTypeCode) {
+    public void setOldPropertyTypeCode(final String oldPropertyTypeCode) {
         this.oldPropertyTypeCode = oldPropertyTypeCode;
     }
 
@@ -1160,7 +1171,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         return propTypeMstr;
     }
 
-    public void setPropTypeMstr(PropertyTypeMaster propTypeMstr) {
+    public void setPropTypeMstr(final PropertyTypeMaster propTypeMstr) {
         this.propTypeMstr = propTypeMstr;
     }
 
@@ -1168,7 +1179,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         return modifyRsn;
     }
 
-    public void setModifyRsn(String modifyRsn) {
+    public void setModifyRsn(final String modifyRsn) {
         this.modifyRsn = modifyRsn;
     }
 
@@ -1184,7 +1195,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         return ackMessage;
     }
 
-    public void setAckMessage(String ackMessage) {
+    public void setAckMessage(final String ackMessage) {
         this.ackMessage = ackMessage;
     }
 
@@ -1200,7 +1211,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         return mode;
     }
 
-    public void setMode(String mode) {
+    public void setMode(final String mode) {
         this.mode = mode;
     }
 
@@ -1208,7 +1219,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         return guardianRelationMap;
     }
 
-    public void setGuardianRelationMap(Map<String, String> guardianRelationMap) {
+    public void setGuardianRelationMap(final Map<String, String> guardianRelationMap) {
         this.guardianRelationMap = guardianRelationMap;
     }
 
@@ -1216,7 +1227,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         return propTypeCategoryMap;
     }
 
-    public void setPropTypeCategoryMap(Map<String, String> propTypeCategoryMap) {
+    public void setPropTypeCategoryMap(final Map<String, String> propTypeCategoryMap) {
         this.propTypeCategoryMap = propTypeCategoryMap;
     }
 
@@ -1224,10 +1235,10 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         return allowEditDocument;
     }
 
-    public void setAllowEditDocument(boolean allowEditDocument) {
+    public void setAllowEditDocument(final boolean allowEditDocument) {
         this.allowEditDocument = allowEditDocument;
     }
-    
+
     public String getReportId() {
         return reportId;
     }
@@ -1236,8 +1247,16 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         return showAckBtn;
     }
 
-    public void setShowAckBtn(Boolean showAckBtn) {
+    public void setShowAckBtn(final Boolean showAckBtn) {
         this.showAckBtn = showAckBtn;
+    }
+
+    public String getInstStartDt() {
+        return instStartDt;
+    }
+
+    public void setInstStartDt(final String instStartDt) {
+        this.instStartDt = instStartDt;
     }
 
 }
