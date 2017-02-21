@@ -88,9 +88,9 @@ public class MarriageCerftificateJsonAdaptor implements JsonSerializer<MarriageC
                         marriageCertificate.getReIssue().getRegistration().getHusband().getFullName());
             if (marriageCertificate.getCertificateType().name() == REGISTRATION) {
                 if (marriageCertificate.getRegistration().getWife().getFullName() != null)
-                    jsonObject.addProperty("wifeName", marriageCertificate.getRegistration().getHusband().getFullName());
+                    jsonObject.addProperty("wifeName", marriageCertificate.getRegistration().getWife().getFullName());
             } else
-                jsonObject.addProperty("wifeName", marriageCertificate.getReIssue().getRegistration().getHusband().getFullName());
+                jsonObject.addProperty("wifeName", marriageCertificate.getReIssue().getRegistration().getWife().getFullName());
 
             if (marriageCertificate.getCertificateType() != null)
                 jsonObject.addProperty("certificateType", marriageCertificate.getCertificateType().toString());
