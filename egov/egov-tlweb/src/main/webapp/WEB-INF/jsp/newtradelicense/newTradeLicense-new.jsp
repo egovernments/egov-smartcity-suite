@@ -221,7 +221,7 @@
             }
             if (currentState == 'First level fee collected')
                 document.getElementById('certificateDiv').hidden = false;
-            if (currentState == 'License Created' || currentState == 'Commissioner approved')
+            if (currentState == 'Commissioner approved')
                 document.getElementById('closeDiv').hidden = false;
             if ($('#boundary')) {
                 $('#boundary').attr('disabled', false);
