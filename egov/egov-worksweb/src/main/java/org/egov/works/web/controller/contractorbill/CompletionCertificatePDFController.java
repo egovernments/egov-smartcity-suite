@@ -56,18 +56,22 @@ import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.utils.DateUtils;
+import org.egov.infra.utils.StringUtils;
 import org.egov.infra.web.utils.WebUtils;
+import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.abstractestimate.entity.Activity;
 import org.egov.works.abstractestimate.service.EstimateService;
 import org.egov.works.contractorbill.entity.ContractorBillCertificateInfo;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.contractorbill.service.ContractorBillRegisterService;
+import org.egov.works.masters.entity.Contractor;
 import org.egov.works.mb.entity.MBDetails;
 import org.egov.works.mb.service.MBDetailsService;
 import org.egov.works.models.tender.OfflineStatus;
 import org.egov.works.offlinestatus.service.OfflineStatusService;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
+import org.egov.works.workorder.entity.WorkOrder;
 import org.egov.works.workorder.entity.WorkOrder.OfflineStatuses;
 import org.egov.works.workorder.entity.WorkOrderActivity;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -110,58 +114,54 @@ public class CompletionCertificatePDFController {
             @PathVariable("contractorBillId") final Long id, final HttpSession session) throws IOException {
         final ContractorBillRegister contractorBillRegister = contractorBillRegisterService.getContractorBillById(id);
 
-        return generateReport(contractorBillRegister, request, session);
+        return generateReport(contractorBillRegister, request);
     }
 
     private ResponseEntity<byte[]> generateReport(final ContractorBillRegister contractorBillRegister,
-            final HttpServletRequest request,
-            final HttpSession session) {
-        final Map<String, Object> reportParams = new HashMap<String, Object>();
+            final HttpServletRequest request) {
+        final Map<String, Object> reportParams = new HashMap<>();
         ReportRequest reportInput = null;
-        ReportOutput reportOutput = null;
+        ReportOutput reportOutput;
         if (contractorBillRegister != null) {
 
             final DecimalFormat df = new DecimalFormat("0.00");
 
             final String url = WebUtils.extractRequestDomainURL(request, false);
 
-            final OfflineStatus offlineStatusses = offlineStatusService.getOfflineStatusByObjectIdAndObjectTypeAndStatus(
-                    contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getId(), WorksConstants.WORKORDER,
-                    OfflineStatuses.WORK_COMMENCED.toString().toUpperCase());
-
-            reportParams.put("nameOfWork",
-                    contractorBillRegister.getWorkOrderEstimate().getEstimate().getName() != null
-                            ? contractorBillRegister.getWorkOrderEstimate().getEstimate().getName() : "");
-            if (contractorBillRegister.getWorkOrderEstimate().getEstimate().getLineEstimateDetails() != null) {
-                reportParams.put("estimateNumber",
-                        contractorBillRegister.getWorkOrderEstimate().getEstimate().getLineEstimateDetails().getEstimateNumber());
-                reportParams.put("winCode", contractorBillRegister.getWorkOrderEstimate().getEstimate().getLineEstimateDetails()
-                        .getProjectCode().getCode());
+            final AbstractEstimate ae = contractorBillRegister.getWorkOrderEstimate().getEstimate();
+            final WorkOrder workOrder = contractorBillRegister.getWorkOrderEstimate().getWorkOrder();
+            final Contractor contractor = workOrder.getContractor();
+            final OfflineStatus offlineStatusses = offlineStatusService
+                    .getOfflineStatusByObjectIdAndObjectTypeAndStatus(workOrder.getId(), WorksConstants.WORKORDER,
+                            OfflineStatuses.WORK_COMMENCED.toString().toUpperCase());
+            if (ae != null) {
+                reportParams.put("nameOfWork", ae.getName());
+                reportParams.put("estimateNumber", ae.getEstimateNumber());
+                reportParams.put("winCode", ae.getProjectCode().getCode());
+                reportParams.put("estimateValue", df.format(ae.getEstimateValue()));
+                reportParams.put("ward", ae.getWard().getName());
             } else {
                 reportParams.put("estimateNumber", "NA");
                 reportParams.put("winCode", "NA");
             }
-
-            reportParams.put("estimateValue",
-                    df.format(contractorBillRegister.getWorkOrderEstimate().getEstimate().getEstimateValue()));
-
-            reportParams.put("contractorName",
-                    contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getContractor().getName() != null
-                            ? contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getContractor().getName() : "");
-            reportParams.put("contractorCode",
-                    contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getContractor().getCode() != null
-                            ? contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getContractor().getCode() : "");
-            reportParams.put("workOrderAmount",
-                    df.format(contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getWorkOrderAmount()));
-            reportParams.put("workOrderNumber",
-                    contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getWorkOrderNumber());
-            reportParams.put("workCommencedOn", DateUtils.getFormattedDate(offlineStatusses.getStatusDate(), "dd/MM/yyyy"));
-            reportParams.put("workCompletedDate", DateUtils
-                    .getFormattedDate(contractorBillRegister.getWorkOrderEstimate().getWorkCompletionDate(), "dd/MM/yyyy"));
+            if (contractor != null) {
+                reportParams.put("contractorName", contractor.getName());
+                reportParams.put("contractorCode", contractor.getCode());
+            } else {
+                reportParams.put("contractorName", StringUtils.EMPTY);
+                reportParams.put("contractorCode", StringUtils.EMPTY);
+            }
+            if (workOrder != null) {
+                reportParams.put("workOrderAmount", df.format(workOrder.getWorkOrderAmount()));
+                reportParams.put("workOrderNumber", workOrder.getWorkOrderNumber());
+            }
+            reportParams.put("workCommencedOn",
+                    DateUtils.getFormattedDate(offlineStatusses.getStatusDate(), "dd/MM/yyyy"));
+            reportParams.put("workCompletedDate", DateUtils.getFormattedDate(
+                    contractorBillRegister.getWorkOrderEstimate().getWorkCompletionDate(), "dd/MM/yyyy"));
 
             reportParams.put("crearedBy", worksUtils.getUserDesignation(contractorBillRegister.getCreatedBy()));
             reportParams.put("approvedBy", worksUtils.getUserDesignation(contractorBillRegister.getApprovedBy()));
-            reportParams.put("ward", contractorBillRegister.getWorkOrderEstimate().getEstimate().getWard().getName());
             reportParams.put("cityLogo", url.concat(ReportConstants.IMAGE_CONTEXT_PATH)
                     .concat((String) request.getSession().getAttribute("citylogo")));
 
@@ -170,8 +170,8 @@ public class CompletionCertificatePDFController {
 
             double totalAsPerTender = 0.0;
             double totalAsPerExecution = 0.0;
-            double totalDifference = 0.0;
-            final List<ContractorBillCertificateInfo> contractorBillCertificateInfoList = new ArrayList<ContractorBillCertificateInfo>();
+            double totalDifference;
+            final List<ContractorBillCertificateInfo> contractorBillCertificateInfoList = new ArrayList<>();
             for (final WorkOrderActivity woa : contractorBillRegister.getWorkOrderEstimate().getWorkOrderActivities()) {
                 final Activity act = woa.getActivity();
                 final List<Activity> activities = estimateService.getActivitiesByParent(act.getId());
