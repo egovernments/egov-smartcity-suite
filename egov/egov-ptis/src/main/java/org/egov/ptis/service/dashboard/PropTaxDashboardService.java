@@ -81,6 +81,7 @@ import org.egov.ptis.bean.dashboard.TaxDefaulters;
 import org.egov.ptis.bean.dashboard.TaxPayerResponseDetails;
 import org.egov.ptis.bean.dashboard.TotalCollectionStats;
 import org.egov.ptis.bean.dashboard.UlbWiseDemandCollection;
+import org.egov.ptis.bean.dashboard.UlbWiseWeeklyDCB;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.model.ErrorDetails;
 import org.egov.ptis.service.es.CollectionIndexElasticSearchService;
@@ -330,7 +331,7 @@ public class PropTaxDashboardService {
      * @param intervalType
      * @return list
      */
-    public List<UlbWiseDemandCollection> getWeekwiseDCBDetails(CollectionDetailsRequest collectionDetailsRequest,
+    public List<UlbWiseWeeklyDCB> getWeekwiseDCBDetails(CollectionDetailsRequest collectionDetailsRequest,
             String intervalType) {
         return collectionIndexElasticSearchService.getWeekwiseDCBDetailsAcrossCities(collectionDetailsRequest, intervalType);
     }

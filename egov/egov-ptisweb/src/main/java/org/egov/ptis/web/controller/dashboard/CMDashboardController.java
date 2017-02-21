@@ -66,6 +66,7 @@ import org.egov.ptis.bean.dashboard.TaxDefaulters;
 import org.egov.ptis.bean.dashboard.TaxPayerResponseDetails;
 import org.egov.ptis.bean.dashboard.TotalCollectionStats;
 import org.egov.ptis.bean.dashboard.UlbWiseDemandCollection;
+import org.egov.ptis.bean.dashboard.UlbWiseWeeklyDCB;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.service.dashboard.PropTaxDashboardService;
 import org.joda.time.DateTime;
@@ -298,23 +299,35 @@ public class CMDashboardController {
             @RequestParam("fromDate") String fromDate,
             @RequestParam("toDate") String toDate, @RequestParam("type") String type,
             @RequestParam("propertyType") String propertyType,
-            @RequestParam("usageType") String usageType, @RequestParam("intervalType") String intervalType)
+            @RequestParam("usageType") String usageType, @RequestParam("intervalType") String intervalType, @RequestParam("month") String month, @RequestParam("year") String year)
             throws IOException {
         CollectionDetailsRequest collectionDetailsRequest = new CollectionDetailsRequest();
-        populateCollectionDetailsRequest(collectionDetailsRequest, regionName, districtName, ulbGrade, ulbCode, fromDate, toDate,
-                type, propertyType);
+        
         MISDCBDetails misDCBDetails = new MISDCBDetails();
-        List<UlbWiseDemandCollection> intervalwiseDCBDetails = new ArrayList<>();
+        List<UlbWiseWeeklyDCB> intervalwiseDCBDetails = new ArrayList<>();
         if (StringUtils.isNotBlank(usageType))
             collectionDetailsRequest.setUsageType(usageType);
         Long startTime = System.currentTimeMillis();
         if (StringUtils.isBlank(intervalType))
             misDCBDetails.setDcbDetails(propTaxDashboardService.getDCBDetails(collectionDetailsRequest));
         else {
-            if ("week".equalsIgnoreCase(intervalType))
-                intervalwiseDCBDetails = propTaxDashboardService.getWeekwiseDCBDetails(collectionDetailsRequest, intervalType);
+            if ("week".equalsIgnoreCase(intervalType)){
+                String monthStartDateStr = year.concat("-").concat(month).concat("-").concat("01");
+                LocalDate monthStDate = new LocalDate(monthStartDateStr);
+                //Fetch the start date of the 1st week of the month and the last day of the month
+                LocalDate weekStart = monthStDate.dayOfWeek().withMinimumValue();
+                LocalDate endOfMonth = monthStDate.dayOfMonth().withMaximumValue();
+                fromDate = weekStart.toString(PropertyTaxConstants.DATE_FORMAT_YYYYMMDD);
+                toDate = endOfMonth.toString(PropertyTaxConstants.DATE_FORMAT_YYYYMMDD);
+            }
             
-            misDCBDetails.setUlbDcbDetails(intervalwiseDCBDetails);
+        }
+        populateCollectionDetailsRequest(collectionDetailsRequest, regionName, districtName, ulbGrade, ulbCode, fromDate, toDate,
+                type, propertyType);
+        
+        if("week".equalsIgnoreCase(intervalType)){
+            intervalwiseDCBDetails = propTaxDashboardService.getWeekwiseDCBDetails(collectionDetailsRequest, intervalType);
+            misDCBDetails.setUlbWeeklyDCBDetails(intervalwiseDCBDetails);
         }
 
         Long timeTaken = System.currentTimeMillis() - startTime;

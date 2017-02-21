@@ -39,35 +39,59 @@
  */
 package org.egov.ptis.bean.dashboard;
 
-import java.util.List;
+public class UlbWiseWeeklyDCB {
+    private String ulbName;
+    private DemandCollectionMIS week1DCB;
+    private DemandCollectionMIS week2DCB;
+    private DemandCollectionMIS week3DCB;
+    private DemandCollectionMIS week4DCB;
+    private DemandCollectionMIS week5DCB;
 
-public class MISDCBDetails {
-    private List<DCBDetails> dcbDetails;
-    private List<UlbWiseDemandCollection> ulbDcbDetails;
-    private List<UlbWiseWeeklyDCB> ulbWeeklyDCBDetails;
-
-    public List<DCBDetails> getDcbDetails() {
-        return dcbDetails;
+    public String getUlbName() {
+        return ulbName;
     }
 
-    public void setDcbDetails(final List<DCBDetails> dcbDetails) {
-        this.dcbDetails = dcbDetails;
+    public void setUlbName(String ulbName) {
+        this.ulbName = ulbName;
     }
 
-    public List<UlbWiseDemandCollection> getUlbDcbDetails() {
-        return ulbDcbDetails;
+    public DemandCollectionMIS getWeek1DCB() {
+        return week1DCB;
     }
 
-    public void setUlbDcbDetails(final List<UlbWiseDemandCollection> ulbDcbDetails) {
-        this.ulbDcbDetails = ulbDcbDetails;
+    public void setWeek1DCB(DemandCollectionMIS week1dcb) {
+        week1DCB = week1dcb;
     }
 
-    public List<UlbWiseWeeklyDCB> getUlbWeeklyDCBDetails() {
-        return ulbWeeklyDCBDetails;
+    public DemandCollectionMIS getWeek2DCB() {
+        return week2DCB;
     }
 
-    public void setUlbWeeklyDCBDetails(List<UlbWiseWeeklyDCB> ulbWeeklyDCBDetails) {
-        this.ulbWeeklyDCBDetails = ulbWeeklyDCBDetails;
+    public void setWeek2DCB(DemandCollectionMIS week2dcb) {
+        week2DCB = week2dcb;
     }
 
+    public DemandCollectionMIS getWeek3DCB() {
+        return week3DCB;
+    }
+
+    public void setWeek3DCB(DemandCollectionMIS week3dcb) {
+        week3DCB = week3dcb;
+    }
+
+    public DemandCollectionMIS getWeek4DCB() {
+        return week4DCB;
+    }
+
+    public void setWeek4DCB(DemandCollectionMIS week4dcb) {
+        week4DCB = week4dcb;
+    }
+
+    public DemandCollectionMIS getWeek5DCB() {
+        return week5DCB;
+    }
+
+    public void setWeek5DCB(DemandCollectionMIS week5dcb) {
+        week5DCB = week5dcb;
+    }
 }

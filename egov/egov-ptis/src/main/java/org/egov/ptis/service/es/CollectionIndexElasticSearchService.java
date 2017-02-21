@@ -86,6 +86,7 @@ import org.egov.ptis.bean.dashboard.DemandCollectionMIS;
 import org.egov.ptis.bean.dashboard.ReceiptTableData;
 import org.egov.ptis.bean.dashboard.ReceiptsTrend;
 import org.egov.ptis.bean.dashboard.UlbWiseDemandCollection;
+import org.egov.ptis.bean.dashboard.UlbWiseWeeklyDCB;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.es.BillCollectorIndex;
 import org.elasticsearch.action.search.SearchResponse;
@@ -1171,93 +1172,7 @@ public class CollectionIndexElasticSearchService {
         }
     }
 
-    /**
-     * Provides week wise DCB details across all ULBs
-     * @param collectionDetailsRequest
-     * @param intervalType
-     * @return list
-     */
-    public List<UlbWiseDemandCollection> getWeekwiseDCBDetailsAcrossCities(final CollectionDetailsRequest collectionDetailsRequest,
-            final String intervalType) {
-        UlbWiseDemandCollection udc;
-        DemandCollectionMIS wdc;
-        List<DemandCollectionMIS> weeklyDCBList;
-        final List<UlbWiseDemandCollection> ulbWiseDetails = new ArrayList<>();
-        Date fromDate;
-        Date toDate;
-        String weekName;
-        Sum aggregateSum;
-        Map<String, Object[]> weekwiseColl = new LinkedHashMap<>();
-        final Map<String, Map<String, Object[]>> yearwiseWeeklyCollMap = new HashMap<>();
-        final CFinancialYear financialYear = cFinancialYearService.getFinancialYearByDate(new Date());
-        if (StringUtils.isNotBlank(collectionDetailsRequest.getFromDate())
-                && StringUtils.isNotBlank(collectionDetailsRequest.getToDate())) {
-            fromDate = DateUtils.getDate(collectionDetailsRequest.getFromDate(), DATE_FORMAT_YYYYMMDD);
-            toDate = DateUtils.addDays(
-                    DateUtils.getDate(collectionDetailsRequest.getToDate(), DATE_FORMAT_YYYYMMDD),
-                    1);
-        } else {
-            fromDate = DateUtils.startOfDay(financialYear.getStartingDate());
-            toDate = DateUtils.addDays(new Date(), 1);
-        }
-
-        final Map<String, BigDecimal> totalDemandMap = getCollectionAndDemandValues(collectionDetailsRequest, fromDate,
-                toDate, PROPERTY_TAX_INDEX_NAME, TOTAL_DEMAND, "cityName");
-        final Aggregations collAggr = getMonthwiseCollectionsForConsecutiveYears(collectionDetailsRequest, fromDate,
-                toDate, true, intervalType);
-        final StringTerms cityaggr = collAggr.get(BY_CITY);
-        BigDecimal totalDemand = BigDecimal.ZERO;
-        BigDecimal weeklyDemand = BigDecimal.ZERO;
-        int noOfWeeks = 1;
-        Object[] demandCollValues;
-        for (final Terms.Bucket cityDetailsentry : cityaggr.getBuckets()) {
-            weekwiseColl = new LinkedHashMap<>();
-            final String ulbName = cityDetailsentry.getKeyAsString();
-            noOfWeeks = 0;
-            totalDemand = totalDemandMap.get(ulbName);
-
-            if (totalDemand == null)
-                totalDemand = BigDecimal.ZERO;
-            final Histogram dateaggs = cityDetailsentry.getAggregations().get(DATE_AGG);
-            for (final Histogram.Bucket entry : dateaggs.getBuckets()) {
-                if (noOfWeeks == 0)
-                    noOfWeeks = 1;
-                demandCollValues = new Object[53];
-                entry.getKeyAsString().split("T");
-                weeklyDemand = totalDemand.divide(BigDecimal.valueOf(52), BigDecimal.ROUND_HALF_UP)
-                        .multiply(BigDecimal.valueOf(noOfWeeks));
-                weekName = "Week " + noOfWeeks;
-                aggregateSum = entry.getAggregations().get("current_total");
-                if (BigDecimal.valueOf(aggregateSum.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP)
-                        .compareTo(BigDecimal.ZERO) > 0) {
-                    demandCollValues[0] = BigDecimal.valueOf(aggregateSum.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP);
-                    demandCollValues[1] = weeklyDemand;
-                    weekwiseColl.put(weekName, demandCollValues);
-                }
-                noOfWeeks++;
-            }
-            yearwiseWeeklyCollMap.put(ulbName, weekwiseColl);
-        }
-        for (final Map.Entry<String, Map<String, Object[]>> entry : yearwiseWeeklyCollMap.entrySet()) {
-            udc = new UlbWiseDemandCollection();
-            udc.setUlbName(entry.getKey());
-            weeklyDCBList = new ArrayList<>();
-            for (final Map.Entry<String, Object[]> weeklyMap : entry.getValue().entrySet()) {
-                wdc = new DemandCollectionMIS();
-                wdc.setName(weeklyMap.getKey());
-                wdc.setCollection(new BigDecimal(weeklyMap.getValue()[0].toString()));
-                wdc.setDemand(new BigDecimal(weeklyMap.getValue()[1].toString()));
-                if (wdc.getDemand().compareTo(BigDecimal.ZERO) > 0)
-                    wdc.setPercent(wdc.getCollection().divide(wdc.getDemand(), 2, RoundingMode.CEILING).multiply(BIGDECIMAL_100));
-
-                weeklyDCBList.add(wdc);
-            }
-            udc.setDemandCollectionMISDetails(weeklyDCBList);
-            ulbWiseDetails.add(udc);
-        }
-        return ulbWiseDetails;
-
-    }
+   
 
     private void setCollTrends(CollectionTrend collTrend,
             String month, BigDecimal cyColl, BigDecimal lyColl, BigDecimal pyColl) {
@@ -2177,4 +2092,132 @@ public class CollectionIndexElasticSearchService {
         daysMap.put(7, "Day 7");
         return daysMap;
     }
+    
+    
+    /**
+     * Provides week wise DCB details across all ULBs
+     * @param collectionDetailsRequest
+     * @param intervalType
+     * @return list
+     */
+    public List<UlbWiseWeeklyDCB> getWeekwiseDCBDetailsAcrossCities(final CollectionDetailsRequest collectionDetailsRequest,
+            final String intervalType) {
+        final List<UlbWiseWeeklyDCB> ulbWiseDetails = new ArrayList<>();
+        Date fromDate;
+        Date toDate;
+        String weekName;
+        Sum aggregateSum;
+        Map<String, Object[]> weekwiseColl = new LinkedHashMap<>();
+        final Map<String, Map<String, Object[]>> weeklyCollMap = new LinkedHashMap<>();
+        final CFinancialYear financialYear = cFinancialYearService.getFinancialYearByDate(new Date());
+        if (StringUtils.isNotBlank(collectionDetailsRequest.getFromDate())
+                && StringUtils.isNotBlank(collectionDetailsRequest.getToDate())) {
+            fromDate = DateUtils.getDate(collectionDetailsRequest.getFromDate(), DATE_FORMAT_YYYYMMDD);
+            toDate = DateUtils.addDays(
+                    DateUtils.getDate(collectionDetailsRequest.getToDate(), DATE_FORMAT_YYYYMMDD),
+                    1);
+        } else {
+            fromDate = DateUtils.startOfDay(financialYear.getStartingDate());
+            toDate = DateUtils.addDays(new Date(), 1);
+        }
+
+        final Map<String, BigDecimal> totalDemandMap = getCollectionAndDemandValues(collectionDetailsRequest, fromDate,
+                toDate, PROPERTY_TAX_INDEX_NAME, TOTAL_DEMAND, "cityName");
+        final Aggregations collAggr = getMonthwiseCollectionsForConsecutiveYears(collectionDetailsRequest, fromDate,
+                toDate, true, intervalType);
+        final StringTerms cityaggr = collAggr.get(BY_CITY);
+        BigDecimal totalDemand = BigDecimal.ZERO;
+        BigDecimal weeklyDemand = BigDecimal.ZERO;
+        int noOfWeeks;
+        Object[] demandCollValues;
+        for (final Terms.Bucket cityDetailsentry : cityaggr.getBuckets()) {
+            weekwiseColl = new LinkedHashMap<>();
+            final String ulbName = cityDetailsentry.getKeyAsString();
+            noOfWeeks = 0;
+            totalDemand = totalDemandMap.get(ulbName);
+
+            if (totalDemand == null)
+                totalDemand = BigDecimal.ZERO;
+            final Histogram dateaggs = cityDetailsentry.getAggregations().get(DATE_AGG);
+            for (final Histogram.Bucket entry : dateaggs.getBuckets()) {
+                if (noOfWeeks == 0)
+                    noOfWeeks = 1;
+                demandCollValues = new Object[53];
+                entry.getKeyAsString().split("T");
+                weeklyDemand = totalDemand.divide(BigDecimal.valueOf(52), BigDecimal.ROUND_HALF_UP)
+                        .multiply(BigDecimal.valueOf(noOfWeeks));
+                weekName = "Week " + noOfWeeks;
+                aggregateSum = entry.getAggregations().get("current_total");
+                if (BigDecimal.valueOf(aggregateSum.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP)
+                        .compareTo(BigDecimal.ZERO) > 0) {
+                    demandCollValues[0] = BigDecimal.valueOf(aggregateSum.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP);
+                    demandCollValues[1] = weeklyDemand;
+                    weekwiseColl.put(weekName, demandCollValues);
+                }
+                noOfWeeks++;
+            }
+            weeklyCollMap.put(ulbName, weekwiseColl);
+        }
+        setWeeklyDCBValues(ulbWiseDetails, weeklyCollMap);
+        return ulbWiseDetails;
+
+    }
+
+    /**
+     * Sets the Demand and Collection values
+     * @param ulbWiseDetails
+     * @param weeklyCollMap
+     */
+    private void setWeeklyDCBValues(final List<UlbWiseWeeklyDCB> ulbWiseDetails,
+            final Map<String, Map<String, Object[]>> weeklyCollMap) {
+        UlbWiseWeeklyDCB ulbWiseWeeklyDCB;
+        DemandCollectionMIS demandCollectionMIS;
+        int count;
+        for (final Map.Entry<String, Map<String, Object[]>> entry : weeklyCollMap.entrySet()) {
+            ulbWiseWeeklyDCB = new UlbWiseWeeklyDCB();
+            count=0;
+            ulbWiseWeeklyDCB.setUlbName(entry.getKey());
+            for (final Map.Entry<String, Object[]> weeklyMap : entry.getValue().entrySet()) {
+                demandCollectionMIS = new DemandCollectionMIS();
+                demandCollectionMIS.setName(weeklyMap.getKey());
+                demandCollectionMIS.setCollection(new BigDecimal(weeklyMap.getValue()[0].toString()));
+                demandCollectionMIS.setDemand(new BigDecimal(weeklyMap.getValue()[1].toString()));
+                if (demandCollectionMIS.getDemand().compareTo(BigDecimal.ZERO) > 0)
+                    demandCollectionMIS.setPercent(demandCollectionMIS.getCollection().divide(demandCollectionMIS.getDemand(), 2, RoundingMode.CEILING).multiply(BIGDECIMAL_100));
+                if(count == 0)
+                    ulbWiseWeeklyDCB.setWeek1DCB(demandCollectionMIS);
+                else if(count == 1)
+                    ulbWiseWeeklyDCB.setWeek2DCB(demandCollectionMIS);
+                else if(count == 2)
+                    ulbWiseWeeklyDCB.setWeek3DCB(demandCollectionMIS);
+                else if(count == 3)
+                    ulbWiseWeeklyDCB.setWeek4DCB(demandCollectionMIS);
+                else if(count == 4)
+                    ulbWiseWeeklyDCB.setWeek5DCB(demandCollectionMIS);
+                count++;
+                
+            }
+            updateNullValuesForWeeks(ulbWiseWeeklyDCB);
+            ulbWiseDetails.add(ulbWiseWeeklyDCB);
+        }
+    }
+
+    /**
+     * Updates null weeks with new objects
+     * @param udc
+     */
+    private void updateNullValuesForWeeks(UlbWiseWeeklyDCB ulbWiseWeeklyDCB) {
+        DemandCollectionMIS demandCollectionMIS = new DemandCollectionMIS();
+        if(ulbWiseWeeklyDCB.getWeek1DCB() == null)
+            ulbWiseWeeklyDCB.setWeek1DCB(demandCollectionMIS);
+        if(ulbWiseWeeklyDCB.getWeek2DCB() == null)
+            ulbWiseWeeklyDCB.setWeek2DCB(demandCollectionMIS);
+        if(ulbWiseWeeklyDCB.getWeek3DCB() == null)
+            ulbWiseWeeklyDCB.setWeek3DCB(demandCollectionMIS);
+        if(ulbWiseWeeklyDCB.getWeek4DCB() == null)
+            ulbWiseWeeklyDCB.setWeek4DCB(demandCollectionMIS);
+        if(ulbWiseWeeklyDCB.getWeek5DCB() == null)
+            ulbWiseWeeklyDCB.setWeek5DCB(demandCollectionMIS);
+    }
+    
 }
