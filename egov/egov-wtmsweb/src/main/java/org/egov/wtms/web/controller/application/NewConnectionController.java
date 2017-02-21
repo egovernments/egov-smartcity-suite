@@ -501,8 +501,8 @@ public class NewConnectionController extends GenericConnectionController {
                 && waterConnectionDetails.getConnectionType() == ConnectionType.METERED) {
             if (waterConnectionDetails.getExistingConnection().getMeterCost() == null)
                 errors.rejectValue("existingConnection.meterCost", "err.required");
-            if (waterConnectionDetails.getConnection().getConsumerCode() == null)
-                errors.rejectValue("connection.consumerCode", "err.required");
+            if (waterConnectionDetails.getConnection().getOldConsumerNumber() == null)
+                errors.rejectValue("connection.oldConsumerNumber", "err.required");
             if (waterConnectionDetails.getConnection().getConsumerCode() != null) {
                 final WaterConnectionDetails validateExistWaterConnectionDet = waterConnectionDetailsService
                         .findByApplicationNumberOrConsumerCode(

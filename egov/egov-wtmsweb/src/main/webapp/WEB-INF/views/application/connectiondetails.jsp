@@ -49,22 +49,7 @@
 	</div>
 </div>
 <div class="form-group">
-    <label class="col-sm-3 control-label text-right"><spring:message
-			code="lbl.watersourcetype" /><span class="mandatory"></span></label>
-	<div class="col-sm-3 add-margin">
-		<form:select path="waterSource" data-first-option="false" 
-			cssClass="form-control" required="required">
-			<form:option value="">
-				<spring:message code="lbl.select" />
-			</form:option>
-			
-			<form:options items="${waterSourceTypes}" itemValue="id" id="waterSourceDropdown"
-				itemLabel="waterSourceType" />
-		</form:select>
-		<form:errors path="waterSource" cssClass="add-margin error-msg" />
-	</div>
-	
-	<label class="col-sm-2 control-label text-right"><spring:message
+	<label class="col-sm-3 control-label text-right"><spring:message
 			code="lbl.connectiontype" /><span class="mandatory"></span></label>
 	<c:if test="${mode !='dataEntry' }">
 	<div class="col-sm-3 add-margin">
@@ -89,6 +74,20 @@
 	</div>
 	</c:if>
 	
+    <label class="col-sm-2 control-label text-right"><spring:message
+			code="lbl.watersourcetype" /><span class="mandatory"></span></label>
+	<div class="col-sm-3 add-margin">
+		<form:select path="waterSource" data-first-option="false" 
+			cssClass="form-control" required="required">
+			<form:option value="">
+				<spring:message code="lbl.select" />
+			</form:option>
+			
+			<form:options items="${waterSourceTypes}" itemValue="id" id="waterSourceDropdown"
+				itemLabel="waterSourceType" />
+		</form:select>
+		<form:errors path="waterSource" cssClass="add-margin error-msg" />
+	</div>
 </div>
 <div class="form-group">
     <label class="col-sm-3 control-label text-right"><spring:message
@@ -167,7 +166,24 @@
 			<form:errors path="numberOfPerson" cssClass="add-margin error-msg" />		
 		</div>
 </div>
-
+<div class="form-group display-hide" id="waterSupplyDiv">
+<label class="col-sm-3 control-label text-right"><spring:message 
+			code="lbl.watersupplytype"/><span class="mandatory"/></label>
+	<div class="col-sm-3 add-margin">
+		<form:select path="waterSupply" data-first-option="false" 
+					cssClass="form-control">
+			<form:option value="">
+				<spring:message code="lbl.select"/>
+			</form:option>
+			
+			<form:options items="${waterSupplyTypes}" itemValue="id" itemLabel="waterSupplyType"
+			 	id = "waterSupplyType"/>
+			
+		</form:select>
+		<form:errors path="waterSupply" cssClass="add-margin error-msg"/>
+	
+	</div>
+</div>
 <div class="form-group" id ="cardHolderDiv">
 	<label class="col-sm-3 control-label text-right"><spring:message
 			code="lbl.bpl.cardholdername" /><span class="mandatory"></span></label> 

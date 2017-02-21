@@ -390,7 +390,7 @@ public class WaterTaxUtils {
         if (approvalPosition != null)
             assignment = assignmentService.getPrimaryAssignmentForPositionAndDate(approvalPosition, new Date());
         if (assignment != null) {
-            asignList = new ArrayList<Assignment>();
+            asignList = new ArrayList<>();
             asignList.add(assignment);
         } else if (assignment == null)
             asignList = assignmentService.getAssignmentsForPosition(approvalPosition, new Date());
@@ -516,36 +516,35 @@ public class WaterTaxUtils {
         final String departmentStr = getDepartmentForWorkFlow();
         final String[] department = departmentStr.split(",");
         final String[] designation = designationStr.split(",");
-        List<Assignment> assignment = new ArrayList<Assignment>();
+        List<Assignment> assignment = new ArrayList<>();
         for (final String dept : department) {
             for (final String desg : designation) {
                 assignment = assignmentService.findByDepartmentDesignationAndBoundary(
                         departmentService.getDepartmentByName(dept).getId(),
                         designationService.getDesignationByName(desg).getId(), boundaryObj.getId());
-                if (assignment.isEmpty()){
+                if (assignment.isEmpty()) {
                     // Ward->Zone
-                    if (boundaryObj.getParent()!=null && boundaryObj.getParent().getBoundaryType() != null
+                    if (boundaryObj.getParent() != null && boundaryObj.getParent().getBoundaryType() != null
                             && boundaryObj.getParent().getBoundaryType().equals(WaterTaxConstants.BOUNDARY_TYPE_ZONE)) {
-                    assignment = assignmentService.findByDeptDesgnAndParentAndActiveChildBoundaries(
-                            departmentService.getDepartmentByName(dept).getId(),
-                            designationService.getDesignationByName(desg).getId(), boundaryObj.getParent().getId());
-                    if (assignment.isEmpty())
-                        // Ward->Zone->City
-                        if (boundaryObj.getParent() != null && boundaryObj.getParent().getParent() != null && boundaryObj
-                                .getParent().getParent().getBoundaryType().equals(WaterTaxConstants.BOUNDARY_TYPE_CITY))
-                        assignment = assignmentService.findByDeptDesgnAndParentAndActiveChildBoundaries(
-                                departmentService.getDepartmentByName(dept).getId(),
-                                designationService.getDesignationByName(desg).getId(),
-                                boundaryObj.getParent().getParent().getId());
-                    }
-                // ward->City mapp
-                if (assignment.isEmpty()){
-                    if (boundaryObj.getParent() != null
-                            && boundaryObj.getParent().getBoundaryType().equals(WaterTaxConstants.BOUNDARY_TYPE_CITY))
                         assignment = assignmentService.findByDeptDesgnAndParentAndActiveChildBoundaries(
                                 departmentService.getDepartmentByName(dept).getId(),
                                 designationService.getDesignationByName(desg).getId(), boundaryObj.getParent().getId());
-                }
+                        if (assignment.isEmpty())
+                            // Ward->Zone->City
+                            if (boundaryObj.getParent() != null && boundaryObj.getParent().getParent() != null && boundaryObj
+                                    .getParent().getParent().getBoundaryType().equals(WaterTaxConstants.BOUNDARY_TYPE_CITY))
+                            assignment = assignmentService.findByDeptDesgnAndParentAndActiveChildBoundaries(
+                                    departmentService.getDepartmentByName(dept).getId(),
+                                    designationService.getDesignationByName(desg).getId(),
+                                    boundaryObj.getParent().getParent().getId());
+                    }
+                    // ward->City mapp
+                    if (assignment.isEmpty())
+                        if (boundaryObj.getParent() != null
+                                && boundaryObj.getParent().getBoundaryType().equals(WaterTaxConstants.BOUNDARY_TYPE_CITY))
+                            assignment = assignmentService.findByDeptDesgnAndParentAndActiveChildBoundaries(
+                                    departmentService.getDepartmentByName(dept).getId(),
+                                    designationService.getDesignationByName(desg).getId(), boundaryObj.getParent().getId());
                 }
                 if (!assignment.isEmpty())
                     break;
@@ -584,6 +583,12 @@ public class WaterTaxUtils {
         return installments;
     }
 
+    public List<Installment> getMonthlyInstallments(final Date executionDate) {
+        final Module module = moduleService.getModuleByName(WaterTaxConstants.MODULE_NAME);
+        return installmentDao.getInstallmentsByModuleForGivenDateAndInstallmentType(module, executionDate,
+                WaterTaxConstants.MONTHLY);
+    }
+
     public Double waterConnectionDue(final long parentId) {
         BigDecimal waterTaxDueforParent = BigDecimal.ZERO;
         final List<WaterConnectionDetails> waterConnectionDetails = waterConnectionDetailsService
@@ -609,7 +614,7 @@ public class WaterTaxUtils {
     }
 
     public List<EgDemand> getAllDemand(final WaterConnectionDetails waterConnectionDetails) {
-        final List<EgDemand> demandList = new ArrayList<EgDemand>();
+        final List<EgDemand> demandList = new ArrayList<>();
         final List<WaterDemandConnection> waterDemandConnectionList = waterDemandConnectionService
                 .findByWaterConnectionDetails(waterConnectionDetails);
         for (final WaterDemandConnection waterDemandConnection : waterDemandConnectionList)

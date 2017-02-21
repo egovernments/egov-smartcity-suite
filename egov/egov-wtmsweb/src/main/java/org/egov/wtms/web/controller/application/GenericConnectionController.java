@@ -56,12 +56,14 @@ import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.masters.entity.PropertyType;
 import org.egov.wtms.masters.entity.WaterSource;
+import org.egov.wtms.masters.entity.WaterSupply;
 import org.egov.wtms.masters.service.ConnectionCategoryService;
 import org.egov.wtms.masters.service.DocumentNamesService;
 import org.egov.wtms.masters.service.PipeSizeService;
 import org.egov.wtms.masters.service.PropertyTypeService;
 import org.egov.wtms.masters.service.UsageTypeService;
 import org.egov.wtms.masters.service.WaterSourceService;
+import org.egov.wtms.masters.service.WaterSupplyService;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -98,6 +100,9 @@ public abstract class GenericConnectionController extends GenericWorkFlowControl
     @Autowired
     protected AssignmentService assignmentService;
     
+    @Autowired
+    protected WaterSupplyService waterSupplyService;
+    
     /*public @ModelAttribute("meterCostMasters") List<MeterCost> meterCostMasters() {
         return meterCostService.findAll();
     }*/
@@ -126,6 +131,11 @@ public abstract class GenericConnectionController extends GenericWorkFlowControl
         return propertyTypeService.getAllActivePropertyTypes();
     }
 
+    @ModelAttribute("waterSupplyTypes") 
+    public List<WaterSupply> supplyTypes(){
+        return waterSupplyService.findAllWaterSupplyType();
+    }
+    
     protected Set<FileStoreMapper> addToFileStore(final MultipartFile[] files) {
         if (ArrayUtils.isNotEmpty(files))
             return Arrays

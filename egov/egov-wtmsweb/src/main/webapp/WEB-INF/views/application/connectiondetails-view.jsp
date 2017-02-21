@@ -109,19 +109,31 @@
                     </div>
 					</div>
 					<c:if test="${mode =='search' && waterConnectionDetails.legacy=='true' }">
-					<div class="row">
-					<div class="col-xs-3 add-margin"><spring:message code="lbl.donationcharge"/></div>  
-					<div class="col-xs-3 add-margin view-content">
-						<c:choose>
-						<c:when test="${not empty waterConnectionDetails.existingConnection.donationCharges}">
-							<c:out value="${waterConnectionDetails.existingConnection.donationCharges}" />
-						</c:when>
-						<c:otherwise>-</c:otherwise>
-					</c:choose></div>
-					<div class="col-xs-3 add-margin"></div>
-					<div class="col-xs-3 add-margin view-content">
-					</div>
-				</div>
+						<div class="row">
+							<div class="col-xs-3 add-margin"><spring:message code="lbl.donationcharge"/></div>  
+							<div class="col-xs-3 add-margin view-content">
+								<c:choose>
+								<c:when test="${not empty waterConnectionDetails.existingConnection.donationCharges}">
+									<c:out value="${waterConnectionDetails.existingConnection.donationCharges}" />
+								</c:when>
+								<c:otherwise>-</c:otherwise>
+							</c:choose></div>
+							<div class="col-xs-3 add-margin"></div>
+							<div class="col-xs-3 add-margin view-content">
+							</div>
+							
+							<div class="col-xs-3 add-margin"><spring:message code="lbl.watersupplytype"/></div>
+							<div class="col-xs-3 add-margin view-content">
+								<c:choose>
+									<c:when test="${waterConnectionDetails.waterSupply.waterSupplyType != null}">
+										<c:out value="${waterConnectionDetails.waterSupply.waterSupplyType}" />
+									</c:when>
+									<c:otherwise>
+										<spring:message code="lb.NA.code"/>
+									</c:otherwise>
+								</c:choose>
+							</div>	
+						</div>
 					</c:if>
 					<c:if test="${waterConnectionDetails.legacy=='false' }">
 				<div class="row">

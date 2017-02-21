@@ -39,7 +39,11 @@
  */
 package org.egov.wtms.application.service;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_SECOND_HALF;
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.METERED;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.MODULE_NAME;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.PROPERTY_MODULE_NAME;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
@@ -180,7 +184,7 @@ public class ConnectionDemandService {
     }
 
     public EgDemand createDemand(final WaterConnectionDetails waterConnectionDetails) {
-        final Map<String, Object> feeDetails = new HashMap<String, Object>();
+        final Map<String, Object> feeDetails = new HashMap<>();
         DonationDetails donationDetails = null;
         final FieldInspectionDetails fieldInspectionDetails = waterConnectionDetails.getFieldInspectionDetails();
         EgDemand egDemand = null;
@@ -191,7 +195,7 @@ public class ConnectionDemandService {
             feeDetails.put(WaterTaxConstants.WATERTAX_SUPERVISION_CHARGE,
                     fieldInspectionDetails.getSupervisionCharges());
         }
-        
+
         // (!WaterTaxConstants.BPL_CATEGORY.equalsIgnoreCase(waterConnectionDetails.getCategory().getCode()))
         if (!WaterTaxConstants.CHANGEOFUSE.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()))
             donationDetails = getDonationDetails(waterConnectionDetails);
@@ -207,7 +211,7 @@ public class ConnectionDemandService {
         // discussion.
         // double totalFee = 0.0;
         if (installment != null) {
-            final Set<EgDemandDetails> dmdDetailSet = new HashSet<EgDemandDetails>();
+            final Set<EgDemandDetails> dmdDetailSet = new HashSet<>();
             for (final String demandReason : feeDetails.keySet())
                 dmdDetailSet.add(createDemandDetails((Double) feeDetails.get(demandReason), demandReason, installment));
             // totalFee += (Double) feeDetails.get(demandReason);
@@ -255,9 +259,15 @@ public class ConnectionDemandService {
     private EgDemandDetails createDemandDetailsrForDataEntry(final BigDecimal amount, final BigDecimal collectAmount,
             final String demandReason, final String installment, final DemandDetail demandTempObj,
             final WaterConnectionDetails waterConnectionDetails) {
-        final Installment installObj = waterConnectionDetailsRepository
-                .findInstallmentByDescription(WaterTaxConstants.PROPERTY_MODULE_NAME, installment);
-        EgDemandDetails demandDetailBean = null;
+        Installment installObj;
+        if (!waterConnectionDetails.getConnectionType().toString().equalsIgnoreCase(METERED))
+            installObj = installmentDao
+                    .getInsatllmentByModuleAndDescription(moduleService.getModuleByName(PROPERTY_MODULE_NAME), installment);
+        else
+            installObj = installmentDao
+                    .getInsatllmentByModuleAndDescription(moduleService.getModuleByName(MODULE_NAME), installment);
+
+        EgDemandDetails demandDetailBean;
         final EgDemandDetails demandDetailsObj = waterConnectionDetailsRepository
                 .findEgDemandDetailById(demandTempObj.getId());
         final EgDemandReason demandReasonObj = getDemandReasonByCodeAndInstallment(demandReason, installObj);
@@ -448,7 +458,7 @@ public class ConnectionDemandService {
     public Map<String, BigDecimal> getDemandCollMap(final WaterConnectionDetails waterConnectionDetails) {
         final EgDemand currDemand = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
         Installment installment = null;
-        List<Object> dmdCollList = new ArrayList<Object>(0);
+        List<Object> dmdCollList = new ArrayList<>(0);
         Installment currFirstHalf = null;
         Installment currSecondHalf = null;
         Integer instId = null;
@@ -456,7 +466,7 @@ public class ConnectionDemandService {
         BigDecimal arrDmd = BigDecimal.ZERO;
         BigDecimal currCollection = BigDecimal.ZERO;
         BigDecimal arrCollection = BigDecimal.ZERO;
-        final Map<String, BigDecimal> retMap = new HashMap<String, BigDecimal>(0);
+        final Map<String, BigDecimal> retMap = new HashMap<>(0);
         if (currDemand != null)
             dmdCollList = getDmdCollAmtInstallmentWise(currDemand);
         currFirstHalf = propertyTaxUtil.getInstallmentsForCurrYear(new Date())
@@ -601,8 +611,8 @@ public class ConnectionDemandService {
      * @param waterConnectionDetails
      * @param billAmount
      * @param currentDate
-     * @return Updates WaterConnectionDetails after Meter Entry Demand
-     *         Calculettion and Update Previous Bill and Generates New Bill
+     * @return Updates WaterConnectionDetails after Meter Entry Demand Calculettion and Update Previous Bill and Generates New
+     * Bill
      */
     @Transactional
     public WaterConnectionDetails updateDemandForMeteredConnection(final WaterConnectionDetails waterConnectionDetails,
@@ -611,16 +621,16 @@ public class ConnectionDemandService {
                 WaterTaxConstants.MONTHLY, currentDate);
         if (installment != null) {
             final EgDemand demandObj = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
-            final Set<EgDemandDetails> dmdDetailSet = new HashSet<EgDemandDetails>();
+            final Set<EgDemandDetails> dmdDetailSet = new HashSet<>();
             dmdDetailSet.add(createDemandDetails(Double.parseDouble(billAmount.toString()),
                     WaterTaxConstants.WATERTAXREASONCODE, installment));
             demandObj.setBaseDemand(demandObj.getBaseDemand().add(billAmount));
             demandObj.setEgInstallmentMaster(installment);
             demandObj.getEgDemandDetails().addAll(dmdDetailSet);
             demandObj.setModifiedDate(new Date());
-            WaterDemandConnection waterDemandConnection=waterDemandConnectionService
-                    .findByWaterConnectionDetailsAndDemand(waterConnectionDetails, demandObj) ;
-            if (demandObj.getId() != null && waterDemandConnection== null) {
+            final WaterDemandConnection waterDemandConnection = waterDemandConnectionService
+                    .findByWaterConnectionDetailsAndDemand(waterConnectionDetails, demandObj);
+            if (demandObj.getId() != null && waterDemandConnection == null) {
                 final WaterDemandConnection waterdemandConnection = new WaterDemandConnection();
                 waterdemandConnection.setDemand(demandObj);
                 waterdemandConnection.setWaterConnectionDetails(waterConnectionDetails);
@@ -643,20 +653,21 @@ public class ConnectionDemandService {
     /**
      * @param waterConnectionDetails
      * @param demandDeatilslist
-     * @return creation or updating demand and demanddetails for data Entry
-     *         Screen
+     * @return creation or updating demand and demanddetails for data Entry Screen
      */
     @Transactional
     public WaterConnectionDetails updateDemandForNonMeteredConnectionDataEntry(
             final WaterConnectionDetails waterConnectionDetails, final String sourceChannel) {
-        EgDemand demandObj = null;
-        propertyTaxUtil.getInstallmentsForCurrYear(new Date()).get(PropertyTaxConstants.CURRENTYEAR_SECOND_HALF);
+        EgDemand demandObj;
+        Installment installObj;
+        final List<String> installmentList = new ArrayList<>();
+        propertyTaxUtil.getInstallmentsForCurrYear(new Date()).get(CURRENTYEAR_SECOND_HALF);
         if (waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand() == null)
             demandObj = new EgDemand();
         else
 
             demandObj = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
-        final Set<EgDemandDetails> dmdDetailSet = new HashSet<EgDemandDetails>();
+        final Set<EgDemandDetails> dmdDetailSet = new HashSet<>();
         for (final DemandDetail demanddetailBean : waterConnectionDetails.getDemandDetailBeanList())
             if (demanddetailBean.getActualAmount().compareTo(BigDecimal.ZERO) == 1
                     && demanddetailBean.getActualCollection().compareTo(BigDecimal.ZERO) >= 0
@@ -667,13 +678,21 @@ public class ConnectionDemandService {
                 dmdDetailSet.add(createDemandDetailsrForDataEntry(demanddetailBean.getActualAmount(),
                         demanddetailBean.getActualCollection(), demanddetailBean.getReasonMaster(),
                         demanddetailBean.getInstallment(), demanddetailBean, waterConnectionDetails));
+
+                installmentList.add(demanddetailBean.getInstallment());
             }
         demandObj.getEgDemandDetails().clear();
         demandObj.getEgDemandDetails().addAll(dmdDetailSet);
-        final int listlength = demandObj.getEgDemandDetails().size() - 1;
-        final Installment installObj = waterConnectionDetailsRepository.findInstallmentByDescription(
-                WaterTaxConstants.PROPERTY_MODULE_NAME,
-                waterConnectionDetails.getDemandDetailBeanList().get(listlength).getInstallment());
+        int listlength = demandObj.getEgDemandDetails().size() - 1;
+        if (!waterConnectionDetails.getConnectionType().toString().equalsIgnoreCase(METERED))
+            installObj = installmentDao.getInsatllmentByModuleAndDescription(
+                    moduleService.getModuleByName(PROPERTY_MODULE_NAME),
+                    waterConnectionDetails.getDemandDetailBeanList().get(listlength).getInstallment());
+        else {
+            listlength = installmentList.size() - 1;
+            installObj = installmentDao.getInsatllmentByModuleAndDescription(moduleService.getModuleByName(MODULE_NAME),
+                    waterConnectionDetails.getDemandDetailBeanList().get(listlength).getInstallment());
+        }
         demandObj.setEgInstallmentMaster(installObj);
         demandObj.setModifiedDate(new Date());
         if (demandObj.getIsHistory() == null)
@@ -734,10 +753,8 @@ public class ConnectionDemandService {
 
     /**
      * @param consumerCode
-     * @return Generates Eg_bill Entry and saved with Demand and As of now we
-     *         are generating Bill and its in XML format because no Method to
-     *         just to generate Bill and Save as of now in
-     *         connectionBillService.
+     * @return Generates Eg_bill Entry and saved with Demand and As of now we are generating Bill and its in XML format because no
+     * Method to just to generate Bill and Save as of now in connectionBillService.
      */
     @Transactional
     public String generateBillForMeterAndMonthly(final String consumerCode) {
@@ -770,15 +787,15 @@ public class ConnectionDemandService {
         if (installment == null) {
             installment = getCurrentInstallment(WaterTaxConstants.WATER_RATES_NONMETERED_PTMODULE, null, new Date());
             InstallemntStartDate = new Date();
-        } 
-        if(installment !=null && reconnInSameInstallment==null)
-        	 InstallemntStartDate = installment.getFromDate();	
-       else if (reconnInSameInstallment!=null && reconnInSameInstallment)
+        }
+        if (installment != null && reconnInSameInstallment == null)
+            InstallemntStartDate = installment.getFromDate();
+        else if (reconnInSameInstallment != null && reconnInSameInstallment)
             InstallemntStartDate = installment.getFromDate();
         else
             InstallemntStartDate = waterConnectionDetails.getReconnectionApprovalDate();
         double totalWaterRate = 0;
-        
+
         final WaterRatesDetails waterRatesDetails = getWaterRatesDetailsForDemandUpdate(waterConnectionDetails);
         final int noofmonths = DateUtils.noOfMonths(InstallemntStartDate, installment.getToDate());
         if (null != waterRatesDetails) {
@@ -829,14 +846,14 @@ public class ConnectionDemandService {
             final String installmentType) {
         final EgDemand currDemand = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
         Installment installment = null;
-        List<Object> dmdCollList = new ArrayList<Object>(0);
+        List<Object> dmdCollList = new ArrayList<>(0);
         Installment currInst = null;
         Integer instId = null;
         BigDecimal curDue = BigDecimal.ZERO;
         BigDecimal arrDue = BigDecimal.ZERO;
 
         BigDecimal arrearInstallmentfrom = BigDecimal.ZERO;
-        final Map<String, BigDecimal> retMap = new HashMap<String, BigDecimal>(0);
+        final Map<String, BigDecimal> retMap = new HashMap<>(0);
         if (currDemand != null)
             dmdCollList = getDmdCollAmtInstallmentWiseWithIsDmdTrue(currDemand);
         currInst = getCurrentInstallment(moduleName, null, new Date());
@@ -886,11 +903,11 @@ public class ConnectionDemandService {
     public Map<String, BigDecimal> getDemandCollMapForBill(final WaterConnectionDetails waterConnectionDetails,
             final String moduleName, final String installmentType) {
         final EgDemand currDemand = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
-        List<Object> dmdCollList = new ArrayList<Object>(0);
+        List<Object> dmdCollList = new ArrayList<>(0);
         Integer instId = null;
         Double balance = null;
         Integer val = null;
-        final Map<String, BigDecimal> retMap = new HashMap<String, BigDecimal>(0);
+        final Map<String, BigDecimal> retMap = new HashMap<>(0);
         if (currDemand != null)
             dmdCollList = getDmdCollAmtInstallmentWiseWithIsDmdTrue(currDemand);
         for (final Object object : dmdCollList) {
@@ -908,10 +925,8 @@ public class ConnectionDemandService {
 
     /**
      * @param waterConnectionDetails
-     * @param givenDate
-     *            It Checks the Meter Entry Exist For the Entred Date Month and
-     *            Returns True if It Exists and checks with Demand Current
-     *            Installment
+     * @param givenDate It Checks the Meter Entry Exist For the Entred Date Month and Returns True if It Exists and checks with
+     * Demand Current Installment
      */
     public Boolean meterEntryAllReadyExistForCurrentMonth(final WaterConnectionDetails waterConnectionDetails,
             final Date givenDate) {
@@ -946,7 +961,7 @@ public class ConnectionDemandService {
     }
 
     public Map<String, Installment> getInstallmentsForPreviousYear(final Date currDate) {
-        final Map<String, Installment> currYearInstMap = new HashMap<String, Installment>();
+        final Map<String, Installment> currYearInstMap = new HashMap<>();
         final String query = "select installment from Installment installment,CFinancialYear finYear where installment.module.name = '"
                 + PTMODULENAME
                 + "'  and cast(installment.toDate as date) <= cast(finYear.startingDate as date) order by installment.id desc";

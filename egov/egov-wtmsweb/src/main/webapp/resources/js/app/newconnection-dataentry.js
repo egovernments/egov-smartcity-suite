@@ -39,6 +39,9 @@
  */
 $(document).ready(function(){
 	
+		if($('#connectionType').val()==="METERED")
+		$('#waterSupplyDiv').removeClass('display-hide');
+	
 
 	$("#connectionType").change(function(){
 		
@@ -46,10 +49,13 @@ $(document).ready(function(){
 		if($('#connectionType').val() === "METERED")
 		{
 			$('#spanmonthlymandatory').hide();
+			$('#waterSupplyDiv').removeClass('display-hide');
+			$('#waterSupplyType').attr('required','required');
 		}
 		else
 		{
 		   $('#spanmonthlymandatory').show();
+		   $('#waterSupplyDiv').addClass('display-hide');
 		}
 	});
 	

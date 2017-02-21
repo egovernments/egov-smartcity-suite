@@ -265,7 +265,8 @@ public class WaterConnectionDetailsService {
 
     @Transactional
     public WaterConnectionDetails createExisting(final WaterConnectionDetails waterConnectionDetails) {
-        waterConnectionDetails.getConnection().setConsumerCode(waterTaxNumberGenerator.getNextConsumerNumber());
+        if (waterConnectionDetails.getConnection() != null && waterConnectionDetails.getConnection().getConsumerCode() == null)
+            waterConnectionDetails.getConnection().setConsumerCode(waterTaxNumberGenerator.getNextConsumerNumber());
         waterConnectionDetails.getExistingConnection().setWaterConnectionDetails(waterConnectionDetails);
         waterConnectionDetails.setApplicationNumber(waterConnectionDetails.getConnection().getConsumerCode());
         waterConnectionDetails.setApplicationDate(waterConnectionDetails.getExecutionDate());
@@ -288,7 +289,7 @@ public class WaterConnectionDetailsService {
     }
 
     public Map<String, String> getConnectionTypesMap() {
-        final Map<String, String> connectionTypeMap = new LinkedHashMap<String, String>(0);
+        final Map<String, String> connectionTypeMap = new LinkedHashMap<>(0);
         connectionTypeMap.put(ConnectionType.METERED.toString(), WaterTaxConstants.METERED);
         connectionTypeMap.put(ConnectionType.NON_METERED.toString(), WaterTaxConstants.NON_METERED);
         return connectionTypeMap;
@@ -319,10 +320,12 @@ public class WaterConnectionDetailsService {
                 connectionStatus);
     }
 
-    public WaterConnectionDetails findByOldConsumerNumberAndConnectionStatus(final String oldConsumerNumber,final ConnectionStatus connectionStatus) {
-        return waterConnectionDetailsRepository.findByConnectionOldConsumerNumberAndConnectionStatus(oldConsumerNumber,connectionStatus);
+    public WaterConnectionDetails findByOldConsumerNumberAndConnectionStatus(final String oldConsumerNumber,
+            final ConnectionStatus connectionStatus) {
+        return waterConnectionDetailsRepository.findByConnectionOldConsumerNumberAndConnectionStatus(oldConsumerNumber,
+                connectionStatus);
     }
-    
+
     public WaterConnectionDetails getActiveConnectionDetailsByConnection(final WaterConnection waterConnection) {
         return waterConnectionDetailsRepository.findByConnectionAndConnectionStatus(waterConnection,
                 ConnectionStatus.ACTIVE);
@@ -338,9 +341,9 @@ public class WaterConnectionDetailsService {
 
     public List<Hashtable<String, Object>> getHistory(final WaterConnectionDetails waterConnectionDetails) {
         User user = null;
-        final List<Hashtable<String, Object>> historyTable = new ArrayList<Hashtable<String, Object>>(0);
+        final List<Hashtable<String, Object>> historyTable = new ArrayList<>(0);
         final State state = waterConnectionDetails.getState();
-        final Hashtable<String, Object> map = new Hashtable<String, Object>(0);
+        final Hashtable<String, Object> map = new Hashtable<>(0);
         if (null != state) {
             map.put("date", state.getDateInfo());
             map.put("comments", state.getComments() != null ? state.getComments() : "");
@@ -362,7 +365,7 @@ public class WaterConnectionDetailsService {
             if (!waterConnectionDetails.getStateHistory().isEmpty() && waterConnectionDetails.getStateHistory() != null)
                 Collections.reverse(waterConnectionDetails.getStateHistory());
             for (final StateHistory stateHistory : waterConnectionDetails.getStateHistory()) {
-                final Hashtable<String, Object> HistoryMap = new Hashtable<String, Object>(0);
+                final Hashtable<String, Object> HistoryMap = new Hashtable<>(0);
                 HistoryMap.put("date", stateHistory.getDateInfo());
                 HistoryMap.put("comments", stateHistory.getComments() != null ? stateHistory.getComments() : "");
                 HistoryMap.put("updatedBy", stateHistory.getLastModifiedBy().getUsername() + "::"
@@ -375,7 +378,7 @@ public class WaterConnectionDetailsService {
                     HistoryMap.put("department", null != eisCommonService.getDepartmentForUser(user.getId())
                             ? eisCommonService.getDepartmentForUser(user.getId()).getName() : "");
                 } else if (null != owner && null != owner.getDeptDesig()) {
-                    user = eisCommonService.getUserForPosition(owner.getId(),  stateHistory.getCreatedDate());
+                    user = eisCommonService.getUserForPosition(owner.getId(), stateHistory.getCreatedDate());
                     HistoryMap.put("user",
                             null != user.getUsername() ? user.getUsername() + "::" + user.getName() : "");
                     HistoryMap.put("department", null != owner.getDeptDesig().getDepartment()
@@ -390,8 +393,7 @@ public class WaterConnectionDetailsService {
     @Transactional
     public WaterConnectionDetails updateWaterConnection(final WaterConnectionDetails waterConnectionDetails,
             final Long approvalPosition, final String approvalComent, String additionalRule,
-            final String workFlowAction, final
-            String mode, final ReportOutput reportOutput, final String sourceChannel)
+            final String workFlowAction, final String mode, final ReportOutput reportOutput, final String sourceChannel)
             throws ValidationException {
         applicationStatusChange(waterConnectionDetails, workFlowAction, mode, sourceChannel);
         if (WaterTaxConstants.APPLICATION_STATUS_CLOSERDIGSIGNPENDING
@@ -538,16 +540,14 @@ public class WaterConnectionDetailsService {
                     && waterConnectionDetails.getState() != null && workFlowAction.equals("Submit"))
                 waterConnectionDetails.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
                         WaterTaxConstants.APPLICATION_STATUS_VERIFIED, WaterTaxConstants.MODULETYPE));
-            else if (workFlowAction.equals(WaterTaxConstants.WF_STATE_BUTTON_GENERATEESTIMATE)   && waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_VERIFIED))
+            else if (workFlowAction.equals(WaterTaxConstants.WF_STATE_BUTTON_GENERATEESTIMATE)
+                    && waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_VERIFIED))
                 waterConnectionDetails.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
                         WaterTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN, WaterTaxConstants.MODULETYPE));
             /*
              * else if (waterConnectionDetails.getStatus().getCode()
-             * .equals(WaterTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN))
-             * waterConnectionDetails.setStatus(waterTaxUtils.
-             * getStatusByCodeAndModuleType(
-             * WaterTaxConstants.APPLICATION_STATUS_FEEPAID,
-             * WaterTaxConstants.MODULETYPE));
+             * .equals(WaterTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN)) waterConnectionDetails.setStatus(waterTaxUtils.
+             * getStatusByCodeAndModuleType( WaterTaxConstants.APPLICATION_STATUS_FEEPAID, WaterTaxConstants.MODULETYPE));
              */
             else if (waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_FEEPAID)
                     && workFlowAction.equalsIgnoreCase(WaterTaxConstants.APPROVEWORKFLOWACTION)) {
@@ -666,21 +666,19 @@ public class WaterConnectionDetailsService {
                                         || waterConnectionDetails.getStatus().getCode()
                                                 .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERINPROGRESS)
                                         || waterConnectionDetails.getStatus().getCode()
-                                                .equals(WaterTaxConstants.APPLICATION_STATUS__RECONNCTIONINPROGRESS)
-                                        )))
+                                                .equals(WaterTaxConstants.APPLICATION_STATUS__RECONNCTIONINPROGRESS))))
             wfmatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails.getStateType(), null, null,
                     additionalRule, waterConnectionDetails.getCurrentState().getValue(), null, null,
                     loggedInUserDesignation);
         else
             wfmatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails.getStateType(), null, null,
                     additionalRule, waterConnectionDetails.getCurrentState().getValue(), null);
-        
+
         if (waterConnectionDetails.getStatus().getCode()
-                .equals(WaterTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN)) {
+                .equals(WaterTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN))
             approvalPosition = waterTaxUtils.getApproverPosition(
                     WaterTaxConstants.JUNIOR_OR_SENIOR_ASSISTANT_DESIGN_REVENUE_CLERK,
                     waterConnectionDetails);
-        }
         if (waterConnectionDetails != null && waterConnectionDetails.getStatus() != null
                 && waterConnectionDetails.getStatus().getCode() != null)
             if (waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_CREATED)
@@ -815,7 +813,7 @@ public class WaterConnectionDetailsService {
             assignment = assignmentService.getPrimaryAssignmentForPositionAndDate(
                     waterConnectionDetails.getState().getOwnerPosition().getId(), new Date());
             if (assignment != null) {
-                asignList = new ArrayList<Assignment>();
+                asignList = new ArrayList<>();
                 asignList.add(assignment);
             } else if (assignment == null)
                 asignList = assignmentService.getAssignmentsForPosition(
@@ -1067,10 +1065,11 @@ public class WaterConnectionDetailsService {
         }
         return balance;
     }
-     @Transactional(readOnly=true)
+
+    @Transactional(readOnly = true)
     public List<ApplicationDocuments> getApplicationDocForExceptClosureAndReConnection(
             final WaterConnectionDetails waterConnectionDetails) {
-        final List<ApplicationDocuments> tempDocList = new ArrayList<ApplicationDocuments>(0);
+        final List<ApplicationDocuments> tempDocList = new ArrayList<>(0);
         if (waterConnectionDetails != null)
             for (final ApplicationDocuments appDoc : waterConnectionDetails.getApplicationDocs())
                 if (appDoc.getDocumentNames() != null && (appDoc.getDocumentNames().getApplicationType().getCode()
@@ -1106,7 +1105,7 @@ public class WaterConnectionDetailsService {
 
     public String getApprovalPositionOnValidate(final Long approvalPositionId) {
         Assignment assignmentObj = null;
-        final List<Assignment> assignmentList = new ArrayList<Assignment>();
+        final List<Assignment> assignmentList = new ArrayList<>();
         if (approvalPositionId != null && approvalPositionId != 0 && approvalPositionId != -1) {
             assignmentObj = assignmentService.getPrimaryAssignmentForPositionAndDate(approvalPositionId, new Date());
             assignmentList.add(assignmentObj);
@@ -1127,7 +1126,7 @@ public class WaterConnectionDetailsService {
     }
 
     public Map<String, String> getNonMeteredConnectionTypesMap() {
-        final Map<String, String> connectionTypeMap = new LinkedHashMap<String, String>(0);
+        final Map<String, String> connectionTypeMap = new LinkedHashMap<>(0);
         connectionTypeMap.put(ConnectionType.NON_METERED.toString(), WaterTaxConstants.NON_METERED);
         return connectionTypeMap;
     }

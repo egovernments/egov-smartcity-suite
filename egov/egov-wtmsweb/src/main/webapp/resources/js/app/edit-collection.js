@@ -168,6 +168,12 @@ $(document).ready(function(e){
 			
 			
 		   if(isSuccess){
+			   if(parseInt($('#receiptamount').val())==0)
+				   {
+				   bootbox.alert('Receipt amount should be greater than 0');
+					  e.preventDefault();
+				   return false;
+				   }
 			   if(parseInt($('#receiptamount').val()) !== collectedAmount)
 			   {
 				   bootbox.alert('Receipt amount should match with total collection amount');
