@@ -37,33 +37,25 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+package org.egov.restapi.web.rest;
 
-package org.egov.commons.repository;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
-import java.util.List;
+import org.egov.restapi.service.ExternalFunctionService;
+import org.egov.restapi.util.JsonConvertor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import org.egov.commons.CFunction;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+@RestController
+public class GetFunctionControler {
 
-@Repository
-public interface FunctionRepository extends JpaRepository<CFunction, Long> {
-    CFunction findByName(String name);
+    @Autowired
+    private ExternalFunctionService externalFunctionService;
 
-    CFunction findByCode(String code);
-
-    List<CFunction> findByNameContainingIgnoreCaseAndCodeContainingIgnoreCase(String name, String code);
-
-    List<CFunction> findByNameContainingIgnoreCaseOrCodeContainingIgnoreCase(String name, String code);
-
-    List<CFunction> findByNameContainingIgnoreCase(String name);
-
-    List<CFunction> findByCodeContainingIgnoreCase(String code);
-
-    List<CFunction> findByIsNotLeaf(Boolean isNotLeaf);
-
-    List<CFunction> findByIsActiveAndIsNotLeaf(Boolean active, Boolean isNotLeaf);
-
-    List<CFunction> findByIsActive(final Boolean isActive);
-
+    @RequestMapping(value = "/egf/function/getactivefunctions", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public String getAllActiveFunds() {
+        return JsonConvertor.convert(externalFunctionService.populateFunction());
+    }
 }

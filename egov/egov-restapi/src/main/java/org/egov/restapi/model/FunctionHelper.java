@@ -37,33 +37,29 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+package org.egov.restapi.model;
 
-package org.egov.commons.repository;
+import java.io.Serializable;
 
-import java.util.List;
+public class FunctionHelper implements Serializable {
 
-import org.egov.commons.CFunction;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+    private static final long serialVersionUID = -1433064701524657608L;
+    private String code;
+    private String name;
 
-@Repository
-public interface FunctionRepository extends JpaRepository<CFunction, Long> {
-    CFunction findByName(String name);
+    public String getCode() {
+        return code;
+    }
 
-    CFunction findByCode(String code);
+    public void setCode(final String code) {
+        this.code = code;
+    }
 
-    List<CFunction> findByNameContainingIgnoreCaseAndCodeContainingIgnoreCase(String name, String code);
+    public String getName() {
+        return name;
+    }
 
-    List<CFunction> findByNameContainingIgnoreCaseOrCodeContainingIgnoreCase(String name, String code);
-
-    List<CFunction> findByNameContainingIgnoreCase(String name);
-
-    List<CFunction> findByCodeContainingIgnoreCase(String code);
-
-    List<CFunction> findByIsNotLeaf(Boolean isNotLeaf);
-
-    List<CFunction> findByIsActiveAndIsNotLeaf(Boolean active, Boolean isNotLeaf);
-
-    List<CFunction> findByIsActive(final Boolean isActive);
-
+    public void setName(final String name) {
+        this.name = name;
+    }
 }

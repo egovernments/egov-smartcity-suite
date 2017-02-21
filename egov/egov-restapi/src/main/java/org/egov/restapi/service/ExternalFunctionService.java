@@ -37,33 +37,36 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+package org.egov.restapi.service;
 
-package org.egov.commons.repository;
-
+import java.util.ArrayList;
 import java.util.List;
 
 import org.egov.commons.CFunction;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import org.egov.commons.service.FunctionService;
+import org.egov.restapi.model.FunctionHelper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-@Repository
-public interface FunctionRepository extends JpaRepository<CFunction, Long> {
-    CFunction findByName(String name);
+@Service
+@Transactional(readOnly = true)
+public class ExternalFunctionService {
 
-    CFunction findByCode(String code);
+    @Autowired
+    private FunctionService functionService;
 
-    List<CFunction> findByNameContainingIgnoreCaseAndCodeContainingIgnoreCase(String name, String code);
+    public List<FunctionHelper> populateFunction() {
+        final List<CFunction> cFunctions = functionService.getByIsACtive(Boolean.TRUE);
 
-    List<CFunction> findByNameContainingIgnoreCaseOrCodeContainingIgnoreCase(String name, String code);
-
-    List<CFunction> findByNameContainingIgnoreCase(String name);
-
-    List<CFunction> findByCodeContainingIgnoreCase(String code);
-
-    List<CFunction> findByIsNotLeaf(Boolean isNotLeaf);
-
-    List<CFunction> findByIsActiveAndIsNotLeaf(Boolean active, Boolean isNotLeaf);
-
-    List<CFunction> findByIsActive(final Boolean isActive);
+        final List<FunctionHelper> functionHelpers = new ArrayList<>();
+        for (final CFunction cFunction : cFunctions) {
+            final FunctionHelper functionHelper = new FunctionHelper();
+            functionHelper.setCode(cFunction.getCode());
+            functionHelper.setName(cFunction.getName());
+            functionHelpers.add(functionHelper);
+        }
+        return functionHelpers;
+    }
 
 }
