@@ -374,6 +374,9 @@ public class WaterTaxConstants {
     public static final String SENIOR_ASSISTANT_DESIGN = "Senior Assistant";
     public static final String JUNIOR_ASSISTANT_DESIGN = "Junior Assistant";
 
+    public static final String BOUNDARY_TYPE_ZONE= "Zone";
+    public static final String BOUNDARY_TYPE_CITY="City";
+
 
 
 }
