@@ -61,6 +61,7 @@ import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.ModuleService;
+import org.egov.mrs.application.MarriageConstants;
 import org.egov.mrs.domain.entity.ReIssue;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -146,7 +147,10 @@ public class ReIssueBillable extends AbstractBillable implements Billable {
 
     @Override
     public String getBoundaryType() {
-        return BOUNDARY_TYPE;
+        final AppConfigValues boundaryType = appConfigValuesService.getConfigValuesByModuleAndKey(
+                MarriageConstants.MODULE_NAME, MarriageConstants.MARRIAGE_REGISTRATIONUNIT_BOUNDARYYTYPE).get(0);
+        return boundaryType != null && !"".equals(boundaryType) ? boundaryType.getValue() : BOUNDARY_TYPE;
+
     }
 
     @Override

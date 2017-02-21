@@ -41,7 +41,7 @@ package org.egov.mrs.web.controller.reports;
 
 import static org.egov.infra.utils.JsonUtils.toJSON;
 import static org.egov.mrs.application.MarriageConstants.BOUNDARY_TYPE;
-import static org.egov.mrs.application.MarriageConstants.REVENUE_HIERARCHY_TYPE;
+import static org.egov.mrs.application.MarriageConstants.ADMINISTRATION_HIERARCHY_TYPE;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -58,12 +58,15 @@ import java.util.Map.Entry;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.City;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.utils.DateUtils;
+import org.egov.mrs.application.MarriageConstants;
 import org.egov.mrs.application.MarriageUtils;
 import org.egov.mrs.application.reports.service.MarriageRegistrationReportsService;
 import org.egov.mrs.domain.entity.ApplicationStatusResultForReport;
@@ -155,6 +158,9 @@ public class MarriageRegistrationReportsController {
     private MarriageActService marriageActService;
 
     @Autowired
+    protected AppConfigValueService appConfigValuesService;
+    
+    @Autowired
     private ReligionService religionService;
     @Autowired
     private MarriageUtils marriageUtils;
@@ -167,10 +173,27 @@ public class MarriageRegistrationReportsController {
 
     @ModelAttribute("zones")
     public List<Boundary> getZonesList() {
-        return boundaryService
-                .getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
-                        BOUNDARY_TYPE, REVENUE_HIERARCHY_TYPE);
+        final AppConfigValues heirarchyType = appConfigValuesService.getConfigValuesByModuleAndKey(
+                MarriageConstants.MODULE_NAME, MarriageConstants.MARRIAGE_REGISTRATIONUNIT_HEIRARCHYTYPE).get(0);
+
+        final AppConfigValues boundaryType = appConfigValuesService.getConfigValuesByModuleAndKey(
+                MarriageConstants.MODULE_NAME, MarriageConstants.MARRIAGE_REGISTRATIONUNIT_BOUNDARYYTYPE).get(0);
+
+        if (heirarchyType != null && heirarchyType.getValue() != null && !"".equals(heirarchyType.getValue())
+                && boundaryType != null && boundaryType.getValue() != null && !"".equals(boundaryType.getValue())) {
+
+            return boundaryService
+                    .getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
+                            boundaryType.getValue(), heirarchyType.getValue());
+
+        } else
+            return boundaryService
+                    .getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
+                            BOUNDARY_TYPE, ADMINISTRATION_HIERARCHY_TYPE);
+
     }
+    
+    
 
     @ModelAttribute("marriageRegistrationUnit")
     public List<MarriageRegistrationUnit> getMarriageRegistrationUnitList() {

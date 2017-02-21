@@ -45,8 +45,8 @@ import java.util.List;
 public class MarriageConstants {
 
     public static final String MODULE_NAME = "Marriage Registration";
-    public static final String BOUNDARY_TYPE = "Zone";
-    public static final String REVENUE_HIERARCHY_TYPE = "REVENUE";
+    public static final String BOUNDARY_TYPE = "City";
+    public static final String ADMINISTRATION_HIERARCHY_TYPE = "ADMINISTRATION";
 
     public static final String APPROVER_ROLE_NAME = "ULB Operator";
     public static final String DATE_FORMAT_DDMMYYYY = "dd-MM-yyyy";
@@ -133,4 +133,9 @@ public class MarriageConstants {
     public static final String APPROVAL_COMMENT = "approvalComment";
     public static final String APPLICATION_NUMBER = "applicationNumber";
     public static final String FILE_STORE_ID_APPLICATION_NUMBER = "fileStoreIdApplicationNumber";
+    
+    public static final String MARRIAGE_REGISTRATIONUNIT_HEIRARCHYTYPE = "MARRIAGE_REGISTRATIONUNIT_HEIRARCHYTYPE";
+    public static final String MARRIAGE_REGISTRATIONUNIT_BOUNDARYYTYPE = "MARRIAGE_REGISTRATIONUNIT_BOUNDARYYTYPE";
+    
+    
 }
