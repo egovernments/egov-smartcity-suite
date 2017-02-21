@@ -73,7 +73,7 @@
 						<th>Marriage Fee</th>
 						<th>Status</th>
 						<th>Registration Unit</th>
-						<th>zone</th>
+						<th>Boundary</th>
 						<th>Remarks</th>
 					</tr>
 				</thead>

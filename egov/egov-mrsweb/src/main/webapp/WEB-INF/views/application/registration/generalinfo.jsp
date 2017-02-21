@@ -88,7 +88,7 @@
 				cssClass="add-margin error-msg" />
 		</div>
 		<label class="col-sm-2 control-label"> <spring:message
-				code="lbl.zone" /><span class="mandatory"></span>
+				code="lbl.Boundary" /><span class="mandatory"></span>
 		</label>
 		<div class="col-sm-3">
 			<form:hidden path="zone" id="txt-zoneid" />

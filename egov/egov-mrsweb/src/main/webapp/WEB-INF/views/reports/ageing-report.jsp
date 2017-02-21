@@ -82,7 +82,7 @@
 					</div>
 						<div class="row">
 						<label class="col-sm-2 control-label">
-			<spring:message code="lbl.zone"/>
+			<spring:message code="lbl.Boundary"/>
 		</label>
 		<div class="col-sm-3 add-margin">	
 			<form:select path="zone.id" id="zones" cssClass="form-control" 
