@@ -41,7 +41,7 @@ package org.egov.restapi.model;
 
 import java.io.Serializable;
 
-public class FundHelper implements Serializable {
+public class DepartmentHelper implements Serializable {
 
     private static final long serialVersionUID = -1433064701524657608L;
     private String code;

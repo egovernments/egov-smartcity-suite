@@ -37,29 +37,25 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.restapi.model;
+package org.egov.restapi.web.rest;
 
-import java.io.Serializable;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
-public class FundHelper implements Serializable {
+import org.egov.restapi.service.ExternalDepartmentService;
+import org.egov.restapi.util.JsonConvertor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-    private static final long serialVersionUID = -1433064701524657608L;
-    private String code;
-    private String name;
+@RestController
+public class DepartmentControler {
 
-    public String getCode() {
-        return code;
-    }
+    @Autowired
+    private ExternalDepartmentService externalDepartmentService;
 
-    public void setCode(final String code) {
-        this.code = code;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(final String name) {
-        this.name = name;
+    @RequestMapping(value = "/egi/department/getalldepartment", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public String getAllActiveFunds() {
+        return JsonConvertor.convert(externalDepartmentService.populateDepartment());
     }
 }

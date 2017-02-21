@@ -37,29 +37,36 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.restapi.model;
+package org.egov.restapi.service;
 
-import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
-public class FundHelper implements Serializable {
+import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.service.DepartmentService;
+import org.egov.restapi.model.DepartmentHelper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-    private static final long serialVersionUID = -1433064701524657608L;
-    private String code;
-    private String name;
+@Service
+@Transactional(readOnly = true)
+public class ExternalDepartmentService {
 
-    public String getCode() {
-        return code;
+    @Autowired
+    private DepartmentService departmentService;
+
+    public List<DepartmentHelper> populateDepartment() {
+        final List<Department> departments = departmentService.getAllDepartments();
+
+        final List<DepartmentHelper> departmentHelpers = new ArrayList<>();
+        for (final Department department : departments) {
+            final DepartmentHelper departmentHelper = new DepartmentHelper();
+            departmentHelper.setCode(department.getCode());
+            departmentHelper.setName(department.getName());
+            departmentHelpers.add(departmentHelper);
+        }
+        return departmentHelpers;
     }
 
-    public void setCode(final String code) {
-        this.code = code;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(final String name) {
-        this.name = name;
-    }
 }
