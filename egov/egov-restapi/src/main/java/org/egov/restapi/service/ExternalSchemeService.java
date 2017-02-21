@@ -37,40 +37,40 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.services.masters;
+package org.egov.restapi.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.egov.commons.Scheme;
-import org.egov.infstr.services.PersistenceService;
-import org.hibernate.Query;
+import org.egov.restapi.model.SchemeHelper;
+import org.egov.services.masters.SchemeService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-public class SchemeService extends PersistenceService<Scheme, Integer> {
+@Service
+@Transactional(readOnly = true)
+public class ExternalSchemeService {
 
-    public SchemeService() {
-        super(Scheme.class);
+    @Autowired
+    private SchemeService schemeService;
+
+    public List<SchemeHelper> populateScheme() {
+        final List<Scheme> schemes = schemeService.getByIsActive();
+        final List<SchemeHelper> schemeHelpers = new ArrayList<>();
+
+        for (final Scheme scheme : schemes) {
+            final SchemeHelper schemeHelper = new SchemeHelper();
+            schemeHelper.setCode(scheme.getCode());
+            schemeHelper.setName(scheme.getName());
+            schemeHelper.setDescription(scheme.getDescription());
+            schemeHelper.setValidFrom(scheme.getValidfrom());
+            schemeHelper.setValidTo(scheme.getValidto());
+            schemeHelper.setFund(scheme.getFund().getName());
+            schemeHelpers.add(schemeHelper);
+        }
+        return schemeHelpers;
     }
 
-    public SchemeService(final Class<Scheme> type) {
-        super(type);
-    }
-
-    public List<Scheme> getByFundId(final Integer fundId) {
-        final Query query = getSession().createQuery(" from Scheme where isactive = true and fund.id=:fundId");
-
-        query.setInteger("fundId", fundId);
-        return query.list();
-    }
-
-    public Scheme findByCode(final String code) {
-        final Query query = getSession().createQuery(" from Scheme where code = :code ");
-
-        query.setString("code", code);
-        return (Scheme) query.uniqueResult();
-    }
-    
-    public List<Scheme> getByIsActive() {
-        final Query query = getSession().createQuery(" from Scheme where isactive = true");
-        return query.list();
-    }
 }

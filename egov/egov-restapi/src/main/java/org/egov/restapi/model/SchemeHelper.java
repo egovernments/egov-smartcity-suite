@@ -37,40 +37,66 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.services.masters;
+package org.egov.restapi.model;
 
-import java.util.List;
+import java.io.Serializable;
+import java.util.Date;
 
-import org.egov.commons.Scheme;
-import org.egov.infstr.services.PersistenceService;
-import org.hibernate.Query;
+public class SchemeHelper implements Serializable {
 
-public class SchemeService extends PersistenceService<Scheme, Integer> {
+    private static final long serialVersionUID = -1433064701524657608L;
+    private String code;
+    private String name;
+    private Date validFrom;
+    private Date validTo;
+    private String description;
+    private String fund;
 
-    public SchemeService() {
-        super(Scheme.class);
+    public String getCode() {
+        return code;
     }
 
-    public SchemeService(final Class<Scheme> type) {
-        super(type);
+    public void setCode(final String code) {
+        this.code = code;
     }
 
-    public List<Scheme> getByFundId(final Integer fundId) {
-        final Query query = getSession().createQuery(" from Scheme where isactive = true and fund.id=:fundId");
-
-        query.setInteger("fundId", fundId);
-        return query.list();
+    public String getName() {
+        return name;
     }
 
-    public Scheme findByCode(final String code) {
-        final Query query = getSession().createQuery(" from Scheme where code = :code ");
-
-        query.setString("code", code);
-        return (Scheme) query.uniqueResult();
+    public void setName(final String name) {
+        this.name = name;
     }
-    
-    public List<Scheme> getByIsActive() {
-        final Query query = getSession().createQuery(" from Scheme where isactive = true");
-        return query.list();
+
+    public Date getValidFrom() {
+        return validFrom;
+    }
+
+    public void setValidFrom(final Date validFrom) {
+        this.validFrom = validFrom;
+    }
+
+    public Date getValidTo() {
+        return validTo;
+    }
+
+    public void setValidTo(final Date validTo) {
+        this.validTo = validTo;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(final String description) {
+        this.description = description;
+    }
+
+    public String getFund() {
+        return fund;
+    }
+
+    public void setFund(final String fund) {
+        this.fund = fund;
     }
 }

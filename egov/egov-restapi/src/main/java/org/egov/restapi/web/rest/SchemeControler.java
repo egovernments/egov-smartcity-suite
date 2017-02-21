@@ -37,40 +37,25 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.services.masters;
+package org.egov.restapi.web.rest;
 
-import java.util.List;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
-import org.egov.commons.Scheme;
-import org.egov.infstr.services.PersistenceService;
-import org.hibernate.Query;
+import org.egov.restapi.service.ExternalSchemeService;
+import org.egov.restapi.util.JsonConvertor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-public class SchemeService extends PersistenceService<Scheme, Integer> {
+@RestController
+public class SchemeControler {
 
-    public SchemeService() {
-        super(Scheme.class);
-    }
+    @Autowired
+    private ExternalSchemeService externalSchemeService;
 
-    public SchemeService(final Class<Scheme> type) {
-        super(type);
-    }
-
-    public List<Scheme> getByFundId(final Integer fundId) {
-        final Query query = getSession().createQuery(" from Scheme where isactive = true and fund.id=:fundId");
-
-        query.setInteger("fundId", fundId);
-        return query.list();
-    }
-
-    public Scheme findByCode(final String code) {
-        final Query query = getSession().createQuery(" from Scheme where code = :code ");
-
-        query.setString("code", code);
-        return (Scheme) query.uniqueResult();
-    }
-    
-    public List<Scheme> getByIsActive() {
-        final Query query = getSession().createQuery(" from Scheme where isactive = true");
-        return query.list();
+    @RequestMapping(value = "/egf/scheme/getactiveschemes", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public String getAllActiveFunds() {
+        return JsonConvertor.convert(externalSchemeService.populateScheme());
     }
 }
