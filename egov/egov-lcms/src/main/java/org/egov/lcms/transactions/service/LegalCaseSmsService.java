@@ -44,6 +44,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.egov.eis.entity.Employee;
+import org.egov.lcms.masters.entity.enums.JudgmentImplIsComplied;
 import org.egov.lcms.transactions.entity.CounterAffidavit;
 import org.egov.lcms.transactions.entity.EmployeeHearing;
 import org.egov.lcms.transactions.entity.Hearings;
@@ -254,10 +255,10 @@ public class LegalCaseSmsService {
 
     public void getSmsForJudgmentImpl(final JudgmentImpl judgmentImpl, final String mobileNo) {
         String smsMsg = "";
-        if (judgmentImpl.getJudgmentImplIsComplied().toString().equals("YES"))
+        if (judgmentImpl.getJudgmentImplIsComplied().toString().equals(JudgmentImplIsComplied.YES.toString()))
             smsMsg = smsBodyByCodeAndArgsWithTypeForJudgmentImplIsCompliedYes("msg.judgmentimpliscompliedyes.sms",
                     judgmentImpl);
-        else if (judgmentImpl.getJudgmentImplIsComplied().toString().equals("NO"))
+        else if (judgmentImpl.getJudgmentImplIsComplied().toString().equals(JudgmentImplIsComplied.NO.toString()))
             smsMsg = smsBodyByCodeAndArgsWithTypeForJudgmentImplIsCompliedNo("msg.judgmentimpliscompliedno.sms",
                     judgmentImpl);
 
@@ -567,10 +568,10 @@ public class LegalCaseSmsService {
 
     public void getSmsToStandingCounselForJudgmentImpl(final JudgmentImpl judgmentImpl, final String mobileNo) {
         String smsMsg = "";
-        if (judgmentImpl.getJudgmentImplIsComplied().toString().equals("YES"))
+        if (judgmentImpl.getJudgmentImplIsComplied().toString().equals(JudgmentImplIsComplied.YES.toString()))
             smsMsg = smsBodyByCodeAndArgsWithTypeToStandingCounselForJudgmentImplIsCompliedYes(
                     "msg.standingcounselforjudgmentimpliscompliedyes.sms", judgmentImpl);
-        else if (judgmentImpl.getJudgmentImplIsComplied().toString().equals("NO"))
+        else if (judgmentImpl.getJudgmentImplIsComplied().toString().equals(JudgmentImplIsComplied.NO.toString()))
             smsMsg = smsBodyByCodeAndArgsWithTypeToStandingCounselForJudgmentImplIsCompliedNo(
                     "msg.standingcounseljudgmentimpliscompliedno.sms", judgmentImpl);
 

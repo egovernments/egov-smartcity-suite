@@ -83,7 +83,6 @@ public class AdvocateMasterService {
     @Transactional
     public AdvocateMaster persist(final AdvocateMaster advocateMaster) {
         return advocateMasterRepository.save(advocateMaster);
-
     }
 
     public List<AdvocateMaster> findAll() {
@@ -94,7 +93,8 @@ public class AdvocateMasterService {
         return advocateMasterRepository.findByName(name);
     }
 
-    public List<AdvocateMaster> getAllAdvocatesByNameLikeAndIsSeniorAdvocate(final String name, final Boolean isSeniorAdvocate) {
+    public List<AdvocateMaster> getAllAdvocatesByNameLikeAndIsSeniorAdvocate(final String name,
+            final Boolean isSeniorAdvocate) {
         return advocateMasterRepository.findByNameContainingIgnoreCaseAndIsSeniorAdvocate(name, isSeniorAdvocate);
     }
 
@@ -132,9 +132,9 @@ public class AdvocateMasterService {
                 final String name = "%" + advocateMaster.getName().toLowerCase() + "%";
                 predicates.add(cb.isNotNull(advocateMasterObj.get("name")));
                 predicates
-                .add(cb.like(
-                        cb.lower(advocateMasterObj
-                                .get(AdvocateMaster.getDeclaredSingularAttribute("name", String.class))),
+                        .add(cb.like(
+                                cb.lower(advocateMasterObj
+                                        .get(AdvocateMaster.getDeclaredSingularAttribute("name", String.class))),
                                 name));
             }
             if (advocateMaster.getMobileNumber() != null) {
@@ -143,15 +143,15 @@ public class AdvocateMasterService {
                 predicates.add(cb.like(
                         cb.lower(advocateMasterObj
                                 .get(AdvocateMaster.getDeclaredSingularAttribute("mobileNumber", String.class))),
-                                mobileNumber));
+                        mobileNumber));
             }
             if (advocateMaster.getEmail() != null) {
                 final String email = "%" + advocateMaster.getEmail() + "%";
                 predicates.add(cb.isNotNull(advocateMasterObj.get("email")));
                 predicates
-                .add(cb.like(
-                        cb.lower(advocateMasterObj
-                                .get(AdvocateMaster.getDeclaredSingularAttribute("email", String.class))),
+                        .add(cb.like(
+                                cb.lower(advocateMasterObj
+                                        .get(AdvocateMaster.getDeclaredSingularAttribute("email", String.class))),
                                 email));
             }
 

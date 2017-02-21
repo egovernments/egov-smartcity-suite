@@ -44,6 +44,7 @@ import java.text.ParseException;
 
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.lcms.entity.es.LegalCaseDocument;
+import org.egov.lcms.masters.entity.enums.JudgmentImplIsComplied;
 import org.egov.lcms.repository.es.LegalCaseDocumentRepository;
 import org.egov.lcms.transactions.entity.Judgment;
 import org.egov.lcms.transactions.entity.JudgmentImpl;
@@ -73,7 +74,10 @@ public class LegalCaseDocumentService {
         if (legalCase.getLcNumber() != null)
             legalCaseDocument = legalCaseDocumentRepository
                     .findOne(ApplicationThreadLocals.getCityCode() + "_" + legalCase.getLcNumber());
-        if (legalCaseDocument == null) {
+        if (legalCaseDocument != null)
+            updateLegalCaseIndex(legalCaseDocument, legalCase, legalCaseInterimOrder, judgment, judgmentImpl,
+                    legalCaseDisposal);
+        else {
             legalCaseDocument = LegalCaseDocument.builder().withCaseNumber(legalCase.getCaseNumber())
                     .withLcNumber(legalCase.getLcNumber()).withCaseTitle(legalCase.getCaseTitle())
                     .withCaseDate(legalCase.getCaseDate()).withCaseReceivingDate(legalCase.getCaseReceivingDate())
@@ -95,9 +99,8 @@ public class LegalCaseDocumentService {
                     .withCreatedDate(legalCase.getCaseDate()).build();
 
             createLeglCaseDocument(legalCaseDocument);
-        } else
-            updateLegalCaseIndex(legalCaseDocument, legalCase, legalCaseInterimOrder, judgment, judgmentImpl,
-                    legalCaseDisposal);
+        }
+
         return legalCaseDocument;
     }
 
@@ -140,7 +143,7 @@ public class LegalCaseDocumentService {
         if (LcmsConstants.LEGALCASE_STATUS_JUDGMENT_IMPLIMENTED.equalsIgnoreCase(legalCase.getStatus().getCode())) {
             legalCaseDocument.setJudgmentImplDate(judgmentImpl.getDateOfCompliance());
             legalCaseDocument.setJudgmentImplemented(judgmentImpl.getJudgmentImplIsComplied().name());
-            if (judgmentImpl.getJudgmentImplIsComplied().toString().equals("NO"))
+            if (judgmentImpl.getJudgmentImplIsComplied().toString().equals(JudgmentImplIsComplied.NO.toString()))
                 legalCaseDocument.setImplementationFailure(judgmentImpl.getImplementationFailure().name());
         }
         if (LcmsConstants.LEGALCASE_STATUS_CLOSED.equalsIgnoreCase(legalCase.getStatus().getCode()))

@@ -53,7 +53,6 @@ public class TimeSeriesReportResult {
     private String month;
     private Long count;
     private LegalCase legalCase;
-
     private String caseNumber;
     private String lcNumber;
     private Date caseFromDate;

@@ -97,7 +97,7 @@ public class JudgmentService {
         final Judgment savedjudgment = judgmentRepository.save(judgment);
         legalCaseSmsService.sendSmsToOfficerInchargeForJudgment(judgment);
         legalCaseSmsService.sendSmsToStandingCounselForJudgment(judgment);
-        legalCaseService.updateIndexes(savedjudgment.getLegalCase(), null, savedjudgment, null, null);
+        legalCaseService.persistLegalCaseIndex(savedjudgment.getLegalCase(), null, savedjudgment, null, null);
         final List<JudgmentDocuments> documentDetails = getDocumentDetails(savedjudgment, files);
         if (!documentDetails.isEmpty()) {
             savedjudgment.setJudgmentDocuments(documentDetails);

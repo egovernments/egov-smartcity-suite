@@ -45,7 +45,6 @@ import org.egov.lcms.transactions.entity.LegalCase;
 
 public class DueReportResult {
     private String caseNumber;
-
     private String lcNumber;
     private Date caseFromDate;
     private LegalCase legalCase;

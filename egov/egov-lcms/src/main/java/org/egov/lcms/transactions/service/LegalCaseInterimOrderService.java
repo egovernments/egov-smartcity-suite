@@ -102,7 +102,8 @@ public class LegalCaseInterimOrderService {
         final LegalCaseInterimOrder savedlcInterimOrder = legalCaseInterimOrderRepository.save(legalCaseInterimOrder);
         legalCaseSmsService.sendSmsToOfficerInchargeInterimOrder(legalCaseInterimOrder);
         legalCaseSmsService.sendSmsToStandingCounselForInterimOrder(legalCaseInterimOrder);
-        legalCaseService.updateIndexes(legalCaseInterimOrder.getLegalCase(), legalCaseInterimOrder, null, null, null);
+        legalCaseService.persistLegalCaseIndex(legalCaseInterimOrder.getLegalCase(), legalCaseInterimOrder, null, null,
+                null);
         final List<LcInterimOrderDocuments> documentDetails = getDocumentDetails(savedlcInterimOrder, files);
         if (!documentDetails.isEmpty()) {
             savedlcInterimOrder.setLcInterimOrderDocuments(documentDetails);

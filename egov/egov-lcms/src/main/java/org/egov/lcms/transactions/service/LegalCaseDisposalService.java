@@ -79,7 +79,7 @@ public class LegalCaseDisposalService {
         legalCaseDisposal.getLegalCase().setReportStatus(reportStatus);
         legalCaseSmsService.sendSmsToOfficerInchargeForCloseCase(legalCaseDisposal);
         legalCaseSmsService.sendSmsToStandingCounselForCloseCase(legalCaseDisposal);
-        legalCaseService.updateIndexes(legalCaseDisposal.getLegalCase(), null, null, null, legalCaseDisposal);
+        legalCaseService.persistLegalCaseIndex(legalCaseDisposal.getLegalCase(), null, null, null, legalCaseDisposal);
         return legalCaseDisposalRepository.save(legalCaseDisposal);
     }
 

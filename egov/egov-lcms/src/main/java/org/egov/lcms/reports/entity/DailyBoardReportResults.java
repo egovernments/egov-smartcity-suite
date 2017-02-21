@@ -230,7 +230,7 @@ public class DailyBoardReportResults {
         return officerInChargeName;
     }
 
-    public void setOfficerInChargeName(String officerInChargeName) {
+    public void setOfficerInChargeName(final String officerInChargeName) {
         this.officerInChargeName = officerInChargeName;
     }
 

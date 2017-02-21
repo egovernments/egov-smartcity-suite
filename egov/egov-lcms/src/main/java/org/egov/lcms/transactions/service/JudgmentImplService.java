@@ -48,6 +48,7 @@ import java.util.Set;
 
 import org.egov.commons.EgwStatus;
 import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.lcms.masters.entity.enums.ImplementationFailure;
 import org.egov.lcms.transactions.entity.Appeal;
 import org.egov.lcms.transactions.entity.AppealDocuments;
 import org.egov.lcms.transactions.entity.Contempt;
@@ -94,7 +95,7 @@ public class JudgmentImplService {
         persistAppealOrContempt(judgmentImpl);
         final JudgmentImpl savedjudgmentImpl = judgmentImplRepository.save(judgmentImpl);
         if (judgmentImpl.getImplementationFailure() != null
-                && judgmentImpl.getImplementationFailure().toString().equals("Appeal")) {
+                && judgmentImpl.getImplementationFailure().toString().equals(ImplementationFailure.Appeal.toString())) {
             final List<AppealDocuments> documentDetails = getDocumentDetails(savedjudgmentImpl, files);
             if (!documentDetails.isEmpty()) {
                 savedjudgmentImpl.getAppeal().get(0).setAppealDocuments(documentDetails);
@@ -120,8 +121,8 @@ public class JudgmentImplService {
         judgmentImpl.getJudgment().getLegalCase().setNextDate(judgmentImpl.getDateOfCompliance());
         legalCaseSmsService.sendSmsToOfficerInchargeForJudgmentImpl(judgmentImpl);
         legalCaseSmsService.sendSmsToStandingCounselForJudgmentImpl(judgmentImpl);
-        legalCaseService.updateIndexes(judgmentImpl.getJudgment().getLegalCase(), null, judgmentImpl.getJudgment(),
-                judgmentImpl, null);
+        legalCaseService.persistLegalCaseIndex(judgmentImpl.getJudgment().getLegalCase(), null,
+                judgmentImpl.getJudgment(), judgmentImpl, null);
         legalCaseService.save(judgmentImpl.getJudgment().getLegalCase());
 
     }
