@@ -123,9 +123,7 @@ public class ExternalContractorService {
                     contractorDetails.getGrade() != null ? contractorDetails.getGrade().getGrade() : StringUtils.EMPTY);
             details.setRegistrationNumber(contractorDetails.getRegistrationNumber());
             details.setStatus(contractorDetails.getStatus().getCode());
-            details.setStartDate(contractorDetails.getValidity().getStartDate());
-            if (contractorDetails.getValidity() != null && contractorDetails.getValidity().getEndDate() != null)
-                details.setEndDate(contractorDetails.getValidity().getEndDate());
+            details.setValidityHelper(contractorDetails.getValidity());
             cont.addContractorDetailsHelper(details);
         }
 
@@ -285,8 +283,11 @@ public class ExternalContractorService {
                     errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_CONTRACTOR_REGISTRACTIONNUMBER_INVALID);
                     errors.add(errorDetails);
                 }
-                if (contractorDetailsHelper.getStartDate() != null && contractorDetailsHelper.getEndDate() != null &&
-                        contractorDetailsHelper.getStartDate().before(contractorDetailsHelper.getEndDate())) {
+                if (contractorDetailsHelper.getValidityHelper() != null
+                        && contractorDetailsHelper.getValidityHelper().getStartDate() != null
+                        && contractorDetailsHelper.getValidityHelper().getEndDate() != null &&
+                        contractorDetailsHelper.getValidityHelper().getStartDate()
+                                .before(contractorDetailsHelper.getValidityHelper().getEndDate())) {
                     errorDetails = new ErrorDetails();
                     errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CONTRACTOR_STARTENDDATE_INVALID);
                     errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_CONTRACTOR_STARTENDDATE_INVALID);
@@ -367,10 +368,8 @@ public class ExternalContractorService {
                 if (StringUtils.isNotBlank(contractorDetailsHelper.getStatus()))
                     contractorDetails.setStatus(egwStatusHibDAO.getStatusByModuleAndCode(WORKS_CONTRACTOR_STATUS,
                             contractorDetailsHelper.getStatus()));
-                if (contractorDetailsHelper.getStartDate() != null)
-                    contractorDetails.getValidity().setStartDate(contractorDetailsHelper.getStartDate());
-                if (contractorDetailsHelper.getEndDate() != null)
-                    contractorDetails.getValidity().setEndDate(contractorDetailsHelper.getEndDate());
+                if (contractorDetailsHelper.getValidityHelper() != null)
+                    contractorDetails.setValidity(contractorDetailsHelper.getValidityHelper());
 
                 contractor.addContractorDetail(contractorDetails);
             }

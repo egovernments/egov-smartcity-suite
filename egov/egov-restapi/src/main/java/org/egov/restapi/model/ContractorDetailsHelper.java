@@ -40,7 +40,8 @@
 package org.egov.restapi.model;
 
 import java.io.Serializable;
-import java.util.Date;
+
+import org.egov.infra.persistence.entity.component.Period;
 
 public class ContractorDetailsHelper implements Serializable {
 
@@ -51,8 +52,7 @@ public class ContractorDetailsHelper implements Serializable {
     private String contractorClass;
     private String status;
     private String category;
-    private Date startDate;
-    private Date endDate;
+    private Period validityHelper;
 
     public String getDepartmentName() {
         return departmentName;
@@ -68,22 +68,6 @@ public class ContractorDetailsHelper implements Serializable {
 
     public void setRegistrationNumber(final String registrationNumber) {
         this.registrationNumber = registrationNumber;
-    }
-
-    public Date getStartDate() {
-        return startDate;
-    }
-
-    public void setStartDate(final Date startDate) {
-        this.startDate = startDate;
-    }
-
-    public Date getEndDate() {
-        return endDate;
-    }
-
-    public void setEndDate(final Date endDate) {
-        this.endDate = endDate;
     }
 
     public String getContractorClass() {
@@ -108,6 +92,14 @@ public class ContractorDetailsHelper implements Serializable {
 
     public void setCategory(final String category) {
         this.category = category;
+    }
+
+    public Period getValidityHelper() {
+        return validityHelper;
+    }
+
+    public void setValidityHelper(final Period validityHelper) {
+        this.validityHelper = validityHelper;
     }
 
 }
