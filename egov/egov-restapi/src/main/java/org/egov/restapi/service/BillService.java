@@ -31,6 +31,7 @@ import org.egov.restapi.model.BillPayeeDetails;
 import org.egov.restapi.model.BillRegister;
 import org.egov.services.masters.SchemeService;
 import org.egov.services.masters.SubSchemeService;
+import org.egov.works.master.service.ContractorService;
 import org.egov.works.models.estimate.ProjectCode;
 import org.egov.works.services.ProjectCodeService;
 import org.egov.works.utils.WorksConstants;
@@ -79,19 +80,22 @@ public class BillService {
     @Autowired
     private FinancialYearHibernateDAO financialYearHibernateDAO;
 
+    @Autowired
+    private ContractorService contractorService;
+
     private static final String EMPTY = StringUtils.EMPTY;
 
     public List<ErrorDetails> validateBillRegister(final BillRegister billRegister) {
         final List<ErrorDetails> errors = new ArrayList<>();
         ErrorDetails errorDetails;
         if (EMPTY.equals(billRegister.getDepartmentCode())
-                && departmentService.getDepartmentByCode(billRegister.getDepartmentCode()) == null) {
+                || departmentService.getDepartmentByCode(billRegister.getDepartmentCode()) == null) {
             errorDetails = new ErrorDetails();
             errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_DEPARTMENT);
             errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_DEPARTMENT);
             errors.add(errorDetails);
         }
-        if (EMPTY.equals(billRegister.getFunctionCode()) && functionService.findByCode(billRegister.getFunctionCode()) == null) {
+        if (EMPTY.equals(billRegister.getFunctionCode()) || functionService.findByCode(billRegister.getFunctionCode()) == null) {
             errorDetails = new ErrorDetails();
             errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_FUNCTION);
             errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_FUNCTION);
@@ -123,7 +127,7 @@ public class BillService {
             errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_BILLTYPE);
             errors.add(errorDetails);
         }
-        if (EMPTY.equals(billRegister.getFundCode()) && fundService.findByCode(billRegister.getFundCode()) == null) {
+        if (EMPTY.equals(billRegister.getFundCode()) || fundService.findByCode(billRegister.getFundCode()) == null) {
             errorDetails = new ErrorDetails();
             errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_FUND);
             errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_FUND);
@@ -187,7 +191,8 @@ public class BillService {
                     if (coa == null) {
                         errorDetails = new ErrorDetails();
                         errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_VALID_DETAIL_GLCODE);
-                        errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_VALID_DETAIL_GLCODE);
+                        errorDetails.setErrorMessage(
+                                billDetails.getGlcode() + " - " + RestApiConstants.THIRD_PARTY_ERR_MSG_NO_VALID_DETAIL_GLCODE);
                         errors.add(errorDetails);
                     }
                     if (billDetails.getDebitAmount() == null && billDetails.getCreditAmount() == null) {
@@ -248,7 +253,7 @@ public class BillService {
                                 errorDetails = new ErrorDetails();
                                 errorDetails
                                         .setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NOT_PROJECT_CONTRACTOR_SUBLEDGER);
-                                errorDetails.setErrorMessage(
+                                errorDetails.setErrorMessage(coa.getGlcode() + " - " +
                                         RestApiConstants.THIRD_PARTY_ERR_MSG_NOT_PROJECT_CONTRACTOR_SUBLEDGER);
                                 errors.add(errorDetails);
                             }
@@ -298,6 +303,12 @@ public class BillService {
                     errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_PAYEE_ACCOUNTTYPE);
                     errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_PAYEE_ACCOUNTTYPE);
                     errors.add(errorDetails);
+                } else if (WorksConstants.ACCOUNTDETAIL_TYPE_CONTRACTOR.equals(billPayeeDetails.getAccountDetailType())
+                        && contractorService.getContractorByCode(billPayeeDetails.getAccountDetailKey()) == null) {
+                    errorDetails = new ErrorDetails();
+                    errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NOT_VALID_CONTRACTOR);
+                    errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NOT_VALID_CONTRACTOR);
+                    errors.add(errorDetails);
                 }
                 if (EMPTY.equals(billPayeeDetails.getAccountDetailKey())) {
                     errorDetails = new ErrorDetails();
@@ -346,7 +357,8 @@ public class BillService {
                 if (!isCOAExistInDetails) {
                     errorDetails = new ErrorDetails();
                     errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_PAYEE_GLCODE_NOT_IN_DETAILS);
-                    errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_PAYEE_GLCODE_NOT_IN_DETAILS);
+                    errorDetails.setErrorMessage(billPayeeDetails.getGlcode() + " - "
+                            + RestApiConstants.THIRD_PARTY_ERR_MSG_PAYEE_GLCODE_NOT_IN_DETAILS);
                     errors.add(errorDetails);
                 }
             }
@@ -366,6 +378,7 @@ public class BillService {
         egBillregister.setBilltype(billRegister.getBillType());
         egBillregister.setBillamount(billRegister.getBillAmount());
         egBillregister.setExpendituretype(WorksConstants.BILL_EXPENDITURE_TYPE);
+        egBillregister.setBillstatus(WorksConstants.APPROVED);
     }
 
     private void populateEgBillregisterMis(final EgBillregister egBillregister, final BillRegister billRegister) {
