@@ -64,10 +64,9 @@ public class ContractorGradeService extends PersistenceService<ContractorGrade, 
         super(ContractorGrade.class);
     }
 
-    public ContractorGradeService(Class<ContractorGrade> type) {
+    public ContractorGradeService(final Class<ContractorGrade> type) {
         super(type);
     }
-
 
     public ContractorGrade getContractorGradeById(final Long contractorGradeId) {
         final ContractorGrade contractorGrade = entityManager.find(ContractorGrade.class, contractorGradeId);
@@ -110,4 +109,10 @@ public class ContractorGradeService extends PersistenceService<ContractorGrade, 
         final String countQuery = "select count(*) " + contractorGradeStr;
         return new SearchQueryHQL(contractorGradeStr, countQuery, paramList);
     }
+
+    public ContractorGrade findByContractorClass(final String contractorClass) {
+        final String query = "from ContractorGrade as cg where upper(cg.grade) = '" + contractorClass.toUpperCase() + "'";
+        return find(query);
+    }
+
 }

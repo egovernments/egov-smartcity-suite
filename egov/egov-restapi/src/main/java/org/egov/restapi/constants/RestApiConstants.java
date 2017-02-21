@@ -417,4 +417,71 @@ public class RestApiConstants {
 
     public static final String THIRD_PARTY_ERR_CODE_NOT_ADVANCE_CONTRACTOR_PAYABLE = "EGF-REST-13";
     public static final String THIRD_PARTY_ERR_MSG_NOT_ADVANCE_CONTRACTOR_PAYABLE = "GL Code purpose should be either Advance payable or Contractor payable";
+
+    public static final String THIRD_PARTY_ERR_CODE_NOT_EXIST_CONTRACTOR = "EGWORKS-CONTRACTOR-1";
+    public static final String THIRD_PARTY_ERR_MSG_NOT_EXIST_CONTRACTOR = "No contractor exists with given contractor code";
+
+    public static final String THIRD_PARTY_ERR_CODE_EXIST_CONTRACTOR = "EGWORKS-CONTRACTOR-2";
+    public static final String THIRD_PARTY_ERR_MSG_EXIST_CONTRACTOR = "Contractor exists with given contractor code";
+
+    public static final String THIRD_PARTY_ERR_CODE_NO_JSON_REQUEST = "EGWORKS-CONTRACTOR-3";
+    public static final String THIRD_PARTY_ERR_MSG_NO_JSON_REQUEST = "Please send valid JSON request";
+
+    public static final String THIRD_PARTY_ERR_CONTRACTOR_NO_CODE = "EGWORKS-CONTRACTOR-4";
+    public static final String THIRD_PARTY_ERR_MSG_NO_CONTRACTOR_CODE = "Code is required";
+
+    public static final String THIRD_PARTY_ERR_CONTRACTOR_NO_NAME = "EGWORKS-CONTRACTOR-5";
+    public static final String THIRD_PARTY_ERR_MSG_NO_CONTRACTOR_NAME = "Name is required";
+
+    public static final String THIRD_PARTY_ERR_CONTRACTOR_CODE_SPECIAL = "EGWORKS-CONTRACTOR-6";
+    public static final String THIRD_PARTY_ERR_MSG_CONTRACTOR_CODE_SPECIAL = "Special charectors not allowed in code";
+
+    public static final String THIRD_PARTY_ERR_CONTRACTOR_NAME_SPECIAL = "EGWORKS-CONTRACTOR-7";
+    public static final String THIRD_PARTY_ERR_MSG_CONTRACTOR_NAME_SPECIAL = "Special charectors not allowed in name";
+
+    public static final String THIRD_PARTY_ERR_CONTRACTOR_CODE_MAXLENGTH = "EGWORKS-CONTRACTOR-8";
+    public static final String THIRD_PARTY_ERR_MSG_CONTRACTOR_CODE_MAXLENGTH = "Code Length Should be less then 50";
+
+    public static final String THIRD_PARTY_ERR_CONTRACTOR_NAME_MAXLENGTH = "EGWORKS-CONTRACTOR-9";
+    public static final String THIRD_PARTY_ERR_MSG_CONTRACTOR_NAME_MAXLENGTH = "Name Length Should be less then 100";
+
+    public static final String THIRD_PARTY_ERR_CONTRACTOR_CORRESPONDENCEADDRESS_INVALID = "EGWORKS-CONTRACTOR-10";
+    public static final String THIRD_PARTY_ERR_MSG_CONTRACTOR_CORRESPONDENCEADDRESS_INVALID = "Correspondence address is not a valid";
+
+    public static final String THIRD_PARTY_ERR_CONTRACTOR_PAYMENTADDRESS_INVALID = "EGWORKS-CONTRACTOR-11";
+    public static final String THIRD_PARTY_ERR_MSG_CONTRACTOR_PAYMENTADDRESS_INVALID = "Payment address is not a valid";
+
+    public static final String THIRD_PARTY_ERR_CONTRACTOR_NARRATION_INVALID = "EGWORKS-CONTRACTOR-12";
+    public static final String THIRD_PARTY_ERR_MSG_CONTRACTOR_NARRATION_INVALID = "Narration is not a valid";
+
+    public static final String THIRD_PARTY_ERR_CONTRACTOR_CONTACTPERSON_INVALID = "EGWORKS-CONTRACTOR-13";
+    public static final String THIRD_PARTY_ERR_MSG_CONTRACTOR_CONTACTPERSON_INVALID = "Contact person is not a valid";
+
+    public static final String THIRD_PARTY_ERR_CONTRACTOR_PANNUMBER_INVALID = "EGWORKS-CONTRACTOR-14";
+    public static final String THIRD_PARTY_ERR_MSG_CONTRACTOR_PANNUMBER_INVALID = "PAN number is not a valid";
+
+    public static final String THIRD_PARTY_ERR_CONTRACTOR_TINNUMBER_INVALID = "EGWORKS-CONTRACTOR-15";
+    public static final String THIRD_PARTY_ERR_MSG_CONTRACTOR_TINNUMBER_INVALID = "TIN number is not a valid";
+
+    public static final String THIRD_PARTY_ERR_CONTRACTOR_IFSCCODE_INVALID = "EGWORKS-CONTRACTOR-16";
+    public static final String THIRD_PARTY_ERR_MSG_CONTRACTOR_IFSCCODE_INVALID = "IFSC code is not a valid";
+
+    public static final String THIRD_PARTY_ERR_CONTRACTOR_MOBILENUMBER_INVALID = "EGWORKS-CONTRACTOR-17";
+    public static final String THIRD_PARTY_ERR_MSG_CONTRACTOR_MOBILENUMBER_INVALID = "Mobile number is not a valid";
+
+    public static final String THIRD_PARTY_ERR_CONTRACTOR_BANKACCOUNT_INVALID = "EGWORKS-CONTRACTOR-18";
+    public static final String THIRD_PARTY_ERR_MSG_CONTRACTOR_BANKACCOUNT_INVALID = "Bank Account is not a valid";
+
+    public static final String THIRD_PARTY_ERR_CONTRACTOR_PWDAPPROVALCODE_INVALID = "EGWORKS-CONTRACTOR-19";
+    public static final String THIRD_PARTY_ERR_MSG_CONTRACTOR_PWDAPPROVALCODE_INVALID = "Pwd approval code is not a valid";
+
+    public static final String THIRD_PARTY_ERR_CONTRACTOR_EMAIL_INVALID = "EGWORKS-CONTRACTOR-20";
+    public static final String THIRD_PARTY_ERR_MSG_CONTRACTOR_EMAIL_INVALID = "Email is not a valid";
+
+    public static final String THIRD_PARTY_ERR_CONTRACTOR_REGISTRACTIONNUMBER_INVALID = "EGWORKS-CONTRACTOR-21";
+    public static final String THIRD_PARTY_ERR_MSG_CONTRACTOR_REGISTRACTIONNUMBER_INVALID = "Registraction Number is not a valid";
+
+    public static final String THIRD_PARTY_ERR_CONTRACTOR_STARTENDDATE_INVALID = "EGWORKS-CONTRACTOR-21";
+    public static final String THIRD_PARTY_ERR_MSG_CONTRACTOR_STARTENDDATE_INVALID = "Start date should fall before end date";
+
 }

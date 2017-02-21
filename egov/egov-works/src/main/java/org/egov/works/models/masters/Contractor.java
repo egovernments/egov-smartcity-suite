@@ -39,11 +39,8 @@
  */
 package org.egov.works.models.masters;
 
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-
-import javax.validation.Valid;
 
 import org.egov.commons.Bank;
 import org.egov.commons.EgwStatus;
@@ -116,7 +113,6 @@ public class Contractor extends BaseModel implements EntityType {
 
     private ExemptionForm exemptionForm;
 
-    @Valid
     private List<ContractorDetail> contractorDetails = new LinkedList<ContractorDetail>();
 
     @Length(max = 10)
@@ -252,10 +248,7 @@ public class Contractor extends BaseModel implements EntityType {
     @Override
     public List<ValidationError> validate() {
         List<ValidationError> errorList = null;
-        if (contractorDetails != null && contractorDetails.isEmpty())
-            return Arrays
-                    .asList(new ValidationError("contractorDetails", "contractor.details.altleastone_details_needed"));
-        else if (contractorDetails != null && !contractorDetails.isEmpty())
+        if (contractorDetails != null && !contractorDetails.isEmpty())
             for (final ContractorDetail contractorDetail : contractorDetails) {
                 errorList = contractorDetail.validate();
                 if (errorList != null)
