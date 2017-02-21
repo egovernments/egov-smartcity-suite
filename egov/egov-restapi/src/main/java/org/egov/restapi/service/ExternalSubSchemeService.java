@@ -37,40 +37,38 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.services.masters;
+package org.egov.restapi.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.egov.commons.SubScheme;
-import org.egov.infstr.services.PersistenceService;
-import org.hibernate.Query;
+import org.egov.restapi.model.SubSchemeHelper;
+import org.egov.services.masters.SubSchemeService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-public class SubSchemeService extends PersistenceService<SubScheme, Integer> {
+@Service
+@Transactional(readOnly = true)
+public class ExternalSubSchemeService {
 
-    public SubSchemeService() {
-        super(SubScheme.class);
+    @Autowired
+    private SubSchemeService subSchemeService;
+
+    public List<SubSchemeHelper> populateSubScheme() {
+
+        final List<SubScheme> subSchemes = subSchemeService.getByIsActive();
+        final List<SubSchemeHelper> subSchemeHelpers = new ArrayList<>();
+
+        for (final SubScheme subScheme : subSchemes) {
+            final SubSchemeHelper subSchemeHelper = new SubSchemeHelper();
+            subSchemeHelper.setCode(subScheme.getCode());
+            subSchemeHelper.setName(subScheme.getName());
+            subSchemeHelper.setScheme(subScheme.getScheme().getName());
+            subSchemeHelpers.add(subSchemeHelper);
+        }
+        return subSchemeHelpers;
     }
 
-    public SubSchemeService(final Class<SubScheme> type) {
-        super(type);
-    }
-
-    public List<SubScheme> getBySchemeId(final Integer schemeId) {
-        final Query query = getSession().createQuery(" from SubScheme where isactive = true and scheme.id=:schemeId");
-
-        query.setInteger("schemeId", schemeId);
-        return query.list();
-    }
-
-    public SubScheme findByCode(final String code) {
-        final Query query = getSession().createQuery(" from Scheme where code = :code ");
-
-        query.setString("code", code);
-        return (SubScheme) query.uniqueResult();
-    }
-    
-    public List<SubScheme> getByIsActive() {
-        final Query query = getSession().createQuery(" from SubScheme where isactive = true");
-        return query.list();
-    }
 }

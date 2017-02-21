@@ -37,40 +37,25 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.services.masters;
+package org.egov.restapi.web.rest;
 
-import java.util.List;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
-import org.egov.commons.SubScheme;
-import org.egov.infstr.services.PersistenceService;
-import org.hibernate.Query;
+import org.egov.restapi.service.ExternalSubSchemeService;
+import org.egov.restapi.util.JsonConvertor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-public class SubSchemeService extends PersistenceService<SubScheme, Integer> {
+@RestController
+public class SubSchemeControler {
 
-    public SubSchemeService() {
-        super(SubScheme.class);
-    }
+    @Autowired
+    private ExternalSubSchemeService externalSubSchemeService;
 
-    public SubSchemeService(final Class<SubScheme> type) {
-        super(type);
-    }
-
-    public List<SubScheme> getBySchemeId(final Integer schemeId) {
-        final Query query = getSession().createQuery(" from SubScheme where isactive = true and scheme.id=:schemeId");
-
-        query.setInteger("schemeId", schemeId);
-        return query.list();
-    }
-
-    public SubScheme findByCode(final String code) {
-        final Query query = getSession().createQuery(" from Scheme where code = :code ");
-
-        query.setString("code", code);
-        return (SubScheme) query.uniqueResult();
-    }
-    
-    public List<SubScheme> getByIsActive() {
-        final Query query = getSession().createQuery(" from SubScheme where isactive = true");
-        return query.list();
+    @RequestMapping(value = "/egf/subscheme/getactivesubschemes", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public String getAllActiveFunds() {
+        return JsonConvertor.convert(externalSubSchemeService.populateSubScheme());
     }
 }

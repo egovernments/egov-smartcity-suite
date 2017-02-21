@@ -37,40 +37,39 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.services.masters;
+package org.egov.restapi.model;
 
-import java.util.List;
+import java.io.Serializable;
 
-import org.egov.commons.SubScheme;
-import org.egov.infstr.services.PersistenceService;
-import org.hibernate.Query;
+public class SubSchemeHelper implements Serializable {
 
-public class SubSchemeService extends PersistenceService<SubScheme, Integer> {
+    private static final long serialVersionUID = -1433064701524657608L;
+    private String code;
+    private String name;
+    private String scheme;
 
-    public SubSchemeService() {
-        super(SubScheme.class);
+    public String getCode() {
+        return code;
     }
 
-    public SubSchemeService(final Class<SubScheme> type) {
-        super(type);
+    public void setCode(final String code) {
+        this.code = code;
     }
 
-    public List<SubScheme> getBySchemeId(final Integer schemeId) {
-        final Query query = getSession().createQuery(" from SubScheme where isactive = true and scheme.id=:schemeId");
-
-        query.setInteger("schemeId", schemeId);
-        return query.list();
+    public String getName() {
+        return name;
     }
 
-    public SubScheme findByCode(final String code) {
-        final Query query = getSession().createQuery(" from Scheme where code = :code ");
+    public void setName(final String name) {
+        this.name = name;
+    }
 
-        query.setString("code", code);
-        return (SubScheme) query.uniqueResult();
+    public String getScheme() {
+        return scheme;
     }
-    
-    public List<SubScheme> getByIsActive() {
-        final Query query = getSession().createQuery(" from SubScheme where isactive = true");
-        return query.list();
+
+    public void setScheme(final String scheme) {
+        this.scheme = scheme;
     }
+
 }
