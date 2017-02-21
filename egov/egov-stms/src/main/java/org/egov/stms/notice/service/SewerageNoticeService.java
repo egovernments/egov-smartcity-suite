@@ -39,6 +39,27 @@
  */
 package org.egov.stms.notice.service;
 
+import static org.egov.stms.utils.constants.SewerageTaxConstants.FILESTORE_MODULECODE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.NOTICE_TYPE_DEMAND_BILL_NOTICE;
+
+import java.io.ByteArrayInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.zip.Deflater;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.apache.commons.lang.WordUtils;
 import org.apache.log4j.Logger;
 import org.egov.demand.model.EgDemand;
@@ -74,26 +95,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import java.io.ByteArrayInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.zip.Deflater;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
-
-import static org.egov.stms.utils.constants.SewerageTaxConstants.FILESTORE_MODULECODE;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.NOTICE_TYPE_DEMAND_BILL_NOTICE;
-
 @Service
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Transactional(readOnly = true)
@@ -122,9 +123,7 @@ public class SewerageNoticeService {
     private AssignmentService assignmentService;
     @Autowired
     private DesignationService designationService;
-    private Map<String, Object> reportParams = null;
-    private ReportRequest reportInput = null;
-    private ReportOutput reportOutput = null;
+
     private BigDecimal donationCharges = BigDecimal.ZERO;
     private BigDecimal sewerageCharges = BigDecimal.ZERO;
     private BigDecimal estimationCharges = BigDecimal.ZERO;
@@ -142,7 +141,7 @@ public class SewerageNoticeService {
     }
 
     public SewerageNotice saveEstimationNotice(final SewerageApplicationDetails sewerageApplicationDetails,
-                                               final InputStream fileStream) {
+            final InputStream fileStream) {
         SewerageNotice sewerageNotice = null;
 
         if (sewerageApplicationDetails != null) {
@@ -160,7 +159,7 @@ public class SewerageNoticeService {
     }
 
     private void buildSewerageNotice(final SewerageApplicationDetails sewerageApplicationDetails,
-                                     final SewerageNotice sewerageNotice, final String noticeNumber, final Date noticeDate, final String noticeType) {
+            final SewerageNotice sewerageNotice, final String noticeNumber, final Date noticeDate, final String noticeType) {
         final Module module = moduleDao.getModuleByName(SewerageTaxConstants.MODULE_NAME);
         sewerageNotice.setModule(module);
         sewerageNotice.setApplicationNumber(sewerageApplicationDetails.getApplicationNumber());
@@ -171,7 +170,7 @@ public class SewerageNoticeService {
     }
 
     public SewerageNotice saveWorkOrderNotice(final SewerageApplicationDetails sewerageApplicationDetails,
-                                              final InputStream fileStream) {
+            final InputStream fileStream) {
 
         SewerageNotice sewerageNotice = null;
         if (sewerageApplicationDetails != null) {
@@ -190,7 +189,8 @@ public class SewerageNoticeService {
     }
 
     public SewerageNotice generateReportForEstimation(final SewerageApplicationDetails sewerageApplicationDetails,
-                                                      final HttpSession session, final HttpServletRequest request) {
+            final HttpSession session, final HttpServletRequest request) {
+        ReportOutput reportOutput = null;
         SewerageNotice sewerageNotice = null;
         reportOutput = generateReportOutputDataForEstimation(sewerageApplicationDetails, session, request);
         if (reportOutput != null && reportOutput.getReportOutputData() != null) {
@@ -201,7 +201,8 @@ public class SewerageNoticeService {
     }
 
     public SewerageNotice generateReportForWorkOrder(final SewerageApplicationDetails sewerageApplicationDetails,
-                                                     final HttpSession session, final HttpServletRequest request) {
+            final HttpSession session, final HttpServletRequest request) {
+        ReportOutput reportOutput = null;
         SewerageNotice sewerageNotice = null;
         reportOutput = generateReportOutputForWorkOrder(sewerageApplicationDetails, session, request);
         if (reportOutput != null && reportOutput.getReportOutputData() != null) {
@@ -214,7 +215,8 @@ public class SewerageNoticeService {
     public ReportOutput generateReportOutputDataForEstimation(
             final SewerageApplicationDetails sewerageApplicationDetails, final HttpSession session,
             final HttpServletRequest request) {
-        reportParams = new HashMap<String, Object>();
+        ReportRequest reportInput = null;
+        final Map<String, Object> reportParams = new HashMap<String, Object>();
         if (sewerageApplicationDetails != null) {
             final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
             final AssessmentDetails assessmentDetails = sewerageTaxUtils.getAssessmentDetailsForFlag(
@@ -269,8 +271,9 @@ public class SewerageNoticeService {
     }
 
     public ReportOutput generateReportOutputForWorkOrder(final SewerageApplicationDetails sewerageApplicationDetails,
-                                                         final HttpSession session, final HttpServletRequest request) {
-        reportParams = new HashMap<String, Object>();
+            final HttpSession session, final HttpServletRequest request) {
+        ReportRequest reportInput = null;
+        final Map<String, Object> reportParams = new HashMap<String, Object>();
         if (null != sewerageApplicationDetails) {
             final AssessmentDetails assessmentDetails = sewerageTaxUtils.getAssessmentDetailsForFlag(
                     sewerageApplicationDetails.getConnectionDetail().getPropertyIdentifier(),
@@ -409,7 +412,9 @@ public class SewerageNoticeService {
     }
 
     public SewerageNotice generateReportForCloseConnection(final SewerageApplicationDetails sewerageApplicationDetails,
-                                                           final HttpSession session) {
+            final HttpSession session) {
+        ReportOutput reportOutput = null;
+
         SewerageNotice sewerageNotice = null;
         reportOutput = generateReportOutputForSewerageCloseConnection(sewerageApplicationDetails, session);
         if (reportOutput != null && reportOutput.getReportOutputData() != null) {
@@ -422,7 +427,8 @@ public class SewerageNoticeService {
     public ReportOutput generateReportOutputForSewerageCloseConnection(
             final SewerageApplicationDetails sewerageApplicationDetails,
             final HttpSession session) {
-        reportParams = new HashMap<String, Object>();
+        ReportRequest reportInput = null;
+        final Map<String, Object> reportParams = new HashMap<String, Object>();
         if (null != sewerageApplicationDetails) {
             final AssessmentDetails assessmentDetails = sewerageTaxUtils.getAssessmentDetailsForFlag(
                     sewerageApplicationDetails.getConnectionDetail().getPropertyIdentifier(),
@@ -468,7 +474,7 @@ public class SewerageNoticeService {
     }
 
     public SewerageNotice saveCloseConnectionNotice(final SewerageApplicationDetails sewerageApplicationDetails,
-                                                    final InputStream fileStream) {
+            final InputStream fileStream) {
         SewerageNotice sewerageNotice = null;
 
         if (sewerageApplicationDetails != null) {
@@ -485,8 +491,8 @@ public class SewerageNoticeService {
 
     @Transactional
     public SewerageNotice buildDemandBillNotice(final SewerageApplicationDetails sewerageApplicationDetails,
-                                                final InputStream fileStream,
-                                                final String demandBillNumber) {
+            final InputStream fileStream,
+            final String demandBillNumber) {
         SewerageNotice sewerageNotice = null;
         if (sewerageApplicationDetails != null) {
             sewerageNotice = new SewerageNotice();

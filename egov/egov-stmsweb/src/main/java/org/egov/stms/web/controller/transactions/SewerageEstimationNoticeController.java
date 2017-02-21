@@ -80,7 +80,6 @@ public class SewerageEstimationNoticeController {
     private static final int BUFFER_SIZE = 4096;
 
     public static final String ESTIMATION_NOTICE = "sewerageEstimationNotice";
-    private ReportOutput reportOutput = null;
 
     @Autowired
     private SewerageApplicationDetailsService sewerageApplicationDetailsService;
@@ -95,6 +94,8 @@ public class SewerageEstimationNoticeController {
 
     private ResponseEntity<byte[]> generateReport(final SewerageApplicationDetails sewerageApplicationDetails,
             final HttpSession session, final HttpServletRequest request) {
+        ReportOutput reportOutput = null;
+
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType("application/pdf"));
         headers.add("content-disposition", "inline;filename=EstimationNotice.pdf");
