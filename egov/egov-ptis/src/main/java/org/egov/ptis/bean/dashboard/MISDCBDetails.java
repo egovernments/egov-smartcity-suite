@@ -45,6 +45,7 @@ public class MISDCBDetails {
     private List<DCBDetails> dcbDetails;
     private List<UlbWiseDemandCollection> ulbDcbDetails;
     private List<UlbWiseWeeklyDCB> ulbWeeklyDCBDetails;
+    private List<MonthlyDCB> monthlyDCBDetails;
 
     public List<DCBDetails> getDcbDetails() {
         return dcbDetails;
@@ -70,4 +71,12 @@ public class MISDCBDetails {
         this.ulbWeeklyDCBDetails = ulbWeeklyDCBDetails;
     }
 
+    public List<MonthlyDCB> getMonthlyDCBDetails() {
+        return monthlyDCBDetails;
+    }
+
+    public void setMonthlyDCBDetails(List<MonthlyDCB> monthlyDCBDetails) {
+        this.monthlyDCBDetails = monthlyDCBDetails;
+    }
+    
 }

@@ -82,6 +82,7 @@ import org.egov.ptis.bean.dashboard.TaxPayerResponseDetails;
 import org.egov.ptis.bean.dashboard.TotalCollectionStats;
 import org.egov.ptis.bean.dashboard.UlbWiseDemandCollection;
 import org.egov.ptis.bean.dashboard.UlbWiseWeeklyDCB;
+import org.egov.ptis.bean.dashboard.MonthlyDCB;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.model.ErrorDetails;
 import org.egov.ptis.service.es.CollectionIndexElasticSearchService;
@@ -337,6 +338,17 @@ public class PropTaxDashboardService {
     }
     
     /**
+     * Provides month wise DCB details for all cities
+     * @param collectionDetailsRequest
+     * @param intervalType
+     * @return
+     */
+    public List<MonthlyDCB> getMonthwiseDCBDetails(CollectionDetailsRequest collectionDetailsRequest,
+            String intervalType) {
+        return collectionIndexElasticSearchService.getMonthwiseDCBDetailsAcrossCities(collectionDetailsRequest, intervalType);
+    }
+    
+    /**
      * API provides Daily Target information across all cities
      * @param collectionDetailsRequest
      * @return CollectionDetails
@@ -347,4 +359,5 @@ public class PropTaxDashboardService {
                 .setResponseDetails(collectionIndexElasticSearchService.getResponseTableData(collectionDetailsRequest));
         return collectionIndexDetails;
     }
+   
 }

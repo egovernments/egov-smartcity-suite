@@ -86,6 +86,7 @@ import org.egov.ptis.bean.dashboard.DemandCollectionMIS;
 import org.egov.ptis.bean.dashboard.ReceiptTableData;
 import org.egov.ptis.bean.dashboard.ReceiptsTrend;
 import org.egov.ptis.bean.dashboard.UlbWiseDemandCollection;
+import org.egov.ptis.bean.dashboard.MonthlyDCB;
 import org.egov.ptis.bean.dashboard.UlbWiseWeeklyDCB;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.es.BillCollectorIndex;
@@ -2218,6 +2219,159 @@ public class CollectionIndexElasticSearchService {
             ulbWiseWeeklyDCB.setWeek4DCB(demandCollectionMIS);
         if(ulbWiseWeeklyDCB.getWeek5DCB() == null)
             ulbWiseWeeklyDCB.setWeek5DCB(demandCollectionMIS);
+    }
+    
+    /**
+     * Provides month wise DCB details across all ULBs
+     * @param collectionDetailsRequest
+     * @param intervalType
+     * @return list
+     */
+    public List<MonthlyDCB> getMonthwiseDCBDetailsAcrossCities(final CollectionDetailsRequest collectionDetailsRequest,
+            final String intervalType) {
+        final List<MonthlyDCB> ulbWiseDetails = new ArrayList<>();
+        Date fromDate = null;
+        Date toDate = null;
+        String monthName;
+        Sum aggregateSum;
+        Integer month;
+        Map<String, Object[]> monthwiseColl;
+        Map<Integer, String> monthValuesMap = DateUtils.getAllMonthsWithFullNames();
+        
+        final Map<String, Map<String, Object[]>> ulbwiseMonthlyCollMap = new HashMap<>();
+        if (StringUtils.isNotBlank(collectionDetailsRequest.getFromDate())
+                && StringUtils.isNotBlank(collectionDetailsRequest.getToDate())) {
+            fromDate = DateUtils.getDate(collectionDetailsRequest.getFromDate(), DATE_FORMAT_YYYYMMDD);
+            toDate = DateUtils.addDays(
+                    DateUtils.getDate(collectionDetailsRequest.getToDate(), DATE_FORMAT_YYYYMMDD),
+                    1);
+        }
+        
+        final Map<String, BigDecimal> totalDemandMap = getCollectionAndDemandValues(collectionDetailsRequest, fromDate,
+                toDate, PROPERTY_TAX_INDEX_NAME, TOTAL_DEMAND, "cityName");
+        final Aggregations collAggr = getMonthwiseCollectionsForConsecutiveYears(collectionDetailsRequest, fromDate,
+                toDate, true, intervalType);
+        final StringTerms cityaggr = collAggr.get(BY_CITY);
+        BigDecimal totalDemand = BigDecimal.ZERO;
+        BigDecimal monthlyDemand = BigDecimal.ZERO;
+        int noOfMonths;
+        Object[] demandCollValues;
+        
+        for (final Terms.Bucket cityDetailsentry : cityaggr.getBuckets()) {
+            monthwiseColl = new LinkedHashMap<>();
+            final String ulbName = cityDetailsentry.getKeyAsString();
+            noOfMonths = 0;
+            totalDemand = totalDemandMap.get(ulbName);
+
+            if (totalDemand == null)
+                totalDemand = BigDecimal.ZERO;
+            final Histogram dateaggs = cityDetailsentry.getAggregations().get(DATE_AGG);
+            for (final Histogram.Bucket entry : dateaggs.getBuckets()) {
+                if (noOfMonths == 0)
+                    noOfMonths = 1;
+                demandCollValues = new Object[12];
+                String[] dateArr =entry.getKeyAsString().split("T");
+                month = Integer.valueOf(dateArr[0].split("-", 3)[1]);
+                monthName = monthValuesMap.get(month);
+                monthlyDemand = totalDemand.divide(BigDecimal.valueOf(12), BigDecimal.ROUND_HALF_UP)
+                        .multiply(BigDecimal.valueOf(noOfMonths));
+                aggregateSum = entry.getAggregations().get("current_total");
+               
+                if (BigDecimal.valueOf(aggregateSum.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP)
+                        .compareTo(BigDecimal.ZERO) > 0) {
+                    demandCollValues[0] = BigDecimal.valueOf(aggregateSum.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP);
+                    demandCollValues[1] = monthlyDemand;
+                    monthwiseColl.put(monthName, demandCollValues);
+                }
+                noOfMonths++;
+            }
+            ulbwiseMonthlyCollMap.put(ulbName, monthwiseColl);
+        }
+        setMonthlyDCBValues(ulbWiseDetails, ulbwiseMonthlyCollMap);
+        return ulbWiseDetails;
+    }
+    
+    /**
+     * Sets the Demand and Collection values
+     * @param ulbWiseDetails
+     * @param monthlyCollMap
+     */
+    private void setMonthlyDCBValues(final List<MonthlyDCB> ulbWiseDetails,
+            final Map<String, Map<String, Object[]>> yearwiseMonthlyCollMap) {
+        MonthlyDCB monthlyDCB;
+        DemandCollectionMIS demandCollectionMIS;
+        String month;
+        for (final Map.Entry<String, Map<String, Object[]>> entry : yearwiseMonthlyCollMap.entrySet()) {
+            monthlyDCB = new MonthlyDCB();
+            monthlyDCB.setUlbName(entry.getKey());
+            for (final Map.Entry<String, Object[]> monthMap : entry.getValue().entrySet()) {
+                demandCollectionMIS = new DemandCollectionMIS();
+                month = monthMap.getKey();
+                demandCollectionMIS.setCollection(new BigDecimal(monthMap.getValue()[0].toString()));
+                demandCollectionMIS.setDemand(new BigDecimal(monthMap.getValue()[1].toString()));
+                if (demandCollectionMIS.getDemand().compareTo(BigDecimal.ZERO) > 0)
+                    demandCollectionMIS.setPercent(demandCollectionMIS.getCollection()
+                            .divide(demandCollectionMIS.getDemand(), 2, RoundingMode.CEILING).multiply(BIGDECIMAL_100));
+                if ("April".equalsIgnoreCase(month))
+                    monthlyDCB.setAprilDCB(demandCollectionMIS);
+                else if ("May".equalsIgnoreCase(month))
+                    monthlyDCB.setMayDCB(demandCollectionMIS);
+                else if ("June".equalsIgnoreCase(month))
+                    monthlyDCB.setJuneDCB(demandCollectionMIS);
+                else if ("July".equalsIgnoreCase(month))
+                    monthlyDCB.setJulyDCB(demandCollectionMIS);
+                else if ("August".equalsIgnoreCase(month))
+                    monthlyDCB.setAugustDCB(demandCollectionMIS);
+                else if ("September".equalsIgnoreCase(month))
+                    monthlyDCB.setSeptemberDCB(demandCollectionMIS);
+                else if ("October".equalsIgnoreCase(month))
+                    monthlyDCB.setOctoberDCB(demandCollectionMIS);
+                else if ("November".equalsIgnoreCase(month))
+                    monthlyDCB.setNovemberDCB(demandCollectionMIS);
+                else if ("December".equalsIgnoreCase(month))
+                    monthlyDCB.setDecemberDCB(demandCollectionMIS);
+                else if ("January".equalsIgnoreCase(month))
+                    monthlyDCB.setJanuaryDCB(demandCollectionMIS);
+                else if ("Feburary".equalsIgnoreCase(month))
+                    monthlyDCB.setFebruaryDCB(demandCollectionMIS);
+                else if ("March".equalsIgnoreCase(month))
+                    monthlyDCB.setMarchDCB(demandCollectionMIS);
+            }
+            updateNullValuesForMonthlyDCB(monthlyDCB);
+            ulbWiseDetails.add(monthlyDCB);
+        }
+    }
+    
+    /**
+     * Updates null months with new objects
+     * @param udc
+     */
+    private void updateNullValuesForMonthlyDCB(MonthlyDCB monthlyDCB) {
+        DemandCollectionMIS demandCollectionMIS = new DemandCollectionMIS();
+        if (monthlyDCB.getAprilDCB() == null)
+            monthlyDCB.setAprilDCB(demandCollectionMIS);
+        if (monthlyDCB.getMayDCB() == null)
+            monthlyDCB.setMayDCB(demandCollectionMIS);
+        if (monthlyDCB.getJuneDCB() == null)
+            monthlyDCB.setJuneDCB(demandCollectionMIS);
+        if (monthlyDCB.getJulyDCB() == null)
+            monthlyDCB.setJulyDCB(demandCollectionMIS);
+        if (monthlyDCB.getAugustDCB() == null)
+            monthlyDCB.setAugustDCB(demandCollectionMIS);
+        if (monthlyDCB.getSeptemberDCB() == null)
+            monthlyDCB.setSeptemberDCB(demandCollectionMIS);
+        if (monthlyDCB.getOctoberDCB() == null)
+            monthlyDCB.setOctoberDCB(demandCollectionMIS);
+        if (monthlyDCB.getNovemberDCB() == null)
+            monthlyDCB.setNovemberDCB(demandCollectionMIS);
+        if (monthlyDCB.getDecemberDCB() == null)
+            monthlyDCB.setDecemberDCB(demandCollectionMIS);
+        if (monthlyDCB.getJanuaryDCB() == null)
+            monthlyDCB.setJanuaryDCB(demandCollectionMIS);
+        if (monthlyDCB.getFebruaryDCB() == null)
+            monthlyDCB.setFebruaryDCB(demandCollectionMIS);
+        if (monthlyDCB.getMarchDCB() == null)
+            monthlyDCB.setMarchDCB(demandCollectionMIS);
     }
     
 }

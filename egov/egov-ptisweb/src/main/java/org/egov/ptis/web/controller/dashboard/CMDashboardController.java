@@ -67,6 +67,7 @@ import org.egov.ptis.bean.dashboard.TaxPayerResponseDetails;
 import org.egov.ptis.bean.dashboard.TotalCollectionStats;
 import org.egov.ptis.bean.dashboard.UlbWiseDemandCollection;
 import org.egov.ptis.bean.dashboard.UlbWiseWeeklyDCB;
+import org.egov.ptis.bean.dashboard.MonthlyDCB;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.service.dashboard.PropTaxDashboardService;
 import org.joda.time.DateTime;
@@ -299,18 +300,19 @@ public class CMDashboardController {
             @RequestParam("fromDate") String fromDate,
             @RequestParam("toDate") String toDate, @RequestParam("type") String type,
             @RequestParam("propertyType") String propertyType,
-            @RequestParam("usageType") String usageType, @RequestParam("intervalType") String intervalType, @RequestParam("month") String month, @RequestParam("year") String year)
+            @RequestParam("usageType") String usageType, @RequestParam("intervalType") String intervalType, 
+            @RequestParam("month") String month, @RequestParam("year") String year)
             throws IOException {
         CollectionDetailsRequest collectionDetailsRequest = new CollectionDetailsRequest();
-        
         MISDCBDetails misDCBDetails = new MISDCBDetails();
-        List<UlbWiseWeeklyDCB> intervalwiseDCBDetails = new ArrayList<>();
+        List<UlbWiseWeeklyDCB> weekwiseDCBDetails;
+        List<MonthlyDCB> monthwiseDCBDetails;
         if (StringUtils.isNotBlank(usageType))
             collectionDetailsRequest.setUsageType(usageType);
         Long startTime = System.currentTimeMillis();
         if (StringUtils.isBlank(intervalType))
             misDCBDetails.setDcbDetails(propTaxDashboardService.getDCBDetails(collectionDetailsRequest));
-        else {
+        else{ 
             if ("week".equalsIgnoreCase(intervalType)){
                 String monthStartDateStr = year.concat("-").concat(month).concat("-").concat("01");
                 LocalDate monthStDate = new LocalDate(monthStartDateStr);
@@ -320,16 +322,18 @@ public class CMDashboardController {
                 fromDate = weekStart.toString(PropertyTaxConstants.DATE_FORMAT_YYYYMMDD);
                 toDate = endOfMonth.toString(PropertyTaxConstants.DATE_FORMAT_YYYYMMDD);
             }
-            
         }
-        populateCollectionDetailsRequest(collectionDetailsRequest, regionName, districtName, ulbGrade, ulbCode, fromDate, toDate,
+        populateCollectionDetailsRequest(collectionDetailsRequest,regionName, districtName, ulbGrade, ulbCode, fromDate, toDate,
                 type, propertyType);
         
         if("week".equalsIgnoreCase(intervalType)){
-            intervalwiseDCBDetails = propTaxDashboardService.getWeekwiseDCBDetails(collectionDetailsRequest, intervalType);
-            misDCBDetails.setUlbWeeklyDCBDetails(intervalwiseDCBDetails);
+            weekwiseDCBDetails = propTaxDashboardService.getWeekwiseDCBDetails(collectionDetailsRequest, intervalType);
+            misDCBDetails.setUlbWeeklyDCBDetails(weekwiseDCBDetails);
+        } else if ("month".equalsIgnoreCase(intervalType)) {
+            monthwiseDCBDetails = propTaxDashboardService.getMonthwiseDCBDetails(collectionDetailsRequest, intervalType);
+            misDCBDetails.setMonthlyDCBDetails(monthwiseDCBDetails);
         }
-
+    
         Long timeTaken = System.currentTimeMillis() - startTime;
         LOGGER.debug("Time taken to serve citywisedcb is : " + timeTaken + " (millisecs)");
         return misDCBDetails;
