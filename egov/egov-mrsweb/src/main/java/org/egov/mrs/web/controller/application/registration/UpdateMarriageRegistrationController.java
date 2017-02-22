@@ -67,6 +67,7 @@ import org.egov.mrs.application.MarriageUtils;
 import org.egov.mrs.domain.entity.MarriageCertificate;
 import org.egov.mrs.domain.entity.MarriageRegistration;
 import org.egov.mrs.domain.enums.MarriageCertificateType;
+import org.egov.mrs.service.es.MarriageRegistrationUpdateIndexesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -106,6 +107,8 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
     protected MarriageUtils marriageUtils;
     @Autowired
     protected FileStoreMapperRepository fileStoreMapperRepository;
+    @Autowired
+    private MarriageRegistrationUpdateIndexesService marriageRegistrationUpdateIndexesService;
     
     private static final Logger LOGGER = Logger.getLogger(UpdateMarriageRegistrationController.class);
 
@@ -380,8 +383,8 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
             model.addAttribute(MARRIAGE_REGISTRATION, registration);
             return MRG_REGISTRATION_EDIT_APPROVED;
         }
-        marriageRegistrationService.updateRegistration(registration);
-
+        MarriageRegistration marriageRegistration = marriageRegistrationService.updateRegistration(registration);
+        marriageRegistrationUpdateIndexesService.updateIndexes(marriageRegistration);
         model.addAttribute("message", messageSource.getMessage("msg.update.registration", new String[] {
                 registration.getApplicationNo(), registration.getRegistrationNo() }, null));
         return MRG_REGISTRATION_SUCCESS;
