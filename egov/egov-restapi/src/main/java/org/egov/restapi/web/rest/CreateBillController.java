@@ -58,13 +58,15 @@ import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.model.bills.EgBillregister;
-import org.egov.ptis.domain.model.ErrorDetails;
 import org.egov.restapi.model.BillRegister;
+import org.egov.restapi.model.RestErrors;
 import org.egov.restapi.service.BillService;
 import org.egov.restapi.util.JsonConvertor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.gson.JsonObject;
@@ -81,9 +83,10 @@ public class CreateBillController {
      *
      * @param egBillregister
      * @param request
-     * @return billnumber - server response in JSON format
+     * @return successMessage and billnumber - server response in JSON format
      */
 
+    @ResponseStatus(value = HttpStatus.OK)
     @RequestMapping(value = "/egf/bill", method = POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public String createContractorBill(@RequestBody final String requestJson,
             final HttpServletRequest request) {
@@ -99,15 +102,15 @@ public class CreateBillController {
             billRegister = (BillRegister) getObjectFromJSONRequest(requestJson, BillRegister.class);
         } catch (final IOException e) {
             LOG.error(e.getStackTrace());
-            final List<ErrorDetails> errorList = new ArrayList<>(0);
-            final ErrorDetails er = new ErrorDetails();
-            er.setErrorCode(e.getMessage());
-            er.setErrorMessage(e.getMessage());
-            errorList.add(er);
+            final List<RestErrors> errorList = new ArrayList<>(0);
+            final RestErrors re = new RestErrors();
+            re.setErrorCode(e.getMessage());
+            re.setErrorMessage(e.getMessage());
+            errorList.add(re);
             return JsonConvertor.convert(errorList);
         }
         try {
-            final List<ErrorDetails> errors = billService.validateBillRegister(billRegister);
+            final List<RestErrors> errors = billService.validateBillRegister(billRegister);
             if (!errors.isEmpty())
                 return JsonConvertor.convert(errors);
             else {
@@ -119,23 +122,23 @@ public class CreateBillController {
             }
         } catch (final ValidationException e) {
             LOG.error(e.getStackTrace());
-            final List<ErrorDetails> errorList = new ArrayList<>(0);
+            final List<RestErrors> errorList = new ArrayList<>(0);
 
             final List<ValidationError> errors = e.getErrors();
             for (final ValidationError ve : errors) {
-                final ErrorDetails er = new ErrorDetails();
-                er.setErrorCode(ve.getKey());
-                er.setErrorMessage(ve.getMessage());
-                errorList.add(er);
+                final RestErrors re = new RestErrors();
+                re.setErrorCode(ve.getKey());
+                re.setErrorMessage(ve.getMessage());
+                errorList.add(re);
             }
             return JsonConvertor.convert(errorList);
         } catch (final Exception e) {
             LOG.error(e.getStackTrace());
-            final List<ErrorDetails> errorList = new ArrayList<>(0);
-            final ErrorDetails er = new ErrorDetails();
-            er.setErrorCode(e.getMessage());
-            er.setErrorMessage(e.getMessage());
-            errorList.add(er);
+            final List<RestErrors> errorList = new ArrayList<>(0);
+            final RestErrors re = new RestErrors();
+            re.setErrorCode(e.getMessage());
+            re.setErrorMessage(e.getMessage());
+            errorList.add(re);
             return JsonConvertor.convert(errorList);
         }
         jsonObject.addProperty("successMessage", "Works Bill created Successfully");
