@@ -113,6 +113,9 @@ $(document).ready(function () {
     }).on('typeahead:selected', function () {
 
     });
+    $('#subCategory').change(function () {
+        $('#subCategoryId').val($('#subCategory').val());
+    });
 
     $('#category').change(function () {
         var val = $(this).val();
