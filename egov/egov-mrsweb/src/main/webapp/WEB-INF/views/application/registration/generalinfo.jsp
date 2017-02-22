@@ -144,7 +144,7 @@
 		</label>
 		<div class="col-sm-3">
 			<form:input path="dateOfMarriage" id="txt-dateOfMarriage" type="text"
-				class="form-control low-width datepicker"
+				class="form-control datepicker" data-inputmask="'alias': 'date'"
 				data-date-today-highlight="true" data-date-end-date="0d"
 				placeholder="" autocomplete="off" required="required" />
 			<form:errors path="dateOfMarriage" cssClass="add-margin error-msg" />

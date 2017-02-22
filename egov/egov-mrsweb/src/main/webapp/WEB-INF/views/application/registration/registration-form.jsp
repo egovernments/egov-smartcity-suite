@@ -45,6 +45,12 @@
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 
 <script src="<cdn:url value='/resources/js/app/viewregistration.js'/> "></script>
+<script
+	src="<cdn:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
+<script
+	src="<cdn:url value='/resources/js/app/registrationformvalidation.js?rnd=${app_release_no}'/> "></script>
+<script
+	src="<cdn:url value='/resources/js/app/registration.js?rnd=${app_release_no}'/> "></script>
 
 <div class="row">
 	<div class="col-md-12">
@@ -157,9 +163,4 @@
 		</form:form>
 	</div>
 </div>
-<script
-	src="<cdn:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
-<script
-	src="<cdn:url value='/resources/js/app/registrationformvalidation.js?rnd=${app_release_no}'/> "></script>
-<script
-	src="<cdn:url value='/resources/js/app/registration.js?rnd=${app_release_no}'/> "></script>
+
