@@ -427,6 +427,9 @@ public class RestApiConstants {
     public static final String THIRD_PARTY_ERR_CODE_NO_SUBSCHEME = "EGF-REST-33";
     public static final String THIRD_PARTY_ERR_MSG_NO_SUBSCHEME = "No Sub Scheme exists with the given sub scheme code";
 
+    public static final String THIRD_PARTY_ERR_CODE_DATE_CANNOT_BE_FUTTURE = "EGF-REST-34";
+    public static final String THIRD_PARTY_ERR_MSG_DATE_CANNOT_BE_FUTTURE = "Provided date can not be Future date";
+
     public static final String THIRD_PARTY_ERR_CODE_NOT_EXIST_CONTRACTOR = "EGWORKS-CONTRACTOR-1";
     public static final String THIRD_PARTY_ERR_MSG_NOT_EXIST_CONTRACTOR = "No contractor exists with given contractor code";
 

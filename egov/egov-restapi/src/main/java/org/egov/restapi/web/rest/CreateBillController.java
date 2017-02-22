@@ -67,6 +67,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.google.gson.JsonObject;
+
 @RestController
 public class CreateBillController {
     private static final Logger LOG = Logger.getLogger(CreateBillController.class);
@@ -85,11 +87,14 @@ public class CreateBillController {
     @RequestMapping(value = "/egf/bill/create", method = POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public String createContractorBill(@RequestBody final String requestJson,
             final HttpServletRequest request) {
+        if (LOG.isDebugEnabled())
+            LOG.debug(requestJson);
         String responseJson;
         EgBillregister egBillregister;
         EgBillregister savedBillregister;
         ApplicationThreadLocals.setUserId(2L);
         BillRegister billRegister = null;
+        final JsonObject jsonObject = new JsonObject();
         try {
             billRegister = (BillRegister) getObjectFromJSONRequest(requestJson, BillRegister.class);
         } catch (final IOException e) {
@@ -133,7 +138,9 @@ public class CreateBillController {
             errorList.add(er);
             return JsonConvertor.convert(errorList);
         }
-        return JsonConvertor.convert(responseJson);
+        jsonObject.addProperty("successMessage", "Works Bill created Successfully");
+        jsonObject.addProperty("billNumber", responseJson);
+        return jsonObject.toString();
     }
 
     /**

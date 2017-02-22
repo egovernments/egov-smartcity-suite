@@ -111,6 +111,12 @@ public class BillService {
             errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_BILLDATE);
             errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_BILLDATE);
             errors.add(errorDetails);
+        } else if (billRegister.getBillDate().after(new Date())) {
+            errorDetails = new ErrorDetails();
+            errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_DATE_CANNOT_BE_FUTTURE);
+            errorDetails.setErrorMessage(
+                    billRegister.getBillDate() + " - " + RestApiConstants.THIRD_PARTY_ERR_MSG_DATE_CANNOT_BE_FUTTURE);
+            errors.add(errorDetails);
         } else
             try {
                 financialYearHibernateDAO.getFinancialYearByDate(billRegister.getBillDate());
@@ -163,6 +169,14 @@ public class BillService {
             errorDetails = new ErrorDetails();
             errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_SCHEME);
             errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_SCHEME);
+            errors.add(errorDetails);
+        }
+        if (billRegister.getPartyBillDate() != null
+                && billRegister.getPartyBillDate().after(new Date())) {
+            errorDetails = new ErrorDetails();
+            errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_DATE_CANNOT_BE_FUTTURE);
+            errorDetails.setErrorMessage(
+                    billRegister.getPartyBillDate() + " - " + RestApiConstants.THIRD_PARTY_ERR_MSG_DATE_CANNOT_BE_FUTTURE);
             errors.add(errorDetails);
         }
         validateBillDetails(billRegister, errors);
