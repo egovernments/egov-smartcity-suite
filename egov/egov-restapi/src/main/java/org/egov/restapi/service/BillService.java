@@ -33,7 +33,6 @@ import org.egov.restapi.model.BillRegister;
 import org.egov.restapi.model.RestErrors;
 import org.egov.services.masters.SchemeService;
 import org.egov.services.masters.SubSchemeService;
-import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.master.service.ContractorService;
 import org.egov.works.models.estimate.ProjectCode;
 import org.egov.works.services.ProjectCodeService;
@@ -423,7 +422,7 @@ public class BillService {
         egBillregister.setExpendituretype(WorksConstants.BILL_EXPENDITURE_TYPE);
         egBillregister.setBillstatus(WorksConstants.APPROVED);
         egBillregister.setStatus(financialUtils.getStatusByModuleAndCode(WorksConstants.CONTRACTORBILL,
-                ContractorBillRegister.BillStatus.CREATED.toString()));
+                WorksConstants.APPROVED));
     }
 
     private void populateEgBillregisterMis(final EgBillregister egBillregister, final BillRegister billRegister) {
