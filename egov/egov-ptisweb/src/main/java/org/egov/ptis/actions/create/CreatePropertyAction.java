@@ -308,6 +308,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     private List<DocumentType> assessmentDocumentTypes = new ArrayList<>();
     private List<String> assessmentDocumentNames;
     private transient DocumentTypeDetails documentTypeDetails = new DocumentTypeDetails();
+    private boolean eligibleInitiator = Boolean.TRUE;
 
     @Autowired
     private transient PropertyDepartmentRepository propertyDepartmentRepository;
@@ -370,6 +371,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                 || StringUtils.containsIgnoreCase(userDesignationList, JUNIOR_ASSISTANT)
                 || StringUtils.containsIgnoreCase(userDesignationList, SENIOR_ASSISTANT))
             showTaxCalcBtn = Boolean.TRUE;
+        validateInitiatorDesgn();
         return RESULT_NEW;
     }
 
@@ -1484,6 +1486,13 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         }
         LOGGER.debug("exiting calculateTax()");
     }
+    
+    public void validateInitiatorDesgn() {
+        if (!propertyTaxCommonUtils.isEligibleInitiator(securityUtils.getCurrentUser().getId())) {
+            setEligibleInitiator(false);
+            addActionError(getText("initiator.noteligible"));
+        }
+    }
 
     @Override
     public PropertyImpl getProperty() {
@@ -2148,4 +2157,13 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     public void setFloorDetailsEntered(boolean floorDetailsEntered) {
         this.floorDetailsEntered = floorDetailsEntered;
     }
+
+    public boolean isEligibleInitiator() {
+        return eligibleInitiator;
+    }
+
+    public void setEligibleInitiator(boolean eligibleInitiator) {
+        this.eligibleInitiator = eligibleInitiator;
+    }
+
 }

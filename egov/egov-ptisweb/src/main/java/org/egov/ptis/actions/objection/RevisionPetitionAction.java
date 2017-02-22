@@ -433,6 +433,10 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
             } else
                 objection.setMeesevaApplicationNumber(getMeesevaApplicationNumber());
         setFloorDetails(objection.getBasicProperty().getProperty());
+        if (!propertyTaxCommonUtils.isEligibleInitiator(securityUtils.getCurrentUser().getId())){
+            addActionError(getText("initiator.noteligible"));
+            return COMMON_FORM;
+        }
         return NEW;
     }
 

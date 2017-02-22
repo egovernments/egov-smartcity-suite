@@ -81,6 +81,7 @@ import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.TaxExemptionReason;
 import org.egov.ptis.domain.service.exemption.TaxExemptionService;
 import org.egov.ptis.domain.service.property.PropertyService;
+import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -111,6 +112,8 @@ public class TaxExemptionController extends GenericWorkFlowController {
     private static final String TAX_EXEMPTION = "TAX_EXEMPTION";
     protected static final String TAX_EXEMPTION_FORM = "taxExemption-form";
     protected static final String TAX_EXEMPTION_SUCCESS = "taxExemption-success";
+    private static final String ERROR_MSG = "errorMsg";
+    
     @Autowired
     private BasicPropertyDAO basicPropertyDAO;
     @Autowired
@@ -131,6 +134,9 @@ public class TaxExemptionController extends GenericWorkFlowController {
     BasicProperty basicProperty;
     PropertyImpl propertyImpl = new PropertyImpl();
     PropertyImpl oldProperty;
+    
+    @Autowired
+    private PropertyTaxCommonUtils propertyTaxCommonUtils;
 
     @ModelAttribute
     public Property propertyModel(@PathVariable final String assessmentNo) {
@@ -155,11 +161,15 @@ public class TaxExemptionController extends GenericWorkFlowController {
         isExempted = oldProperty.getIsExemptedFromTax();
         isAlert = true;
         basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
+        if (!propertyTaxCommonUtils.isEligibleInitiator(securityUtils.getCurrentUser().getId())){
+            model.addAttribute(ERROR_MSG, "msg.initiator.noteligible");
+            return PROPERTY_VALIDATION;
+        }
         if (basicProperty != null) {
             property = (PropertyImpl) basicProperty.getProperty();
             final Ptdemand ptDemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(property);
             if (ptDemand == null || ptDemand != null && ptDemand.getEgDemandDetails() == null) {
-                model.addAttribute("errorMsg", "There is no tax for this property");
+                model.addAttribute(ERROR_MSG, "There is no tax for this property");
                 return PROPERTY_VALIDATION;
             }
 
@@ -171,9 +181,9 @@ public class TaxExemptionController extends GenericWorkFlowController {
             else if (!isExempted) {
                 final Map<String, BigDecimal> propertyTaxDetails = propertyService
                         .getCurrentPropertyTaxDetails(basicProperty.getActiveProperty());
-                BigDecimal currentPropertyTax = BigDecimal.ZERO;
-                BigDecimal currentPropertyTaxDue = BigDecimal.ZERO;
-                BigDecimal arrearPropertyTaxDue = BigDecimal.ZERO;
+                BigDecimal currentPropertyTax;
+                BigDecimal currentPropertyTaxDue;
+                BigDecimal arrearPropertyTaxDue;
                 final Map<String, Installment> installmentMap = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
                 final Installment installmentFirstHalf = installmentMap.get(PropertyTaxConstants.CURRENTYEAR_FIRST_HALF);
                 if (DateUtils.between(new Date(), installmentFirstHalf.getFromDate(), installmentFirstHalf.getToDate())) {
@@ -203,7 +213,7 @@ public class TaxExemptionController extends GenericWorkFlowController {
                 final boolean hasChildPropertyUnderWorkflow = propertyTaxUtil
                         .checkForParentUsedInBifurcation(basicProperty.getUpicNo());
                 if (hasChildPropertyUnderWorkflow) {
-                    model.addAttribute("errorMsg",
+                    model.addAttribute(ERROR_MSG,
                             "Cannot proceed as this property is used in Bifurcation, which is under workflow");
                     return PROPERTY_VALIDATION;
                 }
@@ -240,7 +250,7 @@ public class TaxExemptionController extends GenericWorkFlowController {
                 : null;
         if ((!propertyByEmployee || loggedUserIsMeesevaUser) && assignment == null
                 && propertyService.getUserPositionByZone(property.getBasicProperty(), false) == null) {
-            model.addAttribute("errorMsg", "No Senior or Junior assistants exists,Please check");
+            model.addAttribute(ERROR_MSG, "No Senior or Junior assistants exists,Please check");
             model.addAttribute("stateType", propertyImpl.getClass().getSimpleName());
             taxExemptionService.addModelAttributes(model, basicProperty);
             prepareWorkflow(model, propertyImpl, new WorkflowContainer());
@@ -300,8 +310,9 @@ public class TaxExemptionController extends GenericWorkFlowController {
         return redirect;
     }
 
+    @ResponseBody
     @RequestMapping(value = "/printAck/{assessmentNo}", method = RequestMethod.GET)
-    public @ResponseBody ResponseEntity<byte[]> printAck(final HttpServletRequest request, final Model model,
+    public ResponseEntity<byte[]> printAck(final HttpServletRequest request, final Model model,
             @PathVariable("assessmentNo") final String assessmentNo) {
         final ReportOutput reportOutput = propertyTaxUtil.generateCitizenCharterAcknowledgement(assessmentNo, TAX_EXEMPTION,
                 WFLOW_ACTION_NAME_EXEMPTION);

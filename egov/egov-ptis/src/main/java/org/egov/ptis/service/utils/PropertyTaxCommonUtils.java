@@ -449,4 +449,16 @@ public class PropertyTaxCommonUtils {
         final City city = (City) entityManager.createQuery("from City").getSingleResult();
         return city.getGrade().equals(PropertyTaxConstants.CITY_GRADE_CORPORATION) ? true : false;
     }
+    
+    /**
+     * Returns whether the logged in User is eligible to initiate an application
+     * or not
+     *
+     * @return boolean
+     */
+    public Boolean isEligibleInitiator(Long userId) {
+        return (getAllDesignationsForUser(userId).contains(PropertyTaxConstants.JUNIOR_ASSISTANT)
+                || getAllDesignationsForUser(userId).contains(PropertyTaxConstants.SENIOR_ASSISTANT)) ? true : false;
+
+    }
 }

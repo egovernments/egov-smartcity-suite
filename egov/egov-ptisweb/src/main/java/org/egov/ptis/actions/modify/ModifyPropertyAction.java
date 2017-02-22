@@ -396,6 +396,10 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
                 StringUtils.containsIgnoreCase(userDesignationList, SENIOR_ASSISTANT))
                 && PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn))
             showTaxCalcBtn = Boolean.TRUE;
+        if (!propertyTaxCommonUtils.isEligibleInitiator(securityUtils.getCurrentUser().getId())){
+            addActionError(getText("initiator.noteligible"));
+            return COMMON_FORM;
+        }
         return target;
     }
 
