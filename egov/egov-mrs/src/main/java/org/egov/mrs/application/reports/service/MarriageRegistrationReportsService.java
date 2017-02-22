@@ -1137,7 +1137,7 @@ public class MarriageRegistrationReportsService {
         final Date fromDate = formatter.parse(searchRequest.getYear() + "/" + 1 + "/" + 1);
         final Date toDate = formatter.parse(searchRequest.getYear() + "/" + 12 + "/" + 31);
         if (fromDate != null && toDate != null)
-            boolQuery = QueryBuilders.boolQuery().filter(QueryBuilders.rangeQuery("registrationDate")
+            boolQuery = boolQuery.filter(QueryBuilders.rangeQuery("registrationDate")
                     .from(fromDate)
                     .to(toDate));
         boolQuery = boolQuery.filter(QueryBuilders.matchQuery("applicationStatus", "Registered"));
