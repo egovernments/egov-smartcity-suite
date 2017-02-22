@@ -433,6 +433,12 @@ public class RestApiConstants {
     public static final String THIRD_PARTY_ERR_CODE_NO_VALID_DETAIL_GLCODE = "EGF-REST-35";
     public static final String THIRD_PARTY_ERR_MSG_NO_VALID_DETAIL_GLCODE = "Glcode provided is not a valid detail code";
 
+    public static final String THIRD_PARTY_ERR_CODE_PROJECTCODE_NOT_MATCHING = "EGF-REST-36";
+    public static final String THIRD_PARTY_ERR_MSG_PROJECTCODE_NOT_MATCHING = "Given Bill Payee Project code is not matching Bill register Project code";
+
+    public static final String THIRD_PARTY_ERR_CODE_NOT_VALID_NAME_OF_WORK = "EGF-REST-37";
+    public static final String THIRD_PARTY_ERR_MSG_NOT_VALID_NAME_OF_WORK = "\n \t and ' are not allowed in Name of the Work";
+
     public static final String THIRD_PARTY_ERR_CODE_NOT_EXIST_CONTRACTOR = "EGWORKS-CONTRACTOR-1";
     public static final String THIRD_PARTY_ERR_MSG_NOT_EXIST_CONTRACTOR = "No contractor exists with given contractor code";
 
