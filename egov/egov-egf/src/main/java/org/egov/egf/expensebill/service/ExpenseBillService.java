@@ -216,7 +216,8 @@ public class ExpenseBillService {
 
         createCheckList(savedEgBillregister, checkLists);
 
-        if (workFlowAction.equals(FinancialConstants.CREATEANDAPPROVE))
+        if (workFlowAction.equals(FinancialConstants.CREATEANDAPPROVE)
+                && FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT.equals(egBillregister.getExpendituretype()))
             savedEgBillregister.setStatus(financialUtils.getStatusByModuleAndCode(FinancialConstants.CONTINGENCYBILL_FIN,
                     FinancialConstants.CONTINGENCYBILL_APPROVED_STATUS));
         else {

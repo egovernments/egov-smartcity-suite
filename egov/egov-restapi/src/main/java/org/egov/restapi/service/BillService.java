@@ -1,6 +1,7 @@
 package org.egov.restapi.service;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -19,18 +20,20 @@ import org.egov.commons.service.FunctionService;
 import org.egov.commons.service.FundService;
 import org.egov.commons.utils.EntityType;
 import org.egov.egf.expensebill.service.ExpenseBillService;
+import org.egov.egf.utils.FinancialUtils;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.model.bills.EgBillPayeedetails;
 import org.egov.model.bills.EgBilldetails;
 import org.egov.model.bills.EgBillregister;
 import org.egov.model.bills.EgBillregistermis;
-import org.egov.ptis.domain.model.ErrorDetails;
 import org.egov.restapi.constants.RestApiConstants;
 import org.egov.restapi.model.BillDetails;
 import org.egov.restapi.model.BillPayeeDetails;
 import org.egov.restapi.model.BillRegister;
+import org.egov.restapi.model.RestErrors;
 import org.egov.services.masters.SchemeService;
 import org.egov.services.masters.SubSchemeService;
+import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.master.service.ContractorService;
 import org.egov.works.models.estimate.ProjectCode;
 import org.egov.works.services.ProjectCodeService;
@@ -83,101 +86,106 @@ public class BillService {
     @Autowired
     private ContractorService contractorService;
 
-    public List<ErrorDetails> validateBillRegister(final BillRegister billRegister) {
-        final List<ErrorDetails> errors = new ArrayList<>();
-        ErrorDetails errorDetails;
+    @Autowired
+    private FinancialUtils financialUtils;
+
+    public List<RestErrors> validateBillRegister(final BillRegister billRegister) {
+        final List<RestErrors> errors = new ArrayList<>();
+        RestErrors restErrors;
+        final SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
         if (StringUtils.isBlank(billRegister.getDepartmentCode())
                 || departmentService.getDepartmentByCode(billRegister.getDepartmentCode()) == null) {
-            errorDetails = new ErrorDetails();
-            errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_DEPARTMENT);
-            errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_DEPARTMENT);
-            errors.add(errorDetails);
+            restErrors = new RestErrors();
+            restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_DEPARTMENT);
+            restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_DEPARTMENT);
+            errors.add(restErrors);
         }
         if (StringUtils.isBlank(billRegister.getFunctionCode())
                 || functionService.findByCode(billRegister.getFunctionCode()) == null) {
-            errorDetails = new ErrorDetails();
-            errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_FUNCTION);
-            errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_FUNCTION);
-            errors.add(errorDetails);
+            restErrors = new RestErrors();
+            restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_FUNCTION);
+            restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_FUNCTION);
+            errors.add(restErrors);
         }
         if (StringUtils.isBlank(billRegister.getProjectCode())) {
-            errorDetails = new ErrorDetails();
-            errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_WINCODE);
-            errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_WINCODE);
-            errors.add(errorDetails);
+            restErrors = new RestErrors();
+            restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_WINCODE);
+            restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_WINCODE);
+            errors.add(restErrors);
         }
         if (billRegister.getBillDate() == null) {
-            errorDetails = new ErrorDetails();
-            errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_BILLDATE);
-            errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_BILLDATE);
-            errors.add(errorDetails);
+            restErrors = new RestErrors();
+            restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_BILLDATE);
+            restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_BILLDATE);
+            errors.add(restErrors);
         } else if (billRegister.getBillDate().after(new Date())) {
-            errorDetails = new ErrorDetails();
-            errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_DATE_CANNOT_BE_FUTTURE);
-            errorDetails.setErrorMessage(
-                    billRegister.getBillDate() + " - " + RestApiConstants.THIRD_PARTY_ERR_MSG_DATE_CANNOT_BE_FUTTURE);
-            errors.add(errorDetails);
+            restErrors = new RestErrors();
+            restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_DATE_CANNOT_BE_FUTTURE);
+            restErrors.setErrorMessage(
+                    sdf.format(billRegister.getBillDate()) + " - " + RestApiConstants.THIRD_PARTY_ERR_MSG_DATE_CANNOT_BE_FUTTURE);
+            errors.add(restErrors);
         } else
             try {
                 financialYearHibernateDAO.getFinancialYearByDate(billRegister.getBillDate());
             } catch (final Exception e) {
-                errorDetails = new ErrorDetails();
-                errorDetails.setErrorCode(e.getMessage());
-                errorDetails.setErrorMessage(e.getMessage());
-                errors.add(errorDetails);
+                restErrors = new RestErrors();
+                restErrors.setErrorCode(e.getMessage());
+                restErrors.setErrorMessage(e.getMessage());
+                errors.add(restErrors);
             }
         if (StringUtils.isBlank(billRegister.getBillType())) {
-            errorDetails = new ErrorDetails();
-            errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_BILLTYPE);
-            errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_BILLTYPE);
-            errors.add(errorDetails);
+            restErrors = new RestErrors();
+            restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_BILLTYPE);
+            restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_BILLTYPE);
+            errors.add(restErrors);
         }
         if (StringUtils.isBlank(billRegister.getFundCode()) || fundService.findByCode(billRegister.getFundCode()) == null) {
-            errorDetails = new ErrorDetails();
-            errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_FUND);
-            errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_FUND);
-            errors.add(errorDetails);
+            restErrors = new RestErrors();
+            restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_FUND);
+            restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_FUND);
+            errors.add(restErrors);
         }
         if (projectCodeService.findActiveProjectCodeByCode(billRegister.getProjectCode()) == null
                 && StringUtils.isBlank(billRegister.getNameOfWork())) {
-            errorDetails = new ErrorDetails();
-            errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_NAMEOFWORK);
-            errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_NAMEOFWORK);
-            errors.add(errorDetails);
+            restErrors = new RestErrors();
+            restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_NAMEOFWORK);
+            restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_NAMEOFWORK);
+            errors.add(restErrors);
         }
         if (StringUtils.isBlank(billRegister.getPayTo())) {
-            errorDetails = new ErrorDetails();
-            errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_PAYTO);
-            errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_PAYTO);
-            errors.add(errorDetails);
+            restErrors = new RestErrors();
+            restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_PAYTO);
+            restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_PAYTO);
+            errors.add(restErrors);
         }
         if (billRegister.getBillAmount() == null) {
-            errorDetails = new ErrorDetails();
-            errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_BILLAMOUNT);
-            errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_BILLAMOUNT);
-            errors.add(errorDetails);
+            restErrors = new RestErrors();
+            restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_BILLAMOUNT);
+            restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_BILLAMOUNT);
+            errors.add(restErrors);
         }
         if (StringUtils.isNotBlank(billRegister.getSchemeCode())
                 && schemeService.findByCode(billRegister.getSchemeCode()) == null) {
-            errorDetails = new ErrorDetails();
-            errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_SCHEME);
-            errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_SCHEME);
-            errors.add(errorDetails);
+            restErrors = new RestErrors();
+            restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_SCHEME);
+            restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_SCHEME);
+            errors.add(restErrors);
         }
         if (StringUtils.isNotBlank(billRegister.getSubSchemeCode())
                 && subSchemeService.findByCode(billRegister.getSubSchemeCode()) == null) {
-            errorDetails = new ErrorDetails();
-            errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_SCHEME);
-            errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_SCHEME);
-            errors.add(errorDetails);
+            restErrors = new RestErrors();
+            restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_SCHEME);
+            restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_SCHEME);
+            errors.add(restErrors);
         }
         if (billRegister.getPartyBillDate() != null
                 && billRegister.getPartyBillDate().after(new Date())) {
-            errorDetails = new ErrorDetails();
-            errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_DATE_CANNOT_BE_FUTTURE);
-            errorDetails.setErrorMessage(
-                    billRegister.getPartyBillDate() + " - " + RestApiConstants.THIRD_PARTY_ERR_MSG_DATE_CANNOT_BE_FUTTURE);
-            errors.add(errorDetails);
+            restErrors = new RestErrors();
+            restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_DATE_CANNOT_BE_FUTTURE);
+            restErrors.setErrorMessage(
+                    sdf.format(billRegister.getPartyBillDate()) + " - "
+                            + RestApiConstants.THIRD_PARTY_ERR_MSG_DATE_CANNOT_BE_FUTTURE);
+            errors.add(restErrors);
         }
         validateBillDetails(billRegister, errors);
         validateBillPayeeDetails(billRegister, errors);
@@ -185,8 +193,8 @@ public class BillService {
         return errors;
     }
 
-    private void validateBillDetails(final BillRegister billRegister, final List<ErrorDetails> errors) {
-        ErrorDetails errorDetails;
+    private void validateBillDetails(final BillRegister billRegister, final List<RestErrors> errors) {
+        RestErrors restErrors;
         Accountdetailtype projectCodeAccountDetailType = null;
         Boolean isProjectCodeSubledger = false;
         boolean foundNetPayable = false;
@@ -195,79 +203,62 @@ public class BillService {
         final List<CChartOfAccounts> advancePayableAccountList = chartOfAccountsHibernateDAO
                 .getAccountCodeByPurposeName(RestApiConstants.CONTRACTOR_ADVANCE_PURPOSE);
         if (billRegister.getBillDetails() == null || billRegister.getBillDetails().isEmpty()) {
-            errorDetails = new ErrorDetails();
-            errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_DETAILS);
-            errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_DETAILS);
-            errors.add(errorDetails);
+            restErrors = new RestErrors();
+            restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_DETAILS);
+            restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_DETAILS);
+            errors.add(restErrors);
         } else if (billRegister.getBillDetails().size() < 2) {
-            errorDetails = new ErrorDetails();
-            errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_MIN_DETAILS);
-            errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_MIN_DETAILS);
-            errors.add(errorDetails);
+            restErrors = new RestErrors();
+            restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_MIN_DETAILS);
+            restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_MIN_DETAILS);
+            errors.add(restErrors);
         } else {
             BigDecimal creditAmount = BigDecimal.ZERO;
             BigDecimal debitAmount = BigDecimal.ZERO;
             for (final BillDetails billDetails : billRegister.getBillDetails())
                 if (StringUtils.isBlank(billDetails.getGlcode())) {
-                    errorDetails = new ErrorDetails();
-                    errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_DETAIL_GLCODE);
-                    errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_DETAIL_GLCODE);
-                    errors.add(errorDetails);
+                    restErrors = new RestErrors();
+                    restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_DETAIL_GLCODE);
+                    restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_DETAIL_GLCODE);
+                    errors.add(restErrors);
                 } else {
                     final CChartOfAccounts coa = chartOfAccountsService
                             .getByGlCode(billDetails.getGlcode());
                     if (coa == null) {
-                        errorDetails = new ErrorDetails();
-                        errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_VALID_GLCODE);
-                        errorDetails.setErrorMessage(
+                        restErrors = new RestErrors();
+                        restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_VALID_GLCODE);
+                        restErrors.setErrorMessage(
                                 billDetails.getGlcode() + " - " + RestApiConstants.THIRD_PARTY_ERR_MSG_NO_VALID_GLCODE);
-                        errors.add(errorDetails);
+                        errors.add(restErrors);
                     } else if (coa.getClassification() != 4) {
-                        errorDetails = new ErrorDetails();
-                        errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_VALID_DETAIL_GLCODE);
-                        errorDetails.setErrorMessage(
+                        restErrors = new RestErrors();
+                        restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_VALID_DETAIL_GLCODE);
+                        restErrors.setErrorMessage(
                                 billDetails.getGlcode() + " - " + RestApiConstants.THIRD_PARTY_ERR_MSG_NO_VALID_DETAIL_GLCODE);
-                        errors.add(errorDetails);
+                        errors.add(restErrors);
                     }
                     if (billDetails.getDebitAmount() == null && billDetails.getCreditAmount() == null) {
-                        errorDetails = new ErrorDetails();
-                        errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_EITHER_CREDIT_DEBIT);
-                        errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_EITHER_CREDIT_DEBIT);
-                        errors.add(errorDetails);
+                        restErrors = new RestErrors();
+                        restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_EITHER_CREDIT_DEBIT);
+                        restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_EITHER_CREDIT_DEBIT);
+                        errors.add(restErrors);
                     } else if (billDetails.getCreditAmount() != null && billDetails.getDebitAmount() != null
                             && billDetails.getCreditAmount().doubleValue() > 0 &&
                             billDetails.getDebitAmount().doubleValue() > 0) {
-                        errorDetails = new ErrorDetails();
-                        errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_CREDIT_DEBIT_GREATER_ZERO);
-                        errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_CREDIT_DEBIT_GREATER_ZERO);
-                        errors.add(errorDetails);
+                        restErrors = new RestErrors();
+                        restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_CREDIT_DEBIT_GREATER_ZERO);
+                        restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_CREDIT_DEBIT_GREATER_ZERO);
+                        errors.add(restErrors);
                     }
-                    if (billDetails.getCreditAmount() != null) {
-                        creditAmount = creditAmount.add(billDetails.getCreditAmount());
-                        if (advancePayableAccountList.contains(coa) || contractorPayableAccountList.contains(coa))
-                            foundNetPayable = true;
-                        if (contractorPayableAccountList != null && !contractorPayableAccountList.isEmpty()
-                                && contractorPayableAccountList.contains(coa)
-                                && billDetails.getCreditAmount().compareTo(BigDecimal.ZERO) == -1) {
-                            errorDetails = new ErrorDetails();
-                            errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_AMOUNT_NEGATIVE);
-                            errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_AMOUNT_NEGATIVE);
-                            errors.add(errorDetails);
-                        } else if (billDetails.getCreditAmount().compareTo(BigDecimal.ZERO) <= 0) {
-                            errorDetails = new ErrorDetails();
-                            errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_AMOUNT_SHOULD_GREATER_THAN_ZERO);
-                            errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_AMOUNT_SHOULD_GREATER_THAN_ZERO);
-                            errors.add(errorDetails);
-                        }
-
-                    } else if (billDetails.getDebitAmount() != null) {
+                    if (billDetails.getCreditAmount() == null
+                            && billDetails.getDebitAmount().compareTo(BigDecimal.ZERO) <= 0) {
+                        restErrors = new RestErrors();
+                        restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_AMOUNT_SHOULD_GREATER_THAN_ZERO);
+                        restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_AMOUNT_SHOULD_GREATER_THAN_ZERO);
+                        errors.add(restErrors);
+                    }
+                    if (billDetails.getDebitAmount() != null && billDetails.getDebitAmount().compareTo(BigDecimal.ZERO) > 0) {
                         debitAmount = debitAmount.add(billDetails.getDebitAmount());
-                        if (billDetails.getDebitAmount().compareTo(BigDecimal.ZERO) <= 0) {
-                            errorDetails = new ErrorDetails();
-                            errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_AMOUNT_SHOULD_GREATER_THAN_ZERO);
-                            errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_AMOUNT_SHOULD_GREATER_THAN_ZERO);
-                            errors.add(errorDetails);
-                        }
 
                         if (coa != null)
                             projectCodeAccountDetailType = chartOfAccountsHibernateDAO.getAccountDetailTypeIdByName(
@@ -284,87 +275,104 @@ public class BillService {
                                         detail.getDetailTypeId().getName().equals(WorksConstants.ACCOUNTDETAIL_TYPE_CONTRACTOR))
                                     isProjectContractorSubLedger = true;
                             if (!isProjectContractorSubLedger) {
-                                errorDetails = new ErrorDetails();
-                                errorDetails
+                                restErrors = new RestErrors();
+                                restErrors
                                         .setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NOT_PROJECT_CONTRACTOR_SUBLEDGER);
-                                errorDetails.setErrorMessage(coa.getGlcode() + " - " +
+                                restErrors.setErrorMessage(coa.getGlcode() + " - " +
                                         RestApiConstants.THIRD_PARTY_ERR_MSG_NOT_PROJECT_CONTRACTOR_SUBLEDGER);
-                                errors.add(errorDetails);
+                                errors.add(restErrors);
                             }
+                        }
+                    } else if (billDetails.getCreditAmount() != null) {
+                        creditAmount = creditAmount.add(billDetails.getCreditAmount());
+                        if (advancePayableAccountList.contains(coa) || contractorPayableAccountList.contains(coa))
+                            foundNetPayable = true;
+                        if (contractorPayableAccountList != null && !contractorPayableAccountList.isEmpty()
+                                && contractorPayableAccountList.contains(coa)
+                                && billDetails.getCreditAmount().compareTo(BigDecimal.ZERO) == -1) {
+                            restErrors = new RestErrors();
+                            restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_AMOUNT_NEGATIVE);
+                            restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_AMOUNT_NEGATIVE);
+                            errors.add(restErrors);
+                        } else if (billDetails.getDebitAmount() == null
+                                && billDetails.getCreditAmount().compareTo(BigDecimal.ZERO) <= 0) {
+                            restErrors = new RestErrors();
+                            restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_AMOUNT_SHOULD_GREATER_THAN_ZERO);
+                            restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_AMOUNT_SHOULD_GREATER_THAN_ZERO);
+                            errors.add(restErrors);
                         }
                     }
                 }
             if (!isProjectCodeSubledger) {
-                errorDetails = new ErrorDetails();
-                errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_DEBIT_CODE_SUBLEDGER);
-                errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_DEBIT_CODE_SUBLEDGER);
-                errors.add(errorDetails);
+                restErrors = new RestErrors();
+                restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_DEBIT_CODE_SUBLEDGER);
+                restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_DEBIT_CODE_SUBLEDGER);
+                errors.add(restErrors);
             }
             if (!creditAmount.equals(debitAmount)) {
-                errorDetails = new ErrorDetails();
-                errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NOTEQUAL_CREDIT_DEBIT);
-                errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NOTEQUAL_CREDIT_DEBIT);
-                errors.add(errorDetails);
+                restErrors = new RestErrors();
+                restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NOTEQUAL_CREDIT_DEBIT);
+                restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NOTEQUAL_CREDIT_DEBIT);
+                errors.add(restErrors);
             }
             if (!foundNetPayable) {
-                errorDetails = new ErrorDetails();
-                errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NOT_ADVANCE_CONTRACTOR_PAYABLE);
-                errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NOT_ADVANCE_CONTRACTOR_PAYABLE);
-                errors.add(errorDetails);
+                restErrors = new RestErrors();
+                restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NOT_ADVANCE_CONTRACTOR_PAYABLE);
+                restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NOT_ADVANCE_CONTRACTOR_PAYABLE);
+                errors.add(restErrors);
             }
         }
     }
 
-    private void validateBillPayeeDetails(final BillRegister billRegister, final List<ErrorDetails> errors) {
-        ErrorDetails errorDetails;
+    private void validateBillPayeeDetails(final BillRegister billRegister, final List<RestErrors> errors) {
+        RestErrors restErrors;
         if (billRegister.getBillPayeeDetails() == null || billRegister.getBillPayeeDetails().isEmpty()) {
-            errorDetails = new ErrorDetails();
-            errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_DETAILS);
-            errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_DETAILS);
-            errors.add(errorDetails);
+            restErrors = new RestErrors();
+            restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_DETAILS);
+            restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_DETAILS);
+            errors.add(restErrors);
         }
         if (billRegister.getBillPayeeDetails() != null && !billRegister.getBillPayeeDetails().isEmpty())
             for (final BillPayeeDetails billPayeeDetails : billRegister.getBillPayeeDetails()) {
                 Boolean isCOAExistInDetails = false;
                 if (StringUtils.isBlank(billPayeeDetails.getGlcode())) {
-                    errorDetails = new ErrorDetails();
-                    errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_PAYEE_GLCODE);
-                    errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_PAYEE_GLCODE);
-                    errors.add(errorDetails);
+                    restErrors = new RestErrors();
+                    restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_PAYEE_GLCODE);
+                    restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_PAYEE_GLCODE);
+                    errors.add(restErrors);
                 }
                 if (StringUtils.isBlank(billPayeeDetails.getAccountDetailType())) {
-                    errorDetails = new ErrorDetails();
-                    errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_PAYEE_ACCOUNTTYPE);
-                    errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_PAYEE_ACCOUNTTYPE);
-                    errors.add(errorDetails);
+                    restErrors = new RestErrors();
+                    restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_PAYEE_ACCOUNTTYPE);
+                    restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_PAYEE_ACCOUNTTYPE);
+                    errors.add(restErrors);
                 } else if (WorksConstants.ACCOUNTDETAIL_TYPE_CONTRACTOR.equals(billPayeeDetails.getAccountDetailType())
                         && contractorService.getContractorByCode(billPayeeDetails.getAccountDetailKey()) == null) {
-                    errorDetails = new ErrorDetails();
-                    errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NOT_EXIST_CONTRACTOR);
-                    errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NOT_EXIST_CONTRACTOR);
-                    errors.add(errorDetails);
+                    restErrors = new RestErrors();
+                    restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NOT_EXIST_CONTRACTOR);
+                    restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NOT_EXIST_CONTRACTOR);
+                    errors.add(restErrors);
                 }
                 if (StringUtils.isBlank(billPayeeDetails.getAccountDetailKey())) {
-                    errorDetails = new ErrorDetails();
-                    errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_PAYEE_ACCOUNTKEY);
-                    errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_PAYEE_ACCOUNTKEY);
-                    errors.add(errorDetails);
+                    restErrors = new RestErrors();
+                    restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_PAYEE_ACCOUNTKEY);
+                    restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_PAYEE_ACCOUNTKEY);
+                    errors.add(restErrors);
                 }
-                if (billPayeeDetails.getDebitAmount() == null && billPayeeDetails.getCreditAmount() == null ||
-                        billPayeeDetails.getDebitAmount() != null && billPayeeDetails.getCreditAmount() != null) {
-                    errorDetails = new ErrorDetails();
-                    errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_PAYEE_EITHER_CREDIT_DEBIT);
-                    errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_PAYEE_EITHER_CREDIT_DEBIT + " - "
+                if (billPayeeDetails.getDebitAmount() == null && billPayeeDetails.getCreditAmount() == null) {
+                    restErrors = new RestErrors();
+                    restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_PAYEE_EITHER_CREDIT_DEBIT);
+                    restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_PAYEE_EITHER_CREDIT_DEBIT + " - "
                             + billPayeeDetails.getGlcode());
-                    errors.add(errorDetails);
+                    errors.add(restErrors);
                 }
                 if (billPayeeDetails.getDebitAmount() == null && billPayeeDetails.getCreditAmount() == null
                         && billPayeeDetails.getDebitAmount().doubleValue() > 0
                         && billPayeeDetails.getCreditAmount().doubleValue() > 0) {
-                    errorDetails = new ErrorDetails();
-                    errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_CREDIT_DEBIT_GREATER_ZERO);
-                    errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_CREDIT_DEBIT_GREATER_ZERO);
-                    errors.add(errorDetails);
+                    restErrors = new RestErrors();
+                    restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_CREDIT_DEBIT_GREATER_ZERO);
+                    restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_CREDIT_DEBIT_GREATER_ZERO);
+                    errors.add(restErrors);
                 }
 
                 final CChartOfAccounts coa = chartOfAccountsService
@@ -377,12 +385,12 @@ public class BillService {
                                 detail.getDetailTypeId().getName().equals(WorksConstants.ACCOUNTDETAIL_TYPE_CONTRACTOR))
                             isProjectContractorSubLedger = true;
                     if (!isProjectContractorSubLedger) {
-                        errorDetails = new ErrorDetails();
-                        errorDetails
+                        restErrors = new RestErrors();
+                        restErrors
                                 .setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NOT_PROJECT_CONTRACTOR_SUBLEDGER);
-                        errorDetails.setErrorMessage(
+                        restErrors.setErrorMessage(
                                 RestApiConstants.THIRD_PARTY_ERR_MSG_NOT_PROJECT_CONTRACTOR_SUBLEDGER);
-                        errors.add(errorDetails);
+                        errors.add(restErrors);
                     }
                 }
 
@@ -390,11 +398,11 @@ public class BillService {
                     if (billDetails.getGlcode().equals(billPayeeDetails.getGlcode()))
                         isCOAExistInDetails = true;
                 if (!isCOAExistInDetails) {
-                    errorDetails = new ErrorDetails();
-                    errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_PAYEE_GLCODE_NOT_IN_DETAILS);
-                    errorDetails.setErrorMessage(billPayeeDetails.getGlcode() + " - "
+                    restErrors = new RestErrors();
+                    restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_PAYEE_GLCODE_NOT_IN_DETAILS);
+                    restErrors.setErrorMessage(billPayeeDetails.getGlcode() + " - "
                             + RestApiConstants.THIRD_PARTY_ERR_MSG_PAYEE_GLCODE_NOT_IN_DETAILS);
-                    errors.add(errorDetails);
+                    errors.add(restErrors);
                 }
             }
     }
@@ -414,6 +422,8 @@ public class BillService {
         egBillregister.setBillamount(billRegister.getBillAmount());
         egBillregister.setExpendituretype(WorksConstants.BILL_EXPENDITURE_TYPE);
         egBillregister.setBillstatus(WorksConstants.APPROVED);
+        egBillregister.setStatus(financialUtils.getStatusByModuleAndCode(WorksConstants.CONTRACTORBILL,
+                ContractorBillRegister.BillStatus.CREATED.toString()));
     }
 
     private void populateEgBillregisterMis(final EgBillregister egBillregister, final BillRegister billRegister) {
@@ -446,8 +456,10 @@ public class BillService {
         Accountdetailtype contractorAccountDetailType;
         Accountdetailtype projectCodeAccountDetailType;
         egBilldetails.setGlcodeid(BigDecimal.valueOf(chartOfAccountsService.getByGlCode(details.getGlcode()).getId()));
-        egBilldetails.setCreditamount(details.getCreditAmount());
-        egBilldetails.setDebitamount(details.getDebitAmount());
+        if (details.getCreditAmount() != null && details.getCreditAmount().longValue() > 0)
+            egBilldetails.setCreditamount(details.getCreditAmount());
+        else if (details.getDebitAmount() != null && details.getDebitAmount().longValue() > 0)
+            egBilldetails.setDebitamount(details.getDebitAmount());
         egBilldetails.setEgBillregister(egBillregister);
         egBilldetails.setLastupdatedtime(new Date());
         egBilldetails.setFunctionid(BigDecimal.valueOf(egBillregister.getEgBillregistermis().getFunction().getId()));
@@ -480,8 +492,10 @@ public class BillService {
             final BillDetails details, final BillRegister billRegister) throws ClassNotFoundException {
         final EgBillPayeedetails billPayeedetails = new EgBillPayeedetails();
         if (payeeDetails.getGlcode() != null && payeeDetails.getGlcode().equals(details.getGlcode())) {
-            billPayeedetails.setCreditAmount(payeeDetails.getCreditAmount());
-            billPayeedetails.setDebitAmount(payeeDetails.getDebitAmount());
+            if (payeeDetails.getCreditAmount() != null && payeeDetails.getCreditAmount().longValue() > 0)
+                billPayeedetails.setCreditAmount(payeeDetails.getCreditAmount());
+            if (payeeDetails.getDebitAmount() != null && payeeDetails.getDebitAmount().longValue() > 0)
+                billPayeedetails.setDebitAmount(payeeDetails.getDebitAmount());
             final Accountdetailtype detailType = accountdetailtypeService
                     .findByName(payeeDetails.getAccountDetailType());
             billPayeedetails.setAccountDetailTypeId(detailType.getId());
