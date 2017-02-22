@@ -500,14 +500,6 @@ public class License extends StateAware {
         return getLicenseDemand();
     }
 
-    public BigDecimal getCurrentLicenseFee() {
-        Optional<EgDemandDetails> demandDetails = getCurrentDemand().getEgDemandDetails().stream()
-                .filter(dd -> dd.getEgDemandReason().getEgInstallmentMaster().equals(getCurrentDemand().getEgInstallmentMaster()))
-                .filter(dd -> dd.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster().equals(LICENSE_FEE_TYPE))
-                .findAny();
-        return demandDetails.isPresent() ? demandDetails.get().getAmount() : BigDecimal.ZERO;
-    }
-
     public boolean isPaid() {
         return getTotalBalance().compareTo(BigDecimal.ZERO) == 0;
     }
@@ -555,9 +547,10 @@ public class License extends StateAware {
     public BigDecimal getLatestAmountPaid() {
         Optional<EgDemandDetails> demandDetails = this.getCurrentDemand().getEgDemandDetails().stream()
                 .sorted(Comparator.comparing(EgDemandDetails::getInstallmentEndDate).reversed())
+                .filter(demandDetail -> demandDetail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster().equals(LICENSE_FEE_TYPE))
                 .filter(demandDetail -> demandDetail.getAmount().subtract(demandDetail.getAmtCollected())
                         .doubleValue() <= 0)
                 .findFirst();
-        return demandDetails.isPresent() ? demandDetails.get().getAmount() : BigDecimal.ZERO;
+        return demandDetails.isPresent() ? demandDetails.get().getAmtCollected() : BigDecimal.ZERO;
     }
 }
