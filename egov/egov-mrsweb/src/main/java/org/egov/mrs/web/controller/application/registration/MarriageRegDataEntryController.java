@@ -42,8 +42,11 @@ package org.egov.mrs.web.controller.application.registration;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
+import java.util.Date;
+
 import javax.servlet.http.HttpServletRequest;
 
+import org.egov.mrs.application.service.MarriageFeeCalculator;
 import org.egov.mrs.domain.entity.MarriageRegistration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -63,9 +66,13 @@ public class MarriageRegDataEntryController extends MarriageRegistrationControll
     @Autowired
     private MarriageFormValidator marriageFormValidator;
 
+    @Autowired
+    private MarriageFeeCalculator marriageFeeCalculator;
+
     @RequestMapping(value = "/createdataentry", method = RequestMethod.GET)
     public String showRegistration(final Model model) {
         MarriageRegistration marriageRegistration = new MarriageRegistration();
+        marriageRegistration.setFeePaid(marriageFeeCalculator.calculateMarriageRegistrationFee(marriageRegistration, new Date()));
         model.addAttribute("marriageRegistration", marriageRegistration);
         model.addAttribute("currentState", DATAENTRY);
         return "mrgreg-dataentryform";
