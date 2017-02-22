@@ -60,7 +60,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
  * @author Vinoth
  *
  */
-@Document(indexName = "marriageregistration", type = "marriageregistrationsearch")
+@Document(indexName = "marriageregistration", type = "marriageregistration")
 public class MarriageRegistrationIndex {
 
     @Id
