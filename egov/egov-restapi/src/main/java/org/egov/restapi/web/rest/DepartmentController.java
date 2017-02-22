@@ -41,7 +41,7 @@ package org.egov.restapi.web.rest;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
-import org.egov.restapi.service.ExternalFundService;
+import org.egov.restapi.service.ExternalDepartmentService;
 import org.egov.restapi.util.JsonConvertor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -49,13 +49,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class FundControler {
+public class DepartmentController {
 
     @Autowired
-    private ExternalFundService externalFundService;
+    private ExternalDepartmentService externalDepartmentService;
 
-    @RequestMapping(value = "/egf/fund/getactivefunds", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public String getAllActiveFunds() {
-        return JsonConvertor.convert(externalFundService.populateFund());
+    @RequestMapping(value = "/egi/department/getalldepartment", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public String getAllDepartment() {
+        return JsonConvertor.convert(externalDepartmentService.populateDepartment());
     }
 }

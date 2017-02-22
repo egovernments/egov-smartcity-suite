@@ -41,7 +41,7 @@ package org.egov.restapi.web.rest;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
-import org.egov.restapi.service.ExternalDepartmentService;
+import org.egov.restapi.service.FinancialMasterService;
 import org.egov.restapi.util.JsonConvertor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -49,13 +49,29 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class DepartmentControler {
+public class FinancialMasterController {
 
     @Autowired
-    private ExternalDepartmentService externalDepartmentService;
+    private FinancialMasterService financialMasterService;
 
-    @RequestMapping(value = "/egi/department/getalldepartment", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/egf/fund/getactivefunds", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public String getAllActiveFunds() {
-        return JsonConvertor.convert(externalDepartmentService.populateDepartment());
+        return JsonConvertor.convert(financialMasterService.populateFund());
     }
+
+    @RequestMapping(value = "/egf/scheme/getactiveschemes", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public String getAllActiveSchemes() {
+        return JsonConvertor.convert(financialMasterService.populateScheme());
+    }
+
+    @RequestMapping(value = "/egf/subscheme/getactivesubschemes", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public String getAllActiveSubSchemes() {
+        return JsonConvertor.convert(financialMasterService.populateSubScheme());
+    }
+
+    @RequestMapping(value = "/egf/function/getactivefunctions", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public String getAllActiveFunctions() {
+        return JsonConvertor.convert(financialMasterService.populateFunction());
+    }
+
 }

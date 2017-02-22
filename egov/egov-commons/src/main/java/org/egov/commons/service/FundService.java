@@ -138,4 +138,9 @@ public class FundService {
     public List<Fund> findByIsnotleaf() {
         return fundRepository.findByIsnotleaf(true);
     }
+
+    public List<Fund> findAllActiveAndIsnotleaf() {
+        return fundRepository.findByIsactiveAndIsnotleaf(true, false);
+    }
+
 }

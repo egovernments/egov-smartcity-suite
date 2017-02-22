@@ -52,15 +52,17 @@ public interface FundRepository extends JpaRepository<Fund, Integer> {
 
     Fund findByCode(String code);
 
-    public List<Fund> findByNameContainingIgnoreCaseOrCodeContainingIgnoreCaseOrIsactive(String name, String code,
+    List<Fund> findByNameContainingIgnoreCaseOrCodeContainingIgnoreCaseOrIsactive(String name, String code,
             Boolean isactive);
 
-    public List<Fund> findByCodeContainingIgnoreCase(String code);
+    List<Fund> findByCodeContainingIgnoreCase(String code);
 
-    public List<Fund> findByIsactive(Boolean isactive);
+    List<Fund> findByIsactive(Boolean isactive);
 
-    public List<Fund> findByNameContainingIgnoreCase(String name);
+    List<Fund> findByNameContainingIgnoreCase(String name);
 
-    public List<Fund> findByIsnotleaf(Boolean isnotleaf);
+    List<Fund> findByIsnotleaf(Boolean isnotleaf);
+
+    List<Fund> findByIsactiveAndIsnotleaf(final Boolean active, final Boolean isNotLeaf);
 
 }

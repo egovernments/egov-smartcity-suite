@@ -144,9 +144,5 @@ public class FunctionService {
 
         return query.getResultList();
     }
-    
-    public List<CFunction> getByIsACtive(final Boolean isActive) {
-        return functionRepository.findByIsActive(isActive);
-    }
 
 }

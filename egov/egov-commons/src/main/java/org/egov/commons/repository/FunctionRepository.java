@@ -64,6 +64,4 @@ public interface FunctionRepository extends JpaRepository<CFunction, Long> {
 
     List<CFunction> findByIsActiveAndIsNotLeaf(Boolean active, Boolean isNotLeaf);
 
-    List<CFunction> findByIsActive(final Boolean isActive);
-
 }
