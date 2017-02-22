@@ -77,11 +77,11 @@ public class BillPaymentStatusController {
      * @param request
      * @return paymentAmount
      */
-    @RequestMapping(value = "/egf/bill/getpaymentamount", method = GET, produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/egf/bill/paymentamount", method = GET, produces = APPLICATION_JSON_VALUE)
     public String getPaymentAmount(@RequestParam final String billNumber,
             final HttpServletRequest request) {
         if (LOG.isDebugEnabled())
-            LOG.debug(billNumber);
+            LOG.debug("Rest API getting payment status for the bill number: " + billNumber);
         ApplicationThreadLocals.setUserId(2L);
         BigDecimal paymentAmount;
         EgBillregister egBillregister = null;
@@ -96,6 +96,7 @@ public class BillPaymentStatusController {
             }
             paymentAmount = egovCommon.getPaymentAmount(egBillregister.getId());
         } catch (final ApplicationException e) {
+            LOG.error(e.getStackTrace());
             final ErrorDetails er = new ErrorDetails();
             er.setErrorCode(e.getMessage());
             er.setErrorMessage(e.getMessage());

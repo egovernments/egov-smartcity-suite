@@ -218,6 +218,12 @@ public class BillService {
                             .getByGlCode(billDetails.getGlcode());
                     if (coa == null) {
                         errorDetails = new ErrorDetails();
+                        errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_VALID_GLCODE);
+                        errorDetails.setErrorMessage(
+                                billDetails.getGlcode() + " - " + RestApiConstants.THIRD_PARTY_ERR_MSG_NO_VALID_GLCODE);
+                        errors.add(errorDetails);
+                    } else if (coa.getClassification() != 4) {
+                        errorDetails = new ErrorDetails();
                         errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_VALID_DETAIL_GLCODE);
                         errorDetails.setErrorMessage(
                                 billDetails.getGlcode() + " - " + RestApiConstants.THIRD_PARTY_ERR_MSG_NO_VALID_DETAIL_GLCODE);

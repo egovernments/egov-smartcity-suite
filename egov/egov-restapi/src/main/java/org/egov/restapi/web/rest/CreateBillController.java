@@ -84,11 +84,11 @@ public class CreateBillController {
      * @return billnumber - server response in JSON format
      */
 
-    @RequestMapping(value = "/egf/bill/create", method = POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/egf/bill", method = POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public String createContractorBill(@RequestBody final String requestJson,
             final HttpServletRequest request) {
         if (LOG.isDebugEnabled())
-            LOG.debug(requestJson);
+            LOG.debug("Rest API creating bill with the data: " + requestJson);
         String responseJson;
         EgBillregister egBillregister;
         EgBillregister savedBillregister;
@@ -98,7 +98,7 @@ public class CreateBillController {
         try {
             billRegister = (BillRegister) getObjectFromJSONRequest(requestJson, BillRegister.class);
         } catch (final IOException e) {
-            e.printStackTrace();
+            LOG.error(e.getStackTrace());
             final List<ErrorDetails> errorList = new ArrayList<>(0);
             final ErrorDetails er = new ErrorDetails();
             er.setErrorCode(e.getMessage());
@@ -118,7 +118,7 @@ public class CreateBillController {
                 responseJson = savedBillregister.getBillnumber();
             }
         } catch (final ValidationException e) {
-            e.printStackTrace();
+            LOG.error(e.getStackTrace());
             final List<ErrorDetails> errorList = new ArrayList<>(0);
 
             final List<ValidationError> errors = e.getErrors();
@@ -130,7 +130,7 @@ public class CreateBillController {
             }
             return JsonConvertor.convert(errorList);
         } catch (final Exception e) {
-            e.printStackTrace();
+            LOG.error(e.getStackTrace());
             final List<ErrorDetails> errorList = new ArrayList<>(0);
             final ErrorDetails er = new ErrorDetails();
             er.setErrorCode(e.getMessage());

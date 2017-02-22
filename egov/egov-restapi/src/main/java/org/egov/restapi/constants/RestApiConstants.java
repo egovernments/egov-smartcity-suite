@@ -400,8 +400,8 @@ public class RestApiConstants {
     public static final String THIRD_PARTY_ERR_CODE_AMOUNT_SHOULD_GREATER_THAN_ZERO = "EGF-REST-24";
     public static final String THIRD_PARTY_ERR_MSG_AMOUNT_SHOULD_GREATER_THAN_ZERO = "Amount should be greater than zero";
 
-    public static final String THIRD_PARTY_ERR_CODE_NO_VALID_DETAIL_GLCODE = "EGF-REST-25";
-    public static final String THIRD_PARTY_ERR_MSG_NO_VALID_DETAIL_GLCODE = "No Glcode exists with the given glcode";
+    public static final String THIRD_PARTY_ERR_CODE_NO_VALID_GLCODE = "EGF-REST-25";
+    public static final String THIRD_PARTY_ERR_MSG_NO_VALID_GLCODE = "No Glcode exists with the given glcode";
 
     public static final String THIRD_PARTY_ERR_CODE_MIN_DETAILS = "EGF-REST-26";
     public static final String THIRD_PARTY_ERR_MSG_MIN_DETAILS = "Minimum two glcode details are required";
@@ -429,6 +429,9 @@ public class RestApiConstants {
 
     public static final String THIRD_PARTY_ERR_CODE_DATE_CANNOT_BE_FUTTURE = "EGF-REST-34";
     public static final String THIRD_PARTY_ERR_MSG_DATE_CANNOT_BE_FUTTURE = "Provided date can not be Future date";
+
+    public static final String THIRD_PARTY_ERR_CODE_NO_VALID_DETAIL_GLCODE = "EGF-REST-35";
+    public static final String THIRD_PARTY_ERR_MSG_NO_VALID_DETAIL_GLCODE = "Glcode provided is not a valid detail code";
 
     public static final String THIRD_PARTY_ERR_CODE_NOT_EXIST_CONTRACTOR = "EGWORKS-CONTRACTOR-1";
     public static final String THIRD_PARTY_ERR_MSG_NOT_EXIST_CONTRACTOR = "No contractor exists with given contractor code";
