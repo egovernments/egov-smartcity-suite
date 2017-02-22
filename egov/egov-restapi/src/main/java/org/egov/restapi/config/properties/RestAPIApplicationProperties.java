@@ -39,44 +39,49 @@
  */
 package org.egov.restapi.config.properties;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.core.env.Environment;
+import static java.util.Collections.emptyList;
 
 import java.util.Arrays;
 import java.util.List;
 
-import static java.util.Collections.emptyList;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 
 @Configuration
 @PropertySource(value = {
         "classpath:config/restapi-config.properties",
         "classpath:config/egov-erp-${user.name}.properties",
         "classpath:config/application-config-${client.id}.properties",
-        "classpath:config/egov-erp-override.properties"}, ignoreResourceNotFound = true)
+        "classpath:config/egov-erp-override.properties" }, ignoreResourceNotFound = true)
 public class RestAPIApplicationProperties {
 
     @Autowired
     private Environment environment;
 
     public List<String> aponlineIPAddress() {
-        return environment.getProperty("aponline.ipaddress") == null ?
-                emptyList() : Arrays.asList(environment.getProperty("aponline.ipaddress").split(","));
+        return environment.getProperty("aponline.ipaddress") == null ? emptyList()
+                : Arrays.asList(environment.getProperty("aponline.ipaddress").split(","));
     }
 
     public List<String> esevaIPAddress() {
-        return environment.getProperty("eseva.ipaddress") == null ?
-                emptyList() : Arrays.asList(environment.getProperty("eseva.ipaddress").split(","));
+        return environment.getProperty("eseva.ipaddress") == null ? emptyList()
+                : Arrays.asList(environment.getProperty("eseva.ipaddress").split(","));
     }
 
     public List<String> softtechIPAddress() {
-        return environment.getProperty("softtech.ipaddress") == null ?
-                emptyList() : Arrays.asList(environment.getProperty("softtech.ipaddress").split(","));
+        return environment.getProperty("softtech.ipaddress") == null ? emptyList()
+                : Arrays.asList(environment.getProperty("softtech.ipaddress").split(","));
     }
 
     public List<String> cardIPAddress() {
         return environment.getProperty("card.ipaddress") == null
                 ? emptyList() : Arrays.asList(environment.getProperty("card.ipaddress").split(","));
+    }
+
+    public List<String> leadwinnerIPAddress() {
+        return environment.getProperty("leadwinner.ipaddress") == null ? emptyList()
+                : Arrays.asList(environment.getProperty("leadwinner.ipaddress").split(","));
     }
 }

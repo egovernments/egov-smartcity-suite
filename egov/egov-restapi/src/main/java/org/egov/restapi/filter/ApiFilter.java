@@ -39,7 +39,34 @@
  */
 package org.egov.restapi.filter;
 
-import com.google.common.base.Charsets;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.apache.http.HttpHeaders.REFERER;
+import static org.egov.commons.entity.Source.APONLINE;
+import static org.egov.commons.entity.Source.CARD;
+import static org.egov.commons.entity.Source.ESEVA;
+import static org.egov.commons.entity.Source.SOFTTECH;
+import static org.egov.commons.entity.Source.LEADWINNER;
+import static org.egov.infra.config.core.ApplicationThreadLocals.getCityCode;
+import static org.egov.infra.config.core.ApplicationThreadLocals.setCityCode;
+import static org.egov.infra.config.core.ApplicationThreadLocals.setDomainName;
+import static org.egov.infra.config.core.ApplicationThreadLocals.setTenantID;
+
+import java.io.IOException;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.apache.commons.io.IOUtils;
 import org.egov.commons.entity.Source;
 import org.egov.infra.admin.master.entity.City;
@@ -52,31 +79,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import java.io.IOException;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
-import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.apache.http.HttpHeaders.REFERER;
-import static org.egov.commons.entity.Source.APONLINE;
-import static org.egov.commons.entity.Source.CARD;
-import static org.egov.commons.entity.Source.ESEVA;
-import static org.egov.commons.entity.Source.SOFTTECH;
-import static org.egov.infra.config.core.ApplicationThreadLocals.getCityCode;
-import static org.egov.infra.config.core.ApplicationThreadLocals.setCityCode;
-import static org.egov.infra.config.core.ApplicationThreadLocals.setDomainName;
-import static org.egov.infra.config.core.ApplicationThreadLocals.setTenantID;
+import com.google.common.base.Charsets;
 
 //This is an unnecessary class, the existence of this filter is due to implementer is not ready to
 //change their existing system to call appropriate url from their apps.
@@ -98,47 +101,43 @@ public class ApiFilter implements Filter {
     @Qualifier("ulbCodeMap")
     private Map<String, String> ulbCodeMap;
 
-
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException,
+    public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain filterChain)
+            throws IOException,
             ServletException {
-        MultiReadRequestWrapper multiReadRequestWrapper = new MultiReadRequestWrapper((HttpServletRequest) request);
-        String ulbCode = validateAndExtractULBCode(multiReadRequestWrapper);
+        final MultiReadRequestWrapper multiReadRequestWrapper = new MultiReadRequestWrapper((HttpServletRequest) request);
+        final String ulbCode = validateAndExtractULBCode(multiReadRequestWrapper);
         if (isNotBlank(ulbCode)) {
-            boolean diffDestination = !ulbCode.equals(getCityCode());
+            final boolean diffDestination = !ulbCode.equals(getCityCode());
             LOG.info("Requested ULB Code :- reached : {}, destination : {}. Altering tenant info : {}",
                     getCityCode(), ulbCode, diffDestination);
             if (diffDestination) {
-                String tenantId = ulbCodeMap.get(ulbCode);
+                final String tenantId = ulbCodeMap.get(ulbCode);
                 setTenantID(tenantId);
-                City city = cityService.getCityByCode(ulbCode);
+                final City city = cityService.getCityByCode(ulbCode);
                 setDomainName(city.getDomainURL());
                 setCityCode(ulbCode);
             }
-        } else {
+        } else
             throw new ApplicationRuntimeException("Could not obtain ULB Code from the request");
-        }
 
         filterChain.doFilter(multiReadRequestWrapper, response);
     }
 
-    private String validateAndExtractULBCode(MultiReadRequestWrapper request) throws IOException {
-        String referrer = request.getHeader(REFERER);
+    private String validateAndExtractULBCode(final MultiReadRequestWrapper request) throws IOException {
+        final String referrer = request.getHeader(REFERER);
         if (isNotBlank(referrer)) {
-            HttpSession session = request.getSession();
-            Optional<Map.Entry<Source, List<String>>> resolvedIP = SOURCE_IP_MAPPING.entrySet().parallelStream().
-                    filter(e -> e.getValue().parallelStream().
-                            anyMatch(referrer::contains)).
-                    findFirst();
+            final HttpSession session = request.getSession();
+            final Optional<Map.Entry<Source, List<String>>> resolvedIP = SOURCE_IP_MAPPING.entrySet().parallelStream()
+                    .filter(e -> e.getValue().parallelStream().anyMatch(referrer::contains)).findFirst();
             if (resolvedIP.isPresent())
                 session.setAttribute(SOURCE, resolvedIP.get().getKey());
             else
                 throw new ApplicationRuntimeException(RESTAPI_ERROR_CODE);
-        } else {
+        } else
             throw new ApplicationRuntimeException(RESTAPI_ERROR_CODE);
-        }
 
-        String ulbCode = request.getParameter(ULB_CODE);
+        final String ulbCode = request.getParameter(ULB_CODE);
         return isBlank(ulbCode) ? new JSONObject(IOUtils.toString(request.getInputStream(), Charsets.UTF_8))
                 .get(ULB_CODE).toString() : ulbCode;
 
@@ -146,15 +145,16 @@ public class ApiFilter implements Filter {
 
     @Override
     public void init(final FilterConfig arg0) throws ServletException {
-        //This has to be externalized to automatically pick from config
+        // This has to be externalized to automatically pick from config
         SOURCE_IP_MAPPING.put(APONLINE, restAPIProperties.aponlineIPAddress());
         SOURCE_IP_MAPPING.put(ESEVA, restAPIProperties.esevaIPAddress());
         SOURCE_IP_MAPPING.put(SOFTTECH, restAPIProperties.softtechIPAddress());
         SOURCE_IP_MAPPING.put(CARD, restAPIProperties.cardIPAddress());
+        SOURCE_IP_MAPPING.put(LEADWINNER, restAPIProperties.leadwinnerIPAddress());
     }
 
     @Override
     public void destroy() {
-        //Do nothing
+        // Do nothing
     }
 }
