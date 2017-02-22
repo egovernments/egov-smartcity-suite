@@ -39,7 +39,6 @@
  */
 package org.egov.lcms.reports.entity;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.egov.lcms.transactions.entity.LegalCase;
@@ -71,8 +70,6 @@ public class LegalCaseSearchResult {
     private String reportStatus;
     private String fromDate;
     private String toDate;
-    SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
-    SimpleDateFormat dtft = new SimpleDateFormat("dd/MM/yyyy");
 
     public String getFromDate() {
         return fromDate;
@@ -280,22 +277,6 @@ public class LegalCaseSearchResult {
 
     public void setReportStatus(final String reportStatus) {
         this.reportStatus = reportStatus;
-    }
-
-    public SimpleDateFormat getFt() {
-        return ft;
-    }
-
-    public void setFt(final SimpleDateFormat ft) {
-        this.ft = ft;
-    }
-
-    public SimpleDateFormat getDtft() {
-        return dtft;
-    }
-
-    public void setDtft(final SimpleDateFormat dtft) {
-        this.dtft = dtft;
     }
 
 }
