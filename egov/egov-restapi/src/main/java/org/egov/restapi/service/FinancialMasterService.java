@@ -42,12 +42,17 @@ package org.egov.restapi.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.CFunction;
 import org.egov.commons.Fund;
 import org.egov.commons.Scheme;
 import org.egov.commons.SubScheme;
+import org.egov.commons.service.AccountPurposeService;
+import org.egov.commons.service.ChartOfAccountsService;
 import org.egov.commons.service.FunctionService;
 import org.egov.commons.service.FundService;
+import org.egov.restapi.model.ChartOfAccountHelper;
 import org.egov.restapi.model.FunctionHelper;
 import org.egov.restapi.model.FundHelper;
 import org.egov.restapi.model.SchemeHelper;
@@ -73,6 +78,12 @@ public class FinancialMasterService {
 
     @Autowired
     private FunctionService functionService;
+
+    @Autowired
+    private ChartOfAccountsService chartOfAccountsService;
+
+    @Autowired
+    private AccountPurposeService accountPurposeService;
 
     public List<FunctionHelper> populateFunction() {
         final List<CFunction> cFunctions = functionService.findAllActive();
@@ -142,6 +153,33 @@ public class FinancialMasterService {
         fundHelper.setCode(fund.getCode());
         fundHelper.setName(fund.getName());
         fundHelpers.add(fundHelper);
+    }
+
+    public List<ChartOfAccountHelper> populateChartOfAccounts() {
+        final List<CChartOfAccounts> cChartOfAccounts = chartOfAccountsService.getAllAccountCodesByIsactiveAndClassification();
+
+        final List<ChartOfAccountHelper> chartOfAccountHelpers = new ArrayList<>();
+
+        for (final CChartOfAccounts cChartOfAccount : cChartOfAccounts)
+            createChartOfAccountHelper(chartOfAccountHelpers, cChartOfAccount);
+        return chartOfAccountHelpers;
+    }
+
+    private void createChartOfAccountHelper(final List<ChartOfAccountHelper> chartOfAccountHelpers,
+            final CChartOfAccounts cChartOfAccount) {
+        final ChartOfAccountHelper chartOfAccountHelper = new ChartOfAccountHelper();
+        chartOfAccountHelper.setGlCode(cChartOfAccount.getGlcode());
+        chartOfAccountHelper.setName(cChartOfAccount.getName());
+        if (cChartOfAccount.getPurposeId() != null)
+            chartOfAccountHelper.setPurpose(accountPurposeService.getByPurposeId(cChartOfAccount.getPurposeId()).getName());
+        else
+            chartOfAccountHelper.setPurpose(StringUtils.EMPTY);
+        chartOfAccountHelper.setType(cChartOfAccount.getType());
+        if (cChartOfAccount.getBudgetCheckReq() != null)
+            chartOfAccountHelper.setBudgetCheckReqired(cChartOfAccount.getBudgetCheckReq());
+        else
+            chartOfAccountHelper.setBudgetCheckReqired(Boolean.FALSE);
+        chartOfAccountHelpers.add(chartOfAccountHelper);
     }
 
 }

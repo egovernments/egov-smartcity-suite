@@ -37,46 +37,57 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.restapi.web.rest;
+package org.egov.restapi.model;
 
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import java.io.Serializable;
 
-import org.egov.restapi.service.FinancialMasterService;
-import org.egov.restapi.util.JsonConvertor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+public class ChartOfAccountHelper implements Serializable {
 
-@RestController
-public class FinancialMasterController {
+    private static final long serialVersionUID = -1433064701524657608L;
+    private String glCode;
+    private String name;
+    private String purpose;
+    private boolean isBudgetCheckReqired;
+    private Character type;
 
-    @Autowired
-    private FinancialMasterService financialMasterService;
-
-    @RequestMapping(value = "/egf/fund/activefunds", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public String getAllActiveFunds() {
-        return JsonConvertor.convert(financialMasterService.populateFund());
+    public String getGlCode() {
+        return glCode;
     }
 
-    @RequestMapping(value = "/egf/scheme/activeschemes", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public String getAllActiveSchemes() {
-        return JsonConvertor.convert(financialMasterService.populateScheme());
+    public void setGlCode(final String glCode) {
+        this.glCode = glCode;
     }
 
-    @RequestMapping(value = "/egf/subscheme/activesubschemes", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public String getAllActiveSubSchemes() {
-        return JsonConvertor.convert(financialMasterService.populateSubScheme());
+    public String getName() {
+        return name;
     }
 
-    @RequestMapping(value = "/egf/function/activefunctions", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public String getAllActiveFunctions() {
-        return JsonConvertor.convert(financialMasterService.populateFunction());
+    public void setName(final String name) {
+        this.name = name;
     }
 
-    @RequestMapping(value = "/egf/chartofaccounts/detailedcodes", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public String getChartOfAccounts() {
-        return JsonConvertor.convert(financialMasterService.populateChartOfAccounts());
+    public String getPurpose() {
+        return purpose;
+    }
+
+    public void setPurpose(final String purpose) {
+        this.purpose = purpose;
+    }
+
+    public boolean isBudgetCheckReqired() {
+        return isBudgetCheckReqired;
+    }
+
+    public void setBudgetCheckReqired(final boolean isBudgetCheckReqired) {
+        this.isBudgetCheckReqired = isBudgetCheckReqired;
+    }
+
+    public Character getType() {
+        return type;
+    }
+
+    public void setType(final Character type) {
+        this.type = type;
     }
 
 }

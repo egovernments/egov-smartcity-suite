@@ -277,4 +277,11 @@ public class ChartOfAccountsService extends PersistenceService<CChartOfAccounts,
 
     }
 
+    public List<CChartOfAccounts> getAllAccountCodesByIsactiveAndClassification() {
+        final Query query = getSession()
+                .createQuery(
+                        " from CChartOfAccounts coa where coa.isActiveForPosting=true and coa.classification=4");
+        return query.list();
+    }
+
 }
