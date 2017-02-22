@@ -397,7 +397,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
                     updateWorkflowState(ld.getLicense());
                 licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(ld.getLicense());
                 tradeLicenseSmsAndEmailService.sendSMsAndEmailOnCollection(ld.getLicense(), billReceipt.getReceiptDate(),
-                        ld.getLicense().getCurrentLicenseFee());
+                        ld.getLicense().getLatestAmountPaid());
             } else if (billReceipt.getEvent().equals(EVENT_RECEIPT_CANCELLED))
                 reconcileCollForRcptCancel(demand, billReceipt);
             else if (billReceipt.getEvent().equals(EVENT_INSTRUMENT_BOUNCED))

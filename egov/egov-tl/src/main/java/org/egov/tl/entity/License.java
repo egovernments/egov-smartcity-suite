@@ -45,7 +45,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-
+import java.util.Comparator;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -550,5 +550,14 @@ public class License extends StateAware {
 
     public boolean isTemporary() {
         return TEMP_NATUREOFBUSINESS.equals(getNatureOfBusiness().getName());
+    }
+
+    public BigDecimal getLatestAmountPaid() {
+        Optional<EgDemandDetails> demandDetails = this.getCurrentDemand().getEgDemandDetails().stream()
+                .sorted(Comparator.comparing(EgDemandDetails::getInstallmentEndDate).reversed())
+                .filter(demandDetail -> demandDetail.getAmount().subtract(demandDetail.getAmtCollected())
+                        .doubleValue() <= 0)
+                .findFirst();
+        return demandDetails.isPresent() ? demandDetails.get().getAmount() : BigDecimal.ZERO;
     }
 }
