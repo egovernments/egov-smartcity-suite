@@ -39,6 +39,7 @@
  */
 package org.egov.lcms.reports.entity;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.egov.lcms.transactions.entity.LegalCase;
@@ -65,12 +66,51 @@ public class LegalCaseSearchResult {
     private Integer statusId;
     private String assignDept;
     private Integer reportStatusId;
+    private String caseType;
+    private String courtTypes;
+    private String reportStatus;
+    private String fromDate;
+    private String toDate;
+    SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
+    SimpleDateFormat dtft = new SimpleDateFormat("dd/MM/yyyy");
+
+    public String getFromDate() {
+        return fromDate;
+    }
+
+    public String getToDate() {
+        return toDate;
+    }
+
+    public void setFromDate(final String fromDate) {
+        this.fromDate = fromDate;
+    }
+
+    public void setToDate(final String toDate) {
+        this.toDate = toDate;
+    }
+
+    public String getCourtTypes() {
+        return courtTypes;
+    }
+
+    public void setCourtTypes(final String courtTypes) {
+        this.courtTypes = courtTypes;
+    }
+
+    public String getCaseType() {
+        return caseType;
+    }
+
+    public void setCaseType(final String caseType) {
+        this.caseType = caseType;
+    }
 
     public Integer getReportStatusId() {
         return reportStatusId;
     }
 
-    public void setReportStatusId(Integer reportStatusId) {
+    public void setReportStatusId(final Integer reportStatusId) {
         this.reportStatusId = reportStatusId;
     }
 
@@ -232,6 +272,30 @@ public class LegalCaseSearchResult {
 
     public void setLegalCase(final LegalCase legalCase) {
         this.legalCase = legalCase;
+    }
+
+    public String getReportStatus() {
+        return reportStatus;
+    }
+
+    public void setReportStatus(final String reportStatus) {
+        this.reportStatus = reportStatus;
+    }
+
+    public SimpleDateFormat getFt() {
+        return ft;
+    }
+
+    public void setFt(final SimpleDateFormat ft) {
+        this.ft = ft;
+    }
+
+    public SimpleDateFormat getDtft() {
+        return dtft;
+    }
+
+    public void setDtft(final SimpleDateFormat dtft) {
+        this.dtft = dtft;
     }
 
 }

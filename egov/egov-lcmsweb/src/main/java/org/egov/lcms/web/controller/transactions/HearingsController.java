@@ -39,6 +39,7 @@
  */
 package org.egov.lcms.web.controller.transactions;
 
+import java.text.ParseException;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -88,7 +89,7 @@ public class HearingsController {
     @RequestMapping(value = "/new/", method = RequestMethod.POST)
     public String create(@ModelAttribute final Hearings hearings, final BindingResult errors,
             @RequestParam("lcNumber") final String lcNumber, final RedirectAttributes redirectAttrs, final Model model,
-            final HttpServletRequest request) {
+            final HttpServletRequest request) throws ParseException {
         final LegalCase legalCase = getLegalCase(lcNumber, request);
         hearingsService.validateDate(hearings, legalCase, errors);
         if (errors.hasErrors()) {

@@ -41,7 +41,7 @@ package org.egov.lcms.masters.entity.enums;
 
 import org.apache.commons.lang3.StringUtils;
 
-public enum PWRDOCUMENTTYPE {
+public enum PwrDocumentType {
 
     PWR, CA;
 

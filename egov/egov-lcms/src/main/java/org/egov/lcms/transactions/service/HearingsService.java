@@ -39,6 +39,7 @@
  */
 package org.egov.lcms.transactions.service;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -79,9 +80,12 @@ public class HearingsService {
 
     @Autowired
     private LegalCaseSmsService legalCaseSmsService;
+    
+    @Autowired
+    private LegalCaseService legalCaseService;
 
     @Transactional
-    public Hearings persist(final Hearings hearings) {
+    public Hearings persist(final Hearings hearings) throws ParseException {
         buildEmplyeeList(hearings);
         updateNextDate(hearings, hearings.getLegalCase());
         final EgwStatus statusObj = legalCaseUtil.getStatusForModuleAndCode(LcmsConstants.MODULE_TYPE_LEGALCASE,
@@ -92,6 +96,8 @@ public class HearingsService {
         legalCaseSmsService.sendSmsToOfficerInchargeForHearings(hearings);
         legalCaseSmsService.sendSmsToHearingEmployee(hearings);
         legalCaseSmsService.sendSmsToStandingCounselForHearings(hearings);
+        legalCaseService.persistLegalCaseIndex(hearings.getLegalCase(), null,
+                null, null, null);
         return hearingsRepository.save(hearings);
     }
 

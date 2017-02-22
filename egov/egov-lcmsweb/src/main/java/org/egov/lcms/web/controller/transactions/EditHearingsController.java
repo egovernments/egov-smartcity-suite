@@ -39,6 +39,8 @@
  */
 package org.egov.lcms.web.controller.transactions;
 
+import java.text.ParseException;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
@@ -74,7 +76,7 @@ public class EditHearingsController {
     @RequestMapping(value = "/edit/{hearingsId}", method = RequestMethod.POST)
     public String update(@PathVariable("hearingsId") final String hearingsId,
             @Valid @ModelAttribute final Hearings hearings, final BindingResult errors, final Model model,
-            final RedirectAttributes redirectAttrs, final HttpServletRequest request) {
+            final RedirectAttributes redirectAttrs, final HttpServletRequest request) throws ParseException {
         final LegalCase legalcase = hearings.getLegalCase();
 
         if (!DateUtils.compareDates(hearings.getHearingDate(), hearings.getLegalCase().getCaseDate()))

@@ -47,4 +47,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface LegalCaseDocumentRepository extends ElasticsearchRepository<LegalCaseDocument, String> {
 
+    LegalCaseDocument findByLcNumberAndCityCode(String lcNumber, String cityCode);
+
 }

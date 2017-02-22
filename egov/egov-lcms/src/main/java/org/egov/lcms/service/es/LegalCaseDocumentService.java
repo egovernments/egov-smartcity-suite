@@ -70,10 +70,14 @@ public class LegalCaseDocumentService {
     public LegalCaseDocument persistLegalCaseDocumentIndex(final LegalCase legalCase,
             final LegalCaseInterimOrder legalCaseInterimOrder, final Judgment judgment, final JudgmentImpl judgmentImpl,
             final LegalCaseDisposal legalCaseDisposal) throws ParseException {
+
         LegalCaseDocument legalCaseDocument = null;
+        final String lcnumber = "\"" + legalCase.getLcNumber() + "\"";
+
         if (legalCase.getLcNumber() != null)
-            legalCaseDocument = legalCaseDocumentRepository
-                    .findOne(ApplicationThreadLocals.getCityCode() + "_" + legalCase.getLcNumber());
+            legalCaseDocument = legalCaseDocumentRepository.findByLcNumberAndCityCode(lcnumber,
+                    ApplicationThreadLocals.getCityCode());
+
         if (legalCaseDocument != null)
             updateLegalCaseIndex(legalCaseDocument, legalCase, legalCaseInterimOrder, judgment, judgmentImpl,
                     legalCaseDisposal);
