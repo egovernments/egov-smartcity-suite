@@ -1225,7 +1225,7 @@ public class CollectionIndexElasticSearchService {
                 else if(DAY.equalsIgnoreCase(intervalType))
                     interval = DateHistogramInterval.DAY;
             }
-            aggregationBuilder = AggregationBuilders.terms(BY_CITY).field("cityName")
+            aggregationBuilder = AggregationBuilders.terms(BY_CITY).field("cityName").size(120)
                     .subAggregation(AggregationBuilders.dateHistogram(DATE_AGG).field(RECEIPT_DATE)
                     .interval(interval)
                     .subAggregation(AggregationBuilders.sum("current_total").field(TOTAL_AMOUNT)));

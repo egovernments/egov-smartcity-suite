@@ -281,9 +281,8 @@ public class CMDashboardController {
         List<WeeklyDCB> weekwiseDCBDetails;
         List<MonthlyDCB> monthwiseDCBDetails;
         Long startTime = System.currentTimeMillis();
-        if (StringUtils.isBlank(collectionDetailsRequest.getIntervalType())){
+        if (StringUtils.isBlank(collectionDetailsRequest.getIntervalType()))
             misDCBDetails.setDcbDetails(propTaxDashboardService.getDCBDetails(collectionDetailsRequest));
-        }
         else{ 
             String startDate;
             String endDate;
