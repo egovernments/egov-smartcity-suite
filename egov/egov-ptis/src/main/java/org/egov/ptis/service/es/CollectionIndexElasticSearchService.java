@@ -2313,44 +2313,44 @@ public class CollectionIndexElasticSearchService {
      */
     private void setDCBForMonth(MonthlyDCB monthlyDCB, DemandCollectionMIS demandCollectionMIS, String month) {
         switch (month) {
-        case APRIL:
-            monthlyDCB.setAprilDCB(demandCollectionMIS);
-            break;
-        case MAY:
-            monthlyDCB.setMayDCB(demandCollectionMIS);
-            break;
-        case JUNE:
-            monthlyDCB.setJuneDCB(demandCollectionMIS);
-            break;
-        case JULY:
-            monthlyDCB.setJulyDCB(demandCollectionMIS);
-            break;
-        case AUGUST:
-            monthlyDCB.setAugustDCB(demandCollectionMIS);
-            break;
-        case SEPTEMBER:
-            monthlyDCB.setSeptemberDCB(demandCollectionMIS);
-            break;
-        case OCTOBER:
-            monthlyDCB.setOctoberDCB(demandCollectionMIS);
-            break;
-        case NOVEMBER:
-            monthlyDCB.setNovemberDCB(demandCollectionMIS);
-            break;
-        case DECEMBER:
-            monthlyDCB.setDecemberDCB(demandCollectionMIS);
-            break;
-        case JANUARY:
-            monthlyDCB.setJanuaryDCB(demandCollectionMIS);
-            break;
-        case FEBRUARY:
-            monthlyDCB.setFebruaryDCB(demandCollectionMIS);
-            break;
-        case MARCH:
-            monthlyDCB.setMarchDCB(demandCollectionMIS);
-            break;
-        default:
-            break;
+            case APRIL:
+                monthlyDCB.setAprilDCB(demandCollectionMIS);
+                break;
+            case MAY:
+                monthlyDCB.setMayDCB(demandCollectionMIS);
+                break;
+            case JUNE:
+                monthlyDCB.setJuneDCB(demandCollectionMIS);
+                break;
+            case JULY:
+                monthlyDCB.setJulyDCB(demandCollectionMIS);
+                break;
+            case AUGUST:
+                monthlyDCB.setAugustDCB(demandCollectionMIS);
+                break;
+            case SEPTEMBER:
+                monthlyDCB.setSeptemberDCB(demandCollectionMIS);
+                break;
+            case OCTOBER:
+                monthlyDCB.setOctoberDCB(demandCollectionMIS);
+                break;
+            case NOVEMBER:
+                monthlyDCB.setNovemberDCB(demandCollectionMIS);
+                break;
+            case DECEMBER:
+                monthlyDCB.setDecemberDCB(demandCollectionMIS);
+                break;
+            case JANUARY:
+                monthlyDCB.setJanuaryDCB(demandCollectionMIS);
+                break;
+            case FEBRUARY:
+                monthlyDCB.setFebruaryDCB(demandCollectionMIS);
+                break;
+            case MARCH:
+                monthlyDCB.setMarchDCB(demandCollectionMIS);
+                break;
+            default:
+                break;
         }
     }
     
