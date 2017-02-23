@@ -161,6 +161,7 @@ public class SearchLineEstimateController {
         final List<Department> departments = worksUtils.getUserDepartments(securityUtils.getCurrentUser());
         model.addAttribute("departments", departments);
         model.addAttribute("estimatePhotographSearchRequest", estimatePhotographSearchRequest);
+        model.addAttribute("lineEstimateRequired", worksApplicationProperties.lineEstimateRequired());
         return "searchLineEstimateForEstimatePhotograph-form";
     }
 

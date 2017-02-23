@@ -59,6 +59,7 @@
 	<form:input path="workOrderEstimate.id" type="hidden" id="workOrderEstimateId" value="${contractorMB.workOrderEstimate.id }" />
 	<input id="errorMandatory" type="hidden" value="<spring:message code="error.mandatory.fields" />" />
 	<input type="hidden" id="errorquantityzero" value="<spring:message code='error.mbdetails.quantity.zero' />">
+	<input type="hidden" id="lineEstimateRequired" value = "${lineEstimateRequired }" />
 	
 	<div class="new-page-header"><spring:message code="lbl.createmb" /></div> 
 	   <span class="error-msg add-margin" ><c:out value="${errorMessage}"></c:out></span>

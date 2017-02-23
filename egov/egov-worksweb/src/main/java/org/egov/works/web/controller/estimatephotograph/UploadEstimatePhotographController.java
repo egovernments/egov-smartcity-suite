@@ -46,11 +46,13 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.egov.infra.exception.ApplicationException;
+import org.egov.infra.utils.StringUtils;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.abstractestimate.entity.EstimatePhotographs;
 import org.egov.works.abstractestimate.entity.EstimatePhotographs.WorkProgress;
 import org.egov.works.abstractestimate.service.EstimatePhotographService;
 import org.egov.works.abstractestimate.service.EstimateService;
+import org.egov.works.config.properties.WorksApplicationProperties;
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.service.LineEstimateDetailService;
@@ -86,32 +88,47 @@ public class UploadEstimatePhotographController {
     @Autowired
     private LetterOfAcceptanceService letterOfAcceptanceService;
 
+    @Autowired
+    private WorksApplicationProperties worksApplicationProperties;
+
     @RequestMapping(value = "/newform", method = RequestMethod.GET)
     public String showUploadEstimatePhotographForm(
             @ModelAttribute("estimatePhotographs") final EstimatePhotographs estimatePhotographs, final Model model,
-            final HttpServletRequest request, @RequestParam(value = "mode", required = false) final String mode)
+            final HttpServletRequest request,
+            @RequestParam(value = WorksConstants.MODE, required = false) final String mode)
             throws ApplicationException {
-        final Long lineEstimateDetailsId = Long.valueOf(request.getParameter("lineEstimateDetailsId"));
+        model.addAttribute("lineEstimateRequired", worksApplicationProperties.lineEstimateRequired());
+        if (worksApplicationProperties.lineEstimateRequired())
+            setNewFormValuesFromLineEstimateDetails(estimatePhotographs, model, request);
+        else
+            setNewFormValuesFromAbstractEstimate(estimatePhotographs, model, request);
+        return "estimatePhotographs-form";
+    }
 
+    private void setNewFormValuesFromAbstractEstimate(final EstimatePhotographs estimatePhotographs, final Model model,
+            final HttpServletRequest request) {
+        final String imageType = "image/jpg";
+        final String fileLocation = "/egworks/estimatephotograph/downloadphotgraphs?fileStoreId=";
+        final String moduleName = "&moduleName=WMS";
+        final Long abstractEstimateId = Long.valueOf(request.getParameter("abstractEstimateId"));
         final List<EstimatePhotographs> photographsBefore = estimatePhotographService
-                .getEstimatePhotographsByEstimatePhotographStageAndLineEstimateDetails(
-                        WorkProgress.BEFORE, lineEstimateDetailsId);
+                .getEstimatePhotographsByEstimatePhotographStageAndAbstractEstimate(WorkProgress.BEFORE,
+                        abstractEstimateId);
         final List<EstimatePhotographs> photographsAfter = estimatePhotographService
-                .getEstimatePhotographsByEstimatePhotographStageAndLineEstimateDetails(
-                        WorkProgress.AFTER, lineEstimateDetailsId);
+                .getEstimatePhotographsByEstimatePhotographStageAndAbstractEstimate(WorkProgress.AFTER,
+                        abstractEstimateId);
         final List<EstimatePhotographs> photographsOnProcess = estimatePhotographService
-                .getEstimatePhotographsByEstimatePhotographStageAndLineEstimateDetails(
-                        WorkProgress.DURING, lineEstimateDetailsId);
+                .getEstimatePhotographsByEstimatePhotographStageAndAbstractEstimate(WorkProgress.DURING,
+                        abstractEstimateId);
+
         final JsonObject photographStages = new JsonObject();
         JsonArray array = new JsonArray();
 
         for (final EstimatePhotographs ep : photographsBefore) {
             final JsonObject before = new JsonObject();
             before.addProperty("name", ep.getFileStore().getFileName());
-            before.addProperty("type", "image/jpg");
-            before.addProperty("file",
-                    "/egworks/estimatephotograph/downloadphotgraphs?fileStoreId=" + ep.getFileStore().getFileStoreId()
-                            + "&moduleName=WMS");
+            before.addProperty("type", imageType);
+            before.addProperty("file", fileLocation + ep.getFileStore().getFileStoreId() + moduleName);
             before.addProperty("key", ep.getFileStore().getId());
             array.add(before);
         }
@@ -122,10 +139,8 @@ public class UploadEstimatePhotographController {
         for (final EstimatePhotographs ep : photographsAfter) {
             final JsonObject after = new JsonObject();
             after.addProperty("name", ep.getFileStore().getFileName());
-            after.addProperty("type", "image/jpg");
-            after.addProperty("file",
-                    "/egworks/estimatephotograph/downloadphotgraphs?fileStoreId=" + ep.getFileStore().getFileStoreId()
-                            + "&moduleName=WMS");
+            after.addProperty("type", imageType);
+            after.addProperty("file", fileLocation + ep.getFileStore().getFileStoreId() + moduleName);
             after.addProperty("key", ep.getFileStore().getId());
             array.add(after);
         }
@@ -136,9 +151,76 @@ public class UploadEstimatePhotographController {
         for (final EstimatePhotographs ep : photographsOnProcess) {
             final JsonObject during = new JsonObject();
             during.addProperty("name", ep.getFileStore().getFileName());
-            during.addProperty("type", "image/jpg");
-            during.addProperty("file", "/egworks/estimatephotograph/downloadphotgraphs?fileStoreId="
-                    + ep.getFileStore().getFileStoreId() + "&moduleName=WMS");
+            during.addProperty("type", imageType);
+            during.addProperty("file", fileLocation + ep.getFileStore().getFileStoreId() + moduleName);
+            during.addProperty("key", ep.getFileStore().getId());
+            array.add(during);
+        }
+
+        photographStages.add("during", array);
+
+        final AbstractEstimate abstractEstimate = estimateService.getAbstractEstimateById(abstractEstimateId);
+        final WorkOrder workOrder = letterOfAcceptanceService
+                .getWorkOrderByEstimateNumber(abstractEstimate.getEstimateNumber());
+        model.addAttribute("estimatePhotographs", estimatePhotographs);
+        model.addAttribute("abstractEstimate", abstractEstimate);
+        model.addAttribute("workOrder", workOrder);
+        model.addAttribute("photographStages", photographStages);
+        model.addAttribute("estimatePhotographTrackStage", WorkProgress.values());
+        model.addAttribute("lineEstimateDetails", abstractEstimate.getLineEstimateDetails());
+        model.addAttribute(WorksConstants.MODE, request.getParameter(WorksConstants.MODE) != null
+                ? request.getParameter(WorksConstants.MODE) : StringUtils.EMPTY);
+
+    }
+
+    private void setNewFormValuesFromLineEstimateDetails(final EstimatePhotographs estimatePhotographs,
+            final Model model, final HttpServletRequest request) {
+        final String imageType = "image/jpg";
+        final String fileLocation = "/egworks/estimatephotograph/downloadphotgraphs?fileStoreId=";
+        final String moduleName = "&moduleName=WMS";
+        final Long lineEstimateDetailsId = Long.valueOf(request.getParameter("lineEstimateDetailsId"));
+
+        final List<EstimatePhotographs> photographsBefore = estimatePhotographService
+                .getEstimatePhotographsByEstimatePhotographStageAndLineEstimateDetails(WorkProgress.BEFORE,
+                        lineEstimateDetailsId);
+        final List<EstimatePhotographs> photographsAfter = estimatePhotographService
+                .getEstimatePhotographsByEstimatePhotographStageAndLineEstimateDetails(WorkProgress.AFTER,
+                        lineEstimateDetailsId);
+        final List<EstimatePhotographs> photographsOnProcess = estimatePhotographService
+                .getEstimatePhotographsByEstimatePhotographStageAndLineEstimateDetails(WorkProgress.DURING,
+                        lineEstimateDetailsId);
+        final JsonObject photographStages = new JsonObject();
+        JsonArray array = new JsonArray();
+
+        for (final EstimatePhotographs ep : photographsBefore) {
+            final JsonObject before = new JsonObject();
+            before.addProperty("name", ep.getFileStore().getFileName());
+            before.addProperty("type", imageType);
+            before.addProperty("file", fileLocation + ep.getFileStore().getFileStoreId() + moduleName);
+            before.addProperty("key", ep.getFileStore().getId());
+            array.add(before);
+        }
+
+        photographStages.add("before", array);
+        array = new JsonArray();
+
+        for (final EstimatePhotographs ep : photographsAfter) {
+            final JsonObject after = new JsonObject();
+            after.addProperty("name", ep.getFileStore().getFileName());
+            after.addProperty("type", imageType);
+            after.addProperty("file", fileLocation + ep.getFileStore().getFileStoreId() + moduleName);
+            after.addProperty("key", ep.getFileStore().getId());
+            array.add(after);
+        }
+
+        photographStages.add("after", array);
+        array = new JsonArray();
+
+        for (final EstimatePhotographs ep : photographsOnProcess) {
+            final JsonObject during = new JsonObject();
+            during.addProperty("name", ep.getFileStore().getFileName());
+            during.addProperty("type", imageType);
+            during.addProperty("file", fileLocation + ep.getFileStore().getFileStoreId() + moduleName);
             during.addProperty("key", ep.getFileStore().getId());
             array.add(during);
         }
@@ -156,9 +238,8 @@ public class UploadEstimatePhotographController {
         model.addAttribute("photographStages", photographStages);
         model.addAttribute("lineEstimateDetails", lineEstimateDetails);
         model.addAttribute("estimatePhotographTrackStage", WorkProgress.values());
-        model.addAttribute(WorksConstants.MODE,
-                request.getParameter(WorksConstants.MODE) != null ? request.getParameter(WorksConstants.MODE) : "");
-        return "estimatePhotographs-form";
+        model.addAttribute(WorksConstants.MODE, request.getParameter(WorksConstants.MODE) != null
+                ? request.getParameter(WorksConstants.MODE) : StringUtils.EMPTY);
     }
 
     @RequestMapping(value = "/upload/{id}/{estimatephotographstage}", method = RequestMethod.POST)
@@ -166,28 +247,47 @@ public class UploadEstimatePhotographController {
             @ModelAttribute("estimatePhotographs") final EstimatePhotographs estimatePhotographs,
             @RequestParam("file[]") final MultipartFile[] files, final HttpServletRequest request,
             @PathVariable final Long id, @PathVariable final String estimatephotographstage) throws IOException {
+        if (worksApplicationProperties.lineEstimateRequired())
+            return uploadEstimatePhotographsFromLE(files, id, estimatephotographstage);
+        else
+            return uploadEstimatePhotographsFromAE(files, id, estimatephotographstage);
+    }
 
+    private String uploadEstimatePhotographsFromAE(final MultipartFile[] files, final Long id,
+            final String estimatephotographstage) throws IOException {
+        final AbstractEstimate abstractEstimate = estimateService.getAbstractEstimateById(id);
+
+        final List<EstimatePhotographs> estimatePhotographsList = estimatePhotographService
+                .getEstimatePhotographs(files, abstractEstimate);
+        final JsonArray array = new JsonArray();
+
+        for (final EstimatePhotographs ep : estimatePhotographsList) {
+            final JsonObject child = new JsonObject();
+            ep.setDateOfCapture(new Date());
+            ep.setAbstractestimate(abstractEstimate);
+            ep.setLatitude(ep.getLatitude());
+            ep.setLongitude(ep.getLongitude());
+            if (WorkProgress.BEFORE.toString().equalsIgnoreCase(estimatephotographstage))
+                ep.setWorkProgress(WorkProgress.BEFORE);
+            else if (WorkProgress.AFTER.toString().equalsIgnoreCase(estimatephotographstage))
+                ep.setWorkProgress(WorkProgress.AFTER);
+            else
+                ep.setWorkProgress(WorkProgress.DURING);
+            estimatePhotographService.save(ep);
+            child.addProperty("key", ep.getFileStore().getId());
+            array.add(child);
+        }
+
+        return array.toString();
+    }
+
+    private String uploadEstimatePhotographsFromLE(final MultipartFile[] files, final Long id,
+            final String estimatephotographstage) throws IOException {
         final LineEstimateDetails lineEstimateDetails = lineEstimateDetailService.getById(id);
 
         final List<EstimatePhotographs> estimatePhotographsList = estimatePhotographService
                 .getEstimatePhotographs(files, lineEstimateDetails);
         final JsonArray array = new JsonArray();
-        // TODO : remove this comment when preview required in create/modify screen
-        /*
-         * JsonObject photographStages = new JsonObject(); final List<EstimatePhotographs> photographsBefore =
-         * estimatePhotographService .getEstimatePhotographsByEstimatePhotographStageAndLineEstimateDetails( WorkProgress.BEFORE,
-         * id); final List<EstimatePhotographs> photographsAfter = estimatePhotographService
-         * .getEstimatePhotographsByEstimatePhotographStageAndLineEstimateDetails( WorkProgress.AFTER, id); final
-         * List<EstimatePhotographs> photographsDuring = estimatePhotographService
-         * .getEstimatePhotographsByEstimatePhotographStageAndLineEstimateDetails( WorkProgress.DURING, id); JsonObject
-         * photographStages = new JsonObject(); JsonArray array = new JsonArray(); if
-         * (estimatephotographstage.toUpperCase().equals(WorkProgress.AFTER.toString()))
-         * getEstimatePhotographByWorkProgress(photographsAfter, photographStages, array); else if
-         * (estimatephotographstage.toUpperCase().equals(WorkProgress.BEFORE.toString()))
-         * getEstimatePhotographByWorkProgress(photographsBefore, photographStages, array); else
-         * getEstimatePhotographByWorkProgress(photographsDuring, photographStages, array); add this before returning
-         * photographStages.add("response", array);
-         */
 
         for (final EstimatePhotographs ep : estimatePhotographsList) {
             final JsonObject child = new JsonObject();
@@ -203,33 +303,11 @@ public class UploadEstimatePhotographController {
                 ep.setWorkProgress(WorkProgress.DURING);
             estimatePhotographService.save(ep);
             child.addProperty("key", ep.getFileStore().getId());
-            // TODO : remove this comment when preview required in create/modify screen
-            // child.addProperty("name", ep.getFileStore().getFileName());
-            // child.addProperty("type", "image/jpg");
-            // child.addProperty("file", "/egi/downloadfile?fileStoreId=" + ep.getFileStore().getFileStoreId() +
-            // "&moduleName=WMS");
             array.add(child);
         }
 
         return array.toString();
     }
-
-    // TODO : remove this comment when preview required in create/modify screen
-    // private void getEstimatePhotographByWorkProgress(final List<EstimatePhotographs> photographsBefore, JsonObject
-    // photographStages,
-    // JsonArray array) {
-    // for (EstimatePhotographs ep : photographsBefore) {
-    // JsonObject before = new JsonObject();
-    // before.addProperty("name", ep.getFileStore().getFileName());
-    // before.addProperty("type", "image/jpg");
-    // before.addProperty("file",
-    // "/egi/downloadfile?fileStoreId=" + ep.getFileStore().getFileStoreId() + "&moduleName=WMS");
-    // before.addProperty("key", ep.getFileStore().getId());
-    // array.add(before);
-    // }
-    //
-    // photographStages.add("response", array);
-    // }
 
     @RequestMapping(value = "/update/{id}/{estimatephotographstage}/{fileid}", method = RequestMethod.POST)
     public @ResponseBody String updateEstimatePhotographForm(

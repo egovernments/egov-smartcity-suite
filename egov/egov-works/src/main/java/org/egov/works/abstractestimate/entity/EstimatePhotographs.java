@@ -87,9 +87,8 @@ public class EstimatePhotographs extends AbstractAuditable {
     @GeneratedValue(generator = SEQ_EGW_ESTIMATEPHOTOGRAPHS, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "lineestimatedetails", nullable = false)
+    @JoinColumn(name = "lineestimatedetails")
     private LineEstimateDetails lineEstimateDetails;
 
     private double latitude;
@@ -110,6 +109,10 @@ public class EstimatePhotographs extends AbstractAuditable {
     @NotNull
     @Enumerated(EnumType.STRING)
     private WorkProgress workProgress;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "abstractestimate")
+    private AbstractEstimate abstractestimate;
 
     public EstimatePhotographs() {
     }
@@ -180,4 +183,11 @@ public class EstimatePhotographs extends AbstractAuditable {
         this.workProgress = workProgress;
     }
 
+    public AbstractEstimate getAbstractestimate() {
+        return abstractestimate;
+    }
+
+    public void setAbstractestimate(final AbstractEstimate abstractestimate) {
+        this.abstractestimate = abstractestimate;
+    }
 }

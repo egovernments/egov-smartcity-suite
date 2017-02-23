@@ -174,11 +174,12 @@ public class EstimatePhotographService {
                 "select distinct(ep.lineEstimateDetails) from EstimatePhotographs as ep where ep.lineEstimateDetails.lineEstimate.status.code != :lineEstimateStatus and ep.workProgress is not null");
 
         if (StringUtils.isNotBlank(estimatePhotographSearchRequest.getWorkIdentificationNumber()))
-            queryStr.append(
-                    " and upper(ep.lineEstimateDetails.projectCode.code) = :workIdentificationNumber");
+            queryStr.append(" and upper(ep.lineEstimateDetails.projectCode.code) = :workIdentificationNumber");
 
-        // if (StringUtils.isNotBlank(estimatePhotographSearchRequest.getEstimateNumber()))
-        // queryStr.append(" and upper(ep.lineEstimateDetails.estimateNumber) = :estimateNumber");
+        // if
+        // (StringUtils.isNotBlank(estimatePhotographSearchRequest.getEstimateNumber()))
+        // queryStr.append(" and upper(ep.lineEstimateDetails.estimateNumber) =
+        // :estimateNumber");
 
         if (StringUtils.isNotBlank(estimatePhotographSearchRequest.getWorkOrderNumber()))
             queryStr.append(
@@ -192,8 +193,8 @@ public class EstimatePhotographService {
 
     }
 
-    private Query setParameterForEstimatePhotograph(final EstimatePhotographSearchRequest estimatePhotographSearchRequest,
-            final StringBuilder queryStr) {
+    private Query setParameterForEstimatePhotograph(
+            final EstimatePhotographSearchRequest estimatePhotographSearchRequest, final StringBuilder queryStr) {
         final Query qry = entityManager.createQuery(queryStr.toString());
 
         qry.setParameter("lineEstimateStatus", WorksConstants.CANCELLED_STATUS);
@@ -238,6 +239,75 @@ public class EstimatePhotographService {
     public List<String> getWinForViewEstimatePhotograph(final String workIdentificationNumber) {
         return estimatePhotographRepository.findWorkIdentificationNumberForViewEstimatePhotograph(
                 "%" + workIdentificationNumber + "%", WorksConstants.CANCELLED_STATUS);
+    }
+
+    public List<EstimatePhotographs> getEstimatePhotographsByEstimatePhotographStageAndAbstractEstimate(
+            final WorkProgress estimatePhotographtrackStage, final Long abstractEstimateId) {
+        return estimatePhotographRepository.findByEstimatePhotographAndAbstractEstimate(estimatePhotographtrackStage,
+                abstractEstimateId);
+    }
+
+    public List<String> getEstimateNumbers(final String estimateNumber) {
+        return estimatePhotographRepository.findEstimateNumbersToViewEstimatePhotograph("%" + estimateNumber + "%",
+                WorksConstants.CANCELLED_STATUS);
+    }
+
+    public List<String> getWorkIdentificationNumbers(final String workIdentificationNumber) {
+        return estimatePhotographRepository.findWorkIdentificationNumberToViewEstimatePhotograph(
+                "%" + workIdentificationNumber + "%", WorksConstants.CANCELLED_STATUS);
+    }
+
+    public List<AbstractEstimate> searchEstimatePhotographFromAE(
+            final EstimatePhotographSearchRequest estimatePhotographSearchRequest) {
+        final StringBuilder queryStr = new StringBuilder(500);
+
+        queryStr.append(
+                "select distinct(ep.abstractestimate) from EstimatePhotographs as ep where ep.abstractestimate.egwStatus.code != :abstractEstimateStatus and parent is null and ep.workProgress is not null");
+
+        if (StringUtils.isNotBlank(estimatePhotographSearchRequest.getWorkIdentificationNumber()))
+            queryStr.append(" and upper(ep.abstractestimate.projectCode.code) = :workIdentificationNumber");
+
+        if (StringUtils.isNotBlank(estimatePhotographSearchRequest.getWorkOrderNumber()))
+            queryStr.append(
+                    " and ep.abstractestimate.id in (select distinct(woe.estimate.id) from WorkOrderEstimate as woe where woe.workOrder.egwStatus.code =:workOrderStatus and upper(woe.workOrder.workOrderNumber) =:workOrderNumber) ");
+        if (estimatePhotographSearchRequest.getEstimateCreatedBy() != null)
+            queryStr.append(
+                    " and ep.abstractestimate.id in (select distinct(ae.id) from AbstractEstimate as ae where ae.egwStatus.code =:aeStatus and ae.createdBy.id =:aeCreatedById) ");
+        if (StringUtils.isNotBlank(estimatePhotographSearchRequest.getContractorName()))
+            queryStr.append(
+                    " and ep.abstractestimate.id in (select distinct(woe.estimate.id) from WorkOrderEstimate as woe where woe.workOrder.egwStatus.code =:workOrderStatus and upper(woe.workOrder.contractor.name) =:contractorName or upper(woe.workOrder.contractor.code) =:contractorName) ");
+
+        final Query query = setParameterForEstimatePhotographFromAE(estimatePhotographSearchRequest, queryStr);
+        return query.getResultList();
+    }
+
+    private Query setParameterForEstimatePhotographFromAE(
+            final EstimatePhotographSearchRequest estimatePhotographSearchRequest, final StringBuilder queryStr) {
+        final Query qry = entityManager.createQuery(queryStr.toString());
+
+        qry.setParameter("abstractEstimateStatus", WorksConstants.CANCELLED_STATUS);
+
+        if (estimatePhotographSearchRequest != null) {
+            if (StringUtils.isNotBlank(estimatePhotographSearchRequest.getWorkIdentificationNumber()))
+                qry.setParameter("workIdentificationNumber",
+                        estimatePhotographSearchRequest.getWorkIdentificationNumber().toUpperCase());
+            if (StringUtils.isNotBlank(estimatePhotographSearchRequest.getEstimateNumber()))
+                qry.setParameter("estimateNumber", estimatePhotographSearchRequest.getEstimateNumber().toUpperCase());
+            if (StringUtils.isNotBlank(estimatePhotographSearchRequest.getWorkOrderNumber())) {
+                qry.setParameter("workOrderStatus", WorksConstants.APPROVED);
+                qry.setParameter("workOrderNumber", estimatePhotographSearchRequest.getWorkOrderNumber().toUpperCase());
+            }
+            if (estimatePhotographSearchRequest.getEstimateCreatedBy() != null) {
+                qry.setParameter("aeStatus", AbstractEstimate.EstimateStatus.APPROVED.toString());
+                qry.setParameter("aeCreatedById", estimatePhotographSearchRequest.getEstimateCreatedBy());
+            }
+            if (StringUtils.isNotBlank(estimatePhotographSearchRequest.getContractorName())) {
+                qry.setParameter("workOrderStatus", WorksConstants.APPROVED);
+                qry.setParameter("contractorName", estimatePhotographSearchRequest.getContractorName().toUpperCase());
+            }
+
+        }
+        return qry;
     }
 
 }

@@ -48,6 +48,7 @@ import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.works.abstractestimate.entity.EstimatePhotographSearchRequest;
 import org.egov.works.abstractestimate.service.EstimateService;
+import org.egov.works.config.properties.WorksApplicationProperties;
 import org.egov.works.masters.service.NatureOfWorkService;
 import org.egov.works.utils.WorksUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,9 +77,13 @@ public class SearchEstimatePhotographController {
     @Autowired
     private EstimateService estimateService;
 
+    @Autowired
+    private WorksApplicationProperties worksApplicationProperties;
+
     @RequestMapping(value = "/viewestimatephotograph", method = RequestMethod.GET)
-    public String searchEstmatePhotographs(@ModelAttribute final EstimatePhotographSearchRequest estimatePhotographSearchRequest,
-            final Model model) throws ApplicationException {
+    public String searchEstmatePhotographs(
+            @ModelAttribute final EstimatePhotographSearchRequest estimatePhotographSearchRequest, final Model model)
+            throws ApplicationException {
         model.addAttribute("departments", departmentService.getAllDepartments());
         model.addAttribute("natureOfWork", natureOfWorkService.findAll());
         final List<Department> departments = worksUtils.getUserDepartments(securityUtils.getCurrentUser());
@@ -86,6 +91,7 @@ public class SearchEstimatePhotographController {
         model.addAttribute("departments", departments);
         model.addAttribute("aeCreatedByUsers", aeCreatedByUsers);
         model.addAttribute("estimatePhotographSearchRequest", estimatePhotographSearchRequest);
+        model.addAttribute("lineEstimateRequired", worksApplicationProperties.lineEstimateRequired());
         return "searchEstimatePhotograph-form";
     }
 

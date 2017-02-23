@@ -41,9 +41,12 @@ package org.egov.works.web.controller.estimatephotograph;
 
 import java.util.List;
 
+import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.abstractestimate.entity.EstimatePhotographSearchRequest;
 import org.egov.works.abstractestimate.service.EstimatePhotographService;
+import org.egov.works.config.properties.WorksApplicationProperties;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
+import org.egov.works.web.adaptor.ViewAbstractEstimatePhotographJsonAdaptor;
 import org.egov.works.web.adaptor.ViewEstimatePhotographJsonAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -68,31 +71,58 @@ public class AjaxEstimatePhotographController {
     @Autowired
     private ViewEstimatePhotographJsonAdaptor viewEstimatePhotographJsonAdaptor;
 
+    @Autowired
+    private ViewAbstractEstimatePhotographJsonAdaptor viewAbstractEstimatePhotographJsonAdaptor;
+
+    @Autowired
+    private WorksApplicationProperties worksApplicationProperties;
+
     @RequestMapping(value = "/searchestimatephotograph", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String ajaxSearchEstimatePhotograph(final Model model,
             @ModelAttribute final EstimatePhotographSearchRequest estimatePhotographSearchRequest) {
-        final List<LineEstimateDetails> searchResultList = estimatePhotographService
-                .searchEstimatePhotograph(estimatePhotographSearchRequest);
-        final String result = new StringBuilder("{ \"data\":").append(toSearchEstimatePhotograph(searchResultList))
-                .append("}").toString();
-        return result;
+        if (worksApplicationProperties.lineEstimateRequired()) {
+            final List<LineEstimateDetails> searchResultList = estimatePhotographService
+                    .searchEstimatePhotograph(estimatePhotographSearchRequest);
+            return new StringBuilder("{ \"data\":").append(toSearchEstimatePhotograph(searchResultList)).append("}")
+                    .toString();
+        } else {
+            final List<AbstractEstimate> searchResultList = estimatePhotographService
+                    .searchEstimatePhotographFromAE(estimatePhotographSearchRequest);
+            return new StringBuilder("{ \"data\":").append(toViewEstimatePhotograph(searchResultList)).append("}")
+                    .toString();
+        }
+    }
+
+    private Object toViewEstimatePhotograph(final Object object) {
+        final GsonBuilder gsonBuilder = new GsonBuilder();
+        final Gson gson = gsonBuilder
+                .registerTypeAdapter(AbstractEstimate.class, viewAbstractEstimatePhotographJsonAdaptor).create();
+        return gson.toJson(object);
     }
 
     public Object toSearchEstimatePhotograph(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(LineEstimateDetails.class, viewEstimatePhotographJsonAdaptor).create();
-        final String json = gson.toJson(object);
-        return json;
+        final Gson gson = gsonBuilder.registerTypeAdapter(LineEstimateDetails.class, viewEstimatePhotographJsonAdaptor)
+                .create();
+        return gson.toJson(object);
     }
 
     @RequestMapping(value = "/getestimatenumbers-viewestimatephotograph", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody List<String> findEstimateNumbersForViewEstimatePhotograph(@RequestParam final String estimateNumber) {
-        return estimatePhotographService.getEstimateNumbersForViewEstimatePhotograph(estimateNumber);
+    public @ResponseBody List<String> findEstimateNumbersForViewEstimatePhotograph(
+            @RequestParam final String estimateNumber) {
+        if (worksApplicationProperties.lineEstimateRequired())
+            return estimatePhotographService.getEstimateNumbersForViewEstimatePhotograph(estimateNumber);
+        else
+            return estimatePhotographService.getEstimateNumbers(estimateNumber);
     }
 
     @RequestMapping(value = "/getwin-viewestimatephotograph", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody List<String> findWinForViewEstimatePhotograph(@RequestParam final String workIdentificationNumber) {
-        return estimatePhotographService.getWinForViewEstimatePhotograph(workIdentificationNumber);
+    public @ResponseBody List<String> findWinForViewEstimatePhotograph(
+            @RequestParam final String workIdentificationNumber) {
+        if (worksApplicationProperties.lineEstimateRequired())
+            return estimatePhotographService.getWinForViewEstimatePhotograph(workIdentificationNumber);
+        else
+            return estimatePhotographService.getWorkIdentificationNumbers(workIdentificationNumber);
     }
 
 }

@@ -73,7 +73,10 @@ import org.egov.model.budget.BudgetGroup;
 import org.egov.services.masters.SchemeService;
 import org.egov.services.masters.SubSchemeService;
 import org.egov.utils.BudgetAccountType;
+import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.abstractestimate.entity.EstimatePhotographSearchRequest;
+import org.egov.works.abstractestimate.service.EstimateService;
+import org.egov.works.config.properties.WorksApplicationProperties;
 import org.egov.works.lineestimate.entity.LineEstimate;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.entity.LineEstimateSearchRequest;
@@ -82,6 +85,7 @@ import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.masters.entity.NatureOfWork;
 import org.egov.works.masters.service.NatureOfWorkService;
 import org.egov.works.utils.WorksConstants;
+import org.egov.works.web.adaptor.AbstractEstimateForEstimatePhotographJsonAdaptor;
 import org.egov.works.web.adaptor.AbstractEstimateForLOAJsonAdaptor;
 import org.egov.works.web.adaptor.LineEstimateForEstimatePhotographJsonAdaptor;
 import org.egov.works.web.adaptor.LineEstimateJsonAdaptor;
@@ -160,6 +164,15 @@ public class AjaxLineEstimateController {
 
     @Autowired
     private TypeOfWorkService typeOfWorkService;
+    
+    @Autowired
+    private AbstractEstimateForEstimatePhotographJsonAdaptor abstractEstimateForEstimatePhotographJsonAdaptor;
+    
+    @Autowired
+    private EstimateService estimateService;
+    
+    @Autowired
+    private WorksApplicationProperties worksApplicationProperties;
 
     @RequestMapping(value = "/getschemesbyfundid", method = RequestMethod.GET)
     public @ResponseBody List<Scheme> getAllSchemesByFundId(@RequestParam("fundId") final String fundId)
@@ -396,31 +409,49 @@ public class AjaxLineEstimateController {
     @RequestMapping(value = "/getestimatenumbers-uploadphotographs", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<String> findEstimateNumbersForEstimatePhotograph(
             @RequestParam final String estimateNumber) {
-        return lineEstimateService.getEstimateNumbersForEstimatePhotograph(estimateNumber);
+        if (worksApplicationProperties.lineEstimateRequired())
+            return lineEstimateService.getEstimateNumbersForEstimatePhotograph(estimateNumber);
+        else
+            return estimateService.getEstimateNumbersForEstimatePhotograph(estimateNumber);
     }
 
     @RequestMapping(value = "/getwin-uploadphotographs", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<String> findWinForEstimatePhotograph(
             @RequestParam final String workIdentificationNumber) {
-        return lineEstimateService.getWinForEstimatePhotograph(workIdentificationNumber);
+        if (worksApplicationProperties.lineEstimateRequired())
+            return lineEstimateService.getWinForEstimatePhotograph(workIdentificationNumber);
+        else
+            return estimateService.getWinForEstimatePhotograph(workIdentificationNumber);
     }
 
     @RequestMapping(value = "/searchlineestimateforestimatephotograph", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String ajaxSearchLEForEstimatePhotograph(final Model model,
             @ModelAttribute final EstimatePhotographSearchRequest estimatePhotographSearchRequest) {
-        final List<LineEstimateDetails> searchResultList = lineEstimateService
-                .searchLineEstimatesForEstimatePhotograph(estimatePhotographSearchRequest);
-        final String result = new StringBuilder("{ \"data\":")
-                .append(toSearchLineEstimateForEstimatePhotograph(searchResultList)).append("}").toString();
-        return result;
+        if (worksApplicationProperties.lineEstimateRequired()) {
+            final List<LineEstimateDetails> searchResultList = lineEstimateService
+                    .searchLineEstimatesForEstimatePhotograph(estimatePhotographSearchRequest);
+            return new StringBuilder("{ \"data\":").append(toSearchLineEstimateForEstimatePhotograph(searchResultList))
+                    .append("}").toString();
+        } else {
+            final List<AbstractEstimate> searchResultList = estimateService
+                    .searchAbstractEstimateForEstimatePhotograph(estimatePhotographSearchRequest);
+            return new StringBuilder("{ \"data\":")
+                    .append(toSearchAbstractEstimateForEstimatePhotograph(searchResultList)).append("}").toString();
+        }
     }
 
     public Object toSearchLineEstimateForEstimatePhotograph(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
         final Gson gson = gsonBuilder
                 .registerTypeAdapter(LineEstimateDetails.class, lineEstimateForEstimatePhotographJsonAdaptor).create();
-        final String json = gson.toJson(object);
-        return json;
+        return gson.toJson(object);
+    }
+
+    private Object toSearchAbstractEstimateForEstimatePhotograph(final Object object) {
+        final GsonBuilder gsonBuilder = new GsonBuilder();
+        final Gson gson = gsonBuilder
+                .registerTypeAdapter(AbstractEstimate.class, abstractEstimateForEstimatePhotographJsonAdaptor).create();
+        return gson.toJson(object);
     }
 
 }

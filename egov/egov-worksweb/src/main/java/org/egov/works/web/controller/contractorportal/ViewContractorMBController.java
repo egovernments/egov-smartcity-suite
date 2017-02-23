@@ -97,10 +97,10 @@ public class ViewContractorMBController {
         final ContractorMBHeader newcontractorMB = getContractorMBDocuments(contractorMB);
         splitBOQAndAdditionalDetails(newcontractorMB);
         model.addAttribute("documentDetails", newcontractorMB.getDocumentDetails());
-        model.addAttribute("mode", "view");
+        model.addAttribute(WorksConstants.MODE, WorksConstants.VIEW);
         final List<Long> projectCodeIdList = new ArrayList<Long>();
         projectCodeIdList
-                .add(contractorMB.getWorkOrderEstimate().getEstimate().getLineEstimateDetails().getProjectCode().getId());
+                .add(contractorMB.getWorkOrderEstimate().getEstimate().getProjectCode().getId());
         Map<String, BigDecimal> result = new HashMap<String, BigDecimal>();
         try {
             result = egovCommon.getTotalPaymentforProjectCode(projectCodeIdList, new Date());
@@ -110,7 +110,7 @@ public class ViewContractorMBController {
         model.addAttribute("totalBillsPaidSoFar", result.get("amount"));
         final TrackMilestone trackMilestone = trackMilestoneService
                 .getTrackMilestoneTotalPercentage(contractorMB.getWorkOrderEstimate().getId());
-        String mileStoneStatus = "";
+        String mileStoneStatus;
         if (trackMilestone == null || trackMilestone.getTotalPercentage().compareTo(BigDecimal.ZERO) < 0)
             mileStoneStatus = WorksConstants.MILESTONE_NOT_YET_STARTED;
         else if (trackMilestone.getTotalPercentage().compareTo(BigDecimal.ZERO) > 0

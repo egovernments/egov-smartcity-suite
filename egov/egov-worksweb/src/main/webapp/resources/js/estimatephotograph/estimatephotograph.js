@@ -55,7 +55,11 @@ $.each(JSON.parse(response), function(key, value){
 });
 
 $(document).ready(function(){
-	var ledId = $('#ledId').val();
+	var ledId = "";
+	if($("#lineEstimateRequired").val() == 'true')
+		ledId = $('#ledId').val();
+	else
+		ledId = $('#aeId').val();
 			//Example 2
 			$("#before").filer({
 				fileMaxSize: null,

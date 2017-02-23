@@ -44,6 +44,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <input type="hidden" id="workOrderEstimateId" value="${contractorMB.workOrderEstimate.id }" />
 <input type="hidden" id="lineEstimateDetailsId" value="${contractorMB.workOrderEstimate.estimate.lineEstimateDetails.id }" />
+<input type="hidden" id="abstractEstimateId" value="${contractorMB.workOrderEstimate.estimate.id }" />
 <div class="panel panel-primary" data-collapsed="0">
 	<div class="panel-heading">
 		<div class="panel-title" style="text-align: left;">

@@ -71,12 +71,13 @@
 		<div class="new-page-header"><spring:message code="lbl.uploadestimatephotograph" /> </div> 
 		
 		<input type="hidden" value="${lineEstimateDetails.id}" id="ledId" name="ledId"/>
+		<input type="hidden" value="${abstractEstimate.id}" id="aeId" name="aeId"/>
 		<input type="hidden" value='${photographStages}'  id = "photographStages"/>
 		<input type="hidden" value="${workOrder.id}" name="workOrderId" />
 		<input type="hidden" path="latitude" name="latitude" />
 		<input type="hidden" path="longitude" name="longitude" />
 		<input type="hidden" id="mode" value="${mode}" />
-		
+		<input type="hidden" id = "lineEstimateRequired" value = "${lineEstimateRequired }" />
 		
 		<input type="hidden" value="${lineEstimateDetails.lineEstimate.id}" name="lineEstimateId" />
 		<input type="hidden" value="<spring:message code="lbl.before" />" id="beforeId" />
@@ -87,22 +88,29 @@
 		 		<div class="panel panel-primary" data-collapsed="0">
 					<div class="panel-body">
 						<div class="panel-heading">
-						<%-- <div class="panel-title" style="text-align:center;"><spring:message code="lbl.header" /></div> --%>
 						</div>
 						<c:if test="${mode == ''}"> 
 							<div class="row add-border">
 									<div class="col-md-2 col-xs-6 add-margin"><spring:message code="lbl.abstractestimatenumber" />.</div> 
 									<div class="col-md-2 col-xs-6 add-margin view-content">
-									<%-- <a href='javascript:void(0)' onclick="viewLineEstimate('<c:out value="${abstractEstimate.estimateNumber}"/>')"> <c:out value="${abstractEstimate.estimateNumber}"/> </a> --%>
-									<c:out value="${lineEstimateDetails.estimateNumber}"/>
+									<c:choose>
+										<c:when test="${lineEstimateRequired == 'true' && lineEstimateDetails != null}">
+											<c:out value="${lineEstimateDetails.estimateNumber}"/>
+										</c:when>
+										<c:otherwise>
+											<c:out value="${abstractEstimate.estimateNumber}"/>
+										</c:otherwise>
+									</c:choose>
 									</div>
-									<div class="col-md-2 col-xs-6 add-margin">
-										<spring:message code="lbl.lineestimatenumber" />.
-									</div> 
-									<div class="col-md-2 col-xs-6 add-margin view-content">
-										<%-- <a href='javascript:void(0)' onclick="openLineEstimate('<c:out value="${abstractEstimate.lineEstimateDetails.lineEstimate.id}"/>')"><c:out value="${abstractEstimate.lineEstimateDetails.lineEstimate.lineEstimateNumber}"/></a> --%>
-										<a href='javascript:void(0)' onclick="openLineEstimate('<c:out value="${lineEstimateDetails.lineEstimate.id}"/>')"><c:out value="${lineEstimateDetails.lineEstimate.lineEstimateNumber}"/></a>
-									</div>
+									<c:if test="${lineEstimateRequired == 'true' }">
+										<div class="col-md-2 col-xs-6 add-margin">
+											<spring:message code="lbl.lineestimatenumber" />.
+										</div> 
+										<div class="col-md-2 col-xs-6 add-margin view-content">
+											<%-- <a href='javascript:void(0)' onclick="openLineEstimate('<c:out value="${abstractEstimate.lineEstimateDetails.lineEstimate.id}"/>')"><c:out value="${abstractEstimate.lineEstimateDetails.lineEstimate.lineEstimateNumber}"/></a> --%>
+												<a href='javascript:void(0)' onclick="openLineEstimate('<c:out value="${lineEstimateDetails.lineEstimate.id}"/>')"><c:out value="${lineEstimateDetails.lineEstimate.lineEstimateNumber}"/></a>
+										</div>
+									</c:if>
 								 <c:if test="${workOrder.workOrderNumber != null}"> 
 								<div class="col-md-2 col-xs-6 add-margin"><spring:message code="lbl.workordernumber" />.</div>
 								<div class="col-md-2 col-xs-6 add-margin view-content">
@@ -119,15 +127,20 @@
 								</div>
 							</div>
 						</c:if>
-<%-- 						<c:if test="${abstractEstimate != null}"> 
- --%>						<div class="row add-border">
+						<div class="row add-border">
 							<div class="col-md-2 col-xs-6 add-margin"><spring:message code="lbl.nameofwork" />.</div>
 							<div class="col-md-9 col-xs-12 add-margin view-content">
 							<%-- <c:out value="${abstractEstimate.name}"></c:out> --%>
-								<c:out value="${lineEstimateDetails.nameOfWork}"></c:out>
+							<c:choose>
+								<c:when test="${lineEstimateRequired == 'true' }">
+									<c:out value="${lineEstimateDetails.nameOfWork}"></c:out>
+								</c:when>
+								<c:otherwise>
+									<c:out value="${abstractEstimate.name}"></c:out>
+								</c:otherwise>
+							</c:choose>
 							</div>
 						</div>
-						<%-- </c:if> --%>
 					</div>
 				</div>
 			</div>

@@ -101,6 +101,7 @@ import org.egov.works.abstractestimate.entity.AbstractEstimateForLoaSearchReques
 import org.egov.works.abstractestimate.entity.AbstractEstimateForLoaSearchResult;
 import org.egov.works.abstractestimate.entity.Activity;
 import org.egov.works.abstractestimate.entity.AssetsForEstimate;
+import org.egov.works.abstractestimate.entity.EstimatePhotographSearchRequest;
 import org.egov.works.abstractestimate.entity.EstimateTechnicalSanction;
 import org.egov.works.abstractestimate.entity.EstimateTemplateSearchRequest;
 import org.egov.works.abstractestimate.entity.FinancialDetail;
@@ -1789,6 +1790,70 @@ public class EstimateService {
             bindErrors.reject("error.create.approve", "error.create.approve");
         else if (!validateWorkflowButton && WorksConstants.CREATE_AND_APPROVE.toString().equalsIgnoreCase(workFlowAction))
             bindErrors.reject("error.forward.approve", "error.forward.approve");
+    }
+
+    public List<AbstractEstimate> searchAbstractEstimateForEstimatePhotograph(
+            final EstimatePhotographSearchRequest estimatePhotographSearchRequest) {
+        final StringBuilder queryStr = new StringBuilder(500);
+
+        queryStr.append(
+                "select distinct(ae) from AbstractEstimate as ae where ae.egwStatus.code != :abstractEstimateStatus and parent is null ");
+
+        if (estimatePhotographSearchRequest.getExecutingDepartment() != null)
+            queryStr.append(" and ae.executingDepartment.id = :executingDepartment");
+
+        if (StringUtils.isNotBlank(estimatePhotographSearchRequest.getWorkIdentificationNumber()))
+            queryStr.append(" and upper(ae.projectCode.code) = :workIdentificationNumber");
+
+        if (StringUtils.isNotBlank(estimatePhotographSearchRequest.getEstimateNumber()))
+            queryStr.append(" and upper(ae.estimateNumber) = :estimateNumber");
+
+        if (estimatePhotographSearchRequest.getFromDate() != null)
+            queryStr.append(" and ae.createdDate >= :createdDate");
+
+        if (estimatePhotographSearchRequest.getToDate() != null)
+            queryStr.append(" and ae.createdDate >= :createdDate");
+
+        if (estimatePhotographSearchRequest.getNatureOfWork() != null)
+            queryStr.append(" and ae.natureOfWork.id = :natureOfWork");
+
+        final Query query = setParameterForEstimatePhotograph(estimatePhotographSearchRequest, queryStr);
+        return query.getResultList();
+    }
+
+    private Query setParameterForEstimatePhotograph(
+            final EstimatePhotographSearchRequest estimatePhotographSearchRequest, final StringBuilder queryStr) {
+        final Query qry = entityManager.createQuery(queryStr.toString());
+
+        qry.setParameter("abstractEstimateStatus", WorksConstants.CANCELLED_STATUS);
+
+        if (estimatePhotographSearchRequest != null) {
+            if (estimatePhotographSearchRequest.getExecutingDepartment() != null)
+                qry.setParameter("executingDepartment", estimatePhotographSearchRequest.getExecutingDepartment());
+            if (StringUtils.isNotBlank(estimatePhotographSearchRequest.getWorkIdentificationNumber()))
+                qry.setParameter("workIdentificationNumber",
+                        estimatePhotographSearchRequest.getWorkIdentificationNumber().toUpperCase());
+            if (StringUtils.isNotBlank(estimatePhotographSearchRequest.getEstimateNumber()))
+                qry.setParameter("estimateNumber", estimatePhotographSearchRequest.getEstimateNumber().toUpperCase());
+            if (estimatePhotographSearchRequest.getFromDate() != null)
+                qry.setParameter("createdDate", estimatePhotographSearchRequest.getFromDate());
+            if (estimatePhotographSearchRequest.getToDate() != null)
+                qry.setParameter("createdDate", estimatePhotographSearchRequest.getToDate());
+            if (estimatePhotographSearchRequest.getNatureOfWork() != null)
+                qry.setParameter("natureOfWork", estimatePhotographSearchRequest.getNatureOfWork());
+
+        }
+        return qry;
+    }
+
+    public List<String> getEstimateNumbersForEstimatePhotograph(final String estimateNumber) {
+        return abstractEstimateRepository.findEstimateNumbersForEstimatePhotograph("%" + estimateNumber + "%",
+                WorksConstants.CANCELLED_STATUS);
+    }
+
+    public List<String> getWinForEstimatePhotograph(final String workIdentificationNumber) {
+        return abstractEstimateRepository.findWorkIdentificationNumberForEstimatePhotograph(
+                "%" + workIdentificationNumber + "%", WorksConstants.CANCELLED_STATUS);
     }
 
 }

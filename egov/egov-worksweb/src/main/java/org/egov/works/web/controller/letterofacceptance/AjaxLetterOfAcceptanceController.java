@@ -43,6 +43,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.egov.works.config.properties.WorksApplicationProperties;
 import org.egov.works.letterofacceptance.entity.SearchRequestContractor;
 import org.egov.works.letterofacceptance.entity.SearchRequestLetterOfAcceptance;
 import org.egov.works.letterofacceptance.entity.SearchRequestLetterOfAcceptanceForRE;
@@ -134,6 +135,9 @@ public class AjaxLetterOfAcceptanceController {
 
     @Autowired
     private SearchWorkOrderForCRJsonAdaptor searchWorkOrderForCRJsonAdaptor;
+    
+    @Autowired
+    private WorksApplicationProperties worksApplicationProperties;
 
     @RequestMapping(value = "/ajaxcontractors-loa", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<Contractor> findContractorsByCodeOrName(@RequestParam final String name) {
@@ -459,13 +463,21 @@ public class AjaxLetterOfAcceptanceController {
     }
 
     @RequestMapping(value = "/getworkordernumber-viewestimatephotograph", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody List<String> findWorkOrderNumbersForViewEstimatePhotograph(@RequestParam final String workOrderNumber) {
-        return letterOfAcceptanceService.getWorkOrderNumbersForViewEstimatePhotograph(workOrderNumber);
+    public @ResponseBody List<String> findWorkOrderNumbersForViewEstimatePhotograph(
+            @RequestParam final String workOrderNumber) {
+        if (worksApplicationProperties.lineEstimateRequired())
+            return letterOfAcceptanceService.getWorkOrderNumbersForViewEstimatePhotograph(workOrderNumber);
+        else
+            return letterOfAcceptanceService.getWorkOrderNumbersToViewEstimatePhotograph(workOrderNumber);
     }
 
     @RequestMapping(value = "/getcontractorname-viewestimatephotograph", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody List<String> findContractorsNamesForViewEstimatePhotograph(@RequestParam final String contractorName) {
-        return letterOfAcceptanceService.getContractorsNamesForViewEstimatePhotograph(contractorName);
+    public @ResponseBody List<String> findContractorsNamesForViewEstimatePhotograph(
+            @RequestParam final String contractorName) {
+        if (worksApplicationProperties.lineEstimateRequired())
+            return letterOfAcceptanceService.getContractorsNamesForViewEstimatePhotograph(contractorName);
+        else
+            return letterOfAcceptanceService.getContractorsNamesToViewEstimatePhotograph(contractorName);
     }
 
     @RequestMapping(value = "/ajaxsearch-loatocreatecm", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)

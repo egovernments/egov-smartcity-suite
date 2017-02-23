@@ -75,13 +75,23 @@ function callAjaxSearch() {
 					$('td:eq(5)',row).html(parseFloat(Math.round(data.estimateAmount * 100) / 100).toFixed(2));
 					if (!isNaN(parseFloat(data.workCompletion)))
 						$('td:eq(6)',row).html(parseFloat(Math.round(data.workCompletion * 100) / 100).toFixed(2));
-					$(row).on(
-							'click',
-							function() {
-								window.open('/egworks/estimatephotograph/view?lineEstimateDetailsId='
-										+ data.lineEstimateDetailsId, '',
-										'width=800, height=600');
-							});
+					if($("#lineEstimateRequired").val() == 'true'){
+						$(row).on(
+								'click',
+								function() {
+									window.open('/egworks/estimatephotograph/view?lineEstimateDetailsId='
+											+ data.lineEstimateDetailsId, '',
+											'width=800, height=600');
+								});
+					}else{
+						$(row).on(
+								'click',
+								function() {
+									window.open('/egworks/estimatephotograph/view?abstractEstimateId='
+											+ data.abstractEstimateId, '',
+											'width=800, height=600');
+								});
+					}
 					return row;
 				},
 				aaSorting: [],				

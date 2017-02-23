@@ -68,4 +68,18 @@ public interface EstimatePhotographRepository extends JpaRepository<EstimatePhot
             @Param("workIdentificationNumber") String workIdentificationNumber,
             @Param("lineEstimateStatus") String lineEstimateStatus);
 
+    @Query("select distinct(ae.estimateNumber) from AbstractEstimate as ae where upper(ae.estimateNumber) like upper(:estimateNumber) and ae.egwStatus.code != :abstractEstimateStatus")
+    List<String> findEstimateNumbersToViewEstimatePhotograph(@Param("estimateNumber") String estimateNumber,
+            @Param("abstractEstimateStatus") String abstractEstimateStatus);
+
+    @Query("select distinct(ae.projectCode.code) from AbstractEstimate as ae where upper(ae.projectCode.code) like upper(:workIdentificationNumber) and ae.egwStatus.code != :abstractEstimateStatus")
+    List<String> findWorkIdentificationNumberToViewEstimatePhotograph(
+            @Param("workIdentificationNumber") String workIdentificationNumber,
+            @Param("abstractEstimateStatus") String abstractEstimateStatus);
+
+    @Query("select distinct(ep) from EstimatePhotographs as ep where ep.workProgress = :workProgress and ep.abstractestimate.id = :abstractEstimateId")
+    List<EstimatePhotographs> findByEstimatePhotographAndAbstractEstimate(
+            @Param("workProgress") WorkProgress estimatePhotographtrackStage,
+            @Param("abstractEstimateId") Long abstractEstimateId);
+
 }

@@ -88,9 +88,15 @@ function callAjaxSearch() {
 				},
 				"fnRowCallback" : function(row, data, index) {
 					$('td:eq(1)',row).html(parseFloat(Math.round(data.estimateAmount * 100) / 100).toFixed(2));
-					$('td:eq(5)', row).html(
-							'<a href="javascript:void(0);" onclick="openEstimatePhotographForm(\''
-									+ data.lineEstimateDetailsId + '\')">Upload Estimate Photograph</a>');
+					if($("#lineEstimateRequired").val() == 'true'){
+						$('td:eq(5)', row).html(
+								'<a href="javascript:void(0);" onclick="openEstimatePhotographForm(\''
+										+ data.lineEstimateDetailsId + '\')">Upload Estimate Photograph</a>');
+					}else{
+						$('td:eq(5)', row).html(
+								'<a href="javascript:void(0);" onclick="openEstimatePhotographForm(\''
+										+ data.abstractEstimateId + '\')">Upload Estimate Photograph</a>');
+					}
 					return row;
 				},
 				aaSorting: [],				
@@ -162,6 +168,9 @@ $(document).ready(function(){
 
 });
 
-function openEstimatePhotographForm(lineEstimateDetailsId) {
-	window.open("/egworks/estimatephotograph/newform?lineEstimateDetailsId=" + lineEstimateDetailsId, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+function openEstimatePhotographForm(id) {
+	if($("#lineEstimateRequired").val() == 'true')
+		window.open("/egworks/estimatephotograph/newform?lineEstimateDetailsId=" + id, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+	else
+		window.open("/egworks/estimatephotograph/newform?abstractEstimateId=" + id, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
 }

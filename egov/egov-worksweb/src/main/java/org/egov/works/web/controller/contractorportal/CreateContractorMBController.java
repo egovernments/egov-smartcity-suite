@@ -55,6 +55,7 @@ import org.egov.commons.service.UOMService;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.messaging.MessagingService;
+import org.egov.works.config.properties.WorksApplicationProperties;
 import org.egov.works.contractorportal.entity.ContractorMBHeader;
 import org.egov.works.contractorportal.service.ContractorMBHeaderService;
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
@@ -103,6 +104,9 @@ public class CreateContractorMBController {
 
     @Autowired
     private UOMService uomService;
+    
+    @Autowired
+    private WorksApplicationProperties worksApplicationProperties;
 
     @RequestMapping(value = "/search-loaform", method = RequestMethod.GET)
     public String showSearchLoaForm() {
@@ -137,7 +141,7 @@ public class CreateContractorMBController {
         model.addAttribute("uoms", uomService.findAll());
 
         final List<Long> projectCodeIdList = new ArrayList<Long>();
-        projectCodeIdList.add(workOrderEstimate.getEstimate().getLineEstimateDetails().getProjectCode().getId());
+        projectCodeIdList.add(workOrderEstimate.getEstimate().getProjectCode().getId());
         Map<String, BigDecimal> result = new HashMap<String, BigDecimal>();
         try {
             result = egovCommon.getTotalPaymentforProjectCode(projectCodeIdList, new Date());
@@ -147,7 +151,7 @@ public class CreateContractorMBController {
         model.addAttribute("totalBillsPaidSoFar", result.get("amount"));
 
         final TrackMilestone trackMilestone = trackMilestoneService.getTrackMilestoneTotalPercentage(workOrderEstimate.getId());
-        String mileStoneStatus = "";
+        String mileStoneStatus;
         if (trackMilestone == null || trackMilestone.getTotalPercentage().compareTo(BigDecimal.ZERO) < 0)
             mileStoneStatus = WorksConstants.MILESTONE_NOT_YET_STARTED;
         else if (trackMilestone.getTotalPercentage().compareTo(BigDecimal.ZERO) > 0
@@ -156,6 +160,7 @@ public class CreateContractorMBController {
         else
             mileStoneStatus = WorksConstants.MILESTONE_COMPLETED;
         model.addAttribute("mileStoneStatus", mileStoneStatus);
+        model.addAttribute("lineEstimateRequired", worksApplicationProperties.lineEstimateRequired());
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)

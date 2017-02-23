@@ -1254,4 +1254,19 @@ public class LetterOfAcceptanceService {
             }
         }
     }
+
+    public List<String> getContractorsNamesToViewEstimatePhotograph(final String contractorName) {
+        return letterOfAcceptanceRepository.findContractorsToSearchEstimatePhotograph("%" + contractorName + "%",
+                WorksConstants.APPROVED);
+    }
+
+    public List<String> getWorkOrderNumbersToViewEstimatePhotograph(final String workOrderNumber) {
+        return letterOfAcceptanceRepository.findworkOrderNumbersToSearchEstimatePhotograph("%" + workOrderNumber + "%",
+                WorksConstants.APPROVED);
+    }
+
+    public WorkOrder getApprovedWorkOrderByEstimateNumber(final String estimateNumber) {
+        return letterOfAcceptanceRepository.findByEstimateNumberAndEgwStatus_codeLike(estimateNumber,
+                WorksConstants.APPROVED);
+    }
 }

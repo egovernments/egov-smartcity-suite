@@ -197,12 +197,18 @@ $('#contractormbs').click(function(event) {
 
 $('#viewEstimatePhotograph').click(function(event) {
 	event.preventDefault();
-	window.open("/egworks/estimatephotograph/view?lineEstimateDetailsId=" + $('#lineEstimateDetailsId').val() + "&mode=contractorPortal", '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+	if($("#lineEstimateRequired").val() == 'true')
+		window.open("/egworks/estimatephotograph/view?lineEstimateDetailsId=" + $('#lineEstimateDetailsId').val() + "&mode=contractorPortal", '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+	else
+		window.open("/egworks/estimatephotograph/view?abstractEstimateId=" + $('#abstractEstimateId').val() + "&mode=contractorPortal", '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
 });
 
 $('#uploadEstimatePhotograph').click(function(event) {
 	event.preventDefault();
-	window.open("/egworks/estimatephotograph/newform?lineEstimateDetailsId=" + $('#lineEstimateDetailsId').val() + "&mode=contractorPortal", '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+	if($("#lineEstimateRequired").val() == 'true')
+		window.open("/egworks/estimatephotograph/newform?lineEstimateDetailsId=" + $('#lineEstimateDetailsId').val() + "&mode=contractorPortal", '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+	else
+		window.open("/egworks/estimatephotograph/newform?abstractEstimateId=" + $('#abstractEstimateId').val() + "&mode=contractorPortal", '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
 });
 
 function validateWorkFlowApprover(name) {

@@ -355,6 +355,10 @@ public class AbstractEstimate extends StateAware implements Auditable {
     @JoinColumn(name = "COPIED_FROM", nullable = true)
     private AbstractEstimate copiedFrom;
 
+    @OrderBy("id")
+    @OneToMany(mappedBy = "abstractestimate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = EstimatePhotographs.class)
+    private List<EstimatePhotographs> estimatePhotographsList = new ArrayList<EstimatePhotographs>(0);
+
     @Override
     public Long getId() {
         return id;
@@ -1028,4 +1032,13 @@ public class AbstractEstimate extends StateAware implements Auditable {
     public void setGrossAmountBilled(final BigDecimal grossAmountBilled) {
         this.grossAmountBilled = grossAmountBilled;
     }
+
+    public List<EstimatePhotographs> getEstimatePhotographsList() {
+        return estimatePhotographsList;
+    }
+
+    public void setEstimatePhotographsList(final List<EstimatePhotographs> estimatePhotographsList) {
+        this.estimatePhotographsList = estimatePhotographsList;
+    }
+
 }

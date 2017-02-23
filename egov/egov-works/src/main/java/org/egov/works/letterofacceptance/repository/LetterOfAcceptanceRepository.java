@@ -187,4 +187,14 @@ public interface LetterOfAcceptanceRepository extends JpaRepository<WorkOrder, L
     List<String> findWorkOrderNumbersToCreateCR(@Param("workOrderNumber") String workOrderNumber,
             @Param("workOrderStatus") String workOrderStatus, @Param("mbStatus") String mbStatus);
 
+    @Query("select distinct(woe.workOrder.contractor.name) from WorkOrderEstimate as woe where upper(woe.workOrder.contractor.name) like upper(:contractorName) or upper(woe.workOrder.contractor.code) like upper(:contractorName) and woe.workOrder.egwStatus.code = :workOrderStatus and woe.workOrder.parent is null and woe.estimate.id in (select ep.abstractestimate.id from EstimatePhotographs as ep where ep.abstractestimate.parent is null) ")
+    List<String> findContractorsToSearchEstimatePhotograph(@Param("contractorName") final String contractorName,
+            @Param("workOrderStatus") String workOrderStatus);
+
+    @Query("select distinct(woe.workOrder.workOrderNumber) from WorkOrderEstimate as woe where upper(woe.workOrder.workOrderNumber) like upper(:workOrderNumber) and woe.workOrder.egwStatus.code = :workOrderStatus and woe.workOrder.parent is null and woe.estimate.id in (select ep.abstractestimate.id from EstimatePhotographs as ep where ep.abstractestimate.parent is null) ")
+    List<String> findworkOrderNumbersToSearchEstimatePhotograph(@Param("workOrderNumber") final String workOrderNumber,
+            @Param("workOrderStatus") String workOrderStatus);
+
+    WorkOrder findByEstimateNumberAndEgwStatus_codeLike(final String estimateNumber, final String statusCode);
+
 }

@@ -47,11 +47,13 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.utils.FileStoreUtils;
+import org.egov.infra.utils.StringUtils;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.abstractestimate.entity.EstimatePhotographs;
 import org.egov.works.abstractestimate.entity.EstimatePhotographs.WorkProgress;
 import org.egov.works.abstractestimate.service.EstimatePhotographService;
 import org.egov.works.abstractestimate.service.EstimateService;
+import org.egov.works.config.properties.WorksApplicationProperties;
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.service.LineEstimateDetailService;
@@ -86,33 +88,40 @@ public class ViewEstimatePhotographController {
     @Autowired
     private FileStoreUtils fileStoreUtils;
 
-    @RequestMapping(value = "/view", method = RequestMethod.GET)
-    public String viewMilestoneTemplate(@RequestParam final Long lineEstimateDetailsId,
-            @RequestParam(value = "mode", required = false) final String mode,
-            final Model model,
-            final HttpServletRequest request)
-            throws ApplicationException {
+    @Autowired
+    private WorksApplicationProperties worksApplicationProperties;
 
-        final Long ledId = Long.valueOf(request.getParameter("lineEstimateDetailsId"));
+    @RequestMapping(value = "/view", method = RequestMethod.GET)
+    public String viewEstimatePhotographs(
+            @RequestParam(value = WorksConstants.MODE, required = false) final String mode, final Model model,
+            final HttpServletRequest request) throws ApplicationException {
+        model.addAttribute("lineEstimateRequired", worksApplicationProperties.lineEstimateRequired());
+        if (worksApplicationProperties.lineEstimateRequired())
+            viewEstimatePhotographsFromLE(model, request);
+        else
+            viewEstimatePhotographsFromAE(model, request);
+        return "estimatePhotographs-view";
+    }
+
+    private void viewEstimatePhotographsFromAE(final Model model, final HttpServletRequest request) {
+        final String imageType = "image/jpg";
+        final String fileLocation = "/egworks/estimatephotograph/downloadphotgraphs?fileStoreId=";
+        final String moduleName = "&moduleName=WMS";
+        final Long aeId = Long.valueOf(request.getParameter("abstractEstimateId"));
         final List<EstimatePhotographs> photographsBefore = estimatePhotographService
-                .getEstimatePhotographsByEstimatePhotographStageAndLineEstimateDetails(
-                        WorkProgress.BEFORE, ledId);
+                .getEstimatePhotographsByEstimatePhotographStageAndAbstractEstimate(WorkProgress.BEFORE, aeId);
         final List<EstimatePhotographs> photographsAfter = estimatePhotographService
-                .getEstimatePhotographsByEstimatePhotographStageAndLineEstimateDetails(
-                        WorkProgress.AFTER, ledId);
+                .getEstimatePhotographsByEstimatePhotographStageAndAbstractEstimate(WorkProgress.AFTER, aeId);
         final List<EstimatePhotographs> photographsOnProcess = estimatePhotographService
-                .getEstimatePhotographsByEstimatePhotographStageAndLineEstimateDetails(
-                        WorkProgress.DURING, ledId);
+                .getEstimatePhotographsByEstimatePhotographStageAndAbstractEstimate(WorkProgress.DURING, aeId);
         final JsonObject photographStages = new JsonObject();
         JsonArray array = new JsonArray();
 
         for (final EstimatePhotographs ep : photographsBefore) {
             final JsonObject before = new JsonObject();
             before.addProperty("name", ep.getFileStore().getFileName());
-            before.addProperty("type", "image/jpg");
-            before.addProperty("file",
-                    "/egworks/estimatephotograph/downloadphotgraphs?fileStoreId=" + ep.getFileStore().getFileStoreId()
-                            + "&moduleName=WMS");
+            before.addProperty("type", imageType);
+            before.addProperty("file", fileLocation + ep.getFileStore().getFileStoreId() + moduleName);
             before.addProperty("key", ep.getFileStore().getId());
             array.add(before);
         }
@@ -123,10 +132,8 @@ public class ViewEstimatePhotographController {
         for (final EstimatePhotographs ep : photographsAfter) {
             final JsonObject after = new JsonObject();
             after.addProperty("name", ep.getFileStore().getFileName());
-            after.addProperty("type", "image/jpg");
-            after.addProperty("file",
-                    "/egworks/estimatephotograph/downloadphotgraphs?fileStoreId=" + ep.getFileStore().getFileStoreId()
-                            + "&moduleName=WMS");
+            after.addProperty("type", imageType);
+            after.addProperty("file", fileLocation + ep.getFileStore().getFileStoreId() + moduleName);
             after.addProperty("key", ep.getFileStore().getId());
             array.add(after);
         }
@@ -137,9 +144,68 @@ public class ViewEstimatePhotographController {
         for (final EstimatePhotographs ep : photographsOnProcess) {
             final JsonObject during = new JsonObject();
             during.addProperty("name", ep.getFileStore().getFileName());
-            during.addProperty("type", "image/jpg");
-            during.addProperty("file", "/egworks/estimatephotograph/downloadphotgraphs?fileStoreId="
-                    + ep.getFileStore().getFileStoreId() + "&moduleName=WMS");
+            during.addProperty("type", imageType);
+            during.addProperty("file", fileLocation + ep.getFileStore().getFileStoreId() + moduleName);
+            during.addProperty("key", ep.getFileStore().getId());
+            array.add(during);
+        }
+
+        photographStages.add("during", array);
+
+        final AbstractEstimate abstractEstimate = estimateService.getAbstractEstimateById(aeId);
+        final WorkOrder workOrder = letterOfAcceptanceService
+                .getWorkOrderByEstimateNumber(abstractEstimate.getEstimateNumber());
+        model.addAttribute("abstractEstimate", abstractEstimate);
+        model.addAttribute("workOrder", workOrder);
+        model.addAttribute("photographStages", photographStages);
+        model.addAttribute(WorksConstants.MODE, request.getParameter(WorksConstants.MODE) != null
+                ? request.getParameter(WorksConstants.MODE) : StringUtils.EMPTY);
+
+    }
+
+    private void viewEstimatePhotographsFromLE(final Model model, final HttpServletRequest request) {
+        final String imageType = "image/jpg";
+        final String fileLocation = "/egworks/estimatephotograph/downloadphotgraphs?fileStoreId=";
+        final String moduleName = "&moduleName=WMS";
+        final Long ledId = Long.valueOf(request.getParameter("lineEstimateDetailsId"));
+        final List<EstimatePhotographs> photographsBefore = estimatePhotographService
+                .getEstimatePhotographsByEstimatePhotographStageAndLineEstimateDetails(WorkProgress.BEFORE, ledId);
+        final List<EstimatePhotographs> photographsAfter = estimatePhotographService
+                .getEstimatePhotographsByEstimatePhotographStageAndLineEstimateDetails(WorkProgress.AFTER, ledId);
+        final List<EstimatePhotographs> photographsOnProcess = estimatePhotographService
+                .getEstimatePhotographsByEstimatePhotographStageAndLineEstimateDetails(WorkProgress.DURING, ledId);
+        final JsonObject photographStages = new JsonObject();
+        JsonArray array = new JsonArray();
+
+        for (final EstimatePhotographs ep : photographsBefore) {
+            final JsonObject before = new JsonObject();
+            before.addProperty("name", ep.getFileStore().getFileName());
+            before.addProperty("type", imageType);
+            before.addProperty("file", fileLocation + ep.getFileStore().getFileStoreId() + moduleName);
+            before.addProperty("key", ep.getFileStore().getId());
+            array.add(before);
+        }
+
+        photographStages.add("before", array);
+        array = new JsonArray();
+
+        for (final EstimatePhotographs ep : photographsAfter) {
+            final JsonObject after = new JsonObject();
+            after.addProperty("name", ep.getFileStore().getFileName());
+            after.addProperty("type", imageType);
+            after.addProperty("file", fileLocation + ep.getFileStore().getFileStoreId() + moduleName);
+            after.addProperty("key", ep.getFileStore().getId());
+            array.add(after);
+        }
+
+        photographStages.add("after", array);
+        array = new JsonArray();
+
+        for (final EstimatePhotographs ep : photographsOnProcess) {
+            final JsonObject during = new JsonObject();
+            during.addProperty("name", ep.getFileStore().getFileName());
+            during.addProperty("type", imageType);
+            during.addProperty("file", fileLocation + ep.getFileStore().getFileStoreId() + moduleName);
             during.addProperty("key", ep.getFileStore().getId());
             array.add(during);
         }
@@ -148,24 +214,20 @@ public class ViewEstimatePhotographController {
 
         final LineEstimateDetails lineEstimateDetails = lineEstimateDetailService.getById(ledId);
         final WorkOrder workOrder = letterOfAcceptanceService
-                .getWorkOrderByEstimateNumber(lineEstimateDetails.getEstimateNumber());
+                .getApprovedWorkOrderByEstimateNumber(lineEstimateDetails.getEstimateNumber());
         final AbstractEstimate abstractEstimate = estimateService
                 .getAbstractEstimateByEstimateNumber(lineEstimateDetails.getEstimateNumber());
         model.addAttribute("abstractEstimate", abstractEstimate);
         model.addAttribute("workOrder", workOrder);
         model.addAttribute("lineEstimateDetails", lineEstimateDetails);
-
         model.addAttribute("photographStages", photographStages);
-
-        model.addAttribute(WorksConstants.MODE,
-                request.getParameter(WorksConstants.MODE) != null ? request.getParameter(WorksConstants.MODE) : "");
-        return "estimatePhotographs-view";
+        model.addAttribute(WorksConstants.MODE, request.getParameter(WorksConstants.MODE) != null
+                ? request.getParameter(WorksConstants.MODE) : StringUtils.EMPTY);
     }
 
     @RequestMapping(value = "/downloadphotgraphs", method = RequestMethod.GET)
-    public void viewUploadedDocuments(@RequestParam final String fileStoreId,
-            final HttpServletRequest request, final HttpServletResponse response)
-            throws IOException {
+    public void viewUploadedDocuments(@RequestParam final String fileStoreId, final HttpServletRequest request,
+            final HttpServletResponse response) throws IOException {
         fileStoreUtils.fetchFileAndWriteToStream(fileStoreId, WorksConstants.FILESTORE_MODULECODE, false, response);
 
     }
