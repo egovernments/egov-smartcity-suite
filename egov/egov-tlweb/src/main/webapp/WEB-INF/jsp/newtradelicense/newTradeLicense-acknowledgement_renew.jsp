@@ -42,13 +42,6 @@
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <html>
 <head>
-<script type="text/javascript">
-	function onSubmit(action) {
-		document.forms[0].action = action;
-		document.forms[0].submit;
-		return true;
-	}
-</script>
     <title>Acknowledgement Slip for Renewal of Trade License</title>
     <script>
         function refreshInbox() {
@@ -158,7 +151,8 @@
 <div align="center">
     <s:if test="%{hasCscOperatorRole == true}">
         <input type="button" value="Print" name="PrintAck" id="PrintAck" class="button"
-               onclick="window.open('/tl/newtradelicense/newtradelicense-printAck.action?model.id=<s:property value="%{id}"/>', '_blank', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');" >
+               onclick="window.open('/tl/newtradelicense/newtradelicense-printAck.action?model.id=<s:property value="%{id}"/>',
+                       '_blank', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');" >
     </s:if>
     <s:else>
         <input type="button" id="print" class="button printbtn" value="Print"/>  </s:else>

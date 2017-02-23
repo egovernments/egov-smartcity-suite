@@ -182,9 +182,7 @@
         return true;
     }
     function onSubmit() {
-        //toggleFields(false,"");
         document.renewForm.action = '${pageContext.request.contextPath}/newtradelicense/newTradeLicense-renewal.action';
-        //document.newTradeLicense.submit();
         return true;
     }
     function validateEditableFields() {

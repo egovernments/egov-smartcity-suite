@@ -251,10 +251,12 @@
 
         //this method gets called from included jsp
         function onSubmit() {
-            var mode = document.getElementById("mode").value;
-            var workflowaction = document.getElementById("workFlowAction").value;
+            var mode = $("#mode").val();
+            var workflowaction = $("#workFlowAction").val();
             <s:if test="%{workflowaction != null && workflowaction == 'Generate Provisional Certificate'}">
-            window.open("/tl/viewtradelicense/viewTradeLicense-generateCertificate.action?model.id=" + jQuery('#id').val(), 'gc' + jQuery('#id').val(), 'scrollbars=yes,width=1000,height=700,status=yes');
+                window.open("/tl/viewtradelicense/viewTradeLicense-generateCertificate.action?model.id=" + $('#id').val(),
+                    'gc' + $('#id').val(), 'scrollbars=yes,width=1000,height=700,status=yes');
+                return false;
             </s:if>
             <s:if test="%{mode!=null && ((mode=='view' || mode=='editForApproval' || mode== 'disableApprover') &&  mode!='editForReject' )}">
             clearMessage('newLicense_error');

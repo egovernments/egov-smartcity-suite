@@ -40,74 +40,89 @@
 
 <%@ include file="/includes/taglibs.jsp" %>
 
-<script>
-	function validateWorkFlowApprover(name,errorDivId) {
-		document.getElementById("workFlowAction").value=name;
-	    var approverPosId = document.getElementById("approverPositionId");
-	    if(approverPosId) {
-			var approver = approverPosId.options[approverPosId.selectedIndex].text; 
-			document.getElementById("approverName").value= approver.split('~')[0];
-		}
-	   return  onSubmit();
-	}
-
-	function validateWorkFlowApprover(name) {
-		if(!onSubmitValidations()){
-			return false;
-		}
-	    document.getElementById("workFlowAction").value=name;
-	    var approverDeptId =document.getElementById("approverDepartment");
-	    var approverDesgId = document.getElementById("approverDesignation");
-	    var approverPosId = document.getElementById("approverPositionId");
-	    var approverComments = document.getElementById("approverComments").value;
-	    if(approverPosId && approverPosId.value != -1) {
-			var approver = approverPosId.options[approverPosId.selectedIndex].text; 
-			document.getElementById("approverName").value= approver.split('~')[0];
-		}   
-		<s:if test="%{getNextAction()!='END'}">
-	    if(name=="Forward" || name=="forward") {
-	    	if(approverDeptId && approverDeptId.value == -1){
-	    		bootbox.alert("Please Select the Approver Department ");
-				return false;
-		    } else if(approverDesgId && approverDesgId.value == -1){
-		    	bootbox.alert("Please Select the Approver Designation ");
-				return false;
-		    } else if(approverPosId && approverPosId.value == -1){
-		    	bootbox.alert("Please Select the Approver ");
-				return false;
-		    }  
-	    }
-	    </s:if>
-	    if(name=="Forward" || name=="forward" || name=="approve" || name=="Approve") {
-	    	 if (approverComments == null || approverComments == "" || approverComments.trim().length == 0) { 
-	    		 bootbox.alert("Please Enter Approver Remarks ");
-				return false;
-	    	}  
-	    }
-	    if ((name=="Reject" || name=="reject")) {
-	    	if (approverComments == null || approverComments == "" || approverComments.trim().length == 0) {
-	    		bootbox.alert("Please Enter Rejection Remarks ");
-				return false;
-	    	}
-		}
-	    return  onSubmit();
-	}
-</script>
-
 <div class="buttonbottom" align="center">
-	<s:hidden id="workFlowAction" name="workFlowAction"/>
-	<table>
-		<tr>
-			<td><s:iterator value="validActions" var="name">
-					<s:if test="%{name!=''}">
-					<td>
-						<s:submit type="submit" cssClass="buttonsubmit custom-button" value="%{name}"
-							id="%{name}" name="%{name}"
-							onclick="return validateWorkFlowApprover('%{name}','jsValidationErrors');" style="margin:0 5px" /></td>
-					</s:if>
-				</s:iterator> 
-				<td><input type="button" name="button2" id="button2" value="Close"
-				class="button" onclick="window.close();" style="margin:0 5px"/></td></td>
-		</tr>
-	</table>
+    <s:hidden id="workFlowAction" name="workFlowAction"/>
+    <table>
+        <tr>
+            <td>
+                <s:iterator value="validActions" var="name">
+                <s:if test="%{name!=''}">
+            <td>
+                <input type="button" class="buttonsubmit custom-button" value="${name}"
+                       id="${name}" name="${name}" style="margin:0 5px"/>
+            </td>
+            </s:if>
+            </s:iterator>
+            <td><input type="button" name="button2" id="button2" value="Close"
+                       class="button" onclick="window.close();" style="margin:0 5px"/></td>
+            </td>
+        </tr>
+    </table>
 </div>
+<script>
+    $(document).ready(function () {
+        $(".buttonsubmit").click(function () {
+            var name = $(this).val();
+            if (!onSubmitValidations()) {
+                return false;
+            }
+            $("#workFlowAction").val(name);
+            var approverDeptId = $("#approverDepartment");
+            var approverDesgId = $("#approverDesignation");
+            var approverPosId = $("#approverPositionId");
+            var approverComments = $("#approverComments").val();
+            if (approverPosId && approverPosId.val() != -1) {
+                var approver = $("#approverPositionId option:selected").text();
+                $("approverName").val(approver.split('~')[0]);
+            }
+            <s:if test="%{getNextAction()!='END'}">
+            if (name == "Forward" || name == "forward") {
+                if (approverDeptId && approverDeptId.val() == -1) {
+                    bootbox.alert("Please Select the Approver Department ");
+                    return false;
+                } else if (approverDesgId && approverDesgId.val() == -1) {
+                    bootbox.alert("Please Select the Approver Designation ");
+                    return false;
+                } else if (approverPosId && approverPosId.val() == -1) {
+                    bootbox.alert("Please Select the Approver ");
+                    return false;
+                }
+            }
+            </s:if>
+            if (name == "Forward" || name == "forward" || name == "approve" || name == "Approve") {
+                if (approverComments == null || approverComments == "" || approverComments.trim().length == 0) {
+                    bootbox.alert("Please Enter Approver Remarks ");
+                    return false;
+                }
+            }
+            if ((name == "Reject" || name == "reject")) {
+                if (approverComments == null || approverComments == "" || approverComments.trim().length == 0) {
+                    bootbox.alert("Please Enter Rejection Remarks ");
+                    return false;
+                }
+            }
+            var button = $(this);
+            bootbox.confirm({
+                message: 'Are you sure you want to ' + name + ' ?',
+                buttons: {
+                    'cancel': {
+                        label: 'No',
+                        className: 'btn-default'
+                    },
+                    'confirm': {
+                        label: 'Yes',
+                        className: 'btn-danger'
+                    }
+                },
+                callback: function (result) {
+                    if (result) {
+                        var formOk = onSubmit();
+                        if (formOk) {
+                            button.closest('form').submit();
+                        }
+                    }
+                }
+            });
+        });
+    });
+</script>

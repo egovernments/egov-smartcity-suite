@@ -356,6 +356,12 @@ $(document).ready(function () {
                 var inactive = $('#inactive').is(":checked");
                 reportdatatable = drillDowntableContainer
                     .dataTable({
+                        scrollY:        "300px",
+                        scrollX:        true,
+                        scrollCollapse: true,
+                        fixedColumns:   {
+                            leftColumns: 1
+                        },
                         ajax: {
                             url: "../search/searchtrade-search",
                             data: {

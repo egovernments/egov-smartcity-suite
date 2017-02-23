@@ -150,7 +150,7 @@
 
 <div class="row display-hide report-section">
 	<div class="col-md-12 table-header text-left">Search Result</div>
-	<div class="col-md-12 form-group report-table-container">
+	<div class="col-md-12 report-table-container">
 		<table class="table table-bordered table-hover multiheadertbl" id="tblSearchTrade">
 			<thead>
 				<tr>
@@ -181,8 +181,13 @@
 	href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>" />
 <link rel="stylesheet"
 	href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
+<link rel="stylesheet"
+	  href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/fixedColumns.dataTables.min.css' context='/egi'/>">
 <script type="text/javascript"
 	src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
+<script type="text/javascript"
+		src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/extensions/fixed columns/dataTables.fixedColumns.min.js' context='/egi'/>"></script>
+
 <script type="text/javascript"
 	src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
 <script type="text/javascript"
