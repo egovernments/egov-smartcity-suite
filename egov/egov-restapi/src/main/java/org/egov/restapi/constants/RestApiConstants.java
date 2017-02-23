@@ -499,10 +499,4 @@ public class RestApiConstants {
     public static final String THIRD_PARTY_ERR_CONTRACTOR_EMAIL_INVALID = "EGWORKS-CONTRACTOR-20";
     public static final String THIRD_PARTY_ERR_MSG_CONTRACTOR_EMAIL_INVALID = "Email is not a valid";
 
-    public static final String THIRD_PARTY_ERR_CONTRACTOR_REGISTRACTIONNUMBER_INVALID = "EGWORKS-CONTRACTOR-21";
-    public static final String THIRD_PARTY_ERR_MSG_CONTRACTOR_REGISTRACTIONNUMBER_INVALID = "Registraction Number is not a valid";
-
-    public static final String THIRD_PARTY_ERR_CONTRACTOR_STARTENDDATE_INVALID = "EGWORKS-CONTRACTOR-22";
-    public static final String THIRD_PARTY_ERR_MSG_CONTRACTOR_STARTENDDATE_INVALID = "Start date should fall before end date";
-
 }

@@ -100,6 +100,11 @@ public class CreateContractorController {
 
     }
 
+    @RequestMapping(value = "/egworks/contractors", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public String getAllContractor() {
+        return JsonConvertor.convert(externalContractorService.populateContractor());
+    }
+
     @ResponseStatus(value = HttpStatus.OK)
     @RequestMapping(value = "/egworks/contractor", method = POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public String createContractor(@RequestBody final String requestJson,

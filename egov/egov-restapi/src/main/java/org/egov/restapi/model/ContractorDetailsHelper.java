@@ -41,34 +41,13 @@ package org.egov.restapi.model;
 
 import java.io.Serializable;
 
-import org.egov.infra.persistence.entity.component.Period;
-
 public class ContractorDetailsHelper implements Serializable {
 
     private static final long serialVersionUID = -5127775461515959368L;
 
-    private String departmentName;
-    private String registrationNumber;
     private String contractorClass;
     private String status;
-    private String category;
-    private Period validityHelper;
-
-    public String getDepartmentName() {
-        return departmentName;
-    }
-
-    public void setDepartmentName(final String departmentName) {
-        this.departmentName = departmentName;
-    }
-
-    public String getRegistrationNumber() {
-        return registrationNumber;
-    }
-
-    public void setRegistrationNumber(final String registrationNumber) {
-        this.registrationNumber = registrationNumber;
-    }
+    private String contractorCategory;
 
     public String getContractorClass() {
         return contractorClass;
@@ -86,20 +65,12 @@ public class ContractorDetailsHelper implements Serializable {
         this.status = status;
     }
 
-    public String getCategory() {
-        return category;
+    public String getContractorCategory() {
+        return contractorCategory;
     }
 
-    public void setCategory(final String category) {
-        this.category = category;
-    }
-
-    public Period getValidityHelper() {
-        return validityHelper;
-    }
-
-    public void setValidityHelper(final Period validityHelper) {
-        this.validityHelper = validityHelper;
+    public void setContractorCategory(final String contractorCategory) {
+        this.contractorCategory = contractorCategory;
     }
 
 }
