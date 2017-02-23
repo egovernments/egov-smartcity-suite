@@ -129,11 +129,11 @@ public interface AbstractEstimateRepository extends JpaRepository<AbstractEstima
     @Query("select act from Activity act where act.abstractEstimate.id =:estimateId order by act.id")
     List<Activity> findActivitiesByEstimate(@Param("estimateId") final Long estimateId);
 
-    @Query("select distinct(ae.estimateNumber) from AbstractEstimate as ae where upper(ae.estimateNumber) like upper(:estimateNumber) and ae.egwStatus.code != :abstractEstimateStatus and parent is null")
+    @Query("select distinct(ae.estimateNumber) from AbstractEstimate as ae where upper(ae.estimateNumber) like upper(:estimateNumber) and ae.egwStatus.code != :abstractEstimateStatus and ae.parent is null")
     List<String> findEstimateNumbersForEstimatePhotograph(@Param("estimateNumber") String estimateNumber,
             @Param("abstractEstimateStatus") String abstractEstimateStatus);
 
-    @Query("select distinct(ae.projectCode.code) from AbstractEstimate as ae where upper(ae.projectCode.code) like upper(:workIdentificationNumber) and ae.egwStatus.code != :abstractEstimateStatus and parent is null")
+    @Query("select distinct(ae.projectCode.code) from AbstractEstimate as ae where upper(ae.projectCode.code) like upper(:workIdentificationNumber) and ae.egwStatus.code != :abstractEstimateStatus and ae.parent is null")
     List<String> findWorkIdentificationNumberForEstimatePhotograph(
             @Param("workIdentificationNumber") String workIdentificationNumber,
             @Param("abstractEstimateStatus") String abstractEstimateStatus);

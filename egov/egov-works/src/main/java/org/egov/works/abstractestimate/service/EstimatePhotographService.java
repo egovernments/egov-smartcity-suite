@@ -48,6 +48,7 @@ import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -59,6 +60,7 @@ import javax.imageio.stream.ImageOutputStream;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 import org.egov.infra.exception.ApplicationRuntimeException;
@@ -68,17 +70,31 @@ import org.egov.works.abstractestimate.entity.EstimatePhotographSearchRequest;
 import org.egov.works.abstractestimate.entity.EstimatePhotographs;
 import org.egov.works.abstractestimate.entity.EstimatePhotographs.WorkProgress;
 import org.egov.works.abstractestimate.repository.EstimatePhotographRepository;
+import org.egov.works.config.properties.WorksApplicationProperties;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.utils.WorksConstants;
+import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 
 @Service
 @Transactional(readOnly = true)
 public class EstimatePhotographService {
+
+    public static final String ESTIMATEPHOTOGRAPHS = "estimatePhotographs";
+    private static final String FILELOCATION = "/egworks/estimatephotograph/downloadphotgraphs?fileStoreId=";
+    private static final String MODULENAME = "&moduleName=WMS";
+    private static final String NAME = "name";
+    private static final String TYPE = "type";
+    private static final String FILE = "file";
+    public static final String KEY = "key";
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -88,6 +104,9 @@ public class EstimatePhotographService {
 
     @Autowired
     private FileStoreService fileStoreService;
+
+    @Autowired
+    private WorksApplicationProperties worksApplicationProperties;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -176,17 +195,12 @@ public class EstimatePhotographService {
         if (StringUtils.isNotBlank(estimatePhotographSearchRequest.getWorkIdentificationNumber()))
             queryStr.append(" and upper(ep.lineEstimateDetails.projectCode.code) = :workIdentificationNumber");
 
-        // if
-        // (StringUtils.isNotBlank(estimatePhotographSearchRequest.getEstimateNumber()))
-        // queryStr.append(" and upper(ep.lineEstimateDetails.estimateNumber) =
-        // :estimateNumber");
-
         if (StringUtils.isNotBlank(estimatePhotographSearchRequest.getWorkOrderNumber()))
             queryStr.append(
                     " and ep.lineEstimateDetails.id in (select distinct(woe.estimate.lineEstimateDetails.id) from WorkOrderEstimate as woe where woe.workOrder.egwStatus.code =:workOrderStatus and upper(woe.workOrder.workOrderNumber) =:workOrderNumber) ");
         if (estimatePhotographSearchRequest.getEstimateCreatedBy() != null)
             queryStr.append(
-                    " and ep.lineEstimateDetails.id in (select distinct(ae.lineEstimateDetails.id) from AbstractEstimate as ae where ae.egwStatus.code =:abstractEstimateStatus and ae.createdBy.id =:aeCreatedById) ");
+                    " and ep.lineEstimateDetails.id in (select distinct(ae.lineEstimateDetails.id) from AbstractEstimate as ae where ae.egwStatus.code =:aeStatus and ae.createdBy.id =:aeCreatedById) ");
         if (StringUtils.isNotBlank(estimatePhotographSearchRequest.getContractorName()))
             queryStr.append(
                     " and ep.lineEstimateDetails.id in (select distinct(woe.estimate.lineEstimateDetails.id) from WorkOrderEstimate as woe where woe.workOrder.egwStatus.code =:workOrderStatus and upper(woe.workOrder.contractor.name) =:contractorName or upper(woe.workOrder.contractor.code) =:contractorName) ");
@@ -198,27 +212,7 @@ public class EstimatePhotographService {
         final Query qry = entityManager.createQuery(queryStr.toString());
 
         qry.setParameter("lineEstimateStatus", WorksConstants.CANCELLED_STATUS);
-
-        if (estimatePhotographSearchRequest != null) {
-            if (StringUtils.isNotBlank(estimatePhotographSearchRequest.getWorkIdentificationNumber()))
-                qry.setParameter("workIdentificationNumber",
-                        estimatePhotographSearchRequest.getWorkIdentificationNumber().toUpperCase());
-            if (StringUtils.isNotBlank(estimatePhotographSearchRequest.getEstimateNumber()))
-                qry.setParameter("estimateNumber", estimatePhotographSearchRequest.getEstimateNumber().toUpperCase());
-            if (StringUtils.isNotBlank(estimatePhotographSearchRequest.getWorkOrderNumber())) {
-                qry.setParameter("workOrderStatus", WorksConstants.APPROVED);
-                qry.setParameter("workOrderNumber", estimatePhotographSearchRequest.getWorkOrderNumber().toUpperCase());
-            }
-            if (estimatePhotographSearchRequest.getEstimateCreatedBy() != null) {
-                qry.setParameter("abstractEstimateStatus", AbstractEstimate.EstimateStatus.APPROVED.toString());
-                qry.setParameter("aeCreatedById", estimatePhotographSearchRequest.getEstimateCreatedBy());
-            }
-            if (StringUtils.isNotBlank(estimatePhotographSearchRequest.getContractorName())) {
-                qry.setParameter("workOrderStatus", WorksConstants.APPROVED);
-                qry.setParameter("contractorName", estimatePhotographSearchRequest.getContractorName().toUpperCase());
-            }
-
-        }
+        setSearchParameters(estimatePhotographSearchRequest, qry);
         return qry;
     }
 
@@ -259,10 +253,10 @@ public class EstimatePhotographService {
 
     public List<AbstractEstimate> searchEstimatePhotographFromAE(
             final EstimatePhotographSearchRequest estimatePhotographSearchRequest) {
-        final StringBuilder queryStr = new StringBuilder(500);
+        final StringBuilder queryStr = new StringBuilder();
 
         queryStr.append(
-                "select distinct(ep.abstractestimate) from EstimatePhotographs as ep where ep.abstractestimate.egwStatus.code != :abstractEstimateStatus and parent is null and ep.workProgress is not null");
+                "select distinct(ep.abstractestimate) from EstimatePhotographs as ep where ep.abstractestimate.egwStatus.code != :abstractEstimateStatus and ep.abstractestimate.parent is null and ep.workProgress is not null");
 
         if (StringUtils.isNotBlank(estimatePhotographSearchRequest.getWorkIdentificationNumber()))
             queryStr.append(" and upper(ep.abstractestimate.projectCode.code) = :workIdentificationNumber");
@@ -284,9 +278,13 @@ public class EstimatePhotographService {
     private Query setParameterForEstimatePhotographFromAE(
             final EstimatePhotographSearchRequest estimatePhotographSearchRequest, final StringBuilder queryStr) {
         final Query qry = entityManager.createQuery(queryStr.toString());
-
         qry.setParameter("abstractEstimateStatus", WorksConstants.CANCELLED_STATUS);
+        setSearchParameters(estimatePhotographSearchRequest, qry);
+        return qry;
+    }
 
+    private void setSearchParameters(final EstimatePhotographSearchRequest estimatePhotographSearchRequest,
+            final Query qry) {
         if (estimatePhotographSearchRequest != null) {
             if (StringUtils.isNotBlank(estimatePhotographSearchRequest.getWorkIdentificationNumber()))
                 qry.setParameter("workIdentificationNumber",
@@ -307,7 +305,66 @@ public class EstimatePhotographService {
             }
 
         }
-        return qry;
     }
 
+    public void setPhotographsBeforeJsonArray(final List<EstimatePhotographs> photographsBefore,
+            final JsonObject photographStages) {
+        final JsonArray array = new JsonArray();
+        final JsonObject before = new JsonObject();
+        for (final EstimatePhotographs ep : photographsBefore) {
+            before.addProperty(EstimatePhotographService.NAME, ep.getFileStore().getFileName());
+            before.addProperty(EstimatePhotographService.TYPE, WorksConstants.IMAGETYPE);
+            before.addProperty(EstimatePhotographService.FILE, EstimatePhotographService.FILELOCATION
+                    + ep.getFileStore().getFileStoreId() + EstimatePhotographService.MODULENAME);
+            before.addProperty(EstimatePhotographService.KEY, ep.getFileStore().getId());
+            array.add(before);
+        }
+
+        photographStages.add("before", array);
+    }
+
+    public void setPhotographsDuringJsonArray(final List<EstimatePhotographs> photographsOnProcess,
+            final JsonObject photographStages) {
+        final JsonArray array = new JsonArray();
+        final JsonObject during = new JsonObject();
+        for (final EstimatePhotographs ep : photographsOnProcess) {
+            during.addProperty(EstimatePhotographService.NAME, ep.getFileStore().getFileName());
+            during.addProperty(EstimatePhotographService.TYPE, WorksConstants.IMAGETYPE);
+            during.addProperty(EstimatePhotographService.FILE, EstimatePhotographService.FILELOCATION
+                    + ep.getFileStore().getFileStoreId() + EstimatePhotographService.MODULENAME);
+            during.addProperty(EstimatePhotographService.KEY, ep.getFileStore().getId());
+            array.add(during);
+        }
+
+        photographStages.add("during", array);
+    }
+
+    public void setPhotographsAfterJsonArray(final List<EstimatePhotographs> photographsAfter,
+            final JsonObject photographStages) {
+        final JsonArray array = new JsonArray();
+        final JsonObject after = new JsonObject();
+        for (final EstimatePhotographs ep : photographsAfter) {
+            after.addProperty(EstimatePhotographService.NAME, ep.getFileStore().getFileName());
+            after.addProperty(EstimatePhotographService.TYPE, WorksConstants.IMAGETYPE);
+            after.addProperty(EstimatePhotographService.FILE, EstimatePhotographService.FILELOCATION
+                    + ep.getFileStore().getFileStoreId() + EstimatePhotographService.MODULENAME);
+            after.addProperty(EstimatePhotographService.KEY, ep.getFileStore().getId());
+            array.add(after);
+        }
+
+        photographStages.add("after", array);
+    }
+
+    public void setModelValues(final Model model, final HttpServletRequest request, final JsonObject photographStages,
+            final WorkOrderEstimate workOrderEstimate, final AbstractEstimate abstractEstimate) {
+        model.addAttribute("abstractEstimate", abstractEstimate);
+        if (workOrderEstimate != null)
+            model.addAttribute("workOrder", workOrderEstimate.getWorkOrder());
+        model.addAttribute("photographStages", photographStages);
+        model.addAttribute("estimatePhotographTrackStage", WorkProgress.values());
+        model.addAttribute("lineEstimateRequired", worksApplicationProperties.lineEstimateRequired());
+        model.addAttribute(WorksConstants.MODE, request.getParameter(WorksConstants.MODE) != null
+                ? request.getParameter(WorksConstants.MODE) : StringUtils.EMPTY);
+    }
+    
 }

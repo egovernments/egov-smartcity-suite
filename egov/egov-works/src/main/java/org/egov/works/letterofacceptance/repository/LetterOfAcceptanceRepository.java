@@ -195,6 +195,4 @@ public interface LetterOfAcceptanceRepository extends JpaRepository<WorkOrder, L
     List<String> findworkOrderNumbersToSearchEstimatePhotograph(@Param("workOrderNumber") final String workOrderNumber,
             @Param("workOrderStatus") String workOrderStatus);
 
-    WorkOrder findByEstimateNumberAndEgwStatus_codeLike(final String estimateNumber, final String statusCode);
-
 }

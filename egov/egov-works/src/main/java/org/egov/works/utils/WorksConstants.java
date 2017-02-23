@@ -391,27 +391,27 @@ public class WorksConstants {
 
     public static final String APPCONFIG_NOMINATION_AMOUNT = "NOMINATION_AMOUNT_LIMIT";
 
-    public final static String SECTOR_COLUMN_HEADER_NAME = "SECTOR";
+    public static final  String SECTOR_COLUMN_HEADER_NAME = "SECTOR";
 
-    public final static String DISTRICT_COLUMN_HEADER_NAME = "District Name";
+    public static final  String DISTRICT_COLUMN_HEADER_NAME = "District Name";
 
-    public final static String ULB_COLUMN_HEADER_NAME = "ULB Name";
+    public static final  String ULB_COLUMN_HEADER_NAME = "ULB Name";
 
-    public final static String WORKSMILESTONE_TYPEOFWORKNAME_COLUMN_NAME = "lineestimatetypeofworkname";
+    public static final  String WORKSMILESTONE_TYPEOFWORKNAME_COLUMN_NAME = "lineestimatetypeofworkname";
 
     public static final String NOMINATION_NAME = "NOMINATION_NAME";
 
-    public final static String WORKSMILESTONE_DISTNAME_COLUMN_NAME = "distname";
+    public static final  String WORKSMILESTONE_DISTNAME_COLUMN_NAME = "distname";
 
-    public final static String WORKSMILESTONE_ULBNAME_COLUMN_NAME = "ulbname";
+    public static final  String WORKSMILESTONE_ULBNAME_COLUMN_NAME = "ulbname";
 
-    public final static String WORKSMILESTONE_ULBCODE_COLUMN_NAME = "ulbcode";
+    public static final  String WORKSMILESTONE_ULBCODE_COLUMN_NAME = "ulbcode";
 
-    public final static String WORKSMILESTONE_LOASTATUS_COLUMN_NAME = "loastatus";
+    public static final  String WORKSMILESTONE_LOASTATUS_COLUMN_NAME = "loastatus";
 
-    public final static String WORKSMILESTONE_MILESTONESTATUS_COLUMN_NAME = "milestonestatus";
+    public static final  String WORKSMILESTONE_MILESTONESTATUS_COLUMN_NAME = "milestonestatus";
 
-    public final static String WORKSMILESTONE_ESTIMATEDETAILID_COLUMN_NAME = "lineestimatedetailid";
+    public static final  String WORKSMILESTONE_ESTIMATEDETAILID_COLUMN_NAME = "lineestimatedetailid";
 
     public static final String BILL_EDIT_DESIGNATIONS = "BILL_EDIT_DESIGNATIONS";
 
@@ -437,9 +437,11 @@ public class WorksConstants {
 
     public static final String ABSTRACTESTIMATE_APPROVALRULES = "ABSTRACTESTIMATE-APPROVALRULES";
 
-    public final static String ACTIVE = "Active";
+    public static final  String ACTIVE = "Active";
 
     public static final String MB_APPROVALRULES = "MB-APPROVALRULES";
 
     public static final String REVISIONESTIMATE_APPROVALRULES = "REVISIONESTIMATE-APPROVALRULES";
+    
+    public static final String IMAGETYPE = "image/jpg";
 }

@@ -723,8 +723,8 @@ public class LetterOfAcceptanceService {
             final StringBuilder queryStr) {
 
         queryStr.append(
-                "select distinct(woe) from WorkOrderEstimate woe where woe.workOrder.egwStatus.moduletype = :moduleType and woe.workOrder.egwStatus.code = :status and woe.workOrder.parent.id is null and not exists (select ms.workOrderEstimate.workOrder.id from Milestone ms where ms.workOrderEstimate.workOrder.id = woe.workOrder.id and upper(woe.workOrder.egwStatus.code)  != upper(:workorderstatus) and upper(ms.status.code)  != upper(:milestonestatus))");
-        queryStr.append(" and woe.estimate.executingDepartment.id = :departmentName");
+                "select distinct(woe) from WorkOrderEstimate woe where woe.workOrder.egwStatus.moduletype = :moduleType and woe.workOrder.egwStatus.code = :status and woe.workOrder.parent.id is null and not exists (select ms.workOrderEstimate.workOrder.id from Milestone ms where ms.workOrderEstimate.workOrder.id = woe.workOrder.id and upper(woe.workOrder.egwStatus.code)  != upper(:workorderstatus) and upper(ms.status.code)  != upper(:milestonestatus))")
+        .append(" and woe.estimate.executingDepartment.id = :departmentName");
 
         if (StringUtils.isNotBlank(searchRequestLetterOfAcceptance.getWorkIdentificationNumber()))
             queryStr.append(" and upper(woe.estimate.projectCode.code) = :workIdentificationNumber");
@@ -1262,11 +1262,6 @@ public class LetterOfAcceptanceService {
 
     public List<String> getWorkOrderNumbersToViewEstimatePhotograph(final String workOrderNumber) {
         return letterOfAcceptanceRepository.findworkOrderNumbersToSearchEstimatePhotograph("%" + workOrderNumber + "%",
-                WorksConstants.APPROVED);
-    }
-
-    public WorkOrder getApprovedWorkOrderByEstimateNumber(final String estimateNumber) {
-        return letterOfAcceptanceRepository.findByEstimateNumberAndEgwStatus_codeLike(estimateNumber,
                 WorksConstants.APPROVED);
     }
 }

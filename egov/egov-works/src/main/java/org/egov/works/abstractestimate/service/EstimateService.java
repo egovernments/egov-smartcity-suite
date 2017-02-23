@@ -1794,10 +1794,10 @@ public class EstimateService {
 
     public List<AbstractEstimate> searchAbstractEstimateForEstimatePhotograph(
             final EstimatePhotographSearchRequest estimatePhotographSearchRequest) {
-        final StringBuilder queryStr = new StringBuilder(500);
+        final StringBuilder queryStr = new StringBuilder();
 
         queryStr.append(
-                "select distinct(ae) from AbstractEstimate as ae where ae.egwStatus.code != :abstractEstimateStatus and parent is null ");
+                "select distinct(ae) from AbstractEstimate as ae where ae.egwStatus.code != :abstractEstimateStatus and ae.parent is null ");
 
         if (estimatePhotographSearchRequest.getExecutingDepartment() != null)
             queryStr.append(" and ae.executingDepartment.id = :executingDepartment");

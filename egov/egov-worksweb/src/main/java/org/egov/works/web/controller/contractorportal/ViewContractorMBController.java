@@ -131,7 +131,7 @@ public class ViewContractorMBController {
     }
 
     @RequestMapping(value = "/contractormbs/{id}", method = RequestMethod.GET)
-    public String ContractorMBs(final Model model, @PathVariable final Long id,
+    public String viewContractorMBs(final Model model, @PathVariable final Long id,
             final HttpServletRequest request) {
         final List<ContractorMBHeader> contractorMBHeaders = contractorMBHeaderService
                 .getContractorMBHeaderByWorkOrderEstimateId(Long.valueOf(id));
