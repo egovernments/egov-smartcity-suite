@@ -39,7 +39,7 @@
  */
 package org.egov.ptis.bean.dashboard;
 
-public class UlbWiseWeeklyDCB {
+public class WeeklyDCB {
     private String ulbName;
     private DemandCollectionMIS week1DCB;
     private DemandCollectionMIS week2DCB;

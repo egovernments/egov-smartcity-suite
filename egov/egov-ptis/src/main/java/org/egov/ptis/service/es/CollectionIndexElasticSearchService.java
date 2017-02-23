@@ -61,6 +61,9 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DATEFORMATTER_YYYY_MM
 import static org.egov.ptis.constants.PropertyTaxConstants.DATE_FORMAT_YYYYMMDD;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_EWSHS;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_TAX_INDEX_NAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.WEEK;
+import static org.egov.ptis.constants.PropertyTaxConstants.MONTH;
+import static org.egov.ptis.constants.PropertyTaxConstants.DAY;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -87,7 +90,7 @@ import org.egov.ptis.bean.dashboard.ReceiptTableData;
 import org.egov.ptis.bean.dashboard.ReceiptsTrend;
 import org.egov.ptis.bean.dashboard.UlbWiseDemandCollection;
 import org.egov.ptis.bean.dashboard.MonthlyDCB;
-import org.egov.ptis.bean.dashboard.UlbWiseWeeklyDCB;
+import org.egov.ptis.bean.dashboard.WeeklyDCB;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.es.BillCollectorIndex;
 import org.elasticsearch.action.search.SearchResponse;
@@ -1202,11 +1205,11 @@ public class CollectionIndexElasticSearchService {
         if(isForMISReports){
             DateHistogramInterval interval = null;
             if(StringUtils.isNotBlank(intervalType)){
-                if("month".equalsIgnoreCase(intervalType))
+                if(MONTH.equalsIgnoreCase(intervalType))
                     interval = DateHistogramInterval.MONTH;
-                else if("week".equalsIgnoreCase(intervalType))
+                else if(WEEK.equalsIgnoreCase(intervalType))
                     interval = DateHistogramInterval.WEEK;
-                else if("day".equalsIgnoreCase(intervalType))
+                else if(DAY.equalsIgnoreCase(intervalType))
                     interval = DateHistogramInterval.DAY;
             }
             aggregationBuilder = AggregationBuilders.terms(BY_CITY).field("cityName")
@@ -1848,11 +1851,11 @@ public class CollectionIndexElasticSearchService {
         Aggregations collAggr = getMonthwiseCollectionsForConsecutiveYears(collectionDetailsRequest, fromDate,
                 toDate, true, intervalType);
         StringTerms cityaggr = collAggr.get(BY_CITY);
-        if("month".equalsIgnoreCase(intervalType))
+        if(MONTH.equalsIgnoreCase(intervalType))
             prepareMonthlyCollMap(finYearStartDate, finYearEndDate, monthValuesMap, intervalwiseCollMap, cityaggr);
-        else if("week".equalsIgnoreCase(intervalType))
+        else if(WEEK.equalsIgnoreCase(intervalType))
             prepareWeeklyCollMap(intervalwiseCollMap, cityaggr);
-        else if("day".equalsIgnoreCase(intervalType))
+        else if(DAY.equalsIgnoreCase(intervalType))
             prepareDailyCollMap(intervalwiseCollMap, cityaggr, fromDate);
         
         Long timeTaken = System.currentTimeMillis() - startTime;
@@ -1860,11 +1863,11 @@ public class CollectionIndexElasticSearchService {
                 + timeTaken + MILLISECS);
 
         startTime = System.currentTimeMillis();
-        if("month".equalsIgnoreCase(intervalType))
+        if(MONTH.equalsIgnoreCase(intervalType))
             setCollDetailsForIntervalType(intervalwiseCollMap, citywiseCollList, DateUtils.getAllFinancialYearMonthsWithFullNames(), intervalType);
-        else if("week".equalsIgnoreCase(intervalType))
+        else if(WEEK.equalsIgnoreCase(intervalType))
             setCollDetailsForIntervalType(intervalwiseCollMap, citywiseCollList, getWeeksInMonth(), intervalType);
-        else if("day".equalsIgnoreCase(intervalType))
+        else if(DAY.equalsIgnoreCase(intervalType))
             setCollDetailsForIntervalType(intervalwiseCollMap, citywiseCollList, getDaysInAWeek(), intervalType);
         
         timeTaken = System.currentTimeMillis() - startTime;
@@ -2030,9 +2033,9 @@ public class CollectionIndexElasticSearchService {
                     demandCollMIS.setCollection(intervalTypeCollMap.get(intervalName.getValue()));
                 }
                 //Fetch the month number based on the month name
-                if("month".equalsIgnoreCase(intervalType))
+                if(MONTH.equalsIgnoreCase(intervalType))
                     demandCollMIS.setIntervalCount(finYearMonths.get(intervalName.getValue()));
-                else if("week".equalsIgnoreCase(intervalType) || "day".equalsIgnoreCase(intervalType))
+                else if(WEEK.equalsIgnoreCase(intervalType) || DAY.equalsIgnoreCase(intervalType))
                     demandCollMIS.setIntervalCount(intervalCount);
                 
                 demandCollectionMISList.add(demandCollMIS);
@@ -2101,9 +2104,9 @@ public class CollectionIndexElasticSearchService {
      * @param intervalType
      * @return list
      */
-    public List<UlbWiseWeeklyDCB> getWeekwiseDCBDetailsAcrossCities(final CollectionDetailsRequest collectionDetailsRequest,
+    public List<WeeklyDCB> getWeekwiseDCBDetailsAcrossCities(final CollectionDetailsRequest collectionDetailsRequest,
             final String intervalType) {
-        final List<UlbWiseWeeklyDCB> ulbWiseDetails = new ArrayList<>();
+        final List<WeeklyDCB> ulbWiseDetails = new ArrayList<>();
         Date fromDate = null;
         Date toDate = null;
         String weekName;
@@ -2123,24 +2126,25 @@ public class CollectionIndexElasticSearchService {
         final Aggregations collAggr = getMonthwiseCollectionsForConsecutiveYears(collectionDetailsRequest, fromDate,
                 toDate, true, intervalType);
         final StringTerms cityaggr = collAggr.get(BY_CITY);
-        BigDecimal totalDemand = BigDecimal.ZERO;
-        BigDecimal weeklyDemand = BigDecimal.ZERO;
+        BigDecimal totalDemand;
+        BigDecimal weeklyDemand;
         int noOfWeeks;
         Object[] demandCollValues;
         for (final Terms.Bucket cityDetailsentry : cityaggr.getBuckets()) {
             weekwiseColl = new LinkedHashMap<>();
             final String ulbName = cityDetailsentry.getKeyAsString();
             noOfWeeks = 0;
-            totalDemand = totalDemandMap.get(ulbName);
-
-            if (totalDemand == null)
-                totalDemand = BigDecimal.ZERO;
+            totalDemand = totalDemandMap.get(ulbName) == null ? BigDecimal.ZERO : totalDemandMap.get(ulbName);
+            
             final Histogram dateaggs = cityDetailsentry.getAggregations().get(DATE_AGG);
             for (final Histogram.Bucket entry : dateaggs.getBuckets()) {
                 if (noOfWeeks == 0)
                     noOfWeeks = 1;
                 demandCollValues = new Object[53];
-                weeklyDemand = totalDemand.divide(BigDecimal.valueOf(52), BigDecimal.ROUND_HALF_UP)
+                if(totalDemand.compareTo(BigDecimal.ZERO) == 0)
+                    weeklyDemand = BigDecimal.ZERO;
+                else
+                    weeklyDemand = totalDemand.divide(BigDecimal.valueOf(52), BigDecimal.ROUND_HALF_UP)
                         .multiply(BigDecimal.valueOf(noOfWeeks));
                 weekName = "Week " + noOfWeeks;
                 aggregateSum = entry.getAggregations().get("current_total");
@@ -2164,15 +2168,15 @@ public class CollectionIndexElasticSearchService {
      * @param ulbWiseDetails
      * @param weeklyCollMap
      */
-    private void setWeeklyDCBValues(final List<UlbWiseWeeklyDCB> ulbWiseDetails,
+    private void setWeeklyDCBValues(final List<WeeklyDCB> ulbWiseDetails,
             final Map<String, Map<String, Object[]>> weeklyCollMap) {
-        UlbWiseWeeklyDCB ulbWiseWeeklyDCB;
+        WeeklyDCB weeklyDCB;
         DemandCollectionMIS demandCollectionMIS;
         int count;
         for (final Map.Entry<String, Map<String, Object[]>> entry : weeklyCollMap.entrySet()) {
-            ulbWiseWeeklyDCB = new UlbWiseWeeklyDCB();
+            weeklyDCB = new WeeklyDCB();
             count=1;
-            ulbWiseWeeklyDCB.setUlbName(entry.getKey());
+            weeklyDCB.setUlbName(entry.getKey());
             for (final Map.Entry<String, Object[]> weeklyMap : entry.getValue().entrySet()) {
                 demandCollectionMIS = new DemandCollectionMIS();
                 demandCollectionMIS.setName(weeklyMap.getKey());
@@ -2181,20 +2185,20 @@ public class CollectionIndexElasticSearchService {
                 if (demandCollectionMIS.getDemand().compareTo(BigDecimal.ZERO) > 0)
                     demandCollectionMIS.setPercent(demandCollectionMIS.getCollection().divide(demandCollectionMIS.getDemand(), 2, RoundingMode.CEILING).multiply(BIGDECIMAL_100));
                 if(count == 1)
-                    ulbWiseWeeklyDCB.setWeek1DCB(demandCollectionMIS);
+                    weeklyDCB.setWeek1DCB(demandCollectionMIS);
                 else if(count == 2)
-                    ulbWiseWeeklyDCB.setWeek2DCB(demandCollectionMIS);
+                    weeklyDCB.setWeek2DCB(demandCollectionMIS);
                 else if(count == 3)
-                    ulbWiseWeeklyDCB.setWeek3DCB(demandCollectionMIS);
+                    weeklyDCB.setWeek3DCB(demandCollectionMIS);
                 else if(count == 4)
-                    ulbWiseWeeklyDCB.setWeek4DCB(demandCollectionMIS);
+                    weeklyDCB.setWeek4DCB(demandCollectionMIS);
                 else if(count == 5)
-                    ulbWiseWeeklyDCB.setWeek5DCB(demandCollectionMIS);
+                    weeklyDCB.setWeek5DCB(demandCollectionMIS);
                 count++;
                 
             }
-            updateNullValuesForWeeks(ulbWiseWeeklyDCB);
-            ulbWiseDetails.add(ulbWiseWeeklyDCB);
+            updateNullValuesForWeeks(weeklyDCB);
+            ulbWiseDetails.add(weeklyDCB);
         }
     }
 
@@ -2202,18 +2206,18 @@ public class CollectionIndexElasticSearchService {
      * Updates null weeks with new objects
      * @param udc
      */
-    private void updateNullValuesForWeeks(UlbWiseWeeklyDCB ulbWiseWeeklyDCB) {
+    private void updateNullValuesForWeeks(WeeklyDCB weeklyDCB) {
         DemandCollectionMIS demandCollectionMIS = new DemandCollectionMIS();
-        if(ulbWiseWeeklyDCB.getWeek1DCB() == null)
-            ulbWiseWeeklyDCB.setWeek1DCB(demandCollectionMIS);
-        if(ulbWiseWeeklyDCB.getWeek2DCB() == null)
-            ulbWiseWeeklyDCB.setWeek2DCB(demandCollectionMIS);
-        if(ulbWiseWeeklyDCB.getWeek3DCB() == null)
-            ulbWiseWeeklyDCB.setWeek3DCB(demandCollectionMIS);
-        if(ulbWiseWeeklyDCB.getWeek4DCB() == null)
-            ulbWiseWeeklyDCB.setWeek4DCB(demandCollectionMIS);
-        if(ulbWiseWeeklyDCB.getWeek5DCB() == null)
-            ulbWiseWeeklyDCB.setWeek5DCB(demandCollectionMIS);
+        if(weeklyDCB.getWeek1DCB() == null)
+            weeklyDCB.setWeek1DCB(demandCollectionMIS);
+        if(weeklyDCB.getWeek2DCB() == null)
+            weeklyDCB.setWeek2DCB(demandCollectionMIS);
+        if(weeklyDCB.getWeek3DCB() == null)
+            weeklyDCB.setWeek3DCB(demandCollectionMIS);
+        if(weeklyDCB.getWeek4DCB() == null)
+            weeklyDCB.setWeek4DCB(demandCollectionMIS);
+        if(weeklyDCB.getWeek5DCB() == null)
+            weeklyDCB.setWeek5DCB(demandCollectionMIS);
     }
     
     /**

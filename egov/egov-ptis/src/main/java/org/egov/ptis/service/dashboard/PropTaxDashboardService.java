@@ -81,7 +81,7 @@ import org.egov.ptis.bean.dashboard.TaxDefaulters;
 import org.egov.ptis.bean.dashboard.TaxPayerResponseDetails;
 import org.egov.ptis.bean.dashboard.TotalCollectionStats;
 import org.egov.ptis.bean.dashboard.UlbWiseDemandCollection;
-import org.egov.ptis.bean.dashboard.UlbWiseWeeklyDCB;
+import org.egov.ptis.bean.dashboard.WeeklyDCB;
 import org.egov.ptis.bean.dashboard.MonthlyDCB;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.model.ErrorDetails;
@@ -98,6 +98,8 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class PropTaxDashboardService {
+
+    private static final String MILLISECS = " (millisecs) ";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PropTaxDashboardService.class);
 
@@ -155,7 +157,7 @@ public class PropTaxDashboardService {
         Long timeTaken = System.currentTimeMillis() - startTime;
         CFinancialYear currFinYear = cFinancialYearService.getFinancialYearByDate(new Date());
 
-        LOGGER.debug("Time taken by getFinYearsCollByService() for Property Tax is : " + timeTaken + " (millisecs) ");
+        LOGGER.debug("Time taken by getFinYearsCollByService() for Property Tax is : " + timeTaken + MILLISECS);
         if (!consolidatedColl.isEmpty()) {
             consolidatedData.setCytdColl(consolidatedColl.get("cytdColln"));
             consolidatedData.setLytdColl(consolidatedColl.get("lytdColln"));
@@ -163,7 +165,7 @@ public class PropTaxDashboardService {
         startTime = System.currentTimeMillis();
         BigDecimal totalDmd = propertyTaxElasticSearchIndexService.getTotalDemand();
         timeTaken = System.currentTimeMillis() - startTime;
-        LOGGER.debug("Time taken by Property Tax getTotalDemand() is : " + timeTaken + " (millisecs) ");
+        LOGGER.debug("Time taken by Property Tax getTotalDemand() is : " + timeTaken + MILLISECS);
         int noOfMonths = DateUtils
                 .noOfMonths(DateUtils.startOfDay(currFinYear.getStartingDate()), new Date()) + 1;
         consolidatedData.setTotalDmd(totalDmd.divide(BigDecimal.valueOf(12), BigDecimal.ROUND_HALF_UP)
@@ -180,7 +182,7 @@ public class PropTaxDashboardService {
         startTime = System.currentTimeMillis();
         consolidatedColl = collectionIndexElasticSearchService.getFinYearsCollByService(COLLECION_BILLING_SERVICE_WTMS);
         timeTaken = System.currentTimeMillis() - startTime;
-        LOGGER.debug("Time taken by getFinYearsCollByService() for Water Tax is : " + timeTaken + " (millisecs) ");
+        LOGGER.debug("Time taken by getFinYearsCollByService() for Water Tax is : " + timeTaken + MILLISECS);
         if (!consolidatedColl.isEmpty()) {
             consolidatedData.setCytdColl(consolidatedColl.get("cytdColln"));
             consolidatedData.setLytdColl(consolidatedColl.get("lytdColln"));
@@ -188,7 +190,7 @@ public class PropTaxDashboardService {
         startTime = System.currentTimeMillis();
         consolidatedData.setTotalDmd(getWaterChargeTotalDemand(request));
         timeTaken = System.currentTimeMillis() - startTime;
-        LOGGER.debug("Time taken by Water Tax getTotalDemand() is : " + timeTaken + " (millisecs) ");
+        LOGGER.debug("Time taken by Water Tax getTotalDemand() is : " + timeTaken + MILLISECS);
         consolidatedData.setPerformance((consolidatedData.getCytdColl().multiply(BIGDECIMAL_100))
                 .divide(consolidatedData.getTotalDmd(), 1, BigDecimal.ROUND_HALF_UP));
         consolidatedData.setLyVar(
@@ -332,7 +334,7 @@ public class PropTaxDashboardService {
      * @param intervalType
      * @return list
      */
-    public List<UlbWiseWeeklyDCB> getWeekwiseDCBDetails(CollectionDetailsRequest collectionDetailsRequest,
+    public List<WeeklyDCB> getWeekwiseDCBDetails(CollectionDetailsRequest collectionDetailsRequest,
             String intervalType) {
         return collectionIndexElasticSearchService.getWeekwiseDCBDetailsAcrossCities(collectionDetailsRequest, intervalType);
     }

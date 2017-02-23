@@ -1613,6 +1613,10 @@ public interface PropertyTaxConstants {
     public static final String DASHBOARD_PROPERTY_TYPE_COURTCASES = "Courtcases";
     public static final String DASHBOARD_PROPERTY_TYPE_BUILT_UP = "BuiltUp";
     
+    public static final String WEEK = "week";
+    public static final String MONTH = "month";
+    public static final String DAY = "day";
+
     @SuppressWarnings("serial")
     public static final List<String> DASHBOARD_PROPERTY_TYPE_CENTRAL_GOVT_LIST = new ArrayList<String>() {
         {

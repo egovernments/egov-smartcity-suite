@@ -44,7 +44,7 @@ import java.util.List;
 public class MISDCBDetails {
     private List<DCBDetails> dcbDetails;
     private List<UlbWiseDemandCollection> ulbDcbDetails;
-    private List<UlbWiseWeeklyDCB> ulbWeeklyDCBDetails;
+    private List<WeeklyDCB> weeklyDCBDetails;
     private List<MonthlyDCB> monthlyDCBDetails;
 
     public List<DCBDetails> getDcbDetails() {
@@ -63,12 +63,12 @@ public class MISDCBDetails {
         this.ulbDcbDetails = ulbDcbDetails;
     }
 
-    public List<UlbWiseWeeklyDCB> getUlbWeeklyDCBDetails() {
-        return ulbWeeklyDCBDetails;
+    public List<WeeklyDCB> getWeeklyDCBDetails() {
+        return weeklyDCBDetails;
     }
 
-    public void setUlbWeeklyDCBDetails(List<UlbWiseWeeklyDCB> ulbWeeklyDCBDetails) {
-        this.ulbWeeklyDCBDetails = ulbWeeklyDCBDetails;
+    public void setWeeklyDCBDetails(List<WeeklyDCB> weeklyDCBDetails) {
+        this.weeklyDCBDetails = weeklyDCBDetails;
     }
 
     public List<MonthlyDCB> getMonthlyDCBDetails() {

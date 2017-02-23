@@ -40,9 +40,11 @@
 
 package org.egov.ptis.web.controller.dashboard;
 import static org.egov.ptis.constants.PropertyTaxConstants. DASHBOARD_GROUPING_ULBWISE;
+import static org.egov.ptis.constants.PropertyTaxConstants. WEEK;
+import static org.egov.ptis.constants.PropertyTaxConstants. MONTH;
+import static org.egov.ptis.constants.PropertyTaxConstants. DAY;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -66,7 +68,7 @@ import org.egov.ptis.bean.dashboard.TaxDefaulters;
 import org.egov.ptis.bean.dashboard.TaxPayerResponseDetails;
 import org.egov.ptis.bean.dashboard.TotalCollectionStats;
 import org.egov.ptis.bean.dashboard.UlbWiseDemandCollection;
-import org.egov.ptis.bean.dashboard.UlbWiseWeeklyDCB;
+import org.egov.ptis.bean.dashboard.WeeklyDCB;
 import org.egov.ptis.bean.dashboard.MonthlyDCB;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.service.dashboard.PropTaxDashboardService;
@@ -90,6 +92,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(value = { "/public/dashboard", "/dashboard" })
 public class CMDashboardController {
+    private static final String MILLISECS = " (millisecs)";
+
     private static final Logger LOGGER = LoggerFactory.getLogger(CMDashboardController.class);
 
     @Autowired
@@ -109,7 +113,7 @@ public class CMDashboardController {
         final List<StateCityInfo> stateDetails = propTaxDashboardService.getStateCityDetails();
         Long timeTaken = System.currentTimeMillis() - startTime;
         if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Time taken to serve statecityinfo is : " + timeTaken + " (millisecs)");
+            LOGGER.debug("Time taken to serve statecityinfo is : " + timeTaken + MILLISECS);
         return stateDetails;
     }
 
@@ -126,7 +130,7 @@ public class CMDashboardController {
         TotalCollectionStats consolidatedCollectionDetails = propTaxDashboardService.getTotalCollectionStats(request);
         Long timeTaken = System.currentTimeMillis() - startTime;
         if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Time taken to serve collectionstats is : " + timeTaken + " (millisecs)");
+            LOGGER.debug("Time taken to serve collectionstats is : " + timeTaken + MILLISECS);
         return consolidatedCollectionDetails;
 
     }
@@ -151,7 +155,7 @@ public class CMDashboardController {
                 .getCollectionIndexDetails(collectionDetailsRequest);
         Long timeTaken = System.currentTimeMillis() - startTime;
         if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Time taken to serve collectiondashboard is : " + timeTaken + " (millisecs)");
+            LOGGER.debug("Time taken to serve collectiondashboard is : " + timeTaken + MILLISECS);
         return collectionDetails;
     }
 
@@ -174,7 +178,7 @@ public class CMDashboardController {
         CollReceiptDetails collReceiptDetails = propTaxDashboardService.getReceiptDetails(collectionDetailsRequest);
         Long timeTaken = System.currentTimeMillis() - startTime;
         if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Time taken to serve receipttransactions is : " + timeTaken + " (millisecs)");
+            LOGGER.debug("Time taken to serve receipttransactions is : " + timeTaken + MILLISECS);
         return collReceiptDetails;
     }
 
@@ -199,7 +203,7 @@ public class CMDashboardController {
                 .getTopTenTaxProducers(collectionDetailsRequest);
         Long timeTaken = System.currentTimeMillis() - startTime;
         if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Time taken to serve toptentaxers is : " + timeTaken + " (millisecs)");
+            LOGGER.debug("Time taken to serve toptentaxers is : " + timeTaken + MILLISECS);
         return taxPayerDetails;
     }
 
@@ -224,7 +228,7 @@ public class CMDashboardController {
                 .getBottomTenTaxProducers(collectionDetailsRequest);
         Long timeTaken = System.currentTimeMillis() - startTime;
         if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Time taken to serve bottomtentaxers is : " + timeTaken + " (millisecs)");
+            LOGGER.debug("Time taken to serve bottomtentaxers is : " + timeTaken + MILLISECS);
         return taxPayerDetails;
     }
 
@@ -240,7 +244,7 @@ public class CMDashboardController {
         List<TaxDefaulters> taxDefaulters = propTaxDashboardService.getTaxDefaulters(propertyTaxDefaultersRequest);
         Long timeTaken = System.currentTimeMillis() - startTime;
         if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Time taken to serve topdefaulters is : " + timeTaken + " (millisecs)");
+            LOGGER.debug("Time taken to serve topdefaulters is : " + timeTaken + MILLISECS);
         return taxDefaulters;
     }
     
@@ -270,7 +274,7 @@ public class CMDashboardController {
                 .getCollectionIndexDetails(collectionDetailsRequest);
         Long timeTaken = System.currentTimeMillis() - startTime;
         if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Time taken to serve targetmis is : " + timeTaken + " (millisecs)");
+            LOGGER.debug("Time taken to serve targetmis is : " + timeTaken + MILLISECS);
         return collectionDetails;
     }
 
@@ -294,95 +298,85 @@ public class CMDashboardController {
      */
     @RequestMapping(value = "/citywisedcb", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public MISDCBDetails getDCBDetailsForMIS(@RequestParam("regionName") String regionName,
-            @RequestParam("districtName") String districtName,
-            @RequestParam("ulbGrade") String ulbGrade, @RequestParam("ulbCode") String ulbCode,
-            @RequestParam("fromDate") String fromDate,
-            @RequestParam("toDate") String toDate, @RequestParam("type") String type,
-            @RequestParam("propertyType") String propertyType,
-            @RequestParam("usageType") String usageType, @RequestParam("intervalType") String intervalType, 
-            @RequestParam("month") String month, @RequestParam("year") String year)
+    public MISDCBDetails getDCBDetailsForMIS(CollectionDetailsRequest collectionDetailsRequest)
             throws IOException {
-        CollectionDetailsRequest collectionDetailsRequest = new CollectionDetailsRequest();
         MISDCBDetails misDCBDetails = new MISDCBDetails();
-        List<UlbWiseWeeklyDCB> weekwiseDCBDetails;
+        List<WeeklyDCB> weekwiseDCBDetails;
         List<MonthlyDCB> monthwiseDCBDetails;
-        if (StringUtils.isNotBlank(usageType))
-            collectionDetailsRequest.setUsageType(usageType);
         Long startTime = System.currentTimeMillis();
-        if (StringUtils.isBlank(intervalType))
+        if (StringUtils.isBlank(collectionDetailsRequest.getIntervalType())){
             misDCBDetails.setDcbDetails(propTaxDashboardService.getDCBDetails(collectionDetailsRequest));
+        }
         else{ 
-            if ("week".equalsIgnoreCase(intervalType)){
-                String monthStartDateStr = year.concat("-").concat(month).concat("-").concat("01");
+            String startDate;
+            String endDate;
+            if (WEEK.equalsIgnoreCase(collectionDetailsRequest.getIntervalType())){
+                String monthStartDateStr = collectionDetailsRequest.getYear().concat("-").concat(collectionDetailsRequest.getMonth()).concat("-").concat("01");
                 LocalDate monthStDate = new LocalDate(monthStartDateStr);
                 //Fetch the start date of the 1st week of the month and the last day of the month
                 LocalDate weekStart = monthStDate.dayOfWeek().withMinimumValue();
                 LocalDate endOfMonth = monthStDate.dayOfMonth().withMaximumValue();
-                fromDate = weekStart.toString(PropertyTaxConstants.DATE_FORMAT_YYYYMMDD);
-                toDate = endOfMonth.toString(PropertyTaxConstants.DATE_FORMAT_YYYYMMDD);
+                startDate = weekStart.toString(PropertyTaxConstants.DATE_FORMAT_YYYYMMDD);
+                endDate = endOfMonth.toString(PropertyTaxConstants.DATE_FORMAT_YYYYMMDD);
+                collectionDetailsRequest.setFromDate(startDate);
+                collectionDetailsRequest.setToDate(endDate);
             }
         }
-        populateCollectionDetailsRequest(collectionDetailsRequest,regionName, districtName, ulbGrade, ulbCode, fromDate, toDate,
-                type, propertyType);
         
-        if("week".equalsIgnoreCase(intervalType)){
-            weekwiseDCBDetails = propTaxDashboardService.getWeekwiseDCBDetails(collectionDetailsRequest, intervalType);
-            misDCBDetails.setUlbWeeklyDCBDetails(weekwiseDCBDetails);
-        } else if ("month".equalsIgnoreCase(intervalType)) {
-            monthwiseDCBDetails = propTaxDashboardService.getMonthwiseDCBDetails(collectionDetailsRequest, intervalType);
+        if(WEEK.equalsIgnoreCase(collectionDetailsRequest.getIntervalType())){
+            weekwiseDCBDetails = propTaxDashboardService.getWeekwiseDCBDetails(collectionDetailsRequest, collectionDetailsRequest.getIntervalType());
+            misDCBDetails.setWeeklyDCBDetails(weekwiseDCBDetails);
+        } else if (MONTH.equalsIgnoreCase(collectionDetailsRequest.getIntervalType())) {
+            monthwiseDCBDetails = propTaxDashboardService.getMonthwiseDCBDetails(collectionDetailsRequest, collectionDetailsRequest.getIntervalType());
             misDCBDetails.setMonthlyDCBDetails(monthwiseDCBDetails);
         }
     
         Long timeTaken = System.currentTimeMillis() - startTime;
-        LOGGER.debug("Time taken to serve citywisedcb is : " + timeTaken + " (millisecs)");
+        LOGGER.debug("Time taken to serve citywisedcb is : " + timeTaken + MILLISECS);
         return misDCBDetails;
     }
-
+    
     /**
      * Provides collection analysis data across all ULBs for MIS Reports
      * @return response JSON
      * @throws IOException
      */
     @RequestMapping(value = "/collectionanalysis", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody public Map<String, List<UlbWiseDemandCollection>> getCollectionAnalysisForMIS(@RequestParam("regionName") String regionName, @RequestParam("districtName") String districtName,
-            @RequestParam("ulbGrade") String ulbGrade, @RequestParam("ulbCode") String ulbCode, @RequestParam("fromDate") String fromDate,
-            @RequestParam("toDate") String toDate, @RequestParam("type") String type, @RequestParam("propertyType") String propertyType, 
-            @RequestParam("intervalType") String intervalType, @RequestParam("month") String month, @RequestParam("year") String year, @RequestParam("week") String week) 
+    @ResponseBody public Map<String, List<UlbWiseDemandCollection>> getCollectionAnalysisForMIS(CollectionDetailsRequest collectionDetailsRequest) 
                     throws IOException {
-        CollectionDetailsRequest collectionDetailsRequest = new CollectionDetailsRequest();
-        
-        if(StringUtils.isNotBlank(intervalType)){
-            if("week".equalsIgnoreCase(intervalType)){
+        if(StringUtils.isNotBlank(collectionDetailsRequest.getIntervalType())){
+            String startDate=StringUtils.EMPTY;
+            String endDate=StringUtils.EMPTY;
+            if(WEEK.equalsIgnoreCase(collectionDetailsRequest.getIntervalType())){
                 //Prepare the start date based on the month number and year
-                String monthStartDateStr = year.concat("-").concat(month).concat("-").concat("01");
+                String monthStartDateStr = collectionDetailsRequest.getYear().concat("-").concat(collectionDetailsRequest.getMonth()).concat("-").concat("01");
                 LocalDate monthStDate = new LocalDate(monthStartDateStr);
                 //Fetch the start date of the 1st week of the month and the last day of the month
                 LocalDate weekStart = monthStDate.dayOfWeek().withMinimumValue();
                 LocalDate endOfMonth = monthStDate.dayOfMonth().withMaximumValue();
-                fromDate = weekStart.toString(PropertyTaxConstants.DATE_FORMAT_YYYYMMDD);
-                toDate = endOfMonth.toString(PropertyTaxConstants.DATE_FORMAT_YYYYMMDD);
-            } else if("day".equalsIgnoreCase(intervalType)){
+                startDate = weekStart.toString(PropertyTaxConstants.DATE_FORMAT_YYYYMMDD);
+                endDate = endOfMonth.toString(PropertyTaxConstants.DATE_FORMAT_YYYYMMDD);
+            } else if(DAY.equalsIgnoreCase(collectionDetailsRequest.getIntervalType())){
                 //Prepare the first and last days of the week based on the month, year and week of month values
-                DateTime date = new DateTime().withYear(Integer.parseInt(year)).withMonthOfYear(Integer.parseInt(month));
+                DateTime date = new DateTime().withYear(Integer.parseInt(collectionDetailsRequest.getYear())).withMonthOfYear(Integer.parseInt(collectionDetailsRequest.getMonth()));
                 Calendar cal = date.toCalendar(Locale.getDefault());
                 cal.set(Calendar.DAY_OF_WEEK, 2);
-                cal.set(Calendar.WEEK_OF_MONTH, Integer.parseInt(week));
+                cal.set(Calendar.WEEK_OF_MONTH, Integer.parseInt(collectionDetailsRequest.getWeek()));
                 DateTime weekStartDate = new DateTime(cal).withMillisOfDay(0);
-                fromDate = weekStartDate.toString(PropertyTaxConstants.DATE_FORMAT_YYYYMMDD);
+                startDate = weekStartDate.toString(PropertyTaxConstants.DATE_FORMAT_YYYYMMDD);
                 Date weekEndDate = DateUtils.addDays(weekStartDate.toDate(), 6);
-                toDate = PropertyTaxConstants.DATEFORMATTER_YYYY_MM_DD.format(weekEndDate);
+                endDate = PropertyTaxConstants.DATEFORMATTER_YYYY_MM_DD.format(weekEndDate);
             }
+            collectionDetailsRequest.setFromDate(startDate);
+            collectionDetailsRequest.setToDate(endDate);
         }
-        populateCollectionDetailsRequest(collectionDetailsRequest, regionName, districtName, ulbGrade, ulbCode, fromDate, toDate,
-                type, propertyType);
 
         Map<String, List<UlbWiseDemandCollection>> collectionAnalysis = new HashMap<>();
         Long startTime = System.currentTimeMillis();
-        collectionAnalysis.put("collectionAnalysis", propTaxDashboardService.getCollectionAnalysisData(collectionDetailsRequest, intervalType));
+        collectionAnalysis.put("collectionAnalysis", propTaxDashboardService.getCollectionAnalysisData(collectionDetailsRequest, collectionDetailsRequest.getIntervalType()));
         Long timeTaken = System.currentTimeMillis() - startTime;
         if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Time taken to serve collectionanalysis is : " + timeTaken + " (millisecs)");
+            LOGGER.debug("Time taken to serve collectionanalysis is : " + timeTaken + MILLISECS);
         return collectionAnalysis;
     }
     
@@ -406,7 +400,7 @@ public class CMDashboardController {
         CollectionDetails collectionDetails= propTaxDashboardService.getDailyTarget(collectionDetailsRequest);
         Long timeTaken = System.currentTimeMillis() - startTime;
         if(LOGGER.isDebugEnabled())
-            LOGGER.debug("Time taken to serve dailytarget is : " + timeTaken + " (millisecs)");
+            LOGGER.debug("Time taken to serve dailytarget is : " + timeTaken + MILLISECS);
         return collectionDetails;
     }
 
