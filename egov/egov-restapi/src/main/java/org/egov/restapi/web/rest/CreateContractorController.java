@@ -67,9 +67,9 @@ import org.egov.works.models.masters.Contractor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -82,15 +82,15 @@ public class CreateContractorController {
     @Autowired
     private ExternalContractorService externalContractorService;
 
-    @RequestMapping(value = "/egworks/contractor", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public String getContractorByCode(@RequestParam("contractorCode") final String contractorCode) {
+    @RequestMapping(value = "/egworks/contractor/{code}", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public String getContractorByCode(@PathVariable("code") final String code) {
         final ErrorDetails errorDetails = new ErrorDetails();
-        if (StringUtils.isBlank(contractorCode)) {
+        if (StringUtils.isBlank(code)) {
             errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_JSON_REQUEST);
             errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_JSON_REQUEST);
             return JsonConvertor.convert(errorDetails);
         }
-        final Contractor contractor = contractorService.getContractorByCode(contractorCode);
+        final Contractor contractor = contractorService.getContractorByCode(code);
         if (contractor == null) {
             errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NOT_EXIST_CONTRACTOR);
             errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NOT_EXIST_CONTRACTOR);
@@ -122,7 +122,7 @@ public class CreateContractorController {
             final Contractor contractor = externalContractorService.populateContractorToCreate(contractorHelper);
             final Contractor savedContractor = externalContractorService.saveContractor(contractor);
             final StringBuilder successMessage = new StringBuilder();
-            successMessage.append("Contractor saved successfully with code ").append(savedContractor.getCode());
+            successMessage.append("Contractor data saved successfully with code ").append(savedContractor.getCode());
             return JsonConvertor.convert(successMessage.toString());
         }
 
@@ -149,7 +149,7 @@ public class CreateContractorController {
             final Contractor contractor = externalContractorService.populateContractorToUpdate(contractorHelper);
             final Contractor savedContractor = externalContractorService.updateContractor(contractor);
             final StringBuilder modifyMessage = new StringBuilder();
-            modifyMessage.append("Contractor modified successfully with code ").append(savedContractor.getCode());
+            modifyMessage.append("Contractor data modified successfully with code ").append(savedContractor.getCode());
             return JsonConvertor.convert(modifyMessage);
         }
     }
