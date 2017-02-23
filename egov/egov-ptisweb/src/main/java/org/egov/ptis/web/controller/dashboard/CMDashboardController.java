@@ -332,7 +332,8 @@ public class CMDashboardController {
         }
     
         Long timeTaken = System.currentTimeMillis() - startTime;
-        LOGGER.debug("Time taken to serve citywisedcb is : " + timeTaken + MILLISECS);
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Time taken to serve citywisedcb is : " + timeTaken + MILLISECS);
         return misDCBDetails;
     }
     
