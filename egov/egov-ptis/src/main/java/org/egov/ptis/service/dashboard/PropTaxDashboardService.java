@@ -172,7 +172,7 @@ public class PropTaxDashboardService {
                 .noOfMonths(DateUtils.startOfDay(currFinYear.getStartingDate()), new Date()) + 1;
         consolidatedData.setTotalDmd(totalDmd.divide(BigDecimal.valueOf(12), BigDecimal.ROUND_HALF_UP)
                 .multiply(BigDecimal.valueOf(noOfMonths)));
-        consolidatedData.setPerformance((consolidatedData.getCytdColl().multiply(BIGDECIMAL_100))
+        consolidatedData.setPerformance(consolidatedData.getCytdColl().multiply(BIGDECIMAL_100)
                 .divide(consolidatedData.getTotalDmd(), 1, BigDecimal.ROUND_HALF_UP));
         consolidatedData.setLyVar(
                 (consolidatedData.getCytdColl().subtract(consolidatedData.getLytdColl()).multiply(BIGDECIMAL_100))
@@ -195,7 +195,7 @@ public class PropTaxDashboardService {
         timeTaken = System.currentTimeMillis() - startTime;
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Time taken by Water Tax getTotalDemand() is : " + timeTaken + MILLISECS);
-        consolidatedData.setPerformance((consolidatedData.getCytdColl().multiply(BIGDECIMAL_100))
+        consolidatedData.setPerformance(consolidatedData.getCytdColl().multiply(BIGDECIMAL_100)
                 .divide(consolidatedData.getTotalDmd(), 1, BigDecimal.ROUND_HALF_UP));
         consolidatedData.setLyVar(
                 (consolidatedData.getCytdColl().subtract(consolidatedData.getLytdColl()).multiply(BIGDECIMAL_100))
