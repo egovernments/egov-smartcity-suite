@@ -74,7 +74,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class CreateContractorController {
+public class ContractorController {
 
     @Autowired
     private ContractorService contractorService;
@@ -83,26 +83,19 @@ public class CreateContractorController {
     private ExternalContractorService externalContractorService;
 
     @RequestMapping(value = "/egworks/contractor", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public String getContractorByCode(@RequestParam("code") final String code) {
-        final ErrorDetails errorDetails = new ErrorDetails();
-        if (StringUtils.isBlank(code)) {
-            errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_JSON_REQUEST);
-            errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_JSON_REQUEST);
-            return JsonConvertor.convert(errorDetails);
+    public String getContractors(@RequestParam(value = "code", required = false) final String code) {
+        if (StringUtils.isBlank(code))
+            return JsonConvertor.convert(externalContractorService.populateContractor());
+        else {
+            final ErrorDetails errorDetails = new ErrorDetails();
+            final Contractor contractor = contractorService.getContractorByCode(code);
+            if (contractor == null) {
+                errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NOT_EXIST_CONTRACTOR);
+                errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NOT_EXIST_CONTRACTOR);
+                return JsonConvertor.convert(errorDetails);
+            } else
+                return JsonConvertor.convert(externalContractorService.populateContractorData(contractor));
         }
-        final Contractor contractor = contractorService.getContractorByCode(code);
-        if (contractor == null) {
-            errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NOT_EXIST_CONTRACTOR);
-            errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NOT_EXIST_CONTRACTOR);
-            return JsonConvertor.convert(errorDetails);
-        } else
-            return JsonConvertor.convert(externalContractorService.populateContractorData(contractor));
-
-    }
-
-    @RequestMapping(value = "/egworks/contractors", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public String getAllContractor() {
-        return JsonConvertor.convert(externalContractorService.populateContractor());
     }
 
     @ResponseStatus(value = HttpStatus.OK)

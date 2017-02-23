@@ -46,7 +46,6 @@ import org.apache.commons.lang.StringUtils;
 import org.egov.commons.dao.BankHibernateDAO;
 import org.egov.ptis.domain.model.ErrorDetails;
 import org.egov.restapi.constants.RestApiConstants;
-import org.egov.restapi.model.ContractorDetailsHelper;
 import org.egov.restapi.model.ContractorHelper;
 import org.egov.works.master.service.ContractorService;
 import org.egov.works.models.masters.Contractor;
@@ -100,16 +99,14 @@ public class ExternalContractorService {
         cont.setNarration(contractor.getNarration());
         cont.setMobileNumber(contractor.getMobileNumber());
 
-        final ContractorDetailsHelper details = new ContractorDetailsHelper();
         if (!contractor.getContractorDetails().isEmpty()) {
-            details.setContractorCategory(StringUtils.isNotBlank(contractor.getContractorDetails().get(0).getCategory())
+            cont.setContractorCategory(StringUtils.isNotBlank(contractor.getContractorDetails().get(0).getCategory())
                     ? contractor.getContractorDetails().get(0).getCategory()
                     : StringUtils.EMPTY);
-            details.setContractorClass(
+            cont.setContractorClass(
                     contractor.getContractorDetails().get(0).getGrade() != null
                             ? contractor.getContractorDetails().get(0).getGrade().getGrade() : StringUtils.EMPTY);
-            details.setStatus(contractor.getContractorDetails().get(0).getStatus().getCode());
-            cont.addContractorDetailsHelper(details);
+            cont.setStatus(contractor.getContractorDetails().get(0).getStatus().getCode());
         }
         return cont;
 
@@ -350,16 +347,14 @@ public class ExternalContractorService {
         contractorHelper.setNarration(contractor.getNarration());
         contractorHelper.setMobileNumber(contractor.getMobileNumber());
 
-        final ContractorDetailsHelper details = new ContractorDetailsHelper();
         if (!contractor.getContractorDetails().isEmpty()) {
-            details.setContractorCategory(StringUtils.isNotBlank(contractor.getContractorDetails().get(0).getCategory())
+            contractorHelper.setContractorCategory(StringUtils.isNotBlank(contractor.getContractorDetails().get(0).getCategory())
                     ? contractor.getContractorDetails().get(0).getCategory()
                     : StringUtils.EMPTY);
-            details.setContractorClass(
+            contractorHelper.setContractorClass(
                     contractor.getContractorDetails().get(0).getGrade() != null
                             ? contractor.getContractorDetails().get(0).getGrade().getGrade() : StringUtils.EMPTY);
-            details.setStatus(contractor.getContractorDetails().get(0).getStatus().getCode());
-            contractorHelper.addContractorDetailsHelper(details);
+            contractorHelper.setStatus(contractor.getContractorDetails().get(0).getStatus().getCode());
         }
         contractorHelpers.add(contractorHelper);
     }

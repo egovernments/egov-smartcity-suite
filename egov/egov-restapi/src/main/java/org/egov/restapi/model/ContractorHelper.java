@@ -40,8 +40,6 @@
 package org.egov.restapi.model;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ContractorHelper implements Serializable {
 
@@ -61,7 +59,33 @@ public class ContractorHelper implements Serializable {
     private String pwdApprovalCode;
     private String exemptionName;
     private String mobileNumber;
-    private List<ContractorDetailsHelper> contractorDetailsHelper = new ArrayList<ContractorDetailsHelper>();
+    private String contractorClass;
+    private String status;
+    private String contractorCategory;
+
+    public String getContractorClass() {
+        return contractorClass;
+    }
+
+    public void setContractorClass(final String contractorClass) {
+        this.contractorClass = contractorClass;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(final String status) {
+        this.status = status;
+    }
+
+    public String getContractorCategory() {
+        return contractorCategory;
+    }
+
+    public void setContractorCategory(final String contractorCategory) {
+        this.contractorCategory = contractorCategory;
+    }
 
     public String getCode() {
         return code;
@@ -173,18 +197,6 @@ public class ContractorHelper implements Serializable {
 
     public void setExemptionName(final String exemptionName) {
         this.exemptionName = exemptionName;
-    }
-
-    public List<ContractorDetailsHelper> getContractorDetailsHelper() {
-        return contractorDetailsHelper;
-    }
-
-    public void setContractorDetailsHelper(final List<ContractorDetailsHelper> contractorDetailsHelper) {
-        this.contractorDetailsHelper = contractorDetailsHelper;
-    }
-
-    public void addContractorDetailsHelper(final ContractorDetailsHelper contractorDetails) {
-        contractorDetailsHelper.add(contractorDetails);
     }
 
     public String getMobileNumber() {
