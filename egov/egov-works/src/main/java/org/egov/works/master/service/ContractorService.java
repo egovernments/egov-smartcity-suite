@@ -376,8 +376,7 @@ public class ContractorService extends PersistenceService<Contractor, Long> impl
     }
 
     public Contractor getContractorByCode(final String code) {
-        final String query = "from Contractor as cont where upper(cont.code) = '" + code.toUpperCase() + "'";
-        return find(query);
+        return find("from Contractor as cont where upper(cont.code) = ?", code.toUpperCase());
     }
 
     @Transactional

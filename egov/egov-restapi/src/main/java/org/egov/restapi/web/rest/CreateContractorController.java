@@ -65,10 +65,12 @@ import org.egov.restapi.util.JsonConvertor;
 import org.egov.works.master.service.ContractorService;
 import org.egov.works.models.masters.Contractor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -80,16 +82,15 @@ public class CreateContractorController {
     @Autowired
     private ExternalContractorService externalContractorService;
 
-    @RequestMapping(value = "/egworks/contractor/getcontractorbycode", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public String getContractorByCode(@RequestParam final String requestJson) {
+    @RequestMapping(value = "/egworks/contractor", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public String getContractorByCode(@RequestParam("contractorCode") final String contractorCode) {
         final ErrorDetails errorDetails = new ErrorDetails();
-        ApplicationThreadLocals.setUserId(2L);
-        if (StringUtils.isBlank(requestJson)) {
+        if (StringUtils.isBlank(contractorCode)) {
             errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_JSON_REQUEST);
             errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_JSON_REQUEST);
             return JsonConvertor.convert(errorDetails);
         }
-        final Contractor contractor = contractorService.getContractorByCode(requestJson);
+        final Contractor contractor = contractorService.getContractorByCode(contractorCode);
         if (contractor == null) {
             errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NOT_EXIST_CONTRACTOR);
             errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NOT_EXIST_CONTRACTOR);
@@ -99,7 +100,8 @@ public class CreateContractorController {
 
     }
 
-    @RequestMapping(value = "/egworks/contractor/create", method = POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    @ResponseStatus(value = HttpStatus.OK)
+    @RequestMapping(value = "/egworks/contractor", method = POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public String createContractor(@RequestBody final String requestJson,
             final HttpServletRequest request) throws IOException {
         List<ErrorDetails> errors = new ArrayList<ErrorDetails>();
@@ -126,7 +128,8 @@ public class CreateContractorController {
 
     }
 
-    @RequestMapping(value = "/egworks/contractor/update", method = PUT, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    @ResponseStatus(value = HttpStatus.OK)
+    @RequestMapping(value = "/egworks/contractor", method = PUT, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public String updateContractor(@RequestBody final String requestJson,
             final HttpServletRequest request) throws IOException {
         List<ErrorDetails> errors = new ArrayList<ErrorDetails>();
