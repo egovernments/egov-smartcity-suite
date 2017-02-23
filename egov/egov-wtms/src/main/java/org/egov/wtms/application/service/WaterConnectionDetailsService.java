@@ -434,7 +434,7 @@ public class WaterConnectionDetailsService {
                     reconnInSameInstallment = Boolean.FALSE;
                 }
                 connectionDemandService.updateDemandForNonmeteredConnection(waterConnectionDetails,
-                        nonMeterReconnInstallment, reconnInSameInstallment);
+                        nonMeterReconnInstallment, reconnInSameInstallment,null);
             }
             updateIndexes(waterConnectionDetails, sourceChannel);
         }
@@ -442,7 +442,7 @@ public class WaterConnectionDetailsService {
         if (ConnectionType.NON_METERED.equals(waterConnectionDetails.getConnectionType())
                 && WaterTaxConstants.APPLICATION_STATUS_SANCTIONED
                         .equalsIgnoreCase(waterConnectionDetails.getStatus().getCode())) {
-            connectionDemandService.updateDemandForNonmeteredConnection(waterConnectionDetails, null, null);
+            connectionDemandService.updateDemandForNonmeteredConnection(waterConnectionDetails, null, null,workFlowAction);
             updateIndexes(waterConnectionDetails, sourceChannel);
         }
 

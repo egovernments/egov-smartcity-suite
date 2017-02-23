@@ -782,18 +782,23 @@ public class ConnectionDemandService {
 
     public WaterConnectionDetails updateDemandForNonmeteredConnection(
             final WaterConnectionDetails waterConnectionDetails, Installment installment,
-            final Boolean reconnInSameInstallment) throws ValidationException {
+            final Boolean reconnInSameInstallment,String workFlowAction) throws ValidationException {
         Date InstallemntStartDate = null;
         if (installment == null) {
             installment = getCurrentInstallment(WaterTaxConstants.WATER_RATES_NONMETERED_PTMODULE, null, new Date());
             InstallemntStartDate = new Date();
         }
-        if (installment != null && reconnInSameInstallment == null)
-            InstallemntStartDate = installment.getFromDate();
-        else if (reconnInSameInstallment != null && reconnInSameInstallment)
-            InstallemntStartDate = installment.getFromDate();
-        else
-            InstallemntStartDate = waterConnectionDetails.getReconnectionApprovalDate();
+        if (workFlowAction != null && workFlowAction.equals(WaterTaxConstants.WF_STATE_TAP_EXECUTION_DATE_BUTTON))
+            InstallemntStartDate = new Date();
+
+        else if (reconnInSameInstallment != null) {
+            if (reconnInSameInstallment)
+                InstallemntStartDate = installment.getFromDate();
+            else
+                InstallemntStartDate = waterConnectionDetails.getReconnectionApprovalDate();
+        } else
+            InstallemntStartDate = new Date();
+
         double totalWaterRate = 0;
 
         final WaterRatesDetails waterRatesDetails = getWaterRatesDetailsForDemandUpdate(waterConnectionDetails);
