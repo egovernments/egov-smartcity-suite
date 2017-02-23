@@ -47,7 +47,7 @@ public class ChartOfAccountHelper implements Serializable {
     private String glCode;
     private String name;
     private String purpose;
-    private boolean isBudgetCheckReqired;
+    private boolean budgetCheckReqired;
     private Character type;
 
     public String getGlCode() {
@@ -75,11 +75,11 @@ public class ChartOfAccountHelper implements Serializable {
     }
 
     public boolean isBudgetCheckReqired() {
-        return isBudgetCheckReqired;
+        return budgetCheckReqired;
     }
 
-    public void setBudgetCheckReqired(final boolean isBudgetCheckReqired) {
-        this.isBudgetCheckReqired = isBudgetCheckReqired;
+    public void setBudgetCheckReqired(final boolean budgetCheckReqired) {
+        this.budgetCheckReqired = budgetCheckReqired;
     }
 
     public Character getType() {
