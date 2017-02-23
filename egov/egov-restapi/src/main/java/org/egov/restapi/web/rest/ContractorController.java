@@ -82,7 +82,7 @@ public class ContractorController {
     @Autowired
     private ExternalContractorService externalContractorService;
 
-    @RequestMapping(value = "/egworks/contractor", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/egworks/contractors", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public String getContractors(@RequestParam(value = "code", required = false) final String code) {
         if (StringUtils.isBlank(code))
             return JsonConvertor.convert(externalContractorService.populateContractor());
