@@ -39,7 +39,6 @@
  */
 
 package org.egov.ptis.web.controller.dashboard;
-import static org.egov.ptis.constants.PropertyTaxConstants. DASHBOARD_GROUPING_ULBWISE;
 import static org.egov.ptis.constants.PropertyTaxConstants. DAY;
 import static org.egov.ptis.constants.PropertyTaxConstants. MONTH;
 import static org.egov.ptis.constants.PropertyTaxConstants. WEEK;
@@ -79,7 +78,6 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -253,14 +251,8 @@ public class CMDashboardController {
      * @throws IOException
      */
     @RequestMapping(value = "/targetmis", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody public CollectionDetails getCollectionDetailsForTargetMIS(@RequestParam("regionName") String regionName, @RequestParam("districtName") String districtName,
-            @RequestParam("ulbGrade") String ulbGrade, @RequestParam("ulbCode") String ulbCode, @RequestParam("fromDate") String fromDate,
-            @RequestParam("toDate") String toDate, @RequestParam("type") String type, @RequestParam("propertyType") String propertyType)
+    @ResponseBody public CollectionDetails getCollectionDetailsForTargetMIS(CollectionDetailsRequest collectionDetailsRequest)
             throws IOException {
-        CollectionDetailsRequest collectionDetailsRequest = new CollectionDetailsRequest();
-        populateCollectionDetailsRequest(collectionDetailsRequest, regionName, districtName, ulbGrade, ulbCode, fromDate, toDate,
-                type, propertyType);
-
         Long startTime = System.currentTimeMillis();
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("CollectionDetailsRequest input : regionName = " + collectionDetailsRequest.getRegionName()
@@ -274,19 +266,6 @@ public class CMDashboardController {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Time taken to serve targetmis is : " + timeTaken + MILLISECS);
         return collectionDetails;
-    }
-
-    private void populateCollectionDetailsRequest(CollectionDetailsRequest collectionDetailsRequest, String regionName,
-            String districtName, String ulbGrade, String ulbCode,
-            String fromDate, String toDate, String type, String propertyType) {
-        collectionDetailsRequest.setRegionName(regionName);
-        collectionDetailsRequest.setDistrictName(districtName);
-        collectionDetailsRequest.setUlbGrade(ulbGrade);
-        collectionDetailsRequest.setUlbCode(ulbCode);
-        collectionDetailsRequest.setFromDate(fromDate);
-        collectionDetailsRequest.setToDate(toDate);
-        collectionDetailsRequest.setType(type);
-        collectionDetailsRequest.setPropertyType(propertyType);
     }
     
     /**
@@ -392,16 +371,8 @@ public class CMDashboardController {
      * @return CollectionDetails
      */
     @RequestMapping(value = "/dailytarget", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public CollectionDetails getDailyTargetDetails(
-            @RequestParam("regionName") String regionName, @RequestParam("districtName") String districtName,
-            @RequestParam("ulbGrade") String ulbGrade, @RequestParam("ulbCode") String ulbCode,
-            @RequestParam("fromDate") String fromDate,
-            @RequestParam("toDate") String toDate, @RequestParam("type") String type,
-            @RequestParam("propertyType") String propertyType)
+    public CollectionDetails getDailyTargetDetails(CollectionDetailsRequest collectionDetailsRequest)
             throws IOException {
-        CollectionDetailsRequest collectionDetailsRequest = new CollectionDetailsRequest();
-        populateCollectionDetailsRequest(collectionDetailsRequest, regionName, districtName, ulbGrade, ulbCode, fromDate, toDate,
-                DASHBOARD_GROUPING_ULBWISE, propertyType);
         Long startTime = System.currentTimeMillis();
         CollectionDetails collectionDetails= propTaxDashboardService.getDailyTarget(collectionDetailsRequest);
         Long timeTaken = System.currentTimeMillis() - startTime;
@@ -409,7 +380,4 @@ public class CMDashboardController {
             LOGGER.debug("Time taken to serve dailytarget is : " + timeTaken + MILLISECS);
         return collectionDetails;
     }
-
-    
-
 }
