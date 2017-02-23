@@ -54,22 +54,22 @@ public class FinancialMasterController {
     @Autowired
     private FinancialMasterService financialMasterService;
 
-    @RequestMapping(value = "/egf/fund/activefunds", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/egf/funds", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public String getAllActiveFunds() {
         return JsonConvertor.convert(financialMasterService.populateFund());
     }
 
-    @RequestMapping(value = "/egf/scheme/activeschemes", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/egf/schemes", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public String getAllActiveSchemes() {
         return JsonConvertor.convert(financialMasterService.populateScheme());
     }
 
-    @RequestMapping(value = "/egf/subscheme/activesubschemes", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/egf/subschemes", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public String getAllActiveSubSchemes() {
         return JsonConvertor.convert(financialMasterService.populateSubScheme());
     }
 
-    @RequestMapping(value = "/egf/function/activefunctions", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/egf/functions", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public String getAllActiveFunctions() {
         return JsonConvertor.convert(financialMasterService.populateFunction());
     }

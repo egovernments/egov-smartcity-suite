@@ -54,7 +54,7 @@ public class DepartmentController {
     @Autowired
     private ExternalDepartmentService externalDepartmentService;
 
-    @RequestMapping(value = "/egi/department/getalldepartment", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/egi/departments", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public String getAllDepartment() {
         return JsonConvertor.convert(externalDepartmentService.populateDepartment());
     }
