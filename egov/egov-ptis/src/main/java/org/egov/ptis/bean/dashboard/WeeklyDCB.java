@@ -56,42 +56,67 @@ public class WeeklyDCB {
     }
 
     public DemandCollectionMIS getWeek1DCB() {
+        if(week1DCB == null){
+            week1DCB = new DemandCollectionMIS();
+            week1DCB.setIntervalCount(1);
+        }
         return week1DCB;
     }
 
     public void setWeek1DCB(DemandCollectionMIS week1dcb) {
+        week1dcb.setIntervalCount(1);
         week1DCB = week1dcb;
     }
 
     public DemandCollectionMIS getWeek2DCB() {
+        if(week2DCB == null){
+            week2DCB = new DemandCollectionMIS();
+            week2DCB.setIntervalCount(2);
+        }
         return week2DCB;
     }
 
     public void setWeek2DCB(DemandCollectionMIS week2dcb) {
+        week2dcb.setIntervalCount(2);
         week2DCB = week2dcb;
     }
 
     public DemandCollectionMIS getWeek3DCB() {
+        if(week3DCB == null){
+            week3DCB = new DemandCollectionMIS();
+            week3DCB.setIntervalCount(3);
+        }
         return week3DCB;
     }
 
     public void setWeek3DCB(DemandCollectionMIS week3dcb) {
+        week3dcb.setIntervalCount(3);
         week3DCB = week3dcb;
     }
 
     public DemandCollectionMIS getWeek4DCB() {
+        if(week4DCB == null){
+            week4DCB = new DemandCollectionMIS();
+            week4DCB.setIntervalCount(4);
+        }
         return week4DCB;
     }
 
     public void setWeek4DCB(DemandCollectionMIS week4dcb) {
+        week4dcb.setIntervalCount(4);
         week4DCB = week4dcb;
     }
 
     public DemandCollectionMIS getWeek5DCB() {
+        if(week5DCB == null){
+            week5DCB = new DemandCollectionMIS();
+            week5DCB.setIntervalCount(5);
+        }
         return week5DCB;
     }
 
     public void setWeek5DCB(DemandCollectionMIS week5dcb) {
+        week5dcb.setIntervalCount(5);
         week5DCB = week5dcb;
     }
 }

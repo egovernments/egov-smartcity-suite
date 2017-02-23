@@ -68,11 +68,13 @@ import org.egov.infra.utils.DateUtils;
 import org.egov.infra.web.utils.WebUtils;
 import org.egov.ptis.bean.dashboard.CollReceiptDetails;
 import org.egov.ptis.bean.dashboard.CollTableData;
+import org.egov.ptis.bean.dashboard.CollectionAnalysis;
 import org.egov.ptis.bean.dashboard.CollectionDetails;
 import org.egov.ptis.bean.dashboard.CollectionDetailsRequest;
 import org.egov.ptis.bean.dashboard.CollectionStats;
 import org.egov.ptis.bean.dashboard.CollectionTrend;
 import org.egov.ptis.bean.dashboard.DCBDetails;
+import org.egov.ptis.bean.dashboard.MonthlyDCB;
 import org.egov.ptis.bean.dashboard.PropertyTaxDefaultersRequest;
 import org.egov.ptis.bean.dashboard.ReceiptTableData;
 import org.egov.ptis.bean.dashboard.ReceiptsTrend;
@@ -80,9 +82,7 @@ import org.egov.ptis.bean.dashboard.StateCityInfo;
 import org.egov.ptis.bean.dashboard.TaxDefaulters;
 import org.egov.ptis.bean.dashboard.TaxPayerResponseDetails;
 import org.egov.ptis.bean.dashboard.TotalCollectionStats;
-import org.egov.ptis.bean.dashboard.UlbWiseDemandCollection;
 import org.egov.ptis.bean.dashboard.WeeklyDCB;
-import org.egov.ptis.bean.dashboard.MonthlyDCB;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.model.ErrorDetails;
 import org.egov.ptis.service.es.CollectionIndexElasticSearchService;
@@ -327,7 +327,7 @@ public class PropTaxDashboardService {
      * @param intervalType
      * @return list
      */
-    public List<UlbWiseDemandCollection> getCollectionAnalysisData(CollectionDetailsRequest collectionDetailsRequest,
+    public CollectionAnalysis getCollectionAnalysisData(CollectionDetailsRequest collectionDetailsRequest,
             String intervalType) {
         return collectionIndexElasticSearchService.getCollectionsForInterval(collectionDetailsRequest, intervalType);
     }

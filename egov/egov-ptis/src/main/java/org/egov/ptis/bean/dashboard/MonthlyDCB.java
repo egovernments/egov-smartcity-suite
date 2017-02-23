@@ -63,98 +63,158 @@ public class MonthlyDCB {
     }
 
     public DemandCollectionMIS getJanuaryDCB() {
+        if(januaryDCB == null){
+            januaryDCB = new DemandCollectionMIS();
+            januaryDCB.setIntervalCount(1);
+        }
         return januaryDCB;
     }
 
     public void setJanuaryDCB(DemandCollectionMIS januaryDCB) {
+        januaryDCB.setIntervalCount(1);
         this.januaryDCB = januaryDCB;
     }
 
     public DemandCollectionMIS getFebruaryDCB() {
+        if(februaryDCB == null){
+            februaryDCB = new DemandCollectionMIS();
+            februaryDCB.setIntervalCount(2);
+        }
         return februaryDCB;
     }
 
     public void setFebruaryDCB(DemandCollectionMIS februaryDCB) {
+        februaryDCB.setIntervalCount(2);
         this.februaryDCB = februaryDCB;
     }
 
     public DemandCollectionMIS getMarchDCB() {
+        if(marchDCB == null){
+            marchDCB = new DemandCollectionMIS();
+            marchDCB.setIntervalCount(3);
+        }
         return marchDCB;
     }
 
     public void setMarchDCB(DemandCollectionMIS marchDCB) {
+        marchDCB.setIntervalCount(3);
         this.marchDCB = marchDCB;
     }
 
     public DemandCollectionMIS getAprilDCB() {
+        if(aprilDCB == null){
+            aprilDCB = new DemandCollectionMIS();
+            aprilDCB.setIntervalCount(4);
+        }
         return aprilDCB;
     }
 
     public void setAprilDCB(DemandCollectionMIS aprilDCB) {
+        aprilDCB.setIntervalCount(4);
         this.aprilDCB = aprilDCB;
     }
 
     public DemandCollectionMIS getMayDCB() {
+        if(mayDCB == null){
+            mayDCB = new DemandCollectionMIS();
+            mayDCB.setIntervalCount(5);
+        }
         return mayDCB;
     }
 
     public void setMayDCB(DemandCollectionMIS mayDCB) {
+        mayDCB.setIntervalCount(5);
         this.mayDCB = mayDCB;
     }
 
     public DemandCollectionMIS getJuneDCB() {
+        if(juneDCB == null){
+            juneDCB = new DemandCollectionMIS();
+            juneDCB.setIntervalCount(6);
+        }
         return juneDCB;
     }
 
     public void setJuneDCB(DemandCollectionMIS juneDCB) {
+        juneDCB.setIntervalCount(6);
         this.juneDCB = juneDCB;
     }
 
     public DemandCollectionMIS getJulyDCB() {
+        if(julyDCB == null){
+            julyDCB = new DemandCollectionMIS();
+            julyDCB.setIntervalCount(7);
+        }
         return julyDCB;
     }
 
     public void setJulyDCB(DemandCollectionMIS julyDCB) {
+        julyDCB.setIntervalCount(7);
         this.julyDCB = julyDCB;
     }
 
     public DemandCollectionMIS getAugustDCB() {
+        if(augustDCB == null){
+            augustDCB = new DemandCollectionMIS();
+            augustDCB.setIntervalCount(8);
+        }
         return augustDCB;
     }
 
     public void setAugustDCB(DemandCollectionMIS augustDCB) {
+        augustDCB.setIntervalCount(8);
         this.augustDCB = augustDCB;
     }
 
     public DemandCollectionMIS getSeptemberDCB() {
+        if(septemberDCB == null){
+            septemberDCB = new DemandCollectionMIS();
+            septemberDCB.setIntervalCount(9);
+        }
         return septemberDCB;
     }
 
     public void setSeptemberDCB(DemandCollectionMIS septemberDCB) {
+        septemberDCB.setIntervalCount(9);
         this.septemberDCB = septemberDCB;
     }
 
     public DemandCollectionMIS getOctoberDCB() {
+        if(octoberDCB == null){
+            octoberDCB = new DemandCollectionMIS();
+            octoberDCB.setIntervalCount(10);
+        }
         return octoberDCB;
     }
 
     public void setOctoberDCB(DemandCollectionMIS octoberDCB) {
+        octoberDCB.setIntervalCount(10);
         this.octoberDCB = octoberDCB;
     }
 
     public DemandCollectionMIS getNovemberDCB() {
+        if(novemberDCB == null){
+            novemberDCB = new DemandCollectionMIS();
+            novemberDCB.setIntervalCount(11);
+        }
         return novemberDCB;
     }
 
     public void setNovemberDCB(DemandCollectionMIS novemberDCB) {
+        novemberDCB.setIntervalCount(11);
         this.novemberDCB = novemberDCB;
     }
 
     public DemandCollectionMIS getDecemberDCB() {
+        if(decemberDCB == null){
+            decemberDCB = new DemandCollectionMIS();
+            decemberDCB.setIntervalCount(12);
+        }
         return decemberDCB;
     }
 
     public void setDecemberDCB(DemandCollectionMIS decemberDCB) {
+        decemberDCB.setIntervalCount(12);
         this.decemberDCB = decemberDCB;
     }
 

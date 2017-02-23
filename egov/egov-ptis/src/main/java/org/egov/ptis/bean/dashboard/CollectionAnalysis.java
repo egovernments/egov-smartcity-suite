@@ -39,45 +39,35 @@
  */
 package org.egov.ptis.bean.dashboard;
 
-import java.math.BigDecimal;
+import java.util.List;
 
-public class DemandCollectionMIS {
+public class CollectionAnalysis {
 
-    private BigDecimal collection = BigDecimal.ZERO;
-    private BigDecimal demand = BigDecimal.ZERO;
-    private BigDecimal percent = BigDecimal.ZERO;
-    private int intervalCount = 0;
+    private List<MonthlyDCB> monthlyDCBDetails;
+    private List<WeeklyDCB> weeklyDCBDetails;
+    private List<DayWiseCollection> dailyCollDetails;
 
-    public BigDecimal getCollection() {
-        return collection;
+    public List<MonthlyDCB> getMonthlyDCBDetails() {
+        return monthlyDCBDetails;
     }
 
-    public void setCollection(BigDecimal collection) {
-        this.collection = collection;
+    public void setMonthlyDCBDetails(List<MonthlyDCB> monthlyDCBDetails) {
+        this.monthlyDCBDetails = monthlyDCBDetails;
     }
 
-    public BigDecimal getDemand() {
-        return demand;
+    public List<WeeklyDCB> getWeeklyDCBDetails() {
+        return weeklyDCBDetails;
     }
 
-    public void setDemand(BigDecimal demand) {
-        this.demand = demand;
+    public void setWeeklyDCBDetails(List<WeeklyDCB> weeklyDCBDetails) {
+        this.weeklyDCBDetails = weeklyDCBDetails;
     }
 
-    public BigDecimal getPercent() {
-        return percent;
+    public List<DayWiseCollection> getDailyCollDetails() {
+        return dailyCollDetails;
     }
 
-    public void setPercent(BigDecimal percent) {
-        this.percent = percent;
+    public void setDailyCollDetails(List<DayWiseCollection> dailyCollDetails) {
+        this.dailyCollDetails = dailyCollDetails;
     }
-
-    public int getIntervalCount() {
-        return intervalCount;
-    }
-
-    public void setIntervalCount(int intervalCount) {
-        this.intervalCount = intervalCount;
-    }
-
 }
