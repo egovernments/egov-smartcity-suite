@@ -40,8 +40,6 @@
 package org.egov.restapi.model;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ChartOfAccountHelper implements Serializable {
 
@@ -52,7 +50,7 @@ public class ChartOfAccountHelper implements Serializable {
     private boolean budgetCheckReqired;
     private Character type;
     private boolean functionReqired;
-    private List<SubledgerType> subledgerType = new ArrayList<SubledgerType>();
+    private String[] subledgerType;
 
     public String getGlCode() {
         return glCode;
@@ -102,16 +100,19 @@ public class ChartOfAccountHelper implements Serializable {
         this.functionReqired = functionReqired;
     }
 
-    public List<SubledgerType> getSubledgerType() {
+    public String[] getSubledgerType() {
         return subledgerType;
     }
 
-    public void setSubledgerType(final List<SubledgerType> subledgerType) {
+    public void setSubledgerType(final String[] subledgerType) {
         this.subledgerType = subledgerType;
     }
 
-    public void addSubledgerTypeDetails(final SubledgerType subledgerTypeDetails) {
-        subledgerType.add(subledgerTypeDetails);
+    public void initializeArray(final int size) {
+        subledgerType = new String[size];
     }
 
+    public void addSubledger(final String subledger, final int index) {
+        subledgerType[index] = subledger;
+    }
 }
