@@ -41,6 +41,7 @@ package org.egov.restapi.web.rest;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
+import org.apache.commons.lang.StringUtils;
 import org.egov.restapi.service.FinancialMasterService;
 import org.egov.restapi.util.JsonConvertor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,6 +78,15 @@ public class FinancialMasterController {
     @RequestMapping(value = "/egf/chartofaccounts/detailedcodes", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public String getChartOfAccounts() {
         return JsonConvertor.convert(financialMasterService.populateChartOfAccounts());
+    }
+
+    @RequestMapping(value = "/egf/budgetgroups", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public String getAllActiveBudgetGroups() {
+        try {
+            return JsonConvertor.convert(financialMasterService.populateBudgetGroup());
+        } catch (final Exception e) {
+            return JsonConvertor.convert(StringUtils.EMPTY);
+        }
     }
 
 }

@@ -81,33 +81,7 @@ public class ExternalContractorService {
     private BankHibernateDAO bankHibernateDAO;
 
     public ContractorHelper populateContractorData(final Contractor contractor) {
-        final ContractorHelper cont = new ContractorHelper();
-        cont.setCode(contractor.getCode());
-        cont.setName(contractor.getName());
-        cont.setBankName(contractor.getBank() != null ? contractor.getBank().getName() : StringUtils.EMPTY);
-        cont.setBankAccount(contractor.getBankAccount());
-        cont.setContactPerson(contractor.getContactPerson());
-        cont.setCorrespondenceAddress(contractor.getCorrespondenceAddress());
-        cont.setPaymentAddress(contractor.getPaymentAddress());
-        cont.setEmail(contractor.getEmail());
-        cont.setExemptionName(
-                contractor.getExemptionForm() != null ? contractor.getExemptionForm().toString() : StringUtils.EMPTY);
-        cont.setIfscCode(contractor.getIfscCode());
-        cont.setPanNumber(contractor.getPanNumber());
-        cont.setTinNumber(contractor.getTinNumber());
-        cont.setPwdApprovalCode(contractor.getPwdApprovalCode());
-        cont.setNarration(contractor.getNarration());
-        cont.setMobileNumber(contractor.getMobileNumber());
-
-        if (!contractor.getContractorDetails().isEmpty()) {
-            cont.setContractorCategory(StringUtils.isNotBlank(contractor.getContractorDetails().get(0).getCategory())
-                    ? contractor.getContractorDetails().get(0).getCategory()
-                    : StringUtils.EMPTY);
-            cont.setContractorClass(
-                    contractor.getContractorDetails().get(0).getGrade() != null
-                            ? contractor.getContractorDetails().get(0).getGrade().getGrade() : StringUtils.EMPTY);
-            cont.setStatus(contractor.getContractorDetails().get(0).getStatus().getCode());
-        }
+        final ContractorHelper cont = createContractorData(contractor);
         return cont;
 
     }
@@ -329,23 +303,24 @@ public class ExternalContractorService {
     }
 
     private void createContractorData(final List<ContractorHelper> contractorHelpers, final Contractor contractor) {
+        final ContractorHelper contractorHelper = createContractorData(contractor);
+        contractorHelpers.add(contractorHelper);
+    }
+
+    private ContractorHelper createContractorData(final Contractor contractor) {
         final ContractorHelper contractorHelper = new ContractorHelper();
         contractorHelper.setCode(contractor.getCode());
         contractorHelper.setName(contractor.getName());
         contractorHelper.setBankName(contractor.getBank() != null ? contractor.getBank().getName() : StringUtils.EMPTY);
-        contractorHelper.setBankAccount(contractor.getBankAccount());
-        contractorHelper.setContactPerson(contractor.getContactPerson());
-        contractorHelper.setCorrespondenceAddress(contractor.getCorrespondenceAddress());
-        contractorHelper.setPaymentAddress(contractor.getPaymentAddress());
-        contractorHelper.setEmail(contractor.getEmail());
-        contractorHelper.setExemptionName(
-                contractor.getExemptionForm() != null ? contractor.getExemptionForm().toString() : StringUtils.EMPTY);
-        contractorHelper.setIfscCode(contractor.getIfscCode());
-        contractorHelper.setPanNumber(contractor.getPanNumber());
-        contractorHelper.setTinNumber(contractor.getTinNumber());
-        contractorHelper.setPwdApprovalCode(contractor.getPwdApprovalCode());
-        contractorHelper.setNarration(contractor.getNarration());
-        contractorHelper.setMobileNumber(contractor.getMobileNumber());
+        if (StringUtils.isNotBlank(contractor.getBankAccount()))
+            contractorHelper.setBankAccount(contractor.getBankAccount());
+        else
+            contractorHelper.setBankAccount(StringUtils.EMPTY);
+        if (StringUtils.isNotBlank(contractor.getContactPerson()))
+            contractorHelper.setContactPerson(contractor.getContactPerson());
+        else
+            contractorHelper.setContactPerson(StringUtils.EMPTY);
+        createContractorHeaderData(contractor, contractorHelper);
 
         if (!contractor.getContractorDetails().isEmpty()) {
             contractorHelper.setContractorCategory(StringUtils.isNotBlank(contractor.getContractorDetails().get(0).getCategory())
@@ -356,7 +331,48 @@ public class ExternalContractorService {
                             ? contractor.getContractorDetails().get(0).getGrade().getGrade() : StringUtils.EMPTY);
             contractorHelper.setStatus(contractor.getContractorDetails().get(0).getStatus().getCode());
         }
-        contractorHelpers.add(contractorHelper);
+        return contractorHelper;
+    }
+
+    private void createContractorHeaderData(final Contractor contractor, final ContractorHelper contractorHelper) {
+        if (StringUtils.isNotBlank(contractor.getCorrespondenceAddress()))
+            contractorHelper.setCorrespondenceAddress(contractor.getCorrespondenceAddress());
+        else
+            contractorHelper.setCorrespondenceAddress(StringUtils.EMPTY);
+        if (StringUtils.isNotBlank(contractor.getPaymentAddress()))
+            contractorHelper.setPaymentAddress(contractor.getPaymentAddress());
+        else
+            contractorHelper.setPaymentAddress(StringUtils.EMPTY);
+        if (StringUtils.isNotBlank(contractor.getEmail()))
+            contractorHelper.setEmail(contractor.getEmail());
+        else
+            contractorHelper.setEmail(StringUtils.EMPTY);
+        contractorHelper.setExemptionName(
+                contractor.getExemptionForm() != null ? contractor.getExemptionForm().toString() : StringUtils.EMPTY);
+        if (StringUtils.isNotBlank(contractor.getIfscCode()))
+            contractorHelper.setIfscCode(contractor.getIfscCode());
+        else
+            contractorHelper.setIfscCode(StringUtils.EMPTY);
+        if (StringUtils.isNotBlank(contractor.getPanNumber()))
+            contractorHelper.setPanNumber(contractor.getPanNumber());
+        else
+            contractorHelper.setPanNumber(StringUtils.EMPTY);
+        if (StringUtils.isNotBlank(contractor.getTinNumber()))
+            contractorHelper.setTinNumber(contractor.getTinNumber());
+        else
+            contractorHelper.setTinNumber(StringUtils.EMPTY);
+        if (StringUtils.isNotBlank(contractor.getPwdApprovalCode()))
+            contractorHelper.setPwdApprovalCode(contractor.getPwdApprovalCode());
+        else
+            contractorHelper.setPwdApprovalCode(StringUtils.EMPTY);
+        if (StringUtils.isNotBlank(contractor.getNarration()))
+            contractorHelper.setNarration(contractor.getNarration());
+        else
+            contractorHelper.setNarration(StringUtils.EMPTY);
+        if (StringUtils.isNotBlank(contractor.getMobileNumber()))
+            contractorHelper.setMobileNumber(contractor.getMobileNumber());
+        else
+            contractorHelper.setMobileNumber(StringUtils.EMPTY);
     }
 
 }

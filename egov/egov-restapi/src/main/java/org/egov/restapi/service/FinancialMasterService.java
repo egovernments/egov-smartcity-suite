@@ -49,10 +49,14 @@ import org.egov.commons.CFunction;
 import org.egov.commons.Fund;
 import org.egov.commons.Scheme;
 import org.egov.commons.SubScheme;
+import org.egov.commons.dao.ChartOfAccountsDAO;
 import org.egov.commons.service.AccountPurposeService;
 import org.egov.commons.service.ChartOfAccountsService;
 import org.egov.commons.service.FunctionService;
 import org.egov.commons.service.FundService;
+import org.egov.model.budget.BudgetGroup;
+import org.egov.model.service.BudgetingGroupService;
+import org.egov.restapi.model.BudgetGroupHelper;
 import org.egov.restapi.model.ChartOfAccountHelper;
 import org.egov.restapi.model.FunctionHelper;
 import org.egov.restapi.model.FundHelper;
@@ -85,6 +89,12 @@ public class FinancialMasterService {
 
     @Autowired
     private AccountPurposeService accountPurposeService;
+
+    @Autowired
+    private BudgetingGroupService budgetingGroupService;
+
+    @Autowired
+    private ChartOfAccountsDAO chartOfAccountsDAO;
 
     public List<FunctionHelper> populateFunction() {
         final List<CFunction> cFunctions = functionService.findAllActive();
@@ -192,6 +202,40 @@ public class FinancialMasterService {
             i++;
         }
         chartOfAccountHelpers.add(chartOfAccountHelper);
+    }
+
+    public List<BudgetGroupHelper> populateBudgetGroup() throws Exception {
+        final List<BudgetGroup> budgetGroups = budgetingGroupService.getActiveBudgetGroups();
+
+        final List<BudgetGroupHelper> budgetGroupHelpers = new ArrayList<>();
+
+        for (final BudgetGroup budgetGroup : budgetGroups)
+            createBudgetGroupHelper(budgetGroupHelpers, budgetGroup);
+        return budgetGroupHelpers;
+    }
+
+    private void createBudgetGroupHelper(final List<BudgetGroupHelper> budgetGroupHelpers, final BudgetGroup budgetGroup)
+            throws Exception {
+        final BudgetGroupHelper budgetGroupHelper = new BudgetGroupHelper();
+        if (budgetGroup.getMinCode().equals(budgetGroup.getMaxCode())) {
+            budgetGroupHelper.initializeArray(1);
+            budgetGroupHelper.addAccountCode(budgetGroup.getMaxCode().getGlcode(), 0);
+        } else {
+            budgetGroupHelper
+                    .initializeArray(chartOfAccountsDAO
+                            .getGlcode(budgetGroup.getMinCode().getId().toString(), budgetGroup.getMaxCode().getId().toString(),
+                                    budgetGroup.getMajorCode() != null ? budgetGroup.getMajorCode().getId().toString()
+                                            : StringUtils.EMPTY)
+                            .size());
+            budgetGroupHelper
+                    .setAccountCode((String[]) chartOfAccountsDAO
+                            .getGlcode(budgetGroup.getMinCode().getId().toString(), budgetGroup.getMaxCode().getId().toString(),
+                                    budgetGroup.getMajorCode() != null ? budgetGroup.getMajorCode().getId().toString()
+                                            : StringUtils.EMPTY)
+                            .toArray());
+        }
+        budgetGroupHelper.setName(budgetGroup.getName());
+        budgetGroupHelpers.add(budgetGroupHelper);
     }
 
 }
