@@ -90,9 +90,6 @@ var oDataTable;
 		
 function submitForm() {
 	if($('form').valid()){
-		var caseType = $("#caseCategory");
-		var caseNumber = $("#caseNumber");
-		var lcNumber = $("#lcNumber");
 		var today = getdate();
 		$('#dailyBoardReportResult-header').show();
 		$('#reportgeneration-header').show();
