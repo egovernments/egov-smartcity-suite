@@ -217,22 +217,20 @@ public class FinancialMasterService {
     private void createBudgetGroupHelper(final List<BudgetGroupHelper> budgetGroupHelpers, final BudgetGroup budgetGroup)
             throws Exception {
         final BudgetGroupHelper budgetGroupHelper = new BudgetGroupHelper();
-        if (budgetGroup.getMinCode().equals(budgetGroup.getMaxCode())) {
+        if (budgetGroup.getMinCode() != null && budgetGroup.getMaxCode() != null &&
+                budgetGroup.getMinCode().equals(budgetGroup.getMaxCode())) {
             budgetGroupHelper.initializeArray(1);
             budgetGroupHelper.addAccountCode(budgetGroup.getMaxCode().getGlcode(), 0);
         } else {
+            final List<String> accountCodes = chartOfAccountsDAO
+                    .getGlcode(budgetGroup.getMinCode() != null ? budgetGroup.getMinCode().getId().toString() : StringUtils.EMPTY,
+                            budgetGroup.getMaxCode() != null ? budgetGroup.getMaxCode().getId().toString() : StringUtils.EMPTY,
+                            budgetGroup.getMajorCode() != null ? budgetGroup.getMajorCode().getId().toString()
+                                    : StringUtils.EMPTY);
             budgetGroupHelper
-                    .initializeArray(chartOfAccountsDAO
-                            .getGlcode(budgetGroup.getMinCode().getId().toString(), budgetGroup.getMaxCode().getId().toString(),
-                                    budgetGroup.getMajorCode() != null ? budgetGroup.getMajorCode().getId().toString()
-                                            : StringUtils.EMPTY)
-                            .size());
+                    .initializeArray(accountCodes.size());
             budgetGroupHelper
-                    .setAccountCode((String[]) chartOfAccountsDAO
-                            .getGlcode(budgetGroup.getMinCode().getId().toString(), budgetGroup.getMaxCode().getId().toString(),
-                                    budgetGroup.getMajorCode() != null ? budgetGroup.getMajorCode().getId().toString()
-                                            : StringUtils.EMPTY)
-                            .toArray());
+                    .setAccountCode((String[]) accountCodes.toArray());
         }
         budgetGroupHelper.setName(budgetGroup.getName());
         budgetGroupHelpers.add(budgetGroupHelper);
