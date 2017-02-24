@@ -41,6 +41,10 @@ $(document).ready(function(){
 	
 	loadPropertyDetails();
 	
+	if($("#connectionType").val()=="METERED"){
+		$(".showfields").show();
+	}
+	
 	if($('#noJAORSAMessage') && $('#noJAORSAMessage').val())
 		bootbox.alert($('#noJAORSAMessage').val());
 
@@ -63,15 +67,22 @@ $(document).ready(function(){
 	changecategory();
 	
 	$('#connectionType').change(function(){
-		if($('#legacy'))
-		{
-			if($('#connectionType').val()=='METERED')
+		if($("#legacy").val()==="false"){
+			if($('#connectionType').val()==='METERED')
 			{
-				$('#metereddetails').show();	
+				
+				$('.showfields').show();
+				$('#waterSupplyType').attr('required', 'required');
+				$("#buildingName").attr('required','required');
 			}
 			else
 			{
-				$('#metereddetails').hide();
+				
+				$('.showfields').hide();
+				$('#waterSupplyType').removeAttr('required');
+				$('#buildingName').removeAttr('required');
+				$("#waterSupplyType").val('');
+				$("#buildingName").val('');
 			}
 		}
 	});

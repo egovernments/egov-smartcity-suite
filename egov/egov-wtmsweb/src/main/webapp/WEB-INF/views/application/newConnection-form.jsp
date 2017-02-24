@@ -57,6 +57,7 @@
 			
 			<input type="hidden" id="currentUser" name="currentUser" value="${currentUser}"/>  
 			<form:hidden id="mode" path=""  value="${mode}"/>
+			<form:hidden path="legacy" id="legacy" value="false"/>
 			<input type="hidden" name="allowIfPTDueExists" id="allowIfPTDueExists" value="${allowIfPTDueExists}"> 
 			<input type="hidden" name="validateIfPTDueExists" id="validateIfPTDueExists" value="${validateIfPTDueExists}"> 
 			<input type="hidden" name="approvalPosOnValidate" id="approvalPosOnValidate" value="${approvalPosOnValidate}"> 

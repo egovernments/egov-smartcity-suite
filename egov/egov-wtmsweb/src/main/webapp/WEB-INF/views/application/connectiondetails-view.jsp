@@ -136,24 +136,38 @@
 						</div>
 					</c:if>
 					<c:if test="${waterConnectionDetails.legacy=='false' }">
-				<div class="row">
-					<div class="col-xs-3 add-margin"><spring:message code="lbl.donationcharge"/></div>  
-					<div class="col-xs-3 add-margin view-content">
-						<c:choose>
-						<c:when test="${not empty feeDetails.WTAXDONATION}">
-							<c:out value="${feeDetails.WTAXDONATION}" />
-						</c:when>
-						<c:otherwise>-</c:otherwise>
-					</c:choose></div>
-					<div class="col-xs-3 add-margin"><spring:message code="lbl.estimationcharges"/></div>
-					<div class="col-xs-3 add-margin view-content">
-					<c:choose>
-						<c:when test="${not empty feeDetails.WTAXFIELDINSPEC}">
-							<c:out value="${feeDetails.WTAXFIELDINSPEC}" />
-						</c:when>
-						<c:otherwise>-</c:otherwise>
-					</c:choose></div>
-				</div></c:if>
+						<div class="row add-border">
+							<div class="col-xs-3 add-margin"><spring:message code="lbl.donationcharge"/></div>  
+							<div class="col-xs-3 add-margin view-content">
+								<c:choose>
+								<c:when test="${not empty feeDetails.WTAXDONATION}">
+									<c:out value="${feeDetails.WTAXDONATION}" />
+								</c:when>
+								<c:otherwise>-</c:otherwise>
+							</c:choose></div>
+							<div class="col-xs-3 add-margin"><spring:message code="lbl.estimationcharges"/></div>
+							<div class="col-xs-3 add-margin view-content">
+							<c:choose>
+								<c:when test="${not empty feeDetails.WTAXFIELDINSPEC}">
+									<c:out value="${feeDetails.WTAXFIELDINSPEC}" />
+								</c:when>
+								<c:otherwise>-</c:otherwise>
+							</c:choose></div>
+						</div>
+						<c:if test="${waterConnectionDetails.connectionType == 'METERED'}">
+							<div class="row add-border">
+								<div class="col-xs-3 add-margin"><spring:message code="lbl.watersupplytype"/></div>
+								<div class="col-xs-3 add-margin view-content">
+									<c:out value="${waterConnectionDetails.waterSupply.waterSupplyType}"/>
+								</div>
+								
+								<div class="col-xs-3 add-margin"><spring:message code="lbl.apartmentorcomplexname"/></div>
+								<div class="col-xs-3 add-margin view-content">
+									<c:out value="${waterConnectionDetails.buildingName}"/>
+								</div>
+							</div>
+						</c:if>
+				</c:if>
 				<c:if test="${waterConnectionDetails.connection.parentConnection.id!=null}">
 				<div class="row add-border">
 					<div class="col-xs-3 add-margin"><spring:message code="lbl.addconnection.reason" /></div>

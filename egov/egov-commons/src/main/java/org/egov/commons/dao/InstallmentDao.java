@@ -39,13 +39,13 @@
  */
 package org.egov.commons.dao;
 
-import org.egov.commons.Installment;
-import org.egov.infra.admin.master.entity.Module;
-
 import java.util.Date;
 import java.util.List;
 
-public interface InstallmentDao  {
+import org.egov.commons.Installment;
+import org.egov.infra.admin.master.entity.Module;
+
+public interface InstallmentDao {
     public List<Installment> getInsatllmentByModule(Module module);
 
     public List<Installment> getInsatllmentByModule(Module module, Date year);
@@ -58,13 +58,14 @@ public interface InstallmentDao  {
 
     public Installment getInsatllmentByModuleForGivenDateAndInstallmentType(Module module, Date installmentDate,
             String installmentType);
-    
-    public List<Installment> getInstallmentsByModuleForGivenDateAndInstallmentType(Module module, Date installmentDate,
+
+    List<Installment> getInstallmentsByModuleForGivenDateAndInstallmentType(Module module, Date installmentDate,
             String installmentType);
-    
+
     List<Installment> fetchInstallments(final Module module, final Date toInstallmentDate, final int noOfInstallments);
-    
-    List<Installment> getAllInstallmentsByModuleAndStartDate(final Module module, final Date installmentDate ) ;
+
+    List<Installment> getAllInstallmentsByModuleAndStartDate(final Module module, final Date installmentDate);
+
     Installment fetchInstallmentByModuleAndInstallmentNumber(final Module module, final Integer installmentNumber);
 
     public List<Installment> fetchPreviousInstallmentsInDescendingOrderByModuleAndDate(Module module, Date installmentDate,

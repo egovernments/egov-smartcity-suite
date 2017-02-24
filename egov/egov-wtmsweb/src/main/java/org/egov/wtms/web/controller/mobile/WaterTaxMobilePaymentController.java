@@ -90,8 +90,10 @@ public class WaterTaxMobilePaymentController {
     @Autowired
     @Qualifier("waterConnectionBillable")
     private WaterConnectionBillable waterConnectionBillable;
+
     @Autowired
     private PropertyExtnUtils propertyExtnUtils;
+
     @Autowired
     private WaterTaxExternalService waterTaxExternalService;
 
@@ -112,7 +114,7 @@ public class WaterTaxMobilePaymentController {
 
     /**
      * API to process payments from Mobile App
-     * 
+     *
      * @param model
      * @param consumerNo
      * @param ulbCode
@@ -145,7 +147,7 @@ public class WaterTaxMobilePaymentController {
 
     /**
      * API to return BillInfoImpl, used in tax payment through Mobile App
-     * 
+     *
      * @param mobilePropertyTaxDetails
      * @return
      */

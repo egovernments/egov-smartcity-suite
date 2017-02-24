@@ -156,6 +156,9 @@ public class WaterConnectionDetails extends StateAware {
     @JoinColumn(name = "waterSupply")
     private WaterSupply waterSupply;
 
+    @Length(max = 1024)
+    private String buildingName;
+
     @ManyToOne
     @NotNull
     @JoinColumn(name = "pipeSize", nullable = false)
@@ -704,6 +707,14 @@ public class WaterConnectionDetails extends StateAware {
 
     public void setDeactivateReason(final String deactivateReason) {
         this.deactivateReason = deactivateReason;
+    }
+
+    public String getBuildingName() {
+        return buildingName;
+    }
+
+    public void setBuildingName(final String buildingName) {
+        this.buildingName = buildingName;
     }
 
 }

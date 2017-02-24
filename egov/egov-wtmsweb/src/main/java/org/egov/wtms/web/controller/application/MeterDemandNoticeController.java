@@ -39,6 +39,18 @@
  */
 package org.egov.wtms.web.controller.application;
 
+import java.math.BigDecimal;
+import java.text.Format;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.apache.commons.lang.WordUtils;
 import org.egov.commons.Installment;
 import org.egov.demand.dao.DemandGenericDao;
@@ -72,20 +84,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import java.math.BigDecimal;
-import java.text.Format;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 @Controller
 @RequestMapping(value = "/application")
 public class MeterDemandNoticeController {
+
+    public static final String METERDEMAND_NOTICE = "meterDemandNotice";
 
     @Autowired
     private ReportService reportService;
@@ -96,49 +99,51 @@ public class MeterDemandNoticeController {
     @Autowired
     private ConnectionDemandService connectionDemandService;
 
-    public static final String METERDEMAND_NOTICE = "meterDemandNotice";
     @Autowired
     private PropertyExtnUtils propertyExtnUtils;
-    private final Map<String, Object> reportParams = new HashMap<String, Object>();
-  
-    String errorMessage = "";
 
     @Autowired
     private WaterConnectionDetailsRepository waterConnectionDetailsRepository;
 
     @Autowired
     private WaterConnectionDetailsService waterConnectionDetailsService;
-    
-    @Autowired 
+
+    @Autowired
     private WaterTaxUtils waterTaxUtils;
 
     @RequestMapping(value = "/meterdemandnotice", method = RequestMethod.GET)
-    public @ResponseBody ResponseEntity<byte[]> generateEstimationNotice(final HttpServletRequest request,
+    @ResponseBody
+    public ResponseEntity<byte[]> generateEstimationNotice(final HttpServletRequest request,
             final HttpSession session) {
         final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
                 .findByConsumerCodeAndConnectionStatus(request.getParameter("pathVar"), ConnectionStatus.ACTIVE);
-        if (!errorMessage.isEmpty())
-            return redirect();
         return generateReport(waterConnectionDetails, session);
     }
 
     private ResponseEntity<byte[]> generateReport(final WaterConnectionDetails waterConnectionDetails,
             final HttpSession session) {
-         ReportRequest reportInput = null ;
-         ReportOutput reportOutput ;
+        ReportRequest reportInput = null;
+        ReportOutput reportOutput;
         if (waterConnectionDetails != null) {
+            Map<String, Object> reportParams;
             final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
             final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
                     waterConnectionDetails.getConnection().getPropertyIdentifier(),
-                    PropertyExternalService.FLAG_FULL_DETAILS,BasicPropertyStatus.ACTIVE);
+                    PropertyExternalService.FLAG_FULL_DETAILS, BasicPropertyStatus.ACTIVE);
 
-            String ownerName = "";
+            final StringBuilder ownerName = new StringBuilder();
+
+            int counter = 0;
             for (final OwnerName names : assessmentDetails.getOwnerNames()) {
-                ownerName = names.getOwnerName();
-                break;
+                if (counter > 0)
+                    ownerName.append(", ");
+                ownerName.append(names.getOwnerName());
+                counter++;
             }
+
             EgBill billObj = null;
-            final List<EgBill> billlist = demandGenericDao.getAllBillsForDemand(waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand(),
+            final List<EgBill> billlist = demandGenericDao.getAllBillsForDemand(
+                    waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand(),
                     "N", "N");
             if (!billlist.isEmpty())
                 billObj = billlist.get(0);
@@ -151,7 +156,7 @@ public class MeterDemandNoticeController {
                     meterReadingpriviousObj.setCurrentReadingDate(meterReadingpriviousObjlist.get(1).getCurrentReadingDate());
                 else
                     meterReadingpriviousObj.setCurrentReadingDate(waterConnectionDetails.getExecutionDate());
-            } else {// waterConnectionDetails.getConnection().getInitialReading()
+            } else {
                 if (waterConnectionDetails.getConnection().getInitialReading() != null)
                     meterReadingpriviousObj.setCurrentReading(waterConnectionDetails.getConnection()
                             .getInitialReading());
@@ -165,7 +170,8 @@ public class MeterDemandNoticeController {
                     .getCurrentReadingDate());
             final String yearName = formatterYear.format(waterConnectionDetails.getMeterConnection().get(0)
                     .getCurrentReadingDate());
-            prepareReportParams(waterConnectionDetails, session, formatter, assessmentDetails, ownerName, billObj,
+            reportParams = prepareReportParams(waterConnectionDetails, session, formatter, assessmentDetails,
+                    ownerName.toString(), billObj,
                     meterReadingpriviousObj, monthName, yearName);
             reportInput = new ReportRequest(METERDEMAND_NOTICE, waterConnectionDetails.getEstimationDetails(),
                     reportParams);
@@ -175,7 +181,7 @@ public class MeterDemandNoticeController {
         headers.setContentType(MediaType.parseMediaType("application/pdf"));
         headers.add("content-disposition", "inline;filename=DemandNotice.pdf");
         reportOutput = reportService.createReport(reportInput);
-        return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
+        return new ResponseEntity<>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
     }
 
     /**
@@ -189,16 +195,18 @@ public class MeterDemandNoticeController {
      * @param monthName
      * @param yearName
      */
-    private void prepareReportParams(final WaterConnectionDetails waterConnectionDetails, final HttpSession session,
+    private Map<String, Object> prepareReportParams(final WaterConnectionDetails waterConnectionDetails,
+            final HttpSession session,
             final SimpleDateFormat formatter, final AssessmentDetails assessmentDetails, final String ownerName,
             final EgBill billObj, final MeterReadingConnectionDetails meterReadingpriviousObj, final String monthName,
             final String yearName) {
+        final Map<String, Object> reportParams = new HashMap<>();
         if (WaterTaxConstants.NEWCONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode())
-                ||WaterTaxConstants.ADDNLCONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType()
+                || WaterTaxConstants.ADDNLCONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType()
                         .getCode()))
             reportParams.put("applicationType",
                     WordUtils.capitalize(waterConnectionDetails.getApplicationType().getName()));
-      
+
         reportParams.put("municipality", session.getAttribute("citymunicipalityname"));
         reportParams.put("district", session.getAttribute("districtName"));
         reportParams.put("waterCharges", waterConnectionDetails.getConnectionType().name());
@@ -224,15 +232,16 @@ public class MeterDemandNoticeController {
         reportParams.put("noofunitsconsume", waterConnectionDetails.getMeterConnection().get(0).getCurrentReading()
                 - meterReadingpriviousObj.getCurrentReading());
         reportParams.put("totalBilltoCollect", waterConnectionDetailsService.getTotalAmount(waterConnectionDetails));
-        reportParams.put("currentMonthCharges", getCurrentMonthDemandAmount(waterConnectionDetails,waterConnectionDetails.getMeterConnection().get(0).getCurrentReadingDate()));
-        reportParams.put("totalDueAmount", getTotalDue(waterConnectionDetails,waterConnectionDetails.getMeterConnection().get(0).getCurrentReadingDate()));
-        
+        reportParams.put("currentMonthCharges", getCurrentMonthDemandAmount(waterConnectionDetails,
+                waterConnectionDetails.getMeterConnection().get(0).getCurrentReadingDate()));
+        reportParams.put("totalDueAmount",
+                getTotalDue(waterConnectionDetails, waterConnectionDetails.getMeterConnection().get(0).getCurrentReadingDate()));
+
         reportParams.put("address", assessmentDetails.getPropertyAddress());
+        return reportParams;
     }
 
-  
-
-    public BigDecimal getTotalDue(final WaterConnectionDetails waterConnectionDetails,Date givenDate) {
+    public BigDecimal getTotalDue(final WaterConnectionDetails waterConnectionDetails, final Date givenDate) {
         BigDecimal balance;
         balance = waterConnectionDetailsService.getTotalAmount(waterConnectionDetails);
         final BigDecimal demnadDetCurrentamount = getCurrentMonthDemandAmount(waterConnectionDetails, givenDate);
@@ -240,18 +249,18 @@ public class MeterDemandNoticeController {
         return balance;
     }
 
-    private BigDecimal getCurrentMonthDemandAmount(final WaterConnectionDetails waterConnectionDetails,Date givenDate) {
+    private BigDecimal getCurrentMonthDemandAmount(final WaterConnectionDetails waterConnectionDetails, final Date givenDate) {
         BigDecimal currentAmount = BigDecimal.ZERO;
         final Installment installment = connectionDemandService.getCurrentInstallment(WaterTaxConstants.EGMODULE_NAME,
                 WaterTaxConstants.MONTHLY, givenDate);
         final EgDemandReason demandReasonObj = connectionDemandService.getDemandReasonByCodeAndInstallment(
                 WaterTaxConstants.WATERTAXREASONCODE, installment);
         final List<EgDemandDetails> demnadDetList = demandGenericDao.getDemandDetailsForDemandAndReasons(
-        		waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand(), Arrays.asList(demandReasonObj));
-        if(!demnadDetList.isEmpty()){
-        final int detLength = demnadDetList.size() - 1;
-        if (demnadDetList.get(detLength - detLength).getAmount() != null)
-            currentAmount = demnadDetList.get(detLength).getAmount();
+                waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand(), Arrays.asList(demandReasonObj));
+        if (!demnadDetList.isEmpty()) {
+            final int detLength = demnadDetList.size() - 1;
+            if (demnadDetList.get(0).getAmount() != null)
+                currentAmount = demnadDetList.get(detLength).getAmount();
         }
         return currentAmount;
     }
@@ -265,11 +274,4 @@ public class MeterDemandNoticeController {
         return generateReport(waterConnectionDetails, session);
     }
 
-    private ResponseEntity<byte[]> redirect() {
-        errorMessage = "<html><body><p style='color:red;border:1px solid gray;padding:15px;'>" + errorMessage
-                + "</p></body></html>";
-        final byte[] byteData = errorMessage.getBytes();
-        errorMessage = "";
-        return new ResponseEntity<byte[]>(byteData, HttpStatus.CREATED);
-    }
 }

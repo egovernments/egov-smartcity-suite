@@ -84,6 +84,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping(value = "/application")
 public class WorkOrderController {
 
+    public static final String CONNECTIONWORKORDER = "connectionWorkOrder";
+
     @Autowired
     private ReportService reportService;
 
@@ -91,22 +93,19 @@ public class WorkOrderController {
     @Qualifier("messageSource")
     private MessageSource messageSource;
 
-    public static final String CONNECTIONWORKORDER = "connectionWorkOrder";
     @Autowired
     private PropertyExtnUtils propertyExtnUtils;
-    private final Map<String, Object> reportParams = new HashMap<String, Object>();
-    private ReportRequest reportInput = null;
-    private ReportOutput reportOutput = null;
-    String errorMessage = "";
-    private String workFlowAction = "";
+
     @Autowired
     private WaterConnectionDetailsService wcdService;
+
     @Autowired
     @Qualifier("fileStoreService")
     protected FileStoreService fileStoreService;
-    
+
     @Autowired
     private DesignationService designationService;
+
     @Autowired
     private AssignmentService assignmentService;
 
@@ -114,8 +113,11 @@ public class WorkOrderController {
     private SecurityUtils securityUtils;
 
     @RequestMapping(value = "/workorder", method = RequestMethod.GET)
-    public @ResponseBody ResponseEntity<byte[]> createWorkOrderReport(final HttpServletRequest request,
+    @ResponseBody
+    public ResponseEntity<byte[]> createWorkOrderReport(final HttpServletRequest request,
             final HttpSession session) {
+        String workFlowAction;
+        String errorMessage = "";
         final WaterConnectionDetails connectionDetails = wcdService
                 .findByApplicationNumber(request.getParameter("pathVar"));
         workFlowAction = (String) session.getAttribute(WaterTaxConstants.WORKFLOW_ACTION);
@@ -124,27 +126,30 @@ public class WorkOrderController {
             workFlowAction = request.getParameter("workFlowAction");
         if (null != workFlowAction && !workFlowAction.isEmpty()
                 && workFlowAction.equalsIgnoreCase(WaterTaxConstants.WF_WORKORDER_BUTTON))
-            validateWorkOrder(connectionDetails, true);
+            errorMessage = validateWorkOrder(connectionDetails, true);
         if (!errorMessage.isEmpty())
-            return redirect();
-        return generateReport(connectionDetails, session);
+            return redirect(errorMessage);
+        return generateReport(connectionDetails, session, workFlowAction);
     }
 
     private ResponseEntity<byte[]> generateReport(final WaterConnectionDetails connectionDetails,
-            final HttpSession session) {
+            final HttpSession session, final String workFlowAction) {
+        ReportRequest reportInput = null;
+        ReportOutput reportOutput;
         if (null != connectionDetails) {
+            final Map<String, Object> reportParams = new HashMap<>();
             final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
                     connectionDetails.getConnection().getPropertyIdentifier(),
                     PropertyExternalService.FLAG_FULL_DETAILS, BasicPropertyStatus.ACTIVE);
             final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
             final String doorno[] = assessmentDetails.getPropertyAddress().split(",");
             String ownerName = "";
-            double total = 0;
+            double total;
             String commissionerName = "";
-            Designation desgn=designationService.getDesignationByName(WaterTaxConstants.DESG_COMM_NAME);
-            if(desgn!=null){
-                List<Assignment>assignList=assignmentService.getAllActiveAssignments(desgn.getId());
-                commissionerName = !assignList.isEmpty()?assignList.get(0).getEmployee().getName():"";
+            final Designation desgn = designationService.getDesignationByName(WaterTaxConstants.DESG_COMM_NAME);
+            if (desgn != null) {
+                final List<Assignment> assignList = assignmentService.getAllActiveAssignments(desgn.getId());
+                commissionerName = !assignList.isEmpty() ? assignList.get(0).getEmployee().getName() : "";
             }
             for (final OwnerName names : assessmentDetails.getOwnerNames()) {
                 ownerName = names.getOwnerName();
@@ -213,37 +218,39 @@ public class WorkOrderController {
         headers.setContentType(MediaType.parseMediaType("application/pdf"));
         headers.add("content-disposition", "inline;filename=Work Order.pdf");
         reportOutput = reportService.createReport(reportInput);
-        return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
+        return new ResponseEntity<>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
     }
 
-    public void validateWorkOrder(final WaterConnectionDetails connectionDetails, final Boolean isView) {
-
-        if (null != connectionDetails && connectionDetails.getLegacy())
-            errorMessage = messageSource.getMessage("err.validate.workorder.for.legacy", new String[] { "" }, null);
-        else if (isView && null == connectionDetails.getWorkOrderNumber())
-            errorMessage = messageSource.getMessage("err.validate.workorder.view",
-                    new String[] { connectionDetails.getApplicationNumber() }, null);
-        else if (!isView && !connectionDetails.getStatus().getCode()
-                .equalsIgnoreCase(WaterTaxConstants.APPLICATION_STATUS_WOGENERATED))
-            errorMessage = messageSource.getMessage("err.validate.workorder.view",
-                    new String[] { connectionDetails.getApplicationNumber() }, null);
+    public String validateWorkOrder(final WaterConnectionDetails connectionDetails, final Boolean isView) {
+        String errorMessage = "";
+        if (connectionDetails != null)
+            if (connectionDetails.getLegacy())
+                errorMessage = messageSource.getMessage("err.validate.workorder.for.legacy", new String[] { "" }, null);
+            else if (isView && connectionDetails.getWorkOrderNumber() == null)
+                errorMessage = messageSource.getMessage("err.validate.workorder.view",
+                        new String[] { connectionDetails.getApplicationNumber() }, null);
+            else if (!isView && !connectionDetails.getStatus().getCode()
+                    .equalsIgnoreCase(WaterTaxConstants.APPLICATION_STATUS_WOGENERATED))
+                errorMessage = messageSource.getMessage("err.validate.workorder.view",
+                        new String[] { connectionDetails.getApplicationNumber() }, null);
+        return errorMessage;
     }
 
     @RequestMapping(value = "/workorder/view/{applicationNumber}", method = RequestMethod.GET)
-    public @ResponseBody ResponseEntity<byte[]> viewReport(@PathVariable final String applicationNumber,
+    @ResponseBody
+    public ResponseEntity<byte[]> viewReport(@PathVariable final String applicationNumber,
             final HttpSession session) {
         final WaterConnectionDetails connectionDetails = wcdService.findByApplicationNumber(applicationNumber);
-        validateWorkOrder(connectionDetails, true);
+        final String errorMessage = validateWorkOrder(connectionDetails, true);
         if (!errorMessage.isEmpty())
-            return redirect();
-        return generateReport(connectionDetails, session);
+            return redirect(errorMessage);
+        return generateReport(connectionDetails, session, null);
     }
 
-    private ResponseEntity<byte[]> redirect() {
-        errorMessage = "<html><body><p style='color:red;border:1px solid gray;padding:15px;'>" + errorMessage
+    private ResponseEntity<byte[]> redirect(final String errorMessage) {
+        final String formattedErrorMsg = "<html><body><p style='color:red;border:1px solid gray;padding:15px;'>" + errorMessage
                 + "</p></body></html>";
-        final byte[] byteData = errorMessage.getBytes();
-        errorMessage = "";
-        return new ResponseEntity<byte[]>(byteData, HttpStatus.CREATED);
+        final byte[] byteData = formattedErrorMsg.getBytes();
+        return new ResponseEntity<>(byteData, HttpStatus.CREATED);
     }
 }

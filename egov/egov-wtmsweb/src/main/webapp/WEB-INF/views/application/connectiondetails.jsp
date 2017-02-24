@@ -166,24 +166,33 @@
 			<form:errors path="numberOfPerson" cssClass="add-margin error-msg" />		
 		</div>
 </div>
-<div class="form-group display-hide" id="waterSupplyDiv">
+<div class="form-group display-hide showfields" id="waterSupplyDiv" style="display:none">
 <label class="col-sm-3 control-label text-right"><spring:message 
 			code="lbl.watersupplytype"/><span class="mandatory"/></label>
 	<div class="col-sm-3 add-margin">
 		<form:select path="waterSupply" data-first-option="false" 
-					cssClass="form-control">
+					cssClass="form-control" id = "waterSupplyType">
 			<form:option value="">
 				<spring:message code="lbl.select"/>
 			</form:option>
 			
-			<form:options items="${waterSupplyTypes}" itemValue="id" itemLabel="waterSupplyType"
-			 	id = "waterSupplyType"/>
+			<form:options items="${waterSupplyTypes}" itemValue="id" itemLabel="waterSupplyType" />
 			
 		</form:select>
 		<form:errors path="waterSupply" cssClass="add-margin error-msg"/>
 	
 	</div>
+	
+	<div id="buildingNameDiv">
+		<label class="col-sm-2 control-label text-right"><spring:message code="lbl.apartmentorcomplexname"/><span class="mandatory"/></label>
+		<div class="col-sm-3 add-margin">
+			<form:input class="form-control patternvalidation" data-pattern="alphabetwithspace" maxlength="50" id="buildingName" path="buildingName"/>
+			<form:errors path="buildingName" cssClass="add-margin error-msg"/>
+		</div>
+	</div>
 </div>
+
+
 <div class="form-group" id ="cardHolderDiv">
 	<label class="col-sm-3 control-label text-right"><spring:message
 			code="lbl.bpl.cardholdername" /><span class="mandatory"></span></label> 

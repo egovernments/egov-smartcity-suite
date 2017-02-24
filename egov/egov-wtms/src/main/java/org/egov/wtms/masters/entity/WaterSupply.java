@@ -63,7 +63,7 @@ import org.hibernate.validator.constraints.SafeHtml;
 @AuditOverrides({
         @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate"),
         @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy")
-})
+    })
 public class WaterSupply extends AbstractAuditable {
 
     /**

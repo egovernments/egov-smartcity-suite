@@ -39,23 +39,27 @@
  */
 $(document).ready(function(){
 	
-		if($('#connectionType').val()==="METERED")
-		$('#waterSupplyDiv').removeClass('display-hide');
-	
 
 	$("#connectionType").change(function(){
-		
-		
-		if($('#connectionType').val() === "METERED")
-		{
-			$('#spanmonthlymandatory').hide();
-			$('#waterSupplyDiv').removeClass('display-hide');
-			$('#waterSupplyType').attr('required','required');
-		}
-		else
-		{
-		   $('#spanmonthlymandatory').show();
-		   $('#waterSupplyDiv').addClass('display-hide');
+		if($('#legacy').val()){
+			if($('#connectionType').val() === "METERED")
+			{
+				$('#metereddetails').show();
+				$('#spanmonthlymandatory').hide();
+				$('.showfields').show();
+				$('#waterSupplyType').attr('required','required');
+				$('#buildingName').attr('required','required');
+			}
+			else
+			{
+			    $('#metereddetails').hide();
+			    $('#spanmonthlymandatory').show();
+			    $('.showfields').hide();
+			    $('#waterSupplyType').removeAttr('required');
+			    $('#buildingName').removeAttr('required');
+			    $("#waterSupplyType").val('');
+				$("#buildingName").val('');
+			}
 		}
 	});
 	
@@ -70,7 +74,6 @@ $(document).ready(function(){
 					return false;
 				}
 			}
-		/*	$('#searchResultDiv').show();*/
 
 			if($('#executionDate').val() != '' && $('#existreadingDate').val() != ''){
 				var start = $('#executionDate').val();
@@ -94,7 +97,6 @@ $(document).ready(function(){
 			
 			document.forms[0].submit;
 			return true;
-			event.preventDefault();
 			
 		});
 });	
@@ -110,11 +112,8 @@ function validRange(start, end) {
 	        	bootbox.alert("Last Reading date should not be less than the connection date.");
 				$('#end_date').val('');
 				return false;
-				} else {
+				} 
+	        else {
 				return true;
 			}
-			
-	        return true;
-			
-			
 	}
