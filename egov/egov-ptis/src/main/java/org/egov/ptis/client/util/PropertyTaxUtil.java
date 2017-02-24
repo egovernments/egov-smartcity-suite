@@ -2378,19 +2378,19 @@ public class PropertyTaxUtil {
          
         if (isOwnerShipType(ownerShipType)) {
             if (isOwnershipPrivate(ownerShipType)) {
-                query.append(" and (pmv.propTypeMstrID.code = :ownerType or pmv.propTypeMstrID.code = 'EWSHS') and cast(pmv.propertyId as integer) not in (select propertyId from PropertyCourtCase) ");
+                query.append(" and (pmv.propTypeMstrID.code = :ownerType or pmv.propTypeMstrID.code = 'EWSHS') and pmv.isUnderCourtCase = false ");
                 params.put(ownerType, ownerShipType);
             } else if (isOwnerShipTypeStateOrVacLand(ownerShipType)) {
-                query.append(" and (pmv.propTypeMstrID.code = :ownerType) and  cast(pmv.propertyId as integer) not in (select propertyId from PropertyCourtCase) ");
+                query.append(" and (pmv.propTypeMstrID.code = :ownerType) and  pmv.isUnderCourtCase = false ");
                 params.put(ownerType, ownerShipType);
             } else if (isOwnerShipCentral(ownerShipType)) {
-                query.append(" and (pmv.propTypeMstrID.code like :ownerType) and cast(pmv.propertyId as integer) not in (select propertyId from PropertyCourtCase) ");
+                query.append(" and (pmv.propTypeMstrID.code like :ownerType) and pmv.isUnderCourtCase = false ");
                 params.put(ownerType, ownerShipType+"%");
             } else if (isOwnerShipCourtCase(ownerShipType)) {
-                query.append(" and cast(pmv.propertyId as integer) in (select propertyId from PropertyCourtCase)");
+                query.append(" and pmv.isUnderCourtCase = true ");
             }
         }else if(isNonVacantLand(proptype)){
-            query.append(" and (pmv.propTypeMstrID.code <> :ownerType) and  cast(pmv.propertyId as integer) not in (select propertyId from PropertyCourtCase) ");
+            query.append(" and (pmv.propTypeMstrID.code <> :ownerType)");
             params.put(ownerType, OWNERSHIP_TYPE_VAC_LAND);
         }
        
