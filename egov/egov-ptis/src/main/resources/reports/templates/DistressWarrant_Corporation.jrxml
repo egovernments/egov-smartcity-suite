@@ -39,8 +39,9 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-02-08T11:32:42 -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="DistressWarrant" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="2705e9c1-c034-4df6-adef-232e00358f89">
+<!-- 2017-02-23T14:22:30 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="DistressWarrant" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="30" bottomMargin="30" uuid="2705e9c1-c034-4df6-adef-232e00358f89">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<parameter name="cityName" class="java.lang.String"/>
 	<parameter name="totalTaxDue" class="java.math.BigDecimal"/>
 	<parameter name="ownerName" class="java.lang.String"/>
@@ -50,6 +51,8 @@
 	<parameter name="noticeMonth" class="java.lang.String"/>
 	<parameter name="noticeYear" class="java.lang.Integer"/>
 	<parameter name="FinHalfStratMonth" class="java.lang.String"/>
+	<parameter name="doorNo" class="java.lang.String"/>
+	<parameter name="consumerId" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -57,72 +60,54 @@
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="74" splitType="Stretch">
+		<band height="175" splitType="Stretch">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="56" y="40" width="430" height="27" uuid="6b58ebcd-526d-4302-a070-36e08b807088"/>
+				<reportElement x="62" y="10" width="430" height="27" uuid="6b58ebcd-526d-4302-a070-36e08b807088"/>
 				<textElement textAlignment="Center" markup="none">
 					<font size="16" isBold="true" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{cityName}]]></textFieldExpression>
 			</textField>
-		</band>
-	</title>
-	<pageHeader>
-		<band height="106" splitType="Stretch">
 			<staticText>
-				<reportElement x="176" y="20" width="221" height="21" uuid="18e81596-e6a1-4620-bd63-4ba064e9a22a"/>
+				<reportElement x="181" y="40" width="193" height="24" uuid="3cdceb3d-28e8-4b85-bf72-74de47cdc3f1"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="20"/>
+				</textElement>
+				<text><![CDATA[S C H E D U L E  – L]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="167" y="70" width="221" height="21" uuid="74dc4749-37e6-48a0-9898-1277fda802f0"/>
 				<textElement textAlignment="Center" verticalAlignment="Bottom">
 					<font fontName="SansSerif" size="16" isBold="true" isUnderline="true"/>
 				</textElement>
 				<text><![CDATA[DISTRESS WARRANT]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="85" y="50" width="384" height="30" uuid="5daf5780-8443-41ff-8ae3-475eb276fcbf"/>
+				<reportElement x="85" y="90" width="384" height="18" uuid="6771bdb9-eea1-4d14-837f-cd634aed7707"/>
 				<textElement textAlignment="Center">
 					<font size="11" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{sectionAct}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="40" y="90" width="30" height="14" uuid="e3891a29-8132-4e5c-a150-8c183db7c42e">
+				<reportElement x="40" y="125" width="30" height="14" uuid="0f69a52c-bf01-423a-bae5-7a3a737bbf8e">
 					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
 				</reportElement>
 				<textElement verticalAlignment="Top"/>
 				<text><![CDATA[To]]></text>
 			</staticText>
-			<staticText>
-				<reportElement x="190" y="-4" width="193" height="24" uuid="3cdceb3d-28e8-4b85-bf72-74de47cdc3f1"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="20"/>
-				</textElement>
-				<text><![CDATA[S C H E D U L E  – L]]></text>
-			</staticText>
-		</band>
-	</pageHeader>
-	<columnHeader>
-		<band height="500" splitType="Stretch">
 			<line>
-				<reportElement x="40" y="50" width="100" height="1" uuid="1366f6e1-67df-430b-bf20-596a224ec01b"/>
+				<reportElement x="52" y="156" width="100" height="1" uuid="a6c65b27-70f1-4e9a-bedb-62a21d1bd1a0"/>
 			</line>
-			<textField isStretchWithOverflow="true" pattern="">
-				<reportElement x="40" y="70" width="470" height="420" uuid="a6d28068-2604-4b1b-95db-5e25e7a2a89b">
-					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
-				</reportElement>
-				<textElement textAlignment="Justified" verticalAlignment="Top" markup="styled">
-					<font size="14"/>
-				</textElement>
-				<textFieldExpression><![CDATA["\n\tWhereas Sri./Smt/M/s <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$P{ownerName}+" </style> has not paid, or shown sufficient cause, to my satisfaction, for the non-payment of the sum of Rs. <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$P{totalTaxDue}+"</style> due for the tax mentioned in the margin for the half – year commencing on the first day of <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> first day of "+$P{FinHalfStratMonth}+" ,</style> although the said sum has been duly demanded in writing from Sri.<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$P{ownerName}+"</style> and fifteen days have elapsed since the service of the notice of demand;\n\tThis is to command you to distrain the good and chattels of the said Sri <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$P{ownerName}+"</style> (or, as the case may be, and goods and chattels on the premises in respect of which the said tax is due) to the amount of the said sum of Rs.<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$P{totalTaxDue}+"</style> and such further sum as may be sufficient to defray the cost of recovering the said amount; and if within seven days next after such distress the said sum shall not be paid, together with such further sum as shall be sufficient to defray the said costs, to sell the said goods and chattels; and having paid the deducted out of the proceeds of the sale the said sum of Rs.<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$P{totalTaxDue}+"</style> and the cost of recovering the same, to return the surplus, if any, and if the same be demanded within one year from the date of the sale, to the person whom you shall find in possession of the said goods and chattels.If sufficient distress cannot be found of the goods and chattels of the said Sri.<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$P{ownerName}+"</style> (or on the said premises, as the case may be), you are to certify the same to me together with this warrant.\n \t Dated the <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$P{noticeDay}+"</style> Day of  <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$P{noticeMonth} +"</style> , <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$P{noticeYear} +"</style>"]]></textFieldExpression>
-			</textField>
 			<line>
-				<reportElement x="40" y="20" width="100" height="1" uuid="9e26a967-58b6-4730-a273-b171361f8362"/>
+				<reportElement x="52" y="167" width="100" height="1" uuid="9988a002-9a0a-489c-887e-2d25cb74ac41"/>
 			</line>
 		</band>
-	</columnHeader>
+	</title>
 	<summary>
-		<band height="97" splitType="Stretch">
+		<band height="519" splitType="Stretch">
 			<staticText>
-				<reportElement x="287" y="30" width="223" height="20" uuid="08d88e1e-3618-4003-aa66-d4299983ec63">
+				<reportElement x="287" y="473" width="223" height="20" uuid="08d88e1e-3618-4003-aa66-d4299983ec63">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
 				<textElement textAlignment="Right">
@@ -131,11 +116,21 @@
 				<text><![CDATA[Commissioner,]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="256" y="50" width="254" height="25" uuid="5680372a-103e-4cba-9fab-f7a67f28153b"/>
+				<reportElement x="85" y="493" width="425" height="25" uuid="5680372a-103e-4cba-9fab-f7a67f28153b"/>
 				<textElement textAlignment="Right">
 					<font size="12" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{cityName}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="">
+				<reportElement x="40" y="2" width="470" height="450" uuid="67eeff09-b6d9-400d-bf09-2e2cba7b2f77">
+					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Justified" verticalAlignment="Top" markup="styled">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA["\n\tWhereas Sri./Smt/M/s <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$P{ownerName}+"</style>, Door No:<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$P{doorNo}+"</style>, bearing Assessment No:<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$P{consumerId}+"</style>, has not paid, or shown sufficient cause, to my satisfaction, for the non-payment of the sum of Rs.<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$P{totalTaxDue}+"</style> due for the tax mentioned in the margin for the half – year commencing on the first day of <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> first day of "+$P{FinHalfStratMonth}+" ,</style> although the said sum has been duly demanded in writing from Sri.<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$P{ownerName}+"</style> and fifteen days have elapsed since the service of the notice of demand;\n\n\tThis is to command you to distrain the good and chattels of the said Sri <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$P{ownerName}+"</style> (or, as the case may be, and goods and chattels on the premises in respect of which the said tax is due) to the amount of the said sum of Rs.<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$P{totalTaxDue}+"</style> and such further sum as may be sufficient to defray the cost of recovering the said amount; and if within seven days next after such distress the said sum shall not be paid, together with such further sum as shall be sufficient to defray the said costs, to sell the said goods and chattels; and having paid the deducted out of the proceeds of the sale the said sum of Rs.<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$P{totalTaxDue}+"</style> and the cost of recovering the same, to return the surplus, if any, and if the same be demanded within one year from the date of the sale, to the person whom you shall find in possession of the said goods and chattels.\n\n\tIf sufficient distress cannot be found of the goods and chattels of the said Sri.<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$P{ownerName}+"</style> (or on the said premises, as the case may be), you are to certify the same to me together with this warrant.\n\n \t Dated the <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$P{noticeDay}+"</style> Day of  <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$P{noticeMonth} +"</style> , <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$P{noticeYear} +"</style>"]]></textFieldExpression>
 			</textField>
 		</band>
 	</summary>

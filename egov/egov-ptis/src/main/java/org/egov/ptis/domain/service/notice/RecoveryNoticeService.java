@@ -444,8 +444,12 @@ public class RecoveryNoticeService {
     private ReportRequest generateDistressNotice(final BasicProperty basicProperty, final Map<String, Object> reportParams,
                                                  final City city, final String noticeNo) {
         ReportRequest reportInput;
+        final Address ownerAddress = basicProperty.getAddress();
         reportParams.put(TOTAL_TAX_DUE, getTotalPropertyTaxDueIncludingPenalty(basicProperty));
         final DateTime noticeDate = new DateTime();
+        reportParams.put(DOOR_NO, StringUtils.isNotBlank(ownerAddress.getHouseNoBldgApt())
+                ? ownerAddress.getHouseNoBldgApt().trim() : "N/A");
+        reportParams.put(CONSUMER_ID, basicProperty.getUpicNo());
         reportParams.put(NOTICE_DAY, propertyTaxCommonUtils.getDateWithSufix(noticeDate.getDayOfMonth()));
         reportParams.put(NOTICE_MONTH, noticeDate.monthOfYear().getAsShortText());
         reportParams.put(NOTICE_YEAR, noticeDate.getYear());
