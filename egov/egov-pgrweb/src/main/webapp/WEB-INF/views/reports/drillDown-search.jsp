@@ -43,19 +43,19 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
-<div class="row"> 
+<div class="row">
 	<div class="col-md-12">
 		<div class="" data-collapsed="0">
-		<c:if test="${not empty message}">
-			<div class="alert alert-success" role="alert">${message}</div>
-		</c:if>
+			<c:if test="${not empty message}">
+				<div class="alert alert-success" role="alert">${message}</div>
+			</c:if>
 			<div class="panel-body">
 				<form:form id="drillDownReportForm" method="post" class="form-horizontal form-groups-bordered" modelAttribute="reportHelper">
 					<div class="panel panel-primary" data-collapsed="0">
 						<div class="panel-heading">
 							<div class="panel-title">
 								<c:choose>
-									<c:when test="${mode=='ByBoundary'}"> 
+									<c:when test="${mode=='ByBoundary'}">
 										<strong><spring:message	code="lbl.drilldownReportByBndry.heading.search" /></strong>
 									</c:when>
 									<c:otherwise>
@@ -68,16 +68,16 @@
 							<div class="form-group">
 								<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.period" /></label>
 								<div class="col-sm-7 add-margin">
-									<input type="hidden" id="mode" name="mode" value="${mode}"/> 
-									<input type="hidden" id="deptid" name="deptid" value="${deptid}"/> 
-									<input type="hidden" id="complainttypeid" name="complainttypeid" value="${complainttypeid}"/> 
-									<input type="hidden" id="selecteduserid" name="selecteduserid" value="${selecteduserid}"/> 
-									<input type="hidden" id="boundary" name="boundary" value="${boundary}"/> 
+									<input type="hidden" id="mode" name="mode" value="${mode}"/>
+									<input type="hidden" id="deptid" name="deptid" value="${deptid}"/>
+									<input type="hidden" id="complainttypeid" name="complainttypeid" value="${complainttypeid}"/>
+									<input type="hidden" id="selecteduserid" name="selecteduserid" value="${selecteduserid}"/>
+									<input type="hidden" id="boundary" name="boundary" value="${boundary}"/>
 									<input type="hidden" id="locality" name="locality" value="${locality}"/>
-									<input type="hidden" id="type" name="type" value="${type}"/> 
-									<select name="complaintDateType" id="when_date" class="form-control" data-first-option="false" 
-									onchange="showChangeDropdown(this);">
-						                <option value=""><spring:message code="lbl.select" /></option>
+									<input type="hidden" id="type" name="type" value="${type}"/>
+									<select name="complaintDateType" id="when_date" class="form-control" data-first-option="false"
+											onchange="showChangeDropdown(this);">
+										<option value=""><spring:message code="lbl.select" /></option>
 										<option value="all" ><spring:message code="lbl.all"/></option>
 										<option value="lastsevendays" selected><spring:message code="lbl.last.seven.days"/></option>
 										<option value="lastthirtydays"><spring:message code="lbl.last.thirty.days"/></option>
@@ -91,16 +91,16 @@
 							<div class="form-group">
 								<label class="col-sm-3 control-label"><spring:message code="lbl.drilldownReport.complaintFromDate" /></label>
 								<div class="col-sm-2 add-margin">
-									<input type="text" name="reportFromDate" class="form-control datepicker checkdate" id="start_date" 
-									data-inputmask="'mask': 'd/m/y'" placeholder="<spring:message code='lbl.fromDate'/>" required="required"/>
+									<input type="text" name="reportFromDate" class="form-control datepicker checkdate" id="start_date"
+										   data-inputmask="'mask': 'd/m/y'" placeholder="<spring:message code='lbl.fromDate'/>" required="required"/>
 								</div>
 								<label class="col-sm-3 control-label"><spring:message code="lbl.drilldownReport.complaintToDate" /></label>
 								<div class="col-sm-2 add-margin">
-									<input type="text" name="reportToDate" class="form-control datepicker checkdate" id="end_date" 
-									data-inputmask="'mask': 'd/m/y'" placeholder="<spring:message code='lbl.toDate'/>" />
+									<input type="text" name="reportToDate" class="form-control datepicker checkdate" id="end_date"
+										   data-inputmask="'mask': 'd/m/y'" placeholder="<spring:message code='lbl.toDate'/>" />
 								</div>
 							</div>
-						</div>	
+						</div>
 						<div class="row">
 							<div class="text-center">
 								<button type="button" id="drilldownReportSearch" class="btn btn-primary">
@@ -117,18 +117,33 @@
 				<div class="col-md-6 col-xs-6 table-header"><spring:message code="lbl.drilldownReport.resultHeader" /> </div>
 				<div class="col-md-12 form-group">
 					<table class="table table-bordered datatable dt-responsive table-hover" id="drilldownReport-table">
-						<thead></thead> 
+						<thead>
+						<tr>
+                            <th rowspan="2" style="vertical-align: bottom"></th>
+                            <th colspan="4" style="text-align: center"><spring:message code="lbl.report.status"/></th>
+                            <th colspan="2" style="text-align: center"><spring:message code="lbl.report.sla"/></th>
+                            <th rowspan="2" style="vertical-align: bottom"></th>
+                        </tr>
+						<tr>
+							<th></th>
+							<th></th>
+							<th></th>
+							<th></th>
+							<th></th>
+							<th></th>
+						</tr>
+						</thead>
 						<tfoot id="report-footer">
-						   <tr>
-								<td><b><spring:message code="lbl.pagetotal"/></b></td>
-						    	<td></td>
-						    	<td></td>
-						    	<td></td>
-						    	<td></td>
-						    	<td></td>
-						     	<td></td>
-						     	<td></td>
-							</tr>
+						<tr>
+							<td><b><spring:message code="lbl.pagetotal"/></b></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+						</tr>
 						</tfoot>
 					</table>
 				</div>
@@ -153,3 +168,11 @@
 <script type="text/javascript" src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.columnFilter.js' context='/egi'/>"></script>
 <script	type="text/javascript" src="<cdn:url  value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<cdn:url  value='/resources/js/app/drillDownReport.js?rnd=${app_release_no}'/>"></script>
+<style>
+.table thead tr th {
+border-bottom: none;
+background: #f2851f;
+color: #fff;
+font-weight: normal;
+}
+</style>
