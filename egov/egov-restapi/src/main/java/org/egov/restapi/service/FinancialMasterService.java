@@ -43,6 +43,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.egov.commons.CChartOfAccountDetail;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.CFunction;
 import org.egov.commons.Fund;
@@ -57,6 +58,7 @@ import org.egov.restapi.model.FunctionHelper;
 import org.egov.restapi.model.FundHelper;
 import org.egov.restapi.model.SchemeHelper;
 import org.egov.restapi.model.SubSchemeHelper;
+import org.egov.restapi.model.SubledgerType;
 import org.egov.services.masters.SchemeService;
 import org.egov.services.masters.SubSchemeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -179,7 +181,21 @@ public class FinancialMasterService {
             chartOfAccountHelper.setBudgetCheckReqired(cChartOfAccount.getBudgetCheckReq());
         else
             chartOfAccountHelper.setBudgetCheckReqired(Boolean.FALSE);
+        if (cChartOfAccount.getFunctionReqd() != null)
+            chartOfAccountHelper.setFunctionReqired(cChartOfAccount.getFunctionReqd());
+        else
+            chartOfAccountHelper.setFunctionReqired(Boolean.FALSE);
+
+        for (final CChartOfAccountDetail accountDetail : cChartOfAccount.getChartOfAccountDetails())
+            createSubledgerTypeDetails(chartOfAccountHelper, accountDetail);
         chartOfAccountHelpers.add(chartOfAccountHelper);
+    }
+
+    private void createSubledgerTypeDetails(final ChartOfAccountHelper chartOfAccountHelper,
+            final CChartOfAccountDetail accountDetail) {
+        final SubledgerType subledgerType = new SubledgerType();
+        subledgerType.setName(accountDetail.getDetailTypeId().getName());
+        chartOfAccountHelper.addSubledgerTypeDetails(subledgerType);
     }
 
 }

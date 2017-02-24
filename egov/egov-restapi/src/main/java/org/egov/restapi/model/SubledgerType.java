@@ -40,27 +40,12 @@
 package org.egov.restapi.model;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
-public class ChartOfAccountHelper implements Serializable {
+public class SubledgerType implements Serializable {
 
     private static final long serialVersionUID = -1433064701524657608L;
-    private String glCode;
+
     private String name;
-    private String purpose;
-    private boolean budgetCheckReqired;
-    private Character type;
-    private boolean functionReqired;
-    private List<SubledgerType> subledgerType = new ArrayList<SubledgerType>();
-
-    public String getGlCode() {
-        return glCode;
-    }
-
-    public void setGlCode(final String glCode) {
-        this.glCode = glCode;
-    }
 
     public String getName() {
         return name;
@@ -68,50 +53,6 @@ public class ChartOfAccountHelper implements Serializable {
 
     public void setName(final String name) {
         this.name = name;
-    }
-
-    public String getPurpose() {
-        return purpose;
-    }
-
-    public void setPurpose(final String purpose) {
-        this.purpose = purpose;
-    }
-
-    public boolean isBudgetCheckReqired() {
-        return budgetCheckReqired;
-    }
-
-    public void setBudgetCheckReqired(final boolean budgetCheckReqired) {
-        this.budgetCheckReqired = budgetCheckReqired;
-    }
-
-    public Character getType() {
-        return type;
-    }
-
-    public void setType(final Character type) {
-        this.type = type;
-    }
-
-    public boolean isFunctionReqired() {
-        return functionReqired;
-    }
-
-    public void setFunctionReqired(final boolean functionReqired) {
-        this.functionReqired = functionReqired;
-    }
-
-    public List<SubledgerType> getSubledgerType() {
-        return subledgerType;
-    }
-
-    public void setSubledgerType(final List<SubledgerType> subledgerType) {
-        this.subledgerType = subledgerType;
-    }
-
-    public void addSubledgerTypeDetails(final SubledgerType subledgerTypeDetails) {
-        subledgerType.add(subledgerTypeDetails);
     }
 
 }
