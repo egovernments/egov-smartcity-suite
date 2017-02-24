@@ -311,7 +311,10 @@ public class ExternalContractorService {
         final ContractorHelper contractorHelper = new ContractorHelper();
         contractorHelper.setCode(contractor.getCode());
         contractorHelper.setName(contractor.getName());
-        contractorHelper.setBankName(contractor.getBank() != null ? contractor.getBank().getName() : StringUtils.EMPTY);
+        if (contractor.getBank() != null)
+            contractorHelper.setBankName(contractor.getBank().getName());
+        else
+            contractorHelper.setBankName(StringUtils.EMPTY);
         if (StringUtils.isNotBlank(contractor.getBankAccount()))
             contractorHelper.setBankAccount(contractor.getBankAccount());
         else
@@ -322,16 +325,24 @@ public class ExternalContractorService {
             contractorHelper.setContactPerson(StringUtils.EMPTY);
         createContractorHeaderData(contractor, contractorHelper);
 
-        if (!contractor.getContractorDetails().isEmpty()) {
-            contractorHelper.setContractorCategory(StringUtils.isNotBlank(contractor.getContractorDetails().get(0).getCategory())
-                    ? contractor.getContractorDetails().get(0).getCategory()
-                    : StringUtils.EMPTY);
-            contractorHelper.setContractorClass(
-                    contractor.getContractorDetails().get(0).getGrade() != null
-                            ? contractor.getContractorDetails().get(0).getGrade().getGrade() : StringUtils.EMPTY);
-            contractorHelper.setStatus(contractor.getContractorDetails().get(0).getStatus().getCode());
-        }
+        populateContractorDetailsData(contractor, contractorHelper);
         return contractorHelper;
+    }
+
+    private void populateContractorDetailsData(final Contractor contractor, final ContractorHelper contractorHelper) {
+        if (!contractor.getContractorDetails().isEmpty()
+                && StringUtils.isNotBlank(contractor.getContractorDetails().get(0).getCategory()))
+            contractorHelper.setContractorCategory(contractor.getContractorDetails().get(0).getCategory());
+        else
+            contractorHelper.setContractorCategory(StringUtils.EMPTY);
+        if (!contractor.getContractorDetails().isEmpty() && contractor.getContractorDetails().get(0).getGrade() != null)
+            contractorHelper.setContractorClass(contractor.getContractorDetails().get(0).getGrade().getGrade());
+        else
+            contractorHelper.setContractorClass(StringUtils.EMPTY);
+        if (!contractor.getContractorDetails().isEmpty())
+            contractorHelper.setStatus(contractor.getContractorDetails().get(0).getStatus().getCode());
+        else
+            contractorHelper.setStatus(StringUtils.EMPTY);
     }
 
     private void createContractorHeaderData(final Contractor contractor, final ContractorHelper contractorHelper) {
@@ -347,12 +358,19 @@ public class ExternalContractorService {
             contractorHelper.setEmail(contractor.getEmail());
         else
             contractorHelper.setEmail(StringUtils.EMPTY);
-        contractorHelper.setExemptionName(
-                contractor.getExemptionForm() != null ? contractor.getExemptionForm().toString() : StringUtils.EMPTY);
+        if (contractor.getExemptionForm() != null)
+            contractorHelper.setExemptionName(contractor.getExemptionForm().toString());
+        else
+            contractorHelper.setExemptionName(StringUtils.EMPTY);
         if (StringUtils.isNotBlank(contractor.getIfscCode()))
             contractorHelper.setIfscCode(contractor.getIfscCode());
         else
             contractorHelper.setIfscCode(StringUtils.EMPTY);
+
+        populateContractorDataToView(contractor, contractorHelper);
+    }
+
+    private void populateContractorDataToView(final Contractor contractor, final ContractorHelper contractorHelper) {
         if (StringUtils.isNotBlank(contractor.getPanNumber()))
             contractorHelper.setPanNumber(contractor.getPanNumber());
         else
