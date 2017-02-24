@@ -435,7 +435,8 @@
 					<table width="100%" border="0" cellspacing="0" cellpadding="0">
 						<tr>
 							<td width="4%" class="bluebox">&nbsp;</td>
-							<td class="bluebox"><s:text name="bankremittance.bank" />:</td>
+							<td class="bluebox"><s:text name="bankremittance.bank" /> : <span
+									class="mandatory1">*</span></td>
 							<td class="bluebox"><s:select headerValue="--Select--"
 									headerKey="-1" list="dropdownData.bankBranchList" listKey="id"
 									id="bankBranchMaster" listValue="branchname"
@@ -446,7 +447,8 @@
 									url='receipts/ajaxBankRemittance-accountListOfService.action'
 									selectedValue="%{accountNumberId}" /></td>
 							<td class="bluebox"><s:text
-									name="bankremittance.accountnumber" />:</td>
+									name="bankremittance.accountnumber" />: <span
+				                       class="mandatory1">*</span></td>
 							<td class="bluebox"><s:select headerValue="--Select--"
 									headerKey="-1" list="dropdownData.accountNumberList"
 									listKey="id" id="accountNumberId" listValue="accountnumber"
