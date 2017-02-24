@@ -42,66 +42,6 @@
 <%@ include file="/includes/taglibs.jsp" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 
-<script>
-
-function getUsersByDesignationAndDept() {
-	populateapproverPositionId({approverDepartmentId:document.getElementById('approverDepartment').value,designationId:document.getElementById('approverDesignation').value});
-}
-
-function callAlertForDepartment() {
-    var value=document.getElementById("approverDepartment").value;
-	if(value=="-1") {
-		bootbox.alert("Please select the Approver Department");
-		document.getElementById("approverDepartment").focus();
-		return false;
-	}
-}
-
-function callAlertForDesignation() {
-	var value=document.getElementById("approverDesignation").value;
-	if(value=="-1") {
-		bootbox.alert("Please select the approver designation");
-		document.getElementById("approverDesignation").focus();
-		return false;
-	}
-}
-	
-function loadDesignationByDeptAndType(typeValue,departmentValue,currentStateValue,amountRuleValue,additionalRuleValue,pendingActionsValue,currentDesignation) {
-	  var designationObj =document.getElementById('approverDesignation');
-	  designationObj.options.length = 0;
-	  designationObj.options[0] = new Option("----Choose----","-1");
-	  var approverObj = document.getElementById('approverPositionId');
-	  approverObj.options.length = 0;
-	  approverObj.options[0] = new Option("----Choose----","-1");
-	  populateapproverDesignation({departmentRule:departmentValue,type:typeValue,amountRule:amountRuleValue,additionalRule:additionalRuleValue,
-	  													currentState:currentStateValue,pendingAction:pendingActionsValue,designation:currentDesignation});
-}
-
-function loadDesignationFromMatrix() {
-	var e = dom.get('approverDepartment');
-	var dept = e.options[e.selectedIndex].text;
-	var currentState = dom.get('currentState').value;
-	var amountRule = dom.get('amountRule').value;
-	var additionalRule = dom.get('additionalRule').value;
-	var pendingAction = document.getElementById('pendingActions').value;
-	var stateType = '<s:property value="%{stateType}"/>';
-	var currentDesignation = document.getElementById('currentDesignation').value;
-	loadDesignationByDeptAndType(stateType,dept,currentState,amountRule,additionalRule,pendingAction,currentDesignation); 
-}
-
-function populateApprover() {
-	getUsersByDesignationAndDept();
-}
-
-function setDesignation() {
-	document.getElementById("approverDesignation").value = '<s:property value="%{approverDesignation}"/>';
-	populateApprover();
-} 
-
-function setApprover() {
-	document.getElementById("approverPositionId").value = '<s:property value="%{approverPositionId}"/>';
-} 
-</script>
 <s:if test="%{getNextAction()!='END'}">
 <s:if test="%{!'Closed'.equalsIgnoreCase(state.value)}">
 	<s:hidden id="currentState" name="currentState" value="%{state.value}"/>
@@ -144,17 +84,17 @@ function setApprover() {
 				<egov:ajaxdropdown fields="['Text','Value']" url="workflow/ajaxWorkFlow-getDesignationsByObjectType.action" id="approverDesignation" dropdownId="approverDesignation" 
 					contextToBeUsed="/eis" afterSuccess="setDesignation();"/>
 			</td>
-			<td width="14%"><s:text name="wf.approver.designation"/>:</td>
+			<td width="14%"><s:text name="wf.approver.designation"/>: </td>
 			<td width="14%">
 				<s:select id="approverDesignation" name="approverDesignation" list="dropdownData.designationList" listKey="designationId" headerKey="-1" listValue="designationName" headerValue="----Choose----" 
-					onchange="populateApprover();" onfocus="callAlertForDepartment();" cssClass="form-control" />
+					onchange="populateApprover();" onfocus="callAlertForDepartment();" cssClass="dropDownCss" />
 				<egov:ajaxdropdown id="approverPositionId" fields="['Text','Value']" dropdownId="approverPositionId" 
 					url="workflow/ajaxWorkFlow-getPositionByPassingDesigId.action" contextToBeUsed="/eis" afterSuccess="setApprover();"/>
 			</td>
 			<td width="14%"><s:text name="wf.approver"/>:</td>
 			<td width="14%">
 			  	<s:select id="approverPositionId"  name="approverPositionId" list="dropdownData.approverList" headerKey="-1" headerValue="----Choose----" listKey="id" listValue="firstName"  onfocus="callAlertForDesignation();" 
-			  			value="%{approverPositionId}" cssClass="form-control" /></td> 
+			  			value="%{approverPositionId}" cssClass="dropDownCss" /></td> 
 			<td width="5%">&nbsp;</td>
 		</tr>
 		</table>
@@ -175,4 +115,75 @@ function setApprover() {
            <td>&nbsp;</td>
            </tr>
          </table>
-  </div>       
+  </div>     
+  
+  
+<script>
+
+function getUsersByDesignationAndDept() {
+	populateapproverPositionId({approverDepartmentId:document.getElementById('approverDepartment').value,designationId:document.getElementById('approverDesignation').value});
+}
+
+function callAlertForDepartment() {
+    var value=document.getElementById("approverDepartment").value;
+	if(value=="-1") {
+		bootbox.alert("Please select the Approver Department");
+		document.getElementById("approverDepartment").focus();
+		return false;
+	}
+}
+
+function callAlertForDesignation() {
+	var value=document.getElementById("approverDesignation").value;
+	if(value=="-1") {
+		bootbox.alert("Please select the approver designation");
+		document.getElementById("approverDesignation").focus();
+		return false;
+	}
+}
+	
+function loadDesignationByDeptAndType(typeValue,departmentValue,currentStateValue,amountRuleValue,additionalRuleValue,pendingActionsValue,currentDesignation) {
+	
+	console.log('calling loadDesignationByDeptAndType');
+	
+	var designationObj =document.getElementById('approverDesignation');
+	  designationObj.options.length = 0;
+	  designationObj.options[0] = new Option("----Choose----","-1");
+	  var approverObj = document.getElementById('approverPositionId');
+	  approverObj.options.length = 0;
+	  approverObj.options[0] = new Option("----Choose----","-1");
+	  populateapproverDesignation({departmentRule:departmentValue,type:typeValue,amountRule:amountRuleValue,additionalRule:additionalRuleValue,
+	  													currentState:currentStateValue,pendingAction:pendingActionsValue,designation:currentDesignation});
+}
+
+function loadDesignationFromMatrix() {
+	var e = dom.get('approverDepartment');
+	var dept = e.options[e.selectedIndex].text;
+	var currentState = dom.get('currentState').value;
+	var amountRule = dom.get('amountRule').value;
+	var additionalRule = dom.get('additionalRule').value;
+	var pendingAction = document.getElementById('pendingActions').value;
+	var stateType = '<s:property value="%{stateType}"/>';
+	var currentDesignation = document.getElementById('currentDesignation').value;
+	loadDesignationByDeptAndType(stateType,dept,currentState,amountRule,additionalRule,pendingAction,currentDesignation); 
+}
+
+function populateApprover() {
+	getUsersByDesignationAndDept();
+}
+
+function setDesignation() {
+	document.getElementById("approverDesignation").value = '<s:property value="%{approverDesignation}"/>';
+	populateApprover();
+} 
+
+function setApprover() {
+	document.getElementById("approverPositionId").value = '<s:property value="%{approverPositionId}"/>';
+} 
+
+<c:if test="${not empty approverDepartment}">
+
+loadDesignationFromMatrix();
+
+</c:if>
+</script>  

@@ -628,7 +628,8 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
                 || "-1".equals(propertyModel.getPropertyDetail().getCategoryType()))
             addActionError(getText("mandatory.propTypeCategory"));
 
-        if (basicProp.getAmalgamationsProxy().isEmpty())
+        if (basicProp.getAmalgamationsProxy() == null || (basicProp.getAmalgamationsProxy() != null
+                && basicProp.getAmalgamationsProxy().get(0).getAssessmentNo().isEmpty()))
             addActionError(getText("error.amalgamatedprops.required"));
 
         validateOwners();
@@ -1258,5 +1259,4 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
     public void setInstStartDt(final String instStartDt) {
         this.instStartDt = instStartDt;
     }
-
 }

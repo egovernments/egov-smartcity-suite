@@ -335,7 +335,7 @@ public class SearchPropertyAction extends BaseFormAction {
                 return COMMON_FORM;
             }
             if (basicProperty.isUnderWorkflow()) {
-                addActionError(getText("amalgamation.vlt.error"));
+                addActionError(getText("amalgamation.wf.error"));
                 return COMMON_FORM;
             }
         }
