@@ -484,7 +484,7 @@ public abstract class AbstractLicenseService<T extends License> {
             EgDemandReason reason = demandGenericDao.getDmdReasonByDmdReasonMsterInstallAndMod(
                     demandGenericDao.getDemandReasonMasterByCode(feeType, module), installment, module);
             if (reason == null)
-                throw new ValidationException("TL-007", "TL-007");
+                throw new ValidationException("TL-007", "Demand reason missing for "+feeType);
             EgDemandDetails licenseDemandDetail = reasonWiseDemandDetails.get(reason);
             if (licenseDemandDetail == null)
                 license.getLicenseDemand().getEgDemandDetails().add(EgDemandDetails.

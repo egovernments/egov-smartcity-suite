@@ -103,7 +103,7 @@
             }
             var button = $(this);
             bootbox.confirm({
-                message: 'Are you sure you want to ' + name + ' ?',
+                message: 'Please confirm, if you wish to ' + name + ' this application.',
                 buttons: {
                     'cancel': {
                         label: 'No',
