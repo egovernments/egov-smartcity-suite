@@ -265,6 +265,11 @@ public class WaterConnectionDetails extends StateAware {
     @Transient
     private List<DemandDetail> demandDetailBeanList = new ArrayList<>(0);
 
+    private String referenceNumber;
+
+    @Length(max = 1024)
+    private String deactivateReason;
+
     public List<MeterReadingConnectionDetails> getMeterConnection() {
         return meterConnection;
     }
@@ -683,6 +688,22 @@ public class WaterConnectionDetails extends StateAware {
 
     public void setWaterSupply(final WaterSupply waterSupply) {
         this.waterSupply = waterSupply;
+    }
+
+    public String getReferenceNumber() {
+        return referenceNumber;
+    }
+
+    public void setReferenceNumber(final String referenceNumber) {
+        this.referenceNumber = referenceNumber;
+    }
+
+    public String getDeactivateReason() {
+        return deactivateReason;
+    }
+
+    public void setDeactivateReason(final String deactivateReason) {
+        this.deactivateReason = deactivateReason;
     }
 
 }

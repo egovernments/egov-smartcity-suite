@@ -1193,4 +1193,8 @@ public class WaterConnectionDetailsService {
     public void saveAndFlushWaterConnectionDetail(final WaterConnectionDetails waterConnectionDetails) {
         waterConnectionDetailsRepository.saveAndFlush(waterConnectionDetails);
     }
+    
+    public List<WaterConnectionDetails> getAllConnectionDetailsByPropertyID(final String propertyId) {
+        return waterConnectionDetailsRepository.getAllConnectionDetailsByPropertyID(propertyId);
+    }
 }

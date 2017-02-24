@@ -376,7 +376,7 @@ public class WaterTaxConstants {
 
     public static final String BOUNDARY_TYPE_ZONE= "Zone";
     public static final String BOUNDARY_TYPE_CITY="City";
-
+    public static final String CONNECTION_RECTIFICATION = "connection-rectification";
 
 
 }

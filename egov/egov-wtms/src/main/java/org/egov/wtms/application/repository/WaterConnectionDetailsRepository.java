@@ -80,12 +80,12 @@ public interface WaterConnectionDetailsRepository extends JpaRepository<WaterCon
             @Param("connectionStatus") ConnectionStatus connectionStatus);
 
     @Query("select wcd from WaterConnectionDetails wcd where wcd.connection.consumerCode =:consumerCode or wcd.applicationNumber =:applicationNumber")
-    WaterConnectionDetails findConnectionDetailsByApplicationNumberOrConsumerCode(@Param("consumerCode") String consumerCode,
-            @Param("applicationNumber") String applicationNumber);
+    WaterConnectionDetails findConnectionDetailsByApplicationNumberOrConsumerCode(
+            @Param("consumerCode") String consumerCode, @Param("applicationNumber") String applicationNumber);
 
     @Query("select wcd from WaterConnectionDetails wcd where wcd.connection.consumerCode =:consumerCode and wcd.connectionStatus =:connectionStatus")
-    WaterConnectionDetails findConnectionDetailsByConsumerCodeAndConnectionStatus(@Param("consumerCode") String consumerCode,
-            @Param("connectionStatus") ConnectionStatus connectionStatus);
+    WaterConnectionDetails findConnectionDetailsByConsumerCodeAndConnectionStatus(
+            @Param("consumerCode") String consumerCode, @Param("connectionStatus") ConnectionStatus connectionStatus);
 
     WaterConnectionDetails findByConnection(WaterConnection waterConnection);
 
@@ -101,7 +101,8 @@ public interface WaterConnectionDetailsRepository extends JpaRepository<WaterCon
     // TODO - .. connections also when closure of Primary connection happens.
     // Fixme Later : We are assuming that there will be only one primary
     // connection for given property ID other than INACTIVE and CLOSED status
-    // removed "CLOSED" cos not allowing to create NEW Connection if any records with closed Connectionstatus
+    // removed "CLOSED" cos not allowing to create NEW Connection if any records
+    // with closed Connectionstatus
     @Query("select wcd from WaterConnectionDetails wcd where wcd.connection.parentConnection is null and wcd.connectionStatus not in ('INACTIVE') and wcd.connection.propertyIdentifier =:propertyIdentifier")
     WaterConnectionDetails getPrimaryConnectionDetailsByPropertyID(
             @Param("propertyIdentifier") String propertyIdentifier);
@@ -137,4 +138,7 @@ public interface WaterConnectionDetailsRepository extends JpaRepository<WaterCon
 
     WaterConnectionDetails findByConnectionOldConsumerNumberAndConnectionStatus(String oldConsumerNumber,
             ConnectionStatus connectionStatus);
+
+    @Query("select wcd from WaterConnectionDetails wcd  where wcd.connection.id  in (select wc.id from WaterConnection wc where wc.propertyIdentifier = :propertyId) ")
+    List<WaterConnectionDetails> getAllConnectionDetailsByPropertyID(@Param("propertyId") String propertyId);
 }

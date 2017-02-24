@@ -367,5 +367,21 @@
         <put-attribute name="page-title" value="title.connectionreport" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/reports/arrearRegister-report.jsp"/>
     </definition>
+        <definition name="activate-consumercode" extends="base_layout">
+        <put-attribute name="page-title" value="title.connectionrectification" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/application/activate-consumercode.jsp"/> 
+    </definition>
+    <definition name="connection-rectification" extends="base_layout">
+        <put-attribute name="page-title" value="title.connectionrectification" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/application/connection-rectification.jsp"/> 
+    </definition>
     
+       <definition name="duplicate-consumercode" extends="base_layout">
+        <put-attribute name="page-title" value="title.connectionrectification" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/application/duplicate-connection.jsp"/> 
+    </definition>
+           <definition name="closed-consumercode" extends="base_layout">
+        <put-attribute name="page-title" value="title.connectionrectification" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/application/closed-connection.jsp"/> 
+    </definition>
 </tiles-definitions>
