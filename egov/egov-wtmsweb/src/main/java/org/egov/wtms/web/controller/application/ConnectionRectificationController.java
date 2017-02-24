@@ -45,8 +45,6 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.CONNECTION_RECTIFI
 import java.util.ArrayList;
 import java.util.List;
 
-import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
-import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
@@ -72,9 +70,6 @@ public class ConnectionRectificationController {
 
     @Autowired
     private WaterConnectionDetailsService waterConnectionDetailsService;
-
-    @Autowired
-    private BasicPropertyDAO basicPropertyDAO;
 
     @Autowired
     private PropertyExtnUtils propertyExtnUtils;
@@ -109,7 +104,7 @@ public class ConnectionRectificationController {
         final PropertyAssessmentDetails propertyAssessmentDetails = new PropertyAssessmentDetails();
         final List<ConnectionDetails> connectionDetailsList = new ArrayList<ConnectionDetails>();
 
-        if (waterConnectionDetailsList != null && waterConnectionDetailsList.size() > 0) {
+        if (!waterConnectionDetailsList.isEmpty()) {
             final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
                     connectionRectification.getAssessmentNo(), PropertyExternalService.FLAG_FULL_DETAILS,
                     BasicPropertyStatus.ALL);
@@ -118,8 +113,8 @@ public class ConnectionRectificationController {
             propertyAssessmentDetails
                     .setOwnerName(new ArrayList<>(assessmentDetails.getOwnerNames()).get(0).getOwnerName().toString());
             propertyAssessmentDetails.setAddress(assessmentDetails.getPropertyAddress());
+            final ConnectionDetails connectionDetails = new ConnectionDetails();
             for (final WaterConnectionDetails waterConnectionDetails : waterConnectionDetailsList) {
-                final ConnectionDetails connectionDetails = new ConnectionDetails();
                 connectionDetails.setConsumerNumber(waterConnectionDetails.getConnection().getConsumerCode());
                 connectionDetails.setIsPrimary(
                         waterConnectionDetails.getConnection().getParentConnection() != null ? "NO" : "YES");
@@ -130,9 +125,8 @@ public class ConnectionRectificationController {
             }
             connectionRectification.setPropertyAssessmentDetails(propertyAssessmentDetails);
             connectionRectification.setConnectionDetailsList(connectionDetailsList);
-        } else {
-
-        }
+        } else
+            return CONNECTION_RECTIFICATION;
         model.addAttribute("connectionRectification", connectionRectification);
         model.addAttribute("mode", "enable");
         return CONNECTION_RECTIFICATION;
