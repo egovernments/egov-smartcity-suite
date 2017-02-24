@@ -39,62 +39,79 @@
  */
 package org.egov.lcms.reports.entity;
 
-import java.util.Date;
-
 import org.egov.lcms.transactions.entity.LegalCase;
 
 public class DailyBoardReportResults {
     private String caseNumber;
-    private Date fromDate;
+    private String fromDate;
     private LegalCase legalCase;
-    private Date toDate;
+    private String toDate;
     private String standingCouncil;
-    private Integer casecategory;
+    private String caseCategory;
     private String petitionType;
-    private Integer petitionTypeId;
-    private Integer courtType;
+    private String courtType;
     private String courtName;
-    private Integer courtId;
-    private String govtDept;
     private String caseTitle;
     private String petitionerName;
     private String respondantName;
     private String caseStatus;
-    private Integer statusId;
-    private String assignDept;
-    private Date nextDate;
-    private Long officerIncharge;
-    private String officerInChargeName;
+    private String nextDate;
+    private String officerIncharge;
+    private String lcNumber;
 
-    public Date getFromDate() {
+    public String getCourtType() {
+        return courtType;
+    }
+
+    public String getLcNumber() {
+        return lcNumber;
+    }
+
+    public void setLcNumber(final String lcNumber) {
+        this.lcNumber = lcNumber;
+    }
+
+    public String getFromDate() {
         return fromDate;
     }
 
-    public void setFromDate(final Date fromDate) {
+    public void setFromDate(final String fromDate) {
         this.fromDate = fromDate;
     }
 
-    public Date getToDate() {
+    public String getToDate() {
         return toDate;
     }
 
-    public void setToDate(final Date toDate) {
+    public void setToDate(final String toDate) {
         this.toDate = toDate;
     }
 
-    public Date getNextDate() {
+    public String getCaseCategory() {
+        return caseCategory;
+    }
+
+    public void setCaseCategory(final String caseCategory) {
+        this.caseCategory = caseCategory;
+    }
+
+    public void setCourtType(final String courtType) {
+        this.courtType = courtType;
+    }
+
+    public String getNextDate() {
         return nextDate;
     }
 
-    public void setNextDate(final Date nextDate) {
+    public void setNextDate(final String nextDate) {
         this.nextDate = nextDate;
     }
 
-    public Long getOfficerIncharge() {
+    public String getOfficerIncharge() {
         return officerIncharge;
     }
 
-    public void setOfficerIncharge(final Long officerIncharge) {
+    public void setOfficerIncharge(final String officerIncharge) {
         this.officerIncharge = officerIncharge;
     }
 
@@ -122,44 +139,12 @@ public class DailyBoardReportResults {
         this.petitionType = petitionType;
     }
 
-    public Integer getCasecategory() {
-        return casecategory;
-    }
-
-    public void setCasecategory(final Integer casecategory) {
-        this.casecategory = casecategory;
-    }
-
-    public Integer getCourtType() {
-        return courtType;
-    }
-
-    public void setCourtType(final Integer courtType) {
-        this.courtType = courtType;
-    }
-
     public String getCourtName() {
         return courtName;
     }
 
     public void setCourtName(final String courtName) {
         this.courtName = courtName;
-    }
-
-    public Integer getCourtId() {
-        return courtId;
-    }
-
-    public void setCourtId(final Integer courtId) {
-        this.courtId = courtId;
-    }
-
-    public String getGovtDept() {
-        return govtDept;
-    }
-
-    public void setGovtDept(final String govtDept) {
-        this.govtDept = govtDept;
     }
 
     public String getCaseStatus() {
@@ -176,30 +161,6 @@ public class DailyBoardReportResults {
 
     public void setCaseTitle(final String caseTitle) {
         this.caseTitle = caseTitle;
-    }
-
-    public String getAssignDept() {
-        return assignDept;
-    }
-
-    public void setAssignDept(final String assignDept) {
-        this.assignDept = assignDept;
-    }
-
-    public Integer getStatusId() {
-        return statusId;
-    }
-
-    public void setStatusId(final Integer statusId) {
-        this.statusId = statusId;
-    }
-
-    public Integer getPetitionTypeId() {
-        return petitionTypeId;
-    }
-
-    public void setPetitionTypeId(final Integer petitionTypeId) {
-        this.petitionTypeId = petitionTypeId;
     }
 
     public String getPetitionerName() {
@@ -224,14 +185,6 @@ public class DailyBoardReportResults {
 
     public void setLegalCase(final LegalCase legalCase) {
         this.legalCase = legalCase;
-    }
-
-    public String getOfficerInChargeName() {
-        return officerInChargeName;
-    }
-
-    public void setOfficerInChargeName(final String officerInChargeName) {
-        this.officerInChargeName = officerInChargeName;
     }
 
 }

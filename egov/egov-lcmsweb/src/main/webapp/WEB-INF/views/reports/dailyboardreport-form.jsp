@@ -66,7 +66,7 @@
 								<form:option value="">
 									<spring:message code="lbls.select" />
 								</form:option>
-								<form:options items="${caseTypeList}" itemValue="id"
+								<form:options items="${caseTypeList}" itemValue="caseType"
 									itemLabel="caseType" />
 							</form:select>
 						</div>

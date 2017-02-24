@@ -82,27 +82,7 @@ function submitForm() {
 	"autoWidth" : false,
 	"oTableTools" : {
 		"sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
-		"aButtons" : [ 
-		               {
-			             "sExtends": "pdf",
-			             "mColumns": [0,1,2,4,5,6,9],
-                         "sPdfMessage": "",
-                         "sTitle": "Water Connection Report",
-                         "sPdfOrientation": "landscape"
-		                },
-		                {
-				             "sExtends": "xls",
-				             "mColumns": [0,1,2,4,5,6,9],
-                             "sPdfMessage": "Water Connection Report",
-                             "sTitle": "Water Connection Report"
-			             },
-			             {
-				             "sExtends": "print",
-				             "mColumns": [0,1,2,4,5,6,9],
-                             "sPdfMessage": "",
-                             "sTitle": "Water Connection Report"
-			             }],
-		
+		"aButtons" : []
 	},
 	searchable : true,
 	data : searchResult,

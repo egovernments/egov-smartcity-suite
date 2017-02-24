@@ -60,11 +60,11 @@ jQuery(document).ready(function($) {
 				},
 				filter : function(data) {
 			
-					return $.map(data, function(value, key) {
+					return $.map(data, function(value) {
 						
 						return {
 							name : value,
-							value : key
+							value : value
 						};
 						
 					});
@@ -90,12 +90,15 @@ var oDataTable;
 		
 function submitForm() {
 	if($('form').valid()){
-		var caseType = $("#caseCategory").val();
-		var caseNumber = $("#caseNumber").val();
-		var lcNumber = $("#lcNumber").val();
+		var caseType = $("#caseCategory");
+		var caseNumber = $("#caseNumber");
+		var lcNumber = $("#lcNumber");
 		var today = getdate();
 		$('#dailyBoardReportResult-header').show();
 		$('#reportgeneration-header').show();
+		$.post("/lcms/reports/dailyBoardReportresults/",$('#dailyboardreportForm').serialize())
+		.done(function(searchResult) {
+		console.log(JSON.stringify(searchResult));
 		oDataTable=oTable.DataTable({
 			dom : "<'row'<'col-xs-4 pull-right'f>r>t<'row add-margin'<'col-md-3 col-xs-6'i><'col-md-2 col-xs-6'l><'col-md-3 col-xs-6 text-right'B><'col-md-4 col-xs-6 text-right'p>>",
 			"autoWidth": false,
@@ -131,17 +134,8 @@ function submitForm() {
 						}
 					}
 					],
-
-				ajax : {
-					
-					url : "/lcms/reports/dailyBoardReportresults",
-					data : {
-						'caseType' :caseType,
-						'fromDate' :$("#fromDate").val(),
-						'toDate': $("#toDate").val(),
-						'officerIncharge' : $("#positionId").val()
-					}
-				},
+					searchable : true,
+					data : searchResult,
 				columns :[{"title" : "S.no","sClass" : "text-center"},
 				             
 					       { "data" : "caseTitle" , "title": "Case Title" ,"sClass" : "text-center"},  
@@ -154,12 +148,14 @@ function submitForm() {
 						  { "data" : "officerIncharge", "title": "In Charge Officer","sClass" : "text-center"},
 						  { "data" : "caseStatus", "title": "Status","sClass" : "text-center"},
 						  { "data" : "nextDate", "title": "Next Imp Date","sClass" : "text-center"}
+						  
 						  ],
 						  "fnRowCallback" : function(row, data, index) {
 								$('td:eq(3)',row).html('<a href="javascript:void(0);" onclick="openLegalCase(\''+ data.lcNumber +'\')">' + data.caseNumber + '</a>');
 							}
 				          
 				});
+		
 
 		 //s.no auto generation(will work in exported documents too..)
 		oDataTable.on( 'order.dt search.dt', function () {
@@ -169,8 +165,10 @@ function submitForm() {
            } );
        } ).draw();
 		
+	})
 
 	}
+		
 }
 
 function onchnageofDate() {

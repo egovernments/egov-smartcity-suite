@@ -37,7 +37,7 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.lcms.web.controller.elasticsearch;
+package org.egov.lcms.web.controller.es;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
