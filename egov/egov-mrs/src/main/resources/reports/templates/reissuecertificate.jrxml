@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.0  -->
-<!-- 2017-01-17T18:16:41 -->
+<!-- 2017-02-27T15:27:15 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="registrationcertificate" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="02afdd73-b1f8-4b82-bdec-843293ab245b">
 	<property name="ireport.zoom" value="2.0"/>
 	<property name="ireport.x" value="0"/>
@@ -22,7 +22,8 @@
 	<parameter name="marriagedateyear" class="java.lang.String"/>
 	<parameter name="serialno" class="java.lang.String"/>
 	<parameter name="pageno" class="java.lang.String"/>
-	<parameter name="husbandParentName" class="java.lang.String">
+	<parameter name="husbandParentName" class="java.lang.String"/>
+	<parameter name="applicationNumber" class="java.lang.String">
 		<parameterDescription><![CDATA[]]></parameterDescription>
 	</parameter>
 	<parameter name="wifeParentName" class="java.lang.String">
@@ -43,7 +44,6 @@
 	<field name="placeOfMarriage" class="java.lang.String"/>
 	<field name="dateOfRegistration" class="java.lang.String"/>
 	<field name="registrationNumber" class="java.lang.String"/>
-	<field name="applicationNumber" class="java.lang.String"/>
 	<field name="marriagePhoto" class="java.io.InputStream"/>
 	<background>
 		<band splitType="Stretch"/>
@@ -152,7 +152,7 @@
 				<textElement>
 					<font size="14" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{applicationNumber}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{applicationNumber}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="170" y="90" width="210" height="20" uuid="630d621d-2efe-4b2d-96a9-3f6d6a39da89"/>

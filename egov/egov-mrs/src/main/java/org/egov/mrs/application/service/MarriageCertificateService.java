@@ -301,7 +301,7 @@ public class MarriageCertificateService {
         byte[] marriagePhoto = null;
         final Calendar calForApplnDate = Calendar.getInstance();
         final Calendar calForMrgDate = Calendar.getInstance();
-        calForApplnDate.setTime(reIssue.getApplicationDate());
+        calForApplnDate.setTime(reIssue.getRegistration().getApplicationDate());
         calForMrgDate.setTime(reIssue.getRegistration().getDateOfMarriage());
         reportParams.put("certificateno", certificateNo);
 
@@ -344,7 +344,7 @@ public class MarriageCertificateService {
             reportParams.put("zoneName",
                     reIssue.getRegistration().getZone() != null ? reIssue.getRegistration().getZone().getName() : "");
             reportParams.put("userName", reIssue.getState().getSenderName().split("::")[1]);
-            reportParams.put("applicationNumber", reIssue.getRegistration().getApplicationNo());
+            reportParams.put("applicationNumber", reIssue.getApplicationNo());
             reportParams.put("registrationNumber", reIssue.getRegistration().getRegistrationNo());
 
             final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
