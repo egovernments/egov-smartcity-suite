@@ -277,7 +277,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
             return COMMON_FORM;
         }
         if (basicproperty.isUnderWorkflow()) {
-            final List<String> msgParams = new ArrayList<String>();
+            final List<String> msgParams = new ArrayList<>();
             msgParams.add("Transfer of Ownership");
             wfErrorMsg = getText("wf.pending.msg", msgParams);
             return TARGET_WORKFLOW_ERROR;
@@ -308,7 +308,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                 addActionError(getText("error.superstruc.prop.notallowed"));
                 return COMMON_FORM;
             }
-            if (!propertyTaxCommonUtils.isEligibleInitiator(securityUtils.getCurrentUser().getId())){
+            if (propertyService.isEmployee(transferOwnerService.getLoggedInUser()) && !propertyTaxCommonUtils.isEligibleInitiator(transferOwnerService.getLoggedInUser().getId())){
                 addActionError(getText("initiator.noteligible"));
                 return COMMON_FORM;
             }

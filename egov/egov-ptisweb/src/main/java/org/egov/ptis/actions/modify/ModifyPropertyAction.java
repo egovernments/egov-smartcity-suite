@@ -372,6 +372,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
     @SkipValidation
     @Action(value = "/modifyProperty-modifyForm")
     public String modifyForm() {
+        final User currentUser=securityUtils.getCurrentUser();
         LOGGER.debug("Entered into modifyForm, \nIndexNumber: " + indexNumber + ", BasicProperty: " + basicProp
                 + ", OldProperty: " + oldProperty + ", PropertyModel: " + propertyModel);
         if (propertyModel.getStatus().equals(PropertyTaxConstants.STATUS_DEMAND_INACTIVE)) {
@@ -380,7 +381,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         }
         String target;
         target = populateFormData(Boolean.FALSE);
-        isMeesevaUser = propService.isMeesevaUser(securityUtils.getCurrentUser());
+        isMeesevaUser = propService.isMeesevaUser(currentUser);
         if (isMeesevaUser)
             if (getMeesevaApplicationNumber() == null) {
                 addActionMessage(getText("MEESEVA.005"));
@@ -391,12 +392,8 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
                 + ", PropTypeId: " + getPropTypeId() + ", PropertyCategory: " + getPropertyCategory()
                 + ", PropUsageId: " + getPropUsageId() + ", PropOccId: " + getPropOccId());
         LOGGER.debug("Exiting from modifyForm");
-        if ((StringUtils.containsIgnoreCase(userDesignationList, REVENUE_INSPECTOR_DESGN) ||
-                StringUtils.containsIgnoreCase(userDesignationList, JUNIOR_ASSISTANT) ||
-                StringUtils.containsIgnoreCase(userDesignationList, SENIOR_ASSISTANT))
-                && PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn))
-            showTaxCalcBtn = Boolean.TRUE;
-        if (!propertyTaxCommonUtils.isEligibleInitiator(securityUtils.getCurrentUser().getId())){
+        showTaxCalculateButton();
+        if (propService.isEmployee(currentUser) && !propertyTaxCommonUtils.isEligibleInitiator(currentUser.getId())){
             addActionError(getText("initiator.noteligible"));
             return COMMON_FORM;
         }
@@ -558,11 +555,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
             setModifyRsn(propertyModel.getPropertyDetail().getPropertyMutationMaster().getCode());
             LOGGER.debug("view: PropertyModel by model id: " + propertyModel);
         }
-        if ((StringUtils.containsIgnoreCase(userDesignationList, REVENUE_INSPECTOR_DESGN) ||
-                StringUtils.containsIgnoreCase(userDesignationList, JUNIOR_ASSISTANT) ||
-                StringUtils.containsIgnoreCase(userDesignationList, SENIOR_ASSISTANT))
-                && PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn))
-            showTaxCalcBtn = Boolean.TRUE;
+        showTaxCalculateButton();
         final String currWfState = propertyModel.getState().getValue();
         populateFormData(Boolean.TRUE);
         isEligibleForDocEdit();
@@ -1632,6 +1625,14 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
             }
         }
         LOGGER.debug("exiting calculateTax()");
+    }
+    
+    public void showTaxCalculateButton() {
+        if ((StringUtils.containsIgnoreCase(userDesignationList, REVENUE_INSPECTOR_DESGN) ||
+                StringUtils.containsIgnoreCase(userDesignationList, JUNIOR_ASSISTANT) ||
+                StringUtils.containsIgnoreCase(userDesignationList, SENIOR_ASSISTANT))
+                && PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn))
+            showTaxCalcBtn = Boolean.TRUE;
     }
 
     public BasicProperty getBasicProp() {

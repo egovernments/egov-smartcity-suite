@@ -143,7 +143,7 @@ public class PropertyDemolitionController extends GenericWorkFlowController {
         	model.addAttribute(ERROR_MSG, "Cannot proceed as this property is used in Bifurcation, which is under workflow");
             return PROPERTY_VALIDATION;
         }
-        if (!propertyTaxCommonUtils.isEligibleInitiator(securityUtils.getCurrentUser().getId())){
+        if (propService.isEmployee(securityUtils.getCurrentUser()) && !propertyTaxCommonUtils.isEligibleInitiator(securityUtils.getCurrentUser().getId())){
             model.addAttribute(ERROR_MSG, "msg.initiator.noteligible");
             return PROPERTY_VALIDATION;
         }

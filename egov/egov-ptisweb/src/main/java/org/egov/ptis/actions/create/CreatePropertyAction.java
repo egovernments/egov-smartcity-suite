@@ -97,7 +97,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
+import java.util.SortedMap;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -189,7 +189,7 @@ import com.google.gson.GsonBuilder;
         @Result(name = "dataEntry-ack", location = "create/createProperty-dataEntryAck.jsp"),
         @Result(name = "view", location = "create/createProperty-view.jsp"),
         @Result(name = "error", location = "common/meeseva-errorPage.jsp"),
-        @Result(name = CreatePropertyAction.PRINTACK, location = "create/createProperty-printAck.jsp"),
+        @Result(name = CreatePropertyAction.PRINT_ACK, location = "create/createProperty-printAck.jsp"),
         @Result(name = CreatePropertyAction.MEESEVA_RESULT_ACK, location = "common/meesevaAck.jsp"),
         @Result(name = CreatePropertyAction.EDIT_DATA_ENTRY, location = "create/createProperty-editDataEntry.jsp") })
 public class CreatePropertyAction extends PropertyTaxBaseAction {
@@ -202,7 +202,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     private static final String MSG_REJECT_SUCCESS = " Property Rejected Successfully ";
     private static final String CREATE = "create";
     private static final String RESULT_DATAENTRY = "dataEntry";
-    public static final String PRINTACK = "printAck";
+    public static final String PRINT_ACK = "printAck";
     public static final String MEESEVA_RESULT_ACK = "meesevaAck";
     protected static final String EDIT_DATA_ENTRY = "editDataEntry";
     private static final String MEESEVA_SERVICE_CODE_NEWPROPERTY = "PT01";
@@ -269,7 +269,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     private Long mutationId;
 
     private Map<String, String> propTypeCategoryMap;
-    private TreeMap<Integer, String> floorNoMap;
+    private SortedMap<Integer, String> floorNoMap;
     private Map<String, String> deviationPercentageMap;
     private Map<String, String> guardianRelationMap;
     private List<DocumentType> documentTypes = new ArrayList<>();
@@ -1314,7 +1314,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         final String cityName = request.getSession().getAttribute("citymunicipalityname").toString();
         reportId = reportViewerUtil
                 .addReportToTempCache(basicPropertyService.propertyAcknowledgement(property, cityLogo, cityName));
-        return PRINTACK;
+        return PRINT_ACK;
     }
 
     @SkipValidation
@@ -1488,7 +1488,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     }
     
     public void validateInitiatorDesgn() {
-        if (!propertyTaxCommonUtils.isEligibleInitiator(securityUtils.getCurrentUser().getId())) {
+        final User currentUser=securityUtils.getCurrentUser();
+        if (propService.isEmployee(currentUser) && !propertyTaxCommonUtils.isEligibleInitiator(currentUser.getId())) {
             setEligibleInitiator(false);
             addActionError(getText("initiator.noteligible"));
         }
@@ -1568,11 +1569,11 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         this.dateOfCompletion = dateOfCompletion;
     }
 
-    public TreeMap<Integer, String> getFloorNoMap() {
+    public SortedMap<Integer, String> getFloorNoMap() {
         return floorNoMap;
     }
 
-    public void setFloorNoMap(final TreeMap<Integer, String> floorNoMap) {
+    public void setFloorNoMap(final SortedMap<Integer, String> floorNoMap) {
         this.floorNoMap = floorNoMap;
     }
 
@@ -1607,13 +1608,6 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     public void setBasicProp(final BasicProperty basicProp) {
         this.basicProp = basicProp;
     }
-
-    /**
-     * This implementation transitions the <code>PropertyImpl</code> to the next workflow state.
-     */
-    /*
-     * @Override protected PropertyImpl property() { return property; }
-     */
 
     public PropertyService getPropService() {
         return propService;

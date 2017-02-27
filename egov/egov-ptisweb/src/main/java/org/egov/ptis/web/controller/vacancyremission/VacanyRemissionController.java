@@ -158,7 +158,7 @@ public class VacanyRemissionController extends GenericWorkFlowController {
             final Property property = basicProperty.getActiveProperty();
             List<DocumentType> documentTypes;
             documentTypes = propertyService.getDocumentTypesForTransactionType(TransactionType.VACANCYREMISSION);
-            if (!propertyTaxCommonUtils.isEligibleInitiator(securityUtils.getCurrentUser().getId())){
+            if (propertyService.isEmployee(securityUtils.getCurrentUser()) && !propertyTaxCommonUtils.isEligibleInitiator(securityUtils.getCurrentUser().getId())){
                 model.addAttribute(ERROR_MSG, "msg.initiator.noteligible");
                 return PROPERTY_VALIDATION;
             }
