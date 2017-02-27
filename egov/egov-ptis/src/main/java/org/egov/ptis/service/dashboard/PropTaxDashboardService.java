@@ -46,6 +46,8 @@ import static org.egov.ptis.constants.PropertyTaxConstants.COLLECION_BILLING_SER
 import static org.egov.ptis.constants.PropertyTaxConstants.COLLECION_BILLING_SERVICE_WTMS;
 import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_CODE_SUCCESS;
 import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_MSG_SUCCESS;
+import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_ALLWARDS;
+import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_BILLCOLLECTORWISE;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -237,19 +239,26 @@ public class PropTaxDashboardService {
     public CollectionDetails getCollectionIndexDetails(CollectionDetailsRequest collectionDetailsRequest) {
         CollectionDetails collectionIndexDetails = new CollectionDetails();
         List<CollTableData> collIndexData;
-        collectionIndexElasticSearchService.getCompleteCollectionIndexDetails(collectionDetailsRequest,
-                collectionIndexDetails);
-        propertyTaxElasticSearchIndexService.getConsolidatedDemandInfo(collectionDetailsRequest,
-                collectionIndexDetails);
-        List<CollectionTrend> collectionTrends = collectionIndexElasticSearchService
+        if (!DASHBOARD_GROUPING_ALLWARDS.equalsIgnoreCase(collectionDetailsRequest.getType())) {
+            collectionIndexElasticSearchService.getCompleteCollectionIndexDetails(collectionDetailsRequest,
+                    collectionIndexDetails);
+            propertyTaxElasticSearchIndexService.getConsolidatedDemandInfo(collectionDetailsRequest,
+                    collectionIndexDetails);
+            List<CollectionTrend> collectionTrends = collectionIndexElasticSearchService
                     .getMonthwiseCollectionDetails(collectionDetailsRequest);
+            collectionIndexDetails.setCollTrends(collectionTrends);
+        }
         if (StringUtils.isNotBlank(collectionDetailsRequest.getType()) && collectionDetailsRequest.getType()
-                .equalsIgnoreCase(PropertyTaxConstants.DASHBOARD_GROUPING_BILLCOLLECTORWISE))
+                .equalsIgnoreCase(DASHBOARD_GROUPING_BILLCOLLECTORWISE))
             collIndexData = collectionIndexElasticSearchService
                     .getResponseTableDataForBillCollector(collectionDetailsRequest);
-        else
+        else if (DASHBOARD_GROUPING_ALLWARDS.equalsIgnoreCase(collectionDetailsRequest.getType())) {
+            Iterable<CityIndex> cities = cityIndexService.findAll();
+            collIndexData = collectionIndexElasticSearchService.getWardWiseTableDataAcrossCities(collectionDetailsRequest,
+                    cities);
+        } else
             collIndexData = collectionIndexElasticSearchService.getResponseTableData(collectionDetailsRequest);
-        collectionIndexDetails.setCollTrends(collectionTrends);
+
         collectionIndexDetails.setResponseDetails(collIndexData);
         ErrorDetails errorDetails = new ErrorDetails();
         errorDetails.setErrorCode(THIRD_PARTY_ERR_CODE_SUCCESS);

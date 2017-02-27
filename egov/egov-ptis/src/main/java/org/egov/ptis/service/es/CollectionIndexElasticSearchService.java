@@ -79,6 +79,7 @@ import java.util.Map.Entry;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.service.CFinancialYearService;
+import org.egov.infra.admin.master.entity.es.CityIndex;
 import org.egov.infra.utils.DateUtils;
 import org.egov.ptis.bean.dashboard.CollReceiptDetails;
 import org.egov.ptis.bean.dashboard.CollTableData;
@@ -2352,6 +2353,30 @@ public class CollectionIndexElasticSearchService {
             default:
                 break;
         }
+    }
+ 
+    /**
+     * Provides ward wise details for all cities
+     * @param collectionDetailsRequest
+     * @param cities
+     * @return List
+     */
+    public List<CollTableData> getWardWiseTableDataAcrossCities(CollectionDetailsRequest collectionDetailsRequest,
+            Iterable<CityIndex> cities) {
+        List<CollTableData> citywiseTableData = new ArrayList<>();
+        List<CollTableData> wardWiseData;
+        String cityName;
+        for (CityIndex city : cities) {
+            cityName = city.getName();
+            collectionDetailsRequest.setUlbCode(city.getCitycode());
+            collectionDetailsRequest.setType(DASHBOARD_GROUPING_WARDWISE);
+            wardWiseData = getResponseTableData(collectionDetailsRequest);
+            for (CollTableData wardData : wardWiseData)
+                wardData.setUlbName(cityName);
+
+            citywiseTableData.addAll(wardWiseData);
+        }
+        return citywiseTableData;
     }
     
 }

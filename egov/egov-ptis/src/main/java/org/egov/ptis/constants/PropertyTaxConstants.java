@@ -1605,6 +1605,7 @@ public interface PropertyTaxConstants {
     public static final String DASHBOARD_GROUPING_WARDWISE = "ward";
     public static final String DASHBOARD_GROUPING_CITYWISE = "city";
     public static final String DASHBOARD_GROUPING_BILLCOLLECTORWISE = "billcollector";
+    public static final String DASHBOARD_GROUPING_ALLWARDS = "allwards";
     
     public static final String DASHBOARD_PROPERTY_TYPE_PRIVATE = "Private";
     public static final String DASHBOARD_PROPERTY_TYPE_VACANT_LAND = "Vacant Land";
