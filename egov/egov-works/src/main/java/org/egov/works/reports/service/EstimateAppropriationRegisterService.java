@@ -75,6 +75,15 @@ public class EstimateAppropriationRegisterService {
 
     private static final Logger logger = Logger.getLogger(EstimateAppropriationRegisterService.class);
 
+    private static final String DEPTID = "deptid";
+    private static final String BUDGETHEADID = "budgetheadid";
+    private static final String FUNDID = "fundid";
+    private static final String FUNCTIONID = "functionid";
+    private static final String FINANCIALYEARID = "financialyearid";
+    private static final String FROMDATE = "fromDate";
+    private static final String TODATE = "toDate";
+    private static final String REGULAR = "Regular";
+
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -94,53 +103,42 @@ public class EstimateAppropriationRegisterService {
         return entityManager.unwrap(Session.class);
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "rawtypes" })
     public Map<String, List> searchEstimateAppropriationRegister(
             final EstimateAppropriationRegisterSearchRequest estimateAppropriationRegisterSearchRequest) {
 
         final Map<String, Object> queryParamMap = new HashMap<String, Object>();
         BigDecimal totalGrant = BigDecimal.ZERO;
-        BigDecimal totalGrantPerc = BigDecimal.ZERO;
+        BigDecimal totalGrantPerc;
         Map<String, List> approvedBudgetFolioDetailsMap = null;
 
-        if (estimateAppropriationRegisterSearchRequest != null && estimateAppropriationRegisterSearchRequest.getFund() != null)
-            queryParamMap.put("fundid", estimateAppropriationRegisterSearchRequest.getFund().intValue());
-
-        if (estimateAppropriationRegisterSearchRequest != null
-                && estimateAppropriationRegisterSearchRequest.getFunction() != null)
-            queryParamMap.put("functionid", estimateAppropriationRegisterSearchRequest.getFunction());
-        if (estimateAppropriationRegisterSearchRequest != null
-                && estimateAppropriationRegisterSearchRequest.getBudgetHead() != null) {
-            final List<BudgetGroup> budgetheadid = new ArrayList<BudgetGroup>();
-            final BudgetGroup budgetGroup = budgetGroupService
-                    .findById(estimateAppropriationRegisterSearchRequest.getBudgetHead(), true);
-            budgetheadid.add(budgetGroup);
-            queryParamMap.put("budgetheadid", budgetheadid);
-        }
+        setQueryParamMapValues(estimateAppropriationRegisterSearchRequest, queryParamMap);
 
         if (estimateAppropriationRegisterSearchRequest != null
                 && estimateAppropriationRegisterSearchRequest.getDepartment() != null)
-            queryParamMap.put("deptid", estimateAppropriationRegisterSearchRequest.getDepartment());
+            queryParamMap.put(DEPTID, estimateAppropriationRegisterSearchRequest.getDepartment());
 
         if (estimateAppropriationRegisterSearchRequest != null
                 && estimateAppropriationRegisterSearchRequest.getFinancialYear() != null) {
-            queryParamMap.put("financialyearid", estimateAppropriationRegisterSearchRequest.getFinancialYear());
-            queryParamMap.put("fromDate", financialYearHibernateDAO
-                    .getFinancialYearById(estimateAppropriationRegisterSearchRequest.getFinancialYear()).getStartingDate());
-            queryParamMap.put("toDate", new Date());
+            queryParamMap.put(FINANCIALYEARID, estimateAppropriationRegisterSearchRequest.getFinancialYear());
+            queryParamMap.put(FROMDATE,
+                    financialYearHibernateDAO
+                            .getFinancialYearById(estimateAppropriationRegisterSearchRequest.getFinancialYear())
+                            .getStartingDate());
+            queryParamMap.put(TODATE, new Date());
         }
 
         if (!queryParamMap.isEmpty()) {
-            BigDecimal planningBudgetPerc = new BigDecimal(0);
+            BigDecimal planningBudgetPerc = BigDecimal.ZERO;
             try {
                 totalGrant = budgetDetailsDAO.getBudgetedAmtForYear(queryParamMap);
-                queryParamMap.put("deptid", estimateAppropriationRegisterSearchRequest.getDepartment().intValue());
+                if (estimateAppropriationRegisterSearchRequest != null)
+                    queryParamMap.put(DEPTID, estimateAppropriationRegisterSearchRequest.getDepartment().intValue());
                 planningBudgetPerc = getPlanningBudgetPercentage(queryParamMap);
-                queryParamMap.put("deptid", estimateAppropriationRegisterSearchRequest.getDepartment());
             } catch (final ValidationException valEx) {
                 logger.error(valEx);
             }
-            if (planningBudgetPerc != null && !planningBudgetPerc.equals(0)) {
+            if (planningBudgetPerc != null && planningBudgetPerc.compareTo(BigDecimal.ZERO) != 0) {
                 totalGrantPerc = totalGrant.multiply(planningBudgetPerc.divide(new BigDecimal(100)));
                 queryParamMap.put("totalGrantPerc", totalGrantPerc);
             }
@@ -150,36 +148,57 @@ public class EstimateAppropriationRegisterService {
         return approvedBudgetFolioDetailsMap;
     }
 
+    private void setQueryParamMapValues(
+            final EstimateAppropriationRegisterSearchRequest estimateAppropriationRegisterSearchRequest,
+            final Map<String, Object> queryParamMap) {
+        if (estimateAppropriationRegisterSearchRequest != null
+                && estimateAppropriationRegisterSearchRequest.getFund() != null)
+            queryParamMap.put(FUNDID, estimateAppropriationRegisterSearchRequest.getFund().intValue());
+
+        if (estimateAppropriationRegisterSearchRequest != null
+                && estimateAppropriationRegisterSearchRequest.getFunction() != null)
+            queryParamMap.put(FUNCTIONID, estimateAppropriationRegisterSearchRequest.getFunction());
+        if (estimateAppropriationRegisterSearchRequest != null
+                && estimateAppropriationRegisterSearchRequest.getBudgetHead() != null) {
+            final List<BudgetGroup> budgetheadid = new ArrayList<>();
+            final BudgetGroup budgetGroup = budgetGroupService
+                    .findById(estimateAppropriationRegisterSearchRequest.getBudgetHead(), true);
+            budgetheadid.add(budgetGroup);
+            queryParamMap.put(BUDGETHEADID, budgetheadid);
+        }
+    }
+
     private BigDecimal getPlanningBudgetPercentage(final Map<String, Object> queryParamMap) {
         return budgetDetailsDAO.getPlanningPercentForYear(queryParamMap);
     }
 
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public Map<String, List> getApprovedAppropriationDetailsForBugetHead(final Map<String, Object> queryParamMap) {
         final List<BudgetFolioDetail> approvedBudgetFolioResultList = new ArrayList<BudgetFolioDetail>();
         final Map<String, Object> paramMap = new HashMap<String, Object>();
-        if (queryParamMap.get("budgetheadid") != null) {
-            final List<BudgetGroup> budgetheadid = (List) queryParamMap.get("budgetheadid");
+        if (queryParamMap.get(BUDGETHEADID) != null) {
+            final List<BudgetGroup> budgetheadid = (List) queryParamMap.get(BUDGETHEADID);
             final BudgetGroup bg = budgetheadid.get(0);
             paramMap.put("budgetgroupId", bg.getId());
         }
-        if (queryParamMap.get("deptid") != null)
-            paramMap.put("ExecutionDepartmentId", queryParamMap.get("deptid"));
-        if (queryParamMap.get("functionid") != null)
-            paramMap.put("functionId", queryParamMap.get("functionid"));
-        if (queryParamMap.get("fundid") != null)
-            paramMap.put("fundId", queryParamMap.get("fundid"));
-        if (queryParamMap.get("financialyearid") != null)
-            paramMap.put("financialYearId", queryParamMap.get("financialyearid"));
-        if (queryParamMap.get("fromDate") != null)
-            paramMap.put("fromDate", queryParamMap.get("fromDate"));
-        if (queryParamMap.get("toDate") != null)
-            paramMap.put("toDate", queryParamMap.get("toDate"));
+        if (queryParamMap.get(DEPTID) != null)
+            paramMap.put("ExecutionDepartmentId", queryParamMap.get(DEPTID));
+        if (queryParamMap.get(FUNCTIONID) != null)
+            paramMap.put("functionId", queryParamMap.get(FUNCTIONID));
+        if (queryParamMap.get(FUNDID) != null)
+            paramMap.put("fundId", queryParamMap.get(FUNDID));
+        if (queryParamMap.get(FINANCIALYEARID) != null)
+            paramMap.put("financialYearId", queryParamMap.get(FINANCIALYEARID));
+        if (queryParamMap.get(FROMDATE) != null)
+            paramMap.put(FROMDATE, queryParamMap.get(FROMDATE));
+        if (queryParamMap.get(TODATE) != null)
+            paramMap.put(TODATE, queryParamMap.get(TODATE));
         final Integer moduleId = 11;
         paramMap.put("moduleId", moduleId);
         final List<BudgetUsage> budgetUsageList = budgetDetailsDAO.getListBudgetUsage(paramMap);
         if (budgetUsageList != null && !budgetUsageList.isEmpty())
-            return addApprovedEstimateResultList(approvedBudgetFolioResultList, budgetUsageList, new BigDecimal(
-                    queryParamMap.get("totalGrantPerc").toString()));
+            return addApprovedEstimateResultList(approvedBudgetFolioResultList, budgetUsageList,
+                    new BigDecimal(queryParamMap.get("totalGrantPerc").toString()));
         return new HashMap<String, List>();
     }
 
@@ -188,20 +207,19 @@ public class EstimateAppropriationRegisterService {
             final List<BudgetUsage> budgetUsageList, final BigDecimal totalGrantPerc) {
         int srlNo = 1;
         Double cumulativeTotal = 0.00D;
-        BigDecimal balanceAvailable ;
+        BigDecimal balanceAvailable;
         final Map<String, List> budgetFolioMap = new HashMap<>();
         final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", new Locale("en", "IN"));
         for (final BudgetUsage budgetUsage : budgetUsageList) {
-            final BudgetFolioDetail budgetFolioDetail = new BudgetFolioDetail();
+            final BudgetFolioDetail budgetFolioDetail = getBudgetFolioDetail();
             budgetFolioDetail.setSrlNo(srlNo++);
 
             final EstimateAppropriation estimateAppropriation = estimateAppropriationService
                     .findLatestByBudgetUsage(budgetUsage.getId());
             if (estimateAppropriation != null && estimateAppropriation.getLineEstimateDetails() != null) {
                 final LineEstimateDetails led = estimateAppropriation.getLineEstimateDetails();
-                if (led != null) {
+                if (led != null)
                     setBudgetFolioDetailsForLE(sdf, budgetFolioDetail, led);
-                }
             } else if (estimateAppropriation != null && estimateAppropriation.getAbstractEstimate() != null) {
                 final AbstractEstimate ae = estimateAppropriation.getAbstractEstimate();
                 setBudgetFolioDetailsForAE(sdf, budgetFolioDetail, ae);
@@ -209,10 +227,10 @@ public class EstimateAppropriationRegisterService {
 
             budgetFolioDetail.setBudgetApprNo(budgetUsage.getAppropriationnumber());
             budgetFolioDetail.setCumulativeTotal(cumulativeTotal);
-            balanceAvailable = totalGrantPerc.subtract(new BigDecimal(cumulativeTotal));
+            balanceAvailable = totalGrantPerc.subtract(getCumulativeTotal(cumulativeTotal));
             budgetFolioDetail.setBalanceAvailable(balanceAvailable);
-            budgetFolioDetail.setAppDate(sdf.format(new Date(budgetUsage.getUpdatedTime().getTime())));
-            budgetFolioDetail.setAppType(getApporpriationType(budgetUsage.getId()));
+            budgetFolioDetail.setAppDate(sdf.format(getBudgetUsageUpdatedTime(budgetUsage)));
+            budgetFolioDetail.setAppType(getApporpriationType());
             budgetFolioResultList.add(budgetFolioDetail);
 
             if (budgetUsage.getReleasedAmount() > 0) {
@@ -225,29 +243,29 @@ public class EstimateAppropriationRegisterService {
         }
         final List calculatedValuesList = new ArrayList();
         calculatedValuesList.add(cumulativeTotal);
-        calculatedValuesList.add(totalGrantPerc.subtract(new BigDecimal(cumulativeTotal)));
+        calculatedValuesList.add(totalGrantPerc.subtract(getCumulativeTotal(cumulativeTotal)));
         budgetFolioMap.put("budgetFolioList", budgetFolioResultList);
         budgetFolioMap.put("calculatedValues", calculatedValuesList);
         return budgetFolioMap;
     }
 
-    private void setBudgetFolioDetailsForAE(final SimpleDateFormat sdf,
-            final BudgetFolioDetail budgetFolioDetail, final AbstractEstimate ae) {
-        if(StringUtils.isNotBlank(ae.getEstimateNumber()))
+    private void setBudgetFolioDetailsForAE(final SimpleDateFormat sdf, final BudgetFolioDetail budgetFolioDetail,
+            final AbstractEstimate ae) {
+        if (StringUtils.isNotBlank(ae.getEstimateNumber()))
             budgetFolioDetail.setEstimateNo(ae.getEstimateNumber());
         else
             budgetFolioDetail.setEstimateNo(StringUtils.EMPTY);
         if (ae.getParent() == null)
             budgetFolioDetail.setNameOfWork(ae.getName());
-        else if(ae.getParent() != null)
+        else if (ae.getParent() != null)
             budgetFolioDetail.setNameOfWork(ae.getParent().getName());
         else
             budgetFolioDetail.setNameOfWork(StringUtils.EMPTY);
-        if(StringUtils.isNotBlank(ae.getEstimateValue().toString()))
+        if (StringUtils.isNotBlank(ae.getEstimateValue().toString()))
             budgetFolioDetail.setWorkValue(ae.getEstimateValue().doubleValue());
         else
             budgetFolioDetail.setWorkValue(Double.valueOf(StringUtils.EMPTY));
-        if(StringUtils.isNotBlank(ae.getEstimateDate().toString()))
+        if (StringUtils.isNotBlank(ae.getEstimateDate().toString()))
             budgetFolioDetail.setEstimateDate(sdf.format(ae.getEstimateDate()));
         else
             budgetFolioDetail.setEstimateDate(StringUtils.EMPTY);
@@ -259,21 +277,21 @@ public class EstimateAppropriationRegisterService {
             budgetFolioDetail.setWorkIdentificationNumber(StringUtils.EMPTY);
     }
 
-    private void setBudgetFolioDetailsForLE(final SimpleDateFormat sdf,
-            final BudgetFolioDetail budgetFolioDetail, final LineEstimateDetails led) {
-        if(StringUtils.isNotBlank(led.getEstimateNumber()))
+    private void setBudgetFolioDetailsForLE(final SimpleDateFormat sdf, final BudgetFolioDetail budgetFolioDetail,
+            final LineEstimateDetails led) {
+        if (StringUtils.isNotBlank(led.getEstimateNumber()))
             budgetFolioDetail.setEstimateNo(led.getEstimateNumber());
         else
             budgetFolioDetail.setEstimateNo(StringUtils.EMPTY);
-        if(StringUtils.isNotBlank(led.getNameOfWork()))
+        if (StringUtils.isNotBlank(led.getNameOfWork()))
             budgetFolioDetail.setNameOfWork(led.getNameOfWork());
         else
             budgetFolioDetail.setNameOfWork(StringUtils.EMPTY);
-        if(StringUtils.isNotBlank(led.getEstimateAmount().toString()))
+        if (StringUtils.isNotBlank(led.getEstimateAmount().toString()))
             budgetFolioDetail.setWorkValue(led.getEstimateAmount().doubleValue());
         else
             budgetFolioDetail.setWorkValue(Double.valueOf(StringUtils.EMPTY));
-        if(StringUtils.isNotBlank(led.getLineEstimate().getLineEstimateDate().toString()))
+        if (StringUtils.isNotBlank(led.getLineEstimate().getLineEstimateDate().toString()))
             budgetFolioDetail.setEstimateDate(sdf.format(led.getLineEstimate().getLineEstimateDate()));
         else
             budgetFolioDetail.setEstimateDate(StringUtils.EMPTY);
@@ -283,8 +301,19 @@ public class EstimateAppropriationRegisterService {
             budgetFolioDetail.setWorkIdentificationNumber(StringUtils.EMPTY);
     }
 
-    public String getApporpriationType(final long budgetUsageId) {
-        final String appType = "Regular";
-        return appType;
+    private BudgetFolioDetail getBudgetFolioDetail() {
+        return new BudgetFolioDetail();
+    }
+
+    public String getApporpriationType() {
+        return REGULAR;
+    }
+
+    private Date getBudgetUsageUpdatedTime(final BudgetUsage budgetUsage) {
+        return new Date(budgetUsage.getUpdatedTime().getTime());
+    }
+
+    private BigDecimal getCumulativeTotal(final Double cumulativeTotal) {
+        return new BigDecimal(cumulativeTotal.toString());
     }
 }
