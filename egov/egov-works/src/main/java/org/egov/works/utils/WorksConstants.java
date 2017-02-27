@@ -444,4 +444,6 @@ public class WorksConstants {
     public static final String REVISIONESTIMATE_APPROVALRULES = "REVISIONESTIMATE-APPROVALRULES";
     
     public static final String IMAGETYPE = "image/jpg";
+    
+    public static final String PDF = "pdf";
 }

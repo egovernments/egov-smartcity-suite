@@ -55,6 +55,7 @@ import javax.persistence.PersistenceContext;
 import org.apache.log4j.Logger;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.dao.budget.BudgetDetailsDAO;
+import org.egov.infra.utils.StringUtils;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.model.budget.BudgetGroup;
 import org.egov.model.budget.BudgetUsage;
@@ -182,12 +183,13 @@ public class EstimateAppropriationRegisterService {
         return new HashMap<String, List>();
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public Map<String, List> addApprovedEstimateResultList(final List<BudgetFolioDetail> budgetFolioResultList,
             final List<BudgetUsage> budgetUsageList, final BigDecimal totalGrantPerc) {
         int srlNo = 1;
         Double cumulativeTotal = 0.00D;
-        BigDecimal balanceAvailable = BigDecimal.ZERO;
-        final Map<String, List> budgetFolioMap = new HashMap<String, List>();
+        BigDecimal balanceAvailable ;
+        final Map<String, List> budgetFolioMap = new HashMap<>();
         final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", new Locale("en", "IN"));
         for (final BudgetUsage budgetUsage : budgetUsageList) {
             final BudgetFolioDetail budgetFolioDetail = new BudgetFolioDetail();
@@ -198,26 +200,11 @@ public class EstimateAppropriationRegisterService {
             if (estimateAppropriation != null && estimateAppropriation.getLineEstimateDetails() != null) {
                 final LineEstimateDetails led = estimateAppropriation.getLineEstimateDetails();
                 if (led != null) {
-                    budgetFolioDetail.setEstimateNo(led.getEstimateNumber());
-                    budgetFolioDetail.setNameOfWork(led.getNameOfWork());
-                    budgetFolioDetail.setWorkValue(led.getEstimateAmount().doubleValue());
-                    budgetFolioDetail.setEstimateDate(sdf.format(led.getLineEstimate().getLineEstimateDate()));
-                    if (led.getProjectCode() != null)
-                        budgetFolioDetail.setWorkIdentificationNumber(led.getProjectCode().getCode());
+                    setBudgetFolioDetailsForLE(sdf, budgetFolioDetail, led);
                 }
             } else if (estimateAppropriation != null && estimateAppropriation.getAbstractEstimate() != null) {
                 final AbstractEstimate ae = estimateAppropriation.getAbstractEstimate();
-                budgetFolioDetail.setEstimateNo(ae.getEstimateNumber());
-                if (ae.getParent() == null)
-                    budgetFolioDetail.setNameOfWork(ae.getName());
-                else
-                    budgetFolioDetail.setNameOfWork(ae.getParent().getName());
-                budgetFolioDetail.setWorkValue(ae.getEstimateValue().doubleValue());
-                budgetFolioDetail.setEstimateDate(sdf.format(ae.getEstimateDate()));
-                if (ae.getProjectCode() != null)
-                    budgetFolioDetail.setWorkIdentificationNumber(ae.getProjectCode().getCode());
-                else if (ae.getParent() != null)
-                    budgetFolioDetail.setWorkIdentificationNumber(ae.getParent().getProjectCode().getCode());
+                setBudgetFolioDetailsForAE(sdf, budgetFolioDetail, ae);
             }
 
             budgetFolioDetail.setBudgetApprNo(budgetUsage.getAppropriationnumber());
@@ -242,6 +229,58 @@ public class EstimateAppropriationRegisterService {
         budgetFolioMap.put("budgetFolioList", budgetFolioResultList);
         budgetFolioMap.put("calculatedValues", calculatedValuesList);
         return budgetFolioMap;
+    }
+
+    private void setBudgetFolioDetailsForAE(final SimpleDateFormat sdf,
+            final BudgetFolioDetail budgetFolioDetail, final AbstractEstimate ae) {
+        if(StringUtils.isNotBlank(ae.getEstimateNumber()))
+            budgetFolioDetail.setEstimateNo(ae.getEstimateNumber());
+        else
+            budgetFolioDetail.setEstimateNo(StringUtils.EMPTY);
+        if (ae.getParent() == null)
+            budgetFolioDetail.setNameOfWork(ae.getName());
+        else if(ae.getParent() != null)
+            budgetFolioDetail.setNameOfWork(ae.getParent().getName());
+        else
+            budgetFolioDetail.setNameOfWork(StringUtils.EMPTY);
+        if(StringUtils.isNotBlank(ae.getEstimateValue().toString()))
+            budgetFolioDetail.setWorkValue(ae.getEstimateValue().doubleValue());
+        else
+            budgetFolioDetail.setWorkValue(Double.valueOf(StringUtils.EMPTY));
+        if(StringUtils.isNotBlank(ae.getEstimateDate().toString()))
+            budgetFolioDetail.setEstimateDate(sdf.format(ae.getEstimateDate()));
+        else
+            budgetFolioDetail.setEstimateDate(StringUtils.EMPTY);
+        if (ae.getProjectCode() != null)
+            budgetFolioDetail.setWorkIdentificationNumber(ae.getProjectCode().getCode());
+        else if (ae.getParent() != null)
+            budgetFolioDetail.setWorkIdentificationNumber(ae.getParent().getProjectCode().getCode());
+        else
+            budgetFolioDetail.setWorkIdentificationNumber(StringUtils.EMPTY);
+    }
+
+    private void setBudgetFolioDetailsForLE(final SimpleDateFormat sdf,
+            final BudgetFolioDetail budgetFolioDetail, final LineEstimateDetails led) {
+        if(StringUtils.isNotBlank(led.getEstimateNumber()))
+            budgetFolioDetail.setEstimateNo(led.getEstimateNumber());
+        else
+            budgetFolioDetail.setEstimateNo(StringUtils.EMPTY);
+        if(StringUtils.isNotBlank(led.getNameOfWork()))
+            budgetFolioDetail.setNameOfWork(led.getNameOfWork());
+        else
+            budgetFolioDetail.setNameOfWork(StringUtils.EMPTY);
+        if(StringUtils.isNotBlank(led.getEstimateAmount().toString()))
+            budgetFolioDetail.setWorkValue(led.getEstimateAmount().doubleValue());
+        else
+            budgetFolioDetail.setWorkValue(Double.valueOf(StringUtils.EMPTY));
+        if(StringUtils.isNotBlank(led.getLineEstimate().getLineEstimateDate().toString()))
+            budgetFolioDetail.setEstimateDate(sdf.format(led.getLineEstimate().getLineEstimateDate()));
+        else
+            budgetFolioDetail.setEstimateDate(StringUtils.EMPTY);
+        if (led.getProjectCode() != null)
+            budgetFolioDetail.setWorkIdentificationNumber(led.getProjectCode().getCode());
+        else
+            budgetFolioDetail.setWorkIdentificationNumber(StringUtils.EMPTY);
     }
 
     public String getApporpriationType(final long budgetUsageId) {

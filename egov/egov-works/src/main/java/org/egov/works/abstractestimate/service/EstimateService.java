@@ -132,6 +132,7 @@ import org.egov.works.reports.service.WorkProgressRegisterService;
 import org.egov.works.revisionestimate.entity.RevisionAbstractEstimate.RevisionEstimateStatus;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
+import org.egov.works.workorder.entity.WorkOrder;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.egov.works.workorder.service.WorkOrderEstimateService;
 import org.hibernate.Criteria;
@@ -1327,8 +1328,12 @@ public class EstimateService {
     public AbstractEstimate cancel(final AbstractEstimate abstractEstimate) {
         abstractEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.ABSTRACTESTIMATE,
                 AbstractEstimate.EstimateStatus.CANCELLED.toString()));
-        final AbstractEstimate savedAbstractEstimate = abstractEstimateRepository.save(abstractEstimate);
-        return savedAbstractEstimate;
+        if (!worksApplicationProperties.lineEstimateRequired() && !BudgetControlType.BudgetCheckOption.NONE.toString()
+                .equalsIgnoreCase(budgetControlTypeService.getConfigValue())) {
+            estimateAppropriationService.releaseBudgetOnRejectForEstimate(abstractEstimate,
+                    abstractEstimate.getEstimateValue().doubleValue(), null);
+        }
+        return abstractEstimateRepository.save(abstractEstimate);
     }
 
     public List<AbstractEstimate> searchEstimatesToCancel(

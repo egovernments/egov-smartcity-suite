@@ -48,6 +48,7 @@ import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.abstractestimate.entity.SearchRequestCancelEstimate;
 import org.egov.works.abstractestimate.service.EstimateService;
 import org.egov.works.config.properties.WorksApplicationProperties;
+import org.egov.works.lineestimate.service.EstimateAppropriationService;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.egov.works.workorder.service.WorkOrderEstimateService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,9 +77,11 @@ public class CancelAbstractEstimateController {
     @Autowired
     private WorksApplicationProperties worksApplicationProperties;
 
+    @Autowired
+    private EstimateAppropriationService estimateAppropriationService;
+
     @RequestMapping(value = "/cancel/search", method = RequestMethod.GET)
-    public String showSearchEstimateForm(
-            @ModelAttribute final SearchRequestCancelEstimate searchRequestCancelEstimate,
+    public String showSearchEstimateForm(@ModelAttribute final SearchRequestCancelEstimate searchRequestCancelEstimate,
             final Model model) throws ApplicationException {
         model.addAttribute("searchRequestCancelEstimate", searchRequestCancelEstimate);
         model.addAttribute("lineEstimateRequired", worksApplicationProperties.lineEstimateRequired());
@@ -86,13 +89,12 @@ public class CancelAbstractEstimateController {
     }
 
     @RequestMapping(value = "/cancel", method = RequestMethod.POST)
-    public String cancelEstimate(final HttpServletRequest request,
-            final Model model) throws ApplicationException {
+    public String cancelEstimate(final HttpServletRequest request, final Model model) throws ApplicationException {
         final Long estimateId = Long.parseLong(request.getParameter("id"));
         final String cancellationReason = request.getParameter("cancellationReason");
         final String cancellationRemarks = request.getParameter("cancellationRemarks");
         AbstractEstimate abstractEstimate = estimateService.getAbstractEstimateById(estimateId);
-        String message = "";
+        String message;
 
         final List<WorkOrderEstimate> workOrderEstimates = workOrderEstimateService
                 .getWorkOrderEstimatesToCancelEstimates(abstractEstimate.getEstimateNumber());
@@ -101,11 +103,19 @@ public class CancelAbstractEstimateController {
                     new String[] { workOrderEstimates.get(0).getWorkOrder().getWorkOrderNumber() }, null));
             return "abstractEstimate-success";
         }
-
-        message = messageSource.getMessage("msg.estimate.cancelled", new String[] { abstractEstimate.getEstimateNumber() }, null);
         abstractEstimate.setCancellationReason(cancellationReason);
         abstractEstimate.setCancellationRemarks(cancellationRemarks);
         abstractEstimate = estimateService.cancel(abstractEstimate);
+        if (!worksApplicationProperties.lineEstimateRequired())
+            message = messageSource.getMessage("msg.abstractestimate.cancelled",
+                    new String[] { abstractEstimate.getEstimateNumber(),
+                            estimateAppropriationService.findLatestByAbstractEstimate(abstractEstimate.getId())
+                                    .getBudgetUsage().getAppropriationnumber() },
+                    null);
+        else
+            message = messageSource.getMessage("msg.estimate.cancelled",
+                    new String[] { abstractEstimate.getEstimateNumber(), }, null);
+
         model.addAttribute("abstractEstimate", abstractEstimate);
         model.addAttribute("message", message);
         return "abstractEstimate-success";

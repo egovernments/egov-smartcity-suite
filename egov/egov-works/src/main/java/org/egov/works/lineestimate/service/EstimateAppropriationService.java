@@ -326,7 +326,10 @@ public class EstimateAppropriationService {
         final EstimateAppropriation estimateAppropriation = estimateAppropriationRepository
                 .findLatestByAbstractEstimate(abstractEstimate);
         final List<Long> budgetheadid = new ArrayList<Long>();
-        budgetheadid.add(abstractEstimate.getParent().getFinancialDetails().get(0).getBudgetGroup().getId());
+        if(abstractEstimate.getParent() != null)
+            budgetheadid.add(abstractEstimate.getParent().getFinancialDetails().get(0).getBudgetGroup().getId());
+        else
+            budgetheadid.add(abstractEstimate.getFinancialDetails().get(0).getBudgetGroup().getId());
         BudgetUsage budgetUsage = null;
         final boolean flag = true;
 

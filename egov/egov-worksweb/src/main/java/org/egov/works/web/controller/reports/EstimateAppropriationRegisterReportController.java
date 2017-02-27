@@ -44,6 +44,7 @@ import org.egov.commons.dao.FunctionHibernateDAO;
 import org.egov.commons.dao.FundHibernateDAO;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
+import org.egov.works.config.properties.WorksApplicationProperties;
 import org.egov.works.reports.entity.EstimateAppropriationRegisterSearchRequest;
 import org.egov.works.utils.WorksUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,6 +73,9 @@ public class EstimateAppropriationRegisterReportController {
     @Autowired
     private WorksUtils worksUtils;
     
+    @Autowired
+    private WorksApplicationProperties worksApplicationProperties;
+    
     @RequestMapping(value = "/searchform", method = RequestMethod.GET)
     public String showEstimateAppropriationRegister(
             @ModelAttribute final EstimateAppropriationRegisterSearchRequest estimateAppropriationRegisterSearchRequest,
@@ -87,7 +91,7 @@ public class EstimateAppropriationRegisterReportController {
         model.addAttribute("functions", functionHibernateDAO.getAllActiveFunctionsOrderByCode());
         model.addAttribute("financialYear", financialYearHibernateDAO.getAllActiveFinancialYearList());
         model.addAttribute("departments", departmentService.getAllDepartments());
-
+        model.addAttribute("lineEstimateRequired", worksApplicationProperties.lineEstimateRequired());
     }
 
 }

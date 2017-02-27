@@ -211,23 +211,21 @@ public class LetterOfAcceptanceService {
             final String approvalComent, final String additionalRule, final String workFlowAction,
             final AbstractEstimate abstractEstimate) throws IOException {
 
-        if (StringUtils.isNotBlank(workOrder.getPercentageSign()) && workOrder.getPercentageSign().equals("-"))
+        if (StringUtils.isNotBlank(workOrder.getPercentageSign()) && "-".equals(workOrder.getPercentageSign()))
             workOrder.setTenderFinalizedPercentage(workOrder.getTenderFinalizedPercentage() * -1);
         workOrder.setTotalIncludingRE(workOrder.getWorkOrderAmount());
-        workOrder = createWorkOrderActivities(workOrder);
+        WorkOrder workOrderObj = createWorkOrderActivities(workOrder);
 
-        workOrder = createAssetsForWorkOrder(workOrder);
-        WorkOrder savedworkOrder = null;
-        if (abstractEstimate != null && abstractEstimate.getLineEstimateDetails() != null
-                && abstractEstimate.getLineEstimateDetails().getLineEstimate().isSpillOverFlag()
-                && abstractEstimate.getLineEstimateDetails().getLineEstimate().isWorkOrderCreated())
+        workOrderObj = createAssetsForWorkOrder(workOrderObj);
+        WorkOrder savedworkOrder;
+        if (abstractEstimate != null && abstractEstimate.isSpillOverFlag() && abstractEstimate.isWorkOrderCreated())
             workOrder.setEgwStatus(
                     egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.WORKORDER, WorksConstants.APPROVED));
         else
-            createWorkOrderWorkflowTransition(workOrder, approvalPosition, approvalComent, additionalRule,
+            createWorkOrderWorkflowTransition(workOrderObj, approvalPosition, approvalComent, additionalRule,
                     workFlowAction);
 
-        savedworkOrder = letterOfAcceptanceRepository.save(workOrder);
+        savedworkOrder = letterOfAcceptanceRepository.save(workOrderObj);
 
         final List<DocumentDetails> documentDetails = worksUtils.getDocumentDetails(files, savedworkOrder,
                 WorksConstants.WORKORDER);

@@ -39,7 +39,7 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2016-10-19T20:49:04 -->
+<!-- 2017-02-27T12:50:00 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="BudgetFolio" pageWidth="875" pageHeight="595" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="571536ea-4ec2-408b-b49f-9fddb4041eec">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<import value="org.egov.infra.reporting.util.*"/>
@@ -63,6 +63,7 @@
 	<parameter name="appValueLabel" class="java.lang.String"/>
 	<parameter name="reportRunDate" class="java.lang.String"/>
 	<parameter name="cumulativeExpensesIncurred" class="java.lang.Double"/>
+	<parameter name="lineEstimateRequired" class="java.lang.Boolean"/>
 	<field name="srlNo" class="java.lang.Integer"/>
 	<field name="workValue" class="java.lang.Double"/>
 	<field name="estimateNo" class="java.lang.String"/>
@@ -158,19 +159,7 @@
 				<text><![CDATA[Sl No.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="562" y="14" width="55" height="35" uuid="a4742652-83a9-4d1b-92b0-431b5e8c8e19">
-					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-				</reportElement>
-				<box leftPadding="2" rightPadding="2">
-					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<text><![CDATA[Date of proposal]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="617" y="14" width="62" height="35" uuid="19ad7de9-2a44-4206-b746-6c83d784fc12">
+				<reportElement x="620" y="14" width="59" height="35" uuid="19ad7de9-2a44-4206-b746-6c83d784fc12">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
 				<box leftPadding="2" rightPadding="2">
@@ -215,7 +204,7 @@
 Date]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="203" y="14" width="73" height="35" uuid="587ce1cc-e482-44fe-ab8c-d9c34b2daedc">
+				<reportElement x="203" y="14" width="67" height="35" uuid="587ce1cc-e482-44fe-ab8c-d9c34b2daedc">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
 				<box leftPadding="2" rightPadding="2">
@@ -227,7 +216,7 @@ Date]]></text>
 				<text><![CDATA[Appropriation Value]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="452" y="14" width="110" height="35" uuid="6c5c896b-dc6b-4698-9724-3716f4c1a6f3">
+				<reportElement x="440" y="14" width="95" height="35" uuid="6c5c896b-dc6b-4698-9724-3716f4c1a6f3">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
 				<box leftPadding="2" rightPadding="2">
@@ -239,7 +228,7 @@ Date]]></text>
 				<text><![CDATA[Name of the Work]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="370" y="14" width="82" height="35" uuid="1c8d0ba7-79b3-4c05-9313-843990dd33e8"/>
+				<reportElement x="360" y="14" width="80" height="35" uuid="1c8d0ba7-79b3-4c05-9313-843990dd33e8"/>
 				<box leftPadding="2" rightPadding="2">
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -249,7 +238,7 @@ Date]]></text>
 				<text><![CDATA[WIN Code]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="276" y="14" width="94" height="35" uuid="480ba481-bf50-4871-bd1a-6d67163089c9"/>
+				<reportElement x="270" y="14" width="90" height="35" uuid="480ba481-bf50-4871-bd1a-6d67163089c9"/>
 				<box leftPadding="2" rightPadding="2">
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -268,6 +257,18 @@ Date]]></text>
 				</box>
 				<text><![CDATA[Balance Available]]></text>
 			</staticText>
+			<textField>
+				<reportElement x="535" y="14" width="85" height="35" uuid="84fe8400-ba52-4d6c-96eb-14d266c9b3a6">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<box leftPadding="2" rightPadding="2">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textFieldExpression><![CDATA[$P{lineEstimateRequired}? "Date of Proposal" : "Abstract/Detailed Estimate Date"]]></textFieldExpression>
+			</textField>
 		</band>
 	</columnHeader>
 	<detail>
@@ -285,7 +286,7 @@ Date]]></text>
 				</box>
 				<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToTallestObject" x="30" y="0" width="100" height="30" uuid="e4f407ed-a953-491c-aa60-e31e761750d7"/>
 				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -295,7 +296,7 @@ Date]]></text>
 				</box>
 				<textFieldExpression><![CDATA[$F{budgetApprNo}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToTallestObject" x="130" y="0" width="73" height="30" uuid="108a183f-db05-4c8c-9a6c-42649df27e8e">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
@@ -308,8 +309,8 @@ Date]]></text>
 				<textElement textAlignment="Center"/>
 				<textFieldExpression><![CDATA[$F{appDate}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToTallestObject" x="276" y="0" width="94" height="30" uuid="2063aa25-5301-476a-bcc5-32496da36003"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="270" y="0" width="90" height="30" uuid="2063aa25-5301-476a-bcc5-32496da36003"/>
 				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -318,8 +319,8 @@ Date]]></text>
 				</box>
 				<textFieldExpression><![CDATA[$F{estimateNo}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="#0.00#">
-				<reportElement stretchType="RelativeToTallestObject" x="203" y="0" width="73" height="30" uuid="8f994f92-2baf-4329-843f-0ecf97ddf649">
+			<textField isStretchWithOverflow="true" pattern="#0.00#" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="203" y="0" width="67" height="30" uuid="8f994f92-2baf-4329-843f-0ecf97ddf649">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
 				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
@@ -331,8 +332,8 @@ Date]]></text>
 				<textElement textAlignment="Right"/>
 				<textFieldExpression><![CDATA[$F{appropriatedValue}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToTallestObject" x="370" y="0" width="82" height="30" uuid="40198ab4-496a-4107-b1bd-b83e8bf04e0a"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="360" y="0" width="80" height="30" uuid="40198ab4-496a-4107-b1bd-b83e8bf04e0a"/>
 				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -341,8 +342,8 @@ Date]]></text>
 				</box>
 				<textFieldExpression><![CDATA[$F{workIdentificationNumber} == null ? "" : $F{workIdentificationNumber}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToTallestObject" x="452" y="0" width="110" height="30" uuid="537d0896-42eb-4eff-8968-29a4b4a3fda6">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="440" y="0" width="95" height="30" uuid="537d0896-42eb-4eff-8968-29a4b4a3fda6">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
 				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
@@ -353,8 +354,8 @@ Date]]></text>
 				</box>
 				<textFieldExpression><![CDATA[$F{nameOfWork}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToTallestObject" x="562" y="0" width="55" height="30" uuid="33b44c21-be58-4ee0-93ba-16d48fe6db43">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="535" y="0" width="85" height="30" uuid="33b44c21-be58-4ee0-93ba-16d48fe6db43">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
 				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
@@ -366,8 +367,8 @@ Date]]></text>
 				<textElement textAlignment="Center"/>
 				<textFieldExpression><![CDATA[$F{estimateDate}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="###0.00#;(###0.00#-)">
-				<reportElement stretchType="RelativeToTallestObject" x="617" y="0" width="62" height="30" uuid="9a9ee9a0-0b3f-48ef-9b9d-1ff6cda8bf80">
+			<textField isStretchWithOverflow="true" pattern="###0.00#;(###0.00#-)" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="620" y="0" width="59" height="30" uuid="9a9ee9a0-0b3f-48ef-9b9d-1ff6cda8bf80">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
 				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
@@ -379,7 +380,7 @@ Date]]></text>
 				<textElement textAlignment="Right"/>
 				<textFieldExpression><![CDATA[$F{workValue}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="#0.00#">
+			<textField isStretchWithOverflow="true" pattern="#0.00#" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToTallestObject" x="679" y="0" width="72" height="30" uuid="50343863-cc2f-4139-a043-ea9820c2cf23"/>
 				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -390,7 +391,7 @@ Date]]></text>
 				<textElement textAlignment="Right"/>
 				<textFieldExpression><![CDATA[$F{cumulativeTotal}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToTallestObject" x="751" y="0" width="72" height="30" uuid="f43ceb6f-bf77-4caa-8f02-af851ba8c81a"/>
 				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -424,7 +425,7 @@ Date]]></text>
 	<summary>
 		<band height="30">
 			<textField>
-				<reportElement stretchType="RelativeToTallestObject" x="617" y="0" width="62" height="30" uuid="4cff3e33-4748-48a0-8b88-0bbc28878a69">
+				<reportElement stretchType="RelativeToTallestObject" x="620" y="0" width="59" height="30" uuid="4cff3e33-4748-48a0-8b88-0bbc28878a69">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
 				<box leftPadding="2" rightPadding="2">
@@ -435,7 +436,7 @@ Date]]></text>
 				</box>
 				<textFieldExpression><![CDATA["Latest Status"]]></textFieldExpression>
 			</textField>
-			<textField pattern="###0.00#">
+			<textField pattern="###0.00#" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToTallestObject" x="679" y="0" width="72" height="30" uuid="c2abde65-d3eb-4342-bbe7-ae7fb451a35a"/>
 				<box leftPadding="2" rightPadding="2">
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -448,7 +449,7 @@ Date]]></text>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{cumulativeExpensesIncurred}]]></textFieldExpression>
 			</textField>
-			<textField pattern="###0.00#;(###0.00#-)">
+			<textField pattern="###0.00#;(###0.00#-)" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToTallestObject" x="751" y="0" width="72" height="30" uuid="ef9353ad-ace4-4c45-840e-ac98fb4d80e7"/>
 				<box leftPadding="2" rightPadding="2">
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
