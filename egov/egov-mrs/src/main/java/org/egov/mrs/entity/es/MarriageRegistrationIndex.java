@@ -254,6 +254,21 @@ public class MarriageRegistrationIndex {
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String witness3Address;
+    
+    @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
+    private String witness4Name;
+
+    @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
+    private String witness4Occupation;
+
+    @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
+    private String witness4RelationshipWithApplicant;
+
+    @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
+    private String witness4AadhaarNo;
+
+    @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
+    private String witness4Address;
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String priestName;
@@ -300,6 +315,12 @@ public class MarriageRegistrationIndex {
 
     @Field(type = FieldType.Boolean)
     private boolean wifeHandicapped;
+    
+    @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
+    private String serialNo;
+    
+    @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
+    private String pageNo;
 
     public MarriageRegistrationIndex() {
     }
@@ -929,5 +950,61 @@ public class MarriageRegistrationIndex {
 
     public void setWifeHandicapped(final boolean wifeHandicapped) {
         this.wifeHandicapped = wifeHandicapped;
+    }
+
+    public String getWitness4Name() {
+        return witness4Name;
+    }
+
+    public void setWitness4Name(String witness4Name) {
+        this.witness4Name = witness4Name;
+    }
+
+    public String getWitness4Occupation() {
+        return witness4Occupation;
+    }
+
+    public void setWitness4Occupation(String witness4Occupation) {
+        this.witness4Occupation = witness4Occupation;
+    }
+
+    public String getWitness4RelationshipWithApplicant() {
+        return witness4RelationshipWithApplicant;
+    }
+
+    public void setWitness4RelationshipWithApplicant(String witness4RelationshipWithApplicant) {
+        this.witness4RelationshipWithApplicant = witness4RelationshipWithApplicant;
+    }
+
+    public String getWitness4AadhaarNo() {
+        return witness4AadhaarNo;
+    }
+
+    public void setWitness4AadhaarNo(String witness4AadhaarNo) {
+        this.witness4AadhaarNo = witness4AadhaarNo;
+    }
+
+    public String getWitness4Address() {
+        return witness4Address;
+    }
+
+    public void setWitness4Address(String witness4Address) {
+        this.witness4Address = witness4Address;
+    }
+
+    public String getSerialNo() {
+        return serialNo;
+    }
+
+    public void setSerialNo(String serialNo) {
+        this.serialNo = serialNo;
+    }
+
+    public String getPageNo() {
+        return pageNo;
+    }
+
+    public void setPageNo(String pageNo) {
+        this.pageNo = pageNo;
     }
 }

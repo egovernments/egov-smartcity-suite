@@ -175,6 +175,8 @@ public class MarriageRegistrationIndexService {
                 registrationSearch.setWifeEmail(registration.getWife().getContactInfo().getEmail() != null
                         ? registration.getWife().getContactInfo().getEmail() : "");
                 registrationSearch.setWifeHandicapped(registration.getWife().isHandicapped());
+                registrationSearch.setSerialNo(registration.getSerialNo()!=null ? registration.getSerialNo() : "");
+                registrationSearch.setPageNo(registration.getPageNo()!=null ? registration.getPageNo() : "");
             }
 
             if (!registration.getWitnesses().isEmpty()) {
@@ -218,6 +220,20 @@ public class MarriageRegistrationIndexService {
                     registrationSearch
                             .setWitness3RelationshipWithApplicant(witness3.getRelationshipWithApplicant() != null
                                     ? witness3.getRelationshipWithApplicant() : "");
+                }
+
+                final MarriageWitness witness4 = registration.getWitnesses().get(3);
+                if (witness4 != null) {
+                    registrationSearch.setWitness4Name(witness4.getFullName());
+                    registrationSearch
+                            .setWitness4AadhaarNo(witness4.getAadhaarNo() != null ? witness4.getAadhaarNo() : "");
+                    registrationSearch
+                            .setWitness4Occupation(witness4.getOccupation() != null ? witness4.getOccupation() : "");
+                    registrationSearch.setWitness4Address(witness4.getContactInfo().getResidenceAddress() != null
+                            ? witness4.getContactInfo().getResidenceAddress() : "");
+                    registrationSearch
+                            .setWitness4RelationshipWithApplicant(witness4.getRelationshipWithApplicant() != null
+                                    ? witness4.getRelationshipWithApplicant() : "");
                 }
             }
 
