@@ -182,6 +182,10 @@
 					bootbox.alert("Aadhar number is not valid");
 					}
 			   }
+			})
+			.fail(function(value){
+				jQuery("input[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.aadhaarNumber']").val("");
+				bootbox.alert("Invalid Aadhar number or no details available with this Aadhar number!");
 			});
        }
 

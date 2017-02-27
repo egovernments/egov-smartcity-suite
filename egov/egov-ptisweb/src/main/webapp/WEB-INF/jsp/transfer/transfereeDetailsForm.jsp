@@ -210,6 +210,10 @@
 						bootbox.alert("Aadhar number is not valid");
 						}
 				   }
+				})
+				.fail(function(value){
+					jQuery("input[name='transfereeInfosProxy["+ rowidx +"].transferee.aadhaarNumber']").val("");
+					bootbox.alert("Invalid Aadhar number or no details available with this Aadhar number!");
 				});
 	       }
 
