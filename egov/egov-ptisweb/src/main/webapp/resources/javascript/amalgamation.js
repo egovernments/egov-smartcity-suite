@@ -71,27 +71,9 @@ function setupDefaultLogics(mode)
 		
 		rowIdx = 0;
 		jQuery('#ownerInfoTbl tbody tr').each(function(){
-				if(jQuery('#ownerInfoTbl tbody tr:eq('+rowIdx+')').find('.txtaadhar').val()!=''){
-					jQuery('#ownerInfoTbl tbody tr:eq('+rowIdx+')').find('.txtaadhar').attr('readonly', 'readonly');
-				}
-				if(jQuery('#ownerInfoTbl tbody tr:eq('+rowIdx+')').find('.mobileno').val()!=''){
-					jQuery('#ownerInfoTbl tbody tr:eq('+rowIdx+')').find('.mobileno').attr('readonly', 'readonly');
-				}
-				if(jQuery('#ownerInfoTbl tbody tr:eq('+rowIdx+')').find('.ownername').val()!=''){
-					jQuery('#ownerInfoTbl tbody tr:eq('+rowIdx+')').find('.ownername').attr('readonly', 'readonly');
-				}
-				if(jQuery('#ownerInfoTbl tbody tr:eq('+rowIdx+')').find('.email').val()!=''){
-					jQuery('#ownerInfoTbl tbody tr:eq('+rowIdx+')').find('.email').attr('readonly', 'readonly');
-				}
-				if(jQuery('#ownerInfoTbl tbody tr:eq('+rowIdx+')').find('.guardianname').val()!=''){
-					jQuery('#ownerInfoTbl tbody tr:eq('+rowIdx+')').find('.guardianname').attr('readonly', 'readonly');
-				}
-				if(jQuery('#ownerInfoTbl tbody tr:eq('+rowIdx+')').find('#gender').val()!=''){
-					jQuery('#ownerInfoTbl tbody tr:eq('+rowIdx+')').find('#gender').attr('disabled', 'disabled');
-				}
-				if(jQuery('#ownerInfoTbl tbody tr:eq('+rowIdx+')').find('#guardianRelation').val()!=''){
-					jQuery('#ownerInfoTbl tbody tr:eq('+rowIdx+')').find('#guardianRelation').attr('disabled', 'disabled');
-				}
+			
+				jQuery('#ownerInfoTbl tbody tr:eq('+rowIdx+')').find('input').attr('readonly', 'readonly');
+				jQuery('#ownerInfoTbl tbody tr:eq('+rowIdx+')').find('select').attr('disabled', 'disabled');
 			rowIdx++;
 		});
 	}
