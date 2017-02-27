@@ -38,8 +38,19 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.infra.persistence.entity.enums;
+package org.egov.infra.admin.master.entity;
 
-public enum UserType {
-    CITIZEN, EMPLOYEE, SYSTEM, BUSINESS;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
+import org.egov.infra.persistence.entity.enums.UserType;
+
+@Entity
+@Table(name = "eg_businessuser")
+public class BusinessUser extends User {
+    private static final long serialVersionUID = 1L;
+
+    public BusinessUser() {
+        setType(UserType.BUSINESS);
+    }
 }
