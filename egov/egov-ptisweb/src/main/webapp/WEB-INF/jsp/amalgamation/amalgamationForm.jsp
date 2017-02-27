@@ -106,7 +106,7 @@
 	</div>
 	<div class="form-group">
 		<label class="col-sm-3 control-label text-right"> <s:text
-				name="extent.site" /> :
+				name="extent.site" /> <span class="mandatory" /> :
 		</label>
 		<div class="col-sm-3 add-margin">
 			<s:textfield name="areaOfPlot" id="areaOfPlot" size="12"
