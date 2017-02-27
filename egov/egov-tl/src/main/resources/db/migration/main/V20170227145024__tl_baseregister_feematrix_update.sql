@@ -1,21 +1,21 @@
-DROP VIEW IF EXISTS egtl_mv_baseregister_view;
+DROP VIEW IF EXISTS egtl_mv_baseregister_view CASCADE;
 
-drop FUNCTION IF EXISTS getfeematrixrate(
+DROP FUNCTION IF EXISTS getfeematrixrate(
 apptype bigint,
 cat bigint,
 subcat bigint,
 uom bigint,
 appdate timestamp without time zone,
-tradewt bigint);
+tradewt bigint) CASCADE;
 
-drop function IF EXISTS getfeematrixrate(
+DROP FUNCTION IF EXISTS getfeematrixrate(
     apptype bigint,
     cat bigint,
     subcat bigint,
     uom bigint,
     appdate timestamp without time zone,
     tradewt bigint,
-    installmentdate timestamp without time zone);
+    installmentdate timestamp without time zone) CASCADE;
 
 CREATE OR REPLACE FUNCTION getfeematrixrate(
   apptype BIGINT,
