@@ -334,12 +334,13 @@ public class MarriageCertificateService {
         if (reIssue.getRegistration().getMarriagePhotoFileStore() != null)
             marriagePhoto = FileUtils.readFileToByteArray(fileStoreService
                     .fetch(reIssue.getRegistration().getMarriagePhotoFileStore(), MarriageConstants.FILESTORE_MODULECODE));
-        if (template.equalsIgnoreCase(CERTIFICATE_TEMPLATE_REISSUE))
+        if (template.equalsIgnoreCase(CERTIFICATE_TEMPLATE_REISSUE)){
+            reportParams.put("applicationNumber", reIssue.getApplicationNo());
             reportInput = new ReportRequest(template,
                     new RegistrationCertificate(reIssue.getRegistration(), securityUtils.getCurrentUser(), husbandPhoto,
                             wifePhoto, marriagePhoto),
                     reportParams);
-        else {
+        } else {
             reportParams.put("placeOfMarriage", reIssue.getRegistration().getPlaceOfMarriage());
             reportParams.put("zoneName",
                     reIssue.getRegistration().getZone() != null ? reIssue.getRegistration().getZone().getName() : "");
