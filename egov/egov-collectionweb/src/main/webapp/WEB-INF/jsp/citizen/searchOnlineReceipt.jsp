@@ -283,7 +283,7 @@ function transitionStates(){
 		<input name="selectedReceipts" type="hidden" id="selectedReceipts" value="${currentRow.receiptHeader.id}"/>
 		<input type="hidden" name="paymentstatus" id="paymentstatus" value="${currentRow.status.description}" />
 	</display:column>
-	<display:column headerClass="bluebgheadtd"  class="blueborderfortd" title="SNo"> <c:out value="${currentRow_rowNum}"/> </display:column> 
+	<display:column headerClass="bluebgheadtd"  class="blueborderfortd" title="SI.No" style="width:3%;text-align: center"> <c:out value="${currentRow_rowNum}"/> </display:column> 
 	<display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Bill Number" property="receiptHeader.referencenumber"  format="{0,date,dd/MM/yyyy}" style="width:6%;text-align: center" />
 	<display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Reference ID" property="receiptHeader.id" style="width:8%;text-align:center"  />
 	

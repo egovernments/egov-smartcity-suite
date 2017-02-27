@@ -65,7 +65,7 @@
 		</tr>
 		<s:iterator value="%{voucherHeaderValues}" status="s"> 
 		<tr>
-			<td width="5%"  class="blueborderfortd" align="center"> <s:property value="#s.index+1" />  </td>
+			<td width="5%"  class="blueborderfortd"><div align="center"><s:property value="#s.index+1" /></div>  </td>
 			<td class="blueborderfortd"><div align="center"><s:property value="%{receiptnumber}" /></div></td>
 			<td class="blueborderfortd"><div align="center"><s:date name="%{receiptdate}" format="dd/MM/yyyy" /></div></td>
 			<td class="blueborderfortd"><div align="center"><s:property value="%{service.name}" /></div></td>
