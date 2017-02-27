@@ -100,7 +100,7 @@ public class SearchForm {
         licenseActions.add("View Trade");
         if (!userRoles.contains(CSCOPERATOR)) {
             licenseActions.add("Generate Demand Notice");
-            if (license.isLegacy() && (!license.hasState() || "License Created".equals(license.getState().getValue())))
+            if (license.isLegacy() && !license.hasState())
                 licenseActions.add("Modify Legacy License");
             if (license.getStatus() != null) {
                 addRoleSpecificActions(license, userRoles, licenseActions);
