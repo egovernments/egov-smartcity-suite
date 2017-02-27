@@ -117,7 +117,6 @@
 			<div class="row display-hide report-section">
 			<div class="col-md-6 col-xs-6 table-header"><spring:message code="lbl.complaintTypeWiseReport.resultHeader" /></div>
 				<div class="col-md-12 form-group">
-					test
 					<table class="table table-bordered datatable dt-responsive table-hover" id="compTypeReport-table">
 						<thead>
 						  <tr>

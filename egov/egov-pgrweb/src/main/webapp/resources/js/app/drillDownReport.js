@@ -41,8 +41,9 @@
 var reportdatatable;
 jQuery(document).ready(function($) {
 
-    tableContainer1 = $("#ageingReport-table");
+    //tableContainer1 = $("#ageingReport-table");
     drillDowntableContainer = $("#drilldownReport-table");
+    compwisedrilldowntbl = $("#drilldownReport-compwise");
     $('#report-backbutton').hide();
 
     $('#backButton').click(function(e) {
@@ -114,6 +115,8 @@ function callajaxdatatableForDrilDownReport() {
         endDate = "";
 
     $('.report-section').removeClass('display-hide');
+    $("#drilldownReport-table_wrapper").show();
+    $("#drilldownReport-compwise_wrapper").hide();
     $('#report-footer').show();
     $('#report-backbutton').hide();
     reportdatatable = drillDowntableContainer
@@ -275,6 +278,8 @@ function callAjaxByDepartment() {
         endDate = "";
 
     $('.report-section').removeClass('display-hide');
+    $("#drilldownReport-table_wrapper").show();
+    $("#drilldownReport-compwise_wrapper").hide();
     $('#report-footer').show();
     $('#report-backbutton').show();
 
@@ -395,6 +400,8 @@ function callAjaxByLocality(){
         endDate = "";
 
     $('.report-section').removeClass('display-hide');
+    $("#drilldownReport-table_wrapper").show();
+    $("#drilldownReport-compwise_wrapper").hide();
     $('#report-footer').show();
     $('#report-backbutton').show();
 
@@ -510,6 +517,8 @@ function callAjaxByComplaintType() {
         endDate = "";
 
     $('.report-section').removeClass('display-hide');
+    $("#drilldownReport-table_wrapper").show();
+    $("#drilldownReport-compwise_wrapper").hide();
     $('#report-footer').show();
     $('#report-backbutton').show();
     reportdatatable = drillDowntableContainer
@@ -625,6 +634,8 @@ function callAjaxByUserNameType() {
         endDate = "";
 
     $('.report-section').removeClass('display-hide');
+    $("#drilldownReport-table_wrapper").show();
+    $("#drilldownReport-compwise_wrapper").hide();
     $('#report-footer').show();
 
     reportdatatable = drillDowntableContainer
@@ -740,9 +751,11 @@ function callAjaxByComplaintDetail() {
         endDate = "";
 
     $('.report-section').removeClass('display-hide');
+    $("#drilldownReport-table_wrapper").hide();
+    $("#drilldownReport-compwise_wrapper").show();
     $('#report-footer').hide();
 
-    reportdatatable = drillDowntableContainer
+    reportdatatable = compwisedrilldowntbl
         .dataTable({
             ajax : {
                 url : "drillDown/resultList-update",

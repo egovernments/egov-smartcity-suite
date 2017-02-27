@@ -146,6 +146,7 @@
 						</tr>
 						</tfoot>
 					</table>
+					<table class="table table-bordered datatable dt-responsive table-hover" id="drilldownReport-compwise" />
 				</div>
 			</div>
 			<div id="report-backbutton" class="col-xs-12 text-center">
