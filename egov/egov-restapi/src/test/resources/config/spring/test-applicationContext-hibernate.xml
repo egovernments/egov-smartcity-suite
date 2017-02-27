@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  eGov suite of products aim to improve the internal efficiency,transparency, 
+     accountability and the service delivery of the government  organizations.
+  
+      Copyright (C) <2015>  eGovernments Foundation
+  
+      The updated version of eGov suite of products as by eGovernments Foundation 
+      is available at http://www.egovernments.org
+  
+      This program is free software: you can redistribute it and/or modify
+      it under the terms of the GNU General Public License as published by
+      the Free Software Foundation, either version 3 of the License, or
+      any later version.
+  
+      This program is distributed in the hope that it will be useful,
+      but WITHOUT ANY WARRANTY; without even the implied warranty of
+      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+      GNU General Public License for more details.
+  
+      You should have received a copy of the GNU General Public License
+      along with this program. If not, see http://www.gnu.org/licenses/ or 
+      http://www.gnu.org/licenses/gpl.html .
+  
+      In addition to the terms of the GPL license to be adhered to in using this
+      program, the following additional terms are to be complied with:
+  
+  	1) All versions of this program, verbatim or modified must carry this 
+  	   Legal Notice.
+  
+  	2) Any misrepresentation of the origin of the material is prohibited. It 
+  	   is required that all modified versions of this material be marked in 
+  	   reasonable ways as different from the original version.
+  
+  	3) This license does not grant any rights to any user of the program 
+  	   with regards to rights under trademark law for use of the trade names 
+  	   or trademarks of eGovernments Foundation.
+  
+    In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd"
+	profile="test">
+
+	<bean id="egovErpProperties"
+          class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+        <property name="locations">
+            <list>
+                <value>classpath*:config/egov-erp-${user.name}.properties</value>
+            </list>
+        </property>
+
+        <property name="ignoreResourceNotFound" value="true"/>
+		<property name="localOverride" value="true"/>
+    </bean> 
+
+    <bean id="globalPropertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="properties" ref="egovErpProperties"/>
+        <property name="ignoreUnresolvablePlaceholders" value="true"/>
+    </bean>
+    
+	<tx:annotation-driven proxy-target-class="true"
+		transaction-manager="transactionManager" />
+
+	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+		<property name="entityManagerFactory" ref="entityManagerFactory" />
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<bean id="entityManagerFactory"
+		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="persistenceUnitName" value="egov-test-jpa-unit" />
+		<property name="persistenceXmlLocation" value="classpath:test-persistence.xml"></property>
+		<property name="packagesToScan" value="org.egov" />
+		<property name="jpaVendorAdapter">
+			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+				<property name="generateDdl" value="false" />
+				<property name="database" value="POSTGRESQL" />
+			</bean>
+		</property>
+		<property name="persistenceUnitPostProcessors">
+			<list>
+				<bean
+					class="org.springframework.data.jpa.support.ClasspathScanningPersistenceUnitPostProcessor">
+					<constructor-arg name="basePackage" value="org.egov" />
+					<property name="mappingFileNamePattern" value="**/*hbm.xml" />
+				</bean>
+			</list>
+		</property>
+
+	</bean>
+
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName" value="${db.driver}" />
+		<property name="url" value="${db.url}" />
+		<property name="initialSize" value="1" />
+		<property name="username" value="${db.username}" />
+		<property name="password" value="${db.password}" />
+	</bean>
+
+	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+		<constructor-arg ref="dataSource" />
+	</bean>
+
+	<bean id="entityValidator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean"></bean>
+	
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="maxUploadSize" value="100000"/>
+		<property name="maxInMemorySize" value="10000"/>
+    </bean>
+    
+    <bean id="messageSource"
+          class="org.springframework.context.support.ResourceBundleMessageSource">
+        <property name="basenames">
+            <list>
+                <value>messages/labels</value>
+                <value>messages/errors</value>
+                <value>messages/message</value>
+            </list>
+        </property>
+        <!-- Disabling caching since on development-->
+        <property name="cacheSeconds" value="0"/>
+    </bean>
+</beans>

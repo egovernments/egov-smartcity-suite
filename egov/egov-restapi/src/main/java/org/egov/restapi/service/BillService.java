@@ -393,9 +393,9 @@ public class BillService {
                             + billPayeeDetails.getGlcode());
                     errors.add(restErrors);
                 }
-                if (billPayeeDetails.getDebitAmount() == null && billPayeeDetails.getCreditAmount() == null
-                        || billPayeeDetails.getDebitAmount().doubleValue() > 0
-                                && billPayeeDetails.getCreditAmount().doubleValue() > 0) {
+                if (billPayeeDetails.getDebitAmount() != null && billPayeeDetails.getCreditAmount() != null
+                        && billPayeeDetails.getDebitAmount().doubleValue() > 0
+                        && billPayeeDetails.getCreditAmount().doubleValue() > 0) {
                     restErrors = new RestErrors();
                     restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_CREDIT_DEBIT_GREATER_ZERO);
                     restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_CREDIT_DEBIT_GREATER_ZERO);
