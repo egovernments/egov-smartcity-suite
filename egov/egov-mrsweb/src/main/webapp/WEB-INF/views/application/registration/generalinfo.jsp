@@ -216,7 +216,7 @@
 
 			<c:choose>
 				<c:when
-					test="${currentState != 'NEW' && currentState != 'DATAENTRY'}">
+					test="${currentState != 'DATAENTRY'}">
 					<form:hidden path="marriagePhotoFileStore" />
 					<form:hidden class="encodedPhoto" path="encodedMarriagePhoto" />
 					<img id="marriage-photo" class="add-margin marriage-img"

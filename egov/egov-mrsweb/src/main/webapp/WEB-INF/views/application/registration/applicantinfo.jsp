@@ -184,7 +184,7 @@
 		<div class="col-sm-8 setimage">
 			<c:choose>
 				<c:when
-					test="${currentState != 'NEW' && currentState != 'DATAENTRY'}">
+					test="${currentState != 'DATAENTRY'}">
 					<form:hidden path="${applicant}.photoFileStore" />
 					<form:hidden class="encodedPhoto" path="${applicant}.encodedPhoto" />
 					<img class="add-border marriage-img" 

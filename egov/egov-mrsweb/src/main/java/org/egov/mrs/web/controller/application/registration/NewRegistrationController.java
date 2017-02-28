@@ -162,13 +162,13 @@ public class NewRegistrationController extends MarriageRegistrationController {
             obtainWorkflowParameters(marriageRegistration, workflowContainer, request);
         }
 
-        final Integer loggedInUser = ApplicationThreadLocals.getUserId().intValue();
+       /* final Integer loggedInUser = ApplicationThreadLocals.getUserId().intValue();
         currentuser = assignmentService.getPrimaryAssignmentForUser(loggedInUser.longValue());
         if (null == currentuser) {
             model.addAttribute(MESSAGE, "msg.superuser");
             return "marriagecommon-error";
 
-        }
+        }*/
 
         final String appNo = marriageRegistrationService.createRegistration(marriageRegistration, workflowContainer);
         message = messageSource.getMessage("msg.success.forward",
