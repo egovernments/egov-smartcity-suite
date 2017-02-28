@@ -145,7 +145,12 @@ public class MarriageCertificateService {
         reportParams.put(CERTIFICATE_DATE, new Date());
         reportParams.put("logoPath", logopath);
         reportParams.put("registrationcenter", registration.getMarriageRegistrationUnit().getName());
-        reportParams.put("registrarName", registration.getState().getSenderName().split("::")[1]);
+      //  reportParams.put("registrarName", registration.getState().getSenderName().split("::")[1]);
+        if (registration.getRegistrarName() != null && !"".equals(registration.getRegistrarName()))
+            reportParams.put("registrarName", registration.getRegistrarName());
+        else
+            reportParams.put("registrarName", registration.getState().getSenderName().split("::")[1]);     
+        
         reportParams.put("husbandParentName", registration.getHusband().getParentsName());
         reportParams.put("wifeParentName", registration.getWife().getParentsName());
         reportParams.put("applicationdateday", calForApplnDate.get(Calendar.DAY_OF_MONTH)
@@ -309,7 +314,12 @@ public class MarriageCertificateService {
         reportParams.put(CERTIFICATE_DATE, new Date());
         reportParams.put("logoPath", logopath);
         reportParams.put("registrationcenter", reIssue.getMarriageRegistrationUnit().getName());
-        reportParams.put("registrarName", reIssue.getState().getSenderName().split("::")[1]);
+        
+        if (reIssue.getRegistration().getRegistrarName() != null && !"".equals(reIssue.getRegistration().getRegistrarName()))
+            reportParams.put("registrarName", reIssue.getRegistration().getRegistrarName());
+        else
+            reportParams.put("registrarName", reIssue.getState().getSenderName().split("::")[1]);
+ 
         reportParams.put("husbandParentName", reIssue.getRegistration().getHusband().getParentsName());
         reportParams.put("wifeParentName", reIssue.getRegistration().getWife().getParentsName());
         reportParams.put("applicationdateday", calForApplnDate.get(Calendar.DAY_OF_MONTH)
@@ -336,6 +346,7 @@ public class MarriageCertificateService {
                     .fetch(reIssue.getRegistration().getMarriagePhotoFileStore(), MarriageConstants.FILESTORE_MODULECODE));
         if (template.equalsIgnoreCase(CERTIFICATE_TEMPLATE_REISSUE)){
             reportParams.put("applicationNumber", reIssue.getApplicationNo());
+            reportParams.put("zoneName",reIssue.getZone().getName());
             reportInput = new ReportRequest(template,
                     new RegistrationCertificate(reIssue.getRegistration(), securityUtils.getCurrentUser(), husbandPhoto,
                             wifePhoto, marriagePhoto),

@@ -71,6 +71,7 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.mrs.application.MarriageConstants;
@@ -114,6 +115,9 @@ public class MarriageRegistrationService {
     private static final String STATUS = "status";
     private static final String ERROR_WHILE_COPYING_MULTIPART_FILE_BYTES = "Error while copying Multipart file bytes";
 
+
+    @Autowired
+    private SecurityUtils securityUtils;
     @Autowired
     private final MarriageRegistrationRepository registrationRepository;
     @PersistenceContext
@@ -370,6 +374,10 @@ public class MarriageRegistrationService {
                         MarriageConstants.MODULE_NAME));
         marriageRegistration.setRegistrationNo(marriageRegistrationNumberGenerator
                 .generateMarriageRegistrationNumber(marriageRegistration));
+        
+        User user = securityUtils.getCurrentUser();
+        if(user!=null)
+        marriageRegistration.setRegistrarName(user.getName());
         updateRegistrationdata(marriageRegistration);
         updateDocuments(marriageRegistration);
         update(marriageRegistration);
