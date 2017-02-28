@@ -68,7 +68,10 @@ public class MutationFeeService {
     }
 
     public BigDecimal getMaxHighLimit() {
-        return mutationFeeRepository.maxByHighLimit();
+        if (mutationFeeRepository.maxByHighLimit() != null)
+            return mutationFeeRepository.maxByHighLimit();
+        else
+            return BigDecimal.ZERO;
     }
 
     public boolean validateForHighLimitNull() {
@@ -102,7 +105,7 @@ public class MutationFeeService {
     }
 
     public boolean validateForMaxHighLimit(final BigDecimal lowlimit) {
-        final BigDecimal result = lowlimit.subtract(mutationFeeRepository.maxByHighLimit());
+        final BigDecimal result = lowlimit.subtract(getMaxHighLimit());
         return result.compareTo(BigDecimal.ONE) == 0 ? true : false;
     }
 

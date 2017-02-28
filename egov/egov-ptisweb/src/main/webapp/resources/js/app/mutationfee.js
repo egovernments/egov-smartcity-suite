@@ -43,14 +43,14 @@ jQuery(document).ready(
 			var todtid;
 			jQuery('#flatAmount').blur(function() {
 				if (jQuery(this).val() != "" || jQuery(this).val().length > 0)
-					jQuery('#percentage').attr('disabled', 'disabled');
+					jQuery('#percentage').val("").attr('disabled', 'disabled');
 				else
 					jQuery('#percentage').removeAttr('disabled');
 			});
 
 			jQuery('#percentage').blur(function() {
 				if (this.value != "" || this.value.length > 0)
-					jQuery('#flatAmount').attr('disabled', 'disabled');
+					jQuery('#flatAmount').val("").attr('disabled', 'disabled');
 				else
 					jQuery('#flatAmount').removeAttr('disabled');
 			});
@@ -80,6 +80,16 @@ jQuery(document).ready(
 							} else {
 								jQuery('#todateerror').hide();
 							}
+						}
+					});
+			jQuery('#highLimit').blur(
+					function() {
+						if (this.value != "" || this.value.length > 0) {
+							jQuery('input:radio[name=isRecursive]').val("")
+									.attr('disabled', 'disabled');
+						} else {
+							jQuery('input:radio[name=isRecursive]').removeAttr(
+									'disabled');
 						}
 					});
 
