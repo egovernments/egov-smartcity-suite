@@ -66,17 +66,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class ProjectCodeService extends PersistenceService<ProjectCode, Long> implements EntityTypeService {
 
-    public ProjectCodeService() {
-        super(ProjectCode.class);
-    }
-
-    public ProjectCodeService(final Class<ProjectCode> type) {
-        super(type);
-    }
-    /*
-     * @Autowired private PersistenceService<AssetsForEstimate, Long> assetsForEstimateService;
-     */
-
     @Autowired
     private WorksUtils worksUtils;
 
@@ -85,6 +74,14 @@ public class ProjectCodeService extends PersistenceService<ProjectCode, Long> im
 
     @Autowired
     private AccountdetailkeyHibernateDAO accountdetailkeyHibernateDAO;
+
+    public ProjectCodeService() {
+        super(ProjectCode.class);
+    }
+
+    public ProjectCodeService(final Class<ProjectCode> type) {
+        super(type);
+    }
 
     @Override
     public List<ProjectCode> getAllActiveEntities(final Integer accountDetailTypeId) {
@@ -114,7 +111,7 @@ public class ProjectCodeService extends PersistenceService<ProjectCode, Long> im
             throw new ValidationException(Arrays.asList(new ValidationError("projectcode.doesnt.exist",
                     "No Project Code exists for given Account Detail Key")));
 
-        if (projectCode.getEstimates() == null || projectCode.getEstimates().size() == 0)
+        if (projectCode.getEstimates() == null || projectCode.getEstimates().isEmpty())
             throw new ValidationException(Arrays.asList(new ValidationError("projectcode.no.link.abstractEstimate",
                     "Estimate is not linked with given Account Detail Key")));
 
@@ -122,8 +119,8 @@ public class ProjectCodeService extends PersistenceService<ProjectCode, Long> im
 
         final List<AssetsForEstimate> assetValues = estimates.get(0).getAssetValues();
 
-        if (assetValues == null || assetValues.size() == 0)
-            return Collections.EMPTY_LIST;
+        if (assetValues == null || assetValues.isEmpty())
+            return Collections.emptyList();
         else {
             final List<String> assetCodes = new ArrayList<String>();
             for (final AssetsForEstimate asset : assetValues)
@@ -134,11 +131,10 @@ public class ProjectCodeService extends PersistenceService<ProjectCode, Long> im
 
     public List<ProjectCode> getAllActiveProjectCodes(final int fundId, final Long functionId, final int functionaryId,
             final int fieldId, final int deptId) {
-        String projectCodeQry = null;
         final List<Object> paramList = new ArrayList<Object>();
         Object[] params;
 
-        projectCodeQry = "select pc from ProjectCode pc where pc in (select ae.projectCode from AbstractEstimate as ae inner join ae.financialDetails as fd where ae.state.value not in('CANCELLED')";
+        String projectCodeQry = "select pc from ProjectCode pc where pc in (select ae.projectCode from AbstractEstimate as ae inner join ae.financialDetails as fd where ae.state.value not in('CANCELLED')";
 
         if (fundId != 0) {
             projectCodeQry = projectCodeQry + " and fd.fund.id= ?";
@@ -174,27 +170,18 @@ public class ProjectCodeService extends PersistenceService<ProjectCode, Long> im
             return findAllBy(projectCodeQry, params);
         }
     }
-    /*
-     * public List getAssetListByProjectCode(final Long projectCodeId) throws NoSuchObjectException { final List<String>
-     * assetCodeList = new ArrayList<String>(); final ProjectCode pc = find("from ProjectCode where id=?", projectCodeId); if (pc
-     * == null) throw new NoSuchObjectException("projectcode.notfound"); final List<AssetsForEstimate> assetsForEstimateList =
-     * assetsForEstimateService.findAllByNamedQuery( "ASSETS_FOR_PROJECTCODE", projectCodeId); if
-     * (assetsForEstimateList.isEmpty()) throw new NoSuchObjectException("assetsforestimate.projectcode.asset.notfound"); else for
-     * (final AssetsForEstimate assetsForEstimate : assetsForEstimateList)
-     * assetCodeList.add(assetsForEstimate.getAsset().getCode()); return assetCodeList; }
-     */
 
     @Override
     public List<ProjectCode> validateEntityForRTGS(final List<Long> idsList) throws ValidationException {
 
-        return null;
+        return Collections.emptyList();
 
     }
 
     @Override
     public List<ProjectCode> getEntitiesById(final List<Long> idsList) throws ValidationException {
 
-        return null;
+        return Collections.emptyList();
 
     }
 
