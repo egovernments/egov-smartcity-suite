@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-02-09T10:44:47 -->
+<!-- 2017-02-28T15:27:10 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="test" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="cee583e3-a0f8-4d29-92e7-b2c0afa5f324">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -173,7 +173,7 @@
 				<textElement textAlignment="Justified" verticalAlignment="Middle" markup="styled">
 					<font fontName="DejaVu Sans" size="10" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA["6.	This license is issued subject to inspection by the competent authority. After inspection, if any trade, other than the trade applied for, is noticed, this license will be treated as null & void. Final license with TIN No will be issued after inspection, on payment of difference amount if any by the Applicant. The same can be availed (or) downloaded from the ULB Website/Municipal Office Counter/Meeseva centre."]]></textFieldExpression>
+				<textFieldExpression><![CDATA["6.	This license is issued subject to inspection by the competent authority. After inspection, if any trade, other than the trade applied for, is noticed, this license will be treated as null &amp; void. Final license with TIN No will be issued after inspection, on payment of difference amount if any by the Applicant. The same can be availed (or) downloaded from the ULB Website/Municipal Office Counter/Meeseva centre."]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="40" y="164" width="510" height="87" isPrintWhenDetailOverflows="true" uuid="1cc1c8e6-0a74-4f7d-902e-da7f71310e7e">

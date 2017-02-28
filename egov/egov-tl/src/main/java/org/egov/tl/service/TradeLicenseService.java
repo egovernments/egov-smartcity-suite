@@ -40,6 +40,7 @@
 
 package org.egov.tl.service;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.Installment;
@@ -241,7 +242,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         reportParams.put("wardName", license.getBoundary().getName());
         reportParams.put("cscNumber", "");
         reportParams.put("nameOfEstablishment", license.getNameOfEstablishment());
-        reportParams.put("licenceAddress", license.getAddress());
+        reportParams.put("licenceAddress", StringEscapeUtils.escapeXml(license.getAddress()));
         reportParams.put("municipality", cityMunicipalityName);
         reportParams.put("district", districtName);
         reportParams.put("category", license.getCategory().getName());
