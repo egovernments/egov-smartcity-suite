@@ -40,21 +40,6 @@
 
 package org.egov.tl.web.actions;
 
-import static org.egov.tl.utils.Constants.APPROVE_PAGE;
-import static org.egov.tl.utils.Constants.CSCOPERATOR;
-import static org.egov.tl.utils.Constants.GENERATE_CERTIFICATE;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
@@ -104,6 +89,20 @@ import org.egov.tl.utils.LicenseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
+import javax.servlet.http.HttpServletRequest;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+import static org.egov.tl.utils.Constants.APPROVE_PAGE;
+import static org.egov.tl.utils.Constants.CSCOPERATOR;
+import static org.egov.tl.utils.Constants.GENERATE_CERTIFICATE;
+
 @ParentPackage("egov")
 @Results({
         @Result(name = "collection", type = "redirectAction", location = "licenseBillCollect", params = {"namespace",
@@ -127,8 +126,6 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     protected String roleName;
     protected String reportId;
     protected boolean showAgreementDtl;
-    private boolean hasCscOperatorRole;
-
     @Autowired
     protected transient LicenseUtils licenseUtils;
     @Autowired
@@ -157,6 +154,9 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     @Autowired
     @Qualifier("fileStoreService")
     protected transient FileStoreService fileStoreService;
+    @Autowired
+    protected transient ReportViewerUtil reportViewerUtil;
+    private boolean hasCscOperatorRole;
     private Long feeTypeId;
     private String fileStoreIds;
     private String ulbCode;
@@ -169,8 +169,6 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     @Autowired
     @Qualifier("feeTypeService")
     private transient FeeTypeService feeTypeService;
-    @Autowired
-    protected transient ReportViewerUtil reportViewerUtil;
 
     public BaseLicenseAction() {
         this.addRelatedEntity("boundary", Boundary.class);
@@ -270,7 +268,7 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     public String renew() {
         populateWorkflowBean();
         licenseService().renew(license(), workflowBean);
-        addActionMessage(this.getText("license.renew.submission.succesful") + license().getLicenseNumber());
+        addActionMessage(this.getText("license.renew.submission.succesful") + license().getApplicationNumber());
         setHasCscOperatorRole(
                 securityUtils.getCurrentUser().getRoles().toString().contains(CSCOPERATOR) ? true : false);
         return Constants.ACKNOWLEDGEMENT_RENEW;
@@ -323,11 +321,8 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
         addDropdownData(Constants.DROPDOWN_AREA_LIST_LICENSEE, Collections.emptyList());
         addDropdownData(Constants.DROPDOWN_DIVISION_LIST_LICENSE, Collections.emptyList());
         addDropdownData(Constants.DROPDOWN_DIVISION_LIST_LICENSEE, Collections.emptyList());
-        if (getModel().getClass().getSimpleName().equalsIgnoreCase(Constants.ELECTRICALLICENSE_LICENSETYPE))
-            addDropdownData(Constants.DROPDOWN_TRADENAME_LIST, Collections.emptyList());
-        else
-            addDropdownData(Constants.DROPDOWN_TRADENAME_LIST,
-                    licenseUtils.getAllTradeNames(getModel().getClass().getSimpleName()));
+        addDropdownData(Constants.DROPDOWN_TRADENAME_LIST,
+                licenseUtils.getAllTradeNames(getModel().getClass().getSimpleName()));
 
         setupWorkflowDetails();
         feeTypeId = feeTypeService.findByName(Constants.LICENSE_FEE_TYPE).getId();

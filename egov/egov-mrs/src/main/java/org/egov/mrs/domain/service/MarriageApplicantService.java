@@ -153,17 +153,17 @@ public class MarriageApplicantService {
 
         if (applicantModel.getDocuments() != null) {
             applicantModel
-            .getDocuments()
-            .stream()
-            .filter(doc -> doc.getFile().getSize() > 0)
-            .map(doc -> {
-                final MrApplicantDocument appDoc = documentIdAndApplicantDoc.get(doc.getId());
-                if (appDoc != null)
-                    fileStoreService.delete(appDoc.getFileStoreMapper().getFileStoreId(),
-                            MarriageConstants.FILESTORE_MODULECODE);
-                return appDoc;
-            }).collect(Collectors.toList())
-            .forEach(appDoc -> toDelete.add(appDoc)); // seems like redundent, check
+                    .getDocuments()
+                    .stream()
+                    .filter(doc -> doc.getFile().getSize() > 0)
+                    .map(doc -> {
+                        final MrApplicantDocument appDoc = documentIdAndApplicantDoc.get(doc.getId());
+                        if (appDoc != null)
+                            fileStoreService.delete(appDoc.getFileStoreMapper().getFileStoreId(),
+                                    MarriageConstants.FILESTORE_MODULECODE);
+                        return appDoc;
+                    }).collect(Collectors.toList())
+                    .forEach(appDoc -> toDelete.add(appDoc)); // seems like redundent, check
             applicantDocumentService.delete(toDelete);
         }
     }
@@ -183,16 +183,16 @@ public class MarriageApplicantService {
 
         if (documents != null)
             documents.stream()
-            .filter(document -> !document.getFile().isEmpty() && document.getFile().getSize() > 0)
-            .map(document -> {
-                final MrApplicantDocument applicantDocument = new MrApplicantDocument();
-                setApplicantDocumentsFalg(applicant, document, identityProof);
-                applicantDocument.setApplicant(applicant);
-                applicantDocument.setDocument(documentAndId.get(document.getId()));
-                applicantDocument.setFileStoreMapper(addToFileStore(document.getFile()));
-                return applicantDocument;
-            }).collect(Collectors.toList())
-            .forEach(doc -> applicant.addApplicantDocument(doc));
+                    .filter(document -> !document.getFile().isEmpty() && document.getFile().getSize() > 0)
+                    .map(document -> {
+                        final MrApplicantDocument applicantDocument = new MrApplicantDocument();
+                        setApplicantDocumentsFalg(applicant, document, identityProof);
+                        applicantDocument.setApplicant(applicant);
+                        applicantDocument.setDocument(documentAndId.get(document.getId()));
+                        applicantDocument.setFileStoreMapper(addToFileStore(document.getFile()));
+                        return applicantDocument;
+                    }).collect(Collectors.toList())
+                    .forEach(doc -> applicant.addApplicantDocument(doc));
         applicant.setProofsAttached(identityProof);
     }
 
@@ -215,7 +215,7 @@ public class MarriageApplicantService {
             identityProof.setDeaceasedDeathCertificate(true);
         if (marriageDocument.getCode().equals(DIVORCE_CERTIFICATE))
             identityProof.setDivorceCertificate(true);
-        if (mrApplicant.getPhotoFile().getSize() != 0)
+        if (mrApplicant.getPhotoFile() != null && mrApplicant.getPhotoFile().getSize() != 0)
             identityProof.setPhotograph(true);
     }
 

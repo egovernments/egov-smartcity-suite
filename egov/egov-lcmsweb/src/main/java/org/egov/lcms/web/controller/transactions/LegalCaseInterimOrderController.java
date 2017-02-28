@@ -40,6 +40,7 @@
 package org.egov.lcms.web.controller.transactions;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -97,7 +98,7 @@ public class LegalCaseInterimOrderController {
             @Valid @ModelAttribute("legalCaseInterimOrder") final LegalCaseInterimOrder legalCaseInterimOrder,
             final BindingResult errors, final RedirectAttributes redirectAttrs,
             @RequestParam("lcNumber") final String lcNumber, @RequestParam("file") final MultipartFile[] files,
-            final HttpServletRequest request, final Model model) throws IOException {
+            final HttpServletRequest request, final Model model) throws IOException, ParseException {
         final LegalCase legalCase = getLegalCase(lcNumber, request);
         if (errors.hasErrors()) {
             model.addAttribute("interimOrders", interimOrderService.getActiveInterimOrder());

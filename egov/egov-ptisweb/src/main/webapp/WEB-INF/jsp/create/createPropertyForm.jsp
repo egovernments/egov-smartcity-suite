@@ -196,6 +196,7 @@
 				name="propertyDetail.siteOwner" id="siteOwner"></s:textfield></td>
 	</tr> --%>
 	
+	<s:if test="%{!basicProperty.regdDocNo.isEmpty()}">
 	<tr>
 		<td class="greybox">&nbsp;</td>
 		<td class="greybox"><s:text name="reg.docno"></s:text><span class="mandatory1">*</span> :</td>
@@ -208,7 +209,7 @@
 		 <s:textfield name="basicProperty.regdDocDate" title="Document dated" id="basicProperty.regdDocDate" value="%{#docDate}" size="12" autocomplete="off"
 				maxlength="12" cssClass="datepicker"></s:textfield></td>
 	</tr>
-
+	</s:if>
 	<!-- Amenities section -->
 
 	<tr class="amenities">

@@ -48,7 +48,7 @@
 	<div class="col-md-12">
 		<div class="text-right error-msg" style="font-size: 14px;"></div>
 		<form:form role="form" method="post"
-			action="/mrs/registration/update-approved"
+			action="/mrs/registration/modify-approved"
 			modelAttribute="marriageRegistration" id="form-updateregistration"
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">

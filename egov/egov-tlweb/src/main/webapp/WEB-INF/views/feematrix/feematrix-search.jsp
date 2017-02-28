@@ -111,7 +111,6 @@
                                 <th><spring:message code="lbl.licenseapptype"/></th>
                                 <th><spring:message code="lbl.licensecategory"/></th>
                                 <th><spring:message code="lbl.subcategory"/></th>
-                                <th><spring:message code="lbl.unitofmeasurement"/></th>
                                 <th><spring:message code="lbl.feetype"/></th>
                                 <th><spring:message code="lbl.financialyear"/></th>
                                 <th></th>

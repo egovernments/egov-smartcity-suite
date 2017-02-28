@@ -39,7 +39,6 @@
  */
 package org.egov.works.masters.entity;
 
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -60,7 +59,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.validation.Valid;
 
 import org.egov.commons.Bank;
 import org.egov.commons.EgwStatus;
@@ -163,7 +161,6 @@ public class Contractor extends AbstractAuditable implements EntityType {
     @Column(name = "MOBILE_NUMBER")
     private String mobileNumber;
 
-    @Valid
     @JsonIgnore
     @OrderBy("id")
     @OneToMany(mappedBy = "contractor", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = ContractorDetail.class)
@@ -297,10 +294,7 @@ public class Contractor extends AbstractAuditable implements EntityType {
 
     public List<ValidationError> validate() {
         List<ValidationError> errorList = null;
-        if (contractorDetails != null && contractorDetails.isEmpty())
-            return Arrays
-                    .asList(new ValidationError("contractorDetails", "contractor.details.altleastone_details_needed"));
-        else if (contractorDetails != null && !contractorDetails.isEmpty())
+        if (contractorDetails != null && !contractorDetails.isEmpty())
             for (final ContractorDetail contractorDetail : contractorDetails) {
                 errorList = contractorDetail.validate();
                 if (errorList != null)

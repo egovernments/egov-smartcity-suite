@@ -138,10 +138,9 @@ public class DemandGenerationService {
                     licenseService.raiseDemand(detail.getLicense(), module, installment);
                     detail.setDetail(SUCCESSFUL);
                     detail.setStatus(COMPLETED);
-                    demandGenerationLogService.completeDemandGenerationLogDetail(detail);
                 } catch (RuntimeException e) {
                     LOGGER.warn("Error occurred while generating demand for license {}", detail.getLicense().getLicenseNumber(), e);
-                    demandGenerationLogService.updateDemandGenerationLogDetailOnException(detail, e);
+                    demandGenerationLogService.updateDemandGenerationLogDetailOnException(demandGenerationLog, detail, e);
                 }
                 flushBatchUpdate(entityManager, ++batchUpdateCount, batchSize);
             }
@@ -168,7 +167,8 @@ public class DemandGenerationService {
         List<License> licenses = licenseService.getAllLicensesByNatureOfBusiness(PERMANENT_NATUREOFBUSINESS);
         int batchUpdateCount = 0;
         for (License license : licenses) {
-            DemandGenerationLogDetail demandGenerationLogDetail = demandGenerationLogService.createOrGetDemandGenerationLogDetail(demandGenerationLog, license);
+            DemandGenerationLogDetail demandGenerationLogDetail = demandGenerationLogService.
+                    createOrGetDemandGenerationLogDetail(demandGenerationLog, license);
             try {
                 if (!license.getIsActive()) {
                     demandGenerationLogDetail.setDetail(LICENSE_NOT_ACTIVE);
@@ -179,10 +179,9 @@ public class DemandGenerationService {
                     demandGenerationLogDetail.setDetail(DEMAND_EXIST);
                 }
                 demandGenerationLogDetail.setStatus(COMPLETED);
-                demandGenerationLogService.completeDemandGenerationLogDetail(demandGenerationLogDetail);
             } catch (RuntimeException e) {
                 LOGGER.warn("Error occurred while generating demand for license {}", license.getLicenseNumber(), e);
-                demandGenerationLogService.updateDemandGenerationLogDetailOnException(demandGenerationLogDetail, e);
+                demandGenerationLogService.updateDemandGenerationLogDetailOnException(demandGenerationLog, demandGenerationLogDetail, e);
             }
             flushBatchUpdate(entityManager, ++batchUpdateCount, batchSize);
         }

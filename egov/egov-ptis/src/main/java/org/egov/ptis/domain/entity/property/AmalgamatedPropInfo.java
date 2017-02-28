@@ -46,34 +46,54 @@ public class AmalgamatedPropInfo {
     private String mobileNo;
     private String propertyAddress;
     private boolean paymentDone;
+    private String validationMsg;
+
     public String getAssessmentNo() {
         return assessmentNo;
     }
-    public void setAssessmentNo(String assessmentNo) {
+
+    public void setAssessmentNo(final String assessmentNo) {
         this.assessmentNo = assessmentNo;
     }
+
     public String getOwnerName() {
         return ownerName;
     }
-    public void setOwnerName(String ownerName) {
+
+    public void setOwnerName(final String ownerName) {
         this.ownerName = ownerName;
     }
+
     public String getMobileNo() {
         return mobileNo;
     }
-    public void setMobileNo(String mobileNo) {
+
+    public void setMobileNo(final String mobileNo) {
         this.mobileNo = mobileNo;
     }
+
     public String getPropertyAddress() {
         return propertyAddress;
     }
-    public void setPropertyAddress(String propertyAddress) {
+
+    public void setPropertyAddress(final String propertyAddress) {
         this.propertyAddress = propertyAddress;
     }
+
     public boolean getPaymentDone() {
         return paymentDone;
     }
-    public void setPaymentDone(boolean paymentDone) {
+
+    public void setPaymentDone(final boolean paymentDone) {
         this.paymentDone = paymentDone;
     }
+
+    public String getValidationMsg() {
+        return validationMsg;
+    }
+
+    public void setValidationMsg(final String validationMsg) {
+        this.validationMsg = validationMsg;
+    }
+
 }

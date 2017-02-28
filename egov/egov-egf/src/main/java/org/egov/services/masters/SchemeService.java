@@ -63,4 +63,16 @@ public class SchemeService extends PersistenceService<Scheme, Integer> {
         query.setInteger("fundId", fundId);
         return query.list();
     }
+
+    public Scheme findByCode(final String code) {
+        final Query query = getSession().createQuery(" from Scheme where code = :code ");
+
+        query.setString("code", code);
+        return (Scheme) query.uniqueResult();
+    }
+
+    public List<Scheme> getByIsActive() {
+        final Query query = getSession().createQuery(" from Scheme where isactive = true");
+        return query.list();
+    }
 }

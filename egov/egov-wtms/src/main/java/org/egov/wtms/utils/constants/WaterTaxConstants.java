@@ -140,6 +140,7 @@ public class WaterTaxConstants {
 
     public static final String WF_STATE_REJECTED = "Rejected";
     public static final String WFLOW_ACTION_STEP_REJECT = "Reject";
+    public static final String WFLOW_ACTION_STEP_CANCEL = "Cancel";
     public static final String WF_STATE_REVENUE_CLERK_APPROVAL_PENDING = "Revenenu Clerk Approval Pending";
     public static final String WF_STATE_TAP_EXECUTION_DATE = "Execute Tap";
     public static final String WF_STATE_CLERK_APPROVED = "Clerk approved";
@@ -276,6 +277,7 @@ public class WaterTaxConstants {
     public static final String CURRENTYEAR_SECOND_HALF = "Current 2nd Half";
     public static final String GLCODE_FOR_ADVANCE = "3504106";
     public static final String [] DESG_COMM = {"Commissioner"};
+    public static final String  DESG_COMM_NAME = "Commissioner";
 
     public static final List<String> ORDERED_DEMAND_RSNS_LIST = Arrays.asList(WATERTAXREASONCODE,
             DEMANDRSN_CODE_ADVANCE);
@@ -366,10 +368,15 @@ public class WaterTaxConstants {
     public static final String TAP_INSPPECTOR_DESIGN = "Tap Inspector";
     public static final String ASSISTANT_ENGINEER_DESIGN = "Assistant engineer";
     public static final String JUNIOR_OR_SENIOR_ASSISTANT_DESIGN = "Senior Assistant,Junior Assistant";
+    public static final String JUNIOR_OR_SENIOR_ASSISTANT_DESIGN_REVENUE_CLERK = "Senior Assistant,Junior Assistant,Revenue Clerk";
+
 
     public static final String SENIOR_ASSISTANT_DESIGN = "Senior Assistant";
     public static final String JUNIOR_ASSISTANT_DESIGN = "Junior Assistant";
 
+    public static final String BOUNDARY_TYPE_ZONE= "Zone";
+    public static final String BOUNDARY_TYPE_CITY="City";
+    public static final String CONNECTION_RECTIFICATION = "connection-rectification";
 
 
 }

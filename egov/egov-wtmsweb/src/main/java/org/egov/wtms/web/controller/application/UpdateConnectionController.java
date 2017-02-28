@@ -403,7 +403,7 @@ public class UpdateConnectionController extends GenericConnectionController {
                 if (connectionCategory != null
                         && !connectionCategory.getCode().equalsIgnoreCase(WaterTaxConstants.CATEGORY_BPL)
                         && waterConnectionDetails.getBplCardHolderName() != null)
-                    waterConnectionDetails.setBplCardHolderName(null);
+                    waterConnectionDetails.setBplCardHolderName(waterConnectionDetails.getBplCardHolderName());
                 populateEstimationDetails(waterConnectionDetails);
                 final WaterDemandConnection waterDemandConnection = waterTaxUtils.getCurrentDemand(waterConnectionDetails);
                 waterDemandConnection.setDemand(connectionDemandService.createDemand(waterConnectionDetails));

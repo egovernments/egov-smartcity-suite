@@ -65,6 +65,7 @@ import org.egov.commons.dao.AccountdetailtypeHibernateDAO;
 import org.egov.commons.dao.ChartOfAccountsDAO;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.commons.dao.FunctionDAO;
+import org.egov.commons.service.ChartOfAccountDetailService;
 import org.egov.commons.utils.EntityType;
 import org.egov.dao.budget.BudgetDetailsDAO;
 import org.egov.dao.budget.BudgetDetailsHibernateDAO;
@@ -181,6 +182,9 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long> {
     @Autowired
     @Qualifier("recordStatusPersistenceService")
     private PersistenceService recordStatusPersistenceService;
+    
+    @Autowired
+    private ChartOfAccountDetailService chartOfAccountDetailService;
 
     public VoucherService(final Class<CVoucherHeader> voucherHeader) {
         super(voucherHeader);
@@ -492,31 +496,34 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long> {
                         .getGeneralledgerdetail(generalLedger.getId());
 
                 for (final CGeneralLedgerDetail gledgerDetail : gledgerDetailList) {
-                    subLedgerDetail = new VoucherDetails();
-                    subLedgerDetail.setAmount(gledgerDetail.getAmount()
-                            .setScale(2));
-                    subLedgerDetail.setGlcode(coaDAO
-                            .findById(generalLedger.getGlcodeId().getId(),
-                                    false));
-                    subLedgerDetail.setSubledgerCode(generalLedger
-                            .getGlcodeId().getGlcode());
-                    final Accountdetailtype accountdetailtype = voucherHibDAO
-                            .getAccountDetailById(gledgerDetail
-                                    .getDetailTypeId().getId());
-                    subLedgerDetail.setDetailType(accountdetailtype);
-                    subLedgerDetail.setDetailTypeName(accountdetailtype
-                            .getName());
-                    final EntityType entity = voucherHibDAO.getEntityInfo(
-                            gledgerDetail.getDetailKeyId(),
-                            accountdetailtype.getId());
-                    subLedgerDetail.setDetailCode(entity.getCode());
-                    subLedgerDetail.setDetailKeyId(gledgerDetail
-                            .getDetailKeyId());
-                    subLedgerDetail.setDetailKey(entity.getName());
-                    subLedgerDetail.setFunctionDetail(generalLedger
-                            .getFunctionId() != null ? generalLedger
-                                    .getFunctionId().toString() : "0");
-                    subLedgerlist.add(subLedgerDetail);
+                    if (chartOfAccountDetailService.getByGlcodeIdAndDetailTypeId(generalLedger.getGlcodeId().getId(),
+                            gledgerDetail.getDetailTypeId().getId().intValue()) != null) {
+                        subLedgerDetail = new VoucherDetails();
+                        subLedgerDetail.setAmount(gledgerDetail.getAmount()
+                                .setScale(2));
+                        subLedgerDetail.setGlcode(coaDAO
+                                .findById(generalLedger.getGlcodeId().getId(),
+                                        false));
+                        subLedgerDetail.setSubledgerCode(generalLedger
+                                .getGlcodeId().getGlcode());
+                        final Accountdetailtype accountdetailtype = voucherHibDAO
+                                .getAccountDetailById(gledgerDetail
+                                        .getDetailTypeId().getId());
+                        subLedgerDetail.setDetailType(accountdetailtype);
+                        subLedgerDetail.setDetailTypeName(accountdetailtype
+                                .getName());
+                        final EntityType entity = voucherHibDAO.getEntityInfo(
+                                gledgerDetail.getDetailKeyId(),
+                                accountdetailtype.getId());
+                        subLedgerDetail.setDetailCode(entity.getCode());
+                        subLedgerDetail.setDetailKeyId(gledgerDetail
+                                .getDetailKeyId());
+                        subLedgerDetail.setDetailKey(entity.getName());
+                        subLedgerDetail.setFunctionDetail(generalLedger
+                                .getFunctionId() != null ? generalLedger
+                                        .getFunctionId().toString() : "0");
+                        subLedgerlist.add(subLedgerDetail);
+                    }
                 }
 
             }

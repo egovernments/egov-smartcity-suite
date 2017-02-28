@@ -49,11 +49,15 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.egov.adtax.entity.AdvertisementBatchDemandGenerate;
 import org.egov.adtax.entity.AdvertisementDemandGenerationLog;
 import org.egov.adtax.entity.AdvertisementDemandGenerationLogDetail;
+import org.egov.adtax.search.contract.AdvertisementBatchStatusResponse;
 import org.egov.adtax.search.contract.AdvertisementDemandStatus;
 import org.egov.adtax.service.AdTaxDemandGenerationLogService;
+import org.egov.adtax.service.AdvertisementBatchDemandGenService;
 import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
+import org.egov.adtax.web.adaptor.AdvertisementBatchStatusAdapter;
 import org.egov.adtax.web.adaptor.AdvertisementDemandStatusAdapter;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
@@ -71,7 +75,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 @RequestMapping("/advertisement")
 public class ViewAdTaxDemandGenerationStatusController {
-
+    
     private static final String DATA = "{\"data\":";
     private static final String DEMAND_STATUS_FORM = "demand-status-form";
 
@@ -83,6 +87,9 @@ public class ViewAdTaxDemandGenerationStatusController {
 
     @Autowired
     private AdTaxDemandGenerationLogService adTaxDemandGenerationLogService;
+    
+    @Autowired
+    private AdvertisementBatchDemandGenService advertisementBatchDemandGenService ;
 
     @ModelAttribute("financialYears")
     public List<Installment> financialyear() {
@@ -100,12 +107,15 @@ public class ViewAdTaxDemandGenerationStatusController {
     public String getDemandGenerationStatus(@ModelAttribute final AdvertisementDemandStatus advertisementDemandStatus,
             @RequestParam final String financialYear, final HttpServletRequest request) {
         final List<AdvertisementDemandStatus> resultList = new ArrayList<>();
+       
         if (financialYear != null) {
             final List<AdvertisementDemandGenerationLog> generationLogList = adTaxDemandGenerationLogService
                     .getDemandGenerationLogByInstallmentYear(financialYear);
+
             if (generationLogList != null && !generationLogList.isEmpty()) {
                 final AdvertisementDemandStatus demandStatus = adTaxDemandGenerationLogService
                         .getDemandStatusResult(generationLogList);
+
                 demandStatus.setFinancialYear(financialYear);
                 resultList.add(demandStatus);
             }
@@ -123,7 +133,7 @@ public class ViewAdTaxDemandGenerationStatusController {
         return "adtax-demand-status-view";
     }
 
-    @RequestMapping(value = "/demand-status-records-view/", method = POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    @RequestMapping(value = "/demand-status-records-view/",  produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
     public String viewDemandStatus(@RequestParam("financialyear") final String financialyear, final Model model) {
         List<AdvertisementDemandStatus> resultList;
@@ -151,5 +161,33 @@ public class ViewAdTaxDemandGenerationStatusController {
                 .append("}")
                 .toString();
     }
+
+    
+    @RequestMapping(value = "/demand-batch", method = POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    @ResponseBody
+    public String getDemandGeneration(@ModelAttribute final AdvertisementBatchStatusResponse advertisementBatchStatus,
+            final HttpServletRequest request, @RequestParam final String financialYear, Model model) {
+        final List<AdvertisementBatchStatusResponse> batchresultList = new ArrayList<>();
+        final List<AdvertisementBatchDemandGenerate> batchList = advertisementBatchDemandGenService.findActiveBatchDemands();
+        if (batchList != null) {
+            for (final AdvertisementBatchDemandGenerate batch : batchList) {
+
+                AdvertisementBatchStatusResponse batchobj = new AdvertisementBatchStatusResponse();
+                batchobj.setJobname(batch.getJobName());
+                batchobj.setCreatedDate(batch.getCreatedDate());
+                batchobj.setFinancialYear(financialYear);
+                batchobj.setStatus("Demand Generation is scheduled and waiting for completion");
+                batchresultList.add(batchobj);
+            }
+        }
+        return new StringBuilder(DATA)
+                .append(toJSON(batchresultList, AdvertisementBatchStatusResponse.class, AdvertisementBatchStatusAdapter.class))
+                .append("}")
+                .toString();
+    }
+
+
+  
+
 
 }

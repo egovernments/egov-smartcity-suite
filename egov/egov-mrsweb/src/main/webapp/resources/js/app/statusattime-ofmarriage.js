@@ -53,12 +53,6 @@ $(document).ready(function() {
 
 function callAjaxSearch() {
 
-	// To get current date
-	var currentDate = new Date();
-	var day = currentDate.getDate();
-	var month = currentDate.getMonth() + 1;
-	var year = currentDate.getFullYear();
-	var currentDate = day + "-" + month + "-" + year;
 	var zone = $('#zones').val();
 	var regunit = $('#registrationunit').val();
 	var from = $('#fromDate').val();
@@ -66,7 +60,7 @@ function callAjaxSearch() {
 
 	$('.report-section').removeClass('display-hide');
 
-	var reportdatatable = $("#marriage_table")
+	$("#marriage_table")
 			.dataTable(
 					{
 						ajax : {
@@ -166,6 +160,7 @@ function callAjaxSearch() {
 												+ 'fromDate='+from
 												+ '&'
 												+ 'toDate='+to
+												+ '&'
 												+ 'regunit='+regunit
 												+ '&'
 												+ 'zone='+zone

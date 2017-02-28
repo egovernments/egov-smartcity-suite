@@ -67,7 +67,7 @@
                 showMessage('newLicense_error', '<s:text name="newlicense.licenseeaddress.null" />');
                 window.scroll(0, 0);
                 return false;
-            } else if (document.getElementById("boundary").value == '-1') {
+            } else if (document.getElementById("boundary").value == '') {
                 showMessage('newLicense_error', '<s:text name="newlicense.locality.null" />');
                 window.scroll(0, 0);
                 return false;
@@ -143,70 +143,92 @@
             if (currentState == 'Second level fee collected') {
                 $("span").remove(".mandatory");
             }
-            if (document.getElementById("mode").value == 'disableApprover') {
-                toggleFields(true, ['Submit', 'Reject', 'button2', 'Approve', 'approverComments', 'Sign', 'Preview', 'Generate Certificate']);
-                $(".show-row").hide();
-                $('#approverComments').removeAttr('<span class="mandatory"></span>');
-                $('#approverDepartment').removeAttr('<span class="mandatory"></span>');
-                $('#approverDesignation').removeAttr('<span class="mandatory"></span>');
-                $('#approverPositionId').removeAttr('<span class="mandatory"></span>');
-                $('#workflowCommentsDiv label').text('<s:text name="newlicense.fieldInspection.label" />');
-            }
-
-            if (document.getElementById("mode").value == 'ACK') {
-
-                toggleFields(true, ['approverDepartment', 'approverDesignation', 'approverPositionId', 'approverComments', 'Generate Certificate',
-                    'Forward', 'Reject', 'button2', 'Approve', 'Sign', 'Preview', 'closeBtn', 'closeDiv', 'currentWfstate']);
-                //remove onclick event for propertyno search button
-                $("#searchImg").removeAttr("onclick");
-                // remove onclick event for add and delete button having class = add-padding
-                $('.add-padding').attr('onclick', '').unbind('click');
-                // renaming approver remarks label for second level of workflow
-                <s:if test="%{getNextAction()!='END'}">
-                $('#workflowCommentsDiv label').text('<s:text name="newlicense.fieldInspection.label" />');
-                $('#workflowCommentsDiv label').append('<span class="mandatory"></span>');
-                </s:if>
-                document.getElementById("btncancel").disabled = false;
-                document.getElementById("closebn").disabled = false;
-                document.getElementById('workflowDiv').style.visibility = 'hidden';
-
-            }
-            if (document.getElementById("mode").value == 'view' || document.getElementById("mode").value == 'editForReject') {
-
-                toggleFields(true, ['approverDepartment', 'approverDesignation', 'approverPositionId', 'approverComments', 'Generate Certificate',
-                    'Forward', 'Reject', 'button2', 'Approve', 'Sign', 'Preview', 'currentWfstate']);
-                //remove onclick event for propertyno search button
-                $("#searchImg").removeAttr("onclick");
-                // remove onclick event for add and delete button having class = add-padding
-                $('.add-padding').attr('onclick', '').unbind('click');
-                // renaming approver remarks label for second level of workflow
-                <s:if test="%{getNextAction()!='END'}">
-                $('#workflowCommentsDiv label').text('<s:text name="newlicense.fieldInspection.label" />');
-                $('#workflowCommentsDiv label').append('<span class="mandatory"></span>');
-                </s:if>
-                if (currentState == 'SI/MHO approved') {
-                    document.getElementById('approverDetailHeading').hidden = true
+            try {
+                if (document.getElementById("mode").value == 'disableApprover') {
+                    toggleFields(true, ['Submit', 'Reject', 'button2', 'Approve', 'approverComments', 'Sign', 'Preview', 'Generate Certificate']);
+                    $(".show-row").hide();
+                    $('#approverComments').removeAttr('<span class="mandatory"></span>');
+                    $('#approverDepartment').removeAttr('<span class="mandatory"></span>');
+                    $('#approverDesignation').removeAttr('<span class="mandatory"></span>');
+                    $('#approverPositionId').removeAttr('<span class="mandatory"></span>');
+                    $('#workflowCommentsDiv label').text('<s:text name="newlicense.fieldInspection.label" />');
                 }
-
+            } catch (e) {
+                console.error(e);
             }
-            if (document.getElementById("mode").value == 'editForApproval') {
-                toggleFields(true, ['approverDepartment', 'approverDesignation', 'approverPositionId', 'approverComments', 'Generate Certificate',
-                    'Forward', 'Reject', 'button2', 'Approve']);
-                //remove onclick event for propertyno search button
-                document.getElementById("tradeArea_weight").disabled = false;
-                $("#searchImg").removeAttr("onclick");
-                // remove onclick event for add and delete button having class = add-padding
-                $('.add-padding').attr('onclick', '').unbind('click');
-                // renaming approver remarks label for second level of workflow
-                <s:if test="%{getNextAction()!='END'}">
-                $('#workflowCommentsDiv label').text('<s:text name="newlicense.fieldInspection.label" />');
-                $('#workflowCommentsDiv label').append('<span class="mandatory"></span>');
-                </s:if>
+
+            try {
+                if (document.getElementById("mode").value == 'ACK') {
+
+                    toggleFields(true, ['approverDepartment', 'approverDesignation', 'approverPositionId', 'approverComments', 'Generate Certificate',
+                        'Forward', 'Reject', 'button2', 'Approve', 'Sign', 'Preview', 'closeBtn', 'closeDiv', 'currentWfstate']);
+                    //remove onclick event for propertyno search button
+                    $("#searchImg").removeAttr("onclick");
+                    // remove onclick event for add and delete button having class = add-padding
+                    $('.add-padding').attr('onclick', '').unbind('click');
+                    // renaming approver remarks label for second level of workflow
+                    <s:if test="%{getNextAction()!='END'}">
+                    $('#workflowCommentsDiv label').text('<s:text name="newlicense.fieldInspection.label" />');
+                    $('#workflowCommentsDiv label').append('<span class="mandatory"></span>');
+                    </s:if>
+                    document.getElementById("btncancel").disabled = false;
+                    document.getElementById("closebn").disabled = false;
+                    document.getElementById('workflowDiv').style.visibility = 'hidden';
+
+                }
+            } catch (e) {
+                console.error(e);
+            }
+            try {
+                if (document.getElementById("mode").value == 'view' || document.getElementById("mode").value == 'editForReject') {
+
+                    toggleFields(true, ['approverDepartment', 'approverDesignation', 'approverPositionId', 'approverComments', 'Generate Certificate',
+                        'Forward', 'Reject', 'button2', 'Approve', 'Sign', 'Preview', 'currentWfstate']);
+                    //remove onclick event for propertyno search button
+                    $("#searchImg").removeAttr("onclick");
+                    // remove onclick event for add and delete button having class = add-padding
+                    $('.add-padding').attr('onclick', '').unbind('click');
+                    // renaming approver remarks label for second level of workflow
+                    <s:if test="%{getNextAction()!='END'}">
+                    $('#workflowCommentsDiv label').text('<s:text name="newlicense.fieldInspection.label" />');
+                    $('#workflowCommentsDiv label').append('<span class="mandatory"></span>');
+                    </s:if>
+                    if (currentState == 'SI/MHO approved') {
+                        document.getElementById('approverDetailHeading').hidden = true
+                    }
+
+                }
+            } catch (e) {
+                console.error(e);
+            }
+            try {
+                if (document.getElementById("mode").value == 'editForApproval') {
+                    toggleFields(true, ['approverDepartment', 'approverDesignation', 'approverPositionId', 'approverComments', 'Generate Certificate',
+                        'Forward', 'Reject', 'button2', 'Approve']);
+                    //remove onclick event for propertyno search button
+                    document.getElementById("tradeArea_weight").disabled = false;
+                    $("#searchImg").removeAttr("onclick");
+                    // remove onclick event for add and delete button having class = add-padding
+                    $('.add-padding').attr('onclick', '').unbind('click');
+                    // renaming approver remarks label for second level of workflow
+                    <s:if test="%{getNextAction()!='END'}">
+                    $('#workflowCommentsDiv label').text('<s:text name="newlicense.fieldInspection.label" />');
+                    $('#workflowCommentsDiv label').append('<span class="mandatory"></span>');
+                    </s:if>
+                }
+            } catch (e) {
+                console.error(e);
             }
             if (currentState == 'First level fee collected')
                 document.getElementById('certificateDiv').hidden = false;
-            if (currentState == 'License Created' || currentState == 'Commissioner approved')
+            if (currentState == 'Commissioner approved')
                 document.getElementById('closeDiv').hidden = false;
+            if ($('#boundary')) {
+                $('#boundary').attr('disabled', false);
+            }
+            if ($('#parentBoundary')) {
+                $('#parentBoundary').attr('disabled', false);
+            }
         }
 
         //This method will be called from included jsp
@@ -229,10 +251,12 @@
 
         //this method gets called from included jsp
         function onSubmit() {
-            var mode = document.getElementById("mode").value;
-            var workflowaction = document.getElementById("workFlowAction").value;
+            var mode = $("#mode").val();
+            var workflowaction = $("#workFlowAction").val();
             <s:if test="%{workflowaction != null && workflowaction == 'Generate Provisional Certificate'}">
-            window.open("/tl/viewtradelicense/viewTradeLicense-generateCertificate.action?model.id=" + jQuery('#id').val(), 'gc' + jQuery('#id').val(), 'scrollbars=yes,width=1000,height=700,status=yes');
+                window.open("/tl/viewtradelicense/viewTradeLicense-generateCertificate.action?model.id=" + $('#id').val(),
+                    'gc' + $('#id').val(), 'scrollbars=yes,width=1000,height=700,status=yes');
+                return false;
             </s:if>
             <s:if test="%{mode!=null && ((mode=='view' || mode=='editForApproval' || mode== 'disableApprover') &&  mode!='editForReject' )}">
             clearMessage('newLicense_error');
@@ -257,8 +281,6 @@
 
             return true;
         }
-
-
     </script>
 
 </head>

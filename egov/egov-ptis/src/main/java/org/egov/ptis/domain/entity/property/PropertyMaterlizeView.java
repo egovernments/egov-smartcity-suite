@@ -103,8 +103,10 @@ public class PropertyMaterlizeView implements Serializable {
     private String surveyNo;
     private String duePeriod;
     private BigDecimal advance;
+    private BigDecimal rebate;
+    private BigDecimal adjustment;
 
-
+    
     public Integer getBasicPropertyID() {
         return basicPropertyID;
     }
@@ -524,6 +526,22 @@ public class PropertyMaterlizeView implements Serializable {
 
     public void setOldMuncipalNum(String oldMuncipalNum) {
         this.oldMuncipalNum = oldMuncipalNum;
+    }
+
+    public BigDecimal getRebate() {
+        return rebate;
+    }
+
+    public void setRebate(BigDecimal rebate) {
+        this.rebate = rebate;
+    }
+
+    public BigDecimal getAdjustment() {
+        return adjustment;
+    }
+
+    public void setAdjustment(BigDecimal adjustment) {
+        this.adjustment = adjustment;
     }
       
 }

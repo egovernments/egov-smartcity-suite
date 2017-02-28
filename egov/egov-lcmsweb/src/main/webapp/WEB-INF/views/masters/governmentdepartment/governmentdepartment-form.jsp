@@ -37,7 +37,7 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
-	<div class="row">
+<div class="row">
 	<div class="col-md-12">
 		<div class="panel panel-primary" data-collapsed="0">
 			<div class="panel-heading">
@@ -85,9 +85,6 @@
 					<div class="col-sm-2 add-margin">
 						<form:select path="active" id="active" cssClass="form-control"
 							cssErrorClass="form-control error" required="required">
-							<form:option value="">
-								<spring:message code="lbl.select" />
-							</form:option>
 							<form:option value="true">YES</form:option>
 							<form:option value="false">NO</form:option>
 							<form:errors path="active" cssClass="error-msg" />
@@ -99,4 +96,4 @@
 			</div>
 		</div>
 	</div>
-</div>	
+</div>

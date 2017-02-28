@@ -66,6 +66,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import com.google.common.collect.ImmutableList;
+
 public interface PropertyTaxConstants {
 
     public static final String APPCONFIG_ISCORPORATION = "IS_CORPORATION";
@@ -544,6 +546,7 @@ public interface PropertyTaxConstants {
         private static final long serialVersionUID = 464912402295082366L;
 
         {
+            put(-9,"Cellar");
             put(-3, "Basement-2");
             put(-2, "Basement-1");
             put(-1, "Stilt Floor");
@@ -598,6 +601,7 @@ public interface PropertyTaxConstants {
             put(48, "48th Floor");
             put(49, "49th Floor");
             put(50, "50th Floor");
+            put(99,"Pent House");
         }
     };
 
@@ -1601,6 +1605,7 @@ public interface PropertyTaxConstants {
     public static final String DASHBOARD_GROUPING_WARDWISE = "ward";
     public static final String DASHBOARD_GROUPING_CITYWISE = "city";
     public static final String DASHBOARD_GROUPING_BILLCOLLECTORWISE = "billcollector";
+    public static final String DASHBOARD_GROUPING_ALLWARDS = "allwards";
     
     public static final String DASHBOARD_PROPERTY_TYPE_PRIVATE = "Private";
     public static final String DASHBOARD_PROPERTY_TYPE_VACANT_LAND = "Vacant Land";
@@ -1609,6 +1614,10 @@ public interface PropertyTaxConstants {
     public static final String DASHBOARD_PROPERTY_TYPE_COURTCASES = "Courtcases";
     public static final String DASHBOARD_PROPERTY_TYPE_BUILT_UP = "BuiltUp";
     
+    public static final String WEEK = "week";
+    public static final String MONTH = "month";
+    public static final String DAY = "day";
+
     @SuppressWarnings("serial")
     public static final List<String> DASHBOARD_PROPERTY_TYPE_CENTRAL_GOVT_LIST = new ArrayList<String>() {
         {
@@ -1676,4 +1685,20 @@ public interface PropertyTaxConstants {
             add(VALUATION_CERTIFICATE);
         }
     };
+    public static final List<String> ASSESSMENT_DOCUMENT_NAMES = ImmutableList.of("Patta Certificate (Issued by Revenue Department)",
+            "Registered Will Document", "Un-registered Will Document", "Decree by Civil Court", "Un-registered Document / Notary document", "Registered Document");
+    public static final String DOCUMENT_TYPE_PATTA_CERTIFICATE = "Patta Certificate";
+    public static final String DOCUMENT_TYPE_MRO_PROCEEDINGS = "MRO Proceedings";
+    public static final String DOCUMENT_TYPE_WILL_DEED = "Will Deed";
+    public static final String DOCUMENT_TYPE_DECREE_DOCUMENT = "Decree Document";
+    public static final String DOCUMENT_TYPE_REGD_DOCUMENT = "Registered Document";
+    public static final String DOCUMENT_TYPE_PHOTO_PROPERTY_HOLDER  = "Photo of Property With Holder";
+    public static final String DOCUMENT_NAME_REGD_DOCUMENT = "Registered Document";
+    public static final String DOCUMENT_NAME_PATTA_CERTIFICATE = "Patta Certificate (Issued by Revenue Department)";
+    public static final String DOCUMENT_NAME_REGD_WILL_DOCUMENT = "Registered Will Document";
+    public static final String DOCUMENT_NAME_UNREGD_WILL_DOCUMENT = "Un-registered Will Document";
+    public static final String DOCUMENT_NAME_DECREE_BY_CIVILCOURT = "Decree by Civil Court";
+    public static final String DOCUMENT_NAME_NOTARY_DOCUMENT = "Un-registered Document / Notary document";
+    public static final List<String> COMMISSIONER_DESIGNATIONS = ImmutableList.of("Assistant Commissioner",
+            "Zonal Commissioner", "Deputy Commissioner", "Additional Commissioner", "Commissioner"); 
 }

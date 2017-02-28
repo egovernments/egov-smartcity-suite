@@ -246,6 +246,11 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         reportParams.put("district", districtName);
         reportParams.put("category", license.getCategory().getName());
         reportParams.put("subCategory", license.getTradeName().getName());
+
+        if (license.getState() != null && license.getState().getValue().equals(Constants.WF_FIRST_LVL_FEECOLLECTED)) {
+            reportParams.put("certificateType", "provisional");
+        }
+
         reportParams.put("appType", license.isNewApplication() ? "New Trade" : "Renewal");
         reportParams.put("currentDate", currentDateToDefaultDateFormat());
         if (ApplicationThreadLocals.getMunicipalityName().contains("Corporation"))
@@ -253,10 +258,15 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         reportParams.put("municipality", ApplicationThreadLocals.getMunicipalityName());
         String startYear;
         String endYear;
-        Optional<EgDemandDetails> demandDetails = license.getCurrentDemand().getEgDemandDetails().stream().
-                sorted(Comparator.comparing(EgDemandDetails::getInstallmentEndDate).reversed()).
-                filter(demandDetail -> demandDetail.getAmount().subtract(demandDetail.getAmtCollected()).doubleValue() <= 0).findFirst();
+        BigDecimal amtPaid;
+        Optional<EgDemandDetails> demandDetails = license.getCurrentDemand().getEgDemandDetails().stream()
+                .sorted(Comparator.comparing(EgDemandDetails::getInstallmentEndDate).reversed())
+                .filter(demandDetail -> demandDetail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster().equals(LICENSE_FEE_TYPE))
+                .filter(demandDetail -> demandDetail.getAmount().subtract(demandDetail.getAmtCollected())
+                        .doubleValue() <= 0)
+                .findFirst();
         if (demandDetails.isPresent()) {
+            amtPaid = demandDetails.get().getAmtCollected();
             startYear = toYearFormat(demandDetails.get().getInstallmentStartDate());
             endYear = toYearFormat(demandDetails.get().getInstallmentEndDate());
         } else
@@ -265,7 +275,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         reportParams.put("installMentYear", startYear + "-" + endYear);
         reportParams.put("applicationdate", getDefaultFormattedDate(license.getApplicationDate()));
         reportParams.put("demandUpdateDate", getDefaultFormattedDate(license.getCurrentDemand().getModifiedDate()));
-        reportParams.put("demandTotalamt", license.getCurrentLicenseFee());
+        reportParams.put("demandTotalamt", amtPaid);
         return reportParams;
     }
 

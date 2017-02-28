@@ -135,7 +135,9 @@ $('#searchrecord').click(function(e){
 						  { "data" : "applicationNumber", "title": "Application No."},
 						  { "data" : "applicationFromDate", "title": "Application Date"},
 						  { "data" : "agencyName", "title": "Agency"},
+						  { "data" : "ownerDetail", "title": "Owner Detail"},
 						  { "data" : "pendingDemandAmount", "title": "Amount"},
+						  { "data" : "additionalTaxAmount", "title": "Additional Tax (Service Tax and Cesses)"},
 						  { "data" : "penaltyAmount", "title": "Penalty Amount"},
 						  { "data" : "status", "title": "Hoarding Status"},
 						  
@@ -158,7 +160,7 @@ $('#searchrecord').click(function(e){
 	$('#zoneList').change(function(){
 		$.ajax({
 			type: "GET",
-			url: "/egi/boundary/ajaxBoundary-blockByLocality.action",
+			url: "/egi/boundary/ajaxBoundary-blockByLocality",
 			cache: true,
 			dataType: "json",
 			data:{

@@ -80,6 +80,24 @@
           	</div>
         	</div>
         </form:form>
+
+		<div id="showhide" class="showhide">
+	         <div  class="row display-hide report-section">
+	        	<div  class="col-md-12 table-header text-left">Scheduled Status for Demand Generation</div>
+	        	<div class="col-md-12 form-group report-table-container">
+		        	<table class="table table-bordered table-hover multiheadertbl" id="demandresultTable">
+		        		<thead>
+		        			<tr>
+		        				<th><spring:message code="lbl.demand.Scheduled" /></th>
+		        				<th><spring:message code="lbl.status" /></th>
+		        				<th><spring:message code="lbl.demand.created.Date" /></th>
+		        				
+		        			</tr>
+		        		</thead>
+		        	</table>
+	        	</div>
+	        </div>
+        </div>
         <div class="row display-hide report-section">
         	<div class="col-md-12 table-header text-left">Demand Generation Status Search Result</div>
         	<div class="col-md-12 form-group report-table-container">
@@ -94,6 +112,7 @@
 	        	</table>
         	</div>
         </div>
+               
 	</div>
 </div>
 

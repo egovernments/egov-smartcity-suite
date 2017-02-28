@@ -1,0 +1,702 @@
+# Financials Version 1 API
+swagger: '2.0'
+
+# This is your document metadata
+info:
+  version: "1.0.0"
+  title: Works - Financials Integration System APIs. 
+  description: API for works-financials integration is defined here. Copyright © 2017 eGovernments Foundation, All Rights Reserved.
+  
+  contact:
+    name: Manikanta P T, eGovernments Foundation. 
+schemes:
+  - https
+basePath: '/restapi'
+paths:
+    /egf/bill:
+      post:
+        summary: Create a new Works bill
+        description: This API will create a Works bill in the system after checking the projectcode send. If project code does not exist, this new project code will be created in the system first and then the bill will be created.
+        parameters:
+          - name: Referer
+            type: string
+            in: header
+            description: IP address of the referring system
+            required: true
+          - name: ulbCode
+            in: query
+            type: string
+            description: Code of the ULB to create Bill
+            required: true
+          - name: billRegister
+            in: body
+            description: Works Bill details
+            schema:
+              $ref: '#/definitions/BillRegister'
+        responses:
+          201:
+            description: Works Bill created Successfully 
+            schema:
+              $ref: '#/definitions/BillRegisterResponse'
+          400:
+            description: Invalid Input
+            schema:
+              type: array
+              items:
+                $ref: '#/definitions/ErrorDetails'
+                
+    /egf/bill/paymentamount:
+      get:
+        summary: Get Payment amount for bill number
+        description: This API will retrieve total payment amount for given bill number where payment voucher status is Approved. If no approved payemnt vouchers then the API will return 0. 
+        parameters:
+          - name: Referer
+            type: string
+            in: header
+            description: IP address of the referring system
+            required: true
+          - name: ulbCode
+            in: query
+            type: string
+            description: Code of the ULB to get payment amount
+            required: true
+          - name: billNumber
+            in: query
+            type: string
+            description: Bill Number to get the payment amount
+            required: true
+            maxLength: 50
+        responses:
+          201:
+            description: Returns total payment amount for the bill number
+            schema:
+              type: number
+          400:
+            description: Invalid Input 
+            schema:
+              type: array
+              items:
+                $ref: '#/definitions/ErrorDetails'
+                
+    /egf/funds:
+      get:
+        summary: Get all active funds
+        description: This API will retrieve all the funds which are active and is the last node(no child).
+        parameters:
+          - name: Referer
+            type: string
+            in: header
+            description: IP address of the referring system
+            required: true
+          - name: ulbCode
+            in: query
+            type: string
+            description: Code of the ULB to get the funds
+            required: true
+        responses:
+          201:
+            description: Return all the active Fund master details
+            schema:
+             type: array
+             items:
+               $ref: '#/definitions/FundHelper'
+          400:
+            description: Invalid Input 
+            schema:
+              type: array
+              items:
+                $ref: '#/definitions/ErrorDetails'
+                
+    /egf/functions:
+      get:
+        summary: Get all active functions
+        description: This API will retrieve all the functions which are active and is the last node(no child).
+        parameters:
+          - name: Referer
+            type: string
+            in: header
+            description: IP address of the referring system
+            required: true
+          - name: ulbCode
+            in: query
+            type: string
+            description: Code of the ULB to get the functions
+            required: true
+        responses:
+          201:
+            description: Return all the active Function master details
+            schema:
+             type: array
+             items:
+               $ref: '#/definitions/FunctionHelper'
+          400:
+            description: Invalid Input 
+            schema:
+              type: array
+              items:
+                $ref: '#/definitions/ErrorDetails'
+                
+    /egf/schemes:
+      get:
+        summary: Get all active Schemes
+        description: This API will retrieve all the schemes which are active.
+        parameters:
+          - name: Referer
+            type: string
+            in: header
+            description: IP address of the referring system
+            required: true
+          - name: ulbCode
+            in: query
+            type: string
+            description: Code of the ULB to get the Schemes
+            required: true
+        responses:
+          201:
+            description: Return all the active Scheme master details
+            schema:
+             type: array
+             items:
+               $ref: '#/definitions/SchemeHelper'
+          400:
+            description: Invalid Input 
+            schema:
+              type: array
+              items:
+                $ref: '#/definitions/ErrorDetails'
+                
+    /egf/subschemes:
+      get:
+        summary: Get all active Sub Schemes
+        description: This API will retrieve all the Sub schemes which are active.
+        parameters:
+          - name: Referer
+            type: string
+            in: header
+            description: IP address of the referring system
+            required: true
+          - name: ulbCode
+            in: query
+            type: string
+            description: Code of the ULB to get the Sub Schemes
+            required: true
+        responses:
+          201:
+            description: Return all the active Sub Scheme master details
+            schema:
+             type: array
+             items:
+               $ref: '#/definitions/SubSchemeHelper'
+          400:
+            description: Invalid Input 
+            schema:
+              type: array
+              items:
+                $ref: '#/definitions/ErrorDetails'
+    
+    /egworks/contractors:
+      get:
+        summary: Get the Contractor(s) master data
+        description: This API will retrieve all the contractor master data if the contractor code is not passed. It returns only the selected contractor details if the contractor code is passed as a parameter
+        parameters:
+          - name: Referer
+            type: string
+            in: header
+            description: IP address of the referring system
+            required: true
+          - name: ulbCode
+            in: query
+            type: string
+            description: Code of the ULB to get the Contractor Master data
+            required: true
+          - name: code
+            in: query
+            type: string
+            description: Contractor code to get the Contractor Master data
+            maxLength: 50
+        responses:
+          201:
+            description: Returns the contractor(s) master data
+            schema:
+             type: array
+             items:
+               $ref: '#/definitions/ContractorHelper'
+          400:
+            description: Invalid Input 
+            schema:
+              type: array
+              items:
+                $ref: '#/definitions/ErrorDetails'
+                
+    /egworks/contractor:
+      post:
+        summary: Create a new Contractor
+        description: This API will create a new contractor in the system
+        parameters:
+          - name: Referer
+            type: string
+            in: header
+            description: IP address of the referring system
+            required: true
+          - name: ulbCode
+            in: query
+            type: string
+            description: Code of the ULB to create a new contractor
+            required: true 
+          - name: contractorHelper
+            in: body
+            description: Contractor details
+            schema:
+              $ref: '#/definitions/ContractorHelper'
+        responses:
+          201:
+            description: Contractor data saved successfully
+            schema:
+              $ref: '#/definitions/ContractorResponse'
+          400:
+            description: Invalid Input 
+            schema:
+              type: array
+              items:
+                $ref: '#/definitions/ErrorDetails'
+                
+      put:
+        summary: Update/Modify Contractor master data
+        description: This API will update contractor details in the system
+        parameters:
+          - name: Referer
+            type: string
+            in: header
+            description: IP address of the referring system
+            required: true
+          - name: ulbCode
+            in: query
+            type: string
+            description: Code of the ULB to update a new contractor
+            required: true 
+          - name: contractorHelper
+            in: body
+            description: Contractor details
+            schema:
+              $ref: '#/definitions/ContractorHelper'
+        responses:
+          201:
+            description: Contractor data modified successfully
+            schema:
+              $ref: '#/definitions/ContractorResponse'
+          400:
+            description: Invalid Input 
+            schema:
+              type: array
+              items:
+                $ref: '#/definitions/ErrorDetails'
+                
+    /egf/chartofaccounts/detailedcodes:
+      get:
+        summary: Get all the detailed account codes which are active for posting
+        description: This API will retrieve all the detailed account codes which are active for posting.
+        parameters:
+          - name: Referer
+            type: string
+            in: header
+            description: IP address of the referring system
+            required: true
+          - name: ulbCode
+            in: query
+            type: string
+            description: Code of the ULB to get the Account codes
+            required: true
+        responses:
+          201:
+            description: Return all the detailed account codes which are active for posting
+            schema:
+             type: array
+             items:
+               $ref: '#/definitions/ChartOfAccountHelper'
+          400:
+            description: Invalid Input 
+            schema:
+              type: array
+              items:
+                $ref: '#/definitions/ErrorDetails'
+    
+    /egf/budgetgroups:
+      get:
+        summary: Get all the active Budget Groups
+        description: This API will retrieve all the budget groups which are active.
+        parameters:
+          - name: Referer
+            type: string
+            in: header
+            description: IP address of the referring system
+            required: true
+          - name: ulbCode
+            in: query
+            type: string
+            description: Code of the ULB to get the Budget Groups
+            required: true
+        responses:
+          201:
+            description: Return all the active Budget Groups
+            schema:
+             type: array
+             items:
+               $ref: '#/definitions/BudgetGroupHelper'
+          400:
+            description: Invalid Input 
+            schema:
+              type: array
+              items:
+                $ref: '#/definitions/ErrorDetails'
+                
+definitions:
+    BillRegister:
+      title: The header object for storing Bill main details.
+      type: object
+      properties:
+        projectCode:
+          type: string
+          description: Work Identification Number(WIN Code)
+          maxLength: 256
+        billDate:
+          type: string
+          format: date
+          description: Bill Date (dd-mm-yyyy)
+        billType:
+          type: string
+          description: Bill Type
+          enum:
+          - Part Bill
+          - Final Bill
+        nameOfWork:
+          type: string
+          description: Name of the work
+          maxLength: 1024
+        payTo:
+          type: string
+          description: Name of the Contractor 
+          maxLength: 100
+        billAmount:
+          type: number
+          format: double
+          description: Total Bill Amount 
+        narration:
+          type: string
+          description: Description/Narration of the Bill
+          maxLength: 1024
+        partyBillNumber:
+          type: string
+          description: Agency/Firm Bill Number 
+          maxLength: 50
+        partyBillDate:
+          type: string
+          format: date
+          description: Agency/Firm Bill Date (dd-mm-yyyy)  
+        departmentCode:
+          type: string
+          description: Department Code for the Bill 
+        functionCode:
+          type: string
+          description: Function Code for the Bill 
+        schemeCode:
+          type: string
+          description: Scheme Code for the Bill 
+        subSchemeCode:
+          type: string
+          description: Sub Scheme Code for the Bill 
+        fundCode:
+          type: string
+          description: Fund Code for the Bill 
+        billDetails:
+          type:  array
+          description:  Bill Details for the Bill
+          minItems: 2
+          maxItems: 30
+          uniqueItems: true
+          items:
+            $ref: "#/definitions/BillDetails"
+        billPayeeDetails:
+          type:  array
+          description:  Bill Payee Details for the Bill.
+          maxItems: 30
+          uniqueItems: true
+          items:
+            $ref: "#/definitions/BillPayeeDetails"
+      required:
+        - projectCode
+        - nameOfWork
+        - billDate
+        - billType
+        - payTo
+        - billAmount
+        - departmentCode
+        - functionCode
+        - fundCode
+        - billDetails
+        
+    BillDetails:
+      title: Accounting details of the bill will be handled here.
+      type: object
+      description: Bill Details both Debit and Credit amounts cannot be greater than zero for any given Glcode.
+      properties:
+        glcode:
+          type: string
+          description: Glcode of the Bill Details
+        debitAmount:
+          type: number
+          format: double
+          description: Debit amount of the Bill Details
+          maxLength: 999999999
+        creditAmount:
+          type: number
+          format: double
+          description: Credit amount of the Bill Details
+          maxLength: 999999999
+      required:
+        - glcode
+        
+    BillPayeeDetails:
+      title: This will have all subledger details for any account code.
+      type: object
+      description: Bill Payee details will have the subledger details of each glcode that is used in billdetails. (Both Debit and Credit amounts can not be greater than zero for any given Glcode) 
+      properties:
+        glcode:
+          type: string
+          description: Glcode of the Bill Payee Details
+        accountDetailType:
+          type: string
+          description: Subledger type of the account code. This API will support only- contractor and PROJECTCODE.
+        accountDetailKey:
+          type: string
+          description: Contractor code (if account detail type is contractor) and WIN code (if account detail type is PROJECTCODE)
+        debitAmount:
+          type: number
+          format: double
+          description: Debit amount of the Bill Payee Details
+          maxLength: 999999999
+        creditAmount:
+          type: number
+          format: double
+          description: Credit amount of the Bill Payee Details
+          maxLength: 999999999
+      required:
+        - glcode
+        - accountDetailType
+        - accountDetailKey
+        
+    BillRegisterResponse:
+      type: object
+      description: Bill Response
+      properties:
+        billNumber:
+          type: string
+          description: Autogenerated bill number of the saved bill
+          
+    ErrorDetails:
+      type: object
+      description: Details of the error
+      properties:
+        errorCode:
+          type: string
+          description: error code
+        errorMessage:
+          type: string
+          description: Detailed error message
+   
+    FundHelper: 
+      type: object
+      description: Fund Master details
+      properties:
+        code:
+          type: string
+          description: Fund code
+        name:
+          type: string
+          description: Fund name
+    
+    FunctionHelper: 
+      type: object
+      description: Function Master details
+      properties:
+        code:
+          type: string
+          description: Function code
+        name:
+          type: string
+          description: Function name
+          
+    SchemeHelper: 
+      type: object
+      description: Scheme Master details
+      properties:
+        code:
+          type: string
+          description: Scheme code
+        name:
+          type: string
+          description: Scheme name
+        description:
+          type: string
+          description: Description of the scheme
+        fund:
+          type: string
+          description: Fund name in which the scheme belongs to
+        validFrom:
+          type: string
+          format: date
+          description: Start date of the scheme
+        validTo:
+          type: string
+          format: date
+          description: End date of the scheme
+          
+    SubSchemeHelper: 
+      type: object
+      description: Sub Scheme Master details
+      properties:
+        code:
+          type: string
+          description: Sub Scheme code
+        name:
+          type: string
+          description: Sub Scheme name
+        scheme:
+          type: string
+          description: Scheme name in which the Sub Scheme belongs to
+    
+    ContractorHelper: 
+      type: object
+      description: Contractor Master details
+      properties:
+        code:
+          type: string
+          description: Contractor/Firm code
+          uniqueItems: true
+          minLength: 3
+          maxLength: 50
+        name:
+          type: string
+          description: Contractor/Firm name
+          minLength: 4
+          maxLength: 100
+        correspondenceAddress:
+          type: string
+          description: Correspondence address of Contractor/Firm
+          maxLength: 250
+        paymentAddress:
+          type: string
+          description: Payment Address of Contractor/Firm
+          maxLength: 250
+        contactPerson:
+          type: string
+          description: Contact Person of Contractor/Firm
+          maxLength: 100
+        email:
+          type: string
+          description: Email address of Contractor/Firm
+          maxLength: 100
+        narration:
+          type: string
+          description: Narration/Description of Contractor/Firm
+          maxLength: 1024
+        panNumber:
+          type: string
+          description: PAN of Contractor/Firm
+          minLength: 10
+          maxLength: 10
+        tinNumber:
+          type: string
+          description: TIN of Contractor/Firm
+          maxLength: 14
+        bankName:
+          type: string
+          description: Bank name of Contractor/Firm
+          maxLength: 100
+        ifscCode:
+          type: string
+          description: IFSC of Contractor/Firm
+          maxLength: 15
+        bankAccount:
+          type: string
+          description: Bank Account number of Contractor/Firm
+          maxLength: 22
+        pwdApprovalCode:
+          type: string
+          description: PWD approval code of Contractor/Firm
+          maxLength: 50
+        exemptionName:
+          type: string
+          description: Exemption details of Contractor/Firm
+          enum:
+          - INCOME_TAX
+          - EARNEST_MONEY_DEPOSIT
+          - VAT
+        mobileNumber:
+          type: string
+          description: Mobile Number of Contractor/Firm
+          minLength: 10
+          maxLength: 10
+        contractorClass:
+          type: string
+          description: Class of Contractor/Firm
+        contractorCategory:
+          type: string
+          description: Category of Contractor/Firm
+        status:
+          type: string
+          description: Status of Contractor/Firm
+          enum:
+          - Active
+          - Inactive
+          - Black-listed
+          - Debarred
+      required:
+        - code
+        - name
+        
+    ContractorResponse:
+      type: object
+      description: Contractor Response success message
+      
+    ChartOfAccountHelper: 
+      type: object
+      description: Chart Of Account Master details
+      properties:
+        glCode:
+          type: string
+          description: GL code/account code
+        name:
+          type: string
+          description: Name of the account code
+        purpose:
+          type: string
+          description: Account code purpose
+        budgetCheckReqired:
+          type: boolean
+          description: Flag to say whether budget check required for the account code(true or false)
+        type:
+          type: string
+          description: Account code type(I - Income, E - Expense, A - Asset, L - Liability)
+        functionReqired:
+          type: boolean
+          description: Flag to say whether function required for the account code(true or false)
+        subledgerType:
+          description: The list of account detail type(Subledger types) of the account code
+          type: array
+          items: {
+              type: string
+          }
+          
+    BudgetGroupHelper: 
+      type: object
+      description: Budget Group Master details
+      properties:
+        accountCode:
+          description: Detailed account codes of the Budget Group
+          type: array
+          items: {
+              type: string
+          }
+        name:
+          type: string
+          description: Budget Group name

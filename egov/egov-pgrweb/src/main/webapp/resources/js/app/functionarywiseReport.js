@@ -135,7 +135,7 @@ jQuery(document)
 													return '<a href="javascript:void(0);" onclick="setHiddenValueByLink(this,\'Completed\');" data-hiddenele="boundary" data-eleval="'+ data.completed + '" data-complaintname="'+ data.usrid + '">'
 															+ data.completed + '</a>';
 												},
-												"sTitle" : "Disposed","sClass" : "text-right"
+												"sTitle" : "Completed","sClass" : "text-right"
 											}, {
 												"mData" : getComplaintTypeIdWithDatakey,
 												"render" : function(data, type,row) {

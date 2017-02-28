@@ -241,7 +241,7 @@ public class ProjectCode extends AbstractAuditable implements EntityType {
     }
 
     @Override
-    protected void setId(final Long id) {
+    public void setId(final Long id) {
         this.id = id;
     }
 

@@ -43,13 +43,30 @@ jQuery(document).ready(function($) {
 	tableContainer1 = $("#ageingReport-table");
 	drillDowntableContainer = $("#drilldownReport-table");
 	$(".btn-primary").click(function() {
-	var url = '/wtms/reports/arrear/arrearReport';
-	$('#drillDownReportForm').attr('method', 'post');
-	$('#drillDownReportForm').attr('action', url);
-	$('#drillDownReportForm').attr('name', 'myform');
-	document.forms["myform"].submit();
+		
+		var zone= $('#zone').val();
+		
+		var ward= $('#ward').val();
+		if(zone=="" || zone==null){
+			bootbox.alert("please Select Zone");
+			return false;
+		}
+		
+		if(ward==null || ward ==""){
+			bootbox.alert("please Select Ward");
+			return false;
+		}
+		
+		else {
+			var url = '/wtms/reports/arrear/arrearReport';
+			$('#drillDownReportForm').attr('method', 'post');
+			$('#drillDownReportForm').attr('action', url);
+			$('#drillDownReportForm').attr('name', 'myform');
+			document.forms["myform"].submit();
+			return true;
+		}
 	
-			});
+	});
 	$('#drilldownReportSearch').click(function(e) {
 		
 			callajaxdatatableForDrilDownReport();

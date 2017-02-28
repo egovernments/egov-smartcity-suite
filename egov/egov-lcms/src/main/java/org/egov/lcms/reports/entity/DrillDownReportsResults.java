@@ -75,7 +75,7 @@ public class DrillDownReportsResults {
         return aggregatedBy;
     }
 
-    public void setAggregatedBy(String aggregatedBy) {
+    public void setAggregatedBy(final String aggregatedBy) {
         this.aggregatedBy = aggregatedBy;
     }
 
@@ -83,7 +83,7 @@ public class DrillDownReportsResults {
         return period;
     }
 
-    public void setPeriod(String period) {
+    public void setPeriod(final String period) {
         this.period = period;
     }
 
@@ -91,7 +91,7 @@ public class DrillDownReportsResults {
         return fromDate;
     }
 
-    public void setFromDate(Date fromDate) {
+    public void setFromDate(final Date fromDate) {
         this.fromDate = fromDate;
     }
 
@@ -99,7 +99,7 @@ public class DrillDownReportsResults {
         return toDate;
     }
 
-    public void setToDate(Date toDate) {
+    public void setToDate(final Date toDate) {
         this.toDate = toDate;
     }
 
@@ -107,7 +107,7 @@ public class DrillDownReportsResults {
         return year;
     }
 
-    public void setYear(Integer year) {
+    public void setYear(final Integer year) {
         this.year = year;
     }
 
@@ -115,7 +115,7 @@ public class DrillDownReportsResults {
         return month;
     }
 
-    public void setMonth(String month) {
+    public void setMonth(final String month) {
         this.month = month;
     }
 
@@ -123,7 +123,7 @@ public class DrillDownReportsResults {
         return count;
     }
 
-    public void setCount(Long count) {
+    public void setCount(final Long count) {
         this.count = count;
     }
 

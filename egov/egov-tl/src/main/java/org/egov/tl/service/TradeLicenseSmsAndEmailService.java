@@ -117,7 +117,7 @@ public class TradeLicenseSmsAndEmailService {
         } else if (workFlowAction.equals(Constants.BUTTONAPPROVE)
                 && Constants.STATUS_UNDERWORKFLOW.equalsIgnoreCase(license.getStatus()
                 .getStatusCode())) {
-            BigDecimal demAmt = license.getCurrentLicenseFee();
+            BigDecimal demAmt = license.getLatestAmountPaid();
             SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
             if (license.isReNewApplication())
                 emailCode = "msg.renewTradeLicenseapproval.email.body";

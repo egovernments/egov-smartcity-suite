@@ -50,6 +50,12 @@ public class CollectionDetailsRequest {
     private String toDate;
     private String type;
     private String propertyType;
+    private String usageType;
+    private String intervalType;
+    private String month;
+    private String year;
+    private String week;
+
 
     public String getRegionName() {
         return regionName;
@@ -113,6 +119,46 @@ public class CollectionDetailsRequest {
 
     public void setPropertyType(String propertyType) {
         this.propertyType = propertyType;
+    }
+
+    public String getUsageType() {
+        return usageType;
+    }
+
+    public void setUsageType(String usageType) {
+        this.usageType = usageType;
+    }
+
+    public String getIntervalType() {
+        return intervalType;
+    }
+
+    public void setIntervalType(String intervalType) {
+        this.intervalType = intervalType;
+    }
+
+    public String getMonth() {
+        return month;
+    }
+
+    public void setMonth(String month) {
+        this.month = month;
+    }
+
+    public String getYear() {
+        return year;
+    }
+
+    public void setYear(String year) {
+        this.year = year;
+    }
+    
+    public String getWeek() {
+        return week;
+    }
+
+    public void setWeek(String week) {
+        this.week = week;
     }
 
 }

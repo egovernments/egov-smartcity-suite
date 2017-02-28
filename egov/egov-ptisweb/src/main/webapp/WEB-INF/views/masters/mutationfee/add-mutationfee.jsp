@@ -86,7 +86,6 @@
 							<form:input path="highLimit" id="highLimit" type="text"
 								class="form-control low-width" placeholder="ABOVE"
 								autocomplete="off" onblur="return validate();" />
-
 							<form:errors path="highLimit" cssClass="add-margin error-msg" />
 							<div id="highlimiterror" class="error-msg display-hide">To
 								Value should greater than from value</div>
@@ -108,6 +107,18 @@
 							<form:input path="percentage" id="percentage" type="text"
 								class="form-control low-width" placeholder="" autocomplete="off" />
 							<form:errors path="percentage" cssClass="add-margin error-msg" />
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-3 control-label"><spring:message
+								code="lbl.isRecursive" /></label>
+						<div class="col-sm-6">
+							<form:radiobutton path="isRecursive" id="isRecursiveYes"
+								value="Y" />
+							Yes
+							<form:radiobutton path="isRecursive" id="isRecursiveNo" value="N" />
+							No
+							<form:errors path="isRecursive" cssClass="add-margin error-msg" />
 						</div>
 					</div>
 					<div class="form-group">

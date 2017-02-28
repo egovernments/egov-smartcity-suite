@@ -71,11 +71,9 @@
 			name="create-new" id="btn btn-primary" value="Create Another"
 			class="btn btn-primary" onclick="showNewform()" />
 			
-			<c:if test="${connectionType == 'Non-metered'}">
 			<input type="button" value="Add/Edit DCB" name="Add/Edit DCB" id="editDCB"
 											id="btn btn-primary" class="btn btn-primary" 
 											onclick="showeditDcb('${consumerCode}')" />
-											</c:if>
 											</td>
 	</tr>
 </table>

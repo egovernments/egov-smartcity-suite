@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2016>  eGovernments Foundation
+ *     Copyright (C) <2017>  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -57,7 +57,7 @@ $('.mobileno-field').blur( function () {
 		
 		
 	}
-	else {
+	else {						
 		$('#txt-venuelabel').show();
 		$('#txt-venue').show();
 		
@@ -81,18 +81,17 @@ $( "#select-venue" ).change(function() {
 
 
 $('#txt-dateOfMarriage').datepicker()
-    .blur('changeDate', function(e) {
-    	
-    	var str=$('#txt-dateOfMarriage').val().toString(); 
-    	
-    	if(str.match(/(^(((0[1-9]|1[0-9]|2[0-8])[\/](0[1-9]|1[012]))|((29|30|31)[\/](0[13578]|1[02]))|((29|30)[\/](0[4,6,9]|11)))[\/](19|[2-9][0-9])\d\d$)|(^29[\/]02[\/](19|[2-9][0-9])(00|04|08|12|16|20|24|28|32|36|40|44|48|52|56|60|64|68|72|76|80|84|88|92|96)$)/g))
-    	{
+    .on('changeDate', function(e) {
+    	var str=$('#txt-dateOfMarriage').val(); 
+    	if(isValidDate(str)){
     		showMarriageFee();
     	}
-    	else{
-    		bootbox.alert('Invalid date!');
-    	}
 });
+
+function isValidDate(dateString) {
+  var regEx = /^\d{2}[./-]\d{2}[./-]\d{4}$/;
+  return dateString.match(regEx) != null;
+}
 
 $('.month-field').blur( function () {
 	var month = parseInt( $(this).val() );
@@ -231,13 +230,8 @@ function showMarriageFee()
 						'registrationUnitId' : $('#select-registrationunit').val()
 						}
 				}).done(function(value) {
-										/*if (value == 0)
-											$('#ttxt-zone').val('');
-										else*/
-					console.log(value);
-					
 					$('#txt-zoneid').val(value.id);
-											$('#txt-zone').val(value.name);
+					$('#txt-zone').val(value.name);
 				
 				});
 			}

@@ -64,7 +64,7 @@
 							<th><spring:message code="lbl.application.date" /></th>
 							<th><spring:message code="lbl.date.of.marriage" /></th>
 							<th><spring:message code="lbl.place.of.marriage" /></th>
-							<th><spring:message code="lbl.zone" /></th>
+							<th><spring:message code="lbl.Boundary" /></th>
 							<th><spring:message code="lbl.status" /></th>
 							<th>User Name</th>
 							<th>Pending Action</th>

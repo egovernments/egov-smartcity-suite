@@ -43,41 +43,40 @@
 	id="casetypeMastersearchform"
 	cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
-		<div class="row">
-			<div class="col-md-12">
-				<div class="panel panel-primary" data-collapsed="0">
-					<div class="panel-heading">
-						<div class="panel-title">Search Case Type </div>
-					</div>
-					<div class="panel-body">
-						<div class="form-group">
-							<label class="col-sm-2 control-label text-right"><spring:message
-									code="lbl.code" /> :</label>
-							<div class="col-sm-3 add-margin">
-								<form:input path="code"
-									class="form-control text-left patternvalidation"
-									data-pattern="alphanumericwithspecialcharacterswithspace" maxlength="8" />
-								<form:errors path="code" cssClass="error-msg" />
-							</div>
-							<label class="col-sm-2 control-label text-right"><spring:message
-									code="lbl.casetype" /> :</label>
-							<div class="col-sm-3 add-margin">
-								<form:input path="caseType"
-									class="form-control text-left patternvalidation"
-									data-pattern="alphanumericwithspecialcharacterswithspace" maxlength="50" />
-								<form:errors path="caseType" cssClass="error-msg" />
-							</div>
+	<div class="row">
+		<div class="col-md-12">
+			<div class="panel panel-primary" data-collapsed="0">
+				<div class="panel-heading">
+					<div class="panel-title">Search Case Type</div>
+				</div>
+				<div class="panel-body">
+					<div class="form-group">
+						<label class="col-sm-2 control-label text-right"><spring:message
+								code="lbl.code" /> :</label>
+						<div class="col-sm-3 add-margin">
+							<form:input path="code"
+								class="form-control text-left patternvalidation"
+								data-pattern="alphanumericwithspecialcharacterswithspace"
+								maxlength="8" />
+							<form:errors path="code" cssClass="error-msg" />
 						</div>
-						<div class="form-group">
-							<label class="col-sm-2 control-label text-right"><spring:message
-									code="lbl.active" />:</label>
-									<div class="col-sm-2 add-margin">
-									
+						<label class="col-sm-2 control-label text-right"><spring:message
+								code="lbl.casetype" /> :</label>
+						<div class="col-sm-3 add-margin">
+							<form:input path="caseType"
+								class="form-control text-left patternvalidation"
+								data-pattern="alphanumericwithspecialcharacterswithspace"
+								maxlength="50" />
+							<form:errors path="caseType" cssClass="error-msg" />
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label text-right"><spring:message
+								code="lbl.active" />:</label>
+						<div class="col-sm-2 add-margin">
+
 							<form:select path="active" id="active" cssClass="form-control"
-								cssErrorClass="form-control error" >
-								<form:option value="">
-									<spring:message code="lbl.select" />
-								</form:option>
+								cssErrorClass="form-control error">
 								<form:option value="true">YES</form:option>
 								<form:option value="false">NO</form:option>
 								<form:errors path="active" cssClass="error-msg" />
@@ -102,8 +101,8 @@
 	</div>
 </form:form>
 <div class="row display-hide report-section">
-	<div class="col-md-12 table-header text-left">Case Type
-		Search Result</div>
+	<div class="col-md-12 table-header text-left">Case Type Search
+		Result</div>
 	<div class="col-md-12 form-group report-table-container">
 		<table class="table table-bordered table-hover multiheadertbl"
 			id="resultTable">
@@ -125,8 +124,10 @@
 		}
 	});
 </script>
-<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>
-<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
+<link rel="stylesheet"
+	href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>" />
+<link rel="stylesheet"
+	href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
 <script type="text/javascript"
 	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
 <script type="text/javascript"

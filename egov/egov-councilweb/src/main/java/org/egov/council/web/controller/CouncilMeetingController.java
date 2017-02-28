@@ -98,6 +98,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ValidationUtils;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -206,12 +207,13 @@ public class CouncilMeetingController {
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public String create(@Valid @ModelAttribute final CouncilMeeting councilMeeting, final BindingResult errors,
             final Model model, final RedirectAttributes redirectAttrs, final HttpServletRequest request) {
-        if (councilMeeting.getStatus() == null)
-            councilMeeting.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(COUNCILMEETING, APPROVED));
 
+        validateCouncilMeeting(errors);
         if (errors.hasErrors()) {
             return COUNCILMEETING_NEW;
         }
+        if (councilMeeting.getStatus() == null)
+            councilMeeting.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(COUNCILMEETING, APPROVED));
         CouncilMeetingNumberGenerator meetingNumberGenerator = autonumberServiceBeanResolver
                 .getAutoNumberServiceFor(CouncilMeetingNumberGenerator.class);
         councilMeeting.setMeetingNumber(meetingNumberGenerator.getNextNumber(councilMeeting));
@@ -233,6 +235,12 @@ public class CouncilMeetingController {
         return "redirect:/councilmeeting/result/" + councilMeeting.getId();
     }
 
+    private void validateCouncilMeeting(BindingResult errors) {
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "meetingDate", "notempty.meeting.meetingDate");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "meetingTime", "notempty.meeting.meetingTime");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "meetingLocation", "notempty.meeting.committeeType");
+    }
+
     @RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
     public String edit(@PathVariable("id") final Long id, final Model model, final HttpServletResponse response)
             throws IOException {
@@ -246,6 +254,7 @@ public class CouncilMeetingController {
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     public String update(@Valid @ModelAttribute final CouncilMeeting councilMeeting, final BindingResult errors,
             final Model model, final RedirectAttributes redirectAttrs) {
+        validateCouncilMeeting(errors);
         if (errors.hasErrors()) {
             return COUNCILMEETING_EDIT;
         }
@@ -434,7 +443,6 @@ public class CouncilMeetingController {
     @RequestMapping(value = "/attendance/update", method = RequestMethod.POST)
     public String updateAttendance(@Valid @ModelAttribute final CouncilMeeting councilMeeting, final BindingResult errors,
             final Model model, final RedirectAttributes redirectAttrs) {
-
         if (councilMeeting != null && councilMeeting.getStatus() != null
                 && ATTENDANCEFINALIZED.equals(councilMeeting.getStatus().getCode())) {
             model.addAttribute(MESSAGE, MSG_ATTENDANCE_ALREADY_FINALIZD);

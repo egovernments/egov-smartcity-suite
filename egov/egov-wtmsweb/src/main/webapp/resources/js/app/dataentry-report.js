@@ -95,7 +95,9 @@ function loadingReport()
 				"columns" : [{"sTitle" : "S.no", /*"data" : "hscNo", "mRender": function ( o,val,data, meta ) { return ''+(meta.row+1); }*/},
 			             
 		       
-							  { "data" : "hscNo" , "title": "H.S.C NO"},  
+							  { "data" : "hscNo" , "title": "H.S.C NO" , "render": function ( data, type, full, meta ) {
+									return '<a href="/wtms/viewDcb/consumerCodeWis/'+data+'" target="_blank">'+data+'</a>';
+							    } },  
 							  { "data" : "assessmentNo", "title": "PT Assessment Number"},
 							  { "data" : "ownerName", "title": "Name of the Applicant"},
 							  { "data" : "wardName", "title": "Zone / Ward / Block"},

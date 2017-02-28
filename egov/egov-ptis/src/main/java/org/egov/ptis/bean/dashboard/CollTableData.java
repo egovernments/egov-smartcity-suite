@@ -80,6 +80,16 @@ public class CollTableData {
     private BigDecimal lyPenaltyColl = BigDecimal.ZERO;
     private BigDecimal lyRebate = BigDecimal.ZERO;
     private BigDecimal lyAdvanceColl = BigDecimal.ZERO;
+    private BigDecimal lyTotalArrearsColl = BigDecimal.ZERO;
+    private BigDecimal lyTotalCurrentColl = BigDecimal.ZERO;
+    private BigDecimal lyTotalPenaltyColl = BigDecimal.ZERO;
+    private BigDecimal lyTotalRebate = BigDecimal.ZERO;
+    private BigDecimal lyTotalAdvanceColl = BigDecimal.ZERO;
+    private BigDecimal lyTotalColl = BigDecimal.ZERO;
+    private BigDecimal lyArrearsPenaltyColl = BigDecimal.ZERO;
+    private BigDecimal lyCurrentPenaltyColl = BigDecimal.ZERO;
+    private BigDecimal cyArrearsPenaltyColl = BigDecimal.ZERO;
+    private BigDecimal cyCurrentPenaltyColl = BigDecimal.ZERO;
 
     public String getRegionName() {
         return regionName;
@@ -351,6 +361,86 @@ public class CollTableData {
 
     public void setLyAdvanceColl(BigDecimal lyAdvanceColl) {
         this.lyAdvanceColl = lyAdvanceColl;
+    }
+
+    public BigDecimal getLyTotalArrearsColl() {
+        return lyTotalArrearsColl;
+    }
+
+    public void setLyTotalArrearsColl(BigDecimal lyTotalArrearsColl) {
+        this.lyTotalArrearsColl = lyTotalArrearsColl;
+    }
+
+    public BigDecimal getLyTotalCurrentColl() {
+        return lyTotalCurrentColl;
+    }
+
+    public void setLyTotalCurrentColl(BigDecimal lyTotalCurrentColl) {
+        this.lyTotalCurrentColl = lyTotalCurrentColl;
+    }
+
+    public BigDecimal getLyTotalPenaltyColl() {
+        return lyTotalPenaltyColl;
+    }
+
+    public void setLyTotalPenaltyColl(BigDecimal lyTotalPenaltyColl) {
+        this.lyTotalPenaltyColl = lyTotalPenaltyColl;
+    }
+
+    public BigDecimal getLyTotalRebate() {
+        return lyTotalRebate;
+    }
+
+    public void setLyTotalRebate(BigDecimal lyTotalRebate) {
+        this.lyTotalRebate = lyTotalRebate;
+    }
+
+    public BigDecimal getLyTotalAdvanceColl() {
+        return lyTotalAdvanceColl;
+    }
+
+    public void setLyTotalAdvanceColl(BigDecimal lyTotalAdvanceColl) {
+        this.lyTotalAdvanceColl = lyTotalAdvanceColl;
+    }
+
+    public BigDecimal getLyTotalColl() {
+        return lyTotalColl;
+    }
+
+    public void setLyTotalColl(BigDecimal lyTotalColl) {
+        this.lyTotalColl = lyTotalColl;
+    }
+
+    public BigDecimal getLyArrearsPenaltyColl() {
+        return lyArrearsPenaltyColl;
+    }
+
+    public void setLyArrearsPenaltyColl(BigDecimal lyArrearsPenaltyColl) {
+        this.lyArrearsPenaltyColl = lyArrearsPenaltyColl;
+    }
+
+    public BigDecimal getLyCurrentPenaltyColl() {
+        return lyCurrentPenaltyColl;
+    }
+
+    public void setLyCurrentPenaltyColl(BigDecimal lyCurrentPenaltyColl) {
+        this.lyCurrentPenaltyColl = lyCurrentPenaltyColl;
+    }
+
+    public BigDecimal getCyArrearsPenaltyColl() {
+        return cyArrearsPenaltyColl;
+    }
+
+    public void setCyArrearsPenaltyColl(BigDecimal cyArrearsPenaltyColl) {
+        this.cyArrearsPenaltyColl = cyArrearsPenaltyColl;
+    }
+
+    public BigDecimal getCyCurrentPenaltyColl() {
+        return cyCurrentPenaltyColl;
+    }
+
+    public void setCyCurrentPenaltyColl(BigDecimal cyCurrentPenaltyColl) {
+        this.cyCurrentPenaltyColl = cyCurrentPenaltyColl;
     }
 
 }

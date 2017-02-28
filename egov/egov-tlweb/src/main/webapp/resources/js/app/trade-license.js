@@ -38,58 +38,62 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-function showHideAgreement(){
-    if(document.getElementById("showAgreementDtl").checked){
-        document.getElementById("agreementSec").style.display="";
+$(document).ready(function () {
+    $('#boundary').blur(function () {
+        $('#parentBoundary').find('option:gt(0)').remove();
+        if (this.value !== '') {
+            $.ajax({
+                type: "GET",
+                url: "/egi/boundary/ajaxBoundary-blockByLocality",
+                cache: true,
+                dataType: "json",
+                data: {'locality': this.value}
+            }).done(function (response) {
+                if (response.results.boundaries.length < 1) {
+                    bootbox.alert("Could not find ward for Locality : " + $('#boundary').find(":selected").text());
+                    $('#boundary').val('');
+                    return;
+                }
+                $.each(response.results.boundaries, function (key, boundary) {
+                    $('#parentBoundary').append('<option value="' + boundary.wardId + '">' + boundary.wardName + '</option>');
+                });
+
+                if (parentBoundary != "") {
+                    $("#parentBoundary").val(parentBoundary);
+                    parentBoundary = "";
+                }
+            });
+        }
+    });
+});
+
+function showHideAgreement() {
+    if (document.getElementById("showAgreementDtl").checked) {
+        document.getElementById("agreementSec").style.display = "";
     } else {
-        document.getElementById("agreementSec").style.display="none";
-        document.getElementById("agreementDate").value="";
-        document.getElementById("agreementDocNo").value="";
+        document.getElementById("agreementSec").style.display = "none";
+        document.getElementById("agreementDate").value = "";
+        document.getElementById("agreementDocNo").value = "";
     }
 }
 
-function getUom(){
-    jQuery.ajax({
-        url: "/tl/feeType/uom-by-subcategory",
+function getUom() {
+    $.ajax({
+        url: "/tl/licensesubcategory/detail-by-feetype",
         type: "GET",
         data: {
-            subCategoryId : jQuery('#subCategory').val(),
-            feeTypeId :  jQuery('#feeTypeId').val()
+            subCategoryId: $('#subCategory').val(),
+            feeTypeId: $('#feeTypeId').val()
         },
         cache: false,
         dataType: "json",
         success: function (response) {
-            if(response.length > 0)
-                jQuery('#uom').val(response[0].uom.name);
+            if (response)
+                $('#uom').val(response.uom.name);
             else {
-                jQuery('#uom').val('');
+                $('#uom').val('');
                 bootbox.alert("No UOM mapped for the selected Sub Category");
             }
-        }
-    });
-}
-
-function getZoneWard(){
-    $('#wardName').val("");
-    $('#parentBoundary').val("");
-    $.ajax({
-        url: "/egi/boundary/ajaxBoundary-blockByLocality.action",
-        type: "GET",
-        data: {
-            locality : $('#boundary').val()
-        },
-        cache: false,
-        dataType: "json",
-        success: function (response) {
-            $.each(response.results.boundaries, function (j, boundary) {
-                if (boundary.wardId) {
-                    $('#wardName').val(boundary.wardName);
-                    $('#parentBoundary').val(boundary.wardId);
-                }
-            });
-        },
-        error: function (response) {
-            bootbox.alert("No boundary details mapped for locality")
         }
     });
 }
@@ -111,7 +115,6 @@ function getPropertyDetails() {
                 } else {
                     if (data.boundaryDetails != null) {
                         $("#boundary").val(data.boundaryDetails.localityId);
-                        $("#wardName").val(data.boundaryDetails.wardName);
                         $('#parentBoundary').val(data.boundaryDetails.wardId);
                         $("#address").val(data.propertyAddress);
                     }
@@ -135,11 +138,10 @@ function resetOnPropertyNumChange() {
         $("#address").attr("readonly", false);
         $("#boundary").attr("readonly", false);
     }
-    $("#boundary").val(-1);
-    $("#wardName").val("");
+    $("#boundary").val('');
+    $("#parentBoundary").find('option:gt(0)').remove();
     $("#address").val("");
 }
-
 
 
 function checkLength(obj, val) {

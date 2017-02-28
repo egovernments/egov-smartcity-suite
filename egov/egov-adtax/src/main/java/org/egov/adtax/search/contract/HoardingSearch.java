@@ -40,10 +40,10 @@
 
 package org.egov.adtax.search.contract;
 
-import org.egov.adtax.entity.enums.AdvertisementStatus;
-
 import java.math.BigDecimal;
 import java.util.Date;
+
+import org.egov.adtax.entity.enums.AdvertisementStatus;
 
 public class HoardingSearch {
     private String advertisementNumber;
@@ -61,6 +61,7 @@ public class HoardingSearch {
     private AdvertisementStatus status;
     private BigDecimal pendingDemandAmount;
     private BigDecimal penaltyAmount;
+    private BigDecimal additionalTaxAmount;
     private BigDecimal totalAmount;
     private int totalHoardingInAgency;
     private String hordingIdsSearchedByAgency;
@@ -71,6 +72,8 @@ public class HoardingSearch {
     private String financialYear;
     private String ownerDetail;
     private boolean isLegacy;
+    private String userName;
+    private String pendingAction;
 
     public String getAdvertisementNumber() {
         return advertisementNumber;
@@ -260,7 +263,7 @@ public class HoardingSearch {
         return totalAmount;
     }
 
-    public void setTotalAmount(BigDecimal totalAmount) {
+    public void setTotalAmount(final BigDecimal totalAmount) {
         this.totalAmount = totalAmount;
     }
 
@@ -268,8 +271,32 @@ public class HoardingSearch {
         return isLegacy;
     }
 
-    public void setLegacy(boolean isLegacy) {
+    public void setLegacy(final boolean isLegacy) {
         this.isLegacy = isLegacy;
+    }
+
+    public BigDecimal getAdditionalTaxAmount() {
+        return additionalTaxAmount;
+    }
+
+    public void setAdditionalTaxAmount(final BigDecimal additionalTaxAmount) {
+        this.additionalTaxAmount = additionalTaxAmount;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getPendingAction() {
+        return pendingAction;
+    }
+
+    public void setPendingAction(String pendingAction) {
+        this.pendingAction = pendingAction;
     }
 
 }

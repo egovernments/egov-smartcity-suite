@@ -40,14 +40,17 @@ package org.egov.mrs.web.controller.masters;
 
 import static org.egov.infra.utils.JsonUtils.toJSON;
 import static org.egov.mrs.application.MarriageConstants.BOUNDARY_TYPE;
-import static org.egov.mrs.application.MarriageConstants.REVENUE_HIERARCHY_TYPE;
+import static org.egov.mrs.application.MarriageConstants.ADMINISTRATION_HIERARCHY_TYPE;
 
 import java.util.List;
 
 import javax.validation.Valid;
 
 import org.apache.commons.lang3.RandomStringUtils;
+import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.mrs.application.MarriageConstants;
 import org.egov.mrs.masters.entity.MarriageRegistrationUnit;
 import org.egov.mrs.masters.service.MarriageRegistrationUnitService;
 import org.egov.mrs.web.adaptor.MarriageRegistrationUnitJsonAdaptor;
@@ -81,12 +84,30 @@ public class RegistrationUnitController {
     private BoundaryService boundaryService;
 
     @Autowired
+    protected AppConfigValueService appConfigValuesService;
+    
+    @Autowired
     private MarriageRegistrationUnitService marriageRegistrationUnitService;
 
     private void prepareNewForm(Model model) {
-        model.addAttribute("zones", boundaryService
+
+        final AppConfigValues heirarchyType = appConfigValuesService.getConfigValuesByModuleAndKey(
+                MarriageConstants.MODULE_NAME, MarriageConstants.MARRIAGE_REGISTRATIONUNIT_HEIRARCHYTYPE).get(0);
+
+        final AppConfigValues boundaryType = appConfigValuesService.getConfigValuesByModuleAndKey(
+                MarriageConstants.MODULE_NAME, MarriageConstants.MARRIAGE_REGISTRATIONUNIT_BOUNDARYYTYPE).get(0);
+        
+        if (heirarchyType != null && heirarchyType.getValue() != null && !"".equals(heirarchyType.getValue())
+                && boundaryType != null && boundaryType.getValue() != null && !"".equals(boundaryType.getValue())) {
+            model.addAttribute("zones", boundaryService
                 .getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
-                        BOUNDARY_TYPE, REVENUE_HIERARCHY_TYPE));
+                        boundaryType.getValue(), heirarchyType.getValue()));
+            
+        }else
+            model.addAttribute("zones", boundaryService
+                    .getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
+                            BOUNDARY_TYPE, ADMINISTRATION_HIERARCHY_TYPE));
+        
     }
 
     @RequestMapping(value = "/mrregistrationunit/new", method = RequestMethod.GET)

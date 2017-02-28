@@ -63,45 +63,46 @@ public class CouncilReportService {
 
     private static final String AGENDA = "agenda";
     private static final String MEETINGMOM = "meetingMom";
-    private final Map<String, Object> reportParams = new HashMap<>();
-    private ReportRequest reportInput = null;
 
     @Autowired
     private ReportService reportService;
 
-    public byte[] generatePDFForAgendaDetails(CouncilMeeting councilMeeting, String logoPath) {
+    public byte[] generatePDFForAgendaDetails(final CouncilMeeting councilMeeting, final String logoPath) {
+        ReportRequest reportInput = null;
         if (councilMeeting != null) {
             final Map<String, Object> agendaDetails = new HashMap<>();
-            List<CouncilAgendaDetails> agendaDetailsList = councilMeeting.getMeetingMOMs().get(0).getAgenda()
+            final List<CouncilAgendaDetails> agendaDetailsList = councilMeeting.getMeetingMOMs().get(0).getAgenda()
                     .getAgendaDetails();
-            agendaDetailsList.sort((CouncilAgendaDetails f1, CouncilAgendaDetails f2)->f1.getItemNumber().compareTo(f2.getItemNumber()));
+            agendaDetailsList.sort((final CouncilAgendaDetails f1, final CouncilAgendaDetails f2) -> f1.getItemNumber()
+                    .compareTo(f2.getItemNumber()));
             agendaDetails.put("agendaList", agendaDetailsList);
             reportInput = new ReportRequest(AGENDA, agendaDetails, buildReportParameters(councilMeeting, logoPath));
         }
         reportInput.setReportFormat(ReportConstants.FileFormat.PDF);
         reportInput.setPrintDialogOnOpenReport(false);
-      return createReport(reportInput).getReportOutputData();
+        return createReport(reportInput).getReportOutputData();
 
     }
-    public byte[] generatePDFForMom(CouncilMeeting councilMeeting, String logoPath) {
+
+    public byte[] generatePDFForMom(final CouncilMeeting councilMeeting, final String logoPath) {
+        ReportRequest reportInput = null;
         if (councilMeeting != null) {
             final Map<String, Object> momDetails = new HashMap<>();
-            List<MeetingMOM> meetingMomList = councilMeeting.getMeetingMOMs();
-            meetingMomList.sort((MeetingMOM f1, MeetingMOM f2)->f1.getItemNumber().compareTo(f2.getItemNumber()));
+            final List<MeetingMOM> meetingMomList = councilMeeting.getMeetingMOMs();
+            meetingMomList.sort((final MeetingMOM f1, final MeetingMOM f2) -> f1.getItemNumber().compareTo(f2.getItemNumber()));
             momDetails.put("meetingMOMList", meetingMomList);
             reportInput = new ReportRequest(MEETINGMOM, momDetails, buildReportParameters(councilMeeting, logoPath));
         }
         reportInput.setReportFormat(ReportConstants.FileFormat.PDF);
         reportInput.setPrintDialogOnOpenReport(false);
-      return createReport(reportInput).getReportOutputData();
+        return createReport(reportInput).getReportOutputData();
 
     }
 
+    private Map<String, Object> buildReportParameters(final CouncilMeeting councilMeeting, final String logoPath) {
 
-    private Map<String, Object> buildReportParameters(CouncilMeeting councilMeeting, String logoPath) {
-
-        StringBuilder meetingDateTimeLocation = new StringBuilder();
-
+        final StringBuilder meetingDateTimeLocation = new StringBuilder();
+        final Map<String, Object> reportParams = new HashMap<>();
         reportParams.put("logoPath", logoPath);
         reportParams.put("commiteeType", WordUtils.capitalize(councilMeeting.getCommitteeType().getName()));
         reportParams.put("meetingNumber", WordUtils.capitalize(councilMeeting.getMeetingNumber()));
@@ -114,9 +115,10 @@ public class CouncilReportService {
             meetingDateTimeLocation.append(' ');
             meetingDateTimeLocation.append(councilMeeting.getMeetingLocation());
         }
-        reportParams.put("meetingDate", councilMeeting.getMeetingDate().toString() != null ?councilMeeting.getMeetingDate().toString():" " );
-        reportParams.put("meetingTime", councilMeeting.getMeetingTime() != null ? councilMeeting.getMeetingTime():" ");
-        reportParams.put("meetingPlace", councilMeeting.getMeetingLocation() != null ? councilMeeting.getMeetingLocation():" ");
+        reportParams.put("meetingDate",
+                councilMeeting.getMeetingDate().toString() != null ? councilMeeting.getMeetingDate().toString() : " ");
+        reportParams.put("meetingTime", councilMeeting.getMeetingTime() != null ? councilMeeting.getMeetingTime() : " ");
+        reportParams.put("meetingPlace", councilMeeting.getMeetingLocation() != null ? councilMeeting.getMeetingLocation() : " ");
         reportParams.put("meetingDateTimePlace", meetingDateTimeLocation.toString());
         reportParams.put("cityName", ReportUtil.getCityName());
         return reportParams;

@@ -39,12 +39,18 @@
  */
 package org.egov.wtms.entity.es;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+
 import java.util.Date;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.egov.infra.utils.ApplicationConstant.ES_DATE_FORMAT;
+import static org.egov.infra.utils.DateUtils.TO_DEFAULT_DATE_FORMAT;
+
 public class ApplicationSearchRequest {
+    private static final DateTimeFormatter ES_DATE_FORMATTER = DateTimeFormat.forPattern(ES_DATE_FORMAT);
+
     private String searchText;
     private String moduleName;
     private String applicationType;
@@ -116,14 +122,8 @@ public class ApplicationSearchRequest {
     }
 
     public void setFromDate(final String fromDate) {
-        final SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
-        final SimpleDateFormat dtft = new SimpleDateFormat("dd/MM/yyyy");
-        if (null != fromDate)
-            try {
-                this.fromDate = ft.format(dtft.parse(fromDate));
-            } catch (final ParseException e) {
-
-            }
+        if (isNotBlank(fromDate))
+            this.fromDate = TO_DEFAULT_DATE_FORMAT.parseDateTime(fromDate).withTimeAtStartOfDay().toString(ES_DATE_FORMATTER);
     }
 
     public String getToDate() {
@@ -131,17 +131,9 @@ public class ApplicationSearchRequest {
     }
 
     public void setToDate(final String toDate) {
-        final SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
-        final SimpleDateFormat dtft = new SimpleDateFormat("dd/MM/yyyy");
-        final Calendar cal = Calendar.getInstance();
-        if (null != toDate)
-            try {
-                cal.setTime(dtft.parse(toDate));
-                cal.add(Calendar.DAY_OF_YEAR, 1);
-                this.toDate = ft.format(cal.getTime());
-            } catch (final ParseException e) {
-
-            }
+        if (isNotBlank(toDate))
+            this.toDate = TO_DEFAULT_DATE_FORMAT.parseDateTime(toDate).millisOfDay().
+                    withMaximumValue().toString(ES_DATE_FORMATTER);
     }
 
     public String getCityName() {
@@ -163,33 +155,6 @@ public class ApplicationSearchRequest {
     public void setSource(final String source) {
         this.source = source;
     }
-    
-
-    /*
-     * public Filters searchFilters() { final List<Filter> andFilters = new
-     * ArrayList<>(0); andFilters.add(termsStringFilter("clauses.cityname",
-     * cityName));
-     * andFilters.add(queryStringFilter("searchable.applicationnumber",
-     * applicationNumber != null && !applicationNumber.trim().isEmpty() ? "\"" +
-     * applicationNumber + "\"" : applicationNumber));
-     * andFilters.add(termsStringFilter("clauses.modulename", moduleName));
-     * andFilters.add(termsStringFilter("clauses.applicationtype",
-     * applicationType)); andFilters.add(termsStringFilter("clauses.channel",
-     * source)); andFilters.add(queryStringFilter("searchable.applicantname",
-     * applicantName));
-     * andFilters.add(queryStringFilter("searchable.consumercode",
-     * consumerCode)); if(applicationStatus !=null &&
-     * applicationStatus.equals(WaterTaxConstants.APPLICATIONSTATUSOPEN))
-     * andFilters.add(queryStringFilter("searchable.isclosed",Integer.toString(
-     * 1) )); else if(applicationStatus !=null &&
-     * applicationStatus.equals(WaterTaxConstants.APPLICATIONSTATUSCLOSED))
-     * andFilters.add(queryStringFilter("searchable.isclosed",Integer.toString(
-     * 0) )); andFilters.add(queryStringFilter("searchable.mobilenumber",
-     * mobileNumber)); andFilters.add(rangeFilter("searchable.applicationdate",
-     * fromDate, toDate)); if (logger.isDebugEnabled()) logger.debug(
-     * "finished filters"); logger.info("$$$$$$$$$$$$$$$$ Filters : " +
-     * andFilters); return Filters.withAndFilters(andFilters); }
-     */
 
     public String getUrl() {
         return url;
@@ -225,7 +190,7 @@ public class ApplicationSearchRequest {
 
     public void setApplicationdate(Date applicationdate) {
         this.applicationdate = applicationdate;
-         
+
     }
 
     public String getOwnername() {
@@ -243,8 +208,4 @@ public class ApplicationSearchRequest {
     public void setApplicationCreatedDate(String applicationCreatedDate) {
         this.applicationCreatedDate = applicationCreatedDate;
     }
-
-    
-   
-
 }

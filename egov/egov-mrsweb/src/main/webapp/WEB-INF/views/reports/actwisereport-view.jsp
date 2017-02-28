@@ -65,7 +65,7 @@
 							<th><spring:message code="lbl.act" /></th>
 							<th><spring:message code="lbl.place.of.marriage" /></th>
 							<th><spring:message code="lbl.registrationunit" /></th>
-							<th><spring:message code="lbl.zone" /></th>
+							<th><spring:message code="lbl.Boundary" /></th>
 							
 						</tr>
 					</thead>

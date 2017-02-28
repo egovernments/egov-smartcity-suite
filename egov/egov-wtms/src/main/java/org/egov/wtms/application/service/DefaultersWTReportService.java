@@ -76,10 +76,10 @@ public class DefaultersWTReportService {
                 .append("from egwtr_mv_dcb_view dcbinfo INNER JOIN eg_boundary wardboundary on dcbinfo.wardid = wardboundary.id INNER JOIN eg_boundary localboundary on dcbinfo.locality = localboundary.id");
 
         if (Double.parseDouble(toAmount) == 0)
-            queryStr.append(" where dcbinfo.arr_balance+dcbinfo.curr_balance >" + fromAmount);
+            queryStr.append(" where dcbinfo.arr_balance+dcbinfo.curr_balance >=" + fromAmount);
         else
-            queryStr.append(" where dcbinfo.arr_balance+dcbinfo.curr_balance >" + fromAmount
-                    + " and dcbinfo.arr_balance+dcbinfo.curr_balance <" + toAmount);
+            queryStr.append(" where dcbinfo.arr_balance+dcbinfo.curr_balance >=" + fromAmount
+                    + " and dcbinfo.arr_balance+dcbinfo.curr_balance <=" + toAmount);
         queryStr.append(" and dcbinfo.connectionstatus = '" + ConnectionStatus.ACTIVE.toString() + "'");
         if (ward != null && !ward.isEmpty())
             queryStr.append(" and wardboundary.id = '" + ward + "'");
@@ -101,10 +101,10 @@ public class DefaultersWTReportService {
                 .append(" INNER JOIN eg_boundary wardboundary on dcbinfo.wardid = wardboundary.id INNER JOIN eg_boundary localboundary")
                 .append(" on dcbinfo.locality = localboundary.id");
         if (Double.parseDouble(toAmount) == 0)
-            queryStr.append(" where dcbinfo.arr_balance+dcbinfo.curr_balance >" + fromAmount);
+            queryStr.append(" where dcbinfo.arr_balance+dcbinfo.curr_balance >=" + fromAmount);
         else
-            queryStr.append(" where dcbinfo.arr_balance+dcbinfo.curr_balance >" + fromAmount
-                    + " and dcbinfo.arr_balance+dcbinfo.curr_balance <" + toAmount);
+            queryStr.append(" where dcbinfo.arr_balance+dcbinfo.curr_balance >=" + fromAmount
+                    + " and dcbinfo.arr_balance+dcbinfo.curr_balance <=" + toAmount);
         queryStr.append(" and dcbinfo.connectionstatus = '" + ConnectionStatus.ACTIVE.toString() + "'");
         if (ward != null && !ward.isEmpty())
             queryStr.append(" and wardboundary.id = '" + ward + "'");
@@ -121,10 +121,10 @@ public class DefaultersWTReportService {
                 .append(" INNER JOIN eg_boundary wardboundary on dcbinfo.wardid = wardboundary.id INNER JOIN eg_boundary localboundary")
                 .append(" on dcbinfo.locality = localboundary.id");
         if (Double.parseDouble(toAmount) == 0)
-            queryStr.append(" where dcbinfo.arr_balance+dcbinfo.curr_balance >" + fromAmount);
+            queryStr.append(" where dcbinfo.arr_balance+dcbinfo.curr_balance >=" + fromAmount);
         else
-            queryStr.append(" where dcbinfo.arr_balance+dcbinfo.curr_balance >" + fromAmount
-                    + " and dcbinfo.arr_balance+dcbinfo.curr_balance <" + toAmount);
+            queryStr.append(" where dcbinfo.arr_balance+dcbinfo.curr_balance >=" + fromAmount
+                    + " and dcbinfo.arr_balance+dcbinfo.curr_balance <=" + toAmount);
         queryStr.append(" and dcbinfo.connectionstatus = '" + ConnectionStatus.ACTIVE.toString() + "'");
         if (ward != null && !ward.isEmpty())
             queryStr.append(" and wardboundary.id = '" + ward + "'");

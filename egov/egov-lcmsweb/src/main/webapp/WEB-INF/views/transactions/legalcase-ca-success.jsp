@@ -46,8 +46,8 @@
 	class="form-horizontal form-groups-bordered" modelAttribute="legalCase"
 	id="legalCasecaForm">
 	<c:if test="${not empty message}">
-						<div class=role="alert">${message}</div>
-					</c:if>
+		<div class=role="alert">${message}</div>
+	</c:if>
 	<div class="row">
 		<div class="col-md-12">
 			<div class="panel panel-primary" data-collapsed="0">
@@ -87,10 +87,10 @@
 								var="caduedate" />
 							<c:out value="${caduedate}" />
 						</div>
-						<div class="col-xs-3 add-margin">
+						<div class="col-xs-2 add-margin">
 							<spring:message code="lbl.dateofapprovalca" />
 						</div>
-						<div class="col-xs-2 add-margin view-content">
+						<div class="col-xs-3 add-margin view-content">
 							<fmt:formatDate pattern="dd/MM/yyyy"
 								value="${legalCase.counterAffidavits[0].counterAffidavitApprovalDate}"
 								var="caappdate" />
@@ -103,7 +103,7 @@
 						</div>
 						<div class="col-sm-3 add-margin view-content">
 							${legalCase.counterAffidavits[0].eOfficeComputerNumber}</div>
-							<div class="col-xs-2 add-margin">
+						<div class="col-xs-2 add-margin">
 							<spring:message code="lbl.cafillingdate" />
 						</div>
 						<div class="col-xs-3 add-margin view-content">
@@ -116,9 +116,9 @@
 			</div>
 		</div>
 	</div>
-<jsp:include page="pwrdocumentdetails-view.jsp"></jsp:include>
+	<jsp:include page="pwrdocumentdetails-view.jsp"></jsp:include>
 
-<div class="form-group">
+	<div class="form-group">
 		<div class="text-center">
 			<a href="javascript:void(0)" class="btn btn-default"
 				onclick="self.close()"><spring:message code="lbl.close" /></a>

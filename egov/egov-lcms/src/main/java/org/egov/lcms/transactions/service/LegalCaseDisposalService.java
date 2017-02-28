@@ -39,6 +39,7 @@
  */
 package org.egov.lcms.transactions.service;
 
+import java.text.ParseException;
 import java.util.List;
 
 import org.egov.commons.EgwStatus;
@@ -62,14 +63,23 @@ public class LegalCaseDisposalService {
     @Autowired
     private LegalCaseUtil legalCaseUtil;
 
+    @Autowired
+    private LegalCaseSmsService legalCaseSmsService;
+
+    @Autowired
+    private LegalCaseService legalCaseService;
+
     @Transactional
-    public LegalCaseDisposal persist(final LegalCaseDisposal legalCaseDisposal) {
+    public LegalCaseDisposal persist(final LegalCaseDisposal legalCaseDisposal) throws ParseException {
         legalCaseDisposal.getLegalCase().setNextDate(legalCaseDisposal.getDisposalDate());
         final EgwStatus statusObj = legalCaseUtil.getStatusForModuleAndCode(LcmsConstants.MODULE_TYPE_LEGALCASE,
                 LcmsConstants.LEGALCASE_STATUS_CLOSED);
         legalCaseDisposal.getLegalCase().setStatus(statusObj);
-        final ReportStatus reportStatus=null;
+        final ReportStatus reportStatus = null;
         legalCaseDisposal.getLegalCase().setReportStatus(reportStatus);
+        legalCaseSmsService.sendSmsToOfficerInchargeForCloseCase(legalCaseDisposal);
+        legalCaseSmsService.sendSmsToStandingCounselForCloseCase(legalCaseDisposal);
+        legalCaseService.persistLegalCaseIndex(legalCaseDisposal.getLegalCase(), null, null, null, legalCaseDisposal);
         return legalCaseDisposalRepository.save(legalCaseDisposal);
     }
 

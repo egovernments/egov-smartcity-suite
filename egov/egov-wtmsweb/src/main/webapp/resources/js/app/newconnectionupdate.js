@@ -40,6 +40,27 @@
 $(document)
 		.ready(
 				function() {
+					
+					if($("#connectionType").val()==="METERED"){
+						$(".showfields").show();
+						$("#waterSupplyType").attr('required','required');
+						$("#buildingName").attr('required','required');
+					}
+					
+					$("#connectionType").change(function(){
+						if($("#connectionType").val()==="METERED"){
+							$(".showfields").show();
+							$("#waterSupplyType").attr('required','required');
+							$("#buildingName").attr('required','required');
+						}
+						else{
+							$(".showfields").hide();
+							$("#waterSupplyType").removeAttr('required');
+							$("#buildingName").removeAttr('required');
+							$("#waterSupplyType").val('');
+							$("#buildingName").val('');
+						}
+					});
 
 					var typeOfConnection = $('#typeOfConnection').val();
 					if (typeOfConnection == "CHANGEOFUSE") {
@@ -63,11 +84,20 @@ $(document)
 						$('#approvalDesignation').removeAttr('required');
 						$(".show-row").hide();
 						$("#Forward").hide();
-						$("#Reject").hide();
-						$('#approverDetailHeading').hide();
+						//$("#Reject").hide();
+						//$('#approverDetailHeading').hide();
 						return false;
 
 					}
+					if (currentstate == 'Rejected'
+						&& status == 'ESTIMATIONNOTICEGENERATED') {
+					$('#approvalDepartment').removeAttr('required');
+					$('#approvalDesignation').removeAttr('required');
+					$(".show-row").hide();
+					$("#Forward").hide();
+					return false;
+
+				}
 
 					if (status == 'DIGITALSIGNATUREPENDING' || status=='CLOSUREDIGSIGNPENDING' || status=='RECONNDIGSIGNPENDING') {
 						$("#Approve").hide();

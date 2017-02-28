@@ -41,7 +41,7 @@ package org.egov.mrs.web.controller.application.registration;
 
 import static org.egov.mrs.application.MarriageConstants.BOUNDARY_TYPE;
 import static org.egov.mrs.application.MarriageConstants.REGISTER_NO_OF_DAYS;
-import static org.egov.mrs.application.MarriageConstants.REVENUE_HIERARCHY_TYPE;
+import static org.egov.mrs.application.MarriageConstants.ADMINISTRATION_HIERARCHY_TYPE;
 
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -107,18 +107,22 @@ public class MarriageRegistrationController extends GenericWorkFlowController {
     protected MarriageRegistrationUnitService marriageRegistrationUnitService;
 
     @Autowired
-    protected AppConfigValueService appConfigValuesService;
-
-    @Autowired
     protected NationalityService nationalityService;
     
     @Autowired
     private EducationalQualificationService educationalQualificationService;
-
+    
+    @Autowired
+    protected AppConfigValueService appConfigValuesService;
+    
     @ModelAttribute
     public void prepareForm(final Model model) {
-        model.addAttribute("zones",
+      /*  model.addAttribute("zones",
                 boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(BOUNDARY_TYPE, REVENUE_HIERARCHY_TYPE));
+*/
+
+        getBoundaryTypeForRegistration(model);
+
         model.addAttribute("localitylist", boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
                 MarriageConstants.BOUNDARYTYPE_LOCALITY, MarriageConstants.LOCATION_HIERARCHY_TYPE));
         model.addAttribute("religions", religionService.getReligions());
@@ -137,6 +141,26 @@ public class MarriageRegistrationController extends GenericWorkFlowController {
                 MarriageConstants.MODULE_NAME, MarriageConstants.MARRIAGEREGISTRATION_DAYS_VALIDATION);
         model.addAttribute("allowDaysValidation",
                 allowValidation != null && !allowValidation.getValue().isEmpty() ? allowValidation.getValue() : "NO");
+    }
+
+    private void getBoundaryTypeForRegistration(final Model model) {
+        final AppConfigValues heirarchyType = appConfigValuesService.getConfigValuesByModuleAndKey(
+                MarriageConstants.MODULE_NAME, MarriageConstants.MARRIAGE_REGISTRATIONUNIT_HEIRARCHYTYPE).get(0);
+
+        final AppConfigValues boundaryType = appConfigValuesService.getConfigValuesByModuleAndKey(
+                MarriageConstants.MODULE_NAME, MarriageConstants.MARRIAGE_REGISTRATIONUNIT_BOUNDARYYTYPE).get(0);
+
+        if (heirarchyType != null && heirarchyType.getValue() != null && !"".equals(heirarchyType.getValue())
+                && boundaryType != null && boundaryType.getValue() != null && !"".equals(boundaryType.getValue())) {
+
+            model.addAttribute("zones", boundaryService
+                    .getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
+                            boundaryType.getValue(), heirarchyType.getValue()));
+
+        } else
+            model.addAttribute("zones", boundaryService
+                    .getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
+                            BOUNDARY_TYPE, ADMINISTRATION_HIERARCHY_TYPE));
     }
 
     public void validateApplicationDate(final MarriageRegistration registration,

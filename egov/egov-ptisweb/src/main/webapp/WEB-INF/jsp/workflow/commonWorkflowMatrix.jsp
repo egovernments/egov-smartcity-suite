@@ -168,7 +168,7 @@ function setApprover() {
            <td width="20%" class="${approverEvenCSS}">&nbsp;</td>
            <td class="${approverEvenCSS}" width="13%"><s:text name="wf.approver.remarks"/>: </td>
            <td class="${approverEvenTextCSS}"> 
-           	<textarea id="approverComments" name="approverComments" rows="2" cols="35" ></textarea>  
+           	<textarea id="approverComments" class="form-control" name="approverComments" rows="2" cols="35" ></textarea>  
            </td>
            <td class="${approverEvenCSS}">&nbsp;</td>
            <td width="10%" class="${approverEvenCSS}">&nbsp;</td>

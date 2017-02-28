@@ -54,6 +54,7 @@ public class DefaultersReportAdaptor implements JsonSerializer<DefaultersReport>
     public JsonElement serialize(final DefaultersReport defaultersReport, final Type typeOfSrc,
             final JsonSerializationContext context) {
         final JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("sNo", defaultersReport.getSlNo());
         jsonObject.addProperty("hscNo", defaultersReport.getHscNo());
         jsonObject.addProperty("ownerName", defaultersReport.getOwnerName());
         jsonObject.addProperty("wardName", defaultersReport.getWardName());

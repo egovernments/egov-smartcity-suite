@@ -83,7 +83,7 @@
 	</div>
 	<div class="row add-border">
 		<div class="col-sm-3 ">
-			<spring:message code="lbl.zone" />
+			<spring:message code="lbl.Boundary" />
 		</div>
 		<div class="col-sm-3 add-margin view-content">
 			<c:out value="${reIssue.registration.zone.name}" />

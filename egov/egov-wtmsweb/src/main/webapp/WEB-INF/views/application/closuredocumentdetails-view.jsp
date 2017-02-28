@@ -42,56 +42,58 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<table class="table table-bordered">
-
 <input type="hidden" id="appforDocumentList"  value="${appforDocumentList}" />
-<div class="panel-heading">
-<c:if test="${waterConnectionDetails.applicationType.code=='CLOSINGCONNECTION'}">
-									<div class="panel-title">
-									Closure Connection Documents
-									</div>
-									</c:if>
-								<c:if test="${waterConnectionDetails.applicationType.code=='RECONNECTION'}">
-									<div class="panel-title">
-									ReConnection Documents
-									</div>
-									</c:if>
-								</div>
-<c:if test="${!appforDocumentList.isEmpty()}">
-	<thead>
-		<tr>
-			<th><spring:message code="lbl.slno" /></th>
-			<th><spring:message code="lbl.documentname" /></th>
-			<th><spring:message code="lbl.documentnumber" /></th>
-			<th><spring:message code="lbl.documentdate" /></th>
-			<c:if test="${mode!='ack'}">
-				<th><spring:message code="lbl.files"/></th>
+<div class = "panel panel-primary">
+	<table class="table table-bordered">
+		<div class="panel-heading">
+			<c:if test="${waterConnectionDetails.applicationType.code=='CLOSINGCONNECTION'}">
+					<div class="panel-title">
+						Closure Connection Documents
+					</div>
 			</c:if>
-		</tr>
-	</thead>
-	</c:if>
-	<c:choose>
-		<c:when test="${!appforDocumentList.isEmpty()}">
-			<c:forEach items="${appforDocumentList}" var="docs" varStatus="serialNo">
-				<tbody>
+			<c:if test="${waterConnectionDetails.applicationType.code=='RECONNECTION'}">
+					<div class="panel-title">
+						ReConnection Documents
+					</div>
+			</c:if>
+								
+			<c:if test="${!appforDocumentList.isEmpty()}">
+				<thead>
 					<tr>
-						<td><c:out value="${serialNo.count}"/></td>
-						<td><c:out value="${docs.documentNames.documentName}" /></td>
-						<td><c:out value="${docs.documentNumber}" /></td>
-						<td><fmt:formatDate pattern="dd/MM/yyyy" value="${docs.documentDate}" var="docsDate"/><c:out value="${docsDate}" /></td>
+						<th><spring:message code="lbl.slno" /></th>
+						<th><spring:message code="lbl.documentname" /></th>
+						<th><spring:message code="lbl.documentnumber" /></th>
+						<th><spring:message code="lbl.documentdate" /></th>
 						<c:if test="${mode!='ack'}">
-						<td><c:forEach items="${docs.getSupportDocs()}" var="file">
-								<a href="/egi/downloadfile?fileStoreId=${file.fileStoreId}&moduleName=WTMS" target="_blank"> 
-								<c:out value="${file.fileName}"/></a>
-							</c:forEach>
-						</td>
+							<th><spring:message code="lbl.files"/></th>
 						</c:if>
 					</tr>
-				</tbody>
-			</c:forEach>
-		</c:when>
-		<c:otherwise>
-			<div class="col-md-12 col-xs-6  panel-title">No documents found</div>
-		</c:otherwise>
-	</c:choose>
-</table>
+				</thead>
+			</c:if>
+			<c:choose>
+				<c:when test="${!appforDocumentList.isEmpty()}">
+					<c:forEach items="${appforDocumentList}" var="docs" varStatus="serialNo">
+						<tbody>
+							<tr>
+								<td><c:out value="${serialNo.count}"/></td>
+								<td><c:out value="${docs.documentNames.documentName}" /></td>
+								<td><c:out value="${docs.documentNumber}" /></td>
+								<td><fmt:formatDate pattern="dd/MM/yyyy" value="${docs.documentDate}" var="docsDate"/><c:out value="${docsDate}" /></td>
+								<c:if test="${mode!='ack'}">
+								<td><c:forEach items="${docs.getSupportDocs()}" var="file">
+										<a href="/egi/downloadfile?fileStoreId=${file.fileStoreId}&moduleName=WTMS" target="_blank"> 
+										<c:out value="${file.fileName}"/></a>
+									</c:forEach>
+								</td>
+								</c:if>
+							</tr>
+						</tbody>
+					</c:forEach>
+				</c:when>
+				<c:otherwise>
+					<div class="col-md-12 col-xs-6  panel-title">No documents found</div>
+				</c:otherwise>
+			</c:choose>
+		</div>
+	</table>
+</div>

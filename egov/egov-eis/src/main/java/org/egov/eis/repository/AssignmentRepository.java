@@ -172,7 +172,8 @@ public interface AssignmentRepository extends JpaRepository<Assignment, Long> {
     @Query(" select ASSIGN from Assignment ASSIGN where ASSIGN.designation.id=:designationId and "
             + " ASSIGN.employee.active=true and ASSIGN.fromDate<=current_date and ASSIGN.toDate>=current_date order by ASSIGN.primary desc")
     List<Assignment> getAllActiveAssignments(@Param("designationId") final Long designationId);
-
+    
+   
     @Query("select assignment.employee from Assignment assignment where  assignment.employee.active=true and assignment.designation.name in (:designation)")
     Set<User> getUsersByDesignations(@Param("designation") final String[] designation);
 

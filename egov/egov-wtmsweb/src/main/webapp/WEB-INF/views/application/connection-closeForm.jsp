@@ -87,12 +87,12 @@
 						</div> --%>
 						<label class="col-sm-2 col-xs-4 control-label text-right"><spring:message code="lbl.temporary" /></label>
 			<div class="col-sm-2 col-xs-4 add-margin">
-				<form:radiobutton path="closeConnectionType" id="temporary" value="T" />
+				<form:radiobutton path="closeConnectionType" id="temporary" value="T" required="required"/>
 			</div>
 			<label class="col-sm-2 col-xs-4 control-label "><spring:message code="lbl.permanent" />
 			</label>
 			<div class="col-sm-2 col-xs-4 add-margin">
-				<form:radiobutton path="closeConnectionType" id="permanent" value="P" />
+				<form:radiobutton path="closeConnectionType" id="permanent" value="P" required="required"/>
 			</div>
 					</div>
 									</div>
@@ -138,14 +138,19 @@
 					
 </form:form>
 <script>
-if($('#noJAORSAMessage').val()!='')
+$(".btn-primary")
+.click(
+		function() {
+			validate();	
+			
+		});
+if($('#noJAORSAMessage') && $('#noJAORSAMessage').val())
 	bootbox.alert($('#noJAORSAMessage').val());
 
 if($('#validationMessage').val()!='')
 	bootbox.alert($('#validationMessage').val());
+	
 function validate(){
-	//bootbox.alert(document.forms[0].action);
-
 	var radioValue = $("input[name='closeConnectionType']:checked").val();
     var ar=document.getElementsByName('closeConnectionType');
     ar[0].value=radioValue;

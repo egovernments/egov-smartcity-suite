@@ -171,7 +171,11 @@
 							</td>
 						</tr>
 					</s:if>
-					
+					<s:if test="%{!assessmentDocumentTypes.isEmpty()}">
+						<tr>
+							<%@ include file="document-typedetails-view.jsp"%>
+						</tr>
+					</s:if>
 					<s:if test="%{!documentTypes.isEmpty()}">
 							<tr>
 							   <td colspan="5">

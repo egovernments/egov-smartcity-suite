@@ -42,7 +42,7 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 
-<form:form role="form" action=""
+<form:form role="form" action="/council/councilmeeting/attendance/update" method="post"
 	modelAttribute="councilMeeting" name="councilMeetingform" id="councilMeetingform"
 	cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
@@ -117,7 +117,7 @@
 				<label class="checkbox-inline"><input type="checkbox" value="" disabled>Not Attended</label>
 			</div>
 		<div class="text-center">
-		<button  class='btn btn-primary' id="buttonSubmit">
+		<button  class='btn btn-primary' id="btnsubmit" >
 			<spring:message code='lbl.update' />
 		</button>
 		<button  id="finalizeAttendanceBtn" class='btn btn-primary'><spring:message code='lbl.finalize.attendance'/></button>
@@ -128,17 +128,3 @@
 
 <script type="text/javascript"
 	src="<cdn:url value='/resources/app/js/councilAttendance.js?rnd=${app_release_no}'/>"></script>
-<script>
-	
-$('#buttonSubmit').click(function(e) {
-	if ($('form').valid()) {
-		 var action = '/council/councilmeeting/attendance/update' ;
-			$('#councilMeetingform').attr('method', 'post');
-			$('#councilMeetingform').attr('action', action); 
-			document.forms["councilMeetingform"].submit();
-	} else {
-		e.preventDefault();
-	}
-});	 
-
-</script>

@@ -40,6 +40,7 @@
 package org.egov.lcms.web.controller.transactions;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -110,7 +111,7 @@ public class ViewAndEditLegalCaseController extends GenericLegalCaseController {
     @RequestMapping(value = "/edit/", method = RequestMethod.POST)
     public String update(@ModelAttribute final LegalCase legalCase, @RequestParam("lcNumber") final String lcNumber,
             final BindingResult errors, @RequestParam("file") final MultipartFile[] files, final Model model,
-            final RedirectAttributes redirectAttrs) throws IOException {
+            final RedirectAttributes redirectAttrs) throws IOException, ParseException {
         if (errors.hasErrors())
             return "legalcase-edit";
 

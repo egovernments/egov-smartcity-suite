@@ -81,6 +81,19 @@
                         <div class="panel-title">Editable <s:text name='license.details.lbl'/></div>
                     </div>
                     <div class="form-group">
+                        <label class="col-sm-3 control-label text-right"><s:text name='license.locality.lbl'/><span class="mandatory"></span></label>
+                        <div class="col-sm-3 add-margin">
+                            <s:select name="boundary" id="boundary" list="dropdownData.localityList"
+                                      listKey="id" listValue="name" headerKey="" headerValue="%{getText('default.select')}" required="true" value="%{boundary.id}" class="form-control"/>
+                        </div>
+                        <label class="col-sm-2 control-label text-right"><s:text name='license.division'/><span class="mandatory"></span></label>
+                        <div class="col-sm-3 add-margin">
+                            <select name="parentBoundary" id="parentBoundary" class="form-control" required="true">
+                                <option value=""><s:text name='default.select'/></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
                         <label class="col-sm-3 control-label text-right"><s:text name='license.category.lbl'/><span class="mandatory"></span></label>
                         <div class="col-sm-3 add-margin">
                             <s:select name="category" id="category" list="dropdownData.categoryList"
@@ -135,32 +148,41 @@
 </div>
 <script>
     $('#subCategory').change(function () {
-        $.ajax({
-            url: "/tl/feeType/uom-by-subcategory",
-            type: "GET",
-            data: {
-                subCategoryId: $('#subCategory').val(),
-                feeTypeId: $('#feeTypeId').val()
-            },
-            cache: false,
-            dataType: "json",
-            success: function (response) {
-                if (response.length > 0)
-                    $('#uom').val(response[0].uom.name);
-                else {
-                    $('#uom').val('');
-                    bootbox.alert("No UOM mapped for the selected Sub Category");
+        $('#uom').val('');
+        if ($('#feeTypeId').val() !== '') {
+            $.ajax({
+                url: "/tl/licensesubcategory/detail-by-feetype",
+                type: "GET",
+                data: {
+                    subCategoryId: $('#subCategory').val(),
+                    feeTypeId: $('#feeTypeId').val()
+                },
+                cache: false,
+                dataType: "json",
+                success: function (response) {
+                    if (response)
+                        $('#uom').val(response.uom.name);
+                    else {
+                        $('#uom').val('');
+                        bootbox.alert("No UOM mapped for the selected Sub Category");
+                    }
                 }
-            }
-        })
+            });
+        }
     });
+
+    var parentBoundary = '${model.parentBoundary.id}';
+    $(document).ready(function () {
+        if ($('#boundary').val() != '') {
+            $('#boundary').trigger('blur');
+        }
+    });
+
     function onSubmitValidations() {
         return true;
     }
     function onSubmit() {
-        //toggleFields(false,"");
         document.renewForm.action = '${pageContext.request.contextPath}/newtradelicense/newTradeLicense-renewal.action';
-        //document.newTradeLicense.submit();
         return true;
     }
     function validateEditableFields() {

@@ -47,7 +47,7 @@
 	</head>
 	<body onload="refreshInbox()">
 		<s:form action="viewTradeLicense" theme="simple">
-			<div class="alert alert-success view-content">
+			<div class="alert alert-info view-content">
 				<s:actionmessage />
 			</div>
 			<div class="text-center">

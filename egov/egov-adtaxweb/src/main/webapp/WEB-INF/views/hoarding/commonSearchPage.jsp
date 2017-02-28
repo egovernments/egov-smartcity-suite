@@ -128,5 +128,11 @@
 							</form:select>
 							<form:errors path="revenueInspector" cssClass="error-msg"/>
                         </div>
+                         <label class="col-sm-2 control-label text-right"><spring:message code="lbl.owner.Details"/></label>
+                        <div class="col-sm-3 add-margin">
+                      
+                            <form:input type="text" class="form-control" id="ownerDetail" path="ownerDetail"/>
+							<form:errors path="ownerDetail" cssClass="error-msg"/>
+                        </div>	
                     </div>
                     </div>

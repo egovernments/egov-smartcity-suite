@@ -42,8 +42,12 @@ $(document)
 .ready(
 		function() {
 
-			
 			$('#btn_dailyregistration_search').click(function() {
+				
+				if($('#husband').val() == '' && $('#wife').val() == ''){
+					bootbox.alert('Please select Bridegroom or Bride Religion');
+					return false;
+				}
 				if ($('form').valid()) {
 					callAjaxSearch();
 				} else {
@@ -54,13 +58,13 @@ $(document)
 
 					function callAjaxSearch() {
 						// To get current date
-						var currentDate = new Date();
-						var day = currentDate.getDate();
-						var month = currentDate.getMonth() + 1;
-						var year = currentDate.getFullYear();
+						var now = new Date();
+						var day = now.getDate();
+						var month = now.getMonth() + 1;
+						var year = now.getFullYear();
 						var currentDate = day + "-" + month + "-" + year;
 						$('.report-section').removeClass('display-hide');
-						var reportdatatable = $("#registration_table")
+						$("#registration_table")
 								.dataTable(
 										{
 											"initComplete": function(settings, json){ 

@@ -193,7 +193,9 @@ public class ChangeOfUseController extends GenericConnectionController {
         if (applicationByOthers != null && applicationByOthers.equals(true)) {
             final Position userPosition = waterTaxUtils.getZonalLevelClerkForLoggedInUser(changeOfUse.getConnection()
                     .getPropertyIdentifier());
-            if (userPosition == null) {
+            if (userPosition != null) {
+                approvalPosition = userPosition.getId();
+            } else{
                 final WaterConnectionDetails parentConnectionDetails = waterConnectionDetailsService
                         .getActiveConnectionDetailsByConnection(changeOfUse.getConnection());
                 loadBasicData(model, parentConnectionDetails, changeOfUse, changeOfUse);
@@ -207,8 +209,7 @@ public class ChangeOfUseController extends GenericConnectionController {
                         "err.validate.connection.user.mapping");
                 model.addAttribute("noJAORSAMessage" ,"No JA/SA exists to forward the application.");
                 return "changeOfUse-form";
-            } else
-                approvalPosition = userPosition.getId();
+        }
         }
 
         changeOfUse.setApplicationDate(new Date());
@@ -231,7 +232,7 @@ public class ChangeOfUseController extends GenericConnectionController {
                 + waterTaxUtils.getApproverName(approvalPosition) + ","
                 + (currentUserAssignment != null ? currentUserAssignment.getDesignation().getName() : "") + ","
                 + (nextDesign != null ? nextDesign : "");
-        return "redirect:/application/application-success?pathVars=" + pathVars;
+        return "redirect:/application/citizeenAcknowledgement?pathVars=" + changeOfUse.getApplicationNumber();
     }
 
     private void loadBasicData(final Model model, final WaterConnectionDetails parentConnectionDetails,

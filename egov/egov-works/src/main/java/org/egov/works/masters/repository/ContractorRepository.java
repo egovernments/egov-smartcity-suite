@@ -46,4 +46,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ContractorRepository extends JpaRepository<Contractor, Long> {
 
+    Contractor findByCodeIgnoreCase(final String code);
+
 }

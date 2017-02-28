@@ -55,16 +55,16 @@
 	    <table class="table table-bordered table-hover multiheadertbl" id="registrationstatus_table">
 	    	<thead>
 	    		<tr>
-	    			<th>S.No</th>
-	    			<th>Registration No</th>
-	    			<th>Bridegroom Name</th>
-	    			<th>Bride Name</th>
+	    			<th><spring:message code="lbl.serial.no"/></th>
+	    			<th><spring:message code="lbl.registration.no"/></th>
+	    			<th><spring:message code="lbl.husband.name"/></th>
+	    			<th><spring:message code="lbl.wife.name"/></th>
 	    			<th>Registration Date</th>
 	    			<th>Marriage Date</th>
 	    			<th>Application Type</th>
-	    			<th>RegistrationUnit</th>
-	    			<th>Zone</th>
-	    			<th>Status</th>
+	    			<th><spring:message code="lbl.registrationunit"/></th>
+	    			<th><spring:message code="lbl.Boundary"/></th>
+	    			<th><spring:message code="lbl.status"/></th>
 	    			<th>Remarks</th>
 	    		</tr>
 	    	</thead>

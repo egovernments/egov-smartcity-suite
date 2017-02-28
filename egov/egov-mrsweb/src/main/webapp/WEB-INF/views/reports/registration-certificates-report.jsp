@@ -72,7 +72,7 @@
 
 
 					<label class="col-sm-2 control-label"> <spring:message
-							code="lbl.zone" /></span>
+							code="lbl.Boundary" /></span>
 					</label>
 					<div class="col-sm-3 add-margin">
 						<form:select path="registration.zone" id="select-registrationzone"
@@ -171,15 +171,15 @@
 		<table class="table table-bordered table-hover multiheadertbl"
 			id="marriagecertificate_table">
 			<thead>
-				<th>Registration No</th>
-				<th>Certificate No</th>
-				<th>Zone</th>
+				<th><spring:message code="lbl.registration.no"/></th>
+				<th><spring:message code="lbl.certificate.no"/></th>
+				<th><spring:message code="lbl.Boundary" /></th>
 				<th>certificateDate</th>
-				<th>certificateType</th>
+				<th><spring:message code="lbl.certificate.type" /><</th>
 				<th>Registration Date</th>
 				<th>Marriage Date</th>
-				<th>Bridegroom Name</th>
-				<th>Bride Name</th>
+				<th><spring:message code="lbl.husband.name"/></th>
+				<th><spring:message code="lbl.wife.name"/></th>
 				<th>Remarks</th>
 			</thead>
 			<tbody>

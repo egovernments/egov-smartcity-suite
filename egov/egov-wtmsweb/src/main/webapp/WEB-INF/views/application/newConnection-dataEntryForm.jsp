@@ -109,21 +109,20 @@
 		 if($('#connectionType').val()=='METERED')
 		 {
 		   $('#metereddetails').show();
-		  
+		   $('.showfields').show();
 		 }
 		
 			function validate(){
-				//bootbox.alert(document.forms[0].action);
+				
 				if($('#connectionType').val() !='METERED')
 					{
 						$('#monthlyFee').attr('required', 'required');
-						$('#existmeterCost').val('');
-						$('#existmeterName').val('');
-						$('#existmeterNo').val('');
-						$('#previousReading').val('');
-						$('#currentcurrentReading').val('');
-						$('#existreadingDate').val('');
-						$('#monthlyFee').attr('required', 'required');
+						$('#existmeterCost').removeAttr('required');
+						$('#existmeterName').removeAttr('required');
+						$('#existmeterNo').removeAttr('required');
+						$('#previousReading').removeAttr('required');
+						$('#currentcurrentReading').removeAttr('required');
+						$('#existreadingDate').removeAttr('required');
 					}
 				else {
 					$('#monthlyFee').removeAttr('required');

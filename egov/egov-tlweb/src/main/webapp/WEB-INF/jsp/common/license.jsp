@@ -59,25 +59,27 @@
 <div class="form-group">
     <label class="col-sm-3 control-label text-right"><s:text name='license.establishmentname'/><span class="mandatory"></span></label>
     <div class="col-sm-3 add-margin">
-        <s:textfield name="nameOfEstablishment" cssClass="form-control patternvalidation" data-pattern="alphabetwithspace" id="nameOfEstablishment" value="%{nameOfEstablishment}" maxlength="250" onBlur="checkLength(this,250)"/>
+        <s:textfield name="nameOfEstablishment" cssClass="form-control patternvalidation" data-pattern="alphabetwithspace" id="nameOfEstablishment"
+                     value="%{nameOfEstablishment}" maxlength="250" onBlur="checkLength(this,250)" required="true"/>
     </div>
 
     <label class="col-sm-2 control-label text-right"><s:text name='license.tradeType.lbl'/><span class="mandatory"></span></label>
     <div class="col-sm-3 add-margin">
         <s:select name="natureOfBusiness" id="buildingType" list="dropdownData.tradeTypeList"
-                  listKey="id" listValue="name" headerKey="-1" headerValue="%{getText('default.select')}" value="%{natureOfBusiness.id}" class="form-control"/>
+                  listKey="id" listValue="name" headerKey="-1" headerValue="%{getText('default.select')}" value="%{natureOfBusiness.id}"
+                  required="true" class="form-control"/>
     </div>
 </div>
 <div class="form-group">
     <label class="col-sm-3 control-label text-right"><s:text name='license.category.lbl'/><span class="mandatory"></span></label>
     <div class="col-sm-3 add-margin">
         <s:select name="category" id="category" list="dropdownData.categoryList" listKey="id" listValue="name"
-                  headerKey="-1" headerValue="%{getText('default.select')}" value="%{category.id}" class="form-control"/>
+                  headerKey="-1" headerValue="%{getText('default.select')}" value="%{category.id}" required="true" class="form-control"/>
     </div>
 
     <label class="col-sm-2 control-label text-right"><s:text name='license.subCategory.lbl'/><span class="mandatory"></span></label>
     <div class="col-sm-3 add-margin">
-        <s:select name="tradeName" id="subCategory" list="dropdownData.subCategoryList" listKey="id" listValue="name"
+        <s:select name="tradeName" id="subCategory" list="dropdownData.subCategoryList" listKey="id" listValue="name" required="true"
                   headerKey="-1" headerValue="%{getText('default.select')}" value="%{tradeName.id}" class="form-control select2"/>
     </div>
 </div>
@@ -85,11 +87,13 @@
 <div class="form-group">
     <label class="col-sm-3 control-label text-right"><s:text name='license.uom.lbl'/><span class="mandatory"></span></label>
     <div class="col-sm-3 add-margin">
-        <s:textfield name="uom" maxlength="8" id="uom" value="%{tradeName.licenseSubCategoryDetails.iterator.next.uom.name}" readOnly="true" class="form-control"/>
+        <s:textfield name="uom" maxlength="8" id="uom" value="%{tradeName.licenseSubCategoryDetails.iterator.next.uom.name}" readOnly="true"
+                     required="true" class="form-control"/>
     </div>
     <label class="col-sm-2 control-label text-right"><s:text name='license.premises.lbl'/><span class="mandatory"></span></label>
     <div class="col-sm-3 add-margin">
-        <s:textfield name="tradeArea_weight" maxlength="8" id="tradeArea_weight" value="%{tradeArea_weight}" cssClass="form-control patternvalidation" data-pattern="number"/>
+        <s:textfield name="tradeArea_weight" maxlength="8" id="tradeArea_weight" value="%{tradeArea_weight}" cssClass="form-control patternvalidation"
+                     required="true" data-pattern="number"/>
     </div>
 </div>
 

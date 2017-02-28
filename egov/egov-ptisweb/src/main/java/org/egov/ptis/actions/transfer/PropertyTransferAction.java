@@ -177,6 +177,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     public static final String REDIRECT_SUCCESS = "redirect-success";
     public static final String COLLECT_FEE = "collect-fee";
     public static final String MEESEVA_RESULT_ACK = "meesevaAck";
+    private static final String PROPERTY_MODIFY_REJECT_FAILURE = "property.modify.reject.failure";
 
     // Form Binding Model
     private PropertyMutation propertyMutation = new PropertyMutation();
@@ -276,7 +277,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
             return COMMON_FORM;
         }
         if (basicproperty.isUnderWorkflow()) {
-            final List<String> msgParams = new ArrayList<String>();
+            final List<String> msgParams = new ArrayList<>();
             msgParams.add("Transfer of Ownership");
             wfErrorMsg = getText("wf.pending.msg", msgParams);
             return TARGET_WORKFLOW_ERROR;
@@ -295,14 +296,23 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                     new Date());
             currentPropertyTax = currentTaxAndDue.get(CURR_DMD_STR);
             propertyOwner = basicproperty.getFullOwnerName();
-            houseNo= basicproperty.getAddress().getHouseNoBldgApt();
+            houseNo = basicproperty.getAddress().getHouseNoBldgApt();
             currentPropertyTaxDue = currentTaxAndDue.get(CURR_BAL_STR);
             arrearPropertyTaxDue = propertyTaxDetails.get(ARR_DMD_STR).subtract(propertyTaxDetails.get(ARR_COLL_STR));
             currentWaterTaxDue = propertyService.getWaterTaxDues(assessmentNo);
             if (currentWaterTaxDue.add(currentPropertyTaxDue).add(arrearPropertyTaxDue).longValue() > 0) {
                 setTaxDueErrorMsg(getText("taxdues.error.msg", new String[] { PROPERTY_TRANSFER }));
                 return REJECT_ON_TAXDUE;
-            } else {
+            }
+            if (basicproperty.getActiveProperty().getPropertyDetail().isStructure()) {
+                addActionError(getText("error.superstruc.prop.notallowed"));
+                return COMMON_FORM;
+            }
+            if (propertyService.isEmployee(transferOwnerService.getLoggedInUser()) && !propertyTaxCommonUtils.isEligibleInitiator(transferOwnerService.getLoggedInUser().getId())){
+                addActionError(getText("initiator.noteligible"));
+                return COMMON_FORM;
+            }
+            else {
                 loggedUserIsMeesevaUser = propertyService.isMeesevaUser(transferOwnerService.getLoggedInUser());
                 if (loggedUserIsMeesevaUser)
                     if (getMeesevaApplicationNumber() == null) {
@@ -444,8 +454,8 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         } else if (BILL_COLLECTOR_DESGN.equalsIgnoreCase(loggedInUserDesignation)
                 || REVENUE_INSPECTOR_DESGN.equalsIgnoreCase(loggedInUserDesignation))
             wfInitiator = transferOwnerService.getWorkflowInitiator(propertyMutation);
-
-        if (wfInitiator != null) {
+        if (wfInitiator != null || JUNIOR_ASSISTANT.equalsIgnoreCase(loggedInUserDesignation)
+                || SENIOR_ASSISTANT.equalsIgnoreCase(loggedInUserDesignation)) {
             transitionWorkFlow(propertyMutation);
             transferOwnerService.viewPropertyTransfer(basicproperty, propertyMutation);
             buildSMS(propertyMutation);
@@ -464,7 +474,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                 setAckMessage("Transfer of ownership data rejected successfuly and forwarded to : ");
             setAssessmentNoMessage(" with assessment number : ");
         } else
-            setAckMessage("Intiator is not active so can not do rejection with the assessmnet number : ");
+            setAckMessage(getText(PROPERTY_MODIFY_REJECT_FAILURE));
         return ACK;
     }
 
@@ -875,7 +885,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                     argsForTransferee.add(propertyMutation.getDepartmentValue().toString());
                 argsForTransferee
                         .add(propertyMutation.getMutationFee() != null ? propertyMutation.getMutationFee().toString() : "N/A");
-                smsMsgForTransferor = getText("msg.createtransferproperty.sms", argsForTransferor);
+                smsMsgForTransferor = getText("msg.createtransferpropertytransferor.sms", argsForTransferor);
                 smsMsgForTransferee = getText("msg.createtransferproperty.sms", argsForTransferee);
             } else if (mutationState.getValue().equals(WF_STATE_REJECTED)) {
                 argsForTransferor.add(propertyMutation.getFullTranferorName());
@@ -922,7 +932,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                 argsForTransferor.add(propertyMutation.getFullTranferorName());
                 argsForTransferor.add(propertyMutation.getBasicProperty().getUpicNo());
                 argsForTransferor.add(transferOwnerService.getCityName());
-                emailBodyTransferor = getText("body.createtransferproperty", argsForTransferor);
+                emailBodyTransferor = getText("body.createtransferpropertytransferor", argsForTransferor);
                 argsForTransferee.add(propertyMutation.getFullTranfereeName());
                 argsForTransferee.add(propertyMutation.getBasicProperty().getUpicNo());
                 argsForTransferee.add(transferOwnerService.getCityName());
@@ -1252,11 +1262,12 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     public void setAllowEditDocument(final boolean allowEditDocument) {
         this.allowEditDocument = allowEditDocument;
     }
+
     public String getPropertyOwner() {
         return propertyOwner;
     }
 
-    public void setPropertyOwner(String propertyOwner) {
+    public void setPropertyOwner(final String propertyOwner) {
         this.propertyOwner = propertyOwner;
     }
 
@@ -1264,7 +1275,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         return houseNo;
     }
 
-    public void setHouseNo(String houseNo) {
+    public void setHouseNo(final String houseNo) {
         this.houseNo = houseNo;
     }
 }

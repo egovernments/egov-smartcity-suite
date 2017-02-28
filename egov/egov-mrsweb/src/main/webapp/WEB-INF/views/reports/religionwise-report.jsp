@@ -61,14 +61,17 @@
 							<div class="row">
 								<div class="form-group">
 									<label for="field-1" class="col-sm-2 control-label"><spring:message
-											code="lbl.husband.religion" /> <span class="mandatory"></span></label>
+											code="lbl.husband.religion" /> </label>
 									<div class="col-sm-3 add-margin">
-										<form:select path="husband.religion.id" id="husband.religion"
+										<form:select path="husband.religion.id" id="husband"
 											cssClass="form-control" cssErrorClass="form-control error"
-											data-toggle="popover" data-trigger="focus" required="required"
+											data-toggle="popover" data-trigger="focus" 
 											data-content="${helptext}">
 											<form:option value="">
 												<spring:message code="lbl.default.option" />
+											</form:option>
+											<form:option value="0">
+												ALL
 											</form:option>
 											<form:options items="${religions}" itemValue="id"
 												itemLabel="name" />
@@ -82,12 +85,15 @@
 											code="lbl.wife.religion" />
 									</label>
 									<div class="col-sm-3 add-margin">
-										<form:select path="wife.religion.id" id="wife.religion"
+										<form:select path="wife.religion.id" id="wife"
 											cssClass="form-control" cssErrorClass="form-control error"
 											data-toggle="popover" data-trigger="focus"
 											data-content="${helptext}">
 											<form:option value="">
 												<spring:message code="lbl.default.option" />
+											</form:option>
+											<form:option value="0">
+												ALL
 											</form:option>
 											<form:options items="${religions}" itemValue="id"
 												itemLabel="name" />
@@ -132,7 +138,7 @@
 					<div class="form-group">
 					
 					<label class="col-sm-2 control-label">
-			<spring:message code="lbl.zone"/>
+			<spring:message code="lbl.Boundary"/>
 		</label>
 		<div class="col-sm-3 add-margin">	
 			<form:select path="zone.id" id="select-zones" cssClass="form-control" 
@@ -180,18 +186,18 @@
 			id="registration_table">
 			<thead>
 				<tr>
-					<th>Application No.</th>
-					<th>Registration No.</th>
-					<th>Bridegroom Name</th>
-					<th>Bridegroom Religion</th>
-					<th>Bride Name</th>
-					<th>Bride Religion
+					<th><spring:message code="lbl.application.no"/></th>
+					<th><spring:message code="lbl.registration.no"/></th>
+					<th><spring:message code="lbl.husband.name"/></th>
+					<th><spring:message code="lbl.husband.religion"/></th>
+					<th><spring:message code="lbl.wife.name"/></th>
+					<th><spring:message code="lbl.wife.religion"/></th>
 					<th>Registration Date</th>
 					<th>Marriage Date</th>
 					<th>Marriage Fee</th>
 					<th>Status</th>
-					<th>Registration Unit</th>
-					<th>zone</th>
+					<th><spring:message code="lbl.registrationunit"/></th>
+					<th><spring:message code="lbl.Boundary"/></th>
 					<th>Remarks</th>
 				</tr>
 			</thead>

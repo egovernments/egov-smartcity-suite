@@ -41,14 +41,16 @@
 package org.egov.pgr.service;
 
 import org.egov.eis.entity.Assignment;
+import org.egov.eis.entity.Employee;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.EisCommonService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.admin.master.entity.Module;
+import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.admin.master.service.RoleService;
 import org.egov.infra.messaging.MessagingService;
 import org.egov.infra.persistence.entity.enums.UserType;
@@ -70,7 +72,6 @@ import org.egov.portal.entity.enums.MessageType;
 import org.egov.portal.entity.enums.Priority;
 import org.egov.portal.service.CitizenInboxService;
 import org.hibernate.Criteria;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Restrictions;
@@ -89,12 +90,16 @@ import javax.validation.ValidationException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
+import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
+import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.egov.pgr.entity.enums.ComplaintStatus.FORWARDED;
 import static org.egov.pgr.entity.enums.ComplaintStatus.PROCESSING;
 import static org.egov.pgr.entity.enums.ComplaintStatus.REGISTERED;
@@ -104,8 +109,11 @@ import static org.egov.pgr.utils.constants.PGRConstants.COMPLAINT_REGISTERED;
 import static org.egov.pgr.utils.constants.PGRConstants.DATE;
 import static org.egov.pgr.utils.constants.PGRConstants.DELIMITER_COLON;
 import static org.egov.pgr.utils.constants.PGRConstants.DEPT;
+import static org.egov.pgr.utils.constants.PGRConstants.ESCALATEDSTATUS;
+import static org.egov.pgr.utils.constants.PGRConstants.MODULE_NAME;
 import static org.egov.pgr.utils.constants.PGRConstants.NOASSIGNMENT;
 import static org.egov.pgr.utils.constants.PGRConstants.STATUS;
+import static org.egov.pgr.utils.constants.PGRConstants.SYSTEMUSER;
 import static org.egov.pgr.utils.constants.PGRConstants.UPDATEDBY;
 import static org.egov.pgr.utils.constants.PGRConstants.UPDATEDUSERTYPE;
 import static org.egov.pgr.utils.constants.PGRConstants.USER;
@@ -146,12 +154,16 @@ public class ComplaintService {
     private EntityManager entityManager;
     @Autowired
     private ComplaintIndexService complaintIndexService;
-    
+
     @Autowired
     private PgrApplicationProperties pgrApplicationProperties;
-    
+
     @Autowired
     private PriorityService priorityService;
+
+    @Autowired
+    private ModuleService moduleService;
+
     @Transactional
     public Complaint createComplaint(final Complaint complaint) {
 
@@ -300,11 +312,7 @@ public class ComplaintService {
         final CitizenInboxBuilder citizenInboxBuilder = new CitizenInboxBuilder(MessageType.USER_MESSAGE,
                 getHeaderMessage(savedComplaint), getDetailedMessage(savedComplaint),
                 savedComplaint.getLastModifiedDate(), savedComplaint.getCreatedBy(), Priority.High);
-        final String strQuery = "select md from Module md where md.name=:name";
-        final Query hql = getCurrentSession().createQuery(strQuery);
-        hql.setParameter("name", "PGR");
-
-        citizenInboxBuilder.module((Module) hql.uniqueResult());
+        citizenInboxBuilder.module(moduleService.getModuleByName(MODULE_NAME));
         citizenInboxBuilder.identifier(savedComplaint.getCrn());
         citizenInboxBuilder.link("/pgr/complaint/update/" + savedComplaint.getCrn());
         citizenInboxBuilder.state(savedComplaint.getState());
@@ -334,77 +342,81 @@ public class ComplaintService {
     public List<HashMap<String, Object>> getHistory(final Complaint complaint) {
         final List<HashMap<String, Object>> historyTable = new ArrayList<>();
         final State state = complaint.getState();
-        final HashMap<String, Object> map = new HashMap<>(0);
+        final HashMap<String, Object> map = new HashMap<>();
         map.put(DATE, state.getDateInfo());
-        map.put(COMMENT, state.getComments() != null ? state.getComments() : StringUtils.EMPTY);
-        if (state.getLastModifiedBy().getType().equals(UserType.CITIZEN)
-                || state.getLastModifiedBy().getType().equals(UserType.SYSTEM))
+        map.put(COMMENT, defaultString(state.getComments()));
+        map.put(STATUS, state.getValue());
+        if ("Complaint is escalated".equals(state.getComments())) {
+            map.put(UPDATEDBY, SYSTEMUSER);
+            map.put(STATUS, ESCALATEDSTATUS);
+        } else if (!state.getLastModifiedBy().getType().equals(UserType.EMPLOYEE))
             map.put(UPDATEDBY, complaint.getComplainant().getName());
         else
-            map.put(UPDATEDBY, state.getSenderName() != null ? state.getSenderName()
-                    : state.getLastModifiedBy().getUsername() + DELIMITER_COLON + state.getLastModifiedBy().getName());
+            map.put(UPDATEDBY, defaultIfBlank(state.getSenderName(),
+                    new StringBuilder().append(state.getLastModifiedBy().getUsername()).
+                            append(DELIMITER_COLON).append(state.getLastModifiedBy().getName()).toString()));
         map.put(UPDATEDUSERTYPE, state.getLastModifiedBy().getType());
-        map.put(STATUS, state.getValue());
+
         final Position ownerPosition = state.getOwnerPosition();
         User user = state.getOwnerUser();
         if (user != null) {
             map.put(USER, user.getUsername() + DELIMITER_COLON + user.getName());
-            map.put(USERTYPE, null != user ? user.getType() : StringUtils.EMPTY);
-            map.put(DEPT, null != eisCommonService.getDepartmentForUser(user.getId())
-                    ? eisCommonService.getDepartmentForUser(user.getId()).getName() : StringUtils.EMPTY);
-        } else if (null != ownerPosition && null != ownerPosition.getDeptDesig()) {
-            final List<Assignment> assignmentList = assignmentService.getAssignmentsForPosition(ownerPosition.getId(),
-                    new Date());
-            user = !assignmentList.isEmpty() ? assignmentList.get(0).getEmployee() : null;
-            map.put(USER, null != user
-                    ? user.getUsername() + DELIMITER_COLON + user.getName() + DELIMITER_COLON
-                    + ownerPosition.getDeptDesig().getDesignation().getName()
-                    : NOASSIGNMENT + DELIMITER_COLON + ownerPosition.getName());
-            map.put(USERTYPE, null != user ? user.getType() : StringUtils.EMPTY);
-            map.put(DEPT, null != ownerPosition.getDeptDesig().getDepartment()
-                    ? ownerPosition.getDeptDesig().getDepartment().getName() : StringUtils.EMPTY);
+            map.put(USERTYPE, user.getType());
+            Department department = eisCommonService.getDepartmentForUser(user.getId());
+            map.put(DEPT, defaultString(department.getName()));
+        } else if (ownerPosition != null && ownerPosition.getDeptDesig() != null) {
+            List<Assignment> assignmentList = assignmentService.getAssignmentsForPosition(ownerPosition.getId(), new Date());
+            Optional<Employee> employee = !assignmentList.isEmpty() ? Optional.ofNullable(assignmentList.get(0).getEmployee()) : Optional.empty();
+            map.put(USER, employee.isPresent()
+                    ? new StringBuilder().append(employee.get().getUsername()).append(DELIMITER_COLON).
+                    append(employee.get().getName()).append(DELIMITER_COLON).
+                    append(ownerPosition.getDeptDesig().getDesignation().getName()).toString()
+                    : new StringBuilder().append(NOASSIGNMENT).append(DELIMITER_COLON).
+                    append(ownerPosition.getName()).toString());
+            map.put(USERTYPE, employee.isPresent() ? employee.get().getType() : EMPTY);
+            map.put(DEPT, ownerPosition.getDeptDesig().getDepartment().getName());
         }
         historyTable.add(map);
-        if (!complaint.getStateHistory().isEmpty() && complaint.getStateHistory() != null) {
-            final List<StateHistory> complaintStateHistory = complaint.getStateHistory();
-            Collections.reverse(complaintStateHistory);
-            for (final StateHistory stateHistory : complaintStateHistory) {
-                final HashMap<String, Object> complaintHistory = new HashMap<>(0);
-                complaintHistory.put(DATE, stateHistory.getDateInfo());
-                complaintHistory.put(COMMENT, stateHistory.getComments() != null ? stateHistory.getComments()
-                        : StringUtils.EMPTY);
-                if (stateHistory.getLastModifiedBy().getType().equals(UserType.CITIZEN)
-                        || stateHistory.getLastModifiedBy().getType().equals(UserType.SYSTEM))
-                    complaintHistory.put(UPDATEDBY, complaint.getComplainant().getName());
-                else
-                    complaintHistory.put(UPDATEDBY, stateHistory.getSenderName());
-                complaintHistory.put(UPDATEDUSERTYPE, stateHistory.getLastModifiedBy().getType());
-                complaintHistory.put(STATUS, stateHistory.getValue());
-                final Position owner = stateHistory.getOwnerPosition();
-                user = stateHistory.getOwnerUser();
-                if (null != user) {
-                    complaintHistory.put(USER, user.getUsername() + DELIMITER_COLON + user.getName());
-                    complaintHistory.put(USERTYPE, null != user ? user.getType() : StringUtils.EMPTY);
-                    complaintHistory.put(DEPT, null != eisCommonService.getDepartmentForUser(user.getId())
-                            ? eisCommonService.getDepartmentForUser(user.getId()).getName()
-                            : StringUtils.EMPTY);
-                } else if (null != owner && null != owner.getDeptDesig()) {
-                    final List<Assignment> assignments = assignmentService.getAssignmentsForPosition(owner.getId(), new Date());
-                    user = !assignments.isEmpty() ? assignments.get(0).getEmployee() : null;
-                    complaintHistory
-                            .put(USER,
-                                    null != user
-                                            ? user.getUsername() + DELIMITER_COLON + user.getName() + DELIMITER_COLON
-                                            + owner.getDeptDesig().getDesignation().getName()
-                                            : NOASSIGNMENT + DELIMITER_COLON + owner.getName());
-                    complaintHistory.put(USERTYPE, null != user ? user.getType() : StringUtils.EMPTY);
-                    complaintHistory.put(DEPT, null != owner.getDeptDesig().getDepartment()
-                            ? owner.getDeptDesig().getDepartment().getName() : StringUtils.EMPTY);
-                }
-                historyTable.add(complaintHistory);
-            }
-        }
+
+        complaint.getStateHistory().
+                stream().
+                sorted(Comparator.comparing(StateHistory::getLastModifiedDate).reversed()).
+                forEach(stateHistory -> historyTable.add(constructComplaintHistory(complaint, stateHistory)));
         return historyTable;
+    }
+
+    private HashMap<String, Object> constructComplaintHistory(Complaint complaint, StateHistory stateHistory) {
+        HashMap<String, Object> complaintHistory = new HashMap<>();
+        complaintHistory.put(DATE, stateHistory.getDateInfo());
+        complaintHistory.put(COMMENT, defaultString(stateHistory.getComments()));
+        complaintHistory.put(STATUS, stateHistory.getValue());
+        if ("Complaint is escalated".equals(stateHistory.getComments())) {
+            complaintHistory.put(UPDATEDBY, SYSTEMUSER);
+            complaintHistory.put(STATUS, ESCALATEDSTATUS);
+        } else
+            complaintHistory.put(UPDATEDBY, stateHistory.getLastModifiedBy().getType().equals(UserType.EMPLOYEE) ?
+                    stateHistory.getSenderName() : complaint.getComplainant().getName());
+
+        complaintHistory.put(UPDATEDUSERTYPE, stateHistory.getLastModifiedBy().getType());
+        Position owner = stateHistory.getOwnerPosition();
+        User userobj = stateHistory.getOwnerUser();
+        if (userobj != null) {
+            complaintHistory.put(USER, userobj.getUsername() + DELIMITER_COLON + userobj.getName());
+            complaintHistory.put(USERTYPE, userobj.getType());
+            Department department = eisCommonService.getDepartmentForUser(userobj.getId());
+            complaintHistory.put(DEPT, department != null ? department.getName() : EMPTY);
+        } else if (owner != null && owner.getDeptDesig() != null) {
+            List<Assignment> assignments = assignmentService.getAssignmentsForPosition(owner.getId(), new Date());
+            complaintHistory
+                    .put(USER, !assignments.isEmpty() ? new StringBuilder().append(assignments.get(0).getEmployee().getUsername()).
+                            append(DELIMITER_COLON).append(assignments.get(0).getEmployee().getName()).append(DELIMITER_COLON)
+                            .append(owner.getDeptDesig().getDesignation().getName()).toString()
+                            : NOASSIGNMENT + DELIMITER_COLON + owner.getName());
+            complaintHistory.put(USERTYPE, !assignments.isEmpty() ? assignments.get(0).getEmployee().getType() : EMPTY);
+            complaintHistory.put(DEPT, owner.getDeptDesig().getDepartment() != null
+                    ? owner.getDeptDesig().getDepartment().getName() : EMPTY);
+        }
+        return complaintHistory;
     }
 
     public void sendEmailandSms(final Complaint complaint) {
@@ -440,17 +452,15 @@ public class ComplaintService {
                             .append(" is registered by ").append(complaint.getComplainant().getName() == null ? "Anonymous User"
                                     : complaint.getComplainant().getName())
                             .append(", ")
-                            .append(complaint.getComplainant().getMobile() == null ? StringUtils.EMPTY
+                            .append(complaint.getComplainant().getMobile() == null ? EMPTY
                                     : complaint.getComplainant().getMobile())
                             .append(" at ").append(complaint.getLocation().getName());
                     if (complaint.getLatlngAddress() != null)
                         smsBodyOfficial.append(", " + complaint.getLatlngAddress());
                     else
                         smsBodyOfficial
-                                .append(complaint.getChildLocation() != null ? ", " + complaint.getChildLocation().getName()
-                                        : StringUtils.EMPTY);
-                    smsBodyOfficial.append(complaint.getLandmarkDetails() != null ? ", " + complaint.getLandmarkDetails()
-                            : StringUtils.EMPTY);
+                                .append(complaint.getChildLocation() != null ? ", " + complaint.getChildLocation().getName() : EMPTY);
+                    smsBodyOfficial.append(complaint.getLandmarkDetails() != null ? ", " + complaint.getLandmarkDetails() : EMPTY);
                     messagingService.sendSMS(user.getMobileNumber(), smsBodyOfficial.toString());
                 }
             }
@@ -479,7 +489,7 @@ public class ComplaintService {
                         .append(complaint.getComplainant().getName() == null ? "Anonymous User"
                                 : complaint.getComplainant().getName())
                         .append(", ")
-                        .append(complaint.getComplainant().getMobile() == null ? StringUtils.EMPTY
+                        .append(complaint.getComplainant().getMobile() == null ? EMPTY
                                 : complaint.getComplainant().getMobile())
                         .append(" for " + complaint.getComplaintType().getName() + " from ")
                         .append(complaint.getLocation().getName());
@@ -488,9 +498,9 @@ public class ComplaintService {
                 else
                     smsBodyOfficial
                             .append(complaint.getChildLocation() != null ? ", " + complaint.getChildLocation().getName()
-                                    : StringUtils.EMPTY);
+                                    : EMPTY);
                 smsBodyOfficial.append(complaint.getLandmarkDetails() != null ? ", " + complaint.getLandmarkDetails()
-                        : StringUtils.EMPTY);
+                        : EMPTY);
                 smsBodyOfficial.append(" handled by " + senderName + " has been Forwarded to you.");
                 messagingService.sendSMS(user.getMobileNumber(), smsBodyOfficial.toString());
             }
@@ -543,7 +553,7 @@ public class ComplaintService {
         final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(Complaint.class, "complaint")
                 .createAlias("complaint.state", "state").createAlias("complaint.status", "status");
         criteria.add(Restrictions.in("status.name", pendingStatus));
-        criteria.add(Restrictions.eq("complaint.assignee", positionMasterService.getCurrentPositionForUser(user.getId())));
+        criteria.add(Restrictions.in("complaint.assignee", positionMasterService.getPositionsForEmployee(user.getId(), new Date())));
         return criteria.list();
     }
 

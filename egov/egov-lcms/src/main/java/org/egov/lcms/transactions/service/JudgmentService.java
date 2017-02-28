@@ -40,6 +40,7 @@
 package org.egov.lcms.transactions.service;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -74,6 +75,11 @@ public class JudgmentService {
     private FileStoreService fileStoreService;
 
     @Autowired
+    private LegalCaseSmsService legalCaseSmsService;
+
+    @Autowired
+    private LegalCaseService legalCaseService;
+    @Autowired
     private JudgmentDocumentsRepository judgmentDocumentsRepository;
 
     @Autowired
@@ -82,13 +88,16 @@ public class JudgmentService {
     }
 
     @Transactional
-    public Judgment persist(final Judgment judgment, final MultipartFile[] files) throws IOException {
+    public Judgment persist(final Judgment judgment, final MultipartFile[] files) throws IOException, ParseException {
         final EgwStatus statusObj = legalCaseUtil.getStatusForModuleAndCode(LcmsConstants.MODULE_TYPE_LEGALCASE,
                 LcmsConstants.LEGALCASE_STATUS_JUDGMENT);
         judgment.getLegalCase().setStatus(statusObj);
-        final ReportStatus reportStatus=null;
+        final ReportStatus reportStatus = null;
         judgment.getLegalCase().setReportStatus(reportStatus);
         final Judgment savedjudgment = judgmentRepository.save(judgment);
+        legalCaseSmsService.sendSmsToOfficerInchargeForJudgment(judgment);
+        legalCaseSmsService.sendSmsToStandingCounselForJudgment(judgment);
+        legalCaseService.persistLegalCaseIndex(savedjudgment.getLegalCase(), null, savedjudgment, null, null);
         final List<JudgmentDocuments> documentDetails = getDocumentDetails(savedjudgment, files);
         if (!documentDetails.isEmpty()) {
             savedjudgment.setJudgmentDocuments(documentDetails);

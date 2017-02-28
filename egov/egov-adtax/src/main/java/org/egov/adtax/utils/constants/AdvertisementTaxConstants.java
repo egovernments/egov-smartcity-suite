@@ -51,11 +51,13 @@ public class AdvertisementTaxConstants {
     public static final String SERVICE_CODE = "ADTAX";
     public static final String COLL_RECEIPTDETAIL_DESC_PREFIX = "Collection";
     public static final String PENALTYCALCULATIONREQUIRED = "Penalty Calculation required";
+    public static final String SERVICETAXANDCESSCOLLECTIONREQUIRED =  "Service Tax And Cess Collection required";
     public static final String TOTALRESULTTOBEFETCH = "Number of Records used in next year demand generation";
     public static final String CALCULATESORBYUNIT = "Calculate SOR By Unit";
     public static final String DEMANDREASON_PENALTY = "Penalty";
     public static final String PENALTYAMOUNT = "PENALTYAMOUNT";
     public static final String PENDINGDEMANDAMOUNT = "PENDINGDEMANDAMOUNT";
+    public static final String ADDITIONALTAXAMOUNT = "ADDITIONALTAXAMOUNT";
     public static final String AGENCY_PREFIX_CONSUMERCODE = "AGENCY-";
 
     public static final String BOUNDARYTYPE_LOCALITY = "locality";
@@ -112,5 +114,13 @@ public class AdvertisementTaxConstants {
     public static final String PENDINGAMOUNT = "Pending Amount";
     public static final String TOTALCOLLECTION = " Total Collection";
     public static final String PERMIT_STATUS_PAYMENTPENDING="ADTAXAMTPAYMENTPENDING";
+    
+    //CSC operator related constants
+    public static final String ADTAX_ROLEFORNONEMPLOYEE = "ADTAXROLEFORNONEMPLOYEE";
+    public static final String CSC_OPERATOR_ROLE = "CSC Operator";
+    public static final String ADTAX_WORKFLOWDESIGNATION_FOR_CSCOPERATOR = "ADTAXDESIGNATIONFORCSCOPERATORWORKFLOW";
+    public static final String ADTAX_WORKFLOWDEPARTEMENT_FOR_CSCOPERATOR = "ADTAXDEPARTMENTFORCSCOPERATORWORKFLOW";
+    public static final String ADTAX_WORKFLOWDESIGNATION = "ADTAXDESIGNATIONFORWORKFLOW";
+    public static final String ADTAX_WORKFLOWDEPARTEMENT = "ADTAXDEPARTMENTFORWORKFLOW";
 
 }

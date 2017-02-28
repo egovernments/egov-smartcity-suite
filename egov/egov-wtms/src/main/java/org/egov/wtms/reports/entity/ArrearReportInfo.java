@@ -40,8 +40,11 @@
 package org.egov.wtms.reports.entity;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import org.egov.wtms.application.entity.WaterDemandConnection;
 
 /**
  *
@@ -56,7 +59,7 @@ public class ArrearReportInfo {
     private String blockNo;
     private String localityNo;
     private String partNo;
-    private List<ArrearRegisterReport> propertyWiseArrearInfoList;
+    private List<ArrearRegisterReport> propertyWiseArrearInfoList=new ArrayList<ArrearRegisterReport>();
     private String dateString;
     private Map<String, BigDecimal> demandCollMap;
     private Integer totalNoProps;
@@ -64,13 +67,59 @@ public class ArrearReportInfo {
     private BigDecimal arrDmd;
     private BigDecimal currDmd;
     private BigDecimal totalDmd;
+    private String boundaryname;
+
+    private Long basicPropId;
+    private String indexNumber;
+    private String ownerName;
+    private String houseNo;
     private BigDecimal arrColl;
     private BigDecimal currColl;
     private BigDecimal totalColl;
     private String municipal;
     private String district;
 
-    public String getCurrInstallment() {
+    public String getBoundaryname() {
+		return boundaryname;
+	}
+
+	public void setBoundaryname(String boundaryname) {
+		this.boundaryname = boundaryname;
+	}
+
+	public Long getBasicPropId() {
+		return basicPropId;
+	}
+
+	public void setBasicPropId(Long basicPropId) {
+		this.basicPropId = basicPropId;
+	}
+
+	public String getIndexNumber() {
+		return indexNumber;
+	}
+
+	public void setIndexNumber(String indexNumber) {
+		this.indexNumber = indexNumber;
+	}
+
+	public String getOwnerName() {
+		return ownerName;
+	}
+
+	public void setOwnerName(String ownerName) {
+		this.ownerName = ownerName;
+	}
+
+	public String getHouseNo() {
+		return houseNo;
+	}
+
+	public void setHouseNo(String houseNo) {
+		this.houseNo = houseNo;
+	}
+
+	public String getCurrInstallment() {
         return currInstallment;
     }
 
@@ -428,6 +477,10 @@ public class ArrearReportInfo {
 
     public void setPropertyWiseArrearInfoList(final List<ArrearRegisterReport> propertyWiseArrearInfoList) {
         this.propertyWiseArrearInfoList = propertyWiseArrearInfoList;
+    }
+
+    public void addPropertyWiseArrearInfoList(final ArrearRegisterReport arrearRegisterReport) {
+    	getPropertyWiseArrearInfoList().add(arrearRegisterReport);
     }
 
     public String getMunicipal() {

@@ -78,8 +78,8 @@ import static org.egov.tl.utils.Constants.LOCATION_HIERARCHY_TYPE;
 @Results({
         @Result(name = EnterTradeLicenseAction.NEW, location = "enterTradeLicense-new.jsp"),
         @Result(name = "update", location = "enterTradeLicense-update.jsp"),
-        @Result(name = "viewlicense", type = "redirectAction", location = "viewTradeLicense-view", params = { "namespace",
-                "/viewtradelicense", "model.id", "${model.id}" }) })
+        @Result(name = "viewlicense", type = "redirectAction", location = "viewTradeLicense-view", params = {"namespace",
+                "/viewtradelicense", "model.id", "${model.id}"})})
 public class EnterTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     private static final long serialVersionUID = 1L;
 
@@ -121,7 +121,7 @@ public class EnterTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     public String showLegacyUpdateForm() {
         if (!license().isNew())
             tradeLicense = tradeLicenseService.getLicenseById(license().getId());
-        if (tradeLicense != null && tradeLicense.isLegacy() && tradeLicense.hasState())
+        if (tradeLicense != null && tradeLicense.isLegacy() && tradeLicense.hasState() && !"License Created".equals(tradeLicense.getState().getValue()))
             throw new ValidationException("legacy.license.modify.excp", "You can't modify this license");
         prepareFeeDetails();
         return "update";

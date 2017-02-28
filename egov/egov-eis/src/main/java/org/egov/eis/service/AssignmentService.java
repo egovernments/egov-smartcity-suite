@@ -340,6 +340,12 @@ public class AssignmentService {
                     getRequiredBoundaries(boundaryId));
         return assignments;
     }
+    
+    public List<Assignment> findByDeptDesgnAndParentAndActiveChildBoundaries(final Long deptId, final Long desigId,
+            final Long boundaryId) {
+        return assignmentRepository.findByDepartmentDesignationAndBoundary(deptId, desigId,
+                    getBoundaries(boundaryId));
+    }
 
     /**
      * Gets all assignments for a particular department, designation and given boundary

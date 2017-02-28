@@ -107,7 +107,23 @@
 			<div class="col-md-6 col-xs-6 table-header"><spring:message code="lbl.functionaryWiseReport.resultHeader" /></div>
 				<div class="col-md-12 form-group">
 					<table class="table table-bordered datatable dt-responsive table-hover" id="functionaryReport-table">
-						<thead></thead> 
+						<thead>
+							<tr>
+								<th rowspan="2" style="vertical-align: bottom"></th>
+								<th colspan="5" style="text-align: center"><spring:message code="lbl.report.status"/></th>
+								<th colspan="2" style="text-align: center"><spring:message code="lbl.report.sla"/></th>
+								<th rowspan="2" style="vertical-align: bottom"></th>
+							</tr>
+							<tr>
+								<th></th>
+								<th></th>
+								<th></th>
+								<th></th>
+								<th></th>
+								<th></th>
+								<th></th>
+							</tr>
+						</thead>
 						<tfoot id="report-footer">
 							<tr>
 								<td><b><spring:message code="lbl.pagetotal"/></b></td>
@@ -144,3 +160,11 @@
 <script type="text/javascript" src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<cdn:url  value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<cdn:url  value='/resources/js/app/functionarywiseReport.js?rnd=${app_release_no}'/>"></script>
+<style>
+	.table thead tr th {
+		border-bottom: none;
+		background: #f2851f;
+		color: #fff;
+		font-weight: normal;
+	}
+</style>

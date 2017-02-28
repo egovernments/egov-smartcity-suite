@@ -64,7 +64,8 @@ function openSource(){
 	if("<s:property value='%{voucherHeader.vouchermis.sourcePath}' escapeHtml='false'/>"=="" || "<s:property value='%{voucherHeader.vouchermis.sourcePath}'/>"=='null')
 		bootbox.alert('Source is not available');
 	else{
-		if("<s:property value='%{voucherHeader.vouchermis.sourcePath}' escapeHtml='false'/>".indexOf('EGF') > -1)
+		if("<s:property value='%{voucherHeader.vouchermis.sourcePath}' escapeHtml='false'/>".indexOf('EGF') > -1
+				&& "<s:property value='%{billRegister.egBillregistermis.sourcePath}' escapeHtml='false'/>".indexOf('EGF') <= -1)
 			var url = '<s:property value="%{voucherHeader.vouchermis.sourcePath}" escapeHtml="false"/>'+ '&showMode=view';
 		else
 			var url = '<s:property value="%{voucherHeader.vouchermis.sourcePath}" escapeHtml="false"/>';

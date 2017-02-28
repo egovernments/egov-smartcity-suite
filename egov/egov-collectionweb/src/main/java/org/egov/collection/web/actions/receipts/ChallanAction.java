@@ -154,8 +154,7 @@ public class ChallanAction extends BaseFormAction {
     private Integer designationId;
 
     /**
-     * A <code>String</code> value representing the challan number for which the
-     * challan has to be retrieved
+     * A <code>String</code> value representing the challan number for which the challan has to be retrieved
      */
     private String challanNumber;
 
@@ -167,14 +166,14 @@ public class ChallanAction extends BaseFormAction {
     private Boolean onlineAllowed = Boolean.TRUE;
 
     /**
-     * An instance of <code>InstrumentHeader</code> representing the cash
-     * instrument details entered by the user during receipt creation
+     * An instance of <code>InstrumentHeader</code> representing the cash instrument details entered by the user during receipt
+     * creation
      */
     private InstrumentHeader instrHeaderCash;
 
     /**
-     * An instance of <code>InstrumentHeader</code> representing the card
-     * instrument details entered by the user during receipt creation
+     * An instance of <code>InstrumentHeader</code> representing the card instrument details entered by the user during receipt
+     * creation
      */
     private InstrumentHeader instrHeaderCard;
 
@@ -210,8 +209,7 @@ public class ChallanAction extends BaseFormAction {
     private Position position = null;
 
     /**
-     * A <code>Long</code> array of receipt header ids , which have to be
-     * displayed for view/print/cancel purposes
+     * A <code>Long</code> array of receipt header ids , which have to be displayed for view/print/cancel purposes
      */
     private Long[] selectedReceipts;
 
@@ -262,8 +260,7 @@ public class ChallanAction extends BaseFormAction {
     }
 
     /**
-     * This method is invoked when the user clicks on Create Challan from Menu
-     * Tree
+     * This method is invoked when the user clicks on Create Challan from Menu Tree
      *
      * @return
      */
@@ -294,9 +291,8 @@ public class ChallanAction extends BaseFormAction {
     }
 
     /**
-     * This method is invoked when user clicks on Save challan from Create
-     * Challan UI. All workflow transitions for the challan happen through this
-     * method.
+     * This method is invoked when user clicks on Save challan from Create Challan UI. All workflow transitions for the challan
+     * happen through this method.
      *
      * @return the string
      */
@@ -325,8 +321,7 @@ public class ChallanAction extends BaseFormAction {
     }
 
     /**
-     * This method in invoked when the user clicks on Create Challan Receipt
-     * from Menu Tree.
+     * This method in invoked when the user clicks on Create Challan Receipt from Menu Tree.
      *
      * @return the string
      */
@@ -401,17 +396,25 @@ public class ChallanAction extends BaseFormAction {
     public String viewChallan() {
         if (challanId == null)
             receiptHeader = receiptHeaderService.findById(receiptId, false);
-        else
+        else {
             receiptHeader = (ReceiptHeader) persistenceService.findByNamedQuery(
                     CollectionConstants.QUERY_RECEIPT_BY_CHALLANID, Long.valueOf(challanId));
+            try {
+                final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+                cutOffDate = sdf.parse(collectionsUtil.getAppConfigValue(
+                        CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
+                        CollectionConstants.APPCONFIG_VALUE_COLLECTIONDATAENTRYCUTOFFDATE));
+            } catch (final ParseException e) {
+                LOGGER.error(getText("Error parsing Cut Off Date") + e.getMessage());
+            }
+        }
         setLoginDept();
         loadReceiptDetails();
         return VIEW;
     }
 
     /**
-     * This method is invoked on click of create button from Create Challan
-     * Receipt Screen
+     * This method is invoked on click of create button from Create Challan Receipt Screen
      *
      * @return
      */
@@ -549,9 +552,8 @@ public class ChallanAction extends BaseFormAction {
 
             if (collectionsUtil.checkChallanValidity(receiptHeader.getChallan())) {
                 /**
-                 * if instrument has been deposited create a new receipt in
-                 * place of the cancelled the model is turned into a copy of the
-                 * receipt to be cancelled without the instrument details
+                 * if instrument has been deposited create a new receipt in place of the cancelled the model is turned into a copy
+                 * of the receipt to be cancelled without the instrument details
                  */
 
                 // the reason for cancellation has to be persisted
@@ -654,15 +656,11 @@ public class ChallanAction extends BaseFormAction {
     }
 
     /**
-     * This instrument creates instrument header instances for the receipt, when
-     * the instrument type is Cheque or DD. The created
+     * This instrument creates instrument header instances for the receipt, when the instrument type is Cheque or DD. The created
      * <code>InstrumentHeader</code> instance is persisted
      *
-     * @param k
-     *            an int value representing the index of the instrument type as
-     *            chosen from the front end
-     * @return an <code>InstrumentHeader</code> instance populated with the
-     *         instrument details
+     * @param k an int value representing the index of the instrument type as chosen from the front end
+     * @return an <code>InstrumentHeader</code> instance populated with the instrument details
      */
     private List<InstrumentHeader> populateInstrumentHeaderForChequeDD(
             final List<InstrumentHeader> instrumentHeaderList, final List<InstrumentHeader> instrumentProxyList) {
@@ -686,10 +684,9 @@ public class ChallanAction extends BaseFormAction {
     }
 
     /**
-     * This method creates a receipt along with the challan. The receipt is
-     * created in PENDING status where as the challan is created with a CREATED
-     * status. The receipt is actually created later when there is a request for
-     * it to be created against the challan.
+     * This method creates a receipt along with the challan. The receipt is created in PENDING status where as the challan is
+     * created with a CREATED status. The receipt is actually created later when there is a request for it to be created against
+     * the challan.
      */
     private void populateAndPersistChallanReceipt() {
 
@@ -929,8 +926,7 @@ public class ChallanAction extends BaseFormAction {
     /**
      * Removes the empty rows.
      *
-     * @param list
-     *            the list
+     * @param list the list
      */
     void removeEmptyRows(final List list) {
         for (final Iterator<ReceiptDetailInfo> detail = list.iterator(); detail.hasNext();)
@@ -958,7 +954,8 @@ public class ChallanAction extends BaseFormAction {
                 && receiptHeader.getService().getServiceCategory().getId() != -1)
             addDropdownData("serviceList", serviceDetailsService.findAllByNamedQuery(
                     CollectionConstants.QUERY_SERVICE_BY_CATEGORY_FOR_TYPE, receiptHeader.getService()
-                            .getServiceCategory().getId(), CollectionConstants.SERVICE_TYPE_CHALLAN_COLLECTION,
+                            .getServiceCategory().getId(),
+                    CollectionConstants.SERVICE_TYPE_CHALLAN_COLLECTION,
                     Boolean.TRUE));
         else
             addDropdownData("serviceList", Collections.emptyList());
@@ -1020,9 +1017,8 @@ public class ChallanAction extends BaseFormAction {
         addDropdownData("postionUserList", Collections.emptyList());
         setCurrentFinancialYearId(collectionCommon.getFinancialYearIdByDate(new Date()));
         /**
-         * super class prepare is called at the end to ensure that the modified
-         * values are available to the model. The super class prepare need not
-         * run for cancel challan as the values should not be modified
+         * super class prepare is called at the end to ensure that the modified values are available to the model. The super class
+         * prepare need not run for cancel challan as the values should not be modified
          **/
         if (!CollectionConstants.WF_ACTION_NAME_CANCEL_CHALLAN.equals(actionName))
             super.prepare();
@@ -1215,8 +1211,7 @@ public class ChallanAction extends BaseFormAction {
     }
 
     /**
-     * @param challanId
-     *            the challanId to set
+     * @param challanId the challanId to set
      */
     public void setChallanId(final String challanId) {
         this.challanId = challanId;
@@ -1230,8 +1225,7 @@ public class ChallanAction extends BaseFormAction {
     }
 
     /**
-     * @param approvalRemarks
-     *            the approvalRemarks to set
+     * @param approvalRemarks the approvalRemarks to set
      */
     public void setApprovalRemarks(final String approvalRemarks) {
         this.approvalRemarks = approvalRemarks;
@@ -1245,24 +1239,21 @@ public class ChallanAction extends BaseFormAction {
     }
 
     /**
-     * @param positionUser
-     *            the positionUser to set
+     * @param positionUser the positionUser to set
      */
     public void setPositionUser(final Long positionUser) {
         this.positionUser = positionUser;
     }
 
     /**
-     * @param collectionCommon
-     *            the collectionCommon to set
+     * @param collectionCommon the collectionCommon to set
      */
     public void setCollectionCommon(final CollectionCommon collectionCommon) {
         this.collectionCommon = collectionCommon;
     }
 
     /**
-     * @param receiptHeaderService
-     *            The receipt header service to set
+     * @param receiptHeaderService The receipt header service to set
      */
     public void setReceiptHeaderService(final ReceiptHeaderService receiptHeaderService) {
         this.receiptHeaderService = receiptHeaderService;
@@ -1356,8 +1347,7 @@ public class ChallanAction extends BaseFormAction {
     }
 
     /**
-     * @param designationId
-     *            the designationId to set
+     * @param designationId the designationId to set
      */
     public void setDesignationId(final Integer designationId) {
         this.designationId = designationId;

@@ -68,7 +68,10 @@
 				</div>
 			</div>
 		</div>
-		<jsp:include page="../workflow/commonWorkflowMatrix.jsp"/>
+		
+		<c:if test="${isEmployee}">
+				<jsp:include page="../workflow/commonWorkflowMatrix.jsp"/>
+			</c:if>
 		<div class="buttonbottom" align="center">
 			<jsp:include page="../workflow/commonWorkflowMatrix-button.jsp" />
 		</div>

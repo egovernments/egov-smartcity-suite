@@ -40,51 +40,35 @@
 
 package org.egov.infra.persistence.validator;
 
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.validator.annotation.CompareDates;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-import java.beans.BeanInfo;
-import java.beans.PropertyDescriptor;
 import java.util.Date;
 
-public class CompareDatesValidator implements ConstraintValidator<CompareDates, Date> {
+public class CompareDatesValidator implements ConstraintValidator<CompareDates, Object> {
 
     private CompareDates compareDates;
 
     @Override
-    public void initialize(final CompareDates compareDates) {
+    public void initialize(CompareDates compareDates) {
         this.compareDates = compareDates;
     }
 
     @Override
-    public boolean isValid(final Date date, final ConstraintValidatorContext arg1) {
-        if (compareDates.fromDate() == null || compareDates.toDate() == null || compareDates.dateFormat() == null)
-            return false;
-
-        return dateValidation(date, compareDates.fromDate(), compareDates.toDate());
-    }
-
-    private boolean dateValidation(final Date date, final String field1, final String field2) {
-        final Date fromDate = getValue(date, field1);
-        final Date toDate = getValue(date, field2);
-        if (fromDate == null || toDate == null)
-            return false;
-
-        return fromDate.before(toDate);
-    }
-
-    private Date getValue(final Date target, final String field) {
+    public boolean isValid(Object target, ConstraintValidatorContext validatorContext) {
         try {
-            final BeanInfo info = java.beans.Introspector.getBeanInfo(target.getClass());
-            final PropertyDescriptor[] props = info.getPropertyDescriptors();
-            for (final PropertyDescriptor propertyDescriptor : props)
-                if (propertyDescriptor.getName().equals(field))
-                    return (Date) propertyDescriptor.getReadMethod().invoke(target);
-            return null;
-        } catch (final Exception e) {
-            throw new ApplicationRuntimeException(e.getMessage(), e);
+            Date fromDate = (Date) FieldUtils.readField(target, compareDates.fromDate(), true);
+            Date toDate = (Date) FieldUtils.readField(target, compareDates.toDate(), true);
+            boolean isValid = fromDate != null && toDate != null && fromDate.before(toDate);
+            if (!isValid)
+                validatorContext.buildConstraintViolationWithTemplate(compareDates.message()).
+                        addPropertyNode(compareDates.toDate()).addConstraintViolation();
+            return isValid;
+        } catch (IllegalAccessException e) {
+            throw new ApplicationRuntimeException("Could not compare dates", e);
         }
     }
 }

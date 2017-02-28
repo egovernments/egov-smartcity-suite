@@ -39,6 +39,8 @@
  */
 package org.egov.wtms.web.controller.application;
 
+import static org.egov.wtms.utils.constants.WaterTaxConstants.CONNECTIONTYPE_METERED;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.NON_METERED_DMDRSN_CODE_MAP;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 import java.math.BigDecimal;
@@ -68,7 +70,6 @@ import org.egov.wtms.application.service.LegacyReceiptsSevice;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.utils.WaterTaxUtils;
-import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -117,18 +118,22 @@ public class EditCollectionController {
     }
 
     private String loadViewData(final Model model, final WaterConnectionDetails waterConnectionDetails) {
-        final List<DemandDetail> demandDetailBeanList = new ArrayList<DemandDetail>();
-        final Set<DemandDetail> tempDemandDetail = new LinkedHashSet<DemandDetail>();
-        List<Installment> allInstallments = new ArrayList<Installment>();
+        final List<DemandDetail> demandDetailBeanList = new ArrayList<>();
+        final Set<DemandDetail> tempDemandDetail = new LinkedHashSet<>();
+        List<Installment> allInstallments = new ArrayList<>();
         final DateFormat dateFormat = new SimpleDateFormat(PropertyTaxConstants.DATE_FORMAT_DDMMYYY);
         try {
-            allInstallments = waterTaxUtils.getInstallmentsForCurrYear(
-                    dateFormat.parse(dateFormat.format(waterConnectionDetails.getExecutionDate())));
+            if (waterConnectionDetails.getConnectionType().toString().equals(CONNECTIONTYPE_METERED))
+                allInstallments = waterTaxUtils
+                        .getMonthlyInstallments(dateFormat.parse(dateFormat.format(waterConnectionDetails.getExecutionDate())));
+            else
+                allInstallments = waterTaxUtils.getInstallmentsForCurrYear(
+                        dateFormat.parse(dateFormat.format(waterConnectionDetails.getExecutionDate())));
         } catch (final ParseException e) {
             throw new ApplicationRuntimeException("Error while getting all installments from start date", e);
         }
         DemandDetail dmdDtl = null;
-        for (final Map.Entry<String, String> entry : WaterTaxConstants.NON_METERED_DMDRSN_CODE_MAP.entrySet())
+        for (final Map.Entry<String, String> entry : NON_METERED_DMDRSN_CODE_MAP.entrySet())
             for (final Installment installObj : allInstallments) {
                 final EgDemandReason demandReasonObj = connectionDemandService
                         .getDemandReasonByCodeAndInstallment(entry.getKey(), installObj);
@@ -156,7 +161,7 @@ public class EditCollectionController {
         model.addAttribute("legacyReceipts", waterConnectionDetails.getLegacyReceipts().size());
         model.addAttribute("demandDetailBeanList", demandDetailBeanList);
         model.addAttribute("waterConnectionDetails", waterConnectionDetails);
-        model.addAttribute("current1HalfInstallment", !demandDetailBeanList.isEmpty() && demandDetailBeanList.size()>1 
+        model.addAttribute("current1HalfInstallment", !demandDetailBeanList.isEmpty() && demandDetailBeanList.size() > 1
                 ? demandDetailBeanList.get(demandDetailBeanList.size() - 2).getInstallment() : null);
         model.addAttribute("current2HalfInstallment", !demandDetailBeanList.isEmpty()
                 ? demandDetailBeanList.get(demandDetailBeanList.size() - 1).getInstallment() : null);
@@ -201,13 +206,13 @@ public class EditCollectionController {
     }
 
     @RequestMapping(value = "/editCollection/{consumerCode}", method = RequestMethod.POST)
-    public String updateMeterEntry(@ModelAttribute WaterConnectionDetails waterConnectionDetails,
+    public String updateMeterEntry(@ModelAttribute final WaterConnectionDetails waterConnectionDetails,
             final BindingResult errors, final RedirectAttributes redirectAttrs, final Model model,
             final HttpServletRequest request) {
         final String sourceChannel = request.getParameter("Source");
         final List<LegacyReceipts> legacyReceipts = waterConnectionDetails.getLegacyReceipts();
         if (waterConnectionDetails.getLegacyReceipts().size() > 0) {
-            LegacyReceipts legacyreceipts = new LegacyReceipts();
+            LegacyReceipts legacyreceipts;
             final LegacyReceipts legacyreceipt = waterConnectionDetails.getLegacyReceipts()
                     .get(waterConnectionDetails.getLegacyReceipts().size() - 1);
             legacyreceipts = legacyReceiptsSevice.findByReceiptNumber(legacyreceipt.getReceiptNumber());

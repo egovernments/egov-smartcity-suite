@@ -55,7 +55,7 @@
 	<div class="form-group">
 		<div class="col-sm-3 add-margin"><spring:message code="lbl.date.of.marriage"/></div>
 		<div class="col-sm-3 add-margin view-content"><c:out value="${reIssue.registration.dateOfMarriage}" /></div>
-		<div class="col-sm-3 add-margin"><spring:message code="lbl.zone"/></div>
+		<div class="col-sm-3 add-margin"><spring:message code="lbl.Boundary"/></div>
 		<div class="col-sm-3 add-margin view-content"><c:out value="${reIssue.registration.zone.name}" /></div>
 	</div>
 </div>

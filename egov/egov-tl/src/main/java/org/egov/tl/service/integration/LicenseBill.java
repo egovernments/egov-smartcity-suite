@@ -109,7 +109,7 @@ public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalcu
     public String getConsumerType() {
         return "";
     }
-    
+
     @Override
     public Module getModule() {
         return licenseUtils.getModule(moduleName);
@@ -119,7 +119,7 @@ public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalcu
     public String getBillPayee() {
         return license.getLicensee().getApplicantName();
     }
-    
+
     @Override
     public String getEmailId() {
         return "";
@@ -272,7 +272,7 @@ public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalcu
 
     @Override
     public void setPenaltyCalcType(final LPPenaltyCalcType penaltyType) {
-
+        //not used
     }
 
     @Override
@@ -323,11 +323,11 @@ public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalcu
     }
 
     public Map<Installment, BigDecimal> getCalculatedPenalty(final Date fromDate, final Date collectionDate,
-            final EgDemand demand) {
-        final Map<Installment, BigDecimal> installmentPenalty = new HashMap<Installment, BigDecimal>();
+                                                             final EgDemand demand) {
+        final Map<Installment, BigDecimal> installmentPenalty = new HashMap<>();
         for (final EgDemandDetails demandDetails : demand.getEgDemandDetails())
             if (!demandDetails.getEgDemandReason().getEgDemandReasonMaster().getCode().equals(Constants.PENALTY_DMD_REASON_CODE)
-                    && demandDetails.getAmtCollected().signum() == 0)
+                    && demandDetails.getAmount().subtract(demandDetails.getAmtCollected()).signum() == 1)
                 if (fromDate != null)
                     installmentPenalty.put(demandDetails.getEgDemandReason().getEgInstallmentMaster(),
                             calculatePenalty(fromDate, collectionDate, demandDetails.getAmount()));

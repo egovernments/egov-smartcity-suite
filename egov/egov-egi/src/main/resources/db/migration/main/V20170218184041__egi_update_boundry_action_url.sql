@@ -1,0 +1,1 @@
+﻿update eg_action set url='/boundary/ajaxBoundary-blockByLocality' where url = '/boundary/ajaxBoundary-blockByLocality.action';

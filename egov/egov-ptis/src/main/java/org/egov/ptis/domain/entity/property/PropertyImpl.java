@@ -131,6 +131,7 @@ public class PropertyImpl extends StateAware implements Property {
     private Set<UnitCalculationDetail> unitCalculationDetails = new HashSet<UnitCalculationDetail>();
     private List<AmalgamationOwner> amalgamationOwners = new ArrayList<>();
     private List<AmalgamationOwner> amalgamationOwnersProxy = new ArrayList<>();
+    private List<Document> assessmentDocuments = new ArrayList<>();
 
     @Override
     public String getDocNumber() {
@@ -733,6 +734,16 @@ public class PropertyImpl extends StateAware implements Property {
     @Override
     public void addAmalgamationOwners(AmalgamationOwner ownerInfo) {
         getAmalgamationOwners().add(ownerInfo);
+    }
+
+    @Override
+    public List<Document> getAssessmentDocuments() {
+        return assessmentDocuments;
+    }
+
+    @Override
+    public void setAssessmentDocuments(List<Document> assessmentDocuments) {
+        this.assessmentDocuments = assessmentDocuments;
     }
 
 }

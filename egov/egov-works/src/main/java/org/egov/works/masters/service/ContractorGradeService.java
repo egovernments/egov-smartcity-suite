@@ -120,4 +120,8 @@ public class ContractorGradeService {
         return contractorGradeRepository.findByGrade(grade);
     }
 
+    public ContractorGrade findByContractorClass(final String contractorClass) {
+        return contractorGradeRepository.findByGradeIngoreCase(contractorClass.toUpperCase());
+    }
+
 }

@@ -45,7 +45,7 @@
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <div class="row">
     <div class="col-md-12">
-    	<form:form id="adtaxsearchform" method="post" class="form-horizontal form-groups-bordered" modelAttribute="advertisementPermitDetail" commandName="advertisementPermitDetail">
+    	<form:form role="form" id="adtaxsearchform" method="post" class="form-horizontal form-groups-bordered" modelAttribute="advertisementPermitDetail" commandName="advertisementPermitDetail">
 	        <div class="panel panel-primary" data-collapsed="0">
 	            <div class="panel-heading">
 	                <div class="panel-title"></div>
@@ -138,13 +138,26 @@
 							</form:select>
 							<form:errors path="advertisement.revenueInspector" cssClass="error-msg"/>
                         </div>
-                    </div> 			
-       		
-	            </div>
+                    </div>
+					<div class="form-group">
+						<label class="col-sm-3 control-label text-right"><spring:message
+								code="lbl.owner.Details" /></label>
+						<div class="col-sm-3 add-margin">
+							<form:input type="text" class="form-control" id="ownerDetail"
+								path="ownerDetail" />
+							<form:errors path="ownerDetail" cssClass="error-msg" />
+						</div>
+					</div>
+				</div>
+				
+				<div class="mandatory1">
+	                * Note : By default will show only active advertisement and permitdetails records.
+	                </div>
+	                
 	        </div>
         	<div class="row">
        			<div class="text-center">
-       				<button type="button" class="btn btn-primary" id="search"><spring:message code="lbl.submit"/></button>
+      				<button type="button" class="btn btn-primary" id="search"><spring:message code="lbl.submit"/></button>
           		    <button type="reset" id="reset" class="btn btn-default"><spring:message code="lbl.reset"/></button>
           		    <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a>
           	</div>

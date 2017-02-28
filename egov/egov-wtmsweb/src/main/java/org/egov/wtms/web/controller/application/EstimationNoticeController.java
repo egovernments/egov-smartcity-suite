@@ -84,15 +84,13 @@ public class EstimationNoticeController {
     public static final String ESTIMATION_NOTICE = "estimationNotice";
     @Autowired
     private PropertyExtnUtils propertyExtnUtils;
-    private final Map<String, Object> reportParams = new HashMap<String, Object>();
-    private ReportRequest reportInput = null;
-    private ReportOutput reportOutput = null;
 
     @Autowired
     private WaterConnectionDetailsService waterConnectionDetailsService;
 
     @RequestMapping(value = "/estimationNotice", method = RequestMethod.GET)
-    public @ResponseBody ResponseEntity<byte[]> generateEstimationNotice(final HttpServletRequest request,
+    @ResponseBody
+    public ResponseEntity<byte[]> generateEstimationNotice(final HttpServletRequest request,
             final HttpSession session) {
         final EstimationNumberGenerator estimationNoGen = beanResolver
                 .getAutoNumberServiceFor(EstimationNumberGenerator.class);
@@ -106,18 +104,25 @@ public class EstimationNoticeController {
 
     private ResponseEntity<byte[]> generateReport(final WaterConnectionDetails waterConnectionDetails,
             final HttpSession session) {
+        ReportRequest reportInput = null;
+        ReportOutput reportOutput;
         if (waterConnectionDetails != null) {
+            final Map<String, Object> reportParams = new HashMap<>();
             final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
             final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
                     waterConnectionDetails.getConnection().getPropertyIdentifier(),
                     PropertyExternalService.FLAG_FULL_DETAILS, BasicPropertyStatus.ACTIVE);
             final String doorNo[] = assessmentDetails.getPropertyAddress().split(",");
-            String ownerName = "";
-            double totalCharges = 0;
+            final StringBuilder ownerName = new StringBuilder();
+
+            int counter = 0;
             for (final OwnerName names : assessmentDetails.getOwnerNames()) {
-                ownerName = names.getOwnerName();
-                break;
+                if (counter > 0)
+                    ownerName.append(", ");
+                ownerName.append(names.getOwnerName());
+                counter++;
             }
+
             reportParams.put("applicationType",
                     WordUtils.capitalize(waterConnectionDetails.getApplicationType().getName()).toString());
             reportParams.put("cityName", session.getAttribute("citymunicipalityname"));
@@ -126,13 +131,13 @@ public class EstimationNoticeController {
                     formatter.format(waterConnectionDetails.getFieldInspectionDetails().getCreatedDate()));
             reportParams.put("estimationNumber", waterConnectionDetails.getEstimationNumber());
             reportParams.put("donationCharges", waterConnectionDetails.getDonationCharges());
-            totalCharges = waterConnectionDetails.getDonationCharges()
+            final double totalCharges = waterConnectionDetails.getDonationCharges()
                     + waterConnectionDetails.getFieldInspectionDetails().getSupervisionCharges()
                     + waterConnectionDetails.getFieldInspectionDetails().getRoadCuttingCharges()
                     + waterConnectionDetails.getFieldInspectionDetails().getSecurityDeposit();
             reportParams.put("totalCharges", totalCharges);
             reportParams.put("applicationDate", formatter.format(waterConnectionDetails.getApplicationDate()));
-            reportParams.put("applicantName", ownerName);
+            reportParams.put("applicantName", ownerName.toString());
             reportParams.put("address", assessmentDetails.getPropertyAddress());
             reportParams.put("houseNo", doorNo[0]);
             reportParams.put("propertyID", waterConnectionDetails.getConnection().getPropertyIdentifier());
@@ -149,11 +154,12 @@ public class EstimationNoticeController {
         headers.setContentType(MediaType.parseMediaType("application/pdf"));
         headers.add("content-disposition", "inline;filename=EstimationNotice.pdf");
         reportOutput = reportService.createReport(reportInput);
-        return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
+        return new ResponseEntity<>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
     }
 
     @RequestMapping(value = "/estimationNotice/view/{applicationNumber}", method = RequestMethod.GET)
-    public @ResponseBody ResponseEntity<byte[]> viewEstimationNotice(@PathVariable final String applicationNumber,
+    @ResponseBody
+    public ResponseEntity<byte[]> viewEstimationNotice(@PathVariable final String applicationNumber,
             final HttpSession session) {
         final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
                 .findByApplicationNumber(applicationNumber);

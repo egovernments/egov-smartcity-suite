@@ -40,6 +40,7 @@
 package org.egov.egf.expensebill.service;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -47,9 +48,13 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.script.ScriptContext;
 
+import org.apache.commons.lang.StringUtils;
+import org.egov.commons.CChartOfAccountDetail;
+import org.egov.commons.service.ChartOfAccountDetailService;
 import org.egov.commons.service.CheckListService;
 import org.egov.commons.service.FundService;
 import org.egov.egf.autonumber.ExpenseBillNumberGenerator;
+import org.egov.egf.autonumber.WorksBillNumberGenerator;
 import org.egov.egf.billsubtype.service.EgBillSubTypeService;
 import org.egov.egf.expensebill.repository.ExpenseBillRepository;
 import org.egov.egf.utils.FinancialUtils;
@@ -66,6 +71,7 @@ import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.models.EgChecklists;
+import org.egov.model.bills.EgBillPayeedetails;
 import org.egov.model.bills.EgBillregister;
 import org.egov.pims.commons.Position;
 import org.egov.services.masters.SchemeService;
@@ -139,6 +145,9 @@ public class ExpenseBillService {
     @Autowired
     private FundService fundService;
 
+    @Autowired
+    private ChartOfAccountDetailService chartOfAccountDetailService;
+
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
@@ -169,9 +178,10 @@ public class ExpenseBillService {
     @Transactional
     public EgBillregister create(final EgBillregister egBillregister, final Long approvalPosition, final String approvalComent,
             final String additionalRule, final String workFlowAction) {
-
-        egBillregister.setBilltype(FinancialConstants.BILLTYPE_FINAL_BILL);
-        egBillregister.setExpendituretype(FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT);
+        if (StringUtils.isBlank(egBillregister.getBilltype()))
+            egBillregister.setBilltype(FinancialConstants.BILLTYPE_FINAL_BILL);
+        if (StringUtils.isBlank(egBillregister.getExpendituretype()))
+            egBillregister.setExpendituretype(FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT);
         egBillregister.setPassedamount(egBillregister.getBillamount());
         egBillregister.getEgBillregistermis().setEgBillregister(egBillregister);
         egBillregister.getEgBillregistermis().setLastupdatedtime(new Date());
@@ -210,15 +220,17 @@ public class ExpenseBillService {
 
         createCheckList(savedEgBillregister, checkLists);
 
-        if (workFlowAction.equals(FinancialConstants.CREATEANDAPPROVE))
-            savedEgBillregister.setStatus(financialUtils.getStatusByModuleAndCode(FinancialConstants.CONTINGENCYBILL_FIN,
-                    FinancialConstants.CONTINGENCYBILL_APPROVED_STATUS));
-        else {
+        if (workFlowAction.equals(FinancialConstants.CREATEANDAPPROVE)) {
+            if (FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT.equals(egBillregister.getExpendituretype()))
+                savedEgBillregister.setStatus(financialUtils.getStatusByModuleAndCode(FinancialConstants.CONTINGENCYBILL_FIN,
+                        FinancialConstants.CONTINGENCYBILL_APPROVED_STATUS));
+        } else {
             savedEgBillregister.setStatus(financialUtils.getStatusByModuleAndCode(FinancialConstants.CONTINGENCYBILL_FIN,
                     FinancialConstants.CONTINGENCYBILL_CREATED_STATUS));
             createExpenseBillRegisterWorkflowTransition(savedEgBillregister, approvalPosition, approvalComent, additionalRule,
                     workFlowAction);
         }
+        // TODO: add the code to handle new screen for view bills of all type
         savedEgBillregister.getEgBillregistermis().setSourcePath(
                 "/EGF/expensebill/view/" + savedEgBillregister.getId().toString());
 
@@ -350,8 +362,26 @@ public class ExpenseBillService {
     }
 
     private String getNextBillNumber(final EgBillregister bill) {
-        final ExpenseBillNumberGenerator b = beanResolver.getAutoNumberServiceFor(ExpenseBillNumberGenerator.class);
-        return b.getNextNumber(bill);
+        if (FinancialConstants.STANDARD_EXPENDITURETYPE_WORKS.equals(bill.getExpendituretype())) {
+            final WorksBillNumberGenerator b = beanResolver.getAutoNumberServiceFor(WorksBillNumberGenerator.class);
+            return b.getNextNumber(bill);
+        } else {
+            final ExpenseBillNumberGenerator b = beanResolver.getAutoNumberServiceFor(ExpenseBillNumberGenerator.class);
+            return b.getNextNumber(bill);
+        }
+    }
+
+    public void validateSubledgeDetails(EgBillregister egBillregister) {
+        final List<EgBillPayeedetails> payeeDetails = new ArrayList<>();
+        for (final EgBillPayeedetails payeeDetail : egBillregister.getBillPayeedetails()) {
+            CChartOfAccountDetail coaDetail = chartOfAccountDetailService
+                    .getByGlcodeIdAndDetailTypeId(payeeDetail.getEgBilldetailsId().getGlcodeid().longValue(),
+                            payeeDetail.getAccountDetailTypeId().intValue());
+            if (coaDetail != null)
+                payeeDetails.add(payeeDetail);
+        }
+        egBillregister.getBillPayeedetails().clear();
+        egBillregister.setBillPayeedetails(payeeDetails);
     }
 
     public void createExpenseBillRegisterWorkflowTransition(final EgBillregister egBillregister,

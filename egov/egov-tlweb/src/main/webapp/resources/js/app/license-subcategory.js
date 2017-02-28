@@ -40,25 +40,29 @@
 $(document).ready(function () {
     $('#categories').change(function () {
         var val = $(this).val();
-        var results = [];
-        $.ajax({
-            type: "GET",
-            url: '/tl/licensesubcategory/subcategories-by-category?name=&categoryId=' + val,
-            dataType: "json",
-            success: function (data) {
-                $.each(data, function (i) {
-                    var obj = {};
-                    obj['id'] = data[i]['code'];
-                    obj['text'] = data[i]['name'];
-                    results.push(obj);
-                });
-                select2initialize($("#subCategory"),results,false);
-            },
-            error: function () {
-                bootbox.alert('something went wrong on server');
-            }
-        });
+        if (val !== '') {
+            var results = [];
+            $.ajax({
+                type: "GET",
+                url: '/tl/licensesubcategory/by-category',
+                dataType: "json",
+                data: {categoryId: val},
+                success: function (data) {
+                    $.each(data, function (i) {
+                        var obj = {};
+                        obj['id'] = data[i]['code'];
+                        obj['text'] = data[i]['name'];
+                        results.push(obj);
+                    });
+                    select2initialize($("#subCategory"), results, false);
+                },
+                error: function () {
+                    bootbox.alert('something went wrong on server');
+                }
+            });
+        }
     });
+
 
     $('#subcat').on('change', 'select', function () {
         var obj = $("[id$='feeType']:visible");

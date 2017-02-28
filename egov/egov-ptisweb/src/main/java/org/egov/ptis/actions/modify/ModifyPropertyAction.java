@@ -102,6 +102,8 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_ASSISTANT_AP
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONAL_COMMISSIONER_DESIGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.ROLE_ULB_OPERATOR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CSC_OPERATOR_ROLE;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -131,6 +133,7 @@ import org.egov.commons.Area;
 import org.egov.commons.Installment;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
+import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
@@ -220,6 +223,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
     private static final String PROPERTY_FORWARD_SUCCESS = "property.forward.success";
     private static final String TAXDUES_ERROR_MSG = "taxdues.error.msg";
     private static final String WF_PENDING_MSG = "wf.pending.msg";
+    private static final String PROPERTY_MODIFY_REJECT_FAILURE = "property.modify.reject.failure";
     private static final String PROPERTY_ALTER_ADDITION = "Property Alter/Addition";
     private static final String PROPERTY_BIFURCATION = "Property Bifurcation";
     private static final String PROPERTY_GENERAL_REVISION_PETITION = "Property General Revision Petition";
@@ -322,6 +326,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
     private List<VacantLandPlotArea> vacantLandPlotAreaList = new ArrayList<>();
     private List<LayoutApprovalAuthority> layoutApprovalAuthorityList = new ArrayList<>();
     private boolean allowEditDocument = Boolean.FALSE;
+    private Boolean showAckBtn = Boolean.FALSE;
 
     @Autowired
     transient PropertyPersistenceService basicPropertyService;
@@ -367,6 +372,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
     @SkipValidation
     @Action(value = "/modifyProperty-modifyForm")
     public String modifyForm() {
+        final User currentUser=securityUtils.getCurrentUser();
         LOGGER.debug("Entered into modifyForm, \nIndexNumber: " + indexNumber + ", BasicProperty: " + basicProp
                 + ", OldProperty: " + oldProperty + ", PropertyModel: " + propertyModel);
         if (propertyModel.getStatus().equals(PropertyTaxConstants.STATUS_DEMAND_INACTIVE)) {
@@ -375,7 +381,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         }
         String target;
         target = populateFormData(Boolean.FALSE);
-        isMeesevaUser = propService.isMeesevaUser(securityUtils.getCurrentUser());
+        isMeesevaUser = propService.isMeesevaUser(currentUser);
         if (isMeesevaUser)
             if (getMeesevaApplicationNumber() == null) {
                 addActionMessage(getText("MEESEVA.005"));
@@ -386,11 +392,11 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
                 + ", PropTypeId: " + getPropTypeId() + ", PropertyCategory: " + getPropertyCategory()
                 + ", PropUsageId: " + getPropUsageId() + ", PropOccId: " + getPropOccId());
         LOGGER.debug("Exiting from modifyForm");
-        if ((StringUtils.containsIgnoreCase(userDesignationList, REVENUE_INSPECTOR_DESGN) ||
-                StringUtils.containsIgnoreCase(userDesignationList, JUNIOR_ASSISTANT) ||
-                StringUtils.containsIgnoreCase(userDesignationList, SENIOR_ASSISTANT))
-                && PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn))
-            showTaxCalcBtn = Boolean.TRUE;
+        showTaxCalculateButton();
+        if (propService.isEmployee(currentUser) && !propertyTaxCommonUtils.isEligibleInitiator(currentUser.getId())){
+            addActionError(getText("initiator.noteligible"));
+            return COMMON_FORM;
+        }
         return target;
     }
 
@@ -549,11 +555,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
             setModifyRsn(propertyModel.getPropertyDetail().getPropertyMutationMaster().getCode());
             LOGGER.debug("view: PropertyModel by model id: " + propertyModel);
         }
-        if ((StringUtils.containsIgnoreCase(userDesignationList, REVENUE_INSPECTOR_DESGN) ||
-                StringUtils.containsIgnoreCase(userDesignationList, JUNIOR_ASSISTANT) ||
-                StringUtils.containsIgnoreCase(userDesignationList, SENIOR_ASSISTANT))
-                && PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn))
-            showTaxCalcBtn = Boolean.TRUE;
+        showTaxCalculateButton();
         final String currWfState = propertyModel.getState().getValue();
         populateFormData(Boolean.TRUE);
         isEligibleForDocEdit();
@@ -636,6 +638,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
             showTaxCalcBtn = Boolean.TRUE;
             allowEditDocument = Boolean.TRUE;
         }
+        checkToDisplayAckButton();
         final long startTimeMillis = System.currentTimeMillis();
         isMeesevaUser = propService.isMeesevaUser(securityUtils.getCurrentUser());
 
@@ -715,6 +718,17 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         LOGGER.info("forwardModify: Modify property forwarded successfully; Time taken(ms) = " + elapsedTimeMillis);
         LOGGER.debug("forwardModify: Modify property forward ended");
         return isMeesevaUser ? MEESEVA_RESULT_ACK : RESULT_ACK;
+    }
+    
+    
+    private void checkToDisplayAckButton() {
+        Boolean rejected = wfInitiatorRejected == null ? Boolean.FALSE : wfInitiatorRejected;
+        for (Role role : securityUtils.getCurrentUser().getRoles()) {
+            if ((ROLE_ULB_OPERATOR.equalsIgnoreCase(role.getName()) && !rejected && getModel().getState() == null)
+                    || CSC_OPERATOR_ROLE.equalsIgnoreCase(role.getName())) {
+                showAckBtn = Boolean.TRUE;
+            }
+        }
     }
 
     @Override
@@ -935,7 +949,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
             } else
                 setAckMessage(getText(PROPERTY_MODIFY_REJECT_SUCCESS, new String[] { getModifyReasonString(), username }));
         } else
-            setAckMessage("Intiator is not active so can not do rejection with the assessmnet number : ");
+            setAckMessage(getText(PROPERTY_MODIFY_REJECT_FAILURE));
     }
 
     private boolean isAssistantOrRIApprovalPending() {
@@ -1278,7 +1292,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
                 northBoundary, propTypeId,
                 null != basicProp.getPropertyID() ? String.valueOf(basicProp.getPropertyID().getZone().getId()) : "",
                 propOccId, floorTypeId, roofTypeId, wallTypeId, woodTypeId, modifyRsn, propCompletionDate, vacantLandPlotAreaId,
-                layoutApprovalAuthorityId);
+                layoutApprovalAuthorityId, null);
         validateApproverDetails();
         if (!propertyByEmployee && null != basicProp) {
             final Assignment assignment = propService.isCscOperator(securityUtils.getCurrentUser())
@@ -1611,6 +1625,14 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
             }
         }
         LOGGER.debug("exiting calculateTax()");
+    }
+    
+    public void showTaxCalculateButton() {
+        if ((StringUtils.containsIgnoreCase(userDesignationList, REVENUE_INSPECTOR_DESGN) ||
+                StringUtils.containsIgnoreCase(userDesignationList, JUNIOR_ASSISTANT) ||
+                StringUtils.containsIgnoreCase(userDesignationList, SENIOR_ASSISTANT))
+                && PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn))
+            showTaxCalcBtn = Boolean.TRUE;
     }
 
     public BasicProperty getBasicProp() {
@@ -2349,5 +2371,13 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 
     public void setAllowEditDocument(final boolean allowEditDocument) {
         this.allowEditDocument = allowEditDocument;
+    }
+
+    public Boolean getShowAckBtn() {
+        return showAckBtn;
+    }
+
+    public void setShowAckBtn(Boolean showAckBtn) {
+        this.showAckBtn = showAckBtn;
     }
 }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-02-08T15:33:18 -->
+<!-- 2017-02-09T15:31:25 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="CitizenCharterAcknowledgement" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="80" bottomMargin="80" uuid="b5f00baf-3b68-4ad5-a991-a489d1a08ca2">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<parameter name="ackNo" class="java.lang.String"/>
@@ -140,7 +140,7 @@
 		</band>
 	</detail>
 	<pageFooter>
-		<band height="102" splitType="Stretch">
+		<band height="200" splitType="Stretch">
 			<staticText>
 				<reportElement x="80" y="0" width="50" height="20" uuid="1e4ed91b-ace9-42c7-b495-119855da2db7"/>
 				<textElement textAlignment="Left" verticalAlignment="Bottom"/>
@@ -159,6 +159,11 @@
 			<staticText>
 				<reportElement x="80" y="80" width="445" height="20" uuid="f4cfadc9-ae08-447d-a8ec-2a719419ca2d"/>
 				<text><![CDATA[3. Don’t consult any mediator/broker.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="80" y="100" width="445" height="30" uuid="cefd333d-298c-473c-8def-ba6a3db9ef54"/>
+				<textElement textAlignment="Left"/>
+				<text><![CDATA[4. Application will be processed only after payment of prescribed fee, wherever applicable and SLA period for the service will start from the date of payment.]]></text>
 			</staticText>
 		</band>
 	</pageFooter>

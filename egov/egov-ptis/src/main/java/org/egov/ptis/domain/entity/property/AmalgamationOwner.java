@@ -49,18 +49,19 @@ public class AmalgamationOwner extends AbstractPersistable<Long> {
     private Property property;
     private User owner;
     private Long id;
+    private boolean ownerOfParent;
 
     public AmalgamationOwner() {
 
     }
 
-    public AmalgamationOwner(Property property, User owner) {
+    public AmalgamationOwner(final Property property, final User owner) {
         this.property = property;
         this.owner = owner;
     }
 
     @Override
-    protected void setId(Long id) {
+    protected void setId(final Long id) {
         this.id = id;
     }
 
@@ -73,7 +74,7 @@ public class AmalgamationOwner extends AbstractPersistable<Long> {
         return property;
     }
 
-    public void setProperty(Property property) {
+    public void setProperty(final Property property) {
         this.property = property;
     }
 
@@ -81,8 +82,16 @@ public class AmalgamationOwner extends AbstractPersistable<Long> {
         return owner;
     }
 
-    public void setOwner(User owner) {
+    public void setOwner(final User owner) {
         this.owner = owner;
+    }
+
+    public boolean isOwnerOfParent() {
+        return ownerOfParent;
+    }
+
+    public void setOwnerOfParent(final boolean ownerOfParent) {
+        this.ownerOfParent = ownerOfParent;
     }
 
 }

@@ -85,7 +85,13 @@
 								</s:else>
 							</td>
 						</tr>
+						<s:set value="%{#status.index + 1}" var="OldMaxIndex" />
 					</s:iterator>
+					<s:if test="%{!assessmentDocumentTypes.isEmpty()}">
+						<tr>
+							<%@ include file="../create/doctype-attachments-view.jsp"%>
+						</tr>
+					</s:if>
 				</tbody>
 			</table>
 		</td>

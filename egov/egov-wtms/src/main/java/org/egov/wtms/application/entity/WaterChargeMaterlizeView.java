@@ -79,7 +79,17 @@ public class WaterChargeMaterlizeView implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "demand")
     private EgDemand demand;
-
+   
+    private Long wardid;
+  
+    private Long zoneid;
+   
+    private Long street;
+    private Long block;
+   
+    private Long locality;
+    
+    
     @Column(name = "curr_demand")
     private double currentdemand;
     @Column(name = "curr_coll")
@@ -280,4 +290,47 @@ public class WaterChargeMaterlizeView implements Serializable {
         this.houseno = houseno;
     }
 
+	public Long getWardid() {
+		return wardid;
+	}
+
+	public void setWardid(Long wardid) {
+		this.wardid = wardid;
+	}
+
+	public Long getZoneid() {
+		return zoneid;
+	}
+
+	public void setZoneid(Long zoneid) {
+		this.zoneid = zoneid;
+	}
+
+	public Long getStreet() {
+		return street;
+	}
+
+	public void setStreet(Long street) {
+		this.street = street;
+	}
+
+	public Long getBlock() {
+		return block;
+	}
+
+	public void setBlock(Long block) {
+		this.block = block;
+	}
+
+	public Long getLocality() {
+		return locality;
+	}
+
+	public void setLocality(Long locality) {
+		this.locality = locality;
+	}
+
+	
+
+	
 }

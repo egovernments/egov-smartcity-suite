@@ -444,8 +444,12 @@ public class RecoveryNoticeService {
     private ReportRequest generateDistressNotice(final BasicProperty basicProperty, final Map<String, Object> reportParams,
                                                  final City city, final String noticeNo) {
         ReportRequest reportInput;
+        final Address ownerAddress = basicProperty.getAddress();
         reportParams.put(TOTAL_TAX_DUE, getTotalPropertyTaxDueIncludingPenalty(basicProperty));
         final DateTime noticeDate = new DateTime();
+        reportParams.put(DOOR_NO, StringUtils.isNotBlank(ownerAddress.getHouseNoBldgApt())
+                ? ownerAddress.getHouseNoBldgApt().trim() : "N/A");
+        reportParams.put(CONSUMER_ID, basicProperty.getUpicNo());
         reportParams.put(NOTICE_DAY, propertyTaxCommonUtils.getDateWithSufix(noticeDate.getDayOfMonth()));
         reportParams.put(NOTICE_MONTH, noticeDate.monthOfYear().getAsShortText());
         reportParams.put(NOTICE_YEAR, noticeDate.getYear());
@@ -521,6 +525,7 @@ public class RecoveryNoticeService {
         reportParams.put(DOOR_NO, StringUtils.isNotBlank(ownerAddress.getHouseNoBldgApt())
                 ? ownerAddress.getHouseNoBldgApt() : "N/A");
         reportParams.put(FIN_YEAR, formatter.format(new Date()));
+        reportParams.put(CONSUMER_ID, basicProperty.getUpicNo());
         reportParams.put(TOTAL_TAX_DUE, getTotalPropertyTaxDueIncludingPenalty(basicProperty));
         reportParams.put(FUTURE_DATE, DateUtils.getDefaultFormattedDate(noticeDate.plusDays(2).toDate()));
         reportParams.put(ESD_NOTICE_NUMBER, noticeNo);
@@ -680,15 +685,16 @@ public class RecoveryNoticeService {
         reportParams.put(DOOR_NO, basicProperty.getAddress().getHouseNoBldgApt() == null ? NOT_AVAILABLE
                 : basicProperty.getAddress().getHouseNoBldgApt());
         reportParams.put(LOCATION, basicProperty.getAddress().getAreaLocalitySector() == null ? NOT_AVAILABLE
-                : basicProperty.getAddress().getAreaLocalitySector());
+                : basicProperty.getAddress().getAreaLocalitySector().trim());
         reportParams.put(CITY_NAME, city.getPreferences().getMunicipalityName() == null ? NOT_AVAILABLE
                 : city.getPreferences().getMunicipalityName());
         reportParams.put(FINANCIAL_YEAR, currFinYear.getFinYearRange());
-        final BigDecimal totalTaxDue = getTotalPropertyTaxDue(basicProperty);
+        final BigDecimal totalTaxDue = getTotalPropertyTaxDueIncludingPenalty(basicProperty);
         reportParams.put(TOTAL_TAX_DUE, String.valueOf(totalTaxDue));
         reportParams.put(REPORT_DATE, new SimpleDateFormat("dd/MM/yyyy").format(asOnDate));
         reportParams.put(NOTICE_NUMBER, noticeNo);
         reportParams.put(TAX_DUE_IN_WORDS, NumberUtil.amountInWords(totalTaxDue));
+        reportParams.put(CONSUMER_ID, basicProperty.getUpicNo());
         prepareDemandBillDetails(reportParams, basicProperty);
         final String cityGrade = city.getGrade();
         if (StringUtils.isNotBlank(cityGrade)

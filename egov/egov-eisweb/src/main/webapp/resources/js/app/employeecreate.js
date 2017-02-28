@@ -546,8 +546,8 @@ $(document).ready(function(){
 		var length = $("#jurisdictionTable tr").length;
 		if($("#mode").val()=="update")
 		{
-		i=0;
-		length = length-1;
+		 i=0;
+		 length = length - 1 ;
 		}
 
 			if(($("#jurisdictionTable tr").length-1)>=1){		
@@ -584,6 +584,8 @@ $(document).ready(function(){
 		if(validateJurisdiction()) {
 			if(!jurdctnedit){
 				jurdctnrowCount = $("#jurisdictionTable tr").length;
+				if($("#mode").val()=="update") 
+					jurdctnrowCount = jurdctnrowCount-1;
 				jurdctnaddRow(jurdctnrowCount);
 				jurdctnrowCount++;
 			}

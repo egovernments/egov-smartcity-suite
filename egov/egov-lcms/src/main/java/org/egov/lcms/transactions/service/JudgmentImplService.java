@@ -40,6 +40,7 @@
 package org.egov.lcms.transactions.service;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -47,6 +48,7 @@ import java.util.Set;
 
 import org.egov.commons.EgwStatus;
 import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.lcms.masters.entity.enums.ImplementationFailure;
 import org.egov.lcms.transactions.entity.Appeal;
 import org.egov.lcms.transactions.entity.AppealDocuments;
 import org.egov.lcms.transactions.entity.Contempt;
@@ -81,6 +83,9 @@ public class JudgmentImplService {
     private FileStoreService fileStoreService;
 
     @Autowired
+    private LegalCaseSmsService legalCaseSmsService;
+
+    @Autowired
     public JudgmentImplService(final JudgmentImplRepository judgmentImplRepository) {
         this.judgmentImplRepository = judgmentImplRepository;
     }
@@ -90,7 +95,7 @@ public class JudgmentImplService {
         persistAppealOrContempt(judgmentImpl);
         final JudgmentImpl savedjudgmentImpl = judgmentImplRepository.save(judgmentImpl);
         if (judgmentImpl.getImplementationFailure() != null
-                && judgmentImpl.getImplementationFailure().toString().equals("Appeal")) {
+                && judgmentImpl.getImplementationFailure().toString().equals(ImplementationFailure.Appeal.toString())) {
             final List<AppealDocuments> documentDetails = getDocumentDetails(savedjudgmentImpl, files);
             if (!documentDetails.isEmpty()) {
                 savedjudgmentImpl.getAppeal().get(0).setAppealDocuments(documentDetails);
@@ -101,7 +106,8 @@ public class JudgmentImplService {
     }
 
     @Transactional
-    public void saveOrUpdate(final JudgmentImpl judgmentImpl, final MultipartFile[] files) throws IOException {
+    public void saveOrUpdate(final JudgmentImpl judgmentImpl, final MultipartFile[] files)
+            throws IOException, ParseException {
         persist(judgmentImpl, files);
         if (judgmentImpl.getJudgment().getImplementByDate() != null)
             judgmentImpl.getJudgment().getLegalCase().setNextDate(judgmentImpl.getJudgment().getImplementByDate());
@@ -110,9 +116,13 @@ public class JudgmentImplService {
         final EgwStatus statusObj = legalCaseUtil.getStatusForModuleAndCode(LcmsConstants.MODULE_TYPE_LEGALCASE,
                 LcmsConstants.LEGALCASE_STATUS_JUDGMENT_IMPLIMENTED);
         judgmentImpl.getJudgment().getLegalCase().setStatus(statusObj);
-        final ReportStatus reportStatus=null;
+        final ReportStatus reportStatus = null;
         judgmentImpl.getJudgment().getLegalCase().setReportStatus(reportStatus);
         judgmentImpl.getJudgment().getLegalCase().setNextDate(judgmentImpl.getDateOfCompliance());
+        legalCaseSmsService.sendSmsToOfficerInchargeForJudgmentImpl(judgmentImpl);
+        legalCaseSmsService.sendSmsToStandingCounselForJudgmentImpl(judgmentImpl);
+        legalCaseService.persistLegalCaseIndex(judgmentImpl.getJudgment().getLegalCase(), null,
+                judgmentImpl.getJudgment(), judgmentImpl, null);
         legalCaseService.save(judgmentImpl.getJudgment().getLegalCase());
 
     }

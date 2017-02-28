@@ -1,6 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
-<!-- 2017-01-16T19:03:08 -->
+<!--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  -->
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2017-02-09T15:59:19 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="OccupierNotice_NagarPanachayet" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="60" bottomMargin="20" uuid="5f99a57d-d4d7-42d2-824c-02ee7d858b01">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<parameter name="doorNo" class="java.lang.String"/>
@@ -13,6 +52,7 @@
 	<parameter name="taxDueInWords" class="java.lang.String"/>
 	<parameter name="billNumber" class="java.lang.String"/>
 	<parameter name="billDate" class="java.lang.String"/>
+	<parameter name="consumerId" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -30,7 +70,7 @@
 				<textFieldExpression><![CDATA[$P{cityName}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="20" y="49" width="520" height="23" uuid="cbab1d62-a3d4-4b80-993e-a51b1cda3fb2">
+				<reportElement x="166" y="48" width="220" height="23" uuid="cbab1d62-a3d4-4b80-993e-a51b1cda3fb2">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
 				<textElement textAlignment="Center">
@@ -39,7 +79,7 @@
 				<text><![CDATA[OCCUPIER NOTICE ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="24" y="113" width="36" height="22" uuid="344c635b-bb55-400a-9cb0-6f714b2fcdce">
+				<reportElement x="24" y="74" width="36" height="22" uuid="344c635b-bb55-400a-9cb0-6f714b2fcdce">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
 				<textElement textAlignment="Left">
@@ -48,14 +88,14 @@
 				<text><![CDATA[No :]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="60" y="113" width="260" height="22" uuid="e3b0c16e-3898-42ef-a9e1-bedd74d52d35"/>
+				<reportElement x="60" y="74" width="260" height="22" uuid="e3b0c16e-3898-42ef-a9e1-bedd74d52d35"/>
 				<textElement>
 					<font size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{noticeNumber}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="25" y="140" width="45" height="22" uuid="fbea28bb-3e97-4e28-adb6-8f2d399dc21a">
+				<reportElement x="25" y="101" width="45" height="22" uuid="fbea28bb-3e97-4e28-adb6-8f2d399dc21a">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
@@ -65,7 +105,7 @@
 				<text><![CDATA[Date :]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="70" y="140" width="180" height="22" uuid="ede453f0-8bb5-4727-8bb6-bfa32d635e44"/>
+				<reportElement x="70" y="101" width="180" height="22" uuid="ede453f0-8bb5-4727-8bb6-bfa32d635e44"/>
 				<textElement>
 					<font size="12"/>
 				</textElement>
@@ -82,14 +122,14 @@
 				<text><![CDATA[Sub :-]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="116" y="178" width="408" height="40" uuid="ee73b2ac-2474-4db3-81d7-ec6a64a15b15"/>
-				<textElement markup="styled">
+				<reportElement x="116" y="178" width="411" height="40" uuid="ee73b2ac-2474-4db3-81d7-ec6a64a15b15"/>
+				<textElement textAlignment="Justified" markup="styled">
 					<font size="11"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Property Tax - Collection of property taxes in respect of premises  No. <style forecolor=\"#000000\" isBold=\"true\">" + $P{doorNo}+ "</style>, at <style forecolor=\"#000000\" isBold=\"true\">" + $P{Location} + "</style> Occupied by__________________________ -Reg."]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Property Tax - Collection of property taxes in respect of premises  No. <style forecolor=\"#000000\" isBold=\"true\">" + $P{doorNo}+ "</style>,Assessment Number:<style forecolor=\"#000000\" isBold=\"true\">" + $P{consumerId} +"</style>, at <style forecolor=\"#000000\" isBold=\"true\">" + $P{Location} + "</style> Occupied by__________________________ -Reg."]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="63" y="229" width="55" height="22" uuid="d1e926fe-6e17-4201-9845-425d34c392c9">
+				<reportElement x="61" y="229" width="57" height="22" uuid="d1e926fe-6e17-4201-9845-425d34c392c9">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
@@ -99,8 +139,8 @@
 				<text><![CDATA[Ref :-]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="117" y="230" width="407" height="21" uuid="d8728c78-cc8a-4e98-9362-769988529a39"/>
-				<textElement markup="styled">
+				<reportElement x="117" y="230" width="410" height="21" uuid="d8728c78-cc8a-4e98-9362-769988529a39"/>
+				<textElement textAlignment="Justified" markup="styled">
 					<font size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA["This Office Bill No: <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$P{billNumber}  +"</style> Dt: <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$P{billDate} +"</style>"]]></textFieldExpression>
@@ -113,23 +153,14 @@
 				<text><![CDATA[***]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="24" y="285" width="505" height="53" uuid="96c7ec4d-900f-4711-b3cc-da4e5e3a1d09"/>
-				<textElement markup="styled">
+				<reportElement x="24" y="285" width="503" height="53" uuid="96c7ec4d-900f-4711-b3cc-da4e5e3a1d09"/>
+				<textElement textAlignment="Justified" markup="styled">
 					<font size="11"/>
 				</textElement>
-				<textFieldExpression><![CDATA["A sum of Rs. <style forecolor=\"#000000\" isBold=\"true\"> "+ $P{totalTaxDue}+"</style> ( <style forecolor=\"#000000\" isBold=\"true\">" +$P{taxDueInWords}+ "</style>  ) towards the property tax in respect of the above premises remains un-paid for the year <style forecolor=\"#000000\" isBold=\"true\"> " +$P{financialYear}+ "</style> which is presently occupied by you.\n\nThe landlord/property owner of the said premises has not paid the property tax due by him in spite of issue of demand notice. Therefore, under Section 91 and Rule 35 of schedule II of A.P.M Act, 1965, you are hereby directed to pay the above said sum  within (15) days from the date of receipt of this notice, failing which necessary action will be taken against you for recovery of the said amount , under the provisions of the A.P.M. Act, 1965. "]]></textFieldExpression>
+				<textFieldExpression><![CDATA["A sum of Rs. <style forecolor=\"#000000\" isBold=\"true\"> "+ $P{totalTaxDue}+"</style> ( <style forecolor=\"#000000\" isBold=\"true\">" +$P{taxDueInWords}+ "</style>  ) towards the property tax in respect of the above premises remains un-paid for the year <style forecolor=\"#000000\" isBold=\"true\"> " +$P{financialYear}+ "</style> which is presently occupied by you.\n\n\tThe landlord/property owner of the said premises has not paid the property tax due by him in spite of issue of demand notice. Therefore, under Section 91 and Rule 35 of schedule II of A.P.M Act, 1965, you are hereby directed to pay the above said sum  within (15) days from the date of receipt of this notice, failing which necessary action will be taken against you for recovery of the said amount , under the provisions of the A.P.M. Act, 1965. "]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="346" y="382" width="150" height="23" uuid="be5fd33e-a114-4a16-9eb3-479d7a3947f7">
-					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-				</reportElement>
-				<textElement textAlignment="Center">
-					<font size="12" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Commissioner,]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="30" y="480" width="49" height="25" uuid="5037852f-cf71-4917-bc26-d6dbcfb5fc3d">
+				<reportElement x="25" y="480" width="49" height="25" uuid="5037852f-cf71-4917-bc26-d6dbcfb5fc3d">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
 				<textElement textAlignment="Left">
@@ -138,22 +169,31 @@
 				<text><![CDATA[To,]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="30" y="509" width="410" height="30" uuid="75a82923-78eb-4539-b104-83b7af8cdeed"/>
+				<reportElement x="25" y="509" width="410" height="30" uuid="75a82923-78eb-4539-b104-83b7af8cdeed"/>
 				<textElement textAlignment="Left" markup="styled">
 					<font size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA["_________________________\n_________________________\n_______________________"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="72" y="75" width="448" height="30" uuid="06213648-623d-47c0-844d-3f05b12307f3"/>
+				<reportElement x="30" y="129" width="472" height="30" uuid="06213648-623d-47c0-844d-3f05b12307f3"/>
 				<textElement textAlignment="Center">
 					<font size="11" isBold="true" isUnderline="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["(Issued under Section 91 and Rule 35 of Schedule II of A.P.M. Act 1965)"]]></textFieldExpression>
 			</textField>
+			<staticText>
+				<reportElement x="376" y="436" width="150" height="21" uuid="f0e302eb-e038-4af2-96e7-916fbbe3a3df">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Commissioner,]]></text>
+			</staticText>
 			<textField isStretchWithOverflow="true">
-				<reportElement positionType="Float" x="291" y="405" width="249" height="25" uuid="75caf9c0-1eb2-447d-bb56-2692c4341d56"/>
-				<textElement textAlignment="Center">
+				<reportElement x="277" y="457" width="249" height="21" uuid="30436178-881e-413c-8a0c-145fe39a29c9"/>
+				<textElement textAlignment="Right">
 					<font size="12" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{cityName}]]></textFieldExpression>

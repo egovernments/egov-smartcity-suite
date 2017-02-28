@@ -72,41 +72,49 @@
 									<thead>
 										<tr>
 											<th colspan="1"></th>
-											<th colspan="3"><spring:message code="lbl.hoardingReport.demandAmount"></spring:message></th>
-											<th colspan="3"><spring:message code="lbl.hoardingReport.collectedAmt"></spring:message></th>
+											<th colspan="4"><spring:message code="lbl.hoardingReport.demandAmount"></spring:message></th>
+											<th colspan="4"><spring:message code="lbl.hoardingReport.collectedAmt"></spring:message></th>
 										</tr>
 										<tr role="row">
 											<th><spring:message code="lbl.hoardingReport.year"></spring:message></th>
 											<th><spring:message code="lbl.arrears"></spring:message></th>
 											<th><spring:message code="lbl.hoardingReport.taxReason"></spring:message></th>
 											<th><spring:message code="lbl.penalty"/></th>
+											<th><spring:message code="lbl.additionalTax"/></th>
 											<th><spring:message code="lbl.arrears"/></th>
 											<th><spring:message code="lbl.hoardingReport.taxReason"/></th>
 											<th><spring:message code="lbl.penalty"/></th>
+											<th><spring:message code="lbl.additionalTax"/></th>
 										</tr>
 									</thead>
 									<tbody>
 										<c:set var="totalArrearAmount" value="${0}" />
 										<c:set var="totalDemandAmount" value="${0}" />
 										<c:set var="totalPenaltyAmount" value="${0}" />
+										<c:set var="totalAdditionalTaxAmount" value="${0}" />
 										<c:set var="totalCollectedArrearAmount" value="${0}" />
 										<c:set var="totalCollectedDemandAmount" value="${0}" />
 										<c:set var="totalCollectedPenaltyAmount" value="${0}" />
+										<c:set var="totalCollectedAdditionalTaxAmount" value="${0}" />
 										<c:forEach var="dcb" items="${dcbResult}" varStatus="status" >	
 											<tr class="odd" role="row">
 												<td align="right">${dcb.installmentYearDescription}</td>
 												<td align="right">${dcb.arrearAmount}</td>
 												<td align="right">${dcb.demandAmount}</td>
 												<td align="right">${dcb.penaltyAmount}</td>
+												<td align="right">${dcb.additionalTaxAmount}</td>												
 												<td align="right">${dcb.collectedArrearAmount}</td>
 												<td align="right">${dcb.collectedDemandAmount}</td>
 												<td align="right">${dcb.collectedPenaltyAmount}</td>
+												<td align="right">${dcb.collectedAdditionalTaxAmount}</td>
 												<c:set var="totalDemandAmount" value="${totalDemandAmount+dcb.demandAmount}"/>
 												<c:set var="totalArrearAmount" value="${totalArrearAmount+dcb.arrearAmount}" />
 												<c:set var="totalPenaltyAmount" value="${totalPenaltyAmount+dcb.penaltyAmount}" />
+												<c:set var="totalAdditionalTaxAmount" value="${totalAdditionalTaxAmount+dcb.additionalTaxAmount}" />
 												<c:set var="totalCollectedDemandAmount" value="${totalCollectedDemandAmount+dcb.collectedDemandAmount}"/>
 												<c:set var="totalCollectedArrearAmount" value="${totalCollectedArrearAmount+dcb.collectedArrearAmount }" />
 												<c:set var="totalCollectedPenaltyAmount" value="${totalCollectedPenaltyAmount+dcb.collectedPenaltyAmount }" />
+												<c:set var="totalCollectedAdditionalTaxAmount" value="${totalCollectedAdditionalTaxAmount+dcb.collectedAdditionalTaxAmount}" />
 												<c:set var="totalBalanceAmount" value="${totalDemandAmount-totalCollectedAmount}" />
 											</tr>
 										</c:forEach>
@@ -116,9 +124,13 @@
 										<td align="right" style="font-size: small;font-weight: bold;">${totalArrearAmount}</td>
 										<td align="right" style="font-size: small;font-weight: bold;">${totalDemandAmount}</td>
 										<td align="right" style="font-size: small;font-weight: bold;">${totalPenaltyAmount}</td>
+											<td align="right" style="font-size: small;font-weight: bold;">${totalAdditionalTaxAmount}</td>
+									
 										<td align="right" style="font-size: small;font-weight: bold;">${totalCollectedArrearAmount}</td>
 										<td align="right" style="font-size: small;font-weight: bold;">${totalCollectedDemandAmount}</td>
 										<td align="right" style="font-size: small;font-weight: bold;">${totalCollectedPenaltyAmount}</td>
+											<td align="right" style="font-size: small;font-weight: bold;">${totalCollectedAdditionalTaxAmount}</td>
+									
 									</tfoot>
 								</table>
 								<br/>
@@ -134,8 +146,8 @@
 										<c:set var="totalDemandSum" value="${0}" />
 										<c:set var="totalCollectionSum" value="${0}" />
 										<c:set var="totalBalanceSum" value="${0}" />
-										<c:set var="totalDemandSum" value="${totalArrearAmount+totalDemandAmount+totalPenaltyAmount}" />
-										<c:set var="totalCollectionSum" value="${totalCollectedArrearAmount+totalCollectedDemandAmount+totalCollectedPenaltyAmount}" />
+										<c:set var="totalDemandSum" value="${totalArrearAmount+totalDemandAmount+totalPenaltyAmount+totalAdditionalTaxAmount}" />
+										<c:set var="totalCollectionSum" value="${totalCollectedArrearAmount+totalCollectedDemandAmount+totalCollectedPenaltyAmount+totalCollectedAdditionalTaxAmount}" />
 										<c:set var="totalBalanceSum" value="${totalDemandSum-totalCollectionSum}" />
 										<td align="right" style="font-size: small;font-weight: bold;">${totalDemandSum}</td>
 										<td align="right" style="font-size: small;font-weight: bold;">${totalCollectionSum}</td>
@@ -184,11 +196,11 @@
 </div>
 <link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>
 <link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
-<script type="text/javascript" src="<?rnd=${app_release_no} value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
-<script type="text/javascript" src="<?rnd=${app_release_no} value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
-<script type="text/javascript" src="<?rnd=${app_release_no} value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js' context='/egi'/>"></script>
-<script type="text/javascript" src="<?rnd=${app_release_no} value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"></script>
-<script type="text/javascript" src="<?rnd=${app_release_no} value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>"></script>
-<script src="<?rnd=${app_release_no} value='/resources/global/js/jquery/plugins/datatables/moment.min.js' context='/egi'/>"></script>
-<script src="<?rnd=${app_release_no} value='/resources/global/js/jquery/plugins/datatables/datetime-moment.js' context='/egi'/>"></script>
-<script src="<?rnd=${app_release_no} value='/resources/app/js/searchadtax.js?rnd=${app_release_no}'/>"></script>
+<script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
+<script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
+<script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js' context='/egi'/>"></script>
+<script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"></script>
+<script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>"></script>
+<script src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/moment.min.js' context='/egi'/>"></script>
+<script src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/datetime-moment.js' context='/egi'/>"></script>
+<script src="<cdn:url value='/resources/app/js/searchadtax.js?rnd=${app_release_no}'/>"></script>

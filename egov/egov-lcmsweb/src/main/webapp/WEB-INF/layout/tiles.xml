@@ -439,4 +439,9 @@
 	<put-attribute name="body" value="/WEB-INF/views/reports/employeehearingDueReport-form.jsp"/>
 </definition>
 
+<definition name="legalcasesearch-from" extends="base_layout">
+	<put-attribute name="page-title" value="title.legalcase.search" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/elasticsearch/legalcasesearch-from.jsp"/>
+</definition>
+
 </tiles-definitions>

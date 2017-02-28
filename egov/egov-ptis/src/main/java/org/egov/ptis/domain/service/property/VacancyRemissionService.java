@@ -494,8 +494,13 @@ public class VacancyRemissionService {
             loggedInUserDesignation = !loggedInUserAssign.isEmpty() ? loggedInUserAssign.get(0).getDesignation().getName() : null;
         }
 
+        
         if (WFLOW_ACTION_STEP_FORWARD.equalsIgnoreCase(workFlowAction)
-                && isRoOrCommissioner(approverDesignation))
+                && (approverDesignation.equalsIgnoreCase(ASSISTANT_COMMISSIONER_DESIGN) ||
+                        approverDesignation.equalsIgnoreCase(DEPUTY_COMMISSIONER_DESIGN)
+                        || approverDesignation.equalsIgnoreCase(ADDITIONAL_COMMISSIONER_DESIGN)
+                        || approverDesignation.equalsIgnoreCase(ZONAL_COMMISSIONER_DESIGN) ||
+                        approverDesignation.equalsIgnoreCase(COMMISSIONER_DESGN)))
             if (vacancyRemissionApproval.getStatus().equals(VR_STATUS_APPROVED))
                 nextAction = DIGITAL_SIGNATURE_PENDING;
             else {

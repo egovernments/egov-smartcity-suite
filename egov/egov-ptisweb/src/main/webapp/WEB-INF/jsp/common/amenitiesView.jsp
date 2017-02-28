@@ -40,28 +40,42 @@
 
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ include file="/includes/taglibs.jsp"%>
-			<table width="100%" class="checkbox-section">
+			<table width="100%">
 				<tr>
-					<td width="20%" align="right">
-					<label><s:text name="lift"></s:text> <s:checkbox name="propertyDetail.lift"
-								id="propertyDetail.lift" disabled="true"/></label> <br />
-					<label><s:text name="electricity"></s:text> <s:checkbox name="propertyDetail.electricity"
-								id="propertyDetail.electricity" disabled="true"/> </label>
+					<td width="20%" align="right" class="greybox">
+					<label><s:text name="lift"></s:text> :&nbsp;&nbsp;&nbsp;&nbsp;<s:if
+			test="%{propertyDetail.lift == true}">
+			<span class="bold"> Yes</span>
+		</s:if> <span class="bold"> <s:else> N/A</s:else></span></label> <br />
+					<label><s:text name="electricity"></s:text> :&nbsp;&nbsp;&nbsp;&nbsp;<s:if
+			test="%{propertyDetail.electricity == true}">
+			<span class="bold"> Yes</span>
+		</s:if> <span class="bold"> <s:else> N/A</s:else></span></label>
 				  </td>
-				  <td width="20%" align="right"><label><s:text name="toilets"></s:text> <s:checkbox
-								name="propertyDetail.toilets" id="propertyDetail.toilets" disabled="true"/> </label> <br />
-						<label><s:text name="attachbathroom"></s:text> <s:checkbox name="propertyDetail.attachedBathRoom"
-								id="propertyDetail.attachedBathRoom" disabled="true"/> </label>
+				  <td width="20%" align="right"><label><s:text name="toilets"></s:text> :&nbsp;&nbsp;&nbsp;&nbsp;<s:if
+			test="%{propertyDetail.toilets == true}">
+			<span class="bold"> Yes</span>
+		</s:if> <span class="bold"> <s:else> N/A</s:else></span></label> <br />
+						<label><s:text name="attachbathroom"></s:text> :&nbsp;&nbsp;&nbsp;&nbsp;<s:if
+			test="%{propertyDetail.attachedBathRoom == true}">
+			<span class="bold"> Yes</span>
+		</s:if> <span class="bold"> <s:else> N/A</s:else></span></label>
 				   </td>
-				   <td width="20%" align="right"><label><s:text name="watertap"></s:text> <s:checkbox
-								name="propertyDetail.waterTap" id="propertyDetail.waterTap"
-								value="%{propertyDetail.waterTap}" disabled="true"/></label> <br />
+				   <td width="20%" align="right"><label><s:text name="watertap"></s:text> :&nbsp;&nbsp;&nbsp;&nbsp;<s:if
+			test="%{propertyDetail.waterTap == true}">
+			<span class="bold"> Yes</span>
+		</s:if> <span class="bold"> <s:else> N/A</s:else></span></label> <br />
 					     <label><s:text
-								name="waterharvesting"></s:text> <s:checkbox name="propertyDetail.waterHarvesting"
-								id="propertyDetail.waterHarvesting" disabled="true"/></label>
+								name="waterharvesting"></s:text> :&nbsp;&nbsp;&nbsp;&nbsp;<s:if
+			test="%{propertyDetail.waterHarvesting == true}">
+			<span class="bold"> Yes</span>
+		</s:if> <span class="bold"> <s:else> N/A</s:else></span></label>
 				   </td>
 				   <td width="20%" align="right">
-				            <label><s:text name="cableconnection"></s:text> <s:checkbox name="propertyDetail.cable" id="propertyDetail.cable" disabled="true"/></label><br/>
+				            <label><s:text name="cableconnection"></s:text> :&nbsp;&nbsp;&nbsp;&nbsp;<s:if
+			test="%{propertyDetail.cable == true}">
+			<span class="bold"> Yes</span>
+		</s:if> <span class="bold"> <s:else> N/A</s:else></span></label><br/>
 				            </td>
 					<td width="10%"></td>
 				</tr>

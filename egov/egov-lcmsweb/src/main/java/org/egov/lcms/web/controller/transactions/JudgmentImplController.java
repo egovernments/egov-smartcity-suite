@@ -40,6 +40,7 @@
 package org.egov.lcms.web.controller.transactions;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -108,7 +109,7 @@ public class JudgmentImplController {
     public String create(@Valid @ModelAttribute("judgmentImpl") final JudgmentImpl judgmentImpl,
             final BindingResult errors, final RedirectAttributes redirectAttrs,
             @RequestParam("lcNumber") final String lcNumber, final HttpServletRequest request,
-            @RequestParam("file") final MultipartFile[] files, final Model model) throws IOException {
+            @RequestParam("file") final MultipartFile[] files, final Model model) throws IOException, ParseException {
         final Judgment judgment = judgmentService.findByLCNumber(lcNumber);
         if (errors.hasErrors()) {
             model.addAttribute("judgment", judgment);

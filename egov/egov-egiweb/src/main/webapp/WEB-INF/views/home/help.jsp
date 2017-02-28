@@ -81,6 +81,16 @@ function council(src){
 	$('#getiframe').attr('src', 'http://www.egovernments.org/docs/usermanuals/ap/council.pdf');
 }
 
+function lcms(src){
+	//bootbox.alert(src);
+	$('#getiframe').attr('src', 'http://www.egovernments.org/docs/usermanuals/ap/lcms.pdf');
+}
+
+function ntr(src){
+	//bootbox.alert(src);
+	$('#getiframe').attr('src', 'http://www.egovernments.org/docs/usermanuals/ap/ntr.pdf');
+}
+
 
 </script>
 <div class="row text-center" style="height:calc(100%);">
@@ -111,6 +121,18 @@ function council(src){
 						<div class="text-center">
 							<i class="fa fa-university"></i>
 						</div> <span class="hidden-xs">Council Management</span>
+				</a></li>
+				<li class="source" data-src="lcms"><a
+					href="javascript:void(0);">
+						<div class="text-center">
+							<i class="fa fa-university"></i>
+						</div> <span class="hidden-xs">Legal Case Management</span>
+				</a></li>
+				<li class="source" data-src="ntr"><a
+					href="javascript:void(0);">
+						<div class="text-center">
+							<i class="fa fa-university"></i>
+						</div> <span class="hidden-xs">Non Tax Revenue</span>
 				</a></li>
 			</ul>
 		</nav>

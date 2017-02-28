@@ -78,6 +78,7 @@ import org.egov.wtms.masters.entity.PipeSize;
 import org.egov.wtms.masters.entity.PropertyType;
 import org.egov.wtms.masters.entity.UsageType;
 import org.egov.wtms.masters.entity.WaterSource;
+import org.egov.wtms.masters.entity.WaterSupply;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.masters.entity.enums.ConnectionType;
 import org.hibernate.validator.constraints.Length;
@@ -152,6 +153,13 @@ public class WaterConnectionDetails extends StateAware {
     private WaterSource waterSource;
 
     @ManyToOne
+    @JoinColumn(name = "waterSupply")
+    private WaterSupply waterSupply;
+
+    @Length(max = 1024)
+    private String buildingName;
+
+    @ManyToOne
     @NotNull
     @JoinColumn(name = "pipeSize", nullable = false)
     private PipeSize pipeSize;
@@ -183,7 +191,7 @@ public class WaterConnectionDetails extends StateAware {
     private Date workOrderDate;
 
     private String workOrderNumber;
-    
+
     private String estimationNumber;
 
     private double donationCharges;
@@ -213,27 +221,27 @@ public class WaterConnectionDetails extends StateAware {
 
     @OrderBy("id")
     @OneToMany(mappedBy = "waterConnectionDetails", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<ApplicationDocuments> applicationDocs = new ArrayList<ApplicationDocuments>(0);
+    private List<ApplicationDocuments> applicationDocs = new ArrayList<>(0);
 
     @OrderBy("id")
     @OneToMany(mappedBy = "waterConnectionDetails", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<WaterDemandConnection> waterDemandConnection = new ArrayList<WaterDemandConnection>(0);
+    private List<WaterDemandConnection> waterDemandConnection = new ArrayList<>(0);
 
     @OrderBy("id")
     @OneToMany(mappedBy = "waterConnectionDetails", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<ConnectionEstimationDetails> estimationDetails = new ArrayList<ConnectionEstimationDetails>(0);
+    private List<ConnectionEstimationDetails> estimationDetails = new ArrayList<>(0);
 
     @OrderBy("id")
     @OneToMany(mappedBy = "waterConnectionDetails", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<LegacyReceipts> legacyReceipts = new ArrayList<LegacyReceipts>(0);
+    private List<LegacyReceipts> legacyReceipts = new ArrayList<>(0);
 
     @OrderBy("id desc")
     @OneToMany(mappedBy = "waterConnectionDetails", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<MeterReadingConnectionDetails> meterConnection = new ArrayList<MeterReadingConnectionDetails>(0);
+    private List<MeterReadingConnectionDetails> meterConnection = new ArrayList<>(0);
 
     @OrderBy("ID DESC")
     @OneToMany(mappedBy = "waterConnectionDetails", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<NonMeteredConnBillDetails> nonmeteredBillDetails = new HashSet<NonMeteredConnBillDetails>(0);
+    private Set<NonMeteredConnBillDetails> nonmeteredBillDetails = new HashSet<>(0);
 
     private String closeConnectionType;
 
@@ -258,7 +266,12 @@ public class WaterConnectionDetails extends StateAware {
     private String approvalComent;
 
     @Transient
-    private List<DemandDetail> demandDetailBeanList = new ArrayList<DemandDetail>(0);
+    private List<DemandDetail> demandDetailBeanList = new ArrayList<>(0);
+
+    private String referenceNumber;
+
+    @Length(max = 1024)
+    private String deactivateReason;
 
     public List<MeterReadingConnectionDetails> getMeterConnection() {
         return meterConnection;
@@ -515,15 +528,14 @@ public class WaterConnectionDetails extends StateAware {
     public void setWorkOrderNumber(final String workOrderNumber) {
         this.workOrderNumber = workOrderNumber;
     }
-    
+
     public String getEstimationNumber() {
         return estimationNumber;
     }
 
-    public void setEstimationNumber(String estimationNumber) {
+    public void setEstimationNumber(final String estimationNumber) {
         this.estimationNumber = estimationNumber;
     }
-
 
     public void setBplCardHolderName(final String bplCardHolderName) {
         this.bplCardHolderName = bplCardHolderName;
@@ -671,6 +683,38 @@ public class WaterConnectionDetails extends StateAware {
 
     public void setDemandDetailBeanList(final List<DemandDetail> demandDetailBeanList) {
         this.demandDetailBeanList = demandDetailBeanList;
+    }
+
+    public WaterSupply getWaterSupply() {
+        return waterSupply;
+    }
+
+    public void setWaterSupply(final WaterSupply waterSupply) {
+        this.waterSupply = waterSupply;
+    }
+
+    public String getReferenceNumber() {
+        return referenceNumber;
+    }
+
+    public void setReferenceNumber(final String referenceNumber) {
+        this.referenceNumber = referenceNumber;
+    }
+
+    public String getDeactivateReason() {
+        return deactivateReason;
+    }
+
+    public void setDeactivateReason(final String deactivateReason) {
+        this.deactivateReason = deactivateReason;
+    }
+
+    public String getBuildingName() {
+        return buildingName;
+    }
+
+    public void setBuildingName(final String buildingName) {
+        this.buildingName = buildingName;
     }
 
 }

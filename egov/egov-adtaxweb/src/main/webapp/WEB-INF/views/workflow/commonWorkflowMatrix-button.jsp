@@ -72,6 +72,7 @@
 				<form:button type="submit" id="${validButtons}" class="btn btn-primary workflow-submit"  value="${validButtons}" onclick="validateWorkFlowApprover('${validButtons}');">
 						<c:out value="${validButtons}" /> </form:button>
 			</c:forEach>
+			<form:hidden path="" id="workFlowAction" name="workFlowAction"/>
 				<input type="button" name="button2" id="button2" value="Close"
 				class="btn btn-default" onclick="window.close();" /></td>
 		</tr>

@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) <2017>  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -66,6 +66,9 @@ $(document).ready( function () {
 		$(inputPhoto).trigger('click');
 	});
 	
+	//set default date as current date in data entry screen for date of marriage
+	if($('#registrationStatus').val()=="")
+		$('#txt-dateOfMarriage').datepicker('setDate', new Date());
 
 	// Showing the respective tab when mandatory data is not filled in
 	$('div.tab-content input').bind('invalid', function(e) {

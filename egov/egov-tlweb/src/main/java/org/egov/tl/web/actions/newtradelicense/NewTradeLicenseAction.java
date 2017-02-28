@@ -232,8 +232,12 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     @ValidationErrorPageExt(action = Constants.NEW, makeCall = true, toMethod = "prepareShowForApproval")
     @Action(value = "/newtradelicense/newTradeLicense-approve")
     public String approve() {
-        final BigDecimal newTradeAreWt = tradeLicense.getTradeArea_weight();
+        BigDecimal newTradeAreWt = tradeLicense.getTradeArea_weight();
+        Boundary locality = tradeLicense.getBoundary();
+        Boundary ward = tradeLicense.getParentBoundary();
         tradeLicense = tradeLicenseService.getLicenseById((Long) getSession().get("model.id"));
+        tradeLicense.setBoundary(locality);
+        tradeLicense.setParentBoundary(ward);
         if (license().hasState() && license().getState().getValue().contains(Constants.WF_REVENUECLERK_APPROVED))
             tradeLicense.setTradeArea_weight(newTradeAreWt);
         if ("Submit".equals(workFlowAction) && mode.equalsIgnoreCase(VIEW)
@@ -252,10 +256,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     public String beforeRenew() throws IOException {
         prepareNewForm();
         setDocumentTypes(tradeLicenseService.getDocumentTypesByApplicationType(ApplicationType.NEW));
-        if (tradeLicense.getEgwStatus() != null
-                && !tradeLicense.getEgwStatus().getCode()
-                .equalsIgnoreCase(Constants.APPLICATION_STATUS_SECONDCOLLECTION_CODE)
-                && tradeLicense.isReNewApplication()) {
+        if (tradeLicense.hasState() && !tradeLicense.stateIsEnded()) {
             ServletActionContext.getResponse().setContentType("text/html");
             ServletActionContext.getResponse().getWriter()
                     .write("<center style='color:red;font-weight:bolder'>Renewal workflow is in progress !</center>");

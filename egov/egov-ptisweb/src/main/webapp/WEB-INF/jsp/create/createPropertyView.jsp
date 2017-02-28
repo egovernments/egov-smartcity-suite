@@ -173,6 +173,7 @@
 		<td class="greybox siteowner"><span class="bold"><s:property default="N/A" value="%{propertyDetail.siteOwner}" /> </span></td>
 	</tr> --%>
 	
+	<s:if test="%{!basicProperty.regdDocNo.isEmpty()}">
 	<tr>
 		<td class="greybox" width="5%">&nbsp;</td>
 		<td class="greybox" width="25%"><s:text name="reg.docno"/> :</td>
@@ -185,6 +186,7 @@
 			<span class="bold"><s:property value="%{#regdDocDate}" default="N/A"/></span>
 		</td>
 	</tr>
+	</s:if>
 	
 	
 	<tr class="amenities">

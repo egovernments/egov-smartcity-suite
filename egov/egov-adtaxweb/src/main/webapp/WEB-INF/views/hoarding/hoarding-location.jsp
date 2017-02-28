@@ -100,9 +100,10 @@
 			</div>
 			<label class="col-sm-2 control-label text-right">
 				<spring:message code="lbl.election.ward"/>
+				<span class="mandatory"></span>
 			</label>
 			<div class="col-sm-3 add-margin">
-				<form:select path="advertisement.electionWard" id="electionWard" cssClass="form-control" cssErrorClass="form-control error" >
+				<form:select path="advertisement.electionWard" id="electionWard" cssClass="form-control" cssErrorClass="form-control error" required="required">
 					<form:option value=""><spring:message code="lbl.select"/></form:option> 
 					<form:options items="${revenueWards}" itemLabel="name" itemValue="id"/> 
 				</form:select>

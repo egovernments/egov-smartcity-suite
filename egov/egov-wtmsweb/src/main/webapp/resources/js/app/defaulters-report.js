@@ -147,8 +147,10 @@ function loadingReport() {
 					aaSorting : [],
 					"columns" : [
 							{
-								"sTitle" : "S.no",
-								"sortable" : false,
+								"data" : "sNo",
+								"title" : "S.no",
+								"sortable" : false
+								/*"sortable" : false,*/
 							/*
 							 * "render": function ( data, type, full, meta ) {
 							 * return
@@ -158,7 +160,10 @@ function loadingReport() {
 							{
 								"data" : "hscNo",
 								"title" : "H.S.C NO",
-								"sortable" : false
+								"render": function ( data, type, full, meta ) {
+									return '<a href="/wtms/viewDcb/consumerCodeWis/'+data+'" target="_blank">'+data+'</a>';
+								    }
+								
 							},
 							{
 								"data" : "ownerName",
@@ -235,7 +240,7 @@ function loadingReport() {
 					} ]
 				});
 
-		oDataTable.on('order.dt search.dt', function() {
+/*		oDataTable.on('order.dt search.dt', function() {
 			oDataTable.column(0, {
 				search : 'applied',
 				order : 'applied'
@@ -243,7 +248,7 @@ function loadingReport() {
 				cell.innerHTML = i + 1;
 				oDataTable.cell(cell).invalidate('dom');
 			});
-		}).draw();
+		}).draw();*/
 
 	}
 

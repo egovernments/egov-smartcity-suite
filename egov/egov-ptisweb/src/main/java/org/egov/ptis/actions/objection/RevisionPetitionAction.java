@@ -191,7 +191,6 @@ import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.ResponseEntity;
 
 /**
  * @author pradeep
@@ -225,6 +224,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
     public static final String MEESEVA_ERROR = "error";
     public static final String MEESEVA_RESULT_ACK = "meesevaAck";
     public static final String OBJECTION_FORWARD = "objection.forward";
+    public static final String REJECT_INSPECTION = "objection.inspection.rejection";
 
     private final Logger LOGGER = Logger.getLogger(RevisionPetitionAction.class);
     private ViewPropertyAction viewPropertyAction = new ViewPropertyAction();
@@ -433,6 +433,11 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
             } else
                 objection.setMeesevaApplicationNumber(getMeesevaApplicationNumber());
         setFloorDetails(objection.getBasicProperty().getProperty());
+        if (propService.isEmployee(securityUtils.getCurrentUser())
+                && !propertyTaxCommonUtils.isEligibleInitiator(securityUtils.getCurrentUser().getId())){
+            addActionError(getText("initiator.noteligible"));
+            return COMMON_FORM;
+        }
         return NEW;
     }
 
@@ -1262,7 +1267,6 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         List<Assignment> loggedInUserAssign;
         String loggedInUserDesignation = "";
         String pendingAction = null;
-
         if (objection.getState() != null) {
             loggedInUserAssign = assignmentService.getAssignmentByPositionAndUserAsOnDate(
                     objection.getCurrentState().getOwnerPosition().getId(), user.getId(), new Date());
@@ -1500,25 +1504,29 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 
         } else if (workFlowAction.equalsIgnoreCase("Reject Inspection")) {
             final List<StateHistory> stateHistoryList = objection.getStateHistory();
+            Assignment wfInit = null;
             for (final StateHistory stateHistoryObj : stateHistoryList)
                 if (stateHistoryObj.getValue().equalsIgnoreCase(PropertyTaxConstants.RP_HEARINGCOMPLETED)
                         || stateHistoryObj.getValue().equalsIgnoreCase(PropertyTaxConstants.GRP_HEARINGCOMPLETED)) {
                     position = stateHistoryObj.getOwnerPosition();
+                    wfInit = propService.getUserOnRejection(objection);
                     break;
                 }
+            if (wfInit != null) {
+                objection.setEgwStatus(egwStatusDAO.getStatusByModuleAndCode(PropertyTaxConstants.OBJECTION_MODULE,
+                        PropertyTaxConstants.OBJECTION_HEARING_COMPLETED));
 
-            objection.setEgwStatus(egwStatusDAO.getStatusByModuleAndCode(PropertyTaxConstants.OBJECTION_MODULE,
-                    PropertyTaxConstants.OBJECTION_HEARING_COMPLETED));
-
-            if (position != null) {
-                objection.transition(true).withNextAction(OBJECTION_RECORD_INSPECTIONDETAILS)
-                        .withStateValue(PropertyTaxConstants.WF_STATE_REJECTED).withOwner(position)
-                        .withSenderName(loggedInUser.getUsername() + "::" + loggedInUser.getName())
-                        .withDateInfo(new DateTime().toDate()).withComments(approverComments);
-                final String actionMessage = propertyTaxUtil.getApproverUserName(position.getId());
-                if (actionMessage != null)
-                    addActionMessage(getText(OBJECTION_FORWARD, new String[] { actionMessage }));
-            }
+                if (position != null) {
+                    objection.transition(true).withNextAction(OBJECTION_RECORD_INSPECTIONDETAILS)
+                            .withStateValue(PropertyTaxConstants.WF_STATE_REJECTED).withOwner(position)
+                            .withSenderName(loggedInUser.getUsername() + "::" + loggedInUser.getName())
+                            .withDateInfo(new DateTime().toDate()).withComments(approverComments);
+                    final String actionMessage = propertyTaxUtil.getApproverUserName(position.getId());
+                    if (actionMessage != null)
+                        addActionMessage(getText(OBJECTION_FORWARD, new String[] { actionMessage }));
+                }
+            } else
+                addActionMessage(getText(REJECT_INSPECTION) + objection.getBasicProperty().getUpicNo());
 
         } else if (workFlowAction.equalsIgnoreCase("Reject") || workFlowAction.equalsIgnoreCase("reject")) {
             final List<StateHistory> stateHistoryList = objection.getStateHistory();
@@ -1527,7 +1535,6 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                     position = stateHistoryObj.getOwnerPosition();
                     break;
                 }
-
             if (objection.getCurrentState() != null
                     && (objection.getCurrentState().getValue().equalsIgnoreCase(REJECTED) || objection
                             .getCurrentState().getValue()
@@ -1556,7 +1563,6 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
             else if (loggedInUser != null)
                 addActionMessage(getText(OBJECTION_FORWARD,
                         new String[] { loggedInUser.getName().concat("~").concat(position.getName()) }));
-
         } else if (workFlowAction.equalsIgnoreCase("Print Endoresement")) {
             position = objection.getState().getOwnerPosition();
             objection.transition(true).withStateValue(wfmatrix.getCurrentState()).withOwner(position)
@@ -1703,7 +1709,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                 objection.getProperty().getPropertyDetail()
                         .getWoodType() != null ? objection.getProperty().getPropertyDetail().getWoodType().getId()
                                 : null,
-                null, null, null, null);
+                null, null, null, null, null);
 
     }
 
@@ -1746,7 +1752,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         reportId = reportViewerUtil.addReportToTempCache(reportOutput);
         return NOTICE;
     }
-    
+
     public List<Floor> getFloorDetails() {
         return new ArrayList<Floor>(objection.getBasicProperty().getProperty().getPropertyDetail().getFloorDetails());
     }
@@ -2129,7 +2135,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         return showAckBtn;
     }
 
-    public void setShowAckBtn(Boolean showAckBtn) {
+    public void setShowAckBtn(final Boolean showAckBtn) {
         this.showAckBtn = showAckBtn;
     }
 }

@@ -146,8 +146,12 @@ public class DefaultersWTReportController {
         else
             foundRows = defaultersWTReportService.getTotalCount(fromAmount, toAmount, ward);
         String result = null;
-        for (final DefaultersReport dd : defaultersreportlist)
+        int count = Integer.valueOf(request.getParameter("start"));
+        for (final DefaultersReport dd : defaultersreportlist) {
+            count = count + 1;
             dd.setDuePeriodFrom(getDuePeriodFrom(dd.getDemandId()));
+            dd.setSlNo(count);
+        }
         result = new StringBuilder("{ \"draw\":").append(request.getParameter("draw")).append(", \"recordsTotal\":")
                 .append(foundRows).append(", \"recordsFiltered\":").append(foundRows).append(", \"data\":")
                 .append(toJSON(defaultersreportlist, DefaultersReport.class, DefaultersReportAdaptor.class)).append("}")
@@ -160,11 +164,11 @@ public class DefaultersWTReportController {
         final List<EgDemandDetails> demandDetList = new ArrayList<EgDemandDetails>(
                 egDemandDao.findById(demandId.longValue(), false).getEgDemandDetails());
         final List<EgDemandDetails> demandDetFinalList = new ArrayList<EgDemandDetails>();
-        
+
         for (final EgDemandDetails egDemandTemp : demandDetList)
             if (!egDemandTemp.getAmount().equals(egDemandTemp.getAmtCollected()))
                 demandDetFinalList.addAll(egDemandTemp.getEgDemand().getEgDemandDetails());
-       
+
         if (demandDetFinalList.isEmpty())
             return "";
         else {

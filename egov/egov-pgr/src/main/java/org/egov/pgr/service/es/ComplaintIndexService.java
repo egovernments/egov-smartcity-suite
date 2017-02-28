@@ -172,11 +172,7 @@ public class ComplaintIndexService {
         complaintIndex.setCityDomainUrl(city.getDomainURL());
         complaintIndex.setCityName(city.getName());
         complaintIndex.setCityRegionName(city.getRegionName());
-        complaintIndex.setSource(
-                environment.getProperty(
-                        String.format("complaint.source.%s.%s",
-                                complaint.getCreatedBy().getType().name().toLowerCase(),
-                                complaint.getReceivingMode().getCode().toLowerCase())));
+        complaintIndex.setSource(complaint.getReceivingMode().getName());
         complaintIndex.setClosed(false);
         complaintIndex.setComplaintIsClosed("N");
         complaintIndex.setIfClosed(0);

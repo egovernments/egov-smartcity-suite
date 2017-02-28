@@ -191,6 +191,9 @@
 	<bean id="mutationRegistrationService" parent="abstractPersistenceService" scope="prototype">
 		<constructor-arg name="type" value="org.egov.ptis.domain.entity.property.MutationRegistrationDetails" />
 	</bean>
+	<bean id="documentTypeDetailsService" parent="abstractPersistenceService" scope="prototype" autowire-candidate="true">
+		<constructor-arg name="type" value="org.egov.ptis.domain.entity.document.DocumentTypeDetails" />
+	</bean>
 
     <bean id="bulkBillGenerationPersistenceService" parent="abstractPersistenceService">
         <constructor-arg name="type" value="org.egov.ptis.domain.entity.demand.BulkBillGeneration"/>

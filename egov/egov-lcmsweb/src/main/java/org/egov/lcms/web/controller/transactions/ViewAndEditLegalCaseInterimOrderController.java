@@ -40,6 +40,7 @@
 package org.egov.lcms.web.controller.transactions;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -101,7 +102,7 @@ public class ViewAndEditLegalCaseInterimOrderController {
             @Valid @ModelAttribute("legalCaseInterimOrder") final LegalCaseInterimOrder legalCaseInterimOrder,
             final BindingResult errors, final RedirectAttributes redirectAttrs,
             @PathVariable("lcInterimOrderId") final String lcInterimOrderId,
-            @RequestParam("file") final MultipartFile[] files, final Model model) throws IOException {
+            @RequestParam("file") final MultipartFile[] files, final Model model) throws IOException, ParseException {
         if (errors.hasErrors()) {
             model.addAttribute("interimOrders", interimOrderService.findAll());
             return "lcinterimorder-edit";

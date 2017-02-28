@@ -45,13 +45,6 @@
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <html>
 <head>
-<script type="text/javascript">
-	function onSubmit(action) {
-		document.forms[0].action = action;
-		document.forms[0].submit;
-		return true;
-	}
-</script>
     <title>Acknowledgement Slip for Trade License</title>
 </head>
 <body onload="refreshInbox()">

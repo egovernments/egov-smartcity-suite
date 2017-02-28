@@ -161,6 +161,9 @@ $(document)
 													'registrationNo' : $(
 															"#registrationNo")
 															.val(),
+													'applicationNo' : $(
+															"#applicationNo")
+															.val(),		
 													'dateOfMarriage' : $(
 															"#dateOfMarriage")
 															.val(),
@@ -171,6 +174,15 @@ $(document)
 															.val(),
 													'applicationDate' : $(
 															"#registrationDate")
+															.val(),
+													'marriageRegistrationUnit' : $(
+															"#select-registrationunit")
+															.val(),
+													'fromDate' : $(
+															"#fromDate")
+															.val(),
+													'toDate' : $(
+															"#toDate")
 															.val()
 												}
 											},

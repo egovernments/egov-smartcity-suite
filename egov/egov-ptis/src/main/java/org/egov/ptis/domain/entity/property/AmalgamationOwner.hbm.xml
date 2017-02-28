@@ -49,5 +49,6 @@
 		<many-to-one name="owner" class="org.egov.infra.admin.master.entity.User" column="OWNER" cascade="none"/>
 		<many-to-one name="property" column="PROPERTY" not-null="true"
 			class="org.egov.ptis.domain.entity.property.PropertyImpl"  fetch="select"/>
+		<property name="ownerOfParent" column="OWNEROFPARENT" type="boolean" />
 		</class>
 </hibernate-mapping>

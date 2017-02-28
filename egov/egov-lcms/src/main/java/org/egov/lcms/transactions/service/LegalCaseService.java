@@ -40,16 +40,23 @@
 package org.egov.lcms.transactions.service;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.lcms.entity.es.LegalCaseDocument;
 import org.egov.lcms.masters.entity.AdvocateMaster;
 import org.egov.lcms.masters.service.AdvocateMasterService;
+import org.egov.lcms.service.es.LegalCaseDocumentService;
 import org.egov.lcms.transactions.entity.BipartisanDetails;
 import org.egov.lcms.transactions.entity.CounterAffidavit;
+import org.egov.lcms.transactions.entity.Judgment;
+import org.egov.lcms.transactions.entity.JudgmentImpl;
 import org.egov.lcms.transactions.entity.LegalCase;
 import org.egov.lcms.transactions.entity.LegalCaseAdvocate;
+import org.egov.lcms.transactions.entity.LegalCaseDisposal;
+import org.egov.lcms.transactions.entity.LegalCaseInterimOrder;
 import org.egov.lcms.transactions.entity.LegalCaseUploadDocuments;
 import org.egov.lcms.transactions.entity.Pwr;
 import org.egov.lcms.transactions.entity.PwrDocuments;
@@ -84,10 +91,16 @@ public class LegalCaseService {
     private FileStoreService fileStoreService;
 
     @Autowired
+    private LegalCaseSmsService legalCaseSmsService;
+
+    @Autowired
     private LegalCaseUploadDocumentsRepository legalCaseUploadDocumentsRepository;
 
     @Autowired
     private ReportStatusRepository reportStatusRepository;
+
+    @Autowired
+    private LegalCaseDocumentService legalCaseDocumentService;
 
     @Autowired
     public LegalCaseService(final LegalCaseRepository legalCaseRepository) {
@@ -108,15 +121,18 @@ public class LegalCaseService {
     }
 
     @Transactional
-    public LegalCase persist(LegalCase legalcase, final MultipartFile[] files) throws IOException {
+    public LegalCase persist(final LegalCase legalcase, final MultipartFile[] files)
+            throws IOException, ParseException {
         legalcase.setCaseNumber(
                 legalcase.getCaseNumber() + (legalcase.getWpYear() != null ? "/" + legalcase.getWpYear() : ""));
         legalcase.setStatus(legalCaseUtil.getStatusForModuleAndCode(LcmsConstants.MODULE_TYPE_LEGALCASE,
                 LcmsConstants.LEGALCASE_STATUS_CREATED));
-        legalcase = prepareChildEntities(legalcase);
+        prepareChildEntities(legalcase);
         updateNextDate(legalcase, legalcase.getPwrList());
         setLegalCaseReportStatus(legalcase, legalcase.getPwrList());
         final LegalCase savedlegalcase = legalCaseRepository.save(legalcase);
+        legalCaseSmsService.sendSmsToOfficerInchargeForLegalCase(legalcase);
+        persistLegalCaseIndex(savedlegalcase, null, null, null, null);
         final List<LegalCaseUploadDocuments> documentDetails = getLegalcaseUploadDocumentDetails(savedlegalcase, files);
         if (!documentDetails.isEmpty()) {
             savedlegalcase.setLegalCaseUploadDocuments(documentDetails);
@@ -126,9 +142,13 @@ public class LegalCaseService {
     }
 
     @Transactional
-    public LegalCase update(final LegalCase legalcase, final MultipartFile[] files) throws IOException {
+    public LegalCase update(final LegalCase legalcase, final MultipartFile[] files) throws IOException, ParseException {
         updateCounterAffidavitAndPwr(legalcase, legalcase.getPwrList());
         final LegalCase savedCaAndPwr = legalCaseRepository.save(legalcase);
+        persistLegalCaseIndex(legalcase, null, null, null, null);
+        legalCaseSmsService.sendSmsToOfficerInchargeForCounterAffidavit(legalcase.getCounterAffidavits());
+        legalCaseSmsService.sendSmsToOfficerInchargeForPWR(legalcase.getPwrList());
+        legalCaseSmsService.sendSmsToStandingCounselForCounterAffidavit(legalcase.getCounterAffidavits());
         final List<PwrDocuments> documentDetails = getPwrDocumentDetails(savedCaAndPwr, files);
         if (!documentDetails.isEmpty()) {
             savedCaAndPwr.getPwrList().get(0).setPwrDocuments(documentDetails);
@@ -141,7 +161,8 @@ public class LegalCaseService {
     @Transactional
     public void updateCounterAffidavitAndPwr(final LegalCase legalcase, final List<Pwr> pwrList) {
         /*
-         * final List<LegalCaseDepartment> legalcaseDetails = new ArrayList<LegalCaseDepartment>(0);
+         * final List<LegalCaseDepartment> legalcaseDetails = new
+         * ArrayList<LegalCaseDepartment>(0);
          */
         final List<Pwr> pwrListtemp = new ArrayList<Pwr>(0);
         final List<CounterAffidavit> caListtemp = new ArrayList<CounterAffidavit>(0);
@@ -158,13 +179,19 @@ public class LegalCaseService {
         legalcase.getCounterAffidavits().clear();
         legalcase.setCounterAffidavits(caListtemp);
         /*
-         * for (final LegalCaseDepartment legaldeptObj : legalDept) { String[] stremp = null;
-         * legaldeptObj.setLegalCase(legalcase); if (legaldeptObj.getPosition().getName() != null &&
-         * legaldeptObj.getPosition().getName().contains("@")) { stremp = legaldeptObj.getPosition().getName().split("@");
-         * legaldeptObj.setPosition(legalCaseUtil.getPositionByName(stremp[0])); } else {
-         * legaldeptObj.setPosition(legalCaseUtil.getPositionByName(legaldeptObj .getPosition().getName())); }
-         * legaldeptObj.setDepartment(legalCaseUtil.getDepartmentByName( legaldeptObj.getDepartment().getName()));
-         * legalcaseDetails.add(legaldeptObj); } legalcase.getLegalCaseDepartment().clear();
+         * for (final LegalCaseDepartment legaldeptObj : legalDept) { String[]
+         * stremp = null; legaldeptObj.setLegalCase(legalcase); if
+         * (legaldeptObj.getPosition().getName() != null &&
+         * legaldeptObj.getPosition().getName().contains("@")) { stremp =
+         * legaldeptObj.getPosition().getName().split("@");
+         * legaldeptObj.setPosition(legalCaseUtil.getPositionByName(stremp[0]));
+         * } else {
+         * legaldeptObj.setPosition(legalCaseUtil.getPositionByName(legaldeptObj
+         * .getPosition().getName())); }
+         * legaldeptObj.setDepartment(legalCaseUtil.getDepartmentByName(
+         * legaldeptObj.getDepartment().getName()));
+         * legalcaseDetails.add(legaldeptObj); }
+         * legalcase.getLegalCaseDepartment().clear();
          * legalcase.setLegalCaseDepartment(legalcaseDetails);
          */
 
@@ -229,7 +256,7 @@ public class LegalCaseService {
     }
 
     @Transactional
-    public LegalCase saveStandingCouncilEntity(final LegalCaseAdvocate legalCaseAdvocate) {
+    public LegalCase saveStandingCouncilEntity(final LegalCaseAdvocate legalCaseAdvocate) throws ParseException {
         LegalCaseAdvocate legalCaseAdvocatetemp = null;
         AdvocateMaster seniorLegalMaster = null;
         final AdvocateMaster advocateName = advocateMasterService
@@ -252,6 +279,7 @@ public class LegalCaseService {
             legalCaseAdvocatetemp.setOrderDateJunior(legalCaseAdvocate.getOrderDateJunior());
             legalCaseAdvocatetemp.setOrderNumberJunior(legalCaseAdvocate.getOrderNumberJunior());
             legalCaseAdvocate.getLegalCase().getLegalCaseAdvocates().add(legalCaseAdvocatetemp);
+            legalCaseSmsService.sendSmsToStandingCounsel(legalCaseAdvocatetemp);
 
         } else {
             legalCaseAdvocate.setAdvocateMaster(advocateName);
@@ -259,7 +287,9 @@ public class LegalCaseService {
             legalCaseAdvocate.setSeniorAdvocate(seniorLegalMaster);
             legalCaseAdvocate.setIsActive(Boolean.TRUE);
             legalCaseAdvocate.getLegalCase().getLegalCaseAdvocates().add(legalCaseAdvocate);
+            legalCaseSmsService.sendSmsToStandingCounsel(legalCaseAdvocate);
         }
+        persistLegalCaseIndex(legalCaseAdvocate.getLegalCase(), null, null, null, null);
         return legalCaseRepository.save(legalCaseAdvocate.getLegalCase());
 
     }
@@ -352,6 +382,14 @@ public class LegalCaseService {
     public ReportStatus getReportStatusByCode(final String reportStatusCode) {
         final ReportStatus reportStatus = reportStatusRepository.findByCode(reportStatusCode);
         return reportStatus;
+    }
+
+    public LegalCaseDocument persistLegalCaseIndex(final LegalCase legalCase,
+            final LegalCaseInterimOrder legalCaseInterimOrder, final Judgment judgment, final JudgmentImpl judgmentImpl,
+            final LegalCaseDisposal closeCase) throws ParseException {
+        return legalCaseDocumentService.persistLegalCaseDocumentIndex(legalCase, legalCaseInterimOrder, judgment,
+                judgmentImpl, closeCase);
+
     }
 
 }

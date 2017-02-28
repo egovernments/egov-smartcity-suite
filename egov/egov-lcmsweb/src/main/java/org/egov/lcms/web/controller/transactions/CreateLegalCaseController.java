@@ -41,6 +41,7 @@
 package org.egov.lcms.web.controller.transactions;
 
 import java.io.IOException;
+import java.text.ParseException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -80,7 +81,8 @@ public class CreateLegalCaseController extends GenericLegalCaseController {
     @RequestMapping(value = "create/", method = RequestMethod.POST)
     public String create(@Valid @ModelAttribute final LegalCase legalCase, final BindingResult errors,
             @RequestParam("file") final MultipartFile[] files, final Model model,
-            final RedirectAttributes redirectAttrs, final HttpServletRequest request) throws IOException {
+            final RedirectAttributes redirectAttrs, final HttpServletRequest request)
+            throws IOException, ParseException {
         final String caseNumber = legalCase.getCaseNumber() + "/" + legalCase.getWpYear();
         final LegalCase validateCasenumber = legalCaseService.getLegalCaseByCaseNumber(caseNumber);
         if (validateCasenumber != null)

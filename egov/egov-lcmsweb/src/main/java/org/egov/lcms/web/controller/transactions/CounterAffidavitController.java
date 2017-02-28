@@ -40,6 +40,7 @@
 package org.egov.lcms.web.controller.transactions;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -94,7 +95,7 @@ public class CounterAffidavitController {
     @RequestMapping(value = "/create/", method = RequestMethod.POST)
     public String create(@Valid @ModelAttribute("legalCase") final LegalCase legalCase, final BindingResult errors,
             final RedirectAttributes redirectAttrs, @RequestParam("lcNumber") final String lcNumber,
-            @RequestParam("file") final MultipartFile[] files, final Model model) throws IOException {
+            @RequestParam("file") final MultipartFile[] files, final Model model) throws IOException, ParseException {
         if (errors.hasErrors())
             return "legalcase-caaffidavit";
         else

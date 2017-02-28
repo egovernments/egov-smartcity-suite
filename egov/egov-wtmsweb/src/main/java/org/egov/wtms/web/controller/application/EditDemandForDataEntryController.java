@@ -39,6 +39,7 @@
  */
 package org.egov.wtms.web.controller.application;
 
+import static org.egov.wtms.utils.constants.WaterTaxConstants.CONNECTIONTYPE_METERED;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 import java.math.BigDecimal;
@@ -111,13 +112,17 @@ public class EditDemandForDataEntryController {
     }
 
     private String loadViewData(final Model model, final WaterConnectionDetails waterConnectionDetails) {
-        final List<DemandDetail> demandDetailBeanList = new ArrayList<DemandDetail>();
-        final Set<DemandDetail> tempDemandDetail = new LinkedHashSet<DemandDetail>();
-        List<Installment> allInstallments = new ArrayList<Installment>();
+        final List<DemandDetail> demandDetailBeanList = new ArrayList<>();
+        final Set<DemandDetail> tempDemandDetail = new LinkedHashSet<>();
+        List<Installment> allInstallments = new ArrayList<>();
         final DateFormat dateFormat = new SimpleDateFormat(PropertyTaxConstants.DATE_FORMAT_DDMMYYY);
         try {
-            allInstallments = waterTaxUtils.getInstallmentsForCurrYear(
-                    dateFormat.parse(dateFormat.format(waterConnectionDetails.getExecutionDate())));
+            if (waterConnectionDetails.getConnectionType().toString().equals(CONNECTIONTYPE_METERED))
+                allInstallments = waterTaxUtils
+                        .getMonthlyInstallments(dateFormat.parse(dateFormat.format(waterConnectionDetails.getExecutionDate())));
+            else
+                allInstallments = waterTaxUtils.getInstallmentsForCurrYear(
+                        dateFormat.parse(dateFormat.format(waterConnectionDetails.getExecutionDate())));
         } catch (final ParseException e) {
             throw new ApplicationRuntimeException("Error while getting all installments from start date", e);
         }
