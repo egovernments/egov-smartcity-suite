@@ -185,11 +185,15 @@ public class ContractorAction extends SearchFormAction {
 
     @Action(value = "/masters/contractor-save")
     public String save() {
+        if (actionContractorDetails.isEmpty()) {
+            addActionMessage(getText("contractor.details.altleastone_details_needed"));
+            return NEW;
+        }
         if (contractor.getBank().getId() != -1 && contractor.getBank().getId() != 0 && contractor.getBank() != null
                 && contractor.getBank().getId() != null) {
-            final Integer id = contractor.getBank().getId();
+            final Integer bankId = contractor.getBank().getId();
             entityManager.detach(contractor.getBank());
-            final Bank bank = entityManager.find(Bank.class, id);
+            final Bank bank = entityManager.find(Bank.class, bankId);
             contractor.setBank(bank);
         } else
             contractor.setBank(null);

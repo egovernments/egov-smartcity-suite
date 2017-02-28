@@ -72,7 +72,7 @@ body {
 		</div>
 	</s:if>
 	<s:if test="%{hasActionMessages()}">
-		<div class="messagestyle">
+		<div class="alert alert-danger">
 			<s:actionmessage theme="simple" />
 		</div>
 	</s:if>
@@ -119,6 +119,7 @@ body {
 <input type="hidden" id="contractorCategoryErrorMsg" value="<s:text name='contractordetail.category.required' />" />
 <input type="hidden" id="nameErrorLengthMsg" value="<s:text name='contractor.name.length' />" />
 <input type="hidden" id="pwdApprovalCodeAlphaNeumericErrorMsg" value="<s:text name='contractor.pwdApprovalCode.alphaNumeric' />" />
+<input type="hidden" id="contractorDetailErrorMsg" value="<s:text name='contractor.details.altleastone_details_needed' />" />
 
 <input type="hidden" value="<s:text name='contractor.panNumber.alphaNumeric' />" id='panNumberMessage'>
 		<%@ include file='contractor-form.jsp'%>

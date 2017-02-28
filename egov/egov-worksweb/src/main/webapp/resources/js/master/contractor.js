@@ -453,6 +453,12 @@ function checkForMandatoryValues(){
 
 function validateContractorFormAndSubmit() {
 	clearMessage('contractor_error');
+	if(jQuery("#contractorTable").find("tbody.yui-dt-data").find("tr").length < 1) {
+		showMessage('contractor_error', jQuery("#contractorDetailErrorMsg").val());
+		window.scroll(0,0);
+		return false;
+	}
+		
 	if (!checkCodeAndName()){
 		window.scroll(0,0);
 		return false;
