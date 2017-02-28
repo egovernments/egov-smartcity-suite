@@ -50,7 +50,6 @@ import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.mrs.application.MarriageConstants;
 import org.egov.mrs.application.service.MarriageFeeCalculator;
@@ -103,13 +102,11 @@ public class NewRegistrationController extends MarriageRegistrationController {
 
     @RequestMapping(value = "/register", method = RequestMethod.GET)
     public String showRegistration(final Model model) {
-       /* Assignment currentuser;
-        final Integer loggedInUser = ApplicationThreadLocals.getUserId().intValue();
-        currentuser = assignmentService.getPrimaryAssignmentForUser(loggedInUser.longValue());
-        if (null == currentuser) {
-            model.addAttribute(MESSAGE, "msg.superuser");
-            return "marriagecommon-error";
-        }*/
+        /*
+         * Assignment currentuser; final Integer loggedInUser = ApplicationThreadLocals.getUserId().intValue(); currentuser =
+         * assignmentService.getPrimaryAssignmentForUser(loggedInUser.longValue()); if (null == currentuser) {
+         * model.addAttribute(MESSAGE, "msg.superuser"); return "marriagecommon-error"; }
+         */
         final MarriageRegistration marriageRegistration = new MarriageRegistration();
         model.addAttribute("isEmployee", registrationWorkFlowService.isEmployee(securityUtils.getCurrentUser()));
         marriageRegistration.setFeePaid(calculateMarriageFee(new Date()));
@@ -145,7 +142,6 @@ public class NewRegistrationController extends MarriageRegistrationController {
 
         }
         String message;
-        Assignment currentuser;
         String approverName = null;
         String nextDesignation = null;
         if (!isEmployee) {
@@ -159,16 +155,14 @@ public class NewRegistrationController extends MarriageRegistrationController {
         } else {
             approverName = request.getParameter("approverName");
             nextDesignation = request.getParameter("nextDesignation");
-            obtainWorkflowParameters(marriageRegistration, workflowContainer, request);
+            obtainWorkflowParameters(workflowContainer, request);
         }
 
-       /* final Integer loggedInUser = ApplicationThreadLocals.getUserId().intValue();
-        currentuser = assignmentService.getPrimaryAssignmentForUser(loggedInUser.longValue());
-        if (null == currentuser) {
-            model.addAttribute(MESSAGE, "msg.superuser");
-            return "marriagecommon-error";
-
-        }*/
+        /*
+         * final Integer loggedInUser = ApplicationThreadLocals.getUserId().intValue(); currentuser =
+         * assignmentService.getPrimaryAssignmentForUser(loggedInUser.longValue()); if (null == currentuser) {
+         * model.addAttribute(MESSAGE, "msg.superuser"); return "marriagecommon-error"; }
+         */
 
         final String appNo = marriageRegistrationService.createRegistration(marriageRegistration, workflowContainer);
         message = messageSource.getMessage("msg.success.forward",
@@ -194,7 +188,7 @@ public class NewRegistrationController extends MarriageRegistrationController {
         if (errors.hasErrors())
             return "registration-view";
 
-        obtainWorkflowParameters(marriageRegistration, workflowContainer, request);
+        obtainWorkflowParameters(workflowContainer, request);
         MarriageRegistration result = null;
 
         switch (workflowContainer.getWorkFlowAction()) {
@@ -222,7 +216,7 @@ public class NewRegistrationController extends MarriageRegistrationController {
      * @param workflowContainer
      * @param request
      */
-    private void obtainWorkflowParameters(final MarriageRegistration marriageRegistration,
+    private void obtainWorkflowParameters(
             final WorkflowContainer workflowContainer, final HttpServletRequest request) {
         if (request.getParameter("approvalComent") != null)
             workflowContainer.setApproverComments(request.getParameter("approvalComent"));
@@ -252,7 +246,7 @@ public class NewRegistrationController extends MarriageRegistrationController {
         return marriageFeeCalculator.calculateMarriageRegistrationFee(null, dateOfMarriage);
     }
 
-    @RequestMapping(value = "/new-mrgregistration-ackowledgement/{applnNo}", method = RequestMethod.GET)
+    @RequestMapping(value = "/new-mrgregistration-ackowledgement/{applnNo}", method = GET)
     public String showAcknowledgemnt(@PathVariable final String applnNo, final Model model) {
         model.addAttribute("applicationNo", applnNo);
         model.addAttribute("applnType", "NEW");

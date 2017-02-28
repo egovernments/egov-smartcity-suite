@@ -209,7 +209,7 @@ public class RegistrationWorkflowService {
         final User user = securityUtils.getCurrentUser();
         final String natureOfTask = "Marriage Registration :: Re-Issue";
 
-        WorkFlowMatrix workflowMatrix = null;
+        WorkFlowMatrix workflowMatrix;
         Position nextStateOwner = null;
         String nextState = null;
         String nextAction = null;
@@ -407,18 +407,18 @@ public class RegistrationWorkflowService {
                 deptId = departmentService.getDepartmentByName(dept).getId();
             if (deptId != null)
                 for (final String desg : designation) {
-                    Long desgId = null;
                     final Designation desigObject = designationService.getDesignationByName(desg);
-                    if (desigObject != null)
-                        desgId = designationService.getDesignationByName(desg).getId();
-                    if (desgId != null)
+                    if (desigObject != null) {
                         if (boundaryId == null)
-                            assignment = assignmentService.findByDepartmentAndDesignation(deptId, desgId);
+                            assignment = assignmentService.findByDepartmentAndDesignation(deptId, desigObject.getId());
                         else
-                            assignment = assignmentService.findAssignmentByDepartmentDesignationAndBoundary(deptId, desgId,
+                            assignment = assignmentService.findAssignmentByDepartmentDesignationAndBoundary(deptId,
+                                    desigObject.getId(),
                                     boundaryId);
-                    if (!assignment.isEmpty())
-                        break;
+                        if (!assignment.isEmpty())
+                            break;
+                    }
+
                 }
             if (!assignment.isEmpty())
                 break;
@@ -451,10 +451,9 @@ public class RegistrationWorkflowService {
                 final List<Assignment> assignmentList = assignmentService
                         .getAssignmentsForPosition(reIssue.getState().getInitiatorPosition().getId());
                 return !assignmentList.isEmpty() ? assignmentList.get(0) : null;
-            } else if (reIssue.getCreatedBy() != null)
-                if (isEmployee(reIssue.getCreatedBy()))
-                    return assignmentService.getPrimaryAssignmentForUser(reIssue
-                            .getCreatedBy().getId());
+            } else if (reIssue.getCreatedBy() != null && isEmployee(reIssue.getCreatedBy()))
+                return assignmentService.getPrimaryAssignmentForUser(reIssue
+                        .getCreatedBy().getId());
         return null;
     }
 
@@ -470,9 +469,9 @@ public class RegistrationWorkflowService {
     public void validateAssignmentForCscUser(final MarriageRegistration marriageRegistration, final ReIssue reIssue,
             final Boolean isEmployee,
             final BindingResult errors) {
-        if (!isEmployee && marriageRegistration != null || reIssue != null)
-            if (getUserPositionByZone(marriageRegistration, reIssue) == null)
-                errors.reject("notexists.position", "notexists.position");
+        if (!isEmployee && (marriageRegistration != null || reIssue != null)
+                && getUserPositionByZone(marriageRegistration, reIssue) == null)
+            errors.reject("notexists.position", "notexists.position");
     }
 
 }

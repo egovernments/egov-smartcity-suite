@@ -332,11 +332,14 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
         }
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("........outside for loop......");
-        final Assignment wfInitiator = assignmentService.getPrimaryAssignmentForUser(marriageRegistrationObj
-                .getCreatedBy().getId());
-        final String message = messageSource.getMessage("msg.digisign.success.registration", new String[] { wfInitiator
-                .getEmployee().getName().concat("~").concat(wfInitiator.getDesignation().getName()) }, null);
-        model.addAttribute("successMessage", message);
+
+        if (marriageRegistrationObj != null) {
+            final Assignment wfInitiator = assignmentService.getPrimaryAssignmentForUser(marriageRegistrationObj
+                    .getCreatedBy().getId());
+            final String message = messageSource.getMessage("msg.digisign.success.registration", new String[] { wfInitiator
+                    .getEmployee().getName().concat("~").concat(wfInitiator.getDesignation().getName()) }, null);
+            model.addAttribute("successMessage", message);
+        }
         model.addAttribute("objectType", MarriageCertificateType.REGISTRATION.toString());
         model.addAttribute("fileStoreId", fileStoreIdArr.length == 1 ? fileStoreIdArr[0] : "");
         if (LOGGER.isDebugEnabled())
@@ -392,10 +395,8 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
     @RequestMapping(value = "/checkunique-serialno", method = GET, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     public boolean uniqueSerialNo(@RequestParam final String serialNo) {
-        MarriageRegistration registration = null;
-        if (serialNo != null && serialNo != "")
-            registration = marriageRegistrationService.findBySerialNo(serialNo);
-        if (registration != null)
+
+        if (serialNo != null && !"".equals(serialNo) && marriageRegistrationService.findBySerialNo(serialNo) != null)
             return true;
         return false;
     }

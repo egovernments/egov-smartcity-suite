@@ -191,7 +191,7 @@ public class NewReIssueController extends GenericWorkFlowController {
         }
         String approverName = null;
         String nextDesignation = null;
-        String message;
+        String message = null;
         reIssue.setRegistration(marriageRegistrationService.get(reIssue.getRegistration().getId()));
         obtainWorkflowParameters(workflowContainer, request);
 
@@ -207,9 +207,12 @@ public class NewReIssueController extends GenericWorkFlowController {
             nextDesignation = request.getParameter("nextDesignation");
         }
         final String appNo = reIssueService.createReIssueApplication(reIssue, workflowContainer);
-        message = messageSource.getMessage("msg.reissue.forward",
-                new String[] { approverName.concat("~").concat(nextDesignation), appNo }, null);
+
+        if (approverName != null)
+            message = messageSource.getMessage("msg.reissue.forward",
+                    new String[] { approverName.concat("~").concat(nextDesignation), appNo }, null);
         model.addAttribute(MESSAGE, message);
+
         model.addAttribute("ackNumber", appNo);
         model.addAttribute("feepaid", reIssue.getFeePaid().doubleValue());
         if (!isEmployee) {
@@ -250,13 +253,13 @@ public class NewReIssueController extends GenericWorkFlowController {
                 && workflowContainer.getWorkFlowAction().equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_CANCEL_REISSUE)) {
             final List<AppConfigValues> appConfigValues = appConfigValuesService.getConfigValuesByModuleAndKey(
                     MarriageConstants.MODULE_NAME, MarriageConstants.REISSUE_PRINTREJECTIONCERTIFICATE);
-            if (appConfigValues != null && !appConfigValues.isEmpty()
+            if (reIssueResult != null && appConfigValues != null && !appConfigValues.isEmpty()
                     && "YES".equalsIgnoreCase(appConfigValues.get(0).getValue()))
                 return "redirect:/certificate/reissue?id="
                         + reIssueResult.getId();
         }
-
-        model.addAttribute("ackNumber", reIssueResult.getApplicationNo());
+        if (reIssueResult != null)
+            model.addAttribute("ackNumber", reIssueResult.getApplicationNo());
         model.addAttribute(MESSAGE, message);
         return "reissue-ack";
     }
