@@ -40,7 +40,7 @@
 
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ include file="/includes/taglibs.jsp"%>
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table-fixed">
 	<tr>
 		<td class="bluebox2" width="5%">
 			&nbsp;
@@ -240,7 +240,7 @@
 
 	<tr class="floordetails">
 		<td colspan="5">
-			<div align="center" class="formmainbox" style="box-shadow:none;"> 
+			<div align="center" class="overflow-x-scroll" style="box-shadow:none;"> 
 				<%@ include file="../common/FloorViewForRevPetition.jsp"%>
 				<br/>
 			</div>

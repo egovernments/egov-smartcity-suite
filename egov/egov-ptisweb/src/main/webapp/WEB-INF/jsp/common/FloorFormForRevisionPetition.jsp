@@ -40,6 +40,7 @@
   --%>
 
 <%@ include file="/includes/taglibs.jsp"%>
+<div class="formmainbox" >
 <table width="100%" border="0" cellpadding="0" cellspacing="0"
 	class="tablebottom" id="floorDetails">
 	<tr>
@@ -58,7 +59,7 @@
 		<th class="bluebgheadtd"><s:text name="building.permNo" />
 		<th class="bluebgheadtd"><s:text name="buildingpermdate" />
 		<th class="bluebgheadtd"><s:text name="buildingpermplintharea" />
-		<th class="bluebgheadtd"><s:text name="Add/Delete" /></th>
+		<th class="bluebgheadtd freeze-action-th"><s:text name="Add/Delete" /></th>
 	</tr>
 	<s:if test="property.propertyDetail.floorDetailsProxy.size()==0">
 		<tr id="Floorinfo">
@@ -206,7 +207,7 @@
 				</div>
 			</td>
 
-			<td class="blueborderfortd" id="AddRemoveFloor">
+			<td class="blueborderfortd freeze-action-td" id="AddRemoveFloor">
 			
 			   <span id="addF" alt="AddF" class="tblactionicon add" 
 			        onclick="javascript:addFloor(); showHideLengthBreadth(); return false;">
@@ -396,7 +397,7 @@
 			</td>
 				
 				
-				<td class="blueborderfortd" id="AddRemoveFloor">
+				<td class="blueborderfortd freeze-action-td" id="AddRemoveFloor">
 				
 				  <span id="addF" alt="AddF" class="tblactionicon add" 
 			        onclick="javascript:addFloor(); showHideLengthBreadth(); return false;">
@@ -413,3 +414,4 @@
 		</s:iterator>
 	</s:else>
 </table>
+</div>
