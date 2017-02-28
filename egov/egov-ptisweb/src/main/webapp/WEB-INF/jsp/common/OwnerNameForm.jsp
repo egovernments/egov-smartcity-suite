@@ -158,8 +158,8 @@
     	        {
     	        	jQuery('.loader-class').modal('show', {backdrop: 'static'});
     	        },
-    	        success: function(){
-    	        	var userInfoObj = jQuery.parseJSON(value);
+    	        success: function(response){
+    	        	var userInfoObj = jQuery.parseJSON(response);
     				if(userInfoObj.uid == aadharNo) {
     					jQuery("input[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.name']").val(userInfoObj.name);
     					jQuery("input[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.name']").attr('readonly', true);

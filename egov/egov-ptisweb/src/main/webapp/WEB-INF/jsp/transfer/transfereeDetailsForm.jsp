@@ -179,8 +179,8 @@
       	        {
       	        	jQuery('.loader-class').modal('show', {backdrop: 'static'});
       	        },
-      	        success: function(){
-      	        	var userInfoObj = jQuery.parseJSON(value);
+      	        success: function(response){
+      	        	var userInfoObj = jQuery.parseJSON(response);
       				if(userInfoObj.uid == aadharNo) {
       					jQuery("input[name='transfereeInfosProxy["+ rowidx +"].transferee.name']").val(userInfoObj.name);
       					jQuery("input[name='transfereeInfosProxy["+ rowidx +"].transferee.name']").attr('readonly', true);
