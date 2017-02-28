@@ -51,15 +51,22 @@ import org.egov.eis.service.AssignmentService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.mrs.application.MarriageConstants;
 import org.egov.mrs.application.service.MarriageFeeCalculator;
+import org.egov.mrs.application.service.workflow.RegistrationWorkflowService;
 import org.egov.mrs.domain.entity.MarriageRegistration;
 import org.egov.mrs.masters.entity.MarriageRegistrationUnit;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -77,6 +84,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping(value = "/registration")
 public class NewRegistrationController extends MarriageRegistrationController {
 
+    private static final String ACKOWLEDGEMENT = "acknowledgement";
     private static final String MESSAGE = "message";
     private static final String APPROVAL_POSITION = "approvalPosition";
     private static final String MARRIAGE_REGISTRATION = "marriageRegistration";
@@ -86,6 +94,12 @@ public class NewRegistrationController extends MarriageRegistrationController {
     private MarriageFormValidator marriageFormValidator;
     @Autowired
     private MarriageFeeCalculator marriageFeeCalculator;
+
+    @Autowired
+    private SecurityUtils securityUtils;
+
+    @Autowired
+    private RegistrationWorkflowService registrationWorkFlowService;
 
     @RequestMapping(value = "/register", method = RequestMethod.GET)
     public String showRegistration(final Model model) {
@@ -97,6 +111,7 @@ public class NewRegistrationController extends MarriageRegistrationController {
             return "marriagecommon-error";
         }
         final MarriageRegistration marriageRegistration = new MarriageRegistration();
+        model.addAttribute("isEmployee", registrationWorkFlowService.isEmployee(securityUtils.getCurrentUser()));
         marriageRegistration.setFeePaid(calculateMarriageFee(new Date()));
         model.addAttribute(MARRIAGE_REGISTRATION, marriageRegistration);
         prepareWorkFlowForNewMarriageRegistration(marriageRegistration, model);
@@ -118,19 +133,35 @@ public class NewRegistrationController extends MarriageRegistrationController {
             final Model model,
             final HttpServletRequest request,
             final BindingResult errors, final RedirectAttributes redirectAttributes) {
-
         validateApplicationDate(marriageRegistration, errors, request);
         marriageFormValidator.validate(marriageRegistration, errors, "registration");
+        final Boolean isEmployee = registrationWorkFlowService.isEmployee(securityUtils.getCurrentUser());
+        registrationWorkFlowService.validateAssignmentForCscUser(marriageRegistration, null, isEmployee, errors);
         if (errors.hasErrors()) {
+            model.addAttribute("isEmployee", registrationWorkFlowService.isEmployee(securityUtils.getCurrentUser()));
             model.addAttribute(MARRIAGE_REGISTRATION, marriageRegistration);
             prepareWorkFlowForNewMarriageRegistration(marriageRegistration, model);
             return "registration-form";
 
         }
         String message;
-        String approverName = request.getParameter("approverName");
-        String nextDesignation = request.getParameter("nextDesignation");
         Assignment currentuser;
+        String approverName = null;
+        String nextDesignation = null;
+        if (!isEmployee) {
+            final Assignment assignment = registrationWorkFlowService.getMappedAssignmentForCscOperator(marriageRegistration,
+                    null);
+            if (assignment != null) {
+                workflowContainer.setApproverPositionId(assignment.getPosition().getId());
+                approverName = assignment.getEmployee().getName();
+                nextDesignation = assignment.getDesignation().getName();
+            }
+        } else {
+            approverName = request.getParameter("approverName");
+            nextDesignation = request.getParameter("nextDesignation");
+            obtainWorkflowParameters(marriageRegistration, workflowContainer, request);
+        }
+
         final Integer loggedInUser = ApplicationThreadLocals.getUserId().intValue();
         currentuser = assignmentService.getPrimaryAssignmentForUser(loggedInUser.longValue());
         if (null == currentuser) {
@@ -139,12 +170,17 @@ public class NewRegistrationController extends MarriageRegistrationController {
 
         }
 
-        obtainWorkflowParameters(workflowContainer, request);
         final String appNo = marriageRegistrationService.createRegistration(marriageRegistration, workflowContainer);
         message = messageSource.getMessage("msg.success.forward",
                 new String[] { approverName.concat("~").concat(nextDesignation), appNo }, null);
         model.addAttribute(MESSAGE, message);
-        return "registration-ack";
+        model.addAttribute("applnNo", appNo);
+        model.addAttribute("isEmployee", isEmployee);
+        if (!isEmployee) {
+            redirectAttributes.addFlashAttribute(MESSAGE, message);
+            return "redirect:/registration/new-mrgregistration-ackowledgement/" + appNo;
+        } else
+            return "registration-ack";
     }
 
     @RequestMapping(value = "/workflow", method = RequestMethod.POST)
@@ -158,7 +194,7 @@ public class NewRegistrationController extends MarriageRegistrationController {
         if (errors.hasErrors())
             return "registration-view";
 
-        obtainWorkflowParameters(workflowContainer, request);
+        obtainWorkflowParameters(marriageRegistration, workflowContainer, request);
         MarriageRegistration result = null;
 
         switch (workflowContainer.getWorkFlowAction()) {
@@ -186,7 +222,8 @@ public class NewRegistrationController extends MarriageRegistrationController {
      * @param workflowContainer
      * @param request
      */
-    private void obtainWorkflowParameters(final WorkflowContainer workflowContainer, final HttpServletRequest request) {
+    private void obtainWorkflowParameters(final MarriageRegistration marriageRegistration,
+            final WorkflowContainer workflowContainer, final HttpServletRequest request) {
         if (request.getParameter("approvalComent") != null)
             workflowContainer.setApproverComments(request.getParameter("approvalComent"));
         if (request.getParameter("workFlowAction") != null)
@@ -214,4 +251,39 @@ public class NewRegistrationController extends MarriageRegistrationController {
     public Double calculateMarriageFee(@RequestParam final Date dateOfMarriage) {
         return marriageFeeCalculator.calculateMarriageRegistrationFee(null, dateOfMarriage);
     }
+
+    @RequestMapping(value = "/new-mrgregistration-ackowledgement/{applnNo}", method = RequestMethod.GET)
+    public String showAcknowledgemnt(@PathVariable final String applnNo, final Model model) {
+        model.addAttribute("applicationNo", applnNo);
+        model.addAttribute("applnType", "NEW");
+        return ACKOWLEDGEMENT;
+    }
+
+    @RequestMapping(value = "/printmarriageregistrationack", method = GET)
+    @ResponseBody
+    public ResponseEntity<byte[]> printAck(@RequestParam("applnNo") final String applnNo, final Model model,
+            final HttpServletRequest request) {
+        byte[] reportOutput;
+        final String cityMunicipalityName = (String) request.getSession()
+                .getAttribute("citymunicipalityname");
+        final String cityName = (String) request.getSession().getAttribute("cityname");
+        final MarriageRegistration marriageRegistration = marriageRegistrationService.findByApplicationNo(applnNo);
+
+        if (marriageRegistration != null) {
+            reportOutput = marriageRegistrationService
+                    .getReportParamsForAcknowdgementForMrgReg(marriageRegistration, cityMunicipalityName, cityName)
+                    .getReportOutputData();
+            if (reportOutput != null) {
+                final HttpHeaders headers = new HttpHeaders();
+
+                headers.setContentType(MediaType.parseMediaType(MarriageConstants.APPLICATION_PDF));
+                headers.add("content-disposition", "inline;filename=new-marriage-registration-ack.pdf");
+                return new ResponseEntity<>(reportOutput, headers, HttpStatus.CREATED);
+            }
+        }
+
+        return null;
+
+    }
+
 }

@@ -55,6 +55,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -71,6 +72,9 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.infra.reporting.engine.ReportOutput;
+import org.egov.infra.reporting.engine.ReportRequest;
+import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateHistory;
@@ -98,6 +102,8 @@ import org.hibernate.Session;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.FileCopyUtils;
@@ -106,6 +112,22 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 @Transactional(readOnly = true)
 public class MarriageRegistrationService {
+    private static final String MRG_REGISTRATION_UNIT = "registrationUnit";
+    private static final String MARRIAGE_ACKNOWLEDGEMENT_REPORT_FILE = "mrs_acknowledgement";
+    private static final String REISSUE_MARRIAGE_CERTIFICATE = "Reissue Marriage Certificate (Duplicate)";
+    private static final String NEW_MARRIAGE_REGISTRATION = "New Marriage Registration";
+    private static final String APP_TYPE = "appType";
+    private static final String APPLICATION_CENTRE = "ApplicationCentre";
+    private static final String DUE_DATE = "dueDate";
+    private static final String ADDRESS = "address";
+    private static final String CURRENT_DATE = "currentDate";
+    private static final String ACKNOWLEDGEMENT_NO = "acknowledgementNo";
+    private static final String APPLICANT_NAME = "applicantName";
+    private static final String ZONE_NAME = "zoneName";
+    private static final String CITYNAME = "cityname";
+    private static final String MUNICIPALITY = "municipality";
+    private static final String OFFICE_S_COPY = "Office's Copy";
+    private static final String PARTY_S_COPY = "Party's Copy";
     private static final String USER = "user";
     private static final Logger LOG = Logger.getLogger(MarriageRegistrationService.class);
     private static final String STATUS_DOT_CODE = "status.code";
@@ -115,9 +137,6 @@ public class MarriageRegistrationService {
     private static final String STATUS = "status";
     private static final String ERROR_WHILE_COPYING_MULTIPART_FILE_BYTES = "Error while copying Multipart file bytes";
 
-
-    @Autowired
-    private SecurityUtils securityUtils;
     @Autowired
     private final MarriageRegistrationRepository registrationRepository;
     @PersistenceContext
@@ -154,6 +173,16 @@ public class MarriageRegistrationService {
     private MarriageRegistrationReportsService marriageRegistrationReportsService;
 
     @Autowired
+    private SecurityUtils securityUtils;
+    
+    @Autowired
+    @Qualifier("parentMessageSource")
+    private MessageSource marriageMessageSource;
+
+    @Autowired
+    private ReportService reportService;
+
+    @Autowired
     public MarriageRegistrationService(final MarriageRegistrationRepository registrationRepository) {
         this.registrationRepository = registrationRepository;
     }
@@ -182,6 +211,10 @@ public class MarriageRegistrationService {
 
     public MarriageRegistration findByApplicationNo(final String applicationNo) {
         return registrationRepository.findByApplicationNo(applicationNo);
+    }
+
+    public MarriageRegistration findById(final Long id) {
+        return registrationRepository.findById(id);
     }
 
     public void setMarriageRegData(final MarriageRegistration registration) {
@@ -230,8 +263,8 @@ public class MarriageRegistrationService {
         registration.setStatus(
                 marriageUtils.getStatusByCodeAndModuleType(MarriageRegistration.RegistrationStatus.CREATED.toString(),
                         MarriageConstants.MODULE_NAME));
-        workflowService.transition(registration, workflowContainer, registration.getApprovalComent());
         create(registration);
+        workflowService.transition(registration, workflowContainer, registration.getApprovalComent());
         marriageRegistrationUpdateIndexesService.updateIndexes(registration);
         marriageSmsAndEmailService.sendSMS(registration, MarriageRegistration.RegistrationStatus.CREATED.toString());
         marriageSmsAndEmailService.sendEmail(registration, MarriageRegistration.RegistrationStatus.CREATED.toString());
@@ -282,7 +315,7 @@ public class MarriageRegistrationService {
                         new BigDecimal(marriageRegistration.getFeePaid()));
         try {
             marriageRegistration.getHusband().isCopyFilesToByteArray();
-            marriageRegistration.getWife().copyPhotoAndSignatureToByteArray(); 
+            marriageRegistration.getWife().copyPhotoAndSignatureToByteArray();
 
         } catch (final IOException e) {
             LOG.error(ERROR_WHILE_COPYING_MULTIPART_FILE_BYTES, e);
@@ -290,7 +323,7 @@ public class MarriageRegistrationService {
         marriageRegistration.getWitnesses().forEach(witness -> {
             try {
                 witness.setPhoto(FileCopyUtils.copyToByteArray(witness.getPhotoFile().getInputStream()));
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 LOG.error(ERROR_WHILE_COPYING_MULTIPART_FILE_BYTES, e);
             }
             witness.setPhotoFileStore(addToFileStore(witness.getPhotoFile()));
@@ -374,10 +407,10 @@ public class MarriageRegistrationService {
                         MarriageConstants.MODULE_NAME));
         marriageRegistration.setRegistrationNo(marriageRegistrationNumberGenerator
                 .generateMarriageRegistrationNumber(marriageRegistration));
-        
         User user = securityUtils.getCurrentUser();
         if(user!=null)
         marriageRegistration.setRegistrarName(user.getName());
+        
         updateRegistrationdata(marriageRegistration);
         updateDocuments(marriageRegistration);
         update(marriageRegistration);
@@ -387,7 +420,7 @@ public class MarriageRegistrationService {
         marriageSmsAndEmailService.sendEmail(marriageRegistration, MarriageRegistration.RegistrationStatus.APPROVED.toString());
         return marriageRegistration;
     }
-    
+
     @Transactional
     public MarriageCertificate generateMarriageCertificate(final MarriageRegistration marriageRegistration,
             final WorkflowContainer workflowContainer, final HttpServletRequest request) throws IOException {
@@ -688,4 +721,82 @@ public class MarriageRegistrationService {
     public MarriageRegistration findBySerialNo(final String serialNo) {
         return registrationRepository.findBySerialNo(serialNo);
     }
+
+    public ReportOutput getReportParamsForAcknowdgementForMrgReg(final MarriageRegistration registration,
+            final String municipalityName, final String cityName) {
+        String applicantName = null;
+        final Map<String, Object> reportParams = new HashMap<>();
+        reportParams.put(MUNICIPALITY, municipalityName);
+        reportParams.put(CITYNAME, cityName);
+        reportParams.put(ZONE_NAME, registration.getZone().getName());
+        reportParams.put(MRG_REGISTRATION_UNIT, registration.getMarriageRegistrationUnit().getName());
+        if (registration.getHusband() != null && registration.getWife() != null)
+            applicantName = registration.getHusband().getFullName().concat(" / ").concat(registration.getWife().getFullName());
+        reportParams.put(APPLICANT_NAME, applicantName);
+        reportParams.put(ACKNOWLEDGEMENT_NO, registration.getApplicationNo());
+        final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        reportParams.put(CURRENT_DATE, formatter.format(new Date()));
+        reportParams.put(ADDRESS, registration.getHusband().getContactInfo().getResidenceAddress());
+        reportParams.put(DUE_DATE, formatter.format(calculateDueDateForMrgReg()));
+        reportParams.put(PARTY_S_COPY, PARTY_S_COPY);
+        reportParams.put(OFFICE_S_COPY, OFFICE_S_COPY);
+        reportParams.put(APPLICATION_CENTRE, marriageMessageSource.getMessage("msg.application.centre",
+                new String[] {}, Locale.getDefault()));
+        reportParams.put(APP_TYPE, NEW_MARRIAGE_REGISTRATION);
+
+        final ReportRequest reportInput = new ReportRequest(MARRIAGE_ACKNOWLEDGEMENT_REPORT_FILE, registration, reportParams);
+
+        return reportService.createReport(reportInput);
+
+    }
+
+    public ReportOutput getReportParamsForAcknowdgementForMrgReissue(final ReIssue reIssue,
+            final String municipalityName, final String cityName) {
+        String applicantName = null;
+        final Map<String, Object> reportParams = new HashMap<>();
+        reportParams.put(MUNICIPALITY, municipalityName);
+        reportParams.put(CITYNAME, cityName);
+        reportParams.put(MRG_REGISTRATION_UNIT, reIssue.getRegistration().getMarriageRegistrationUnit().getName());
+        reportParams.put(ZONE_NAME, reIssue.getZone().getName());
+        if (reIssue.getRegistration().getHusband() != null && reIssue.getRegistration().getWife() != null)
+            applicantName = reIssue.getRegistration().getHusband().getFullName().concat(" / ")
+                    .concat(reIssue.getRegistration().getWife().getFullName());
+        reportParams.put(APPLICANT_NAME, applicantName);
+        reportParams.put(ACKNOWLEDGEMENT_NO, reIssue.getApplicationNo());
+        final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        reportParams.put(CURRENT_DATE, formatter.format(new Date()));
+        reportParams.put(ADDRESS, reIssue.getRegistration().getHusband().getContactInfo().getResidenceAddress());
+        reportParams.put(DUE_DATE, formatter.format(calculateDueDateForMrgReIssue()));
+        reportParams.put(PARTY_S_COPY, PARTY_S_COPY);
+        reportParams.put(OFFICE_S_COPY, OFFICE_S_COPY);
+        reportParams.put(APPLICATION_CENTRE, marriageMessageSource.getMessage("msg.application.centre",
+                new String[] {}, Locale.getDefault()));
+        reportParams.put(APP_TYPE, REISSUE_MARRIAGE_CERTIFICATE);
+
+        final ReportRequest reportInput = new ReportRequest(MARRIAGE_ACKNOWLEDGEMENT_REPORT_FILE, reIssue, reportParams);
+
+        return reportService.createReport(reportInput);
+
+    }
+
+    public Date calculateDueDateForMrgReg() {
+        Date dueDate;
+        final Date currentDate = new Date();
+        final String slaNewAdvertisement = marriageMessageSource.getMessage("msg.new.marriage.registration.sla",
+                new String[] {}, Locale.getDefault());
+        dueDate = org.apache.commons.lang3.time.DateUtils.addDays(currentDate, Integer.parseInt(slaNewAdvertisement));
+        return dueDate;
+
+    }
+
+    public Date calculateDueDateForMrgReIssue() {
+        Date dueDate;
+        final Date currentDate = new Date();
+        final String slaNewAdvertisement = marriageMessageSource.getMessage("msg.marriage.reissue.certificate.sla",
+                new String[] {}, Locale.getDefault());
+        dueDate = org.apache.commons.lang3.time.DateUtils.addDays(currentDate, Integer.parseInt(slaNewAdvertisement));
+        return dueDate;
+
+    }
+
 }

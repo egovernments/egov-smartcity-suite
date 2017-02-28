@@ -39,18 +39,22 @@
 
 package org.egov.mrs.web.controller.application.reissue;
 
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+
 import java.io.IOException;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.egov.eis.entity.Assignment;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
-import org.egov.infra.utils.StringUtils;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.mrs.application.MarriageConstants;
 import org.egov.mrs.application.service.MarriageFeeCalculator;
+import org.egov.mrs.application.service.workflow.RegistrationWorkflowService;
 import org.egov.mrs.domain.entity.MarriageRegistration;
 import org.egov.mrs.domain.entity.ReIssue;
 import org.egov.mrs.domain.service.MarriageApplicantService;
@@ -62,6 +66,10 @@ import org.egov.mrs.masters.service.MarriageRegistrationUnitService;
 import org.egov.mrs.web.controller.application.registration.MarriageFormValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -69,10 +77,13 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
  * Handles Marriage Registration ReIssue transaction
- * 
+ *
  * @author nayeem
  *
  */
@@ -80,8 +91,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @RequestMapping(value = "/reissue")
 public class NewReIssueController extends GenericWorkFlowController {
 
+    private static final String IS_EMPLOYEE = "isEmployee";
     private static final String APPROVAL_POSITION = "approvalPosition";
     private static final String MESSAGE = "message";
+    private static final String ACKOWLEDGEMENT = "acknowledgement";
 
     @Autowired
     private ReIssueService reIssueService;
@@ -102,13 +115,20 @@ public class NewReIssueController extends GenericWorkFlowController {
     @Autowired
     private MarriageFeeCalculator marriageFeeCalculator;
 
+    @Autowired
+    private SecurityUtils securityUtils;
+
+    @Autowired
+    private RegistrationWorkflowService registrationWorkFlowService;
+
     public void prepareNewForm(final Model model, final ReIssue reIssue) {
         model.addAttribute("marriageRegistrationUnit",
                 marriageRegistrationUnitService.getActiveRegistrationunit());
         marriageRegistrationService.prepareDocumentsForView(reIssue.getRegistration());
         marriageApplicantService.prepareDocumentsForView(reIssue.getRegistration().getHusband());
         marriageApplicantService.prepareDocumentsForView(reIssue.getRegistration().getWife());
-        MarriageFee marriageFee = marriageFeeCalculator.calculateMarriageReissueFee(null, MarriageConstants.REISSUE_FEECRITERIA);
+        final MarriageFee marriageFee = marriageFeeCalculator.calculateMarriageReissueFee(null,
+                MarriageConstants.REISSUE_FEECRITERIA);
         if (marriageFee != null) {
             reIssue.setFeeCriteria(marriageFee);
             reIssue.setFeePaid(marriageFee.getFees());
@@ -133,7 +153,8 @@ public class NewReIssueController extends GenericWorkFlowController {
             model.addAttribute(MESSAGE, "msg.workflow.alreadyPresent");
             return "marriagecommon-error";
         }
-        ReIssue reIssue = new ReIssue();
+        model.addAttribute(IS_EMPLOYEE, registrationWorkFlowService.isEmployee(securityUtils.getCurrentUser()));
+        final ReIssue reIssue = new ReIssue();
         reIssue.setRegistration(registration);
         prepareNewForm(model, reIssue);
 
@@ -141,7 +162,7 @@ public class NewReIssueController extends GenericWorkFlowController {
     }
 
     private void prepareWorkFlowForReIssue(final ReIssue reIssue, final Model model) {
-        WorkflowContainer workFlowContainer = new WorkflowContainer();
+        final WorkflowContainer workFlowContainer = new WorkflowContainer();
         workFlowContainer.setAdditionalRule(MarriageConstants.ADDITIONAL_RULE_REGISTRATION);
         prepareWorkflow(model, reIssue, workFlowContainer);
         model.addAttribute("additionalRule", MarriageConstants.ADDITIONAL_RULE_REGISTRATION);
@@ -154,39 +175,60 @@ public class NewReIssueController extends GenericWorkFlowController {
             @ModelAttribute final ReIssue reIssue,
             final Model model,
             final HttpServletRequest request,
-            final BindingResult errors) {
-
+            final BindingResult errors,
+            final RedirectAttributes redirectAttributes) {
+        final Boolean isEmployee = registrationWorkFlowService.isEmployee(securityUtils.getCurrentUser());
         marriageFormValidator.validateReIssue(reIssue, errors);
+        registrationWorkFlowService.validateAssignmentForCscUser(null, reIssue, isEmployee, errors);
         if (errors.hasErrors()) {
             final MarriageRegistration registration = marriageRegistrationService.get(reIssue.getRegistration().getId());
             reIssue.setRegistration(registration);
-            Double fees = reIssue.getFeePaid();
+            final Double fees = reIssue.getFeePaid();
+            model.addAttribute(IS_EMPLOYEE, registrationWorkFlowService.isEmployee(securityUtils.getCurrentUser()));
             prepareNewForm(model, reIssue);
             reIssue.setFeePaid(fees);
             return "reissue-form";
         }
+        String approverName = null;
+        String nextDesignation = null;
+        String message;
         reIssue.setRegistration(marriageRegistrationService.get(reIssue.getRegistration().getId()));
         obtainWorkflowParameters(workflowContainer, request);
+
+        if (!isEmployee) {
+            final Assignment assignment = registrationWorkFlowService.getMappedAssignmentForCscOperator(null, reIssue);
+            if (assignment != null) {
+                workflowContainer.setApproverPositionId(assignment.getPosition().getId());
+                approverName = assignment.getEmployee().getName();
+                nextDesignation = assignment.getDesignation().getName();
+            }
+        } else {
+            approverName = request.getParameter("approverName");
+            nextDesignation = request.getParameter("nextDesignation");
+        }
         final String appNo = reIssueService.createReIssueApplication(reIssue, workflowContainer);
-        String message;
-        String approverName = request.getParameter("approverName");
-        String nextDesignation = request.getParameter("nextDesignation");
         message = messageSource.getMessage("msg.reissue.forward",
                 new String[] { approverName.concat("~").concat(nextDesignation), appNo }, null);
         model.addAttribute(MESSAGE, message);
         model.addAttribute("ackNumber", appNo);
         model.addAttribute("feepaid", reIssue.getFeePaid().doubleValue());
-        return "reissue-ack";
+        if (!isEmployee) {
+            redirectAttributes.addFlashAttribute(MESSAGE, message);
+            return "redirect:/reissue/reissue-certificate-ackowledgement/" + appNo;
+        } else
+            return "reissue-ack";
     }
 
     @RequestMapping(value = "/workflow", method = RequestMethod.POST)
-    public String handleWorkflowAction(@ModelAttribute ReIssue reIssue,
+    public String handleWorkflowAction(@ModelAttribute final ReIssue reIssue,
             @ModelAttribute final WorkflowContainer workflowContainer,
             final Model model,
             final HttpServletRequest request,
             final BindingResult errors) throws IOException {
-        String message = StringUtils.EMPTY;
+        String message = org.apache.commons.lang.StringUtils.EMPTY;
         ReIssue reIssueResult = null;
+        String approverName;
+        String nextDesignation;
         if (errors.hasErrors())
             return "reissue-view";
 
@@ -194,6 +236,10 @@ public class NewReIssueController extends GenericWorkFlowController {
 
         if ("Forward".equals(workflowContainer.getWorkFlowAction())) {
             reIssueResult = reIssueService.forwardReIssue(reIssue.getId(), reIssue, workflowContainer);
+            approverName = request.getParameter("approverName");
+            nextDesignation = request.getParameter("nextDesignation");
+            message = messageSource.getMessage("msg.reissue.forward",
+                    new String[] { approverName.concat("~").concat(nextDesignation), reIssueResult.getApplicationNo() }, null);
         } else if ("Cancel ReIssue".equals(workflowContainer.getWorkFlowAction())) {
             reIssueResult = reIssueService.rejectReIssue(reIssue, workflowContainer, request);
             message = messageSource.getMessage("msg.cancelled.reissue", null, null);
@@ -202,14 +248,14 @@ public class NewReIssueController extends GenericWorkFlowController {
         // On Cancel, output rejection certificate
         if (workflowContainer.getWorkFlowAction() != null && !workflowContainer.getWorkFlowAction().isEmpty()
                 && workflowContainer.getWorkFlowAction().equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_CANCEL_REISSUE)) {
-            List<AppConfigValues> appConfigValues = appConfigValuesService.getConfigValuesByModuleAndKey(
+            final List<AppConfigValues> appConfigValues = appConfigValuesService.getConfigValuesByModuleAndKey(
                     MarriageConstants.MODULE_NAME, MarriageConstants.REISSUE_PRINTREJECTIONCERTIFICATE);
             if (appConfigValues != null && !appConfigValues.isEmpty()
-                    && "YES".equalsIgnoreCase(appConfigValues.get(0).getValue())) {
+                    && "YES".equalsIgnoreCase(appConfigValues.get(0).getValue()))
                 return "redirect:/certificate/reissue?id="
                         + reIssueResult.getId();
-            }
         }
+
         model.addAttribute("ackNumber", reIssueResult.getApplicationNo());
         model.addAttribute(MESSAGE, message);
         return "reissue-ack";
@@ -228,5 +274,39 @@ public class NewReIssueController extends GenericWorkFlowController {
             workflowContainer.setWorkFlowAction(request.getParameter("workFlowAction"));
         if (request.getParameter(APPROVAL_POSITION) != null && !request.getParameter(APPROVAL_POSITION).isEmpty())
             workflowContainer.setApproverPositionId(Long.valueOf(request.getParameter(APPROVAL_POSITION)));
+    }
+
+    @RequestMapping(value = "/reissue-certificate-ackowledgement/{applnNo}", method = RequestMethod.GET)
+    public String showAcknowledgemnt(@PathVariable final String applnNo, final Model model) {
+        model.addAttribute("applicationNo", applnNo);
+        model.addAttribute("applnType", "REISSUE");
+        return ACKOWLEDGEMENT;
+    }
+
+    @RequestMapping(value = "/printreissuecertificateack", method = GET)
+    @ResponseBody
+    public ResponseEntity<byte[]> printAck(@RequestParam("applnNo") final String applnNo, final Model model,
+            final HttpServletRequest request) {
+        byte[] reportOutput;
+        final String cityMunicipalityName = (String) request.getSession()
+                .getAttribute("citymunicipalityname");
+        final String cityName = (String) request.getSession().getAttribute("cityname");
+        final ReIssue reIssue = reIssueService.findByApplicationNo(applnNo);
+
+        if (reIssue != null) {
+            reportOutput = marriageRegistrationService
+                    .getReportParamsForAcknowdgementForMrgReissue(reIssue, cityMunicipalityName, cityName)
+                    .getReportOutputData();
+            if (reportOutput != null) {
+                final HttpHeaders headers = new HttpHeaders();
+
+                headers.setContentType(MediaType.parseMediaType(MarriageConstants.APPLICATION_PDF));
+                headers.add("content-disposition", "inline;filename=marriage-duplicate-certificate-ack.pdf");
+                return new ResponseEntity<>(reportOutput, headers, HttpStatus.CREATED);
+            }
+        }
+
+        return null;
+
     }
 }

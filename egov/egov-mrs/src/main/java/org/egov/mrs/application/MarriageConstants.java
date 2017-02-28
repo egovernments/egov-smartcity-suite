@@ -126,10 +126,6 @@ public class MarriageConstants {
     public static final String MARRIAGE_DEFAULT_FUND_SRC_CODE = "MARRIAGE_DEFAULT_FUND_SRC_CODE";
     public static final String MARRIAGE_DEFAULT_FUND_CODE = "MARRIAGE_DEFAULT_FUND_CODE";
 
-    private MarriageConstants() {
-        // To hide implicit public
-    }
-
     public static final String APPROVAL_COMMENT = "approvalComment";
     public static final String APPLICATION_NUMBER = "applicationNumber";
     public static final String FILE_STORE_ID_APPLICATION_NUMBER = "fileStoreIdApplicationNumber";
@@ -138,4 +134,16 @@ public class MarriageConstants {
     public static final String MARRIAGE_REGISTRATIONUNIT_BOUNDARYYTYPE = "MARRIAGE_REGISTRATIONUNIT_BOUNDARYYTYPE";
     
     
+    //CSC operator related constants
+    public static final String MRG_ROLEFORNONEMPLOYEE = "MRSROLEFORNONEMPLOYEE";
+    public static final String CSC_OPERATOR_ROLE = "CSC Operator";
+    public static final String MRG_WORKFLOWDESIGNATION_FOR_CSCOPERATOR = "MRSDESIGNATIONFORCSCOPERATORWORKFLOW";
+    public static final String MRG_WORKFLOWDEPARTEMENT_FOR_CSCOPERATOR = "MRSDEPARTMENTFORCSCOPERATORWORKFLOW";
+    public static final String CREATED =  "CREATED";
+    public static final String JUNIOR_SENIOR_ASSISTANCE_APPROVAL_PENDING ="Junior/Senior Assistance approval pending";
+    public static final String CSC_OPERATOR_CREATED =  "CSC Operator created";
+    public static final String APPLICATION_PDF = "application/pdf";
+    private MarriageConstants() {
+        // To hide implicit public
+    }
 }

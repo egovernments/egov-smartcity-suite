@@ -48,8 +48,8 @@ public class MarriageFormValidator implements Validator {
         return MarriageRegistration.class.equals(clazz);
     }
 
-    public void validateReIssue(Object target, Errors errors) {
-        ReIssue reIssue = (ReIssue) target;
+    public void validateReIssue(final Object target, final Errors errors) {
+        final ReIssue reIssue = (ReIssue) target;
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "marriageRegistrationUnit", "Notempty.regUnit.name");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "applicant.name.firstName", NOTEMPTY_MRG_FIRST_NAME);
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "applicant.contactInfo.residenceAddress",
@@ -64,18 +64,16 @@ public class MarriageFormValidator implements Validator {
                 && reIssue.getApplicant().getContactInfo().getMobileNo() != null) {
             pattern = Pattern.compile(MOBILE_PATTERN);
             matcher = pattern.matcher(reIssue.getApplicant().getContactInfo().getMobileNo());
-            if (!matcher.matches()) {
+            if (!matcher.matches())
                 errors.rejectValue("applicant.contactInfo.mobileNo", VALIDATE_MOBILE_NO);
-            }
         }
 
         if (reIssue.getApplicant() != null && reIssue.getApplicant().getContactInfo() != null
                 && reIssue.getApplicant().getContactInfo().getEmail() != null) {
             pattern = Pattern.compile(EMAIL_PATTERN);
             matcher = pattern.matcher(reIssue.getApplicant().getContactInfo().getEmail());
-            if (!matcher.matches()) {
+            if (!matcher.matches())
                 errors.rejectValue("applicant.contactInfo.email", VALIDATE_EMAIL);
-            }
         }
     }
 
@@ -92,9 +90,8 @@ public class MarriageFormValidator implements Validator {
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "city", NOTEMPTY_MRG_CITY);
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "dateOfMarriage", "Notempty.mrg.date.of.mrg");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "venue", "Notempty.mrg.venue");
-        if (!"Residence".equals(registration.getVenue())) {
+        if (!"Residence".equals(registration.getVenue()))
             ValidationUtils.rejectIfEmptyOrWhitespace(errors, "placeOfMarriage", "Notempty.mrg.place.of.mrg");
-        }
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "husband.name.firstName", NOTEMPTY_MRG_FIRST_NAME);
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "husband.religion", "Notempty.mrg.religion.name");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "husband.ageInYearsAsOnMarriage", "Notempty.mrg.age.year");
@@ -159,14 +156,18 @@ public class MarriageFormValidator implements Validator {
             validateDocumentAttachments(errors, registration);
 
             if (registration.getStatus() != null && "CREATED".equals(registration.getStatus().getCode())
-                    && !registration.isFeeCollected())
+                    && !registration.isFeeCollected() && !MarriageConstants.JUNIOR_SENIOR_ASSISTANCE_APPROVAL_PENDING
+                            .equalsIgnoreCase(registration.getState().getNextAction()))
                 errors.reject("validate.collect.marriageFee", null);
 
-            if (registration.getStatus() != null && 
-                    (("APPROVED".equals(registration.getStatus().getCode()) && 
-                            (registration.getState().getNextAction()!=null && 
-                            registration.getState().getNextAction().equalsIgnoreCase(MarriageConstants.WFLOW_PENDINGACTION_PRINTCERTIFICATE))) || 
-                    (MarriageRegistration.RegistrationStatus.DIGITALSIGNED.name().equalsIgnoreCase(registration.getStatus().getCode()))))
+            if (registration.getStatus() != null &&
+                    ("APPROVED".equals(registration.getStatus().getCode()) &&
+                            registration.getState().getNextAction() != null &&
+                            registration.getState().getNextAction()
+                                    .equalsIgnoreCase(MarriageConstants.WFLOW_PENDINGACTION_PRINTCERTIFICATE)
+                            ||
+                            MarriageRegistration.RegistrationStatus.DIGITALSIGNED.name()
+                                    .equalsIgnoreCase(registration.getStatus().getCode())))
                 validateSerialAndPageNo(errors);
 
         }

@@ -55,9 +55,9 @@ import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.utils.StringUtils;
 import org.egov.mrs.application.MarriageConstants;
 import org.egov.mrs.application.MarriageUtils;
+import org.egov.mrs.application.service.workflow.RegistrationWorkflowService;
 import org.egov.mrs.domain.entity.MarriageCertificate;
 import org.egov.mrs.domain.entity.ReIssue;
 import org.egov.mrs.domain.enums.MarriageCertificateType;
@@ -106,7 +106,9 @@ public class UpdateMrgReIssueController extends GenericWorkFlowController {
     private MarriageRegistrationService marriageRegistrationService;
     @Autowired
     private MarriageUtils marriageUtils;
-    
+    @Autowired
+    private RegistrationWorkflowService registrationWorkflowService;
+
     private static final Logger LOGGER = Logger.getLogger(UpdateMrgReIssueController.class);
 
     public void prepareNewForm(final Model model) {
@@ -135,8 +137,8 @@ public class UpdateMrgReIssueController extends GenericWorkFlowController {
 
     private void prepareWorkFlowForReIssue(final ReIssue reIssue, final Model model) {
         final WorkflowContainer workFlowContainer = new WorkflowContainer();
-        
-        //Set pending actions based on digitalsignature configuration value
+
+        // Set pending actions based on digitalsignature configuration value
         if (reIssue.getStatus().getCode().equalsIgnoreCase(MarriageConstants.APPROVED))
             if (marriageUtils.isDigitalSignEnabled()) {
                 model.addAttribute("pendingActions", MarriageConstants.WFLOW_PENDINGACTION_DIGISIGNPENDING);
@@ -149,6 +151,10 @@ public class UpdateMrgReIssueController extends GenericWorkFlowController {
         prepareWorkflow(model, reIssue, workFlowContainer);
         model.addAttribute("additionalRule", MarriageConstants.ADDITIONAL_RULE_REGISTRATION);
         model.addAttribute("stateType", reIssue.getClass().getSimpleName());
+        if (reIssue.getStatus().getCode().equalsIgnoreCase(MarriageConstants.CREATED)
+                && MarriageConstants.JUNIOR_SENIOR_ASSISTANCE_APPROVAL_PENDING
+                        .equalsIgnoreCase(reIssue.getState().getNextAction()))
+            model.addAttribute("nextActn", MarriageConstants.JUNIOR_SENIOR_ASSISTANCE_APPROVAL_PENDING);
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.POST)
@@ -158,20 +164,20 @@ public class UpdateMrgReIssueController extends GenericWorkFlowController {
             final HttpServletRequest request,
             final BindingResult errors) throws IOException {
 
-        String workFlowAction = StringUtils.EMPTY;
+        String workFlowAction = org.apache.commons.lang.StringUtils.EMPTY;
         if (request.getParameter("workFlowAction") != null)
             workFlowAction = request.getParameter("workFlowAction");
 
         if (errors.hasErrors())
             return "reissue-view";
 
-        String message = StringUtils.EMPTY;
+        String message = org.apache.commons.lang.StringUtils.EMPTY;
         String approverName;
         String nextDesignation;
 
         if (workFlowAction != null && !workFlowAction.isEmpty()) {
             workflowContainer.setWorkFlowAction(workFlowAction);
-            final Assignment wfInitiator = assignmentService.getPrimaryAssignmentForUser(reIssue.getCreatedBy().getId());
+            final Assignment wfInitiator = registrationWorkflowService.getWorkFlowInitiatorForReissue(reIssue);
             approverName = wfInitiator.getEmployee().getName();
             nextDesignation = wfInitiator.getDesignation().getName();
             workflowContainer.setApproverComments(request.getParameter("approvalComent"));
@@ -185,7 +191,7 @@ public class UpdateMrgReIssueController extends GenericWorkFlowController {
                 message = messageSource.getMessage("msg.cancelled.reissue", new String[] { reIssue.getApplicationNo(), null },
                         null);
             } else if (workFlowAction.equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_APPROVE)) {
-                //If digital signature is configured, after approve appl shld remain in commissioner inbox for digital signature
+                // If digital signature is configured, after approve appl shld remain in commissioner inbox for digital signature
                 // otherwise gets fwded to creator for print certificate.
                 if (marriageUtils.isDigitalSignEnabled()) {
                     model.addAttribute("pendingActions", MarriageConstants.WFLOW_PENDINGACTION_APPRVLPENDING_DIGISIGN);
@@ -200,15 +206,16 @@ public class UpdateMrgReIssueController extends GenericWorkFlowController {
                     message = messageSource.getMessage(
                             "msg.approved.forwarded.reissue",
                             new String[] { reIssue.getApplicationNo(),
-                                    approverName.concat("~").concat(nextDesignation) }, null);
+                                    approverName.concat("~").concat(nextDesignation) },
+                            null);
                 }
             } else if (workFlowAction.equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_DIGISIGN)) {
-                //Generates certificate, sends for digital sign and calls callback url for workflow transition.
+                // Generates certificate, sends for digital sign and calls callback url for workflow transition.
                 final MarriageCertificate marriageCertificate = reIssueService
                         .generateReIssueCertificate(reIssue, workflowContainer, request);
                 model.addAttribute("fileStoreIds", marriageCertificate.getFileStore().getFileStoreId());
                 model.addAttribute("ulbCode", ApplicationThreadLocals.getCityCode());
-               //Adding applicationNo and its filestoreid to be digitally signed to session
+                // Adding applicationNo and its filestoreid to be digitally signed to session
                 final HttpSession session = request.getSession();
                 session.setAttribute(MarriageConstants.APPROVAL_COMMENT, request.getParameter("approvalComent"));
                 session.setAttribute(MarriageConstants.APPLICATION_NUMBER, marriageCertificate.getReIssue()
@@ -240,26 +247,26 @@ public class UpdateMrgReIssueController extends GenericWorkFlowController {
         model.addAttribute("message", message);
         return "reissue-ack";
     }
-    
+
     @RequestMapping(value = "/digiSignWorkflow")
     public String digiSignTransitionWorkflow(final HttpServletRequest request, final Model model) throws IOException {
         LOGGER.debug("..........Inside Digital Signature Transition : ReIssue........");
         final String fileStoreIds = request.getParameter("fileStoreId");
-        LOGGER.debug("........fileStoreIds.........."+fileStoreIds);
+        LOGGER.debug("........fileStoreIds.........." + fileStoreIds);
         final String[] fileStoreIdArr = fileStoreIds.split(",");
-        LOGGER.debug("........fileStoreIdArr.........."+fileStoreIdArr.length);
+        LOGGER.debug("........fileStoreIdArr.........." + fileStoreIdArr.length);
         final HttpSession session = request.getSession();
         final String approvalComent = (String) session.getAttribute(MarriageConstants.APPROVAL_COMMENT);
-        //Gets the digitally signed applicationNo and its filestoreid from session
+        // Gets the digitally signed applicationNo and its filestoreid from session
         final Map<String, String> appNoFileStoreIdsMap = (Map<String, String>) session
                 .getAttribute(MarriageConstants.FILE_STORE_ID_APPLICATION_NUMBER);
-        LOGGER.debug("........appNoFileStoreIdsMap....size......"+appNoFileStoreIdsMap.size());
+        LOGGER.debug("........appNoFileStoreIdsMap....size......" + appNoFileStoreIdsMap.size());
         ReIssue reIssueObj = null;
         WorkflowContainer workflowContainer;
         for (final String fileStoreId : fileStoreIdArr) {
             LOGGER.debug("........Inside for loop......");
             final String applicationNumber = appNoFileStoreIdsMap.get(fileStoreId);
-            LOGGER.debug("........applicationNumber......"+applicationNumber);
+            LOGGER.debug("........applicationNumber......" + applicationNumber);
             if (null != applicationNumber && !applicationNumber.isEmpty()) {
                 workflowContainer = new WorkflowContainer();
                 workflowContainer.setApproverComments(approvalComent);
@@ -290,12 +297,12 @@ public class UpdateMrgReIssueController extends GenericWorkFlowController {
     public void downloadReIssueDigiSignedCertificate(final HttpServletRequest request, final HttpServletResponse response) {
         final String signedFileStoreId = request.getParameter("signedFileStoreId");
         try {
-          marriageUtils.downloadSignedCertificate(signedFileStoreId, response);
+            marriageUtils.downloadSignedCertificate(signedFileStoreId, response);
         } catch (final ApplicationRuntimeException ex) {
             throw new ApplicationRuntimeException("Exception while downloading file : " + ex);
         }
     }
-    
+
     /**
      * @description To show preview of reissue certificate before digital sign
      * @param id

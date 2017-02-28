@@ -69,7 +69,7 @@
 			<input type="hidden" id="feeCollected" value="${reIssue.feeCollected}" />
 			<form:hidden path="" name="registration.id" id="reIssueRegistrationId" value="${reIssue.registration.id}"/>	
 			<form:hidden path="" id="workFlowAction" name="workFlowAction"/>
-			
+			<input type="hidden" id="nextActn" value="${nextActn}" />
 			<c:if test="${reIssue.status.code =='CREATED' && !reIssue.feeCollected}"> 
 			 <div  data-collapsed="0">
 				<div class="panel-heading">
