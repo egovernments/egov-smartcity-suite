@@ -57,7 +57,7 @@ public interface ContractorGradeRepository extends JpaRepository<ContractorGrade
 
     ContractorGrade findByGrade(final String grade);
 
-    ContractorGrade findByGradeIngoreCase(final String grade);
+    ContractorGrade findByGradeIgnoreCase(final String grade);
 
     @Query("select distinct(cg.minAmount) from ContractorGrade as cg order by cg.minAmount")
     List<String> findByContractorClassMinAmount();
