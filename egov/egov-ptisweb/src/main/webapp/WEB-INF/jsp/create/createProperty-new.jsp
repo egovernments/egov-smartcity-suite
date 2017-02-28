@@ -159,8 +159,10 @@
     				jQuery("#fpoptbl").hide();
     				jQuery('#loading').show();
     				jQuery('#popup').show();
+    				jQuery('.loader-class').modal('show', {backdrop: 'static'});
     			}
     		}).success(function (response) {
+    			jQuery('.loader-class').modal('hide');
     			jQuery('.popup').addClass('popup-show');
     			jQuery('#fpoptbl tbody').html("");
     			if(response.startsWith("Please")) {

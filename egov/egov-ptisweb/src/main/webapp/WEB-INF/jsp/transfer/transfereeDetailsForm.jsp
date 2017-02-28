@@ -165,56 +165,65 @@
 					</tr>
 <script type="text/javascript">
           function getAadharDetailsForTransferee(obj) {
-	    	   var aadharNo = jQuery(obj).val();
-	    	   var rowidx= jQuery(obj).data('idx');
-	    	   jQuery.ajax({
-					type: "GET",
-					url: "/egi/aadhaar/"+aadharNo,
-					cache: true,
-				}).done(function(value) {
-					var userInfoObj = jQuery.parseJSON(value);
-					if(userInfoObj.valid == true) {
-						jQuery("input[name='transfereeInfosProxy["+ rowidx +"].transferee.name']").val(userInfoObj.name);
-						jQuery("input[name='transfereeInfosProxy["+ rowidx +"].transferee.name']").attr('readonly', true);
-						if(userInfoObj.gender == 'M' || userInfoObj.gender == 'Male') {
-							jQuery("select[name='transfereeInfosProxy["+ rowidx +"].transferee.gender']").val("MALE");
-						} else if (userInfoObj.gender == 'F' || userInfoObj.gender == 'Female') {
-							jQuery("select[name='transfereeInfosProxy["+ rowidx +"].transferee.gender']").val("FEMALE");
-						} else {
-							jQuery("select[name='transfereeInfosProxy["+ rowidx +"].transferee.gender']").val("OTHERS");
-						} 
-						jQuery("select[name='transfereeInfosProxy["+ rowidx +"].transferee.gender']").focus(function(e) {
-						    jQuery(this).blur();
-						});
-						jQuery("input[name='transfereeInfosProxy["+ rowidx +"].transferee.mobileNumber']").val(userInfoObj.phone);
-						jQuery("input[name='transfereeInfosProxy["+ rowidx +"].transferee.mobileNumber']").attr('readonly', true);
-						jQuery("input[name='transfereeInfosProxy["+ rowidx +"].transferee.emailId']").attr('readonly', true);
-						jQuery("select[name='transfereeInfosProxy["+ rowidx +"].transferee.guardianRelation']").val("OTHERS");
-						jQuery("select[name='transfereeInfosProxy["+ rowidx +"].transferee.guardianRelation']").focus(function(e) {
-						    jQuery(this).blur();
-						});
-						jQuery("input[name='transfereeInfosProxy["+ rowidx +"].transferee.guardian']").val(userInfoObj.careof);
-						jQuery("input[name='transfereeInfosProxy["+ rowidx +"].transferee.guardian']").attr('readonly', true);
-					} else if(userInfoObj.valid == false) {
-						jQuery("input[name='transfereeInfosProxy["+ rowidx +"].transferee.aadhaarNumber']").val("");
-						jQuery("input[name='transfereeInfosProxy["+ rowidx +"].transferee.name']").val("");
-						jQuery("input[name='transfereeInfosProxy["+ rowidx +"].transferee.name']").attr('readonly', false);
-						jQuery("select[name='transfereeInfosProxy["+ rowidx +"].transferee.gender']").removeAttr('disabled');
-						jQuery("select[name='transfereeInfosProxy["+ rowidx +"].transferee.gender']").val("");
-						jQuery("input[name='transfereeInfosProxy["+ rowidx +"].transferee.mobileNumber']").val("").attr('readonly', false);
-						//jQuery("input[name='transfereeInfosProxy["+ rowidx +"].mobileNumber']").attr('readonly', true);
-						jQuery("input[name='transfereeInfosProxy["+ rowidx +"].transferee.emailId']").attr('readonly', false);
-						jQuery("select[name='transfereeInfosProxy["+ rowidx +"].transferee.guardianRelation']").removeAttr('disabled');
-						jQuery("input[name='transfereeInfosProxy["+ rowidx +"].transferee.guardian']").attr('readonly', false);
-						if(aadharNo != "NaN") {
-						bootbox.alert("Aadhar number is not valid");
-						}
-				   }
-				})
-				.fail(function(value){
-					jQuery("input[name='transfereeInfosProxy["+ rowidx +"].transferee.aadhaarNumber']").val("");
-					bootbox.alert("Invalid Aadhar number or no details available with this Aadhar number!");
-				});
+        	  var rowidx=jQuery(obj).data('idx');
+      		var aadharNo = jQuery(obj).val();
+      		if(aadharNo.length<12){
+      			jQuery(obj).val("");
+      			bootbox.alert("Invalid Aadhar number !");
+      			return false;
+      		}
+      	    jQuery.ajax({
+      	    	url: "/egi/aadhaar/"+aadharNo,
+      	        type: "GET",
+      	        beforeSend:function()
+      	        {
+      	        	jQuery('.loader-class').modal('show', {backdrop: 'static'});
+      	        },
+      	        success: function(){
+      	        	var userInfoObj = jQuery.parseJSON(value);
+      				if(userInfoObj.uid == aadharNo) {
+      					jQuery("input[name='transfereeInfosProxy["+ rowidx +"].transferee.name']").val(userInfoObj.name);
+      					jQuery("input[name='transfereeInfosProxy["+ rowidx +"].transferee.name']").attr('readonly', true);
+      					if(userInfoObj.gender == 'M' || userInfoObj.gender == 'Male') {
+      						jQuery("select[name='transfereeInfosProxy["+ rowidx +"].transferee.gender']").val("MALE");
+      					} else if (userInfoObj.gender == 'F' || userInfoObj.gender == 'Female') {
+      						jQuery("select[name='transfereeInfosProxy["+ rowidx +"].transferee.gender']").val("FEMALE");
+      					} else {
+      						jQuery("select[name='transfereeInfosProxy["+ rowidx +"].transferee.gender']").val("OTHERS");
+      					} 
+      					jQuery("select[name='transfereeInfosProxy["+ rowidx +"].transferee.gender']").attr('disabled','disabled');
+      					jQuery("input[name='transfereeInfosProxy["+ rowidx +"].transferee.mobileNumber']").val(userInfoObj.phone);
+      					jQuery("input[name='transfereeInfosProxy["+ rowidx +"].transferee.mobileNumber']").attr('readonly', true);
+      					jQuery("input[name='transfereeInfosProxy["+ rowidx +"].transferee.emailId']").attr('readonly', true);
+      					jQuery("select[name='transfereeInfosProxy["+ rowidx +"].transferee.guardianRelation']").attr('disabled', 'disabled');
+      					jQuery("input[name='transfereeInfosProxy["+ rowidx +"].transferee.guardian']").attr('readonly', true);
+      				} else {
+      					jQuery("input[name='transfereeInfosProxy["+ rowidx +"].transferee.aadhaarNumber']").val("");
+      					jQuery("input[name='transfereeInfosProxy["+ rowidx +"].transferee.name']").val("");
+      					jQuery("input[name='transfereeInfosProxy["+ rowidx +"].transferee.name']").attr('readonly', false);
+      					jQuery("select[name='transfereeInfosProxy["+ rowidx +"].transferee.gender']").removeAttr('disabled');
+      					jQuery("select[name='transfereeInfosProxy["+ rowidx +"].transferee.gender']").val("");
+      					jQuery("input[name='transfereeInfosProxy["+ rowidx +"].transferee.mobileNumber']").val("").attr('readonly', false);
+      					jQuery("input[name='transfereeInfosProxy["+ rowidx +"].transferee.emailId']").attr('readonly', false);
+      					jQuery("select[name='transfereeInfosProxy["+ rowidx +"].transferee.guardianRelation']").removeAttr('disabled');
+      					jQuery("input[name='transfereeInfosProxy["+ rowidx +"].transferee.guardian']").attr('readonly', false);
+      					if(aadharNo != "NaN") {
+      						bootbox.alert("Aadhar number is not valid");
+      					}
+      			   }
+      	        	
+      	        },
+      	        complete:function()
+      	        {
+      	        	jQuery('.loader-class').modal('hide');
+      	        },
+      	        error:function()
+      	        {
+      	        	jQuery("input[name='transfereeInfosProxy["+ rowidx +"].transferee.aadhaarNumber']").val("");
+      	        	alert("Invalid Aadhar number or no details available with this Aadhar number!");
+      	        	return false;
+      	        }
+      	    });
 	       }
 
           function getUserDetailsForMobileNo(obj) {

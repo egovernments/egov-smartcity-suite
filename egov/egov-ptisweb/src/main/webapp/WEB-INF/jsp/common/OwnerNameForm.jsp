@@ -144,49 +144,65 @@
       </table>
        <script>
        function getAadharDetails(obj) {
-    	   var aadharNo = jQuery(obj).val();
-    	   var rowidx= jQuery(obj).data('idx');
-    	   jQuery.ajax({
-				type: "GET",
-				url: "/egi/aadhaar/"+aadharNo,
-				cache: true
-			}).done(function(value) {
-				var userInfoObj = jQuery.parseJSON(value);
-				if(userInfoObj.uid == aadharNo) {
-					jQuery("input[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.name']").val(userInfoObj.name);
-					jQuery("input[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.name']").attr('readonly', true);
-					if(userInfoObj.gender == 'M' || userInfoObj.gender == 'Male') {
-						jQuery("select[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.gender']").val("MALE");
-					} else if (userInfoObj.gender == 'F' || userInfoObj.gender == 'Female') {
-						jQuery("select[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.gender']").val("FEMALE");
-					} else {
-						jQuery("select[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.gender']").val("OTHERS");
-					} 
-					jQuery("select[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.gender']").attr('disabled','disabled');
-					jQuery("input[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.mobileNumber']").val(userInfoObj.phone);
-					jQuery("input[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.mobileNumber']").attr('readonly', true);
-					jQuery("input[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.emailId']").attr('readonly', true);
-					jQuery("select[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.guardianRelation']").attr('disabled', 'disabled');
-					jQuery("input[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.guardian']").attr('readonly', true);
-				} else {
-					jQuery("input[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.aadhaarNumber']").val("");
-					jQuery("input[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.name']").val("");
-					jQuery("input[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.name']").attr('readonly', false);
-					jQuery("select[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.gender']").removeAttr('disabled');
-					jQuery("select[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.gender']").val("");
-					jQuery("input[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.mobileNumber']").val("").attr('readonly', false);
-					jQuery("input[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.emailId']").attr('readonly', false);
-					jQuery("select[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.guardianRelation']").removeAttr('disabled');
-					jQuery("input[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.guardian']").attr('readonly', false);
-					if(aadharNo != "NaN") {
-					bootbox.alert("Aadhar number is not valid");
-					}
-			   }
-			})
-			.fail(function(value){
-				jQuery("input[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.aadhaarNumber']").val("");
-				bootbox.alert("Invalid Aadhar number or no details available with this Aadhar number!");
-			});
+    	   var rowidx=jQuery(obj).data('idx');
+    		var aadharNo = jQuery(obj).val();
+    		if(aadharNo.length<12){
+      			jQuery(obj).val("");
+      			bootbox.alert("Invalid Aadhar number !");
+      			return false;
+      		}
+    	    jQuery.ajax({
+    	    	url: "/egi/aadhaar/"+aadharNo,
+    	        type: "GET",
+    	        beforeSend:function()
+    	        {
+    	        	jQuery('.loader-class').modal('show', {backdrop: 'static'});
+    	        },
+    	        success: function(){
+    	        	var userInfoObj = jQuery.parseJSON(value);
+    				if(userInfoObj.uid == aadharNo) {
+    					jQuery("input[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.name']").val(userInfoObj.name);
+    					jQuery("input[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.name']").attr('readonly', true);
+    					if(userInfoObj.gender == 'M' || userInfoObj.gender == 'Male') {
+    						jQuery("select[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.gender']").val("MALE");
+    					} else if (userInfoObj.gender == 'F' || userInfoObj.gender == 'Female') {
+    						jQuery("select[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.gender']").val("FEMALE");
+    					} else {
+    						jQuery("select[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.gender']").val("OTHERS");
+    					} 
+    					jQuery("select[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.gender']").attr('disabled','disabled');
+    					jQuery("input[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.mobileNumber']").val(userInfoObj.phone);
+    					jQuery("input[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.mobileNumber']").attr('readonly', true);
+    					jQuery("input[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.emailId']").attr('readonly', true);
+    					jQuery("select[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.guardianRelation']").attr('disabled', 'disabled');
+    					jQuery("input[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.guardian']").attr('readonly', true);
+    				} else {
+    					jQuery("input[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.aadhaarNumber']").val("");
+    					jQuery("input[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.name']").val("");
+    					jQuery("input[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.name']").attr('readonly', false);
+    					jQuery("select[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.gender']").removeAttr('disabled');
+    					jQuery("select[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.gender']").val("");
+    					jQuery("input[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.mobileNumber']").val("").attr('readonly', false);
+    					jQuery("input[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.emailId']").attr('readonly', false);
+    					jQuery("select[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.guardianRelation']").removeAttr('disabled');
+    					jQuery("input[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.guardian']").attr('readonly', false);
+    					if(aadharNo != "NaN") {
+    						bootbox.alert("Aadhar number is not valid");
+    					}
+    			   }
+    	        	
+    	        },
+    	        complete:function()
+    	        {
+    	        	jQuery('.loader-class').modal('hide');
+    	        },
+    	        error:function()
+    	        {
+    	        	jQuery("input[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.aadhaarNumber']").val("");
+    	        	alert("Invalid Aadhar number or no details available with this Aadhar number!");
+    	        	return false;
+    	        }
+    	    });
        }
 
        function getUserDetailsForMobileNo(obj) {
