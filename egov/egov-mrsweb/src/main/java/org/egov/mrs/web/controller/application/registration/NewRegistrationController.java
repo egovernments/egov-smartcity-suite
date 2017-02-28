@@ -103,13 +103,13 @@ public class NewRegistrationController extends MarriageRegistrationController {
 
     @RequestMapping(value = "/register", method = RequestMethod.GET)
     public String showRegistration(final Model model) {
-        Assignment currentuser;
+       /* Assignment currentuser;
         final Integer loggedInUser = ApplicationThreadLocals.getUserId().intValue();
         currentuser = assignmentService.getPrimaryAssignmentForUser(loggedInUser.longValue());
         if (null == currentuser) {
             model.addAttribute(MESSAGE, "msg.superuser");
             return "marriagecommon-error";
-        }
+        }*/
         final MarriageRegistration marriageRegistration = new MarriageRegistration();
         model.addAttribute("isEmployee", registrationWorkFlowService.isEmployee(securityUtils.getCurrentUser()));
         marriageRegistration.setFeePaid(calculateMarriageFee(new Date()));
