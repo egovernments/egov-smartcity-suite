@@ -54,7 +54,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_VACANT
 import static org.egov.ptis.constants.PropertyTaxConstants.FLOOR_MAP;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_BASERATE_BY_OCCUPANCY_ZONE;
-import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_DEMANDREASONDETAILS_BY_DEMANDREASON_AND_INSTALLMENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.SQUARE_YARD_TO_SQUARE_METER_VALUE;
 
 import java.math.BigDecimal;
@@ -69,7 +68,6 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.egov.commons.Installment;
-import org.egov.demand.model.EgDemandReasonDetails;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.client.handler.TaxCalculationInfoXmlHandler;
@@ -90,21 +88,20 @@ import org.egov.ptis.exceptions.TaxCalculatorExeption;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-//TODO name class as client specific
 public class APTaxCalculator implements PropertyTaxCalculator {
     private static final Logger LOGGER = Logger.getLogger(APTaxCalculator.class);
-    private static BigDecimal RESD_OWNER_DEPRECIATION = new BigDecimal(40);
-    private static BigDecimal SEASHORE_RESD_OWNER_DEPRECIATION = new BigDecimal(45);
-    public static final String UNAUTHPENALTY_STARTDATE = "01/04/1987";
-    private BigDecimal BUIULDING_VALUE = new BigDecimal(2).divide(new BigDecimal(3), 5, BigDecimal.ROUND_HALF_UP);
-    private BigDecimal SITE_VALUE = new BigDecimal(1).divide(new BigDecimal(3), 5, BigDecimal.ROUND_HALF_UP);
-    private BigDecimal totalTaxPayable = BigDecimal.ZERO;
+    private static final BigDecimal RESD_OWNER_DEPRECIATION = new BigDecimal(40);
+    private static final BigDecimal SEASHORE_ADDITIONAL_DEPRECIATION = new BigDecimal(5);
+    private static final String UNAUTHPENALTY_STARTDATE = "01/04/1987";
+    private static final BigDecimal BUILDING_VALUE = new BigDecimal(2).divide(new BigDecimal(3), 5, BigDecimal.ROUND_HALF_UP);
+    private static final BigDecimal SITE_VALUE = new BigDecimal(1).divide(new BigDecimal(3), 5, BigDecimal.ROUND_HALF_UP);
     private Boolean isCorporation = Boolean.FALSE;
     private Boolean isSeaShoreULB = Boolean.FALSE;
     private Boolean isPrimaryServiceChrApplicable = Boolean.FALSE;
-    private HashMap<Installment, TaxCalculationInfo> taxCalculationMap = new HashMap<Installment, TaxCalculationInfo>();
+    private final HashMap<Installment, TaxCalculationInfo> taxCalculationMap = new HashMap<>();
     private Properties taxRateProps = null;
 
+    @SuppressWarnings("rawtypes")
     @Autowired
     @Qualifier("persistenceService")
     private PersistenceService persistenceService;
@@ -113,21 +110,18 @@ public class APTaxCalculator implements PropertyTaxCalculator {
     private PropertyTaxUtil propertyTaxUtil;
 
     /**
-     * @param property
-     *            Property Object
-     * @param applicableTaxes
-     *            List of Applicable Taxes
-     * @param occupationDate
-     *            Minimum Occupancy Date among all the units
+     * @param property Property Object
+     * @param applicableTaxes List of Applicable Taxes
+     * @param occupationDate Minimum Occupancy Date among all the units
      * @return
      * @throws TaxCalculatorExeption
      */
     @Override
     public HashMap<Installment, TaxCalculationInfo> calculatePropertyTax(final Property property,
             final Date occupationDate) throws TaxCalculatorExeption {
-        Boundary propertyZone = null;
-        BigDecimal totalNetArv = BigDecimal.ZERO;
-        BoundaryCategory boundaryCategory = null;
+        Boundary propertyZone;
+        BigDecimal totalNetArv;
+        BoundaryCategory boundaryCategory;
         taxRateProps = propertyTaxUtil.loadTaxRates();
         isCorporation = propertyTaxUtil.isCorporation();
         isSeaShoreULB = propertyTaxUtil.isSeaShoreULB();
@@ -135,18 +129,18 @@ public class APTaxCalculator implements PropertyTaxCalculator {
             isPrimaryServiceChrApplicable = propertyTaxUtil.isPrimaryServiceApplicable();
 
         final List<String> applicableTaxes = prepareApplicableTaxes(property);
-        List<Installment> taxInstallments = propertyTaxUtil.getInstallmentsListByEffectiveDate(occupationDate);
+        final List<Installment> taxInstallments = propertyTaxUtil.getInstallmentsListByEffectiveDate(occupationDate);
         propertyZone = property.getBasicProperty().getPropertyID().getZone();
 
         for (final Installment installment : taxInstallments) {
-            totalTaxPayable = BigDecimal.ZERO;
+            BigDecimal totalTaxPayable = BigDecimal.ZERO;
             totalNetArv = BigDecimal.ZERO;
             final APTaxCalculationInfo taxCalculationInfo = addPropertyInfo(property);
 
             if (betweenOrBefore(occupationDate, installment.getFromDate(), installment.getToDate())) {
                 if (property.getPropertyDetail().getPropertyTypeMaster().getCode().equals(OWNERSHIP_TYPE_VAC_LAND)
-                        || (property.getPropertyDetail().isAppurtenantLandChecked() != null && property
-                                .getPropertyDetail().isAppurtenantLandChecked())) {
+                        || property.getPropertyDetail().isAppurtenantLandChecked() != null && property
+                                .getPropertyDetail().isAppurtenantLandChecked()) {
                     final APUnitTaxCalculationInfo unitTaxCalculationInfo = calculateVacantLandTax(property,
                             occupationDate, applicableTaxes, installment);
                     totalNetArv = totalNetArv.add(unitTaxCalculationInfo.getNetARV());
@@ -154,8 +148,7 @@ public class APTaxCalculator implements PropertyTaxCalculator {
                     totalTaxPayable = totalTaxPayable.add(unitTaxCalculationInfo.getTotalTaxPayable());
                 }
 
-                for (final Floor floorIF : property.getPropertyDetail().getFloorDetails()) {
-                    // TODO think about, these beans to be client specific
+                for (final Floor floorIF : property.getPropertyDetail().getFloorDetails())
                     if (betweenOrBefore(floorIF.getOccupancyDate(), installment.getFromDate(), installment.getToDate())) {
                         boundaryCategory = getBoundaryCategory(propertyZone, installment, floorIF.getPropertyUsage()
                                 .getId(), occupationDate, floorIF.getStructureClassification().getId());
@@ -166,8 +159,6 @@ public class APTaxCalculator implements PropertyTaxCalculator {
                         totalTaxPayable = totalTaxPayable.add(unitTaxCalculationInfo.getTotalTaxPayable());
                         taxCalculationInfo.addUnitTaxCalculationInfo(unitTaxCalculationInfo);
                     }
-
-                }
                 taxCalculationInfo.setTotalNetARV(totalNetArv);
                 taxCalculationInfo.setTotalTaxPayable(totalTaxPayable);
                 taxCalculationInfo.setTaxCalculationInfoXML(generateTaxCalculationXML(taxCalculationInfo));
@@ -180,13 +171,13 @@ public class APTaxCalculator implements PropertyTaxCalculator {
     private APUnitTaxCalculationInfo calculateNonVacantTax(final Property property, final Floor floor,
             final BoundaryCategory boundaryCategory, final List<String> applicableTaxes, final Installment installment) {
         final APUnitTaxCalculationInfo unitTaxCalculationInfo = new APUnitTaxCalculationInfo();
-        BigDecimal builtUpArea = BigDecimal.ZERO;
-        BigDecimal floorMrv = BigDecimal.ZERO;
-        BigDecimal floorBuildingValue = BigDecimal.ZERO;
-        BigDecimal floorSiteValue = BigDecimal.ZERO;
-        BigDecimal floorGrossArv = BigDecimal.ZERO;
-        BigDecimal floorDepreciation = BigDecimal.ZERO;
-        BigDecimal floorNetArv = BigDecimal.ZERO;
+        BigDecimal builtUpArea;
+        BigDecimal floorMrv;
+        BigDecimal floorBuildingValue;
+        BigDecimal floorSiteValue;
+        BigDecimal floorGrossArv;
+        BigDecimal floorDepreciation;
+        BigDecimal floorNetArv;
 
         builtUpArea = BigDecimal.valueOf(floor.getBuiltUpArea().getArea());
         floorMrv = calculateFloorMrv(builtUpArea, boundaryCategory);
@@ -194,10 +185,6 @@ public class APTaxCalculator implements PropertyTaxCalculator {
         floorSiteValue = calculateFloorSiteValue(floorMrv);
         floorGrossArv = floorBuildingValue.multiply(new BigDecimal(12));
         floorDepreciation = calculateFloorDepreciation(floorGrossArv, floor);
-        /*if (property.getPropertyDetail().isStructure())
-            floorNetArv = floorGrossArv.subtract(floorDepreciation);
-        else
-            floorNetArv = floorSiteValue.multiply(new BigDecimal(12)).add(floorGrossArv.subtract(floorDepreciation));*/
         floorNetArv = floorSiteValue.multiply(new BigDecimal(12)).add(floorGrossArv.subtract(floorDepreciation));
         unitTaxCalculationInfo.setFloorNumber(FLOOR_MAP.get(floor.getFloorNo()));
         unitTaxCalculationInfo.setFloorArea(builtUpArea);
@@ -212,7 +199,7 @@ public class APTaxCalculator implements PropertyTaxCalculator {
         unitTaxCalculationInfo.setUnitOccupation(floor.getPropertyOccupation().getOccupancyCode());
         unitTaxCalculationInfo.setUnitStructure(floor.getStructureClassification().getConstrTypeCode());
         unitTaxCalculationInfo.setNetARV(floorNetArv.setScale(0, BigDecimal.ROUND_HALF_UP));
-        BigDecimal unAuthDeviationPerc = getUnAuthDeviationPerc(floor);
+        final BigDecimal unAuthDeviationPerc = getUnAuthDeviationPerc(floor);
         calculateApplicableTaxes(applicableTaxes, unitTaxCalculationInfo, installment, property.getPropertyDetail()
                 .getPropertyTypeMaster().getCode(), floor, unAuthDeviationPerc);
 
@@ -222,7 +209,7 @@ public class APTaxCalculator implements PropertyTaxCalculator {
     private APTaxCalculationInfo addPropertyInfo(final Property property) {
         final APTaxCalculationInfo taxCalculationInfo = new APTaxCalculationInfo();
         // Add Property Info
-        PropertyID propertyId = property.getBasicProperty().getPropertyID();
+        final PropertyID propertyId = property.getBasicProperty().getPropertyID();
         taxCalculationInfo.setPropertyOwnerName(property.getBasicProperty().getFullOwnerName());
         taxCalculationInfo.setPropertyAddress(property.getBasicProperty().getAddress().toString());
         taxCalculationInfo.setHouseNumber(property.getBasicProperty().getAddress().getHouseNoBldgApt());
@@ -246,8 +233,8 @@ public class APTaxCalculator implements PropertyTaxCalculator {
         final BigDecimal alv = unitTaxCalculationInfo.getNetARV();
         BigDecimal generalTax = BigDecimal.ZERO;
         BigDecimal educationTax = BigDecimal.ZERO;
-        BigDecimal halfYearHeadTax = BigDecimal.ZERO;
-        BigDecimal taxRatePerc = BigDecimal.ZERO;
+        BigDecimal halfYearHeadTax;
+        BigDecimal taxRatePerc;
         LOGGER.debug("calculateApplicableTaxes - ALV: " + alv);
         LOGGER.debug("calculateApplicableTaxes - applicableTaxes: " + applicableTaxes);
 
@@ -259,11 +246,10 @@ public class APTaxCalculator implements PropertyTaxCalculator {
                     halfYearHeadTax = getHalfYearTax(alv.multiply(taxRatePerc.divide(new BigDecimal("100"))).setScale(
                             2, BigDecimal.ROUND_HALF_UP));
                 } else {
-                    if (floor != null && floor.getPropertyUsage().getIsResidential()) {
+                    if (floor != null && floor.getPropertyUsage().getIsResidential())
                         taxRatePerc = getTaxRate(DEMANDRSN_CODE_GENERAL_TAX + "_RESD");
-                    } else {
+                    else
                         taxRatePerc = getTaxRate(DEMANDRSN_CODE_GENERAL_TAX + "_NR");
-                    }
                     halfYearHeadTax = alv.multiply(taxRatePerc.divide(new BigDecimal("100"))).setScale(2,
                             BigDecimal.ROUND_HALF_UP);
                 }
@@ -275,34 +261,30 @@ public class APTaxCalculator implements PropertyTaxCalculator {
                         .setScale(2, BigDecimal.ROUND_HALF_UP);
                 halfYearHeadTax = educationTax;
             }
-            if (applicableTax.equals(DEMANDRSN_CODE_LIBRARY_CESS)) {
+            if (applicableTax.equals(DEMANDRSN_CODE_LIBRARY_CESS))
                 halfYearHeadTax = generalTax.add(educationTax)
                         .multiply(getTaxRate(DEMANDRSN_CODE_LIBRARY_CESS).divide(new BigDecimal("100")))
                         .setScale(2, BigDecimal.ROUND_HALF_UP);
-            }
 
             if (halfYearHeadTax.compareTo(BigDecimal.ZERO) > 0) {
-                //halfYearHeadTax = roundOffToNearestEven(halfYearHeadTax);
                 totalHalfTaxPayable = totalHalfTaxPayable.add(halfYearHeadTax);
                 createMiscTax(applicableTax, halfYearHeadTax, unitTaxCalculationInfo);
             }
         }
         // calculating Un Authorized Penalty
-        if (!propTypeCode.equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)) {
+        if (!propTypeCode.equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
             try {
-                if (floor.getConstructionDate()
-                        .after(new SimpleDateFormat(DATE_FORMAT_DDMMYYY).parse(UNAUTHPENALTY_STARTDATE))) {
+                if (floor != null && floor.getConstructionDate()
+                        .after(new SimpleDateFormat(DATE_FORMAT_DDMMYYY).parse(UNAUTHPENALTY_STARTDATE)))
                     if (!(checkUnAuthDeviationPerc(unAuthDeviationPerc)
-                            || (unAuthDeviationPerc != null && unAuthDeviationPerc.intValue() == 0))) {
+                            || unAuthDeviationPerc != null && unAuthDeviationPerc.intValue() == 0)) {
                         halfYearHeadTax = calculateUnAuthPenalty(unAuthDeviationPerc, totalHalfTaxPayable);
                         totalHalfTaxPayable = totalHalfTaxPayable.add(halfYearHeadTax);
                         createMiscTax(DEMANDRSN_CODE_UNAUTHORIZED_PENALTY, halfYearHeadTax, unitTaxCalculationInfo);
                     }
-                }
-            } catch (ParseException e) {
+            } catch (final ParseException e) {
                 LOGGER.error(e);
             }
-        }
         // calculating Public Service Charges
         if (isPrimaryServiceChrApplicable) {
             halfYearHeadTax = roundOffToNearestEven(calcPublicServiceCharges(totalHalfTaxPayable));
@@ -312,8 +294,8 @@ public class APTaxCalculator implements PropertyTaxCalculator {
         unitTaxCalculationInfo.setTotalTaxPayable(totalHalfTaxPayable);
         return unitTaxCalculationInfo;
     }
-    
-    private Boolean checkUnAuthDeviationPerc(BigDecimal unAuthDeviationPerc) {
+
+    private Boolean checkUnAuthDeviationPerc(final BigDecimal unAuthDeviationPerc) {
         return unAuthDeviationPerc == null || "0".equals(unAuthDeviationPerc.toString())
                 || "-1".equals(unAuthDeviationPerc.toString());
     }
@@ -327,14 +309,13 @@ public class APTaxCalculator implements PropertyTaxCalculator {
     private List<String> prepareApplicableTaxes(final Property property) {
         LOGGER.debug("Entered into prepareApplTaxes");
         LOGGER.debug("prepareApplTaxes: property: " + property);
-        final List<String> applicableTaxes = new ArrayList<String>();
+        final List<String> applicableTaxes = new ArrayList<>();
         if (!property.getPropertyDetail().getPropertyTypeMaster().getCode().equals(OWNERSHIP_TYPE_VAC_LAND)) {
             applicableTaxes.add(DEMANDRSN_CODE_GENERAL_TAX);
             applicableTaxes.add(DEMANDRSN_CODE_UNAUTHORIZED_PENALTY);
             applicableTaxes.add(DEMANDRSN_CODE_EDUCATIONAL_CESS);
-        } else {
+        } else
             applicableTaxes.add(DEMANDRSN_CODE_VACANT_TAX);
-        }
         applicableTaxes.add(DEMANDRSN_CODE_LIBRARY_CESS);
         if (isCorporation)
             applicableTaxes.add(DEMANDRSN_CODE_SEWERAGE_TAX);
@@ -345,32 +326,26 @@ public class APTaxCalculator implements PropertyTaxCalculator {
         return applicableTaxes;
     }
 
+    @SuppressWarnings("unchecked")
     private BoundaryCategory getBoundaryCategory(final Boundary zone, final Installment installment,
             final Long usageId, final Date occupancyDate, final Long classification) throws TaxCalculatorExeption {
-        List<BoundaryCategory> categories = new ArrayList<BoundaryCategory>();
-        categories = persistenceService.findAllByNamedQuery(QUERY_BASERATE_BY_OCCUPANCY_ZONE, zone.getId(), usageId,
+        final List<BoundaryCategory> categories = persistenceService.findAllByNamedQuery(QUERY_BASERATE_BY_OCCUPANCY_ZONE,
+                zone.getId(), usageId,
                 classification, occupancyDate, installment.getToDate());
 
         LOGGER.debug("baseRentOfUnit - Installment : " + installment);
 
-        if (categories.isEmpty()) {
+        if (categories.isEmpty())
             throw new TaxCalculatorExeption("There are no Unit rates defined for chosen combinations, zone : "
                     + zone.getName() + " usageId : " + usageId + " classification : " + classification
                     + " occupancyDate : " + occupancyDate);
-        } else {
+        else
             return categories.get(0);
-        }
-    }
-
-    private List<EgDemandReasonDetails> getDemandReasonDetails(final String demandReasonCode,
-            final BigDecimal grossAnnualRentAfterDeduction, final Installment installment) {
-        return persistenceService.findAllByNamedQuery(QUERY_DEMANDREASONDETAILS_BY_DEMANDREASON_AND_INSTALLMENT,
-                demandReasonCode, grossAnnualRentAfterDeduction, installment.getFromDate(), installment.getToDate());
     }
 
     public Map<String, BigDecimal> getMiscTaxesForProp(final List<UnitTaxCalculationInfo> unitTaxCalcInfos) {
 
-        final Map<String, BigDecimal> taxMap = new HashMap<String, BigDecimal>();
+        final Map<String, BigDecimal> taxMap = new HashMap<>();
         for (final UnitTaxCalculationInfo unitTaxCalcInfo : unitTaxCalcInfos)
             for (final MiscellaneousTax miscTax : unitTaxCalcInfo.getMiscellaneousTaxes())
                 if (taxMap.get(miscTax.getTaxName()) == null)
@@ -378,11 +353,9 @@ public class APTaxCalculator implements PropertyTaxCalculator {
                 else
                     taxMap.put(miscTax.getTaxName(),
                             taxMap.get(miscTax.getTaxName()).add(miscTax.getTotalCalculatedTax()));
-        
-        
-        for (Map.Entry<String, BigDecimal> entry : taxMap.entrySet()) {
+
+        for (final Map.Entry<String, BigDecimal> entry : taxMap.entrySet())
             entry.setValue(entry.getValue().setScale(0, BigDecimal.ROUND_HALF_UP));
-        }
         return taxMap;
     }
 
@@ -419,8 +392,7 @@ public class APTaxCalculator implements PropertyTaxCalculator {
     }
 
     private Boolean betweenOrBefore(final Date date, final Date fromDate, final Date toDate) {
-        final Boolean result = between(date, fromDate, toDate) || date.before(fromDate);
-        return result;
+        return between(date, fromDate, toDate) || date.before(fromDate);
     }
 
     private BigDecimal calculateFloorMrv(final BigDecimal builtUpArea, final BoundaryCategory boundaryCategory) {
@@ -428,7 +400,7 @@ public class APTaxCalculator implements PropertyTaxCalculator {
     }
 
     private BigDecimal calculateFloorBuildingValue(final BigDecimal floorMrv) {
-        return floorMrv.multiply(BUIULDING_VALUE).setScale(2, BigDecimal.ROUND_HALF_UP);
+        return floorMrv.multiply(BUILDING_VALUE).setScale(2, BigDecimal.ROUND_HALF_UP);
     }
 
     private BigDecimal calculateFloorSiteValue(final BigDecimal floorMrv) {
@@ -436,20 +408,14 @@ public class APTaxCalculator implements PropertyTaxCalculator {
     }
 
     private BigDecimal calculateFloorDepreciation(final BigDecimal grossArv, final Floor floor) {
-        BigDecimal depreciationPct = BigDecimal.ZERO;
-        if (isSeaShoreULB) {
-            if (floor.getPropertyOccupation().getOccupancyCode().equals(PropertyTaxConstants.OCC_OWNER)) {
-                depreciationPct = SEASHORE_RESD_OWNER_DEPRECIATION;
-            } else {
-                depreciationPct = BigDecimal.valueOf(floor.getDepreciationMaster().getDepreciationPct());
-            }
-        } else {
-            if (floor.getPropertyOccupation().getOccupancyCode().equals(PropertyTaxConstants.OCC_OWNER) && floor.getPropertyUsage().getIsResidential()) {
-                depreciationPct = RESD_OWNER_DEPRECIATION;
-            } else {
-                depreciationPct = BigDecimal.valueOf(floor.getDepreciationMaster().getDepreciationPct());
-            }
-        }
+        BigDecimal depreciationPct;
+        if (floor.getPropertyOccupation().getOccupancyCode().equals(PropertyTaxConstants.OCC_OWNER)
+                && floor.getPropertyUsage().getIsResidential())
+            depreciationPct = RESD_OWNER_DEPRECIATION;
+        else
+            depreciationPct = BigDecimal.valueOf(floor.getDepreciationMaster().getDepreciationPct());
+        if (isSeaShoreULB)
+            depreciationPct = depreciationPct.add(SEASHORE_ADDITIONAL_DEPRECIATION);
         return grossArv.multiply(depreciationPct).divide(BigDecimal.valueOf(100));
     }
 
@@ -457,9 +423,8 @@ public class APTaxCalculator implements PropertyTaxCalculator {
         BigDecimal roundedAmt;
         final BigDecimal remainder = amount.remainder(new BigDecimal(2));
         /*
-         * if reminder is less than 1, subtract reminder amount from passed
-         * amount else reminder is greater than 1, subtract reminder amount from
-         * passed amount and add 5 to result amount
+         * if reminder is less than 1, subtract reminder amount from passed amount else reminder is greater than 1, subtract
+         * reminder amount from passed amount and add 5 to result amount
          */
         if (remainder.compareTo(new BigDecimal("1")) == 1)
             roundedAmt = amount.subtract(remainder).add(new BigDecimal(2));
@@ -469,78 +434,74 @@ public class APTaxCalculator implements PropertyTaxCalculator {
     }
 
     public BigDecimal convertYardToSquareMeters(final Float vacantLandArea) {
-        Float areaInSqMts = null;
-        areaInSqMts = new Float(vacantLandArea) * new Float(SQUARE_YARD_TO_SQUARE_METER_VALUE);
+        final Float areaInSqMts = vacantLandArea * new Float(SQUARE_YARD_TO_SQUARE_METER_VALUE);
         return new BigDecimal(areaInSqMts).setScale(2, BigDecimal.ROUND_HALF_UP);
     }
 
-    private BigDecimal taxIfGovtProperty(String propTypeCode, BigDecimal tax) {
+    private BigDecimal taxIfGovtProperty(final String propTypeCode, final BigDecimal tax) {
+        BigDecimal amount = BigDecimal.ZERO;
         if (propTypeCode.equals(PropertyTaxConstants.OWNERSHIP_TYPE_CENTRAL_GOVT_335))
-            tax = tax.multiply(new BigDecimal(0.335));
+            amount = tax.multiply(BigDecimal.valueOf(0.335));
         if (propTypeCode.equals(PropertyTaxConstants.OWNERSHIP_TYPE_CENTRAL_GOVT_50))
-            tax = tax.multiply(new BigDecimal(0.5));
+            amount = tax.multiply(BigDecimal.valueOf(0.5));
         if (propTypeCode.equals(PropertyTaxConstants.OWNERSHIP_TYPE_CENTRAL_GOVT_75))
-            tax = tax.multiply(new BigDecimal(0.75));
-        return tax;
+            amount = tax.multiply(BigDecimal.valueOf(0.75));
+        return amount;
     }
 
-    private BigDecimal getUnAuthDeviationPerc(Floor floor) {
+    private BigDecimal getUnAuthDeviationPerc(final Floor floor) {
         BigDecimal deviationPerc = null;
-        BigDecimal diffArea = null;
-        BigDecimal plinthArea = new BigDecimal(floor.getBuiltUpArea().getArea()).setScale(2, BigDecimal.ROUND_HALF_UP);
-        BigDecimal buildingPlanPlinthArea = (floor.getBuildingPlanPlinthArea() != null && floor
-                .getBuildingPlanPlinthArea().getArea() != null) ? new BigDecimal(floor.getBuildingPlanPlinthArea()
-                .getArea()).setScale(2, BigDecimal.ROUND_HALF_UP) : BigDecimal.ZERO;
-        if (buildingPlanPlinthArea.compareTo(BigDecimal.ZERO) == 0) {
+        BigDecimal diffArea;
+        final BigDecimal plinthArea = new BigDecimal(floor.getBuiltUpArea().getArea()).setScale(2, BigDecimal.ROUND_HALF_UP);
+        final BigDecimal buildingPlanPlinthArea = floor.getBuildingPlanPlinthArea() != null && floor
+                .getBuildingPlanPlinthArea().getArea() != null ? new BigDecimal(floor.getBuildingPlanPlinthArea()
+                        .getArea()).setScale(2, BigDecimal.ROUND_HALF_UP) : BigDecimal.ZERO;
+        if (buildingPlanPlinthArea.compareTo(BigDecimal.ZERO) == 0)
             deviationPerc = new BigDecimal(100);
-        } else if (plinthArea.compareTo(buildingPlanPlinthArea) == 1) {
+        else if (plinthArea.compareTo(buildingPlanPlinthArea) > 0) {
             diffArea = plinthArea.subtract(buildingPlanPlinthArea);
             deviationPerc = diffArea.divide(buildingPlanPlinthArea, 2, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal("100"));
         }
         return deviationPerc;
     }
 
-    private BigDecimal calculateUnAuthPenalty(BigDecimal deviationPerc, BigDecimal totalPropertyTax) {
+    private BigDecimal calculateUnAuthPenalty(final BigDecimal deviationPerc, final BigDecimal totalPropertyTax) {
         BigDecimal unAuthPenalty = BigDecimal.ZERO;
         /*
-         * deviationPerc between 1-10, Penalty perc = 25%, 
-         * deviationPerc > 10, Penalty perc = 50%, 
-         * no Building plan details, Penalty perc = 100%
+         * deviationPerc between 1-10, Penalty perc = 25%, deviationPerc > 10, Penalty perc = 50%, no Building plan details,
+         * Penalty perc = 100%
          */
-        if (deviationPerc != null && !deviationPerc.equals("0")) {
-            if (deviationPerc.compareTo(BigDecimal.ZERO) == 1 && deviationPerc.compareTo(BigDecimal.TEN) <=0) {
+        if (deviationPerc != null && deviationPerc.compareTo(BigDecimal.ZERO) > 0)
+            if (deviationPerc.compareTo(BigDecimal.ZERO) > 0 && deviationPerc.compareTo(BigDecimal.TEN) <= 0)
                 unAuthPenalty = totalPropertyTax.multiply(BPA_DEVIATION_TAXPERC_1_10);
-            } else if (deviationPerc.compareTo(BigDecimal.TEN) == 1
-            		&& deviationPerc.compareTo(BIGDECIMAL_100) != 0) {
+            else if (deviationPerc.compareTo(BigDecimal.TEN) > 0
+                    && deviationPerc.compareTo(BIGDECIMAL_100) != 0)
                 unAuthPenalty = totalPropertyTax.multiply(BPA_DEVIATION_TAXPERC_ABOVE_11);
-            } else {
+            else
                 unAuthPenalty = totalPropertyTax.multiply(BPA_DEVIATION_TAXPERC_NOT_DEFINED);
-            }
-        }
         return unAuthPenalty;
     }
 
-    private BigDecimal calcPublicServiceCharges(BigDecimal totalPropertyTax) {
-        BigDecimal publicServiceCharge = BigDecimal.ZERO;
-        return publicServiceCharge;
+    private BigDecimal calcPublicServiceCharges(final BigDecimal totalPropertyTax) {
+        return BigDecimal.ZERO;
     }
 
-    private void createMiscTax(String taxHead, BigDecimal tax, APUnitTaxCalculationInfo unitTaxCalculationInfo) {
-        APMiscellaneousTax miscellaneousTax = new APMiscellaneousTax();
+    private void createMiscTax(final String taxHead, final BigDecimal tax,
+            final APUnitTaxCalculationInfo unitTaxCalculationInfo) {
+        final APMiscellaneousTax miscellaneousTax = new APMiscellaneousTax();
         miscellaneousTax.setTaxName(taxHead);
         miscellaneousTax.setTotalCalculatedTax(tax);
         unitTaxCalculationInfo.addMiscellaneousTaxes(miscellaneousTax);
     }
 
-    private BigDecimal getTaxRate(String taxHead) {
+    private BigDecimal getTaxRate(final String taxHead) {
         BigDecimal taxRate = BigDecimal.ZERO;
-        if (taxRateProps != null) {
+        if (taxRateProps != null)
             taxRate = new BigDecimal(taxRateProps.getProperty(taxHead));
-        }
         return taxRate;
     }
 
-    private BigDecimal getHalfYearTax(BigDecimal annualTax) {
+    private BigDecimal getHalfYearTax(final BigDecimal annualTax) {
         return annualTax.divide(new BigDecimal(2)).setScale(2, BigDecimal.ROUND_HALF_UP);
     }
 
