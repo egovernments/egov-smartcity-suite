@@ -105,8 +105,15 @@
 							data-collapsed="0">
 							<%@ include file="amalgamationForm.jsp"%>
 							<div class="panel-body custom-form">
-								<%@ include file="../workflow/common-workflowmatrix-new.jsp"%>
-								<%@ include file="../workflow/commonWorkflowMatrix-button.jsp"%>
+								<s:if test="%{propertyByEmployee == true}">
+									<%@ include file="../workflow/common-workflowmatrix-new.jsp"%>
+									<%@ include file="../workflow/commonWorkflowMatrix-button.jsp"%>
+								</s:if>
+								<s:else>
+									<tr>
+										<%@ include file="../workflow/commonWorkflowMatrix-button.jsp"%>
+									</tr>
+								</s:else>
 							</div>
 						</div>
 						<!-- Amalgamation-form -->
