@@ -532,6 +532,10 @@ public class License extends StateAware {
         return getLicenseAppType() != null && NEW_LIC_APPTYPE.equals(getLicenseAppType().getName());
     }
 
+    public boolean isNewPermanentApplication() {
+        return getLicenseAppType() != null && NEW_LIC_APPTYPE.equals(getLicenseAppType().getName()) && PERMANENT_NATUREOFBUSINESS.equals(getNatureOfBusiness().getName());
+    }
+
     public boolean isReNewApplication() {
         return getLicenseAppType() != null && RENEWAL_LIC_APPTYPE.equals(getLicenseAppType().getName());
     }

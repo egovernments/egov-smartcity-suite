@@ -43,6 +43,7 @@ package org.egov.tl.entity.dto;
 import org.egov.infra.workflow.entity.State;
 import org.egov.tl.entity.License;
 import org.egov.tl.utils.Constants;
+import org.joda.time.DateTime;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -125,6 +126,11 @@ public class SearchForm {
             State stateobj = license.getState();
             if (!license.isPaid() && license.getIsActive())
                 addRenewalOption(licenseActions, stateobj);
+            Date fromRange = new DateTime().withMonthOfYear(1).withDayOfMonth(1).toDate();
+            Date toRange = new DateTime().withMonthOfYear(3).withDayOfMonth(31).toDate();
+            Date currentDate = new Date();
+            if (currentDate.after(fromRange) && currentDate.before(toRange))
+                demandGenerationOption(licenseActions, license);
         }
 
     }
@@ -132,6 +138,14 @@ public class SearchForm {
     private void addRenewalOption(List<String> licenseActions, State stateobj) {
         if (stateobj == null || "END".equals(stateobj.getValue()) || "Closed".equals(stateobj.getValue()))
             licenseActions.add("Renew License");
+    }
+
+    private void demandGenerationOption(List<String> licenseActions, License license) {
+        Date nextYearInstallment = new DateTime().withMonthOfYear(4).withDayOfMonth(1).toDate();
+        Date currentYearInstallment = license.getLicenseDemand().getEgInstallmentMaster().getToDate();
+        if (license.isNewPermanentApplication() && license.hasState() && license.getIsActive() && currentYearInstallment.before(nextYearInstallment)) {
+            licenseActions.add("Generate Demand");
+        }
     }
 
     public String getApplicationNumber() {

@@ -100,6 +100,8 @@ public class DemandGenerationService {
 
     private int batchSize;
 
+    private static String errormsg = "Error occurred while generating demand for license {}";
+
     @Autowired
     public DemandGenerationService(ApplicationProperties applicationProperties) {
         this.batchSize = applicationProperties.getBatchUpdateSize();
@@ -139,7 +141,7 @@ public class DemandGenerationService {
                     detail.setDetail(SUCCESSFUL);
                     detail.setStatus(COMPLETED);
                 } catch (RuntimeException e) {
-                    LOGGER.warn("Error occurred while generating demand for license {}", detail.getLicense().getLicenseNumber(), e);
+                    LOGGER.warn(errormsg, detail.getLicense().getLicenseNumber(), e);
                     demandGenerationLogService.updateDemandGenerationLogDetailOnException(demandGenerationLog, detail, e);
                 }
                 flushBatchUpdate(entityManager, ++batchUpdateCount, batchSize);
@@ -180,12 +182,35 @@ public class DemandGenerationService {
                 }
                 demandGenerationLogDetail.setStatus(COMPLETED);
             } catch (RuntimeException e) {
-                LOGGER.warn("Error occurred while generating demand for license {}", license.getLicenseNumber(), e);
+                LOGGER.warn(errormsg, license.getLicenseNumber(), e);
                 demandGenerationLogService.updateDemandGenerationLogDetailOnException(demandGenerationLog, demandGenerationLogDetail, e);
             }
             flushBatchUpdate(entityManager, ++batchUpdateCount, batchSize);
         }
 
         return demandGenerationLogService.completeDemandGenerationLog(demandGenerationLog);
+    }
+
+    @Transactional
+    public DemandGenerationLogDetail generateLicenseDemand(License license) {
+        Installment installment = installmentDao.getInsatllmentByModuleForGivenDate(licenseService.getModuleName(), new DateTime().withMonthOfYear(4).withDayOfMonth(1).toDate());
+        CFinancialYear financialYear = getLatestFinancialYear();
+        DemandGenerationLog demandGenerationLog = demandGenerationLogService.getDemandGenerationLogByInstallmentYear(financialYear.getFinYearRange());
+        DemandGenerationLogDetail demandGenerationLogDetail = demandGenerationLogService.
+                createOrGetDemandGenerationLogDetail(demandGenerationLog, license);
+        try {
+            licenseService.raiseDemand(license, licenseService.getModuleName(), installment);
+            demandGenerationLogDetail.setDetail(SUCCESSFUL);
+            demandGenerationLogDetail.setStatus(COMPLETED);
+        } catch (RuntimeException e) {
+            LOGGER.warn(errormsg, demandGenerationLogDetail.getLicense().getLicenseNumber(), e);
+            demandGenerationLogService.updateDemandGenerationLogDetailOnException(demandGenerationLog, demandGenerationLogDetail, e);
+        }
+        demandGenerationLogService.completeDemandGenerationLog(demandGenerationLog, demandGenerationLogDetail);
+        return demandGenerationLogDetail;
+    }
+
+    public CFinancialYear getLatestFinancialYear() {
+        return financialYearService.getFinancialYearByDate(new DateTime().withMonthOfYear(4).withDayOfMonth(1).toDate());
     }
 }

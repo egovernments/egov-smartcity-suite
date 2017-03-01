@@ -43,12 +43,13 @@ package org.egov.tl.entity;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.tl.entity.enums.ProcessStatus;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -79,7 +80,8 @@ public class DemandGenerationLog extends AbstractAuditable {
     @Enumerated(EnumType.STRING)
     private ProcessStatus demandGenerationStatus;
 
-    @OneToMany(mappedBy = "demandGenerationLog", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "demandGenerationLog", cascade = CascadeType.ALL)
+    @Fetch(FetchMode.SUBSELECT)
     private List<DemandGenerationLogDetail> details = new ArrayList<>();
 
     protected DemandGenerationLog() {
