@@ -139,12 +139,8 @@
 						<div class="row add-border">
 							<div class="col-xs-3 add-margin"><spring:message code="lbl.donationcharge"/></div>  
 							<div class="col-xs-3 add-margin view-content">
-								<c:choose>
-								<c:when test="${not empty feeDetails.WTAXDONATION}">
-									<c:out value="${feeDetails.WTAXDONATION}" />
-								</c:when>
-								<c:otherwise>-</c:otherwise>
-							</c:choose></div>
+								<c:out value="${waterConnectionDetails.donationCharges}"></c:out>
+							</div>
 							<div class="col-xs-3 add-margin"><spring:message code="lbl.estimationcharges"/></div>
 							<div class="col-xs-3 add-margin view-content">
 							<c:choose>

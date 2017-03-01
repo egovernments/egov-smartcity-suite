@@ -179,7 +179,7 @@ public class ConnectionDemandService {
         final Map<String, Object> feeDetails = new HashMap<>();
         DonationDetails donationDetails = null;
         final FieldInspectionDetails fieldInspectionDetails = waterConnectionDetails.getFieldInspectionDetails();
-        EgDemand egDemand = null;
+        EgDemand egDemand;
         if (null != fieldInspectionDetails) {
             feeDetails.put(WaterTaxConstants.WATERTAX_SECURITY_CHARGE, fieldInspectionDetails.getSecurityDeposit());
             feeDetails.put(WaterTaxConstants.WATERTAX_ROADCUTTING_CHARGE,
@@ -189,8 +189,12 @@ public class ConnectionDemandService {
         }
 
         // (!WaterTaxConstants.BPL_CATEGORY.equalsIgnoreCase(waterConnectionDetails.getCategory().getCode()))
-        if (!WaterTaxConstants.CHANGEOFUSE.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()))
+        if (waterConnectionDetails.getConnectionType().equals(ConnectionType.NON_METERED) &&
+                !WaterTaxConstants.CHANGEOFUSE.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()))
             donationDetails = getDonationDetails(waterConnectionDetails);
+        if (waterConnectionDetails.getConnectionType().equals(ConnectionType.METERED) &&
+                waterConnectionDetails.getDonationCharges() > 0.0)
+            feeDetails.put(WaterTaxConstants.WATERTAX_DONATION_CHARGE, waterConnectionDetails.getDonationCharges());
 
         if (donationDetails != null) {
             feeDetails.put(WaterTaxConstants.WATERTAX_DONATION_CHARGE, donationDetails.getAmount());
@@ -201,12 +205,10 @@ public class ConnectionDemandService {
                 moduleService.getModuleByName(WaterTaxConstants.EGMODULE_NAME), new Date(), WaterTaxConstants.YEARLY);
         // Not updating demand amount collected for new connection as per the
         // discussion.
-        // double totalFee = 0.0;
         if (installment != null) {
             final Set<EgDemandDetails> dmdDetailSet = new HashSet<>();
             for (final String demandReason : feeDetails.keySet())
                 dmdDetailSet.add(createDemandDetails((Double) feeDetails.get(demandReason), demandReason, installment));
-            // totalFee += (Double) feeDetails.get(demandReason);
 
             egDemand = new EgDemand();
             egDemand.setEgInstallmentMaster(installment);
@@ -317,7 +319,6 @@ public class ConnectionDemandService {
         return splitAmount;
     }
 
-   
     public List<Object> getDmdCollAmtInstallmentWise(final EgDemand egDemand) {
         final StringBuilder queryStringBuilder = new StringBuilder();
         queryStringBuilder
@@ -606,7 +607,7 @@ public class ConnectionDemandService {
 
     public WaterConnectionDetails updateDemandForNonmeteredConnection(
             final WaterConnectionDetails waterConnectionDetails, Installment installment,
-            final Boolean reconnInSameInstallment,String workFlowAction) throws ValidationException {
+            final Boolean reconnInSameInstallment, final String workFlowAction) throws ValidationException {
         Date InstallemntStartDate = null;
         if (installment == null) {
             installment = getCurrentInstallment(WaterTaxConstants.WATER_RATES_NONMETERED_PTMODULE, null, new Date());
@@ -678,6 +679,7 @@ public class ConnectionDemandService {
             return installmentDao.getInsatllmentByModuleForGivenDateAndInstallmentType(
                     moduleService.getModuleByName(moduleName), date, installmentType);
     }
+
     public List<Object> getDmdCollAmtInstallmentWiseWithIsDmdTrue(final EgDemand egDemand) {
         final StringBuffer strBuf = new StringBuffer(2000);
         strBuf.append(
