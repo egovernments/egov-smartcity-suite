@@ -105,7 +105,7 @@ public class MarriageRegistrationUpdateIndexesService {
         } else
             user = securityUtils.getCurrentUser();
 
-        final String url = "/mrs/registration/" + marriageRegistration.getApplicationNo();
+        final String url = "/mrs/registration/viewapplication/" + marriageRegistration.getApplicationNo();
 
         ApplicationIndex applicationIndex = applicationIndexService
                 .findByApplicationNumber(marriageRegistration.getApplicationNo());
@@ -158,7 +158,7 @@ public class MarriageRegistrationUpdateIndexesService {
                             String.format(url))
                     .withApplicantAddress(marriageRegistration.getHusband().getContactInfo().getResidenceAddress())
                     .withOwnername(user != null ?user.getUsername() + "::" + user.getName():"")
-                    .withChannel(Source.SYSTEM.toString())
+                    .withChannel(marriageRegistration.getSource() == null ? Source.SYSTEM.toString() : marriageRegistration.getSource())
                     .withMobileNumber(marriageRegistration.getHusband().getContactInfo().getMobileNo())
                     .withClosed(ClosureStatus.NO)
                     .withApproved(ApprovalStatus.INPROGRESS).build();

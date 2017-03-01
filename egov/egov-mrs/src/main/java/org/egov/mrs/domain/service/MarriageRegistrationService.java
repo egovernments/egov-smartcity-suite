@@ -65,6 +65,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 import org.egov.commons.EgwStatus;
+import org.egov.commons.entity.Source;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.eis.service.EisCommonService;
 import org.egov.eis.web.contract.WorkflowContainer;
@@ -263,6 +264,7 @@ public class MarriageRegistrationService {
         registration.setStatus(
                 marriageUtils.getStatusByCodeAndModuleType(MarriageRegistration.RegistrationStatus.CREATED.toString(),
                         MarriageConstants.MODULE_NAME));
+        registration.setSource(Source.SYSTEM.toString());
         create(registration);
         workflowService.transition(registration, workflowContainer, registration.getApprovalComent());
         marriageRegistrationUpdateIndexesService.updateIndexes(registration);
@@ -286,6 +288,7 @@ public class MarriageRegistrationService {
                     dd.setAmtCollected(dd.getAmount());
         registration.setActive(true);
         registration.setLegacy(true);
+        registration.setSource(Source.SYSTEM.toString());
         create(registration);
         marriageRegistrationUpdateIndexesService.updateIndexes(registration);
         return registration.getApplicationNo();

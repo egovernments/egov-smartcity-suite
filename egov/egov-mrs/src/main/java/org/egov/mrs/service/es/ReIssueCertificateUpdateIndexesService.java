@@ -79,10 +79,10 @@ public class ReIssueCertificateUpdateIndexesService {
                 .withApplicationType(MarriageFeeType.CERTIFICATEISSUE.name())
                 .withApplicantName(reIssue.getApplicant().getFullName())
                 .withStatus(reIssue.getStatus().getDescription()).withUrl(
-                        "/mrs/reissue/" + reIssue.getId())
+                        "/mrs/reissue/viewapplication/" + reIssue.getApplicationNo())
                 .withApplicantAddress(reIssue.getApplicant().getContactInfo().getResidenceAddress())
                 .withOwnername(user != null ? user.getUsername() + "::" + user.getName() : "")
-                .withChannel(Source.SYSTEM.toString())
+                .withChannel(reIssue.getSource() == null ? Source.SYSTEM.toString() : reIssue.getSource())
                 .withMobileNumber(reIssue.getApplicant().getContactInfo().getMobileNo())
                 .withClosed(ClosureStatus.NO)
                 .withApproved(ApprovalStatus.INPROGRESS).build();

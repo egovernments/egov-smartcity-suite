@@ -143,6 +143,7 @@ public class MarriageConstants {
     public static final String JUNIOR_SENIOR_ASSISTANCE_APPROVAL_PENDING ="Junior/Senior Assistance approval pending";
     public static final String CSC_OPERATOR_CREATED =  "CSC Operator created";
     public static final String APPLICATION_PDF = "application/pdf";
+    public static final String SOURCE_CSC =  "CSC";
     private MarriageConstants() {
         // To hide implicit public
     }

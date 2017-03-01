@@ -139,6 +139,7 @@ public class RegistrationWorkflowService {
                     REGISTRATION_ADDNL_RULE, currentState, null);
             nextState = workflowMatrix.getNextState();
             nextAction = workflowMatrix.getNextAction();
+            registration.setSource(MarriageConstants.SOURCE_CSC);
         } else if (workflowContainer == null) {
             nextStateOwner = assignmentService.getPrimaryAssignmentForUser(registration.getCreatedBy().getId()).getPosition();
             workflowMatrix = marriageRegistrationWorkflowService.getWfMatrix(WorkflowType.MarriageRegistration.name(), null, null,
@@ -227,6 +228,7 @@ public class RegistrationWorkflowService {
                     REGISTRATION_ADDNL_RULE, currentState, null);
             nextState = workflowMatrix.getNextState();
             nextAction = workflowMatrix.getNextAction();
+            reIssue.setSource(MarriageConstants.SOURCE_CSC);
         } else if (workflowContainer == null) {
             nextStateOwner = assignment != null ? assignment.getPosition() : null;
             workflowMatrix = reIssueWorkflowService.getWfMatrix(WorkflowType.ReIssue.name(), null, null,
