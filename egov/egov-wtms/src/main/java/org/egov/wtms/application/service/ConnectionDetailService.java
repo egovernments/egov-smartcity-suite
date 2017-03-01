@@ -110,7 +110,7 @@ public class ConnectionDetailService {
             waterTaxDue.setIsSuccess(true);
         } else {
             waterTaxDue.setIsSuccess(false);
-            waterTaxDue.setConsumerCode(Collections.EMPTY_LIST);
+            waterTaxDue.setConsumerCode(Collections.emptyList());
             waterTaxDue.setConnectionCount(0);
             waterTaxDue.setErrorCode(WaterTaxConstants.CONSUMERCODE_NOT_EXIST_ERR_CODE);
             waterTaxDue.setErrorMessage(WaterTaxConstants.WTAXDETAILS_CONSUMER_CODE_NOT_EXIST_ERR_MSG_PREFIX
@@ -130,7 +130,7 @@ public class ConnectionDetailService {
                 .findByPropertyIdentifier(propertyIdentifier);
         if (waterConnections.isEmpty()) {
             waterTaxDue = new WaterTaxDue();
-            waterTaxDue.setConsumerCode(Collections.EMPTY_LIST);
+            waterTaxDue.setConsumerCode(Collections.emptyList());
             waterTaxDue.setConnectionCount(0);
             waterTaxDue.setIsSuccess(false);
             waterTaxDue.setErrorCode(WaterTaxConstants.PROPERTYID_NOT_EXIST_ERR_CODE);
