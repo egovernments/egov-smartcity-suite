@@ -84,9 +84,6 @@ public interface WorkOrderEstimateRepository extends JpaRepository<WorkOrderEsti
             @Param("workOrderStatus") String workOrderStatus, @Param("offlineStatus") String offlineStatus,
             @Param("objectType") String objectType);
 
-    List<WorkOrderEstimate> findByEstimate_EstimateNumberContainingIgnoreCaseAndWorkOrder_EgwStatus_codeNotLike(
-            final String estimateNumber, final String statusCode);
-
     WorkOrderEstimate findByEstimate_EstimateNumberAndWorkOrder_EgwStatus_codeNotLike(
             final String estimateNumber, final String statusCode);
 
@@ -102,5 +99,8 @@ public interface WorkOrderEstimateRepository extends JpaRepository<WorkOrderEsti
     @Query("select distinct(woe) from WorkOrderEstimate as woe where upper(woe.estimate.estimateNumber) = :estimateNumber and woe.workOrder.egwStatus.code = :workOrderStatus and woe.workOrder.parent is null")
     WorkOrderEstimate findWorkOrderEstimateByEstimateNumber(@Param("estimateNumber") final String estimateNumber,
             @Param("workOrderStatus") final String workOrderStatus);
-
+    
+    @Query("select distinct(woe) from WorkOrderEstimate as woe where upper(woe.estimate.estimateNumber) = :estimateNumber and woe.workOrder.egwStatus.code != :workOrderStatus")
+    List<WorkOrderEstimate> findWorkOrderEstimatesToCancelAbstractEstimate(
+            @Param("estimateNumber") final String estimateNumber, @Param("workOrderStatus") final String workOrderStatus);
 }

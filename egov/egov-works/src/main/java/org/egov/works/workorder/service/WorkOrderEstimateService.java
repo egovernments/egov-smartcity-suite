@@ -233,9 +233,8 @@ public class WorkOrderEstimateService {
     }
 
     public List<WorkOrderEstimate> getWorkOrderEstimatesToCancelEstimates(final String estimateNumber) {
-        return workOrderEstimateRepository
-                .findByEstimate_EstimateNumberContainingIgnoreCaseAndWorkOrder_EgwStatus_codeNotLike(estimateNumber,
-                        WorksConstants.CANCELLED_STATUS);
+        return workOrderEstimateRepository.findWorkOrderEstimatesToCancelAbstractEstimate(estimateNumber.toUpperCase(),
+                WorksConstants.CANCELLED_STATUS);
     }
 
     public WorkOrderEstimate getWorkOrderByEstimateNumber(final String estimateNumber) {
