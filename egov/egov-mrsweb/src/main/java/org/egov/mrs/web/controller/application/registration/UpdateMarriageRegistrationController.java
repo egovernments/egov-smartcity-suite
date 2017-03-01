@@ -187,7 +187,8 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
         prepareWorkflow(model, registration, workFlowContainer);
         model.addAttribute("additionalRule", MarriageConstants.ADDITIONAL_RULE_REGISTRATION);
         model.addAttribute("stateType", registration.getClass().getSimpleName());
-        model.addAttribute("currentState", registration.getCurrentState().getValue());
+        if (registration.getCurrentState() != null)
+            model.addAttribute("currentState", registration.getCurrentState().getValue());
         model.addAttribute("isDigitalSignEnabled", marriageUtils.isDigitalSignEnabled());
 
         if (registration.getStatus().getCode().equalsIgnoreCase(MarriageConstants.CREATED)
