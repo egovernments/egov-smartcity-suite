@@ -439,6 +439,9 @@ public class RestApiConstants {
     public static final String THIRD_PARTY_ERR_CODE_NOT_VALID_NAME_OF_WORK = "EGF-REST-37";
     public static final String THIRD_PARTY_ERR_MSG_NOT_VALID_NAME_OF_WORK = "\n \t and ' are not allowed in Name of the Work";
 
+    public static final String THIRD_PARTY_ERR_CODE_NO_PAYEE_DETAILS = "EGF-REST-38";
+    public static final String THIRD_PARTY_ERR_MSG_NO_PAYEE_DETAILS = "Bill Payee Details are required";
+
     public static final String THIRD_PARTY_ERR_CODE_NOT_EXIST_CONTRACTOR = "EGWORKS-CONTRACTOR-1";
     public static final String THIRD_PARTY_ERR_MSG_NOT_EXIST_CONTRACTOR = "No contractor exists with given contractor code";
 
