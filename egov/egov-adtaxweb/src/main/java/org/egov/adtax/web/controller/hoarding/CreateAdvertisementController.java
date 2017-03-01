@@ -55,6 +55,7 @@ import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
 import org.egov.adtax.web.controller.common.HoardingControllerSupport;
 import org.egov.adtax.workflow.AdvertisementWorkFlowService;
 import org.egov.commons.Installment;
+import org.egov.commons.entity.Source;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.entity.Boundary;
@@ -81,20 +82,20 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 @RequestMapping("/hoarding")
 public class CreateAdvertisementController extends HoardingControllerSupport {
-	
+
     private static final String APPROVAL_POSITION = "approvalPosition";
     private static final String APPLICATION_PDF = "application/pdf";
     protected String reportId;
     @Autowired
     @Qualifier("messageSource")
     private MessageSource messageSource;
-   
+
     @Autowired
     private SecurityUtils securityUtils;
-    
+
     @Autowired
     private AdvertisementWorkFlowService advertisementWorkFlowService;
-    
+
     @RequestMapping(value = "child-boundaries", method = GET, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     public List<Boundary> childBoundaries(@RequestParam final Long parentBoundaryId) {
@@ -134,6 +135,7 @@ public class CreateAdvertisementController extends HoardingControllerSupport {
             advertisementPermitDetail.setStatus(advertisementPermitDetailService
                     .getStatusByModuleAndCode(AdvertisementTaxConstants.APPLICATION_STATUS_CREATED));
         advertisementPermitDetail.getAdvertisement().setStatus(AdvertisementStatus.WORKFLOW_IN_PROGRESS);
+        advertisementPermitDetail.setSource(Source.SYSTEM.toString());
         if (resultBinder.hasErrors()) {
             WorkflowContainer workFlowContainer = new WorkflowContainer();
             model.addAttribute("isEmployee", advertisementWorkFlowService.isEmployee(securityUtils.getCurrentUser()));
@@ -156,8 +158,10 @@ public class CreateAdvertisementController extends HoardingControllerSupport {
                 approvalPosition = assignment.getPosition().getId();
                 approverName = assignment.getEmployee().getName();
                 nextDesignation = assignment.getDesignation().getName();
+
             }
         }
+
         if (request.getParameter("approvalComent") != null)
             approvalComment = request.getParameter("approvalComent");
         if (request.getParameter("workFlowAction") != null)
@@ -182,7 +186,7 @@ public class CreateAdvertisementController extends HoardingControllerSupport {
         } else {
             return "redirect:/hoarding/success/" + advertisementPermitDetail.getId();
         }
-    } 
+    }
 
     private void validateApplicationDate(final AdvertisementPermitDetail advertisementPermitDetail,
             final BindingResult resultBinder) {
@@ -200,7 +204,7 @@ public class CreateAdvertisementController extends HoardingControllerSupport {
     @RequestMapping(value = "/success/{id}", method = GET)
     public ModelAndView successView(@PathVariable("id") final String id,
             @ModelAttribute final AdvertisementPermitDetail advertisementPermitDetail) {
-        
+
         return new ModelAndView("hoarding/hoarding-success", "hoarding",
                 advertisementPermitDetailService.findBy(Long.valueOf(id)));
 
@@ -223,7 +227,8 @@ public class CreateAdvertisementController extends HoardingControllerSupport {
         AdvertisementPermitDetail advertisementPermitDetail = advertisementPermitDetailService.findBy(Long.valueOf(id));
 
         if (advertisementPermitDetail != null) {
-            reportOutput = advertisementService.getReportParamsForAcknowdgement(advertisementPermitDetail, cityMunicipalityName, cityName)
+            reportOutput = advertisementService
+                    .getReportParamsForAcknowdgement(advertisementPermitDetail, cityMunicipalityName, cityName)
                     .getReportOutputData();
             if (reportOutput != null) {
                 final HttpHeaders headers = new HttpHeaders();
@@ -233,9 +238,9 @@ public class CreateAdvertisementController extends HoardingControllerSupport {
                 return new ResponseEntity<>(reportOutput, headers, HttpStatus.CREATED);
             }
         }
-        
+
         return null;
-        
+
     }
 
     public void validateAssignmentForCscUser(final AdvertisementPermitDetail advertisementPermitDetail, Boolean isEmployee,

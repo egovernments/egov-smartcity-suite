@@ -201,6 +201,8 @@ public class AdvertisementIndex {
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String advertisementNumber_Clauses;
 
+    @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
+    private String source;
 	
 	public AdvertisementIndex(final String advertisementNumber,
 			final String ulbName, final String ulbCode, final Date createdDate,
@@ -605,5 +607,13 @@ public class AdvertisementIndex {
 	public void setAdvertisementNumber_Clauses(String advertisementNumber_Clauses) {
 		this.advertisementNumber_Clauses = advertisementNumber_Clauses;
 	}
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
 
 }

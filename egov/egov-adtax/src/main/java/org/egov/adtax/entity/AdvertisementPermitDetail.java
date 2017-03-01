@@ -139,11 +139,13 @@ public class AdvertisementPermitDetail extends StateAware {
     private Double width;
     private Double breadth;
     private Double totalHeight;
-    
+
     private String deactivation_remarks;
-    
+
     private Date deactivation_date;
-    
+
+    private String Source;
+
     @Transient
     private Long approvalDepartment;
 
@@ -375,6 +377,12 @@ public class AdvertisementPermitDetail extends StateAware {
         this.deactivation_date = deactivation_date;
     }
 
- 
+    public String getSource() {
+        return Source;
+    }
+
+    public void setSource(String source) {
+        Source = source;
+    }
 
 }
