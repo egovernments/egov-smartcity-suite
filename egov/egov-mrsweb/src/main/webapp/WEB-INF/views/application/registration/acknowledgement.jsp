@@ -56,12 +56,12 @@
 		<c:if test="${applnType=='NEW'}">
 		<input type="button" value="Print" name="PrintAck" id="PrintAck"
 				class="button"
-				onclick="window.open('/mrs/registration/printmarriageregistrationack?applnNo=${applicationNo}','_blank');" > 
+				onclick="window.open('/mrs/registration/printmarriageregistrationack?applnNo=${applicationNo}','_self');" > 
 		</c:if>
 		<c:if test="${applnType=='REISSUE'}">
 		<input type="button" value="Print" name="PrintAck" id="PrintAck"
 				class="button"
-				onclick="window.open('/mrs/reissue/printreissuecertificateack?applnNo=${applicationNo}','_blank');" > 
+				onclick="window.open('/mrs/reissue/printreissuecertificateack?applnNo=${applicationNo}','_self');" > 
 		</c:if>
 		<input type="button" name="button2" id="button2" value="Close" class="btn btn-default" onclick="window.close();" />
 </div>

@@ -77,6 +77,11 @@ public class ViewMarriageRegistrationController extends MarriageRegistrationCont
             final Model model) throws IOException {
         final MarriageRegistration registration = marriageRegistrationService.get(registrationId);
 
+        prepareMrgRegForView(mode, model, registration);
+        return "registration-view";
+    }
+
+    private void prepareMrgRegForView(String mode, final Model model, final MarriageRegistration registration) {
         model.addAttribute("registration", registration);
         model.addAttribute("mode", mode);
 
@@ -95,7 +100,21 @@ public class ViewMarriageRegistrationController extends MarriageRegistrationCont
                 LOG.error("Error while preparing the document for view", e);
             }
         });
+    }
+    
+    @RequestMapping(value = "/viewapplication/{applnNo}", method = RequestMethod.GET)
+    public String viewRegistrationByApplnNumber(@PathVariable final String applnNo, @RequestParam(required = false) String mode,
+            final Model model) throws IOException {
+        if (null == applnNo) {
+            model.addAttribute("message", "msg.appln.no.not.found");
+            return "marriagecommon-error";
+        }
+        final MarriageRegistration registration = marriageRegistrationService.findByApplicationNo(applnNo);
+        if (null == registration) {
+            model.addAttribute("message", "msg.appln.no.data.not.found");
+            return "marriagecommon-error";
+        }
+        prepareMrgRegForView(mode, model, registration);
         return "registration-view";
     }
-
 }

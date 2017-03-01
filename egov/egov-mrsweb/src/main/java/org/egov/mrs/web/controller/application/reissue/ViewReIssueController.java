@@ -98,17 +98,7 @@ public class ViewReIssueController extends GenericWorkFlowController {
             final Model model) throws IOException {
         String mode1 = null;
         final ReIssue reIssue = reIssueService.get(reIssueId);
-        final MarriageRegistration registration = reIssue.getRegistration();
-
-        model.addAttribute("documents", marriageDocumentService.getReIssueApplicantDocs());
-        model.addAttribute("reIssue", reIssue);
-        model.addAttribute("mode", mode1);
-
-        marriageRegistrationService.prepareDocumentsForView(registration);
-        marriageApplicantService.prepareDocumentsForView(registration.getHusband());
-        marriageApplicantService.prepareDocumentsForView(registration.getWife());
-        marriageApplicantService.prepareDocumentsForView(reIssue.getApplicant());
-
+        prepareReIssueForView(model, mode1, reIssue);
         String screen;
 
         if (!reIssue.getStatus().getCode().equalsIgnoreCase(ReIssue.ReIssueStatus.APPROVED.toString())) {
@@ -120,9 +110,20 @@ public class ViewReIssueController extends GenericWorkFlowController {
         } else
             screen = "reissue-view";
 
+        return screen;
+    }
+
+    private void prepareReIssueForView(final Model model, String mode1, final ReIssue reIssue) {
+        final MarriageRegistration registration = reIssue.getRegistration();
+        model.addAttribute("documents", marriageDocumentService.getReIssueApplicantDocs());
+        model.addAttribute("reIssue", reIssue);
+        model.addAttribute("mode", mode1);
+        marriageRegistrationService.prepareDocumentsForView(registration);
+        marriageApplicantService.prepareDocumentsForView(registration.getHusband());
+        marriageApplicantService.prepareDocumentsForView(registration.getWife());
+        marriageApplicantService.prepareDocumentsForView(reIssue.getApplicant());
         prepareNewForm(model);
         prepareWorkflow(model, reIssue, new WorkflowContainer());
-        return screen;
     }
 
     /**
@@ -157,6 +158,23 @@ public class ViewReIssueController extends GenericWorkFlowController {
         prepareNewForm(model);
         prepareWorkflow(model, reIssue, new WorkflowContainer());
 
+        return "reissue-success";
+    }
+    
+    @RequestMapping(value = "/viewapplication/{applnNo}", method = RequestMethod.GET)
+    public String viewReIssueByApplnNo(@PathVariable final String applnNo, @RequestParam(required = false) String mode,
+            final Model model) throws IOException {
+        if (null == applnNo) {
+            model.addAttribute("message", "msg.appln.no.not.found");
+            return "marriagecommon-error";
+        }
+        String mode1 = null;
+        final ReIssue reIssue = reIssueService.findByApplicationNo(applnNo);
+        if (null == reIssue) {
+            model.addAttribute("message", "msg.appln.no.data.not.found");
+            return "marriagecommon-error";
+        }
+        prepareReIssueForView(model, mode1, reIssue);
         return "reissue-success";
     }
 }
