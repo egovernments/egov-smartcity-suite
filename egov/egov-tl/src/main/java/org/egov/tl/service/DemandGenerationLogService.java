@@ -128,7 +128,6 @@ public class DemandGenerationLogService {
     public DemandGenerationLog completeDemandGenerationLog(DemandGenerationLog demandGenerationLog, DemandGenerationLogDetail demandGenerationLogDetail) {
         if (demandGenerationLogDetail.getStatus().equals(INCOMPLETE))
             demandGenerationLog.setDemandGenerationStatus(INCOMPLETE);
-        demandGenerationLog.setExecutionStatus(COMPLETED);
         return demandGenerationLogRepository.save(demandGenerationLog);
     }
 

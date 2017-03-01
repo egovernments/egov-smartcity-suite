@@ -44,7 +44,6 @@ import org.egov.commons.service.CFinancialYearService;
 import org.egov.tl.entity.DemandGenerationLog;
 import org.egov.tl.entity.DemandGenerationLogDetail;
 import org.egov.tl.entity.License;
-import org.egov.tl.entity.enums.ProcessStatus;
 import org.egov.tl.service.DemandGenerationService;
 import org.egov.tl.service.TradeLicenseService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,9 +55,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
+import static org.egov.tl.entity.enums.ProcessStatus.COMPLETED;
 import static org.egov.tl.utils.Constants.MESSAGE;
 
 @Controller
@@ -103,26 +102,18 @@ public class DemandGenerationController {
     }
 
     @RequestMapping(value = "licensedemandgenerate", method = RequestMethod.GET)
-    public String generateDemandForLicense(HttpServletRequest request, Model model) {
-        String licenseId = request.getParameter("id");
-        if (licenseId != null && !licenseId.trim().isEmpty()) {
-            License license = tradeLicenseService.getLicenseById(Long.valueOf(licenseId));
-            model.addAttribute("licenseNumber", license.getLicenseNumber());
-            model.addAttribute("financialYear", demandGenerationService.getLatestFinancialYear().getFinYearRange());
-        }
+    public String generateDemandForLicense(@RequestParam Long licenseId, Model model) {
+        model.addAttribute("licenseNumber", tradeLicenseService.getLicenseById(licenseId).getLicenseNumber());
+        model.addAttribute("financialYear", demandGenerationService.getLatestFinancialYear().getFinYearRange());
         return "demandgenerate-result";
     }
 
     @RequestMapping(value = "licensedemandgenerate", method = RequestMethod.POST)
     public String generateDemandForLicense(@RequestParam String licenseNumber, RedirectAttributes redirectAttrs) {
-        License license = null;
-        if (!licenseNumber.isEmpty())
-            license = tradeLicenseService.getLicenseByLicenseNumber(licenseNumber);
+        License license = tradeLicenseService.getLicenseByLicenseNumber(licenseNumber);
         DemandGenerationLogDetail demandGenerationLogDetail = demandGenerationService.generateLicenseDemand(license);
-        if (ProcessStatus.COMPLETED.equals(demandGenerationLogDetail.getStatus()))
-            redirectAttrs.addFlashAttribute(MESSAGE, "msg.demand.generation.completed");
-        else
-            redirectAttrs.addAttribute(MESSAGE, "msg.demand.generation.incomplete");
+        redirectAttrs.addFlashAttribute(MESSAGE, COMPLETED.equals(demandGenerationLogDetail.getStatus()) ? "msg.demand.generation.completed" : "msg.demand.generation.incomplete");
+        redirectAttrs.addAttribute("licenseId", license.getId());
         return "redirect:/demand/licensedemandgenerate";
     }
 

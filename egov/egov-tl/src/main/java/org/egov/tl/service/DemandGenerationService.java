@@ -100,7 +100,7 @@ public class DemandGenerationService {
 
     private int batchSize;
 
-    private static String errormsg = "Error occurred while generating demand for license {}";
+    private static final String ERRORMSG = "Error occurred while generating demand for license {}";
 
     @Autowired
     public DemandGenerationService(ApplicationProperties applicationProperties) {
@@ -141,7 +141,7 @@ public class DemandGenerationService {
                     detail.setDetail(SUCCESSFUL);
                     detail.setStatus(COMPLETED);
                 } catch (RuntimeException e) {
-                    LOGGER.warn(errormsg, detail.getLicense().getLicenseNumber(), e);
+                    LOGGER.warn(ERRORMSG, detail.getLicense().getLicenseNumber(), e);
                     demandGenerationLogService.updateDemandGenerationLogDetailOnException(demandGenerationLog, detail, e);
                 }
                 flushBatchUpdate(entityManager, ++batchUpdateCount, batchSize);
@@ -182,7 +182,7 @@ public class DemandGenerationService {
                 }
                 demandGenerationLogDetail.setStatus(COMPLETED);
             } catch (RuntimeException e) {
-                LOGGER.warn(errormsg, license.getLicenseNumber(), e);
+                LOGGER.warn(ERRORMSG, license.getLicenseNumber(), e);
                 demandGenerationLogService.updateDemandGenerationLogDetailOnException(demandGenerationLog, demandGenerationLogDetail, e);
             }
             flushBatchUpdate(entityManager, ++batchUpdateCount, batchSize);
@@ -203,7 +203,7 @@ public class DemandGenerationService {
             demandGenerationLogDetail.setDetail(SUCCESSFUL);
             demandGenerationLogDetail.setStatus(COMPLETED);
         } catch (RuntimeException e) {
-            LOGGER.warn(errormsg, demandGenerationLogDetail.getLicense().getLicenseNumber(), e);
+            LOGGER.warn(ERRORMSG, demandGenerationLogDetail.getLicense().getLicenseNumber(), e);
             demandGenerationLogService.updateDemandGenerationLogDetailOnException(demandGenerationLog, demandGenerationLogDetail, e);
         }
         demandGenerationLogService.completeDemandGenerationLog(demandGenerationLog, demandGenerationLogDetail);
