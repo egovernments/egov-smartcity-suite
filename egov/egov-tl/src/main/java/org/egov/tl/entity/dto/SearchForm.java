@@ -40,7 +40,6 @@
 
 package org.egov.tl.entity.dto;
 
-import org.egov.infra.workflow.entity.State;
 import org.egov.tl.entity.License;
 import org.egov.tl.utils.Constants;
 import org.joda.time.DateTime;
@@ -108,8 +107,8 @@ public class SearchForm {
                 if (license.isStatusActive())
                     licenseActions.add("Closure");
             }
-        } else if (!license.isPaid() && license.getIsActive()) {
-            addRenewalOption(licenseActions, license.getState());
+        } else if (license.isReadyForRenewal()) {
+            licenseActions.add("Renew License");
         }
         setActions(licenseActions);
     }
@@ -123,9 +122,8 @@ public class SearchForm {
                 licenseActions.add("Print Certificate");
             if (license.getStatus().getStatusCode().equals(Constants.STATUS_UNDERWORKFLOW))
                 licenseActions.add("Print Provisional Certificate");
-            State stateobj = license.getState();
-            if (!license.isPaid() && license.getIsActive())
-                addRenewalOption(licenseActions, stateobj);
+            if (license.isReadyForRenewal())
+                licenseActions.add("Renew License");
             Date fromRange = new DateTime().withMonthOfYear(1).withDayOfMonth(1).toDate();
             Date toRange = new DateTime().withMonthOfYear(3).withDayOfMonth(31).toDate();
             Date currentDate = new Date();
@@ -133,11 +131,6 @@ public class SearchForm {
                 demandGenerationOption(licenseActions, license);
         }
 
-    }
-
-    private void addRenewalOption(List<String> licenseActions, State stateobj) {
-        if (stateobj == null || "END".equals(stateobj.getValue()) || "Closed".equals(stateobj.getValue()))
-            licenseActions.add("Renew License");
     }
 
     private void demandGenerationOption(List<String> licenseActions, License license) {

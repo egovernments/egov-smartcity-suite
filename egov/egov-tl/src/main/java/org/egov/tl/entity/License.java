@@ -40,32 +40,7 @@
 
 package org.egov.tl.entity;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-import java.util.Comparator;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-
+import com.google.gson.annotations.Expose;
 import org.egov.commons.EgwStatus;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.infra.admin.master.entity.Boundary;
@@ -77,7 +52,15 @@ import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
 
-import com.google.gson.annotations.Expose;
+import javax.persistence.*;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
 import static org.egov.tl.utils.Constants.LICENSE_FEE_TYPE;
 import static org.egov.tl.utils.Constants.NEW_LIC_APPTYPE;
@@ -546,6 +529,10 @@ public class License extends StateAware {
 
     public boolean isTemporary() {
         return TEMP_NATUREOFBUSINESS.equals(getNatureOfBusiness().getName());
+    }
+
+    public boolean isReadyForRenewal() {
+        return isPermanent() && getIsActive() && stateIsEnded() && !isPaid();
     }
 
     public BigDecimal getLatestAmountPaid() {
