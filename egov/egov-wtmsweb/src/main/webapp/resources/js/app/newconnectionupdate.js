@@ -323,8 +323,7 @@ $(document)
 												&& action == 'Execute Tap') {
 											validateTapExecutionDate(action);
 										} else if (status == 'CREATED'
-												&& action == 'Reject'
-												&& mode == 'fieldInspection') {
+												&& action == 'Reject' ) {
 
 											$('#pipelineDistance').val(0);
 											if ($('#estimationCharges'))
