@@ -88,3 +88,4 @@
 </div>
 
 <script src="<cdn:url value='/resources/js/app/additionalconnection.js?rnd=${app_release_no}'/>"></script>
+<script src="<cdn:url value='/resources/js/app/connectiondetails.js?rnd=${app_release_no}'/>"></script>

@@ -66,27 +66,6 @@ $(document).ready(function(){
 	$('#bplCardHolderName').removeAttr('required');
 	changecategory();
 	
-	$('#connectionType').change(function(){
-		if($("#legacy").val()==="false"){
-			if($('#connectionType').val()==='METERED')
-			{
-				
-				$('.showfields').show();
-				$('#waterSupplyType').attr('required', 'required');
-				$("#buildingName").attr('required','required');
-			}
-			else
-			{
-				
-				$('.showfields').hide();
-				$('#waterSupplyType').removeAttr('required');
-				$('#buildingName').removeAttr('required');
-				$("#waterSupplyType").val('');
-				$("#buildingName").val('');
-			}
-		}
-	});
-		
 	$('#connectionCategorie').change(function(){
 		changecategory();
 	});

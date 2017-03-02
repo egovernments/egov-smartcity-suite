@@ -348,8 +348,8 @@ public class BillService {
         RestErrors restErrors;
         if (billRegister.getBillPayeeDetails() == null || billRegister.getBillPayeeDetails().isEmpty()) {
             restErrors = new RestErrors();
-            restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_DETAILS);
-            restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_DETAILS);
+            restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_PAYEE_DETAILS);
+            restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_PAYEE_DETAILS);
             errors.add(restErrors);
         }
         if (billRegister.getBillPayeeDetails() != null && !billRegister.getBillPayeeDetails().isEmpty())

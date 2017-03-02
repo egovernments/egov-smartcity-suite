@@ -86,4 +86,5 @@
 </div>
 
 <script src="<cdn:url value='/resources/js/app/newconnection.js?rnd=${app_release_no}'/>"></script>
+<script src="<cdn:url value='/resources/js/app/connectiondetails.js?rnd=${app_release_no}'/>"></script>
 <script src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>

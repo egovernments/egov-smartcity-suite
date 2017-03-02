@@ -123,6 +123,7 @@ public abstract class AdtaxWorkflowCustomImpl implements AdtaxWorkflowCustom {
             wfmatrix = advertisementPermitDetailWorkflowService.getWfMatrix(advertisementPermitDetail.getStateType(), null,
                     null, additionalRule, currentState, null);
             advertisementPermitDetail.setStatus(getStatusByPassingModuleAndCode(wfmatrix));
+            advertisementPermitDetail.setSource(AdvertisementTaxConstants.CSC_SOURCE);
             advertisementPermitDetail.transition().start()
                     .withSenderName(user.getUsername() + AdvertisementTaxConstants.COLON_CONCATE + user.getName())
                     .withComments(approvalComent).withInitiator(wfInitiator!=null ?wfInitiator.getPosition():null)

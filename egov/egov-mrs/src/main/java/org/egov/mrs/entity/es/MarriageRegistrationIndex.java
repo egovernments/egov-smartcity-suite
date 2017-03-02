@@ -321,8 +321,12 @@ public class MarriageRegistrationIndex {
     
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String pageNo;
+    
+    @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
+    private String source;
 
     public MarriageRegistrationIndex() {
+        //
     }
 
     public MarriageRegistrationIndex(final String applicationNo, final String ulbName, final String ulbCode,
@@ -1007,4 +1011,13 @@ public class MarriageRegistrationIndex {
     public void setPageNo(String pageNo) {
         this.pageNo = pageNo;
     }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
+    
 }

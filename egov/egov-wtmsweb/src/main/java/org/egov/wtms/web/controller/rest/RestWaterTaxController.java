@@ -49,7 +49,7 @@ import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.egov.wtms.application.rest.WaterChargesDetails;
 import org.egov.wtms.application.rest.WaterTaxDue;
-import org.egov.wtms.application.service.ConnectionDemandService;
+import org.egov.wtms.application.service.ConnectionDetailService;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.Aggregations;
 import org.elasticsearch.search.aggregations.metrics.sum.Sum;
@@ -70,7 +70,7 @@ public class RestWaterTaxController {
     private ElasticsearchTemplate elasticsearchTemplate;
 
     @Autowired
-    private ConnectionDemandService connectionDemandService;
+    private ConnectionDetailService connectionDetailService;
 
     /*
      * Returns Total tax due for the water connection for a given ConsumerCode
@@ -78,7 +78,7 @@ public class RestWaterTaxController {
     @RequestMapping(value = "rest/watertax/due/bycode/{consumerCode}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public WaterTaxDue getWaterTaxDueByConsumerCode(@PathVariable final String consumerCode)
             throws JsonGenerationException, JsonMappingException, IOException {
-        return connectionDemandService.getDueDetailsByConsumerCode(consumerCode);
+        return connectionDetailService.getDueDetailsByConsumerCode(consumerCode);
 
     }
 
@@ -106,7 +106,7 @@ public class RestWaterTaxController {
             "rest/watertax/due/byptno/{assessmentNumber}" }, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public WaterTaxDue getWaterTaxDueByPropertyId(@PathVariable final String assessmentNumber)
             throws JsonGenerationException, JsonMappingException, IOException {
-        return connectionDemandService.getDueDetailsByPropertyId(assessmentNumber);
+        return connectionDetailService.getDueDetailsByPropertyId(assessmentNumber);
 
     }
     
@@ -114,7 +114,7 @@ public class RestWaterTaxController {
             "rest/watertax/connectiondetails/byptno/{assessmentNumber}" }, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public List<WaterChargesDetails> getWaterConnectionDetailsByPropertyId(@PathVariable final String assessmentNumber)
             throws JsonGenerationException, JsonMappingException, IOException {
-        return connectionDemandService.getWaterTaxDetailsByPropertyId(assessmentNumber);
+        return connectionDetailService.getWaterTaxDetailsByPropertyId(assessmentNumber);
 
     }
 

@@ -472,4 +472,9 @@
     	<put-attribute name="page-title" value="lbl.digitalSignature.success.title" cascade="true"/>
     	<put-attribute name="body" value="/WEB-INF/views/application/digitalsignature/reissue-digitalsignature.jsp"/>
      </definition>
+     
+     <definition name="acknowledgement" extends="base_layout">
+    	<put-attribute name="page-title" value="title.registration" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/application/registration/acknowledgement.jsp"/>
+     </definition>
 </tiles-definitions>

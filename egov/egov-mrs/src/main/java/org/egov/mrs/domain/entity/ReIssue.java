@@ -66,6 +66,7 @@ import org.egov.infra.workflow.entity.StateAware;
 import org.egov.mrs.masters.entity.MarriageFee;
 import org.egov.mrs.masters.entity.MarriageRegistrationUnit;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 import org.egov.mrs.domain.entity.MrApplicant; 
 
 /**
@@ -148,6 +149,10 @@ public class ReIssue extends StateAware {
 
     @Transient
     private String approvalComent;
+    
+    @SafeHtml
+    @Length(max = 15)
+    private String source;
 
     @OneToMany(mappedBy = "reIssue", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<MarriageCertificate> marriageCertificate = new ArrayList<>();
@@ -313,4 +318,13 @@ public class ReIssue extends StateAware {
             MarriageRegistrationUnit marriageRegistrationUnit) {
         this.marriageRegistrationUnit = marriageRegistrationUnit;
     }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
+    
 }

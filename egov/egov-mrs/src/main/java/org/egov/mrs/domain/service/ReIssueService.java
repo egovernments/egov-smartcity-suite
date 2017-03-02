@@ -51,6 +51,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
+import org.egov.commons.entity.Source;
 import org.egov.eis.service.EisCommonService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.entity.AppConfigValues;
@@ -149,6 +150,7 @@ public class ReIssueService {
             reIssue.setFeeCriteria(marriageFeeService.getFee(reIssue.getFeeCriteria().getId()));
         reIssue.setStatus(marriageUtils.getStatusByCodeAndModuleType(ReIssue.ReIssueStatus.CREATED.toString(),
                 MarriageConstants.MODULE_NAME));
+        reIssue.setSource(Source.SYSTEM.toString());
         if (reIssue.getFeePaid() != null && reIssue.getDemand() == null)
             reIssue.setDemand(reIssueDemandService.createDemand(new BigDecimal(reIssue.getFeePaid())));
 

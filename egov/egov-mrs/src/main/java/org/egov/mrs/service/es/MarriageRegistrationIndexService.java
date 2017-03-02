@@ -83,6 +83,7 @@ public class MarriageRegistrationIndexService {
                 cityWebsite.getName(), cityWebsite.getCode(), registration.getCreatedDate(),
                 cityWebsite.getDistrictName(), cityWebsite.getRegionName(), cityWebsite.getGrade());
         if (registration != null) {
+            registrationSearch.setSource(registration.getSource() != null ? registration.getSource() : "");
             registrationSearch.setId(cityWebsite.getCode().concat("-").concat(registrationSearch.getApplicationNo()));
             registrationSearch
                     .setApplicationNo(registration.getApplicationNo() != null ? registration.getApplicationNo() : "");

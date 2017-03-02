@@ -114,7 +114,7 @@
 										</div>
 										<div class="col-xs-3 add-margin view-content">
 											<c:choose>
-									<c:when test="${connectionDetail.isPrimary == 'ACTIVE'}">
+									<c:when test="${connectionRectification.propertyAssessmentDetails.status == 'ACTIVE'}">
 										<c:out value="ACTIVE" />
 									</c:when> 
 									<c:otherwise>
@@ -210,7 +210,7 @@
                                         <option value="/wtms/application/activateConsumerCode/<c:out value="${connectionDetail.consumerNumber}" />">Activate Connection</option>
                                         <option value="/wtms/application/duplicateConsumerCode/<c:out value="${connectionDetail.consumerNumber}"/>">Inactivate - Duplicate Connection</option>
                                         <option value="/wtms/application/closedConsumerCode/<c:out value="${connectionDetail.consumerNumber}"/>">Inactivate - Closed Connection</option>
-                                        <option value="">Change Assessment - Linked assessment is inactive</option>
+
                                      </select>
 								</div>
 							</td>

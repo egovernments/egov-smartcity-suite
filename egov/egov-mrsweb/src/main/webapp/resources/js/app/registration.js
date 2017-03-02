@@ -90,6 +90,7 @@ $(document).ready( function () {
 		$('#approvalComent').removeAttr('readonly');
 	}
 	
+	
 	if($('#registrationStatus').val()=='APPROVED' && $("#feeCollected").val()=='false'){ 
 		 $("[id='Print Certificate']").hide();
 	 }  
@@ -139,7 +140,20 @@ $(document).ready( function () {
 		$('#approvalDesignation').attr('required', 'required');
 		$('#approvalPosition').attr('required', 'required');
 	}
-	
+	if($('#registrationStatus').val() != '' && ($('#registrationStatus').val() == 'CREATED' && $('#nextActn').val() != 'Junior/Senior Assistance approval pending') && $('#registrationStatus').val() != 'REJECTED'){ 
+        $(".show-row").hide();
+        $('#approverDetailHeading').hide();
+        $('#approvalDepartment').removeAttr('required');
+        $('#approvalDesignation').removeAttr('required');
+        $('#approvalPosition').removeAttr('required');
+    } else {
+        $(".show-row").show();
+        $('#approverDetailHeading').show();
+        $('#approvalDepartment').attr('required', 'required');
+        $('#approvalDesignation').attr('required', 'required');
+        $('#approvalPosition').attr('required', 'required');
+    }
+
 
 
 	// Showing the respective tab when mandatory data is not filled in
@@ -381,7 +395,7 @@ function validateForm(e) {
 		e.preventDefault();
 	}
 }
-$('#txt-serialNo').blur(function(){
+$('#txt-serialNo').change(function(){
 	validateSerialNumber();
 });
 

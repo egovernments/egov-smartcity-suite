@@ -384,4 +384,8 @@
         <put-attribute name="page-title" value="title.connectionrectification" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/application/closed-connection.jsp"/> 
     </definition>
+              <definition name="linked-assessment" extends="base_layout">
+        <put-attribute name="page-title" value="title.connectionrectification" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/application/linked-assessment.jsp"/> 
+    </definition>
 </tiles-definitions>

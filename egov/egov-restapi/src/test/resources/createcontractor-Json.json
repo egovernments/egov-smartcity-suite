@@ -1,0 +1,16 @@
+{"code": "JUNITCODE",
+    "name": "JUNITNAME",
+    "correspondenceAddress": "correspondenceAddress",
+    "paymentAddress": "paymentAddress",
+    "contactPerson": "contactPerson",
+    "email": "abc@gmail.com",
+    "narration": "narration",
+    "panNumber": "asdfg1234s",
+    "tinNumber": "TIN1234",
+    "bankName": "SBI",
+    "ifscCode": "ss",
+    "bankAccount": "SBI",
+    "pwdApprovalCode": "PWD123",
+    "exemptionName": "VAT",
+    "mobileNumber": "1234567890"
+    }

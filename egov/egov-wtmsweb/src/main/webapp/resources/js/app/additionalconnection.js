@@ -44,25 +44,6 @@ $(document).ready(function(){
 		$(".showfields").show();
 	}
 	
-	$('#connectionType').change(function(){
-			if($('#connectionType').val()==='METERED')
-			{
-				
-				$('.showfields').show();
-				$('#waterSupplyType').attr('required', 'required');
-				$("#buildingName").attr('required','required');
-			}
-			else
-			{
-				
-				$('.showfields').hide();
-				$('#waterSupplyType').removeAttr('required');
-				$('#buildingName').removeAttr('required');
-				$("#waterSupplyType").val('');
-				$("#buildingName").val('');
-			}
-	});
-	
 	if($('#noJAORSAMessage').val()!='')
 		bootbox.alert($('#noJAORSAMessage').val());
 

@@ -96,10 +96,9 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
+import java.util.SortedMap;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -120,7 +119,6 @@ import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.eis.entity.Assignment;
-import org.egov.eis.service.DesignationService;
 import org.egov.eis.service.EisCommonService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.User;
@@ -180,6 +178,10 @@ import org.egov.ptis.domain.entity.property.StructureClassification;
 import org.egov.ptis.domain.entity.property.VacantProperty;
 import org.egov.ptis.domain.entity.property.WallType;
 import org.egov.ptis.domain.entity.property.WoodType;
+import org.egov.ptis.domain.entity.property.vacantland.LayoutApprovalAuthority;
+import org.egov.ptis.domain.entity.property.vacantland.VacantLandPlotArea;
+import org.egov.ptis.domain.repository.master.vacantland.LayoutApprovalAuthorityRepository;
+import org.egov.ptis.domain.repository.master.vacantland.VacantLandPlotAreaRepository;
 import org.egov.ptis.domain.service.notice.NoticeService;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.domain.service.property.SMSEmailService;
@@ -214,7 +216,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
     protected static final String DIGITAL_SIGNATURE_REDIRECTION = "digitalSignatureRedirection";
     private static final long serialVersionUID = 1L;
     protected static final String COMMON_FORM = "commonForm";
-    private final String REJECTED = "Rejected";
+    private static final String REJECTED = "Rejected";
     public static final String STRUTS_RESULT_MESSAGE = "message";
     private static final String REVISION_PETITION_CREATED = "CREATED";
     private static final String REVISION_PETITION_HEARINGNOTICEGENERATED = "HEARINGNOTICEGENERATED";
@@ -230,26 +232,26 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
     private ViewPropertyAction viewPropertyAction = new ViewPropertyAction();
     private RevisionPetition objection = new RevisionPetition();
     private String propertyId;
-    private Map<String, Object> viewMap;
-    private RevisionPetitionService revisionPetitionService;
-    protected WorkflowService<RevisionPetition> objectionWorkflowService;
+    private transient Map<String, Object> viewMap;
+    private transient RevisionPetitionService revisionPetitionService;
+    protected transient WorkflowService<RevisionPetition> objectionWorkflowService;
     private String ownerName;
     private String propertyAddress;
-    private PersistenceService<Property, Long> propertyImplService;
+    private transient PersistenceService<Property, Long> propertyImplService;
     private String propTypeObjId;
     final SimpleDateFormat dateformat = new SimpleDateFormat("dd/MM/yyyy");
     private String[] floorNoStr = new String[100];
     private Boolean loggedUserIsEmployee = Boolean.TRUE;
-    private PropertyService propService;
+    private transient PropertyService propService;
     private PropertyStatusValues propStatVal;
     private String reasonForModify;
-    private TreeMap<Integer, String> floorNoMap;
+    private SortedMap<Integer, String> floorNoMap;
     private Map<String, String> deviationPercentageMap;
-    private LinkedHashMap<String, String> hearingTimingMap;
+    private Map<String, String> hearingTimingMap;
     private String areaOfPlot;
 
     private List<DocumentType> documentTypes = new ArrayList<>();
-    private List<Hashtable<String, Object>> historyMap = new ArrayList<Hashtable<String, Object>>();
+    private transient List<Hashtable<String, Object>> historyMap = new ArrayList<>();
     private String northBoundary;
     private String southBoundary;
     private String eastBoundary;
@@ -258,60 +260,68 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
     private String reportId;
     private Long taxExemptedReason;
     private String currentStatus;
+    private List<VacantLandPlotArea> vacantLandPlotAreaList = new ArrayList<>();
+    private List<LayoutApprovalAuthority> layoutApprovalAuthorityList = new ArrayList<>();
+    private Long vacantLandPlotAreaId;
+    private Long layoutApprovalAuthorityId;
 
     @Autowired
-    private PropertyStatusValuesDAO propertyStatusValuesDAO;
+    private transient PropertyStatusValuesDAO propertyStatusValuesDAO;
     @Autowired
-    private ReportService reportService;
+    private transient ReportService reportService;
     @Autowired
-    private NoticeService noticeService;
+    private transient NoticeService noticeService;
     @Autowired
-    private BasicPropertyDAO basicPropertyDAO;
-    private PropertyTaxNumberGenerator propertyTaxNumberGenerator;
+    private transient BasicPropertyDAO basicPropertyDAO;
+    private transient PropertyTaxNumberGenerator propertyTaxNumberGenerator;
     @Autowired
     @Qualifier("workflowService")
-    protected SimpleWorkflowService<RevisionPetition> revisionPetitionWorkFlowService;
+    protected transient SimpleWorkflowService<RevisionPetition> revisionPetitionWorkFlowService;
 
     private boolean isShowAckMessage;
     @Autowired
-    private PtDemandDao ptDemandDAO;
+    private transient PtDemandDao ptDemandDAO;
     @Autowired
-    private SecurityUtils securityUtils;
+    private transient SecurityUtils securityUtils;
     @Autowired
-    private UserService userService;
+    private transient UserService userService;
 
     @Autowired
-    private PropertyStatusDAO propertyStatusDAO;
+    private transient PropertyStatusDAO propertyStatusDAO;
 
     @Autowired
-    private EgwStatusHibernateDAO egwStatusDAO;
+    private transient EgwStatusHibernateDAO egwStatusDAO;
     @Autowired
-    private EisCommonService eisCommonService;
+    private transient EisCommonService eisCommonService;
     @Autowired
-    PositionMasterService positionMasterService;
+    private transient PositionMasterService positionMasterService;
 
     @Autowired
-    DesignationService designationService;
+    private transient ApplicationNumberGenerator applicationNumberGenerator;
     @Autowired
-    private ApplicationNumberGenerator applicationNumberGenerator;
+    private transient MessagingService messagingService;
     @Autowired
-    private MessagingService messagingService;
+    private transient PropertyTaxCommonUtils propertyTaxCommonUtils;
     @Autowired
-    private PropertyTaxCommonUtils propertyTaxCommonUtils;
-    @Autowired
-    private ReportViewerUtil reportViewerUtil;
+    private transient ReportViewerUtil reportViewerUtil;
 
-    private SMSEmailService sMSEmailService;
+    private transient SMSEmailService sMSEmailService;
     private String actionType;
     private String fileStoreIds;
     private String ulbCode;
-    private Map<String, Object> wfPropTaxDetailsMap;
+    private transient Map<String, Object> wfPropTaxDetailsMap;
     private boolean digitalSignEnabled;
     private Boolean isMeesevaUser = Boolean.FALSE;
     private String meesevaApplicationNumber;
     private String wfType;
     private boolean allowEditDocument = Boolean.FALSE;
     private Boolean showAckBtn = Boolean.FALSE;
+    
+    @Autowired
+    private transient VacantLandPlotAreaRepository vacantLandPlotAreaRepository;
+
+    @Autowired
+    private transient LayoutApprovalAuthorityRepository layoutApprovalAuthorityRepository;
 
     public RevisionPetitionAction() {
 
@@ -388,6 +398,10 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         setDeviationPercentageMap(DEVIATION_PERCENTAGE);
         setHearingTimingMap(HEARING_TIMINGS);
         digitalSignEnabled = propertyTaxCommonUtils.isDigitalSignatureEnabled();
+        setVacantLandPlotAreaList(vacantLandPlotAreaRepository.findAll());
+        setLayoutApprovalAuthorityList(layoutApprovalAuthorityRepository.findAll());
+        addDropdownData("vacantLandPlotAreaList", vacantLandPlotAreaList);
+        addDropdownData("layoutApprovalAuthorityList", layoutApprovalAuthorityList);
     }
 
     /**
@@ -483,7 +497,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         if (!isMeesevaUser)
             revisionPetitionService.createRevisionPetition(objection);
         else {
-            final HashMap<String, String> meesevaParams = new HashMap<String, String>();
+            final HashMap<String, String> meesevaParams = new HashMap<>();
             meesevaParams.put("ADMISSIONFEE", "0");
             meesevaParams.put("APPLICATIONNUMBER", objection.getMeesevaApplicationNumber());
             objection.setApplicationNo(objection.getMeesevaApplicationNumber());
@@ -700,9 +714,9 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
      * @param basicProperty
      */
     public void generateSpecialNotice(final PropertyImpl property, final BasicPropertyImpl basicProperty) {
-        final Map<String, Object> reportParams = new HashMap<String, Object>();
-        ReportRequest reportInput = null;
-        PropertyNoticeInfo propertyNotice = null;
+        final Map<String, Object> reportParams = new HashMap<>();
+        ReportRequest reportInput;
+        PropertyNoticeInfo propertyNotice;
         InputStream specialNoticePdf = null;
         String noticeNo = null;
         String natureOfWork;
@@ -799,9 +813,9 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
      * @return
      */
     private List<PropertyAckNoticeInfo> getFloorDetailsForNotice(final PropertyImpl property) {
-        final List<PropertyAckNoticeInfo> floorDetailsList = new ArrayList<PropertyAckNoticeInfo>();
+        final List<PropertyAckNoticeInfo> floorDetailsList = new ArrayList<>();
         final PropertyDetail detail = property.getPropertyDetail();
-        PropertyAckNoticeInfo floorInfo = null;
+        PropertyAckNoticeInfo floorInfo;
         for (final Floor floor : detail.getFloorDetails()) {
             floorInfo = new PropertyAckNoticeInfo();
             floorInfo.setBuildingClassification(floor.getStructureClassification().getTypeName());
@@ -969,8 +983,8 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         /*
          * Change basic property status from Objected to Assessed.
          */
-        Position position = null;
-        User user = null;
+        Position position;
+        User user;
 
         position = eisCommonService.getPositionByUserId(ApplicationThreadLocals.getUserId());
         user = userService.getUserById(ApplicationThreadLocals.getUserId());
@@ -1036,8 +1050,8 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         /*
          * Change basic property status from Objected to Assessed.
          */
-        Position position = null;
-        User user = null;
+        Position position;
+        User user;
 
         position = positionMasterService.getPositionByUserId(securityUtils.getCurrentUser().getId());
         user = securityUtils.getCurrentUser();
@@ -1060,7 +1074,6 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 
         if (!WFLOW_ACTION_STEP_SIGN.equals(actionType))
             revisionPetitionService.updateRevisionPetition(objection);
-        /* return STRUTS_RESULT_MESSAGE; */
         final ReportOutput reportOutput = new ReportOutput();
         if (objection != null && objection.getObjectionNumber() != null) {
             final PtNotice ptNotice = noticeService.getNoticeByNoticeTypeAndApplicationNumber(
@@ -1099,7 +1112,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
             final String mobileNumber = user.getMobileNumber();
             final String emailid = user.getEmailId();
             final String applicantName = user.getName();
-            final List<String> args = new ArrayList<String>();
+            final List<String> args = new ArrayList<>();
             args.add(NATURE_OF_WORK_RP.equalsIgnoreCase(wfType) ? NATURE_REVISION_PETITION
                     : NATURE_GENERAL_REVISION_PETITION);
             args.add(applicantName);
@@ -1118,7 +1131,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                 }
             } else if (applicationType.equalsIgnoreCase(REVISION_PETITION_HEARINGNOTICEGENERATED)) {
 
-                if (objection.getHearings() != null && objection.getHearings().size() > 0) {
+                if (objection.getHearings() != null && !objection.getHearings().isEmpty()) {
                     args.add(DateUtils.getFormattedDate(objection.getHearings().get(0).getPlannedHearingDt(),
                             "dd/MM/yyyy"));
                     args.add(objection.getHearings().get(0).getHearingVenue());
@@ -1184,14 +1197,14 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
             westBoundary = propertyID.getWestBoundary();
         }
         populatePropertyTypeCategory();
+        populateLayoutAndVltArea();
         checkIfEligibleForDocEdit();
-
         if (objection != null && objection.getProperty() != null) {
             setReasonForModify(objection.getProperty().getPropertyDetail().getPropertyMutationMaster().getCode());
             if (objection.getProperty().getPropertyDetail().getSitalArea() != null)
                 setAreaOfPlot(objection.getProperty().getPropertyDetail().getSitalArea().getArea().toString());
 
-            if (objection.getProperty().getPropertyDetail().getFloorDetails().size() > 0)
+            if (!objection.getProperty().getPropertyDetail().getFloorDetails().isEmpty())
                 setFloorDetails(objection.getProperty());
             if (objection.getProperty().getPropertyDetail().getPropertyTypeMaster() != null)
                 propTypeObjId = objection.getProperty().getPropertyDetail().getPropertyTypeMaster().getId().toString();
@@ -1203,7 +1216,6 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         propStatVal = propertyStatusValuesDAO.getLatestPropertyStatusValuesByPropertyIdAndreferenceNo(objection
                 .getBasicProperty().getUpicNo(), objection.getObjectionNumber());
 
-        // setupWorkflowDetails();
         if (objection != null && objection.getState() != null) {
             if (!objection.getState().getHistory().isEmpty())
                 setUpWorkFlowHistory(objection.getState().getId());
@@ -1247,7 +1259,6 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 
     public String updateRecordObjection() {
 
-        // objectionService.update(objection);
         revisionPetitionService.updateRevisionPetition(objection);
 
         updateStateAndStatus(objection);
@@ -1266,7 +1277,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         Assignment wfInitiator;
         List<Assignment> loggedInUserAssign;
         String loggedInUserDesignation = "";
-        String pendingAction = null;
+        String pendingAction;
         if (objection.getState() != null) {
             loggedInUserAssign = assignmentService.getAssignmentByPositionAndUserAsOnDate(
                     objection.getCurrentState().getOwnerPosition().getId(), user.getId(), new Date());
@@ -1394,7 +1405,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
             final String comments, final WorkFlowMatrix wfmatrix, Position position, final User loggedInUser) {
         boolean positionFoundInHistory = false;
         Assignment nextAssignment;
-        String loggedInUserDesignation = "";
+        String loggedInUserDesignation;
         String nextAction = null;
         final String nextState = null;
         User user;
@@ -1644,7 +1655,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                                 .getWoodType().getId() : null,
                 taxExemptedReason, objection.getProperty().getPropertyDetail().getPropertyDepartment() != null
                         ? objection.getProperty().getPropertyDetail().getPropertyDepartment().getId() : null,
-                null, null);
+                getVacantLandPlotAreaId(), getLayoutApprovalAuthorityId());
 
         updatePropertyID(objection.getBasicProperty());
         final PropertyTypeMaster propTypeMstr = (PropertyTypeMaster) getPersistenceService().find(
@@ -1661,6 +1672,11 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 
         propService
                 .modifyDemand(objection.getProperty(), (PropertyImpl) objection.getBasicProperty().getProperty());
+        if (objection.getProperty().getPropertyDetail().getLayoutApprovalAuthority() != null
+                && "No Approval".equals(objection.getProperty().getPropertyDetail().getLayoutApprovalAuthority().getName())) {
+            objection.getProperty().getPropertyDetail().setLayoutPermitNo(null);
+            objection.getProperty().getPropertyDetail().setLayoutPermitDate(null);
+        }
 
     }
 
@@ -1709,7 +1725,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                 objection.getProperty().getPropertyDetail()
                         .getWoodType() != null ? objection.getProperty().getPropertyDetail().getWoodType().getId()
                                 : null,
-                null, null, null, null, null);
+                null, null, getVacantLandPlotAreaId(), getLayoutApprovalAuthorityId(), null);
 
     }
 
@@ -1752,9 +1768,19 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         reportId = reportViewerUtil.addReportToTempCache(reportOutput);
         return NOTICE;
     }
+    
+    public void populateLayoutAndVltArea() {
+        if (objection.getProperty() != null) {
+            if (objection.getProperty().getPropertyDetail().getVacantLandPlotArea() != null)
+                vacantLandPlotAreaId = objection.getProperty().getPropertyDetail().getVacantLandPlotArea().getId();
+            if (objection.getProperty().getPropertyDetail().getLayoutApprovalAuthority() != null)
+                layoutApprovalAuthorityId = objection.getProperty().getPropertyDetail().getLayoutApprovalAuthority()
+                        .getId();
+        }
+    }
 
     public List<Floor> getFloorDetails() {
-        return new ArrayList<Floor>(objection.getBasicProperty().getProperty().getPropertyDetail().getFloorDetails());
+        return new ArrayList<>(objection.getBasicProperty().getProperty().getPropertyDetail().getFloorDetails());
     }
 
     public Map<String, String> getPropTypeCategoryMap() {
@@ -1873,11 +1899,11 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         this.reasonForModify = reasonForModify;
     }
 
-    public TreeMap<Integer, String> getFloorNoMap() {
+    public SortedMap<Integer, String> getFloorNoMap() {
         return floorNoMap;
     }
 
-    public void setFloorNoMap(final TreeMap<Integer, String> floorNoMap) {
+    public void setFloorNoMap(final SortedMap<Integer, String> floorNoMap) {
         this.floorNoMap = floorNoMap;
     }
 
@@ -1917,11 +1943,11 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         this.documentTypes = documentTypes;
     }
 
-    public LinkedHashMap<String, String> getHearingTimingMap() {
+    public Map<String, String> getHearingTimingMap() {
         return hearingTimingMap;
     }
 
-    public void setHearingTimingMap(final LinkedHashMap<String, String> hearingTimingMap) {
+    public void setHearingTimingMap(final Map<String, String> hearingTimingMap) {
         this.hearingTimingMap = hearingTimingMap;
     }
 
@@ -2137,5 +2163,37 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 
     public void setShowAckBtn(final Boolean showAckBtn) {
         this.showAckBtn = showAckBtn;
+    }
+
+    public List<VacantLandPlotArea> getVacantLandPlotAreaList() {
+        return vacantLandPlotAreaList;
+    }
+
+    public void setVacantLandPlotAreaList(List<VacantLandPlotArea> vacantLandPlotAreaList) {
+        this.vacantLandPlotAreaList = vacantLandPlotAreaList;
+    }
+
+    public List<LayoutApprovalAuthority> getLayoutApprovalAuthorityList() {
+        return layoutApprovalAuthorityList;
+    }
+
+    public void setLayoutApprovalAuthorityList(List<LayoutApprovalAuthority> layoutApprovalAuthorityList) {
+        this.layoutApprovalAuthorityList = layoutApprovalAuthorityList;
+    }
+
+    public Long getVacantLandPlotAreaId() {
+        return vacantLandPlotAreaId;
+    }
+
+    public void setVacantLandPlotAreaId(Long vacantLandPlotAreaId) {
+        this.vacantLandPlotAreaId = vacantLandPlotAreaId;
+    }
+
+    public Long getLayoutApprovalAuthorityId() {
+        return layoutApprovalAuthorityId;
+    }
+
+    public void setLayoutApprovalAuthorityId(Long layoutApprovalAuthorityId) {
+        this.layoutApprovalAuthorityId = layoutApprovalAuthorityId;
     }
 }

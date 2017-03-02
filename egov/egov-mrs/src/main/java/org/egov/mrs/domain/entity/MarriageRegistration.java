@@ -241,6 +241,14 @@ public class MarriageRegistration extends StateAware {
     @NotNull
     private String pageNo;
 
+    @SafeHtml
+    @Length(max = 100)
+    private String registrarName;
+    
+    @SafeHtml
+    @Length(max = 15)
+    private String source;
+    
     @Override
     public String getStateDetails() {
         return "Marriage registration application no : " + applicationNo;
@@ -261,6 +269,14 @@ public class MarriageRegistration extends StateAware {
     public void addWitness(final MarriageWitness witness) {
         witness.setRegistration(this);
         getWitnesses().add(witness);
+    }
+
+    public String getRegistrarName() {
+        return registrarName;
+    }
+
+    public void setRegistrarName(String registrarName) {
+        this.registrarName = registrarName;
     }
 
     @Override
@@ -646,4 +662,12 @@ public class MarriageRegistration extends StateAware {
         this.registrationDocuments = registrationDocuments;
     }
 
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
+    
 }

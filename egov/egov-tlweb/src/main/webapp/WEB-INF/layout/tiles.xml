@@ -135,6 +135,10 @@
         <put-attribute name="page-title" value="title.demand.generation" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/demandgeneration/demand-generate.jsp"/>
     </definition>
+    <definition name="demandgenerate-result" extends="base_layout">
+        <put-attribute name="page-title" value="title.demand.generation" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/demandgeneration/demandgenerate-result.jsp"/>
+    </definition>
     <definition name="document-new" extends="base_layout">
         <put-attribute name="page-title" value="title.create.document" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/documenttype/document-new.jsp"/>

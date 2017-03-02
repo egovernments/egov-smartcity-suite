@@ -67,6 +67,7 @@ import org.egov.egf.expensebill.service.ExpenseBillService;
 import org.egov.egf.utils.FinancialUtils;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.DepartmentService;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.utils.DateUtils;
 import org.egov.model.bills.EgBillregister;
 import org.egov.restapi.model.BillDetails;
@@ -198,10 +199,10 @@ public class BillServiceTest extends AbstractContextControllerTest<BillService> 
         function.setId(1l);
 
         final Accountdetailtype accountdetailtype1 = new Accountdetailtype();
-        accountdetailtype1.setFullQualifiedName("org.egov.works.models.estimate.ProjectCode");
+        accountdetailtype1.setFullQualifiedName(ProjectCode.class.getName());
 
         final Accountdetailtype accountdetailtype2 = new Accountdetailtype();
-        accountdetailtype2.setFullQualifiedName("org.egov.works.models.masters.Contractor");
+        accountdetailtype2.setFullQualifiedName(Contractor.class.getName());
 
         projectCode = new ProjectCode();
         projectCode.setId(1l);
@@ -302,5 +303,76 @@ public class BillServiceTest extends AbstractContextControllerTest<BillService> 
         billService.populateBillRegister(egBillregister, billRegister);
         final EgBillregister savedEgBillregister = billService.createBill(egBillregister);
         assertEquals(savedEgBillregister.getEgBilldetailes().size(), egBillregister.getEgBilldetailes().size());
+    }
+
+    @Test
+    public void shouldGiveErrorsIfMandatoryFieldsNotPresent() {
+        billRegister.setProjectCode("");
+        billRegister.setBillType("");
+        billRegister.setPayTo("");
+        billRegister.setDepartmentCode("");
+        billRegister.setFunctionCode("");
+        billRegister.setFundCode("");
+        errors = billService.validateBillRegister(billRegister);
+        assertEquals(6, errors.size());
+    }
+
+    @Test
+    public void shouldGiveErrorsIfBillDatesNotProper() {
+        billRegister.setBillDate(DateUtils.getDate("20-02-2011", "dd-MM-yyyy"));
+        billRegister.setPartyBillDate(DateUtils.getDate("20-02-2018", "dd-MM-yyyy"));
+        when(financialYearHibernateDAO.getFinancialYearByDate(Matchers.any()))
+                .thenThrow(new ApplicationRuntimeException("Financial Year is not active For Posting."));
+        errors = billService.validateBillRegister(billRegister);
+        assertEquals(2, errors.size());
+    }
+
+    @Test
+    public void shouldGiveErrorForInvalidNameOfWork() {
+        billRegister.setNameOfWork("Building Contruction\n'");
+        when(projectCodeService.findActiveProjectCodeByCode(Matchers.anyString())).thenReturn(null);
+        errors = billService.validateBillRegister(billRegister);
+        assertEquals(1, errors.size());
+    }
+
+    @Test
+    public void shouldGiveErrorsIfBillDetailsEmpty() {
+        billRegister.getBillDetails().clear();
+        billRegister.getBillPayeeDetails().clear();
+        errors = billService.validateBillRegister(billRegister);
+        assertEquals(2, errors.size());
+    }
+
+    @Test
+    public void shouldGiveErrorsIfInvalidGlcode() {
+        when(chartOfAccountsService.getByGlCode(Matchers.anyString())).thenReturn(null);
+        errors = billService.validateBillRegister(billRegister);
+        assertEquals(4, errors.size());
+    }
+
+    @Test
+    public void shouldGiveErrorsIfInvalidDetailGlcode() {
+        chartOfAccount1.setClassification(1l);
+        errors = billService.validateBillRegister(billRegister);
+        assertEquals(2, errors.size());
+    }
+
+    @Test
+    public void shouldGiveErrorsIfAmountNegative() {
+        billRegister.getBillDetails().get(0).setDebitAmount(new BigDecimal(-1000));
+        billRegister.getBillDetails().get(1).setCreditAmount(new BigDecimal(-1000));
+        errors = billService.validateBillRegister(billRegister);
+        assertEquals(4, errors.size());
+    }
+
+    @Test
+    public void shouldGiveErrorsIfInvalidPayeeDetails() {
+        billRegister.getBillPayeeDetails().get(0).setGlcode("");
+        billRegister.getBillPayeeDetails().get(0).setAccountDetailType("");
+        billRegister.getBillPayeeDetails().get(0).setAccountDetailKey("abcd123");
+        billRegister.getBillPayeeDetails().get(0).setCreditAmount(null);
+        billRegister.getBillPayeeDetails().get(0).setDebitAmount(null);
+        errors = billService.validateBillRegister(billRegister);
+        assertEquals(4, errors.size());
     }
 }

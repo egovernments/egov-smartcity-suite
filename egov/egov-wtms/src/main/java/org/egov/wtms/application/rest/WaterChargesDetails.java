@@ -47,6 +47,16 @@ public class WaterChargesDetails {
     private String consumerCode;
     private String connectionType;
     private String connectionStatus;
+    private String waterSupplyType;
+    private String usageType;
+    private String waterSource;
+    private String propertytype;
+    private String applicationType;
+    private Boolean isPrimaryConnection;
+    private String category;
+    private String pipesize;
+    private Long sumpCapacity;
+    private Integer noOfPerson;
 
     public String getConnectionStatus() {
         return connectionStatus;
@@ -88,4 +98,84 @@ public class WaterChargesDetails {
         this.connectionType = connectionType;
     }
 
+    public String getWaterSupplyType() {
+        return waterSupplyType;
+    }
+
+    public void setWaterSupplyType(String waterSupplyType) {
+        this.waterSupplyType = waterSupplyType;
+    }
+
+    public String getUsageType() {
+        return usageType;
+    }
+
+    public void setUsageType(String usageType) {
+        this.usageType = usageType;
+    }
+
+    public String getWaterSource() {
+        return waterSource;
+    }
+
+    public void setWaterSource(String waterSource) {
+        this.waterSource = waterSource;
+    }
+
+    public String getPropertytype() {
+        return propertytype;
+    }
+
+    public void setPropertytype(String propertytype) {
+        this.propertytype = propertytype;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public String getPipesize() {
+        return pipesize;
+    }
+
+    public void setPipesize(String pipesize) {
+        this.pipesize = pipesize;
+    }
+
+    
+    public Long getSumpCapacity() {
+        return sumpCapacity;
+    }
+
+    public void setSumpCapacity(Long sumpCapacity) {
+        this.sumpCapacity = sumpCapacity;
+    }
+
+    public Integer getNoOfPerson() {
+        return noOfPerson;
+    }
+
+    public void setNoOfPerson(Integer noOfPerson) {
+        this.noOfPerson = noOfPerson;
+    }
+
+    public Boolean getIsPrimaryConnection() {
+        return isPrimaryConnection;
+    }
+
+    public void setIsPrimaryConnection(Boolean isPrimaryConnection) {
+        this.isPrimaryConnection = isPrimaryConnection;
+    }
+
+    public String getApplicationType() {
+        return applicationType;
+    }
+
+    public void setApplicationType(String applicationType) {
+        this.applicationType = applicationType;
+    }
 }

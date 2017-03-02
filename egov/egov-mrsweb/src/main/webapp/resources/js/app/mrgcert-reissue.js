@@ -62,6 +62,21 @@ $(document).ready( function () {
 		$('#approvalPosition').attr('required', 'required');
 	}
 	
+	if(($('#reIssueStatus').val()=='CREATED' && $('#nextActn').val() != 'Junior/Senior Assistance approval pending') || $('#reIssueStatus').val()=='APPROVED'){ 
+        $(".show-row").hide();
+        $('#approverDetailHeading').hide();
+        $('#approvalDepartment').removeAttr('required');
+        $('#approvalDesignation').removeAttr('required');
+        $('#approvalPosition').removeAttr('required');
+    } else {
+        $(".show-row").show();
+        $('#approverDetailHeading').show();
+        $('#approvalDepartment').attr('required', 'required');
+        $('#approvalDesignation').attr('required', 'required');
+        $('#approvalPosition').attr('required', 'required');
+    }
+
+
 	$('.slide-history-menu').click(function(){
 		$(this).parent().find('.history-slide').slideToggle();
 		if($(this).parent().find('#toggle-his-icon').hasClass('fa fa-angle-down'))

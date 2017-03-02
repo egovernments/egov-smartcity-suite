@@ -45,7 +45,55 @@ $(document).ready(function(){
 		 loadPropertyCategories();
 		 loadPropertyUsageTypes();
 		 loadPropertyPipeTypes();
- });
+	});
+	
+	$('#connectionType').change(function(){
+		
+		$.ajax({
+			url: "/wtms/ajax-isdonationamount-editable",    
+			type: "GET",
+			data: {
+				connectionType : $('#connectionType').val()   
+			},
+			dataType: "json",
+			success: function (response) {
+				if(response){
+					
+						$('#donationChargesDiv').show();
+						$('#donationChargesInput').removeAttr('disabled');
+						$('#donationChargesInput').attr('required','required');
+					
+					
+				}
+				else{
+					$('#donationChargesDiv').show();
+					$('#donationChargesInput').removeAttr('required');
+					$('#donationChargesInput').attr('disabled',true	);
+					$('#donationChargesInput').val(0.0);
+				}
+			},
+			error: function() {
+				bootbox.alert('json fail');
+			}
+		});
+		
+			if($('#connectionType').val()==='METERED')
+			{
+				$('.showfields').show();
+				$('#waterSupplyType').attr('required', 'required');
+				$("#buildingName").attr('required','required');
+			}
+			else
+			{
+				
+				$('.showfields').hide();
+				$('#waterSupplyType').removeAttr('required');
+				$('#buildingName').removeAttr('required');
+				$("#waterSupplyType").val('');
+				$("#buildingName").val('');
+			}
+	});
+	
 	function loadPropertyPipeTypes(){
 
         $.ajax({

@@ -51,28 +51,43 @@
 <div class="form-group">
 	<label class="col-sm-3 control-label text-right"><spring:message
 			code="lbl.connectiontype" /><span class="mandatory"></span></label>
-	<c:if test="${mode !='dataEntry' }">
-	<div class="col-sm-3 add-margin">
-		<form:select path="connectionType" data-first-option="false" cssClass="form-control" required="required"> 
-			<form:option value="">
-				<spring:message code="lbl.select" />
-			</form:option>
-			<form:options items="${connectionTypes}" />
-		</form:select>
-		<form:errors path="connectionType" cssClass="add-margin error-msg" />
-	</div>
-	</c:if>
-	<c:if test="${mode =='dataEntry' }">
-	<div class="col-sm-3 add-margin">
-		<form:select path="connectionType" data-first-option="false" cssClass="form-control" required="required"  onchange="getEmptyValues();"> 
-			<form:option value="">
-				<spring:message code="lbl.select" />
-			</form:option>
-			<form:options items="${connectionTypes}" />
-		</form:select>
-		<form:errors path="connectionType" cssClass="add-margin error-msg" />
-	</div>
-	</c:if>
+	<c:choose>
+		<c:when test="${mode != 'fieldInspection'}">
+			<c:if test="${mode !='dataEntry' }">
+			<div class="col-sm-3 add-margin">
+				<form:select path="connectionType" data-first-option="false" cssClass="form-control" required="required"> 
+					<form:option value="">
+						<spring:message code="lbl.select" />
+					</form:option>
+					<form:options items="${connectionTypes}" />
+				</form:select>
+				<form:errors path="connectionType" cssClass="add-margin error-msg" />
+			</div>
+			</c:if>
+			<c:if test="${mode =='dataEntry' }">
+			<div class="col-sm-3 add-margin">
+				<form:select path="connectionType" data-first-option="false" cssClass="form-control" required="required"  onchange="getEmptyValues();"> 
+					<form:option value="">
+						<spring:message code="lbl.select" />
+					</form:option>
+					<form:options items="${connectionTypes}" />
+				</form:select>
+				<form:errors path="connectionType" cssClass="add-margin error-msg" />
+			</div>
+			</c:if>
+		</c:when>
+		<c:otherwise>
+			<div class="col-sm-3 add-margin">
+				<form:select path="connectionType" data-first-option="false" cssClass="form-control" disabled="true"> 
+					<form:option value="">
+						<spring:message code="lbl.select" />
+					</form:option>
+					<form:options items="${connectionTypes}" />
+				</form:select>
+				<form:errors path="connectionType" cssClass="add-margin error-msg" />
+			</div>
+		</c:otherwise>
+	</c:choose>
 	
     <label class="col-sm-2 control-label text-right"><spring:message
 			code="lbl.watersourcetype" /><span class="mandatory"></span></label>
@@ -191,7 +206,12 @@
 		</div>
 	</div>
 </div>
-
+<div class="form-group display-hide" id="donationChargesDiv" style="display:none">
+	<label class="col-sm-3 control-label text-right"><spring:message code="lbl.donationorcontribution"/><span class="mandatory"/></label>
+	<div class="col-sm-3 add-margin">
+		<form:input class="form-control patternvalidation" path="donationCharges" id="donationChargesInput" value='${donationCharges}'/>
+	</div>
+</div>
 
 <div class="form-group" id ="cardHolderDiv">
 	<label class="col-sm-3 control-label text-right"><spring:message
@@ -212,4 +232,15 @@
 		</div>
 </div>	
 </c:if>	
+
+<script>
+	if($("#connectionType").val()=='METERED'){
+		$('#donationChargesDiv').show();
+		$('#donationChargesInput').attr('required','required');
+	}
+	else if($('#connectionType').val()=='NON_METERED'){
+		$('#donationChargesDiv').show();
+		$('#donationChargesInput').attr('disabled', true);
+	}
+</script>
 		

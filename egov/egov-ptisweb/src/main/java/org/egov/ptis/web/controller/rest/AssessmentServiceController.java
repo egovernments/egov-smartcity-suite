@@ -101,7 +101,7 @@ public class AssessmentServiceController {
 	@RequestMapping(value ="/rest/property/{assessmentNumber}", produces = APPLICATION_JSON_VALUE)
 	public AssessmentDetails getAssessmentDetails(@PathVariable String assessmentNumber) throws IOException {
 		return propertyExternalService.loadAssessmentDetails(assessmentNumber,
-                        PropertyExternalService.FLAG_FULL_DETAILS,BasicPropertyStatus.ACTIVE);
+                        PropertyExternalService.FLAG_FULL_DETAILS,BasicPropertyStatus.ALL);
 	}
 
 	/**
@@ -874,4 +874,5 @@ public class AssessmentServiceController {
 		return errorDetails;
 	}
 
+	
 }

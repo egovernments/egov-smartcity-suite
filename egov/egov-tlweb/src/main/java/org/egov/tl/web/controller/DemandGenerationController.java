@@ -42,9 +42,13 @@ package org.egov.tl.web.controller;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.service.CFinancialYearService;
 import org.egov.tl.entity.DemandGenerationLog;
+import org.egov.tl.entity.DemandGenerationLogDetail;
+import org.egov.tl.entity.License;
 import org.egov.tl.service.DemandGenerationService;
+import org.egov.tl.service.TradeLicenseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -52,6 +56,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
+
+import static org.egov.tl.entity.enums.ProcessStatus.COMPLETED;
+import static org.egov.tl.utils.Constants.MESSAGE;
 
 @Controller
 @RequestMapping("/demand")
@@ -62,6 +69,9 @@ public class DemandGenerationController {
 
     @Autowired
     private CFinancialYearService financialYearService;
+
+    @Autowired
+    private TradeLicenseService tradeLicenseService;
 
     @ModelAttribute("financialYearList")
     public List<CFinancialYear> financialYearList() {
@@ -77,7 +87,7 @@ public class DemandGenerationController {
     public String generateDemand(@RequestParam String installmentYear, RedirectAttributes responseAttribs) {
         DemandGenerationLog bulkDemandGenerationLog = demandGenerationService.generateDemand(installmentYear);
         responseAttribs.addFlashAttribute("demandGenerationLog", bulkDemandGenerationLog);
-        responseAttribs.addFlashAttribute("message",
+        responseAttribs.addFlashAttribute(MESSAGE,
                 "msg.demand.generation." + bulkDemandGenerationLog.getDemandGenerationStatus());
         return "redirect:/demand/generate";
     }
@@ -86,8 +96,26 @@ public class DemandGenerationController {
     public String regenerateDemand(@RequestParam String installmentYear, RedirectAttributes responseAttribs) {
         DemandGenerationLog bulkDemandGenerationLog = demandGenerationService.retryFailedDemandGeneration(installmentYear);
         responseAttribs.addFlashAttribute("demandGenerationLog", bulkDemandGenerationLog);
-        responseAttribs.addFlashAttribute("message",
+        responseAttribs.addFlashAttribute(MESSAGE,
                 "msg.demand.generation." + bulkDemandGenerationLog.getDemandGenerationStatus());
         return "redirect:/demand/generate";
     }
+
+    @RequestMapping(value = "licensedemandgenerate", method = RequestMethod.GET)
+    public String generateDemandForLicense(@RequestParam Long licenseId, Model model) {
+        model.addAttribute("licenseNumber", tradeLicenseService.getLicenseById(licenseId).getLicenseNumber());
+        model.addAttribute("financialYear", demandGenerationService.getLatestFinancialYear().getFinYearRange());
+        return "demandgenerate-result";
+    }
+
+    @RequestMapping(value = "licensedemandgenerate", method = RequestMethod.POST)
+    public String generateDemandForLicense(@RequestParam String licenseNumber, RedirectAttributes redirectAttrs) {
+        License license = tradeLicenseService.getLicenseByLicenseNumber(licenseNumber);
+        DemandGenerationLogDetail demandGenerationLogDetail = demandGenerationService.generateLicenseDemand(license);
+        redirectAttrs.addFlashAttribute(MESSAGE, COMPLETED.equals(demandGenerationLogDetail.getStatus()) ? "msg.demand.generation.completed" : "msg.demand.generation.incomplete");
+        redirectAttrs.addAttribute("licenseId", license.getId());
+        return "redirect:/demand/licensedemandgenerate";
+    }
+
+
 }
