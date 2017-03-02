@@ -86,6 +86,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -622,12 +623,9 @@ public class AssessmentService {
      * This method provides ward-wise property details
      * @throws IOException 
      */
-    @RequestMapping(value = "/property/wardWisePropertyDetails", method = RequestMethod.POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-    public String getWardWisePropertyDetails(@RequestBody String assessmentRequest) throws IOException {
-    	AssessmentRequest assessmentReq = (AssessmentRequest) getObjectFromJSONRequest(assessmentRequest,
-                AssessmentRequest.class);
-    	List<ViewPropertyDetails> propertyDetails = propertyExternalService.getPropertyDetailsForTheWard(assessmentReq.getUlbCode(), assessmentReq.getWardNum());
-    	return getJSONResponse(propertyDetails);
+    @RequestMapping(value = "/property/wardWisePropertyDetails", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
+    public List<ViewPropertyDetails> getWardWisePropertyDetails(@RequestParam("revWardNo") String revWardNo) throws IOException {
+    	return propertyExternalService.getPropertyDetailsForTheWard(revWardNo);
     }
     /**
      * This method is used to prepare jSON response.
