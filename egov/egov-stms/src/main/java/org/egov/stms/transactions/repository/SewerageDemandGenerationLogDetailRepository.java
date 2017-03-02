@@ -39,6 +39,8 @@
  */
 package org.egov.stms.transactions.repository;
 
+import java.util.List;
+
 import org.egov.stms.entity.SewerageDemandGenerationLogDetail;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -46,4 +48,6 @@ public interface SewerageDemandGenerationLogDetailRepository extends JpaReposito
 
     SewerageDemandGenerationLogDetail findByDemandGenerationLogIdAndSewerageApplicationDetailsId(Long logId,
             Long sewerageApplnId);
+
+    public List<SewerageDemandGenerationLogDetail> findByDemandGenerationLogIdOrderByIdDesc(Long demandGenerationLogId);
 }

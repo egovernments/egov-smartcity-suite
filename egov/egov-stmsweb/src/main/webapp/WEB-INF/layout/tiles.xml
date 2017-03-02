@@ -271,4 +271,25 @@
 		<put-attribute name="body" 
 			value="/WEB-INF/views/reports/sewerage-connection-report-search.jsp" />	
 	</definition>
+		<definition name="seweragedemand-generate" extends="base_layout">
+		<put-attribute name="page-title" value="title.sewerage.generateDemand" 
+			cascade="true"/>
+		<put-attribute name="body" 
+			value="/WEB-INF/views/transactions/seweragedemand-generate.jsp" />	
+	</definition>
+			<definition name="generate-success" extends="base_layout">
+		<put-attribute name="page-title" value="title.sewerageNumberOfApplications" 
+			cascade="true"/>
+		<put-attribute name="body" 
+			value="/WEB-INF/views/transactions/generate-success.jsp" />	
+	</definition>
+	    <definition name="sewerage-demand-status" extends="base_layout">
+    	<put-attribute name="page-title" value="title.sewerage.viewdemandstatus" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/transactions/sewerage-demand-status.jsp"/>
+    </definition>
+       
+	    <definition name="seweragestatus-view" extends="base_layout">
+    	<put-attribute name="page-title" value="title.sewerage.viewdemandstatus" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/transactions/sewerage-demand-status-view.jsp"/>
+    </definition>
 </tiles-definitions>

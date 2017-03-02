@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) <2017>  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -37,41 +37,47 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.commons.dao;
+
+package org.egov.stms.transactions.entity;
 
 import java.util.Date;
-import java.util.List;
 
-import org.egov.commons.Installment;
-import org.egov.infra.admin.master.entity.Module;
+public class SewerageDemandStatusResponse {
+    private String financialYear;
+    private String jobname;
+    private String status;
+    private Date createdDate;
 
-public interface InstallmentDao {
-    public List<Installment> getInsatllmentByModule(Module module);
+    public String getJobname() {
+        return jobname;
+    }
 
-    public List<Installment> getInsatllmentByModule(Module module, Date year);
+    public void setJobname(final String jobname) {
+        this.jobname = jobname;
+    }
 
-    public Installment getInsatllmentByModule(Module module, Date year, Integer installmentNumber);
+    public String getStatus() {
+        return status;
+    }
 
-    public Installment getInsatllmentByModuleForGivenDate(Module module, Date installmentDate);
+    public void setStatus(final String status) {
+        this.status = status;
+    }
 
-    public List<Installment> getEffectiveInstallmentsforModuleandDate(Date dateToCompare, int noOfMonths, Module mod);
+    public Date getCreatedDate() {
+        return createdDate;
+    }
 
-    public Installment getInsatllmentByModuleForGivenDateAndInstallmentType(Module module, Date installmentDate,
-            String installmentType);
+    public void setCreatedDate(final Date createdDate) {
+        this.createdDate = createdDate;
+    }
 
-    List<Installment> getInstallmentsByModuleForGivenDateAndInstallmentType(Module module, Date installmentDate,
-            String installmentType);
+    public String getFinancialYear() {
+        return financialYear;
+    }
 
-    List<Installment> fetchInstallments(final Module module, final Date toInstallmentDate, final int noOfInstallments);
+    public void setFinancialYear(final String financialYear) {
+        this.financialYear = financialYear;
+    }
 
-    List<Installment> getAllInstallmentsByModuleAndStartDate(final Module module, final Date installmentDate);
-
-    Installment fetchInstallmentByModuleAndInstallmentNumber(final Module module, final Integer installmentNumber);
-
-    public List<Installment> fetchPreviousInstallmentsInDescendingOrderByModuleAndDate(Module module, Date installmentDate,
-            int noOfInstallmentToFetch);
-
-    public Installment getInsatllmentByModuleAndDescription(Module moduleByName, String description);
-    
-    public List<Installment> fetchNextInstallmentsByModuleAndDate(final Module module, final Date date);
 }
