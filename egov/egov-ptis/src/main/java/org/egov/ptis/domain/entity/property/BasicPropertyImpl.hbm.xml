@@ -200,6 +200,7 @@
 		<property name="longitude" column="LONGITUDE" type="double" />
 		<property name="latitude" column="LATITUDE" type="double" />
 		<property name="eligible" column="eligible" type="boolean" />
+		<property name="isIntgBillCreated" column="is_intg_bill_created"/>
 	</class>
 
 </hibernate-mapping>

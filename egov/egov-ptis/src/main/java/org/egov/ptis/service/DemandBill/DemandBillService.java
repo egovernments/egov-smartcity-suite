@@ -51,7 +51,7 @@ import org.egov.ptis.domain.entity.property.BasicProperty;
  */
 public interface DemandBillService {
 
-    public ReportOutput generateDemandBill(String assessmentNo);
+    public ReportOutput generateDemandBill(String assessmentNo, String noticeType);
     
     public void printDemandBill(String assessmentNo);
     

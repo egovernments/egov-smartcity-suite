@@ -107,6 +107,7 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
     private boolean eligible;
     private List<Amalgamation> amalgamations = new ArrayList<>();
     private List<Amalgamation> amalgamationsProxy = new ArrayList<>();
+    private Character isIntgBillCreated;
 
     @Override
     public List<PropertyOwnerInfo> getPropertyOwnerInfo() {
@@ -846,6 +847,14 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
     @Override
     public void addAmalgamations(Amalgamation amalgamation) {
         getAmalgamations().add(amalgamation);
+    }
+
+    public Character getIsIntgBillCreated() {
+        return isIntgBillCreated;
+    }
+
+    public void setIsIntgBillCreated(Character isIntgBillCreated) {
+        this.isIntgBillCreated = isIntgBillCreated;
     }
 
 }

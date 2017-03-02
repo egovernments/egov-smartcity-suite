@@ -237,7 +237,7 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
                 PTMODULENAME);
         if ("Y".equalsIgnoreCase(clientSpecificDmdBill)) {
             DemandBillService demandBillService = (DemandBillService) beanProvider.getBean("demandBillService");
-            ReportOutput reportOutput = demandBillService.generateDemandBill(indexNumber);
+            ReportOutput reportOutput = demandBillService.generateDemandBill(indexNumber, NOTICE_TYPE_BILL);
             reportId = reportViewerUtil.addReportToTempCache(reportOutput);
         } else {
             generateBill();

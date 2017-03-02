@@ -303,4 +303,7 @@ public interface BasicProperty {
     
     public void addAmalgamations(Amalgamation amalgamation);
 
+    public Character getIsIntgBillCreated();
+
+    public void setIsIntgBillCreated(Character isIntgBillCreated);
 }
