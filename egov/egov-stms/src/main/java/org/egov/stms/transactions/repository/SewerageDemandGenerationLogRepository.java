@@ -48,5 +48,5 @@ public interface SewerageDemandGenerationLogRepository extends JpaRepository<Sew
 
     SewerageDemandGenerationLog findByInstallmentYear(String installmentYear);
  
-    public List<SewerageDemandGenerationLog> findByInstallmentYearOrderByIdDesc(String installmentYear);
+    List<SewerageDemandGenerationLog> findByInstallmentYearOrderByIdDesc(String installmentYear);
 }

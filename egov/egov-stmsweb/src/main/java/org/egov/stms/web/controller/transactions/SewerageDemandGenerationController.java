@@ -128,7 +128,7 @@ public class SewerageDemandGenerationController {
             installment = installmentDao.getInsatllmentByModuleAndDescription(
                     moduleService.getModuleByName(SEWERAGE_TAX_MANAGEMENT), sewerageDemandStatusDetails.getFinancialYear());
         else {
-              return "seweragedemand-generate";
+            return "seweragedemand-generate";
         }
 
         if (installment != null) {

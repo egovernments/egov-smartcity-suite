@@ -49,5 +49,5 @@ public interface SewerageDemandGenerationLogDetailRepository extends JpaReposito
     SewerageDemandGenerationLogDetail findByDemandGenerationLogIdAndSewerageApplicationDetailsId(Long logId,
             Long sewerageApplnId);
 
-    public List<SewerageDemandGenerationLogDetail> findByDemandGenerationLogIdOrderByIdDesc(Long demandGenerationLogId);
+     List<SewerageDemandGenerationLogDetail> findByDemandGenerationLogIdOrderByIdDesc(Long demandGenerationLogId);
 }
