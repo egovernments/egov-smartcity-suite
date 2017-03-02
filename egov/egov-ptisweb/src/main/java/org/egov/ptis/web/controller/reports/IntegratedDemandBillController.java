@@ -58,7 +58,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class IntegratedDemandBillController {
 
     @Autowired
-    IntgDemandBillService intgDemandBillService;
+    private IntgDemandBillService intgDemandBillService;
 
     private static final String INTEGRATEDDEMANDBILL_FORM = "integrateddemandbill-form";
 
