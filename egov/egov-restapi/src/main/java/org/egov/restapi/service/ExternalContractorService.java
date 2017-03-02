@@ -44,9 +44,9 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.egov.commons.dao.BankHibernateDAO;
-import org.egov.ptis.domain.model.ErrorDetails;
 import org.egov.restapi.constants.RestApiConstants;
 import org.egov.restapi.model.ContractorHelper;
+import org.egov.restapi.model.RestErrors;
 import org.egov.works.master.service.ContractorService;
 import org.egov.works.models.masters.Contractor;
 import org.egov.works.models.masters.ExemptionForm;
@@ -81,161 +81,162 @@ public class ExternalContractorService {
     private BankHibernateDAO bankHibernateDAO;
 
     public ContractorHelper populateContractorData(final Contractor contractor) {
-        final ContractorHelper cont = createContractorData(contractor);
-        return cont;
-
+        return createContractorData(contractor);
     }
 
-    public List<ErrorDetails> validateContactorToCreate(final ContractorHelper contractorHelper) {
-        List<ErrorDetails> errors = new ArrayList<ErrorDetails>();
-        ErrorDetails errorDetails = null;
+    public List<RestErrors> validateContactorToCreate(final ContractorHelper contractorHelper) {
+        List<RestErrors> errors = new ArrayList<>();
+        RestErrors restErrors = null;
         errors = validateMandatoryFields(contractorHelper, errors);
         if (contractorHelper.getCode() != null) {
             final Contractor existingContractor = contractorService.getContractorByCode(contractorHelper.getCode());
             if (existingContractor != null) {
-                errorDetails = new ErrorDetails();
-                errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_EXIST_CONTRACTOR);
-                errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_EXIST_CONTRACTOR);
-                errors.add(errorDetails);
+                restErrors = new RestErrors();
+                restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_EXIST_CONTRACTOR);
+                restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_EXIST_CONTRACTOR);
+                errors.add(restErrors);
             }
         }
 
         return errors;
     }
 
-    private List<ErrorDetails> validateMandatoryFields(final ContractorHelper contractorHelper, List<ErrorDetails> errors) {
-        ErrorDetails errorDetails = null;
+    private List<RestErrors> validateMandatoryFields(final ContractorHelper contractorHelper, List<RestErrors> errors) {
+        RestErrors restErrors = null;
         if (StringUtils.isBlank(contractorHelper.getCode())) {
-            errorDetails = new ErrorDetails();
-            errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CONTRACTOR_NO_CODE);
-            errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_CONTRACTOR_CODE);
-            errors.add(errorDetails);
+            restErrors = new RestErrors();
+            restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CONTRACTOR_NO_CODE);
+            restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_CONTRACTOR_CODE);
+            errors.add(restErrors);
         }
         if (StringUtils.isBlank(contractorHelper.getName())) {
-            errorDetails = new ErrorDetails();
-            errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CONTRACTOR_NO_NAME);
-            errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_CONTRACTOR_NAME);
-            errors.add(errorDetails);
+            restErrors = new RestErrors();
+            restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CONTRACTOR_NO_NAME);
+            restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_CONTRACTOR_NAME);
+            errors.add(restErrors);
         }
-        if (contractorHelper.getCode() != null && !contractorHelper.getCode().matches(ALPHANUMERICWITHSPECIALCHAR)) {
-            errorDetails = new ErrorDetails();
-            errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CONTRACTOR_CODE_SPECIAL);
-            errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_CONTRACTOR_CODE_SPECIAL);
-            errors.add(errorDetails);
+        if (StringUtils.isNotBlank(contractorHelper.getCode())
+                && !contractorHelper.getCode().matches(ALPHANUMERICWITHSPECIALCHAR)) {
+            restErrors = new RestErrors();
+            restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CONTRACTOR_CODE_SPECIAL);
+            restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_CONTRACTOR_CODE_SPECIAL);
+            errors.add(restErrors);
         }
-        if (contractorHelper.getName() != null && !contractorHelper.getName().matches(ALPHANUMERICWITHSPECIALCHAR)) {
-            errorDetails = new ErrorDetails();
-            errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CONTRACTOR_NAME_SPECIAL);
-            errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_CONTRACTOR_NAME_SPECIAL);
-            errors.add(errorDetails);
+        if (StringUtils.isNotBlank(contractorHelper.getName())
+                && !contractorHelper.getName().matches(ALPHANUMERICWITHSPECIALCHAR)) {
+            restErrors = new RestErrors();
+            restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CONTRACTOR_NAME_SPECIAL);
+            restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_CONTRACTOR_NAME_SPECIAL);
+            errors.add(restErrors);
         }
-        if (contractorHelper.getCode() != null && contractorHelper.getCode().length() > 50) {
-            errorDetails = new ErrorDetails();
-            errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CONTRACTOR_CODE_MAXLENGTH);
-            errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_CONTRACTOR_CODE_MAXLENGTH);
-            errors.add(errorDetails);
+        if (StringUtils.isNotBlank(contractorHelper.getCode()) && contractorHelper.getCode().length() > 50) {
+            restErrors = new RestErrors();
+            restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CONTRACTOR_CODE_MAXLENGTH);
+            restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_CONTRACTOR_CODE_MAXLENGTH);
+            errors.add(restErrors);
         }
-        if (contractorHelper.getName() != null && contractorHelper.getName().length() > 100) {
-            errorDetails = new ErrorDetails();
-            errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CONTRACTOR_NAME_MAXLENGTH);
-            errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_CONTRACTOR_NAME_MAXLENGTH);
-            errors.add(errorDetails);
+        if (StringUtils.isNotBlank(contractorHelper.getName()) && contractorHelper.getName().length() > 100) {
+            restErrors = new RestErrors();
+            restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CONTRACTOR_NAME_MAXLENGTH);
+            restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_CONTRACTOR_NAME_MAXLENGTH);
+            errors.add(restErrors);
         }
-        errors = validateNonMandatorFields(contractorHelper, errors, errorDetails);
+        errors = validateNonMandatorFields(contractorHelper, errors, restErrors);
 
         return errors;
     }
 
-    private List<ErrorDetails> validateNonMandatorFields(final ContractorHelper contractorHelper, final List<ErrorDetails> errors,
-            ErrorDetails errorDetails) {
+    private List<RestErrors> validateNonMandatorFields(final ContractorHelper contractorHelper, final List<RestErrors> errors,
+            RestErrors restErrors) {
         if (StringUtils.isNotBlank(contractorHelper.getCorrespondenceAddress())
                 && !contractorHelper.getCorrespondenceAddress().matches(ALPHANUMERICWITHALLSPECIALCHAR)) {
-            errorDetails = new ErrorDetails();
-            errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CONTRACTOR_CORRESPONDENCEADDRESS_INVALID);
-            errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_CONTRACTOR_CORRESPONDENCEADDRESS_INVALID);
-            errors.add(errorDetails);
+            restErrors = new RestErrors();
+            restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CONTRACTOR_CORRESPONDENCEADDRESS_INVALID);
+            restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_CONTRACTOR_CORRESPONDENCEADDRESS_INVALID);
+            errors.add(restErrors);
         }
         if (StringUtils.isNotBlank(contractorHelper.getPaymentAddress())
                 && !contractorHelper.getPaymentAddress().matches(ALPHANUMERICWITHALLSPECIALCHAR)) {
-            errorDetails = new ErrorDetails();
-            errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CONTRACTOR_PAYMENTADDRESS_INVALID);
-            errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_CONTRACTOR_PAYMENTADDRESS_INVALID);
-            errors.add(errorDetails);
+            restErrors = new RestErrors();
+            restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CONTRACTOR_PAYMENTADDRESS_INVALID);
+            restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_CONTRACTOR_PAYMENTADDRESS_INVALID);
+            errors.add(restErrors);
         }
         if (StringUtils.isNotBlank(contractorHelper.getNarration())
                 && !contractorHelper.getNarration().matches(ALPHANUMERICWITHALLSPECIALCHAR)) {
-            errorDetails = new ErrorDetails();
-            errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CONTRACTOR_NARRATION_INVALID);
-            errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_CONTRACTOR_NARRATION_INVALID);
-            errors.add(errorDetails);
+            restErrors = new RestErrors();
+            restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CONTRACTOR_NARRATION_INVALID);
+            restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_CONTRACTOR_NARRATION_INVALID);
+            errors.add(restErrors);
         }
         if (StringUtils.isNotBlank(contractorHelper.getContactPerson())
                 && !contractorHelper.getContactPerson().matches(ALPHANUMERIC_WITHSPACE)) {
-            errorDetails = new ErrorDetails();
-            errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CONTRACTOR_CONTACTPERSON_INVALID);
-            errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_CONTRACTOR_CONTACTPERSON_INVALID);
-            errors.add(errorDetails);
+            restErrors = new RestErrors();
+            restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CONTRACTOR_CONTACTPERSON_INVALID);
+            restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_CONTRACTOR_CONTACTPERSON_INVALID);
+            errors.add(restErrors);
         }
         if (StringUtils.isNotBlank(contractorHelper.getEmail()) && !contractorHelper.getEmail().matches(EMAIL)) {
-            errorDetails = new ErrorDetails();
-            errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CONTRACTOR_EMAIL_INVALID);
-            errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_CONTRACTOR_EMAIL_INVALID);
-            errors.add(errorDetails);
+            restErrors = new RestErrors();
+            restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CONTRACTOR_EMAIL_INVALID);
+            restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_CONTRACTOR_EMAIL_INVALID);
+            errors.add(restErrors);
         }
         if (StringUtils.isNotBlank(contractorHelper.getPanNumber())
                 && !contractorHelper.getPanNumber().matches(PANNUMBER)) {
-            errorDetails = new ErrorDetails();
-            errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CONTRACTOR_PANNUMBER_INVALID);
-            errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_CONTRACTOR_PANNUMBER_INVALID);
-            errors.add(errorDetails);
+            restErrors = new RestErrors();
+            restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CONTRACTOR_PANNUMBER_INVALID);
+            restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_CONTRACTOR_PANNUMBER_INVALID);
+            errors.add(restErrors);
         }
         if (StringUtils.isNotBlank(contractorHelper.getTinNumber())
                 && !contractorHelper.getTinNumber().matches(ALPHANUMERIC)) {
-            errorDetails = new ErrorDetails();
-            errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CONTRACTOR_TINNUMBER_INVALID);
-            errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_CONTRACTOR_TINNUMBER_INVALID);
-            errors.add(errorDetails);
+            restErrors = new RestErrors();
+            restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CONTRACTOR_TINNUMBER_INVALID);
+            restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_CONTRACTOR_TINNUMBER_INVALID);
+            errors.add(restErrors);
         }
         if (StringUtils.isNotBlank(contractorHelper.getIfscCode())
                 && !contractorHelper.getIfscCode().matches(ALPHANUMERIC)) {
-            errorDetails = new ErrorDetails();
-            errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CONTRACTOR_IFSCCODE_INVALID);
-            errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_CONTRACTOR_IFSCCODE_INVALID);
+            restErrors = new RestErrors();
+            restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CONTRACTOR_IFSCCODE_INVALID);
+            restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_CONTRACTOR_IFSCCODE_INVALID);
+            errors.add(restErrors);
         }
         if (StringUtils.isNotBlank(contractorHelper.getBankAccount())
                 && !contractorHelper.getBankAccount().matches(ALPHANUMERIC)) {
-            errorDetails = new ErrorDetails();
-            errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CONTRACTOR_BANKACCOUNT_INVALID);
-            errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_CONTRACTOR_BANKACCOUNT_INVALID);
-            errors.add(errorDetails);
+            restErrors = new RestErrors();
+            restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CONTRACTOR_BANKACCOUNT_INVALID);
+            restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_CONTRACTOR_BANKACCOUNT_INVALID);
+            errors.add(restErrors);
         }
         if (StringUtils.isNotBlank(contractorHelper.getPwdApprovalCode())
                 && !contractorHelper.getPwdApprovalCode().matches(ALPHANUMERIC)) {
-            errorDetails = new ErrorDetails();
-            errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CONTRACTOR_PWDAPPROVALCODE_INVALID);
-            errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_CONTRACTOR_PWDAPPROVALCODE_INVALID);
-            errors.add(errorDetails);
+            restErrors = new RestErrors();
+            restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CONTRACTOR_PWDAPPROVALCODE_INVALID);
+            restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_CONTRACTOR_PWDAPPROVALCODE_INVALID);
+            errors.add(restErrors);
         }
         if (StringUtils.isNotBlank(contractorHelper.getMobileNumber())
                 && !contractorHelper.getMobileNumber().matches(MOBILE_NUM)) {
-            errorDetails = new ErrorDetails();
-            errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CONTRACTOR_MOBILENUMBER_INVALID);
-            errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_CONTRACTOR_MOBILENUMBER_INVALID);
-            errors.add(errorDetails);
+            restErrors = new RestErrors();
+            restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CONTRACTOR_MOBILENUMBER_INVALID);
+            restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_CONTRACTOR_MOBILENUMBER_INVALID);
+            errors.add(restErrors);
         }
         return errors;
     }
 
-    public List<ErrorDetails> validateContactorToUpdate(final ContractorHelper contractorHelper) {
-        List<ErrorDetails> errors = new ArrayList<>();
-        ErrorDetails errorDetails = null;
-        if (contractorHelper.getCode() != null) {
+    public List<RestErrors> validateContactorToUpdate(final ContractorHelper contractorHelper) {
+        List<RestErrors> errors = new ArrayList<>();
+        RestErrors restErrors = null;
+        if (StringUtils.isNotBlank(contractorHelper.getCode())) {
             final Contractor existingContractor = contractorService.getContractorByCode(contractorHelper.getCode());
             if (existingContractor == null) {
-                errorDetails = new ErrorDetails();
-                errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NOT_EXIST_CONTRACTOR);
-                errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NOT_EXIST_CONTRACTOR);
-                errors.add(errorDetails);
+                restErrors = new RestErrors();
+                restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NOT_EXIST_CONTRACTOR);
+                restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NOT_EXIST_CONTRACTOR);
+                errors.add(restErrors);
             }
         }
         errors = validateMandatoryFields(contractorHelper, errors);

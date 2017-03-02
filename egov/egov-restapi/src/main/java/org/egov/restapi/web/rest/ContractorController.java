@@ -57,9 +57,9 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
 import org.egov.dcb.bean.ChequePayment;
 import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.ptis.domain.model.ErrorDetails;
 import org.egov.restapi.constants.RestApiConstants;
 import org.egov.restapi.model.ContractorHelper;
+import org.egov.restapi.model.RestErrors;
 import org.egov.restapi.service.ExternalContractorService;
 import org.egov.restapi.util.JsonConvertor;
 import org.egov.works.master.service.ContractorService;
@@ -87,12 +87,12 @@ public class ContractorController {
         if (StringUtils.isBlank(code))
             return JsonConvertor.convert(externalContractorService.populateContractor());
         else {
-            final ErrorDetails errorDetails = new ErrorDetails();
+            final RestErrors restErrors = new RestErrors();
             final Contractor contractor = contractorService.getContractorByCode(code);
             if (contractor == null) {
-                errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NOT_EXIST_CONTRACTOR);
-                errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NOT_EXIST_CONTRACTOR);
-                return JsonConvertor.convert(errorDetails);
+                restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NOT_EXIST_CONTRACTOR);
+                restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NOT_EXIST_CONTRACTOR);
+                return JsonConvertor.convert(restErrors);
             } else
                 return JsonConvertor.convert(externalContractorService.populateContractorData(contractor));
         }
@@ -102,13 +102,13 @@ public class ContractorController {
     @RequestMapping(value = "/egworks/contractor", method = POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public String createContractor(@RequestBody final String requestJson,
             final HttpServletRequest request) throws IOException {
-        List<ErrorDetails> errors = new ArrayList<ErrorDetails>();
-        final ErrorDetails errorDetails = null;
+        List<RestErrors> errors = new ArrayList<>();
+        final RestErrors restErrors = new RestErrors();
         ApplicationThreadLocals.setUserId(2L);
         if (StringUtils.isBlank(requestJson)) {
-            errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_JSON_REQUEST);
-            errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_JSON_REQUEST);
-            errors.add(errorDetails);
+            restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_JSON_REQUEST);
+            restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_JSON_REQUEST);
+            errors.add(restErrors);
             return JsonConvertor.convert(errors);
         }
         final ContractorHelper contractorHelper = (ContractorHelper) getObjectFromJSONRequest(requestJson,
@@ -130,13 +130,14 @@ public class ContractorController {
     @RequestMapping(value = "/egworks/contractor", method = PUT, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public String updateContractor(@RequestBody final String requestJson,
             final HttpServletRequest request) throws IOException {
-        List<ErrorDetails> errors = new ArrayList<ErrorDetails>();
-        final ErrorDetails errorDetails = null;
+        List<RestErrors> errors = new ArrayList<>();
+        final RestErrors restErrors = new RestErrors();
         ApplicationThreadLocals.setUserId(2L);
         if (StringUtils.isBlank(requestJson)) {
-            errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_JSON_REQUEST);
-            errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_JSON_REQUEST);
-            return JsonConvertor.convert(errorDetails);
+            restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_JSON_REQUEST);
+            restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_JSON_REQUEST);
+            errors.add(restErrors);
+            return JsonConvertor.convert(restErrors);
         }
         final ContractorHelper contractorHelper = (ContractorHelper) getObjectFromJSONRequest(requestJson,
                 ContractorHelper.class);
