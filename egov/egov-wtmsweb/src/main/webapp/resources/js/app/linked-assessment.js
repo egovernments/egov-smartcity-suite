@@ -70,9 +70,9 @@ function loadPropertyDetails() {
 	if(consumerCode != '') {
 		propertyID=getPropertyId(consumerCode);
 	}
-	propertyID=$('#assessmentNo').val();
-
-
+	if(propertyID != '') {
+		propertyID=$('#assessmentNo').val();
+	}
 	if(propertyID != '') {
 		$.ajax({
 			url: "/ptis/rest/property/"+propertyID,      
@@ -192,13 +192,13 @@ function loadConnectionDetails()
 {
 	
 	consumerCode=$('#consumerCode').val();
-
-	
 	if(consumerCode != '') {
 		propertyID=getPropertyId(consumerCode);
-
 	}
-	propertyID=$('#assessmentNo').val();
+	if(propertyID != '') {
+		propertyID=$('#assessmentNo').val();
+	}
+	
 	if(propertyID != '') {
 		$.ajax({
 			url: "/wtms/rest/watertax/connectiondetails/byptno/"+propertyID,      

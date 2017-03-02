@@ -39,8 +39,6 @@
  */
 
 package org.egov.wtms.web.controller.application;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.CONNECTION_RECTIFICATION;
-
 
 import java.util.ArrayList;
 import java.util.List;
@@ -107,7 +105,8 @@ public class DuplicateConnectionController {
         if (!duplicateConnection.getConsumerCodes().isEmpty())
             waterConnectionDetails.getConnection().setOldConsumerNumber(duplicateConnection.getConsumerCodes().get(0));
         waterConnectionDetailsService.save(waterConnectionDetails);
-        return CONNECTION_RECTIFICATION;
+        model.addAttribute("consumerCode", consumerCode);
+        return "duplicateconnection-success";
 
     }
 

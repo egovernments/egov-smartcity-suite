@@ -45,6 +45,8 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.CONNECTION_RECTIFI
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.validation.ValidationException;
+
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
@@ -87,15 +89,16 @@ public class ConnectionRectificationController {
             final BindingResult resultBinder, final RedirectAttributes redirectAttrs, final Model model) {
 
         final List<WaterConnectionDetails> waterConnectionDetailsList = new ArrayList<WaterConnectionDetails>(0);
-
+        WaterConnectionDetails waterconnectionDetails = null;
         if (connectionRectification.getConsumerNo() != null) {
-            final WaterConnectionDetails waterconnectionDetails = waterConnectionDetailsService
-                    .findByConsumerCodeAndConnectionStatus(connectionRectification.getConsumerNo(),
-                            ConnectionStatus.ACTIVE);
+            waterconnectionDetails = waterConnectionDetailsService.findByConsumerCodeAndConnectionStatus(
+                    connectionRectification.getConsumerNo(), ConnectionStatus.ACTIVE);
+            if (waterconnectionDetails == null)
+                waterconnectionDetails = waterConnectionDetailsService.findByConsumerCodeAndConnectionStatus(
+                        connectionRectification.getConsumerNo(), ConnectionStatus.INACTIVE);
             if (waterconnectionDetails != null) {
                 waterConnectionDetailsList.add(waterconnectionDetails);
                 connectionRectification.setAssessmentNo(waterconnectionDetails.getConnection().getPropertyIdentifier());
-
             }
 
         } else
@@ -108,13 +111,15 @@ public class ConnectionRectificationController {
             final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
                     connectionRectification.getAssessmentNo(), PropertyExternalService.FLAG_FULL_DETAILS,
                     BasicPropertyStatus.ALL);
+            if (!assessmentDetails.isStatus())
+                throw new ValidationException("err.inactive.property");
             propertyAssessmentDetails.setAssessmentNumber(connectionRectification.getAssessmentNo());
             propertyAssessmentDetails.setStatus(assessmentDetails.isStatus() ? "ACTIVE" : "INACTIVE");
             propertyAssessmentDetails
                     .setOwnerName(new ArrayList<>(assessmentDetails.getOwnerNames()).get(0).getOwnerName().toString());
             propertyAssessmentDetails.setAddress(assessmentDetails.getPropertyAddress());
-            final ConnectionDetails connectionDetails = new ConnectionDetails();
             for (final WaterConnectionDetails waterConnectionDetails : waterConnectionDetailsList) {
+                final ConnectionDetails connectionDetails = new ConnectionDetails();
                 connectionDetails.setConsumerNumber(waterConnectionDetails.getConnection().getConsumerCode());
                 connectionDetails.setIsPrimary(
                         waterConnectionDetails.getConnection().getParentConnection() != null ? "NO" : "YES");

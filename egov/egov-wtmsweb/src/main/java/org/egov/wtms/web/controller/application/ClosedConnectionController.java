@@ -40,8 +40,6 @@
 
 package org.egov.wtms.web.controller.application;
 
-import static org.egov.wtms.utils.constants.WaterTaxConstants.CONNECTION_RECTIFICATION;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.ValidationException;
@@ -69,7 +67,7 @@ public class ClosedConnectionController {
 
     @RequestMapping(value = "/closedConsumerCode/{consumerCode}", method = RequestMethod.GET)
     public String view(final Model model, @PathVariable final String consumerCode, final HttpServletRequest request) {
-        ClosedConnection closedConnection = new ClosedConnection();
+        final ClosedConnection closedConnection = new ClosedConnection();
         closedConnection.setConsumerNo(consumerCode);
         model.addAttribute("closedConnection", closedConnection);
         return "closed-consumercode";
@@ -86,7 +84,9 @@ public class ClosedConnectionController {
         waterConnectionDetails.setCloseApprovalDate(closedConnection.getClosedDate());
         waterConnectionDetails.setReferenceNumber(closedConnection.getReferenceNo());
         waterConnectionDetails.setDeactivateReason(closedConnection.getDeactivateReason());
+        waterConnectionDetails.setConnectionStatus(ConnectionStatus.INACTIVE);
         waterConnectionDetailsService.save(waterConnectionDetails);
-        return CONNECTION_RECTIFICATION;
+        model.addAttribute("consumerCode", consumerCode);
+        return "closedconnection-success";
     }
 }
