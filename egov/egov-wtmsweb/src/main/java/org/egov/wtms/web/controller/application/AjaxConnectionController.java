@@ -60,6 +60,7 @@ import org.egov.wtms.masters.entity.UsageType;
 import org.egov.wtms.masters.entity.WaterRatesDetails;
 import org.egov.wtms.masters.entity.WaterRatesHeader;
 import org.egov.wtms.masters.entity.WaterSource;
+import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.masters.entity.enums.ConnectionType;
 import org.egov.wtms.masters.service.ApplicationProcessTimeService;
 import org.egov.wtms.masters.service.ApplicationTypeService;
@@ -299,6 +300,16 @@ public class AjaxConnectionController {
             return WaterTaxConstants.APPCONFIGVALUEOFENABLED.equalsIgnoreCase(appConfigValues.get(0).getValue());
         else
             return false;
+    }
+    
+    @RequestMapping(value = "/ajax-getPropertyIdByConsumerCode", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public  String getPropertyIdentifier(@RequestParam final String consumerCode) {
+       final  WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService.findByConsumerCodeAndConnectionStatus(consumerCode,ConnectionStatus.ACTIVE);
+        if (waterConnectionDetails == null)
+            return "";
+        else
+            return waterConnectionDetails.getConnection().getPropertyIdentifier();
     }
 
 }
