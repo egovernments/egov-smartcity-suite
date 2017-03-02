@@ -43,9 +43,7 @@ package org.egov.wtms.web.controller.application;
 import java.util.List;
 
 import javax.validation.ValidationException;
-
 import org.egov.wtms.application.entity.LinkedAssessment;
-import org.egov.wtms.application.entity.WaterConnection;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
@@ -68,11 +66,9 @@ public class LinkedAssessmentController {
 
     @Autowired
     private WaterConnectionDetailsService waterConnectionDetailsService;
-    
+
     @Autowired
     private ApplicationTypeService applicationTypeService;
-    
-    
 
     @RequestMapping(value = "/linkedAssessment", method = RequestMethod.GET)
     public String viewForm(final Model model) {
@@ -102,10 +98,10 @@ public class LinkedAssessmentController {
                                 ConnectionStatus.ACTIVE);
                 waterconnectionDetails.getConnection()
                         .setPropertyIdentifier(linkedAssessment.getActiveAssessmentDetails().getAssessmentNumber());
-                if (!activeWaterConnectionDetailsList.isEmpty())
-                {
-                        waterconnectionDetails.getConnection().setParentConnection(null);
-                        waterconnectionDetails.setApplicationType(applicationTypeService.findByCode(WaterTaxConstants.ADDNLCONNECTION));
+                if (!activeWaterConnectionDetailsList.isEmpty()) {
+                    waterconnectionDetails.getConnection().setParentConnection(null);
+                    waterconnectionDetails
+                            .setApplicationType(applicationTypeService.findByCode(WaterTaxConstants.ADDNLCONNECTION));
                 }
                 waterConnectionDetailsService.save(waterconnectionDetails);
             }
