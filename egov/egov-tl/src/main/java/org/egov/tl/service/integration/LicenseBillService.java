@@ -201,13 +201,12 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
                 else {
                     penaltyDemandDetail = insertPenaltyAndBillDetails(penalty.getValue().setScale(0, RoundingMode.HALF_UP),
                             penalty.getKey());
-                    if (penaltyDemandDetail != null) {
+                    if (penaltyDemandDetail != null)
                         demand.getEgDemandDetails().add(penaltyDemandDetail);
-                        demand.addBaseDemand(penaltyDemandDetail.getAmount());
-                    }
                 }
             }
         }
+        license.getLicenseDemand().recalculateBaseDemand();
         for (final EgDemandDetails demandDetail : demand.getEgDemandDetails()) {
             final Installment installment = demandDetail.getEgDemandReason().getEgInstallmentMaster();
             if (installmentWise.get(installment) == null) {

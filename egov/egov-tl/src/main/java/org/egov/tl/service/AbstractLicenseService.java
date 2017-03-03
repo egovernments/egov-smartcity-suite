@@ -306,7 +306,7 @@ public abstract class AbstractLicenseService<T extends License> {
                     dmd.setAmount(fm.getAmount());
                     dmd.setModifiedDate(new Date());
                 }
-        this.recalculateBaseDemand(licenseDemand);
+        licenseDemand.recalculateBaseDemand();
         return license;
 
     }
@@ -323,7 +323,7 @@ public abstract class AbstractLicenseService<T extends License> {
                     dmd.setAmount(fm.getAmount().setScale(0, RoundingMode.HALF_UP));
                     dmd.setAmtCollected(ZERO);
                 }
-        this.recalculateBaseDemand(licenseDemand);
+        licenseDemand.recalculateBaseDemand();
     }
 
     @Transactional
@@ -429,19 +429,10 @@ public abstract class AbstractLicenseService<T extends License> {
                                 amtCollected));
             }
         // Recalculating BasedDemand
-        this.recalculateBaseDemand(licenseDemand);
+        licenseDemand.recalculateBaseDemand();
 
     }
 
-    public void recalculateBaseDemand(final LicenseDemand licenseDemand) {
-        licenseDemand.setAmtCollected(ZERO);
-        licenseDemand.setBaseDemand(ZERO);
-        licenseDemand.setModifiedDate(new Date());
-        for (final EgDemandDetails demandDetail : licenseDemand.getEgDemandDetails()) {
-            licenseDemand.setAmtCollected(licenseDemand.getAmtCollected().add(demandDetail.getAmtCollected()));
-            licenseDemand.setBaseDemand(licenseDemand.getBaseDemand().add(demandDetail.getAmount()));
-        }
-    }
 
     @Transactional
     public void renew(final T license, final WorkflowBean workflowBean) {
@@ -484,7 +475,7 @@ public abstract class AbstractLicenseService<T extends License> {
             EgDemandReason reason = demandGenericDao.getDmdReasonByDmdReasonMsterInstallAndMod(
                     demandGenericDao.getDemandReasonMasterByCode(feeType, module), installment, module);
             if (reason == null)
-                throw new ValidationException("TL-007", "Demand reason missing for "+feeType);
+                throw new ValidationException("TL-007", "Demand reason missing for " + feeType);
             EgDemandDetails licenseDemandDetail = reasonWiseDemandDetails.get(reason);
             if (licenseDemandDetail == null)
                 license.getLicenseDemand().getEgDemandDetails().add(EgDemandDetails.
@@ -494,7 +485,7 @@ public abstract class AbstractLicenseService<T extends License> {
             if (license.getCurrentDemand().getEgInstallmentMaster().getInstallmentYear().before(installment.getInstallmentYear()))
                 license.getLicenseDemand().setEgInstallmentMaster(installment);
         }
-        recalculateBaseDemand(license.getLicenseDemand());
+        license.getLicenseDemand().recalculateBaseDemand();
         licenseRepository.save(license);
     }
 
