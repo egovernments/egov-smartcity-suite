@@ -144,8 +144,8 @@
 							<div class="col-xs-3 add-margin"><spring:message code="lbl.estimationcharges"/></div>
 							<div class="col-xs-3 add-margin view-content">
 							<c:choose>
-								<c:when test="${not empty feeDetails.WTAXFIELDINSPEC}">
-									<c:out value="${feeDetails.WTAXFIELDINSPEC}" />
+								<c:when test="${not empty waterConnectionDetails.fieldInspectionDetails.estimationCharges}">
+									<c:out value="${waterConnectionDetails.fieldInspectionDetails.estimationCharges}" />
 								</c:when>
 								<c:otherwise>-</c:otherwise>
 							</c:choose></div>

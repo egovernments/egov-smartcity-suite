@@ -180,12 +180,14 @@ public class ConnectionDemandService {
         DonationDetails donationDetails = null;
         final FieldInspectionDetails fieldInspectionDetails = waterConnectionDetails.getFieldInspectionDetails();
         EgDemand egDemand;
-        if (null != fieldInspectionDetails) {
+        if (fieldInspectionDetails != null) {
             feeDetails.put(WaterTaxConstants.WATERTAX_SECURITY_CHARGE, fieldInspectionDetails.getSecurityDeposit());
             feeDetails.put(WaterTaxConstants.WATERTAX_ROADCUTTING_CHARGE,
                     fieldInspectionDetails.getRoadCuttingCharges());
             feeDetails.put(WaterTaxConstants.WATERTAX_SUPERVISION_CHARGE,
                     fieldInspectionDetails.getSupervisionCharges());
+            waterConnectionDetails.getFieldInspectionDetails().setEstimationCharges(fieldInspectionDetails.getSecurityDeposit()
+                    + fieldInspectionDetails.getRoadCuttingCharges() + fieldInspectionDetails.getSupervisionCharges());
         }
 
         // (!WaterTaxConstants.BPL_CATEGORY.equalsIgnoreCase(waterConnectionDetails.getCategory().getCode()))
@@ -295,9 +297,9 @@ public class ConnectionDemandService {
         return demandReasonObj;
     }
 
-    public HashMap<String, Double> getSplitFee(final WaterConnectionDetails waterConnectionDetails) {
+    public Map<String, Double> getSplitFee(final WaterConnectionDetails waterConnectionDetails) {
         final EgDemand demand = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
-        final HashMap<String, Double> splitAmount = new HashMap<>();
+        final Map<String, Double> splitAmount = new HashMap<>();
         if (demand != null && demand.getEgDemandDetails() != null && demand.getEgDemandDetails().size() > 0)
             for (final EgDemandDetails detail : demand.getEgDemandDetails())
                 if (WaterTaxConstants.WATERTAX_FIELDINSPECTION_CHARGE
@@ -608,26 +610,26 @@ public class ConnectionDemandService {
     public WaterConnectionDetails updateDemandForNonmeteredConnection(
             final WaterConnectionDetails waterConnectionDetails, Installment installment,
             final Boolean reconnInSameInstallment, final String workFlowAction) throws ValidationException {
-        Date InstallemntStartDate = null;
+        Date installemntStartDate;
         if (installment == null) {
             installment = getCurrentInstallment(WaterTaxConstants.WATER_RATES_NONMETERED_PTMODULE, null, new Date());
-            InstallemntStartDate = new Date();
+            installemntStartDate = new Date();
         }
         if (workFlowAction != null && workFlowAction.equals(WaterTaxConstants.WF_STATE_TAP_EXECUTION_DATE_BUTTON))
-            InstallemntStartDate = new Date();
+            installemntStartDate = new Date();
 
         else if (reconnInSameInstallment != null) {
             if (reconnInSameInstallment)
-                InstallemntStartDate = installment.getFromDate();
+                installemntStartDate = installment.getFromDate();
             else
-                InstallemntStartDate = waterConnectionDetails.getReconnectionApprovalDate();
+                installemntStartDate = waterConnectionDetails.getReconnectionApprovalDate();
         } else
-            InstallemntStartDate = new Date();
+            installemntStartDate = new Date();
 
         double totalWaterRate = 0;
 
         final WaterRatesDetails waterRatesDetails = getWaterRatesDetailsForDemandUpdate(waterConnectionDetails);
-        final int noofmonths = DateUtils.noOfMonths(InstallemntStartDate, installment.getToDate());
+        final int noofmonths = DateUtils.noOfMonths(installemntStartDate, installment.getToDate());
         if (null != waterRatesDetails) {
             if (noofmonths > 0)
                 totalWaterRate = waterRatesDetails.getMonthlyRate() * (noofmonths + 1);
