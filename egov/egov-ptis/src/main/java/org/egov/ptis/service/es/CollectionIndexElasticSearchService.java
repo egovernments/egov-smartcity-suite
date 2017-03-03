@@ -64,6 +64,12 @@ import static org.egov.ptis.constants.PropertyTaxConstants.MONTH;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_EWSHS;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_TAX_INDEX_NAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.WEEK;
+import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_RESIDENTIAL;
+import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_NON_RESIDENTIAL;
+import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_MIXED;
+import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_STATE_GOVT;
+import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_CENTRAL_GOVT;
+import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_USAGE_TYPE_ALL;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -278,12 +284,25 @@ public class CollectionIndexElasticSearchService {
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery(CITY_GRADE, collectionDetailsRequest.getUlbGrade()));
         if (StringUtils.isNotBlank(collectionDetailsRequest.getUlbCode()))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery(CITY_CODE, collectionDetailsRequest.getUlbCode()));
-        if (StringUtils.isNotBlank(collectionDetailsRequest.getPropertyType())) 
+        if (StringUtils.isNotBlank(collectionDetailsRequest.getPropertyType()))
             boolQuery = queryForPropertyType(collectionDetailsRequest, boolQuery, indexName);
-        if(PROPERTY_TAX_INDEX_NAME.equalsIgnoreCase(indexName) && StringUtils.isNotBlank(collectionDetailsRequest.getUsageType()))
-            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("propertyUsage", collectionDetailsRequest.getUsageType()));
+        if (PROPERTY_TAX_INDEX_NAME.equalsIgnoreCase(indexName)
+                && StringUtils.isNotBlank(collectionDetailsRequest.getUsageType()))
+            boolQuery = queryForUsageType(collectionDetailsRequest, boolQuery);
 
         return boolQuery;
+    }
+
+    private BoolQueryBuilder queryForUsageType(CollectionDetailsRequest collectionDetailsRequest, BoolQueryBuilder boolQuery) {
+        BoolQueryBuilder usageTypeQuery = boolQuery;
+        if (DASHBOARD_USAGE_TYPE_ALL.equalsIgnoreCase(collectionDetailsRequest.getUsageType()))
+            usageTypeQuery = usageTypeQuery.filter(QueryBuilders.termsQuery("propertyUsage",
+                    Arrays.asList(CATEGORY_RESIDENTIAL, CATEGORY_NON_RESIDENTIAL, CATEGORY_MIXED, CATEGORY_STATE_GOVT,
+                            CATEGORY_CENTRAL_GOVT)));
+        else
+            usageTypeQuery = usageTypeQuery
+                    .filter(QueryBuilders.matchQuery("propertyUsage", collectionDetailsRequest.getUsageType()));
+        return usageTypeQuery;
     }
 
     public BoolQueryBuilder queryForPropertyType(CollectionDetailsRequest collectionDetailsRequest, BoolQueryBuilder boolQuery, String indexName) {
@@ -314,8 +333,8 @@ public class CollectionIndexElasticSearchService {
                 propTypeQuery = propTypeQuery
                         .filter(QueryBuilders.matchQuery(CONSUMER_TYPE, collectionDetailsRequest.getPropertyType()));
 
-            if(!DASHBOARD_PROPERTY_TYPE_BUILT_UP.equalsIgnoreCase(collectionDetailsRequest.getPropertyType())){
-                if(PROPERTY_TAX_INDEX_NAME.equalsIgnoreCase(indexName))
+            if (!DASHBOARD_PROPERTY_TYPE_BUILT_UP.equalsIgnoreCase(collectionDetailsRequest.getPropertyType())) {
+                if (PROPERTY_TAX_INDEX_NAME.equalsIgnoreCase(indexName))
                     propTypeQuery = propTypeQuery.filter(QueryBuilders.matchQuery(IS_UNDER_COURTCASE, false));
                 else
                     propTypeQuery = propTypeQuery.filter(QueryBuilders.matchQuery("conflict", 0));

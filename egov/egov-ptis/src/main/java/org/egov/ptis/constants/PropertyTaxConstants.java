@@ -1614,6 +1614,8 @@ public interface PropertyTaxConstants {
     public static final String DASHBOARD_PROPERTY_TYPE_COURTCASES = "Courtcases";
     public static final String DASHBOARD_PROPERTY_TYPE_BUILT_UP = "BuiltUp";
     
+    public static final String DASHBOARD_USAGE_TYPE_ALL = "ALL";
+    
     public static final String WEEK = "week";
     public static final String MONTH = "month";
     public static final String DAY = "day";
