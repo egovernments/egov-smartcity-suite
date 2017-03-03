@@ -43,6 +43,7 @@ package org.egov.wtms.web.controller.application;
 import java.util.List;
 
 import javax.validation.ValidationException;
+
 import org.egov.wtms.application.entity.LinkedAssessment;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
@@ -105,8 +106,9 @@ public class LinkedAssessmentController {
                 }
                 waterConnectionDetailsService.save(waterconnectionDetails);
             }
-            model.addAttribute("linkedAssessment", linkedAssessment);
-            return LINKED_ASSESSMENT;
+            model.addAttribute("propertyIdentifier",
+                    linkedAssessment.getActiveAssessmentDetails().getAssessmentNumber());
+            return "linkedassessment-success";
         } else
             throw new ValidationException("err.no.active.connections");
     }

@@ -384,8 +384,25 @@
         <put-attribute name="page-title" value="title.connectionrectification" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/application/closed-connection.jsp"/> 
     </definition>
-              <definition name="linked-assessment" extends="base_layout">
+     <definition name="linked-assessment" extends="base_layout">
         <put-attribute name="page-title" value="title.connectionrectification" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/application/linked-assessment.jsp"/> 
     </definition>
+    <definition name="closedconnection-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.connectionrectification" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/application/closedconnection-success.jsp"/> 
+    </definition>
+     <definition name="activateconnection-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.connectionrectification" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/application/activateconnection-success.jsp"/> 
+    </definition>
+    <definition name="duplicateconnection-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.connectionrectification" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/application/deactivateconnection-success.jsp"/> 
+    </definition>
+       <definition name="linkedassessment-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.connectionrectification" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/application/linkedassessment-success.jsp"/> 
+    </definition>
+   
 </tiles-definitions>

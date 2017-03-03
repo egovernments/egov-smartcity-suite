@@ -1,3 +1,4 @@
+
 /*
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
@@ -41,9 +42,16 @@
 $(document).ready(function(){
 	$('#save-button').hide();
 	  $('#buttonid').click(function() {
+			var assessmentno = $("#assessmentNo").val();
+			var consumerNo = $("#consumerCode").val();
+			if (((assessmentno == null || assessmentno == "") && (consumerNo == null || consumerNo == ""))) {
+				bootbox
+						.alert('Please select one mandatory field');
+				return false;
+			}
 		  loadPropertyDetails();
 		  loadConnectionDetails();
-		  $('#save-button').show();
+/*		  $('#save-button').show();*/
 		  ///
 	  });
 
@@ -70,9 +78,11 @@ function loadPropertyDetails() {
 	if(consumerCode != '') {
 		propertyID=getPropertyId(consumerCode);
 	}
-	if(propertyID != '') {
-		propertyID=$('#assessmentNo').val();
+	if(propertyID == '') {
+	propertyID=$('#assessmentNo').val();
 	}
+
+
 	if(propertyID != '') {
 		$.ajax({
 			url: "/ptis/rest/property/"+propertyID,      
@@ -192,13 +202,15 @@ function loadConnectionDetails()
 {
 	
 	consumerCode=$('#consumerCode').val();
+
+	
 	if(consumerCode != '') {
 		propertyID=getPropertyId(consumerCode);
+
 	}
-	if(propertyID != '') {
-		propertyID=$('#assessmentNo').val();
+	if(propertyID == '') {
+	propertyID=$('#assessmentNo').val();
 	}
-	
 	if(propertyID != '') {
 		$.ajax({
 			url: "/wtms/rest/watertax/connectiondetails/byptno/"+propertyID,      
@@ -257,5 +269,3 @@ function loadActiveConnectionDetailsTbl(waterConnections)
 		$('#activeConnDetailsTbl tbody').append($tr);
 	});
 }
-
-
