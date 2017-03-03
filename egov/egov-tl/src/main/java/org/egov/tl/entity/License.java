@@ -504,7 +504,7 @@ public class License extends StateAware {
     }
 
     public boolean canCollectFee() {
-        return !isPaid() && !isRejected() && isAcknowledged() || isApproved();
+        return !isPaid() && !isRejected() && (isAcknowledged() || isApproved());
     }
 
     public boolean isStatusActive() {
@@ -532,7 +532,7 @@ public class License extends StateAware {
     }
 
     public boolean isReadyForRenewal() {
-        return isActiveAndPermanent() && !isPaid() && isLegacy() || stateIsEnded();
+        return isActiveAndPermanent() && !isPaid() && (isLegacy() || stateIsEnded());
     }
 
     public boolean isActiveAndPermanent() {
