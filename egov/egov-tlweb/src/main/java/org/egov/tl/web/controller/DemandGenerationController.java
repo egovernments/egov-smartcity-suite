@@ -42,7 +42,6 @@ package org.egov.tl.web.controller;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.service.CFinancialYearService;
 import org.egov.tl.entity.DemandGenerationLog;
-import org.egov.tl.entity.DemandGenerationLogDetail;
 import org.egov.tl.entity.License;
 import org.egov.tl.service.DemandGenerationService;
 import org.egov.tl.service.TradeLicenseService;
@@ -57,7 +56,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
-import static org.egov.tl.entity.enums.ProcessStatus.COMPLETED;
 import static org.egov.tl.utils.Constants.MESSAGE;
 
 @Controller
@@ -111,8 +109,9 @@ public class DemandGenerationController {
     @RequestMapping(value = "licensedemandgenerate", method = RequestMethod.POST)
     public String generateDemandForLicense(@RequestParam String licenseNumber, RedirectAttributes redirectAttrs) {
         License license = tradeLicenseService.getLicenseByLicenseNumber(licenseNumber);
-        DemandGenerationLogDetail demandGenerationLogDetail = demandGenerationService.generateLicenseDemand(license);
-        redirectAttrs.addFlashAttribute(MESSAGE, COMPLETED.equals(demandGenerationLogDetail.getStatus()) ? "msg.demand.generation.completed" : "msg.demand.generation.incomplete");
+        boolean generationStatus = demandGenerationService.generateLicenseDemand(license);
+        redirectAttrs.addFlashAttribute(MESSAGE, generationStatus ?
+                "msg.demand.generation.completed" : "msg.demand.generation.incomplete");
         redirectAttrs.addAttribute("licenseId", license.getId());
         return "redirect:/demand/licensedemandgenerate";
     }
