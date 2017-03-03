@@ -41,12 +41,16 @@ package org.egov.restapi.web.rest;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.lang.StringUtils;
 import org.egov.restapi.service.FinancialMasterService;
 import org.egov.restapi.util.JsonConvertor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -55,36 +59,43 @@ public class FinancialMasterController {
     @Autowired
     private FinancialMasterService financialMasterService;
 
+    @ResponseStatus(value = HttpStatus.CREATED)
     @RequestMapping(value = "/egf/funds", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public String getAllActiveFunds() {
         return JsonConvertor.convert(financialMasterService.populateFund());
     }
 
+    @ResponseStatus(value = HttpStatus.CREATED)
     @RequestMapping(value = "/egf/schemes", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public String getAllActiveSchemes() {
         return JsonConvertor.convert(financialMasterService.populateScheme());
     }
 
+    @ResponseStatus(value = HttpStatus.CREATED)
     @RequestMapping(value = "/egf/subschemes", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public String getAllActiveSubSchemes() {
         return JsonConvertor.convert(financialMasterService.populateSubScheme());
     }
 
+    @ResponseStatus(value = HttpStatus.CREATED)
     @RequestMapping(value = "/egf/functions", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public String getAllActiveFunctions() {
         return JsonConvertor.convert(financialMasterService.populateFunction());
     }
 
+    @ResponseStatus(value = HttpStatus.CREATED)
     @RequestMapping(value = "/egf/chartofaccounts/detailedcodes", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public String getChartOfAccounts() {
         return JsonConvertor.convert(financialMasterService.populateChartOfAccounts());
     }
 
     @RequestMapping(value = "/egf/budgetgroups", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public String getAllActiveBudgetGroups() {
+    public String getAllActiveBudgetGroups(final HttpServletResponse response) {
         try {
+            response.setStatus(HttpServletResponse.SC_CREATED);
             return JsonConvertor.convert(financialMasterService.populateBudgetGroup());
         } catch (final Exception e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return JsonConvertor.convert(StringUtils.EMPTY);
         }
     }

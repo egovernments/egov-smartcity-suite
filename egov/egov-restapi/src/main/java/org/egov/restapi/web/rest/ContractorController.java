@@ -48,7 +48,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
@@ -65,12 +65,10 @@ import org.egov.restapi.util.JsonConvertor;
 import org.egov.works.master.service.ContractorService;
 import org.egov.works.models.masters.Contractor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -83,25 +81,29 @@ public class ContractorController {
     private ExternalContractorService externalContractorService;
 
     @RequestMapping(value = "/egworks/contractors", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public String getContractors(@RequestParam(value = "code", required = false) final String code) {
-        if (StringUtils.isBlank(code))
+    public String getContractors(@RequestParam(value = "code", required = false) final String code,
+            final HttpServletResponse response) {
+        if (StringUtils.isBlank(code)) {
+            response.setStatus(HttpServletResponse.SC_CREATED);
             return JsonConvertor.convert(externalContractorService.populateContractor());
-        else {
+        } else {
             final RestErrors restErrors = new RestErrors();
             final Contractor contractor = contractorService.getContractorByCode(code);
             if (contractor == null) {
                 restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NOT_EXIST_CONTRACTOR);
                 restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NOT_EXIST_CONTRACTOR);
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 return JsonConvertor.convert(restErrors);
-            } else
+            } else {
+                response.setStatus(HttpServletResponse.SC_CREATED);
                 return JsonConvertor.convert(externalContractorService.populateContractorData(contractor));
+            }
         }
     }
 
-    @ResponseStatus(value = HttpStatus.OK)
     @RequestMapping(value = "/egworks/contractor", method = POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public String createContractor(@RequestBody final String requestJson,
-            final HttpServletRequest request) throws IOException {
+            final HttpServletResponse response) throws IOException {
         List<RestErrors> errors = new ArrayList<>();
         final RestErrors restErrors = new RestErrors();
         ApplicationThreadLocals.setUserId(2L);
@@ -114,22 +116,23 @@ public class ContractorController {
         final ContractorHelper contractorHelper = (ContractorHelper) getObjectFromJSONRequest(requestJson,
                 ContractorHelper.class);
         errors = externalContractorService.validateContactorToCreate(contractorHelper);
-        if (!errors.isEmpty())
+        if (!errors.isEmpty()) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return JsonConvertor.convert(errors);
-        else {
+        } else {
             final Contractor contractor = externalContractorService.populateContractorToCreate(contractorHelper);
             final Contractor savedContractor = externalContractorService.saveContractor(contractor);
             final StringBuilder successMessage = new StringBuilder();
             successMessage.append("Contractor data saved successfully with code ").append(savedContractor.getCode());
+            response.setStatus(HttpServletResponse.SC_CREATED);
             return JsonConvertor.convert(successMessage.toString());
         }
 
     }
 
-    @ResponseStatus(value = HttpStatus.OK)
     @RequestMapping(value = "/egworks/contractor", method = PUT, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public String updateContractor(@RequestBody final String requestJson,
-            final HttpServletRequest request) throws IOException {
+            final HttpServletResponse response) throws IOException {
         List<RestErrors> errors = new ArrayList<>();
         final RestErrors restErrors = new RestErrors();
         ApplicationThreadLocals.setUserId(2L);
@@ -142,13 +145,15 @@ public class ContractorController {
         final ContractorHelper contractorHelper = (ContractorHelper) getObjectFromJSONRequest(requestJson,
                 ContractorHelper.class);
         errors = externalContractorService.validateContactorToUpdate(contractorHelper);
-        if (!errors.isEmpty())
+        if (!errors.isEmpty()) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return JsonConvertor.convert(errors);
-        else {
+        } else {
             final Contractor contractor = externalContractorService.populateContractorToUpdate(contractorHelper);
             final Contractor savedContractor = externalContractorService.updateContractor(contractor);
             final StringBuilder modifyMessage = new StringBuilder();
             modifyMessage.append("Contractor data modified successfully with code ").append(savedContractor.getCode());
+            response.setStatus(HttpServletResponse.SC_CREATED);
             return JsonConvertor.convert(modifyMessage);
         }
     }

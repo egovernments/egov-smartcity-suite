@@ -46,7 +46,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
@@ -63,10 +63,8 @@ import org.egov.restapi.model.RestErrors;
 import org.egov.restapi.service.BillService;
 import org.egov.restapi.util.JsonConvertor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.gson.JsonObject;
@@ -86,10 +84,9 @@ public class CreateBillController {
      * @return successMessage and billnumber - server response in JSON format
      */
 
-    @ResponseStatus(value = HttpStatus.OK)
     @RequestMapping(value = "/egf/bill", method = POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public String createContractorBill(@RequestBody final String requestJson,
-            final HttpServletRequest request) {
+            final HttpServletResponse response) {
         if (LOG.isDebugEnabled())
             LOG.debug("Rest API creating bill with the data: " + requestJson);
         String responseJson;
@@ -107,13 +104,15 @@ public class CreateBillController {
             re.setErrorCode(e.getMessage());
             re.setErrorMessage(e.getMessage());
             errorList.add(re);
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return JsonConvertor.convert(errorList);
         }
         try {
             final List<RestErrors> errors = billService.validateBillRegister(billRegister);
-            if (!errors.isEmpty())
+            if (!errors.isEmpty()) {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 return JsonConvertor.convert(errors);
-            else {
+            } else {
                 egBillregister = new EgBillregister();
                 billService.createProjectCode(billRegister);
                 billService.populateBillRegister(egBillregister, billRegister);
@@ -131,6 +130,7 @@ public class CreateBillController {
                 re.setErrorMessage(ve.getMessage());
                 errorList.add(re);
             }
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return JsonConvertor.convert(errorList);
         } catch (final Exception e) {
             LOG.error(e.getStackTrace());
@@ -139,10 +139,12 @@ public class CreateBillController {
             re.setErrorCode(e.getMessage());
             re.setErrorMessage(e.getMessage());
             errorList.add(re);
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return JsonConvertor.convert(errorList);
         }
         jsonObject.addProperty("successMessage", "Works Bill created Successfully");
         jsonObject.addProperty("billNumber", responseJson);
+        response.setStatus(HttpServletResponse.SC_CREATED);
         return jsonObject.toString();
     }
 
