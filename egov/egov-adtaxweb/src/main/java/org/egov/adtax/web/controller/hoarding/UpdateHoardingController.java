@@ -79,11 +79,9 @@ public class UpdateHoardingController extends HoardingControllerSupport {
     @Autowired
     @Qualifier("messageSource")
     private MessageSource messageSource;
-    
+
     @Autowired
     private AdvertisementWorkFlowService advertisementWorkFlowService;
-
-    private WorkflowContainer workFlowContainer = null;
 
     @ModelAttribute("advertisementPermitDetail")
     public AdvertisementPermitDetail advertisementPermitDetail(@PathVariable final String id) {
@@ -92,12 +90,11 @@ public class UpdateHoardingController extends HoardingControllerSupport {
 
     @RequestMapping(value = "/update/{id}", method = GET)
     public String updateHoarding(@PathVariable final String id, final Model model) {
-        workFlowContainer = new WorkflowContainer();
+        final WorkflowContainer workFlowContainer = new WorkflowContainer();
         final AdvertisementPermitDetail advertisementPermitDetail = advertisementPermitDetailService.findBy(Long.valueOf(id));
         model.addAttribute("dcPending", advertisementDemandService.anyDemandPendingForCollection(advertisementPermitDetail));
         model.addAttribute("advertisementPermitDetail", advertisementPermitDetail);
-        // model.addAttribute("additionalRule", AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE);
-        if (advertisementPermitDetail != null && advertisementPermitDetail.getPreviousapplicationid() != null) {
+       if (advertisementPermitDetail != null && advertisementPermitDetail.getPreviousapplicationid() != null) {
             model.addAttribute(ADDITIONAL_RULE, AdvertisementTaxConstants.RENEWAL_ADDITIONAL_RULE);
             workFlowContainer.setAdditionalRule(AdvertisementTaxConstants.RENEWAL_ADDITIONAL_RULE);
         } else {
@@ -105,11 +102,13 @@ public class UpdateHoardingController extends HoardingControllerSupport {
             workFlowContainer.setAdditionalRule(AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE);
         }
 
+       if(advertisementPermitDetail!=null) {
         model.addAttribute("stateType", advertisementPermitDetail.getClass().getSimpleName());
         model.addAttribute("currentState", advertisementPermitDetail.getCurrentState().getValue());
-        prepareWorkflow(model, advertisementPermitDetail, workFlowContainer);
         model.addAttribute("agency", advertisementPermitDetail.getAgency());
         model.addAttribute("advertisementDocuments", advertisementPermitDetail.getAdvertisement().getDocuments());
+        prepareWorkflow(model, advertisementPermitDetail, workFlowContainer);
+       }
         return HOARDING_UPDATE;
     }
 
@@ -122,7 +121,7 @@ public class UpdateHoardingController extends HoardingControllerSupport {
         validateHoardingDocsOnUpdate(advertisementPermitDetail, resultBinder, redirAttrib);
         validateAdvertisementDetails(advertisementPermitDetail, resultBinder);
         if (resultBinder.hasErrors()) {
-            workFlowContainer = new WorkflowContainer();
+            final WorkflowContainer workFlowContainer = new WorkflowContainer();
 
             if (advertisementPermitDetail != null && advertisementPermitDetail.getPreviousapplicationid() != null) {
                 model.addAttribute(ADDITIONAL_RULE, AdvertisementTaxConstants.RENEWAL_ADDITIONAL_RULE);
@@ -131,9 +130,11 @@ public class UpdateHoardingController extends HoardingControllerSupport {
                 model.addAttribute(ADDITIONAL_RULE, AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE);
                 workFlowContainer.setAdditionalRule(AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE);
             }
+            if (advertisementPermitDetail != null){
             prepareWorkflow(model, advertisementPermitDetail, workFlowContainer);
             model.addAttribute("stateType", advertisementPermitDetail.getClass().getSimpleName());
             model.addAttribute("currentState", advertisementPermitDetail.getCurrentState().getValue());
+            }
             return HOARDING_UPDATE;
         }
         try {
@@ -141,7 +142,7 @@ public class UpdateHoardingController extends HoardingControllerSupport {
             String approvalComment = "";
             String approverName = "";
             String nextDesignation = "";
-            String message ;
+            String message;
             if (request.getParameter("approverName") != null)
                 approverName = request.getParameter("approverName");
             if (request.getParameter("nextDesignation") != null)
