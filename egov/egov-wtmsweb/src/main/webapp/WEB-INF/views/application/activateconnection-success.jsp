@@ -49,15 +49,21 @@
 		<div class="panel" data-collapsed="0">
 		<div class="panel-body">
 		<form:form  method ="post" class="form-horizontal form-groups-bordered" id="DigitalSignatureAckForm" >
+		<input type="hidden" id="consumerCode" name="consumerCode" value="${consumerCode}"/> 
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading" align="center">
 					<div class="panel-title text-center" align="center">
 						<strong>Consumer number ${consumerCode} is successfully activated</strong>
 					</div>
 				</div> 
+				<div class="text-center">
+								<button type="button" class="btn btn-primary" id="buttonid"><spring:message code="lbl.editDemndNonMetered"/></button>
+								<a onclick="self.close()" class="btn btn-default" href="javascript:void(0)"><spring:message code="lbl.close"/></a>
+				</div>
 			</div>
 		</form:form>
 		</div>
         </div>
     </div>
 </div>
+<script src="<cdn:url value='/resources/js/app/activateconnection-success.js?rnd=${app_release_no}'/>"></script>

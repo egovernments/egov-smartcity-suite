@@ -41,28 +41,12 @@
 $(document).ready(function(){
 	
 	  $('#buttonid').click(function() {
-			var assessmentno = $("#assessmentNo").val();
-			var consumerNo = $("#consumerNo").val();
-			if (((assessmentno == null || assessmentno == "") && (consumerNo == null || consumerNo == ""))) {
-				bootbox
-						.alert('Please select one mandatory field');
-				return false;
-			}
-		  if ($( "#connectionRectificationform" ).valid())
-			  {
-			  document.forms[0].submit();
-			  }
-		  		});
-	  
-	  $('select').change(function(e){
-		  
-		  var url=$(this).val();
-		  if(url){
-			  window.open(url, "_self");
-			  $(this).prop('selectedIndex', 0);
-		  }
-		  
+		  var consumerNumber = $("#consumerCode").val();
+		  var url = '/wtms/application/editDemand/'+ consumerNumber;
+		  window.open(url, "_self");
 	  });
+	  
+
 	
 });
 
