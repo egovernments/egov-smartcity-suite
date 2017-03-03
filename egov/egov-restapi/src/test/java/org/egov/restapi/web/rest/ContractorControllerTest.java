@@ -46,7 +46,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.egov.infra.utils.ApplicationConstant;
@@ -85,7 +85,7 @@ public class ContractorControllerTest extends AbstractContextControllerTest<Cont
     private String responseJson;
 
     @Mock
-    private HttpServletRequest request;
+    private HttpServletResponse response;
 
     @Override
     protected ContractorController initController() {
@@ -110,7 +110,7 @@ public class ContractorControllerTest extends AbstractContextControllerTest<Cont
         when(externalContractorService.validateContactorToCreate(Matchers.anyObject())).thenReturn(errors);
         when(externalContractorService.populateContractorToCreate(Matchers.anyObject())).thenReturn(contractor);
         when(externalContractorService.saveContractor(Matchers.anyObject())).thenReturn(contractor);
-        responseJson = contractorController.createContractor(requestJson, request);
+        responseJson = contractorController.createContractor(requestJson, response);
         final StringBuilder successMessage = new StringBuilder();
         successMessage.append("\"Contractor data saved successfully with code ").append(contractor.getCode()).append("\"");
         assertEquals(responseJson, successMessage.toString());
@@ -124,7 +124,7 @@ public class ContractorControllerTest extends AbstractContextControllerTest<Cont
         when(externalContractorService.validateContactorToCreate(Matchers.anyObject())).thenReturn(errors);
         when(externalContractorService.populateContractorToCreate(Matchers.anyObject())).thenReturn(contractor);
         when(externalContractorService.saveContractor(Matchers.anyObject())).thenReturn(contractor);
-        responseJson = contractorController.createContractor(requestJson, request);
+        responseJson = contractorController.createContractor(requestJson, response);
         final JSONArray jsonArray = new JSONArray(responseJson);
         final JSONObject jsonObject = jsonArray.getJSONObject(0);
         assertEquals(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_JSON_REQUEST, jsonObject.getString("errorCode"));
@@ -137,7 +137,7 @@ public class ContractorControllerTest extends AbstractContextControllerTest<Cont
                 Thread.currentThread().getContextClassLoader().getResourceAsStream("createcontractor-Json.json"),
                 ApplicationConstant.DEFAULT_CHARACTER_ENCODING);
         when(contractorService.getContractorByCode(Matchers.anyString())).thenReturn(null);
-        responseJson = contractorController.getContractors(requestJson);
+        responseJson = contractorController.getContractors(requestJson, response);
         final JSONObject jsonObject = new JSONObject(responseJson);
         assertEquals(RestApiConstants.THIRD_PARTY_ERR_CODE_NOT_EXIST_CONTRACTOR, jsonObject.getString("errorCode"));
 
@@ -153,7 +153,7 @@ public class ContractorControllerTest extends AbstractContextControllerTest<Cont
                 ApplicationConstant.DEFAULT_CHARACTER_ENCODING);
         when(externalContractorService.populateContractorData(Matchers.anyObject())).thenReturn(contractorHelper);
         when(contractorService.getContractorByCode(Matchers.anyString())).thenReturn(contractor);
-        responseJson = contractorController.getContractors(requestJson);
+        responseJson = contractorController.getContractors(requestJson, response);
         final JSONObject jsonObject = new JSONObject(responseJson);
         assertEquals(contractorHelper.getCode(), jsonObject.getString("code"));
     }
@@ -166,7 +166,7 @@ public class ContractorControllerTest extends AbstractContextControllerTest<Cont
         when(externalContractorService.validateContactorToUpdate(Matchers.anyObject())).thenReturn(errors);
         when(externalContractorService.populateContractorToUpdate(Matchers.anyObject())).thenReturn(contractor);
         when(externalContractorService.updateContractor(Matchers.anyObject())).thenReturn(contractor);
-        responseJson = contractorController.updateContractor(requestJson, request);
+        responseJson = contractorController.updateContractor(requestJson, response);
         final StringBuilder successMessage = new StringBuilder();
         successMessage.append("\"Contractor data modified successfully with code ").append(contractor.getCode()).append("\"");
         assertEquals(responseJson, successMessage.toString());
@@ -180,7 +180,7 @@ public class ContractorControllerTest extends AbstractContextControllerTest<Cont
         when(externalContractorService.validateContactorToUpdate(Matchers.anyObject())).thenReturn(errors);
         when(externalContractorService.populateContractorToUpdate(Matchers.anyObject())).thenReturn(contractor);
         when(externalContractorService.updateContractor(Matchers.anyObject())).thenReturn(contractor);
-        responseJson = contractorController.updateContractor(requestJson, request);
+        responseJson = contractorController.updateContractor(requestJson, response);
         final JSONObject jsonObject = new JSONObject(responseJson);
         assertEquals(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_JSON_REQUEST, jsonObject.getString("errorCode"));
 
