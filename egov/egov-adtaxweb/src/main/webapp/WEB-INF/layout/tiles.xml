@@ -335,5 +335,19 @@
         <put-attribute name="body" value="/WEB-INF/views/hoarding/hoarding-ack.jsp"/>
     </definition>
     
-  
+    <definition name="search-adtax-online-payment" extends="base_layout">
+    	<put-attribute name="page-title" value="title.adtax.search" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/citizen/search-adtax-online-payment.jsp"/>
+    </definition>
+    
+    <definition name="citizen/citizen-online-dcbview" extends="base_layout">
+    	<put-attribute name="page-title" value="title.hoardingwise.report" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/citizen/citizen-online-dcbview.jsp"/>
+    </definition>
+    
+    <definition name="onlinepayment-redirection" extends="base_layout">
+    	<put-attribute name="page-title" value="title.hoardingwise.report" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/citizen/onlinepayment-redirection.jsp"/>
+    </definition>
+    
 </tiles-definitions>

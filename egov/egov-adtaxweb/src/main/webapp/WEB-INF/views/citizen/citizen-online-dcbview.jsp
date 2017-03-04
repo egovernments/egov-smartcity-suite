@@ -2,7 +2,7 @@
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~     Copyright (C) <20176>  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -48,7 +48,7 @@
 		<c:if test="${not empty message}">
 			<div class="alert alert-success" role="alert"><spring:message code="${message}"/></div>
 		</c:if>
-		<form:form id="hoardingformview" action="" class="form-horizontal form-groups-bordered" modelAttribute="hoarding" 
+		<form:form id="hoardingformview" name="myform" action="" class="form-horizontal form-groups-bordered" modelAttribute="hoarding" 
 		commandName="hoarding" >
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading custom_form_panel_heading">
@@ -65,6 +65,7 @@
 								</label>
 								<div class="col-sm-3 add-margin view-content">
 									${hoarding.advertisementNumber}
+									<input type="hidden" value="${hoarding.id}" id="hoardingid" name="id">
 								</div>
 							</div>
 							<div class="panel-body custom-form">
@@ -72,64 +73,72 @@
 									<thead>
 										<tr>
 											<th colspan="1"></th>
-											<th colspan="4"><spring:message code="lbl.hoardingReport.demandAmount"></spring:message></th>
-											<th colspan="4"><spring:message code="lbl.hoardingReport.collectedAmt"></spring:message></th>
+											<th colspan="3"><spring:message code="lbl.hoardingReport.demandAmount"></spring:message></th>
+											<th colspan="3"><spring:message code="lbl.hoardingReport.collectedAmt"></spring:message></th>
+											<th colspan="3"><spring:message code="lbl.hoardingReport.balanceAmt"></spring:message></th>
 										</tr>
 										<tr role="row">
 											<th><spring:message code="lbl.hoardingReport.year"></spring:message></th>
-											<th><spring:message code="lbl.arrears"></spring:message></th>
 											<th><spring:message code="lbl.hoardingReport.taxReason"></spring:message></th>
 											<th><spring:message code="lbl.penalty"/></th>
 											<th><spring:message code="lbl.additionalTax"/></th>
-											<th><spring:message code="lbl.arrears"/></th>
+											<th><spring:message code="lbl.hoardingReport.taxReason"/></th>
+											<th><spring:message code="lbl.penalty"/></th>
+											<th><spring:message code="lbl.additionalTax"/></th>
 											<th><spring:message code="lbl.hoardingReport.taxReason"/></th>
 											<th><spring:message code="lbl.penalty"/></th>
 											<th><spring:message code="lbl.additionalTax"/></th>
 										</tr>
 									</thead>
 									<tbody>
-										<c:set var="totalArrearAmount" value="${0}" />
+									
 										<c:set var="totalDemandAmount" value="${0}" />
 										<c:set var="totalPenaltyAmount" value="${0}" />
 										<c:set var="totalAdditionalTaxAmount" value="${0}" />
-										<c:set var="totalCollectedArrearAmount" value="${0}" />
 										<c:set var="totalCollectedDemandAmount" value="${0}" />
 										<c:set var="totalCollectedPenaltyAmount" value="${0}" />
 										<c:set var="totalCollectedAdditionalTaxAmount" value="${0}" />
+										<c:set var="totalBalanceDemandAmount" value="${0}" />
+										<c:set var="totalBalancePenaltyAmount" value="${0}" />
+										<c:set var="totalBalanceAdditionalTaxAmount" value="${0}" />
 										<c:forEach var="dcb" items="${dcbResult}" varStatus="status" >	
 											<tr class="odd" role="row">
 												<td align="right">${dcb.installmentYearDescription}</td>
-												<td align="right">${dcb.arrearAmount}</td>
 												<td align="right">${dcb.demandAmount}</td>
 												<td align="right">${dcb.penaltyAmount}</td>
 												<td align="right">${dcb.additionalTaxAmount}</td>												
-												<td align="right">${dcb.collectedArrearAmount}</td>
 												<td align="right">${dcb.collectedDemandAmount}</td>
 												<td align="right">${dcb.collectedPenaltyAmount}</td>
 												<td align="right">${dcb.collectedAdditionalTaxAmount}</td>
 												<c:set var="totalDemandAmount" value="${totalDemandAmount+dcb.demandAmount}"/>
-												<c:set var="totalArrearAmount" value="${totalArrearAmount+dcb.arrearAmount}" />
 												<c:set var="totalPenaltyAmount" value="${totalPenaltyAmount+dcb.penaltyAmount}" />
 												<c:set var="totalAdditionalTaxAmount" value="${totalAdditionalTaxAmount+dcb.additionalTaxAmount}" />
 												<c:set var="totalCollectedDemandAmount" value="${totalCollectedDemandAmount+dcb.collectedDemandAmount}"/>
-												<c:set var="totalCollectedArrearAmount" value="${totalCollectedArrearAmount+dcb.collectedArrearAmount }" />
 												<c:set var="totalCollectedPenaltyAmount" value="${totalCollectedPenaltyAmount+dcb.collectedPenaltyAmount }" />
 												<c:set var="totalCollectedAdditionalTaxAmount" value="${totalCollectedAdditionalTaxAmount+dcb.collectedAdditionalTaxAmount}" />
 												<c:set var="totalBalanceAmount" value="${totalDemandAmount-totalCollectedAmount}" />
+												<c:set var="totalBalanceDemandAmount" value="${totalDemandAmount-totalCollectedDemandAmount}" />
+												<c:set var="totalBalancePenaltyAmount" value="${totalPenaltyAmount-totalCollectedPenaltyAmount}" />
+												<c:set var="totalBalanceAdditionalTaxAmount" value="${totalAdditionalTaxAmount-totalCollectedAdditionalTaxAmount}" />
+												<td align="right" ">${totalBalanceDemandAmount}</td>
+												<td align="right" ">${totalBalancePenaltyAmount}</td>
+												<td align="right" ">${totalBalanceAdditionalTaxAmount}</td>
 											</tr>
 										</c:forEach>
 									</tbody>
 									<tfoot>
 										<td align="right" style="font-size: small;font-weight: bold;"><spring:message code="lbl.dcbreport.total"></spring:message></td> 
-										<td align="right" style="font-size: small;font-weight: bold;">${totalArrearAmount}</td>
 										<td align="right" style="font-size: small;font-weight: bold;">${totalDemandAmount}</td>
 										<td align="right" style="font-size: small;font-weight: bold;">${totalPenaltyAmount}</td>
-											<td align="right" style="font-size: small;font-weight: bold;">${totalAdditionalTaxAmount}</td>
+										<td align="right" style="font-size: small;font-weight: bold;">${totalAdditionalTaxAmount}</td>
 									
-										<td align="right" style="font-size: small;font-weight: bold;">${totalCollectedArrearAmount}</td>
 										<td align="right" style="font-size: small;font-weight: bold;">${totalCollectedDemandAmount}</td>
 										<td align="right" style="font-size: small;font-weight: bold;">${totalCollectedPenaltyAmount}</td>
-											<td align="right" style="font-size: small;font-weight: bold;">${totalCollectedAdditionalTaxAmount}</td>
+										<td align="right" style="font-size: small;font-weight: bold;">${totalCollectedAdditionalTaxAmount}</td>
+										
+										<td align="right" style="font-size: small;font-weight: bold;">${totalBalanceDemandAmount}</td>
+										<td align="right" style="font-size: small;font-weight: bold;">${totalBalancePenaltyAmount}</td>
+										<td align="right" style="font-size: small;font-weight: bold;">${totalBalanceAdditionalTaxAmount}</td>
 									
 									</tfoot>
 								</table>
@@ -146,8 +155,8 @@
 										<c:set var="totalDemandSum" value="${0}" />
 										<c:set var="totalCollectionSum" value="${0}" />
 										<c:set var="totalBalanceSum" value="${0}" />
-										<c:set var="totalDemandSum" value="${totalArrearAmount+totalDemandAmount+totalPenaltyAmount+totalAdditionalTaxAmount}" />
-										<c:set var="totalCollectionSum" value="${totalCollectedArrearAmount+totalCollectedDemandAmount+totalCollectedPenaltyAmount+totalCollectedAdditionalTaxAmount}" />
+										<c:set var="totalDemandSum" value="${totalDemandAmount+totalPenaltyAmount+totalAdditionalTaxAmount}" />
+										<c:set var="totalCollectionSum" value="${totalCollectedDemandAmount+totalCollectedPenaltyAmount+totalCollectedAdditionalTaxAmount}" />
 										<c:set var="totalBalanceSum" value="${totalDemandSum-totalCollectionSum}" />
 										<td align="right" style="font-size: small;font-weight: bold;">${totalDemandSum}</td>
 										<td align="right" style="font-size: small;font-weight: bold;">${totalCollectionSum}</td>
@@ -157,8 +166,8 @@
 								<br/>
 								<table align="center" style="max-width: 12cm;"  cellpadding="10" class="table table-bordered datatable dt-responsive multiheadertbl" role="grid" id="dcbReportTable" sortable="sortable">
 									<c:set var="booleanVariable" value="true" />
-									<c:forEach var="dcb" items="${dcbResult}" varStatus="counter" >
-											<c:forEach var="receipt" items="${dcb.receipts}" varStatus="counter" >
+									<c:forEach var="dcb" items="${dcbResult}" varStatus="counter">
+										<c:forEach var="receipt" items="${dcb.receipts}" varStatus="counter">
 											<c:if test="${not empty dcb.receipts}">
 												<c:if test="${booleanVariable eq true}">
 													<thead>
@@ -190,7 +199,11 @@
 					</div>
 				</div>
 				<div class="text-center">
-		    		<a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a>
+					<a href="javascript:void(0)" class="btn btn-default"
+						onclick="self.close()"><spring:message code="lbl.close" /></a>
+					<c:if test="${totalBalanceSum > 0}">
+						<input type="button" value="Pay Now" name="payNow" id="paynow" class="btn btn-primary paynow" >
+					</c:if>
 				</div>
 			</div>
 		</form:form>
@@ -205,4 +218,4 @@
 <script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>"></script>
 <script src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/moment.min.js' context='/egi'/>"></script>
 <script src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/datetime-moment.js' context='/egi'/>"></script>
-<script src="<cdn:url value='/resources/app/js/searchadtax.js?rnd=${app_release_no}'/>"></script>
+<script src="<cdn:url value='/resources/app/js/searchadtaxforonlinepay.js?rnd=${app_release_no}'/>"></script>

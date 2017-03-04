@@ -53,6 +53,7 @@ import org.egov.demand.model.EgDemandDetails;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -78,10 +79,10 @@ public class AdvertisementBillable extends AbstractBillable implements Billable 
 
     private Advertisement advertisement;
     private String collectionType;
-
     @Autowired
     private EgBillDao egBillDAO;
-
+    @Autowired
+    private SecurityUtils securityUtils;
     @Override
     public String getBillPayee() {
         AdvertisementPermitDetail advPermit=advertisement.getActiveAdvertisementPermit();
@@ -226,9 +227,10 @@ public class AdvertisementBillable extends AbstractBillable implements Billable 
 
     @Override
     public Long getUserId() {
-        return ApplicationThreadLocals.getUserId() == null ? null : Long.valueOf(ApplicationThreadLocals.getUserId());
+        return ApplicationThreadLocals.getUserId() == null ? securityUtils.getCurrentUser().getId() : Long.valueOf(ApplicationThreadLocals.getUserId());
     }
-
+    
+    
     @Override
     public String getDescription() {
         final StringBuffer description = new StringBuffer();

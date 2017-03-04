@@ -62,6 +62,9 @@
 				<security:filter-chain pattern="/agency/agencies" filters="none" />
 				<security:filter-chain pattern="/reports/getAgencyWiseDcb" filters="none" />				
 				<security:filter-chain pattern="/hoarding/getsubcategories-by-category" filters="none" />
+				<security:filter-chain pattern="/citizen/search/**" filters="none" />
+				<security:filter-chain pattern="/citizen/collection/**" filters="none" />
+				<security:filter-chain pattern="/citizen/create/**" filters="none" />
 				
 				<security:filter-chain pattern="/**"  filters="concurrentSessionFilter,securityContextPersistenceFilter,logoutFilter,authenticationProcessingFilter,securityContextHolderAwareRequestFilter,rememberMeAuthenticationFilter,anonymousAuthenticationFilter,exceptionTranslationFilter,filterSecurityInterceptor" />
 			</list>

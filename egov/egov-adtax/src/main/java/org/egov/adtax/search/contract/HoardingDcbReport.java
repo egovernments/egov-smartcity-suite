@@ -43,7 +43,11 @@ package org.egov.adtax.search.contract;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+
+import org.egov.dcb.bean.Receipt;
 
 public class HoardingDcbReport {
     private String installmentYearDescription;
@@ -68,6 +72,7 @@ public class HoardingDcbReport {
     private BigDecimal collectedDemandAmount = BigDecimal.ZERO.setScale(2, BigDecimal.ROUND_HALF_EVEN);
     private BigDecimal collectedPenaltyAmount = BigDecimal.ZERO.setScale(2, BigDecimal.ROUND_HALF_EVEN);
     private Map<Date, String> collectReceiptMap = new HashMap<Date, String>();
+    private Set<Receipt> receipts = new HashSet<>();
     private BigDecimal additionalTaxAmount = BigDecimal.ZERO.setScale(2, BigDecimal.ROUND_HALF_EVEN);
     private BigDecimal collectedAdditionalTaxAmount = BigDecimal.ZERO.setScale(2, BigDecimal.ROUND_HALF_EVEN);
 
@@ -262,5 +267,17 @@ public class HoardingDcbReport {
 
     public void setCollectReceiptMap(final Map<Date, String> collectReceiptMap) {
         this.collectReceiptMap = collectReceiptMap;
+    }
+
+    public Set<Receipt> getReceipts() {
+        return receipts;
+    }
+
+    public void setReceipts(Set<Receipt> receipts) {
+        this.receipts = receipts;
+    }
+
+    public void addReceipts(Receipt receipt){
+        this.receipts.add(receipt);
     }
 }
