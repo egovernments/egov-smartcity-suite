@@ -3,7 +3,7 @@
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~     Copyright (C) <2016>  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -39,8 +39,8 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-03-01T18:43:59 -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="mainVRProceedings" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="10" bottomMargin="10" isSummaryNewPage="true" whenResourceMissingType="Error" uuid="9cf367da-f255-4a18-8dcb-ffe982b88e97">
+<!-- 2017-03-06T16:38:35 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="mainVRProceedings" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="15" rightMargin="25" topMargin="20" bottomMargin="10" isSummaryNewPage="true" whenResourceMissingType="Error" uuid="9cf367da-f255-4a18-8dcb-ffe982b88e97">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
@@ -57,7 +57,7 @@
 	<parameter name="assessmentNo" class="java.lang.String"/>
 	<parameter name="applicationDate" class="java.lang.String"/>
 	<parameter name="currentDate" class="java.lang.String"/>
-	<parameter name="cFYear" class="java.lang.String"/>
+	<parameter name="financialYear" class="java.lang.String"/>
 	<parameter name="vrFromDate" class="java.lang.String"/>
 	<parameter name="vrToDate" class="java.lang.String"/>
 	<parameter name="totalMonths" class="java.lang.Integer"/>
@@ -70,7 +70,7 @@
 		<band height="35" splitType="Stretch">
 			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 			<subreport>
-				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="555" height="30" uuid="cc986a3e-b45b-435c-aaeb-bcd5180159a6"/>
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="540" height="30" uuid="cc986a3e-b45b-435c-aaeb-bcd5180159a6"/>
 				<subreportParameter name="cityName">
 					<subreportParameterExpression><![CDATA[$P{cityName}]]></subreportParameterExpression>
 				</subreportParameter>
@@ -104,8 +104,8 @@
 				<subreportParameter name="applicationDate">
 					<subreportParameterExpression><![CDATA[$P{applicationDate}]]></subreportParameterExpression>
 				</subreportParameter>
-				<subreportParameter name="cFYear">
-					<subreportParameterExpression><![CDATA[$P{cFYear}]]></subreportParameterExpression>
+				<subreportParameter name="financialYear">
+					<subreportParameterExpression><![CDATA[$P{financialYear}]]></subreportParameterExpression>
 				</subreportParameter>
 				<subreportParameter name="vrFromDate">
 					<subreportParameterExpression><![CDATA[$P{vrFromDate}]]></subreportParameterExpression>
@@ -131,7 +131,7 @@
 		<band height="35" splitType="Stretch">
 			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 			<subreport>
-				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="555" height="30" uuid="28effcea-ccef-4dfd-98e6-300b1de4a221"/>
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="540" height="30" uuid="28effcea-ccef-4dfd-98e6-300b1de4a221"/>
 				<subreportParameter name="cityName">
 					<subreportParameterExpression><![CDATA[$P{cityName}]]></subreportParameterExpression>
 				</subreportParameter>
@@ -165,8 +165,8 @@
 				<subreportParameter name="applicationDate">
 					<subreportParameterExpression><![CDATA[$P{applicationDate}]]></subreportParameterExpression>
 				</subreportParameter>
-				<subreportParameter name="cFYear">
-					<subreportParameterExpression><![CDATA[$P{cFYear}]]></subreportParameterExpression>
+				<subreportParameter name="financialYear">
+					<subreportParameterExpression><![CDATA[$P{financialYear}]]></subreportParameterExpression>
 				</subreportParameter>
 				<subreportParameter name="vrFromDate">
 					<subreportParameterExpression><![CDATA[$P{vrFromDate}]]></subreportParameterExpression>

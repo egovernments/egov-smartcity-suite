@@ -39,8 +39,8 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-03-06T10:27:03 -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="vacancyRemissionProceedings_municipality" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="0" bottomMargin="0" uuid="bfa584a8-aba2-402c-aa8b-d9cf2f66bfb3">
+<!-- 2017-03-06T16:38:32 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="vacancyRemissionProceedings_municipality" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="15" rightMargin="25" topMargin="0" bottomMargin="0" uuid="bfa584a8-aba2-402c-aa8b-d9cf2f66bfb3">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="92"/>
@@ -56,7 +56,7 @@
 	<parameter name="assessmentNo" class="java.lang.String"/>
 	<parameter name="applicationDate" class="java.lang.String"/>
 	<parameter name="currentDate" class="java.lang.String"/>
-	<parameter name="cFYear" class="java.lang.String"/>
+	<parameter name="financialYear" class="java.lang.String"/>
 	<parameter name="vrFromDate" class="java.lang.String"/>
 	<parameter name="vrToDate" class="java.lang.String"/>
 	<parameter name="totalMonths" class="java.lang.String"/>
@@ -134,7 +134,7 @@
 	<pageHeader>
 		<band height="540" splitType="Stretch">
 			<textField isStretchWithOverflow="true">
-				<reportElement x="32" y="49" width="498" height="191" uuid="75aa4cf0-93b7-4dd9-a88a-f4467db78343"/>
+				<reportElement x="32" y="25" width="498" height="245" uuid="75aa4cf0-93b7-4dd9-a88a-f4467db78343"/>
 				<textElement textAlignment="Justified" verticalAlignment="Middle" markup="styled">
 					<paragraph lineSpacing="1_1_2" lineSpacingSize="1.0"/>
 				</textElement>
@@ -160,7 +160,7 @@
 				<text><![CDATA[To, Sri/Smt./Kum.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="339" y="312" width="61" height="46" uuid="bd8ab7ee-0ab0-4bc8-a7bd-506286801bcb"/>
+				<reportElement x="339" y="318" width="61" height="46" uuid="bd8ab7ee-0ab0-4bc8-a7bd-506286801bcb"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -173,7 +173,7 @@
 				<text><![CDATA[No of completed months]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="182" y="312" width="157" height="25" uuid="22ae5f29-84e9-441d-a841-1e3b16ab6600"/>
+				<reportElement x="182" y="318" width="157" height="25" uuid="22ae5f29-84e9-441d-a841-1e3b16ab6600"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -186,7 +186,7 @@
 				<text><![CDATA[Vaccant Period of the Premises]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="182" y="337" width="78" height="21" uuid="dd90a462-df05-4145-b27a-5ad89864186d"/>
+				<reportElement x="182" y="343" width="78" height="21" uuid="dd90a462-df05-4145-b27a-5ad89864186d"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -199,7 +199,7 @@
 				<text><![CDATA[From]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="400" y="312" width="98" height="46" uuid="4a3f8836-e75b-4aef-a2cc-0d47b4d45764"/>
+				<reportElement x="400" y="318" width="98" height="46" uuid="4a3f8836-e75b-4aef-a2cc-0d47b4d45764"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -212,7 +212,7 @@
 				<text><![CDATA[50 % of Vacancy Remission now granted]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="260" y="337" width="79" height="21" uuid="e58aa857-c4f1-4094-b7fa-70f3ff65a5e4"/>
+				<reportElement x="260" y="343" width="79" height="21" uuid="e58aa857-c4f1-4094-b7fa-70f3ff65a5e4"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -225,7 +225,7 @@
 				<text><![CDATA[To]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="34" y="16" width="70" height="10" isPrintWhenDetailOverflows="true" uuid="04367b92-ef01-4585-8ade-6f2e685a1154"/>
+				<reportElement positionType="Float" x="34" y="3" width="70" height="10" isPrintWhenDetailOverflows="true" uuid="04367b92-ef01-4585-8ade-6f2e685a1154"/>
 				<textElement markup="styled">
 					<font size="8" isBold="true" isUnderline="true"/>
 				</textElement>
@@ -239,7 +239,7 @@
 				<textFieldExpression><![CDATA[$P{cityName}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="45" y="358" width="137" height="42" uuid="47b7c546-2a9d-4a49-83c3-8e2952958d44"/>
+				<reportElement x="45" y="364" width="137" height="42" uuid="47b7c546-2a9d-4a49-83c3-8e2952958d44"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -250,7 +250,7 @@
 				<textFieldExpression><![CDATA[$P{halfYearTax}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="182" y="358" width="78" height="42" uuid="1b021d99-604f-43bb-9ba4-416fd0f29d2c"/>
+				<reportElement x="182" y="364" width="78" height="42" uuid="1b021d99-604f-43bb-9ba4-416fd0f29d2c"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -261,7 +261,7 @@
 				<textFieldExpression><![CDATA[$P{vrFromDate}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="260" y="358" width="79" height="42" uuid="539def92-9b24-453e-955c-0908c826fb3c"/>
+				<reportElement x="260" y="364" width="79" height="42" uuid="539def92-9b24-453e-955c-0908c826fb3c"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -272,7 +272,7 @@
 				<textFieldExpression><![CDATA[$P{vrToDate}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="339" y="358" width="61" height="42" uuid="e9538cf5-c465-4ce3-b925-05556bc6a963"/>
+				<reportElement x="339" y="364" width="61" height="42" uuid="e9538cf5-c465-4ce3-b925-05556bc6a963"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -283,7 +283,7 @@
 				<textFieldExpression><![CDATA[$P{totalMonths}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="400" y="358" width="98" height="42" uuid="7493ae93-530b-4d1a-a58e-220b1b7f5c59"/>
+				<reportElement x="400" y="364" width="98" height="42" uuid="7493ae93-530b-4d1a-a58e-220b1b7f5c59"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -294,7 +294,7 @@
 				<textFieldExpression><![CDATA[$P{newTax}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="33" y="515" width="341" height="21" uuid="68686175-0050-4d90-ab31-04531989aeb7"/>
+				<reportElement x="33" y="521" width="341" height="15" uuid="68686175-0050-4d90-ab31-04531989aeb7"/>
 				<textElement>
 					<font size="8"/>
 				</textElement>
@@ -305,15 +305,17 @@
 				<imageExpression><![CDATA[$P{userSignature}]]></imageExpression>
 			</image>
 			<textField>
-				<reportElement x="45" y="312" width="137" height="46" uuid="f202959d-af25-4eb9-812b-d5cbab67af36"/>
+				<reportElement x="45" y="318" width="137" height="46" uuid="f202959d-af25-4eb9-812b-d5cbab67af36"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA["Property Tax payable for the 1st/2nd half year of\n"+$P{cFYear}]]></textFieldExpression>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Property Tax payable for the 1st/2nd half year of\n"+$P{financialYear}]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>

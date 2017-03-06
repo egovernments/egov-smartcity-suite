@@ -114,12 +114,12 @@ public class UpdateVacancyRemissionController extends GenericWorkFlowController 
         final String userDesignationList = propertyTaxCommonUtils
                 .getAllDesignationsForUser(securityUtils.getCurrentUser().getId());
         if (vacancyRemission != null) {
-            if(propertyTaxUtil.enableMonthlyUpdate(vacancyRemission.getBasicProperty().getUpicNo())){
-                
-                return "redirect:/vacancyremission/monthlyupdate/"+vacancyRemission.getBasicProperty().getUpicNo();
-            }else if(propertyTaxUtil.enableVRApproval(vacancyRemission.getBasicProperty().getUpicNo())){
-                
-                return "redirect:/vacancyremissionapproval/create/"+vacancyRemission.getBasicProperty().getUpicNo();
+            if (propertyTaxUtil.enableVRApproval(vacancyRemission.getBasicProperty().getUpicNo())) {
+
+                return "redirect:/vacancyremissionapproval/create/" + vacancyRemission.getBasicProperty().getUpicNo();
+            } else if (propertyTaxUtil.enableMonthlyUpdate(vacancyRemission.getBasicProperty().getUpicNo())) {
+
+                return "redirect:/vacancyremission/monthlyupdate/" + vacancyRemission.getBasicProperty().getUpicNo();
             }
             final BasicProperty basicProperty = vacancyRemission.getBasicProperty();
             model.addAttribute("stateType", vacancyRemission.getClass().getSimpleName());
