@@ -49,6 +49,9 @@ import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.VacancyRemission;
 import org.egov.ptis.domain.service.property.VacancyRemissionService;
 import org.egov.ptis.report.bean.PropertyAckNoticeInfo;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -84,7 +87,8 @@ public class RejectionAcknowledgementController {
     private UserService userService;
 
     @RequestMapping(value = "/rejectionacknowledgement", method = RequestMethod.GET)
-    public @ResponseBody ResponseEntity<byte[]> generateRejectionAckNotice(final HttpServletRequest request,
+    @ResponseBody
+    public ResponseEntity<byte[]> generateRejectionAckNotice(final HttpServletRequest request,
             final HttpSession session) {
     	String pathvars[] = request.getParameter("pathVar").split(",");
     	final VacancyRemission vacancyRemission = vacancyRemissionService.getLatestRejectAckGeneratedVacancyRemissionForProperty(pathvars[0]);
@@ -94,17 +98,17 @@ public class RejectionAcknowledgementController {
     private ResponseEntity<byte[]> generateReport(final VacancyRemission vacancyRemission,final HttpServletRequest request,
             final HttpSession session,String rejectingUser) {
     	if(vacancyRemission!=null){
-    		final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+    		final DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/yyyy");
     		PropertyAckNoticeInfo ackBean = new PropertyAckNoticeInfo();
             final String url = WebUtils.extractRequestDomainURL(request, false);
             final String cityLogo = url.concat(PropertyTaxConstants.IMAGE_CONTEXT_PATH).concat(
                     (String) request.getSession().getAttribute("citylogo"));
             final String cityName = request.getSession().getAttribute("citymunicipalityname").toString();
-            
+           DateTime dt = new DateTime(vacancyRemission.getState().getCreatedDate());
             reportParams.put("logoPath", cityLogo);
             reportParams.put("cityName", cityName);
             reportParams.put("loggedInUsername", userService.getUserById(ApplicationThreadLocals.getUserId()).getName());
-            reportParams.put("rejectionDate", formatter.format(vacancyRemission.getState().getCreatedDate()));
+            reportParams.put("rejectionDate", dt.toString(formatter));
             reportParams.put("rejectingUser", rejectingUser);
             ackBean.setAssessmentNo(vacancyRemission.getBasicProperty().getUpicNo());
             ackBean.setOwnerAddress(vacancyRemission.getBasicProperty().getAddress().toString());

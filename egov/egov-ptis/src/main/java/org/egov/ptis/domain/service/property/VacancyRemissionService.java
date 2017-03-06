@@ -55,10 +55,12 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_GENERAL
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_LIBRARY_CESS;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEPUTY_COMMISSIONER_DESIGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.DIGITAL_SIGNATURE_PENDING;
+import static org.egov.ptis.constants.PropertyTaxConstants.JUNIOR_ASSISTANT;
 import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_VACANCY_REMISSION;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTYTAX_ROLEFORNONEMPLOYEE;
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_OFFICER_DESGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.SENIOR_ASSISTANT;
 import static org.egov.ptis.constants.PropertyTaxConstants.VR_SPECIALNOTICE_TEMPLATE;
 import static org.egov.ptis.constants.PropertyTaxConstants.VR_STATUS_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.VR_STATUS_COMMISSIONER_FORWARD_PENDING;
@@ -74,6 +76,8 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONAL_COMMISSIONER_DESIGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.VR_APP_STATUS_REJECTED;
+import static org.egov.ptis.constants.PropertyTaxConstants.VR_STATUS_MONTHLY_UPDATE;
 
 import java.io.ByteArrayInputStream;
 import java.math.BigDecimal;
@@ -89,6 +93,7 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
+import org.egov.commons.CFinancialYear;
 import org.egov.commons.Installment;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.eis.entity.Assignment;
@@ -196,6 +201,8 @@ public class VacancyRemissionService {
     @Autowired
     private AppConfigValueService appConfigValuesService;
 
+    public static final String REJECTION_ACK_TEMPLATE = "vacancyRemission_rejectionAck";
+
     public VacancyRemission getApprovedVacancyRemissionForProperty(final String upicNo) {
         return vacancyRemissionRepository.findByUpicNo(upicNo);
     }
@@ -244,7 +251,8 @@ public class VacancyRemissionService {
         Assignment assignment;
         String approverDesignation = "";
         String nextAction = "";
-
+        String loggedInUserDesignation;
+        loggedInUserDesignation = getLoggedInUserDesignation(vacancyRemission, user);
         if (!propertyByEmployee) {
             currentState = "Created";
             if (propertyService.isCscOperator(user)) {
@@ -322,14 +330,14 @@ public class VacancyRemissionService {
                 vacancyRemission.getBasicProperty().setUnderWorkflow(true);
             } else {
                 wfmatrix = vacancyRemissionWorkflowService.getWfMatrix(vacancyRemission.getStateType(), null, null,
-                        additionalRule, vacancyRemission.getCurrentState().getValue(), null);
+                        additionalRule, vacancyRemission.getCurrentState().getValue(), vacancyRemission.getCurrentState().getNextAction(),null,loggedInUserDesignation);
 
                 if (wfmatrix != null)
                     if (wfmatrix.getNextAction().equalsIgnoreCase("END")) {
-                        vacancyRemission.transition(true).end()
-                                .withSenderName(user.getUsername() + "::" + user.getName())
-                                .withComments(approvalComent).withDateInfo(currentDate.toDate());
-                        vacancyRemission.getBasicProperty().setUnderWorkflow(false);
+                        vacancyRemission.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+                                .withComments(approvalComent).withStateValue(wfmatrix.getNextState())
+                                .withDateInfo(currentDate.toDate()).withNextAction(VR_STATUS_MONTHLY_UPDATE);
+
                     } else
                         vacancyRemission.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
                                 .withComments(approvalComent).withStateValue(wfmatrix.getNextState())
@@ -440,6 +448,23 @@ public class VacancyRemissionService {
         vacancyRemissionRepository.save(vacancyRemission);
     }
 
+    @Transactional
+    public void rejectVacancyRemission(final VacancyRemission vacancyRemission, final String commnets,
+            final HttpServletRequest request) {
+        final User user = securityUtils.getCurrentUser();
+        Position wfInitiator;
+        if (vacancyRemission != null) {
+            wfInitiator = vacancyRemission.getState().getInitiatorPosition();
+
+            vacancyRemission.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+                    .withComments(commnets).withStateValue(VR_APP_STATUS_REJECTED).withDateInfo(new Date())
+                    .withOwner(wfInitiator).withNextAction("Generate Notice");
+            vacancyRemission.setStatus(VR_STATUS_REJECTED);
+            buildSMS(vacancyRemission, "Reject");
+        }
+        vacancyRemissionRepository.save(vacancyRemission);
+    }
+
     public List<VacancyRemissionDetails> getMonthlyDetailsHistory(final VacancyRemission vacancyRemission) {
         List<VacancyRemissionDetails> historyList = new ArrayList<>();
         if (!vacancyRemission.getVacancyRemissionDetails().isEmpty()) {
@@ -466,7 +491,9 @@ public class VacancyRemissionService {
         Assignment assignment;
         String approverDesignation = "";
         String nextAction = "";
-
+        List<Assignment> loggedInUserAssign;
+        String loggedInUserDesignation = "";
+        
         if (vacancyRemissionApproval.getId() != null
                 && workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_REJECT))
             wfInitiator = assignmentService.getPrimaryAssignmentForUser(vacancyRemissionApproval.getCreatedBy()
@@ -486,8 +513,6 @@ public class VacancyRemissionService {
             approverDesignation = assignment.getDesignation().getName();
         }
 
-        List<Assignment> loggedInUserAssign;
-        String loggedInUserDesignation = "";
         if (vacancyRemissionApproval.getState() != null) {
             loggedInUserAssign = assignmentService.getAssignmentByPositionAndUserAsOnDate(
                     vacancyRemissionApproval.getCurrentState().getOwnerPosition().getId(), user.getId(), new Date());
@@ -676,6 +701,7 @@ public class VacancyRemissionService {
             final String approvedUser, final String noticeNo) {
         ReportRequest reportInput;
         ReportOutput reportOutput = null;
+        CFinancialYear financialYear;
         if (vacancyRemission != null) {
             final Map<String, Object> reportParams = new HashMap<>();
             final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
@@ -683,8 +709,8 @@ public class VacancyRemissionService {
             final String cityGrade = request.getSession().getAttribute("cityGrade") != null
                     ? request.getSession().getAttribute("cityGrade").toString() : null;
             Boolean isCorporation;
-            if (!cityGrade.equals(null) && !cityGrade.equals("")
-                    && cityGrade.equalsIgnoreCase(CITY_GRADE_CORPORATION))
+            if (StringUtils.isNoneBlank(cityGrade)
+                    && CITY_GRADE_CORPORATION.equalsIgnoreCase(cityGrade))
                 isCorporation = true;
             else
                 isCorporation = false;
@@ -714,6 +740,8 @@ public class VacancyRemissionService {
             final Map<String, BigDecimal> currentDemand = ptDemandDAO
                     .getDemandCollMap(vacancyRemission.getBasicProperty().getProperty());
             final BigDecimal halfYearTax = currentDemand.get(CURR_SECONDHALF_DMD_STR);
+            financialYear = propertyTaxUtil.getFinancialYearforDate(new Date());
+            reportParams.put("financialYear", financialYear.getFinYearRange());
             reportParams.put("halfYearTax", halfYearTax.toString());
             reportParams.put("newTax", halfYearTax.divide(BigDecimal.valueOf(2)).setScale(2).toString());
             reportInput = new ReportRequest(VR_SPECIALNOTICE_TEMPLATE, vacancyRemission, reportParams);
@@ -815,4 +843,28 @@ public class VacancyRemissionService {
 
     }
 
+    @Transactional
+    public void closeVacancyRemission(final VacancyRemission vacancyRemission) {
+        final User user = securityUtils.getCurrentUser();
+        vacancyRemission.transition().end().withSenderName(user.getName()).withDateInfo(new Date());
+        if (!VR_STATUS_APPROVED.equals(vacancyRemission.getStatus())) {
+            vacancyRemission.setStatus(VR_STATUS_REJECTION_ACK_GENERATED);
+            vacancyRemission.getBasicProperty().setUnderWorkflow(false);
+        }
+    }
+    
+    private String getLoggedInUserDesignation(final VacancyRemission vacancyRemission, final User user) {
+        String loggedInUserDesignation = "";
+        List<Assignment> loggedInUserAssign;
+        if (vacancyRemission.getState() != null) {
+            loggedInUserAssign = assignmentService.getAssignmentByPositionAndUserAsOnDate(
+                    vacancyRemission.getCurrentState().getOwnerPosition().getId(), user.getId(), new Date());
+            loggedInUserDesignation = !loggedInUserAssign.isEmpty()
+                    ? loggedInUserAssign.get(0).getDesignation().getName() : null;
+        }
+        if (JUNIOR_ASSISTANT.equals(loggedInUserDesignation) || SENIOR_ASSISTANT.equals(loggedInUserDesignation))
+            loggedInUserDesignation = null;
+
+        return loggedInUserDesignation;
+    }
 }

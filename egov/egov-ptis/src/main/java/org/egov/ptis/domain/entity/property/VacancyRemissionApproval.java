@@ -118,7 +118,7 @@ public class VacancyRemissionApproval extends StateAware {
 
     @Override
     public String getStateDetails() {
-        return "Vacancy Remission Monthly Update" + " - " + this.vacancyRemission.getBasicProperty().getUpicNo();
+        return "Vacancy Remission Approval" + " - " + this.vacancyRemission.getBasicProperty().getUpicNo();
     }
 
     public String getStatus() {

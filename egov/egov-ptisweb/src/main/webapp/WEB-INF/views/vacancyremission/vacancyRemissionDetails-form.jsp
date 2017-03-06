@@ -82,11 +82,32 @@
 			</div> <!-- end of main-content -->
 			
 			<div class="form-group text-center">
-				<button type="submit" class="btn btn-primary" ><spring:message code="lbl.submit"/></button>
-				&nbsp; <input type="button" class="button" value="Close" onclick="self.close()">
+				<button type="submit" class="btn btn-primary"><spring:message code="lbl.submit"/></button>
+				&nbsp; 
+				<button type="button" name ="reject" class="btn btn-primary" onclick="return validateAndReject();"><spring:message code="lbl.btn.reject"/></button>
+				<input type="button" class="button" value="Close" onclick="self.close()">
+				<form:hidden path="" name="wfAction" id="wfAction" value="" />
 			</div>
 		</div>
 </form:form>
+<script>
+function validateAndReject(){
+	jQuery('#wfAction').val("Reject");
+	var comments = jQuery('#remissionComments').val();
+	if(comments == '' || comments==null){
+		bootbox.alert("Please enter the detials");
+		return false;
+	}else{
+		var result = confirm("Are you sure, you want to reject the application?");
+		if(result==true){
+			jQuery( "#vacancyRemissionDetailsForm" ).submit();
+			return true;
+		}else{
+			return false;
+		}
+	}
+} 
+</script>
 
 <script src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
 

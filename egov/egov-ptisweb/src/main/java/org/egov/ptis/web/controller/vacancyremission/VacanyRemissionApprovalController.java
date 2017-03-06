@@ -154,6 +154,7 @@ public class VacanyRemissionApprovalController extends GenericWorkFlowController
 
             vacancyRemissionService.saveVacancyRemissionApproval(vacancyRemissionApproval, approvalPosition,
                     approvalComent, null, workFlowAction);
+            vacancyRemissionService.closeVacancyRemission(vacancyRemission);
 
             String successMsg = "Vacancy Remission Final Approval saved and forwarded to : "
                     + propertyTaxUtil.getApproverUserName(approvalPosition);

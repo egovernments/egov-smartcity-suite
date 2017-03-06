@@ -114,15 +114,32 @@ public class UpdateVacancyRemissionController extends GenericWorkFlowController 
         final String userDesignationList = propertyTaxCommonUtils
                 .getAllDesignationsForUser(securityUtils.getCurrentUser().getId());
         if (vacancyRemission != null) {
+            if(propertyTaxUtil.enableMonthlyUpdate(vacancyRemission.getBasicProperty().getUpicNo())){
+                
+                return "redirect:/vacancyremission/monthlyupdate/"+vacancyRemission.getBasicProperty().getUpicNo();
+            }else if(propertyTaxUtil.enableVRApproval(vacancyRemission.getBasicProperty().getUpicNo())){
+                
+                return "redirect:/vacancyremissionapproval/create/"+vacancyRemission.getBasicProperty().getUpicNo();
+            }
+            final BasicProperty basicProperty = vacancyRemission.getBasicProperty();
             model.addAttribute("stateType", vacancyRemission.getClass().getSimpleName());
             model.addAttribute("currentState", vacancyRemission.getCurrentState().getValue());
             if (!vacancyRemission.getDocuments().isEmpty())
                 model.addAttribute("attachedDocuments", vacancyRemission.getDocuments());
+            if (vacancyRemission.getStatus().equals(PropertyTaxConstants.VR_STATUS_APPROVED)) {
+                model.addAttribute("updated", true);
+                vacancyRemissionService.addModelAttributes(model, basicProperty);
+                return VACANCYREMISSION_EDIT;
+            } else if (vacancyRemission.getStatus().equals(PropertyTaxConstants.VR_STATUS_REJECTED)) {
+                prepareWorkflow(model, vacancyRemission, new WorkflowContainer());
+                vacancyRemissionService.addModelAttributes(model, basicProperty);
+
+            } else{
             model.addAttribute("userDesignationList", userDesignationList);
             model.addAttribute("designation", COMMISSIONER_DESGN);
             prepareWorkflow(model, vacancyRemission, new WorkflowContainer());
-            final BasicProperty basicProperty = vacancyRemission.getBasicProperty();
             vacancyRemissionService.addModelAttributes(model, basicProperty);
+            }
         }
         return VACANCYREMISSION_EDIT;
     }
@@ -150,6 +167,12 @@ public class UpdateVacancyRemissionController extends GenericWorkFlowController 
                     && workFlowAction.equalsIgnoreCase(PropertyTaxConstants.WFLOW_ACTION_STEP_FORWARD))
                 approvalPosition = vacancyRemission.getState().getInitiatorPosition().getId();
             final Boolean propertyByEmployee = Boolean.valueOf(request.getParameter("propertyByEmployee"));
+            if (PropertyTaxConstants.WFLOW_ACTION_STEP_NOTICE_GENERATE.equalsIgnoreCase(workFlowAction)) {
+                final String pathVars = vacancyRemission.getBasicProperty().getUpicNo() + "," + senderName;
+                vacancyRemissionService.closeVacancyRemission(vacancyRemission);
+                return "redirect:/vacancyremission/rejectionacknowledgement?pathVar=" + pathVars;
+
+            }
             if (!isWfReject(workFlowAction))
                 vacancyRemissionService.saveVacancyRemission(vacancyRemission, approvalPosition, approvalComent, null,
                         workFlowAction, propertyByEmployee);
@@ -168,11 +191,7 @@ public class UpdateVacancyRemissionController extends GenericWorkFlowController 
                             + vacancyRemission.getApplicationNumber();
 
             model.addAttribute("successMessage", successMsg);
-            if (isWfNoticeGen(workFlowAction)) {
-                final String pathVars = vacancyRemission.getBasicProperty().getUpicNo() + "," + senderName;
-                return "redirect:/vacancyremission/rejectionacknowledgement?pathVar=" + pathVars;
-            } else
-                return VACANCYREMISSION_SUCCESS;
+            return VACANCYREMISSION_SUCCESS;
         } else {
             prepareWorkflow(model, vacancyRemission, new WorkflowContainer());
             final BasicProperty basicProperty = vacancyRemission.getBasicProperty();
@@ -193,11 +212,6 @@ public class UpdateVacancyRemissionController extends GenericWorkFlowController 
     private boolean isWfNotNoticeGen(final String workFlowAction) {
         return org.apache.commons.lang.StringUtils.isNotBlank(workFlowAction)
                 && !workFlowAction.equalsIgnoreCase(PropertyTaxConstants.WFLOW_ACTION_STEP_NOTICE_GENERATE);
-    }
-
-    private boolean isWfNoticeGen(final String workFlowAction) {
-        return org.apache.commons.lang.StringUtils.isNotBlank(workFlowAction)
-                && workFlowAction.equalsIgnoreCase(PropertyTaxConstants.WFLOW_ACTION_STEP_NOTICE_GENERATE);
     }
 
     private boolean isWfForwardOrApprovalPending(final VacancyRemission vacancyRemission, final String workFlowAction) {

@@ -59,6 +59,12 @@ body
 	class="form-horizontal form-groups-bordered" modelAttribute="vacancyRemission">
 	<div class="page-container" id="page-container">
 			<form:hidden path="" id="workFlowAction" name="workFlowAction" />
+			
+			<c:if test="${updated==true}">
+			<div class="add-margin error-msg"  style="text-align: center">
+			  <font size="5">   <spring:message code="lbl.vr.monthlyupdate.validation" /></font> 
+			</div>
+			</c:if>
         	<div class="main-content">
 				<jsp:include page="../common/commonPropertyDetailsView.jsp"></jsp:include>
 				<div class="row">

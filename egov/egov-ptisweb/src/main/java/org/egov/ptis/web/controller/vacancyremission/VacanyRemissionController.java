@@ -168,14 +168,13 @@ public class VacanyRemissionController extends GenericWorkFlowController {
                     Boolean enableVacancyRemission = Boolean.FALSE;
                     if (property.getPropertyDetail().getPropertyTypeMaster().getCode()
                             .equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)) {
-                        model.addAttribute(ERROR_MSG, "Vacancy Remission cannot be done for Vacant Land ");
+                        model.addAttribute(ERROR_MSG, "msg.vlt.error");
                         return PROPERTY_VALIDATION;
                     } else if (property.getIsExemptedFromTax()) {
-                        model.addAttribute(ERROR_MSG, "This property is exempted from taxes");
+                        model.addAttribute(ERROR_MSG, "msg.property.exempted");
                         return PROPERTY_VALIDATION;
                     } else if (basicProperty.isUnderWorkflow()) {
-                        model.addAttribute(ERROR_MSG,
-                                "Could not do Vacancy Remission now, as this property is undergoing some work flow.");
+                        model.addAttribute(ERROR_MSG,"msg.under.workflow");
                         return PROPERTY_VALIDATION;
                     } else {
                         final List<VacancyRemission> remissionList = vacancyRemissionService
@@ -195,7 +194,7 @@ public class VacanyRemissionController extends GenericWorkFlowController {
                                     enableVacancyRemission = true;
                                 else if (vacancyRemission.getStatus().equalsIgnoreCase(
                                         PropertyTaxConstants.VR_STATUS_WORKFLOW)) {
-                                    model.addAttribute(ERROR_MSG, "This property is under workflow");
+                                    model.addAttribute(ERROR_MSG, "msg.under.workflow");
                                     return PROPERTY_VALIDATION;
                                 }
                         }

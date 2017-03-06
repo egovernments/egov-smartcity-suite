@@ -1,45 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  ~ eGov suite of products aim to improve the internal efficiency,transparency,
-  ~    accountability and the service delivery of the government  organizations.
-  ~
-  ~     Copyright (C) <2016>  eGovernments Foundation
-  ~
-  ~     The updated version of eGov suite of products as by eGovernments Foundation
-  ~     is available at http://www.egovernments.org
-  ~
-  ~     This program is free software: you can redistribute it and/or modify
-  ~     it under the terms of the GNU General Public License as published by
-  ~     the Free Software Foundation, either version 3 of the License, or
-  ~     any later version.
-  ~
-  ~     This program is distributed in the hope that it will be useful,
-  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~     GNU General Public License for more details.
-  ~
-  ~     You should have received a copy of the GNU General Public License
-  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
-  ~     http://www.gnu.org/licenses/gpl.html .
-  ~
-  ~     In addition to the terms of the GPL license to be adhered to in using this
-  ~     program, the following additional terms are to be complied with:
-  ~
-  ~         1) All versions of this program, verbatim or modified must carry this
-  ~            Legal Notice.
-  ~
-  ~         2) Any misrepresentation of the origin of the material is prohibited. It
-  ~            is required that all modified versions of this material be marked in
-  ~            reasonable ways as different from the original version.
-  ~
-  ~         3) This license does not grant any rights to any user of the program
-  ~            with regards to rights under trademark law for use of the trade names
-  ~            or trademarks of eGovernments Foundation.
-  ~
-  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  -->
-<!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
-<!-- 2016-12-13T17:36:09 -->
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2017-03-06T10:27:03 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="vacancyRemissionProceedings_municipality" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="0" bottomMargin="0" uuid="bfa584a8-aba2-402c-aa8b-d9cf2f66bfb3">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -56,6 +17,7 @@
 	<parameter name="assessmentNo" class="java.lang.String"/>
 	<parameter name="applicationDate" class="java.lang.String"/>
 	<parameter name="currentDate" class="java.lang.String"/>
+	<parameter name="cFYear" class="java.lang.String"/>
 	<parameter name="vrFromDate" class="java.lang.String"/>
 	<parameter name="vrToDate" class="java.lang.String"/>
 	<parameter name="totalMonths" class="java.lang.String"/>
@@ -115,9 +77,9 @@
 				<text><![CDATA[Roc.No:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="222" y="175" width="100" height="20" uuid="9a972691-2d35-4a21-8031-50a0a223125a"/>
+				<reportElement x="222" y="178" width="100" height="20" uuid="9a972691-2d35-4a21-8031-50a0a223125a"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="12" isBold="true"/>
+					<font size="14" isBold="true"/>
 				</textElement>
 				<text><![CDATA[*     *     *]]></text>
 			</staticText>
@@ -137,7 +99,7 @@
 				<textElement textAlignment="Justified" verticalAlignment="Middle" markup="styled">
 					<paragraph lineSpacing="1_1_2" lineSpacingSize="1.0"/>
 				</textElement>
-				<textFieldExpression><![CDATA["\tIn the reference read above, the Owner of the premises bearing Door No:<style forecolor=\"#000000\" isBold=\"true\">"+$P{houseNo}+"</style>, Assessment Number <style forecolor=\"#000000\" isBold=\"true\">"+$P{assessmentNo}+"</style> , Locality<style forecolor=\"#000000\" isBold=\"true\"> "+$P{locality}+"</style> has informed that the above property is vacant from <style forecolor=\"#000000\" isBold=\"true\">"+$P{vrFromDate}+"</style>  to <style forecolor=\"#000000\" isBold=\"true\">"+$P{vrToDate}+"</style> for <style forecolor=\"#000000\" isBold=\"true\">"+$P{totalMonths}+" </style> months and therefore requested for property tax “vacancy remission” for the said period. \n\tOn receipt of the same, the said property is got inspected by the revenue officials and found the following:-\na) That the premises is vacant from <style forecolor=\"#000000\" isBold=\"true\">"+$P{vrFromDate}+" </style> to <style forecolor=\"#000000\" isBold=\"true\">"+$P{vrToDate}+"</style> for <style forecolor=\"#000000\" isBold=\"true\">"+$P{totalMonths}+ "</style> months.\nb) That the premises is got inspected every month and found that the same is vacant.\nc) That the same is un-occupied and unproductive of rent.\nd) That the electricity bills of the said premises are verified for the above period and found that minimum monthly c.c. charges have come during the period for which the claim is made by the applicant.\n\tAfter careful examination of the above issue, as per the information available in the Municipal Office records and in exercise of the powers conferred by the Commissioner, u/s 92 of A.P. Municipalities Act, 1965,  property tax “vacancy remission” is hereby granted to the Owner of the above premises, as detailed below:-"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["\tIn the reference read above, the Owner of the premises bearing Door No:<style forecolor=\"#000000\" isBold=\"true\">"+$P{houseNo}+"</style>, Assessment Number <style forecolor=\"#000000\" isBold=\"true\">"+$P{assessmentNo}+"</style> , Locality<style forecolor=\"#000000\" isBold=\"true\"> "+$P{locality}+"</style> has informed that the above property is vacant from <style forecolor=\"#000000\" isBold=\"true\">"+$P{vrFromDate}+"</style>  to <style forecolor=\"#000000\" isBold=\"true\">"+$P{vrToDate}+"</style> for <style forecolor=\"#000000\" isBold=\"true\">"+$P{totalMonths}+" </style> months and therefore requested for property tax “Vacancy Remission” for the said period. \n\n\tOn receipt of the same, the said property is got inspected by the revenue officials and found the following:-\na) That the premises is vacant from <style forecolor=\"#000000\" isBold=\"true\">"+$P{vrFromDate}+" </style> to <style forecolor=\"#000000\" isBold=\"true\">"+$P{vrToDate}+"</style> for <style forecolor=\"#000000\" isBold=\"true\">"+$P{totalMonths}+ "</style> months.\nb) That the premises is got inspected every month and found that the same is vacant.\nc) That the same is un-occupied and unproductive of rent.\nd) That the electricity bills of the said premises are verified for the above period and found that minimum monthly c.c. charges have come during the period for which the claim is made by the applicant.\n\n\tAfter careful examination of the above issue, as per the information available in the Municipal Office records and in exercise of the powers conferred by the Commissioner, u/s 92 of A.P. Municipalities Act, 1965,  property tax “Vacancy Remission” is hereby granted to the Owner of the above premises, as detailed below:-"]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="347" y="475" width="163" height="20" uuid="1d498d13-1a1e-4870-a73f-7d5708b0617c"/>
@@ -196,19 +158,6 @@
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[From]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="45" y="312" width="137" height="46" uuid="5463ca33-6a53-4c0e-a819-89a651a374f7"/>
-				<box>
-					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="8" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Property Tax payable for 1st/2nd Half]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="400" y="312" width="98" height="46" uuid="4a3f8836-e75b-4aef-a2cc-0d47b4d45764"/>
@@ -316,6 +265,17 @@
 				<reportElement x="330" y="419" width="171" height="51" uuid="38a5a59b-8e2a-4041-aad9-f57fc0595eaf"/>
 				<imageExpression><![CDATA[$P{userSignature}]]></imageExpression>
 			</image>
+			<textField>
+				<reportElement x="45" y="312" width="137" height="46" uuid="f202959d-af25-4eb9-812b-d5cbab67af36"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA["Property Tax payable for the 1st/2nd half year of\n"+$P{cFYear}]]></textFieldExpression>
+			</textField>
 		</band>
 	</pageHeader>
 </jasperReport>
