@@ -193,6 +193,7 @@ public final class Constants {
     public static final String PUBLIC_HEALTH_DEPT = "PUBLIC HEALTH AND SANITATION";
     public static final String JA_DESIGNATION = "Junior Assistant";
     public static final String RC_DESIGNATION = "Revenue Clerk";
+    public static final String CLOSURE_NATUREOFTASK = "Closure License";
     private static final Map<String, String> OWNERSHIP_TYPE = new HashMap<>();
 
     static {

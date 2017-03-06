@@ -58,6 +58,7 @@ import static org.egov.tl.utils.Constants.RENEWAL_NATUREOFWORK;
 import static org.egov.tl.utils.Constants.TRADELICENSEMODULE;
 import static org.egov.tl.utils.Constants.WF_STATE_SANITORY_INSPECTOR_APPROVAL_PENDING;
 import static org.egov.tl.utils.Constants.WORKFLOW_STATE_REJECTED;
+import static org.egov.tl.utils.Constants.CLOSURE_NATUREOFTASK;
 
 import java.io.File;
 import java.math.BigDecimal;
@@ -335,7 +336,7 @@ public abstract class AbstractLicenseService<T extends License> {
 
     @Transactional
     public void createLegacyLicense(final T license, final Map<Integer, Integer> legacyInstallmentwiseFees,
-            final Map<Integer, Boolean> legacyFeePayStatus) {
+                                    final Map<Integer, Boolean> legacyFeePayStatus) {
         if (licenseRepository.findByOldLicenseNumber(license.getOldLicenseNumber()) != null)
             throw new ValidationException("TL-001", "TL-001", license.getOldLicenseNumber());
         this.addLegacyDemand(legacyInstallmentwiseFees, legacyFeePayStatus, license);
@@ -352,8 +353,8 @@ public abstract class AbstractLicenseService<T extends License> {
     }
 
     private void addLegacyDemand(final Map<Integer, Integer> legacyInstallmentwiseFees,
-            final Map<Integer, Boolean> legacyFeePayStatus,
-            final T license) {
+                                 final Map<Integer, Boolean> legacyFeePayStatus,
+                                 final T license) {
         final LicenseDemand licenseDemand = new LicenseDemand();
         licenseDemand.setIsHistory("N");
         licenseDemand.setCreateDate(new Date());
@@ -387,7 +388,7 @@ public abstract class AbstractLicenseService<T extends License> {
 
     @Transactional
     public void updateLegacyLicense(final T license, final Map<Integer, Integer> updatedInstallmentFees,
-            final Map<Integer, Boolean> legacyFeePayStatus) {
+                                    final Map<Integer, Boolean> legacyFeePayStatus) {
         processAndStoreDocument(license.getDocuments(), license);
         this.updateLegacyDemand(license, updatedInstallmentFees, legacyFeePayStatus);
         this.validityService.applyLicenseValidity(license);
@@ -395,7 +396,7 @@ public abstract class AbstractLicenseService<T extends License> {
     }
 
     private void updateLegacyDemand(final T license, final Map<Integer, Integer> updatedInstallmentFees,
-            final Map<Integer, Boolean> legacyFeePayStatus) {
+                                    final Map<Integer, Boolean> legacyFeePayStatus) {
         final LicenseDemand licenseDemand = license.getCurrentDemand();
 
         // Update existing demand details
@@ -693,7 +694,7 @@ public abstract class AbstractLicenseService<T extends License> {
      * @return
      */
     public Map<String, Map<String, BigDecimal>> getOutstandingFeeForDemandNotice(final TradeLicense license,
-            final Installment currentInstallment, final Installment previousInstallment) {
+                                                                                 final Installment currentInstallment, final Installment previousInstallment) {
         final Map<String, Map<String, BigDecimal>> outstandingFee = new HashMap<>();
 
         final LicenseDemand licenseDemand = license.getCurrentDemand();
@@ -767,7 +768,7 @@ public abstract class AbstractLicenseService<T extends License> {
     public void cancelLicenseWorkflow(final T license, final WorkflowBean workflowBean) {
 
         final User currentUser = this.securityUtils.getCurrentUser();
-        final String natureOfWork = "Closure License";
+        final String natureOfWork = CLOSURE_NATUREOFTASK;
         Position owner = null;
         if (workflowBean.getApproverPositionId() != null)
             owner = positionMasterService.getPositionById(workflowBean.getApproverPositionId());

@@ -115,7 +115,7 @@ public class SearchForm {
 
     private void addRoleSpecificActions(License license, String userRoles, List<String> licenseActions) {
 
-        if (userRoles.contains(Constants.ROLE_BILLCOLLECTOR) && license.canCollectFee())
+        if (userRoles.contains(Constants.ROLE_BILLCOLLECTOR) && license.canCollectFee() && !Constants.CLOSURE_NATUREOFTASK.equals(license.getState().getNatureOfTask()))
             licenseActions.add("Collect Fees");
         else if (userRoles.contains(Constants.TL_CREATOR_ROLENAME) || userRoles.contains(Constants.TL_APPROVER_ROLENAME)) {
             if (license.isStatusActive() && !license.isLegacy())
