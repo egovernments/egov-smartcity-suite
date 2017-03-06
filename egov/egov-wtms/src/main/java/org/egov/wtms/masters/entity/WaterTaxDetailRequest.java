@@ -51,7 +51,7 @@ public class WaterTaxDetailRequest implements Serializable {
     private String assessmentNumber;
     private String ulbCode;
     
-    List<String> childAssessmentNumber;
+    private List<String> childAssessmentNumber;
     public String getAssessmentNumber() {
         return assessmentNumber;
     }

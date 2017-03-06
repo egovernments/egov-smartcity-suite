@@ -319,12 +319,12 @@ public class WaterConnectionDetailsService {
         return waterConnectionDetailsRepository.findConnectionDetailsByConsumerCodeAndConnectionStatus(consumerCode,
                 connectionStatus);
     }
+
     public WaterConnectionDetails findParentConnectionDetailsByConsumerCodeAndConnectionStatus(final String consumerCode,
             final ConnectionStatus connectionStatus) {
         return waterConnectionDetailsRepository.findParentConnectionDetailsByConsumerCodeAndConnectionStatus(consumerCode,
                 connectionStatus);
     }
-    
 
     public WaterConnectionDetails findByOldConsumerNumberAndConnectionStatus(final String oldConsumerNumber,
             final ConnectionStatus connectionStatus) {
@@ -337,29 +337,32 @@ public class WaterConnectionDetailsService {
                 ConnectionStatus.ACTIVE);
     }
 
-    public WaterConnectionDetails getPrimaryConnectionDetailsByPropertyIdentifier(final  String propertyIdentifier) {
+    public WaterConnectionDetails getPrimaryConnectionDetailsByPropertyIdentifier(final String propertyIdentifier) {
         return waterConnectionDetailsRepository.getPrimaryConnectionDetailsByPropertyID(propertyIdentifier);
     }
+
     public WaterConnectionDetails getPrimaryConnectionDetailsByPropertyAssessmentNumbers(final List<String> propertyIdentifier) {
-        WaterConnectionDetails waterConnectionDetails=null;
-       for (String assessmentNumber:propertyIdentifier){
-           waterConnectionDetails=waterConnectionDetailsRepository.getPrimaryConnectionDetailsByPropertyAssessmentNumber(assessmentNumber);
-              if(waterConnectionDetails!=null) 
-               break; 
-       }
-       return waterConnectionDetails;
+        WaterConnectionDetails waterConnectionDetails = null;
+        for (final String assessmentNumber : propertyIdentifier) {
+            waterConnectionDetails = waterConnectionDetailsRepository
+                    .getPrimaryConnectionDetailsByPropertyAssessmentNumber(assessmentNumber);
+            if (waterConnectionDetails != null)
+                break;
+        }
+        return waterConnectionDetails;
     }
-    
+
     public List<WaterConnectionDetails> getChildConnectionDetailsByPropertyID(final String propertyIdentifier) {
         return waterConnectionDetailsRepository.getChildConnectionDetailsByPropertyID(propertyIdentifier);
     }
+
     public List<WaterConnectionDetails> getAllConnectionDetailsByParentConnection(final Long parentId) {
         return waterConnectionDetailsRepository.getAllConnectionDetailsByParentConnection(parentId);
     }
+
     public List<WaterConnectionDetails> getAllConnectionDetailsExceptInactiveStatusByPropertyID(final String propertyIdentifier) {
         return waterConnectionDetailsRepository.getAllConnectionDetailsExceptInactiveStatusByPropertyID(propertyIdentifier);
     }
-    
 
     public List<Hashtable<String, Object>> getHistory(final WaterConnectionDetails waterConnectionDetails) {
         User user = null;
@@ -456,7 +459,7 @@ public class WaterConnectionDetailsService {
                     reconnInSameInstallment = Boolean.FALSE;
                 }
                 connectionDemandService.updateDemandForNonmeteredConnection(waterConnectionDetails,
-                        nonMeterReconnInstallment, reconnInSameInstallment,null);
+                        nonMeterReconnInstallment, reconnInSameInstallment, null);
             }
             updateIndexes(waterConnectionDetails, sourceChannel);
         }
@@ -464,7 +467,7 @@ public class WaterConnectionDetailsService {
         if (ConnectionType.NON_METERED.equals(waterConnectionDetails.getConnectionType())
                 && WaterTaxConstants.APPLICATION_STATUS_SANCTIONED
                         .equalsIgnoreCase(waterConnectionDetails.getStatus().getCode())) {
-            connectionDemandService.updateDemandForNonmeteredConnection(waterConnectionDetails, null, null,workFlowAction);
+            connectionDemandService.updateDemandForNonmeteredConnection(waterConnectionDetails, null, null, workFlowAction);
             updateIndexes(waterConnectionDetails, sourceChannel);
         }
 
@@ -1215,7 +1218,7 @@ public class WaterConnectionDetailsService {
     public void saveAndFlushWaterConnectionDetail(final WaterConnectionDetails waterConnectionDetails) {
         waterConnectionDetailsRepository.saveAndFlush(waterConnectionDetails);
     }
-    
+
     public List<WaterConnectionDetails> getAllConnectionDetailsByPropertyID(final String propertyId) {
         return waterConnectionDetailsRepository.getAllConnectionDetailsByPropertyID(propertyId);
     }

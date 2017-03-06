@@ -62,6 +62,7 @@ import org.egov.wtms.application.repository.WaterConnectionRepository;
 import org.egov.wtms.application.rest.WaterChargesDetails;
 import org.egov.wtms.application.rest.WaterTaxDue;
 import org.egov.wtms.masters.entity.ApplicationType;
+import org.egov.wtms.masters.entity.WaterTaxDetailRequest;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.masters.service.ApplicationTypeService;
 import org.egov.wtms.utils.WaterTaxUtils;
@@ -180,24 +181,23 @@ public class ConnectionDetailService {
     }
 
     @Transactional
-    public String updateWaterConnectionDetails(final String retainerpropertyIdentifier,
-            final List<String> mergedAssessmentNumber) {
+    public String updateWaterConnectionDetails(WaterTaxDetailRequest waterTaxDetailRequest) {
         final List<WaterConnection> waterConnections = waterConnectionService
-                .findByPropertyIdentifier(retainerpropertyIdentifier);
-        final WaterConnection waterConnection = waterConnectionService.findParentWaterConnection(retainerpropertyIdentifier);
-        List<WaterConnectionDetails> waterConnectionDetailslist = null;
+                .findByPropertyIdentifier(waterTaxDetailRequest.getAssessmentNumber());
+        final WaterConnection waterConnection = waterConnectionService.findParentWaterConnection(waterTaxDetailRequest.getAssessmentNumber());
+        List<WaterConnectionDetails> waterConnectionDetailslist;
         Boolean parentConnection = false;
         WaterConnectionDetails waterConnectionDetailsRetainer = null;
-        WaterConnectionDetails waterConnectionDetails = null;
+        WaterConnectionDetails waterConnectionDetails;
         final ApplicationType additionAppType = applicationTypeService.findByCode(WaterTaxConstants.ADDNLCONNECTION);
         if (waterConnections.isEmpty()) {
-            for (final String childAssessmentNumber : mergedAssessmentNumber)
-                if (waterConnectionDetailsRetainer == null && !parentConnection) {
+            for (final String childAssessmentNumber :  waterTaxDetailRequest.getChildAssessmentNumber())
+                if (waterConnectionDetailsRetainer == null && parentConnection==false) {
                     waterConnectionDetailsRetainer = waterConnectionDetailsService
-                            .getPrimaryConnectionDetailsByPropertyAssessmentNumbers(mergedAssessmentNumber);
+                            .getPrimaryConnectionDetailsByPropertyAssessmentNumbers( waterTaxDetailRequest.getChildAssessmentNumber());
                     final WaterConnection connectiontemp = waterConnectionDetailsRetainer.getConnection();
                     connectiontemp.setOldPropertyIdentifier(childAssessmentNumber);
-                    connectiontemp.setPropertyIdentifier(retainerpropertyIdentifier);
+                    connectiontemp.setPropertyIdentifier(waterTaxDetailRequest.getAssessmentNumber());
                     waterConnectionRepository.save(connectiontemp);
                     parentConnection = Boolean.TRUE;
                 } else {
@@ -209,7 +209,7 @@ public class ConnectionDetailService {
                                 .getCode().equals(WaterTaxConstants.NEWCONNECTION)) {
                             final WaterConnection connectiontemp = waterConnectionDetailObj.getConnection();
                             connectiontemp.setOldPropertyIdentifier(childAssessmentNumber);
-                            connectiontemp.setPropertyIdentifier(retainerpropertyIdentifier);
+                            connectiontemp.setPropertyIdentifier(waterTaxDetailRequest.getAssessmentNumber());
                             connectiontemp.setParentConnection(waterConnectionDetailsRetainer.getConnection());
                             waterConnectionDetailObj.setApplicationType(additionAppType);
                             waterConnectionDetailObj.setConnection(connectiontemp);
@@ -218,7 +218,7 @@ public class ConnectionDetailService {
                         } else {
                             final WaterConnection connectiontemp = waterConnectionDetailObj.getConnection();
                             connectiontemp.setOldPropertyIdentifier(connectiontemp.getPropertyIdentifier());
-                            connectiontemp.setPropertyIdentifier(retainerpropertyIdentifier);
+                            connectiontemp.setPropertyIdentifier(waterTaxDetailRequest.getAssessmentNumber());
                             connectiontemp.setParentConnection(waterConnectionDetailsRetainer.getConnection());
                             waterConnectionRepository.save(connectiontemp);
                         }
@@ -228,33 +228,32 @@ public class ConnectionDetailService {
             final WaterConnectionDetails waterConnectionDetailsRetainerObj = waterConnectionDetailsService
                     .findParentConnectionDetailsByConsumerCodeAndConnectionStatus(waterConnection.getConsumerCode(),
                             ConnectionStatus.ACTIVE);
-            if (waterConnectionDetailsRetainerObj != null)
-                if (!mergedAssessmentNumber.isEmpty())
-                    for (final String childAssessmentNumber : mergedAssessmentNumber) {
-                        waterConnectionDetails = waterConnectionDetailsService
-                                .getPrimaryConnectionDetailsByPropertyIdentifier(childAssessmentNumber);
-                        if (waterConnectionDetails != null) {
-                            final WaterConnection connectiontemp = waterConnectionDetails.getConnection();
+            if (waterConnectionDetailsRetainerObj != null && ! waterTaxDetailRequest.getChildAssessmentNumber().isEmpty())
+                for (final String childAssessmentNumber :  waterTaxDetailRequest.getChildAssessmentNumber()) {
+                    waterConnectionDetails = waterConnectionDetailsService
+                            .getPrimaryConnectionDetailsByPropertyIdentifier(childAssessmentNumber);
+                    if (waterConnectionDetails != null) {
+                        final WaterConnection connectiontemp = waterConnectionDetails.getConnection();
+                        connectiontemp.setOldPropertyIdentifier(connectiontemp.getPropertyIdentifier());
+                        connectiontemp.setPropertyIdentifier(waterTaxDetailRequest.getAssessmentNumber());
+                        connectiontemp.setParentConnection(waterConnectionDetailsRetainerObj.getConnection());
+                        waterConnectionDetails.setApplicationType(additionAppType);
+                        waterConnectionDetails.setConnection(connectiontemp);
+                        waterConnectionDetailsRepository
+                                .save(waterConnectionDetails);
+                    } else {
+                        waterConnectionDetailslist = waterConnectionDetailsService
+                                .getChildConnectionDetailsByPropertyID(childAssessmentNumber);
+                        for (final WaterConnectionDetails tempconn : waterConnectionDetailslist) {
+                            final WaterConnection connectiontemp = tempconn.getConnection();
                             connectiontemp.setOldPropertyIdentifier(connectiontemp.getPropertyIdentifier());
-                            connectiontemp.setPropertyIdentifier(retainerpropertyIdentifier);
-                            connectiontemp.setParentConnection(waterConnectionDetailsRetainerObj.getConnection());
-                            waterConnectionDetails.setApplicationType(additionAppType);
-                            waterConnectionDetails.setConnection(connectiontemp);
-                            waterConnectionDetailsRepository
-                                    .save(waterConnectionDetails);
-                        } else {
-                            waterConnectionDetailslist = waterConnectionDetailsService
-                                    .getChildConnectionDetailsByPropertyID(childAssessmentNumber);
-                            for (final WaterConnectionDetails tempconn : waterConnectionDetailslist) {
-                                final WaterConnection connectiontemp = tempconn.getConnection();
-                                connectiontemp.setOldPropertyIdentifier(connectiontemp.getPropertyIdentifier());
-                                connectiontemp.setPropertyIdentifier(childAssessmentNumber);
-                                waterConnectionRepository.save(connectiontemp);
-                            }
+                            connectiontemp.setPropertyIdentifier(childAssessmentNumber);
+                            waterConnectionRepository.save(connectiontemp);
                         }
                     }
+                }
         }
-        return retainerpropertyIdentifier;
+        return waterTaxDetailRequest.getAssessmentNumber();
     }
 
     public List<WaterChargesDetails> getWaterTaxDetailsByPropertyId(final String propertyIdentifier, final String ulbCode) {
