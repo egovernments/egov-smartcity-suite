@@ -43,67 +43,55 @@ package org.egov.pgr.web.controller.reports;
 import java.math.BigInteger;
 
 public class AgeingReportResult {
-    private String zoneName;
-    private BigInteger grtthn90 = BigInteger.ZERO;
-    private BigInteger btw45to90 = BigInteger.ZERO;
-    private BigInteger btw15to45 = BigInteger.ZERO;
-    private BigInteger lsthn15 = BigInteger.ZERO;
-    private String complainttype;
+    private BigInteger grtthn30 = BigInteger.ZERO;
+    private BigInteger btw10to30 = BigInteger.ZERO;
+    private BigInteger btw5to10 = BigInteger.ZERO;
+    private BigInteger btw2to5 = BigInteger.ZERO;
+    private BigInteger lsthn2 = BigInteger.ZERO;
     private String name;
 
-    public String getZoneName() {
-        return zoneName;
+    public BigInteger getGrtthn30() {
+        return grtthn30;
     }
 
-    public void setZoneName(final String zoneName) {
-        this.zoneName = zoneName;
+    public void setGrtthn30(BigInteger grtthn30) {
+        this.grtthn30 = grtthn30;
     }
 
-    public BigInteger getGrtthn90() {
-        return grtthn90;
+    public BigInteger getBtw10to30() {
+        return btw10to30;
     }
 
-    public void setGrtthn90(final BigInteger grtthn90) {
-        this.grtthn90 = grtthn90;
+    public void setBtw10to30(BigInteger btw10to30) {
+        this.btw10to30 = btw10to30;
     }
 
-    public BigInteger getBtw45to90() {
-        return btw45to90;
+    public BigInteger getBtw5to10() {
+        return btw5to10;
     }
 
-    public void setBtw45to90(final BigInteger btw45to90) {
-        this.btw45to90 = btw45to90;
+    public void setBtw5to10(BigInteger btw5to10) {
+        this.btw5to10 = btw5to10;
     }
 
-    public BigInteger getBtw15to45() {
-        return btw15to45;
+    public BigInteger getBtw2to5() {
+        return btw2to5;
     }
 
-    public void setBtw15to45(final BigInteger btw15to45) {
-        this.btw15to45 = btw15to45;
+    public void setBtw2to5(BigInteger btw2to5) {
+        this.btw2to5 = btw2to5;
     }
 
-    public BigInteger getLsthn15() {
-        return lsthn15;
+    public BigInteger getLsthn2() {
+        return lsthn2;
     }
 
-    public void setLsthn15(final BigInteger lsthn15) {
-        this.lsthn15 = lsthn15;
-    }
-
-    public String getComplainttype() {
-        return complainttype;
-    }
-
-    public void setComplainttype(final String complainttype) {
-        this.complainttype = complainttype;
+    public void setLsthn2(BigInteger lsthn2) {
+        this.lsthn2 = lsthn2;
     }
 
     public BigInteger getTotal() {
-        return grtthn90.add(btw45to90).add(btw15to45).add(lsthn15);
-    }
-
-    public void setTotal(final BigInteger total) {
+        return grtthn30.add(btw10to30).add(btw5to10).add(btw2to5).add(lsthn2);
     }
 
     public String getName() {

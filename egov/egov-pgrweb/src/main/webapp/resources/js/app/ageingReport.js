@@ -95,13 +95,15 @@ jQuery(document)
 								"data" : "complainttype"
 
 							}, {
-								"data" : "grtthn90","sClass": "text-right"
+								"data" : "grtthn30","sClass": "text-right"
 							}, {
-								"data" : "btw45to90","sClass": "text-right"
+								"data" : "btw10to30","sClass": "text-right"
 							}, {
-								"data" : "btw15to45","sClass": "text-right"
-							}, {
-								"data" : "lsthn15","sClass": "text-right"
+								"data" : "btw5to10","sClass": "text-right"
+							},{
+                                "data" : "btw2to5","sClass": "text-right"
+                            }, {
+								"data" : "lsthn2","sClass": "text-right"
 
 							}, {
 								"data" : "total","sClass": "text-right"
@@ -120,11 +122,11 @@ jQuery(document)
 							    updateTotalFooter(3, api);
 							    updateTotalFooter(4, api);
 							    updateTotalFooter(5, api);
-							    
+							    updateTotalFooter(6, api);
 								}
 							},
 					                "aoColumnDefs": [ {
-							      "aTargets": [1,2,3,4,5],
+							      "aTargets": [1,2,3,4,5,6],
 							      "mRender": function ( data, type, full ) {
 								return formatNumberInr(data);
 							      }

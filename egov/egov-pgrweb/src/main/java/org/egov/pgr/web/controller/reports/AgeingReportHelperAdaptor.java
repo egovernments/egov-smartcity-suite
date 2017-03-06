@@ -51,19 +51,20 @@ public class AgeingReportHelperAdaptor implements JsonSerializer<AgeingReportRes
 
     @Override
     public JsonElement serialize(final AgeingReportResult ageingReportObject, final Type type,
-            final JsonSerializationContext jsc) {
+                                 final JsonSerializationContext jsc) {
         final JsonObject jsonObject = new JsonObject();
         if (ageingReportObject != null) {
 
-            jsonObject.addProperty("complainttype", null != ageingReportObject.getName() ? ageingReportObject.getName()
-                    .toString() : "Not Available");
-            jsonObject.addProperty("grtthn90", null != ageingReportObject.getGrtthn90() ? ageingReportObject
-                    .getGrtthn90().toString() : "0");
-            jsonObject.addProperty("btw45to90", null != ageingReportObject.getBtw45to90() ? ageingReportObject
-                    .getBtw45to90().toString() : "0");
-            jsonObject.addProperty("btw15to45", null != ageingReportObject.getBtw15to45() ? ageingReportObject
-                    .getBtw15to45().toString() : "0");
-            jsonObject.addProperty("lsthn15", null != ageingReportObject.getLsthn15() ? ageingReportObject.getLsthn15()
+            jsonObject.addProperty("complainttype", null != ageingReportObject.getName() ? ageingReportObject.getName() : "Not Available");
+            jsonObject.addProperty("grtthn30", null != ageingReportObject.getGrtthn30() ? ageingReportObject
+                    .getGrtthn30().toString() : "0");
+            jsonObject.addProperty("btw10to30", null != ageingReportObject.getBtw10to30() ? ageingReportObject
+                    .getBtw10to30().toString() : "0");
+            jsonObject.addProperty("btw5to10", null != ageingReportObject.getBtw5to10() ? ageingReportObject
+                    .getBtw5to10().toString() : "0");
+            jsonObject.addProperty("btw2to5", null != ageingReportObject.getBtw2to5() ? ageingReportObject
+                    .getBtw2to5().toString() : "0");
+            jsonObject.addProperty("lsthn2", null != ageingReportObject.getLsthn2() ? ageingReportObject.getLsthn2()
                     .toString() : "0");
             jsonObject.addProperty("total", null != ageingReportObject.getTotal() ? ageingReportObject.getTotal()
                     .toString() : "0");
