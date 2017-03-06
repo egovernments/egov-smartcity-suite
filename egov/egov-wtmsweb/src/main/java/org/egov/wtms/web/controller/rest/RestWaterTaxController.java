@@ -51,7 +51,7 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.egov.wtms.application.rest.WaterChargesDetails;
 import org.egov.wtms.application.rest.WaterTaxDue;
 import org.egov.wtms.application.service.ConnectionDetailService;
-import org.egov.wtms.masters.entity.PayWaterTaxDetails;
+import org.egov.wtms.masters.entity.WaterTaxDetailRequest;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.Aggregations;
 import org.elasticsearch.search.aggregations.metrics.sum.Sum;
@@ -121,11 +121,11 @@ public class RestWaterTaxController {
     }
 
     @RequestMapping(value = "rest/watertax/connectiondetails", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
-    public List<WaterChargesDetails> getWaterConnectionDetailsByPropertyId(PayWaterTaxDetails payWaterTaxDetails)
+    public List<WaterChargesDetails> getWaterConnectionDetailsByPropertyId(WaterTaxDetailRequest waterTaxDetailRequest)
             throws IOException {
-        return connectionDetailService.getWaterTaxDetailsByPropertyId(payWaterTaxDetails.getAssessmentNumber(),
-                payWaterTaxDetails.getUlbCode());
+        return connectionDetailService.getWaterTaxDetailsByPropertyId(waterTaxDetailRequest.getAssessmentNumber(),
+                waterTaxDetailRequest.getUlbCode());
 
     }
-
+    
 }
