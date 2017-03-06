@@ -182,6 +182,8 @@ import org.egov.infra.utils.DateUtils;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.pims.commons.Position;
+import org.egov.ptis.bean.AssessmentInfo;
+import org.egov.ptis.bean.FloorInfo;
 import org.egov.ptis.bean.SurveyAssessmentDetails;
 import org.egov.ptis.client.bill.PTBillServiceImpl;
 import org.egov.ptis.client.integration.utils.CollectionHelper;
@@ -1868,16 +1870,17 @@ public class PropertyExternalService {
      * @param wardNum
      * @return List
      */
-    public List<ViewPropertyDetails> getPropertyDetailsForTheWard(String wardNum) {
+    public List<AssessmentInfo> getPropertyDetailsForWard(String ulbCode, String wardNum) {
         Boundary ward = getBoundaryByNumberAndType(wardNum, WARD, REVENUE_HIERARCHY_TYPE);
-        List<ViewPropertyDetails> propertyDetails = new ArrayList<>();
+        List<AssessmentInfo> propertyDetails = new ArrayList<>();
         List<BasicProperty> basicProperties = basicPropertyDAO.getActiveBasicPropertiesForWard(ward.getId());
         if (!basicProperties.isEmpty()) {
-            ViewPropertyDetails viewPropDetails;
+            AssessmentInfo assessmentInfo;
             for (BasicProperty basicProperty : basicProperties) {
-                viewPropDetails = new ViewPropertyDetails();
-                prepareProperyDetailsInfo(basicProperty, viewPropDetails);
-                propertyDetails.add(viewPropDetails);
+                assessmentInfo = new AssessmentInfo();
+                assessmentInfo.setUlbCode(ulbCode);
+                prepareProperyDetailsInfo(basicProperty, assessmentInfo);
+                propertyDetails.add(assessmentInfo);
             }
         }
         return propertyDetails;
@@ -1888,28 +1891,21 @@ public class PropertyExternalService {
      * @param basicProperty
      * @param viewPropertyDetails
      */
-    private void prepareProperyDetailsInfo(BasicProperty basicProperty, ViewPropertyDetails viewPropertyDetails) {
+    private void prepareProperyDetailsInfo(BasicProperty basicProperty, AssessmentInfo assessmentInfo) {
         Property property = basicProperty.getProperty();
-        viewPropertyDetails.setOldAssessmentNumber(basicProperty.getOldMuncipalNum());
-        viewPropertyDetails.setAssessmentNumber(basicProperty.getUpicNo());
-        viewPropertyDetails
+        assessmentInfo.setOldAssessmentNumber(basicProperty.getOldMuncipalNum());
+        assessmentInfo.setAssessmentNumber(basicProperty.getUpicNo());
+        assessmentInfo
                 .setCategory(basicProperty.getProperty().getPropertyDetail().getPropertyTypeMaster().getType());
         PropertyID propertyID = basicProperty.getPropertyID();
         if (property != null) {
             PropertyDetail propertyDetail = property.getPropertyDetail();
-            viewPropertyDetails.setExemption(
-                    property.getTaxExemptedReason() == null ? NOT_AVAILABLE : property.getTaxExemptedReason().getName());
-            Ptdemand ptDemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(property);
-            if (ptDemand != null) {
-                if (ptDemand.getDmdCalculations() != null && ptDemand.getDmdCalculations().getAlv() != null)
-                    viewPropertyDetails.setArv(ptDemand.getDmdCalculations().getAlv());
-                else
-                    viewPropertyDetails.setArv(BigDecimal.ZERO);
-            }
-            populatePropertyDetails(basicProperty, viewPropertyDetails, propertyID, propertyDetail);
+            assessmentInfo.setExemption(
+                    property.getTaxExemptedReason() == null ? "N" : "Y");
+            populatePropertyDetails(basicProperty, assessmentInfo, propertyID, propertyDetail);
         }
 
-        populateOwnerAndAddressDetails(basicProperty, viewPropertyDetails, propertyID);
+        populateOwnerAndAddressDetails(basicProperty, assessmentInfo, propertyID);
     }
 
     /**
@@ -1919,25 +1915,25 @@ public class PropertyExternalService {
      * @param ownerAddress
      * @param propertyID
      */
-    public void populateOwnerAndAddressDetails(BasicProperty basicProperty, ViewPropertyDetails viewPropertyDetails,
+    public void populateOwnerAndAddressDetails(BasicProperty basicProperty, AssessmentInfo assessmentInfo,
             PropertyID propertyID) {
         if (!basicProperty.getPropertyOwnerInfo().isEmpty()) {
             for (PropertyOwnerInfo propOwner : basicProperty.getPropertyOwnerInfo()) {
                 List<Address> addrSet = propOwner.getOwner().getAddress();
                 for (final Address address : addrSet) {
-                    viewPropertyDetails
+                    assessmentInfo
                             .setDoorNo(address.getHouseNoBldgApt() == null ? NOT_AVAILABLE : address.getHouseNoBldgApt());
                     break;
                 }
             }
-            viewPropertyDetails.setOwnerDetails(getOwnerDetails(basicProperty));
+            assessmentInfo.setOwnerDetails(getOwnerDetails(basicProperty));
         }
-        viewPropertyDetails.setZoneName(propertyID.getZone().getName());
-        viewPropertyDetails.setWardName(propertyID.getWard().getName());
-        viewPropertyDetails.setBlockName(propertyID.getArea().getName());
-        viewPropertyDetails.setLocalityName(propertyID.getLocality().getName());
-        viewPropertyDetails.setElectionWardName(propertyID.getElectionBoundary().getName());
-        viewPropertyDetails.setEnumerationBlockName(NOT_AVAILABLE);
+        assessmentInfo.setPropertyAddress(basicProperty.getAddress().toString());
+        assessmentInfo.setRevZone(propertyID.getZone().getName());
+        assessmentInfo.setRevWard(propertyID.getWard().getName());
+        assessmentInfo.setRevBlock(propertyID.getArea().getName());
+        assessmentInfo.setLocalityName(propertyID.getLocality().getName());
+        assessmentInfo.setElectionWardName(propertyID.getElectionBoundary().getName());
     }
 
     /**
@@ -1947,40 +1943,37 @@ public class PropertyExternalService {
      * @param propertyID
      * @param propertyDetail
      */
-    public void populatePropertyDetails(BasicProperty basicProperty, ViewPropertyDetails viewPropertyDetails,
+    public void populatePropertyDetails(BasicProperty basicProperty, AssessmentInfo assessmentInfo,
             PropertyID propertyID, PropertyDetail propertyDetail) {
-        viewPropertyDetails.setEffectiveDate(DateUtils.getDefaultFormattedDate(basicProperty.getPropOccupationDate()));
-        viewPropertyDetails
-                .setPropertyTypeMaster(PropertyTaxConstants.PROPERTY_TYPE_CATEGORIES.get(propertyDetail.getCategoryType()));
-        viewPropertyDetails.setApartmentCmplx(
+        assessmentInfo.setEffectiveDate(DateUtils.getDefaultFormattedDate(basicProperty.getPropOccupationDate()));
+        assessmentInfo
+                .setPropertyType(PropertyTaxConstants.PROPERTY_TYPE_CATEGORIES.get(propertyDetail.getCategoryType()));
+        assessmentInfo.setApartmentCmplx(
                 propertyDetail.getApartment() == null ? NOT_AVAILABLE : propertyDetail.getApartment().getName());
-        viewPropertyDetails.setExtentOfSite(
+        assessmentInfo.setExtentOfSite(
                 propertyDetail.getSitalArea() == null ? NOT_AVAILABLE : propertyDetail.getSitalArea().getArea().toString());
-        viewPropertyDetails.setExtentAppartenauntLand(propertyDetail.getExtentAppartenauntLand() == null ? NOT_AVAILABLE
-                : propertyDetail.getExtentAppartenauntLand().toString());
-        viewPropertyDetails.setRegdDocNo(basicProperty.getRegdDocNo());
+        assessmentInfo.setRegdDocNo(basicProperty.getRegdDocNo());
         if (basicProperty.getRegdDocDate() != null)
-            viewPropertyDetails.setRegdDocDate(DateUtils.getDefaultFormattedDate(basicProperty.getRegdDocDate()));
-        viewPropertyDetails.setMutationReason(propertyDetail.getPropertyMutationMaster().getMutationName());
+            assessmentInfo.setRegdDocDate(DateUtils.getDefaultFormattedDate(basicProperty.getRegdDocDate()));
 
         if (!propertyDetail.getPropertyTypeMaster().getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)) {
-            getConstructionTypeDetails(viewPropertyDetails, propertyDetail);
-            viewPropertyDetails.setFloorDetails(getFloorDetails(propertyDetail));
-        } else {
-            getVacantLandDetails(viewPropertyDetails, propertyDetail, propertyID);
-        }
+            getAmenitiesAndConstructionTypeDetails(assessmentInfo, propertyDetail);
+            assessmentInfo.setFloorInfo(getFloorDetails(propertyDetail));
+        } else 
+            getVacantLandDetails(assessmentInfo, propertyDetail, propertyID);
+        
         final Query query = entityManager.createNamedQuery("DOCUMENT_TYPE_DETAILS_BY_ID");
         query.setParameter(1, propertyID.getBasicProperty().getId());
         List<DocumentTypeDetails> docTypeDetailsList = query.getResultList();
         if (!docTypeDetailsList.isEmpty()) {
             DocumentTypeDetails docTypeDetails = docTypeDetailsList.get(0);
             if (docTypeDetails != null) {
-                viewPropertyDetails.setDocType(docTypeDetails.getDocumentName());
-                viewPropertyDetails.setMroProcNo(docTypeDetails.getProceedingNo());
+                assessmentInfo.setDocType(docTypeDetails.getDocumentName());
+                assessmentInfo.setMroProcNo(docTypeDetails.getProceedingNo());
                 if (docTypeDetails.getProceedingDate() != null)
-                    viewPropertyDetails.setMroProcDate(DateUtils.getDefaultFormattedDate(docTypeDetails.getProceedingDate()));
-                viewPropertyDetails.setCourtName(docTypeDetails.getCourtName());
-                viewPropertyDetails.setTwSigned(docTypeDetails.isSigned());
+                    assessmentInfo.setMroProcDate(DateUtils.getDefaultFormattedDate(docTypeDetails.getProceedingDate()));
+                assessmentInfo.setCourtName(docTypeDetails.getCourtName());
+                assessmentInfo.setTwSigned(docTypeDetails.isSigned());
             }
         }
     }
@@ -1990,12 +1983,19 @@ public class PropertyExternalService {
      * @param viewPropertyDetails
      * @param propertyDetail
      */
-    private void getConstructionTypeDetails(ViewPropertyDetails viewPropertyDetails, PropertyDetail propertyDetail) {
-        viewPropertyDetails.setFloorType(propertyDetail.getFloorType().getName());
-        viewPropertyDetails.setRoofType(propertyDetail.getRoofType().getName());
-        viewPropertyDetails
+    private void getAmenitiesAndConstructionTypeDetails(AssessmentInfo assessmentInfo, PropertyDetail propertyDetail) {
+        assessmentInfo.setHasLift(propertyDetail.isLift());
+        assessmentInfo.setHasToilet(propertyDetail.isToilets());
+        assessmentInfo.setHasWaterTap(propertyDetail.isWaterTap());
+        assessmentInfo.setHasElectricity(propertyDetail.isElectricity());
+        assessmentInfo.setHasAttachedBathroom(propertyDetail.isAttachedBathRoom());
+        assessmentInfo.setHasWaterHarvesting(propertyDetail.isWaterHarvesting());
+        assessmentInfo.setHasCableConnection(propertyDetail.isCable());
+        assessmentInfo.setFloorType(propertyDetail.getFloorType().getName());
+        assessmentInfo.setRoofType(propertyDetail.getRoofType().getName());
+        assessmentInfo
                 .setWallType(propertyDetail.getWallType() == null ? NOT_AVAILABLE : propertyDetail.getWallType().getName());
-        viewPropertyDetails
+        assessmentInfo
                 .setWoodType(propertyDetail.getWoodType() == null ? NOT_AVAILABLE : propertyDetail.getWoodType().getName());
     }
 
@@ -2029,31 +2029,30 @@ public class PropertyExternalService {
      * @param propertyDetail
      * @return List
      */
-    private List<FloorDetails> getFloorDetails(PropertyDetail propertyDetail) {
-        List<FloorDetails> floorDetails = new ArrayList<>();
-        FloorDetails floorDet;
+    private List<FloorInfo> getFloorDetails(PropertyDetail propertyDetail) {
+        List<FloorInfo> floorDetails = new ArrayList<>();
+        FloorInfo floorInfo;
         for (Floor floor : propertyDetail.getFloorDetails()) {
-            floorDet = new FloorDetails();
-            floorDet.setFloorNoCode(FLOOR_MAP.get(floor.getFloorNo()));
-            floorDet.setBuildClassificationCode(floor.getStructureClassification().getDescription());
-            floorDet.setNatureOfUsageCode(floor.getPropertyUsage().getUsageName());
-            floorDet.setFirmName(StringUtils.isBlank(floor.getFirmName()) ? NOT_AVAILABLE : floor.getFirmName());
-            floorDet.setOccupancyCode(floor.getPropertyOccupation().getOccupation());
-            floorDet.setOccupantName(StringUtils.isBlank(floor.getOccupantName()) ? NOT_AVAILABLE : floor.getOccupantName());
-            floorDet.setConstructionDate(floor.getConstructionDate() == null ? NOT_AVAILABLE
+            floorInfo = new FloorInfo();
+            floorInfo.setFloorNo(FLOOR_MAP.get(floor.getFloorNo()));
+            floorInfo.setBuildClassification(floor.getStructureClassification().getDescription());
+            floorInfo.setNatureOfUsage(floor.getPropertyUsage().getUsageName());
+            floorInfo.setFirmName(StringUtils.isBlank(floor.getFirmName()) ? NOT_AVAILABLE : floor.getFirmName());
+            floorInfo.setOccupancy(floor.getPropertyOccupation().getOccupation());
+            floorInfo.setOccupantName(StringUtils.isBlank(floor.getOccupantName()) ? NOT_AVAILABLE : floor.getOccupantName());
+            floorInfo.setConstructionDate(floor.getConstructionDate() == null ? NOT_AVAILABLE
                     : DateUtils.getDefaultFormattedDate(floor.getConstructionDate()));
-            floorDet.setOccupancyDate(DateUtils.getDefaultFormattedDate(floor.getOccupancyDate()));
-            floorDet.setPlinthLength(floor.getBuiltUpArea().getLength());
-            floorDet.setPlinthBreadth(floor.getBuiltUpArea().getBreadth());
-            floorDet.setPlinthArea(floor.getBuiltUpArea().getArea());
-            floorDet.setBuildingPermissionNo(floor.getBuildingPermissionNo());
-            floorDet.setBuildingPermissionDate(floor.getBuildingPermissionDate() == null ? NOT_AVAILABLE
+            floorInfo.setOccupancyDate(DateUtils.getDefaultFormattedDate(floor.getOccupancyDate()));
+            floorInfo.setPlinthLength(floor.getBuiltUpArea().getLength());
+            floorInfo.setPlinthBreadth(floor.getBuiltUpArea().getBreadth());
+            floorInfo.setPlinthArea(floor.getBuiltUpArea().getArea());
+            floorInfo.setBuildingPermissionNo(floor.getBuildingPermissionNo());
+            floorInfo.setBuildingPermissionDate(floor.getBuildingPermissionDate() == null ? NOT_AVAILABLE
                     : DateUtils.getDefaultFormattedDate(floor.getBuildingPermissionDate()));
-            floorDet.setBuildingPlanPlinthArea(
+            floorInfo.setBuildingPlanPlinthArea(
                     floor.getBuildingPlanPlinthArea() == null ? 0.0F : floor.getBuildingPlanPlinthArea().getArea());
-            floorDet.setUnitRate(floor.getFloorDmdCalc().getCategoryAmt().doubleValue());
 
-            floorDetails.add(floorDet);
+            floorDetails.add(floorInfo);
         }
         return floorDetails;
     }
@@ -2064,25 +2063,25 @@ public class PropertyExternalService {
      * @param propertyDetail
      * @param propertyID
      */
-    private void getVacantLandDetails(ViewPropertyDetails viewPropertyDetails, PropertyDetail propertyDetail,
+    private void getVacantLandDetails(AssessmentInfo assessmentInfo, PropertyDetail propertyDetail,
             PropertyID propertyID) {
-        viewPropertyDetails.setSurveyNumber(propertyDetail.getSurveyNumber());
-        viewPropertyDetails.setPattaNumber(propertyDetail.getPattaNumber());
-        viewPropertyDetails.setVacantLandArea(propertyDetail.getSitalArea().getArea());
-        viewPropertyDetails.setMarketValue(propertyDetail.getMarketValue());
-        viewPropertyDetails.setCurrentCapitalValue(propertyDetail.getCurrentCapitalValue());
-        viewPropertyDetails.setEffectiveDate(DateUtils.getDefaultFormattedDate(propertyDetail.getDateOfCompletion()));
+        assessmentInfo.setSurveyNumber(propertyDetail.getSurveyNumber());
+        assessmentInfo.setPattaNumber(propertyDetail.getPattaNumber());
+        assessmentInfo.setVacantLandArea(propertyDetail.getSitalArea().getArea());
+        assessmentInfo.setMarketValue(propertyDetail.getMarketValue());
+        assessmentInfo.setCurrentCapitalValue(propertyDetail.getCurrentCapitalValue());
+        assessmentInfo.setEffectiveDate(DateUtils.getDefaultFormattedDate(propertyDetail.getDateOfCompletion()));
         if (propertyDetail.getVacantLandPlotArea() != null)
-            viewPropertyDetails.setVlPlotArea(propertyDetail.getVacantLandPlotArea().getName());
+            assessmentInfo.setVlPlotArea(propertyDetail.getVacantLandPlotArea().getName());
         if (propertyDetail.getLayoutApprovalAuthority() != null)
-            viewPropertyDetails.setLaAuthority(propertyDetail.getLayoutApprovalAuthority().getName());
-        viewPropertyDetails.setLpNo(propertyDetail.getLayoutPermitNo());
+            assessmentInfo.setLaAuthority(propertyDetail.getLayoutApprovalAuthority().getName());
+        assessmentInfo.setLpNo(propertyDetail.getLayoutPermitNo());
         if (propertyDetail.getLayoutPermitDate() != null)
-            viewPropertyDetails.setLpDate(DateUtils.getDefaultFormattedDate(propertyDetail.getLayoutPermitDate()));
-        viewPropertyDetails.setNorthBoundary(propertyID.getNorthBoundary());
-        viewPropertyDetails.setEastBoundary(propertyID.getEastBoundary());
-        viewPropertyDetails.setWestBoundary(propertyID.getWestBoundary());
-        viewPropertyDetails.setSouthBoundary(propertyID.getSouthBoundary());
+            assessmentInfo.setLpDate(DateUtils.getDefaultFormattedDate(propertyDetail.getLayoutPermitDate()));
+        assessmentInfo.setNorthBoundary(propertyID.getNorthBoundary());
+        assessmentInfo.setEastBoundary(propertyID.getEastBoundary());
+        assessmentInfo.setWestBoundary(propertyID.getWestBoundary());
+        assessmentInfo.setSouthBoundary(propertyID.getSouthBoundary());
     }
     
     /**
