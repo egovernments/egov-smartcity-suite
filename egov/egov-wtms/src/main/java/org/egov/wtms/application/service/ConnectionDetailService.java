@@ -57,9 +57,13 @@ import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.wtms.application.entity.WaterConnection;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
+import org.egov.wtms.application.repository.WaterConnectionDetailsRepository;
+import org.egov.wtms.application.repository.WaterConnectionRepository;
 import org.egov.wtms.application.rest.WaterChargesDetails;
 import org.egov.wtms.application.rest.WaterTaxDue;
+import org.egov.wtms.masters.entity.ApplicationType;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
+import org.egov.wtms.masters.service.ApplicationTypeService;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.hibernate.Session;
@@ -76,11 +80,20 @@ public class ConnectionDetailService {
 
     @Autowired
     private InstallmentHibDao installmentDao;
+
+    @Autowired
+    private WaterConnectionDetailsRepository waterConnectionDetailsRepository;
+    @Autowired
+    private WaterConnectionRepository waterConnectionRepository;
+
     @Autowired
     private ConnectionDemandService connectionDemandService;
 
     @Autowired
     private WaterConnectionService waterConnectionService;
+
+    @Autowired
+    private ApplicationTypeService applicationTypeService;
 
     @Autowired
     private WaterConnectionDetailsService waterConnectionDetailsService;
@@ -164,6 +177,84 @@ public class ConnectionDetailService {
             waterTaxDue.setIsSuccess(true);
         }
         return waterTaxDue;
+    }
+
+    @Transactional
+    public String updateWaterConnectionDetails(final String retainerpropertyIdentifier,
+            final List<String> mergedAssessmentNumber) {
+        final List<WaterConnection> waterConnections = waterConnectionService
+                .findByPropertyIdentifier(retainerpropertyIdentifier);
+        final WaterConnection waterConnection = waterConnectionService.findParentWaterConnection(retainerpropertyIdentifier);
+        List<WaterConnectionDetails> waterConnectionDetailslist = null;
+        Boolean parentConnection = false;
+        WaterConnectionDetails waterConnectionDetailsRetainer = null;
+        WaterConnectionDetails waterConnectionDetails = null;
+        final ApplicationType additionAppType = applicationTypeService.findByCode(WaterTaxConstants.ADDNLCONNECTION);
+        if (waterConnections.isEmpty()) {
+            for (final String childAssessmentNumber : mergedAssessmentNumber)
+                if (waterConnectionDetailsRetainer == null && !parentConnection) {
+                    waterConnectionDetailsRetainer = waterConnectionDetailsService
+                            .getPrimaryConnectionDetailsByPropertyAssessmentNumbers(mergedAssessmentNumber);
+                    final WaterConnection connectiontemp = waterConnectionDetailsRetainer.getConnection();
+                    connectiontemp.setOldPropertyIdentifier(childAssessmentNumber);
+                    connectiontemp.setPropertyIdentifier(retainerpropertyIdentifier);
+                    waterConnectionRepository.save(connectiontemp);
+                    parentConnection = Boolean.TRUE;
+                } else {
+                    waterConnectionDetailslist = waterConnectionDetailsService
+                            .getAllConnectionDetailsExceptInactiveStatusByPropertyID(childAssessmentNumber);
+
+                    for (final WaterConnectionDetails waterConnectionDetailObj : waterConnectionDetailslist)
+                        if (waterConnectionDetailObj != null && waterConnectionDetailObj.getApplicationType()
+                                .getCode().equals(WaterTaxConstants.NEWCONNECTION)) {
+                            final WaterConnection connectiontemp = waterConnectionDetailObj.getConnection();
+                            connectiontemp.setOldPropertyIdentifier(childAssessmentNumber);
+                            connectiontemp.setPropertyIdentifier(retainerpropertyIdentifier);
+                            connectiontemp.setParentConnection(waterConnectionDetailsRetainer.getConnection());
+                            waterConnectionDetailObj.setApplicationType(additionAppType);
+                            waterConnectionDetailObj.setConnection(connectiontemp);
+                            waterConnectionDetailsRepository
+                                    .save(waterConnectionDetailObj);
+                        } else {
+                            final WaterConnection connectiontemp = waterConnectionDetailObj.getConnection();
+                            connectiontemp.setOldPropertyIdentifier(connectiontemp.getPropertyIdentifier());
+                            connectiontemp.setPropertyIdentifier(retainerpropertyIdentifier);
+                            connectiontemp.setParentConnection(waterConnectionDetailsRetainer.getConnection());
+                            waterConnectionRepository.save(connectiontemp);
+                        }
+
+                }
+        } else if (waterConnection != null) {
+            final WaterConnectionDetails waterConnectionDetailsRetainerObj = waterConnectionDetailsService
+                    .findParentConnectionDetailsByConsumerCodeAndConnectionStatus(waterConnection.getConsumerCode(),
+                            ConnectionStatus.ACTIVE);
+            if (waterConnectionDetailsRetainerObj != null)
+                if (!mergedAssessmentNumber.isEmpty())
+                    for (final String childAssessmentNumber : mergedAssessmentNumber) {
+                        waterConnectionDetails = waterConnectionDetailsService
+                                .getPrimaryConnectionDetailsByPropertyIdentifier(childAssessmentNumber);
+                        if (waterConnectionDetails != null) {
+                            final WaterConnection connectiontemp = waterConnectionDetails.getConnection();
+                            connectiontemp.setOldPropertyIdentifier(connectiontemp.getPropertyIdentifier());
+                            connectiontemp.setPropertyIdentifier(retainerpropertyIdentifier);
+                            connectiontemp.setParentConnection(waterConnectionDetailsRetainerObj.getConnection());
+                            waterConnectionDetails.setApplicationType(additionAppType);
+                            waterConnectionDetails.setConnection(connectiontemp);
+                            waterConnectionDetailsRepository
+                                    .save(waterConnectionDetails);
+                        } else {
+                            waterConnectionDetailslist = waterConnectionDetailsService
+                                    .getChildConnectionDetailsByPropertyID(childAssessmentNumber);
+                            for (final WaterConnectionDetails tempconn : waterConnectionDetailslist) {
+                                final WaterConnection connectiontemp = tempconn.getConnection();
+                                connectiontemp.setOldPropertyIdentifier(connectiontemp.getPropertyIdentifier());
+                                connectiontemp.setPropertyIdentifier(childAssessmentNumber);
+                                waterConnectionRepository.save(connectiontemp);
+                            }
+                        }
+                    }
+        }
+        return retainerpropertyIdentifier;
     }
 
     public List<WaterChargesDetails> getWaterTaxDetailsByPropertyId(final String propertyIdentifier, final String ulbCode) {

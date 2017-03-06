@@ -61,6 +61,7 @@ import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilde
 import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -128,4 +129,9 @@ public class RestWaterTaxController {
 
     }
     
+    @RequestMapping(value =  "rest/watertax/updateConnectionForAmulgamation" , method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public String updateWaterConnectionForAmalagamation(@RequestBody WaterTaxDetailRequest waterTaxDetailRequest)
+            throws IOException {
+        return connectionDetailService.updateWaterConnectionDetails(waterTaxDetailRequest.getAssessmentNumber(), waterTaxDetailRequest.getChildAssessmentNumber());
+    }
 }

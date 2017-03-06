@@ -104,6 +104,11 @@ public class WaterConnection extends AbstractAuditable {
     @Length(min = 3, max = 50)
     private String duplicateConsumerNumber;
 
+    
+    @SafeHtml
+    @Length(min = 3, max = 50)
+    private String oldPropertyIdentifier;
+    
     @Override
     public Long getId() {
         return id;
@@ -184,6 +189,14 @@ public class WaterConnection extends AbstractAuditable {
 
     public void setDuplicateConsumerNumber(final String duplicateConsumerNumber) {
         this.duplicateConsumerNumber = duplicateConsumerNumber;
+    }
+
+    public String getOldPropertyIdentifier() {
+        return oldPropertyIdentifier;
+    }
+
+    public void setOldPropertyIdentifier(String oldPropertyIdentifier) {
+        this.oldPropertyIdentifier = oldPropertyIdentifier;
     }
 
 }
