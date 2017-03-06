@@ -281,12 +281,7 @@ public class VacancyRemissionService {
                         approverDesignation.equalsIgnoreCase(COMMISSIONER_DESGN))) {
 
             final String designation = approverDesignation.split(" ")[0];
-            if (designation.equalsIgnoreCase(COMMISSIONER_DESGN))
-                nextAction = VR_STATUS_COMMISSIONER_FORWARD_PENDING;
-            else
-                nextAction = new StringBuilder().append(designation).append(" ")
-                        .append(VR_STATUS_COMMISSIONER_FORWARD_PENDING)
-                        .toString();
+            nextAction = getWorkflowNextAction(designation);
         }
 
         if (vacancyRemission.getId() != null && (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_REJECT)
@@ -333,7 +328,7 @@ public class VacancyRemissionService {
                         additionalRule, vacancyRemission.getCurrentState().getValue(), vacancyRemission.getCurrentState().getNextAction(),null,loggedInUserDesignation);
 
                 if (wfmatrix != null)
-                    if (wfmatrix.getNextAction().equalsIgnoreCase("END")) {
+                    if ("END".equalsIgnoreCase(wfmatrix.getNextAction())) {
                         vacancyRemission.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
                                 .withComments(approvalComent).withStateValue(wfmatrix.getNextState())
                                 .withDateInfo(currentDate.toDate()).withNextAction(VR_STATUS_MONTHLY_UPDATE);
@@ -487,23 +482,15 @@ public class VacancyRemissionService {
         final User user = securityUtils.getCurrentUser();
         final DateTime currentDate = new DateTime();
         Position pos = null;
-        Assignment wfInitiator = null;
+        Assignment wfInitiator;
         Assignment assignment;
         String approverDesignation = "";
         String nextAction = "";
         List<Assignment> loggedInUserAssign;
         String loggedInUserDesignation = "";
-        
-        if (vacancyRemissionApproval.getId() != null
-                && workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_REJECT))
-            wfInitiator = assignmentService.getPrimaryAssignmentForUser(vacancyRemissionApproval.getCreatedBy()
-                    .getId());
-        if (vacancyRemissionApproval.getId() != null
-                && workFlowAction
-                        .equalsIgnoreCase(WFLOW_ACTION_STEP_NOTICE_GENERATE))
-            wfInitiator = assignmentService
-                    .getPrimaryAssignmentForUser(vacancyRemissionApproval.getVacancyRemission().getCreatedBy()
-                            .getId());
+
+        wfInitiator = getInitiatorOnWFAction(vacancyRemissionApproval, workFlowAction);
+
         if (wfInitiator == null)
             wfInitiator = getWorkflowInitiatorAssignment(user.getId());
 
@@ -525,18 +512,14 @@ public class VacancyRemissionService {
                         approverDesignation.equalsIgnoreCase(DEPUTY_COMMISSIONER_DESIGN)
                         || approverDesignation.equalsIgnoreCase(ADDITIONAL_COMMISSIONER_DESIGN)
                         || approverDesignation.equalsIgnoreCase(ZONAL_COMMISSIONER_DESIGN) ||
-                        approverDesignation.equalsIgnoreCase(COMMISSIONER_DESGN)))
+                        approverDesignation.equalsIgnoreCase(COMMISSIONER_DESGN))){
             if (vacancyRemissionApproval.getStatus().equals(VR_STATUS_APPROVED))
                 nextAction = DIGITAL_SIGNATURE_PENDING;
             else {
                 final String designation = approverDesignation.split(" ")[0];
-                if (designation.equalsIgnoreCase(COMMISSIONER_DESGN))
-                    nextAction = WF_STATE_COMMISSIONER_APPROVAL_PENDING;
-                else
-                    nextAction = new StringBuilder().append(designation).append(" ")
-                            .append(WF_STATE_COMMISSIONER_APPROVAL_PENDING)
-                            .toString();
+                nextAction = getApprovalAsNextAction(designation);
             }
+        }
 
         if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_NOTICE_GENERATE)) {
             if (VR_STATUS_APPROVED.equalsIgnoreCase(vacancyRemissionApproval.getStatus())) {
@@ -860,11 +843,47 @@ public class VacancyRemissionService {
             loggedInUserAssign = assignmentService.getAssignmentByPositionAndUserAsOnDate(
                     vacancyRemission.getCurrentState().getOwnerPosition().getId(), user.getId(), new Date());
             loggedInUserDesignation = !loggedInUserAssign.isEmpty()
-                    ? loggedInUserAssign.get(0).getDesignation().getName() : null;
+                    ? loggedInUserAssign.get(0).getDesignation().getName() : "";
         }
         if (JUNIOR_ASSISTANT.equals(loggedInUserDesignation) || SENIOR_ASSISTANT.equals(loggedInUserDesignation))
-            loggedInUserDesignation = null;
+            loggedInUserDesignation = "";
 
         return loggedInUserDesignation;
+    }
+    
+    private String getWorkflowNextAction(String designation) {
+        String nextAction;
+        if (COMMISSIONER_DESGN.equalsIgnoreCase(designation))
+            nextAction = VR_STATUS_COMMISSIONER_FORWARD_PENDING;
+        else {
+            nextAction = new StringBuilder().append(designation).append(" ")
+                    .append(VR_STATUS_COMMISSIONER_FORWARD_PENDING).toString();
+        }
+        return nextAction;
+
+    }
+    
+    private String getApprovalAsNextAction(String designation) {
+        String nextAction;
+        if (designation.equalsIgnoreCase(COMMISSIONER_DESGN))
+            nextAction = WF_STATE_COMMISSIONER_APPROVAL_PENDING;
+        else
+            nextAction = new StringBuilder().append(designation).append(" ")
+                    .append(WF_STATE_COMMISSIONER_APPROVAL_PENDING).toString();
+        return nextAction;
+
+    }
+
+    private Assignment getInitiatorOnWFAction(final VacancyRemissionApproval vacancyRemissionApproval,
+            String wfAction) {
+        Assignment wfInitiator = null;
+        if (vacancyRemissionApproval.getId() != null && WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(wfAction))
+            wfInitiator = assignmentService
+                    .getPrimaryAssignmentForUser(vacancyRemissionApproval.getCreatedBy().getId());
+        if (vacancyRemissionApproval.getId() != null && WFLOW_ACTION_STEP_NOTICE_GENERATE.equalsIgnoreCase(wfAction))
+            wfInitiator = assignmentService
+                    .getPrimaryAssignmentForUser(vacancyRemissionApproval.getVacancyRemission().getCreatedBy().getId());
+
+        return wfInitiator;
     }
 }
