@@ -81,6 +81,7 @@ public class TradeLicenseSmsAndEmailService {
         final String[] strarr = getMunicipalityName().split(" ");
         final String cityname = strarr[0];
         String emailCode;
+        String smsCode;
         if (license.getState().getHistory().isEmpty() && license.isAcknowledged()) {
 
             smsMsg = licenseMessageSource.getMessage(
@@ -95,7 +96,7 @@ public class TradeLicenseSmsAndEmailService {
                             getMunicipalityName() },
                     locale);
             emailSubject = licenseMessageSource.getMessage("msg.newTradeLicensecreate.email.subject",
-                    new String[] { license.getApplicationNumber() }, locale);
+                    new String[] { license.getLicenseAppType().getName() }, locale);
         } else if (workFlowAction.equals(Constants.BUTTONAPPROVE)
                 && Constants.STATUS_UNDERWORKFLOW.equalsIgnoreCase(license.getStatus()
                         .getStatusCode())) {
@@ -103,14 +104,15 @@ public class TradeLicenseSmsAndEmailService {
             for (final EgDemandDetails dmdDtls : license.getCurrentDemand().getEgDemandDetails())
                 demAmt = demAmt.add(dmdDtls.getAmount().subtract(dmdDtls.getAmtCollected()));
 
-            if (demAmt.compareTo(BigDecimal.ZERO) == 0)
+            if (demAmt.compareTo(BigDecimal.ZERO) == 0) {
                 emailCode = "msg.newTradeLicenseapproval.email.body";
-            else
-
+                smsCode = "msg.newTradeLicenseapproval.sms";
+            } else {
                 emailCode = "msg.newTradeLicenseapprovalAmt.email.body";
-
+                smsCode = "msg.newTradeLicenseapprovalAmt.sms";
+            }
             smsMsg = licenseMessageSource.getMessage(
-                    "msg.newTradeLicenseapproval.sms",
+                    smsCode,
                     new String[] { license.getLicensee().getApplicantName(),
                             license.getApplicationNumber(),
                             license.getNameOfEstablishment(), license.getLicenseNumber(), getMunicipalityName() },
