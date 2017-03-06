@@ -236,7 +236,7 @@ public class PropTaxDashboardService {
      * @param collectionDetailsRequest
      * @return CollectionIndexDetails
      */
-    public CollectionDetails getCollectionIndexDetails(CollectionDetailsRequest collectionDetailsRequest) {
+    public CollectionDetails getCollectionIndexDetails(CollectionDetailsRequest collectionDetailsRequest, boolean isForMISReports) {
         CollectionDetails collectionIndexDetails = new CollectionDetails();
         List<CollTableData> collIndexData;
         if (!DASHBOARD_GROUPING_ALLWARDS.equalsIgnoreCase(collectionDetailsRequest.getType())) {
@@ -257,7 +257,7 @@ public class PropTaxDashboardService {
             collIndexData = collectionIndexElasticSearchService.getWardWiseTableDataAcrossCities(collectionDetailsRequest,
                     cities);
         } else
-            collIndexData = collectionIndexElasticSearchService.getResponseTableData(collectionDetailsRequest);
+            collIndexData = collectionIndexElasticSearchService.getResponseTableData(collectionDetailsRequest, isForMISReports);
 
         collectionIndexDetails.setResponseDetails(collIndexData);
         ErrorDetails errorDetails = new ErrorDetails();
@@ -371,7 +371,7 @@ public class PropTaxDashboardService {
     public CollectionDetails getDailyTarget(CollectionDetailsRequest collectionDetailsRequest) {
         CollectionDetails collectionIndexDetails = new CollectionDetails();
         collectionIndexDetails
-                .setResponseDetails(collectionIndexElasticSearchService.getResponseTableData(collectionDetailsRequest));
+                .setResponseDetails(collectionIndexElasticSearchService.getResponseTableData(collectionDetailsRequest, true));
         return collectionIndexDetails;
     }
    

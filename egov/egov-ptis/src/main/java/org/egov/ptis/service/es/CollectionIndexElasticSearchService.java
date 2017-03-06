@@ -464,7 +464,7 @@ public class CollectionIndexElasticSearchService {
      * @param collectionDetailsRequest
      * @return List
      */
-    public List<CollTableData> getResponseTableData(CollectionDetailsRequest collectionDetailsRequest) {
+    public List<CollTableData> getResponseTableData(CollectionDetailsRequest collectionDetailsRequest, boolean isForMISReports) {
         List<CollTableData> collIndDataList = new ArrayList<>();
         Date fromDate;
         Date toDate;
@@ -491,7 +491,10 @@ public class CollectionIndexElasticSearchService {
         BigDecimal lyTotalPenaltyColl;
         BigDecimal lyTotalRebate;
         BigDecimal lyTotalAdvance;
-        String aggregationField = REGION_NAME;
+        String aggregationField = StringUtils.EMPTY;
+        if(!isForMISReports)
+            aggregationField = REGION_NAME;
+        
         Map<String, BillCollectorIndex> wardWiseBillCollectors = new HashMap<>();
         Map<String, Map<String, BigDecimal>> currYrTillDateCollDivisionMap = new HashMap<>();
         Map<String, Map<String, BigDecimal>> lastYrTillDateCollDivisionMap = new HashMap<>();
@@ -1106,6 +1109,7 @@ public class CollectionIndexElasticSearchService {
         String[] dateArr;
         Integer month;
         Sum aggregateSum;
+        String aggregationField = StringUtils.EMPTY;
         CFinancialYear financialYear = cFinancialYearService.getFinancialYearByDate(new Date());
         Date finYearStartDate = financialYear.getStartingDate();
         Date finYearEndDate = financialYear.getEndingDate();
@@ -1113,6 +1117,9 @@ public class CollectionIndexElasticSearchService {
         String monthName;
         List<Map<String, BigDecimal>> yearwiseMonthlyCollList = new ArrayList<>();
         Map<String, BigDecimal> monthwiseColl;
+        if (StringUtils.isNotBlank(collectionDetailsRequest.getType())) 
+            aggregationField = getAggregrationField(collectionDetailsRequest);
+        
         /**
          * For month-wise collections between the date ranges if dates are sent in the request, consider fromDate and toDate+1 ,
          * else calculate from current year start date till current date+1 day
@@ -1131,7 +1138,7 @@ public class CollectionIndexElasticSearchService {
         for (int count = 0; count <= 2; count++) {
             monthwiseColl = new LinkedHashMap<>();
             Aggregations collAggr = getMonthwiseCollectionsForConsecutiveYears(collectionDetailsRequest, fromDate,
-                    toDate, false, null);
+                    toDate, false, null, aggregationField);
             Histogram dateaggs = collAggr.get(DATE_AGG);
 
             for (Histogram.Bucket entry : dateaggs.getBuckets()) {
@@ -1228,7 +1235,7 @@ public class CollectionIndexElasticSearchService {
      * @return SearchResponse
      */
     private Aggregations getMonthwiseCollectionsForConsecutiveYears(CollectionDetailsRequest collectionDetailsRequest,
-            Date fromDate, Date toDate, boolean isForMISReports, String intervalType) {
+            Date fromDate, Date toDate, boolean isForMISReports, String intervalType, String aggregationField) {
         AggregationBuilder aggregationBuilder;
         BoolQueryBuilder boolQuery = prepareWhereClause(collectionDetailsRequest, COLLECTION_INDEX_NAME);
         boolQuery = boolQuery.filter(QueryBuilders.rangeQuery(RECEIPT_DATE).gte(DATEFORMATTER_YYYY_MM_DD.format(fromDate))
@@ -1245,7 +1252,7 @@ public class CollectionIndexElasticSearchService {
                 else if(DAY.equalsIgnoreCase(intervalType))
                     interval = DateHistogramInterval.DAY;
             }
-            aggregationBuilder = AggregationBuilders.terms(BY_CITY).field("cityName").size(120)
+            aggregationBuilder = AggregationBuilders.terms(BY_CITY).field(aggregationField).size(120)
                     .subAggregation(AggregationBuilders.dateHistogram(DATE_AGG).field(RECEIPT_DATE)
                     .interval(interval)
                     .subAggregation(AggregationBuilders.sum("current_total").field(TOTAL_AMOUNT)));
@@ -1653,7 +1660,7 @@ public class CollectionIndexElasticSearchService {
         /**
          * Fetch the Ward-wise data
          */
-        List<CollTableData> wardWiseData = getResponseTableData(collectionDetailsRequest);
+        List<CollTableData> wardWiseData = getResponseTableData(collectionDetailsRequest, false);
         for (CollTableData tableData : wardWiseData) {
             wardReceiptDetails.put(tableData.getWardName(), tableData);
         }
@@ -1864,6 +1871,10 @@ public class CollectionIndexElasticSearchService {
             String intervalType) {
         Date fromDate = null;
         Date toDate = null;
+        String aggregationField = StringUtils.EMPTY;
+        if (StringUtils.isNotBlank(collectionDetailsRequest.getType())) 
+            aggregationField = getAggregrationField(collectionDetailsRequest);
+        
         CFinancialYear financialYear = cFinancialYearService.getFinancialYearByDate(new Date());
         Map<Integer, String> monthValuesMap = DateUtils.getAllMonthsWithFullNames();
         Map<String, Map<String, BigDecimal>> intervalwiseCollMap = new HashMap<>();
@@ -1880,7 +1891,7 @@ public class CollectionIndexElasticSearchService {
 
         Long startTime = System.currentTimeMillis();
         Aggregations collAggr = getMonthwiseCollectionsForConsecutiveYears(collectionDetailsRequest, fromDate,
-                toDate, true, intervalType);
+                toDate, true, intervalType, aggregationField);
         StringTerms cityaggr = collAggr.get(BY_CITY);
         if (MONTH.equalsIgnoreCase(intervalType)) {
             prepareMonthlyCollMap(financialYear.getStartingDate(), financialYear.getEndingDate(), monthValuesMap,
@@ -2035,6 +2046,7 @@ public class CollectionIndexElasticSearchService {
         Date toDate = null;
         String weekName;
         Sum aggregateSum;
+        String aggregationField = StringUtils.EMPTY;
         Map<String, Object[]> weekwiseColl;
         final Map<String, Map<String, Object[]>> weeklyCollMap = new LinkedHashMap<>();
         if (StringUtils.isNotBlank(collectionDetailsRequest.getFromDate())
@@ -2044,11 +2056,13 @@ public class CollectionIndexElasticSearchService {
                     DateUtils.getDate(collectionDetailsRequest.getToDate(), DATE_FORMAT_YYYYMMDD),
                     1);
         }
-
+        if (StringUtils.isNotBlank(collectionDetailsRequest.getType())) 
+            aggregationField = getAggregrationField(collectionDetailsRequest);
+        
         final Map<String, BigDecimal> totalDemandMap = getCollectionAndDemandValues(collectionDetailsRequest, fromDate,
-                toDate, PROPERTY_TAX_INDEX_NAME, TOTAL_DEMAND, "cityName");
+                toDate, PROPERTY_TAX_INDEX_NAME, TOTAL_DEMAND,aggregationField);
         final Aggregations collAggr = getMonthwiseCollectionsForConsecutiveYears(collectionDetailsRequest, fromDate,
-                toDate, true, intervalType);
+                toDate, true, intervalType, aggregationField);
         final StringTerms cityaggr = collAggr.get(BY_CITY);
         BigDecimal totalDemand;
         BigDecimal weeklyDemand;
@@ -2100,7 +2114,7 @@ public class CollectionIndexElasticSearchService {
         for (final Map.Entry<String, Map<String, Object[]>> entry : weeklyCollMap.entrySet()) {
             weeklyDCB = new WeeklyDCB();
             count=1;
-            weeklyDCB.setUlbName(entry.getKey());
+            weeklyDCB.setBoundaryName(entry.getKey());
             for (final Map.Entry<String, Object[]> weeklyMap : entry.getValue().entrySet()) {
                 demandCollectionMIS = new DemandCollectionMIS();
                 demandCollectionMIS.setCollection(new BigDecimal(weeklyMap.getValue()[0].toString()));
@@ -2138,8 +2152,11 @@ public class CollectionIndexElasticSearchService {
         String monthName;
         Sum aggregateSum;
         Integer month;
+        String aggregationField = StringUtils.EMPTY;
         Map<String, Object[]> monthwiseColl;
         Map<Integer, String> monthValuesMap = DateUtils.getAllMonthsWithFullNames();
+        if (StringUtils.isNotBlank(collectionDetailsRequest.getType()))
+            aggregationField = getAggregrationField(collectionDetailsRequest);
         
         final Map<String, Map<String, Object[]>> ulbwiseMonthlyCollMap = new HashMap<>();
         if (StringUtils.isNotBlank(collectionDetailsRequest.getFromDate())
@@ -2151,12 +2168,12 @@ public class CollectionIndexElasticSearchService {
         }
         
         final Map<String, BigDecimal> totalDemandMap = getCollectionAndDemandValues(collectionDetailsRequest, fromDate,
-                toDate, PROPERTY_TAX_INDEX_NAME, TOTAL_DEMAND, "cityName");
+                toDate, PROPERTY_TAX_INDEX_NAME, TOTAL_DEMAND,aggregationField);
         final Aggregations collAggr = getMonthwiseCollectionsForConsecutiveYears(collectionDetailsRequest, fromDate,
-                toDate, true, intervalType);
+                toDate, true, intervalType, aggregationField);
         final StringTerms cityaggr = collAggr.get(BY_CITY);
-        BigDecimal totalDemand = BigDecimal.ZERO;
-        BigDecimal monthlyDemand = BigDecimal.ZERO;
+        BigDecimal totalDemand;
+        BigDecimal monthlyDemand;
         int noOfMonths;
         Object[] demandCollValues;
         
@@ -2206,7 +2223,7 @@ public class CollectionIndexElasticSearchService {
         String month;
         for (final Map.Entry<String, Map<String, Object[]>> entry : yearwiseMonthlyCollMap.entrySet()) {
             monthlyDCB = new MonthlyDCB();
-            monthlyDCB.setUlbName(entry.getKey());
+            monthlyDCB.setBoundaryName(entry.getKey());
             for (final Map.Entry<String, Object[]> monthMap : entry.getValue().entrySet()) {
                 demandCollectionMIS = new DemandCollectionMIS();
                 month = monthMap.getKey();
@@ -2234,7 +2251,7 @@ public class CollectionIndexElasticSearchService {
         String month;
         for (final Map.Entry<String, Map<String, BigDecimal>> entry : collectionMap.entrySet()) {
             monthlyDCB = new MonthlyDCB();
-            monthlyDCB.setUlbName(entry.getKey());
+            monthlyDCB.setBoundaryName(entry.getKey());
             for (final Map.Entry<String, BigDecimal> monthMap : entry.getValue().entrySet()) {
                 demandCollectionMIS = new DemandCollectionMIS();
                 month = monthMap.getKey();
@@ -2261,7 +2278,7 @@ public class CollectionIndexElasticSearchService {
         for (Map.Entry<String, Map<String, BigDecimal>> citywise : collectionMap.entrySet()) {
             weeklyDCB = new WeeklyDCB();
             intervalCount = 1;
-            weeklyDCB.setUlbName(citywise.getKey());
+            weeklyDCB.setBoundaryName(citywise.getKey());
             for (final Map.Entry<String, BigDecimal> weeklyMap : citywise.getValue().entrySet()) {
                 demandCollectionMIS = new DemandCollectionMIS();
                 demandCollectionMIS.setCollection(weeklyMap.getValue());
@@ -2298,7 +2315,7 @@ public class CollectionIndexElasticSearchService {
         for (Map.Entry<String, Map<String, BigDecimal>> citywise : collectionMap.entrySet()) {
             dayWiseCollection = new DayWiseCollection();
             intervalCount = 1;
-            dayWiseCollection.setUlbName(citywise.getKey());
+            dayWiseCollection.setBoundaryName(citywise.getKey());
             for (final Map.Entry<String, BigDecimal> weeklyMap : citywise.getValue().entrySet()) {
                 demandCollectionMIS = new DemandCollectionMIS();
                 demandCollectionMIS.setCollection(weeklyMap.getValue());
@@ -2389,7 +2406,7 @@ public class CollectionIndexElasticSearchService {
             cityName = city.getName();
             collectionDetailsRequest.setUlbCode(city.getCitycode());
             collectionDetailsRequest.setType(DASHBOARD_GROUPING_WARDWISE);
-            wardWiseData = getResponseTableData(collectionDetailsRequest);
+            wardWiseData = getResponseTableData(collectionDetailsRequest, false);
             for (CollTableData wardData : wardWiseData)
                 wardData.setUlbName(cityName);
 

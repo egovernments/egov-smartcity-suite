@@ -42,15 +42,15 @@ package org.egov.ptis.bean.dashboard;
 import java.util.List;
 
 public class UlbWiseDemandCollection {
-    private String ulbName;
+    private String boundaryName;
     private List<DemandCollectionMIS> demandCollectionMISDetails;
 
-    public String getUlbName() {
-        return ulbName;
+    public String getBoundaryName() {
+        return boundaryName;
     }
 
-    public void setUlbName(String ulbName) {
-        this.ulbName = ulbName;
+    public void setBoundaryName(String boundaryName) {
+        this.boundaryName = boundaryName;
     }
 
     public List<DemandCollectionMIS> getDemandCollectionMISDetails() {

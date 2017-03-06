@@ -41,7 +41,7 @@ package org.egov.ptis.bean.dashboard;
 
 public class DayWiseCollection {
 
-    private String ulbName;
+    private String boundaryName;
     private DemandCollectionMIS day1DCB;
     private DemandCollectionMIS day2DCB;
     private DemandCollectionMIS day3DCB;
@@ -50,12 +50,12 @@ public class DayWiseCollection {
     private DemandCollectionMIS day6DCB;
     private DemandCollectionMIS day7DCB;
 
-    public String getUlbName() {
-        return ulbName;
+    public String getBoundaryName() {
+        return boundaryName;
     }
 
-    public void setUlbName(String ulbName) {
-        this.ulbName = ulbName;
+    public void setBoundaryName(String boundaryName) {
+        this.boundaryName = boundaryName;
     }
 
     public DemandCollectionMIS getDay1DCB() {
