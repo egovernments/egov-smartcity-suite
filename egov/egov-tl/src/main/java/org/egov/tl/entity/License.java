@@ -532,7 +532,7 @@ public class License extends StateAware {
     }
 
     public boolean isReadyForRenewal() {
-        return isActiveAndPermanent() && !isPaid() && (isLegacy() || stateIsEnded());
+        return isActiveAndPermanent() && !isPaid() && (isLegacy() || transitionCompleted());
     }
 
     public boolean isActiveAndPermanent() {

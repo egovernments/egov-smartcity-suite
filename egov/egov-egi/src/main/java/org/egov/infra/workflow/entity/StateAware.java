@@ -125,17 +125,16 @@ public abstract class StateAware extends AbstractAuditable {
         return this.getClass().getSimpleName();
     }
 
-    public final boolean stateIsNew() {
+    public final boolean transitionInitialized() {
         return hasState() && getCurrentState().isNew();
     }
 
-    public final boolean stateIsEnded() {
+    public final boolean transitionCompleted() {
         return hasState() && getCurrentState().isEnded();
     }
 
-    public final boolean stateInProgress() {
-        return hasState() && getState().getStatus().equals(StateStatus.STARTED)
-                || getState().getStatus().equals(StateStatus.INPROGRESS);
+    public final boolean transitionInprogress() {
+        return hasState() && getCurrentState().isInprogress();
     }
 
     public final boolean hasState() {
@@ -175,7 +174,7 @@ public abstract class StateAware extends AbstractAuditable {
     }
 
     public final StateAware end() {
-        if (stateIsEnded())
+        if (transitionCompleted())
             throw new ApplicationRuntimeException("Workflow already ended state.");
         else {
             state.setValue(State.DEFAULT_STATE_VALUE_CLOSED);
@@ -186,7 +185,7 @@ public abstract class StateAware extends AbstractAuditable {
     }
 
     public final StateAware reopen(final boolean clone) {
-        if (stateIsEnded()) {
+        if (transitionCompleted()) {
             final StateHistory stateHistory = new StateHistory(state);
             stateHistory.setValue(State.STATE_REOPENED);
             state.setStatus(StateStatus.INPROGRESS);
@@ -199,7 +198,7 @@ public abstract class StateAware extends AbstractAuditable {
     }
 
     public final StateAware reinitiateTransition() {
-        if (state != null && !stateIsEnded())
+        if (state != null && !transitionCompleted())
             throw new ApplicationRuntimeException("Could not reinitiate Workflow, existing workflow not ended.");
         else
             state = null;

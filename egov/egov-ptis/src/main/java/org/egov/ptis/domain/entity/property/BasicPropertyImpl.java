@@ -463,7 +463,7 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
         RevisionPetition wfObjection = null;
         for (final RevisionPetition objection : getObjections()) {
             wfObjection = objection;
-            if (wfObjection.hasState() && !wfObjection.stateIsEnded())
+            if (wfObjection.hasState() && !wfObjection.transitionCompleted())
                 break;
             wfObjection = null;
         }
@@ -483,7 +483,7 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
         String wfOwner = "";
         final Map<String, String> wfMap = new HashMap<String, String>();
         for (final Recovery recovery : getRecoveries())
-            if (!recovery.stateIsEnded()) {
+            if (!recovery.transitionCompleted()) {
                 isPropInWf = Boolean.TRUE;
                 wfOwner = recovery.getState().getOwnerUser().getName();
                 break;

@@ -237,6 +237,10 @@ public class State extends AbstractAuditable {
         return status.equals(StateStatus.ENDED);
     }
 
+    public boolean isInprogress() {
+        return status.equals(StateStatus.INPROGRESS);
+    }
+
     public Position getInitiatorPosition() {
         return initiatorPosition;
     }
