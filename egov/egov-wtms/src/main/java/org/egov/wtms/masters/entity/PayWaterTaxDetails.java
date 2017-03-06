@@ -51,6 +51,7 @@ public class PayWaterTaxDetails implements Serializable {
      */
     private static final long serialVersionUID = 7083364740584612941L;
     private String consumerNo;
+    private String assessmentNumber;
     private String ulbCode;
     @JsonIgnore
     private String applicaionNumber;
@@ -174,6 +175,14 @@ public class PayWaterTaxDetails implements Serializable {
 
     public void setSource(String source) {
         this.source = source;
+    }
+
+    public String getAssessmentNumber() {
+        return assessmentNumber;
+    }
+
+    public void setAssessmentNumber(String assessmentNumber) {
+        this.assessmentNumber = assessmentNumber;
     }
 
 }

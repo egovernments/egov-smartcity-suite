@@ -76,7 +76,6 @@ public class ConnectionDetailService {
 
     @Autowired
     private InstallmentHibDao installmentDao;
-
     @Autowired
     private ConnectionDemandService connectionDemandService;
 
@@ -167,7 +166,7 @@ public class ConnectionDetailService {
         return waterTaxDue;
     }
 
-    public List<WaterChargesDetails> getWaterTaxDetailsByPropertyId(final String propertyIdentifier) {
+    public List<WaterChargesDetails> getWaterTaxDetailsByPropertyId(final String propertyIdentifier, final String ulbCode) {
         final List<WaterConnection> waterConnections = waterConnectionService
                 .findByPropertyIdentifier(propertyIdentifier);
         final List<WaterChargesDetails> waterChargesDetailsList = new ArrayList<>();
@@ -182,13 +181,13 @@ public class ConnectionDetailService {
                                     ConnectionStatus.ACTIVE);
                     if (waterConnectionDetails != null)
                         waterChargesDetails = getWatertaxDetails(waterConnectionDetails, connection.getConsumerCode(),
-                                propertyIdentifier);
+                                propertyIdentifier, ulbCode);
                     else {
                         waterConnectionDetails = waterConnectionDetailsService.findByConsumerCodeAndConnectionStatus(
                                 connection.getConsumerCode(), ConnectionStatus.INACTIVE);
                         if (waterConnectionDetails != null)
                             waterChargesDetails = getWatertaxDetails(waterConnectionDetails,
-                                    connection.getConsumerCode(), propertyIdentifier);
+                                    connection.getConsumerCode(), propertyIdentifier, ulbCode);
                     }
                     waterChargesDetailsList.add(waterChargesDetails);
                 }
@@ -197,7 +196,7 @@ public class ConnectionDetailService {
     }
 
     public WaterChargesDetails getWatertaxDetails(final WaterConnectionDetails waterConnectionDetails,
-            final String consumerCode, final String propertyIdentifier) {
+            final String consumerCode, final String propertyIdentifier, final String ulbCode) {
         final WaterChargesDetails waterChargesDetails = new WaterChargesDetails();
         waterChargesDetails.setTotalTaxDue(getDueInfo(waterConnectionDetails).getTotalTaxDue());
         waterChargesDetails.setConnectionType(waterConnectionDetails.getConnectionType().name());
@@ -207,6 +206,7 @@ public class ConnectionDetailService {
         waterChargesDetails.setNoOfPerson(waterConnectionDetails.getNumberOfPerson());
         waterChargesDetails.setPipesize(waterConnectionDetails.getPipeSize().getCode());
         waterChargesDetails.setWaterSource(waterConnectionDetails.getWaterSource().getDescription());
+        waterChargesDetails.setUlbCode(ulbCode);
         waterChargesDetails.setWaterSupplyType(
                 waterConnectionDetails.getWaterSupply() != null ? waterConnectionDetails.getWaterSupply().getDescription() : "");
         waterChargesDetails.setCategory(waterConnectionDetails.getCategory().getDescription());
@@ -283,6 +283,7 @@ public class ConnectionDetailService {
     public Installment getCurrentInstallment(final String moduleName, final String installmentType, final Date date) {
         return connectionDemandService.getCurrentInstallment(moduleName, installmentType, date);
     }
+
     public Map<String, BigDecimal> getDemandCollMapForPtisIntegration(
             final WaterConnectionDetails waterConnectionDetails, final String moduleName,
             final String installmentType) {

@@ -40,6 +40,7 @@
 package org.egov.wtms.web.controller.rest;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.WATER_TAX_INDEX_NAME;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -50,6 +51,7 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.egov.wtms.application.rest.WaterChargesDetails;
 import org.egov.wtms.application.rest.WaterTaxDue;
 import org.egov.wtms.application.service.ConnectionDetailService;
+import org.egov.wtms.masters.entity.PayWaterTaxDetails;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.Aggregations;
 import org.elasticsearch.search.aggregations.metrics.sum.Sum;
@@ -109,12 +111,20 @@ public class RestWaterTaxController {
         return connectionDetailService.getDueDetailsByPropertyId(assessmentNumber);
 
     }
-    
+
     @RequestMapping(value = {
             "rest/watertax/connectiondetails/byptno/{assessmentNumber}" }, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public List<WaterChargesDetails> getWaterConnectionDetailsByPropertyId(@PathVariable final String assessmentNumber)
             throws JsonGenerationException, JsonMappingException, IOException {
-        return connectionDetailService.getWaterTaxDetailsByPropertyId(assessmentNumber);
+        return connectionDetailService.getWaterTaxDetailsByPropertyId(assessmentNumber, null);
+
+    }
+
+    @RequestMapping(value = "rest/watertax/connectiondetails", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
+    public List<WaterChargesDetails> getWaterConnectionDetailsByPropertyId(PayWaterTaxDetails payWaterTaxDetails)
+            throws IOException {
+        return connectionDetailService.getWaterTaxDetailsByPropertyId(payWaterTaxDetails.getAssessmentNumber(),
+                payWaterTaxDetails.getUlbCode());
 
     }
 
