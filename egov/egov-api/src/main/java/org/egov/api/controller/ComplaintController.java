@@ -166,6 +166,7 @@ public class ComplaintController extends ApiController {
                 final JsonObject jComplaintCategory = new JsonObject();
                 jComplaintCategory.addProperty("categoryId", complaintTypeCategory.getId());
                 jComplaintCategory.addProperty("categoryName", complaintTypeCategory.getName());
+                jComplaintCategory.addProperty("localName", complaintTypeCategory.getLocalName());
 
                 final List<ComplaintType> complaintTypes = complaintTypeService
                         .findActiveComplaintTypesByCategory(complaintTypeCategory.getId());
@@ -177,6 +178,7 @@ public class ComplaintController extends ApiController {
                     jComplaintType.addProperty("id", complaintType.getId());
                     jComplaintType.addProperty("name", complaintType.getName());
                     jComplaintType.addProperty("description", complaintType.getDescription());
+                    jComplaintType.addProperty("localName", complaintType.getLocalName());
                     jAryComplaintTypes.add(jComplaintType);
                 }
 
