@@ -136,7 +136,7 @@ public class SearchForm {
     private void demandGenerationOption(List<String> licenseActions, License license) {
         Date nextYearInstallment = new DateTime().withMonthOfYear(4).withDayOfMonth(1).toDate();
         Date currentYearInstallment = license.getLicenseDemand().getEgInstallmentMaster().getToDate();
-        if (license.isNewPermanentApplication() && license.hasState() && license.getIsActive() && currentYearInstallment.before(nextYearInstallment)) {
+        if (license.isNewPermanentApplication() && !license.isLegacyWithNoState() && license.getIsActive() && currentYearInstallment.before(nextYearInstallment)) {
             licenseActions.add("Generate Demand");
         }
     }

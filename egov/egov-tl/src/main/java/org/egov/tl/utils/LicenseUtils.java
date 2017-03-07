@@ -56,11 +56,18 @@ import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.tl.entity.License;
 import org.egov.tl.entity.LicenseSubCategory;
+import org.egov.tl.entity.PenaltyRates;
 import org.egov.tl.service.LicenseStatusService;
 import org.egov.tl.service.LicenseSubCategoryService;
+import org.egov.tl.service.PenaltyRatesService;
+import org.joda.time.Days;
+import org.joda.time.LocalDate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -70,6 +77,7 @@ import static org.egov.tl.utils.Constants.TRADELICENSEMODULE;
 
 @Service
 public class LicenseUtils {
+    private static final Logger LOG = LoggerFactory.getLogger(LicenseUtils.class);
     @Autowired
     private ModuleService moduleService;
     @Autowired
@@ -91,6 +99,9 @@ public class LicenseUtils {
 
     @Autowired
     private LicenseStatusService licenseStatusService;
+
+    @Autowired
+    private PenaltyRatesService penaltyRatesService;
 
     public Module getModule(final String moduleName) {
         return moduleService.getModuleByName(moduleName);
@@ -143,5 +154,23 @@ public class LicenseUtils {
     public License licenseStatusUpdate(final License licenseObj, final String code) {
         licenseObj.setStatus(licenseStatusService.getLicenseStatusByCode(code));
         return licenseObj;
+    }
+
+    public BigDecimal calculatePenalty(License license, final Date fromDate, final Date collectionDate, final BigDecimal amount) {
+        if (fromDate != null) {
+            final int paymentDueDays = Days
+                    .daysBetween(new LocalDate(fromDate.getTime()), new LocalDate(collectionDate.getTime()))
+                    .getDays();
+            final PenaltyRates penaltyRates = penaltyRatesService.findByDaysAndLicenseAppType(Long.valueOf(paymentDueDays),
+                    license.getLicenseAppType());
+            if (penaltyRates == null) {
+                LOG.warn("License payment due since {} days, There is no penatlity rate definied for License Type {}",
+                        paymentDueDays,
+                        license.getLicenseAppType().getName());
+                return BigDecimal.ZERO;
+            }
+            return amount.multiply(BigDecimal.valueOf(penaltyRates.getRate() / 100));
+        }
+        return BigDecimal.ZERO;
     }
 }

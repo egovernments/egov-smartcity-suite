@@ -41,7 +41,10 @@
 package org.egov.tl.web.actions.integration;
 
 import org.apache.struts2.ServletActionContext;
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.tl.entity.License;
 import org.egov.tl.service.TradeLicenseService;
@@ -52,19 +55,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.net.URLEncoder;
+import java.util.Map;
+
+import static com.opensymphony.xwork2.Action.SUCCESS;
 
 @ParentPackage("egov")
+@Results({@Result(name = "showfees", location = "license-showfees.jsp"),
+        @Result(name = SUCCESS, location = "licenseBillCollect.jsp")})
 public class LicenseBillCollectAction extends BaseFormAction {
 
     private static final long serialVersionUID = 1L;
     private Long licenseId;
     private LicenseBill licenseBill;
     private String collectXML;
-    
+
     @Autowired
     private LicenseBillService licenseBillService;
-    
+
     @Autowired
     private LicenseNumberUtils licenseNumberUtils;
 
@@ -72,8 +81,18 @@ public class LicenseBillCollectAction extends BaseFormAction {
     @Qualifier("tradeLicenseService")
     private TradeLicenseService tradeLicenseService;
 
+    private Map<String, Map<String, BigDecimal>> outstandingFee;
+
     @Override
     public String execute() throws IOException {
+        final License license = tradeLicenseService.getLicenseById(licenseId);
+        setOutstandingFee(licenseBillService.getPaymentFee(license));
+        setLicenseId(licenseId);
+        return "showfees";
+    }
+
+    @Action(value = "/integration/licenseBillCollect-collectfees")
+    public String payFee() throws IOException {
         final License license = tradeLicenseService.getLicenseById(licenseId);
         if (license.isPaid()) {
             ServletActionContext.getResponse().setContentType("text/html");
@@ -86,19 +105,6 @@ public class LicenseBillCollectAction extends BaseFormAction {
         licenseBillService.setLicense(license);
         collectXML = URLEncoder.encode(licenseBillService.getBillXML(licenseBill), "UTF-8");
         return SUCCESS;
-    }
-
-    public String renew() throws IOException {
-        if (getSession().get("model.id") != null) {
-            licenseId = Long.valueOf((Long) getSession().get("model.id"));
-            getSession().remove("model.id");
-        }
-        final License license = tradeLicenseService.getLicenseById(licenseId);
-        licenseBill.setLicense(license);
-        licenseBillService.setLicense(license);
-        collectXML = URLEncoder.encode(licenseBillService.getBillXML(licenseBill), "UTF-8");
-        return SUCCESS;
-
     }
 
     @Override
@@ -118,7 +124,15 @@ public class LicenseBillCollectAction extends BaseFormAction {
         this.licenseId = licenseId;
     }
 
-   public void setLicenseBill(LicenseBill licenseBill) {
+    public void setLicenseBill(LicenseBill licenseBill) {
         this.licenseBill = licenseBill;
+    }
+
+    public Map<String, Map<String, BigDecimal>> getOutstandingFee() {
+        return outstandingFee;
+    }
+
+    public void setOutstandingFee(Map<String, Map<String, BigDecimal>> outstandingFee) {
+        this.outstandingFee = outstandingFee;
     }
 }

@@ -40,6 +40,7 @@
 
 package org.egov.tl.service.integration;
 
+import static java.math.BigDecimal.ZERO;
 import static org.egov.tl.utils.Constants.APPLICATION_STATUS_DIGUPDATE_CODE;
 import static org.egov.tl.utils.Constants.CHQ_BOUNCE_PENALTY;
 import static org.egov.tl.utils.Constants.DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY;
@@ -100,6 +101,7 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.Position;
 import org.egov.tl.entity.License;
 import org.egov.tl.entity.LicenseDemand;
+import org.egov.tl.service.PenaltyRatesService;
 import org.egov.tl.service.TradeLicenseSmsAndEmailService;
 import org.egov.tl.service.es.LicenseApplicationIndexService;
 import org.egov.tl.utils.Constants;
@@ -161,6 +163,9 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
 
     @Autowired
     private LicenseUtils licenseUtils;
+
+    @Autowired
+    private PenaltyRatesService penaltyRatesService;
 
     public void setLicense(final License license) {
         this.license = license;
@@ -229,7 +234,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
             final Installment installment = demandDetail.getEgDemandReason().getEgInstallmentMaster();
             if ("N".equalsIgnoreCase(demandDetail.getEgDemandReason().getEgDemandReasonMaster().getIsDebit())
                     && demandDetail.getAmount().subtract(demandDetail.getAmtRebate())
-                            .compareTo(demandDetail.getAmtCollected()) != 0) {
+                    .compareTo(demandDetail.getAmtCollected()) != 0) {
                 final EgBillDetails billdetail = new EgBillDetails();
                 final EgBillDetails billdetailRebate = new EgBillDetails();
                 if (demandDetail.getAmtRebate() != null && demandDetail.getAmtRebate().compareTo(BigDecimal.ZERO) != 0) {
@@ -321,7 +326,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
     }
 
     public EgDemandDetails createDemandDetails(final EgDemandReason egDemandReason, final BigDecimal amtCollected,
-            final BigDecimal dmdAmount) {
+                                               final BigDecimal dmdAmount) {
         return EgDemandDetails.fromReasonAndAmounts(dmdAmount, egDemandReason, amtCollected);
     }
 
@@ -493,7 +498,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
                 for (final EgDemandDetails demandDetail : demand.getEgDemandDetails())
                     if (reason.equals(demandDetail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster())
                             && installment.equals(demandDetail.getEgDemandReason().getEgInstallmentMaster()
-                                    .getDescription())) {
+                            .getDescription())) {
                         demandDetail
                                 .setAmtCollected(demandDetail.getAmtCollected().subtract(rcptAccInfo.getCrAmount()));
                         LOGGER.info("Deducted Collected amount and receipt details for tax : " + reason
@@ -579,7 +584,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
     }
 
     private EgDemandDetails getDemandDetail(final EgDemand demand,
-            final String demandrsnStrChqBouncePenalty) {
+                                            final String demandrsnStrChqBouncePenalty) {
         EgDemandDetails chqBounceDemand = null;
         for (final EgDemandDetails dd : demand.getEgDemandDetails())
             if (dd.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster()
@@ -719,7 +724,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
     }
 
     private BillReceipt prepareBillReceiptBean(final BillReceiptInfo bri, final EgBill egBill,
-            final BigDecimal totalCollectedAmt) {
+                                               final BigDecimal totalCollectedAmt) {
 
         BillReceipt billRecpt = null;
         if (bri != null && egBill != null && totalCollectedAmt != null) {
@@ -760,7 +765,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
     }
 
     private BillReceipt updateBillReceiptForCancellation(final BillReceiptInfo bri, final EgBill egBill,
-            final BigDecimal totalCollectedAmt) {
+                                                         final BigDecimal totalCollectedAmt) {
         BillReceipt billRecpt;
         if (bri == null)
             throw new ApplicationRuntimeException(" BillReceiptInfo Object is null ");
@@ -778,8 +783,8 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
     }
 
     protected EgdmCollectedReceipt persistCollectedReceipts(final EgDemandDetails egDemandDetails,
-            final String receiptNumber, final BigDecimal receiptAmount, final Date receiptDate,
-            final BigDecimal reasonAmount) {
+                                                            final String receiptNumber, final BigDecimal receiptAmount, final Date receiptDate,
+                                                            final BigDecimal reasonAmount) {
         final EgdmCollectedReceipt egDmCollectedReceipt = new EgdmCollectedReceipt();
         egDmCollectedReceipt.setReceiptNumber(receiptNumber);
         egDmCollectedReceipt.setReceiptDate(receiptDate);
@@ -793,7 +798,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
 
     @Override
     public void apportionPaidAmount(final String billReferenceNumber, final BigDecimal actualAmountPaid,
-            final ArrayList<ReceiptDetail> receiptDetailsArray) {
+                                    final ArrayList<ReceiptDetail> receiptDetailsArray) {
         // No logic now
     }
 
@@ -835,7 +840,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
 
     @Override
     public List<ReceiptDetail> reconstructReceiptDetail(final String billReferenceNumber,
-            final BigDecimal actualAmountPaid, final List<ReceiptDetail> receiptDetailList) {
+                                                        final BigDecimal actualAmountPaid, final List<ReceiptDetail> receiptDetailList) {
         return Collections.emptyList();
     }
 
@@ -849,4 +854,33 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
         return new ReceiptAmountInfo();
     }
 
+
+    public Map<String, Map<String, BigDecimal>> getPaymentFee(final License license) {
+        final Map<String, Map<String, BigDecimal>> outstandingFee = new HashMap<>();
+        final LicenseDemand licenseDemand = license.getCurrentDemand();
+
+        for (final EgDemandDetails demandDetail : licenseDemand.getEgDemandDetails()) {
+            Date fromDate = license.isNewApplication() ? license.getCommencementDate() : demandDetail.getEgDemandReason().getEgInstallmentMaster().getFromDate();
+            final String demandReason = demandDetail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster();
+            final Installment installmentYear = demandDetail.getEgDemandReason().getEgInstallmentMaster();
+            Map<String, BigDecimal> feeByTypes;
+            if (!demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode().equals(Constants.PENALTY_DMD_REASON_CODE)
+                    && demandDetail.getAmount().subtract(demandDetail.getAmtCollected()).signum() == 1) {
+                if (outstandingFee.containsKey(installmentYear.getDescription()))
+                    feeByTypes = outstandingFee.get(installmentYear.getDescription());
+                else {
+                    feeByTypes = new HashMap<>();
+                    feeByTypes.put(demandReason, ZERO);
+                }
+                final BigDecimal demandAmount = demandDetail.getAmount().subtract(demandDetail.getAmtCollected());
+                feeByTypes.put(demandReason, demandAmount);
+                BigDecimal penaltyAmt = licenseUtils.calculatePenalty(license, fromDate, new Date(), demandDetail.getAmount());
+                if (penaltyAmt.compareTo(BigDecimal.ZERO) > 0)
+                    feeByTypes.put("Penalty", penaltyAmt);
+                outstandingFee.put(installmentYear.getDescription(), feeByTypes);
+            }
+        }
+        return outstandingFee;
+
+    }
 }

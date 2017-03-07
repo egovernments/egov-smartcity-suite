@@ -51,14 +51,9 @@ import org.egov.demand.model.EgDemandDetails;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.tl.entity.License;
-import org.egov.tl.entity.PenaltyRates;
 import org.egov.tl.service.PenaltyRatesService;
 import org.egov.tl.utils.Constants;
 import org.egov.tl.utils.LicenseUtils;
-import org.joda.time.Days;
-import org.joda.time.LocalDate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -75,8 +70,6 @@ import static org.apache.commons.lang.StringUtils.isBlank;
 
 @Transactional(readOnly = true)
 public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalculator {
-
-    private static final Logger LOG = LoggerFactory.getLogger(LicenseBill.class);
 
     private License license;
     private String moduleName;
@@ -287,21 +280,7 @@ public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalcu
 
     @Override
     public BigDecimal calculatePenalty(final Date commencementDate, final Date collectionDate, final BigDecimal amount) {
-        if (commencementDate != null) {
-            final int paymentDueDays = Days
-                    .daysBetween(new LocalDate(commencementDate.getTime()), new LocalDate(collectionDate.getTime()))
-                    .getDays();
-            final PenaltyRates penaltyRates = penaltyRatesService.findByDaysAndLicenseAppType(Long.valueOf(paymentDueDays),
-                    license.getLicenseAppType());
-            if (penaltyRates == null) {
-                LOG.warn("License payment due since {} days, There is no penatlity rate definied for License Type {}",
-                        paymentDueDays,
-                        license.getLicenseAppType().getName());
-                return BigDecimal.ZERO;
-            }
-            return amount.multiply(BigDecimal.valueOf(penaltyRates.getRate() / 100));
-        }
-        return BigDecimal.ZERO;
+        return licenseUtils.calculatePenalty(license, commencementDate, collectionDate, amount);
     }
 
     @Override
