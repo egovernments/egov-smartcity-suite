@@ -230,8 +230,14 @@ function showMarriageFee()
 						'registrationUnitId' : $('#select-registrationunit').val()
 						}
 				}).done(function(value) {
-					$('#txt-zoneid').val(value.id);
-					$('#txt-zone').val(value.name);
+					if(value !=null){
+						$('#txt-zoneid').val(value.id);
+						$('#txt-zone').val(value.name);
+						}
+						else{
+							
+						$('#txt-zone').val('');
+						}
 				
 				});
 			}
