@@ -87,8 +87,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
- * The PaymentRequestAdaptor class frames the request object for the payment
- * service.
+ * The PaymentRequestAdaptor class frames the request object for the payment service.
  */
 @Service
 public class AxisAdaptor implements PaymentGatewayAdaptor {
@@ -108,8 +107,7 @@ public class AxisAdaptor implements PaymentGatewayAdaptor {
     private CityService cityService;
 
     /**
-     * This method invokes APIs to frame request object for the payment service
-     * passed as parameter
+     * This method invokes APIs to frame request object for the payment service passed as parameter
      *
      * @param serviceDetails
      * @param receiptHeader
@@ -133,7 +131,7 @@ public class AxisAdaptor implements PaymentGatewayAdaptor {
                 + CollectionConstants.SEPARATOR_HYPHEN + ApplicationThreadLocals.getCityName());
         final StringBuilder returnUrl = new StringBuilder();
         returnUrl.append(paymentServiceDetails.getCallBackurl()).append("?paymentServiceId=")
-        .append(paymentServiceDetails.getId());
+                .append(paymentServiceDetails.getId());
         fields.put(CollectionConstants.AXIS_RETURN_URL, returnUrl.toString());
         final BigDecimal amount = receiptHeader.getTotalAmount();
         final float rupees = Float.parseFloat(amount.toString());
@@ -208,11 +206,9 @@ public class AxisAdaptor implements PaymentGatewayAdaptor {
     }
 
     /**
-     * This method parses the given response string into a AXIS payment response
-     * object.
+     * This method parses the given response string into a AXIS payment response object.
      *
-     * @param a
-     *            <code>String</code> representation of the response.
+     * @param a <code>String</code> representation of the response.
      * @return an instance of <code></code> containing the response information
      */
     @Override
@@ -227,14 +223,11 @@ public class AxisAdaptor implements PaymentGatewayAdaptor {
                 fields.put(entry[0].trim(), entry[1].trim());
         }
         /*
-         * If there has been a merchant secret set then sort and loop through
-         * all the data in the Virtual Payment Client response. while we have
-         * the data, we can append all the fields that contain values (except
-         * the secure hash) so that we can create a hash and validate it against
-         * the secure hash in the Virtual Payment Client response. NOTE: If the
-         * vpc_TxnResponseCode in not a single character then there was a
-         * Virtual Payment Client error and we cannot accurately validate the
-         * incoming data from the secure hash.
+         * If there has been a merchant secret set then sort and loop through all the data in the Virtual Payment Client response.
+         * while we have the data, we can append all the fields that contain values (except the secure hash) so that we can create
+         * a hash and validate it against the secure hash in the Virtual Payment Client response. NOTE: If the vpc_TxnResponseCode
+         * in not a single character then there was a Virtual Payment Client error and we cannot accurately validate the incoming
+         * data from the secure hash.
          */
 
         // remove the vpc_TxnResponseCode code from the response fields as we do
@@ -254,10 +247,10 @@ public class AxisAdaptor implements PaymentGatewayAdaptor {
 
             // Validate the Secure Hash (remember MD5 hashes are not case
             // sensitive)
-            if (!vpcTxnSecureHash.equalsIgnoreCase(secureHash)){
+            if (!vpcTxnSecureHash.equalsIgnoreCase(secureHash)) {
                 // Secure Hash validation failed, add a data field to be
                 // displayed later.
-                //throw new ApplicationRuntimeException("Axis Bank Payment Secure Hash validation failed");
+                // throw new ApplicationRuntimeException("Axis Bank Payment Secure Hash validation failed");
             }
         }
         return preparePaymentResponse(fields);
@@ -282,10 +275,11 @@ public class AxisAdaptor implements PaymentGatewayAdaptor {
             axisResponse.setAuthStatus("0".equals(fields.get(CollectionConstants.AXIS_TXN_RESPONSE_CODE)) ? "0300"
                     : fields.get(CollectionConstants.AXIS_TXN_RESPONSE_CODE));
             axisResponse.setErrorDescription(fields.get(CollectionConstants.AXIS_RESP_MESSAGE));
-            axisResponse.setAdditionalInfo6(receiptHeader.getConsumerCode());
+            axisResponse.setAdditionalInfo6(receiptHeader.getConsumerCode().replace("-", "")
+                    .replace("/", ""));
             axisResponse.setReceiptId(receiptId);
             axisResponse.setTxnAmount(new BigDecimal(fields.get(CollectionConstants.AXIS_AMOUNT))
-            .divide(PAISE_RUPEE_CONVERTER));
+                    .divide(PAISE_RUPEE_CONVERTER));
             axisResponse.setTxnReferenceNo(fields.get(CollectionConstants.AXIS_TXN_NO));
             axisResponse.setAdditionalInfo2(fields.get(CollectionConstants.AXIS_ORDER_INFO));
             axisResponse.setTxnDate(getTransactionDate(fields.get(CollectionConstants.AXIS_BATCH_NO)));
@@ -297,9 +291,8 @@ public class AxisAdaptor implements PaymentGatewayAdaptor {
     }
 
     /*
-     * This method takes a data String and returns a predefined value if empty
-     * If data Sting is null, returns string "No Value Returned", else returns
-     * input
+     * This method takes a data String and returns a predefined value if empty If data Sting is null, returns string
+     * "No Value Returned", else returns input
      * @param in String containing the data String
      * @return String containing the output String
      */
@@ -313,10 +306,8 @@ public class AxisAdaptor implements PaymentGatewayAdaptor {
     /**
      * This method is for creating a URL query string.
      *
-     * @param buf
-     *            is the inital URL for appending the encoded fields to
-     * @param fields
-     *            is the input parameters from the order page
+     * @param buf is the inital URL for appending the encoded fields to
+     * @param fields is the input parameters from the order page
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     // Method for creating a URL query string
@@ -334,12 +325,12 @@ public class AxisAdaptor implements PaymentGatewayAdaptor {
             if (fieldValue != null && fieldValue.length() > 0)
                 // append the URL parameters
                 try {
-                    buf.append(URLEncoder.encode(fieldName, UTF8));
-                    buf.append('=');
-                    buf.append(URLEncoder.encode(fieldValue, UTF8));
+                buf.append(URLEncoder.encode(fieldName, UTF8));
+                buf.append('=');
+                buf.append(URLEncoder.encode(fieldValue, UTF8));
                 } catch (final UnsupportedEncodingException e) {
-                    LOGGER.error("Error appending QueryFields" + e);
-                    throw new ApplicationRuntimeException(e.getMessage());
+                LOGGER.error("Error appending QueryFields" + e);
+                throw new ApplicationRuntimeException(e.getMessage());
                 }
             // add a '&' to the end if we have more fields coming.
             if (itr.hasNext())
@@ -366,14 +357,16 @@ public class AxisAdaptor implements PaymentGatewayAdaptor {
             if (null != responseAxisMap.get(CollectionConstants.AXIS_TXN_RESPONSE_CODE)
                     && !"".equals(responseAxisMap.get(CollectionConstants.AXIS_TXN_RESPONSE_CODE))) {
                 axisResponse
-                .setAuthStatus(null != responseAxisMap.get(CollectionConstants.AXIS_TXN_RESPONSE_CODE)
-                && "0".equals(responseAxisMap.get(CollectionConstants.AXIS_TXN_RESPONSE_CODE)) ? CollectionConstants.PGI_AUTHORISATION_CODE_SUCCESS
-                        : responseAxisMap.get(CollectionConstants.AXIS_TXN_RESPONSE_CODE));
+                        .setAuthStatus(null != responseAxisMap.get(CollectionConstants.AXIS_TXN_RESPONSE_CODE)
+                                && "0".equals(responseAxisMap.get(CollectionConstants.AXIS_TXN_RESPONSE_CODE))
+                                        ? CollectionConstants.PGI_AUTHORISATION_CODE_SUCCESS
+                                        : responseAxisMap.get(CollectionConstants.AXIS_TXN_RESPONSE_CODE));
                 axisResponse.setErrorDescription(responseAxisMap.get(CollectionConstants.AXIS_RESP_MESSAGE));
 
                 if (CollectionConstants.PGI_AUTHORISATION_CODE_SUCCESS.equals(axisResponse.getAuthStatus())) {
                     axisResponse.setTxnReferenceNo(responseAxisMap.get(CollectionConstants.AXIS_TXN_NO));
-                    axisResponse.setTxnAmount(new BigDecimal(responseAxisMap.get(CollectionConstants.AXIS_AMOUNT)).divide(PAISE_RUPEE_CONVERTER));
+                    axisResponse.setTxnAmount(
+                            new BigDecimal(responseAxisMap.get(CollectionConstants.AXIS_AMOUNT)).divide(PAISE_RUPEE_CONVERTER));
                     axisResponse.setAdditionalInfo2(responseAxisMap.get(CollectionConstants.AXIS_ORDER_INFO));
                     axisResponse.setTxnDate(getTransactionDate(responseAxisMap.get(CollectionConstants.AXIS_BATCH_NO)));
                 }
