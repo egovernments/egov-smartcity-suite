@@ -1343,7 +1343,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                     .withDateInfo(new DateTime().toDate()).withOwner(position)
                     .withSenderName(loggedInUser.getUsername() + "::" + loggedInUser.getName()).withOwner(user)
                     .withComments(approverComments).withNextAction(wfmatrix.getNextAction())
-                    .withInitiator(wfInitiator != null ? wfInitiator.getPosition() : null)
+                    .withInitiator(wfInitiator != null ? wfInitiator.getPosition() : position)
                     .withNatureOfTask(NATURE_OF_WORK_RP.equalsIgnoreCase(wfType) ? NATURE_REVISION_PETITION
                             : NATURE_GENERAL_REVISION_PETITION);
 
