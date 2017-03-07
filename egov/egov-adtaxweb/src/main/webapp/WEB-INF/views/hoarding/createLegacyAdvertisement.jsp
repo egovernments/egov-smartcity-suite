@@ -144,7 +144,7 @@
 								<span class="mandatory"></span>
 								</label>
 								<div class="col-sm-3 add-margin">
-									<form:input type="text" cssClass="form-control datepicker" path="applicationDate" id="applicationDate" data-date-end-date="0d" required="required"/>
+									<form:input type="text" cssClass="form-control datepicker" path="applicationDate" id="applicationDate" data-inputmask="'alias': 'date'" data-date-end-date="0d" required="required"/>
                                		<form:errors path="applicationDate" cssClass="error-msg" />
 								</div>
 							</div>
@@ -221,7 +221,7 @@
 								<span class="mandatory"></span>
 								</label>
 								<div class="col-sm-3 add-margin">
-									<form:input type="text" cssClass="form-control datepicker checkdate" path="permissionstartdate" id="permissionstartdate" required="required"/>
+									<form:input type="text" cssClass="form-control datepicker checkdate" path="permissionstartdate" data-inputmask="'alias': 'date'" id="permissionstartdate" required="required"/>
                                		<form:errors path="permissionstartdate" cssClass="error-msg" />
                              	</div>
 						     	<label class="col-sm-2 control-label text-right">
@@ -229,7 +229,7 @@
 								<span class="mandatory"></span>
 								</label>
 								<div class="col-sm-3 add-margin">
-									<form:input type="text" cssClass="form-control datepicker checkdate" path="permissionenddate" id="permissionenddate" required="required"/>
+									<form:input type="text" cssClass="form-control datepicker checkdate" path="permissionenddate" data-inputmask="'alias': 'date'" id="permissionenddate" required="required"/>
                                		<form:errors path="permissionenddate" cssClass="error-msg" />
 								</div>
 							</div>
