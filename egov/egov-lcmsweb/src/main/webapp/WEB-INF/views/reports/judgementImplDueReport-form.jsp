@@ -47,7 +47,7 @@
 
 <div class="row" id="page-content">
 	<div class="col-md-12">
-		<form:form method="get" modelAttribute="dueReportResult"
+		<form:form method="post" modelAttribute="dueReportResult"
 			id="dueReportResultForm" class="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
 			<div class="row">
@@ -83,7 +83,7 @@
 		id="judgemntDueReport-table">
 	</table>
 </div>
-</div>
+
 
 <link rel="stylesheet"
 	href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>" />

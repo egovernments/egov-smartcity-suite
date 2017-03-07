@@ -47,7 +47,7 @@
 
 <div class="row" id="page-content">
 	<div class="col-md-12">
-		<form:form method="get" modelAttribute="dueReportResult"
+		<form:form method="post" modelAttribute="dueReportResult"
 			id="dueReportResultForm" class="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
 			<div class="row">
@@ -78,7 +78,6 @@
 	<table class="table table-bordered table-hover multiheadertbl"
 		id="employeehearingDueReport-table">
 	</table>
-</div>
 </div>
 
 <link rel="stylesheet"

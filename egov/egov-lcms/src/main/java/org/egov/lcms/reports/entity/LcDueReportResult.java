@@ -43,21 +43,118 @@ import java.util.Date;
 
 import org.egov.lcms.transactions.entity.LegalCase;
 
-public class DueReportResult {
+public class LcDueReportResult {
     private String caseNumber;
     private String lcNumber;
     private Date caseFromDate;
     private LegalCase legalCase;
     private Date caseToDate;
     private String courtName;
-    private Date hearingDate;
+    private String hearingDate;
     private Date judgementImplDate;
     private String reportBy;
     private Boolean isStatusExcluded;
     private String caseStatus;
     private String petitionType;
-    private Long officerIncharge;
-    private String officerInChargeName;
+    private String officerIncharge;
+    private String fromDate;
+    private String toDate;
+    private String judgmentImplDate;
+    private String caseTitle;
+    private String petName;
+    private String resName;
+    private String standingCounsel;
+    private String nextDate;
+    private String pwrDueDate;
+    private String caDueDate;
+
+    public String getLcNumber() {
+        return lcNumber;
+    }
+
+    public void setLcNumber(final String lcNumber) {
+        this.lcNumber = lcNumber;
+    }
+
+    public String getPwrDueDate() {
+        return pwrDueDate;
+    }
+
+    public void setPwrDueDate(final String pwrDueDate) {
+        this.pwrDueDate = pwrDueDate;
+    }
+
+    public String getCaDueDate() {
+        return caDueDate;
+    }
+
+    public void setCaDueDate(final String caDueDate) {
+        this.caDueDate = caDueDate;
+    }
+
+    public String getCaseTitle() {
+        return caseTitle;
+    }
+
+    public void setCaseTitle(final String caseTitle) {
+        this.caseTitle = caseTitle;
+    }
+
+    public String getPetName() {
+        return petName;
+    }
+
+    public void setPetName(final String petName) {
+        this.petName = petName;
+    }
+
+    public String getResName() {
+        return resName;
+    }
+
+    public void setResName(final String resName) {
+        this.resName = resName;
+    }
+
+    public String getStandingCounsel() {
+        return standingCounsel;
+    }
+
+    public void setStandingCounsel(final String standingCounsel) {
+        this.standingCounsel = standingCounsel;
+    }
+
+    public String getNextDate() {
+        return nextDate;
+    }
+
+    public void setNextDate(final String nextDate) {
+        this.nextDate = nextDate;
+    }
+
+    public String getFromDate() {
+        return fromDate;
+    }
+
+    public void setFromDate(final String fromDate) {
+        this.fromDate = fromDate;
+    }
+
+    public String getToDate() {
+        return toDate;
+    }
+
+    public void setToDate(final String toDate) {
+        this.toDate = toDate;
+    }
+
+    public String getJudgmentImplDate() {
+        return judgmentImplDate;
+    }
+
+    public void setJudgmentImplDate(final String judgmentImplDate) {
+        this.judgmentImplDate = judgmentImplDate;
+    }
 
     public String getCaseNumber() {
         return caseNumber;
@@ -65,10 +162,6 @@ public class DueReportResult {
 
     public void setCaseNumber(final String caseNumber) {
         this.caseNumber = caseNumber;
-    }
-
-    public String getLcNumber() {
-        return lcNumber;
     }
 
     public Date getCaseFromDate() {
@@ -85,10 +178,6 @@ public class DueReportResult {
 
     public void setCaseToDate(final Date caseToDate) {
         this.caseToDate = caseToDate;
-    }
-
-    public void setLcNumber(final String lcNumber) {
-        this.lcNumber = lcNumber;
     }
 
     public String getCourtName() {
@@ -131,11 +220,11 @@ public class DueReportResult {
         this.reportBy = reportBy;
     }
 
-    public Date getHearingDate() {
+    public String getHearingDate() {
         return hearingDate;
     }
 
-    public void setHearingDate(final Date hearingDate) {
+    public void setHearingDate(final String hearingDate) {
         this.hearingDate = hearingDate;
     }
 
@@ -155,20 +244,12 @@ public class DueReportResult {
         this.petitionType = petitionType;
     }
 
-    public Long getOfficerIncharge() {
+    public String getOfficerIncharge() {
         return officerIncharge;
     }
 
-    public void setOfficerIncharge(final Long officerIncharge) {
+    public void setOfficerIncharge(final String officerIncharge) {
         this.officerIncharge = officerIncharge;
-    }
-
-    public String getOfficerInChargeName() {
-        return officerInChargeName;
-    }
-
-    public void setOfficerInChargeName(final String officerInChargeName) {
-        this.officerInChargeName = officerInChargeName;
     }
 
 }

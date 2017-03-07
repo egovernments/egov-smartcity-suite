@@ -39,18 +39,26 @@
  */
 package org.egov.lcms.web.controller.reports;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.egov.infra.utils.JsonUtils;
-import org.egov.lcms.reports.entity.DueReportResult;
-import org.egov.lcms.transactions.service.DueLegalCaseReportService;
+import org.apache.commons.lang3.StringUtils;
+import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.utils.ApplicationConstant;
+import org.egov.lcms.entity.es.LegalCaseDocument;
+import org.egov.lcms.reports.entity.LcDueReportResult;
+import org.egov.lcms.repository.es.LegalCaseDocumentRepository;
 import org.egov.lcms.utils.constants.LcmsConstants;
-import org.egov.lcms.web.adaptor.DueReportResultJsonAdaptor;
 import org.egov.lcms.web.controller.transactions.GenericLegalCaseController;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
+import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -62,18 +70,69 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class JudgementImplDueReportController extends GenericLegalCaseController {
 
     @Autowired
-    private DueLegalCaseReportService dueLegalCaseReportService;
+    private LegalCaseDocumentRepository legalCaseDocumentRepository;
 
-    @RequestMapping(value = "/judgementImplDueReportResult", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
-    public @ResponseBody String getDailyBoardReportResult(
-            final @ModelAttribute("dueReportResult") DueReportResult dueReportResult,
-            final HttpServletRequest request) {
+    @RequestMapping(value = "/judgementImplDueReportResult", method = RequestMethod.POST)
+    @ResponseBody
+    public List<LcDueReportResult> getPwrDueReport(@ModelAttribute final LcDueReportResult dueReportResult)
+            throws ParseException {
+        final SimpleDateFormat dateFormat = new SimpleDateFormat("E MMM dd HH:mm:ss Z yyyy");
+        final SimpleDateFormat myFormat = new SimpleDateFormat(LcmsConstants.DATE_FORMAT_DDMMYYYY);
+        List<LegalCaseDocument> legalcaseDocumentTempList;
+        final List<LcDueReportResult> finalResult = new ArrayList<>();
+        LcDueReportResult dueReportResultObj;
+        legalcaseDocumentTempList = findAllLegalcaseDocumentIndexByFilter(dueReportResult);
+        for (final LegalCaseDocument legalcaseDocumentIndex : legalcaseDocumentTempList) {
+            dueReportResultObj = new LcDueReportResult();
+            dueReportResultObj.setCaseNumber(legalcaseDocumentIndex.getCaseNumber());
+            dueReportResultObj.setLcNumber(legalcaseDocumentIndex.getLcNumber());
+            dueReportResultObj.setCaseTitle(legalcaseDocumentIndex.getCaseTitle());
+            dueReportResultObj.setCaseNumber(legalcaseDocumentIndex.getCaseNumber());
+            dueReportResultObj.setCourtName(legalcaseDocumentIndex.getCourtName());
+            dueReportResultObj.setPetName(legalcaseDocumentIndex.getPetitionerNames());
+            dueReportResultObj.setResName(legalcaseDocumentIndex.getRespondantNames());
+            dueReportResultObj.setStandingCounsel(legalcaseDocumentIndex.getAdvocateName());
+            dueReportResultObj.setOfficerIncharge(legalcaseDocumentIndex.getOfficerIncharge());
+            dueReportResultObj
+                    .setNextDate(myFormat.format(dateFormat.parse(legalcaseDocumentIndex.getNextDate().toString())));
+            finalResult.add(dueReportResultObj);
+        }
+        return finalResult;
 
-        final List<DueReportResult> pwrDueSearchList = dueLegalCaseReportService.getLegalCaseReport(dueReportResult,
-                LcmsConstants.DUEJUDGEMENTIMPLPREPORT);
-        final String result = new StringBuilder("{ \"data\":")
-                .append(JsonUtils.toJSON(pwrDueSearchList, DueReportResult.class, DueReportResultJsonAdaptor.class))
-                .append("}").toString();
-        return result;
     }
+
+    public List<LegalCaseDocument> findAllLegalcaseDocumentIndexByFilter(final LcDueReportResult dueReportResult)
+            throws ParseException {
+
+        final BoolQueryBuilder query = getFilterQuery(dueReportResult);
+        final SearchQuery searchQuery = new NativeSearchQueryBuilder().withIndices(LcmsConstants.LEGALCASE_INDEX_NAME)
+                .withQuery(query).withPageable(new PageRequest(0, 250)).build();
+
+        final Iterable<LegalCaseDocument> legalcaseDocumentSearchList = legalCaseDocumentRepository.search(searchQuery);
+        final List<LegalCaseDocument> legalcaseDocumentList = new ArrayList<>();
+        for (final LegalCaseDocument documentObj : legalcaseDocumentSearchList)
+            legalcaseDocumentList.add(documentObj);
+
+        return legalcaseDocumentList;
+    }
+
+    private BoolQueryBuilder getFilterQuery(final LcDueReportResult searchRequest) throws ParseException {
+        final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        final SimpleDateFormat newFormat = new SimpleDateFormat(ApplicationConstant.ES_DATE_FORMAT);
+        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery()
+                .filter(QueryBuilders.termQuery("cityName", ApplicationThreadLocals.getCityName()))
+                .mustNot(QueryBuilders.matchQuery("status", LcmsConstants.LEGALCASE_STATUS_CLOSED_DESC));
+
+        if (StringUtils.isNotBlank(searchRequest.getFromDate()))
+            boolQuery = boolQuery.filter(QueryBuilders.rangeQuery("judgmentImplDate")
+                    .gte(newFormat.format(formatter.parse(searchRequest.getFromDate())))
+                    .lte(new DateTime(newFormat.format(formatter.parse(searchRequest.getToDate())))));
+
+        if (StringUtils.isNotBlank(searchRequest.getOfficerIncharge()))
+            boolQuery = boolQuery
+                    .filter(QueryBuilders.termQuery("officerIncharge", searchRequest.getOfficerIncharge().split("@")[0]));
+
+        return boolQuery;
+    }
+
 }
