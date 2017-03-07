@@ -272,7 +272,7 @@ public class TaxExemptionController extends GenericWorkFlowController {
 
                 if (StringUtils.isBlank(property.getApplicationNo())) {
                     property.setApplicationNo(((PropertyImpl) property).getMeesevaApplicationNumber());
-                    property.setSource(PropertyTaxConstants.SOURCEOFDATA_MEESEWA);
+                    property.setSource(PropertyTaxConstants.SOURCE_MEESEVA);
                 }
                 taxExemptionService.saveProperty(property, oldProperty, status, approvalComent, workFlowAction,
                         approvalPosition, taxExemptedReason, propertyByEmployee, EXEMPTION, meesevaParams);
