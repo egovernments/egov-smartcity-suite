@@ -105,13 +105,10 @@ function callAjaxSearch() {
 			}
 
 
-
 $("#resultTable").on('click','tbody tr td  .view',function(event) {
 	var id = reportdatatable.fnGetData($(this).parent().parent(),6);
 	window.open('/council/councilmom/new' + '/'+id,'','width=800, height=600,scrollbars=yes');
 });
-
-
 
 String.prototype.compose = (function (){
 	   var re = /\{{(.+?)\}}/g;
@@ -126,11 +123,11 @@ var tbody = $('#sumotoTable').children('tbody');
 var table = tbody.length ? tbody : $('#sumotoTable');
 
 var row = '<tr>'+
- '<td><select name="meetingMOMs[{{idx}}].preamble.department" class="form-control" required="required"> <option value="">Loading...</option></select></td>'+
- '<td><div class="input-group"><textarea class="form-control textarea-content" required="required" name="meetingMOMs[{{idx}}].preamble.gistOfPreamble"  value="{{gistTextBoxValue}}" /><span class="input-group-addon" id="showModal" data-header="Sumoto Resolution - GIST of Sumoto Resolution"><span class="glyphicon glyphicon-pencil" style="cursor:pointer"></span></span></div></td>'+
+ '<td><select name="meetingMOMs[{{idx}}].preamble.department" class="form-control" required="required" > <option value="" >Loading...</option></select></td>'+
+ '<td><div class="/councilpreamble-group"><textarea class="form-control textarea-content" required="required" name="meetingMOMs[{{idx}}].preamble.gistOfPreamble"  value="{{gistTextBoxValue}}" /><span class="input-group-addon" id="showModal" data-header="Sumoto Resolution - GIST of Sumoto Resolution"><span class="glyphicon glyphicon-pencil" style="cursor:pointer"></span></span></div></td>'+
  '<td><input type="text" class="form-control" name="meetingMOMs[{{idx}}].preamble.sanctionAmount" {{readonly}} data-pattern="number" value="{{amountTextBoxValue}}"/></td>'+
- '<td><div class="input-group"><textarea class="form-control textarea-content" required="required" name="meetingMOMs[{{idx}}].resolutionDetail"  value="{{amountTextBoxValue}}" /><span class="input-group-addon" id="showModal" data-header="Sumoto Resolution - Resolution comments"><span class="glyphicon glyphicon-pencil" style="cursor:pointer"></span></span></div></td>'+
  '<td><select name="meetingMOMs[{{idx}}].resolutionStatus" class="form-control" required="required"><option value="">Loading...</option></select></td>'+
+ '<td><div class="input-group"><textarea class="form-control textarea-content" required="required" name="meetingMOMs[{{idx}}].resolutionDetail"  value="{{amountTextBoxValue}}" /><span class="input-group-addon" id="showModal" data-header="Sumoto Resolution - Resolution comments"><span class="glyphicon glyphicon-pencil" style="cursor:pointer"></span></span></div></td>'+
 '</tr>';
 
 jQuery('#add-sumoto').click(function(){
@@ -168,8 +165,6 @@ function loadDepartmentlist(selectBoxName){
 		error: function (response) {
 		}
 	});
- 
- 
 }
 
 function loadResolutionlist(selectBoxNameResolution){
@@ -189,8 +184,6 @@ function loadResolutionlist(selectBoxNameResolution){
 			error: function (response) {
 			}
 		});
-	 
-	 
 	}
 
 function loadWardnumberlist(selectBoxNameWard){
@@ -218,8 +211,6 @@ function addRowFromObject(rowJsonObj)
 {
 	table.append(row.compose(rowJsonObj));
 }
-
-
 
 $(document).ready(function() {
 	    
@@ -288,4 +279,3 @@ $('#buttonFinalSubmit')
 				e.preventDefault();
 			}
 });
-

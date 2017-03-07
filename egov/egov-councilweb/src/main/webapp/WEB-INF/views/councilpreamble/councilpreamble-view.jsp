@@ -128,7 +128,7 @@
 								<th><spring:message code="lbl.meeting.type" /></th>
 								<th><spring:message code="lbl.preamble.status" /></th>
 								<th><spring:message code="lbl.resolutionNumber" /></th>
-								<th><spring:message code="lbl.resolution.comment" /></th>
+								<th><spring:message code="lbl.resolution" /></th>
 								<th><spring:message code="lbl.action" /></th>
 							</thead>
 							<tbody>

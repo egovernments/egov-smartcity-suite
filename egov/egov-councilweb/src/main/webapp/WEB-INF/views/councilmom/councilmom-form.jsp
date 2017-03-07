@@ -105,8 +105,10 @@
 								<th width="40%"><spring:message code="lbl.gistofpreamble" /></th>
 								<th  width="3%"><spring:message code="lbl.agenda.number" /></th>
 								<th><spring:message code="lbl.preamble.number" /></th>
-								<th  width="22%"><spring:message code="lbl.resolution.comment" /></th>
-								<th><spring:message code="lbl.mom.action" /></th>
+								<th ><spring:message code="lbl.resolution" /></th>
+								<th  width="22%"><spring:message code="lbl.comments" /></th>
+								
+								
 								
 							</thead>
 							<tbody>
@@ -126,16 +128,8 @@
 													<td><c:out value="${mom.agenda.agendaNumber}" /></td>
 													<td><c:out value="${mom.preamble.preambleNumber}" /></td>
 													<td>
-													 <div class="input-group">
-											            <form:textarea path="meetingMOMs[${counter.index}].resolutionDetail" id="meetingMOMs[${counter.index}].resolutionDetail" 
-														class="form-control text-left textarea-content"  value="${mom.resolutionDetail}" rows="5" required ="required" />
-														<form:errors path="meetingMOMs[${counter.index}].resolutionDetail" cssClass="error-msg" />
-											            <span class="input-group-addon" id="showModal" data-header="Agenda Items - Resolution comments"><span class="glyphicon glyphicon-pencil" style="cursor:pointer"></span></span>
-											        </div>
-											        </td>
-													<td>
 													<form:select  path="meetingMOMs[${counter.index}].resolutionStatus"
-																	id="resolutionStatus" cssClass="form-control" 
+																cssClass="form-control" 
 																	cssErrorClass="form-control error"  required="required">
 																	<form:option value="">
 																		<spring:message code="lbl.select" />
@@ -149,6 +143,16 @@
 														</div>
 														
 													</td>
+													<td>
+													<div class="input-group">
+											            <form:textarea path="meetingMOMs[${counter.index}].resolutionDetail" id="meetingMOMs[${counter.index}].resolutionDetail" 
+														 class="form-control text-left textarea-content"  value="${mom.resolutionDetail}" rows="5" required ="required" />
+														<form:errors path="meetingMOMs[${counter.index}].resolutionDetail" cssClass="error-msg" />
+											            <span class="input-group-addon" id="showModal" data-header="Agenda Items - Resolution comments"><span class="glyphicon glyphicon-pencil" style="cursor:pointer"></span></span>
+											        </div>
+													 
+											        </td>
+													
 											</tr>
 										</c:forEach>
 									</c:when>
@@ -177,12 +181,12 @@
 				
 					<%-- <th><spring:message code="lbl.serial.no" /></th> --%>
 					<%-- <th><spring:message code="lbl.preamble.number" /></th> --%>
-					<th><spring:message code="lbl.department" /></th>
+					<th><spring:message code="lbl.department" /><span class="mandatory"></span></th>
 					<%-- <th><spring:message code="lbl.wardnumber" /></th> --%>
-					<th><spring:message code="lbl.gist.sumoto" /></th>
+					<th><spring:message code="lbl.gist.sumoto" /><span class="mandatory"></th>
 					<th><spring:message code="lbl.amount"/></th>
-					<th><spring:message code="lbl.resolution.comment" /></th>
-					<th><spring:message code="lbl.mom.status" /></th>			
+					<th><spring:message code="lbl.resolution" /></th>
+					<th><spring:message code="lbl.comments" /></th>			
 				
 			</thead>
 			 <tbody data-existing-len="${fn:length(councilMeeting.meetingMOMs)}"> 
