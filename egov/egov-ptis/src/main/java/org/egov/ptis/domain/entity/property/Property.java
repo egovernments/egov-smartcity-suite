@@ -192,9 +192,9 @@ public interface Property extends Auditable {
 
     public void setDemolitionReason(String demolitionReason);
 
-    public Character getSource();
+    public String getSource();
 
-    public void setSource(Character source);
+    public void setSource(String source);
 
     public List<AmalgamationOwner> getAmalgamationOwners();
 

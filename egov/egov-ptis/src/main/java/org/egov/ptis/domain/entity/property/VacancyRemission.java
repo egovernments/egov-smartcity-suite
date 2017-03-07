@@ -94,7 +94,7 @@ public class VacancyRemission extends StateAware {
 
     @OrderBy("id")
     @OneToMany(mappedBy = "vacancyRemission", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<VacancyRemissionDetails> vacancyRemissionDetails = new LinkedList<VacancyRemissionDetails>();
+    private List<VacancyRemissionDetails> vacancyRemissionDetails = new LinkedList<>();
 
     @Column(name = "status")
     private String status;
@@ -104,7 +104,7 @@ public class VacancyRemission extends StateAware {
 
     @OrderBy("id")
     @OneToMany(mappedBy = "vacancyRemission", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<VacancyRemissionApproval> vacancyRemissionApproval = new LinkedList<VacancyRemissionApproval>();
+    private List<VacancyRemissionApproval> vacancyRemissionApproval = new LinkedList<>();
     
     @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     @JoinTable(name = "egpt_vacancy_remission_docs", joinColumns = @JoinColumn(name = "vacancyremission"), inverseJoinColumns = @JoinColumn(name = "document"))
@@ -114,7 +114,7 @@ public class VacancyRemission extends StateAware {
     private String meesevaApplicationNumber;
    
     @Column(name = "source")
-    private Character source = 'A';
+    private String source;
     
     @Override
     public String getStateDetails() {
@@ -203,11 +203,11 @@ public class VacancyRemission extends StateAware {
         this.meesevaApplicationNumber = meesevaApplicationNumber;
     }
 
-    public Character getSource() {
+    public String getSource() {
         return source;
     }
 
-    public void setSource(Character source) {
+    public void setSource(String source) {
         this.source = source;
     }
     

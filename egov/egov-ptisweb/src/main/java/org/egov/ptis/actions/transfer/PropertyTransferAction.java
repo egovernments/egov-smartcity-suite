@@ -329,14 +329,13 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     @Action(value = "/save")
     public String save() {
         transitionWorkFlow(propertyMutation);
-
+        propertyMutation.setSource(propertyTaxCommonUtils.setSourceOfProperty(securityUtils.getCurrentUser(), false));
         loggedUserIsMeesevaUser = propertyService.isMeesevaUser(transferOwnerService.getLoggedInUser());
         if (!loggedUserIsMeesevaUser)
             transferOwnerService.initiatePropertyTransfer(basicproperty, propertyMutation);
         else {
-            final HashMap<String, String> meesevaParams = new HashMap<String, String>();
+            final HashMap<String, String> meesevaParams = new HashMap<>();
             meesevaParams.put("APPLICATIONNUMBER", propertyMutation.getMeesevaApplicationNumber());
-            propertyMutation.setSource(PropertyTaxConstants.SOURCEOFDATA_MEESEWA);
             propertyMutation.setApplicationNo(propertyMutation.getMeesevaApplicationNumber());
             transferOwnerService.initiatePropertyTransfer(basicproperty, propertyMutation, meesevaParams);
         }

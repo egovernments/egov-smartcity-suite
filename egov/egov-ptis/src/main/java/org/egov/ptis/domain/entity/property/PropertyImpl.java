@@ -68,6 +68,7 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.portal.entity.Citizen;
+import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.demand.FloorwiseDemandCalculations;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 
@@ -119,7 +120,7 @@ public class PropertyImpl extends StateAware implements Property {
     private String meesevaApplicationNumber;// Temporary number for meeseva
                                             // integration.
     private String meesevaServiceCode;
-    private Character source = 'A';
+    private String source;
 
     /**
      * @Size(min=1) is not working when we modify a migrated property, Reason is
@@ -702,12 +703,12 @@ public class PropertyImpl extends StateAware implements Property {
     }
 
     @Override
-    public Character getSource() {
+    public String getSource() {
         return source;
     }
 
     @Override
-    public void setSource(final Character source) {
+    public void setSource(final String source) {
         this.source = source;
     }
 

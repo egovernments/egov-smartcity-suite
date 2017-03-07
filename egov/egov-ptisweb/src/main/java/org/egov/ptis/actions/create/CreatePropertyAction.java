@@ -393,7 +393,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
 
         if (loggedUserIsMeesevaUser && property.getMeesevaApplicationNumber() != null) {
             property.setApplicationNo(property.getMeesevaApplicationNumber());
-            property.setSource(PropertyTaxConstants.SOURCEOFDATA_MEESEWA);
+            property.setSource(PropertyTaxConstants.SOURCE_MEESEVA);
         }
 
         final BasicProperty basicProperty = createBasicProp(STATUS_DEMAND_INACTIVE);

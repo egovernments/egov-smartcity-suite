@@ -98,12 +98,17 @@ import org.egov.infra.utils.NumberUtil;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
+import org.egov.ptis.domain.entity.objection.RevisionPetition;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
+import org.egov.ptis.domain.entity.property.PropertyImpl;
+import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
+import org.egov.ptis.domain.entity.property.VacancyRemission;
 import org.egov.ptis.domain.model.calculator.MiscellaneousTax;
 import org.egov.ptis.domain.model.calculator.TaxCalculationInfo;
 import org.egov.ptis.domain.model.calculator.UnitTaxCalculationInfo;
+import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.service.DemandBill.DemandBillService;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -136,6 +141,9 @@ public class PropertyTaxCommonUtils {
 
     @Autowired
     private AssignmentService assignmentService;
+    
+    @Autowired
+    private PropertyService propertyService;
 
     /**
      * Gives the first half of the current financial year
@@ -461,4 +469,34 @@ public class PropertyTaxCommonUtils {
                 || getAllDesignationsForUser(userId).contains(PropertyTaxConstants.SENIOR_ASSISTANT)) ? true : false;
 
     }
+    
+    public String setSourceOfProperty(User user, Boolean isOnline) {
+        String source;
+        if (propertyService.isCscOperator(user))
+            source = PropertyTaxConstants.SOURCE_CSC;
+        else if (propertyService.isMeesevaUser(user))
+            source = PropertyTaxConstants.SOURCE_MEESEVA;
+        else if (isOnline)
+            source = PropertyTaxConstants.SOURCE_ONLINE;
+        else
+            source = PropertyTaxConstants.SOURCE_SYSTEM;
+        return source;
+    }
+
+    public String getPropertySource(final PropertyImpl property) {
+        return property.getSource() != null ? property.getSource() : null;
+    }
+
+    public String getMutationSource(final PropertyMutation propertyMutation) {
+        return propertyMutation.getSource() != null ? propertyMutation.getSource() : null;
+    }
+
+    public String getObjectionSource(final RevisionPetition objection) {
+        return objection.getSource() != null ? objection.getSource() : null;
+    }
+
+    public String getVRSource(final VacancyRemission vacancyRemission) {
+        return vacancyRemission.getSource() != null ? vacancyRemission.getSource() : null;
+    }
+    
 }

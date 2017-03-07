@@ -476,10 +476,10 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
             addActionMessage(getText("mandatory.fieldvalue.receivedOn"));
             return NEW;
         }
+        objection.setSource(propertyTaxCommonUtils.setSourceOfProperty(securityUtils.getCurrentUser(), false));
         isMeesevaUser = propService.isMeesevaUser(securityUtils.getCurrentUser());
         if (isMeesevaUser && getMeesevaApplicationNumber() != null) {
             objection.setObjectionNumber(objection.getMeesevaApplicationNumber());
-            objection.getBasicProperty().setSource(PropertyTaxConstants.SOURCEOFDATA_MEESEWA);
         } else
             objection.setObjectionNumber(applicationNumberGenerator.generate());
         objection.getBasicProperty().setStatus(
@@ -894,7 +894,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         infoBean.setApproverName(approver.getName());
         final BigDecimal revTax = currDemand.getBaseDemand();
         infoBean.setNewTotalTax(revTax);
-        if (property.getSource().equals(PropertyTaxConstants.SOURCEOFDATA_MEESEWA))
+        if (property.getSource().equals(PropertyTaxConstants.SOURCE_MEESEVA))
             infoBean.setMeesevaNo(property.getApplicationNo());
         propertyNotice.setOwnerInfo(infoBean);
     }

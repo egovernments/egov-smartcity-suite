@@ -95,9 +95,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.PT_WORKFLOWDESIGNATION_MOBILE;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPSTATVALUE_BY_UPICNO_CODE_ISACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVISIONPETITION_STATUS_CODE;
-import static org.egov.ptis.constants.PropertyTaxConstants.SOURCEOFDATA_ESEVA;
-import static org.egov.ptis.constants.PropertyTaxConstants.SOURCEOFDATA_MEESEWA;
-import static org.egov.ptis.constants.PropertyTaxConstants.SOURCEOFDATA_MOBILE;
 import static org.egov.ptis.constants.PropertyTaxConstants.SQUARE_YARD_TO_SQUARE_METER_VALUE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_CANCELLED;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
@@ -139,7 +136,6 @@ import org.apache.struts2.ServletActionContext;
 import org.egov.commons.Area;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentHibDao;
-import org.egov.commons.entity.Source;
 import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgDemandReason;
@@ -165,6 +161,7 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.rest.client.SimpleRestClient;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.utils.MoneyUtils;
@@ -321,6 +318,9 @@ public class PropertyService {
     @Qualifier("documentTypeDetailsService")
     private PersistenceService<DocumentTypeDetails, Long> documentTypeDetailsService;
     
+    @Autowired
+    private SecurityUtils securityUtils;
+    
     /**
      * Creates a new property if property is in transient state else updates persisted property
      *
@@ -433,6 +433,7 @@ public class PropertyService {
         property.setInstallment(currentInstall);
         property.setEffectiveDate(currentInstall.getFromDate());
         property.setPropertySource(propertySource);
+        property.setSource(propertyTaxCommonUtils.setSourceOfProperty(securityUtils.getCurrentUser(), property.getBasicProperty().getSource().equals(PropertyTaxConstants.SOURCEOFDATA_ONLINE)));
         property.setDocNumber(docnumber);
         // TODO move this code out side this api as this dont have to be called
         // every time we create property
@@ -2091,7 +2092,7 @@ public class PropertyService {
             ApplicationIndex applicationIndex = applicationIndexService.findByApplicationNumber(property
                     .getApplicationNo());
             User owner = property.getBasicProperty().getPrimaryOwner();
-            String source = getApplicationSource(property.getBasicProperty());
+            String source = propertyTaxCommonUtils.getPropertySource(property);
             if (applicationIndex==null) {
                 applicationIndex = ApplicationIndex.builder().withModuleName(PTMODULENAME)
                         .withApplicationNumber(property.getApplicationNo()).withApplicationDate(property.getCreatedDate()!=null?property.getCreatedDate():new Date())
@@ -2104,7 +2105,7 @@ public class PropertyService {
                         .withApproved(property.getState().getValue().contains(WF_STATE_COMMISSIONER_APPROVED)?ApprovalStatus.APPROVED:property.getState().getValue().contains(WF_STATE_REJECTED)||property.getState().getValue().contains(WF_STATE_CLOSED)?ApprovalStatus.REJECTED:ApprovalStatus.INPROGRESS)
                         .build();
 
-                //applicationIndexService.createApplicationIndex(applicationIndex);
+                applicationIndexService.createApplicationIndex(applicationIndex);
             } else {
                 applicationIndex.setStatus(property.getState().getValue());
                 if (applictionType.equalsIgnoreCase(APPLICATION_TYPE_NEW_ASSESSENT)
@@ -2125,7 +2126,7 @@ public class PropertyService {
             final RevisionPetition property = (RevisionPetition) stateAwareObject;
             ApplicationIndex applicationIndex = applicationIndexService.findByApplicationNumber(property
                     .getObjectionNumber());
-            String source = getApplicationSource(property.getBasicProperty());
+            String source = propertyTaxCommonUtils.getObjectionSource(property);
             if (applicationIndex == null) {
                 User owner = property.getBasicProperty().getPrimaryOwner();
                 applicationIndex = ApplicationIndex.builder().withModuleName(PTMODULENAME)
@@ -2152,7 +2153,7 @@ public class PropertyService {
             ApplicationIndex applicationIndex = applicationIndexService.findByApplicationNumber(property
                     .getApplicationNo());
             User owner = property.getBasicProperty().getPrimaryOwner();
-            String source = getApplicationSource(property.getBasicProperty());
+            String source = propertyTaxCommonUtils.getMutationSource(property);
             if (applicationIndex == null) {
                 applicationIndex = ApplicationIndex.builder().withModuleName(PTMODULENAME)
                         .withApplicationNumber(property.getApplicationNo()).withApplicationDate(property.getCreatedDate()!=null?property.getCreatedDate():new Date())
@@ -2181,7 +2182,7 @@ public class PropertyService {
             ApplicationIndex applicationIndex = applicationIndexService.findByApplicationNumber(vacancyRemission.getApplicationNumber());
             User owner = vacancyRemission.getBasicProperty().getPrimaryOwner();
             VacancyRemissionApproval vacancyRemissionApproval = vacancyRemission.getVacancyRemissionApproval().get(0);
-            String source = getApplicationSource(vacancyRemission.getBasicProperty());
+            String source = propertyTaxCommonUtils.getVRSource(vacancyRemission);
             if (applicationIndex == null) {
                 applicationIndex = ApplicationIndex.builder().withModuleName(PTMODULENAME)
                         .withApplicationNumber(vacancyRemission.getApplicationNumber()).withApplicationDate(vacancyRemission.getCreatedDate()!=null?vacancyRemission.getCreatedDate():new Date())
@@ -2207,19 +2208,6 @@ public class PropertyService {
 
         }
 
-    }
-
-    private String getApplicationSource(final BasicProperty property) {
-        String source;
-        if(SOURCEOFDATA_MEESEWA.equals(property.getSource()))
-            source= Source.MEESEVA.toString();
-        else if(SOURCEOFDATA_ESEVA.equals(property.getSource()))
-            source=Source.ESEVA.toString();
-        else if (SOURCEOFDATA_MOBILE.equals(property.getSource()))
-            source=Source.MOBILE.toString();
-        else
-            source=Source.SYSTEM.toString();
-        return source;
     }
 
     /**

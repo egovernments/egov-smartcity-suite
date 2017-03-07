@@ -703,7 +703,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
         infoBean.setWardName(propertyId.getWard().getName());
         infoBean.setAreaName(propertyId.getArea().getName());
         infoBean.setLocalityName(propertyId.getLocality().getName());
-        if (property.getSource().equals(PropertyTaxConstants.SOURCEOFDATA_MEESEWA))
+        if (property.getSource().equals(PropertyTaxConstants.SOURCE_MEESEVA))
             infoBean.setMeesevaNo(property.getApplicationNo());
         infoBean.setNoticeDate(new Date());
         ownerType = property.getPropertyDetail().getPropertyTypeMaster().getType();

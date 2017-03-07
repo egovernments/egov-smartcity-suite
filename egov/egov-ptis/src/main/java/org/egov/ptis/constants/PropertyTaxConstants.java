@@ -1706,4 +1706,11 @@ public interface PropertyTaxConstants {
     public static final List<String> COMMISSIONER_DESIGNATIONS = ImmutableList.of("Assistant Commissioner",
             "Zonal Commissioner", "Deputy Commissioner", "Additional Commissioner", "Commissioner");
     public static final String INTEGRATED_BILL = "Integrated Bill";
+    
+    //Source of Application
+    public static final String SOURCE_CSC = "CSC";
+    public static final String SOURCE_MEESEVA = "MSEVA";
+    public static final String SOURCE_MOBILE = "MOBILE";
+    public static final String SOURCE_SYSTEM = "SYSTEM";
+    public static final String SOURCE_ONLINE = "ONLINE";
 }

@@ -300,6 +300,7 @@ public class VacanyRemissionController extends GenericWorkFlowController {
         List<Document> documents = new ArrayList<>();
         loggedUserIsMeesevaUser = propertyService.isMeesevaUser(vacancyRemissionService.getLoggedInUser());
         validateDates(vacancyRemission, resultBinder, request);
+        vacancyRemission.setSource(propertyTaxCommonUtils.setSourceOfProperty(securityUtils.getCurrentUser(), false));
         final Assignment assignment = propertyService.isCscOperator(vacancyRemissionService.getLoggedInUser())
                 ? propertyService.getAssignmentByDeptDesigElecWard(basicProperty)
                 : null;
@@ -341,7 +342,6 @@ public class VacanyRemissionController extends GenericWorkFlowController {
 
                 if (StringUtils.isBlank(vacancyRemission.getApplicationNumber())){
                     vacancyRemission.setApplicationNumber(vacancyRemission.getMeesevaApplicationNumber());
-                    vacancyRemission.setSource(PropertyTaxConstants.SOURCEOFDATA_MEESEWA);
                 }
                 vacancyRemissionService.saveVacancyRemission(vacancyRemission, approvalPosition, approvalComent, "",
                         workFlowAction, propertyByEmployee, meesevaParams);

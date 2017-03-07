@@ -84,7 +84,7 @@ public class PropertyMutation extends StateAware {
     private String saleDetail;
     private List<Document> documents = new ArrayList<>();
     private String meesevaApplicationNumber;//Temporary number for meeseva integration.
-    private Character source = 'A';
+    private String source;
     private BigDecimal partyValue;
     private BigDecimal departmentValue;
     private boolean partialMutation;
@@ -370,11 +370,11 @@ public class PropertyMutation extends StateAware {
         this.meesevaApplicationNumber = meesevaApplicationNumber;
     }
 
-    public Character getSource() {
+    public String getSource() {
         return source;
     }
 
-    public void setSource(Character source) {
+    public void setSource(String source) {
         this.source = source;
     }
 

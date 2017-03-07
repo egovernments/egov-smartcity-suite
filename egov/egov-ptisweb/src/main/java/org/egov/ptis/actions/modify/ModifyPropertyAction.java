@@ -644,7 +644,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 
         if (isMeesevaUser && getMeesevaApplicationNumber() != null) {
             propertyModel.setApplicationNo(propertyModel.getMeesevaApplicationNumber());
-            propertyModel.setSource(PropertyTaxConstants.SOURCEOFDATA_MEESEWA);
+            propertyModel.setSource(PropertyTaxConstants.SOURCE_MEESEVA);
         }
         if (getModelId() != null && !getModelId().trim().isEmpty()) {
             propWF = (PropertyImpl) getPersistenceService().findByNamedQuery(QUERY_WORKFLOW_PROPERTYIMPL_BYID,
