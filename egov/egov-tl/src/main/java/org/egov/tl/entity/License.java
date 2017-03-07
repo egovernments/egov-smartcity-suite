@@ -532,7 +532,7 @@ public class License extends StateAware {
     }
 
     public boolean isReadyForRenewal() {
-        return isActiveAndPermanent() && !isPaid() && (transitionCompleted() || (isLegacy() && !hasState()));
+        return isActiveAndPermanent() && !isPaid() && (transitionCompleted() || isLegacyWithNoState());
     }
 
     public boolean isActiveAndPermanent() {
@@ -547,5 +547,9 @@ public class License extends StateAware {
                         .doubleValue() <= 0)
                 .findFirst();
         return demandDetails.isPresent() ? demandDetails.get().getAmtCollected() : BigDecimal.ZERO;
+    }
+
+    public boolean isLegacyWithNoState() {
+        return isLegacy() && !hasState();
     }
 }
