@@ -54,9 +54,10 @@ import org.egov.infra.persistence.entity.Auditable;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 
 /**
- * This is the interface for the Property which reperesents the Status and Source of each Property. Every Property Object has some
- * source associated with it, which can be either Self-Assessment, Surveys or PropertyFiles. Property from different Sources would
- * be represented as seperate entities.
+ * This is the interface for the Property which reperesents the Status and
+ * Source of each Property. Every Property Object has some source associated
+ * with it, which can be either Self-Assessment, Surveys or PropertyFiles.
+ * Property from different Sources would be represented as seperate entities.
  *
  * @author Neetu
  * @version 2.00
@@ -90,13 +91,16 @@ public interface Property extends Auditable {
     public boolean validateProperty() throws InvalidPropertyException;
 
     /*
-     * public void addPropertyTenants(Citizen citzen); public void removePropertyTenants(Citizen citzen);
+     * public void addPropertyTenants(Citizen citzen); public void
+     * removePropertyTenants(Citizen citzen);
      */
     public Character getIsDefaultProperty();
 
     /**
-     * @param isDefaultProperty The isDefaultProperty to set. If a property is set to default, this application will consider this
-     * property's details for all the demand calculation etc.
+     * @param isDefaultProperty
+     *            The isDefaultProperty to set. If a property is set to default,
+     *            this application will consider this property's details for all
+     *            the demand calculation etc.
      */
 
     public void setIsDefaultProperty(Character isDefaultProperty);
@@ -134,7 +138,8 @@ public interface Property extends Auditable {
     public void setPropertyModifyReason(String propertyModifyReason);
 
     /*
-     * public Set<PtDemandARV> getPtDemandARVSet(); public void setPtDemandARVSet(Set<PtDemandARV> ptDemandARVSet); public void
+     * public Set<PtDemandARV> getPtDemandARVSet(); public void
+     * setPtDemandARVSet(Set<PtDemandARV> ptDemandARVSet); public void
      * addPtDemandARV(PtDemandARV ptDemandARV);
      */
 
@@ -205,9 +210,9 @@ public interface Property extends Auditable {
     public void setAmalgamationOwnersProxy(List<AmalgamationOwner> amalgamationOwnersProxy);
 
     public void addAmalgamationOwners(AmalgamationOwner ownerInfo);
-    
+
     public List<Document> getAssessmentDocuments();
-    
+
     public void setAssessmentDocuments(List<Document> assessmentDocumentsProxy);
-    
+
 }
