@@ -68,6 +68,7 @@
 	<parameter name="total" class="java.lang.Double"/>
 	<parameter name="locality" class="java.lang.String"/>
 	<parameter name="commissionerName" class="java.lang.String"/>
+	<parameter name="loggedInUserDesignation" class="java.lang.String"/>
 	<background>
 		<band height="780" splitType="Stretch">
 			<rectangle>
@@ -245,11 +246,11 @@
 				<textFieldExpression><![CDATA["Present: "+$P{commissionerName}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="186" y="53" width="190" height="15" uuid="4f2f353c-dbd2-491c-a417-dd7201455ea3"/>
+				<reportElement x="0" y="42" width="555" height="15" uuid="6ea68d39-6c99-43ca-8be4-14d6867b8b73"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Commissioner"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Present: "+$P{loggedInUserDesignation}]]></textFieldExpression>
 			</textField>
 		</band>
 	</summary>
