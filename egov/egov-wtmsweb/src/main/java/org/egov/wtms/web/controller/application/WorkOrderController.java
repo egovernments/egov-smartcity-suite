@@ -136,10 +136,6 @@ public class WorkOrderController {
             final HttpSession session, final String workFlowAction) {
         ReportRequest reportInput = null;
         ReportOutput reportOutput;
-        final User user = securityUtils.getCurrentUser();
-        final Assignment loggedInUserAssign = assignmentService.getPrimaryAssignmentForEmployee(user.getId());
-        final String loggedInUserDesignation = loggedInUserAssign != null ? loggedInUserAssign.getDesignation().getName()
-                : "Commissioner";
         if (null != connectionDetails) {
             final Map<String, Object> reportParams = new HashMap<>();
             final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
@@ -190,6 +186,7 @@ public class WorkOrderController {
                 if (workFlowAction.equalsIgnoreCase(WaterTaxConstants.WF_SIGN_BUTTON)) {
                     reportParams.put("workOrderDate", formatter.format(connectionDetails.getWorkOrderDate()));
                     reportParams.put("workOrderNo", connectionDetails.getWorkOrderNumber());
+                    final User user = securityUtils.getCurrentUser();
                     reportParams.put("userId", user.getId());
                 }
             }
@@ -209,7 +206,6 @@ public class WorkOrderController {
             reportParams.put("superVisionCharges",
                     connectionDetails.getFieldInspectionDetails().getSupervisionCharges());
             reportParams.put("locality", assessmentDetails.getBoundaryDetails().getLocalityName());
-            reportParams.put("loggedInUserDesignation", loggedInUserDesignation);
             reportParams.put("commissionerName", commissionerName);
             total = connectionDetails.getDonationCharges()
                     + connectionDetails.getFieldInspectionDetails().getSecurityDeposit()
