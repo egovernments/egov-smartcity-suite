@@ -129,7 +129,7 @@
 													<td><c:out value="${mom.preamble.preambleNumber}" /></td>
 													<td>
 													<form:select  path="meetingMOMs[${counter.index}].resolutionStatus"
-																cssClass="form-control" 
+																cssClass="form-control addorremoverequired" 
 																	cssErrorClass="form-control error"  required="required">
 																	<form:option value="">
 																		<spring:message code="lbl.select" />
@@ -146,7 +146,7 @@
 													<td>
 													<div class="input-group">
 											            <form:textarea path="meetingMOMs[${counter.index}].resolutionDetail" id="meetingMOMs[${counter.index}].resolutionDetail" 
-														 class="form-control text-left textarea-content"  value="${mom.resolutionDetail}" rows="5" required ="required" />
+														 class="form-control text-left textarea-content addorremoverequired"  value="${mom.resolutionDetail}" rows="5" required ="required" />
 														<form:errors path="meetingMOMs[${counter.index}].resolutionDetail" cssClass="error-msg" />
 											            <span class="input-group-addon" id="showModal" data-header="Agenda Items - Resolution comments"><span class="glyphicon glyphicon-pencil" style="cursor:pointer"></span></span>
 											        </div>
@@ -222,12 +222,6 @@
     </div>
   </div>
   
-<script>
-	$('#buttonSubmit').click(function(e) {
-		document.forms["councilMomform"].submit();
-	});  
-</script>
-
 <script type="text/javascript"
 	src="<cdn:url value='/resources/app/js/councilMom.js?rnd=${app_release_no}'/>"></script>
 <script

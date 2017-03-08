@@ -126,8 +126,8 @@ var row = '<tr>'+
  '<td><select name="meetingMOMs[{{idx}}].preamble.department" class="form-control" required="required" > <option value="" >Loading...</option></select></td>'+
  '<td><div class="input-group"><textarea class="form-control textarea-content" required="required" name="meetingMOMs[{{idx}}].preamble.gistOfPreamble"  value="{{gistTextBoxValue}}" /><span class="input-group-addon" id="showModal" data-header="Sumoto Resolution - GIST of Sumoto Resolution"><span class="glyphicon glyphicon-pencil" style="cursor:pointer"></span></span></div></td>'+
  '<td><input type="text" class="form-control" name="meetingMOMs[{{idx}}].preamble.sanctionAmount" {{readonly}} data-pattern="number" value="{{amountTextBoxValue}}"/></td>'+
- '<td><select name="meetingMOMs[{{idx}}].resolutionStatus" class="form-control" required="required"><option value="">Loading...</option></select></td>'+
- '<td><div class="input-group"><textarea class="form-control textarea-content" required="required" name="meetingMOMs[{{idx}}].resolutionDetail"  value="{{amountTextBoxValue}}" /><span class="input-group-addon" id="showModal" data-header="Sumoto Resolution - Resolution comments"><span class="glyphicon glyphicon-pencil" style="cursor:pointer"></span></span></div></td>'+
+ '<td><select name="meetingMOMs[{{idx}}].resolutionStatus" class="form-control addorremoverequired" required="required"><option value="">Loading...</option></select></td>'+
+ '<td><div class="input-group"><textarea class="form-control textarea-content addorremoverequired" required="required" name="meetingMOMs[{{idx}}].resolutionDetail"  value="{{amountTextBoxValue}}" /><span class="input-group-addon" id="showModal" data-header="Sumoto Resolution - Resolution comments"><span class="glyphicon glyphicon-pencil" style="cursor:pointer"></span></span></div></td>'+
 '</tr>';
 
 jQuery('#add-sumoto').click(function(){
@@ -246,8 +246,11 @@ $(document).ready(function() {
 });
 
 $('#buttonFinalSubmit')
-.click(
-		function(e) {
+		.click(
+				function(e) {
+					// When we updating mom details only few fields is mandatory but in case of
+					// generating final resolution pdf all fields are mandatory
+					$('.addorremoverequired').attr("required", "required");
 					if ($('form').valid()) {
 							bootbox
 							.confirm({
@@ -278,4 +281,19 @@ $('#buttonFinalSubmit')
 				e.stopPropagation();
 				e.preventDefault();
 			}
+});
+
+
+$('#buttonSubmit').click(function(e) {
+	// After adding sumoto resolution,when we click on update department and
+	// gistofpreamble value is mandatory remaining field values are optional,
+	// but by default all sumoto resolution fields are mandatory so that
+	// validations are added to validate.
+	$('.addorremoverequired').removeAttr("required", "required");
+	$('.addorremoverequired').removeClass('error');
+	if ($('form').valid()) {
+		document.forms["councilMomform"].submit();
+	} else {
+		e.preventDefault();
+	}
 });
