@@ -65,6 +65,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.apache.commons.lang.StringUtils.defaultIfBlank;
 import static org.apache.commons.lang.StringUtils.defaultString;
 import static org.apache.commons.lang.StringUtils.isBlank;
 
@@ -78,6 +79,7 @@ public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalcu
     private Boolean isCallbackForApportion = Boolean.FALSE;
     public static final String DEFAULT_FUNCTIONARY_CODE = "1";
     private String transanctionReferenceNumber;
+    private Long userId;
 
     @Autowired
     private LicenseUtils licenseUtils;
@@ -100,7 +102,7 @@ public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalcu
 
     @Override
     public String getConsumerType() {
-        return "";
+        return "moduleName";
     }
 
     @Override
@@ -218,10 +220,18 @@ public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalcu
         return license.getTotalBalance();
     }
 
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+    
     @Override
     public Long getUserId() {
-        return ApplicationThreadLocals.getUserId();
+    	if(ApplicationThreadLocals.getUserId()!=null)
+         return ApplicationThreadLocals.getUserId();
+    	else
+    	 return	userId;
     }
+
 
     @Override
     public String getDescription() {
@@ -270,7 +280,7 @@ public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalcu
 
     @Override
     public String getConsumerId() {
-        return null;
+        return defaultIfBlank(license.getLicenseNumber(), license.getApplicationNumber());
     }
 
     @Override
