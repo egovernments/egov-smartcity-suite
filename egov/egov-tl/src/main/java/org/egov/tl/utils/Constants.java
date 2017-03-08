@@ -40,7 +40,10 @@
 
 package org.egov.tl.utils;
 
+import static org.egov.tl.utils.Constants.DATE_FORMAT_YYYYMMDD;
+
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -194,6 +197,12 @@ public final class Constants {
     public static final String JA_DESIGNATION = "Junior Assistant";
     public static final String RC_DESIGNATION = "Revenue Clerk";
     public static final String CLOSURE_NATUREOFTASK = "Closure License";
+    public static final String COLLECTION_INDEX_NAME="receipts";
+    public static final String DATE_FORMAT_YYYYMMDD = "yyyy-MM-dd";
+    public static final String COLLECION_BILLING_SERVICE_TL = "Trade License";
+    public static final SimpleDateFormat DATEFORMATTER_YYYY_MM_DD = new SimpleDateFormat(DATE_FORMAT_YYYYMMDD);
+
+
     private static final Map<String, String> OWNERSHIP_TYPE = new HashMap<>();
 
     static {
