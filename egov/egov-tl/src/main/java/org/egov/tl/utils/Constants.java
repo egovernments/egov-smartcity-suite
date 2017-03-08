@@ -40,8 +40,6 @@
 
 package org.egov.tl.utils;
 
-import static org.egov.tl.utils.Constants.DATE_FORMAT_YYYYMMDD;
-
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
