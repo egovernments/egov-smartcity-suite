@@ -72,6 +72,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import static java.math.BigDecimal.ZERO;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.egov.tl.utils.Constants.TRADELICENSEMODULE;
 
@@ -161,16 +162,16 @@ public class LicenseUtils {
             final int paymentDueDays = Days
                     .daysBetween(new LocalDate(fromDate.getTime()), new LocalDate(collectionDate.getTime()))
                     .getDays();
-            final PenaltyRates penaltyRates = penaltyRatesService.findByDaysAndLicenseAppType(Long.valueOf(paymentDueDays),
+            final PenaltyRates penaltyRates = penaltyRatesService.findByDaysAndLicenseAppType((long) paymentDueDays,
                     license.getLicenseAppType());
             if (penaltyRates == null) {
                 LOG.warn("License payment due since {} days, There is no penatlity rate definied for License Type {}",
                         paymentDueDays,
                         license.getLicenseAppType().getName());
-                return BigDecimal.ZERO;
+                return ZERO;
             }
             return amount.multiply(BigDecimal.valueOf(penaltyRates.getRate() / 100));
         }
-        return BigDecimal.ZERO;
+        return ZERO;
     }
 }

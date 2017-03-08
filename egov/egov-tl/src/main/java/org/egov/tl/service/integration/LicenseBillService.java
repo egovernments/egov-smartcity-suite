@@ -101,7 +101,6 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.Position;
 import org.egov.tl.entity.License;
 import org.egov.tl.entity.LicenseDemand;
-import org.egov.tl.service.PenaltyRatesService;
 import org.egov.tl.service.TradeLicenseSmsAndEmailService;
 import org.egov.tl.service.es.LicenseApplicationIndexService;
 import org.egov.tl.utils.Constants;
@@ -163,9 +162,6 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
 
     @Autowired
     private LicenseUtils licenseUtils;
-
-    @Autowired
-    private PenaltyRatesService penaltyRatesService;
 
     public void setLicense(final License license) {
         this.license = license;
@@ -237,7 +233,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
                     .compareTo(demandDetail.getAmtCollected()) != 0) {
                 final EgBillDetails billdetail = new EgBillDetails();
                 final EgBillDetails billdetailRebate = new EgBillDetails();
-                if (demandDetail.getAmtRebate() != null && demandDetail.getAmtRebate().compareTo(BigDecimal.ZERO) != 0) {
+                if (demandDetail.getAmtRebate() != null && demandDetail.getAmtRebate().compareTo(ZERO) != 0) {
                     final EgReasonCategory reasonCategory = demandGenericDao
                             .getReasonCategoryByCode(Constants.DEMANDRSN_REBATE);
                     final List<EgDemandReasonMaster> demandReasonMasterByCategory = demandGenericDao
@@ -247,7 +243,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
                                 demandReasonMaster, installment, module);
                         if (demandDetail.getEgDemandReason().getId().equals(reasonDed.getEgDemandReason().getId())) {
                             billdetailRebate.setDrAmount(demandDetail.getAmtRebate());
-                            billdetailRebate.setCrAmount(BigDecimal.ZERO);
+                            billdetailRebate.setCrAmount(ZERO);
                             billdetailRebate.setGlcode(reasonDed.getGlcodeId().getGlcode());
                             billdetailRebate.setEgDemandReason(demandDetail.getEgDemandReason());
                             billdetailRebate.setAdditionalFlag(1);
@@ -263,7 +259,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
                     }
                 }
                 if (demandDetail.getAmount() != null) {
-                    billdetail.setDrAmount(BigDecimal.ZERO);
+                    billdetail.setDrAmount(ZERO);
                     billdetail.setCrAmount(demandDetail.getAmount().subtract(demandDetail.getAmtCollected()));
                 }
 
@@ -306,7 +302,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
 
     private EgDemandDetails insertPenaltyDmdDetail(final Installment inst, final BigDecimal penaltyAmount) {
         EgDemandDetails demandDetail = null;
-        if (penaltyAmount != null && penaltyAmount.compareTo(BigDecimal.ZERO) > 0) {
+        if (penaltyAmount != null && penaltyAmount.compareTo(ZERO) > 0) {
             final Module module = license.getTradeName().getLicenseType().getModule();
             final EgDemandReasonMaster egDemandReasonMaster = demandGenericDao.getDemandReasonMasterByCode(
                     PENALTY_DMD_REASON_CODE,
@@ -320,7 +316,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
             if (egDemandReason == null)
                 throw new ApplicationRuntimeException(" Penalty Demand reason is null in method  insertPenalty ");
 
-            demandDetail = createDemandDetails(egDemandReason, BigDecimal.ZERO, penaltyAmount);
+            demandDetail = createDemandDetails(egDemandReason, ZERO, penaltyAmount);
         }
         return demandDetail;
     }
@@ -360,7 +356,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
                 String installmentDesc;
 
                 for (final EgDemandDetails dmdDtls : demand.getEgDemandDetails())
-                    if (dmdDtls.getAmount().compareTo(BigDecimal.ZERO) > 0) {
+                    if (dmdDtls.getAmount().compareTo(ZERO) > 0) {
                         dmdRsn = dmdDtls.getEgDemandReason();
                         installmentDesc = dmdRsn.getEgInstallmentMaster().getDescription();
                         demandDetailByReason = new HashMap<>();
@@ -377,7 +373,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
 
                 for (final ReceiptAccountInfo rcptAccInfo : billReceipt.getAccountDetails())
                     if (rcptAccInfo.getDescription() != null && !rcptAccInfo.getDescription().isEmpty()
-                            && rcptAccInfo.getCrAmount() != null && rcptAccInfo.getCrAmount().compareTo(BigDecimal.ZERO) > 0) {
+                            && rcptAccInfo.getCrAmount() != null && rcptAccInfo.getCrAmount().compareTo(ZERO) > 0) {
                         final String[] desc = rcptAccInfo.getDescription().split("-", 2);
                         final String reason = desc[0].trim();
                         final String instDesc = desc[1].trim();
@@ -490,7 +486,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
     private void updateDmdDetForRcptCancel(final EgDemand demand, final BillReceiptInfo billRcptInfo) {
         LOGGER.debug("Entering method updateDmdDetForRcptCancel");
         for (final ReceiptAccountInfo rcptAccInfo : billRcptInfo.getAccountDetails())
-            if (rcptAccInfo.getCrAmount() != null && rcptAccInfo.getCrAmount().compareTo(BigDecimal.ZERO) > 0
+            if (rcptAccInfo.getCrAmount() != null && rcptAccInfo.getCrAmount().compareTo(ZERO) > 0
                     && !rcptAccInfo.getIsRevenueAccount()) {
                 final String[] desc = rcptAccInfo.getDescription().split("-", 2);
                 final String reason = desc[0].trim();
@@ -536,7 +532,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
             dmdDet = insertPenalty(chqBouncePenalty, ld.getLicense().getTradeName().getLicenseType().getModule());
         else {
             BigDecimal existDmdDetAmt = penaltyDmdDet.getAmount();
-            existDmdDetAmt = existDmdDetAmt == null || existDmdDetAmt.compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ZERO
+            existDmdDetAmt = existDmdDetAmt == null || existDmdDetAmt.compareTo(ZERO) == 0 ? ZERO
                     : existDmdDetAmt;
             penaltyDmdDet.setAmount(existDmdDetAmt.add(chqBouncePenalty));
             dmdDet = penaltyDmdDet;
@@ -570,12 +566,12 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
             final BigDecimal amtCollected = dd.getAmtCollected();
             totalCollChqBounced = totalCollChqBounced.subtract(amtCollected);
             if (totalCollChqBounced.longValue() >= 0) {
-                dd.setAmtCollected(BigDecimal.ZERO);
+                dd.setAmtCollected(ZERO);
                 demand.setBaseDemand(demand.getBaseDemand().subtract(amtCollected));
             } else {
                 dd.setAmtCollected(amtCollected.subtract(totalCollChqBounced));
                 demand.setBaseDemand(demand.getBaseDemand().subtract(totalCollChqBounced));
-                totalCollChqBounced = BigDecimal.ZERO;
+                totalCollChqBounced = ZERO;
 
             }
 
@@ -620,7 +616,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
                         glCodeExist = true;
                         BigDecimal amtCollected = billDet.getCollectedAmount();
                         if (amtCollected == null)
-                            amtCollected = BigDecimal.ZERO;
+                            amtCollected = ZERO;
                         billDet.setCollectedAmount(acctDet.getCrAmount().subtract(amtCollected));
                         egBillDetailsDao.update(billDet);
                     }
@@ -636,13 +632,13 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
     public BigDecimal getEgBillDetailCollection(final EgBillDetails billdet) {
         BigDecimal collectedAmt = billdet.getCollectedAmount();
         if (billdet.getCollectedAmount() == null)
-            collectedAmt = BigDecimal.ZERO;
+            collectedAmt = ZERO;
         return collectedAmt;
 
     }
 
     public EgBill updateBillForChqBounce(final EgBill egBill, final BigDecimal totalChqAmt) {
-        final BigDecimal zeroVal = BigDecimal.ZERO;
+        final BigDecimal zeroVal = ZERO;
         if (totalChqAmt != null && totalChqAmt.compareTo(zeroVal) != 0 && egBill != null) {
             final List<EgBillDetails> billList = new ArrayList<>(egBill.getEgBillDetails());
             // Reversed the list because the knocking off the amount should
@@ -650,7 +646,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
             Collections.reverse(billList);
             BigDecimal carry = totalChqAmt;
             for (final EgBillDetails billdet : billList) {
-                BigDecimal remAmount = BigDecimal.ZERO;
+                BigDecimal remAmount = ZERO;
                 final BigDecimal balanceAmt = getEgBillDetailCollection(billdet);
                 if (balanceAmt != null && balanceAmt.compareTo(zeroVal) > 0) {
                     if (carry.compareTo(zeroVal) > 0 && carry.subtract(balanceAmt).compareTo(zeroVal) > 0) {
@@ -658,7 +654,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
                         remAmount = balanceAmt;
                     } else if (carry.compareTo(zeroVal) > 0 && carry.subtract(balanceAmt).compareTo(zeroVal) <= 0) {
                         remAmount = carry;
-                        carry = BigDecimal.ZERO;
+                        carry = ZERO;
                     }
                     if (remAmount.compareTo(zeroVal) > 0) {
                         billdet.setCollectedAmount(remAmount);
@@ -688,7 +684,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
     }
 
     public BigDecimal getTotalChequeAmt(final BillReceiptInfo bri) {
-        BigDecimal totalCollAmt = BigDecimal.ZERO;
+        BigDecimal totalCollAmt = ZERO;
         try {
             if (bri != null)
                 for (final ReceiptInstrumentInfo rctInst : bri.getBouncedInstruments())
@@ -703,7 +699,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
 
     public BigDecimal calculateTotalCollectedAmt(final BillReceiptInfo bri, final List<EgBillDetails> billDetList)
             throws InvalidAccountHeadException {
-        BigDecimal totalCollAmt = BigDecimal.ZERO;
+        BigDecimal totalCollAmt = ZERO;
         try {
             if (bri != null && billDetList != null)
                 for (final EgBillDetails billDet : billDetList) {
@@ -810,7 +806,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
      */
     EgDemandDetails insertPenalty(final BigDecimal chqBouncePenalty, final Module module) {
         EgDemandDetails demandDetail = null;
-        if (chqBouncePenalty != null && chqBouncePenalty.compareTo(BigDecimal.ZERO) > 0) {
+        if (chqBouncePenalty != null && chqBouncePenalty.compareTo(ZERO) > 0) {
             final Installment currInstallment = getCurrentInstallment(module);
             final EgDemandReasonMaster egDemandReasonMaster = demandGenericDao.getDemandReasonMasterByCode(
                     DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY, module);
@@ -820,7 +816,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
                     egDemandReasonMaster, currInstallment, module);
             if (egDemandReason == null)
                 throw new ApplicationRuntimeException(" Penalty Demand reason is null in method  insertPenalty ");
-            demandDetail = EgDemandDetails.fromReasonAndAmounts(chqBouncePenalty, egDemandReason, BigDecimal.ZERO);
+            demandDetail = EgDemandDetails.fromReasonAndAmounts(chqBouncePenalty, egDemandReason, ZERO);
         }
         return demandDetail;
     }
@@ -864,7 +860,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
             final String demandReason = demandDetail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster();
             final Installment installmentYear = demandDetail.getEgDemandReason().getEgInstallmentMaster();
             Map<String, BigDecimal> feeByTypes;
-            if (!demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode().equals(Constants.PENALTY_DMD_REASON_CODE)
+            if (!PENALTY_DMD_REASON_CODE.equals(demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode())
                     && demandDetail.getAmount().subtract(demandDetail.getAmtCollected()).signum() == 1) {
                 if (outstandingFee.containsKey(installmentYear.getDescription()))
                     feeByTypes = outstandingFee.get(installmentYear.getDescription());
@@ -873,10 +869,10 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
                     feeByTypes.put(demandReason, ZERO);
                 }
                 final BigDecimal demandAmount = demandDetail.getAmount().subtract(demandDetail.getAmtCollected());
-                feeByTypes.put(demandReason, demandAmount);
-                BigDecimal penaltyAmt = licenseUtils.calculatePenalty(license, fromDate, new Date(), demandDetail.getAmount());
-                if (penaltyAmt.compareTo(BigDecimal.ZERO) > 0)
-                    feeByTypes.put("Penalty", penaltyAmt);
+                feeByTypes.put(demandReason, demandAmount.setScale(0, RoundingMode.HALF_DOWN));
+                BigDecimal penaltyAmt = licenseUtils.calculatePenalty(license, fromDate, new Date(), demandAmount);
+                if (penaltyAmt.compareTo(ZERO) > 0)
+                    feeByTypes.put("Penalty", penaltyAmt.setScale(0, RoundingMode.HALF_DOWN));
                 outstandingFee.put(installmentYear.getDescription(), feeByTypes);
             }
         }

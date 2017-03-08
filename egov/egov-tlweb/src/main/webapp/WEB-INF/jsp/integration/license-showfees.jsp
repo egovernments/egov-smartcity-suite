@@ -30,7 +30,7 @@
         <s:set value="outstandingFee" var="feeInfo"></s:set>
         <s:if test="%{#attr.feeInfo.size > 0}">
             <div class="panel-heading  custom_form_panel_heading subheadnew">
-                <div class="panel-title"><s:text name='license.title.feedetail'/></div>
+                <div class="panel-title"><s:text name='licensefee.verification.title'/></div>
             </div>
             <table class="table table-bordered" style="width:97%;margin:0 auto;">
                 <thead>
@@ -57,8 +57,7 @@
 </div>
 
 <div align="center" class="buttonbottom" id="buttondiv">
-    <a href="#" class="btn btn-primary" onclick="window.open('/tl/integration/licenseBillCollect-collectfees.action?licenseId='+${licenseId}, '',
-                    'scrollbars=yes,width=1000,height=700,status=yes'); return false;">Pay Fees</a>
+    <a href="#" class="btn btn-primary" onclick="window.open('/tl/integration/licenseBillCollect-collectfees.action?licenseId='+${licenseId}, '_self'); return false;">Continue to payment</a>
     <a href='javascript:void(0)' class='btn btn-default' onclick='self.close()'>Close</a>
 </div>
 </s:form>
