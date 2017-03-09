@@ -173,7 +173,7 @@
 	<label class="col-sm-2 control-label text-right" id="persons"><spring:message
 			code="lbl.prayer" /><span class="mandatory"></span>:</label>
 	<div class="col-sm-3 add-margin" id="personsdiv">
-		<form:textarea class="form-control" maxlength="1024" id="prayer"
+		<form:textarea class="form-control" maxlength="10000" id="prayer"
 			path="prayer" />
 		<form:errors path="prayer" cssClass="add-margin error-msg" />
 	</div>
@@ -230,8 +230,8 @@
 	<label class="col-sm-2 control-label text-right"><spring:message
 			code="lbl.oldreferencenumber" />:</label>
 	<div class="col-sm-3 add-margin">
-		<form:input class="form-control text-left patternvalidation" maxlength="4" id="oldReferenceNumber"
-			path="oldReferenceNumber" data-pattern="number" />
+		<form:input class="form-control patternvalidation" maxlength="4" id="oldrefnumber"
+			path="oldReferenceNumber" data-pattern="address" />
 		<form:errors path="oldReferenceNumber" cssClass="add-margin error-msg" />
 	</div>
 </div>

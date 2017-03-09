@@ -52,12 +52,6 @@
 	</div>
 	</div>
 	</div>
-	<%-- <c:choose>
-		<c:when
-			test="${judgmentImpl.judgmentImplIsComplied == 'NO' && judgmentImpl.implementationFailure == 'Appeal'}"> --%>
-			
-	<%-- 	</c:when>
-	</c:choose> --%>
 	<div class="form-group">
 		<div class="text-center">
 			<form:button type="button" id="buttonid" class="btn btn-primary">

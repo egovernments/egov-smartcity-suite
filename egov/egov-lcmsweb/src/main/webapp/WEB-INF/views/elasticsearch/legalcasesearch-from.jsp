@@ -131,13 +131,11 @@
 							cssErrorClass="form-control error" />
 					</div>
 					<label class="col-sm-2 control-label text-right"><spring:message
-							code="lbl.caseenddate" />:<span class="mandatory"></span></label>
+							code="lbl.caseenddate" />:</label>
 					<div class="col-sm-3 add-margin">
-						<fmt:formatDate value="${currDate}" var="toDate"
-							pattern="dd/MM/yyyy" />
 						<form:input path="" name="toDate" id="toDate"
 							cssClass="form-control datepicker" value="${toDate}"
-							cssErrorClass="form-control error" required="required" />
+							cssErrorClass="form-control error" />
 					</div>
 
 				</div>
@@ -188,7 +186,7 @@
 							code="lbl.exclude.closed.case" />:</label>
 					<div class="col-sm-1 add-margin">
 						<input type="checkbox" name="isStatusExcluded"
-							value="isStatusExcluded" checked="checked" />
+							value="isStatusExcluded" />
 					</div>
 				</div>
 				<div class="row">

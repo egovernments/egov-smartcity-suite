@@ -39,18 +39,49 @@
  */
 jQuery(document).ready(
 		function($) {
-			$('#buttonsubmitid').click(function() {
-				var txt = $('#eoffice').val();
-				var re = /^[ A-Za-z0-9/-]*$/
-				if (re.test(txt)) {
-				}
-				else {
-				alert('It Should accept two special charcters / and -');
-				return false;
-				}
+			$('#buttonid').click(function() {
+				formValidation();
+			
+				
 			});
 		
 		});
+
+	
+function formValidation(){
+	var pwrduedate = $("#pwrDueDate").val();
+	var pwrapprovaldate = $("#pwrApprovalDate").val();
+	var counteraffidavitduedate = $("#counterAffidavitDueDate").val();
+	var counteraffidavitapprovaldate = $("#counterAffidavitApprovalDate").val();
+	var eofficenum = $("#eoffice").val();
+	var cafilingdate = $("#caFilingDate").val();
+	if (((pwrduedate == null || pwrduedate == "") && (pwrapprovaldate == null || pwrapprovaldate == "") && 
+			(counteraffidavitduedate== null || counteraffidavitduedate== "") && 
+			(counteraffidavitapprovaldate== null || counteraffidavitapprovaldate=="") && (eofficenum== null || eofficenum =="")
+			&& (cafilingdate == null || cafilingdate==""))) {
+		bootbox
+				.alert('Please enter one mandatory field');
+		return false;
+	}
+	//eOfficeNumValidation();
+  if ($( "#legalcasecaform" ).valid())
+	  {
+	  document.forms[0].submit();
+	  }
+  		}
+
+	
+function eOfficeNumValidation(){
+	var txt = $('#eoffice').val();
+	var re = /^[ A-Za-z0-9/-]*$/
+	if (re.test(txt)) {
+	}
+	else {
+	alert('It Should accept two special charcters / and -');
+	return false;
+	}
+	
+}
 			
 			/*var modeval=$("#mode").val();
 			var $tableBody = $('#caffidavitdetails').find("tbody"),
