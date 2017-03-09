@@ -430,7 +430,7 @@ public class CreateAction extends PropertyTaxBaseAction {
         if (blockId == null || blockId == -1)
             addActionError(getText("mandatory.block"));
         else if (null != propTypeMstr && !propTypeMstr.getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
-            if (!StringUtils.isBlank(houseNumber))
+            if (!isBlank(houseNumber))
                 validateHouseNumber(wardId, houseNumber, basicProp);
             else if (property != null
                     && property.getState() != null
@@ -443,15 +443,15 @@ public class CreateAction extends PropertyTaxBaseAction {
             addActionError(getText("mandatory.election.ward"));
         for (final PropertyOwnerInfo owner : property.getBasicProperty().getPropertyOwnerInfoProxy())
             if (owner != null) {
-                if (StringUtils.isBlank(owner.getOwner().getName()))
+                if (isBlank(owner.getOwner().getName()))
                     addActionError(getText("mandatory.ownerName"));
                 if (null == owner.getOwner().getGender())
                     addActionError(getText("mandatory.gender"));
-                if (StringUtils.isBlank(owner.getOwner().getMobileNumber()))
+                if (isBlank(owner.getOwner().getMobileNumber()))
                     addActionError(getText("mandatory.mobilenumber"));
-                if (StringUtils.isBlank(owner.getOwner().getGuardianRelation()))
+                if (isBlank(owner.getOwner().getGuardianRelation()))
                     addActionError(getText("mandatory.guardianrelation"));
-                if (StringUtils.isBlank(owner.getOwner().getGuardian()))
+                if (isBlank(owner.getOwner().getGuardian()))
                     addActionError(getText("mandatory.guardian"));
             }
 
@@ -518,7 +518,7 @@ public class CreateAction extends PropertyTaxBaseAction {
         if (null != getElectionWardId() && getElectionWardId() != -1 && null != property.getBasicProperty()
                 && null == propService.getUserPositionByZone(property.getBasicProperty(), false))
             addActionError(getText("notexists.position"));
-        if (!(StringUtils.isBlank(applicationSource) || applicationSource.equalsIgnoreCase(ONLINE)))
+        if (!(isBlank(applicationSource) || applicationSource.equalsIgnoreCase(ONLINE)))
             validateDocumentDetails(getDocumentTypeDetails());
         super.validate();
     }
@@ -526,7 +526,7 @@ public class CreateAction extends PropertyTaxBaseAction {
     @SkipValidation
     @Action(value = "/create-newForm")
     public String newForm() {
-        if (StringUtils.isBlank(applicationSource) || !applicationSource.equalsIgnoreCase(ONLINE))
+        if (isBlank(applicationSource) || !applicationSource.equalsIgnoreCase(ONLINE))
             addActionError(getText("citizen.unAuthorized.user.error"));
         return NEW;
     }
@@ -538,7 +538,7 @@ public class CreateAction extends PropertyTaxBaseAction {
                     + ", wardId: " + wardId + ", blockId: " + blockId + ", areaOfPlot: " + areaOfPlot
                     + ", dateOfCompletion: " + dateOfCompletion + ", propTypeId: " + propTypeId + ", propUsageId: "
                     + propUsageId + ", propOccId: " + propOccId);
-        if (StringUtils.isBlank(applicationSource) || !applicationSource.equalsIgnoreCase(ONLINE))
+        if (isBlank(applicationSource) || !applicationSource.equalsIgnoreCase(ONLINE))
             throw new ValidationException(new ValidationError("authenticationError",
                     getText("citizen.unAuthorized.user.error")));
 
@@ -580,10 +580,10 @@ public class CreateAction extends PropertyTaxBaseAction {
         setApplicationNoMessage(" with application number : ");
 
         final long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
-        if (logger.isDebugEnabled()) {
+        if (logger.isInfoEnabled())
             logger.info("create: Property created successfully in system" + "; Time taken(ms) = " + elapsedTimeMillis);
+        if (logger.isDebugEnabled())
             logger.debug("create: Property creation ended");
-        }
         return RESULT_ACK;
     }
 
@@ -637,7 +637,8 @@ public class CreateAction extends PropertyTaxBaseAction {
                 layoutApprovalAuthorityId, Boolean.FALSE);
         property.setStatus(status);
 
-        logger.debug("createBasicProp: Property after call to PropertyService.createProperty: " + property);
+        if (logger.isDebugEnabled()) 
+            logger.debug("createBasicProp: Property after call to PropertyService.createProperty: " + property);
         if (!property.getPropertyDetail().getPropertyTypeMaster().getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
             propCompletionDate = propService.getLowestDtOfCompFloorWise(property.getPropertyDetail().getFloorDetails());
         else
@@ -708,7 +709,8 @@ public class CreateAction extends PropertyTaxBaseAction {
         propertyId.setNorthBoundary(getNorthBoundary());
         propertyId.setSouthBoundary(getSouthBoundary());
         propertyId.setBasicProperty(basicProperty);
-        logger.debug("PropertyID: " + propertyId + "\nExiting from createPropertyID");
+        if (logger.isDebugEnabled())
+            logger.debug("PropertyID: " + propertyId + "\nExiting from createPropertyID");
         return propertyId;
     }
 

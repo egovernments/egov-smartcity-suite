@@ -272,10 +272,12 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
     }
 
     protected void setupWorkflowDetails() {
-        logger.debug("Entered into setupWorkflowDetails | Start");
+        if (logger.isDebugEnabled())
+            logger.debug("Entered into setupWorkflowDetails | Start");
         if (workflowBean != null)
-            logger.debug("setupWorkflowDetails: Department: " + workflowBean.getDepartmentId() + " Designation: "
-                    + workflowBean.getDesignationId());
+            if (logger.isDebugEnabled())
+                logger.debug("setupWorkflowDetails: Department: " + workflowBean.getDepartmentId() + " Designation: "
+                        + workflowBean.getDesignationId());
         final AjaxCommonAction ajaxCommonAction = new AjaxCommonAction();
         ajaxCommonAction.setPersistenceService(persistenceService);
         ajaxCommonAction.setDesignationService(new DesignationService());
@@ -285,7 +287,8 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
         workflowBean.setDepartmentList(departmentsForLoggedInUser);
         workflowBean.setDesignationList(Collections.emptyList());
         workflowBean.setAppoverUserList(Collections.emptyList());
-        logger.debug("Exiting from setupWorkflowDetails | End");
+        if (logger.isDebugEnabled())
+            logger.debug("Exiting from setupWorkflowDetails | End");
     }
 
     protected void validateProperty(final Property property, final String areaOfPlot, final String dateOfCompletion,
@@ -724,8 +727,8 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
             final String approvalmesg = " Succesfully Cancelled.";
             ackMessage = ackMessage == null ? approvalmesg : ackMessage + approvalmesg;
         }
-
-        logger.debug("Exiting method : transitionWorkFlow");
+        if (logger.isDebugEnabled())
+            logger.debug("Exiting method : transitionWorkFlow");
     }
 
     private String getNatureOfTask() {

@@ -41,6 +41,7 @@
 package org.egov.ptis.domain.service.demolition;
 
 import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
 import static org.egov.ptis.constants.PropertyTaxConstants.ADDITIONAL_COMMISSIONER_DESIGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.ADVANCE_DMD_RSN_CODE;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPCONFIG_CLIENT_SPECIFIC_DMD_BILL;
@@ -204,7 +205,7 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
         final String areaOfPlot = String.valueOf(propertyModel.getPropertyDetail().getSitalArea().getArea());
         propertyModel = propertyService.createProperty(propertyModel, areaOfPlot, PROPERTY_MODIFY_REASON_FULL_DEMOLITION,
                 propertyModel.getPropertyDetail().getPropertyTypeMaster().getId().toString(), null, null, status, null,
-                null, null, null, null, null, null, null, null, null, Boolean.FALSE);
+                null, null, null, null, null, null, null, null, null, FALSE);
         final Map<String, Installment> yearwiseInstMap = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
         final Installment installmentFirstHalf = yearwiseInstMap.get(CURRENTYEAR_FIRST_HALF);
         final Installment installmentSecondHalf = yearwiseInstMap.get(CURRENTYEAR_SECOND_HALF);
@@ -218,7 +219,7 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
         if (!propertyModel.getPropertyDetail().getPropertyTypeMaster().getCode().equals(OWNERSHIP_TYPE_VAC_LAND))
             propertyService.changePropertyDetail(propertyModel, new VacantProperty(), 0);
         propertyModel.getPropertyDetail().setCategoryType(VACANTLAND_PROPERTY_CATEGORY);
-        basicProperty.setUnderWorkflow(Boolean.TRUE);
+        basicProperty.setUnderWorkflow(TRUE);
         propertyModel.setBasicProperty(basicProperty);
         basicProperty.addProperty(propertyModel);
         getSession().setFlushMode(FlushMode.MANUAL);

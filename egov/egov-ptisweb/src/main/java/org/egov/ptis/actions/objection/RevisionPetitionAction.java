@@ -250,7 +250,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
     private String propertyAddress;
     private transient PersistenceService<Property, Long> propertyImplService;
     private String propTypeObjId;
-    final SimpleDateFormat dateformat = new SimpleDateFormat(DATE_FORMAT_DDMMYYY);
+    private final SimpleDateFormat dateformat = new SimpleDateFormat(DATE_FORMAT_DDMMYYY);
     private String[] floorNoStr = new String[100];
     private Boolean loggedUserIsEmployee = Boolean.TRUE;
     private transient PropertyService propService;

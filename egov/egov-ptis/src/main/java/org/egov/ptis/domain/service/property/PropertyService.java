@@ -447,9 +447,8 @@ public class PropertyService {
         property.getPropertyDetail().setPropertyTypeMaster(propTypeMstr);
         property.getPropertyDetail().setPropertyMutationMaster(propMutMstr);
         property.getPropertyDetail().setUpdatedTime(new Date());
-        if (!property.getPropertyDetail().isAppurtenantLandChecked() || (property.getPropertyDetail().isAppurtenantLandChecked() && nonVacant)) {
+        if (!property.getPropertyDetail().isAppurtenantLandChecked() || (property.getPropertyDetail().isAppurtenantLandChecked() && nonVacant))
             createFloors(property, mutationCode, propUsageId, propOccId);
-        }
         property.setStatus(status);
         property.setIsDefaultProperty(PROPERTY_IS_DEFAULT);
         property.setInstallment(currentInstall);
@@ -777,19 +776,19 @@ public class PropertyService {
      * @param ptDemandNew
      * @param inst
      */
-	private void carryForwardPenalty(Ptdemand ptDemandOld, Ptdemand ptDemandNew, final Installment inst) {
-		List<EgDemandDetails> penaltyDmdDtlsList;
-		penaltyDmdDtlsList = getEgDemandDetailsListForReason(ptDemandOld.getEgDemandDetails(),
-		        DEMANDRSN_CODE_PENALTY_FINES);
-		if (penaltyDmdDtlsList != null && !penaltyDmdDtlsList.isEmpty())
-		    for (final EgDemandDetails penaltyDmdDet : penaltyDmdDtlsList)
-		        ptDemandNew.getEgDemandDetails().add((EgDemandDetails) penaltyDmdDet.clone());
-		penaltyDmdDtlsList = getEgDemandDetailsListForReason(ptDemandOld.getEgDemandDetails(),
-		        DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY);
-		if (penaltyDmdDtlsList != null && !penaltyDmdDtlsList.isEmpty())
-		    for (final EgDemandDetails penaltyDmdDet : penaltyDmdDtlsList)
-		        ptDemandNew.getEgDemandDetails().add((EgDemandDetails) penaltyDmdDet.clone());
-	}
+    private void carryForwardPenalty(Ptdemand ptDemandOld, Ptdemand ptDemandNew, final Installment inst) {
+	List<EgDemandDetails> penaltyDmdDtlsList;
+	penaltyDmdDtlsList = getEgDemandDetailsListForReason(ptDemandOld.getEgDemandDetails(),
+	        DEMANDRSN_CODE_PENALTY_FINES);
+	if (penaltyDmdDtlsList != null && !penaltyDmdDtlsList.isEmpty())
+	    for (final EgDemandDetails penaltyDmdDet : penaltyDmdDtlsList)
+	        ptDemandNew.getEgDemandDetails().add((EgDemandDetails) penaltyDmdDet.clone());
+	penaltyDmdDtlsList = getEgDemandDetailsListForReason(ptDemandOld.getEgDemandDetails(),
+	        DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY);
+	if (penaltyDmdDtlsList != null && !penaltyDmdDtlsList.isEmpty())
+	    for (final EgDemandDetails penaltyDmdDet : penaltyDmdDtlsList)
+	        ptDemandNew.getEgDemandDetails().add((EgDemandDetails) penaltyDmdDet.clone());
+    }
 
     /**
      * Modifies property active demand and creates arrears demand and performs the excss colletion adjustment

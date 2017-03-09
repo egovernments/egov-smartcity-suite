@@ -221,7 +221,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     private static final String EXEMPTED_REASON_LIST = "taxExemptedList";
     private static final String PROPERTY_CREATE_REJECT_FAILURE = "Initiator is not active so can not do rejection with application number ";
 
-    transient Logger logger = Logger.getLogger(getClass());
+    private transient Logger logger = Logger.getLogger(getClass());
     private PropertyImpl property = new PropertyImpl();
     @Autowired
     transient PropertyPersistenceService basicPropertyService;
@@ -447,10 +447,10 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         setAckMessage("Property Data Saved Successfully in the System and forwarded to : ");
         setApplicationNoMessage(" with application number : ");
         final long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
-        if (logger.isDebugEnabled()) {
+        if (logger.isInfoEnabled())
             logger.info("create: Property created successfully in system" + "; Time taken(ms) = " + elapsedTimeMillis);
+        if (logger.isDebugEnabled())
             logger.debug("create: Property creation ended");
-        }
         if (!loggedUserIsMeesevaUser)
             return RESULT_ACK;
         else
@@ -981,7 +981,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         int i = 0;
         for (final Floor flr : floorList) {
             floorNoStr[i] = FLOOR_MAP.get(flr.getFloorNo());
-            logger.debug("setFloorDetails: floorNoStr[" + i + "]->" + floorNoStr[i]);
+            if (logger.isDebugEnabled())
+                logger.debug("setFloorDetails: floorNoStr[" + i + "]->" + floorNoStr[i]);
             i++;
         }
         if (logger.isDebugEnabled())
@@ -1120,7 +1121,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         setAssessmentDocumentNames(PropertyTaxConstants.ASSESSMENT_DOCUMENT_NAMES);
         addDropdownData("assessmentDocumentNameList", assessmentDocumentNames);
         super.prepare();
-        if (logger.isDebugEnabled())
+        if (logger.isDebugEnabled()) {
             logger.debug("prepare: PropTypeList: " + (propTypeList != null ? propTypeList : "NULL") + ", PropOccuList: "
                     + (propOccList != null ? propOccList : "NLL") + ", MutationList: "
                     + (mutationList != null ? mutationList : "NULL") + ", AgeFactList: "
@@ -1129,8 +1130,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                     + ", TaxExemptedReasonList: " + (getDropdownData().get(EXEMPTED_REASON_LIST) != null
                             ? getDropdownData().get(EXEMPTED_REASON_LIST) : "List is NULL"));
 
-        logger.debug("Exiting from prepare");
-
+            logger.debug("Exiting from prepare");
+        }
     }
 
     private BasicProperty createBasicProp(final Character status) {
@@ -1177,7 +1178,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                 getWallTypeId(), getWoodTypeId(), Long.valueOf(taxExemptionId), getPropertyDepartmentId(),
                 getVacantLandPlotAreaId(), getLayoutApprovalAuthorityId(), Boolean.FALSE);
         property.setStatus(status);
-        logger.debug("createBasicProp: Property after call to PropertyService.createProperty: " + property);
+        if (logger.isDebugEnabled())
+            logger.debug("createBasicProp: Property after call to PropertyService.createProperty: " + property);
         if (!property.getPropertyDetail().getPropertyTypeMaster().getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
             propCompletionDate = propService.getLowestDtOfCompFloorWise(property.getPropertyDetail().getFloorDetails());
         else
@@ -1206,8 +1208,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
      */
 
     private VacantProperty changePropertyDetail(final PropertyImpl property) {
-
-        logger.debug("Entered into changePropertyDetail, Property is Vacant land");
+        if (logger.isDebugEnabled())
+            logger.debug("Entered into changePropertyDetail, Property is Vacant land");
 
         final PropertyDetail propertyDetail = property.getPropertyDetail();
         if (getDocumentTypeDetails().getDocumentName() != null
@@ -1241,7 +1243,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         vacantProperty.setManualAlv(propertyDetail.getManualAlv());
         vacantProperty.setOccupierName(propertyDetail.getOccupierName());
 
-        logger.debug("Exiting from changePropertyDetail");
+        if (logger.isDebugEnabled())
+            logger.debug("Exiting from changePropertyDetail");
         return vacantProperty;
     }
 
@@ -1339,7 +1342,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         propertyId.setNorthBoundary(getNorthBoundary());
         propertyId.setSouthBoundary(getSouthBoundary());
         propertyId.setBasicProperty(basicProperty);
-        logger.debug("PropertyID: " + propertyId + "\nExiting from createPropertyID");
+        if (logger.isDebugEnabled())
+            logger.debug("PropertyID: " + propertyId + "\nExiting from createPropertyID");
         return propertyId;
     }
 
@@ -1602,7 +1606,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     @SkipValidation
     @Action(value = "/createProperty-calculateTax")
     public void calculateTax() {
-        logger.debug("entering calculateTax()");
+        if (logger.isDebugEnabled())
+            logger.debug("entering calculateTax()");
         validate();
         if (hasErrors())
             try {
@@ -1656,7 +1661,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                 logger.error("calculateTax() : Error while writing response", e);
             }
         }
-        logger.debug("exiting calculateTax()");
+        if (logger.isDebugEnabled())
+            logger.debug("exiting calculateTax()");
     }
 
     public void validateInitiatorDesgn() {

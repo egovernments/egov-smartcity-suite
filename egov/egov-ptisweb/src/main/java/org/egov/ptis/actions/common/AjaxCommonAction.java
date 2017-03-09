@@ -105,7 +105,6 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 
-@SuppressWarnings("serial")
 @ParentPackage("egov")
 @Namespace("/common")
 @ResultPath("/WEB-INF/jsp/common/")
@@ -176,7 +175,7 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
     private String propTypeCategory;
     private BigDecimal partyValue;
     private BigDecimal departmentValue;
-    private BigDecimal mutationFee = BigDecimal.ZERO;
+    private BigDecimal mutationFee = ZERO;
     private List<PropertyDepartment> propertyDepartmentList;
     private List<DocumentType> assessmentDocumentList;
     private String assessmentDocumentType = "";
@@ -206,39 +205,46 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
 
     @Action(value = "/ajaxCommon-wardByZone")
     public String wardByZone() {
-        logger.debug("Entered into wardByZone, zoneId: " + zoneId);
+        if (logger.isDebugEnabled())
+            logger.debug("Entered into wardByZone, zoneId: " + zoneId);
         wardList = new ArrayList<>();
         wardList = boundaryService.getActiveChildBoundariesByBoundaryId(getZoneId());
-        logger.debug("Exiting from wardByZone, No of wards in zone: " + zoneId + "are "
-                + (wardList != null ? wardList : ZERO));
+        if (logger.isDebugEnabled())
+            logger.debug("Exiting from wardByZone, No of wards in zone: " + zoneId + "are "
+                    + (wardList != null ? wardList : ZERO));
         return WARD;
     }
 
     @Action(value = "/ajaxCommon-areaByWard")
     public String areaByWard() {
-        logger.debug("Entered into areaByWard, wardId: " + wardId);
+        if (logger.isDebugEnabled())
+            logger.debug("Entered into areaByWard, wardId: " + wardId);
         areaList = new ArrayList<>();
         areaList = boundaryService.getActiveChildBoundariesByBoundaryId(getWardId());
-        logger.debug("Exiting from areaByWard, No of areas in ward: " + wardId + " are "
-                + (areaList != null ? areaList : ZERO));
+        if (logger.isDebugEnabled())
+            logger.debug("Exiting from areaByWard, No of areas in ward: " + wardId + " are "
+                    + (areaList != null ? areaList : ZERO));
         return AREA;
     }
 
     @SuppressWarnings("unchecked")
     @Action(value = "/ajaxCommon-streetByWard")
     public String streetByWard() {
-        logger.debug("Entered into streetByWard, wardId: " + wardId);
+        if (logger.isDebugEnabled())
+            logger.debug("Entered into streetByWard, wardId: " + wardId);
         streetList = new ArrayList<>();
         streetList = getPersistenceService().findAllBy("select CH.child from CrossHierarchy CH where CH.parent.id = ? ",
                 getWardId());
-        logger.debug("Exiting from streetByWard, No of streets in ward: " + wardId + " are "
-                + (streetList != null ? streetList : ZERO));
+        if (logger.isDebugEnabled())
+            logger.debug("Exiting from streetByWard, No of streets in ward: " + wardId + " are "
+                    + (streetList != null ? streetList : ZERO));
         return "street";
     }
 
     @Action(value = "/ajaxCommon-populateDesignationsByDept")
     public String populateDesignationsByDept() {
-        logger.debug("Entered into populateUsersByDesignation : departmentId : " + departmentId);
+        if (logger.isDebugEnabled())
+            logger.debug("Entered into populateUsersByDesignation : departmentId : " + departmentId);
         if (departmentId != null) {
             final Designation designation = assignmentService
                     .getPrimaryAssignmentForUser(securityUtils.getCurrentUser().getId()).getDesignation();
@@ -248,19 +254,18 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
                 designationMasterList.add(designationService.getDesignationByName(COMMISSIONER_DESGN));
         }
 
-        logger.debug("Exiting from populateUsersByDesignation : No of Designation : "
-                + (designationMasterList != null ? designationMasterList.size() : ZERO));
+        if (logger.isDebugEnabled())
+            logger.debug("Exiting from populateUsersByDesignation : No of Designation : "
+                    + (designationMasterList != null ? designationMasterList.size() : ZERO));
 
         return "designationList";
     }
 
     @Action(value = "/ajaxCommon-populateDesignationsByDeptForRevisionPetition")
     public String populateDesignationsByDeptForRevisionPetition() {
-        logger.debug("Entered into populateUsersByDesignation : departmentId : " + departmentId + currentStatusCode);
+        if (logger.isDebugEnabled())
+            logger.debug("Entered into populateUsersByDesignation : departmentId : " + departmentId + currentStatusCode);
         if (departmentId != null) {
-            // designationMasterList =
-            // designationService.getAllDesignationByDepartment(departmentId,new
-            // Date());
             final Designation designation = assignmentService
                     .getPrimaryAssignmentForUser(securityUtils.getCurrentUser().getId()).getDesignation();
             if (currentStatusCode == null || "".equals(currentStatusCode))
@@ -286,28 +291,31 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
                 designationMasterList.add(designationService.getDesignationByName(COMMISSIONER_DESGN));
         }
 
-        logger.debug("Exiting from populateUsersByDesignation : No of Designation : "
-                + (designationMasterList != null ? designationMasterList.size() : ZERO));
+        if (logger.isDebugEnabled())
+            logger.debug("Exiting from populateUsersByDesignation : No of Designation : "
+                    + (designationMasterList != null ? designationMasterList.size() : ZERO));
 
         return "designationList";
     }
 
     @Action(value = "/ajaxCommon-populateUsersByDeptAndDesignation")
     public String populateUsersByDeptAndDesignation() {
-        logger.debug("Entered into populateUsersByDesignation : designationId : " + designationId);
+        if (logger.isDebugEnabled())
+            logger.debug("Entered into populateUsersByDesignation : designationId : " + designationId);
         if (designationId != null && departmentId != null)
             assignmentList = assignmentService.getPositionsByDepartmentAndDesignationForGivenRange(departmentId,
                     designationId, new Date());
-        logger.debug(
-                "Exiting from populateUsersByDesignation : No of users : " + (userList != null ? userList : ZERO));
+        if (logger.isDebugEnabled())
+            logger.debug(
+                    "Exiting from populateUsersByDesignation : No of users : " + (userList != null ? userList : ZERO));
         return "userList";
     }
 
     @Action(value = "/ajaxCommon-categoryByRateUsageAndStructClass")
     public String categoryByRateUsageAndStructClass() {
-
-        logger.debug("Entered into categoryByRateUsageAndStructClass method, Usage Factor: " + usageFactor
-                + ", Structure Classification: " + structFactor);
+        if (logger.isDebugEnabled())
+            logger.debug("Entered into categoryByRateUsageAndStructClass method, Usage Factor: " + usageFactor
+                    + ", Structure Classification: " + structFactor);
 
         final PropertyUsage propUsage = (PropertyUsage) getPersistenceService()
                 .find("from PropertyUsage pu where pu.usageName=?", usageFactor);
@@ -332,14 +340,17 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
         }
 
         addDropdownData("categoryList", categoryList);
-        logger.debug("Exiting from categoryByRateUsageAndStructClass method");
+        if (logger.isDebugEnabled())
+            logger.debug("Exiting from categoryByRateUsageAndStructClass method");
         if (categoryList == null) {
-            logger.debug(
-                    "categoryByRateUsageAndStructClass: categoryList is NULL \n Exiting from categoryByRateUsageAndStructClass");
+            if (logger.isDebugEnabled())
+                logger.debug(
+                        "categoryByRateUsageAndStructClass: categoryList is NULL \n Exiting from categoryByRateUsageAndStructClass");
             return FAILURE;
         } else {
-            logger.debug("categoryByRateUsageAndStructClass: categoryList:" + categoryList
-                    + "\nExiting from categoryByRateUsageAndStructClass");
+            if (logger.isDebugEnabled())
+                logger.debug("categoryByRateUsageAndStructClass: categoryList:" + categoryList
+                        + "\nExiting from categoryByRateUsageAndStructClass");
             return CATEGORY;
         }
     }
@@ -347,7 +358,8 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
     @Actions({ @Action(value = "/ajaxCommon-propTypeCategoryByPropType"),
             @Action(value = "/public/ajaxCommon-propTypeCategoryByPropType") })
     public String propTypeCategoryByPropType() {
-        logger.debug("Entered into propTypeCategoryByPropType, propTypeId: " + propTypeId);
+        if (logger.isDebugEnabled())
+            logger.debug("Entered into propTypeCategoryByPropType, propTypeId: " + propTypeId);
         final PropertyTypeMaster propType = (PropertyTypeMaster) getPersistenceService()
                 .find("from PropertyTypeMaster ptm where ptm.id=?", propTypeId.longValue());
         if (propType != null) {
@@ -356,25 +368,29 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
             else
                 propTypeCategoryMap.putAll(NON_VAC_LAND_PROPERTY_TYPE_CATEGORY);
             setPropTypeCategoryMap(propTypeCategoryMap);
-        } else
+        } else if (logger.isDebugEnabled())
             logger.debug("propTypeCategoryByPropType: NULL -> propType is null");
-        logger.debug("Exiting from propTypeCategoryByPropType, No of Categories: "
-                + (propTypeCategoryMap != null ? propTypeCategoryMap.size() : ZERO));
+        if (logger.isDebugEnabled())
+            logger.debug("Exiting from propTypeCategoryByPropType, No of Categories: "
+                    + (propTypeCategoryMap != null ? propTypeCategoryMap.size() : ZERO));
         return PROP_TYPE_CATEGORY;
     }
 
     @SuppressWarnings("unchecked")
     @Action(value = "/ajaxCommon-locationFactorsByWard")
     public String locationFactorsByWard() {
-        logger.debug("Entered into locationFactorsByWard, wardId: " + wardId);
+        if (logger.isDebugEnabled())
+            logger.debug("Entered into locationFactorsByWard, wardId: " + wardId);
 
         categoryList = new ArrayList<>();
         categoryList.addAll(
                 getPersistenceService().findAllBy("select bc.category from BoundaryCategory bc where bc.bndry.id = ? "
                         + "and bc.category.propUsage = null and bc.category.structureClass = null", wardId));
 
-        logger.debug("locationFactorsByWard: categories - " + categoryList);
-        logger.debug("Exiting from locationFactorsByWard");
+        if (logger.isDebugEnabled()) {
+            logger.debug("locationFactorsByWard: categories - " + categoryList);
+            logger.debug("Exiting from locationFactorsByWard");
+        }
 
         return CATEGORY;
     }
@@ -382,16 +398,19 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
     @SuppressWarnings("unchecked")
     @Action(value = "/ajaxCommon-populateStructuralClassifications")
     public String populateStructuralClassifications() {
-        logger.debug("Entered into getStructureClassifications, Date: " + completionOccupationDate);
+        if (logger.isDebugEnabled())
+            logger.debug("Entered into getStructureClassifications, Date: " + completionOccupationDate);
         structuralClassifications = new ArrayList<>();
         try {
             if (completionOccupationDate
                     .after(new SimpleDateFormat(PropertyTaxConstants.DATE_FORMAT_DDMMYYY).parse(DATE_CONSTANT))) {
-                logger.debug("Base Rate - Structural Factors");
+                if (logger.isDebugEnabled())
+                    logger.debug("Base Rate - Structural Factors");
                 structuralClassifications
                         .addAll(getPersistenceService().findAllBy("from StructureClassification where code like 'R%'"));
             } else {
-                logger.debug("Rent Chart - Structural Factors");
+                if (logger.isDebugEnabled())
+                    logger.debug("Rent Chart - Structural Factors");
                 structuralClassifications
                         .addAll(getPersistenceService().findAllBy("from StructureClassification where code like 'R%'"));
             }
@@ -399,10 +418,12 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
             logger.error("Error while parsing Floor Completion / occupation", pe);
             throw new ApplicationRuntimeException("Error while parsing Floor Completion / occupation", pe);
         }
-        Collections.sort(structuralClassifications, (object1, object2) -> ((StructureClassification) object1).getTypeName()
-                .compareTo(((StructureClassification) object2).getTypeName()));
-        logger.info("getStructureClassifications - Structural Factors : " + structuralClassifications);
-        logger.debug("Exiting from getStructureClassifications");
+        Collections.sort(structuralClassifications, (object1, object2) -> object1.getTypeName()
+                .compareTo(object2.getTypeName()));
+        if (logger.isInfoEnabled())
+            logger.info("getStructureClassifications - Structural Factors : " + structuralClassifications);
+        if (logger.isDebugEnabled())
+            logger.debug("Exiting from getStructureClassifications");
         return RESULT_STRUCTURAL;
     }
 
@@ -429,7 +450,8 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
 
     @Action(value = "/ajaxCommon-checkIfCategoryExists")
     public String checkIfCategoryExists() {
-        logger.debug("Entered into checkIfCategoryExists ");
+        if (logger.isDebugEnabled())
+            logger.debug("Entered into checkIfCategoryExists ");
         final Category existingCategory = (Category) getPersistenceService().find(
                 "select bc.category from BoundaryCategory bc where bc.bndry.id = ? "
                         + "and bc.category.propUsage.id = ? and bc.category.structureClass.id = ? and bc.category.fromDate = ? and bc.category.isActive = true ",
@@ -445,7 +467,8 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
     @SuppressWarnings("unchecked")
     @Actions({ @Action(value = "/ajaxCommon-usageByPropType"), @Action(value = "/public/ajaxCommon-usageByPropType") })
     public String usageByPropType() {
-        logger.debug("Entered into usageByPropType, propTypeId: " + propTypeId);
+        if (logger.isDebugEnabled())
+            logger.debug("Entered into usageByPropType, propTypeId: " + propTypeId);
         if (propTypeCategory.equals(CATEGORY_MIXED))
             propUsageList = getPersistenceService()
                     .findAllBy("From PropertyUsage where isActive = true order by usageName ");
@@ -455,7 +478,8 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
         else if (propTypeCategory.equals(CATEGORY_NON_RESIDENTIAL))
             propUsageList = getPersistenceService().findAllBy(
                     "From PropertyUsage where isResidential = false and isActive = true  order by usageName ");
-        logger.debug("Exiting from usageByPropType, No of Usages: " + (propUsageList != null ? propUsageList : ZERO));
+        if (logger.isDebugEnabled())
+            logger.debug("Exiting from usageByPropType, No of Usages: " + (propUsageList != null ? propUsageList : ZERO));
         return USAGE;
     }
 
@@ -483,7 +507,7 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
         // the documentValue
         final BigDecimal documentValue = partyValue.compareTo(departmentValue) > 0 ? partyValue : departmentValue;
 
-        if (documentValue.compareTo(BigDecimal.ZERO) > 0) {
+        if (documentValue.compareTo(ZERO) > 0) {
             BigDecimal excessDocValue;
             BigDecimal multiplicationFactor;
             final MutationFeeDetails mutationFeeDetails = (MutationFeeDetails) getPersistenceService().find(
@@ -491,7 +515,7 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
                     documentValue, documentValue);
             if (mutationFeeDetails != null) {
                 if (mutationFeeDetails.getFlatAmount() != null
-                        && mutationFeeDetails.getFlatAmount().compareTo(BigDecimal.ZERO) > 0)
+                        && mutationFeeDetails.getFlatAmount().compareTo(ZERO) > 0)
                     if (mutationFeeDetails.getIsRecursive().toString().equalsIgnoreCase(RECURSIVEFACTOR_N))
                         mutationFee = mutationFeeDetails.getFlatAmount();
                     else {
@@ -502,7 +526,7 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
                                 .add(multiplicationFactor.multiply(mutationFeeDetails.getRecursiveAmount()));
                     }
                 if (mutationFeeDetails.getPercentage() != null
-                        && mutationFeeDetails.getPercentage().compareTo(BigDecimal.ZERO) > 0)
+                        && mutationFeeDetails.getPercentage().compareTo(ZERO) > 0)
                     if (mutationFeeDetails.getIsRecursive().toString().equalsIgnoreCase(RECURSIVEFACTOR_N))
                         mutationFee = documentValue.multiply(mutationFeeDetails.getPercentage())
                                 .divide(PropertyTaxConstants.BIGDECIMAL_100);
@@ -547,7 +571,7 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
             final BigDecimal permissableArea = triplePlingthArea.compareTo(BigDecimal.valueOf(1000)) < 0 ? triplePlingthArea
                     : BigDecimal.valueOf(1000);
             final BigDecimal landArea = extentOfSite.subtract(permissableArea);
-            jsonObject.put("isAppurTenantLand", landArea.compareTo(BigDecimal.ZERO) > 0);
+            jsonObject.put("isAppurTenantLand", landArea.compareTo(ZERO) > 0);
             jsonObject.put("extentAppartenauntLand", permissableArea);
             jsonObject.put("vacantLandArea", landArea);
         } else
