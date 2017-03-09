@@ -92,7 +92,7 @@
 		<div class="col-sm-6">
 			<form:input path="${applicant}.parentsName" id="txt-parentsName"
 				type="text" class="form-control low-width is_valid_alphabet"
-				maxlength="20" placeholder="" autocomplete="off" required="required" />
+				maxlength="70" placeholder="" autocomplete="off" required="required" />
 			<form:errors path="${applicant}.parentsName"
 				cssClass="add-margin error-msg" />
 		</div>
@@ -253,8 +253,9 @@
 	</label>
 	<div class="col-sm-3">
 		<form:input path="${applicant}.street" id="txt-street" type="text"
-			class="form-control is_valid_alphabet inline-elem" placeholder=""
-			autocomplete="off" required="required" />
+		    data-pattern="regexp_alphabetspecialcharacters"
+			class="form-control low-width patternvalidation" placeholder=""
+			maxlength="100" autocomplete="off" required="required" />
 		<form:errors path="${applicant}.street"
 			cssClass="add-margin error-msg" />
 	</div>
@@ -268,6 +269,7 @@
 
 		<form:input path="${applicant}.locality" id="txt-locality" type="text"
 			class="form-control is_valid_alphabet inline-elem" placeholder=""
+			maxlength="100"
 			autocomplete="off" required="required" />
 		<form:errors path="${applicant}.locality"
 			cssClass="add-margin error-msg" />
@@ -278,7 +280,7 @@
 	<div class="col-sm-3">
 		<form:input path="${applicant}.city" id="txt-city" type="text"
 			class="form-control is_valid_alphabet inline-elem" placeholder=""
-			autocomplete="off" required="required" />
+			maxlength="30" autocomplete="off" required="required" />
 		<form:errors path="${applicant}.city" cssClass="add-margin error-msg" />
 	</div>
 </div>
@@ -318,7 +320,7 @@
 	<div class="col-sm-3">
 		<form:input path="${applicant}.occupation"
 			id="${applicant}.occupation" type="text"
-			class="form-control low-width is_valid_alphabet" maxlength="20"
+			class="form-control low-width is_valid_alphabet" maxlength="60"
 			placeholder="" autocomplete="off" required="required" />
 		<form:errors path="${applicant}.occupation"
 			cssClass="add-margin error-msg" />

@@ -91,7 +91,7 @@
 			</form:select>
 			<form:input path="${witness}.relativeName"
 				id="${witness}.relativeName" type="text"
-				class="form-control is_valid_alphabet inline-elem" maxlength="30"
+				class="form-control is_valid_alphabet inline-elem" maxlength="70"
 				style="width: 65%" placeholder="" autocomplete="off"
 				required="required" />
 
@@ -107,7 +107,7 @@
 		<div class="col-sm-6">
 			<form:input path="${witness}.aadhaarNo" id="${witness}.aadhaarNo"
 				type="text" cssClass="form-control low-width patternvalidation"
-				data-pattern="number" maxlength="60" placeholder=""
+				data-pattern="number"  maxlength="12" placeholder=""
 				autocomplete="off" />
 			<form:errors path="${witness}.aadhaarNo"
 				cssClass="add-margin error-msg" />
