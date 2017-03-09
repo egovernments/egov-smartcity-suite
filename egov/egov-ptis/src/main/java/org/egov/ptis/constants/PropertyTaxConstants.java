@@ -1416,6 +1416,7 @@ public interface PropertyTaxConstants {
     public static final String VR_STATUS_COMMISSIONER_FORWARD_PENDING = "Commissioner Forward Pending";
     public static final String VR_APP_STATUS_REJECTED = "VacancyRemission:Rejected";
     public static final String VR_STATUS_MONTHLY_UPDATE = "Monthly Update Pending";
+    public static final String NOTICE_TYPE_EXEMPTIONPROCEEDINGS = "Tax Exemption Proceedings";
     
     public static final String VACANTLAND_PROPERTY_CATEGORY = "VACANTLAND";
     public static final String MEESEVA_OPERATOR_ROLE = "MeeSeva Operator";
