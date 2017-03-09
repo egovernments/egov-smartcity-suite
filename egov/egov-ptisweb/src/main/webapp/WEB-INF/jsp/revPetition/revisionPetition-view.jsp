@@ -96,12 +96,13 @@
 		propType = '<s:property value="%{objection.basicProperty.property.propertyDetail.propertyTypeMaster.type}"/>';
 		appurtenantLandChecked = '<s:property value="%{objection.basicProperty.property.propertyDetail.appurtenantLandChecked}"/>';
 		enableFieldsForPropTypeView(propType, appurtenantLandChecked);
-		enableAppartnaumtLandDetailsView();
 		enableOrDisableSiteOwnerDetails(jQuery('input[name="property.propertyDetail.structure"]'));
 		//toggleFloorDetailsView();
 		<s:if test="(objection.egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_HEARING_COMPLETED))" >
 			showHideFirmName();
-			showHideLengthBreadth();
+			if (propType != 'Vacant Land') {
+				showHideLengthBreadth();
+			}
 		</s:if>
 		
 		loadDesignationFromMatrix();
@@ -115,17 +116,7 @@
   		var pendingAction=document.getElementById('pendingActions').value;
   		loadDesignationByDeptAndType('RevisionPetition',dept,currentState,amountRule,"",pendingAction); 
   	}
-	function enableAppartnaumtLandDetailsView() {
-		if (document.forms[0].appurtenantLandChecked != null && document.forms[0].appurtenantLandChecked.checked == true) {
-			jQuery('tr.vacantlanddetaills').show();
-			jQuery('#appurtenantRow').show();
-			jQuery('tr.floordetails').show();
-			jQuery('tr.extentSite').hide();
-		} else {
-			appurtenantLandChecked = '<s:property value="%{objection.basicProperty.property.propertyDetail.appurtenantLandChecked}"/>';
-			enableFieldsForPropTypeView(propType, appurtenantLandChecked);
-		}
-	}
+
 	function toggleFloorDetailsView() {
 		var propType = '<s:property value="%{property.propertyDetail.propertyTypeMaster.type}"/>';
 		if (propType == "Vacant Land") {
@@ -247,8 +238,6 @@
 
 		document.forms[0].action = action;
 		document.forms[0].submit;
-		return true;
-
 		return true;
 	}
 

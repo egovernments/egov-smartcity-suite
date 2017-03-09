@@ -43,9 +43,13 @@ import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.egov.ptis.constants.PropertyTaxConstants.ADMIN_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_NEW_ASSESSENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPURTENANT_PROPERTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_CENTRAL_GOVT;
 import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_MIXED;
 import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_NON_RESIDENTIAL;
 import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_RESIDENTIAL;
+import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_STATE_GOVT;
+import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_VACANT_LAND;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEVIATION_PERCENTAGE;
 import static org.egov.ptis.constants.PropertyTaxConstants.ELECTIONWARD_BNDRY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.ELECTION_HIERARCHY_TYPE;
@@ -53,7 +57,10 @@ import static org.egov.ptis.constants.PropertyTaxConstants.FLOOR_MAP;
 import static org.egov.ptis.constants.PropertyTaxConstants.GUARDIAN_RELATION;
 import static org.egov.ptis.constants.PropertyTaxConstants.LOCALITY;
 import static org.egov.ptis.constants.PropertyTaxConstants.LOCATION_HIERARCHY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.NEW_ASSESSMENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.NON_VAC_LAND_PROPERTY_TYPE_CATEGORY;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_PRIVATE;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_STATE_GOVT;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_STATUS_WORKFLOW;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN;
@@ -63,6 +70,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYP
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_BILL_NOTCREATED;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_DEMAND_INACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_YES_XML_MIGRATION;
+import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.VAC_LAND_PROPERTY_TYPE_CATEGORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.WARD;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
@@ -73,7 +81,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
+import java.util.SortedMap;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -109,20 +117,24 @@ import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
 import org.egov.ptis.domain.entity.property.BuiltUpProperty;
 import org.egov.ptis.domain.entity.property.DocumentType;
+import org.egov.ptis.domain.entity.property.Floor;
 import org.egov.ptis.domain.entity.property.FloorType;
 import org.egov.ptis.domain.entity.property.PropertyAddress;
 import org.egov.ptis.domain.entity.property.PropertyDepartment;
+import org.egov.ptis.domain.entity.property.PropertyDetail;
 import org.egov.ptis.domain.entity.property.PropertyID;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyMutationMaster;
 import org.egov.ptis.domain.entity.property.PropertyOccupation;
 import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.domain.entity.property.PropertyStatus;
+import org.egov.ptis.domain.entity.property.PropertyStatusValues;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.egov.ptis.domain.entity.property.PropertyUsage;
 import org.egov.ptis.domain.entity.property.RoofType;
 import org.egov.ptis.domain.entity.property.StructureClassification;
 import org.egov.ptis.domain.entity.property.TaxExemptionReason;
+import org.egov.ptis.domain.entity.property.VacantProperty;
 import org.egov.ptis.domain.entity.property.WallType;
 import org.egov.ptis.domain.entity.property.WoodType;
 import org.egov.ptis.domain.entity.property.vacantland.LayoutApprovalAuthority;
@@ -143,14 +155,17 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
 @ResultPath("/WEB-INF/jsp/")
 @Results({ @Result(name = CreateAction.NEW, location = "citizen/create/create-new.jsp"),
         @Result(name = CreateAction.RESULT_ACK, location = "citizen/create/create-ack.jsp"),
-        @Result(name = CreateAction.PRINTACK, location = "citizen/create/create-printAck.jsp") })
+        @Result(name = CreateAction.PRINT_ACK, location = "citizen/create/create-printAck.jsp") })
 public class CreateAction extends PropertyTaxBaseAction {
 
+    private static final String USAGE_LIST = "UsageList";
+    private static final String TAX_EXEMPTED_LIST = "taxExemptedList";
     private static final long serialVersionUID = -2329719786287615452L;
+    private static final String ONLINE = "online";
     public static final String RESULT_ACK = "ack";
-    public static final String PRINTACK = "printAck";
+    public static final String PRINT_ACK = "printAck";
     private static final String PROPTYPEMASTER_QUERY = "from PropertyTypeMaster ptm where ptm.id = ?";
-    private final Logger LOGGER = Logger.getLogger(getClass());
+    private final Logger logger = Logger.getLogger(getClass());
     private PropertyImpl property = new PropertyImpl();
 
     private Long zoneId;
@@ -198,7 +213,7 @@ public class CreateAction extends PropertyTaxBaseAction {
     private String applicationSource;
     private Long mutationId;
     private Map<String, String> propTypeCategoryMap;
-    private TreeMap<Integer, String> floorNoMap;
+    private SortedMap<Integer, String> floorNoMap;
     private Map<String, String> deviationPercentageMap;
     private Map<String, String> guardianRelationMap;
     private List<DocumentType> documentTypes = new ArrayList<>();
@@ -218,6 +233,7 @@ public class CreateAction extends PropertyTaxBaseAction {
     private List<DocumentType> assessmentDocumentTypes = new ArrayList<>();
     private List<String> assessmentDocumentNames;
     private transient DocumentTypeDetails documentTypeDetails = new DocumentTypeDetails();
+    private boolean floorDetailsEntered;
 
     @Autowired
     private PropertyPersistenceService basicPropertyService;
@@ -264,8 +280,8 @@ public class CreateAction extends PropertyTaxBaseAction {
     @SuppressWarnings("unchecked")
     @SkipValidation
     public void prepare() {
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Entered into prepare, ModelId: " + getModelId() + ", PropTypeId: " + propTypeId
+        if (logger.isDebugEnabled())
+            logger.debug("Entered into prepare, ModelId: " + getModelId() + ", PropTypeId: " + propTypeId
                     + ", ZoneId: " + zoneId + ", WardId: " + wardId);
         ApplicationThreadLocals.setUserId(2L);
         setUserInfo();
@@ -276,8 +292,8 @@ public class CreateAction extends PropertyTaxBaseAction {
                     Long.valueOf(getModelId()));
 
             basicProp = property.getBasicProperty();
-            if (LOGGER.isDebugEnabled())
-                LOGGER.debug("prepare: Property by ModelId: " + property + "BasicProperty on property: " + basicProp);
+            if (logger.isDebugEnabled())
+                logger.debug("prepare: Property by ModelId: " + property + "BasicProperty on property: " + basicProp);
         }
 
         documentTypes = propService.getDocumentTypesForTransactionType(TransactionType.CREATE);
@@ -296,7 +312,7 @@ public class CreateAction extends PropertyTaxBaseAction {
                 "from PropertyUsage where isActive = true order by usageName");
 
         final List<String> ageFacList = getPersistenceService().findAllBy("from DepreciationMaster");
-        final List<String> StructureList = getPersistenceService().findAllBy(
+        final List<String> structureList = getPersistenceService().findAllBy(
                 "from StructureClassification where isActive = true order by typeName ");
         final List<String> apartmentsList = getPersistenceService().findAllBy("from Apartment order by name");
         final List<String> taxExemptionReasonList = getPersistenceService().findAllBy(
@@ -313,9 +329,9 @@ public class CreateAction extends PropertyTaxBaseAction {
                         ELECTION_HIERARCHY_TYPE);
 
         addDropdownData("zones", zones);
-        addDropdownData("wards", Collections.EMPTY_LIST);
-        addDropdownData("blocks", Collections.EMPTY_LIST);
-        addDropdownData("streets", Collections.EMPTY_LIST);
+        addDropdownData("wards", Collections.emptyList());
+        addDropdownData("blocks", Collections.emptyList());
+        addDropdownData("streets", Collections.emptyList());
         setDeviationPercentageMap(DEVIATION_PERCENTAGE);
         setGuardianRelationMap(GUARDIAN_RELATION);
         addDropdownData("PropTypeMaster", propTypeList);
@@ -326,16 +342,16 @@ public class CreateAction extends PropertyTaxBaseAction {
         addDropdownData("apartments", apartmentsList);
 
         addDropdownData("OccupancyList", propOccList);
-        addDropdownData("StructureList", StructureList);
+        addDropdownData("StructureList", structureList);
         addDropdownData("AgeFactorList", ageFacList);
         addDropdownData("MutationList", mutationList);
-        addDropdownData("LocationFactorList", Collections.EMPTY_LIST);
+        addDropdownData("LocationFactorList", Collections.emptyList());
         setFloorNoMap(FLOOR_MAP);
         addDropdownData("localityList", localityList);
         addDropdownData("electionWardList", electionWardList);
         addDropdownData("enumerationBlockList", enumerationBlockList);
         addDropdownData("taxExemptionReasonList", taxExemptionReasonList);
-        if (propTypeId != null && !propTypeId.trim().isEmpty() && !propTypeId.equals("-1")) {
+        if (propTypeId != null && !propTypeId.trim().isEmpty() && !"-1".equals(propTypeId)) {
             propTypeMstr = (PropertyTypeMaster) getPersistenceService().find(
                     PROPTYPEMASTER_QUERY, Long.valueOf(propTypeId));
             if (propTypeMstr.getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
@@ -343,10 +359,10 @@ public class CreateAction extends PropertyTaxBaseAction {
             else
                 setPropTypeCategoryMap(NON_VAC_LAND_PROPERTY_TYPE_CATEGORY);
         } else
-            setPropTypeCategoryMap(Collections.EMPTY_MAP);
+            setPropTypeCategoryMap(Collections.emptyMap());
 
         // Loading property usages based on property category
-        if (StringUtils.isNoneBlank(propertyCategory)) {
+        if (StringUtils.isNoneBlank(propertyCategory))
             if (propertyCategory.equals(CATEGORY_MIXED))
                 usageList = getPersistenceService().findAllBy("From PropertyUsage order by usageName");
             else if (propertyCategory.equals(CATEGORY_RESIDENTIAL))
@@ -355,11 +371,10 @@ public class CreateAction extends PropertyTaxBaseAction {
             else if (propertyCategory.equals(CATEGORY_NON_RESIDENTIAL))
                 usageList = getPersistenceService().findAllBy(
                         "From PropertyUsage where isResidential = false order by usageName");
-        }
 
-        addDropdownData("UsageList", usageList);
+        addDropdownData(USAGE_LIST, usageList);
         // tax exempted properties
-        addDropdownData("taxExemptedList", CommonServices.getTaxExemptedList());
+        addDropdownData(TAX_EXEMPTED_LIST, CommonServices.getTaxExemptedList());
 
         // Loading Property Department based on ownership of property
 
@@ -378,8 +393,8 @@ public class CreateAction extends PropertyTaxBaseAction {
         setAssessmentDocumentNames(PropertyTaxConstants.ASSESSMENT_DOCUMENT_NAMES);
         addDropdownData("assessmentDocumentNameList", assessmentDocumentNames);
         super.prepare();
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("prepare: PropTypeList: "
+        if (logger.isDebugEnabled())
+            logger.debug("prepare: PropTypeList: "
                     + (propTypeList != null ? propTypeList : "NULL")
                     + ", PropOccuList: "
                     + (propOccList != null ? propOccList : "NLL")
@@ -388,27 +403,26 @@ public class CreateAction extends PropertyTaxBaseAction {
                     + ", AgeFactList: "
                     + (ageFacList != null ? ageFacList : "NULL")
                     + "UsageList: "
-                    + (getDropdownData().get("UsageList") != null ? getDropdownData().get("UsageList") : "List is NULL")
+                    + (getDropdownData().get(USAGE_LIST) != null ? getDropdownData().get(USAGE_LIST) : "List is NULL")
                     + ", TaxExemptedReasonList: "
-                    + (getDropdownData().get("taxExemptedList") != null ? getDropdownData().get("taxExemptedList")
+                    + (getDropdownData().get(TAX_EXEMPTED_LIST) != null ? getDropdownData().get(TAX_EXEMPTED_LIST)
                             : "List is NULL"));
 
-        LOGGER.debug("Exiting from prepare");
+        logger.debug("Exiting from prepare");
     }
 
     @Override
     public void validate() {
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Entered into validate\nZoneId: " + zoneId + ", WardId: " + wardId + ", AreadId: " + blockId
+        if (logger.isDebugEnabled())
+            logger.debug("Entered into validate\nZoneId: " + zoneId + ", WardId: " + wardId + ", AreadId: " + blockId
                     + ", HouseNumber: " + houseNumber + ", PinCode: " + pinCode + ", MutationId: " + mutationId);
 
         if (locality == null || locality == -1)
             addActionError(getText("mandatory.localityId"));
 
-        if (null != propTypeId && !propTypeId.equals("-1")) {
+        if (null != propTypeId && !"-1".equals(propTypeId))
             propTypeMstr = (PropertyTypeMaster) getPersistenceService().find(
                     PROPTYPEMASTER_QUERY, Long.valueOf(propTypeId));
-        }
         if (zoneId == null || zoneId == -1)
             addActionError(getText("mandatory.zone"));
         if (wardId == null || wardId == -1)
@@ -425,9 +439,8 @@ public class CreateAction extends PropertyTaxBaseAction {
                             .equalsIgnoreCase(WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING))
                 addActionError(getText("mandatory.doorNo"));
 
-        if (electionWardId == null || electionWardId == -1) {
+        if (electionWardId == null || electionWardId == -1)
             addActionError(getText("mandatory.election.ward"));
-        }
         for (final PropertyOwnerInfo owner : property.getBasicProperty().getPropertyOwnerInfoProxy())
             if (owner != null) {
                 if (StringUtils.isBlank(owner.getOwner().getName()))
@@ -442,26 +455,24 @@ public class CreateAction extends PropertyTaxBaseAction {
                     addActionError(getText("mandatory.guardian"));
             }
 
-        int count = property.getBasicProperty().getPropertyOwnerInfoProxy().size();
+        final int count = property.getBasicProperty().getPropertyOwnerInfoProxy().size();
         for (int i = 0; i < count; i++) {
-            PropertyOwnerInfo owner = property.getBasicProperty().getPropertyOwnerInfoProxy().get(i);
-            if (owner != null) {
+            final PropertyOwnerInfo owner = property.getBasicProperty().getPropertyOwnerInfoProxy().get(i);
+            if (owner != null)
                 for (int j = i + 1; j <= count - 1; j++) {
-                    PropertyOwnerInfo owner1 = property.getBasicProperty().getPropertyOwnerInfoProxy().get(j);
-                    if (owner1 != null) {
+                    final PropertyOwnerInfo owner1 = property.getBasicProperty().getPropertyOwnerInfoProxy().get(j);
+                    if (owner1 != null)
                         if (owner.getOwner().getMobileNumber().equalsIgnoreCase(owner1.getOwner().getMobileNumber())
-                                && owner.getOwner().getName().equalsIgnoreCase(owner1.getOwner().getName())) {
+                                && owner.getOwner().getName().equalsIgnoreCase(owner1.getOwner().getName()))
                             addActionError(getText("error.owner.duplicateMobileNo", "", owner.getOwner()
                                     .getMobileNumber().concat(",").concat(owner.getOwner().getName())));
-                        }
-                    }
                 }
-            }
         }
 
         validateProperty(property, areaOfPlot, dateOfCompletion, eastBoundary, westBoundary, southBoundary,
-                northBoundary, propTypeId, (null != zoneId && zoneId != -1) ? String.valueOf(zoneId) : "", propOccId,
-                floorTypeId, roofTypeId, wallTypeId, woodTypeId, null, null, vacantLandPlotAreaId, layoutApprovalAuthorityId, null);
+                northBoundary, propTypeId, null != zoneId && zoneId != -1 ? String.valueOf(zoneId) : "", propOccId,
+                floorTypeId, roofTypeId, wallTypeId, woodTypeId, null, null, vacantLandPlotAreaId, layoutApprovalAuthorityId,
+                null);
 
         if (isBlank(pinCode))
             addActionError(getText("mandatory.pincode"));
@@ -501,52 +512,60 @@ public class CreateAction extends PropertyTaxBaseAction {
         } else
             addActionError(getText("mandatory.createRsn"));
 
-        PropertyID propertyid = new PropertyID();
+        final PropertyID propertyid = new PropertyID();
         propertyid.setElectionBoundary(boundaryService.getBoundaryById(getElectionWardId()));
         property.getBasicProperty().setPropertyID(propertyid);
         if (null != getElectionWardId() && getElectionWardId() != -1 && null != property.getBasicProperty()
-                && null == propService.getUserPositionByZone(property.getBasicProperty(), false)) {
+                && null == propService.getUserPositionByZone(property.getBasicProperty(), false))
             addActionError(getText("notexists.position"));
-        }
-        validateDocumentDetails(getDocumentTypeDetails());
+        if (!(StringUtils.isBlank(applicationSource) || applicationSource.equalsIgnoreCase(ONLINE)))
+            validateDocumentDetails(getDocumentTypeDetails());
         super.validate();
     }
 
     @SkipValidation
     @Action(value = "/create-newForm")
     public String newForm() {
-        if (StringUtils.isBlank(applicationSource) || !applicationSource.equalsIgnoreCase("online")) {
+        if (StringUtils.isBlank(applicationSource) || !applicationSource.equalsIgnoreCase(ONLINE))
             addActionError(getText("citizen.unAuthorized.user.error"));
-        }
         return NEW;
     }
 
     @Action(value = "/create-create")
     public String create() {
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("create: Property creation started, Property: " + property + ", zoneId: " + zoneId
+        if (logger.isDebugEnabled())
+            logger.debug("create: Property creation started, Property: " + property + ", zoneId: " + zoneId
                     + ", wardId: " + wardId + ", blockId: " + blockId + ", areaOfPlot: " + areaOfPlot
                     + ", dateOfCompletion: " + dateOfCompletion + ", propTypeId: " + propTypeId + ", propUsageId: "
                     + propUsageId + ", propOccId: " + propOccId);
-        if (StringUtils.isBlank(applicationSource) || !applicationSource.equalsIgnoreCase("online")) {
+        if (StringUtils.isBlank(applicationSource) || !applicationSource.equalsIgnoreCase(ONLINE))
             throw new ValidationException(new ValidationError("authenticationError",
                     getText("citizen.unAuthorized.user.error")));
-        }
 
         final long startTimeMillis = System.currentTimeMillis();
+
+        if (property.getPropertyDetail().isAppurtenantLandChecked()) {
+            propTypeMstr = (PropertyTypeMaster) getPersistenceService().find(PROPTYPEMASTER_QUERY,
+                    Long.valueOf(propTypeId));
+            if (propTypeMstr.getCode().equals(OWNERSHIP_TYPE_VAC_LAND))
+                property.getPropertyDetail().setPropertyType(VACANT_PROPERTY);
+            else
+                property.getPropertyDetail().setPropertyType(PropertyTaxConstants.BUILT_UP_PROPERTY);
+            return createAppurTenantProperties(STATUS_DEMAND_INACTIVE);
+        }
 
         final BasicProperty basicProperty = createBasicProp(STATUS_DEMAND_INACTIVE);
         try {
             addDemandAndCompleteDate(STATUS_DEMAND_INACTIVE, basicProperty, basicProperty.getPropertyMutationMaster());
-        } catch (TaxCalculatorExeption e) {
+        } catch (final TaxCalculatorExeption e) {
             basicProperty.setPropertyOwnerInfoProxy(basicProperty.getPropertyOwnerInfo());
             addActionError(getText("unitrate.error"));
-            LOGGER.error("create : There are no Unit rates defined for chosen combinations", e);
+            logger.error("create : There are no Unit rates defined for chosen combinations", e);
             return NEW;
         }
         basicProperty.setUnderWorkflow(Boolean.TRUE);
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("create: BasicProperty after creation: " + basicProperty);
+        if (logger.isDebugEnabled())
+            logger.debug("create: BasicProperty after creation: " + basicProperty);
         basicProperty.setIsTaxXMLMigrated(STATUS_YES_XML_MIGRATION);
         // this should be appending to messgae
         transitionWorkFlow(property);
@@ -561,16 +580,21 @@ public class CreateAction extends PropertyTaxBaseAction {
         setApplicationNoMessage(" with application number : ");
 
         final long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.info("create: Property created successfully in system" + "; Time taken(ms) = " + elapsedTimeMillis);
-            LOGGER.debug("create: Property creation ended");
+        if (logger.isDebugEnabled()) {
+            logger.info("create: Property created successfully in system" + "; Time taken(ms) = " + elapsedTimeMillis);
+            logger.debug("create: Property creation ended");
         }
         return RESULT_ACK;
     }
 
+    @Override
+    public String getAdditionalRule() {
+        return NEW_ASSESSMENT;
+    }
+
     private BasicProperty createBasicProp(final Character status) {
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Entered into createBasicProp, Property: " + property + ", status: " + status + ", wardId: "
+        if (logger.isDebugEnabled())
+            logger.debug("Entered into createBasicProp, Property: " + property + ", status: " + status + ", wardId: "
                     + wardId);
 
         final BasicProperty basicProperty = new BasicPropertyImpl();
@@ -586,27 +610,34 @@ public class CreateAction extends PropertyTaxBaseAction {
         final PropertyMutationMaster propertyMutationMaster = (PropertyMutationMaster) getPersistenceService().find(
                 "from PropertyMutationMaster pmm where pmm.type=? AND pmm.id=?", PROP_CREATE_RSN, mutationId);
         basicProperty.setPropertyMutationMaster(propertyMutationMaster);
+        if (propertyMutationMaster.getCode().equals(PROP_CREATE_RSN_BIFUR)
+                || property.getPropertyDetail().isAppurtenantLandChecked())
+            basicProperty.addPropertyStatusValues(propService.createPropStatVal(basicProperty, PROP_CREATE_RSN, null,
+                    null, null, null, getParentIndex()));
         basicProperty.setBoundary(boundaryService.getBoundaryById(getElectionWardId()));
         basicProperty.setIsBillCreated(STATUS_BILL_NOTCREATED);
         basicProperty.setSource(PropertyTaxConstants.SOURCEOFDATA_ONLINE);
-        basicPropertyService.createOwners(property, basicProperty, ownerAddress);
-        property.setBasicProperty(basicProperty);
+        if (!property.getPropertyDetail().isAppurtenantLandChecked()) {
+            basicPropertyService.createOwners(property, basicProperty, ownerAddress);
+            property.setBasicProperty(basicProperty);
+        } else
+            basicPropertyService.createOwnersForAppurTenant(property, basicProperty, ownerAddress);
         property.setPropertyModifyReason(PROP_CREATE_RSN);
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("BasicProperty: " + basicProperty + "\nExiting from createBasicProp");
+        if (logger.isDebugEnabled())
+            logger.debug("BasicProperty: " + basicProperty + "\nExiting from createBasicProp");
         return basicProperty;
     }
 
     private void addDemandAndCompleteDate(final Character status, final BasicProperty basicProperty,
             final PropertyMutationMaster propertyMutationMaster) throws TaxCalculatorExeption {
-        taxExemptionId = (taxExemptionId == null || taxExemptionId.isEmpty()) ? "-1" : taxExemptionId;
+        taxExemptionId = taxExemptionId == null || taxExemptionId.isEmpty() ? "-1" : taxExemptionId;
         property = propService.createProperty(property, getAreaOfPlot(), propertyMutationMaster.getCode(), propTypeId,
                 propUsageId, propOccId, status, getDocNumber(), getNonResPlotArea(), getFloorTypeId(), getRoofTypeId(),
                 getWallTypeId(), getWoodTypeId(), Long.valueOf(taxExemptionId), getPropertyDepartmentId(), vacantLandPlotAreaId,
-                layoutApprovalAuthorityId);
+                layoutApprovalAuthorityId, Boolean.FALSE);
         property.setStatus(status);
 
-        LOGGER.debug("createBasicProp: Property after call to PropertyService.createProperty: " + property);
+        logger.debug("createBasicProp: Property after call to PropertyService.createProperty: " + property);
         if (!property.getPropertyDetail().getPropertyTypeMaster().getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
             propCompletionDate = propService.getLowestDtOfCompFloorWise(property.getPropertyDetail().getFloorDetails());
         else
@@ -618,22 +649,22 @@ public class CreateAction extends PropertyTaxBaseAction {
                 propService.processAndStoreDocument(property.getDocuments());
 
             propService.createDemand(property, propCompletionDate);
-        } catch (TaxCalculatorExeption e) {
+        } catch (final TaxCalculatorExeption e) {
             throw new TaxCalculatorExeption();
         }
     }
 
     private PropertyAddress createPropAddress() {
 
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Entered into createPropAddress, \nAreaId: " + getBlockId() + ", House Number: "
+        if (logger.isDebugEnabled())
+            logger.debug("Entered into createPropAddress, \nAreaId: " + getBlockId() + ", House Number: "
                     + getHouseNumber() + ", OldHouseNo: " + ", AddressStr: " + getAddressStr() + ", PinCode: "
                     + getPinCode());
 
         final Address propAddr = new PropertyAddress();
         propAddr.setHouseNoBldgApt(getHouseNumber());
         propAddr.setAreaLocalitySector(boundaryService.getBoundaryById(getLocality()).getName());
-        String cityName = ApplicationThreadLocals.getCityName();
+        final String cityName = ApplicationThreadLocals.getCityName();
         propAddr.setStreetRoadLine(boundaryService.getBoundaryById(getWardId()).getName());
         propAddr.setCityTownVillage(cityName);
 
@@ -655,8 +686,8 @@ public class CreateAction extends PropertyTaxBaseAction {
             ownerAddress.setCityTownVillage(cityName);
             ownerAddress.setPinCode(getCorrPinCode());
         }
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("PropertyAddress: " + propAddr + "\nExiting from createPropAddress");
+        if (logger.isDebugEnabled())
+            logger.debug("PropertyAddress: " + propAddr + "\nExiting from createPropAddress");
         return (PropertyAddress) propAddr;
     }
 
@@ -677,7 +708,7 @@ public class CreateAction extends PropertyTaxBaseAction {
         propertyId.setNorthBoundary(getNorthBoundary());
         propertyId.setSouthBoundary(getSouthBoundary());
         propertyId.setBasicProperty(basicProperty);
-        LOGGER.debug("PropertyID: " + propertyId + "\nExiting from createPropertyID");
+        logger.debug("PropertyID: " + propertyId + "\nExiting from createPropertyID");
         return propertyId;
     }
 
@@ -691,14 +722,199 @@ public class CreateAction extends PropertyTaxBaseAction {
         final String cityName = request.getSession().getAttribute("citymunicipalityname").toString();
         reportId = reportViewerUtil.addReportToTempCache(
                 basicPropertyService.propertyAcknowledgement(property, cityLogo, cityName));
-        return PRINTACK;
+        return PRINT_ACK;
     }
 
+    private String createAppurTenantProperties(final Character status) {
+        final BasicProperty nonVacantBasicProperty = createBasicProp(STATUS_DEMAND_INACTIVE);
+        updatePropertyStatusValuesRemarks(nonVacantBasicProperty);
+        PropertyImpl nonVacantProperty = null;
+        try {
+            nonVacantProperty = createNonVacantProperty(status, nonVacantBasicProperty);
+            final BasicProperty vacantBasicProperty = createBasicProp(STATUS_DEMAND_INACTIVE);
+            updatePropertyStatusValuesRefProperty(nonVacantBasicProperty, vacantBasicProperty);
+            createVacantProperty(status, nonVacantProperty, vacantBasicProperty);
+        } catch (final TaxCalculatorExeption e) {
+            nonVacantBasicProperty.setPropertyOwnerInfoProxy(nonVacantBasicProperty.getPropertyOwnerInfo());
+            addActionError(getText("unitrate.error"));
+            logger.error("create : There are no Unit rates defined for chosen combinations", e);
+            return NEW;
+        }
+        setBasicProp(nonVacantBasicProperty);
+        setAckMessage("Property Created Successfully in the System and Forwarded to : ");
+        setAssessmentNoMessage(" for Digital Signature with assessment number : ");
+        return RESULT_ACK;
+    }
+
+    private PropertyImpl createNonVacantProperty(final Character status, final BasicProperty nonVacantBasicProperty)
+            throws TaxCalculatorExeption {
+        final PropertyImpl nonVacantProperty = createAppurTenantProperty(status, nonVacantBasicProperty, Boolean.TRUE);
+        persistAndMessage(nonVacantBasicProperty, nonVacantProperty);
+        return nonVacantProperty;
+    }
+
+    private void createVacantProperty(final Character status, final PropertyImpl nonVacantProperty,
+            final BasicProperty vacantBasicProperty)
+            throws TaxCalculatorExeption {
+        final PropertyImpl vacantProperty = createAppurTenantProperty(status, vacantBasicProperty, Boolean.FALSE);
+        vacantProperty.setPropertyDetail(changePropertyDetail(vacantProperty));
+        vacantProperty.getPropertyDetail().setCategoryType(getCategoryByNonVacantPropertyType(nonVacantProperty));
+        vacantProperty.getPropertyDetail().setAppurtenantLandChecked(null);
+        vacantBasicProperty.getAddress().setHouseNoBldgApt(null);
+        persistAndMessage(vacantBasicProperty, vacantProperty);
+    }
+
+    private void updatePropertyStatusValuesRefProperty(final BasicProperty nonVacantBasicProperty,
+            final BasicProperty vacantBasicProperty) {
+        final PropertyStatusValues propStatusVal = updatePropertyStatusValuesRemarks(vacantBasicProperty);
+        propStatusVal.setReferenceBasicProperty(nonVacantBasicProperty);
+    }
+
+    private PropertyStatusValues updatePropertyStatusValuesRemarks(final BasicProperty basicProperty) {
+        final PropertyStatusValues propStatusVal = basicProperty.getPropertyStatusValuesSet()
+                .iterator().next();
+        propStatusVal.setRemarks(APPURTENANT_PROPERTY);
+        return propStatusVal;
+    }
+
+    private String getCategoryByNonVacantPropertyType(final PropertyImpl nonVacantProperty) {
+        final String propertyType = nonVacantProperty.getPropertyDetail().getPropertyTypeMaster().getCode();
+        return OWNERSHIP_TYPE_PRIVATE.equals(propertyType)
+                || OWNERSHIP_TYPE_VAC_LAND.equals(propertyType) ? CATEGORY_VACANT_LAND
+                        : OWNERSHIP_TYPE_STATE_GOVT.equals(propertyType) ? CATEGORY_STATE_GOVT
+                                : CATEGORY_CENTRAL_GOVT;
+    }
+
+    private void persistAndMessage(final BasicProperty basicProperty, final PropertyImpl property) {
+        basicPropertyService.persist(basicProperty);
+        buildEmailandSms(property, APPLICATION_TYPE_NEW_ASSESSENT);
+        final DocumentTypeDetails docTypeDetails = cloneDocumentTypeDetails();
+        propService.saveDocumentTypeDetails(basicProperty, docTypeDetails);
+    }
+
+    private DocumentTypeDetails cloneDocumentTypeDetails() {
+        final DocumentTypeDetails docTypeDetails = new DocumentTypeDetails();
+        docTypeDetails.setCourtName(documentTypeDetails.getCourtName());
+        docTypeDetails.setDocumentNo(documentTypeDetails.getDocumentNo());
+        docTypeDetails.setDocumentDate(documentTypeDetails.getDocumentDate());
+        docTypeDetails.setDocumentName(documentTypeDetails.getDocumentName());
+        docTypeDetails.setProceedingNo(documentTypeDetails.getProceedingNo());
+        docTypeDetails.setProceedingDate(documentTypeDetails.getProceedingDate());
+        docTypeDetails.setSigned(documentTypeDetails.isSigned());
+        return docTypeDetails;
+    }
+
+    private PropertyImpl createAppurTenantProperty(final Character status, final BasicProperty basicProperty,
+            final Boolean nonVacant) throws TaxCalculatorExeption {
+        PropertyImpl clonedProp = (PropertyImpl) property.createPropertyclone();
+        if (nonVacant) {
+            final List<Floor> flrDtlsSet = cloneFloorDetails();
+            clonedProp.getPropertyDetail().setFloorDetailsProxy(flrDtlsSet);
+        }
+        clonedProp.setBasicProperty(basicProperty);
+        clonedProp.setPropertyModifyReason(PROP_CREATE_RSN);
+
+        taxExemptionId = taxExemptionId == null || taxExemptionId.isEmpty() ? "-1" : taxExemptionId;
+        clonedProp = propService.createProperty(clonedProp, getAreaOfPlot(),
+                basicProperty.getPropertyMutationMaster().getCode(),
+                propTypeId,
+                propUsageId, propOccId, status, getDocNumber(), getNonResPlotArea(), getFloorTypeId(), getRoofTypeId(),
+                getWallTypeId(), getWoodTypeId(), Long.valueOf(taxExemptionId), getPropertyDepartmentId(),
+                getVacantLandPlotAreaId(), getLayoutApprovalAuthorityId(), nonVacant);
+        clonedProp.setStatus(status);
+        if (!clonedProp.getPropertyDetail().getPropertyTypeMaster().getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
+            propCompletionDate = propService.getLowestDtOfCompFloorWise(clonedProp.getPropertyDetail().getFloorDetails());
+        else
+            propCompletionDate = clonedProp.getPropertyDetail().getDateOfCompletion();
+        basicProperty.setPropOccupationDate(propCompletionDate);
+        if (propTypeMstr != null && propTypeMstr.getCode().equals(OWNERSHIP_TYPE_VAC_LAND))
+            clonedProp.setPropertyDetail(changePropertyDetail(clonedProp));
+        basicProperty.addProperty(clonedProp);
+        if (basicProperty.getSource() == PropertyTaxConstants.SOURCEOFDATA_APPLICATION) {
+            if (!clonedProp.getDocuments().isEmpty())
+                propService.processAndStoreDocument(clonedProp.getDocuments());
+
+            propService.createDemand(clonedProp, propCompletionDate);
+        }
+        basicProperty.setUnderWorkflow(Boolean.TRUE);
+        basicProperty.setIsTaxXMLMigrated(STATUS_YES_XML_MIGRATION);
+        transitionWorkFlow(clonedProp);
+        basicPropertyService.applyAuditing(clonedProp.getState());
+        propService.updateIndexes(clonedProp, APPLICATION_TYPE_NEW_ASSESSENT);
+        propService.processAndStoreDocument(clonedProp.getAssessmentDocuments());
+        return clonedProp;
+    }
+
+    private List<Floor> cloneFloorDetails() {
+        Floor floor;
+        final List<Floor> flrDtlsSet = new ArrayList<>();
+        for (final Floor flr : property.getPropertyDetail().getFloorDetailsProxy()) {
+            floor = new Floor(flr.getConstructionTypeSet(), flr.getStructureClassification(), flr.getPropertyUsage(),
+                    flr.getPropertyOccupation(), flr.getFloorNo(), flr.getDepreciationMaster(), flr.getBuiltUpArea(),
+                    flr.getFloorArea(), flr.getWaterMeter(), flr.getElectricMeter(), null, null, flr.getRentPerMonth(),
+                    flr.getManualAlv(), flr.getUnitType(), flr.getUnitTypeCategory(), flr.getWaterRate(), flr.getAlv(),
+                    flr.getOccupancyDate(), flr.getOccupantName(), flr.getUnstructuredLand(), flr.getFloorDmdCalc(),
+                    flr.getFirmName(), flr.getBuildingPermissionNo(), flr.getBuildingPermissionDate(),
+                    flr.getBuildingPlanPlinthArea(), flr.getFloorUid(), flr.getConstructionDate());
+            flrDtlsSet.add(floor);
+        }
+        return flrDtlsSet;
+    }
+
+    /**
+     * Changes the property details from {@link BuiltUpProperty} to {@link VacantProperty}
+     *
+     * @return vacant property details
+     * @see org.egov.ptis.domain.entity.property.VacantProperty
+     */
+
+    private VacantProperty changePropertyDetail(final PropertyImpl property) {
+
+        logger.debug("Entered into changePropertyDetail, Property is Vacant land");
+
+        final PropertyDetail propertyDetail = property.getPropertyDetail();
+        if (getDocumentTypeDetails().getDocumentName() != null
+                && getDocumentTypeDetails().getDocumentName().equals(PropertyTaxConstants.DOCUMENT_NAME_NOTARY_DOCUMENT))
+            propertyDetail.setStructure(true);
+        final VacantProperty vacantProperty = new VacantProperty(propertyDetail.getSitalArea(),
+                propertyDetail.getTotalBuiltupArea(), propertyDetail.getCommBuiltUpArea(),
+                propertyDetail.getPlinthArea(), propertyDetail.getCommVacantLand(), propertyDetail.getNonResPlotArea(),
+                false, propertyDetail.getSurveyNumber(), propertyDetail.getFieldVerified(),
+                propertyDetail.getFieldVerificationDate(), propertyDetail.getFloorDetails(),
+                propertyDetail.getPropertyDetailsID(), propertyDetail.getWater_Meter_Num(),
+                propertyDetail.getElec_Meter_Num(), 0, propertyDetail.getFieldIrregular(),
+                propertyDetail.getDateOfCompletion(), propertyDetail.getProperty(), propertyDetail.getUpdatedTime(),
+                propertyDetail.getPropertyUsage(), null, propertyDetail.getPropertyTypeMaster(),
+                propertyDetail.getPropertyType(), propertyDetail.getInstallment(),
+                propertyDetail.getPropertyOccupation(), propertyDetail.getPropertyMutationMaster(),
+                propertyDetail.getComZone(), propertyDetail.getCornerPlot(),
+                propertyDetail.getExtentSite() != null ? propertyDetail.getExtentSite() : 0.0,
+                propertyDetail.getExtentAppartenauntLand() != null ? propertyDetail.getExtentAppartenauntLand() : 0.0,
+                propertyDetail.getFloorType(), propertyDetail.getRoofType(), propertyDetail.getWallType(),
+                propertyDetail.getWoodType(), propertyDetail.isLift(), propertyDetail.isToilets(),
+                propertyDetail.isWaterTap(), propertyDetail.isStructure(), propertyDetail.isElectricity(),
+                propertyDetail.isAttachedBathRoom(), propertyDetail.isWaterHarvesting(), propertyDetail.isCable(),
+                propertyDetail.getSiteOwner(), propertyDetail.getPattaNumber(), propertyDetail.getCurrentCapitalValue(),
+                propertyDetail.getMarketValue(), propertyDetail.getCategoryType(),
+                propertyDetail.getOccupancyCertificationNo(), propertyDetail.isAppurtenantLandChecked(),
+                propertyDetail.isCorrAddressDiff(), propertyDetail.getPropertyDepartment(),
+                propertyDetail.getVacantLandPlotArea(), propertyDetail.getLayoutApprovalAuthority(),
+                propertyDetail.getLayoutPermitNo(), propertyDetail.getLayoutPermitDate());
+
+        vacantProperty.setManualAlv(propertyDetail.getManualAlv());
+        vacantProperty.setOccupierName(propertyDetail.getOccupierName());
+
+        logger.debug("Exiting from changePropertyDetail");
+        return vacantProperty;
+    }
+
+    @Override
     public PropertyImpl getProperty() {
         return property;
     }
 
-    public void setProperty(PropertyImpl property) {
+    @Override
+    public void setProperty(final PropertyImpl property) {
         this.property = property;
     }
 
@@ -706,7 +922,7 @@ public class CreateAction extends PropertyTaxBaseAction {
         return zoneId;
     }
 
-    public void setZoneId(Long zoneId) {
+    public void setZoneId(final Long zoneId) {
         this.zoneId = zoneId;
     }
 
@@ -714,7 +930,7 @@ public class CreateAction extends PropertyTaxBaseAction {
         return wardId;
     }
 
-    public void setWardId(Long wardId) {
+    public void setWardId(final Long wardId) {
         this.wardId = wardId;
     }
 
@@ -722,7 +938,7 @@ public class CreateAction extends PropertyTaxBaseAction {
         return blockId;
     }
 
-    public void setBlockId(Long blockId) {
+    public void setBlockId(final Long blockId) {
         this.blockId = blockId;
     }
 
@@ -730,7 +946,7 @@ public class CreateAction extends PropertyTaxBaseAction {
         return streetId;
     }
 
-    public void setStreetId(Long streetId) {
+    public void setStreetId(final Long streetId) {
         this.streetId = streetId;
     }
 
@@ -738,7 +954,7 @@ public class CreateAction extends PropertyTaxBaseAction {
         return locality;
     }
 
-    public void setLocality(Long locality) {
+    public void setLocality(final Long locality) {
         this.locality = locality;
     }
 
@@ -746,7 +962,7 @@ public class CreateAction extends PropertyTaxBaseAction {
         return floorTypeId;
     }
 
-    public void setFloorTypeId(Long floorTypeId) {
+    public void setFloorTypeId(final Long floorTypeId) {
         this.floorTypeId = floorTypeId;
     }
 
@@ -754,7 +970,7 @@ public class CreateAction extends PropertyTaxBaseAction {
         return roofTypeId;
     }
 
-    public void setRoofTypeId(Long roofTypeId) {
+    public void setRoofTypeId(final Long roofTypeId) {
         this.roofTypeId = roofTypeId;
     }
 
@@ -762,7 +978,7 @@ public class CreateAction extends PropertyTaxBaseAction {
         return wallTypeId;
     }
 
-    public void setWallTypeId(Long wallTypeId) {
+    public void setWallTypeId(final Long wallTypeId) {
         this.wallTypeId = wallTypeId;
     }
 
@@ -770,7 +986,7 @@ public class CreateAction extends PropertyTaxBaseAction {
         return woodTypeId;
     }
 
-    public void setWoodTypeId(Long woodTypeId) {
+    public void setWoodTypeId(final Long woodTypeId) {
         this.woodTypeId = woodTypeId;
     }
 
@@ -778,7 +994,7 @@ public class CreateAction extends PropertyTaxBaseAction {
         return ownershipType;
     }
 
-    public void setOwnershipType(Long ownershipType) {
+    public void setOwnershipType(final Long ownershipType) {
         this.ownershipType = ownershipType;
     }
 
@@ -786,7 +1002,7 @@ public class CreateAction extends PropertyTaxBaseAction {
         return electionWardId;
     }
 
-    public void setElectionWardId(Long electionWardId) {
+    public void setElectionWardId(final Long electionWardId) {
         this.electionWardId = electionWardId;
     }
 
@@ -794,7 +1010,7 @@ public class CreateAction extends PropertyTaxBaseAction {
         return wardName;
     }
 
-    public void setWardName(String wardName) {
+    public void setWardName(final String wardName) {
         this.wardName = wardName;
     }
 
@@ -802,7 +1018,7 @@ public class CreateAction extends PropertyTaxBaseAction {
         return zoneName;
     }
 
-    public void setZoneName(String zoneName) {
+    public void setZoneName(final String zoneName) {
         this.zoneName = zoneName;
     }
 
@@ -810,7 +1026,7 @@ public class CreateAction extends PropertyTaxBaseAction {
         return blockName;
     }
 
-    public void setBlockName(String blockName) {
+    public void setBlockName(final String blockName) {
         this.blockName = blockName;
     }
 
@@ -818,7 +1034,7 @@ public class CreateAction extends PropertyTaxBaseAction {
         return houseNumber;
     }
 
-    public void setHouseNumber(String houseNumber) {
+    public void setHouseNumber(final String houseNumber) {
         this.houseNumber = houseNumber;
     }
 
@@ -826,7 +1042,7 @@ public class CreateAction extends PropertyTaxBaseAction {
         return addressStr;
     }
 
-    public void setAddressStr(String addressStr) {
+    public void setAddressStr(final String addressStr) {
         this.addressStr = addressStr;
     }
 
@@ -834,7 +1050,7 @@ public class CreateAction extends PropertyTaxBaseAction {
         return pinCode;
     }
 
-    public void setPinCode(String pinCode) {
+    public void setPinCode(final String pinCode) {
         this.pinCode = pinCode;
     }
 
@@ -842,7 +1058,7 @@ public class CreateAction extends PropertyTaxBaseAction {
         return areaOfPlot;
     }
 
-    public void setAreaOfPlot(String areaOfPlot) {
+    public void setAreaOfPlot(final String areaOfPlot) {
         this.areaOfPlot = areaOfPlot;
     }
 
@@ -850,7 +1066,7 @@ public class CreateAction extends PropertyTaxBaseAction {
         return dateOfCompletion;
     }
 
-    public void setDateOfCompletion(String dateOfCompletion) {
+    public void setDateOfCompletion(final String dateOfCompletion) {
         this.dateOfCompletion = dateOfCompletion;
     }
 
@@ -858,7 +1074,7 @@ public class CreateAction extends PropertyTaxBaseAction {
         return applicationNo;
     }
 
-    public void setApplicationNo(String applicationNo) {
+    public void setApplicationNo(final String applicationNo) {
         this.applicationNo = applicationNo;
     }
 
@@ -866,7 +1082,7 @@ public class CreateAction extends PropertyTaxBaseAction {
         return corrAddress1;
     }
 
-    public void setCorrAddress1(String corrAddress1) {
+    public void setCorrAddress1(final String corrAddress1) {
         this.corrAddress1 = corrAddress1;
     }
 
@@ -874,7 +1090,7 @@ public class CreateAction extends PropertyTaxBaseAction {
         return corrAddress2;
     }
 
-    public void setCorrAddress2(String corrAddress2) {
+    public void setCorrAddress2(final String corrAddress2) {
         this.corrAddress2 = corrAddress2;
     }
 
@@ -882,7 +1098,7 @@ public class CreateAction extends PropertyTaxBaseAction {
         return corrPinCode;
     }
 
-    public void setCorrPinCode(String corrPinCode) {
+    public void setCorrPinCode(final String corrPinCode) {
         this.corrPinCode = corrPinCode;
     }
 
@@ -890,7 +1106,7 @@ public class CreateAction extends PropertyTaxBaseAction {
         return upicNo;
     }
 
-    public void setUpicNo(String upicNo) {
+    public void setUpicNo(final String upicNo) {
         this.upicNo = upicNo;
     }
 
@@ -898,7 +1114,7 @@ public class CreateAction extends PropertyTaxBaseAction {
         return taxExemptionId;
     }
 
-    public void setTaxExemptionId(String taxExemptionId) {
+    public void setTaxExemptionId(final String taxExemptionId) {
         this.taxExemptionId = taxExemptionId;
     }
 
@@ -906,7 +1122,7 @@ public class CreateAction extends PropertyTaxBaseAction {
         return parentIndex;
     }
 
-    public void setParentIndex(String parentIndex) {
+    public void setParentIndex(final String parentIndex) {
         this.parentIndex = parentIndex;
     }
 
@@ -914,7 +1130,7 @@ public class CreateAction extends PropertyTaxBaseAction {
         return amenities;
     }
 
-    public void setAmenities(String amenities) {
+    public void setAmenities(final String amenities) {
         this.amenities = amenities;
     }
 
@@ -922,7 +1138,7 @@ public class CreateAction extends PropertyTaxBaseAction {
         return floorNoStr;
     }
 
-    public void setFloorNoStr(String[] floorNoStr) {
+    public void setFloorNoStr(final String[] floorNoStr) {
         this.floorNoStr = floorNoStr;
     }
 
@@ -930,7 +1146,7 @@ public class CreateAction extends PropertyTaxBaseAction {
         return propTypeId;
     }
 
-    public void setPropTypeId(String propTypeId) {
+    public void setPropTypeId(final String propTypeId) {
         this.propTypeId = propTypeId;
     }
 
@@ -938,7 +1154,7 @@ public class CreateAction extends PropertyTaxBaseAction {
         return propUsageId;
     }
 
-    public void setPropUsageId(String propUsageId) {
+    public void setPropUsageId(final String propUsageId) {
         this.propUsageId = propUsageId;
     }
 
@@ -946,7 +1162,7 @@ public class CreateAction extends PropertyTaxBaseAction {
         return propOccId;
     }
 
-    public void setPropOccId(String propOccId) {
+    public void setPropOccId(final String propOccId) {
         this.propOccId = propOccId;
     }
 
@@ -954,7 +1170,7 @@ public class CreateAction extends PropertyTaxBaseAction {
         return propertyCategory;
     }
 
-    public void setPropertyCategory(String propertyCategory) {
+    public void setPropertyCategory(final String propertyCategory) {
         this.propertyCategory = propertyCategory;
     }
 
@@ -962,7 +1178,7 @@ public class CreateAction extends PropertyTaxBaseAction {
         return docNumber;
     }
 
-    public void setDocNumber(String docNumber) {
+    public void setDocNumber(final String docNumber) {
         this.docNumber = docNumber;
     }
 
@@ -970,7 +1186,7 @@ public class CreateAction extends PropertyTaxBaseAction {
         return nonResPlotArea;
     }
 
-    public void setNonResPlotArea(String nonResPlotArea) {
+    public void setNonResPlotArea(final String nonResPlotArea) {
         this.nonResPlotArea = nonResPlotArea;
     }
 
@@ -978,7 +1194,7 @@ public class CreateAction extends PropertyTaxBaseAction {
         return applicationNoMessage;
     }
 
-    public void setApplicationNoMessage(String applicationNoMessage) {
+    public void setApplicationNoMessage(final String applicationNoMessage) {
         this.applicationNoMessage = applicationNoMessage;
     }
 
@@ -986,7 +1202,7 @@ public class CreateAction extends PropertyTaxBaseAction {
         return assessmentNoMessage;
     }
 
-    public void setAssessmentNoMessage(String assessmentNoMessage) {
+    public void setAssessmentNoMessage(final String assessmentNoMessage) {
         this.assessmentNoMessage = assessmentNoMessage;
     }
 
@@ -994,7 +1210,7 @@ public class CreateAction extends PropertyTaxBaseAction {
         return propertyInitiatedBy;
     }
 
-    public void setPropertyInitiatedBy(String propertyInitiatedBy) {
+    public void setPropertyInitiatedBy(final String propertyInitiatedBy) {
         this.propertyInitiatedBy = propertyInitiatedBy;
     }
 
@@ -1002,7 +1218,7 @@ public class CreateAction extends PropertyTaxBaseAction {
         return northBoundary;
     }
 
-    public void setNorthBoundary(String northBoundary) {
+    public void setNorthBoundary(final String northBoundary) {
         this.northBoundary = northBoundary;
     }
 
@@ -1010,7 +1226,7 @@ public class CreateAction extends PropertyTaxBaseAction {
         return southBoundary;
     }
 
-    public void setSouthBoundary(String southBoundary) {
+    public void setSouthBoundary(final String southBoundary) {
         this.southBoundary = southBoundary;
     }
 
@@ -1018,7 +1234,7 @@ public class CreateAction extends PropertyTaxBaseAction {
         return eastBoundary;
     }
 
-    public void setEastBoundary(String eastBoundary) {
+    public void setEastBoundary(final String eastBoundary) {
         this.eastBoundary = eastBoundary;
     }
 
@@ -1026,7 +1242,7 @@ public class CreateAction extends PropertyTaxBaseAction {
         return westBoundary;
     }
 
-    public void setWestBoundary(String westBoundary) {
+    public void setWestBoundary(final String westBoundary) {
         this.westBoundary = westBoundary;
     }
 
@@ -1034,7 +1250,7 @@ public class CreateAction extends PropertyTaxBaseAction {
         return mutationId;
     }
 
-    public void setMutationId(Long mutationId) {
+    public void setMutationId(final Long mutationId) {
         this.mutationId = mutationId;
     }
 
@@ -1042,15 +1258,15 @@ public class CreateAction extends PropertyTaxBaseAction {
         return propTypeCategoryMap;
     }
 
-    public void setPropTypeCategoryMap(Map<String, String> propTypeCategoryMap) {
+    public void setPropTypeCategoryMap(final Map<String, String> propTypeCategoryMap) {
         this.propTypeCategoryMap = propTypeCategoryMap;
     }
 
-    public TreeMap<Integer, String> getFloorNoMap() {
+    public SortedMap<Integer, String> getFloorNoMap() {
         return floorNoMap;
     }
 
-    public void setFloorNoMap(TreeMap<Integer, String> floorNoMap) {
+    public void setFloorNoMap(final SortedMap<Integer, String> floorNoMap) {
         this.floorNoMap = floorNoMap;
     }
 
@@ -1058,7 +1274,7 @@ public class CreateAction extends PropertyTaxBaseAction {
         return deviationPercentageMap;
     }
 
-    public void setDeviationPercentageMap(Map<String, String> deviationPercentageMap) {
+    public void setDeviationPercentageMap(final Map<String, String> deviationPercentageMap) {
         this.deviationPercentageMap = deviationPercentageMap;
     }
 
@@ -1066,7 +1282,7 @@ public class CreateAction extends PropertyTaxBaseAction {
         return guardianRelationMap;
     }
 
-    public void setGuardianRelationMap(Map<String, String> guardianRelationMap) {
+    public void setGuardianRelationMap(final Map<String, String> guardianRelationMap) {
         this.guardianRelationMap = guardianRelationMap;
     }
 
@@ -1074,7 +1290,7 @@ public class CreateAction extends PropertyTaxBaseAction {
         return documentTypes;
     }
 
-    public void setDocumentTypes(List<DocumentType> documentTypes) {
+    public void setDocumentTypes(final List<DocumentType> documentTypes) {
         this.documentTypes = documentTypes;
     }
 
@@ -1082,7 +1298,7 @@ public class CreateAction extends PropertyTaxBaseAction {
         return reportId;
     }
 
-    public void setReportId(String reportId) {
+    public void setReportId(final String reportId) {
         this.reportId = reportId;
     }
 
@@ -1090,7 +1306,7 @@ public class CreateAction extends PropertyTaxBaseAction {
         return approved;
     }
 
-    public void setApproved(boolean approved) {
+    public void setApproved(final boolean approved) {
         this.approved = approved;
     }
 
@@ -1098,7 +1314,7 @@ public class CreateAction extends PropertyTaxBaseAction {
         return basicProp;
     }
 
-    public void setBasicProp(BasicProperty basicProp) {
+    public void setBasicProp(final BasicProperty basicProp) {
         this.basicProp = basicProp;
     }
 
@@ -1106,7 +1322,7 @@ public class CreateAction extends PropertyTaxBaseAction {
         return propTypeMstr;
     }
 
-    public void setPropTypeMstr(PropertyTypeMaster propTypeMstr) {
+    public void setPropTypeMstr(final PropertyTypeMaster propTypeMstr) {
         this.propTypeMstr = propTypeMstr;
     }
 
@@ -1114,7 +1330,7 @@ public class CreateAction extends PropertyTaxBaseAction {
         return newProperty;
     }
 
-    public void setNewProperty(PropertyImpl newProperty) {
+    public void setNewProperty(final PropertyImpl newProperty) {
         this.newProperty = newProperty;
     }
 
@@ -1122,7 +1338,7 @@ public class CreateAction extends PropertyTaxBaseAction {
         return ownerAddress;
     }
 
-    public void setOwnerAddress(Address ownerAddress) {
+    public void setOwnerAddress(final Address ownerAddress) {
         this.ownerAddress = ownerAddress;
     }
 
@@ -1130,11 +1346,11 @@ public class CreateAction extends PropertyTaxBaseAction {
         return propCompletionDate;
     }
 
-    public void setPropCompletionDate(Date propCompletionDate) {
+    public void setPropCompletionDate(final Date propCompletionDate) {
         this.propCompletionDate = propCompletionDate;
     }
 
-    public void setPropService(PropertyService propService) {
+    public void setPropService(final PropertyService propService) {
         this.propService = propService;
     }
 
@@ -1146,7 +1362,7 @@ public class CreateAction extends PropertyTaxBaseAction {
         return ackMessage;
     }
 
-    public void setAckMessage(String ackMessage) {
+    public void setAckMessage(final String ackMessage) {
         this.ackMessage = ackMessage;
     }
 
@@ -1154,7 +1370,7 @@ public class CreateAction extends PropertyTaxBaseAction {
         return applicationSource;
     }
 
-    public void setApplicationSource(String applicationSource) {
+    public void setApplicationSource(final String applicationSource) {
         this.applicationSource = applicationSource;
     }
 
@@ -1162,7 +1378,7 @@ public class CreateAction extends PropertyTaxBaseAction {
         return propertyDepartmentId;
     }
 
-    public void setPropertyDepartmentId(Long propertyDepartmentId) {
+    public void setPropertyDepartmentId(final Long propertyDepartmentId) {
         this.propertyDepartmentId = propertyDepartmentId;
     }
 
@@ -1170,7 +1386,7 @@ public class CreateAction extends PropertyTaxBaseAction {
         return vacantLandPlotAreaId;
     }
 
-    public void setVacantLandPlotAreaId(Long vacantLandPlotAreaId) {
+    public void setVacantLandPlotAreaId(final Long vacantLandPlotAreaId) {
         this.vacantLandPlotAreaId = vacantLandPlotAreaId;
     }
 
@@ -1178,7 +1394,7 @@ public class CreateAction extends PropertyTaxBaseAction {
         return layoutApprovalAuthorityId;
     }
 
-    public void setLayoutApprovalAuthorityId(Long layoutApprovalAuthorityId) {
+    public void setLayoutApprovalAuthorityId(final Long layoutApprovalAuthorityId) {
         this.layoutApprovalAuthorityId = layoutApprovalAuthorityId;
     }
 
@@ -1186,7 +1402,7 @@ public class CreateAction extends PropertyTaxBaseAction {
         return propertyDepartmentList;
     }
 
-    public void setPropertyDepartmentList(List<PropertyDepartment> propertyDepartmentList) {
+    public void setPropertyDepartmentList(final List<PropertyDepartment> propertyDepartmentList) {
         this.propertyDepartmentList = propertyDepartmentList;
     }
 
@@ -1194,7 +1410,7 @@ public class CreateAction extends PropertyTaxBaseAction {
         return vacantLandPlotAreaList;
     }
 
-    public void setVacantLandPlotAreaList(List<VacantLandPlotArea> vacantLandPlotAreaList) {
+    public void setVacantLandPlotAreaList(final List<VacantLandPlotArea> vacantLandPlotAreaList) {
         this.vacantLandPlotAreaList = vacantLandPlotAreaList;
     }
 
@@ -1202,7 +1418,7 @@ public class CreateAction extends PropertyTaxBaseAction {
         return layoutApprovalAuthorityList;
     }
 
-    public void setLayoutApprovalAuthorityList(List<LayoutApprovalAuthority> layoutApprovalAuthorityList) {
+    public void setLayoutApprovalAuthorityList(final List<LayoutApprovalAuthority> layoutApprovalAuthorityList) {
         this.layoutApprovalAuthorityList = layoutApprovalAuthorityList;
     }
 
@@ -1210,7 +1426,7 @@ public class CreateAction extends PropertyTaxBaseAction {
         return assessmentDocumentTypes;
     }
 
-    public void setAssessmentDocumentTypes(List<DocumentType> assessmentDocumentTypes) {
+    public void setAssessmentDocumentTypes(final List<DocumentType> assessmentDocumentTypes) {
         this.assessmentDocumentTypes = assessmentDocumentTypes;
     }
 
@@ -1218,7 +1434,7 @@ public class CreateAction extends PropertyTaxBaseAction {
         return assessmentDocumentNames;
     }
 
-    public void setAssessmentDocumentNames(List<String> assessmentDocumentNames) {
+    public void setAssessmentDocumentNames(final List<String> assessmentDocumentNames) {
         this.assessmentDocumentNames = assessmentDocumentNames;
     }
 
@@ -1226,8 +1442,16 @@ public class CreateAction extends PropertyTaxBaseAction {
         return documentTypeDetails;
     }
 
-    public void setDocumentTypeDetails(DocumentTypeDetails documentTypeDetails) {
+    public void setDocumentTypeDetails(final DocumentTypeDetails documentTypeDetails) {
         this.documentTypeDetails = documentTypeDetails;
+    }
+
+    public boolean isFloorDetailsEntered() {
+        return floorDetailsEntered;
+    }
+
+    public void setFloorDetailsEntered(final boolean floorDetailsEntered) {
+        this.floorDetailsEntered = floorDetailsEntered;
     }
 
 }

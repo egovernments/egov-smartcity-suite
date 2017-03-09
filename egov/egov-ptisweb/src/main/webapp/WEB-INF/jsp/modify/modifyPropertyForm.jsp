@@ -143,52 +143,27 @@
 				name="propertyDetail.apartment" id="apartment" listKey="id"
 				listValue="name" value="%{propertyDetail.apartment.id}"
 				list="dropdownData.apartments" cssClass="selectnew" /></td>
-		<td class="greybox" colspan="2">&nbsp;</td>
-	</tr>
-	<s:if test="%{oldPropertyTypeCode==@org.egov.ptis.constants.PropertyTaxConstants@OWNERSHIP_TYPE_VAC_LAND && modifyRsn==@org.egov.ptis.constants.PropertyTaxConstants@PROPERTY_MODIFY_REASON_ADD_OR_ALTER}">
-	<tr> 
-	<td class="greybox">&nbsp;</td>
-		<td class="greybox"><s:text name="Door No"></s:text> :</td>
-		<s:if test="%{houseNo!=null && !houseNo.isEmpty()}">
-		<td class="greybox"><s:textfield name="houseNo" id="houseNo" value="%{houseNo}" />
-		</td>
-		</s:if>
-		<s:else>
-		<td class="greybox"><s:textfield name="houseNo" id="houseNo" size="12" maxlength="15" value="%{houseNo}" /></td>
-		</s:else>
-	      </td>
-		<td class="greybox" width="25%"></td>
-		<td class="greybox"></td>
-		</tr>
-		</s:if>
-	
-	<tr class="appurtenant">
-		<td class="greybox">&nbsp;</td>
-		<td class="bluebox"><s:text name="isextent.appurtntland" /> :
-		<td class="bluebox"><s:checkbox
-				name="propertyDetail.appurtenantLandChecked"
-				id="appurtenantLandChecked"
-				value="%{propertyDetail.appurtenantLandChecked}"
-				onclick="enableAppartnaumtLandDetails();"
-				onfocus="makePropertyTypeMandatory();" /></td>
 		<td class="bluebox"><s:text name="certificationNumber"></s:text>:</td>
 		<td class="bluebox"><s:textfield maxlength="64"
 				name="propertyDetail.occupancyCertificationNo"
 				id="certificationNumber"
 				value="%{propertyDetail.occupancyCertificationNo}" /></td>
 	</tr>
-	<tr id="appurtenantRow">
-		<td class="greybox">&nbsp;</td>
-		<td class="greybox"><s:text name="extent.appurtntland"></s:text>
-			<span class="mandatory1">*</span> :</td>
-		<td class="greybox"><s:textfield
-				name="propertyDetail.extentAppartenauntLand"
-				id="extentAppartenauntLand"
-				value="%{propertyDetail.extentAppartenauntLand}" size="12"
-				maxlength="12" onchange="trim(this,this.value);"
-				onblur="validNumber(this);checkZero(this);"></s:textfield></td>
-		<td class="greybox" colspan="2">&nbsp;</td>
-	</tr>
+	<s:if test="%{oldPropertyTypeCode==@org.egov.ptis.constants.PropertyTaxConstants@OWNERSHIP_TYPE_VAC_LAND && modifyRsn==@org.egov.ptis.constants.PropertyTaxConstants@PROPERTY_MODIFY_REASON_ADD_OR_ALTER}">
+		<tr> 
+			<td class="greybox">&nbsp;</td>
+			<td class="greybox"><s:text name="Door No"></s:text> :</td>
+			<s:if test="%{houseNo!=null && !houseNo.isEmpty()}">
+				<td class="greybox"><s:textfield name="houseNo" id="houseNo" value="%{houseNo}" />
+				</td>
+			</s:if>
+			<s:else>
+				<td class="greybox"><s:textfield name="houseNo" id="houseNo" size="12" maxlength="15" value="%{houseNo}" /></td>
+			</s:else>
+			<td class="greybox" width="25%"></td>
+			<td class="greybox"></td>
+		</tr>
+	</s:if>
 	
 	<!-- Amenities section -->
 

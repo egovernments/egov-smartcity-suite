@@ -160,27 +160,11 @@
 			class="mandatory1">*</span> :</td>
 		<td class="greybox" width=""><s:textfield name="areaOfPlot" title="Extent of Site of the Property" id="areaOfPlot" size="12" maxlength="8" value="%{areaOfPlot}" 
 		onblur="trim(this,this.value);checkForTwoDecimals(this,'extent of site');checkZero(this,'extent of site');"></s:textfield></td>
-		
-	</tr>
- 
-   <tr class="appurtenant">
-		<td class="greybox">&nbsp;</td>
-		<td class="bluebox"><s:text name="isextent.appurtntland" /> : 
-		<td class="bluebox"><s:checkbox name="propertyDetail.appurtenantLandChecked" title="If property belongs to Appurtenent land" id="appurtenantLandChecked"
-				value="%{propertyDetail.appurtenantLandChecked}" onclick="enableAppartnaumtLandDetails();" onfocus="makePropertyTypeMandatory();" />
-		</td>
 		<td class="greybox"><s:text name="certificationNumber"></s:text>:</td>
 		<td class="greybox"><s:textfield maxlength="64" title="Property certification number" name="propertyDetail.occupancyCertificationNo" id="propertyDetail.occupancyCertificationNo" value="%{propertyDetail.occupancyCertificationNo}"></s:textfield></td>
 	</tr>
-
-	<tr id="appurtenantRow">
-		<td class="greybox">&nbsp;</td>
-		<td class="greybox"><s:text name="extent.appurtntland"></s:text>
-			<span class="mandatory1">*</span> :</td>
-		<td class="greybox"><s:textfield name="propertyDetail.extentAppartenauntLand" id="extentAppartenauntLand"
-				value="%{propertyDetail.extentAppartenauntLand}" size="12"	maxlength="8" onchange="trim(this,this.value);"
-				onblur="validNumber(this);checkZero(this);"></s:textfield></td>
-	</tr>
+ 	<s:hidden id="appurtenantLandChecked" name="propertyDetail.appurtenantLandChecked" value="%{propertyDetail.appurtenantLandChecked}"/>
+ 	<s:hidden id="extentAppartenauntLand" name="propertyDetail.extentAppartenauntLand" value="%{propertyDetail.extentAppartenauntLand}"/>
 	
 	<%-- <tr class="superStructureRow">
 		<td class="greybox">&nbsp;</td>
@@ -257,7 +241,17 @@
 			</div>
 		</td>
 	</tr>
-
+	<s:if test="%{id == null && !dataEntry}">
+		<tr class="floordetails">
+			<td class="greybox">&nbsp;</td>
+			<td class="greybox"><s:text name="floor.data.enterted"></s:text>
+				<span class="mandatory1">*</span> :</td>
+			<td class="bluebox"><s:checkbox name="floorDetailsEntered" title="Floor details enerted or not" id="floorDetailsEntered"
+					value="%{floorDetailsEntered}" onclick="makePlingthAreaReadonly();"/>
+			</td>
+		</tr>
+	</s:if>
+	
 	<tr id="vacantLandRow" class="vacantlanddetaills">
 		<td colspan="5">
 			<div class="headingsmallbg">

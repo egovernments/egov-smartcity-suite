@@ -204,7 +204,7 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
         final String areaOfPlot = String.valueOf(propertyModel.getPropertyDetail().getSitalArea().getArea());
         propertyModel = propertyService.createProperty(propertyModel, areaOfPlot, PROPERTY_MODIFY_REASON_FULL_DEMOLITION,
                 propertyModel.getPropertyDetail().getPropertyTypeMaster().getId().toString(), null, null, status, null,
-                null, null, null, null, null, null, null, null, null);
+                null, null, null, null, null, null, null, null, null, Boolean.FALSE);
         final Map<String, Installment> yearwiseInstMap = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
         final Installment installmentFirstHalf = yearwiseInstMap.get(CURRENTYEAR_FIRST_HALF);
         final Installment installmentSecondHalf = yearwiseInstMap.get(CURRENTYEAR_SECOND_HALF);
@@ -228,14 +228,14 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
         final Property modProperty = propertyService.createDemand(propertyModel, effectiveDate);
         Ptdemand currPtDmd = null;
         for (final Ptdemand demand : modProperty.getPtDemandSet())
-            if (demand.getIsHistory().equalsIgnoreCase("N"))
+            if ("N".equalsIgnoreCase(demand.getIsHistory()))
                 if (demand.getEgInstallmentMaster().equals(currInstall)) {
                     currPtDmd = demand;
                     break;
                 }
         Ptdemand oldCurrPtDmd = null;
         for (final Ptdemand ptDmd : oldProperty.getPtDemandSet())
-            if (ptDmd.getIsHistory().equalsIgnoreCase("N"))
+            if ("N".equalsIgnoreCase(ptDmd.getIsHistory()))
                 if (ptDmd.getEgInstallmentMaster().equals(currInstall)) {
                     oldCurrPtDmd = ptDmd;
                     break;
@@ -248,7 +248,7 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
         basicProperty.addProperty(modProperty);
         for (final Ptdemand ptDemand : modProperty.getPtDemandSet())
             propertyPerService.applyAuditing(ptDemand.getDmdCalculations());
-        currPtDmd = adjustCollection(oldCurrPtDmd, currPtDmd, effectiveInstall);
+        adjustCollection(oldCurrPtDmd, currPtDmd, effectiveInstall);
         propertyPerService.update(basicProperty);
         getSession().flush();
     }
@@ -446,9 +446,8 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
             final String designation = approverDesignation.split(" ")[0];
             if (designation.equalsIgnoreCase(COMMISSIONER_DESGN))
                 nextAction = WF_STATE_COMMISSIONER_APPROVAL_PENDING;
-            else if (REVENUE_OFFICER_DESGN.equalsIgnoreCase(approverDesignation)) {
+            else if (REVENUE_OFFICER_DESGN.equalsIgnoreCase(approverDesignation))
                 nextAction = WF_STATE_REVENUE_OFFICER_APPROVAL_PENDING;
-            }
             else
                 nextAction = new StringBuilder().append(designation).append(" ")
                         .append(WF_STATE_COMMISSIONER_APPROVAL_PENDING)
@@ -590,9 +589,9 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
             final Map<String, Installment> yearwiseInstMap = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
             final Installment installmentFirstHalf = yearwiseInstMap.get(CURRENTYEAR_FIRST_HALF);
             final Installment installmentSecondHalf = yearwiseInstMap.get(CURRENTYEAR_SECOND_HALF);
-            Date effectiveDate = null;
+            Date effectiveDate;
             Map<String, BigDecimal> demandMap = null;
-            BigDecimal totalTax = BigDecimal.ZERO;
+            BigDecimal totalTax;
 
             /*
              * If demolition is done in 1st half, then fetch the total tax amount for the 2nd half, else fetch the total tax for

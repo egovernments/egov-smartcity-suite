@@ -192,15 +192,10 @@
 		function loadOnStartUp() {
 			document.getElementById('assessmentRow').style.display = "none";
 			enableCorresAddr();
-			enableAppartnaumtLandDetails();
+			enableFieldsForPropType();
 			makeMandatory();
-			document.getElementById("appurtenantRow").style.display = "none";
 			enableOrDisableSiteOwnerDetails(jQuery('input[name="propertyDetail.structure"]'));
 			enableOrDisableBPADetails(jQuery('input[name="propertyDetail.buildingPlanDetailsChecked"]'));
-			var appartunentLand = jQuery('input[name="propertyDetail.appurtenantLandChecked"]');
-			if (jQuery(appartunentLand).is(":checked")) {
-				enableAppartnaumtLandDetails();
-			}
 			var category = '<s:property value="%{propertyDetail.categoryType}"/>';
 			document.forms[0].propTypeCategoryId.options[document.forms[0].propTypeCategoryId.selectedIndex].value = category;
 			toggleFloorDetails();
@@ -212,13 +207,35 @@
 				}
 			});
 			populateBoundaries();
-			loadDesignationFromMatrix();
+			<s:if test = '%{propertyByEmployee}'>
+				loadDesignationFromMatrix();
+			</s:if>
 			showHideFirmName();
-			showHideLengthBreadth();
+			if (jQuery('#floorDetailsEntered').is(":checked")) {
+				jQuery('#areaOfPlot').attr('readonly', true);
+				disableBuiltUpAreaDetails();
+			} else {
+				showHideLengthBreadth();
+			}
+			<s:if test = '%{propertyDetail.appurtenantLandChecked}'>
+				jQuery('#vacantLandArea').attr('readOnly', true);
+			</s:if>
 		}
 
 		function onSubmit() {
 			jQuery('#gender, #guardianRelation').removeAttr('disabled');
+			<s:if test="%{state == null}">
+				var propertyType = jQuery("#propTypeId option:selected").text();
+				if (propertyType != "Vacant Land" && !jQuery('#floorDetailsEntered').prop("checked")) {
+					bootbox.alert('Please check floor details entered checkbox');
+					return false;
+				}
+				jQuery("#floorDetails tr").find('select').each(function() {
+					if(jQuery(this).attr('id') == 'unstructuredLand') {
+						jQuery(this).removeAttr('disabled');
+					}
+				});
+			</s:if>
 			document.forms[0].action = 'createProperty-create.action';
 			<s:if test="mode=='edit'">
 			document.forms[0].action = 'createProperty-forward.action';
@@ -313,6 +330,18 @@
             for(var i=1;i<=tabLength;i++){
                  enableDisableLengthBreadth(getControlInBranch(tbl.rows[i],'unstructuredLand'));
             }
+		}
+
+		function disableBuiltUpAreaDetails() {
+			jQuery("#floorDetails tr").find('input, select').each(function() {
+				if (jQuery(this).attr('id') == 'builtUpArealength' || jQuery(this).attr('id') == 'builtUpAreabreadth' 
+						|| jQuery(this).attr('id') == 'builtUpArea') {
+					jQuery(this).attr('readonly', true);
+				}
+				if (jQuery(this).attr('id') == 'unstructuredLand') {
+					jQuery(this).attr('disabled', true);
+				}
+			});
 		}
 				
 	</script>

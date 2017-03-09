@@ -46,6 +46,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.ADDITIONAL_COMMISSION
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_GRP;
 import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_COMMISSIONER_DESIGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.DATE_FORMAT_DDMMYYY;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEPUTY_COMMISSIONER_DESIGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEVIATION_PERCENTAGE;
 import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
@@ -211,6 +212,16 @@ import org.springframework.beans.factory.annotation.Qualifier;
         @Result(name = RevisionPetitionAction.MEESEVA_ERROR, location = "common/meeseva-errorPage.jsp") })
 public class RevisionPetitionAction extends PropertyTaxBaseAction {
 
+    private static final String APPROVE = "Approve";
+    private static final String PRINT_ENDORESEMENT = "Print Endoresement";
+    private static final String REJECT = "reject";
+    private static final String CHOOSE = "----Choose----";
+    private static final String REJECT_INSPECTION_STR = "Reject Inspection";
+    private static final String FORWARD_TO_APPROVER = "forward to approver";
+    private static final String CANCEL_UNCONSIDERED = "cancel unconsidered";
+    private static final String CURRENT = "current";
+    private static final String HISTORY = "history";
+    private static final String HEARING_NOTCIE_EXCEPTION_MESSAGE = "Exception while generating Hearing Notcie : ";
     private static final String GENERAL_REVISION_PETETION = "GENERAL_REVISION_PETETION";
     private static final String REVISION_PETETION = "REVISION_PETETION";
     protected static final String DIGITAL_SIGNATURE_REDIRECTION = "digitalSignatureRedirection";
@@ -228,7 +239,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
     public static final String OBJECTION_FORWARD = "objection.forward";
     public static final String REJECT_INSPECTION = "objection.inspection.rejection";
 
-    private final Logger LOGGER = Logger.getLogger(RevisionPetitionAction.class);
+    private final Logger logger = Logger.getLogger(RevisionPetitionAction.class);
     private ViewPropertyAction viewPropertyAction = new ViewPropertyAction();
     private RevisionPetition objection = new RevisionPetition();
     private String propertyId;
@@ -239,7 +250,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
     private String propertyAddress;
     private transient PersistenceService<Property, Long> propertyImplService;
     private String propTypeObjId;
-    final SimpleDateFormat dateformat = new SimpleDateFormat("dd/MM/yyyy");
+    final SimpleDateFormat dateformat = new SimpleDateFormat(DATE_FORMAT_DDMMYYY);
     private String[] floorNoStr = new String[100];
     private Boolean loggedUserIsEmployee = Boolean.TRUE;
     private transient PropertyService propService;
@@ -316,7 +327,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
     private String wfType;
     private boolean allowEditDocument = Boolean.FALSE;
     private Boolean showAckBtn = Boolean.FALSE;
-    
+
     @Autowired
     private transient VacantLandPlotAreaRepository vacantLandPlotAreaRepository;
 
@@ -347,7 +358,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
     @SuppressWarnings("unchecked")
     @Override
     public void prepare() {
-        User user = null;
+        User user;
         // to merge the new values from jsp with existing
         if (objection.getId() != null)
             objection = revisionPetitionService.findById(objection.getId(), false);
@@ -371,7 +382,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                 "from PropertyTypeMaster where type != 'EWSHS' order by orderNo");
         final List<PropertyMutationMaster> propMutList = getPersistenceService().findAllBy(
                 "from PropertyMutationMaster where type = 'MODIFY' and code in('OBJ')");
-        final List<String> StructureList = getPersistenceService().findAllBy("from StructureClassification");
+        final List<String> structureList = getPersistenceService().findAllBy("from StructureClassification");
         final List<PropertyUsage> usageList = getPersistenceService()
                 .findAllBy("from PropertyUsage order by usageName");
         final List<PropertyOccupation> propOccList = getPersistenceService().findAllBy("from PropertyOccupation");
@@ -389,7 +400,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         addDropdownData("OccupancyList", propOccList);
         addDropdownData("UsageList", usageList);
         addDropdownData("MutationList", propMutList);
-        addDropdownData("StructureList", StructureList);
+        addDropdownData("StructureList", structureList);
         addDropdownData("AgeFactorList", ageFacList);
         addDropdownData("apartments", apartmentsList);
         addDropdownData("taxExemptionReasonList", taxExemptionReasonList);
@@ -413,8 +424,8 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
     @Actions({ @Action(value = "/revPetition-newForm"), @Action(value = "/genRevPetition-newForm") })
     public String newForm() {
         RevisionPetition odlObjection;
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Entered into newForm");
+        if (logger.isDebugEnabled())
+            logger.debug("Entered into newForm");
         final BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByIndexNumAndParcelID(propertyId, null);
         if (basicProperty.getProperty().getStatus().equals(PropertyTaxConstants.STATUS_ISACTIVE)
                 && !wfType.equalsIgnoreCase(PropertyTaxConstants.PROPERTY_MODIFY_REASON_GENERAL_REVISION_PETITION)) {
@@ -448,7 +459,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                 objection.setMeesevaApplicationNumber(getMeesevaApplicationNumber());
         setFloorDetails(objection.getBasicProperty().getProperty());
         if (propService.isEmployee(securityUtils.getCurrentUser())
-                && !propertyTaxCommonUtils.isEligibleInitiator(securityUtils.getCurrentUser().getId())){
+                && !propertyTaxCommonUtils.isEligibleInitiator(securityUtils.getCurrentUser().getId())) {
             addActionError(getText("initiator.noteligible"));
             return COMMON_FORM;
         }
@@ -462,8 +473,8 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
      */
     @Action(value = "/revPetition")
     public String create() {
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("ObjectionAction | Create | start " + objection);
+        if (logger.isDebugEnabled())
+            logger.debug("ObjectionAction | Create | start " + objection);
 
         if (objection != null && objection.getBasicProperty() != null && objection.getState() == null
                 && objection.getBasicProperty().isUnderWorkflow()) {
@@ -478,9 +489,9 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         }
         objection.setSource(propertyTaxCommonUtils.setSourceOfProperty(securityUtils.getCurrentUser(), false));
         isMeesevaUser = propService.isMeesevaUser(securityUtils.getCurrentUser());
-        if (isMeesevaUser && getMeesevaApplicationNumber() != null) {
+        if (isMeesevaUser && getMeesevaApplicationNumber() != null)
             objection.setObjectionNumber(objection.getMeesevaApplicationNumber());
-        } else
+        else
             objection.setObjectionNumber(applicationNumberGenerator.generate());
         objection.getBasicProperty().setStatus(
                 propertyStatusDAO.getPropertyStatusByCode(PropertyTaxConstants.STATUS_OBJECTED_STR));
@@ -505,8 +516,8 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         }
         currentStatus = REVISION_PETITION_CREATED;
         sendEmailandSms(objection, REVISION_PETITION_CREATED);
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("ObjectionAction | Create | End " + objection);
+        if (logger.isDebugEnabled())
+            logger.debug("ObjectionAction | Create | End " + objection);
         return isMeesevaUser ? MEESEVA_RESULT_ACK : STRUTS_RESULT_MESSAGE;
     }
 
@@ -517,8 +528,8 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
      */
     @Action(value = "/revPetition-addHearingDate")
     public String addHearingDate() {
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("ObjectionAction | addHearingDate | start " + objection);
+        if (logger.isDebugEnabled())
+            logger.debug("ObjectionAction | addHearingDate | start " + objection);
         InputStream hearingNoticePdf = null;
         ReportOutput reportOutput = new ReportOutput();
         final String noticeNo = propertyTaxNumberGenerator.generateNoticeNumber(NOTICE_TYPE_REVISIONPETITION_HEARINGNOTICE);
@@ -531,8 +542,8 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                     NOTICE_TYPE_REVISIONPETITION_HEARINGNOTICE, objection.getBasicProperty(), hearingNoticePdf);// Save Notice
         revisionPetitionService.updateRevisionPetition(objection);
         sendEmailandSms(objection, REVISION_PETITION_HEARINGNOTICEGENERATED);
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("ObjectionAction | addHearingDate | End " + objection);
+        if (logger.isDebugEnabled())
+            logger.debug("ObjectionAction | addHearingDate | End " + objection);
         return STRUTS_RESULT_MESSAGE;
     }
 
@@ -573,7 +584,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                 bFile = FileUtils.readFileToByteArray(file);
             } catch (final IOException e) {
 
-                throw new ApplicationRuntimeException("Exception while generating Hearing Notcie : " + e);
+                throw new ApplicationRuntimeException(HEARING_NOTCIE_EXCEPTION_MESSAGE + e);
             }
             reportOutput.setReportOutputData(bFile);
             reportOutput.setReportFormat(FileFormat.PDF);
@@ -587,8 +598,8 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
     @Action(value = "/revPetition-recordHearingDetails")
     public String recordHearingDetails() throws TaxCalculatorExeption {
 
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("ObjectionAction | recordHearingDetails | start "
+        if (logger.isDebugEnabled())
+            logger.debug("ObjectionAction | recordHearingDetails | start "
                     + objection.getHearings().get(objection.getHearings().size() - 1));
         vaidatePropertyDetails();
 
@@ -606,8 +617,8 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         modifyBasicProp();
         propertyImplService.merge(objection.getProperty());
         revisionPetitionService.updateRevisionPetition(objection);
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("ObjectionAction | recordHearingDetails | End "
+        if (logger.isDebugEnabled())
+            logger.debug("ObjectionAction | recordHearingDetails | End "
                     + objection.getHearings().get(objection.getHearings().size() - 1));
         return STRUTS_RESULT_MESSAGE;
 
@@ -621,8 +632,8 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
     @ValidationErrorPage(value = "view")
     @Action(value = "/revPetition-recordInspectionDetails")
     public String recordInspectionDetails() throws TaxCalculatorExeption {
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("ObjectionAction | recordInspectionDetails | start "
+        if (logger.isDebugEnabled())
+            logger.debug("ObjectionAction | recordInspectionDetails | start "
                     + objection.getInspections().get(objection.getInspections().size() - 1));
         vaidatePropertyDetails();
 
@@ -636,8 +647,8 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         if (REVENUE_INSPECTOR_DESGN.equals(designation))
             propService.processAndStoreDocument(objection.getDocuments());
         updateStateAndStatus(objection);
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("ObjectionAction | recordInspectionDetails | End "
+        if (logger.isDebugEnabled())
+            logger.debug("ObjectionAction | recordInspectionDetails | End "
                     + objection.getInspections().get(objection.getInspections().size() - 1));
         modifyBasicProp();
         if (wfType.equalsIgnoreCase(NATURE_OF_WORK_RP))
@@ -674,8 +685,8 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
     @ValidationErrorPage(value = "view")
     @Action(value = "/revPetition-recordObjectionOutcome")
     public String recordObjectionOutcome() {
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("ObjectionAction | recordObjectionOutcome | start " + objection);
+        if (logger.isDebugEnabled())
+            logger.debug("ObjectionAction | recordObjectionOutcome | start " + objection);
 
         if (hasErrors())
             return "view";
@@ -704,8 +715,8 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         if (WFLOW_ACTION_STEP_APPROVE.equalsIgnoreCase(workFlowAction))
             addActionMessage(NATURE_OF_WORK_RP.equalsIgnoreCase(wfType) ? getText("objection.outcome.success")
                     : getText("objection.grp.outcome.success"));
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("ObjectionAction | recordObjectionOutcome | End " + objection);
+        if (logger.isDebugEnabled())
+            logger.debug("ObjectionAction | recordObjectionOutcome | End " + objection);
         return STRUTS_RESULT_MESSAGE;
     }
 
@@ -865,7 +876,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         final Ptdemand currDemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(property);
 
         // Sets data for the current property
-        prepareTaxInfoForProperty(infoBean, totalTax, propertyTax, currDemand, "current");
+        prepareTaxInfoForProperty(infoBean, totalTax, propertyTax, currDemand, CURRENT);
         if (currDemand.getDmdCalculations() != null && currDemand.getDmdCalculations().getAlv() != null)
             infoBean.setNew_rev_ARV(currDemand.getDmdCalculations().getAlv());
 
@@ -875,20 +886,21 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         if (historyProperty != null && historyDemand != null) {
             totalTax = BigDecimal.ZERO;
             propertyTax = BigDecimal.ZERO;
-            prepareTaxInfoForProperty(infoBean, totalTax, propertyTax, historyDemand, "history");
+            prepareTaxInfoForProperty(infoBean, totalTax, propertyTax, historyDemand, HISTORY);
             if (historyDemand.getDmdCalculations() != null && historyDemand.getDmdCalculations().getAlv() != null)
                 infoBean.setExistingARV(historyDemand.getDmdCalculations().getAlv());
         }
 
-        final PropertyID propertyId = basicProperty.getPropertyID();
-        infoBean.setZoneName(propertyId.getZone().getName());
-        infoBean.setWardName(propertyId.getWard().getName());
-        infoBean.setAreaName(propertyId.getArea().getName());
-        infoBean.setLocalityName(propertyId.getLocality().getName());
+        final PropertyID boundaryDetails = basicProperty.getPropertyID();
+        infoBean.setZoneName(boundaryDetails.getZone().getName());
+        infoBean.setWardName(boundaryDetails.getWard().getName());
+        infoBean.setAreaName(boundaryDetails.getArea().getName());
+        infoBean.setLocalityName(boundaryDetails.getLocality().getName());
         infoBean.setNoticeDate(new Date());
         infoBean.setApplicationDate(DateUtils.getFormattedDate(objection.getCreatedDate(),
-                "dd/MM/yyyy"));
-        infoBean.setHearingDate(DateUtils.getFormattedDate(objection.getHearings().get(0).getPlannedHearingDt(), "dd/MM/yyyy"));
+                DATE_FORMAT_DDMMYYY));
+        infoBean.setHearingDate(
+                DateUtils.getFormattedDate(objection.getHearings().get(0).getPlannedHearingDt(), DATE_FORMAT_DDMMYYY));
         final User approver = userService.getUserById(ApplicationThreadLocals.getUserId());
 
         infoBean.setApproverName(approver.getName());
@@ -914,9 +926,9 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                     propertyTax = propertyTax.add(demandDetail.getAmount());
                 if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
                         .equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_LIBRARY_CESS)) {
-                    if (propertyType.equalsIgnoreCase("current"))
+                    if (propertyType.equalsIgnoreCase(CURRENT))
                         infoBean.setRevLibraryCess(demandDetail.getAmount());
-                    if (propertyType.equalsIgnoreCase("history"))
+                    if (propertyType.equalsIgnoreCase(HISTORY))
                         infoBean.setExistingLibraryCess(demandDetail.getAmount());
                 }
 
@@ -927,17 +939,17 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                     propertyTax = propertyTax.add(demandDetail.getAmount());
                 if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
                         .equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_UNAUTHORIZED_PENALTY)) {
-                    if (propertyType.equalsIgnoreCase("current"))
+                    if (propertyType.equalsIgnoreCase(CURRENT))
                         infoBean.setRevUCPenalty(demandDetail.getAmount());
-                    if (propertyType.equalsIgnoreCase("history"))
+                    if (propertyType.equalsIgnoreCase(HISTORY))
                         infoBean.setExistingUCPenalty(demandDetail.getAmount());
                 }
             }
-        if (propertyType.equalsIgnoreCase("current")) {
+        if (propertyType.equalsIgnoreCase(CURRENT)) {
             infoBean.setRevTotalTax(totalTax);
             infoBean.setRevPropertyTax(propertyTax);
         }
-        if (propertyType.equalsIgnoreCase("history")) {
+        if (propertyType.equalsIgnoreCase(HISTORY)) {
             infoBean.setExistingTotalTax(totalTax);
             infoBean.setExistingPropertyTax(propertyTax);
         }
@@ -961,7 +973,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                     bFile = FileUtils.readFileToByteArray(file);
                 } catch (final IOException e) {
 
-                    throw new ApplicationRuntimeException("Exception while generating Hearing Notcie : " + e);
+                    throw new ApplicationRuntimeException(HEARING_NOTCIE_EXCEPTION_MESSAGE + e);
                 }
                 reportOutput.setReportOutputData(bFile);
                 reportOutput.setReportFormat(FileFormat.PDF);
@@ -1016,8 +1028,8 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
             addActionMessage(getText("objection.endoresementNotice.success"));
         else
             addActionMessage(getText("objection.grp.endoresementNotice.success"));
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("ObjectionAction | generateEnodresementNotice | End " + objection);
+        if (logger.isDebugEnabled())
+            logger.debug("ObjectionAction | generateEnodresementNotice | End " + objection);
 
         if (objection != null && objection.getObjectionNumber() != null) {
             final PtNotice ptNotice = noticeService.getPtNoticeByNoticeNumberAndNoticeType(objection
@@ -1031,7 +1043,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                     bFile = FileUtils.readFileToByteArray(file);
                 } catch (final IOException e) {
 
-                    throw new ApplicationRuntimeException("Exception while generating Hearing Notcie : " + e);
+                    throw new ApplicationRuntimeException(HEARING_NOTCIE_EXCEPTION_MESSAGE + e);
                 }
                 reportOutput.setReportOutputData(bFile);
                 reportOutput.setReportFormat(FileFormat.PDF);
@@ -1086,7 +1098,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                     bFile = FileUtils.readFileToByteArray(file);
                 } catch (final IOException e) {
 
-                    throw new ApplicationRuntimeException("Exception while generating Hearing Notcie : " + e);
+                    throw new ApplicationRuntimeException(HEARING_NOTCIE_EXCEPTION_MESSAGE + e);
                 }
                 reportOutput.setReportOutputData(bFile);
                 reportOutput.setReportFormat(FileFormat.PDF);
@@ -1133,7 +1145,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 
                 if (objection.getHearings() != null && !objection.getHearings().isEmpty()) {
                     args.add(DateUtils.getFormattedDate(objection.getHearings().get(0).getPlannedHearingDt(),
-                            "dd/MM/yyyy"));
+                            DATE_FORMAT_DDMMYYY));
                     args.add(objection.getHearings().get(0).getHearingVenue());
                     args.add(objection.getHearings().get(0).getHearingTime());
                     args.add(sMSEmailService.getCityName());
@@ -1164,8 +1176,8 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
      * @param property
      */
     private void setFloorDetails(final Property property) {
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Entered into setFloorDetails, Property: " + property);
+        if (logger.isDebugEnabled())
+            logger.debug("Entered into setFloorDetails, Property: " + property);
 
         final List<Floor> floors = property.getPropertyDetail().getFloorDetails();
         objection.getBasicProperty().getProperty().getPropertyDetail().setFloorDetails(floors);
@@ -1177,14 +1189,14 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
             floorNoStr[i] = FLOOR_MAP.get(flr.getFloorNo());
             i++;
         }
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Exiting from setFloorDetails: ");
+        if (logger.isDebugEnabled())
+            logger.debug("Exiting from setFloorDetails: ");
     }
 
     @Action(value = "/revPetition-view")
     public String view() {
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("ObjectionAction | view | Start");
+        if (logger.isDebugEnabled())
+            logger.debug("ObjectionAction | view | Start");
         objection = revisionPetitionService.findById(Long.valueOf(parameters.get("objectionId")[0]), false);
         getPropertyView(objection.getBasicProperty().getUpicNo());
 
@@ -1224,8 +1236,8 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         setOwnerName(objection.getBasicProperty().getProperty());
         setPropertyAddress(objection.getBasicProperty().getAddress());
         setWfType(objection.getType());
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("ObjectionAction | view | End");
+        if (logger.isDebugEnabled())
+            logger.debug("ObjectionAction | view | End");
         return "view";
     }
 
@@ -1238,14 +1250,14 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
     }
 
     public String viewObjectionDetails() {
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("ObjectionAction | viewObjectionDetails | Start");
+        if (logger.isDebugEnabled())
+            logger.debug("ObjectionAction | viewObjectionDetails | Start");
         objection = revisionPetitionService.find("from Objection where objectionNumber like ?",
                 objection.getObjectionNumber());
         setOwnerName(objection.getBasicProperty().getProperty());
         setPropertyAddress(objection.getBasicProperty().getAddress());
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("ObjectionAction | viewObjectionDetails | End");
+        if (logger.isDebugEnabled())
+            logger.debug("ObjectionAction | viewObjectionDetails | End");
         return "viewDetails";
     }
 
@@ -1266,8 +1278,8 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
     }
 
     private void updateStateAndStatus(final RevisionPetition revPetition) {
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("ObjectionAction | updateStateAndStatus | Start");
+        if (logger.isDebugEnabled())
+            logger.debug("ObjectionAction | updateStateAndStatus | Start");
         Position position = null;
         User user;
         User loggedInUser;
@@ -1359,7 +1371,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                 && !WFLOW_ACTION_STEP_SAVE.equalsIgnoreCase(workFlowAction)) {
 
             if (WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction)
-                    || workFlowAction.equalsIgnoreCase("cancel unconsidered")) {
+                    || workFlowAction.equalsIgnoreCase(CANCEL_UNCONSIDERED)) {
 
                 wfmatrix = revisionPetitionWorkFlowService.getPreviousStateFromWfMatrix(objection.getStateType(), null,
                         null, getAdditionalRule(), objection.getCurrentState().getValue(),
@@ -1410,15 +1422,15 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         final String nextState = null;
         User user;
         List<Assignment> loggedInUserAssign;
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("revisionpetitionaction ||Starting workFlowTransition method for objection");
+        if (logger.isDebugEnabled())
+            logger.debug("revisionpetitionaction ||Starting workFlowTransition method for objection");
         user = securityUtils.getCurrentUser();
         loggedInUserAssign = assignmentService.getAssignmentByPositionAndUserAsOnDate(
                 objection.getCurrentState().getOwnerPosition().getId(), user.getId(), new Date());
         loggedInUserDesignation = !loggedInUserAssign.isEmpty() ? loggedInUserAssign.get(0).getDesignation().getName() : null;
         final Assignment wfInitiator = revisionPetitionService.getWorkflowInitiator(objection);
         if (WFLOW_ACTION_STEP_FORWARD.equalsIgnoreCase(workFlowAction) || workFlowAction.equalsIgnoreCase("approve objection")
-                || workFlowAction.equalsIgnoreCase("forward to approver")) {
+                || workFlowAction.equalsIgnoreCase(FORWARD_TO_APPROVER)) {
 
             if (wfmatrix != null && (wfmatrix.getNextStatus() != null
                     && wfmatrix.getNextStatus().equalsIgnoreCase(PropertyTaxConstants.OBJECTION_HEARING_FIXED)
@@ -1506,14 +1518,14 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 
             if (wfmatrix.getNextStatus() != null)
                 updateRevisionPetitionStatus(wfmatrix, objection, null);
-            if (approverName != null && !approverName.isEmpty() && !approverName.equalsIgnoreCase("----Choose----"))
+            if (approverName != null && !approverName.isEmpty() && !approverName.equalsIgnoreCase(CHOOSE))
                 addActionMessage(
                         getText(OBJECTION_FORWARD, new String[] { approverName.concat("~").concat(position.getName()) }));
             else if (loggedInUser != null && !positionFoundInHistory)
                 addActionMessage(getText(OBJECTION_FORWARD,
                         new String[] { loggedInUser.getName().concat("~").concat(position.getName()) }));
 
-        } else if (workFlowAction.equalsIgnoreCase("Reject Inspection")) {
+        } else if (workFlowAction.equalsIgnoreCase(REJECT_INSPECTION_STR)) {
             final List<StateHistory> stateHistoryList = objection.getStateHistory();
             Assignment wfInit = null;
             for (final StateHistory stateHistoryObj : stateHistoryList)
@@ -1539,7 +1551,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
             } else
                 addActionMessage(getText(REJECT_INSPECTION) + objection.getBasicProperty().getUpicNo());
 
-        } else if (workFlowAction.equalsIgnoreCase("Reject") || workFlowAction.equalsIgnoreCase("reject")) {
+        } else if (workFlowAction.equalsIgnoreCase(REJECT)) {
             final List<StateHistory> stateHistoryList = objection.getStateHistory();
             for (final StateHistory stateHistoryObj : stateHistoryList)
                 if (stateHistoryObj.getValue().equalsIgnoreCase(objection.getCurrentState().getValue())) {
@@ -1564,31 +1576,31 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                         .withDateInfo(new DateTime().toDate()).withNextAction(wfmatrix.getPendingActions())
                         .withComments(approverComments);
 
-                if (workFlowAction.equalsIgnoreCase("Reject"))
+                if (workFlowAction.equalsIgnoreCase(REJECT))
                     updateRevisionPetitionStatus(wfmatrix, objection, null);
             }
 
-            if (approverName != null && !approverName.isEmpty() && !approverName.equalsIgnoreCase("----Choose----"))
+            if (approverName != null && !approverName.isEmpty() && !approverName.equalsIgnoreCase(CHOOSE))
                 addActionMessage(
                         getText(OBJECTION_FORWARD, new String[] { approverName.concat("~").concat(position.getName()) }));
             else if (loggedInUser != null)
                 addActionMessage(getText(OBJECTION_FORWARD,
                         new String[] { loggedInUser.getName().concat("~").concat(position.getName()) }));
-        } else if (workFlowAction.equalsIgnoreCase("Print Endoresement")) {
+        } else if (workFlowAction.equalsIgnoreCase(PRINT_ENDORESEMENT)) {
             position = objection.getState().getOwnerPosition();
             objection.transition(true).withStateValue(wfmatrix.getCurrentState()).withOwner(position)
                     .withSenderName(loggedInUser.getUsername() + "::" + loggedInUser.getName())
                     .withDateInfo(new DateTime().toDate()).withNextAction(wfmatrix.getNextAction())
                     .withComments(approverComments);
-            if (LOGGER.isDebugEnabled())
-                LOGGER.debug("revisionpetitionaction ||ended  workflow for objection");
+            if (logger.isDebugEnabled())
+                logger.debug("revisionpetitionaction ||ended  workflow for objection");
 
         } else if (WFLOW_ACTION_STEP_SIGN.equalsIgnoreCase(workFlowAction))
             objection.transition(true).withStateValue(wfmatrix.getCurrentState())
                     .withOwner(position).withSenderName(loggedInUser.getUsername() + "::" + loggedInUser.getName())
                     .withDateInfo(new DateTime().toDate()).withNextAction(wfmatrix.getNextAction())
                     .withComments(approverComments);
-        else if (workFlowAction.equalsIgnoreCase("Approve")) {
+        else if (workFlowAction.equalsIgnoreCase(APPROVE)) {
             position = objection.getState().getOwnerPosition();
             objection.transition(true).withStateValue(wfmatrix.getNextState())
                     .withOwner(position).withSenderName(loggedInUser.getUsername() + "::" + loggedInUser.getName())
@@ -1617,7 +1629,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         Date propCompletionDate = null;
         final Long oldPropTypeId = objection.getProperty().getPropertyDetail().getPropertyTypeMaster().getId();
 
-        if (propTypeObjId != null && !propTypeObjId.trim().isEmpty() && !propTypeObjId.equals("-1")) {
+        if (propTypeObjId != null && !propTypeObjId.trim().isEmpty() && !"-1".equals(propTypeObjId)) {
             final PropertyTypeMaster propTypeMstr = (PropertyTypeMaster) getPersistenceService().find(
                     "from PropertyTypeMaster ptm where ptm.id = ?", Long.valueOf(propTypeObjId));
 
@@ -1655,7 +1667,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                                 .getWoodType().getId() : null,
                 taxExemptedReason, objection.getProperty().getPropertyDetail().getPropertyDepartment() != null
                         ? objection.getProperty().getPropertyDetail().getPropertyDepartment().getId() : null,
-                getVacantLandPlotAreaId(), getLayoutApprovalAuthorityId());
+                getVacantLandPlotAreaId(), getLayoutApprovalAuthorityId(), Boolean.FALSE);
 
         updatePropertyID(objection.getBasicProperty());
         final PropertyTypeMaster propTypeMstr = (PropertyTypeMaster) getPersistenceService().find(
@@ -1684,8 +1696,8 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
      * @param propertyId
      */
     private void getPropertyView(final String propertyId) {
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("ObjectionAction | getPropertyView | Start");
+        if (logger.isDebugEnabled())
+            logger.debug("ObjectionAction | getPropertyView | Start");
         viewPropertyAction.setPersistenceService(persistenceService);
         viewPropertyAction.setBasicPropertyDAO(basicPropertyDAO);
         viewPropertyAction.setPtDemandDAO(ptDemandDAO);
@@ -1702,8 +1714,8 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                 && (objection.getEgwStatus().getCode().equalsIgnoreCase(PropertyTaxConstants.OBJECTION_INSPECTION_COMPLETED)
                         || objection.getEgwStatus().getCode().equalsIgnoreCase(PropertyTaxConstants.OBJECTION_INSPECTION_VERIFY)))
             wfPropTaxDetailsMap = propertyTaxCommonUtils.getTaxDetailsForWorkflowProperty(viewPropertyAction.getBasicProperty());
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("ObjectionAction | getPropertyView | End");
+        if (logger.isDebugEnabled())
+            logger.debug("ObjectionAction | getPropertyView | End");
     }
 
     public void vaidatePropertyDetails() {
@@ -1768,7 +1780,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         reportId = reportViewerUtil.addReportToTempCache(reportOutput);
         return NOTICE;
     }
-    
+
     public void populateLayoutAndVltArea() {
         if (objection.getProperty() != null) {
             if (objection.getProperty().getPropertyDetail().getVacantLandPlotArea() != null)
@@ -1816,12 +1828,12 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
     }
 
     private void updatePropertyID(final BasicProperty basicProperty) {
-        final PropertyID propertyId = basicProperty.getPropertyID();
-        if (propertyId != null) {
-            propertyId.setEastBoundary(getEastBoundary());
-            propertyId.setWestBoundary(getWestBoundary());
-            propertyId.setNorthBoundary(getNorthBoundary());
-            propertyId.setSouthBoundary(getSouthBoundary());
+        final PropertyID boundaryDetails = basicProperty.getPropertyID();
+        if (boundaryDetails != null) {
+            boundaryDetails.setEastBoundary(getEastBoundary());
+            boundaryDetails.setWestBoundary(getWestBoundary());
+            boundaryDetails.setNorthBoundary(getNorthBoundary());
+            boundaryDetails.setSouthBoundary(getSouthBoundary());
         }
     }
 
@@ -2169,7 +2181,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         return vacantLandPlotAreaList;
     }
 
-    public void setVacantLandPlotAreaList(List<VacantLandPlotArea> vacantLandPlotAreaList) {
+    public void setVacantLandPlotAreaList(final List<VacantLandPlotArea> vacantLandPlotAreaList) {
         this.vacantLandPlotAreaList = vacantLandPlotAreaList;
     }
 
@@ -2177,7 +2189,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         return layoutApprovalAuthorityList;
     }
 
-    public void setLayoutApprovalAuthorityList(List<LayoutApprovalAuthority> layoutApprovalAuthorityList) {
+    public void setLayoutApprovalAuthorityList(final List<LayoutApprovalAuthority> layoutApprovalAuthorityList) {
         this.layoutApprovalAuthorityList = layoutApprovalAuthorityList;
     }
 
@@ -2185,7 +2197,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         return vacantLandPlotAreaId;
     }
 
-    public void setVacantLandPlotAreaId(Long vacantLandPlotAreaId) {
+    public void setVacantLandPlotAreaId(final Long vacantLandPlotAreaId) {
         this.vacantLandPlotAreaId = vacantLandPlotAreaId;
     }
 
@@ -2193,7 +2205,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         return layoutApprovalAuthorityId;
     }
 
-    public void setLayoutApprovalAuthorityId(Long layoutApprovalAuthorityId) {
+    public void setLayoutApprovalAuthorityId(final Long layoutApprovalAuthorityId) {
         this.layoutApprovalAuthorityId = layoutApprovalAuthorityId;
     }
 }

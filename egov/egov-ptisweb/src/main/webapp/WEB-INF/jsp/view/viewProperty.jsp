@@ -149,13 +149,6 @@
 				<s:property default="N/A"
 					value="%{basicProperty.property.propertyDetail.sitalArea.area}" />
 			</div>
-			<div class="col-xs-3 add-margin">
-				<s:text name="extent.appurtntland"></s:text>
-			</div>
-			<div class="col-xs-3 add-margin view-content">
-				<s:property default="N/A"
-					value="%{propertyDetail.extentAppartenauntLand}" />
-			</div>
 		</div>
 		<%-- <div class="row add-border">
 			<div class="col-xs-3 add-margin">

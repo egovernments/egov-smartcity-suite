@@ -119,7 +119,7 @@
 		<property name="pattaNumber" column="pattanumber" type="java.lang.String" />
 		<property name="categoryType" column="category_type" type="java.lang.String" />
 		<property name="occupancyCertificationNo" column="occupancy_certificationno" type="java.lang.String" />
-		<property name="appurtenantLandChecked" column="appurtenantland_checked" type="java.lang.Boolean"/>
+		<!-- <property name="appurtenantLandChecked" column="appurtenantland_checked" type="java.lang.Boolean"/> -->
 		<property name="corrAddressDiff" column="corrAddressDiff" type="java.lang.Boolean"/>
 		<many-to-one name="floorType" class="org.egov.ptis.domain.entity.property.FloorType" column="floorType" />
 		<many-to-one name="roofType" class="org.egov.ptis.domain.entity.property.RoofType" column="roofType" />

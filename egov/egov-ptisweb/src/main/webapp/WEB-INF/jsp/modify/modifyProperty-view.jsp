@@ -115,7 +115,6 @@
 			
 			function loadOnStartUp() {
 				enableFieldsForPropTypeView();
-				enableAppartnaumtLandDetailsView();
 				enableOrDisableSiteOwnerDetails(jQuery('input[name="propertyDetail.structure"]'));
 				toggleFloorDetailsView();
 				showHideFirmName();
@@ -218,17 +217,6 @@
 				}
 			}
 
-			function enableAppartnaumtLandDetailsView() {
-				if (document.forms[0].appurtenantLandChecked.checked == true) {
-					jQuery('tr.vacantlanddetaills').show();
-					jQuery('#appurtenantRow').show();
-					jQuery('tr.floordetails').show();
-					jQuery('tr.extentSite').hide();
-				} else {
-					enableFieldsForPropTypeView();
-				}
-			}
-
 			function enableFieldsForPropTypeView() {
 				var propType = '<s:property value="%{model.propertyDetail.propertyTypeMaster.type}"/>';
 				if (propType != "select") {
@@ -237,9 +225,7 @@
 						jQuery('tr.vacantlanddetaills').show();
 						jQuery('tr.construction').hide();
 						jQuery('tr.amenities').hide();
-						jQuery('#appurtenantRow').hide();
 						jQuery('tr.extentSite').hide();
-						jQuery('tr.appurtenant').hide();
 						jQuery("#apartment").prop('selectedIndex', 0);
 						jQuery('td.apartmentRow').hide();
 					} else {
@@ -247,9 +233,7 @@
 						jQuery('tr.vacantlanddetaills').hide();
 						jQuery('tr.construction').show();
 						jQuery('tr.amenities').show();
-						jQuery('#appurtenantRow').hide();
 						jQuery('tr.extentSite').show();
-						jQuery('tr.appurtenant').show();
 						jQuery('td.apartmentRow').show();
 					}
 				}

@@ -215,7 +215,7 @@
 			<td class="blueborderfortd freeze-action-td" id="AddRemoveFloor">
 			
 			  <span id="addF" alt="AddF" class="tblactionicon add" 
-			        onclick="javascript:addFloor(); showHideLengthBreadth(); return false;">
+			        onclick="javascript:addFloor(); return false;">
 			           <i class="fa fa-plus-circle"></i>
 			  </span>
 			  &nbsp;
@@ -399,7 +399,7 @@
 			
 				<td class="blueborderfortd freeze-action-td" id="AddRemoveFloor">
 				  <span id="addF" alt="AddF" class="tblactionicon add" 
-			        onclick="javascript:addFloor(); showHideLengthBreadth(); return false;">
+			        onclick="javascript:addFloor(); return false;">
 			           <i class="fa fa-plus-circle"></i>
 				  </span>
 				  &nbsp;

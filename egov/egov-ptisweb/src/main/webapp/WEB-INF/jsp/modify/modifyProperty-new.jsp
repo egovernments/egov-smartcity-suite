@@ -92,12 +92,13 @@
 
 	function loadOnStartUp() {
 		enableFieldsForPropType();
-		enableAppartnaumtLandDetails();
 		enableOrDisableSiteOwnerDetails(jQuery('input[name="propertyDetail.structure"]'));
 		toggleFloorDetails();
 		showHideFirmName();
 		showHideLengthBreadth();
+		<s:if test = '%{propertyByEmployee}'>
 		loadDesignationFromMatrix();
+		</s:if>
 	}
 	function submitDateEntry() { 
 		document.forms[0].action = 'modifyProperty-saveDataEntry.action';

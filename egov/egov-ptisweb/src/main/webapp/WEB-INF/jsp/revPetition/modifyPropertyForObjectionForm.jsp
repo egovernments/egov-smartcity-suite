@@ -192,26 +192,12 @@
 	
 	<tr class="appurtenant">
 		<td class="bluebox">&nbsp;</td>
-		<td class="bluebox"><s:text name="isextent.appurtntland" /> : 
-		<td class="bluebox"><s:checkbox name="property.propertyDetail.appurtenantLandChecked" id="appurtenantLandChecked"
-				value="%{property.propertyDetail.appurtenantLandChecked}" onclick="enableAppartnaumtLandDetails();" />
-		</td>
 		<td class="bluebox"><s:text name="certificationNumber"></s:text>:</td>
 		<td class="bluebox"><s:textfield maxlength="64" name="property.propertyDetail.occupancyCertificationNo" id="certificationNumber" value="%{property.propertyDetail.occupancyCertificationNo}"/></td>
-	</tr>
-	<tr id="appurtenantRow">
-		<td class="greybox">&nbsp;</td>
-		<td class="greybox"><s:text name="extent.appurtntland"></s:text>
-			<span class="mandatory1">*</span> :</td>
-		<td class="greybox"><s:textfield name="property.propertyDetail.extentAppartenauntLand" id="extentAppartenauntLand"
-				value="%{property.propertyDetail.extentAppartenauntLand}" size="12"	maxlength="12" onchange="trim(this,this.value);"
-				onblur="validNumber(this);checkZero(this);"></s:textfield>
-		</td>
 		<td class="greybox" colspan="2">
-			&nbsp;
+			&nbsp;			
 		</td>
 	</tr>
-	
 	<!-- Amenities section -->
 	
 	<tr id="amenitiesHeaderRow" class="amenities">

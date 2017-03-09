@@ -151,7 +151,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class AmalgamationAction extends PropertyTaxBaseAction {
 
     private static final long serialVersionUID = 1L;
-    private final transient Logger LOGGER = Logger.getLogger(getClass());
+    private final transient Logger logger = Logger.getLogger(getClass());
     protected static final String COMMON_FORM = "commonForm";
     protected static final String RESULT_ACK = "ack";
     private static final String PROPERTY_MODIFY_REJECT_SUCCESS = "property.modify.reject.success";
@@ -240,9 +240,8 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public void prepare() {
-        LOGGER.debug("Entered into preapre, ModelId: " + getModelId());
+        logger.debug("Entered into preapre, ModelId: " + getModelId());
         final Map<String, Installment> currYearInstMap = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
         final Installment currInstFirstHalf = currYearInstMap.get(PropertyTaxConstants.CURRENTYEAR_FIRST_HALF);
         final DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
@@ -256,7 +255,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         propertyByEmployee = propService.isEmployee(securityUtils.getCurrentUser());
         if (getModelId() != null && !getModelId().isEmpty()) {
             setBasicProp(basicPropertyDAO.getBasicPropertyByProperty(Long.valueOf(getModelId())));
-            LOGGER.debug("prepare: BasicProperty: " + basicProp);
+            logger.debug("prepare: BasicProperty: " + basicProp);
             propWF = (PropertyImpl) getPersistenceService().findByNamedQuery(QUERY_WORKFLOW_PROPERTYIMPL_BYID,
                     Long.valueOf(getModelId()));
             if (propWF != null) {
@@ -295,7 +294,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
                 usageList = propertyUsageService.getNonResidentialPropertyUsages();
 
         addDropdownData("UsageList", usageList);
-        LOGGER.debug("Exiting from preapre, ModelId: " + getModelId());
+        logger.debug("Exiting from preapre, ModelId: " + getModelId());
     }
 
     @SkipValidation
@@ -414,7 +413,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
     }
 
     private void setFloorDetails(final Property property) {
-        LOGGER.debug("Entered into setFloorDetails, Property: " + property);
+        logger.debug("Entered into setFloorDetails, Property: " + property);
         final List<Floor> floors = property.getPropertyDetail().getFloorDetails();
         property.getPropertyDetail().setFloorDetailsProxy(floors);
         int i = 0;
@@ -428,7 +427,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
             floorNoStr[i] = FLOOR_MAP.get(flr.getFloorNo());
             i++;
         }
-        LOGGER.debug("Exiting from setFloorDetails: ");
+        logger.debug("Exiting from setFloorDetails: ");
     }
 
     /**
@@ -438,7 +437,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
     @SkipValidation
     @Action(value = "/amalgamation-forwardModify")
     public String forwardModify() {
-        LOGGER.debug("forwardModify: Modify property started " + propertyModel);
+        logger.debug("forwardModify: Modify property started " + propertyModel);
         setOldPropertyTypeCode(basicProp.getProperty().getPropertyDetail().getPropertyTypeMaster().getCode());
         validate();
         final long startTimeMillis = System.currentTimeMillis();
@@ -446,7 +445,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
             propWF = (PropertyImpl) getPersistenceService().findByNamedQuery(QUERY_WORKFLOW_PROPERTYIMPL_BYID,
                     Long.valueOf(getModelId()));
 
-            LOGGER.debug("forwardModify: Workflow property: " + propWF);
+            logger.debug("forwardModify: Workflow property: " + propWF);
             basicProp = propWF.getBasicProperty();
             setBasicProp(basicProp);
         } else
@@ -464,7 +463,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
             modifyBasicProp();
         } catch (final TaxCalculatorExeption e) {
             addActionError(getText("unitrate.error"));
-            LOGGER.error("forwardModify : There are no Unit rates defined for chosen combinations", e);
+            logger.error("forwardModify : There are no Unit rates defined for chosen combinations", e);
             return NEW;
         }
         transitionWorkFlow(propertyModel);
@@ -476,8 +475,8 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         addActionMessage(getText(PROPERTY_FORWARD_SUCCESS,
                 new String[] { propertyModel.getBasicProperty().getUpicNo() }));
         final long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
-        LOGGER.info("forwardModify: Amalgamation forwarded successfully; Time taken(ms) = " + elapsedTimeMillis);
-        LOGGER.debug("forwardModify: Amalgamation forward ended");
+        logger.info("forwardModify: Amalgamation forwarded successfully; Time taken(ms) = " + elapsedTimeMillis);
+        logger.debug("forwardModify: Amalgamation forward ended");
         return RESULT_ACK;
     }
 
@@ -542,12 +541,12 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
     @SkipValidation
     @Action(value = "/amalgamation-view")
     public String view() {
-        LOGGER.debug("Entered into view, BasicProperty: " + basicProp + ", ModelId: " + getModelId());
+        logger.debug("Entered into view, BasicProperty: " + basicProp + ", ModelId: " + getModelId());
         if (getModelId() != null) {
             propertyModel = (PropertyImpl) getPersistenceService().findByNamedQuery(QUERY_PROPERTYIMPL_BYID,
                     Long.valueOf(getModelId()));
             setModifyRsn(propertyModel.getPropertyDetail().getPropertyMutationMaster().getCode());
-            LOGGER.debug("view: PropertyModel by model id: " + propertyModel);
+            logger.debug("view: PropertyModel by model id: " + propertyModel);
         }
         if (checkDesignationsForEdit()) {
             mode = EDIT;
@@ -565,8 +564,8 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
 
         setModifyRsn(propertyModel.getPropertyDetail().getPropertyMutationMaster().getCode());
         setDocNumber(propertyModel.getDocNumber());
-        LOGGER.debug("view: ModifyReason: " + getModifyRsn());
-        LOGGER.debug("Exiting from view");
+        logger.debug("view: ModifyReason: " + getModifyRsn());
+        logger.debug("Exiting from view");
         return VIEW;
     }
 
@@ -577,7 +576,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
     @SkipValidation
     @Action(value = "/amalgamation-forwardView")
     public String forwardView() {
-        LOGGER.debug("Entered into forwardView");
+        logger.debug("Entered into forwardView");
         validateApproverDetails();
         if (hasErrors())
             if (checkDesignationsForEdit())
@@ -586,7 +585,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
                 return VIEW;
         propertyModel = (PropertyImpl) getPersistenceService().findByNamedQuery(QUERY_PROPERTYIMPL_BYID,
                 Long.valueOf(getModelId()));
-        LOGGER.debug("forwardView: Workflow property: " + propertyModel);
+        logger.debug("forwardView: Workflow property: " + propertyModel);
         transitionWorkFlow(propertyModel);
         propService.updateIndexes(propertyModel, getApplicationType());
         basicPropertyService.update(basicProp);
@@ -594,7 +593,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         prepareAckMsg();
         addActionMessage(getText(PROPERTY_FORWARD_SUCCESS,
                 new String[] { propertyModel.getBasicProperty().getUpicNo() }));
-        LOGGER.debug("Exiting from forwardView");
+        logger.debug("Exiting from forwardView");
         return RESULT_ACK;
     }
 
@@ -616,7 +615,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
      */
     @Override
     public void validate() {
-        LOGGER.debug("Entered into validate, ModifyRsn: " + modifyRsn);
+        logger.debug("Entered into validate, ModifyRsn: " + modifyRsn);
         propertyModel.setBasicProperty(basicProp);
         Date propCompletionDate = null;
 
@@ -628,8 +627,8 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
                 || "-1".equals(propertyModel.getPropertyDetail().getCategoryType()))
             addActionError(getText("mandatory.propTypeCategory"));
 
-        if (basicProp.getAmalgamationsProxy() == null || (basicProp.getAmalgamationsProxy() != null
-                && basicProp.getAmalgamationsProxy().get(0).getAssessmentNo().isEmpty()))
+        if (basicProp.getAmalgamationsProxy() == null || basicProp.getAmalgamationsProxy() != null
+                && basicProp.getAmalgamationsProxy().get(0).getAssessmentNo().isEmpty())
             addActionError(getText("error.amalgamatedprops.required"));
 
         validateOwners();
@@ -645,7 +644,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
                     regDocDate, modifyRsn, propCompletionDate);
         }
         validateApproverDetails();
-        LOGGER.debug("Exiting from validate, BasicProperty: " + getBasicProp());
+        logger.debug("Exiting from validate, BasicProperty: " + getBasicProp());
     }
 
     private void validateOwners() {
@@ -699,7 +698,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         createAmalgamationOwners(propertyModel, basicProp, basicProp.getAddress());
         setProperty(propService.createProperty(propertyModel, getAreaOfPlot(), modifyRsn, proptypeMstr.getId().toString(), null,
                 null, status, propertyModel.getDocNumber(), null, floorTypeId, roofTypeId, wallTypeId, woodTypeId,
-                null, null, null, null));
+                null, null, null, null, Boolean.FALSE));
         updatePropertyID(basicProp);
         propertyModel.setPropertyModifyReason(modifyRsn);
         propertyModel.setBasicProperty(basicProp);
@@ -709,7 +708,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         try {
             modProperty = propService.modifyDemand(propertyModel, oldProperty);
         } catch (final TaxCalculatorExeption e) {
-            LOGGER.error("modifyBasicProp : Exception occured while modifying demand ", e);
+            logger.error("modifyBasicProp : Exception occured while modifying demand ", e);
             throw new TaxCalculatorExeption();
         }
 
@@ -721,7 +720,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         else
             basicProp.addProperty(modProperty);
 
-        LOGGER.debug("Exiting modifyBasicProp");
+        logger.debug("Exiting modifyBasicProp");
     }
 
     private void changePropertyDetail(final PropertyTypeMaster proptypeMstr) {
@@ -769,7 +768,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
     }
 
     public void createAmalgamationOwners(final Property property, final BasicProperty basicProperty, final Address ownerAddress) {
-        LOGGER.debug("createOwners for property: " + property + ", basicProperty: " + basicProperty
+        logger.debug("createOwners for property: " + property + ", basicProperty: " + basicProperty
                 + ", ownerAddress: " + ownerAddress);
         User user;
         property.getAmalgamationOwners().clear();
@@ -797,7 +796,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
                     userService.createUser(newOwner);
                     ownerInfo.setProperty(property);
                     ownerInfo.setOwner(newOwner);
-                    LOGGER.debug("createOwners: OwnerAddress: " + ownerAddress);
+                    logger.debug("createOwners: OwnerAddress: " + ownerAddress);
                     ownerInfo.getOwner().addAddress(basicProperty.getAddress());
                 } else {
                     // If existing user, then do not add correspondence address
@@ -839,10 +838,10 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
     @SkipValidation
     @Action(value = "/amalgamation-approve")
     public String approve() {
-        LOGGER.debug("Enter method approve");
+        logger.debug("Enter method approve");
         propertyModel = (PropertyImpl) getPersistenceService().findByNamedQuery(QUERY_PROPERTYIMPL_BYID,
                 Long.valueOf(getModelId()));
-        LOGGER.debug("approve: Workflow property: " + propertyModel);
+        logger.debug("approve: Workflow property: " + propertyModel);
         basicProp = propertyModel.getBasicProperty();
         oldProperty = (PropertyImpl) basicProp.getProperty();
         transitionWorkFlow(propertyModel);
@@ -867,7 +866,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
                 propertyModel.getBasicProperty().getUpicNo() }));
         addActionMessage(getText(PROPERTY_MODIFY_APPROVE_SUCCESS, new String[] { AMALGAMATION_OF_ASSESSMENT,
                 propertyModel.getBasicProperty().getUpicNo() }));
-        LOGGER.debug("Exiting approve");
+        logger.debug("Exiting approve");
         return RESULT_ACK;
     }
 
@@ -898,7 +897,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
     @SkipValidation
     @Action(value = "/amalgamation-reject")
     public String reject() {
-        LOGGER.debug("reject: Property rejection started");
+        logger.debug("reject: Property rejection started");
         if (isBlank(approverComments)) {
             addActionError(getText("property.workflow.remarks"));
             if (checkDesignationsForEdit())
@@ -912,10 +911,10 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
                 .equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
             propertyModel.getPropertyDetail().getFloorDetails().clear();
 
-        LOGGER.debug("reject: Property: " + propertyModel);
+        logger.debug("reject: Property: " + propertyModel);
         final BasicProperty basicProperty = propertyModel.getBasicProperty();
         setBasicProp(basicProperty);
-        LOGGER.debug("reject: BasicProperty: " + basicProperty);
+        logger.debug("reject: BasicProperty: " + basicProperty);
         transitionWorkFlow(propertyModel);
         if (propertyModel.getStatus().equals(PropertyTaxConstants.STATUS_CANCELLED))
             for (final Amalgamation amalProp : basicProp.getAmalgamations())
@@ -932,7 +931,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         } else
             setAckMessage(getText(PROPERTY_MODIFY_REJECT_SUCCESS, new String[] { AMALGAMATION_OF_ASSESSMENT, username }));
 
-        LOGGER.debug("reject: Property rejection ended");
+        logger.debug("reject: Property rejection ended");
         return RESULT_ACK;
     }
 

@@ -1263,6 +1263,10 @@ function deleteMutationOwner(obj)
 
 function addFloor()
 {		
+	if (jQuery('#floorDetailsEntered').prop('checked')) {
+		bootbox.alert('Uncheck floor details entered check box to proceed');
+		return false;
+	}
 	var tbl = document.getElementById('floorDetails');
     var rowO=tbl.rows.length;
      // bootbox.alert("rowO="+rowO);
@@ -1332,6 +1336,7 @@ function addFloor()
 				});
 		}
 	}
+    showHideLengthBreadth();
 }
 function delFloor(obj)
 {
