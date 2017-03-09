@@ -88,6 +88,7 @@ import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
+import org.egov.eis.service.DesignationService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.City;
@@ -95,6 +96,7 @@ import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.utils.NumberUtil;
@@ -143,6 +145,12 @@ public class PropertyTaxCommonUtils {
 
     @Autowired
     private AssignmentService assignmentService;
+    
+    @Autowired
+    private DesignationService designationService;
+    
+    @Autowired
+    private DepartmentService departmentService;
     
     /**
      * Gives the first half of the current financial year
@@ -512,4 +520,37 @@ public class PropertyTaxCommonUtils {
         return false;
     }
     
+    public String getDesgnForThirdPartyFullTransferWF() {
+        final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(PTMODULENAME,
+                PropertyTaxConstants.DESIGNATION_FOR_THIRDPARTY_FULLTRANSFER_WF);
+        return null != appConfigValue ? appConfigValue.get(0).getValue() : null;
+
+    }
+
+    public String getDeptForThirdPartyFullTransferWF() {
+        final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(PTMODULENAME,
+                PropertyTaxConstants.DEPARTMENT_FOR_THIRDPARTY_FULLTRANSFER_WF);
+        return null != appConfigValue ? appConfigValue.get(0).getValue() : null;
+
+    }
+
+    public Assignment getCommissionerAsgnForFullTransfer() {
+        final String designationStr = getDesgnForThirdPartyFullTransferWF();
+        final String departmentStr = getDeptForThirdPartyFullTransferWF();
+        final String[] department = departmentStr.split(",");
+        final String[] designation = designationStr.split(",");
+        List<Assignment> assignment = new ArrayList<>();
+        for (final String dept : department) {
+            for (final String desg : designation) {
+                Long deptId = departmentService.getDepartmentByName(dept).getId();
+                Long desgId = designationService.getDesignationByName(desg).getId();
+                assignment = assignmentService.findByDepartmentAndDesignation(deptId, desgId);
+                if (!assignment.isEmpty())
+                    break;
+            }
+            if (!assignment.isEmpty())
+                break;
+        }
+        return !assignment.isEmpty() ? assignment.get(0) : null;
+    }
 }

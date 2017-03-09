@@ -809,5 +809,27 @@ public class PropertyTransferService {
             }
         return wfInitor;
     }
+    
+    /**
+     * API to get Assignment for Third Party user based on mutation type
+     * @param propertyMutation Object basicProperty Object
+     * @return Assignment
+     */
+    public Assignment getAssignmentForThirdPartyByMutationType(PropertyMutation propertyMutation,
+            BasicProperty basicproperty, User user) {
+        if (propertyService.isCscOperator(user)){
+            if (propertyMutation.getType().equals(PropertyTaxConstants.ADDTIONAL_RULE_FULL_TRANSFER))
+                return propertyTaxCommonUtils.getCommissionerAsgnForFullTransfer();
+            else
+                return propertyService.getMappedAssignmentForCscOperator(basicproperty);
+        }
+        else{
+            if (propertyMutation.getType().equals(PropertyTaxConstants.ADDTIONAL_RULE_FULL_TRANSFER))
+                return propertyTaxCommonUtils.getCommissionerAsgnForFullTransfer();
+            else
+                return propertyService.getUserPositionByZone(basicproperty, false);
+        }
+
+    }
 
 }

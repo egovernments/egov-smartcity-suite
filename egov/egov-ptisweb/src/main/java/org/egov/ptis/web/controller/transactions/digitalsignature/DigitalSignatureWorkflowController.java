@@ -292,7 +292,8 @@ public class DigitalSignatureWorkflowController {
     }
 
     public void transitionWorkFlow(final PropertyMutation propertyMutation) {
-        if (propertyService.isMeesevaUser(propertyMutation.getCreatedBy())) {
+        if (propertyService.isMeesevaUser(propertyMutation.getCreatedBy())
+                || propertyMutation.getType().equals(PropertyTaxConstants.ADDTIONAL_RULE_FULL_TRANSFER)) {
             propertyMutation.transition().end();
             propertyMutation.getBasicProperty().setUnderWorkflow(false);
         } else {

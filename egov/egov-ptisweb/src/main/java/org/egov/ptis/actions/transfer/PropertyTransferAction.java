@@ -453,8 +453,8 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         } else if (BILL_COLLECTOR_DESGN.equalsIgnoreCase(loggedInUserDesignation)
                 || REVENUE_INSPECTOR_DESGN.equalsIgnoreCase(loggedInUserDesignation))
             wfInitiator = transferOwnerService.getWorkflowInitiator(propertyMutation);
-        if (wfInitiator != null || JUNIOR_ASSISTANT.equalsIgnoreCase(loggedInUserDesignation)
-                || SENIOR_ASSISTANT.equalsIgnoreCase(loggedInUserDesignation)) {
+        if (propertyMutation.getType().equals(ADDTIONAL_RULE_FULL_TRANSFER) || (wfInitiator != null || JUNIOR_ASSISTANT.equalsIgnoreCase(loggedInUserDesignation)
+                || SENIOR_ASSISTANT.equalsIgnoreCase(loggedInUserDesignation))) {
             transitionWorkFlow(propertyMutation);
             transferOwnerService.viewPropertyTransfer(basicproperty, propertyMutation);
             buildSMS(propertyMutation);
@@ -744,14 +744,11 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         Assignment assignment;
 
         if (!propertyByEmployee) {
-            currentState = "Created";
-            if (propertyService.isCscOperator(user))
-                assignment = propertyService.getMappedAssignmentForCscOperator(basicproperty);
-            else
-                assignment = propertyService.getUserPositionByZone(basicproperty, false);
+            currentState = getCurrentStateForThirdPartyWF(propertyMutation);
+            assignment = transferOwnerService.getAssignmentForThirdPartyByMutationType(propertyMutation, basicproperty, user);
             approverPositionId = assignment.getPosition().getId();
             approverName = assignment.getEmployee().getName().concat("~").concat(assignment.getPosition().getName());
-            wfInitiator = assignment;
+            wfInitiator = setInitiatorForThirdPartyByMutationType(propertyMutation, assignment);
             approverDesignation = assignment.getDesignation().getName();
         } else {
             if (null != approverPositionId && approverPositionId != -1) {
@@ -991,6 +988,15 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                                         ? NATURE_PARTIAL_TRANSFER
                                         : "PropertyMutation";
         return nature;
+    }
+    
+    private String getCurrentStateForThirdPartyWF(PropertyMutation propertyMutation){
+        
+        return propertyMutation.getType().equals(ADDTIONAL_RULE_FULL_TRANSFER) ? "NEW" : "Created";
+    }
+    
+    private Assignment setInitiatorForThirdPartyByMutationType(PropertyMutation propertyMutation, Assignment assignment){
+        return propertyMutation.getType().equals(ADDTIONAL_RULE_FULL_TRANSFER) ? null : assignment;
     }
 
     public BigDecimal getCurrentPropertyTax() {

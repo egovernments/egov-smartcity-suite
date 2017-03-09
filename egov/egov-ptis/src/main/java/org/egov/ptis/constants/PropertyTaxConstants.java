@@ -1360,6 +1360,8 @@ public interface PropertyTaxConstants {
     public static final String PROPERTYTAX_ROLEFORNONEMPLOYEE = "PROPERTYTAXROLEFORNONEMPLOYEE";
     public static final String APPLICATION_TYPE_REVISION_PETITION = "Revision_Petition";
     public static final String PT_WORKFLOWDESIGNATION_MOBILE = "PTIS_DESIGNATIONFORWF_MOBILE";
+    public static final String DESIGNATION_FOR_THIRDPARTY_FULLTRANSFER_WF = "PT_DESIGNATION_FOR_THIRDPARTY_FULLTRANSFER";
+    public static final String DEPARTMENT_FOR_THIRDPARTY_FULLTRANSFER_WF = "PT_DEPARTMENT_FOR_THIRDPARTY_FULLTRANSFER";
 
     // Action targets
     public static final String TARGET_WORKFLOW_ERROR = "workFlowError";
