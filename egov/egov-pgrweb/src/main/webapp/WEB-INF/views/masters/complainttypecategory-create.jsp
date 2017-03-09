@@ -64,7 +64,16 @@
 							<form:input path="name" id="name" cssClass="form-control is_valid_alphabet" cssErrorClass="form-control error" required="required" minlength="5" maxlength="100"/>
 							<form:errors path="name" cssClass="error-msg" />
 						</div>
-					</div>					
+					</div>		
+					<div class="form-group">
+						<label class="col-sm-3 control-label">
+							<spring:message code="lbl.local.name"/>
+						</label>
+						<div class="col-sm-6 add-margin">
+							<form:input path="localName" id="localname" cssClass="form-control" cssErrorClass="form-control error" maxlength="200"/>
+							<form:errors path="localName" cssClass="error-msg" />
+						</div>
+					</div>				
 					<div class="form-group">
 						<label class="col-sm-3 control-label"> 
 							<spring:message code="lbl.description"/>
