@@ -87,9 +87,9 @@ public class LicenseBillOnlinePaymentController {
 	@Autowired
 	protected LicenseCategoryService licenseCategoryService;
 
-    @Autowired
-    private SecurityUtils securityUtils;
-    
+	@Autowired
+	private SecurityUtils securityUtils;
+
 	@ModelAttribute("onlineSearchForm")
 	public OnlineSearchForm onlineSearchForm() {
 		return new OnlineSearchForm();
@@ -130,6 +130,5 @@ public class LicenseBillOnlinePaymentController {
 		return tradeLicenseService.getTradeLicenseForGivenParam(searchParamValue, searchParamType);
 
 	}
-	
-	 
+
 }

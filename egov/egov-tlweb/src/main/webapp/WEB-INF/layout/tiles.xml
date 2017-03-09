@@ -243,8 +243,12 @@
       	<put-attribute name="page-title" value="title.document.new" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/jsp/payment/license-onlinepayment.jsp"/>
     </definition>
-      <definition name="dcr-search" extends="base_layout">
+    <definition name="dcr-search" extends="base_layout">
         <put-attribute name="page-title" value="title.dailycollection" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/dailycitizenreport/dcr-search.jsp"/>
+    </definition>
+    <definition name="view-license-dcb" extends="base_layout">
+      	<put-attribute name="page-title" value="title.document.new" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/jsp/payment/view-license-dcb.jsp"/>
     </definition>
 </tiles-definitions>

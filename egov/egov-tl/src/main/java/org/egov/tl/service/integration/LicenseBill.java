@@ -224,13 +224,13 @@ public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalcu
         this.userId = userId;
     }
     
-    @Override
-    public Long getUserId() {
-    	if(ApplicationThreadLocals.getUserId()!=null)
-         return ApplicationThreadLocals.getUserId();
-    	else
-    	 return	userId;
-    }
+	@Override
+	public Long getUserId() {
+		if (ApplicationThreadLocals.getUserId() != null)
+			return ApplicationThreadLocals.getUserId();
+		else
+			return userId;
+	}
 
 
     @Override

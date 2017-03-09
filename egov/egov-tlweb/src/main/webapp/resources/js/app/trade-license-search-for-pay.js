@@ -432,5 +432,5 @@ function goToAction(obj, id) {
    if (obj.options[obj.selectedIndex].innerHTML == 'Payment')
         window.location="/tl/public/licenseonlinepayment-form/" + id;
    else if (obj.options[obj.selectedIndex].innerHTML == 'View DCB')
-       window.location="/tl/public/licenseviewdcb-form/" + id;
+       window.location="/tl/public/view-license-dcb/" + id;
 }

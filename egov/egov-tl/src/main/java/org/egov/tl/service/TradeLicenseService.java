@@ -359,17 +359,15 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         searchCriteria.add(Restrictions.isNotNull("applicationNumber"));
         searchCriteria.addOrder(Order.asc("id"));
         final List<OnlineSearchForm> finalList = new LinkedList<>();
-
-        for (final License license : (List<License>) searchCriteria.list()) {
+        final License license =  (License) searchCriteria.list().get(0);
             BigDecimal[] dmdColl;
             dmdColl=getDemandColl(license);
             finalList.add(new OnlineSearchForm(license, dmdColl));
-        }
         return finalList;
     }
     
     public BigDecimal[] getDemandColl(License license){
-        Module module = moduleService.getModuleByName(Constants.TRADELICENSE_MODULENAME);
+        Module module = moduleService.getModuleByName(TRADELICENSE_MODULENAME);
         final Installment currInstallment = getCurrentInstallment(module);
         BigDecimal[] dmdColl = new BigDecimal[3];
         BigDecimal currDmd = BigDecimal.ZERO;

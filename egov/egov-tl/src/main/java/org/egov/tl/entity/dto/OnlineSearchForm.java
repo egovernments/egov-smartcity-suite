@@ -74,9 +74,11 @@ public class OnlineSearchForm {
         setTotColl(dmdColl[2]);
         if(license.canCollectFee())
         	actions.add("Payment");
+        if(license.getIsActive())
+        	actions.add("View DCB");
     }
 
-     public String getApplicationNumber() {
+    public String getApplicationNumber() {
         return applicationNumber;
     }
 
