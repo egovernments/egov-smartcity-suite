@@ -45,14 +45,10 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.es.CollectionDocument;
-import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
-import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.tl.entity.dto.DCRSearchRequest;
 import org.egov.tl.service.DCRService;
@@ -82,31 +78,20 @@ public class DCRController {
         return new DCRSearchRequest();
     }
 
-    @ModelAttribute("operators")
-    public Set<User> collectionOperators() {
-        return dCRService.getCollectionOperators();
-    }
-
-    @ModelAttribute("status")
-    public List<EgwStatus> status() {
-        return egwStatusHibernateDAO.getStatusByModule(CollectionConstants.MODULE_NAME_RECEIPTHEADER);
-    }
-
-    @ModelAttribute("wards")
-    public List<Boundary> wardBoundaries() {
-        return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(WARD, REVENUE_HIERARCHY_TYPE);
-    }
-
     @RequestMapping(method = GET)
     public String search(final Model model) {
         model.addAttribute("currentDate", new Date());
+        model.addAttribute("operators", dCRService.getCollectionOperators());
+        model.addAttribute("status", egwStatusHibernateDAO.getStatusByModule(CollectionConstants.MODULE_NAME_RECEIPTHEADER));
+        model.addAttribute("wards",
+                boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(WARD, REVENUE_HIERARCHY_TYPE));
         return "dcr-search";
     }
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
     public List<CollectionDocument> searchCollection(@ModelAttribute final DCRSearchRequest searchRequest) {
-        return dCRService.collection(searchRequest);
+        return dCRService.searchDailyCollection(searchRequest);
 
     }
 

@@ -58,13 +58,13 @@
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
 					<div class="panel-title">
-						<spring:message code="lbl.dailyCollection.report" />
+						<spring:message code="title.dailycollection" />
 					</div>
 				</div>
 				<div class="panel-body custom-form">
 					<div class="form-group">
 						<label for="field-1" class="col-sm-2 control-label">
-							<spring:message code="lbl.dailyReport.fromDate" />
+							<spring:message code="lbl.fromdate" />
 							<span class="mandatory"></span>
 						</label>
 						<div class="col-sm-3 add-margin">
@@ -75,7 +75,7 @@
 						</div>
 
 						<label for="field-1" class="col-sm-2 control-label">
-							<spring:message code="lbl.dailyReport.toDate" />
+							<spring:message code="lbl.todate" />
 							<span class="mandatory"></span>
 					   </label>
 						<div class="col-sm-3 add-margin">
@@ -173,11 +173,6 @@
 		</table>
 	</div>
 </div>
-
-<link rel="stylesheet"
-	href="<cdn:url value='/resources/global/css/font-icons/entypo/css/entypo.css' context='/egi'/>" />
-<link rel="stylesheet"
-	href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" />
 <link rel="stylesheet"
 	href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>" />
 <link rel="stylesheet"
@@ -190,15 +185,7 @@
 	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js' context='/egi'/>"></script>
 <script type="text/javascript"
 	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"></script>
-<script type="text/javascript"
-	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.columnFilter.js' context='/egi'/>"></script>
-<script type="text/javascript"
-	src="<cdn:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
 <script
 	src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>
-<script type="text/javascript"
-	src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
-<script
-	src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
 <script
 	src="<cdn:url value='/resources/js/app/dcr-report.js?rnd=${app_release_no}'/>"></script>

@@ -39,10 +39,6 @@
  */
 package org.egov.tl.service;
 
-import static org.egov.tl.utils.Constants.COLLECION_BILLING_SERVICE_TL;
-import static org.egov.tl.utils.Constants.COLLECTION_INDEX_NAME;
-import static org.egov.tl.utils.Constants.DATEFORMATTER_YYYY_MM_DD;
-
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -54,6 +50,7 @@ import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.utils.ApplicationConstant;
 import org.egov.infra.utils.DateUtils;
 import org.egov.tl.entity.dto.DCRSearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
@@ -61,6 +58,9 @@ import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.metrics.valuecount.ValueCount;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
@@ -71,7 +71,9 @@ import org.springframework.stereotype.Service;
 public class DCRService {
 
     private static final String RECEIPT_COUNT = "receipt_count";
-
+    private static final String COLLECTION_INDEX_NAME="receipts";
+    private static final String COLLECION_BILLING_SERVICE_TL = "Trade License";
+    private static final DateTimeFormatter YYYY_MM_DD_FORMAT = DateTimeFormat.forPattern(ApplicationConstant.ES_DATE_FORMAT);
 
     @Autowired
     private ElasticsearchTemplate elasticsearchTemplate;
@@ -89,7 +91,7 @@ public class DCRService {
         return assignmentService.getUsersByDesignations(operatorDesignation.split(","));
     }
 
-    public List<CollectionDocument> collection(DCRSearchRequest dcrSearchRequest) {
+    public List<CollectionDocument> searchDailyCollection(DCRSearchRequest dcrSearchRequest) {
         BoolQueryBuilder dcrSearchCriteria = getCollectionFilterQuery(dcrSearchRequest);
         SearchQuery dcrSearchQuery = new NativeSearchQueryBuilder().
                 withIndices(COLLECTION_INDEX_NAME).
@@ -113,19 +115,17 @@ public class DCRService {
     public BoolQueryBuilder getCollectionFilterQuery(DCRSearchRequest searchRequest) {
         Date fromDate = null;
         Date toDate = null;
-        if (searchRequest.getFromDate()!= null) {
+        if (searchRequest.getFromDate()!= null) 
             fromDate = DateUtils.startOfDay(searchRequest.getFromDate());
-        }
+        
         if (searchRequest.getToDate() != null)
-            toDate = org.apache.commons.lang3.time.DateUtils.addDays(
-                    DateUtils.endOfDay(searchRequest.getToDate()),
-                    1);
+            toDate = DateUtils.endOfDay(searchRequest.getToDate());
         BoolQueryBuilder boolQuery = QueryBuilders.
                 boolQuery().
                 filter(QueryBuilders.matchQuery("billingService",COLLECION_BILLING_SERVICE_TL)).
                 filter(QueryBuilders.rangeQuery("receiptDate").
-                        gte(DATEFORMATTER_YYYY_MM_DD.format(fromDate)).
-                        lte(DATEFORMATTER_YYYY_MM_DD.format(toDate)).
+                        gte(YYYY_MM_DD_FORMAT.print(new DateTime(fromDate))).
+                        lte(YYYY_MM_DD_FORMAT.print(new DateTime(toDate))).
                         includeUpper(false));
 
         boolQuery = boolQuery.filter(QueryBuilders.matchQuery("cityName", ApplicationThreadLocals.getCityName()));
