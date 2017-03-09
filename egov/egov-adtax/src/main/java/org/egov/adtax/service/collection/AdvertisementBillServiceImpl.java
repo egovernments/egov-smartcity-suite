@@ -79,7 +79,8 @@ public class AdvertisementBillServiceImpl extends BillServiceInterface {
 
     @PersistenceContext
     private EntityManager entityManager;
-    private @Autowired AppConfigValueService appConfigValuesService;
+    @Autowired
+    private AppConfigValueService appConfigValuesService;
     @Autowired
     private AdvertisementAdditinalTaxRateService advertisementAdditinalTaxRateService;
     @Autowired
@@ -128,8 +129,7 @@ public class AdvertisementBillServiceImpl extends BillServiceInterface {
 
                     final EgBillDetails billdetail = createBillDetailObject(orderNo, BigDecimal.ZERO, creaditAmt,
                             demandDetail.getEgDemandReason().getGlcodeId().getGlcode(), getReceiptDetailDescription(
-                                    demandDetail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster()
-                                            + " " + AdvertisementTaxConstants.COLL_RECEIPTDETAIL_DESC_PREFIX,
+                                    demandDetail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster(),
                                     demandDetail.getEgDemandReason().getEgInstallmentMaster()));
                     orderNo++;
                     billDetailList.add(billdetail);
@@ -190,8 +190,7 @@ public class AdvertisementBillServiceImpl extends BillServiceInterface {
                         creaditAmt.add(amount),
                         existingDemandDetail.getEgDemandReason().getGlcodeId().getGlcode(),
                         getReceiptDetailDescription(existingDemandDetail.getEgDemandReason()
-                                .getEgDemandReasonMaster().getReasonMaster()
-                                + " " + AdvertisementTaxConstants.COLL_RECEIPTDETAIL_DESC_PREFIX,
+                                .getEgDemandReasonMaster().getReasonMaster(),
                                 existingDemandDetail.getEgDemandReason().getEgInstallmentMaster()));
                 orderNo++;
                 billDetailList.add(billdetail);
@@ -204,8 +203,7 @@ public class AdvertisementBillServiceImpl extends BillServiceInterface {
                         BigDecimal.ZERO,
                         amount, pendingTaxReason.getGlcodeId().getGlcode(),
                         getReceiptDetailDescription(pendingTaxReason.getEgDemandReasonMaster()
-                                .getReasonMaster() + " "
-                                + AdvertisementTaxConstants.COLL_RECEIPTDETAIL_DESC_PREFIX,
+                                .getReasonMaster(),
                                 pendingTaxReason.getEgInstallmentMaster()));
                 orderNo++;
                 billDetailList.add(billdetail);
@@ -216,7 +214,19 @@ public class AdvertisementBillServiceImpl extends BillServiceInterface {
     }
 
     private String getReceiptDetailDescription(final String reasonType, final Installment instlment) {
-        return reasonType + (instlment != null ? " " + instlment.getDescription() : "");
+        List<AdvertisementAdditionalTaxRate> additionalTaxRates = advertisementAdditinalTaxRateService
+                .getAllActiveAdditinalTaxRates();
+        List<String> taxTypeList = new ArrayList<>();
+        for (AdvertisementAdditionalTaxRate advertisementAdditionalTaxRate : additionalTaxRates) {
+            if (advertisementAdditionalTaxRate != null)
+                taxTypeList.add(advertisementAdditionalTaxRate.getTaxType());
+        }
+        if (!taxTypeList.isEmpty() && taxTypeList.contains(reasonType)) {
+            return reasonType + " " + AdvertisementTaxConstants.COLL_RECEIPTDETAIL_DESC_PREFIX;
+        } else {
+            return reasonType + " " + AdvertisementTaxConstants.COLL_RECEIPTDETAIL_DESC_PREFIX
+                    + (instlment != null ? " " + instlment.getDescription() : "");
+        }
 
     }
 
