@@ -43,6 +43,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 import org.egov.tl.entity.dto.OnlineSearchForm;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -51,30 +52,30 @@ import com.google.gson.JsonSerializer;
 
 public class OnlineSearchTradeResultHelperAdaptor implements JsonSerializer<OnlineSearchForm> {
 
-	@Override
-	public JsonElement serialize(final OnlineSearchForm searchFormObj, final Type type,
-			final JsonSerializationContext jsc) {
-		JsonObject searchResult = new JsonObject();
-		if (searchFormObj != null) {
-			searchResult.addProperty("licenseId", searchFormObj.getLicenseId());
-			searchResult.addProperty("applicationNumber", searchFormObj.getApplicationNumber());
-			searchResult.addProperty("tlNumber", searchFormObj.getLicenseNumber());
-			searchResult.addProperty("tradeOwner", searchFormObj.getTradeOwnerName());
-			searchResult.addProperty("mobileNumber", searchFormObj.getMobileNo());
-			searchResult.addProperty("propertyAssmntNo", searchFormObj.getPropertyAssessmentNo());
-			searchResult.addProperty("arrDmd", searchFormObj.getArrDmd());
-			searchResult.addProperty("currDmd", searchFormObj.getCurrDmd());
-			searchResult.addProperty("totColl", searchFormObj.getTotColl());
-			Gson gson = new Gson();
-			ArrayList<JsonObject> actions = new ArrayList<>();
-			searchFormObj.getActions().forEach(action -> {
-				JsonObject actionItem = new JsonObject();
-				actionItem.addProperty("key", action);
-				actions.add(actionItem);
-			});
-			searchResult.addProperty("actions", gson.toJson(actions));
-		}
+    @Override
+    public JsonElement serialize(final OnlineSearchForm searchFormObj, final Type type,
+            final JsonSerializationContext jsc) {
+        final JsonObject searchResult = new JsonObject();
+        if (searchFormObj != null) {
+            searchResult.addProperty("licenseId", searchFormObj.getLicenseId());
+            searchResult.addProperty("applicationNumber", searchFormObj.getApplicationNumber());
+            searchResult.addProperty("tlNumber", searchFormObj.getLicenseNumber());
+            searchResult.addProperty("tradeOwner", searchFormObj.getTradeOwnerName());
+            searchResult.addProperty("mobileNumber", searchFormObj.getMobileNo());
+            searchResult.addProperty("propertyAssmntNo", searchFormObj.getPropertyAssessmentNo());
+            searchResult.addProperty("arrDmd", searchFormObj.getArrDmd());
+            searchResult.addProperty("currDmd", searchFormObj.getCurrDmd());
+            searchResult.addProperty("totColl", searchFormObj.getTotColl());
+            final Gson gson = new Gson();
+            final ArrayList<JsonObject> actions = new ArrayList<>();
+            searchFormObj.getActions().forEach(action -> {
+                final JsonObject actionItem = new JsonObject();
+                actionItem.addProperty("key", action);
+                actions.add(actionItem);
+            });
+            searchResult.addProperty("actions", gson.toJson(actions));
+        }
 
-		return searchResult;
-	}
+        return searchResult;
+    }
 }

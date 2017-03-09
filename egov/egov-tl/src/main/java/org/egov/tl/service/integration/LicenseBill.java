@@ -40,6 +40,18 @@
 
 package org.egov.tl.service.integration;
 
+import static org.apache.commons.lang.StringUtils.defaultIfBlank;
+import static org.apache.commons.lang.StringUtils.defaultString;
+import static org.apache.commons.lang.StringUtils.isBlank;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.Installment;
 import org.egov.demand.dao.EgBillDao;
@@ -51,40 +63,26 @@ import org.egov.demand.model.EgDemandDetails;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.tl.entity.License;
-import org.egov.tl.service.PenaltyRatesService;
 import org.egov.tl.utils.Constants;
 import org.egov.tl.utils.LicenseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.apache.commons.lang.StringUtils.defaultIfBlank;
-import static org.apache.commons.lang.StringUtils.defaultString;
-import static org.apache.commons.lang.StringUtils.isBlank;
-
 @Transactional(readOnly = true)
 public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalculator {
+    public static final String DEFAULT_FUNCTIONARY_CODE = "1";
 
     private License license;
     private String moduleName;
     private String serviceCode;
     private String referenceNumber;
     private Boolean isCallbackForApportion = Boolean.FALSE;
-    public static final String DEFAULT_FUNCTIONARY_CODE = "1";
     private String transanctionReferenceNumber;
     private Long userId;
 
     @Autowired
     private LicenseUtils licenseUtils;
-    @Autowired
-    private PenaltyRatesService penaltyRatesService;
+
     @Autowired
     private EgBillDao egBillDao;
 
@@ -220,18 +218,17 @@ public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalcu
         return license.getTotalBalance();
     }
 
-    public void setUserId(Long userId) {
+    public void setUserId(final Long userId) {
         this.userId = userId;
     }
-    
-	@Override
-	public Long getUserId() {
-		if (ApplicationThreadLocals.getUserId() != null)
-			return ApplicationThreadLocals.getUserId();
-		else
-			return userId;
-	}
 
+    @Override
+    public Long getUserId() {
+        if (ApplicationThreadLocals.getUserId() != null)
+            return ApplicationThreadLocals.getUserId();
+        else
+            return userId;
+    }
 
     @Override
     public String getDescription() {
@@ -275,7 +272,7 @@ public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalcu
 
     @Override
     public void setPenaltyCalcType(final LPPenaltyCalcType penaltyType) {
-        //not used
+        // not used
     }
 
     @Override
@@ -312,7 +309,7 @@ public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalcu
     }
 
     public Map<Installment, BigDecimal> getCalculatedPenalty(final Date fromDate, final Date collectionDate,
-                                                             final EgDemand demand) {
+            final EgDemand demand) {
         final Map<Installment, BigDecimal> installmentPenalty = new HashMap<>();
         for (final EgDemandDetails demandDetails : demand.getEgDemandDetails())
             if (!demandDetails.getEgDemandReason().getEgDemandReasonMaster().getCode().equals(Constants.PENALTY_DMD_REASON_CODE)
