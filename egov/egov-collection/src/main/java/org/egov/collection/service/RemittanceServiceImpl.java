@@ -448,8 +448,6 @@ public class RemittanceServiceImpl extends RemittanceService {
             final String paymentMode) {
 
         final List<HashMap<String, Object>> paramList = new ArrayList<>();
-        // TODO: Fix the sum(ih.instrumentamount) the amount is wrong because of
-        // the ujl.boundary in (" + boundaryIdList + ")"
         final String queryBuilder = "SELECT sum(ih.instrumentamount) as INSTRUMENTMAOUNT,date(ch.RECEIPTDATE) AS RECEIPTDATE,"
                 + "sd.NAME as SERVICENAME,it.TYPE as INSTRUMENTTYPE,fnd.name AS FUNDNAME,dpt.name AS DEPARTMENTNAME,"
                 + "fnd.code AS FUNDCODE,dpt.code AS DEPARTMENTCODE from EGCL_COLLECTIONHEADER ch,"
@@ -479,7 +477,7 @@ public class RemittanceServiceImpl extends RemittanceService {
          * Query to get the collection of the instrument types Cash,Cheque,DD &
          * Card for bank remittance
          */
-        final StringBuilder queryStringForCashChequeDDCard = new StringBuilder(queryBuilder + ",egeis_jurisdiction ujl"
+        final StringBuilder queryStringForCashChequeDDCard = new StringBuilder(queryBuilder 
                 + whereClauseBeforInstumentType + whereClauseForServiceAndFund + "it.TYPE in ");
         if (paymentMode.equals(CollectionConstants.INSTRUMENTTYPE_CASH))
             queryStringForCashChequeDDCard.append("('" + CollectionConstants.INSTRUMENTTYPE_CASH + "')");
@@ -490,8 +488,8 @@ public class RemittanceServiceImpl extends RemittanceService {
             queryStringForCashChequeDDCard.append(
                     "('" + CollectionConstants.INSTRUMENTTYPE_CASH + "','" + CollectionConstants.INSTRUMENTTYPE_CHEQUE
                             + "'," + "'" + CollectionConstants.INSTRUMENTTYPE_DD + "') ");
-        queryStringForCashChequeDDCard.append(whereClause + "AND ch.CREATEDBY=ujl.employee and ujl.boundary in ("
-                + boundaryIdList + ")" + groupByClause);
+        queryStringForCashChequeDDCard.append(whereClause + "AND ch.CREATEDBY in (select distinct ujl.employee from egeis_jurisdiction ujl where ujl.boundary in ("
+                + boundaryIdList + "))" + groupByClause);
 
         collectionsUtil.getUserByUserName(CollectionConstants.CITIZEN_USER_NAME);
 
