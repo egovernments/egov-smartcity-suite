@@ -426,11 +426,11 @@ $(document).ready(function () {
     );
 });
 function goToView(id) {
-    window.open("../viewtradelicense/viewTradeLicense-view.action?id=" + id, '', 'scrollbars=yes,width=1000,height=700,status=yes');
+    window.open("/tl/public/viewtradelicense/viewTradeLicense-view.action?id=" + id, '', 'scrollbars=yes,width=1000,height=700,status=yes');
 }
 function goToAction(obj, id) {
    if (obj.options[obj.selectedIndex].innerHTML == 'Payment')
-        window.location="/tl/public/licenseonlinepayment-form/" + id;
+        window.open("/tl/public/licenseonlinepayment-form/" + id);
    else if (obj.options[obj.selectedIndex].innerHTML == 'View DCB')
-       window.location="/tl/public/view-license-dcb/" + id;
+       window.open("/tl/public/view-license-dcb/" + id);
 }

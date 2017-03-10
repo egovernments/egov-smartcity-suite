@@ -43,6 +43,70 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
+
+<div align="center" style='font-weight:bold'>View DCB</div>
+<div>
+<table border="1" width="100%">
+	<tr>
+		<td>
+			<div align="left">
+				License No.: 
+			</div>
+		</td>
+		<td style='font-weight:bold'><c:out value="${license.licenseNumber}" /></td>
+		<td>
+			<div align="left">
+				Locality: 
+			</div>
+		</td>
+		<td style='font-weight:bold'><c:out value="${license.boundary.name}" /></td>
+	</tr>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	<tr>
+		<td>
+			<div align="left">
+				Ward: 
+			</div>
+		</td>
+		<td style='font-weight:bold'><c:out value="${license.parentBoundary.name}" /></td>
+		<td>
+			<div align="left">
+				Address: 
+			</div>
+		</td>
+		<td style='font-weight:bold'><c:out value="${license.address}" /></td>
+	</tr>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	<tr>
+		<td>
+			<div align="left">
+				Mobile No.: 
+			</div>
+		</td>
+		<td style='font-weight:bold'><c:out value="${license.licensee.mobilePhoneNumber}" /></td>
+		<td>
+			<div align="left">
+				Trade Owner Name: 
+			</div>
+		</td>
+		<td style='font-weight:bold'><c:out value="${license.licensee.applicantName}" /></td>
+	</tr>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	
+	<tr>
+		<td>
+			<div align="left">
+				Ownership Type: 
+			</div>
+		</td>
+		<td style='font-weight:bold'><c:out value="${license.ownershipType}" /></td>
+		<td>
+			<div align="left">
+				Trade Name: 
+			</div>
+		</td>
+		<td style='font-weight:bold'><c:out value="${license.tradeName.name}" /></td>
+	</tr>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</table>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</div>
+
 <div class="row display-hide report-section">
 	<div class="col-md-12 table-header text-left">
 		<spring:message code="lbl.drill.report" />
@@ -120,7 +184,7 @@
 <script type="text/javascript"
 	src="<cdn:url  value='/resources/js/app/online-dcb-report.js?rnd=${app_release_no}'/>"></script>
 <script>
-		var dcbreportdata = ${dcbreport};
-		populateData(dcbreportdata);  
-</script> 
+	var dcbreportdata = ${dcbreport};
+	populateData(dcbreportdata);
+</script>
 

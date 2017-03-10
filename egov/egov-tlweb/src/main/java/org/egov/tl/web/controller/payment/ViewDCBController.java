@@ -67,14 +67,25 @@ public class ViewDCBController {
     @Autowired
     private DCBReportService dCBReportService;
 
+    private License licenseObj;
+
     @RequestMapping(value = "/public/view-license-dcb/{id}", method = RequestMethod.GET)
     public String search(@PathVariable final Long id, final Model model) throws IOException {
-        final License license = tradeLicenseService.getLicenseById(id);
-        model.addAttribute(LICENSE, license);
+        licenseObj = tradeLicenseService.getLicenseById(id);
+        model.addAttribute(LICENSE, licenseObj);
         model.addAttribute("dcbreport",
-                toJSON(dCBReportService.generateReportResult(license.getLicenseNumber(), defaultString(LICENSE),
+                toJSON(dCBReportService.generateReportResult(licenseObj.getLicenseNumber(), defaultString(LICENSE),
                         defaultString(LICENSE)), DCBReportResult.class, DCBReportResponseAdaptor.class));
 
         return "view-license-dcb";
     }
+
+    public License getLicenseObj() {
+        return licenseObj;
+    }
+
+    public void setLicenseObj(final License licenseObj) {
+        this.licenseObj = licenseObj;
+    }
+
 }
