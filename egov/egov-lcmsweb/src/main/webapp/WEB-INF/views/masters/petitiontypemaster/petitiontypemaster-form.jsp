@@ -73,8 +73,8 @@
 							code="lbl.petitiontype" /> :<span class="mandatory"></span> </label>
 					<div class="col-sm-3 add-margin">
 						<form:input path="petitionType" id="petitiontype"
-							class="form-control patternvalidation"
-							data-pattern="alphanumericwithspecialcharacterswithspace" maxlength="128"
+							class="form-control text-left pattern"
+							 maxlength="128"
 							required="required" />
 						<form:errors path="petitionType" cssClass="error-msg" />
 					</div>

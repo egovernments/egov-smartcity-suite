@@ -230,7 +230,7 @@
 	<label class="col-sm-2 control-label text-right"><spring:message
 			code="lbl.oldreferencenumber" />:</label>
 	<div class="col-sm-3 add-margin">
-		<form:input class="form-control patternvalidation" maxlength="4" id="oldrefnumber"
+		<form:input class="form-control patternvalidation" maxlength="10" id="oldrefnumber"
 			path="oldReferenceNumber" data-pattern="address" />
 		<form:errors path="oldReferenceNumber" cssClass="add-margin error-msg" />
 	</div>

@@ -60,10 +60,9 @@ function formValidation(){
 			(counteraffidavitapprovaldate== null || counteraffidavitapprovaldate=="") && (eofficenum== null || eofficenum =="")
 			&& (cafilingdate == null || cafilingdate==""))) {
 		bootbox
-				.alert('Please enter one mandatory field');
+				.alert('Please enter one field else close screen');
 		return false;
 	}
-	//eOfficeNumValidation();
   if ($( "#legalcasecaform" ).valid())
 	  {
 	  document.forms[0].submit();
@@ -71,17 +70,6 @@ function formValidation(){
   		}
 
 	
-function eOfficeNumValidation(){
-	var txt = $('#eoffice').val();
-	var re = /^[ A-Za-z0-9/-]*$/
-	if (re.test(txt)) {
-	}
-	else {
-	alert('It Should accept two special charcters / and -');
-	return false;
-	}
-	
-}
 			
 			/*var modeval=$("#mode").val();
 			var $tableBody = $('#caffidavitdetails').find("tbody"),
