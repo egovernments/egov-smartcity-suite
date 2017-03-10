@@ -1540,7 +1540,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
             setAckMessage("Migrated Property updated Successfully in System with Index Number: ");
 
             final long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
-            if (logger.isDebugEnabled())
+            if (logger.isInfoEnabled())
                 logger.info("updateData: Property modified successfully in system with Index Number: "
                         + basicProp.getUpicNo() + "; Time taken(ms) = " + elapsedTimeMillis);
         }
