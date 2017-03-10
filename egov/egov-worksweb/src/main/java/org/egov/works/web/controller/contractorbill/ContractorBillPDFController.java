@@ -52,6 +52,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.infra.filestore.service.FileStoreService;
@@ -59,14 +60,17 @@ import org.egov.infra.reporting.engine.ReportConstants;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.NumberUtil;
 import org.egov.infra.web.utils.WebUtils;
 import org.egov.model.bills.EgBilldetails;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.contractorbill.service.ContractorBillRegisterService;
+import org.egov.works.masters.entity.Contractor;
 import org.egov.works.mb.service.MBHeaderService;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
+import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
@@ -108,20 +112,20 @@ public class ContractorBillPDFController {
     public @ResponseBody ResponseEntity<byte[]> generateContractorBillPDF(final HttpServletRequest request,
             @PathVariable("contractorBillId") final Long id, final HttpSession session) throws IOException {
         final ContractorBillRegister contractorBillRegister = contractorBillRegisterService.getContractorBillById(id);
-        return generateReport(contractorBillRegister, request, session);
+        return generateReport(contractorBillRegister, request);
     }
 
     private ResponseEntity<byte[]> generateReport(final ContractorBillRegister contractorBillRegister,
-            final HttpServletRequest request,
-            final HttpSession session) {
+            final HttpServletRequest request) {
         final Map<String, Object> reportParams = new HashMap<String, Object>();
         ReportRequest reportInput = null;
-        ReportOutput reportOutput = null;
+        ReportOutput reportOutput;
         if (contractorBillRegister != null) {
 
             final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
             final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm a");
             new DecimalFormat("#.##");
+            final WorkOrderEstimate workOrderEstimate = contractorBillRegister.getWorkOrderEstimate();
 
             final String url = WebUtils.extractRequestDomainURL(request, false);
 
@@ -130,29 +134,20 @@ public class ContractorBillPDFController {
 
             final String cityName = (String) request.getSession().getAttribute("citymunicipalityname");
             reportParams.put("cityName", cityName);
-            reportParams.put("contractorName",
-                    contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getContractor().getName() != null
-                            ? contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getContractor().getName() : "");
-            reportParams.put("contractorCode",
-                    contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getContractor().getCode() != null
-                            ? contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getContractor().getCode() : "");
-            reportParams.put("bankAcc",
-                    contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getContractor().getBank() != null
-                            ? contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getContractor().getBankaccount()
-                            : "N/A");
-            reportParams.put("panNo",
-                    !contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getContractor().getPanNumber().isEmpty()
-                            ? contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getContractor().getPanNumber()
-                            : "N/A");
+            if(workOrderEstimate != null){
+                setContractorJsonValues(contractorBillRegister, reportParams, workOrderEstimate);
+                if(workOrderEstimate.getWorkCompletionDate() != null)
+                    reportParams.put("workCommencedDate", workOrderEstimate.getWorkCompletionDate());
+                else
+                    reportParams.put("workCommencedDate", org.egov.infra.utils.StringUtils.EMPTY);
+                reportParams.put("win", workOrderEstimate.getEstimate().getProjectCode().getCode());
+                reportParams.put("nameOfTheWork", workOrderEstimate.getEstimate().getName());
+                reportParams.put("ward", workOrderEstimate.getEstimate().getWard().getName());
+            }
             reportParams.put("billType", contractorBillRegister.getBilltype());
-            reportParams.put("workCommencedDate", contractorBillRegister.getWorkOrderEstimate().getWorkCompletionDate() != null
-                    ? formatter.format(contractorBillRegister.getWorkOrderEstimate().getWorkCompletionDate()) : "");
-            reportParams.put("win", contractorBillRegister.getWorkOrderEstimate().getEstimate().getProjectCode().getCode());
             reportParams.put("billNumber", contractorBillRegister.getBillnumber());
             reportParams.put("billDate", formatter.format(contractorBillRegister.getBilldate()));
             reportParams.put("billAmount", contractorBillRegister.getBillamount());
-            reportParams.put("nameOfTheWork", contractorBillRegister.getWorkOrderEstimate().getEstimate().getName());
-            reportParams.put("ward", contractorBillRegister.getWorkOrderEstimate().getEstimate().getWard().getName());
             reportParams.put("department", contractorBillRegister.getEgBillregistermis().getEgDepartment().getName());
             reportParams.put("reportRunDate", sdf.format(new Date()));
             reportParams.put("creatorName", contractorBillRegister.getCreatedBy().getName());
@@ -178,6 +173,32 @@ public class ContractorBillPDFController {
         reportOutput = reportService.createReport(reportInput);
         return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
 
+    }
+
+    private void setContractorJsonValues(final ContractorBillRegister contractorBillRegister,
+            final Map<String, Object> reportParams, final WorkOrderEstimate workOrderEstimate) {
+        final Contractor contractor = workOrderEstimate.getWorkOrder().getContractor();
+        
+        if (contractor != null) {
+            if (contractor.getName() != null)
+                reportParams.put("contractorName", contractor.getName());
+            else
+                reportParams.put("contractorName", org.egov.infra.utils.StringUtils.EMPTY);
+            if (contractor.getCode() != null)
+                reportParams.put("contractorCode", contractor.getCode());
+            else
+                reportParams.put("contractorCode", org.egov.infra.utils.StringUtils.EMPTY);
+            if (contractor.getBank() != null)
+                reportParams.put("bankAcc", contractor.getBankaccount());
+            else
+                reportParams.put("bankAcc", "N/A");
+            if (StringUtils.isNotBlank(contractorBillRegister.getWorkOrderEstimate().getWorkOrder()
+                    .getContractor().getPanNumber()))
+                reportParams.put("panNo", contractorBillRegister.getWorkOrderEstimate().getWorkOrder()
+                        .getContractor().getPanNumber());
+            else
+                reportParams.put("panNo", "N/A");
+        }
     }
 
     public List<Map<String, Object>> getBillDetailsMap(final ContractorBillRegister contractorBillRegister,

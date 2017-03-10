@@ -446,4 +446,6 @@ public class WorksConstants {
     public static final String IMAGETYPE = "image/jpg";
     
     public static final String PDF = "pdf";
+    
+    public static final String NA = "NA";
 }

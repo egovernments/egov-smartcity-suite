@@ -41,6 +41,7 @@ package org.egov.works.web.controller.reports;
 
 import java.util.List;
 
+import org.egov.works.config.properties.WorksApplicationProperties;
 import org.egov.works.reports.entity.WorkProgressRegister;
 import org.egov.works.reports.entity.WorkProgressRegisterSearchRequest;
 import org.egov.works.reports.service.WorkProgressRegisterService;
@@ -67,10 +68,16 @@ public class AjaxWorkProgressRegisterController {
 
     @Autowired
     private WorkProgressRegisterJsonAdaptor workProgressRegisterJsonAdaptor;
+    
+    @Autowired
+    private WorksApplicationProperties worksApplicationProperties;
 
     @RequestMapping(value = "/ajax-wincodestosearchworkprogressregister", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<String> getChildBoundariesById(@RequestParam final String code) {
-        return workProgressRegisterService.findWorkIdentificationNumbersToSearchLineEstimatesForLoa(code);
+        if (worksApplicationProperties.lineEstimateRequired())
+            return workProgressRegisterService.findWorkIdentificationNumbersToSearchLineEstimatesForLoa(code);
+        else
+            return workProgressRegisterService.findWorkIdentificationNumbersToSearchAbstractEstimatesForLoa(code);
     }
 
     @RequestMapping(value = "/ajax-workprogressregister", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)

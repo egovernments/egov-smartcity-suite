@@ -52,7 +52,14 @@
 					<th><spring:message code="lbl.typeofwork" /></th>
 					<th><spring:message code="lbl.subtypeofwork" /></th>
 					<th><spring:message code="lbl.department" /></th>
-					<th><spring:message code="lbl.lineestimate" /></th>
+					<c:choose>
+						<c:when test="${lineEstimateRequired }">
+							<th><spring:message code="lbl.lineestimate" /></th>
+						</c:when>
+						<c:otherwise>
+							<th><spring:message code="lbl.abstractestimatecount"/></th>
+						</c:otherwise>
+					</c:choose>
 					<th><spring:message code="lbl.adminsanctionedestimates" /></th>
 					<th><spring:message code="lbl.leadminsanctionedamountincrores" /></th>
 					<th><spring:message code="lbl.aeadminsanctionedamountincrores" /></th>

@@ -249,11 +249,11 @@ function callAjaxSearch() {
 					"data" : "technicalSanctionAuthorityDate"}, {
 					"data" : "estimateAmount"}, {
 					"data" : "workValue", "sClass" : "text-right"}, {
-					"data" : "modeOfAllotment", "sClass" : "text-right"}, {
+					"data" : "modeOfAllotment", "sClass" : "text-left"}, {
 					"data" : "agreementNumberDate", "sClass" : "text-right"}, {
-					"data" : "contractorCodeName", "sClass" : "text-right"}, {
+					"data" : "contractorCodeName", "sClass" : "text-left"}, {
 					"data" : "agreementAmount", "sClass" : "text-right"}, {
-					"data" : "workStatus", "sClass" : "text-right"}, {
+					"data" : "workStatus", "sClass" : "text-left"}, {
 					"data" : "milestonePercentageCompleted"}, {
 					"data" : "latestMbNumberDate"}, {
 					"data" : "latestBillNumberDate"}, {

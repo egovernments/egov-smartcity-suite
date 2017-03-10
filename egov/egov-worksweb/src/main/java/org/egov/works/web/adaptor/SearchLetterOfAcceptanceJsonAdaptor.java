@@ -109,7 +109,7 @@ public class SearchLetterOfAcceptanceJsonAdaptor implements JsonSerializer<WorkO
                         && (workOrder.getEgwStatus().getCode().equalsIgnoreCase(WorksConstants.APPROVED)
                                 || workOrder.getEgwStatus().getCode().equalsIgnoreCase(WorksConstants.CANCELLED_STATUS)))
                     jsonObject.addProperty("currentowner", "NA");
-                else
+                else if(workOrder.getState().getOwnerPosition() != null)
                     jsonObject.addProperty("currentowner",
                             worksUtils.getApproverName(workOrder.getState().getOwnerPosition().getId()));
             } else

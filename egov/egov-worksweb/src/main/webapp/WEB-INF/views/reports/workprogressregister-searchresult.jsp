@@ -43,7 +43,14 @@
 
 <div class="display-hide report-section">
 	<div class="table-header text-left">
-		<spring:message code="title.lineestimate.search" /></div>
+		<c:choose>
+			<c:when test="${lineEstimateRequired == true}">
+				<spring:message code="title.lineestimate.search" /></div>
+			</c:when>
+			<c:otherwise>
+				<spring:message code="title.searchresult" />
+			</c:otherwise>
+		</c:choose>
 	<div id="searchCriteria" class="text-center"></div>
 	<div id="dataRun" class="text-center"></div>
 	<div class="form-group report-table-container">

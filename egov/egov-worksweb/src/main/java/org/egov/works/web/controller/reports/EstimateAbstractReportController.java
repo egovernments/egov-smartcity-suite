@@ -97,6 +97,7 @@ public class EstimateAbstractReportController {
         estimateAbstractReport.setCurrentFinancialYearId(currentFinancialYear.getId());
         model.addAttribute("estimateAbstractReport", estimateAbstractReport);
         estimateAbstractReport.setDepartment(worksUtils.getDefaultDepartmentId());
+        model.addAttribute("lineEstimateRequired", worksApplicationProperties.lineEstimateRequired());
         return "estimateAbstractReportByDepartmentWise-search";
     }
 
@@ -114,6 +115,7 @@ public class EstimateAbstractReportController {
             if (approverDepartment != null)
                 estimateAbstractReport.getDepartments().add(approverDepartment);
         }
+        model.addAttribute("lineEstimateRequired", worksApplicationProperties.lineEstimateRequired());
         return "estimateAbstractReportByTypeOfWorkWise-search";
     }
 

@@ -41,6 +41,7 @@ package org.egov.works.web.controller.reports;
 
 import java.util.List;
 
+import org.egov.works.config.properties.WorksApplicationProperties;
 import org.egov.works.reports.entity.EstimateAbstractReport;
 import org.egov.works.reports.service.WorkProgressRegisterService;
 import org.egov.works.web.adaptor.EstimateAbstractReportJsonAdaptor;
@@ -64,35 +65,53 @@ public class AjaxEstimateAbstractReportController {
     private WorkProgressRegisterService workProgressRegisterService;
 
     @Autowired
+    private WorksApplicationProperties worksApplicationProperties;
+
+    @Autowired
     private EstimateAbstractReportJsonAdaptor estimateAbstractReportJsonAdaptor;
 
     @RequestMapping(value = "/ajax-estimateabstractreportbydepartmentwise", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
-    public @ResponseBody String showSearchEstimateAbstractReportByDepartment(
+    @ResponseBody
+    public String showSearchEstimateAbstractReportByDepartment(
             @ModelAttribute final EstimateAbstractReport estimateAbstractReport, final Model model) {
-        final List<EstimateAbstractReport> estimateAbstractReportByDepartmentWise = workProgressRegisterService
-                .searchEstimateAbstractReportByDepartmentWise(estimateAbstractReport);
-        final String result = new StringBuilder("{ \"data\":")
-                .append(toSearchEstimateAbstractReportJson(estimateAbstractReportByDepartmentWise))
-                .append("}").toString();
-        return result;
+        if (worksApplicationProperties.lineEstimateRequired()) {
+            final List<EstimateAbstractReport> estimateAbstractReportByDepartmentWise = workProgressRegisterService
+                    .searchEstimateAbstractReportByDepartmentWise(estimateAbstractReport);
+            return new StringBuilder(WorkProgressRegisterService.JSONDATAPREFIX)
+                    .append(toSearchEstimateAbstractReportJson(estimateAbstractReportByDepartmentWise)).append("}")
+                    .toString();
+        } else {
+            final List<EstimateAbstractReport> estimateAbstractReportByDepartmentWise = workProgressRegisterService
+                    .searchEstimateAbstractReportByDepartmentWiseForAE(estimateAbstractReport);
+            return new StringBuilder(WorkProgressRegisterService.JSONDATAPREFIX)
+                    .append(toSearchEstimateAbstractReportJson(estimateAbstractReportByDepartmentWise)).append("}")
+                    .toString();
+        }
     }
 
     @RequestMapping(value = "/ajax-estimateabstractreportbytypeofworkwise", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
-    public @ResponseBody String showSearchEstimateAbstractReportByTypeOfWork(final Model model,
+    @ResponseBody
+    public String showSearchEstimateAbstractReportByTypeOfWork(final Model model,
             @ModelAttribute final EstimateAbstractReport estimateAbstractReport) {
-        final List<EstimateAbstractReport> estimateAbstractReportByTypeOfWorkWise = workProgressRegisterService
-                .searchEstimateAbstractReportByTypeOfWorkWise(estimateAbstractReport);
-        final String result = new StringBuilder("{ \"data\":")
-                .append(toSearchEstimateAbstractReportJson(estimateAbstractReportByTypeOfWorkWise))
-                .append("}").toString();
-        return result;
+        if (worksApplicationProperties.lineEstimateRequired()) {
+            final List<EstimateAbstractReport> estimateAbstractReportByTypeOfWorkWise = workProgressRegisterService
+                    .searchEstimateAbstractReportByTypeOfWorkWise(estimateAbstractReport);
+            return new StringBuilder(WorkProgressRegisterService.JSONDATAPREFIX)
+                    .append(toSearchEstimateAbstractReportJson(estimateAbstractReportByTypeOfWorkWise)).append("}")
+                    .toString();
+        } else {
+            final List<EstimateAbstractReport> estimateAbstractReportByTypeOfWorkWise = workProgressRegisterService
+                    .searchEstimateAbstractReportByTypeOfWorkWiseForAE(estimateAbstractReport);
+            return new StringBuilder(WorkProgressRegisterService.JSONDATAPREFIX)
+                    .append(toSearchEstimateAbstractReportJson(estimateAbstractReportByTypeOfWorkWise)).append("}")
+                    .toString();
+        }
     }
 
     public Object toSearchEstimateAbstractReportJson(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(EstimateAbstractReport.class,
-                estimateAbstractReportJsonAdaptor).create();
-        final String json = gson.toJson(object);
-        return json;
+        final Gson gson = gsonBuilder
+                .registerTypeAdapter(EstimateAbstractReport.class, estimateAbstractReportJsonAdaptor).create();
+        return gson.toJson(object);
     }
 }

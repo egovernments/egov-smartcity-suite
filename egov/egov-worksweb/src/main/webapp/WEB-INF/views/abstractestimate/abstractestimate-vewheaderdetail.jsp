@@ -77,29 +77,29 @@
 								<div class="col-md-2 col-xs-6 add-margin view-content">${abstractEstimate.projectCode.code}</div>
 							</c:if>
 						</div>
-						<c:if test="${lineEstimateRequired == true }">
-							<div class="row add-border">
+						<div class="row add-border">
+							<c:if test="${lineEstimateRequired == true }">
 								<div class="col-md-2 col-xs-6 add-margin"><spring:message code="lbl.adminsanctionestimatamount" /> : </div> 
 								<div class="col-md-2 col-xs-6 add-margin view-content">&#8377 <fmt:formatNumber groupingUsed="false" maxFractionDigits="2"
 								minFractionDigits="2" value="${abstractEstimate.lineEstimateDetails.estimateAmount}" /></div>
-								<c:if test="${workOrderEstimate!=null &&  workOrderEstimate.workOrder.id != null}">
-									<div class="col-md-2 col-xs-6 add-margin"><spring:message code="lbl.loano" />.</div>
-									<div class="col-md-2 col-xs-6 add-margin view-content">
-										<a href="javascript:void(0)" onclick='viewLOA(<c:out value="${workOrderEstimate.workOrder.id}"/>)'><c:out value="${workOrderEstimate.workOrder.workOrderNumber}"/></a>
-									</div>
-								</c:if>
-								<div class="col-md-2 col-xs-6 add-margin"><spring:message code="lbl.paymentreleased" /> : </div> 
-								<c:choose>
-									<c:when test="${paymentreleased != 0 && paymentreleased != null}">
-										<div class="col-md-2 col-xs-6 add-margin view-content">&#8377 <span><fmt:formatNumber groupingUsed="false" maxFractionDigits="2"
-												minFractionDigits="2" value="${paymentreleased}" /></span></div>
-									</c:when>
-									<c:otherwise>
-										<div class="col-md-2 col-xs-6 add-margin view-content"><span><c:out default="N/A" value="N/A"></c:out></span></div>
-									</c:otherwise>
-								</c:choose>
-							</div>
-						</c:if>
+							</c:if>
+							<c:if test="${workOrderEstimate!=null &&  workOrderEstimate.workOrder.id != null}">
+								<div class="col-md-2 col-xs-6 add-margin"><spring:message code="lbl.loano" />.</div>
+								<div class="col-md-2 col-xs-6 add-margin view-content">
+									<a href="javascript:void(0)" onclick='viewLOA(<c:out value="${workOrderEstimate.workOrder.id}"/>)'><c:out value="${workOrderEstimate.workOrder.workOrderNumber}"/></a>
+								</div>
+							</c:if>
+							<div class="col-md-2 col-xs-6 add-margin"><spring:message code="lbl.paymentreleased" /> : </div> 
+							<c:choose>
+								<c:when test="${paymentreleased != 0 && paymentreleased != null}">
+									<div class="col-md-2 col-xs-6 add-margin view-content">&#8377 <span><fmt:formatNumber groupingUsed="false" maxFractionDigits="2"
+											minFractionDigits="2" value="${paymentreleased}" /></span></div>
+								</c:when>
+								<c:otherwise>
+									<div class="col-md-2 col-xs-6 add-margin view-content"><span><c:out default="N/A" value="N/A"></c:out></span></div>
+								</c:otherwise>
+							</c:choose>
+						</div>
 					</div>
 				</div>
 			</div>

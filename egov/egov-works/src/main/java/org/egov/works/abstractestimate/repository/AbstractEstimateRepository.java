@@ -137,4 +137,8 @@ public interface AbstractEstimateRepository extends JpaRepository<AbstractEstima
     List<String> findWorkIdentificationNumberForEstimatePhotograph(
             @Param("workIdentificationNumber") String workIdentificationNumber,
             @Param("abstractEstimateStatus") String abstractEstimateStatus);
+    
+    @Query("select distinct(ae.projectCode.code) from AbstractEstimate as ae  where upper(ae.projectCode.code) like upper(:workIdentificationNumber) and ae.egwStatus.code = :status")
+    List<String> findWorkIdentificationNumbersToSearchWorkProgressRegister(
+            @Param("workIdentificationNumber") String workIdentificationNumber, @Param("status") String status);
 }

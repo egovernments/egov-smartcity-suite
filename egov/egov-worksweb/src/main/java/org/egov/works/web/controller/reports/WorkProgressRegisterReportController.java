@@ -41,6 +41,7 @@ package org.egov.works.web.controller.reports;
 
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
+import org.egov.works.config.properties.WorksApplicationProperties;
 import org.egov.works.reports.entity.WorkProgressRegisterSearchRequest;
 import org.egov.works.reports.entity.enums.WorkStatus;
 import org.egov.works.utils.WorksUtils;
@@ -60,6 +61,9 @@ public class WorkProgressRegisterReportController {
 
     @Autowired
     private WorksUtils worksUtils;
+    
+    @Autowired
+    private WorksApplicationProperties worksApplicationProperties;
 
     @RequestMapping(value = "/searchform", method = RequestMethod.GET)
     public String showSearchLineEstimateForm(
@@ -68,6 +72,7 @@ public class WorkProgressRegisterReportController {
         setDropDownValues(model);
         model.addAttribute("workProgressRegisterSearchRequest", workProgressRegisterSearchRequest);
         workProgressRegisterSearchRequest.setDepartment(worksUtils.getDefaultDepartmentId());
+        model.addAttribute("lineEstimateRequired", worksApplicationProperties.lineEstimateRequired());
         return "workProgressRegister-search";
     }
 

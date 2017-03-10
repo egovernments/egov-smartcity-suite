@@ -53,13 +53,14 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.workorder.entity.WorkOrder;
 import org.hibernate.validator.constraints.Length;
 
 @Entity
-@Table(name = "EGW_MV_BILLDETAILS")
+@Table(name = "EGW_MV_BILLDETAIL")
 @SequenceGenerator(name = BillDetails.SEQ_EGW_MV_BILLDETAILS, sequenceName = BillDetails.SEQ_EGW_MV_BILLDETAILS, allocationSize = 1)
 public class BillDetails extends AbstractAuditable {
 
@@ -92,6 +93,10 @@ public class BillDetails extends AbstractAuditable {
 
     @Length(max = 100)
     private String billtype;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "aeid")
+    private AbstractEstimate abstractEstimate;
 
     @Override
     public Long getId() {
@@ -159,4 +164,12 @@ public class BillDetails extends AbstractAuditable {
         this.billtype = billtype;
     }
 
+    public AbstractEstimate getAbstractEstimate() {
+        return abstractEstimate;
+    }
+
+    public void setAbstractEstimate(AbstractEstimate abstractEstimate) {
+        this.abstractEstimate = abstractEstimate;
+    }
+    
 }

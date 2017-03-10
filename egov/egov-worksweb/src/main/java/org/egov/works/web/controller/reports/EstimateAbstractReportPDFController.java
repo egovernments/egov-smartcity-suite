@@ -60,12 +60,15 @@ import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
+import org.egov.infra.utils.StringUtils;
 import org.egov.services.masters.SchemeService;
 import org.egov.services.masters.SubSchemeService;
+import org.egov.works.config.properties.WorksApplicationProperties;
 import org.egov.works.masters.service.NatureOfWorkService;
 import org.egov.works.reports.entity.EstimateAbstractReport;
 import org.egov.works.reports.entity.enums.WorkStatus;
 import org.egov.works.reports.service.WorkProgressRegisterService;
+import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
@@ -110,8 +113,11 @@ public class EstimateAbstractReportPDFController {
     @Autowired
     private TypeOfWorkService typeOfWorkService;
 
+    @Autowired
+    private WorksApplicationProperties worksApplicationProperties;
+
     @RequestMapping(value = "/departmentwise/pdf", method = RequestMethod.GET)
-    public @ResponseBody ResponseEntity<byte[]> generatePDFDepartmentWise(final HttpServletRequest request,
+    @ResponseBody public  ResponseEntity<byte[]> generatePDFDepartmentWise(final HttpServletRequest request,
             @RequestParam("adminSanctionFromDate") final Date adminSanctionFromDate,
             @RequestParam("adminSanctionToDate") final Date adminSanctionToDate,
             @RequestParam("department") final Long department, @RequestParam("scheme") final Integer scheme,
@@ -135,36 +141,22 @@ public class EstimateAbstractReportPDFController {
         searchRequest.setNatureOfWork(natureOfWork);
         searchRequest.setSpillOverFlag(spillOverFlag);
 
-        final List<EstimateAbstractReport> estimateAbstractReports = workProgressRegisterService
-                .searchEstimateAbstractReportByDepartmentWise(searchRequest);
+        List<EstimateAbstractReport> estimateAbstractReports;
+        if (worksApplicationProperties.lineEstimateRequired())
+            estimateAbstractReports = workProgressRegisterService
+                    .searchEstimateAbstractReportByDepartmentWise(searchRequest);
+        else
+            estimateAbstractReports = workProgressRegisterService
+                    .searchEstimateAbstractReportByDepartmentWiseForAE(searchRequest);
 
-        String queryParameters = messageSource.getMessage("msg.estimateabstractreport.by.departmentwise", null, null);
-        if (spillOverFlag)
-            queryParameters = messageSource.getMessage("msg.estimateabstractreport.by.departmentwise.for.spillover",
-                    null, null);
-        if (adminSanctionFromDate != null || adminSanctionToDate != null || department != null)
-            queryParameters += " for ";
-
-        if (adminSanctionFromDate != null && adminSanctionToDate != null)
-            queryParameters += messageSource.getMessage("msg.daterange", null, null) + sdf.format(adminSanctionFromDate)
-                    + " - " + sdf.format(adminSanctionToDate) + ", ";
-        if (adminSanctionFromDate != null && adminSanctionToDate == null)
-            queryParameters += messageSource.getMessage("msg.adminsanctionfromdate", null, null) + adminSanctionFromDate
-                    + ", ";
-        if (adminSanctionToDate != null && adminSanctionFromDate == null)
-            queryParameters += messageSource.getMessage("msg.adminsanctiontodate", null, null) + adminSanctionToDate
-                    + ", ";
+        String queryParameters = setQueryParameterForDepartmentWise(spillOverFlag);
+        queryParameters = setQueryParametersForAdminSanctionDates(adminSanctionFromDate, adminSanctionToDate,
+                department, sdf, queryParameters);
         if (department != null)
             queryParameters += messageSource.getMessage("msg.department", null, null)
                     + departmentService.getDepartmentById(department).getName() + ", ";
 
-        if (scheme != null)
-            queryParameters += messageSource.getMessage("msg.scheme", null, null)
-                    + schemeService.findById(scheme, false).getName() + ", ";
-
-        if (subScheme != null)
-            queryParameters += messageSource.getMessage("msg.subscheme", null, null)
-                    + subSchemeService.findById(subScheme, false).getName() + ", ";
+        queryParameters = setQueryParametersForSchemesAndSubSchemes(scheme, subScheme, queryParameters);
 
         if (workCategory != null)
             queryParameters += "Work Category : " + workCategory.replace('_', ' ') + ", ";
@@ -182,7 +174,46 @@ public class EstimateAbstractReportPDFController {
 
         reportParams.put("queryParameters", queryParameters);
 
-        return generateReportDepartmentWise(estimateAbstractReports, request, session, contentType, searchRequest, reportParams);
+        return generateReportDepartmentWise(estimateAbstractReports, request, session, contentType, searchRequest,
+                reportParams);
+    }
+
+    private String setQueryParameterForDepartmentWise(final boolean spillOverFlag) {
+        String queryParameters = messageSource.getMessage("msg.estimateabstractreport.by.departmentwise", null, null);
+        if (spillOverFlag)
+            queryParameters = messageSource.getMessage("msg.estimateabstractreport.by.departmentwise.for.spillover",
+                    null, null);
+        return queryParameters;
+    }
+
+    private String setQueryParametersForAdminSanctionDates(final Date adminSanctionFromDate,
+            final Date adminSanctionToDate, final Long department, final SimpleDateFormat sdf, String queryParameters) {
+        String queryParams = queryParameters;
+        if (adminSanctionFromDate != null || adminSanctionToDate != null || department != null)
+            queryParams += " for ";
+
+        if (adminSanctionFromDate != null && adminSanctionToDate != null)
+            queryParams += messageSource.getMessage("msg.daterange", null, null) + sdf.format(adminSanctionFromDate)
+                    + " - " + sdf.format(adminSanctionToDate) + ", ";
+        if (adminSanctionFromDate != null && adminSanctionToDate == null)
+            queryParams += messageSource.getMessage("msg.adminsanctionfromdate", null, null) + adminSanctionFromDate
+                    + ", ";
+        if (adminSanctionToDate != null && adminSanctionFromDate == null)
+            queryParams += messageSource.getMessage("msg.adminsanctiontodate", null, null) + adminSanctionToDate + ", ";
+        return queryParams;
+    }
+
+    private String setQueryParametersForSchemesAndSubSchemes(final Integer scheme, final Integer subScheme,
+            String queryParameters) {
+        String queryParams = queryParameters;
+        if (scheme != null)
+            queryParams += messageSource.getMessage("msg.scheme", null, null)
+                    + schemeService.findById(scheme, false).getName() + ", ";
+
+        if (subScheme != null)
+            queryParams += messageSource.getMessage("msg.subscheme", null, null)
+                    + subSchemeService.findById(subScheme, false).getName() + ", ";
+        return queryParams;
     }
 
     private ResponseEntity<byte[]> generateReportDepartmentWise(
@@ -191,9 +222,9 @@ public class EstimateAbstractReportPDFController {
             final Map<String, Object> reportParams) {
         final List<EstimateAbstractReport> estimateAbstractReportPdfList = new ArrayList<EstimateAbstractReport>();
         final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy hh:mm a");
-        ReportRequest reportInput = null;
-        ReportOutput reportOutput = null;
-        String dataRunDate = "";
+        ReportRequest reportInput;
+        ReportOutput reportOutput;
+        String dataRunDate = StringUtils.EMPTY;
 
         if (estimateAbstractReports != null && !estimateAbstractReports.isEmpty())
             for (final EstimateAbstractReport eadwr : estimateAbstractReports) {
@@ -201,116 +232,21 @@ public class EstimateAbstractReportPDFController {
                 if (eadwr.getDepartmentName() != null)
                     pdf.setDepartmentName(eadwr.getDepartmentName());
                 else
-                    pdf.setDepartmentName("");
+                    pdf.setDepartmentName(StringUtils.EMPTY);
 
-                if (eadwr.getLineEstimates() != null)
-                    pdf.setLineEstimates(eadwr.getLineEstimates());
-                else
-                    pdf.setLineEstimates(null);
+                setEstimatesPDFValues(eadwr, pdf);
 
-                if (eadwr.getAdminSanctionedEstimates() != null)
-                    pdf.setAdminSanctionedEstimates(eadwr.getAdminSanctionedEstimates());
-                else
-                    pdf.setAdminSanctionedEstimates(null);
+                setSanctionedEstimatesPDFValues(eadwr, pdf);
 
-                if (eadwr.getLeAdminSanctionedAmountInCrores() != null)
-                    pdf.setLeAdminSanctionedAmountInCrores(new BigDecimal(eadwr.getLeAdminSanctionedAmountInCrores())
-                            .setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
-                else
-                    pdf.setLeAdminSanctionedAmountInCrores("NA");
+                setPDFLOAValues(eadwr, pdf);
 
-                if (eadwr.getAeAdminSanctionedAmountInCrores() != null)
-                    pdf.setAeAdminSanctionedAmountInCrores(new BigDecimal(eadwr.getAeAdminSanctionedAmountInCrores())
-                            .setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
-                else
-                    pdf.setAeAdminSanctionedAmountInCrores("NA");
+                setPDFAgreementValue(eadwr, pdf);
 
-                if (eadwr.getWorkValueOfAdminSanctionedAEInCrores() != null)
-                    pdf.setWorkValueOfAdminSanctionedAEInCrores(
-                            new BigDecimal(eadwr.getWorkValueOfAdminSanctionedAEInCrores())
-                                    .setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
-                else
-                    pdf.setWorkValueOfAdminSanctionedAEInCrores("NA");
+                setWorkStatusPDFValues(eadwr, pdf);
 
-                if (eadwr.getTechnicalSanctionedEstimates() != null)
-                    pdf.setTechnicalSanctionedEstimates(eadwr.getTechnicalSanctionedEstimates());
-                else
-                    pdf.setTechnicalSanctionedEstimates(null);
+                setBillsPDFValues(eadwr, pdf);
 
-                if (eadwr.getLoaCreated() != null)
-                    pdf.setLoaCreated(eadwr.getLoaCreated());
-                else
-                    pdf.setLoaCreated(null);
-
-                if (eadwr.getLoaNotCreated() != null)
-                    pdf.setLoaNotCreated(eadwr.getLoaNotCreated());
-                else
-                    pdf.setLoaNotCreated(null);
-
-                if (eadwr.getWorkNotCommenced() != null)
-                    pdf.setWorkNotCommenced(eadwr.getWorkNotCommenced());
-                else
-                    pdf.setWorkNotCommenced(null);
-
-                if (eadwr.getAgreementValueInCrores() != null)
-                    pdf.setAgreementValueInCrores(new BigDecimal(eadwr.getAgreementValueInCrores())
-                            .setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
-                else
-                    pdf.setAgreementValueInCrores("NA");
-
-                if (eadwr.getWorkInProgress() != null)
-                    pdf.setWorkInProgress(eadwr.getWorkInProgress());
-                else
-                    pdf.setWorkInProgress(null);
-
-                if (eadwr.getWorkCompleted() != null)
-                    pdf.setWorkCompleted(eadwr.getWorkCompleted());
-                else
-                    pdf.setWorkCompleted(null);
-
-                if (eadwr.getBillsCreated() != null)
-                    pdf.setBillsCreated(eadwr.getBillsCreated());
-                else
-                    pdf.setBillsCreated(null);
-
-                if (eadwr.getBillValueInCrores() != null)
-                    pdf.setBillValueInCrores(new BigDecimal(eadwr.getBillValueInCrores())
-                            .setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
-                else
-                    pdf.setBillValueInCrores("NA");
-
-                // Making value NA based on work status
-                if (searchRequest.getWorkStatus() != null && !searchRequest.getWorkStatus().isEmpty()) {
-
-                    if (searchRequest.getWorkStatus().equalsIgnoreCase(WorkStatus.LOA_Not_Created.toString())) {
-                        pdf.setLoaCreated("NA");
-                        pdf.setAgreementValueInCrores("NA");
-                        pdf.setLoaNotCreated("NA");
-                        pdf.setWorkNotCommenced("NA");
-                        pdf.setWorkInProgress("NA");
-                        pdf.setWorkCompleted("NA");
-                        pdf.setBillsCreated("NA");
-                        pdf.setBillValueInCrores("NA");
-                    }
-
-                    if (searchRequest.getWorkStatus().equalsIgnoreCase(WorkStatus.Not_Commenced.toString())) {
-                        pdf.setLoaNotCreated("NA");
-                        pdf.setWorkNotCommenced("NA");
-                        pdf.setWorkInProgress("NA");
-                        pdf.setWorkCompleted("NA");
-                        pdf.setBillsCreated("NA");
-                        pdf.setBillValueInCrores("NA");
-                    }
-
-                    if (searchRequest.getWorkStatus().equalsIgnoreCase(WorkStatus.In_Progress.toString())
-                            || searchRequest.getWorkStatus().equalsIgnoreCase(WorkStatus.Completed.toString())) {
-                        pdf.setLoaNotCreated("NA");
-                        pdf.setWorkNotCommenced("NA");
-                        pdf.setWorkInProgress("NA");
-                        pdf.setWorkCompleted("NA");
-                    }
-
-                }
+                setPDFValuesForWorkOrderStatus(searchRequest, pdf);
 
                 dataRunDate = formatter.format(workProgressRegisterService.getReportSchedulerRunDate());
 
@@ -322,27 +258,195 @@ public class EstimateAbstractReportPDFController {
         reportParams.put("reportRunDate", formatter.format(new Date()));
         reportParams.put("dataRunDate", dataRunDate);
 
-        reportInput = new ReportRequest(
-                messageSource.getMessage("msg.estimateabstractreportbydepartmentwisepdf", null, null),
-                estimateAbstractReportPdfList, reportParams);
+        reportInput = setDocumentWiseReportInputValues(reportParams, estimateAbstractReportPdfList);
 
-        final HttpHeaders headers = new HttpHeaders();
-        if (contentType.equalsIgnoreCase("pdf")) {
-            reportInput.setReportFormat(FileFormat.PDF);
-            headers.setContentType(MediaType.parseMediaType("application/pdf"));
-            headers.add("content-disposition", "inline;filename=EstimateAbstractReportByDepartmentWise.pdf");
-        } else {
-            reportInput.setReportFormat(FileFormat.XLS);
-            headers.setContentType(MediaType.parseMediaType("application/vnd.ms-excel"));
-            headers.add("content-disposition", "inline;filename=EstimateAbstractReportByDepartmentWise.xls");
-        }
+        final HttpHeaders headers = setDocumentWisePDFHeaders(contentType, reportInput);
         reportOutput = reportService.createReport(reportInput);
         return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
 
     }
 
+    private void setEstimatesPDFValues(final EstimateAbstractReport eadwr, final EstimateAbstractReport pdf) {
+        if (eadwr.getLineEstimates() != null)
+            pdf.setLineEstimates(eadwr.getLineEstimates());
+        else
+            pdf.setLineEstimates(null);
+
+        if (eadwr.getAbstractEstimates() != null)
+            pdf.setAbstractEstimates(eadwr.getAbstractEstimates());
+        else
+            pdf.setAbstractEstimates(null);
+    }
+
+    private void setPDFAgreementValue(final EstimateAbstractReport eadwr, final EstimateAbstractReport pdf) {
+        if (eadwr.getAgreementValueInCrores() != null)
+            pdf.setAgreementValueInCrores(new BigDecimal(eadwr.getAgreementValueInCrores())
+                    .setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+        else
+            pdf.setAgreementValueInCrores(WorksConstants.NA);
+    }
+
+    private void setSanctionedEstimatesPDFValues(final EstimateAbstractReport eadwr, final EstimateAbstractReport pdf) {
+        if (eadwr.getAdminSanctionedEstimates() != null)
+            pdf.setAdminSanctionedEstimates(eadwr.getAdminSanctionedEstimates());
+        else
+            pdf.setAdminSanctionedEstimates(null);
+
+        setAdminSanctionedAmount(eadwr, pdf);
+
+        if (eadwr.getTechnicalSanctionedEstimates() != null)
+            pdf.setTechnicalSanctionedEstimates(eadwr.getTechnicalSanctionedEstimates());
+        else
+            pdf.setTechnicalSanctionedEstimates(null);
+    }
+
+    private void setPDFValuesForWorkOrderStatus(final EstimateAbstractReport searchRequest,
+            final EstimateAbstractReport pdf) {
+        // Making value NA based on work status
+        if (searchRequest.getWorkStatus() != null && !searchRequest.getWorkStatus().isEmpty()) {
+
+            setPDFValuesWhenLOANotCreated(searchRequest, pdf);
+
+            setPDFValuesWhenWorkNotCommenced(searchRequest, pdf);
+
+            setPDFValuesWhenWorkInProgressOrCompleted(searchRequest, pdf);
+
+        }
+    }
+
+    private HttpHeaders setDocumentWisePDFHeaders(final String contentType, final ReportRequest reportInput) {
+        final HttpHeaders headers = new HttpHeaders();
+        if (WorksConstants.PDF.equalsIgnoreCase(contentType)) {
+            reportInput.setReportFormat(FileFormat.PDF);
+            headers.setContentType(MediaType.parseMediaType("application/pdf"));
+            if (worksApplicationProperties.lineEstimateRequired())
+                headers.add(WorkProgressRegisterService.CONTENTDISPOSITION, "inline;filename=EstimateAbstractReportByDepartmentWise.pdf");
+            else
+                headers.add(WorkProgressRegisterService.CONTENTDISPOSITION, "inline;filename=EstimateAbstractReportForDepartmentWise.pdf");
+        } else {
+            reportInput.setReportFormat(FileFormat.XLS);
+            headers.setContentType(MediaType.parseMediaType("application/vnd.ms-excel"));
+            headers.add(WorkProgressRegisterService.CONTENTDISPOSITION, "inline;filename=EstimateAbstractReportByDepartmentWise.xls");
+        }
+        return headers;
+    }
+
+    private ReportRequest setDocumentWiseReportInputValues(final Map<String, Object> reportParams,
+            final List<EstimateAbstractReport> estimateAbstractReportPdfList) {
+        ReportRequest reportInput;
+        if (worksApplicationProperties.lineEstimateRequired())
+            reportInput = new ReportRequest(
+                    messageSource.getMessage("msg.estimateabstractreportbydepartmentwisepdf", null, null),
+                    estimateAbstractReportPdfList, reportParams);
+        else
+            reportInput = new ReportRequest(
+                    messageSource.getMessage("msg.estimateabstractreportfordepartmentwise", null, null),
+                    estimateAbstractReportPdfList, reportParams);
+        return reportInput;
+    }
+
+    private void setWorkStatusPDFValues(final EstimateAbstractReport eadwr, final EstimateAbstractReport pdf) {
+        if (eadwr.getWorkNotCommenced() != null)
+            pdf.setWorkNotCommenced(eadwr.getWorkNotCommenced());
+        else
+            pdf.setWorkNotCommenced(null);
+
+        if (eadwr.getWorkInProgress() != null)
+            pdf.setWorkInProgress(eadwr.getWorkInProgress());
+        else
+            pdf.setWorkInProgress(null);
+
+        if (eadwr.getWorkCompleted() != null)
+            pdf.setWorkCompleted(eadwr.getWorkCompleted());
+        else
+            pdf.setWorkCompleted(null);
+    }
+
+    private void setBillsPDFValues(final EstimateAbstractReport eadwr, final EstimateAbstractReport pdf) {
+        if (eadwr.getBillsCreated() != null)
+            pdf.setBillsCreated(eadwr.getBillsCreated());
+        else
+            pdf.setBillsCreated(null);
+
+        if (eadwr.getBillValueInCrores() != null)
+            pdf.setBillValueInCrores(
+                    new BigDecimal(eadwr.getBillValueInCrores()).setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+        else
+            pdf.setBillValueInCrores(WorksConstants.NA);
+    }
+
+    private void setPDFLOAValues(final EstimateAbstractReport eadwr, final EstimateAbstractReport pdf) {
+        if (eadwr.getLoaCreated() != null)
+            pdf.setLoaCreated(eadwr.getLoaCreated());
+        else
+            pdf.setLoaCreated(null);
+
+        if (eadwr.getLoaNotCreated() != null)
+            pdf.setLoaNotCreated(eadwr.getLoaNotCreated());
+        else
+            pdf.setLoaNotCreated(null);
+    }
+
+    private void setAdminSanctionedAmount(final EstimateAbstractReport eadwr, final EstimateAbstractReport pdf) {
+        if (eadwr.getLeAdminSanctionedAmountInCrores() != null)
+            pdf.setLeAdminSanctionedAmountInCrores(new BigDecimal(eadwr.getLeAdminSanctionedAmountInCrores())
+                    .setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+        else
+            pdf.setLeAdminSanctionedAmountInCrores(WorksConstants.NA);
+
+        if (eadwr.getAeAdminSanctionedAmountInCrores() != null)
+            pdf.setAeAdminSanctionedAmountInCrores(new BigDecimal(eadwr.getAeAdminSanctionedAmountInCrores())
+                    .setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+        else
+            pdf.setAeAdminSanctionedAmountInCrores(WorksConstants.NA);
+
+        if (eadwr.getWorkValueOfAdminSanctionedAEInCrores() != null)
+            pdf.setWorkValueOfAdminSanctionedAEInCrores(new BigDecimal(eadwr.getWorkValueOfAdminSanctionedAEInCrores())
+                    .setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+        else
+            pdf.setWorkValueOfAdminSanctionedAEInCrores(WorksConstants.NA);
+    }
+
+    private void setPDFValuesWhenWorkInProgressOrCompleted(final EstimateAbstractReport searchRequest,
+            final EstimateAbstractReport pdf) {
+        if (searchRequest.getWorkStatus().equalsIgnoreCase(WorkStatus.In_Progress.toString())
+                || searchRequest.getWorkStatus().equalsIgnoreCase(WorkStatus.Completed.toString())) {
+            pdf.setLoaNotCreated(WorksConstants.NA);
+            pdf.setWorkNotCommenced(WorksConstants.NA);
+            pdf.setWorkInProgress(WorksConstants.NA);
+            pdf.setWorkCompleted(WorksConstants.NA);
+        }
+    }
+
+    private void setPDFValuesWhenWorkNotCommenced(final EstimateAbstractReport searchRequest,
+            final EstimateAbstractReport pdf) {
+        if (searchRequest.getWorkStatus().equalsIgnoreCase(WorkStatus.Not_Commenced.toString())) {
+            pdf.setLoaNotCreated(WorksConstants.NA);
+            pdf.setWorkNotCommenced(WorksConstants.NA);
+            pdf.setWorkInProgress(WorksConstants.NA);
+            pdf.setWorkCompleted(WorksConstants.NA);
+            pdf.setBillsCreated(WorksConstants.NA);
+            pdf.setBillValueInCrores(WorksConstants.NA);
+        }
+    }
+
+    private void setPDFValuesWhenLOANotCreated(final EstimateAbstractReport searchRequest,
+            final EstimateAbstractReport pdf) {
+        if (searchRequest.getWorkStatus().equalsIgnoreCase(WorkStatus.LOA_Not_Created.toString())) {
+            pdf.setLoaCreated(WorksConstants.NA);
+            pdf.setAgreementValueInCrores(WorksConstants.NA);
+            pdf.setLoaNotCreated(WorksConstants.NA);
+            pdf.setWorkNotCommenced(WorksConstants.NA);
+            pdf.setWorkInProgress(WorksConstants.NA);
+            pdf.setWorkCompleted(WorksConstants.NA);
+            pdf.setBillsCreated(WorksConstants.NA);
+            pdf.setBillValueInCrores(WorksConstants.NA);
+        }
+    }
+
     @RequestMapping(value = "/typeofworkwise/pdf", method = RequestMethod.GET)
-    public @ResponseBody ResponseEntity<byte[]> generatePDFTypeOfWorkWise(final HttpServletRequest request,
+    @ResponseBody
+    public ResponseEntity<byte[]> generatePDFTypeOfWorkWise(final HttpServletRequest request,
             @RequestParam("adminSanctionFromDate") final Date adminSanctionFromDate,
             @RequestParam("adminSanctionToDate") final Date adminSanctionToDate,
             @RequestParam("typeOfWork") final Long typeOfWork, @RequestParam("subTypeOfWork") final Long subTypeOfWork,
@@ -369,36 +473,22 @@ public class EstimateAbstractReportPDFController {
         searchRequest.setNatureOfWork(natureOfWork);
         searchRequest.setSpillOverFlag(spillOverFlag);
 
-        final List<EstimateAbstractReport> estimateAbstractReports = workProgressRegisterService
-                .searchEstimateAbstractReportByTypeOfWorkWise(searchRequest);
+        List<EstimateAbstractReport> estimateAbstractReports;
+        if (worksApplicationProperties.lineEstimateRequired())
+            estimateAbstractReports = workProgressRegisterService
+                    .searchEstimateAbstractReportByTypeOfWorkWise(searchRequest);
+        else
+            estimateAbstractReports = workProgressRegisterService
+                    .searchEstimateAbstractReportByTypeOfWorkWiseForAE(searchRequest);
 
-        String queryParameters = messageSource.getMessage("msg.estimateabstractreport.by.typeofworkwise", null, null);
-        if (spillOverFlag)
-            queryParameters = messageSource.getMessage("msg.estimateabstractreport.by.typeofworkwise.for.spillover",
-                    null, null);
-        if (adminSanctionFromDate != null || adminSanctionToDate != null)
-            queryParameters += " for ";
+        String queryParameters = setQueryParametersForTOWWise(spillOverFlag);
+        queryParameters = setQueryParametersForAdminSanctionedDates(adminSanctionFromDate, adminSanctionToDate, sdf,
+                queryParameters);
 
-        if (adminSanctionFromDate != null && adminSanctionToDate != null)
-            queryParameters += messageSource.getMessage("msg.daterange", null, null) + sdf.format(adminSanctionFromDate)
-                    + " - " + sdf.format(adminSanctionToDate) + ", ";
-        if (adminSanctionFromDate != null && adminSanctionToDate == null)
-            queryParameters += messageSource.getMessage("msg.adminsanctionfromdate", null, null) + adminSanctionFromDate
-                    + ", ";
-        if (adminSanctionToDate != null && adminSanctionFromDate == null)
-            queryParameters += messageSource.getMessage("msg.adminsanctiontodate", null, null) + adminSanctionToDate
-                    + ", ";
+        queryParameters = setQueryParametersForTypeOfWork(typeOfWork, subTypeOfWork, queryParameters);
 
-        if (typeOfWork != null)
-            queryParameters += messageSource.getMessage("msg.typeofwork", null, null)
-                    + typeOfWorkService.getTypeOfWorkById(typeOfWork).getName() + ", ";
-
-        if (subTypeOfWork != null)
-            queryParameters += messageSource.getMessage("msg.subtypeofwork", null, null)
-                    + typeOfWorkService.getTypeOfWorkById(subTypeOfWork).getName() + ", ";
-
-        if (departments != null && !departments.toString().equalsIgnoreCase("[null]")
-                && !departments.toString().equalsIgnoreCase("[]")) {
+        if (departments != null && !"[null]".equalsIgnoreCase(departments.toString())
+                && !"[]".equalsIgnoreCase(departments.toString())) {
             String departmentNames = "";
             for (final Department dept : departments)
                 departmentNames = departmentNames + dept.getName() + ",";
@@ -406,13 +496,7 @@ public class EstimateAbstractReportPDFController {
             queryParameters += messageSource.getMessage("msg.departments", null, null) + departmentNames + ", ";
         }
 
-        if (scheme != null)
-            queryParameters += messageSource.getMessage("msg.scheme", null, null)
-                    + schemeService.findById(scheme, false).getName() + ", ";
-
-        if (subScheme != null)
-            queryParameters += messageSource.getMessage("msg.subscheme", null, null)
-                    + subSchemeService.findById(subScheme, false).getName() + ", ";
+        queryParameters = setQueryParametersForSchemesAndSubSchemes(scheme, subScheme, queryParameters);
 
         if (workCategory != null)
             queryParameters += messageSource.getMessage("msg.workcategory", null, null) + workCategory.replace('_', ' ')
@@ -431,144 +515,85 @@ public class EstimateAbstractReportPDFController {
 
         reportParams.put("queryParameters", queryParameters);
 
-        return generateReportTypeOfWorkWise(estimateAbstractReports, request, session, contentType, searchRequest, reportParams);
+        return generateReportTypeOfWorkWise(estimateAbstractReports, session, contentType, searchRequest, reportParams);
+    }
+
+    private String setQueryParametersForTOWWise(final boolean spillOverFlag) {
+        String queryParameters = messageSource.getMessage("msg.estimateabstractreport.by.typeofworkwise", null, null);
+        if (spillOverFlag)
+            queryParameters = messageSource.getMessage("msg.estimateabstractreport.by.typeofworkwise.for.spillover",
+                    null, null);
+        return queryParameters;
+    }
+
+    private String setQueryParametersForAdminSanctionedDates(final Date adminSanctionFromDate,
+            final Date adminSanctionToDate, final SimpleDateFormat sdf, String queryParameters) {
+        String queryParams = queryParameters;
+        if (adminSanctionFromDate != null || adminSanctionToDate != null)
+            queryParams += " for ";
+
+        if (adminSanctionFromDate != null && adminSanctionToDate != null)
+            queryParams += messageSource.getMessage("msg.daterange", null, null) + sdf.format(adminSanctionFromDate)
+                    + " - " + sdf.format(adminSanctionToDate) + ", ";
+        if (adminSanctionFromDate != null && adminSanctionToDate == null)
+            queryParams += messageSource.getMessage("msg.adminsanctionfromdate", null, null) + adminSanctionFromDate
+                    + ", ";
+        if (adminSanctionToDate != null && adminSanctionFromDate == null)
+            queryParams += messageSource.getMessage("msg.adminsanctiontodate", null, null) + adminSanctionToDate + ", ";
+        return queryParams;
+    }
+
+    private String setQueryParametersForTypeOfWork(final Long typeOfWork, final Long subTypeOfWork,
+            String queryParameters) {
+        String queryParams = queryParameters;
+        if (typeOfWork != null)
+            queryParams += messageSource.getMessage("msg.typeofwork", null, null)
+                    + typeOfWorkService.getTypeOfWorkById(typeOfWork).getName() + ", ";
+
+        if (subTypeOfWork != null)
+            queryParams += messageSource.getMessage("msg.subtypeofwork", null, null)
+                    + typeOfWorkService.getTypeOfWorkById(subTypeOfWork).getName() + ", ";
+        return queryParams;
     }
 
     private ResponseEntity<byte[]> generateReportTypeOfWorkWise(
-            final List<EstimateAbstractReport> estimateAbstractReports, final HttpServletRequest request,
+            final List<EstimateAbstractReport> estimateAbstractReports,
             final HttpSession session, final String contentType, final EstimateAbstractReport searchRequest,
             final Map<String, Object> reportParams) {
         final List<EstimateAbstractReport> estimateAbstractReportPdfList = new ArrayList<EstimateAbstractReport>();
         final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy hh:mm a");
 
-        String dataRunDate = "";
-        ReportRequest reportInput = null;
-        ReportOutput reportOutput = null;
+        String dataRunDate = StringUtils.EMPTY;
+        ReportRequest reportInput;
+        ReportOutput reportOutput;
         if (estimateAbstractReports != null && !estimateAbstractReports.isEmpty())
             for (final EstimateAbstractReport eadwr : estimateAbstractReports) {
                 final EstimateAbstractReport pdf = new EstimateAbstractReport();
                 if (eadwr.getDepartmentName() != null)
                     pdf.setDepartmentName(eadwr.getDepartmentName());
                 else
-                    pdf.setDepartmentName("");
+                    pdf.setDepartmentName(StringUtils.EMPTY);
 
-                if (eadwr.getTypeOfWorkName() != null)
-                    pdf.setTypeOfWorkName(eadwr.getTypeOfWorkName());
-                else
-                    pdf.setTypeOfWorkName("");
+                setTOWPDFValues(eadwr, pdf);
 
-                if (eadwr.getSubTypeOfWorkName() != null)
-                    pdf.setSubTypeOfWorkName(eadwr.getSubTypeOfWorkName());
-                else
-                    pdf.setSubTypeOfWorkName("");
+                setEstimatesPDFValues(eadwr, pdf);
 
-                if (eadwr.getLineEstimates() != null)
-                    pdf.setLineEstimates(eadwr.getLineEstimates());
-                else
-                    pdf.setLineEstimates(null);
+                setSanctionedEstimatesPDFValues(eadwr, pdf);
 
-                if (eadwr.getAdminSanctionedEstimates() != null)
-                    pdf.setAdminSanctionedEstimates(eadwr.getAdminSanctionedEstimates());
-                else
-                    pdf.setAdminSanctionedEstimates(null);
-
-                if (eadwr.getLeAdminSanctionedAmountInCrores() != null)
-                    pdf.setLeAdminSanctionedAmountInCrores(new BigDecimal(eadwr.getLeAdminSanctionedAmountInCrores())
-                            .setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
-                else
-                    pdf.setLeAdminSanctionedAmountInCrores("NA");
-
-                if (eadwr.getAeAdminSanctionedAmountInCrores() != null)
-                    pdf.setAeAdminSanctionedAmountInCrores(new BigDecimal(eadwr.getAeAdminSanctionedAmountInCrores())
-                            .setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
-                else
-                    pdf.setAeAdminSanctionedAmountInCrores("NA");
-
-                if (eadwr.getWorkValueOfAdminSanctionedAEInCrores() != null)
-                    pdf.setWorkValueOfAdminSanctionedAEInCrores(
-                            new BigDecimal(eadwr.getWorkValueOfAdminSanctionedAEInCrores())
-                                    .setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
-                else
-                    pdf.setWorkValueOfAdminSanctionedAEInCrores("NA");
-                if (eadwr.getTechnicalSanctionedEstimates() != null)
-                    pdf.setTechnicalSanctionedEstimates(eadwr.getTechnicalSanctionedEstimates());
-                else
-                    pdf.setTechnicalSanctionedEstimates(null);
-
-                if (eadwr.getLoaCreated() != null)
-                    pdf.setLoaCreated(eadwr.getLoaCreated());
-                else
-                    pdf.setLoaCreated(null);
-
-                if (eadwr.getLoaNotCreated() != null)
-                    pdf.setLoaNotCreated(eadwr.getLoaNotCreated());
-                else
-                    pdf.setLoaNotCreated(null);
+                setPDFLOAValues(eadwr, pdf);
 
                 if (eadwr.getWorkNotCommenced() != null)
                     pdf.setWorkNotCommenced(eadwr.getWorkNotCommenced());
                 else
                     pdf.setWorkNotCommenced(null);
 
-                if (eadwr.getAgreementValueInCrores() != null)
-                    pdf.setAgreementValueInCrores(new BigDecimal(eadwr.getAgreementValueInCrores())
-                            .setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
-                else
-                    pdf.setAgreementValueInCrores("NA");
+                setPDFAgreementValue(eadwr, pdf);
 
-                if (eadwr.getWorkInProgress() != null)
-                    pdf.setWorkInProgress(eadwr.getWorkInProgress());
-                else
-                    pdf.setWorkInProgress(null);
+                setWorkStatusPDFValues(eadwr, pdf);
 
-                if (eadwr.getWorkCompleted() != null)
-                    pdf.setWorkCompleted(eadwr.getWorkCompleted());
-                else
-                    pdf.setWorkCompleted(null);
+                setBillsPDFValues(eadwr, pdf);
 
-                if (eadwr.getBillsCreated() != null)
-                    pdf.setBillsCreated(eadwr.getBillsCreated());
-                else
-                    pdf.setBillsCreated(null);
-
-                if (eadwr.getBillValueInCrores() != null)
-                    pdf.setBillValueInCrores(new BigDecimal(eadwr.getBillValueInCrores())
-                            .setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
-                else
-                    pdf.setBillValueInCrores("NA");
-
-                // Making value NA based on work status
-                if (searchRequest.getWorkStatus() != null && !searchRequest.getWorkStatus().isEmpty()) {
-
-                    if (searchRequest.getWorkStatus().equalsIgnoreCase(WorkStatus.LOA_Not_Created.toString())) {
-                        pdf.setLoaCreated("NA");
-                        pdf.setAgreementValueInCrores("NA");
-                        pdf.setLoaNotCreated("NA");
-                        pdf.setWorkNotCommenced("NA");
-                        pdf.setWorkInProgress("NA");
-                        pdf.setWorkCompleted("NA");
-                        pdf.setBillsCreated("NA");
-                        pdf.setBillValueInCrores("NA");
-                    }
-
-                    if (searchRequest.getWorkStatus().equalsIgnoreCase(WorkStatus.Not_Commenced.toString())) {
-                        pdf.setLoaNotCreated("NA");
-                        pdf.setWorkNotCommenced("NA");
-                        pdf.setWorkInProgress("NA");
-                        pdf.setWorkCompleted("NA");
-                        pdf.setBillsCreated("NA");
-                        pdf.setBillValueInCrores("NA");
-                    }
-
-                    if (searchRequest.getWorkStatus().equalsIgnoreCase(WorkStatus.In_Progress.toString())
-                            || searchRequest.getWorkStatus().equalsIgnoreCase(WorkStatus.Completed.toString())) {
-                        pdf.setLoaNotCreated("NA");
-                        pdf.setWorkNotCommenced("NA");
-                        pdf.setWorkInProgress("NA");
-                        pdf.setWorkCompleted("NA");
-                    }
-
-                }
+                setPDFValuesForWorkOrderStatus(searchRequest, pdf);
 
                 dataRunDate = formatter.format(workProgressRegisterService.getReportSchedulerRunDate());
 
@@ -579,30 +604,62 @@ public class EstimateAbstractReportPDFController {
                 messageSource.getMessage("msg.estimateabstractreport.by.typeofworkwise", null, null));
         reportParams.put("reportRunDate", formatter.format(new Date()));
         reportParams.put("dataRunDate", dataRunDate);
+        reportInput = setTOWWiseReportInputValue(searchRequest, reportParams, estimateAbstractReportPdfList);
+
+        final HttpHeaders headers = setTOWWiseReportHeaderValues(contentType, reportInput);
+        reportOutput = reportService.createReport(reportInput);
+        return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
+
+    }
+
+    private ReportRequest setTOWWiseReportInputValue(final EstimateAbstractReport searchRequest,
+            final Map<String, Object> reportParams, final List<EstimateAbstractReport> estimateAbstractReportPdfList) {
+        ReportRequest reportInput;
         if (searchRequest.getDepartments() != null
-                && !searchRequest.getDepartments().toString().equalsIgnoreCase("[null]")
-                && !searchRequest.getDepartments().toString().equalsIgnoreCase("[]"))
-            reportInput = new ReportRequest(
-                    messageSource.getMessage("msg.estimateabstractreportbytypeofworkwisewithdeptpdf", null, null),
-                    estimateAbstractReportPdfList, reportParams);
+                && !"[null]".equalsIgnoreCase(searchRequest.getDepartments().toString())
+                && !"[]".equalsIgnoreCase(searchRequest.getDepartments().toString()))
+            if (worksApplicationProperties.lineEstimateRequired())
+                reportInput = new ReportRequest(
+                        messageSource.getMessage("msg.estimateabstractreportbytypeofworkwisewithdeptpdf", null, null),
+                        estimateAbstractReportPdfList, reportParams);
+            else
+                reportInput = new ReportRequest(
+                        messageSource.getMessage("msg.estimateabstractreportfortypeofworkwise", null, null),
+                        estimateAbstractReportPdfList, reportParams);
         else
             reportInput = new ReportRequest(
                     messageSource.getMessage("msg.estimateabstractreportbytypeofworkwisepdf", null, null),
                     estimateAbstractReportPdfList, reportParams);
+        return reportInput;
+    }
 
+    private HttpHeaders setTOWWiseReportHeaderValues(final String contentType, final ReportRequest reportInput) {
         final HttpHeaders headers = new HttpHeaders();
-        if (contentType.equalsIgnoreCase("pdf")) {
+        if (WorksConstants.PDF.equalsIgnoreCase(contentType)) {
             reportInput.setReportFormat(FileFormat.PDF);
             headers.setContentType(MediaType.parseMediaType("application/pdf"));
-            headers.add("content-disposition", "inline;filename=EstimateAbstractReportByTypeOfWorkWise.pdf");
+            if (worksApplicationProperties.lineEstimateRequired())
+                headers.add(WorkProgressRegisterService.CONTENTDISPOSITION, "inline;filename=EstimateAbstractReportByTypeOfWorkWise.pdf");
+            else
+                headers.add(WorkProgressRegisterService.CONTENTDISPOSITION, "inline;filename=EstimateAbstractReportForTypeOfWorkWise.pdf");
         } else {
             reportInput.setReportFormat(FileFormat.XLS);
             headers.setContentType(MediaType.parseMediaType("application/vnd.ms-excel"));
-            headers.add("content-disposition", "inline;filename=EstimateAbstractReportByTypeOfWorkWise.xls");
+            headers.add(WorkProgressRegisterService.CONTENTDISPOSITION, "inline;filename=EstimateAbstractReportByTypeOfWorkWise.xls");
         }
-        reportOutput = reportService.createReport(reportInput);
-        return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
+        return headers;
+    }
 
+    private void setTOWPDFValues(final EstimateAbstractReport eadwr, final EstimateAbstractReport pdf) {
+        if (eadwr.getTypeOfWorkName() != null)
+            pdf.setTypeOfWorkName(eadwr.getTypeOfWorkName());
+        else
+            pdf.setTypeOfWorkName(StringUtils.EMPTY);
+
+        if (eadwr.getSubTypeOfWorkName() != null)
+            pdf.setSubTypeOfWorkName(eadwr.getSubTypeOfWorkName());
+        else
+            pdf.setSubTypeOfWorkName(StringUtils.EMPTY);
     }
 
 }

@@ -51,6 +51,8 @@ import org.egov.commons.CFinancialYear;
 import org.egov.commons.service.CFinancialYearService;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
+import org.egov.works.abstractestimate.repository.AbstractEstimateRepository;
+import org.egov.works.config.properties.WorksApplicationProperties;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.entity.enums.LineEstimateStatus;
 import org.egov.works.lineestimate.repository.LineEstimateDetailsRepository;
@@ -80,6 +82,33 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class WorkProgressRegisterService {
 
+    public static final String JSONDATAPREFIX = "{ \"data\":";
+    public static final String CONTENTDISPOSITION = "content-disposition";
+    private static final String CONTRACTOR = "contractor";
+    private static final String WORKSTATUS = "workstatus";
+    private static final String LINEESTIMATE_STATUS = "'TECHNICAL_SANCTIONED','ADMINISTRATIVE_SANCTIONED'";
+    // Multiple status can be added like
+    // 'TECHNICAL_SANCTIONED','ADMINISTRATIVE_SANCTIONED'
+    private static final String ABSTRACTESTIMATE_STATUS = "'APPROVED'";
+    private static final String DEPARTMENTNAME = "departmentName";
+    private static final String LINEESTIMATES = "lineEstimates";
+    private static final String ABSTRACTESTIMATES = "abstractEstimates";
+    private static final String ADMINSANCTIONEDESTIMATES = "adminSanctionedEstimates";
+    private static final String LEADMINSANCTIONEDAMOUNTINCRORES = "leAdminSanctionedAmountInCrores";
+    private static final String AEADMINSANCTIONEDAMOUNTINCRORES = "aeAdminSanctionedAmountInCrores";
+    private static final String WORKVALUEOFADMINSANCTIONEDAEINCRORES = "workValueOfAdminSanctionedAEInCrores";
+    private static final String TECHNICALSANCTIONEDESTIMATES = "technicalSanctionedEstimates";
+    private static final String LOACREATED = "loaCreated";
+    private static final String LOANOTCREATED = "loaNotCreated";
+    private static final String WORKNOTCOMMENCED = "workNotCommenced";
+    private static final String AGREEMENTVALUEINCRORES = "agreementValueInCrores";
+    private static final String WORKINPROGRESS = "workInProgress";
+    private static final String WORKCOMPLETED = "workCompleted";
+    private static final String BILLSCREATED = "billsCreated";
+    private static final String BILLVALUEINCRORES = "billValueInCrores";
+    private static final String TYPEOFWORKNAME = "typeOfWorkName";
+    private static final String SUBTYPEOFWORKNAME = "subTypeOfWorkName";
+
     @Autowired
     private LineEstimateDetailsRepository lineEstimateDetailsRepository;
 
@@ -92,12 +121,16 @@ public class WorkProgressRegisterService {
     @PersistenceContext
     private EntityManager entityManager;
 
+    @Autowired
+    private AbstractEstimateRepository abstractEstimateRepository;
+
+    @Autowired
+    private WorksApplicationProperties worksApplicationProperties;
+
     public List<String> findWorkIdentificationNumbersToSearchLineEstimatesForLoa(final String code) {
-        final List<String> workIdNumbers = lineEstimateDetailsRepository
-                .findWorkIdentificationNumbersToSearchWorkProgressRegister("%" + code + "%",
-                        LineEstimateStatus.ADMINISTRATIVE_SANCTIONED.toString(),
-                        LineEstimateStatus.TECHNICAL_SANCTIONED.toString());
-        return workIdNumbers;
+        return lineEstimateDetailsRepository.findWorkIdentificationNumbersToSearchWorkProgressRegister("%" + code + "%",
+                LineEstimateStatus.ADMINISTRATIVE_SANCTIONED.toString(),
+                LineEstimateStatus.TECHNICAL_SANCTIONED.toString());
     }
 
     @Transactional
@@ -111,11 +144,12 @@ public class WorkProgressRegisterService {
                 criteria.add(Restrictions.eq("winCode", workProgressRegisterSearchRequest.getWorkIdentificationNumber())
                         .ignoreCase());
             if (workProgressRegisterSearchRequest.getContractor() != null) {
-                criteria.createAlias("contractor", "contractor");
-                criteria.add(Restrictions.or(Restrictions.ilike("contractor.code",
-                        workProgressRegisterSearchRequest.getContractor(), MatchMode.ANYWHERE),
-                        Restrictions.ilike("contractor.name",
-                                workProgressRegisterSearchRequest.getContractor(), MatchMode.ANYWHERE)));
+                criteria.createAlias(CONTRACTOR, CONTRACTOR);
+                criteria.add(Restrictions.or(
+                        Restrictions.ilike("contractor.code", workProgressRegisterSearchRequest.getContractor(),
+                                MatchMode.ANYWHERE),
+                        Restrictions.ilike("contractor.name", workProgressRegisterSearchRequest.getContractor(),
+                                MatchMode.ANYWHERE)));
             }
             if (workProgressRegisterSearchRequest.getAdminSanctionFromDate() != null)
                 criteria.add(Restrictions.ge("adminSanctionDate",
@@ -123,10 +157,9 @@ public class WorkProgressRegisterService {
             if (workProgressRegisterSearchRequest.getAdminSanctionToDate() != null)
                 criteria.add(Restrictions.le("adminSanctionDate",
                         workProgressRegisterSearchRequest.getAdminSanctionToDate()));
-            if (workProgressRegisterSearchRequest.isSpillOverFlag())
-                criteria.add(Restrictions.eq("spillOverFlag", workProgressRegisterSearchRequest.isSpillOverFlag()));
             if (workProgressRegisterSearchRequest.getWorkStatus() != null)
-                criteria.add(Restrictions.eq("workstatus", workProgressRegisterSearchRequest.getWorkStatus()));
+                criteria.add(Restrictions.eq(WORKSTATUS, workProgressRegisterSearchRequest.getWorkStatus()));
+            criteria.add(Restrictions.eq("spillOverFlag", workProgressRegisterSearchRequest.isSpillOverFlag()));
 
             criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
             return criteria.list();
@@ -148,23 +181,19 @@ public class WorkProgressRegisterService {
     public List<EstimateAbstractReport> searchEstimateAbstractReportByDepartmentWise(
             final EstimateAbstractReport estimateAbstractReport) {
 
-        Query query = null;
+        Query query;
         query = entityManager.unwrap(Session.class)
                 .createSQLQuery(getQueryForDepartmentWiseReport(estimateAbstractReport))
-                .addScalar("departmentName", StringType.INSTANCE).addScalar("lineEstimates", StringType.INSTANCE)
-                .addScalar("adminSanctionedEstimates", StringType.INSTANCE)
-                .addScalar("leAdminSanctionedAmountInCrores", StringType.INSTANCE)
-                .addScalar("aeAdminSanctionedAmountInCrores", StringType.INSTANCE)
-                .addScalar("workValueOfAdminSanctionedAEInCrores", StringType.INSTANCE)
-                .addScalar("technicalSanctionedEstimates", StringType.INSTANCE)
-                .addScalar("loaCreated", StringType.INSTANCE)
-                .addScalar("loaNotCreated", StringType.INSTANCE)
-                .addScalar("workNotCommenced", StringType.INSTANCE)
-                .addScalar("agreementValueInCrores", StringType.INSTANCE)
-                .addScalar("workInProgress", StringType.INSTANCE)
-                .addScalar("workCompleted", StringType.INSTANCE)
-                .addScalar("billsCreated", StringType.INSTANCE)
-                .addScalar("billValueInCrores", StringType.INSTANCE)
+                .addScalar(DEPARTMENTNAME, StringType.INSTANCE).addScalar(LINEESTIMATES, StringType.INSTANCE)
+                .addScalar(ADMINSANCTIONEDESTIMATES, StringType.INSTANCE)
+                .addScalar(LEADMINSANCTIONEDAMOUNTINCRORES, StringType.INSTANCE)
+                .addScalar(AEADMINSANCTIONEDAMOUNTINCRORES, StringType.INSTANCE)
+                .addScalar(WORKVALUEOFADMINSANCTIONEDAEINCRORES, StringType.INSTANCE)
+                .addScalar(TECHNICALSANCTIONEDESTIMATES, StringType.INSTANCE).addScalar(LOACREATED, StringType.INSTANCE)
+                .addScalar(LOANOTCREATED, StringType.INSTANCE).addScalar(WORKNOTCOMMENCED, StringType.INSTANCE)
+                .addScalar(AGREEMENTVALUEINCRORES, StringType.INSTANCE).addScalar(WORKINPROGRESS, StringType.INSTANCE)
+                .addScalar(WORKCOMPLETED, StringType.INSTANCE).addScalar(BILLSCREATED, StringType.INSTANCE)
+                .addScalar(BILLVALUEINCRORES, StringType.INSTANCE)
                 .setResultTransformer(Transformers.aliasToBean(EstimateAbstractReport.class));
         query = setParameterForDepartmentWiseReport(estimateAbstractReport, query);
         return query.list();
@@ -179,17 +208,9 @@ public class WorkProgressRegisterService {
             if (estimateAbstractReport.getDepartment() != null)
                 query.setLong("department", estimateAbstractReport.getDepartment());
 
-            if (estimateAbstractReport.getAdminSanctionFromDate() != null)
-                query.setDate("fromDate", estimateAbstractReport.getAdminSanctionFromDate());
+            setAdminSanctionDateQueryParameters(estimateAbstractReport, query);
 
-            if (estimateAbstractReport.getAdminSanctionToDate() != null)
-                query.setDate("toDate", estimateAbstractReport.getAdminSanctionToDate());
-
-            if (estimateAbstractReport.getScheme() != null)
-                query.setLong("scheme", estimateAbstractReport.getScheme());
-
-            if (estimateAbstractReport.getSubScheme() != null)
-                query.setLong("subScheme", estimateAbstractReport.getSubScheme());
+            setSchemeQueryParameters(estimateAbstractReport, query);
 
             if (estimateAbstractReport.getWorkCategory() != null)
                 query.setString("workcategory", estimateAbstractReport.getWorkCategory());
@@ -200,44 +221,53 @@ public class WorkProgressRegisterService {
             if (estimateAbstractReport.getNatureOfWork() != null)
                 query.setLong("natureofwork", estimateAbstractReport.getNatureOfWork());
 
-            if (estimateAbstractReport.getWorkStatus() != null && !estimateAbstractReport.getWorkStatus().equalsIgnoreCase(""))
-                query.setString("workstatus", estimateAbstractReport.getWorkStatus().replace("_", " "));
+            setWorkStatusQueryParameters(estimateAbstractReport, query);
 
         }
         return query;
     }
 
-    private Query setParameterForTypeOfWorkWiseReport(final EstimateAbstractReport estimateAbstractReport, final Query query) {
+    private void setWorkStatusQueryParameters(final EstimateAbstractReport estimateAbstractReport, final Query query) {
+        if (estimateAbstractReport.getWorkStatus() != null
+                && !StringUtils.EMPTY.equalsIgnoreCase(estimateAbstractReport.getWorkStatus()))
+            query.setString(WORKSTATUS, estimateAbstractReport.getWorkStatus().replace("_", " "));
+    }
+
+    private void setSchemeQueryParameters(final EstimateAbstractReport estimateAbstractReport, final Query query) {
+        if (estimateAbstractReport.getScheme() != null)
+            query.setLong("scheme", estimateAbstractReport.getScheme());
+
+        if (estimateAbstractReport.getSubScheme() != null)
+            query.setLong("subScheme", estimateAbstractReport.getSubScheme());
+    }
+
+    private void setAdminSanctionDateQueryParameters(final EstimateAbstractReport estimateAbstractReport,
+            final Query query) {
+        if (estimateAbstractReport.getAdminSanctionFromDate() != null)
+            query.setDate("fromDate", estimateAbstractReport.getAdminSanctionFromDate());
+
+        if (estimateAbstractReport.getAdminSanctionToDate() != null)
+            query.setDate("toDate", estimateAbstractReport.getAdminSanctionToDate());
+    }
+
+    private Query setParameterForTypeOfWorkWiseReport(final EstimateAbstractReport estimateAbstractReport,
+            final Query query) {
 
         if (estimateAbstractReport != null) {
             if (estimateAbstractReport.isSpillOverFlag())
                 query.setBoolean("spilloverflag", true);
 
-            if (estimateAbstractReport.getTypeOfWork() != null)
-                query.setLong("typeofwork", estimateAbstractReport.getTypeOfWork());
+            setTypeOfWorkQueryParameters(estimateAbstractReport, query);
 
-            if (estimateAbstractReport.getSubTypeOfWork() != null)
-                query.setLong("subtypeofwork", estimateAbstractReport.getSubTypeOfWork());
-
-            if (estimateAbstractReport.getDepartments() != null
-                    && !estimateAbstractReport.getDepartments().toString().equalsIgnoreCase("[null]")
-                    && !estimateAbstractReport.getDepartments().toString().equalsIgnoreCase("[]")) {
+            if (checkEstimateAbstractReportDepartments(estimateAbstractReport)) {
                 final List<Long> departmentIds = new ArrayList<Long>();
                 for (final Department dept : estimateAbstractReport.getDepartments())
                     departmentIds.add(dept.getId());
                 query.setParameterList("departmentIds", departmentIds);
 
             }
-            if (estimateAbstractReport.getAdminSanctionFromDate() != null)
-                query.setDate("fromDate", estimateAbstractReport.getAdminSanctionFromDate());
-
-            if (estimateAbstractReport.getAdminSanctionToDate() != null)
-                query.setDate("toDate", estimateAbstractReport.getAdminSanctionToDate());
-            if (estimateAbstractReport.getScheme() != null)
-                query.setLong("scheme", estimateAbstractReport.getScheme());
-
-            if (estimateAbstractReport.getSubScheme() != null)
-                query.setLong("subScheme", estimateAbstractReport.getSubScheme());
+            setAdminSanctionDateQueryParameters(estimateAbstractReport, query);
+            setSchemeQueryParameters(estimateAbstractReport, query);
 
             if (estimateAbstractReport.getWorkCategory() != null)
                 query.setString("workcategory", estimateAbstractReport.getWorkCategory());
@@ -248,60 +278,54 @@ public class WorkProgressRegisterService {
             if (estimateAbstractReport.getNatureOfWork() != null)
                 query.setLong("natureofwork", estimateAbstractReport.getNatureOfWork());
 
-            if (estimateAbstractReport.getWorkStatus() != null && !estimateAbstractReport.getWorkStatus().equalsIgnoreCase(""))
-                query.setString("workstatus", estimateAbstractReport.getWorkStatus().replace("_", " "));
+            setWorkStatusQueryParameters(estimateAbstractReport, query);
         }
         return query;
+    }
+
+    private void setTypeOfWorkQueryParameters(final EstimateAbstractReport estimateAbstractReport, final Query query) {
+        if (estimateAbstractReport.getTypeOfWork() != null)
+            query.setLong("typeofwork", estimateAbstractReport.getTypeOfWork());
+
+        if (estimateAbstractReport.getSubTypeOfWork() != null)
+            query.setLong("subtypeofwork", estimateAbstractReport.getSubTypeOfWork());
     }
 
     @Transactional
     public List<EstimateAbstractReport> searchEstimateAbstractReportByTypeOfWorkWise(
             final EstimateAbstractReport estimateAbstractReport) {
 
-        Query query = null;
-        if (estimateAbstractReport.getDepartments() != null
-                && !estimateAbstractReport.getDepartments().toString().equalsIgnoreCase("[null]")
-                && !estimateAbstractReport.getDepartments().toString().equalsIgnoreCase("[]")) {
+        Query query;
+        if (checkEstimateAbstractReportDepartments(estimateAbstractReport)) {
             query = entityManager.unwrap(Session.class)
                     .createSQLQuery(getQueryForTypeOfWorkWiseReport(estimateAbstractReport))
-                    .addScalar("typeOfWorkName", StringType.INSTANCE)
-                    .addScalar("subTypeOfWorkName", StringType.INSTANCE)
-                    .addScalar("departmentName", StringType.INSTANCE)
-                    .addScalar("lineEstimates", StringType.INSTANCE)
-                    .addScalar("adminSanctionedEstimates", StringType.INSTANCE)
-                    .addScalar("leAdminSanctionedAmountInCrores", StringType.INSTANCE)
-                    .addScalar("aeAdminSanctionedAmountInCrores", StringType.INSTANCE)
-                    .addScalar("workValueOfAdminSanctionedAEInCrores", StringType.INSTANCE)
-                    .addScalar("technicalSanctionedEstimates", StringType.INSTANCE)
-                    .addScalar("loaCreated", StringType.INSTANCE)
-                    .addScalar("agreementValueInCrores", StringType.INSTANCE)
-                    .addScalar("loaNotCreated", StringType.INSTANCE)
-                    .addScalar("workNotCommenced", StringType.INSTANCE)
-                    .addScalar("workInProgress", StringType.INSTANCE)
-                    .addScalar("workCompleted", StringType.INSTANCE)
-                    .addScalar("billsCreated", StringType.INSTANCE)
-                    .addScalar("billValueInCrores", StringType.INSTANCE)
+                    .addScalar(TYPEOFWORKNAME, StringType.INSTANCE).addScalar(SUBTYPEOFWORKNAME, StringType.INSTANCE)
+                    .addScalar(DEPARTMENTNAME, StringType.INSTANCE).addScalar(LINEESTIMATES, StringType.INSTANCE)
+                    .addScalar(ADMINSANCTIONEDESTIMATES, StringType.INSTANCE)
+                    .addScalar(LEADMINSANCTIONEDAMOUNTINCRORES, StringType.INSTANCE)
+                    .addScalar(AEADMINSANCTIONEDAMOUNTINCRORES, StringType.INSTANCE)
+                    .addScalar(WORKVALUEOFADMINSANCTIONEDAEINCRORES, StringType.INSTANCE)
+                    .addScalar(TECHNICALSANCTIONEDESTIMATES, StringType.INSTANCE)
+                    .addScalar(LOACREATED, StringType.INSTANCE).addScalar(AGREEMENTVALUEINCRORES, StringType.INSTANCE)
+                    .addScalar(LOANOTCREATED, StringType.INSTANCE).addScalar(WORKNOTCOMMENCED, StringType.INSTANCE)
+                    .addScalar(WORKINPROGRESS, StringType.INSTANCE).addScalar(WORKCOMPLETED, StringType.INSTANCE)
+                    .addScalar(BILLSCREATED, StringType.INSTANCE).addScalar(BILLVALUEINCRORES, StringType.INSTANCE)
                     .setResultTransformer(Transformers.aliasToBean(EstimateAbstractReport.class));
             query = setParameterForTypeOfWorkWiseReport(estimateAbstractReport, query);
         } else {
             query = entityManager.unwrap(Session.class)
                     .createSQLQuery(getQueryForTypeOfWorkWiseReport(estimateAbstractReport))
-                    .addScalar("typeOfWorkName", StringType.INSTANCE)
-                    .addScalar("subTypeOfWorkName", StringType.INSTANCE)
-                    .addScalar("lineEstimates", StringType.INSTANCE)
-                    .addScalar("adminSanctionedEstimates", StringType.INSTANCE)
-                    .addScalar("leAdminSanctionedAmountInCrores", StringType.INSTANCE)
-                    .addScalar("aeAdminSanctionedAmountInCrores", StringType.INSTANCE)
-                    .addScalar("workValueOfAdminSanctionedAEInCrores", StringType.INSTANCE)
-                    .addScalar("technicalSanctionedEstimates", StringType.INSTANCE)
-                    .addScalar("loaCreated", StringType.INSTANCE)
-                    .addScalar("agreementValueInCrores", StringType.INSTANCE)
-                    .addScalar("loaNotCreated", StringType.INSTANCE)
-                    .addScalar("workNotCommenced", StringType.INSTANCE)
-                    .addScalar("workInProgress", StringType.INSTANCE)
-                    .addScalar("workCompleted", StringType.INSTANCE)
-                    .addScalar("billsCreated", StringType.INSTANCE)
-                    .addScalar("billValueInCrores", StringType.INSTANCE)
+                    .addScalar(TYPEOFWORKNAME, StringType.INSTANCE).addScalar(SUBTYPEOFWORKNAME, StringType.INSTANCE)
+                    .addScalar(LINEESTIMATES, StringType.INSTANCE)
+                    .addScalar(ADMINSANCTIONEDESTIMATES, StringType.INSTANCE)
+                    .addScalar(LEADMINSANCTIONEDAMOUNTINCRORES, StringType.INSTANCE)
+                    .addScalar(AEADMINSANCTIONEDAMOUNTINCRORES, StringType.INSTANCE)
+                    .addScalar(WORKVALUEOFADMINSANCTIONEDAEINCRORES, StringType.INSTANCE)
+                    .addScalar(TECHNICALSANCTIONEDESTIMATES, StringType.INSTANCE)
+                    .addScalar(LOACREATED, StringType.INSTANCE).addScalar(AGREEMENTVALUEINCRORES, StringType.INSTANCE)
+                    .addScalar(LOANOTCREATED, StringType.INSTANCE).addScalar(WORKNOTCOMMENCED, StringType.INSTANCE)
+                    .addScalar(WORKINPROGRESS, StringType.INSTANCE).addScalar(WORKCOMPLETED, StringType.INSTANCE)
+                    .addScalar(BILLSCREATED, StringType.INSTANCE).addScalar(BILLVALUEINCRORES, StringType.INSTANCE)
                     .setResultTransformer(Transformers.aliasToBean(EstimateAbstractReport.class));
             query = setParameterForTypeOfWorkWiseReport(estimateAbstractReport, query);
 
@@ -310,46 +334,20 @@ public class WorkProgressRegisterService {
 
     }
 
+    private boolean checkEstimateAbstractReportDepartments(final EstimateAbstractReport estimateAbstractReport) {
+        return estimateAbstractReport.getDepartments() != null
+                && !"[null]".equalsIgnoreCase(estimateAbstractReport.getDepartments().toString())
+                && !"[]".equalsIgnoreCase(estimateAbstractReport.getDepartments().toString());
+    }
+
     private String getQueryForDepartmentWiseReport(final EstimateAbstractReport estimateAbstractReport) {
+        final boolean lineEstimateRequired = worksApplicationProperties.lineEstimateRequired();
         final StringBuilder filterConditions = new StringBuilder();
 
-        if (estimateAbstractReport != null) {
-
-            if (estimateAbstractReport.getDepartment() != null)
-                filterConditions.append(" AND details.department =:department ");
-
-            if (estimateAbstractReport.getAdminSanctionFromDate() != null)
-                filterConditions.append(" AND details.adminsanctiondate >=:fromDate ");
-
-            if (estimateAbstractReport.getAdminSanctionToDate() != null)
-                filterConditions.append(" AND details.adminsanctiondate <=:toDate ");
-
-            if (estimateAbstractReport.getScheme() != null)
-                filterConditions.append(" AND details.scheme =:scheme ");
-
-            if (estimateAbstractReport.getSubScheme() != null)
-                filterConditions.append(" AND details.subScheme =:subScheme ");
-
-            if (estimateAbstractReport.getWorkCategory() != null)
-                filterConditions.append(" AND details.workcategory =:workcategory ");
-            if (estimateAbstractReport.getBeneficiary() != null)
-                filterConditions.append(" AND details.beneficiary =:beneficiary ");
-
-            if (estimateAbstractReport.getNatureOfWork() != null)
-                filterConditions.append(" AND details.natureofwork =:natureofwork ");
-
-            if (estimateAbstractReport.isSpillOverFlag())
-                filterConditions.append(" AND details.spilloverflag =:spilloverflag ");
-
-            if (estimateAbstractReport.getWorkStatus() != null && !estimateAbstractReport.getWorkStatus().equalsIgnoreCase(""))
-                filterConditions.append(" AND details.workstatus =:workstatus ");
-
-        }
+        setFilterConditions(estimateAbstractReport, filterConditions);
         final StringBuilder query = new StringBuilder();
         query.append("SELECT departmentName AS departmentName, ");
-        query.append(" SUM(lineEstimates)                 AS lineEstimates ,  ");
-        query.append(" SUM(lineEstimateDetails)           AS lineEstimateDetails ,  ");
-        query.append(" SUM(leAdminSanctionedAmountInCrores) AS leAdminSanctionedAmountInCrores,  ");
+        queryAppendForEstimateReportLENotRequiredCase(lineEstimateRequired, query);
         query.append(" SUM(adminSanctionedEstimates)        AS adminSanctionedEstimates,  ");
         query.append(" SUM(aeAdminSanctionedAmountInCrores) AS aeAdminSanctionedAmountInCrores,  ");
         query.append(" SUM(workValueOfAdminSanctionedAEInCrores) AS workValueOfAdminSanctionedAEInCrores, ");
@@ -365,13 +363,21 @@ public class WorkProgressRegisterService {
         query.append(" FROM  ");
         query.append(" (  ");
         query.append(" SELECT details.departmentName        AS departmentName,  ");
-        query.append(" COUNT(DISTINCT details.leid)         AS lineEstimates,  ");
-        query.append(" COUNT(details.ledid)                 AS lineEstimateDetails,  ");
-        query.append(" SUM(details.adminSanctionAmount)/10000000 AS leAdminSanctionedAmountInCrores,  ");
-        query.append(" 0                                    AS adminSanctionedEstimates,  ");
-        query.append(" 0                                    AS aeAdminSanctionedAmountInCrores,  ");
-        query.append(" 0                                    AS workValueOfAdminSanctionedAEInCrores, ");
-        query.append(" 0                                    AS technicalSanctionedEstimates,  ");
+        if (lineEstimateRequired) {
+            query.append(" COUNT(DISTINCT details.leid)                 AS lineEstimates,  ");
+            query.append(" COUNT(details.ledid)                         AS lineEstimateDetails,  ");
+            query.append(" SUM(details.adminsanctionamount)/10000000    AS leAdminSanctionedAmountInCrores,  ");
+            query.append(" SUM(details.estimatevalue)/10000000          AS aeAdminSanctionedAmountInCrores,  ");
+            query.append(" SUM(details.workvalue)/10000000              AS workValueOfAdminSanctionedAEInCrores, ");
+            query.append(" COUNT(details.adminsanctionby)       AS adminSanctionedEstimates,  ");
+            query.append(" COUNT(details.technicalsanctionby)   AS technicalSanctionedEstimates,  ");
+        } else {
+            query.append(" COUNT(DISTINCT details.aeid)                 AS abstractEstimates ,  ");
+            query.append(" SUM(details.adminsanctionamount)/10000000    AS aeAdminSanctionedAmountInCrores,  ");
+            query.append(" SUM(details.workvalue)/10000000              AS workValueOfAdminSanctionedAEInCrores, ");
+            query.append(" COUNT(details.adminsanctionby)       AS adminSanctionedEstimates,  ");
+            query.append(" COUNT(details.technicalsanctionby)   AS technicalSanctionedEstimates,  ");
+        }
         query.append(" 0                                    AS loaCreated,  ");
         query.append(" 0                                    AS agreementValueInCrores, ");
         query.append(" 0                                    AS loaNotCreated, ");
@@ -382,18 +388,15 @@ public class WorkProgressRegisterService {
         query.append(" 0                                    AS billValueInCrores ");
         query.append(" FROM egw_mv_work_progress_register details, ");
         query.append("   egw_status status ");
-        query.append(" WHERE details.lineestimatestatus = status.code ");
-        query.append(" AND status.code       IN ('TECHNICAL_SANCTIONED','ADMINISTRATIVE_SANCTIONED') ");
+        queryAppendForStatusCheck(lineEstimateRequired, query);
         query.append(filterConditions.toString());
         query.append(" GROUP BY details.departmentName ");
         query.append(" UNION ");
         query.append(" SELECT details.departmentName        AS departmentName, ");
-        query.append(" 0                                    AS lineEstimates, ");
-        query.append(" 0                                    AS lineEstimateDetails, ");
-        query.append(" 0                                    AS leAdminSanctionedAmountInCrores, ");
-        query.append(" COUNT(details.estimatestatuscode)    AS adminSanctionedEstimates, ");
-        query.append(" SUM(details.estimatevalue)/10000000  AS aeAdminSanctionedAmountInCrores,  ");
-        query.append(" SUM(details.workvalue)/10000000      AS workValueOfAdminSanctionedAEInCrores, ");
+        queryAppendForLENotRequiredCase(lineEstimateRequired, query);
+        query.append(" 0                                    AS adminSanctionedEstimates, ");
+        query.append(" 0                                    AS aeAdminSanctionedAmountInCrores,  ");
+        query.append(" 0                                    AS workValueOfAdminSanctionedAEInCrores, ");
         query.append(" 0                                    AS technicalSanctionedEstimates, ");
         query.append(" 0                                    AS loaCreated, ");
         query.append(" 0                                    AS agreementValueInCrores, ");
@@ -411,13 +414,11 @@ public class WorkProgressRegisterService {
         query.append(" GROUP BY details.departmentName ");
         query.append(" UNION ");
         query.append(" SELECT details.departmentName AS departmentName, ");
-        query.append(" 0                           AS lineEstimates, ");
-        query.append(" 0                           AS lineEstimateDetails, ");
-        query.append(" 0                           AS leAdminSanctionedAmountInCrores, ");
+        queryAppendForLENotRequiredCase(lineEstimateRequired, query);
         query.append(" 0                           AS adminSanctionedEstimates, ");
         query.append(" 0                           AS aeAdminSanctionedAmountInCrores,  ");
         query.append(" 0                           AS workValueOfAdminSanctionedAEInCrores, ");
-        query.append(" COUNT(details.estimatestatuscode)     AS technicalSanctionedEstimates, ");
+        query.append(" 0                           AS technicalSanctionedEstimates, ");
         query.append(" 0                           AS loaCreated, ");
         query.append(" 0                           AS agreementValueInCrores, ");
         query.append(" 0                           AS loaNotCreated, ");
@@ -429,19 +430,20 @@ public class WorkProgressRegisterService {
         query.append(" FROM egw_mv_work_progress_register details, ");
         query.append(" egw_status status ");
         query.append(" WHERE details.estimatestatuscode = status.code ");
-        query.append(" AND status.code       IN ('ADMIN_SANCTIONED','TECH_SANCTIONED') ");
+        if (lineEstimateRequired)
+            query.append(" AND status.code       IN ('ADMIN_SANCTIONED','TECH_SANCTIONED') ");
+        else
+            query.append(" AND status.code       IN (" + ABSTRACTESTIMATE_STATUS + ") ");
         query.append(filterConditions.toString());
         query.append(" GROUP BY details.departmentName ");
         query.append(" UNION ");
         query.append(" SELECT details.departmentName         AS departmentName, ");
-        query.append(" 0                                     AS lineEstimates, ");
-        query.append(" 0                                     AS lineEstimateDetails, ");
-        query.append(" 0                                     AS leAdminSanctionedAmountInCrores, ");
+        queryAppendForLENotRequiredCase(lineEstimateRequired, query);
         query.append(" 0                                     AS adminSanctionedEstimates, ");
         query.append(" 0                                     AS aeAdminSanctionedAmountInCrores,  ");
         query.append(" 0                                     AS workValueOfAdminSanctionedAEInCrores, ");
         query.append(" 0                                     AS technicalSanctionedEstimates, ");
-        query.append(" COUNT(details.ledid)                  AS loaCreated, ");
+        queryAppendForLoaCreated(lineEstimateRequired, query);
         query.append(" SUM(details.agreementamount)/10000000 AS agreementValueInCrores, ");
         query.append(" 0                                     AS loaNotCreated, ");
         query.append(" 0                                     AS workNotCommenced, ");
@@ -451,21 +453,22 @@ public class WorkProgressRegisterService {
         query.append(" 0                                     AS billValueInCrores ");
         query.append(" FROM egw_mv_work_progress_register details ");
         query.append(" WHERE details.agreementnumber IS NOT NULL ");
-        query.append(" AND details.wostatuscode       = 'APPROVED' ");
+        query.append(" AND details.wostatuscode       = " + ABSTRACTESTIMATE_STATUS + " ");
         query.append(filterConditions.toString());
         query.append(" GROUP BY details.departmentName ");
         query.append(" UNION ");
         query.append(" SELECT details.departmentName         AS departmentName, ");
-        query.append(" 0                                     AS lineEstimates, ");
-        query.append(" 0                                     AS lineEstimateDetails, ");
-        query.append(" 0                                     AS leAdminSanctionedAmountInCrores, ");
+        queryAppendForLENotRequiredCase(lineEstimateRequired, query);
         query.append(" 0                                     AS adminSanctionedEstimates, ");
         query.append(" 0                                     AS aeAdminSanctionedAmountInCrores,  ");
         query.append(" 0                                     AS workValueOfAdminSanctionedAEInCrores, ");
         query.append(" 0                                     AS technicalSanctionedEstimates, ");
         query.append(" 0                                     AS loaCreated, ");
         query.append(" 0                                     AS agreementValueInCrores, ");
-        query.append(" COUNT(details.ledid)                  AS loaNotCreated, ");
+        if (lineEstimateRequired)
+            query.append(" COUNT(details.ledid)                  AS loaNotCreated, ");
+        else
+            query.append(" COUNT(details.aeid)                  AS loaNotCreated, ");
         query.append(" 0                                     AS workNotCommenced, ");
         query.append(" 0                                     AS workInProgress, ");
         query.append(" 0                                     AS workCompleted, ");
@@ -477,9 +480,7 @@ public class WorkProgressRegisterService {
         query.append(" GROUP BY details.departmentName ");
         query.append(" UNION ");
         query.append(" SELECT details.departmentName         AS departmentName, ");
-        query.append(" 0                                     AS lineEstimates, ");
-        query.append(" 0                                     AS lineEstimateDetails, ");
-        query.append(" 0                                     AS leAdminSanctionedAmountInCrores, ");
+        queryAppendForLENotRequiredCase(lineEstimateRequired, query);
         query.append(" 0                                     AS adminSanctionedEstimates, ");
         query.append(" 0                                     AS aeAdminSanctionedAmountInCrores,  ");
         query.append(" 0                                     AS workValueOfAdminSanctionedAEInCrores, ");
@@ -487,7 +488,7 @@ public class WorkProgressRegisterService {
         query.append(" 0                                     AS loaCreated, ");
         query.append(" 0                                     AS agreementValueInCrores, ");
         query.append(" 0                                     AS loaNotCreated, ");
-        query.append(" COUNT(details.ledid)                  AS workNotCommenced, ");
+        queryAppendForWorkNotCommenced(lineEstimateRequired, query);
         query.append(" 0                                     AS workInProgress, ");
         query.append(" 0                                     AS workCompleted, ");
         query.append(" 0                                     AS billsCreated, ");
@@ -498,9 +499,7 @@ public class WorkProgressRegisterService {
         query.append(" GROUP BY details.departmentName ");
         query.append(" UNION ");
         query.append(" SELECT details.departmentName AS departmentName, ");
-        query.append(" 0                             AS lineEstimates, ");
-        query.append(" 0                             AS lineEstimateDetails, ");
-        query.append(" 0                             AS leAdminSanctionedAmountInCrores, ");
+        queryAppendForLENotRequiredCase(lineEstimateRequired, query);
         query.append(" 0                             AS adminSanctionedEstimates, ");
         query.append(" 0                             AS aeAdminSanctionedAmountInCrores,  ");
         query.append(" 0                             AS workValueOfAdminSanctionedAEInCrores, ");
@@ -509,7 +508,10 @@ public class WorkProgressRegisterService {
         query.append(" 0                             AS agreementValueInCrores, ");
         query.append(" 0                             AS loaNotCreated, ");
         query.append(" 0                             AS workNotCommenced, ");
-        query.append(" COUNT(DISTINCT details.ledid) AS workInProgress, ");
+        if (lineEstimateRequired)
+            query.append(" COUNT(DISTINCT details.ledid) AS workInProgress, ");
+        else
+            query.append(" COUNT(DISTINCT details.aeid)  AS workInProgress, ");
         query.append(" 0                             AS workCompleted, ");
         query.append(" 0                             AS billsCreated, ");
         query.append(" 0                             AS billValueInCrores ");
@@ -519,9 +521,7 @@ public class WorkProgressRegisterService {
         query.append(" GROUP BY details.departmentName ");
         query.append(" UNION ");
         query.append(" SELECT details.departmentName AS departmentName, ");
-        query.append(" 0                             AS lineEstimates, ");
-        query.append(" 0                             AS lineEstimateDetails, ");
-        query.append(" 0                             AS leAdminSanctionedAmountInCrores, ");
+        queryAppendForLENotRequiredCase(lineEstimateRequired, query);
         query.append(" 0                             AS adminSanctionedEstimates, ");
         query.append(" 0                             AS aeAdminSanctionedAmountInCrores,  ");
         query.append(" 0                             AS workValueOfAdminSanctionedAEInCrores, ");
@@ -531,7 +531,7 @@ public class WorkProgressRegisterService {
         query.append(" 0                             AS loaNotCreated, ");
         query.append(" 0                             AS workNotCommenced, ");
         query.append(" 0                             AS workInProgress, ");
-        query.append(" COUNT(DISTINCT details.ledid) AS workCompleted, ");
+        queryAppendForWorkCompleted(lineEstimateRequired, query);
         query.append(" 0                             AS billsCreated, ");
         query.append(" 0                             AS billValueInCrores ");
         query.append(" FROM egw_mv_work_progress_register details ");
@@ -540,9 +540,7 @@ public class WorkProgressRegisterService {
         query.append(" GROUP BY details.departmentName ");
         query.append(" UNION ");
         query.append(" SELECT details.departmentName       AS departmentName, ");
-        query.append(" 0                                   AS lineEstimates, ");
-        query.append(" 0                                   AS lineEstimateDetails, ");
-        query.append(" 0                                   AS leAdminSanctionedAmountInCrores, ");
+        queryAppendForLENotRequiredCase(lineEstimateRequired, query);
         query.append(" 0                                   AS adminSanctionedEstimates, ");
         query.append(" 0                                   AS aeAdminSanctionedAmountInCrores,  ");
         query.append(" 0                                   AS workValueOfAdminSanctionedAEInCrores, ");
@@ -557,7 +555,7 @@ public class WorkProgressRegisterService {
         query.append(" SUM(billdetail.billamount)/10000000 AS billValueInCrores ");
         query.append(" FROM egw_mv_work_progress_register details , ");
         query.append(" egw_mv_billdetail billdetail ");
-        query.append(" WHERE billdetail.ledid = details.ledid ");
+        queryAppendForBillDetailLENotRequiredCase(lineEstimateRequired, query);
         query.append(filterConditions.toString());
         query.append(" GROUP BY details.departmentName ");
         query.append(" ) final ");
@@ -565,15 +563,45 @@ public class WorkProgressRegisterService {
         return query.toString();
     }
 
+    private void queryAppendForWorkNotCommenced(final boolean lineEstimateRequired, final StringBuilder query) {
+        if (lineEstimateRequired)
+            query.append(" COUNT(details.ledid)                  AS workNotCommenced, ");
+        else
+            query.append(" COUNT(details.aeid)                  AS workNotCommenced, ");
+    }
+
+    private void queryAppendForLoaCreated(final boolean lineEstimateRequired, final StringBuilder query) {
+        if (lineEstimateRequired)
+            query.append(" COUNT(details.ledid)                  AS loaCreated, ");
+        else
+            query.append(" COUNT(details.aeid)                  AS loaCreated, ");
+    }
+
+    private void queryAppendForBillDetailLENotRequiredCase(final boolean lineEstimateRequired,
+            final StringBuilder query) {
+        if (lineEstimateRequired)
+            query.append(" WHERE billdetail.ledid = details.ledid ");
+        else
+            query.append(" WHERE billdetail.aeid = details.aeid ");
+    }
+
+    private void queryAppendForLENotRequiredCase(final boolean lineEstimateRequired, final StringBuilder query) {
+        if (lineEstimateRequired) {
+            query.append(" 0                                    AS lineEstimates, ");
+            query.append(" 0                                    AS lineEstimateDetails, ");
+            query.append(" 0                                    AS leAdminSanctionedAmountInCrores, ");
+        } else
+            query.append(" 0                                AS abstractEstimates ,  ");
+    }
+
     private String getQueryForTypeOfWorkWiseReport(final EstimateAbstractReport estimateAbstractReport) {
+        final boolean lineEstimateRequired = worksApplicationProperties.lineEstimateRequired();
         final StringBuilder filterConditions = new StringBuilder();
         final StringBuilder selectQuery = new StringBuilder();
         final StringBuilder groupByQuery = new StringBuilder();
         final StringBuilder mainSelectQuery = new StringBuilder();
         final StringBuilder mainGroupByQuery = new StringBuilder();
-        if (estimateAbstractReport.getDepartments() != null
-                && !estimateAbstractReport.getDepartments().toString().equalsIgnoreCase("[null]")
-                && !estimateAbstractReport.getDepartments().toString().equalsIgnoreCase("[]")) {
+        if (checkEstimateAbstractReportDepartments(estimateAbstractReport)) {
             filterConditions.append(" AND details.department in ( :departmentIds ) ");
 
             selectQuery.append(" SELECT details.typeOfWorkName       AS typeOfWorkName,  ");
@@ -584,7 +612,7 @@ public class WorkProgressRegisterService {
             mainSelectQuery.append(" subTypeOfWorkName         AS subTypeOfWorkName,  ");
             mainSelectQuery.append(" departmentName         AS departmentName,  ");
 
-            groupByQuery.append(" GROUP BY details.typeOfWorkName,details.subTypeOfWorkName,details.departmentName ");
+            groupByQuery.append(" GROUP BY details.typeOfWorkName,details.subTypeOfWorkName,details.departmentName");
             mainGroupByQuery.append(" GROUP BY typeofworkname,subtypeofworkname,departmentname ");
         } else {
             selectQuery.append(" SELECT details.typeOfWorkName       AS typeOfWorkName,  ");
@@ -598,46 +626,10 @@ public class WorkProgressRegisterService {
             mainGroupByQuery.append(" GROUP BY typeofworkname,subtypeofworkname ");
         }
 
-        if (estimateAbstractReport != null) {
-
-            if (estimateAbstractReport.getTypeOfWork() != null)
-                filterConditions.append(" AND details.typeofwork =:typeofwork ");
-
-            if (estimateAbstractReport.getSubTypeOfWork() != null)
-                filterConditions.append(" AND details.subtypeofwork =:subtypeofwork ");
-
-            if (estimateAbstractReport.getAdminSanctionFromDate() != null)
-                filterConditions.append(" AND details.adminsanctiondate >=:fromDate ");
-
-            if (estimateAbstractReport.getAdminSanctionToDate() != null)
-                filterConditions.append(" AND details.adminsanctiondate <=:toDate ");
-
-            if (estimateAbstractReport.getScheme() != null)
-                filterConditions.append(" AND details.scheme =:scheme ");
-
-            if (estimateAbstractReport.getSubScheme() != null)
-                filterConditions.append(" AND details.subScheme =:subScheme ");
-
-            if (estimateAbstractReport.getWorkCategory() != null)
-                filterConditions.append(" AND details.workcategory =:workcategory ");
-
-            if (estimateAbstractReport.getBeneficiary() != null)
-                filterConditions.append(" AND details.beneficiary =:beneficiary ");
-
-            if (estimateAbstractReport.getNatureOfWork() != null)
-                filterConditions.append(" AND details.natureofwork =:natureofwork ");
-
-            if (estimateAbstractReport.isSpillOverFlag())
-                filterConditions.append(" AND details.spilloverflag =:spilloverflag ");
-
-            if (estimateAbstractReport.getWorkStatus() != null && !estimateAbstractReport.getWorkStatus().equalsIgnoreCase(""))
-                filterConditions.append(" AND details.workstatus =:workstatus ");
-        }
+        setFilterConditionsForTypeOfWorkWise(estimateAbstractReport, filterConditions);
         final StringBuilder query = new StringBuilder();
         query.append(mainSelectQuery.toString());
-        query.append(" SUM(lineEstimates)                 AS lineEstimates ,  ");
-        query.append(" SUM(lineEstimateDetails)           AS lineEstimateDetails ,  ");
-        query.append(" SUM(leAdminSanctionedAmountInCrores) AS leAdminSanctionedAmountInCrores,  ");
+        queryAppendForEstimateReportLENotRequiredCase(lineEstimateRequired, query);
         query.append(" SUM(adminSanctionedEstimates)        AS adminSanctionedEstimates,  ");
         query.append(" SUM(aeAdminSanctionedAmountInCrores) AS aeAdminSanctionedAmountInCrores,  ");
         query.append(" SUM(workValueOfAdminSanctionedAEInCrores) AS workValueOfAdminSanctionedAEInCrores, ");
@@ -653,13 +645,21 @@ public class WorkProgressRegisterService {
         query.append(" FROM  ");
         query.append(" (  ");
         query.append(selectQuery.toString());
-        query.append(" COUNT(DISTINCT details.leid)         AS lineEstimates,  ");
-        query.append(" COUNT(details.ledid)                 AS lineEstimateDetails,  ");
-        query.append(" SUM(details.adminSanctionAmount)/10000000 AS leAdminSanctionedAmountInCrores,  ");
-        query.append(" 0                                    AS adminSanctionedEstimates,  ");
-        query.append(" 0                                    AS aeAdminSanctionedAmountInCrores,  ");
-        query.append(" 0                                    AS workValueOfAdminSanctionedAEInCrores, ");
-        query.append(" 0                                    AS technicalSanctionedEstimates,  ");
+        if (lineEstimateRequired) {
+            query.append(" COUNT(DISTINCT details.leid)                 AS lineEstimates,  ");
+            query.append(" COUNT(details.ledid)                         AS lineEstimateDetails,  ");
+            query.append(" SUM(details.adminsanctionamount)/10000000    AS leAdminSanctionedAmountInCrores,  ");
+            query.append(" SUM(details.estimatevalue)/10000000          AS aeAdminSanctionedAmountInCrores,  ");
+            query.append(" COUNT(details.adminsanctionby)               AS adminSanctionedEstimates,  ");
+            query.append(" COUNT(details.technicalsanctionby)           AS technicalSanctionedEstimates,  ");
+            query.append(" SUM(details.workvalue)/10000000              AS workValueOfAdminSanctionedAEInCrores, ");
+        } else {
+            query.append(" COUNT(DISTINCT details.aeid)                 AS abstractEstimates,  ");
+            query.append(" SUM(details.adminsanctionamount)/10000000    AS aeAdminSanctionedAmountInCrores,  ");
+            query.append(" COUNT(details.adminsanctionby)               AS adminSanctionedEstimates,  ");
+            query.append(" COUNT(details.technicalsanctionby)           AS technicalSanctionedEstimates,  ");
+            query.append(" SUM(details.workvalue)/10000000              AS workValueOfAdminSanctionedAEInCrores, ");
+        }
         query.append(" 0                                    AS loaCreated,  ");
         query.append(" 0                                    AS agreementValueInCrores, ");
         query.append(" 0                                    AS loaNotCreated, ");
@@ -670,17 +670,14 @@ public class WorkProgressRegisterService {
         query.append(" 0                                    AS billValueInCrores ");
         query.append(" FROM egw_mv_work_progress_register details, ");
         query.append("   egw_status status ");
-        query.append(" WHERE details.lineestimatestatus = status.code ");
-        query.append(" AND status.code       IN ('TECHNICAL_SANCTIONED','ADMINISTRATIVE_SANCTIONED') ");
+        queryAppendForStatusCheck(lineEstimateRequired, query);
         query.append(filterConditions.toString());
         query.append(groupByQuery.toString());
         query.append(" UNION ");
         query.append(selectQuery.toString());
-        query.append(" 0                                    AS lineEstimates, ");
-        query.append(" 0                                    AS lineEstimateDetails, ");
-        query.append(" 0                                    AS leAdminSanctionedAmountInCrores, ");
-        query.append(" COUNT(details.estimatestatuscode)    AS adminSanctionedEstimates, ");
-        query.append(" SUM(details.estimatevalue)/10000000  AS aeAdminSanctionedAmountInCrores,  ");
+        queryAppendForLENotRequiredCase(lineEstimateRequired, query);
+        query.append(" COUNT(details.adminsanctionby)       AS adminSanctionedEstimates, ");
+        query.append(" SUM(details.adminsanctionamount)/10000000  AS aeAdminSanctionedAmountInCrores,  ");
         query.append(" SUM(details.workvalue)/10000000      AS workValueOfAdminSanctionedAEInCrores, ");
         query.append(" 0                                    AS technicalSanctionedEstimates, ");
         query.append(" 0                                    AS loaCreated, ");
@@ -699,9 +696,7 @@ public class WorkProgressRegisterService {
         query.append(groupByQuery.toString());
         query.append(" UNION ");
         query.append(selectQuery.toString());
-        query.append(" 0                           AS lineEstimates, ");
-        query.append(" 0                           AS lineEstimateDetails, ");
-        query.append(" 0                           AS leAdminSanctionedAmountInCrores, ");
+        queryAppendForLENotRequiredCase(lineEstimateRequired, query);
         query.append(" 0                           AS adminSanctionedEstimates,  ");
         query.append(" 0                           AS aeAdminSanctionedAmountInCrores,  ");
         query.append(" 0                           AS workValueOfAdminSanctionedAEInCrores, ");
@@ -722,14 +717,12 @@ public class WorkProgressRegisterService {
         query.append(groupByQuery.toString());
         query.append(" UNION ");
         query.append(selectQuery.toString());
-        query.append(" 0                                     AS lineEstimates, ");
-        query.append(" 0                                     AS lineEstimateDetails, ");
-        query.append(" 0                                     AS leAdminSanctionedAmountInCrores, ");
+        queryAppendForLENotRequiredCase(lineEstimateRequired, query);
         query.append(" 0                                     AS adminSanctionedEstimates,  ");
         query.append(" 0                                     AS aeAdminSanctionedAmountInCrores,  ");
         query.append(" 0                                     AS workValueOfAdminSanctionedAEInCrores, ");
         query.append(" 0                                     AS technicalSanctionedEstimates, ");
-        query.append(" COUNT(details.ledid)                  AS loaCreated, ");
+        queryAppendForLoaCreated(lineEstimateRequired, query);
         query.append(" SUM(details.agreementamount)/10000000 AS agreementValueInCrores, ");
         query.append(" 0                                     AS loaNotCreated, ");
         query.append(" 0                                     AS workNotCommenced, ");
@@ -739,21 +732,22 @@ public class WorkProgressRegisterService {
         query.append(" 0                                     AS billValueInCrores ");
         query.append(" FROM egw_mv_work_progress_register details ");
         query.append(" WHERE details.agreementnumber IS NOT NULL ");
-        query.append(" AND details.wostatuscode       = 'APPROVED' ");
+        query.append(" AND details.wostatuscode       = " + ABSTRACTESTIMATE_STATUS + " ");
         query.append(filterConditions.toString());
         query.append(groupByQuery.toString());
         query.append(" UNION ");
         query.append(selectQuery.toString());
-        query.append(" 0                                     AS lineEstimates, ");
-        query.append(" 0                                     AS lineEstimateDetails, ");
-        query.append(" 0                                     AS leAdminSanctionedAmountInCrores, ");
+        queryAppendForLENotRequiredCase(lineEstimateRequired, query);
         query.append(" 0                                     AS adminSanctionedEstimates,  ");
         query.append(" 0                                     AS aeAdminSanctionedAmountInCrores,  ");
         query.append(" 0                                     AS workValueOfAdminSanctionedAEInCrores, ");
         query.append(" 0                                     AS technicalSanctionedEstimates, ");
         query.append(" 0                                     AS loaCreated, ");
         query.append(" 0                                     AS agreementValueInCrores, ");
-        query.append(" COUNT(details.ledid)                  AS loaNotCreated, ");
+        if (lineEstimateRequired)
+            query.append(" COUNT(details.ledid)              AS loaNotCreated, ");
+        else
+            query.append(" COUNT(details.aeid)               AS loaNotCreated, ");
         query.append(" 0                                     AS workNotCommenced, ");
         query.append(" 0                                     AS workInProgress, ");
         query.append(" 0                                     AS workCompleted, ");
@@ -765,9 +759,7 @@ public class WorkProgressRegisterService {
         query.append(groupByQuery.toString());
         query.append(" UNION ");
         query.append(selectQuery.toString());
-        query.append(" 0                                     AS lineEstimates, ");
-        query.append(" 0                                     AS lineEstimateDetails, ");
-        query.append(" 0                                     AS leAdminSanctionedAmountInCrores, ");
+        queryAppendForLENotRequiredCase(lineEstimateRequired, query);
         query.append(" 0                                     AS adminSanctionedEstimates,  ");
         query.append(" 0                                     AS aeAdminSanctionedAmountInCrores,  ");
         query.append(" 0                                     AS workValueOfAdminSanctionedAEInCrores, ");
@@ -775,7 +767,7 @@ public class WorkProgressRegisterService {
         query.append(" 0                                     AS loaCreated, ");
         query.append(" 0                                     AS agreementValueInCrores, ");
         query.append(" 0                                     AS loaNotCreated, ");
-        query.append(" COUNT(details.ledid)                  AS workNotCommenced, ");
+        queryAppendForWorkNotCommenced(lineEstimateRequired, query);
         query.append(" 0                                     AS workInProgress, ");
         query.append(" 0                                     AS workCompleted, ");
         query.append(" 0                                     AS billsCreated, ");
@@ -786,9 +778,7 @@ public class WorkProgressRegisterService {
         query.append(groupByQuery.toString());
         query.append(" UNION ");
         query.append(selectQuery.toString());
-        query.append(" 0                                     AS lineEstimates, ");
-        query.append(" 0                                     AS lineEstimateDetails, ");
-        query.append(" 0                                     AS leAdminSanctionedAmountInCrores, ");
+        queryAppendForLENotRequiredCase(lineEstimateRequired, query);
         query.append(" 0                                     AS adminSanctionedEstimates,  ");
         query.append(" 0                                     AS aeAdminSanctionedAmountInCrores,  ");
         query.append(" 0                                     AS workValueOfAdminSanctionedAEInCrores, ");
@@ -797,7 +787,10 @@ public class WorkProgressRegisterService {
         query.append(" 0                                     AS agreementValueInCrores, ");
         query.append(" 0                                     AS loaNotCreated, ");
         query.append(" 0                                     AS workNotCommenced, ");
-        query.append(" COUNT(details.ledid)                  AS workInProgress, ");
+        if (lineEstimateRequired)
+            query.append(" COUNT(details.ledid)              AS workInProgress, ");
+        else
+            query.append(" COUNT(details.aeid)               AS workInProgress, ");
         query.append(" 0                                     AS workCompleted, ");
         query.append(" 0                                     AS billsCreated, ");
         query.append(" 0                                     AS billValueInCrores ");
@@ -807,9 +800,7 @@ public class WorkProgressRegisterService {
         query.append(groupByQuery.toString());
         query.append(" UNION ");
         query.append(selectQuery.toString());
-        query.append(" 0                             AS lineEstimates, ");
-        query.append(" 0                             AS lineEstimateDetails, ");
-        query.append(" 0                             AS leAdminSanctionedAmountInCrores, ");
+        queryAppendForLENotRequiredCase(lineEstimateRequired, query);
         query.append(" 0                             AS adminSanctionedEstimates,  ");
         query.append(" 0                             AS aeAdminSanctionedAmountInCrores,  ");
         query.append(" 0                             AS workValueOfAdminSanctionedAEInCrores, ");
@@ -819,7 +810,7 @@ public class WorkProgressRegisterService {
         query.append(" 0                             AS loaNotCreated, ");
         query.append(" 0                             AS workNotCommenced, ");
         query.append(" 0                             AS workInProgress, ");
-        query.append(" COUNT(DISTINCT details.ledid) AS workCompleted, ");
+        queryAppendForWorkCompleted(lineEstimateRequired, query);
         query.append(" 0                             AS billsCreated, ");
         query.append(" 0                             AS billValueInCrores ");
         query.append(" FROM egw_mv_work_progress_register details ");
@@ -828,9 +819,7 @@ public class WorkProgressRegisterService {
         query.append(groupByQuery.toString());
         query.append(" UNION ");
         query.append(selectQuery.toString());
-        query.append(" 0                                   AS lineEstimates, ");
-        query.append(" 0                                   AS lineEstimateDetails, ");
-        query.append(" 0                                   AS leAdminSanctionedAmountInCrores, ");
+        queryAppendForLENotRequiredCase(lineEstimateRequired, query);
         query.append(" 0                                   AS adminSanctionedEstimates,  ");
         query.append(" 0                                   AS aeAdminSanctionedAmountInCrores,  ");
         query.append(" 0                                   AS workValueOfAdminSanctionedAEInCrores, ");
@@ -845,12 +834,70 @@ public class WorkProgressRegisterService {
         query.append(" SUM(billdetail.billamount)/10000000 AS billValueInCrores ");
         query.append(" FROM egw_mv_work_progress_register details , ");
         query.append(" egw_mv_billdetail billdetail ");
-        query.append(" WHERE billdetail.ledid = details.ledid ");
+        queryAppendForBillDetailLENotRequiredCase(lineEstimateRequired, query);
         query.append(filterConditions.toString());
         query.append(groupByQuery.toString());
         query.append(" ) final ");
         query.append(mainGroupByQuery.toString());
         return query.toString();
+    }
+
+    private void queryAppendForStatusCheck(final boolean lineEstimateRequired, final StringBuilder query) {
+        if (lineEstimateRequired) {
+            query.append(" WHERE details.lineestimatestatus = status.code ");
+            query.append(" AND status.code       IN (" + LINEESTIMATE_STATUS + ")");
+        } else {
+            query.append(" WHERE details.estimatestatuscode = status.code ");
+            query.append(" AND status.code       IN (" + ABSTRACTESTIMATE_STATUS
+                    + ") AND status.moduletype = 'AbstractEstimate'");
+        }
+    }
+
+    private void queryAppendForWorkCompleted(final boolean lineEstimateRequired, final StringBuilder query) {
+        if (lineEstimateRequired)
+            query.append(" COUNT(DISTINCT details.ledid) AS workCompleted, ");
+        else
+            query.append(" COUNT(DISTINCT details.aeid) AS workCompleted, ");
+    }
+
+    private void queryAppendForEstimateReportLENotRequiredCase(final boolean lineEstimateRequired,
+            final StringBuilder query) {
+        if (lineEstimateRequired) {
+            query.append(" SUM(lineEstimates)                 AS lineEstimates ,  ");
+            query.append(" SUM(lineEstimateDetails)           AS lineEstimateDetails ,  ");
+            query.append(" SUM(leAdminSanctionedAmountInCrores) AS leAdminSanctionedAmountInCrores,  ");
+        } else
+            query.append(" SUM(abstractEstimates)           AS abstractEstimates ,  ");
+    }
+
+    private void setFilterConditionsForTypeOfWorkWise(final EstimateAbstractReport estimateAbstractReport,
+            final StringBuilder filterConditions) {
+        if (estimateAbstractReport != null) {
+
+            if (estimateAbstractReport.getTypeOfWork() != null)
+                filterConditions.append(" AND details.typeofwork =:typeofwork ");
+
+            if (estimateAbstractReport.getSubTypeOfWork() != null)
+                filterConditions.append(" AND details.subtypeofwork =:subtypeofwork ");
+
+            setFilterConditionsForAdminSanctionDate(estimateAbstractReport, filterConditions);
+
+            setFilterConditionsForSchemes(estimateAbstractReport, filterConditions);
+
+            if (estimateAbstractReport.getWorkCategory() != null)
+                filterConditions.append(" AND details.workcategory =:workcategory ");
+
+            if (estimateAbstractReport.getBeneficiary() != null)
+                filterConditions.append(" AND details.beneficiary =:beneficiary ");
+
+            if (estimateAbstractReport.getNatureOfWork() != null)
+                filterConditions.append(" AND details.natureofwork =:natureofwork ");
+
+            if (estimateAbstractReport.isSpillOverFlag())
+                filterConditions.append(" AND details.spilloverflag =:spilloverflag ");
+
+            setFilterConditionForWorkStatus(estimateAbstractReport, filterConditions);
+        }
     }
 
     public WorkProgressRegister getWorkProgressRegisterByLineEstimateDetailsId(final LineEstimateDetails led) {
@@ -863,12 +910,11 @@ public class WorkProgressRegisterService {
 
     public List<ContractorWiseAbstractSearchResult> searchContractorWiseAbstractReport(
             final ContractorWiseAbstractReport contractorWiseAbstractReport) {
-        Query query = null;
-        query = entityManager.unwrap(Session.class).createSQLQuery(getContractorListWithAllstatus(contractorWiseAbstractReport))
-                .addScalar("contractorName", StringType.INSTANCE)
-                .addScalar("contractorCode", StringType.INSTANCE)
-                .addScalar("electionWard", StringType.INSTANCE)
-                .addScalar("approvedEstimates", IntegerType.INSTANCE)
+        Query query;
+        query = entityManager.unwrap(Session.class)
+                .createSQLQuery(getContractorListWithAllstatus(contractorWiseAbstractReport))
+                .addScalar("contractorName", StringType.INSTANCE).addScalar("contractorCode", StringType.INSTANCE)
+                .addScalar("electionWard", StringType.INSTANCE).addScalar("approvedEstimates", IntegerType.INSTANCE)
                 .addScalar("approvedAmount", BigDecimalType.INSTANCE)
                 .addScalar("siteNotHandedOverEstimates", IntegerType.INSTANCE)
                 .addScalar("siteNotHandedOverAmount", BigDecimalType.INSTANCE)
@@ -905,8 +951,7 @@ public class WorkProgressRegisterService {
             if (contractorWiseAbstractReport.getElectionWardId() != null)
                 filterConditions.append(" AND details.ward =:ward ");
         }
-        final String getLOACreatedQuery = getLOACreatedQuery(filterConditions.toString(), contractorWiseAbstractReport);
-        return getLOACreatedQuery;
+        return getLOACreatedQuery(filterConditions.toString(), contractorWiseAbstractReport);
     }
 
     private Query setQueryParametersForContractorWiseReport(final ContractorWiseAbstractReport contractorWiseAbstractReport,
@@ -922,9 +967,9 @@ public class WorkProgressRegisterService {
             if (contractorWiseAbstractReport.getNatureOfWork() != null)
                 query.setParameter("natureOfWork", contractorWiseAbstractReport.getNatureOfWork());
             if (StringUtils.isNotBlank(contractorWiseAbstractReport.getWorkStatus()))
-                query.setParameter("workstatus", contractorWiseAbstractReport.getWorkStatus());
+                query.setParameter(WORKSTATUS, contractorWiseAbstractReport.getWorkStatus());
             if (StringUtils.isNotBlank(contractorWiseAbstractReport.getContractor()))
-                query.setParameter("contractor", contractorWiseAbstractReport.getContractor());
+                query.setParameter(CONTRACTOR, contractorWiseAbstractReport.getContractor());
         }
 
         return query;
@@ -1149,6 +1194,122 @@ public class WorkProgressRegisterService {
             query.append(" GROUP BY contractorName,contractorCode ");
         }
         return query.toString();
+    }
+
+    public List<String> findWorkIdentificationNumbersToSearchAbstractEstimatesForLoa(final String code) {
+        return abstractEstimateRepository.findWorkIdentificationNumbersToSearchWorkProgressRegister("%" + code + "%",
+                WorksConstants.APPROVED);
+    }
+
+    public List<EstimateAbstractReport> searchEstimateAbstractReportByDepartmentWiseForAE(
+            final EstimateAbstractReport estimateAbstractReport) {
+        Query query;
+        query = entityManager.unwrap(Session.class)
+                .createSQLQuery(getQueryForDepartmentWiseReport(estimateAbstractReport))
+                .addScalar(DEPARTMENTNAME, StringType.INSTANCE).addScalar(ABSTRACTESTIMATES, StringType.INSTANCE)
+                .addScalar(ADMINSANCTIONEDESTIMATES, StringType.INSTANCE)
+                .addScalar(AEADMINSANCTIONEDAMOUNTINCRORES, StringType.INSTANCE)
+                .addScalar(WORKVALUEOFADMINSANCTIONEDAEINCRORES, StringType.INSTANCE)
+                .addScalar(TECHNICALSANCTIONEDESTIMATES, StringType.INSTANCE).addScalar(LOACREATED, StringType.INSTANCE)
+                .addScalar(LOANOTCREATED, StringType.INSTANCE).addScalar(WORKNOTCOMMENCED, StringType.INSTANCE)
+                .addScalar(AGREEMENTVALUEINCRORES, StringType.INSTANCE).addScalar(WORKINPROGRESS, StringType.INSTANCE)
+                .addScalar(WORKCOMPLETED, StringType.INSTANCE).addScalar(BILLSCREATED, StringType.INSTANCE)
+                .addScalar(BILLVALUEINCRORES, StringType.INSTANCE)
+                .setResultTransformer(Transformers.aliasToBean(EstimateAbstractReport.class));
+        query = setParameterForDepartmentWiseReport(estimateAbstractReport, query);
+        return query.list();
+    }
+
+    private void setFilterConditions(final EstimateAbstractReport estimateAbstractReport,
+            final StringBuilder filterConditions) {
+        if (estimateAbstractReport != null) {
+
+            if (estimateAbstractReport.getDepartment() != null)
+                filterConditions.append(" AND details.department =:department ");
+
+            setFilterConditionsForAdminSanctionDate(estimateAbstractReport, filterConditions);
+
+            setFilterConditionsForSchemes(estimateAbstractReport, filterConditions);
+
+            if (estimateAbstractReport.getWorkCategory() != null)
+                filterConditions.append(" AND details.workcategory =:workcategory ");
+            if (estimateAbstractReport.getBeneficiary() != null)
+                filterConditions.append(" AND details.beneficiary =:beneficiary ");
+
+            if (estimateAbstractReport.getNatureOfWork() != null)
+                filterConditions.append(" AND details.natureofwork =:natureofwork ");
+
+            if (estimateAbstractReport.isSpillOverFlag())
+                filterConditions.append(" AND details.spilloverflag =:spilloverflag ");
+
+            setFilterConditionForWorkStatus(estimateAbstractReport, filterConditions);
+
+        }
+    }
+
+    private void setFilterConditionForWorkStatus(final EstimateAbstractReport estimateAbstractReport,
+            final StringBuilder filterConditions) {
+        if (estimateAbstractReport.getWorkStatus() != null
+                && !StringUtils.EMPTY.equalsIgnoreCase(estimateAbstractReport.getWorkStatus()))
+            filterConditions.append(" AND details.workstatus =:workstatus ");
+    }
+
+    private void setFilterConditionsForSchemes(final EstimateAbstractReport estimateAbstractReport,
+            final StringBuilder filterConditions) {
+        if (estimateAbstractReport.getScheme() != null)
+            filterConditions.append(" AND details.scheme =:scheme ");
+
+        if (estimateAbstractReport.getSubScheme() != null)
+            filterConditions.append(" AND details.subScheme =:subScheme ");
+    }
+
+    private void setFilterConditionsForAdminSanctionDate(final EstimateAbstractReport estimateAbstractReport,
+            final StringBuilder filterConditions) {
+        if (estimateAbstractReport.getAdminSanctionFromDate() != null)
+            filterConditions.append(" AND details.adminsanctiondate >=:fromDate ");
+
+        if (estimateAbstractReport.getAdminSanctionToDate() != null)
+            filterConditions.append(" AND details.adminsanctiondate <=:toDate ");
+    }
+
+    @Transactional
+    public List<EstimateAbstractReport> searchEstimateAbstractReportByTypeOfWorkWiseForAE(
+            final EstimateAbstractReport estimateAbstractReport) {
+        Query query;
+        if (checkEstimateAbstractReportDepartments(estimateAbstractReport)) {
+            query = entityManager.unwrap(Session.class)
+                    .createSQLQuery(getQueryForTypeOfWorkWiseReport(estimateAbstractReport))
+                    .addScalar(TYPEOFWORKNAME, StringType.INSTANCE).addScalar(SUBTYPEOFWORKNAME, StringType.INSTANCE)
+                    .addScalar(DEPARTMENTNAME, StringType.INSTANCE).addScalar(ABSTRACTESTIMATES, StringType.INSTANCE)
+                    .addScalar(ADMINSANCTIONEDESTIMATES, StringType.INSTANCE)
+                    .addScalar(AEADMINSANCTIONEDAMOUNTINCRORES, StringType.INSTANCE)
+                    .addScalar(WORKVALUEOFADMINSANCTIONEDAEINCRORES, StringType.INSTANCE)
+                    .addScalar(TECHNICALSANCTIONEDESTIMATES, StringType.INSTANCE)
+                    .addScalar(LOACREATED, StringType.INSTANCE).addScalar(AGREEMENTVALUEINCRORES, StringType.INSTANCE)
+                    .addScalar(LOANOTCREATED, StringType.INSTANCE).addScalar(WORKNOTCOMMENCED, StringType.INSTANCE)
+                    .addScalar(WORKINPROGRESS, StringType.INSTANCE).addScalar(WORKCOMPLETED, StringType.INSTANCE)
+                    .addScalar(BILLSCREATED, StringType.INSTANCE).addScalar(BILLVALUEINCRORES, StringType.INSTANCE)
+                    .setResultTransformer(Transformers.aliasToBean(EstimateAbstractReport.class));
+            query = setParameterForTypeOfWorkWiseReport(estimateAbstractReport, query);
+        } else {
+            query = entityManager.unwrap(Session.class)
+                    .createSQLQuery(getQueryForTypeOfWorkWiseReport(estimateAbstractReport))
+                    .addScalar(TYPEOFWORKNAME, StringType.INSTANCE).addScalar(SUBTYPEOFWORKNAME, StringType.INSTANCE)
+                    .addScalar(ABSTRACTESTIMATES, StringType.INSTANCE)
+                    .addScalar(ADMINSANCTIONEDESTIMATES, StringType.INSTANCE)
+                    .addScalar(AEADMINSANCTIONEDAMOUNTINCRORES, StringType.INSTANCE)
+                    .addScalar(WORKVALUEOFADMINSANCTIONEDAEINCRORES, StringType.INSTANCE)
+                    .addScalar(TECHNICALSANCTIONEDESTIMATES, StringType.INSTANCE)
+                    .addScalar(LOACREATED, StringType.INSTANCE).addScalar(AGREEMENTVALUEINCRORES, StringType.INSTANCE)
+                    .addScalar(LOANOTCREATED, StringType.INSTANCE).addScalar(WORKNOTCOMMENCED, StringType.INSTANCE)
+                    .addScalar(WORKINPROGRESS, StringType.INSTANCE).addScalar(WORKCOMPLETED, StringType.INSTANCE)
+                    .addScalar(BILLSCREATED, StringType.INSTANCE).addScalar(BILLVALUEINCRORES, StringType.INSTANCE)
+                    .setResultTransformer(Transformers.aliasToBean(EstimateAbstractReport.class));
+            query = setParameterForTypeOfWorkWiseReport(estimateAbstractReport, query);
+
+        }
+        return query.list();
+
     }
 
 }

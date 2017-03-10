@@ -872,6 +872,8 @@ public class EstimateService {
     public void saveAdminSanctionDetails(final AbstractEstimate abstractEstimate) {
         abstractEstimate.setAdminSanctionBy(securityUtils.getCurrentUser().getUsername());
         abstractEstimate.setAdminSanctionDate(new Date());
+        if(abstractEstimate.getLineEstimateDetails() != null)
+            abstractEstimate.setAdminSanctionNumber(abstractEstimate.getLineEstimateDetails().getLineEstimate().getAdminSanctionNumber());
         abstractEstimate.setApprovedBy(securityUtils.getCurrentUser());
         abstractEstimate.setApprovedDate(new Date());
     }

@@ -290,6 +290,11 @@ function callAjaxSearch() {
 				oTable.column(12).visible(false);
 			}
 		}
+		
+		if($("#lineEstimateRequired").val() == 'false'){
+			var oTable = $('#resultTable').DataTable();
+			oTable.column(3).visible(false);
+		}
 }
 
 

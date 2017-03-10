@@ -44,6 +44,7 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/taglibs/cdn.tld" prefix="cdn"%>
+<input type="hidden" id="lineEstimateRequired"	value = "${lineEstimateRequired }" />
 		<form:form name="estimateAbstractReportByDepartmentWise" role="form" action="" modelAttribute="estimateAbstractReport" id="estimateAbstractReportByDepartmentWise" class="form-horizontal form-groups-bordered" >
 			<div class="row">
 				<div class="col-md-12">

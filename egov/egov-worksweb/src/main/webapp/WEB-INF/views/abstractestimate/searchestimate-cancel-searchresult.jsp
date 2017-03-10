@@ -42,7 +42,15 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <div class="row display-hide report-section">
 	<div class="col-md-12 table-header text-left">
-		<spring:message code="title.lineestimate.search" /></div>
+		<c:choose>
+			<c:when test="${lineEstimateRequired }">
+				<spring:message code="title.lineestimate.search" />
+			</c:when>
+			<c:otherwise>
+				<spring:message code="title.searchresult" />
+			</c:otherwise>
+		</c:choose>
+	</div>
 	<div class="col-md-12 form-group report-table-container">
 		<table class="table table-bordered table-responsive table-hover"
 			id="resultTable">

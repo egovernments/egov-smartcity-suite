@@ -277,8 +277,8 @@ function callAjaxSearch() {
 				aaSorting: [],				
 				columns : [ { 
 					/*"data" : "", "sClass" : "text-center"} ,{*/ 
-					"data" : "typeOfWorkName"} ,{
-					"data" : "subTypeOfWorkName"} ,{
+					"data" : "typeOfWorkName","sClass" : "text-left"} ,{
+					"data" : "subTypeOfWorkName","sClass" : "text-left"} ,{
 					"data" : "departmentName"} ,{
 					"data" : "lineEstimates"} ,{
 					"data" : "adminSanctionedEstimates"} ,{ 
@@ -335,6 +335,11 @@ function callAjaxSearch() {
 				oTable.column(13).visible(false);
 				oTable.column(14).visible(false);
 			}
+		}
+		
+		if($("#lineEstimateRequired").val() == 'false'){
+			var oTable = $('#resultTable').DataTable();
+			oTable.column(5).visible(false);
 		}
 		
 }

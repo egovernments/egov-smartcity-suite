@@ -52,6 +52,7 @@ import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.utils.StringUtils;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.abstractestimate.entity.AbstractEstimate.OfflineStatusesForAbstractEstimate;
 import org.egov.works.abstractestimate.entity.AbstractEstimateForLoaSearchRequest;
@@ -134,42 +135,47 @@ public class SearchAbstractEstimateController {
     @RequestMapping(value = "/view/{id}", method = RequestMethod.GET)
     public String viewAbstractEstimate(@PathVariable final String id, final Model model) throws ApplicationException {
         final AbstractEstimate abstractEstimate = estimateService.getAbstractEstimateById(Long.valueOf(id));
+        final boolean lineEstimateRequired = worksApplicationProperties.lineEstimateRequired();
 
         getEstimateDocuments(abstractEstimate);
         final List<AppConfigValues> values = appConfigValuesService.getConfigValuesByModuleAndKey(
                 WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_KEY_SHOW_SERVICE_FIELDS);
         final AppConfigValues value = values.get(0);
-        if (value.getValue().equalsIgnoreCase("Yes"))
+        if (WorksConstants.YES.equalsIgnoreCase(value.getValue()))
             model.addAttribute("isServiceVATRequired", true);
         else
             model.addAttribute("isServiceVATRequired", false);
         final List<AppConfigValues> showDeductions = appConfigValuesService.getConfigValuesByModuleAndKey(
                 WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_KEY_SHOW_DEDUCTION_GRID);
         final AppConfigValues showDeduction = showDeductions.get(0);
-        if (showDeduction.getValue().equalsIgnoreCase("Yes"))
+        if (WorksConstants.YES.equalsIgnoreCase(showDeduction.getValue()))
             model.addAttribute("isEstimateDeductionGrid", true);
         else
             model.addAttribute("isEstimateDeductionGrid", false);
-        model.addAttribute("mode", "view");
+        model.addAttribute(WorksConstants.MODE, WorksConstants.VIEW);
         model.addAttribute("abstractEstimate", abstractEstimate);
         model.addAttribute("documentDetails", abstractEstimate.getDocumentDetails());
         model.addAttribute("workOrderEstimate",
                 workOrderEstimateService.getWorkOrderEstimateByAbstractEstimateId(Long.valueOf(id)));
-        model.addAttribute("paymentreleased",
-                estimateService.getPaymentsReleasedForLineEstimate(abstractEstimate.getLineEstimateDetails()));
+        if (lineEstimateRequired)
+            model.addAttribute("paymentreleased",
+                    estimateService.getPaymentsReleasedForLineEstimate(abstractEstimate.getLineEstimateDetails()));
+        else
+            model.addAttribute("paymentreleased",
+                    estimateService.getPaymentsReleasedForAbstractEstimate(abstractEstimate));
 
         model.addAttribute("adminsanctionbydesignation",
                 worksUtils.getUserDesignation(abstractEstimate.getApprovedBy()));
         model.addAttribute("measurementsPresent", measurementSheetService.existsByEstimate(abstractEstimate.getId()));
 
-        String techSanctionBy = "";
+        String techSanctionBy = StringUtils.EMPTY;
         if (!abstractEstimate.getEstimateTechnicalSanctions().isEmpty())
             techSanctionBy = worksUtils.getUserDesignation(abstractEstimate.getEstimateTechnicalSanctions()
                     .get(abstractEstimate.getEstimateTechnicalSanctions().size() - 1).getTechnicalSanctionBy());
         model.addAttribute("technicalsanctionbydesignation", techSanctionBy);
         model.addAttribute("workflowHistory",
                 worksUtils.getHistory(abstractEstimate.getState(), abstractEstimate.getStateHistory()));
-        model.addAttribute("lineEstimateRequired", worksApplicationProperties.lineEstimateRequired());
+        model.addAttribute("lineEstimateRequired", lineEstimateRequired);
 
         return "abstractestimate-view";
     }

@@ -74,13 +74,14 @@ public class EstimateAbstractReport {
     private String workNotCommenced;
     private String agreementValueInCrores;
     private String workInProgress;
-    private String WorkCompleted;
+    private String workCompleted;
     private String billsCreated;
-    private String BillValueInCrores;
+    private String billValueInCrores;
     private String createdDate;
     private String typeOfWorkName;
     private String subTypeOfWorkName;
     private Set<Department> departments = new HashSet<>();
+    private String abstractEstimates;
 
     public Long getFinancialYear() {
         return financialYear;
@@ -299,11 +300,11 @@ public class EstimateAbstractReport {
     }
 
     public String getWorkCompleted() {
-        return WorkCompleted;
+        return workCompleted;
     }
 
     public void setWorkCompleted(final String workCompleted) {
-        WorkCompleted = workCompleted;
+        this.workCompleted = workCompleted;
     }
 
     public String getBillsCreated() {
@@ -315,11 +316,11 @@ public class EstimateAbstractReport {
     }
 
     public String getBillValueInCrores() {
-        return BillValueInCrores;
+        return billValueInCrores;
     }
 
     public void setBillValueInCrores(final String billValueInCrores) {
-        BillValueInCrores = billValueInCrores;
+        this.billValueInCrores = billValueInCrores;
     }
 
     public String getCreatedDate() {
@@ -352,6 +353,14 @@ public class EstimateAbstractReport {
 
     public void setDepartments(final Set<Department> departments) {
         this.departments = departments;
+    }
+
+    public String getAbstractEstimates() {
+        return abstractEstimates;
+    }
+
+    public void setAbstractEstimates(final String abstractEstimates) {
+        this.abstractEstimates = abstractEstimates;
     }
 
 }

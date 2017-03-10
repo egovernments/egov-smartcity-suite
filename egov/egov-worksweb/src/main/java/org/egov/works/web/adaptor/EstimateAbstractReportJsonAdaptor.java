@@ -44,6 +44,8 @@ import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 
+import org.egov.infra.utils.StringUtils;
+import org.egov.works.config.properties.WorksApplicationProperties;
 import org.egov.works.reports.entity.EstimateAbstractReport;
 import org.egov.works.reports.service.WorkProgressRegisterService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,8 +60,12 @@ import com.google.gson.JsonSerializer;
 public class EstimateAbstractReportJsonAdaptor implements JsonSerializer<EstimateAbstractReport> {
     final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy hh:mm a");
 
+    private static final String LINEESTIMATES = "lineEstimates";
     @Autowired
     private WorkProgressRegisterService workProgressRegisterService;
+
+    @Autowired
+    private WorksApplicationProperties worksApplicationProperties;
 
     @Override
     public JsonElement serialize(final EstimateAbstractReport estimateAbstractReport, final Type type,
@@ -69,104 +75,126 @@ public class EstimateAbstractReportJsonAdaptor implements JsonSerializer<Estimat
             if (estimateAbstractReport.getDepartmentName() != null)
                 jsonObject.addProperty("departmentName", estimateAbstractReport.getDepartmentName());
             else
-                jsonObject.addProperty("departmentName", "");
+                jsonObject.addProperty("departmentName", StringUtils.EMPTY);
 
-            if (estimateAbstractReport.getTypeOfWorkName() != null)
-                jsonObject.addProperty("typeOfWorkName", estimateAbstractReport.getTypeOfWorkName());
-            else
-                jsonObject.addProperty("typeOfWorkName", "");
+            setTOWJsonValues(estimateAbstractReport, jsonObject);
 
-            if (estimateAbstractReport.getSubTypeOfWorkName() != null)
-                jsonObject.addProperty("subTypeOfWorkName", estimateAbstractReport.getSubTypeOfWorkName());
-            else
-                jsonObject.addProperty("subTypeOfWorkName", "");
-
-            if (estimateAbstractReport.getLineEstimates() != null)
-                jsonObject.addProperty("lineEstimates", estimateAbstractReport.getLineEstimates());
-            else
-                jsonObject.addProperty("lineEstimates", "");
+            setLEJsonValues(estimateAbstractReport, jsonObject);
 
             if (estimateAbstractReport.getAdminSanctionedEstimates() != null)
-                jsonObject.addProperty("adminSanctionedEstimates", estimateAbstractReport.getAdminSanctionedEstimates());
+                jsonObject.addProperty("adminSanctionedEstimates",
+                        estimateAbstractReport.getAdminSanctionedEstimates());
             else
-                jsonObject.addProperty("adminSanctionedEstimates", "");
+                jsonObject.addProperty("adminSanctionedEstimates", StringUtils.EMPTY);
 
-            if (estimateAbstractReport.getLeAdminSanctionedAmountInCrores() != null)
-                jsonObject.addProperty(
-                        "leAdminSanctionedAmountInCrores",
-                        new BigDecimal(estimateAbstractReport.getLeAdminSanctionedAmountInCrores()).setScale(2,
-                                BigDecimal.ROUND_HALF_EVEN).toString());
-            else
-                jsonObject.addProperty("leAdminSanctionedAmountInCrores", "");
-
-            if (estimateAbstractReport.getAeAdminSanctionedAmountInCrores() != null)
-                jsonObject.addProperty(
-                        "aeAdminSanctionedAmountInCrores",
-                        new BigDecimal(estimateAbstractReport.getAeAdminSanctionedAmountInCrores()).setScale(2,
-                                BigDecimal.ROUND_HALF_EVEN).toString());
-            else
-                jsonObject.addProperty("aeAdminSanctionedAmountInCrores", "");
-
-            if (estimateAbstractReport.getWorkValueOfAdminSanctionedAEInCrores() != null)
-                jsonObject.addProperty(
-                        "workValueOfAdminSanctionedAEInCrores",
-                        new BigDecimal(estimateAbstractReport.getWorkValueOfAdminSanctionedAEInCrores()).setScale(2,
-                                BigDecimal.ROUND_HALF_EVEN).toString());
-            else
-                jsonObject.addProperty("aeAdminSanctionedAmountInCrores", "");
+            setAdminSanctionedAmountInCrores(estimateAbstractReport, jsonObject);
 
             if (estimateAbstractReport.getTechnicalSanctionedEstimates() != null)
                 jsonObject.addProperty("technicalSanctionedEstimates",
                         estimateAbstractReport.getTechnicalSanctionedEstimates());
             else
-                jsonObject.addProperty("technicalSanctionedEstimates", "");
+                jsonObject.addProperty("technicalSanctionedEstimates", StringUtils.EMPTY);
 
-            if (estimateAbstractReport.getLoaCreated() != null)
-                jsonObject.addProperty("loaCreated", estimateAbstractReport.getLoaCreated());
-            else
-                jsonObject.addProperty("loaCreated", "");
-
-            if (estimateAbstractReport.getLoaNotCreated() != null)
-                jsonObject.addProperty("loaNotCreated", estimateAbstractReport.getLoaNotCreated());
-            else
-                jsonObject.addProperty("loaNotCreated", "");
+            setLOAJsonObjectValues(estimateAbstractReport, jsonObject);
 
             if (estimateAbstractReport.getWorkNotCommenced() != null)
                 jsonObject.addProperty("workNotCommenced", estimateAbstractReport.getWorkNotCommenced());
             else
-                jsonObject.addProperty("workNotCommenced", "");
+                jsonObject.addProperty("workNotCommenced", StringUtils.EMPTY);
 
-            if (estimateAbstractReport.getAgreementValueInCrores() != null)
-                jsonObject.addProperty("agreementValueInCrores",
-                        new BigDecimal(estimateAbstractReport.getAgreementValueInCrores())
-                                .setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
-            else
-                jsonObject.addProperty("agreementValueInCrores", "");
+            setJsonObjectValues(estimateAbstractReport, jsonObject);
 
-            if (estimateAbstractReport.getWorkInProgress() != null)
-                jsonObject.addProperty("workInProgress", estimateAbstractReport.getWorkInProgress());
-            else
-                jsonObject.addProperty("workInProgress", "");
-
-            if (estimateAbstractReport.getWorkCompleted() != null)
-                jsonObject.addProperty("workCompleted", estimateAbstractReport.getWorkCompleted());
-            else
-                jsonObject.addProperty("workCompleted", "");
-
-            if (estimateAbstractReport.getBillsCreated() != null)
-                jsonObject.addProperty("billsCreated", estimateAbstractReport.getBillsCreated());
-            else
-                jsonObject.addProperty("billsCreated", "");
-
-            if (estimateAbstractReport.getBillValueInCrores() != null)
-                jsonObject.addProperty("billValueInCrores", new BigDecimal(estimateAbstractReport.getBillValueInCrores())
-                        .setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
-            else
-                jsonObject.addProperty("billValueInCrores", "");
-
-            jsonObject.addProperty("createdDate", formatter.format(workProgressRegisterService.getReportSchedulerRunDate()));
+            jsonObject.addProperty("createdDate",
+                    formatter.format(workProgressRegisterService.getReportSchedulerRunDate()));
 
         }
         return jsonObject;
+    }
+
+    private void setLEJsonValues(final EstimateAbstractReport estimateAbstractReport, final JsonObject jsonObject) {
+        if (worksApplicationProperties.lineEstimateRequired() && estimateAbstractReport.getLineEstimates() != null)
+            jsonObject.addProperty(LINEESTIMATES, estimateAbstractReport.getLineEstimates());
+        else if (estimateAbstractReport.getAbstractEstimates() != null)
+            jsonObject.addProperty(LINEESTIMATES, estimateAbstractReport.getAbstractEstimates());
+        else
+            jsonObject.addProperty(LINEESTIMATES, StringUtils.EMPTY);
+    }
+
+    private void setLOAJsonObjectValues(final EstimateAbstractReport estimateAbstractReport,
+            final JsonObject jsonObject) {
+        if (estimateAbstractReport.getLoaCreated() != null)
+            jsonObject.addProperty("loaCreated", estimateAbstractReport.getLoaCreated());
+        else
+            jsonObject.addProperty("loaCreated", StringUtils.EMPTY);
+
+        if (estimateAbstractReport.getLoaNotCreated() != null)
+            jsonObject.addProperty("loaNotCreated", estimateAbstractReport.getLoaNotCreated());
+        else
+            jsonObject.addProperty("loaNotCreated", StringUtils.EMPTY);
+    }
+
+    private void setTOWJsonValues(final EstimateAbstractReport estimateAbstractReport, final JsonObject jsonObject) {
+        if (estimateAbstractReport.getTypeOfWorkName() != null)
+            jsonObject.addProperty("typeOfWorkName", estimateAbstractReport.getTypeOfWorkName());
+        else
+            jsonObject.addProperty("typeOfWorkName", StringUtils.EMPTY);
+
+        if (estimateAbstractReport.getSubTypeOfWorkName() != null)
+            jsonObject.addProperty("subTypeOfWorkName", estimateAbstractReport.getSubTypeOfWorkName());
+        else
+            jsonObject.addProperty("subTypeOfWorkName", StringUtils.EMPTY);
+    }
+
+    private void setJsonObjectValues(final EstimateAbstractReport estimateAbstractReport, final JsonObject jsonObject) {
+        if (estimateAbstractReport.getAgreementValueInCrores() != null)
+            jsonObject.addProperty("agreementValueInCrores",
+                    new BigDecimal(estimateAbstractReport.getAgreementValueInCrores())
+                            .setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+        else
+            jsonObject.addProperty("agreementValueInCrores", StringUtils.EMPTY);
+
+        if (estimateAbstractReport.getWorkInProgress() != null)
+            jsonObject.addProperty("workInProgress", estimateAbstractReport.getWorkInProgress());
+        else
+            jsonObject.addProperty("workInProgress", StringUtils.EMPTY);
+
+        if (estimateAbstractReport.getWorkCompleted() != null)
+            jsonObject.addProperty("workCompleted", estimateAbstractReport.getWorkCompleted());
+        else
+            jsonObject.addProperty("workCompleted", StringUtils.EMPTY);
+
+        if (estimateAbstractReport.getBillsCreated() != null)
+            jsonObject.addProperty("billsCreated", estimateAbstractReport.getBillsCreated());
+        else
+            jsonObject.addProperty("billsCreated", StringUtils.EMPTY);
+    }
+
+    private void setAdminSanctionedAmountInCrores(final EstimateAbstractReport estimateAbstractReport,
+            final JsonObject jsonObject) {
+        if (estimateAbstractReport.getLeAdminSanctionedAmountInCrores() != null)
+            jsonObject.addProperty("leAdminSanctionedAmountInCrores",
+                    new BigDecimal(estimateAbstractReport.getLeAdminSanctionedAmountInCrores())
+                            .setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+        else
+            jsonObject.addProperty("leAdminSanctionedAmountInCrores", StringUtils.EMPTY);
+        if (estimateAbstractReport.getAeAdminSanctionedAmountInCrores() != null)
+            jsonObject.addProperty("aeAdminSanctionedAmountInCrores",
+                    new BigDecimal(estimateAbstractReport.getAeAdminSanctionedAmountInCrores())
+                            .setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+        else
+            jsonObject.addProperty("aeAdminSanctionedAmountInCrores", StringUtils.EMPTY);
+
+        if (estimateAbstractReport.getWorkValueOfAdminSanctionedAEInCrores() != null)
+            jsonObject.addProperty("workValueOfAdminSanctionedAEInCrores",
+                    new BigDecimal(estimateAbstractReport.getWorkValueOfAdminSanctionedAEInCrores())
+                            .setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+        else
+            jsonObject.addProperty("workValueOfAdminSanctionedAEInCrores", StringUtils.EMPTY);
+
+        if (estimateAbstractReport.getBillValueInCrores() != null)
+            jsonObject.addProperty("billValueInCrores", new BigDecimal(estimateAbstractReport.getBillValueInCrores())
+                    .setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+        else
+            jsonObject.addProperty("billValueInCrores", StringUtils.EMPTY);
     }
 }
