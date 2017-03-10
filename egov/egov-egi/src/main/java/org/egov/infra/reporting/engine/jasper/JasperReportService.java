@@ -103,6 +103,7 @@ public class JasperReportService extends AbstractReportService<JasperReport> {
     private static final String TEMPLATE_EXTENSION = ".jasper";
     private static final String JASPER_PROPERTIES_FILE = "config/jasperreports.properties";
     private static final String EXCEPTION_IN_REPORT_CREATION = "Error occurred while generating report.";
+    private static final String PRINT_PDF_JAVASCRIPT = "this.print()";
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -199,7 +200,7 @@ public class JasperReportService extends AbstractReportService<JasperReport> {
         if (PDF.equals(reportInput.getReportFormat())) {
             SimplePdfExporterConfiguration pdfExporterConfiguration = new SimplePdfExporterConfiguration();
             if (reportInput.isPrintDialogOnOpenReport())
-                pdfExporterConfiguration.setPdfJavaScript("this.print()");
+                pdfExporterConfiguration.setPdfJavaScript(PRINT_PDF_JAVASCRIPT);
             exporter = new JRPdfExporter();
             exporterConfiguration = pdfExporterConfiguration;
         } else if (XLS.equals(reportInput.getReportFormat())) {
