@@ -77,9 +77,7 @@
 				else{
 					bootbox.alert("This row can not be deleted");
 				}
-			}
-			
-			        
+			}	        
 		});
 
 		if(jQuery('#isviewmode'))
@@ -275,11 +273,11 @@ success: function(o) {
 			{
 				obj = document.getElementById('subledgerDetails['+parseInt(eachItem[0])+']'+'.detailType.id');
 				if(obj!=null)
-					obj.options.length=detailRecord.length+1;
+					obj.options.length=detailRecord.length+1; 	
 			}
 			if(obj!=null)
 			{
-				obj.options[i+1].text=eachItem[1];
+				obj.options[i+1].text=eachItem[1];     
 				obj.options[i+1].value=eachItem[2];
 				document.getElementById('subledgerDetails['+parseInt(eachItem[0])+']'+'.detailType.name').value = eachItem[1];
 			}
@@ -291,16 +289,13 @@ success: function(o) {
 				d.options[0].text='---Select---';
 				d.options[0].value=0;
 			}
-		} 
+		} 	
 			<s:iterator value="subledgerDetails" status="stat">
 			if('<s:property value="detailType.id"/>' !="" || '<s:property value="detailType.id"/>' !=0){
 				var index = '<s:property value="#stat.index"/>';
 				updateSLDetailDropdown('detailType.id',index,'<s:property value="detailType.id"/>');
 			}
-				
 			</s:iterator>
-		
-		
     },
     failure: function(o) {
     	bootbox.alert('failure');
@@ -310,9 +305,11 @@ success: function(o) {
 function updateSLDetailDropdown(field,index,value){
 	var element = document.getElementById(SUBLEDGERLIST+'['+index+'].'+field);
 	if(value != "" ){
-	element.options.length=2;
-	element.options[1].value=value;
-	element.options[1].selected = true;
+		for(var k=0;k<3;k++){
+			if(element.options[k].value.trim() == value.trim()){
+				element.options[k].selected=true;
+			}
+		}
 	}
 }
 
