@@ -79,7 +79,7 @@ function callAjaxSearch() {
 					$('td:eq(0)',row).html('<input type="radio" data="' + data.loaNumber + '" name="selectCheckbox" value="'+ data.id +'"/>');
 					$('td:eq(3)',row).html(parseFloat(Math.round(data.estimateValue * 100) / 100).toFixed(2));
 					if($('#lineEstimateRequired').val() == 'false') {
-						$(row).on(
+						$('td:gt(0)',row).on(
 								'click',
 								function() {
 									window.open('/egworks/abstractestimate/view/'
@@ -184,7 +184,7 @@ $(document).ready(function() {
 			
 			if($("#cancelForm").valid()) {
 				var loaNumber = $('input[name=selectCheckbox]:checked').attr('data');
-				if (loaNumber != '') {
+				if (loaNumber != '' && loaNumber != undefined) {
 					message = $('#errorLOACreated').val();
 					message = message.replace(/\{0\}/g, loaNumber);
 					bootbox.alert(message);

@@ -60,7 +60,6 @@ import org.egov.infra.reporting.engine.ReportConstants;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
-import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.NumberUtil;
 import org.egov.infra.web.utils.WebUtils;
 import org.egov.model.bills.EgBilldetails;
@@ -109,7 +108,7 @@ public class ContractorBillPDFController {
     protected FileStoreService fileStoreService;
 
     @RequestMapping(value = "/contractorbillPDF/{contractorBillId}", method = RequestMethod.GET)
-    public @ResponseBody ResponseEntity<byte[]> generateContractorBillPDF(final HttpServletRequest request,
+    @ResponseBody public ResponseEntity<byte[]> generateContractorBillPDF(final HttpServletRequest request,
             @PathVariable("contractorBillId") final Long id, final HttpSession session) throws IOException {
         final ContractorBillRegister contractorBillRegister = contractorBillRegisterService.getContractorBillById(id);
         return generateReport(contractorBillRegister, request);
@@ -137,9 +136,9 @@ public class ContractorBillPDFController {
             if(workOrderEstimate != null){
                 setContractorJsonValues(contractorBillRegister, reportParams, workOrderEstimate);
                 if(workOrderEstimate.getWorkCompletionDate() != null)
-                    reportParams.put("workCommencedDate", workOrderEstimate.getWorkCompletionDate());
+                    reportParams.put("workCommencedDate", formatter.format(workOrderEstimate.getWorkCompletionDate()));
                 else
-                    reportParams.put("workCommencedDate", org.egov.infra.utils.StringUtils.EMPTY);
+                    reportParams.put("workCommencedDate", StringUtils.EMPTY);
                 reportParams.put("win", workOrderEstimate.getEstimate().getProjectCode().getCode());
                 reportParams.put("nameOfTheWork", workOrderEstimate.getEstimate().getName());
                 reportParams.put("ward", workOrderEstimate.getEstimate().getWard().getName());

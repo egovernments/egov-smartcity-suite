@@ -93,7 +93,7 @@ public class BillDetails extends AbstractAuditable {
 
     @Length(max = 100)
     private String billtype;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "aeid")
     private AbstractEstimate abstractEstimate;
@@ -168,8 +168,8 @@ public class BillDetails extends AbstractAuditable {
         return abstractEstimate;
     }
 
-    public void setAbstractEstimate(AbstractEstimate abstractEstimate) {
+    public void setAbstractEstimate(final AbstractEstimate abstractEstimate) {
         this.abstractEstimate = abstractEstimate;
     }
-    
+
 }

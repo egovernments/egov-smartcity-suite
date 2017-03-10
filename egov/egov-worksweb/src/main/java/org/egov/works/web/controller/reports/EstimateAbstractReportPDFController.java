@@ -117,7 +117,7 @@ public class EstimateAbstractReportPDFController {
     private WorksApplicationProperties worksApplicationProperties;
 
     @RequestMapping(value = "/departmentwise/pdf", method = RequestMethod.GET)
-    @ResponseBody public  ResponseEntity<byte[]> generatePDFDepartmentWise(final HttpServletRequest request,
+    @ResponseBody public  ResponseEntity<byte[]> generatePDFDepartmentWise(
             @RequestParam("adminSanctionFromDate") final Date adminSanctionFromDate,
             @RequestParam("adminSanctionToDate") final Date adminSanctionToDate,
             @RequestParam("department") final Long department, @RequestParam("scheme") final Integer scheme,
@@ -125,7 +125,7 @@ public class EstimateAbstractReportPDFController {
             @RequestParam("beneficiary") final String beneficiary, @RequestParam("workStatus") final String workStatus,
             @RequestParam("natureOfWork") final Long natureOfWork,
             @RequestParam("spillOverFlag") final boolean spillOverFlag,
-            @RequestParam("contentType") final String contentType, final HttpSession session) throws IOException {
+            @RequestParam("contentType") final String contentType) throws IOException {
         final EstimateAbstractReport searchRequest = new EstimateAbstractReport();
         final Map<String, Object> reportParams = new HashMap<String, Object>();
 
@@ -174,8 +174,7 @@ public class EstimateAbstractReportPDFController {
 
         reportParams.put("queryParameters", queryParameters);
 
-        return generateReportDepartmentWise(estimateAbstractReports, request, session, contentType, searchRequest,
-                reportParams);
+        return generateReportDepartmentWise(estimateAbstractReports, contentType, searchRequest, reportParams);
     }
 
     private String setQueryParameterForDepartmentWise(final boolean spillOverFlag) {
@@ -217,22 +216,18 @@ public class EstimateAbstractReportPDFController {
     }
 
     private ResponseEntity<byte[]> generateReportDepartmentWise(
-            final List<EstimateAbstractReport> estimateAbstractReports, final HttpServletRequest request,
-            final HttpSession session, final String contentType, final EstimateAbstractReport searchRequest,
-            final Map<String, Object> reportParams) {
+            final List<EstimateAbstractReport> estimateAbstractReports, final String contentType,
+            final EstimateAbstractReport searchRequest, final Map<String, Object> reportParams) {
         final List<EstimateAbstractReport> estimateAbstractReportPdfList = new ArrayList<EstimateAbstractReport>();
         final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy hh:mm a");
         ReportRequest reportInput;
         ReportOutput reportOutput;
         String dataRunDate = StringUtils.EMPTY;
-
+        
+        final EstimateAbstractReport pdf = new EstimateAbstractReport();
         if (estimateAbstractReports != null && !estimateAbstractReports.isEmpty())
             for (final EstimateAbstractReport eadwr : estimateAbstractReports) {
-                final EstimateAbstractReport pdf = new EstimateAbstractReport();
-                if (eadwr.getDepartmentName() != null)
-                    pdf.setDepartmentName(eadwr.getDepartmentName());
-                else
-                    pdf.setDepartmentName(StringUtils.EMPTY);
+                setDepartmentNamePDFValue(pdf, eadwr);
 
                 setEstimatesPDFValues(eadwr, pdf);
 
@@ -264,6 +259,13 @@ public class EstimateAbstractReportPDFController {
         reportOutput = reportService.createReport(reportInput);
         return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
 
+    }
+
+    private void setDepartmentNamePDFValue(final EstimateAbstractReport pdf, final EstimateAbstractReport eadwr) {
+        if (eadwr.getDepartmentName() != null)
+            pdf.setDepartmentName(eadwr.getDepartmentName());
+        else
+            pdf.setDepartmentName(StringUtils.EMPTY);
     }
 
     private void setEstimatesPDFValues(final EstimateAbstractReport eadwr, final EstimateAbstractReport pdf) {
@@ -346,10 +348,7 @@ public class EstimateAbstractReportPDFController {
     }
 
     private void setWorkStatusPDFValues(final EstimateAbstractReport eadwr, final EstimateAbstractReport pdf) {
-        if (eadwr.getWorkNotCommenced() != null)
-            pdf.setWorkNotCommenced(eadwr.getWorkNotCommenced());
-        else
-            pdf.setWorkNotCommenced(null);
+        setWorkNotCommencedPDFValue(pdf, eadwr);
 
         if (eadwr.getWorkInProgress() != null)
             pdf.setWorkInProgress(eadwr.getWorkInProgress());
@@ -487,14 +486,7 @@ public class EstimateAbstractReportPDFController {
 
         queryParameters = setQueryParametersForTypeOfWork(typeOfWork, subTypeOfWork, queryParameters);
 
-        if (departments != null && !"[null]".equalsIgnoreCase(departments.toString())
-                && !"[]".equalsIgnoreCase(departments.toString())) {
-            String departmentNames = "";
-            for (final Department dept : departments)
-                departmentNames = departmentNames + dept.getName() + ",";
-            departmentNames = departmentNames.substring(0, departmentNames.length() - 1);
-            queryParameters += messageSource.getMessage("msg.departments", null, null) + departmentNames + ", ";
-        }
+        queryParameters = setQueryParametersForDepartmentNames(departments, queryParameters);
 
         queryParameters = setQueryParametersForSchemesAndSubSchemes(scheme, subScheme, queryParameters);
 
@@ -515,7 +507,19 @@ public class EstimateAbstractReportPDFController {
 
         reportParams.put("queryParameters", queryParameters);
 
-        return generateReportTypeOfWorkWise(estimateAbstractReports, session, contentType, searchRequest, reportParams);
+        return generateReportTypeOfWorkWise(estimateAbstractReports, contentType, searchRequest, reportParams);
+    }
+
+    private String setQueryParametersForDepartmentNames(final Set<Department> departments, String queryParameters) {
+        if (departments != null && !"[null]".equalsIgnoreCase(departments.toString())
+                && !"[]".equalsIgnoreCase(departments.toString())) {
+            StringBuilder deptNames = new StringBuilder();
+            for (final Department dept : departments)
+                deptNames.append(dept.getName() + ",");
+            final String departmentNames = deptNames.toString().substring(0, deptNames.toString().length() - 1);
+            queryParameters += messageSource.getMessage("msg.departments", null, null) + departmentNames + ", ";
+        }
+        return queryParameters;
     }
 
     private String setQueryParametersForTOWWise(final boolean spillOverFlag) {
@@ -558,7 +562,7 @@ public class EstimateAbstractReportPDFController {
 
     private ResponseEntity<byte[]> generateReportTypeOfWorkWise(
             final List<EstimateAbstractReport> estimateAbstractReports,
-            final HttpSession session, final String contentType, final EstimateAbstractReport searchRequest,
+            final String contentType, final EstimateAbstractReport searchRequest,
             final Map<String, Object> reportParams) {
         final List<EstimateAbstractReport> estimateAbstractReportPdfList = new ArrayList<EstimateAbstractReport>();
         final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy hh:mm a");
@@ -566,13 +570,11 @@ public class EstimateAbstractReportPDFController {
         String dataRunDate = StringUtils.EMPTY;
         ReportRequest reportInput;
         ReportOutput reportOutput;
+        final EstimateAbstractReport pdf = new EstimateAbstractReport();
         if (estimateAbstractReports != null && !estimateAbstractReports.isEmpty())
             for (final EstimateAbstractReport eadwr : estimateAbstractReports) {
-                final EstimateAbstractReport pdf = new EstimateAbstractReport();
-                if (eadwr.getDepartmentName() != null)
-                    pdf.setDepartmentName(eadwr.getDepartmentName());
-                else
-                    pdf.setDepartmentName(StringUtils.EMPTY);
+                
+                setDepartmentNamePDFValue(pdf, eadwr);
 
                 setTOWPDFValues(eadwr, pdf);
 
@@ -582,10 +584,7 @@ public class EstimateAbstractReportPDFController {
 
                 setPDFLOAValues(eadwr, pdf);
 
-                if (eadwr.getWorkNotCommenced() != null)
-                    pdf.setWorkNotCommenced(eadwr.getWorkNotCommenced());
-                else
-                    pdf.setWorkNotCommenced(null);
+                setWorkNotCommencedPDFValue(pdf, eadwr);
 
                 setPDFAgreementValue(eadwr, pdf);
 
@@ -610,6 +609,13 @@ public class EstimateAbstractReportPDFController {
         reportOutput = reportService.createReport(reportInput);
         return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
 
+    }
+
+    private void setWorkNotCommencedPDFValue(final EstimateAbstractReport pdf, final EstimateAbstractReport eadwr) {
+        if (eadwr.getWorkNotCommenced() != null)
+            pdf.setWorkNotCommenced(eadwr.getWorkNotCommenced());
+        else
+            pdf.setWorkNotCommenced(null);
     }
 
     private ReportRequest setTOWWiseReportInputValue(final EstimateAbstractReport searchRequest,
