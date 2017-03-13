@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) 2016  eGovernments Foundation
+ *  Copyright (C) 2017  eGovernments Foundation
  *
  *  The updated version of eGov suite of products as by eGovernments Foundation
  *  is available at http://www.egovernments.org
@@ -38,23 +38,49 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.infra.config.persistence.multitenancy;
+package org.egov.infra.config.persistence.datasource.routing;
 
-import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.hibernate.context.spi.CurrentTenantIdentifierResolver;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Pointcut;
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Conditional;
+import org.springframework.core.Ordered;
+import org.springframework.stereotype.Component;
 
-import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
+@Aspect
+@Component
+@Conditional(RoutingDatasourceConfigCondition.class)
+public class ReadOnlyDatasourceInterceptor implements Ordered {
 
-public class DomainBasedDatabaseTenantIdentifierResolver implements CurrentTenantIdentifierResolver {
+    private int order;
 
     @Override
-    public String resolveCurrentTenantIdentifier() {
-        return defaultIfBlank(ApplicationThreadLocals.getTenantID(), "READWRITE_DS");
+    public int getOrder() {
+        return order;
     }
 
-    @Override
-    public boolean validateExistingCurrentSessions() {
-        return true;
+    @Value("20")
+    public void setOrder(int order) {
+        this.order = order;
     }
 
+    @Pointcut(value = "@annotation(org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly)")
+    public void readOnlyAnnotatedMethods() {
+        //Pointcut for methods marked with ReadOnly
+    }
+
+    @Around("@annotation(readOnly)")
+    public Object proceed(ProceedingJoinPoint joinPoint, ReadOnly readOnly) throws Throwable {
+        try {
+            DatasourceTypeHolder.setDataSourceType(DatasourceType.READONLY);
+            Object result = joinPoint.proceed();
+            DatasourceTypeHolder.clear();
+            return result;
+        } finally {
+            DatasourceTypeHolder.clear();
+        }
+    }
 }

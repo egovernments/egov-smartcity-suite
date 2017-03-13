@@ -90,8 +90,8 @@
 				<prop key="org.quartz.jobStore.dontSetAutoCommitFalse">true</prop>
         		
         		<!-- Datasource Properties -->
-        		<prop key="org.quartz.dataSource.quartzDS.jndiURL">java:/ezgovDatabasePool</prop>
-        		<prop key="org.quartz.dataSource.quartzNoTXDS.jndiURL">java:/ezgovDatabasePoolNoTX</prop>
+        		<prop key="org.quartz.dataSource.quartzDS.jndiURL">${default.jdbc.jndi.datasource}</prop>
+        		<prop key="org.quartz.dataSource.quartzNoTXDS.jndiURL">${default.jdbc.jndi.quartz.datasource}</prop>
         		
         		<!-- Logger Plugin Properties -->       		
            		<prop key="org.quartz.plugin.jobHistory.class">org.quartz.plugins.history.LoggingJobHistoryPlugin</prop>        		

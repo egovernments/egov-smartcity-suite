@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) 2016  eGovernments Foundation
+ *  Copyright (C) 2017  eGovernments Foundation
  *
  *  The updated version of eGov suite of products as by eGovernments Foundation
  *  is available at http://www.egovernments.org
@@ -38,23 +38,8 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.infra.config.persistence.multitenancy;
+package org.egov.infra.config.persistence.datasource.routing;
 
-import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.hibernate.context.spi.CurrentTenantIdentifierResolver;
-
-import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
-
-public class DomainBasedDatabaseTenantIdentifierResolver implements CurrentTenantIdentifierResolver {
-
-    @Override
-    public String resolveCurrentTenantIdentifier() {
-        return defaultIfBlank(ApplicationThreadLocals.getTenantID(), "READWRITE_DS");
-    }
-
-    @Override
-    public boolean validateExistingCurrentSessions() {
-        return true;
-    }
-
+public enum DatasourceType {
+    READONLY, READWRITE
 }

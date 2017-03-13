@@ -51,6 +51,7 @@ import java.util.List;
 
 import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.springframework.core.Ordered.LOWEST_PRECEDENCE;
 
 @Configuration
 @PropertySource(value = {
@@ -58,7 +59,7 @@ import static org.apache.commons.lang3.StringUtils.EMPTY;
         "classpath:config/egov-erp-${user.name}.properties",
         "classpath:config/application-config-${client.id}.properties",
         "classpath:config/egov-erp-override.properties"}, ignoreResourceNotFound = true)
-@Order(0)
+@Order(LOWEST_PRECEDENCE)
 public class ApplicationProperties {
 
     public static final String FILESTORE_BASE_DIR = "filestore.base.dir";

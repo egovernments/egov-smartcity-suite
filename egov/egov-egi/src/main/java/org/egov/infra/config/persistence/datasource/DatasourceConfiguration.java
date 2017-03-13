@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) 2016  eGovernments Foundation
+ *  Copyright (C) 2017  eGovernments Foundation
  *
  *  The updated version of eGov suite of products as by eGovernments Foundation
  *  is available at http://www.egovernments.org
@@ -38,13 +38,13 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.infra.config.persistence;
+package org.egov.infra.config.persistence.datasource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.jndi.JndiObjectFactoryBean;
 
@@ -52,8 +52,9 @@ import javax.sql.DataSource;
 
 @Configuration
 @Profile("production")
-@PropertySource("classpath:config/persistence-config.properties")
+@Conditional(DatasourceConfigCondition.class)
 public class DatasourceConfiguration {
+
     @Autowired
     private Environment env;
 
@@ -61,7 +62,7 @@ public class DatasourceConfiguration {
     public JndiObjectFactoryBean dataSource() {
         final JndiObjectFactoryBean dataSource = new JndiObjectFactoryBean();
         dataSource.setExpectedType(DataSource.class);
-        dataSource.setJndiName(env.getProperty("default.jdbc.jndi.dataSource"));
+        dataSource.setJndiName(env.getProperty("default.jdbc.jndi.datasource"));
         return dataSource;
     }
 }

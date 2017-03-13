@@ -41,7 +41,7 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
-		
+
 	<bean name="ptisSchedular" id="ptisSchedular" parent="egovSchedular" lazy-init="false">
      	<property name="overwriteExistingJobs" value="true"/>
         <property name="autoStartup" value="true" />
@@ -56,13 +56,13 @@
 				<ref bean="bulkBillGenerationCronTrigger4" />
 				<ref bean="demandActivationJobTrigger"/>
 	    	</list>
-		</property>	
-		<property name="applicationContextSchedulerContextKey" value="applicationQuartzContext-ptis" /> 
-	</bean>      
-	
+		</property>
+		<property name="applicationContextSchedulerContextKey" value="applicationQuartzContext-ptis" />
+	</bean>
+
 	<!-- Add description for bulkBillGenerationJobScheduler0 -->
- 	 
-  <bean name="bulkBillGenerationJobScheduler0" id="bulkBillGenerationJobScheduler0" class="org.springframework.scheduling.quartz.JobDetailFactoryBean" > 
+
+  <bean name="bulkBillGenerationJobScheduler0" id="bulkBillGenerationJobScheduler0" class="org.springframework.scheduling.quartz.JobDetailFactoryBean" >
 		<property name="group" value="PTIS_BILL_JOB_GROUP"/>
 		<property name="name" value="PTISBillJob0"/>
 		<property name="durability" value="true" />
@@ -75,14 +75,14 @@
 				<entry key="cityDataRequired"  value="true" />
 				<entry key="moduleName" value="ptis"/>
             </map>
-        </property>   	
+        </property>
 	</bean>
-	
+
 	<bean id="bulkBillGenerationJobDelegate0" class="org.egov.ptis.scheduler.BulkBillGenerationJob" lazy-init="true" scope="prototype">
 		<property name="modulo" value="0" />
 		<property name="billsCount" value="50" />
     </bean>
-   
+
     <bean id="bulkBillGenerationCronTrigger0" name="bulkBillGenerationCronTrigger0" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean" >
         <property name="jobDetail" ref="bulkBillGenerationJobScheduler0" />
         <property name="group" value="PTIS_TRIGGER_GROUP"/>
@@ -90,12 +90,12 @@
         <property name="cronExpression" value="0 */59 * * * ?" />
 		<property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_DO_NOTHING"/>
     </bean>
-     
+
      <!-- END bulkBillGenerationJobScheduler0 -->
-     
-	<!-- Add description for bulkBillGenerationJobScheduler1 --> 
- 	 
-  <bean name="bulkBillGenerationJobScheduler1" id="bulkBillGenerationJobScheduler1" class="org.springframework.scheduling.quartz.JobDetailFactoryBean" > 
+
+	<!-- Add description for bulkBillGenerationJobScheduler1 -->
+
+  <bean name="bulkBillGenerationJobScheduler1" id="bulkBillGenerationJobScheduler1" class="org.springframework.scheduling.quartz.JobDetailFactoryBean" >
 		<property name="group" value="PTIS_BILL_JOB_GROUP"/>
 		<property name="name" value="PTISBillJob1"/>
 		<property name="durability" value="true" />
@@ -108,14 +108,14 @@
 				<entry key="cityDataRequired"  value="true" />
 				<entry key="moduleName" value="ptis"/>
             </map>
-        </property>   	
+        </property>
 	</bean>
-	
+
 	<bean id="bulkBillGenerationJobDelegate1" class="org.egov.ptis.scheduler.BulkBillGenerationJob" lazy-init="true" scope="prototype">
 		<property name="modulo" value="1" />
 		<property name="billsCount" value="50" />
     </bean>
-    
+
     <bean id="bulkBillGenerationCronTrigger1" name="bulkBillGenerationCronTrigger1" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean" >
         <property name="jobDetail" ref="bulkBillGenerationJobScheduler1" />
         <property name="group" value="PTIS_TRIGGER_GROUP"/>
@@ -123,16 +123,16 @@
         <property name="cronExpression" value="0 */59 * * * ?" />
 		<property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_DO_NOTHING"/>
     </bean>
-     
+
      <!-- END bulkBillGenerationJobScheduler1 -->
 
 	<!-- Add description for bulkBillGenerationJobScheduler2 -->
- 	 
-  <bean name="bulkBillGenerationJobScheduler2" id="bulkBillGenerationJobScheduler2" class="org.springframework.scheduling.quartz.JobDetailFactoryBean" > 
+
+  <bean name="bulkBillGenerationJobScheduler2" id="bulkBillGenerationJobScheduler2" class="org.springframework.scheduling.quartz.JobDetailFactoryBean" >
 		<property name="group" value="PTIS_BILL_JOB_GROUP"/>
 		<property name="name" value="PTISBillJob2"/>
 		<property name="durability" value="true" />
-		<property name="jobClass" value="org.egov.ptis.scheduler.BulkBillGenerationJob"/> 
+		<property name="jobClass" value="org.egov.ptis.scheduler.BulkBillGenerationJob"/>
    		<property name="requestsRecovery" value="true"/>
 		<property name="jobDataMap">
             <map>
@@ -141,14 +141,14 @@
 				<entry key="cityDataRequired"  value="true" />
 				<entry key="moduleName" value="ptis"/>
             </map>
-        </property>   	
+        </property>
 	</bean>
-	
+
 	<bean id="bulkBillGenerationJobDelegate2" class="org.egov.ptis.scheduler.BulkBillGenerationJob" lazy-init="true" scope="prototype">
 		<property name="modulo" value="2" />
 		<property name="billsCount" value="50" />
     </bean>
-   
+
     <bean id="bulkBillGenerationCronTrigger2" name="bulkBillGenerationCronTrigger2" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean" >
         <property name="jobDetail" ref="bulkBillGenerationJobScheduler2" />
         <property name="group" value="PTIS_TRIGGER_GROUP"/>
@@ -156,12 +156,12 @@
         <property name="cronExpression" value="0 */59 * * * ?" />
 		<property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_DO_NOTHING"/>
     </bean>
-     
+
      <!-- END bulkBillGenerationJobScheduler2 -->
 
 	<!-- Add description for bulkBillGenerationJobScheduler3 -->
- 	 
-  <bean name="bulkBillGenerationJobScheduler3" id="bulkBillGenerationJobScheduler3" class="org.springframework.scheduling.quartz.JobDetailFactoryBean"> 
+
+  <bean name="bulkBillGenerationJobScheduler3" id="bulkBillGenerationJobScheduler3" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
 		<property name="group" value="PTIS_BILL_JOB_GROUP"/>
 		<property name="name" value="PTISBillJob3"/>
 		<property name="durability" value="true" />
@@ -174,14 +174,14 @@
 				<entry key="cityDataRequired" value="true" />
 				<entry key="moduleName" value="ptis"/>
             </map>
-        </property>   	
+        </property>
 	</bean>
-	
+
 	<bean id="bulkBillGenerationJobDelegate3" class="org.egov.ptis.scheduler.BulkBillGenerationJob" lazy-init="true" scope="prototype">
 		<property name="modulo" value="3" />
 		<property name="billsCount" value="50" />
     </bean>
-   
+
     <bean id="bulkBillGenerationCronTrigger3" name="bulkBillGenerationCronTrigger3" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean" >
         <property name="jobDetail" ref="bulkBillGenerationJobScheduler3" />
         <property name="group" value="PTIS_TRIGGER_GROUP"/>
@@ -189,12 +189,12 @@
         <property name="cronExpression" value="0 */59 * * * ?" />
 		<property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_DO_NOTHING"/>
     </bean>
-     
+
      <!-- END bulkBillGenerationJobScheduler3 -->
 
 	<!-- Add description for bulkBillGenerationJobScheduler4 -->
- 	 
-  <bean name="bulkBillGenerationJobScheduler4" id="bulkBillGenerationJobScheduler4" class="org.springframework.scheduling.quartz.JobDetailFactoryBean" > 
+
+  <bean name="bulkBillGenerationJobScheduler4" id="bulkBillGenerationJobScheduler4" class="org.springframework.scheduling.quartz.JobDetailFactoryBean" >
 		<property name="group" value="PTIS_BILL_JOB_GROUP"/>
 		<property name="name" value="PTISBillJob4"/>
 		<property name="durability" value="true" />
@@ -207,14 +207,14 @@
 				<entry key="cityDataRequired"  value="true" />
 				<entry key="moduleName" value="ptis"/>
             </map>
-        </property>   	
+        </property>
 	</bean>
-	
+
 	<bean id="bulkBillGenerationJobDelegate4" class="org.egov.ptis.scheduler.BulkBillGenerationJob" lazy-init="true" scope="prototype">
 		<property name="modulo" value="4" />
 		<property name="billsCount" value="50" />
     </bean>
-   
+
     <bean id="bulkBillGenerationCronTrigger4" name="bulkBillGenerationCronTrigger4" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
         <property name="jobDetail" ref="bulkBillGenerationJobScheduler4" />
         <property name="group" value="PTIS_TRIGGER_GROUP"/>
@@ -222,12 +222,12 @@
         <property name="cronExpression" value="0 */59 * * * ?" />
 		<property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_DO_NOTHING"/>
     </bean>
-     
-     <!-- END bulkBillGenerationJobScheduler4 --> 
-     
+
+     <!-- END bulkBillGenerationJobScheduler4 -->
+
      <!-- description for DemandActivationJob -->
- 	 
-  <bean name="demandActivationJobScheduler" id="demandActivationJobScheduler" class="org.springframework.scheduling.quartz.JobDetailFactoryBean"> 
+
+  <bean name="demandActivationJobScheduler" id="demandActivationJobScheduler" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
 		<property name="group" value="PTIS_DEMAND_ACTIVATION_JOB_GROUP"/>
 		<property name="name" value="PTISDemandActivationJob"/>
 		<property name="durability" value="true" />
@@ -240,14 +240,14 @@
 				<entry key="cityDataRequired"  value="true" />
 				<entry key="moduleName" value="ptis"/>
             </map>
-        </property>   	
+        </property>
 	</bean>
-	
+
 	<bean id="demandActivationJob" class="org.egov.ptis.scheduler.DemandActivationJob" lazy-init="true" scope="prototype">
     </bean>
-    
+
     <!-- This job will be triggered everyday at 12:15AM -->
-    
+
     <bean id="demandActivationJobTrigger" name="demandActivationJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
         <property name="jobDetail" ref="demandActivationJobScheduler" />
         <property name="group" value="PTIS_DEMAND_ACTIVATION_JOB_GROUP"/>
@@ -255,12 +255,12 @@
         <property name="cronExpression" value="0 15 0 * * ?" />
 		<property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_DO_NOTHING"/>
     </bean>
-     
+
     <!-- END DemandActivationJob -->
-    
+
     <bean name="recoveryNoticesSchedular" id="recoveryNoticesSchedular" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
      	<property name="overwriteExistingJobs" value="true"/>
-        <property name="autoStartup" value="true" />   
+        <property name="autoStartup" value="true" />
 		<property name="schedulerName" value="recoverynotices-scheduler"/>
         <property name="exposeSchedulerInRepository" value="true"/>
         <property name="jobFactory" ref="jobFactory"/>
@@ -275,7 +275,7 @@
             	<prop key="org.quartz.scheduler.wrapJobExecutionInUserTransaction">false</prop>
         		<prop key="org.quartz.scheduler.skipUpdateCheck">true</prop>
         		<prop key="org.quartz.scheduler.threadsInheritContextClassLoaderOfInitializer">true</prop>
-        		
+
         		<!-- Job Store and Clustering Properties -->
         		<prop key="org.quartz.jobStore.isClustered">true</prop>
         		<prop key="org.quartz.jobStore.clusterCheckinInterval">60000</prop>
@@ -289,15 +289,15 @@
         		<prop key="org.quartz.jobStore.tablePrefix">public.QRTZ_</prop>
         		<prop key="org.quartz.jobStore.misfireThreshold">60000</prop>
         		<prop key="org.quartz.jobStore.class">org.quartz.impl.jdbcjobstore.JobStoreCMT</prop>
-				<prop key="org.quartz.jobStore.dontSetNonManagedTXConnectionAutoCommitFalse">false</prop>        		
+				<prop key="org.quartz.jobStore.dontSetNonManagedTXConnectionAutoCommitFalse">false</prop>
 				<prop key="org.quartz.jobStore.dontSetAutoCommitFalse">true</prop>
-        		
+
         		<!-- Datasource Properties -->
-        		<prop key="org.quartz.dataSource.quartzDS.jndiURL">java:/ezgovDatabasePool</prop>
-        		<prop key="org.quartz.dataSource.quartzNoTXDS.jndiURL">java:/ezgovDatabasePoolNoTX</prop>
-        		
-        		<!-- Logger Plugin Properties -->       		
-           		<prop key="org.quartz.plugin.jobHistory.class">org.quartz.plugins.history.LoggingJobHistoryPlugin</prop>        		
+        		<prop key="org.quartz.dataSource.quartzDS.jndiURL">java:/READWRITE_DS</prop>
+        		<prop key="org.quartz.dataSource.quartzNoTXDS.jndiURL">java:/QUARTZ_NO_TXN_DS</prop>
+
+        		<!-- Logger Plugin Properties -->
+           		<prop key="org.quartz.plugin.jobHistory.class">org.quartz.plugins.history.LoggingJobHistoryPlugin</prop>
         		<prop key="org.quartz.plugin.jobHistory.jobToBeFiredMessage">Job [{1}.{0}] to be fired by trigger [{4}.{3}], re-fire: {7}</prop>
         		<prop key="org.quartz.plugin.jobHistory.jobSuccessMessage">Job [{1}.{0}] execution complete and reports: {8}</prop>
         		<prop key="org.quartz.plugin.jobHistory.jobFailedMessage">Job [{1}.{0}] execution failed with exception: {8}</prop>
@@ -306,16 +306,16 @@
         		<prop key="org.quartz.plugin.triggerHistory.triggerFiredMessage">Trigger [{1}.{0}] fired job [{6}.{5}] scheduled at: {2, date, dd-MM-yyyy HH:mm:ss.SSS}, next scheduled at: {3, date, dd-MM-yyyy HH:mm:ss.SSS}</prop>
         		<prop key="org.quartz.plugin.triggerHistory.triggerCompleteMessage">Trigger [{1}.{0}] completed firing job [{6}.{5}] with resulting trigger instruction code: {9}. Next scheduled at: {3, date, dd-MM-yyyy HH:mm:ss.SSS}</prop>
         		<prop key="org.quartz.plugin.triggerHistory.triggerMisfiredMessage">Trigger [{1}.{0}] misfired job [{6}.{5}]. Should have fired at: {3, date, dd-MM-yyyy HH:mm:ss.SSS}</prop>
-	       		
+
 	       		<!-- Scheduler Shutdown Hook Plugin Properties-->
 	       		<prop key="org.quartz.plugin.shutdownHook.class">org.quartz.plugins.management.ShutdownHookPlugin</prop>
         		<prop key="org.quartz.plugin.shutdownHook.cleanShutdown">true</prop>
         	</props>
         </property>
-        <property name="applicationContextSchedulerContextKey" value="applicationQuartzContext-ptis" /> 
-	</bean> 
-    
-    <bean name="recoveryNoticesJobDetails" id="recoveryNoticesJobDetails" class="org.springframework.scheduling.quartz.JobDetailFactoryBean"> 
+        <property name="applicationContextSchedulerContextKey" value="applicationQuartzContext-ptis" />
+	</bean>
+
+    <bean name="recoveryNoticesJobDetails" id="recoveryNoticesJobDetails" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
 		<property name="group" value="PTIS_RECOVERY_NOTICES_JOB_GROUP"/>
 		<property name="name" value="PTISRecoveryNoticesJob"/>
 		<property name="durability" value="true" />
@@ -328,9 +328,9 @@
 				<entry key="cityDataRequired"  value="true" />
 				<entry key="moduleName" value="ptis"/>
             </map>
-        </property>   	
+        </property>
 	</bean>
-	
+
 	<bean id="recoveryNoticesJob" class="org.egov.ptis.scheduler.RecoveryNoticesJob" lazy-init="true" scope="prototype">
     </bean>
 </beans>
