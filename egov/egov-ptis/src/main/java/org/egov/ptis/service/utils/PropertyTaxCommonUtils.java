@@ -99,6 +99,7 @@ import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.utils.NumberUtil;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.client.util.PropertyTaxUtil;
@@ -479,7 +480,7 @@ public class PropertyTaxCommonUtils {
     
     public String setSourceOfProperty(User user, Boolean isOnline) {
         String source;
-        if (isCscOperator(user))
+        if (checkCscUserAndType(user))
             source = PropertyTaxConstants.SOURCE_CSC;
         else if (isMeesevaUser(user))
             source = PropertyTaxConstants.SOURCE_MEESEVA;
@@ -488,6 +489,13 @@ public class PropertyTaxCommonUtils {
         else
             source = PropertyTaxConstants.SOURCE_SYSTEM;
         return source;
+    }
+    
+    public Boolean checkCscUserAndType(User user){
+        if (user.getType() != null)
+            return isCscOperator(user) && UserType.BUSINESS.equals(user.getType());
+        else
+            return false;
     }
 
     public String getPropertySource(final PropertyImpl property) {
