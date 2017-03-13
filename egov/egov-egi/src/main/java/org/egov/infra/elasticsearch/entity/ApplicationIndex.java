@@ -40,11 +40,10 @@
 
 package org.egov.infra.elasticsearch.entity;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import org.egov.infra.elasticsearch.entity.enums.ApprovalStatus;
-import org.egov.infra.elasticsearch.entity.enums.ClosureStatus;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.hibernate.validator.constraints.Length;
+import static org.egov.infra.elasticsearch.entity.ApplicationIndex.SEQ_APPLICATIONINDEX;
+import static org.egov.infra.validation.ValidatorUtils.assertNotNull;
+
+import java.util.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -55,10 +54,13 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-import java.util.Date;
 
-import static org.egov.infra.elasticsearch.entity.ApplicationIndex.SEQ_APPLICATIONINDEX;
-import static org.egov.infra.validation.ValidatorUtils.assertNotNull;
+import org.egov.infra.elasticsearch.entity.enums.ApprovalStatus;
+import org.egov.infra.elasticsearch.entity.enums.ClosureStatus;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.validator.constraints.Length;
+
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 @Entity
 @Table(name = "EG_APPLICATIONINDEX")
@@ -272,12 +274,11 @@ public class ApplicationIndex extends AbstractAuditable {
         this.mobileNumber = mobileNumber;
     }
 
-
     public String getOwnerName() {
         return ownerName;
     }
 
-    public void setOwnerName(String ownerName) {
+    public void setOwnerName(final String ownerName) {
         this.ownerName = ownerName;
     }
 
@@ -372,7 +373,7 @@ public class ApplicationIndex extends AbstractAuditable {
         private String mobileNumber;
         private String ownerName;
         private String aadharNumber;
-        private Integer elapsedDays;
+        private Integer elapsedDays = 0;
         private ClosureStatus closed;
         private ApprovalStatus approved;
         private String channel;
