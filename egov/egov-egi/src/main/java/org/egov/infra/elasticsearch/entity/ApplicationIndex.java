@@ -89,7 +89,7 @@ public class ApplicationIndex extends AbstractAuditable {
     private String applicationType;
 
     @NotNull
-    @Length(max = 100)
+    @Length(max = 250)
     private String applicantName;
 
     @Length(max = 250)
@@ -304,9 +304,9 @@ public class ApplicationIndex extends AbstractAuditable {
     public void setClosed(final ClosureStatus closed) {
         this.closed = closed;
         if (this.closed.toString().equals(ClosureStatus.YES.toString()))
-            setIsClosed(0);
-        else
             setIsClosed(1);
+        else
+            setIsClosed(0);
     }
 
     public ApprovalStatus getApproved() {
