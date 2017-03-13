@@ -40,11 +40,39 @@
 
 package org.egov.infra.elasticsearch.service.es;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.config.mapper.BeanMapperConfiguration;
 import org.egov.infra.elasticsearch.entity.ApplicationIndex;
+import org.egov.infra.elasticsearch.entity.bean.ApplicationDetails;
+import org.egov.infra.elasticsearch.entity.bean.ApplicationIndexRequest;
+import org.egov.infra.elasticsearch.entity.bean.ApplicationIndexResponse;
+import org.egov.infra.elasticsearch.entity.bean.Trend;
 import org.egov.infra.elasticsearch.entity.es.ApplicationDocument;
 import org.egov.infra.elasticsearch.repository.es.ApplicationDocumentRepository;
+import org.egov.infra.utils.DateUtils;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.aggregations.AggregationBuilder;
+import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.aggregations.Aggregations;
+import org.elasticsearch.search.aggregations.bucket.histogram.DateHistogramInterval;
+import org.elasticsearch.search.aggregations.bucket.histogram.Histogram;
+import org.elasticsearch.search.aggregations.bucket.terms.StringTerms;
+import org.elasticsearch.search.aggregations.bucket.terms.Terms;
+import org.elasticsearch.search.aggregations.metrics.valuecount.ValueCount;
+import org.elasticsearch.search.aggregations.metrics.valuecount.ValueCountBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
+import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -52,10 +80,34 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class ApplicationDocumentService {
 
+    private static final String APPLICATION_NUMBER = "applicationNumber";
+
+    private static final String APPLICATIONS_INDEX = "applications";
+
+    private static final String IS_CLOSED = "isClosed";
+
+    private static final String DATE_AGGR = "date_aggr";
+
+    private static final String DISTRICT_NAME = "districtName";
+
+    private static final String OPEN = "open";
+
+    private static final String CLOSED = "closed";
+
+    private static final String RECEIVED = "received";
+
+    private static final String TOTAL_COUNT = "total_count";
+
     private final ApplicationDocumentRepository applicationDocumentRepository;
 
     @Autowired
     private BeanMapperConfiguration beanMapperConfiguration;
+
+    @Autowired
+    private ElasticsearchTemplate elasticsearchTemplate;
+
+    private static final String DATE_FORMAT_YYYYMMDD = "yyyy-MM-dd";
+    private static final SimpleDateFormat DATEFORMATTER_YYYY_MM_DD = new SimpleDateFormat(DATE_FORMAT_YYYYMMDD);
 
     @Autowired
     public ApplicationDocumentService(ApplicationDocumentRepository applicationDocumentRepository) {
@@ -67,4 +119,318 @@ public class ApplicationDocumentService {
         ApplicationDocument applicationDocument = beanMapperConfiguration.map(applicationIndex, ApplicationDocument.class);
         return applicationDocumentRepository.save(applicationDocument);
     }
+
+    /**
+     * Provides Applications details
+     * @param applicationIndexRequest
+     * @return ApplicationIndexResponse
+     */
+    public ApplicationIndexResponse findAllApplications(ApplicationIndexRequest applicationIndexRequest) {
+        ApplicationIndexResponse applicationIndexResponse = new ApplicationIndexResponse();
+        Aggregations aggregation;
+        ValueCount valueCount;
+        Date fromDate = null;
+        Date toDate = null;
+        if (StringUtils.isNotBlank(applicationIndexRequest.getFromDate())
+                && StringUtils.isNotBlank(applicationIndexRequest.getToDate())) {
+            fromDate = DateUtils.getDate(applicationIndexRequest.getFromDate(), DATE_FORMAT_YYYYMMDD);
+            toDate = DateUtils.addDays(DateUtils.getDate(applicationIndexRequest.getToDate(), DATE_FORMAT_YYYYMMDD),
+                    1);
+        }
+        aggregation = getDocumentCounts(applicationIndexRequest, fromDate, toDate, StringUtils.EMPTY, RECEIVED, StringUtils.EMPTY,
+                0);
+        if (aggregation != null) {
+            valueCount = aggregation.get(TOTAL_COUNT);
+            applicationIndexResponse.setTotalReceived(valueCount != null ? valueCount.getValue() : 0);
+        }
+        aggregation = getDocumentCounts(applicationIndexRequest, fromDate, toDate, StringUtils.EMPTY, CLOSED, StringUtils.EMPTY,
+                0);
+        if (aggregation != null) {
+            valueCount = aggregation.get(TOTAL_COUNT);
+            applicationIndexResponse.setTotalClosed(valueCount != null ? valueCount.getValue() : 0);
+        }
+        aggregation = getDocumentCounts(applicationIndexRequest, fromDate, toDate, StringUtils.EMPTY, OPEN, StringUtils.EMPTY, 0);
+        if (aggregation != null) {
+            valueCount = aggregation.get(TOTAL_COUNT);
+            applicationIndexResponse.setTotalOpen(valueCount != null ? valueCount.getValue() : 0);
+        }
+
+        // For today's counts
+        fromDate = new Date();
+        toDate = DateUtils.addDays(new Date(), 1);
+        aggregation = getDocumentCounts(applicationIndexRequest, fromDate, toDate, StringUtils.EMPTY, CLOSED, StringUtils.EMPTY,
+                0);
+        if (aggregation != null) {
+            valueCount = aggregation.get(TOTAL_COUNT);
+            applicationIndexResponse.setTodaysClosed(valueCount != null ? valueCount.getValue() : 0);
+        }
+        aggregation = getDocumentCounts(applicationIndexRequest, fromDate, toDate, StringUtils.EMPTY, RECEIVED, StringUtils.EMPTY,
+                0);
+        if (aggregation != null) {
+            valueCount = aggregation.get(TOTAL_COUNT);
+            applicationIndexResponse.setTodaysReceived(valueCount != null ? valueCount.getValue() : 0);
+        }
+        List<Trend> applicationTrends = getMonthwiseApplicationTrends(applicationIndexRequest);
+        applicationIndexResponse.setTrend(applicationTrends);
+        List<ApplicationDetails> applicationDetails = getAnalysisTableResponse(applicationIndexRequest);
+        applicationIndexResponse.setDetails(applicationDetails);
+        return applicationIndexResponse;
+    }
+
+    private BoolQueryBuilder prepareWhereClause(ApplicationIndexRequest applicationIndexRequest, Date fromDate, Date toDate) {
+        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery()
+                .mustNot(QueryBuilders.matchQuery(APPLICATION_NUMBER, StringUtils.EMPTY));
+
+        if (StringUtils.isNotBlank(applicationIndexRequest.getRegion()))
+            boolQuery = boolQuery
+                    .filter(QueryBuilders.matchQuery("regionName", applicationIndexRequest.getRegion()));
+        if (StringUtils.isNotBlank(applicationIndexRequest.getDistrict()))
+            boolQuery = boolQuery
+                    .filter(QueryBuilders.matchQuery(DISTRICT_NAME, applicationIndexRequest.getDistrict()));
+        if (StringUtils.isNotBlank(applicationIndexRequest.getGrade()))
+            boolQuery = boolQuery
+                    .filter(QueryBuilders.matchQuery("cityGrade", applicationIndexRequest.getGrade()));
+        if (StringUtils.isNotBlank(applicationIndexRequest.getUlbCode()))
+            boolQuery = boolQuery
+                    .filter(QueryBuilders.matchQuery("cityCode", applicationIndexRequest.getUlbCode()));
+        if (StringUtils.isNotBlank(applicationIndexRequest.getServiceGroup()))
+            boolQuery = boolQuery
+                    .filter(QueryBuilders.matchQuery("moduleName", applicationIndexRequest.getServiceGroup()));
+        if (StringUtils.isNotBlank(applicationIndexRequest.getService()))
+            boolQuery = boolQuery
+                    .filter(QueryBuilders.matchQuery("applicationType", applicationIndexRequest.getService()));
+        if (StringUtils.isNotBlank(applicationIndexRequest.getSource()))
+            boolQuery = boolQuery
+                    .filter(QueryBuilders.matchQuery("channel", applicationIndexRequest.getSource()));
+        if (fromDate != null && toDate != null)
+            boolQuery = boolQuery
+                    .filter(QueryBuilders.rangeQuery("applicationDate").gte(DATEFORMATTER_YYYY_MM_DD.format(fromDate))
+                            .lte(DATEFORMATTER_YYYY_MM_DD.format(toDate)).includeUpper(false));
+        return boolQuery;
+    }
+
+    private Map<String, Long> getAggregationWiseApplicationCounts(ApplicationIndexRequest applicationIndexRequest, Date fromDate,
+            Date toDate,
+            String aggregationName, String status, String aggregationField, int size) {
+        Map<String, Long> aggregationResults = new HashMap<>();
+        ValueCount valueCount;
+        Aggregations aggregation = getDocumentCounts(applicationIndexRequest, fromDate, toDate, aggregationName, status,
+                aggregationField, size);
+        StringTerms cityAggr = aggregation.get(aggregationName);
+        for (Terms.Bucket entry : cityAggr.getBuckets()) {
+            valueCount = entry.getAggregations().get(TOTAL_COUNT);
+            aggregationResults.put(String.valueOf(entry.getKey()), valueCount.getValue());
+        }
+        return aggregationResults;
+    }
+
+    /**
+     * Provides analysis table response
+     * @param applicationIndexRequest
+     * @return list
+     */
+    private List<ApplicationDetails> getAnalysisTableResponse(ApplicationIndexRequest applicationIndexRequest) {
+        List<ApplicationDetails> applicationDetailsList = new ArrayList<>();
+        Date fromDate = null;
+        Date toDate = null;
+        String aggregationField = DISTRICT_NAME;
+        int size = 15;
+        String name;
+        ApplicationDetails applicationDetails;
+
+        if (StringUtils.isNotBlank(applicationIndexRequest.getAggregationLevel())) {
+            Map<String, String> aggrTypeAndSize = fetchAggregationTypeAndSize(applicationIndexRequest.getAggregationLevel());
+            aggregationField = aggrTypeAndSize.get("aggregationField");
+            size = Integer.parseInt(aggrTypeAndSize.get("size"));
+        }
+
+        if (StringUtils.isNotBlank(applicationIndexRequest.getFromDate())
+                && StringUtils.isNotBlank(applicationIndexRequest.getToDate())) {
+            fromDate = DateUtils.getDate(applicationIndexRequest.getFromDate(), DATE_FORMAT_YYYYMMDD);
+            toDate = DateUtils.addDays(DateUtils.getDate(applicationIndexRequest.getToDate(), DATE_FORMAT_YYYYMMDD),
+                    1);
+        }
+
+        Map<String, Long> totalRcvdApplications = getAggregationWiseApplicationCounts(applicationIndexRequest, fromDate, toDate,
+                "totalReceived", RECEIVED, aggregationField, size);
+        Map<String, Long> totalClosedApplications = getAggregationWiseApplicationCounts(applicationIndexRequest, fromDate, toDate,
+                "totalClosed", CLOSED, aggregationField, size);
+        Map<String, Long> totalOpenApplications = getAggregationWiseApplicationCounts(applicationIndexRequest, fromDate, toDate,
+                "totalOpen", OPEN, aggregationField, size);
+
+        for (Map.Entry<String, Long> entry : totalRcvdApplications.entrySet()) {
+            applicationDetails = new ApplicationDetails();
+            name = entry.getKey();
+            applicationDetails.setDistrict(name);
+            applicationDetails.setTotalReceived(entry.getValue());
+            applicationDetails.setTotalClosed(totalClosedApplications.get(name) == null ? 0 : totalClosedApplications.get(name));
+            applicationDetails.setTotalOpen(totalOpenApplications.get(name) == null ? 0 : totalOpenApplications.get(name));
+
+            applicationDetailsList.add(applicationDetails);
+        }
+        return applicationDetailsList;
+    }
+
+    private Map<String, String> fetchAggregationTypeAndSize(String aggregationLevel) {
+        Map<String, String> aggrTypeAndSize = new HashMap<>();
+        String aggregationField = DISTRICT_NAME;
+        int size = 15;
+        if ("region".equalsIgnoreCase(aggregationLevel)) {
+            aggregationField = "regionName";
+            size = 4;
+        } else if ("district".equalsIgnoreCase(aggregationLevel)) {
+            aggregationField = DISTRICT_NAME;
+            size = 50;
+        } else if ("grade".equalsIgnoreCase(aggregationLevel)) {
+            aggregationField = "cityGrade";
+            size = 6;
+        } else if ("ulb".equalsIgnoreCase(aggregationLevel)) {
+            aggregationField = "cityName";
+            size = 120;
+        } else if ("revz".equalsIgnoreCase(aggregationLevel)) {
+            aggregationField = DISTRICT_NAME;
+            size = 4;
+        } else if ("module".equalsIgnoreCase(aggregationLevel)) {
+            aggregationField = "moduleName";
+            size = 6;
+        } else if ("service".equalsIgnoreCase(aggregationLevel)) {
+            aggregationField = "applicationType";
+            size = 4;
+        } else if ("source".equalsIgnoreCase(aggregationLevel)) {
+            aggregationField = "channel";
+            size = 4;
+        }
+        aggrTypeAndSize.put("aggregationField", aggregationField);
+        aggrTypeAndSize.put("size", String.valueOf(size));
+        return aggrTypeAndSize;
+    }
+
+    /**
+     * Provides month-wise Application trends - received/closed/open
+     * @param applicationIndexRequest
+     * @return list
+     */
+    public List<Trend> getMonthwiseApplicationTrends(ApplicationIndexRequest applicationIndexRequest) {
+        List<Trend> trendsList = new ArrayList<>();
+        Date fromDate = null;
+        Date toDate = null;
+        Map<Integer, String> monthValuesMap = DateUtils.getAllMonthsWithFullNames();
+        Map<String, Long> receivedApplications = new LinkedHashMap<>();
+        Map<String, Long> closedApplications = new LinkedHashMap<>();
+        Map<String, Long> openApplications = new LinkedHashMap<>();
+        Aggregations aggregation;
+
+        if (StringUtils.isNotBlank(applicationIndexRequest.getFromDate())
+                && StringUtils.isNotBlank(applicationIndexRequest.getToDate())) {
+            fromDate = DateUtils.getDate(applicationIndexRequest.getFromDate(), DATE_FORMAT_YYYYMMDD);
+            toDate = DateUtils.addDays(DateUtils.getDate(applicationIndexRequest.getToDate(), DATE_FORMAT_YYYYMMDD),
+                    1);
+        }
+
+        aggregation = getMonthwiseApplications(applicationIndexRequest, fromDate,
+                toDate, RECEIVED);
+        Histogram dateaggs = aggregation.get(DATE_AGGR);
+        prepareMonthwiseDetails(monthValuesMap, receivedApplications, dateaggs);
+        aggregation = getMonthwiseApplications(applicationIndexRequest, fromDate,
+                toDate, CLOSED);
+        dateaggs = aggregation.get(DATE_AGGR);
+        prepareMonthwiseDetails(monthValuesMap, closedApplications, dateaggs);
+
+        aggregation = getMonthwiseApplications(applicationIndexRequest, fromDate,
+                toDate, OPEN);
+        dateaggs = aggregation.get(DATE_AGGR);
+        prepareMonthwiseDetails(monthValuesMap, openApplications, dateaggs);
+        Trend trend;
+
+        if (StringUtils.isBlank(applicationIndexRequest.getFromDate())
+                && StringUtils.isBlank(applicationIndexRequest.getToDate())) {
+            for (Map.Entry<Integer, String> entry : DateUtils.getAllFinancialYearMonthsWithFullNames().entrySet()) {
+                trend = new Trend();
+                trend.setMonth(entry.getValue());
+                trend.setTotalReceived(
+                        receivedApplications.get(entry.getValue()) == null ? 0 : receivedApplications.get(entry.getValue()));
+                trend.setTotalClosed(
+                        closedApplications.get(entry.getValue()) == null ? 0 : closedApplications.get(entry.getValue()));
+                trend.setTotalOpen(openApplications.get(entry.getValue()) == null ? 0 : openApplications.get(entry.getValue()));
+                trendsList.add(trend);
+            }
+        } else {
+            for (Map.Entry<String, Long> entry : receivedApplications.entrySet()) {
+                trend = new Trend();
+                trend.setMonth(entry.getKey());
+                trend.setTotalReceived(
+                        receivedApplications.get(entry.getKey()) == null ? 0 : receivedApplications.get(entry.getKey()));
+                trend.setTotalClosed(closedApplications.get(entry.getKey()) == null ? 0 : closedApplications.get(entry.getKey()));
+                trend.setTotalOpen(openApplications.get(entry.getKey()) == null ? 0 : openApplications.get(entry.getKey()));
+                trendsList.add(trend);
+            }
+        }
+        return trendsList;
+    }
+
+    private void prepareMonthwiseDetails(Map<Integer, String> monthValuesMap, Map<String, Long> applications,
+            Histogram dateaggs) {
+        String[] dateArr;
+        Integer month;
+        ValueCount countAggr;
+        String monthName;
+        for (Histogram.Bucket entry : dateaggs.getBuckets()) {
+            dateArr = entry.getKeyAsString().split("T");
+            month = Integer.valueOf(dateArr[0].split("-", 3)[1]);
+            monthName = monthValuesMap.get(month);
+            countAggr = entry.getAggregations().get(TOTAL_COUNT);
+            applications.put(monthName, countAggr.getValue());
+        }
+    }
+
+    private Aggregations getMonthwiseApplications(ApplicationIndexRequest applicationIndexRequest,
+            Date fromDate, Date toDate, String status) {
+        BoolQueryBuilder boolQuery = prepareWhereClause(applicationIndexRequest, fromDate, toDate);
+
+        if (CLOSED.equalsIgnoreCase(status))
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery(IS_CLOSED, 1));
+        else if (OPEN.equalsIgnoreCase(status))
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery(IS_CLOSED, 0));
+
+        AggregationBuilder aggregationBuilder = AggregationBuilders.dateHistogram(DATE_AGGR).field("applicationDate")
+                .interval(DateHistogramInterval.MONTH)
+                .subAggregation(AggregationBuilders.count(TOTAL_COUNT).field(APPLICATION_NUMBER));
+
+        SearchQuery searchQueryColl = new NativeSearchQueryBuilder().withIndices(APPLICATIONS_INDEX)
+                .withQuery(boolQuery)
+                .addAggregation(aggregationBuilder).build();
+
+        return elasticsearchTemplate.query(searchQueryColl,
+                response -> response.getAggregations());
+    }
+
+    private Aggregations getDocumentCounts(ApplicationIndexRequest applicationIndexRequest, Date fromDate,
+            Date toDate, String aggregationName, String applicationStatus, String aggregationField, int size) {
+        AggregationBuilder aggregation = null;
+        SearchQuery searchQueryColl;
+        ValueCountBuilder countBuilder = AggregationBuilders.count(TOTAL_COUNT).field(APPLICATION_NUMBER);
+        BoolQueryBuilder boolQuery = prepareWhereClause(applicationIndexRequest, fromDate, toDate);
+
+        if (StringUtils.isNotBlank(applicationStatus)) {
+            if (CLOSED.equalsIgnoreCase(applicationStatus))
+                boolQuery = boolQuery.filter(QueryBuilders.matchQuery(IS_CLOSED, 1));
+            else if (OPEN.equalsIgnoreCase(applicationStatus))
+                boolQuery = boolQuery.filter(QueryBuilders.matchQuery(IS_CLOSED, 0));
+        }
+
+        if (StringUtils.isNotBlank(aggregationName))
+            aggregation = AggregationBuilders.terms(aggregationName).field(aggregationField).size(size)
+                    .subAggregation(countBuilder);
+
+        NativeSearchQueryBuilder queryBuilder = new NativeSearchQueryBuilder().withIndices(APPLICATIONS_INDEX)
+                .withQuery(boolQuery).addAggregation(countBuilder);
+        if (StringUtils.isNotBlank(aggregationName))
+            searchQueryColl = queryBuilder.addAggregation(aggregation).build();
+        else
+            searchQueryColl = queryBuilder.build();
+
+        return elasticsearchTemplate.query(searchQueryColl,
+                response -> response.getAggregations());
+    }
+
 }
