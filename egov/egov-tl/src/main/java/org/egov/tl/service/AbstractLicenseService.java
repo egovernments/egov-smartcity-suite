@@ -59,7 +59,6 @@ import static org.egov.tl.utils.Constants.TRADELICENSEMODULE;
 import static org.egov.tl.utils.Constants.WF_STATE_SANITORY_INSPECTOR_APPROVAL_PENDING;
 import static org.egov.tl.utils.Constants.WORKFLOW_STATE_REJECTED;
 import static org.egov.tl.utils.Constants.CLOSURE_NATUREOFTASK;
-import static org.egov.tl.utils.Constants.CLOSURE_ADDITIONAL_RULE;
 
 import java.io.File;
 import java.math.BigDecimal;
