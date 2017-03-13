@@ -1325,6 +1325,8 @@ public class ComplaintIndexService {
         if (isNotBlank(complaintDashBoardRequest.getFunctionaryName()))
             boolQuery = boolQuery.filter(matchQuery(INITIAL_FUNCTIONARY_NAME,
                     complaintDashBoardRequest.getFunctionaryName()));
+        if(isNotBlank(complaintDashBoardRequest.getSourceName()))
+            boolQuery = boolQuery.filter(matchQuery("source", complaintDashBoardRequest.getSourceName()));
 
         return boolQuery;
     }
