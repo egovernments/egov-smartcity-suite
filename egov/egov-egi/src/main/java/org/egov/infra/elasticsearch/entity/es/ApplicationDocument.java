@@ -40,7 +40,13 @@
 
 package org.egov.infra.elasticsearch.entity.es;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import static org.egov.infra.utils.ApplicationConstant.DEFAULT_TIMEZONE;
+import static org.egov.infra.utils.ApplicationConstant.ES_DATE_FORMAT;
+import static org.springframework.data.elasticsearch.annotations.DateFormat.date_optional_time;
+import static org.springframework.data.elasticsearch.annotations.FieldIndex.not_analyzed;
+
+import java.util.Date;
+
 import org.egov.infra.elasticsearch.entity.enums.ClosureStatus;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.DateFormat;
@@ -48,12 +54,7 @@ import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 
-import java.util.Date;
-
-import static org.egov.infra.utils.ApplicationConstant.DEFAULT_TIMEZONE;
-import static org.egov.infra.utils.ApplicationConstant.ES_DATE_FORMAT;
-import static org.springframework.data.elasticsearch.annotations.DateFormat.date_optional_time;
-import static org.springframework.data.elasticsearch.annotations.FieldIndex.not_analyzed;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 @Document(indexName = "applications", type = "applications")
 public class ApplicationDocument {
@@ -131,6 +132,12 @@ public class ApplicationDocument {
 
     @Field(type = FieldType.Integer)
     private Integer isClosed;
+
+    @Field(type = FieldType.Integer)
+    private Integer sla;
+
+    @Field(type = FieldType.Integer)
+    private Integer slaGap;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ES_DATE_FORMAT, timezone = DEFAULT_TIMEZONE)
     @Field(type = FieldType.Date, format = DateFormat.date_optional_time, pattern = ES_DATE_FORMAT)
@@ -339,4 +346,21 @@ public class ApplicationDocument {
     public void setCreatedDate(final Date createdDate) {
         this.createdDate = createdDate;
     }
+
+    public Integer getSla() {
+        return sla;
+    }
+
+    public void setSla(final Integer sla) {
+        this.sla = sla;
+    }
+
+    public Integer getSlaGap() {
+        return slaGap;
+    }
+
+    public void setSlaGap(final Integer slaGap) {
+        this.slaGap = slaGap;
+    }
+
 }

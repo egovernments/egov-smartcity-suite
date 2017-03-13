@@ -149,6 +149,10 @@ public class ApplicationIndex extends AbstractAuditable {
 
     private Integer isClosed;
 
+    private Integer sla;
+
+    private Integer slaGap;
+
     public static Builder builder() {
         return new Builder();
     }
@@ -359,6 +363,22 @@ public class ApplicationIndex extends AbstractAuditable {
         this.cityGrade = cityGrade;
     }
 
+    public Integer getSla() {
+        return sla;
+    }
+
+    public void setSla(final Integer sla) {
+        this.sla = sla;
+    }
+
+    public Integer getSlaGap() {
+        return slaGap;
+    }
+
+    public void setSlaGap(final Integer slaGap) {
+        this.slaGap = slaGap;
+    }
+
     public static final class Builder {
         private String moduleName;
         private String applicationNumber;
@@ -382,6 +402,7 @@ public class ApplicationIndex extends AbstractAuditable {
         private String cityGrade;
         private String districtName;
         private String regionName;
+        private Integer sla = 0;
 
         private Builder() {
         }
@@ -496,6 +517,11 @@ public class ApplicationIndex extends AbstractAuditable {
             return this;
         }
 
+        public Builder withSla(final Integer sla) {
+            this.sla = sla;
+            return this;
+        }
+
         public ApplicationIndex build() {
             final ApplicationIndex applicationIndex = new ApplicationIndex();
             applicationIndex.setModuleName(moduleName);
@@ -521,6 +547,8 @@ public class ApplicationIndex extends AbstractAuditable {
             applicationIndex.setDistrictName(districtName);
             applicationIndex.setRegionName(regionName);
             applicationIndex.setClosed(closed);
+            applicationIndex.setSla(sla);
+            applicationIndex.setSlaGap(sla - elapsedDays);
             return applicationIndex;
         }
     }
