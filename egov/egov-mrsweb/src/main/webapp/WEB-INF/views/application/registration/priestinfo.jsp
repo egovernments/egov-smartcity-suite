@@ -79,7 +79,7 @@
 				<spring:message code="lbl.residence.address"/>
 			</label>
 			<div class="col-sm-3" >
-				<form:textarea path="priest.contactInfo.residenceAddress" id="txt-priest-residenceAddress" type="text" class="form-control low-width" data-pattern="alphanumericwithspecialcharacters" maxlength="256" placeholder="" autocomplete="off" />
+				<form:textarea path="priest.contactInfo.residenceAddress" id="txt-priest-residenceAddress" type="text" class="form-control low-width" data-pattern="alphanumericwithspecialcharacters" maxlength="250" placeholder="" autocomplete="off" />
                 <form:errors path="priest.contactInfo.residenceAddress" cssClass="add-margin error-msg"/>
 			</div>
 		</div>

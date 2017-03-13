@@ -243,7 +243,7 @@
 		<form:textarea path="${applicant}.contactInfo.residenceAddress"
 			id="${applicant}.contactInfo.residenceAddress" type="text"
 			class="form-control low-width patternvalidation"
-			data-pattern="regexp_alphabetspecialcharacters" maxlength="256"
+			data-pattern="regexp_alphabetspecialcharacters" maxlength="250"
 			placeholder="" autocomplete="off" required="required" />
 		<form:errors path="${applicant}.contactInfo.residenceAddress"
 			cssClass="add-margin error-msg" />
@@ -294,7 +294,7 @@
 		<form:textarea path="${applicant}.contactInfo.officeAddress"
 			id="${applicant}.contactInfo.officeAddress" type="text"
 			class="form-control low-width patternvalidation"
-			data-pattern="regexp_alphabetspecialcharacters" maxlength="256"
+			data-pattern="regexp_alphabetspecialcharacters" maxlength="250"
 			placeholder="" autocomplete="off" required="required" />
 		<form:errors path="${applicant}.contactInfo.officeAddress"
 			cssClass="add-margin error-msg" />

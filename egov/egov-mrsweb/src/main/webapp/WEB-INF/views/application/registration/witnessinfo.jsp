@@ -183,7 +183,7 @@
 		<form:textarea path="${witness}.contactInfo.residenceAddress"
 			id="${witness}.contactInfo.residenceAddress" type="text"
 			class="form-control low-width patternvalidation"
-			data-pattern="regexp_alphabetspecialcharacters" maxlength="256"
+			data-pattern="regexp_alphabetspecialcharacters" maxlength="250"
 			placeholder="" autocomplete="off" required="required" />
 		<form:errors path="${witness}.contactInfo.residenceAddress"
 			cssClass="add-margin error-msg" />
@@ -195,7 +195,7 @@
 		<form:textarea path="${witness}.contactInfo.officeAddress"
 			id="${witness}.contactInfo.officeAddress" type="text"
 			class="form-control low-width patternvalidation"
-			data-pattern="regexp_alphabetspecialcharacters" maxlength="256"
+			data-pattern="regexp_alphabetspecialcharacters" maxlength="250"
 			placeholder="" autocomplete="off" required="required" />
 		<form:errors path="${witness}.contactInfo.officeAddress"
 			cssClass="add-margin error-msg" />
