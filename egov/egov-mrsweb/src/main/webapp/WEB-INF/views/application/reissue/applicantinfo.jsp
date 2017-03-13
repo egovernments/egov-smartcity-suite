@@ -100,7 +100,7 @@
 			<spring:message code="lbl.residence.address"/><span class="mandatory"></span>
 		</div>
 		<div class="col-sm-3">
-			<form:textarea path="${applicant}.contactInfo.residenceAddress" id="txt-residenceAddress" type="text" class="form-control low-width patternvalidation" data-pattern="regexp_alphabetspecialcharacters" maxlength="250 placeholder="" autocomplete="off" required="required"/>
+			<form:textarea path="${applicant}.contactInfo.residenceAddress" id="txt-residenceAddress" type="text" class="form-control low-width patternvalidation" data-pattern="regexp_alphabetspecialcharacters" maxlength="250" placeholder="" autocomplete="off" required="required"/>
                   <form:errors path="${applicant}.contactInfo.residenceAddress" cssClass="add-margin error-msg"/>
 		</div>
 		<div class="col-sm-2 control-label">
