@@ -63,6 +63,7 @@ import javax.validation.ValidationException;
 
 import org.egov.commons.EgModules;
 import org.egov.commons.Installment;
+import org.egov.commons.entity.Source;
 import org.egov.demand.model.EgDemand;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.AssignmentAdaptor;
@@ -77,6 +78,7 @@ import org.egov.infra.elasticsearch.entity.enums.ClosureStatus;
 import org.egov.infra.elasticsearch.service.ApplicationIndexService;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
@@ -892,7 +894,9 @@ public class WaterConnectionDetailsService {
                 applicationIndex.setApproved(ApprovalStatus.INPROGRESS);
                 applicationIndex.setClosed(ClosureStatus.NO);
                 applicationIndex.setStatus(waterConnectionDetails.getStatus().getDescription());
-                if (sourceChannel == null)
+                if (waterTaxUtils.isCSCoperator(waterConnectionDetails.getCreatedBy()) && UserType.BUSINESS.equals(waterConnectionDetails.getCreatedBy().getType()))
+                    applicationIndex.setChannel(Source.CSC.toString());
+                else if (sourceChannel == null)
                     applicationIndex.setChannel(WaterTaxConstants.SYSTEM);
                 else
                     applicationIndex.setChannel(sourceChannel);
