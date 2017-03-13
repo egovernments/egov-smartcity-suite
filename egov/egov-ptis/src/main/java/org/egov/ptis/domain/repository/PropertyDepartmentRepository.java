@@ -55,5 +55,8 @@ public interface PropertyDepartmentRepository extends JpaRepository<PropertyDepa
 
     @Query(value = "SELECT pds from PropertyDepartment pds WHERE pds.category = 'CENTRAL' order by name")
     List<PropertyDepartment> getAllCentralDepartments();
+    
+    @Query(value = "SELECT pds from PropertyDepartment pds WHERE pds.category = 'PRIVATE' order by name")
+    List<PropertyDepartment> getAllPrivateDepartments();
 
 }

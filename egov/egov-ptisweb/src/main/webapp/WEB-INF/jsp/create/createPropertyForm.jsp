@@ -83,7 +83,10 @@
 		   </div>
 		   		
 		</td>
-		<td class="greybox" width="25%"><s:text name="label.property.department"/> :</td>
+	</tr>
+	<tr>
+	<td class="greybox" width="5%">&nbsp;</td>
+	<td class="greybox" width="25%"><s:text name="label.property.department"/> :</td>
 		<egov:ajaxdropdown id="propertyDepartmentId" fields="['Value','Text']" dropdownId="propertyDepartmentId"
 			url="/public/common/ajaxcommon-propdepartment-byproptype.action" />
 		<td class="greybox">

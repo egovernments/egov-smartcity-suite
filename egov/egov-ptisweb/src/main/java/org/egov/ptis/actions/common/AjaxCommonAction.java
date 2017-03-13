@@ -546,6 +546,8 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
                 propertyDepartmentList = propertyDepartmentRepository.getAllStateDepartments();
             else if (propTypeMstr.getCode().startsWith("CENTRAL_GOVT"))
                 propertyDepartmentList = propertyDepartmentRepository.getAllCentralDepartments();
+            else if (propTypeMstr.getCode().equals(PropertyTaxConstants.OWNERSHIP_TYPE_PRIVATE))
+                setPropertyDepartmentList(propertyDepartmentRepository.getAllPrivateDepartments());
         }
         setPropertyDepartmentList(propertyDepartmentList);
         return "propDepartment";

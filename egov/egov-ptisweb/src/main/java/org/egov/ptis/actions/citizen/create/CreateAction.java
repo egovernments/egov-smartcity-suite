@@ -385,6 +385,8 @@ public class CreateAction extends PropertyTaxBaseAction {
                 setPropertyDepartmentList(propertyDepartmentRepository.getAllStateDepartments());
             else if (propTypeMstr.getCode().startsWith("CENTRAL_GOVT"))
                 setPropertyDepartmentList(propertyDepartmentRepository.getAllCentralDepartments());
+            else if (propTypeMstr.getCode().equals(PropertyTaxConstants.OWNERSHIP_TYPE_PRIVATE))
+                setPropertyDepartmentList(propertyDepartmentRepository.getAllPrivateDepartments());
         }
         setVacantLandPlotAreaList(vacantLandPlotAreaRepository.findAll());
         setLayoutApprovalAuthorityList(layoutApprovalAuthorityRepository.findAll());
