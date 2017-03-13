@@ -48,7 +48,6 @@ import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.eis.entity.Assignment;
 import org.egov.infra.reporting.engine.ReportService;
-import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.web.struts.annotation.ValidationErrorPageExt;
 import org.egov.tl.entity.TradeLicense;
@@ -62,6 +61,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.io.IOException;
 import java.util.List;
 
+import static org.egov.tl.utils.Constants.CSCOPERATOR;
+
 @ParentPackage("egov")
 @Results({@Result(name = "report", location = "viewTradeLicense-report.jsp"),
         @Result(name = "message", location = "viewTradeLicense-message.jsp")})
@@ -69,7 +70,6 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     private static final long serialVersionUID = 1L;
 
     protected TradeLicense tradeLicense = new TradeLicense();
-    protected String reportId;
     private String applicationNo;
     private Long licenseid;
 
@@ -77,8 +77,6 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     private ReportService reportService;
     @Autowired
     private TradeLicenseService tradeLicenseService;
-    @Autowired
-    private ReportViewerUtil reportViewerUtil;
 
     @Override
     public TradeLicense getModel() {
@@ -116,11 +114,10 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     }
 
     private void setLicenseIdIfServletRedirect() {
-        if (tradeLicense.getId() == null)
-            if (getSession().get("model.id") != null) {
-                tradeLicense.setId(Long.valueOf((Long) getSession().get("model.id")));
-                getSession().remove("model.id");
-            }
+        if (tradeLicense.getId() == null && getSession().get("model.id") != null) {
+            tradeLicense.setId(Long.valueOf((Long) getSession().get("model.id")));
+            getSession().remove("model.id");
+        }
     }
 
 
@@ -209,7 +206,9 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
         if (getLicenseid() != null) {
             tradeLicense = tradeLicenseService.getLicenseById(getLicenseid());
             tradeLicenseService.cancelLicenseWorkflow(tradeLicense, workflowBean);
-            if (workflowBean.getWorkFlowAction().contains(Constants.BUTTONFORWARD)) {
+            if (hasCSCOperatorRole())
+                addActionMessage(this.getText("license.closure.initiated"));
+            else if (workflowBean.getWorkFlowAction().contains(Constants.BUTTONFORWARD)) {
                 List<Assignment> assignments = assignmentService.getAssignmentsForPosition(workflowBean.getApproverPositionId());
                 String nextDesgn = !assignments.isEmpty() ? assignments.get(0).getDesignation().getName() : "";
                 final String userName = !assignments.isEmpty() ? assignments.get(0).getEmployee().getName() : "";
@@ -220,8 +219,6 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
                     final String userName = !assignments.isEmpty() ? assignments.get(0).getEmployee().getName() : "";
                     addActionMessage(this.getText("license.closure.rejectedfirst") + (" " + license().getState().getInitiatorPosition().getDeptDesig().getDesignation().getName() + " - ") + " " + userName);
                 } else addActionMessage(this.getText("license.closure.rejected") + " " + license().getLicenseNumber());
-
-
             } else
                 addActionMessage(this.getText("license.closure.msg") + license().getLicenseNumber());
         }
@@ -241,5 +238,8 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
         this.licenseid = licenseid;
     }
 
-
+    public Boolean hasCSCOperatorRole() {
+        final String currentUserRoles = securityUtils.getCurrentUser().getRoles().toString();
+        return currentUserRoles.contains(CSCOPERATOR) ? true : false;
+    }
 }

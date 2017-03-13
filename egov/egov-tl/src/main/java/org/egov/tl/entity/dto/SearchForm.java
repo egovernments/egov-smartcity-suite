@@ -98,15 +98,14 @@ public class SearchForm {
     private void addActions(final License license, final String userRoles) {
         final List<String> licenseActions = new ArrayList<>();
         licenseActions.add("View Trade");
+        if (license.isStatusActive())
+            licenseActions.add("Closure");
         if (!userRoles.contains(CSCOPERATOR)) {
             licenseActions.add("Generate Demand Notice");
             if (license.isLegacyWithNoState())
                 licenseActions.add("Modify Legacy License");
-            if (license.getStatus() != null) {
+            if (license.getStatus() != null)
                 addRoleSpecificActions(license, userRoles, licenseActions);
-                if (license.isStatusActive())
-                    licenseActions.add("Closure");
-            }
         } else if (license.isReadyForRenewal()) {
             licenseActions.add("Renew License");
         }

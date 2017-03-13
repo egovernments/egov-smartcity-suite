@@ -96,8 +96,8 @@ function populateApprover() {
 	
 </script>
 <s:if test="%{getNextAction()!='END'}">
-<s:if test="%{!'Closed'.equalsIgnoreCase(state.value)}">
-	<s:hidden id="currentState" name="currentState" value="%{state.value}"/>
+<s:if test="%{!'Closed'.equalsIgnoreCase(state.value) || !'END'.equalsIgnoreCase(state.value)}">
+    <s:hidden id="currentState" name="currentState" value="%{state.value}"/>
 </s:if>
 <s:else>
 	<s:hidden id="currentState" name="currentState" value=""/>
@@ -109,7 +109,7 @@ function populateApprover() {
 <s:hidden id="pendingActions" name="pendingActions" value="%{pendingActions}"/>
 <s:hidden id="approverName" name="approverName" />
 
-		<s:if test="%{getNextAction()!='Second level collection pending'}">
+    <s:if test="%{getNextAction()!='Second level collection pending'}">
 		<div class="panel-heading custom_form_panel_heading">
 		    <div class="panel-title">
 				<s:text name="title.approval.information"/>
@@ -143,7 +143,7 @@ function populateApprover() {
              </div>
          </div>
          </div>
-</s:if>
+    </s:if>
 </s:if>
 <div id="workflowCommentsDiv" align="center">
          <div class="form-group">
