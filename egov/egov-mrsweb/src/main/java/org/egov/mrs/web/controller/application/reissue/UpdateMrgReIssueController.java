@@ -42,6 +42,7 @@ package org.egov.mrs.web.controller.application.reissue;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -57,6 +58,7 @@ import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.mrs.application.MarriageConstants;
 import org.egov.mrs.application.MarriageUtils;
+import org.egov.mrs.application.service.MarriageCertificateService;
 import org.egov.mrs.application.service.workflow.RegistrationWorkflowService;
 import org.egov.mrs.domain.entity.MarriageCertificate;
 import org.egov.mrs.domain.entity.ReIssue;
@@ -108,6 +110,8 @@ public class UpdateMrgReIssueController extends GenericWorkFlowController {
     private MarriageUtils marriageUtils;
     @Autowired
     private RegistrationWorkflowService registrationWorkflowService;
+    @Autowired
+    private MarriageCertificateService marriageCertificateService;
 
     private static final Logger LOGGER = Logger.getLogger(UpdateMrgReIssueController.class);
 
@@ -211,8 +215,18 @@ public class UpdateMrgReIssueController extends GenericWorkFlowController {
                 }
             } else if (workFlowAction.equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_DIGISIGN)) {
                 // Generates certificate, sends for digital sign and calls callback url for workflow transition.
-                final MarriageCertificate marriageCertificate = reIssueService
-                        .generateReIssueCertificate(reIssue, workflowContainer, request);
+                MarriageCertificate marriageCertificate = null;
+                final List<MarriageCertificate> certificateReIssued = marriageCertificateService
+                        .getGeneratedReIssueCertificate(reIssue);
+                if (certificateReIssued != null && !certificateReIssued.isEmpty()) {
+                    for (final MarriageCertificate certificateobj : certificateReIssued)
+                        marriageCertificate = certificateobj;
+
+                } else {
+                    marriageCertificate = reIssueService
+                            .generateReIssueCertificate(reIssue, workflowContainer, request);
+                }
+
                 model.addAttribute("fileStoreIds", marriageCertificate.getFileStore().getFileStoreId());
                 model.addAttribute("ulbCode", ApplicationThreadLocals.getCityCode());
                 // Adding applicationNo and its filestoreid to be digitally signed to session

@@ -89,6 +89,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class MarriageCertificateService {
 
+    private static final String RE_ISSUE_DOT_REGISTRATION = "reIssue.registration";
+    private static final String REGISTRATION = "registration";
+    private static final String CERTIFICATE_DOT_REGISTRATION = "certificate.registration";
+    private static final String REGISTRATION_DOT_REGISTRATION_NO = "registration.registrationNo";
+    private static final String CERTIFICATE = "certificate";
     private static final String CITY_CODE = "cityCode";
     private static final String CERTIFICATE_DATE = "certificateDate";
     private static final String CERTIFICATE_TEMPLATE_REGISTRATION = "registrationcertificate";
@@ -145,12 +150,12 @@ public class MarriageCertificateService {
         reportParams.put(CERTIFICATE_DATE, new Date());
         reportParams.put("logoPath", logopath);
         reportParams.put("registrationcenter", registration.getMarriageRegistrationUnit().getName());
-      //  reportParams.put("registrarName", registration.getState().getSenderName().split("::")[1]);
+        // reportParams.put("registrarName", registration.getState().getSenderName().split("::")[1]);
         if (registration.getRegistrarName() != null && !"".equals(registration.getRegistrarName()))
             reportParams.put("registrarName", registration.getRegistrarName());
         else
-            reportParams.put("registrarName", registration.getState().getSenderName().split("::")[1]);     
-        
+            reportParams.put("registrarName", registration.getState().getSenderName().split("::")[1]);
+
         reportParams.put("husbandParentName", registration.getHusband().getParentsName());
         reportParams.put("wifeParentName", registration.getWife().getParentsName());
         reportParams.put("applicationdateday", calForApplnDate.get(Calendar.DAY_OF_MONTH)
@@ -314,12 +319,12 @@ public class MarriageCertificateService {
         reportParams.put(CERTIFICATE_DATE, new Date());
         reportParams.put("logoPath", logopath);
         reportParams.put("registrationcenter", reIssue.getMarriageRegistrationUnit().getName());
-        
+
         if (reIssue.getRegistration().getRegistrarName() != null && !"".equals(reIssue.getRegistration().getRegistrarName()))
             reportParams.put("registrarName", reIssue.getRegistration().getRegistrarName());
         else
             reportParams.put("registrarName", reIssue.getState().getSenderName().split("::")[1]);
- 
+
         reportParams.put("husbandParentName", reIssue.getRegistration().getHusband().getParentsName());
         reportParams.put("wifeParentName", reIssue.getRegistration().getWife().getParentsName());
         reportParams.put("applicationdateday", calForApplnDate.get(Calendar.DAY_OF_MONTH)
@@ -344,9 +349,9 @@ public class MarriageCertificateService {
         if (reIssue.getRegistration().getMarriagePhotoFileStore() != null)
             marriagePhoto = FileUtils.readFileToByteArray(fileStoreService
                     .fetch(reIssue.getRegistration().getMarriagePhotoFileStore(), MarriageConstants.FILESTORE_MODULECODE));
-        if (template.equalsIgnoreCase(CERTIFICATE_TEMPLATE_REISSUE)){
+        if (template.equalsIgnoreCase(CERTIFICATE_TEMPLATE_REISSUE)) {
             reportParams.put("applicationNumber", reIssue.getApplicationNo());
-            reportParams.put("zoneName",reIssue.getZone().getName());
+            reportParams.put("zoneName", reIssue.getZone().getName());
             reportInput = new ReportRequest(template,
                     new RegistrationCertificate(reIssue.getRegistration(), securityUtils.getCurrentUser(), husbandPhoto,
                             wifePhoto, marriagePhoto),
@@ -389,20 +394,20 @@ public class MarriageCertificateService {
 
     @SuppressWarnings("unchecked")
     public List<MarriageCertificate> searchMarriageCertificates(final MarriageCertificate certificate) {
-        final Criteria criteria = getCurrentSession().createCriteria(MarriageCertificate.class, "certificate");
-        List<MarriageCertificate> certificateResultList = new ArrayList<>();
+        final Criteria criteria = getCurrentSession().createCriteria(MarriageCertificate.class, CERTIFICATE);
+        final List<MarriageCertificate> certificateResultList = new ArrayList<>();
         if (certificate.getRegistration().getRegistrationNo() != null) {
-            criteria.createAlias("certificate.registration", "registration");
+            criteria.createAlias(CERTIFICATE_DOT_REGISTRATION, REGISTRATION);
             criteria.add(
-                    Restrictions.eq("registration.registrationNo", certificate.getRegistration().getRegistrationNo().trim()));
+                    Restrictions.eq(REGISTRATION_DOT_REGISTRATION_NO, certificate.getRegistration().getRegistrationNo().trim()));
         }
         buildSearchCriteriaForMrgCertificate(certificate, criteria);
         certificateResultList.addAll(criteria.list());
-        // To fetch reissue certificate details along with registration certificate details when searching 
+        // To fetch reissue certificate details along with registration certificate details when searching
         // using registration number
         if (certificate.getRegistration().getRegistrationNo() != null) {
             final Criteria criteriaForReissue = getCurrentSession().createCriteria(MarriageCertificate.class, "cert");
-            criteriaForReissue.createAlias("cert.reIssue", "reIssue").createAlias("reIssue.registration", "reg");
+            criteriaForReissue.createAlias("cert.reIssue", "reIssue").createAlias(RE_ISSUE_DOT_REGISTRATION, "reg");
             criteriaForReissue
                     .add(Restrictions.eq("reg.registrationNo", certificate.getRegistration().getRegistrationNo().trim()));
             buildSearchCriteriaForMrgCertificate(certificate, criteriaForReissue);
@@ -430,5 +435,27 @@ public class MarriageCertificateService {
     public MarriageCertificate findById(final long id) {
         return marriageCertificateRepository.findOne(id);
     }
-    
+
+    @SuppressWarnings("unchecked")
+    public List<MarriageCertificate> getGeneratedRegCertificate(final MarriageRegistration registration) {
+        final Criteria criteriaReg = getCurrentSession().createCriteria(MarriageCertificate.class, CERTIFICATE);
+        if (registration != null && registration.getRegistrationNo() != null) {
+            criteriaReg.createAlias(CERTIFICATE_DOT_REGISTRATION, REGISTRATION);
+            criteriaReg.add(
+                    Restrictions.eq(REGISTRATION_DOT_REGISTRATION_NO, registration.getRegistrationNo().trim()));
+        }
+        return criteriaReg.list();
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<MarriageCertificate> getGeneratedReIssueCertificate(final ReIssue reIssue) {
+        final Criteria criteriaReissue = getCurrentSession().createCriteria(MarriageCertificate.class, CERTIFICATE);
+        if (reIssue != null && reIssue.getRegistration() != null && reIssue.getRegistration().getRegistrationNo() != null) {
+            criteriaReissue.createAlias("certificate.reIssue", "reIssue").createAlias(RE_ISSUE_DOT_REGISTRATION, "reg");
+            criteriaReissue.add(
+                    Restrictions.eq("reg.registrationNo", reIssue.getRegistration().getRegistrationNo().trim()));
+        }
+        return criteriaReissue.list();
+    }
+
 }
