@@ -857,7 +857,7 @@ public class ApplicationDocumentService {
 
         final Aggregations aggr = elasticsearchTemplate.query(searchQueryColl,
                 response -> response.getAggregations());
-        final Map<String, Long> aggregationResults = new HashMap<>();
+        final Map<String, Long> aggregationResults = new LinkedHashMap<>();
         final StringTerms serviceAggr = aggr.get("by_service1");
         ValueCount valueCount;
         for (final Terms.Bucket entry : serviceAggr.getBuckets()) {
