@@ -81,4 +81,10 @@ public class PortalDashboardController {
     public ApplicationIndexResponse getServiceWiseDetails(ApplicationIndexRequest applicationIndexRequest) {
         return applicationDocumentService.findServiceWiseDetails(applicationIndexRequest);
     }
+    
+    @RequestMapping(value = "/sourceWiseApplicationDetails", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ApplicationIndexResponse getSourceWiseApplicationDetails(ApplicationIndexRequest applicationIndexRequest) {
+        return applicationDocumentService.findSourceWiseApplicationDetails(applicationIndexRequest);
+    }
 }

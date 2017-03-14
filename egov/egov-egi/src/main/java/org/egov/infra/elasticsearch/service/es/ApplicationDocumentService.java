@@ -55,9 +55,10 @@ import org.egov.infra.elasticsearch.entity.ApplicationIndex;
 import org.egov.infra.elasticsearch.entity.bean.ApplicationDetails;
 import org.egov.infra.elasticsearch.entity.bean.ApplicationIndexRequest;
 import org.egov.infra.elasticsearch.entity.bean.ApplicationIndexResponse;
+import org.egov.infra.elasticsearch.entity.bean.ServiceDetails;
 import org.egov.infra.elasticsearch.entity.bean.ServiceGroupDetails;
 import org.egov.infra.elasticsearch.entity.bean.ServiceGroupTrend;
-import org.egov.infra.elasticsearch.entity.bean.ServiceDetails;
+import org.egov.infra.elasticsearch.entity.bean.SourceTrend;
 import org.egov.infra.elasticsearch.entity.bean.Trend;
 import org.egov.infra.elasticsearch.entity.es.ApplicationDocument;
 import org.egov.infra.elasticsearch.repository.es.ApplicationDocumentRepository;
@@ -314,21 +315,160 @@ public class ApplicationDocumentService {
         Histogram aggr = aggregation.get(DATE_AGGR);
         prepareMonthwiseServiceGroupDetails(monthValuesMap, receivedApplications, aggr);
 
-        /*
-         * Trend trend; if (StringUtils.isBlank(applicationIndexRequest.getFromDate()) &&
-         * StringUtils.isBlank(applicationIndexRequest.getToDate())) { for (ServiceGroupTrend trend : receivedApplications) {
-         * List<Trend> trends = new ArrayList<>(); for (Map.Entry<Integer, String> entry :
-         * DateUtils.getAllFinancialYearMonthsWithFullNames().entrySet()) { trend = new Trend(); trend.setMonth(entry.getValue());
-         * trend.setTotalReceived( receivedApplications.get(serviceGroup) == null ||
-         * receivedApplications.get(serviceGroup).get(entry.getKey()) == null ? 0 :
-         * receivedApplications.get(serviceGroup).get(entry.getKey())); trends.add(trend); } serviceTrends.put(serviceGroup,
-         * trends); } } else { for (Entry<String, Map<String, Long>> applicationEntry : receivedApplications.entrySet()) { String
-         * serviceGroup = applicationEntry.getKey(); List<Trend> trends = new ArrayList<>(); for (Entry<String, Long> entry :
-         * applicationEntry.getValue().entrySet()) { trend = new Trend(); trend.setMonth(entry.getKey()); trend.setTotalReceived(
-         * receivedApplications.get(serviceGroup) == null || receivedApplications.get(serviceGroup).get(entry.getKey()) == null ?
-         * 0 : receivedApplications.get(serviceGroup).get(entry.getKey())); trends.add(trend); } serviceTrends.put(serviceGroup,
-         * trends); } }
-         */ return receivedApplications;
+        return receivedApplications;
+    }
+
+    /**
+     * Provides Source wise applications details
+     * 
+     * @param applicationIndexRequest
+     * @return ApplicationIndexResponse
+     */
+    public ApplicationIndexResponse findSourceWiseApplicationDetails(ApplicationIndexRequest applicationIndexRequest) {
+        ApplicationIndexResponse applicationIndexResponse = new ApplicationIndexResponse();
+        Aggregations aggregation;
+        ValueCount valueCount;
+        Date fromDate = null;
+        Date toDate = null;
+        if (StringUtils.isNotBlank(applicationIndexRequest.getFromDate())
+                && StringUtils.isNotBlank(applicationIndexRequest.getToDate())) {
+            fromDate = DateUtils.getDate(applicationIndexRequest.getFromDate(), DATE_FORMAT_YYYYMMDD);
+            toDate = DateUtils.addDays(DateUtils.getDate(applicationIndexRequest.getToDate(), DATE_FORMAT_YYYYMMDD),
+                    1);
+        }
+        aggregation = getDocumentCounts(applicationIndexRequest, fromDate, toDate, StringUtils.EMPTY, RECEIVED, StringUtils.EMPTY,
+                0);
+        if (aggregation != null) {
+            valueCount = aggregation.get(TOTAL_COUNT);
+            applicationIndexResponse.setTotalReceived(valueCount != null ? valueCount.getValue() : 0);
+        }
+        aggregation = getDocumentCounts(applicationIndexRequest, fromDate, toDate, StringUtils.EMPTY, MEESEVA_TOTAL,
+                StringUtils.EMPTY,
+                0);
+        if (aggregation != null) {
+            valueCount = aggregation.get(TOTAL_COUNT);
+            applicationIndexResponse.setTotalMeeseva(valueCount != null ? valueCount.getValue() : 0);
+        }
+        aggregation = getDocumentCounts(applicationIndexRequest, fromDate, toDate, StringUtils.EMPTY, CSC_TOTAL,
+                StringUtils.EMPTY,
+                0);
+        if (aggregation != null) {
+            valueCount = aggregation.get(TOTAL_COUNT);
+            applicationIndexResponse.setTotalCsc(valueCount != null ? valueCount.getValue() : 0);
+        }
+        aggregation = getDocumentCounts(applicationIndexRequest, fromDate, toDate, StringUtils.EMPTY, ULB_TOTAL,
+                StringUtils.EMPTY,
+                0);
+        if (aggregation != null) {
+            valueCount = aggregation.get(TOTAL_COUNT);
+            applicationIndexResponse.setTotalUlb(valueCount != null ? valueCount.getValue() : 0);
+        }
+        aggregation = getDocumentCounts(applicationIndexRequest, fromDate, toDate, StringUtils.EMPTY, ONLINE_TOTAL,
+                StringUtils.EMPTY,
+                0);
+        if (aggregation != null) {
+            valueCount = aggregation.get(TOTAL_COUNT);
+            applicationIndexResponse.setTotalOnline(valueCount != null ? valueCount.getValue() : 0);
+        }
+        aggregation = getDocumentCounts(applicationIndexRequest, fromDate, toDate, StringUtils.EMPTY, OTHERS_TOTAL,
+                StringUtils.EMPTY,
+                0);
+        if (aggregation != null) {
+            valueCount = aggregation.get(TOTAL_COUNT);
+            applicationIndexResponse.setTotalOthers(valueCount != null ? valueCount.getValue() : 0);
+        }
+
+        List<SourceTrend> sourceTrend = getMonthwiseSourceApplicationTrends(applicationIndexRequest);
+        applicationIndexResponse.setSourceTrend(sourceTrend);
+        return applicationIndexResponse;
+    }
+
+    /**
+     * Provides month-wise source application trends - received/open
+     * @param applicationIndexRequest
+     * @return list
+     */
+    public List<SourceTrend> getMonthwiseSourceApplicationTrends(
+            ApplicationIndexRequest applicationIndexRequest) {
+        Date fromDate = null;
+        Date toDate = null;
+        Map<Integer, String> monthValuesMap = DateUtils.getAllMonthsWithFullNames();
+        List<SourceTrend> receivedApplications = new ArrayList<>();
+        Aggregations aggregation;
+
+        if (StringUtils.isNotBlank(applicationIndexRequest.getFromDate())
+                && StringUtils.isNotBlank(applicationIndexRequest.getToDate())) {
+            fromDate = DateUtils.getDate(applicationIndexRequest.getFromDate(), DATE_FORMAT_YYYYMMDD);
+            toDate = DateUtils.addDays(DateUtils.getDate(applicationIndexRequest.getToDate(), DATE_FORMAT_YYYYMMDD),
+                    1);
+        }
+
+        aggregation = getMonthwiseSourceApplications(applicationIndexRequest, fromDate,
+                toDate, RECEIVED);
+
+        Histogram aggr = aggregation.get(DATE_AGGR);
+        prepareMonthwiseSourceDetails(monthValuesMap, receivedApplications, aggr);
+
+        return receivedApplications;
+    }
+
+    private void prepareMonthwiseSourceDetails(Map<Integer, String> monthValuesMap,
+            List<SourceTrend> applications,
+            Histogram aggr) {
+        String[] dateArr;
+        Integer month;
+        String monthName;
+        for (Histogram.Bucket entry : aggr.getBuckets()) {
+            SourceTrend sourceTrend = new SourceTrend();
+            dateArr = entry.getKeyAsString().split("T");
+            month = Integer.valueOf(dateArr[0].split("-", 3)[1]);
+            monthName = monthValuesMap.get(month);
+            StringTerms termAggr = entry.getAggregations().get(CHANNEL);
+            for (Bucket term : termAggr.getBuckets()) {
+                populateTotal(sourceTrend, term, term.getKeyAsString());
+            }
+            sourceTrend.setMonth(monthName);
+            applications.add(sourceTrend);
+        }
+    }
+
+    private void populateTotal(final SourceTrend sourceTrend, final Bucket term, final String channel) {
+        final ValueCount countAggr = term.getAggregations().get(TOTAL_COUNT);
+        if (SOURCE_CSC.equals(channel))
+            sourceTrend.setTotalCsc(countAggr.getValue());
+        else if (SOURCE_MEESEVA.equals(channel))
+            sourceTrend.setTotalMeeseva(countAggr.getValue());
+        else if (SOURCE_SYSTEM.equals(channel))
+            sourceTrend.setTotalUlb(countAggr.getValue());
+        else if (SOURCE_ONLINE.equals(channel))
+            sourceTrend.setTotalOnline(countAggr.getValue());
+        else
+            sourceTrend.setTotalOthers(countAggr.getValue());
+    }
+
+    @SuppressWarnings("rawtypes")
+    private Aggregations getMonthwiseSourceApplications(ApplicationIndexRequest applicationIndexRequest,
+            Date fromDate, Date toDate, String status) {
+
+        BoolQueryBuilder boolQuery = prepareWhereClause(applicationIndexRequest, fromDate, toDate);
+
+        if (CLOSED.equalsIgnoreCase(status))
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery(IS_CLOSED, 1));
+        else if (OPEN.equalsIgnoreCase(status))
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery(IS_CLOSED, 0));
+
+        AggregationBuilder aggregationBuilder = AggregationBuilders.dateHistogram(DATE_AGGR).field(APPLICATION_DATE)
+                .interval(DateHistogramInterval.MONTH);
+
+        aggregationBuilder.subAggregation(AggregationBuilders.terms(CHANNEL).field(CHANNEL)
+                .subAggregation(AggregationBuilders.count(TOTAL_COUNT).field(APPLICATION_NUMBER)));
+
+        SearchQuery searchQueryColl = new NativeSearchQueryBuilder().withIndices(APPLICATIONS_INDEX)
+                .withQuery(boolQuery)
+                .addAggregation(aggregationBuilder).build();
+
+        return elasticsearchTemplate.query(searchQueryColl,
+                response -> response.getAggregations());
     }
 
     private void prepareMonthwiseServiceGroupDetails(Map<Integer, String> monthValuesMap,

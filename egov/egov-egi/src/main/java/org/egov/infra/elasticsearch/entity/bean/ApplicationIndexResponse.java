@@ -53,11 +53,17 @@ public class ApplicationIndexResponse {
     private long totalWithinSLA = 0;
     private long openBeyondSLA = 0;
     private long closedBeyondSLA = 0;
+    private long totalCsc = 0;
+    private long totalMeeseva = 0;
+    private long totalOnline = 0;
+    private long totalUlb = 0;
+    private long totalOthers = 0;
     private List<Trend> trend;
     private List<ApplicationDetails> details;
     private List<ServiceGroupDetails> serviceGroupDetails;
     private List<ServiceGroupTrend> serviceGroupTrend;
     private List<ServiceDetails> serviceDetails;
+    private List<SourceTrend> sourceTrend;
 
     public long getTotalReceived() {
         return totalReceived;
@@ -135,7 +141,7 @@ public class ApplicationIndexResponse {
         return totalBeyondSLA;
     }
 
-    public void setTotalBeyondSLA(long totalBeyondSLA) {
+    public void setTotalBeyondSLA(final long totalBeyondSLA) {
         this.totalBeyondSLA = totalBeyondSLA;
     }
 
@@ -143,7 +149,7 @@ public class ApplicationIndexResponse {
         return totalWithinSLA;
     }
 
-    public void setTotalWithinSLA(long totalWithinSLA) {
+    public void setTotalWithinSLA(final long totalWithinSLA) {
         this.totalWithinSLA = totalWithinSLA;
     }
 
@@ -151,7 +157,7 @@ public class ApplicationIndexResponse {
         return openBeyondSLA;
     }
 
-    public void setOpenBeyondSLA(long openBeyondSLA) {
+    public void setOpenBeyondSLA(final long openBeyondSLA) {
         this.openBeyondSLA = openBeyondSLA;
     }
 
@@ -159,7 +165,7 @@ public class ApplicationIndexResponse {
         return closedBeyondSLA;
     }
 
-    public void setClosedBeyondSLA(long closedBeyondSLA) {
+    public void setClosedBeyondSLA(final long closedBeyondSLA) {
         this.closedBeyondSLA = closedBeyondSLA;
     }
 
@@ -167,8 +173,56 @@ public class ApplicationIndexResponse {
         return serviceDetails;
     }
 
-    public void setServiceDetails(List<ServiceDetails> serviceDetails) {
+    public void setServiceDetails(final List<ServiceDetails> serviceDetails) {
         this.serviceDetails = serviceDetails;
+    }
+
+    public long getTotalCsc() {
+        return totalCsc;
+    }
+
+    public void setTotalCsc(final long totalCsc) {
+        this.totalCsc = totalCsc;
+    }
+
+    public long getTotalMeeseva() {
+        return totalMeeseva;
+    }
+
+    public void setTotalMeeseva(final long totalMeeseva) {
+        this.totalMeeseva = totalMeeseva;
+    }
+
+    public long getTotalOnline() {
+        return totalOnline;
+    }
+
+    public void setTotalOnline(final long totalOnline) {
+        this.totalOnline = totalOnline;
+    }
+
+    public long getTotalUlb() {
+        return totalUlb;
+    }
+
+    public void setTotalUlb(final long totalUlb) {
+        this.totalUlb = totalUlb;
+    }
+
+    public long getTotalOthers() {
+        return totalOthers;
+    }
+
+    public void setTotalOthers(final long totalOthers) {
+        this.totalOthers = totalOthers;
+    }
+
+    public List<SourceTrend> getSourceTrend() {
+        return sourceTrend;
+    }
+
+    public void setSourceTrend(final List<SourceTrend> sourceTrend) {
+        this.sourceTrend = sourceTrend;
     }
 
 }
