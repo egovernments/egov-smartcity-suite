@@ -62,7 +62,17 @@ public class PortalDashboardController {
      */
     @RequestMapping(value = "/applicationdetails", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ApplicationIndexResponse getApplicationDetails(ApplicationIndexRequest applicationIndexRequest) {
+    public ApplicationIndexResponse getApplicationDetails(final ApplicationIndexRequest applicationIndexRequest) {
         return applicationDocumentService.findAllApplications(applicationIndexRequest);
+    }
+
+    /**
+     * Provides service group wise application index details
+     * @return response JSON
+     */
+    @RequestMapping(value = "/serviceGroupWiseApplicationdetails", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ApplicationIndexResponse getServiceGroupWiseApplicationDetails(final ApplicationIndexRequest applicationIndexRequest) {
+        return applicationDocumentService.findServiceGroupWiseApplications(applicationIndexRequest);
     }
 }

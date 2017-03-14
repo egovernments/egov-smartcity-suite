@@ -51,12 +51,14 @@ public class ApplicationIndexResponse {
     private long todaysClosed = 0;
     private List<Trend> trend;
     private List<ApplicationDetails> details;
+    private List<ServiceGroupDetails> serviceGroupDetails;
+    private List<ServiceGroupTrend> serviceGroupTrend;
 
     public long getTotalReceived() {
         return totalReceived;
     }
 
-    public void setTotalReceived(long totalReceived) {
+    public void setTotalReceived(final long totalReceived) {
         this.totalReceived = totalReceived;
     }
 
@@ -64,7 +66,7 @@ public class ApplicationIndexResponse {
         return totalClosed;
     }
 
-    public void setTotalClosed(long totalClosed) {
+    public void setTotalClosed(final long totalClosed) {
         this.totalClosed = totalClosed;
     }
 
@@ -72,7 +74,7 @@ public class ApplicationIndexResponse {
         return totalOpen;
     }
 
-    public void setTotalOpen(long totalOpen) {
+    public void setTotalOpen(final long totalOpen) {
         this.totalOpen = totalOpen;
     }
 
@@ -80,7 +82,7 @@ public class ApplicationIndexResponse {
         return todaysReceived;
     }
 
-    public void setTodaysReceived(long todaysReceived) {
+    public void setTodaysReceived(final long todaysReceived) {
         this.todaysReceived = todaysReceived;
     }
 
@@ -88,7 +90,7 @@ public class ApplicationIndexResponse {
         return todaysClosed;
     }
 
-    public void setTodaysClosed(long todaysClosed) {
+    public void setTodaysClosed(final long todaysClosed) {
         this.todaysClosed = todaysClosed;
     }
 
@@ -96,7 +98,7 @@ public class ApplicationIndexResponse {
         return trend;
     }
 
-    public void setTrend(List<Trend> trend) {
+    public void setTrend(final List<Trend> trend) {
         this.trend = trend;
     }
 
@@ -104,8 +106,24 @@ public class ApplicationIndexResponse {
         return details;
     }
 
-    public void setDetails(List<ApplicationDetails> details) {
+    public void setDetails(final List<ApplicationDetails> details) {
         this.details = details;
+    }
+
+    public List<ServiceGroupDetails> getServiceGroupDetails() {
+        return serviceGroupDetails;
+    }
+
+    public void setServiceGroupDetails(final List<ServiceGroupDetails> serviceGroupDetails) {
+        this.serviceGroupDetails = serviceGroupDetails;
+    }
+
+    public List<ServiceGroupTrend> getServiceGroupTrend() {
+        return serviceGroupTrend;
+    }
+
+    public void setServiceGroupTrend(final List<ServiceGroupTrend> serviceGroupTrend) {
+        this.serviceGroupTrend = serviceGroupTrend;
     }
 
 }

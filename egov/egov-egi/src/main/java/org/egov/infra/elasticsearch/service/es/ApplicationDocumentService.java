@@ -55,6 +55,8 @@ import org.egov.infra.elasticsearch.entity.ApplicationIndex;
 import org.egov.infra.elasticsearch.entity.bean.ApplicationDetails;
 import org.egov.infra.elasticsearch.entity.bean.ApplicationIndexRequest;
 import org.egov.infra.elasticsearch.entity.bean.ApplicationIndexResponse;
+import org.egov.infra.elasticsearch.entity.bean.ServiceGroupDetails;
+import org.egov.infra.elasticsearch.entity.bean.ServiceGroupTrend;
 import org.egov.infra.elasticsearch.entity.bean.Trend;
 import org.egov.infra.elasticsearch.entity.es.ApplicationDocument;
 import org.egov.infra.elasticsearch.repository.es.ApplicationDocumentRepository;
@@ -68,6 +70,7 @@ import org.elasticsearch.search.aggregations.bucket.histogram.DateHistogramInter
 import org.elasticsearch.search.aggregations.bucket.histogram.Histogram;
 import org.elasticsearch.search.aggregations.bucket.terms.StringTerms;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
+import org.elasticsearch.search.aggregations.bucket.terms.Terms.Bucket;
 import org.elasticsearch.search.aggregations.metrics.valuecount.ValueCount;
 import org.elasticsearch.search.aggregations.metrics.valuecount.ValueCountBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -126,6 +129,8 @@ public class ApplicationDocumentService {
     private static final String APPLICATION_TYPE = "applicationType";
 
     private static final String REGION_NAME = "regionName";
+
+    private static final String MODULE_NAME = "moduleName";
 
     private static final String APPLICATION_NUMBER = "applicationNumber";
 
@@ -224,6 +229,127 @@ public class ApplicationDocumentService {
         return applicationIndexResponse;
     }
 
+    /**
+     * Provides Service group wise applications details
+     * 
+     * @param applicationIndexRequest
+     * @return ApplicationIndexResponse
+     */
+    public ApplicationIndexResponse findServiceGroupWiseApplications(ApplicationIndexRequest applicationIndexRequest) {
+        ApplicationIndexResponse applicationIndexResponse = new ApplicationIndexResponse();
+        Aggregations aggregation;
+        ValueCount valueCount;
+        Date fromDate = null;
+        Date toDate = null;
+        List<ServiceGroupDetails> serviceGroups = new ArrayList<>();
+        if (StringUtils.isNotBlank(applicationIndexRequest.getFromDate())
+                && StringUtils.isNotBlank(applicationIndexRequest.getToDate())) {
+            fromDate = DateUtils.getDate(applicationIndexRequest.getFromDate(), DATE_FORMAT_YYYYMMDD);
+            toDate = DateUtils.addDays(DateUtils.getDate(applicationIndexRequest.getToDate(), DATE_FORMAT_YYYYMMDD),
+                    1);
+        }
+        aggregation = getDocumentCounts(applicationIndexRequest, fromDate, toDate, MODULE_NAME, RECEIVED, MODULE_NAME,
+                0);
+        if (aggregation != null) {
+            StringTerms aggr = aggregation.get(MODULE_NAME);
+            for (Terms.Bucket entry : aggr.getBuckets()) {
+                ServiceGroupDetails serviceGroup = new ServiceGroupDetails();
+                valueCount = entry.getAggregations().get(TOTAL_COUNT);
+                serviceGroup.setServiceGroup(String.valueOf(entry.getKey()));
+                serviceGroup.setTotalReceived(valueCount.getValue());
+                serviceGroups.add(serviceGroup);
+            }
+        }
+        aggregation = getDocumentCounts(applicationIndexRequest, fromDate, toDate, MODULE_NAME, OPEN, MODULE_NAME, 0);
+        if (aggregation != null) {
+            StringTerms aggr = aggregation.get(MODULE_NAME);
+            for (Terms.Bucket entry : aggr.getBuckets()) {
+                String moduleName = String.valueOf(entry.getKey());
+                for (ServiceGroupDetails serviceGroup : serviceGroups) {
+                    if (serviceGroup.getServiceGroup().equals(moduleName)) {
+                        valueCount = entry.getAggregations().get(TOTAL_COUNT);
+                        serviceGroup.setTotalOpen(valueCount.getValue());
+                        break;
+                    }
+                }
+            }
+        }
+        applicationIndexResponse.setServiceGroupDetails(serviceGroups);
+        List<ServiceGroupTrend> serviceGroupTrend = getMonthwiseServiceGroupApplicationTrends(applicationIndexRequest);
+        applicationIndexResponse.setServiceGroupTrend(serviceGroupTrend);
+        return applicationIndexResponse;
+    }
+
+    /**
+     * Provides month-wise service group application trends - received/open
+     * @param applicationIndexRequest
+     * @return list
+     */
+    public List<ServiceGroupTrend> getMonthwiseServiceGroupApplicationTrends(
+            ApplicationIndexRequest applicationIndexRequest) {
+        Date fromDate = null;
+        Date toDate = null;
+        Map<Integer, String> monthValuesMap = DateUtils.getAllMonthsWithFullNames();
+        List<ServiceGroupTrend> receivedApplications = new ArrayList<>();
+        Aggregations aggregation;
+
+        if (StringUtils.isNotBlank(applicationIndexRequest.getFromDate())
+                && StringUtils.isNotBlank(applicationIndexRequest.getToDate())) {
+            fromDate = DateUtils.getDate(applicationIndexRequest.getFromDate(), DATE_FORMAT_YYYYMMDD);
+            toDate = DateUtils.addDays(DateUtils.getDate(applicationIndexRequest.getToDate(), DATE_FORMAT_YYYYMMDD),
+                    1);
+        }
+
+        aggregation = getMonthwiseServiceGroupApplications(applicationIndexRequest, fromDate,
+                toDate, RECEIVED);
+
+        Histogram aggr = aggregation.get(DATE_AGGR);
+        prepareMonthwiseServiceGroupDetails(monthValuesMap, receivedApplications, aggr);
+
+        /*
+         * Trend trend; if (StringUtils.isBlank(applicationIndexRequest.getFromDate()) &&
+         * StringUtils.isBlank(applicationIndexRequest.getToDate())) { for (ServiceGroupTrend trend : receivedApplications) {
+         * List<Trend> trends = new ArrayList<>(); for (Map.Entry<Integer, String> entry :
+         * DateUtils.getAllFinancialYearMonthsWithFullNames().entrySet()) { trend = new Trend(); trend.setMonth(entry.getValue());
+         * trend.setTotalReceived( receivedApplications.get(serviceGroup) == null ||
+         * receivedApplications.get(serviceGroup).get(entry.getKey()) == null ? 0 :
+         * receivedApplications.get(serviceGroup).get(entry.getKey())); trends.add(trend); } serviceTrends.put(serviceGroup,
+         * trends); } } else { for (Entry<String, Map<String, Long>> applicationEntry : receivedApplications.entrySet()) { String
+         * serviceGroup = applicationEntry.getKey(); List<Trend> trends = new ArrayList<>(); for (Entry<String, Long> entry :
+         * applicationEntry.getValue().entrySet()) { trend = new Trend(); trend.setMonth(entry.getKey()); trend.setTotalReceived(
+         * receivedApplications.get(serviceGroup) == null || receivedApplications.get(serviceGroup).get(entry.getKey()) == null ?
+         * 0 : receivedApplications.get(serviceGroup).get(entry.getKey())); trends.add(trend); } serviceTrends.put(serviceGroup,
+         * trends); } }
+         */ return receivedApplications;
+    }
+
+    private void prepareMonthwiseServiceGroupDetails(Map<Integer, String> monthValuesMap,
+            List<ServiceGroupTrend> applications,
+            Histogram aggr) {
+        String[] dateArr;
+        Integer month;
+        ValueCount countAggr;
+        String monthName;
+        for (Histogram.Bucket entry : aggr.getBuckets()) {
+            ServiceGroupTrend serviceGroupTrend = new ServiceGroupTrend();
+            dateArr = entry.getKeyAsString().split("T");
+            month = Integer.valueOf(dateArr[0].split("-", 3)[1]);
+            monthName = monthValuesMap.get(month);
+            StringTerms termAggr = entry.getAggregations().get(MODULE_NAME);
+            List<ServiceGroupDetails> serviceGroupDetails = new ArrayList<>();
+            for (Bucket term : termAggr.getBuckets()) {
+                ServiceGroupDetails details = new ServiceGroupDetails();
+                countAggr = term.getAggregations().get(TOTAL_COUNT);
+                details.setServiceGroup(term.getKeyAsString());
+                details.setTotalReceived(countAggr.getValue());
+                serviceGroupDetails.add(details);
+            }
+            serviceGroupTrend.setMonth(monthName);
+            serviceGroupTrend.setServiceGroupDetails(serviceGroupDetails);
+            applications.add(serviceGroupTrend);
+        }
+    }
+
     private BoolQueryBuilder prepareWhereClause(ApplicationIndexRequest applicationIndexRequest, Date fromDate, Date toDate) {
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery()
                 .mustNot(QueryBuilders.matchQuery(APPLICATION_NUMBER, StringUtils.EMPTY));
@@ -242,7 +368,7 @@ public class ApplicationDocumentService {
                     .filter(QueryBuilders.matchQuery("cityCode", applicationIndexRequest.getUlbCode()));
         if (StringUtils.isNotBlank(applicationIndexRequest.getServiceGroup()))
             boolQuery = boolQuery
-                    .filter(QueryBuilders.matchQuery("moduleName", applicationIndexRequest.getServiceGroup()));
+                    .filter(QueryBuilders.matchQuery(MODULE_NAME, applicationIndexRequest.getServiceGroup()));
         if (StringUtils.isNotBlank(applicationIndexRequest.getService()))
             boolQuery = boolQuery
                     .filter(QueryBuilders.matchQuery(APPLICATION_TYPE, applicationIndexRequest.getService()));
@@ -398,7 +524,7 @@ public class ApplicationDocumentService {
             aggregationField = CITY_NAME;
             size = 112;
         } else if ("module".equalsIgnoreCase(aggregationLevel)) {
-            aggregationField = "moduleName";
+            aggregationField = MODULE_NAME;
             size = 6;
         } else if ("service".equalsIgnoreCase(aggregationLevel)) {
             aggregationField = APPLICATION_TYPE;
@@ -502,6 +628,31 @@ public class ApplicationDocumentService {
         AggregationBuilder aggregationBuilder = AggregationBuilders.dateHistogram(DATE_AGGR).field("applicationDate")
                 .interval(DateHistogramInterval.MONTH)
                 .subAggregation(AggregationBuilders.count(TOTAL_COUNT).field(APPLICATION_NUMBER));
+
+        SearchQuery searchQueryColl = new NativeSearchQueryBuilder().withIndices(APPLICATIONS_INDEX)
+                .withQuery(boolQuery)
+                .addAggregation(aggregationBuilder).build();
+
+        return elasticsearchTemplate.query(searchQueryColl,
+                response -> response.getAggregations());
+    }
+
+    @SuppressWarnings("rawtypes")
+    private Aggregations getMonthwiseServiceGroupApplications(ApplicationIndexRequest applicationIndexRequest,
+            Date fromDate, Date toDate, String status) {
+
+        BoolQueryBuilder boolQuery = prepareWhereClause(applicationIndexRequest, fromDate, toDate);
+
+        if (CLOSED.equalsIgnoreCase(status))
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery(IS_CLOSED, 1));
+        else if (OPEN.equalsIgnoreCase(status))
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery(IS_CLOSED, 0));
+
+        AggregationBuilder aggregationBuilder = AggregationBuilders.dateHistogram(DATE_AGGR).field("applicationDate")
+                .interval(DateHistogramInterval.MONTH);
+
+        aggregationBuilder.subAggregation(AggregationBuilders.terms(MODULE_NAME).field(MODULE_NAME)
+                .subAggregation(AggregationBuilders.count(TOTAL_COUNT).field(APPLICATION_NUMBER)));
 
         SearchQuery searchQueryColl = new NativeSearchQueryBuilder().withIndices(APPLICATIONS_INDEX)
                 .withQuery(boolQuery)
