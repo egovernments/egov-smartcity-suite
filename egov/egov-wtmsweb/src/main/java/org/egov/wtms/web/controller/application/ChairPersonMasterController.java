@@ -54,7 +54,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -96,20 +95,20 @@ public class ChairPersonMasterController {
         return new ChairPerson();
     }
 
-    @RequestMapping(value = "/chairperson-view", method = RequestMethod.GET)
+    @RequestMapping(value = "/chairperson-view", method = GET)
     public String getChairPersonMasterList(final Model model) {
         final List<ChairPerson> chairPersonList = chairPersonService.findAll();
         model.addAttribute("chairPersonList", chairPersonList);
         return "chairperson-view";
     }
 
-    @RequestMapping(value = "/chairperson-edit", method = RequestMethod.GET)
+    @RequestMapping(value = "/chairperson-edit", method = GET)
     public String getChairPersonMaster(final Model model) {
         model.addAttribute("mode", "edit");
         return getChairPersonMasterList(model);
     }
 
-    @RequestMapping(value = "/chairperson-edit/{chairpersonid}", method = RequestMethod.GET)
+    @RequestMapping(value = "/chairperson-edit/{chairpersonid}", method = GET)
     public String modifyChairPerson(@ModelAttribute final ChairPerson chairPerson, @PathVariable final Long chairpersonid,
             final Model model) {
         final ChairPerson chairPersonFromDb = chairPersonService.findById(chairpersonid);
@@ -118,7 +117,7 @@ public class ChairPersonMasterController {
         return "chairpersondetails-edit";
     }
 
-    @RequestMapping(value = "/chairperson-edit/{chairpersonid}", method = RequestMethod.POST)
+    @RequestMapping(value = "/chairperson-edit/{chairpersonid}", method = POST)
     public String saveModifiedChairPerson(@ModelAttribute final ChairPerson chairPerson, final Model model,
             final RedirectAttributes redirectAttrs,
             @PathVariable("chairpersonid") final Long chairpersonid) {
