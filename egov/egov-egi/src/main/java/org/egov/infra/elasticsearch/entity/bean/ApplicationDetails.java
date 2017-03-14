@@ -70,7 +70,7 @@ public class ApplicationDetails {
     private long slab3beyondSLA = 0;
     private long slab4beyondSLA = 0;
     private long slab5beyondSLA = 0;
-    private long slaPeriod = 0;
+    private int slaPeriod;
     private long cscTotal = 0;
     private long meesevaTotal = 0;
     private long onlineTotal = 0;
@@ -301,11 +301,11 @@ public class ApplicationDetails {
         this.slab5beyondSLA = slab5beyondSLA;
     }
 
-    public long getSlaPeriod() {
+    public int getSlaPeriod() {
         return slaPeriod;
     }
 
-    public void setSlaPeriod(long slaPeriod) {
+    public void setSlaPeriod(int slaPeriod) {
         this.slaPeriod = slaPeriod;
     }
 

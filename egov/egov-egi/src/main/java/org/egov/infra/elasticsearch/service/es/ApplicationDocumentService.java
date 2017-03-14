@@ -61,8 +61,10 @@ import org.egov.infra.elasticsearch.entity.bean.Trend;
 import org.egov.infra.elasticsearch.entity.es.ApplicationDocument;
 import org.egov.infra.elasticsearch.repository.es.ApplicationDocumentRepository;
 import org.egov.infra.utils.DateUtils;
+import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.aggregations.AggregationBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.Aggregations;
@@ -93,8 +95,6 @@ public class ApplicationDocumentService {
     private static final String SOURCE_MEESEVA = "MEESEVA";
 
     private static final String SOURCE_CSC = "CSC";
-
-    private static final String CSC_TOTAL_APPLICATIONS = "cscTotalApplications";
 
     private static final String SLA_GAP = "slaGap";
 
@@ -410,6 +410,7 @@ public class ApplicationDocumentService {
         int size = 15;
         String name;
         ApplicationDetails applicationDetails;
+        Map serviceDetails;
 
         if (StringUtils.isNotBlank(applicationIndexRequest.getAggregationLevel())) {
             Map<String, String> aggrTypeAndSize = fetchAggregationTypeAndSize(applicationIndexRequest.getAggregationLevel());
@@ -468,14 +469,21 @@ public class ApplicationDocumentService {
         for (Map.Entry<String, Long> entry : totalRcvdApplications.entrySet()) {
             applicationDetails = new ApplicationDetails();
             name = entry.getKey();
+
             if (DISTRICT_NAME.equalsIgnoreCase(aggregationField))
                 applicationDetails.setDistrict(name);
             else if (REGION_NAME.equalsIgnoreCase(aggregationField))
                 applicationDetails.setRegion(name);
             else if (CITY_NAME.equalsIgnoreCase(aggregationField))
                 applicationDetails.setUlbName(name);
-            else if (APPLICATION_TYPE.equalsIgnoreCase(aggregationField))
+            else if (APPLICATION_TYPE.equalsIgnoreCase(aggregationField)) {
                 applicationDetails.setServiceType(name);
+                serviceDetails = getDetailsForApplicationType(applicationIndexRequest, fromDate, toDate, name);
+                if (!serviceDetails.isEmpty()) {
+                    applicationDetails.setServiceGroup(serviceDetails.get(MODULE_NAME).toString());
+                    applicationDetails.setSlaPeriod((Integer) serviceDetails.get("sla"));
+                }
+            }
 
             applicationDetails.setTotalReceived(entry.getValue());
             applicationDetails.setTotalClosed(totalClosedApplications.get(name) == null ? 0 : totalClosedApplications.get(name));
@@ -725,6 +733,31 @@ public class ApplicationDocumentService {
             appStatusQuery = appStatusQuery.mustNot(
                     QueryBuilders.termsQuery(CHANNEL, Arrays.asList(SOURCE_CSC, SOURCE_MEESEVA, SOURCE_ONLINE, SOURCE_SYSTEM)));
         return appStatusQuery;
+    }
+
+    /**
+     * Provides the details required for service type
+     * @param applicationIndexRequest
+     * @param fromDate
+     * @param toDate
+     * @param applicationType
+     * @return map
+     */
+    private Map getDetailsForApplicationType(ApplicationIndexRequest applicationIndexRequest, Date fromDate, Date toDate,
+            String applicationType) {
+        BoolQueryBuilder boolQuery = prepareWhereClause(applicationIndexRequest, fromDate, toDate);
+        boolQuery = boolQuery.filter(QueryBuilders.matchQuery("applicationType", applicationType));
+        Map applicationTypeDetails = new HashMap<>();
+        SearchResponse response = elasticsearchTemplate.getClient()
+                .prepareSearch(APPLICATIONS_INDEX)
+                .setQuery(boolQuery).setSize(1)
+                .setFetchSource(new String[] { MODULE_NAME, "sla" }, null)
+                .execute().actionGet();
+
+        for (SearchHit hit : response.getHits())
+            applicationTypeDetails = hit.sourceAsMap();
+
+        return applicationTypeDetails;
     }
 
 }
