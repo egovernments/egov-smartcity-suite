@@ -49,10 +49,15 @@ public class ApplicationIndexResponse {
     private long totalOpen = 0;
     private long todaysReceived = 0;
     private long todaysClosed = 0;
+    private long totalBeyondSLA = 0;
+    private long totalWithinSLA = 0;
+    private long openBeyondSLA = 0;
+    private long closedBeyondSLA = 0;
     private List<Trend> trend;
     private List<ApplicationDetails> details;
     private List<ServiceGroupDetails> serviceGroupDetails;
     private List<ServiceGroupTrend> serviceGroupTrend;
+    private List<ServiceDetails> serviceDetails;
 
     public long getTotalReceived() {
         return totalReceived;
@@ -124,6 +129,46 @@ public class ApplicationIndexResponse {
 
     public void setServiceGroupTrend(final List<ServiceGroupTrend> serviceGroupTrend) {
         this.serviceGroupTrend = serviceGroupTrend;
+    }
+
+    public long getTotalBeyondSLA() {
+        return totalBeyondSLA;
+    }
+
+    public void setTotalBeyondSLA(long totalBeyondSLA) {
+        this.totalBeyondSLA = totalBeyondSLA;
+    }
+
+    public long getTotalWithinSLA() {
+        return totalWithinSLA;
+    }
+
+    public void setTotalWithinSLA(long totalWithinSLA) {
+        this.totalWithinSLA = totalWithinSLA;
+    }
+
+    public long getOpenBeyondSLA() {
+        return openBeyondSLA;
+    }
+
+    public void setOpenBeyondSLA(long openBeyondSLA) {
+        this.openBeyondSLA = openBeyondSLA;
+    }
+
+    public long getClosedBeyondSLA() {
+        return closedBeyondSLA;
+    }
+
+    public void setClosedBeyondSLA(long closedBeyondSLA) {
+        this.closedBeyondSLA = closedBeyondSLA;
+    }
+
+    public List<ServiceDetails> getServiceDetails() {
+        return serviceDetails;
+    }
+
+    public void setServiceDetails(List<ServiceDetails> serviceDetails) {
+        this.serviceDetails = serviceDetails;
     }
 
 }

@@ -75,4 +75,10 @@ public class PortalDashboardController {
     public ApplicationIndexResponse getServiceGroupWiseApplicationDetails(final ApplicationIndexRequest applicationIndexRequest) {
         return applicationDocumentService.findServiceGroupWiseApplications(applicationIndexRequest);
     }
+
+    @RequestMapping(value = "/servicewisedetails", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ApplicationIndexResponse getServiceWiseDetails(ApplicationIndexRequest applicationIndexRequest) {
+        return applicationDocumentService.findServiceWiseDetails(applicationIndexRequest);
+    }
 }

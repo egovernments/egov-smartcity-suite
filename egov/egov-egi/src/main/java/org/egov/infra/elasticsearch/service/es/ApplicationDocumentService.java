@@ -57,6 +57,7 @@ import org.egov.infra.elasticsearch.entity.bean.ApplicationIndexRequest;
 import org.egov.infra.elasticsearch.entity.bean.ApplicationIndexResponse;
 import org.egov.infra.elasticsearch.entity.bean.ServiceGroupDetails;
 import org.egov.infra.elasticsearch.entity.bean.ServiceGroupTrend;
+import org.egov.infra.elasticsearch.entity.bean.ServiceDetails;
 import org.egov.infra.elasticsearch.entity.bean.Trend;
 import org.egov.infra.elasticsearch.entity.es.ApplicationDocument;
 import org.egov.infra.elasticsearch.repository.es.ApplicationDocumentRepository;
@@ -149,6 +150,10 @@ public class ApplicationDocumentService {
     private static final String RECEIVED = "received";
 
     private static final String TOTAL_COUNT = "total_count";
+
+    private static final String TOTAL_BEYOND_SLA = "totalBeyondSLA";
+
+    private static final String TOTAL_WITHIN_SLA = "totalWithinSLA";
 
     private final ApplicationDocumentRepository applicationDocumentRepository;
 
@@ -707,6 +712,10 @@ public class ApplicationDocumentService {
         else if (CLOSED_BEYOND_SLA.equalsIgnoreCase(applicationStatus))
             appStatusQuery = appStatusQuery.filter(QueryBuilders.matchQuery(IS_CLOSED, 1))
                     .must(QueryBuilders.rangeQuery(SLA_GAP).gt(0));
+        else if (TOTAL_BEYOND_SLA.equalsIgnoreCase(applicationStatus))
+            appStatusQuery= appStatusQuery.filter(QueryBuilders.rangeQuery(SLA_GAP).gt(0));
+        else if (TOTAL_WITHIN_SLA.equalsIgnoreCase(applicationStatus))
+            appStatusQuery = appStatusQuery.filter(QueryBuilders.rangeQuery(SLA_GAP).lte(0));
         else if (OPEN_WITHIN_SLA.equalsIgnoreCase(applicationStatus))
             appStatusQuery = appStatusQuery.filter(QueryBuilders.matchQuery(IS_CLOSED, 0))
                     .must(QueryBuilders.rangeQuery(SLA_GAP).lte(0));
@@ -758,6 +767,104 @@ public class ApplicationDocumentService {
             applicationTypeDetails = hit.sourceAsMap();
 
         return applicationTypeDetails;
+    }
+    
+    public ApplicationIndexResponse findServiceWiseDetails(final ApplicationIndexRequest applicationIndexRequest) {
+        final ApplicationIndexResponse applicationIndexResponse = new ApplicationIndexResponse();
+        Aggregations aggregation;
+        ValueCount valueCount;
+        Date fromDate = null;
+        Date toDate = null;
+        if (StringUtils.isNotBlank(applicationIndexRequest.getFromDate())
+                && StringUtils.isNotBlank(applicationIndexRequest.getToDate())) {
+            fromDate = DateUtils.getDate(applicationIndexRequest.getFromDate(), DATE_FORMAT_YYYYMMDD);
+            toDate = org.apache.commons.lang3.time.DateUtils.addDays(
+                    DateUtils.getDate(applicationIndexRequest.getToDate(), DATE_FORMAT_YYYYMMDD),
+                    1);
+        }
+        aggregation = getDocumentCounts(applicationIndexRequest, fromDate, toDate, StringUtils.EMPTY, RECEIVED, StringUtils.EMPTY,
+                0);
+        if (aggregation != null) {
+            valueCount = aggregation.get(TOTAL_COUNT);
+            applicationIndexResponse.setTotalReceived(valueCount != null ? valueCount.getValue() : 0);
+        }
+        aggregation = getDocumentCounts(applicationIndexRequest, fromDate, toDate, StringUtils.EMPTY, CLOSED, StringUtils.EMPTY,
+                0);
+        if (aggregation != null) {
+            valueCount = aggregation.get(TOTAL_COUNT);
+            applicationIndexResponse.setTotalClosed(valueCount != null ? valueCount.getValue() : 0);
+        }
+        aggregation = getDocumentCounts(applicationIndexRequest, fromDate, toDate, StringUtils.EMPTY, OPEN, StringUtils.EMPTY, 0);
+        if (aggregation != null) {
+            valueCount = aggregation.get(TOTAL_COUNT);
+            applicationIndexResponse.setTotalOpen(valueCount != null ? valueCount.getValue() : 0);
+        }
+        aggregation = getDocumentCounts(applicationIndexRequest, fromDate, toDate, StringUtils.EMPTY, TOTAL_BEYOND_SLA,
+                StringUtils.EMPTY, 0);
+        if (aggregation != null) {
+            valueCount = aggregation.get(TOTAL_COUNT);
+            applicationIndexResponse.setTotalBeyondSLA(valueCount != null ? valueCount.getValue() : 0);
+        }
+        aggregation = getDocumentCounts(applicationIndexRequest, fromDate, toDate, StringUtils.EMPTY, TOTAL_WITHIN_SLA,
+                StringUtils.EMPTY, 0);
+        if (aggregation != null) {
+            valueCount = aggregation.get(TOTAL_COUNT);
+            applicationIndexResponse.setTotalWithinSLA(valueCount != null ? valueCount.getValue() : 0);
+        }
+        aggregation = getDocumentCounts(applicationIndexRequest, fromDate, toDate, StringUtils.EMPTY, OPEN_BEYOND_SLA,
+                StringUtils.EMPTY, 0);
+        if (aggregation != null) {
+            valueCount = aggregation.get(TOTAL_COUNT);
+            applicationIndexResponse.setOpenBeyondSLA(valueCount != null ? valueCount.getValue() : 0);
+        }
+        aggregation = getDocumentCounts(applicationIndexRequest, fromDate, toDate, StringUtils.EMPTY, CLOSED_BEYOND_SLA,
+                StringUtils.EMPTY, 0);
+        if (aggregation != null) {
+            valueCount = aggregation.get(TOTAL_COUNT);
+            applicationIndexResponse.setClosedBeyondSLA(valueCount != null ? valueCount.getValue() : 0);
+        }
+
+        final List<ServiceDetails> serviceDetails = getServiceDetails(applicationIndexRequest, fromDate, toDate);
+        applicationIndexResponse.setServiceDetails(serviceDetails);
+        return applicationIndexResponse;
+    }
+
+    @SuppressWarnings("rawtypes")
+    private List<ServiceDetails> getServiceDetails(final ApplicationIndexRequest applicationIndexRequest, final Date fromDate,
+            final Date toDate) {
+        final List<ServiceDetails> serviceDetailsList = new ArrayList<>();
+        AggregationBuilder aggregation;
+        SearchQuery searchQueryColl;
+        final ValueCountBuilder countBuilder = AggregationBuilders.count(TOTAL_COUNT).field(APPLICATION_NUMBER);
+        final BoolQueryBuilder boolQuery = prepareWhereClause(applicationIndexRequest, fromDate, toDate);
+
+        aggregation = AggregationBuilders.terms("by_service1").field("applicationType").size(5)
+                .subAggregation(countBuilder)
+                .order(Terms.Order.aggregation(TOTAL_COUNT, false));
+
+        final NativeSearchQueryBuilder queryBuilder = new NativeSearchQueryBuilder().withIndices(APPLICATIONS_INDEX)
+                .withQuery(boolQuery).addAggregation(aggregation);
+        searchQueryColl = queryBuilder.build();
+
+        final Aggregations aggr = elasticsearchTemplate.query(searchQueryColl,
+                response -> response.getAggregations());
+        final Map<String, Long> aggregationResults = new HashMap<>();
+        final StringTerms serviceAggr = aggr.get("by_service1");
+        ValueCount valueCount;
+        for (final Terms.Bucket entry : serviceAggr.getBuckets()) {
+            valueCount = entry.getAggregations().get(TOTAL_COUNT);
+            aggregationResults.put(String.valueOf(entry.getKey()), valueCount.getValue());
+        }
+        ServiceDetails serviceDetails;
+        for (final Map.Entry<String, Long> entry : aggregationResults.entrySet()) {
+            serviceDetails = new ServiceDetails();
+            serviceDetails.setServiceName(entry.getKey());
+            serviceDetails
+                    .setBeyondSLA(aggregationResults.get(entry.getKey()) == null ? 0 : aggregationResults.get(entry.getKey()));
+            serviceDetailsList.add(serviceDetails);
+        }
+
+        return serviceDetailsList;
     }
 
 }
