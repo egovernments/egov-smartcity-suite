@@ -52,6 +52,10 @@ public class ApplicationDetails {
     private String admZone;
     private String admWard;
     private String locality;
+    private String commName;
+    private String commMobile;
+    private String serviceGroup;
+    private String serviceType;
     private String functionaryName;
     private String functionaryCode;
     private long totalReceived = 0;
@@ -153,6 +157,38 @@ public class ApplicationDetails {
         this.locality = locality;
     }
 
+    public String getCommName() {
+        return commName;
+    }
+
+    public void setCommName(String commName) {
+        this.commName = commName;
+    }
+
+    public String getCommMobile() {
+        return commMobile;
+    }
+
+    public void setCommMobile(String commMobile) {
+        this.commMobile = commMobile;
+    }
+
+    public String getServiceGroup() {
+        return serviceGroup;
+    }
+
+    public void setServiceGroup(String serviceGroup) {
+        this.serviceGroup = serviceGroup;
+    }
+
+    public String getServiceType() {
+        return serviceType;
+    }
+
+    public void setServiceType(String serviceType) {
+        this.serviceType = serviceType;
+    }
+    
     public String getFunctionaryName() {
         return functionaryName;
     }

@@ -42,6 +42,7 @@ package org.egov.infra.elasticsearch.service.es;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -79,6 +80,52 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 public class ApplicationDocumentService {
+
+    private static final String CITY_NAME = "cityName";
+
+    private static final String SOURCE_SYSTEM = "SYSTEM";
+
+    private static final String SOURCE_ONLINE = "ONLINE";
+
+    private static final String SOURCE_MEESEVA = "MEESEVA";
+
+    private static final String SOURCE_CSC = "CSC";
+
+    private static final String CSC_TOTAL_APPLICATIONS = "cscTotalApplications";
+
+    private static final String SLA_GAP = "slaGap";
+
+    private static final String OTHERS_TOTAL = "othersTotal";
+
+    private static final String ULB_TOTAL = "ulbTotal";
+
+    private static final String ONLINE_TOTAL = "onlineTotal";
+
+    private static final String MEESEVA_TOTAL = "meesevaTotal";
+
+    private static final String CSC_TOTAL = "cscTotal";
+
+    private static final String SLAB4BEYOND_SLA = "slab4beyondSLA";
+
+    private static final String SLAB3BEYOND_SLA = "slab3beyondSLA";
+
+    private static final String SLAB2BEYOND_SLA = "slab2beyondSLA";
+
+    private static final String SLAB1BEYOND_SLA = "slab1beyondSLA";
+
+    private static final String OPEN_BEYOND_SLA = "openBeyondSLA";
+
+    private static final String OPEN_WITHIN_SLA = "openWithinSLA";
+
+    private static final String CLOSED_BEYOND_SLA = "closedBeyondSLA";
+
+    private static final String CLOSED_WITHIN_SLA = "closedWithinSLA";
+
+    private static final String CHANNEL = "channel";
+
+    private static final String APPLICATION_TYPE = "applicationType";
+
+    private static final String REGION_NAME = "regionName";
 
     private static final String APPLICATION_NUMBER = "applicationNumber";
 
@@ -183,7 +230,7 @@ public class ApplicationDocumentService {
 
         if (StringUtils.isNotBlank(applicationIndexRequest.getRegion()))
             boolQuery = boolQuery
-                    .filter(QueryBuilders.matchQuery("regionName", applicationIndexRequest.getRegion()));
+                    .filter(QueryBuilders.matchQuery(REGION_NAME, applicationIndexRequest.getRegion()));
         if (StringUtils.isNotBlank(applicationIndexRequest.getDistrict()))
             boolQuery = boolQuery
                     .filter(QueryBuilders.matchQuery(DISTRICT_NAME, applicationIndexRequest.getDistrict()));
@@ -198,10 +245,10 @@ public class ApplicationDocumentService {
                     .filter(QueryBuilders.matchQuery("moduleName", applicationIndexRequest.getServiceGroup()));
         if (StringUtils.isNotBlank(applicationIndexRequest.getService()))
             boolQuery = boolQuery
-                    .filter(QueryBuilders.matchQuery("applicationType", applicationIndexRequest.getService()));
+                    .filter(QueryBuilders.matchQuery(APPLICATION_TYPE, applicationIndexRequest.getService()));
         if (StringUtils.isNotBlank(applicationIndexRequest.getSource()))
             boolQuery = boolQuery
-                    .filter(QueryBuilders.matchQuery("channel", applicationIndexRequest.getSource()));
+                    .filter(QueryBuilders.matchQuery(CHANNEL, applicationIndexRequest.getSource()));
         if (fromDate != null && toDate != null)
             boolQuery = boolQuery
                     .filter(QueryBuilders.rangeQuery("applicationDate").gte(DATEFORMATTER_YYYY_MM_DD.format(fromDate))
@@ -257,14 +304,77 @@ public class ApplicationDocumentService {
                 "totalClosed", CLOSED, aggregationField, size);
         Map<String, Long> totalOpenApplications = getAggregationWiseApplicationCounts(applicationIndexRequest, fromDate, toDate,
                 "totalOpen", OPEN, aggregationField, size);
+        Map<String, Long> closedWithinSLAApplications = getAggregationWiseApplicationCounts(applicationIndexRequest, fromDate,
+                toDate,
+                CLOSED_WITHIN_SLA, CLOSED_WITHIN_SLA, aggregationField, size);
+        Map<String, Long> closedBeyondSLAApplications = getAggregationWiseApplicationCounts(applicationIndexRequest, fromDate,
+                toDate, CLOSED_BEYOND_SLA, CLOSED_BEYOND_SLA, aggregationField, size);
+        Map<String, Long> openWithinSLAApplications = getAggregationWiseApplicationCounts(applicationIndexRequest, fromDate,
+                toDate,
+                OPEN_WITHIN_SLA, OPEN_WITHIN_SLA, aggregationField, size);
+        Map<String, Long> openBeyondSLAApplications = getAggregationWiseApplicationCounts(applicationIndexRequest, fromDate,
+                toDate,
+                OPEN_BEYOND_SLA, OPEN_BEYOND_SLA, aggregationField, size);
+        Map<String, Long> slab1beyondSLAApplications = getAggregationWiseApplicationCounts(applicationIndexRequest, fromDate,
+                toDate,
+                SLAB1BEYOND_SLA, SLAB1BEYOND_SLA, aggregationField, size);
+        Map<String, Long> slab2beyondSLAApplications = getAggregationWiseApplicationCounts(applicationIndexRequest, fromDate,
+                toDate,
+                SLAB2BEYOND_SLA, SLAB2BEYOND_SLA, aggregationField, size);
+        Map<String, Long> slab3beyondSLAApplications = getAggregationWiseApplicationCounts(applicationIndexRequest, fromDate,
+                toDate,
+                SLAB3BEYOND_SLA, SLAB3BEYOND_SLA, aggregationField, size);
+        Map<String, Long> slab4beyondSLAApplications = getAggregationWiseApplicationCounts(applicationIndexRequest, fromDate,
+                toDate,
+                SLAB4BEYOND_SLA, SLAB4BEYOND_SLA, aggregationField, size);
+        Map<String, Long> cscApplications = getAggregationWiseApplicationCounts(applicationIndexRequest, fromDate, toDate,
+                CSC_TOTAL, CSC_TOTAL, aggregationField, size);
+        Map<String, Long> meesevaApplications = getAggregationWiseApplicationCounts(applicationIndexRequest, fromDate,
+                toDate,
+                MEESEVA_TOTAL, MEESEVA_TOTAL, aggregationField, size);
+        Map<String, Long> onlineApplications = getAggregationWiseApplicationCounts(applicationIndexRequest, fromDate, toDate,
+                ONLINE_TOTAL, ONLINE_TOTAL, aggregationField, size);
+        Map<String, Long> ulbApplications = getAggregationWiseApplicationCounts(applicationIndexRequest, fromDate, toDate,
+                ULB_TOTAL, ULB_TOTAL, aggregationField, size);
+        Map<String, Long> otherApplications = getAggregationWiseApplicationCounts(applicationIndexRequest, fromDate, toDate,
+                OTHERS_TOTAL, OTHERS_TOTAL, aggregationField, size);
 
         for (Map.Entry<String, Long> entry : totalRcvdApplications.entrySet()) {
             applicationDetails = new ApplicationDetails();
             name = entry.getKey();
-            applicationDetails.setDistrict(name);
+            if (DISTRICT_NAME.equalsIgnoreCase(aggregationField))
+                applicationDetails.setDistrict(name);
+            else if (REGION_NAME.equalsIgnoreCase(aggregationField))
+                applicationDetails.setRegion(name);
+            else if (CITY_NAME.equalsIgnoreCase(aggregationField))
+                applicationDetails.setUlbName(name);
+            else if (APPLICATION_TYPE.equalsIgnoreCase(aggregationField))
+                applicationDetails.setServiceType(name);
+
             applicationDetails.setTotalReceived(entry.getValue());
             applicationDetails.setTotalClosed(totalClosedApplications.get(name) == null ? 0 : totalClosedApplications.get(name));
             applicationDetails.setTotalOpen(totalOpenApplications.get(name) == null ? 0 : totalOpenApplications.get(name));
+            applicationDetails.setClosedWithinSLA(
+                    closedWithinSLAApplications.get(name) == null ? 0 : closedWithinSLAApplications.get(name));
+            applicationDetails.setClosedBeyondSLA(
+                    closedBeyondSLAApplications.get(name) == null ? 0 : closedBeyondSLAApplications.get(name));
+            applicationDetails
+                    .setOpenWithinSLA(openWithinSLAApplications.get(name) == null ? 0 : openWithinSLAApplications.get(name));
+            applicationDetails
+                    .setOpenBeyondSLA(openBeyondSLAApplications.get(name) == null ? 0 : openBeyondSLAApplications.get(name));
+            applicationDetails
+                    .setSlab1beyondSLA(slab1beyondSLAApplications.get(name) == null ? 0 : slab1beyondSLAApplications.get(name));
+            applicationDetails
+                    .setSlab2beyondSLA(slab2beyondSLAApplications.get(name) == null ? 0 : slab2beyondSLAApplications.get(name));
+            applicationDetails
+                    .setSlab3beyondSLA(slab3beyondSLAApplications.get(name) == null ? 0 : slab3beyondSLAApplications.get(name));
+            applicationDetails
+                    .setSlab4beyondSLA(slab4beyondSLAApplications.get(name) == null ? 0 : slab4beyondSLAApplications.get(name));
+            applicationDetails.setCscTotal(cscApplications.get(name) == null ? 0 : cscApplications.get(name));
+            applicationDetails.setMeesevaTotal(meesevaApplications.get(name) == null ? 0 : meesevaApplications.get(name));
+            applicationDetails.setOnlineTotal(onlineApplications.get(name) == null ? 0 : onlineApplications.get(name));
+            applicationDetails.setUlbTotal(ulbApplications.get(name) == null ? 0 : ulbApplications.get(name));
+            applicationDetails.setOthersTotal(otherApplications.get(name) == null ? 0 : otherApplications.get(name));
 
             applicationDetailsList.add(applicationDetails);
         }
@@ -276,29 +386,26 @@ public class ApplicationDocumentService {
         String aggregationField = DISTRICT_NAME;
         int size = 15;
         if ("region".equalsIgnoreCase(aggregationLevel)) {
-            aggregationField = "regionName";
+            aggregationField = REGION_NAME;
             size = 4;
         } else if ("district".equalsIgnoreCase(aggregationLevel)) {
             aggregationField = DISTRICT_NAME;
-            size = 50;
+            size = 15;
         } else if ("grade".equalsIgnoreCase(aggregationLevel)) {
             aggregationField = "cityGrade";
-            size = 6;
+            size = 7;
         } else if ("ulb".equalsIgnoreCase(aggregationLevel)) {
-            aggregationField = "cityName";
-            size = 120;
-        } else if ("revz".equalsIgnoreCase(aggregationLevel)) {
-            aggregationField = DISTRICT_NAME;
-            size = 4;
+            aggregationField = CITY_NAME;
+            size = 112;
         } else if ("module".equalsIgnoreCase(aggregationLevel)) {
             aggregationField = "moduleName";
             size = 6;
         } else if ("service".equalsIgnoreCase(aggregationLevel)) {
-            aggregationField = "applicationType";
-            size = 4;
+            aggregationField = APPLICATION_TYPE;
+            size = 27;
         } else if ("source".equalsIgnoreCase(aggregationLevel)) {
-            aggregationField = "channel";
-            size = 4;
+            aggregationField = CHANNEL;
+            size = 5;
         }
         aggrTypeAndSize.put("aggregationField", aggregationField);
         aggrTypeAndSize.put("size", String.valueOf(size));
@@ -411,12 +518,8 @@ public class ApplicationDocumentService {
         ValueCountBuilder countBuilder = AggregationBuilders.count(TOTAL_COUNT).field(APPLICATION_NUMBER);
         BoolQueryBuilder boolQuery = prepareWhereClause(applicationIndexRequest, fromDate, toDate);
 
-        if (StringUtils.isNotBlank(applicationStatus)) {
-            if (CLOSED.equalsIgnoreCase(applicationStatus))
-                boolQuery = boolQuery.filter(QueryBuilders.matchQuery(IS_CLOSED, 1));
-            else if (OPEN.equalsIgnoreCase(applicationStatus))
-                boolQuery = boolQuery.filter(QueryBuilders.matchQuery(IS_CLOSED, 0));
-        }
+        if (StringUtils.isNotBlank(applicationStatus))
+            boolQuery = prepareQueryForApplicationStatus(applicationStatus, boolQuery);
 
         if (StringUtils.isNotBlank(aggregationName))
             aggregation = AggregationBuilders.terms(aggregationName).field(aggregationField).size(size)
@@ -431,6 +534,46 @@ public class ApplicationDocumentService {
 
         return elasticsearchTemplate.query(searchQueryColl,
                 response -> response.getAggregations());
+    }
+
+    private BoolQueryBuilder prepareQueryForApplicationStatus(String applicationStatus, BoolQueryBuilder boolQuery) {
+        BoolQueryBuilder appStatusQuery = boolQuery;
+        if (CLOSED.equalsIgnoreCase(applicationStatus))
+            appStatusQuery = appStatusQuery.filter(QueryBuilders.matchQuery(IS_CLOSED, 1));
+        else if (OPEN.equalsIgnoreCase(applicationStatus))
+            appStatusQuery = appStatusQuery.filter(QueryBuilders.matchQuery(IS_CLOSED, 0));
+        else if (CLOSED_WITHIN_SLA.equalsIgnoreCase(applicationStatus))
+            appStatusQuery = appStatusQuery.filter(QueryBuilders.matchQuery(IS_CLOSED, 1))
+                    .must(QueryBuilders.rangeQuery(SLA_GAP).lte(0));
+        else if (CLOSED_BEYOND_SLA.equalsIgnoreCase(applicationStatus))
+            appStatusQuery = appStatusQuery.filter(QueryBuilders.matchQuery(IS_CLOSED, 1))
+                    .must(QueryBuilders.rangeQuery(SLA_GAP).gt(0));
+        else if (OPEN_WITHIN_SLA.equalsIgnoreCase(applicationStatus))
+            appStatusQuery = appStatusQuery.filter(QueryBuilders.matchQuery(IS_CLOSED, 0))
+                    .must(QueryBuilders.rangeQuery(SLA_GAP).lte(0));
+        else if (OPEN_BEYOND_SLA.equalsIgnoreCase(applicationStatus))
+            appStatusQuery = appStatusQuery.filter(QueryBuilders.matchQuery(IS_CLOSED, 0))
+                    .must(QueryBuilders.rangeQuery(SLA_GAP).gt(0));
+        else if (SLAB1BEYOND_SLA.equalsIgnoreCase(applicationStatus))
+            appStatusQuery = appStatusQuery.filter(QueryBuilders.rangeQuery(SLA_GAP).gte(0).lt(8));
+        else if (SLAB2BEYOND_SLA.equalsIgnoreCase(applicationStatus))
+            appStatusQuery = appStatusQuery.filter(QueryBuilders.rangeQuery(SLA_GAP).gte(8).lt(31));
+        else if (SLAB3BEYOND_SLA.equalsIgnoreCase(applicationStatus))
+            appStatusQuery = appStatusQuery.filter(QueryBuilders.rangeQuery(SLA_GAP).gte(31).lt(91));
+        else if (SLAB4BEYOND_SLA.equalsIgnoreCase(applicationStatus))
+            appStatusQuery = appStatusQuery.filter(QueryBuilders.rangeQuery(SLA_GAP).gte(91));
+        else if (CSC_TOTAL.equalsIgnoreCase(applicationStatus))
+            appStatusQuery = appStatusQuery.filter(QueryBuilders.matchQuery(CHANNEL, SOURCE_CSC));
+        else if (MEESEVA_TOTAL.equalsIgnoreCase(applicationStatus))
+            appStatusQuery = appStatusQuery.filter(QueryBuilders.matchQuery(CHANNEL, SOURCE_MEESEVA));
+        else if (ONLINE_TOTAL.equalsIgnoreCase(applicationStatus))
+            appStatusQuery = appStatusQuery.filter(QueryBuilders.matchQuery(CHANNEL, SOURCE_ONLINE));
+        else if (ULB_TOTAL.equalsIgnoreCase(applicationStatus))
+            appStatusQuery = appStatusQuery.filter(QueryBuilders.matchQuery(CHANNEL, SOURCE_SYSTEM));
+        else if (OTHERS_TOTAL.equalsIgnoreCase(applicationStatus))
+            appStatusQuery = appStatusQuery.mustNot(
+                    QueryBuilders.termsQuery(CHANNEL, Arrays.asList(SOURCE_CSC, SOURCE_MEESEVA, SOURCE_ONLINE, SOURCE_SYSTEM)));
+        return appStatusQuery;
     }
 
 }
