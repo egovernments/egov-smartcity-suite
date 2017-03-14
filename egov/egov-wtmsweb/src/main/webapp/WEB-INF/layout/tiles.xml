@@ -162,9 +162,9 @@
         <put-attribute name="page-title" value="title.editdataentry" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/application/newConnection-dataEntryEditForm.jsp"/>
     </definition>
-    <definition name="chairperson-details" extends="base_layout">
+    <definition name="chairperson-create" extends="base_layout">
         <put-attribute name="page-title" value="title.chair.person.master" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/application/chairperson-details.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/application/chairperson-create.jsp"/>
     </definition>
     <definition name="donation-master" extends="base_layout">
         <put-attribute name="page-title" value="title.donation.master" cascade="true"/>
@@ -404,5 +404,16 @@
         <put-attribute name="page-title" value="title.connectionrectification" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/application/linkedassessment-success.jsp"/> 
     </definition>
-   
+    <definition name="chairperson-view" extends="base_layout">
+    	<put-attribute name="page-title" value="title.chairpersonmaster" cascade="true"></put-attribute>
+    	<put-attribute name="body" value="/WEB-INF/views/application/chairperson-view.jsp"></put-attribute>
+    </definition>
+       <definition name="chairpersondetails-edit" extends="base_layout">
+    	<put-attribute name="page-title" value="title.chairpersonmaster" cascade="true"></put-attribute>
+    	<put-attribute name="body" value="/WEB-INF/views/application/chairpersondetails-edit.jsp"></put-attribute>
+    </definition>
+     <definition name="chairperson-success" extends="base_layout">
+    	<put-attribute name="page-title" value="title.chairpersonmaster" cascade="true"></put-attribute>
+    	<put-attribute name="body" value="/WEB-INF/views/application/chairperson-success.jsp"></put-attribute>
+    </definition>
 </tiles-definitions>

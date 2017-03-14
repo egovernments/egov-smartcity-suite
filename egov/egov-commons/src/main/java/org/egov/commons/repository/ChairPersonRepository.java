@@ -39,9 +39,12 @@
  */
 package org.egov.commons.repository;
 
+import java.util.Date;
+
 import org.egov.commons.entity.ChairPerson;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -55,5 +58,8 @@ public interface ChairPersonRepository extends JpaRepository<ChairPerson, Long> 
 
     @Query("select cp from ChairPerson cp where cp.active=true and cp.fromDate = CURRENT_DATE() ")
     ChairPerson findActiveChairPersonByCurrentDate();
+
+    @Query("select cp from ChairPerson cp where cp.active=true and ((cp.toDate is not null and :toDate between cp.fromDate and cp.toDate) or (cp.toDate is not null and :fromDate between cp.fromDate and cp.toDate))")
+    ChairPerson findActiveChairPersonByGivenDate(@Param("fromDate") Date fromDate, @Param("toDate") Date toDate);
 
 }

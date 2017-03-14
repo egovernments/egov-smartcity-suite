@@ -44,41 +44,54 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
- <form:form method ="post" action="" class="form-horizontal form-groups-bordered"  id="chairPersonDetailsform"
-			cssClass="form-horizontal form-groups-bordered"
+ 
+ <form:form method ="post" action="" class="form-horizontal form-groups-bordered"  id="chairPersonDetailsEditForm"
+			cssClass="form-horizontal form-groups-bordered" modelAttribute="chairPerson" 
 			enctype="multipart/form-data">
+			<c:if test="${not empty message}">
+				<div class="alert alert-success" role="alert">${message}</div>
+			</c:if>
 					<div class="panel panel-primary" data-collapsed="0">
 						<div class="panel-heading">
 						</div>
 						<div class="panel-body custom-form">
 							<div class="form-group">
-								<label for="field-1" class="col-sm-4 control-label"><spring:message code="lbl.chairpersonname" /></label>
-								<div class="col-sm-4 add-margin">
-									<input type="textbox" class="form-control" title="space is not allowed as the first letter" pattern="^[^-\s][a-zA-Z0-9_\s-]+$" maxlength="32" id ="name">
+    							<label class="col-sm-3 control-label text-right"><spring:message code="lbl.chairpersonname" /><span class="mandatory"/></label>
+									<div class="col-sm-3 add-margin">
+										<form:input type="textbox" class="form-control"  id="chairpersonname" maxlength="32" path ="name" value="${chairPerson.name}" required="required"/>	
+									</div>
+									<label class="col-sm-2 control-label text-right"><spring:message code="lbl.isActive" /></label>
+									<div class="col-sm-3 add-margin">
+										<form:checkbox path="active" id="isActive" value="${chairPerson.active}"/>
+									</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label text-right"><spring:message
+								code="lbl.effective.fromdate" />:<span class="mandatory"></span></label>
+								<div class="col-sm-3 add-margin">
+									<form:input  path="fromDate" class="form-control datepicker" 
+										id="fromDate" data-inputmask="'mask': 'd/m/y'" required="required" />
+									<form:errors path="fromDate" cssClass="add-margin error-msg" />
 								</div>
+								
+								<label class="col-sm-2 control-label text-right"><spring:message
+								code="lbl.effective.todate" /><span class="mandatory"></span></label>
+								<div class="col-sm-3 add-margin">
+									<form:input  path="toDate" class="form-control datepicker" id="toDate" 
+										data-inputmask="'mask': 'd/m/y'" required="required" />
+									<form:errors path="toDate" cssClass="add-margin error-msg" />
+								</div>						
 							</div>
 							<div class="form-group text-center" >
-								<button type="button" class="btn btn-primary" id="buttonid"><spring:message code="lbl.add"/></button>
+								<input type="submit" value="Save" class="btn btn-primary" id="saveButtonid"/>
+								<button type="reset" class="btn btn-default" id="resetid"><spring:message code="lbl.reset" /></button>
 								<a onclick="self.close()" class="btn btn-default" href="javascript:void(0)"><spring:message code="lbl.close"/></a>
 							</div>
 						</div>
 					</div>
- 					
-	              <div class="row">
-					<div class="col-sm-12">
-						<h4>Available Names in the drop down:</h4>
-					</div>
-				 </div>
-					<table  class="table table-bordered datatable" id="chairperson-table">
-					</table>
 		</form:form>			
-				<link rel="stylesheet" href="<cdn:url value='/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css' context='/egi'/>">
-				<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>
-				<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
-                <script src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"
-	            type="text/javascript"></script>
-                <script src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"
-	            type="text/javascript"></script>
-                <script src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>"
-	            type="text/javascript"></script>
+				
 	            <script src="<cdn:url value='/resources/js/app/chairperson-details.js?rnd=${app_release_no}'/>"></script>
+	            <script src="<cdn:url value='/resources/js/app/helper.js?rnd=${app_release_no}'/>"></script>
+	            
+	            
