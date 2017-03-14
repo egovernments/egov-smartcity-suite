@@ -15,7 +15,7 @@
 <div id="content" class="printable">
     <div class="formmainbox panel-primary">
         <div class="subheadnew text-center" id="headingdiv">
-            <s:text name="page.title.viewtrade"/>
+            <s:text name="licensefee.verification.title"/>
         </div>
         <table>
             <tr>
@@ -57,12 +57,11 @@
 </div>
 
 <div align="center" class="buttonbottom" id="buttondiv">
-    <a href="#" class="btn btn-primary" onclick="window.open('/tl/integration/licenseBillCollect-collectfees.action?licenseId='+${licenseId}, '_self'); return false;">Continue to payment</a>
+    <a href="#" class="btn btn-primary"
+       onclick="window.open('/tl/integration/licenseBillCollect-collectfees.action?licenseId='+${licenseId}, '_self'); return false;">Continue
+        to payment</a>
     <a href='javascript:void(0)' class='btn btn-default' onclick='self.close()'>Close</a>
 </div>
 </s:form>
-<script>
-
-</script>
 </body>
 </html>

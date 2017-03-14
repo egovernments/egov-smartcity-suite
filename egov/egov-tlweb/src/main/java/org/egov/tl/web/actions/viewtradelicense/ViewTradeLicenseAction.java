@@ -120,28 +120,6 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
         }
     }
 
-
-    @SkipValidation
-    @Action(value = "/viewtradelicense/viewTradeLicense-generateRejCertificate")
-    public String generateRejCertificate() {
-        setLicenseIdIfServletRedirect();
-        tradeLicense = tradeLicenseService.getLicenseById(license().getId());
-        return "rejCertificate";
-    }
-
-    @SkipValidation
-    @Action(value = "/viewtradelicense/viewTradeLicense-certificateForRej")
-    public String certificateForRej() {
-        getSession().get("model.id");
-        tradeLicense = tradeLicenseService.getLicenseById(license().getId());
-        return "certificateForRej";
-    }
-
-    @Action(value = "/viewtradelicense/viewTradeLicense-duplicateCertificate")
-    public String duplicateCertificate() {
-        return "duplicate";
-    }
-
     @Override
     protected TradeLicense license() {
         return tradeLicense;

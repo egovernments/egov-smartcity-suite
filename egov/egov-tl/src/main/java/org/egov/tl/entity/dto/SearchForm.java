@@ -98,7 +98,7 @@ public class SearchForm {
     private void addActions(final License license, final String userRoles) {
         final List<String> licenseActions = new ArrayList<>();
         licenseActions.add("View Trade");
-        if (license.isStatusActive())
+        if (license.isClosureApplicable())
             licenseActions.add("Closure");
         if (!userRoles.contains(CSCOPERATOR)) {
             licenseActions.add("Generate Demand Notice");

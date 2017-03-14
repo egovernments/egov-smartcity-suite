@@ -96,7 +96,7 @@ function populateApprover() {
 	
 </script>
 <s:if test="%{getNextAction()!='END'}">
-<s:if test="%{!'Closed'.equalsIgnoreCase(state.value) || !'END'.equalsIgnoreCase(state.value)}">
+<s:if test="%{!'Closed'.equalsIgnoreCase(state.value) && !'END'.equalsIgnoreCase(state.value)}">
     <s:hidden id="currentState" name="currentState" value="%{state.value}"/>
 </s:if>
 <s:else>
