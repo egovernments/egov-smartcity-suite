@@ -894,6 +894,8 @@ public class WaterConnectionDetailsService {
                 applicationIndex.setApproved(ApprovalStatus.INPROGRESS);
                 applicationIndex.setClosed(ClosureStatus.NO);
                 applicationIndex.setStatus(waterConnectionDetails.getStatus().getDescription());
+                applicationIndex.setSla(applicationProcessTimeService.getApplicationProcessTime(
+                        waterConnectionDetails.getApplicationType(), waterConnectionDetails.getCategory()));
                 if (waterTaxUtils.isCSCoperator(waterConnectionDetails.getCreatedBy()) && UserType.BUSINESS.equals(waterConnectionDetails.getCreatedBy().getType()))
                     applicationIndex.setChannel(Source.CSC.toString());
                 else if (sourceChannel == null)
