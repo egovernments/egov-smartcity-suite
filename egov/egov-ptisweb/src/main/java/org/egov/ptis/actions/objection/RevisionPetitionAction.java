@@ -1721,23 +1721,21 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
     public void vaidatePropertyDetails() {
         if (reasonForModify == null || reasonForModify.equals("-1"))
             addActionError(getText("mandatory.rsnForMdfy"));
-        validateProperty(
-                objection.getProperty(),
-                getAreaOfPlot() != null ? getAreaOfPlot() : "",
-                objection.getProperty().getPropertyDetail().getDateOfCompletion() != null ? dateformat.format(
-                        objection.getProperty().getPropertyDetail().getDateOfCompletion()).toString() : "",
-                eastBoundary, westBoundary, southBoundary, northBoundary, propTypeObjId != null ? propTypeObjId : null,
-                ownerName, ownerName, objection.getProperty().getPropertyDetail().getFloorType() != null ? objection
-                        .getProperty().getPropertyDetail().getFloorType().getId() : null,
-                objection.getProperty()
-                        .getPropertyDetail().getRoofType() != null ? objection.getProperty().getPropertyDetail()
-                                .getRoofType().getId() : null,
-                objection.getProperty().getPropertyDetail().getWallType() != null ? objection.getProperty()
-                        .getPropertyDetail().getWallType().getId() : null,
-                objection.getProperty().getPropertyDetail()
-                        .getWoodType() != null ? objection.getProperty().getPropertyDetail().getWoodType().getId()
-                                : null,
-                null, null, getVacantLandPlotAreaId(), getLayoutApprovalAuthorityId(), null);
+        validateProperty(objection.getProperty(), getAreaOfPlot() != null ? getAreaOfPlot() : "", null, eastBoundary,
+                westBoundary, southBoundary, northBoundary, propTypeObjId != null ? propTypeObjId : null, ownerName,
+                ownerName,
+                objection.getProperty().getPropertyDetail().getFloorType() != null
+                        ? objection.getProperty().getPropertyDetail().getFloorType().getId() : null,
+                objection.getProperty().getPropertyDetail().getRoofType() != null
+                        ? objection.getProperty().getPropertyDetail().getRoofType().getId() : null,
+                objection.getProperty().getPropertyDetail().getWallType() != null
+                        ? objection.getProperty().getPropertyDetail().getWallType().getId() : null,
+                objection.getProperty().getPropertyDetail().getWoodType() != null
+                        ? objection.getProperty().getPropertyDetail().getWoodType().getId() : null,
+                null,
+                objection.getProperty().getPropertyDetail().getDateOfCompletion() != null
+                        ? objection.getProperty().getPropertyDetail().getDateOfCompletion() : null,
+                getVacantLandPlotAreaId(), getLayoutApprovalAuthorityId(), null);
 
     }
 
