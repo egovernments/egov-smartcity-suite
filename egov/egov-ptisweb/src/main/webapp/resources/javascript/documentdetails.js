@@ -50,6 +50,7 @@ jQuery('#assessmentDocumentNames').change(function() {
 
 function documentTypeEdit() {
 	var dropdownvalue = jQuery('#assessmentDocumentNames :selected').text();
+	enableOwnerDetailsFields(dropdownvalue);
 	serialNoToggle(dropdownvalue);
 }
 
@@ -65,8 +66,8 @@ function documentTypeToggle(dropdownvalue) {
 		jQuery('#Decree_Document').hide();
 		jQuery('#Registered_Document').hide();
 		jQuery('#Photo_of_Property_With_Holder').hide();
-		jQuery('#docNoLabel').html('Certificate No :');
-		jQuery('#docDateLabel').html('Certificate Date :');
+		jQuery('#docNoLabel').html('Certificate No * :');
+		jQuery('#docDateLabel').html('Certificate Date * :');
 	} else if (dropdownvalue.indexOf('Decree') != -1) {
 		jQuery(".docNoDate").show();
 		jQuery(".proceeding").hide();
@@ -78,8 +79,8 @@ function documentTypeToggle(dropdownvalue) {
 		jQuery('#Decree_Document').show();
 		jQuery('#Photo_of_Property_With_Holder').hide();
 		jQuery('#Registered_Document').hide();
-		jQuery('#docNoLabel').html('Decree No :');
-		jQuery('#docDateLabel').html('Decree Date :');
+		jQuery('#docNoLabel').html('Decree No * :');
+		jQuery('#docDateLabel').html('Decree Date * :');
 	} else if (dropdownvalue.indexOf('Registered Will Document') != -1) {
 		jQuery(".docNoDate").show();
 		jQuery(".proceeding").hide();
@@ -91,8 +92,8 @@ function documentTypeToggle(dropdownvalue) {
 		jQuery('#Decree_Document').hide();
 		jQuery('#Photo_of_Property_With_Holder').hide();
 		jQuery('#Registered_Document').hide();
-		jQuery('#docNoLabel').html('Deed No :');
-		jQuery('#docDateLabel').html('Deed Date :');
+		jQuery('#docNoLabel').html('Deed No * :');
+		jQuery('#docDateLabel').html('Deed Date * :');
 	} else if (dropdownvalue.indexOf('Un-registered Will Document') != -1) {
 		jQuery(".docNoDate").show();
 		jQuery(".proceeding").hide();
@@ -104,8 +105,8 @@ function documentTypeToggle(dropdownvalue) {
 		jQuery('#Decree_Document').hide();
 		jQuery('#Photo_of_Property_With_Holder').hide();
 		jQuery('#Registered_Document').hide();
-		jQuery('#docNoLabel').html('Deed No :');
-		jQuery('#docDateLabel').html('Deed Date :');
+		jQuery('#docNoLabel').html('Deed No * :');
+		jQuery('#docDateLabel').html('Deed Date * :');
 	} else if (dropdownvalue.indexOf('Registered Document') != -1) {
 		jQuery(".docNoDate").show();
 		jQuery(".proceeding").hide();
@@ -117,8 +118,8 @@ function documentTypeToggle(dropdownvalue) {
 		jQuery('#Decree_Document').hide();
 		jQuery('#Registered_Document').show();
 		jQuery('#Photo_of_Property_With_Holder').hide();
-		jQuery('#docNoLabel').html('Registered Document No :');
-		jQuery('#docDateLabel').html('Registered Document Date :');
+		jQuery('#docNoLabel').html('Registered Document No * :');
+		jQuery('#docDateLabel').html('Registered Document Date * :');
 	} else if (dropdownvalue.indexOf('Notary document') != -1) {
 		jQuery(".docNoDate").hide();
 		jQuery(".proceeding").hide();
@@ -141,18 +142,48 @@ var populateDefaultCitizenSuccess = function(req, res) {
 				"input[name='basicProperty.propertyOwnerInfoProxy[" + rowidx
 						+ "].owner.name']").val(results[0].name);
 		jQuery(
+				"input[name='basicProperty.propertyOwnerInfoProxy[" + rowidx
+						+ "].owner.name']").attr("disabled", "disabled");
+		jQuery(
 				"select[name='basicProperty.propertyOwnerInfoProxy[" + rowidx
 						+ "].owner.gender']").val(results[0].gender);
+		jQuery(
+				"select[name='basicProperty.propertyOwnerInfoProxy[" + rowidx
+						+ "].owner.gender']").attr("disabled", "disabled");
 		jQuery(
 				"input[name='basicProperty.propertyOwnerInfoProxy[" + rowidx
 						+ "].owner.mobileNumber']").val(results[0].mobileNo);
 		jQuery(
 				"select[name='basicProperty.propertyOwnerInfoProxy[" + rowidx
-						+ "].owner.guardianRelation']").val(
-				results[0].guardianRelation);
+						+ "].owner.guardianRelation']").val(results[0].guardianRelation);
+		jQuery(
+				"select[name='basicProperty.propertyOwnerInfoProxy[" + rowidx
+						+ "].owner.guardianRelation']").attr("disabled", "disabled");
 		jQuery(
 				"input[name='basicProperty.propertyOwnerInfoProxy[" + rowidx
 						+ "].owner.guardian']").val(results[0].guardian);
+		jQuery(
+				"input[name='basicProperty.propertyOwnerInfoProxy[" + rowidx
+						+ "].owner.guardian']").attr("disabled", "disabled");
+		jQuery(
+				"input[name='propertyDetail.floorDetailsProxy[" + rowidx
+						+ "].buildingPermissionNo']").val("");
+		jQuery(
+				"input[name='propertyDetail.floorDetailsProxy[" + rowidx
+						+ "].buildingPermissionDate']").val("");
+		jQuery(
+				"input[name='propertyDetail.floorDetailsProxy[" + rowidx
+						+ "].buildingPlanPlinthArea.area']").val("");
+		jQuery(
+				"input[name='propertyDetail.floorDetailsProxy[" + rowidx
+						+ "].buildingPermissionNo']").attr("disabled", "disabled");
+		jQuery(
+				"input[name='propertyDetail.floorDetailsProxy[" + rowidx
+						+ "].buildingPermissionDate']").attr("disabled", "disabled");
+		jQuery(
+				"input[name='propertyDetail.floorDetailsProxy[" + rowidx
+						+ "].buildingPlanPlinthArea.area']").attr("disabled", "disabled");
+		
 	}
 }
 
@@ -210,4 +241,32 @@ jQuery(".doctable input:file")
 function clearSelectedFile(obj) {
 	jQuery(obj).parent().find('input:file').val('');
 	jQuery(obj).remove();
+}
+
+function enableOwnerDetailsFields(dropdownvalue) {
+	if (dropdownvalue.indexOf('Notary document') == -1) {
+		var rowidx = 0;
+		jQuery(
+				"input[name='basicProperty.propertyOwnerInfoProxy[" + rowidx
+						+ "].owner.name']").removeAttr("disabled");
+		jQuery(
+				"select[name='basicProperty.propertyOwnerInfoProxy[" + rowidx
+						+ "].owner.gender']").removeAttr("disabled");
+		jQuery(
+				"select[name='basicProperty.propertyOwnerInfoProxy[" + rowidx
+						+ "].owner.guardianRelation']").removeAttr("disabled");
+		jQuery(
+				"input[name='basicProperty.propertyOwnerInfoProxy[" + rowidx
+						+ "].owner.guardian']").removeAttr("disabled");
+		jQuery(
+				"input[name='propertyDetail.floorDetailsProxy[" + rowidx
+						+ "].buildingPermissionNo']").removeAttr("disabled");
+		jQuery(
+				"input[name='propertyDetail.floorDetailsProxy[" + rowidx
+						+ "].buildingPermissionDate']").removeAttr("disabled");
+		jQuery(
+				"input[name='propertyDetail.floorDetailsProxy[" + rowidx
+						+ "].buildingPlanPlinthArea.area']").removeAttr("disabled");
+	}
+	
 }

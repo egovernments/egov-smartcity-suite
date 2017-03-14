@@ -1693,7 +1693,7 @@ public interface PropertyTaxConstants {
         }
     };
     public static final List<String> ASSESSMENT_DOCUMENT_NAMES = ImmutableList.of("Patta Certificate (Issued by Revenue Department)",
-            "Registered Will Document", "Un-registered Will Document", "Decree by Civil Court", "Registered Document");
+            "Registered Will Document", "Un-registered Will Document", "Decree by Civil Court", "Registered Document", "Un-registered Document / Notary document");
     public static final String DOCUMENT_TYPE_PATTA_CERTIFICATE = "Patta Certificate";
     public static final String DOCUMENT_TYPE_MRO_PROCEEDINGS = "MRO Proceedings";
     public static final String DOCUMENT_TYPE_WILL_DEED = "Will Deed";
@@ -1712,7 +1712,7 @@ public interface PropertyTaxConstants {
     
     //Source of Application
     public static final String SOURCE_CSC = "CSC";
-    public static final String SOURCE_MEESEVA = "MSEVA";
+    public static final String SOURCE_MEESEVA = "MEESEVA";
     public static final String SOURCE_MOBILE = "MOBILE";
     public static final String SOURCE_SYSTEM = "SYSTEM";
     public static final String SOURCE_ONLINE = "ONLINE";

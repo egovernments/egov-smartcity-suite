@@ -703,7 +703,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
         infoBean.setWardName(propertyId.getWard().getName());
         infoBean.setAreaName(propertyId.getArea().getName());
         infoBean.setLocalityName(propertyId.getLocality().getName());
-        if (property.getSource().equals(PropertyTaxConstants.SOURCE_MEESEVA))
+        if (checkMeesevaSource(property))
             infoBean.setMeesevaNo(property.getApplicationNo());
         infoBean.setNoticeDate(new Date());
         ownerType = property.getPropertyDetail().getPropertyTypeMaster().getType();
@@ -833,6 +833,10 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
         property.transition().end();
         basicProperty.setUnderWorkflow(false);
         LOGGER.debug("Exit method endWorkFlow, Workflow ended");
+    }
+    
+    Boolean checkMeesevaSource(PropertyImpl property){
+        return property.getSource() != null ? property.getSource().equals(PropertyTaxConstants.SOURCE_MEESEVA) : false;
     }
 
     public void setReportService(final ReportService reportService) {
