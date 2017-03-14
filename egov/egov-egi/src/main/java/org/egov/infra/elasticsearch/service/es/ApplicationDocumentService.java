@@ -74,6 +74,7 @@ import org.elasticsearch.search.aggregations.bucket.histogram.Histogram;
 import org.elasticsearch.search.aggregations.bucket.terms.StringTerms;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms.Bucket;
+import org.elasticsearch.search.aggregations.metrics.sum.Sum;
 import org.elasticsearch.search.aggregations.metrics.valuecount.ValueCount;
 import org.elasticsearch.search.aggregations.metrics.valuecount.ValueCountBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,6 +87,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 public class ApplicationDocumentService {
+
+    private static final String APPLICATION_DATE = "applicationDate";
 
     private static final String CITY_NAME = "cityName";
 
@@ -382,7 +385,7 @@ public class ApplicationDocumentService {
                     .filter(QueryBuilders.matchQuery(CHANNEL, applicationIndexRequest.getSource()));
         if (fromDate != null && toDate != null)
             boolQuery = boolQuery
-                    .filter(QueryBuilders.rangeQuery("applicationDate").gte(DATEFORMATTER_YYYY_MM_DD.format(fromDate))
+                    .filter(QueryBuilders.rangeQuery(APPLICATION_DATE).gte(DATEFORMATTER_YYYY_MM_DD.format(fromDate))
                             .lte(DATEFORMATTER_YYYY_MM_DD.format(toDate)).includeUpper(false));
         return boolQuery;
     }
@@ -416,6 +419,7 @@ public class ApplicationDocumentService {
         String name;
         ApplicationDetails applicationDetails;
         Map serviceDetails;
+        Map<String, Long> delayDaysMap = new HashMap<>();
 
         if (StringUtils.isNotBlank(applicationIndexRequest.getAggregationLevel())) {
             Map<String, String> aggrTypeAndSize = fetchAggregationTypeAndSize(applicationIndexRequest.getAggregationLevel());
@@ -471,6 +475,9 @@ public class ApplicationDocumentService {
         Map<String, Long> otherApplications = getAggregationWiseApplicationCounts(applicationIndexRequest, fromDate, toDate,
                 OTHERS_TOTAL, OTHERS_TOTAL, aggregationField, size);
 
+        if (APPLICATION_TYPE.equalsIgnoreCase(aggregationField))
+            delayDaysMap = getDelayedDaysAggregate(applicationIndexRequest, fromDate, toDate, aggregationField, size);
+
         for (Map.Entry<String, Long> entry : totalRcvdApplications.entrySet()) {
             applicationDetails = new ApplicationDetails();
             name = entry.getKey();
@@ -488,6 +495,8 @@ public class ApplicationDocumentService {
                     applicationDetails.setServiceGroup(serviceDetails.get(MODULE_NAME).toString());
                     applicationDetails.setSlaPeriod((Integer) serviceDetails.get("sla"));
                 }
+                if (!delayDaysMap.isEmpty() && delayDaysMap.get(name) != null)
+                    applicationDetails.setDelayedDays(delayDaysMap.get(name));
             }
 
             applicationDetails.setTotalReceived(entry.getValue());
@@ -638,7 +647,7 @@ public class ApplicationDocumentService {
         else if (OPEN.equalsIgnoreCase(status))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery(IS_CLOSED, 0));
 
-        AggregationBuilder aggregationBuilder = AggregationBuilders.dateHistogram(DATE_AGGR).field("applicationDate")
+        AggregationBuilder aggregationBuilder = AggregationBuilders.dateHistogram(DATE_AGGR).field(APPLICATION_DATE)
                 .interval(DateHistogramInterval.MONTH)
                 .subAggregation(AggregationBuilders.count(TOTAL_COUNT).field(APPLICATION_NUMBER));
 
@@ -661,7 +670,7 @@ public class ApplicationDocumentService {
         else if (OPEN.equalsIgnoreCase(status))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery(IS_CLOSED, 0));
 
-        AggregationBuilder aggregationBuilder = AggregationBuilders.dateHistogram(DATE_AGGR).field("applicationDate")
+        AggregationBuilder aggregationBuilder = AggregationBuilders.dateHistogram(DATE_AGGR).field(APPLICATION_DATE)
                 .interval(DateHistogramInterval.MONTH);
 
         aggregationBuilder.subAggregation(AggregationBuilders.terms(MODULE_NAME).field(MODULE_NAME)
@@ -713,7 +722,7 @@ public class ApplicationDocumentService {
             appStatusQuery = appStatusQuery.filter(QueryBuilders.matchQuery(IS_CLOSED, 1))
                     .must(QueryBuilders.rangeQuery(SLA_GAP).gt(0));
         else if (TOTAL_BEYOND_SLA.equalsIgnoreCase(applicationStatus))
-            appStatusQuery= appStatusQuery.filter(QueryBuilders.rangeQuery(SLA_GAP).gt(0));
+            appStatusQuery = appStatusQuery.filter(QueryBuilders.rangeQuery(SLA_GAP).gt(0));
         else if (TOTAL_WITHIN_SLA.equalsIgnoreCase(applicationStatus))
             appStatusQuery = appStatusQuery.filter(QueryBuilders.rangeQuery(SLA_GAP).lte(0));
         else if (OPEN_WITHIN_SLA.equalsIgnoreCase(applicationStatus))
@@ -768,7 +777,7 @@ public class ApplicationDocumentService {
 
         return applicationTypeDetails;
     }
-    
+
     public ApplicationIndexResponse findServiceWiseDetails(final ApplicationIndexRequest applicationIndexRequest) {
         final ApplicationIndexResponse applicationIndexResponse = new ApplicationIndexResponse();
         Aggregations aggregation;
@@ -865,6 +874,40 @@ public class ApplicationDocumentService {
         }
 
         return serviceDetailsList;
+    }
+
+    /**
+     * Fetch delayed days for aggregation based on service type
+     * @param applicationIndexRequest
+     * @param fromDate
+     * @param toDate
+     * @param aggregationField
+     * @param size
+     * @return map
+     */
+    private Map<String, Long> getDelayedDaysAggregate(ApplicationIndexRequest applicationIndexRequest, Date fromDate, Date toDate,
+            String aggregationField, int size) {
+        Sum sumAggr;
+        Map<String, Long> delayMap = new HashMap<>();
+        BoolQueryBuilder boolQuery = prepareWhereClause(applicationIndexRequest, fromDate, toDate);
+        boolQuery = boolQuery.must(QueryBuilders.rangeQuery(SLA_GAP).gt(0));
+
+        AggregationBuilder aggregationBuilder = AggregationBuilders.terms("by_service").field(aggregationField).size(size)
+                .subAggregation(AggregationBuilders.sum(TOTAL_COUNT).field(SLA_GAP));
+
+        NativeSearchQueryBuilder queryBuilder = new NativeSearchQueryBuilder().withIndices(APPLICATIONS_INDEX)
+                .withQuery(boolQuery);
+        SearchQuery searchQueryColl = queryBuilder.addAggregation(aggregationBuilder).build();
+
+        Aggregations aggregation = elasticsearchTemplate.query(searchQueryColl,
+                response -> response.getAggregations());
+
+        StringTerms stringTerms = aggregation.get("by_service");
+        for (Terms.Bucket entry : stringTerms.getBuckets()) {
+            sumAggr = entry.getAggregations().get(TOTAL_COUNT);
+            delayMap.put(String.valueOf(entry.getKey()), (long) sumAggr.getValue());
+        }
+        return delayMap;
     }
 
 }

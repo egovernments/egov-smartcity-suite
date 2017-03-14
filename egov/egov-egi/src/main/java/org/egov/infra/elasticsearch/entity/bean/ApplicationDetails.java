@@ -76,6 +76,7 @@ public class ApplicationDetails {
     private long onlineTotal = 0;
     private long ulbTotal = 0;
     private long othersTotal = 0;
+    private long delayedDays;
 
     public String getRegion() {
         return region;
@@ -188,7 +189,7 @@ public class ApplicationDetails {
     public void setServiceType(String serviceType) {
         this.serviceType = serviceType;
     }
-    
+
     public String getFunctionaryName() {
         return functionaryName;
     }
@@ -347,6 +348,14 @@ public class ApplicationDetails {
 
     public void setOthersTotal(long othersTotal) {
         this.othersTotal = othersTotal;
+    }
+
+    public long getDelayedDays() {
+        return delayedDays;
+    }
+
+    public void setDelayedDays(long delayedDays) {
+        this.delayedDays = delayedDays;
     }
 
 }
