@@ -147,9 +147,9 @@ public class SewerageBatchDemandGenService {
                 }
             }
             sewerageDmdGen.setActive(false);
-            sewerageDmdGen.setTotalRecords(recordsResult[0]);
-            sewerageDmdGen.setSuccessfullRecords(recordsResult[1]);
-            sewerageDmdGen.setFailureRecords(recordsResult[2]);
+            sewerageDmdGen.setTotalRecords((recordsResult != null && recordsResult.length >0 &&   recordsResult[0]!=null) ? recordsResult[0] : 0);
+            sewerageDmdGen.setSuccessfullRecords((recordsResult != null &&  recordsResult.length >=2 &&  recordsResult[1]!=null)? recordsResult[1] : 0);
+            sewerageDmdGen.setFailureRecords((recordsResult != null  &&  recordsResult.length >=3 &&  recordsResult[2]!=null) ? recordsResult[2] : 0);
 
             final TransactionTemplate txTemplate = new TransactionTemplate(transactionTemplate.getTransactionManager());
             txTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
@@ -159,7 +159,9 @@ public class SewerageBatchDemandGenService {
                 return Boolean.TRUE;
             });
         }
-        return recordsResult[1];
+       
+        return (recordsResult != null &&  recordsResult.length >=2 &&  recordsResult[1]!=null) ? recordsResult[1]:0;
     }
+
 
 }
