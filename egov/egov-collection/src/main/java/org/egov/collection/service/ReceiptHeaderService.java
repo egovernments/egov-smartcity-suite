@@ -421,7 +421,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 
         if (receiptHeader.getReceiptMisc().getDepositedInBank() != null)
             receiptHeader
-                    .transition(true)
+                    .transition().progressWithStateCopy()
                     .withSenderName(
                             receiptHeader.getCreatedBy().getUsername() + "::" + receiptHeader.getCreatedBy().getName())
                     .withComments("Receipts Submitted for Approval")
@@ -593,8 +593,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 
         if (position != null)
             receiptHeaderToBeCancelled
-                    .transition(true)
-                    .end()
+                    .transition().end()
                     .withSenderName(
                             receiptHeaderToBeCancelled.getCreatedBy().getUsername() + "::"
                                     + receiptHeaderToBeCancelled.getCreatedBy().getName())

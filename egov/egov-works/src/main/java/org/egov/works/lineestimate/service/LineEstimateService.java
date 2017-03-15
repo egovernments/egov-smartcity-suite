@@ -661,7 +661,7 @@ public class LineEstimateService {
             wfInitiator = assignmentService.getPrimaryAssignmentForUser(lineEstimate.getCreatedBy().getId());
         if (WorksConstants.REJECT_ACTION.toString().equalsIgnoreCase(workFlowAction)) {
             final String stateValue = WorksConstants.WF_STATE_REJECTED;
-            lineEstimate.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+            lineEstimate.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
                     .withComments(approvalComent).withStateValue(stateValue).withDateInfo(currentDate.toDate())
                     .withOwner(wfInitiator.getPosition()).withNextAction("").withNatureOfTask(natureOfwork);
 
@@ -678,13 +678,13 @@ public class LineEstimateService {
                         .withOwner(pos).withNextAction(wfmatrix.getNextAction()).withNatureOfTask(natureOfwork);
             } else if (WorksConstants.CANCEL_ACTION.toString().equalsIgnoreCase(workFlowAction)) {
                 final String stateValue = WorksConstants.WF_STATE_CANCELLED;
-                lineEstimate.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+                lineEstimate.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withStateValue(stateValue).withDateInfo(currentDate.toDate())
                         .withOwner(pos).withNextAction("").withNatureOfTask(natureOfwork);
             } else {
                 wfmatrix = lineEstimateWorkflowService.getWfMatrix(lineEstimate.getStateType(), null, null,
                         additionalRule, lineEstimate.getCurrentState().getValue(), null);
-                lineEstimate.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+                lineEstimate.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withStateValue(wfmatrix.getNextState())
                         .withDateInfo(currentDate.toDate()).withOwner(pos).withNextAction(wfmatrix.getNextAction())
                         .withNatureOfTask(natureOfwork);

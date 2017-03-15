@@ -205,24 +205,24 @@ public class JournalVoucherActionHelper {
 
         if (FinancialConstants.BUTTONREJECT.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
                 final String stateValue = FinancialConstants.WORKFLOW_STATE_REJECTED;
-                voucherHeader.transition(true).withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
+                voucherHeader.transition().progressWithStateCopy().withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
                         .withStateValue(stateValue).withDateInfo(currentDate.toDate())
                         .withOwner(wfInitiator.getPosition()).withNextAction(FinancialConstants.WF_STATE_EOA_Approval_Pending);
 
         } else if (FinancialConstants.BUTTONAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
             final WorkFlowMatrix wfmatrix = voucherHeaderWorkflowService.getWfMatrix(voucherHeader.getStateType(), null,
                     null, null, voucherHeader.getCurrentState().getValue(), null);
-            voucherHeader.transition(true).withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
+            voucherHeader.transition().progressWithStateCopy().withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
                     .withStateValue(wfmatrix.getCurrentDesignation() + " Approved").withDateInfo(currentDate.toDate())
                     .withOwner(pos)
                     .withNextAction(wfmatrix.getNextAction());
 
             voucherHeader.setStatus(FinancialConstants.CREATEDVOUCHERSTATUS);
-            voucherHeader.transition(true).end().withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
+            voucherHeader.transition().end().withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
                     .withDateInfo(currentDate.toDate());
         } else if (FinancialConstants.BUTTONCANCEL.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
             voucherHeader.setStatus(FinancialConstants.CANCELLEDVOUCHERSTATUS);
-            voucherHeader.transition(true).end().withStateValue(FinancialConstants.WORKFLOW_STATE_CANCELLED)
+            voucherHeader.transition().end().withStateValue(FinancialConstants.WORKFLOW_STATE_CANCELLED)
                     .withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
                     .withDateInfo(currentDate.toDate());
         } else {
@@ -236,13 +236,13 @@ public class JournalVoucherActionHelper {
                         .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
                         .withNextAction(wfmatrix.getNextAction());
             } else if (voucherHeader.getCurrentState().getNextAction().equalsIgnoreCase("END"))
-                voucherHeader.transition(true).end().withSenderName(user.getName())
+                voucherHeader.transition().end().withSenderName(user.getName())
                         .withComments(workflowBean.getApproverComments())
                         .withDateInfo(currentDate.toDate());
             else {
                 final WorkFlowMatrix wfmatrix = voucherHeaderWorkflowService.getWfMatrix(voucherHeader.getStateType(), null,
                         null, null, voucherHeader.getCurrentState().getValue(), null);
-                voucherHeader.transition(true).withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
+                voucherHeader.transition().progressWithStateCopy().withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
                         .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
                         .withNextAction(wfmatrix.getNextAction());
             }

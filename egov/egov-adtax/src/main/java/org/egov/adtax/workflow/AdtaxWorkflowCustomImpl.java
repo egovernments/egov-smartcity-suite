@@ -162,7 +162,7 @@ public abstract class AdtaxWorkflowCustomImpl implements AdtaxWorkflowCustom {
             }
        
             advertisementPermitDetail.setPermissionNumber((beanResolver.getAutoNumberServiceFor(AdvertisementPermitNumberGenerator.class)).getNextAdvertisementPermitNumber(advertisementPermitDetail.getAdvertisement()));
-            advertisementPermitDetail.transition(true)
+            advertisementPermitDetail.transition().progressWithStateCopy()
                     .withSenderName(user.getUsername() + AdvertisementTaxConstants.COLON_CONCATE + user.getName())
                     .withComments(approvalComent)
                     .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate())
@@ -179,7 +179,7 @@ public abstract class AdtaxWorkflowCustomImpl implements AdtaxWorkflowCustom {
                     
                 advertisementPermitDetail.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(AdvertisementTaxConstants.APPLICATION_MODULE_TYPE,
                                 AdvertisementTaxConstants.APPLICATION_STATUS_CANCELLED));
-                advertisementPermitDetail.transition(true).end()
+                advertisementPermitDetail.transition().end()
                         .withSenderName(user.getUsername() + AdvertisementTaxConstants.COLON_CONCATE + user.getName())
                         .withComments(approvalComent).withDateInfo(currentDate.toDate())
                         .withNextAction(AdvertisementTaxConstants.WF_END_STATE).withNatureOfTask(AdvertisementTaxConstants.NATURE_OF_WORK);
@@ -216,7 +216,7 @@ public abstract class AdtaxWorkflowCustomImpl implements AdtaxWorkflowCustom {
                 wfmatrix = advertisementPermitDetailWorkflowService.getWfMatrix(advertisementPermitDetail.getStateType(), null,
                         null, additionalRule, AdvertisementTaxConstants.WF_REJECT_STATE, null);
                 advertisementPermitDetail.setStatus(getStatusByPassingModuleAndCode(wfmatrix));
-                advertisementPermitDetail.transition(true)
+                advertisementPermitDetail.transition().progressWithStateCopy()
                         .withSenderName(user.getUsername() + AdvertisementTaxConstants.COLON_CONCATE + user.getName())
                         .withComments(approvalComent)
                         .withStateValue(AdvertisementTaxConstants.WF_REJECT_STATE).withDateInfo(currentDate.toDate())
@@ -228,7 +228,7 @@ public abstract class AdtaxWorkflowCustomImpl implements AdtaxWorkflowCustom {
             wfmatrix = advertisementPermitDetailWorkflowService.getWfMatrix(advertisementPermitDetail.getStateType(), null,
                     null, additionalRule, advertisementPermitDetail.getCurrentState().getValue(), null);
             advertisementPermitDetail.setStatus(getStatusByPassingModuleAndCode(wfmatrix));
-            advertisementPermitDetail.transition(true)
+            advertisementPermitDetail.transition().progressWithStateCopy()
                     .withSenderName((wfInitiator!=null && wfInitiator.getEmployee()!=null ?wfInitiator.getEmployee().getUsername():"" ) + AdvertisementTaxConstants.COLON_CONCATE
                             + (wfInitiator!=null && wfInitiator.getEmployee()!=null ?wfInitiator.getEmployee().getName():"" ) )
                     .withComments(approvalComent)
@@ -241,7 +241,7 @@ public abstract class AdtaxWorkflowCustomImpl implements AdtaxWorkflowCustom {
             advertisementPermitDetail.setStatus(getStatusByPassingModuleAndCode(wfmatrix));
             advertisementPermitDetail.getAdvertisement().setStatus(AdvertisementStatus.ACTIVE);
             if (wfmatrix.getNextAction().equalsIgnoreCase(AdvertisementTaxConstants.WF_END_STATE))
-                advertisementPermitDetail.transition(true).end()
+                advertisementPermitDetail.transition().end()
                         .withSenderName((wfInitiator!=null && wfInitiator.getEmployee()!=null ?wfInitiator.getEmployee().getUsername():"" ) + AdvertisementTaxConstants.COLON_CONCATE
                                 + (wfInitiator!=null && wfInitiator.getEmployee()!=null ?wfInitiator.getEmployee().getName():"" ) )
                         .withComments(approvalComent).withDateInfo(currentDate.toDate())
@@ -250,7 +250,7 @@ public abstract class AdtaxWorkflowCustomImpl implements AdtaxWorkflowCustom {
             wfmatrix = advertisementPermitDetailWorkflowService.getWfMatrix(advertisementPermitDetail.getStateType(), null,
                     null, additionalRule, advertisementPermitDetail.getCurrentState().getValue(), null);
             advertisementPermitDetail.setStatus(getStatusByPassingModuleAndCode(wfmatrix));
-            advertisementPermitDetail.transition(true)
+            advertisementPermitDetail.transition().progressWithStateCopy()
                     .withSenderName(user.getUsername() + AdvertisementTaxConstants.COLON_CONCATE + user.getName())
                     .withComments(approvalComent)
                     .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)

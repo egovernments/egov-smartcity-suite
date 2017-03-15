@@ -280,14 +280,14 @@ public class WorksPackageAction extends GenericWorkFlowAction {
 
         if (WorksConstants.CANCEL_ACTION.equals(workFlowAction)) {
             if (wfInitiator.equals(userAssignment)) {
-                worksPackage.transition(true).end().withSenderName(user.getName()).withComments(approverComments)
+                worksPackage.transition().end().withSenderName(user.getName()).withComments(approverComments)
                         .withStateValue(WorksPackage.WorkPacakgeStatus.CANCELLED.toString()).withDateInfo(currentDate.toDate())
                         .withNextAction("END");
                 worksPackage.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WORKSPACKAGE,
                         WorksPackage.WorkPacakgeStatus.CANCELLED.toString()));
             }
         } else if (WorksConstants.REJECT_ACTION.equals(workFlowAction)) {
-            worksPackage.transition(true).withSenderName(user.getName()).withComments(approverComments)
+            worksPackage.transition().progressWithStateCopy().withSenderName(user.getName()).withComments(approverComments)
                     .withStateValue(WorksPackage.WorkPacakgeStatus.REJECTED.toString()).withDateInfo(currentDate.toDate())
                     .withOwner(wfInitiator.getPosition()).withNextAction("");
             worksPackage.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WORKSPACKAGE,
@@ -318,11 +318,11 @@ public class WorksPackageAction extends GenericWorkFlowAction {
                 final WorkFlowMatrix wfmatrix = worksPackageWorkflowService.getWfMatrix(worksPackage.getStateType(), null,
                         null, getAdditionalRule(), worksPackage.getCurrentState().getValue(), null);
                 if (wfmatrix.getNextAction() != null && wfmatrix.getNextAction().equalsIgnoreCase("END"))
-                    worksPackage.transition(true).end().withSenderName(user.getName()).withComments(approverComments)
+                    worksPackage.transition().end().withSenderName(user.getName()).withComments(approverComments)
                             .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate())
                             .withNextAction(wfmatrix.getNextAction());
                 else
-                    worksPackage.transition(true).withSenderName(user.getName()).withComments(approverComments)
+                    worksPackage.transition().progressWithStateCopy().withSenderName(user.getName()).withComments(approverComments)
                             .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(position)
                             .withNextAction(wfmatrix.getNextAction());
                 worksPackage

@@ -321,7 +321,7 @@ public class BudgetSearchAndModify extends BudgetSearchAction {
                     detail.setApprovedAmount(detail.getApprovedAmount().multiply(BigDecimal.valueOf(1000)));
                 final String comment = detail.getState() == null ? "" : detail.getState().getExtraInfo();
 
-                detail.transition(true).withStateValue("END").withOwner(positionByUserId).withComments(comment);
+                detail.transition().progressWithStateCopy().withStateValue("END").withOwner(positionByUserId).withComments(comment);
                 budgetDetailService.persist(detail);
                 final BudgetDetail detailBE = (BudgetDetail) persistenceService.find("from BudgetDetail where id=?",
                         detail.getNextYrId());
@@ -329,7 +329,7 @@ public class BudgetSearchAndModify extends BudgetSearchAction {
                     detailBE.setApprovedAmount(detail.getNextYrapprovedAmount().multiply(BigDecimal.valueOf(1000)));
                 else
                     detailBE.setApprovedAmount(detail.getNextYrapprovedAmount());
-                detailBE.transition(true).withStateValue("END").withOwner(getPosition()).withComments(comment);
+                detailBE.transition().progressWithStateCopy().withStateValue("END").withOwner(getPosition()).withComments(comment);
                 budgetDetailService.persist(detailBE);
 
                 // detail.getNextYearBEProposed
@@ -346,7 +346,7 @@ public class BudgetSearchAndModify extends BudgetSearchAction {
                     detail.setApprovedAmount(detail.getApprovedAmount().multiply(BigDecimal.valueOf(1000)));
                 final String comment = detail.getState() == null ? "" : detail.getState().getExtraInfo();
 
-                detail.transition(true).withStateValue("Forwarded by " + name).withOwner(positionByUserId).withComments(comment);
+                detail.transition().progressWithStateCopy().withStateValue("Forwarded by " + name).withOwner(positionByUserId).withComments(comment);
                 budgetDetailService.persist(detail);
                 final BudgetDetail detailBE = (BudgetDetail) persistenceService.find("from BudgetDetail where id=?",
                         detail.getNextYrId());
@@ -355,7 +355,7 @@ public class BudgetSearchAndModify extends BudgetSearchAction {
                     detailBE.setApprovedAmount(detail.getNextYrapprovedAmount().multiply(BigDecimal.valueOf(1000)));
                 else
                     detailBE.setApprovedAmount(detail.getNextYrapprovedAmount());
-                detailBE.transition(true).withStateValue("Forwarded by " + name).withOwner(positionByUserId)
+                detailBE.transition().progressWithStateCopy().withStateValue("Forwarded by " + name).withOwner(positionByUserId)
                         .withComments(comment);
                 budgetDetailService.persist(detailBE);
                 // budgetDetailWorkflowService.transition(parameters.get(ACTIONNAME)[0]+"|"+userId, detail, comment);
@@ -365,13 +365,13 @@ public class BudgetSearchAndModify extends BudgetSearchAction {
         // if budget is not forwarded yet send the budget else ignore
         if (getTopBudget().getState().getOwnerPosition() != null
                 && getTopBudget().getState().getOwnerPosition().getId() != positionByUserId.getId())
-            getTopBudget().transition(true).withStateValue("Forwarded by " + name).withOwner(positionByUserId)
+            getTopBudget().transition().progressWithStateCopy().withStateValue("Forwarded by " + name).withOwner(positionByUserId)
                     .withComments(comments);
         // add logic for BE approval also
         final Budget beBudget = budgetService.find("from Budget where referenceBudget=?", getTopBudget());
         if (beBudget.getState().getOwnerPosition() != null
                 && beBudget.getState().getOwnerPosition().getId() != positionByUserId.getId())
-            beBudget.transition(true).withStateValue("Forwarded by " + name).withOwner(positionByUserId).withComments(comments);
+            beBudget.transition().progressWithStateCopy().withStateValue("Forwarded by " + name).withOwner(positionByUserId).withComments(comments);
 
         // budgetWorkflowService.transition(parameters.get(ACTIONNAME)[0]+"|"+userId, getTopBudget(),comments);
 

@@ -102,7 +102,7 @@ public class ChallanService extends PersistenceService<Challan, Long> {
             .withDateInfo(new Date());
         }
         if (CollectionConstants.WF_ACTION_NAME_MODIFY_CHALLAN.equals(actionName)) {
-            challan.transition(true).withComments(CollectionConstants.CHALLAN_CREATION_REMARKS)
+            challan.transition().progressWithStateCopy().withComments(CollectionConstants.CHALLAN_CREATION_REMARKS)
             .withStateValue(CollectionConstants.WF_STATE_CREATE_CHALLAN).withOwner(position)
             .withSenderName(challan.getCreatedBy().getUsername() + "::" + challan.getCreatedBy().getName())
             .withDateInfo(new Date());
@@ -113,7 +113,7 @@ public class ChallanService extends PersistenceService<Challan, Long> {
         if (CollectionConstants.WF_ACTION_NAME_APPROVE_CHALLAN.equals(actionName)) {
             challan.setStatus(collectionsUtil.getStatusForModuleAndCode(CollectionConstants.MODULE_NAME_CHALLAN,
                     CollectionConstants.CHALLAN_STATUS_CODE_APPROVED));
-            challan.transition(true).withComments(remarks).withStateValue(CollectionConstants.WF_STATE_APPROVE_CHALLAN)
+            challan.transition().progressWithStateCopy().withComments(remarks).withStateValue(CollectionConstants.WF_STATE_APPROVE_CHALLAN)
             .withOwner(position)
                     .withSenderName(challan.getCreatedBy().getUsername() + "::" + challan.getCreatedBy().getName())
             .withDateInfo(new Date());
@@ -128,7 +128,7 @@ public class ChallanService extends PersistenceService<Challan, Long> {
             challan.setStatus(collectionsUtil.getStatusForModuleAndCode(CollectionConstants.MODULE_NAME_CHALLAN,
                     CollectionConstants.CHALLAN_STATUS_CODE_REJECTED));
             // the next action can be modify or cancel challan
-            challan.transition(true).withComments(remarks)
+            challan.transition().progressWithStateCopy().withComments(remarks)
                     .withStateValue(CollectionConstants.WF_STATE_REJECTED_CHALLAN)
             .withOwner(collectionsUtil.getPositionOfUser(challan.getCreatedBy()))
                     .withSenderName(challan.getCreatedBy().getUsername() + "::" + challan.getCreatedBy().getName())

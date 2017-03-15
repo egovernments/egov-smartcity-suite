@@ -797,7 +797,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         if (WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction)) {
             if (wfInitiator.getPosition().equals(propertyMutation.getState().getOwnerPosition())
                     || propertyMutation.getType().equalsIgnoreCase(ADDTIONAL_RULE_FULL_TRANSFER)) {
-                propertyMutation.transition(true).end().withSenderName(user.getUsername() + "::" + user.getName())
+                propertyMutation.transition().end().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approverComments).withDateInfo(currentDate.toDate());
                 propertyMutation.getBasicProperty().setUnderWorkflow(Boolean.FALSE);
             } else {
@@ -819,7 +819,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                             .concat(wfInitiator.getPosition().getName()));
                 }
                 final String stateValue = WF_STATE_REJECTED;
-                propertyMutation.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+                propertyMutation.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approverComments).withStateValue(stateValue).withDateInfo(currentDate.toDate())
                         .withOwner(wfInitiator != null ? wfInitiator.getPosition() : null)
                         .withNextAction(nextAction);
@@ -840,13 +840,13 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                         .withNatureOfTask(getNatureOfTask())
                         .withInitiator(wfInitiator != null ? wfInitiator.getPosition() : null);
             } else if (propertyMutation.getCurrentState().getNextAction().equalsIgnoreCase("END"))
-                propertyMutation.transition(true).end().withSenderName(user.getUsername() + "::" + user.getName())
+                propertyMutation.transition().end().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approverComments).withDateInfo(currentDate.toDate());
             else {
                 final WorkFlowMatrix wfmatrix = transferWorkflowService.getWfMatrix(propertyMutation.getStateType(), null, null,
                         getAdditionalRule(), propertyMutation.getCurrentState().getValue(),
                         propertyMutation.getCurrentState().getNextAction(), null, loggedInUserDesignation);
-                propertyMutation.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+                propertyMutation.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approverComments).withStateValue(wfmatrix.getNextState())
                         .withDateInfo(currentDate.toDate()).withOwner(pos)
                         .withNextAction(StringUtils.isNotBlank(nextAction) ? nextAction : wfmatrix.getNextAction());

@@ -371,7 +371,7 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
                         property.getCurrentState().getValue(), property.getCurrentState().getNextAction(), null,
                         loggedInUserDesignation);
 
-                property.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+                property.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvarComments).withStateValue(wfmatrix.getNextState())
                         .withDateInfo(currentDate.toDate()).withOwner(pos)
                         .withNextAction(StringUtils.isNotBlank(nextAction) ? nextAction : wfmatrix.getNextAction());
@@ -415,7 +415,7 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
             final User user, final DateTime currentDate, Assignment wfInitiator, final String loggedInUserDesignation) {
         String nextAction;
         if (wfInitiator != null && wfInitiator.getPosition().equals(property.getState().getOwnerPosition())) {
-            property.transition(true).end().withSenderName(user.getUsername() + "::" + user.getName())
+            property.transition().end().withSenderName(user.getUsername() + "::" + user.getName())
                     .withComments(approvarComments).withDateInfo(currentDate.toDate());
             property.setStatus(STATUS_CANCELLED);
             property.getBasicProperty().setUnderWorkflow(FALSE);
@@ -428,7 +428,7 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
                 nextAction = WF_STATE_ASSISTANT_APPROVAL_PENDING;
             if (wfInitiator != null) {
                 final String stateValue = property.getCurrentState().getValue().split(":")[0] + ":" + WF_STATE_REJECTED;
-                property.transition(true)
+                property.transition().progressWithStateCopy()
                         .withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvarComments)
                         .withStateValue(stateValue)

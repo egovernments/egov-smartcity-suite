@@ -772,7 +772,7 @@ public class DishonorChequeWorkflowAction extends BaseFormAction {
         if (null == dishonorCheque.getState()) {
             final Position pos = eisService.getPrimaryPositionForUser(null/* phoenix dishonorCheque.getApproverPositionId() */,
                     new Date());
-            dishonorCheque.start().withOwner(pos).withComments("DishonorCheque Work flow started");
+            dishonorCheque.transition().start().withOwner(pos).withComments("DishonorCheque Work flow started");
             dishonorChequeWorkflowService.transition("forward", dishonorCheque, "Created by SM");
         }
 

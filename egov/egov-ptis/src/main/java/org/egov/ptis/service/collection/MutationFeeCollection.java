@@ -119,7 +119,7 @@ public class MutationFeeCollection extends TaxCollection {
                     null, null, propertyMutation.getType(), propertyMutation.getCurrentState().getValue(), null);
             nextAction = wFMatrix.getNextAction();
             if (propertyMutation.getType().equalsIgnoreCase(ADDTIONAL_RULE_FULL_TRANSFER))
-                propertyMutation.transition(true).withSenderName(propertyMutation.getState().getSenderName())
+                propertyMutation.transition().progressWithStateCopy().withSenderName(propertyMutation.getState().getSenderName())
                         .withDateInfo(new Date())
                         .withOwner(propertyMutation.getState().getOwnerPosition())
                         .withStateValue(TRANSFER_FEE_COLLECTED)

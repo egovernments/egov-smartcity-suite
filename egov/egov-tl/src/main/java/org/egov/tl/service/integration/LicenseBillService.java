@@ -421,12 +421,12 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
             final Position position = licenseUtils.getCityLevelCommissioner();
             licenseUtils.applicationStatusChange(licenseObj, Constants.APPLICATION_STATUS_APPROVED_CODE);
             if (licenseObj.isReNewApplication())
-                licenseObj.transition(true).withSenderName(user.getUsername() + Constants.DELIMITER_COLON + user.getName())
+                licenseObj.transition().progressWithStateCopy().withSenderName(user.getUsername() + Constants.DELIMITER_COLON + user.getName())
                         .withComments(Constants.WF_SECOND_LVL_FEECOLLECTED)
                         .withStateValue(Constants.DIGI_ENABLED_WF_SECOND_LVL_FEECOLLECTED).withDateInfo(currentDate.toDate())
                         .withOwner(position).withNextAction(Constants.WF_ACTION_DIGI_PENDING);
             else
-                licenseObj.transition(true).withSenderName(user.getUsername() + Constants.DELIMITER_COLON + user.getName())
+                licenseObj.transition().progressWithStateCopy().withSenderName(user.getUsername() + Constants.DELIMITER_COLON + user.getName())
                         .withComments(Constants.WF_SECOND_LVL_FEECOLLECTED)
                         .withStateValue(Constants.DIGI_ENABLED_WF_SECOND_LVL_FEECOLLECTED).withDateInfo(currentDate.toDate())
                         .withOwner(position).withNextAction(Constants.WF_ACTION_DIGI_PENDING);
@@ -451,7 +451,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
                     wfmatrix = tradeLicenseWorkflowService.getWfMatrix(TRADELICENSE, null, null, Constants.NEW_ADDITIONAL_RULE,
                             Constants.WF_STATE_COMMISSIONER_APPROVED_STR, null);
             if (wfmatrix != null)
-                licenseObj.transition(true).withSenderName(user.getUsername() + Constants.DELIMITER_COLON + user.getName())
+                licenseObj.transition().progressWithStateCopy().withSenderName(user.getUsername() + Constants.DELIMITER_COLON + user.getName())
                         .withComments(wfmatrix.getNextStatus()).withNatureOfTask(natureOfWork)
                         .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate())
                         .withOwner(licenseObj.getState().getInitiatorPosition())

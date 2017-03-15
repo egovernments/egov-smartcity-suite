@@ -202,7 +202,7 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
                 if (position != null)
                     user = eisCommonService.getUserForPosition(position.getId(), new Date());
 
-                objection.start().withNextAction(wfmatrix.getPendingActions())
+                objection.transition().start().withNextAction(wfmatrix.getPendingActions())
                 .withStateValue(wfmatrix.getCurrentState()).withOwner(position)
                 .withSenderName(user != null && user.getName() != null ? user.getName() : "").withOwner(user)
                 .withComments("");

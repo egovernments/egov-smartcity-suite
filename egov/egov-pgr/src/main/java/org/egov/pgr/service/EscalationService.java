@@ -203,7 +203,8 @@ public class EscalationService {
         final User previoususer = !prevUserAssignments.isEmpty() ? prevUserAssignments.get(0).getEmployee() : null;
         complaint.setEscalationDate(getExpiryDate(complaint));
         complaint.setAssignee(superiorPosition);
-        complaint.transition().withOwner(superiorPosition).withComments("Complaint is escalated")
+        complaint.transition().progress()
+                .withOwner(superiorPosition).withComments("Complaint is escalated")
                 .withDateInfo(new Date())
                 .withStateValue(complaint.getStatus().getName())
                 .withSenderName(securityUtils.getCurrentUser().getName());

@@ -87,7 +87,7 @@ public abstract class WorkflowActionStep {
 	 * Changes the state
 	 */
 	public void changeState() {
-		propertyModel.transition(true);
+		propertyModel.transition().progressWithStateCopy();
 	}
 
 	public Property getPropertyModel() {

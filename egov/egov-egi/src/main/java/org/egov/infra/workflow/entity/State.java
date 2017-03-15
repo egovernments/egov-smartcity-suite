@@ -74,40 +74,60 @@ public class State extends AbstractAuditable {
     public static final String DEFAULT_STATE_VALUE_CREATED = "Created";
     public static final String DEFAULT_STATE_VALUE_CLOSED = "Closed";
     public static final String STATE_REOPENED = "Reopened";
-    static final String SEQ_STATE = "SEQ_EG_WF_STATES";
+    protected static final String SEQ_STATE = "SEQ_EG_WF_STATES";
     private static final long serialVersionUID = -9159043292636575746L;
+
     @Id
     @GeneratedValue(generator = SEQ_STATE, strategy = GenerationType.SEQUENCE)
     private Long id;
+
     @NotNull
     private String type;
+
     @NotNull
     @Length(min = 1)
     private String value;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "OWNER_POS")
     private Position ownerPosition;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "OWNER_USER")
     private User ownerUser;
+
     @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY, mappedBy = "state")
     @OrderBy("id")
     private Set<StateHistory> history = new HashSet<>();
+
     private String senderName;
+
     private String nextAction;
+
     private String comments;
+
     private String natureOfTask;
+
     private String extraInfo;
+
     private Date dateInfo;
+
     private Date extraDateInfo;
+
     @Enumerated(EnumType.ORDINAL)
     @NotNull
     private StateStatus status;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "INITIATOR_POS")
     private Position initiatorPosition;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "previousStateRef")
+    private State previousStateRef;
+
     protected State() {
+        //Explicit state initialization not allowed
     }
 
     @Override
@@ -247,6 +267,14 @@ public class State extends AbstractAuditable {
 
     public void setInitiatorPosition(Position initiatorPosition) {
         this.initiatorPosition = initiatorPosition;
+    }
+
+    public State getPreviousStateRef() {
+        return previousStateRef;
+    }
+
+    public void setPreviousStateRef(State previousStateRef) {
+        this.previousStateRef = previousStateRef;
     }
 
     public enum StateStatus {

@@ -295,14 +295,14 @@ public class VacancyRemissionService {
         if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_NOTICE_GENERATE)) {
             if (wfInitiator.getPosition().equals(vacancyRemission.getState().getOwnerPosition())) {
                 vacancyRemission.setStatus(VR_STATUS_REJECTION_ACK_GENERATED);
-                vacancyRemission.transition(true).end().withSenderName(user.getUsername() + "::" + user.getName())
+                vacancyRemission.transition().end().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withDateInfo(currentDate.toDate());
                 vacancyRemission.getBasicProperty().setUnderWorkflow(false);
             }
         } else if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_REJECT)) {
             final String stateValue = WF_STATE_REJECTED;
             vacancyRemission.setStatus(VR_STATUS_REJECTED);
-            vacancyRemission.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+            vacancyRemission.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
                     .withComments(approvalComent).withStateValue(stateValue).withDateInfo(currentDate.toDate())
                     .withOwner(wfInitiator.getPosition()).withNextAction("Application Rejected");
             buildSMS(vacancyRemission, workFlowAction);
@@ -329,12 +329,12 @@ public class VacancyRemissionService {
 
                 if (wfmatrix != null)
                     if ("END".equalsIgnoreCase(wfmatrix.getNextAction())) {
-                        vacancyRemission.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+                        vacancyRemission.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
                                 .withComments(approvalComent).withStateValue(wfmatrix.getNextState())
                                 .withDateInfo(currentDate.toDate()).withNextAction(VR_STATUS_MONTHLY_UPDATE);
 
                     } else
-                        vacancyRemission.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+                        vacancyRemission.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
                                 .withComments(approvalComent).withStateValue(wfmatrix.getNextState())
                                 .withDateInfo(currentDate.toDate()).withOwner(pos)
                                 .withNextAction(wfmatrix.getNextAction());
@@ -451,7 +451,7 @@ public class VacancyRemissionService {
         if (vacancyRemission != null) {
             wfInitiator = vacancyRemission.getState().getInitiatorPosition();
 
-            vacancyRemission.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+            vacancyRemission.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
                     .withComments(commnets).withStateValue(VR_APP_STATUS_REJECTED).withDateInfo(new Date())
                     .withOwner(wfInitiator).withNextAction("Generate Notice");
             vacancyRemission.setStatus(VR_STATUS_REJECTED);
@@ -536,7 +536,7 @@ public class VacancyRemissionService {
         } else if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_REJECT)) {
             if (wfInitiator != null)
                 if (wfInitiator.getPosition().equals(vacancyRemissionApproval.getCurrentState().getOwnerPosition())) {
-                    vacancyRemissionApproval.transition(true).end().withSenderName(user.getUsername() + "::" + user.getName())
+                    vacancyRemissionApproval.transition().end().withSenderName(user.getUsername() + "::" + user.getName())
                             .withComments(approvalComent).withDateInfo(currentDate.toDate());
                     vacancyRemissionApproval.setStatus(VR_STATUS_REJECTED);
                     vacancyRemissionApproval.getVacancyRemission().getBasicProperty().setUnderWorkflow(FALSE);
@@ -574,7 +574,7 @@ public class VacancyRemissionService {
                 wfmatrix = vacancyRemissionWorkflowService.getWfMatrix(vacancyRemissionApproval.getStateType(), null,
                         null, additionalRule, vacancyRemissionApproval.getCurrentState().getValue(),
                         vacancyRemissionApproval.getCurrentState().getNextAction(), null, loggedInUserDesignation);
-                vacancyRemissionApproval.transition(false).withSenderName(user.getName())
+                vacancyRemissionApproval.transition().progress().withSenderName(user.getName())
                         .withComments(approvalComent).withStateValue(wfmatrix.getNextState())
                         .withDateInfo(currentDate.toDate()).withOwner(pos)
                         .withNextAction(StringUtils.isNotBlank(nextAction) ? nextAction : wfmatrix.getNextAction());

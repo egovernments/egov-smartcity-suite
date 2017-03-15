@@ -359,7 +359,7 @@ public class RevisionEstimateAction extends GenericWorkFlowAction {
                 // revisionEstimate = (RevisionAbstractEstimate)
                 // workflowService.start(revisionEstimate, pos,
                 // "Revision Estimate created.");
-                revisionEstimate = (RevisionAbstractEstimate) revisionEstimate.transition().start().withOwner(pos)
+                revisionEstimate.transition().start().withOwner(pos)
                         .withComments("Revision Estimate created.");
             }
             addActionMessage(getText(messageKey, "The Revision Estimate was saved successfully"));
@@ -372,7 +372,7 @@ public class RevisionEstimateAction extends GenericWorkFlowAction {
                 // revisionEstimate = (RevisionAbstractEstimate)
                 // workflowService.start(revisionEstimate, pos,
                 // "Revision Estimate created.");
-                revisionEstimate = (RevisionAbstractEstimate) revisionEstimate.transition().start().withOwner(pos)
+                revisionEstimate.transition().start().withOwner(pos)
                         .withComments("Revision Estimate created.");
                 revisionEstimate = revisionAbstractEstimateService.persist(revisionEstimate);
             }

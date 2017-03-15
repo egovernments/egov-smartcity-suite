@@ -86,7 +86,7 @@ public class DishonorChequeService extends PersistenceService<DishonorCheque, Lo
                 financialIntegrationService.updateSourceInstrumentVoucher(
                         FinancialIntegrationService.EVENT_INSTRUMENT_DISHONOR_INITIATED, dishonorCheque.getInstrumentHeader()
                                 .getId());
-            dishonorCheque.start().withOwner(pos).withComments("DishonorCheque Work flow started");
+            dishonorCheque.transition().start().withOwner(pos).withComments("DishonorCheque Work flow started");
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("---------" + dishonorCheque);
             dishonorChqWorkflowService.transition("forward", dishonorCheque, "Created by SM");

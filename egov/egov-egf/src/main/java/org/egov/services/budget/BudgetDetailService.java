@@ -603,7 +603,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
     }
 
     public void transitionToEnd(final BudgetDetail detail, final Position position) {
-        detail.transition(true).end().withOwner(position);
+        detail.transition().end().withOwner(position);
     }
 
     public List<Object[]> fetchActualsForFYDate(final String fromDate, final String toVoucherDate,
@@ -2219,29 +2219,29 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
 
         if (FinancialConstants.BUTTONREJECT.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
             if (wfInitiator.equals(userAssignment))
-                budgetDetail.transition(true).end().withSenderName(user.getName())
+                budgetDetail.transition().end().withSenderName(user.getName())
                         .withComments(workflowBean.getApproverComments()).withDateInfo(new Date());
             else {
                 final String stateValue = FinancialConstants.WORKFLOW_STATE_REJECTED;
-                budgetDetail.transition(true).withSenderName(user.getName())
+                budgetDetail.transition().progressWithStateCopy().withSenderName(user.getName())
                         .withComments(workflowBean.getApproverComments()).withStateValue(stateValue)
                         .withDateInfo(new Date()).withOwner(wfInitiator.getPosition())
                         .withNextAction(FinancialConstants.WF_STATE_EOA_Approval_Pending);
             }
 
         } else if (FinancialConstants.BUTTONVERIFY.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
-            budgetDetail.transition(true).withSenderName(user.getName())
+            budgetDetail.transition().progressWithStateCopy().withSenderName(user.getName())
                     .withComments(workflowBean.getApproverComments())
                     .withStateValue(" Approved").withDateInfo(new Date())
                     .withOwner(pos);
-            budgetDetail.transition(true).end().withSenderName(user.getName())
+            budgetDetail.transition().end().withSenderName(user.getName())
                     .withComments(workflowBean.getApproverComments()).withDateInfo(new Date());
             budgetDetail.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(FinancialConstants.BUDGETDETAIL,
                     FinancialConstants.BUDGETDETAIL_VERIFIED_STATUS));
         } else if (FinancialConstants.BUTTONCANCEL.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
             budgetDetail.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(FinancialConstants.BUDGETDETAIL,
                     FinancialConstants.WORKFLOW_STATE_CANCELLED));
-            budgetDetail.transition(true).end().withStateValue(FinancialConstants.WORKFLOW_STATE_CANCELLED)
+            budgetDetail.transition().end().withStateValue(FinancialConstants.WORKFLOW_STATE_CANCELLED)
                     .withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
                     .withDateInfo(new Date());
         } else if (FinancialConstants.BUTTONSAVE.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
@@ -2265,10 +2265,10 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                         FinancialConstants.BUDGETDETAIL_CREATED_STATUS));
             } else if (budgetDetail.getCurrentState().getNextAction() != null
                     && budgetDetail.getCurrentState().getNextAction().equalsIgnoreCase(FinancialConstants.WORKFLOWENDSTATE))
-                budgetDetail.transition(true).end().withSenderName(user.getName())
+                budgetDetail.transition().end().withSenderName(user.getName())
                         .withComments(workflowBean.getApproverComments()).withDateInfo(new Date());
             else
-                budgetDetail.transition(true).withSenderName(user.getName())
+                budgetDetail.transition().progressWithStateCopy().withSenderName(user.getName())
                         .withComments(workflowBean.getApproverComments())
                         .withStateValue(FinancialConstants.BUDGETDETAIL_CREATED_STATUS)
                         .withDateInfo(new Date()).withOwner(pos);
@@ -2284,7 +2284,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         if (budgetDetail.getId() != null && budgetDetail.getId() != 0)
             wfInitiator = getWorkflowInitiator(budgetDetail);
         final String stateValue = FinancialConstants.WORKFLOW_STATE_REJECTED;
-        budgetDetail.transition(true).withSenderName(user.getName())
+        budgetDetail.transition().progressWithStateCopy().withSenderName(user.getName())
                 .withStateValue(stateValue).withComments(comment)
                 .withDateInfo(currentDate.toDate()).withOwner(wfInitiator.getPosition())
                 .withNextAction(FinancialConstants.WF_STATE_EOA_Approval_Pending);

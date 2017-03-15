@@ -1991,7 +1991,7 @@ public class PropertyService {
         final String desigName = propertyTaxUtil.getDesignationName(initiater.getId());
         final String value = WFLOW_ACTION_NAME_MODIFY + ":" + desigName + "_" + WF_STATE_APPROVAL_PENDING;
 
-        newProperty.transition(true).start().withSenderName(initiater.getName())
+        newProperty.transition().start().withSenderName(initiater.getName())
                 .withComments(PROPERTY_WORKFLOW_STARTED).withStateValue(value).withOwner(owner)
                 .withDateInfo(new Date());
 
