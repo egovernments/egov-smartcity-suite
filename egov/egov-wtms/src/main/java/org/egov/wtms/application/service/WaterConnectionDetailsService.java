@@ -851,8 +851,10 @@ public class WaterConnectionDetailsService {
             user = securityUtils.getCurrentUser();
         ApplicationIndex applicationIndex = applicationIndexService
                 .findByApplicationNumber(waterConnectionDetails.getApplicationNumber());
-        if(waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_CREATED))
+        if(applicationIndex!=null && waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_CREATED)){
             applicationIndex.setOwnerName(user.getUsername() + "::" + user.getName());
+            applicationIndexService.updateApplicationIndex(applicationIndex);
+        }
         if (applicationIndex != null && null != waterConnectionDetails.getId()
                 && waterConnectionDetails.getStatus() != null
                 && !waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_CREATED)) {
