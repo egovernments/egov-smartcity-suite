@@ -80,7 +80,7 @@
                                         </label>
                                         <div class="col-sm-8 col-xs-12 add-margin">
                                            <form:input id="reConnectionReason" path="reConnectionReason" name="reConnectionReason" required="required"
-                                           class="form-control"  />
+                                           class="form-control"  maxlength="1024"/>
 	
                                         </div>
 									</div>
