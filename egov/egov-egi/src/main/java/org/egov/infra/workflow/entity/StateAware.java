@@ -40,7 +40,6 @@
 
 package org.egov.infra.workflow.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.entity.AbstractAuditable;
@@ -55,7 +54,6 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
-import javax.persistence.Transient;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.Comparator;
@@ -72,10 +70,6 @@ public abstract class StateAware extends AbstractAuditable {
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "STATE_ID")
     private State state;
-
-    @Transient
-    @JsonIgnore
-    private Transition transition;
 
     public static Comparator<StateAware> byCreatedDate() {
         return (stateAware1, stateAware2) -> {
@@ -116,7 +110,7 @@ public abstract class StateAware extends AbstractAuditable {
         return state;
     }
 
-    protected void setState(final State state) {
+    private void setState(State state) {
         this.state = state;
     }
 
@@ -148,7 +142,7 @@ public abstract class StateAware extends AbstractAuditable {
         return getCurrentState() != null;
     }
 
-    public Transition transition() {
+    public final Transition transition() {
         return new Transition();
     }
 
@@ -163,24 +157,25 @@ public abstract class StateAware extends AbstractAuditable {
         return this.buildStateInfo().toJson();
     }
 
-    public class Transition implements Serializable {
+    public final class Transition implements Serializable {
         private static final long serialVersionUID = -6035435855091367838L;
         private boolean transitionInitiated;
 
-        private void checkTransition() {
+        private void checkinTransition() {
             if (transitionInitiated)
-                throw new ApplicationRuntimeException("You can't call start | progress | end in the same transition");
+                throw new ApplicationRuntimeException("Calling multiple transitions not supported");
+            transitionInitiated = true;
         }
 
-        private void checkTransitionInitiated() {
+        private void checkTransitionStatus() {
             if (!transitionInitiated)
-                throw new ApplicationRuntimeException("You can't set values without calling start | progress | end");
+                throw new ApplicationRuntimeException("Use start|progress|end API before setting values");
         }
 
         public final Transition start() {
-            checkTransition();
+            checkinTransition();
             if (hasState())
-                throw new ApplicationRuntimeException("Workflow already started state.");
+                throw new ApplicationRuntimeException("Transition already started.");
             else {
                 state = new State();
                 state.setType(getStateType());
@@ -188,132 +183,124 @@ public abstract class StateAware extends AbstractAuditable {
                 state.setValue(State.DEFAULT_STATE_VALUE_CREATED);
                 state.setComments(State.DEFAULT_STATE_VALUE_CREATED);
             }
-            transitionInitiated = true;
             return this;
         }
 
         public final Transition startNext() {
-            checkTransition();
             if (state == null)
-                throw new ApplicationRuntimeException("No workflow found to start the next one");
+                throw new ApplicationRuntimeException("Transition never started, use start() instead");
             if (!transitionCompleted())
-                throw new ApplicationRuntimeException("Could not start a new Workflow, existing is not ended.");
+                throw new ApplicationRuntimeException("Transition can not be started, end the current transition first");
             State previousState = state;
             state = null;
             start();
             state.setPreviousStateRef(previousState);
-            transitionInitiated = true;
             return this;
         }
 
         public final Transition progress() {
-            checkTransition();
             progressWithStateCopy();
             resetState();
-            transitionInitiated = true;
             return this;
         }
 
         public final Transition progressWithStateCopy() {
-            checkTransition();
+            checkinTransition();
             if (hasState()) {
                 state.addStateHistory(new StateHistory(state));
                 state.setStatus(StateStatus.INPROGRESS);
             }
-            transitionInitiated = true;
             return this;
         }
 
         public final Transition end() {
-            checkTransition();
+            checkinTransition();
             if (transitionCompleted())
-                throw new ApplicationRuntimeException("Workflow already ended state.");
+                throw new ApplicationRuntimeException("Transition already ended");
             else {
                 state.addStateHistory(new StateHistory(state));
                 state.setValue(State.DEFAULT_STATE_VALUE_CLOSED);
                 state.setStatus(StateStatus.ENDED);
                 state.setComments(State.DEFAULT_STATE_VALUE_CLOSED);
             }
-            transitionInitiated = true;
             return this;
         }
 
 
         public final Transition reopen() {
-            checkTransition();
+            checkinTransition();
             if (transitionCompleted()) {
-                final StateHistory stateHistory = new StateHistory(state);
+                StateHistory stateHistory = new StateHistory(state);
                 stateHistory.setValue(State.STATE_REOPENED);
                 state.setStatus(StateStatus.INPROGRESS);
                 state.addStateHistory(stateHistory);
             } else
-                throw new ApplicationRuntimeException("Workflow not ended.");
-            transitionInitiated = true;
+                throw new ApplicationRuntimeException("Transition can not be reopened, end the current transition first");
             return this;
         }
 
-        public final Transition withOwner(final User owner) {
-            checkTransitionInitiated();
+        public final Transition withOwner(User owner) {
+            checkTransitionStatus();
             state.setOwnerUser(owner);
             return this;
         }
 
-        public final Transition withOwner(final Position owner) {
-            checkTransitionInitiated();
+        public final Transition withOwner(Position owner) {
+            checkTransitionStatus();
             state.setOwnerPosition(owner);
             return this;
         }
 
-        public final Transition withInitiator(final Position owner) {
-            checkTransitionInitiated();
+        public final Transition withInitiator(Position owner) {
+            checkTransitionStatus();
             state.setInitiatorPosition(owner);
             return this;
         }
 
-        public final Transition withStateValue(final String currentStateValue) {
-            checkTransitionInitiated();
+        public final Transition withStateValue(String currentStateValue) {
+            checkTransitionStatus();
             state.setValue(currentStateValue);
             return this;
         }
 
-        public final Transition withNextAction(final String nextAction) {
-            checkTransitionInitiated();
+        public final Transition withNextAction(String nextAction) {
+            checkTransitionStatus();
             state.setNextAction(nextAction);
             return this;
         }
 
-        public final Transition withComments(final String comments) {
-            checkTransitionInitiated();
+        public final Transition withComments(String comments) {
+            checkTransitionStatus();
             state.setComments(comments);
             return this;
         }
 
-        public final Transition withNatureOfTask(final String natureOfTask) {
-            checkTransitionInitiated();
+        public final Transition withNatureOfTask(String natureOfTask) {
+            checkTransitionStatus();
             state.setNatureOfTask(natureOfTask);
             return this;
         }
 
-        public final Transition withExtraInfo(final String extraInfo) {
-            checkTransitionInitiated();
+        public final Transition withExtraInfo(String extraInfo) {
+            checkTransitionStatus();
             state.setExtraInfo(extraInfo);
             return this;
         }
 
-        public final Transition withDateInfo(final Date dateInfo) {
-            checkTransitionInitiated();
+        public final Transition withDateInfo(Date dateInfo) {
+            checkTransitionStatus();
             state.setDateInfo(dateInfo);
             return this;
         }
 
-        public final Transition withExtraDateInfo(final Date extraDateInfo) {
-            checkTransitionInitiated();
+        public final Transition withExtraDateInfo(Date extraDateInfo) {
+            checkTransitionStatus();
             state.setExtraDateInfo(extraDateInfo);
             return this;
         }
 
-        public final Transition withSenderName(final String senderName) {
-            checkTransitionInitiated();
+        public final Transition withSenderName(String senderName) {
+            checkTransitionStatus();
             state.setSenderName(senderName);
             return this;
         }
