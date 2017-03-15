@@ -103,12 +103,12 @@
 										Balance</th>
 								</tr>
 								<tr>
-									<th>Installments <br/><a href="javascript:void(0);" onclick="openNewWindow();">Show Receipts</a></th>
-									<th>Water charges</th>
+									<th class="text-center">Installments <br/><a href="javascript:void(0);" onclick="openNewWindow();">Show Receipts</a></th>
+									<th class="text-center">Water charges</th>
 
-									<th>Water charges</th>
+									<th class="text-center">Water charges</th>
 
-									<th>Water charges</th>
+									<th class="text-center">Water charges</th>
 
 
 								</tr>
