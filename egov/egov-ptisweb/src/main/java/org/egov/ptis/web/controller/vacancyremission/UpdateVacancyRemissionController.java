@@ -49,6 +49,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.web.contract.WorkflowContainer;
@@ -216,7 +217,7 @@ public class UpdateVacancyRemissionController extends GenericWorkFlowController 
 
     private boolean isWfForwardOrApprovalPending(final VacancyRemission vacancyRemission, final String workFlowAction) {
         return workFlowAction.equalsIgnoreCase(PropertyTaxConstants.WFLOW_ACTION_STEP_FORWARD)
-                && vacancyRemission.getCurrentState().getNextAction().equals(WF_STATE_ASSISTANT_APPROVAL_PENDING);
+                && WF_STATE_ASSISTANT_APPROVAL_PENDING.equals(vacancyRemission.getCurrentState().getNextAction());
     }
 
     private String wfReject(final VacancyRemission vacancyRemission, final String workFlowAction, final Long approvalPosition,

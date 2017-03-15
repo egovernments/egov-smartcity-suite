@@ -40,6 +40,7 @@
 package org.egov.ptis.domain.service.revisionPetition;
 
 import static java.lang.String.format;
+import static org.egov.ptis.constants.PropertyTaxConstants.ANONYMOUS_USER;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_REVISION_PETITION;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_GENERAL_REVISION_PETITION;
@@ -354,7 +355,7 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
     
     public Assignment getWorkflowInitiator(RevisionPetition objection) {
         Assignment wfInitiator;
-        if (propertyService.isEmployee(objection.getCreatedBy())){
+        if (propertyService.isEmployee(objection.getCreatedBy()) && !ANONYMOUS_USER.equalsIgnoreCase(objection.getCreatedBy().getName())){
                 if(objection.getState() != null  && objection.getState().getInitiatorPosition() != null)
                     wfInitiator = propertyTaxCommonUtils.getUserAssignmentByPassingPositionAndUser(objection
                     .getCreatedBy(),objection.getState().getInitiatorPosition());

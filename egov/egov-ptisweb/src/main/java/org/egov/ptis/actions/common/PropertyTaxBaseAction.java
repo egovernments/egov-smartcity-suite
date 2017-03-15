@@ -48,6 +48,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_ALTER_
 import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_BIFURCATE_ASSESSMENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.ALTERATION_OF_ASSESSMENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.AMALGAMATION;
+import static org.egov.ptis.constants.PropertyTaxConstants.ANONYMOUS_USER;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_GRP;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_NEW_ASSESSENT;
@@ -599,7 +600,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
         String approverDesignation = "";
         WorkFlowMatrix wfmatrix;
 
-        if (!propertyByEmployee) {
+        if (!propertyByEmployee || ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName())) {
             currentState = "Created";
             if (propertyService.isCscOperator(user))
                 assignment = propertyService.getMappedAssignmentForCscOperator(property.getBasicProperty());

@@ -136,7 +136,7 @@
             </div>
             </td>
           </tr>
-         <s:if test="%{loggedUserIsEmployee == true}">
+         <s:if test="%{loggedUserIsEmployee == true  && applicationSource != 'online'}">
           <tr>
             <td>
             <div class="formmainbox"> 
@@ -159,6 +159,7 @@
 		</tr>             
 		</table> --%></div>
 		<s:hidden name="model.id" id="model.id"/>    
+		<s:hidden name="applicationSource" value="%{applicationSource}" />
 		<s:hidden name="egwStatus.code" id="egwStatuscode" value="%{egwStatus.code}"/>      
 		<s:hidden name="wfType" id="wfType" value="%{wfType}" />
 		</s:push>

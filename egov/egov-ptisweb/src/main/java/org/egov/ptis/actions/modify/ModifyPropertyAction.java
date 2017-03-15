@@ -45,6 +45,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_ALTER_
 import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_BIFURCATE_ASSESSMENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.ALTERATION_OF_ASSESSMENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.AMALGAMATION_OF_ASSESSMENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.ANONYMOUS_USER;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPCONFIG_CLIENT_SPECIFIC_DMD_BILL;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_BIFURCATE_ASSESSENT;
@@ -93,6 +94,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.ROLE_ULB_OPERATOR;
 import static org.egov.ptis.constants.PropertyTaxConstants.SENIOR_ASSISTANT;
 import static org.egov.ptis.constants.PropertyTaxConstants.SOURCEOFDATA_DATAENTRY;
 import static org.egov.ptis.constants.PropertyTaxConstants.SOURCEOFDATA_MIGRATION;
+import static org.egov.ptis.constants.PropertyTaxConstants.SOURCE_ONLINE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISHISTORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_REJECTED;
@@ -125,6 +127,7 @@ import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
+import org.apache.struts2.convention.annotation.Namespaces;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.ResultPath;
@@ -135,6 +138,7 @@ import org.egov.commons.Installment;
 import org.egov.eis.entity.Assignment;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
@@ -202,6 +206,7 @@ import com.google.gson.GsonBuilder;
 @Results({ @Result(name = ModifyPropertyAction.RESULT_ACK, location = "modify/modifyProperty-ack.jsp"),
         @Result(name = ModifyPropertyAction.EDIT, location = "modify/modifyProperty-new.jsp"),
         @Result(name = ModifyPropertyAction.NEW, location = "modify/modifyProperty-new.jsp"),
+        @Result(name = ModifyPropertyAction.CITIZEN_NEW, location = "citizen/modify/modifyProperty-new.jsp"),
         @Result(name = ModifyPropertyAction.VIEW, location = "modify/modifyProperty-view.jsp"),
         @Result(name = TARGET_WORKFLOW_ERROR, location = "workflow/workflow-error.jsp"),
         @Result(name = ModifyPropertyAction.BALANCE, location = "modify/modifyProperty-balance.jsp"),
@@ -209,7 +214,7 @@ import com.google.gson.GsonBuilder;
         @Result(name = ModifyPropertyAction.COMMON_FORM, location = "search/searchProperty-commonForm.jsp"),
         @Result(name = ModifyPropertyAction.MEESEVA_ERROR, location = "common/meeseva-errorPage.jsp"),
         @Result(name = ModifyPropertyAction.MEESEVA_RESULT_ACK, location = "common/meesevaAck.jsp") })
-@Namespace("/modify")
+@Namespaces(value={@Namespace("/modify"),@Namespace("/citizen/modify")})
 public class ModifyPropertyAction extends PropertyTaxBaseAction {
     private static final String FROM_PROPERTY_TYPE_MASTER_WHERE_ID = "from PropertyTypeMaster ptm where ptm.id = ?";
     private final Logger logger = Logger.getLogger(getClass());
@@ -217,6 +222,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
     protected static final String BALANCE = "balance";
     protected static final String RESULT_ACK = "ack";
     protected static final String VIEW = "view";
+    protected static final String CITIZEN_NEW = "citizenNewForm";
 
     private static final String PROPERTY_MODIFY_REJECT_SUCCESS = "property.modify.reject.success";
     private static final String PROPERTY_MODIFY_FINAL_REJECT_SUCCESS = "property.modify.final.reject.success";
@@ -328,6 +334,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
     private List<LayoutApprovalAuthority> layoutApprovalAuthorityList = new ArrayList<>();
     private boolean allowEditDocument = Boolean.FALSE;
     private Boolean showAckBtn = Boolean.FALSE;
+    private String applicationSource;
 
     @Autowired
     transient PropertyPersistenceService basicPropertyService;
@@ -397,7 +404,8 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
             logger.debug("Exiting from modifyForm");
         }
         showTaxCalculateButton();
-        if (propService.isEmployee(currentUser) && !propertyTaxCommonUtils.isEligibleInitiator(currentUser.getId())) {
+        if (StringUtils.isBlank(applicationSource)
+                && (propService.isEmployee(currentUser) && !propertyTaxCommonUtils.isEligibleInitiator(currentUser.getId()))) {
             addActionError(getText("initiator.noteligible"));
             return COMMON_FORM;
         }
@@ -543,7 +551,10 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
                 vacantLandPlotAreaId = propertyModel.getPropertyDetail().getVacantLandPlotArea().getId();
             if (propertyModel.getPropertyDetail().getLayoutApprovalAuthority() != null)
                 layoutApprovalAuthorityId = propertyModel.getPropertyDetail().getLayoutApprovalAuthority().getId();
-            target = NEW;
+            if(StringUtils.isNotBlank(applicationSource))
+                target = CITIZEN_NEW;
+            else
+                target = NEW;
         }
         if (logger.isDebugEnabled())
             logger.debug("populateFormData - target : " + target + "\n Exiting from populateFormData");
@@ -700,7 +711,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
             if (propTypeMstr.getType().equals(OWNERSHIP_TYPE_VAC_LAND_STR))
                 addActionError(getText("error.nonVacantToVacant"));
         if (hasErrors())
-            if (isAssistantOrRIApprovalPending()
+            if (ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName()) || isAssistantOrRIApprovalPending()
                     || !propertyByEmployee)
                 return NEW;
             else if (isCommissionerRoOrBillCollector())
@@ -746,10 +757,14 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 
     private void checkToDisplayAckButton() {
         final Boolean rejected = wfInitiatorRejected == null ? Boolean.FALSE : wfInitiatorRejected;
-        for (final Role role : securityUtils.getCurrentUser().getRoles())
-            if (ROLE_ULB_OPERATOR.equalsIgnoreCase(role.getName()) && !rejected && getModel().getState() == null
-                    || CSC_OPERATOR_ROLE.equalsIgnoreCase(role.getName()))
-                showAckBtn = Boolean.TRUE;
+        if(ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName()))
+            showAckBtn = Boolean.TRUE;
+        if(!showAckBtn){
+            for (final Role role : securityUtils.getCurrentUser().getRoles())
+                if (ROLE_ULB_OPERATOR.equalsIgnoreCase(role.getName()) && !rejected && getModel().getState() == null
+                || CSC_OPERATOR_ROLE.equalsIgnoreCase(role.getName()))
+                    showAckBtn = Boolean.TRUE;
+        }
     }
 
     @Override
@@ -1120,6 +1135,8 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
                     + (amalgPropIds != null ? amalgPropIds.length : "NULL"));
         }
         Date propCompletionDate;
+        if(SOURCE_ONLINE.equalsIgnoreCase(applicationSource) && ApplicationThreadLocals.getUserId() == null) 
+            ApplicationThreadLocals.setUserId(securityUtils.getCurrentUser().getId());
         final Character status = STATUS_WORKFLOW;
         final PropertyTypeMaster proptypeMstr = propertyTypeMasterDAO.findById(Integer.valueOf(propTypeId), false);
         if (!proptypeMstr.getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
@@ -1592,7 +1609,10 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         final String imagePath = url.concat(PropertyTaxConstants.IMAGE_CONTEXT_PATH).concat(
                 (String) request.getSession().getAttribute("citylogo"));
         final String cityName = request.getSession().getAttribute("citymunicipalityname").toString();
-
+        if(ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName()) && ApplicationThreadLocals.getUserId() == null) {
+            ApplicationThreadLocals.setUserId(securityUtils.getCurrentUser().getId());
+            setApplicationSource(propertyModel.getSource().toLowerCase());
+        }
         final Map<String, Object> reportParams = new HashMap<String, Object>();
         reportParams.put("ownerName", basicProp.getFullOwnerName());
         reportParams.put("applicationDate", new SimpleDateFormat("dd/MM/yyyy").format(basicProp.getCreatedDate()));
@@ -1604,7 +1624,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         reportParams.put("creationReason", modifyRsn);
         reportParams.put("logoPath", imagePath);
         reportParams.put("cityName", cityName);
-        reportParams.put("loggedInUsername", propertyTaxUtil.getLoggedInUser(getSession()).getName());
+        reportParams.put("loggedInUsername", securityUtils.getCurrentUser().getName());
         ReportRequest reportInput;
         if (modifyRsn.equals(PROPERTY_MODIFY_REASON_GENERAL_REVISION_PETITION)) {
             reportParams.put("noOfDays",
@@ -2432,5 +2452,13 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 
     public void setShowAckBtn(final Boolean showAckBtn) {
         this.showAckBtn = showAckBtn;
+    }
+
+    public String getApplicationSource() {
+        return applicationSource;
+    }
+
+    public void setApplicationSource(String applicationSource) {
+        this.applicationSource = applicationSource;
     }
 }

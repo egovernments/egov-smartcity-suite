@@ -44,6 +44,7 @@ import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 import static org.egov.ptis.constants.PropertyTaxConstants.ADDITIONAL_COMMISSIONER_DESIGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.ADVANCE_DMD_RSN_CODE;
+import static org.egov.ptis.constants.PropertyTaxConstants.ANONYMOUS_USER;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPCONFIG_CLIENT_SPECIFIC_DMD_BILL;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_BAL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_COMMISSIONER_DESIGN;
@@ -65,6 +66,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASO
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_OFFICER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.SENIOR_ASSISTANT;
+import static org.egov.ptis.constants.PropertyTaxConstants.SOURCE_ONLINE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_CANCELLED;
 import static org.egov.ptis.constants.PropertyTaxConstants.UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.VACANTLAND_PROPERTY_CATEGORY;
@@ -206,6 +208,8 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
         propertyModel = propertyService.createProperty(propertyModel, areaOfPlot, PROPERTY_MODIFY_REASON_FULL_DEMOLITION,
                 propertyModel.getPropertyDetail().getPropertyTypeMaster().getId().toString(), null, null, status, null,
                 null, null, null, null, null, null, null, null, null, FALSE);
+        if(SOURCE_ONLINE.equalsIgnoreCase(propertyModel.getSource()) && ApplicationThreadLocals.getUserId() == null) 
+            ApplicationThreadLocals.setUserId(securityUtils.getCurrentUser().getId());
         final Map<String, Installment> yearwiseInstMap = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
         final Installment installmentFirstHalf = yearwiseInstMap.get(CURRENTYEAR_FIRST_HALF);
         final Installment installmentSecondHalf = yearwiseInstMap.get(CURRENTYEAR_SECOND_HALF);
@@ -315,7 +319,7 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
         String approverDesignation = "";
         String nextAction = "";
         String currentState = "";
-        if (isNotEmployee()) {
+        if (isNotEmployee() || ANONYMOUS_USER.equalsIgnoreCase(user.getName())) {
             currentState = "Created";
             assignment = getUserAssignment(user, property);
             if (null != assignment) {

@@ -43,6 +43,7 @@
 package org.egov.ptis.actions.objection;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.ADDITIONAL_COMMISSIONER_DESIGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.ANONYMOUS_USER;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_GRP;
 import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_COMMISSIONER_DESIGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
@@ -71,6 +72,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_INSPECTOR_DES
 import static org.egov.ptis.constants.PropertyTaxConstants.REVISIONPETITION_STATUS_CODE;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVISION_PETITION;
 import static org.egov.ptis.constants.PropertyTaxConstants.SENIOR_ASSISTANT;
+import static org.egov.ptis.constants.PropertyTaxConstants.SOURCE_ONLINE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISHISTORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_REJECTED;
@@ -110,6 +112,7 @@ import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Actions;
 import org.apache.struts2.convention.annotation.Namespace;
+import org.apache.struts2.convention.annotation.Namespaces;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.ResultPath;
@@ -199,7 +202,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
  * @author pradeep
  */
 @ParentPackage("egov")
-@Namespace("/revPetition")
+@Namespaces(value={@Namespace("/revPetition"),@Namespace("/citizen/revPetition")})
 @ResultPath(value = "/WEB-INF/jsp")
 @Results({
         @Result(name = "new", location = "revPetition/revisionPetition-new.jsp"),
@@ -327,6 +330,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
     private String wfType;
     private boolean allowEditDocument = Boolean.FALSE;
     private Boolean showAckBtn = Boolean.FALSE;
+    private String applicationSource;
 
     @Autowired
     private transient VacantLandPlotAreaRepository vacantLandPlotAreaRepository;
@@ -458,8 +462,8 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
             } else
                 objection.setMeesevaApplicationNumber(getMeesevaApplicationNumber());
         setFloorDetails(objection.getBasicProperty().getProperty());
-        if (propService.isEmployee(securityUtils.getCurrentUser())
-                && !propertyTaxCommonUtils.isEligibleInitiator(securityUtils.getCurrentUser().getId())) {
+        if (StringUtils.isBlank(applicationSource) && (propService.isEmployee(securityUtils.getCurrentUser())
+                && !propertyTaxCommonUtils.isEligibleInitiator(securityUtils.getCurrentUser().getId()))) {
             addActionError(getText("initiator.noteligible"));
             return COMMON_FORM;
         }
@@ -487,7 +491,11 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
             addActionMessage(getText("mandatory.fieldvalue.receivedOn"));
             return NEW;
         }
-        objection.setSource(propertyTaxCommonUtils.setSourceOfProperty(securityUtils.getCurrentUser(), false));
+        if (StringUtils.isBlank(objection.getSource())) {
+            objection.setSource(propertyTaxCommonUtils.setSourceOfProperty(securityUtils.getCurrentUser(), SOURCE_ONLINE.equalsIgnoreCase(applicationSource)));
+        }
+        if(SOURCE_ONLINE.equalsIgnoreCase(applicationSource) && ApplicationThreadLocals.getUserId() == null) 
+            ApplicationThreadLocals.setUserId(securityUtils.getCurrentUser().getId());
         isMeesevaUser = propService.isMeesevaUser(securityUtils.getCurrentUser());
         if (isMeesevaUser && getMeesevaApplicationNumber() != null)
             objection.setObjectionNumber(objection.getMeesevaApplicationNumber());
@@ -1313,7 +1321,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
             pendingAction = getPendingActions();
 
         if (null == objection.getState()) {
-            if (loggedUserIsEmployee)
+            if (loggedUserIsEmployee && !ANONYMOUS_USER.equalsIgnoreCase(user.getName()))
                 wfmatrix = revisionPetitionWorkFlowService.getWfMatrix(objection.getStateType(), null, null,
                         getAdditionalRule(), null, null, null);
             else
@@ -1773,6 +1781,8 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
             serviceType = GENERAL_REVISION_PETITION;
             applicationType = GENERAL_REVISION_PETETION;
         }
+        if(ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName())) 
+            setApplicationSource(SOURCE_ONLINE.toLowerCase());
         reportOutput = propertyTaxUtil
                 .generateCitizenCharterAcknowledgement(propertyId, applicationType, serviceType);
         reportId = reportViewerUtil.addReportToTempCache(reportOutput);
@@ -2205,5 +2215,13 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 
     public void setLayoutApprovalAuthorityId(final Long layoutApprovalAuthorityId) {
         this.layoutApprovalAuthorityId = layoutApprovalAuthorityId;
+    }
+
+    public String getApplicationSource() {
+        return applicationSource;
+    }
+
+    public void setApplicationSource(String applicationSource) {
+        this.applicationSource = applicationSource;
     }
 }

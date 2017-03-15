@@ -93,6 +93,38 @@
 				<security:filter-chain pattern="/report/*" filters="none" />  
 				<security:filter-chain pattern="/public/**" filters="none"/>
 				<security:filter-chain pattern="/reports/ulbWiseCollectionList" filters="none" />  
+				<security:filter-chain pattern="/citizen/search/searchproperty-transferownership.action" filters="none" />
+				<security:filter-chain pattern="/citizen/search/searchproperty-alter-assessment.action" filters="none" />
+				<security:filter-chain pattern="/citizen/search/searchproperty-revisionpetition.action" filters="none" />
+				<security:filter-chain pattern="/citizen/search/searchproperty-general-revisionpetition.action" filters="none" />
+				<security:filter-chain pattern="/citizen/search/searchProperty-commonSearch.action" filters="none" />
+				<security:filter-chain pattern="/citizen/revPetition/genRevPetition-newForm.action" filters="none" />
+				<security:filter-chain pattern="/citizen/revPetition/revPetition-newForm.action" filters="none" />
+				<security:filter-chain pattern="/citizen/revPetition/revPetition.action" filters="none" />
+				<security:filter-chain pattern="/citizen/revPetition/revPetition-printAck.action" filters="none" />
+				<security:filter-chain pattern="/citizen/modify/modifyProperty-modifyForm.action" filters="none" />
+				<security:filter-chain pattern="/citizen/modify/modifyProperty-forward.action" filters="none" />
+				<security:filter-chain pattern="/citizen/modify/modifyProperty-printAck.action" filters="none" />
+				<security:filter-chain pattern="/citizen/property/transfer/redirect.action" filters="none" />
+				<security:filter-chain pattern="/citizen/property/transfer/new.action" filters="none" />
+				<security:filter-chain pattern="/citizen/property/transfer/save.action" filters="none" />
+				<security:filter-chain pattern="/citizen/property/transfer/printAck.action" filters="none" />
+				<security:filter-chain pattern="/common/ajaxCommon-getUserByMobileNo.action" filters="none" />
+				<security:filter-chain pattern="/common/ajaxCommon-calculateMutationFee.action" filters="none" />
+				<security:filter-chain pattern="/citizen/search/searchproperty-demolition.action" filters="none" />
+				<security:filter-chain pattern="/citizen/property/demolition/**" filters="none" />
+				<security:filter-chain pattern="/citizen/demolition/ack/**" filters="none" />
+				<security:filter-chain pattern="/citizen/search/searchproperty-taxexemption.action" filters="none" />
+				<security:filter-chain pattern="/citizen/exemption/form/**" filters="none" />
+				<security:filter-chain pattern="/citizen/exemption/printAck/**" filters="none" />
+				<security:filter-chain pattern="/citizen/search/searchproperty-vacancyremission.action" filters="none" />
+				<security:filter-chain pattern="/citizen/vacancyremission/create/**" filters="none" />
+				<security:filter-chain pattern="/citizen/vacancyremission/printAck/**" filters="none" />
+				<security:filter-chain pattern="/citizen/create/createProperty-newForm.action" filters="none" />
+				<security:filter-chain pattern="/citizen/create/createProperty-create.action" filters="none" />
+				<security:filter-chain pattern="/citizen/create/createProperty-printAck.action" filters="none" />
+				<security:filter-chain pattern="/reportViewer**" filters="none" />
+				<security:filter-chain pattern="/create/createProperty-calculateTax.action" filters="none" />
 				<security:filter-chain pattern="/**"  filters="concurrentSessionFilter,securityContextPersistenceFilter,logoutFilter,authenticationProcessingFilter,securityContextHolderAwareRequestFilter,rememberMeAuthenticationFilter,anonymousAuthenticationFilter,exceptionTranslationFilter,filterSecurityInterceptor" />
 			</list>
 		</constructor-arg>

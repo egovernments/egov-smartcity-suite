@@ -75,6 +75,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYP
 import static org.egov.ptis.constants.PropertyTaxConstants.SESSIONLOGINID;
 import static org.egov.ptis.constants.PropertyTaxConstants.SOURCEOFDATA_DATAENTRY;
 import static org.egov.ptis.constants.PropertyTaxConstants.SOURCEOFDATA_MIGRATION;
+import static org.egov.ptis.constants.PropertyTaxConstants.SOURCE_ONLINE;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -92,6 +93,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.Actions;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
@@ -129,36 +131,36 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
         @Result(name = SearchPropertyAction.TARGET, location = "searchProperty-result.jsp"),
         @Result(name = SearchPropertyAction.COMMON_FORM, location = "searchProperty-commonForm.jsp"),
         @Result(name = APPLICATION_TYPE_ALTER_ASSESSENT, type = "redirectAction", location = "modifyProperty-modifyForm", params = {
-                "namespace", "/modify", "indexNumber", "${assessmentNum}", "modifyRsn", "ADD_OR_ALTER", "applicationType",
-                "${applicationType}" }),
+                "namespace", "${actionNamespace}", "indexNumber", "${assessmentNum}", "modifyRsn", "ADD_OR_ALTER", "applicationType",
+                "${applicationType}","applicationSource","${applicationSource}" }),
         @Result(name = APPLICATION_TYPE_BIFURCATE_ASSESSENT, type = "redirectAction", location = "modifyProperty-modifyForm", params = {
                 "namespace", "/modify", "indexNumber", "${assessmentNum}", "modifyRsn", "BIFURCATE", "applicationType",
                 "${applicationType}" }),
         @Result(name = APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP, type = "redirectAction", location = "redirect", params = {
-                "namespace", "/property/transfer", "assessmentNo", "${assessmentNum}", "applicationType", "${applicationType}" }),
+                "namespace", "${actionNamespace}", "assessmentNo", "${assessmentNum}", "applicationType", "${applicationType}","applicationSource","${applicationSource}" }),
         @Result(name = APPLICATION_TYPE_MEESEVA_TRANSFER_OF_OWNERSHIP, type = "redirectAction", location = "redirect", params = {
                 "namespace", "/property/transfer", "assessmentNo", "${assessmentNum}", "meesevaApplicationNumber",
                 "${meesevaApplicationNumber}", "meesevaServiceCode", "${meesevaServiceCode}", "applicationType",
                 "${applicationType}" }),
         @Result(name = APPLICATION_TYPE_REVISION_PETITION, type = "redirectAction", location = "revPetition-newForm", params = {
-                "namespace", "/revPetition", "propertyId", "${assessmentNum}", "wfType", "RP" }),
+                "namespace", "${actionNamespace}", "propertyId", "${assessmentNum}", "wfType", "RP","applicationSource","${applicationSource}" }),
         @Result(name = APPLICATION_TYPE_GRP, type = "redirectAction", location = "genRevPetition-newForm", params = {
-                "namespace", "/revPetition", "propertyId", "${assessmentNum}", "wfType", "GRP" }),
+                "namespace", "${actionNamespace}", "propertyId", "${assessmentNum}", "wfType", "GRP","applicationSource","${applicationSource}" }),
         @Result(name = "meesevaerror", location = "/WEB-INF/jsp/common/meeseva-errorPage.jsp"),
         @Result(name = APPLICATION_TYPE_COLLECT_TAX, type = "redirectAction", location = "searchProperty-searchOwnerDetails", params = {
                 "namespace", "/search", "assessmentNum", "${assessmentNum}" }),
         @Result(name = APPLICATION_TYPE_DEMAND_BILL, type = "redirectAction", location = "billGeneration-generateDemandBill", params = {
                 "namespace", "/bills", "indexNumber", "${assessmentNum}" }),
         @Result(name = APPLICATION_TYPE_VACANCY_REMISSION, type = "redirect", location = "../vacancyremission/create/${assessmentNum},${mode}", params = {
-                "meesevaApplicationNumber", "${meesevaApplicationNumber}" }),
+                "meesevaApplicationNumber", "${meesevaApplicationNumber}","applicationSource","${applicationSource}" }),
         @Result(name = APPLICATION_TYPE_TAX_EXEMTION, type = "redirect", location = "..//exemption/form/${assessmentNum}", params = {
-                "meesevaApplicationNumber", "${meesevaApplicationNumber}" }),
+                "meesevaApplicationNumber", "${meesevaApplicationNumber}","applicationSource","${applicationSource}" }),
         @Result(name = APPLICATION_TYPE_EDIT_DEMAND, type = "redirectAction", location = "editDemand-newEditForm", params = {
                 "namespace", "/edit", "propertyId", "${assessmentNum}" }),
         @Result(name = APPLICATION_TYPE_ADD_DEMAND, type = "redirectAction", location = "addDemand-newAddForm", params = {
                 "namespace", "/edit", "propertyId", "${assessmentNum}" }),
         @Result(name = APPLICATION_TYPE_EDIT_COLLECTION, type = "redirect", location = "../editCollection/editForm/${assessmentNum}"),
-        @Result(name = APPLICATION_TYPE_DEMOLITION, type = "redirect", location = "../property/demolition/${assessmentNum}"),
+        @Result(name = APPLICATION_TYPE_DEMOLITION, type = "redirect", location = "../property/demolition/${assessmentNum}/${applicationSource}"),
         @Result(name = APPLICATION_TYPE_EDIT_OWNER, type = "redirect", location = "../editowner/${assessmentNum}"),
         @Result(name = SearchPropertyAction.USER_DETAILS, location = "searchProperty-ownerDetails.jsp"),
         @Result(name = APPLICATION_TYPE_MODIFY_DATA_ENTRY, type = "redirectAction", location = "createProperty-editDataEntryForm", params = {
@@ -217,6 +219,8 @@ public class SearchPropertyAction extends BaseFormAction {
     private String mobileNumber;
     private String meesevaApplicationNumber;
     private String meesevaServiceCode;
+    private String applicationSource;
+    private String actionNamespace;
 
     private List<Map<String, String>> searchResultList;
     List<Map<String, String>> searchList = new ArrayList<Map<String, String>>();
@@ -296,7 +300,7 @@ public class SearchPropertyAction extends BaseFormAction {
      * @return
      */
     @ValidationErrorPage(value = COMMON_FORM)
-    @Action(value = "/search/searchProperty-commonSearch")
+    @Actions({ @Action(value = "/search/searchProperty-commonSearch"), @Action(value = "/citizen/search/searchProperty-commonSearch") })
     public String commonSearch() {
         final BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByIndexNumAndParcelID(assessmentNum, null);
         if (basicProperty == null) {
@@ -983,8 +987,14 @@ public class SearchPropertyAction extends BaseFormAction {
         return UPDATEMOBILE_FORM;
     }
 
-    @Action(value = "/search/searchproperty-alter-assessment")
+    @Actions({ @Action(value = "/search/searchproperty-alter-assessment"),
+            @Action(value = "/citizen/search/searchproperty-alter-assessment") })
     public String alterAssessment() {
+        if (StringUtils.isNotBlank(applicationSource) && SOURCE_ONLINE.equalsIgnoreCase(applicationSource)) {
+            setActionNamespace("/citizen/modify");
+        } else {
+            setActionNamespace("/modify");
+        }
         setApplicationType(APPLICATION_TYPE_ALTER_ASSESSENT);
         return commonForm();
     }
@@ -995,7 +1005,8 @@ public class SearchPropertyAction extends BaseFormAction {
         return commonForm();
     }
 
-    @Action(value = "/search/searchproperty-taxexemption")
+    @Actions({ @Action(value = "/search/searchproperty-taxexemption"),
+            @Action(value = "/citizen/search/searchproperty-taxexemption") })
     public String taxExemption() {
         setApplicationType(APPLICATION_TYPE_TAX_EXEMTION);
         return commonForm();
@@ -1013,8 +1024,14 @@ public class SearchPropertyAction extends BaseFormAction {
         return commonForm();
     }
 
-    @Action(value = "/search/searchproperty-transferownership")
+    @Actions({ @Action(value = "/search/searchproperty-transferownership"),
+            @Action(value = "/citizen/search/searchproperty-transferownership") })
     public String transferOwnership() {
+        if (StringUtils.isNotBlank(applicationSource) && SOURCE_ONLINE.equalsIgnoreCase(applicationSource)) {
+            setActionNamespace("/citizen/property/transfer");
+        } else {
+            setActionNamespace("/property/transfer");
+        }
         setApplicationType(APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP);
         return commonForm();
     }
@@ -1025,25 +1042,41 @@ public class SearchPropertyAction extends BaseFormAction {
         return commonForm();
     }
 
-    @Action(value = "/search/searchproperty-revisionpetition")
+    @Actions({ @Action(value = "/search/searchproperty-revisionpetition"),
+            @Action(value = "/citizen/search/searchproperty-revisionpetition") })
     public String revisionPetition() {
+        if (StringUtils.isNotBlank(applicationSource) && SOURCE_ONLINE.equalsIgnoreCase(applicationSource)) {
+            setActionNamespace("/citizen/revPetition");
+        } else {
+            setActionNamespace("/revPetition");
+        }
         setApplicationType(APPLICATION_TYPE_REVISION_PETITION);
         return commonForm();
     }
 
-    @Action(value = "/search/searchproperty-general-revisionpetition")
+    @Actions({ @Action(value = "/search/searchproperty-general-revisionpetition"),
+            @Action(value = "/citizen/search/searchproperty-general-revisionpetition") })
     public String generalRevisionPetition() {
+        if (StringUtils.isNotBlank(applicationSource) && SOURCE_ONLINE.equalsIgnoreCase(applicationSource)) {
+            setActionNamespace("/citizen/revPetition");
+        } else {
+            setActionNamespace("/revPetition");
+        }
         setApplicationType(APPLICATION_TYPE_GRP);
         return commonForm();
     }
 
-    @Action(value = "/search/searchproperty-demolition")
+    @Actions({ @Action(value = "/search/searchproperty-demolition"),
+            @Action(value = "/citizen/search/searchproperty-demolition") })
     public String demolition() {
         setApplicationType(APPLICATION_TYPE_DEMOLITION);
+        if(StringUtils.isBlank(applicationSource))
+            setApplicationSource("system");
         return commonForm();
     }
 
-    @Action(value = "/search/searchproperty-vacancyremission")
+    @Actions({ @Action(value = "/search/searchproperty-vacancyremission"),
+            @Action(value = "/citizen/search/searchproperty-vacancyremission") })
     public String vacancyRemission() {
         setApplicationType(APPLICATION_TYPE_VACANCY_REMISSION);
         return commonForm();
@@ -1337,5 +1370,21 @@ public class SearchPropertyAction extends BaseFormAction {
 
     public void setActivePropertyId(final String activePropertyId) {
         this.activePropertyId = activePropertyId;
+    }
+
+    public String getApplicationSource() {
+        return applicationSource;
+    }
+
+    public void setApplicationSource(String applicationSource) {
+        this.applicationSource = applicationSource;
+    }
+
+    public String getActionNamespace() {
+        return actionNamespace;
+    }
+
+    public void setActionNamespace(String actionNamespace) {
+        this.actionNamespace = actionNamespace;
     }
 }

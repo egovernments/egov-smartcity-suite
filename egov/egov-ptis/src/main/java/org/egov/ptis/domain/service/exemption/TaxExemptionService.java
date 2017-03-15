@@ -42,6 +42,7 @@ package org.egov.ptis.domain.service.exemption;
 
 import static java.lang.Boolean.FALSE;
 import static org.egov.ptis.constants.PropertyTaxConstants.ADDITIONAL_COMMISSIONER_DESIGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.ANONYMOUS_USER;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_COMMISSIONER_DESIGN;
@@ -62,6 +63,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_TAX_EXEMPTION;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_OFFICER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.SENIOR_ASSISTANT;
+import static org.egov.ptis.constants.PropertyTaxConstants.SOURCE_ONLINE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_CANCELLED;
 import static org.egov.ptis.constants.PropertyTaxConstants.UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
@@ -195,6 +197,8 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
         final Installment installmentFirstHalf = yearwiseInstMap.get(CURRENTYEAR_FIRST_HALF);
         final Installment installmentSecondHalf = yearwiseInstMap.get(CURRENTYEAR_SECOND_HALF);
         Date effectiveDate = null;
+        if(SOURCE_ONLINE.equalsIgnoreCase(propertyModel.getSource()) && ApplicationThreadLocals.getUserId() == null) 
+            ApplicationThreadLocals.setUserId(securityUtils.getCurrentUser().getId());
         /*
          * While converting an exempted property to non-exempted property, effective date will be the installment from date of the
          * current installment. Else, effective date will be the starting date of the next installment
@@ -276,17 +280,19 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
         Position pos = null;
         String currentState;
         Assignment wfInitiator = null;
-        Assignment assignment;
+        Assignment assignment = null;
         String approverDesignation = "";
         String nextAction = "";
 
-        if (!propertyByEmployee) {
+        if (!propertyByEmployee || ANONYMOUS_USER.equalsIgnoreCase(user.getName())) {
             currentState = "Created";
             if (propertyService.isCscOperator(user)) {
                 assignment = propertyService.getMappedAssignmentForCscOperator(property.getBasicProperty());
                 wfInitiator = assignment;
-            } else
+            } else {
                 assignment = propertyService.getUserPositionByZone(property.getBasicProperty(), false);
+                wfInitiator = assignment;
+            }
             if (null != assignment)
                 approverPosition = assignment.getPosition().getId();
         } else {
@@ -396,7 +402,8 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
             model.addAttribute("ARV", ptDemand.getDmdCalculations().getAlv());
         else
             model.addAttribute("ARV", BigDecimal.ZERO);
-        model.addAttribute("propertyByEmployee", propertyService.isEmployee(securityUtils.getCurrentUser()));
+        model.addAttribute("propertyByEmployee", propertyService.isEmployee(securityUtils.getCurrentUser())
+                && !ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName()));
         if (!property.getIsExemptedFromTax()) {
             Map<String, Map<String, BigDecimal>> demandCollMap;
             try {

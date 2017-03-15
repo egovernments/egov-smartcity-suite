@@ -41,6 +41,7 @@ package org.egov.ptis.domain.service.property;
 
 import static java.lang.Boolean.FALSE;
 import static org.egov.ptis.constants.PropertyTaxConstants.ADDITIONAL_COMMISSIONER_DESIGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.ANONYMOUS_USER;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_BAL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_COMMISSIONER_DESIGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.CITY_GRADE_CORPORATION;
@@ -61,6 +62,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTYTAX_ROLEFORNO
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_OFFICER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.SENIOR_ASSISTANT;
+import static org.egov.ptis.constants.PropertyTaxConstants.SOURCE_ONLINE;
 import static org.egov.ptis.constants.PropertyTaxConstants.VR_SPECIALNOTICE_TEMPLATE;
 import static org.egov.ptis.constants.PropertyTaxConstants.VR_STATUS_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.VR_STATUS_COMMISSIONER_FORWARD_PENDING;
@@ -253,13 +255,17 @@ public class VacancyRemissionService {
         String nextAction = "";
         String loggedInUserDesignation;
         loggedInUserDesignation = getLoggedInUserDesignation(vacancyRemission, user);
-        if (!propertyByEmployee) {
+        if(SOURCE_ONLINE.equalsIgnoreCase(vacancyRemission.getSource()) && ApplicationThreadLocals.getUserId() == null) 
+            ApplicationThreadLocals.setUserId(securityUtils.getCurrentUser().getId());
+        if (!propertyByEmployee  || ANONYMOUS_USER.equalsIgnoreCase(user.getName())) {
             currentState = "Created";
             if (propertyService.isCscOperator(user)) {
                 assignment = propertyService.getMappedAssignmentForCscOperator(vacancyRemission.getBasicProperty());
                 wfInitiator = assignment;
-            } else
+            } else {
                 assignment = propertyService.getUserPositionByZone(vacancyRemission.getBasicProperty(), false);
+                wfInitiator = assignment;
+            }
             if (null != assignment)
                 approvalPosition = assignment.getPosition().getId();
         } else {
@@ -399,7 +405,8 @@ public class VacancyRemissionService {
             }
             Boolean propertyByEmployee = Boolean.TRUE;
             propertyByEmployee = checkIfEmployee(getLoggedInUser());
-            model.addAttribute("propertyByEmployee", propertyByEmployee);
+            model.addAttribute("propertyByEmployee",
+                    propertyByEmployee && !ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName()));
         }
     }
 
@@ -410,7 +417,8 @@ public class VacancyRemissionService {
     public String getInitiatorName(final VacancyRemission vacancyRemission) {
         String initiatorName;
         Assignment assignment = new Assignment();
-        if (checkIfEmployee(vacancyRemission.getCreatedBy()))
+        if (checkIfEmployee(vacancyRemission.getCreatedBy())
+                && !ANONYMOUS_USER.equalsIgnoreCase(vacancyRemission.getCreatedBy().getName()))
             assignment = assignmentService.getPrimaryAssignmentForUser(vacancyRemission.getCreatedBy().getId());
         else
             assignment = assignmentService

@@ -104,6 +104,7 @@
 							value="%{@org.egov.ptis.constants.PropertyTaxConstants@FULLTT}" /></span>
 				</s:else>
 				<s:hidden name="type" value="%{type}" />
+				<s:hidden name="applicationSource" value="%{applicationSource}" />
 				<table width="100%" border="0" cellspacing="0" cellpadding="0">
 					<tr>
 						<td>&nbsp;</td>
@@ -284,7 +285,7 @@
 					<s:if test="%{!documentTypes.isEmpty()}">
 						<%@ include file="../common/DocumentUploadForm.jsp"%>
 					</s:if>
-				<s:if test="%{propertyByEmployee == true}">
+				<s:if test="%{propertyByEmployee == true && applicationSource != 'online'}">
 					<table width="100%" border="0" cellspacing="0" cellpadding="0">
 						<tr>
 							<%@ include file="../workflow/commonWorkflowMatrix.jsp"%>

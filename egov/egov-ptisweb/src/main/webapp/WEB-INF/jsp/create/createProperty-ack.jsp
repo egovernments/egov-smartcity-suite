@@ -66,6 +66,7 @@
 				<br />
 				<table width="100%" border="0" cellspacing="0" cellpadding="0">
 					<s:hidden name="modelId" id="modelId" value="%{id}" />
+					<s:hidden name="applicationSource" value="%{applicationSource}" />
 					<tr>
 						<s:if test="mode == 'create' && (model.state.nextAction.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_BILL_COLLECTOR_APPROVAL_PENDING))">
 							<s:if test="%{applicationNo != null && !applicationNo.isEmpty()}">

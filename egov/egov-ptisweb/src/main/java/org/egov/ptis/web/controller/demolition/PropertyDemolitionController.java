@@ -39,6 +39,7 @@
  */
 package org.egov.ptis.web.controller.demolition;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.ANONYMOUS_USER;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_DEMOLITION;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
@@ -62,6 +63,7 @@ import org.egov.commons.Installment;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.DateUtils;
 import org.egov.ptis.client.util.PropertyTaxUtil;
@@ -88,7 +90,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-@RequestMapping(value = "/property/demolition/{assessmentNo}")
+@RequestMapping(value = { "/property/demolition/{assessmentNo}/{applicationSource}",
+        "/citizen/property/demolition/{assessmentNo}/{applicationSource}" })
 public class PropertyDemolitionController extends GenericWorkFlowController {
 
     protected static final String COMMON_FORM = "commonForm";
@@ -122,7 +125,7 @@ public class PropertyDemolitionController extends GenericWorkFlowController {
     PropertyImpl oldProperty;
 
     @ModelAttribute
-    public Property propertyModel(@PathVariable String assessmentNo) {
+    public Property propertyModel(@PathVariable("assessmentNo") String assessmentNo) {
         basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
         if (null != basicProperty) {
             oldProperty = basicProperty.getActiveProperty();
@@ -132,18 +135,20 @@ public class PropertyDemolitionController extends GenericWorkFlowController {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public String newForm(final Model model, @PathVariable String assessmentNo) {
+    public String newForm(final Model model, @PathVariable("assessmentNo") String assessmentNo , @PathVariable("applicationSource") String applicationSource) {
         if (null != basicProperty && basicProperty.isUnderWorkflow()) {
             model.addAttribute("wfPendingMsg", "Could not do " + APPLICATION_TYPE_DEMOLITION
                     + " now, property is undergoing some work flow.");
             return TARGET_WORKFLOW_ERROR;
         }
         boolean hasChildPropertyUnderWorkflow = propertyTaxUtil.checkForParentUsedInBifurcation(basicProperty.getUpicNo());
+        User loggedInUser = securityUtils.getCurrentUser();
         if(hasChildPropertyUnderWorkflow){
         	model.addAttribute(ERROR_MSG, "Cannot proceed as this property is used in Bifurcation, which is under workflow");
             return PROPERTY_VALIDATION;
         }
-        if (propService.isEmployee(securityUtils.getCurrentUser()) && !propertyTaxCommonUtils.isEligibleInitiator(securityUtils.getCurrentUser().getId())){
+        if (!ANONYMOUS_USER.equalsIgnoreCase(loggedInUser.getName())
+                && (propService.isEmployee(loggedInUser) && !propertyTaxCommonUtils.isEligibleInitiator(loggedInUser.getId()))) {
             model.addAttribute(ERROR_MSG, "msg.initiator.noteligible");
             return PROPERTY_VALIDATION;
         }
@@ -176,7 +181,7 @@ public class PropertyDemolitionController extends GenericWorkFlowController {
             model.addAttribute("taxDuesErrorMsg", "Please clear property tax due for property demolition ");
             return TARGET_TAX_DUES;
         }
-        model.addAttribute("isEmployee", propService.isEmployee(securityUtils.getCurrentUser()));
+        model.addAttribute("isEmployee", !ANONYMOUS_USER.equalsIgnoreCase(loggedInUser.getName()) && propService.isEmployee(loggedInUser));
         propertyDemolitionService.addModelAttributes(model, basicProperty);
         model.addAttribute("stateType", propertyImpl.getClass().getSimpleName());
         prepareWorkflow(model, propertyImpl, new WorkflowContainer());
@@ -189,12 +194,13 @@ public class PropertyDemolitionController extends GenericWorkFlowController {
             final RedirectAttributes redirectAttrs, final Model model, final HttpServletRequest request,
             @RequestParam String workFlowAction) throws TaxCalculatorExeption {
 
+        User loggedInUser = securityUtils.getCurrentUser();
         propertyDemolitionService.validateProperty(property, errors, request);
 
         if (errors.hasErrors()) {
             prepareWorkflow(model, (PropertyImpl) property, new WorkflowContainer());
             model.addAttribute("stateType", property.getClass().getSimpleName());
-            model.addAttribute("isEmployee", propService.isEmployee(securityUtils.getCurrentUser()));
+            model.addAttribute("isEmployee", !ANONYMOUS_USER.equalsIgnoreCase(loggedInUser.getName()) && propService.isEmployee(loggedInUser));
             propertyDemolitionService.addModelAttributes(model, basicProperty);
             return DEMOLITION_FORM;
         } else {
@@ -213,12 +219,13 @@ public class PropertyDemolitionController extends GenericWorkFlowController {
             propertyDemolitionService.saveProperty(oldProperty, property, status, approvalComent, workFlowAction,
                     approvalPosition, DEMOLITION);
             
-            if(!propService.isEmployee(securityUtils.getCurrentUser())) {
-                Assignment assignment =  propertyDemolitionService.getUserAssignment(securityUtils.getCurrentUser(), property);
+            if(!propService.isEmployee(loggedInUser) || ANONYMOUS_USER.equalsIgnoreCase(loggedInUser.getName())) {
+                Assignment assignment =  propertyDemolitionService.getUserAssignment(loggedInUser, property);
                 if(assignment != null)
                     approvalPosition = assignment.getPosition().getId();
             }
             model.addAttribute("showAckBtn", Boolean.TRUE);
+            model.addAttribute("isOnlineApplication", ANONYMOUS_USER.equalsIgnoreCase(loggedInUser.getName()));
             model.addAttribute("propertyId", property.getBasicProperty().getUpicNo());
             model.addAttribute(
                     "successMessage",

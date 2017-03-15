@@ -56,6 +56,7 @@
 		<s:form name="transPropAckForm" theme="simple">
 			<s:push value="model">
 			<s:hidden name="mutationId" id="mutationId" value="%{id}"></s:hidden>
+			<s:hidden name="applicationSource" value="%{applicationSource}" />
 			<s:token/>
 				<div class="formmainbox">
 					<div class="headingbg">
@@ -83,7 +84,7 @@
 					</table>
 					<div class="buttonbottom" align="center">
 					<s:if test="%{(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_ASSISTANT_APPROVED.equalsIgnoreCase(model.state.value) && !model.state.createdBy.name.equals('CSCUSER'))
-					||	model.state.lastModifiedBy.name.equals('CSCUSER')}">
+					||	model.state.lastModifiedBy.name.equals('CSCUSER') || applicationSource == 'online'}">
 					    <s:if test="%{initiatorIsActive}">
 						<input type="button" name="button2" id="button2" value="Generate Acknowledgement" class="buttonsubmit" onclick="printAcknowledgement()" />
 						</s:if>

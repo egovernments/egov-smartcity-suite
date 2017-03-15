@@ -1,4 +1,4 @@
- <%--
+<%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
@@ -37,40 +37,4 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
-
-<%@ page language="java" pageEncoding="UTF-8"%>
-<%@ include file="/includes/taglibs.jsp" %>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<title>Ack</title>
-</head>
-<body>
-<s:form theme="simple" name="displayReportForm">
-	<s:if test="%{hasErrors()}">
-		<div class="errorstyle"><s:actionerror /> <s:fielderror /></div>
-	</s:if>
-	<s:if test="%{hasActionMessages()}">
-		<div class="messagestyle"><s:actionmessage theme="simple" /></div>
-	</s:if>
-	<s:if test="%{applicationSource == 'online'}">
-		<iframe src="../../reportViewer?reportId=<s:property value='reportId'/>" width="98%"
-				height="70%">
-			<p>Your browser does not support iframes.</p>
-		</iframe>
-	</s:if>
-	<s:else>
-		<iframe src="../reportViewer?reportId=<s:property value='reportId'/>" width="98%"
-				height="70%">
-			<p>Your browser does not support iframes.</p>
-		</iframe>
-	</s:else>
-	<br />
-	<div class="buttonbottom">
-		<input name="closeButton" type="button" class="button"
-			id="buttonClose" value="Close" onclick="window.close()" /> &nbsp;
-	</div>
-</s:form>
-</body>
-</html>
+<%@  include file="../../search/searchProperty-commonForm.jsp"%>
