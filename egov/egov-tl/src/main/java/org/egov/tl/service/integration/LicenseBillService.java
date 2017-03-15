@@ -40,28 +40,6 @@
 
 package org.egov.tl.service.integration;
 
-import static java.math.BigDecimal.ZERO;
-import static org.egov.tl.utils.Constants.APPLICATION_STATUS_DIGUPDATE_CODE;
-import static org.egov.tl.utils.Constants.CHQ_BOUNCE_PENALTY;
-import static org.egov.tl.utils.Constants.DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY;
-import static org.egov.tl.utils.Constants.DEMANDRSN_STR_CHQ_BOUNCE_PENALTY;
-import static org.egov.tl.utils.Constants.DMD_STATUS_CHEQUE_BOUNCED;
-import static org.egov.tl.utils.Constants.PENALTY_DMD_REASON_CODE;
-import static org.egov.tl.utils.Constants.TRADELICENSE;
-
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
-
 import org.egov.InvalidAccountHeadException;
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.integration.models.BillAccountDetails;
@@ -93,6 +71,7 @@ import org.egov.demand.utils.DemandConstants;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.ModuleService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
@@ -104,24 +83,47 @@ import org.egov.tl.entity.LicenseDemand;
 import org.egov.tl.service.TradeLicenseSmsAndEmailService;
 import org.egov.tl.service.es.LicenseApplicationIndexService;
 import org.egov.tl.utils.Constants;
+import org.egov.tl.utils.LicenseNumberUtils;
 import org.egov.tl.utils.LicenseUtils;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
+
+import static java.math.BigDecimal.ZERO;
+import static org.egov.tl.utils.Constants.APPLICATION_STATUS_DIGUPDATE_CODE;
+import static org.egov.tl.utils.Constants.BILL_TYPE_AUTO;
+import static org.egov.tl.utils.Constants.CHQ_BOUNCE_PENALTY;
+import static org.egov.tl.utils.Constants.DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY;
+import static org.egov.tl.utils.Constants.DEMANDRSN_STR_CHQ_BOUNCE_PENALTY;
+import static org.egov.tl.utils.Constants.DMD_STATUS_CHEQUE_BOUNCED;
+import static org.egov.tl.utils.Constants.PENALTY_DMD_REASON_CODE;
+import static org.egov.tl.utils.Constants.TL_SERVICE_CODE;
+import static org.egov.tl.utils.Constants.TRADELICENSE;
+import static org.egov.tl.utils.Constants.TRADE_LICENSE;
+
 @Service
 @Transactional(readOnly = true)
-@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class LicenseBillService extends BillServiceInterface implements BillingIntegrationService {
-    public static final String TL_FUNCTION_CODE = "1500";
+    private static final String TL_FUNCTION_CODE = "1500";
     private static final Logger LOG = LoggerFactory.getLogger(LicenseBillService.class);
-    protected License license;
+
     @Autowired
     private EgBillDetailsDao egBillDetailsDao;
 
@@ -163,15 +165,31 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
     @Autowired
     private LicenseUtils licenseUtils;
 
-    public void setLicense(final License license) {
-        this.license = license;
+    @Autowired
+    private LicenseNumberUtils licenseNumberUtils;
+
+    @Transactional
+    public String createLicenseBillXML(License license) {
+        LicenseBill licenseBill = new LicenseBill();
+        licenseBill.setLicense(license);
+        licenseBill.setModuleName(TRADE_LICENSE);
+        licenseBill.setServiceCode(TL_SERVICE_CODE);
+        licenseBill.setModule(licenseUtils.getModule(TRADE_LICENSE));
+        licenseBill.setBillType(egBillDao.getBillTypeByCode(BILL_TYPE_AUTO));
+        licenseBill.setDepartmentCode(licenseUtils.getDepartmentCodeForBillGenerate());
+        licenseBill.setLicenseUtils(licenseUtils);
+        licenseBill.setUserId(ApplicationThreadLocals.getUserId() == null ?
+                securityUtils.getCurrentUser().getId() : ApplicationThreadLocals.getUserId());
+        licenseBill.setReferenceNumber(licenseNumberUtils.generateBillNumber());
+        return getBillXML(licenseBill);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
+    @Transactional
     public List<EgBillDetails> getBilldetails(final Billable billObj) {
         final List<EgBillDetails> billDetails = new ArrayList<>();
         final LicenseBill billable = (LicenseBill) billObj;
+        final License license = billable.getLicense();
         final EgDemand demand = billObj.getCurrentDemand();
         final Date currentDate = new Date();
         final Map installmentWise = new HashMap<Installment, List<EgDemandDetails>>();
@@ -179,7 +197,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
         Module module = license.getTradeName() != null && license.getTradeName().getLicenseType() != null
                 ? license.getTradeName().getLicenseType().getModule() : null;
         if (module == null)
-            module = moduleService.getModuleByName(Constants.TRADELICENSE_MODULENAME);
+            module = moduleService.getModuleByName(TRADE_LICENSE);
         getCurrentInstallment(module);
         final List<EgDemandDetails> orderedDetailsList = new ArrayList<>();
         Map<Installment, BigDecimal> installmentPenalty = new HashMap<>();
@@ -196,8 +214,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
                 if (penaltyDemandDetail != null)
                     penaltyDemandDetail.setAmount(penalty.getValue().setScale(0, RoundingMode.HALF_UP));
                 else {
-                    penaltyDemandDetail = insertPenaltyAndBillDetails(penalty.getValue().setScale(0, RoundingMode.HALF_UP),
-                            penalty.getKey());
+                    penaltyDemandDetail = insertPenaltyDmdDetail(license, penalty.getKey(), penalty.getValue().setScale(0, RoundingMode.HALF_UP));
                     if (penaltyDemandDetail != null)
                         demand.getEgDemandDetails().add(penaltyDemandDetail);
                 }
@@ -296,11 +313,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
         return installmentWisePenaltyDemandDetails;
     }
 
-    private EgDemandDetails insertPenaltyAndBillDetails(final BigDecimal penalty, final Installment installment) {
-        return insertPenaltyDmdDetail(installment, penalty);
-    }
-
-    private EgDemandDetails insertPenaltyDmdDetail(final Installment inst, final BigDecimal penaltyAmount) {
+    private EgDemandDetails insertPenaltyDmdDetail(License license, final Installment inst, final BigDecimal penaltyAmount) {
         EgDemandDetails demandDetail = null;
         if (penaltyAmount != null && penaltyAmount.compareTo(ZERO) > 0) {
             final Module module = license.getTradeName().getLicenseType().getModule();

@@ -56,6 +56,7 @@ public abstract class AbstractBillable implements Billable {
 
     @PersistenceContext
     private EntityManager entityManager;
+
     /**
      * Generates a number to be used as the ID of a new bill.
      */
@@ -68,5 +69,4 @@ public abstract class AbstractBillable implements Billable {
             throw new ApplicationRuntimeException("Could not generate new bill no", e);
         }
     }
-
 }

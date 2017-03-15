@@ -56,11 +56,6 @@
         <property name="licenseWorkflowService" ref="tradeLicenseWorkflowService"/>
     </bean>
 
-    <bean id="licenseBill" class="org.egov.tl.service.integration.LicenseBill" scope="prototype">
-        <property name="moduleName" value="Trade License"/>
-        <property name="serviceCode" value="TL"/>
-    </bean>
-
     <bean id="licenseDocumentTypeService" class="org.egov.infstr.services.PersistenceService">
         <constructor-arg name="type" value="org.egov.tl.entity.LicenseDocumentType"/>
     </bean>

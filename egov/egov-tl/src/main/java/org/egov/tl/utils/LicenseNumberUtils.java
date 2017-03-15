@@ -50,6 +50,8 @@ import org.egov.infra.utils.DateUtils;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.tl.service.LicenseNumberGenerator;
 import org.hibernate.exception.SQLGrammarException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -57,11 +59,18 @@ import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.Date;
 
+import static org.egov.tl.utils.Constants.TRADE_LICENSE;
+
 @Service
 public class LicenseNumberUtils {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(LicenseNumberUtils.class);
+
     @Autowired
-    protected AutonumberServiceBeanResolver autonumberServiceBeanResolver;
+    private AutonumberServiceBeanResolver autonumberServiceBeanResolver;
+
+    @Autowired
+    private ApplicationNumberGenerator applicationNumberGenerator;
 
     @Autowired
     private SequenceNumberGenerator sequenceNumberGenerator;
@@ -75,9 +84,6 @@ public class LicenseNumberUtils {
     @Autowired
     private InstallmentDao installmentDao;
 
-    @Autowired
-    protected ApplicationNumberGenerator applicationNumberGenerator;
-
     public String generateLicenseNumber() {
         return autonumberServiceBeanResolver.getAutoNumberServiceFor(LicenseNumberGenerator.class).generateLicenseNumber();
     }
@@ -88,18 +94,24 @@ public class LicenseNumberUtils {
 
     public String generateBillNumber() {
         try {
-            final String currentInstallmentYear = DateUtils.toYearFormat(installmentDao.getInsatllmentByModuleForGivenDate(
-                    moduleService.getModuleByName(Constants.TRADELICENSE_MODULENAME), new Date()).getInstallmentYear());
-            final String sequenceName = Constants.LICENSE_BILLNO_SEQ+ currentInstallmentYear;
-            Serializable sequenceNumber;
-            try {
-                sequenceNumber = sequenceNumberGenerator.getNextSequence(sequenceName);
-            } catch (final SQLGrammarException e) {
-                sequenceNumber = dbSequenceGenerator.createAndGetNextSequence(sequenceName);
-            }
+            String currentInstallmentYear = DateUtils.toYearFormat(installmentDao.getInsatllmentByModuleForGivenDate(
+                    moduleService.getModuleByName(TRADE_LICENSE), new Date()).getInstallmentYear());
+            String sequenceName = Constants.LICENSE_BILLNO_SEQ + currentInstallmentYear;
+            Serializable sequenceNumber = getNextSequence(sequenceName);
             return String.format("%s%06d", "", sequenceNumber);
-        } catch (final SQLException e) {
+        } catch (SQLException e) {
             throw new ApplicationRuntimeException("Error occurred while generating license bill Number ", e);
         }
+    }
+
+    private Serializable getNextSequence(final String sequenceName) throws SQLException {
+        Serializable sequenceNumber;
+        try {
+            sequenceNumber = sequenceNumberGenerator.getNextSequence(sequenceName);
+        } catch (SQLGrammarException e) {
+            LOGGER.warn("License number sequence does not exist, creating one.", e);
+            sequenceNumber = dbSequenceGenerator.createAndGetNextSequence(sequenceName);
+        }
+        return sequenceNumber;
     }
 }
