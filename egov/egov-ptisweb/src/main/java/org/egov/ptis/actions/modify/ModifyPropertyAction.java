@@ -404,8 +404,8 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
             logger.debug("Exiting from modifyForm");
         }
         showTaxCalculateButton();
-        if (StringUtils.isBlank(applicationSource)
-                && (propService.isEmployee(currentUser) && !propertyTaxCommonUtils.isEligibleInitiator(currentUser.getId()))) {
+        if (isBlank(applicationSource)
+                && propService.isEmployee(currentUser) && !propertyTaxCommonUtils.isEligibleInitiator(currentUser.getId())) {
             addActionError(getText("initiator.noteligible"));
             return COMMON_FORM;
         }
@@ -757,12 +757,12 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 
     private void checkToDisplayAckButton() {
         final Boolean rejected = wfInitiatorRejected == null ? Boolean.FALSE : wfInitiatorRejected;
-        if(ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName()))
+        if (ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName()))
             showAckBtn = Boolean.TRUE;
-        if(!showAckBtn){
+        if (!showAckBtn) {
             for (final Role role : securityUtils.getCurrentUser().getRoles())
                 if (ROLE_ULB_OPERATOR.equalsIgnoreCase(role.getName()) && !rejected && getModel().getState() == null
-                || CSC_OPERATOR_ROLE.equalsIgnoreCase(role.getName()))
+                    || CSC_OPERATOR_ROLE.equalsIgnoreCase(role.getName()))
                     showAckBtn = Boolean.TRUE;
         }
     }

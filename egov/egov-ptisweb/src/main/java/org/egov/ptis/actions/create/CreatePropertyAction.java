@@ -1044,9 +1044,9 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                 .findAllBy("from PropertyTypeMaster where type != 'EWSHS' order by orderNo");
         final List<PropertyOccupation> propOccList = getPersistenceService().findAllBy("from PropertyOccupation");
         List<PropertyMutationMaster> mutationList;
-        if(StringUtils.isBlank(applicationSource)) {
-        mutationList = getPersistenceService()
-                .findAllBy("from PropertyMutationMaster pmm where pmm.type=?", PROP_CREATE_RSN);
+        if (StringUtils.isBlank(applicationSource)) {
+            mutationList = getPersistenceService()
+                    .findAllBy("from PropertyMutationMaster pmm where pmm.type=?", PROP_CREATE_RSN);
         } else {
             mutationList = getPersistenceService().findAllBy("from PropertyMutationMaster pmm where pmm.type=? and pmm.code=?",
                     PROP_CREATE_RSN, PROP_CREATE_RSN_NEWPROPERTY_CODE);

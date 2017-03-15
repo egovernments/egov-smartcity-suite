@@ -167,8 +167,8 @@ public class TaxExemptionController extends GenericWorkFlowController {
         isAlert = true;
         basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
         User loggedInUser = securityUtils.getCurrentUser();
-        if (!ANONYMOUS_USER.equalsIgnoreCase(loggedInUser.getName()) && (propertyService.isEmployee(loggedInUser)
-                && !propertyTaxCommonUtils.isEligibleInitiator(loggedInUser.getId()))) {
+        if (!ANONYMOUS_USER.equalsIgnoreCase(loggedInUser.getName()) && propertyService.isEmployee(loggedInUser)
+                && !propertyTaxCommonUtils.isEligibleInitiator(loggedInUser.getId())) {
             model.addAttribute(ERROR_MSG, "msg.initiator.noteligible");
             return PROPERTY_VALIDATION;
         }
