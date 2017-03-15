@@ -984,6 +984,11 @@ public class WaterConnectionDetailsService {
             if (applicationIndex == null) {
                 if (LOG.isDebugEnabled())
                     LOG.debug(" updating Application Index creation Started... ");
+                String channel;
+                if (waterTaxUtils.isCSCoperator(waterConnectionDetails.getCreatedBy()) && UserType.BUSINESS.equals(waterConnectionDetails.getCreatedBy().getType()))
+                    channel = Source.CSC.toString();
+                else 
+                    channel = WaterTaxConstants.SYSTEM;
                 applicationIndex = ApplicationIndex.builder().withModuleName(((EgModules) hql.uniqueResult()).getName())
                         .withApplicationNumber(waterConnectionDetails.getApplicationNumber())
                         .withApplicationDate(waterConnectionDetails.getApplicationDate())
@@ -993,7 +998,7 @@ public class WaterConnectionDetailsService {
                         .withUrl(String.format(WTMS_APPLICATION_VIEW, waterConnectionDetails.getApplicationNumber()))
                         .withApplicantAddress(assessmentDetails.getPropertyAddress())
                         .withOwnername(user.getUsername() + "::" + user.getName())
-                        .withChannel(sourceChannel != null ? sourceChannel : WaterTaxConstants.SYSTEM)
+                        .withChannel(sourceChannel != null ? sourceChannel : channel)
                         .withDisposalDate(waterConnectionDetails.getDisposalDate())
                         .withMobileNumber(mobileNumber.toString()).withClosed(ClosureStatus.NO)
                         .withAadharNumber(aadharNumber.toString()).withApproved(ApprovalStatus.INPROGRESS).build();
