@@ -184,6 +184,10 @@ public class TaxExemptionController extends GenericWorkFlowController {
                 model.addAttribute("wfPendingMsg", "Could not do Tax exemption now, property is undergoing some work flow.");
                 return TARGET_WORKFLOW_ERROR;
             }
+            if (basicProperty.getActiveProperty().getPropertyDetail().isStructure()) {
+                model.addAttribute(ERROR_MSG, "error.superstruc.prop.notallowed");
+                return PROPERTY_VALIDATION;
+            }
 
             else if (!isExempted) {
                 final Map<String, BigDecimal> propertyTaxDetails = propertyService

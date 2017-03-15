@@ -171,6 +171,10 @@ public class VacanyRemissionController extends GenericWorkFlowController {
                 model.addAttribute(ERROR_MSG, "msg.initiator.noteligible");
                 return PROPERTY_VALIDATION;
             }
+            if (basicProperty.getActiveProperty().getPropertyDetail().isStructure()) {
+                model.addAttribute(ERROR_MSG, "error.superstruc.prop.notallowed");
+                return PROPERTY_VALIDATION;
+            }
             if (property != null)
                 // When called from common search
                 if ("commonSearch".equalsIgnoreCase(mode)) {

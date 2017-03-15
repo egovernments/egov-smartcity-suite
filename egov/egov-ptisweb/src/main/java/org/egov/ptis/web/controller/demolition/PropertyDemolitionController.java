@@ -152,6 +152,10 @@ public class PropertyDemolitionController extends GenericWorkFlowController {
             model.addAttribute(ERROR_MSG, "msg.initiator.noteligible");
             return PROPERTY_VALIDATION;
         }
+        if (basicProperty.getActiveProperty().getPropertyDetail().isStructure()) {
+            model.addAttribute(ERROR_MSG, "error.superstruc.prop.notallowed");
+            return PROPERTY_VALIDATION;
+        }
         final Map<String, BigDecimal> propertyTaxDetails = ptDemandDAO.getDemandCollMap(basicProperty
                 .getActiveProperty());
         Map<String, Installment> installmentMap = propertyTaxUtil.getInstallmentsForCurrYear(new Date());

@@ -409,6 +409,10 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
             addActionError(getText("initiator.noteligible"));
             return COMMON_FORM;
         }
+        if (basicProp.getActiveProperty().getPropertyDetail().isStructure()) {
+            addActionError(getText("error.superstruc.prop.notallowed"));
+            return COMMON_FORM;
+        }
         return target;
     }
 
