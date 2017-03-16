@@ -185,8 +185,8 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
                                                             .subAggregation(
                                                                     AggregationBuilders.range(HOURWISE_COMPLAINT_TYPE_AGEING)
                                                                             .field(COMPLAINT_AGEING_FROM_DUE)
-                                                                            .addRange("3hours", 0, 4)
-                                                                            .addRange("1day", 4, 25)
+                                                                            .addRange("12hours", 0, 13)
+                                                                            .addRange("1day", 13, 25)
                                                                             .addRange("1week", 25, 169)
                                                                             .addUnboundedFrom(REMAINING_HOURS, 169))
                                                             .subAggregation(
@@ -218,8 +218,8 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
                                                                             .subAggregation(
                                                                                     AggregationBuilders.range(GROUP_BY_FIELD_AGEING_FOR_HOURS)
                                                                                             .field(COMPLAINT_AGEING_FROM_DUE)
-                                                                                            .addRange("3hours", 0, 4)
-                                                                                            .addRange("1day", 4, 25)
+                                                                                            .addRange("12hours", 0, 13)
+                                                                                            .addRange("1day", 13, 25)
                                                                                             .addRange("1week", 25, 169)
                                                                                             .addUnboundedFrom(REMAINING_HOURS, 169))
                                                                             .subAggregation(getCountWithGrouping(
@@ -249,8 +249,8 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
                                                             .subAggregation(
                                                                     AggregationBuilders.range(HOURWISE_COMPLAINT_TYPE_AGEING)
                                                                             .field(COMPLAINT_AGEING_FROM_DUE)
-                                                                            .addRange("3hours", 0, 4)
-                                                                            .addRange("1day", 4, 25)
+                                                                            .addRange("12hours", 0, 13)
+                                                                            .addRange("1day", 13, 25)
                                                                             .addRange("1week", 25, 169)
                                                                             .addUnboundedFrom(REMAINING_HOURS, 169))
                                                             .subAggregation(
@@ -284,8 +284,8 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
                                                                                     .subAggregation(
                                                                                             AggregationBuilders.range(GROUP_BY_FIELD_AGEING_FOR_HOURS)
                                                                                                     .field(COMPLAINT_AGEING_FROM_DUE)
-                                                                                                    .addRange("3hours", 0, 3)
-                                                                                                    .addRange("1day", 4, 25)
+                                                                                                    .addRange("12hours", 0, 13)
+                                                                                                    .addRange("1day", 13, 25)
                                                                                                     .addRange("1week", 25, 169)
                                                                                                     .addUnboundedFrom(REMAINING_HOURS, 169))
                                                                                     .subAggregation(getCountWithGrouping(
@@ -314,8 +314,8 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
                                                             .subAggregation(
                                                                     AggregationBuilders.range(HOURWISE_COMPLAINT_TYPE_AGEING)
                                                                             .field(COMPLAINT_AGEING_FROM_DUE)
-                                                                            .addRange("3hours", 0, 4)
-                                                                            .addRange("1day", 4, 25)
+                                                                            .addRange("12hours", 0, 13)
+                                                                            .addRange("1day", 13, 25)
                                                                             .addRange("1week", 25, 169)
                                                                             .addUnboundedFrom(REMAINING_HOURS, 169))
                                                             .subAggregation(
@@ -350,8 +350,8 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
                                                                                     .subAggregation(
                                                                                             AggregationBuilders.range(GROUP_BY_FIELD_AGEING_FOR_HOURS)
                                                                                                     .field(COMPLAINT_AGEING_FROM_DUE)
-                                                                                                    .addRange("3hours", 0, 4)
-                                                                                                    .addRange("1day", 4, 25)
+                                                                                                    .addRange("12hours", 0, 13)
+                                                                                                    .addRange("1day", 13, 25)
                                                                                                     .addRange("1week", 25, 169)
                                                                                                     .addUnboundedFrom(REMAINING_HOURS, 169))
                                                                                     .subAggregation(getCountWithGrouping(
@@ -380,8 +380,8 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
                                                             .subAggregation(
                                                                     AggregationBuilders.range(HOURWISE_COMPLAINT_TYPE_AGEING)
                                                                             .field(COMPLAINT_AGEING_FROM_DUE)
-                                                                            .addRange("3hours", 0, 4)
-                                                                            .addRange("1day", 4, 25)
+                                                                            .addRange("12hours", 0, 13)
+                                                                            .addRange("1day", 13, 25)
                                                                             .addRange("1week", 25, 169)
                                                                             .addUnboundedFrom(REMAINING_HOURS, 169))
                                                             .subAggregation(
@@ -403,8 +403,8 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
                                                             .subAggregation(
                                                                     AggregationBuilders.range(GROUP_BY_FIELD_AGEING_FOR_HOURS)
                                                                             .field(COMPLAINT_AGEING_FROM_DUE)
-                                                                            .addRange("3hours", 0, 4)
-                                                                            .addRange("1day", 4, 25)
+                                                                            .addRange("12hours", 0, 13)
+                                                                            .addRange("1day", 13, 25)
                                                                             .addRange("1week", 25, 169)
                                                                             .addUnboundedFrom(REMAINING_HOURS, 169))
                                                             .subAggregation(getCountWithGrouping("groupByFieldSla", IF_SLA, 2))))
@@ -431,8 +431,8 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
                                             .subAggregation(
                                                     AggregationBuilders.range(GROUP_BY_FIELD_AGEING_FOR_HOURS)
                                                             .field(COMPLAINT_AGEING_FROM_DUE)
-                                                            .addRange("3hours", 0, 4)
-                                                            .addRange("1day", 4, 25)
+                                                            .addRange("12hours", 0, 13)
+                                                            .addRange("1day", 13, 25)
                                                             .addRange("1week", 25, 169)
                                                             .addUnboundedFrom(REMAINING_HOURS, 169))
                                             .subAggregation(getCountWithGrouping("groupByFieldSla", IF_SLA, 2))))
@@ -629,8 +629,8 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
                                         .subAggregation(
                                                 AggregationBuilders.range(GROUP_BY_FIELD_AGEING_FOR_HOURS)
                                                         .field(COMPLAINT_AGEING_FROM_DUE)
-                                                        .addRange("3hours", 0, 4)
-                                                        .addRange("1day", 4, 25)
+                                                        .addRange("12hours", 0, 13)
+                                                        .addRange("1day", 13, 25)
                                                         .addRange("1week", 25, 169)
                                                         .addUnboundedFrom(REMAINING_HOURS, 169))
                                         .subAggregation(getCountWithGrouping("groupByFieldSla", IF_SLA, 2)))
