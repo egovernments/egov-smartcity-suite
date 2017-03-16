@@ -37,7 +37,7 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infstr.zuulproxy.filter;
+package org.egov.infstr.microservice.zuulproxy.filter;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -54,8 +54,8 @@ import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.properties.ApplicationProperties;
 import org.egov.infra.config.security.authentication.SecureUser;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infstr.models.Role;
-import org.egov.infstr.models.UserInfo;
+import org.egov.infstr.microservice.zuulproxy.models.Role;
+import org.egov.infstr.microservice.zuulproxy.models.UserInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;

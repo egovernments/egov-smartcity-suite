@@ -201,7 +201,7 @@
 	</listener>
 	
 	<listener>
-		 <listener-class>org.egov.infstr.zuulproxy.listeners.ZuulProxyStartServerListener</listener-class>
+		 <listener-class>org.egov.infstr.microservice.zuulproxy.listeners.ZuulProxyStartServerListener</listener-class>
 	</listener>
 
 	<listener>

@@ -37,14 +37,14 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infstr.zuulproxy.listeners;
+package org.egov.infstr.microservice.zuulproxy.listeners;
 
 import java.io.File;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
-import org.egov.infstr.zuulproxy.filter.ZuulProxyFilter;
+import org.egov.infstr.microservice.zuulproxy.filter.ZuulProxyFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -82,7 +82,7 @@ public class ZuulProxyStartServerListener implements ServletContextListener {
         FilterLoader.getInstance().setCompiler(new GroovyCompiler());
 
         String scriptRoot = System.getProperty("zuul.filter.root",
-                getClass().getClassLoader().getResource("/groovy/filters").getPath());
+                getClass().getClassLoader().getResource("/groovy/microservice/filters").getPath());
 
         if (scriptRoot.length() > 0)
             scriptRoot = scriptRoot + File.separator;
