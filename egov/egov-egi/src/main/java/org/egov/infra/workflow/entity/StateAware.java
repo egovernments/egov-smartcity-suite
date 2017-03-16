@@ -40,6 +40,7 @@
 
 package org.egov.infra.workflow.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.entity.AbstractAuditable;
@@ -54,6 +55,7 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.Transient;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.Comparator;
@@ -70,6 +72,10 @@ public abstract class StateAware extends AbstractAuditable {
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "STATE_ID")
     private State state;
+
+    @Transient
+    @JsonIgnore
+    private Transition transition;
 
     public static Comparator<StateAware> byCreatedDate() {
         return (stateAware1, stateAware2) -> {
@@ -143,7 +149,9 @@ public abstract class StateAware extends AbstractAuditable {
     }
 
     public final Transition transition() {
-        return new Transition();
+        if (this.transition == null)
+            this.transition = new Transition();
+        return this.transition;
     }
 
     protected StateInfoBuilder buildStateInfo() {
