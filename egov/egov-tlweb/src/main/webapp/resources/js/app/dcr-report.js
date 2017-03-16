@@ -44,7 +44,7 @@ jQuery(document).ready(function() {
 	
 	function validRange(start, end) {
         
-        if (end< start) {
+        if (start.getTime() > end.getTime() ) {
         	bootbox.alert("From date  should not be greater than the To Date.");
 			$('#end_date').val('');
 			return false;
@@ -57,8 +57,8 @@ jQuery(document).ready(function() {
 		$('#dailyCollectionReportSearch').click(function(e){
 			$('#dailyCollectionReport-header').hide();
 			if($('#dailyCollectionform').valid()){
-			var fromDate = $("#fromDate").val();
-			var toDate = $("#toDate").val(); 
+			var fromDate = $("#fromDate").datepicker('getDate');
+			var toDate = $("#toDate").datepicker('getDate'); 
 			var status = $("#status").val();
 			validRange(fromDate,toDate);
 			var oTable= $('#dailyCollReport-table');
