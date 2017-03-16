@@ -42,6 +42,7 @@ package org.egov.ptis.web.controller.transactions.digitalsignature;
 import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_ALTER_ASSESSMENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_BIFURCATE_ASSESSMENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.AMALGAMATION;
+import static org.egov.ptis.constants.PropertyTaxConstants.ANONYMOUS_USER;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_AMALGAMATION;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_BIFURCATE_ASSESSENT;
@@ -332,7 +333,8 @@ public class DigitalSignatureWorkflowController {
             if (!state.getStateHistory().isEmpty())
                 wfInitiator = assignmentService.getPrimaryAssignmentForPositon(state.getStateHistory().get(0)
                         .getOwnerPosition().getId());
-        } else if (propertyService.isEmployee(state.getCreatedBy()))
+        } else if (propertyService.isEmployee(state.getCreatedBy())
+                && !ANONYMOUS_USER.equalsIgnoreCase(state.getCreatedBy().getName()))
             wfInitiator = assignmentService.getPrimaryAssignmentForUser(state.getCreatedBy().getId());
         else if (!state.getStateHistory().isEmpty())
             wfInitiator = assignmentService.getAssignmentsForPosition(

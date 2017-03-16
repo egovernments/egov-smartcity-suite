@@ -40,6 +40,7 @@
 
 package org.egov.tl.web.actions.viewtradelicense;
 
+import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Actions;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -65,7 +66,8 @@ import static org.egov.tl.utils.Constants.CSCOPERATOR;
 
 @ParentPackage("egov")
 @Results({@Result(name = "report", location = "viewTradeLicense-report.jsp"),
-        @Result(name = "message", location = "viewTradeLicense-message.jsp")})
+        @Result(name = "message", location = "viewTradeLicense-message.jsp"),
+        @Result(name = "closure", location = "viewTradeLicense-closure.jsp")})
 public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     private static final long serialVersionUID = 1L;
 
@@ -168,13 +170,22 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
         return reportId;
     }
 
+    @Action(value = "/viewtradelicense/showclosureform")
+    public String showClosureForm() throws IOException {
+        if (license() != null && license().getId() != null)
+            tradeLicense = tradeLicenseService.getLicenseById(license().getId());
+        if (tradeLicense.hasState() && !tradeLicense.transitionCompleted()) {
+            ServletActionContext.getResponse().setContentType("text/html");
+            ServletActionContext.getResponse().getWriter().write("<center style='color:red;font-weight:bolder'>Closure License workflow is in progress !</center>");
+            return null;
+        }
+        return "closure";
+    }
 
     @Action(value = "/viewtradelicense/viewTradeLicense-closure")
     public String viewClosure() {
         if (license() != null && license().getId() != null)
             tradeLicense = tradeLicenseService.getLicenseById(license().getId());
-        else if (applicationNo != null && !applicationNo.isEmpty())
-            tradeLicense = tradeLicenseService.getLicenseByApplicationNumber(applicationNo);
         return "closure";
     }
 

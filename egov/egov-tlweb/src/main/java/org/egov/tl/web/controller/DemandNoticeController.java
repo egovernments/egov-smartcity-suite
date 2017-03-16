@@ -93,7 +93,7 @@ import static org.egov.infra.utils.PdfUtils.appendFiles;
 import static org.egov.tl.utils.Constants.CITY_GRADE_CORPORATION;
 import static org.egov.tl.utils.Constants.TL_LICENSE_ACT_CORPORATION;
 import static org.egov.tl.utils.Constants.TL_LICENSE_ACT_DEFAULT;
-import static org.egov.tl.utils.Constants.TRADELICENSE_MODULENAME;
+import static org.egov.tl.utils.Constants.TRADE_LICENSE;
 
 @Controller
 @RequestMapping("/demandnotice")
@@ -149,7 +149,7 @@ public class DemandNoticeController {
 
             // GET PREVIOUS INSTALLMENTS BASED ON CURRENT INSTALLMENT.
             List<Installment> previousInstallment = installmentDao
-                    .fetchPreviousInstallmentsInDescendingOrderByModuleAndDate(licenseUtils.getModule(TRADELICENSE_MODULENAME),
+                    .fetchPreviousInstallmentsInDescendingOrderByModuleAndDate(licenseUtils.getModule(TRADE_LICENSE),
                             currentInstallment.getToDate(), 1);
 
             if (!previousInstallment.isEmpty()) {
@@ -214,12 +214,12 @@ public class DemandNoticeController {
 
         if (CITY_GRADE_CORPORATION.equalsIgnoreCase(cityGrade)) {
             List<AppConfigValues> corporationAct = appConfigValueService
-                    .getConfigValuesByModuleAndKey(TRADELICENSE_MODULENAME, TL_LICENSE_ACT_CORPORATION);
+                    .getConfigValuesByModuleAndKey(TRADE_LICENSE, TL_LICENSE_ACT_CORPORATION);
             reportParams.put("actDeclaration",
                     corporationAct != null && corporationAct.get(0) != null ? corporationAct.get(0).getValue() : " ");
         } else {
             List<AppConfigValues> municipalityAct = appConfigValueService
-                    .getConfigValuesByModuleAndKey(TRADELICENSE_MODULENAME, TL_LICENSE_ACT_DEFAULT);
+                    .getConfigValuesByModuleAndKey(TRADE_LICENSE, TL_LICENSE_ACT_DEFAULT);
 
             reportParams.put("actDeclaration", municipalityAct != null && municipalityAct.get(0) != null
                     ? municipalityAct.get(0).getValue() : " ");

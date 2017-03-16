@@ -43,6 +43,7 @@ import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.egov.ptis.constants.PropertyTaxConstants.ADDITIONAL_COMMISSIONER_DESIGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.ADMIN_HIERARCHY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.ANONYMOUS_USER;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_NEW_ASSESSENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPURTENANT_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_COMMISSIONER_DESIGN;
@@ -78,6 +79,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYP
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_INSPECTOR_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_OFFICER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.SENIOR_ASSISTANT;
+import static org.egov.ptis.constants.PropertyTaxConstants.SOURCE_ONLINE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_BILL_NOTCREATED;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_DEMAND_INACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
@@ -115,6 +117,7 @@ import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
+import org.apache.struts2.convention.annotation.Namespaces;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.ResultPath;
@@ -187,9 +190,10 @@ import com.google.gson.GsonBuilder;
  * @author parvati
  */
 @ParentPackage("egov")
-@Namespace("/create")
+@Namespaces(value={@Namespace("/create"),@Namespace("/citizen/create")})
 @ResultPath("/WEB-INF/jsp/")
 @Results({ @Result(name = "new", location = "create/createProperty-new.jsp"),
+        @Result(name = CreatePropertyAction.CITIZEN_NEW, location = "citizen/create/createProperty-citizenNew.jsp"),
         @Result(name = "dataEntry", location = "create/createProperty-dataEntry.jsp"),
         @Result(name = "ack", location = "create/createProperty-ack.jsp"),
         @Result(name = "dataEntry-ack", location = "create/createProperty-dataEntryAck.jsp"),
@@ -220,6 +224,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     private static final String USAGE_LIST = "UsageList";
     private static final String EXEMPTED_REASON_LIST = "taxExemptedList";
     private static final String PROPERTY_CREATE_REJECT_FAILURE = "Initiator is not active so can not do rejection with application number ";
+    protected static final String CITIZEN_NEW = "citizenNewForm";
 
     private transient Logger logger = Logger.getLogger(getClass());
     private PropertyImpl property = new PropertyImpl();
@@ -316,6 +321,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     private transient DocumentTypeDetails documentTypeDetails = new DocumentTypeDetails();
     private boolean eligibleInitiator = Boolean.TRUE;
     private boolean dataEntry = Boolean.FALSE;
+    private String applicationSource;
 
     @Autowired
     private transient PropertyDepartmentRepository propertyDepartmentRepository;
@@ -374,12 +380,21 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                 property.setMeesevaServiceCode(request.getParameter(MEESEVA_SERVICE_CODE));
             }
         }
+        showCalculateTaxButton();
+        if(StringUtils.isBlank(applicationSource)) {
+            validateInitiatorDesgn();
+            return RESULT_NEW;   
+        }
+        else
+            return CITIZEN_NEW;
+    }
+    
+    private void showCalculateTaxButton() {
         if (StringUtils.containsIgnoreCase(userDesignationList, REVENUE_INSPECTOR_DESGN)
                 || StringUtils.containsIgnoreCase(userDesignationList, JUNIOR_ASSISTANT)
-                || StringUtils.containsIgnoreCase(userDesignationList, SENIOR_ASSISTANT))
+                || StringUtils.containsIgnoreCase(userDesignationList, SENIOR_ASSISTANT)
+                || SOURCE_ONLINE.equalsIgnoreCase(applicationSource))
             showTaxCalcBtn = Boolean.TRUE;
-        validateInitiatorDesgn();
-        return RESULT_NEW;
     }
 
     @SuppressWarnings("unchecked")
@@ -402,6 +417,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             property.setApplicationNo(property.getMeesevaApplicationNumber());
             property.setSource(PropertyTaxConstants.SOURCE_MEESEVA);
         }
+        if(SOURCE_ONLINE.equalsIgnoreCase(applicationSource) && ApplicationThreadLocals.getUserId() == null) 
+            ApplicationThreadLocals.setUserId(securityUtils.getCurrentUser().getId());
 
         if (property.getPropertyDetail().isAppurtenantLandChecked()) {
             propTypeMstr = (PropertyTypeMaster) getPersistenceService().find(PROPTYPEMASTER_QUERY,
@@ -477,6 +494,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         setBasicProp(nonVacantBasicProperty);
         setAckMessage("Property Created Successfully in the System and Forwarded to : ");
         setAssessmentNoMessage(" for Digital Signature with assessment number : ");
+        property = nonVacantProperty;
         if (!loggedUserIsMeesevaUser)
             return RESULT_ACK;
         else
@@ -647,6 +665,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                     setPropertyDepartmentList(propertyDepartmentRepository.getAllStateDepartments());
                 else if (propTypeMstr.getCode().startsWith("CENTRAL_GOVT"))
                     setPropertyDepartmentList(propertyDepartmentRepository.getAllCentralDepartments());
+                else if (propTypeMstr.getCode().equals(PropertyTaxConstants.OWNERSHIP_TYPE_PRIVATE))
+                    setPropertyDepartmentList(propertyDepartmentRepository.getAllPrivateDepartments());
             }
             if (property.getPropertyDetail().getVacantLandPlotArea() != null)
                 vacantLandPlotAreaId = property.getPropertyDetail().getVacantLandPlotArea().getId();
@@ -724,10 +744,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                 || property.getState().getNextAction() != null && property.getState().getNextAction()
                         .equalsIgnoreCase(WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING)
                 || currState.endsWith(WFLOW_ACTION_NEW)) {
-            if (StringUtils.containsIgnoreCase(userDesignationList, REVENUE_INSPECTOR_DESGN)
-                    || StringUtils.containsIgnoreCase(userDesignationList, JUNIOR_ASSISTANT)
-                    || StringUtils.containsIgnoreCase(userDesignationList, SENIOR_ASSISTANT))
-                showTaxCalcBtn = Boolean.TRUE;
+            showCalculateTaxButton();
             mode = EDIT;
             setAllowEditDocument(Boolean.TRUE);
             return RESULT_NEW;
@@ -1002,7 +1019,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                     + zoneId + ", WardId: " + wardId);
         setUserInfo();
         setUserDesignations();
-        propertyByEmployee = propService.isEmployee(securityUtils.getCurrentUser());
+        propertyByEmployee = propService.isEmployee(securityUtils.getCurrentUser())
+                && !ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName());
         loggedUserIsMeesevaUser = propService.isMeesevaUser(securityUtils.getCurrentUser());
         if (isNotBlank(getModelId())) {
             property = (PropertyImpl) getPersistenceService().findByNamedQuery(QUERY_PROPERTYIMPL_BYID,
@@ -1027,9 +1045,14 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         final List<PropertyTypeMaster> propTypeList = getPersistenceService()
                 .findAllBy("from PropertyTypeMaster where type != 'EWSHS' order by orderNo");
         final List<PropertyOccupation> propOccList = getPersistenceService().findAllBy("from PropertyOccupation");
-        final List<PropertyMutationMaster> mutationList = getPersistenceService()
-                .findAllBy("from PropertyMutationMaster pmm where pmm.type=?", PROP_CREATE_RSN);
-
+        List<PropertyMutationMaster> mutationList;
+        if (StringUtils.isBlank(applicationSource)) {
+            mutationList = getPersistenceService()
+                    .findAllBy("from PropertyMutationMaster pmm where pmm.type=?", PROP_CREATE_RSN);
+        } else {
+            mutationList = getPersistenceService().findAllBy("from PropertyMutationMaster pmm where pmm.type=? and pmm.code=?",
+                    PROP_CREATE_RSN, PROP_CREATE_RSN_NEWPROPERTY_CODE);
+        }
         if (null != property && property.getMeesevaServiceCode() != null) {
             if (property.getMeesevaServiceCode().equalsIgnoreCase(MEESEVA_SERVICE_CODE_NEWPROPERTY))
                 getMutationListByCode(PROP_CREATE_RSN_NEWPROPERTY_CODE);
@@ -1471,10 +1494,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         }
         validateApproverDetails();
         super.validate();
-        if (isBlank(getModelId()) && (StringUtils.containsIgnoreCase(userDesignationList, REVENUE_INSPECTOR_DESGN)
-                || StringUtils.containsIgnoreCase(userDesignationList, JUNIOR_ASSISTANT)
-                || StringUtils.containsIgnoreCase(userDesignationList, SENIOR_ASSISTANT)))
-            showTaxCalcBtn = Boolean.TRUE;
+        if (isBlank(getModelId()))
+            showCalculateTaxButton();
         if (propTypeMstr != null && propTypeMstr.getCode().equalsIgnoreCase(PropertyTaxConstants.OWNERSHIP_TYPE_STATE_GOVT)
                 && propertyDepartmentId == null)
             addActionError(getText("mandatory.property.department"));
@@ -1490,6 +1511,9 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         final String cityLogo = url.concat(PropertyTaxConstants.IMAGE_CONTEXT_PATH)
                 .concat((String) request.getSession().getAttribute("citylogo"));
         final String cityName = request.getSession().getAttribute("citymunicipalityname").toString();
+        if(ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName()) && ApplicationThreadLocals.getUserId() == null) {
+            ApplicationThreadLocals.setUserId(securityUtils.getCurrentUser().getId());
+        }
         reportId = reportViewerUtil
                 .addReportToTempCache(basicPropertyService.propertyAcknowledgement(property, cityLogo, cityName));
         return PRINT_ACK;
@@ -2347,6 +2371,14 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
 
     public void setDataEntry(final boolean dataEntry) {
         this.dataEntry = dataEntry;
+    }
+
+    public String getApplicationSource() {
+        return applicationSource;
+    }
+
+    public void setApplicationSource(String applicationSource) {
+        this.applicationSource = applicationSource;
     }
 
 }

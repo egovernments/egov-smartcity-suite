@@ -227,6 +227,7 @@
 				<s:hidden id="modifyRsn" name="modifyRsn" value="%{modifyRsn}" />
 				<s:hidden id="ownerName" name="ownerName" value="%{ownerName}" />
 				<s:hidden id="propAddress" name="propAddress" value="%{propAddress}" />
+				<s:hidden name="applicationSource" value="%{applicationSource}" />
 			    <s:hidden name="meesevaApplicationNumber" id="meesevaApplicationNumber" value="%{meesevaApplicationNumber}" />
 				<s:if test="%{@org.egov.ptis.constants.PropertyTaxConstants@PROPERTY_MODIFY_REASON_EDIT_DATA_ENTRY.equals(modifyRsn)}">
 				<div class="buttonbottom" align="center">
@@ -234,7 +235,7 @@
 					<input type="button" name="button2" id="button2" value="Close" class="btn btn-primary" onclick="window.close();" /></td>
 				</div>
 				</s:if>
-				<s:elseif test="%{propertyByEmployee == true}">
+				<s:elseif test="%{propertyByEmployee == true && applicationSource != 'online'}">
 				<%@ include file="../workflow/commonWorkflowMatrix.jsp"%>
 				<div class="buttonbottom" align="center">
 					<%@ include file="../workflow/commonWorkflowMatrix-button.jsp" %>

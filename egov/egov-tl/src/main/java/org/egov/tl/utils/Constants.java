@@ -101,8 +101,6 @@ public final class Constants {
     public static final String WARD_NAME = "WARD_NAME";
     public static final String NO_OF_LATE_RENEWALS = "NO_OF_LATE_RENEWALS";
     public static final String TRADE_ID = "TRADE_ID";
-    public static final String TRADELICENSE_MODULENAME = "Trade License";
-    public static final String ELECTRICALLICENSE_LICENSETYPE = "electricalcontractorlicense";
     public static final String TOTAL_NEW = "TOTAL_NEW";
     public static final String TOTAL_CAN = "TOTAL_CAN";
     public static final String TOTAL_OBJ = "TOTAL_OBJ";
@@ -138,7 +136,6 @@ public final class Constants {
     public static final String APPLICATION_STATUS_REJECTED = "REJECTED";
     public static final String APPLICATION_STATUS_CANCELLED = "CANCELLED";
     public static final String RENEWAL_LIC_APPTYPE = "Renew";
-    public static final String STR_FOR_EMAILSUBJECT = "Trade License Application Amount Collected for %s %s";
     public static final String SEARCH_BY_APPNO = "ApplicationNumber";
     public static final String SEARCH_BY_LICENSENO = "LicenseNumber";
     public static final String SEARCH_BY_OLDLICENSENO = "OldLicenseNumber";
@@ -180,7 +177,6 @@ public final class Constants {
     public static final String WF_ACTION_DIGI_PENDING = "Digital Signature Pending";
     public static final String WF_ACTION_DIGI_SIGN_COMMISSION_NO_COLLECTION = "Digital sign-Commissioner Approved no collection";
     public static final String WF_DIGI_SIGNED = "Digital signed";
-    public static final String DELIMITER_HYPEN = "-";
     public static final String REVENUE_WARD = "Ward";
     public static final String APPROVE_PAGE = "approve";
     public static final String GENERATE_CERTIFICATE = "tl_generateCertificate";
@@ -194,8 +190,9 @@ public final class Constants {
     public static final String JA_DESIGNATION = "Junior Assistant";
     public static final String RC_DESIGNATION = "Revenue Clerk";
     public static final String CLOSURE_NATUREOFTASK = "Closure License";
-   
-
+    public static final String BILL_TYPE_AUTO = "AUTO";
+    public static final String TRADE_LICENSE = "Trade License";
+    public static final String TL_SERVICE_CODE = "TL";
     private static final Map<String, String> OWNERSHIP_TYPE = new HashMap<>();
 
     static {

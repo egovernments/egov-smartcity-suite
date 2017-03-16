@@ -63,6 +63,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_INSPECTOR_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_OFFICER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.SENIOR_ASSISTANT;
+import static org.egov.ptis.constants.PropertyTaxConstants.SOURCE_ONLINE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_REJECTED;
 import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_WORKFLOW_ERROR;
 import static org.egov.ptis.constants.PropertyTaxConstants.UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
@@ -82,6 +83,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REVENUE_OFFICER_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONAL_COMMISSIONER_DESIGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.ANONYMOUS_USER;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -102,6 +104,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
+import org.apache.struts2.convention.annotation.Namespaces;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
@@ -147,6 +150,7 @@ import com.opensymphony.xwork2.ActionContext;
         @Result(name = BaseFormAction.EDIT, location = "transfer/transferProperty-edit.jsp"),
         @Result(name = BaseFormAction.VIEW, location = "transfer/transferProperty-view.jsp"),
         @Result(name = PropertyTransferAction.REDIRECT, location = "transfer/transferProperty-redirect.jsp"),
+        @Result(name = PropertyTransferAction.CITIZEN_REDIRECT, location = "citizen/transfer/transferProperty-redirect.jsp"),
         @Result(name = TARGET_WORKFLOW_ERROR, location = "workflow/workflow-error.jsp"),
         @Result(name = PropertyTransferAction.ACK, location = "transfer/transferProperty-ack.jsp"),
         @Result(name = PropertyTransferAction.REJECT_ON_TAXDUE, location = "transfer/transferProperty-balance.jsp"),
@@ -160,11 +164,12 @@ import com.opensymphony.xwork2.ActionContext;
                 "assessmentNo", "${assessmentNo}", "mutationId", "${mutationId}" }),
         @Result(name = PropertyTransferAction.COMMON_FORM, location = "search/searchProperty-commonForm.jsp"),
         @Result(name = PropertyTransferAction.DIGITAL_SIGNATURE_REDIRECTION, location = "transfer/transferProperty-digitalSignatureRedirection.jsp") })
-@Namespace("/property/transfer")
+@Namespaces(value={@Namespace("/property/transfer"),@Namespace("/citizen/property/transfer")})
 public class PropertyTransferAction extends GenericWorkFlowAction {
     protected static final String COMMON_FORM = "commonForm";
     protected static final String REDIRECT = "redirect";
     protected static final String DIGITAL_SIGNATURE_REDIRECTION = "digitalSignatureRedirection";
+    protected static final String CITIZEN_REDIRECT = "citizenRedirect";
 
     private static final String PROPERTY_TRANSFER = "property transfer";
     private static final long serialVersionUID = 1L;
@@ -258,6 +263,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     private boolean mutationFeePaid = Boolean.FALSE;
     private boolean receiptCanceled = Boolean.FALSE;
     private boolean allowEditDocument = Boolean.FALSE;
+    private String applicationSource;
 
     public PropertyTransferAction() {
         addRelatedEntity("mutationReason", PropertyMutationMaster.class);
@@ -266,7 +272,10 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     @SkipValidation
     @Action(value = "/redirect")
     public String redirect() {
-        return REDIRECT;
+        if (StringUtils.isNotBlank(applicationSource))
+            return CITIZEN_REDIRECT;
+        else 
+            return REDIRECT;
     }
 
     @SkipValidation
@@ -308,7 +317,8 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                 addActionError(getText("error.superstruc.prop.notallowed"));
                 return COMMON_FORM;
             }
-            if (propertyService.isEmployee(transferOwnerService.getLoggedInUser()) && !propertyTaxCommonUtils.isEligibleInitiator(transferOwnerService.getLoggedInUser().getId())){
+            if (StringUtils.isBlank(applicationSource) && propertyService.isEmployee(transferOwnerService.getLoggedInUser())
+                    && !propertyTaxCommonUtils.isEligibleInitiator(transferOwnerService.getLoggedInUser().getId())) {
                 addActionError(getText("initiator.noteligible"));
                 return COMMON_FORM;
             }
@@ -329,7 +339,10 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     @Action(value = "/save")
     public String save() {
         transitionWorkFlow(propertyMutation);
-        propertyMutation.setSource(propertyTaxCommonUtils.setSourceOfProperty(securityUtils.getCurrentUser(), false));
+        Boolean isOnlineApplication = Boolean.FALSE;
+        if (StringUtils.isNotBlank(applicationSource) && SOURCE_ONLINE.equalsIgnoreCase(applicationSource))
+            isOnlineApplication = Boolean.TRUE;
+        propertyMutation.setSource(propertyTaxCommonUtils.setSourceOfProperty(securityUtils.getCurrentUser(), isOnlineApplication));
         loggedUserIsMeesevaUser = propertyService.isMeesevaUser(transferOwnerService.getLoggedInUser());
         if (!loggedUserIsMeesevaUser)
             transferOwnerService.initiatePropertyTransfer(basicproperty, propertyMutation);
@@ -547,6 +560,10 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         final String cityLogo = url.concat(PropertyTaxConstants.IMAGE_CONTEXT_PATH).concat(
                 (String) request.getSession().getAttribute("citylogo"));
         final String cityName = request.getSession().getAttribute("citymunicipalityname").toString();
+        if(ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName()) && ApplicationThreadLocals.getUserId() == null) {
+            ApplicationThreadLocals.setUserId(securityUtils.getCurrentUser().getId());
+            setApplicationSource(SOURCE_ONLINE.toLowerCase());
+        }
         reportId = reportViewerUtil.addReportToTempCache(
                 transferOwnerService.generateAcknowledgement(basicproperty, propertyMutation, cityName, cityLogo));
         return PRINTACK;
@@ -743,7 +760,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         String nextAction = "";
         Assignment assignment;
 
-        if (!propertyByEmployee) {
+        if (!propertyByEmployee || ANONYMOUS_USER.equalsIgnoreCase(transferOwnerService.getLoggedInUser().getName())) {
             currentState = getCurrentStateForThirdPartyWF(propertyMutation);
             assignment = transferOwnerService.getAssignmentForThirdPartyByMutationType(propertyMutation, basicproperty, user);
             approverPositionId = assignment.getPosition().getId();
@@ -1282,5 +1299,13 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
 
     public void setHouseNo(final String houseNo) {
         this.houseNo = houseNo;
+    }
+
+    public String getApplicationSource() {
+        return applicationSource;
+    }
+
+    public void setApplicationSource(String applicationSource) {
+        this.applicationSource = applicationSource;
     }
 }

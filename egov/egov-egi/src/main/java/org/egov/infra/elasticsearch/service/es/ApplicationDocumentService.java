@@ -43,6 +43,7 @@ package org.egov.infra.elasticsearch.service.es;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -88,6 +89,10 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 public class ApplicationDocumentService {
+
+    private static final String CITY_CODE = "cityCode";
+
+    private static final String CITY_GRADE = "cityGrade";
 
     private static final String APPLICATION_DATE = "applicationDate";
 
@@ -510,10 +515,10 @@ public class ApplicationDocumentService {
                     .filter(QueryBuilders.matchQuery(DISTRICT_NAME, applicationIndexRequest.getDistrict()));
         if (StringUtils.isNotBlank(applicationIndexRequest.getGrade()))
             boolQuery = boolQuery
-                    .filter(QueryBuilders.matchQuery("cityGrade", applicationIndexRequest.getGrade()));
+                    .filter(QueryBuilders.matchQuery(CITY_GRADE, applicationIndexRequest.getGrade()));
         if (StringUtils.isNotBlank(applicationIndexRequest.getUlbCode()))
             boolQuery = boolQuery
-                    .filter(QueryBuilders.matchQuery("cityCode", applicationIndexRequest.getUlbCode()));
+                    .filter(QueryBuilders.matchQuery(CITY_CODE, applicationIndexRequest.getUlbCode()));
         if (StringUtils.isNotBlank(applicationIndexRequest.getServiceGroup()))
             boolQuery = boolQuery
                     .filter(QueryBuilders.matchQuery(MODULE_NAME, applicationIndexRequest.getServiceGroup()));
@@ -558,7 +563,7 @@ public class ApplicationDocumentService {
         int size = 15;
         String name;
         ApplicationDetails applicationDetails;
-        Map serviceDetails;
+        Map detailsForAggregationField = Collections.emptyMap();
         Map<String, Long> delayDaysMap = new HashMap<>();
 
         if (StringUtils.isNotBlank(applicationIndexRequest.getAggregationLevel())) {
@@ -621,23 +626,39 @@ public class ApplicationDocumentService {
         for (Map.Entry<String, Long> entry : totalRcvdApplications.entrySet()) {
             applicationDetails = new ApplicationDetails();
             name = entry.getKey();
+            if (DISTRICT_NAME.equalsIgnoreCase(aggregationField) || CITY_NAME.equalsIgnoreCase(aggregationField)
+                    || APPLICATION_TYPE.equalsIgnoreCase(aggregationField))
+                detailsForAggregationField = getDetailsForAggregationType(applicationIndexRequest, fromDate, toDate, name,
+                        aggregationField);
 
-            if (DISTRICT_NAME.equalsIgnoreCase(aggregationField))
+            if (DISTRICT_NAME.equalsIgnoreCase(aggregationField)) {
                 applicationDetails.setDistrict(name);
-            else if (REGION_NAME.equalsIgnoreCase(aggregationField))
+                if (!detailsForAggregationField.isEmpty())
+                    applicationDetails.setRegion(detailsForAggregationField.get(REGION_NAME).toString());
+            } else if (REGION_NAME.equalsIgnoreCase(aggregationField))
                 applicationDetails.setRegion(name);
-            else if (CITY_NAME.equalsIgnoreCase(aggregationField))
+            else if (CITY_NAME.equalsIgnoreCase(aggregationField)) {
                 applicationDetails.setUlbName(name);
-            else if (APPLICATION_TYPE.equalsIgnoreCase(aggregationField)) {
+                if (!detailsForAggregationField.isEmpty()) {
+                    applicationDetails.setRegion(detailsForAggregationField.get(REGION_NAME).toString());
+                    applicationDetails.setDistrict(detailsForAggregationField.get(DISTRICT_NAME).toString());
+                    applicationDetails.setGrade(detailsForAggregationField.get(CITY_GRADE).toString());
+                    applicationDetails.setUlbCode(detailsForAggregationField.get(CITY_CODE).toString());
+                }
+            } else if (APPLICATION_TYPE.equalsIgnoreCase(aggregationField)) {
                 applicationDetails.setServiceType(name);
-                serviceDetails = getDetailsForApplicationType(applicationIndexRequest, fromDate, toDate, name);
-                if (!serviceDetails.isEmpty()) {
-                    applicationDetails.setServiceGroup(serviceDetails.get(MODULE_NAME).toString());
-                    applicationDetails.setSlaPeriod((Integer) serviceDetails.get("sla"));
+                if (!detailsForAggregationField.isEmpty()) {
+                    applicationDetails.setServiceGroup(detailsForAggregationField.get(MODULE_NAME).toString());
+                    applicationDetails.setSlaPeriod((Integer) detailsForAggregationField.get("sla"));
                 }
                 if (!delayDaysMap.isEmpty() && delayDaysMap.get(name) != null)
                     applicationDetails.setDelayedDays(delayDaysMap.get(name));
-            }
+            } else if (CITY_GRADE.equalsIgnoreCase(aggregationField))
+                applicationDetails.setGrade(name);
+            else if (MODULE_NAME.equalsIgnoreCase(aggregationField))
+                applicationDetails.setServiceGroup(name);
+            else if (CHANNEL.equalsIgnoreCase(aggregationField))
+                applicationDetails.setSource(name);
 
             applicationDetails.setTotalReceived(entry.getValue());
             applicationDetails.setTotalClosed(totalClosedApplications.get(name) == null ? 0 : totalClosedApplications.get(name));
@@ -680,7 +701,7 @@ public class ApplicationDocumentService {
             aggregationField = DISTRICT_NAME;
             size = 15;
         } else if ("grade".equalsIgnoreCase(aggregationLevel)) {
-            aggregationField = "cityGrade";
+            aggregationField = CITY_GRADE;
             size = 7;
         } else if ("ulb".equalsIgnoreCase(aggregationLevel)) {
             aggregationField = CITY_NAME;
@@ -894,22 +915,42 @@ public class ApplicationDocumentService {
     }
 
     /**
-     * Provides the details required for service type
+     * Provides the details required for the aggregation Field
      * @param applicationIndexRequest
      * @param fromDate
      * @param toDate
-     * @param applicationType
+     * @param value
+     * @param aggregationField
      * @return map
      */
-    private Map getDetailsForApplicationType(ApplicationIndexRequest applicationIndexRequest, Date fromDate, Date toDate,
-            String applicationType) {
+    private Map getDetailsForAggregationType(ApplicationIndexRequest applicationIndexRequest, Date fromDate, Date toDate,
+            String value, String aggregationField) {
+        String[] requiredFields = null;
         BoolQueryBuilder boolQuery = prepareWhereClause(applicationIndexRequest, fromDate, toDate);
-        boolQuery = boolQuery.filter(QueryBuilders.matchQuery("applicationType", applicationType));
+
+        if (DISTRICT_NAME.equalsIgnoreCase(aggregationField)) {
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("districtName", value));
+            requiredFields = new String[1];
+            requiredFields[0] = REGION_NAME;
+        } else if (CITY_NAME.equalsIgnoreCase(aggregationField)) {
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("cityName", value));
+            requiredFields = new String[4];
+            requiredFields[0] = REGION_NAME;
+            requiredFields[1] = DISTRICT_NAME;
+            requiredFields[2] = CITY_GRADE;
+            requiredFields[3] = CITY_CODE;
+        } else if (APPLICATION_TYPE.equalsIgnoreCase(aggregationField)) {
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("applicationType", value));
+            requiredFields = new String[2];
+            requiredFields[0] = MODULE_NAME;
+            requiredFields[1] = "sla";
+        }
+
         Map applicationTypeDetails = new HashMap<>();
         SearchResponse response = elasticsearchTemplate.getClient()
                 .prepareSearch(APPLICATIONS_INDEX)
                 .setQuery(boolQuery).setSize(1)
-                .setFetchSource(new String[] { MODULE_NAME, "sla" }, null)
+                .setFetchSource(requiredFields, null)
                 .execute().actionGet();
 
         for (SearchHit hit : response.getHits())

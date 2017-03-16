@@ -42,6 +42,7 @@ package org.egov.ptis.domain.service.property;
 import static java.lang.Boolean.FALSE;
 import static java.lang.String.format;
 import static java.math.BigDecimal.ZERO;
+import static org.egov.ptis.constants.PropertyTaxConstants.ANONYMOUS_USER;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_BIFURCATE_ASSESSENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_GRP;
@@ -454,7 +455,9 @@ public class PropertyService {
         property.setInstallment(currentInstall);
         property.setEffectiveDate(currentInstall.getFromDate());
         property.setPropertySource(propertySource);
-        property.setSource(propertyTaxCommonUtils.setSourceOfProperty(securityUtils.getCurrentUser(), property.getBasicProperty().getSource().equals(PropertyTaxConstants.SOURCEOFDATA_ONLINE)));
+        if(StringUtils.isBlank(property.getSource())) {
+            property.setSource(propertyTaxCommonUtils.setSourceOfProperty(securityUtils.getCurrentUser(), ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName())));
+        }
         property.setDocNumber(docnumber);
         // TODO move this code out side this api as this dont have to be called
         // every time we create property

@@ -40,72 +40,72 @@
 
 package org.egov.tl.service.integration;
 
-import static org.apache.commons.lang.StringUtils.defaultIfBlank;
-import static org.apache.commons.lang.StringUtils.defaultString;
-import static org.apache.commons.lang.StringUtils.isBlank;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.Installment;
-import org.egov.demand.dao.EgBillDao;
 import org.egov.demand.interfaces.LatePayPenaltyCalculator;
 import org.egov.demand.model.AbstractBillable;
 import org.egov.demand.model.EgBillType;
 import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.infra.admin.master.entity.Module;
-import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.tl.entity.License;
 import org.egov.tl.utils.Constants;
 import org.egov.tl.utils.LicenseUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
+import org.joda.time.LocalDate;
 
-@Transactional(readOnly = true)
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang.StringUtils.defaultIfBlank;
+import static org.apache.commons.lang.StringUtils.isBlank;
+
 public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalculator {
+
     public static final String DEFAULT_FUNCTIONARY_CODE = "1";
 
     private License license;
     private String moduleName;
     private String serviceCode;
     private String referenceNumber;
+    private String departmentCode;
     private Boolean isCallbackForApportion = Boolean.FALSE;
-    private String transanctionReferenceNumber;
     private Long userId;
-
-    @Autowired
+    private Module module;
+    private EgBillType billType;
     private LicenseUtils licenseUtils;
-
-    @Autowired
-    private EgBillDao egBillDao;
 
     public License getLicense() {
         return license;
     }
 
-    public void setLicense(final License license) {
+    public void setLicense(License license) {
         this.license = license;
     }
 
-    public void setModuleName(final String moduleName) {
+    public void setLicenseUtils(LicenseUtils licenseUtils) {
+        this.licenseUtils = licenseUtils;
+    }
+
+    public void setModuleName(String moduleName) {
         this.moduleName = moduleName;
     }
 
     @Override
     public String getConsumerType() {
-        return "moduleName";
+        return moduleName;
     }
 
     @Override
     public Module getModule() {
-        return licenseUtils.getModule(moduleName);
+        return module;
+    }
+
+    public void setModule(Module module) {
+        this.module = module;
     }
 
     @Override
@@ -115,13 +115,16 @@ public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalcu
 
     @Override
     public String getEmailId() {
-        return "";
+        return EMPTY;
     }
 
     @Override
     public String getBillAddress() {
-        return license.getLicensee().getAddress() + (StringUtils.isNotBlank(license.getLicensee().getMobilePhoneNumber())
-                ? "\nPh : " + license.getLicensee().getMobilePhoneNumber() : "");
+        return new StringBuilder().
+                append(license.getLicensee().getAddress()).
+                append("\nPh : ").
+                append(defaultIfBlank(license.getLicensee().getMobilePhoneNumber(), "NA"))
+                .toString();
     }
 
     @Override
@@ -131,26 +134,23 @@ public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalcu
 
     @Override
     public List<EgDemand> getAllDemands() {
-        final List<EgDemand> demands = new ArrayList<>();
-        demands.add(license.getLicenseDemand());
-        return demands;
+        return Arrays.asList(license.getLicenseDemand());
 
     }
 
     @Override
     public EgBillType getBillType() {
-        return egBillDao.getBillTypeByCode("AUTO");
+        return billType;
 
+    }
+
+    public void setBillType(EgBillType billType) {
+        this.billType = billType;
     }
 
     @Override
     public Date getBillLastDueDate() {
-        Date dueDate = new Date();
-        final Calendar cal = Calendar.getInstance();
-        cal.setTime(dueDate);
-        cal.get(Calendar.MONTH + 1);
-        dueDate = cal.getTime();
-        return dueDate;
+        return new LocalDate().plusMonths(1).toDate();
 
     }
 
@@ -166,7 +166,11 @@ public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalcu
 
     @Override
     public String getDepartmentCode() {
-        return licenseUtils.getDepartmentCodeForBillGenerate();
+        return departmentCode;
+    }
+
+    public void setDepartmentCode(String departmentCode) {
+        this.departmentCode = departmentCode;
     }
 
     @Override
@@ -204,13 +208,13 @@ public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalcu
         return false;
     }
 
-    public void setServiceCode(final String serviceCode) {
-        this.serviceCode = serviceCode;
-    }
-
     @Override
     public String getServiceCode() {
         return serviceCode;
+    }
+
+    public void setServiceCode(String serviceCode) {
+        this.serviceCode = serviceCode;
     }
 
     @Override
@@ -218,16 +222,13 @@ public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalcu
         return license.getTotalBalance();
     }
 
-    public void setUserId(final Long userId) {
-        this.userId = userId;
-    }
-
     @Override
     public Long getUserId() {
-        if (ApplicationThreadLocals.getUserId() != null)
-            return ApplicationThreadLocals.getUserId();
-        else
-            return userId;
+        return userId;
+    }
+
+    public void setUserId(final Long userId) {
+        this.userId = userId;
     }
 
     @Override
@@ -243,11 +244,7 @@ public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalcu
 
     @Override
     public String getCollModesNotAllowed() {
-        return "";
-    }
-
-    public String getPropertyId() {
-        return defaultString(license.getLicenseNumber(), license.getApplicationNumber());
+        return EMPTY;
     }
 
     @Override
@@ -271,7 +268,7 @@ public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalcu
     }
 
     @Override
-    public void setPenaltyCalcType(final LPPenaltyCalcType penaltyType) {
+    public void setPenaltyCalcType(LPPenaltyCalcType penaltyType) {
         // not used
     }
 
@@ -281,12 +278,12 @@ public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalcu
     }
 
     @Override
-    public BigDecimal calculateLPPenaltyForPeriod(final Date fromDate, final Date toDate, final BigDecimal amount) {
+    public BigDecimal calculateLPPenaltyForPeriod(Date fromDate, Date toDate, BigDecimal amount) {
         return null;
     }
 
     @Override
-    public BigDecimal calculatePenalty(final Date commencementDate, final Date collectionDate, final BigDecimal amount) {
+    public BigDecimal calculatePenalty(Date commencementDate, Date collectionDate, BigDecimal amount) {
         return licenseUtils.calculatePenalty(license, commencementDate, collectionDate, amount);
     }
 
@@ -295,21 +292,18 @@ public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalcu
         return referenceNumber;
     }
 
-    public void setReferenceNumber(final String referenceNumber) {
+    public void setReferenceNumber(String referenceNumber) {
         this.referenceNumber = referenceNumber;
     }
 
     @Override
     public String getTransanctionReferenceNumber() {
-        return transanctionReferenceNumber;
+        return EMPTY;
     }
 
-    public void setTransanctionReferenceNumber(final String transanctionReferenceNumber) {
-        this.transanctionReferenceNumber = transanctionReferenceNumber;
-    }
 
-    public Map<Installment, BigDecimal> getCalculatedPenalty(final Date fromDate, final Date collectionDate,
-            final EgDemand demand) {
+    public Map<Installment, BigDecimal> getCalculatedPenalty(Date fromDate, Date collectionDate,
+                                                             EgDemand demand) {
         final Map<Installment, BigDecimal> installmentPenalty = new HashMap<>();
         for (final EgDemandDetails demandDetails : demand.getEgDemandDetails())
             if (!demandDetails.getEgDemandReason().getEgDemandReasonMaster().getCode().equals(Constants.PENALTY_DMD_REASON_CODE)

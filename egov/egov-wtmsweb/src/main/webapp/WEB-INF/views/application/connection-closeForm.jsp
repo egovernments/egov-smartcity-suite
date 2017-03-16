@@ -102,7 +102,7 @@
                                         </label>
                                         <div class="col-sm-8 col-xs-12 add-margin">
                                            <form:input id="closeconnectionreason" path="closeconnectionreason" name="closeconnectionreason" required="required"
-                                           class="form-control"  />
+                                           class="form-control"  maxlength="1024"/>
 	
                                         </div>
 									</div>

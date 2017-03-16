@@ -69,6 +69,7 @@ body
 					<div class="col-md-12">
 						<div class="panel panel-primary" data-collapsed="0">
 							<form:hidden path="" name="propertyByEmployee" id="propertyByEmployee" value="${propertyByEmployee}" />
+							<form:hidden path="" name="applicationSource" value="${applicationSource}"/>
 							<div class="panel-heading" style="text-align: left">
 								<div class="panel-title"><spring:message code="lbl.vacancyremission.details" /></div>
 							</div>

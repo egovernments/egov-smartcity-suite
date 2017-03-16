@@ -361,7 +361,7 @@ public class ReceiptAction extends BaseFormAction {
                     setTotalAmntToBeCollected(totalAmntToBeCollected.setScale(
                             CollectionConstants.AMOUNT_PRECISION_DEFAULT, BigDecimal.ROUND_UP));
             } catch (final Exception e) {
-                LOGGER.error(getText("billreceipt.error.improperbilldata") + e);
+                LOGGER.error(getText("billreceipt.error.improperbilldata"), e);
                 addActionError(getText("billreceipt.error.improperbilldata"));
             }
         }

@@ -39,6 +39,7 @@
  */
 package org.egov.ptis.web.controller.vacancyremission;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.ANONYMOUS_USER;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_COLL_STR;
@@ -47,6 +48,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_COLL_
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_VALIDATION;
+import static org.egov.ptis.constants.PropertyTaxConstants.SOURCE_ONLINE;
 import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_TAX_DUES;
 import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_VACANCY_REMISSION;
 
@@ -65,6 +67,7 @@ import org.egov.commons.Installment;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -102,13 +105,15 @@ import org.springframework.web.servlet.support.RequestContextUtils;
 import org.springframework.web.servlet.view.RedirectView;
 
 @Controller
-@RequestMapping(value = "/vacancyremission")
+@RequestMapping(value = { "/vacancyremission","/citizen/vacancyremission" })
 public class VacanyRemissionController extends GenericWorkFlowController {
 
+    private static final String STATE_TYPE = "stateType";
     private static final String VACANCY_REMISSION = "VACANCY_REMISSION";
     private static final String VACANCYREMISSION_FORM = "vacancyRemission-form";
     private static final String VACANCYREMISSION_SUCCESS = "vacancyRemission-success";
     private static final String ERROR_MSG = "errorMsg";
+    private static final String APPLICATION_SOURCE = "applicationSource";
 
     @Autowired
     private BasicPropertyDAO basicPropertyDAO;
@@ -153,13 +158,21 @@ public class VacanyRemissionController extends GenericWorkFlowController {
     }
     @RequestMapping(value = "/create/{assessmentNo},{mode}", method = RequestMethod.GET)
     public String newForm(final Model model, @PathVariable final String assessmentNo, @PathVariable final String mode,
-            @RequestParam(required = false) final String meesevaApplicationNumber, final HttpServletRequest request) {
+            @RequestParam(required = false) final String meesevaApplicationNumber, final HttpServletRequest request,
+            @RequestParam(required = false) final String applicationSource) {
         if (basicProperty != null) {
             final Property property = basicProperty.getActiveProperty();
             List<DocumentType> documentTypes;
+            User loggedInUser = securityUtils.getCurrentUser();
             documentTypes = propertyService.getDocumentTypesForTransactionType(TransactionType.VACANCYREMISSION);
-            if (propertyService.isEmployee(securityUtils.getCurrentUser()) && !propertyTaxCommonUtils.isEligibleInitiator(securityUtils.getCurrentUser().getId())){
+            if (!ANONYMOUS_USER.equalsIgnoreCase(loggedInUser.getName())
+                    && propertyService.isEmployee(loggedInUser)
+                    && !propertyTaxCommonUtils.isEligibleInitiator(loggedInUser.getId())) {
                 model.addAttribute(ERROR_MSG, "msg.initiator.noteligible");
+                return PROPERTY_VALIDATION;
+            }
+            if (basicProperty.getActiveProperty().getPropertyDetail().isStructure()) {
+                model.addAttribute(ERROR_MSG, "error.superstruc.prop.notallowed");
                 return PROPERTY_VALIDATION;
             }
             if (property != null)
@@ -234,8 +247,9 @@ public class VacanyRemissionController extends GenericWorkFlowController {
                             }
 
                             prepareWorkflow(model, vacancyRemission, new WorkflowContainer());
-                            model.addAttribute("stateType", vacancyRemission.getClass().getSimpleName());
+                            model.addAttribute(STATE_TYPE, vacancyRemission.getClass().getSimpleName());
                             model.addAttribute("documentTypes", documentTypes);
+                            model.addAttribute(APPLICATION_SOURCE, applicationSource);
                             vacancyRemissionService.addModelAttributes(model, basicProperty);
                         }
                         loggedUserIsMeesevaUser = propertyService.isMeesevaUser(vacancyRemissionService
@@ -284,7 +298,7 @@ public class VacanyRemissionController extends GenericWorkFlowController {
                     }
                     model.addAttribute("documentTypes", documentTypes);
                     prepareWorkflow(model, vacancyRemission, new WorkflowContainer());
-                    model.addAttribute("stateType", vacancyRemission.getClass().getSimpleName());
+                    model.addAttribute(STATE_TYPE, vacancyRemission.getClass().getSimpleName());
                     vacancyRemissionService.addModelAttributes(model, basicProperty);
                 }
         }
@@ -300,21 +314,21 @@ public class VacanyRemissionController extends GenericWorkFlowController {
         List<Document> documents = new ArrayList<>();
         loggedUserIsMeesevaUser = propertyService.isMeesevaUser(vacancyRemissionService.getLoggedInUser());
         validateDates(vacancyRemission, resultBinder, request);
-        vacancyRemission.setSource(propertyTaxCommonUtils.setSourceOfProperty(securityUtils.getCurrentUser(), false));
+        vacancyRemissionSource(vacancyRemission, request);
         final Assignment assignment = propertyService.isCscOperator(vacancyRemissionService.getLoggedInUser())
                 ? propertyService.getAssignmentByDeptDesigElecWard(basicProperty)
                 : null;
         if (resultBinder.hasErrors()) {
             if (basicProperty != null) {
                 prepareWorkflow(model, vacancyRemission, new WorkflowContainer());
-                model.addAttribute("stateType", vacancyRemission.getClass().getSimpleName());
+                model.addAttribute(STATE_TYPE, vacancyRemission.getClass().getSimpleName());
                 vacancyRemissionService.addModelAttributes(model, basicProperty);
             }
             return VACANCYREMISSION_FORM;
         } else if ((!propertyByEmployee || loggedUserIsMeesevaUser) && assignment == null
                 && propertyService.getUserPositionByZone(basicProperty, false) == null) {
             prepareWorkflow(model, vacancyRemission, new WorkflowContainer());
-            model.addAttribute("stateType", vacancyRemission.getClass().getSimpleName());
+            model.addAttribute(STATE_TYPE, vacancyRemission.getClass().getSimpleName());
             model.addAttribute(ERROR_MSG, "No Senior or Junior assistants exists,Please check");
             vacancyRemissionService.addModelAttributes(model, basicProperty);
             return VACANCYREMISSION_FORM;
@@ -355,6 +369,7 @@ public class VacanyRemissionController extends GenericWorkFlowController {
             model.addAttribute("successMessage", successMsg);
         }
         model.addAttribute("showAckBtn", Boolean.TRUE);
+        model.addAttribute("isOnlineApplication", ANONYMOUS_USER.equalsIgnoreCase(vacancyRemissionService.getLoggedInUser().getName()));
         model.addAttribute("propertyId", basicProperty.getUpicNo());
         if (loggedUserIsMeesevaUser)
             return "redirect:/vacancyremission/generate-meesevareceipt/"
@@ -362,6 +377,17 @@ public class VacanyRemissionController extends GenericWorkFlowController {
                     + vacancyRemission.getApplicationNumber();
         else
             return VACANCYREMISSION_SUCCESS;
+    }
+    
+    private void vacancyRemissionSource(final VacancyRemission vacancyRemission, final HttpServletRequest request) {
+        User loggedInUser = securityUtils.getCurrentUser();
+        if (StringUtils.isNotBlank(request.getParameter(APPLICATION_SOURCE))
+                && SOURCE_ONLINE.equalsIgnoreCase(request.getParameter(APPLICATION_SOURCE))
+                && ANONYMOUS_USER.equalsIgnoreCase(loggedInUser.getName())) {
+            vacancyRemission.setSource(propertyTaxCommonUtils.setSourceOfProperty(loggedInUser, Boolean.TRUE));
+        } else {
+            vacancyRemission.setSource(propertyTaxCommonUtils.setSourceOfProperty(loggedInUser, Boolean.FALSE));
+        }
     }
 
     @RequestMapping(value = "/generate-meesevareceipt/{assessmentNo}", method = RequestMethod.GET)

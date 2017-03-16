@@ -54,10 +54,18 @@
 	<s:if test="%{hasActionMessages()}">
 		<div class="messagestyle"><s:actionmessage theme="simple" /></div>
 	</s:if>
-	<iframe src="../reportViewer?reportId=<s:property value='reportId'/>" width="98%"
-		height="70%">
-	<p>Your browser does not support iframes.</p>
-	</iframe>
+	<s:if test="%{applicationSource == 'online'}">
+		<iframe src="../../reportViewer?reportId=<s:property value='reportId'/>" width="98%"
+				height="70%">
+			<p>Your browser does not support iframes.</p>
+		</iframe>
+	</s:if>
+	<s:else>
+		<iframe src="../reportViewer?reportId=<s:property value='reportId'/>" width="98%"
+				height="70%">
+			<p>Your browser does not support iframes.</p>
+		</iframe>
+	</s:else>
 	<br />
 	<div class="buttonbottom">
 		<input name="closeButton" type="button" class="button"
