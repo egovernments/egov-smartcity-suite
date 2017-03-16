@@ -40,25 +40,27 @@
 
 package org.egov.infra.config.properties;
 
+import static java.lang.String.format;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.springframework.core.Ordered.LOWEST_PRECEDENCE;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
 
-import java.util.Arrays;
-import java.util.List;
-
-import static java.lang.String.format;
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.springframework.core.Ordered.LOWEST_PRECEDENCE;
-
 @Configuration
 @PropertySource(value = {
         "classpath:config/application-config.properties",
         "classpath:config/egov-erp-${user.name}.properties",
         "classpath:config/application-config-${client.id}.properties",
-        "classpath:config/egov-erp-override.properties"}, ignoreResourceNotFound = true)
+        "classpath:config/egov-erp-override.properties" }, ignoreResourceNotFound = true)
 @Order(LOWEST_PRECEDENCE)
 public class ApplicationProperties {
 
@@ -106,6 +108,7 @@ public class ApplicationProperties {
     private static final String SEARCH_PORT = "elasticsearch.port";
     private static final String SEARCH_CLUSTER_NAME = "elasticsearch.cluster.name";
     private static final String CDN_URL = "cdn.domain.url";
+    private static final String ZUUL_PROXY_ROUTING_URLS_MAPPING = "zuul.proxy.routing.urls";
 
     @Autowired
     private Environment environment;
@@ -296,5 +299,17 @@ public class ApplicationProperties {
 
     public String cdnURL() {
         return environment.getProperty(CDN_URL, EMPTY);
+    }
+
+    public Map<String, String> zuulProxyRoutingUrls() {
+        final HashMap<String, String> routingUrlsKeyValuePair = new HashMap<String, String>();
+        final String[] routingUrls = environment.getProperty(ZUUL_PROXY_ROUTING_URLS_MAPPING).split(",");
+        if (routingUrls != null && routingUrls.length > 0)
+            for (final String mappingUrl : routingUrls) {
+                final String[] url = mappingUrl.split("~");
+                routingUrlsKeyValuePair.put(url[0], url[1]);
+            }
+
+        return routingUrlsKeyValuePair;
     }
 }
