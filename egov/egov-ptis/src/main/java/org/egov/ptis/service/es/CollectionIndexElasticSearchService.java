@@ -295,11 +295,7 @@ public class CollectionIndexElasticSearchService {
 
     private BoolQueryBuilder queryForUsageType(CollectionDetailsRequest collectionDetailsRequest, BoolQueryBuilder boolQuery) {
         BoolQueryBuilder usageTypeQuery = boolQuery;
-        if (DASHBOARD_USAGE_TYPE_ALL.equalsIgnoreCase(collectionDetailsRequest.getUsageType()))
-            usageTypeQuery = usageTypeQuery.filter(QueryBuilders.termsQuery("propertyUsage",
-                    Arrays.asList(CATEGORY_RESIDENTIAL, CATEGORY_NON_RESIDENTIAL, CATEGORY_MIXED, CATEGORY_STATE_GOVT,
-                            CATEGORY_CENTRAL_GOVT)));
-        else
+        if (!DASHBOARD_USAGE_TYPE_ALL.equalsIgnoreCase(collectionDetailsRequest.getUsageType()))
             usageTypeQuery = usageTypeQuery
                     .filter(QueryBuilders.matchQuery("propertyUsage", collectionDetailsRequest.getUsageType()));
         return usageTypeQuery;
