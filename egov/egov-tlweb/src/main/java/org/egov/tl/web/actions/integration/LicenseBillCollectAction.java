@@ -48,9 +48,7 @@ import org.apache.struts2.convention.annotation.Results;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.tl.entity.License;
 import org.egov.tl.service.TradeLicenseService;
-import org.egov.tl.service.integration.LicenseBill;
 import org.egov.tl.service.integration.LicenseBillService;
-import org.egov.tl.utils.LicenseNumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -68,18 +66,14 @@ public class LicenseBillCollectAction extends BaseFormAction {
 
     private static final long serialVersionUID = 1L;
     private Long licenseId;
-    private LicenseBill licenseBill;
     private String collectXML;
 
     @Autowired
-    private LicenseBillService licenseBillService;
-
-    @Autowired
-    private LicenseNumberUtils licenseNumberUtils;
+    private transient LicenseBillService licenseBillService;
 
     @Autowired
     @Qualifier("tradeLicenseService")
-    private TradeLicenseService tradeLicenseService;
+    private transient TradeLicenseService tradeLicenseService;
 
     private Map<String, Map<String, BigDecimal>> outstandingFee;
 
@@ -100,10 +94,7 @@ public class LicenseBillCollectAction extends BaseFormAction {
                     .write("<center style='color:red;font-weight:bolder'>License Fee already collected !</center>");
             return null;
         }
-        licenseBill.setLicense(license);
-        licenseBill.setReferenceNumber(licenseNumberUtils.generateBillNumber());
-        licenseBillService.setLicense(license);
-        collectXML = URLEncoder.encode(licenseBillService.getBillXML(licenseBill), "UTF-8");
+        collectXML = URLEncoder.encode(licenseBillService.createLicenseBillXML(license), "UTF-8");
         return SUCCESS;
     }
 
@@ -122,10 +113,6 @@ public class LicenseBillCollectAction extends BaseFormAction {
 
     public void setLicenseId(final Long licenseId) {
         this.licenseId = licenseId;
-    }
-
-    public void setLicenseBill(LicenseBill licenseBill) {
-        this.licenseBill = licenseBill;
     }
 
     public Map<String, Map<String, BigDecimal>> getOutstandingFee() {

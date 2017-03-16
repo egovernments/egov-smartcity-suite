@@ -139,6 +139,7 @@
 <script>
 	jQuery(document).ready(function() {
 		documentTypeEdit();
+		populateDefaultCitizen();
 	});
 </script>
 <script type="text/javascript"

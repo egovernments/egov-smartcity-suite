@@ -665,6 +665,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                     setPropertyDepartmentList(propertyDepartmentRepository.getAllStateDepartments());
                 else if (propTypeMstr.getCode().startsWith("CENTRAL_GOVT"))
                     setPropertyDepartmentList(propertyDepartmentRepository.getAllCentralDepartments());
+                else if (propTypeMstr.getCode().equals(PropertyTaxConstants.OWNERSHIP_TYPE_PRIVATE))
+                    setPropertyDepartmentList(propertyDepartmentRepository.getAllPrivateDepartments());
             }
             if (property.getPropertyDetail().getVacantLandPlotArea() != null)
                 vacantLandPlotAreaId = property.getPropertyDetail().getVacantLandPlotArea().getId();
@@ -1044,9 +1046,9 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                 .findAllBy("from PropertyTypeMaster where type != 'EWSHS' order by orderNo");
         final List<PropertyOccupation> propOccList = getPersistenceService().findAllBy("from PropertyOccupation");
         List<PropertyMutationMaster> mutationList;
-        if(StringUtils.isBlank(applicationSource)) {
-        mutationList = getPersistenceService()
-                .findAllBy("from PropertyMutationMaster pmm where pmm.type=?", PROP_CREATE_RSN);
+        if (StringUtils.isBlank(applicationSource)) {
+            mutationList = getPersistenceService()
+                    .findAllBy("from PropertyMutationMaster pmm where pmm.type=?", PROP_CREATE_RSN);
         } else {
             mutationList = getPersistenceService().findAllBy("from PropertyMutationMaster pmm where pmm.type=? and pmm.code=?",
                     PROP_CREATE_RSN, PROP_CREATE_RSN_NEWPROPERTY_CODE);

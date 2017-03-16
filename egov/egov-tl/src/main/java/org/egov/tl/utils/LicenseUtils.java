@@ -75,6 +75,7 @@ import java.util.List;
 import static java.math.BigDecimal.ZERO;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.egov.tl.utils.Constants.TRADELICENSEMODULE;
+import static org.egov.tl.utils.Constants.TRADE_LICENSE;
 
 @Service
 public class LicenseUtils {
@@ -122,13 +123,13 @@ public class LicenseUtils {
 
     public Boolean isDigitalSignEnabled() {
         final AppConfigValues appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
-                Constants.TRADELICENSE_MODULENAME, Constants.DIGITALSIGNINCLUDEINWORKFLOW).get(0);
+                TRADE_LICENSE, Constants.DIGITALSIGNINCLUDEINWORKFLOW).get(0);
         return "YES".equalsIgnoreCase(appConfigValue.getValue());
     }
 
     public String getDepartmentCodeForBillGenerate() {
         final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
-                Constants.TRADELICENSE_MODULENAME, "DEPARTMENTFORGENERATEBILL");
+                TRADE_LICENSE, "DEPARTMENTFORGENERATEBILL");
         return appConfigValue.isEmpty() ? EMPTY : appConfigValue.get(0).getValue();
     }
 

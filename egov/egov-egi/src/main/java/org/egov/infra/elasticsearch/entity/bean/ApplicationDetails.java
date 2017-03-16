@@ -58,6 +58,7 @@ public class ApplicationDetails {
     private String serviceType;
     private String functionaryName;
     private String functionaryCode;
+    private String source;
     private long totalReceived = 0;
     private long totalClosed = 0;
     private long totalOpen = 0;
@@ -204,6 +205,14 @@ public class ApplicationDetails {
 
     public void setFunctionaryCode(String functionaryCode) {
         this.functionaryCode = functionaryCode;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
     }
 
     public long getTotalReceived() {

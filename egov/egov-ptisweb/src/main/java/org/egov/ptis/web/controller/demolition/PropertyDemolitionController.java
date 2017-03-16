@@ -148,8 +148,12 @@ public class PropertyDemolitionController extends GenericWorkFlowController {
             return PROPERTY_VALIDATION;
         }
         if (!ANONYMOUS_USER.equalsIgnoreCase(loggedInUser.getName())
-                && (propService.isEmployee(loggedInUser) && !propertyTaxCommonUtils.isEligibleInitiator(loggedInUser.getId()))) {
+                && propService.isEmployee(loggedInUser) && !propertyTaxCommonUtils.isEligibleInitiator(loggedInUser.getId())) {
             model.addAttribute(ERROR_MSG, "msg.initiator.noteligible");
+            return PROPERTY_VALIDATION;
+        }
+        if (basicProperty.getActiveProperty().getPropertyDetail().isStructure()) {
+            model.addAttribute(ERROR_MSG, "error.superstruc.prop.notallowed");
             return PROPERTY_VALIDATION;
         }
         final Map<String, BigDecimal> propertyTaxDetails = ptDemandDAO.getDemandCollMap(basicProperty

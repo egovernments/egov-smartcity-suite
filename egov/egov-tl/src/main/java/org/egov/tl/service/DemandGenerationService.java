@@ -69,7 +69,7 @@ import static org.egov.tl.entity.enums.ProcessStatus.COMPLETED;
 import static org.egov.tl.entity.enums.ProcessStatus.INCOMPLETE;
 import static org.egov.tl.entity.enums.ProcessStatus.INPROGRESS;
 import static org.egov.tl.utils.Constants.PERMANENT_NATUREOFBUSINESS;
-import static org.egov.tl.utils.Constants.TRADELICENSE_MODULENAME;
+import static org.egov.tl.utils.Constants.TRADE_LICENSE;
 
 @Service
 @Transactional(readOnly = true)
@@ -123,7 +123,7 @@ public class DemandGenerationService {
     @Transactional(propagation = Propagation.REQUIRES_NEW, timeout = 7200)
     public DemandGenerationLog retryFailedDemandGeneration(String installmentYearRange) {
         DemandGenerationLog demandGenerationLog = demandGenerationLogService.getDemandGenerationLogByInstallmentYear(installmentYearRange);
-        Module module = moduleService.getModuleByName(TRADELICENSE_MODULENAME);
+        Module module = moduleService.getModuleByName(TRADE_LICENSE);
         CFinancialYear installmentYear = financialYearService.getFinacialYearByYearRange(installmentYearRange);
         Installment installment = installmentDao.getInsatllmentByModuleForGivenDate(module, installmentYear.getStartingDate());
         int batchUpdateCount = 0;
@@ -154,7 +154,7 @@ public class DemandGenerationService {
 
 
     private DemandGenerationLog generateDemand(DemandGenerationLog demandGenerationLog, CFinancialYear installmentYear) {
-        Module module = moduleService.getModuleByName(TRADELICENSE_MODULENAME);
+        Module module = moduleService.getModuleByName(TRADE_LICENSE);
         Installment installment = installmentDao.getInsatllmentByModuleForGivenDate(module, installmentYear.getStartingDate());
         if (installment == null)
             throw new ApplicationRuntimeException("TL-005");

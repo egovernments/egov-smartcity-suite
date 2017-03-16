@@ -39,25 +39,12 @@
  */
 package org.egov.tl.web.controller.payment;
 
-import static org.egov.infra.utils.JsonUtils.toJSON;
-
-import java.io.IOException;
-import java.net.URLEncoder;
-import java.util.List;
-
-import org.egov.infra.security.utils.SecurityUtils;
-
 import org.egov.tl.entity.License;
 import org.egov.tl.entity.dto.OnlineSearchForm;
-import org.egov.tl.service.LicenseCategoryService;
 import org.egov.tl.service.TradeLicenseService;
-import org.egov.tl.service.integration.LicenseBill;
 import org.egov.tl.service.integration.LicenseBillService;
-import org.egov.tl.utils.LicenseNumberUtils;
 import org.egov.tl.web.response.adaptor.OnlineSearchTradeResultHelperAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.context.annotation.Scope;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -68,67 +55,56 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.io.IOException;
+import java.net.URLEncoder;
+import java.util.List;
+
+import static org.egov.infra.utils.JsonUtils.toJSON;
+
 @Controller
-@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class LicenseBillOnlinePaymentController {
 
-	@Autowired
-	private LicenseBill licenseBill;
+    @Autowired
+    private LicenseBillService licenseBillService;
 
-	@Autowired
-	private LicenseBillService licenseBillService;
+    @Autowired
+    private TradeLicenseService tradeLicenseService;
 
-	@Autowired
-	private LicenseNumberUtils licenseNumberUtils;
+    @ModelAttribute("onlineSearchForm")
+    public OnlineSearchForm onlineSearchForm() {
+        return new OnlineSearchForm();
+    }
 
-	@Autowired
-	private TradeLicenseService tradeLicenseService;
+    @RequestMapping(value = "/public/licenseonlinepayment-form/{id}", method = RequestMethod.GET)
+    public String execute(@PathVariable final Long id, Model model) throws IOException {
+        final License license = tradeLicenseService.getLicenseById(id);
+        if (license.isPaid()) {
+            model.addAttribute("paymentdone", "License Fee already collected");
+            return "license-onlinepayment";
+        }
 
-	@Autowired
-	protected LicenseCategoryService licenseCategoryService;
+        model.addAttribute("collectXML", URLEncoder.encode(licenseBillService.createLicenseBillXML(license), "UTF-8"));
+        return "license-onlinepayment";
+    }
 
-	@Autowired
-	private SecurityUtils securityUtils;
+    @RequestMapping(value = "/public/search/searchlicensepayment-form", method = RequestMethod.GET)
+    public String searchLicenseForPayment() {
+        return "searchtrade-licenseforpay";
+    }
 
-	@ModelAttribute("onlineSearchForm")
-	public OnlineSearchForm onlineSearchForm() {
-		return new OnlineSearchForm();
-	}
+    @RequestMapping(value = "/public/search/searchtrade-search", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
+    @ResponseBody
+    public String search(@ModelAttribute final OnlineSearchForm searchForm) throws IOException {
+        return new StringBuilder("{ \"data\":").append(toJSON(tradeLicenseService.onlineSearchTradeLicense(searchForm),
+                OnlineSearchForm.class, OnlineSearchTradeResultHelperAdaptor.class)).append("}").toString();
+    }
 
-	@RequestMapping(value = "/public/licenseonlinepayment-form/{id}", method = RequestMethod.GET)
-	public String execute(@PathVariable final Long id, Model model) throws IOException {
-		final License license = tradeLicenseService.getLicenseById(id);
-		if (license.isPaid()) {
-			model.addAttribute("paymentdone", "License Fee already collected");
-			return null;
-		}
-		licenseBill.setLicense(license);
-		licenseBill.setUserId(securityUtils.getCurrentUser().getId());
-		licenseBill.setReferenceNumber(licenseNumberUtils.generateBillNumber());
-		licenseBillService.setLicense(license);
-		model.addAttribute("collectXML", URLEncoder.encode(licenseBillService.getBillXML(licenseBill), "UTF-8"));
+    @RequestMapping(value = "/public/search/tradeLicense", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<String> searchautocomplete(@RequestParam final String searchParamValue,
+                                           @RequestParam final String searchParamType) {
+        return tradeLicenseService.getTradeLicenseForGivenParam(searchParamValue, searchParamType);
 
-		return "license-onlinepayment";
-	}
-
-	@RequestMapping(value = "/public/search/searchlicensepayment-form", method = RequestMethod.GET)
-	public String searchLicenseForPayment() {
-		return "searchtrade-licenseforpay";
-	}
-
-	@RequestMapping(value = "/public/search/searchtrade-search", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
-	@ResponseBody
-	public String search(@ModelAttribute final OnlineSearchForm searchForm) throws IOException {
-		return new StringBuilder("{ \"data\":").append(toJSON(tradeLicenseService.onlineSearchTradeLicense(searchForm),
-				OnlineSearchForm.class, OnlineSearchTradeResultHelperAdaptor.class)).append("}").toString();
-	}
-
-	@RequestMapping(value = "/public/search/tradeLicense", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	@ResponseBody
-	public List<String> searchautocomplete(@RequestParam final String searchParamValue,
-			@RequestParam final String searchParamType) {
-		return tradeLicenseService.getTradeLicenseForGivenParam(searchParamValue, searchParamType);
-
-	}
+    }
 
 }

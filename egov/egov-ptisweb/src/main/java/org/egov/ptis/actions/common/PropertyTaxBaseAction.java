@@ -942,7 +942,10 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
         if (documentTypeDetails.getDocumentName() == null || "-1".equals(documentTypeDetails.getDocumentName()))
             addActionError(getText("mandatory.doctype"));
         else {
-            validateDocumentNumberAndDate(documentTypeDetails);
+            validateCertificateDocDetails(documentTypeDetails);
+            validateWillDocDetails(documentTypeDetails);
+            validateDecreeDocDetails(documentTypeDetails);
+            validateRegisteredDocDetails(documentTypeDetails);
             if (PropertyTaxConstants.DOCUMENT_NAME_PATTA_CERTIFICATE.equals(documentTypeDetails.getDocumentName())
                     && documentTypeDetails.getProceedingNo().isEmpty())
                 addActionError(getText("mandatory.dtd.procno"));
@@ -955,13 +958,43 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
         }
     }
 
-    public void validateDocumentNumberAndDate(final DocumentTypeDetails documentTypeDetails) {
-        if (!PropertyTaxConstants.DOCUMENT_NAME_NOTARY_DOCUMENT.equals(documentTypeDetails.getDocumentName())
+    public void validateCertificateDocDetails(final DocumentTypeDetails documentTypeDetails){
+        if (PropertyTaxConstants.DOCUMENT_NAME_PATTA_CERTIFICATE.equals(documentTypeDetails.getDocumentName())
                 && documentTypeDetails.getDocumentNo().isEmpty())
-            addActionError(getText("mandatory.dtd.no"));
-        if (!PropertyTaxConstants.DOCUMENT_NAME_NOTARY_DOCUMENT.equals(documentTypeDetails.getDocumentName())
+            addActionError(getText("mandatory.dtd.certificate.no"));
+        if (PropertyTaxConstants.DOCUMENT_NAME_PATTA_CERTIFICATE.equals(documentTypeDetails.getDocumentName())
                 && documentTypeDetails.getDocumentDate() == null)
-            addActionError(getText("mandatory.dtd.date"));
+            addActionError(getText("mandatory.dtd.certificate.date"));
+    }
+    
+    public void validateWillDocDetails(final DocumentTypeDetails documentTypeDetails){
+        if (checkWillDocDetails(documentTypeDetails) && documentTypeDetails.getDocumentNo().isEmpty())
+            addActionError(getText("mandatory.dtd.deed.no"));
+        if (checkWillDocDetails(documentTypeDetails)&& documentTypeDetails.getDocumentDate() == null)
+            addActionError(getText("mandatory.dtd.deed.date"));
+    }
+    
+    public void validateDecreeDocDetails(final DocumentTypeDetails documentTypeDetails){
+        if (PropertyTaxConstants.DOCUMENT_NAME_DECREE_BY_CIVILCOURT.equals(documentTypeDetails.getDocumentName())
+                && documentTypeDetails.getDocumentNo().isEmpty())
+            addActionError(getText("mandatory.dtd.decree.no"));
+        if (PropertyTaxConstants.DOCUMENT_NAME_DECREE_BY_CIVILCOURT.equals(documentTypeDetails.getDocumentName())
+                && documentTypeDetails.getDocumentDate() == null)
+            addActionError(getText("mandatory.dtd.decree.date"));
+    }
+    
+    public void validateRegisteredDocDetails(final DocumentTypeDetails documentTypeDetails){
+        if (PropertyTaxConstants.DOCUMENT_NAME_REGD_DOCUMENT.equals(documentTypeDetails.getDocumentName())
+                && documentTypeDetails.getDocumentNo().isEmpty())
+            addActionError(getText("mandatory.dtd.registered.no"));
+        if (PropertyTaxConstants.DOCUMENT_NAME_REGD_DOCUMENT.equals(documentTypeDetails.getDocumentName())
+                && documentTypeDetails.getDocumentDate() == null)
+            addActionError(getText("mandatory.dtd.registered.date"));
+    }
+    
+    public Boolean checkWillDocDetails(final DocumentTypeDetails documentTypeDetails){
+        return PropertyTaxConstants.DOCUMENT_NAME_REGD_WILL_DOCUMENT.equals(documentTypeDetails.getDocumentName())
+                || PropertyTaxConstants.DOCUMENT_NAME_UNREGD_WILL_DOCUMENT.equals(documentTypeDetails.getDocumentName());
     }
 
     public WorkflowBean getWorkflowBean() {

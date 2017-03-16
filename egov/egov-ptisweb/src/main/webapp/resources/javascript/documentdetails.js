@@ -143,13 +143,13 @@ var populateDefaultCitizenSuccess = function(req, res) {
 						+ "].owner.name']").val(results[0].name);
 		jQuery(
 				"input[name='basicProperty.propertyOwnerInfoProxy[" + rowidx
-						+ "].owner.name']").attr("disabled", "disabled");
+						+ "].owner.name']").attr("readonly", true);
 		jQuery(
 				"select[name='basicProperty.propertyOwnerInfoProxy[" + rowidx
 						+ "].owner.gender']").val(results[0].gender);
 		jQuery(
 				"select[name='basicProperty.propertyOwnerInfoProxy[" + rowidx
-						+ "].owner.gender']").attr("disabled", "disabled");
+						+ "].owner.gender']:not(:selected)").attr('disabled', true);
 		jQuery(
 				"input[name='basicProperty.propertyOwnerInfoProxy[" + rowidx
 						+ "].owner.mobileNumber']").val(results[0].mobileNo);
@@ -158,13 +158,13 @@ var populateDefaultCitizenSuccess = function(req, res) {
 						+ "].owner.guardianRelation']").val(results[0].guardianRelation);
 		jQuery(
 				"select[name='basicProperty.propertyOwnerInfoProxy[" + rowidx
-						+ "].owner.guardianRelation']").attr("disabled", "disabled");
+						+ "].owner.guardianRelation']:not(:selected)").attr('disabled', true);
 		jQuery(
 				"input[name='basicProperty.propertyOwnerInfoProxy[" + rowidx
 						+ "].owner.guardian']").val(results[0].guardian);
 		jQuery(
 				"input[name='basicProperty.propertyOwnerInfoProxy[" + rowidx
-						+ "].owner.guardian']").attr("disabled", "disabled");
+						+ "].owner.guardian']").attr("readonly", true);
 		jQuery(
 				"input[name='propertyDetail.floorDetailsProxy[" + rowidx
 						+ "].buildingPermissionNo']").val("");
@@ -176,13 +176,13 @@ var populateDefaultCitizenSuccess = function(req, res) {
 						+ "].buildingPlanPlinthArea.area']").val("");
 		jQuery(
 				"input[name='propertyDetail.floorDetailsProxy[" + rowidx
-						+ "].buildingPermissionNo']").attr("disabled", "disabled");
+						+ "].buildingPermissionNo']").attr("readonly", true);
 		jQuery(
 				"input[name='propertyDetail.floorDetailsProxy[" + rowidx
-						+ "].buildingPermissionDate']").attr("disabled", "disabled");
+						+ "].buildingPermissionDate']").attr("readonly", true);
 		jQuery(
 				"input[name='propertyDetail.floorDetailsProxy[" + rowidx
-						+ "].buildingPlanPlinthArea.area']").attr("disabled", "disabled");
+						+ "].buildingPlanPlinthArea.area']").attr("readonly", true);
 		
 	}
 }
@@ -248,25 +248,25 @@ function enableOwnerDetailsFields(dropdownvalue) {
 		var rowidx = 0;
 		jQuery(
 				"input[name='basicProperty.propertyOwnerInfoProxy[" + rowidx
-						+ "].owner.name']").removeAttr("disabled");
+						+ "].owner.name']").attr("readonly", false);
 		jQuery(
 				"select[name='basicProperty.propertyOwnerInfoProxy[" + rowidx
-						+ "].owner.gender']").removeAttr("disabled");
+						+ "].owner.gender']").attr("disabled", false);
 		jQuery(
 				"select[name='basicProperty.propertyOwnerInfoProxy[" + rowidx
-						+ "].owner.guardianRelation']").removeAttr("disabled");
+						+ "].owner.guardianRelation']").attr("disabled", false);
 		jQuery(
 				"input[name='basicProperty.propertyOwnerInfoProxy[" + rowidx
-						+ "].owner.guardian']").removeAttr("disabled");
+						+ "].owner.guardian']").attr("readonly", false);
 		jQuery(
 				"input[name='propertyDetail.floorDetailsProxy[" + rowidx
-						+ "].buildingPermissionNo']").removeAttr("disabled");
+						+ "].buildingPermissionNo']").attr("readonly", false);
 		jQuery(
 				"input[name='propertyDetail.floorDetailsProxy[" + rowidx
-						+ "].buildingPermissionDate']").removeAttr("disabled");
+						+ "].buildingPermissionDate']").attr("readonly", false);
 		jQuery(
 				"input[name='propertyDetail.floorDetailsProxy[" + rowidx
-						+ "].buildingPlanPlinthArea.area']").removeAttr("disabled");
+						+ "].buildingPlanPlinthArea.area']").attr("readonly", false);
 	}
 	
 }

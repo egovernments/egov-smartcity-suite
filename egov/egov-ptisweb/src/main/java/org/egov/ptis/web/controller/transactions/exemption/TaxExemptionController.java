@@ -167,8 +167,8 @@ public class TaxExemptionController extends GenericWorkFlowController {
         isAlert = true;
         basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
         User loggedInUser = securityUtils.getCurrentUser();
-        if (!ANONYMOUS_USER.equalsIgnoreCase(loggedInUser.getName()) && (propertyService.isEmployee(loggedInUser)
-                && !propertyTaxCommonUtils.isEligibleInitiator(loggedInUser.getId()))) {
+        if (!ANONYMOUS_USER.equalsIgnoreCase(loggedInUser.getName()) && propertyService.isEmployee(loggedInUser)
+                && !propertyTaxCommonUtils.isEligibleInitiator(loggedInUser.getId())) {
             model.addAttribute(ERROR_MSG, "msg.initiator.noteligible");
             return PROPERTY_VALIDATION;
         }
@@ -183,6 +183,10 @@ public class TaxExemptionController extends GenericWorkFlowController {
             else if (basicProperty.isUnderWorkflow()) {
                 model.addAttribute("wfPendingMsg", "Could not do Tax exemption now, property is undergoing some work flow.");
                 return TARGET_WORKFLOW_ERROR;
+            }
+            if (basicProperty.getActiveProperty().getPropertyDetail().isStructure()) {
+                model.addAttribute(ERROR_MSG, "error.superstruc.prop.notallowed");
+                return PROPERTY_VALIDATION;
             }
 
             else if (!isExempted) {
