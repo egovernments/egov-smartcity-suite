@@ -212,7 +212,7 @@ public class BudgetLoadAction extends BaseFormAction {
 
             final FileStoreMapper originalFileStore = fileStoreService.store(budgetInXls,
                     budgetOriginalFileName,
-                    budgetInXlsContentType, FinancialConstants.MODULE_NAME_APPCONFIG);
+                    budgetInXlsContentType, FinancialConstants.MODULE_NAME_APPCONFIG,false);
 
             persistenceService.persist(originalFileStore);
             originalFileStoreId = originalFileStore.getFileStoreId();
