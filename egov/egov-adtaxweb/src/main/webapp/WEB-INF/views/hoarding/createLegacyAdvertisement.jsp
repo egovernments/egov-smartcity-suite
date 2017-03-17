@@ -145,7 +145,7 @@
 								</label>
 								<div class="col-sm-3 add-margin">
 								<form:input  path="applicationDate"  type="text"
-                                class="form-control datepicker"   title="Please enter a valid date" pattern="\d{1,2}/\d{1,2}/\d{4}" data-date-end-date="-1d" 
+                                class="form-control datepicker"   title="Please enter a valid date" pattern="\d{1,2}/\d{1,2}/\d{4}" data-date-end-date="0d" 
                                 id="applicationDate" data-inputmask="'mask': 'd/m/y'"  required="required"/>
                                		<form:errors path="applicationDate" cssClass="error-msg" />
 								</div>
@@ -224,7 +224,7 @@
 								</label>
 								<div class="col-sm-3 add-margin">
 								<form:input  path="permissionstartdate"  
-                                class="form-control datepicker" title="Please enter a valid date" pattern="\d{1,2}/\d{1,2}/\d{4}" data-date-end-date="-1d"
+                                class="form-control datepicker" title="Please enter a valid date" pattern="\d{1,2}/\d{1,2}/\d{4}" 
                                 id="permissionstartdate" data-inputmask="'mask': 'd/m/y'" required="required" />
                                		<form:errors path="permissionstartdate" cssClass="error-msg" />
                              	</div>
@@ -234,7 +234,7 @@
 								</label>
 								<div class="col-sm-3 add-margin">
                                 <form:input  path="permissionenddate"  
-                                class="form-control datepicker" pattern="\d{1,2}/\d{1,2}/\d{4}" data-date-end-date="-1d" 
+                                class="form-control datepicker" pattern="\d{1,2}/\d{1,2}/\d{4}"
                                 id="permissionenddate" data-inputmask="'mask': 'd/m/y'" required="required" />                               		
                                 <form:errors path="permissionenddate" cssClass="error-msg" />
 								</div>
@@ -327,9 +327,6 @@
                                		
 								</div>
 							</div>
-							<c:if test="${advertisementPermitDetail.advertisement.taxPaidForCurrentYear == 'true'} && ${advertisementPermitDetail.advertisement.legacy == 'true'}">
-								<form:input type="text" path="advertisement.pendingTax" value="5" readonly="true" ></form:input>
-								</c:if>
 						<c:if test="${advertisementPermitDetail.advertisement.legacy == 'true'}">
 							<div class="form-group">
 								<label class="col-sm-3 control-label text-right">

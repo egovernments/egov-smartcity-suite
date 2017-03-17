@@ -49,7 +49,7 @@
 		<c:if test="${not empty message}">
 			<div class="alert alert-success" role="alert"><c:out value="${message}" /></div>
 		</c:if>
-		<form:form id="hoardingform" method="post" class="form-horizontal form-groups-bordered"  onSubmit="return ValidateForm()"
+		<form:form id="hoardingform" method="post" class="form-horizontal form-groups-bordered" 
 		modelAttribute="advertisementPermitDetail" commandName="advertisementPermitDetail" enctype="multipart/form-data">
 		<div class="panel panel-primary" data-collapsed="0">
 			<div class="panel-heading">
