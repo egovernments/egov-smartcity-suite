@@ -251,7 +251,7 @@ public abstract class AbstractLicenseService<T extends License> {
                     ? RENEWAL_NATUREOFWORK : NEW_NATUREOFWORK;
             final WorkFlowMatrix wfmatrix = this.licenseWorkflowService.getWfMatrix(license.getStateType(), PUBLIC_HEALTH_DEPT,
                     null, workflowBean.getAdditionaRule(), workflowBean.getCurrentState(), null);
-            if (license.isNew() || license.isLegacy())
+            if (!license.hasState())
                 license.transition().start();
             else
                 license.transition().startNext();
@@ -460,7 +460,7 @@ public abstract class AbstractLicenseService<T extends License> {
         if (!currentUserRoles.contains(CSCOPERATOR)) {
             final WorkFlowMatrix wfmatrix = this.licenseWorkflowService.getWfMatrix(license.getStateType(), null,
                     null, workflowBean.getAdditionaRule(), workflowBean.getCurrentState(), null);
-            if (license.isLegacy() && !license.hasState())
+            if (!license.hasState())
                 license.transition().start();
             else
                 license.transition().startNext();
@@ -804,7 +804,7 @@ public abstract class AbstractLicenseService<T extends License> {
             final Assignment wfInitiator = this.assignmentService
                     .getPrimaryAssignmentForUser(this.securityUtils.getCurrentUser().getId());
             if (!currentUserRoles.contains(CSCOPERATOR)) {
-                if (license.isLegacy() && !license.hasState())
+                if (!license.hasState())
                     license.transition().start();
                 else
                     license.transition().startNext();
@@ -869,7 +869,7 @@ public abstract class AbstractLicenseService<T extends License> {
                             designationService.getDesignationByName(RC_DESIGNATION).getId(), new Date());
         if (!assignmentList.isEmpty()) {
             final Assignment wfAssignment = assignmentList.get(0);
-            if (license.isLegacy() && !license.hasState())
+            if (!license.hasState())
                 license.transition().start();
             else
                 license.transition().startNext();
