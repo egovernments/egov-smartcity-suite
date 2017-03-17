@@ -49,6 +49,7 @@ import java.util.Map.Entry;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.security.authentication.SecureUser;
@@ -112,7 +113,8 @@ public class ZuulProxyFilter extends ZuulFilter {
         }
         try {
             final URL requestURL = new URL(request.getRequestURL().toString());
-            final String endPointURI;
+
+            String endPointURI;
             if (requestURL.getPath().startsWith("/services/api"))
                 endPointURI = requestURL.getPath().split("/services/api")[1];
             else
@@ -128,6 +130,9 @@ public class ZuulProxyFilter extends ZuulFilter {
             }
             if (log.isInfoEnabled())
                 log.info(String.format("%s request to the url %s", request.getMethod(), request.getRequestURL().toString()));
+
+            if (StringUtils.isNoneBlank(request.getQueryString()))
+                endPointURI = endPointURI + "?" + request.getQueryString();
 
             final URL routedHost = new URL(mappingURL + endPointURI);
             ctx.setRouteHost(routedHost);
