@@ -88,6 +88,11 @@ $(document)
 						$("#Approve").hide();
 
 					}
+					if (status == 'ESTIMATIONAMOUNTPAID') {
+						$("#Sign").hide();
+						$("#Preview").hide();
+
+					}
 					if (approvalPositionExist != 0
 							&& ((status == 'CREATED' && wfstate != null)
 									|| status == 'VERIFIED'

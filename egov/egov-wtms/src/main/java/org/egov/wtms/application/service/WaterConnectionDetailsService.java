@@ -685,7 +685,7 @@ public class WaterConnectionDetailsService {
                         || loggedInUserDesignation.equalsIgnoreCase(WaterTaxConstants.SUPERIENTEND_ENGINEER_DESIGN)
                         || loggedInUserDesignation.equalsIgnoreCase(WaterTaxConstants.TAP_INSPPECTOR_DESIGN)
                         || (loggedInUserDesignation.equalsIgnoreCase(WaterTaxConstants.ASSISTANT_ENGINEER_DESIGN)
-                                || loggedInUserDesignation.equalsIgnoreCase(WaterTaxConstants.TAP_INSPPECTOR_DESIGN))
+                                || loggedInUserDesignation.equalsIgnoreCase(WaterTaxConstants.ASSISTANT_EXECUTIVE_ENGINEER_DESIGN))
                                 && (waterConnectionDetails.getStatus().getCode()
                                         .equals(WaterTaxConstants.APPLICATION_STATUS_VERIFIED)
                                         || waterConnectionDetails.getStatus().getCode()
