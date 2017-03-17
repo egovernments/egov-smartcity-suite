@@ -88,7 +88,7 @@ $(document)
 						$("#Approve").hide();
 
 					}
-					if (status == 'ESTIMATIONAMOUNTPAID') {
+					if (status == 'ESTIMATIONAMOUNTPAID' || status=='CLOSERINPROGRESS' || status=='RECONNECTIONINPROGRESS') {
 						$("#Sign").hide();
 						$("#Preview").hide();
 
