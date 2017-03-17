@@ -121,9 +121,9 @@ import org.springframework.transaction.annotation.Transactional;
 public abstract class AbstractLicenseService<T extends License> {
 
     public static final String ARREAR = "arrear";
+    public static final String LICENSE_WF_INITIATOR_NOT_DEFINED = "license.wf.initiator.not.defined";
     private static final String CURRENT = "current";
     private static final String PENALTY = "penalty";
-
     @Autowired
     @Qualifier("entityQueryService")
     protected PersistenceService entityQueryService;
@@ -251,10 +251,10 @@ public abstract class AbstractLicenseService<T extends License> {
                     ? RENEWAL_NATUREOFWORK : NEW_NATUREOFWORK;
             final WorkFlowMatrix wfmatrix = this.licenseWorkflowService.getWfMatrix(license.getStateType(), PUBLIC_HEALTH_DEPT,
                     null, workflowBean.getAdditionaRule(), workflowBean.getCurrentState(), null);
-            if (license.isReNewApplication())
-                license.transition().startNext();
-            else
+            if (license.isNew() || license.isLegacy())
                 license.transition().start();
+            else
+                license.transition().startNext();
             license.transition().withSenderName(
                     wfAssignment.getEmployee().getUsername() + DELIMITER_COLON + wfAssignment.getEmployee().getName())
                     .withComments(workflowBean.getApproverComments()).withNatureOfTask(natureOfWork)
@@ -263,7 +263,7 @@ public abstract class AbstractLicenseService<T extends License> {
             license.setEgwStatus(
                     egwStatusHibernateDAO.getStatusByModuleAndCode(TRADELICENSEMODULE, APPLICATION_STATUS_CREATED_CODE));
         } else
-            throw new ValidationException("license.wf.initiator.not.defined", "license.wf.initiator.not.defined");
+            throw new ValidationException(LICENSE_WF_INITIATOR_NOT_DEFINED, LICENSE_WF_INITIATOR_NOT_DEFINED);
     }
 
     private BigDecimal raiseNewDemand(final T license) {
@@ -460,8 +460,12 @@ public abstract class AbstractLicenseService<T extends License> {
         if (!currentUserRoles.contains(CSCOPERATOR)) {
             final WorkFlowMatrix wfmatrix = this.licenseWorkflowService.getWfMatrix(license.getStateType(), null,
                     null, workflowBean.getAdditionaRule(), workflowBean.getCurrentState(), null);
-            license.transition().startNext()
-                    .withSenderName(currentUser.getUsername() + DELIMITER_COLON + currentUser.getName())
+            if (license.isLegacy() && !license.hasState())
+                license.transition().start();
+            else
+                license.transition().startNext();
+
+            license.transition().withSenderName(currentUser.getUsername() + DELIMITER_COLON + currentUser.getName())
                     .withComments(workflowBean.getApproverComments()).withNatureOfTask(natureOfWork)
                     .withStateValue(wfmatrix.getNextState()).withDateInfo(new DateTime().toDate())
                     .withOwner(wfInitiator.getPosition())
@@ -799,13 +803,17 @@ public abstract class AbstractLicenseService<T extends License> {
                     null, workflowBean.getAdditionaRule(), "NEW", null);
             final Assignment wfInitiator = this.assignmentService
                     .getPrimaryAssignmentForUser(this.securityUtils.getCurrentUser().getId());
-            if (!currentUserRoles.contains(CSCOPERATOR))
-                license.transition().startNext()
+            if (!currentUserRoles.contains(CSCOPERATOR)) {
+                if (license.isLegacy() && !license.hasState())
+                    license.transition().start();
+                else
+                    license.transition().startNext();
+                license.transition()
                         .withSenderName(currentUser.getUsername() + DELIMITER_COLON + currentUser.getName())
                         .withComments(workflowBean.getApproverComments()).withNatureOfTask(natureOfWork)
                         .withStateValue(newwfmatrix.getNextState()).withDateInfo(new DateTime().toDate()).withOwner(owner)
                         .withNextAction(newwfmatrix.getNextAction()).withInitiator(wfInitiator.getPosition());
-            else
+            } else
                 closureWfWithOperator(license);
             licenseUtils.applicationStatusChange(license, APPLICATION_STATUS_CREATED_CODE);
             license.setStatus(licenseStatusService.getLicenseStatusByName(LICENSE_STATUS_ACKNOWLEDGED));
@@ -861,7 +869,11 @@ public abstract class AbstractLicenseService<T extends License> {
                             designationService.getDesignationByName(RC_DESIGNATION).getId(), new Date());
         if (!assignmentList.isEmpty()) {
             final Assignment wfAssignment = assignmentList.get(0);
-            license.transition().startNext().withSenderName(
+            if (license.isLegacy() && !license.hasState())
+                license.transition().start();
+            else
+                license.transition().startNext();
+            license.transition().withSenderName(
                     wfAssignment.getEmployee().getUsername() + DELIMITER_COLON + wfAssignment.getEmployee().getName())
                     .withComments("CSC Operator Initiated").withNatureOfTask(natureOfWork)
                     .withStateValue("NEW").withDateInfo(new Date()).withOwner(wfAssignment.getPosition())
@@ -869,7 +881,7 @@ public abstract class AbstractLicenseService<T extends License> {
             license.setEgwStatus(
                     egwStatusHibernateDAO.getStatusByModuleAndCode(TRADELICENSEMODULE, APPLICATION_STATUS_CREATED_CODE));
         } else
-            throw new ValidationException("license.wf.initiator.not.defined", "license.wf.initiator.not.defined");
+            throw new ValidationException(LICENSE_WF_INITIATOR_NOT_DEFINED, LICENSE_WF_INITIATOR_NOT_DEFINED);
     }
 
     public boolean checkOldLicenseNumberIsDuplicated(final T t) {
