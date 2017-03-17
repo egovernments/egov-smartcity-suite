@@ -90,6 +90,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class ApplicationDocumentService {
 
+    private static final String OWNER_NAME = "ownerName";
+
     private static final String CITY_CODE = "cityCode";
 
     private static final String CITY_GRADE = "cityGrade";
@@ -532,6 +534,9 @@ public class ApplicationDocumentService {
             boolQuery = boolQuery
                     .filter(QueryBuilders.rangeQuery(APPLICATION_DATE).gte(DATEFORMATTER_YYYY_MM_DD.format(fromDate))
                             .lte(DATEFORMATTER_YYYY_MM_DD.format(toDate)).includeUpper(false));
+        if (StringUtils.isNotBlank(applicationIndexRequest.getFunctionaryCode()))
+            boolQuery = boolQuery
+                    .filter(QueryBuilders.matchQuery(OWNER_NAME, applicationIndexRequest.getFunctionaryCode()));
         return boolQuery;
     }
 
@@ -659,6 +664,8 @@ public class ApplicationDocumentService {
                 applicationDetails.setServiceGroup(name);
             else if (CHANNEL.equalsIgnoreCase(aggregationField))
                 applicationDetails.setSource(name);
+            else if (OWNER_NAME.equalsIgnoreCase(aggregationField))
+                applicationDetails.setFunctionaryName(name);
 
             applicationDetails.setTotalReceived(entry.getValue());
             applicationDetails.setTotalClosed(totalClosedApplications.get(name) == null ? 0 : totalClosedApplications.get(name));
@@ -715,6 +722,9 @@ public class ApplicationDocumentService {
         } else if ("source".equalsIgnoreCase(aggregationLevel)) {
             aggregationField = CHANNEL;
             size = 5;
+        } else if ("functionary".equalsIgnoreCase(aggregationLevel)) {
+            aggregationField = OWNER_NAME;
+            size = 1000;
         }
         aggrTypeAndSize.put("aggregationField", aggregationField);
         aggrTypeAndSize.put("size", String.valueOf(size));

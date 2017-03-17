@@ -3,7 +3,7 @@
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) <2016>  eGovernments Foundation
+  ~     Copyright (C) <2015>  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -39,8 +39,8 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-01-19T18:07:08 -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="specialNotice_corp" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="47bc74eb-1422-43ff-8219-94fd47b0fe31">
+<!-- 2017-03-16T18:36:35 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="specialNotice_corp" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="47bc74eb-1422-43ff-8219-94fd47b0fe31">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="100"/>
@@ -58,6 +58,7 @@
 	<parameter name="copyType" class="java.lang.String"/>
 	<parameter name="userSignature" class="java.lang.Object"/>
 	<parameter name="isCommissioner" class="java.lang.Boolean"/>
+	<parameter name="isStructure" class="java.lang.String"/>
 	<field name="buildingClassification" class="java.lang.String"/>
 	<field name="natureOfUsage" class="java.lang.String"/>
 	<field name="plinthArea" class="java.math.BigDecimal"/>
@@ -94,7 +95,7 @@
 				<textElement textAlignment="Center" markup="none">
 					<font size="10" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["(Special Notice of Property Tax "+$P{ownerInfo}.getOwnerTypeForReport()+"Assessment/ Revision)\n(Issued U/S 220(2) of Municipal Corporation Act, 1955(Formerly GHMC Act, 1955))"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{isStructure}.equals( "true" )?("(Special Notice of Property Tax "+$P{ownerInfo}.getOwnerTypeForReport()+"Assessment/ Revision)\n(Issued U/S 220(2) of Municipal Corporation Act, 1955(Formerly GHMC Act, 1955) \n and as per Circular Memo No: 67205/A1/2015, Dt: 10-1-2017 of MA & UD Dept)"):("(Special Notice of Property Tax "+$P{ownerInfo}.getOwnerTypeForReport()+"Assessment/ Revision)\n(Issued U/S 220(2) of Municipal Corporation Act, 1955(Formerly GHMC Act, 1955))")]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="false">
 				<reportElement positionType="Float" x="282" y="330" width="231" height="12" uuid="b1257569-dded-45d1-a429-d0f5ef2b2df3"/>
@@ -714,6 +715,15 @@
 					<font size="8" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{ownerInfo}.getOwnershipType().equalsIgnoreCase("Vacant Land") ? "Revision or New Assessment Capital Value (Rs.)" : "Revision or New Assessment ARV (Rs.)"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="37" y="270" width="476" height="47" uuid="2a31e3a0-9e14-470c-9ed9-4afc51107901">
+					<printWhenExpression><![CDATA[$P{isStructure}.equals( "true" )]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Left" markup="styled">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" >Note:-</style>\n1) This special notice is issued levying property tax with 100% penalty on the building constructed unauthorizedly, where the holder of the premises does not possess Title deeds/Ownership documents over the land.\n2) Levy of property tax with 100% penalty on this building shall not confer any ownership on the land to the holder of the premises"]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>
