@@ -524,7 +524,7 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
     
     public Boolean isUnderWtmsWF(String assessmentNo, final HttpServletRequest request){
         return propertyService.getWaterTaxDues(assessmentNo, request).get(PropertyTaxConstants.UNDER_WTMS_WF) == null
-                ? Boolean.FALSE
+                ? FALSE
                 : Boolean.valueOf((Boolean) propertyService.getWaterTaxDues(assessmentNo, request)
                         .get(PropertyTaxConstants.UNDER_WTMS_WF));
     }
