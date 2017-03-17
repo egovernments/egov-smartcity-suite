@@ -49,7 +49,7 @@
 		<c:if test="${not empty message}">
 			<div class="alert alert-success" role="alert"><spring:message code="${message}"/></div>
 		</c:if>
-		<form:form id="advertisementform" name="advertisementform" method="post" class="form-horizontal form-groups-bordered" 
+		<form:form id="advertisementform" name="advertisementform" onSubmit="return ValidateForm()" method="post" class="form-horizontal form-groups-bordered" 
 		modelAttribute="advertisementPermitDetail" commandName="advertisementPermitDetail" enctype="multipart/form-data">
 		<form:hidden path="previousapplicationid" value="${previousapplicationid.id}"/>
 	<div class="panel panel-primary" data-collapsed="0">
@@ -78,6 +78,7 @@
 	</form:form>
 	</div>
 </div>
+
 <script>
 //this is to reset the sub combobox upon field error
 var subcategory = '${advertisementPermitDetail.advertisement.subCategory.id}';
@@ -85,20 +86,37 @@ var adminBoundry = '${advertisementPermitDetail.advertisement.ward.id}';
 var revenueBoundary = '${advertisementPermitDetail.advertisement.locality.id}';
 
 $('#Forward').click(function(e){
-	if($('#advertisementform').valid()){
-		console.log('valid');
-		if(DateValidation($('#permissionstartdate').val() , $('#permissionenddate').val())){
-			if($('#measurement').val() <= 0){
-				bootbox.alert('Please enter valid measurement');
+	
+
+	function isDate(date) {
+					var timeStamp = Date.parse(date);
+					if (isNaN(timestamp))
+						bootbox.alert('Plese select a valid date!');
+
+					return true
+				}
+
+				var endDate = $('.datepicker').val();
+				if (isDate(endDate) == false) {
+
+					e.preventDefault();
+				}
+
+				if ($('#advertisementform').valid()) {
+					console.log('valid');
+					if (DateValidation($('#permissionstartdate').val(), $(
+							'#permissionenddate').val())) {
+						if ($('#measurement').val() <= 0) {
+							bootbox.alert('Please enter valid measurement');
+							e.preventDefault();
+						} else
+							return true;
+					} else {
+						e.preventDefault();
+					}
+				}
 				e.preventDefault();
-			}else 
-				return true;
-		}else{
-			e.preventDefault();
-		}
-	}
-	e.preventDefault();
-});
+			});
 </script>
 <script src="<cdn:url value='/resources/global/js/jquery/plugins/exif.js' context='/egi'/>"></script>
 <script src="<cdn:url value='/resources/app/js/hoarding.js?rnd=${app_release_no}'/>"></script>

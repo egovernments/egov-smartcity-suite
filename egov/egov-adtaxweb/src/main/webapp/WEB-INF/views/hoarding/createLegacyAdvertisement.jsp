@@ -144,7 +144,9 @@
 								<span class="mandatory"></span>
 								</label>
 								<div class="col-sm-3 add-margin">
-									<form:input type="text" cssClass="form-control datepicker" path="applicationDate" id="applicationDate" data-inputmask="'alias': 'date'" data-date-end-date="0d" required="required"/>
+								<form:input  path="applicationDate"  type="text"
+                                class="form-control datepicker"   title="Please enter a valid date" pattern="\d{1,2}/\d{1,2}/\d{4}" data-date-end-date="-1d" 
+                                id="applicationDate" data-inputmask="'mask': 'd/m/y'"  required="required"/>
                                		<form:errors path="applicationDate" cssClass="error-msg" />
 								</div>
 							</div>
@@ -221,7 +223,9 @@
 								<span class="mandatory"></span>
 								</label>
 								<div class="col-sm-3 add-margin">
-									<form:input type="text" cssClass="form-control datepicker checkdate" path="permissionstartdate" data-inputmask="'alias': 'date'" id="permissionstartdate" required="required"/>
+								<form:input  path="permissionstartdate"  
+                                class="form-control datepicker" title="Please enter a valid date" pattern="\d{1,2}/\d{1,2}/\d{4}" data-date-end-date="-1d"
+                                id="permissionstartdate" data-inputmask="'mask': 'd/m/y'" required="required" />
                                		<form:errors path="permissionstartdate" cssClass="error-msg" />
                              	</div>
 						     	<label class="col-sm-2 control-label text-right">
@@ -229,8 +233,10 @@
 								<span class="mandatory"></span>
 								</label>
 								<div class="col-sm-3 add-margin">
-									<form:input type="text" cssClass="form-control datepicker checkdate" path="permissionenddate" data-inputmask="'alias': 'date'" id="permissionenddate" required="required"/>
-                               		<form:errors path="permissionenddate" cssClass="error-msg" />
+                                <form:input  path="permissionenddate"  
+                                class="form-control datepicker" pattern="\d{1,2}/\d{1,2}/\d{4}" data-date-end-date="-1d" 
+                                id="permissionenddate" data-inputmask="'mask': 'd/m/y'" required="required" />                               		
+                                <form:errors path="permissionenddate" cssClass="error-msg" />
 								</div>
 							</div>
 							<div class="form-group">
@@ -321,6 +327,9 @@
                                		
 								</div>
 							</div>
+							<c:if test="${advertisementPermitDetail.advertisement.taxPaidForCurrentYear == 'true'} && ${advertisementPermitDetail.advertisement.legacy == 'true'}">
+								<form:input type="text" path="advertisement.pendingTax" value="5" readonly="true" ></form:input>
+								</c:if>
 						<c:if test="${advertisementPermitDetail.advertisement.legacy == 'true'}">
 							<div class="form-group">
 								<label class="col-sm-3 control-label text-right">
@@ -330,6 +339,9 @@
 									<form:radiobutton path="advertisement.taxPaidForCurrentYear" value="true"/>Yes 
 									<form:radiobutton path="advertisement.taxPaidForCurrentYear" value="false"/>No 
 								</div>
+									
+								
+								
 							</div>
 							<div class="panel-heading custom_form_panel_heading">
 								<div class="panel-title">
@@ -339,10 +351,12 @@
 							<div class="form-group">
 								<label class="col-sm-3 control-label text-right">
 								<spring:message code="lbl.pendingtax"/> 
+							
 								<fmt:formatDate value="${previousFinancialYear.endingDate}" pattern="dd-MM-yyyy" var="previousFinancialYrEndDte"/>
 								<strong><c:out value="${previousFinancialYrEndDte}" /></strong>
 									<span class="mandatory"></span>
 								</label>
+								
 								<div class="col-sm-3 add-margin">
 									<form:input type="text" class="form-control patternvalidation" data-pattern="decimalvalue"  maxlength="15"  path="advertisement.pendingTax" id="pendingTax" required="required"/>
                                		<form:errors path="advertisement.pendingTax" cssClass="error-msg" />
