@@ -188,7 +188,10 @@ public class TaxExemptionController extends GenericWorkFlowController {
                 model.addAttribute(ERROR_MSG, "error.superstruc.prop.notallowed");
                 return PROPERTY_VALIDATION;
             }
-
+            if (taxExemptionService.isUnderWtmsWF(basicProperty.getUpicNo(), request)) {
+                model.addAttribute(ERROR_MSG, "msg.under.wtms.wf.taxexemption");
+                return PROPERTY_VALIDATION;
+            }
             else if (!isExempted) {
                 final Map<String, BigDecimal> propertyTaxDetails = propertyService
                         .getCurrentPropertyTaxDetails(basicProperty.getActiveProperty());
@@ -208,7 +211,7 @@ public class TaxExemptionController extends GenericWorkFlowController {
                 }
                 arrearPropertyTaxDue = propertyTaxDetails.get(ARR_DMD_STR).subtract(
                         propertyTaxDetails.get(ARR_COLL_STR));
-                final BigDecimal currentWaterTaxDue = propertyService.getWaterTaxDues(basicProperty.getUpicNo(), request);
+                final BigDecimal currentWaterTaxDue = taxExemptionService.getWaterTaxDues(basicProperty.getUpicNo(), request);
                 model.addAttribute("assessementNo", basicProperty.getUpicNo());
                 model.addAttribute("ownerName", basicProperty.getFullOwnerName());
                 model.addAttribute("doorNo", basicProperty.getAddress().getHouseNoBldgApt());

@@ -894,4 +894,17 @@ public class VacancyRemissionService {
 
         return wfInitiator;
     }
+    
+    public BigDecimal getWaterTaxDues(final String assessmentNo, final HttpServletRequest request){
+        return propertyService.getWaterTaxDues(assessmentNo, request).get(PropertyTaxConstants.WATER_TAX_DUES) == null ? BigDecimal.ZERO : new BigDecimal(
+                Double.valueOf((Double) propertyService.getWaterTaxDues(assessmentNo, request).get(PropertyTaxConstants.WATER_TAX_DUES)));
+    }
+    
+    public Boolean isUnderWtmsWF(String assessmentNo, final HttpServletRequest request){
+        return propertyService.getWaterTaxDues(assessmentNo, request).get(PropertyTaxConstants.UNDER_WTMS_WF) == null
+                ? FALSE
+                : Boolean.valueOf((Boolean) propertyService.getWaterTaxDues(assessmentNo, request)
+                        .get(PropertyTaxConstants.UNDER_WTMS_WF));
+    }
+    
 }

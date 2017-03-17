@@ -54,6 +54,15 @@ public class WaterTaxDue {
     private String errorCode;
     private String errorMessage;
     private Boolean isSuccess;
+    private Boolean isInWorkFlow;
+
+    public Boolean getIsInWorkFlow() {
+        return isInWorkFlow;
+    }
+
+    public void setIsInWorkFlow(Boolean isInWorkFlow) {
+        this.isInWorkFlow = isInWorkFlow;
+    }
 
     public String getPropertyID() {
         return org.apache.commons.lang.StringUtils.defaultIfEmpty(propertyID, "");

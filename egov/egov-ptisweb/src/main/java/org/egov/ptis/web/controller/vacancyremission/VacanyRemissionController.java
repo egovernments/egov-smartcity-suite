@@ -175,6 +175,10 @@ public class VacanyRemissionController extends GenericWorkFlowController {
                 model.addAttribute(ERROR_MSG, "error.superstruc.prop.notallowed");
                 return PROPERTY_VALIDATION;
             }
+            if (vacancyRemissionService.isUnderWtmsWF(basicProperty.getUpicNo(), request)) {
+                model.addAttribute(ERROR_MSG, "msg.under.wtms.wf.vr");
+                return PROPERTY_VALIDATION;
+            }
             if (property != null)
                 // When called from common search
                 if ("commonSearch".equalsIgnoreCase(mode)) {
@@ -230,7 +234,7 @@ public class VacanyRemissionController extends GenericWorkFlowController {
                             }
                             arrearPropertyTaxDue = propertyTaxDetails.get(ARR_DMD_STR).subtract(
                                     propertyTaxDetails.get(ARR_COLL_STR));
-                            final BigDecimal currentWaterTaxDue = propertyService.getWaterTaxDues(
+                            final BigDecimal currentWaterTaxDue = vacancyRemissionService.getWaterTaxDues(
                                     basicProperty.getUpicNo(), request);
                             
                             model.addAttribute("assessementNo", basicProperty.getUpicNo());
@@ -285,7 +289,7 @@ public class VacanyRemissionController extends GenericWorkFlowController {
                     }
                     arrearPropertyTaxDue = propertyTaxDetails.get(ARR_DMD_STR).subtract(
                             propertyTaxDetails.get(ARR_COLL_STR));
-                    final BigDecimal currentWaterTaxDue = propertyService.getWaterTaxDues(basicProperty.getUpicNo(),
+                    final BigDecimal currentWaterTaxDue = vacancyRemissionService.getWaterTaxDues(basicProperty.getUpicNo(),
                             request);
                     model.addAttribute("currentPropertyTax", currentPropertyTax);
                     model.addAttribute("currentPropertyTaxDue", currentPropertyTaxDue);

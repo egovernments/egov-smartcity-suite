@@ -84,6 +84,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.Installment;
 import org.egov.demand.model.EgDemandDetails;
@@ -102,6 +104,7 @@ import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.client.util.PropertyTaxUtil;
+import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.property.BasicProperty;
@@ -512,6 +515,18 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
 
     public Assignment getWfInitiator(final PropertyImpl property) {
         return propertyService.getWorkflowInitiator(property);
+    }
+    
+    public BigDecimal getWaterTaxDues(final String assessmentNo, final HttpServletRequest request){
+        return propertyService.getWaterTaxDues(assessmentNo, request).get(PropertyTaxConstants.WATER_TAX_DUES) == null ? BigDecimal.ZERO : new BigDecimal(
+                Double.valueOf((Double) propertyService.getWaterTaxDues(assessmentNo, request).get(PropertyTaxConstants.WATER_TAX_DUES)));
+    }
+    
+    public Boolean isUnderWtmsWF(String assessmentNo, final HttpServletRequest request){
+        return propertyService.getWaterTaxDues(assessmentNo, request).get(PropertyTaxConstants.UNDER_WTMS_WF) == null
+                ? FALSE
+                : Boolean.valueOf((Boolean) propertyService.getWaterTaxDues(assessmentNo, request)
+                        .get(PropertyTaxConstants.UNDER_WTMS_WF));
     }
 
 }

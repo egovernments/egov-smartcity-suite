@@ -40,101 +40,134 @@
 
 <%@ include file="/includes/taglibs.jsp"%>
 <div align="center" class="overflow-x-scroll">
-<table width="100%" border="0" cellspacing="0" cellpadding="0" class="tablebottom" id="vacantLandTable">
+	<table width="100%" border="0" cellspacing="0" cellpadding="0"
+		class="tablebottom" id="vacantLandTable">
+		<tr>
+			<th class="bluebgheadtd"><s:text name="surveyNumber" /><span
+				class="mandatory1">*</span></th>
+			<th class="bluebgheadtd"><s:text name="pattaNumber" /><span
+				class="mandatory1">*</span></th>
+			<th class="bluebgheadtd"><s:text name="vacantLandArea" /><span
+				class="mandatory1">*</span></th>
+			<th class="bluebgheadtd"><s:text name="MarketValue" /><span
+				class="mandatory1">*</span></th>
+			<th class="bluebgheadtd"><s:text name="currentCapitalValue" /><span
+				class="mandatory1">*</span></th>
+			<th class="bluebgheadtd"><s:text name="constCompl.date" /><span
+				class="mandatory1">*</span></th>
+			<th class="bluebgheadtd"><s:text name="lbl.vl.plotarea" /><span
+				class="mandatory1">*</span></th>
+			<th class="bluebgheadtd"><s:text name="lbl.layout.authority" /><span
+				class="mandatory1">*</span></th>
+			<th class="bluebgheadtd"><s:text name="lbl.layout.permitno" /><span
+				class="mandatory1">*</span></th>
+			<th class="bluebgheadtd"><s:text name="lbl.layout.permitdate" /><span
+				class="mandatory1">*</span></th>
+		</tr>
+
+		<tr id="vacantLandRow">
+			<td class="blueborderfortd" align="center"><s:textfield
+					name="propertyDetail.surveyNumber" id="propertyDetail.surveyNumber"
+					maxlength="15" value="%{propertyDetail.surveyNumber}"
+					title="Survey number of vacant land" /></td>
+			<td class="blueborderfortd" align="center"><s:textfield
+					name="propertyDetail.pattaNumber" id="propertyDetail.pattaNumber"
+					maxlength="15" value="%{propertyDetail.pattaNumber}"
+					title="Patta number of vacant land" /></td>
+			<td class="blueborderfortd" align="center"><s:textfield
+					name="propertyDetail.sitalArea.area" id="vacantLandArea"
+					title="Vacant land total area in meters" maxlength="10"
+					value="%{propertyDetail.sitalArea.area}"
+					onblur="trim(this,this.value);checkForTwoDecimals(this,'propertyDetail.sitalArea.area');checkZero(this,'propertyDetail.sitalArea.area');" />
+			</td>
+			<td class="blueborderfortd" align="center"><s:textfield
+					name="propertyDetail.marketValue" id="marketValue"
+					title="Market value of the vacant land" maxlength="10"
+					value="%{propertyDetail.marketValue}"
+					onblur="trim(this,this.value);checkForTwoDecimals(this,'propertyDetail.marketValue');checkZero(this,'propertyDetail.marketValue');" />
+			</td>
+
+			<td class="blueborderfortd"><s:textfield
+					name="propertyDetail.currentCapitalValue" id="currentCapitalValue"
+					maxlength="15" value="%{propertyDetail.currentCapitalValue}"
+					title="Current capital value of Land"
+					onblur="trim(this,this.value);checkForTwoDecimals(this,'propertyDetail.currentCapitalValue');checkZero(this,'propertyDetail.currentCapitalValue');" />
+			</td>
+
+			<td class="blueborderfortd"><s:date
+					name="%{propertyDetail.dateOfCompletion}" var="occupationDate"
+					format="dd/MM/yyyy" /> <s:textfield
+					name="propertyDetail.dateOfCompletion"
+					id="propertyDetail.dateOfCompletion" value="%{#occupationDate}"
+					autocomplete="off" cssClass="datepicker" data-date-end-date="0d"
+					maxlength="10"></s:textfield></td>
+			<td class="greybox"><s:select headerKey="-1"
+					headerValue="%{getText('default.select')}"
+					name="vacantLandPlotAreaId" id="vacantLandPlotAreaId" listKey="id"
+					listValue="name" list="dropdownData.vacantLandPlotAreaList"
+					value="%{vacantLandPlotAreaId}" cssClass="selectnew"
+					onchange="makeMandatory();" /></td>
+			<td class="greybox"><s:select headerKey="-1"
+					headerValue="%{getText('default.select')}"
+					name="layoutApprovalAuthorityId" id="layoutApprovalAuthorityId"
+					listKey="id" listValue="name"
+					list="dropdownData.layoutApprovalAuthorityList"
+					value="%{layoutApprovalAuthorityId}" cssClass="selectnew"
+					onchange="makeMandatory();" /></td>
+			<td class="blueborderfortd" align="center"><s:textfield
+					name="propertyDetail.layoutPermitNo" id="layoutPermitNo"
+					maxlength="15" value="%{propertyDetail.layoutPermitNo}" /></td>
+			<td class="blueborderfortd"><s:date
+					name="%{propertyDetail.layoutPermitDate}" var="layoutPermitDate"
+					format="dd/MM/yyyy" /> <s:textfield
+					name="propertyDetail.layoutPermitDate" id="layoutPermitDate"
+					value="%{#layoutPermitDate}" autocomplete="off"
+					cssClass="datepicker" maxlength="10"></s:textfield></td>
+		</tr>
+	</table>
+</div>
+<table width="100%" border="0" cellspacing="0" cellpadding="0"
+	class="tablebottom" id="vacantLandTable">
 	<tr>
-	    <th class="bluebgheadtd"><s:text name="surveyNumber" /><span class="mandatory1">*</span></th>
-	    <th class="bluebgheadtd"><s:text name="pattaNumber" /><span class="mandatory1">*</span></th>
-		<th class="bluebgheadtd"><s:text name="vacantLandArea" /><span class="mandatory1">*</span></th>
-		<th class="bluebgheadtd"><s:text name="MarketValue" /><span class="mandatory1">*</span></th>
-		<th class="bluebgheadtd"><s:text name="currentCapitalValue" /><span	class="mandatory1">*</span></th>
-		<th class="bluebgheadtd"><s:text name="constCompl.date" /><span	class="mandatory1">*</span></th>
-		<th class="bluebgheadtd"><s:text name="lbl.vl.plotarea" /><span	class="mandatory1">*</span></th>
-		<th class="bluebgheadtd"><s:text name="lbl.layout.authority" /><span	class="mandatory1">*</span></th>
-		<th class="bluebgheadtd"><s:text name="lbl.layout.permitno" /><span	class="mandatory1">*</span></th>
-		<th class="bluebgheadtd"><s:text name="lbl.layout.permitdate" /><span	class="mandatory1">*</span></th>
-    </tr>
-	
-	<tr id="vacantLandRow">
-        <td class="blueborderfortd" align="center">
-		 <s:textfield name="propertyDetail.surveyNumber" id="propertyDetail.surveyNumber"
-				maxlength="15" value="%{propertyDetail.surveyNumber}" title="Survey number of vacant land"/>
-		</td>
-        <td class="blueborderfortd" align="center">
-        	<s:textfield name="propertyDetail.pattaNumber" id="propertyDetail.pattaNumber"
-				maxlength="15" value="%{propertyDetail.pattaNumber}" title="Patta number of vacant land"/>
-        </td>
-        <td class="blueborderfortd" align="center">
-        	<s:textfield name="propertyDetail.sitalArea.area" id="vacantLandArea" title="Vacant land total area in meters"
-				maxlength="10" value="%{propertyDetail.sitalArea.area}"
-				onblur="trim(this,this.value);checkForTwoDecimals(this,'propertyDetail.sitalArea.area');checkZero(this,'propertyDetail.sitalArea.area');" />
-        </td>
-        <td class="blueborderfortd" align="center">
-        	<s:textfield name="propertyDetail.marketValue" id="marketValue" title="Market value of the vacant land"
-				maxlength="10" value="%{propertyDetail.marketValue}"
-				onblur="trim(this,this.value);checkForTwoDecimals(this,'propertyDetail.marketValue');checkZero(this,'propertyDetail.marketValue');" />
-		</td>
-        
-        <td class="blueborderfortd">
-        	<s:textfield name="propertyDetail.currentCapitalValue"
-				id="currentCapitalValue" maxlength="15" value="%{propertyDetail.currentCapitalValue}" title="Current capital value of Land"
-				onblur="trim(this,this.value);checkForTwoDecimals(this,'propertyDetail.currentCapitalValue');checkZero(this,'propertyDetail.currentCapitalValue');" />
-        </td>
-        
-        <td class="blueborderfortd">
-		   <s:date name="%{propertyDetail.dateOfCompletion}" var="occupationDate" format="dd/MM/yyyy" /> <s:textfield
-				name="propertyDetail.dateOfCompletion" id="propertyDetail.dateOfCompletion" value="%{#occupationDate}" autocomplete="off" cssClass="datepicker"
-				 maxlength="10"></s:textfield>
-		</td>
-		<td class="greybox"><s:select headerKey="-1" headerValue="%{getText('default.select')}" name="vacantLandPlotAreaId"
-				id="vacantLandPlotAreaId" listKey="id" listValue="name" list="dropdownData.vacantLandPlotAreaList" value="%{vacantLandPlotAreaId}"
-				cssClass="selectnew" onchange="makeMandatory();" /></td>
-		<td class="greybox"><s:select headerKey="-1" headerValue="%{getText('default.select')}" name="layoutApprovalAuthorityId"
-				id="layoutApprovalAuthorityId" listKey="id" listValue="name" list="dropdownData.layoutApprovalAuthorityList" value="%{layoutApprovalAuthorityId}"
-				cssClass="selectnew" onchange="makeMandatory();" /></td>
-		<td class="blueborderfortd" align="center">
-		 <s:textfield name="propertyDetail.layoutPermitNo" id="layoutPermitNo"
-				maxlength="15" value="%{propertyDetail.layoutPermitNo}"/>
-		</td>
-		<td class="blueborderfortd">
-		   <s:date name="%{propertyDetail.layoutPermitDate}" var="layoutPermitDate" format="dd/MM/yyyy" /> <s:textfield
-				name="propertyDetail.layoutPermitDate" id="layoutPermitDate" value="%{#layoutPermitDate}" autocomplete="off" cssClass="datepicker"
-				 maxlength="10"></s:textfield>
-		</td>
-    </tr>
-    </table>
-   </div>
-    <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tablebottom" id="vacantLandTable">
-    <tr>
-     <tr>
+	<tr>
 		<td colspan="6">
 			<table class="tablebottom" style="width: 100%;" id="boundaryData">
 				<tbody>
-				  <tr>
-				     <td colspan="4">
-				       <div class="headingsmallbg">
-				         <span class="bold"><s:text name="boundaries"/></span> 
-			          </div>
-			         </td>
-			        </tr>
 					<tr>
-						<th class="bluebgheadtd"><s:text name="North" /><span class="mandatory1">*</span></th>
-						<th class="bluebgheadtd"><s:text name="East" /><span class="mandatory1">*</span></th>
-						<th class="bluebgheadtd"><s:text name="West" /><span class="mandatory1">*</span></th>
-						<th class="bluebgheadtd"><s:text name="South" /><span class="mandatory1">*</span></th>
+						<td colspan="4">
+							<div class="headingsmallbg">
+								<span class="bold"><s:text name="boundaries" /></span>
+							</div>
+						</td>
 					</tr>
 					<tr>
-						<td class="blueborderfortd" align="center"><s:textfield name="northBoundary" id="northBoundary" maxlength="32"
-								value="%{northBoundary}" title="North side of Land"/></td>
-						<td class="blueborderfortd" align="center"><s:textfield name="eastBoundary" id="eastBoundary" maxlength="32"
+						<th class="bluebgheadtd"><s:text name="North" /><span
+							class="mandatory1">*</span></th>
+						<th class="bluebgheadtd"><s:text name="East" /><span
+							class="mandatory1">*</span></th>
+						<th class="bluebgheadtd"><s:text name="West" /><span
+							class="mandatory1">*</span></th>
+						<th class="bluebgheadtd"><s:text name="South" /><span
+							class="mandatory1">*</span></th>
+					</tr>
+					<tr>
+						<td class="blueborderfortd" align="center"><s:textfield
+								name="northBoundary" id="northBoundary" maxlength="32"
+								value="%{northBoundary}" title="North side of Land" /></td>
+						<td class="blueborderfortd" align="center"><s:textfield
+								name="eastBoundary" id="eastBoundary" maxlength="32"
 								value="%{eastBoundary}" title="East side of Land" /></td>
-						<td class="blueborderfortd" align="center"><s:textfield name="westBoundary" id="westBoundary" maxlength="32"
-								value="%{westBoundary}" title="West side of land"/></td>
-						<td class="blueborderfortd" align="center"><s:textfield	name="southBoundary" id="southBoundary" maxlength="32"
-								value="%{southBoundary}" title="South side of land"/></td>
+						<td class="blueborderfortd" align="center"><s:textfield
+								name="westBoundary" id="westBoundary" maxlength="32"
+								value="%{westBoundary}" title="West side of land" /></td>
+						<td class="blueborderfortd" align="center"><s:textfield
+								name="southBoundary" id="southBoundary" maxlength="32"
+								value="%{southBoundary}" title="South side of land" /></td>
 					</tr>
 				</tbody>
 			</table>
-			</td>
+		</td>
 	</tr>
 </table>
-<script type="text/javascript" src="<cdn:url value='/resources/js/app/vacantland.js?rnd=${app_release_no}'/>"></script>
+<script type="text/javascript"
+	src="<cdn:url value='/resources/js/app/vacantland.js?rnd=${app_release_no}'/>"></script>
