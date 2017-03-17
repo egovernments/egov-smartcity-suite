@@ -386,4 +386,6 @@ public class WaterTaxConstants {
 
     public static final String IS_METEREDDONATIONAMOUNT_MANUAL="IS_METEREDDONATIONAMOUNT_MANUAL";
     public static final String IS_NONMETEREDDONATIONAMOUNT_MANUAL="IS_NONMETEREDDONATIONAMOUNT_MANUAL";
+    
+    public static final String INPROGRESS = "INPROGRESS";
 }

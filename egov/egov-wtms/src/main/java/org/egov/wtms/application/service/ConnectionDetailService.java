@@ -39,6 +39,7 @@
  */
 package org.egov.wtms.application.service;
 
+import static org.egov.wtms.utils.constants.WaterTaxConstants.INPROGRESS;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -138,7 +139,7 @@ public class ConnectionDetailService {
         BigDecimal currDmd = new BigDecimal(0);
         BigDecimal currColl = new BigDecimal(0);
         BigDecimal totalDue = new BigDecimal(0);
-        WaterTaxDue waterTaxDue = null;
+        WaterTaxDue waterTaxDue;
         final List<WaterConnection> waterConnections = waterConnectionService
                 .findByPropertyIdentifier(propertyIdentifier);
         if (waterConnections.isEmpty()) {
@@ -177,6 +178,13 @@ public class ConnectionDetailService {
             waterTaxDue.setConnectionCount(waterConnections.size());
             waterTaxDue.setIsSuccess(true);
         }
+            List<WaterConnectionDetails> connectionDetailsList = waterConnectionDetailsService.getAllConnectionDetailsExceptInactiveStatusByPropertyID(propertyIdentifier);
+            for(WaterConnectionDetails connectionDetails : connectionDetailsList){
+                if(INPROGRESS.equals(connectionDetails.getConnectionStatus().toString())){
+                    waterTaxDue.setIsInWorkFlow(true);
+                }
+            }
+        
         return waterTaxDue;
     }
 
