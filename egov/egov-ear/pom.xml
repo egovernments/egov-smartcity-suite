@@ -139,7 +139,12 @@
 			<version>${project.parent.version}</version>
 			<type>war</type>
 		</dependency>
-
+		<dependency>
+			<groupId>org.egov</groupId>
+			<artifactId>egov-services</artifactId>
+			<version>${project.parent.version}</version>
+			<type>war</type>
+		</dependency>
 		<dependency>
 			<groupId>org.egov</groupId>
 			<artifactId>egov-egi</artifactId>
@@ -409,6 +414,11 @@
 							<groupId>org.egov</groupId>
 							<artifactId>egov-mrsweb</artifactId>
 							<contextRoot>/mrs</contextRoot>
+						</webModule>
+						<webModule>
+							<groupId>org.egov</groupId>
+							<artifactId>egov-services</artifactId>
+							<contextRoot>/services</contextRoot>
 						</webModule>
 						
 					</modules>

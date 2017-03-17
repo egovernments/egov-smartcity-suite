@@ -37,22 +37,58 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infstr.microservice.zuulproxy.models;
+package org.egov.services.zuulproxy.models;
 
-public class Role {
+import java.util.List;
 
-    private String name;
+public class UserInfo {
 
-    public Role(final String name) {
+    private final List<Role> roles;
+    private final Long id;
+    private final String userName;
+    private final String name;
+    private final String emailId;
+    private final String mobileNumber;
+    private final String type;
+
+    public UserInfo(final List<Role> roles, final Long id, final String userName, final String name, final String emailId,
+            final String mobileNumber, final String type) {
+        super();
+        this.roles = roles;
+        this.id = id;
+        this.userName = userName;
         this.name = name;
+        this.emailId = emailId;
+        this.mobileNumber = mobileNumber;
+        this.type = type;
+    }
+
+    public List<Role> getRoles() {
+        return roles;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getUserName() {
+        return userName;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(final String name) {
-        this.name = name;
+    public String getEmailId() {
+        return emailId;
+    }
+
+    public String getMobileNumber() {
+        return mobileNumber;
+    }
+
+    public String getType() {
+        return type;
     }
 
 }

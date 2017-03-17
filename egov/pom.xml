@@ -284,6 +284,7 @@
         <module>egov-stmsweb</module>
 	     <module>egov-mrs</module>
         <module>egov-mrsweb</module>
+        <module>egov-services</module>
     </modules>
 
     <dependencyManagement>

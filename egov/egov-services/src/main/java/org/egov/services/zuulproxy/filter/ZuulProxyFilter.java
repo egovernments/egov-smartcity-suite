@@ -37,7 +37,7 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infstr.microservice.zuulproxy.filter;
+package org.egov.services.zuulproxy.filter;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -51,11 +51,11 @@ import javax.servlet.http.HttpSession;
 
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
-import org.egov.infra.config.properties.ApplicationProperties;
 import org.egov.infra.config.security.authentication.SecureUser;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infstr.microservice.zuulproxy.models.Role;
-import org.egov.infstr.microservice.zuulproxy.models.UserInfo;
+import org.egov.services.config.properties.ServicesApplicationProperties;
+import org.egov.services.zuulproxy.models.Role;
+import org.egov.services.zuulproxy.models.UserInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
@@ -100,8 +100,8 @@ public class ZuulProxyFilter extends ZuulFilter {
                 .getRequiredWebApplicationContext(request.getServletContext());
 
         final HashMap<String, String> zuulProxyRoutingUrls;
-        final ApplicationProperties applicationProperties = (ApplicationProperties) springContext
-                .getBean("applicationProperties");
+        final ServicesApplicationProperties applicationProperties = (ServicesApplicationProperties) springContext
+                .getBean("servicesApplicationProperties");
         try {
             zuulProxyRoutingUrls = (HashMap<String, String>) applicationProperties
                     .zuulProxyRoutingUrls();
@@ -113,8 +113,8 @@ public class ZuulProxyFilter extends ZuulFilter {
         try {
             final URL requestURL = new URL(request.getRequestURL().toString());
             final String endPointURI;
-            if (requestURL.getPath().startsWith("/egi"))
-                endPointURI = requestURL.getPath().split("/egi")[1];
+            if (requestURL.getPath().startsWith("/services/api"))
+                endPointURI = requestURL.getPath().split("/services/api")[1];
             else
                 endPointURI = requestURL.getPath();
 

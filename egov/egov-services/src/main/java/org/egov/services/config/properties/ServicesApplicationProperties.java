@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2017>  eGovernments Foundation
+ *     Copyright (C) <2015>  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -37,58 +37,37 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infstr.microservice.zuulproxy.models;
+package org.egov.services.config.properties;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
-public class UserInfo {
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 
-    private final List<Role> roles;
-    private final Long id;
-    private final String userName;
-    private final String name;
-    private final String emailId;
-    private final String mobileNumber;
-    private final String type;
+@Configuration
+@PropertySource(name = "servicesApplicationProperties", value = { "classpath:config/application-config-services.properties",
+        "classpath:config/egov-erp-${user.name}.properties",
+        "classpath:config/application-config-${client.id}.properties",
+        "classpath:config/egov-erp-override.properties" }, ignoreResourceNotFound = true)
+public class ServicesApplicationProperties {
 
-    public UserInfo(final List<Role> roles, final Long id, final String userName, final String name, final String emailId,
-            final String mobileNumber, final String type) {
-        super();
-        this.roles = roles;
-        this.id = id;
-        this.userName = userName;
-        this.name = name;
-        this.emailId = emailId;
-        this.mobileNumber = mobileNumber;
-        this.type = type;
+    private static final String ZUUL_PROXY_ROUTING_URLS_MAPPING = "zuul.proxy.routing.urls";
+
+    @Autowired
+    private Environment environment;
+
+    public Map<String, String> zuulProxyRoutingUrls() {
+        final HashMap<String, String> routingUrlsKeyValuePair = new HashMap<String, String>();
+        final String[] routingUrls = environment.getProperty(ZUUL_PROXY_ROUTING_URLS_MAPPING).split(",");
+        if (routingUrls != null && routingUrls.length > 0)
+            for (final String mappingUrl : routingUrls) {
+                final String[] url = mappingUrl.split("~");
+                routingUrlsKeyValuePair.put(url[0], url[1]);
+            }
+
+        return routingUrlsKeyValuePair;
     }
-
-    public List<Role> getRoles() {
-        return roles;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getEmailId() {
-        return emailId;
-    }
-
-    public String getMobileNumber() {
-        return mobileNumber;
-    }
-
-    public String getType() {
-        return type;
-    }
-
 }
