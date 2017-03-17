@@ -299,6 +299,10 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                 wfErrorMsg = getText("error.msg.child.underworkflow");
                 return TARGET_WORKFLOW_ERROR;
             }
+            if (isUnderWtmsWF()) {
+                wfErrorMsg = getText("msg.under.wtms.wf.ttp");
+                return TARGET_WORKFLOW_ERROR;
+            }
             final Map<String, BigDecimal> propertyTaxDetails = propertyService
                     .getCurrentPropertyTaxDetails(basicproperty.getActiveProperty());
             final Map<String, BigDecimal> currentTaxAndDue = propertyService.getCurrentTaxAndBalance(propertyTaxDetails,
@@ -308,7 +312,8 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
             houseNo = basicproperty.getAddress().getHouseNoBldgApt();
             currentPropertyTaxDue = currentTaxAndDue.get(CURR_BAL_STR);
             arrearPropertyTaxDue = propertyTaxDetails.get(ARR_DMD_STR).subtract(propertyTaxDetails.get(ARR_COLL_STR));
-            currentWaterTaxDue = propertyService.getWaterTaxDues(assessmentNo);
+            currentWaterTaxDue = getWaterTaxDues();
+            
             if (currentWaterTaxDue.add(currentPropertyTaxDue).add(arrearPropertyTaxDue).longValue() > 0) {
                 setTaxDueErrorMsg(getText("taxdues.error.msg", new String[] { PROPERTY_TRANSFER }));
                 return REJECT_ON_TAXDUE;
@@ -1014,6 +1019,18 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     
     private Assignment setInitiatorForThirdPartyByMutationType(PropertyMutation propertyMutation, Assignment assignment){
         return propertyMutation.getType().equals(ADDTIONAL_RULE_FULL_TRANSFER) ? null : assignment;
+    }
+    
+    private BigDecimal getWaterTaxDues(){
+        return propertyService.getWaterTaxDues(assessmentNo).get(PropertyTaxConstants.WATER_TAX_DUES) == null ? BigDecimal.ZERO : new BigDecimal(
+                Double.valueOf((Double) propertyService.getWaterTaxDues(assessmentNo).get(PropertyTaxConstants.WATER_TAX_DUES)));
+    }
+    
+    private Boolean isUnderWtmsWF(){
+        return propertyService.getWaterTaxDues(assessmentNo).get(PropertyTaxConstants.UNDER_WTMS_WF) == null
+                ? Boolean.FALSE
+                : Boolean.valueOf((Boolean) propertyService.getWaterTaxDues(assessmentNo)
+                        .get(PropertyTaxConstants.UNDER_WTMS_WF));
     }
 
     public BigDecimal getCurrentPropertyTax() {

@@ -1719,4 +1719,7 @@ public interface PropertyTaxConstants {
     
     public static final String APPURTENANT_PROPERTY = "AppurTenantProperty";
     public static final String ANONYMOUS_USER= "Anonymous";
+    public static final String WATER_TAX_DUES = "totalTaxDue";
+    public static final String UNDER_WTMS_WF = "isInWorkFlow";
+    
 }
