@@ -82,7 +82,7 @@ public class EgBillHibernateDao implements EgBillDao {
     @Transactional
     @Override
     public EgBill create(EgBill egBill) {
-        getCurrentSession().saveOrUpdate(egBill);
+        getCurrentSession().persist(egBill);
         return egBill;
     }
 
@@ -95,7 +95,7 @@ public class EgBillHibernateDao implements EgBillDao {
     @Transactional
     @Override
     public EgBill update(EgBill egBill) {
-        getCurrentSession().saveOrUpdate(egBill);
+        getCurrentSession().update(egBill);
         return egBill;
     }
 }
