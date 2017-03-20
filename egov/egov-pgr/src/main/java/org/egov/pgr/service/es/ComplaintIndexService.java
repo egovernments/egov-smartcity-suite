@@ -106,6 +106,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class ComplaintIndexService {
 
+    private static final String SOURCE = "source";
+
     private static final String GROUP_BY_FIELD_AGEING_FOR_HOURS = "groupByFieldAgeingForHours";
 
     private static final String GROUP_BY_FIELD_AGEING = "groupByFieldAgeing";
@@ -1272,8 +1274,11 @@ public class ComplaintIndexService {
         if (complaintDashBoardRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_ALL_ULB) ||
                 complaintDashBoardRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_ALL_WARDS) ||
                 complaintDashBoardRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_ALL_LOCALITIES) ||
-                complaintDashBoardRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_ALL_FUNCTIONARY))
+                complaintDashBoardRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_ALL_FUNCTIONARY)){
+            boolQuery = filterBasedOnSource(complaintDashBoardRequest, boolQuery);
             return boolQuery;
+        }
+            
         if (isNotBlank(complaintDashBoardRequest.getRegionName()))
             boolQuery = boolQuery.filter(matchQuery(CITY_REGION_NAME, complaintDashBoardRequest.getRegionName()));
         if (isNotBlank(complaintDashBoardRequest.getUlbGrade()))
@@ -1304,12 +1309,19 @@ public class ComplaintIndexService {
         if (isNotBlank(complaintDashBoardRequest.getFunctionaryName()))
             boolQuery = boolQuery.filter(matchQuery(INITIAL_FUNCTIONARY_NAME,
                     complaintDashBoardRequest.getFunctionaryName()));
-        if(isNotBlank(complaintDashBoardRequest.getIncludedSources()))
-            boolQuery = boolQuery.must(termsQuery("source", complaintDashBoardRequest.getIncludedSources().split("~")));
-        if(isNotBlank(complaintDashBoardRequest.getExcludedSources()))
-            boolQuery = boolQuery.mustNot(termsQuery("source", complaintDashBoardRequest.getExcludedSources().split("~")));
+        boolQuery = filterBasedOnSource(complaintDashBoardRequest, boolQuery);
             
         return boolQuery;
+    }
+
+    private BoolQueryBuilder filterBasedOnSource(ComplaintDashBoardRequest complaintDashBoardRequest,
+            BoolQueryBuilder boolQuery) {
+        BoolQueryBuilder sourceQuery = boolQuery;
+        if (isNotBlank(complaintDashBoardRequest.getIncludedSources()))
+            sourceQuery = sourceQuery.must(termsQuery(SOURCE, complaintDashBoardRequest.getIncludedSources().split("~")));
+        if (isNotBlank(complaintDashBoardRequest.getExcludedSources()))
+            sourceQuery = sourceQuery.mustNot(termsQuery(SOURCE, complaintDashBoardRequest.getExcludedSources().split("~")));
+        return sourceQuery;
     }
 
     private ComplaintDashBoardResponse populateResponse(final ComplaintDashBoardRequest complaintDashBoardRequest,
