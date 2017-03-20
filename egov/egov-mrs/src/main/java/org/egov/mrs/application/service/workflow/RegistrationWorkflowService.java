@@ -302,10 +302,10 @@ public class RegistrationWorkflowService {
                     .withNextAction(nextAction)
                     .withNatureOfTask(natureOfTask);
         else if (nextAction != null && nextAction.equalsIgnoreCase(STATE_END))
-            itemInWorkflow.transition(true).end().withSenderName(user.getUsername() + "::" + user.getName())
+            itemInWorkflow.transition().end().withSenderName(user.getUsername() + "::" + user.getName())
                     .withComments(approvalComent).withDateInfo(new Date());
         else
-            itemInWorkflow.transition(true)
+            itemInWorkflow.transition().progressWithStateCopy()
                     .withSenderName(user.getUsername() + "::" + user.getName())
                     .withComments(approvalComent)
                     .withStateValue(nextState)

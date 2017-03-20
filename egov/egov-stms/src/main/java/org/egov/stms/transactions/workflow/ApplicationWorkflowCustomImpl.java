@@ -126,14 +126,14 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                     wfmatrix = sewerageApplicationWorkflowService.getWfMatrix(
                          sewerageApplicationDetails.getStateType(), null, null, additionalRule, stateValue, SewerageTaxConstants.WF_STATE_REJECTED);
                 } 
-                sewerageApplicationDetails.transition(true).withSenderName(user.getUsername() + "::" + user.getName()) 
+                sewerageApplicationDetails.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent)
                         .withStateValue(stateValue).withDateInfo(currentDate.toDate())
                         .withOwner(wfInitiator.getPosition()).withNextAction("Application Rejected")
                         .withNatureOfTask(natureOfwork);
         } else if(SewerageTaxConstants.WFLOW_ACTION_STEP_CANCEL.equalsIgnoreCase(workFlowAction)){
             // Incase of reject / cancel from the creator, end the workflow
-            sewerageApplicationDetails.transition(true).end().withSenderName(user.getUsername() + "::" + user.getName())
+            sewerageApplicationDetails.transition().end().withSenderName(user.getUsername() + "::" + user.getName())
                     .withComments(approvalComent).withDateInfo(currentDate.toDate()).withNatureOfTask(natureOfwork);
         } else {
             if (null != approvalPosition && approvalPosition != -1 && !approvalPosition.equals(Long.valueOf(0)))
@@ -163,14 +163,14 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                 sewerageApplicationDetails.setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(
                         SewerageTaxConstants.APPLICATION_STATUS_SANCTIONED, SewerageTaxConstants.MODULETYPE));
                 if (wfmatrix.getNextAction().equalsIgnoreCase("END"))
-                    sewerageApplicationDetails.transition(true).end()
+                    sewerageApplicationDetails.transition().end()
                             .withSenderName(user.getUsername() + "::" + user.getName()).withComments(approvalComent)
                             .withDateInfo(currentDate.toDate()).withNatureOfTask(natureOfwork);
             } // TODO : Need to check this usecase. 
             else if (null != approvalComent && "Receipt Cancelled".equalsIgnoreCase(approvalComent)) {  
                 wfmatrix = sewerageApplicationWorkflowService.getWfMatrix(sewerageApplicationDetails.getStateType(),
                         null, null, additionalRule, SewerageTaxConstants.WF_STATE_ASSISTANT_APPROVED, null);
-                sewerageApplicationDetails.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+                sewerageApplicationDetails.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withStateValue(wfmatrix.getNextState())
                         .withDateInfo(currentDate.toDate()).withOwner(pos).withNextAction(wfmatrix.getNextAction())
                         .withNatureOfTask(natureOfwork);
@@ -195,7 +195,7 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                     } else
                         nextState= wfmatrix.getNextState();
                     
-                    sewerageApplicationDetails.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+                    sewerageApplicationDetails.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
                     .withComments(approvalComent).withStateValue(nextState)
                     .withDateInfo(currentDate.toDate()).withOwner(pos).withNextAction(wfmatrix.getNextAction())
                     .withNatureOfTask(natureOfwork);
@@ -204,7 +204,7 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                         wfmatrix = sewerageApplicationWorkflowService.getWfMatrix(sewerageApplicationDetails.getStateType(),
                         null, null, additionalRule, sewerageApplicationDetails.getCurrentState().getValue(), pendingActions);
                 
-                        sewerageApplicationDetails.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+                        sewerageApplicationDetails.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withStateValue(wfmatrix.getNextState())
                         .withDateInfo(currentDate.toDate()).withOwner(pos).withNextAction(wfmatrix.getNextAction())
                         .withNatureOfTask(natureOfwork);
@@ -238,14 +238,14 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                     final String stateValue = SewerageTaxConstants.WF_STATE_REJECTED;
                     wfmatrix = sewerageApplicationWorkflowService.getWfMatrix(
                          sewerageApplicationDetails.getStateType(), null, null, additionalRule, stateValue, SewerageTaxConstants.WF_STATE_REJECTED);
-                    sewerageApplicationDetails.transition(true).withSenderName(user.getUsername() + "::" + user.getName()) 
+                    sewerageApplicationDetails.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
                             .withComments(approvalComent)
                             .withStateValue(stateValue).withDateInfo(currentDate.toDate())
                             .withOwner(wfInitiator.getPosition()).withNextAction("Application Rejected")
                             .withNatureOfTask(natureOfwork);
             } else if(SewerageTaxConstants.WFLOW_ACTION_STEP_CANCEL.equalsIgnoreCase(workFlowAction)){
                 // Incase of reject / cancel from the creator, end the workflow
-                sewerageApplicationDetails.transition(true).end().withSenderName(user.getUsername() + "::" + user.getName())
+                sewerageApplicationDetails.transition().end().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withDateInfo(currentDate.toDate()).withNatureOfTask(natureOfwork);
             } else {
                 if (null != approvalPosition && approvalPosition != -1 && !approvalPosition.equals(Long.valueOf(0)))
@@ -266,7 +266,7 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                     wfmatrix = sewerageApplicationWorkflowService.getWfMatrix(sewerageApplicationDetails.getStateType(),
                             null, null, additionalRule, sewerageApplicationDetails.getCurrentState().getValue(), SewerageTaxConstants.WF_STATE_CLOSECONNECTION_NOTICEGENERATION_PENDING);
                     if (wfmatrix.getNextAction().equalsIgnoreCase("END"))
-                        sewerageApplicationDetails.transition(true).end()
+                        sewerageApplicationDetails.transition().end()
                                 .withSenderName(user.getUsername() + "::" + user.getName()).withComments(approvalComent)
                                 .withDateInfo(currentDate.toDate()).withNatureOfTask(natureOfwork);
                 } 
@@ -277,7 +277,7 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                         wfmatrix = sewerageApplicationWorkflowService.getWfMatrix(sewerageApplicationDetails.getStateType(),
                                 null, null, additionalRule, sewerageApplicationDetails.getCurrentState().getValue(), pendingActions);
                         String nextState = wfmatrix.getNextState();
-                        sewerageApplicationDetails.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+                        sewerageApplicationDetails.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withStateValue(nextState)
                         .withDateInfo(currentDate.toDate()).withOwner(pos).withNextAction(wfmatrix.getNextAction())
                         .withNatureOfTask(natureOfwork);
@@ -285,7 +285,7 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                     }  else{ 
                             wfmatrix = sewerageApplicationWorkflowService.getWfMatrix(sewerageApplicationDetails.getStateType(),
                             null, null, additionalRule, sewerageApplicationDetails.getCurrentState().getValue(), pendingActions);
-                            sewerageApplicationDetails.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+                            sewerageApplicationDetails.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
                             .withComments(approvalComent).withStateValue(wfmatrix.getNextState())
                             .withDateInfo(currentDate.toDate()).withOwner(pos).withNextAction(wfmatrix.getNextAction())
                             .withNatureOfTask(natureOfwork);

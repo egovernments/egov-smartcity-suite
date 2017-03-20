@@ -39,6 +39,8 @@
  */
 package org.egov.wtms.application.service;
 
+import static org.egov.wtms.utils.constants.WaterTaxConstants.INPROGRESS;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -138,7 +140,7 @@ public class ConnectionDetailService {
         BigDecimal currDmd = new BigDecimal(0);
         BigDecimal currColl = new BigDecimal(0);
         BigDecimal totalDue = new BigDecimal(0);
-        WaterTaxDue waterTaxDue = null;
+        WaterTaxDue waterTaxDue;
         final List<WaterConnection> waterConnections = waterConnectionService
                 .findByPropertyIdentifier(propertyIdentifier);
         if (waterConnections.isEmpty()) {
@@ -177,6 +179,12 @@ public class ConnectionDetailService {
             waterTaxDue.setConnectionCount(waterConnections.size());
             waterTaxDue.setIsSuccess(true);
         }
+        final List<WaterConnectionDetails> connectionDetailsList = waterConnectionDetailsService
+                .getAllConnectionDetailsExceptInactiveStatusByPropertyID(propertyIdentifier);
+        for (final WaterConnectionDetails connectionDetails : connectionDetailsList)
+            if (INPROGRESS.equals(connectionDetails.getConnectionStatus().toString()))
+                waterTaxDue.setIsInWorkFlow(true);
+
         return waterTaxDue;
     }
 
@@ -217,7 +225,7 @@ public class ConnectionDetailService {
                             waterConnectionDetailObj.setConnection(connectiontemp);
                             waterConnectionDetailsRepository
                                     .save(waterConnectionDetailObj);
-                        } else {
+                        } else if (waterConnectionDetailObj != null) {
                             final WaterConnection connectiontemp = waterConnectionDetailObj.getConnection();
                             connectiontemp.setOldPropertyIdentifier(connectiontemp.getPropertyIdentifier());
                             connectiontemp.setPropertyIdentifier(waterTaxDetailRequest.getAssessmentNumber());
@@ -335,11 +343,11 @@ public class ConnectionDetailService {
 
     public Map<String, BigDecimal> getDemandCollMap(final WaterConnectionDetails waterConnectionDetails) {
         final EgDemand currDemand = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
-        Installment installment = null;
+        Installment installment;
         List<Object> dmdCollList = new ArrayList<>(0);
-        Installment currFirstHalf = null;
-        Installment currSecondHalf = null;
-        Integer instId = null;
+        Installment currFirstHalf;
+        Installment currSecondHalf;
+        Integer instId;
         BigDecimal currDmd = BigDecimal.ZERO;
         BigDecimal arrDmd = BigDecimal.ZERO;
         BigDecimal currCollection = BigDecimal.ZERO;
@@ -380,10 +388,10 @@ public class ConnectionDetailService {
             final WaterConnectionDetails waterConnectionDetails, final String moduleName,
             final String installmentType) {
         final EgDemand currDemand = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
-        Installment installment = null;
+        Installment installment;
         List<Object> dmdCollList = new ArrayList<>(0);
-        Installment currInst = null;
-        Integer instId = null;
+        Installment currInst;
+        Integer instId;
         BigDecimal curDue = BigDecimal.ZERO;
         BigDecimal arrDue = BigDecimal.ZERO;
 
@@ -416,9 +424,9 @@ public class ConnectionDetailService {
             final String moduleName, final String installmentType) {
         final EgDemand currDemand = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
         List<Object> dmdCollList = new ArrayList<>(0);
-        Integer instId = null;
-        Double balance = null;
-        Integer val = null;
+        Integer instId;
+        Double balance;
+        Integer val;
         final Map<String, BigDecimal> retMap = new HashMap<>(0);
         if (currDemand != null)
             dmdCollList = connectionDemandService.getDmdCollAmtInstallmentWiseWithIsDmdTrue(currDemand);

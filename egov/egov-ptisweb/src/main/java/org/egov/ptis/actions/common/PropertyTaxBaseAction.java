@@ -660,7 +660,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
 
         if (WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction)) {
             if (wfInitiator.getPosition().equals(property.getState().getOwnerPosition())) {
-                property.transition(true).end().withSenderName(user.getUsername() + "::" + user.getName())
+                property.transition().end().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approverComments).withDateInfo(currentDate.toDate());
                 property.setStatus(STATUS_CANCELLED);
                 property.getBasicProperty().setUnderWorkflow(FALSE);
@@ -684,7 +684,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                 }
 
                 final String stateValue = property.getCurrentState().getValue().split(":")[0] + ":" + WF_STATE_REJECTED;
-                property.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+                property.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approverComments).withStateValue(stateValue).withDateInfo(currentDate.toDate())
                         .withOwner(wfInitiator != null ? wfInitiator.getPosition() : null).withNextAction(
                                 property.getBasicProperty().getSource().equals(SOURCEOFDATA_MOBILE)
@@ -708,13 +708,13 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                         .withDateInfo(currentDate.toDate()).withOwner(pos).withNextAction(wfmatrix.getNextAction())
                         .withNatureOfTask(nature).withInitiator(wfInitiator != null ? wfInitiator.getPosition() : null);
             } else if (property.getCurrentState().getNextAction().equalsIgnoreCase("END"))
-                property.transition(true).end().withSenderName(user.getUsername() + "::" + user.getName())
+                property.transition().end().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approverComments).withDateInfo(currentDate.toDate());
             else {
                 wfmatrix = propertyWorkflowService.getWfMatrix(property.getStateType(), null,
                         null, getAdditionalRule(), property.getCurrentState().getValue(),
                         property.getState().getNextAction(), null, loggedInUserDesignation);
-                property.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+                property.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approverComments)
                         .withStateValue(wfmatrix.getNextState())
                         .withDateInfo(currentDate.toDate()).withOwner(pos)

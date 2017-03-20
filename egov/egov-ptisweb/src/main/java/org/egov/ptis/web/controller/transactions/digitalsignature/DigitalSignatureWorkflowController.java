@@ -263,7 +263,7 @@ public class DigitalSignatureWorkflowController {
             final Assignment wfInitiator = getWorkflowInitiator(property, property.getBasicProperty());
             final String currentState = new StringBuilder(property.getCurrentState().getValue().split(":")[0]).append(":")
                     .append(WF_STATE_DIGITALLY_SIGNED).toString();
-            property.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+            property.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
                     .withStateValue(currentState).withDateInfo(currentDate.toDate())
                     .withOwner(property.getCurrentState().getInitiatorPosition() != null
                             ? property.getCurrentState().getInitiatorPosition() : wfInitiator.getPosition())
@@ -283,7 +283,7 @@ public class DigitalSignatureWorkflowController {
         } else {
             final User user = securityUtils.getCurrentUser();
             final Assignment wfInitiator = getWorkflowInitiator(revPetition, revPetition.getBasicProperty());
-            revPetition.transition(true)
+            revPetition.transition().progressWithStateCopy()
                     .withStateValue(revPetition.getType().concat(":").concat(WF_STATE_DIGITALLY_SIGNED))
                     .withOwner(revPetition.getCurrentState().getInitiatorPosition() != null
                             ? revPetition.getCurrentState().getInitiatorPosition() : wfInitiator.getPosition())
@@ -301,7 +301,7 @@ public class DigitalSignatureWorkflowController {
             final DateTime currentDate = new DateTime();
             final User user = securityUtils.getCurrentUser();
             final Assignment wfInitiator = getWorkflowInitiator(propertyMutation, propertyMutation.getBasicProperty());
-            propertyMutation.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+            propertyMutation.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
                     .withStateValue(WF_STATE_DIGITALLY_SIGNED).withDateInfo(currentDate.toDate())
                     .withOwner(propertyMutation.getCurrentState().getInitiatorPosition() != null
                             ? propertyMutation.getCurrentState().getInitiatorPosition() : wfInitiator.getPosition())
@@ -319,7 +319,7 @@ public class DigitalSignatureWorkflowController {
             final Assignment wfInitiator = getWorkflowInitiator(vacancyRemission, vacancyRemission.getBasicProperty());
             final Position pos = wfInitiator.getPosition();
             final VacancyRemissionApproval vacancyRemissionApproval = vacancyRemission.getVacancyRemissionApproval().get(0);
-            vacancyRemissionApproval.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+            vacancyRemissionApproval.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
                     .withStateValue(WF_STATE_DIGITALLY_SIGNED).withDateInfo(currentDate.toDate())
                     .withOwner(vacancyRemission.getCurrentState().getInitiatorPosition() != null
                             ? vacancyRemission.getCurrentState().getInitiatorPosition() : pos)

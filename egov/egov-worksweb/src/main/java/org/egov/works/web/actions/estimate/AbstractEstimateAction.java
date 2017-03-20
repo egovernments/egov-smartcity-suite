@@ -415,14 +415,14 @@ public class AbstractEstimateAction extends GenericWorkFlowAction {
 
         if (CANCEL_ACTION.equals(workFlowAction)) {
             if (wfInitiator.equals(userAssignment)) {
-                abstractEstimate.transition(true).end().withSenderName(user.getName()).withComments(approverComments)
+                abstractEstimate.transition().end().withSenderName(user.getName()).withComments(approverComments)
                         .withStateValue(AbstractEstimate.EstimateStatus.CANCELLED.toString()).withDateInfo(currentDate.toDate())
                         .withNextAction("END");
                 abstractEstimate.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(ABSTRACTESTIMATE,
                         AbstractEstimate.EstimateStatus.CANCELLED.toString()));
             }
         } else if (REJECT_ACTION.equals(workFlowAction)) {
-            abstractEstimate.transition(true).withSenderName(user.getName()).withComments(approverComments)
+            abstractEstimate.transition().progressWithStateCopy().withSenderName(user.getName()).withComments(approverComments)
                     .withStateValue(AbstractEstimate.EstimateStatus.REJECTED.toString()).withDateInfo(currentDate.toDate())
                     .withOwner(wfInitiator.getPosition()).withNextAction("");
             abstractEstimate.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(ABSTRACTESTIMATE,
@@ -453,11 +453,11 @@ public class AbstractEstimateAction extends GenericWorkFlowAction {
                 final WorkFlowMatrix wfmatrix = abstractEstimateWorkflowService.getWfMatrix(abstractEstimate.getStateType(), null,
                         null, getAdditionalRule(), abstractEstimate.getCurrentState().getValue(), null);
                 if (wfmatrix.getNextAction() != null && wfmatrix.getNextAction().equalsIgnoreCase("END"))
-                    abstractEstimate.transition(true).end().withSenderName(user.getName()).withComments(approverComments)
+                    abstractEstimate.transition().end().withSenderName(user.getName()).withComments(approverComments)
                             .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate())
                             .withNextAction(wfmatrix.getNextAction());
                 else
-                    abstractEstimate.transition(true).withSenderName(user.getName()).withComments(approverComments)
+                    abstractEstimate.transition().progressWithStateCopy().withSenderName(user.getName()).withComments(approverComments)
                             .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(position)
                             .withNextAction(wfmatrix.getNextAction());
                 abstractEstimate

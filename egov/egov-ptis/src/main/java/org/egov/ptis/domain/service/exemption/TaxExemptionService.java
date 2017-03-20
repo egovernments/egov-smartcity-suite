@@ -84,6 +84,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.Installment;
 import org.egov.demand.model.EgDemandDetails;
@@ -102,6 +104,7 @@ import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.client.util.PropertyTaxUtil;
+import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.property.BasicProperty;
@@ -338,7 +341,7 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
 
         if (WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction)) {
             if (wfInitiator.getPosition().equals(property.getState().getOwnerPosition())) {
-                property.transition(true).end().withSenderName(user.getUsername() + "::" + user.getName())
+                property.transition().end().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvarComments).withDateInfo(currentDate.toDate());
                 property.setStatus(STATUS_CANCELLED);
                 property.getBasicProperty().setUnderWorkflow(FALSE);
@@ -350,7 +353,7 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
                 } else
                     nextAction = WF_STATE_ASSISTANT_APPROVAL_PENDING;
                 final String stateValue = property.getCurrentState().getValue().split(":")[0] + ":" + WF_STATE_REJECTED;
-                property.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+                property.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvarComments).withStateValue(stateValue).withDateInfo(currentDate.toDate())
                         .withOwner(wfInitiator.getPosition()).withNextAction(nextAction);
                 buildSMS(property, workFlowAction);
@@ -379,7 +382,7 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
                 wfmatrix = propertyWorkflowService.getWfMatrix(property.getStateType(), null, null, additionalRule,
                         property.getCurrentState().getValue(), property.getCurrentState().getNextAction(), null,
                         loggedInUserDesignation);
-                property.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+                property.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvarComments).withStateValue(wfmatrix.getNextState())
                         .withDateInfo(currentDate.toDate()).withOwner(pos)
                         .withNextAction(StringUtils.isNotBlank(nextAction) ? nextAction : wfmatrix.getNextAction());
@@ -512,6 +515,18 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
 
     public Assignment getWfInitiator(final PropertyImpl property) {
         return propertyService.getWorkflowInitiator(property);
+    }
+    
+    public BigDecimal getWaterTaxDues(final String assessmentNo, final HttpServletRequest request){
+        return propertyService.getWaterTaxDues(assessmentNo, request).get(PropertyTaxConstants.WATER_TAX_DUES) == null ? BigDecimal.ZERO : new BigDecimal(
+                Double.valueOf((Double) propertyService.getWaterTaxDues(assessmentNo, request).get(PropertyTaxConstants.WATER_TAX_DUES)));
+    }
+    
+    public Boolean isUnderWtmsWF(String assessmentNo, final HttpServletRequest request){
+        return propertyService.getWaterTaxDues(assessmentNo, request).get(PropertyTaxConstants.UNDER_WTMS_WF) == null
+                ? FALSE
+                : Boolean.valueOf((Boolean) propertyService.getWaterTaxDues(assessmentNo, request)
+                        .get(PropertyTaxConstants.UNDER_WTMS_WF));
     }
 
 }

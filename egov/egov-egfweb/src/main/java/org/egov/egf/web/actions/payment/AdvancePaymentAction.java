@@ -204,7 +204,7 @@ public class AdvancePaymentAction extends BasePaymentAction {
                     advanceRequisition.getAdvanceRequisitionAmount());
 
             createMiscBill();
-            paymentheader.start().withOwner(paymentService.getPosition());
+            paymentheader.transition().start().withOwner(paymentService.getPosition());
             advanceRequisition.getEgAdvanceReqMises().setVoucherheader(paymentheader.getVoucherheader());
             sendForApproval();
             addActionMessage(getText("arf.payment.transaction.success") + " " + voucherHeader.getVoucherNumber());
@@ -465,7 +465,7 @@ public class AdvancePaymentAction extends BasePaymentAction {
         voucherHeader = paymentheader.getVoucherheader();
         voucherHeader.setStatus(FinancialConstants.CANCELLEDVOUCHERSTATUS);
         // persistenceService.setType(CVoucherHeader.class);
-        paymentheader.transition(true).end();
+        paymentheader.transition().end();
         persistenceService.persist(voucherHeader);
         addActionMessage(getText("payment.cancel.success"));
         action = parameters.get(ACTIONNAME)[0];

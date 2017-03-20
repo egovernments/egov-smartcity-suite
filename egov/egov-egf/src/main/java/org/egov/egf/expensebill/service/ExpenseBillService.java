@@ -394,7 +394,7 @@ public class ExpenseBillService {
             wfInitiator = assignmentService.getPrimaryAssignmentForUser(egBillregister.getCreatedBy().getId());
         if (FinancialConstants.BUTTONREJECT.toString().equalsIgnoreCase(workFlowAction)) {
             final String stateValue = FinancialConstants.WORKFLOW_STATE_REJECTED;
-            egBillregister.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+            egBillregister.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
                     .withComments(approvalComent)
                     .withStateValue(stateValue).withDateInfo(currentDate.toDate())
                     .withOwner(wfInitiator.getPosition())
@@ -416,7 +416,7 @@ public class ExpenseBillService {
                 final String stateValue = FinancialConstants.WORKFLOW_STATE_CANCELLED;
                 wfmatrix = egBillregisterRegisterWorkflowService.getWfMatrix(egBillregister.getStateType(), null,
                         null, additionalRule, egBillregister.getCurrentState().getValue(), null);
-                egBillregister.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+                egBillregister.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent)
                         .withStateValue(stateValue).withDateInfo(currentDate.toDate()).withOwner(pos)
                         .withNextAction("")
@@ -424,7 +424,7 @@ public class ExpenseBillService {
             } else {
                 wfmatrix = egBillregisterRegisterWorkflowService.getWfMatrix(egBillregister.getStateType(), null,
                         null, additionalRule, egBillregister.getCurrentState().getValue(), null);
-                egBillregister.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+                egBillregister.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent)
                         .withStateValue(wfmatrix.getNextState()).withDateInfo(new Date()).withOwner(pos)
                         .withNextAction(wfmatrix.getNextAction())

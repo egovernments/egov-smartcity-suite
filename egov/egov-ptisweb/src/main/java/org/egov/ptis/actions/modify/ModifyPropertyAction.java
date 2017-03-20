@@ -495,8 +495,13 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
                 msgParams.add(PROPERTY_GENERAL_REVISION_PETITION);
             setWfErrorMsg(getText(WF_PENDING_MSG, msgParams));
             target = TARGET_WORKFLOW_ERROR;
-        } else {
+        } 
+        else {
             if (PROPERTY_MODIFY_REASON_BIFURCATE.equalsIgnoreCase(modifyRsn) && !fromInbox) {
+                if (isUnderWtmsWF()) {
+                    wfErrorMsg = getText("msg.under.wtms.wf.modify");
+                    return TARGET_WORKFLOW_ERROR;
+                }
                 final Map<String, BigDecimal> propertyTaxDetails = propService.getCurrentPropertyTaxDetails(basicProp
                         .getActiveProperty());
                 final Map<String, BigDecimal> currentTaxAndDue = propertyService.getCurrentTaxAndBalance(propertyTaxDetails,
@@ -505,7 +510,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
                 currentPropertyTaxDue = currentTaxAndDue.get(CURR_BAL_STR);
                 arrearPropertyTaxDue = propertyTaxDetails.get(ARR_DMD_STR).subtract(
                         propertyTaxDetails.get(ARR_COLL_STR));
-                currentWaterTaxDue = propertyService.getWaterTaxDues(basicProp.getUpicNo());
+                currentWaterTaxDue = getWaterTaxDues();
                 if (currentWaterTaxDue.add(currentPropertyTaxDue).add(arrearPropertyTaxDue).longValue() > 0) {
                     setTaxDueErrorMsg(getText(TAXDUES_ERROR_MSG, new String[] { BIFURCATION }));
                     return BALANCE;
@@ -1714,6 +1719,18 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
                 StringUtils.containsIgnoreCase(userDesignationList, SENIOR_ASSISTANT))
                 && PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn))
             showTaxCalcBtn = Boolean.TRUE;
+    }
+    
+    private BigDecimal getWaterTaxDues(){
+        return propertyService.getWaterTaxDues(basicProp.getUpicNo()).get(PropertyTaxConstants.WATER_TAX_DUES) == null ? BigDecimal.ZERO : new BigDecimal(
+                Double.valueOf((Double) propertyService.getWaterTaxDues(basicProp.getUpicNo()).get(PropertyTaxConstants.WATER_TAX_DUES)));
+    }
+    
+    private Boolean isUnderWtmsWF(){
+        return propertyService.getWaterTaxDues(basicProp.getUpicNo()).get(PropertyTaxConstants.UNDER_WTMS_WF) == null
+                ? Boolean.FALSE
+                : Boolean.valueOf((Boolean) propertyService.getWaterTaxDues(basicProp.getUpicNo())
+                        .get(PropertyTaxConstants.UNDER_WTMS_WF));
     }
 
     public BasicProperty getBasicProp() {

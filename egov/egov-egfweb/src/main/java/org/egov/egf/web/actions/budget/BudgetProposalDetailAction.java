@@ -429,7 +429,7 @@ public class BudgetProposalDetailAction extends BaseBudgetDetailAction {
             BudgetDetail beNextYear = new BudgetDetail();
 
             if (addNewDetails)
-                beNextYear.transition(true).withStateValue("END").withOwner(getPosition()).withComments("");
+                beNextYear.transition().progressWithStateCopy().withStateValue("END").withOwner(getPosition()).withComments("");
             beNextYear.copyFrom(detail);
             beNextYear.setBudget(refBudget);
             beNextYear.setOriginalAmount(beAmounts.get(index));
@@ -496,7 +496,7 @@ public class BudgetProposalDetailAction extends BaseBudgetDetailAction {
 
         for (final BudgetDetail detail : savedbudgetDetailList) {
             if (new String("forward").equals(parameters.get(ACTIONNAME)[0]))
-                detail.transition(true).withStateValue("Forwarded by " + getPosition().getName())
+                detail.transition().progressWithStateCopy().withStateValue("Forwarded by " + getPosition().getName())
                         .withOwner(getPositionByUserId(userId)).withComments(detail.getComment());
             budgetDetailService.persist(detail);
         }

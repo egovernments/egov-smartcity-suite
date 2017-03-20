@@ -58,46 +58,42 @@ import static org.mockito.MockitoAnnotations.initMocks;
 
 /**
  * @author Vaibhav.K
- *
  */
-public class EscalationServiceTest {    
-   
+public class EscalationServiceTest {
+
+    private Designation designation;
+    private ComplaintType compType;
+    private Escalation escalation;
+    @Mock
     private EscalationService escalationService;
-    
     @Mock
     private EscalationRepository escalationRepository;
-    
-    Designation designation;
-    ComplaintType compType;
-    Escalation escalation;
-    
+
     @Before
-    public void before()
-    {
+    public void before() {
         initMocks(this);
-       escalationService=new EscalationService(escalationRepository) ;
-       sampleEscalation();
+        escalationService = new EscalationService(escalationRepository);
+        sampleEscalation();
     }
-    
+
     private void sampleEscalation() {
         designation = new DesignationBuilder().withName("test-desig").withId(1l).build();
         compType = new ComplaintTypeBuilder().withDefaults().build();
         escalation = new EscalationBuilder().withDesignation(designation).withComplaintType(compType).withHrs(23).build();
         escalationService.create(escalation);
     }
-    
+
     @Test
     public void createEscalation() {
         assertNotNull(escalation);
     }
-    
+
     @Test
     public void getNoOfHrs() {
-        when(escalationRepository.findByDesignationAndComplaintType(designation.getId(),compType.getId())).thenReturn((escalation));
-    
-        Integer hrsToResolve = escalationService.getHrsToResolve(designation.getId(),compType.getId());
-        assertEquals(hrsToResolve, Integer.valueOf(23));
+        when(escalationRepository.findByDesignationAndComplaintType(designation.getId(), compType.getId())).thenReturn((escalation));
+        Integer hrsToResolve = escalationService.getHrsToResolve(designation.getId(), compType.getId());
+        assertEquals(Integer.valueOf(23), hrsToResolve);
     }
 
-    
+
 }

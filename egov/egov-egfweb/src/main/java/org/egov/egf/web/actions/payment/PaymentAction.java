@@ -1319,7 +1319,7 @@ public class PaymentAction extends BasePaymentAction {
         voucherHeader = paymentheader.getVoucherheader();
         voucherHeader.setStatus(FinancialConstants.CANCELLEDVOUCHERSTATUS);
         // persistenceService.setType(CVoucherHeader.class);
-        paymentheader.transition(true).end();
+        paymentheader.transition().end();
         persistenceService.persist(voucherHeader);
         addActionMessage(getMessage("payment.cancel.success"));
         action = parameters.get(ACTIONNAME)[0];

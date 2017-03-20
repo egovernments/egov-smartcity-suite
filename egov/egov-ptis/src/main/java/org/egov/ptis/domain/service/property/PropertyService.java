@@ -245,7 +245,6 @@ import org.springframework.web.multipart.MultipartFile;
  */
 @Transactional(readOnly = true)
 public class PropertyService {
-    private static final String TOTAL_TAX_DUE = "totalTaxDue";
     private static final String FROM_PROPERTY_USAGE_WHERE_ID = "from PropertyUsage pu where pu.id = ?";
     private static final String FROM_PROPERTY_OCCUPATION_WHERE_ID = "from PropertyOccupation po where po.id = ?";
     private static final String FROM_PROPERTY_MUTATION_MASTER_WHERE_CODE = "from PropertyMutationMaster PM where upper(PM.code) = ?";
@@ -1994,7 +1993,7 @@ public class PropertyService {
         final String desigName = propertyTaxUtil.getDesignationName(initiater.getId());
         final String value = WFLOW_ACTION_NAME_MODIFY + ":" + desigName + "_" + WF_STATE_APPROVAL_PENDING;
 
-        newProperty.transition(true).start().withSenderName(initiater.getName())
+        newProperty.transition().start().withSenderName(initiater.getName())
                 .withComments(PROPERTY_WORKFLOW_STARTED).withStateValue(value).withOwner(owner)
                 .withDateInfo(new Date());
 
@@ -2242,7 +2241,8 @@ public class PropertyService {
      */
     public Boolean hasDemandDues(final String assessmentNo) {
         final BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
-        final BigDecimal currentWaterTaxDue = getWaterTaxDues(assessmentNo);
+        final BigDecimal currentWaterTaxDue = getWaterTaxDues(assessmentNo).get(PropertyTaxConstants.WATER_TAX_DUES) == null ? BigDecimal.ZERO : new BigDecimal(
+                Double.valueOf((Double) getWaterTaxDues(assessmentNo).get(PropertyTaxConstants.WATER_TAX_DUES)));
         final Map<String, BigDecimal> propertyTaxDetails = getCurrentPropertyTaxDetails(basicProperty
                 .getActiveProperty());
         final BigDecimal currentPropertyTaxDue = propertyTaxDetails.get(CURR_DMD_STR).subtract(
@@ -2258,13 +2258,12 @@ public class PropertyService {
      * @param assessmentNo
      * @return
      */
-    public BigDecimal getWaterTaxDues(final String assessmentNo) {
+    public Map<String, Object> getWaterTaxDues(final String assessmentNo) {
         final String wtmsRestURL = format(WTMS_TAXDUE_RESTURL,
                 WebUtils.extractRequestDomainURL(ServletActionContext.getRequest(), false), assessmentNo);
-        final HashMap<String, Object> waterTaxInfo = simpleRestClient.getRESTResponseAsMap(wtmsRestURL);
-        return waterTaxInfo.get(TOTAL_TAX_DUE) == null ? BigDecimal.ZERO : new BigDecimal(
-                Double.valueOf((Double) waterTaxInfo.get(TOTAL_TAX_DUE)));
+         return simpleRestClient.getRESTResponseAsMap(wtmsRestURL);
     }
+        
 
     /**
      * Returns Water tax due of an assessment
@@ -2273,12 +2272,11 @@ public class PropertyService {
      * @param request
      * @return
      */
-    public BigDecimal getWaterTaxDues(final String assessmentNo, final HttpServletRequest request) {
+    public Map<String, Object> getWaterTaxDues(final String assessmentNo, final HttpServletRequest request) {
         final String wtmsRestURL = format(PropertyTaxConstants.WTMS_TAXDUE_RESTURL, WebUtils.extractRequestDomainURL(request, false),
                 assessmentNo);
-        final HashMap<String, Object> waterTaxInfo = simpleRestClient.getRESTResponseAsMap(wtmsRestURL);
-        return waterTaxInfo.get(TOTAL_TAX_DUE) == null ? BigDecimal.ZERO : new BigDecimal(
-                Double.valueOf((Double) waterTaxInfo.get(TOTAL_TAX_DUE)));
+        return simpleRestClient.getRESTResponseAsMap(wtmsRestURL);
+        
     }
 
     /**
@@ -2722,7 +2720,7 @@ public class PropertyService {
     }
 
     public Assignment getWorkflowInitiator(final PropertyImpl property) {
-        Assignment wfInitiator;
+        Assignment wfInitiator = null;
         List<Assignment> assignment;
         if (isEmployee(property.getCreatedBy())){
             if(isStateNotNull(property)){

@@ -40,6 +40,7 @@
 
 package org.egov.infra.workflow.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.entity.AbstractAuditable;
@@ -54,6 +55,8 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.Transient;
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -70,19 +73,23 @@ public abstract class StateAware extends AbstractAuditable {
     @JoinColumn(name = "STATE_ID")
     private State state;
 
-    public static Comparator<? super StateAware> byCreatedDate() {
-        return (stateAware_1, stateAware_2) -> {
+    @Transient
+    @JsonIgnore
+    private Transition transition;
+
+    public static Comparator<StateAware> byCreatedDate() {
+        return (stateAware1, stateAware2) -> {
             int returnVal = 1;
-            if (stateAware_1 == null)
-                returnVal = stateAware_2 == null ? 0 : -1;
-            else if (stateAware_2 == null)
+            if (stateAware1 == null)
+                returnVal = stateAware2 == null ? 0 : -1;
+            else if (stateAware2 == null)
                 returnVal = 1;
             else {
-                final Date first_date = stateAware_1.getState().getCreatedDate();
-                final Date second_date = stateAware_2.getState().getCreatedDate();
-                if (first_date.after(second_date))
+                final Date createdDate1 = stateAware1.getState().getCreatedDate();
+                final Date createdDate2 = stateAware2.getState().getCreatedDate();
+                if (createdDate1.after(createdDate2))
                     returnVal = -1;
-                else if (first_date.equals(second_date))
+                else if (createdDate1.equals(createdDate2))
                     returnVal = 0;
             }
             return returnVal;
@@ -109,7 +116,7 @@ public abstract class StateAware extends AbstractAuditable {
         return state;
     }
 
-    protected void setState(final State state) {
+    private void setState(State state) {
         this.state = state;
     }
 
@@ -141,137 +148,10 @@ public abstract class StateAware extends AbstractAuditable {
         return getCurrentState() != null;
     }
 
-    public final StateAware transition() {
-        if (hasState()) {
-            state.addStateHistory(new StateHistory(state));
-            state.setStatus(StateStatus.INPROGRESS);
-            resetState();
-        }
-        return this;
-    }
-
-    public final StateAware transition(final boolean clone) {
-        if (hasState() && clone) {
-            state.addStateHistory(new StateHistory(state));
-            state.setStatus(StateStatus.INPROGRESS);
-        } else
-            transition();
-        return this;
-    }
-
-    public final StateAware start() {
-        if (hasState())
-            throw new ApplicationRuntimeException("Workflow already started state.");
-        else {
-            state = new State();
-            state.setType(getStateType());
-            state.setStatus(StateStatus.STARTED);
-            state.setValue(State.DEFAULT_STATE_VALUE_CREATED);
-            state.setComments(State.DEFAULT_STATE_VALUE_CREATED);
-        }
-
-        return this;
-    }
-
-    public final StateAware end() {
-        if (transitionCompleted())
-            throw new ApplicationRuntimeException("Workflow already ended state.");
-        else {
-            state.setValue(State.DEFAULT_STATE_VALUE_CLOSED);
-            state.setStatus(StateStatus.ENDED);
-            state.setComments(State.DEFAULT_STATE_VALUE_CLOSED);
-        }
-        return this;
-    }
-
-    public final StateAware reopen(final boolean clone) {
-        if (transitionCompleted()) {
-            final StateHistory stateHistory = new StateHistory(state);
-            stateHistory.setValue(State.STATE_REOPENED);
-            state.setStatus(StateStatus.INPROGRESS);
-            state.addStateHistory(stateHistory);
-            if (!clone)
-                resetState();
-        } else
-            throw new ApplicationRuntimeException("Workflow not ended.");
-        return this;
-    }
-
-    public final StateAware reinitiateTransition() {
-        if (state != null && !transitionCompleted())
-            throw new ApplicationRuntimeException("Could not reinitiate Workflow, existing workflow not ended.");
-        else
-            state = null;
-        return this;
-    }
-
-    public final StateAware withOwner(final User owner) {
-        state.setOwnerUser(owner);
-        return this;
-    }
-
-    public final StateAware withOwner(final Position owner) {
-        state.setOwnerPosition(owner);
-        return this;
-    }
-
-    public final StateAware withInitiator(final Position owner) {
-        state.setInitiatorPosition(owner);
-        return this;
-    }
-
-    public final StateAware withStateValue(final String currentStateValue) {
-        state.setValue(currentStateValue);
-        return this;
-    }
-
-    public final StateAware withNextAction(final String nextAction) {
-        state.setNextAction(nextAction);
-        return this;
-    }
-
-    public final StateAware withComments(final String comments) {
-        state.setComments(comments);
-        return this;
-    }
-
-    public final StateAware withNatureOfTask(final String natureOfTask) {
-        state.setNatureOfTask(natureOfTask);
-        return this;
-    }
-
-    public final StateAware withExtraInfo(final String extraInfo) {
-        state.setExtraInfo(extraInfo);
-        return this;
-    }
-
-    public final StateAware withDateInfo(final Date dateInfo) {
-        state.setDateInfo(dateInfo);
-        return this;
-    }
-
-    public final StateAware withExtraDateInfo(final Date extraDateInfo) {
-        state.setExtraDateInfo(extraDateInfo);
-        return this;
-    }
-
-    public final StateAware withSenderName(final String senderName) {
-        state.setSenderName(senderName);
-        return this;
-    }
-
-    private void resetState() {
-        state.setComments(EMPTY);
-        state.setDateInfo(null);
-        state.setExtraDateInfo(null);
-        state.setExtraInfo(EMPTY);
-        state.setNextAction(EMPTY);
-        state.setValue(EMPTY);
-        state.setSenderName(EMPTY);
-        state.setNatureOfTask(EMPTY);
-        state.setOwnerUser(null);
-        state.setOwnerPosition(null);
-        state.setInitiatorPosition(null);
+    public final Transition transition() {
+        if (this.transition == null)
+            this.transition = new Transition();
+        return this.transition;
     }
 
     protected StateInfoBuilder buildStateInfo() {
@@ -283,5 +163,169 @@ public abstract class StateAware extends AbstractAuditable {
 
     public String getStateInfoJson() {
         return this.buildStateInfo().toJson();
+    }
+
+    public final class Transition implements Serializable {
+        private static final long serialVersionUID = -6035435855091367838L;
+        private boolean transitionInitiated;
+
+        private void checkinTransition() {
+            if (transitionInitiated)
+                throw new ApplicationRuntimeException("Calling multiple transitions not supported");
+            transitionInitiated = true;
+        }
+
+        private void checkTransitionStatus() {
+            if (!transitionInitiated)
+                throw new ApplicationRuntimeException("Use start|progress|end API before setting values");
+        }
+
+        public final Transition start() {
+            checkinTransition();
+            if (hasState())
+                throw new ApplicationRuntimeException("Transition already started.");
+            else {
+                state = new State();
+                state.setType(getStateType());
+                state.setStatus(StateStatus.STARTED);
+                state.setValue(State.DEFAULT_STATE_VALUE_CREATED);
+                state.setComments(State.DEFAULT_STATE_VALUE_CREATED);
+            }
+            return this;
+        }
+
+        public final Transition startNext() {
+            if (state == null)
+                throw new ApplicationRuntimeException("Transition never started, use start() instead");
+            if (!transitionCompleted())
+                throw new ApplicationRuntimeException("Transition can not be started, end the current transition first");
+            State previousState = state;
+            state = null;
+            start();
+            state.setPreviousStateRef(previousState);
+            return this;
+        }
+
+        public final Transition progress() {
+            progressWithStateCopy();
+            resetState();
+            return this;
+        }
+
+        public final Transition progressWithStateCopy() {
+            checkinTransition();
+            if (hasState()) {
+                state.addStateHistory(new StateHistory(state));
+                state.setStatus(StateStatus.INPROGRESS);
+            }
+            return this;
+        }
+
+        public final Transition end() {
+            checkinTransition();
+            if (transitionCompleted())
+                throw new ApplicationRuntimeException("Transition already ended");
+            else {
+                state.addStateHistory(new StateHistory(state));
+                state.setValue(State.DEFAULT_STATE_VALUE_CLOSED);
+                state.setStatus(StateStatus.ENDED);
+                state.setComments(State.DEFAULT_STATE_VALUE_CLOSED);
+            }
+            return this;
+        }
+
+
+        public final Transition reopen() {
+            checkinTransition();
+            if (transitionCompleted()) {
+                StateHistory stateHistory = new StateHistory(state);
+                stateHistory.setValue(State.STATE_REOPENED);
+                state.setStatus(StateStatus.INPROGRESS);
+                state.addStateHistory(stateHistory);
+            } else
+                throw new ApplicationRuntimeException("Transition can not be reopened, end the current transition first");
+            return this;
+        }
+
+        public final Transition withOwner(User owner) {
+            checkTransitionStatus();
+            state.setOwnerUser(owner);
+            return this;
+        }
+
+        public final Transition withOwner(Position owner) {
+            checkTransitionStatus();
+            state.setOwnerPosition(owner);
+            return this;
+        }
+
+        public final Transition withInitiator(Position owner) {
+            checkTransitionStatus();
+            state.setInitiatorPosition(owner);
+            return this;
+        }
+
+        public final Transition withStateValue(String currentStateValue) {
+            checkTransitionStatus();
+            state.setValue(currentStateValue);
+            return this;
+        }
+
+        public final Transition withNextAction(String nextAction) {
+            checkTransitionStatus();
+            state.setNextAction(nextAction);
+            return this;
+        }
+
+        public final Transition withComments(String comments) {
+            checkTransitionStatus();
+            state.setComments(comments);
+            return this;
+        }
+
+        public final Transition withNatureOfTask(String natureOfTask) {
+            checkTransitionStatus();
+            state.setNatureOfTask(natureOfTask);
+            return this;
+        }
+
+        public final Transition withExtraInfo(String extraInfo) {
+            checkTransitionStatus();
+            state.setExtraInfo(extraInfo);
+            return this;
+        }
+
+        public final Transition withDateInfo(Date dateInfo) {
+            checkTransitionStatus();
+            state.setDateInfo(dateInfo);
+            return this;
+        }
+
+        public final Transition withExtraDateInfo(Date extraDateInfo) {
+            checkTransitionStatus();
+            state.setExtraDateInfo(extraDateInfo);
+            return this;
+        }
+
+        public final Transition withSenderName(String senderName) {
+            checkTransitionStatus();
+            state.setSenderName(senderName);
+            return this;
+        }
+
+        private void resetState() {
+            state.setComments(EMPTY);
+            state.setDateInfo(null);
+            state.setExtraDateInfo(null);
+            state.setExtraInfo(EMPTY);
+            state.setNextAction(EMPTY);
+            state.setValue(EMPTY);
+            state.setSenderName(EMPTY);
+            state.setNatureOfTask(EMPTY);
+            state.setOwnerUser(null);
+            state.setOwnerPosition(null);
+            state.setInitiatorPosition(null);
+        }
+
     }
 }

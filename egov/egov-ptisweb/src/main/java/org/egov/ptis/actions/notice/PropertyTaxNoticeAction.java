@@ -498,6 +498,8 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
             Boolean isCorporation;
             reportParams.put("logoPath", imagePath);
             reportParams.put("cityName", cityName);
+            Boolean superStructure = basicProperty.getProperty().getPropertyDetail().isStructure();
+            reportParams.put("isStructure", superStructure.toString());
             if (cityGrade != null && cityGrade != ""
                     && cityGrade.equalsIgnoreCase(PropertyTaxConstants.CITY_GRADE_CORPORATION))
                 isCorporation = true;

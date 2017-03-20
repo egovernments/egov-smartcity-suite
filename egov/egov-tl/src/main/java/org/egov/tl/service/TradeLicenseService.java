@@ -358,12 +358,11 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
 
         searchCriteria.add(Restrictions.isNotNull("applicationNumber"));
         searchCriteria.addOrder(Order.asc("id"));
-        final List<OnlineSearchForm> finalList = new LinkedList<>();
-        final License license = (License) searchCriteria.list().get(0);
-        BigDecimal[] dmdColl;
-        dmdColl = getDemandColl(license);
-        finalList.add(new OnlineSearchForm(license, dmdColl));
-        return finalList;
+        List<OnlineSearchForm> searchResult = new ArrayList<>();
+        License license = (License) searchCriteria.uniqueResult();
+        if (license != null)
+            searchResult.add(new OnlineSearchForm(license, getDemandColl(license)));
+        return searchResult;
     }
 
     public BigDecimal[] getDemandColl(License license) {

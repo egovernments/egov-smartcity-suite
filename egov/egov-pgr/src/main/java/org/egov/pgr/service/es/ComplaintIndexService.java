@@ -53,6 +53,7 @@ import static org.egov.pgr.utils.constants.PGRConstants.NOASSIGNMENT;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
 import static org.elasticsearch.index.query.QueryBuilders.termQuery;
+import static org.elasticsearch.index.query.QueryBuilders.termsQuery;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -104,6 +105,10 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class ComplaintIndexService {
+
+    private static final String GROUP_BY_FIELD_AGEING_FOR_HOURS = "groupByFieldAgeingForHours";
+
+    private static final String GROUP_BY_FIELD_AGEING = "groupByFieldAgeing";
 
     private static final String INITIAL_FUNCTIONARY_MOBILE_NUMBER = "initialFunctionaryMobileNumber";
 
@@ -628,15 +633,7 @@ public class ComplaintIndexService {
                                 else
                                     responseDetail.setClosedOutSideSLACount(slaBucket.getDocCount());
                             // To set Ageing Buckets Result
-                            final Range ageingRange = closedCountbucket.getAggregations().get("groupByFieldAgeing");
-                            Range.Bucket rangeBucket = ageingRange.getBuckets().get(0);
-                            responseDetail.setAgeingGroup1(rangeBucket.getDocCount());
-                            rangeBucket = ageingRange.getBuckets().get(1);
-                            responseDetail.setAgeingGroup2(rangeBucket.getDocCount());
-                            rangeBucket = ageingRange.getBuckets().get(2);
-                            responseDetail.setAgeingGroup3(rangeBucket.getDocCount());
-                            rangeBucket = ageingRange.getBuckets().get(3);
-                            responseDetail.setAgeingGroup4(rangeBucket.getDocCount());
+                            setAgeingResults(responseDetail, closedCountbucket, GROUP_BY_FIELD_AGEING, GROUP_BY_FIELD_AGEING_FOR_HOURS);
                         } else {
                             responseDetail.setOpenComplaintCount(closedCountbucket.getDocCount());
                             final Terms slaTerms = closedCountbucket.getAggregations().get("groupByFieldSla");
@@ -686,15 +683,7 @@ public class ComplaintIndexService {
                                     else
                                         responseDetail.setClosedOutSideSLACount(slaBucket.getDocCount());
                                 // To set Ageing Buckets Result
-                                final Range ageingRange = closedCountbucket.getAggregations().get("groupByFieldAgeing");
-                                Range.Bucket rangeBucket = ageingRange.getBuckets().get(0);
-                                responseDetail.setAgeingGroup1(rangeBucket.getDocCount());
-                                rangeBucket = ageingRange.getBuckets().get(1);
-                                responseDetail.setAgeingGroup2(rangeBucket.getDocCount());
-                                rangeBucket = ageingRange.getBuckets().get(2);
-                                responseDetail.setAgeingGroup3(rangeBucket.getDocCount());
-                                rangeBucket = ageingRange.getBuckets().get(3);
-                                responseDetail.setAgeingGroup4(rangeBucket.getDocCount());
+                                setAgeingResults(responseDetail, closedCountbucket, GROUP_BY_FIELD_AGEING, GROUP_BY_FIELD_AGEING_FOR_HOURS);
                             } else {
                                 responseDetail.setOpenComplaintCount(closedCountbucket.getDocCount());
                                 final Terms slaTerms = closedCountbucket.getAggregations().get("groupByFieldSla");
@@ -748,15 +737,7 @@ public class ComplaintIndexService {
                                     else
                                         responseDetail.setClosedOutSideSLACount(slaBucket.getDocCount());
                                 // To set Ageing Buckets Result
-                                final Range ageingRange = closedCountbucket.getAggregations().get("groupByFieldAgeing");
-                                Range.Bucket rangeBucket = ageingRange.getBuckets().get(0);
-                                responseDetail.setAgeingGroup1(rangeBucket.getDocCount());
-                                rangeBucket = ageingRange.getBuckets().get(1);
-                                responseDetail.setAgeingGroup2(rangeBucket.getDocCount());
-                                rangeBucket = ageingRange.getBuckets().get(2);
-                                responseDetail.setAgeingGroup3(rangeBucket.getDocCount());
-                                rangeBucket = ageingRange.getBuckets().get(3);
-                                responseDetail.setAgeingGroup4(rangeBucket.getDocCount());
+                                setAgeingResults(responseDetail, closedCountbucket, GROUP_BY_FIELD_AGEING, GROUP_BY_FIELD_AGEING_FOR_HOURS);
                             } else {
                                 responseDetail.setOpenComplaintCount(closedCountbucket.getDocCount());
                                 final Terms slaTerms = closedCountbucket.getAggregations().get("groupByFieldSla");
@@ -796,15 +777,7 @@ public class ComplaintIndexService {
                             else
                                 responseDetail.setClosedOutSideSLACount(slaBucket.getDocCount());
                         // To set Ageing Buckets Result
-                        final Range ageingRange = closedCountbucket.getAggregations().get("groupByFieldAgeing");
-                        Range.Bucket rangeBucket = ageingRange.getBuckets().get(0);
-                        responseDetail.setAgeingGroup1(rangeBucket.getDocCount());
-                        rangeBucket = ageingRange.getBuckets().get(1);
-                        responseDetail.setAgeingGroup2(rangeBucket.getDocCount());
-                        rangeBucket = ageingRange.getBuckets().get(2);
-                        responseDetail.setAgeingGroup3(rangeBucket.getDocCount());
-                        rangeBucket = ageingRange.getBuckets().get(3);
-                        responseDetail.setAgeingGroup4(rangeBucket.getDocCount());
+                        setAgeingResults(responseDetail, closedCountbucket, GROUP_BY_FIELD_AGEING, GROUP_BY_FIELD_AGEING_FOR_HOURS);
                     } else {
                         responseDetail.setOpenComplaintCount(closedCountbucket.getDocCount());
                         final Terms slaTerms = closedCountbucket.getAggregations().get("groupByFieldSla");
@@ -843,15 +816,7 @@ public class ComplaintIndexService {
                         else
                             responseDetail.setClosedOutSideSLACount(slaBucket.getDocCount());
                     // To set Ageing Buckets Result
-                    final Range ageingRange = closedCountbucket.getAggregations().get("groupByFieldAgeing");
-                    Range.Bucket rangeBucket = ageingRange.getBuckets().get(0);
-                    responseDetail.setAgeingGroup1(rangeBucket.getDocCount());
-                    rangeBucket = ageingRange.getBuckets().get(1);
-                    responseDetail.setAgeingGroup2(rangeBucket.getDocCount());
-                    rangeBucket = ageingRange.getBuckets().get(2);
-                    responseDetail.setAgeingGroup3(rangeBucket.getDocCount());
-                    rangeBucket = ageingRange.getBuckets().get(3);
-                    responseDetail.setAgeingGroup4(rangeBucket.getDocCount());
+                    setAgeingResults(responseDetail, closedCountbucket, GROUP_BY_FIELD_AGEING, GROUP_BY_FIELD_AGEING_FOR_HOURS);
                 } else {
                     responseDetail.setOpenComplaintCount(closedCountbucket.getDocCount());
                     final Terms slaTerms = closedCountbucket.getAggregations().get("groupByFieldSla");
@@ -895,15 +860,7 @@ public class ComplaintIndexService {
                             complaintType.setClosedOutSideSLACount(slaBucket.getDocCount());
 
                     // To set Ageing Buckets Result
-                    final Range ageingRange = closedCountbucket.getAggregations().get("ComplaintTypeAgeing");
-                    Range.Bucket rangeBucket = ageingRange.getBuckets().get(0);
-                    complaintType.setAgeingGroup1(rangeBucket.getDocCount());
-                    rangeBucket = ageingRange.getBuckets().get(1);
-                    complaintType.setAgeingGroup2(rangeBucket.getDocCount());
-                    rangeBucket = ageingRange.getBuckets().get(2);
-                    complaintType.setAgeingGroup3(rangeBucket.getDocCount());
-                    rangeBucket = ageingRange.getBuckets().get(3);
-                    complaintType.setAgeingGroup4(rangeBucket.getDocCount());
+                    setAgeingResults(complaintType, closedCountbucket, "ComplaintTypeAgeing", "hourwiseComplaintTypeAgeing");
                 } else {
                     complaintType.setOpenComplaintCount(closedCountbucket.getDocCount());
                     final Terms slaTerms = closedCountbucket.getAggregations().get("complaintTypeSla");
@@ -918,6 +875,28 @@ public class ComplaintIndexService {
         result.put("complaintTypes", complaintTypeList);
 
         return result;
+    }
+
+    private void setAgeingResults(ComplaintDashBoardResponse responseDetail, Bucket closedCountbucket, String weeklyAggregation,
+            String hourlyAggregation) {
+        Range ageingRange = closedCountbucket.getAggregations().get(weeklyAggregation);
+        Range.Bucket rangeBucket = ageingRange.getBuckets().get(0);
+        responseDetail.setAgeingGroup1(rangeBucket.getDocCount());
+        rangeBucket = ageingRange.getBuckets().get(1);
+        responseDetail.setAgeingGroup2(rangeBucket.getDocCount());
+        rangeBucket = ageingRange.getBuckets().get(2);
+        responseDetail.setAgeingGroup3(rangeBucket.getDocCount());
+        rangeBucket = ageingRange.getBuckets().get(3);
+        responseDetail.setAgeingGroup4(rangeBucket.getDocCount());
+        Range hourlyAgeingRange = closedCountbucket.getAggregations().get(hourlyAggregation);
+        Range.Bucket hourlyRangeBucket = hourlyAgeingRange.getBuckets().get(0);
+        responseDetail.setAgeingGroup5(hourlyRangeBucket.getDocCount());
+        hourlyRangeBucket = hourlyAgeingRange.getBuckets().get(1);
+        responseDetail.setAgeingGroup6(hourlyRangeBucket.getDocCount());
+        hourlyRangeBucket = hourlyAgeingRange.getBuckets().get(2);
+        responseDetail.setAgeingGroup7(hourlyRangeBucket.getDocCount());
+        hourlyRangeBucket = hourlyAgeingRange.getBuckets().get(3);
+        responseDetail.setAgeingGroup8(hourlyRangeBucket.getDocCount());
     }
 
     public Map<String, Object> getComplaintTypeReport(final ComplaintDashBoardRequest complaintDashBoardRequest) {
@@ -1325,9 +1304,11 @@ public class ComplaintIndexService {
         if (isNotBlank(complaintDashBoardRequest.getFunctionaryName()))
             boolQuery = boolQuery.filter(matchQuery(INITIAL_FUNCTIONARY_NAME,
                     complaintDashBoardRequest.getFunctionaryName()));
-        if(isNotBlank(complaintDashBoardRequest.getSourceName()))
-            boolQuery = boolQuery.filter(matchQuery("source", complaintDashBoardRequest.getSourceName()));
-
+        if(isNotBlank(complaintDashBoardRequest.getIncludedSources()))
+            boolQuery = boolQuery.must(termsQuery("source", complaintDashBoardRequest.getIncludedSources().split("~")));
+        if(isNotBlank(complaintDashBoardRequest.getExcludedSources()))
+            boolQuery = boolQuery.mustNot(termsQuery("source", complaintDashBoardRequest.getExcludedSources().split("~")));
+            
         return boolQuery;
     }
 

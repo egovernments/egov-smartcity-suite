@@ -237,12 +237,12 @@ public class ComplaintService {
             complaint.setDepartment(complaint.getAssignee().getDeptDesig().getDepartment());
             LOG.debug("Terminating Grievance Workflow");
             if (!securityUtils.getCurrentUser().getRoles().contains(goRole))
-                complaint.transition(true).end().withComments(approvalComent)
+                complaint.transition().end().withComments(approvalComent)
                         .withStateValue(complaint.getStatus().getName()).withSenderName(userName)
                         .withDateInfo(new Date());
 
             else
-                complaint.transition(true).end().withComments(approvalComent)
+                complaint.transition().end().withComments(approvalComent)
                         .withStateValue(complaint.getStatus().getName()).withSenderName(userName)
                         .withDateInfo(new Date()).withOwner(complaint.getState().getOwnerPosition());
         } else if (null != approvalPosition && !approvalPosition.equals(Long.valueOf(0))) {
@@ -250,19 +250,19 @@ public class ComplaintService {
             complaint.setAssignee(owner);
             complaint.setDepartment(complaint.getAssignee().getDeptDesig().getDepartment());
             if (!securityUtils.getCurrentUser().getRoles().contains(goRole))
-                complaint.transition(true).withOwner(owner).withComments(approvalComent).withSenderName(userName)
+                complaint.transition().progressWithStateCopy().withOwner(owner).withComments(approvalComent).withSenderName(userName)
                         .withStateValue(complaint.getStatus().getName()).withDateInfo(new Date());
             else
-                complaint.transition(true).withComments(approvalComent).withStateValue(complaint.getStatus().getName())
+                complaint.transition().progressWithStateCopy().withComments(approvalComent).withStateValue(complaint.getStatus().getName())
                         .withSenderName(userName).withDateInfo(new Date()).withOwner(owner);
         } else {
             complaint.setDepartment(complaint.getAssignee().getDeptDesig().getDepartment());
             if (!securityUtils.getCurrentUser().getRoles().contains(goRole))
-                complaint.transition(true).withComments(approvalComent).withSenderName(userName)
+                complaint.transition().progressWithStateCopy().withComments(approvalComent).withSenderName(userName)
                         .withStateValue(complaint.getStatus().getName()).withDateInfo(new Date());
 
             else
-                complaint.transition(true).withComments(approvalComent).withSenderName(userName)
+                complaint.transition().progressWithStateCopy().withComments(approvalComent).withSenderName(userName)
                         .withStateValue(complaint.getStatus().getName()).withDateInfo(new Date())
                         .withOwner(complaint.getState().getOwnerPosition());
         }

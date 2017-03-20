@@ -60,9 +60,13 @@ import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
 
-    public static final String DFT_DATE_FORMAT = "dd/MM/yyyy";
-    public static final DateTimeFormatter FORMAT_DATE_TO_YEAR = DateTimeFormat.forPattern("yyyy");
-    public static final DateTimeFormatter TO_DEFAULT_DATE_FORMAT = DateTimeFormat.forPattern(DFT_DATE_FORMAT);
+    public static final String DEFAULT_DATE_FORMAT = "dd/MM/yyyy";
+    public static final String DEFAULT_DATE_WITH_HR_AND_MIN_FORMAT = "dd/MM/yyyy HH:mm";
+
+    public static final DateTimeFormatter DATE_TO_YEAR_FORMATTER = DateTimeFormat.forPattern("yyyy");
+    public static final DateTimeFormatter DEFAULT_DATE_FORMATTER = DateTimeFormat.forPattern(DEFAULT_DATE_FORMAT);
+    public static final DateTimeFormatter DEFAULT_DATE_WITH_HR_AND_MIN_FORMATTER = DateTimeFormat.forPattern(DEFAULT_DATE_WITH_HR_AND_MIN_FORMAT);
+
     private static final String[] DATE_IN_WORDS = {
             "First", "Second", "Third", "Fourth", "Fifth", "Sixth", "Seventh", "Eighth", "Ninth", "Tenth", "Eleventh",
             "Twelfth", "Thirteenth", "Fourteenth", "Fifteenth", "Sixteenth", "Seventeenth", "Eighteenth", "Nineteenth",
@@ -79,11 +83,11 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
     }
 
     public static String toYearFormat(final LocalDate date) {
-        return FORMAT_DATE_TO_YEAR.print(date);
+        return DATE_TO_YEAR_FORMATTER.print(date);
     }
 
     public static String toYearFormat(final Date date) {
-        return FORMAT_DATE_TO_YEAR.print(new LocalDate(date));
+        return DATE_TO_YEAR_FORMATTER.print(new LocalDate(date));
     }
 
     public static String currentDateToDefaultDateFormat() {
@@ -91,11 +95,15 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
     }
 
     public static String toDefaultDateFormat(final LocalDate date) {
-        return TO_DEFAULT_DATE_FORMAT.print(date);
+        return DEFAULT_DATE_FORMATTER.print(date);
     }
 
     public static String toDefaultDateFormat(final Date date) {
         return toDefaultDateFormat(new LocalDate(date));
+    }
+
+    public static String toDefaultDateTimeFormat(final Date date) {
+        return DEFAULT_DATE_WITH_HR_AND_MIN_FORMATTER.print(new LocalDate(date));
     }
 
     public static Date endOfDay(final Date date) {
@@ -149,13 +157,10 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
      * Adds given number of days/months/years to given date and returns the
      * resulting date.
      *
-     * @param inputDate
-     *            Input date
-     * @param addType
-     *            type to be added
+     * @param inputDate Input date
+     * @param addType   type to be added
      *                  (Calendar.DAY_OF_MONTH/Calendar.MONTH/Calendar.YEAR)
-     * @param addAmount
-     *            Number of days/months/years to be added to the input date
+     * @param addAmount Number of days/months/years to be added to the input date
      * @return Date after adding given number of days/months/years to the input
      * date
      */
@@ -187,10 +192,8 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
      * From date will construct time as 0:0:0 AM<br/>
      * To Date will construct time as To Date + 1 [one day advance] 0:0:0.
      *
-     * @param fromDate
-     *            Date
-     * @param toDate
-     *            Date. return Date[] converted Date String values of From Date
+     * @param fromDate Date
+     * @param toDate   Date. return Date[] converted Date String values of From Date
      *                 and To Date
      * @return the java.util. date[]
      */
@@ -220,25 +223,21 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
      * From date will construct time as 0:0:0 AM<br/>
      * To Date will construct time as To Date + 1 [one day advance] 0:0:0.
      *
-     * @param fromDate
-     *            String
-     * @param toDate
-     *            String. return Date[] converted Date String values of From
+     * @param fromDate String
+     * @param toDate   String. return Date[] converted Date String values of From
      *                 Date and To Date
      * @return the java.util. date[]
-     * @throws ParseException
-     *             the parse exception
+     * @throws ParseException the parse exception
      */
     public static Date[] constructDateRange(final String fromDate, final String toDate) throws ParseException {
-        return constructDateRange(getDateFormatter(DFT_DATE_FORMAT).parse(fromDate),
-                getDateFormatter(DFT_DATE_FORMAT).parse(toDate));
+        return constructDateRange(getDateFormatter(DEFAULT_DATE_FORMAT).parse(fromDate),
+                getDateFormatter(DEFAULT_DATE_FORMAT).parse(toDate));
     }
 
     /**
      * Creates the date.
      *
-     * @param year
-     *            the year
+     * @param year the year
      * @return the java.util. date
      */
     public static Date createDate(final int year) {
@@ -307,12 +306,9 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
     /**
      * Gets the date.
      *
-     * @param year
-     *            the year
-     * @param month
-     *            the month
-     * @param date
-     *            the date
+     * @param year  the year
+     * @param month the month
+     * @param date  the date
      * @return date object representing given year, month and date
      */
     public static Date getDate(final int year, final int month, final int date) {
@@ -324,21 +320,18 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
     /**
      * Will format the given Date by dd/MM/yyyy pattern.
      *
-     * @param date
-     *            the date
+     * @param date the date
      * @return the default formatted date
      */
     public static String getDefaultFormattedDate(final Date date) {
-        return getDateFormatter(DFT_DATE_FORMAT).format(date);
+        return getDateFormatter(DEFAULT_DATE_FORMAT).format(date);
     }
 
     /**
      * Will format the given Date by given pattern.
      *
-     * @param date
-     *            the date
-     * @param pattern
-     *            the pattern
+     * @param date    the date
+     * @param pattern the pattern
      * @return the formatted date
      */
     public static String getFormattedDate(final Date date, final String pattern) {
@@ -381,8 +374,7 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
      * Eight<br/>
      * .
      *
-     * @param dateToConvert
-     *            the date to convert
+     * @param dateToConvert the date to convert
      * @return String word rep of date
      */
     public static String convertToWords(final Date dateToConvert) {
@@ -400,8 +392,7 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
     /**
      * Gets the date formatter.
      *
-     * @param pattern
-     *            the pattern
+     * @param pattern the pattern
      * @return the date formatter This is not threadsafe
      */
     public static SimpleDateFormat getDateFormatter(final String pattern) {
@@ -410,6 +401,7 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
 
     /**
      * Checks if the given date is between the 2 dates
+     *
      * @param date
      * @param fromDate
      * @param toDate

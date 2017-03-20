@@ -342,7 +342,7 @@ public class ContractorBillRegisterService {
             wfInitiator = assignmentService.getPrimaryAssignmentForUser(contractorBillRegister.getCreatedBy().getId());
         if (WorksConstants.REJECT_ACTION.toString().equalsIgnoreCase(workFlowAction)) {
             final String stateValue = WorksConstants.WF_STATE_REJECTED;
-            contractorBillRegister.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+            contractorBillRegister.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
                     .withComments(approvalComent)
                     .withStateValue(stateValue).withDateInfo(currentDate.toDate())
                     .withOwner(wfInitiator.getPosition())
@@ -365,7 +365,7 @@ public class ContractorBillRegisterService {
                 final String stateValue = WorksConstants.WF_STATE_CANCELLED;
                 wfmatrix = contractorBillRegisterWorkflowService.getWfMatrix(contractorBillRegister.getStateType(), null,
                         null, additionalRule, contractorBillRegister.getCurrentState().getValue(), null);
-                contractorBillRegister.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+                contractorBillRegister.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent)
                         .withStateValue(stateValue).withDateInfo(currentDate.toDate()).withOwner(pos)
                         .withNextAction("")
@@ -373,7 +373,7 @@ public class ContractorBillRegisterService {
             } else {
                 wfmatrix = contractorBillRegisterWorkflowService.getWfMatrix(contractorBillRegister.getStateType(), null,
                         null, additionalRule, contractorBillRegister.getCurrentState().getValue(), null);
-                contractorBillRegister.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+                contractorBillRegister.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent)
                         .withStateValue(wfmatrix.getNextState()).withDateInfo(new Date()).withOwner(pos)
                         .withNextAction(wfmatrix.getNextAction())

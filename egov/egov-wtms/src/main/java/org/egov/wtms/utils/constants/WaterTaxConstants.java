@@ -364,10 +364,13 @@ public class WaterTaxConstants {
     public static final String COMMISSIONER_DESGN = "Commissioner";
     public static final String EXECUTIVE_ENGINEER_DESIGN = "Executive engineer";
     public static final String MUNICIPAL_ENGINEER_DESIGN = "Municipal Engineer";
+    public static final String DEPUTY_ENGINEER_DESIGN = "Deputy Executive engineer";
     public static final String SUPERIENTEND_ENGINEER_DESIGN = "Superintendent Engineer";
     public static final String TAP_INSPPECTOR_DESIGN = "Tap Inspector";
     public static final String ASSISTANT_ENGINEER_DESIGN = "Assistant engineer";
+    public static final String ASSISTANT_EXECUTIVE_ENGINEER_DESIGN = "Assistant executive engineer";
     public static final String JUNIOR_OR_SENIOR_ASSISTANT_DESIGN = "Senior Assistant,Junior Assistant";
+    public static final String AE_TAPE_AEE__DESIGN = "Assistant executive engineer,Assistant engineer,Tap Inspector";
     public static final String JUNIOR_OR_SENIOR_ASSISTANT_DESIGN_REVENUE_CLERK = "Senior Assistant,Junior Assistant,Revenue Clerk";
 
 
@@ -383,4 +386,6 @@ public class WaterTaxConstants {
 
     public static final String IS_METEREDDONATIONAMOUNT_MANUAL="IS_METEREDDONATIONAMOUNT_MANUAL";
     public static final String IS_NONMETEREDDONATIONAMOUNT_MANUAL="IS_NONMETEREDDONATIONAMOUNT_MANUAL";
+    
+    public static final String INPROGRESS = "INPROGRESS";
 }

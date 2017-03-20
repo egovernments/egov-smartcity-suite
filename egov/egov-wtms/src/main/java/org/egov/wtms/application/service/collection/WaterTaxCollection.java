@@ -82,7 +82,6 @@ import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.workflow.entity.StateHistory;
-import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.client.util.PropertyTaxUtil;
@@ -254,19 +253,14 @@ public class WaterTaxCollection extends TaxCollection {
             waterConnectionDetails.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
                     WaterTaxConstants.APPLICATION_STATUS_FEEPAID, WaterTaxConstants.MODULETYPE));
             Long approvalPosition = 0l;
-            WorkFlowMatrix wfmatrix;
             final ApplicationWorkflowCustomDefaultImpl applicationWorkflowCustomDefaultImpl = waterConnectionDetailsService
                     .getInitialisedWorkFlowBean();
-         
-                wfmatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails.getStateType(), null, null,
-                        waterConnectionDetails.getApplicationType().getCode(),
-                        waterConnectionDetails.getCurrentState().getValue(), null);
-                approvalPosition = waterTaxUtils.getApproverPosition(wfmatrix.getNextDesignation(),
-                        waterConnectionDetails);
-                applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(waterConnectionDetails,
-                        approvalPosition, WaterTaxConstants.FEE_COLLECTION_COMMENT,
-                        waterConnectionDetails.getApplicationType().getCode(), null);
-            
+            approvalPosition = waterTaxUtils.getApproverPosition(WaterTaxConstants.AE_TAPE_AEE__DESIGN,
+                    waterConnectionDetails);
+            applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(waterConnectionDetails,
+                    approvalPosition, WaterTaxConstants.FEE_COLLECTION_COMMENT,
+                    waterConnectionDetails.getApplicationType().getCode(), null);
+
             waterConnectionSmsAndEmailService.sendSmsAndEmail(waterConnectionDetails, null);
             waterConnectionDetailsService.saveAndFlushWaterConnectionDetail(waterConnectionDetails);
         }

@@ -469,14 +469,14 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
         if (FinancialConstants.BUTTONREJECT.equalsIgnoreCase(workflowBean
                 .getWorkFlowAction())) {
             if (wfInitiator.equals(userAssignment)) {
-                paymentheader.transition(true).end()
+                paymentheader.transition().end()
                         .withSenderName(user.getName())
                         .withComments(workflowBean.getApproverComments())
                         .withDateInfo(currentDate.toDate());
             } else {
                 final String stateValue = FinancialConstants.WORKFLOW_STATE_REJECTED;
                 paymentheader
-                        .transition(true)
+                        .transition().progressWithStateCopy()
                         .withSenderName(user.getName())
                         .withComments(workflowBean.getApproverComments())
                         .withStateValue(stateValue)
@@ -494,7 +494,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
                             null, paymentheader.getCurrentState().getValue(),
                             null);
             paymentheader
-                    .transition(true)
+                    .transition().progressWithStateCopy()
                     .withSenderName(user.getName())
                     .withComments(workflowBean.getApproverComments())
                     .withStateValue(
@@ -504,7 +504,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
 
             paymentheader.getVoucherheader().setStatus(
                     FinancialConstants.CREATEDVOUCHERSTATUS);
-            paymentheader.transition(true).end().withSenderName(user.getName())
+            paymentheader.transition().end().withSenderName(user.getName())
                     .withComments(workflowBean.getApproverComments())
                     .withDateInfo(currentDate.toDate());
         } else if (FinancialConstants.BUTTONCANCEL
@@ -513,8 +513,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
             paymentheader.getVoucherheader().setStatus(
                     FinancialConstants.CANCELLEDVOUCHERSTATUS);
             paymentheader
-                    .transition(true)
-                    .end()
+                    .transition().end()
                     .withStateValue(FinancialConstants.WORKFLOW_STATE_CANCELLED)
                     .withSenderName(user.getName())
                     .withComments(workflowBean.getApproverComments())
@@ -539,7 +538,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
 
             } else if (paymentheader.getCurrentState().getNextAction()
                     .equalsIgnoreCase("END"))
-                paymentheader.transition(true).end()
+                paymentheader.transition().progressWithStateCopy().end()
                         .withSenderName(user.getName())
                         .withComments(workflowBean.getApproverComments())
                         .withDateInfo(currentDate.toDate());
@@ -549,7 +548,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
                                 null, paymentheader.getCurrentState()
                                         .getValue(),
                                 null);
-                paymentheader.transition(true).withSenderName(user.getName())
+                paymentheader.transition().progressWithStateCopy().withSenderName(user.getName())
                         .withComments(workflowBean.getApproverComments())
                         .withStateValue(wfmatrix.getNextState())
                         .withDateInfo(currentDate.toDate()).withOwner(pos)
