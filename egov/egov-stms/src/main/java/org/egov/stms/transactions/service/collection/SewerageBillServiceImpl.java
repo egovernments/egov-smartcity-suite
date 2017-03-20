@@ -145,6 +145,7 @@ public class SewerageBillServiceImpl extends BillServiceInterface {
     }
 
     @Override
+    @Transactional
     public String getBillXML(final Billable billObj) {
         String collectXML;
         try {
