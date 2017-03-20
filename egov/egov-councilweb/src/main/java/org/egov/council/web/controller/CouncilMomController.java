@@ -119,6 +119,7 @@ public class CouncilMomController {
     private static final String COUNCILMOM_SEARCH = "councilmom-search";
     private static final String COUNCILMOM_VIEW = "councilmom-view";
     private static final String COMMONERRORPAGE = "common-error-page";
+    private static final String APPLICATION_RTF = "application/rtf";
 
     @Autowired
     private EgwStatusHibernateDAO egwStatusHibernateDAO;
@@ -371,7 +372,7 @@ public class CouncilMomController {
         reportOutput = generateMomPdfByPassingMeeting(councilMeeting, request);
         if (reportOutput != null) {
             councilMeeting.setFilestore(fileStoreService.store(new ByteArrayInputStream(reportOutput), MEETINGRESOLUTIONFILENAME,
-                    "application/pdf", MODULE_NAME));
+                    APPLICATION_RTF, MODULE_NAME));
         }
         councilMeeting.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(MEETING_MODULENAME, MOM_FINALISED));
         councilMeetingService.update(councilMeeting);

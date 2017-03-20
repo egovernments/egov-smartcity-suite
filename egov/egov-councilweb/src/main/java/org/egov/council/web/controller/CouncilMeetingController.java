@@ -110,7 +110,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping("/councilmeeting")
 public class CouncilMeetingController {
 
-    private static final String APPLICATION_PDF = "application/pdf";
+    private static final String APPLICATION_RTF = "application/rtf";
     private static final String DATA = "{ \"data\":";
     private static final String MSG_ATTENDANCE_ALREADY_FINALIZD = "msg.attendance.already.finalizd";
     private static final String CITYLOGO = "citylogo";
@@ -128,6 +128,7 @@ public class CouncilMeetingController {
     private static final String COUNCILMEETING_SEND_SMS_EMAIL = "councilmeetingsearch-tosendsms-email";
     private static final String COUNCILMEETING_EDIT_ATTENDANCE = "councilmeeting-attend-form";
     private static final String COUNCILMEETING_ATTENDANCE_RESULT = "councilmeeting-attend-result";
+    private static final String MSG_MOM_RESOLUTION_CREATED ="msg.mom.create";
 
     @Autowired
     private CouncilMeetingService councilMeetingService;
@@ -350,22 +351,25 @@ public class CouncilMeetingController {
     }
 
     @RequestMapping(value = "/generateresolution/{id}", method = RequestMethod.GET)
-    @ResponseBody
-    public ResponseEntity<byte[]> viewDemandNoticeReport(@PathVariable final Long id,
-            final HttpSession session, HttpServletRequest request) {
+    public String viewDemandNoticeReport(@PathVariable final Long id,
+            final Model model, final HttpSession session, HttpServletRequest request) {
 
-        byte[] reportOutput;
+        //byte[] reportOutput;
         CouncilMeeting councilMeeting = councilMeetingService.findOne(id);
         final String url = WebUtils.extractRequestDomainURL(request, false);
 
         String logoPath = url.concat(ReportConstants.IMAGE_CONTEXT_PATH).concat(
                 (String) request.getSession().getAttribute(CITYLOGO));
-        reportOutput = councilReportService.generatePDFForMom(councilMeeting, logoPath);
+        councilReportService.generatePDFForMom(councilMeeting, logoPath);
 
-        final HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.parseMediaType(APPLICATION_PDF));
-        headers.add("content-disposition", "inline;filename=Resolution.pdf");
-        return new ResponseEntity<byte[]>(reportOutput, headers, HttpStatus.CREATED);
+        /*final HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.parseMediaType(APPLICATION_RTF));
+        headers.add("content-disposition", "inline;filename=Resolution.rtf");
+        new ResponseEntity<byte[]>(reportOutput, headers, HttpStatus.CREATED);*/
+        
+        model.addAttribute(MESSAGE, MSG_MOM_RESOLUTION_CREATED);
+        model.addAttribute("id", id);
+        return "mom-resolution-response" ;
     }
 
     @RequestMapping(value = "/attendance/search", method = RequestMethod.GET)
@@ -515,7 +519,7 @@ public class CouncilMeetingController {
 
                     if (reportOutput != null) {
                         councilMeeting.setFilestore(fileStoreService.store(new ByteArrayInputStream(reportOutput),
-                                MEETINGRESOLUTIONFILENAME, APPLICATION_PDF, MODULE_NAME));
+                                MEETINGRESOLUTIONFILENAME, APPLICATION_RTF, MODULE_NAME));
                         councilMeetingService.update(councilMeeting);
                     }
 
@@ -564,7 +568,7 @@ public class CouncilMeetingController {
         reportOutput = councilReportService.generatePDFForAgendaDetails(councilMeeting, logoPath);
 
         final HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.parseMediaType(APPLICATION_PDF));
+        headers.setContentType(MediaType.parseMediaType("application/pdf"));
         headers.add("content-disposition", "inline;filename=AgendaNotice.pdf");
         return new ResponseEntity<byte[]>(reportOutput, headers, HttpStatus.CREATED);
 

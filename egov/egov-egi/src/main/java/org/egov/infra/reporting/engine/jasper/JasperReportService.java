@@ -40,6 +40,33 @@
 
 package org.egov.infra.reporting.engine.jasper;
 
+import static org.egov.infra.reporting.engine.ReportConstants.FileFormat.CSV;
+import static org.egov.infra.reporting.engine.ReportConstants.FileFormat.HTM;
+import static org.egov.infra.reporting.engine.ReportConstants.FileFormat.PDF;
+import static org.egov.infra.reporting.engine.ReportConstants.FileFormat.RTF;
+import static org.egov.infra.reporting.engine.ReportConstants.FileFormat.TXT;
+import static org.egov.infra.reporting.engine.ReportConstants.FileFormat.XLS;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.sql.Connection;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.reporting.engine.AbstractReportService;
+import org.egov.infra.reporting.engine.ReportOutput;
+import org.egov.infra.reporting.engine.ReportRequest;
+import org.hibernate.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.sf.jasperreports.engine.DefaultJasperReportsContext;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JREmptyDataSource;
@@ -69,32 +96,8 @@ import net.sf.jasperreports.export.SimpleOutputStreamExporterOutput;
 import net.sf.jasperreports.export.SimplePdfExporterConfiguration;
 import net.sf.jasperreports.export.SimpleRtfExporterConfiguration;
 import net.sf.jasperreports.export.SimpleTextExporterConfiguration;
+import net.sf.jasperreports.export.SimpleWriterExporterOutput;
 import net.sf.jasperreports.export.SimpleXlsExporterConfiguration;
-import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.reporting.engine.AbstractReportService;
-import org.egov.infra.reporting.engine.ReportOutput;
-import org.egov.infra.reporting.engine.ReportRequest;
-import org.hibernate.Session;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.sql.Connection;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.egov.infra.reporting.engine.ReportConstants.FileFormat.CSV;
-import static org.egov.infra.reporting.engine.ReportConstants.FileFormat.HTM;
-import static org.egov.infra.reporting.engine.ReportConstants.FileFormat.PDF;
-import static org.egov.infra.reporting.engine.ReportConstants.FileFormat.RTF;
-import static org.egov.infra.reporting.engine.ReportConstants.FileFormat.TXT;
-import static org.egov.infra.reporting.engine.ReportConstants.FileFormat.XLS;
 
 public class JasperReportService extends AbstractReportService<JasperReport> {
 
@@ -209,6 +212,7 @@ public class JasperReportService extends AbstractReportService<JasperReport> {
         } else if (RTF.equals(reportInput.getReportFormat())) {
             exporter = new JRRtfExporter();
             exporterConfiguration = new SimpleRtfExporterConfiguration();
+            exporterOutput= new SimpleWriterExporterOutput(outputStream);
         } else if (HTM.equals(reportInput.getReportFormat())) {
             exporter = new HtmlExporter();
             exporterConfiguration = new SimpleHtmlExporterConfiguration();

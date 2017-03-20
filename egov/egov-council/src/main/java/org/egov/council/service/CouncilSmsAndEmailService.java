@@ -63,7 +63,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class CouncilSmsAndEmailService {
 
-    private static final String AGENDAATTACHFILENAME = "agendadetails";
+    private static final String AGENDAATTACHFILENAME = "agendadetails.rtf";
 
     @Autowired
     private MessagingService messagingService;
@@ -296,7 +296,7 @@ public class CouncilSmsAndEmailService {
 
     public void sendEmailOnSewerageForMeetingWithAttachment(final String email, final String emailBody,
             final String emailSubject, final byte[] attachment) {
-        messagingService.sendEmailWithAttachment(email, emailSubject, emailBody, "application/pdf", AGENDAATTACHFILENAME,
+        messagingService.sendEmailWithAttachment(email, emailSubject, emailBody, "application/rtf", AGENDAATTACHFILENAME,
                 attachment);
     }
 
