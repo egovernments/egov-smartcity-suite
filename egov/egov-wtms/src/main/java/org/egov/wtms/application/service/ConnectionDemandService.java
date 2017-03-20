@@ -371,6 +371,7 @@ public class ConnectionDemandService {
         return query.list();
     }
 
+    @Transactional
     public String generateBill(final String consumerCode, final String applicationTypeCode) {
         String collectXML = "";
         final SimpleDateFormat formatYear = new SimpleDateFormat("yyyy");
