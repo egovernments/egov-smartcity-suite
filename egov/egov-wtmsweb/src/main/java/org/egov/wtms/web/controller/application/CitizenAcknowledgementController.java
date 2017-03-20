@@ -39,6 +39,9 @@
  */
 package org.egov.wtms.web.controller.application;
 
+import static org.egov.wtms.utils.constants.WaterTaxConstants.PERMENENTCLOSE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.TEMPERARYCLOSE;
+
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
@@ -79,13 +82,12 @@ public class CitizenAcknowledgementController {
     @Autowired
     private ApplicationProcessTimeService applicationProcessTimeService;
     public static final String CITIZEN_ACKNOWLDGEMENT = "citizenAcknowledgement";
-    
+
     @Autowired
     private PropertyExtnUtils propertyExtnUtils;
-    
+
     @Autowired
     private CityService cityService;
-  
 
     @Autowired
     private WaterConnectionDetailsService waterConnectionDetailsService;
@@ -93,17 +95,17 @@ public class CitizenAcknowledgementController {
     @RequestMapping(value = "/citizeenAcknowledgement", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<byte[]> generateEstimationNotice(final HttpServletRequest request,
             final HttpSession session) {
-      
+
         final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
                 .findByApplicationNumber(request.getParameter("pathVars"));
-       return generateReport(waterConnectionDetails, session);
+        return generateReport(waterConnectionDetails, session);
     }
 
     private ResponseEntity<byte[]> generateReport(final WaterConnectionDetails waterConnectionDetails,
             final HttpSession session) {
-    	   ReportRequest reportInput = null;
-    	   ReportOutput reportOutput = null;
-    	   Map<String, Object> reportParams = new HashMap<String, Object>();
+        ReportRequest reportInput = null;
+        ReportOutput reportOutput = null;
+        final Map<String, Object> reportParams = new HashMap<>();
         if (waterConnectionDetails != null) {
             final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
             final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
@@ -118,13 +120,15 @@ public class CitizenAcknowledgementController {
             final Integer appProcessTime = applicationProcessTimeService.getApplicationProcessTime(
                     waterConnectionDetails.getApplicationType(), waterConnectionDetails.getCategory());
             if (appProcessTime != null)
-            	 reportParams.put("applicationDueDate",formatter.format(waterConnectionDetailsService.getDisposalDate(waterConnectionDetails, appProcessTime)));
-            
-            else 
-            	reportParams.put("applicationDueDate",null);
-            
-            String districtName=(String) session.getAttribute("districtName");
-            reportParams.put("cityUrl", ((!cityService.findAll().isEmpty()?cityService.findAll().get(0).getName().toLowerCase():districtName.toLowerCase())+ ".cdma.ap.gov.in"));
+                reportParams.put("applicationDueDate",
+                        formatter.format(waterConnectionDetailsService.getDisposalDate(waterConnectionDetails, appProcessTime)));
+
+            else
+                reportParams.put("applicationDueDate", null);
+
+            final String districtName = (String) session.getAttribute("districtName");
+            reportParams.put("cityUrl", (!cityService.findAll().isEmpty() ? cityService.findAll().get(0).getName().toLowerCase()
+                    : districtName.toLowerCase()) + ".cdma.ap.gov.in");
             reportParams.put("applicationType",
                     WordUtils.capitalize(waterConnectionDetails.getApplicationType().getName()).toString());
             reportParams.put("cityName", session.getAttribute("citymunicipalityname"));
@@ -135,15 +139,24 @@ public class CitizenAcknowledgementController {
             reportParams.put("address", assessmentDetails.getPropertyAddress());
             reportParams.put("houseNo", doorNo[0]);
             reportParams.put("propertyID", waterConnectionDetails.getConnection().getPropertyIdentifier());
-            reportParams.put("electionWard",assessmentDetails.getBoundaryDetails().getAdminWardName());
+            reportParams.put("electionWard", assessmentDetails.getBoundaryDetails().getAdminWardName());
+            if (waterConnectionDetails.getCloseConnectionType() != null)
+                if ("T".equals(waterConnectionDetails.getCloseConnectionType().toString()))
+                    waterConnectionDetails.setCloseConnectionType(TEMPERARYCLOSE);
+                else if ("P".equals(waterConnectionDetails.getCloseConnectionType().toString()))
+                    waterConnectionDetails.setCloseConnectionType(PERMENENTCLOSE);
+            reportParams.put("closeconnectiontype", waterConnectionDetails.getCloseConnectionType());
+            if (waterConnectionDetails.getCloseconnectionreason() != null)
+                reportParams.put("closeconnectionreason", waterConnectionDetails.getCloseconnectionreason().toString());
+            if (waterConnectionDetails.getReConnectionReason() != null)
+                reportParams.put("reconnectionreason", waterConnectionDetails.getReConnectionReason().toString());
             reportInput = new ReportRequest(CITIZEN_ACKNOWLDGEMENT, waterConnectionDetails, reportParams);
         }
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType("application/pdf"));
         headers.add("content-disposition", "inline;filename=EstimationNotice.pdf");
         reportOutput = reportService.createReport(reportInput);
-        return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
+        return new ResponseEntity<>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
     }
 
-    
 }
