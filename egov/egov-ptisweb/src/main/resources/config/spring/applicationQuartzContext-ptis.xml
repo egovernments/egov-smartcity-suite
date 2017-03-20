@@ -49,11 +49,11 @@
 		<property name="triggers">
 	    	<list>
 	    		<!-- Triggers at 7pm everyday (0 0 19 * * ?) -->
-                <ref bean="bulkBillGenerationCronTrigger0" />
+                <!-- <ref bean="bulkBillGenerationCronTrigger0" />
 				<ref bean="bulkBillGenerationCronTrigger1" />
 				<ref bean="bulkBillGenerationCronTrigger2" />
 				<ref bean="bulkBillGenerationCronTrigger3" />
-				<ref bean="bulkBillGenerationCronTrigger4" />
+				<ref bean="bulkBillGenerationCronTrigger4" /> -->
 				<ref bean="demandActivationJobTrigger"/>
 	    	</list>
 		</property>
@@ -62,7 +62,7 @@
 
 	<!-- Add description for bulkBillGenerationJobScheduler0 -->
 
-  <bean name="bulkBillGenerationJobScheduler0" id="bulkBillGenerationJobScheduler0" class="org.springframework.scheduling.quartz.JobDetailFactoryBean" >
+  <!-- <bean name="bulkBillGenerationJobScheduler0" id="bulkBillGenerationJobScheduler0" class="org.springframework.scheduling.quartz.JobDetailFactoryBean" >
 		<property name="group" value="PTIS_BILL_JOB_GROUP"/>
 		<property name="name" value="PTISBillJob0"/>
 		<property name="durability" value="true" />
@@ -91,9 +91,9 @@
 		<property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_DO_NOTHING"/>
     </bean>
 
-     <!-- END bulkBillGenerationJobScheduler0 -->
+     END bulkBillGenerationJobScheduler0
 
-	<!-- Add description for bulkBillGenerationJobScheduler1 -->
+	Add description for bulkBillGenerationJobScheduler1
 
   <bean name="bulkBillGenerationJobScheduler1" id="bulkBillGenerationJobScheduler1" class="org.springframework.scheduling.quartz.JobDetailFactoryBean" >
 		<property name="group" value="PTIS_BILL_JOB_GROUP"/>
@@ -124,9 +124,9 @@
 		<property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_DO_NOTHING"/>
     </bean>
 
-     <!-- END bulkBillGenerationJobScheduler1 -->
+     END bulkBillGenerationJobScheduler1
 
-	<!-- Add description for bulkBillGenerationJobScheduler2 -->
+	Add description for bulkBillGenerationJobScheduler2
 
   <bean name="bulkBillGenerationJobScheduler2" id="bulkBillGenerationJobScheduler2" class="org.springframework.scheduling.quartz.JobDetailFactoryBean" >
 		<property name="group" value="PTIS_BILL_JOB_GROUP"/>
@@ -157,9 +157,9 @@
 		<property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_DO_NOTHING"/>
     </bean>
 
-     <!-- END bulkBillGenerationJobScheduler2 -->
+     END bulkBillGenerationJobScheduler2
 
-	<!-- Add description for bulkBillGenerationJobScheduler3 -->
+	Add description for bulkBillGenerationJobScheduler3
 
   <bean name="bulkBillGenerationJobScheduler3" id="bulkBillGenerationJobScheduler3" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
 		<property name="group" value="PTIS_BILL_JOB_GROUP"/>
@@ -190,9 +190,9 @@
 		<property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_DO_NOTHING"/>
     </bean>
 
-     <!-- END bulkBillGenerationJobScheduler3 -->
+     END bulkBillGenerationJobScheduler3
 
-	<!-- Add description for bulkBillGenerationJobScheduler4 -->
+	Add description for bulkBillGenerationJobScheduler4
 
   <bean name="bulkBillGenerationJobScheduler4" id="bulkBillGenerationJobScheduler4" class="org.springframework.scheduling.quartz.JobDetailFactoryBean" >
 		<property name="group" value="PTIS_BILL_JOB_GROUP"/>
@@ -221,7 +221,7 @@
 		<property name="name" value="PTISBillTrigger4"/>
         <property name="cronExpression" value="0 */59 * * * ?" />
 		<property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_DO_NOTHING"/>
-    </bean>
+    </bean> -->
 
      <!-- END bulkBillGenerationJobScheduler4 -->
 
