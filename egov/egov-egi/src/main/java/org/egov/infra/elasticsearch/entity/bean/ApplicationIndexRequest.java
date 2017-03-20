@@ -59,6 +59,9 @@ public class ApplicationIndexRequest {
     private String aggregationLevel;
     private String fromDate;
     private String toDate;
+    private String ageing;
+    private String closed;
+    private String beyondSLA;
 
     public String getRegion() {
         return region;
@@ -194,6 +197,30 @@ public class ApplicationIndexRequest {
 
     public void setToDate(String toDate) {
         this.toDate = toDate;
+    }
+
+    public String getAgeing() {
+        return ageing;
+    }
+
+    public void setAgeing(String ageing) {
+        this.ageing = ageing;
+    }
+
+    public String getClosed() {
+        return closed;
+    }
+
+    public void setClosed(String closed) {
+        this.closed = closed;
+    }
+
+    public String getBeyondSLA() {
+        return beyondSLA;
+    }
+
+    public void setBeyondSLA(String beyondSLA) {
+        this.beyondSLA = beyondSLA;
     }
 
 }

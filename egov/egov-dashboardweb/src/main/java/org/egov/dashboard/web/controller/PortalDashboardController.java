@@ -39,8 +39,11 @@
  */
 package org.egov.dashboard.web.controller;
 
+import java.util.List;
+
 import org.egov.infra.elasticsearch.entity.bean.ApplicationIndexRequest;
 import org.egov.infra.elasticsearch.entity.bean.ApplicationIndexResponse;
+import org.egov.infra.elasticsearch.entity.bean.ApplicationInfo;
 import org.egov.infra.elasticsearch.service.es.ApplicationDocumentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -86,5 +89,11 @@ public class PortalDashboardController {
     @ResponseBody
     public ApplicationIndexResponse getSourceWiseApplicationDetails(ApplicationIndexRequest applicationIndexRequest) {
         return applicationDocumentService.findSourceWiseApplicationDetails(applicationIndexRequest);
+    }
+    
+    @RequestMapping(value = "/applications", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<ApplicationInfo> getApplications(ApplicationIndexRequest applicationIndexRequest) {
+        return applicationDocumentService.getApplicationInfo(applicationIndexRequest);
     }
 }
