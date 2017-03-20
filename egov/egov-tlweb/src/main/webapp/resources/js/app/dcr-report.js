@@ -41,29 +41,29 @@
 jQuery(document).ready(function() {
 	$('#dailyCollectionReport-header').hide();
 	$('#report-footer').hide();
-	
+
 	function validRange(start, end) {
-        
+
         if (start.getTime() > end.getTime() ) {
         	bootbox.alert("From date  should not be greater than the To Date.");
 			$('#end_date').val('');
 			return false;
-			} else 
+			} else
 			return true;
-		
+
 	}
 
-	
+
 		$('#dailyCollectionReportSearch').click(function(e){
 			$('#dailyCollectionReport-header').hide();
 			if($('#dailyCollectionform').valid()){
 			var fromDate = $("#fromDate").datepicker('getDate');
-			var toDate = $("#toDate").datepicker('getDate'); 
+			var toDate = $("#toDate").datepicker('getDate');
 			var status = $("#status").val();
 			validRange(fromDate,toDate);
 			var oTable= $('#dailyCollReport-table');
 			$('#dailyCollectionReport-header').show();
-	        $("#resultDateLabel").html(fromDate+" - "+toDate);	
+	        $("#resultDateLabel").html(fromDate+" - "+toDate);
 	        $.post("/tl/reports/dailycollectionreport",$('#dailyCollectionform').serialize())
 	    	.done(function(searchResult) {
 			oTable.dataTable({
@@ -73,7 +73,7 @@ jQuery(document).ready(function() {
 				"bDestroy": true,
 				"oTableTools" : {
 					"sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
-					"aButtons" : [ 
+					"aButtons" : [
 					               {
 						             "sExtends": "pdf",
 	                                 "sPdfMessage": "Daily Trade License Collection Report result for dates : "+fromDate+" - "+toDate+"",
@@ -90,7 +90,7 @@ jQuery(document).ready(function() {
 		                                 "sPdfMessage": "Daily Trade License Collection Report result for dates : "+fromDate+" - "+toDate+"",
 		                                 "sTitle": "Daily Water Tax Collection Report"
 						             }],
-					
+
 				},
 				searchable : true,
 				data : searchResult,
@@ -99,7 +99,7 @@ jQuery(document).ready(function() {
 						{title: 'Receipt Date', data: 'receiptDate',
 							render: function (data, type, full) {
 								if(data!=null && data!=undefined &&  data!= undefined) {
-									var regDateSplit = data.split("T")[0].split("-");		
+									var regDateSplit = data.split("T")[0].split("-");
 									return regDateSplit[2] + "/" + regDateSplit[1] + "/" + regDateSplit[0];
 								}
 								else return "";
@@ -112,10 +112,10 @@ jQuery(document).ready(function() {
 						{title: 'Payment mode', data: 'paymentMode'},
 						{title: 'Status', data: 'status'},
 						{title: 'Paid From', data: 'installmentFrom'},
-						{title: 'Paid To', data: 'installmentTo'},
+                   		{title: 'Paid To', data: 'installmentTo'},
 						{title: 'Arrear Total', data: 'arrearAmount',"className": "text-right"},
 						{title: 'Current Total', data: 'currentAmount',"className": "text-right"},
-						{title: 'Total Penalty', data: 'advanceAmount',"className": "text-right"},
+						{title: 'Total Penalty', data: 'latePaymentCharges',"className": "text-right"},
 						{title: 'Total Collection', data: 'totalAmount',"className": "text-right"}
 						],
 							  "aaSorting": [[4, 'desc']] ,
@@ -124,7 +124,7 @@ jQuery(document).ready(function() {
 									if (data.length == 0) {
 										jQuery('#report-footer').hide();
 									} else {
-										jQuery('#report-footer').show(); 
+										jQuery('#report-footer').show();
 									}
 									if (data.length > 0) {
 										updateTotalFooter(10, api);
@@ -134,18 +134,18 @@ jQuery(document).ready(function() {
 									}
 								},
 								"aoColumnDefs" : [ {
-									"aTargets" : [9,10,11,12],
+									"aTargets" : [10,11,12,13],
 									"mRender" : function(data, type, full) {
-										return formatNumberInr(data);    
+										return formatNumberInr(data);
 									}
-								} ]		
+								} ]
 					});
 			e.stopPropagation();
-		
+
 	});
 	        return true;
 	}
-	else 
+	else
 		return false;
 });
 });
