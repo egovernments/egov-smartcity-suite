@@ -87,8 +87,7 @@ import static org.egov.pgr.utils.constants.PGRConstants.MODULE_NAME;
 public class EscalationService {
     private static final Logger LOG = LoggerFactory.getLogger(EscalationService.class);
 
-    @Autowired
-    private EscalationRepository escalationRepository;
+    private final EscalationRepository escalationRepository;
 
     @Autowired
     private AppConfigValueService appConfigValuesService;
@@ -125,6 +124,11 @@ public class EscalationService {
 
     @Autowired
     private ComplaintIndexService complaintIndexService;
+
+    @Autowired
+    public EscalationService(EscalationRepository escalationRepository) {
+        this.escalationRepository = escalationRepository;
+    }
 
     @Transactional
     public void create(Escalation escalation) {
