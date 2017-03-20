@@ -39,6 +39,8 @@
  */
 package org.egov.wtms.web.controller.application;
 
+import static org.egov.wtms.utils.constants.WaterTaxConstants.MODE;
+
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Date;
@@ -122,15 +124,18 @@ public class CloserConnectionController extends GenericConnectionController {
         return waterConnectionDetails;
     }
 
-    public @ModelAttribute("connectionCategories") List<ConnectionCategory> connectionCategories() {
+    @ModelAttribute("connectionCategories")
+    public List<ConnectionCategory> connectionCategories() {
         return connectionCategoryService.getAllActiveConnectionCategory();
     }
 
-    public @ModelAttribute("usageTypes") List<UsageType> usageTypes() {
+    @ModelAttribute("usageTypes")
+    public List<UsageType> usageTypes() {
         return usageTypeService.getActiveUsageTypes();
     }
 
-    public @ModelAttribute("pipeSizes") List<PipeSize> pipeSizes() {
+    @ModelAttribute("pipeSizes")
+    public List<PipeSize> pipeSizes() {
         return pipeSizeService.getAllActivePipeSize();
     }
 
@@ -171,7 +176,7 @@ public class CloserConnectionController extends GenericConnectionController {
         model.addAttribute("applicationHistory", waterConnectionDetailsService.getHistory(waterConnectionDetails));
         model.addAttribute("approvalDepartmentList", departmentService.getAllDepartments());
         model.addAttribute("typeOfConnection", WaterTaxConstants.CLOSINGCONNECTION);
-        model.addAttribute("mode", "closureConnection");
+        model.addAttribute(MODE, "closureConnection");
         model.addAttribute("validationMessage",
                 closerConnectionService.validateChangeOfUseConnection(waterConnectionDetails));
         final BigDecimal waterTaxDueforParent = waterConnectionDetailsService.getTotalAmount(waterConnectionDetails);
@@ -187,8 +192,8 @@ public class CloserConnectionController extends GenericConnectionController {
         final String sourceChannel = request.getParameter("Source");
         String workFlowAction = "";
 
-        if (request.getParameter("mode") != null)
-            request.getParameter("mode");
+        if (request.getParameter(MODE) != null)
+            request.getParameter(MODE);
 
         if (request.getParameter("workFlowAction") != null)
             workFlowAction = request.getParameter("workFlowAction");
@@ -241,7 +246,7 @@ public class CloserConnectionController extends GenericConnectionController {
         final WaterConnectionDetails savedWaterConnectionDetails = closerConnectionService.updatecloserConnection(
                 waterConnectionDetails, approvalPosition, approvalComent, addrule, workFlowAction, sourceChannel);
         model.addAttribute("waterConnectionDetails", savedWaterConnectionDetails);
-        model.addAttribute("mode", "ack");
+        model.addAttribute(MODE, "ack");
         return "redirect:/application/citizeenAcknowledgement?pathVars=" + waterConnectionDetails.getApplicationNumber();
 
     }

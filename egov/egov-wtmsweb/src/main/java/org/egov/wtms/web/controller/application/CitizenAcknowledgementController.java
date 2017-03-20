@@ -93,7 +93,8 @@ public class CitizenAcknowledgementController {
     private WaterConnectionDetailsService waterConnectionDetailsService;
 
     @RequestMapping(value = "/citizeenAcknowledgement", method = RequestMethod.GET)
-    public @ResponseBody ResponseEntity<byte[]> generateEstimationNotice(final HttpServletRequest request,
+    @ResponseBody
+    public ResponseEntity<byte[]> generateEstimationNotice(final HttpServletRequest request,
             final HttpSession session) {
 
         final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
@@ -104,7 +105,7 @@ public class CitizenAcknowledgementController {
     private ResponseEntity<byte[]> generateReport(final WaterConnectionDetails waterConnectionDetails,
             final HttpSession session) {
         ReportRequest reportInput = null;
-        ReportOutput reportOutput = null;
+        ReportOutput reportOutput;
         final Map<String, Object> reportParams = new HashMap<>();
         if (waterConnectionDetails != null) {
             final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
