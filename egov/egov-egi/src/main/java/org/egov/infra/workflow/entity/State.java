@@ -40,10 +40,11 @@
 
 package org.egov.infra.workflow.entity;
 
-import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.pims.commons.Position;
-import org.hibernate.validator.constraints.Length;
+import static org.egov.infra.workflow.entity.State.SEQ_STATE;
+
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -60,11 +61,12 @@ import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
-import static org.egov.infra.workflow.entity.State.SEQ_STATE;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.workflow.multitenant.model.Task;
+import org.egov.pims.commons.Position;
+import org.hibernate.validator.constraints.Length;
 
 @Entity
 @Table(name = "EG_WF_STATES")
@@ -96,7 +98,7 @@ public class State extends AbstractAuditable {
     @JoinColumn(name = "OWNER_USER")
     private User ownerUser;
 
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY, mappedBy = "state")
+    @OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.LAZY, mappedBy = "state")
     @OrderBy("id")
     private Set<StateHistory> history = new HashSet<>();
 
@@ -130,8 +132,12 @@ public class State extends AbstractAuditable {
     @JoinColumn(name = "previousStateRef")
     private State previousStateRef;
 
-    protected State() {
-        //Explicit state initialization not allowed
+    private String myLinkId;
+    
+    private String tenantId;
+
+    public State() {
+        // Explicit state initialization not allowed
     }
 
     @Override
@@ -148,7 +154,7 @@ public class State extends AbstractAuditable {
         return type;
     }
 
-    protected void setType(final String type) {
+    public void setType(final String type) {
         this.type = type;
     }
 
@@ -156,7 +162,7 @@ public class State extends AbstractAuditable {
         return value;
     }
 
-    protected void setValue(final String value) {
+    public void setValue(final String value) {
         this.value = value;
     }
 
@@ -164,7 +170,7 @@ public class State extends AbstractAuditable {
         return ownerPosition;
     }
 
-    protected void setOwnerPosition(final Position ownerPosition) {
+    public void setOwnerPosition(final Position ownerPosition) {
         this.ownerPosition = ownerPosition;
     }
 
@@ -172,7 +178,7 @@ public class State extends AbstractAuditable {
         return ownerUser;
     }
 
-    protected void setOwnerUser(final User ownerUser) {
+    public void setOwnerUser(final User ownerUser) {
         this.ownerUser = ownerUser;
     }
 
@@ -180,11 +186,11 @@ public class State extends AbstractAuditable {
         return history;
     }
 
-    protected void setHistory(final Set<StateHistory> history) {
+    public void setHistory(final Set<StateHistory> history) {
         this.history = history;
     }
 
-    protected void addStateHistory(final StateHistory history) {
+    public void addStateHistory(final StateHistory history) {
         getHistory().add(history);
     }
 
@@ -192,7 +198,7 @@ public class State extends AbstractAuditable {
         return senderName;
     }
 
-    protected void setSenderName(final String senderName) {
+    public void setSenderName(final String senderName) {
         this.senderName = senderName;
     }
 
@@ -200,7 +206,7 @@ public class State extends AbstractAuditable {
         return nextAction;
     }
 
-    protected void setNextAction(final String nextAction) {
+    public void setNextAction(final String nextAction) {
         this.nextAction = nextAction;
     }
 
@@ -208,7 +214,7 @@ public class State extends AbstractAuditable {
         return comments;
     }
 
-    protected void setComments(final String comments) {
+    public void setComments(final String comments) {
         this.comments = comments;
     }
 
@@ -224,7 +230,7 @@ public class State extends AbstractAuditable {
         return extraInfo;
     }
 
-    protected void setExtraInfo(final String extraInfo) {
+    public void setExtraInfo(final String extraInfo) {
         this.extraInfo = extraInfo;
     }
 
@@ -232,7 +238,7 @@ public class State extends AbstractAuditable {
         return dateInfo;
     }
 
-    protected void setDateInfo(final Date dateInfo) {
+    public void setDateInfo(final Date dateInfo) {
         this.dateInfo = dateInfo;
     }
 
@@ -240,7 +246,7 @@ public class State extends AbstractAuditable {
         return extraDateInfo;
     }
 
-    protected void setExtraDateInfo(final Date extraDateInfo) {
+    public void setExtraDateInfo(final Date extraDateInfo) {
         this.extraDateInfo = extraDateInfo;
     }
 
@@ -248,7 +254,7 @@ public class State extends AbstractAuditable {
         return status;
     }
 
-    protected void setStatus(final StateStatus status) {
+    public void setStatus(final StateStatus status) {
         this.status = status;
     }
 
@@ -293,4 +299,37 @@ public class State extends AbstractAuditable {
         STARTED, INPROGRESS, ENDED
     }
 
+    public String getMyLinkId() {
+        return myLinkId;
+    }
+
+    public void setMyLinkId(String myLinkId) {
+        this.myLinkId = myLinkId;
+    }
+
+    public Task map() {
+        Task t=new Task();
+        t.setBusinessKey(this.type);
+        t.setComments(this.comments);
+        t.setCreatedDate(this.getCreatedDate());
+        t.setId(this.id.toString());
+        t.setStatus(this.value);
+        t.setNatureOfTask(this.natureOfTask);
+        t.setDetails(this.extraInfo==null?"hello":this.extraInfo);
+        t.setSender(this.senderName);
+        t.setUrl(this.myLinkId);  
+        return t;
+        
+         
+     }
+
+	public String getTenantId() {
+		return tenantId;
+	}
+
+	public void setTenantId(String tenantId) {
+		this.tenantId = tenantId;
+	}
+    
+    
 }

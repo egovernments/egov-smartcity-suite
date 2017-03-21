@@ -40,7 +40,15 @@
 
 package org.egov.infra.web.controller;
 
-import com.google.gson.GsonBuilder;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.egov.infra.utils.StringUtils.escapeSpecialChars;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.web.support.ui.Inbox;
 import org.egov.infra.workflow.entity.State;
@@ -48,23 +56,21 @@ import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infra.workflow.entity.WorkflowTypes;
 import org.egov.infra.workflow.inbox.InboxRenderServiceDeligate;
+import org.egov.infra.workflow.multitenant.model.ProcessInstance;
+import org.egov.infra.workflow.multitenant.model.Task;
+import org.egov.infra.workflow.multitenant.service.WorkflowInterface;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.LinkedList;
-import java.util.List;
-
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.egov.infra.utils.StringUtils.escapeSpecialChars;
-import static org.egov.infra.workflow.entity.StateAware.byCreatedDate;
+import com.google.gson.GsonBuilder;
 
 @Controller
 @RequestMapping("/inbox")
@@ -77,6 +83,9 @@ public class InboxController {
 
     @Autowired
     private SecurityUtils securityUtils;
+
+    @Autowired
+    private ApplicationContext applicationContext;
 
     @RequestMapping(produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String showInbox() {
@@ -94,8 +103,7 @@ public class InboxController {
     }
 
     private String createInboxData(final List<StateAware> inboxStates) {
-        final List<Inbox> inboxItems = new LinkedList<>();
-        inboxStates.sort(byCreatedDate());
+        final List<Inbox> inboxItems = new ArrayList<Inbox>();
         for (final StateAware stateAware : inboxStates) {
             final State state = stateAware.getCurrentState();
             final WorkflowTypes workflowTypes = inboxRenderServiceDeligate.getWorkflowType(stateAware.getStateType());
@@ -109,8 +117,34 @@ public class InboxController {
             inboxItem.setDetails(isBlank(stateAware.getStateDetails()) ? EMPTY : stateAware.getStateDetails());
             inboxItem.setLink(workflowTypes.getLink().replace(":ID", stateAware.myLinkId()));
             inboxItems.add(inboxItem);
+
         }
+        WorkflowInterface wf = getWorkflowImplementation(null);
+        ProcessInstance processInstance = new ProcessInstance();
+        processInstance.setAsignee(securityUtils.getCurrentUser().getId().toString());
+        List<Task> tasks = wf.getTasks("jurisdiction", processInstance);
+        for (Task t : tasks) {
+
+            final Inbox inboxItem = new Inbox();
+            inboxItem.setId(t.getId());
+            inboxItem.setCreatedDate(t.getCreatedDate());
+            inboxItem.setDate(DATE_FORMATTER.print(new DateTime(t.getCreatedDate())));
+            inboxItem.setSender(t.getSender());
+            inboxItem.setTask(t.getNatureOfTask());
+            inboxItem.setStatus(t.getStatus());
+            inboxItem.setDetails(t.getDetails());
+            inboxItem.setLink(t.getUrl());
+            inboxItem.setSender(t.getSender());
+            inboxItems.add(inboxItem);
+        }
+        Collections.sort(inboxItems);
+        Collections.reverse(inboxItems);
+
         return "{ \"data\":" + new GsonBuilder().create().toJson(inboxItems) + "}";
+    }
+
+    public WorkflowInterface getWorkflowImplementation(String type) {
+        return (WorkflowInterface) applicationContext.getBean("internalDefaultWorkflow");
     }
 
     private String createInboxHistoryData(final List<StateHistory> stateHistories) {
@@ -121,10 +155,13 @@ public class InboxController {
             inboxHistoryItem.setId(stateHistory.getState().getId().toString());
             inboxHistoryItem.setDate(DATE_FORMATTER.print(new DateTime(stateHistory.getLastModifiedDate())));
             inboxHistoryItem.setSender(stateHistory.getSenderName());
-            inboxHistoryItem.setTask(isBlank(stateHistory.getNatureOfTask()) ? workflowTypes.getDisplayName() : stateHistory.getNatureOfTask());
+            inboxHistoryItem.setTask(
+                    isBlank(stateHistory.getNatureOfTask()) ? workflowTypes.getDisplayName() : stateHistory.getNatureOfTask());
             inboxHistoryItem
-                    .setStatus(stateHistory.getValue() + (isBlank(stateHistory.getNextAction()) ? EMPTY : "-" + stateHistory.getNextAction()));
-            inboxHistoryItem.setDetails(isBlank(stateHistory.getComments()) ? EMPTY : escapeSpecialChars(stateHistory.getComments()));
+                    .setStatus(stateHistory.getValue()
+                            + (isBlank(stateHistory.getNextAction()) ? EMPTY : "-" + stateHistory.getNextAction()));
+            inboxHistoryItem
+                    .setDetails(isBlank(stateHistory.getComments()) ? EMPTY : escapeSpecialChars(stateHistory.getComments()));
             inboxHistoryItem.setLink(EMPTY);
             inboxHistoryItems.add(inboxHistoryItem);
         }
