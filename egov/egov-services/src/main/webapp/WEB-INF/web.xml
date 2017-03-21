@@ -186,7 +186,8 @@
 	
     <filter-mapping>
         <filter-name>ContextLifecycleFilter</filter-name>
-        <url-pattern>/api/*</url-pattern>
+        <url-pattern>/egf-masters/*</url-pattern>
+        <url-pattern>/hr-masters/*</url-pattern>
     </filter-mapping>
 
 	<!-- Filter Mapping Ends -->
@@ -216,7 +217,8 @@
 
     <servlet-mapping>
         <servlet-name>ZuulServlet</servlet-name>
-        <url-pattern>/api/*</url-pattern>
+        <url-pattern>/egf-masters/*</url-pattern>
+        <url-pattern>/hr-masters/*</url-pattern>
 	</servlet-mapping>
 	
     <!-- Servlet Declaration Ends -->  

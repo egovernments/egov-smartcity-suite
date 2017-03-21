@@ -115,8 +115,8 @@ public class ZuulProxyFilter extends ZuulFilter {
             final URL requestURL = new URL(request.getRequestURL().toString());
 
             String endPointURI;
-            if (requestURL.getPath().startsWith("/services/api"))
-                endPointURI = requestURL.getPath().split("/services/api")[1];
+            if (requestURL.getPath().startsWith("/services"))
+                endPointURI = requestURL.getPath().split("/services")[1];
             else
                 endPointURI = requestURL.getPath();
 
