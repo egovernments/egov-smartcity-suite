@@ -1424,9 +1424,12 @@ public class ComplaintIndexService {
 
     // This is a generic method to fetch all complaints based on fieldName and its value
     public List<ComplaintIndex> getFilteredComplaints(final ComplaintDashBoardRequest complaintDashBoardRequest,
-            final String fieldName, final String fieldValue) {
-        final BoolQueryBuilder boolQuery = getFilterQuery(complaintDashBoardRequest);
-        boolQuery.filter(matchQuery(fieldName, fieldValue));
+            final String fieldName, final String fieldValue, Integer lowerLimit, Integer upperLimit) {
+        BoolQueryBuilder boolQuery = getFilterQuery(complaintDashBoardRequest);
+        if (isNotBlank(fieldValue))
+            boolQuery.filter(matchQuery(fieldName, fieldValue));
+        else 
+            boolQuery = boolQuery.filter(matchQuery("ifClosed", 1)).filter(rangeQuery(fieldName).gte(lowerLimit).lte(upperLimit));
 
         final List<ComplaintIndex> complaints = complaintIndexRepository.findAllComplaintsByField(complaintDashBoardRequest,
                 boolQuery);
