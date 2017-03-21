@@ -342,4 +342,9 @@
 	<put-attribute name="page-title" value="lbl.title.meeting.details.report" cascade="true"/>
 	<put-attribute name="body" value="/WEB-INF/views/reports/meetingdetails-report.jsp"/>
 </definition>
+
+<definition name="mom-resolution-response" extends="base_layout">
+	<put-attribute name="page-title" value="title.mom.resolution.generated" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/councilmom/mom-resolution-response.jsp"/>
+</definition>
 </tiles-definitions>

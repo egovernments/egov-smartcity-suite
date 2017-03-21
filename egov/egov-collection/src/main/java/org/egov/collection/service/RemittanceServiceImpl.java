@@ -361,7 +361,6 @@ public class RemittanceServiceImpl extends RemittanceService {
         remittanceDetailsList.addAll(getRemittanceDetailsList(BigDecimal.ZERO, totalAmount, serviceGLCode, remittance));
         remittance.setRemittanceDetails(new HashSet<RemittanceDetail>(remittanceDetailsList));
         remittancePersistService.persist(remittance);
-        startWorkflow(remittance);
         if (CollectionConstants.YES.equalsIgnoreCase(createVoucher)
                 && (totalCashVoucherAmt.compareTo(BigDecimal.ZERO) > 0
                         || totalChequeVoucherAmt.compareTo(BigDecimal.ZERO) > 0)) {
@@ -413,15 +412,6 @@ public class RemittanceServiceImpl extends RemittanceService {
         headerdetails.put(VoucherConstant.MODULEID, CollectionConstants.COLLECTIONS_EG_MODULES_ID);
         headerdetails.put(VoucherConstant.MODULEID, CollectionConstants.COLLECTIONS_EG_MODULES_ID);
         return headerdetails;
-    }
-
-    private void startWorkflow(final Remittance remittance) {
-        final Position position = collectionsUtil.getPositionOfUser(collectionsUtil.getLoggedInUser());
-        remittance.transition().start()
-                .withSenderName(collectionsUtil.getLoggedInUser().getUsername() + "::"
-                        + collectionsUtil.getLoggedInUser().getName())
-                .withComments(CollectionConstants.WF_STATE_NEW).withStateValue(CollectionConstants.WF_STATE_NEW)
-                .withOwner(position).withDateInfo(new Date()).withNextAction(CollectionConstants.WF_STATE_END).end();
     }
 
     public List<RemittanceDetail> getRemittanceDetailsList(final BigDecimal creditAmount, final BigDecimal debitAmount,

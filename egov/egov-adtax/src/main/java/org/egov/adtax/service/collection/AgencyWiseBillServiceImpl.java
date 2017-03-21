@@ -155,6 +155,7 @@ public class AgencyWiseBillServiceImpl extends BillServiceInterface {
     }
 
     @Override
+    @Transactional
     public String getBillXML(final Billable billObj) {
         String collectXML;
         collectXML = URLEncoder.encode(super.getBillXML(billObj));

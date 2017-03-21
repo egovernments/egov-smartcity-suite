@@ -56,6 +56,7 @@ import org.egov.infra.elasticsearch.entity.ApplicationIndex;
 import org.egov.infra.elasticsearch.entity.bean.ApplicationDetails;
 import org.egov.infra.elasticsearch.entity.bean.ApplicationIndexRequest;
 import org.egov.infra.elasticsearch.entity.bean.ApplicationIndexResponse;
+import org.egov.infra.elasticsearch.entity.bean.ApplicationInfo;
 import org.egov.infra.elasticsearch.entity.bean.ServiceDetails;
 import org.egov.infra.elasticsearch.entity.bean.ServiceGroupDetails;
 import org.egov.infra.elasticsearch.entity.bean.ServiceGroupTrend;
@@ -534,10 +535,47 @@ public class ApplicationDocumentService {
             boolQuery = boolQuery
                     .filter(QueryBuilders.rangeQuery(APPLICATION_DATE).gte(DATEFORMATTER_YYYY_MM_DD.format(fromDate))
                             .lte(DATEFORMATTER_YYYY_MM_DD.format(toDate)).includeUpper(false));
-        if (StringUtils.isNotBlank(applicationIndexRequest.getFunctionaryCode()))
+        if (StringUtils.isNotBlank(applicationIndexRequest.getFunctionaryCode())) {
             boolQuery = boolQuery
                     .filter(QueryBuilders.matchQuery(OWNER_NAME, applicationIndexRequest.getFunctionaryCode()));
+            if (StringUtils.isNotBlank(applicationIndexRequest.getClosed())) {
+                if ("Y".equalsIgnoreCase(applicationIndexRequest.getClosed()))
+                    boolQuery = boolQuery
+                            .filter(QueryBuilders.matchQuery(IS_CLOSED, 1));
+                else
+                    boolQuery = boolQuery
+                            .filter(QueryBuilders.matchQuery(IS_CLOSED, 0));
+            }
+            if (StringUtils.isNotBlank(applicationIndexRequest.getBeyondSLA()))
+                boolQuery = filterBasedOnSLAForFunctionary(applicationIndexRequest, boolQuery);
+        }
+
         return boolQuery;
+    }
+
+    private BoolQueryBuilder filterBasedOnSLAForFunctionary(ApplicationIndexRequest applicationIndexRequest,
+            BoolQueryBuilder boolQuery) {
+        BoolQueryBuilder slaQuery = boolQuery;
+        if ("Y".equalsIgnoreCase(applicationIndexRequest.getBeyondSLA())) {
+            if (StringUtils.isNotBlank(applicationIndexRequest.getAgeing())) {
+                if ("0-1Wdays".equalsIgnoreCase(applicationIndexRequest.getAgeing()))
+                    slaQuery = slaQuery
+                            .filter(QueryBuilders.rangeQuery(SLA_GAP).gte(0).lt(8));
+                else if ("1W-1M".equalsIgnoreCase(applicationIndexRequest.getAgeing()))
+                    slaQuery = slaQuery
+                            .filter(QueryBuilders.rangeQuery(SLA_GAP).gte(8).lt(31));
+                else if ("1M-3M".equalsIgnoreCase(applicationIndexRequest.getAgeing()))
+                    slaQuery = slaQuery
+                            .filter(QueryBuilders.rangeQuery(SLA_GAP).gte(31).lt(91));
+                else
+                    slaQuery = slaQuery.filter(QueryBuilders.rangeQuery(SLA_GAP).gte(91));
+            } else
+                slaQuery = slaQuery
+                        .filter(QueryBuilders.rangeQuery(SLA_GAP).gt(0));
+        } else
+            slaQuery = slaQuery
+                    .filter(QueryBuilders.rangeQuery(SLA_GAP).lte(0));
+        return slaQuery;
     }
 
     private Map<String, Long> getAggregationWiseApplicationCounts(ApplicationIndexRequest applicationIndexRequest, Date fromDate,
@@ -950,7 +988,7 @@ public class ApplicationDocumentService {
             requiredFields[2] = CITY_GRADE;
             requiredFields[3] = CITY_CODE;
         } else if (APPLICATION_TYPE.equalsIgnoreCase(aggregationField)) {
-            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("applicationType", value));
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery(APPLICATION_TYPE, value));
             requiredFields = new String[2];
             requiredFields[0] = MODULE_NAME;
             requiredFields[1] = "sla";
@@ -1038,7 +1076,7 @@ public class ApplicationDocumentService {
         final ValueCountBuilder countBuilder = AggregationBuilders.count(TOTAL_COUNT).field(APPLICATION_NUMBER);
         final BoolQueryBuilder boolQuery = prepareWhereClause(applicationIndexRequest, fromDate, toDate);
 
-        aggregation = AggregationBuilders.terms("by_service1").field("applicationType").size(5)
+        aggregation = AggregationBuilders.terms("by_service1").field(APPLICATION_TYPE).size(5)
                 .subAggregation(countBuilder)
                 .order(Terms.Order.aggregation(TOTAL_COUNT, false));
 
@@ -1099,6 +1137,58 @@ public class ApplicationDocumentService {
             delayMap.put(String.valueOf(entry.getKey()), (long) sumAggr.getValue());
         }
         return delayMap;
+    }
+
+    /**
+     * Provides the details of the applications
+     * @param applicationIndexRequest
+     * @return list
+     */
+    public List<ApplicationInfo> getApplicationInfo(ApplicationIndexRequest applicationIndexRequest) {
+        List<ApplicationInfo> applications = new ArrayList<>();
+        List<Map> appDetails = new ArrayList<>();
+        ApplicationInfo appInfo;
+        Date fromDate = null;
+        Date toDate = null;
+        if (StringUtils.isNotBlank(applicationIndexRequest.getFromDate())
+                && StringUtils.isNotBlank(applicationIndexRequest.getToDate())) {
+            fromDate = DateUtils.getDate(applicationIndexRequest.getFromDate(), DATE_FORMAT_YYYYMMDD);
+            toDate = DateUtils.addDays(DateUtils.getDate(applicationIndexRequest.getToDate(), DATE_FORMAT_YYYYMMDD),
+                    1);
+        }
+        BoolQueryBuilder boolQuery = prepareWhereClause(applicationIndexRequest, fromDate, toDate);
+
+        SearchResponse response = elasticsearchTemplate.getClient()
+                .prepareSearch(APPLICATIONS_INDEX)
+                .setQuery(boolQuery)
+                .execute().actionGet();
+
+        int size = (int) response.getHits().totalHits();
+        response = elasticsearchTemplate.getClient()
+                .prepareSearch(APPLICATIONS_INDEX)
+                .setQuery(boolQuery).setSize(size)
+                .setFetchSource(new String[] { APPLICATION_DATE, APPLICATION_NUMBER, APPLICATION_TYPE, "applicantName",
+                        "applicantAddress", "status", CHANNEL, "sla" }, null)
+                .execute().actionGet();
+
+        for (SearchHit hit : response.getHits())
+            appDetails.add(hit.sourceAsMap());
+
+        if (!appDetails.isEmpty()) {
+            for (Map details : appDetails) {
+                appInfo = new ApplicationInfo();
+                appInfo.setAppDate(details.get(APPLICATION_DATE).toString().split("T")[0]);
+                appInfo.setAppNo(details.get(APPLICATION_NUMBER).toString());
+                appInfo.setService(details.get(APPLICATION_TYPE).toString());
+                appInfo.setApplicantName(details.get("applicantName").toString());
+                appInfo.setApplicantAddress(details.get("applicantAddress").toString());
+                appInfo.setAppStatus(details.get("status").toString());
+                appInfo.setSource(details.get(CHANNEL).toString());
+                appInfo.setSla(details.get("sla") == null ? 0 : (int) details.get("sla"));
+                applications.add(appInfo);
+            }
+        }
+        return applications;
     }
 
 }

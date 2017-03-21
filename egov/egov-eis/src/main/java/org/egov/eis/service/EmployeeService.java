@@ -560,4 +560,15 @@ public class EmployeeService implements EntityTypeService {
         return false;
     }
 
+    public Boolean primaryAssignExistsForSamePeriod(final Employee employee) {
+        int count = 0;
+        Date currentDate = new Date();
+        for (Assignment assign : employee.getAssignments()) {
+            if (assign.getFromDate() != null && currentDate.after(assign.getFromDate()) && currentDate.before(assign.getToDate())
+                    && assign.getPrimary())
+                count++;
+        }
+        return count > 1 ? true : false;
+    }
+
 }

@@ -39,10 +39,9 @@
  */
 package org.egov.wtms.web.controller.application;
 
-import static org.egov.wtms.utils.constants.WaterTaxConstants.WFLOW_ACTION_STEP_THIRDPARTY_CREATED;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.MODE;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -50,13 +49,8 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.egov.eis.entity.Assignment;
 import org.egov.eis.web.contract.WorkflowContainer;
-import org.egov.infra.admin.master.entity.Role;
-import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.DepartmentService;
-import org.egov.infra.admin.master.service.UserService;
-import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.pims.commons.Position;
 import org.egov.wtms.application.entity.ApplicationDocuments;
@@ -107,17 +101,13 @@ public class CloserConnectionController extends GenericConnectionController {
 
     @Autowired
     private SecurityUtils securityUtils;
-    
-    @Autowired
-    private UserService userService;
-    
+
     @Autowired
     private ApplicationTypeService applicationTypeService;
-    
+
     @Autowired
     @Qualifier("parentMessageSource")
     private MessageSource wcmsMessageSource;
-
 
     @Autowired
     public CloserConnectionController(final WaterConnectionDetailsService waterConnectionDetailsService,
@@ -134,27 +124,26 @@ public class CloserConnectionController extends GenericConnectionController {
         return waterConnectionDetails;
     }
 
-    public @ModelAttribute("connectionCategories") List<ConnectionCategory> connectionCategories() {
+    @ModelAttribute("connectionCategories")
+    public List<ConnectionCategory> connectionCategories() {
         return connectionCategoryService.getAllActiveConnectionCategory();
     }
 
-    public @ModelAttribute("usageTypes") List<UsageType> usageTypes() {
+    @ModelAttribute("usageTypes")
+    public List<UsageType> usageTypes() {
         return usageTypeService.getActiveUsageTypes();
     }
 
-    public @ModelAttribute("pipeSizes") List<PipeSize> pipeSizes() {
+    @ModelAttribute("pipeSizes")
+    public List<PipeSize> pipeSizes() {
         return pipeSizeService.getAllActivePipeSize();
     }
 
     /*
-     * public @ModelAttribute("documentNamesList") List<DocumentNames>
-     * documentNamesList(
+     * public @ModelAttribute("documentNamesList") List<DocumentNames> documentNamesList(
      * @ModelAttribute final WaterConnectionDetails waterConnectionDetails) {
-     * waterConnectionDetails.setApplicationType(applicationTypeService
-     * .findByCode(WaterTaxConstants.CLOSINGCONNECTION)); return
-     * waterConnectionDetailsService
-     * .getAllActiveDocumentNames(waterConnectionDetails.getApplicationType());
-     * }
+     * waterConnectionDetails.setApplicationType(applicationTypeService .findByCode(WaterTaxConstants.CLOSINGCONNECTION)); return
+     * waterConnectionDetailsService .getAllActiveDocumentNames(waterConnectionDetails.getApplicationType()); }
      */
 
     @RequestMapping(value = "/close/{applicationCode}", method = RequestMethod.GET)
@@ -164,8 +153,8 @@ public class CloserConnectionController extends GenericConnectionController {
 
         return loadViewData(model, request, waterConnectionDetails);
     }
-    
-    @Transactional(readOnly=true)
+
+    @Transactional(readOnly = true)
     public String loadViewData(final Model model, final HttpServletRequest request,
             final WaterConnectionDetails waterConnectionDetails) {
         waterConnectionDetails.setPreviousApplicationType(waterConnectionDetails.getApplicationType().getCode());
@@ -179,7 +168,7 @@ public class CloserConnectionController extends GenericConnectionController {
         workflowContainer.setAdditionalRule(WaterTaxConstants.WORKFLOW_CLOSUREADDITIONALRULE);
         prepareWorkflow(model, waterConnectionDetails, workflowContainer);
         model.addAttribute("radioButtonMap", Arrays.asList(ClosureType.values()));
-        model.addAttribute("loggedInCSCUser",waterTaxUtils.getCurrentUserRole());
+        model.addAttribute("loggedInCSCUser", waterTaxUtils.getCurrentUserRole());
         model.addAttribute("waterConnectionDetails", waterConnectionDetails);
         model.addAttribute("feeDetails", connectionDemandService.getSplitFee(waterConnectionDetails));
         model.addAttribute("connectionType", waterConnectionDetailsService.getConnectionTypesMap()
@@ -187,7 +176,7 @@ public class CloserConnectionController extends GenericConnectionController {
         model.addAttribute("applicationHistory", waterConnectionDetailsService.getHistory(waterConnectionDetails));
         model.addAttribute("approvalDepartmentList", departmentService.getAllDepartments());
         model.addAttribute("typeOfConnection", WaterTaxConstants.CLOSINGCONNECTION);
-        model.addAttribute("mode", "closureConnection");
+        model.addAttribute(MODE, "closureConnection");
         model.addAttribute("validationMessage",
                 closerConnectionService.validateChangeOfUseConnection(waterConnectionDetails));
         final BigDecimal waterTaxDueforParent = waterConnectionDetailsService.getTotalAmount(waterConnectionDetails);
@@ -198,12 +187,13 @@ public class CloserConnectionController extends GenericConnectionController {
     @RequestMapping(value = "/close/{applicationCode}", method = RequestMethod.POST)
     public String update(@Valid @ModelAttribute final WaterConnectionDetails waterConnectionDetails,
             final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
-            final HttpServletRequest request, final Model model,final BindingResult errors, @RequestParam("files") final MultipartFile[] files) {
+            final HttpServletRequest request, final Model model, final BindingResult errors,
+            @RequestParam("files") final MultipartFile[] files) {
         final String sourceChannel = request.getParameter("Source");
         String workFlowAction = "";
 
-        if (request.getParameter("mode") != null)
-            request.getParameter("mode");
+        if (request.getParameter(MODE) != null)
+            request.getParameter(MODE);
 
         if (request.getParameter("workFlowAction") != null)
             workFlowAction = request.getParameter("workFlowAction");
@@ -213,15 +203,15 @@ public class CloserConnectionController extends GenericConnectionController {
 
         if (request.getParameter("approvalComent") != null)
             approvalComent = request.getParameter("approvalComent");
-        
+
         final Boolean applicationByOthers = waterTaxUtils.getCurrentUserRole();
 
         if (applicationByOthers != null && applicationByOthers.equals(true)) {
             final Position userPosition = waterTaxUtils
                     .getZonalLevelClerkForLoggedInUser(waterConnectionDetails.getConnection().getPropertyIdentifier());
             if (userPosition == null) {
-                model.addAttribute("noJAORSAMessage" ,"No JA/SA exists to forward the application.");
-                return  "connection-closeForm";
+                model.addAttribute("noJAORSAMessage", "No JA/SA exists to forward the application.");
+                return "connection-closeForm";
             } else
                 approvalPosition = userPosition.getId();
 
@@ -256,24 +246,8 @@ public class CloserConnectionController extends GenericConnectionController {
         final WaterConnectionDetails savedWaterConnectionDetails = closerConnectionService.updatecloserConnection(
                 waterConnectionDetails, approvalPosition, approvalComent, addrule, workFlowAction, sourceChannel);
         model.addAttribute("waterConnectionDetails", savedWaterConnectionDetails);
-        final Assignment currentUserAssignment = assignmentService
-                .getPrimaryAssignmentForGivenRange(securityUtils.getCurrentUser().getId(), new Date(), new Date());
-        String nextDesign = "";
-        Assignment assignObj = null;
-        List<Assignment> asignList = null;
-        if (approvalPosition != null)
-            assignObj = assignmentService.getPrimaryAssignmentForPositon(approvalPosition);
-        if (assignObj != null) {
-            asignList = new ArrayList<Assignment>();
-            asignList.add(assignObj);
-        } else if (assignObj == null && approvalPosition != null)
-            asignList = assignmentService.getAssignmentsForPosition(approvalPosition, new Date());
-        nextDesign = !asignList.isEmpty() ? asignList.get(0).getDesignation().getName() : "";
-        final String pathVars = waterConnectionDetails.getApplicationNumber() + ","
-                + waterTaxUtils.getApproverName(approvalPosition) + ","
-                + (currentUserAssignment != null ? currentUserAssignment.getDesignation().getName() : "") + ","
-                + (nextDesign != null ? nextDesign : "");
-        return "redirect:/application/application-success?pathVars=" + pathVars;
+        model.addAttribute(MODE, "ack");
+        return "redirect:/application/citizeenAcknowledgement?pathVars=" + waterConnectionDetails.getApplicationNumber();
 
     }
 
