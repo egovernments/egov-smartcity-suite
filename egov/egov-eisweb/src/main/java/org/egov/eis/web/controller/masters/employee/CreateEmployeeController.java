@@ -109,6 +109,9 @@ public class CreateEmployeeController {
         if (!employeeService.primaryAssignmentExists(employee) && employee.isActive())
             errors.rejectValue("assignments", "primary.assignment");
 
+        if (employeeService.primaryAssignExistsForSamePeriod(employee))
+            errors.rejectValue("assignments", "primary.assignment.daterange");
+
         if (errors.hasErrors()) {
             setDropDownValues(model);
             model.addAttribute("mode", "create");
