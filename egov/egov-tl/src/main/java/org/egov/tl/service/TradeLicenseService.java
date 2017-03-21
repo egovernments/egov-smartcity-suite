@@ -200,7 +200,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
             }
         if (license.hasState()
                 && license.getState().getValue().contains(Constants.WF_REVENUECLERK_APPROVED)
-                && recalDemandAmount.compareTo(currentDemandAmount) > 0)
+                && recalDemandAmount.compareTo(currentDemandAmount) >= 0)
             updateDemandForChangeTradeArea(license);
     }
 

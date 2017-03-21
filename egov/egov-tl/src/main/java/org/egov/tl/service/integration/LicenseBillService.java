@@ -922,10 +922,10 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
                     feeByTypes.put(demandReason, ZERO);
                 }
                 final BigDecimal demandAmount = demandDetail.getAmount().subtract(demandDetail.getAmtCollected());
-                feeByTypes.put(demandReason, demandAmount.setScale(0, RoundingMode.HALF_DOWN));
+                feeByTypes.put(demandReason, demandAmount.setScale(0, RoundingMode.HALF_UP));
                 BigDecimal penaltyAmt = licenseUtils.calculatePenalty(license, fromDate, new Date(), demandAmount);
                 if (penaltyAmt.compareTo(ZERO) > 0)
-                    feeByTypes.put("Penalty", penaltyAmt.setScale(0, RoundingMode.HALF_DOWN));
+                    feeByTypes.put("Penalty", penaltyAmt.setScale(0, RoundingMode.HALF_UP));
                 outstandingFee.put(installmentYear.getDescription(), feeByTypes);
             }
         }
