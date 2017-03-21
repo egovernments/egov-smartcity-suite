@@ -1146,6 +1146,7 @@ public class ApplicationDocumentService {
      */
     public List<ApplicationInfo> getApplicationInfo(ApplicationIndexRequest applicationIndexRequest) {
         List<ApplicationInfo> applications = new ArrayList<>();
+        List<Map> appDetails = new ArrayList<>();
         ApplicationInfo appInfo;
         Date fromDate = null;
         Date toDate = null;
@@ -1156,10 +1157,16 @@ public class ApplicationDocumentService {
                     1);
         }
         BoolQueryBuilder boolQuery = prepareWhereClause(applicationIndexRequest, fromDate, toDate);
-        List<Map> appDetails = new ArrayList<>();
+
         SearchResponse response = elasticsearchTemplate.getClient()
                 .prepareSearch(APPLICATIONS_INDEX)
-                .setQuery(boolQuery).setSize(1000)
+                .setQuery(boolQuery)
+                .execute().actionGet();
+
+        int size = (int) response.getHits().totalHits();
+        response = elasticsearchTemplate.getClient()
+                .prepareSearch(APPLICATIONS_INDEX)
+                .setQuery(boolQuery).setSize(size)
                 .setFetchSource(new String[] { APPLICATION_DATE, APPLICATION_NUMBER, APPLICATION_TYPE, "applicantName",
                         "applicantAddress", "status", CHANNEL, "sla" }, null)
                 .execute().actionGet();
