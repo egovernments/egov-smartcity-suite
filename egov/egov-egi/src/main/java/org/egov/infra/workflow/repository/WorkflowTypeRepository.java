@@ -40,13 +40,23 @@
 
 package org.egov.infra.workflow.repository;
 
+import java.util.List;
+
 import org.egov.infra.workflow.entity.WorkflowTypes;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 public interface WorkflowTypeRepository extends JpaRepository<WorkflowTypes, Long> {
 
     WorkflowTypes findByTypeAndEnabledIsTrue(String type);
 
     WorkflowTypes findByType(String type);
+
+    @Query("select type from WorkflowTypes where enabled=:isEnabled  ")
+    List<String> findTypeEnabled(@Param("isEnabled") Boolean enabled);
+
+    @Query("select type from WorkflowTypes where enabled is null  ")
+    List<String> findTypeByEnabledIsNull();
 
 }

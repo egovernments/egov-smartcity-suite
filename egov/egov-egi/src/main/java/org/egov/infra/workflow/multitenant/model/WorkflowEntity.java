@@ -38,41 +38,82 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.infra.workflow.service;
+package org.egov.infra.workflow.multitenant.model;
 
-import java.util.List;
+import javax.persistence.Column;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.Transient;
 
-import org.egov.infra.workflow.entity.WorkflowTypes;
-import org.egov.infra.workflow.repository.WorkflowTypeRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.workflow.entity.StateAware;
 
-@Service
-@Transactional(readOnly = true)
-public class WorkflowTypeService {
+import aj.org.objectweb.asm.Attribute;
 
-    @Autowired
-    private WorkflowTypeRepository workflowTypeRepository;
-
-    public List<String> getEnabledWorkflowType(Boolean isEnabled) {
-        return workflowTypeRepository.findTypeEnabled(isEnabled);
+@MappedSuperclass
+public abstract class WorkflowEntity extends AbstractAuditable {
+    private static final long serialVersionUID = 5776408218810221246L;
+   
+    @Column(name="processid")
+    private String workflowId;
+    
+    @Column(name="state_id")
+    private Long state_id;
+        
+    public Long getState_id() {
+        return state_id;
+    }
+     public void setState_id(Long state_id) {
+        this.state_id = state_id;
     }
 
-    public WorkflowTypes getEnabledWorkflowTypeByType(String type) {
-        return workflowTypeRepository.findByTypeAndEnabledIsTrue(type);
+
+    public abstract String getStateDetails();
+    
+    @Deprecated
+    @Transient
+    private ProcessInstance processInstance;
+   
+    @Deprecated
+    @Transient
+    private Task currentTask;
+    
+    
+   
+
+    public Task getCurrentTask() {
+        return currentTask;
     }
 
-    public WorkflowTypes getWorkflowTypeByType(String type) {
-        return workflowTypeRepository.findByType(type);
+
+    public void setCurrentTask(Task currentTask) {
+        this.currentTask = currentTask;
     }
 
-    public List<WorkflowTypes> getAllWorkflowTypes() {
-        return workflowTypeRepository.findAll(new Sort(Sort.Direction.ASC, "type"));
+
+    /**
+     * To set the Group Link, Any State Aware Object which needs Grouping should override this method
+     **/
+    public String myLinkId() {
+        return getId().toString();
     }
 
-    public WorkflowTypes getWorkflowTypeById(Long id) {
-        return workflowTypeRepository.findOne(id);
+    
+    public String getWorkflowId() {
+        return workflowId;
     }
-}
+
+    public void setWorkflowId(String workflowId) {
+        this.workflowId = workflowId;
+    }
+
+    public ProcessInstance getProcessInstance() {
+        return processInstance;
+    }
+
+    public void setProcessInstance(ProcessInstance processInstance) {
+        this.processInstance = processInstance;
+    }
+    
+
+   }
+

@@ -40,11 +40,20 @@
 
 package org.egov.infra.workflow.service;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.infra.workflow.entity.State;
+import org.egov.infra.workflow.entity.State.StateStatus;
 import org.egov.infra.workflow.repository.StateRepository;
+import org.hibernate.FlushMode;
+import org.hibernate.Session;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,6 +63,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class StateService {
 
     private final StateRepository stateRepository;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Autowired
     public StateService(final StateRepository stateRepository) {
@@ -72,4 +84,33 @@ public class StateService {
         return stateRepository.findOne(id);
     }
 
+    @Transactional
+    public State create(final State state) {
+        return stateRepository.save(state);
+    }
+
+    @Transactional
+    public State update(final State state) {
+        return stateRepository.save(state);
+    }
+
+    public Session getSession() {
+        return entityManager.unwrap(Session.class);
+    }
+
+    public List<State> getStates(List<Long> ownerIds, List<String> types, Long userId) {
+        if (ownerIds != null && !ownerIds.isEmpty())
+            return getSession().createCriteria(State.class)
+                    .setFlushMode(FlushMode.MANUAL).setReadOnly(true).setCacheable(true)
+                    .add(Restrictions.in("type", types))
+                    .add(Restrictions.in("ownerPosition.id", ownerIds))
+                    .add(Restrictions.ne("status", StateStatus.ENDED))
+                    .add(Restrictions.not(Restrictions.conjunction().add(Restrictions.eq("status", StateStatus.STARTED))
+                            .add(Restrictions.eq("createdBy.id", userId))))
+                    .addOrder(Order.desc("createdDate"))
+                    .list();
+        else
+            return Collections.emptyList();
+
+    }
 }
