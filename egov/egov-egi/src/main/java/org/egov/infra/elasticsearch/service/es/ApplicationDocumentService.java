@@ -80,6 +80,7 @@ import org.elasticsearch.search.aggregations.bucket.terms.Terms.Bucket;
 import org.elasticsearch.search.aggregations.metrics.sum.Sum;
 import org.elasticsearch.search.aggregations.metrics.valuecount.ValueCount;
 import org.elasticsearch.search.aggregations.metrics.valuecount.ValueCountBuilder;
+import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
@@ -1167,6 +1168,7 @@ public class ApplicationDocumentService {
         response = elasticsearchTemplate.getClient()
                 .prepareSearch(APPLICATIONS_INDEX)
                 .setQuery(boolQuery).setSize(size)
+                .addSort(APPLICATION_DATE, SortOrder.DESC)
                 .setFetchSource(new String[] { APPLICATION_DATE, APPLICATION_NUMBER, APPLICATION_TYPE, "applicantName",
                         "applicantAddress", "status", CHANNEL, "sla" }, null)
                 .execute().actionGet();
