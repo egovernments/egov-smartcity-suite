@@ -582,10 +582,10 @@ public class MBHeaderService {
             wfInitiator = assignmentService.getPrimaryAssignmentForUser(mbHeader.getCreatedBy().getId());
         if (WorksConstants.REJECT_ACTION.toString().equalsIgnoreCase(workFlowAction)) {
             if (wfInitiator.equals(userAssignment))
-                mbHeader.transition(true).end().withSenderName(user.getUsername() + "::" + user.getName())
+                mbHeader.transition().progressWithStateCopy().end().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withDateInfo(currentDate.toDate()).withNatureOfTask(natureOfwork);
             else
-                mbHeader.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+                mbHeader.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withStateValue(WorksConstants.WF_STATE_REJECTED)
                         .withDateInfo(currentDate.toDate()).withOwner(wfInitiator.getPosition()).withNextAction("")
                         .withNatureOfTask(natureOfwork);
@@ -593,7 +593,7 @@ public class MBHeaderService {
             wfmatrix = mbHeaderWorkflowService.getWfMatrix(mbHeader.getStateType(), null, mbHeader.getMbAmount(),
                     additionalRule, WorksConstants.NEW, null);
             if (mbHeader.getState() == null)
-                mbHeader.transition(true).start().withSenderName(user.getUsername() + "::" + user.getName())
+                mbHeader.transition().progressWithStateCopy().start().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withStateValue(WorksConstants.NEW)
                         .withDateInfo(currentDate.toDate()).withOwner(wfInitiator.getPosition())
                         .withNextAction(WorksConstants.ESTIMATE_ONSAVE_NEXTACTION_VALUE).withNatureOfTask(natureOfwork);
@@ -611,13 +611,13 @@ public class MBHeaderService {
                         .withOwner(pos).withNextAction(wfmatrix.getNextAction()).withNatureOfTask(natureOfwork);
             } else if (WorksConstants.CANCEL_ACTION.toString().equalsIgnoreCase(workFlowAction)) {
                 final String stateValue = WorksConstants.WF_STATE_CANCELLED;
-                mbHeader.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+                mbHeader.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withStateValue(stateValue).withDateInfo(currentDate.toDate())
                         .withOwner(pos).withNextAction("").withNatureOfTask(natureOfwork);
             } else {
                 wfmatrix = mbHeaderWorkflowService.getWfMatrix(mbHeader.getStateType(), null, mbHeader.getMbAmount(),
                         additionalRule, mbHeader.getCurrentState().getValue(), mbHeader.getState().getNextAction());
-                mbHeader.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+                mbHeader.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withStateValue(wfmatrix.getNextState())
                         .withDateInfo(currentDate.toDate()).withOwner(pos).withNextAction(wfmatrix.getNextAction())
                         .withNatureOfTask(natureOfwork);

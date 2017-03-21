@@ -56,6 +56,7 @@ public class WaterChargesDetails {
     private String category;
     private String pipesize;
     private Long sumpCapacity;
+    private String ulbCode;
     private Integer noOfPerson;
 
     public String getConnectionStatus() {
@@ -178,4 +179,13 @@ public class WaterChargesDetails {
     public void setApplicationType(String applicationType) {
         this.applicationType = applicationType;
     }
+
+    public String getUlbCode() {
+        return ulbCode;
+    }
+
+    public void setUlbCode(String ulbCode) {
+        this.ulbCode = ulbCode;
+    }
+    
 }

@@ -51,7 +51,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class TenantDatasourceProvider implements Stoppable {
 
-    private static final String ANY_DS_JNDI_NAME = "ezgovDatabasePool";
+    private static final String ANY_DS_JNDI_NAME = "READWRITE_DS";
     private Map<String, DataSource> tenantDatasourceStore = new ConcurrentHashMap<>();
 
     protected DataSource getAnyDataSource() {

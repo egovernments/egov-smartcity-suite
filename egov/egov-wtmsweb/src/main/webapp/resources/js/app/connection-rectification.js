@@ -53,10 +53,10 @@ $(document).ready(function(){
 			  document.forms[0].submit();
 			  }
 		  		});
-	  $('#selectBox').change(function(e){
+	  
+	  $('select').change(function(e){
 		  
 		  var url=$(this).val();
-		  
 		  if(url){
 			  window.open(url, "_self");
 			  $(this).prop('selectedIndex', 0);

@@ -100,7 +100,7 @@
 								<th><spring:message code="lbl.department" /></th>
 								<th><spring:message code="lbl.agenda.number" /></th>
 								<th><spring:message code="lbl.preamble.number" /></th>
-								<th><spring:message code="lbl.resolution.comment" /></th>
+								<th><spring:message code="lbl.resolution" /></th>
 								<th><spring:message code="lbl.status" /></th>
 								<th><spring:message code="lbl.resolutionNumber" /></th>
 								<th><spring:message code="lbl.gistofpreamble" /></th>

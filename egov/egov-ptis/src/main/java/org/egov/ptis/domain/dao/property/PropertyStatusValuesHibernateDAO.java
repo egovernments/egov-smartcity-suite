@@ -39,17 +39,20 @@
  */
 package org.egov.ptis.domain.dao.property;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.APPURTENANT_PROPERTY;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.PropertyStatusValues;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.util.ArrayList;
-import java.util.List;
 
 @Repository(value = "propertyStatusValuesDAO")
 @Transactional(readOnly = true)
@@ -63,28 +66,30 @@ public class PropertyStatusValuesHibernateDAO implements PropertyStatusValuesDAO
     }
 
     @Override
-    public PropertyStatusValues getLatestPropertyStatusValuesByPropertyIdAndCode(String PropertyId,
-            List Code) {
-        Query qry = getCurrentSession()
+    public PropertyStatusValues getLatestPropertyStatusValuesByPropertyIdAndCode(final String PropertyId,
+            final List Code) {
+        final Query qry = getCurrentSession()
                 .createQuery(
                         "from PropertyStatusValues PSV "
                                 + "left join fetch PSV.basicProperty BP "
                                 + "left join fetch PSV.propertyStatus PS "
                                 + "where PSV.isActive ='Y' and BP.upicNo =:PropertyId and PS.statusCode in (:Code) "
-                                + "order by PSV.createdDate desc").setMaxResults(1);
+                                + "order by PSV.createdDate desc")
+                .setMaxResults(1);
         qry.setString("PropertyId", PropertyId);
         qry.setParameterList("Code", Code);
         return (PropertyStatusValues) qry.uniqueResult();
     }
 
-    public PropertyStatusValues getLatestPropertyStatusValuesByPropertyIdAndreferenceNo(String PropertyId,
-            String referenceNumber)
-    {
-        Query qry = getCurrentSession()
+    @Override
+    public PropertyStatusValues getLatestPropertyStatusValuesByPropertyIdAndreferenceNo(final String PropertyId,
+            final String referenceNumber) {
+        final Query qry = getCurrentSession()
                 .createQuery(
                         "from PropertyStatusValues PSV "
                                 + " where PSV.basicProperty.upicNo =:PropertyId and PSV.referenceNo in (:referenceNumber) "
-                                + " order by PSV.createdDate desc").setMaxResults(1);
+                                + " order by PSV.createdDate desc")
+                .setMaxResults(1);
         qry.setString("PropertyId", PropertyId);
         qry.setString("referenceNumber", referenceNumber);
         return (PropertyStatusValues) qry.uniqueResult();
@@ -92,10 +97,10 @@ public class PropertyStatusValuesHibernateDAO implements PropertyStatusValuesDAO
     }
 
     @Override
-    public List<PropertyStatusValues> getParentBasicPropsForChild(BasicProperty basicProperty) {
-        List<PropertyStatusValues> propStatValueList = new ArrayList<PropertyStatusValues>();
+    public List<PropertyStatusValues> getParentBasicPropsForChild(final BasicProperty basicProperty) {
+        List<PropertyStatusValues> propStatValueList = new ArrayList<>();
         if (basicProperty != null) {
-            Query qry = getCurrentSession()
+            final Query qry = getCurrentSession()
                     .createQuery(
                             "from PropertyStatusValues PSV left join fetch PSV.propertyStatus PS where PSV.basicProperty =:BasicPropertyId and PS.statusCode = 'CREATE' and PSV.isActive='Y' ");
             qry.setString("BasicPropertyId", basicProperty.getId().toString());
@@ -106,16 +111,17 @@ public class PropertyStatusValuesHibernateDAO implements PropertyStatusValuesDAO
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<PropertyStatusValues> getPropertyStatusValuesByReferenceBasicProperty(BasicProperty basicProperty) {
-        Query qry = getCurrentSession()
+    public List<PropertyStatusValues> getPropertyStatusValuesByReferenceBasicProperty(final BasicProperty basicProperty) {
+        final Query qry = getCurrentSession()
                 .createQuery(
-                        "from PropertyStatusValues PSV left join fetch PSV.propertyStatus PS where PSV.referenceBasicProperty.id =:BasicPropertyId and PS.statusCode = 'CREATE' and PSV.isActive='Y' ");
+                        "from PropertyStatusValues PSV left join fetch PSV.propertyStatus PS where PSV.referenceBasicProperty.id =:BasicPropertyId and PS.statusCode = 'CREATE' and PSV.isActive='Y' and PSV.remarks != :appurTenant");
         qry.setParameter("BasicPropertyId", basicProperty.getId());
-        return (List<PropertyStatusValues>) qry.list();
+        qry.setString("appurTenant", APPURTENANT_PROPERTY);
+        return qry.list();
     }
-    
+
     @Override
-    public PropertyStatusValues findById(Integer id, boolean lock) {
+    public PropertyStatusValues findById(final Integer id, final boolean lock) {
 
         return null;
     }
@@ -127,20 +133,19 @@ public class PropertyStatusValuesHibernateDAO implements PropertyStatusValuesDAO
     }
 
     @Override
-    public PropertyStatusValues create(PropertyStatusValues propertyStatusValues) {
+    public PropertyStatusValues create(final PropertyStatusValues propertyStatusValues) {
 
         return null;
     }
 
     @Override
-    public void delete(PropertyStatusValues propertyStatusValues) {
-
+    public void delete(final PropertyStatusValues propertyStatusValues) {
 
     }
 
     @Override
     @Transactional
-    public PropertyStatusValues update(PropertyStatusValues propertyStatusValues) {
+    public PropertyStatusValues update(final PropertyStatusValues propertyStatusValues) {
         entityManager.persist(propertyStatusValues);
         return propertyStatusValues;
     }

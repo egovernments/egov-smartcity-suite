@@ -87,6 +87,10 @@ public interface WaterConnectionDetailsRepository extends JpaRepository<WaterCon
     WaterConnectionDetails findConnectionDetailsByConsumerCodeAndConnectionStatus(
             @Param("consumerCode") String consumerCode, @Param("connectionStatus") ConnectionStatus connectionStatus);
 
+    @Query("select wcd from WaterConnectionDetails wcd where  wcd.connection.parentConnection is null and wcd.connection.consumerCode =:consumerCode and wcd.connectionStatus =:connectionStatus")
+    WaterConnectionDetails findParentConnectionDetailsByConsumerCodeAndConnectionStatus(
+            @Param("consumerCode") String consumerCode, @Param("connectionStatus") ConnectionStatus connectionStatus);
+
     WaterConnectionDetails findByConnection(WaterConnection waterConnection);
 
     WaterConnectionDetails findByConnectionAndConnectionStatus(WaterConnection waterConnection,
@@ -105,6 +109,18 @@ public interface WaterConnectionDetailsRepository extends JpaRepository<WaterCon
     // with closed Connectionstatus
     @Query("select wcd from WaterConnectionDetails wcd where wcd.connection.parentConnection is null and wcd.connectionStatus not in ('INACTIVE') and wcd.connection.propertyIdentifier =:propertyIdentifier")
     WaterConnectionDetails getPrimaryConnectionDetailsByPropertyID(
+            @Param("propertyIdentifier") String propertyIdentifier);
+    
+    @Query("select wcd from WaterConnectionDetails wcd where wcd.connection.parentConnection is null and wcd.connectionStatus in ('ACTIVE') and wcd.connection.propertyIdentifier =:propertyIdentifier) order by wcd.applicationDate asc ")
+    WaterConnectionDetails getPrimaryConnectionDetailsByPropertyAssessmentNumber(
+            @Param("propertyIdentifier") String propertyIdentifier);
+    
+    @Query("select wcd from WaterConnectionDetails wcd where wcd.applicationType.code not in ('NEWCONNECTION') and  wcd.connectionStatus not in ('INACTIVE') and wcd.connection.propertyIdentifier =:propertyIdentifier")
+    List<WaterConnectionDetails> getChildConnectionDetailsByPropertyID(
+            @Param("propertyIdentifier") String propertyIdentifier);
+    
+    @Query("select wcd from WaterConnectionDetails wcd where wcd.connectionStatus not in ('INACTIVE') and wcd.connection.propertyIdentifier =:propertyIdentifier")
+    List<WaterConnectionDetails> getAllConnectionDetailsExceptInactiveStatusByPropertyID(
             @Param("propertyIdentifier") String propertyIdentifier);
 
     @Query(" from WaterConnectionDetails WCD where WCD.connectionStatus in(:status)"

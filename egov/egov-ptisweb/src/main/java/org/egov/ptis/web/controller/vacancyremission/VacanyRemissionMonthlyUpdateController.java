@@ -39,6 +39,8 @@
  */
 package org.egov.ptis.web.controller.vacancyremission;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
+
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.entity.enums.TransactionType;
 import org.egov.ptis.domain.entity.property.Document;
@@ -126,17 +128,24 @@ public class VacanyRemissionMonthlyUpdateController {
     public String saveRemissionDetails(@Valid @ModelAttribute VacancyRemission vacancyRemission,
             final BindingResult errors, RedirectAttributes redirectAttrs, final Model model,
             final HttpServletRequest request) {
+        final String wfAction = request.getParameter("wfAction");
+        String comments = request.getParameter("remissionComments");
         VacancyRemissionDetails remissionDetailsObj = new VacancyRemissionDetails();
         final List<Document> documents = new ArrayList<>();
-        remissionDetailsObj.setComments(request.getParameter("remissionComments"));
+        remissionDetailsObj.setComments(comments);
         remissionDetailsObj.setCheckinDate(new Date());
         documents.addAll(vacancyRemission.getDocuments());
         vacancyRemission.getDocuments().clear();
         vacancyRemission.getDocuments().addAll(documents);
         processAndStoreApplicationDocuments(vacancyRemission);
+        if(WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(wfAction)){
+            vacancyRemissionService.rejectVacancyRemission(vacancyRemission,comments,request);
+            model.addAttribute("successMessage", "Vacancy Remission application rejected !");   
+        }else{
         populateRemissionDetails(remissionDetailsObj, vacancyRemission);
         vacancyRemissionService.saveRemissionDetails(vacancyRemission);
         model.addAttribute("successMessage", "Remission details saved successfully!!");
+        }
         return "vacancyRemission-success";
     }
     protected void processAndStoreApplicationDocuments(final VacancyRemission vacancyRemission) {

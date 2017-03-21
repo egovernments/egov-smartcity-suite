@@ -43,11 +43,13 @@ package org.egov.infra.config.persistence.multitenancy;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.hibernate.context.spi.CurrentTenantIdentifierResolver;
 
+import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
+
 public class DomainBasedDatabaseTenantIdentifierResolver implements CurrentTenantIdentifierResolver {
 
     @Override
     public String resolveCurrentTenantIdentifier() {
-        return ApplicationThreadLocals.getTenantID() == null ? "ezgovDatabasePool" : ApplicationThreadLocals.getTenantID();
+        return defaultIfBlank(ApplicationThreadLocals.getTenantID(), "READWRITE_DS");
     }
 
     @Override

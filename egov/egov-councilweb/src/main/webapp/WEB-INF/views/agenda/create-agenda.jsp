@@ -67,8 +67,7 @@
 <div class="row display-hide agenda-section">
 	<div class="col-md-6 table-header text-left">Create Agenda</div>
 	<!-- <div class="col-md-6 text-right pull-right"><button type="button" class="btn btn-primary" id="add-agenda">Add Row</button></div> -->
-		<div>
-
+		<div class="form-group">
 			<label class="col-sm-3 control-label text-right"><spring:message
 					code="lbl.committeetype" /> <span class="mandatory"></span> </label>
 			<div class="col-sm-3 add-margin">

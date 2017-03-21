@@ -39,6 +39,9 @@
  */
 package org.egov.lcms.entity.es;
 
+import static org.egov.infra.utils.ApplicationConstant.DEFAULT_TIMEZONE;
+import static org.egov.infra.utils.ApplicationConstant.ES_DATE_FORMAT_WITHOUT_TS;
+
 import java.util.Date;
 
 import org.egov.infra.config.core.ApplicationThreadLocals;
@@ -81,16 +84,16 @@ public class LegalCaseDocument {
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String officerIncharge;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "IST")
-    @Field(type = FieldType.Date, format = DateFormat.date_optional_time, pattern = "yyyy-MM-dd")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ES_DATE_FORMAT_WITHOUT_TS, timezone = DEFAULT_TIMEZONE)
+    @Field(type = FieldType.Date, format = DateFormat.date_optional_time, pattern = ES_DATE_FORMAT_WITHOUT_TS)
     private Date caseDate;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "IST")
-    @Field(type = FieldType.Date, format = DateFormat.date_optional_time, pattern = "yyyy-MM-dd")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ES_DATE_FORMAT_WITHOUT_TS, timezone = DEFAULT_TIMEZONE)
+    @Field(type = FieldType.Date, format = DateFormat.date_optional_time, pattern = ES_DATE_FORMAT_WITHOUT_TS)
     private Date caseReceivingDate;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "IST")
-    @Field(type = FieldType.Date, format = DateFormat.date_optional_time, pattern = "yyyy-MM-dd")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ES_DATE_FORMAT_WITHOUT_TS, timezone = DEFAULT_TIMEZONE)
+    @Field(type = FieldType.Date, format = DateFormat.date_optional_time, pattern = ES_DATE_FORMAT_WITHOUT_TS)
     private Date nextDate;
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
@@ -111,9 +114,17 @@ public class LegalCaseDocument {
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String respondantNames;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "IST")
-    @Field(type = FieldType.Date, format = DateFormat.date_optional_time, pattern = "yyyy-MM-dd")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ES_DATE_FORMAT_WITHOUT_TS, timezone = DEFAULT_TIMEZONE)
+    @Field(type = FieldType.Date, format = DateFormat.date_optional_time, pattern = ES_DATE_FORMAT_WITHOUT_TS)
     private Date caFilingDate;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ES_DATE_FORMAT_WITHOUT_TS, timezone = DEFAULT_TIMEZONE)
+    @Field(type = FieldType.Date, format = DateFormat.date_optional_time, pattern = ES_DATE_FORMAT_WITHOUT_TS)
+    private Date pwrDueDate;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ES_DATE_FORMAT_WITHOUT_TS, timezone = DEFAULT_TIMEZONE)
+    @Field(type = FieldType.Date, format = DateFormat.date_optional_time, pattern = ES_DATE_FORMAT_WITHOUT_TS)
+    private Date caDueDate;
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String advocateName;
@@ -127,20 +138,20 @@ public class LegalCaseDocument {
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String judgmentOutcome;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "IST")
-    @Field(type = FieldType.Date, format = DateFormat.date_optional_time, pattern = "yyyy-MM-dd")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ES_DATE_FORMAT_WITHOUT_TS, timezone = DEFAULT_TIMEZONE)
+    @Field(type = FieldType.Date, format = DateFormat.date_optional_time, pattern = ES_DATE_FORMAT_WITHOUT_TS)
     private Date judgmentDate;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "IST")
-    @Field(type = FieldType.Date, format = DateFormat.date_optional_time, pattern = "yyyy-MM-dd")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ES_DATE_FORMAT_WITHOUT_TS, timezone = DEFAULT_TIMEZONE)
+    @Field(type = FieldType.Date, format = DateFormat.date_optional_time, pattern = ES_DATE_FORMAT_WITHOUT_TS)
     private Date orderSentToDeptDate;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "IST")
-    @Field(type = FieldType.Date, format = DateFormat.date_optional_time, pattern = "yyyy-MM-dd")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ES_DATE_FORMAT_WITHOUT_TS, timezone = DEFAULT_TIMEZONE)
+    @Field(type = FieldType.Date, format = DateFormat.date_optional_time, pattern = ES_DATE_FORMAT_WITHOUT_TS)
     private Date deadLineImplementByDate;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "IST")
-    @Field(type = FieldType.Date, format = DateFormat.date_optional_time, pattern = "yyyy-MM-dd")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ES_DATE_FORMAT_WITHOUT_TS, timezone = DEFAULT_TIMEZONE)
+    @Field(type = FieldType.Date, format = DateFormat.date_optional_time, pattern = ES_DATE_FORMAT_WITHOUT_TS)
     private Date judgmentImplDate;
 
     @Field(type = FieldType.String)
@@ -149,12 +160,12 @@ public class LegalCaseDocument {
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String implementationFailure;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "IST")
-    @Field(type = FieldType.Date, format = DateFormat.date_optional_time, pattern = "yyyy-MM-dd")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ES_DATE_FORMAT_WITHOUT_TS, timezone = DEFAULT_TIMEZONE)
+    @Field(type = FieldType.Date, format = DateFormat.date_optional_time, pattern = ES_DATE_FORMAT_WITHOUT_TS)
     private Date disposalDate;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "IST")
-    @Field(type = FieldType.Date, format = DateFormat.date_optional_time, pattern = "yyyy-MM-dd")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ES_DATE_FORMAT_WITHOUT_TS, timezone = DEFAULT_TIMEZONE)
+    @Field(type = FieldType.Date, format = DateFormat.date_optional_time, pattern = ES_DATE_FORMAT_WITHOUT_TS)
     private Date createdDate;
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
@@ -162,6 +173,39 @@ public class LegalCaseDocument {
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String cityCode;
+
+    @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
+    private String cityGrade;
+
+    @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
+    private String districtName;
+
+    @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
+    private String regionName;
+
+    public String getCityGrade() {
+        return cityGrade;
+    }
+
+    public void setCityGrade(final String cityGrade) {
+        this.cityGrade = cityGrade;
+    }
+
+    public String getDistrictName() {
+        return districtName;
+    }
+
+    public void setDistrictName(final String districtName) {
+        this.districtName = districtName;
+    }
+
+    public String getRegionName() {
+        return regionName;
+    }
+
+    public void setRegionName(final String regionName) {
+        this.regionName = regionName;
+    }
 
     public String getCityName() {
         return cityName;
@@ -427,6 +471,22 @@ public class LegalCaseDocument {
         this.createdDate = createdDate;
     }
 
+    public Date getPwrDueDate() {
+        return pwrDueDate;
+    }
+
+    public void setPwrDueDate(final Date pwrDueDate) {
+        this.pwrDueDate = pwrDueDate;
+    }
+
+    public Date getCaDueDate() {
+        return caDueDate;
+    }
+
+    public void setCaDueDate(final Date caDueDate) {
+        this.caDueDate = caDueDate;
+    }
+
     public static Builder builder() {
         return new Builder();
     }
@@ -449,8 +509,13 @@ public class LegalCaseDocument {
         private String subStatus;
         private String petitionerNames;
         private String respondantNames;
+        private Date pwrDueDate;
+        private Date caDueDate;
         private String cityName;
         private String cityCode;
+        private String regionName;
+        private String districtName;
+        private String cityGrade;
         private Date createdDate;
 
         private Builder() {
@@ -537,6 +602,18 @@ public class LegalCaseDocument {
 
         }
 
+        public Builder withPwrDueDate(final Date pwrDueDate) {
+            this.pwrDueDate = pwrDueDate;
+            return this;
+
+        }
+
+        public Builder withCaDueDate(final Date caDueDate) {
+            this.caDueDate = caDueDate;
+            return this;
+
+        }
+
         public Builder withRespondantNames(final String respondantNames) {
             this.respondantNames = respondantNames;
             return this;
@@ -555,6 +632,21 @@ public class LegalCaseDocument {
 
         public Builder withCityName(final String cityname) {
             cityName = cityname;
+            return this;
+        }
+
+        public Builder withCityGrade(final String cityGrade) {
+            this.cityGrade = cityGrade;
+            return this;
+        }
+
+        public Builder withRegionName(final String regionname) {
+            regionName = regionname;
+            return this;
+        }
+
+        public Builder withDistrictName(final String districtname) {
+            districtName = districtname;
             return this;
         }
 
@@ -578,8 +670,13 @@ public class LegalCaseDocument {
             legalCaseIndex.setSubStatus(subStatus);
             legalCaseIndex.setPetitionerNames(petitionerNames);
             legalCaseIndex.setRespondantNames(respondantNames);
+            legalCaseIndex.setPwrDueDate(pwrDueDate);
+            legalCaseIndex.setCaDueDate(caDueDate);
             legalCaseIndex.setCityCode(cityCode);
             legalCaseIndex.setCityName(cityName);
+            legalCaseIndex.setCityGrade(cityGrade);
+            legalCaseIndex.setRegionName(regionName);
+            legalCaseIndex.setDistrictName(districtName);
             legalCaseIndex.setCreatedDate(createdDate);
             return legalCaseIndex;
         }

@@ -488,17 +488,17 @@ public class RevisionEstimateService {
             wfInitiator = assignmentService.getPrimaryAssignmentForUser(revisionEstimate.getCreatedBy().getId());
         if (WorksConstants.REJECT_ACTION.toString().equalsIgnoreCase(workFlowAction)) {
             if (wfInitiator.equals(userAssignment))
-                revisionEstimate.transition(true).end().withSenderName(user.getUsername() + "::" + user.getName())
+                revisionEstimate.transition().progressWithStateCopy().end().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withDateInfo(currentDate.toDate())
                         .withNatureOfTask(WorksConstants.WORKFLOWTYPE_DISPLAYNAME_REVISION_ESTIMATE);
             else
-                revisionEstimate.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+                revisionEstimate.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withStateValue(WorksConstants.WF_STATE_REJECTED)
                         .withDateInfo(currentDate.toDate()).withOwner(wfInitiator.getPosition()).withNextAction("")
                         .withNatureOfTask(WorksConstants.WORKFLOWTYPE_DISPLAYNAME_REVISION_ESTIMATE);
         } else if (WorksConstants.SAVE_ACTION.toString().equalsIgnoreCase(workFlowAction)) {
             if (revisionEstimate.getState() == null)
-                revisionEstimate.transition(true).start().withSenderName(user.getUsername() + "::" + user.getName())
+                revisionEstimate.transition().progressWithStateCopy().start().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withStateValue(WorksConstants.NEW)
                         .withDateInfo(currentDate.toDate()).withOwner(wfInitiator.getPosition())
                         .withNextAction(WorksConstants.ESTIMATE_ONSAVE_NEXTACTION_VALUE)
@@ -518,7 +518,7 @@ public class RevisionEstimateService {
                         .withNatureOfTask(WorksConstants.WORKFLOWTYPE_DISPLAYNAME_REVISION_ESTIMATE);
             } else if (WorksConstants.CANCEL_ACTION.toString().equalsIgnoreCase(workFlowAction)) {
                 final String stateValue = WorksConstants.WF_STATE_CANCELLED;
-                revisionEstimate.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+                revisionEstimate.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withStateValue(stateValue).withDateInfo(currentDate.toDate())
                         .withOwner(pos).withNextAction("")
                         .withNatureOfTask(WorksConstants.WORKFLOWTYPE_DISPLAYNAME_REVISION_ESTIMATE);
@@ -528,7 +528,7 @@ public class RevisionEstimateService {
                         revisionEstimate.getEstimateValue(),
                         additionalRule, revisionEstimate.getCurrentState().getValue(),
                         revisionEstimate.getCurrentState().getNextAction());
-                revisionEstimate.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+                revisionEstimate.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withStateValue(wfmatrix.getNextState())
                         .withDateInfo(currentDate.toDate()).withOwner(pos).withNextAction(wfmatrix.getNextAction())
                         .withNatureOfTask(WorksConstants.WORKFLOWTYPE_DISPLAYNAME_REVISION_ESTIMATE);
@@ -537,7 +537,7 @@ public class RevisionEstimateService {
                         revisionEstimate.getEstimateValue(),
                         additionalRule, revisionEstimate.getCurrentState().getValue(),
                         revisionEstimate.getCurrentState().getNextAction());
-                revisionEstimate.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+                revisionEstimate.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withStateValue(wfmatrix.getNextState())
                         .withDateInfo(currentDate.toDate()).withOwner(pos).withNextAction(wfmatrix.getNextAction())
                         .withNatureOfTask(WorksConstants.WORKFLOWTYPE_DISPLAYNAME_REVISION_ESTIMATE);

@@ -41,8 +41,11 @@
 package org.egov.tl.entity;
 
 import org.egov.demand.model.EgDemand;
+import org.egov.demand.model.EgDemandDetails;
 
 import java.util.Date;
+
+import static java.math.BigDecimal.ZERO;
 
 public class LicenseDemand extends EgDemand {
     private static final long serialVersionUID = -8850906441323607906L;
@@ -72,5 +75,15 @@ public class LicenseDemand extends EgDemand {
 
     public void setIsLateRenewal(final char isLateRenewal) {
         this.isLateRenewal = isLateRenewal;
+    }
+
+    public void recalculateBaseDemand() {
+        this.setAmtCollected(ZERO);
+        this.setBaseDemand(ZERO);
+        this.setModifiedDate(new Date());
+        for (final EgDemandDetails demandDetail : this.getEgDemandDetails()) {
+            this.setAmtCollected(this.getAmtCollected().add(demandDetail.getAmtCollected()));
+            this.setBaseDemand(this.getBaseDemand().add(demandDetail.getAmount()));
+        }
     }
 }

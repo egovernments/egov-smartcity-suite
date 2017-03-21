@@ -355,7 +355,7 @@ public class BudgetDetail extends StateAware {
                     .equalsIgnoreCase("Cancelled"))
                 if ((entry.getAdditionAmount() != null)
                         && !(BigDecimal.ZERO
-                                .compareTo(entry.getAdditionAmount()) == 0))
+                        .compareTo(entry.getAdditionAmount()) == 0))
                     total = total.add(entry.getAdditionAmount());
                 else
                     total = total.subtract(entry.getDeductionAmount());
@@ -374,7 +374,7 @@ public class BudgetDetail extends StateAware {
                     && entry.getCreatedDate().before(asOnDate))
                 if ((entry.getAdditionAmount() != null)
                         && !(BigDecimal.ZERO
-                                .compareTo(entry.getAdditionAmount()) == 0))
+                        .compareTo(entry.getAdditionAmount()) == 0))
                     total = total.add(entry.getAdditionAmount());
                 else
                     total = total.subtract(entry.getDeductionAmount());
@@ -400,7 +400,7 @@ public class BudgetDetail extends StateAware {
             same = false;
         if ((executingDepartment != null) && (other.executingDepartment != null)
                 && !executingDepartment.getId()
-                        .equals(other.getExecutingDepartment().getId()))
+                .equals(other.getExecutingDepartment().getId()))
             same = false;
         if ((scheme != null) && (other.scheme != null)
                 && !scheme.getId().equals(other.getScheme().getId()))
@@ -470,7 +470,7 @@ public class BudgetDetail extends StateAware {
     }
 
     public void setWfState(final State state) {
-        setState(state);
+        //setState(state);
     }
 
     public EgwStatus getStatus() {

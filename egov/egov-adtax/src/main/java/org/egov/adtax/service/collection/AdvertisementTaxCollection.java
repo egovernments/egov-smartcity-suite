@@ -41,6 +41,7 @@
 package org.egov.adtax.service.collection;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -108,7 +109,7 @@ public class AdvertisementTaxCollection extends TaxCollection {
 
     @Autowired
     private AdvertisementAdditinalTaxRateService advertisementAdditinalTaxRateService;
-
+    
     private final Map<String, String> additionalTaxes = new HashMap<String, String>();
 
     public Session getCurrentSession() {
@@ -287,7 +288,7 @@ public class AdvertisementTaxCollection extends TaxCollection {
             final String eventType, final BigDecimal totalAmount) {
 
         BigDecimal totalAmountCollected = BigDecimal.ZERO;
-
+        List<String> taxTypeDescList = buildAdditionalTaxDetails();
         for (final ReceiptAccountInfo recAccInfo : billReceiptInfo.getAccountDetails()) {
             String demandMasterReasonDesc = null;
             String financialYearDesc = null;
@@ -299,13 +300,17 @@ public class AdvertisementTaxCollection extends TaxCollection {
                                 recAccInfo.getDescription().indexOf(
                                         AdvertisementTaxConstants.COLL_RECEIPTDETAIL_DESC_PREFIX))
                         .trim();
-                financialYearDesc = recAccInfo
-                        .getDescription()
-                        .substring(
-                                recAccInfo.getDescription().indexOf(
-                                        AdvertisementTaxConstants.COLL_RECEIPTDETAIL_DESC_PREFIX)
-                                        + AdvertisementTaxConstants.COLL_RECEIPTDETAIL_DESC_PREFIX.length())
-                        .trim();
+                if (!taxTypeDescList.isEmpty() && taxTypeDescList.contains(demandMasterReasonDesc)) {
+
+                    financialYearDesc = advertisementDemandService.getCurrentInstallment().getDescription();
+
+                } else {
+                    financialYearDesc = recAccInfo.getDescription()
+                            .substring(
+                                    recAccInfo.getDescription().indexOf(AdvertisementTaxConstants.COLL_RECEIPTDETAIL_DESC_PREFIX)
+                                            + AdvertisementTaxConstants.COLL_RECEIPTDETAIL_DESC_PREFIX.length())
+                            .trim();
+                }
 
                 if (eventType.equals(EVENT_RECEIPT_CREATED))
                     totalAmountCollected = totalAmountCollected
@@ -322,6 +327,18 @@ public class AdvertisementTaxCollection extends TaxCollection {
         }
         demand.setModifiedDate(new Date());
         return totalAmountCollected;
+    }
+
+    private List<String> buildAdditionalTaxDetails() {
+        List<String> taxTypeDescList = new ArrayList<>();
+        List<AdvertisementAdditionalTaxRate> additionalTaxRates = advertisementAdditinalTaxRateService
+                .getAllActiveAdditinalTaxRates();
+        for (AdvertisementAdditionalTaxRate advertisementAdditionalTaxRate : additionalTaxRates) {
+            if (advertisementAdditionalTaxRate != null) {
+                taxTypeDescList.add(advertisementAdditionalTaxRate.getTaxType());
+            }
+        }
+        return taxTypeDescList;
     }
 
     /*
@@ -380,7 +397,7 @@ public class AdvertisementTaxCollection extends TaxCollection {
         LOGGER.debug("Entering method updateDmdDetForRcptCancel");
         String demandMasterReasonDesc = null;
         String financialYearDesc = null;
-
+        List<String> taxTypeDescList = buildAdditionalTaxDetails();
         for (final ReceiptAccountInfo rcptAccInfo : billRcptInfo.getAccountDetails())
             if (rcptAccInfo.getCrAmount() != null && rcptAccInfo.getCrAmount().compareTo(BigDecimal.ZERO) == 1
                     && !rcptAccInfo.getIsRevenueAccount())
@@ -389,11 +406,17 @@ public class AdvertisementTaxCollection extends TaxCollection {
                             .getDescription().substring(0, rcptAccInfo.getDescription().indexOf(
                                     AdvertisementTaxConstants.COLL_RECEIPTDETAIL_DESC_PREFIX))
                             .trim();
-                    financialYearDesc = rcptAccInfo.getDescription().substring(
-                            rcptAccInfo.getDescription().indexOf(
-                                    AdvertisementTaxConstants.COLL_RECEIPTDETAIL_DESC_PREFIX)
-                                    + AdvertisementTaxConstants.COLL_RECEIPTDETAIL_DESC_PREFIX.length())
-                            .trim();
+                    //If demand reason  of service tax and cess type, then current installment will be used default.
+                    if (!taxTypeDescList.isEmpty() && taxTypeDescList.contains(demandMasterReasonDesc)) {
+                        financialYearDesc = advertisementDemandService.getCurrentInstallment().getDescription();
+                    } else {
+                        financialYearDesc = rcptAccInfo.getDescription()
+                                .substring(rcptAccInfo.getDescription()
+                                        .indexOf(AdvertisementTaxConstants.COLL_RECEIPTDETAIL_DESC_PREFIX)
+                                        + AdvertisementTaxConstants.COLL_RECEIPTDETAIL_DESC_PREFIX.length())
+                                .trim();
+                    }
+                    
                     for (final EgDemandDetails demandDetail : demand.getEgDemandDetails())
                         if (demandMasterReasonDesc.equalsIgnoreCase(demandDetail.getEgDemandReason()
                                 .getEgDemandReasonMaster().getReasonMaster()) && financialYearDesc != null &&

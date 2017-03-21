@@ -1,0 +1,1 @@
+﻿alter table eg_wf_states add column previousstateref bigint;

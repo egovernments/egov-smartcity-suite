@@ -45,6 +45,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_TITLE_TRANSFER;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_MUTATION_CERTIFICATE;
+import static org.egov.ptis.constants.PropertyTaxConstants.SOURCE_ONLINE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.TRANSFER;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_GENERATE_TRANSFER_NOTICE;
@@ -235,6 +236,8 @@ public class PropertyTransferService {
         propertyMutation.setMutationDate(new Date());
         if (propertyMutation.getApplicationNo() == null)
             propertyMutation.setApplicationNo(applicationNumberGenerator.generate());
+        if(SOURCE_ONLINE.equalsIgnoreCase(propertyMutation.getSource()) && ApplicationThreadLocals.getUserId() == null) 
+            ApplicationThreadLocals.setUserId(securityUtils.getCurrentUser().getId());
         createUserIfNotExist(propertyMutation, propertyMutation.getTransfereeInfosProxy());
         basicProperty.getPropertyMutations().add(propertyMutation);
         basicProperty.setUnderWorkflow(true);
@@ -808,6 +811,28 @@ public class PropertyTransferService {
                 break;
             }
         return wfInitor;
+    }
+    
+    /**
+     * API to get Assignment for Third Party user based on mutation type
+     * @param propertyMutation Object basicProperty Object
+     * @return Assignment
+     */
+    public Assignment getAssignmentForThirdPartyByMutationType(PropertyMutation propertyMutation,
+            BasicProperty basicproperty, User user) {
+        if (propertyService.isCscOperator(user)){
+            if (propertyMutation.getType().equals(PropertyTaxConstants.ADDTIONAL_RULE_FULL_TRANSFER))
+                return propertyTaxCommonUtils.getCommissionerAsgnForFullTransfer();
+            else
+                return propertyService.getMappedAssignmentForCscOperator(basicproperty);
+        }
+        else{
+            if (propertyMutation.getType().equals(PropertyTaxConstants.ADDTIONAL_RULE_FULL_TRANSFER))
+                return propertyTaxCommonUtils.getCommissionerAsgnForFullTransfer();
+            else
+                return propertyService.getUserPositionByZone(basicproperty, false);
+        }
+
     }
 
 }

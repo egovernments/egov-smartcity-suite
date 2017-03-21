@@ -227,8 +227,10 @@ public class LcmsConstants {
         public static final SimpleDateFormat DATEFORMATTER_DD_MM_YYYY = new SimpleDateFormat(DATE_FORMAT_DDMMYYYY );
         
         public static final String LEGALCASE_INDEX_NAME = "legalcasedocument";
+        public static final String HEARINGS_INDEX_NAME = "hearingsdocument";
         
         public static final String LEGALCASE_STATUS_JUDGMENT_IMPLIMENTED_DESC = "Judgment Implemented";
         public static final String LEGALCASE_STATUS_CLOSED_DESC = "Closed";
-
+        public static final String LEGALCASE_STATUS_HEARING_DESC = "Hearing In Progress";
+        public static final String LEGALCASE_INTERIMSTAY_STATUS_DESC = "Interim Stay";
 }

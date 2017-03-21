@@ -498,6 +498,8 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
             Boolean isCorporation;
             reportParams.put("logoPath", imagePath);
             reportParams.put("cityName", cityName);
+            Boolean superStructure = basicProperty.getProperty().getPropertyDetail().isStructure();
+            reportParams.put("isStructure", superStructure.toString());
             if (cityGrade != null && cityGrade != ""
                     && cityGrade.equalsIgnoreCase(PropertyTaxConstants.CITY_GRADE_CORPORATION))
                 isCorporation = true;
@@ -703,7 +705,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
         infoBean.setWardName(propertyId.getWard().getName());
         infoBean.setAreaName(propertyId.getArea().getName());
         infoBean.setLocalityName(propertyId.getLocality().getName());
-        if (property.getSource().equals(PropertyTaxConstants.SOURCEOFDATA_MEESEWA))
+        if (checkMeesevaSource(property))
             infoBean.setMeesevaNo(property.getApplicationNo());
         infoBean.setNoticeDate(new Date());
         ownerType = property.getPropertyDetail().getPropertyTypeMaster().getType();
@@ -833,6 +835,10 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
         property.transition().end();
         basicProperty.setUnderWorkflow(false);
         LOGGER.debug("Exit method endWorkFlow, Workflow ended");
+    }
+    
+    Boolean checkMeesevaSource(PropertyImpl property){
+        return property.getSource() != null ? property.getSource().equals(PropertyTaxConstants.SOURCE_MEESEVA) : false;
     }
 
     public void setReportService(final ReportService reportService) {

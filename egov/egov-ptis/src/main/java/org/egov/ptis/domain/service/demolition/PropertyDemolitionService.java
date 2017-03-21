@@ -41,8 +41,10 @@
 package org.egov.ptis.domain.service.demolition;
 
 import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
 import static org.egov.ptis.constants.PropertyTaxConstants.ADDITIONAL_COMMISSIONER_DESIGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.ADVANCE_DMD_RSN_CODE;
+import static org.egov.ptis.constants.PropertyTaxConstants.ANONYMOUS_USER;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPCONFIG_CLIENT_SPECIFIC_DMD_BILL;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_BAL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_COMMISSIONER_DESIGN;
@@ -64,6 +66,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASO
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_OFFICER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.SENIOR_ASSISTANT;
+import static org.egov.ptis.constants.PropertyTaxConstants.SOURCE_ONLINE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_CANCELLED;
 import static org.egov.ptis.constants.PropertyTaxConstants.UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.VACANTLAND_PROPERTY_CATEGORY;
@@ -204,7 +207,9 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
         final String areaOfPlot = String.valueOf(propertyModel.getPropertyDetail().getSitalArea().getArea());
         propertyModel = propertyService.createProperty(propertyModel, areaOfPlot, PROPERTY_MODIFY_REASON_FULL_DEMOLITION,
                 propertyModel.getPropertyDetail().getPropertyTypeMaster().getId().toString(), null, null, status, null,
-                null, null, null, null, null, null, null, null, null);
+                null, null, null, null, null, null, null, null, null, FALSE);
+        if(SOURCE_ONLINE.equalsIgnoreCase(propertyModel.getSource()) && ApplicationThreadLocals.getUserId() == null) 
+            ApplicationThreadLocals.setUserId(securityUtils.getCurrentUser().getId());
         final Map<String, Installment> yearwiseInstMap = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
         final Installment installmentFirstHalf = yearwiseInstMap.get(CURRENTYEAR_FIRST_HALF);
         final Installment installmentSecondHalf = yearwiseInstMap.get(CURRENTYEAR_SECOND_HALF);
@@ -218,7 +223,7 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
         if (!propertyModel.getPropertyDetail().getPropertyTypeMaster().getCode().equals(OWNERSHIP_TYPE_VAC_LAND))
             propertyService.changePropertyDetail(propertyModel, new VacantProperty(), 0);
         propertyModel.getPropertyDetail().setCategoryType(VACANTLAND_PROPERTY_CATEGORY);
-        basicProperty.setUnderWorkflow(Boolean.TRUE);
+        basicProperty.setUnderWorkflow(TRUE);
         propertyModel.setBasicProperty(basicProperty);
         basicProperty.addProperty(propertyModel);
         getSession().setFlushMode(FlushMode.MANUAL);
@@ -228,14 +233,14 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
         final Property modProperty = propertyService.createDemand(propertyModel, effectiveDate);
         Ptdemand currPtDmd = null;
         for (final Ptdemand demand : modProperty.getPtDemandSet())
-            if (demand.getIsHistory().equalsIgnoreCase("N"))
+            if ("N".equalsIgnoreCase(demand.getIsHistory()))
                 if (demand.getEgInstallmentMaster().equals(currInstall)) {
                     currPtDmd = demand;
                     break;
                 }
         Ptdemand oldCurrPtDmd = null;
         for (final Ptdemand ptDmd : oldProperty.getPtDemandSet())
-            if (ptDmd.getIsHistory().equalsIgnoreCase("N"))
+            if ("N".equalsIgnoreCase(ptDmd.getIsHistory()))
                 if (ptDmd.getEgInstallmentMaster().equals(currInstall)) {
                     oldCurrPtDmd = ptDmd;
                     break;
@@ -248,7 +253,7 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
         basicProperty.addProperty(modProperty);
         for (final Ptdemand ptDemand : modProperty.getPtDemandSet())
             propertyPerService.applyAuditing(ptDemand.getDmdCalculations());
-        currPtDmd = adjustCollection(oldCurrPtDmd, currPtDmd, effectiveInstall);
+        adjustCollection(oldCurrPtDmd, currPtDmd, effectiveInstall);
         propertyPerService.update(basicProperty);
         getSession().flush();
     }
@@ -314,7 +319,7 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
         String approverDesignation = "";
         String nextAction = "";
         String currentState = "";
-        if (isNotEmployee()) {
+        if (isNotEmployee() || ANONYMOUS_USER.equalsIgnoreCase(user.getName())) {
             currentState = "Created";
             assignment = getUserAssignment(user, property);
             if (null != assignment) {
@@ -370,7 +375,7 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
                         property.getCurrentState().getValue(), property.getCurrentState().getNextAction(), null,
                         loggedInUserDesignation);
 
-                property.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+                property.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvarComments).withStateValue(wfmatrix.getNextState())
                         .withDateInfo(currentDate.toDate()).withOwner(pos)
                         .withNextAction(StringUtils.isNotBlank(nextAction) ? nextAction : wfmatrix.getNextAction());
@@ -414,7 +419,7 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
             final User user, final DateTime currentDate, Assignment wfInitiator, final String loggedInUserDesignation) {
         String nextAction;
         if (wfInitiator != null && wfInitiator.getPosition().equals(property.getState().getOwnerPosition())) {
-            property.transition(true).end().withSenderName(user.getUsername() + "::" + user.getName())
+            property.transition().end().withSenderName(user.getUsername() + "::" + user.getName())
                     .withComments(approvarComments).withDateInfo(currentDate.toDate());
             property.setStatus(STATUS_CANCELLED);
             property.getBasicProperty().setUnderWorkflow(FALSE);
@@ -427,7 +432,7 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
                 nextAction = WF_STATE_ASSISTANT_APPROVAL_PENDING;
             if (wfInitiator != null) {
                 final String stateValue = property.getCurrentState().getValue().split(":")[0] + ":" + WF_STATE_REJECTED;
-                property.transition(true)
+                property.transition().progressWithStateCopy()
                         .withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvarComments)
                         .withStateValue(stateValue)
@@ -446,9 +451,8 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
             final String designation = approverDesignation.split(" ")[0];
             if (designation.equalsIgnoreCase(COMMISSIONER_DESGN))
                 nextAction = WF_STATE_COMMISSIONER_APPROVAL_PENDING;
-            else if (REVENUE_OFFICER_DESGN.equalsIgnoreCase(approverDesignation)) {
+            else if (REVENUE_OFFICER_DESGN.equalsIgnoreCase(approverDesignation))
                 nextAction = WF_STATE_REVENUE_OFFICER_APPROVAL_PENDING;
-            }
             else
                 nextAction = new StringBuilder().append(designation).append(" ")
                         .append(WF_STATE_COMMISSIONER_APPROVAL_PENDING)
@@ -590,9 +594,9 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
             final Map<String, Installment> yearwiseInstMap = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
             final Installment installmentFirstHalf = yearwiseInstMap.get(CURRENTYEAR_FIRST_HALF);
             final Installment installmentSecondHalf = yearwiseInstMap.get(CURRENTYEAR_SECOND_HALF);
-            Date effectiveDate = null;
+            Date effectiveDate;
             Map<String, BigDecimal> demandMap = null;
-            BigDecimal totalTax = BigDecimal.ZERO;
+            BigDecimal totalTax;
 
             /*
              * If demolition is done in 1st half, then fetch the total tax amount for the 2nd half, else fetch the total tax for

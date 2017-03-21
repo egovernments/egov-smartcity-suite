@@ -99,7 +99,7 @@ public class MarriageWitness extends AbstractAuditable {
 
     @NotNull
     @SafeHtml
-    @Length(max = 30)
+    @Length(max = 70)
     private String relativeName;
 
     @SafeHtml

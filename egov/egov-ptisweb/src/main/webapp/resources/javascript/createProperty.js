@@ -50,16 +50,102 @@ function makePropertyTypeMandatory() {
     }
 }
 
-function enableAppartnaumtLandDetails() {
-	if (document.forms[0].appurtenantLandChecked.checked == true) {
-		jQuery('tr.vacantlanddetaills').show();
-		jQuery('#appurtenantRow').show();
-		jQuery('tr.floordetails').show();
-		jQuery('#areaOfPlot').val("");
-		jQuery('tr.extentSite').hide();
+function makePlingthAreaReadonly() {
+	var isAppurtenantCalRequired = true;
+	var totalPlingthArea = 0;
+	if (jQuery('#floorDetailsEntered').is(":checked")) {
+		if (jQuery('#areaOfPlot').val() == null || jQuery('#areaOfPlot').val() == "") {
+			bootbox.alert('Extent of Site is mandatory');
+			jQuery('#floorDetailsEntered').prop('checked', false);
+			isAppurtenantCalRequired = false;
+			return false;
+		}
+		jQuery('#areaOfPlot').attr('readonly', true);
+		jQuery("#floorDetails tr").find('input, select').each(function() {
+			if (jQuery(this).attr('id') == 'builtUpArealength' || jQuery(this).attr('id') == 'builtUpAreabreadth') {
+				jQuery(this).attr('readonly', true);
+			}
+			if (jQuery(this).attr('id') == 'unstructuredLand') {
+				jQuery(this).attr('disabled', true);
+			}
+		});
+		jQuery("#floorDetails tr").find('input').each(function() {
+			if(jQuery(this).attr('id') == 'builtUpArea') {
+				if (jQuery(this).val() == null || jQuery(this).val() == "") {
+					bootbox.alert("Plinth area is mandatory");
+					jQuery('#floorDetailsEntered').prop('checked', false);
+					enableBuiltUpAreaDetails();
+					isAppurtenantCalRequired = false;
+					return false;
+				}
+				totalPlingthArea = parseFloat(totalPlingthArea) + parseFloat(jQuery(this).val());
+				jQuery(this).attr('readonly', true);
+			}
+		});
+		if (isAppurtenantCalRequired) {
+			isAppurtenantLand(jQuery('#areaOfPlot').val(), totalPlingthArea);
+		}
 	} else {
-		enableFieldsForPropType();
+		jQuery('#areaOfPlot').removeAttr('readonly');
+		enableBuiltUpAreaDetails();
+		jQuery("#floorDetails tr").find('input').each(function() {
+			if(jQuery(this).attr('id') == 'builtUpArea') {
+				totalPlingthArea = parseFloat(totalPlingthArea) + parseFloat(jQuery(this).val());
+			}
+		});
+		isAppurtenantLand(jQuery('#areaOfPlot').val(), totalPlingthArea);
 	}
+}
+
+function isAppurtenantLand(extentOfSite, totalPlingthArea) {
+	jQuery.ajax({
+		url: "/ptis/common/ajaxCommon-isAppurTenant.action",
+		type : "GET",
+		data : {
+			"extentOfSite" : extentOfSite,
+			"plingthArea" : totalPlingthArea
+		},
+		dataType : "json",
+	}).done(function(response) {
+		if (response.isAppurTenantLand) {
+			jQuery('tr.vacantlanddetaills').show();
+			jQuery('#vacantLandArea').val(response.vacantLandArea);
+			jQuery('#vacantLandArea').attr('readOnly', true);
+			jQuery('#extentAppartenauntLand').val(response.extentAppartenauntLand);
+		} else {
+			jQuery('tr.vacantlanddetaills').hide();
+			jQuery('#extentAppartenauntLand').val("");
+		}
+		jQuery('#appurtenantLandChecked').val(response.isAppurTenantLand);
+	});
+}
+
+function enableBuiltUpAreaDetails() {
+	var unstructured;
+	jQuery("#floorDetails tr").find('input, select').each(function() {
+		if (jQuery(this).attr('id') == 'unstructuredLand') {
+			jQuery(this).removeAttr('disabled');
+			unstructured = jQuery(this).val();
+		}
+		if (jQuery(this).attr('id') == 'builtUpArealength' || jQuery(this).attr('id') == 'builtUpAreabreadth' 
+			|| jQuery(this).attr('id') == 'builtUpArea') {
+			if (unstructured == "true") {
+				if (jQuery(this).attr('id') == 'builtUpArea') {
+					jQuery(this).removeAttr('readonly');
+				}
+				if (jQuery(this).attr('id') == 'builtUpArealength' || jQuery(this).attr('id') == 'builtUpAreabreadth') {
+					jQuery(this).attr('readonly', true);
+				}
+			} else {
+				if (jQuery(this).attr('id') == 'builtUpArealength' || jQuery(this).attr('id') == 'builtUpAreabreadth' ) {
+					jQuery(this).removeAttr('readonly');
+				}
+				if (jQuery(this).attr('id') == 'builtUpArea') {
+					jQuery(this).attr('readonly', true);
+				}
+			}
+		}
+	});
 }
 
 function enableFieldsForPropType() {
@@ -81,6 +167,7 @@ function enableFieldsForPropType() {
 					tbl.deleteRow(rIndex);
 				}
 			});
+			enableBuiltUpAreaDetails();
 			jQuery("#amenitiesTable tr").find('input:checkbox').each(function() {
 				jQuery(this).prop('checked', false);
 			});
@@ -91,12 +178,13 @@ function enableFieldsForPropType() {
 			jQuery('tr.vacantlanddetaills').show();
 			jQuery('tr.construction').hide();
 			jQuery('tr.amenities').hide();
-			jQuery("#appurtenantLandChecked").prop('checked', false);
-			jQuery('#appurtenantRow').hide();
+			jQuery("#appurtenantLandChecked").val("");
+			jQuery("#extentAppartenauntLand").val("");
+			jQuery('#vacantLandArea').removeAttr('readOnly');
+			jQuery('#floorDetailsEntered').prop('checked', false);
+			jQuery('tr.floordetails').hide();
 			jQuery('#areaOfPlot').val("");
 			jQuery('tr.extentSite').hide();
-			jQuery('tr.appurtenant').hide();
-			//jQuery('tr.superStructureRow').hide();
 			jQuery('tr.bpddetailsheader').hide();
 			jQuery('tr.bpddetails').hide();
 			jQuery("#apartment").prop('selectedIndex', 0);
@@ -104,18 +192,21 @@ function enableFieldsForPropType() {
 			jQuery('#houseNoSpan').hide();
 		} else {
 			jQuery('tr.floordetails').show();
-			jQuery("#vacantLandTable tr, #boundaryData tr").find('input').each(function() {
-				jQuery(this).val("");
-			});
-			jQuery('tr.vacantlanddetaills').hide();
+			var appurtenantLandChecked = jQuery("#appurtenantLandChecked").val();
+			if (appurtenantLandChecked == 'true') {
+				jQuery('tr.vacantlanddetaills').show();
+			} else {
+				jQuery("#vacantLandTable tr, #boundaryData tr").find('input').each(function() {
+					jQuery(this).val("");
+				});
+				jQuery('tr.vacantlanddetaills').hide();
+			}
+			jQuery('tr.extentSite').show();
 			jQuery('tr.construction').show();
 			jQuery('tr.amenities').show();
-			jQuery('#extentAppartenauntLand').val("");
-			jQuery("#appurtenantLandChecked").prop('checked', false);
-			jQuery('#appurtenantRow').hide();
-			jQuery('tr.extentSite').show();
-			jQuery('tr.appurtenant').show();
-			//jQuery('tr.superStructureRow').show();
+			jQuery('#areaOfPlot').removeAttr('readOnly');
+			jQuery('tr.floordetails').show();
+			jQuery('#floorDetailsEntered').prop('checked', false);
 			jQuery('tr.bpddetailsheader').show();
 			jQuery('div.apartmentRow').show();
 			jQuery('#houseNoSpan').show();
@@ -1141,31 +1232,24 @@ function enableFieldsForPropTypeView(propType,appurtenantLandChecked) {
 			jQuery('tr.vacantlanddetaills').show();
 			jQuery('tr.construction, .construction').hide();
 			jQuery('tr.amenities').hide();
-			jQuery('#appurtenantRow').hide();
 			jQuery('tr.extentSite').hide();
-			jQuery('tr.appurtenant').hide();
-			//jQuery('tr.superStructureRow').hide();
-			//jQuery('tr.bpddetailsheader').hide();
-			//jQuery('tr.bpddetails').hide();
+			jQuery('#floorDetailsEntered').prop('checked', false);
+			jQuery('tr.floordetails').hide();
 			jQuery("#apartment").prop('selectedIndex', 0);
 			jQuery('div.apartmentRow').hide();
 		} else {
 			jQuery('tr.floordetails').show();
-			jQuery('tr.vacantlanddetaills').hide();
-			jQuery('tr.construction, .construction').show();
-			jQuery('tr.amenities').show();
-			jQuery('#appurtenantRow').hide();
-			jQuery('tr.extentSite').show();
-			jQuery('tr.appurtenant').show();
-			//jQuery('tr.superStructureRow').show();
-			//jQuery('tr.bpddetailsheader').show();
-			//jQuery('tr.bpddetails').show();
-			jQuery('div.apartmentRow').show();
 			if (appurtenantLandChecked == 'true') {
 				jQuery('tr.vacantlanddetaills').show();
-				jQuery('tr.extentSite').hide();
-				jQuery('#appurtenantRow').show();
+			} else {
+				jQuery('tr.vacantlanddetaills').hide();
 			}
+			jQuery('tr.extentSite').show();
+			jQuery('tr.construction, .construction').show();
+			jQuery('tr.amenities').show();
+			jQuery('tr.floordetails').show();
+			jQuery('#floorDetailsEntered').prop('checked', false);
+			jQuery('div.apartmentRow').show();
 		}
 	}
 }

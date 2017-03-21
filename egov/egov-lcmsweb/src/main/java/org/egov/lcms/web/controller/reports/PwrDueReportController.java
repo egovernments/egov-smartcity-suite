@@ -39,18 +39,16 @@
  */
 package org.egov.lcms.web.controller.reports;
 
+import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.egov.infra.utils.JsonUtils;
-import org.egov.lcms.reports.entity.DueReportResult;
-import org.egov.lcms.transactions.service.DueLegalCaseReportService;
+import org.egov.lcms.entity.es.LegalCaseDocument;
+import org.egov.lcms.reports.entity.LcDueReportResult;
+import org.egov.lcms.transactions.service.LcDueReportService;
 import org.egov.lcms.utils.constants.LcmsConstants;
-import org.egov.lcms.web.adaptor.DueReportResultJsonAdaptor;
 import org.egov.lcms.web.controller.transactions.GenericLegalCaseController;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -62,18 +60,20 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class PwrDueReportController extends GenericLegalCaseController {
 
     @Autowired
-    private DueLegalCaseReportService dueLegalCaseReportService;
+    private LcDueReportService lcDueReportService;
 
-    @RequestMapping(value = "/pwrDueReportResult", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
-    public @ResponseBody String getDailyBoardReportResult(
-            final @ModelAttribute("dueReportResult") DueReportResult dueReportResult,
-            final HttpServletRequest request) {
-
-        final List<DueReportResult> pwrDueSearchList = dueLegalCaseReportService.getLegalCaseReport(dueReportResult,
+    @RequestMapping(value = "/pwrDueReportResult", method = RequestMethod.POST)
+    @ResponseBody
+    public List<LcDueReportResult> getPwrDueReport(@ModelAttribute final LcDueReportResult dueReportResult)
+            throws ParseException {
+        List<LegalCaseDocument> legalcaseDocumentList;
+        final List<LcDueReportResult> finalResult = new ArrayList<>();
+        legalcaseDocumentList = lcDueReportService.findAllLegalcaseDocumentIndexByFilter(dueReportResult,
                 LcmsConstants.DUEPWRREPORT);
-        final String result = new StringBuilder("{ \"data\":")
-                .append(JsonUtils.toJSON(pwrDueSearchList, DueReportResult.class, DueReportResultJsonAdaptor.class))
-                .append("}").toString();
-        return result;
+        for (final LegalCaseDocument legalcaseDocument : legalcaseDocumentList)
+            lcDueReportService.buildLcDueReport(legalcaseDocument, finalResult);
+        return finalResult;
+
     }
+
 }

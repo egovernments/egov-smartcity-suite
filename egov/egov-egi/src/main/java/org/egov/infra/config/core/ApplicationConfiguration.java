@@ -66,9 +66,11 @@ import java.util.Properties;
 public class ApplicationConfiguration {
 
     @Resource(name = "tenants")
-    protected List<String> tenants;
+    private List<String> tenants;
+
     @Autowired
     private ApplicationContext context;
+
     @Autowired
     private ApplicationProperties applicationProperties;
 
@@ -116,5 +118,4 @@ public class ApplicationConfiguration {
     public ReportService reportService() {
         return new JasperReportService(10, 30);
     }
-
 }

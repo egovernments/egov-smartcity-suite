@@ -79,6 +79,7 @@
 			<s:hidden name="modelId" id="modelId" value="%{modelId}" />
 			<s:hidden id="modifyRsn" name="modifyRsn" value="%{modifyRsn}" />
 			<s:hidden id="indexNumber" name="indexNumber" value="%{indexNumber}" />
+			<s:hidden id="dataEntry" name="dataEntry" value="%{dataEntry}" />
 			<div class="formmainbox">
 				<div class="headingbg">
 					<s:text name="dataentrypropertyheader" /> 
@@ -99,146 +100,151 @@
 		
 	</s:form>
 	<script type="text/javascript">
-	jQuery.noConflict();
-
-	jQuery("#loadingMask").remove();
-	jQuery(function ($) {
-		try { 
-			$(".datepicker").datepicker({
-				format: "dd/mm/yyyy"
-			}); 
-			}catch(e){
-			console.warn("No Date Picker "+ e);
-		}
-
-			$('.datepicker').on('changeDate', function(ev){
-			    $(this).datepicker('hide');
-			});
-	});
-
-	function loadOnStartUp() {
-		enableCorresAddr();
-		populateBoundaries();
-		enableAppartnaumtLandDetails();
-		makeMandatory();
-		document.getElementById("appurtenantRow").style.display = "none";
-		enableOrDisableSiteOwnerDetails(jQuery('input[name="propertyDetail.structure"]'));
-		//enableOrDisableBPADetails(jQuery('input[name="propertyDetail.buildingPlanDetailsChecked"]'));
-		var appartunentLand = jQuery('input[name="propertyDetail.appurtenantLandChecked"]');
-		if (jQuery(appartunentLand).is(":checked")) {
-			enableAppartnaumtLandDetails();
-		} 
-		var category = '<s:property value="%{propertyDetail.categoryType}"/>';
-		document.forms[0].propTypeCategoryId.options[document.forms[0].propTypeCategoryId.selectedIndex].value = category;
-		toggleFloorDetails();
-	     var aadhartextboxes = jQuery('.txtaadhar');
-	     aadhartextboxes.each(function() {
-		   	if(jQuery(this).val())
-		   	{
-		   		  getAadharDetails(this);
-		   	}
-		 });
-	     document.getElementById("upicNo").readOnly = true;
-	     document.getElementById("upicNo").disabled = true;
-	     showHideFirmName();
-		 showHideLengthBreadth();
-	}
-
-	function showHideFirmName(){
-		var tbl=document.getElementById("floorDetails");
-	    var tabLength = (tbl.rows.length)-1;
-	    for(var i=1;i<=tabLength;i++){
-	         enableDisableFirmName(getControlInBranch(tbl.rows[i],'floorUsage'));
-	    }
-	}
-
-	function showHideLengthBreadth(){
-		var tbl=document.getElementById("floorDetails");
-	    var tabLength = (tbl.rows.length)-1;
-	    for(var i=1;i<=tabLength;i++){
-	         enableDisableLengthBreadth(getControlInBranch(tbl.rows[i],'unstructuredLand'));
-	    }
-	}
-
-	function enableDisableFirmName(obj){ 
-		var selIndex = obj.selectedIndex;
-		if(selIndex != undefined){
-			var selText = obj.options[selIndex].text; 
-			var rIndex = getRow(obj).rowIndex;
-			var tbl = document.getElementById('floorDetails');
-			var firmval=getControlInBranch(tbl.rows[rIndex],'firmName'); 
-			if(selText!=null && selText=='<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@NATURE_OF_USAGE_RESIDENCE}"/>'){
-				if(firmval.value!=null && firmval.value!="") 
-					firmval.value="";
-				firmval.readOnly = true;      
-			} else{
-				firmval.readOnly = false; 
-			}
-		}
-	}  
-
-	function calculatePlintArea(obj){ 
-		var rIndex = getRow(obj).rowIndex;
-		var tbl = document.getElementById('floorDetails');
-		var builtUpArea=getControlInBranch(tbl.rows[rIndex],'builtUpArea');
-		var unstructureLand = getControlInBranch(tbl.rows[rIndex],'unstructuredLand');
-		if(unstructureLand.options[unstructureLand.selectedIndex].text=='No'){
-			if(obj.value!=null && obj.value!=""){
-				var buildLength=getControlInBranch(tbl.rows[rIndex],'builtUpArealength');
-				var buildbreadth=getControlInBranch(tbl.rows[rIndex],'builtUpAreabreadth');
-				  
-				if(buildLength.value!=null && buildLength.value!="" && buildbreadth.value!=null && buildbreadth.value!=""){
-					builtUpArea.value= roundoff(eval(buildLength.value * buildbreadth.value));
-					trim(builtUpArea,builtUpArea.value);
-					checkForTwoDecimals(builtUpArea,'Assessable Area');
-					checkZero(builtUpArea,'Assessable Area'); 
-				}
-				else
-					builtUpArea.value="";
-			}else
-				builtUpArea.value="";
-		}
-	}
 	
-	function enableDisableLengthBreadth(obj){ 
-		var selIndex = obj.selectedIndex;
-		if(obj.value=='true'){
-				obj.value='true';
-				obj.options[selIndex].selected = true;
+		jQuery.noConflict();
+
+		jQuery("#loadingMask").remove();
+		jQuery(function($) {
+			try {
+				$(".datepicker").datepicker({
+					format : "dd/mm/yyyy"
+				});
+			} catch (e) {
+				console.warn("No Date Picker " + e);
+			}
+
+			$('.datepicker').on('changeDate', function(ev) {
+				$(this).datepicker('hide');
+			});
+		});
+
+		function loadOnStartUp() {
+			enableCorresAddr();
+			populateBoundaries();
+			makeMandatory();
+			enableOrDisableSiteOwnerDetails(jQuery('input[name="propertyDetail.structure"]'));
+			//enableOrDisableBPADetails(jQuery('input[name="propertyDetail.buildingPlanDetailsChecked"]'));
+			var category = '<s:property value="%{propertyDetail.categoryType}"/>';
+			document.forms[0].propTypeCategoryId.options[document.forms[0].propTypeCategoryId.selectedIndex].value = category;
+			toggleFloorDetails();
+			enableFieldsForPropType();
+			var aadhartextboxes = jQuery('.txtaadhar');
+			aadhartextboxes.each(function() {
+				if (jQuery(this).val()) {
+					getAadharDetails(this);
+				}
+			});
+			document.getElementById("upicNo").readOnly = true;
+			document.getElementById("upicNo").disabled = true;
+			showHideFirmName();
+			showHideLengthBreadth();
 		}
-		else{
-			obj.value='false';
-			obj.options[selIndex].selected = true;
-		}
-		
-		if(selIndex != undefined){
-			var selText = obj.options[selIndex].text; 
-			var rIndex = getRow(obj).rowIndex;
-			var tbl = document.getElementById('floorDetails');
-			var buildLength=getControlInBranch(tbl.rows[rIndex],'builtUpArealength');
-			var buildbreadth=getControlInBranch(tbl.rows[rIndex],'builtUpAreabreadth');  
-			var builtUpArea=getControlInBranch(tbl.rows[rIndex],'builtUpArea');
-			if(selText!=null && selText=='No'){
-				buildLength.readOnly = false;      
-				buildbreadth.readOnly = false;
-				builtUpArea.readOnly = true;
-			} else{
-				buildLength.value="";
-				buildLength.readOnly = true;
-				buildbreadth.value="";
-				buildbreadth.readOnly = true;
-				builtUpArea.readOnly = false;
+
+		function showHideFirmName() {
+			var tbl = document.getElementById("floorDetails");
+			var tabLength = (tbl.rows.length) - 1;
+			for (var i = 1; i <= tabLength; i++) {
+				enableDisableFirmName(getControlInBranch(tbl.rows[i],
+						'floorUsage'));
 			}
 		}
-	}
 
-	function onSubmit() { 
-		jQuery('#gender, #guardianRelation').removeAttr('disabled');
-		document.forms[0].action = 'createProperty-updateDataEntry.action';
-		document.forms[0].submit;
-	    return true; 
-	}
-				
+		function showHideLengthBreadth() {
+			var tbl = document.getElementById("floorDetails");
+			var tabLength = (tbl.rows.length) - 1;
+			for (var i = 1; i <= tabLength; i++) {
+				enableDisableLengthBreadth(getControlInBranch(tbl.rows[i],
+						'unstructuredLand'));
+			}
+		}
+
+		function enableDisableFirmName(obj) {
+			var selIndex = obj.selectedIndex;
+			if (selIndex != undefined) {
+				var selText = obj.options[selIndex].text;
+				var rIndex = getRow(obj).rowIndex;
+				var tbl = document.getElementById('floorDetails');
+				var firmval = getControlInBranch(tbl.rows[rIndex], 'firmName');
+				if (selText != null
+						&& selText == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@NATURE_OF_USAGE_RESIDENCE}"/>') {
+					if (firmval.value != null && firmval.value != "")
+						firmval.value = "";
+					firmval.readOnly = true;
+				} else {
+					firmval.readOnly = false;
+				}
+			}
+		}
+
+		function calculatePlintArea(obj) {
+			var rIndex = getRow(obj).rowIndex;
+			var tbl = document.getElementById('floorDetails');
+			var builtUpArea = getControlInBranch(tbl.rows[rIndex],
+					'builtUpArea');
+			var unstructureLand = getControlInBranch(tbl.rows[rIndex],
+					'unstructuredLand');
+			if (unstructureLand.options[unstructureLand.selectedIndex].text == 'No') {
+				if (obj.value != null && obj.value != "") {
+					var buildLength = getControlInBranch(tbl.rows[rIndex],
+							'builtUpArealength');
+					var buildbreadth = getControlInBranch(tbl.rows[rIndex],
+							'builtUpAreabreadth');
+
+					if (buildLength.value != null && buildLength.value != ""
+							&& buildbreadth.value != null
+							&& buildbreadth.value != "") {
+						builtUpArea.value = roundoff(eval(buildLength.value
+								* buildbreadth.value));
+						trim(builtUpArea, builtUpArea.value);
+						checkForTwoDecimals(builtUpArea, 'Assessable Area');
+						checkZero(builtUpArea, 'Assessable Area');
+					} else
+						builtUpArea.value = "";
+				} else
+					builtUpArea.value = "";
+			}
+		}
+
+		function enableDisableLengthBreadth(obj) {
+			var selIndex = obj.selectedIndex;
+			if (obj.value == 'true') {
+				obj.value = 'true';
+				obj.options[selIndex].selected = true;
+			} else {
+				obj.value = 'false';
+				obj.options[selIndex].selected = true;
+			}
+
+			if (selIndex != undefined) {
+				var selText = obj.options[selIndex].text;
+				var rIndex = getRow(obj).rowIndex;
+				var tbl = document.getElementById('floorDetails');
+				var buildLength = getControlInBranch(tbl.rows[rIndex],
+						'builtUpArealength');
+				var buildbreadth = getControlInBranch(tbl.rows[rIndex],
+						'builtUpAreabreadth');
+				var builtUpArea = getControlInBranch(tbl.rows[rIndex],
+						'builtUpArea');
+				if (selText != null && selText == 'No') {
+					buildLength.readOnly = false;
+					buildbreadth.readOnly = false;
+					builtUpArea.readOnly = true;
+				} else {
+					buildLength.value = "";
+					buildLength.readOnly = true;
+					buildbreadth.value = "";
+					buildbreadth.readOnly = true;
+					builtUpArea.readOnly = false;
+				}
+			}
+		}
+
+		function onSubmit() {
+			jQuery('#gender, #guardianRelation').removeAttr('disabled');
+			document.forms[0].action = 'createProperty-updateDataEntry.action';
+			document.forms[0].submit;
+			return true;
+		}
 	</script>
 	<script
             src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>

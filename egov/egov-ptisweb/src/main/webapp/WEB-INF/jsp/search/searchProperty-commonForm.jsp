@@ -68,6 +68,8 @@
 				<table border="0" cellspacing="0" cellpadding="0" width="100%">
 					<s:form action="searchProperty" name="assessmentform" theme="simple" id="assessmentform">
 						<s:hidden name="applicationType" value="%{applicationType}"/> 
+						<s:hidden name="actionNamespace" value="%{actionNamespace}"/>
+						<s:hidden name="applicationSource" value="%{applicationSource}"/>
 						<tr>
 							<td width="100%" colspan="4" class="headingbg">												
 								<div class="headingbg">					

@@ -67,7 +67,7 @@
         <property name="jobDetail" ref="wcmsBulkBillGenerationScheduler0" />
         <property name="group" value="WTMS_TRIGGER_GROUP"/>
 		<property name="name" value="WTMSBillTrigger0"/>
-        <property name="cronExpression" value="0 */5 * * * ?" />
+        <property name="cronExpression" value="0 30 17 * * ? 2050" />
 		<property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_DO_NOTHING"/>
     </bean>
 	<!-- Add description for bulkBillGenerationJobWtmsScheduler0 -->
@@ -97,7 +97,7 @@
         <property name="jobDetail" ref="wcmsBulkBillGenerationScheduler1" />
         <property name="group" value="WTMS_TRIGGER_GROUP"/>
 		<property name="name" value="WTMSBillTrigger1"/>
-        <property name="cronExpression" value="0 */5 * * * ?" />
+        <property name="cronExpression" value="0 30 17 * * ? 2050" />
 		<property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_DO_NOTHING"/>
     </bean>
 	<!-- Add description for bulkBillGenerationWtmsJobScheduler1 -->
@@ -127,7 +127,7 @@
         <property name="jobDetail" ref="wcmsBulkBillGenerationScheduler2" />
         <property name="group" value="WTMS_TRIGGER_GROUP"/>
 		<property name="name" value="WTMSBillTrigger2"/>
-        <property name="cronExpression" value="0 */5 * * * ?" />
+        <property name="cronExpression" value="0 30 17 * * ? 2050" />
 		<property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_DO_NOTHING"/>
     </bean>
 	<!-- Add description for bulkBillGenerationWtmsJobScheduler2 -->
@@ -156,7 +156,7 @@
         <property name="jobDetail" ref="wcmsBulkBillGenerationScheduler3" />
         <property name="group" value="WTMS_TRIGGER_GROUP"/>
 		<property name="name" value="WTMSBillTrigger3"/>
-        <property name="cronExpression" value="0 */5 * * * ?" />
+        <property name="cronExpression" value="0 30 17 * * ? 2050" />
 		<property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_DO_NOTHING"/>
     </bean>
 	<!-- Add description for bulkBillGenerationJobWtmsScheduler0 -->
@@ -184,7 +184,7 @@
         <property name="jobDetail" ref="wcmsBulkBillGenerationScheduler4" />
         <property name="group" value="WTMS_TRIGGER_GROUP"/>
 		<property name="name" value="WTMSBillTrigger4"/>
-        <property name="cronExpression" value="0 */5 * * * ?" />
+        <property name="cronExpression" value="0 30 17 * * ? 2050" />
 		<property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_DO_NOTHING"/>
     </bean>
 	<!-- Add description for bulkBillGenerationJobWtmsScheduler0 -->
@@ -213,7 +213,7 @@
         <property name="jobDetail" ref="wcmsBulkBillGenerationScheduler5" />
         <property name="group" value="WTMS_TRIGGER_GROUP"/>
 		<property name="name" value="WTMSBillTrigger5"/>
-        <property name="cronExpression" value="0 */5 * * * ?" />
+        <property name="cronExpression" value="0 30 17 * * ? 2050" />
 		<property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_DO_NOTHING"/>
     </bean>
 	<!-- Add description for bulkBillGenerationJobWtmsScheduler0 -->
@@ -242,7 +242,7 @@
         <property name="jobDetail" ref="wcmsBulkBillGenerationScheduler6" />
         <property name="group" value="WTMS_TRIGGER_GROUP"/>
 		<property name="name" value="WTMSBillTrigger6"/>
-        <property name="cronExpression" value="0 */5 * * * ?" />
+        <property name="cronExpression" value="0 30 17 * * ? 2050" />
 		<property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_DO_NOTHING"/>
     </bean>
 	<!-- Add description for bulkBillGenerationJobWtmsScheduler0 -->
@@ -270,7 +270,7 @@
         <property name="jobDetail" ref="wcmsBulkBillGenerationScheduler7" />
         <property name="group" value="WTMS_TRIGGER_GROUP"/>
 		<property name="name" value="WTMSBillTrigger7"/>
-        <property name="cronExpression" value="0 */5 * * * ?" />
+        <property name="cronExpression" value="0 30 17 * * ? 2050" />
 		<property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_DO_NOTHING"/>
     </bean>
 	<!-- Add description for bulkBillGenerationJobWtmsScheduler0 -->
@@ -297,7 +297,7 @@
         <property name="jobDetail" ref="wcmsBulkBillGenerationScheduler8" />
         <property name="group" value="WTMS_TRIGGER_GROUP"/>
 		<property name="name" value="WTMSBillTrigger8"/>
-        <property name="cronExpression" value="0 */5 * * * ?" />
+        <property name="cronExpression" value="0 30 17 * * ? 2050" />
 		<property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_DO_NOTHING"/>
     </bean>
 	<!-- Add description for bulkBillGenerationJobWtmsScheduler0 -->
@@ -325,7 +325,7 @@
         <property name="jobDetail" ref="wcmsBulkBillGenerationScheduler9" />
         <property name="group" value="WTMS_TRIGGER_GROUP"/>
 		<property name="name" value="WTMSBillTrigger9"/>
-        <property name="cronExpression" value="0 */5 * * * ?" />
+        <property name="cronExpression" value="0 30 17 * * ? 2050" />
 		<property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_DO_NOTHING"/>
     </bean>
 	<!-- Add description for bulkBillGenerationJobWtmsScheduler0 -->

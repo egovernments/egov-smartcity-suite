@@ -41,7 +41,6 @@ package org.egov.demand.interfaces;
 
 /**
  * @author satyam
- *
  */
 
 import org.egov.demand.model.EgBillType;
@@ -55,86 +54,86 @@ import java.util.List;
 /**
  * Any class that needs to generate a Bill must implement the Billable
  * Interface.
- * 
+ *
  */
 public interface Billable {
 
-	String getBillPayee();
+    String getBillPayee();
 
-	String getBillAddress();
+    String getBillAddress();
 
-	String getReferenceNumber();
+    String getReferenceNumber();
 
-	EgDemand getCurrentDemand();
+    EgDemand getCurrentDemand();
 
-	List<EgDemand> getAllDemands();
+    List<EgDemand> getAllDemands();
 
-	EgBillType getBillType();
+    EgBillType getBillType();
 
-	Date getBillLastDueDate();
+    Date getBillLastDueDate();
 
-	Long getBoundaryNum();
+    Long getBoundaryNum();
 
-	String getBoundaryType();
+    String getBoundaryType();
 
-	String getDepartmentCode();
+    String getDepartmentCode();
 
-	BigDecimal getFunctionaryCode();
+    BigDecimal getFunctionaryCode();
 
-	String getFundCode();
+    String getFundCode();
 
-	String getFundSourceCode();
-	
-	String getEmailId();
+    String getFundSourceCode();
 
-	Date getIssueDate();
+    String getEmailId();
 
-	Date getLastDate();
+    Date getIssueDate();
 
-	Module getModule();
+    Date getLastDate();
 
-	Boolean getOverrideAccountHeadsAllowed();
+    Module getModule();
 
-	Boolean getPartPaymentAllowed();
+    Boolean getOverrideAccountHeadsAllowed();
 
-	String getServiceCode();
+    Boolean getPartPaymentAllowed();
 
-	BigDecimal getTotalAmount();
+    String getServiceCode();
 
-	Long getUserId();
+    BigDecimal getTotalAmount();
 
-	String getDescription();
+    Long getUserId();
 
-	String getDisplayMessage();
-	
-	String getTransanctionReferenceNumber();
+    String getDescription();
 
-	/**
-	 * Comma separated list of payment modes not allowed for the Demand.
-	 * 
-	 * @return
-	 */
-	String getCollModesNotAllowed();
+    String getDisplayMessage();
 
-	/**
-	 * The "consumer code" of the entity being billed - e.g. a property ID in case of property tax.
-	 */
-	String getConsumerId();
-	
-	String getConsumerType();
+    String getTransanctionReferenceNumber();
 
-	/**
-	 * If apportioning of a payment into the various account heads is to be done by Collections,
-	 * this should be FALSE. If the apportioning is done by the billing system (via the 
-	 * TaxCollection.apportionPaidAmount() interface), then this should return TRUE.  
-	 */
-	Boolean isCallbackForApportion();
-	
-	/**
-	 * Typically a billing system will always have one setting for "isCallbackForApportion". In some
-	 * cases however, the same billing system needs to have the choice of whether to apportion or
-	 * not, depending on the use case. In such cases, this method may be used to alter the value.  
-	 */
-	void setCallbackForApportion(Boolean b);
+    /**
+     * Comma separated list of payment modes not allowed for the Demand.
+     *
+     * @return
+     */
+    String getCollModesNotAllowed();
+
+    /**
+     * The "consumer code" of the entity being billed - e.g. a property ID in case of property tax.
+     */
+    String getConsumerId();
+
+    String getConsumerType();
+
+    /**
+     * If apportioning of a payment into the various account heads is to be done by Collections,
+     * this should be FALSE. If the apportioning is done by the billing system (via the
+     * TaxCollection.apportionPaidAmount() interface), then this should return TRUE.
+     */
+    Boolean isCallbackForApportion();
+
+    /**
+     * Typically a billing system will always have one setting for "isCallbackForApportion". In some
+     * cases however, the same billing system needs to have the choice of whether to apportion or
+     * not, depending on the use case. In such cases, this method may be used to alter the value.
+     */
+    void setCallbackForApportion(Boolean b);
 
 }

@@ -40,8 +40,6 @@
 
 package org.egov.wtms.web.controller.application;
 
-import static org.egov.wtms.utils.constants.WaterTaxConstants.CONNECTION_RECTIFICATION;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ValidationException;
 
@@ -95,7 +93,8 @@ public class ActivateConsumerCodeController {
         waterConnectionDetails.setReferenceNumber(activateConnection.getReferenceNo());
         waterConnectionDetails.setConnectionStatus(ConnectionStatus.ACTIVE);
         waterConnectionDetailsService.save(waterConnectionDetails);
-        return CONNECTION_RECTIFICATION;
+        model.addAttribute("consumerCode", consumerCode);
+        return "activateconnection-success";
 
     }
 

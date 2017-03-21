@@ -704,7 +704,7 @@ public class SewerageDemandService {
             SewerageDemandGenerationLog demandGenerationLog;
             demandGenerationLog = txTemplate.execute(result -> {
                 return stDemandGenerationLogService
-                        .createDemandGenerationLog(sewerageDmdGenerationInstallment.getFinYearRange());
+                        .createDemandGenerationLog(sewerageDmdGenerationInstallment.getDescription());
             });
 
             for (SewerageApplicationDetails applicationDetails : sewerageApplicationDetails) {

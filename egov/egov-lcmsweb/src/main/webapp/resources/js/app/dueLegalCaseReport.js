@@ -83,11 +83,11 @@ jQuery(document).ready(function($) {
 				},
 				filter : function(data) {
 			
-					return $.map(data, function(value, key) {
+					return $.map(data, function(value) {
 						
 						return {
 							name : value,
-							value : key
+							value : value
 						};
 						
 					});
@@ -113,8 +113,10 @@ var oDataTable;
 function submitForm(redirectUrl,oTable) {
 	if($('form').valid()){
 		var today = getdate();
-		//$('#dailyBoardReportResult-header').show();
 		$('#reportgeneration-header').show();
+		 $.post(redirectUrl+$('#dueReportResultForm').serialize())
+			.done(function(searchResult) {
+				console.log(JSON.stringify(searchResult));
 		oDataTable=oTable.DataTable({
 			dom : "<'row'<'col-xs-4 pull-right'f>r>t<'row add-margin'<'col-md-3 col-xs-6'i><'col-md-2 col-xs-6'l><'col-md-3 col-xs-6 text-right'B><'col-md-4 col-xs-6 text-right'p>>",
 			"autoWidth": false,
@@ -147,23 +149,21 @@ function submitForm(redirectUrl,oTable) {
 					    }
 					}
 					],
-				ajax : {
-					
-					url : redirectUrl+$('#dueReportResultForm').serialize(),
-				},
+					searchable : true,
+					data : searchResult,
 				columns :[{"title" : "S.no","sClass" : "text-center"},
 				          { "data" : "caseNumber", "title": "Case Number","sClass" : "text-center"},
-				          { "data" : "legalcaseno", "title": "LC Number","sClass" : "text-center"},
+				          { "data" : "lcNumber", "title": "LC Number","sClass" : "text-center"},
 					      { "data" : "caseTitle" , "title": "Case Title","sClass" : "text-center"},  
 						  { "data" : "courtName", "title": "Court Name","sClass" : "text-center"},
-						  { "data" : "petitionerName", "title": "Petitioners","sClass" : "text-center"},
-						  { "data" : "respondantName", "title": "Respondants","sClass" : "text-center"},
-						  { "data" : "standingCouncil", "title": "Standing Council","sClass" : "text-center"},
+						  { "data" : "petName", "title": "Petitioners","sClass" : "text-center"},
+						  { "data" : "resName", "title": "Respondants","sClass" : "text-center"},
+						  { "data" : "standingCounsel", "title": "Standing Council","sClass" : "text-center"},
 						  { "data" : "officerIncharge", "title": "In Charge Officer","sClass" : "text-center"},
 						  { "data" : "nextDate", "title": "Important Date","sClass" : "text-center"}
 						  ],
 							"fnRowCallback" : function(row, data, index) {
-								$('td:eq(1)',row).html('<a href="javascript:void(0);" onclick="openLegalCase(\''+ data.legalcaseno +'\')">' + data.caseNumber + '</a>');
+								$('td:eq(1)',row).html('<a href="javascript:void(0);" onclick="openLegalCase(\''+ data.lcNumber +'\')">' + data.caseNumber + '</a>');
 							}
 				});
 		 //s.no auto generation(will work in exported documents too..)
@@ -173,6 +173,7 @@ function submitForm(redirectUrl,oTable) {
                 oDataTable.cell(cell).invalidate('dom'); 
             } );
         } ).draw();
+			})
 		
 
 	}

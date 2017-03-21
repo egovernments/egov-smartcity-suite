@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.3.0.final using JasperReports Library version 6.3.0  -->
+<!-- 2017-03-17T18:22:57 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="meetingMomDetails" pageWidth="595" pageHeight="842" orientation="Landscape" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="178aa26f-47e8-4c10-ad9c-659d25ab0e00">
 	<property name="ireport.zoom" value="1.1"/>
 	<property name="ireport.x" value="0"/>
@@ -38,7 +40,7 @@
 					<rightPen lineWidth="0.0"/>
 				</box>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font isBold="false"/>
+					<font fontName="Gautami" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{preamble}.getGistOfPreamble()]]></textFieldExpression>
 			</textField>
@@ -84,7 +86,7 @@
 					<rightPen lineWidth="0.0"/>
 				</box>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font isBold="false"/>
+					<font fontName="Gautami" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{resolutionDetail}]]></textFieldExpression>
 			</textField>
@@ -100,7 +102,7 @@
 					<rightPen lineWidth="0.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font isBold="true"/>
+					<font fontName="Gautami" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["'"+$F{resolutionStatus}.getDescription()+"'"]]></textFieldExpression>
 			</textField>

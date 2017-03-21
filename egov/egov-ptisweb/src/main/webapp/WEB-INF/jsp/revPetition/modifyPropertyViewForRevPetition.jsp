@@ -175,23 +175,11 @@
 	
 	<tr class="appurtenant">
 		<td class="bluebox">&nbsp;</td>
-		<td class="bluebox"><s:text name="isextent.appurtntland" /> : </td>
-		<td class="bluebox"><s:checkbox name="property.propertyDetail.appurtenantLandChecked" disabled="true" id="appurtenantLandChecked"/>
-		</td>
 		<td class="bluebox"><s:text name="certificationNumber"></s:text>:</td>
 		<td class="bluebox">
 			<span class="bold"><s:property value="%{property.propertyDetail.occupancyCertificationNo}"/></span>
 		</td>
-	</tr>
-	<tr id="appurtenantRow">
-		<td class="bluebox">&nbsp;</td>
-		<td class="bluebox"><s:text name="extent.appurtntland"></s:text> :</td>
-		<td class="bluebox">
-			<span class="bold"><s:property value="%{property.propertyDetail.extentAppartenauntLand}" default="N/A"/></span>
-		</td>
-		<td class="bluebox" colspan="2">
-			&nbsp;
-		</td>
+		<td class="bluebox" colspan="2">&nbsp;</td>
 	</tr>
 	
 	<!-- Amenities section -->

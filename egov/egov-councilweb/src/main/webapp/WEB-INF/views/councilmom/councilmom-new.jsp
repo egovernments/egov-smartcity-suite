@@ -86,8 +86,3 @@
 	href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>">
 <script type="text/javascript"
 	src="<cdn:url value='/resources/app/js/councilMom.js?rnd=${app_release_no}'/>"></script>
-<script>
-	$('#buttonSubmit').click(function(e) {
-		document.forms["councilMomform"].submit();
-	});
-</script>

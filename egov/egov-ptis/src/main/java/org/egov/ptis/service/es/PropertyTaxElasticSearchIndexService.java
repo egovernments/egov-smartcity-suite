@@ -905,7 +905,7 @@ public class PropertyTaxElasticSearchIndexService {
         for (Map.Entry<String, Map<String, BigDecimal>> entry : demandDivisionMap.entrySet()) {
             dCBDetails = new DCBDetails();
             name = entry.getKey();
-            dCBDetails.setUlbName(name);
+            dCBDetails.setBoundaryName(name);
             if (!assessmentsCountMap.isEmpty() && assessmentsCountMap.get(name) != null)
                 dCBDetails.setTotalAssessments(assessmentsCountMap.get(name) == null ? BigDecimal.ZERO : assessmentsCountMap.get(name));
 

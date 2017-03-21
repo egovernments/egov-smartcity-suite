@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2016-11-03T14:15:12 -->
+<!-- Created with Jaspersoft Studio version 6.3.0.final using JasperReports Library version 6.3.0  -->
+<!-- 2017-03-20T12:31:58 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="meetingMom" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="cee583e3-a0f8-4d29-92e7-b2c0afa5f324">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="16"/>
@@ -18,18 +18,18 @@
 	<title>
 		<band height="191">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="127" y="13" width="366" height="33" uuid="c62d110f-2237-4e88-a1b5-0d9f40bc358a"/>
+				<reportElement x="100" y="13" width="455" height="33" uuid="c62d110f-2237-4e88-a1b5-0d9f40bc358a"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Serif" size="20" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{cityName}]]></textFieldExpression>
 			</textField>
 			<image hAlign="Center" vAlign="Middle" onErrorType="Blank">
-				<reportElement x="50" y="13" width="60" height="57" uuid="62286e2b-46b1-4cfb-9c0b-2c64a181f82e"/>
+				<reportElement x="30" y="13" width="60" height="57" uuid="62286e2b-46b1-4cfb-9c0b-2c64a181f82e"/>
 				<imageExpression><![CDATA[$P{logoPath}]]></imageExpression>
 			</image>
 			<staticText>
-				<reportElement x="127" y="46" width="366" height="28" uuid="4343c9c0-cf2d-4b36-b5a7-11b2fa411403"/>
+				<reportElement x="100" y="48" width="455" height="28" uuid="4343c9c0-cf2d-4b36-b5a7-11b2fa411403"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="13" isBold="true"/>
 				</textElement>

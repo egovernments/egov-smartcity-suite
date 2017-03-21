@@ -60,6 +60,8 @@ import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_OC;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_VRPROCEEDINGS;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_GRPPROCEEDINGS;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_RPPROCEEDINGS;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_EXEMPTION;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_EXEMPTIONPROCEEDINGS;
 
 
 public class CommonServices {
@@ -98,6 +100,7 @@ public class CommonServices {
                 noticeTypeMap.put(NOTICE_TYPE_GRPPROCEEDINGS, NOTICE_TYPE_GRPPROCEEDINGS);
                 noticeTypeMap.put(NOTICE_TYPE_RPPROCEEDINGS, NOTICE_TYPE_RPPROCEEDINGS);
                 noticeTypeMap.put(NOTICE_TYPE_VRPROCEEDINGS, NOTICE_TYPE_VRPROCEEDINGS);
+                noticeTypeMap.put(NOTICE_TYPE_EXEMPTION, NOTICE_TYPE_EXEMPTIONPROCEEDINGS);
 		return noticeTypeMap;
 	}
 

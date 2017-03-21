@@ -723,7 +723,7 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction {
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug("voucher id=======" + vhid);
                 voucherHeader = (CVoucherHeader) getPersistenceService().find(VOUCHERQUERY, vhid);
-                voucherHeader.start().withOwner(getPosition());
+                voucherHeader.transition().start().withOwner(getPosition());
                 addActionMessage(getText("pjv.voucher.wc.created", new String[] { voucherHeader.getVoucherNumber() }));
             } else
                 addActionError(getText("pjv.budgetcheck.failed"));

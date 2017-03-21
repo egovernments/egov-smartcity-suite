@@ -62,6 +62,7 @@ import org.egov.tl.entity.NatureOfBusiness;
 import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.entity.WorkflowBean;
 import org.egov.tl.entity.dto.DemandnoticeForm;
+import org.egov.tl.entity.dto.OnlineSearchForm;
 import org.egov.tl.entity.dto.SearchForm;
 import org.egov.tl.utils.Constants;
 import org.egov.tl.utils.LicenseUtils;
@@ -73,13 +74,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Comparator;
 
 import static org.egov.infra.utils.DateUtils.currentDateToDefaultDateFormat;
 import static org.egov.infra.utils.DateUtils.getDefaultFormattedDate;
@@ -89,7 +90,7 @@ import static org.egov.tl.utils.Constants.BUTTONREJECT;
 import static org.egov.tl.utils.Constants.LICENSE_FEE_TYPE;
 import static org.egov.tl.utils.Constants.NEW_LIC_APPTYPE;
 import static org.egov.tl.utils.Constants.RENEWAL_LIC_APPTYPE;
-import static org.egov.tl.utils.Constants.TRADELICENSE_MODULENAME;
+import static org.egov.tl.utils.Constants.TRADE_LICENSE;
 
 @Transactional(readOnly = true)
 public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
@@ -119,7 +120,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
 
     @Override
     protected Module getModuleName() {
-        return moduleService.getModuleByName("Trade License");
+        return moduleService.getModuleByName(TRADE_LICENSE);
     }
 
     @Override
@@ -346,6 +347,54 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         return finalList;
     }
 
+    public List<OnlineSearchForm> onlineSearchTradeLicense(final OnlineSearchForm searchForm) {
+        final Criteria searchCriteria = entityQueryService.getSession().createCriteria(TradeLicense.class);
+        searchCriteria.createAlias("licensee", "licc").createAlias("category", "cat")
+                .createAlias("tradeName", "subcat").createAlias("status", "licstatus");
+        if (StringUtils.isNotBlank(searchForm.getApplicationNumber()))
+            searchCriteria.add(Restrictions.eq("applicationNumber", searchForm.getApplicationNumber()).ignoreCase());
+        if (StringUtils.isNotBlank(searchForm.getLicenseNumber()))
+            searchCriteria.add(Restrictions.eq("licenseNumber", searchForm.getLicenseNumber()).ignoreCase());
+
+        searchCriteria.add(Restrictions.isNotNull("applicationNumber"));
+        searchCriteria.addOrder(Order.asc("id"));
+        List<OnlineSearchForm> searchResult = new ArrayList<>();
+        License license = (License) searchCriteria.uniqueResult();
+        if (license != null)
+            searchResult.add(new OnlineSearchForm(license, getDemandColl(license)));
+        return searchResult;
+    }
+
+    public BigDecimal[] getDemandColl(License license) {
+        Module module = moduleService.getModuleByName(TRADE_LICENSE);
+        final Installment currInstallment = getCurrentInstallment(module);
+        BigDecimal[] dmdColl = new BigDecimal[3];
+        BigDecimal currDmd = BigDecimal.ZERO;
+        BigDecimal totColl = BigDecimal.ZERO;
+        BigDecimal arrDmd = BigDecimal.ZERO;
+        for (EgDemandDetails dmddtls : license.getCurrentDemand().getEgDemandDetails()) {
+            if (dmddtls.getInstallmentStartDate().before(currInstallment.getFromDate()) || dmddtls.getInstallmentStartDate().equals(currInstallment.getFromDate())) {
+                arrDmd = arrDmd.add(dmddtls.getAmount());
+                totColl = totColl.add(dmddtls.getAmtCollected());
+            } else {
+                currDmd = currDmd.add(dmddtls.getAmount());
+                totColl = totColl.add(dmddtls.getAmtCollected());
+            }
+        }
+        dmdColl[0] = arrDmd;
+        dmdColl[1] = currDmd;
+        dmdColl[2] = totColl;
+        return dmdColl;
+    }
+
+    public Installment getInstallmentForDate(final Date date, final Module module) {
+        return installmentDao.getInsatllmentByModuleForGivenDate(module, date);
+    }
+
+    public Installment getCurrentInstallment(final Module module) {
+        return getInstallmentForDate(new Date(), module);
+    }
+
     public List<DemandnoticeForm> searchLicensefordemandnotice(final DemandnoticeForm demandnoticeForm) {
         final Criteria searchCriteria = entityQueryService.getSession().createCriteria(TradeLicense.class);
         searchCriteria.createAlias("licensee", "licc").createAlias("category", "cat").createAlias("tradeName", "subcat")
@@ -377,7 +426,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
             Installment currentInstallment = license.getCurrentDemand().getEgInstallmentMaster();
             List<Installment> previousInstallment = installmentDao
                     .fetchPreviousInstallmentsInDescendingOrderByModuleAndDate(
-                            licenseUtils.getModule(TRADELICENSE_MODULENAME), currentInstallment.getToDate(), 1);
+                            licenseUtils.getModule(TRADE_LICENSE), currentInstallment.getToDate(), 1);
             Map<String, Map<String, BigDecimal>> outstandingFees = getOutstandingFeeForDemandNotice(license,
                     currentInstallment, previousInstallment.get(0));
             Map<String, BigDecimal> licenseFees = outstandingFees.get(LICENSE_FEE_TYPE);

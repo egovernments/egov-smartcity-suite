@@ -58,7 +58,6 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @Controller
-@RequestMapping("/licensesubcategory")
 public class ViewSubCategoryController {
 
     @Autowired
@@ -67,19 +66,19 @@ public class ViewSubCategoryController {
     @Autowired
     private SubCategoryDetailsService subCategoryDetailsService;
 
-    @RequestMapping(value = "by-category", method = GET, produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = {"/licensesubcategory/by-category", "/public/licensesubcategory/by-category"}, method = GET, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     public List<LicenseSubCategory> subcategories(@RequestParam Long categoryId) {
         return licenseSubCategoryService.getSubCategoriesByCategory(categoryId);
     }
 
-    @RequestMapping(value = "detail", method = GET, produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/licensesubcategory/detail", method = GET, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     public List<LicenseSubCategoryDetails> subcategoryDetailsBySubcategoryId(@RequestParam Long subCategoryId) {
         return subCategoryDetailsService.getSubcategoryDetailsBySubcategoryId(subCategoryId);
     }
 
-    @RequestMapping(value = "detail-by-feetype", method = GET, produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/licensesubcategory/detail-by-feetype", method = GET, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     public LicenseSubCategoryDetails subcategoryDetailBySubcategoryAndFeeType(@RequestParam Long subCategoryId, @RequestParam Long feeTypeId) {
         return subCategoryDetailsService.getSubcategoryDetailBySubcategoryAndFeeType(subCategoryId, feeTypeId);
@@ -90,7 +89,7 @@ public class ViewSubCategoryController {
         return licenseSubCategoryService.getSubCategoryByCode(code);
     }
 
-    @RequestMapping(value = "view/{code}", method = GET)
+    @RequestMapping(value = "/licensesubcategory/view/{code}", method = GET)
     public String viewSubCategory() {
         return "subcategory-view";
     }

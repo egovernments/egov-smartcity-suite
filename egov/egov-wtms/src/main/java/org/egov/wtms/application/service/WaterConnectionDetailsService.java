@@ -63,6 +63,7 @@ import javax.validation.ValidationException;
 
 import org.egov.commons.EgModules;
 import org.egov.commons.Installment;
+import org.egov.commons.entity.Source;
 import org.egov.demand.model.EgDemand;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.AssignmentAdaptor;
@@ -77,6 +78,7 @@ import org.egov.infra.elasticsearch.entity.enums.ClosureStatus;
 import org.egov.infra.elasticsearch.service.ApplicationIndexService;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
@@ -320,6 +322,12 @@ public class WaterConnectionDetailsService {
                 connectionStatus);
     }
 
+    public WaterConnectionDetails findParentConnectionDetailsByConsumerCodeAndConnectionStatus(final String consumerCode,
+            final ConnectionStatus connectionStatus) {
+        return waterConnectionDetailsRepository.findParentConnectionDetailsByConsumerCodeAndConnectionStatus(consumerCode,
+                connectionStatus);
+    }
+
     public WaterConnectionDetails findByOldConsumerNumberAndConnectionStatus(final String oldConsumerNumber,
             final ConnectionStatus connectionStatus) {
         return waterConnectionDetailsRepository.findByConnectionOldConsumerNumberAndConnectionStatus(oldConsumerNumber,
@@ -335,8 +343,27 @@ public class WaterConnectionDetailsService {
         return waterConnectionDetailsRepository.getPrimaryConnectionDetailsByPropertyID(propertyIdentifier);
     }
 
+    public WaterConnectionDetails getPrimaryConnectionDetailsByPropertyAssessmentNumbers(final List<String> propertyIdentifier) {
+        WaterConnectionDetails waterConnectionDetails = null;
+        for (final String assessmentNumber : propertyIdentifier) {
+            waterConnectionDetails = waterConnectionDetailsRepository
+                    .getPrimaryConnectionDetailsByPropertyAssessmentNumber(assessmentNumber);
+            if (waterConnectionDetails != null)
+                break;
+        }
+        return waterConnectionDetails;
+    }
+
+    public List<WaterConnectionDetails> getChildConnectionDetailsByPropertyID(final String propertyIdentifier) {
+        return waterConnectionDetailsRepository.getChildConnectionDetailsByPropertyID(propertyIdentifier);
+    }
+
     public List<WaterConnectionDetails> getAllConnectionDetailsByParentConnection(final Long parentId) {
         return waterConnectionDetailsRepository.getAllConnectionDetailsByParentConnection(parentId);
+    }
+
+    public List<WaterConnectionDetails> getAllConnectionDetailsExceptInactiveStatusByPropertyID(final String propertyIdentifier) {
+        return waterConnectionDetailsRepository.getAllConnectionDetailsExceptInactiveStatusByPropertyID(propertyIdentifier);
     }
 
     public List<Hashtable<String, Object>> getHistory(final WaterConnectionDetails waterConnectionDetails) {
@@ -434,7 +461,7 @@ public class WaterConnectionDetailsService {
                     reconnInSameInstallment = Boolean.FALSE;
                 }
                 connectionDemandService.updateDemandForNonmeteredConnection(waterConnectionDetails,
-                        nonMeterReconnInstallment, reconnInSameInstallment,null);
+                        nonMeterReconnInstallment, reconnInSameInstallment, null);
             }
             updateIndexes(waterConnectionDetails, sourceChannel);
         }
@@ -442,7 +469,7 @@ public class WaterConnectionDetailsService {
         if (ConnectionType.NON_METERED.equals(waterConnectionDetails.getConnectionType())
                 && WaterTaxConstants.APPLICATION_STATUS_SANCTIONED
                         .equalsIgnoreCase(waterConnectionDetails.getStatus().getCode())) {
-            connectionDemandService.updateDemandForNonmeteredConnection(waterConnectionDetails, null, null,workFlowAction);
+            connectionDemandService.updateDemandForNonmeteredConnection(waterConnectionDetails, null, null, workFlowAction);
             updateIndexes(waterConnectionDetails, sourceChannel);
         }
 
@@ -658,7 +685,7 @@ public class WaterConnectionDetailsService {
                         || loggedInUserDesignation.equalsIgnoreCase(WaterTaxConstants.SUPERIENTEND_ENGINEER_DESIGN)
                         || loggedInUserDesignation.equalsIgnoreCase(WaterTaxConstants.TAP_INSPPECTOR_DESIGN)
                         || (loggedInUserDesignation.equalsIgnoreCase(WaterTaxConstants.ASSISTANT_ENGINEER_DESIGN)
-                                || loggedInUserDesignation.equalsIgnoreCase(WaterTaxConstants.TAP_INSPPECTOR_DESIGN))
+                                || loggedInUserDesignation.equalsIgnoreCase(WaterTaxConstants.ASSISTANT_EXECUTIVE_ENGINEER_DESIGN))
                                 && (waterConnectionDetails.getStatus().getCode()
                                         .equals(WaterTaxConstants.APPLICATION_STATUS_VERIFIED)
                                         || waterConnectionDetails.getStatus().getCode()
@@ -824,6 +851,10 @@ public class WaterConnectionDetailsService {
             user = securityUtils.getCurrentUser();
         ApplicationIndex applicationIndex = applicationIndexService
                 .findByApplicationNumber(waterConnectionDetails.getApplicationNumber());
+        if(applicationIndex!=null && waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_CREATED)){
+            applicationIndex.setOwnerName(user.getUsername() + "::" + user.getName());
+            applicationIndexService.updateApplicationIndex(applicationIndex);
+        }
         if (applicationIndex != null && null != waterConnectionDetails.getId()
                 && waterConnectionDetails.getStatus() != null
                 && !waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_CREATED)) {
@@ -867,7 +898,11 @@ public class WaterConnectionDetailsService {
                 applicationIndex.setApproved(ApprovalStatus.INPROGRESS);
                 applicationIndex.setClosed(ClosureStatus.NO);
                 applicationIndex.setStatus(waterConnectionDetails.getStatus().getDescription());
-                if (sourceChannel == null)
+                applicationIndex.setSla(applicationProcessTimeService.getApplicationProcessTime(
+                        waterConnectionDetails.getApplicationType(), waterConnectionDetails.getCategory()));
+                if (waterTaxUtils.isCSCoperator(waterConnectionDetails.getCreatedBy()) && UserType.BUSINESS.equals(waterConnectionDetails.getCreatedBy().getType()))
+                    applicationIndex.setChannel(Source.CSC.toString());
+                else if (sourceChannel == null)
                     applicationIndex.setChannel(WaterTaxConstants.SYSTEM);
                 else
                     applicationIndex.setChannel(sourceChannel);
@@ -953,6 +988,11 @@ public class WaterConnectionDetailsService {
             if (applicationIndex == null) {
                 if (LOG.isDebugEnabled())
                     LOG.debug(" updating Application Index creation Started... ");
+                String channel;
+                if (waterTaxUtils.isCSCoperator(waterConnectionDetails.getCreatedBy()) && UserType.BUSINESS.equals(waterConnectionDetails.getCreatedBy().getType()))
+                    channel = Source.CSC.toString();
+                else 
+                    channel = WaterTaxConstants.SYSTEM;
                 applicationIndex = ApplicationIndex.builder().withModuleName(((EgModules) hql.uniqueResult()).getName())
                         .withApplicationNumber(waterConnectionDetails.getApplicationNumber())
                         .withApplicationDate(waterConnectionDetails.getApplicationDate())
@@ -962,7 +1002,7 @@ public class WaterConnectionDetailsService {
                         .withUrl(String.format(WTMS_APPLICATION_VIEW, waterConnectionDetails.getApplicationNumber()))
                         .withApplicantAddress(assessmentDetails.getPropertyAddress())
                         .withOwnername(user.getUsername() + "::" + user.getName())
-                        .withChannel(sourceChannel != null ? sourceChannel : WaterTaxConstants.SYSTEM)
+                        .withChannel(sourceChannel != null ? sourceChannel : channel)
                         .withDisposalDate(waterConnectionDetails.getDisposalDate())
                         .withMobileNumber(mobileNumber.toString()).withClosed(ClosureStatus.NO)
                         .withAadharNumber(aadharNumber.toString()).withApproved(ApprovalStatus.INPROGRESS).build();
@@ -1193,7 +1233,7 @@ public class WaterConnectionDetailsService {
     public void saveAndFlushWaterConnectionDetail(final WaterConnectionDetails waterConnectionDetails) {
         waterConnectionDetailsRepository.saveAndFlush(waterConnectionDetails);
     }
-    
+
     public List<WaterConnectionDetails> getAllConnectionDetailsByPropertyID(final String propertyId) {
         return waterConnectionDetailsRepository.getAllConnectionDetailsByPropertyID(propertyId);
     }

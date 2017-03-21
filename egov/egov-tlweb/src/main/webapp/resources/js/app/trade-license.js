@@ -39,6 +39,9 @@
  */
 
 $(document).ready(function () {
+    $('#boundary').change(function () {
+        parentBoundary = '';
+    });
     $('#boundary').blur(function () {
         $('#parentBoundary').find('option:gt(0)').remove();
         if (this.value !== '') {
@@ -60,7 +63,6 @@ $(document).ready(function () {
 
                 if (parentBoundary != "") {
                     $("#parentBoundary").val(parentBoundary);
-                    parentBoundary = "";
                 }
             });
         }
@@ -107,42 +109,33 @@ function getPropertyDetails() {
             type: "GET",
             contentType: "application/x-www-form-urlencoded",
             success: function (data) {
-                if (data.errorDetails.errorCode != null && data.errorDetails.errorCode != '') {
+                if (data.errorDetails && data.errorDetails.errorCode != null && data.errorDetails.errorCode != '') {
                     bootbox.alert(data.errorDetails.errorMessage);
                     $('#propertyNo').val('');
-                    $("#address").attr("readonly", false);
-                    $("#boundary").attr("readonly", false);
+                    $("#boundary").val('');
+                    $("#parentBoundary").find('option:gt(0)').remove();
+                    $("#address").val("");
                 } else {
                     if (data.boundaryDetails != null) {
                         $("#boundary").val(data.boundaryDetails.localityId);
-                        $('#parentBoundary').val(data.boundaryDetails.wardId);
+                        parentBoundary = data.boundaryDetails.wardId;
+                        var boundaryChanged = $("#boundary").triggerHandler('blur');
+                        boundaryChanged && boundaryChanged.done(function () {
+                            $("#parentBoundary").val(data.boundaryDetails.wardId)
+                        });
                         $("#address").val(data.propertyAddress);
                     }
                 }
             },
             error: function (e) {
-                $("#propertyNo").val("");
-                resetOnPropertyNumChange();
+                $('#propertyNo').val('');
+                $("#boundary").val('');
+                $("#parentBoundary").find('option:gt(0)').remove();
                 bootbox.alert("Error getting property details");
             }
         });
     }
 }
-
-function resetOnPropertyNumChange() {
-    var propertyNo = $("#propertyNo").val();
-    if (propertyNo != "" && propertyNo != null) {
-        $("#address").attr("readonly", true);
-        $("#boundary").attr("readonly", true);
-    } else {
-        $("#address").attr("readonly", false);
-        $("#boundary").attr("readonly", false);
-    }
-    $("#boundary").val('');
-    $("#parentBoundary").find('option:gt(0)').remove();
-    $("#address").val("");
-}
-
 
 function checkLength(obj, val) {
     if (obj.value.length > val) {

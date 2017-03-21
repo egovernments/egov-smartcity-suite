@@ -88,6 +88,11 @@ $(document)
 						$("#Approve").hide();
 
 					}
+					if (status == 'ESTIMATIONAMOUNTPAID' || status=='CLOSERINPROGRESS' || status=='RECONNECTIONINPROGRESS') {
+						$("#Sign").hide();
+						$("#Preview").hide();
+
+					}
 					if (approvalPositionExist != 0
 							&& ((status == 'CREATED' && wfstate != null)
 									|| status == 'VERIFIED'
@@ -323,8 +328,7 @@ $(document)
 												&& action == 'Execute Tap') {
 											validateTapExecutionDate(action);
 										} else if (status == 'CREATED'
-												&& action == 'Reject'
-												&& mode == 'fieldInspection') {
+												&& action == 'Reject' ) {
 
 											$('#pipelineDistance').val(0);
 											if ($('#estimationCharges'))

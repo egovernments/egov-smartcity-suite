@@ -157,14 +157,15 @@
 								<br/>
 								<table align="center" style="max-width: 12cm;"  cellpadding="10" class="table table-bordered datatable dt-responsive multiheadertbl" role="grid" id="dcbReportTable" sortable="sortable">
 									<c:set var="booleanVariable" value="true" />
-									<c:forEach var="dcb" items="${dcbResult}" varStatus="counter">
-										<c:forEach var="receipt" items="${dcb.collectReceiptMap}" varStatus="counter">
-											<c:if test="${not empty dcb.collectReceiptMap}">
+									<c:forEach var="dcb" items="${dcbResult}" varStatus="counter" >
+											<c:forEach var="receipt" items="${dcb.receipts}" varStatus="counter" >
+											<c:if test="${not empty dcb.receipts}">
 												<c:if test="${booleanVariable eq true}">
 													<thead>
 														<tr role="row">
-															<th> <spring:message code="lbl.hoardingReport.receipts" ></spring:message></th>
+															<th> <spring:message code="lbl.receipt.no" ></spring:message></th>
 															<th> <spring:message code="lbl.receipt.date" ></spring:message></th>
+															<th> <spring:message code="lbl.receipt.amt" ></spring:message></th>
 														</tr>
 													</thead>
 													<c:set var="booleanVariable" value="false" />
@@ -174,10 +175,11 @@
 									</c:forEach>
 									<tbody>
 										<c:forEach var="dcb" items="${dcbResult}" varStatus="counter" >
-											<c:forEach var="receipt" items="${dcb.collectReceiptMap}" varStatus="counter" >
+											<c:forEach var="receipt" items="${dcb.receipts}" varStatus="counter" >
 												<tr>
-													<td align="center">${receipt.value}</td>
-													<td align="center">${receipt.key}</td>
+													<td align="center">${receipt.receiptNumber}</td>
+													<td align="center">${receipt.receiptDate}</td>
+													<td align="center">${receipt.receiptAmt}</td>
 												</tr>
 											</c:forEach>
 										</c:forEach>

@@ -58,7 +58,7 @@
 								code="lbl.effective.fromdate" />:<span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
 							<form:input  path="activateDate"  
-								class="form-control datepicker" 
+								class="form-control datepicker" data-date-end-date="0d"
 								id="effectiveDate" data-inputmask="'mask': 'd/m/y'" required="required" />
 								<form:errors path="activateDate" cssClass="add-margin error-msg" />
 						</div>

@@ -203,4 +203,12 @@ public class NoticeService extends PersistenceService<PtNotice, Long> {
                 + " and noticeDate between ? and ? ",
                 noticeType, assessementNumber, currFinYear.getStartingDate(), currFinYear.getEndingDate());
     }
+
+    public PtNotice getPtNoticeByNoticeNumberAndBillType(final String noticeNo, final List<String> noticeType) {
+        final Query qry = getSession().createQuery(
+                "from PtNotice Pn where upper(Pn.noticeNo) = :noticeNumber and upper(noticeType) in (:noticeType) ");
+        qry.setString("noticeNumber", noticeNo.toUpperCase());
+        qry.setParameterList("noticeType", noticeType);
+        return (PtNotice) qry.uniqueResult();
+    }
 }

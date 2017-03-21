@@ -159,7 +159,7 @@ public class BudgetReAppropriationService extends PersistenceService<BudgetReApp
         final BudgetDetail savedBudgetDetail = budgetDetailService.createBudgetDetail(detail, position, persistenceService);
         budgetDetailService.applyAuditing(savedBudgetDetail);
         budgetDetailService.persist(savedBudgetDetail);
-        // detail.transition(true).end().withOwner(position);
+        // detail.transition().end().withOwner(position);
         return savedBudgetDetail;
     }
 

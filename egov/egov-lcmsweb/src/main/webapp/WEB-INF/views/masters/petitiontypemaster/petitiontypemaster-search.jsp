@@ -78,8 +78,8 @@
 						<label class="col-sm-2 control-label text-right"><spring:message
 								code="lbl.petitiontype" /> </label>
 						<div class="col-sm-3 add-margin">
-							<form:input path="petitionType"
-								class="form-control text-left patternvalidation"
+							<form:input path="petitionType" id="petitiontype"
+								class="form-control patternvalidation"
 								data-pattern="alphanumericwithspecialcharacterswithspace"
 								maxlength="128" />
 							<form:errors path="petitionType" cssClass="error-msg" />

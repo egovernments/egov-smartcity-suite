@@ -41,11 +41,16 @@ package org.egov.stms.transactions.service;
 
 import static  org.egov.stms.masters.entity.enums.SewerageProcessStatus.COMPLETED;
 import static  org.egov.stms.masters.entity.enums.SewerageProcessStatus.INCOMPLETE;
+import static org.springframework.util.StringUtils.isEmpty;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.egov.stms.entity.SewerageDemandGenerationLog;
 import org.egov.stms.entity.SewerageDemandGenerationLogDetail;
 import org.egov.stms.masters.entity.enums.SewerageProcessStatus;
 import org.egov.stms.transactions.entity.SewerageApplicationDetails;
+import org.egov.stms.transactions.entity.SewerageDemandStatusDetails;
 import org.egov.stms.transactions.repository.SewerageDemandGenerationLogDetailRepository;
 import org.egov.stms.transactions.repository.SewerageDemandGenerationLogRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,8 +71,17 @@ public class SewerageDemandGenerationLogService {
         return demandGenerationLogRepository.findByInstallmentYear(installmentYearRange);
     }
 
+    public List<SewerageDemandGenerationLog> getDemandGenerationLogListByInstallmentYear(final String installmentYear) {
+        return demandGenerationLogRepository.findByInstallmentYearOrderByIdDesc(installmentYear);
+    }
+
     public SewerageDemandGenerationLog createDemandGenerationLog(String installmentYearRange) {
         return demandGenerationLogRepository.saveAndFlush(new SewerageDemandGenerationLog(installmentYearRange));
+    }
+    
+    public List<SewerageDemandGenerationLogDetail> getDemandGenerationLogDetailByDemandGenerationLog(
+            final SewerageDemandGenerationLog demandGenerationLog) {
+        return demandGenerationLogDetailRepository.findByDemandGenerationLogIdOrderByIdDesc(demandGenerationLog.getId());
     }
 
     @Transactional
@@ -91,8 +105,8 @@ public class SewerageDemandGenerationLogService {
      * @param detailMsg
      * @return
      */
-    public SewerageDemandGenerationLogDetail createOrGetDemandGenerationLogDetail(SewerageDemandGenerationLog demandGenerationLog,
-            SewerageApplicationDetails applicationDetails, SewerageProcessStatus status, String detailMsg) {
+    public SewerageDemandGenerationLogDetail createOrGetDemandGenerationLogDetail(final SewerageDemandGenerationLog demandGenerationLog,
+           final SewerageApplicationDetails applicationDetails, final SewerageProcessStatus status,final String detailMsg) {
 
         SewerageDemandGenerationLogDetail logDetail = demandGenerationLogDetailRepository
                 .findByDemandGenerationLogIdAndSewerageApplicationDetailsId(demandGenerationLog.getId(),
@@ -113,6 +127,61 @@ public class SewerageDemandGenerationLogService {
     public SewerageDemandGenerationLogDetail completeDemandGenerationLogDetail(
             SewerageDemandGenerationLogDetail demandGenerationLogDetail) {
         return demandGenerationLogDetailRepository.saveAndFlush(demandGenerationLogDetail);
+    }
+    
+    public SewerageDemandStatusDetails getDemandStatusResult(final List<SewerageDemandGenerationLog> logList) {
+        final SewerageDemandStatusDetails demandStatus = new SewerageDemandStatusDetails();
+        Long noOfSuccess = 0L;
+        Long noOfFailure = 0L;
+        final List<String> sewrageList = new ArrayList<>();
+        List<SewerageDemandGenerationLogDetail> logDetailList;
+        for (final SewerageDemandGenerationLog log : logList) {
+            logDetailList = getDemandGenerationLogDetailByDemandGenerationLog(log);
+            for (final SewerageDemandGenerationLogDetail logDetail : logDetailList) {
+                if (isEmpty(sewrageList))
+                    sewrageList.add(logDetail.getSewerageApplicationDetails().getApplicationNumber());
+                else if (!sewrageList.contains(logDetail.getSewerageApplicationDetails().getApplicationNumber())){
+                    if (SewerageProcessStatus.COMPLETED.equals(logDetail.getStatus()))
+                        noOfSuccess++;
+                    else if (SewerageProcessStatus.INCOMPLETE.equals(logDetail.getStatus()))
+                        noOfFailure++;
+                }
+                sewrageList.add(logDetail.getSewerageApplicationDetails().getApplicationNumber());
+            }
+        }
+        demandStatus.setNoOfSuccess(noOfSuccess);
+        demandStatus.setNoOfFailure(noOfFailure);
+        return demandStatus;
+    }
+    
+    public List<SewerageDemandStatusDetails> getLogDetailResultList(final List<SewerageDemandGenerationLogDetail> logDetail,
+            final SewerageDemandGenerationLog demandGenerationLog, final List<Long> detailList, final boolean value) {
+        final List<SewerageDemandStatusDetails> successRecordsList = new ArrayList<>();
+        final List<SewerageDemandStatusDetails> failedRecordsList = new ArrayList<>();
+        final List<SewerageDemandStatusDetails> resultList = new ArrayList<>();
+        SewerageDemandStatusDetails statusObject;
+        for (final SewerageDemandGenerationLogDetail detail : logDetail)
+            if (!detailList.contains(detail.getSewerageApplicationDetails().getApplicationNumber())) {
+
+                statusObject = new SewerageDemandStatusDetails();
+                statusObject.setFinancialYear(demandGenerationLog.getInstallmentYear());
+                final SewerageApplicationDetails sewerageApplicationDetails = detail.getSewerageApplicationDetails();
+                statusObject.setSewerageApplicationNumber(sewerageApplicationDetails.getApplicationNumber());
+                
+                statusObject.setStatus(detail.getStatus().toString());
+                statusObject.setDetails(detail.getDetail());
+
+                if (SewerageProcessStatus.COMPLETED.equals(detail.getStatus()))
+                    successRecordsList.add(statusObject);
+                else if (SewerageProcessStatus.INCOMPLETE.equals(detail.getStatus()))
+                    failedRecordsList.add(statusObject);
+                detailList.add(detail.getSewerageApplicationDetails().getId());
+            }
+        if (value)
+            resultList.addAll(successRecordsList);
+        else
+            resultList.addAll(failedRecordsList);
+        return resultList;
     }
 
 }

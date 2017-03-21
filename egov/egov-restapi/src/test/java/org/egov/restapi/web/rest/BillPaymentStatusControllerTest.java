@@ -44,7 +44,7 @@ import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.egf.commons.EgovCommon;
@@ -71,7 +71,7 @@ public class BillPaymentStatusControllerTest extends AbstractContextControllerTe
     private ExpenseBillService expenseBillService;
 
     @Mock
-    private HttpServletRequest request;
+    private HttpServletResponse response;
 
     @InjectMocks
     private BillPaymentStatusController billPaymentStatusController;
@@ -102,14 +102,14 @@ public class BillPaymentStatusControllerTest extends AbstractContextControllerTe
     public void shouldReturnPaymentAmount() throws Exception {
         when(expenseBillService.getByBillnumber(Matchers.anyString())).thenReturn(egBillregister);
         when(egovCommon.getPaymentAmount(Matchers.anyLong())).thenReturn(BigDecimal.valueOf(1000));
-        responseJson = billPaymentStatusController.getPaymentAmount("1234", request);
+        responseJson = billPaymentStatusController.getPaymentAmount("1234", response);
         assertEquals("1000", responseJson);
     }
 
     @Test
     public void shouldGetErrorsWhenInvalidBillNumber() {
         when(expenseBillService.getByBillnumber(null)).thenReturn(null);
-        responseJson = billPaymentStatusController.getPaymentAmount(null, request);
+        responseJson = billPaymentStatusController.getPaymentAmount(null, response);
         final JSONObject jsonObject = new JSONObject(responseJson);
         assertEquals(RestApiConstants.THIRD_PARTY_ERR_CODE_NOT_VALID_BILLNUMBER, jsonObject.get("errorCode"));
     }
@@ -118,7 +118,7 @@ public class BillPaymentStatusControllerTest extends AbstractContextControllerTe
     public void shouldThrowApplicationExceptionWhenBillIdIsNull() throws ApplicationException {
         when(expenseBillService.getByBillnumber(Matchers.anyString())).thenReturn(egBillregister);
         when(egovCommon.getPaymentAmount(Matchers.anyLong())).thenThrow(new ApplicationException(""));
-        responseJson = billPaymentStatusController.getPaymentAmount(requestJson, request);
+        responseJson = billPaymentStatusController.getPaymentAmount(requestJson, response);
         final JSONObject jsonObject = new JSONObject(responseJson);
         assertEquals(StringUtils.EMPTY, jsonObject.get("errorCode"));
     }

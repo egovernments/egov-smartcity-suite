@@ -366,7 +366,7 @@ public class ContractorAdvanceService {
             wfInitiator = assignmentService.getPrimaryAssignmentForUser(contractorAdvanceRequisition.getCreatedBy().getId());
         if (WorksConstants.REJECT_ACTION.toString().equalsIgnoreCase(workFlowAction)) {
             final String stateValue = WorksConstants.WF_STATE_REJECTED;
-            contractorAdvanceRequisition.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+            contractorAdvanceRequisition.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
                     .withComments(approvalComent).withStateValue(stateValue).withDateInfo(currentDate.toDate())
                     .withOwner(wfInitiator.getPosition()).withNextAction("").withNatureOfTask(natureOfwork);
         } else {
@@ -382,7 +382,7 @@ public class ContractorAdvanceService {
                         .withOwner(pos).withNextAction(wfmatrix.getNextAction()).withNatureOfTask(natureOfwork);
             } else if (WorksConstants.CANCEL_ACTION.toString().equalsIgnoreCase(workFlowAction)) {
                 final String stateValue = WorksConstants.WF_STATE_CANCELLED;
-                contractorAdvanceRequisition.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+                contractorAdvanceRequisition.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withStateValue(stateValue).withDateInfo(currentDate.toDate())
                         .withOwner(pos).withNextAction("").withNatureOfTask(natureOfwork);
             } else {
@@ -390,7 +390,7 @@ public class ContractorAdvanceService {
                         null, contractorAdvanceRequisition.getAdvanceRequisitionAmount(), additionalRule,
                         contractorAdvanceRequisition.getCurrentState().getValue(),
                         contractorAdvanceRequisition.getState().getNextAction());
-                contractorAdvanceRequisition.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+                contractorAdvanceRequisition.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withStateValue(wfmatrix.getNextState()).withDateInfo(new Date())
                         .withOwner(pos).withNextAction(wfmatrix.getNextAction()).withNatureOfTask(natureOfwork);
             }

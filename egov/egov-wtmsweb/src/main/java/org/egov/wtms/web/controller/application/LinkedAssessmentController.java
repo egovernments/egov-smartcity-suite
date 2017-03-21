@@ -43,7 +43,9 @@ package org.egov.wtms.web.controller.application;
 import java.util.List;
 
 import javax.validation.ValidationException;
+
 import org.egov.wtms.application.entity.LinkedAssessment;
+import org.egov.wtms.application.entity.WaterConnection;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
@@ -91,6 +93,11 @@ public class LinkedAssessmentController {
         final List<WaterConnectionDetails> activeWaterConnectionDetailsList = waterConnectionDetailsService
                 .getAllConnectionDetailsByPropertyID(
                         linkedAssessment.getActiveAssessmentDetails().getAssessmentNumber());
+        WaterConnection parentConnection = null;
+        if (!activeWaterConnectionDetailsList.isEmpty())
+            for (final WaterConnectionDetails connectionDetails : activeWaterConnectionDetailsList)
+                if (connectionDetails.getConnection().getParentConnection() == null)
+                    parentConnection = connectionDetails.getConnection();
         if (!waterconnectiondetailslist.isEmpty()) {
             for (final WaterConnectionDetails connectionDetails : waterconnectiondetailslist) {
                 final WaterConnectionDetails waterconnectionDetails = waterConnectionDetailsService
@@ -99,14 +106,15 @@ public class LinkedAssessmentController {
                 waterconnectionDetails.getConnection()
                         .setPropertyIdentifier(linkedAssessment.getActiveAssessmentDetails().getAssessmentNumber());
                 if (!activeWaterConnectionDetailsList.isEmpty()) {
-                    waterconnectionDetails.getConnection().setParentConnection(null);
+                    waterconnectionDetails.getConnection().setParentConnection(parentConnection);
                     waterconnectionDetails
                             .setApplicationType(applicationTypeService.findByCode(WaterTaxConstants.ADDNLCONNECTION));
                 }
                 waterConnectionDetailsService.save(waterconnectionDetails);
             }
-            model.addAttribute("linkedAssessment", linkedAssessment);
-            return LINKED_ASSESSMENT;
+            model.addAttribute("propertyIdentifier",
+                    linkedAssessment.getActiveAssessmentDetails().getAssessmentNumber());
+            return "linkedassessment-success";
         } else
             throw new ValidationException("err.no.active.connections");
     }

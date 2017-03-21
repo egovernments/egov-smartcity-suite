@@ -64,7 +64,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Controller
 @RequestMapping(value = "/collection")
 public class SewerageBillGeneratorController {
-    private final String SEWERAGE_BILLNUMBER = "SEQ_SEWERAGEBILL_NUMBER";
     @Autowired
     private SewerageApplicationDetailsService sewerageApplicationDetailsService;
 
@@ -87,7 +86,7 @@ public class SewerageBillGeneratorController {
     public String payTax(@PathVariable final String consumernumber, @PathVariable final String assessmentnumber,
             final Model model, final ModelMap modelMap,
             @ModelAttribute SewerageApplicationDetails sewerageApplicationDetails, final HttpServletRequest request) {
-
+        String SEWERAGE_BILLNUMBER = "SEQ_SEWERAGEBILL_NUMBER";
         if (consumernumber != null)
             sewerageApplicationDetails = sewerageApplicationDetailsService.findByApplicationNumber(consumernumber);
         if (sewerageApplicationDetails != null) {

@@ -58,6 +58,8 @@ public class ComplaintDashBoardRequest {
     private String type;
     private String localityName;
     private String functionaryName;
+    private String includedSources;
+    private String excludedSources;
 
     public String getDistrictName() {
         return districtName;
@@ -185,5 +187,21 @@ public class ComplaintDashBoardRequest {
 
     public void setFunctionaryName(final String functionaryName) {
         this.functionaryName = functionaryName;
+    }
+
+    public String getIncludedSources() {
+        return includedSources;
+    }
+
+    public void setIncludedSources(String includedSources) {
+        this.includedSources = includedSources;
+    }
+
+    public String getExcludedSources() {
+        return excludedSources;
+    }
+
+    public void setExcludedSources(String excludedSources) {
+        this.excludedSources = excludedSources;
     }
 }

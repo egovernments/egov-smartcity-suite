@@ -107,7 +107,8 @@
 		</label>
 		<div class="col-sm-3">
 			<form:input path="street" id="txt-street" type="text"
-				class="form-control is_valid_alphabet inline-elem" placeholder=""
+			   data-pattern="regexp_alphabetspecialcharacters"
+			   class="form-control low-width patternvalidation" placeholder=""  maxlength="100"
 				autocomplete="off" required="required" />
 			<form:errors path="street" cssClass="add-margin error-msg" />
 		</div>
@@ -117,8 +118,8 @@
 		<div class="col-sm-3">
 
 			<form:select path="locality" id="select-locality"
-				cssClass="form-control" cssErrorClass="form-control error"
-				required="required">
+				cssClass="form-control" cssErrorClass="form-control error" 
+				required="required"> 
 				<form:option value="">
 					<spring:message code="lbl.default.option" />
 				</form:option>
@@ -136,7 +137,7 @@
 		<div class="col-sm-3">
 			<form:input path="city" id="txt-city" type="text"
 				class="form-control is_valid_alphabet inline-elem" placeholder=""
-				autocomplete="off" required="required" />
+				autocomplete="off" required="required" maxlength="30"  />
 			<form:errors path="city" cssClass="add-margin error-msg" />
 		</div>
 		<label class="col-sm-2 control-label"> <spring:message
@@ -173,7 +174,7 @@
 		</label>
 		<div class="col-sm-3">
 			<form:select path="venue" id="select-venue" cssClass="form-control "
-				cssErrorClass="form-control error" required="required">
+				cssErrorClass="form-control error"  required="required">
 				<form:option value="">
 					<spring:message code="lbl.default.option" />
 				</form:option>
@@ -203,7 +204,7 @@
 			<div class="col-sm-3">
 
 				<form:input path="placeOfMarriage" id="txt-placeofmrg" type="text"
-					class="form-control low-width patternvalidation addremoverequired"
+					class="form-control low-width patternvalidation addremoverequired" maxlength="100"
 					placeholder="" autocomplete="off" />
 
 				<form:errors path="placeOfMarriage" cssClass="add-margin error-msg" />

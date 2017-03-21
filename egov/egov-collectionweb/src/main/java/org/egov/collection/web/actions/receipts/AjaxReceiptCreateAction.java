@@ -74,13 +74,13 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 
 @ParentPackage("egov")
 @Results({ @Result(name = "schemeList", location = "ajaxReceiptCreate-schemeList.jsp"),
-    @Result(name = "subSchemeList", location = "ajaxReceiptCreate-subSchemeList.jsp"),
-    @Result(name = AjaxReceiptCreateAction.SERVICE_LIST, location = "ajaxReceiptCreate-serviceList.jsp"),
-    @Result(name = "serviceAccDtls", location = "ajaxReceiptCreate-serviceAccDtls.jsp"),
-    @Result(name = "subledger", location = "ajaxReceiptCreate-subledger.jsp"),
-    @Result(name = "entities", location = "ajaxReceiptCreate-entities.jsp"),
-    @Result(name = AjaxBankRemittanceAction.USERLIST, location = "ajaxReceiptCreate-userList.jsp"),
-    @Result(name = AjaxReceiptCreateAction.RESULT, location = "ajaxReceiptCreate-result.jsp") })
+        @Result(name = "subSchemeList", location = "ajaxReceiptCreate-subSchemeList.jsp"),
+        @Result(name = AjaxReceiptCreateAction.SERVICE_LIST, location = "ajaxReceiptCreate-serviceList.jsp"),
+        @Result(name = "serviceAccDtls", location = "ajaxReceiptCreate-serviceAccDtls.jsp"),
+        @Result(name = "subledger", location = "ajaxReceiptCreate-subledger.jsp"),
+        @Result(name = "entities", location = "ajaxReceiptCreate-entities.jsp"),
+        @Result(name = AjaxBankRemittanceAction.USERLIST, location = "ajaxReceiptCreate-userList.jsp"),
+        @Result(name = AjaxReceiptCreateAction.RESULT, location = "ajaxReceiptCreate-result.jsp") })
 public class AjaxReceiptCreateAction extends BaseFormAction {
     private static final Logger LOGGER = Logger.getLogger(AjaxReceiptCreateAction.class);
     private static final long serialVersionUID = 1L;
@@ -159,13 +159,13 @@ public class AjaxReceiptCreateAction extends BaseFormAction {
                 .findAllBy(
                         " from Accountdetailtype"
                                 + " where id in (select detailTypeId from CChartOfAccountDetail where glCodeId=(select id from CChartOfAccounts where glcode=?))  ",
-                                accountCode);
+                        accountCode);
         if (list == null || list.isEmpty())
             value = index + "~" + ERROR + "#";
         else
             for (final Accountdetailtype accountdetailtype : list)
                 value = value + index + "~" + selectedDetailType + "~" + onload + "~" + accountdetailtype.getName()
-                + "~" + accountdetailtype.getId().toString() + "#";
+                        + "~" + accountdetailtype.getId().toString() + "#";
         if (StringUtils.isNotBlank(value))
             value = value.substring(0, value.length() - 1);
         return RESULT;
@@ -261,15 +261,14 @@ public class AjaxReceiptCreateAction extends BaseFormAction {
                     || e.getName().contains("%") || e.getName().contains("^") || e.getName().contains("&")
                     || e.getName().contains("*"))
                 e.getName().replace("@", " ").replace("#", " ").replace("$", " ").replace("%", " ").replace("^", " ")
-                .replace("&", " ").replace("*", " ");
+                        .replace("&", " ").replace("*", " ");
             entityList.add(e);
         }
         return "entities";
     }
 
     /*
-     * This code has to be deleted once autocomplete feature is changed in misc
-     * Receipts also
+     * This code has to be deleted once autocomplete feature is changed in misc Receipts also
      */
     @Action(value = "/receipts/ajaxReceiptCreate-ajaxValidateDetailCode")
     public String ajaxValidateDetailCode() {
@@ -287,7 +286,7 @@ public class AjaxReceiptCreateAction extends BaseFormAction {
             final List<EntityType> entityList = getPersistenceService().findAllBy(
                     " from " + adt.getFullQualifiedName() + ""
                             + " where id in (select detailkey from Accountdetailkey where accountdetailtype.id=?)  ",
-                            Integer.valueOf(parameters.get(DETAILTYPEID)[0]));
+                    Integer.valueOf(parameters.get(DETAILTYPEID)[0]));
 
             if (getEntityList() == null || getEntityList().isEmpty())
                 value = index + "~" + ERROR + "#";
@@ -328,7 +327,7 @@ public class AjaxReceiptCreateAction extends BaseFormAction {
         setEntityList(getPersistenceService().findAllBy(
                 "select entity from " + adt.getFullQualifiedName() + " entity,Accountdetailkey adk"
                         + " where entity.id =adk.detailkey and adk.accountdetailtype.id=? ",
-                        Integer.valueOf(detailTypeId)));
+                Integer.valueOf(detailTypeId)));
 
         return "entities";
     }
@@ -344,12 +343,12 @@ public class AjaxReceiptCreateAction extends BaseFormAction {
                 .findAllBy(
                         " from Accountdetailtype"
                                 + " where id in (select detailTypeId from CChartOfAccountDetail where glCodeId=(select id from CChartOfAccounts where glcode=?))  ",
-                                accountCode);
+                        accountCode);
 
         for (final Accountdetailtype accountdetailtype : list)
             value = value + index + "~" + accountdetailtype.getDescription() + "~"
                     + accountdetailtype.getId().toString() + "#";
-        if (!("").equals(value))
+        if (!"".equals(value))
             value = value.substring(0, value.length() - 1);
 
         return RESULT;
@@ -456,18 +455,18 @@ public class AjaxReceiptCreateAction extends BaseFormAction {
         final StringBuilder miscDetails = new StringBuilder();
         if (null != service)
             miscDetails.append(null != service.getFund() ? service.getFund().getId() : "-1").append('~') // fund
-            .append(null != service.getScheme() ? service.getScheme().getId() : "-1").append('~') // scheme
-            .append(null != service.getSubscheme() ? service.getSubscheme().getId() : "-1").append('~') // subscheme
-            .append(null != service.getFundSource() ? service.getFundSource().getId() : "-1").append('~') // fundsource
-            .append(null != service.getFunctionary() ? service.getFunctionary().getId() : "-1").append('~') // functionary
-            .append(null != service.getFunction() ? service.getFunction().getId() : "-1"); // function
+                    .append(null != service.getScheme() ? service.getScheme().getId() : "-1").append('~') // scheme
+                    .append(null != service.getSubscheme() ? service.getSubscheme().getId() : "-1").append('~') // subscheme
+                    .append(null != service.getFundSource() ? service.getFundSource().getId() : "-1").append('~') // fundsource
+                    .append(null != service.getFunctionary() ? service.getFunctionary().getId() : "-1").append('~') // functionary
+                    .append(null != service.getFunction() ? service.getFunction().getId() : "-1"); // function
         else
             miscDetails.append("-1").append('~') // fund
-            .append("-1").append('~') // scheme
-            .append("-1").append('~') // subscheme
-            .append("-1").append('~') // fundsource
-            .append("-1").append('~') // functionary
-            .append("-1"); // function
+                    .append("-1").append('~') // scheme
+                    .append("-1").append('~') // subscheme
+                    .append("-1").append('~') // fundsource
+                    .append("-1").append('~') // functionary
+                    .append("-1"); // function
         value = miscDetails.toString();
         return RESULT;
 
@@ -510,33 +509,32 @@ public class AjaxReceiptCreateAction extends BaseFormAction {
                     } else
                         subledgerDetails.addAll(Collections.emptyList());
                 } else
-                    for (final ServiceSubledgerInfo serviceSubledgerInfo : subledgerDetails) {
-                        EntityType entityType = null;
-                        try {
-                            entityType = egovCommon.getEntityType(serviceSubledgerInfo.getDetailType(),
-                                    serviceSubledgerInfo.getDetailKeyId());
-                        } catch (final ApplicationException e) {
-                            LOGGER.error("Exception while setting subledger details", e);
-                            throw new ApplicationRuntimeException("Exception while setting subledger details", e);
+                    for (final ServiceSubledgerInfo serviceSubledgerInfo : subledgerDetails)
+                        if (serviceSubledgerInfo.getDetailType() != null && serviceSubledgerInfo.getDetailKeyId() != null) {
+                            EntityType entityType = null;
+                            try {
+                                entityType = egovCommon.getEntityType(serviceSubledgerInfo.getDetailType(),
+                                        serviceSubledgerInfo.getDetailKeyId());
+                            } catch (final ApplicationException e) {
+                                LOGGER.error("Exception while setting subledger details", e);
+                                throw new ApplicationRuntimeException("Exception while setting subledger details", e);
+                            }
+                            if (entityType != null) {
+                                serviceSubledgerInfo.setDetailCode(entityType.getCode());
+                                serviceSubledgerInfo.setDetailKey(entityType.getName());
+                            }
                         }
-                        if (entityType != null) {
-                            serviceSubledgerInfo.setDetailCode(entityType.getCode());
-                            serviceSubledgerInfo.setDetailKey(entityType.getName());
-                        }
-                    }
             }
-
         return "subledger";
     }
-    
+
     @Action(value = "/receipts/ajaxReceiptCreate-ajaxOnlineReceiptCreatedByList")
     public String ajaxOnlineReceiptCreatedByList() {
         if (paymentServiceId != null)
-                userList = persistenceService.findAllByNamedQuery(
-                        CollectionConstants.QUERY_CREATEDBYUSERS_OF_PAYMENT_RECEIPTS, paymentServiceId);
+            userList = persistenceService.findAllByNamedQuery(
+                    CollectionConstants.QUERY_CREATEDBYUSERS_OF_PAYMENT_RECEIPTS, paymentServiceId);
         return USER_LIST;
     }
-
 
     @Override
     public Object getModel() {
@@ -611,7 +609,7 @@ public class AjaxReceiptCreateAction extends BaseFormAction {
         return paymentServiceId;
     }
 
-    public void setPaymentServiceId(Long paymentServiceId) {
+    public void setPaymentServiceId(final Long paymentServiceId) {
         this.paymentServiceId = paymentServiceId;
     }
 
@@ -619,7 +617,7 @@ public class AjaxReceiptCreateAction extends BaseFormAction {
         return userList;
     }
 
-    public void setUserList(List<User> userList) {
+    public void setUserList(final List<User> userList) {
         this.userList = userList;
     }
 

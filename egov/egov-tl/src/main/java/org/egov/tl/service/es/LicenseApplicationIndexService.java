@@ -59,20 +59,21 @@ import java.util.List;
 import java.util.Optional;
 
 import static java.lang.String.format;
+import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.egov.commons.entity.Source.SYSTEM;
 import static org.egov.infra.elasticsearch.entity.enums.ApprovalStatus.INPROGRESS;
 import static org.egov.infra.elasticsearch.entity.enums.ClosureStatus.NO;
 import static org.egov.tl.utils.Constants.APPLICATION_STATUS_APPROVED_CODE;
-import static org.egov.tl.utils.Constants.APPLICATION_STATUS_SECONDCOLLECTION_CODE;
-import static org.egov.tl.utils.Constants.APPLICATION_STATUS_FIRSTCOLLECTIONDONE_CODE;
 import static org.egov.tl.utils.Constants.APPLICATION_STATUS_CREATED_CODE;
+import static org.egov.tl.utils.Constants.APPLICATION_STATUS_FIRSTCOLLECTIONDONE_CODE;
 import static org.egov.tl.utils.Constants.APPLICATION_STATUS_GENECERT_CODE;
 import static org.egov.tl.utils.Constants.APPLICATION_STATUS_INSPE_CODE;
+import static org.egov.tl.utils.Constants.APPLICATION_STATUS_SECONDCOLLECTION_CODE;
+import static org.egov.tl.utils.Constants.DELIMITER_COLON;
 import static org.egov.tl.utils.Constants.STATUS_CANCELLED;
-import static org.egov.tl.utils.Constants.TRADELICENSE_MODULENAME;
+import static org.egov.tl.utils.Constants.TRADE_LICENSE;
 import static org.egov.tl.utils.Constants.WF_STATE_GENERATE_CERTIFICATE;
 import static org.egov.tl.utils.Constants.WORKFLOW_STATE_REJECTED;
-import static org.egov.tl.utils.Constants.DELIMITER_COLON;
 
 @Service
 public class LicenseApplicationIndexService {
@@ -99,14 +100,15 @@ public class LicenseApplicationIndexService {
     }
 
     private void createLicenseApplicationIndex(License license) {
-        User user = getApplicationCurrentOwner(license);
+        Optional<User> user = getApplicationCurrentOwner(license);
         if (license.getApplicationDate() == null)
             license.setApplicationDate(new Date());
-        applicationIndexService.createApplicationIndex(ApplicationIndex.builder().withModuleName(TRADELICENSE_MODULENAME)
+        applicationIndexService.createApplicationIndex(ApplicationIndex.builder().withModuleName(TRADE_LICENSE)
                 .withApplicationNumber(license.getApplicationNumber()).withApplicationDate(license.getApplicationDate())
                 .withApplicationType(license.getLicenseAppType().getName()).withApplicantName(license.getLicensee().getApplicantName())
                 .withStatus(license.getEgwStatus().getDescription()).withUrl(format(APPLICATION_VIEW_URL, license.getApplicationNumber()))
-                .withApplicantAddress(license.getAddress()).withOwnername(user.getUsername() + DELIMITER_COLON + user.getName())
+                .withApplicantAddress(license.getAddress()).withOwnername(user.isPresent() ?
+                        user.get().getUsername() + DELIMITER_COLON + user.get().getName() : EMPTY)
                 .withChannel(SYSTEM.toString()).withMobileNumber(license.getLicensee().getMobilePhoneNumber())
                 .withAadharNumber(license.getLicensee().getUid()).withClosed(NO).withApproved(INPROGRESS)
                 .build());
@@ -124,10 +126,10 @@ public class LicenseApplicationIndexService {
                 || license.getEgwStatus().getCode().equals(APPLICATION_STATUS_CREATED_CODE)
                 || license.getStatus().getStatusCode().equals(APPLICATION_STATUS_FIRSTCOLLECTIONDONE_CODE)
                 && license.getState().getValue().contains(WORKFLOW_STATE_REJECTED)) {
-            User user = getApplicationCurrentOwner(license);
+            Optional<User> user = getApplicationCurrentOwner(license);
             applicationIndex.setStatus(license.getEgwStatus().getDescription());
             applicationIndex.setApplicantAddress(license.getAddress());
-            applicationIndex.setOwnerName(user.getUsername() + DELIMITER_COLON + user.getName());
+            applicationIndex.setOwnerName(user.isPresent() ? user.get().getUsername() + DELIMITER_COLON + user.get().getName() : EMPTY);
             applicationIndex.setConsumerCode(license.getLicenseNumber());
             applicationIndex.setClosed(NO);
             applicationIndex.setApproved(INPROGRESS);
@@ -152,7 +154,7 @@ public class LicenseApplicationIndexService {
         }
     }
 
-    private User getApplicationCurrentOwner(final License license) {
+    private Optional<User> getApplicationCurrentOwner(final License license) {
         User user = null;
 
         if (license.hasState() && license.getState().getOwnerPosition() != null) {
@@ -169,7 +171,7 @@ public class LicenseApplicationIndexService {
         } else {
             user = securityUtils.getCurrentUser();
         }
-        return user;
+        return Optional.ofNullable(user);
     }
 
 }

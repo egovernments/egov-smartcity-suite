@@ -46,7 +46,7 @@ import org.apache.commons.lang3.StringUtils;
 
 public class DCBDetails {
 
-    private String ulbName = StringUtils.EMPTY;
+    private String boundaryName = StringUtils.EMPTY;
     private BigDecimal totalAssessments = BigDecimal.ZERO;
     private BigDecimal arrearDemand = BigDecimal.ZERO;
     private BigDecimal arrearPenalty = BigDecimal.ZERO;
@@ -63,11 +63,11 @@ public class DCBDetails {
     private BigDecimal totalColl = BigDecimal.ZERO;
     private BigDecimal percentage = BigDecimal.ZERO;
     
-    public String getUlbName() {
-        return ulbName;
+    public String getBoundaryName() {
+        return boundaryName;
     }
-    public void setUlbName(String ulbName) {
-        this.ulbName = ulbName;
+    public void setBoundaryName(String boundaryName) {
+        this.boundaryName = boundaryName;
     }
     public BigDecimal getTotalAssessments() {
         return totalAssessments;

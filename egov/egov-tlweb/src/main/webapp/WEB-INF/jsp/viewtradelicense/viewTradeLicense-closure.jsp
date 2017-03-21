@@ -38,64 +38,81 @@
   ~    In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
-<%@ include file="/includes/taglibs.jsp"%>
+<%@ include file="/includes/taglibs.jsp" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <html>
-	<head>
-		<title><s:text name="page.title.viewtrade" /></title>
-	</head>
-	<body>
-		<div id="content" class="printable">
-			<div class="formmainbox panel-primary">
-				<div class="subheadnew text-center" id="headingdiv">
-					<s:text name="page.title.viewtrade" />
-				</div>
-				<table>
-					<tr>
-						<td align="left" style="color: #FF0000">
-							<s:actionerror cssStyle="color: #FF0000" />
-							<s:fielderror />
-							<s:actionmessage />
-						</td>
-					</tr>
-				</table>
-				<s:form action="viewTradeLicense-cancelLicense" theme="simple" name="viewForm">
-					<s:push value="model">
-						<s:hidden name="actionName" value="create" />
-						<s:hidden name="licenseid" id="licenseId" value="%{id}"/>
-						<s:hidden id="detailChanged" name="detailChanged"></s:hidden>
-						<c:set var="trclass" value="greybox" />
-						<div class="text-right error-msg" style="font-size:14px;">
-							<s:text name="dateofapplication.lbl" /> : <s:date name="applicationDate"
-							format="dd/MM/yyyy"/></div>
-						<s:if test="%{applicationNumber!=null}">
-							<div class="text-right error-msg" style="font-size:14px;">
-								<s:text name="application.num" /> : <s:property value="%{applicationNumber}" />
-							</div>
-						</s:if>
-						<table width="100%">
-							<%@ include file='../common/license-detail-view.jsp'%>
-						</table>
-						<div class="panel panel-primary" id="workflowDiv" >
-							<%@ include file='../common/license-workflow-dropdown.jsp'%>
-							<%@ include file='../common/license-workflow-button.jsp'%>
-						</div>
-					</s:push>
-				</s:form>
-			</div>
-		</div>
+<head>
+    <title><s:text name="page.title.viewtrade"/></title>
+</head>
+<body>
+<div id="content" class="printable">
+    <s:form action="viewTradeLicense-cancelLicense" theme="simple" name="viewForm" method="POST">
+        <div class="formmainbox panel-primary">
+        <div class="subheadnew text-center" id="headingdiv">
+            <s:text name="page.title.viewtrade"/>
+        </div>
+        <table>
+            <tr>
+                <td align="left" style="color: #FF0000">
+                    <s:actionerror cssStyle="color: #FF0000"/>
+                    <s:fielderror/>
+                    <s:actionmessage/>
+                </td>
+            </tr>
+        </table>
 
-		<script>
-			function onSubmitValidations() {
-				return true;
-			}
-			function onSubmit() {
-				var licid=jQuery('#licenseId').val();
-				document.viewForm.action='${pageContext.request.contextPath}/viewtradelicense/viewTradeLicense-cancelLicense.action?model.id='+licid;
-				return true;
-			}
+        <s:push value="model">
+            <s:hidden name="actionName" value="create"/>
+            <s:hidden name="licenseid" id="licenseId" value="%{id}"/>
+            <s:hidden id="detailChanged" name="detailChanged"></s:hidden>
+            <c:set var="trclass" value="greybox"/>
+            <div class="text-right error-msg" style="font-size:14px;">
+                <s:text name="dateofapplication.lbl"/> : <s:date name="applicationDate"
+                                                                 format="dd/MM/yyyy"/></div>
+            <s:if test="%{applicationNumber!=null}">
+                <div class="text-right error-msg" style="font-size:14px;">
+                    <s:text name="application.num"/> : <s:property value="%{applicationNumber}"/>
+                </div>
+            </s:if>
+            <table width="100%">
+                <%@ include file='../common/license-detail-view.jsp' %>
+            </table>
+            </div>
+            <s:if test="!hasCSCOperatorRole()">
+                <div class="panel panel-primary" id="workflowDiv">
+                    <%@ include file='../common/license-workflow-dropdown.jsp' %>
+                    <%@ include file='../common/license-workflow-button.jsp' %>
+                </div>
+            </s:if>
+            <s:else>
+                <s:hidden id="additionalRule" name="additionalRule" value="%{additionalRule}"/>
+                <div class="row"/>
+                <div class="row">
+                    <div class="text-center">
+                        <button type="submit" id="btnsave" class="btn btn-primary" onclick="return onSubmit();">
+                            Save
+                        </button>
+                        <button type="button" id="btnclose" class="btn btn-default" onclick="window.close();">
+                            Close
+                        </button>
+                    </div>
+                </div>
+            </s:else>
+        </s:push>
+    </s:form>
+</div>
+<script>
+    function onSubmitValidations() {
+        return true;
+    }
 
-        </script>
-		<script src="<cdn:url  value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
-	</body>
+    function onSubmit() {
+        var licid = $('#licenseId').val();
+        document.viewForm.action = '${pageContext.request.contextPath}/viewtradelicense/viewTradeLicense-cancelLicense.action?model.id=' + licid;
+        return true;
+    }
+
+</script>
+<script src="<cdn:url  value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
+</body>
 </html>

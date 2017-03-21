@@ -76,19 +76,22 @@ public class AgeingReportService {
 
         if (COMPLAINTSTATUS_COMPLETED.equals(typeofReport) || COMPLAINTSTATUS_REJECTED.equals(typeofReport)) {
             query.append(
-                    " COUNT(CASE WHEN date_part('day',(cd.createddate - state.createddate)) > :grtthn90 THEN 1 END) grtthn90, ");
+                    " COUNT(CASE WHEN date_part('day',(cd.createddate - state.createddate)) > :grtthn30 THEN 1 END) grtthn30, ");
             query.append(
-                    " COUNT(CASE WHEN date_part('day',(cd.createddate - state.createddate)) BETWEEN :grtthn45 AND :lsthn90 THEN 1 END) btw45to90, ");
+                    " COUNT(CASE WHEN date_part('day',(cd.createddate - state.createddate)) BETWEEN :grtthn10 AND :lsthn30 THEN 1 END) btw10to30, ");
             query.append(
-                    " COUNT(CASE WHEN date_part('day',(cd.createddate - state.createddate)) BETWEEN :grtthn15 AND :lsthn45 THEN 1 END) btw15to45, ");
+                    " COUNT(CASE WHEN date_part('day',(cd.createddate - state.createddate)) BETWEEN :grtthn5 AND :lsthn10 THEN 1 END) btw5to10, ");
             query.append(
-                    " COUNT(CASE WHEN date_part('day',(cd.createddate - state.createddate)) BETWEEN :zero AND :lsthn15 THEN 1 END) lsthn15 ");
+                    " COUNT(CASE WHEN date_part('day',(cd.createddate - state.createddate)) BETWEEN :grtthn2 AND :lsthn5 THEN 1 END) btw2to5, ");
+            query.append(
+                    " COUNT(CASE WHEN date_part('day',(cd.createddate - state.createddate)) BETWEEN :zero AND :lsthn2 THEN 1 END) lsthn2 ");
             query.append(" FROM egpgr_complaintstatus cs  ,egpgr_complainttype ctype, eg_wf_states state, egpgr_complaint cd  ");
         } else {
-            query.append(" COUNT(CASE WHEN cd.createddate < :grtthn90 THEN 1 END) grtthn90, ");
-            query.append(" COUNT(CASE WHEN cd.createddate BETWEEN :lsthn90 AND :grtthn45 THEN 1 END) btw45to90, ");
-            query.append(" COUNT(CASE WHEN cd.createddate BETWEEN :lsthn45 AND  :grtthn15 THEN 1 END) btw15to45, ");
-            query.append(" COUNT(CASE WHEN cd.createddate BETWEEN :lsthn15 AND :currdate THEN 1 END) lsthn15 ");
+            query.append(" COUNT(CASE WHEN cd.createddate < :grtthn30 THEN 1 END) grtthn30, ");
+            query.append(" COUNT(CASE WHEN cd.createddate BETWEEN :lsthn10 AND :grtthn30 THEN 1 END) btw10to30, ");
+            query.append(" COUNT(CASE WHEN cd.createddate BETWEEN :lsthn5 AND  :grtthn10 THEN 1 END) btw5to10, ");
+            query.append(" COUNT(CASE WHEN cd.createddate BETWEEN :lsthn2 AND  :grtthn5 THEN 1 END) btw2to5, ");
+            query.append(" COUNT(CASE WHEN cd.createddate BETWEEN :lsthn2 AND :currdate THEN 1 END) lsthn2 ");
             query.append(" FROM egpgr_complaintstatus cs  ,egpgr_complainttype ctype ,egpgr_complaint cd  ");
         }
 
@@ -121,10 +124,10 @@ public class AgeingReportService {
             query.append(" AND cs.name IN ('REGISTERED','FORWARDED', 'PROCESSING','REOPENED') ");
         }
 
-        if ("lastsevendays".equals(complaintDateType) || "lastthirtydays".equals(complaintDateType) || "lastninetydays".equals(complaintDateType) || fromDate != null)
-            query.append(" and cd.createddate >=   :fromDates ");
-        else if (fromDate != null && toDate != null)
+        if (fromDate != null && toDate != null)
             query.append(" and ( cd.createddate BETWEEN :fromDates and :toDates) ");
+        else if ("lastsevendays".equals(complaintDateType) || "lastthirtydays".equals(complaintDateType) || "lastninetydays".equals(complaintDateType) || fromDate != null)
+            query.append(" and cd.createddate >=   :fromDates ");
         else if (toDate != null)
             query.append(" and cd.createddate <=  :toDates ");
     }
@@ -134,22 +137,24 @@ public class AgeingReportService {
         final SQLQuery qry = entityManager.unwrap(Session.class).createSQLQuery(querykey);
 
         if (COMPLAINTSTATUS_COMPLETED.equals(typeofReport) || COMPLAINTSTATUS_REJECTED.equals(typeofReport)) {
-            qry.setParameter("grtthn90", 90);
-            qry.setParameter("lsthn90", 90);
-            qry.setParameter("grtthn45", 45.0001);
-            qry.setParameter("grtthn15", 15.0001);
-            qry.setParameter("lsthn45", 45);
-            qry.setParameter("lsthn15", 15);
+            qry.setParameter("grtthn30", 30);
+            qry.setParameter("lsthn30", 30);
+            qry.setParameter("grtthn10", 10.0001);
+            qry.setParameter("grtthn5", 5.0001);
+            qry.setParameter("lsthn10", 10);
+            qry.setParameter("lsthn5", 5);
+            qry.setParameter("lsthn2", 2);
+            qry.setParameter("grtthn2", 2.0001);
             qry.setParameter("zero", 0);
 
         } else {
 
-            qry.setParameter("grtthn90", getCurrentDateWithOutTime().minusDays(90).toDate());
-            qry.setParameter("grtthn45", getCurrentDateWithOutTime().minusDays(46).toDate());
-            qry.setParameter("lsthn90", getCurrentDateWithEndOfDayTime().minusDays(90).toDate());
-            qry.setParameter("grtthn15", getCurrentDateWithOutTime().minusDays(16).toDate());
-            qry.setParameter("lsthn45", getCurrentDateWithEndOfDayTime().minusDays(45).toDate());
-            qry.setParameter("lsthn15", getCurrentDateWithOutTime().minusDays(15).toDate());
+            qry.setParameter("grtthn30", getCurrentDateWithOutTime().minusDays(30).toDate());
+            qry.setParameter("grtthn10", getCurrentDateWithOutTime().minusDays(11).toDate());
+            qry.setParameter("grtthn5", getCurrentDateWithOutTime().minusDays(6).toDate());
+            qry.setParameter("lsthn10", getCurrentDateWithEndOfDayTime().minusDays(10).toDate());
+            qry.setParameter("lsthn5", getCurrentDateWithOutTime().minusDays(5).toDate());
+            qry.setParameter("lsthn2", getCurrentDateWithOutTime().minusDays(2).toDate());
             qry.setParameter("currdate", getCurrentDateWithEndOfDayTime().toDate());
         }
 

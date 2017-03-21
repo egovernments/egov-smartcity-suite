@@ -52,17 +52,13 @@
 <!-- <script type="text/javascript" src="/ptis/javascript/unitRentAgreement.js"></script> -->
 
 <script type="text/javascript">
-		jQuery.noConflict();
-		jQuery("#loadingMask").remove();
-	  function loadOnStartUp() {
+	jQuery.noConflict();
+	jQuery("#loadingMask").remove();
+	function loadOnStartUp() {
    		var propType = '<s:property value="%{propertyDetail.propertyTypeMaster.type}"/>';
-   		var appurtenantLandChecked = '<s:property value="%{propertyDetail.appurtenantLandChecked}"/>';
-		enableFieldsForPropTypeView(propType,appurtenantLandChecked);
+		enableFieldsForPropTypeView(propType,false);
 		var mutationReason = '<s:property value="%{propertyDetail.propertyMutationMaster.mutationName}"/>';
 		showMutationFields(mutationReason);
-		if(appurtenantLandChecked == null) {
-			jQuery('#appurtenantRow').hide();
-		}
 		var structure = '<s:property value="%{propertyDetail.structure}"/>';
 		if(structure == 'false') {
 			jQuery('td.siteowner').hide();
@@ -72,21 +68,18 @@
 		if(userDesign == 'Commissioner') {
 			jQuery('#Forward').hide();
 		} 
-		
-   		
 	}
- function setCorrCheckBox(){
-    
-     <s:if test="%{isAddressCheck()}">
+ 	function setCorrCheckBox(){
+    	<s:if test="%{isAddressCheck()}">
 			document.getElementById("corrAddressDiff").checked=true;
-	</s:if>
-   }
+		</s:if>
+   	}
 
- function onSubmit(action,obj) {
-	 document.getElementById('workflowBean.actionName').value = obj.id;
+	function onSubmit(action,obj) {
+		document.getElementById('workflowBean.actionName').value = obj.id;
 		document.forms[0].action = action;
 		document.forms[0].submit;
-	   return true;
+		return true;
 	}
 	
 	function onSubmit() {

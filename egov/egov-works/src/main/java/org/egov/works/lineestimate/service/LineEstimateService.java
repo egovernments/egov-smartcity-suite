@@ -637,12 +637,11 @@ public class LineEstimateService {
             wfInitiator = assignmentService.getPrimaryAssignmentForUser(lineEstimate.getCreatedBy().getId());
         if (WorksConstants.REJECT_ACTION.toString().equalsIgnoreCase(workFlowAction)) {
             final String stateValue = WorksConstants.WF_STATE_REJECTED;
-            lineEstimate.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
-                    .withComments(approvalComent)
-                    .withStateValue(stateValue).withDateInfo(currentDate.toDate())
-                    .withOwner(wfInitiator.getPosition())
-                    .withNextAction("")
-                    .withNatureOfTask(natureOfwork);
+            
+            lineEstimate.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
+                    .withComments(approvalComent).withStateValue(stateValue).withDateInfo(currentDate.toDate())
+                    .withOwner(wfInitiator.getPosition()).withNextAction("").withNatureOfTask(natureOfwork);
+
         } else {
             if (null != approvalPosition && approvalPosition != -1 && !approvalPosition.equals(Long.valueOf(0))
                     && !WorksConstants.CANCEL_ACTION.toString().equalsIgnoreCase(workFlowAction))
@@ -657,15 +656,13 @@ public class LineEstimateService {
                         .withOwner(pos).withNextAction(wfmatrix.getNextAction()).withNatureOfTask(natureOfwork);
             } else if (WorksConstants.CANCEL_ACTION.toString().equalsIgnoreCase(workFlowAction)) {
                 final String stateValue = WorksConstants.WF_STATE_CANCELLED;
-                lineEstimate.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+                lineEstimate.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withStateValue(stateValue).withDateInfo(currentDate.toDate())
                         .withOwner(pos).withNextAction("").withNatureOfTask(natureOfwork);
             } else {
-                wfmatrix = lineEstimateWorkflowService.getWfMatrix(lineEstimate.getStateType(), null,
-                        lineEstimate.getTotalEstimateAmount(),
-                        additionalRule, lineEstimate.getCurrentState().getValue(),
-                        lineEstimate.getCurrentState().getNextAction());
-                lineEstimate.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+                wfmatrix = lineEstimateWorkflowService.getWfMatrix(lineEstimate.getStateType(), null, lineEstimate.getTotalEstimateAmount(),
+                        additionalRule, lineEstimate.getCurrentState().getValue(), lineEstimate.getCurrentState().getNextAction());
+                lineEstimate.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withStateValue(wfmatrix.getNextState())
                         .withDateInfo(currentDate.toDate()).withOwner(pos).withNextAction(wfmatrix.getNextAction())
                         .withNatureOfTask(natureOfwork);

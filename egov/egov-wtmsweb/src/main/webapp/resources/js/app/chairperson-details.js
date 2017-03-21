@@ -39,107 +39,179 @@
  */
 
 $(document).ready(function(){
-	loadingTable();	
 	
-	//add chairperson
+	$('#resetid').click(function(){
+		$('#fromDate').val('');
+		$('#toDate').val('');
+		$('#chairpersonname').val('');
+		$('#isActive').removeAttr('checked');
+		return false;
+	});
+
+	$('#saveButtonid').click(function(){
+		if($("#chairPersonDetailsEditForm").valid()){
+			var fromDate = $('#fromDate').val();
+			var toDate = $('#toDate').val();
+			var isValidDate = dateValidation(fromDate , toDate);
+			if(!isValidDate){
+				return false;
+			}
+			return true;
+		}
+		else{
+			return false;
+		}
+		
+	});
+	
+	
 	$('#buttonid').click(function() {
 		  if ($( "#chairPersonDetailsform" ).valid())
 		  {
-			var name = $('input').val();
-		       if (name != ''){
-		        $.ajax({
-		            url: '/wtms/application/ajax-activeChairPersonExistsAsOnCurrentDate',
-		            type: "GET",
-		            data: {
-		            	name: name
-		            },
-		            dataType : 'json',
-		            success: function (response) {
-		    			console.log("success"+response);
-		    			if(response==true){
-			    				addChairPerson();
-			    				loadingTable();
-			    			}
-		    			else{
-		    				overwritechairperson();
-		    				loadingTable();
-		    			}
-		    		},error: function (response) {
-		    			console.log("failed");
-		    		}
-		        });
-		        
-		       }
+			var fromDate = $('#fromDate').val();
+			var toDate = $('#toDate').val();
+				
+			var isValidDate = dateValidation(fromDate , toDate);
+			if(!isValidDate){
+				return false;
+			}
+			
+			var isPersonExists = isChairPersonExistOnCurrentDate();
+			if(!isPersonExists){
+				return false;
+			}
+			
+			var isDateValid = validateDates(fromDate, toDate);
+			if(!isDateValid){
+				return false;
+			}
+				return true;
+			
 		  }
+		  else
+			  {
+			  	return false;
+			  }
 		});
 });
 
-function loadingTable()
-{
-	tableContainer = $("#chairperson-table");
-	tableContainer.dataTable({
-		//processing : true,
-		serverSide : true,
-		type : 'GET',
-		sort : true,
-		filter : true,
-		responsive : true,
-		destroy : true,
-		"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
-		"aLengthMenu" : [[10,25,50,-1 ],[10,25,50,"All" ] ],
-		"autoWidth" : false,
-		 ajax : "/wtms/application/ajax-chairpersontable",
-		 columns : [ {
-				"sTitle" : "S.no",
-			},
-			{
-				"mData" : "chairPerson",
-				"sTitle" : "Chair Person Name",
-			}, 
-			 {
-				"mData" : "fromDate",
-				"sTitle" : "From Date",
-			},{
-				"mData" : "toDate",
-				"sTitle" : "To Date"
-			},{
-				"mData" : "status",
-				"sTitle" : "Status"
-			}],
-			"fnInitComplete": function(oSettings, json) {
-				$('#chairperson-table tbody tr:eq(0) td:last').addClass('error-msg view-content');
-			},
-			"fnRowCallback" : function(nRow, aData, iDisplayIndex){
-                $("td:first", nRow).html(iDisplayIndex +1);
-               return nRow;
-            }
-	});
+
+function edit(chairPersonId){
+	window.open("/wtms/application/chairperson-edit/"+chairPersonId, "_self");
 }
 
-function overwritechairperson()
-{
-	 if(confirm("On entered date chairperson name is already present, do you want to overwrite it?"))
-	 {
-		 addChairPerson();
-		 
-	 }
-	 else{
-		 console.log("not added");
-		 
-	 }
-}
+$('#addnewid').on("click",function(){
+	window.open("/wtms/application/chairperson-create", "_self");
+});
 
-function addChairPerson()
-{
-	 $.ajax({
-            url: '/wtms/application/ajax-addChairPersonName',
-            type: "GET",
-            data: {
-            	name: $('#name').val()
-            },
-            dataType : 'json'
-        });
-	 
-	 bootbox.alert("Chair person name updated in drop down successfully");
-   
+
+function dateValidation(fromDate , toDate){
+	var result = compareDate (fromDate , toDate);
+	if(result == -1){
+		bootbox.alert("From Date should not be greater than To Date");
+		return false;
 	}
+	return true;
+}
+
+function validateDates(fromDate, toDate){
+	var boolVar = false;
+	$.ajax({
+		url: '/wtms/application/ajax-activeChairPersonExistsAsOnGivenDate',
+		type: "GET",
+		data: {
+			fromdate: fromDate,
+			toDate: toDate
+		},
+		dataType: 'json',
+		async:false,
+		success: function(response){
+			if(response){
+				response = JSON.parse(response);
+				if(response.fromDate!=null){
+					var fromDateArray = response.fromDate.split("-");
+					var fromDateVal = fromDateArray[2] + "/" + fromDateArray[1] + "/" + fromDateArray[0];
+					var toDateArray = response.toDate.split("-");
+					var toDateVal = toDateArray[2] + "/" + toDateArray[1] + "/" + toDateArray[0];
+					bootbox.alert('Chairperson already exists between the range : '+fromDateVal+' and '+toDateVal);
+					boolVar =false;
+					return false;
+				}
+				else{
+					boolVar = true;
+					return true;
+				}
+			}
+		},
+		error: function () {
+			boolVar =false;
+			return false;
+		}
+		
+	});
+	return boolVar;
+}
+
+function isChairPersonExistOnCurrentDate(){
+	var boolVar = false;
+	var name = $('input').val();
+	var enteredFromDate = $('#fromDate').val();
+    if (name != ''){
+     $.ajax({
+         url: '/wtms/application/ajax-activeChairPersonExistsAsOnCurrentDate',
+         type: "GET",
+         data: {
+         	name: name
+         },
+         async: false,
+         dataType : 'json',
+         success: function (response) {
+ 			if(response!=null && response.toDate !=null){
+				var activeToDate = response.toDate;
+				var actDate = activeToDate.toString();
+				var date=actDate.split("-");
+				var toDateVal = date[2]+"/"+date[1]+"/"+date[0];
+				
+				var activeFromDate = response.fromDate;
+				var actFrmDate = activeFromDate.toString();
+				var frmdate;
+				frmdate=actFrmDate.split("-");
+				var fromDateVal = frmdate[2]+"/"+frmdate[1]+"/"+frmdate[0];
+				
+				var result = compareDate (toDateVal , enteredFromDate);
+				if(result == -1){
+					bootbox.alert("From Date should be more than "+toDateVal+". Active user exists between "+fromDateVal+" and "+toDateVal);
+					boolVar = false;
+					return false;
+				}
+				else{
+					boolVar = true;
+	 				return true;
+				}
+	    	}
+ 			else{
+ 				boolVar = true;
+ 				return true;
+ 			}
+ 		},error: function () {
+ 			console.log("failed");
+ 		}
+     });
+    }
+    return boolVar;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

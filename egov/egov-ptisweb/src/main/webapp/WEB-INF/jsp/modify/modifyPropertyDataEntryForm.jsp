@@ -173,25 +173,10 @@
 		</td>
 	</tr>
 	<tr class="appurtenant">
-		<td class="greybox">&nbsp;</td>
-		<td class="bluebox"><s:text name="isextent.appurtntland" /> : 
-		<td class="bluebox"><s:checkbox name="propertyDetail.appurtenantLandChecked" id="appurtenantLandChecked"
-				value="%{propertyDetail.appurtenantLandChecked}" onclick="enableAppartnaumtLandDetails();" />
-		</td>
+		<td class="bluebox">&nbsp;</td>
 		<td class="bluebox"><s:text name="certificationNumber"></s:text>:</td>
 		<td class="bluebox"><s:textfield maxlength="64" name="propertyDetail.occupancyCertificationNo" id="certificationNumber" value="%{propertyDetail.occupancyCertificationNo}"/></td>
-	</tr>
-	<tr id="appurtenantRow">
-		<td class="greybox">&nbsp;</td>
-		<td class="greybox"><s:text name="extent.appurtntland"></s:text>
-			<span class="mandatory1">*</span> :</td>
-		<td class="greybox"><s:textfield name="propertyDetail.extentAppartenauntLand" id="propertyDetail.extentAppartenauntLand"
-				value="%{propertyDetail.extentAppartenauntLand}" size="12"	maxlength="12" onchange="trim(this,this.value);"
-				onblur="validNumber(this);checkZero(this);"></s:textfield>
-		</td>
-		<td class="greybox" colspan="2">
-			&nbsp;
-		</td>
+		<td class="bluebox" colspan="2">&nbsp;</td>
 	</tr>
 	<tr class="bpddetailsheader">
 		<td class="greybox">&nbsp;</td>

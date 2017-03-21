@@ -39,6 +39,10 @@
  */
 package org.egov.tl.service;
 
+import java.math.BigDecimal;
+import java.util.Locale;
+
+import org.egov.demand.model.EgDemandDetails;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.messaging.MessagingService;
 import org.egov.tl.entity.License;
@@ -48,15 +52,21 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-
-import static org.egov.infra.utils.DateUtils.toDefaultDateFormat;
-
 @Service
 public class TradeLicenseSmsAndEmailService {
+
+    private static final String MSG_LICENSE_CREATE_SMS = "msg.%s.license.creator.sms";
+    private static final String MSG_LICENSE_CREATE_SUBJECT = "msg.%s.license.create.email.subject";
+    private static final String MSG_LICENSE_CREATE_BODY = "msg.%s.license.create.email.body";
+    private static final String MSG_LICENSE_APPROVAL_BODY = "msg.%s.licenseapproval.email.body";
+    private static final String MSG_LICENSE_APPROVALAMT_BODY = "msg.%s.license.approvalAmt.email.body";
+    private static final String MSG_LICENSE_CANCEL_BODY = "msg.%s.license.cancelled.email.body";
+    private static final String MSG_LICENSE_FIRSTLEVEL_SMS = "msg.%s.license.firstcollection.sms";
+    private static final String MSG_LICENSE_FIRSTLEVEL_SUBJECT = "msg.%s.license.firstcollection.email.subject";
+    private static final String MSG_LICENSE_FIRSTLEVEL_BODY = "msg.%s.license.firstcollection.email.body";
+    private static final String MSG_LICENSE_SECONDLEVEL_SMS = "msg.%s.license.second.level.sms";
+    private static final String MSG_LICENSE_SECONDLEVEL_BODY = "msg.%s.license.second.level.email.body";
+
     @Autowired
     private MessagingService messagingService;
 
@@ -64,11 +74,11 @@ public class TradeLicenseSmsAndEmailService {
     @Qualifier("parentMessageSource")
     private MessageSource licenseMessageSource;
 
-    public void sendSMSOnLicense(String mobileNumber, String smsBody) {
+    public void sendSMSOnLicense(final String mobileNumber, final String smsBody) {
         messagingService.sendSMS(mobileNumber, smsBody);
     }
 
-    public void sendEmailOnLicense(String email, String emailBody, String emailSubject) {
+    public void sendEmailOnLicense(final String email, final String emailBody, final String emailSubject) {
         messagingService.sendEmail(email, emailSubject, emailBody);
     }
 
@@ -76,103 +86,187 @@ public class TradeLicenseSmsAndEmailService {
         return ApplicationThreadLocals.getMunicipalityName();
     }
 
-    public void sendSmsAndEmail(License license, String workFlowAction) {
-        String mobileNumber = license.getLicensee() != null && license.getLicensee().getMobilePhoneNumber() != null
-                ? license.getLicensee().getMobilePhoneNumber() : null;
-        String email = license.getLicensee() != null && license.getLicensee().getEmailId() != null
-                ? license.getLicensee().getEmailId() : null;
-        getSmsAndEmailForNewTradeLicense(license, workFlowAction, email, mobileNumber);
-    }
-
-    public void getSmsAndEmailForNewTradeLicense(License license, String workFlowAction, String email,
-                                                 String mobileNumber) {
+    public void sendSmsAndEmail(final License license, final String workFlowAction) {
         String smsMsg = null;
         String emailBody = "";
         String emailSubject = "";
-        Locale locale = Locale.getDefault();
-        String[] strarr = getMunicipalityName().split(" ");
-        String cityname = strarr[0];
-        String smsCode;
+        final Locale locale = Locale.getDefault();
+        final String[] strarr = getMunicipalityName().split(" ");
+        final String cityname = strarr[0];
         String emailCode;
+        String smsCode;
         if (license.getState().getHistory().isEmpty() && license.isAcknowledged()) {
-            if (license.isReNewApplication()) {
-                smsCode = "msg.renewTradeLicensecreator.sms";
-                emailCode = "msg.renewTradeLicensecreate.email.body";
+
+            smsMsg = licenseMessageSource.getMessage(
+                    String.format(MSG_LICENSE_CREATE_SMS, license.getLicenseAppType().getName().toLowerCase()),
+                    new String[] { license.getLicensee().getApplicantName(),
+                            license.getApplicationNumber(),
+                            getMunicipalityName() },
+                    locale);
+            emailBody = licenseMessageSource.getMessage(
+                    String.format(MSG_LICENSE_CREATE_BODY, license.getLicenseAppType().getName().toLowerCase()),
+                    new String[] { license.getLicensee().getApplicantName(),
+                            license.getNameOfEstablishment(),
+                            license.getApplicationNumber(),
+                            getMunicipalityName() },
+                    locale);
+            emailSubject = licenseMessageSource.getMessage(String.format(MSG_LICENSE_CREATE_SUBJECT,
+                    license.getLicenseAppType().getName().toLowerCase()),
+                    new String[] { getMunicipalityName() }, locale);
+
+        } else if (workFlowAction.equals(Constants.BUTTONAPPROVE)
+                && Constants.STATUS_UNDERWORKFLOW.equalsIgnoreCase(license.getStatus()
+                        .getStatusCode())) {
+            BigDecimal demAmt = BigDecimal.ZERO;
+            for (final EgDemandDetails dmdDtls : license.getCurrentDemand().getEgDemandDetails())
+                demAmt = demAmt.add(dmdDtls.getAmount().subtract(dmdDtls.getAmtCollected()));
+
+            if (demAmt.compareTo(BigDecimal.ZERO) == 0) {
+                emailCode = String.format(MSG_LICENSE_APPROVAL_BODY,
+                        license.getLicenseAppType().getName().toLowerCase());
+                smsCode = "msg.newTradeLicenseapproval.sms";
             } else {
-                smsCode = "msg.newTradeLicensecreator.sms";
-                emailCode = "msg.newTradeLicensecreate.email.body";
+                emailCode = String.format(MSG_LICENSE_APPROVALAMT_BODY,
+                        license.getLicenseAppType().getName().toLowerCase());
+                smsCode = "msg.newTradeLicenseapprovalAmt.sms";
             }
             smsMsg = licenseMessageSource.getMessage(
                     smsCode,
-                    new String[]{license.getLicensee().getApplicantName(), license.getApplicationNumber(),
-                            getMunicipalityName()},
+                    new String[] { license.getLicensee().getApplicantName(),
+                            license.getApplicationNumber(),
+                            license.getNameOfEstablishment(),
+                            license.getLicenseNumber(),
+                            getMunicipalityName() },
                     locale);
             emailBody = licenseMessageSource.getMessage(
                     emailCode,
-                    new String[]{license.getLicensee().getApplicantName(), license.getApplicationNumber(),
-                            getMunicipalityName()},
-                    locale);
-            emailSubject = licenseMessageSource.getMessage("msg.newTradeLicensecreate.email.subject",
-                    new String[]{license.getApplicationNumber()}, locale);
-        } else if (workFlowAction.equals(Constants.BUTTONAPPROVE)
-                && Constants.STATUS_UNDERWORKFLOW.equalsIgnoreCase(license.getStatus()
-                .getStatusCode())) {
-            BigDecimal demAmt = license.getLatestAmountPaid();
-            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-            if (license.isReNewApplication())
-                emailCode = "msg.renewTradeLicenseapproval.email.body";
-            else
-                emailCode = "msg.newTradeLicenseapproval.email.body";
-            smsMsg = licenseMessageSource.getMessage(
-                    "msg.newTradeLicenseapproval.sms",
-                    new String[]{license.getLicensee().getApplicantName(), license.getLicenseNumber(),
-                            demAmt.toString(), formatter.format(license.getApplicationDate()), cityname, getMunicipalityName()},
-                    locale);
-            emailBody = licenseMessageSource.getMessage(
-                    emailCode,
-                    new String[]{license.getLicensee().getApplicantName(), license.getLicenseNumber(),
-                            demAmt.toString(), formatter.format(license.getApplicationDate()), cityname, getMunicipalityName()},
+                    new String[] { license.getLicensee().getApplicantName(),
+                            license.getApplicationNumber(),
+                            license.getNameOfEstablishment(),
+                            license.getLicenseNumber(),
+                            getMunicipalityName() },
                     locale);
             emailSubject = licenseMessageSource.getMessage("msg.newTradeLicenseApproval.email.subject",
-                    new String[]{license.getLicenseNumber()}, locale);
+                    new String[] { license.getNameOfEstablishment() }, locale);
         } else if (Constants.STATUS_CANCELLED.equalsIgnoreCase(license.getStatus()
                 .getStatusCode())) {
             smsMsg = licenseMessageSource.getMessage(
                     "msg.newTradeLicensecancelled.sms",
-                    new String[]{license.getLicensee().getApplicantName(), license.getApplicationNumber(),
-                            cityname, getMunicipalityName()},
+                    new String[] { license.getLicensee().getApplicantName(),
+                            license.getApplicationNumber(),
+                            cityname,
+                            getMunicipalityName() },
                     locale);
             emailBody = licenseMessageSource.getMessage(
-                    "msg.newTradeLicensecancelled.email.body",
-                    new String[]{license.getLicensee().getApplicantName(), license.getApplicationNumber(),
-                            cityname, getMunicipalityName()},
+                    String.format(MSG_LICENSE_CANCEL_BODY, license.getLicenseAppType().getName().toLowerCase()),
+                    new String[] { license.getLicensee().getApplicantName(),
+                            license.getApplicationNumber(),
+                            license.getNameOfEstablishment(),
+                            getMunicipalityName() },
                     locale);
             emailSubject = licenseMessageSource.getMessage("msg.newTradeLicensecancelled.email.subject",
-                    new String[]{license.getApplicationNumber()}, locale);
+                    new String[] { license.getNameOfEstablishment() }, locale);
         }
-        sendSMSOnLicense(mobileNumber, smsMsg);
-        sendEmailOnLicense(email, emailBody, emailSubject);
+        sendSMSOnLicense(license.getLicensee().getMobilePhoneNumber(), smsMsg);
+        sendEmailOnLicense(license.getLicensee().getEmailId(), emailBody, emailSubject);
     }
 
-    public void sendSMsAndEmailOnCollection(License license, Date receiptDate, BigDecimal demandAmount) {
-        String message;
-        String subject;
-        if (license.getLicenseNumber() != null) {
-            subject = String.format(Constants.STR_FOR_EMAILSUBJECT, "TIN No.", license.getLicenseNumber());
-            message = String.format(
-                    "Dear %s,%nTrade License with TIN No.%s, fee collected is at the rate of Rs.%s/- per year w.e.f %s.%nThanks,%n%s",
-                    license.getLicensee().getApplicantName(), license.getLicenseNumber(),
-                    demandAmount.toString(),
-                    toDefaultDateFormat(receiptDate), ApplicationThreadLocals.getMunicipalityName());
+    public void sendSMsAndEmailOnCollection(final License license, final BigDecimal demandAmount) {
+        String smsMsg;
+        String emailBody;
+        String emailSubject;
+        final Locale locale = Locale.getDefault();
+
+        if (Constants.APPLICATION_STATUS_FIRSTCOLLECTIONDONE_CODE.equals(license.getEgwStatus().getCode())) {
+
+            smsMsg = licenseMessageSource.getMessage(
+                    String.format(MSG_LICENSE_FIRSTLEVEL_SMS, license.getLicenseAppType().getName().toLowerCase()),
+                    new String[] { license.getLicensee().getApplicantName(),
+                            demandAmount.toString(),
+                            license.getNameOfEstablishment(),
+                            license.getApplicationNumber(),
+                            ApplicationThreadLocals.getMunicipalityName() },
+                    locale);
+            emailSubject = licenseMessageSource.getMessage(
+                    String.format(MSG_LICENSE_FIRSTLEVEL_SUBJECT, license.getLicenseAppType().getName().toLowerCase()),
+                    new String[] { license.getLicenseAppType().getName() }, locale);
+            emailBody = licenseMessageSource.getMessage(
+                    String.format(MSG_LICENSE_FIRSTLEVEL_BODY, license.getLicenseAppType().getName().toLowerCase()),
+                    new String[] { license.getLicensee().getApplicantName(),
+                            demandAmount.toString(),
+                            license.getNameOfEstablishment(),
+                            license.getApplicationNumber(),
+                            ApplicationThreadLocals.getMunicipalityName() },
+                    locale);
         } else {
-            subject = String.format(Constants.STR_FOR_EMAILSUBJECT, "Application No.", license.getApplicationNumber());
-            message = String.format(
-                    "Dear %s, %nYour Trade License application with number %s has been accepted, please use this number for future reference.%nThanks,%n%s",
-                    license.getLicensee().getApplicantName(), license.getApplicationNumber(), ApplicationThreadLocals.getMunicipalityName());
+            smsMsg = licenseMessageSource.getMessage(
+                    String.format(MSG_LICENSE_SECONDLEVEL_SMS, license.getLicenseAppType().getName().toLowerCase()),
+                    new String[] { license.getLicensee().getApplicantName(),
+                            demandAmount.toString(),
+                            license.getNameOfEstablishment(),
+                            license.getLicenseNumber(),
+                            ApplicationThreadLocals.getMunicipalityName() },
+                    locale);
+            emailSubject = licenseMessageSource.getMessage("msg.newTradeLicensecollection.email.subject",
+                    new String[] { license.getLicenseNumber() }, locale);
+            emailBody = licenseMessageSource.getMessage(
+                    String.format(MSG_LICENSE_SECONDLEVEL_BODY, license.getLicenseAppType().getName().toLowerCase()),
+                    new String[] { license.getLicensee().getApplicantName(),
+                            demandAmount.toString(),
+                            license.getNameOfEstablishment(),
+                            license.getLicenseNumber(),
+                            ApplicationThreadLocals.getMunicipalityName() },
+                    locale);
         }
-        messagingService.sendSMS(license.getLicensee().getMobilePhoneNumber(), message);
-        messagingService.sendEmail(license.getLicensee().getEmailId(), subject,
-                message);
+        sendSMSOnLicense(license.getLicensee().getMobilePhoneNumber(), smsMsg);
+        sendEmailOnLicense(license.getLicensee().getEmailId(), emailBody,
+                emailSubject);
+    }
+
+    public void sendSMsAndEmailOnClosure(final License license, final String workflowAction) {
+        String smsMsg = null;
+        String emailBody = "";
+        String emailSubject = "";
+        final Locale locale = Locale.getDefault();
+
+        if (license.getLicenseNumber() != null && Constants.BUTTONFORWARD.equals(workflowAction)) {
+
+            smsMsg = licenseMessageSource.getMessage(
+                    "msg.newTradeLicenseclosure.sms",
+                    new String[] { license.getLicensee().getApplicantName(), license.getNameOfEstablishment(),
+                            license.getLicenseNumber(),
+                            getMunicipalityName() },
+                    locale);
+            emailBody = licenseMessageSource.getMessage(
+                    "msg.newTradeLicenseclosure.email.body",
+                    new String[] { license.getLicensee().getApplicantName(), license.getNameOfEstablishment(),
+                            license.getLicenseNumber(),
+                            getMunicipalityName() },
+                    locale);
+            emailSubject = licenseMessageSource.getMessage("msg.newTradeLicenseclosure.email.subject",
+                    new String[] { license.getNameOfEstablishment() }, locale);
+
+        } else if (license.getLicenseNumber() != null && Constants.BUTTONAPPROVE.equals(workflowAction)) {
+            smsMsg = licenseMessageSource.getMessage(
+                    "msg.newTradeLicenseclosureapproval.sms",
+                    new String[] { license.getLicensee().getApplicantName(), license.getNameOfEstablishment(),
+                            license.getLicenseNumber(),
+                            getMunicipalityName() },
+                    locale);
+            emailBody = licenseMessageSource.getMessage(
+                    "msg.newTradeLicenseclosureapproval.email.body",
+                    new String[] { license.getLicensee().getApplicantName(), license.getNameOfEstablishment(),
+                            license.getLicenseNumber(),
+                            getMunicipalityName() },
+                    locale);
+            emailSubject = licenseMessageSource.getMessage("msg.newTradeLicenseclosureapproval.email.subject",
+                    new String[] { license.getNameOfEstablishment() }, locale);
+
+        }
+
+        sendSMSOnLicense(license.getLicensee().getMobilePhoneNumber(), smsMsg);
+        sendEmailOnLicense(license.getLicensee().getEmailId(), emailBody, emailSubject);
+
     }
 
 }

@@ -40,18 +40,18 @@
 
 package org.egov.adtax.entity;
 
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+
 import org.egov.adtax.entity.enums.AdvertisementDuration;
 import org.egov.commons.EgwStatus;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.workflow.entity.StateAware;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
-
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 @Entity
 @Table(name = "EGADTAX_PERMITDETAILS")
@@ -84,7 +84,6 @@ public class AdvertisementPermitDetail extends StateAware {
     private String permissionNumber;
 
     @NotNull
-    @Temporal(value = TemporalType.DATE)
     private Date applicationDate;
 
     @Enumerated(EnumType.ORDINAL)
@@ -106,11 +105,9 @@ public class AdvertisementPermitDetail extends StateAware {
     private Boolean isActive = false;
 
     // @NotNull
-    @Temporal(value = TemporalType.DATE)
     private Date permissionstartdate;
 
     // @NotNull
-    @Temporal(value = TemporalType.DATE)
     private Date permissionenddate;
 
     @SafeHtml

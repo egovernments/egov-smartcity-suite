@@ -106,7 +106,7 @@ function onSubmitEvent(event) {
                 responsive: true,
                 destroy: true,
                 ajax: {
-                    url: "/tl/baseregister/search-resultList?"
+                    url: "/tl/public/baseregister/search-resultList?"
                     + $("#baseregisterform").serialize()
                 },
                 columns: [

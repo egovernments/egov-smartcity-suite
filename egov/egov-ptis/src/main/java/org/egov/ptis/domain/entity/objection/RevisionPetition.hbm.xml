@@ -127,5 +127,6 @@
 			<key column="OBJECTION" not-null="true" />
 			<many-to-many class="org.egov.ptis.domain.entity.property.Document" column="DOCUMENT"/>
 		</bag>
+		<property name="source" column="source" type="java.lang.String"/>
     </class>
 </hibernate-mapping>

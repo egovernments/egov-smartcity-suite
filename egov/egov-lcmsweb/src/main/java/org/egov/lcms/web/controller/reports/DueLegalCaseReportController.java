@@ -43,7 +43,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.egov.lcms.reports.entity.DueReportResult;
+import org.egov.lcms.reports.entity.LcDueReportResult;
 import org.egov.lcms.utils.constants.LcmsConstants;
 import org.egov.lcms.web.controller.transactions.GenericLegalCaseController;
 import org.springframework.stereotype.Controller;
@@ -67,7 +67,7 @@ public class DueLegalCaseReportController extends GenericLegalCaseController {
 
     @RequestMapping(method = RequestMethod.GET, value = "/dueReport")
     public String dueReportForm(final Model model) {
-        model.addAttribute("dueReportResult", new DueReportResult());
+        model.addAttribute("dueReportResult", new LcDueReportResult());
         return "duereport-form";
     }
 

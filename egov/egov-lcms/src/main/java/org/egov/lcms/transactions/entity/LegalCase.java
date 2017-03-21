@@ -160,7 +160,7 @@ public class LegalCase extends AbstractAuditable {
     private String lcNumber;
 
     @NotNull
-    @Length(max = 1024)
+    @Length(max = 10000)
     @Audited
     private String prayer;
 

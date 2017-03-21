@@ -206,32 +206,12 @@
 		<td class="greybox apartmentRow">
 			<span class="bold"><s:property value="%{propertyDetail.apartment.name}" default="N/A"/></span>
 		</td>
-		<td class="greybox" colspan="2">
-			&nbsp;			
-		</td>
-	</tr>
-	
-	<tr class="appurtenant">
-		<td class="greybox">&nbsp;</td>
-		<td class="bluebox"><s:text name="isextent.appurtntland" /> : </td>
-		<td class="bluebox"><s:checkbox name="propertyDetail.appurtenantLandChecked" disabled="true" id="appurtenantLandChecked"/>
-		</td>
 		<td class="greybox"><s:text name="certificationNumber"></s:text>:</td>
 		<td class="greybox">
 			<span class="bold">
 				<s:if test='%{propertyDetail.occupancyCertificationNo == ""}'>N/A</s:if>
 				<s:else><s:property value="%{propertyDetail.occupancyCertificationNo}" default="N/A"/></s:else>
 			</span>
-		</td>
-	</tr>
-	<tr id="appurtenantRow">
-		<td class="greybox">&nbsp;</td>
-		<td class="greybox"><s:text name="extent.appurtntland"></s:text> :</td>
-		<td class="greybox">
-			<span class="bold"><s:property value="%{propertyDetail.extentAppartenauntLand}" default="N/A"/></span>
-		</td>
-		<td class="bluebox" colspan="2">
-			&nbsp;
 		</td>
 	</tr>
 	

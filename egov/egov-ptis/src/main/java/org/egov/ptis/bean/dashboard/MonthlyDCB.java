@@ -40,7 +40,7 @@
 package org.egov.ptis.bean.dashboard;
 
 public class MonthlyDCB {
-    private String ulbName;
+    private String boundaryName;
     private DemandCollectionMIS januaryDCB;
     private DemandCollectionMIS februaryDCB;
     private DemandCollectionMIS marchDCB;
@@ -54,12 +54,12 @@ public class MonthlyDCB {
     private DemandCollectionMIS novemberDCB;
     private DemandCollectionMIS decemberDCB;
 
-    public String getUlbName() {
-        return ulbName;
+    public String getBoundaryName() {
+        return boundaryName;
     }
 
-    public void setUlbName(String ulbName) {
-        this.ulbName = ulbName;
+    public void setBoundaryName(String boundaryName) {
+        this.boundaryName = boundaryName;
     }
 
     public DemandCollectionMIS getJanuaryDCB() {

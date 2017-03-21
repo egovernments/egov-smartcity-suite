@@ -39,6 +39,8 @@
  */
 package org.egov.ptis.domain.entity.property;
 
+import static java.lang.Boolean.FALSE;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -109,7 +111,7 @@ public class VacantProperty extends AbstractProperty {
     private Double marketValue;
     private String categoryType;
     private String occupancyCertificationNo;
-    private Boolean appurtenantLandChecked;
+    private transient Boolean appurtenantLandChecked = FALSE;
     private Boolean corrAddressDiff;
     private PropertyDepartment propertyDepartment;
     private VacantLandPlotArea vacantLandPlotArea;

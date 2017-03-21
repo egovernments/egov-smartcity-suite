@@ -65,7 +65,7 @@ import static org.egov.tl.utils.Constants.LOCATION_HIERARCHY_TYPE;
 
 
 @Controller
-@RequestMapping("baseregister")
+@RequestMapping(value = {"baseregister", "/public/baseregister"})
 public class BaseRegisterController {
     private final LicenseStatusService licenseStatusService;
     private final BaseRegisterService baseRegisterService;

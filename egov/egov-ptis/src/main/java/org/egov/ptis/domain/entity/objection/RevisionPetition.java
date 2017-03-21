@@ -123,6 +123,7 @@ public class RevisionPetition extends StateAware implements Auditable {
     public static final DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
     private List<Document> documents = new ArrayList<>();
     private String type;
+    private String source;
 
     @Override
     public String getStateDetails() {
@@ -319,5 +320,13 @@ public class RevisionPetition extends StateAware implements Auditable {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
     }
 }

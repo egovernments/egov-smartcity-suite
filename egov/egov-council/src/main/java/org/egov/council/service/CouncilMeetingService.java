@@ -188,9 +188,14 @@ public class CouncilMeetingService {
             if (mom != null && mom.getAgenda() != null && !agendaNumber.contains(mom.getAgenda().getAgendaNumber())
                     && mom.getAgenda().getAgendaDetails() != null) {
                 for (CouncilAgendaDetails agendaDetails : mom.getAgenda().getAgendaDetails()) {
-                    usersListResult.add(agendaDetails.getPreamble().getState().getCreatedBy());
-                    usersListResult.add(eisCommonService
-                            .getUserForPosition(agendaDetails.getPreamble().getState().getOwnerPosition().getId(), new Date()));
+                    if (agendaDetails != null && agendaDetails.getPreamble() != null
+                            && agendaDetails.getPreamble().getState() != null
+                            && agendaDetails.getPreamble().getState().getOwnerPosition() != null) {
+                        usersListResult.add(agendaDetails.getPreamble().getState().getCreatedBy());
+                        usersListResult.add(eisCommonService
+                                .getUserForPosition(agendaDetails.getPreamble().getState().getOwnerPosition().getId(),
+                                        new Date()));
+                    }
                 }
                 agendaNumber.add(mom.getAgenda().getAgendaNumber());
             }

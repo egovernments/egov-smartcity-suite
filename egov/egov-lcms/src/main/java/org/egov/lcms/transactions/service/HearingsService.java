@@ -52,6 +52,8 @@ import javax.persistence.PersistenceContext;
 import org.egov.commons.EgwStatus;
 import org.egov.eis.entity.Employee;
 import org.egov.infra.utils.DateUtils;
+import org.egov.lcms.entity.es.HearingsDocument;
+import org.egov.lcms.service.es.HearingsDocumentService;
 import org.egov.lcms.transactions.entity.EmployeeHearing;
 import org.egov.lcms.transactions.entity.Hearings;
 import org.egov.lcms.transactions.entity.LegalCase;
@@ -80,9 +82,12 @@ public class HearingsService {
 
     @Autowired
     private LegalCaseSmsService legalCaseSmsService;
-    
+
     @Autowired
     private LegalCaseService legalCaseService;
+
+    @Autowired
+    private HearingsDocumentService hearingsDocumentService;
 
     @Transactional
     public Hearings persist(final Hearings hearings) throws ParseException {
@@ -98,7 +103,9 @@ public class HearingsService {
         legalCaseSmsService.sendSmsToStandingCounselForHearings(hearings);
         legalCaseService.persistLegalCaseIndex(hearings.getLegalCase(), null,
                 null, null, null);
-        return hearingsRepository.save(hearings);
+        hearingsRepository.save(hearings);
+        persistHearingsIndex(hearings);
+        return hearings;
     }
 
     @Transactional
@@ -115,7 +122,7 @@ public class HearingsService {
                 prepareEmployeeHearingList(hearings, empUserName, hearingEmp);
             }
         }
-        if (hearings.getPositionTemplList().size() > 0
+        if (!hearings.getPositionTemplList().isEmpty()
                 && hearings.getPositionTemplList().size() < hearings.getEmployeeHearingList().size()) {
             hearings.getEmployeeHearingList().clear();
             for (final EmployeeHearing hearingEmp : hearings.getPositionTemplList()) {
@@ -152,7 +159,7 @@ public class HearingsService {
         if (!DateUtils.compareDates(legalCase.getNextDate(), hearings.getHearingDate()))
             legalCase.setNextDate(hearings.getHearingDate());
         else {
-            final List<Date> hearingDateList = new ArrayList<Date>(0);
+            final List<Date> hearingDateList = new ArrayList<>(0);
             hearingDateList.add(hearings.getHearingDate());
             final Iterator<Hearings> iteratorHearings = legalCase.getHearings().iterator();
             while (iteratorHearings.hasNext()) {
@@ -178,6 +185,11 @@ public class HearingsService {
         if (count >= 1)
             errors.rejectValue("hearingDate", "validatedate.hearing.futuredate");
         return errors;
+    }
+
+    public HearingsDocument persistHearingsIndex(final Hearings hearings) throws ParseException {
+        return hearingsDocumentService.persistHearingsDocumentIndex(hearings);
+
     }
 
 }

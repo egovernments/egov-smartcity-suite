@@ -476,4 +476,9 @@
 		<put-attribute name="page-title" value="lbl.title.occupier.notice"  cascade="true" />
 		<put-attribute name="body" value="/WEB-INF/views/reports/occupierNotice.jsp" />
 	</definition>
+	
+    <definition name="integrateddemandbill-form" extends="base_layout">
+		<put-attribute name="page-title" value="lbl.title.integrated.demand.bill"  cascade="true" />
+		<put-attribute name="body" value="/WEB-INF/views/reports/integrateddemandbill-form.jsp" />
+	</definition>
 </tiles-definitions> 

@@ -44,7 +44,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 import java.math.BigDecimal;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.egov.egf.commons.EgovCommon;
@@ -56,10 +56,8 @@ import org.egov.restapi.constants.RestApiConstants;
 import org.egov.restapi.model.RestErrors;
 import org.egov.restapi.util.JsonConvertor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -79,10 +77,9 @@ public class BillPaymentStatusController {
      * @param request
      * @return paymentAmount
      */
-    @ResponseStatus(value = HttpStatus.OK)
     @RequestMapping(value = "/egf/bill/paymentamount", method = GET, produces = APPLICATION_JSON_VALUE)
     public String getPaymentAmount(@RequestParam final String billNumber,
-            final HttpServletRequest request) {
+            final HttpServletResponse response) {
         if (LOG.isDebugEnabled())
             LOG.debug("Rest API getting payment status for the bill number: " + billNumber);
         ApplicationThreadLocals.setUserId(2L);
@@ -95,6 +92,7 @@ public class BillPaymentStatusController {
                 restErrors = new RestErrors();
                 restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NOT_VALID_BILLNUMBER);
                 restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NOT_VALID_BILLNUMBER);
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 return JsonConvertor.convert(restErrors);
             }
             paymentAmount = egovCommon.getPaymentAmount(egBillregister.getId());
@@ -103,8 +101,10 @@ public class BillPaymentStatusController {
             final RestErrors re = new RestErrors();
             re.setErrorCode(e.getMessage());
             re.setErrorMessage(e.getMessage());
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return JsonConvertor.convert(re);
         }
+        response.setStatus(HttpServletResponse.SC_CREATED);
         return JsonConvertor.convert(paymentAmount);
     }
 }

@@ -69,6 +69,10 @@ public class ComplaintDashBoardResponse {
     private long AgeingGroup2;
     private long AgeingGroup3;
     private long AgeingGroup4;
+    private long ageingGroup5;
+    private long ageingGroup6;
+    private long ageingGroup7;
+    private long ageingGroup8;
     private long reOpenedComplaintCount;
 
     public String getDistrictName() {
@@ -269,5 +273,37 @@ public class ComplaintDashBoardResponse {
 
     public void setReOpenedComplaintCount(final long reOpenedComplaintCount) {
         this.reOpenedComplaintCount = reOpenedComplaintCount;
+    }
+
+    public long getAgeingGroup5() {
+        return ageingGroup5;
+    }
+
+    public void setAgeingGroup5(long ageingGroup5) {
+        this.ageingGroup5 = ageingGroup5;
+    }
+
+    public long getAgeingGroup6() {
+        return ageingGroup6;
+    }
+
+    public void setAgeingGroup6(long ageingGroup6) {
+        this.ageingGroup6 = ageingGroup6;
+    }
+
+    public long getAgeingGroup7() {
+        return ageingGroup7;
+    }
+
+    public void setAgeingGroup7(long ageingGroup7) {
+        this.ageingGroup7 = ageingGroup7;
+    }
+
+    public long getAgeingGroup8() {
+        return ageingGroup8;
+    }
+
+    public void setAgeingGroup8(long ageingGroup8) {
+        this.ageingGroup8 = ageingGroup8;
     }
 }

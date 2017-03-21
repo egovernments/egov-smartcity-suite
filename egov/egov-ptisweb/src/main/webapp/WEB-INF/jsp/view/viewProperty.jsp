@@ -150,11 +150,11 @@
 					value="%{basicProperty.property.propertyDetail.sitalArea.area}" />
 			</div>
 			<div class="col-xs-3 add-margin">
-				<s:text name="extent.appurtntland"></s:text>
+				<s:text name="label.property.department"></s:text>
 			</div>
 			<div class="col-xs-3 add-margin view-content">
 				<s:property default="N/A"
-					value="%{propertyDetail.extentAppartenauntLand}" />
+					value="%{basicProperty.property.propertyDetail.propertyDepartment.name}" />
 			</div>
 		</div>
 		<%-- <div class="row add-border">

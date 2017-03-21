@@ -193,6 +193,17 @@ public class WaterTaxUtils {
         return cscUserRole;
     }
 
+    public Boolean isCSCoperator(final User currentUser) {
+        Boolean cscUserRole = Boolean.FALSE;
+        if (currentUser != null)
+            for (final Role userrole : currentUser.getRoles())
+                if (userrole.getName().equals(WaterTaxConstants.ROLE_CSCOPERTAOR)) {
+                    cscUserRole = Boolean.TRUE;
+                    break;
+                }
+        return cscUserRole;
+    }
+
     public Boolean isSmsEnabled() {
         final AppConfigValues appConfigValue = getAppConfigValueByModuleNameAndKeyName(WaterTaxConstants.MODULE_NAME,
                 WaterTaxConstants.SENDSMSFORWATERTAX).get(0);
@@ -401,11 +412,14 @@ public class WaterTaxUtils {
         return (EgwStatus) persistenceService.find("from EgwStatus where moduleType=? and code=?", moduleName, code);
     }
 
-    public String getRevenueWardForConsumerCode(final String code, final WaterConnectionDetails waterConnectionDetails) {
+    public String getRevenueWardForConsumerCode(final String code,
+            final WaterConnectionDetails waterConnectionDetails) {
         BasicPropertyImpl basicPropertyImpl = null;
-        if (waterConnectionDetails != null && waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.ACTIVE))
-            basicPropertyImpl = (BasicPropertyImpl) persistenceService.find("from BasicPropertyImpl "
-                    + "bp where bp.upicNo in(select conn.propertyIdentifier from WaterConnection conn where conn.consumerCode = ?)",
+        if (waterConnectionDetails != null
+                && waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.ACTIVE))
+            basicPropertyImpl = (BasicPropertyImpl) persistenceService.find(
+                    "from BasicPropertyImpl "
+                            + "bp where bp.upicNo in(select conn.propertyIdentifier from WaterConnection conn where conn.consumerCode = ?)",
                     code);
         else
             basicPropertyImpl = (BasicPropertyImpl) persistenceService.find(
@@ -414,8 +428,8 @@ public class WaterTaxUtils {
                             + "(select conndet.connection from WaterConnectionDetails conndet where conndet.applicationNumber = ?))",
                     code);
         return basicPropertyImpl != null && basicPropertyImpl.getPropertyID() != null
-                && basicPropertyImpl.getPropertyID().getWard() != null ? basicPropertyImpl.getPropertyID().getWard().getName()
-                        : "";
+                && basicPropertyImpl.getPropertyID().getWard() != null
+                        ? basicPropertyImpl.getPropertyID().getWard().getName() : "";
     }
 
     public Long getApproverPosition(final String designationName, final WaterConnectionDetails waterConnectionDetails) {
@@ -500,11 +514,13 @@ public class WaterTaxUtils {
     }
 
     /**
-     * Getting User assignment based on designation ,department and zone boundary Reading Designation and Department from
-     * appconfig values and Values should be 'Senior Assistant,Junior Assistant' for designation and
+     * Getting User assignment based on designation ,department and zone
+     * boundary Reading Designation and Department from appconfig values and
+     * Values should be 'Senior Assistant,Junior Assistant' for designation and
      * 'Revenue,Accounts,Administration' for department
      *
-     * @param asessmentNumber ,
+     * @param asessmentNumber
+     *            ,
      * @Param assessmentDetails
      * @param boundaryObj
      * @return Assignment
@@ -531,20 +547,19 @@ public class WaterTaxUtils {
                                 designationService.getDesignationByName(desg).getId(), boundaryObj.getParent().getId());
                         if (assignment.isEmpty())
                             // Ward->Zone->City
-                            if (boundaryObj.getParent() != null && boundaryObj.getParent().getParent() != null && boundaryObj
-                                    .getParent().getParent().getBoundaryType().equals(WaterTaxConstants.BOUNDARY_TYPE_CITY))
-                            assignment = assignmentService.findByDeptDesgnAndParentAndActiveChildBoundaries(
-                                    departmentService.getDepartmentByName(dept).getId(),
-                                    designationService.getDesignationByName(desg).getId(),
-                                    boundaryObj.getParent().getParent().getId());
+                            if (boundaryObj.getParent() != null && boundaryObj.getParent().getParent() != null
+                                    && boundaryObj.getParent().getParent().getBoundaryType()
+                                            .equals(WaterTaxConstants.BOUNDARY_TYPE_CITY))
+                            assignment = assignmentService.findByDeptDesgnAndParentAndActiveChildBoundaries(departmentService.getDepartmentByName(dept).getId(), designationService.getDesignationByName(desg).getId(), boundaryObj.getParent().getParent().getId());
                     }
                     // ward->City mapp
                     if (assignment.isEmpty())
-                        if (boundaryObj.getParent() != null
-                                && boundaryObj.getParent().getBoundaryType().equals(WaterTaxConstants.BOUNDARY_TYPE_CITY))
+                        if (boundaryObj.getParent() != null && boundaryObj.getParent().getBoundaryType()
+                                .equals(WaterTaxConstants.BOUNDARY_TYPE_CITY))
                             assignment = assignmentService.findByDeptDesgnAndParentAndActiveChildBoundaries(
                                     departmentService.getDepartmentByName(dept).getId(),
-                                    designationService.getDesignationByName(desg).getId(), boundaryObj.getParent().getId());
+                                    designationService.getDesignationByName(desg).getId(),
+                                    boundaryObj.getParent().getId());
                 }
                 if (!assignment.isEmpty())
                     break;

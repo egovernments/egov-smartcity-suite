@@ -108,7 +108,7 @@
 										</div>
 										<div class="form-group">
 											<div class="text-center">
-												<button type="button" class="btn btn-primary" id="buttonid"><spring:message code="lbl.search"/></button>
+												<button type="button" class="btn btn-primary" id="buttonid"><spring:message code="lbl.Submit.button"/></button>
 								<a onclick="self.close()" class="btn btn-default" href="javascript:void(0)"><spring:message code="lbl.close"/></a>
 											</div>
 										</div>

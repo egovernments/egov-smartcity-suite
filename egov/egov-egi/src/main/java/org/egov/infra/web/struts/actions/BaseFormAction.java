@@ -51,6 +51,8 @@ import org.apache.struts2.interceptor.RequestAware;
 import org.apache.struts2.interceptor.SessionAware;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.services.PersistenceService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -67,12 +69,12 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 @ParentPackage("egov")
 public abstract class BaseFormAction extends ActionSupport
-        implements ModelDriven<Object>,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             ParameterAware, SessionAware, Preparable, RequestAware, ParameterNameAware {
-
+        implements ModelDriven<Object>, ParameterAware, SessionAware, Preparable, RequestAware, ParameterNameAware {
     public static final String INDEX = "index";
     public static final String NEW = "new";
     public static final String EDIT = "edit";
     public static final String VIEW = "view";
+    protected static final Logger LOG = LoggerFactory.getLogger(BaseFormAction.class);
     private static final long serialVersionUID = 1L;
     @Autowired
     @Qualifier("persistenceService")

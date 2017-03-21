@@ -104,6 +104,7 @@ public class MarriageBillService extends BillServiceInterface {
      * @param registration
      * @return xml representation of the bill
      */
+    @Transactional
     public String generateBill(final MarriageRegistration registration) {
 
         billableRegistration.setRegistration(registration);
@@ -129,6 +130,7 @@ public class MarriageBillService extends BillServiceInterface {
      * @param registration
      * @return xml representation of the bill
      */
+    @Transactional
     public String generateBill(final ReIssue reIssue) {
 
         billableReIssue.setReIssue(reIssue);

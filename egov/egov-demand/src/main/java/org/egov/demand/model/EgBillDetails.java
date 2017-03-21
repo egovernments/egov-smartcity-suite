@@ -46,7 +46,7 @@ import org.egov.commons.Installment;
 
 /**
  * EgBillDetails entity.
- * 
+ *
  * @author MyEclipse Persistence Tools
  */
 
@@ -55,7 +55,7 @@ public class EgBillDetails implements java.io.Serializable, Comparable<EgBillDet
     // Fields
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 1L;
     private Long id;
@@ -220,4 +220,12 @@ public class EgBillDetails implements java.io.Serializable, Comparable<EgBillDet
         this.purpose = purpose;
     }
 
+    public Date getInstallmentStartDate() {
+        return getEgDemandReason().getEgInstallmentMaster().getFromDate();
+
+    }
+
+    public Date getInstallmentEndDate() {
+        return getEgDemandReason().getEgInstallmentMaster().getToDate();
+    }
 }

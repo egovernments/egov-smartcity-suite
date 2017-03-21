@@ -40,7 +40,6 @@
 
 package org.egov.tl.entity.dto;
 
-import org.egov.infra.workflow.entity.State;
 import org.egov.tl.entity.License;
 import org.egov.tl.utils.Constants;
 import org.joda.time.DateTime;
@@ -99,33 +98,31 @@ public class SearchForm {
     private void addActions(final License license, final String userRoles) {
         final List<String> licenseActions = new ArrayList<>();
         licenseActions.add("View Trade");
+        if (license.isClosureApplicable())
+            licenseActions.add("Closure");
         if (!userRoles.contains(CSCOPERATOR)) {
             licenseActions.add("Generate Demand Notice");
-            if (license.isLegacy() && !license.hasState())
+            if (license.isLegacyWithNoState())
                 licenseActions.add("Modify Legacy License");
-            if (license.getStatus() != null) {
+            if (license.getStatus() != null)
                 addRoleSpecificActions(license, userRoles, licenseActions);
-                if (license.isStatusActive())
-                    licenseActions.add("Closure");
-            }
-        } else if (!license.isPaid() && license.getIsActive()) {
-            addRenewalOption(licenseActions, license.getState());
+        } else if (license.isReadyForRenewal()) {
+            licenseActions.add("Renew License");
         }
         setActions(licenseActions);
     }
 
     private void addRoleSpecificActions(License license, String userRoles, List<String> licenseActions) {
 
-        if (userRoles.contains(Constants.ROLE_BILLCOLLECTOR) && license.canCollectFee())
+        if (userRoles.contains(Constants.ROLE_BILLCOLLECTOR) && license.canCollectFee() && !Constants.CLOSURE_NATUREOFTASK.equals(license.getState().getNatureOfTask()))
             licenseActions.add("Collect Fees");
         else if (userRoles.contains(Constants.TL_CREATOR_ROLENAME) || userRoles.contains(Constants.TL_APPROVER_ROLENAME)) {
             if (license.isStatusActive() && !license.isLegacy())
                 licenseActions.add("Print Certificate");
             if (license.getStatus().getStatusCode().equals(Constants.STATUS_UNDERWORKFLOW))
                 licenseActions.add("Print Provisional Certificate");
-            State stateobj = license.getState();
-            if (!license.isPaid() && license.getIsActive())
-                addRenewalOption(licenseActions, stateobj);
+            if (license.isReadyForRenewal())
+                licenseActions.add("Renew License");
             Date fromRange = new DateTime().withMonthOfYear(1).withDayOfMonth(1).toDate();
             Date toRange = new DateTime().withMonthOfYear(3).withDayOfMonth(31).toDate();
             Date currentDate = new Date();
@@ -135,15 +132,10 @@ public class SearchForm {
 
     }
 
-    private void addRenewalOption(List<String> licenseActions, State stateobj) {
-        if (stateobj == null || "END".equals(stateobj.getValue()) || "Closed".equals(stateobj.getValue()))
-            licenseActions.add("Renew License");
-    }
-
     private void demandGenerationOption(List<String> licenseActions, License license) {
         Date nextYearInstallment = new DateTime().withMonthOfYear(4).withDayOfMonth(1).toDate();
         Date currentYearInstallment = license.getLicenseDemand().getEgInstallmentMaster().getToDate();
-        if (license.isNewPermanentApplication() && license.hasState() && license.getIsActive() && currentYearInstallment.before(nextYearInstallment)) {
+        if (license.isNewPermanentApplication() && !license.isLegacyWithNoState() && license.getIsActive() && currentYearInstallment.before(nextYearInstallment)) {
             licenseActions.add("Generate Demand");
         }
     }

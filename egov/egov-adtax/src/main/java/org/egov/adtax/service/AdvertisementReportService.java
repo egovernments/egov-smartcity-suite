@@ -56,6 +56,7 @@ import org.egov.adtax.service.penalty.AdvertisementPenaltyCalculator;
 import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
 import org.egov.collection.integration.services.CollectionIntegrationService;
 import org.egov.commons.Installment;
+import org.egov.dcb.bean.Receipt;
 import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgdmCollectedReceipt;
@@ -189,16 +190,15 @@ public class AdvertisementReportService {
                 }
             }
 
-            final Map<Date, String> collectedReceiptMap = new HashMap<Date, String>();
-            final StringBuffer receiptNumber = new StringBuffer();
             for (final EgDemandDetails demandDtl : hoarding.getDemandId().getEgDemandDetails())
                 for (final EgdmCollectedReceipt collRecpt : demandDtl.getEgdmCollectedReceipts())
                     if (!collRecpt.isCancelled()) {
-                        receiptNumber.append(collRecpt.getReceiptNumber()).append(" ");
-                        collectedReceiptMap.put(collRecpt.getReceiptDate(), collRecpt.getReceiptNumber());
-
+                        Receipt receipt = new Receipt();
+                        receipt.setReceiptNumber(collRecpt.getReceiptNumber());
+                        receipt.setReceiptDate(collRecpt.getReceiptDate());
+                        receipt.setReceiptAmt(collRecpt.getAmount());
+                        hoardingReport.addReceipts(receipt);
                     }
-            hoardingReport.setCollectReceiptMap(collectedReceiptMap);
 
             for (final Map.Entry<Installment, BigDecimal> penaltyMap : penaltyAmountMap.entrySet())
                 if (hoardingwiseMap.containsKey(penaltyMap.getKey().getDescription()))

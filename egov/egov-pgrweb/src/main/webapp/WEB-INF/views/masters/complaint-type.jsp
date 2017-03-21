@@ -57,11 +57,20 @@
 				<div class="panel-body custom-form">
 					<div class="form-group">
 						<label class="col-sm-3 control-label"> 
-							<spring:message code="lbl.complaintTypeName" /><span class="mandatory"></span>
+							<spring:message code="lbl.name" /><span class="mandatory"></span>
 						</label>
 						<div class="col-sm-6 add-margin">
 							<form:input path="name" id="comp_type_name" cssClass="form-control is_valid_alphabet" cssErrorClass="form-control error" required="required"/>
 							<form:errors path="name" cssClass="error-msg" />
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-3 control-label"> 
+							<spring:message code="lbl.local.name" />
+						</label>
+						<div class="col-sm-6 add-margin">
+							<form:input path="localName" id="comp_type_localname" cssClass="form-control " cssErrorClass="form-control error" maxlength="200"/>
+							<form:errors path="localName" cssClass="error-msg" />
 						</div>
 					</div>
 					<div class="form-group">

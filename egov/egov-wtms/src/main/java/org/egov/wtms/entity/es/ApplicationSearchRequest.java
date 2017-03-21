@@ -46,7 +46,7 @@ import java.util.Date;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.egov.infra.utils.ApplicationConstant.ES_DATE_FORMAT;
-import static org.egov.infra.utils.DateUtils.TO_DEFAULT_DATE_FORMAT;
+import static org.egov.infra.utils.DateUtils.DEFAULT_DATE_FORMATTER;
 
 public class ApplicationSearchRequest {
     private static final DateTimeFormatter ES_DATE_FORMATTER = DateTimeFormat.forPattern(ES_DATE_FORMAT);
@@ -123,7 +123,7 @@ public class ApplicationSearchRequest {
 
     public void setFromDate(final String fromDate) {
         if (isNotBlank(fromDate))
-            this.fromDate = TO_DEFAULT_DATE_FORMAT.parseDateTime(fromDate).withTimeAtStartOfDay().toString(ES_DATE_FORMATTER);
+            this.fromDate = DEFAULT_DATE_FORMATTER.parseDateTime(fromDate).withTimeAtStartOfDay().toString(ES_DATE_FORMATTER);
     }
 
     public String getToDate() {
@@ -132,7 +132,7 @@ public class ApplicationSearchRequest {
 
     public void setToDate(final String toDate) {
         if (isNotBlank(toDate))
-            this.toDate = TO_DEFAULT_DATE_FORMAT.parseDateTime(toDate).millisOfDay().
+            this.toDate = DEFAULT_DATE_FORMATTER.parseDateTime(toDate).millisOfDay().
                     withMaximumValue().toString(ES_DATE_FORMATTER);
     }
 

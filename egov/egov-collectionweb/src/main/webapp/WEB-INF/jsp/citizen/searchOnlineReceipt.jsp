@@ -278,12 +278,10 @@ function transitionStates(){
 <display:table name="results" uid="currentRow" pagesize = "30" style="border:1px;width:100%;empty-cells:show;border-collapse:collapse;" cellpadding="0" cellspacing="0" export="false" requestURI="">
 
 	<display:caption media="pdf">&nbsp;</display:caption>
-	
-	<display:column headerClass="bluebgheadtd"  class="blueborderfortd" style="width:3%">
-		<input name="selectedReceipts" type="hidden" id="selectedReceipts" value="${currentRow.receiptHeader.id}"/>
-		<input type="hidden" name="paymentstatus" id="paymentstatus" value="${currentRow.status.description}" />
-	</display:column>
-	<display:column headerClass="bluebgheadtd"  class="blueborderfortd" title="Sl.No" style="width:3%;text-align: center"> <c:out value="${currentRow_rowNum}"/> </display:column> 
+	<display:column headerClass="bluebgheadtd"  class="blueborderfortd" title="Sl.No" style="width:3%;text-align: center"> <c:out value="${currentRow_rowNum}"/>
+	<input type="hidden" name="selectedReceipts"  id="selectedReceipts" value="${currentRow.receiptHeader.id}"/>
+	<input type="hidden" name="paymentstatus" id="paymentstatus" value="${currentRow.status.description}" />
+	 </display:column>  
 	<display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Bill Number" property="receiptHeader.referencenumber"  format="{0,date,dd/MM/yyyy}" style="width:6%;text-align: center" />
 	<display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Reference ID" property="receiptHeader.id" style="width:8%;text-align:center"  />
 	

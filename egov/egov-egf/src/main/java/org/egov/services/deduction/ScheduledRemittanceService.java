@@ -926,7 +926,7 @@ public class ScheduledRemittanceService {
         miscbillDetail.setPaidto(remitted);
         persistenceService.getSession().save(miscbillDetail);
 
-        ph.start().withOwner(nextOwner);
+        ph.transition().start().withOwner(nextOwner);
         paymentWorkflowService.transition("uac_ao_approve|" + user.getId(), ph, "created from schedular");
 
         return voucherHeader;

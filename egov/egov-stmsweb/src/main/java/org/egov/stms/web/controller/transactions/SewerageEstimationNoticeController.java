@@ -77,10 +77,6 @@ public class SewerageEstimationNoticeController {
     @Autowired
     private SewerageNoticeService sewerageNoticeService;
 
-    private static final int BUFFER_SIZE = 4096;
-
-    public static final String ESTIMATION_NOTICE = "sewerageEstimationNotice";
-
     @Autowired
     private SewerageApplicationDetailsService sewerageApplicationDetailsService;
 
@@ -106,6 +102,7 @@ public class SewerageEstimationNoticeController {
     @RequestMapping(value = "/downloadFile", method = RequestMethod.GET)
     public void downLoadFieldInspectionAttachment(final HttpServletRequest request, final HttpServletResponse response)
             throws IOException {
+        final int BUFFER_SIZE = 4096;
         final SewerageApplicationDetails sewerageApplicationDetails = sewerageApplicationDetailsService
                 .findByApplicationNumber(request.getParameter("applicationNumber"));
         final ServletContext context = request.getServletContext();

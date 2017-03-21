@@ -40,8 +40,15 @@
 
 package org.egov.lcms.service.es;
 
-import java.text.ParseException;
+import static org.apache.commons.lang3.StringUtils.defaultString;
+import static org.egov.infra.utils.ApplicationConstant.CITY_CORP_GRADE_KEY;
+import static org.egov.infra.utils.ApplicationConstant.CITY_DIST_NAME_KEY;
+import static org.egov.infra.utils.ApplicationConstant.CITY_REGION_NAME_KEY;
 
+import java.text.ParseException;
+import java.util.Map;
+
+import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.lcms.entity.es.LegalCaseDocument;
 import org.egov.lcms.masters.entity.enums.JudgmentImplIsComplied;
@@ -63,6 +70,9 @@ public class LegalCaseDocumentService {
     private final LegalCaseDocumentRepository legalCaseDocumentRepository;
 
     @Autowired
+    private CityService cityService;
+
+    @Autowired
     public LegalCaseDocumentService(final LegalCaseDocumentRepository legalCaseDocumentRepository) {
         this.legalCaseDocumentRepository = legalCaseDocumentRepository;
     }
@@ -70,7 +80,7 @@ public class LegalCaseDocumentService {
     public LegalCaseDocument persistLegalCaseDocumentIndex(final LegalCase legalCase,
             final LegalCaseInterimOrder legalCaseInterimOrder, final Judgment judgment, final JudgmentImpl judgmentImpl,
             final LegalCaseDisposal legalCaseDisposal) throws ParseException {
-
+        final Map<String, Object> cityInfo = cityService.cityDataAsMap();
         LegalCaseDocument legalCaseDocument = null;
         final String lcnumber = "\"" + legalCase.getLcNumber() + "\"";
 
@@ -96,9 +106,14 @@ public class LegalCaseDocumentService {
                     .withOfficerIncharge(
                             legalCase.getOfficerIncharge() != null ? legalCase.getOfficerIncharge().getName() : "")
                     .withSubStatus(legalCase.getReportStatus().getName())
+                    .withPwrDueDate(legalCase.getPwrList().get(0).getPwrDueDate())
+                    .withCaDueDate(legalCase.getPwrList().get(0).getCaDueDate())
                     .withFiledByULB(legalCase.getIsFiledByCorporation())
                     .withCityName(ApplicationThreadLocals.getCityName())
                     .withCityCode(ApplicationThreadLocals.getCityCode())
+                    .withCityGrade(defaultString((String) cityInfo.get(CITY_CORP_GRADE_KEY)))
+                    .withRegionName(defaultString((String) cityInfo.get(CITY_REGION_NAME_KEY)))
+                    .withDistrictName(defaultString((String) cityInfo.get(CITY_DIST_NAME_KEY)))
 
                     .withCreatedDate(legalCase.getCaseDate()).build();
 
@@ -128,16 +143,22 @@ public class LegalCaseDocumentService {
         legalCaseDocument.setStatus(legalCase.getStatus().getDescription());
         legalCaseDocument
                 .setSubStatus(legalCase.getReportStatus() != null ? legalCase.getReportStatus().getName() : "");
-
-        if (legalCase.getPwrList() != null && !legalCase.getPwrList().isEmpty())
+        if (legalCase.getPwrList() != null && !legalCase.getPwrList().isEmpty()) {
+            legalCaseDocument.setPwrDueDate(legalCase.getPwrList().get(0).getPwrDueDate());
             legalCaseDocument.setCaFilingDate(legalCase.getPwrList().get(0).getCaFilingDate());
+            legalCaseDocument.setCaDueDate(legalCase.getPwrList().get(0).getCaDueDate());
+        }
         if (legalCase.getLegalCaseAdvocates() != null && !legalCase.getLegalCaseAdvocates().isEmpty()) {
             legalCaseDocument.setAdvocateName(legalCase.getLegalCaseAdvocates().get(0).getAdvocateMaster().getName());
             legalCaseDocument.setSeniorAdvocate(
                     legalCase.getLegalCaseAdvocates().get(0).getAdvocateMaster().getIsSenioradvocate());
         }
         if (LcmsConstants.LEGALCASE_INTERIMSTAY_STATUS.equalsIgnoreCase(legalCase.getStatus().getCode()))
-            legalCaseDocument.setInterimOrderType(legalCaseInterimOrder.getInterimOrder().getInterimOrderType());
+            if (!legalCase.getLegalCaseInterimOrder().isEmpty())
+                legalCaseDocument
+                        .setInterimOrderType(legalCase.getLegalCaseInterimOrder().get(0).getInterimOrder().getInterimOrderType());
+            else
+                legalCaseDocument.setInterimOrderType(legalCaseInterimOrder.getInterimOrder().getInterimOrderType());
         if (LcmsConstants.LEGALCASE_STATUS_JUDGMENT.equalsIgnoreCase(legalCase.getStatus().getCode())) {
             legalCaseDocument.setJudgmentOutcome(judgment.getJudgmentType().getName());
             legalCaseDocument.setJudgmentDate(judgment.getOrderDate());

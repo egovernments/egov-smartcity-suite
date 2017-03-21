@@ -40,417 +40,302 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 <properties>
-   <AccountCode>
-   
-   	 <!-- Mention the Maximum length of glcode  -->
-         <glcodeMaxLength>7</glcodeMaxLength>
-         
-         <!-- Mention the difference between the sub-minorcode and posting code in zeroes (6-4=2 i.e 00)  -->
-         <zerofill>00</zerofill>
-         
-         <!-- Mention the number of digits in the sub-minorcode ( 4721 --> 4)    -->
-         <subminorvalue>5</subminorvalue>
-         
-         <!-- Mention the classification value of the parent of detail code  -->
-         <parentfordetailcode>3</parentfordetailcode>
-         
-         <!-- Mention the number of digits in the majorcode    -->
-         <majorcodevalue>3</majorcodevalue>
-         
-         <!-- Mention the number of digits in the minor code    -->
-         <minorcodevalue>5</minorcodevalue>
+    <AccountCode>
+
+        <!-- Mention the Maximum length of glcode  -->
+        <glcodeMaxLength>7</glcodeMaxLength>
+
+        <!-- Mention the difference between the sub-minorcode and posting code in zeroes (6-4=2 i.e 00)  -->
+        <zerofill>00</zerofill>
+
+        <!-- Mention the number of digits in the sub-minorcode ( 4721 --> 4) -->
+        <subminorvalue>5</subminorvalue>
+
+        <!-- Mention the classification value of the parent of detail code  -->
+        <parentfordetailcode>3</parentfordetailcode>
+
+        <!-- Mention the number of digits in the majorcode    -->
+        <majorcodevalue>3</majorcodevalue>
+
+        <!-- Mention the number of digits in the minor code    -->
+        <minorcodevalue>5</minorcodevalue>
 
 
-	 <!-- Mention the classification value for budget group    -->
-         <budgetgroupvalue>4</budgetgroupvalue>
+        <!-- Mention the classification value for budget group    -->
+        <budgetgroupvalue>4</budgetgroupvalue>
 
-   </AccountCode>
- 
-  <autoGenerateCheck>
-            <autoGenerateChqNo>Y</autoGenerateChqNo>
-   </autoGenerateCheck> 
+    </AccountCode>
 
-   <deptCheck>
-         <deptRequired>Y</deptRequired>
-   </deptCheck> 
-   
-   <budgetCheck>
-         <budgetCheckRequired>Y</budgetCheckRequired>
-        
-   </budgetCheck> 
-   
-   <general>
-   
-     	<!-- Deployment. Defines the place the current application is being deployed-->
-     	<DEPLOYMENT>CHENNAI</DEPLOYMENT>
-     	<deptRequired>Y</deptRequired>
-   	<MODULESFORBILLSACCOUNTINGMODIFY>Salary</MODULESFORBILLSACCOUNTINGMODIFY>
-     	<!-- Please make the value = production in the live server --> 
-      	<SYSTEM_ENVIRONMENT>development</SYSTEM_ENVIRONMENT>
-     
-     	<!-- The jndi name to which the database connection is bound 
-     	This should be the same as mentioned in oracle-ds.xml-->
-      	<DB_JNDINAME>java:/ezgovDatabasePool</DB_JNDINAME>
-     	<!-- Hibernate Session Factory Name. Should be the same as 
-     	mentioned in the hibernate-service.xml-->
-     	<HIBERNATE_SFNAME>java:/hibernate/admBndrySF</HIBERNATE_SFNAME>
-   </general>
-   
-     <!-- Properties for Admin Boundary module -->
-     <ADMBNDRY>
-      <Administration>
-       	<multiple>multiple</multiple>
-       	<EXCLUDE_LEVEL>SUBBLOCK,STREET,Street Fragment</EXCLUDE_LEVEL>
-       	<callJavaScriptFunonChange>setBoundryType</callJavaScriptFunonChange>
-       </Administration>
-      <PGRADMIN>
-       	<multiple></multiple>
-       	<EXCLUDE_LEVEL>SUBBLOCK,STREET,Street Fragment</EXCLUDE_LEVEL>
-       	<callJavaScriptFunonChange>zoneDeptcheck</callJavaScriptFunonChange>
-      </PGRADMIN>
-  </ADMBNDRY>
-   
-    <vouchernumberformat> 
-		<receipt>BRV</receipt> 
-		<payment>BPV</payment> 
-		<journal>GJV</journal> 
-		<purchasejv>PJV</purchasejv> 
-		<fixedassetjv>FJV</fixedassetjv> 
-		<worksjv>CJV</worksjv> 
-		<contingentjv>EJV</contingentjv>
-		<salaryjv>SJV</salaryjv>  
-		<contra>CSL</contra>
-		<pensionjv>TJV</pensionjv> 
-		<length>5</length>
-		<sublength>3</sublength> 
-	</vouchernumberformat>
-   <CashInHand>
-         <PURPOSEID>4</PURPOSEID>
-   </CashInHand> 
-   
-   <ChequeInHand>
-         <PURPOSEID>5</PURPOSEID>
-   </ChequeInHand> 
-   
-   <BoundaryType>
-         <city>city</city>
-   </BoundaryType>   
-   
-   
-   <MAXAmount>
-         <Length>1000</Length>
-   </MAXAmount> 
-   
+    <autoGenerateCheck>
+        <autoGenerateChqNo>Y</autoGenerateChqNo>
+    </autoGenerateCheck>
 
-   <RecFund>
-         <PURPOSEID>9</PURPOSEID>
-   </RecFund> 
-   
-   <PayFund>
-         <Length>8</Length>
-   </PayFund> 
-   
-   <ContractorCodes>
-         <ConPayCode>350100201</ConPayCode>
-         <TdsAccCode></TdsAccCode>
-         <ConAdvCode>460400201</ConAdvCode>
-   </ContractorCodes> 
-    
-   <SupplierCodes>
-         <SupPayCode>350100101</SupPayCode>
-         <SupAdvCode>460400101</SupAdvCode>
+    <deptCheck>
+        <deptRequired>Y</deptRequired>
+    </deptCheck>
 
-   </SupplierCodes>   
-   
-   <CBillCodes>
-       	<CbillPayCode>350100301</CbillPayCode>
-   </CBillCodes>
-   <RTGSPayment>
-            <payto>Cashier</payto>
-   </RTGSPayment>
-<!--   not Used 
-<SalaryBillCodes>
-			<211100>382100</211100>
-			<212100>382200</212100> 
-			<salCodes>211100\,212100</salCodes>
-</SalaryBillCodes>
-   -->
-   <SalaryCodes>
-         <SalPayCode>350110100</SalPayCode>
-   </SalaryCodes> 
-      
-   <defaultValues>
-         <salaryBillPurposeIds>31</salaryBillPurposeIds>
-		  <salaryBillDefaultPurposeId>31</salaryBillDefaultPurposeId>
-         <cBillPurposeIds>28</cBillPurposeIds>
-         <cBillDefaultPurposeId>28</cBillDefaultPurposeId>
-		 <worksBillPurposeIds>26</worksBillPurposeIds>
-         <worksBillDefaultPurposeId>26</worksBillDefaultPurposeId>
-		  <purchaseBillPurposeIds>27</purchaseBillPurposeIds>
-         <purchaseBillDefaultPurposeId>27</purchaseBillDefaultPurposeId>
-   </defaultValues> 
-   
-   <PenaltyCode>
-         <RecPenaltyCode></RecPenaltyCode>
-         <OtherTaxes></OtherTaxes>
-   </PenaltyCode>
-     
-   <!-- In income and expenditure report we expect all income codes to be credited except this refundcode-->
-   <!-- This code needs to be subtracted in ie report -->
+    <budgetCheck>
+        <budgetCheckRequired>Y</budgetCheckRequired>
 
-   <IncomeRefundCode>
-         <noOfCodes>3</noOfCodes>
-         <IRefundCode>119\,139\,149</IRefundCode>
-   </IncomeRefundCode>
-   
- <servers>
-	    <news>
-	     <host>news.mydomain.com\,news.com</host>
-	      <port>1244</port>
-	    </news>
-	 <email>
-	    <host>mymail.com\,myemail.com</host>
-	      <port>9211</port>
-	  	 </email>
-   </servers>
+    </budgetCheck>
 
-  <!-- Properties for PGR module -->
-  <PGR>
-    <!-- Can be AUTOMATIC or SEMI_AUTOMATIC--> 
-    <SYSTEM_MODE>AUTOMATIC</SYSTEM_MODE>
-    <!-- APPROPRIATE ROUTING USER IDS FOR THEIR RESPECTIVE DEPARTMENTS -->
-    <DEPT_ENG_ROUTER_ID>6</DEPT_ENG_ROUTER_ID>
-    <DEPT_HEALTH_ROUTER_ID>17</DEPT_HEALTH_ROUTER_ID>
-    <DEPT_REVENUE_ROUTER_ID>11</DEPT_REVENUE_ROUTER_ID>
-    <GRIEVANCE_OFFICER_ID>5</GRIEVANCE_OFFICER_ID>
+    <general>
+        <deptRequired>Y</deptRequired>
+        <MODULESFORBILLSACCOUNTINGMODIFY>Salary</MODULESFORBILLSACCOUNTINGMODIFY>
+    </general>
+
+    <!-- Properties for Admin Boundary module -->
+    <ADMBNDRY>
+        <Administration>
+            <multiple>multiple</multiple>
+            <EXCLUDE_LEVEL>SUBBLOCK,STREET,Street Fragment</EXCLUDE_LEVEL>
+            <callJavaScriptFunonChange>setBoundryType</callJavaScriptFunonChange>
+        </Administration>
+        <PGRADMIN>
+            <multiple></multiple>
+            <EXCLUDE_LEVEL>SUBBLOCK,STREET,Street Fragment</EXCLUDE_LEVEL>
+            <callJavaScriptFunonChange>zoneDeptcheck</callJavaScriptFunonChange>
+        </PGRADMIN>
+    </ADMBNDRY>
+
+    <vouchernumberformat>
+        <receipt>BRV</receipt>
+        <payment>BPV</payment>
+        <journal>GJV</journal>
+        <purchasejv>PJV</purchasejv>
+        <fixedassetjv>FJV</fixedassetjv>
+        <worksjv>CJV</worksjv>
+        <contingentjv>EJV</contingentjv>
+        <salaryjv>SJV</salaryjv>
+        <contra>CSL</contra>
+        <pensionjv>TJV</pensionjv>
+        <length>5</length>
+        <sublength>3</sublength>
+    </vouchernumberformat>
+    <CashInHand>
+        <PURPOSEID>4</PURPOSEID>
+    </CashInHand>
+
+    <ChequeInHand>
+        <PURPOSEID>5</PURPOSEID>
+    </ChequeInHand>
+
+    <BoundaryType>
+        <city>city</city>
+    </BoundaryType>
+
+
+    <MAXAmount>
+        <Length>1000</Length>
+    </MAXAmount>
+
+
+    <RecFund>
+        <PURPOSEID>9</PURPOSEID>
+    </RecFund>
+
+    <PayFund>
+        <Length>8</Length>
+    </PayFund>
+
+    <ContractorCodes>
+        <ConPayCode>350100201</ConPayCode>
+        <TdsAccCode></TdsAccCode>
+        <ConAdvCode>460400201</ConAdvCode>
+    </ContractorCodes>
+
+    <SupplierCodes>
+        <SupPayCode>350100101</SupPayCode>
+        <SupAdvCode>460400101</SupAdvCode>
+
+    </SupplierCodes>
+
+    <CBillCodes>
+        <CbillPayCode>350100301</CbillPayCode>
+    </CBillCodes>
+    <RTGSPayment>
+        <payto>Cashier</payto>
+    </RTGSPayment>
+    <!--   not Used
+    <SalaryBillCodes>
+                <211100>382100</211100>
+                <212100>382200</212100>
+                <salCodes>211100\,212100</salCodes>
+    </SalaryBillCodes>
+       -->
+    <SalaryCodes>
+        <SalPayCode>350110100</SalPayCode>
+    </SalaryCodes>
+
+    <defaultValues>
+        <salaryBillPurposeIds>31</salaryBillPurposeIds>
+        <salaryBillDefaultPurposeId>31</salaryBillDefaultPurposeId>
+        <cBillPurposeIds>28</cBillPurposeIds>
+        <cBillDefaultPurposeId>28</cBillDefaultPurposeId>
+        <worksBillPurposeIds>26</worksBillPurposeIds>
+        <worksBillDefaultPurposeId>26</worksBillDefaultPurposeId>
+        <purchaseBillPurposeIds>27</purchaseBillPurposeIds>
+        <purchaseBillDefaultPurposeId>27</purchaseBillDefaultPurposeId>
+    </defaultValues>
+
+    <PenaltyCode>
+        <RecPenaltyCode></RecPenaltyCode>
+        <OtherTaxes></OtherTaxes>
+    </PenaltyCode>
+
+    <!-- In income and expenditure report we expect all income codes to be credited except this refundcode-->
+    <!-- This code needs to be subtracted in ie report -->
+
+    <IncomeRefundCode>
+        <noOfCodes>3</noOfCodes>
+        <IRefundCode>119\,139\,149</IRefundCode>
+    </IncomeRefundCode>
+
+    <servers>
+        <news>
+            <host>news.mydomain.com\,news.com</host>
+            <port>1244</port>
+        </news>
+        <email>
+            <host>mymail.com\,myemail.com</host>
+            <port>9211</port>
+        </email>
+    </servers>
+
+    <!-- Properties for PGR module -->
+    <PGR>
+        <!-- Can be AUTOMATIC or SEMI_AUTOMATIC-->
+        <SYSTEM_MODE>AUTOMATIC</SYSTEM_MODE>
+        <!-- APPROPRIATE ROUTING USER IDS FOR THEIR RESPECTIVE DEPARTMENTS -->
+        <DEPT_ENG_ROUTER_ID>6</DEPT_ENG_ROUTER_ID>
+        <DEPT_HEALTH_ROUTER_ID>17</DEPT_HEALTH_ROUTER_ID>
+        <DEPT_REVENUE_ROUTER_ID>11</DEPT_REVENUE_ROUTER_ID>
+        <GRIEVANCE_OFFICER_ID>5</GRIEVANCE_OFFICER_ID>
     </PGR>
-  
-  <!-- Properties for PT module -->
-  <PT>
-     <!-- Can be ARV, UAS or CVS--> 	
-     <VALUATION_SYSTEM>ARV</VALUATION_SYSTEM>
-  </PT>
-  
-  <!-- Properties for BND module -->
-  <BND>
- </BND>
-  <GISReports>
-	<getFinancialyear>1</getFinancialyear>
-	<getSubstringValue>3</getSubstringValue>
-	<getFinancialyearName>2006-2007</getFinancialyearName>
-</GISReports> 
-<PredefinedId>
-       		<fundId>4</fundId>
-     		<fundSourceId>1</fundSourceId>
-     		<functionId>13</functionId>
-     		<departmentId>11</departmentId>
-     		
-</PredefinedId>
-    
-  
-    
-<purposeId>
-	<cessControlCode>2</cessControlCode>
-	<PTSuspenseCode></PTSuspenseCode>
-</purposeId>
 
-    
- <ReportDate>
-         <HalfYear>30/09</HalfYear>
-   </ReportDate> 
+    <!-- Properties for PT module -->
+    <PT>
+        <!-- Can be ARV, UAS or CVS-->
+        <VALUATION_SYSTEM>ARV</VALUATION_SYSTEM>
+    </PT>
 
-  
-   <FinClassFactory>
-         <Commons>com.exilant.eGov.src.common.EGovernCommon</Commons>
-   </FinClassFactory> 
-   
-   
-   
+    <!-- Properties for BND module -->
+    <BND>
+    </BND>
+    <GISReports>
+        <getFinancialyear>1</getFinancialyear>
+        <getSubstringValue>3</getSubstringValue>
+        <getFinancialyearName>2006-2007</getFinancialyearName>
+    </GISReports>
+    <PredefinedId>
+        <fundId>4</fundId>
+        <fundSourceId>1</fundSourceId>
+        <functionId>13</functionId>
+        <departmentId>11</departmentId>
+
+    </PredefinedId>
 
 
-
- 
-  
-   
-  
-
-<WPNpurchase>
-    <headername>purchase</headername> 
-       	<parentquery>select id \,name \,code from relation where relationtypeid='1' and id in (select distinct wd.relationid  from worksdetail wd where  wd.isactive='1') order by id</parentquery> 
-    	<intermediatequery>SELECT DISTINCT wd.ID AS id \,wd.name \,wd.code FROM worksdetail wd left outer join eg_billregister ebr ON wd.id = ebr.worksdetailid WHERE wd.relationid=:parentId AND (ebr.worksdetailid NOT IN (SELECT DISTINCT worksdetailid FROM eg_billregister WHERE UPPER(billtype)='FINAL BILL' AND UPPER(billstatus)!='CANCELLED' AND worksdetailid IS NOT NULL ) OR ebr.worksdetailid IS NULL)</intermediatequery>
-    	<childquery></childquery>
-  </WPNpurchase>
-  
-  <WPNworks> 
-     <headername>works</headername> 
-      	<parentquery>select id \,name \,code from relation where relationtypeid='2' and id in (select distinct wd.relationid  from worksdetail wd where  wd.isactive='1') order by id </parentquery>  
- 	<intermediatequery>SELECT DISTINCT wd.ID AS id \,wd.name \,wd.code FROM worksdetail wd left outer join eg_billregister ebr ON wd.id = ebr.worksdetailid WHERE wd.relationid=:parentId AND (ebr.worksdetailid NOT IN (SELECT DISTINCT worksdetailid FROM eg_billregister WHERE UPPER(billtype)='FINAL BILL' AND UPPER(billstatus)!='CANCELLED' AND worksdetailid IS NOT NULL ) OR ebr.worksdetailid IS NULL)</intermediatequery>
-     <childquery></childquery> 	
-  </WPNworks>  
-  
-	
-	<localhost>
-		<VoucherTypes>
-			<Journal>Auto</Journal>
-			<Receipt>Auto</Receipt>
-			<Payment>Auto</Payment>
-			<Contra>Auto</Contra>
-		</VoucherTypes>
-	</localhost>
-	
-	
-		<!-- Production Internal ip address -->
-		<ip10:236:10:26>
-			<VoucherTypes>
-				<Journal>Auto</Journal>
-				<Receipt>Auto</Receipt>
-				<Payment>Auto</Payment>
-				<Contra>Auto</Contra>
-			</VoucherTypes>
-		</ip10:236:10:26>
-		
-		<ip10:236:10:32>
-			<VoucherTypes>
-				<Journal>Auto</Journal>
-				<Receipt>Auto</Receipt>
-				<Payment>Auto</Payment>
-				<Contra>Auto</Contra>
-			</VoucherTypes>
-		</ip10:236:10:32>
-		
-		<!--Production external ip -->
-		<ip210:212:62:123>
-			<VoucherTypes>
-				<Journal>Auto</Journal>
-				<Receipt>Auto</Receipt>
-				<Payment>Auto</Payment>
-				<Contra>Auto</Contra>
-			</VoucherTypes>
-		</ip210:212:62:123>
-	<!-- Uat external IP used for data Entry -->	
-		<ip210:212:62:17>
-			<VoucherTypes>
-				<Journal>Auto</Journal>
-				<Receipt>Auto</Receipt>
-				<Payment>Auto</Payment>
-				<Contra>Auto</Contra>
-			</VoucherTypes>
-		</ip210:212:62:17>
-		<!-- Production New Server  external ip -->
-		<ip218:248:44:55>
-			<VoucherTypes>
-				<Journal>Auto</Journal>
-				<Receipt>Auto</Receipt>
-				<Payment>Auto</Payment>
-				<Contra>Auto</Contra>
-			</VoucherTypes>
-		</ip218:248:44:55>
-		<ip10:236:10:58>
-			<VoucherTypes>
-				<Journal>Auto</Journal>
-				<Receipt>Auto</Receipt>
-				<Payment>Auto</Payment>
-				<Contra>Auto</Contra>
-			</VoucherTypes>
-		</ip10:236:10:58>
-		<!--QA internal ip -->
-		<ip192:168:1:44>
-			<VoucherTypes>
-				<Journal>Auto</Journal>
-				<Receipt>Auto</Receipt>
-				<Payment>Auto</Payment>
-				<Contra>Auto</Contra>
-			</VoucherTypes>
-		</ip192:168:1:44>
-		
-		<!--QA external ip -->
-		<ip182:74:137:194>
-			<VoucherTypes>
-				<Journal>Auto</Journal>
-				<Receipt>Auto</Receipt>
-				<Payment>Auto</Payment>
-				<Contra>Auto</Contra>
-			</VoucherTypes>
-		</ip182:74:137:194>
-		
-		<!--UAT internal ip -->
-				<ip192:168:1:46>
-					<VoucherTypes>
-						<Journal>Auto</Journal>
-						<Receipt>Auto</Receipt>
-						<Payment>Auto</Payment>
-						<Contra>Auto</Contra>
-					</VoucherTypes>
-				</ip192:168:1:46>
-				
-				<!--UAT external ip -->
-				<ip118:102:160:141>
-					<VoucherTypes>
-						<Journal>Auto</Journal>
-						<Receipt>Auto</Receipt>
-						<Payment>Auto</Payment>
-						<Contra>Auto</Contra>
-					</VoucherTypes>
-		</ip118:102:160:141>
-<IEReport> 
-	<reportlength>4</reportlength>
-	<t0>280-Add:Prior period Items(Net)</t0> 
-	<t1>280a-Gross surplus/(deficit) of income over expenditure after Prior Period Items</t1> 
-	<t2>290-Less: Transfer to Reserve Funds</t2> 
-	<t3>290a-Net balance being surplus/ deficit carried over to Municipal Fund</t3> 
-</IEReport>
-<IESchedule>
-	<reportlength>4</reportlength>
-	<t0>28-a.Prior-period Income</t0>
-	<t1>28-b.Prior Period Expenses</t1>
-	<t2>(Net)</t2>
-	<t3>Sub - Total</t3>
-</IESchedule>
-<IESchedulet0>
-	<glcode>281,282</glcode>
-</IESchedulet0>
-
-<IESchedulet1>
-	<glcode>286,288</glcode>
-</IESchedulet1>
-
-<IESchedulesFormatting>
-	<I-01>
-		<lesssubtotal>119</lesssubtotal>
-	</I-01>
-	<I-03>
-		<lesssubtotal>139</lesssubtotal>
-	</I-03>
-	<I-04>
-		<lesssubtotal>149</lesssubtotal>
-	</I-04>
-</IESchedulesFormatting>
-
-<AdvanceRegisterCode>
-         <ARGLCode>460</ARGLCode>
-</AdvanceRegisterCode> 
-
-<SchemeUtilization>
-         <filterGlcodeForScheme>350\,450</filterGlcodeForScheme>
-</SchemeUtilization> 
-<DepositRegReport>
-	<majorCodes>340\,341</majorCodes>
-</DepositRegReport>
+    <purposeId>
+        <cessControlCode>2</cessControlCode>
+        <PTSuspenseCode></PTSuspenseCode>
+    </purposeId>
 
 
-<BankAdviceReport>
-		<infavourof>Chairperson</infavourof>
-</BankAdviceReport>
+    <ReportDate>
+        <HalfYear>30/09</HalfYear>
+    </ReportDate>
 
-<TNEBWebService>
-    <URL>http://corp.tneb.com/</URL>
-    <username>CORPTANGEDCO</username>
-    <password>TanXBill1@3</password>
-</TNEBWebService>
 
-<IOBService>
-    <URL>https://www.iobnet.co.in:4432/ibanking/iobTNEBEntry.do?RtgsId=</URL>    
-</IOBService>
+    <FinClassFactory>
+        <Commons>com.exilant.eGov.src.common.EGovernCommon</Commons>
+    </FinClassFactory>
 
+
+    <WPNpurchase>
+        <headername>purchase</headername>
+        <parentquery>select id \,name \,code from relation where relationtypeid='1' and id in (select distinct
+            wd.relationid from worksdetail wd where wd.isactive='1') order by id
+        </parentquery>
+        <intermediatequery>SELECT DISTINCT wd.ID AS id \,wd.name \,wd.code FROM worksdetail wd left outer join
+            eg_billregister ebr ON wd.id = ebr.worksdetailid WHERE wd.relationid=:parentId AND (ebr.worksdetailid NOT IN
+            (SELECT DISTINCT worksdetailid FROM eg_billregister WHERE UPPER(billtype)='FINAL BILL' AND
+            UPPER(billstatus)!='CANCELLED' AND worksdetailid IS NOT NULL ) OR ebr.worksdetailid IS NULL)
+        </intermediatequery>
+        <childquery></childquery>
+    </WPNpurchase>
+
+    <WPNworks>
+        <headername>works</headername>
+        <parentquery>select id \,name \,code from relation where relationtypeid='2' and id in (select distinct
+            wd.relationid from worksdetail wd where wd.isactive='1') order by id
+        </parentquery>
+        <intermediatequery>SELECT DISTINCT wd.ID AS id \,wd.name \,wd.code FROM worksdetail wd left outer join
+            eg_billregister ebr ON wd.id = ebr.worksdetailid WHERE wd.relationid=:parentId AND (ebr.worksdetailid NOT IN
+            (SELECT DISTINCT worksdetailid FROM eg_billregister WHERE UPPER(billtype)='FINAL BILL' AND
+            UPPER(billstatus)!='CANCELLED' AND worksdetailid IS NOT NULL ) OR ebr.worksdetailid IS NULL)
+        </intermediatequery>
+        <childquery></childquery>
+    </WPNworks>
+
+
+    <localhost>
+        <VoucherTypes>
+            <Journal>Auto</Journal>
+            <Receipt>Auto</Receipt>
+            <Payment>Auto</Payment>
+            <Contra>Auto</Contra>
+        </VoucherTypes>
+    </localhost>
+
+    <IEReport>
+        <reportlength>4</reportlength>
+        <t0>280-Add:Prior period Items(Net)</t0>
+        <t1>280a-Gross surplus/(deficit) of income over expenditure after Prior Period Items</t1>
+        <t2>290-Less: Transfer to Reserve Funds</t2>
+        <t3>290a-Net balance being surplus/ deficit carried over to Municipal Fund</t3>
+    </IEReport>
+    <IESchedule>
+        <reportlength>4</reportlength>
+        <t0>28-a.Prior-period Income</t0>
+        <t1>28-b.Prior Period Expenses</t1>
+        <t2>(Net)</t2>
+        <t3>Sub - Total</t3>
+    </IESchedule>
+    <IESchedulet0>
+        <glcode>281,282</glcode>
+    </IESchedulet0>
+
+    <IESchedulet1>
+        <glcode>286,288</glcode>
+    </IESchedulet1>
+
+    <IESchedulesFormatting>
+        <I-01>
+            <lesssubtotal>119</lesssubtotal>
+        </I-01>
+        <I-03>
+            <lesssubtotal>139</lesssubtotal>
+        </I-03>
+        <I-04>
+            <lesssubtotal>149</lesssubtotal>
+        </I-04>
+    </IESchedulesFormatting>
+
+    <AdvanceRegisterCode>
+        <ARGLCode>460</ARGLCode>
+    </AdvanceRegisterCode>
+
+    <SchemeUtilization>
+        <filterGlcodeForScheme>350\,450</filterGlcodeForScheme>
+    </SchemeUtilization>
+    <DepositRegReport>
+        <majorCodes>340\,341</majorCodes>
+    </DepositRegReport>
+
+
+    <BankAdviceReport>
+        <infavourof>Chairperson</infavourof>
+    </BankAdviceReport>
 </properties>
  

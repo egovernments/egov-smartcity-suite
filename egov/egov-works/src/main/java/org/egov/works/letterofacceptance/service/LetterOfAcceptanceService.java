@@ -255,10 +255,10 @@ public class LetterOfAcceptanceService {
             workOrder.setEgwStatus(
                     egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.WORKORDER, WorksConstants.REJECTED));
             if (wfInitiator.equals(userAssignment))
-                workOrder.transition(true).end().withSenderName(user.getUsername() + "::" + user.getName())
+                workOrder.transition().progressWithStateCopy().end().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withDateInfo(currentDate.toDate()).withNatureOfTask(natureOfwork);
             else
-                workOrder.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+                workOrder.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withStateValue(WorksConstants.WF_STATE_REJECTED)
                         .withDateInfo(currentDate.toDate()).withOwner(wfInitiator.getPosition()).withNextAction("")
                         .withNatureOfTask(natureOfwork);
@@ -266,12 +266,12 @@ public class LetterOfAcceptanceService {
             wfmatrix = workOrderWorkflowService.getWfMatrix(workOrder.getStateType(), null,
                     new BigDecimal(workOrder.getWorkOrderAmount()), additionalRule, WorksConstants.NEW, null);
             if (workOrder.getState() == null)
-                workOrder.transition(true).start().withSenderName(user.getUsername() + "::" + user.getName())
+                workOrder.transition().progressWithStateCopy().start().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withStateValue(WorksConstants.NEW)
                         .withDateInfo(currentDate.toDate()).withOwner(wfInitiator.getPosition())
                         .withNextAction(wfmatrix.getNextAction()).withNatureOfTask(natureOfwork);
             else
-                workOrder.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+                workOrder.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withStateValue(WorksConstants.NEW)
                         .withDateInfo(currentDate.toDate()).withOwner(wfInitiator.getPosition())
                         .withNextAction(wfmatrix.getNextAction()).withNatureOfTask(natureOfwork);
@@ -291,13 +291,13 @@ public class LetterOfAcceptanceService {
                 workOrder.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.WORKORDER,
                         WorksConstants.CANCELLED_STATUS));
                 final String stateValue = WorksConstants.WF_STATE_CANCELLED;
-                workOrder.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+                workOrder.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withStateValue(stateValue).withDateInfo(currentDate.toDate())
                         .withOwner(pos).withNextAction("").withNatureOfTask(natureOfwork);
             } else if (WorksConstants.APPROVE_ACTION.toString().equalsIgnoreCase(workFlowAction)) {
                 wfmatrix = workOrderWorkflowService.getWfMatrix(workOrder.getStateType(), null, null, additionalRule,
                         workOrder.getCurrentState().getValue(), null);
-                workOrder.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+                workOrder.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withStateValue(wfmatrix.getNextState())
                         .withDateInfo(currentDate.toDate()).withOwner(pos).withNextAction("")
                         .withNatureOfTask(natureOfwork);
@@ -313,7 +313,7 @@ public class LetterOfAcceptanceService {
                 wfmatrix = workOrderWorkflowService.getWfMatrix(workOrder.getStateType(), null,
                         new BigDecimal(workOrder.getWorkOrderAmount()), additionalRule,
                         workOrder.getCurrentState().getValue(), workOrder.getState().getNextAction());
-                workOrder.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+                workOrder.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withStateValue(wfmatrix.getNextState())
                         .withDateInfo(currentDate.toDate()).withOwner(pos).withNextAction(wfmatrix.getNextAction())
                         .withNatureOfTask(natureOfwork);

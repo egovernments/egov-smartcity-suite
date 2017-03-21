@@ -932,10 +932,10 @@ public class EstimateService {
             wfInitiator = assignmentService.getPrimaryAssignmentForUser(abstractEstimate.getCreatedBy().getId());
         if (WorksConstants.REJECT_ACTION.toString().equalsIgnoreCase(workFlowAction)) {
             if (wfInitiator.equals(userAssignment))
-                abstractEstimate.transition(true).end().withSenderName(user.getUsername() + "::" + user.getName())
+                abstractEstimate.transition().progressWithStateCopy().end().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withDateInfo(currentDate.toDate()).withNatureOfTask(natureOfwork);
             else
-                abstractEstimate.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+                abstractEstimate.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withStateValue(WorksConstants.WF_STATE_REJECTED)
                         .withDateInfo(currentDate.toDate()).withOwner(wfInitiator.getPosition()).withNextAction("")
                         .withNatureOfTask(natureOfwork);
@@ -943,7 +943,7 @@ public class EstimateService {
             wfmatrix = abstractEstimateWorkflowService.getWfMatrix(abstractEstimate.getStateType(), null,
                     abstractEstimate.getEstimateValue(), additionalRule, WorksConstants.NEW, null);
             if (abstractEstimate.getState() == null)
-                abstractEstimate.transition(true).start().withSenderName(user.getUsername() + "::" + user.getName())
+                abstractEstimate.transition().progressWithStateCopy().start().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withStateValue(WorksConstants.NEW)
                         .withDateInfo(currentDate.toDate()).withOwner(wfInitiator.getPosition())
                         .withNextAction(WorksConstants.ESTIMATE_ONSAVE_NEXTACTION_VALUE).withNatureOfTask(natureOfwork);
@@ -961,14 +961,14 @@ public class EstimateService {
                         .withOwner(pos).withNextAction(wfmatrix.getNextAction()).withNatureOfTask(natureOfwork);
             } else if (WorksConstants.CANCEL_ACTION.toString().equalsIgnoreCase(workFlowAction)) {
                 final String stateValue = WorksConstants.WF_STATE_CANCELLED;
-                abstractEstimate.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+                abstractEstimate.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withStateValue(stateValue).withDateInfo(currentDate.toDate())
                         .withOwner(pos).withNextAction("").withNatureOfTask(natureOfwork);
             } else {
                 wfmatrix = abstractEstimateWorkflowService.getWfMatrix(abstractEstimate.getStateType(), null,
                         abstractEstimate.getEstimateValue(), additionalRule,
                         abstractEstimate.getCurrentState().getValue(), abstractEstimate.getState().getNextAction());
-                abstractEstimate.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+                abstractEstimate.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withStateValue(wfmatrix.getNextState())
                         .withDateInfo(currentDate.toDate()).withOwner(pos).withNextAction(wfmatrix.getNextAction())
                         .withNatureOfTask(natureOfwork);

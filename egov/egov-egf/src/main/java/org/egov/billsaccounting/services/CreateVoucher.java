@@ -43,8 +43,6 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.SQLException;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -76,7 +74,6 @@ import org.egov.commons.dao.AccountdetailtypeHibernateDAO;
 import org.egov.commons.dao.BankHibernateDAO;
 import org.egov.commons.dao.BankaccountHibernateDAO;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
-import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.commons.dao.FiscalPeriodHibernateDAO;
 import org.egov.commons.dao.FunctionDAO;
@@ -90,8 +87,6 @@ import org.egov.commons.exception.NoSuchObjectException;
 import org.egov.commons.exception.TooManyValuesException;
 import org.egov.commons.service.ChartOfAccountDetailService;
 import org.egov.dao.bills.EgBillRegisterHibernateDAO;
-import org.egov.dao.budget.BudgetDetailsHibernateDAO;
-import org.egov.dao.budget.BudgetUsageHibernateDAO;
 import org.egov.egf.autonumber.VouchernumberGenerator;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.AppConfig;
@@ -127,7 +122,6 @@ import org.egov.services.voucher.GeneralLedgerDetailService;
 import org.egov.services.voucher.GeneralLedgerService;
 import org.egov.services.voucher.VoucherService;
 import org.egov.utils.FinancialConstants;
-import org.egov.utils.VoucherHelper;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -141,7 +135,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.exilant.GLEngine.ChartOfAccounts;
 import com.exilant.GLEngine.Transaxtion;
 import com.exilant.GLEngine.TransaxtionParameter;
-import com.exilant.eGov.src.transactions.CommonMethodsImpl;
 import com.exilant.eGov.src.transactions.VoucherTypeForULB;
 import com.exilant.exility.common.TaskFailedException;
 
@@ -854,7 +847,7 @@ public class CreateVoucher {
 						.getBillTypeforVoucher(voucherheader);
 				if (billtype == null) {
 					applicationContext.getBean("voucherWorkflowService");
-					voucherheader.start().withOwner(getPosition());
+					voucherheader.transition().start().withOwner(getPosition());
 					// voucherWorkflowService.transition("aa_approve",
 					// voucherheader, "Created"); // action name need to pass
 					// Position position =
@@ -866,7 +859,7 @@ public class CreateVoucher {
 							.getBean("persistenceService");
 					final Position nextPosition = getNextPosition(
 							voucherheader, vs, persistenceService, null);
-					voucherheader.transition(true)
+					voucherheader.transition().progressWithStateCopy()
 							.withStateValue("WORKFLOW INITIATED")
 							.withOwner(nextPosition)
 							.withComments("WORKFLOW STARTED");
@@ -994,13 +987,13 @@ public class CreateVoucher {
 				applicationContext.getBean("voucherWorkflowService");
 				if (LOGGER.isDebugEnabled())
 					LOGGER.debug("completed voucherWorkflowService from application context.......");
-				cjv.getVoucherHeaderId().start().withOwner(getPosition());
+				cjv.getVoucherHeaderId().transition().start().withOwner(getPosition());
 				// voucherWorkflowService.transition("am_approve",
 				// cjv.getVoucherHeaderId(), "Created"); // action name need to
 				// pass
 				final Position position = eisCommonService
 						.getPositionByUserId(ApplicationThreadLocals.getUserId());
-				cjv.transition(true).withStateValue("WORKFLOW INITIATED")
+				cjv.transition().progressWithStateCopy().withStateValue("WORKFLOW INITIATED")
 						.withOwner(position).withComments("WORKFLOW STARTED");
 				final VoucherService vs = (VoucherService) applicationContext
 						.getBean("voucherService");
@@ -1008,7 +1001,7 @@ public class CreateVoucher {
 						.getBean("persistenceService");
 				final Position nextPosition = getNextPosition(
 						cjv.getVoucherHeaderId(), vs, persistenceService, null);
-				cjv.transition(true).withStateValue("WORKFLOW INITIATED")
+				cjv.transition().progressWithStateCopy().withStateValue("WORKFLOW INITIATED")
 						.withOwner(nextPosition)
 						.withComments("WORKFLOW STARTED");
 			}
@@ -1048,14 +1041,14 @@ public class CreateVoucher {
 			applicationContext.getBean("voucherWorkflowService");
 			if (LOGGER.isDebugEnabled())
 				LOGGER.debug("completed voucherWorkflowService from application context.......");
-			voucherHeader.start().withOwner(getPosition());
+			voucherHeader.transition().start().withOwner(getPosition());
 			final VoucherService vs = (VoucherService) applicationContext
 					.getBean("voucherService");
 			final PersistenceService persistenceService = (PersistenceService) applicationContext
 					.getBean("persistenceService");
 			final Position nextPosition = getNextPosition(voucherHeader, vs,
 					persistenceService, null);
-			voucherHeader.transition(true).withStateValue("Forwarded")
+			voucherHeader.transition().progressWithStateCopy().withStateValue("Forwarded")
 					.withOwner(nextPosition).withComments("Forwarded");
 
 		} catch (final Exception e) {

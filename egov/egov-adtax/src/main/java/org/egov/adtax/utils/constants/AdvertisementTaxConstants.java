@@ -123,5 +123,6 @@ public class AdvertisementTaxConstants {
     public static final String ADTAX_WORKFLOWDESIGNATION = "ADTAXDESIGNATIONFORWORKFLOW";
     public static final String ADTAX_WORKFLOWDEPARTEMENT = "ADTAXDEPARTMENTFORWORKFLOW";
     public static final String CSC_SOURCE ="CSC";
-
+    
+    public static final String CITY_GRADE_CORPORATION = "Corp";
 }

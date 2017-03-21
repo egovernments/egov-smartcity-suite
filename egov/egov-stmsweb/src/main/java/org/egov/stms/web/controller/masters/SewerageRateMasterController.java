@@ -82,8 +82,6 @@ import com.google.gson.GsonBuilder;
 @Controller
 @RequestMapping(value = "/masters")
 public class SewerageRateMasterController {
-    SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-    SimpleDateFormat newFormat = new SimpleDateFormat("dd-MM-yyyy");
     private static final Logger LOG = LoggerFactory.getLogger(SewerageRateMasterController.class);
     private static final String SEWERAGE_RATES_MASTER = "sewerageRatesMaster";
     private static final String SEWERAGE_RATES_SUCCESS_PAGE = "redirect:/masters/getseweragerates/";
@@ -189,6 +187,8 @@ public class SewerageRateMasterController {
     @ResponseBody
     public String getLatestActiveFromDate(@RequestParam("propertyType") final PropertyType propertyType,
             @RequestParam("fromDate") final Date fromDate) {
+        SimpleDateFormat newFormat = new SimpleDateFormat("dd-MM-yyyy");
+     
         final List<SewerageRatesMaster> existingsewerageRatesMasterList = sewerageRatesMasterService
                 .getLatestActiveRecord(propertyType, true);
         if (!existingsewerageRatesMasterList.isEmpty() && fromDate != null) {
@@ -221,6 +221,9 @@ public class SewerageRateMasterController {
     public void sewerageRatesSearch(final Model model,
             @ModelAttribute final SewerageRatesSearch sewerageRatesSearch, final HttpServletResponse response)
             throws IOException {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        SimpleDateFormat newFormat = new SimpleDateFormat("dd-MM-yyyy");
+     
         PropertyType type = null;
         String effectivefromDate = null;
         if (sewerageRatesSearch.getPropertyType() != null)
@@ -249,6 +252,8 @@ public class SewerageRateMasterController {
     @RequestMapping(value = "update/{id}", method = POST)
     public String update(@ModelAttribute final SewerageRatesMaster sewerageRatesMaster, @PathVariable final Long id,
             final Model model, final RedirectAttributes redirectAttrs, final BindingResult errors) throws ParseException {
+        SimpleDateFormat newFormat = new SimpleDateFormat("dd-MM-yyyy");
+     
         final SewerageRatesMaster ratesMaster = sewerageRatesMasterService.findBy(id);
 
         final String todaysdate = newFormat.format(new Date());

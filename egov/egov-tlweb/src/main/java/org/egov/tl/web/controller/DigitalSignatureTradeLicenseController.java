@@ -125,7 +125,7 @@ public class DigitalSignatureTradeLicenseController {
                             Constants.NEW_ADDITIONAL_RULE,
                             Constants.WF_DIGI_SIGNED, null);
 
-                license.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+                license.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(Constants.WF_DIGI_SIGNED).withStateValue(wfmatrix.getCurrentState())
                         .withDateInfo(currentDate.toDate()).withOwner(wfInitiator.getPosition())
                         .withNextAction(wfmatrix.getCurrentStatus());

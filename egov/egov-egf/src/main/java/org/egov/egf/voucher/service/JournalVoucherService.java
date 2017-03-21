@@ -362,7 +362,7 @@ public class JournalVoucherService {
             wfInitiator = assignmentService.getPrimaryAssignmentForUser(voucherHeader.getCreatedBy().getId());
         if (FinancialConstants.BUTTONREJECT.toString().equalsIgnoreCase(workFlowAction)) {
             final String stateValue = FinancialConstants.WORKFLOW_STATE_REJECTED;
-            voucherHeader.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+            voucherHeader.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
                     .withComments(approvalComent)
                     .withStateValue(stateValue).withDateInfo(currentDate.toDate())
                     .withOwner(wfInitiator.getPosition())
@@ -385,7 +385,7 @@ public class JournalVoucherService {
                 voucherHeader.setStatus(FinancialConstants.CREATEDVOUCHERSTATUS);
                 wfmatrix = cvoucherHeaderRegisterWorkflowService.getWfMatrix(voucherHeader.getStateType(), null,
                         null, additionalRule, voucherHeader.getCurrentState().getValue(), null);
-                voucherHeader.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+                voucherHeader.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent)
                         .withStateValue(stateValue).withDateInfo(currentDate.toDate()).withOwner(pos)
                         .withNextAction("")
@@ -395,7 +395,7 @@ public class JournalVoucherService {
                 voucherHeader.setStatus(FinancialConstants.CANCELLEDVOUCHERSTATUS);
                 wfmatrix = cvoucherHeaderRegisterWorkflowService.getWfMatrix(voucherHeader.getStateType(), null,
                         null, additionalRule, voucherHeader.getCurrentState().getValue(), null);
-                voucherHeader.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+                voucherHeader.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent)
                         .withStateValue(stateValue).withDateInfo(currentDate.toDate()).withOwner(pos)
                         .withNextAction("")
@@ -403,7 +403,7 @@ public class JournalVoucherService {
             } else {
                 wfmatrix = cvoucherHeaderRegisterWorkflowService.getWfMatrix(voucherHeader.getStateType(), null,
                         null, additionalRule, voucherHeader.getCurrentState().getValue(), null);
-                voucherHeader.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+                voucherHeader.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent)
                         .withStateValue(wfmatrix.getNextState()).withDateInfo(new Date()).withOwner(pos)
                         .withNextAction(wfmatrix.getNextAction())

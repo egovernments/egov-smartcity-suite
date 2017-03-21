@@ -39,6 +39,9 @@
  */
 package org.egov.commons.service;
 
+import java.util.Date;
+import java.util.List;
+
 import org.egov.commons.entity.ChairPerson;
 import org.egov.commons.repository.ChairPersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,8 +51,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -67,7 +68,7 @@ public class ChairPersonService {
     }
 
     public List<ChairPerson> findAll() {
-        return chairPersonRepository.findAll(new Sort(Sort.Direction.ASC, "name"));
+        return chairPersonRepository.findAll(new Sort(Sort.Direction.DESC, "id"));
     }
 
     public ChairPerson load(final Long id) {
@@ -99,5 +100,9 @@ public class ChairPersonService {
     @Transactional
     public void updateChairPerson(final ChairPerson chairPerson) {
         chairPersonRepository.save(chairPerson);
+    }
+
+    public ChairPerson getActiveChairPersonByGivenDate(final Date fromdate, final Date toDate) {
+        return chairPersonRepository.findActiveChairPersonByGivenDate(fromdate, toDate);
     }
 }

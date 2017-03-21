@@ -46,9 +46,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.egov.commons.dao.BankHibernateDAO;
 import org.egov.restapi.model.ContractorHelper;
 import org.egov.restapi.model.RestErrors;
 import org.egov.restapi.web.rest.AbstractContextControllerTest;
@@ -68,15 +65,7 @@ public class ContractorServiceTest extends AbstractContextControllerTest<Externa
     @Mock
     private ContractorService contractorService;
 
-    @Mock
-    private BankHibernateDAO bankHibernateDAO;
-
-    @Mock
-    private HttpServletRequest request;
-
     private List<RestErrors> errors;
-
-    private Contractor contractor;
 
     private List<Contractor> contractors;
 
@@ -97,7 +86,6 @@ public class ContractorServiceTest extends AbstractContextControllerTest<Externa
     @Before
     public void setUp() throws IOException {
         errors = new ArrayList<>();
-        contractor = new Contractor();
         fillContractor();
 
         when(contractorService.getContractorByCode(Matchers.anyString())).thenReturn(new Contractor());
@@ -149,9 +137,18 @@ public class ContractorServiceTest extends AbstractContextControllerTest<Externa
     public void shouldValidateContractorCodeAndNameLength() {
         when(contractorService.getContractorByCode(Matchers.anyString())).thenReturn(null);
         contractorHelper.setCode(
-                "The quick, brown fox jumps over a lazy dog. DJs flock by when MTV ax quiz prog. Junk MTV quiz graced by fox whelps. Bawds jog, flick quartz, vex nymphs. Waltz, bad nymph, for quick jigs vex! Fox nymphs grab quick-jived waltz. Brick quiz whangs jumpy veldt fox. Bright vixens jump; dozy fowl quack. Quick wafting zephyrs vex bold Jim.");
+                "The quick, brown fox jumps over a lazy dog. DJs flock by when MTV ax quiz prog. "
+                        + "Junk MTV quiz graced by fox whelps. Bawds jog, flick quartz, vex nymphs. Waltz, bad nymph, "
+                        + "for quick jigs vex! Fox nymphs grab quick-jived waltz. Brick quiz whangs jumpy veldt fox. "
+                        + "Bright vixens jump; dozy fowl quack. Quick wafting zephyrs vex bold Jim.");
         contractorHelper.setName(
-                "One morning, when Gregor Samsa woke from troubled dreams, he found himself transformed in his bed into a horrible vermin. He lay on his armour-like back, and if he lifted his head a little he could see his brown belly, slightly domed and divided by arches into stiff sections. The bedding was hardly able to cover it and seemed ready to slide off any moment. His many legs, pitifully thin compared with the size of the rest of him, waved about helplessly as he looked. cWhat's happened to me?  he thought. It wasn't a dream. His room, a proper human room although a little too small, lay peacefully between its four familiar walls.");
+                "One morning, when Gregor Samsa woke from troubled dreams, he found himself transformed in his"
+                        + " bed into a horrible vermin. He lay on his armour-like back, and if he lifted his head a little "
+                        + "he could see his brown belly, slightly domed and divided by arches into stiff sections. "
+                        + "The bedding was hardly able to cover it and seemed ready to slide off any moment. His many legs, "
+                        + "pitifully thin compared with the size of the rest of him, waved about helplessly as he looked. cWhat's "
+                        + "happened to me?  he thought. It wasn't a dream. His room, a proper human room although a little "
+                        + "too small, lay peacefully between its four familiar walls.");
         errors = externalContractorService.validateContactorToCreate(contractorHelper);
         assertEquals(4, errors.size());
 
@@ -258,9 +255,19 @@ public class ContractorServiceTest extends AbstractContextControllerTest<Externa
     public void shouldValidateModifyContractorCodeAndNameLength() {
         when(contractorService.getContractorByCode(Matchers.anyString())).thenReturn(null);
         contractorHelper.setCode(
-                "The quick, brown fox jumps over a lazy dog. DJs flock by when MTV ax quiz prog. Junk MTV quiz graced by fox whelps. Bawds jog, flick quartz, vex nymphs. Waltz, bad nymph, for quick jigs vex! Fox nymphs grab quick-jived waltz. Brick quiz whangs jumpy veldt fox. Bright vixens jump; dozy fowl quack. Quick wafting zephyrs vex bold Jim.");
+                "The quick, brown fox jumps over a lazy dog. "
+                        + "DJs flock by when MTV ax quiz prog. Junk MTV quiz graced by fox whelps. "
+                        + "Bawds jog, flick quartz, vex nymphs. Waltz, bad nymph, for quick jigs vex! Fox "
+                        + "nymphs grab quick-jived waltz. Brick quiz whangs jumpy veldt fox. Bright vixens jump;"
+                        + "dozy fowl quack. Quick wafting zephyrs vex bold Jim.");
         contractorHelper.setName(
-                "One morning, when Gregor Samsa woke from troubled dreams, he found himself transformed in his bed into a horrible vermin. He lay on his armour-like back, and if he lifted his head a little he could see his brown belly, slightly domed and divided by arches into stiff sections. The bedding was hardly able to cover it and seemed ready to slide off any moment. His many legs, pitifully thin compared with the size of the rest of him, waved about helplessly as he looked. cWhat's happened to me?  he thought. It wasn't a dream. His room, a proper human room although a little too small, lay peacefully between its four familiar walls.");
+                "One morning, when Gregor Samsa woke from troubled dreams, he found himself transformed "
+                        + "in his bed into a horrible vermin. He lay on his armour-like back, and if he lifted his head a "
+                        + "little he could see his brown belly, slightly domed and divided by arches into stiff sections. "
+                        + "The bedding was hardly able to cover it and seemed ready to slide off any moment. His many legs, "
+                        + "pitifully thin compared with the size of the rest of him, waved about helplessly as he looked."
+                        + " cWhat's happened to me?  he thought. It wasn't a dream. His room, a proper human room although a "
+                        + "little too small, lay peacefully between its four familiar walls.");
         errors = externalContractorService.validateContactorToUpdate(contractorHelper);
         assertEquals(5, errors.size());
 

@@ -40,6 +40,22 @@
 
 package org.egov.wtms.web.controller.reports;
 
+import static org.egov.infra.utils.JsonUtils.toJSON;
+import static org.egov.ptis.constants.PropertyTaxConstants.BLOCK;
+import static org.egov.ptis.constants.PropertyTaxConstants.LOCALITY;
+import static org.egov.ptis.constants.PropertyTaxConstants.LOCATION_HIERARCHY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WARD;
+import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.io.IOUtils;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
@@ -59,22 +75,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import static org.egov.infra.utils.JsonUtils.toJSON;
-import static org.egov.ptis.constants.PropertyTaxConstants.BLOCK;
-import static org.egov.ptis.constants.PropertyTaxConstants.LOCALITY;
-import static org.egov.ptis.constants.PropertyTaxConstants.LOCATION_HIERARCHY_TYPE;
-import static org.egov.ptis.constants.PropertyTaxConstants.WARD;
-import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
-
 @Controller
 @RequestMapping(value = "/reports")
 public class DCBReportController {
@@ -92,14 +92,14 @@ public class DCBReportController {
     protected WaterConnectionDetailsService waterConnectionDetailsService;
     @Autowired
     private BoundaryService boundaryService;
-    private final DCBReportResult dCBReportResult = new DCBReportResult();
 
     @ModelAttribute("dCBReportResult")
     public DCBReportResult dCBReportResultModel() {
-        return dCBReportResult;
+        return new DCBReportResult();
     }
 
-    public @ModelAttribute("connectionTypes") Map<String, String> connectionTypes() {
+    @ModelAttribute("connectionTypes")
+    public Map<String, String> connectionTypes() {
         return waterConnectionDetailsService.getConnectionTypesMap();
     }
 
@@ -156,9 +156,10 @@ public class DCBReportController {
     }
 
     @RequestMapping(value = "/dCBReportList", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody void search(final HttpServletRequest request, final HttpServletResponse response,
+    @ResponseBody
+    public void search(final HttpServletRequest request, final HttpServletResponse response,
             final Model model) throws IOException {
-        List<DCBReportResult> resultList = new ArrayList<DCBReportResult>();
+        List<DCBReportResult> resultList;
         String connectionType = "", mode = "", reportType = "";
         String[] boundaryId = null;
         final StringBuilder zones = new StringBuilder();
@@ -180,10 +181,11 @@ public class DCBReportController {
             reportType = request.getParameter("reportType");
         final SQLQuery query = prepareQuery(zones.toString(), connectionType, mode, reportType);
         resultList = query.list();
-        String result = null;
-        result = new StringBuilder("{ \"data\":").append(toJSON(resultList, DCBReportResult.class, DCBReportHelperAdaptor.class)).append("}").toString();
+        String result;
+        result = new StringBuilder("{ \"data\":").append(toJSON(resultList, DCBReportResult.class, DCBReportHelperAdaptor.class))
+                .append("}").toString();
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        IOUtils.write(result, response.getWriter());    
+        IOUtils.write(result, response.getWriter());
     }
 
     private SQLQuery prepareQuery(final String paramList, final String connectionType, final String mode,
@@ -195,19 +197,19 @@ public class DCBReportController {
         StringBuilder whereQry = new StringBuilder();
         final StringBuilder groupByQry = new StringBuilder();
         selectQry2
-        .append("  cast(SUM(arr_demand) as bigint) AS arr_demand,cast(SUM(curr_demand) as bigint) AS curr_demand,cast(SUM(arr_coll) as bigint) AS arr_coll,cast(SUM(curr_coll) as bigint) AS curr_coll,"
-                + "cast(SUM(arr_balance) as bigint) AS arr_balance,cast(SUM(curr_balance) as bigint) AS curr_balance ");
+                .append("  cast(SUM(arr_demand) as bigint) AS arr_demand,cast(SUM(curr_demand) as bigint) AS curr_demand,cast(SUM(arr_coll) as bigint) AS arr_coll,cast(SUM(curr_coll) as bigint) AS curr_coll,"
+                        + "cast(SUM(arr_balance) as bigint) AS arr_balance,cast(SUM(curr_balance) as bigint) AS curr_balance ");
         fromQry = new StringBuilder(" from egwtr_mv_dcb_view dcbinfo,eg_boundary boundary ");
         if (mode.equalsIgnoreCase(ZONEWISE)) {
             selectQry1
-            .append("select  distinct cast(dcbinfo.zoneid as integer) as \"zoneid\",boundary.name as \"boundaryName\", count(hscno) as countofconsumerno,");
+                    .append("select  distinct cast(dcbinfo.zoneid as integer) as \"zoneid\",boundary.name as \"boundaryName\", count(hscno) as countofconsumerno,");
             groupByQry.append(" group by dcbinfo.zoneid,boundary.name order by boundary.name");
             whereQry.append(" where dcbinfo.zoneid=boundary.id ");
             if (paramList != null && !paramList.equalsIgnoreCase(""))
                 whereQry = whereQry.append(" and dcbinfo.zoneid in (" + paramList + ")");
         } else if (mode.equalsIgnoreCase(WARDWISE)) {
             selectQry1
-            .append("select distinct cast(dcbinfo.wardid as integer) as \"wardid\",boundary.name as \"boundaryName\",count(hscno) as countofconsumerno, ");
+                    .append("select distinct cast(dcbinfo.wardid as integer) as \"wardid\",boundary.name as \"boundaryName\",count(hscno) as countofconsumerno, ");
             groupByQry.append(" group by dcbinfo.wardid,boundary.name order by boundary.name");
             whereQry.append(" where dcbinfo.wardid=boundary.id ");
             if (paramList != null && !paramList.equalsIgnoreCase("") && reportType.equalsIgnoreCase("wardWise"))
@@ -216,7 +218,7 @@ public class DCBReportController {
                 whereQry = whereQry.append(" and dcbinfo.zoneid in (" + paramList + ")");
         } else if (mode.equalsIgnoreCase(BLOCKWISE)) {
             selectQry1
-            .append("select  distinct cast(dcbinfo.block as integer) as \"wardid\",boundary.name as \"boundaryName\", count(hscno) as countofconsumerno,");
+                    .append("select  distinct cast(dcbinfo.block as integer) as \"wardid\",boundary.name as \"boundaryName\", count(hscno) as countofconsumerno,");
             groupByQry.append(" group by dcbinfo.block,boundary.name order by boundary.name");
             whereQry.append(" where dcbinfo.block=boundary.id ");
             if (paramList != null && !paramList.equalsIgnoreCase("") && reportType.equalsIgnoreCase("blockWise"))
@@ -225,12 +227,12 @@ public class DCBReportController {
                 whereQry = whereQry.append(" and dcbinfo.wardid in (" + paramList + ")");
         } else if (mode.equalsIgnoreCase(LOCALITYWISE)) {
             selectQry1
-            .append("select  distinct cast(dcbinfo.locality as integer) as \"locality\",boundary.name as \"boundaryName\",dcbinfo.username as \"username\", count(hscno) as countofconsumerno, ");
+                    .append("select  distinct cast(dcbinfo.locality as integer) as \"locality\",boundary.name as \"boundaryName\",dcbinfo.username as \"username\", count(hscno) as countofconsumerno, ");
             groupByQry.append(" group by dcbinfo.locality,boundary.name,dcbinfo.username order by boundary.name");
             whereQry.append(" where dcbinfo.locality=boundary.id and dcbinfo.locality in (" + paramList + ")");
         } else if (mode.equalsIgnoreCase(PROPERTY)) {
             selectQry1
-            .append("select distinct dcbinfo.hscno as hscno,dcbinfo.propertyid as \"propertyid\" ,dcbinfo.username as \"username\", ");
+                    .append("select distinct dcbinfo.hscno as hscno,dcbinfo.propertyid as \"propertyid\" ,dcbinfo.username as \"username\", ");
             fromQry = new StringBuilder(" from egwtr_mv_dcb_view dcbinfo ");
             groupByQry.append("group by dcbinfo.hscno,dcbinfo.propertyid,dcbinfo.username ");
             whereQry.append(" where dcbinfo.hscno is not null  ");

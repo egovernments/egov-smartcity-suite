@@ -93,7 +93,7 @@ public class CouncilReportService {
             momDetails.put("meetingMOMList", meetingMomList);
             reportInput = new ReportRequest(MEETINGMOM, momDetails, buildReportParameters(councilMeeting, logoPath));
         }
-        reportInput.setReportFormat(ReportConstants.FileFormat.PDF);
+        reportInput.setReportFormat(ReportConstants.FileFormat.RTF);
         reportInput.setPrintDialogOnOpenReport(false);
         return createReport(reportInput).getReportOutputData();
 

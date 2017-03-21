@@ -40,6 +40,7 @@
 
 package org.egov.tl.entity;
 
+import org.egov.tl.utils.Constants;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.RelationTargetAuditMode;
 
@@ -67,7 +68,7 @@ public class TradeLicense extends License {
 
     @Override
     public String myLinkId() {
-        if ("Closure License".equals(this.getState().getNatureOfTask()))
+        if (Constants.CLOSURE_NATUREOFTASK.equals(this.getState().getNatureOfTask()))
             return "/tl/viewtradelicense/viewTradeLicense-closure.action?model.id=" + this.id;
         else
             return "/tl/newtradelicense/newTradeLicense-showForApproval.action?model.id=" + this.id;

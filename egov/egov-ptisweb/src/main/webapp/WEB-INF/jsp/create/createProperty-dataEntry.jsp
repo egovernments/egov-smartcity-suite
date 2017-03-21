@@ -134,7 +134,11 @@ jQuery(function ($) {
 var isSubmit=false;
 
 function validateProperty() {
-	
+	var upicNo = jQuery('#upicNo').val();
+	if (upicNo == null || upicNo == "") {
+		bootbox.alert('Please enter assessment number');
+		return false;
+	}
 	if(isSubmit)
 	{
 		return onSubmit();
@@ -165,15 +169,9 @@ function validateProperty() {
 
 function loadOnStartUp() {
 	enableCorresAddr();
-	enableAppartnaumtLandDetails();
 	makeMandatory();
-	document.getElementById("appurtenantRow").style.display = "none";
 	enableOrDisableSiteOwnerDetails(jQuery('input[name="propertyDetail.structure"]'));
 	enableOrDisableBPADetails(jQuery('input[name="propertyDetail.buildingPlanDetailsChecked"]'));
-	var appartunentLand = jQuery('input[name="propertyDetail.appurtenantLandChecked"]');
-	if (jQuery(appartunentLand).is(":checked")) {
-		enableAppartnaumtLandDetails();
-	}
 	var category = '<s:property value="%{propertyDetail.categoryType}"/>';
 	document.forms[0].propTypeCategoryId.options[document.forms[0].propTypeCategoryId.selectedIndex].value = category;
 	toggleFloorDetails();
@@ -249,6 +247,23 @@ function showHideLengthBreadth(){
     for(var i=1;i<=tabLength;i++){
          enableDisableLengthBreadth(getControlInBranch(tbl.rows[i],'unstructuredLand'));
     }
+}
+
+function enableDisableFirmName(obj){ 
+	var selIndex = obj.selectedIndex;
+	if(selIndex != undefined){
+		var selText = obj.options[selIndex].text; 
+		var rIndex = getRow(obj).rowIndex;
+		var tbl = document.getElementById('floorDetails');
+		var firmval=getControlInBranch(tbl.rows[rIndex],'firmName'); 
+		if(selText!=null && selText=='<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@NATURE_OF_USAGE_RESIDENCE}"/>'){
+			if(firmval.value!=null && firmval.value!="") 
+				firmval.value="";
+			firmval.readOnly = true;      
+		} else{
+			firmval.readOnly = false; 
+		}
+	}
 }
 
 function onSubmit() { 

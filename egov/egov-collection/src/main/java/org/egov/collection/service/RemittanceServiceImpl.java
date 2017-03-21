@@ -361,7 +361,6 @@ public class RemittanceServiceImpl extends RemittanceService {
         remittanceDetailsList.addAll(getRemittanceDetailsList(BigDecimal.ZERO, totalAmount, serviceGLCode, remittance));
         remittance.setRemittanceDetails(new HashSet<RemittanceDetail>(remittanceDetailsList));
         remittancePersistService.persist(remittance);
-        startWorkflow(remittance);
         if (CollectionConstants.YES.equalsIgnoreCase(createVoucher)
                 && (totalCashVoucherAmt.compareTo(BigDecimal.ZERO) > 0
                         || totalChequeVoucherAmt.compareTo(BigDecimal.ZERO) > 0)) {
@@ -415,15 +414,6 @@ public class RemittanceServiceImpl extends RemittanceService {
         return headerdetails;
     }
 
-    private void startWorkflow(final Remittance remittance) {
-        final Position position = collectionsUtil.getPositionOfUser(collectionsUtil.getLoggedInUser());
-        remittance.transition().start()
-                .withSenderName(collectionsUtil.getLoggedInUser().getUsername() + "::"
-                        + collectionsUtil.getLoggedInUser().getName())
-                .withComments(CollectionConstants.WF_STATE_NEW).withStateValue(CollectionConstants.WF_STATE_NEW)
-                .withOwner(position).withDateInfo(new Date()).withNextAction(CollectionConstants.WF_STATE_END).end();
-    }
-
     public List<RemittanceDetail> getRemittanceDetailsList(final BigDecimal creditAmount, final BigDecimal debitAmount,
             final String glCode, final Remittance remittance) {
         final List<RemittanceDetail> remittanceDetailsList = new ArrayList<>();
@@ -448,8 +438,6 @@ public class RemittanceServiceImpl extends RemittanceService {
             final String paymentMode) {
 
         final List<HashMap<String, Object>> paramList = new ArrayList<>();
-        // TODO: Fix the sum(ih.instrumentamount) the amount is wrong because of
-        // the ujl.boundary in (" + boundaryIdList + ")"
         final String queryBuilder = "SELECT sum(ih.instrumentamount) as INSTRUMENTMAOUNT,date(ch.RECEIPTDATE) AS RECEIPTDATE,"
                 + "sd.NAME as SERVICENAME,it.TYPE as INSTRUMENTTYPE,fnd.name AS FUNDNAME,dpt.name AS DEPARTMENTNAME,"
                 + "fnd.code AS FUNDCODE,dpt.code AS DEPARTMENTCODE from EGCL_COLLECTIONHEADER ch,"
@@ -479,7 +467,7 @@ public class RemittanceServiceImpl extends RemittanceService {
          * Query to get the collection of the instrument types Cash,Cheque,DD &
          * Card for bank remittance
          */
-        final StringBuilder queryStringForCashChequeDDCard = new StringBuilder(queryBuilder + ",egeis_jurisdiction ujl"
+        final StringBuilder queryStringForCashChequeDDCard = new StringBuilder(queryBuilder 
                 + whereClauseBeforInstumentType + whereClauseForServiceAndFund + "it.TYPE in ");
         if (paymentMode.equals(CollectionConstants.INSTRUMENTTYPE_CASH))
             queryStringForCashChequeDDCard.append("('" + CollectionConstants.INSTRUMENTTYPE_CASH + "')");
@@ -490,8 +478,8 @@ public class RemittanceServiceImpl extends RemittanceService {
             queryStringForCashChequeDDCard.append(
                     "('" + CollectionConstants.INSTRUMENTTYPE_CASH + "','" + CollectionConstants.INSTRUMENTTYPE_CHEQUE
                             + "'," + "'" + CollectionConstants.INSTRUMENTTYPE_DD + "') ");
-        queryStringForCashChequeDDCard.append(whereClause + "AND ch.CREATEDBY=ujl.employee and ujl.boundary in ("
-                + boundaryIdList + ")" + groupByClause);
+        queryStringForCashChequeDDCard.append(whereClause + "AND ch.CREATEDBY in (select distinct ujl.employee from egeis_jurisdiction ujl where ujl.boundary in ("
+                + boundaryIdList + "))" + groupByClause);
 
         collectionsUtil.getUserByUserName(CollectionConstants.CITIZEN_USER_NAME);
 

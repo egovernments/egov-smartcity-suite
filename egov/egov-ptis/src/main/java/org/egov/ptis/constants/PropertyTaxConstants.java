@@ -1360,6 +1360,8 @@ public interface PropertyTaxConstants {
     public static final String PROPERTYTAX_ROLEFORNONEMPLOYEE = "PROPERTYTAXROLEFORNONEMPLOYEE";
     public static final String APPLICATION_TYPE_REVISION_PETITION = "Revision_Petition";
     public static final String PT_WORKFLOWDESIGNATION_MOBILE = "PTIS_DESIGNATIONFORWF_MOBILE";
+    public static final String DESIGNATION_FOR_THIRDPARTY_FULLTRANSFER_WF = "PT_DESIGNATION_FOR_THIRDPARTY_FULLTRANSFER";
+    public static final String DEPARTMENT_FOR_THIRDPARTY_FULLTRANSFER_WF = "PT_DEPARTMENT_FOR_THIRDPARTY_FULLTRANSFER";
 
     // Action targets
     public static final String TARGET_WORKFLOW_ERROR = "workFlowError";
@@ -1414,6 +1416,9 @@ public interface PropertyTaxConstants {
     public static final String NOTICE_TYPE_VRPROCEEDINGS = "VR Proceedings";
     public static final String VR_STATUS_ASSISTANT_FORWARDED = "Assistant Forwarded";
     public static final String VR_STATUS_COMMISSIONER_FORWARD_PENDING = "Commissioner Forward Pending";
+    public static final String VR_APP_STATUS_REJECTED = "VacancyRemission:Rejected";
+    public static final String VR_STATUS_MONTHLY_UPDATE = "Monthly Update Pending";
+    public static final String NOTICE_TYPE_EXEMPTIONPROCEEDINGS = "Tax Exemption Proceedings";
     
     public static final String VACANTLAND_PROPERTY_CATEGORY = "VACANTLAND";
     public static final String MEESEVA_OPERATOR_ROLE = "MeeSeva Operator";
@@ -1614,6 +1619,8 @@ public interface PropertyTaxConstants {
     public static final String DASHBOARD_PROPERTY_TYPE_COURTCASES = "Courtcases";
     public static final String DASHBOARD_PROPERTY_TYPE_BUILT_UP = "BuiltUp";
     
+    public static final String DASHBOARD_USAGE_TYPE_ALL = "ALL";
+    
     public static final String WEEK = "week";
     public static final String MONTH = "month";
     public static final String DAY = "day";
@@ -1700,5 +1707,19 @@ public interface PropertyTaxConstants {
     public static final String DOCUMENT_NAME_DECREE_BY_CIVILCOURT = "Decree by Civil Court";
     public static final String DOCUMENT_NAME_NOTARY_DOCUMENT = "Un-registered Document / Notary document";
     public static final List<String> COMMISSIONER_DESIGNATIONS = ImmutableList.of("Assistant Commissioner",
-            "Zonal Commissioner", "Deputy Commissioner", "Additional Commissioner", "Commissioner"); 
+            "Zonal Commissioner", "Deputy Commissioner", "Additional Commissioner", "Commissioner");
+    public static final String INTEGRATED_BILL = "Integrated Bill";
+    
+    //Source of Application
+    public static final String SOURCE_CSC = "CSC";
+    public static final String SOURCE_MEESEVA = "MEESEVA";
+    public static final String SOURCE_MOBILE = "MOBILE";
+    public static final String SOURCE_SYSTEM = "SYSTEM";
+    public static final String SOURCE_ONLINE = "ONLINE";
+    
+    public static final String APPURTENANT_PROPERTY = "AppurTenantProperty";
+    public static final String ANONYMOUS_USER= "Anonymous";
+    public static final String WATER_TAX_DUES = "totalTaxDue";
+    public static final String UNDER_WTMS_WF = "isInWorkFlow";
+    
 }

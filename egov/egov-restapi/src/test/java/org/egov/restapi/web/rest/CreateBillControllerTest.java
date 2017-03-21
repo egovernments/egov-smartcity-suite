@@ -46,7 +46,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.egov.model.bills.EgBillregister;
@@ -70,7 +70,7 @@ public class CreateBillControllerTest extends AbstractContextControllerTest<Crea
     private BillService billService;
 
     @Mock
-    private HttpServletRequest request;
+    private HttpServletResponse response;
 
     @InjectMocks
     private CreateBillController createBillController;
@@ -105,7 +105,7 @@ public class CreateBillControllerTest extends AbstractContextControllerTest<Crea
         requestJson = IOUtils.toString(Thread.currentThread().getContextClassLoader().getResourceAsStream("createbill-Json.json"),
                 "UTF-8");
         when(billService.validateBillRegister(Matchers.anyObject())).thenReturn(errors);
-        responseJson = createBillController.createContractorBill(requestJson, request);
+        responseJson = createBillController.createContractorBill(requestJson, response);
         final JSONObject jsonObject = new JSONObject(responseJson);
         assertEquals(egBillregister.getBillnumber(), jsonObject.get("billNumber"));
     }
@@ -119,7 +119,7 @@ public class CreateBillControllerTest extends AbstractContextControllerTest<Crea
         restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_DEPARTMENT);
         errors.add(restErrors);
         when(billService.validateBillRegister(Matchers.anyObject())).thenReturn(errors);
-        responseJson = createBillController.createContractorBill(requestJson, request);
+        responseJson = createBillController.createContractorBill(requestJson, response);
         final JSONArray jsonArray = new JSONArray(responseJson);
         final JSONObject jsonObject = jsonArray.getJSONObject(0);
         assertEquals(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_DEPARTMENT, jsonObject.get("errorCode"));
@@ -128,6 +128,6 @@ public class CreateBillControllerTest extends AbstractContextControllerTest<Crea
     @Test
     public void shouldThrowNullPointerExceptionWhenJsonStringIsNull() {
         thrown.expect(NullPointerException.class);
-        responseJson = createBillController.createContractorBill(requestJson, request);
+        responseJson = createBillController.createContractorBill(requestJson, response);
     }
 }

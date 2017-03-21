@@ -138,9 +138,7 @@ public class APTaxCalculator implements PropertyTaxCalculator {
             final APTaxCalculationInfo taxCalculationInfo = addPropertyInfo(property);
 
             if (betweenOrBefore(occupationDate, installment.getFromDate(), installment.getToDate())) {
-                if (property.getPropertyDetail().getPropertyTypeMaster().getCode().equals(OWNERSHIP_TYPE_VAC_LAND)
-                        || property.getPropertyDetail().isAppurtenantLandChecked() != null && property
-                                .getPropertyDetail().isAppurtenantLandChecked()) {
+                if (property.getPropertyDetail().getPropertyTypeMaster().getCode().equals(OWNERSHIP_TYPE_VAC_LAND)) {
                     final APUnitTaxCalculationInfo unitTaxCalculationInfo = calculateVacantLandTax(property,
                             occupationDate, applicableTaxes, installment);
                     totalNetArv = totalNetArv.add(unitTaxCalculationInfo.getNetARV());
@@ -446,8 +444,8 @@ public class APTaxCalculator implements PropertyTaxCalculator {
             amount = tax.multiply(BigDecimal.valueOf(0.5));
         if (propTypeCode.equals(PropertyTaxConstants.OWNERSHIP_TYPE_CENTRAL_GOVT_75))
             amount = tax.multiply(BigDecimal.valueOf(0.75));
-        if(amount.compareTo(BigDecimal.ZERO) == 0)
-            amount=tax;
+        if (amount.compareTo(BigDecimal.ZERO) == 0)
+            amount = tax;
         return amount;
     }
 

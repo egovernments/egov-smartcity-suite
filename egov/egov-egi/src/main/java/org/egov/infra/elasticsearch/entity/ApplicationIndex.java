@@ -40,11 +40,10 @@
 
 package org.egov.infra.elasticsearch.entity;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import org.egov.infra.elasticsearch.entity.enums.ApprovalStatus;
-import org.egov.infra.elasticsearch.entity.enums.ClosureStatus;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.hibernate.validator.constraints.Length;
+import static org.egov.infra.elasticsearch.entity.ApplicationIndex.SEQ_APPLICATIONINDEX;
+import static org.egov.infra.validation.ValidatorUtils.assertNotNull;
+
+import java.util.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -55,10 +54,13 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-import java.util.Date;
 
-import static org.egov.infra.elasticsearch.entity.ApplicationIndex.SEQ_APPLICATIONINDEX;
-import static org.egov.infra.validation.ValidatorUtils.assertNotNull;
+import org.egov.infra.elasticsearch.entity.enums.ApprovalStatus;
+import org.egov.infra.elasticsearch.entity.enums.ClosureStatus;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.validator.constraints.Length;
+
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 @Entity
 @Table(name = "EG_APPLICATIONINDEX")
@@ -89,7 +91,7 @@ public class ApplicationIndex extends AbstractAuditable {
     private String applicationType;
 
     @NotNull
-    @Length(max = 100)
+    @Length(max = 250)
     private String applicantName;
 
     @Length(max = 250)
@@ -146,6 +148,10 @@ public class ApplicationIndex extends AbstractAuditable {
     private String regionName;
 
     private Integer isClosed;
+
+    private Integer sla;
+
+    private Integer slaGap;
 
     public static Builder builder() {
         return new Builder();
@@ -272,12 +278,11 @@ public class ApplicationIndex extends AbstractAuditable {
         this.mobileNumber = mobileNumber;
     }
 
-
     public String getOwnerName() {
         return ownerName;
     }
 
-    public void setOwnerName(String ownerName) {
+    public void setOwnerName(final String ownerName) {
         this.ownerName = ownerName;
     }
 
@@ -304,9 +309,9 @@ public class ApplicationIndex extends AbstractAuditable {
     public void setClosed(final ClosureStatus closed) {
         this.closed = closed;
         if (this.closed.toString().equals(ClosureStatus.YES.toString()))
-            setIsClosed(0);
-        else
             setIsClosed(1);
+        else
+            setIsClosed(0);
     }
 
     public ApprovalStatus getApproved() {
@@ -358,6 +363,22 @@ public class ApplicationIndex extends AbstractAuditable {
         this.cityGrade = cityGrade;
     }
 
+    public Integer getSla() {
+        return sla;
+    }
+
+    public void setSla(final Integer sla) {
+        this.sla = sla;
+    }
+
+    public Integer getSlaGap() {
+        return slaGap;
+    }
+
+    public void setSlaGap(final Integer slaGap) {
+        this.slaGap = slaGap;
+    }
+
     public static final class Builder {
         private String moduleName;
         private String applicationNumber;
@@ -372,7 +393,7 @@ public class ApplicationIndex extends AbstractAuditable {
         private String mobileNumber;
         private String ownerName;
         private String aadharNumber;
-        private Integer elapsedDays;
+        private Integer elapsedDays = 0;
         private ClosureStatus closed;
         private ApprovalStatus approved;
         private String channel;
@@ -381,6 +402,7 @@ public class ApplicationIndex extends AbstractAuditable {
         private String cityGrade;
         private String districtName;
         private String regionName;
+        private Integer sla = 0;
 
         private Builder() {
         }
@@ -495,6 +517,11 @@ public class ApplicationIndex extends AbstractAuditable {
             return this;
         }
 
+        public Builder withSla(final Integer sla) {
+            this.sla = sla;
+            return this;
+        }
+
         public ApplicationIndex build() {
             final ApplicationIndex applicationIndex = new ApplicationIndex();
             applicationIndex.setModuleName(moduleName);
@@ -520,6 +547,8 @@ public class ApplicationIndex extends AbstractAuditable {
             applicationIndex.setDistrictName(districtName);
             applicationIndex.setRegionName(regionName);
             applicationIndex.setClosed(closed);
+            applicationIndex.setSla(sla);
+            applicationIndex.setSlaGap(sla - elapsedDays);
             return applicationIndex;
         }
     }

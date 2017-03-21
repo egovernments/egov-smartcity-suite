@@ -191,4 +191,18 @@ public class InstallmentHibDao<T, id extends Serializable> implements Installmen
         qry.setMaxResults(noOfInstallmentToFetch);
         return qry.list();
     }
+    
+    @Override
+    public List<Installment> fetchNextInstallmentsByModuleAndDate(final Module module, final Date date)
+    {
+
+        final Query qry = getCurrentSession()
+                .createQuery(
+                        "from Installment I where I.module=:module and I.fromDate>= :installmentDate order by fromDate desc");
+        qry.setEntity("module", module);
+        qry.setDate("installmentDate", date);
+
+        return qry.list();
+
+    }
 }

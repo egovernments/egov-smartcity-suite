@@ -44,6 +44,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.APPCONFIG_DIGITAL_SIG
 import static org.egov.ptis.constants.PropertyTaxConstants.ARREARS;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CSC_OPERATOR_ROLE;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_FIRST_HALF;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_SECOND_HALF;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_COLL_STR;
@@ -62,6 +63,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_GENERAL
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_LIBRARY_CESS;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_UNAUTHORIZED_PENALTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_VACANT_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.MEESEVA_OPERATOR_ROLE;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 
@@ -86,21 +88,29 @@ import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
+import org.egov.eis.service.DesignationService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.entity.Module;
+import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.utils.NumberUtil;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
+import org.egov.ptis.domain.entity.objection.RevisionPetition;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
+import org.egov.ptis.domain.entity.property.PropertyImpl;
+import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
+import org.egov.ptis.domain.entity.property.VacancyRemission;
 import org.egov.ptis.domain.model.calculator.MiscellaneousTax;
 import org.egov.ptis.domain.model.calculator.TaxCalculationInfo;
 import org.egov.ptis.domain.model.calculator.UnitTaxCalculationInfo;
@@ -136,7 +146,13 @@ public class PropertyTaxCommonUtils {
 
     @Autowired
     private AssignmentService assignmentService;
-
+    
+    @Autowired
+    private DesignationService designationService;
+    
+    @Autowired
+    private DepartmentService departmentService;
+    
     /**
      * Gives the first half of the current financial year
      *
@@ -460,5 +476,89 @@ public class PropertyTaxCommonUtils {
         return (getAllDesignationsForUser(userId).contains(PropertyTaxConstants.JUNIOR_ASSISTANT)
                 || getAllDesignationsForUser(userId).contains(PropertyTaxConstants.SENIOR_ASSISTANT)) ? true : false;
 
+    }
+    
+    public String setSourceOfProperty(User user, Boolean isOnline) {
+        String source;
+        if (checkCscUserAndType(user))
+            source = PropertyTaxConstants.SOURCE_CSC;
+        else if (isMeesevaUser(user))
+            source = PropertyTaxConstants.SOURCE_MEESEVA;
+        else if (isOnline)
+            source = PropertyTaxConstants.SOURCE_ONLINE;
+        else
+            source = PropertyTaxConstants.SOURCE_SYSTEM;
+        return source;
+    }
+    
+    public Boolean checkCscUserAndType(User user){
+        if (user.getType() != null)
+            return isCscOperator(user) && UserType.BUSINESS.equals(user.getType());
+        else
+            return false;
+    }
+
+    public String getPropertySource(final PropertyImpl property) {
+        return property.getSource() != null ? property.getSource() : null;
+    }
+
+    public String getMutationSource(final PropertyMutation propertyMutation) {
+        return propertyMutation.getSource() != null ? propertyMutation.getSource() : null;
+    }
+
+    public String getObjectionSource(final RevisionPetition objection) {
+        return objection.getSource() != null ? objection.getSource() : null;
+    }
+
+    public String getVRSource(final VacancyRemission vacancyRemission) {
+        return vacancyRemission.getSource() != null ? vacancyRemission.getSource() : null;
+    }
+    
+    public Boolean isCscOperator(final User user) {
+        for (final Role role : user.getRoles())
+            if (role != null && role.getName().equalsIgnoreCase(CSC_OPERATOR_ROLE))
+                return true;
+        return false;
+    }
+    
+    public Boolean isMeesevaUser(final User user) {
+        for (final Role role : user.getRoles())
+            if (role != null && role.getName().equalsIgnoreCase(MEESEVA_OPERATOR_ROLE))
+                return true;
+        return false;
+    }
+    
+    public String getDesgnForThirdPartyFullTransferWF() {
+        final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(PTMODULENAME,
+                PropertyTaxConstants.DESIGNATION_FOR_THIRDPARTY_FULLTRANSFER_WF);
+        return null != appConfigValue ? appConfigValue.get(0).getValue() : null;
+
+    }
+
+    public String getDeptForThirdPartyFullTransferWF() {
+        final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(PTMODULENAME,
+                PropertyTaxConstants.DEPARTMENT_FOR_THIRDPARTY_FULLTRANSFER_WF);
+        return null != appConfigValue ? appConfigValue.get(0).getValue() : null;
+
+    }
+
+    public Assignment getCommissionerAsgnForFullTransfer() {
+        final String designationStr = getDesgnForThirdPartyFullTransferWF();
+        final String departmentStr = getDeptForThirdPartyFullTransferWF();
+        final String[] department = departmentStr.split(",");
+        final String[] designation = designationStr.split(",");
+        List<Assignment> assignment = new ArrayList<>();
+        for (final String dept : department) {
+            for (final String desg : designation) {
+                Long deptId = departmentService.getDepartmentByName(dept).getId();
+                Long desgId = designationService.getDesignationByName(desg).getId();
+                assignment = assignmentService.findByDepartmentAndDesignation(deptId, desgId);
+                if (!assignment.isEmpty())
+                    break;
+            }
+            if (!assignment.isEmpty())
+                break;
+        }
+        return !assignment.isEmpty() ? assignment.get(0) : null;
     }
 }

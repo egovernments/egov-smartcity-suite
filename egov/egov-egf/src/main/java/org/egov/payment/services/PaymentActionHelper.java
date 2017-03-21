@@ -377,23 +377,23 @@ public class PaymentActionHelper {
 
         if (FinancialConstants.BUTTONREJECT.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
             if (wfInitiator.equals(userAssignment)) {
-                paymentheader.transition(true).end().withSenderName(user.getName())
+                paymentheader.transition().end().withSenderName(user.getName())
                         .withComments(workflowBean.getApproverComments())
                         .withDateInfo(currentDate.toDate());
             } else {
                 final String stateValue = FinancialConstants.WORKFLOW_STATE_REJECTED;
-                paymentheader.transition(true).withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
+                paymentheader.transition().progressWithStateCopy().withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
                         .withStateValue(stateValue).withDateInfo(currentDate.toDate())
                         .withOwner(wfInitiator.getPosition()).withNextAction(FinancialConstants.WF_STATE_EOA_Approval_Pending);
             }
 
         } else if (FinancialConstants.BUTTONAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
             paymentheader.getVoucherheader().setStatus(FinancialConstants.CREATEDVOUCHERSTATUS);
-            paymentheader.transition(true).end().withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
+            paymentheader.transition().end().withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
                     .withDateInfo(currentDate.toDate());
         } else if (FinancialConstants.BUTTONCANCEL.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
             paymentheader.getVoucherheader().setStatus(FinancialConstants.CANCELLEDVOUCHERSTATUS);
-            paymentheader.transition(true).end().withStateValue(FinancialConstants.WORKFLOW_STATE_CANCELLED)
+            paymentheader.transition().end().withStateValue(FinancialConstants.WORKFLOW_STATE_CANCELLED)
                     .withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
                     .withDateInfo(currentDate.toDate());
         } else {
@@ -407,13 +407,13 @@ public class PaymentActionHelper {
                         .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
                         .withNextAction(wfmatrix.getNextAction());
             } else if (paymentheader.getCurrentState().getNextAction().equalsIgnoreCase("END"))
-                paymentheader.transition(true).end().withSenderName(user.getName())
+                paymentheader.transition().end().withSenderName(user.getName())
                         .withComments(workflowBean.getApproverComments())
                         .withDateInfo(currentDate.toDate());
             else {
                 final WorkFlowMatrix wfmatrix = paymentHeaderWorkflowService.getWfMatrix(paymentheader.getStateType(), null,
                         null, null, paymentheader.getCurrentState().getValue(), null);
-                paymentheader.transition(true).withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
+                paymentheader.transition().progressWithStateCopy().withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
                         .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
                         .withNextAction(wfmatrix.getNextAction());
             }

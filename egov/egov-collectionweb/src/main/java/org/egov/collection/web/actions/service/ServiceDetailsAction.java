@@ -83,7 +83,6 @@ import org.egov.infstr.services.PersistenceService;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 
 @ParentPackage("egov")
 @Results({ @Result(name = ServiceDetailsAction.NEW, location = "serviceDetails-new.jsp"),
@@ -124,9 +123,6 @@ public class ServiceDetailsAction extends BaseFormAction {
     private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
     private SortedMap<String, String> serviceTypeMap = new TreeMap<>();
     private String deptId;
-    @Autowired
-    private ApplicationContext context;
-
     private EgovCommon egovCommon;
 
     public ServiceDetailsAction() {
@@ -161,20 +157,21 @@ public class ServiceDetailsAction extends BaseFormAction {
             accountDetails.addAll(serviceDetails.getServiceAccountDtls());
             for (final ServiceAccountDetails account : serviceDetails.getServiceAccountDtls())
                 subledgerDetails.addAll(account.getSubledgerDetails());
-            for (ServiceSubledgerInfo serviceSubledgerInfo : subledgerDetails) {
-                EntityType entityType = null;
-                try {
-                    entityType = egovCommon.getEntityType(serviceSubledgerInfo.getDetailType(),
-                            serviceSubledgerInfo.getDetailKeyId());
-                } catch (ApplicationException e) {
-                    LOGGER.error("Exception while setting subledger details", e);
-                    throw new ApplicationRuntimeException("Exception while setting subledger details", e);
+            for (final ServiceSubledgerInfo serviceSubledgerInfo : subledgerDetails)
+                if (serviceSubledgerInfo.getDetailType() != null && serviceSubledgerInfo.getDetailKeyId() != null) {
+                    EntityType entityType = null;
+                    try {
+                        entityType = egovCommon.getEntityType(serviceSubledgerInfo.getDetailType(),
+                                serviceSubledgerInfo.getDetailKeyId());
+                    } catch (final ApplicationException e) {
+                        LOGGER.error("Exception while setting subledger details", e);
+                        throw new ApplicationRuntimeException("Exception while setting subledger details", e);
+                    }
+                    if (entityType != null) {
+                        serviceSubledgerInfo.setDetailCode(entityType.getCode());
+                        serviceSubledgerInfo.setDetailKey(entityType.getName());
+                    }
                 }
-                if (entityType != null) {
-                    serviceSubledgerInfo.setDetailCode(entityType.getCode());
-                    serviceSubledgerInfo.setDetailKey(entityType.getName());
-                }
-            }
             for (final Department department : serviceDetails.getServiceDept()) {
                 departmentList.add(department.getId());
                 setDeptId(department.getId().toString());
@@ -343,7 +340,8 @@ public class ServiceDetailsAction extends BaseFormAction {
             final ServiceAccountDetails next = detail.next();
             if (null != next
                     && (null == next.getGlCodeId() || null == next.getGlCodeId().getId() || next.getGlCodeId().getId()
-                            .toString().trim().isEmpty()) && next.getAmount().compareTo(BigDecimal.ZERO) == 0)
+                            .toString().trim().isEmpty())
+                    && next.getAmount().compareTo(BigDecimal.ZERO) == 0)
                 detail.remove();
             else if (null == next)
                 detail.remove();
@@ -357,7 +355,7 @@ public class ServiceDetailsAction extends BaseFormAction {
                     && (null == next.getServiceAccountDetail() || null == next.getServiceAccountDetail().getGlCodeId()
                             || null == next.getServiceAccountDetail().getGlCodeId().getId()
                             || next.getServiceAccountDetail().getGlCodeId().getId() == 0 || next
-                            .getServiceAccountDetail().getGlCodeId().getId() == -1))
+                                    .getServiceAccountDetail().getGlCodeId().getId() == -1))
                 detail.remove();
             else if (null == next)
                 detail.remove();
@@ -544,7 +542,7 @@ public class ServiceDetailsAction extends BaseFormAction {
         this.deptId = deptId;
     }
 
-    public void setEgovCommon(EgovCommon egovCommon) {
+    public void setEgovCommon(final EgovCommon egovCommon) {
         this.egovCommon = egovCommon;
     }
 }

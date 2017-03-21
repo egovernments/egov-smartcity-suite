@@ -46,8 +46,7 @@
 <div class="form-group">
     <label class="col-sm-3 control-label text-right"><s:text name='license.propertyNo.lbl'/></label>
     <div class="col-sm-3 add-margin">
-        <s:textfield name="assessmentNo" id="propertyNo" value="%{assessmentNo}" maxlength="15" onblur="getPropertyDetails();"
-                     onchange="resetOnPropertyNumChange();" class="form-control"/>
+        <s:textfield name="assessmentNo" id="propertyNo" value="%{assessmentNo}" maxlength="15" onblur="getPropertyDetails();" class="form-control"/>
     </div>
 
     <label class="col-sm-2 control-label text-right"><s:text name='license.locality.lbl'/><span class="mandatory"></span></label>
@@ -84,7 +83,6 @@
         }
 
         if ($("#propertyNo") && $("#propertyNo").val() !== "") {
-            resetOnPropertyNumChange();
             getPropertyDetails();
         }
     });

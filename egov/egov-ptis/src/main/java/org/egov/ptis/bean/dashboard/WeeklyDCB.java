@@ -40,19 +40,19 @@
 package org.egov.ptis.bean.dashboard;
 
 public class WeeklyDCB {
-    private String ulbName;
+    private String boundaryName;
     private DemandCollectionMIS week1DCB;
     private DemandCollectionMIS week2DCB;
     private DemandCollectionMIS week3DCB;
     private DemandCollectionMIS week4DCB;
     private DemandCollectionMIS week5DCB;
 
-    public String getUlbName() {
-        return ulbName;
+    public String getBoundaryName() {
+        return boundaryName;
     }
 
-    public void setUlbName(String ulbName) {
-        this.ulbName = ulbName;
+    public void setBoundaryName(String boundaryName) {
+        this.boundaryName = boundaryName;
     }
 
     public DemandCollectionMIS getWeek1DCB() {

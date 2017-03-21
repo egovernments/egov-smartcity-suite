@@ -40,6 +40,7 @@
 
 package org.egov.infra.workflow.inbox;
 
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.entity.StateHistory;
@@ -49,6 +50,7 @@ import org.egov.infra.workflow.service.StateService;
 import org.egov.infra.workflow.service.WorkflowActionService;
 import org.egov.infra.workflow.service.WorkflowTypeService;
 import org.egov.infstr.services.EISServeable;
+import org.egov.pims.commons.Position;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -74,6 +76,7 @@ import static org.apache.commons.lang.StringUtils.EMPTY;
 public class InboxRenderServiceDeligate<T extends StateAware> {
     private static final Logger LOG = LoggerFactory.getLogger(InboxRenderServiceDeligate.class);
     private static final String INBOX_RENDER_SERVICE_SUFFIX = "InboxRenderService";
+    private static final Map<String, WorkflowTypes> WORKFLOWTYPE_CACHE = new ConcurrentHashMap<>();
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -91,26 +94,27 @@ public class InboxRenderServiceDeligate<T extends StateAware> {
     @Autowired
     private WorkflowActionService workflowActionService;
 
-    private static final Map<String, WorkflowTypes> WORKFLOWTYPE_CACHE = new ConcurrentHashMap<>();
-
+    @ReadOnly
     public List<T> getInboxItems(final Long userId) {
         return fetchInboxItems(userId, this.eisService.getPositionsForUser(userId, new Date()).parallelStream()
-                .map(position -> position.getId()).collect(Collectors.toList()));
+                .map(Position::getId).collect(Collectors.toList()));
     }
 
+    @ReadOnly
     public List<T> getInboxDraftItems(final Long userId) {
         return fetchInboxDraftItems(userId, this.eisService.getPositionsForUser(userId, new Date()).parallelStream()
-                .map(position -> position.getId()).collect(Collectors.toList()));
+                .map(Position::getId).collect(Collectors.toList()));
     }
 
+    @ReadOnly
     public List<StateHistory> getWorkflowHistory(final Long stateId) {
         return new LinkedList<>(stateService.getStateById(stateId).getHistory());
     }
 
     public List<T> fetchInboxItems(final Long userId, final List<Long> owners) {
         final List<T> assignedWFItems = new ArrayList<>();
-        if(!owners.isEmpty()){
-        	final List<String> wfTypes = stateService.getAssignedWorkflowTypeNames(owners);
+        if (!owners.isEmpty()) {
+            final List<String> wfTypes = stateService.getAssignedWorkflowTypeNames(owners);
             for (final String wfType : wfTypes) {
                 final Optional<InboxRenderService<T>> inboxRenderService = this.getInboxRenderService(wfType);
                 if (inboxRenderService.isPresent())
@@ -122,8 +126,8 @@ public class InboxRenderServiceDeligate<T extends StateAware> {
 
     public List<T> fetchInboxDraftItems(final Long userId, final List<Long> owners) {
         final List<T> draftWfItems = new ArrayList<>();
-        if(!owners.isEmpty()){
-        	final List<String> wfTypes = stateService.getAssignedWorkflowTypeNames(owners);
+        if (!owners.isEmpty()) {
+            final List<String> wfTypes = stateService.getAssignedWorkflowTypeNames(owners);
             for (final String wfType : wfTypes) {
                 final Optional<InboxRenderService<T>> inboxRenderService = getInboxRenderService(wfType);
                 if (inboxRenderService.isPresent())

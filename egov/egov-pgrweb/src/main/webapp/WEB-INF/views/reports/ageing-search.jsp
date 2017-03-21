@@ -127,10 +127,11 @@
 									<th><spring:message code="lbl.ageingReport.department" /></th>
 								</c:otherwise>
 							</c:choose>
-							<th>><spring:message code="lbl.header.90"/></th>
-							<th><spring:message code="lbl.header.45to90"/></th>
-							<th><spring:message code="lbl.header.15to45"/></th>
-							<th><spring:message code="lbl.header.0to15"/></th>
+							<th>><spring:message code="lbl.header.30"/></th>
+							<th><spring:message code="lbl.header.10to30"/></th>
+							<th><spring:message code="lbl.header.5to10"/></th>
+							<th><spring:message code="lbl.header.2to5"/></th>
+							<th><spring:message code="lbl.header.0to2"/></th>
 							<th><b><spring:message code="lbl.header.totaldays" /></b></th>
 						</thead>
 						<tfoot id="report-footer">
@@ -141,6 +142,7 @@
 							    <td></td>
 							    <td></td>
 							    <td></td>
+								<td></td>
 							</tr>
 						</tfoot>
 					</table>
