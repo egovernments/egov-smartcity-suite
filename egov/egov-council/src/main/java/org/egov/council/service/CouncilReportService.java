@@ -78,7 +78,7 @@ public class CouncilReportService {
             agendaDetails.put("agendaList", agendaDetailsList);
             reportInput = new ReportRequest(AGENDA, agendaDetails, buildReportParameters(councilMeeting, logoPath));
         }
-        reportInput.setReportFormat(ReportConstants.FileFormat.PDF);
+        reportInput.setReportFormat(ReportConstants.FileFormat.RTF);
         reportInput.setPrintDialogOnOpenReport(false);
         return createReport(reportInput).getReportOutputData();
 
