@@ -51,6 +51,7 @@ import javax.validation.Valid;
 import org.egov.adtax.entity.AdvertisementPermitDetail;
 import org.egov.adtax.entity.SubCategory;
 import org.egov.adtax.entity.enums.AdvertisementStatus;
+import org.egov.adtax.entity.enums.AdvertisementApplicationType;
 import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
 import org.egov.adtax.web.controller.common.HoardingControllerSupport;
 import org.egov.adtax.workflow.AdvertisementWorkFlowService;
@@ -131,19 +132,25 @@ public class CreateAdvertisementController extends HoardingControllerSupport {
         validateHoardingDocs(advertisementPermitDetail, resultBinder);
         validateApplicationDate(advertisementPermitDetail, resultBinder);
         validateAdvertisementDetails(advertisementPermitDetail, resultBinder);
-        if (advertisementPermitDetail.getState() == null)
-            advertisementPermitDetail.setStatus(advertisementPermitDetailService
-                    .getStatusByModuleAndCode(AdvertisementTaxConstants.APPLICATION_STATUS_CREATED));
-        advertisementPermitDetail.getAdvertisement().setStatus(AdvertisementStatus.WORKFLOW_IN_PROGRESS);
-        advertisementPermitDetail.setSource(Source.SYSTEM.toString());
-        if (resultBinder.hasErrors()) {
-            WorkflowContainer workFlowContainer = new WorkflowContainer();
-            model.addAttribute("isEmployee", advertisementWorkFlowService.isEmployee(securityUtils.getCurrentUser()));
-            workFlowContainer.setAdditionalRule(AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE);
-            prepareWorkflow(model, advertisementPermitDetail, workFlowContainer);
-            model.addAttribute("additionalRule", AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE);
-            model.addAttribute("stateType", advertisementPermitDetail.getClass().getSimpleName());
-            return "hoarding-create";
+        if (advertisementPermitDetail != null) {
+            if (advertisementPermitDetail.getState() == null) {
+                advertisementPermitDetail.setStatus(advertisementPermitDetailService
+                        .getStatusByModuleAndCode(AdvertisementTaxConstants.APPLICATION_STATUS_CREATED));
+            }
+            advertisementPermitDetail.getAdvertisement().setStatus(AdvertisementStatus.WORKFLOW_IN_PROGRESS);
+
+            advertisementPermitDetail.setSource(Source.SYSTEM.toString());
+            advertisementPermitDetail.setApplicationtype(AdvertisementApplicationType.NEW);
+
+            if (resultBinder.hasErrors()) {
+                WorkflowContainer workFlowContainer = new WorkflowContainer();
+                model.addAttribute("isEmployee", advertisementWorkFlowService.isEmployee(securityUtils.getCurrentUser()));
+                workFlowContainer.setAdditionalRule(AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE);
+                prepareWorkflow(model, advertisementPermitDetail, workFlowContainer);
+                model.addAttribute("additionalRule", AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE);
+                model.addAttribute("stateType", advertisementPermitDetail.getClass().getSimpleName());
+                return "hoarding-create";
+            }
         }
         storeHoardingDocuments(advertisementPermitDetail);
 
