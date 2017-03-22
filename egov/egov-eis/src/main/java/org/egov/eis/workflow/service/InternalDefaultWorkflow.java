@@ -261,7 +261,7 @@ public class InternalDefaultWorkflow implements WorkflowInterface {
     public List<Task> getTasks(final String jurisdiction, final ProcessInstance processInstance) {
         final List<Task> tasks = new ArrayList<Task>();
         final Long userId = securityUtils.getCurrentUser().getId();
-        final List<String> types = workflowTypeService.getEnabledWorkflowType(false);
+        final List<String> types = workflowTypeService.getEnabledWorkflowTypeForMs();
         final List<Long> ownerIds = eisService.getPositionsForUser(userId, new Date()).parallelStream()
                 .map(position -> position.getId()).collect(Collectors.toList());
         List<State> states = new ArrayList<State>();
