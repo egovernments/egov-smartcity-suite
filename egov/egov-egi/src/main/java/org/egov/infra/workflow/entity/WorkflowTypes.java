@@ -79,6 +79,8 @@ public class WorkflowTypes extends AbstractAuditable {
     private String displayName;
 
     private boolean enabled;
+    
+    private boolean enabledInMs;
 
     private boolean grouped;
 
@@ -145,4 +147,14 @@ public class WorkflowTypes extends AbstractAuditable {
     public void setGrouped(final boolean grouped) {
         this.grouped = grouped;
     }
+
+	public boolean isEnabledInMs() {
+		return enabledInMs;
+	}
+
+	public void setEnabledInMs(boolean enabledInMs) {
+		this.enabledInMs = enabledInMs;
+	}
+    
+    
 }
