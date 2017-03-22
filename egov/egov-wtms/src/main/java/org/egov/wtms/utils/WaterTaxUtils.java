@@ -663,5 +663,18 @@ public class WaterTaxUtils {
         else
             return false;
     }
+    
+    public Boolean isLoggedInUserJuniorOrSeniorAssistant(final Long userid) {
+        Boolean isJrAsstOrSrAsst = Boolean.FALSE;
+        final String[] desgnArray = WaterTaxConstants.ROLE_CLERKFORADONI.split(",");
+        final List<Assignment> assignmentList = assignmentService.getAllActiveEmployeeAssignmentsByEmpId(userid);
+        for (final Assignment assignment : assignmentList)
+            for (final String str : desgnArray)
+                if (assignment.getDesignation().getName().equalsIgnoreCase(str)) {
+                    isJrAsstOrSrAsst = Boolean.TRUE;
+                    break;
+                }
+        return isJrAsstOrSrAsst;
+    }
 
 }

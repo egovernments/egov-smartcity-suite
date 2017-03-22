@@ -53,6 +53,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import javax.validation.ValidationException;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.egov.commons.entity.Source;
@@ -186,6 +187,13 @@ public class NewConnectionController extends GenericConnectionController {
             final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
             final HttpServletRequest request, final Model model, @RequestParam String workFlowAction,
             final BindingResult errors) {
+        final Boolean isCSCOperator = waterTaxUtils.isCSCoperator(securityUtils.getCurrentUser());
+        if (!isCSCOperator) {
+            final Boolean isJuniorAsstOrSeniorAsst = waterTaxUtils
+                    .isLoggedInUserJuniorOrSeniorAssistant(securityUtils.getCurrentUser().getId());
+            if (!isJuniorAsstOrSeniorAsst)
+                throw new ValidationException("err.creator.application");
+        }
         final Boolean loggedUserIsMeesevaUser = waterTaxUtils.isMeesevaUser(securityUtils.getCurrentUser());
         final Boolean applicationByOthers = waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser());
 
