@@ -86,9 +86,8 @@ public class DCBReportController {
         return new StringBuilder("{ \"data\":")
                 .append(toJSON(
                         dCBReportService.generateReportResult(
-                        defaultString(request.getParameter("licensenumber")),
-                        defaultString(request.getParameter("mode")),
-                        defaultString(request.getParameter(REPORT_TYPE_ATTRIB_NAME))),
+                                defaultString(request.getParameter("licensenumber")),
+                                defaultString(request.getParameter("mode"))),
                         DCBReportResult.class, DCBReportResponseAdaptor.class)).append("}").toString();
     }
 }

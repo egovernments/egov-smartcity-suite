@@ -55,7 +55,6 @@
 					</div>
 				</div>
 				<form:hidden path="mode" id="mode" value="${mode}" />
-				<form:hidden path="reportType" id="reportType" value="${reportType}" />
 				<div class="panel-body"></div>
 				<div class="form-group">
 					<label class="col-sm-3 control-label text-right"> License
