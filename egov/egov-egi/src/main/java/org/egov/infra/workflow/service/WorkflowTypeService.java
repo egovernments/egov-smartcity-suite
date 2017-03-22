@@ -75,4 +75,8 @@ public class WorkflowTypeService {
     public WorkflowTypes getWorkflowTypeById(Long id) {
         return workflowTypeRepository.findOne(id);
     }
+    
+    public List<String> getEnabledWorkflowTypeForMs() {
+        return workflowTypeRepository.findTypeEnabledAndEnabledInMs(false,true);
+    }
 }
