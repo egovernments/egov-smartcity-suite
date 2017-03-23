@@ -66,229 +66,228 @@ import org.hibernate.annotations.Immutable;
 @Table(name = "eg_wf_state_history")
 @SequenceGenerator(name = StateHistory.SEQ_STATEHISTORY, sequenceName = StateHistory.SEQ_STATEHISTORY, allocationSize = 1)
 public class StateHistory implements Serializable {
-    private static final long serialVersionUID = -2286621991905578107L;
-    static final String SEQ_STATEHISTORY = "SEQ_EG_WF_STATE_HISTORY";
+	private static final long serialVersionUID = -2286621991905578107L;
+	static final String SEQ_STATEHISTORY = "SEQ_EG_WF_STATE_HISTORY";
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = SEQ_STATEHISTORY)
-    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = SEQ_STATEHISTORY)
+	private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "createdBy")
-    private User createdBy;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "createdBy")
+	private User createdBy;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdDate;
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date createdDate;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "lastModifiedBy")
-    private User lastModifiedBy;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "lastModifiedBy")
+	private User lastModifiedBy;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date lastModifiedDate;
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date lastModifiedDate;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "state_id")
-    private State state;
+	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+	@JoinColumn(name = "state_id")
+	private State state;
 
-    @NotNull
-    private String value;
+	@NotNull
+	private String value;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "OWNER_POS")
-    private Position ownerPosition;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "OWNER_POS")
+	private Position ownerPosition;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "OWNER_USER")
-    private User ownerUser;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "OWNER_USER")
+	private User ownerUser;
 
-    private String senderName;
-    private String nextAction;
-    private String comments;
-    private String natureOfTask;
-    private String extraInfo;
-    private Date dateInfo;
-    private Date extraDateInfo;
-    
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "INITIATOR_POS")
-    private Position initiatorPosition;
-    
-    private String tenantId;
-    
-    StateHistory() {
-    }
+	private String senderName;
+	private String nextAction;
+	private String comments;
+	private String natureOfTask;
+	private String extraInfo;
+	private Date dateInfo;
+	private Date extraDateInfo;
 
-    public StateHistory(final State state) {
-        this.state = state;
-        createdBy = state.getCreatedBy();
-        createdDate = state.getCreatedDate() != null ? state.getCreatedDate() : null;
-        lastModifiedBy = state.getLastModifiedBy();
-        lastModifiedDate = state.getLastModifiedDate() != null ? state.getLastModifiedDate() : null;
-        value = state.getValue();
-        ownerPosition = state.getOwnerPosition();
-        ownerUser = state.getOwnerUser();
-        senderName = state.getSenderName();
-        nextAction = state.getNextAction();
-        comments = state.getComments();
-        extraInfo = state.getExtraInfo();
-        dateInfo = state.getDateInfo();
-        extraDateInfo = state.getExtraDateInfo();
-        natureOfTask = state.getNatureOfTask();
-        initiatorPosition = state.getInitiatorPosition();
-    }
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "INITIATOR_POS")
+	private Position initiatorPosition;
 
-    public State getState() {
-        return state;
-    }
+	private String tenantId;
 
-    public void setState(final State state) {
-        this.state = state;
-    }
+	public StateHistory() {
+	}
 
-    public String getValue() {
-        return value;
-    }
+	public StateHistory(final State state) {
+		this.state = state;
+		createdBy = state.getCreatedBy();
+		createdDate = state.getCreatedDate() != null ? state.getCreatedDate() : null;
+		lastModifiedBy = state.getLastModifiedBy();
+		lastModifiedDate = state.getLastModifiedDate() != null ? state.getLastModifiedDate() : null;
+		value = state.getValue();
+		ownerPosition = state.getOwnerPosition();
+		ownerUser = state.getOwnerUser();
+		senderName = state.getSenderName();
+		nextAction = state.getNextAction();
+		comments = state.getComments();
+		extraInfo = state.getExtraInfo();
+		dateInfo = state.getDateInfo();
+		extraDateInfo = state.getExtraDateInfo();
+		natureOfTask = state.getNatureOfTask();
+		initiatorPosition = state.getInitiatorPosition();
+	}
 
-    public void setValue(final String value) {
-        this.value = value;
-    }
+	public State getState() {
+		return state;
+	}
 
-    public Position getOwnerPosition() {
-        return ownerPosition;
-    }
+	public void setState(final State state) {
+		this.state = state;
+	}
 
-    public void setOwnerPosition(final Position ownerPosition) {
-        this.ownerPosition = ownerPosition;
-    }
+	public String getValue() {
+		return value;
+	}
 
-    public User getOwnerUser() {
-        return ownerUser;
-    }
+	public void setValue(final String value) {
+		this.value = value;
+	}
 
-    public void setOwnerUser(final User ownerUser) {
-        this.ownerUser = ownerUser;
-    }
+	public Position getOwnerPosition() {
+		return ownerPosition;
+	}
 
-    public String getSenderName() {
-        return senderName;
-    }
+	public void setOwnerPosition(final Position ownerPosition) {
+		this.ownerPosition = ownerPosition;
+	}
 
-    public void setSenderName(final String senderName) {
-        this.senderName = senderName;
-    }
+	public User getOwnerUser() {
+		return ownerUser;
+	}
 
-    public String getNextAction() {
-        return nextAction;
-    }
+	public void setOwnerUser(final User ownerUser) {
+		this.ownerUser = ownerUser;
+	}
 
-    public void setNextAction(final String nextAction) {
-        this.nextAction = nextAction;
-    }
+	public String getSenderName() {
+		return senderName;
+	}
 
-    public String getComments() {
-        return comments;
-    }
+	public void setSenderName(final String senderName) {
+		this.senderName = senderName;
+	}
 
-    public void setComments(final String comments) {
-        this.comments = comments;
-    }
+	public String getNextAction() {
+		return nextAction;
+	}
 
-    public String getNatureOfTask() {
-        return natureOfTask;
-    }
+	public void setNextAction(final String nextAction) {
+		this.nextAction = nextAction;
+	}
 
-    public void setNatureOfTask(final String natureOfTask) {
-        this.natureOfTask = natureOfTask;
-    }
+	public String getComments() {
+		return comments;
+	}
 
-    public String getExtraInfo() {
-        return extraInfo;
-    }
+	public void setComments(final String comments) {
+		this.comments = comments;
+	}
 
-    public void setExtraInfo(final String extraInfo) {
-        this.extraInfo = extraInfo;
-    }
+	public String getNatureOfTask() {
+		return natureOfTask;
+	}
 
-    public Date getDateInfo() {
-        return dateInfo;
-    }
+	public void setNatureOfTask(final String natureOfTask) {
+		this.natureOfTask = natureOfTask;
+	}
 
-    public void setDateInfo(final Date dateInfo) {
-        this.dateInfo = dateInfo;
-    }
+	public String getExtraInfo() {
+		return extraInfo;
+	}
 
-    public Date getExtraDateInfo() {
-        return extraDateInfo;
-    }
+	public void setExtraInfo(final String extraInfo) {
+		this.extraInfo = extraInfo;
+	}
 
-    public void setExtraDateInfo(final Date extraDateInfo) {
-        this.extraDateInfo = extraDateInfo;
-    }
+	public Date getDateInfo() {
+		return dateInfo;
+	}
 
-    public Long getId() {
-        return id;
-    }
+	public void setDateInfo(final Date dateInfo) {
+		this.dateInfo = dateInfo;
+	}
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
+	public Date getExtraDateInfo() {
+		return extraDateInfo;
+	}
 
-    public User getCreatedBy() {
-        return createdBy;
-    }
+	public void setExtraDateInfo(final Date extraDateInfo) {
+		this.extraDateInfo = extraDateInfo;
+	}
 
-    public void setCreatedBy(final User createdBy) {
-        this.createdBy = createdBy;
-    }
+	public Long getId() {
+		return id;
+	}
 
-    public Date getCreatedDate() {
-        return createdDate;
-    }
+	public void setId(final Long id) {
+		this.id = id;
+	}
 
-    public void setCreatedDate(final Date createdDate) {
-        this.createdDate = createdDate;
-    }
+	public User getCreatedBy() {
+		return createdBy;
+	}
 
-    public User getLastModifiedBy() {
-        return lastModifiedBy;
-    }
+	public void setCreatedBy(final User createdBy) {
+		this.createdBy = createdBy;
+	}
 
-    public void setLastModifiedBy(final User lastModifiedBy) {
-        this.lastModifiedBy = lastModifiedBy;
-    }
+	public Date getCreatedDate() {
+		return createdDate;
+	}
 
-    public Date getLastModifiedDate() {
-        return lastModifiedDate;
-    }
+	public void setCreatedDate(final Date createdDate) {
+		this.createdDate = createdDate;
+	}
 
-    public void setLastModifiedDate(final Date lastModifiedDate) {
-        this.lastModifiedDate = lastModifiedDate;
-    }
+	public User getLastModifiedBy() {
+		return lastModifiedBy;
+	}
 
-    public Position getInitiatorPosition() {
-        return initiatorPosition;
-    }
+	public void setLastModifiedBy(final User lastModifiedBy) {
+		this.lastModifiedBy = lastModifiedBy;
+	}
 
-    public void setInitiatorPosition(Position initiatorPosition) {
-        this.initiatorPosition = initiatorPosition;
-    }
-    
-    public Task map() {
-        Task t=new Task();
-        t.setBusinessKey(this.getState().getType());
-        t.setComments(this.comments);
-        t.setCreatedDate(this.getCreatedDate());
-        t.setId(this.getId().toString());
-        t.setStatus(this.getValue());
-        t.setDescription(this.getNatureOfTask());
-        t.setDetails(this.extraInfo==null?"hello":this.extraInfo);
-        t.setSender(this.senderName);
-        t.setOwner(this.getOwnerPosition().getId().toString());
-        return t;
-        
-         
-     }
+	public Date getLastModifiedDate() {
+		return lastModifiedDate;
+	}
+
+	public void setLastModifiedDate(final Date lastModifiedDate) {
+		this.lastModifiedDate = lastModifiedDate;
+	}
+
+	public Position getInitiatorPosition() {
+		return initiatorPosition;
+	}
+
+	public void setInitiatorPosition(Position initiatorPosition) {
+		this.initiatorPosition = initiatorPosition;
+	}
+
+	public Task map() {
+		Task t = new Task();
+		t.setBusinessKey(this.getState().getType());
+		t.setComments(this.comments);
+		t.setCreatedDate(this.getCreatedDate());
+		t.setId(this.getId().toString());
+		t.setStatus(this.getValue());
+		t.setDescription(this.getNatureOfTask());
+		t.setDetails(this.extraInfo == null ? "hello" : this.extraInfo);
+		t.setSender(this.senderName);
+		t.setOwner(this.getOwnerPosition().getId().toString());
+		return t;
+
+	}
 
 	public String getTenantId() {
 		return tenantId;
@@ -297,7 +296,5 @@ public class StateHistory implements Serializable {
 	public void setTenantId(String tenantId) {
 		this.tenantId = tenantId;
 	}
-    
-    
 
 }
