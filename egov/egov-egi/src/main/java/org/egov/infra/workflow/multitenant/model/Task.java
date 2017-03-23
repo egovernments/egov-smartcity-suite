@@ -1,6 +1,5 @@
 package org.egov.infra.workflow.multitenant.model;
 
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -9,226 +8,214 @@ import org.egov.pims.commons.Position;
 
 public class Task {
 
-    private String id = null;
+	private String id = null;
 
-    private String type = null;
+	private String type = null;
 
-    private String description = null;
+	private String description = null;
 
-    private Date createdDate = null;
+	private Date createdDate = null;
 
-    private Date lastupdatedSince = null;
+	private Date lastupdatedSince = null;
 
-    private String owner = null;
-    
-    private String assignee = null;
+	private String owner = null;
 
-    private String module  = null;
+	private String assignee = null;
 
-    private String state = null;
+	private String module = null;
 
-    private String status = null;
+	private String state = null;
 
-    private String url = null;
+	private String status = null;
 
-    private String businessKey = null;
-    
-    private String action = null;
-    
-    private String sender;
-    
-  
-    private WorkflowEntity entity;
-    
-    private String comments;
-    
-    private String extraInfo;
-    
-    private String details;
-    
-    private Position ownerPosition;
-    
-    private String natureOfTask;
-    
-    
-    
-    private Map<String,Attribute> attributes = new HashMap<String,Attribute>();
+	private String url = null;
 
-    public Position getOwnerPosition() {
-        return ownerPosition;
-    }
+	private String businessKey = null;
 
-    public void setOwnerPosition(Position ownerPosition) {
-        this.ownerPosition = ownerPosition;
-    }
+	private String action = null;
 
-    public String getExtraInfo() {
-        return extraInfo;
-    }
+	private String sender;
 
-    public void setExtraInfo(String extraInfo) {
-        this.extraInfo = extraInfo;
-    }
+	private WorkflowEntity entity;
 
-    public String getComments() {
-        return comments;
-    }
+	private String comments;
 
-    public void setComments(String comments) {
-        this.comments = comments;
-    }
+	private String extraInfo;
 
-    public WorkflowEntity getEntity() {
-        return entity;
-    }
+	private String details;
 
-    public void setEntity(WorkflowEntity entity) {
-        this.entity = entity;
-    }
+	private Position ownerPosition;
 
-    public String getAction() {
-        return action;
-    }
+	private String natureOfTask;
 
-    public void setAction(String action) {
-        this.action = action;
-    }
+	private Map<String, Attribute> attributes = new HashMap<String, Attribute>();
 
-    public String getId() {
-        return id;
-    }
+	public Position getOwnerPosition() {
+		return ownerPosition;
+	}
 
-    public void setId(String id) {
-        this.id = id;
-    }
+	public void setOwnerPosition(Position ownerPosition) {
+		this.ownerPosition = ownerPosition;
+	}
 
-    public String getType() {
-        return type;
-    }
+	public String getExtraInfo() {
+		return extraInfo;
+	}
 
-    public void setType(String type) {
-        this.type = type;
-    }
+	public void setExtraInfo(String extraInfo) {
+		this.extraInfo = extraInfo;
+	}
 
-    public String getDescription() {
-        return description;
-    }
+	public String getComments() {
+		return comments;
+	}
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+	public void setComments(String comments) {
+		this.comments = comments;
+	}
 
-    public Date getCreatedDate() {
-        return createdDate;
-    }
+	public WorkflowEntity getEntity() {
+		return entity;
+	}
 
-    public void setCreatedDate(Date createdDate) {
-        this.createdDate = createdDate;
-    }
+	public void setEntity(WorkflowEntity entity) {
+		this.entity = entity;
+	}
 
-    public Date getLastupdatedSince() {
-        return lastupdatedSince;
-    }
+	public String getAction() {
+		return action;
+	}
 
-    public void setLastupdatedSince(Date lastupdatedSince) {
-        this.lastupdatedSince = lastupdatedSince;
-    }
+	public void setAction(String action) {
+		this.action = action;
+	}
 
-     
-    public String getOwner() {
-        return owner;
-    }
+	public String getId() {
+		return id;
+	}
 
-    public void setOwner(String owner) {
-        this.owner = owner;
-    }
+	public void setId(String id) {
+		this.id = id;
+	}
 
-    public String getModule() {
-        return module;
-    }
+	public String getType() {
+		return type;
+	}
 
-    public void setModule(String module) {
-        this.module = module;
-    }
+	public void setType(String type) {
+		this.type = type;
+	}
 
-    public String getState() {
-        return state;
-    }
+	public String getDescription() {
+		return description;
+	}
 
-    public void setState(String state) {
-        this.state = state;
-    }
+	public void setDescription(String description) {
+		this.description = description;
+	}
 
-    public String getStatus() {
-        return status;
-    }
+	public Date getCreatedDate() {
+		return createdDate;
+	}
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
+	public void setCreatedDate(Date createdDate) {
+		this.createdDate = createdDate;
+	}
 
-    public String getUrl() {
-        return url;
-    }
+	public Date getLastupdatedSince() {
+		return lastupdatedSince;
+	}
 
-    public void setUrl(String url) {
-        this.url = url;
-    }
+	public void setLastupdatedSince(Date lastupdatedSince) {
+		this.lastupdatedSince = lastupdatedSince;
+	}
 
-    public String getBusinessKey() {
-        return businessKey;
-    }
+	public String getOwner() {
+		return owner;
+	}
 
-    public void setBusinessKey(String businesskey) {
-        this.businessKey = businesskey;
-    }
+	public void setOwner(String owner) {
+		this.owner = owner;
+	}
 
+	public String getModule() {
+		return module;
+	}
 
-    public void setSender(String sender) {
-        this.sender = sender;
-    }
+	public void setModule(String module) {
+		this.module = module;
+	}
 
-    public String getSender() {
-        return sender;
-    }
+	public String getState() {
+		return state;
+	}
 
-    public String getNatureOfTask() {
-        return natureOfTask;
-    }
+	public void setState(String state) {
+		this.state = state;
+	}
 
-    public void setNatureOfTask(String natureOfTask) {
-        this.natureOfTask = natureOfTask;
-    }
+	public String getStatus() {
+		return status;
+	}
 
-    public String getDetails() {
-        return details;
-    }
+	public void setStatus(String status) {
+		this.status = status;
+	}
 
-    public void setDetails(String details) {
-        this.details = details;
-    }
+	public String getUrl() {
+		return url;
+	}
 
-    public String getAssignee() {
-        return assignee;
-    }
+	public void setUrl(String url) {
+		this.url = url;
+	}
 
-    public void setAssignee(String assignee) {
-        this.assignee = assignee;
-    }
+	public String getBusinessKey() {
+		return businessKey;
+	}
 
-    public Map<String, Attribute> getAttributes() {
-        return attributes;
-    }
+	public void setBusinessKey(String businesskey) {
+		this.businessKey = businesskey;
+	}
 
-    public void setAttributes(Map<String, Attribute> attributes) {
-        this.attributes = attributes;
-    }
+	public void setSender(String sender) {
+		this.sender = sender;
+	}
 
-   
+	public String getSender() {
+		return sender;
+	}
 
+	public String getNatureOfTask() {
+		return natureOfTask;
+	}
 
+	public void setNatureOfTask(String natureOfTask) {
+		this.natureOfTask = natureOfTask;
+	}
 
+	public String getDetails() {
+		return details;
+	}
 
+	public void setDetails(String details) {
+		this.details = details;
+	}
 
+	public String getAssignee() {
+		return assignee;
+	}
+
+	public void setAssignee(String assignee) {
+		this.assignee = assignee;
+	}
+
+	public Map<String, Attribute> getAttributes() {
+		return attributes;
+	}
+
+	public void setAttributes(Map<String, Attribute> attributes) {
+		this.attributes = attributes;
+	}
 
 }
