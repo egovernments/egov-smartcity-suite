@@ -186,8 +186,26 @@
 	
     <filter-mapping>
         <filter-name>ContextLifecycleFilter</filter-name>
+        <url-pattern>/egov-common-masters/*</url-pattern>
+        <url-pattern>/egov-filestore/*</url-pattern>
+        <url-pattern>/egov-localization/*</url-pattern>
+        <url-pattern>/egov-location/*</url-pattern>
+        <url-pattern>/egov-notification-mail/*</url-pattern>
+        <url-pattern>/egov-notification-sms/*</url-pattern>
+        <url-pattern>/egov-user/*</url-pattern>
         <url-pattern>/egf-masters/*</url-pattern>
+        <url-pattern>/demand-services/*</url-pattern>
+        <url-pattern>/asset-services/*</url-pattern>
+        <url-pattern>/egov-workflows/*</url-pattern>
+        <url-pattern>/hr-attendance/*</url-pattern>
+        <url-pattern>/hr-employee/*</url-pattern>
+        <url-pattern>/hr-employee-indexer/*</url-pattern>
+        <url-pattern>/hr-employee-search-indexer/*</url-pattern>
+        <url-pattern>/hr-leave/*</url-pattern>
         <url-pattern>/hr-masters/*</url-pattern>
+        <url-pattern>/hr-web/*</url-pattern>
+        <url-pattern>/lams-services/*</url-pattern>
+        <url-pattern>/lams-web/*</url-pattern>
     </filter-mapping>
 
 	<!-- Filter Mapping Ends -->
@@ -217,8 +235,26 @@
 
     <servlet-mapping>
         <servlet-name>ZuulServlet</servlet-name>
+        <url-pattern>/egov-common-masters/*</url-pattern>
+        <url-pattern>/egov-filestore/*</url-pattern>
+        <url-pattern>/egov-localization/*</url-pattern>
+        <url-pattern>/egov-location/*</url-pattern>
+        <url-pattern>/egov-notification-mail/*</url-pattern>
+        <url-pattern>/egov-notification-sms/*</url-pattern>
+        <url-pattern>/egov-user/*</url-pattern>
         <url-pattern>/egf-masters/*</url-pattern>
+        <url-pattern>/demand-services/*</url-pattern>
+        <url-pattern>/asset-services/*</url-pattern>
+        <url-pattern>/egov-workflows/*</url-pattern>
+        <url-pattern>/hr-attendance/*</url-pattern>
+        <url-pattern>/hr-employee/*</url-pattern>
+        <url-pattern>/hr-employee-indexer/*</url-pattern>
+        <url-pattern>/hr-employee-search-indexer/*</url-pattern>
+        <url-pattern>/hr-leave/*</url-pattern>
         <url-pattern>/hr-masters/*</url-pattern>
+        <url-pattern>/hr-web/*</url-pattern>
+        <url-pattern>/lams-services/*</url-pattern>
+        <url-pattern>/lams-web/*</url-pattern>
 	</servlet-mapping>
 	
     <!-- Servlet Declaration Ends -->  
