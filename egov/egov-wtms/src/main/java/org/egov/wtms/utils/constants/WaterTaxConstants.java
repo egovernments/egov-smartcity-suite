@@ -388,4 +388,5 @@ public class WaterTaxConstants {
     public static final String IS_NONMETEREDDONATIONAMOUNT_MANUAL="IS_NONMETEREDDONATIONAMOUNT_MANUAL";
     
     public static final String INPROGRESS = "INPROGRESS";
+    public static final String APPLICATIONINITIATORROLE = "APPLICATIONINITIATORROLE";
 }
