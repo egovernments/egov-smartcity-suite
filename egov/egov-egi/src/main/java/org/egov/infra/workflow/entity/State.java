@@ -315,7 +315,7 @@ public class State extends AbstractAuditable {
         t.setId(this.id.toString());
         t.setStatus(this.value);
         t.setNatureOfTask(this.natureOfTask);
-        t.setDetails(this.extraInfo==null?"hello":this.extraInfo);
+        t.setDetails(this.extraInfo==null?"":this.extraInfo);
         t.setSender(this.senderName);
         t.setUrl(this.myLinkId);  
         return t;
