@@ -69,7 +69,9 @@ import org.egov.commons.entity.Source;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.eis.service.EisCommonService;
 import org.egov.eis.web.contract.WorkflowContainer;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
@@ -175,6 +177,9 @@ public class MarriageRegistrationService {
 
     @Autowired
     private SecurityUtils securityUtils;
+    
+    @Autowired
+    private AppConfigValueService appConfigValuesService;
     
     @Autowired
     @Qualifier("parentMessageSource")
@@ -785,9 +790,9 @@ public class MarriageRegistrationService {
     public Date calculateDueDateForMrgReg() {
         Date dueDate;
         final Date currentDate = new Date();
-        final String slaNewAdvertisement = marriageMessageSource.getMessage("msg.new.marriage.registration.sla",
-                new String[] {}, Locale.getDefault());
-        dueDate = org.apache.commons.lang3.time.DateUtils.addDays(currentDate, Integer.parseInt(slaNewAdvertisement));
+        final AppConfigValues marriageSla = getSlaAppConfigValuesForMarriageReg(
+                MarriageConstants.MODULE_NAME, MarriageConstants.SLAFORMARRIAGEREGISTRATION);
+        dueDate = org.apache.commons.lang3.time.DateUtils.addDays(currentDate, Integer.parseInt(marriageSla.getValue()));
         return dueDate;
 
     }
@@ -795,11 +800,15 @@ public class MarriageRegistrationService {
     public Date calculateDueDateForMrgReIssue() {
         Date dueDate;
         final Date currentDate = new Date();
-        final String slaNewAdvertisement = marriageMessageSource.getMessage("msg.marriage.reissue.certificate.sla",
-                new String[] {}, Locale.getDefault());
-        dueDate = org.apache.commons.lang3.time.DateUtils.addDays(currentDate, Integer.parseInt(slaNewAdvertisement));
+        final AppConfigValues reissuemarriageSla = getSlaAppConfigValuesForMarriageReg(
+                MarriageConstants.MODULE_NAME, MarriageConstants.SLAFORMARRIAGEREISSUE);
+        dueDate = org.apache.commons.lang3.time.DateUtils.addDays(currentDate, Integer.parseInt(reissuemarriageSla.getValue()));
         return dueDate;
 
+    }
+    public AppConfigValues getSlaAppConfigValuesForMarriageReg(final String moduleName, final String keyName) {
+        final List<AppConfigValues> appConfigValues = appConfigValuesService.getConfigValuesByModuleAndKey(moduleName, keyName);
+        return !appConfigValues.isEmpty() ? appConfigValues.get(0) : null;
     }
 
 }
