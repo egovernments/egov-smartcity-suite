@@ -50,9 +50,10 @@ public class UserInfo {
     private final String emailId;
     private final String mobileNumber;
     private final String type;
+    private final String tenantId;
 
     public UserInfo(final List<Role> roles, final Long id, final String userName, final String name, final String emailId,
-            final String mobileNumber, final String type) {
+            final String mobileNumber, final String type, final String tenantId) {
         super();
         this.roles = roles;
         this.id = id;
@@ -61,6 +62,7 @@ public class UserInfo {
         this.emailId = emailId;
         this.mobileNumber = mobileNumber;
         this.type = type;
+        this.tenantId = tenantId;
     }
 
     public List<Role> getRoles() {
@@ -89,6 +91,10 @@ public class UserInfo {
 
     public String getType() {
         return type;
+    }
+
+    public String getTenantId() {
+        return tenantId;
     }
 
 }
