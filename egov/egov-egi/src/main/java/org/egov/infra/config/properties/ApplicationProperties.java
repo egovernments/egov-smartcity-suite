@@ -40,25 +40,25 @@
 
 package org.egov.infra.config.properties;
 
+import static java.lang.String.format;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.springframework.core.Ordered.LOWEST_PRECEDENCE;
+
+import java.util.Arrays;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
 
-import java.util.Arrays;
-import java.util.List;
-
-import static java.lang.String.format;
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.springframework.core.Ordered.LOWEST_PRECEDENCE;
-
 @Configuration
 @PropertySource(value = {
         "classpath:config/application-config.properties",
         "classpath:config/egov-erp-${user.name}.properties",
         "classpath:config/application-config-${client.id}.properties",
-        "classpath:config/egov-erp-override.properties"}, ignoreResourceNotFound = true)
+        "classpath:config/egov-erp-override.properties" }, ignoreResourceNotFound = true)
 @Order(LOWEST_PRECEDENCE)
 public class ApplicationProperties {
 

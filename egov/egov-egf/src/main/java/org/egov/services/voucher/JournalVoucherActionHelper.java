@@ -212,14 +212,12 @@ public class JournalVoucherActionHelper {
         } else if (FinancialConstants.BUTTONAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
             final WorkFlowMatrix wfmatrix = voucherHeaderWorkflowService.getWfMatrix(voucherHeader.getStateType(), null,
                     null, null, voucherHeader.getCurrentState().getValue(), null);
-            voucherHeader.transition().progressWithStateCopy().withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
+            voucherHeader.transition().end().withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
                     .withStateValue(wfmatrix.getCurrentDesignation() + " Approved").withDateInfo(currentDate.toDate())
                     .withOwner(pos)
                     .withNextAction(wfmatrix.getNextAction());
 
             voucherHeader.setStatus(FinancialConstants.CREATEDVOUCHERSTATUS);
-            voucherHeader.transition().end().withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
-                    .withDateInfo(currentDate.toDate());
         } else if (FinancialConstants.BUTTONCANCEL.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
             voucherHeader.setStatus(FinancialConstants.CANCELLEDVOUCHERSTATUS);
             voucherHeader.transition().end().withStateValue(FinancialConstants.WORKFLOW_STATE_CANCELLED)

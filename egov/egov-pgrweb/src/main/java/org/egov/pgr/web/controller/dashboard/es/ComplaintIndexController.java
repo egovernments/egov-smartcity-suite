@@ -209,6 +209,29 @@ public class ComplaintIndexController {
             complaintRequest.setSortDirection("DESC");
         if (complaintRequest.getSize() == 0)
             complaintRequest.setSize(10000);
-        return complaintIndexService.getFilteredComplaints(complaintRequest, fieldName, fieldValue);
+        return complaintIndexService.getFilteredComplaints(complaintRequest, fieldName, fieldValue, null, null);
+    }
+    
+    /**
+     * This is a common api where a fieldName, lowerLimit and upperLimit will be accepted additionally to return matching
+     * complaints with existing filters for the SLA dashboard
+     * @param complaintRequest
+     * @param fieldName
+     * @param lowerLimit
+     * @param upperLimit
+     * @return list
+     */
+    @RequestMapping(value = "/slaComplaints", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<ComplaintIndex> getFilteredComplaintsForSLASlabs(@RequestBody final ComplaintDashBoardRequest complaintRequest,
+            @RequestParam final String fieldName, @RequestParam final Integer lowerLimit,
+            @RequestParam final Integer upperLimit) {
+        if (StringUtils.isEmpty(complaintRequest.getSortField()))
+            complaintRequest.setSortField("createdDate");
+        if (StringUtils.isEmpty(complaintRequest.getSortDirection()))
+            complaintRequest.setSortDirection("DESC");
+        if (complaintRequest.getSize() == 0)
+            complaintRequest.setSize(10000);
+        return complaintIndexService.getFilteredComplaints(complaintRequest, fieldName, StringUtils.EMPTY, lowerLimit,
+                upperLimit);
     }
 }

@@ -139,9 +139,9 @@
 							</form:select>
 						</div>
 						<div class="col-md-3 add-margin">
-							<form:select name="receivingCenter" path="" data-first-option="false" cssClass="form-control" >
+							<form:select name="receivingMode" path="" data-first-option="false" cssClass="form-control" >
 								<form:option value=""><spring:message code="lbl.receivingmode" /></form:option>
-								<form:options items="${complaintReceivingModes}"  />  
+								<form:options items="${complaintReceivingModes}"  itemValue="code" itemLabel="name"/>
 							</form:select>
 						</div>
 					</div>

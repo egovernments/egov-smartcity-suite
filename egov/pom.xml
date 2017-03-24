@@ -284,6 +284,7 @@
         <module>egov-stmsweb</module>
 	     <module>egov-mrs</module>
         <module>egov-mrsweb</module>
+        <module>egov-services</module>
     </modules>
 
     <dependencyManagement>
@@ -1194,6 +1195,13 @@
         </dependency>
         <!-- DATABASE END -->
 
+		<!-- https://mvnrepository.com/artifact/com.netflix.zuul/zuul-core -->
+		<dependency>
+		    <groupId>com.netflix.zuul</groupId>
+		    <artifactId>zuul-core</artifactId>
+		    <version>1.3.0</version>
+		</dependency>
+		
     </dependencies>
 
     <build>

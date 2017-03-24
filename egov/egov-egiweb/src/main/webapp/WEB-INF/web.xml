@@ -122,7 +122,6 @@
 	    <filter-name>springSessionRepositoryFilter</filter-name>
 	    <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
 	</filter>
-
 	<!-- Filter Declaration Ends -->
 
 	<!-- Filter Mapping Starts -->
@@ -183,19 +182,20 @@
 		<filter-name>mdcLoggingFilter</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
-
+	
 	<!-- Filter Mapping Ends -->
 
 	<!-- Listeners Starts -->
+
 	<listener>
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
 	</listener>
-
+	
 	<listener>
 		<listener-class>org.springframework.security.web.session.HttpSessionEventPublisher</listener-class>
 	</listener>
-	<!-- Listeners Ends -->
 	
+	<!-- Listeners Ends -->
 	
 	<!-- Servlet Declaration Starts -->
     <servlet>

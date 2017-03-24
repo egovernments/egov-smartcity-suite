@@ -74,8 +74,7 @@ public class ViewDCBController {
         licenseObj = tradeLicenseService.getLicenseById(id);
         model.addAttribute(LICENSE, licenseObj);
         model.addAttribute("dcbreport",
-                toJSON(dCBReportService.generateReportResult(licenseObj.getLicenseNumber(), defaultString(LICENSE),
-                        defaultString(LICENSE)), DCBReportResult.class, DCBReportResponseAdaptor.class));
+                toJSON(dCBReportService.generateReportResult(licenseObj.getLicenseNumber(), defaultString(LICENSE)), DCBReportResult.class, DCBReportResponseAdaptor.class));
 
         return "view-license-dcb";
     }

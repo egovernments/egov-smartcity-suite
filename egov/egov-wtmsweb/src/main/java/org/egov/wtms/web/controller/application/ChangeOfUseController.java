@@ -65,6 +65,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import javax.validation.ValidationException;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -122,7 +124,13 @@ public class ChangeOfUseController extends GenericConnectionController {
             final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
             final HttpServletRequest request, final Model model, @RequestParam final String workFlowAction,
             final BindingResult errors) {
-
+        final Boolean isCSCOperator = waterTaxUtils.isCSCoperator(securityUtils.getCurrentUser());
+        if (!isCSCOperator) {
+            final Boolean isJuniorAsstOrSeniorAsst = waterTaxUtils
+                    .isLoggedInUserJuniorOrSeniorAssistant(securityUtils.getCurrentUser().getId());
+            if (!isJuniorAsstOrSeniorAsst)
+                throw new ValidationException("err.creator.application");
+        }
         final List<ApplicationDocuments> applicationDocs = new ArrayList<ApplicationDocuments>();
         final WaterConnectionDetails connectionUnderChange = waterConnectionDetailsService
                 .findByConsumerCodeAndConnectionStatus(changeOfUse.getConnection().getConsumerCode(),

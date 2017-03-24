@@ -892,11 +892,7 @@ public class DirectBankPaymentAction extends BasePaymentAction {
         if (FinancialConstants.BUTTONCANCEL.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
             addActionMessage(getText("payment.voucher.cancelled"));
         else if (FinancialConstants.BUTTONAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
-            if ("Closed".equals(paymentheader.getState().getValue()))
                 addActionMessage(getText("payment.voucher.final.approval"));
-            else
-                addActionMessage(getText("payment.voucher.approved", new String[] {
-                        paymentService.getEmployeeNameForPositionId(paymentheader.getState().getOwnerPosition()) }));
             setAction(workflowBean.getWorkFlowAction());
 
         }

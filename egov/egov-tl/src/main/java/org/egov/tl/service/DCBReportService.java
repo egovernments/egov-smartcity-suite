@@ -39,7 +39,6 @@
  */
 package org.egov.tl.service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -58,42 +57,29 @@ public class DCBReportService {
     @PersistenceContext
     private EntityManager entityManager;
 
-    public SQLQuery prepareQuery(final String licensenumber, final String mode,
-            final String reportType) {
-        StringBuilder query = new StringBuilder();
+    private SQLQuery prepareQuery(final String licensenumber, final String mode) {
         final StringBuilder selectQry1 = new StringBuilder();
-        final StringBuilder selectQry2 = new StringBuilder();
-        StringBuilder fromQry = new StringBuilder();
+        StringBuilder fromQry;
         StringBuilder whereQry = new StringBuilder();
-        selectQry2
-                .append("  cast(arr_demand as bigint) AS arr_demand,cast(curr_demand as bigint) AS curr_demand,cast(arr_coll as bigint) AS arr_coll,cast(curr_coll as bigint) AS curr_coll,"
-                        + "cast(arr_balance as bigint) AS arr_balance,cast(curr_balance as bigint) AS curr_balance ");
+        final StringBuilder selectQry2 = new StringBuilder("  cast(arr_demand as bigint) AS arr_demand,cast(curr_demand as bigint) AS curr_demand,cast(arr_coll as bigint) AS arr_coll,cast(curr_coll as bigint) AS curr_coll,"
+                + "cast(arr_balance as bigint) AS arr_balance,cast(curr_balance as bigint) AS curr_balance ");
         fromQry = new StringBuilder(" from egtl_mv_dcb_view dcbinfo,eg_boundary boundary ");
 
-        if (mode.equalsIgnoreCase("license")) {
+        if ("license".equalsIgnoreCase(mode)) {
             selectQry1
                     .append("select distinct dcbinfo.licenseNumber as licenseNumber ,cast(dcbinfo.licenseId as integer) as licenseid,dcbinfo.username as \"username\", ");
             fromQry = new StringBuilder(" from egtl_mv_dcb_view dcbinfo ");
             if (licensenumber != null && !"".equals(licensenumber))
                 whereQry = whereQry.append(" where  dcbinfo.licenseNumber = '" + licensenumber.toUpperCase() + "'");
-            if (licensenumber != null && !"".equals(licensenumber))
-                whereQry.append(" and ");
-            else
-                whereQry.append(" where ");
-            whereQry.append(" dcbinfo.licenseNumber is not null  ");
         }
 
-        query = selectQry1.append(selectQry2).append(fromQry).append(whereQry);
-        final SQLQuery finalQuery = entityManager.unwrap(Session.class).createSQLQuery(query.toString());
-        return finalQuery;
+        StringBuilder query = selectQry1.append(selectQry2).append(fromQry).append(whereQry);
+        return entityManager.unwrap(Session.class).createSQLQuery(query.toString());
     }
 
-    public List<DCBReportResult> generateReportResult(final String licensenumber, final String mode,
-            final String reportType) {
-        List<DCBReportResult> resultList = new ArrayList<DCBReportResult>();
-        final SQLQuery finalQuery = prepareQuery(licensenumber, mode, reportType);
+    public List<DCBReportResult> generateReportResult(final String licensenumber, final String mode) {
+        final SQLQuery finalQuery = prepareQuery(licensenumber, mode);
         finalQuery.setResultTransformer(new AliasToBeanResultTransformer(DCBReportResult.class));
-        resultList = finalQuery.list();
-        return resultList;
+        return finalQuery.list();
     }
 }

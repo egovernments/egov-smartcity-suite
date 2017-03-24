@@ -53,6 +53,11 @@
 				<security:filter-chain pattern="/resources/**" filters="none" />
 				<security:filter-chain pattern="/error/**" filters="none" />
 				<security:filter-chain pattern="/index.jsp" filters="none" />
+				<security:filter-chain pattern="/javascript/**" filters="none" /> 
+				<security:filter-chain pattern="/reports/**" filters="none" /> 
+				<security:filter-chain pattern="/timeseriesreports/**" filters="none" /> 
+				<security:filter-chain pattern="/application/view/" filters="none" /> 
+				<security:filter-chain pattern="/ajax/getposition" filters="none" /> 
 				<security:filter-chain pattern="/**"  filters="concurrentSessionFilter,securityContextPersistenceFilter,logoutFilter,authenticationProcessingFilter,securityContextHolderAwareRequestFilter,rememberMeAuthenticationFilter,anonymousAuthenticationFilter,exceptionTranslationFilter,filterSecurityInterceptor" />
 			</list>
 		</constructor-arg>

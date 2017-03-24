@@ -764,7 +764,7 @@ public abstract class AbstractLicenseService<T extends License> {
         for (final EgDemandDetails demandDetail : licenseDemand.getEgDemandDetails())
             if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster().equals(LICENSE_FEE_TYPE)
                     && licenseDemand.getEgInstallmentMaster().equals(demandDetail.getEgDemandReason().getEgInstallmentMaster()))
-                licenseFee = licenseFee.add(demandDetail.getAmount());
+                licenseFee = licenseFee.add(demandDetail.getAmtCollected());
         return licenseFee;
     }
 

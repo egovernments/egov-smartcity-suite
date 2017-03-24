@@ -568,8 +568,8 @@ public class CouncilMeetingController {
         reportOutput = councilReportService.generatePDFForAgendaDetails(councilMeeting, logoPath);
 
         final HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.parseMediaType("application/pdf"));
-        headers.add("content-disposition", "inline;filename=AgendaNotice.pdf");
+        headers.setContentType(MediaType.parseMediaType(APPLICATION_RTF));
+        headers.add("content-disposition", "inline;filename=meetingdetails.rtf");
         return new ResponseEntity<byte[]>(reportOutput, headers, HttpStatus.CREATED);
 
     }
