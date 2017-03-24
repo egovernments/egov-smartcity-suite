@@ -144,18 +144,20 @@ public class InboxRenderServiceDeligate<T extends StateAware> {
 		StateHistoryModel sh;
 		for (final Object[] element : result) {
 			sh = new StateHistoryModel();
-			sh.setStateId(Long.valueOf(element[0].toString()));
-			sh.setStateType(element[1].toString());
-			try {
-				sh.setLastModifiedDate(new SimpleDateFormat("yyyy-MM-dd").parse(element[2].toString()));
-			} catch (ParseException e) {
-				e.printStackTrace();
+			sh.setStateId(Long.valueOf(element[0] != null ? element[0].toString() : "0"));
+			sh.setStateType(element[1] != null ? element[1].toString() : "");
+			if (element[2] != null) {
+				try {
+					sh.setLastModifiedDate(new SimpleDateFormat("yyyy-MM-dd").parse(element[2].toString()));
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
 			}
-			sh.setSenderName(element[3].toString());
-			sh.setNatureOfTask(element[4].toString());
-			sh.setValue(element[5].toString());
-			sh.setNextAction(element[6].toString());
-			sh.setComments(element[7].toString());
+			sh.setSenderName(element[3] != null ? element[3].toString() : "");
+			sh.setNatureOfTask(element[4] != null ? element[4].toString() : "");
+			sh.setValue(element[5] != null ? element[5].toString() : "");
+			sh.setNextAction(element[6] != null ? element[6].toString() : "");
+			sh.setComments(element[7] != null ? element[7].toString() : "");
 			history.add(sh);
 		}
 		return history;
