@@ -350,7 +350,7 @@ public class CouncilMeetingController {
         return new StringBuilder("{ \"success\":true }").toString();
     }
 
-    @RequestMapping(value = "/generateresolution/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/generateresolution/{id}", method = RequestMethod.POST)
     public String viewDemandNoticeReport(@PathVariable final Long id,
             final Model model, final HttpSession session, HttpServletRequest request) {
 

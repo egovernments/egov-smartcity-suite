@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.3.0.final using JasperReports Library version 6.3.0  -->
-<!-- 2017-03-21T13:47:31 -->
+<!-- 2017-03-23T21:50:01 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="meetingMom" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="cee583e3-a0f8-4d29-92e7-b2c0afa5f324">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="16"/>
@@ -16,7 +16,7 @@
 	<field name="meetingMOMList" class="java.util.List"/>
 	<field name="meetingAttendenceList" class="java.util.List"/>
 	<title>
-		<band height="191">
+		<band height="191" splitType="Stretch">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="100" y="13" width="455" height="33" uuid="c62d110f-2237-4e88-a1b5-0d9f40bc358a"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
