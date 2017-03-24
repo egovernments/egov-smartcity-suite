@@ -52,7 +52,7 @@
                 <form:form role="form" modelAttribute="feeMatrix" id="feematrix-new" name="feematrix-new"
                            cssClass="form-horizontal form-groups-bordered" method="post">
                     <spring:hasBindErrors name="feeMatrix">
-                        <form:errors path="natureOfBusiness" cssClass="error-msg add-margin"/><br/>
+                        <form:errors path="" cssClass="error-msg add-margin"/><br/>
                     </spring:hasBindErrors>
                     <div class="form-group">
                         <label class="col-sm-3 control-label">
@@ -160,7 +160,7 @@
                             <spring:message code="lbl.effective.to"/><span class="mandatory"></span>
                         </label>
                         <div class="col-sm-3 add-margin">
-                            <form:input id="effectiveTo" path="effectiveTo" class="form-control text-left" maxlength="10" disabled="true"/>
+                            <form:input id="effectiveTo" path="effectiveTo" class="datepicker form-control text-left" maxlength="10" />
                         </div>
                     </div>
                     <div class="panel-heading">
