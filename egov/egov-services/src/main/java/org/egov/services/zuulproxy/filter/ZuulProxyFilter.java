@@ -52,6 +52,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.config.security.authentication.SecureUser;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.services.config.properties.ServicesApplicationProperties;
@@ -165,7 +166,8 @@ public class ZuulProxyFilter extends ZuulFilter {
             userDetails.getUser().getRoles().forEach(authority -> roles.add(new Role(authority.getName())));
 
             final UserInfo userInfo = new UserInfo(roles, userDetails.getUserId(), userDetails.getUsername(), user.getName(),
-                    user.getEmailId(), user.getMobileNumber(), userDetails.getUserType().toString());
+                    user.getEmailId(), user.getMobileNumber(), userDetails.getUserType().toString(),
+                    ApplicationThreadLocals.getCityName());
             final ObjectMapper mapper = new ObjectMapper();
             try {
                 userInfoJson = mapper.writeValueAsString(userInfo);
