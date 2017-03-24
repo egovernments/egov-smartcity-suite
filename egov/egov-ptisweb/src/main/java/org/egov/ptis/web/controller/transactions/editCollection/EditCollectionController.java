@@ -232,6 +232,9 @@ public class EditCollectionController {
                                 "revised.collection.greater.than.reviseddemand");
                         errors.rejectValue("demandDetailBeans[" + i + "].revisedCollection",
                                 "revised.demand.less.than.revisedcollection");
+                    } else if (dd.getRevisedCollection().compareTo(dd.getRevisedAmount()) < 0) {
+                        errors.rejectValue("demandDetailBeans[" + i + "].revisedCollection",
+                                "error.penalty.not.collected");
                     }
                     editingCollection = Boolean.TRUE;
                     totalRevisedCollection = totalRevisedCollection.add(dd.getRevisedCollection());
@@ -240,12 +243,19 @@ public class EditCollectionController {
                     if (dd.getActualCollection().compareTo(dd.getRevisedAmount()) > 0) {
                         errors.rejectValue("demandDetailBeans[" + i + "].revisedAmount",
                                 "actual.collection.greater.than.reviseddemand");
+                    } else if (dd.getRevisedCollection().compareTo(dd.getRevisedAmount()) < 0
+                            || dd.getActualCollection().compareTo(dd.getRevisedAmount()) < 0) {
+                        errors.rejectValue("demandDetailBeans[" + i + "].revisedCollection",
+                                "error.penalty.not.collected");
                     }
                     editingCollection = Boolean.TRUE;
                 } else if (dd.getRevisedCollection() != null) {
                     if (dd.getRevisedCollection().compareTo(dd.getActualAmount()) > 0) {
                         errors.rejectValue("demandDetailBeans[" + i + "].revisedCollection",
                                 "revised.collection.greater.than.actualdemand");
+                    } else if (dd.getRevisedCollection().compareTo(dd.getActualAmount()) < 0) {
+                        errors.rejectValue("demandDetailBeans[" + i + "].revisedCollection",
+                                "error.penalty.not.collected");
                     }
                     editingCollection = Boolean.TRUE;
                     totalRevisedCollection = totalRevisedCollection.add(dd.getRevisedCollection());
