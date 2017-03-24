@@ -53,7 +53,6 @@ import org.egov.pgr.entity.ComplaintStatus;
 import org.egov.pgr.entity.ComplaintType;
 import org.egov.pgr.service.ComplaintService;
 import org.egov.pgr.service.ComplaintStatusMappingService;
-import org.egov.pgr.service.ComplaintStatusService;
 import org.egov.pgr.service.ComplaintTypeService;
 import org.egov.pgr.web.controller.AbstractContextControllerTest;
 import org.junit.Before;
@@ -65,7 +64,6 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.SmartValidator;
 import org.springframework.web.util.NestedServletException;
 
 import java.lang.reflect.Field;
@@ -86,62 +84,46 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class ComplaintUpdationControllerTest extends AbstractContextControllerTest<ComplaintUpdationController> {
     @Mock
+    ComplaintStatusMappingService complaintStatusMappingService;
+    @Mock
+    ComplaintTypeService complaintTypeService;
+    @Mock
+    Complaint complaint1;
+    @Mock
+    BindingResult errors;
+    @Mock
+    UserService userService;
+    @Mock
+    User user;
+    @Mock
+    SecurityUtils securityUtils;
+    @Mock
     private Complaint complaint;
     @Mock
     private ComplaintService complaintService;
     @Mock
     private BoundaryService boundaryService;
-
-    @Mock
-    private ComplaintStatusService complaintStatusService;
-
-    @Mock
-    ComplaintStatusMappingService complaintStatusMappingService;
-
-    @Mock
-    private SmartValidator smartValidator;
-
     @Autowired
     private ResourceBundleMessageSource messageSource;
-    
     @Mock
     private DepartmentService departmentService;
-
     private MockMvc mockMvc;
-    @Mock
-    ComplaintTypeService complaintTypeService;
-
     private Long id;
     private ComplaintType complaintType;
-
-    @Mock
-    Complaint complaint1;
-
-    @Mock
-    BindingResult errors;
-
-    @Mock
-    UserService userService;
-
-    @Mock
-    User user;
-    
-    @Mock
-    SecurityUtils securityUtils;
 
     @Override
     protected ComplaintUpdationController initController() {
         initMocks(this);
 
         final ComplaintUpdationController complaintUpdationController = new ComplaintUpdationController(complaintService,
-                complaintTypeService, complaintStatusMappingService, smartValidator);
+                complaintTypeService, complaintStatusMappingService);
         // when(complaintUpdationController.getStatus()).thenReturn(value,
         // values);
         try {
             Field msgSrc = complaintUpdationController.getClass().getDeclaredField("messageSource");
             Field secuUtil = complaintUpdationController.getClass().getDeclaredField("securityUtils");
-            Field deptService = complaintUpdationController.getClass().getDeclaredField("departmentService"); 
-            Field bndryService = complaintUpdationController.getClass().getDeclaredField("boundaryService"); 
+            Field deptService = complaintUpdationController.getClass().getDeclaredField("departmentService");
+            Field bndryService = complaintUpdationController.getClass().getDeclaredField("boundaryService");
             deptService.setAccessible(true);
             bndryService.setAccessible(true);
             msgSrc.setAccessible(true);
@@ -150,7 +132,7 @@ public class ComplaintUpdationControllerTest extends AbstractContextControllerTe
             secuUtil.set(complaintUpdationController, securityUtils);
             deptService.set(complaintUpdationController, departmentService);
             bndryService.set(complaintUpdationController, boundaryService);
-        } catch (NoSuchFieldException | SecurityException  | IllegalAccessException e) {
+        } catch (NoSuchFieldException | SecurityException | IllegalAccessException e) {
         }
         return complaintUpdationController;
     }
