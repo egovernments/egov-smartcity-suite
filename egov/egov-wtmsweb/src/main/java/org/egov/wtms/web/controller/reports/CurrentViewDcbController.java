@@ -42,11 +42,13 @@ package org.egov.wtms.web.controller.reports;
 
 import static org.egov.demand.model.EgdmCollectedReceipt.RCPT_CANCEL_STATUS;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERCHARGES_CONSUMERCODE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAXREASONCODE;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -54,9 +56,12 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.egov.commons.Installment;
 import org.egov.dcb.bean.DCBDisplayInfo;
+import org.egov.dcb.bean.DCBRecord;
 import org.egov.dcb.bean.DCBReport;
 import org.egov.dcb.bean.Receipt;
 import org.egov.dcb.service.DCBService;
+import org.egov.demand.model.EgDemand;
+import org.egov.demand.model.EgDemandDetails;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
@@ -123,28 +128,29 @@ public class CurrentViewDcbController {
 
     @ModelAttribute
     public WaterConnectionDetails getWaterConnectionDetails(@PathVariable final String applicationCode) {
-        final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
+        return waterConnectionDetailsService
                 .findByConsumerCodeAndConnectionStatus(applicationCode, ConnectionStatus.ACTIVE);
-        return waterConnectionDetails;
     }
 
     @Autowired
-    public @ModelAttribute("connectionTypes") Map<String, String> connectionTypes() {
+    @ModelAttribute("connectionTypes")
+    public Map<String, String> connectionTypes() {
         return waterConnectionDetailsService.getConnectionTypesMap();
     }
 
     @RequestMapping(value = "/showMigData/{consumerNumber}/{applicationCode}", method = RequestMethod.GET)
     public String showMigData(final Model model, @PathVariable final String consumerNumber,
             @PathVariable final String applicationCode, final HttpServletRequest request) throws ParseException {
-        List<WaterChargesReceiptInfo> waterChargesReceiptInfo = new ArrayList<WaterChargesReceiptInfo>(0);
-        List<WaterChargesReceiptInfo> waterChargesReceiptInfoList = new ArrayList<WaterChargesReceiptInfo>(0);
+        List<WaterChargesReceiptInfo> waterChargesReceiptInfo;
+        List<WaterChargesReceiptInfo> waterChargesReceiptInfoList;
         final SQLQuery query = currentDcbService.getMigratedReceipttDetails(consumerNumber);
         waterChargesReceiptInfo = query.list();
-        WaterConnectionDetails waterConnectionDetails = null;
-        waterConnectionDetails = waterConnectionDetailsService.findByOldConsumerNumberAndConnectionStatus(consumerNumber,ConnectionStatus.ACTIVE);
-        if (waterConnectionDetails == null) {
-            waterConnectionDetails = waterConnectionDetailsService.findByConsumerCodeAndConnectionStatus(consumerNumber,ConnectionStatus.ACTIVE);
-        }
+        WaterConnectionDetails waterConnectionDetails;
+        waterConnectionDetails = waterConnectionDetailsService.findByOldConsumerNumberAndConnectionStatus(consumerNumber,
+                ConnectionStatus.ACTIVE);
+        if (waterConnectionDetails == null)
+            waterConnectionDetails = waterConnectionDetailsService.findByConsumerCodeAndConnectionStatus(consumerNumber,
+                    ConnectionStatus.ACTIVE);
         final SQLQuery sqlQuery = currentDcbService.getMigratedReceiptDetails(waterConnectionDetails.getId());
         waterChargesReceiptInfoList = sqlQuery.list();
         waterChargesReceiptInfoList.addAll(waterChargesReceiptInfo);
@@ -158,9 +164,11 @@ public class CurrentViewDcbController {
             final HttpServletRequest request) {
         final WaterConnectionDetails waterConnectionDetails = getWaterConnectionDetails(applicationCode);
 
-        List<Receipt> cancelRcpt = new ArrayList<Receipt>();
-        List<Receipt> activeRcpts = new ArrayList<Receipt>();
+        List<Receipt> cancelRcpt;
+        List<Receipt> activeRcpts;
         DCBReport dCBReport = new DCBReport();
+        final Map<Installment, DCBRecord> finalResultMap = new HashMap<>();
+        final List<String> installmentList = new ArrayList<>();
 
         model.addAttribute(WATERCHARGES_CONSUMERCODE, waterConnectionDetails.getApplicationNumber());
 
@@ -177,6 +185,17 @@ public class CurrentViewDcbController {
             waterConnectionBillable.setAssessmentDetails(assessmentDetails);
             dcbService.setBillable(waterConnectionBillable);
             dCBReport = dcbService.getCurrentDCBAndReceipts(dcbDispInfo);
+
+            final EgDemand demand = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
+            for (final EgDemandDetails demandDetails : demand.getEgDemandDetails())
+                if (WATERTAXREASONCODE.equals(demandDetails.getEgDemandReason().getEgDemandReasonMaster().getCode()))
+                    installmentList.add(demandDetails.getEgDemandReason().getEgInstallmentMaster().getDescription());
+            for (final String installment : installmentList)
+                for (final Map.Entry<Installment, DCBRecord> dcbMap : dCBReport.getRecords().entrySet())
+                    if (installment.equals(dcbMap.getKey().getDescription()))
+                        finalResultMap.put(dcbMap.getKey(), dcbMap.getValue());
+            dCBReport.setRecords(finalResultMap);
+
             activeRcpts = populateActiveReceiptsOnly(dCBReport.getReceipts());
             cancelRcpt = populateCancelledReceiptsOnly(dCBReport.getReceipts());
             model.addAttribute("activeRcpts", activeRcpts);
@@ -199,7 +218,7 @@ public class CurrentViewDcbController {
     }
 
     public BigDecimal calculateReceiptTotal(final List<Receipt> activeRcpts) {
-        final List<Receipt> rcpts = new ArrayList<Receipt>();
+        final List<Receipt> rcpts = new ArrayList<>();
         BigDecimal totalRcptAmt = BigDecimal.ZERO;
         for (final Receipt r : activeRcpts)
             if (!rcpts.contains(r) && r.getReceiptStatus().equals('A')) {
@@ -210,7 +229,7 @@ public class CurrentViewDcbController {
     }
 
     public BigDecimal calculateCancelledReceiptTotal(final List<Receipt> cancelRcpt) {
-        final List<Receipt> rcpts = new ArrayList<Receipt>();
+        final List<Receipt> rcpts = new ArrayList<>();
         BigDecimal totalRcptAmt = BigDecimal.ZERO;
         for (final Receipt r : cancelRcpt)
             if (!rcpts.contains(r) && r.getReceiptStatus().equals(RCPT_CANCEL_STATUS)) {
@@ -229,7 +248,7 @@ public class CurrentViewDcbController {
 
     private List<Receipt> populateActiveReceiptsOnly(final Map<Installment, List<Receipt>> receipts) {
 
-        final List<Receipt> rcpt = new ArrayList<Receipt>();
+        final List<Receipt> rcpt = new ArrayList<>();
         for (final Map.Entry<Installment, List<Receipt>> entry : receipts.entrySet())
             for (final Receipt r : entry.getValue())
                 if (!rcpt.contains(r) && !r.getReceiptStatus().equals(RCPT_CANCEL_STATUS))
@@ -253,7 +272,7 @@ public class CurrentViewDcbController {
 
     private List<Receipt> populateCancelledReceiptsOnly(final Map<Installment, List<Receipt>> receipts) {
 
-        final List<Receipt> rcpt = new ArrayList<Receipt>();
+        final List<Receipt> rcpt = new ArrayList<>();
         for (final Map.Entry<Installment, List<Receipt>> entry : receipts.entrySet())
             for (final Receipt r : entry.getValue())
                 if (!rcpt.contains(r) && r.getReceiptStatus().equals(RCPT_CANCEL_STATUS))
