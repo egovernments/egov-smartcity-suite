@@ -792,7 +792,8 @@ public class MarriageRegistrationService {
         final Date currentDate = new Date();
         final AppConfigValues marriageSla = getSlaAppConfigValuesForMarriageReg(
                 MarriageConstants.MODULE_NAME, MarriageConstants.SLAFORMARRIAGEREGISTRATION);
-        dueDate = org.apache.commons.lang3.time.DateUtils.addDays(currentDate, Integer.parseInt(marriageSla.getValue()));
+        dueDate = org.apache.commons.lang3.time.DateUtils.addDays(currentDate,( marriageSla != null && marriageSla.getValue() != null)
+                ? Integer.valueOf(marriageSla.getValue()) : 0);
         return dueDate;
 
     }
@@ -802,7 +803,8 @@ public class MarriageRegistrationService {
         final Date currentDate = new Date();
         final AppConfigValues reissuemarriageSla = getSlaAppConfigValuesForMarriageReg(
                 MarriageConstants.MODULE_NAME, MarriageConstants.SLAFORMARRIAGEREISSUE);
-        dueDate = org.apache.commons.lang3.time.DateUtils.addDays(currentDate, Integer.parseInt(reissuemarriageSla.getValue()));
+        dueDate = org.apache.commons.lang3.time.DateUtils.addDays(currentDate, (reissuemarriageSla != null && reissuemarriageSla.getValue() != null)
+                ? Integer.valueOf(reissuemarriageSla.getValue()) : 0);
         return dueDate;
 
     }
