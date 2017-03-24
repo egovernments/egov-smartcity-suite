@@ -116,19 +116,22 @@ public class StateService {
 		StateModel state;
 		for (final Object[] element : result) {
 			state = new StateModel();
-			state.setId(Long.valueOf(element[0].toString()));
-			state.setType(element[1].toString());
-			state.setValue(element[2].toString());
-			state.setComments(element[3].toString());
-			try {
-				state.setCreatedDate(new SimpleDateFormat("yyyy-MM-dd").parse(element[4].toString()));
-			} catch (ParseException e) {
-				e.printStackTrace();
+			state.setId(Long.valueOf(element[0] != null ? element[0].toString() : "0"));
+			state.setType(element[1] != null ? element[1].toString() : "");
+			state.setValue(element[2] != null ? element[2].toString() : "");
+			state.setComments(element[3] != null ? element[3].toString() : "");
+			if (element[4] != null){
+				try {
+					state.setCreatedDate(new SimpleDateFormat("yyyy-MM-dd").parse(element[4].toString()));
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
 			}
-			state.setNatureOfTask(element[5].toString());
-			state.setExtraInfo(element[6].toString());
-			state.setSenderName(element[7].toString());
-			state.setMyLinkId(element[8].toString().replaceAll(":ID", state.getId().toString()));
+			state.setNatureOfTask(element[5] != null ? element[5].toString() : "");
+			state.setExtraInfo(element[6] != null ? element[6].toString() : "");
+			state.setSenderName(element[7] != null ? element[7].toString() : "");
+			state.setMyLinkId(
+					element[8] != null ? element[8].toString().replaceAll(":ID", state.getId().toString()) : "");
 			states.add(state);
 		}
 		return states;
