@@ -77,6 +77,8 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
+import org.egov.ptis.domain.entity.enums.TransactionType;
+import org.egov.ptis.domain.entity.property.DocumentType;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.TaxExemptionReason;
@@ -106,17 +108,16 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
     private static final String SUCCESSMESSAGE = "successMessage";
     private static final String TAXEXEMPTIONREASON = "taxExemptedReason";
     private static final String PROPERTY_MODIFY_REJECT_FAILURE = "Initiator is not active so can not do rejection with the Assessment number :";
+    private static final String CHOULTRY_DOC = "choultryDocs";
+    private static final String EDUINST_DOC = "eduinstDocs";
+    private static final String NGO_DOC = "ngoDocs";
+    private static final String WORSHIP_DOC = "worshipDocs";
+    private static final String EXSERVICE_DOC = "exserviceDocs";
     
     private final TaxExemptionService taxExemptionService;
-
-    @Autowired
-    public UpdateTaxExemptionController(final TaxExemptionService taxExemptionService) {
-        this.taxExemptionService = taxExemptionService;
-    }
-
     private PropertyImpl property;
     private Boolean isExempted = Boolean.FALSE;
-
+    
     @Autowired
     private PropertyTaxUtil propertyTaxUtil;
 
@@ -128,6 +129,11 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
 
     @Autowired
     private PropertyTaxCommonUtils propertyTaxCommonUtils;
+
+    @Autowired
+    public UpdateTaxExemptionController(final TaxExemptionService taxExemptionService) {
+        this.taxExemptionService = taxExemptionService;
+    }
 
     @ModelAttribute
     public Property propertyModel(@PathVariable final String id) {
@@ -141,6 +147,31 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
     @ModelAttribute("taxExemptionReasons")
     public List<TaxExemptionReason> getTaxExemptionReasons() {
         return taxExemptionService.getSession().createQuery("from TaxExemptionReason where isActive = true order by name").list();
+    }
+    
+    @ModelAttribute("documentsEduInst")
+    public List<DocumentType> documentsEduInst(TransactionType transactionType) {
+        return taxExemptionService.getDocuments(TransactionType.TE_EDU_INST);
+    }
+    
+    @ModelAttribute("documentsWorship")
+    public List<DocumentType> documentsWorship(TransactionType transactionType) {
+        return taxExemptionService.getDocuments(TransactionType.TE_PUBLIC_WORSHIP);
+    }
+    
+    @ModelAttribute("documentsNGO")
+    public List<DocumentType> documentsNGO(TransactionType transactionType) {
+        return taxExemptionService.getDocuments(TransactionType.TE_PENSIONER_NGO);
+    }
+    
+    @ModelAttribute("documentsExService")
+    public List<DocumentType> documentsExService(TransactionType transactionType) {
+        return taxExemptionService.getDocuments(TransactionType.TE_EXSERVICE);
+    }
+    
+    @ModelAttribute("documentsChoultries")
+    public List<DocumentType> documentsChoultries(TransactionType transactionType) {
+        return taxExemptionService.getDocuments(TransactionType.TE_CHOULTRY);
     }
 
     @RequestMapping(method = RequestMethod.GET)
@@ -161,18 +192,42 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
         model.addAttribute("isExempted", isExempted);
         model.addAttribute("pendingActions", nextAction);
         model.addAttribute("additionalRule", EXEMPTION);
+        model.addAttribute("isAlert", false);
+        model.addAttribute(CHOULTRY_DOC, "");
+        model.addAttribute(WORSHIP_DOC, "");
+        model.addAttribute(EDUINST_DOC, "");
+        model.addAttribute(EXSERVICE_DOC, "");
+        model.addAttribute(NGO_DOC, "");
         final String currentDesignation = taxExemptionService.getLoggedInUserDesignation(
                 property.getCurrentState().getOwnerPosition().getId(),
                 securityUtils.getCurrentUser());
+        model.addAttribute("userDesignation", currentDesignation);
         if (!(currState.endsWith(STATUS_REJECTED) || currState.endsWith(WFLOW_ACTION_NEW)))
             model.addAttribute("currentDesignation", currentDesignation);
 
         taxExemptionService.addModelAttributes(model, property.getBasicProperty());
+        if (!property.getTaxExemptionDocuments().isEmpty()) {
+            property.setTaxExemptionDocumentsProxy(property.getTaxExemptionDocuments());
+            if (property.getTaxExemptedReason().getCode().equals(PropertyTaxConstants.EXEMPTION_CHOULTRY)) {
+                model.addAttribute(CHOULTRY_DOC, property.getTaxExemptionDocumentsProxy());
+            } else if (property.getTaxExemptedReason().getCode().equals(PropertyTaxConstants.EXEMPTION_EDU_INST)) {
+                model.addAttribute(EDUINST_DOC, property.getTaxExemptionDocumentsProxy());
+            } else if (property.getTaxExemptedReason().getCode().equals(PropertyTaxConstants.EXEMPTION_EXSERVICE)) {
+                model.addAttribute(EXSERVICE_DOC, property.getTaxExemptionDocumentsProxy());
+            } else if (property.getTaxExemptedReason().getCode()
+                    .equals(PropertyTaxConstants.EXEMPTION_PUBLIC_WORSHIP)) {
+                model.addAttribute(WORSHIP_DOC, property.getTaxExemptionDocumentsProxy());
+            } else {
+                model.addAttribute(NGO_DOC, property.getTaxExemptionDocumentsProxy());
+            }
+        }
         if (currState.endsWith(WF_STATE_REJECTED) || nextAction.equalsIgnoreCase(WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING)
                 || currState.endsWith(WFLOW_ACTION_NEW)) {
             model.addAttribute("mode", EDIT);
             return TAX_EXEMPTION_FORM;
         } else {
+            if (!property.getTaxExemptionDocuments().isEmpty())
+                model.addAttribute("attachedDocuments", property.getTaxExemptionDocuments());  
             model.addAttribute("mode", VIEW);
             return TAX_EXEMPTION_VIEW;
         }

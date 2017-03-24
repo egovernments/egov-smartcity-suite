@@ -77,6 +77,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.ZONAL_COMMISSIONER_DE
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -107,13 +108,17 @@ import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
+import org.egov.ptis.domain.entity.enums.TransactionType;
 import org.egov.ptis.domain.entity.property.BasicProperty;
+import org.egov.ptis.domain.entity.property.Document;
+import org.egov.ptis.domain.entity.property.DocumentType;
 import org.egov.ptis.domain.entity.property.Floor;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyDetail;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.domain.entity.property.TaxExemptionReason;
+import org.egov.ptis.domain.repository.vacancyremission.VacancyRemissionRepository;
 import org.egov.ptis.domain.service.property.PropertyPersistenceService;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
@@ -172,6 +177,9 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
 
     @Autowired
     private AssignmentService assignmentService;
+    
+    @Autowired
+    private VacancyRemissionRepository vacancyRemissionRepository;
 
     Property property = null;
 
@@ -188,6 +196,7 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
             final String approvalComment, final String workFlowAction, final Long approvalPosition,
             final String taxExemptedReason, final Boolean propertyByEmployee, final String additionalRule) {
 
+        TaxExemptionReason taxExemptionReason=null;
         final BasicProperty basicProperty = oldProperty.getBasicProperty();
         final PropertyDetail propertyDetail = oldProperty.getPropertyDetail();
         propertyDetail.getDateOfCompletion();
@@ -226,7 +235,7 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
             floor.setPropertyDetail(propertyModel.getPropertyDetail());
         }
         if (StringUtils.isNotBlank(taxExemptedReason) && !taxExemptedReason.equals("-1")) {
-            final TaxExemptionReason taxExemptionReason = (TaxExemptionReason) propertyPerService.find(
+            taxExemptionReason = (TaxExemptionReason) propertyPerService.find(
                     "From TaxExemptionReason where id = ?", Long.valueOf(taxExemptedReason));
             propertyModel.setTaxExemptedReason(taxExemptionReason);
             propertyModel.setIsExemptedFromTax(Boolean.TRUE);
@@ -255,7 +264,8 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
 
         for (final Ptdemand ptdemand : newPtdemandSet)
             propertyPerService.applyAuditing(ptdemand.getDmdCalculations());
-
+        if(taxExemptionReason != null)
+            processAndStoreApplicationDocuments(propertyModel, taxExemptionReason.getCode());
         propertyModel.setBasicProperty(basicProperty);
         basicProperty.addProperty(propertyModel);
         transitionWorkFlow(propertyModel, approvalComment, workFlowAction, approvalPosition, additionalRule,
@@ -527,6 +537,44 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
                 ? FALSE
                 : Boolean.valueOf((Boolean) propertyService.getWaterTaxDues(assessmentNo, request)
                         .get(PropertyTaxConstants.UNDER_WTMS_WF));
+    }
+    
+    public List<DocumentType> getDocuments(final TransactionType transactionType) {
+        return propertyService.getDocumentTypesForTransactionType(transactionType);
+    }
+
+    @Transactional
+    public void processAndStoreApplicationDocuments(final PropertyImpl property, String exemptionCode) {
+        final TransactionType transactionType = getTransactionTypeByExemptionCode(exemptionCode);
+        for (final Document applicationDocument : property.getTaxExemptionDocumentsProxy()) {
+            if (applicationDocument.getFile() != null)
+                property.getTaxExemptionDocuments().clear();
+        }
+        if (!property.getTaxExemptionDocumentsProxy().isEmpty())
+            for (final Document applicationDocument : property.getTaxExemptionDocumentsProxy()) {
+                if (applicationDocument.getFile() != null) {
+                    applicationDocument.setType(vacancyRemissionRepository.findDocumentTypeByNameAndTransactionType(
+                            applicationDocument.getType().getName(), transactionType));
+                    applicationDocument.setFiles(propertyService.addToFileStore(applicationDocument.getFile()));
+                    property.addTaxExemptionDocuments(applicationDocument);
+                }
+
+            }
+    }
+
+    public TransactionType getTransactionTypeByExemptionCode(String exemptionCode) {
+        TransactionType transactionType;
+        if (exemptionCode.equals(PropertyTaxConstants.EXEMPTION_PUBLIC_WORSHIP))
+            transactionType = TransactionType.TE_PUBLIC_WORSHIP;
+        else if (exemptionCode.equals(PropertyTaxConstants.EXEMPTION_CHOULTRY))
+            transactionType = TransactionType.TE_CHOULTRY;
+        else if (exemptionCode.equals(PropertyTaxConstants.EXEMPTION_EDU_INST))
+            transactionType = TransactionType.TE_EDU_INST;
+        else if (exemptionCode.equals(PropertyTaxConstants.EXEMPTION_EXSERVICE))
+            transactionType = TransactionType.TE_EXSERVICE;
+        else
+            transactionType = TransactionType.TE_PENSIONER_NGO;
+        return transactionType;
     }
 
 }

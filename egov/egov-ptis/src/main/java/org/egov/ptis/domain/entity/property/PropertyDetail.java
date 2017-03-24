@@ -384,4 +384,8 @@ public interface PropertyDetail extends Property {
     public Date getLayoutPermitDate();
     
     public void setLayoutPermitDate(Date layoutPermitDate);
+    
+    public String getExemptionDetails();
+    
+    public void setExemptionDetails(String exemptionDetails);
 }

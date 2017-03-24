@@ -87,6 +87,11 @@ body
 							<c:out default="N/A" value="${property.taxExemptedReason.name}"></c:out>
 						</div>
 					</div>
+					<c:if test="${attachedDocuments.size() > 0}">
+							<div>
+								<jsp:include page="taxexemption-document-view.jsp"></jsp:include>
+							</div>
+					</c:if>
 				</div>
 			</div>
 			<c:choose>
