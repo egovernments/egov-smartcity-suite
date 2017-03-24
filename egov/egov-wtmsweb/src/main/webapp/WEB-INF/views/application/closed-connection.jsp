@@ -81,7 +81,7 @@
 											<div class="col-sm-4 add-margin">
 												<form:input  path="closedDate"  
 								class="form-control datepicker" 
-								id="closedDate" data-inputmask="'mask': 'd/m/y'" required="required" />
+								id="closedDate" data-inputmask="'mask': 'd/m/y'" data-date-end-date="0d" required="required" />
 								<form:errors path="closedDate" cssClass="add-margin error-msg" />
 											</div>
 				

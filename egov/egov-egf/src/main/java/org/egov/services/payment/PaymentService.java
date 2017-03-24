@@ -493,20 +493,18 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
                     .getWfMatrix(paymentheader.getStateType(), null, null,
                             null, paymentheader.getCurrentState().getValue(),
                             null);
+
             paymentheader
-                    .transition().progressWithStateCopy()
+                    .transition().end()
                     .withSenderName(user.getName())
                     .withComments(workflowBean.getApproverComments())
-                    .withStateValue(
-                            wfmatrix.getCurrentDesignation() + " Approved")
-                    .withDateInfo(currentDate.toDate()).withOwner(pos)
+                    .withStateValue(wfmatrix.getCurrentDesignation() + " Approved")
+                    .withDateInfo(currentDate.toDate()).withOwner(getPosition())
                     .withNextAction(wfmatrix.getNextAction());
 
             paymentheader.getVoucherheader().setStatus(
                     FinancialConstants.CREATEDVOUCHERSTATUS);
-            paymentheader.transition().end().withSenderName(user.getName())
-                    .withComments(workflowBean.getApproverComments())
-                    .withDateInfo(currentDate.toDate());
+
         } else if (FinancialConstants.BUTTONCANCEL
                 .equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
 

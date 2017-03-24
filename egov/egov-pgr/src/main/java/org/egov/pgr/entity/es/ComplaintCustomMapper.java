@@ -26,6 +26,7 @@ public class ComplaintCustomMapper extends CustomMapper<Complaint, ComplaintInde
         complaintIndex.setAssigneeName(complaint.getAssignee().getName());
         complaintIndex.setDepartmentName(complaint.getDepartment().getName());
         complaintIndex.setDepartmentCode(complaint.getDepartment().getCode());
+        complaintIndex.setReceivingMode(complaint.getReceivingMode().getCode());
         if (Objects.nonNull(complaint.getChildLocation())) {
             complaintIndex.setLocalityName(complaint.getChildLocation().getName());
             complaintIndex.setLocalityNo(complaint.getChildLocation().getBoundaryNum().toString());

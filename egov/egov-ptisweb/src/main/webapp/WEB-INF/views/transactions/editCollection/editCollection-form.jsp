@@ -43,6 +43,7 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <style>
 body {
 	font-family: regular !important;
@@ -59,6 +60,49 @@ body {
 		} else if (obj.value == "reset") {
 			window.location.href = '/ptis/editCollection/editForm/'+${basicProperty.upicNo};
 		}
+	}
+	
+	
+	
+	function checkPenaltyCollection(obj) {
+		var intransaction = false;
+		var taxvalue = jQuery(obj).val();
+		var rowidx = jQuery(obj).data('idx');
+		var penaltycollection = jQuery(
+				"#Penalty-Fines-" + rowidx + "-rvsdCollection").val();
+		var penaltyamount = jQuery("#Penalty-Fines-" + rowidx + "-rvsdAmount")
+				.val();
+		var existingpenalty = jQuery(
+				"#Penalty-Fines-" + rowidx + "-actualDemand").val();
+		var actualcollection = jQuery(
+				"#Penalty-Fines-" + rowidx + "-actualCollection").val();
+		if (taxvalue && (Number(existingpenalty) != Number(actualcollection))) {
+			if (penaltycollection == '') {
+				intransaction = true;
+				bootbox.alert("penalty should be collected first!!");
+				jQuery(obj).val("");
+				return false;
+			} else if (Number(penaltyamount) > Number(penaltycollection)
+					&& penaltycollection) {
+				bootbox.alert("penalty amount should be fully collected!");
+				jQuery("#Penalty-Fines-" + rowidx + "-rvsdCollection").val("");
+				return false;
+
+			} else if (penaltyamount == ''
+					&& Number(existingpenalty) > Number(penaltycollection)) {
+				bootbox.alert("penalty amount should be fully collected!");
+				jQuery("#Penalty-Fines-" + rowidx + "-rvsdCollection").val("");
+				return false;
+
+			}
+		} else if (Number(penaltyamount) > Number(penaltycollection)
+				&& penaltycollection) {
+			bootbox.alert("penalty amount should be fully collected!");
+			jQuery("#Penalty-Fines-" + rowidx + "-rvsdCollection").val("");
+			return false;
+
+		}
+
 	}
 </script>
 <form:form id="EditCollection" method="post" action=""
@@ -80,8 +124,11 @@ body {
 				</thead>
 				<tbody>
 					<form:hidden path="basicProperty.upicNo" />
+					<c:set var="taxId" value="0"></c:set>
 					<c:forEach var="demandDetailBean" items="${demandDetailBeans}"
 							varStatus="demandInfoStatus">
+							<c:set var="taxHead" value="${demandDetailBeans[demandInfoStatus.index].reasonMaster}"></c:set>
+							<c:set var="taxName" value="${fn:replace(taxHead,' ','-')}"></c:set>
 							<tr>
 								<td class="col-xs-2" align="center">
 									<form:hidden
@@ -94,6 +141,7 @@ body {
 										test="${demandDetailBeans[demandInfoStatus.index].installment.id != demandDetailBeans[demandInfoStatus.index - 1].installment.id }">
 										<c:out
 											value="${demandDetailBeans[demandInfoStatus.index].installment}" />
+											<c:set var="taxId" value="${taxId+1}"></c:set>
 									</c:if>
 								</td>
 								<td class="col-xs-2" align="left">
@@ -107,11 +155,15 @@ body {
 										value="${demandDetailBeans[demandInfoStatus.index].actualAmount}" />
 									<form:hidden
 										path="demandDetailBeans[${demandInfoStatus.index}].actualAmount" />
-								</td>
+								<input type="hidden"
+								value="${demandDetailBeans[demandInfoStatus.index].actualAmount}"
+								id="${taxName}-${taxId}-actualDemand" />
+
+							</td>
 								<td class="col-xs-2" align="right">
 									<c:if
 										test="${demandDetailBeans[demandInfoStatus.index].reasonMaster == 'Penalty Fines'}">
-										<form:input path="demandDetailBeans[${demandInfoStatus.index}].revisedAmount" onblur="validNumber(this);" id="revisedAmount" cssClass="form-control" />
+										<form:input path="demandDetailBeans[${demandInfoStatus.index}].revisedAmount" onblur="validNumber(this);" id="${taxName}-${taxId}-rvsdAmount" cssClass="form-control" />
 										<form:errors path="demandDetailBeans[${demandInfoStatus.index}].revisedAmount" cssClass="add-margin error-msg" />
 									</c:if>
 									<c:if
@@ -124,9 +176,13 @@ body {
 										value="${demandDetailBeans[demandInfoStatus.index].actualCollection}" />
 									<form:hidden
 										path="demandDetailBeans[${demandInfoStatus.index}].actualCollection" />
-								</td>
-								<td class="col-xs-2" align="right">
-									<form:input path="demandDetailBeans[${demandInfoStatus.index}].revisedCollection" onblur="validNumber(this);checkZero(this);" id="revisedCollection" cssClass="form-control" />
+								<input type="hidden"
+								value="${demandDetailBeans[demandInfoStatus.index].actualCollection}"
+								id="${taxName}-${taxId}-actualCollection" />
+
+							</td>
+								<td class="col-xs-2" align="right" >
+									<form:input path="demandDetailBeans[${demandInfoStatus.index}].revisedCollection" onblur="checkPenaltyCollection(this);validNumber(this);" id="${taxName}-${taxId}-rvsdCollection" data-idx="${taxId}" cssClass="form-control" />
 									<form:hidden
 										path="demandDetailBeans[${demandInfoStatus.index}].isCollectionEditable" />
 									<form:errors path="demandDetailBeans[${demandInfoStatus.index}].revisedCollection" cssClass="add-margin error-msg" />

@@ -126,17 +126,16 @@
 					<label class="col-sm-3 control-label text-right"><spring:message
 							code="lbl.casestartdate" />:</label>
 					<div class="col-sm-3 add-margin">
-						<input type="text" name="caseFromDate"
-							class="form-control datepicker" data-date-end-date="0d"
-							id="caseFromDate" data-inputmask="'mask': 'd/m/y'"
-							onblur="onchnageofDate()" />
+						<form:input path="" name="caseFromDate" id="caseFromDate"
+							cssClass="form-control datepicker" value="${caseFromDate}"
+							cssErrorClass="form-control error" />
 					</div>
 					<label class="col-sm-2 control-label text-right"><spring:message
 							code="lbl.caseenddate" />:</label>
 					<div class="col-sm-3 add-margin">
-						<input type="text" name="caseToDate"
-							class="form-control datepicker today" data-date-end-date="0d"
-							id="caseToDate" />
+						<form:input path="" name="caseToDate" id="caseToDate"
+							cssClass="form-control datepicker" value="${caseToDate}"
+							cssErrorClass="form-control error" />
 					</div>
 
 				</div>
@@ -181,16 +180,16 @@
 								itemLabel="name" />
 						</form:select>
 					</div>
-					</div>
-				<div class="form-group" >
-				<label class="col-sm-3 control-label text-right"></label>
-				<div class="col-sm-3 add-margin"></div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-3 control-label text-right"></label>
+					<div class="col-sm-3 add-margin"></div>
 					<label class="col-sm-5 control-label text-right"><spring:message
 							code="lbl.exclude.closed.case" />:</label>
-					 <div class="col-sm-1 add-margin">
+					<div class="col-sm-1 add-margin">
 						<input type="checkbox" name="isStatusExcluded"
-							value="isStatusExcluded"  checked="checked" />
-					</div> 
+							value="isStatusExcluded" />
+					</div>
 				</div>
 				<div class="row">
 					<div class="text-center">

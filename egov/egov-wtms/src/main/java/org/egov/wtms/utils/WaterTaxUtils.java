@@ -663,5 +663,29 @@ public class WaterTaxUtils {
         else
             return false;
     }
+    
+    public Boolean isLoggedInUserJuniorOrSeniorAssistant(final Long userid) {
+        Boolean isJrAsstOrSrAsst = Boolean.FALSE;
+        final String designationStr = getDesignationForAppInitiator();
+        final String[] desgnArray = designationStr.split(",");
+        if (desgnArray !=null ) {
+            final List<Assignment> assignmentList = assignmentService.getAllActiveEmployeeAssignmentsByEmpId(userid);
+            for (final Assignment assignment : assignmentList)
+                for (final String str : desgnArray)
+                    if (assignment.getDesignation().getName().equalsIgnoreCase(str)) {
+                        isJrAsstOrSrAsst = Boolean.TRUE;
+                        break;
+                    }
+        } else
+            isJrAsstOrSrAsst = Boolean.FALSE;
+        return isJrAsstOrSrAsst;
+    }
+
+    public String getDesignationForAppInitiator() {
+        final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
+                WaterTaxConstants.MODULE_NAME, WaterTaxConstants.APPLICATIONINITIATORROLE);
+        return !appConfigValue.isEmpty() ? appConfigValue.get(0).getValue() : null;
+    }
+
 
 }

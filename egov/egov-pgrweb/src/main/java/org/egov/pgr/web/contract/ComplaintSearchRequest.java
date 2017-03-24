@@ -93,9 +93,9 @@ public class ComplaintSearchRequest {
             searchQueryBuilder.filter(matchQuery("complainantEmail", email));
     }
 
-    public void setReceivingCenter(final String receivingCenter) {
-        if (isNotBlank(receivingCenter))
-            searchQueryBuilder.filter(matchQuery("receivingMode", receivingCenter));
+    public void setReceivingMode(final String receivingMode) {
+        if (isNotBlank(receivingMode))
+            searchQueryBuilder.filter(matchQuery("receivingMode", receivingMode));
     }
 
     public void setComplaintType(final String complaintType) {

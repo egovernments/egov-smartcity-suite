@@ -125,4 +125,9 @@ public class AdvertisementTaxConstants {
     public static final String CSC_SOURCE ="CSC";
     
     public static final String CITY_GRADE_CORPORATION = "Corp";
+    public static final String SLAFORNEWADVERTISEMENT="SLAFORNEWADVERTISEMENT";
+    public static final String SLAFORRENEWADVERTISEMENT="SLAFORRENEWADVERTISEMENT";
+    public static final String RENEW = "RENEW";
+    public static final String NEW = "NEW";
+
 }

@@ -163,7 +163,7 @@ public class EscalationService {
             boolean sendMessage = "YES".equalsIgnoreCase(appConfigValuesService.
                     getConfigValuesByModuleAndKey(MODULE_NAME, "SENDEMAILFORESCALATION").get(0).getValue());
 
-            complaintService.getComplaintsEligibleForEscalation().parallelStream().forEach(complaint ->
+            complaintService.getComplaintsEligibleForEscalation().forEach(complaint ->
                     findNextOwnerAndEscalate(complaint, objectType, sendMessage)
             );
 

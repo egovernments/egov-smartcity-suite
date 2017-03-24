@@ -55,7 +55,7 @@ public class DCBReportResponseAdaptor implements JsonSerializer<DCBReportResult>
         JsonObject dcbReportResponse = new JsonObject();
         if (dCBReportObj != null) {
             dcbReportResponse.addProperty("licenseid", dCBReportObj.getLicenseid());
-            dcbReportResponse.addProperty("licensenumber", dCBReportObj.getLicensenumber());
+            dcbReportResponse.addProperty("licensenumber", dCBReportObj.getLicensenumber() != null ? dCBReportObj.getLicensenumber() : "N/A");
             dcbReportResponse.addProperty("username", dCBReportObj.getUsername());
             dcbReportResponse.addProperty("curr_demand", dCBReportObj.getCurr_demand());
             dcbReportResponse.addProperty("arr_demand", dCBReportObj.getArr_demand());

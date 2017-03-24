@@ -52,7 +52,7 @@
                 <form:form role="form" action="create" modelAttribute="feeMatrix" id="feematrix-new" name="feematrix-new"
                            cssClass="form-horizontal form-groups-bordered">
                     <spring:hasBindErrors name="feeMatrix">
-                        <form:errors path="natureOfBusiness" cssClass="error-msg add-margin"/><br/>
+                        <form:errors path="" cssClass="error-msg add-margin"/><br/>
                     </spring:hasBindErrors>
                     <div class="form-group">
                         <label class="col-sm-3 control-label">

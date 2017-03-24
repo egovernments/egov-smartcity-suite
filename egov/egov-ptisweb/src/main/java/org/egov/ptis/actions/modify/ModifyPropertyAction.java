@@ -720,8 +720,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
             if (propTypeMstr.getType().equals(OWNERSHIP_TYPE_VAC_LAND_STR))
                 addActionError(getText("error.nonVacantToVacant"));
         if (hasErrors())
-            if (ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName()) || isAssistantOrRIApprovalPending()
-                    || !propertyByEmployee)
+            if (!propertyByEmployee || ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName()) || isAssistantOrRIApprovalPending())
                 return NEW;
             else if (isCommissionerRoOrBillCollector())
                 return VIEW;

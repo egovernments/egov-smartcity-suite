@@ -54,7 +54,9 @@ import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
 import org.egov.commons.entity.Source;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.elasticsearch.entity.ApplicationIndex;
 import org.egov.infra.elasticsearch.entity.enums.ApprovalStatus;
@@ -84,6 +86,9 @@ public class AdvertisementPermitDetailUpdateIndexService {
 
     @Autowired
     private AdvertisementIndexService advertisementIndexService;
+    
+    @Autowired
+    protected AppConfigValueService appConfigValuesService;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -175,6 +180,17 @@ public class AdvertisementPermitDetailUpdateIndexService {
             advertisementIndexService.createAdvertisementIndex(advertisementPermitDetail);
 
         } else {
+            AppConfigValues slaForAdvertisement = null;
+
+            if (advertisementPermitDetail != null && advertisementPermitDetail.getApplicationtype() != null
+                    && AdvertisementTaxConstants.RENEW.equals(advertisementPermitDetail.getApplicationtype().toString())) {
+                slaForAdvertisement = getSlaAppConfigValuesForAdvertisement(
+                        AdvertisementTaxConstants.MODULE_NAME, AdvertisementTaxConstants.SLAFORRENEWADVERTISEMENT);
+            } else if (advertisementPermitDetail != null && advertisementPermitDetail.getApplicationtype() != null
+                    && AdvertisementTaxConstants.NEW.equals(advertisementPermitDetail.getApplicationtype().toString())) {
+                slaForAdvertisement = getSlaAppConfigValuesForAdvertisement(
+                        AdvertisementTaxConstants.MODULE_NAME, AdvertisementTaxConstants.SLAFORNEWADVERTISEMENT);
+            }
 
             if (advertisementPermitDetail.getApplicationDate() == null)
                 advertisementPermitDetail.setApplicationDate(new Date());
@@ -198,9 +214,14 @@ public class AdvertisementPermitDetailUpdateIndexService {
                         .withMobileNumber(advertisementPermitDetail.getAgency() != null
                                 ? advertisementPermitDetail.getAgency().getMobileNumber() : EMPTY)
                         .withClosed(ClosureStatus.NO)
+                        .withSla(slaForAdvertisement != null && slaForAdvertisement.getValue()!=null? Integer.valueOf(slaForAdvertisement.getValue()) : 0) 
                         .withApproved(ApprovalStatus.INPROGRESS).build();
                 applicationIndexService.createApplicationIndex(applicationIndex);
             }
         }
+    }
+    public AppConfigValues getSlaAppConfigValuesForAdvertisement(final String moduleName, final String keyName) {
+        final List<AppConfigValues> appConfigValues = appConfigValuesService.getConfigValuesByModuleAndKey(moduleName, keyName);
+        return !appConfigValues.isEmpty() ? appConfigValues.get(0) : null;
     }
 }

@@ -39,8 +39,14 @@
  */
 package org.egov.adtax.web.controller.hoarding;
 
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.egov.adtax.entity.AdvertisementPermitDetail;
 import org.egov.adtax.entity.enums.AdvertisementStatus;
+import org.egov.adtax.entity.enums.AdvertisementApplicationType;
 import org.egov.adtax.exception.HoardingValidationError;
 import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
 import org.egov.adtax.web.controller.common.HoardingControllerSupport;
@@ -57,18 +63,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpServletRequest;
-
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
-
 @Controller
 @RequestMapping("/advertisement")
 public class AdvertisementRenewalController extends HoardingControllerSupport {
 	
-   @Autowired
-   @Qualifier("messageSource")
-   private MessageSource messageSource;
+    private static final String RENEWAL_NEWFORM = "renewal-newform";
+    private static final String MESSAGE = "message";
+    private static final String RENEWAL_ERROR = "renewal-error";
+    @Autowired
+    @Qualifier("messageSource")
+    private MessageSource messageSource;
 
     @RequestMapping(value = "/renewal/{id}", method = GET)
     public String renewForm(@PathVariable final String id, final Model model,
@@ -78,21 +82,21 @@ public class AdvertisementRenewalController extends HoardingControllerSupport {
         if (parentPermitDetail!=null && parentPermitDetail.getAdvertisement() != null && parentPermitDetail.getAdvertisement().getDemandId() != null) {
             // CHECK ANY DEMAND PENDING for selected year.
             if (!advertisementDemandService.checkAnyTaxPendingForSelectedFinancialYear(parentPermitDetail.getAdvertisement(),parentPermitDetail.getAdvertisement().getDemandId().getEgInstallmentMaster())) {
-                model.addAttribute("message", "msg.renewal.taxNotPending");
-                return "renewal-error";
+                model.addAttribute(MESSAGE, "msg.renewal.taxNotPending");
+                return RENEWAL_ERROR;
             }
         }
         if (parentPermitDetail!=null && parentPermitDetail.getAdvertisement() != null && parentPermitDetail.getAdvertisement().getStatus()!=null && parentPermitDetail.getAdvertisement().getStatus().equals(AdvertisementStatus.WORKFLOW_IN_PROGRESS)) {
-             model.addAttribute("message", "msg.renewal.alreadyInWorkFlow");
-                return "renewal-error";
+             model.addAttribute(MESSAGE, "msg.renewal.alreadyInWorkFlow");
+                return RENEWAL_ERROR;
            
         }
         //If curernt status of permit is approved, then payment is pending for the selected record.
         if(parentPermitDetail!=null && parentPermitDetail.getAdvertisement() != null && parentPermitDetail.getAdvertisement().getStatus()!=null && parentPermitDetail.getAdvertisement().getStatus().equals(AdvertisementStatus.ACTIVE)  &&
                 parentPermitDetail.getStatus()!=null && parentPermitDetail.getStatus().getCode().equalsIgnoreCase(AdvertisementTaxConstants.APPLICATION_STATUS_APPROVED))
         {
-            model.addAttribute("message", "msg.renewal.paymentPending");
-            return "renewal-error";
+            model.addAttribute(MESSAGE, "msg.renewal.paymentPending");
+            return RENEWAL_ERROR;
         }
         
         
@@ -107,7 +111,7 @@ public class AdvertisementRenewalController extends HoardingControllerSupport {
  
         model.addAttribute("agency", parentPermitDetail.getAgency());
         model.addAttribute("advertisementDocuments", parentPermitDetail.getAdvertisement().getDocuments());
-        return "renewal-newform";
+        return RENEWAL_NEWFORM;
     }
 
     private void loadBasicData(final Model model, final AdvertisementPermitDetail parentPermitDetail,
@@ -144,6 +148,7 @@ public class AdvertisementRenewalController extends HoardingControllerSupport {
             renewalPermitDetail.setStatus(advertisementPermitDetailService
                     .getStatusByModuleAndCode(AdvertisementTaxConstants.APPLICATION_STATUS_CREATED));
         renewalPermitDetail.getAdvertisement().setStatus(AdvertisementStatus.WORKFLOW_IN_PROGRESS);
+        renewalPermitDetail.setApplicationtype(AdvertisementApplicationType.RENEW);
         if (resultBinder.hasErrors()) {
             WorkflowContainer workFlowContainer = new WorkflowContainer();
             workFlowContainer.setAdditionalRule(AdvertisementTaxConstants.RENEWAL_ADDITIONAL_RULE);
@@ -151,7 +156,7 @@ public class AdvertisementRenewalController extends HoardingControllerSupport {
             model.addAttribute("additionalRule", AdvertisementTaxConstants.RENEWAL_ADDITIONAL_RULE);
             model.addAttribute("stateType", renewalPermitDetail.getClass().getSimpleName());
             model.addAttribute("currentState", "NEW");
-            return "renewal-newform";
+            return RENEWAL_NEWFORM;
         }
         try {
             updateHoardingDocuments(renewalPermitDetail);
@@ -174,11 +179,11 @@ public class AdvertisementRenewalController extends HoardingControllerSupport {
             redirAttrib.addFlashAttribute("advertisementPermitDetail", renewalPermitDetail);
             String message = messageSource.getMessage("msg.success.forward",
                     new String[] { approverName.concat("~").concat(nextDesignation), renewalPermitDetail.getApplicationNumber() }, null);
-            redirAttrib.addFlashAttribute("message", message);
+            redirAttrib.addFlashAttribute(MESSAGE, message);
             return "redirect:/hoarding/success/" + renewalPermitDetail.getId();
         } catch (final HoardingValidationError e) {
             resultBinder.rejectValue(e.fieldName(), e.errorCode());
-            return "renewal-newform";
+            return RENEWAL_NEWFORM;
         }
     }
 }

@@ -52,14 +52,14 @@
 		<input type="text" name="fromDate"
 			class="form-control datepicker" 
 			id="fromDate" data-inputmask="'mask': 'd/m/y'"
-			onblur="onchnageofDate()" />
+			onblur="onchnageofDate()" required="required"/>
 	</div>
 	<label class="col-sm-2 control-label text-right"> <spring:message
 			code="lbl.toDate" />:<span class="mandatory"></label>
 	<div class="col-sm-3 add-margin">
 		<input type="text" name="toDate"
 			class="form-control datepicker today" 
-			id="toDate" data-inputmask="'mask': 'd/m/y'" />
+			id="toDate" data-inputmask="'mask': 'd/m/y'" required="required" />
 	</div>
 </div>
 <div class="form-group">

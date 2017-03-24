@@ -679,12 +679,7 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction {
             if (FinancialConstants.BUTTONCANCEL.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
                 addActionMessage(getText("billVoucher.file.canceled"));
             else if (FinancialConstants.BUTTONAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
-                if ("Closed".equals(voucherHeader.getState().getValue()))
                     addActionMessage(getText("pjv.voucher.final.approval", new String[] { "The File has been approved" }));
-                else
-                    addActionMessage(getText("pjv.voucher.approved",
-                            new String[] { voucherService.getEmployeeNameForPositionId(voucherHeader.getState()
-                                    .getOwnerPosition()) }));
             }
         } catch (final ValidationException e) {
 

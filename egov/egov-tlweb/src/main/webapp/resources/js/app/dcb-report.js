@@ -61,10 +61,8 @@ function openTradeLicense(obj) {
 
 function callAjaxByBoundary(event) {
 	var modeVal = "";
-	var reportType = "";
 	var temp = "";
 	modeVal = $('#mode').val();
-	reportType = $('#reportType').val();
 	$('#report-backbutton').show();
 	var licenseNumbertemp = $('#licensenumber').val();
 	$('.report-section').removeClass('display-hide');
@@ -108,7 +106,6 @@ function callAjaxByBoundary(event) {
 					url : "../dcbreportlist",
 					data : {
 						'mode' : modeVal,
-						'reportType' : 'license',
 						'licensenumber' : licenseNumbertemp
 					}
 				},

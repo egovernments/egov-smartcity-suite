@@ -70,6 +70,7 @@ public class AdvertisementIndexService {
     @Autowired
     private AdvertisementDemandService advertisementDemandService;
 
+
     public AdvertisementIndex createAdvertisementIndex(final AdvertisementPermitDetail advertisementPermitDetailIndex) {
         AdvertisementIndex advertisementSearch = null;
         if (advertisementPermitDetailIndex.getStatus() != null &&
@@ -254,5 +255,7 @@ public class AdvertisementIndexService {
         advertisementIndexRepository.save(advertisementSearch);
         return advertisementSearch;
     }
+    
+    
 
 }
