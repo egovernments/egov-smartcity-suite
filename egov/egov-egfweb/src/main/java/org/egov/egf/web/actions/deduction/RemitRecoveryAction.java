@@ -64,6 +64,7 @@ import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.billsaccounting.services.CreateVoucher;
 import org.egov.billsaccounting.services.VoucherConstant;
+import org.egov.commons.Bank;
 import org.egov.commons.Bankaccount;
 import org.egov.commons.CFunction;
 import org.egov.commons.CVoucherHeader;
@@ -73,6 +74,7 @@ import org.egov.commons.Fundsource;
 import org.egov.commons.Scheme;
 import org.egov.commons.SubScheme;
 import org.egov.commons.Vouchermis;
+import org.egov.commons.dao.BankHibernateDAO;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.commons.service.BankAccountService;
 import org.egov.commons.service.FunctionService;
@@ -200,7 +202,9 @@ public class RemitRecoveryAction extends BasePaymentAction {
     @Autowired
     @Qualifier("bankAccountService")
     private BankAccountService bankAccountService;
-
+    @Autowired
+    private BankHibernateDAO bankHibernateDAO;
+    
     public BigDecimal getBalance() {
         return balance;
     }
@@ -235,8 +239,10 @@ public class RemitRecoveryAction extends BasePaymentAction {
         final List<Recovery> listRecovery = recoveryService.getAllActiveRecoverys();
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("RemitRecoveryAction | Tds list size : " + listRecovery.size());
+        List<Bank> activeBanks = bankHibernateDAO.getAllBankHavingBranchAndAccounts();  ; 
+        addDropdownData("bankList", activeBanks);
+        addDropdownData("branchList", Collections.EMPTY_LIST);
         addDropdownData("recoveryList", listRecovery);
-        addDropdownData("bankList", Collections.EMPTY_LIST);
         addDropdownData("accNumList", Collections.EMPTY_LIST);
         modeOfCollectionMap.put("cash", getText("cash.consolidated.cheque"));
     }

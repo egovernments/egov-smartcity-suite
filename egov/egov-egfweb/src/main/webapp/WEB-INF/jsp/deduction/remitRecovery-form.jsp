@@ -216,6 +216,16 @@ function validateSearch()
 		bootbox.alert("Please select fund");
 		return false;
 	}
+	if(jQuery("#bank").val()!=""){
+		if(jQuery("#bankBranch").val()==""){
+			bootbox.alert("Please select bank branch");
+			return false;
+		}
+		else if(jQuery("#bankAccount").val()==""){
+			bootbox.alert("Please select bank account number");
+			return false;
+		}
+	}
 	document.remitRecoveryForm.action='/EGF/deduction/remitRecovery-search.action';
 	document.remitRecoveryForm.submit();
 	return true;
