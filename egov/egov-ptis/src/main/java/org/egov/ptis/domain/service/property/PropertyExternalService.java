@@ -1870,10 +1870,15 @@ public class PropertyExternalService {
      * @param wardNum
      * @return List
      */
-    public List<AssessmentInfo> getPropertyDetailsForWard(String ulbCode, String wardNum) {
-        Boundary ward = getBoundaryByNumberAndType(wardNum, WARD, REVENUE_HIERARCHY_TYPE);
+    public List<AssessmentInfo> getPropertyDetailsForWard(String ulbCode, String wardNum, String assessmentNo, String doorNo) {
+        Long wardId = null;
+        if(StringUtils.isNotBlank(wardNum)){
+            Boundary ward = getBoundaryByNumberAndType(wardNum, WARD, REVENUE_HIERARCHY_TYPE);
+            wardId = ward.getId();
+        }
+        
         List<AssessmentInfo> propertyDetails = new ArrayList<>();
-        List<BasicProperty> basicProperties = basicPropertyDAO.getActiveBasicPropertiesForWard(ward.getId());
+        List<BasicProperty> basicProperties = basicPropertyDAO.getActiveBasicPropertiesForWard(wardId, assessmentNo, doorNo);
         if (!basicProperties.isEmpty()) {
             AssessmentInfo assessmentInfo;
             for (BasicProperty basicProperty : basicProperties) {
