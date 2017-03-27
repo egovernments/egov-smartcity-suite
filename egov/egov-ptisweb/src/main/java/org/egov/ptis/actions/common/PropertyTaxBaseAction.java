@@ -349,8 +349,12 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
             addActionError(getText("mandatory.pattaNum"));
         if (null == propertyDetail.getSitalArea().getArea())
             addActionError(getText("mandatory.vacantLandArea"));
-        if (null == propertyDetail.getDateOfCompletion())
+        final Date effDate = propertyTaxUtil.getEffectiveDateForProperty();
+        if (null == propertyDetail.getDateOfCompletion() || "".equals(propertyDetail.getDateOfCompletion()))
             addActionError(getText("mandatory.dtOfCmpln"));
+        else if (propertyDetail.getDateOfCompletion().before(effDate))
+            addActionError(getText("vacant.effectiveDate.before.6inst"));
+        
         if (null == propertyDetail.getCurrentCapitalValue())
             addActionError(getText("mandatory.capitalValue"));
         if (null == propertyDetail.getMarketValue())

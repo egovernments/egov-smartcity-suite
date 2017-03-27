@@ -118,6 +118,7 @@ public class VacantProperty extends AbstractProperty {
     private LayoutApprovalAuthority layoutApprovalAuthority;
     private String layoutPermitNo;
     private Date layoutPermitDate;
+    private String exemptionDetails;
 
     public VacantProperty(Area sitalArea, Area totalBuiltupArea, Area commBuiltUpArea, Area plinthArea,
             Area commVacantLand, Area nonResPlotArea, Boolean irregular, String surveyNumber, Character fieldVerified,
@@ -1021,6 +1022,14 @@ public class VacantProperty extends AbstractProperty {
     @Override
     public void setLayoutPermitDate(Date layoutPermitDate) {
         this.layoutPermitDate = layoutPermitDate;
+    }
+
+    public String getExemptionDetails() {
+        return exemptionDetails;
+    }
+
+    public void setExemptionDetails(String exemptionDetails) {
+        this.exemptionDetails = exemptionDetails;
     }
 
 }

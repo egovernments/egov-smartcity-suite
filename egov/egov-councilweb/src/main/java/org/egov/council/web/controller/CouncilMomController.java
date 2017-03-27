@@ -326,7 +326,7 @@ public class CouncilMomController {
                 .append("}").toString();
     }
 
-    @RequestMapping(value = "/generateresolution", method = RequestMethod.GET)
+    @RequestMapping(value = "/generateresolution", method = RequestMethod.POST)
     public String generateResolutionnumber(
             @Valid @ModelAttribute final CouncilMeeting councilMeeting,
             final BindingResult errors, final Model model,
@@ -379,7 +379,7 @@ public class CouncilMomController {
         councilMeetingIndexService.createCouncilMeetingIndex(councilMeeting);
         councilSmsAndEmailService.sendSms(councilMeeting, null);
         councilSmsAndEmailService.sendEmail(councilMeeting, null, reportOutput);
-        return "redirect:/councilmeeting/generateresolution/" + councilMeeting.getId();
+        return "forward:/councilmeeting/generateresolution/" + councilMeeting.getId();
     }
 
     private byte[] generateMomPdfByPassingMeeting(final CouncilMeeting councilMeeting,

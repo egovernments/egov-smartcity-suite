@@ -46,7 +46,7 @@
 						code="lbl.gistofpreamble" /><span class="mandatory"></span></label>
 				<div class="col-sm-8 add-margin">
 					<form:textarea path="gistOfPreamble" id="gistOfPreamble" data-role="none" rows="10" class="form-control text-left patternvalidation"
-					 maxlength="5000" required ="required"/>
+					 maxlength="10000" required ="required"/>
 					<form:errors path="gistOfPreamble" cssClass="error-msg" />
 				</div>
 				

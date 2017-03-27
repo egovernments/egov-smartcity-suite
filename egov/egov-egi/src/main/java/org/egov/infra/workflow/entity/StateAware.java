@@ -124,6 +124,14 @@ public abstract class StateAware extends AbstractAuditable {
         return state;
     }
 
+    public final Position currentAssignee() {
+        return state.getOwnerPosition();
+    }
+
+    public final Position previousAssignee() {
+        return state.getPreviousOwner();
+    }
+
     public final List<StateHistory> getStateHistory() {
         return state == null ? Collections.emptyList() : new LinkedList<>(state.getHistory());
     }
@@ -185,7 +193,7 @@ public abstract class StateAware extends AbstractAuditable {
             if (hasState())
                 throw new ApplicationRuntimeException("Transition already started.");
             else {
-                state = new State();
+                setState(new State());
                 state.setType(getStateType());
                 state.setStatus(StateStatus.STARTED);
                 state.setValue(State.DEFAULT_STATE_VALUE_CREATED);
@@ -207,8 +215,10 @@ public abstract class StateAware extends AbstractAuditable {
         }
 
         public final Transition progress() {
+            Position previousOwner = state.getOwnerPosition();
             progressWithStateCopy();
             resetState();
+            state.setPreviousOwner(previousOwner);
             return this;
         }
 
@@ -216,6 +226,7 @@ public abstract class StateAware extends AbstractAuditable {
             checkinTransition();
             if (hasState()) {
                 state.addStateHistory(new StateHistory(state));
+                state.setPreviousOwner(state.getOwnerPosition());
                 state.setStatus(StateStatus.INPROGRESS);
             }
             return this;
@@ -239,6 +250,7 @@ public abstract class StateAware extends AbstractAuditable {
             checkinTransition();
             if (transitionCompleted()) {
                 StateHistory stateHistory = new StateHistory(state);
+                state.setPreviousOwner(state.getOwnerPosition());
                 stateHistory.setValue(State.STATE_REOPENED);
                 state.setStatus(StateStatus.INPROGRESS);
                 state.addStateHistory(stateHistory);

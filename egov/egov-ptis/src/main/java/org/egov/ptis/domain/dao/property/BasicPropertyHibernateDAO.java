@@ -531,10 +531,24 @@ public class BasicPropertyHibernateDAO implements BasicPropertyDAO {
      * API to fetch properties belonging to a particular ward
      */
     @Override
-    public List<BasicProperty> getActiveBasicPropertiesForWard(Long wardId){
-    	String queryStr = "select bp from BasicPropertyImpl bp where bp.propertyID.ward.id=:wardId and bp.active = 'Y' and bp.upicNo is not null order by bp.id ";
-    	Query query = getCurrentSession().createQuery(queryStr);
-    	query.setLong("wardId", wardId);
+    public List<BasicProperty> getActiveBasicPropertiesForWard(Long wardId, String upicNo, String doorNo){
+        String queryStr = "select bp from BasicPropertyImpl bp where bp.active = 'Y' and bp.upicNo is not null ";
+        if (wardId != null)
+            queryStr = queryStr.concat(" and bp.propertyID.ward.id=:wardId ");
+        if (StringUtils.isNotBlank(upicNo))
+            queryStr = queryStr.concat(" and bp.upicNo =:upicNo ");
+        if (StringUtils.isNotBlank(doorNo))
+            queryStr = queryStr.concat(" and bp.address.houseNoBldgApt like :doorNo ");
+
+        queryStr = queryStr.concat(" order by bp.id desc ");
+        Query query = getCurrentSession().createQuery(queryStr);
+        if (wardId != null)
+            query.setLong("wardId", wardId);
+        if (StringUtils.isNotBlank(upicNo))
+            query.setString("upicNo", upicNo);
+        if (StringUtils.isNotBlank(doorNo))
+            query.setString("doorNo", "%" + doorNo.trim() + "%");
+    	    
     	return query.list();
     }
     

@@ -78,7 +78,9 @@ import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
+import org.egov.ptis.domain.entity.enums.TransactionType;
 import org.egov.ptis.domain.entity.property.BasicProperty;
+import org.egov.ptis.domain.entity.property.DocumentType;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.TaxExemptionReason;
@@ -117,6 +119,11 @@ public class TaxExemptionController extends GenericWorkFlowController {
     protected static final String TAX_EXEMPTION_FORM = "taxExemption-form";
     protected static final String TAX_EXEMPTION_SUCCESS = "taxExemption-success";
     private static final String ERROR_MSG = "errorMsg";
+    private static final String CHOULTRY_DOC = "choultryDocs";
+    private static final String EDUINST_DOC = "eduinstDocs";
+    private static final String NGO_DOC = "ngoDocs";
+    private static final String WORSHIP_DOC = "worshipDocs";
+    private static final String EXSERVICE_DOC = "exserviceDocs";
     
     @Autowired
     private BasicPropertyDAO basicPropertyDAO;
@@ -156,6 +163,31 @@ public class TaxExemptionController extends GenericWorkFlowController {
     @ModelAttribute("taxExemptionReasons")
     public List<TaxExemptionReason> getTaxExemptionReasons() {
         return taxExemptionService.getSession().createQuery("from TaxExemptionReason where isActive = true order by name").list();
+    }
+    
+    @ModelAttribute("documentsEduInst")
+    public List<DocumentType> documentsEduInst(TransactionType transactionType) {
+        return taxExemptionService.getDocuments(TransactionType.TE_EDU_INST);
+    }
+
+    @ModelAttribute("documentsWorship")
+    public List<DocumentType> documentsWorship(TransactionType transactionType) {
+        return taxExemptionService.getDocuments(TransactionType.TE_PUBLIC_WORSHIP);
+    }
+
+    @ModelAttribute("documentsNGO")
+    public List<DocumentType> documentsNGO(TransactionType transactionType) {
+        return taxExemptionService.getDocuments(TransactionType.TE_PENSIONER_NGO);
+    }
+
+    @ModelAttribute("documentsExService")
+    public List<DocumentType> documentsExService(TransactionType transactionType) {
+        return taxExemptionService.getDocuments(TransactionType.TE_EXSERVICE);
+    }
+
+    @ModelAttribute("documentsChoultries")
+    public List<DocumentType> documentsChoultries(TransactionType transactionType) {
+        return taxExemptionService.getDocuments(TransactionType.TE_CHOULTRY);
     }
 
     @RequestMapping(value = "/form/{assessmentNo}", method = RequestMethod.GET)
@@ -243,6 +275,11 @@ public class TaxExemptionController extends GenericWorkFlowController {
         model.addAttribute("isExempted", isExempted);
         model.addAttribute(APPLICATION_SOURCE, applicationSource);
         model.addAttribute("isAlert", isAlert);
+        model.addAttribute(CHOULTRY_DOC, "");
+        model.addAttribute(WORSHIP_DOC, "");
+        model.addAttribute(EDUINST_DOC, "");
+        model.addAttribute(EXSERVICE_DOC, "");
+        model.addAttribute(NGO_DOC, "");
         taxExemptionService.addModelAttributes(model, basicProperty);
         prepareWorkflow(model, propertyImpl, new WorkflowContainer());
         return TAX_EXEMPTION_FORM;
@@ -287,7 +324,10 @@ public class TaxExemptionController extends GenericWorkFlowController {
                 workFlowAction = request.getParameter("workFlowAction");
             if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
                 approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
-
+            if (checkCommercialProperty((PropertyImpl)property)) {
+                model.addAttribute(ERROR_MSG, "error.commercial.prop.notallowed");
+                return PROPERTY_VALIDATION;
+            }
             if (loggedUserIsMeesevaUser) {
                 final HashMap<String, String> meesevaParams = new HashMap<>();
                 meesevaParams.put("APPLICATIONNUMBER", ((PropertyImpl) property).getMeesevaApplicationNumber());
@@ -343,5 +383,12 @@ public class TaxExemptionController extends GenericWorkFlowController {
         headers.setContentType(MediaType.parseMediaType("application/pdf"));
         headers.add("content-disposition", "inline;filename=CitizenCharterAcknowledgement.pdf");
         return new ResponseEntity<>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
+    }
+    
+    public Boolean checkCommercialProperty(PropertyImpl property) {
+        return property.getPropertyDetail().getCategoryType().equals(PropertyTaxConstants.CATEGORY_NON_RESIDENTIAL)
+                && (property.getTaxExemptedReason().getCode().equals(PropertyTaxConstants.EXEMPTION_EXSERVICE)
+                        || property.getTaxExemptedReason().getCode()
+                                .equals(PropertyTaxConstants.EXEMPTION_PUBLIC_WORSHIP));
     }
 }

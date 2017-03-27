@@ -114,6 +114,7 @@ import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
+import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyMaterlizeView;
@@ -121,6 +122,7 @@ import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.domain.entity.property.PropertyStatusValues;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 
 import com.opensymphony.xwork2.validator.annotations.Validations;
 
@@ -254,6 +256,9 @@ public class SearchPropertyAction extends BaseFormAction {
 
     @Autowired
     private UserService userService;
+    
+    @Autowired
+    private PropertyTaxCommonUtils propertyTaxCommonUtils;
 
     @Override
     public Object getModel() {
@@ -396,11 +401,23 @@ public class SearchPropertyAction extends BaseFormAction {
                 return COMMON_FORM;
             }
 
-        } else if (APPLICATION_TYPE_DEMAND_BILL.equals(applicationType))
+        } else if (APPLICATION_TYPE_DEMAND_BILL.equals(applicationType)){
+            Ptdemand currentDemand = null;
+
+            for (final Ptdemand ptdemand : basicProperty.getProperty().getPtDemandSet())
+                if (ptdemand.getEgInstallmentMaster().equals(propertyTaxCommonUtils.getCurrentInstallment())) {
+                    currentDemand = ptdemand;
+                    break;
+                }
+            if(currentDemand ==null){
+                addActionError(getText("error.msg.no.demand") + basicProperty.getUpicNo());
+                return COMMON_FORM; 
+            }
             if (basicProperty.getProperty().getIsExemptedFromTax()) {
                 addActionError(getText("error.msg.taxExempted"));
                 return COMMON_FORM;
             }
+        }
         loggedUserIsMeesevaUser = propertyService.isMeesevaUser(securityUtils.getCurrentUser());
         if (loggedUserIsMeesevaUser)
             if (APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP.equals(applicationType))

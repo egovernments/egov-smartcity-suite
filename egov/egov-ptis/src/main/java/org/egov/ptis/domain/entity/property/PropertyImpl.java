@@ -131,6 +131,8 @@ public class PropertyImpl extends StateAware implements Property {
     private List<AmalgamationOwner> amalgamationOwners = new ArrayList<>();
     private List<AmalgamationOwner> amalgamationOwnersProxy = new ArrayList<>();
     private List<Document> assessmentDocuments = new ArrayList<>();
+    private List<Document> taxExemptionDocuments = new ArrayList<>();
+    private List<Document> taxExemptionDocumentsProxy = new ArrayList<>();
 
     @Override
     public String getDocNumber() {
@@ -749,6 +751,31 @@ public class PropertyImpl extends StateAware implements Property {
     @Override
     public void setAssessmentDocuments(List<Document> assessmentDocuments) {
         this.assessmentDocuments = assessmentDocuments;
+    }
+
+    @Override
+    public List<Document> getTaxExemptionDocuments() {
+        return taxExemptionDocuments;
+    }
+
+    @Override
+    public void setTaxExemptionDocuments(List<Document> taxExemptionDocuments) {
+        this.taxExemptionDocuments = taxExemptionDocuments;
+    }
+
+    @Override
+    public List<Document> getTaxExemptionDocumentsProxy() {
+        return taxExemptionDocumentsProxy;
+    }
+
+    @Override
+    public void setTaxExemptionDocumentsProxy(List<Document> taxExemptionDocumentsProxy) {
+        this.taxExemptionDocumentsProxy = taxExemptionDocumentsProxy;
+    }
+    
+    @Override
+    public void addTaxExemptionDocuments(Document exemptionDocument) {
+        getTaxExemptionDocuments().add(exemptionDocument);
     }
 
 }

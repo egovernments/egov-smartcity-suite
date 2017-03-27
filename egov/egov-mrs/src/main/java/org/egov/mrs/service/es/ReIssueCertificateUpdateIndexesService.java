@@ -46,14 +46,17 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
 import org.egov.commons.entity.Source;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.elasticsearch.entity.ApplicationIndex;
 import org.egov.infra.elasticsearch.entity.enums.ApprovalStatus;
 import org.egov.infra.elasticsearch.entity.enums.ClosureStatus;
 import org.egov.infra.elasticsearch.service.ApplicationIndexService;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.mrs.application.MarriageConstants;
 import org.egov.mrs.domain.entity.ReIssue;
 import org.egov.mrs.domain.enums.MarriageFeeType;
+import org.egov.mrs.domain.service.MarriageRegistrationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -67,12 +70,17 @@ public class ReIssueCertificateUpdateIndexesService {
     private SecurityUtils securityUtils;
     @Autowired
     private ApplicationIndexService applicationIndexService;
+    
+    @Autowired
+    private MarriageRegistrationService marriageRegistrationService;
 
     public void createReIssueAppIndex(final ReIssue reIssue) {
         final User user = securityUtils.getCurrentUser();
         if (LOG.isDebugEnabled())
             LOG.debug("Application Index creation Started... ");
 
+        final AppConfigValues reissueSla =marriageRegistrationService.getSlaAppConfigValuesForMarriageReg(
+                MarriageConstants.MODULE_NAME, MarriageConstants.SLAFORMARRIAGEREISSUE);
         ApplicationIndex applicationIndex = ApplicationIndex.builder().withModuleName(APPL_INDEX_MODULE_NAME)
                 .withApplicationNumber(reIssue.getApplicationNo())
                 .withApplicationDate(reIssue.getApplicationDate())
@@ -85,6 +93,8 @@ public class ReIssueCertificateUpdateIndexesService {
                 .withChannel(reIssue.getSource() == null ? Source.SYSTEM.toString() : reIssue.getSource())
                 .withMobileNumber(reIssue.getApplicant().getContactInfo().getMobileNo())
                 .withClosed(ClosureStatus.NO)
+                .withSla(reissueSla != null && reissueSla.getValue() != null
+                        ? Integer.valueOf(reissueSla.getValue()):0) 
                 .withApproved(ApprovalStatus.INPROGRESS).build();
         applicationIndexService.createApplicationIndex(applicationIndex);
         if (LOG.isDebugEnabled())

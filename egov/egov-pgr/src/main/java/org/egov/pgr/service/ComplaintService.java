@@ -64,7 +64,6 @@ import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.enums.ComplaintStatus;
 import org.egov.pgr.repository.ComplaintRepository;
 import org.egov.pgr.service.es.ComplaintIndexService;
-import org.egov.pgr.utils.constants.PGRConstants;
 import org.egov.pims.commons.Position;
 import org.egov.portal.entity.CitizenInbox;
 import org.egov.portal.entity.CitizenInboxBuilder;
@@ -104,20 +103,7 @@ import static org.egov.pgr.entity.enums.ComplaintStatus.FORWARDED;
 import static org.egov.pgr.entity.enums.ComplaintStatus.PROCESSING;
 import static org.egov.pgr.entity.enums.ComplaintStatus.REGISTERED;
 import static org.egov.pgr.entity.enums.ComplaintStatus.REOPENED;
-import static org.egov.pgr.utils.constants.PGRConstants.COMMENT;
-import static org.egov.pgr.utils.constants.PGRConstants.COMPLAINT_REGISTERED;
-import static org.egov.pgr.utils.constants.PGRConstants.DATE;
-import static org.egov.pgr.utils.constants.PGRConstants.DELIMITER_COLON;
-import static org.egov.pgr.utils.constants.PGRConstants.DEPT;
-import static org.egov.pgr.utils.constants.PGRConstants.ESCALATEDSTATUS;
-import static org.egov.pgr.utils.constants.PGRConstants.MODULE_NAME;
-import static org.egov.pgr.utils.constants.PGRConstants.NOASSIGNMENT;
-import static org.egov.pgr.utils.constants.PGRConstants.STATUS;
-import static org.egov.pgr.utils.constants.PGRConstants.SYSTEMUSER;
-import static org.egov.pgr.utils.constants.PGRConstants.UPDATEDBY;
-import static org.egov.pgr.utils.constants.PGRConstants.UPDATEDUSERTYPE;
-import static org.egov.pgr.utils.constants.PGRConstants.USER;
-import static org.egov.pgr.utils.constants.PGRConstants.USERTYPE;
+import static org.egov.pgr.utils.constants.PGRConstants.*;
 
 @Service
 @Transactional(readOnly = true)
@@ -163,6 +149,9 @@ public class ComplaintService {
 
     @Autowired
     private ModuleService moduleService;
+
+    @Autowired
+    private ForwardSkippablePositionService forwardSkippablePositionService;
 
     @Transactional
     public Complaint createComplaint(final Complaint complaint) {
@@ -216,16 +205,16 @@ public class ComplaintService {
 
     /**
      * @param complaint
-     * @param approvalPosition
-     * @param approvalComent
+     * @param nextOwnerId
+     * @param approvalComment
      * @return If the status is changed to completed/withdrawn then terminate/end the workflow. Even if the poistion is selected
      * no need to consider position as it is end of workflow.else If position is found then it is forwarding only. Else it is
      * update by official or citizen
      */
 
     @Transactional
-    public Complaint update(final Complaint complaint, final Long approvalPosition, final String approvalComent) {
-        final Role goRole = roleService.getRoleByName(PGRConstants.GO_ROLE_NAME);
+    public Complaint update(Complaint complaint, Long nextOwnerId, String approvalComment, boolean sendToPrevAssignee) {
+        final Role goRole = roleService.getRoleByName(GO_ROLE_NAME);
         String userName;
         if (securityUtils.getCurrentUser().getType().equals(UserType.CITIZEN))
             userName = securityUtils.getCurrentUser().getName();
@@ -237,38 +226,45 @@ public class ComplaintService {
             complaint.setDepartment(complaint.getAssignee().getDeptDesig().getDepartment());
             LOG.debug("Terminating Grievance Workflow");
             if (!securityUtils.getCurrentUser().getRoles().contains(goRole))
-                complaint.transition().end().withComments(approvalComent)
+                complaint.transition().end().withComments(approvalComment)
                         .withStateValue(complaint.getStatus().getName()).withSenderName(userName)
                         .withDateInfo(new Date());
 
             else
-                complaint.transition().end().withComments(approvalComent)
+                complaint.transition().end().withComments(approvalComment)
                         .withStateValue(complaint.getStatus().getName()).withSenderName(userName)
                         .withDateInfo(new Date()).withOwner(complaint.getState().getOwnerPosition());
-        } else if (null != approvalPosition && !approvalPosition.equals(Long.valueOf(0))) {
-            final Position owner = positionMasterService.getPositionById(approvalPosition);
+        } else if (nextOwnerId != null && !nextOwnerId.equals(0L)) {
+            final Position owner = positionMasterService.getPositionById(nextOwnerId);
             complaint.setAssignee(owner);
             complaint.setDepartment(complaint.getAssignee().getDeptDesig().getDepartment());
             if (!securityUtils.getCurrentUser().getRoles().contains(goRole))
-                complaint.transition().progressWithStateCopy().withOwner(owner).withComments(approvalComent).withSenderName(userName)
+                complaint.transition().progressWithStateCopy().withOwner(owner).withComments(approvalComment).withSenderName(userName)
                         .withStateValue(complaint.getStatus().getName()).withDateInfo(new Date());
             else
-                complaint.transition().progressWithStateCopy().withComments(approvalComent).withStateValue(complaint.getStatus().getName())
+                complaint.transition().progressWithStateCopy().withComments(approvalComment).withStateValue(complaint.getStatus().getName())
                         .withSenderName(userName).withDateInfo(new Date()).withOwner(owner);
+        } else if (sendToPrevAssignee && canSendToPreviousAssignee(complaint)) {
+            Position nextAssignee = complaint.previousAssignee();
+            complaint.setDepartment(nextAssignee.getDeptDesig().getDepartment());
+            complaint.setAssignee(nextAssignee);
+            complaint.transition().progressWithStateCopy().withComments(approvalComment).withSenderName(userName)
+                    .withStateValue(complaint.getStatus().getName()).withOwner(nextAssignee).withDateInfo(new Date());
+
         } else {
             complaint.setDepartment(complaint.getAssignee().getDeptDesig().getDepartment());
             if (!securityUtils.getCurrentUser().getRoles().contains(goRole))
-                complaint.transition().progressWithStateCopy().withComments(approvalComent).withSenderName(userName)
+                complaint.transition().progressWithStateCopy().withComments(approvalComment).withSenderName(userName)
                         .withStateValue(complaint.getStatus().getName()).withDateInfo(new Date());
-
             else
-                complaint.transition().progressWithStateCopy().withComments(approvalComent).withSenderName(userName)
+                complaint.transition().progressWithStateCopy().withComments(approvalComment).withSenderName(userName)
                         .withStateValue(complaint.getStatus().getName()).withDateInfo(new Date())
                         .withOwner(complaint.getState().getOwnerPosition());
+
         }
 
         complaintRepository.saveAndFlush(complaint);
-        complaintIndexService.updateComplaintIndex(complaint, approvalPosition, approvalComent);
+        complaintIndexService.updateComplaintIndex(complaint, nextOwnerId, approvalComment);
         pushMessage(complaint);
         if (complaint.getStatus().getName().equalsIgnoreCase(ComplaintStatus.COMPLETED.toString()) ||
                 complaint.getStatus().getName().equalsIgnoreCase(ComplaintStatus.REJECTED.toString()))
@@ -559,40 +555,40 @@ public class ComplaintService {
 
     public Page<Complaint> getMyPendingGrievances(final int page, final int pageSize) {
         final int offset = page - 1;
-        return complaintRepository.findMyComplaintyByStatus(securityUtils.getCurrentUser(), PGRConstants.PENDING_STATUS,
+        return complaintRepository.findMyComplaintyByStatus(securityUtils.getCurrentUser(), PENDING_STATUS,
                 new PageRequest(offset, pageSize));
     }
 
     public Page<Complaint> getMyCompletedGrievances(final int page, final int pageSize) {
         final int offset = page - 1;
-        return complaintRepository.findMyComplaintyByStatus(securityUtils.getCurrentUser(), PGRConstants.COMPLETED_STATUS,
+        return complaintRepository.findMyComplaintyByStatus(securityUtils.getCurrentUser(), COMPLETED_STATUS,
                 new PageRequest(offset, pageSize));
     }
 
     public Page<Complaint> getMyRejectedGrievances(final int page, final int pageSize) {
         final int offset = page - 1;
-        return complaintRepository.findMyComplaintyByStatus(securityUtils.getCurrentUser(), PGRConstants.REJECTED_STATUS,
+        return complaintRepository.findMyComplaintyByStatus(securityUtils.getCurrentUser(), REJECTED_STATUS,
                 new PageRequest(offset, pageSize));
     }
 
     public Map<String, Integer> getMyComplaintsCount() {
         final HashMap<String, Integer> complaintsCount = new HashMap<>();
-        complaintsCount.put(PGRConstants.COMPLAINT_ALL,
+        complaintsCount.put(COMPLAINT_ALL,
                 complaintRepository.getMyComplaintsTotalCount(securityUtils.getCurrentUser()).intValue());
-        complaintsCount.put(PGRConstants.COMPLAINT_PENDING,
-                complaintRepository.getMyComplaintCountByStatus(securityUtils.getCurrentUser(), PGRConstants.PENDING_STATUS).intValue());
-        complaintsCount.put(PGRConstants.COMPLAINT_COMPLETED,
-                complaintRepository.getMyComplaintCountByStatus(securityUtils.getCurrentUser(), PGRConstants.COMPLETED_STATUS).intValue());
-        complaintsCount.put(PGRConstants.COMPLAINT_REJECTED,
-                complaintRepository.getMyComplaintCountByStatus(securityUtils.getCurrentUser(), PGRConstants.REJECTED_STATUS).intValue());
+        complaintsCount.put(COMPLAINT_PENDING,
+                complaintRepository.getMyComplaintCountByStatus(securityUtils.getCurrentUser(), PENDING_STATUS).intValue());
+        complaintsCount.put(COMPLAINT_COMPLETED,
+                complaintRepository.getMyComplaintCountByStatus(securityUtils.getCurrentUser(), COMPLETED_STATUS).intValue());
+        complaintsCount.put(COMPLAINT_REJECTED,
+                complaintRepository.getMyComplaintCountByStatus(securityUtils.getCurrentUser(), REJECTED_STATUS).intValue());
         return complaintsCount;
     }
 
     public Map<String, Integer> getComplaintsTotalCount() {
         final HashMap<String, Integer> complaintsCount = new HashMap<>();
-        complaintsCount.put(PGRConstants.COMPLAINTS_FILED, complaintRepository.getTotalComplaintsCount().intValue());
-        complaintsCount.put(PGRConstants.COMPLAINTS_RESOLVED, complaintRepository.getComplaintsTotalCountByStatus(PGRConstants.RESOLVED_STATUS).intValue());
-        complaintsCount.put(PGRConstants.COMPLAINTS_UNRESOLVED, complaintRepository.getComplaintsTotalCountByStatus(PGRConstants.PENDING_STATUS).intValue());
+        complaintsCount.put(COMPLAINTS_FILED, complaintRepository.getTotalComplaintsCount().intValue());
+        complaintsCount.put(COMPLAINTS_RESOLVED, complaintRepository.getComplaintsTotalCountByStatus(RESOLVED_STATUS).intValue());
+        complaintsCount.put(COMPLAINTS_UNRESOLVED, complaintRepository.getComplaintsTotalCountByStatus(PENDING_STATUS).intValue());
         return complaintsCount;
     }
 
@@ -601,4 +597,8 @@ public class ComplaintService {
         return complaintRepository.findByStatusNameIn(statusList);
     }
 
+    public boolean canSendToPreviousAssignee(Complaint complaint) {
+        return complaint.hasState() && complaint.previousAssignee() != null &&
+                forwardSkippablePositionService.isSkippablePosition(complaint.currentAssignee());
+    }
 }

@@ -134,3 +134,75 @@ function balanceCheck(obj, name, value)
 			}
 			return true;
 		}
+
+
+var bankBranchId = 0;
+var bankAccountId =0;
+
+jQuery(document).ready(function(){
+	bankBranchId = jQuery('#bankBranch').val();
+	bankAccountId = jQuery('#bankAccount').val();
+
+	jQuery('#bank').change(function () {
+	bankBranchId = "";
+	jQuery('#bankBranch').empty();
+	jQuery('#bankBranch').append(jQuery('<option>').text('Select from below').attr('value', ''));
+	if(jQuery('#bank').val()!="")
+		loadBankBranches(jQuery('#bank').val());
+	else
+		loadBankBranches(0);	
+});
+	
+	jQuery('#bankBranch').change(function () {
+		bankBranchId = "";
+		jQuery('#bankAccount').empty();
+		jQuery('#bankAccount').append(jQuery('<option>').text('Select from below').attr('value', ''));
+			loadBankAccounts(jQuery('#bankBranch').val());
+	});
+});
+
+function loadBankBranches(bankId){
+	jQuery.ajax({
+			method : "GET",
+			url : "/EGF/common/getbankbranchesbybankid",
+			data : {
+				bankId : bankId
+			},
+			async : true
+		}).done(
+				function(response) {
+					jQuery('#bankBranch').empty();
+					jQuery('#bankBranch').append(jQuery("<option value=''>Select from below</option>"));
+					jQuery.each(response, function(index, value) {
+						var selected="";
+						if(bankBranchId && bankBranchId==value.id)
+						{
+								selected="selected";
+						}
+						jQuery('#bankBranch').append(jQuery('<option '+ selected +'>').text(value.branchname).attr('value', value.id));
+					});
+				});
+}
+
+function loadBankAccounts(branchId){
+	jQuery.ajax({
+			method : "GET",
+			url : "/EGF/common/getbankaccountbybranchid",
+			data : {
+				branchId : branchId
+			},
+			async : true
+		}).done(
+				function(response) {
+					jQuery('#bankAccount').empty();
+					jQuery('#bankAccount').append(jQuery("<option value=''>Select from below</option>"));
+					jQuery.each(response, function(index, value) {
+						var selected="";
+						if(bankAccountId && bankAccountId==value.id)
+						{
+								selected="selected";
+						}
+						jQuery('#bankAccount').append(jQuery('<option '+ selected +'>').text(value.accountnumber).attr('value', value.id));
+					});
+				});
+}

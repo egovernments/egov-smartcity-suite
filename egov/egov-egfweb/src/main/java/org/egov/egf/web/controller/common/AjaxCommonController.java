@@ -47,6 +47,7 @@ import java.util.List;
 
 import org.apache.struts2.ServletActionContext;
 import org.egov.commons.Accountdetailtype;
+import org.egov.commons.Bankaccount;
 import org.egov.commons.Bankbranch;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.CFunction;
@@ -60,6 +61,7 @@ import org.egov.commons.service.FunctionService;
 import org.egov.commons.service.FundsourceService;
 import org.egov.commons.utils.EntityType;
 import org.egov.egf.billsubtype.service.EgBillSubTypeService;
+import org.egov.egf.commons.bankaccount.service.CreateBankAccountService;
 import org.egov.egf.commons.bankbranch.service.CreateBankBranchService;
 import org.egov.egf.web.adaptor.ChartOfAccountsAdaptor;
 import org.egov.infra.admin.master.entity.AppConfigValues;
@@ -121,6 +123,9 @@ public class AjaxCommonController {
 
     @Autowired
     private AppConfigValueService appConfigValueService;
+    
+    @Autowired
+    private CreateBankAccountService createBankAccountService;
 
     @RequestMapping(value = "/getschemesbyfundid", method = RequestMethod.GET)
     @ResponseBody
@@ -254,6 +259,13 @@ public class AjaxCommonController {
             return createBankBranchService.getByBankId(Integer.parseInt(bankId));
         else
             return createBankBranchService.getByIsActiveTrueOrderByBranchname();
+    }
+    
+    @RequestMapping(value = "/getbankaccountbybranchid", method = RequestMethod.GET)
+    @ResponseBody
+    public List<Bankaccount> getBankAccountByBranchId(@RequestParam("branchId") final String branchId)
+            throws ApplicationException {
+        return createBankAccountService.getByBranchId(Integer.parseInt(branchId));
     }
 
     public static <T> String toJSON(final Collection<T> objects, final Class<? extends T> objectClazz,

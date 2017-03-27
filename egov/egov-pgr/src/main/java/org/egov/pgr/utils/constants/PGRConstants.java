@@ -40,9 +40,8 @@
 
 package org.egov.pgr.utils.constants;
 
-public class PGRConstants {
+public final class PGRConstants {
     public static final String MODULE_NAME = "PGR";
-    public static final String DASH_DELIM = "-";
     public static final String EG_OBJECT_TYPE_COMPLAINT = "Complaint";
     public static final String GO_ROLE_NAME = "Grievance Officer";
     public static final String GRO_ROLE_NAME = "Grievance Routing Officer";
@@ -84,7 +83,6 @@ public class PGRConstants {
     public static final String COMPLAINTTYPE_SELECT_QRY = " SELECT ctype.name as name, ";
     public static final String DEPT_SELECT_QRY = " SELECT dept.name as name, ";
 
-    //Dashboard
     public static final String CITY_CODE = "cityCode";
     public static final String WARD_NUMBER = "wardNo";
     public static final String WARD_NAME = "wardName";
@@ -98,11 +96,23 @@ public class PGRConstants {
     public static final String COMPLAINTS_RESOLVED = "RESOLVED";
     public static final String COMPLAINTS_UNRESOLVED = "UNRESOLVED";
     public static final String COMPLAINT_REGISTERED = "REGISTERED";
-    public static final String[] PENDING_STATUS = {"REGISTERED", "FORWARDED", "PROCESSING", "NOTCOMPLETED", "REOPENED"};
-    public static final String[] COMPLETED_STATUS = {"COMPLETED", "WITHDRAWN", "CLOSED"};
-    public static final String[] REJECTED_STATUS = {"REJECTED"};
-    public static final String[] RESOLVED_STATUS = {"COMPLETED", "WITHDRAWN", "CLOSED", "REJECTED"};
+    public static final String COMPLAINT_CLOSED = "CLOSED";
+    public static final String COMPLAINT_WITHDRAWN = "WITHDRAWN";
+
+    public static final String[] PENDING_STATUS = {COMPLAINT_REGISTERED, "FORWARDED", "PROCESSING", "NOTCOMPLETED", "REOPENED"};
+    public static final String[] COMPLETED_STATUS = {COMPLAINT_COMPLETED, COMPLAINT_WITHDRAWN, COMPLAINT_CLOSED};
+    public static final String[] REJECTED_STATUS = {COMPLAINT_REJECTED};
+    public static final String[] RESOLVED_STATUS = {COMPLAINT_COMPLETED, COMPLAINT_WITHDRAWN, COMPLAINT_CLOSED, COMPLAINT_REJECTED};
     public static final String DEFAULT_RECEIVING_MODE = "WEBSITE";
     public static final String SYSTEMUSER = "SYSTEM";
     public static final String ESCALATEDSTATUS = "ESCALATED";
+    public static final String COMPLAINT_ATTRIB = "complaint";
+    public static final String CITIZEN_RATING_ATTRIB = "citizenRating";
+    public static final String APPROVAL_COMMENT_ATTRIB = "approvalComent";
+    public static final String APPROVAL_POSITION_ATTRIB = "approvalPosition";
+    public static final String LOCATION_ATTRIB = "location";
+
+    private PGRConstants() {
+        //Only invariables
+    }
 }

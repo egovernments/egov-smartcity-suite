@@ -57,7 +57,7 @@ public class CouncilPreamble extends StateAware {
     private BigDecimal sanctionAmount;
 
     @NotNull
-    @Length(max = 5000)
+    @Length(max = 10000)
     @JoinColumn(name = "gistOfPreamble")
     private String gistOfPreamble;
 

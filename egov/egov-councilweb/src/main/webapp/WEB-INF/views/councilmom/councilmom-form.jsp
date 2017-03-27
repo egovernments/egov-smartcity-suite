@@ -146,7 +146,7 @@
 													<td>
 													<div class="input-group">
 											            <form:textarea path="meetingMOMs[${counter.index}].resolutionDetail" id="meetingMOMs[${counter.index}].resolutionDetail" 
-														 class="form-control text-left textarea-content addorremoverequired"  value="${mom.resolutionDetail}" rows="5" required ="required" />
+														 class="form-control text-left textarea-content addorremoverequired" maxlength="5000"  value="${mom.resolutionDetail}" rows="5" required ="required" />
 														<form:errors path="meetingMOMs[${counter.index}].resolutionDetail" cssClass="error-msg" />
 											            <span class="input-group-addon" id="showModal" data-header="Agenda Items - Resolution comments"><span class="glyphicon glyphicon-pencil" style="cursor:pointer"></span></span>
 											        </div>

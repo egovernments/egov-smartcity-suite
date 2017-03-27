@@ -125,6 +125,10 @@ public class State extends AbstractAuditable {
     private Position initiatorPosition;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "previousOwner")
+    private Position previousOwner;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "previousStateRef")
     private State previousStateRef;
 
@@ -273,6 +277,14 @@ public class State extends AbstractAuditable {
 
     public void setInitiatorPosition(Position initiatorPosition) {
         this.initiatorPosition = initiatorPosition;
+    }
+
+    public Position getPreviousOwner() {
+        return previousOwner;
+    }
+
+    public void setPreviousOwner(final Position previousOwner) {
+        this.previousOwner = previousOwner;
     }
 
     public State getPreviousStateRef() {

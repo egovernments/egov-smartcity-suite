@@ -79,9 +79,7 @@
 								code="lbl.petitiontype" /> </label>
 						<div class="col-sm-3 add-margin">
 							<form:input path="petitionType" id="petitiontype"
-								class="form-control patternvalidation"
-								data-pattern="alphanumericwithspecialcharacterswithspace"
-								maxlength="128" />
+								class="form-control text-left pattern" maxlength="128" />
 							<form:errors path="petitionType" cssClass="error-msg" />
 						</div>
 
@@ -128,14 +126,6 @@
 		</table>
 	</div>
 </div>
-<script>
-	$('#btnsearch').click(function(e) {
-		if ($('form').valid()) {
-		} else {
-			e.preventDefault();
-		}
-	});
-</script>
 <link rel="stylesheet"
 	href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>" />
 <link rel="stylesheet"

@@ -625,7 +625,8 @@ public class AssessmentService {
      */
     @RequestMapping(value = "/property/wardWisePropertyDetails", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
     public List<AssessmentInfo> getWardWisePropertyDetails(AssessmentRequest assessmentRequest) throws IOException {
-        return propertyExternalService.getPropertyDetailsForWard(assessmentRequest.getUlbCode(), assessmentRequest.getWardNum());
+        return propertyExternalService.getPropertyDetailsForWard(assessmentRequest.getUlbCode(), assessmentRequest.getWardNum(),
+                assessmentRequest.getAssessmentNo(), assessmentRequest.getDoorNo());
     }
     
     /**
