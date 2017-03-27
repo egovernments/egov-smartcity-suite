@@ -44,6 +44,7 @@ import static org.egov.council.utils.constants.CouncilConstants.MOM_FINALISED;
 import static org.egov.council.utils.constants.CouncilConstants.SENDEMAILFORCOUNCIL;
 import static org.egov.council.utils.constants.CouncilConstants.SENDSMSFORCOUNCIL;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -62,6 +63,8 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class CouncilSmsAndEmailService {
+
+    private static final String DATE_FORMAT = "yyyy-MM-dd";
 
     private static final String AGENDAATTACHFILENAME = "agendadetails.rtf";
 
@@ -231,16 +234,13 @@ public class CouncilSmsAndEmailService {
      */
     public String emailBodyByCodeAndArgsWithType(final String code, final String name, final CouncilMeeting councilMeeting,
             final String customMessage) {
-        String emailBody;
-
-        emailBody = councilMessageSource.getMessage(code,
+        final SimpleDateFormat sf = new SimpleDateFormat(DATE_FORMAT);
+        return councilMessageSource.getMessage(code,
                 new String[] { name,
-                        String.valueOf(councilMeeting.getMeetingDate()),
+                        sf.format(councilMeeting.getMeetingDate()),
                         String.valueOf(councilMeeting.getMeetingTime()),
                         String.valueOf(councilMeeting.getMeetingLocation()), customMessage != null ? customMessage : " " },
                 LocaleContextHolder.getLocale());
-
-        return emailBody;
     }
 
     /**
@@ -251,15 +251,13 @@ public class CouncilSmsAndEmailService {
      */
     public String smsBodyByCodeAndArgsWithType(final String code, final String name, final CouncilMeeting councilMeeting,
             final String customMessage) {
-        String smsMsg;
-        smsMsg = councilMessageSource.getMessage(code,
+        final SimpleDateFormat sf = new SimpleDateFormat(DATE_FORMAT);
+        return councilMessageSource.getMessage(code,
                 new String[] { name,
-                        String.valueOf(councilMeeting.getMeetingDate()),
+                        sf.format(councilMeeting.getMeetingDate()),
                         String.valueOf(councilMeeting.getMeetingTime()),
                         String.valueOf(councilMeeting.getMeetingLocation()), customMessage != null ? customMessage : " " },
                 LocaleContextHolder.getLocale());
-
-        return smsMsg;
     }
 
     public Boolean isSmsEnabled() {
@@ -282,9 +280,10 @@ public class CouncilSmsAndEmailService {
     }
 
     public String emailSubjectforEmailByCodeAndArgs(final String code, final String name, final CouncilMeeting councilMeeting) {
+        final SimpleDateFormat sf = new SimpleDateFormat(DATE_FORMAT);
         return councilMessageSource.getMessage(code,
                 new String[] { name,
-                        String.valueOf(councilMeeting.getMeetingDate()),
+                        sf.format(councilMeeting.getMeetingDate()),
                         String.valueOf(councilMeeting.getMeetingTime()),
                         String.valueOf(councilMeeting.getMeetingLocation()) },
                 LocaleContextHolder.getLocale());
