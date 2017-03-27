@@ -239,7 +239,7 @@ public class RemitRecoveryAction extends BasePaymentAction {
         final List<Recovery> listRecovery = recoveryService.getAllActiveRecoverys();
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("RemitRecoveryAction | Tds list size : " + listRecovery.size());
-        List<Bank> activeBanks = bankHibernateDAO.getAllBankHavingBranchAndAccounts();  ; 
+        List<Bank> activeBanks = bankHibernateDAO.getAllBankHavingBranchAndAccounts();
         addDropdownData("bankList", activeBanks);
         addDropdownData("branchList", Collections.EMPTY_LIST);
         addDropdownData("recoveryList", listRecovery);
