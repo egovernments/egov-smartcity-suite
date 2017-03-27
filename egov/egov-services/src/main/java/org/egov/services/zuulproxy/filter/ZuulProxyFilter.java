@@ -60,6 +60,7 @@ import org.egov.services.zuulproxy.models.Role;
 import org.egov.services.zuulproxy.models.UserInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.env.Environment;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.context.WebApplicationContext;
@@ -74,6 +75,7 @@ public class ZuulProxyFilter extends ZuulFilter {
 
     private static Logger log = LoggerFactory.getLogger(ZuulProxyFilter.class);
     private static final String USER_INFO = "x-user-info";
+    private static final String CLIENT_ID = "client.id";
 
     @Override
     public String filterType() {
@@ -165,9 +167,16 @@ public class ZuulProxyFilter extends ZuulFilter {
             final List<Role> roles = new ArrayList<Role>();
             userDetails.getUser().getRoles().forEach(authority -> roles.add(new Role(authority.getName())));
 
+            final Environment environment = (Environment) springContext.getBean("environment");
+            final String clientId = environment.getProperty(CLIENT_ID);
+
+            String tenantId = ApplicationThreadLocals.getTenantID();
+            if (StringUtils.isNoneBlank(clientId))
+                tenantId = clientId + "." + tenantId;
+
             final UserInfo userInfo = new UserInfo(roles, userDetails.getUserId(), userDetails.getUsername(), user.getName(),
                     user.getEmailId(), user.getMobileNumber(), userDetails.getUserType().toString(),
-                    ApplicationThreadLocals.getCityName());
+                    tenantId);
             final ObjectMapper mapper = new ObjectMapper();
             try {
                 userInfoJson = mapper.writeValueAsString(userInfo);
