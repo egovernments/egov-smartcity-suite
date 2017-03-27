@@ -95,7 +95,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.SENIOR_ASSISTANT;
 import static org.egov.ptis.constants.PropertyTaxConstants.SOURCEOFDATA_DATAENTRY;
 import static org.egov.ptis.constants.PropertyTaxConstants.SOURCEOFDATA_MIGRATION;
 import static org.egov.ptis.constants.PropertyTaxConstants.SOURCE_ONLINE;
-import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
+import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_DEMAND_INACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISHISTORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_REJECTED;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
@@ -384,7 +384,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         if (logger.isDebugEnabled())
             logger.debug("Entered into modifyForm, \nIndexNumber: " + indexNumber + ", BasicProperty: " + basicProp
                     + ", OldProperty: " + oldProperty + ", PropertyModel: " + propertyModel);
-        if (propertyModel.getStatus().equals(PropertyTaxConstants.STATUS_DEMAND_INACTIVE)) {
+        if (propertyModel.getStatus().equals(STATUS_DEMAND_INACTIVE)) {
             addActionError(getText("error.msg.demandInactive"));
             return COMMON_FORM;
         }
@@ -848,7 +848,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
          */
         if (PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn) || PROPERTY_MODIFY_REASON_BIFURCATE.equals(modifyRsn)
                 || PROPERTY_MODIFY_REASON_GENERAL_REVISION_PETITION.equals(modifyRsn)) {
-            propertyModel.setStatus(STATUS_ISACTIVE);
+            propertyModel.setStatus(STATUS_DEMAND_INACTIVE);
             oldProperty.setStatus(STATUS_ISHISTORY);
             final String clientSpecificDmdBill = propertyTaxCommonUtils.getAppConfigValue(APPCONFIG_CLIENT_SPECIFIC_DMD_BILL,
                     PTMODULENAME);
