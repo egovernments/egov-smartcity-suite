@@ -337,7 +337,7 @@ public class ConnectionDemandService {
 
     public List<Object> getDmdCollAmtInstallmentWiseUptoCurrentInstallmemt(final EgDemand egDemand,
             final WaterConnectionDetails waterConnectionDetails) {
-        Installment currInstallment = null;
+        Installment currInstallment;
         if (waterConnectionDetails.getConnectionType().equals(ConnectionType.NON_METERED))
             currInstallment = getCurrentInstallment(WaterTaxConstants.WATER_RATES_NONMETERED_PTMODULE, null,
                     new Date());
@@ -375,7 +375,7 @@ public class ConnectionDemandService {
 
     @Transactional
     public String generateBill(final String consumerCode, final String applicationTypeCode) {
-        String collectXML = "";
+        String collectXML;
         final SimpleDateFormat formatYear = new SimpleDateFormat("yyyy");
         String currentInstallmentYear = null;
         final WaterConnectionBillable waterConnectionBillable = (WaterConnectionBillable) context
@@ -424,8 +424,7 @@ public class ConnectionDemandService {
     }
 
     public EgBillType getBillTypeByCode(final String typeCode) {
-        final EgBillType billType = egBillDAO.getBillTypeByCode(typeCode);
-        return billType;
+        return egBillDAO.getBillTypeByCode(typeCode);
     }
 
     public EgDemand getDemandByInstAndApplicationNumber(final Installment installment, final String consumerCode) {
@@ -605,16 +604,14 @@ public class ConnectionDemandService {
         waterConnectionBillable.setReferenceNumber(meterDemandNotice.generateMeterDemandNoticeNumber());
         waterConnectionBillable.setBillType(getBillTypeByCode(WaterTaxConstants.BILLTYPE_MANUAL));
 
-        final String billObj = connectionBillService.getBillXML(waterConnectionBillable);
-
-        return billObj;
+        return connectionBillService.getBillXML(waterConnectionBillable);
     }
 
     public WaterConnectionDetails updateDemandForNonmeteredConnection(
             final WaterConnectionDetails waterConnectionDetails, Installment installment,
             final Boolean reconnInSameInstallment, final String workFlowAction) throws ValidationException {
         Date installemntStartDate;
-        EgDemandDetails existingDemandDtlObject;
+        EgDemandDetails existingDemandDtlObject = null;
         int numberOfMonths;
         double totalWaterRate;
         List<Installment> installmentList = new ArrayList<>();
@@ -639,7 +636,6 @@ public class ConnectionDemandService {
         else
             installmentList.add(installment);
 
-        existingDemandDtlObject = null;
         EgDemandDetails demandDetails;
         final WaterRatesDetails waterRatesDetails = getWaterRatesDetailsForDemandUpdate(waterConnectionDetails);
         final EgDemand currentDemand = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
@@ -661,7 +657,7 @@ public class ConnectionDemandService {
                         totalWaterRate = waterRatesDetails.getMonthlyRate();
 
                     demandDetails = createDemandDetails(totalWaterRate,
-                            WaterTaxConstants.WATERTAXREASONCODE, instlment);
+                            WATERTAXREASONCODE, instlment);
 
                     currentDemand.setBaseDemand(currentDemand.getBaseDemand().add(BigDecimal.valueOf(totalWaterRate)));
                     currentDemand.setEgInstallmentMaster(instlment);
