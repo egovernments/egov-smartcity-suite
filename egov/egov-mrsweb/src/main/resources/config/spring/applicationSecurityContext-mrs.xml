@@ -55,7 +55,26 @@
 				
 				<security:filter-chain pattern="/search/Search/" filters="none" /> 
 				<security:filter-chain pattern="/application/view/**" filters="none" /> 
-				<security:filter-chain pattern="/collection/citizen/**" filters="none" />
+				<security:filter-chain pattern="/collection/citizen/**" filters="none" />			
+				<security:filter-chain pattern="/report/age-wise" filters="none" />
+				<security:filter-chain pattern="/report/age-wise/view" filters="none" />
+				<security:filter-chain pattern="/report/status-at-time-marriage" filters="none" />
+				<security:filter-chain pattern="/report/status-at-time-marriage/view" filters="none" />				
+				<security:filter-chain pattern="/report/certificatedetails" filters="none" />
+				<security:filter-chain pattern="/report/datewiseregistration" filters="none" />				
+				<security:filter-chain pattern="/report/monthwiseregistration" filters="none" />
+				<security:filter-chain pattern="/report/show-applications-details" filters="none" />
+				<security:filter-chain pattern="/report/registrationstatus" filters="none" />
+				<security:filter-chain pattern="/report/applicantionsstatus-count" filters="none" />				
+				<security:filter-chain pattern="/report/religionwiseregistration" filters="none" />				
+			    <security:filter-chain pattern="/report/ageing-report" filters="none" />
+			    <security:filter-chain pattern="/report/ageing-report/view/**" filters="none" />
+			    <security:filter-chain pattern="/report/handicapped-report" filters="none" />
+			    <security:filter-chain pattern="/report/handicapped-report-search" filters="none" />
+			    <security:filter-chain pattern="/report/religion-wise-registrations-report" filters="none" />			    
+				<security:filter-chain pattern="/report/monthwisefundcollection" filters="none" />
+				<security:filter-chain pattern="/report/monthly-fund-collection" filters="none" />
+				<security:filter-chain pattern="/report/print-religion-wise-details" filters="none" />
 				<security:filter-chain pattern="/rest/**" filters="anonymousAuthenticationFilter"/>
 			<security:filter-chain pattern="/**"  filters="concurrentSessionFilter,securityContextPersistenceFilter,logoutFilter,authenticationProcessingFilter,securityContextHolderAwareRequestFilter,rememberMeAuthenticationFilter,anonymousAuthenticationFilter,exceptionTranslationFilter,filterSecurityInterceptor" />
 			</list>
