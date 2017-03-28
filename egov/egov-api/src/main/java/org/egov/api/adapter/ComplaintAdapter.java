@@ -57,6 +57,19 @@ import java.util.List;
 
 public class ComplaintAdapter extends DataAdapter<Complaint> {
 
+    Boolean isSkippableForward=false;
+
+    public ComplaintAdapter(){
+    }
+
+    public ComplaintAdapter(Boolean isSkippableForward){
+        this.isSkippableForward=isSkippableForward;
+    }
+
+    public Boolean getSkippableForward() {
+        return isSkippableForward;
+    }
+
     @Override
     public JsonElement serialize(Complaint complaint, Type type, JsonSerializationContext context) {
         JsonObject jo = new JsonObject(); 
@@ -69,7 +82,8 @@ public class ComplaintAdapter extends DataAdapter<Complaint> {
         jo.addProperty("complainantMobileNo", complaint.getComplainant().getMobile());
         jo.addProperty("complainantEmail", StringUtils.isNotBlank(complaint.getComplainant().getEmail())?complaint.getComplainant().getEmail():"");
         jo.addProperty("citizenFeedback", complaint.getCitizenFeedback()!=null?complaint.getCitizenFeedback().name():"");
-        
+        jo.addProperty("isSkippable", getSkippableForward()); //flag for send back functionality
+
         if(complaint.getReceivingMode()!=null)
         {
         	JsonObject receivingMode=new JsonObject();
