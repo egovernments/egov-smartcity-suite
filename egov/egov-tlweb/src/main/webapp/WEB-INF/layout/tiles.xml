@@ -251,4 +251,16 @@
       	<put-attribute name="page-title" value="title.document.new" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/jsp/payment/view-license-dcb.jsp"/>
     </definition>
+    <definition name="create-legacylicense" extends="base_layout">
+        <put-attribute name="page-title" value="title.legacylicense" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/legacylicense/legacy-create.jsp"/>
+    </definition>
+    <definition name="license-view" extends="base_layout">
+        <put-attribute name="page-title" value="title.legacylicense" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/legacylicense/legacy-view.jsp"/>
+    </definition>
+    <definition name="updateform-legacylicense" extends="base_layout">
+        <put-attribute name="page-title" value="title.legacylicense" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/legacylicense/legacy-update.jsp"/>
+    </definition>
 </tiles-definitions>

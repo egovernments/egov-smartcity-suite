@@ -40,37 +40,77 @@
 
 package org.egov.tl.entity;
 
-import org.egov.tl.utils.Constants;
-import org.hibernate.envers.Audited;
-import org.hibernate.envers.RelationTargetAuditMode;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.egov.infra.utils.DateUtils.toDefaultDateFormat;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.egov.infra.utils.DateUtils.toDefaultDateFormat;
+import org.egov.tl.utils.Constants;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.RelationTargetAuditMode;
 
 @Entity
 @Table(name = "egtl_trade_license")
 @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
 public class TradeLicense extends License {
 
+    /**
+     *
+     */
+    private static final long serialVersionUID = 1559371825326966340L;
+    @Transient
+    List<String> financialyear = new ArrayList<>();
+    @Transient
+    List<String> legacyInstallmentwiseFees = new ArrayList<>();
+    @Transient
+    List<String> legacyFeePayStatus = new ArrayList<>();
+
     @Override
     public String getStateDetails() {
-        StringBuilder details = new StringBuilder();
+        final StringBuilder details = new StringBuilder();
         if (isNotBlank(getLicenseNumber()))
             details.append("Trade License Number ").append(getLicenseNumber()).append(" and ");
         details.append("App No. ").append(applicationNumber).append(" dated ").append(toDefaultDateFormat(applicationDate));
-        if (isNotBlank(this.getState().getComments()))
-            details.append("<br/> Remarks : ").append(this.getState().getComments());
+        if (isNotBlank(getState().getComments()))
+            details.append("<br/> Remarks : ").append(getState().getComments());
         return details.toString();
     }
 
     @Override
     public String myLinkId() {
-        if (Constants.CLOSURE_NATUREOFTASK.equals(this.getState().getNatureOfTask()))
-            return "/tl/viewtradelicense/viewTradeLicense-closure.action?model.id=" + this.id;
+        if (Constants.CLOSURE_NATUREOFTASK.equals(getState().getNatureOfTask()))
+            return "/tl/viewtradelicense/viewTradeLicense-closure.action?model.id=" + id;
         else
-            return "/tl/newtradelicense/newTradeLicense-showForApproval.action?model.id=" + this.id;
+            return "/tl/newtradelicense/newTradeLicense-showForApproval.action?model.id=" + id;
     }
+
+    public List<String> getFinancialyear() {
+        return financialyear;
+    }
+
+    public void setFinancialyear(final List<String> financialyear) {
+        this.financialyear = financialyear;
+    }
+
+    public List<String> getLegacyInstallmentwiseFees() {
+        return legacyInstallmentwiseFees;
+    }
+
+    public void setLegacyInstallmentwiseFees(final List<String> legacyInstallmentwiseFees) {
+        this.legacyInstallmentwiseFees = legacyInstallmentwiseFees;
+    }
+
+    public List<String> getLegacyFeePayStatus() {
+        return legacyFeePayStatus;
+    }
+
+    public void setLegacyFeePayStatus(final List<String> legacyFeePayStatus) {
+        this.legacyFeePayStatus = legacyFeePayStatus;
+    }
+
 }

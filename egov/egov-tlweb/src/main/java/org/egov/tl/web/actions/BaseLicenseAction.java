@@ -193,15 +193,6 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
         return Constants.ACKNOWLEDGEMENT;
     }
 
-    @ValidationErrorPage(Constants.NEW)
-    public String enterExisting(final T license, final Map<Integer, Integer> legacyInstallmentwiseFees,
-                                final Map<Integer, Boolean> legacyFeePayStatus) {
-        licenseService().createLegacyLicense(license, legacyInstallmentwiseFees, legacyFeePayStatus);
-        addActionMessage(this.getText("license.entry.succesful") + "  " + license().getLicenseNumber());
-
-        return "viewlicense";
-    }
-
     // sub class should get the object of the model and set to license()
     public String approve() {
 
