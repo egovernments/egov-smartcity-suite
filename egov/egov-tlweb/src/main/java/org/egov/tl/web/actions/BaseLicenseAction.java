@@ -98,6 +98,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
 
 import static org.egov.tl.utils.Constants.APPROVE_PAGE;
 import static org.egov.tl.utils.Constants.CSCOPERATOR;
@@ -169,6 +170,7 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     @Autowired
     @Qualifier("feeTypeService")
     private transient FeeTypeService feeTypeService;
+    protected List<HashMap<String, Object>> licenseHistory = new ArrayList<>();
 
     public BaseLicenseAction() {
         this.addRelatedEntity("boundary", Boundary.class);
@@ -494,4 +496,11 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
         this.hasCscOperatorRole = hasCscOperatorRole;
     }
 
+    public List<HashMap<String, Object>> getLicenseHistory() {
+        return licenseHistory;
+    }
+
+    public void setLicenseHistory(List<HashMap<String, Object>> licenseHistory) {
+        this.licenseHistory = licenseHistory;
+    }
 }

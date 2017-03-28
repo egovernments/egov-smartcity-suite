@@ -179,6 +179,9 @@
 	</tbody>
 </table>
 </s:if>
+<s:if test="%{hasState()== true}">
+	<%@ include file='workflowhistory.jsp' %>
+</s:if>
 <div class="panel-heading  custom_form_panel_heading subheadnew">
     <div class="panel-title"><s:text name='license.title.documentDetails' /></div>
 </div>

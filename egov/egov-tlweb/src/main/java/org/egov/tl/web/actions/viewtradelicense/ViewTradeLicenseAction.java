@@ -74,7 +74,6 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     protected TradeLicense tradeLicense = new TradeLicense();
     private String applicationNo;
     private Long licenseid;
-
     @Autowired
     private ReportService reportService;
     @Autowired
@@ -102,6 +101,7 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
             tradeLicense = tradeLicenseService.getLicenseById(license().getId());
         else if (applicationNo != null && !applicationNo.isEmpty())
             tradeLicense = tradeLicenseService.getLicenseByApplicationNumber(applicationNo);
+        licenseHistory = tradeLicenseService.populateHistory(tradeLicense);
         return Constants.VIEW;
     }
 
@@ -231,4 +231,5 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
         final String currentUserRoles = securityUtils.getCurrentUser().getRoles().toString();
         return currentUserRoles.contains(CSCOPERATOR) ? true : false;
     }
+
 }

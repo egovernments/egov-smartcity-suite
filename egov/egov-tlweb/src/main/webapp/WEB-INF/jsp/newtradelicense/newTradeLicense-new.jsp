@@ -355,6 +355,9 @@
                                 <%@ include file='../common/licensee.jsp' %>
                                 <%@ include file='../common/license-address.jsp' %>
                                 <%@ include file='../common/license.jsp' %>
+                                <s:if test="%{hasState()== true}">
+                                    <%@ include file='../common/workflowhistory.jsp' %>
+                                </s:if>
                             </div>
                             <div class="tab-pane fade" id="tradeattachments">
                                 <%@include file="../common/supportdocs-new.jsp" %>
