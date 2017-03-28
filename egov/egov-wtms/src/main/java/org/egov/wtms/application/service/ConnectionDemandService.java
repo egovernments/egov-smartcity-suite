@@ -44,6 +44,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.METERED;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.MODULE_NAME;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.PROPERTY_MODULE_NAME;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAXREASONCODE;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
@@ -105,6 +106,7 @@ import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -451,7 +453,7 @@ public class ConnectionDemandService {
             final EgDemand demandObj = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
             final Set<EgDemandDetails> dmdDetailSet = new HashSet<>();
             dmdDetailSet.add(createDemandDetails(Double.parseDouble(billAmount.toString()),
-                    WaterTaxConstants.WATERTAXREASONCODE, installment));
+                    WATERTAXREASONCODE, installment));
             demandObj.setBaseDemand(demandObj.getBaseDemand().add(billAmount));
             demandObj.setEgInstallmentMaster(installment);
             demandObj.getEgDemandDetails().addAll(dmdDetailSet);
@@ -612,10 +614,13 @@ public class ConnectionDemandService {
             final WaterConnectionDetails waterConnectionDetails, Installment installment,
             final Boolean reconnInSameInstallment, final String workFlowAction) throws ValidationException {
         Date installemntStartDate;
-        if (installment == null) {
+        EgDemandDetails existingDemandDtlObject;
+        int numberOfMonths;
+        double totalWaterRate;
+        List<Installment> installmentList = new ArrayList<>();
+
+        if (installment == null)
             installment = getCurrentInstallment(WaterTaxConstants.WATER_RATES_NONMETERED_PTMODULE, null, new Date());
-            installemntStartDate = new Date();
-        }
         if (workFlowAction != null && workFlowAction.equals(WaterTaxConstants.WF_STATE_TAP_EXECUTION_DATE_BUTTON))
             installemntStartDate = new Date();
 
@@ -627,34 +632,55 @@ public class ConnectionDemandService {
         } else
             installemntStartDate = new Date();
 
-        double totalWaterRate = 0;
+        final CFinancialYear finYear = financialYearDAO.getFinancialYearByDate(new Date());
+        numberOfMonths = DateUtils.noOfMonths(installemntStartDate, finYear.getEndingDate());
+        if (numberOfMonths >= 6)
+            installmentList = waterTaxUtils.getInstallmentsForCurrYear(finYear.getStartingDate());
+        else
+            installmentList.add(installment);
 
+        existingDemandDtlObject = null;
+        EgDemandDetails demandDetails;
         final WaterRatesDetails waterRatesDetails = getWaterRatesDetailsForDemandUpdate(waterConnectionDetails);
-        final int noofmonths = DateUtils.noOfMonths(installemntStartDate, installment.getToDate());
-        if (null != waterRatesDetails) {
-            if (noofmonths > 0)
-                totalWaterRate = waterRatesDetails.getMonthlyRate() * (noofmonths + 1);
-            else
-                totalWaterRate = waterRatesDetails.getMonthlyRate();
+        final EgDemand currentDemand = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
+        final WaterDemandConnection demandConnection = waterDemandConnectionService
+                .findByWaterConnectionDetailsAndDemand(waterConnectionDetails, currentDemand);
+        for (final Installment instlment : installmentList) {
+            for (final EgDemandDetails demandDtls : currentDemand.getEgDemandDetails())
+                if (WATERTAXREASONCODE.equalsIgnoreCase(demandDtls.getEgDemandReason().getEgDemandReasonMaster().getCode()) &&
+                        instlment.getDescription()
+                                .equalsIgnoreCase(demandDtls.getEgDemandReason().getEgInstallmentMaster().getDescription()))
+                    existingDemandDtlObject = demandDtls;
 
-            final EgDemand demand = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
-            final EgDemandDetails demandDetails = createDemandDetails(totalWaterRate,
-                    WaterTaxConstants.WATERTAXREASONCODE, installment);
-            demand.setBaseDemand(BigDecimal.valueOf(totalWaterRate));
-            demand.setEgInstallmentMaster(installment);
-            demand.getEgDemandDetails().add(demandDetails);
-            demand.setModifiedDate(new Date());
-            if (demand.getId() != null && waterDemandConnectionService
-                    .findByWaterConnectionDetailsAndDemand(waterConnectionDetails, demand) == null) {
-                final WaterDemandConnection waterdemandConnection = new WaterDemandConnection();
-                waterdemandConnection.setDemand(demand);
-                waterdemandConnection.setWaterConnectionDetails(waterConnectionDetails);
-                waterConnectionDetails.addWaterDemandConnection(waterdemandConnection);
-                waterDemandConnectionService.createWaterDemandConnection(waterdemandConnection);
+            final Integer noofmonths = DateUtils.noOfMonths(installemntStartDate, instlment.getToDate());
+            if (existingDemandDtlObject == null) {
+                if (null != waterRatesDetails) {
+                    if (noofmonths > 0)
+                        totalWaterRate = waterRatesDetails.getMonthlyRate() * (noofmonths + 1);
+                    else
+                        totalWaterRate = waterRatesDetails.getMonthlyRate();
+
+                    demandDetails = createDemandDetails(totalWaterRate,
+                            WaterTaxConstants.WATERTAXREASONCODE, instlment);
+
+                    currentDemand.setBaseDemand(currentDemand.getBaseDemand().add(BigDecimal.valueOf(totalWaterRate)));
+                    currentDemand.setEgInstallmentMaster(instlment);
+                    currentDemand.getEgDemandDetails().add(demandDetails);
+                    currentDemand.setModifiedDate(new Date());
+                    if (currentDemand.getId() != null && demandConnection == null) {
+                        final WaterDemandConnection waterdemandConnection = new WaterDemandConnection();
+                        waterdemandConnection.setDemand(currentDemand);
+                        waterdemandConnection.setWaterConnectionDetails(waterConnectionDetails);
+                        waterConnectionDetails.addWaterDemandConnection(waterdemandConnection);
+                        waterDemandConnectionService.createWaterDemandConnection(waterdemandConnection);
+                    }
+                } else
+                    throw new ValidationException("err.water.rate.not.found");
+
+                installemntStartDate = new DateTime(instlment.getToDate()).plusDays(1).toDate();
             }
 
-        } else
-            throw new ValidationException("err.water.rate.not.found");
+        }
         return waterConnectionDetails;
     }
 
@@ -677,7 +703,7 @@ public class ConnectionDemandService {
     public Installment getCurrentInstallment(final String moduleName, final String installmentType, final Date date) {
         if (null == installmentType)
             return installmentDao.getInsatllmentByModuleForGivenDate(moduleService.getModuleByName(moduleName),
-                    new Date());
+                    date);
         else
             return installmentDao.getInsatllmentByModuleForGivenDateAndInstallmentType(
                     moduleService.getModuleByName(moduleName), date, installmentType);

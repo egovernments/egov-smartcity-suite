@@ -367,7 +367,7 @@ public class WaterConnectionDetailsService {
     }
 
     public List<Hashtable<String, Object>> getHistory(final WaterConnectionDetails waterConnectionDetails) {
-        User user = null;
+        User user;
         final List<Hashtable<String, Object>> historyTable = new ArrayList<>(0);
         final State state = waterConnectionDetails.getState();
         final Hashtable<String, Object> map = new Hashtable<>(0);
@@ -441,8 +441,8 @@ public class WaterConnectionDetailsService {
             waterConnectionDetails.setConnectionStatus(ConnectionStatus.ACTIVE);
             waterConnectionDetails.setReconnectionApprovalDate(new Date());
             if (ConnectionType.NON_METERED.equals(waterConnectionDetails.getConnectionType())) {
-                Installment nonMeterReconnInstallment = null;
-                Boolean reconnInSameInstallment = null;
+                Installment nonMeterReconnInstallment;
+                Boolean reconnInSameInstallment;
                 if (checkTwoDatesAreInSameInstallment(waterConnectionDetails)) {
                     final Installment nonMeterCurrentInstallment = connectionDemandService.getCurrentInstallment(
                             WaterTaxConstants.WATER_RATES_NONMETERED_PTMODULE, null,
@@ -546,17 +546,17 @@ public class WaterConnectionDetailsService {
     }
 
     public Boolean checkTwoDatesAreInSameInstallment(final WaterConnectionDetails waterConnectionDetails) {
-        Boolean DateInSameInstallment = Boolean.FALSE;
+        Boolean dateInSameInstallment = Boolean.FALSE;
 
         final Installment nonMeterClosedInstallment = connectionDemandService.getCurrentInstallment(
                 WaterTaxConstants.WATER_RATES_NONMETERED_PTMODULE, null, waterConnectionDetails.getCloseApprovalDate());
         final Installment nonMeterReconnInstallment = connectionDemandService.getCurrentInstallment(
                 WaterTaxConstants.WATER_RATES_NONMETERED_PTMODULE, null,
                 waterConnectionDetails.getReconnectionApprovalDate());
-        if (nonMeterClosedInstallment.getInstallmentNumber().equals(nonMeterReconnInstallment.getInstallmentNumber()))
-            DateInSameInstallment = Boolean.TRUE;
+        if (nonMeterClosedInstallment.getDescription().equals(nonMeterReconnInstallment.getDescription()))
+            dateInSameInstallment = Boolean.TRUE;
 
-        return DateInSameInstallment;
+        return dateInSameInstallment;
     }
 
     public void applicationStatusChange(final WaterConnectionDetails waterConnectionDetails,
@@ -685,7 +685,8 @@ public class WaterConnectionDetailsService {
                         || loggedInUserDesignation.equalsIgnoreCase(WaterTaxConstants.SUPERIENTEND_ENGINEER_DESIGN)
                         || loggedInUserDesignation.equalsIgnoreCase(WaterTaxConstants.TAP_INSPPECTOR_DESIGN)
                         || (loggedInUserDesignation.equalsIgnoreCase(WaterTaxConstants.ASSISTANT_ENGINEER_DESIGN)
-                                || loggedInUserDesignation.equalsIgnoreCase(WaterTaxConstants.ASSISTANT_EXECUTIVE_ENGINEER_DESIGN))
+                                || loggedInUserDesignation
+                                        .equalsIgnoreCase(WaterTaxConstants.ASSISTANT_EXECUTIVE_ENGINEER_DESIGN))
                                 && (waterConnectionDetails.getStatus().getCode()
                                         .equals(WaterTaxConstants.APPLICATION_STATUS_VERIFIED)
                                         || waterConnectionDetails.getStatus().getCode()
@@ -816,7 +817,7 @@ public class WaterConnectionDetailsService {
             ownerNameItr = assessmentDetails.getOwnerNames().iterator();
         final StringBuilder consumerName = new StringBuilder();
         final StringBuilder mobileNumber = new StringBuilder();
-        Assignment assignment = null;
+        Assignment assignment;
         User user = null;
         final StringBuilder aadharNumber = new StringBuilder();
         if (null != ownerNameItr && ownerNameItr.hasNext()) {
@@ -851,7 +852,8 @@ public class WaterConnectionDetailsService {
             user = securityUtils.getCurrentUser();
         ApplicationIndex applicationIndex = applicationIndexService
                 .findByApplicationNumber(waterConnectionDetails.getApplicationNumber());
-        if(applicationIndex!=null && waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_CREATED)){
+        if (applicationIndex != null
+                && waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_CREATED)) {
             applicationIndex.setOwnerName(user.getUsername() + "::" + user.getName());
             applicationIndexService.updateApplicationIndex(applicationIndex);
         }
@@ -900,7 +902,8 @@ public class WaterConnectionDetailsService {
                 applicationIndex.setStatus(waterConnectionDetails.getStatus().getDescription());
                 applicationIndex.setSla(applicationProcessTimeService.getApplicationProcessTime(
                         waterConnectionDetails.getApplicationType(), waterConnectionDetails.getCategory()));
-                if (waterTaxUtils.isCSCoperator(waterConnectionDetails.getCreatedBy()) && UserType.BUSINESS.equals(waterConnectionDetails.getCreatedBy().getType()))
+                if (waterTaxUtils.isCSCoperator(waterConnectionDetails.getCreatedBy())
+                        && UserType.BUSINESS.equals(waterConnectionDetails.getCreatedBy().getType()))
                     applicationIndex.setChannel(Source.CSC.toString());
                 else if (sourceChannel == null)
                     applicationIndex.setChannel(WaterTaxConstants.SYSTEM);
@@ -989,9 +992,10 @@ public class WaterConnectionDetailsService {
                 if (LOG.isDebugEnabled())
                     LOG.debug(" updating Application Index creation Started... ");
                 String channel;
-                if (waterTaxUtils.isCSCoperator(waterConnectionDetails.getCreatedBy()) && UserType.BUSINESS.equals(waterConnectionDetails.getCreatedBy().getType()))
+                if (waterTaxUtils.isCSCoperator(waterConnectionDetails.getCreatedBy())
+                        && UserType.BUSINESS.equals(waterConnectionDetails.getCreatedBy().getType()))
                     channel = Source.CSC.toString();
-                else 
+                else
                     channel = WaterTaxConstants.SYSTEM;
                 applicationIndex = ApplicationIndex.builder().withModuleName(((EgModules) hql.uniqueResult()).getName())
                         .withApplicationNumber(waterConnectionDetails.getApplicationNumber())
@@ -1144,7 +1148,7 @@ public class WaterConnectionDetailsService {
     }
 
     public String getApprovalPositionOnValidate(final Long approvalPositionId) {
-        Assignment assignmentObj = null;
+        Assignment assignmentObj;
         final List<Assignment> assignmentList = new ArrayList<>();
         if (approvalPositionId != null && approvalPositionId != 0 && approvalPositionId != -1) {
             assignmentObj = assignmentService.getPrimaryAssignmentForPositionAndDate(approvalPositionId, new Date());
@@ -1161,8 +1165,7 @@ public class WaterConnectionDetailsService {
     @Transactional
     public WaterConnectionDetails updateWaterConnectionDetailsWithFileStore(
             final WaterConnectionDetails waterConnectionDetails) {
-        final WaterConnectionDetails upadtedWaterConnectionDetails = entityManager.merge(waterConnectionDetails);
-        return upadtedWaterConnectionDetails;
+        return entityManager.merge(waterConnectionDetails);
     }
 
     public Map<String, String> getNonMeteredConnectionTypesMap() {
