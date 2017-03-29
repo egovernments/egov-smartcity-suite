@@ -39,7 +39,7 @@
   --%>
 
 <%@ include file="/includes/taglibs.jsp" %>
-<s:if test="%{!licenseHistory.isEmpty()}">
+<s:if test="%{!licenseHistory.isEmpty}">
     <div class="panel-heading  custom_form_panel_heading subheadnew">
         <div class="panel-title"><s:text name='lbl.licensehistory'/></div>
     </div>
@@ -59,7 +59,7 @@
             <tr>
                 <td class="blueborderfortd" style="text-align: left"><s:date
                         name="#history.date" var="updatedDate"
-                        format="dd/MM/yyyy hh:mm:ss"/> <s:property
+                        format="dd/MM/yyyy hh:mm a"/> <s:property
                         value="#updatedDate"/></td>
                 <td class="blueborderfortd" style="text-align: left"><s:property
                         value="%{#history.updatedBy}"/></td>

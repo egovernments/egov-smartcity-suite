@@ -60,7 +60,6 @@ import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.entity.StateHistory;
-
 import org.egov.pims.commons.Position;
 import org.egov.tl.entity.License;
 import org.egov.tl.entity.LicenseAppType;
@@ -75,7 +74,6 @@ import org.egov.tl.utils.LicenseUtils;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -89,6 +87,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.egov.infra.utils.DateUtils.currentDateToDefaultDateFormat;
 import static org.egov.infra.utils.DateUtils.getDefaultFormattedDate;
 import static org.egov.infra.utils.DateUtils.toYearFormat;
@@ -458,47 +458,42 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
     }
 
     public List<HashMap<String, Object>> populateHistory(final StateAware stateAware) {
-        final List<HashMap<String, Object>> historyTable = new ArrayList<>();
-        User ownerUser;
-        Position ownerPosition;
+        final List<HashMap<String, Object>> processHistoryDetails = new ArrayList<>();
         if (stateAware.hasState()) {
             State state = stateAware.getCurrentState();
-            final HashMap<String, Object> stateMap = new HashMap<>();
-            stateMap.put("date", state.getLastModifiedDate());
-            stateMap.put("updatedBy", state.getLastModifiedBy().getUsername() + "::" + state.getLastModifiedBy().getName());
-            stateMap.put("status", state.getValue());
-            stateMap.put("comments", state.getComments() != null ? state.getComments() : "");
-            ownerUser = state.getOwnerUser();
-            ownerPosition = state.getOwnerPosition();
+            final HashMap<String, Object> currentStateDetail = new HashMap<>();
+            currentStateDetail.put("date", state.getLastModifiedDate());
+            currentStateDetail.put("updatedBy", state.getLastModifiedBy().getName());
+            currentStateDetail.put("status", "END".equals(state.getValue()) ? "Completed" : state.getValue());
+            currentStateDetail.put("comments", defaultString(state.getComments()));
+            User ownerUser = state.getOwnerUser();
+            Position ownerPosition = state.getOwnerPosition();
             if (ownerPosition != null) {
                 User usr = eisCommonService.getUserForPosition(ownerPosition.getId(), new Date());
-                stateMap.put("user", usr != null ? usr.getUsername() + "::" + usr.getName() : "");
+                currentStateDetail.put("user", usr == null ? EMPTY : usr.getName());
             } else
-                stateMap.put("user", ownerUser != null ? ownerUser.getUsername() + "::" + ownerUser.getName() : "");
+                currentStateDetail.put("user", ownerUser == null ? EMPTY : ownerUser.getName());
 
-            historyTable.add(stateMap);
+            processHistoryDetails.add(currentStateDetail);
             state.getHistory().stream().sorted(Comparator.comparing(StateHistory::getLastModifiedDate).reversed()).
-                    forEach(sh -> historyTable.add(constructHistory(sh)));
+                    forEach(sh -> processHistoryDetails.add(constructHistory(sh)));
         }
-        return historyTable;
+        return processHistoryDetails;
     }
 
-    private HashMap<String, Object> constructHistory(StateHistory sh) {
-        Position ownerPosition;
-        User ownerUser;
-        final HashMap<String, Object> hmap = new HashMap<>();
-        hmap.put("date", sh.getLastModifiedDate());
-        hmap.put("updatedBy", sh.getLastModifiedBy().getUsername() + "::"
-                + sh.getLastModifiedBy().getName());
-        hmap.put("status", sh.getValue());
-        hmap.put("comments", sh.getComments() != null ? sh.getComments() : "");
-        ownerPosition = sh.getOwnerPosition();
-        ownerUser = sh.getOwnerUser();
+    private HashMap<String, Object> constructHistory(StateHistory stateHistory) {
+        final HashMap<String, Object> processHistory = new HashMap<>();
+        processHistory.put("date", stateHistory.getLastModifiedDate());
+        processHistory.put("updatedBy", stateHistory.getLastModifiedBy().getName());
+        processHistory.put("status", "END".equals(stateHistory.getValue()) ? "Completed" : stateHistory.getValue());
+        processHistory.put("comments", defaultString(stateHistory.getComments()));
+        Position ownerPosition = stateHistory.getOwnerPosition();
+        User ownerUser = stateHistory.getOwnerUser();
         if (ownerPosition != null) {
-            User userPos = eisCommonService.getUserForPosition(ownerPosition.getId(), sh.getLastModifiedDate());
-            hmap.put("user", userPos != null ? userPos.getUsername() + "::" + userPos.getName() : "");
+            User userPos = eisCommonService.getUserForPosition(ownerPosition.getId(), stateHistory.getLastModifiedDate());
+            processHistory.put("user", userPos == null ? EMPTY : userPos.getName());
         } else
-            hmap.put("user", ownerUser != null ? ownerUser.getUsername() + "::" + ownerUser.getName() : "");
-        return hmap;
+            processHistory.put("user", ownerUser == null ? EMPTY : ownerUser.getName());
+        return processHistory;
     }
 }
