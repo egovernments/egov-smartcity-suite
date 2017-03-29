@@ -53,6 +53,7 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
@@ -75,6 +76,7 @@ import org.hibernate.Criteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
@@ -290,6 +292,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         return reportParams;
     }
 
+    @ReadOnly
     public List<String> getTradeLicenseForGivenParam(final String paramValue, final String paramType) {
         List<String> licenseList = new ArrayList<>();
         if (paramType.equals(Constants.SEARCH_BY_APPNO))
@@ -316,6 +319,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         return licenseList;
     }
 
+    @ReadOnly
     public List<SearchForm> searchTradeLicense(final SearchForm searchForm) {
         final Criteria searchCriteria = entityQueryService.getSession().createCriteria(TradeLicense.class);
         searchCriteria.createAlias("licensee", "licc").createAlias("category", "cat")
@@ -356,6 +360,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         return finalList;
     }
 
+    @ReadOnly
     public List<OnlineSearchForm> onlineSearchTradeLicense(final OnlineSearchForm searchForm) {
         final Criteria searchCriteria = entityQueryService.getSession().createCriteria(TradeLicense.class);
         searchCriteria.createAlias("licensee", "licc").createAlias("category", "cat")
@@ -404,6 +409,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         return getInstallmentForDate(new Date(), module);
     }
 
+    @ReadOnly
     public List<DemandnoticeForm> searchLicensefordemandnotice(final DemandnoticeForm demandnoticeForm) {
         final Criteria searchCriteria = entityQueryService.getSession().createCriteria(TradeLicense.class);
         searchCriteria.createAlias("licensee", "licc").createAlias("category", "cat").createAlias("tradeName", "subcat")
@@ -495,5 +501,10 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         } else
             processHistory.put("user", ownerUser == null ? EMPTY : ownerUser.getName());
         return processHistory;
+    }
+
+    @ReadOnly
+    public List<License> getLicenses(Example license) {
+        return licenseRepository.findAll(license);
     }
 }
