@@ -775,7 +775,7 @@ public class CollectionsUtil {
         }
         HttpEntity<String> entity = new HttpEntity<>(json, headers);
         String url = ApplicationThreadLocals.getDomainURL().concat(
-                collectionApplicationProperties.getUpdateDemandUrl(serviceCode));
+                collectionApplicationProperties.getUpdateDemandUrl(serviceCode.toLowerCase()));
         ResponseEntity<ReceiptAmountInfo> response = restTemplate.postForEntity(url, entity, ReceiptAmountInfo.class);
         return response.getBody();
     }
