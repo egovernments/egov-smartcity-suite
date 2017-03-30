@@ -186,6 +186,7 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     public String viewClosure() {
         if (license() != null && license().getId() != null)
             tradeLicense = tradeLicenseService.getLicenseById(license().getId());
+        licenseHistory = tradeLicenseService.populateHistory(tradeLicense);
         return "closure";
     }
 

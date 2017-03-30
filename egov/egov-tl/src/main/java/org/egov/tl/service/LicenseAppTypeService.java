@@ -69,4 +69,8 @@ public class LicenseAppTypeService {
     public LicenseAppType getNewLicenseAppType() {
         return getLicenseAppTypeByName(NEW_LIC_APPTYPE);
     }
+
+    public List<LicenseAppType> findByDisplayTrue() {
+        return licenseAppTypeRepository.findByDisplayTrueOrderByNameAsc();
+    }
 }

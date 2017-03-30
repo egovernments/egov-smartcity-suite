@@ -202,6 +202,8 @@ public abstract class AbstractLicenseService<T extends License> {
 
     protected abstract void sendEmailAndSMS(T license, String currentAction);
 
+    protected abstract LicenseAppType getClosureLicenseApplicationType();
+
     public void setLicenseWorkflowService(final SimpleWorkflowService<T> licenseWorkflowService) {
         this.licenseWorkflowService = licenseWorkflowService;
     }
@@ -587,7 +589,7 @@ public abstract class AbstractLicenseService<T extends License> {
      * @return
      */
     public Map<String, Map<String, BigDecimal>> getOutstandingFeeForDemandNotice(final TradeLicense license,
-            final Installment currentInstallment, final Installment previousInstallment) {
+                                                                                 final Installment currentInstallment, final Installment previousInstallment) {
         final Map<String, Map<String, BigDecimal>> outstandingFee = new HashMap<>();
 
         final LicenseDemand licenseDemand = license.getCurrentDemand();
@@ -689,6 +691,7 @@ public abstract class AbstractLicenseService<T extends License> {
             }
         else if (license.getState() == null || "END".equals(license.getState().getValue())
                 || "Closed".equals(license.getState().getValue())) {
+            license.setLicenseAppType(getClosureLicenseApplicationType());
             final WorkFlowMatrix newwfmatrix = this.licenseWorkflowService.getWfMatrix(license.getStateType(), null,
                     null, workflowBean.getAdditionaRule(), "NEW", null);
             final Assignment wfInitiator = this.assignmentService

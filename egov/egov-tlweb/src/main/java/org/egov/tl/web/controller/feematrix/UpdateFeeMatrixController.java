@@ -105,7 +105,7 @@ public class UpdateFeeMatrixController {
 
     @ModelAttribute
     public List<LicenseAppType> licenseAppTypes() {
-        return licenseAppTypeService.getLicenseAppTypes();
+        return licenseAppTypeService.findByDisplayTrue();
     }
 
     @RequestMapping(method = GET)

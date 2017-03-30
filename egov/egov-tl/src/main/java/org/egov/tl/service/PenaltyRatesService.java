@@ -51,7 +51,6 @@ import org.egov.tl.repository.PenaltyRatesRepository;
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -65,7 +64,7 @@ public class PenaltyRatesService {
 
     @Autowired
     public PenaltyRatesService(final PenaltyRatesRepository penaltyRatesRepository,
-            final LicenseAppTypeRepository licenseAppTypeRepository) {
+                               final LicenseAppTypeRepository licenseAppTypeRepository) {
         this.penaltyRatesRepository = penaltyRatesRepository;
         this.licenseAppTypeRepository = licenseAppTypeRepository;
     }
@@ -75,7 +74,7 @@ public class PenaltyRatesService {
     }
 
     public List<LicenseAppType> findAllLicenseAppType() {
-        return licenseAppTypeRepository.findAll(new Sort(Sort.Direction.ASC, "name"));
+        return licenseAppTypeRepository.findByDisplayTrueOrderByNameAsc();
     }
 
     public PenaltyRates findOne(final Long id) {
@@ -102,7 +101,7 @@ public class PenaltyRatesService {
     public void delete(final PenaltyRates penaltyRates) {
         penaltyRatesRepository.delete(penaltyRates);
     }
-    
+
     public BigDecimal calculatePenalty(final Date commencementDate, final Date penaltyCalculationEndDate, final BigDecimal amount, License license) {
         if (commencementDate != null) {
             final int paymentDueDays = Days

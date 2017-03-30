@@ -100,6 +100,7 @@ import static org.egov.tl.utils.Constants.LICENSE_FEE_TYPE;
 import static org.egov.tl.utils.Constants.NEW_LIC_APPTYPE;
 import static org.egov.tl.utils.Constants.RENEWAL_LIC_APPTYPE;
 import static org.egov.tl.utils.Constants.TRADE_LICENSE;
+import static org.egov.tl.utils.Constants.CLOSURE_LIC_APPTYPE;
 
 @Transactional(readOnly = true)
 public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
@@ -147,6 +148,11 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
     @Override
     protected LicenseAppType getLicenseApplicationType() {
         return licenseAppTypeService.getLicenseAppTypeByName(NEW_LIC_APPTYPE);
+    }
+
+    @Override
+    protected LicenseAppType getClosureLicenseApplicationType() {
+        return licenseAppTypeService.getLicenseAppTypeByName(CLOSURE_LIC_APPTYPE);
     }
 
     @Transactional
