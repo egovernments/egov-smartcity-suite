@@ -40,18 +40,26 @@
 
 package org.egov.infra.web.support.ui;
 
+import com.google.gson.JsonSerializer;
+import org.springframework.data.domain.Page;
+
 import java.util.List;
+
+import static org.egov.infra.utils.JsonUtils.toJSON;
 
 public class DataTable<T> {
 
-    private int draw;
-    private int recordsTotal;
-    private int totalDisplayRecords;
-    private int recordsFiltered;
+    private long draw;
+    private long recordsTotal;
+    private long totalDisplayRecords;
+    private long recordsFiltered;
     private List<T> data;
 
-    public DataTable(int draw, int recordsTotal, int totalDisplayRecords, int recordsFiltered, List<T> data) {
-        super();
+    public DataTable(Page<T> pages, long draw) {
+        this(draw, pages.getTotalElements(), pages.getNumber(), pages.getTotalElements(), pages.getContent());
+    }
+
+    public DataTable(long draw, long recordsTotal, long totalDisplayRecords, long recordsFiltered, List<T> data) {
         this.draw = draw;
         this.recordsTotal = recordsTotal;
         this.totalDisplayRecords = totalDisplayRecords;
@@ -59,7 +67,7 @@ public class DataTable<T> {
         this.data = data;
     }
 
-    public int getDraw() {
+    public long getDraw() {
         return draw;
     }
 
@@ -67,7 +75,7 @@ public class DataTable<T> {
         this.draw = draw;
     }
 
-    public int getRecordsTotal() {
+    public long getRecordsTotal() {
         return recordsTotal;
     }
 
@@ -75,7 +83,7 @@ public class DataTable<T> {
         this.recordsTotal = recordsTotal;
     }
 
-    public int getTotalDisplayRecords() {
+    public long getTotalDisplayRecords() {
         return totalDisplayRecords;
     }
 
@@ -83,7 +91,7 @@ public class DataTable<T> {
         this.totalDisplayRecords = totalDisplayRecords;
     }
 
-    public int getRecordsFiltered() {
+    public long getRecordsFiltered() {
         return recordsFiltered;
     }
 
@@ -97,5 +105,9 @@ public class DataTable<T> {
 
     public void setData(final List<T> data) {
         this.data = data;
+    }
+
+    public String toJson(Class<? extends JsonSerializer<DataTable<T>>> jsonSerializer) {
+        return toJSON(this, jsonSerializer);
     }
 }

@@ -41,6 +41,7 @@
 package org.egov.infra.admin.master.service;
 
 
+import org.egov.infra.admin.master.contracts.AppConfigSearchRequest;
 import org.egov.infra.admin.master.entity.AppConfig;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.repository.AppConfigRepository;
@@ -60,29 +61,26 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 @Transactional(readOnly = true)
 public class AppConfigService {
 
-    private final AppConfigRepository appConfigRepository;
-
     @Autowired
-    public AppConfigService(final AppConfigRepository appConfigRepository) {
-        this.appConfigRepository = appConfigRepository;
-    }
+    private AppConfigRepository appConfigRepository;
 
-    public AppConfig getAppConfigByModuleNameAndKeyName(final String moduleName, final String keyName) {
+    public AppConfig getAppConfigByModuleNameAndKeyName(String moduleName, String keyName) {
         return appConfigRepository.findByModuleNameAndKeyName(moduleName, keyName);
     }
 
-    public AppConfig getAppConfigByKeyName(final String keyName) {
+    public AppConfig getAppConfigByKeyName(String keyName) {
         return appConfigRepository.findByKeyName(keyName);
     }
 
-    public List<AppConfig> getAllAppConfigByModuleName(final String moduleName) {
+    public List<AppConfig> getAllAppConfigByModuleName(String moduleName) {
         return appConfigRepository.findByModuleName(moduleName);
     }
 
-    public Page<AppConfig> getAllAppConfig(String moduleName, final Integer pageNumber, final Integer pageSize) {
-        final Pageable pageable = new PageRequest(pageNumber - 1, pageSize, Sort.Direction.ASC, "module.name");
-        return isBlank(moduleName) ? appConfigRepository.findAll(pageable) :
-                appConfigRepository.findByModuleName(moduleName, pageable);
+    public Page<AppConfig> getAllAppConfig(AppConfigSearchRequest searchRequest) {
+        Pageable pageable = new PageRequest(searchRequest.getPageNumber(), searchRequest.getPageSize(),
+                Sort.Direction.ASC, "module.name");
+        return isBlank(searchRequest.getModuleName()) ? appConfigRepository.findAll(pageable) :
+                appConfigRepository.findByModuleName(searchRequest.getModuleName(), pageable);
     }
 
     @Transactional

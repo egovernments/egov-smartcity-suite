@@ -1,9 +1,8 @@
-
 /*
  * eGov suite of products aim to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) 2016  eGovernments Foundation
+ *  Copyright (C) 2017  eGovernments Foundation
  *
  *  The updated version of eGov suite of products as by eGovernments Foundation
  *  is available at http://www.egovernments.org
@@ -39,38 +38,38 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.infra.web.controller.admin.masters.config.adaptor;
+package org.egov.infra.web.support.search;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
-import org.egov.infra.admin.master.entity.AppConfig;
-import org.egov.infra.admin.master.entity.AppConfigValues;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import java.lang.reflect.Type;
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class SearchRequest {
 
-import static org.egov.infra.utils.DateUtils.getDefaultFormattedDate;
+    private Integer start;
+    private Integer length;
+    private Integer draw;
 
-public class AppConfigJsonAdaptor implements JsonSerializer<AppConfig> {
-
-    @Override
-    public JsonElement serialize(final AppConfig appConfig, final Type type, final JsonSerializationContext jsc) {
-        JsonObject appConfigJSON = new JsonObject();
-        appConfigJSON.addProperty("keyName", appConfig.getKeyName());
-        appConfigJSON.addProperty("description", appConfig.getDescription());
-        appConfigJSON.addProperty("module", appConfig.getModule().getName());
-        appConfigJSON.addProperty("id", appConfig.getId());
-        JsonArray  configValues = new JsonArray();
-        for(AppConfigValues confValue : appConfig.getConfValues()) {
-        	JsonObject configValueJSON = new JsonObject();
-            configValueJSON.addProperty("Effective Date", getDefaultFormattedDate(confValue.getEffectiveFrom()));
-            configValueJSON.addProperty("Value", confValue.getValue());
-            configValues.add(configValueJSON);
-        }
-        appConfigJSON.add("values", configValues);
-        return appConfigJSON;
+    public void setStart(final Integer start) {
+        this.start = start;
     }
 
+    public void setLength(final Integer length) {
+        this.length = length;
+    }
+
+    public Integer getPageNumber() {
+        return (start / length + 1) - 1;
+    }
+
+    public Integer getPageSize() {
+        return length == -1 ? Integer.MAX_VALUE : length;
+    }
+
+    public Integer getDraw() {
+        return draw;
+    }
+
+    public void setDraw(final Integer draw) {
+        this.draw = draw;
+    }
 }
