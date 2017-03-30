@@ -79,10 +79,7 @@ public class Application extends AbstractAuditable {
     @GeneratedValue(generator = SEQ_APPLICATION, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @ManyToOne
-    @NotNull
-    @JoinColumn(name = "stakeHolder", nullable = false)
-    private List<ApplicationStakeHolder> stakeHolder = new ArrayList<>(0);
+
     @Length(min = 1, max = 128)
     private String buildingplanapprovalnumber;
     @Temporal(value = TemporalType.DATE)
@@ -166,7 +163,8 @@ public class Application extends AbstractAuditable {
 
     @OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<AutoDcrMap> autoDcr = new ArrayList<>();
-
+    @OneToMany(mappedBy = "stakeHolder", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<ApplicationStakeHolder> stakeHolder = new ArrayList<>(0);
     @OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ApplicationDocument> applicationDocument = new ArrayList<>(0);
     @OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

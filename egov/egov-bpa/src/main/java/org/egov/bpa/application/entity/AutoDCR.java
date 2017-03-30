@@ -118,7 +118,7 @@ public class AutoDCR extends AbstractAuditable {
 	private String logicalPath;
 
 	@Valid
-	@OneToMany(mappedBy = "AUTODCRID", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "autoDcr", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<AutoDCRFloorDetails> appDcRList = new ArrayList<>();
 
 	@Override

@@ -34,6 +34,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
@@ -50,7 +51,8 @@ public class Noc extends AbstractAuditable {
 
     private static final long serialVersionUID = 3078684328383202788L;
     public static final String SEQ_NOC = "SEQ_EGBPA_MSTR_NOC";
-
+    
+    @Id
     @GeneratedValue(generator = SEQ_NOC, strategy = GenerationType.SEQUENCE)
     private Long id;
 
