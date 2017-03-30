@@ -760,7 +760,7 @@ public class CollectionsUtil {
         return reportService.createReport(reportRequest);
     }
 
-    public ReceiptAmountInfo updateReceiptDetailsAndGetReceiptAmountInfo(BillReceiptReq billReceipt) {
+    public ReceiptAmountInfo updateReceiptDetailsAndGetReceiptAmountInfo(BillReceiptReq billReceipt, String serviceCode) {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -775,7 +775,7 @@ public class CollectionsUtil {
         }
         HttpEntity<String> entity = new HttpEntity<>(json, headers);
         String url = ApplicationThreadLocals.getDomainURL().concat(
-                collectionApplicationProperties.getLamsUpdateDemandUrl());
+                collectionApplicationProperties.getUpdateDemandUrl(serviceCode));
         ResponseEntity<ReceiptAmountInfo> response = restTemplate.postForEntity(url, entity, ReceiptAmountInfo.class);
         return response.getBody();
     }
@@ -797,7 +797,7 @@ public class CollectionsUtil {
                         persistenceService, null);
                 billReceipts.add(billReceipt);
                 if (billingService.getCode().equals(CollectionConstants.SERVICECODE_LAMS))
-                    receiptAmountInfo = updateReceiptDetailsAndGetReceiptAmountInfo(new BillReceiptReq(billReceipt));
+                    receiptAmountInfo = updateReceiptDetailsAndGetReceiptAmountInfo(new BillReceiptReq(billReceipt), billingService.getCode());
                 else
                     receiptAmountInfo = billingServiceBean.receiptAmountBifurcation(billReceipt);
             } catch (final Exception e) {

@@ -118,7 +118,7 @@ public class CollectionApplicationProperties {
         return environment.getProperty(cityCode.concat(".sbimops.hoa"));
     }
     
-    public String getLamsUpdateDemandUrl() { 
-        return environment.getProperty("lams.updatedemand.url");
+    public String getUpdateDemandUrl(final String serviceCode) { 
+        return environment.getProperty(serviceCode.concat(".updatedemand.url"));
     }
 }
