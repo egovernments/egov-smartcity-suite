@@ -47,8 +47,10 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.egov.collection.config.properties.CollectionApplicationProperties;
@@ -58,7 +60,9 @@ import org.egov.collection.entity.CollectionIndex;
 import org.egov.collection.entity.OnlinePayment;
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.entity.ReceiptHeader;
+import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.collection.integration.models.BillReceiptInfoImpl;
+import org.egov.collection.integration.models.BillReceiptReq;
 import org.egov.collection.integration.models.ReceiptAmountInfo;
 import org.egov.collection.integration.services.BillingIntegrationService;
 import org.egov.commons.CFinancialYear;
@@ -107,6 +111,14 @@ import org.hibernate.Query;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class CollectionsUtil {
     public static final SimpleDateFormat CHEQUE_DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy");
@@ -424,7 +436,7 @@ public class CollectionsUtil {
                 .createQuery(
                         "from CFinancialYear cfinancialyear where ? between "
                                 + "cfinancialyear.startingDate and cfinancialyear.endingDate").setDate(0, date).list()
-                                .get(0);
+                .get(0);
     }
 
     /**
@@ -748,6 +760,26 @@ public class CollectionsUtil {
         return reportService.createReport(reportRequest);
     }
 
+    public ReceiptAmountInfo updateReceiptDetailsAndGetReceiptAmountInfo(BillReceiptReq billReceipt) {
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        String json = null;
+        try {
+            json = new ObjectMapper().writeValueAsString(billReceipt);
+        } catch (JsonProcessingException e) {
+            final String errMsg = "Exception while updating receiptdetails through rest for receipt number ["
+                    + billReceipt.getReceiptNum() + "]!";
+            LOGGER.error(errMsg, e);
+            throw new ApplicationRuntimeException(errMsg, e);
+        }
+        HttpEntity<String> entity = new HttpEntity<>(json, headers);
+        String url = ApplicationThreadLocals.getDomainURL().concat(
+                collectionApplicationProperties.getLamsUpdateDemandUrl());
+        ResponseEntity<ReceiptAmountInfo> response = restTemplate.postForEntity(url, entity, ReceiptAmountInfo.class);
+        return response.getBody();
+    }
+
     public CollectionIndex constructCollectionIndex(final ReceiptHeader receiptHeader) {
         ReceiptAmountInfo receiptAmountInfo = new ReceiptAmountInfo();
         final ServiceDetails billingService = receiptHeader.getService();
@@ -760,8 +792,14 @@ public class CollectionsUtil {
             final BillingIntegrationService billingServiceBean = (BillingIntegrationService) getBean(billingService
                     .getCode() + CollectionConstants.COLLECTIONS_INTERFACE_SUFFIX);
             try {
-                receiptAmountInfo = billingServiceBean.receiptAmountBifurcation(new BillReceiptInfoImpl(receiptHeader,
-                        chartOfAccountsHibernateDAO, persistenceService, null));
+                final Set<BillReceiptInfo> billReceipts = new HashSet<>(0);
+                BillReceiptInfo billReceipt = new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO,
+                        persistenceService, null);
+                billReceipts.add(billReceipt);
+                if (billingService.getCode().equals(CollectionConstants.SERVICECODE_LAMS))
+                    receiptAmountInfo = updateReceiptDetailsAndGetReceiptAmountInfo(new BillReceiptReq(billReceipt));
+                else
+                    receiptAmountInfo = billingServiceBean.receiptAmountBifurcation(billReceipt);
             } catch (final Exception e) {
                 final String errMsg = "Exception while constructing collection index for receipt number ["
                         + receiptHeader.getReceiptnumber() + "]!";
@@ -783,24 +821,23 @@ public class CollectionsUtil {
                 .withPaymentGateway(
                         receiptHeader.getOnlinePayment() != null ? receiptHeader.getOnlinePayment().getService()
                                 .getName() : "")
-                                .withConsumerName(receiptHeader.getPayeeName() != null ? receiptHeader.getPayeeName() : "")
-                                .withReceiptCreator(receiptHeader.getCreatedBy() != null ? receiptHeader.getCreatedBy().getName() : "")
-                                .withArrearAmount(receiptAmountInfo.getArrearsAmount())
-                                .withAdvanceAmount(receiptAmountInfo.getAdvanceAmount())
-                                .withCurrentAmount(receiptAmountInfo.getCurrentInstallmentAmount())
-                                .withPenaltyAmount(receiptAmountInfo.getPenaltyAmount())
-                                .withArrearCess(receiptAmountInfo.getArrearCess())
-                                .withLatePaymentChargesAmount(receiptAmountInfo.getLatePaymentCharges())
-                                .withCurrentCess(receiptAmountInfo.getCurrentCess())
-                                .withReductionAmount(receiptAmountInfo.getReductionAmount())
-                                .withInstallmentFrom(
-                                        receiptAmountInfo.getInstallmentFrom() != null ? receiptAmountInfo.getInstallmentFrom() : "")
+                .withConsumerName(receiptHeader.getPayeeName() != null ? receiptHeader.getPayeeName() : "")
+                .withReceiptCreator(receiptHeader.getCreatedBy() != null ? receiptHeader.getCreatedBy().getName() : "")
+                .withArrearAmount(receiptAmountInfo.getArrearsAmount())
+                .withAdvanceAmount(receiptAmountInfo.getAdvanceAmount())
+                .withCurrentAmount(receiptAmountInfo.getCurrentInstallmentAmount())
+                .withPenaltyAmount(receiptAmountInfo.getPenaltyAmount())
+                .withArrearCess(receiptAmountInfo.getArrearCess())
+                .withLatePaymentChargesAmount(receiptAmountInfo.getLatePaymentCharges())
+                .withCurrentCess(receiptAmountInfo.getCurrentCess())
+                .withReductionAmount(receiptAmountInfo.getReductionAmount())
+                .withInstallmentFrom(
+                        receiptAmountInfo.getInstallmentFrom() != null ? receiptAmountInfo.getInstallmentFrom() : "")
                 .withInstallmentTo(
                         receiptAmountInfo.getInstallmentTo() != null ? receiptAmountInfo.getInstallmentTo() : "")
                 .withRevenueWard(receiptAmountInfo.getRevenueWard())
                 .withConsumerType(receiptHeader.getConsumerType() != null ? receiptHeader.getConsumerType() : "")
-                .withConflict(receiptAmountInfo.getConflict()!=null?receiptAmountInfo.getConflict():0)
-                .build();
+                .withConflict(receiptAmountInfo.getConflict() != null ? receiptAmountInfo.getConflict() : 0).build();
         return collectionIndex;
     }
 
@@ -874,7 +911,7 @@ public class CollectionsUtil {
         Boolean voucherTypeForChequeDDCard = false;
         if (getAppConfigValue(CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
                 CollectionConstants.APPCONFIG_VALUE_REMITTANCEVOUCHERTYPEFORCHEQUEDDCARD).equals(
-                        CollectionConstants.FINANCIAL_RECEIPTS_VOUCHERTYPE))
+                CollectionConstants.FINANCIAL_RECEIPTS_VOUCHERTYPE))
             voucherTypeForChequeDDCard = true;
         return voucherTypeForChequeDDCard;
     }
