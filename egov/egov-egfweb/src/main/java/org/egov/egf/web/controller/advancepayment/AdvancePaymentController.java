@@ -276,6 +276,8 @@ public class AdvancePaymentController extends BasePaymentController {
         model.addAttribute(DESIGNATION, request.getParameter(DESIGNATION));
         model.addAttribute("voucherHeader", cVoucherHeader);
         model.addAttribute("egBillregister", egBillregister);
+        model.addAttribute("billIds", request.getParameter("billId"));
+        prepareValidActionListByCutOffDate(model);
     }
 
     @RequestMapping(value = "/success", method = RequestMethod.GET)

@@ -369,5 +369,4 @@ public interface FinancialConstants {
     public static final String WARNING = "warning";
     public static final String NONE = "none";
     
-    public static final String MODE_OF_PAYMENT = "Mode of Payment";
 }

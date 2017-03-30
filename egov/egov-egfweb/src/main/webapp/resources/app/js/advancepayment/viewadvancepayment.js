@@ -40,38 +40,31 @@
 
 $(document).ready(
 		function() {
-			$('.btn-primary').click(
-					function() {
-						var button = $(this).attr('id');
-						if (button != null && (button == 'Forward')) {
-							if (!validateWorkFlowApprover(button))
-								return false;
-							if (!$("form").valid())
-								return false;
+			$('.btn-primary').click(function(){
+				var button = $(this).attr('id');
+				if (button != null && button == 'Forward') {
+					if(!$("form").valid())
+						return false;
+					if(validateWorkFlowApprover(button))
+						return true;
+					else
+						return false;
+				} else if(validateWorkFlowApprover(button))
+					return true;
+				else
+					return false;
+			});
+			
+			$('.btn-primary').click(function(){
+				var button = $(this).attr('id');
+				if(!validateWorkFlowApprover(button))
+					return false;
+				if($("form").valid()){
+					return true;
+				}else
+					return false;
+			});
 
-						} else if (button != null && (button == 'Create And Approve')) {
-							$('#approvalDepartment').removeAttr('required');
-							$('#approvalDesignation').removeAttr('required');
-							$('#approvalPosition').removeAttr('required');
-							$('#approvalComent').removeAttr('required');
-							if (!validateWorkFlowApprover(button))
-								return false;
-							return true
-						} else if (button != null
-								&& ((button == 'Reject') || (button == 'Cancel'))) {
-							var value = $('#approvalComent').val();
-							if (value == "") {
-								bootbox.alert("Please Enter Approver Remarks");
-								return false;
-							}
-							if (!validateWorkFlowApprover(button))
-								return false;
-							if (!$("form").valid())
-								return false;
-						} else if (button != null && ((button == 'Approve'))) {
-							document.getElementById("workFlowAction").value = button;
-						}
-					});
 		});
 function viewBillVoucher(billVoucherId) {
 	window.open('/EGF/voucher/preApprovedVoucher-loadvoucherview.action?vhid='
@@ -112,6 +105,6 @@ function validateWorkFlowApprover(name) {
 	}
 	if (button != null && button == 'Approve') {
 		$('#approvalComent').removeAttr('required');
-	} else
-		return true;
+	} 
+	return true;
 }

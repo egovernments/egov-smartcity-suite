@@ -74,7 +74,6 @@
 					<form:option value="${bankbranchs.id}">${bankbranchs.bank.name} - ${bankbranchs.branchname}</form:option>
 				</c:forEach>
 			</form:select>
-			<form:errors path="" cssClass="add-margin error-msg" />
 		</div>
 		<label class="col-sm-2 control-label text-right"><spring:message
 				code="lbl.accountnumber" /> <span class="mandatory"></span></label>
@@ -90,7 +89,6 @@
 				value="${bankaccount}" />
 			<form:input path="" class="form-control text-left "
 				id="paymentbalance" name="paymentbaalnce" readonly="true" />
-			<form:errors path="" cssClass="error-msg" />
 		</div>
 	</div>
 	<div class="form-group">
@@ -101,7 +99,6 @@
 				items="${modeOfPaymentMap}" />
 			<input type="hidden" name="modeOfPayment" id="modeOfPayment"
 				value="${modeOfPayment}" />
-			<form:errors path="" cssClass="add-margin error-msg" />
 		</div>
 		<label class="col-sm-2 control-label text-right"><spring:message
 				code="lbl.narration" /> </label>
