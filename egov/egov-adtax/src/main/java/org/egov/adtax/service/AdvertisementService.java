@@ -56,6 +56,7 @@ import org.egov.adtax.repository.AdvertisementRepository;
 import org.egov.collection.integration.services.CollectionIntegrationService;
 import org.egov.commons.Installment;
 import org.egov.demand.model.EgDemand;
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
@@ -83,18 +84,18 @@ public class AdvertisementService {
 
     @Autowired
     private AdvertisementDemandService advertisementDemandService;
-    
+
     @Autowired
     @Qualifier("parentMessageSource")
     private MessageSource advertisementMessageSource;
 
     @Autowired
     private ReportService reportService;
-    
+
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
-    
+
     @Transactional
     public Advertisement createAdvertisement(final Advertisement hoarding) {
         if (hoarding != null && hoarding.getId() == null)
@@ -117,10 +118,12 @@ public class AdvertisementService {
          * hoarding.getPendingTax().setScale(2, BigDecimal.ROUND_HALF_UP));
          */ }
 
+    @ReadOnly
     public List<Object[]> searchBySearchType(final Advertisement hoarding, final String searchType) {
         return advertisementRepository.fetchAdvertisementBySearchType(hoarding, searchType);
     }
 
+    @ReadOnly
     public int getActivePermanentAdvertisementsByCurrentInstallment(final Installment installment) {
         return advertisementRepository.findActivePermanentAdvertisementsByCurrentInstallment(installment);
     }
@@ -137,14 +140,17 @@ public class AdvertisementService {
         return advertisementRepository.findByAdvertisementNumber(hoardingNumber);
     }
 
+    @ReadOnly
     public Advertisement findByAdvertisementNumber(final String hoardingNumber) {
         return advertisementRepository.findByAdvertisementNumber(hoardingNumber);
     }
 
+    @ReadOnly
     public Advertisement findBy(final Long hoardingId) {
         return advertisementRepository.findOne(hoardingId);
     }
 
+    @ReadOnly
     public Advertisement getAdvertisementByDemand(final EgDemand demand) {
         return advertisementRepository.findByDemandId(demand);
     }
