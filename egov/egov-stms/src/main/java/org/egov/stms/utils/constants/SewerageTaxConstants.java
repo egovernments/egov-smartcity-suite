@@ -305,4 +305,9 @@ public class SewerageTaxConstants {
     public static final String GROUPBYFIELD = "groupByField";
     
     public static final String TOTALRESULTTOBEFETCH = "Number of Records used in next year demand generation";
+    
+    public static final String SLAFORNEWSEWERAGECONNECTION = "SLAFORNEWSEWERAGECONNECTION";
+    public static final String SLAFORCHANGEINCLOSET = "SLAFORCHANGEINCLOSET";
+    
+    
 }
