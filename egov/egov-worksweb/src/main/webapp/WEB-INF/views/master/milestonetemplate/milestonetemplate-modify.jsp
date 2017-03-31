@@ -37,39 +37,39 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
-<%@ include file="/includes/taglibs.jsp"%>
-<script
-	src="<cdn:url value='/resources/js/milestonetemplate/milestonetemplate.js?rnd=${app_release_no}'/>"></script>
-<html>
-<head>
-<style type="text/css">
-ul {
-	list-style-type: none;
-}
-</style>
-</head>
-<body onload="replaceStatus()">
-	<s:if test="%{hasActionMessages()}">
-		<div id="msgsDiv" class="new-page-header">
-			<s:actionmessage theme="simple" />
+
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ taglib uri="/WEB-INF/taglibs/cdn.tld" prefix="cdn"%>
+
+<form:form name="milestoneTemplateForm" id="milestoneTemplateForm" role="form"
+	action="/egworks/masters/milestonetemplate-edit" modelAttribute="milestoneTemplate"
+	class="form-horizontal form-groups-bordered">
+	<input type="hidden" name="mode" value="${mode}" />
+	<spring:hasBindErrors name="milestoneTemplate">
+		<div class="alert alert-danger col-md-12">
+			<form:errors cssClass="add-margin" />
+			<br />
 		</div>
-	</s:if>
-
-	<%@ include file='milestonetemplate-commonview.jsp'%>
-
-	<s:hidden name="model.id" id="id" />
-	<s:hidden name="mode" id="mode" />
-	<div class="row text-center">
-		<div class="add-margin">
-			<s:if test="%{mode != 'edit' && mode == ''}">
-				<input type="submit" name="create" Class="btn btn-primary"
-					value="Create New Milestone Template" id="CREATE" name="button"
-					onclick="createNewMilestoneTemplate();" />
-			</s:if>
-			<input type="submit" name="closeButton" id="closeButton"
-				value="Close" Class="btn btn-default" onclick="window.close();" />
+	</spring:hasBindErrors>
+	<div class="row">
+		<div class="col-md-12">
+			<jsp:include page="milestonetemplate-header.jsp" />
+			<jsp:include page="milestonetemplate-activity-details.jsp" />
 		</div>
 	</div>
-</body>
-
-</html>
+	<div class="row">
+		<div class="col-sm-12 text-center">
+			<button type="submit" name="submit" id="submitBtn" class="btn btn-primary" value="Modify" >
+				<spring:message code="lbl.modify" />
+			</button>
+			<button type="button" class="btn btn-default" id="button2"
+				onclick="window.close();">
+				<spring:message code="lbl.close" />
+			</button>
+		</div>
+	</div>
+</form:form>
+<script src="<cdn:url value='/resources/js/master/milestonetemplate.js?rnd=${app_release_no}'/>"></script> 

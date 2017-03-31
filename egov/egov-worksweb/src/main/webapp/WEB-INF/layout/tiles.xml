@@ -620,4 +620,54 @@
         <put-attribute name="page-title" value="lbl.viewcontractorclass" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/master/contractorclass/contractorclass-success.jsp"/>
     </definition>
+    
+    <definition name="milestonetemplate-form" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.createmilestonetemplate" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/master/milestonetemplate/milestonetemplate-new.jsp"/>
+    </definition>
+    
+    <definition name="milestonetemplate-modify" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.modifymilestonetemplate" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/master/milestonetemplate/milestonetemplate-modify.jsp"/>
+    </definition>
+    
+    <definition name="milestonetemplate-search" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.searchmilestonetemplate" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/master/milestonetemplate/milestonetemplate-search.jsp"/>
+    </definition>
+    
+    <definition name="milestonetemplate-view" extends="base_layout">
+        <put-attribute name="page-title" value="hdr.viewmilestonetemplate" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/master/milestonetemplate/milestonetemplate-success.jsp"/>
+    </definition>
+    
+    <definition name="milestonetemplate-success" extends="base_layout">
+        <put-attribute name="page-title" value="hdr.viewmilestonetemplate" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/master/milestonetemplate/milestonetemplate-success.jsp"/>
+    </definition>
+    
+    <definition name="searchcontractor" extends="base_layout">
+        <put-attribute name="page-title" value="title.search.contractor" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/master/contractor/contractor-search.jsp"/>
+    </definition>
+    
+    <definition name="contractor-form" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.createcontractor" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/master/contractor/contractor-new.jsp"/>
+    </definition>
+    
+    <definition name="contractor-modify" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.modifycontractor" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/master/contractor/contractor-modify.jsp"/>
+    </definition>
+    
+    <definition name="contractor-view" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.viewcontractor" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/master/contractor/contractor-success.jsp"/>
+    </definition>
+    
+    <definition name="contractor-success" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.viewcontractor" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/master/contractor/contractor-success.jsp"/>
+    </definition>
 </tiles-definitions>

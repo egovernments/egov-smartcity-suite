@@ -37,52 +37,73 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ page contentType="text/html" language="java"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <div class="row">
 	<div class="col-md-12">
 		<div class="panel panel-primary" data-collapsed="0">
-			<div class="panel-heading"></div>
+			<div class="panel-heading">
+				<c:if test="${mode == 'view' }">
+					<div class="panel-title" style="text-align:center;" ><spring:message code="hdr.viewmilestonetemplate" /></div>
+				</c:if>
+			</div>
 			<div class="panel-body">
 				<div class="row add-border">
 					<div class="col-xs-3 add-margin">
-						<s:text name="milestone.template.code" />
+						<spring:message code="lbl.templatecode" />
 					</div>
 					<div class="col-xs-3 add-margin view-content">
-						<s:property value="%{code}" />
+						<c:out value="${milestoneTemplate.code}" />
 					</div>
 					<div class="col-xs-3 add-margin">
-						<s:text name="milestone.template.status" />
+						<spring:message code="lbl.templatestatus" />
 					</div>
 					<div id="status" class="col-xs-3 add-margin view-content">
-						<s:property value="%{status}" />
+						<c:choose>
+							<c:when test="${milestoneTemplate.status == true}">
+								<c:out value="ACTIVE" />
+							</c:when>
+							<c:otherwise>
+								<c:out value="INACTIVE" />
+							</c:otherwise>
+						</c:choose>
 					</div>
 				</div>
 				<div class="row add-border">
 					<div class="col-xs-3 add-margin">
-						<s:text name="milestone.template.name" />
+						<spring:message code="lbl.templatename" />
 					</div>
 					<div class="col-xs-3 add-margin view-content">
-						<s:property value="%{name}" />
+						<c:out value="${milestoneTemplate.name}" />
 					</div>
 					<div class="col-xs-3 add-margin">
-						<s:text name="milestone.template.description" />
+						<spring:message code="lbl.description" />
 					</div>
 					<div class="col-xs-3 add-margin view-content">
-						<s:property value="%{description}" />
+						<c:out value="${milestoneTemplate.description}" />
 					</div>
 				</div>
 				<div class="row add-border">
 					<div class="col-xs-3 add-margin">
-						<s:text name="milestone.template.type" />
+						<spring:message code="lbl.typeofwork" />
 					</div>
 					<div class="col-xs-3 add-margin view-content">
-						<s:property value="%{typeOfWork.name}" />
+						<c:out value="${milestoneTemplate.typeOfWork.name}" />
 					</div>
 					<div class="col-xs-3 add-margin">
-						<s:text name="milestone.template.subtype" />
+						<spring:message code="lbl.subtypeofwork" />
 					</div>
 					<div class="col-xs-3 add-margin view-content">
-						<s:property value="%{subTypeOfWork.name}" />
+						<c:choose>
+							<c:when test="${milestoneTemplate.subTypeOfWork != null}">
+								<c:out value="${milestoneTemplate.subTypeOfWork.name}" />
+							</c:when>
+							<c:otherwise>
+								<c:out value="NA" />
+							</c:otherwise>
+						</c:choose>
 					</div>
 				</div>
 			</div>
@@ -92,29 +113,27 @@
 <div class="panel panel-primary" data-collapsed="0">
 	<div class="panel-heading">
 		<div class="panel-title">
-			<s:text name="milestone.template.activityDetails" />
+			<spring:message code="lbl.milestonetemplate.activityDetails" />
 		</div>
 	</div>
 	<div class="panel-body">
 		<table class="table table-bordered">
 			<thead>
 				<tr>
-					<th><s:text name="milestone.template.stageOrderNo" /></th>
-					<th><s:text name="milestone.template.stageDescription" /></th>
-					<th><s:text name="milestone.template.percentage" /></th>
-
+					<th><spring:message code="lbl.stageordernumber" /></th>
+					<th><spring:message code="lbl.description" /></th>
+					<th><spring:message code="lbl.percentage" /></th>
 				</tr>
+				<c:forEach	var="mta" items = "${milestoneTemplate.milestoneTemplateActivities }">
+					<tr>
+						<td><c:out value="${mta.stageOrderNo}"></c:out></td>
+						<td><c:out value="${mta.description}"></c:out></td>
+						<td class="text-right"><fmt:formatNumber type="number" pattern="#0.00#" value="${mta.percentage}" /></td>
+					</tr>
+				</c:forEach>
 			</thead>
 			<tbody>
-				<s:iterator value="milestoneTemplateActivities" status="row_status">
-					<tr>
-						<td><s:property value="%{stageOrderNo}" /></td>
-						<td><s:property value="%{description}" /></td>
-						<td align="right">
-							<fmt:formatNumber  maxFractionDigits="2" minFractionDigits="2" pattern="#.##"><s:property value="%{percentage}" /></fmt:formatNumber>
-						</td>
-					</tr>
-				</s:iterator>
+				
 			</tbody>
 		</table>
 	</div>

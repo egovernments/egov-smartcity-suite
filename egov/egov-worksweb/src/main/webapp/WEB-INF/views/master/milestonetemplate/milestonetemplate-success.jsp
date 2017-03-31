@@ -38,4 +38,22 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
-<%@ include file='milestonetemplate-new.jsp'%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="/WEB-INF/taglibs/cdn.tld" prefix="cdn"%>
+<div class="page-container" id="page-container">
+		<div class="new-page-header" id="successMessage">
+			${successMessage }
+		</div>
+			<jsp:include page="milestonetemplate-commonview.jsp" />
+		<div class="col-sm-12 text-center">
+			<div class="row">
+				<c:if test="${ mode != 'view' && mode != 'edit'}">
+					<input type="submit" name="create" Class="btn btn-primary" value="Create New Milestone Template" id="CREATE" name="button" onclick="createNewMilestoneTemplate();" />
+				</c:if>
+				<input type="submit" name="closeButton" id="closeButton" value="Close" Class="btn btn-default" onclick="window.close();" />
+			</div>
+		</div>
+		
+</div>
+<script
+	src="<cdn:url value='/resources/js/master/milestonetemplate.js?rnd=${app_release_no}'/>"></script>

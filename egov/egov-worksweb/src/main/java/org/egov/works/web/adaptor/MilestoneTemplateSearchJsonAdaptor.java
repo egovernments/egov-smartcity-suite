@@ -38,63 +38,41 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.works.milestone.entity;
+package org.egov.works.web.adaptor;
 
-public class SearchRequestMilestoneTemplate {
+import java.lang.reflect.Type;
 
-    private String name;
-    private String description;
-    private Long typeOfWork;
-    private Long subTypeOfWork;
-    private String templateCode;
-    private String templateStatus;
+import org.egov.works.masters.entity.MilestoneTemplate;
+import org.egov.works.utils.WorksConstants;
+import org.springframework.stereotype.Component;
 
-    public String getName() {
-        return name;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
+
+@Component
+public class MilestoneTemplateSearchJsonAdaptor implements JsonSerializer<MilestoneTemplate> {
+    @Override
+    public JsonElement serialize(final MilestoneTemplate milestoneTemplate, final Type type,
+            final JsonSerializationContext jsc) {
+        final JsonObject jsonObject = new JsonObject();
+        if (milestoneTemplate != null) {
+            jsonObject.addProperty("templateCode", milestoneTemplate.getCode());
+            jsonObject.addProperty("typeOfWork", milestoneTemplate.getTypeOfWork().getName());
+            if (milestoneTemplate.getSubTypeOfWork() != null)
+                jsonObject.addProperty("subTypeOfWork", milestoneTemplate.getSubTypeOfWork().getName());
+            else
+                jsonObject.addProperty("subTypeOfWork", WorksConstants.NA);
+            if (milestoneTemplate.isStatus())
+                jsonObject.addProperty("templateStatus", WorksConstants.ACTIVE);
+            else
+                jsonObject.addProperty("templateStatus", "INACTIVE");
+            jsonObject.addProperty("templateName", milestoneTemplate.getName());
+            jsonObject.addProperty("milestoneTemplateId", milestoneTemplate.getId());
+            jsonObject.addProperty("templateDescription", milestoneTemplate.getDescription());
+
+        }
+        return jsonObject;
     }
-
-    public void setName(final String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(final String description) {
-        this.description = description;
-    }
-
-    public Long getTypeOfWork() {
-        return typeOfWork;
-    }
-
-    public void setTypeOfWork(final Long typeOfWork) {
-        this.typeOfWork = typeOfWork;
-    }
-
-    public Long getSubTypeOfWork() {
-        return subTypeOfWork;
-    }
-
-    public void setSubTypeOfWork(final Long subTypeOfWork) {
-        this.subTypeOfWork = subTypeOfWork;
-    }
-
-    public String getTemplateCode() {
-        return templateCode;
-    }
-
-    public void setTemplateCode(final String templateCode) {
-        this.templateCode = templateCode;
-    }
-
-    public String getTemplateStatus() {
-        return templateStatus;
-    }
-
-    public void setTemplateStatus(final String templateStatus) {
-        this.templateStatus = templateStatus;
-    }
-
 }

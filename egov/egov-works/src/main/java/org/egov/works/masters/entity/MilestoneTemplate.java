@@ -54,16 +54,17 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 
 import org.egov.commons.EgwTypeOfWork;
 import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.persistence.validator.annotation.OptionalPattern;
 import org.egov.infra.persistence.validator.annotation.Unique;
-import org.egov.works.utils.WorksConstants;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "EGW_MILESTONE_TEMPLATE")
-@Unique(id = "id", tableName = "EGW_MILESTONE_TEMPLATE", columnName = { "code" }, fields = { "code" }, enableDfltMsg = true)
+@Unique(fields = { "code" }, enableDfltMsg = true)
 @SequenceGenerator(name = MilestoneTemplate.SEQ_EGW_MILESTONE_TEMPLATE, sequenceName = MilestoneTemplate.SEQ_EGW_MILESTONE_TEMPLATE, allocationSize = 1)
 public class MilestoneTemplate extends AbstractAuditable {
 
@@ -75,15 +76,19 @@ public class MilestoneTemplate extends AbstractAuditable {
     @GeneratedValue(generator = SEQ_EGW_MILESTONE_TEMPLATE, strategy = GenerationType.SEQUENCE)
     private Long id;
 
+    @NotNull
+    @SafeHtml
     private String code;
 
-    @OptionalPattern(regex = WorksConstants.ALPHANUMERICWITHALLSPECIALCHAR, message = "milestonetemplate.name.alphaNumeric")
+    @NotNull
+    @SafeHtml
     private String name;
 
-    @OptionalPattern(regex = WorksConstants.ALPHANUMERICWITHALLSPECIALCHAR, message = "milestonetemplate.description.alphaNumeric")
+    @NotNull
+    @SafeHtml
     private String description;
 
-    private Integer status;
+    private boolean status = true;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "typeOfWork", nullable = false)
@@ -96,6 +101,9 @@ public class MilestoneTemplate extends AbstractAuditable {
     @OrderBy("id")
     @OneToMany(mappedBy = "milestoneTemplate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = MilestoneTemplateActivity.class)
     private final List<MilestoneTemplateActivity> milestoneTemplateActivities = new ArrayList<MilestoneTemplateActivity>(0);
+    
+    @Transient
+    private List<MilestoneTemplateActivity> tempMilestoneTemplateActivities = new ArrayList<MilestoneTemplateActivity>(0);
 
     @Override
     public Long getId() {
@@ -131,14 +139,6 @@ public class MilestoneTemplate extends AbstractAuditable {
         this.description = description;
     }
 
-    public Integer getStatus() {
-        return status;
-    }
-
-    public void setStatus(final Integer status) {
-        this.status = status;
-    }
-
     public EgwTypeOfWork getTypeOfWork() {
         return typeOfWork;
     }
@@ -163,4 +163,20 @@ public class MilestoneTemplate extends AbstractAuditable {
         milestoneTemplateActivities.add(milestoneTemplateactivity);
     }
 
+    public boolean isStatus() {
+        return status;
+    }
+
+    public void setStatus(boolean status) {
+        this.status = status;
+    }
+
+    public List<MilestoneTemplateActivity> getTempMilestoneTemplateActivities() {
+        return tempMilestoneTemplateActivities;
+    }
+
+    public void setTempMilestoneTemplateActivities(List<MilestoneTemplateActivity> tempMilestoneTemplateActivities) {
+        this.tempMilestoneTemplateActivities = tempMilestoneTemplateActivities;
+    }
+    
 }

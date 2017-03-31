@@ -44,9 +44,12 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.egov.commons.service.TypeOfWorkService;
 import org.egov.works.masters.entity.MilestoneTemplate;
+import org.egov.works.masters.entity.MilestoneTemplateActivity;
 import org.egov.works.masters.repository.MilestoneTemplateRepository;
 import org.egov.works.milestone.entity.SearchRequestMilestoneTemplate;
+import org.egov.works.utils.WorksConstants;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.CriteriaSpecification;
@@ -55,6 +58,7 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.Model;
 
 @Service
 @Transactional(readOnly = true)
@@ -63,8 +67,15 @@ public class MilestoneTemplateService {
     @PersistenceContext
     private EntityManager entityManager;
 
+    private final MilestoneTemplateRepository milestoneTemplateRepository;
+
     @Autowired
-    private MilestoneTemplateRepository milestoneTemplateRepository;
+    private TypeOfWorkService typeOfWorkService;
+
+    @Autowired
+    public MilestoneTemplateService(final MilestoneTemplateRepository milestoneTemplateRepository) {
+        this.milestoneTemplateRepository = milestoneTemplateRepository;
+    }
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -72,20 +83,11 @@ public class MilestoneTemplateService {
 
     @Transactional
     public MilestoneTemplate save(final MilestoneTemplate milestoneTemplate) {
-        final MilestoneTemplate newMilestoneTemplate = milestoneTemplateRepository.save(milestoneTemplate);
-        return newMilestoneTemplate;
+        return milestoneTemplateRepository.save(milestoneTemplate);
     }
 
     public MilestoneTemplate getMilestoneTemplateById(final Long id) {
         return milestoneTemplateRepository.findOne(id);
-    }
-
-    public boolean getCode(final String code) {
-        final MilestoneTemplate milestoneTemplate = milestoneTemplateRepository.findByCodeIgnoreCase(code);
-        if (milestoneTemplate == null)
-            return false;
-        else
-            return true;
     }
 
     public MilestoneTemplate getMilestoneTemplateByCode(final String code) {
@@ -96,7 +98,8 @@ public class MilestoneTemplateService {
         return milestoneTemplateRepository.findByCodeContainingIgnoreCase(code);
     }
 
-    public List<MilestoneTemplate> searchMilestoneTemplate(final SearchRequestMilestoneTemplate searchRequestMilestoneTemplate) {
+    public List<MilestoneTemplate> searchMilestoneTemplate(
+            final SearchRequestMilestoneTemplate searchRequestMilestoneTemplate) {
         final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(MilestoneTemplate.class);
         if (searchRequestMilestoneTemplate != null) {
             if (searchRequestMilestoneTemplate.getName() != null)
@@ -104,13 +107,50 @@ public class MilestoneTemplateService {
             if (searchRequestMilestoneTemplate.getDescription() != null)
                 criteria.add(Restrictions.ilike("description", searchRequestMilestoneTemplate.getDescription(),
                         MatchMode.ANYWHERE));
-            if (searchRequestMilestoneTemplate.getTypeOfWork() != null)
-                criteria.add(Restrictions.eq("typeOfWork.id", searchRequestMilestoneTemplate.getTypeOfWork()));
+            criteria.add(Restrictions.eq("typeOfWork.id", searchRequestMilestoneTemplate.getTypeOfWork()));
             if (searchRequestMilestoneTemplate.getSubTypeOfWork() != null)
                 criteria.add(Restrictions.eq("subTypeOfWork.id", searchRequestMilestoneTemplate.getSubTypeOfWork()));
+            if (searchRequestMilestoneTemplate.getTemplateCode() != null)
+                criteria.add(Restrictions.ilike("code", searchRequestMilestoneTemplate.getTemplateCode(),
+                        MatchMode.ANYWHERE));
+            createCriteriaForTemplateStatus(searchRequestMilestoneTemplate, criteria);
         }
         criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
         return criteria.list();
+    }
+
+    private void createCriteriaForTemplateStatus(final SearchRequestMilestoneTemplate searchRequestMilestoneTemplate,
+            final Criteria criteria) {
+        if (searchRequestMilestoneTemplate.getTemplateStatus() != null
+                && Boolean.TRUE.toString().equalsIgnoreCase(searchRequestMilestoneTemplate.getTemplateStatus()))
+            criteria.add(Restrictions.eq("status", true));
+        if (searchRequestMilestoneTemplate.getTemplateStatus() != null
+                && Boolean.FALSE.toString().equalsIgnoreCase(searchRequestMilestoneTemplate.getTemplateStatus()))
+            criteria.add(Restrictions.eq("status", false));
+    }
+
+    @Transactional
+    public MilestoneTemplate update(final MilestoneTemplate milestoneTemplate) {
+        return milestoneTemplateRepository.save(milestoneTemplate);
+    }
+
+    public void createMilestoneTemplateActivity(final MilestoneTemplate milestoneTemplate) {
+        MilestoneTemplateActivity milestoneTemplateActivity;
+        milestoneTemplate.getMilestoneTemplateActivities().clear();
+        for (final MilestoneTemplateActivity mta : milestoneTemplate.getTempMilestoneTemplateActivities()) {
+            milestoneTemplateActivity = new MilestoneTemplateActivity();
+            milestoneTemplateActivity.setStageOrderNo(mta.getStageOrderNo());
+            milestoneTemplateActivity.setDescription(mta.getDescription());
+            milestoneTemplateActivity.setPercentage(mta.getPercentage());
+            milestoneTemplateActivity.setMilestoneTemplate(milestoneTemplate);
+            milestoneTemplate.getMilestoneTemplateActivities().add(milestoneTemplateActivity);
+        }
+    }
+
+    public void loadModelValues(final Model model, final MilestoneTemplate milestoneTemplate) {
+        model.addAttribute("milestoneTemplate", milestoneTemplate);
+        model.addAttribute("typeOfWork",
+                typeOfWorkService.getActiveTypeOfWorksByPartyType(WorksConstants.PARTY_TYPE_CONTRACTOR));
     }
 
 }

@@ -37,23 +37,38 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
-<%@ include file="/includes/taglibs.jsp"%>
-<script
-	src="<cdn:url value='/resources/js/milestonetemplate/milestonetemplate.js?rnd=${app_release_no}'/>"></script>
-<html>
-<body onload="replaceStatus()">
-	<div class="new-page-header">
-		<s:text name="search.milestonetepmlate.view" />
-	</div>
 
-	<%@ include file='milestonetemplate-commonview.jsp'%>
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ taglib uri="/WEB-INF/taglibs/cdn.tld" prefix="cdn"%>
 
-	<div class="row text-center">
-		<div class="add-margin">
-			<input type="submit" name="closeButton" id="closeButton"
-				value="Close" Class="btn btn-default" onclick="window.close();" />
+<form:form name="milestoneTemplateForm" id="milestoneTemplateForm" role="form"
+	action="/egworks/masters/milestonetemplate-save" modelAttribute="milestoneTemplate"
+	class="form-horizontal form-groups-bordered">
+	<spring:hasBindErrors name="milestoneTemplate">
+		<div class="alert alert-danger col-md-12">
+			<form:errors cssClass="add-margin" />
+			<br />
+		</div>
+	</spring:hasBindErrors>
+	<div class="row">
+		<div class="col-md-12">
+			<jsp:include page="milestonetemplate-header.jsp" />
+			<jsp:include page="milestonetemplate-activity-details.jsp" />
 		</div>
 	</div>
-
-</body>
-</html>
+	<div class="row">
+		<div class="col-sm-12 text-center">
+			<button type="submit" name="submit" id="submitBtn" class="btn btn-primary" value="Save" >
+				<spring:message code="lbl.save" />
+			</button>
+			<button type="button" class="btn btn-default" id="button2"
+				onclick="window.close();">
+				<spring:message code="lbl.close" />
+			</button>
+		</div>
+	</div>
+</form:form>
+<script src="<cdn:url value='/resources/js/master/milestonetemplate.js?rnd=${app_release_no}'/>"></script> 

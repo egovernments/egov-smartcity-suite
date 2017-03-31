@@ -76,7 +76,7 @@
 					</div>
 					<div class="col-xs-3 add-margin view-content">
 						<c:choose>
-							<c:when test="${milestoneTemplate.status != 1}">
+							<c:when test="${milestoneTemplate.status != true}">
 								<c:out default="INACTIVE" value="INACTIVE"></c:out>
 							</c:when>
 							<c:otherwise>

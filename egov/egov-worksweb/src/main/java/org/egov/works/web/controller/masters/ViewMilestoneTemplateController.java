@@ -37,64 +37,32 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+package org.egov.works.web.controller.masters;
 
-package org.egov.works.milestone.entity;
+import org.egov.infra.exception.ApplicationException;
+import org.egov.works.masters.entity.MilestoneTemplate;
+import org.egov.works.masters.service.MilestoneTemplateService;
+import org.egov.works.utils.WorksConstants;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
-public class SearchRequestMilestoneTemplate {
+@Controller
+@RequestMapping(value = "/masters")
+public class ViewMilestoneTemplateController {
 
-    private String name;
-    private String description;
-    private Long typeOfWork;
-    private Long subTypeOfWork;
-    private String templateCode;
-    private String templateStatus;
+    @Autowired
+    private MilestoneTemplateService milestoneTemplateService;
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(final String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(final String description) {
-        this.description = description;
-    }
-
-    public Long getTypeOfWork() {
-        return typeOfWork;
-    }
-
-    public void setTypeOfWork(final Long typeOfWork) {
-        this.typeOfWork = typeOfWork;
-    }
-
-    public Long getSubTypeOfWork() {
-        return subTypeOfWork;
-    }
-
-    public void setSubTypeOfWork(final Long subTypeOfWork) {
-        this.subTypeOfWork = subTypeOfWork;
-    }
-
-    public String getTemplateCode() {
-        return templateCode;
-    }
-
-    public void setTemplateCode(final String templateCode) {
-        this.templateCode = templateCode;
-    }
-
-    public String getTemplateStatus() {
-        return templateStatus;
-    }
-
-    public void setTemplateStatus(final String templateStatus) {
-        this.templateStatus = templateStatus;
+    @RequestMapping(value = "/milestonetemplate-view/{id}", method = RequestMethod.GET)
+    public String viewMilestoneTemplate(@PathVariable final Long id, final Model model) throws ApplicationException {
+        final MilestoneTemplate milestoneTemplate = milestoneTemplateService.getMilestoneTemplateById(id);
+        model.addAttribute("milestoneTemplate", milestoneTemplate);
+        model.addAttribute(WorksConstants.MODE, WorksConstants.VIEW);
+        return "milestonetemplate-view";
     }
 
 }
