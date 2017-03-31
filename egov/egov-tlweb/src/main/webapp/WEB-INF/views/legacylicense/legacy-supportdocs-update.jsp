@@ -83,14 +83,21 @@
 			</div>
 			<div class="col-sm-4">
 			<c:choose>
-				<c:when test="${documentType.mandatory}">
-					<input type="file" name="files" id="uploadFile${stat.index}" class="file-ellipsis upload-file" required="true"/>	
+				<c:when test="${documentType.mandatory  && tradeLicense.documents[stat.index].files.isEmpty()}">
+					<input type="file" name="files" id="uploadFile${stat.index}" class="file-ellipsis upload-file" required="true"/>
+				</c:when>
+				<c:when test="${!documentType.mandatory}">
+				<input type="file" name="files" id="uploadFile${stat.index}" class="file-ellipsis upload-file"/>
 				</c:when>
 				<c:otherwise>
-					<input type="file" name="files" id="uploadFile${stat.index}" class="file-ellipsis upload-file" />
+				<input type="file" name="files" id="uploadFile${stat.index}" class="file-ellipsis upload-file"/>
 				</c:otherwise>
 			</c:choose>
-			<form:errors path="documents[${stat.index}].files" class="add-margin error-msg" />
+			<c:forEach items="${tradeLicense.documents[stat.index].files}" var="getdocuments">
+				<a href="javascript:viewDocument('<c:out value="${getdocuments.fileStoreId}"/>')">
+					<c:out value="${getdocuments.fileName}" /></a>
+			</c:forEach> 
+			<form:errors name="documents[${stat.index}].files" class="add-margin error-msg" />
 			</div>
 			<div class="col-sm-3 add-margin">
 				<form:textarea path="documents[${stat.index}].description"

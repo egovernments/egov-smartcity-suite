@@ -46,6 +46,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import java.io.IOException;
 
 import javax.validation.Valid;
+import javax.validation.ValidationException;
 
 import org.egov.tl.entity.TradeLicense;
 import org.springframework.stereotype.Controller;
@@ -63,6 +64,8 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("/legacylicense")
 public class CreateLegacyLicenseController extends LegacyLicenseController {
 
+    private static final String CREATE_LEGACY_LICENSE = "create-legacylicense";
+
     @ModelAttribute("tradeLicense")
     public TradeLicense tradeLicense() {
         return new TradeLicense();
@@ -71,21 +74,28 @@ public class CreateLegacyLicenseController extends LegacyLicenseController {
     @GetMapping(value = "/create")
     public String create(final TradeLicense tradeLicense, final Model model) {
 
-        model.addAttribute("legacyFeePayStatus", legacyService.legacyFeePayStatusForCreate(tradeLicense));
-        model.addAttribute("legacyInstallmentwiseFees", legacyService.legacyInstallmentwiseFeesForCreate(tradeLicense));
+        model.addAttribute("legacyFeePayStatus", legacyService.legacyFeePayStatusForCreate());
+        model.addAttribute("legacyInstallmentwiseFees", legacyService.legacyInstallmentwiseFeesForCreate());
 
-        return "create-legacylicense";
+        return CREATE_LEGACY_LICENSE;
     }
 
     @PostMapping(value = "/create")
     public String create(@Valid final TradeLicense tradeLicense, final BindingResult errors,
             @RequestParam("files") final MultipartFile[] files, final Model model) throws IOException {
+
         if (errors.hasErrors()) {
             model.addAttribute("tradeLicense", tradeLicense);
-            model.addAttribute("legacyInstallmentwiseFees", legacyService.legacyInstallmentwiseFeesForCreate(tradeLicense));
-            return "create-legacylicense";
+            model.addAttribute("legacyInstallmentwiseFees", legacyService.legacyInstallmentwiseFeesForCreate());
+            return CREATE_LEGACY_LICENSE;
         }
-        legacyService.storeDocument(tradeLicense, files);
+        try {
+            legacyService.storeDocument(tradeLicense, files);
+        } catch (final ValidationException e) {
+            errors.rejectValue("files", e.getMessage());
+            return CREATE_LEGACY_LICENSE;
+        }
+        
         legacyService.createLegacy(tradeLicense);
 
         return "redirect:/legacylicense/view/" + tradeLicense.getApplicationNumber();

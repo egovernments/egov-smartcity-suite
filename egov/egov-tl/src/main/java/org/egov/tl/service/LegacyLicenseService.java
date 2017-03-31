@@ -110,9 +110,6 @@ public class LegacyLicenseService {
     @Transactional
     public void createLegacy(final TradeLicense license) {
 
-        if (licenseRepository.findByOldLicenseNumber(license.getOldLicenseNumber()) != null)
-            throw new ValidationException("TL-001", "TL-001", license.getOldLicenseNumber());
-
         addLegacyDemand(license);
         license.setLicenseAppType(licenseAppTypeService.getLicenseAppTypeByName("New"));
         license.getLicensee().setLicense(license);
@@ -120,7 +117,6 @@ public class LegacyLicenseService {
         license.setApplicationNumber(licenseNumberUtils.generateApplicationNumber());
         license.setLegacy(true);
         license.setActive(true);
-        license.setApplicationDate(new Date());
         license.setLicenseNumber(licenseNumberUtils.generateLicenseNumber());
         validityService.applyLicenseValidity(license);
         licenseRepository.save(license);
@@ -134,7 +130,7 @@ public class LegacyLicenseService {
         licenseRepository.save(license);
     }
 
-    public Map<Integer, Integer> legacyInstallmentwiseFeesForCreate(final TradeLicense license) {
+    public Map<Integer, Integer> legacyInstallmentwiseFeesForCreate() {
         final Map<Integer, Integer> legacyInstallmentwiseFees = new LinkedHashMap<>();
         for (final Installment installment : tradeLicenseService.getLastFiveYearInstallmentsForLicense())
             legacyInstallmentwiseFees.put(installment.getInstallmentNumber(), 0);
@@ -142,14 +138,14 @@ public class LegacyLicenseService {
     }
 
     public Map<Integer, Integer> legacyInstallmentwiseFees(final TradeLicense license) {
-        final Map<Integer, Integer> legacyInstallmentwiseFees = legacyInstallmentwiseFeesForCreate(license);
+        final Map<Integer, Integer> legacyInstallmentwiseFees = legacyInstallmentwiseFeesForCreate();
         for (final EgDemandDetails demandDetail : license.getCurrentDemand().getEgDemandDetails())
             legacyInstallmentwiseFees.put(demandDetail.getEgDemandReason().getEgInstallmentMaster().getInstallmentNumber(),
                     demandDetail.getAmount().intValue());
         return legacyInstallmentwiseFees;
     }
 
-    public Map<Integer, Boolean> legacyFeePayStatusForCreate(final TradeLicense license) {
+    public Map<Integer, Boolean> legacyFeePayStatusForCreate() {
         final Map<Integer, Boolean> legacyFeePayStatus = new LinkedHashMap<>();
         for (final Installment installment : tradeLicenseService.getLastFiveYearInstallmentsForLicense())
             legacyFeePayStatus.put(installment.getInstallmentNumber(), false);
@@ -157,10 +153,10 @@ public class LegacyLicenseService {
     }
 
     public Map<Integer, Boolean> legacyFeePayStatus(final TradeLicense license) {
-        final Map<Integer, Boolean> legacyFeePayStatus = legacyFeePayStatusForCreate(license);
+        final Map<Integer, Boolean> legacyFeePayStatus = legacyFeePayStatusForCreate();
         for (final EgDemandDetails demandDetail : license.getCurrentDemand().getEgDemandDetails())
             legacyFeePayStatus.put(demandDetail.getEgDemandReason().getEgInstallmentMaster().getInstallmentNumber(),
-                    demandDetail.getAmtCollected().compareTo(BigDecimal.ZERO) != 0 &&
+                    demandDetail.getAmtCollected().compareTo(ZERO) != 0 &&
                             demandDetail.getAmtCollected().compareTo(demandDetail.getAmount()) == 0);
         return legacyFeePayStatus;
     }
@@ -169,10 +165,13 @@ public class LegacyLicenseService {
         final List<String> installmentYears = license.getFinancialyear();
         final List<String> installmentFees = license.getLegacyInstallmentwiseFees();
         final Map<Integer, Integer> legacyInstallmentwiseFees = new LinkedHashMap<>();
-        for (int i = 0; i < installmentYears.size(); i++)
+        for (int i = 0; i < installmentYears.size(); i++) {
+            if (installmentFees.get(i) == null)
+                installmentFees.set(i, "0");
             legacyInstallmentwiseFees.put(
                     Integer.valueOf(installmentYears.get(i)),
                     Integer.valueOf(installmentFees.get(i)));
+        }
         return legacyInstallmentwiseFees;
     }
 
@@ -253,6 +252,31 @@ public class LegacyLicenseService {
                 demandDetails.remove();
             updatedInstallmentFees.put(installmentNumber, 0);
         }
+        // Create demand details which is newly entered
+        updateNewLegacyDemand(updatedInstallmentFees, legacyFeePayStatus, licenseDemand);
+    }
+
+    private void updateNewLegacyDemand(final Map<Integer, Integer> updatedInstallmentFees,
+            final Map<Integer, Boolean> legacyFeePayStatus, final LicenseDemand licenseDemand) {
+
+        final Module module = moduleService.getModuleByName("Trade License");
+        for (final Entry<Integer, Integer> updatedInstallmentFee : updatedInstallmentFees.entrySet())
+            if (updatedInstallmentFee.getValue() != null && updatedInstallmentFee.getValue() > 0) {
+
+                final Installment installment = installmentDao.fetchInstallmentByModuleAndInstallmentNumber(module,
+                        updatedInstallmentFee.getKey());
+                final BigDecimal demandAmount = BigDecimal.valueOf(updatedInstallmentFee.getValue()).setScale(0,
+                        RoundingMode.HALF_UP);
+                final BigDecimal amtCollected = legacyFeePayStatus.get(updatedInstallmentFee.getKey()) == null
+                        || !legacyFeePayStatus.get(updatedInstallmentFee.getKey()) ? ZERO : demandAmount;
+                licenseDemand.getEgDemandDetails().add(EgDemandDetails.fromReasonAndAmounts(demandAmount,
+                                demandGenericDao.getDmdReasonByDmdReasonMsterInstallAndMod(
+                                demandGenericDao.getDemandReasonMasterByCode("License Fee", module),
+                                installment, module),
+                                amtCollected));
+            }
+        // Recalculating BasedDemand
+        licenseDemand.recalculateBaseDemand();
     }
 
     public void storeDocument(final License license, final MultipartFile[] files) {
@@ -265,11 +289,11 @@ public class LegacyLicenseService {
                     documents.get(i).getFiles().addAll(fileStoreUtils.addToFileStore(files, "EGTL"));
 
                     documents.get(i).setEnclosed(true);
-                } else if (documents.get(i).getType().isMandatory() && files[i].isEmpty()) {
+                } else if (documents.get(i).getType().isMandatory() && files[i].isEmpty() && documents.isEmpty()) {
                     documents.get(i).getFiles().clear();
-                    throw new ValidationException("TL-004", "TL-004", documents.get(i).getType().getName());
+                    throw new ValidationException("File should not be Empty", "File should not be Empty", documents.get(i).getType().getName());
                 }
-                documents.get(i).setDocDate(new Date());
+                documents.get(i).setDocDate(license.getApplicationDate());
                 documents.get(i).setLicense(license);
             }
     }

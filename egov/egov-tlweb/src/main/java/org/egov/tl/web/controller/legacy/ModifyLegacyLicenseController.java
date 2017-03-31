@@ -43,6 +43,7 @@ package org.egov.tl.web.controller.legacy;
 import java.io.IOException;
 
 import javax.validation.Valid;
+import javax.validation.ValidationException;
 
 import org.egov.tl.entity.TradeLicense;
 import org.springframework.stereotype.Controller;
@@ -60,6 +61,8 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("/legacylicense")
 public class ModifyLegacyLicenseController extends LegacyLicenseController {
 
+    private static final String UPDATE_LEGACY_FORM = "updateform-legacylicense";
+
     @ModelAttribute("tradeLicense")
     public TradeLicense tradeLicense(@PathVariable final Long id) {
         return tradeLicenseService.getLicenseById(id);
@@ -72,7 +75,7 @@ public class ModifyLegacyLicenseController extends LegacyLicenseController {
         model.addAttribute("legacyFeePayStatus", legacyService.legacyFeePayStatus(tradeLicense));
         model.addAttribute("outstandingFee", tradeLicenseService.getOutstandingFee(tradeLicense));
 
-        return "updateform-legacylicense";
+        return UPDATE_LEGACY_FORM;
     }
 
     @PostMapping(value = "/update/{id}")
@@ -82,9 +85,15 @@ public class ModifyLegacyLicenseController extends LegacyLicenseController {
             model.addAttribute("legacyInstallmentwiseFees", legacyService.legacyInstallmentwiseFees(tradeLicense));
             model.addAttribute("legacyFeePayStatus", legacyService.legacyFeePayStatus(tradeLicense));
             model.addAttribute("outstandingFee", tradeLicenseService.getOutstandingFee(tradeLicense));
-            return "updateform-legacylicense";
+            return UPDATE_LEGACY_FORM;
         }
-        legacyService.storeDocument(tradeLicense, files);
+        try {
+            legacyService.storeDocument(tradeLicense, files);
+        } catch (final ValidationException e) {
+            errors.rejectValue("files", e.getMessage());
+            return UPDATE_LEGACY_FORM;
+        }
+
         legacyService.updateLegacy(tradeLicense);
 
         return "redirect:/legacylicense/view/" + tradeLicense.getApplicationNumber();

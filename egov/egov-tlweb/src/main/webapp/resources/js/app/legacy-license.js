@@ -68,7 +68,16 @@ $(document).ready(function() {
 	if (showdetail != "")
 		$("#showAgreementDtl").prop("checked", true);
 
-})
+});
+
+jQuery('form').validate({
+    ignore: ".ignore",
+    invalidHandler: function(e, validator){
+        if(validator.errorList.length)
+          $('#settingstab a[href="#' + 
+        		  jQuery(validator.errorList[0].element).closest(".tab-pane").attr('id') + '"]').tab('show');
+    }
+});
 
 function applicationdate(){
 	
@@ -115,19 +124,21 @@ $('#boundary').change(function () {
             cache: true,
             dataType: "json",
             data: {'locality': this.value}
-        }).done(function (response) {
-            if (response.results.boundaries.length < 1) {
-                bootbox.alert("Could not find ward for Locality : " + $('#boundary').find(":selected").text());
+        	}).done(function (response) {
+            if (response.results.boundaries.length < 1)
+            {
+                bootbox.alert("Could not find ward for Locality : " +
+                		$('#boundary').find(":selected").text());
                 $('#boundary').val('');
                 return;
             }
-            $.each(response.results.boundaries, function (key, boundary) {
+            $.each(response.results.boundaries, function (key, boundary)
+            	{
                 $('#parentBoundary').append('<option '
                 		+ (boundary.wardId === $('#parentBoundary').data('selected-id')?'selected="selected"':"") 
                     +'value="' + boundary.wardId + '">' + boundary.wardName + '</option>');
-            });
+            	});
             $('#parentBoundary').removeAttr('data-selected-id');
-           
         });
     }
 });
@@ -151,7 +162,6 @@ $('#category').change(function () {
                 select2initialize($("#subCategory"), results, false);
                 
                 $('[name="tradeName"]').val($('[name="tradeName"]').data('selected-id')).trigger('change');
-                                
             },
             error: function () {
                 bootbox.alert('something went wrong on server');
@@ -162,40 +172,41 @@ $('#category').change(function () {
 
 function validateForm() {
 	if ($('#legacyLicenseForm').valid()) {
-	
 		var mobileno= $('#mobilePhoneNumber').val();
-		console.log(mobileno);
-		 if (mobileno.length > 0 && mobileno.length < 10) {
+		 if (mobileno.length > 0 && mobileno.length < 10)
+		 {
 			$('#mobileError').removeClass("hide");
 			$("#mobilePhoneNumber").focus();
 			return false;
-		}
-			else if ($("#showAgreementDtl").checked) {
+		 }
+		  else if ($("#showAgreementDtl").checked)
+		   {
 			if ($("#agreementDate").val() == ''
-					|| $("#agreementDate").val() == null) {
-				showMessage('enterLicense_error', $("#agreementDateerror")
-						.val());
-				window.scroll(0, 0);
-				return false;
-			} else if ($("#agreementDocNo").val().trim() == ''
-					|| $("#agreementDocNo").val() == null) {
-				showMessage('enterLicense_error',
-						$("#agreementDocNoerror").val());
-				window.scroll(0, 0);
-				return false;
-			} else{
-				/*validate fee details*/
-				if(validate_feedetails()){
-					//checkbox checked
-					if(feedetails_checked()){
-						formsubmit();
+					|| $("#agreementDate").val() == null)
+				{
+					showMessage('enterLicense_error', $("#agreementDateerror").val());
+					window.scroll(0, 0);
+					return false;
+				} 
+			 else if ($("#agreementDocNo").val().trim() == ''|| $("#agreementDocNo").val() == null) 
+				 {
+					showMessage('enterLicense_error',
+							$("#agreementDocNoerror").val());
+					window.scroll(0, 0);
+					return false;
+				  } else{
+					/*validate fee details*/
+					if(validate_feedetails()){
+						//checkbox checked
+						if(feedetails_checked()){
+							formsubmit();
+						}else{
+							return false;
+						}
 					}else{
 						return false;
 					}
-				}else{
-					return false;
 				}
-			}
 			} else{
 				/*validate fee details*/
 				if(validate_feedetails()){
@@ -281,7 +292,6 @@ function feedetails_checked(){
 
 function formsubmit() {
 	/* submit the form */
-	clearMessage('enterLicense_error');
 	toggleFields(false, "");
 	$("#legacyLicenseForm").submit();
 }

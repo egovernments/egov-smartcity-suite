@@ -182,7 +182,7 @@
 						</div>
 						<div class="tab-pane fade" id="tradeattachments">
 							<div>
-								<%@ include file="legacy-supportdocs.jsp"%>
+								<%@ include file="legacy-supportdocs-update.jsp"%>
 							</div>
 						</div>
 					</div>

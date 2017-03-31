@@ -50,7 +50,7 @@
 		<form:input path="licensee.uid" id="adhaarId"
 			class="form-control typeahead" value="${licensee.uid}" maxlength="12"
 			placeholder="" autocomplete="off" />
-		<div class="error-msg hide" id="adhaarError">Should be 12 digits</div>
+		<div class="error-msg hide" path="licensee.uid" id="adhaarError">Should be 12 digits</div>
 	</div>
 	<label class="col-sm-2 control-label text-right"><spring:message
 			code='search.licensee.mobileNo' /><span class="mandatory"></span></label>
@@ -60,7 +60,7 @@
             <form:input path="licensee.mobilePhoneNumber" id="mobilePhoneNumber" maxlength="10" required="true"
                          cssClass="form-control patternvalidation" data-pattern="number" value="${licensee.mobilePhoneNumber}"/>
    </div> 
-             <form:errors class="error-msg hide" path="licensee.mobilePhoneNumber"  id="mobileError">Should be 10 digits</form:errors>
+             <div class="error-msg hide" path="licensee.mobilePhoneNumber"  id="mobileError">Should be 10 digits</div>
    </div>
  
 </div>
@@ -105,10 +105,3 @@
 		<form:errors path="licensee.address" cssClass="error-msg" />
 	</div>
 </div>
-
-<script>
-	try {
-		$(":input").inputmask();
-	} catch (e) {
-	}
-</script>

@@ -59,22 +59,19 @@ import org.hibernate.envers.RelationTargetAuditMode;
 @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
 public class TradeLicense extends License {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = 1559371825326966340L;
+    private static final long serialVersionUID = 986289058758315223L;
     @Transient
-    List<String> financialyear = new ArrayList<>();
+    private List<String> financialyear = new ArrayList<>();
     @Transient
-    List<String> legacyInstallmentwiseFees = new ArrayList<>();
+    private List<String> legacyInstallmentwiseFees = new ArrayList<>();
     @Transient
-    List<String> legacyFeePayStatus = new ArrayList<>();
+    private List<String> legacyFeePayStatus = new ArrayList<>();
 
     @Override
     public String getStateDetails() {
         final StringBuilder details = new StringBuilder();
         if (isNotBlank(getLicenseNumber()))
-            details.append("Trade License Number ").append(getLicenseNumber()).append(" and ");
+            details.append("Trade License Number").append(getLicenseNumber()).append(" and ");
         details.append("App No. ").append(applicationNumber).append(" dated ").append(toDefaultDateFormat(applicationDate));
         if (isNotBlank(getState().getComments()))
             details.append("<br/> Remarks : ").append(getState().getComments());
