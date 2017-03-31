@@ -45,15 +45,15 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.hibernate.validator.constraints.Length;
 
 @Entity
-@Table(name = "EGBPA_PERMITTED_FLOORDETAILS")
-@SequenceGenerator(name = PermittedFloorDetail.SEQ_PERMITTEDFLOORDETAILS, sequenceName = PermittedFloorDetail.SEQ_PERMITTEDFLOORDETAILS, allocationSize = 1)
+@Table(name = "EGBPA_PERMITTED_FLOORDETAIL")
+@SequenceGenerator(name = PermittedFloorDetail.SEQ_PERMITTEDFLOORDETAIL, sequenceName = PermittedFloorDetail.SEQ_PERMITTEDFLOORDETAIL, allocationSize = 1)
 public class PermittedFloorDetail extends AbstractAuditable {
 
     private static final long serialVersionUID = 3078684328383202788L;
-    public static final String SEQ_PERMITTEDFLOORDETAILS = "SEQ_EGBPA_PERMITTED_FLOORDETAILS";
+    public static final String SEQ_PERMITTEDFLOORDETAIL = "SEQ_EGBPA_PERMITTED_FLOORDETAIL";
 
     @Id
-    @GeneratedValue(generator = SEQ_PERMITTEDFLOORDETAILS, strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = SEQ_PERMITTEDFLOORDETAIL, strategy = GenerationType.SEQUENCE)
     private Long id;
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)

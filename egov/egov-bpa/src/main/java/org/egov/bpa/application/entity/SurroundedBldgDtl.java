@@ -47,7 +47,7 @@ import org.hibernate.validator.constraints.Length;
 public class SurroundedBldgDtl extends AbstractAuditable {
 
     private static final long serialVersionUID = 3078684328383202788L;
-    public static final String SEQ_SURROUNDEDBLDGDTL = "SEQ_EGBPA_MSTR_SURNBLDGDTLS";
+    public static final String SEQ_SURROUNDEDBLDGDTL = "SEQ_EGBPA_MSTR_SURNBLDGDTL";
     @Id
     @GeneratedValue(generator = SEQ_SURROUNDEDBLDGDTL, strategy = GenerationType.SEQUENCE)
     private Long id;

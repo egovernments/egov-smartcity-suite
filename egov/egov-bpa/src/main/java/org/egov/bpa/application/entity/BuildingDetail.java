@@ -50,12 +50,12 @@ import org.hibernate.validator.constraints.Length;
 
 @Entity
 @Table(name = "EGBPA_BUILDINGDETAIL")
-@SequenceGenerator(name = BuildingDetail.SEQEGBPABUILDINGDETAILS, sequenceName = BuildingDetail.SEQEGBPABUILDINGDETAILS, allocationSize = 1)
+@SequenceGenerator(name = BuildingDetail.SEQEGBPABUILDINGDETAIL, sequenceName = BuildingDetail.SEQEGBPABUILDINGDETAIL, allocationSize = 1)
 public class BuildingDetail extends AbstractAuditable {
     private static final long serialVersionUID = 3078684328383202788L;
-    public static final String SEQEGBPABUILDINGDETAILS = "SEQ_EGBPA_BUILDINGDETAILS";
+    public static final String SEQEGBPABUILDINGDETAIL = "SEQ_EGBPA_BUILDINGDETAIL";
     @Id
-    @GeneratedValue(generator = SEQEGBPABUILDINGDETAILS, strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = SEQEGBPABUILDINGDETAIL, strategy = GenerationType.SEQUENCE)
     private Long id;
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @Valid
@@ -63,23 +63,23 @@ public class BuildingDetail extends AbstractAuditable {
     @JoinColumn(name = "application", nullable = false)
     private Application application;
     private Integer unitCount;
-    @Length(min = 1, max = 125)
+    @Length(min = 1, max = 128)
     private String unitClassification;
     private Integer floorCount;
     private Integer noofbasementUnit;
     private BigDecimal buildingheightGround;
-    private Integer buildingheightFloor;
+    private BigDecimal buildingheightFloor;
     private Integer noofupperFloor;
     private Integer noofdwellingUnit;
     private Boolean isGroudFloor;
     private Boolean isStiltFloor;
     private Boolean isMezzanineFloor;
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "existBldgcatgId", nullable = false)
-    private BuildingCategory existBldgcatgId;
+    @JoinColumn(name = "existBldgcategory", nullable = false)
+    private BuildingCategory existBldgCategory;
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "proposedBldgcatgId", nullable = false)
-    private BuildingCategory proposedBldgcatgId;
+    private BuildingCategory proposedBldgCategory;
     private BigDecimal proposedSitalinSqmt;
     private BigDecimal proposedfloorArea;
     private BigDecimal totalPlintArea;
@@ -135,14 +135,6 @@ public class BuildingDetail extends AbstractAuditable {
         this.buildingheightGround = buildingheightGround;
     }
 
-    public Integer getBuildingheightFloor() {
-        return buildingheightFloor;
-    }
-
-    public void setBuildingheightFloor(final Integer buildingheightFloor) {
-        this.buildingheightFloor = buildingheightFloor;
-    }
-
     public Integer getNoofupperFloor() {
         return noofupperFloor;
     }
@@ -183,22 +175,6 @@ public class BuildingDetail extends AbstractAuditable {
         this.isMezzanineFloor = isMezzanineFloor;
     }
 
-    public BuildingCategory getExistBldgcatgId() {
-        return existBldgcatgId;
-    }
-
-    public void setExistBldgcatgId(final BuildingCategory existBldgcatgId) {
-        this.existBldgcatgId = existBldgcatgId;
-    }
-
-    public BuildingCategory getProposedBldgcatgId() {
-        return proposedBldgcatgId;
-    }
-
-    public void setProposedBldgcatgId(final BuildingCategory proposedBldgcatgId) {
-        this.proposedBldgcatgId = proposedBldgcatgId;
-    }
-
     public BigDecimal getProposedSitalinSqmt() {
         return proposedSitalinSqmt;
     }
@@ -237,6 +213,30 @@ public class BuildingDetail extends AbstractAuditable {
 
     public void setApplication(final Application application) {
         this.application = application;
+    }
+
+    public void setBuildingheightFloor(BigDecimal buildingheightFloor) {
+        this.buildingheightFloor = buildingheightFloor;
+    }
+
+    public BigDecimal getBuildingheightFloor() {
+        return buildingheightFloor;
+    }
+
+    public BuildingCategory getExistBldgCategory() {
+        return existBldgCategory;
+    }
+
+    public void setExistBldgCategory(BuildingCategory existBldgCategory) {
+        this.existBldgCategory = existBldgCategory;
+    }
+
+    public BuildingCategory getProposedBldgCategory() {
+        return proposedBldgCategory;
+    }
+
+    public void setProposedBldgCategory(BuildingCategory proposedBldgCategory) {
+        this.proposedBldgCategory = proposedBldgCategory;
     }
 
 }

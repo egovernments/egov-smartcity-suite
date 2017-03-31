@@ -75,7 +75,7 @@ public class Inspection extends AbstractAuditable {
     private Date inspectionDate;
     @ManyToOne(fetch = FetchType.LAZY)
     private Inspection parent;
-  
+
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     private User inspectedBy;
@@ -91,6 +91,7 @@ public class Inspection extends AbstractAuditable {
     private Date postponedDate;
 
     // Land Details
+    @Enumerated(EnumType.ORDINAL)
     private LandBldngZoneing landZoning;
     @ManyToOne(fetch = FetchType.LAZY)
     private LayoutMaster lndLayoutType;
@@ -111,13 +112,13 @@ public class Inspection extends AbstractAuditable {
     private BigDecimal bldngProposedPlotFrontage = new BigDecimal(0);
     private BigDecimal bldngRoadWidth = new BigDecimal(0);
     private BigDecimal bldngProposedBldngArea = new BigDecimal(0);
-    private BigDecimal bldngGFloor_TiledFloor = new BigDecimal(0);
-    private BigDecimal bldngGFloor_OtherTypes = new BigDecimal(0);
-    private BigDecimal bldngFrstFloor_TotalArea = new BigDecimal(0);
+    private BigDecimal bldngGFloorTiledFloor = new BigDecimal(0);
+    private BigDecimal bldngGFloorOtherTypes = new BigDecimal(0);
+    private BigDecimal bldngFrstFloorTotalArea = new BigDecimal(0);
     @ManyToOne(fetch = FetchType.LAZY)
     private StormWaterDrain bldngStormWaterDrain;
     private BigDecimal bldngCompoundWall = new BigDecimal(0);
-    private BigDecimal bldngWellOht_SumpTankArea = new BigDecimal(0);
+    private BigDecimal bldngWellOhtSumpTankArea = new BigDecimal(0);
     private BigDecimal bldngCommercial = new BigDecimal(0);
     private BigDecimal bldngResidential = new BigDecimal(0);
     private Boolean bldngIsRegularisationCharges;
@@ -148,7 +149,7 @@ public class Inspection extends AbstractAuditable {
     @JoinColumn(name = "docket", unique = true)
     private Docket docket;
     @OneToMany(mappedBy = "inspection", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<FloorDetail> floorDetail = new ArrayList<>(0);
+    private List<ApplicationFloorDetail> floorDetail = new ArrayList<>(0);
     @ManyToOne(fetch = FetchType.LAZY)
     private Application application;
 
@@ -157,6 +158,7 @@ public class Inspection extends AbstractAuditable {
         return id;
     }
 
+    @Override
     public void setId(final Long id) {
         this.id = id;
     }
@@ -377,30 +379,6 @@ public class Inspection extends AbstractAuditable {
         this.bldngProposedBldngArea = bldngProposedBldngArea;
     }
 
-    public BigDecimal getBldngGFloor_TiledFloor() {
-        return bldngGFloor_TiledFloor;
-    }
-
-    public void setBldngGFloor_TiledFloor(BigDecimal bldngGFloor_TiledFloor) {
-        this.bldngGFloor_TiledFloor = bldngGFloor_TiledFloor;
-    }
-
-    public BigDecimal getBldngGFloor_OtherTypes() {
-        return bldngGFloor_OtherTypes;
-    }
-
-    public void setBldngGFloor_OtherTypes(BigDecimal bldngGFloor_OtherTypes) {
-        this.bldngGFloor_OtherTypes = bldngGFloor_OtherTypes;
-    }
-
-    public BigDecimal getBldngFrstFloor_TotalArea() {
-        return bldngFrstFloor_TotalArea;
-    }
-
-    public void setBldngFrstFloor_TotalArea(BigDecimal bldngFrstFloor_TotalArea) {
-        this.bldngFrstFloor_TotalArea = bldngFrstFloor_TotalArea;
-    }
-
     public StormWaterDrain getBldngStormWaterDrain() {
         return bldngStormWaterDrain;
     }
@@ -415,14 +393,6 @@ public class Inspection extends AbstractAuditable {
 
     public void setBldngCompoundWall(BigDecimal bldngCompoundWall) {
         this.bldngCompoundWall = bldngCompoundWall;
-    }
-
-    public BigDecimal getBldngWellOht_SumpTankArea() {
-        return bldngWellOht_SumpTankArea;
-    }
-
-    public void setBldngWellOht_SumpTankArea(BigDecimal bldngWellOht_SumpTankArea) {
-        this.bldngWellOht_SumpTankArea = bldngWellOht_SumpTankArea;
     }
 
     public BigDecimal getBldngCommercial() {
@@ -585,7 +555,6 @@ public class Inspection extends AbstractAuditable {
         this.docket = docket;
     }
 
- 
     public Application getApplication() {
         return application;
     }
@@ -594,12 +563,44 @@ public class Inspection extends AbstractAuditable {
         this.application = application;
     }
 
-    public List<FloorDetail> getFloorDetail() {
+    public List<ApplicationFloorDetail> getFloorDetail() {
         return floorDetail;
     }
 
-    public void setFloorDetail(List<FloorDetail> floorDetail) {
+    public void setFloorDetail(List<ApplicationFloorDetail> floorDetail) {
         this.floorDetail = floorDetail;
+    }
+
+    public BigDecimal getBldngGFloorTiledFloor() {
+        return bldngGFloorTiledFloor;
+    }
+
+    public void setBldngGFloorTiledFloor(BigDecimal bldngGFloorTiledFloor) {
+        this.bldngGFloorTiledFloor = bldngGFloorTiledFloor;
+    }
+
+    public BigDecimal getBldngGFloorOtherTypes() {
+        return bldngGFloorOtherTypes;
+    }
+
+    public void setBldngGFloorOtherTypes(BigDecimal bldngGFloorOtherTypes) {
+        this.bldngGFloorOtherTypes = bldngGFloorOtherTypes;
+    }
+
+    public BigDecimal getBldngFrstFloorTotalArea() {
+        return bldngFrstFloorTotalArea;
+    }
+
+    public void setBldngFrstFloorTotalArea(BigDecimal bldngFrstFloorTotalArea) {
+        this.bldngFrstFloorTotalArea = bldngFrstFloorTotalArea;
+    }
+
+    public BigDecimal getBldngWellOhtSumpTankArea() {
+        return bldngWellOhtSumpTankArea;
+    }
+
+    public void setBldngWellOhtSumpTankArea(BigDecimal bldngWellOhtSumpTankArea) {
+        this.bldngWellOhtSumpTankArea = bldngWellOhtSumpTankArea;
     }
 
 }

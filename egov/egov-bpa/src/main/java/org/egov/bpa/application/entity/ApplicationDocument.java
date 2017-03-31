@@ -11,6 +11,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
@@ -24,99 +26,100 @@ import org.springframework.web.multipart.MultipartFile;
 @SequenceGenerator(name = ApplicationDocument.SEQ_APPLICATIONDOCUMENT, sequenceName = ApplicationDocument.SEQ_APPLICATIONDOCUMENT, allocationSize = 1)
 public class ApplicationDocument extends AbstractAuditable {
 
-	private static final long serialVersionUID = -4555037259173138199L;
-	public static final String SEQ_APPLICATIONDOCUMENT = "seq_egbpa_application_document";
+    private static final long serialVersionUID = -4555037259173138199L;
+    public static final String SEQ_APPLICATIONDOCUMENT = "seq_egbpa_application_document";
 
-	@Id
-	@GeneratedValue(generator = SEQ_APPLICATIONDOCUMENT, strategy = GenerationType.SEQUENCE)
-	private Long id;
+    @Id
+    @GeneratedValue(generator = SEQ_APPLICATIONDOCUMENT, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	/*
-	 * @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	 * 
-	 * @JoinTable(name = "egwtr_documents", joinColumns = @JoinColumn(name =
-	 * "applicationdocumentsid"), inverseJoinColumns = @JoinColumn(name =
-	 * "filestoreid")) private Set<FileStoreMapper> supportDocs =
-	 * Collections.emptySet();
-	 */
+    /*
+     * @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+     * @JoinTable(name = "egwtr_documents", joinColumns = @JoinColumn(name = "applicationdocumentsid"), inverseJoinColumns
+     * = @JoinColumn(name = "filestoreid")) private Set<FileStoreMapper> supportDocs = Collections.emptySet();
+     */
 
-	private transient MultipartFile[] files;
-	@ManyToOne
-	@NotNull
-	@JoinColumn(name = "checklistcode", nullable = false)
-	private CheckListDetail checklistDetail;
-	@ManyToOne(cascade = CascadeType.ALL)
-	@Valid
-	@NotNull
-	@JoinColumn(name = "application", nullable = false)
-	private Application application;
-	private Date submissionDate;
-	private Boolean issubmitted;
-	
-	@ManyToOne(cascade = CascadeType.ALL)
-	private User createduser;
-	@Length(min = 1, max = 256)
-	private String remarks;
+    private transient MultipartFile[] files;
+    @ManyToOne
+    @NotNull
+    @JoinColumn(name = "checklistDetail", nullable = false)
+    private CheckListDetail checklistDetail;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @Valid
+    @NotNull
+    @JoinColumn(name = "application", nullable = false)
+    private Application application;
+    @Temporal(value = TemporalType.DATE)
+    private Date submissionDate;
+    private Boolean issubmitted;
 
-	@Override
-	public Long getId() {
-		return id;
-	}
-	@Override
-	public void setId(final Long id) {
-		this.id = id;
-	}
+    @ManyToOne(cascade = CascadeType.ALL)
+    private User createduser;
+    @Length(min = 1, max = 256)
+    private String remarks;
 
-	public MultipartFile[] getFiles() {
-		return files;
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	public void setFiles(final MultipartFile[] files) {
-		this.files = files;
-	}
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
+    }
 
-	public Date getSubmissionDate() {
-		return submissionDate;
-	}
+    public MultipartFile[] getFiles() {
+        return files;
+    }
 
-	public void setSubmissionDate(final Date submissionDate) {
-		this.submissionDate = submissionDate;
-	}
+    public void setFiles(final MultipartFile[] files) {
+        this.files = files;
+    }
 
-	public Boolean getIssubmitted() {
-		return issubmitted;
-	}
+    public Date getSubmissionDate() {
+        return submissionDate;
+    }
 
-	public void setIssubmitted(final Boolean issubmitted) {
-		this.issubmitted = issubmitted;
-	}
+    public void setSubmissionDate(final Date submissionDate) {
+        this.submissionDate = submissionDate;
+    }
 
-	public User getCreateduser() {
-		return createduser;
-	}
+    public Boolean getIssubmitted() {
+        return issubmitted;
+    }
 
-	public void setCreateduser(User createduser) {
-		this.createduser = createduser;
-	}
+    public void setIssubmitted(final Boolean issubmitted) {
+        this.issubmitted = issubmitted;
+    }
 
-	public String getRemarks() {
-		return remarks;
-	}
+    public User getCreateduser() {
+        return createduser;
+    }
 
-	public void setRemarks(final String remarks) {
-		this.remarks = remarks;
-	}
+    public void setCreateduser(User createduser) {
+        this.createduser = createduser;
+    }
 
-	public Application getApplication() {
-		return application;
-	}
+    public String getRemarks() {
+        return remarks;
+    }
 
-	public void setApplication(final Application application) {
-		this.application = application;
-	}
+    public void setRemarks(final String remarks) {
+        this.remarks = remarks;
+    }
+
+    public Application getApplication() {
+        return application;
+    }
+
+    public void setApplication(final Application application) {
+        this.application = application;
+    }
+
     public CheckListDetail getChecklistDetail() {
         return checklistDetail;
     }
+
     public void setChecklistDetail(CheckListDetail checklistDetail) {
         this.checklistDetail = checklistDetail;
     }

@@ -29,10 +29,16 @@
  */
 package org.egov.bpa.application.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -76,7 +82,13 @@ public class StakeHolder extends User {
     @Length(min = 1, max = 15)
     private String organizationMobNo;
     private Boolean isOnbehalfOfOrganization;
+    @NotNull
     private Boolean isActive;
+    @Length(max = 10)
+    private String tan;
+
+    @OneToMany(mappedBy = "stakeHolder", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private final List<StakeHolderDocument> stakeHolderDocument = new ArrayList<>(0);
 
     public Boolean getIsActive() {
         return isActive;
@@ -180,6 +192,14 @@ public class StakeHolder extends User {
 
     public void setIsOnbehalfOfOrganization(Boolean isOnbehalfOfOrganization) {
         this.isOnbehalfOfOrganization = isOnbehalfOfOrganization;
+    }
+
+    public String getTan() {
+        return tan;
+    }
+
+    public void setTan(String tan) {
+        this.tan = tan;
     }
 
 }

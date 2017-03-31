@@ -80,9 +80,11 @@ public class SiteDetail extends AbstractAuditable {
     private String streetaddress2;
     @Length(min = 1, max = 128)
     private String area;
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     private Boundary adminBoundary;
+    @ManyToOne(fetch = FetchType.LAZY)
     private Boundary locationBoundary;
+    @ManyToOne(fetch = FetchType.LAZY)
     private Boundary electionBoundary;
     @Length(min = 1, max = 128)
     private String citytown; // required ??

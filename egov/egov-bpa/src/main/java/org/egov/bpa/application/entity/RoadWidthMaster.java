@@ -57,7 +57,7 @@ public class RoadWidthMaster extends AbstractAuditable {
     @Length(min = 1, max = 128)
     @Column(name = "code", unique = true)
     private String code;
-
+    @NotNull
     @Length(min = 1, max = 256)
     private String description;
 
@@ -66,6 +66,7 @@ public class RoadWidthMaster extends AbstractAuditable {
     @NotNull
     @Length(min = 1, max = 128)
     private String range;
+    @NotNull
     private Double rate;
 
     @Override

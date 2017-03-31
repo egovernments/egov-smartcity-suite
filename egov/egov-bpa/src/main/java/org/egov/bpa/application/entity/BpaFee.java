@@ -66,7 +66,6 @@ public class BpaFee extends AbstractAuditable {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @NotNull
     private CChartOfAccounts glcode;
     @ManyToOne(fetch = FetchType.LAZY)
     private CFunction function;

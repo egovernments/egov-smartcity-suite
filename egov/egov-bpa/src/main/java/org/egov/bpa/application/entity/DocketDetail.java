@@ -34,6 +34,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -65,6 +66,7 @@ public class DocketDetail extends AbstractAuditable {
     @Length(min = 1, max = 32)
     private String percentageOfViolation;
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "docket")
     private Docket docket;
     @ManyToOne(fetch = FetchType.LAZY)
     private CheckListDetail checkListDetail;

@@ -28,6 +28,7 @@
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 package org.egov.bpa.application.entity;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -45,56 +46,67 @@ import org.hibernate.validator.constraints.Length;
 @SequenceGenerator(name = BpaStatus.SEQ_BPASTATUS, sequenceName = BpaStatus.SEQ_BPASTATUS, allocationSize = 1)
 public class BpaStatus extends AbstractAuditable {
 
-	private static final long serialVersionUID = 3078684328383202788L;
-	public static final String SEQ_BPASTATUS = "SEQ_EGBPA_STATUS";
+    private static final long serialVersionUID = 3078684328383202788L;
+    public static final String SEQ_BPASTATUS = "SEQ_EGBPA_STATUS";
 
-	@Id
-	@GeneratedValue(generator = SEQ_BPASTATUS, strategy = GenerationType.SEQUENCE)
-	private Long id;
+    @Id
+    @GeneratedValue(generator = SEQ_BPASTATUS, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	@NotNull
-	@Length(min = 1, max = 128)
-	@Column(name = "code", unique = true)
-	private String code;
+    @NotNull
+    @Length(min = 1, max = 128)
+    @Column(name = "code", unique = true)
+    private String code;
 
-	@NotNull
-	@Length(min = 1, max = 256)
-	private String description;
+    @NotNull
+    @Length(min = 1, max = 256)
+    private String description;
 
-	@NotNull
-	private Boolean isActive;
+    @NotNull
+    private Boolean isActive;
+    @Length(min = 1, max = 64)
+    private String moduleType;
 
-	@Override
-	public Long getId() {
-		return id;
-	}
-	@Override
-	public void setId(final Long id) {
-		this.id = id;
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	public String getCode() {
-		return code;
-	}
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
+    }
 
-	public void setCode(String code) {
-		this.code = code;
-	}
+    public String getCode() {
+        return code;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public void setCode(String code) {
+        this.code = code;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public Boolean getIsActive() {
-		return isActive;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public void setIsActive(Boolean isActive) {
-		this.isActive = isActive;
-	}
+    public Boolean getIsActive() {
+        return isActive;
+    }
+
+    public void setIsActive(Boolean isActive) {
+        this.isActive = isActive;
+    }
+
+    public String getModuleType() {
+        return moduleType;
+    }
+
+    public void setModuleType(String moduleType) {
+        this.moduleType = moduleType;
+    }
 
 }

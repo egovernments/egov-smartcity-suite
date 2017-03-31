@@ -81,6 +81,7 @@ public class LettertoParty extends AbstractAuditable {
     private User scheduledby;
     @Length(min = 1, max = 128)
     private String scheduledPlace;
+    @Temporal(TemporalType.DATE)
     private Date scheduledtime;
     @Temporal(TemporalType.DATE)
     private Date sentDate;
@@ -98,11 +99,9 @@ public class LettertoParty extends AbstractAuditable {
     @Length(min = 1, max = 512)
     private String documentid;
 
-
     @OneToMany(mappedBy = "letterToParty", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private final List<AutoDcrMap> autoDcrMap = new ArrayList<AutoDcrMap>(0);
 
-    
     @Override
     public Long getId() {
         return id;

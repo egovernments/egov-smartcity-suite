@@ -56,7 +56,7 @@ public class LayoutMaster extends AbstractAuditable {
     @Length(min = 1, max = 128)
     @Column(name = "code", unique = true)
     private String code;
-
+    @NotNull
     @Length(min = 1, max = 256)
     private String description;
 

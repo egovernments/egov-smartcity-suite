@@ -70,7 +70,7 @@ public class Checklist extends AbstractAuditable {
 
     @NotNull
     @OneToMany(mappedBy = "checkList", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private final List<CheckListDetail> checkListDetail = new ArrayList<CheckListDetail>(0);
+    private final List<CheckListDetail> checkListDetail = new ArrayList<>(0);
 
     @Override
     public Long getId() {

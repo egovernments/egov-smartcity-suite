@@ -50,13 +50,13 @@ import org.hibernate.validator.constraints.Length;
 
 @Entity
 @Table(name = "EGBPA_MSTR_BPAFEEDETAIL")
-@SequenceGenerator(name = BpaFeeDetail.SEQ_BPAFEEDETAILS, sequenceName = BpaFeeDetail.SEQ_BPAFEEDETAILS, allocationSize = 1)
+@SequenceGenerator(name = BpaFeeDetail.SEQ_BPAFEEDETAIL, sequenceName = BpaFeeDetail.SEQ_BPAFEEDETAIL, allocationSize = 1)
 public class BpaFeeDetail extends AbstractAuditable {
 
     private static final long serialVersionUID = 3078684328383202788L;
-    public static final String SEQ_BPAFEEDETAILS = "SEQ_EGBPA_MSTR_BPAFEEDETAIL";
+    public static final String SEQ_BPAFEEDETAIL = "SEQ_EGBPA_MSTR_BPAFEEDETAIL";
     @Id
-    @GeneratedValue(generator = SEQ_BPAFEEDETAILS, strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = SEQ_BPAFEEDETAIL, strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)

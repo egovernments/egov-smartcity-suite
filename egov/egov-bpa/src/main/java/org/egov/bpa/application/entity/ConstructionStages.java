@@ -57,11 +57,9 @@ public class ConstructionStages extends AbstractAuditable {
     @Column(name = "code", unique = true)
     private String code;
 
-    @Length(min = 1, max = 256)
-    private String description;
     @NotNull
     @Length(min = 1, max = 256)
-    private String constStage;
+    private String description;
 
     private Boolean isActive;
 
@@ -98,13 +96,4 @@ public class ConstructionStages extends AbstractAuditable {
     public void setIsActive(Boolean isActive) {
         this.isActive = isActive;
     }
-
-    public String getConstStage() {
-        return constStage;
-    }
-
-    public void setConstStage(String constStage) {
-        this.constStage = constStage;
-    }
-
 }

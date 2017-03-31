@@ -63,14 +63,15 @@ import javax.validation.constraints.NotNull;
 import org.egov.bpa.application.entity.enums.Occupancy;
 import org.egov.commons.entity.Source;
 import org.egov.demand.model.EgDemand;
+import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.workflow.entity.StateAware;
 import org.hibernate.validator.constraints.Length;
 
 @Entity
 @Table(name = "EGBPA_APPLICATION")
 @SequenceGenerator(name = Application.SEQ_APPLICATION, sequenceName = Application.SEQ_APPLICATION, allocationSize = 1)
-public class Application extends AbstractAuditable {
+public class Application extends StateAware {
 
     private static final long serialVersionUID = -361205348191992865L;
     public static final String SEQ_APPLICATION = "SEQ_EGBPA_APPLICATION";
@@ -78,8 +79,6 @@ public class Application extends AbstractAuditable {
     @Id
     @GeneratedValue(generator = SEQ_APPLICATION, strategy = GenerationType.SEQUENCE)
     private Long id;
-
-
     @Length(min = 1, max = 128)
     private String buildingplanapprovalnumber;
     @Temporal(value = TemporalType.DATE)
@@ -92,7 +91,6 @@ public class Application extends AbstractAuditable {
     private Date applicationDate;
     @Temporal(value = TemporalType.DATE)
     private Date approvalDate;
-
     @Length(min = 1, max = 128)
     private String assessmentNumber;
     @NotNull
@@ -160,11 +158,12 @@ public class Application extends AbstractAuditable {
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "permittedFloorDetail")
     private PermittedFloorDetail permittedFloorDetail;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Department department;
 
     @OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<AutoDcrMap> autoDcr = new ArrayList<>();
-    @OneToMany(mappedBy = "stakeHolder", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<ApplicationStakeHolder> stakeHolder = new ArrayList<>(0);
+
     @OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ApplicationDocument> applicationDocument = new ArrayList<>(0);
     @OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -176,6 +175,9 @@ public class Application extends AbstractAuditable {
 
     @OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ApplicationFee> applicationFee = new ArrayList<>();
+
+    @OneToMany(mappedBy = "stakeHolder", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<ApplicationStakeHolder> stakeHolder = new ArrayList<>(0);
 
     @Override
     public Long getId() {
@@ -395,7 +397,6 @@ public class Application extends AbstractAuditable {
         this.stakeHolder = stakeHolder;
     }
 
-
     public Source getSource() {
         return source;
     }
@@ -458,6 +459,12 @@ public class Application extends AbstractAuditable {
 
     public void setApprovalDate(Date approvalDate) {
         this.approvalDate = approvalDate;
+    }
+
+    @Override
+    public String getStateDetails() {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

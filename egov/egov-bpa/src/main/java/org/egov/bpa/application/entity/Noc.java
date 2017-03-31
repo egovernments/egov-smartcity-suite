@@ -51,7 +51,6 @@ public class Noc extends AbstractAuditable {
 
     private static final long serialVersionUID = 3078684328383202788L;
     public static final String SEQ_NOC = "SEQ_EGBPA_MSTR_NOC";
-    
     @Id
     @GeneratedValue(generator = SEQ_NOC, strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -60,7 +59,7 @@ public class Noc extends AbstractAuditable {
     @Length(min = 1, max = 128)
     @Column(name = "code", unique = true)
     private String code;
-
+    @NotNull
     @Length(min = 1, max = 256)
     private String description;
 

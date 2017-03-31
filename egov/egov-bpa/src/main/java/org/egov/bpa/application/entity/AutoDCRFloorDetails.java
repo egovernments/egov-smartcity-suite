@@ -28,12 +28,12 @@ public class AutoDCRFloorDetails extends AbstractAuditable {
     @Id
     @GeneratedValue(generator = SEQ_EGBPA_AUTODCR_FLD, strategy = GenerationType.SEQUENCE)
     private Long id;
-	@Length(min = 1, max = 128)
+    @Length(min = 1, max = 128)
     private String floorName;
     @ManyToOne(cascade = CascadeType.ALL)
     @Valid
     @NotNull
-    @JoinColumn(name = "AUTODCRID", nullable = false)
+    @JoinColumn(name = "autoDcr", nullable = false)
     private AutoDCR autoDcr;
     private BigDecimal totalCarpetArea;
     private BigDecimal totalBuildUpArea;
@@ -43,6 +43,7 @@ public class AutoDCRFloorDetails extends AbstractAuditable {
     public Long getId() {
         return id;
     }
+
     @Override
     public void setId(final Long id) {
         this.id = id;
@@ -80,6 +81,4 @@ public class AutoDCRFloorDetails extends AbstractAuditable {
         this.totalSlab = totalSlab;
     }
 
-
-
-    }
+}

@@ -16,19 +16,19 @@ import javax.validation.constraints.NotNull;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 
 @Entity
-@Table(name = "EGBPA_APPLICATION_FLOORDETAILS")
-@SequenceGenerator(name = FloorDetail.SEQ_EGBPA_REGN_FLOORDETAILS, sequenceName = FloorDetail.SEQ_EGBPA_REGN_FLOORDETAILS, allocationSize = 1)
-public class FloorDetail extends AbstractAuditable {
+@Table(name = "EGBPA_APPLICATION_FLOORDETAIL")
+@SequenceGenerator(name = ApplicationFloorDetail.SEQ_EGBPA_REGN_FLOORDETAIL, sequenceName = ApplicationFloorDetail.SEQ_EGBPA_REGN_FLOORDETAIL, allocationSize = 1)
+public class ApplicationFloorDetail extends AbstractAuditable {
 
     private static final long serialVersionUID = 1L;
-    public static final String SEQ_EGBPA_REGN_FLOORDETAILS = "SEQ_EGBPA_APPLICATION_FLOORDETAILS";
+    public static final String SEQ_EGBPA_REGN_FLOORDETAIL = "SEQ_EGBPA_APPLICATION_FLOORDETAIL";
     @Id
-    @GeneratedValue(generator = SEQ_EGBPA_REGN_FLOORDETAILS, strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = SEQ_EGBPA_REGN_FLOORDETAIL, strategy = GenerationType.SEQUENCE)
 
     private Long id;
     @ManyToOne(cascade = CascadeType.ALL)
     @NotNull
-    private BuildingDetail buildingDetailid;
+    private BuildingDetail buildingDetail;
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "inspection")
     private Inspection inspection; // need to refer InspectionObject
@@ -52,14 +52,6 @@ public class FloorDetail extends AbstractAuditable {
     @Override
     public void setId(final Long id) {
         this.id = id;
-    }
-
-    public BuildingDetail getBuildingDetailid() {
-        return buildingDetailid;
-    }
-
-    public void setBuildingDetailid(final BuildingDetail buildingDetailid) {
-        this.buildingDetailid = buildingDetailid;
     }
 
     public Inspection getInspectionid() {
@@ -132,6 +124,14 @@ public class FloorDetail extends AbstractAuditable {
 
     public void setInspection(Inspection inspection) {
         this.inspection = inspection;
+    }
+
+    public BuildingDetail getBuildingDetail() {
+        return buildingDetail;
+    }
+
+    public void setBuildingDetail(BuildingDetail buildingDetail) {
+        this.buildingDetail = buildingDetail;
     }
 
 }
