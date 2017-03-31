@@ -59,6 +59,7 @@ $(document).ready(function(){
 						{ "data": "name"},
 						{ "data": "applicationType"},
 						{ "data": "mandatory"},
+						{ "data": "enabled"},
 						{ "data" : null, 'sClass':"text-center","target":-1,"defaultContent": 
 							
 		                   '<button type="button" class="btn btn-xs btn-secondary edit add-margin"><span class="glyphicon glyphicon-edit"></span>&nbsp;Edit</button>'}

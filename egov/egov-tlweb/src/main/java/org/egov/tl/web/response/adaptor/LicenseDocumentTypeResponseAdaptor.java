@@ -58,6 +58,7 @@ public class LicenseDocumentTypeResponseAdaptor implements JsonSerializer<Licens
             documentTypeResponse.addProperty("name", documenttype.getName());
             documentTypeResponse.addProperty("applicationType", documenttype.getApplicationType().name());
             documentTypeResponse.addProperty("mandatory", documenttype.isMandatory() ? "Yes" : "No");
+            documentTypeResponse.addProperty("enabled", documenttype.isEnabled() ? "Yes" : "No");
         }
         return documentTypeResponse;
     }

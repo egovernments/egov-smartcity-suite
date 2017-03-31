@@ -43,7 +43,8 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
-<form:form role="form" modelAttribute="documenttype" commandName="documenttype" cssClass="form-horizontal form-groups-bordered">
+<form:form role="form" modelAttribute="documenttype" commandName="documenttype"
+           cssClass="form-horizontal form-groups-bordered">
     <div class="row">
         <div class="col-md-12">
             <div class="panel panel-primary" data-collapsed="0">
@@ -56,25 +57,27 @@
                             <spring:message code="lbl.name"/> <span id="mandatory" class="mandatory"></span>
                         </label>
                         <div class="col-sm-3 add-margin">
-                            <form:input path="name" id="name" class="form-control text-left patternvalidation" maxLength="100"/>
+                            <form:input path="name" id="name" class="form-control text-left patternvalidation"
+                                        maxLength="100"/>
                         </div>
                         <label class="col-sm-2 control-label text-right">
                             <spring:message code="lbl.licenseAppType"/> <span class="mandatory"></span>
                         </label>
                         <div class="col-sm-3 add-margin">
-                            <form:select path="applicationType" id="applicationType_dropdown" cssClass="form-control" disabled="true" cssErrorClass="form-control error">
+                            <form:select path="applicationType" id="applicationType_dropdown" cssClass="form-control"
+                                         disabled="true" cssErrorClass="form-control error">
                                 <form:option value=""><spring:message code="lbl.select"/></form:option>
                                 <form:options items="${applicationTypes}"/>
                             </form:select>
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-3 control-label text-right"><spring:message code="lbl.mandatory"/></label>
+                            <label class="col-sm-3 control-label text-right"><spring:message
+                                    code="lbl.mandatory"/></label>
                             <div class="col-sm-3 add-margin">
                                 <form:checkbox path="mandatory" id="mandatory"/>
                             </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label text-right"><spring:message code="lbl.enabled"/></label>
+                            <label class="col-sm-3 control-label text-right"><spring:message
+                                    code="lbl.enabled"/></label>
                             <div class="col-sm-3 add-margin">
                                 <form:checkbox path="enabled" id="enabled"/>
                             </div>
@@ -93,8 +96,10 @@
             <button type='submit' class='btn btn-primary' id="buttonSubmit">
                 <spring:message code='lbl.submit'/>
             </button>
-            <a href='javascript:void(0)' class='btn btn-default' onclick='self.close()'><spring:message code='lbl.close'/></a>
+            <a href='javascript:void(0)' class='btn btn-default' onclick='self.close()'><spring:message
+                    code='lbl.close'/></a>
         </div>
     </div>
 </form:form>
-<script type="text/javascript" src="<cdn:url value='/resources/js/app/license-document-type.js?rnd=${app_release_no}'/>"></script>
+<script type="text/javascript"
+        src="<cdn:url value='/resources/js/app/license-document-type.js?rnd=${app_release_no}'/>"></script>
