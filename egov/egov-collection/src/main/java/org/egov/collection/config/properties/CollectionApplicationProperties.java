@@ -117,4 +117,8 @@ public class CollectionApplicationProperties {
     public String sbimopsHoa(final String cityCode) {
         return environment.getProperty(cityCode.concat(".sbimops.hoa"));
     }
+    
+    public String getUpdateDemandUrl(final String serviceCode) { 
+        return environment.getProperty(serviceCode.concat(".updatedemand.url"));
+    }
 }
