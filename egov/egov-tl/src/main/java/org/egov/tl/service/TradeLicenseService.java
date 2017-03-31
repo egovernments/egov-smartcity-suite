@@ -170,7 +170,6 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         final Assignment userAssignment = assignmentService.getPrimaryAssignmentForUser(securityUtils.getCurrentUser().getId());
         final Position wfInitiator = getWorkflowInitiator(license);
         if (BUTTONAPPROVE.equals(workFlowAction)) {
-            license.setActive(true);
             if (license.getTempLicenseNumber() == null && license.isNewApplication())
                 license.setLicenseNumber(licenseNumberUtils.generateLicenseNumber());
 
@@ -193,6 +192,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         }
 
         if (Constants.GENERATECERTIFICATE.equals(workFlowAction)) {
+            license.setActive(true);
             license.setStatus(licenseStatusService.getLicenseStatusByCode(Constants.STATUS_ACTIVE));
             // setting license to non-legacy, old license number will be the only tracking
             // to check a license created as legacy or new hereafter.
