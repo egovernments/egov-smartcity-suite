@@ -62,6 +62,7 @@ import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.entity.ReceiptHeader;
 import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.collection.integration.models.BillReceiptInfoImpl;
+import org.egov.collection.integration.models.BillReceiptInfoReq;
 import org.egov.collection.integration.models.BillReceiptReq;
 import org.egov.collection.integration.models.ReceiptAmountInfo;
 import org.egov.collection.integration.services.BillingIntegrationService;
@@ -94,6 +95,7 @@ import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.config.properties.ApplicationProperties;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.messaging.MessagingService;
+import org.egov.infra.microservice.utils.MicroserviceUtils;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
@@ -113,15 +115,8 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 public class CollectionsUtil {
@@ -188,12 +183,16 @@ public class CollectionsUtil {
     private CollectionApplicationProperties collectionApplicationProperties;
 
     @Autowired
+    MicroserviceUtils microserviceUtils;
+
+    @Autowired
     private ApplicationProperties applicationProperties;
 
     /**
      * Returns the Status object for given status code for a receipt
      *
-     * @param statusCode Status code for which status object is to be returned
+     * @param statusCode
+     *            Status code for which status object is to be returned
      * @return the Status object for given status code for a receipt
      */
     public EgwStatus getReceiptStatusForCode(final String statusCode) {
@@ -201,10 +200,13 @@ public class CollectionsUtil {
     }
 
     /**
-     * This method returns the <code>EgwStatus</code> for the given module type and status code
+     * This method returns the <code>EgwStatus</code> for the given module type
+     * and status code
      *
-     * @param moduleName Module name of the required status
-     * @param statusCode Status code of the required status
+     * @param moduleName
+     *            Module name of the required status
+     * @param statusCode
+     *            Status code of the required status
      * @return the <code>EgwStatus</code> instance
      */
     public EgwStatus getStatusForModuleAndCode(final String moduleName, final String statusCode) {
@@ -221,7 +223,8 @@ public class CollectionsUtil {
     }
 
     /**
-     * @param sessionMap Map of session variables
+     * @param sessionMap
+     *            Map of session variables
      * @return user name of currently logged in user
      */
     public String getLoggedInUserName() {
@@ -231,7 +234,8 @@ public class CollectionsUtil {
     /**
      * This method returns the User instance associated with the logged in user
      *
-     * @param sessionMap Map of session variables
+     * @param sessionMap
+     *            Map of session variables
      * @return the logged in user
      */
     public User getLoggedInUser() {
@@ -239,7 +243,8 @@ public class CollectionsUtil {
     }
 
     /**
-     * @param user the user whose department is to be returned
+     * @param user
+     *            the user whose department is to be returned
      * @return department of the given user
      */
     public Department getDepartmentOfUser(final User user) {
@@ -250,7 +255,8 @@ public class CollectionsUtil {
     }
 
     /**
-     * @param sessionMap map of session variables
+     * @param sessionMap
+     *            map of session variables
      * @return department of currently logged in user
      */
     public Department getDepartmentOfLoggedInUser() {
@@ -259,7 +265,8 @@ public class CollectionsUtil {
     }
 
     /**
-     * This method returns the User instance for the userName passed as parameter
+     * This method returns the User instance for the userName passed as
+     * parameter
      *
      * @param userName
      * @return User
@@ -269,7 +276,8 @@ public class CollectionsUtil {
     }
 
     /**
-     * @param sessionMap Map of session variables
+     * @param sessionMap
+     *            Map of session variables
      * @return Location object for given user
      */
     public Location getLocationOfUser(final Map<String, Object> sessionMap) {
@@ -325,10 +333,13 @@ public class CollectionsUtil {
     }
 
     /**
-     * This method returns the collection modes that are not allowed based on rules configured in the script
+     * This method returns the collection modes that are not allowed based on
+     * rules configured in the script
      *
-     * @param loggedInUser a <code>User</code> entity representing the logged in user.
-     * @return a <code>List</code> of <code>String</code> values representing the mode of payments supported.
+     * @param loggedInUser
+     *            a <code>User</code> entity representing the logged in user.
+     * @return a <code>List</code> of <code>String</code> values representing
+     *         the mode of payments supported.
      */
     public List<String> getCollectionModesNotAllowed(final User loggedInUser) {
         final List<String> collectionsModeNotAllowed = new ArrayList<>(0);
@@ -351,7 +362,8 @@ public class CollectionsUtil {
             throw new ValidationException(Arrays.asList(new ValidationError("Department",
                     "billreceipt.counter.deptcode.null")));
         if (isBankCollectionOperator(loggedInUser)) {
-            // Bank Collection Operator cash, cheque and dd collection modes are allowed.
+            // Bank Collection Operator cash, cheque and dd collection modes are
+            // allowed.
             collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_CARD);
             collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_BANK);
             collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_ONLINE);
@@ -418,7 +430,8 @@ public class CollectionsUtil {
     }
 
     /**
-     * @param sessionMap Map of session variables
+     * @param sessionMap
+     *            Map of session variables
      * @return Position of logged in user
      */
     public Position getPositionOfUser(final User user) {
@@ -432,7 +445,8 @@ public class CollectionsUtil {
     /**
      * Gets position by given position name
      *
-     * @param positionName Position name
+     * @param positionName
+     *            Position name
      * @return Position object for given position name
      */
     public Position getPositionByName(final String positionName) {
@@ -442,24 +456,29 @@ public class CollectionsUtil {
     /**
      * This method retrieves the <code>CFinancialYear</code> for the given date.
      *
-     * @param date an instance of <code>Date</code> for which the financial year is to be retrieved.
-     * @return an instance of <code></code> representing the financial year for the given date
+     * @param date
+     *            an instance of <code>Date</code> for which the financial year
+     *            is to be retrieved.
+     * @return an instance of <code></code> representing the financial year for
+     *         the given date
      */
     public CFinancialYear getFinancialYearforDate(final Date date) {
         return (CFinancialYear) persistenceService
                 .getSession()
                 .createQuery(
                         "from CFinancialYear cfinancialyear where ? between "
-                                + "cfinancialyear.startingDate and cfinancialyear.endingDate")
-                .setDate(0, date).list()
+                                + "cfinancialyear.startingDate and cfinancialyear.endingDate").setDate(0, date).list()
                 .get(0);
     }
 
     /**
      * This method checks if the given challan is valid.
      *
-     * @param challan the <code>Challan</code> instance whose validity has to be checked
-     * @return a boolean value - true indicating that the challan is valid and false indicating that teh challan is not valid
+     * @param challan
+     *            the <code>Challan</code> instance whose validity has to be
+     *            checked
+     * @return a boolean value - true indicating that the challan is valid and
+     *         false indicating that teh challan is not valid
      */
     public boolean checkChallanValidity(final Challan challan) {
         final Calendar current = Calendar.getInstance();
@@ -490,7 +509,8 @@ public class CollectionsUtil {
     /**
      * Fetches given bean from application context
      *
-     * @param beanName name of bean to be fetched
+     * @param beanName
+     *            name of bean to be fetched
      * @return given bean from application context
      */
     public Object getBean(final String beanName) {
@@ -508,12 +528,15 @@ public class CollectionsUtil {
     }
 
     /**
-     * This method returns the currently active config value for the given module name and key
+     * This method returns the currently active config value for the given
+     * module name and key
      *
-     * @param moduleName a <code>String<code> representing the module name
+     * @param moduleName
+     *            a <code>String<code> representing the module name
      *                     &#64;param key
      *                     a <code>String</code> representing the key
-     * @param defaultValue Default value to be returned in case the key is not defined
+     * @param defaultValue
+     *            Default value to be returned in case the key is not defined
      * @return <code>String</code> representing the configuration value
      */
     public String getAppConfigValue(final String moduleName, final String key, final String defaultValue) {
@@ -524,7 +547,8 @@ public class CollectionsUtil {
     /**
      * This method returns the config value for the given module name and key
      *
-     * @param moduleName a <code>String<code> representing the module name
+     * @param moduleName
+     *            a <code>String<code> representing the module name
      *                   &#64;param key
      *                   a <code>String</code> representing the key
      * @return <code>String</code> representing the configuration value
@@ -539,12 +563,15 @@ public class CollectionsUtil {
     }
 
     /**
-     * This method returns the list of config values for the given module name and key
+     * This method returns the list of config values for the given module name
+     * and key
      *
-     * @param moduleName a <code>String<code> representing the module name
+     * @param moduleName
+     *            a <code>String<code> representing the module name
      *                   &#64;param key
      *                   a <code>String</code> representing the key
-     * @return <code>List<AppConfigValues></code> representing the list of configuration values
+     * @return <code>List<AppConfigValues></code> representing the list of
+     *         configuration values
      */
     public List<AppConfigValues> getAppConfigValues(final String moduleName, final String key) {
         return appConfigValuesService.getConfigValuesByModuleAndKey(moduleName, key);
@@ -553,7 +580,8 @@ public class CollectionsUtil {
     /**
      * Gets position by given position id
      *
-     * @param positionId Position Id
+     * @param positionId
+     *            Position Id
      * @return Position object for given position id
      */
     public Position getPositionById(final Long positionId) {
@@ -561,10 +589,11 @@ public class CollectionsUtil {
     }
 
     /**
-     * This method is invoked from the ReceiptHeader.workFlow script and returns the position for the employee id passed as
-     * parameter
+     * This method is invoked from the ReceiptHeader.workFlow script and returns
+     * the position for the employee id passed as parameter
      *
-     * @param employeeId PersonalInformation Id
+     * @param employeeId
+     *            PersonalInformation Id
      * @return Position object for Employee Id passed as parameter
      */
 
@@ -573,13 +602,18 @@ public class CollectionsUtil {
     }
 
     /**
-     * This method is invoked from the ReceiptHeader.workFlow script and returns Employee object for the given Department Id,
-     * Designation Id ,Boundary Id and FunctionaryId
+     * This method is invoked from the ReceiptHeader.workFlow script and returns
+     * Employee object for the given Department Id, Designation Id ,Boundary Id
+     * and FunctionaryId
      *
-     * @param deptId Department Id
-     * @param designationId Designation Id
-     * @param boundaryId Boundary Id
-     * @param functionaryId Functionary Id
+     * @param deptId
+     *            Department Id
+     * @param designationId
+     *            Designation Id
+     * @param boundaryId
+     *            Boundary Id
+     * @param functionaryId
+     *            Functionary Id
      * @return PersonalInformation
      */
 
@@ -607,7 +641,8 @@ public class CollectionsUtil {
     }
 
     /**
-     * @param user the user whose non-primary department list is to be returned
+     * @param user
+     *            the user whose non-primary department list is to be returned
      * @return list of non-primary department of the given user
      */
     public List<Department> getAllNonPrimaryAssignmentsOfUser(final User user) {
@@ -615,7 +650,7 @@ public class CollectionsUtil {
         try {
             final HashMap<String, String> paramMap = new HashMap<>();
             paramMap.put("code", EisManagersUtill.getEmployeeService().getEmpForUserId(user.getId()).getCode());
-            final List<EmployeeView> employeeViewList =(List<EmployeeView>)eisService.getEmployeeInfoList(paramMap);
+            final List<EmployeeView> employeeViewList = eisService.getEmployeeInfoList(paramMap);
             if (!employeeViewList.isEmpty())
                 for (final EmployeeView employeeView : employeeViewList)
                     if (!employeeView.getAssignment().getPrimary())
@@ -630,9 +665,10 @@ public class CollectionsUtil {
     }
 
     /**
-     * @param user the user whose non-primary department is to be returned
-     * @return non-primary department of the given user. In case user has multiple non-primary departments, the first one will be
-     * returned.
+     * @param user
+     *            the user whose non-primary department is to be returned
+     * @return non-primary department of the given user. In case user has
+     *         multiple non-primary departments, the first one will be returned.
      */
     public Department getNonPrimaryDeptOfUser(final User user) {
         final List<Department> nonPrimaryAssignments = getAllNonPrimaryAssignmentsOfUser(user);
@@ -670,12 +706,16 @@ public class CollectionsUtil {
     }
 
     /**
-     * This method checks if the given glcode belongs to an account head representing an arrear account head (for Property Tax).
-     * The glcodes for such accounts are retrieved from App Config.
+     * This method checks if the given glcode belongs to an account head
+     * representing an arrear account head (for Property Tax). The glcodes for
+     * such accounts are retrieved from App Config.
      *
-     * @param glcode The Chart of Accounts Code
-     * @param description Description of the glcode
-     * @returna a <code>Boolean</code> indicating if the glcode is arrear account head
+     * @param glcode
+     *            The Chart of Accounts Code
+     * @param description
+     *            Description of the glcode
+     * @returna a <code>Boolean</code> indicating if the glcode is arrear
+     *          account head
      */
     public boolean isPropertyTaxArrearAccountHead(final String glcode, final String description) {
         final List<AppConfigValues> list = appConfigValuesService.getConfigValuesByModuleAndKey(
@@ -752,24 +792,31 @@ public class CollectionsUtil {
         return reportService.createReport(reportRequest);
     }
 
-    public ReceiptAmountInfo updateReceiptDetailsAndGetReceiptAmountInfo(BillReceiptReq billReceipt, String serviceCode) {
-        RestTemplate restTemplate = new RestTemplate();
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        String json = null;
+    public ReceiptAmountInfo updateReceiptDetailsAndGetReceiptAmountInfo(final BillReceiptReq billReceipt,
+            final String serviceCode) {
+        final RestTemplate restTemplate = new RestTemplate();
+        billReceipt.setTenantId(microserviceUtils.getTanentId());
+        final BillReceiptInfoReq billReceiptInfoReq = new BillReceiptInfoReq();
+        billReceiptInfoReq.setBillReceiptInfo(billReceipt);
+        billReceiptInfoReq.setRequestInfo(microserviceUtils.createRequestInfo());
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("updateReceiptDetailsAndGetReceiptAmountInfo - before calling LAMS update");
+        final String url = collectionApplicationProperties.getLamsServiceUrl().concat(
+                collectionApplicationProperties.getUpdateDemandUrl(serviceCode.toLowerCase()));
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("updateReceiptDetailsAndGetReceiptAmountInfo - url" + url);
+        ReceiptAmountInfo receiptAmountInfo = null;
         try {
-            json = new ObjectMapper().writeValueAsString(billReceipt);
-        } catch (JsonProcessingException e) {
-            final String errMsg = "Exception while updating receiptdetails through rest for receipt number ["
-                    + billReceipt.getReceiptNum() + "]!";
+            receiptAmountInfo = restTemplate.postForObject(url, billReceiptInfoReq, ReceiptAmountInfo.class);
+        } catch (final Exception e) {
+            final String errMsg = "Exception while updateReceiptDetailsAndGetReceiptAmountInfo for bill number  ["
+                    + billReceipt.getBillReferenceNum() + "]!";
             LOGGER.error(errMsg, e);
             throw new ApplicationRuntimeException(errMsg, e);
         }
-        HttpEntity<String> entity = new HttpEntity<>(json, headers);
-        String url = ApplicationThreadLocals.getDomainURL().concat(
-                collectionApplicationProperties.getUpdateDemandUrl(serviceCode.toLowerCase()));
-        ResponseEntity<ReceiptAmountInfo> response = restTemplate.postForEntity(url, entity, ReceiptAmountInfo.class);
-        return response.getBody();
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("updateReceiptDetailsAndGetReceiptAmountInfo - response" + receiptAmountInfo);
+        return receiptAmountInfo;
     }
 
     public CollectionIndex constructCollectionIndex(final ReceiptHeader receiptHeader) {
@@ -780,26 +827,26 @@ public class CollectionsUtil {
         if (!receiptHeader.getReceiptInstrument().isEmpty())
             instrumentType = receiptHeader.getReceiptInstrument().iterator().next().getInstrumentType().getType();
 
-        if (receiptHeader.getReceipttype() == CollectionConstants.RECEIPT_TYPE_BILL) {
-            final BillingIntegrationService billingServiceBean = (BillingIntegrationService) getBean(billingService
-                    .getCode() + CollectionConstants.COLLECTIONS_INTERFACE_SUFFIX);
+        if (receiptHeader.getReceipttype() == CollectionConstants.RECEIPT_TYPE_BILL)
             try {
                 final Set<BillReceiptInfo> billReceipts = new HashSet<>(0);
-                BillReceiptInfo billReceipt = new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO,
+                final BillReceiptInfo billReceipt = new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO,
                         persistenceService, null);
                 billReceipts.add(billReceipt);
                 if (billingService.getCode().equals(CollectionConstants.SERVICECODE_LAMS))
                     receiptAmountInfo = updateReceiptDetailsAndGetReceiptAmountInfo(new BillReceiptReq(billReceipt),
                             billingService.getCode());
-                else
+                else {
+                    final BillingIntegrationService billingServiceBean = (BillingIntegrationService) getBean(billingService
+                            .getCode() + CollectionConstants.COLLECTIONS_INTERFACE_SUFFIX);
                     receiptAmountInfo = billingServiceBean.receiptAmountBifurcation(billReceipt);
+                }
             } catch (final Exception e) {
                 final String errMsg = "Exception while constructing collection index for receipt number ["
                         + receiptHeader.getReceiptnumber() + "]!";
                 LOGGER.error(errMsg, e);
                 throw new ApplicationRuntimeException(errMsg, e);
             }
-        }
         final CollectionIndex collectionIndex = CollectionIndex
                 .builder()
                 .withReceiptDate(receiptHeader.getReceiptdate())
@@ -904,13 +951,15 @@ public class CollectionsUtil {
         Boolean voucherTypeForChequeDDCard = false;
         if (getAppConfigValue(CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
                 CollectionConstants.APPCONFIG_VALUE_REMITTANCEVOUCHERTYPEFORCHEQUEDDCARD).equals(
-                        CollectionConstants.FINANCIAL_RECEIPTS_VOUCHERTYPE))
+                CollectionConstants.FINANCIAL_RECEIPTS_VOUCHERTYPE))
             voucherTypeForChequeDDCard = true;
         return voucherTypeForChequeDDCard;
     }
 
     /**
-     * @param serviceCode Billing service code for which the receipt template is to be returned
+     * @param serviceCode
+     *            Billing service code for which the receipt template is to be
+     *            returned
      * @return Receipt template to be used for given billing service code.
      */
     public String getReceiptTemplateName(final char receiptType, final String serviceCode) {
@@ -951,19 +1000,30 @@ public class CollectionsUtil {
         String emailBody = collectionApplicationProperties.getEmailBody();
         emailBody = String.format(emailBody, ApplicationThreadLocals.getCityName(), receiptHeader.getTotalAmount()
                 .toString(), receiptHeader.getService().getName(), receiptHeader.getConsumerCode(), receiptHeader
-                        .getReceiptdate().toString(),
-                ApplicationThreadLocals.getCityName());
+                .getReceiptdate().toString(), ApplicationThreadLocals.getCityName());
         String emailSubject = collectionApplicationProperties.getEmailSubject();
         emailSubject = String.format(emailSubject, receiptHeader.getService().getName());
         messagingService.sendEmailWithAttachment(receiptHeader.getPayeeEmail(), emailSubject, emailBody,
                 "application/pdf", "Receipt" + receiptHeader.getReceiptdate().toString(), attachment);
     }
 
+    public void setUserService(final UserService userService) {
+        this.userService = userService;
+    }
+
+    public void setPersistenceService(final PersistenceService persistenceService) {
+        this.persistenceService = persistenceService;
+    }
+
+    public void setReportService(final ReportService reportService) {
+        this.reportService = reportService;
+    }
+
     public String getBeanNameForDebitAccountHead() {
         Class<?> service = null;
         try {
             service = Class.forName(applicationProperties.getProperty("collection.debitaccounthead.client.impl.class"));
-        } catch (ClassNotFoundException e) {
+        } catch (final ClassNotFoundException e) {
             LOGGER.error("Error getting Class name for Debit Account Head" + e);
         }
         // getting the entity type service.
@@ -997,10 +1057,9 @@ public class CollectionsUtil {
         String value;
         for (final AppConfigValues appConfigVal : appConfigValuesList) {
             value = appConfigVal.getValue();
-            for (final Role role : user.getRoles()) {
+            for (final Role role : user.getRoles())
                 if (role != null && role.getName().equals(value))
                     return true;
-            }
         }
         return false;
     }
