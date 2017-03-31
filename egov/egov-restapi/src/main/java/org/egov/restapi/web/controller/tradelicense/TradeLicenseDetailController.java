@@ -46,8 +46,7 @@ import org.egov.restapi.web.contracts.tradelicense.TradeLicenseDetailResponse;
 import org.egov.tl.service.TradeLicenseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -63,8 +62,8 @@ public class TradeLicenseDetailController {
     @Autowired
     private TradeLicenseService tradeLicenseService;
 
-    @PostMapping(value = "/details", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-    public List<TradeLicenseDetailResponse> tradeLicenseDetails(@RequestBody TradeLicenseDetailRequest request) {
+    @GetMapping(value = "/details", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    public List<TradeLicenseDetailResponse> tradeLicenseDetails(TradeLicenseDetailRequest request) {
         return tradeLicenseService.getLicenses(request.tradeLicenseLike())
                 .parallelStream()
                 .map(TradeLicenseDetailResponse::new)
