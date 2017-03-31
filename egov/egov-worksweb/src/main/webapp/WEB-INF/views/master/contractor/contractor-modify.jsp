@@ -38,35 +38,38 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
-<%@ include file="/includes/taglibs.jsp"%>
-<script src="<cdn:url value='/resources/js/master/contractor.js?rnd=${app_release_no}'/>"></script> 
-<html>
-<head>
-<title><s:text name="contractor.list" /></title>
-<style type="text/css">
-ul {
-	list-style-type: none;
-}
-</style>
-</head>
-<body onload="replaceExemptionFormChar();">
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ taglib uri="/WEB-INF/taglibs/cdn.tld" prefix="cdn"%>
 
-<s:if test="%{hasActionMessages()}">
-<div id="msgsDiv" class="new-page-header">
-	<s:actionmessage theme="simple" />
-</div>
-</s:if>
-
-<%@ include file='contractor-commonview.jsp' %>
-<s:hidden name="model.id" id="model"/>
-<s:hidden name="hide" id="hide" value = "%{dropdownData.contractorMasterHiddenFields}" />
-<div class="row text-center">
-	<div class="add-margin">
-	<s:if test="%{ mode!='edit' && mode != 'view'}">
-		<input type="submit" name="create" Class="btn btn-primary" value="Create New Contractor" id="CREATE" name="button" onclick="createNewContractor();" />
-	</s:if>
-	<input type="submit" name="closeButton"	id="closeButton" value="Close" Class="btn btn-default" onclick="window.close();" />
+<form:form name="contractorForm" id="contractorForm" role="form"
+	action="/egworks/masters/contractor-update" modelAttribute="contractor"
+	class="form-horizontal form-groups-bordered">
+	<input type="hidden" name="mode" value="${mode}" id = "mode"/>
+	<spring:hasBindErrors name="contractor">
+		<div class="alert alert-danger col-md-12">
+			<form:errors cssClass="add-margin" />
+			<br />
+		</div>
+	</spring:hasBindErrors>
+	<div class="row">
+		<div class="col-md-12">
+			<jsp:include page="contractor-header.jsp" />
+			<jsp:include page="contractor-details.jsp" />
+		</div>
 	</div>
-</div>
-</body>
-</html>
+	<div class="row">
+		<div class="col-sm-12 text-center">
+			<button type="submit" name="submit" id="submitBtn" class="btn btn-primary" value="Modify" >
+				<spring:message code="lbl.modify" />
+			</button>
+			<button type="button" class="btn btn-default" id="button2"
+				onclick="window.close();">
+				<spring:message code="lbl.close" />
+			</button>
+		</div>
+	</div>
+</form:form>
+<script src="<cdn:url value='/resources/js/master/contractor.js?rnd=${app_release_no}'/>"></script>

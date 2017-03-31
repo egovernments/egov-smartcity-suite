@@ -37,59 +37,64 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-function setDropDownsAlignment(){
-	var elements = jQuery("#contractorTable").find("tbody.yui-dt-data").find("tr");
-		elements.find("td.yui-dt-col-departmentName").css('width', '15%');
-		elements.find("td.yui-dt-col-categoryName").css('width', '15%');
-		elements.find("td.yui-dt-col-gradeName").css('width', '15%');
-		elements.find("td.yui-dt-col-statusDesc").css('width', '15%');
-		elements.find("td.yui-dt-col-departmentName").find("select").css('width', '100%');
-		elements.find("td.yui-dt-col-categoryName").find("select").css('width', '100%');
-		elements.find("td.yui-dt-col-gradeName").find("select").css('width', '100%');
-		elements.find("td.yui-dt-col-statusDesc").find("select").css('width', '100%');
+function setExemptionFormValues(){
+	var exemptionFormOptions = $("#exemptionForm").find("option");
+	$.each(exemptionFormOptions,function(){
+		var option = $(this).val();
+		if(option != "")
+			$(this).html(option.replace(/_/g," "));
+	});
 }
 
-function setTextFieldsAlignment(){
-	var elements = jQuery("#contractorTable").find("tbody.yui-dt-data").find("tr")
-		elements.find("td.yui-dt-col-registrationNumber").css('width', '15%');
-		elements.find("td.yui-dt-col-startDate").css('width', '15%');
-		elements.find("td.yui-dt-col-endDate").css('width', '15%');
-		elements.find("td.yui-dt-col-registrationNumber").find("input").css('width', '100%');
-		elements.find("td.yui-dt-col-startDate").find("input").css('width', '100%');
-		elements.find("td.yui-dt-col-endDate").find("input").css('width', '100%');
-}
-
-function setDefaultDepartment() {
-	var elements = jQuery("#contractorTable").find("tbody.yui-dt-data").find("tr")
-	for(var i=0;i<elements.length;i++){
-		var departmentElement = jQuery(jQuery(elements[i]).find("select")[0])
-		departmentElement.val(jQuery('#defaultDepartmentId').val());
-	}
-}
-
-jQuery(document).ready(function(){
+$(document).ready(function(){
 	flag = false;
-	if(jQuery("#mandatory").val() != null){
-		var loadMandatoryFields = jQuery("#mandatory").val().replace(/[\[\]']+/g,'').split(",");
-		jQuery.each(loadMandatoryFields,function(){
+	var mode = $("#mode").val();
+	if($("#mandatory").val() != null){
+		var loadMandatoryFields = $("#mandatory").val().replace(/[\[\]']+/g,'').split(",");
+		$.each(loadMandatoryFields,function(){
 			var fieldName = this.toString().trim();
-			var label = jQuery("label[for='"+fieldName+"']");
+			var label = $("label[for='"+fieldName+"']");
 			label.append("<span class = 'mandatory'></span>");
-		})
+		});
 	}
-	if(jQuery("#hide").val() != null){
-		var loadHiddenFields = jQuery("#hide").val().replace(/[\[\]']+/g,'').split(",");
-		jQuery.each(loadHiddenFields,function(){
+	if($("#hide").val() != null){
+		var loadHiddenFields = $("#hide").val().replace(/[\[\]']+/g,'').split(",");
+		$.each(loadHiddenFields,function(){
 			var fieldName = this.toString().trim();
-			var label = jQuery("label[for='"+fieldName+"']");
+			var label = $("label[for='"+fieldName+"']");
 			label.hide();
-			jQuery("#"+fieldName).hide();
-			jQuery("#"+fieldName+"-value").hide();
-			jQuery("#"+fieldName).parent().hide();
-		})
+			$("#"+fieldName).hide();
+			$("#"+fieldName+"-value").hide();
+			$("#"+fieldName+"Label").hide();
+			$("#"+fieldName).parent().hide();
+			var sibling = label.siblings("label");
+			if(sibling.hasClass('col-sm-2')){
+				sibling.removeClass('col-sm-2');
+				sibling.addClass('col-sm-3');
+			}
+		});
 	}
 	
-	jQuery("#mobileNumber").on("input", function(){
+	if($("#mandatory").val() != null && $("#hide").val() != null){
+		var mandatoryFields = $("#mandatory").val().replace(/[\[\]']+/g,'').split(",");
+		var hiddenFields = $("#hide").val().replace(/[\[\]']+/g,'').split(",");
+		var contractorMandatoryFields = mandatoryFields.filter(function(val) {
+		  return hiddenFields.indexOf(val) == -1;
+		});
+		$.each(contractorMandatoryFields.reverse(),function(){
+			var fieldName = this.toString().trim();
+			$("#"+fieldName).attr("required","required");
+			if(fieldName == "registrationNumber"){
+				$(".registrationNumber").attr("required","required");
+			}
+			if(fieldName == "category")
+				$(".category").attr("required","required");
+			if(fieldName == "grade")
+				$(".grade").attr("required","required");
+		});
+	}
+	
+	$("#mobileNumber").on("input", function(){
 		var valid = /\d+$/.test(this.value),
 	       val = this.value;
 	   
@@ -98,53 +103,49 @@ jQuery(document).ready(function(){
 	       this.value = val.substring(0, val.length - 1);
 	   }
 		});
-	setDropDownsAlignment();
-	setTextFieldsAlignment();
 
-	if(jQuery("#codeautogeneration").val() == "true" && jQuery("#mode").val() != "edit"){
-		jQuery("label[for='code']").remove();
-		jQuery("#contractor-save_code").parent().remove();
+	if($("#codeautogeneration").val() == "Yes" && mode != "edit"){
+		$("label[for='code']").remove();
+		$("#contractor_code").parent().remove();
+		$("label[for='name']").removeClass('col-sm-2');
+		$("label[for='name']").addClass('col-sm-3');
 	}
-	if(jQuery("#mode").val() != "edit"){
-		setDefaultDepartment();
-	}
-	jQuery("#addContractorDetails").on("click",function(){
-		setDropDownsAlignment();
-		setTextFieldsAlignment();
-	});
 	
-
-	jQuery('.textfieldsvalidate').on('input',function(){
+	if(mode != "edit"){
+		var defaultDepartmentId = $("#defaultDepartmentId").val();
+		if(defaultDepartmentId != ""){
+			$("#department").val(defaultDepartmentId);
+		}
+	}
+	
+	$('.textfieldsvalidate').on('input',function(){
 		var regexp_textfields = /[^0-9a-zA-Z_@./#&+-/!(){}\",^$%*|=;:<>?`~ ]/g;
-		if(jQuery(this).val().match(regexp_textfields)){
-			jQuery(this).val( jQuery(this).val().replace(regexp_textfields,'') );
+		if($(this).val().match(regexp_textfields)){
+			$(this).val( $(this).val().replace(regexp_textfields,'') );
 		}
 	})
+	
+	setExemptionFormValues();
+	
+	var exemptionFormValue = $("#exemptionForm-value").html();
+	if(exemptionFormValue != undefined)
+		$("#exemptionForm-value").html(exemptionFormValue.replace(/_/g," "));
+	
 });
 
 function checkMobileNumber(){
-	if(jQuery("#mobileNumber").val().length == 0){
-		showMessage('contractor_error', jQuery("#mobileNumberErrorMsg").val());
-		flag = true;
-		return false;
-		}
 	var regx = /\d{10}$/;
-	if (jQuery("#mobileNumber").val().length < 10 || !regx.test(jQuery("#mobileNumber").val())) {
-		  showMessage('contractor_error', jQuery("#mobileNumberErrorMsg").val());
+	if ($("#mobileNumber").val().length != 10 || !regx.test($("#mobileNumber").val())) {
+		  bootbox.alert( $("#mobileNumberErrorMsg").val());
 		  flag = true;
 		  return false;
 	  }
 	  return true;
 }
 function checkPanNumber(){
-	if(jQuery("#panNumber").val().length == 0){
-		showMessage('contractor_error', jQuery("#panNumberErrorMsg").val());
-		flag = true;
-		return false;
-		}
   var regx = /^[A-Za-z]{5}\d{4}[A-za-z]{1}$/;
-  if (!regx.test(jQuery("#panNumber").val())) {
-	  showMessage('contractor_error', jQuery("#panNumberMessage").val());
+  if (!regx.test($("#panNumber").val())) {
+	  bootbox.alert( $("#panNumberMessage").val());
 	  flag = true;
 	  return false;
   }
@@ -152,14 +153,9 @@ function checkPanNumber(){
 }
 
 function checkTinNumber(){
-	if(jQuery("#tinNumber").val().length == 0){
-		showMessage('contractor_error', jQuery("#tinNumberErrorMsg").val());
-		flag = true;
-		return false;
-		}
   var regx = /^[A-Za-z0-9]+$/;
-  if (!regx.test(jQuery("#tinNumber").val())) {
-	  showMessage('contractor_error', jQuery("#tinNumberAlphaNeumericErrorMsg").val());
+  if (!regx.test($("#tinNumber").val())) {
+	  bootbox.alert( $("#tinNumberAlphaNeumericErrorMsg").val());
 	  flag = true;
 	  return false;
   }
@@ -167,14 +163,9 @@ function checkTinNumber(){
 }
 
 function checkContactPerson(){
-	if(jQuery("#contactPerson").val().length == 0){
-		showMessage('contractor_error', jQuery("#contactPersonErrorMsg").val());
-		flag = true;
-		return false;
-	}
 	var regx = /^[A-Za-z0-9 ]+$/;
-	  if (!regx.test(jQuery("#contactPerson").val())) {
-		  showMessage('contractor_error', jQuery("#contactPersonAlphaNeumericErrorMsg").val());
+	  if (!regx.test($("#contactPerson").val())) {
+		  bootbox.alert( $("#contactPersonAlphaNeumericErrorMsg").val());
 		  flag = true;
 		  return false;
 	  }
@@ -182,202 +173,68 @@ function checkContactPerson(){
 }
 
 function checkIfscCode(){
-	if(jQuery("#ifscCode").val().length == 0){
-		showMessage('contractor_error', jQuery("#ifscCodeErrorMsg").val());
-		flag = true;
-		return false;
-		}
   var regx = /^[A-Za-z0-9]+$/;
-  if (!regx.test(jQuery("#ifscCode").val())) {
-	  showMessage('contractor_error', jQuery("#ifscCodeAlphaNeumericErrorMsg").val());
+  if (!regx.test($("#ifscCode").val())) {
+	  bootbox.alert( $("#ifscCodeAlphaNeumericErrorMsg").val());
 	  flag = true;
 	  return false;
   }
-  return true;
-}
-
-function checkCorrespondenceAddress(){
-	
-	if(jQuery("#correspondenceAddress").val().length == 0){
-		showMessage('contractor_error', jQuery("#correspondenceAddressErrorMsg").val());
-		flag = true;
-		return false;
-		}
-  return true;
-}
-
-function checkPaymentAddress(){
-	if(jQuery("#paymentAddress").val().length == 0){
-		showMessage('contractor_error', jQuery("#paymentAddressErrorMsg").val());
-		flag = true;
-		return false;
-		}
   return true;
 }
 
 function checkBankAccountNumber(){
-	if(jQuery("#bankAccount").val().length == 0){
-		showMessage('contractor_error', jQuery("#bankAccountErrorMsg").val());
-		flag = true;
-		return false;
-		}
   var regx = /^[A-Za-z0-9]+$/;
-  if (!regx.test(jQuery("#bankAccount").val())) {
-	  showMessage('contractor_error', jQuery("#bankAccountAlphaNeumericErrorMsg").val());
+  if (!regx.test($("#bankAccount").val())) {
+	  bootbox.alert( $("#bankAccountAlphaNeumericErrorMsg").val());
 	  flag = true;
 	  return false;
   }
   return true;
 }
 
-function checkBank(){
-	if(jQuery("#bank").val() == -1){
-	 showMessage('contractor_error', jQuery("#bankErrorMsg").val());
-	 flag = true;
-	 return false;
-	}
-	return true;
-}
-
 function checkEmail(){
-	if(jQuery("#email").val().length == 0){
-		showMessage('contractor_error', jQuery("#emailErrorMsg").val());
-		flag = true;
-		return false;
-		}
 	var regx = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-	if (!regx.test(jQuery("#email").val())) {
-	  showMessage('contractor_error', jQuery("#emailInvalidErrorMsg").val());
+	if (!regx.test($("#email").val())) {
+	  bootbox.alert( $("#emailInvalidErrorMsg").val());
 	  flag = true;
 	  return false;
 	}
 	return true;
 }
 
-function checkNarration(){
-	if(jQuery("#narration").val().length == 0){
-		showMessage('contractor_error', jQuery("#narrationErrorMsg").val());
-		flag = true;
-		return false;
-		}
-	return true;
-}
-
 function checkPwdApprovalCode(){
-	if(jQuery("#pwdApprovalCode").val().length == 0){
-		showMessage('contractor_error', jQuery("#pwdApprovalCodeErrorMsg").val());
-		flag = true;
-		return false;
-		}
 	var regx = /^[A-Za-z0-9\-\/]+$/;
-	if (!regx.test(jQuery("#pwdApprovalCode").val())) {
-		  showMessage('contractor_error', jQuery("#pwdApprovalCodeAlphaNeumericErrorMsg").val());
+	if (!regx.test($("#pwdApprovalCode").val())) {
+		  bootbox.alert( $("#pwdApprovalCodeAlphaNeumericErrorMsg").val());
 		  flag = true;
 		  return false;
 	  }
 	return true;
 }
 
-function checkExemptionForm(){
-	if(jQuery("#exemptionForm").val().length == 0){
-		showMessage('contractor_error', jQuery("#exemptionFormErrorMsg").val());
-		flag = true;
-		return false;
-		}
-	return true;
-}
-
-function checkRegistrationNumber(){
-	var elements = jQuery(".selectmultilinewk");
-	for(var i = 0;i< elements.length;i++){
-		if(jQuery("#registrationNumberyui-rec"+i).val() == ''){
-			showMessage('contractor_error', jQuery("#registrationNumberErrorMsg").val());
-			flag = true;
-			return false;
-			}
-		var regx = /^[A-Za-z0-9\-\/]+$/;
-		  if (!regx.test(jQuery("#registrationNumberyui-rec"+i).val())) {
-			  showMessage('contractor_error', jQuery("#registrationNumberAlphaNeumericErrorMsg").val());
-			  flag = true;
-			  return false;
-		  }
-		}
-	return true;
-}
-
-function checkContractorClass(){
-	var elements = jQuery(".yui-dt-dropdown");
-	for(var i=0;i < elements.length;i++){
-		if(jQuery("#gradeNameyui-rec"+i).val() == 0){
-			showMessage('contractor_error', jQuery("#contractorClassErrorMsg").val());
-			flag = true;
-			return false;
-			}
-	}
-	return true;
-}
-
-function checkStartDate(){
-	var elements = jQuery(".selectmultilinewk");
-	for(var i = 0;i< elements.length;i++){
-		if(jQuery("#startDateyui-rec"+i).val() == ''){
-			showMessage('contractor_error', jQuery("#startDateErrorMsg").val());
-			flag = true;
-			return false;
-			}
-		}
-	return true;
-}
-
-function checkDepartment(){
-	var elements = jQuery("#contractorTable").find("tbody.yui-dt-data").find("tr");
-	for(var i=0 ; i < elements.length ; i++){
-		var departmentElement = jQuery(jQuery(elements[i]).find("select")[0])
-		if(departmentElement.val() == 0){
-			showMessage('contractor_error', jQuery("#departmentErrorMsg").val());
-			return false;
-		}
-	}
-	return true;
-}
-
 function checkCodeAndName(){  
 	var regxCode = /^[A-Za-z0-9\-\/]+$/
 	var regxName = /^[A-Za-z0-9\-\& \:\,\/\.()\@]+$/;
-	if(!(jQuery("#codeautogeneration").val() == "true")){
-		if(jQuery("#contractor-save_code").val().length == 0){
-			showMessage('contractor_error', jQuery("#codeErrorMsg").val());
-			return false;
-		}
+	if(!($("#codeautogeneration").val() == "Yes")){
 		  
-		  if (!regxCode.test(jQuery("#contractor-save_code").val())) {
-			  showMessage('contractor_error', jQuery("#codeAlphaNeumericErrorMsg").val());
+		  if (!regxCode.test($("#code").val())) {
+			  bootbox.alert( $("#codeAlphaNeumericErrorMsg").val());
 			  return false;
 		  }
 
-		  if(jQuery("#name").val().length == 0){
-				showMessage('contractor_error', jQuery("#nameErrorMsg").val());
-				return false;
-		  }
-		  
-		  if (!regxName.test(jQuery("#name").val())) {
-			  showMessage('contractor_error', jQuery("#nameAlphaNeumericErrorMsg").val());
+		  if (!regxName.test($("#name").val())) {
+			  bootbox.alert( $("#nameAlphaNeumericErrorMsg").val());
 			  return false;
 		  }
 	}else{
 
-		  if(jQuery("#name").val().length == 0){
-				showMessage('contractor_error', jQuery("#nameErrorMsg").val());
-				return false;
-			}
-		  
-		  if (!regxName.test(jQuery("#name").val())) {
-			  showMessage('contractor_error', jQuery("#nameAlphaNeumericErrorMsg").val());
+		  if (!regxName.test($("#name").val())) {
+			  bootbox.alert( $("#nameAlphaNeumericErrorMsg").val());
 			  return false;
 		  }
 			  
-		 if(jQuery("#name").val().length < 4){
-				showMessage('contractor_error', jQuery("#nameErrorLengthMsg").val());
+		 if($("#name").val().length < 4){
+				bootbox.alert( $("#nameErrorLengthMsg").val());
 				return false;
 		 }
 	}
@@ -385,119 +242,324 @@ function checkCodeAndName(){
   return true;
 }
 
-function checkContractorCategory(){
-	var elements = jQuery("#contractorTable").find("tbody.yui-dt-data").find("tr")
-	for(var i=0;i < elements.length;i++){
-		if(jQuery(elements[i]).find("td:nth-child(8)").find("select").val() == 0){
-			showMessage('contractor_error', jQuery("#contractorCategoryErrorMsg").val());
-			return false;
-		}
-	}
-	return true;
-}
 
-function checkContractorDetailsMandatoryFieldsErrors(fieldName){
-	if (fieldName == "registrationNumber")
-		checkRegistrationNumber();
-	else if (fieldName == "grade")
-		checkContractorClass();
-	else if (fieldName == "category")
-		checkContractorCategory();
-}
-
-function checkContractorMasterMandatoryFieldsErrors(fieldName){
-	if (fieldName == "panNumber") 
-		checkPanNumber();
-	else if (fieldName == "tinNumber")
-		checkTinNumber();
-	else if (fieldName == "contactPerson")
-		checkContactPerson();
-	else if (fieldName == "email")
-		checkEmail();
-	else if (fieldName == "mobileNumber")
-		checkMobileNumber();
-	else if (fieldName == "bank")
-		checkBank();
-	else if (fieldName == "bankAccount")
-		checkBankAccountNumber();
-	else if (fieldName == "correspondenceAddress")
-		checkCorrespondenceAddress();
-	else if (fieldName == "ifscCode")
-		checkIfscCode();
-	else if (fieldName == "paymentAddress")
-		checkPaymentAddress();
-	else if (fieldName == "narration")
-		checkNarration();
-	else if (fieldName == "exemptionForm")
-		checkExemptionForm();
-	else if (fieldName == "pwdApprovalCode")
-		checkPwdApprovalCode();
-	checkContractorDetailsMandatoryFieldsErrors(fieldName);
-}
-
-function checkForMandatoryValues(){
-	if(jQuery("#mandatory").val() != null && jQuery("#hide").val() != null){
-			var mandatoryFields = jQuery("#mandatory").val().replace(/[\[\]']+/g,'').replace(/, /g, ",").split(",");
-			var hiddenFields = jQuery("#hide").val().replace(/[\[\]']+/g,'').replace(/, /g, ",").split(",");
-			var contractorMasterMandatoryFields = mandatoryFields.filter(function(val) {
-				  return hiddenFields.indexOf(val) == -1;
-				});
-			jQuery.each(contractorMasterMandatoryFields.reverse(),function(){
-				var fieldName = this.toString().trim();
-				checkContractorMasterMandatoryFieldsErrors(fieldName);
+$('#btnsearch').click(function(e) {
+	drillDowntableContainer = $("#resultTable");
+	$('.report-section').removeClass('display-hide');
+	reportdatatable = drillDowntableContainer
+			.dataTable({
+				ajax : {
+					url : "/egworks/masters/contractor-searchdetails",
+					type : "POST",
+					"data" : getFormData($('form'))
+				},
+				"bDestroy" : true,
+				'bAutoWidth': false,
+				"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-xs-3'i><'col-xs-3 col-right'l><'col-xs-3 col-right'<'export-data'T>><'col-xs-3 text-right'p>>",
+				"aLengthMenu" : [ [ 10, 25, 50, -1 ], [ 10, 25, 50, "All" ] ],
+				"oTableTools" : {
+					"sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
+					"aButtons" : []
+				},
+				"fnRowCallback" : function(row, data, index) {
+					$('td:eq(0)', row).html(index + 1);
+					$('td:eq(5)', row).html(
+							'<a href="javascript:void(0);" onclick="modifyContractor(\''
+									+ data.contractorId + '\')">Modify</a>');
+					return row;
+				},
+				aaSorting : [],
+				columns : [{
+					"data" : "",
+					"sClass" : "text-center","width": "2%"
+				}, {
+					"data" : "name",
+				},{
+					"data" : "code",
+				}, {
+					"data" : "class",
+				},{
+					"data" : "status",
+				},{
+					"data" : "",
+					"sClass" : "text-center"
+				}]
 			});
-			window.scroll(0,0);
-			return flag;
+});
+
+function getFormData($form) {
+	var unindexed_array = $form.serializeArray();
+	var indexed_array = {};
+
+	$.map(unindexed_array, function(n, i) {
+		indexed_array[n['name']] = n['value'];
+	});
+
+	return indexed_array;
+}
+
+function addContractorDetails() {
+	var rowcount = $("#tblContractorDetails tbody tr").length;
+	if (rowcount < 30) {
+		if ($('contractorDetailRow') != null) {
+			// get Next Row Index to Generate
+			var nextIdx = 0;
+			nextIdx = $("#tblContractorDetails tbody tr").length;
+			
+			// validate status variable for exiting function
+			var isValid = 1;// for default have success value 0
+
+			// validate existing rows in table
+			$("#tblContractorDetails tbody tr").find('input, select').each(
+					function() {
+						if (($(this).data('optional') === 0)
+								&& (!$(this).val())) {
+							$(this).focus();
+							bootbox.alert($(this).data('errormsg'));
+							isValid = 0;// set validation failure
+							return false;
+						}
+			});
+
+			if (isValid === 0) {
+				return false;
+			}
+			
+			// Generate all textboxes Id and name with new index
+			$("#tblContractorDetails tbody tr").last().clone().find("input, select").each(
+					function() {
+
+						if ($(this).data('server')) {
+							$(this).removeAttr('data-server');
+						}
+						
+							$(this).attr(
+									{
+										'name' : function(_, name) {
+											return name.replace(/\d+/, nextIdx);
+										},
+										'data-idx' : function(_,dataIdx)
+										{
+											return nextIdx;
+										}
+									});
+
+							// if element is static attribute hold values for
+							// next row, otherwise it will be reset
+							if (!$(this).data('static')) {
+								$(this).val('');
+								// set default selection for dropdown
+								if ($(this).is("select")) {
+									$(this).prop('selectedIndex', 0);
+								}
+							}
+							
+							$(this).removeAttr('disabled');
+							$(this).prop('checked', false);
+
+					}).end().appendTo("#tblContractorDetails tbody");
+			
+			generateSno();
+			initializeDatePicker();
+		}
+	} else {
+		  bootbox.alert('limit reached!');
 	}
 }
 
-function validateContractorFormAndSubmit() {
-	clearMessage('contractor_error');
-	if(jQuery("#contractorTable").find("tbody.yui-dt-data").find("tr").length < 1) {
-		showMessage('contractor_error', jQuery("#contractorDetailErrorMsg").val());
-		window.scroll(0,0);
-		return false;
-	}
-		
-	if (!checkCodeAndName()){
-		window.scroll(0,0);
-		return false;
-	}
-	if (checkForMandatoryValues()){
-		flag = false;
-		return false; 
-	}	
-	if (!checkDepartment()){
-		window.scroll(0,0);
-		return false;
-	}
-	if (!checkStartDate()){
-		window.scroll(0,0);
-		return false;
-	}
-	
-	links=document.contractor.getElementsByTagName("span");
-	for(i=0;i<links.length;i++) {
-		if(links[i].innerHTML=='&nbsp;x' && links[i].style.display!='none'){
-			showMessage('contractor_error', jQuery("#vaidateError").val());
-			window.scroll(0,0);
+function generateSno()
+{
+	var idx=1;
+	$(".spansno").each(function(){
+		$(this).text(idx);
+		idx++;
+	});
+}
+
+function checkStartDateAndEndDate() {
+	var fromDateElements = $(".fromdate");
+	var toDateElements = $(".todate");
+	var checkDateFlag = true;
+	$.each(toDateElements, function(index) {
+		var fromDateValue = $(fromDateElements[index]).val().split("/");
+		var toDateValue = $(this).val().split("/");
+		if ($(this).val() != ""
+				&& (new Date(fromDateValue[2], fromDateValue[1] - 1,
+						fromDateValue[0]) > new Date(toDateValue[2],
+						toDateValue[1] - 1, toDateValue[0]))) {
+			bootbox.alert($("#fromDateGreaterThanEndDateError").val());
+			checkDateFlag = false;
 			return false;
 		}
+	});
+	if (checkDateFlag)
+		return true;
+	else
+		return false;
+}
+
+$('#submitBtn').click(function() {
+	if ($('#contractorForm').valid()) {
+		var isSuccess = true;
+		if (!checkCodeAndName()){
+			return false;
+		}
+		
+		if(!checkStartDateAndEndDate()){
+			return false;
+		}
+		
+		var mandatoryFields = $("#mandatory").val().replace(/[\[\]']+/g,'').replace(/, /g, ",").split(",");
+		var hiddenFields = $("#hide").val().replace(/[\[\]']+/g,'').replace(/, /g, ",").split(",");
+		var contractorMasterMandatoryFields = mandatoryFields.filter(function(val) {
+			  return hiddenFields.indexOf(val) == -1;
+			});
+		$.each(contractorMasterMandatoryFields.reverse(),function(){
+			var fieldName = this.toString().trim();
+			if (fieldName == "panNumber"){ 
+				isSuccess = checkPanNumber();
+				if(!isSuccess)
+					return false;
+			}
+			else if (fieldName == "tinNumber"){
+				isSuccess = checkTinNumber();
+				if(!isSuccess)
+					return false;
+			}
+			else if (fieldName == "contactPerson"){
+				isSuccess = checkContactPerson();
+				if(!isSuccess)
+					return false;
+			}
+			else if (fieldName == "email"){
+				isSuccess = checkEmail();
+				if(!isSuccess)
+					return false;
+			}
+			else if (fieldName == "mobileNumber"){
+				isSuccess = checkMobileNumber();
+				if(!isSuccess)
+					return false;
+			}
+			else if (fieldName == "bankAccount"){
+				isSuccess = checkBankAccountNumber();
+				if(!isSuccess)
+					return false;
+			}
+			else if (fieldName == "ifscCode"){
+				isSuccess = checkIfscCode();
+				if(!isSuccess)
+					return false;
+			}
+			else if (fieldName == "paymentAddress"){
+				isSuccess = checkPaymentAddress();
+				if(!isSuccess)
+					return false;
+			}
+			else if (fieldName == "narration"){
+				isSuccess = checkNarration();
+				if(!isSuccess)
+					return false;
+			}
+			else if (fieldName == "exemptionForm"){
+				isSuccess = checkExemptionForm();
+				if(!isSuccess)
+					return false;
+			}
+			else if (fieldName == "pwdApprovalCode"){
+				isSuccess = checkPwdApprovalCode();
+				if(!isSuccess)
+					return false;
+			}
+		});
+		
+		if(isSuccess)
+			return true;
 	}
+	return false;
+});
+
+function deleteContractorDetail(obj) {
+	var rIndex = getRow(obj).rowIndex;
+	
+	var tbl=document.getElementById('tblContractorDetails');	
+	var rowcount=$("#tblContractorDetails tbody tr").length;
+	
+	if(rowcount<=1) {
+		bootbox.alert($("#rowDeleteErrorMessage").val());
+		return false;
+	} else {
+		tbl.deleteRow(rIndex);
+		//starting index for table fields
+		var idx= 0;
+		var sno = 1;
+		//regenerate index existing inputs in table row
+		$("#tblContractorDetails tbody tr").each(function() {
+		
+				$(this).find("input, select, textarea, errors, span, input:hidden").each(function() {
+					var classval = $(this).attr('class');
+					if(classval == 'spansno') {
+						$(this).text(sno);
+						sno++;
+					} else {
+					$(this).attr({
+					      'name': function(_, name) {
+					    	  if(!($(this).attr('name')===undefined))
+					    		  return name.replace(/\[.\]/g, '['+ idx +']'); 
+					      },
+					      'id': function(_, id) {
+					    	  if(!($(this).attr('id')===undefined))
+					    		  return id.replace(/\[.\]/g, '['+ idx +']'); 
+					      },
+					      'class' : function(_, name) {
+								if(!($(this).attr('class')===undefined))
+									return name.replace(/\[.\]/g, '['+ idx +']'); 
+							},
+						  'data-idx' : function(_,dataIdx)
+						  {
+							  return idx;
+						  }
+					   });
+					}
+			    });
+				
+				idx++;
+		});
+		generateSno();
+		initializeDatePicker();
+		return true;
+	}	
 }
 
-function replaceExemptionFormChar() {
-	var exemption = document.getElementById('exemptionForm-value').innerHTML;
-	exemption = exemption.replace(/_/g, " ");
-    document.getElementById("exemptionForm-value").innerHTML = exemption;
+function getRow(obj) {
+	if(!obj)
+		return null;
+	tag = obj.nodeName.toUpperCase();
+	while(tag != 'BODY'){
+		if (tag == 'TR') 
+			return obj;
+		obj=obj.parentNode ;
+		tag = obj.nodeName.toUpperCase();
+	}
+	return null;
 }
 
+function initializeDatePicker()
+{
+	$(".datepicker").datepicker({
+		format: "dd/mm/yyyy",
+		autoclose:true
+	});
+	try {
+		$(".datepicker").inputmask();
+		} catch (e) {
+	}	
+}
 
 function createNewContractor() {
-	window.location = "contractor-newform.action";
+	window.location = "contractor-newform";
 }
 
-function modifyContractorData() {
-	var model = document.getElementById('model').value;
-	window.location = 'contractor-edit.action?mode=edit&id='+model;
+function modifyContractor(contractorId) {
+	window.location = '/egworks/masters/contractor-update/'+contractorId;
 }

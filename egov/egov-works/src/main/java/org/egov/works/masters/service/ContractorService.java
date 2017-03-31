@@ -39,32 +39,28 @@
  */
 package org.egov.works.masters.service;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.TreeSet;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.Accountdetailkey;
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.dao.AccountdetailkeyHibernateDAO;
-import org.egov.commons.service.EntityTypeService;
-import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.commons.dao.EgwStatusHibernateDAO;
+import org.egov.egf.commons.bank.service.CreateBankService;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
-import org.egov.infra.validation.exception.ValidationException;
-import org.egov.infstr.search.SearchQuery;
-import org.egov.infstr.search.SearchQueryHQL;
 import org.egov.works.autonumber.ContractorCodeGenerator;
 import org.egov.works.config.properties.WorksApplicationProperties;
+import org.egov.works.letterofacceptance.entity.SearchRequestContractor;
 import org.egov.works.masters.entity.Contractor;
+import org.egov.works.masters.entity.ContractorDetail;
 import org.egov.works.masters.entity.ExemptionForm;
 import org.egov.works.masters.repository.ContractorRepository;
 import org.egov.works.services.WorksService;
@@ -72,19 +68,17 @@ import org.egov.works.utils.WorksConstants;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.CriteriaSpecification;
-import org.hibernate.criterion.Order;
+import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.type.StringType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.Model;
 
 @Service("contractorService")
 @Transactional(readOnly = true)
-public class ContractorService implements EntityTypeService {
-
-    private final Logger logger = Logger.getLogger(getClass());
+public class ContractorService {
 
     @Autowired
     private WorksService worksService;
@@ -95,8 +89,7 @@ public class ContractorService implements EntityTypeService {
     @PersistenceContext
     private EntityManager entityManager;
 
-    @Autowired
-    private ContractorRepository contractorRepository;
+    private final ContractorRepository contractorRepository;
 
     @Autowired
     private AutonumberServiceBeanResolver beanResolver;
@@ -104,12 +97,27 @@ public class ContractorService implements EntityTypeService {
     @Autowired
     private WorksApplicationProperties worksApplicationProperties;
 
-    public Contractor getContractorById(final Long contractorId) {
-        final Contractor contractor = contractorRepository.findOne(contractorId);
-        return contractor;
+    @Autowired
+    private DepartmentService departmentService;
+
+    @Autowired
+    private ContractorGradeService contractorGradeService;
+
+    @Autowired
+    private EgwStatusHibernateDAO egwStatusHibDAO;
+
+    @Autowired
+    private CreateBankService createBankService;
+
+    @Autowired
+    public ContractorService(final ContractorRepository contractorRepository) {
+        this.contractorRepository = contractorRepository;
     }
 
-    @Override
+    public Contractor getContractorById(final Long contractorId) {
+        return contractorRepository.findOne(contractorId);
+    }
+
     public List<Contractor> getAllActiveEntities(final Integer accountDetailTypeId) {
         final Query query = entityManager
                 .createQuery("select distinct contractorDet.contractor from ContractorDetail contractorDet "
@@ -120,27 +128,13 @@ public class ContractorService implements EntityTypeService {
         return list;
     }
 
-    public static final Map<String, String> exemptionForm = new LinkedHashMap<String, String>() {
-
-        private static final long serialVersionUID = 408579850562980945L;
-
-        {
-            put(ExemptionForm.INCOME_TAX.toString(), ExemptionForm.INCOME_TAX.toString().replace("_", " "));
-            put(ExemptionForm.EARNEST_MONEY_DEPOSIT.toString(), ExemptionForm.EARNEST_MONEY_DEPOSIT.toString().replace("_", " "));
-            put(ExemptionForm.VAT.toString(), ExemptionForm.VAT.toString().replace("_", " "));
-        }
-    };
-
-    @Override
-    public List<Contractor> filterActiveEntities(final String filterKey,
-            final int maxRecords, final Integer accountDetailTypeId) {
+    public List<Contractor> filterActiveEntities(final String filterKey, final int maxRecords,
+            final Integer accountDetailTypeId) {
         List<Contractor> contractorList = null;
         filterKey.toUpperCase();
         final String qryString = "select distinct cont from Contractor cont, ContractorDetail contractorDet "
-                +
-                "where cont.id=contractorDet.contractor.id and contractorDet.status.description = :statusDescription and contractorDet.status.moduletype = :moduleType and (upper(cont.code) like :contractorCodeOrName "
-                +
-                "or upper(cont.name) like :contractorCodeOrName) order by cont.code,cont.name";
+                + "where cont.id=contractorDet.contractor.id and contractorDet.status.description = :statusDescription and contractorDet.status.moduletype = :moduleType and (upper(cont.code) like :contractorCodeOrName "
+                + "or upper(cont.name) like :contractorCodeOrName) order by cont.code,cont.name";
         final Query query = entityManager.createQuery(qryString);
         query.setParameter("statusDescription", "Active");
         query.setParameter("moduleType", "Contractor");
@@ -149,172 +143,8 @@ public class ContractorService implements EntityTypeService {
         return contractorList;
     }
 
-    @Override
-    public List getAssetCodesForProjectCode(final Integer accountdetailkey)
-            throws ValidationException {
-        return null;
-    }
-
-    @Override
-    public List<Contractor> validateEntityForRTGS(final List<Long> idsList) throws ValidationException {
-
-        List<Contractor> entities = null;
-        final Query entitysQuery = entityManager
-                .createQuery(" from Contractor where panNumber is null or bank is null and id in ( :IDS )");
-        entitysQuery.setParameter("IDS", idsList);
-        entities = entitysQuery.getResultList();
-        return entities;
-
-    }
-
-    @Override
-    public List<Contractor> getEntitiesById(final List<Long> idsList) throws ValidationException {
-
-        List<Contractor> entities = null;
-        final Query entitysQuery = entityManager.createQuery(" from Contractor where id in ( :IDS )");
-        entitysQuery.setParameter("IDS", idsList);
-        entities = entitysQuery.getResultList();
-        return entities;
-    }
-
     public List<Contractor> getAllContractors() {
         return contractorRepository.findAll(new Sort(Sort.Direction.ASC, "code"));
-    }
-
-    public List<Contractor> getContractorListForCriterias(final Map<String, Object> criteriaMap) {
-        List<Contractor> contractorList = null;
-        String contractorStr = null;
-        final String contractorName = (String) criteriaMap.get(WorksConstants.CONTRACTOR_NAME);
-        final String contractorCode = (String) criteriaMap.get(WorksConstants.CONTRACTOR_CODE);
-        final Long departmentId = (Long) criteriaMap.get(WorksConstants.DEPARTMENT_ID);
-        final Integer statusId = (Integer) criteriaMap.get(WorksConstants.STATUS_ID);
-        final Long gradeId = (Long) criteriaMap.get(WorksConstants.GRADE_ID);
-        contractorStr = " select distinct contractor from Contractor contractor ";
-
-        if (statusId != null || departmentId != null || gradeId != null)
-            contractorStr = contractorStr + " left outer join fetch contractor.contractorDetails as detail ";
-
-        if (statusId != null || departmentId != null || gradeId != null
-                || contractorCode != null && !contractorCode.equals("")
-                || contractorName != null && !contractorName.equals(""))
-            contractorStr = contractorStr + " where contractor.code is not null";
-
-        if (org.apache.commons.lang.StringUtils.isNotEmpty(contractorCode))
-            contractorStr = contractorStr + " and UPPER(contractor.code) like :contractorCode";
-
-        if (org.apache.commons.lang.StringUtils.isNotEmpty(contractorName))
-            contractorStr = contractorStr + " and UPPER(contractor.name) like :contractorName";
-
-        if (statusId != null)
-            contractorStr = contractorStr + " and detail.status.id = :statusId";
-
-        if (departmentId != null)
-            contractorStr = contractorStr + " and detail.department.id = :departmentId";
-
-        if (gradeId != null)
-            contractorStr = contractorStr + " and detail.grade.id = :gradeId";
-
-        final Query qry = entityManager.createQuery(contractorStr.toString());
-
-        if (org.apache.commons.lang.StringUtils.isNotEmpty(contractorCode))
-            qry.setParameter("contractorCode", "%" + contractorCode.toUpperCase() + "%");
-
-        if (org.apache.commons.lang.StringUtils.isNotEmpty(contractorName))
-            qry.setParameter("contractorName", "%" + contractorName.toUpperCase() + "%");
-
-        if (statusId != null)
-            qry.setParameter("statusId", statusId);
-
-        if (departmentId != null)
-            qry.setParameter("departmentId", departmentId);
-
-        if (gradeId != null)
-            qry.setParameter("gradeId", gradeId);
-        contractorList = qry.getResultList();
-
-        return contractorList;
-    }
-
-    public SearchQuery prepareQuery(final Map<String, Object> criteriaMap) {
-        String contractorStr = null;
-        final List<Object> paramList = new ArrayList<Object>();
-        final String contractorName = (String) criteriaMap.get(WorksConstants.CONTRACTOR_NAME);
-        final String contractorCode = (String) criteriaMap.get(WorksConstants.CONTRACTOR_CODE);
-        final Long departmentId = (Long) criteriaMap.get(WorksConstants.DEPARTMENT_ID);
-        final Integer statusId = (Integer) criteriaMap.get(WorksConstants.STATUS_ID);
-        final Long gradeId = (Long) criteriaMap.get(WorksConstants.GRADE_ID);
-        contractorStr = " from ContractorDetail detail ";
-
-        if (statusId != null || departmentId != null || gradeId != null || contractorCode != null && !contractorCode.equals("")
-                || contractorName != null && !contractorName.equals(""))
-            contractorStr = contractorStr + " where detail.contractor.code is not null";
-
-        if (contractorCode != null && !contractorCode.equals("")) {
-            contractorStr = contractorStr + " and UPPER(detail.contractor.code) like ?";
-            paramList.add("%" + contractorCode.toUpperCase() + "%");
-        }
-
-        if (contractorName != null && !contractorName.equals("")) {
-            contractorStr = contractorStr + " and UPPER(detail.contractor.name) like ?";
-            paramList.add("%" + contractorName.toUpperCase() + "%");
-        }
-
-        if (statusId != null) {
-            contractorStr = contractorStr + " and detail.status.id = ? ";
-            paramList.add(statusId);
-        }
-
-        if (departmentId != null) {
-            contractorStr = contractorStr + " and detail.department.id = ? ";
-            paramList.add(departmentId);
-        }
-
-        if (gradeId != null) {
-            contractorStr = contractorStr + " and detail.grade.id = ? ";
-            paramList.add(gradeId);
-        }
-        final String query = "select distinct detail.contractor " + contractorStr;
-
-        final String countQuery = "select count(distinct detail.contractor) " + contractorStr;
-        return new SearchQueryHQL(query, countQuery, paramList);
-    }
-
-    public void searchContractor(final Map<String, Object> criteriaMap) {
-        if (logger.isDebugEnabled())
-            logger.debug("Inside searchContractor");
-        final String contractorName = (String) criteriaMap.get(WorksConstants.CONTRACTOR_NAME);
-        final String contractorCode = (String) criteriaMap.get(WorksConstants.CONTRACTOR_CODE);
-        final Long departmentId = (Long) criteriaMap.get(WorksConstants.DEPARTMENT_ID);
-        final Long gradeId = (Long) criteriaMap.get(WorksConstants.GRADE_ID);
-        final Date searchDate = (Date) criteriaMap.get(WorksConstants.SEARCH_DATE);
-        final List<AppConfigValues> configList = worksService.getAppConfigValue("Works", "CONTRACTOR_STATUS");
-        final String status = configList.get(0).getValue();
-
-        final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(Contractor.class);
-        if (org.apache.commons.lang.StringUtils.isNotEmpty(contractorCode))
-            criteria.add(Restrictions.sqlRestriction("lower({alias}.code) like lower(?)", "%" + contractorCode.trim() + "%",
-                    StringType.INSTANCE));
-
-        if (org.apache.commons.lang.StringUtils.isNotEmpty(contractorName))
-            criteria.add(Restrictions.sqlRestriction("lower({alias}.name) like lower(?)", "%" + contractorName.trim() + "%",
-                    StringType.INSTANCE));
-
-        criteria.createAlias("contractorDetails", "detail").createAlias("detail.status", "status");
-        criteria.add(Restrictions.eq("status.description", status));
-        if (departmentId != null)
-            criteria.add(Restrictions.eq("detail.department.id", departmentId));
-
-        if (gradeId != null)
-            criteria.add(Restrictions.eq("detail.grade.id", gradeId));
-
-        if (searchDate != null)
-            criteria.add(Restrictions.le("detail.validity.startDate", searchDate))
-                    .add(Restrictions.or(Restrictions.ge("detail.validity.endDate", searchDate),
-                            Restrictions.isNull("detail.validity.endDate")));
-
-        criteria.addOrder(Order.asc("name"));
-        criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
-        criteria.list();
     }
 
     @Transactional
@@ -336,8 +166,8 @@ public class ContractorService implements EntityTypeService {
         return filterActiveEntitiesByCode(queryString, 0, null);
     }
 
-    public List<Contractor> filterActiveEntitiesByCode(final String filterKey,
-            final int maxRecords, final Integer accountDetailTypeId) {
+    public List<Contractor> filterActiveEntitiesByCode(final String filterKey, final int maxRecords,
+            final Integer accountDetailTypeId) {
         List<Contractor> contractorList = null;
         final String qryString = "select distinct cont from Contractor cont, ContractorDetail contractorDet "
                 + "where cont.id=contractorDet.contractor.id and contractorDet.status.description = :statusDescription and contractorDet.status.moduletype = :moduleType and upper(cont.code) like :contractorCode "
@@ -352,7 +182,12 @@ public class ContractorService implements EntityTypeService {
 
     @Transactional
     public Contractor save(final Contractor contractor) {
-        return contractorRepository.save(contractor);
+        if (WorksConstants.YES
+                .equalsIgnoreCase(worksApplicationProperties.contractorMasterCodeAutoGenerated().toLowerCase())) {
+            contractor.setCode(generateContractorCode(contractor));
+            return contractorRepository.save(contractor);
+        } else
+            return contractorRepository.save(contractor);
     }
 
     public String generateContractorCode(final Contractor contractor) {
@@ -420,6 +255,63 @@ public class ContractorService implements EntityTypeService {
 
     @Transactional
     public Contractor updateContractor(final Contractor contractor) {
+        return contractorRepository.save(contractor);
+    }
+
+    public List<Contractor> searchContractor(final SearchRequestContractor searchRequestContractor) {
+        final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(Contractor.class)
+                .createAlias("contractorDetails", "contractorDetail")
+                .createAlias("contractorDetail.department", "department")
+                .createAlias("contractorDetail.grade", "contractorClass")
+                .createAlias("contractorDetail.status", "status");
+        if (searchRequestContractor != null) {
+            if (StringUtils.isNotBlank(searchRequestContractor.getNameOfAgency()))
+                criteria.add(Restrictions.ilike("name", searchRequestContractor.getNameOfAgency(), MatchMode.ANYWHERE));
+            if (StringUtils.isNotBlank(searchRequestContractor.getContractorCode()))
+                criteria.add(
+                        Restrictions.ilike("code", searchRequestContractor.getContractorCode(), MatchMode.ANYWHERE));
+            if (searchRequestContractor.getDepartment() != null)
+                criteria.add(Restrictions.eq("department.id", searchRequestContractor.getDepartment()));
+            if (searchRequestContractor.getStatus() != null)
+                criteria.add(Restrictions.eq("status.id", searchRequestContractor.getStatus()));
+            if (searchRequestContractor.getContractorClass() != null)
+                criteria.add(Restrictions.eq("contractorClass.id", searchRequestContractor.getContractorClass()));
+        }
+        criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+        return criteria.list();
+    }
+
+    public void loadModelValues(final Model model) {
+        model.addAttribute("exemptionFormValues", ExemptionForm.values());
+        model.addAttribute("bankList", createBankService.getByIsActiveTrueOrderByName());
+        model.addAttribute("departmentList", departmentService.getAllDepartments());
+        model.addAttribute("contractorClassList", contractorGradeService.getAllContractorGrades());
+        model.addAttribute("statusList", egwStatusHibDAO.getStatusByModule(WorksConstants.STATUS_MODULE_NAME));
+        model.addAttribute("contractorDetailsCategoryValues", Arrays.asList(getContractorMasterCategoryValues()));
+        model.addAttribute("contractorMasterMandatoryFields", Arrays.asList(getcontractorMasterSetMandatoryFields()));
+        model.addAttribute("contractorMasterHiddenFields", Arrays.asList(getcontractorMasterSetHiddenFields()));
+        model.addAttribute("codeAutoGeneration", getContractorMasterAutoCodeGenerateValue());
+    }
+
+    public void createContractorDetails(final Contractor contractor) {
+        ContractorDetail contractorDetail;
+        contractor.getContractorDetails().clear();
+        for (final ContractorDetail cd : contractor.getTempContractorDetails()) {
+            contractorDetail = new ContractorDetail();
+            contractorDetail.setDepartment(cd.getDepartment());
+            contractorDetail.setRegistrationNumber(cd.getRegistrationNumber());
+            contractorDetail.setCategory(cd.getCategory());
+            contractorDetail.setGrade(cd.getGrade());
+            contractorDetail.setStatus(cd.getStatus());
+            contractorDetail.setValidity(cd.getValidity());
+            contractorDetail.setContractor(contractor);
+            contractor.getContractorDetails().add(contractorDetail);
+        }
+
+    }
+
+    @Transactional
+    public Contractor update(final Contractor contractor) {
         return contractorRepository.save(contractor);
     }
 

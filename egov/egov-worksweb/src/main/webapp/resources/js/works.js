@@ -282,32 +282,8 @@ function setContractorId(val) {
 	document.getElementById('id').value = val;
 }
 
-function modifyContractorDataOnSearch() {
-	var id = document.getElementById('id').value;
-    if (id == '' || id == null) {
-    	var message = document.getElementById('selectMessage').value;
-        showMessage('contractorError', message);
-        window.scrollTo(0, 0);
-        return false;
-    } else
-        window.location = 'contractor-edit.action?mode=edit&id=' + id;
-    return true;
-}
-
 function validate(){
 	jQuery('#id').val('');
-}
-
-function viewContractorDataOnSearch() {
-	var id = document.getElementById('id').value;
-    if (id == '' || id == null) {
-    	var message = document.getElementById('selectMessage').value;
-        showMessage('contractorError', message);
-        window.scrollTo(0, 0);
-        return false;
-    } else
-        window.location = 'contractor-edit.action?mode=view&id=' + id;
-    return true;
 }
 
 function createNewEsimate() {

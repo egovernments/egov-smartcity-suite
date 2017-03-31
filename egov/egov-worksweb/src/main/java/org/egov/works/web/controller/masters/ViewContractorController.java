@@ -37,31 +37,36 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.formatters;
+package org.egov.works.web.controller.masters;
 
-import java.text.ParseException;
-import java.util.Locale;
+import java.util.Arrays;
 
-import org.apache.commons.lang3.StringUtils;
-import org.egov.infstr.services.PersistenceService;
+import org.egov.infra.exception.ApplicationException;
 import org.egov.works.masters.entity.Contractor;
+import org.egov.works.masters.service.ContractorService;
+import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.Formatter;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
-@Component("contractorFormatter")
-public class ContractorFormatter implements Formatter<Contractor> {
+@Controller
+@RequestMapping(value = "/masters")
+public class ViewContractorController {
 
     @Autowired
-    private PersistenceService<Contractor, Long> persistenceService;
+    private ContractorService contractorService;
 
-    @Override
-    public String print(final Contractor object, final Locale locale) {
-        return object.getName();
+    @RequestMapping(value = "/contractor-view/{id}", method = RequestMethod.GET)
+    public String viewContractor(@PathVariable final Long id, final Model model) throws ApplicationException {
+        final Contractor contractor = contractorService.getContractorById(id);
+        model.addAttribute("contractor", contractor);
+        model.addAttribute(WorksConstants.MODE, WorksConstants.VIEW);
+        model.addAttribute("contractorMasterHiddenFields",
+                Arrays.asList(contractorService.getcontractorMasterSetHiddenFields()));
+        return "contractor-view";
     }
 
-    @Override
-    public Contractor parse(final String id, final Locale locale) throws ParseException {
-        return StringUtils.isNotBlank(id) ? persistenceService.load(Long.valueOf(id), Contractor.class) : null;
-    }
 }

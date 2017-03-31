@@ -37,52 +37,48 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.letterofacceptance.entity;
+package org.egov.works.web.controller.masters;
 
-public class SearchRequestContractor {
-    private String contractorCode;
-    private String nameOfAgency;
-    private Long contractorClass;
-    private Long department;
-    private Integer status;
+import java.util.List;
 
-    public String getContractorCode() {
-        return contractorCode;
+import org.egov.works.letterofacceptance.entity.SearchRequestContractor;
+import org.egov.works.masters.entity.Contractor;
+import org.egov.works.masters.service.ContractorService;
+import org.egov.works.web.adaptor.ContractorSearchJsonAdaptor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+@Controller
+@RequestMapping(value = "/masters")
+public class AjaxContractorController {
+
+    @Autowired
+    private ContractorService contractorService;
+
+    @Autowired
+    private ContractorSearchJsonAdaptor contractorSearchJsonAdaptor;
+
+    @RequestMapping(value = "/contractor-searchdetails", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    @ResponseBody
+    public String ajaxContractorSearch(final Model model,
+            @ModelAttribute final SearchRequestContractor searchRequestContractor) {
+        final List<Contractor> searchContractorList = contractorService.searchContractor(searchRequestContractor);
+        return new StringBuilder("{ \"data\":").append(toSearchContractorJson(searchContractorList)).append("}")
+                .toString();
     }
 
-    public void setContractorCode(final String contractorCode) {
-        this.contractorCode = contractorCode;
-    }
-
-    public String getNameOfAgency() {
-        return nameOfAgency;
-    }
-
-    public void setNameOfAgency(final String nameOfAgency) {
-        this.nameOfAgency = nameOfAgency;
-    }
-
-    public Long getContractorClass() {
-        return contractorClass;
-    }
-
-    public void setContractorClass(final Long contractorClass) {
-        this.contractorClass = contractorClass;
-    }
-
-    public Long getDepartment() {
-        return department;
-    }
-
-    public void setDepartment(final Long department) {
-        this.department = department;
-    }
-
-    public Integer getStatus() {
-        return status;
-    }
-
-    public void setStatus(final Integer status) {
-        this.status = status;
+    public Object toSearchContractorJson(final Object object) {
+        final GsonBuilder gsonBuilder = new GsonBuilder();
+        final Gson gson = gsonBuilder.registerTypeAdapter(Contractor.class, contractorSearchJsonAdaptor).create();
+        return gson.toJson(object);
     }
 }

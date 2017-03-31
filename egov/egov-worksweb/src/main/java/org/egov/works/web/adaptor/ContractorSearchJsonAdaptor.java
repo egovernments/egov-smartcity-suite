@@ -37,52 +37,38 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.letterofacceptance.entity;
 
-public class SearchRequestContractor {
-    private String contractorCode;
-    private String nameOfAgency;
-    private Long contractorClass;
-    private Long department;
-    private Integer status;
+package org.egov.works.web.adaptor;
 
-    public String getContractorCode() {
-        return contractorCode;
-    }
+import java.lang.reflect.Type;
+import java.util.List;
 
-    public void setContractorCode(final String contractorCode) {
-        this.contractorCode = contractorCode;
-    }
+import org.egov.works.masters.entity.Contractor;
+import org.egov.works.masters.entity.ContractorDetail;
+import org.springframework.stereotype.Component;
 
-    public String getNameOfAgency() {
-        return nameOfAgency;
-    }
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 
-    public void setNameOfAgency(final String nameOfAgency) {
-        this.nameOfAgency = nameOfAgency;
-    }
-
-    public Long getContractorClass() {
-        return contractorClass;
-    }
-
-    public void setContractorClass(final Long contractorClass) {
-        this.contractorClass = contractorClass;
-    }
-
-    public Long getDepartment() {
-        return department;
-    }
-
-    public void setDepartment(final Long department) {
-        this.department = department;
-    }
-
-    public Integer getStatus() {
-        return status;
-    }
-
-    public void setStatus(final Integer status) {
-        this.status = status;
+@Component
+public class ContractorSearchJsonAdaptor implements JsonSerializer<Contractor> {
+    @Override
+    public JsonElement serialize(final Contractor contractor, final Type type, final JsonSerializationContext jsc) {
+        final JsonObject jsonObject = new JsonObject();
+        if (contractor != null) {
+            final List<ContractorDetail> contractorDetails = contractor.getContractorDetails();
+            jsonObject.addProperty("code", contractor.getCode());
+            jsonObject.addProperty("name", contractor.getName());
+            if (contractorDetails != null && !contractorDetails.isEmpty()) {
+                jsonObject.addProperty("class",
+                        contractorDetails.get(contractorDetails.size() - 1).getGrade().getGrade());
+                jsonObject.addProperty("status",
+                        contractorDetails.get(contractorDetails.size() - 1).getStatus().getCode());
+            }
+            jsonObject.addProperty("contractorId", contractor.getId());
+        }
+        return jsonObject;
     }
 }

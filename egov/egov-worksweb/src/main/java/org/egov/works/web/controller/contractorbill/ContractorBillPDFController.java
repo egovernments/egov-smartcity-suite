@@ -188,7 +188,7 @@ public class ContractorBillPDFController {
             else
                 reportParams.put("contractorCode", org.egov.infra.utils.StringUtils.EMPTY);
             if (contractor.getBank() != null)
-                reportParams.put("bankAcc", contractor.getBankaccount());
+                reportParams.put("bankAcc", contractor.getBankAccount());
             else
                 reportParams.put("bankAcc", "N/A");
             if (StringUtils.isNotBlank(contractorBillRegister.getWorkOrderEstimate().getWorkOrder()

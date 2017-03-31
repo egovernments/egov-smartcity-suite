@@ -38,4 +38,23 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
-<%@ include file='contractor-new.jsp'%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="/WEB-INF/taglibs/cdn.tld" prefix="cdn"%>
+<div class="page-container" id="page-container">
+		<div class="new-page-header" id="successMessage">
+			${successMessage }
+		</div>
+			<jsp:include page="contractor-commonview.jsp" />
+		<div class="col-sm-12 text-center">
+			<div class="row">
+				<input type="hidden" value="${contractorMasterHiddenFields }" id="hide" />
+				<c:if test="${ mode != 'view' && mode != 'edit'}">
+					<input type="submit" name="create" Class="btn btn-primary" value="Create New Contractor" id="CREATE" name="button" onclick="createNewContractor();" />
+				</c:if>
+				<input type="submit" name="closeButton" id="closeButton" value="Close" Class="btn btn-default" onclick="window.close();" />
+			</div>
+		</div>
+		
+</div>
+<script
+	src="<cdn:url value='/resources/js/master/contractor.js?rnd=${app_release_no}'/>"></script>

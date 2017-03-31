@@ -39,9 +39,6 @@
  */
 package org.egov.works.masters.entity;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -52,7 +49,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.validation.Valid;
 
 import org.egov.commons.ContractorGrade;
@@ -62,7 +58,6 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.entity.component.Period;
 import org.egov.infra.persistence.validator.annotation.OptionalPattern;
 import org.egov.infra.persistence.validator.annotation.Required;
-import org.egov.infra.validation.exception.ValidationError;
 import org.egov.works.utils.WorksConstants;
 import org.hibernate.validator.constraints.Length;
 
@@ -105,9 +100,6 @@ public class ContractorDetail extends AbstractAuditable {
     private Period validity;
 
     private String category;
-
-    @Transient
-    private List<ValidationError> errorList;
 
     public Contractor getContractor() {
         return contractor;
@@ -157,51 +149,12 @@ public class ContractorDetail extends AbstractAuditable {
         this.validity = validity;
     }
 
-    public List<ValidationError> getErrorList() {
-        if (errorList != null)
-            return errorList;
-        else
-            return new ArrayList<ValidationError>();
-    }
-
-    public void setErrorList(final List<ValidationError> errorList) {
-        this.errorList = errorList;
-    }
-
     public String getCategory() {
         return category;
     }
 
     public void setCategory(final String category) {
         this.category = category;
-    }
-
-    public List<ValidationError> validate() {
-        final List<ValidationError> validationErrors = getErrorList();
-        if (department == null || department.getId() == null)
-            validationErrors.add(new ValidationError("department", "contractorDetails.department.required"));
-        if (status == null || status.getId() == null)
-            validationErrors.add(new ValidationError("status", "contractorDetails.status.required"));
-        if (validity == null || validity != null && validity.getStartDate() == null)
-            validationErrors.add(new ValidationError("validity", "contractorDetails.fromDate_empty"));
-        else if (validity == null || validity != null && !compareDates(validity.getStartDate(), validity.getEndDate()))
-            validationErrors.add(new ValidationError("validity", "contractorDetails.invalid_fromdate_range"));
-        if (validationErrors.isEmpty())
-            return null;
-        else
-            return validationErrors;
-    }
-
-    public static boolean compareDates(final java.util.Date startDate, final java.util.Date endDate) {
-        if (startDate == null)
-            return false;
-
-        if (endDate == null)
-            return true;
-
-        if (endDate.before(startDate))
-            return false;
-        return true;
     }
 
     @Override

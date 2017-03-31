@@ -37,52 +37,35 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.letterofacceptance.entity;
+package org.egov.works.web.controller.masters;
 
-public class SearchRequestContractor {
-    private String contractorCode;
-    private String nameOfAgency;
-    private Long contractorClass;
-    private Long department;
-    private Integer status;
+import javax.servlet.http.HttpServletRequest;
 
-    public String getContractorCode() {
-        return contractorCode;
+import org.egov.infra.exception.ApplicationException;
+import org.egov.works.letterofacceptance.entity.SearchRequestContractor;
+import org.egov.works.masters.service.ContractorService;
+import org.egov.works.utils.WorksConstants;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
+@Controller
+@RequestMapping(value = "/masters")
+public class SearchContractorController {
+
+    @Autowired
+    private ContractorService contractorService;
+
+    @RequestMapping(value = "/contractor-search", method = RequestMethod.GET)
+    public String searchContractorClass(
+            @ModelAttribute("searchRequestContractor") final SearchRequestContractor searchRequestContractor,
+            final Model model, final HttpServletRequest request) throws ApplicationException {
+        model.addAttribute(WorksConstants.MODE, request.getParameter(WorksConstants.MODE));
+        contractorService.loadModelValues(model);
+        return "searchcontractor";
     }
 
-    public void setContractorCode(final String contractorCode) {
-        this.contractorCode = contractorCode;
-    }
-
-    public String getNameOfAgency() {
-        return nameOfAgency;
-    }
-
-    public void setNameOfAgency(final String nameOfAgency) {
-        this.nameOfAgency = nameOfAgency;
-    }
-
-    public Long getContractorClass() {
-        return contractorClass;
-    }
-
-    public void setContractorClass(final Long contractorClass) {
-        this.contractorClass = contractorClass;
-    }
-
-    public Long getDepartment() {
-        return department;
-    }
-
-    public void setDepartment(final Long department) {
-        this.department = department;
-    }
-
-    public Integer getStatus() {
-        return status;
-    }
-
-    public void setStatus(final Integer status) {
-        this.status = status;
-    }
 }

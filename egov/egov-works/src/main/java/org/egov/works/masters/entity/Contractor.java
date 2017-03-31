@@ -39,7 +39,7 @@
  */
 package org.egov.works.masters.entity;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -59,15 +59,13 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.egov.commons.Bank;
-import org.egov.commons.EgwStatus;
-import org.egov.commons.utils.EntityType;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.OptionalPattern;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.persistence.validator.annotation.Unique;
-import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.regex.Constants;
 import org.egov.works.utils.WorksConstants;
 import org.hibernate.validator.constraints.Length;
@@ -76,12 +74,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "EGW_CONTRACTOR")
-@Unique(fields = { "code" }, id = "id", tableName = "EGW_CONTRACTOR", columnName = {
-        "CODE" }, message = "contractor.code.isunique")
+@Unique(fields = { "code" }, enableDfltMsg = true)
 @NamedQueries({
-        @NamedQuery(name = Contractor.GET_CONTRACTORS_BY_STATUS, query = " select distinct cont from Contractor cont inner join cont.contractorDetails as cd where cd.status.description = ? ") })
+    @NamedQuery(name = Contractor.GET_CONTRACTORS_BY_STATUS, query = " select distinct cont from Contractor cont inner join cont.contractorDetails as cd where cd.status.description = ? ") })
 @SequenceGenerator(name = Contractor.SEQ_EGW_CONTRACTOR, sequenceName = Contractor.SEQ_EGW_CONTRACTOR, allocationSize = 1)
-public class Contractor extends AbstractAuditable implements EntityType {
+public class Contractor extends AbstractAuditable {
 
     private static final long serialVersionUID = 6858362239507609219L;
     public static final String SEQ_EGW_CONTRACTOR = "SEQ_EGW_CONTRACTOR";
@@ -160,13 +157,25 @@ public class Contractor extends AbstractAuditable implements EntityType {
     @Length(max = 10)
     @Column(name = "MOBILE_NUMBER")
     private String mobileNumber;
-
+    
     @JsonIgnore
     @OrderBy("id")
     @OneToMany(mappedBy = "contractor", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = ContractorDetail.class)
-    private List<ContractorDetail> contractorDetails = new LinkedList<ContractorDetail>();
+    private final List<ContractorDetail> contractorDetails = new ArrayList<ContractorDetail>(0);
+
+    @Transient
+    private List<ContractorDetail> tempContractorDetails = new ArrayList<ContractorDetail>(0);
 
     @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
+    }
+
     public String getCode() {
         return code;
     }
@@ -175,7 +184,6 @@ public class Contractor extends AbstractAuditable implements EntityType {
         this.code = code;
     }
 
-    @Override
     public String getName() {
         return name;
     }
@@ -272,101 +280,12 @@ public class Contractor extends AbstractAuditable implements EntityType {
         this.pwdApprovalCode = pwdApprovalCode;
     }
 
-    public List<ContractorDetail> getContractorDetails() {
-        return contractorDetails;
-    }
-
     public ExemptionForm getExemptionForm() {
         return exemptionForm;
     }
 
     public void setExemptionForm(final ExemptionForm exemptionForm) {
         this.exemptionForm = exemptionForm;
-    }
-
-    public void setContractorDetails(final List<ContractorDetail> contractorDetails) {
-        this.contractorDetails = contractorDetails;
-    }
-
-    public void addContractorDetail(final ContractorDetail contractorDetail) {
-        contractorDetails.add(contractorDetail);
-    }
-
-    public List<ValidationError> validate() {
-        List<ValidationError> errorList = null;
-        if (contractorDetails != null && !contractorDetails.isEmpty())
-            for (final ContractorDetail contractorDetail : contractorDetails) {
-                errorList = contractorDetail.validate();
-                if (errorList != null)
-                    return errorList;
-            }
-        return errorList;
-    }
-
-    @Override
-    public String getBankaccount() {
-
-        return bankAccount;
-    }
-
-    @Override
-    public String getBankname() {
-
-        if (bank == null)
-            return "";
-        else
-            return bank.getName();
-    }
-
-    @Override
-    public String getIfsccode() {
-
-        return ifscCode;
-    }
-
-    @Override
-    public String getPanno() {
-
-        return panNumber;
-    }
-
-    @Override
-    public String getTinno() {
-
-        return tinNumber;
-    }
-
-    @Override
-    public String getModeofpay() {
-
-        return null;
-    }
-
-    @Override
-    public Integer getEntityId() {
-        return Integer.valueOf(id.intValue());
-    }
-
-    @Override
-    public String getEntityDescription() {
-
-        return getName();
-    }
-
-    @Override
-    public EgwStatus getEgwStatus() {
-
-        return null;
-    }
-
-    @Override
-    public Long getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(final Long id) {
-        this.id = id;
     }
 
     public String getMobileNumber() {
@@ -376,4 +295,17 @@ public class Contractor extends AbstractAuditable implements EntityType {
     public void setMobileNumber(final String mobileNumber) {
         this.mobileNumber = mobileNumber;
     }
+
+    public List<ContractorDetail> getContractorDetails() {
+        return contractorDetails;
+    }
+
+    public List<ContractorDetail> getTempContractorDetails() {
+        return tempContractorDetails;
+    }
+
+    public void setTempContractorDetails(List<ContractorDetail> tempContractorDetails) {
+        this.tempContractorDetails = tempContractorDetails;
+    }
+
 }

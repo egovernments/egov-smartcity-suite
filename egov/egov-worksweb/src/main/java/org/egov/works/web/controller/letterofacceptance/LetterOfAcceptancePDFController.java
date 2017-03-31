@@ -60,6 +60,7 @@ import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.web.utils.WebUtils;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
+import org.egov.works.masters.entity.Contractor;
 import org.egov.works.utils.WorksUtils;
 import org.egov.works.workorder.entity.WorkOrder;
 import org.egov.works.workorder.entity.WorkOrderActivity;
@@ -121,20 +122,11 @@ public class LetterOfAcceptancePDFController {
             final String cityName = (String) request.getSession().getAttribute("citymunicipalityname");
             reportParams.put("cityName", cityName);
             reportParams.put("workOrderNumber",
-                    workOrder.getWorkOrderNumber() != null ? workOrder.getWorkOrderNumber() : "");
-            reportParams.put("workOrderDate",
-                    workOrder.getWorkOrderDate() != null ? formatter.format(workOrder.getWorkOrderDate()) : "");
+                    workOrder.getWorkOrderNumber() != null ? workOrder.getWorkOrderNumber() : StringUtils.EMPTY);
+            reportParams.put("workOrderDate", workOrder.getWorkOrderDate() != null
+                    ? formatter.format(workOrder.getWorkOrderDate()) : StringUtils.EMPTY);
 
-            reportParams.put("contractorName",
-                    workOrder.getContractor().getName() != null ? workOrder.getContractor().getName() : "");
-            reportParams.put("contractorAddress", workOrder.getContractor().getBankaccount() != null
-                    ? workOrder.getContractor().getCorrespondenceAddress() : "");
-            reportParams.put("panNo",
-                    workOrder.getContractor().getPanNumber() != null ? workOrder.getContractor().getPanNumber() : "");
-            reportParams.put("bank",
-                    workOrder.getContractor().getBank() != null ? workOrder.getContractor().getBank().getName() : "");
-            reportParams.put("accountNo", workOrder.getContractor().getBankaccount() != null
-                    ? workOrder.getContractor().getBankaccount() : "");
+            setReportParamsForContractor(workOrder, reportParams);
             reportParams.put("subject", estimate.getName());
             reportParams.put("modeOfAllotment", StringUtils.isNotBlank(estimate.getModeOfAllotment())
                     ? estimate.getModeOfAllotment() : StringUtils.EMPTY);
@@ -150,7 +142,7 @@ public class LetterOfAcceptancePDFController {
             reportParams.put("tenderFinalizedPercentage", workOrder.getTenderFinalizedPercentage());
             reportParams.put("currDate", sdf.format(new Date()));
             reportParams.put("workValue", estimate.getWorkValue());
-            String technicalSanctionByDesignation = StringUtils.EMPTY;
+            String technicalSanctionByDesignation;
             if (!estimate.getEstimateTechnicalSanctions().isEmpty() && estimate.getEstimateTechnicalSanctions()
                     .get(estimate.getEstimateTechnicalSanctions().size() - 1).getTechnicalSanctionBy() != null)
                 technicalSanctionByDesignation = worksUtils.getUserDesignation(estimate.getEstimateTechnicalSanctions()
@@ -167,6 +159,30 @@ public class LetterOfAcceptancePDFController {
         headers.add("content-disposition", "inline;filename=LetterOfAcceptance.pdf");
         reportOutput = reportService.createReport(reportInput);
         return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
+
+    }
+
+    private void setReportParamsForContractor(final WorkOrder workOrder, final Map<String, Object> reportParams) {
+        final Contractor contractor = workOrder.getContractor();
+        if (contractor != null) {
+            reportParams.put("contractorName", contractor.getName());
+            if (contractor.getCorrespondenceAddress() != null)
+                reportParams.put("contractorAddress", contractor.getCorrespondenceAddress());
+            else
+                reportParams.put("contractorAddress", StringUtils.EMPTY);
+            if (contractor.getPanNumber() != null)
+                reportParams.put("panNo", contractor.getPanNumber());
+            else
+                reportParams.put("panNo", StringUtils.EMPTY);
+            if (contractor.getBank() != null)
+                reportParams.put("bank", contractor.getBank().getName());
+            else
+                reportParams.put("bank", StringUtils.EMPTY);
+            if (contractor.getBankAccount() != null)
+                reportParams.put("accountNo", contractor.getBankAccount());
+            else
+                reportParams.put("accountNo", StringUtils.EMPTY);
+        }
 
     }
 

@@ -37,52 +37,60 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.letterofacceptance.entity;
 
-public class SearchRequestContractor {
-    private String contractorCode;
-    private String nameOfAgency;
-    private Long contractorClass;
-    private Long department;
-    private Integer status;
+$('#btnsearch').click(function(e) {
+	drillDowntableContainer = jQuery("#resultTable");
+	jQuery('.report-section').removeClass('display-hide');
+	reportdatatable = drillDowntableContainer
+		.dataTable({
+			ajax : {
+				url : "/egworks/masters/contractor-searchdetails",
+				type : "POST",
+				"data" : getFormData(jQuery('form'))
+			},
+			"bDestroy" : true,
+			'bAutoWidth': false,
+			"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-xs-3'i><'col-xs-3 col-right'l><'col-xs-3 col-right'<'export-data'T>><'col-xs-3 text-right'p>>",
+			"aLengthMenu" : [ [ 10, 25, 50, -1 ], [ 10, 25, 50, "All" ] ],
+			"oTableTools" : {
+				"sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
+				"aButtons" : []
+			},
+			"fnRowCallback" : function(row, data, index) {
+				$('td:eq(0)', row).html(index + 1);
+				$(row).on(
+						'click',
+						function() {
+							window.open('/egworks/masters/contractor-view/'
+									+ data.contractorId, '',
+									'width=800, height=600');
+						});
+				return row;
+			},
+			aaSorting : [],
+			columns : [{
+				"data" : "",
+				"sClass" : "text-center","width": "2%"
+			}, {
+				"data" : "name",
+			},{
+				"data" : "code",
+			}, {
+				"data" : "class",
+			},{
+				"data" : "status",
+			}]
+		});
+});
 
-    public String getContractorCode() {
-        return contractorCode;
-    }
 
-    public void setContractorCode(final String contractorCode) {
-        this.contractorCode = contractorCode;
-    }
+function getFormData($form) {
+	var unindexed_array = $form.serializeArray();
+	var indexed_array = {};
 
-    public String getNameOfAgency() {
-        return nameOfAgency;
-    }
+	$.map(unindexed_array, function(n, i) {
+		indexed_array[n['name']] = n['value'];
+	});
 
-    public void setNameOfAgency(final String nameOfAgency) {
-        this.nameOfAgency = nameOfAgency;
-    }
-
-    public Long getContractorClass() {
-        return contractorClass;
-    }
-
-    public void setContractorClass(final Long contractorClass) {
-        this.contractorClass = contractorClass;
-    }
-
-    public Long getDepartment() {
-        return department;
-    }
-
-    public void setDepartment(final Long department) {
-        this.department = department;
-    }
-
-    public Integer getStatus() {
-        return status;
-    }
-
-    public void setStatus(final Integer status) {
-        this.status = status;
-    }
+	return indexed_array;
 }

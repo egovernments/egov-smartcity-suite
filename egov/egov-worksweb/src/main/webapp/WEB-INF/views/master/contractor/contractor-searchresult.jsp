@@ -38,20 +38,27 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
-<%@ include file="/includes/taglibs.jsp"%>
-<script src="<cdn:url value='/resources/js/master/contractor.js?rnd=${app_release_no}'/>"></script>
-<html>
-<body onload="replaceExemptionFormChar();">
-<div class="new-page-header"><s:text  name="contractor.viewConractor.view" /></div>
-<s:hidden name="hide" id="hide" value = "%{dropdownData.contractorMasterHiddenFields}" />
-
-<%@ include file='contractor-commonview.jsp'%>
-
-<div class="row text-center">
-	<div class="add-margin">
-		<input type="submit" name="closeButton"	id="closeButton" value="Close" Class="btn btn-default" onclick="window.close();" />
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<div class="row display-hide report-section">
+	<div class="col-md-12 table-header text-left">
+		<spring:message code="title.searchresult" />
+	</div>
+	<div class="col-md-12 form-group report-table-container">
+		<table class="table table-bordered table-hover"
+			id="resultTable">
+			<thead>
+				<tr>
+					<th><spring:message code="lbl.slno" /></th>
+					<th><spring:message code="lbl.contractor.name" /></th>
+					<th><spring:message code="lbl.contractor.code" /></th>
+					<th><spring:message code="lbl.contractorclass" /></th>
+					<th><spring:message code="lbl.status" /></th>
+					<c:if test="${mode != 'view'}"> 
+						<th><spring:message code="lbl.modify" /></th>
+					</c:if>
+				</tr>
+			</thead>
+		</table>
 	</div>
 </div>
-
-</body>
-</html>
