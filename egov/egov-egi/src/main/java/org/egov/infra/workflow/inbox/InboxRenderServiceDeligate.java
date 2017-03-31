@@ -134,7 +134,7 @@ public class InboxRenderServiceDeligate<T extends StateAware> {
 	@ReadOnly
 	public List<StateHistoryModel> getWorkflowHistoryForMS(final Long stateId) {
 		List<Object[]> result = getSession().createSQLQuery(new StringBuilder()
-				.append("select st.id as stateId, st.type as stateType, sh.lastModifiedDate as LastModifiedDate, sh.senderName as senderName, sh.natureOfTask as natureOfTask, sh.value as value, sh.nextAction as nextAction, sh.comments as comments from public.eg_wf_state_history sh,public.eg_wf_states st where st.id = sh.state_id and sh.state_id =:stateId")
+				.append("select st.id as stateId, st.type as stateType, sh.lastModifiedDate as LastModifiedDate, sh.senderName as senderName, sh.natureOfTask as natureOfTask, sh.value as value, sh.nextAction as nextAction, sh.comments as comments from microservice.eg_wf_state_history sh,microservice.eg_wf_states st where st.id = sh.state_id and sh.state_id =:stateId")
 				.toString()).setLong("stateId", stateId).list();
 		return populateHistory(result);
 	}
