@@ -196,6 +196,7 @@
         <url-pattern>/egf-masters/*</url-pattern>
         <url-pattern>/demand-services/*</url-pattern>
         <url-pattern>/asset-services/*</url-pattern>
+ 	<url-pattern>/asset-web/*</url-pattern>
         <url-pattern>/egov-workflows/*</url-pattern>
         <url-pattern>/hr-attendance/*</url-pattern>
         <url-pattern>/hr-employee/*</url-pattern>
