@@ -61,7 +61,10 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.Bank;
+import org.egov.commons.EgwStatus;
+import org.egov.commons.utils.EntityType;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.OptionalPattern;
 import org.egov.infra.persistence.validator.annotation.Required;
@@ -76,9 +79,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Table(name = "EGW_CONTRACTOR")
 @Unique(fields = { "code" }, enableDfltMsg = true)
 @NamedQueries({
-    @NamedQuery(name = Contractor.GET_CONTRACTORS_BY_STATUS, query = " select distinct cont from Contractor cont inner join cont.contractorDetails as cd where cd.status.description = ? ") })
+        @NamedQuery(name = Contractor.GET_CONTRACTORS_BY_STATUS, query = " select distinct cont from Contractor cont inner join cont.contractorDetails as cd where cd.status.description = ? ") })
 @SequenceGenerator(name = Contractor.SEQ_EGW_CONTRACTOR, sequenceName = Contractor.SEQ_EGW_CONTRACTOR, allocationSize = 1)
-public class Contractor extends AbstractAuditable {
+public class Contractor extends AbstractAuditable implements EntityType {
 
     private static final long serialVersionUID = 6858362239507609219L;
     public static final String SEQ_EGW_CONTRACTOR = "SEQ_EGW_CONTRACTOR";
@@ -157,7 +160,7 @@ public class Contractor extends AbstractAuditable {
     @Length(max = 10)
     @Column(name = "MOBILE_NUMBER")
     private String mobileNumber;
-    
+
     @JsonIgnore
     @OrderBy("id")
     @OneToMany(mappedBy = "contractor", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = ContractorDetail.class)
@@ -176,6 +179,7 @@ public class Contractor extends AbstractAuditable {
         this.id = id;
     }
 
+    @Override
     public String getCode() {
         return code;
     }
@@ -184,6 +188,7 @@ public class Contractor extends AbstractAuditable {
         this.code = code;
     }
 
+    @Override
     public String getName() {
         return name;
     }
@@ -304,8 +309,57 @@ public class Contractor extends AbstractAuditable {
         return tempContractorDetails;
     }
 
-    public void setTempContractorDetails(List<ContractorDetail> tempContractorDetails) {
+    public void setTempContractorDetails(final List<ContractorDetail> tempContractorDetails) {
         this.tempContractorDetails = tempContractorDetails;
+    }
+
+    @Override
+    public String getBankname() {
+        if (bank == null)
+            return StringUtils.EMPTY;
+        else
+            return bank.getName();
+
+    }
+
+    @Override
+    public String getBankaccount() {
+        return bankAccount;
+    }
+
+    @Override
+    public String getPanno() {
+        return panNumber;
+    }
+
+    @Override
+    public String getTinno() {
+        return tinNumber;
+    }
+
+    @Override
+    public String getIfsccode() {
+        return ifscCode;
+    }
+
+    @Override
+    public String getModeofpay() {
+        return null;
+    }
+
+    @Override
+    public Integer getEntityId() {
+        return Integer.valueOf(id.intValue());
+    }
+
+    @Override
+    public String getEntityDescription() {
+        return getName();
+    }
+
+    @Override
+    public EgwStatus getEgwStatus() {
+        return null;
     }
 
 }

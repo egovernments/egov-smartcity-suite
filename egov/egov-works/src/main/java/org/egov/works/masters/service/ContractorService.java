@@ -53,9 +53,11 @@ import org.egov.commons.Accountdetailkey;
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.dao.AccountdetailkeyHibernateDAO;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
+import org.egov.commons.service.EntityTypeService;
 import org.egov.egf.commons.bank.service.CreateBankService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.works.autonumber.ContractorCodeGenerator;
 import org.egov.works.config.properties.WorksApplicationProperties;
 import org.egov.works.letterofacceptance.entity.SearchRequestContractor;
@@ -78,7 +80,7 @@ import org.springframework.ui.Model;
 
 @Service("contractorService")
 @Transactional(readOnly = true)
-public class ContractorService {
+public class ContractorService implements EntityTypeService {
 
     @Autowired
     private WorksService worksService;
@@ -118,6 +120,7 @@ public class ContractorService {
         return contractorRepository.findOne(contractorId);
     }
 
+    @Override
     public List<Contractor> getAllActiveEntities(final Integer accountDetailTypeId) {
         final Query query = entityManager
                 .createQuery("select distinct contractorDet.contractor from ContractorDetail contractorDet "
@@ -128,6 +131,7 @@ public class ContractorService {
         return list;
     }
 
+    @Override
     public List<Contractor> filterActiveEntities(final String filterKey, final int maxRecords,
             final Integer accountDetailTypeId) {
         List<Contractor> contractorList = null;
@@ -313,6 +317,30 @@ public class ContractorService {
     @Transactional
     public Contractor update(final Contractor contractor) {
         return contractorRepository.save(contractor);
+    }
+
+    @Override
+    public List getAssetCodesForProjectCode(final Integer accountdetailkey) throws ValidationException {
+        return null;
+    }
+
+    @Override
+    public List<Contractor> validateEntityForRTGS(final List<Long> idsList) throws ValidationException {
+
+        final Query entitysQuery = entityManager
+                .createQuery(" from Contractor where panNumber is null or bank is null and id in ( :IDS )");
+        entitysQuery.setParameter("IDS", idsList);
+        return entitysQuery.getResultList();
+
+    }
+
+    @Override
+    public List<Contractor> getEntitiesById(final List<Long> idsList) throws ValidationException {
+
+        final Query entitysQuery = entityManager.createQuery(" from Contractor where id in ( :IDS )");
+        entitysQuery.setParameter("IDS", idsList);
+        return entitysQuery.getResultList();
+
     }
 
 }
