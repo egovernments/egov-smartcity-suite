@@ -102,7 +102,7 @@ public class StateService {
 		String tenantId = ApplicationThreadLocals.getTenantID();
 		List<Object[]> result = getSession()
 				.createSQLQuery(new StringBuilder()
-						.append("select state.id as id , state.type as type , state.value as value ,state.comments as comments ,state.createdDate as createdDate,state.natureofTask as natureOfTask, state.extraInfo as extraInfo,state.senderName as senderName, state.myLinkId as myLinkId from public.eg_wf_states state where state.tenantid =:tenantId and state.type in (:types) and state.owner_pos in(:ownerIds) and state.status <> 2 and not(state.status = 0 and state.createdby =:createdBy) order by state.createddate desc")
+						.append("select state.id as id , state.type as type , state.value as value ,state.comments as comments ,state.createdDate as createdDate,state.natureofTask as natureOfTask, state.extraInfo as extraInfo,state.senderName as senderName, state.myLinkId as myLinkId from microservice.eg_wf_states state where state.tenantid =:tenantId and state.type in (:types) and state.owner_pos in(:ownerIds) and state.status <> 2 and not(state.status = 0 and state.createdby =:createdBy) order by state.createddate desc")
 						.toString())
 				.setParameterList("types", types).setParameterList("ownerIds", ownerIds).setLong("createdBy", userId)
 				.setString("tenantId", tenantId).list();
