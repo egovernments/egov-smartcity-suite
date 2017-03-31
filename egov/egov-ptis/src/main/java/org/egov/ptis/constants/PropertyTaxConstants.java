@@ -876,11 +876,11 @@ public interface PropertyTaxConstants {
     };
 
     public static final String GLCODE_FOR_TAXREBATE = "2202103";// 2801002
-    public static final String GLCODE_FOR_PENALTY = "1402002";// 1402001,
+    public static final String GLCODE_FOR_PENALTY = "1402010";// 1402001,1402002
     // 4314208
 
     public static final String GLCODE_FOR_ADVANCE_REBATE = "4314209";
-    public static final String GLCODE_FOR_ADVANCE = "3504102";
+    public static final String GLCODE_FOR_ADVANCE = "3504101";//3504102
 
     public static final BigDecimal FIRST_REBATETAX_PERC = new BigDecimal("4");
     public static final BigDecimal SECOND_REBATETAX_PERC = new BigDecimal("2");
