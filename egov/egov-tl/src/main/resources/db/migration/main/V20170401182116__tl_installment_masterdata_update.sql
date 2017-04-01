@@ -1,0 +1,2 @@
+--Installment for 18-19
+Insert into eg_installment_master (ID,INSTALLMENT_NUM,INSTALLMENT_YEAR,START_DATE,END_DATE,ID_MODULE,LASTUPDATEDTIMESTAMP, DESCRIPTION,INSTALLMENT_TYPE) values (nextval('SEQ_EG_INSTALLMENT_MASTER'),201804,to_date('01-04-18','DD-MM-YY'),to_date('01-04-18','DD-MM-YY'),to_date('31-03-19','DD-MM-YY'), (select id from eg_module where name = 'Trade License' and parentmodule is null), current_timestamp,'TL/18-19','Yearly');
