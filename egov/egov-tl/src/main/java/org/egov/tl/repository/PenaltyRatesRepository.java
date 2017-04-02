@@ -50,8 +50,9 @@ import java.util.List;
 
 @Repository
 public interface PenaltyRatesRepository extends JpaRepository<PenaltyRates, Long> {
+
     @Query("select pr from PenaltyRates pr where pr.fromRange < :days and pr.toRange >= :days and pr.licenseAppType = :licenseAppType ")
-    PenaltyRates findByDaysAndLicenseAppType(@Param("days") Long days, @Param("licenseAppType") LicenseAppType licenseAppType);
+    PenaltyRates findByDaysAndLicenseAppType(@Param("days") Integer days, @Param("licenseAppType") LicenseAppType licenseAppType);
 
     List<PenaltyRates> findByLicenseAppTypeIdOrderByIdAsc(Long licenseAppTypeId);
 }

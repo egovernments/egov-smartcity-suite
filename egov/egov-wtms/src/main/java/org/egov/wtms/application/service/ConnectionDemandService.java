@@ -630,7 +630,7 @@ public class ConnectionDemandService {
             installemntStartDate = new Date();
 
         final CFinancialYear finYear = financialYearDAO.getFinancialYearByDate(new Date());
-        numberOfMonths = DateUtils.noOfMonths(installemntStartDate, finYear.getEndingDate());
+        numberOfMonths = DateUtils.noOfMonthsBetween(installemntStartDate, finYear.getEndingDate());
         if (numberOfMonths >= 6)
             installmentList = waterTaxUtils.getInstallmentsForCurrYear(finYear.getStartingDate());
         else
@@ -648,7 +648,7 @@ public class ConnectionDemandService {
                                 .equalsIgnoreCase(demandDtls.getEgDemandReason().getEgInstallmentMaster().getDescription()))
                     existingDemandDtlObject = demandDtls;
 
-            final Integer noofmonths = DateUtils.noOfMonths(installemntStartDate, instlment.getToDate());
+            final Integer noofmonths = DateUtils.noOfMonthsBetween(installemntStartDate, instlment.getToDate());
             if (existingDemandDtlObject == null) {
                 if (null != waterRatesDetails) {
                     if (noofmonths > 0)

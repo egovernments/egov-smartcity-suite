@@ -43,7 +43,6 @@ package org.egov.tl.service;
 import org.egov.tl.entity.LicenseAppType;
 import org.egov.tl.repository.LicenseAppTypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -62,8 +61,8 @@ public class LicenseAppTypeService {
         return licenseAppTypeRepository.findByName(name);
     }
 
-    public List<LicenseAppType> getLicenseAppTypes() {
-        return licenseAppTypeRepository.findAll(new Sort(Sort.Direction.ASC, "name"));
+    public List<LicenseAppType> findAllLicenseAppType() {
+        return licenseAppTypeRepository.findByDisplayTrueOrderByNameAsc();
     }
 
     public LicenseAppType getNewLicenseAppType() {

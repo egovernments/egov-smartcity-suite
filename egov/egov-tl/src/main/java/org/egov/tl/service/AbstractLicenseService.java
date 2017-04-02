@@ -40,35 +40,6 @@
 
 package org.egov.tl.service;
 
-import static java.math.BigDecimal.ZERO;
-import static org.egov.tl.utils.Constants.APPLICATION_STATUS_CREATED_CODE;
-import static org.egov.tl.utils.Constants.BUTTONAPPROVE;
-import static org.egov.tl.utils.Constants.BUTTONREJECT;
-import static org.egov.tl.utils.Constants.CLOSURE_NATUREOFTASK;
-import static org.egov.tl.utils.Constants.CSCOPERATOR;
-import static org.egov.tl.utils.Constants.DELIMITER_COLON;
-import static org.egov.tl.utils.Constants.GENERATECERTIFICATE;
-import static org.egov.tl.utils.Constants.JA_DESIGNATION;
-import static org.egov.tl.utils.Constants.LICENSE_FEE_TYPE;
-import static org.egov.tl.utils.Constants.LICENSE_STATUS_ACKNOWLEDGED;
-import static org.egov.tl.utils.Constants.NEW_NATUREOFWORK;
-import static org.egov.tl.utils.Constants.PUBLIC_HEALTH_DEPT;
-import static org.egov.tl.utils.Constants.RC_DESIGNATION;
-import static org.egov.tl.utils.Constants.RENEWAL_NATUREOFWORK;
-import static org.egov.tl.utils.Constants.TRADELICENSEMODULE;
-import static org.egov.tl.utils.Constants.WF_STATE_SANITORY_INSPECTOR_APPROVAL_PENDING;
-import static org.egov.tl.utils.Constants.WORKFLOW_STATE_REJECTED;
-
-import java.io.File;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.egov.commons.Installment;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.dao.InstallmentHibDao;
@@ -113,6 +84,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.io.File;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static java.math.BigDecimal.ZERO;
+import static org.egov.tl.utils.Constants.*;
 
 @Transactional(readOnly = true)
 public abstract class AbstractLicenseService<T extends License> {
@@ -619,8 +603,8 @@ public abstract class AbstractLicenseService<T extends License> {
                         feeByTypes.put(ARREAR, feeByTypes.get(ARREAR).add(demandAmount));
                         // Calculate penalty by passing installment startdate and end of dec 31st date of previous installment
                         // dates using penalty master.
-                        final BigDecimal penaltyAmt = penaltyRatesService.calculatePenalty(installmentYear.getFromDate(),
-                                endDateOfPreviousFinancialYear, demandAmount, license);
+                        final BigDecimal penaltyAmt = penaltyRatesService.calculatePenalty(license, installmentYear.getFromDate(),
+                                endDateOfPreviousFinancialYear, demandAmount);
                         feeByTypes.put(PENALTY, feeByTypes.get(PENALTY).add(penaltyAmt));
                     }
                 outstandingFee.put(demandReason, feeByTypes);

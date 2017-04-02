@@ -39,58 +39,40 @@
  */
 package org.egov.tl.service;
 
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
-
+import org.egov.infra.utils.DateUtils;
 import org.egov.tl.entity.License;
 import org.egov.tl.entity.LicenseAppType;
 import org.egov.tl.entity.PenaltyRates;
-import org.egov.tl.repository.LicenseAppTypeRepository;
 import org.egov.tl.repository.PenaltyRatesRepository;
-import org.joda.time.Days;
-import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
 public class PenaltyRatesService {
 
-    private final PenaltyRatesRepository penaltyRatesRepository;
-
-    private final LicenseAppTypeRepository licenseAppTypeRepository;
-
     @Autowired
-    public PenaltyRatesService(final PenaltyRatesRepository penaltyRatesRepository,
-                               final LicenseAppTypeRepository licenseAppTypeRepository) {
-        this.penaltyRatesRepository = penaltyRatesRepository;
-        this.licenseAppTypeRepository = licenseAppTypeRepository;
-    }
+    private PenaltyRatesRepository penaltyRatesRepository;
 
-    public PenaltyRates findByDaysAndLicenseAppType(final Long days, final LicenseAppType licenseAppType) {
+    public PenaltyRates findByDaysAndLicenseAppType(Integer days, LicenseAppType licenseAppType) {
         return penaltyRatesRepository.findByDaysAndLicenseAppType(days, licenseAppType);
     }
 
-    public List<LicenseAppType> findAllLicenseAppType() {
-        return licenseAppTypeRepository.findByDisplayTrueOrderByNameAsc();
-    }
-
-    public PenaltyRates findOne(final Long id) {
+    public PenaltyRates findOne(Long id) {
         return penaltyRatesRepository.findOne(id);
     }
 
-    public LicenseAppType findByLicenseAppType(final Long licenseAppId) {
-        return licenseAppTypeRepository.findOne(licenseAppId);
-    }
-
     @Transactional
-    public List<PenaltyRates> create(final List<PenaltyRates> penaltyRates) {
+    public List<PenaltyRates> create(List<PenaltyRates> penaltyRates) {
         return penaltyRatesRepository.save(penaltyRates);
     }
 
-    public List<PenaltyRates> search(final Long licenseAppType) {
+    public List<PenaltyRates> search(Long licenseAppType) {
         if (licenseAppType != null)
             return penaltyRatesRepository.findByLicenseAppTypeIdOrderByIdAsc(licenseAppType);
         else
@@ -98,17 +80,14 @@ public class PenaltyRatesService {
     }
 
     @Transactional
-    public void delete(final PenaltyRates penaltyRates) {
+    public void delete(PenaltyRates penaltyRates) {
         penaltyRatesRepository.delete(penaltyRates);
     }
 
-    public BigDecimal calculatePenalty(final Date commencementDate, final Date penaltyCalculationEndDate, final BigDecimal amount, License license) {
-        if (commencementDate != null) {
-            final int paymentDueDays = Days
-                    .daysBetween(new LocalDate(commencementDate.getTime()), new LocalDate(penaltyCalculationEndDate.getTime()))
-                    .getDays();
-            final PenaltyRates penaltyRates = findByDaysAndLicenseAppType(Long.valueOf(paymentDueDays),
-                    license.getLicenseAppType());
+    public BigDecimal calculatePenalty(License license, Date fromDate, Date toDate, BigDecimal amount) {
+        if (fromDate != null) {
+            int paymentDueDays = DateUtils.daysBetween(fromDate, toDate);
+            PenaltyRates penaltyRates = findByDaysAndLicenseAppType(paymentDueDays, license.getLicenseAppType());
             if (penaltyRates == null) {
                 return BigDecimal.ZERO;
             }

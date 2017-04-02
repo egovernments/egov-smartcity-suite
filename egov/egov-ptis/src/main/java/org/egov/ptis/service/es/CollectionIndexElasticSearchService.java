@@ -64,11 +64,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.MONTH;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_EWSHS;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_TAX_INDEX_NAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.WEEK;
-import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_RESIDENTIAL;
-import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_NON_RESIDENTIAL;
-import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_MIXED;
-import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_STATE_GOVT;
-import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_CENTRAL_GOVT;
 import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_USAGE_TYPE_ALL;
 
 import java.math.BigDecimal;
@@ -561,7 +556,7 @@ public class CollectionIndexElasticSearchService {
             fromDate = DateUtils.startOfDay(financialYear.getStartingDate());
             toDate = DateUtils.addDays(new Date(), 1);
         }
-        noOfMonths = DateUtils.noOfMonths(fromDate, toDate) + 1;
+        noOfMonths = DateUtils.noOfMonthsBetween(fromDate, toDate) + 1;
 
         Map<String, BigDecimal> cytdCollMap = getCollectionAndDemandValues(collectionDetailsRequest, fromDate, toDate,
                 COLLECTION_INDEX_NAME, TOTAL_AMOUNT, aggregationField);

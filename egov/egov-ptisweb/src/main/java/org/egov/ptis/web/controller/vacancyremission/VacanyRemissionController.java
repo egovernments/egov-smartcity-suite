@@ -408,7 +408,7 @@ public class VacanyRemissionController extends GenericWorkFlowController {
     private void validateDates(final VacancyRemission vacancyRemission, final BindingResult errors,
             final HttpServletRequest request) {
 
-        final int noOfMonths = DateUtils.noOfMonths(vacancyRemission.getVacancyFromDate(),
+        final int noOfMonths = DateUtils.noOfMonthsBetween(vacancyRemission.getVacancyFromDate(),
                 vacancyRemission.getVacancyToDate());
         if (noOfMonths < 6)
             errors.rejectValue("vacancyToDate", "vacancyToDate.incorrect");

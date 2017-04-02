@@ -210,7 +210,7 @@ public class PropertyTaxElasticSearchIndexService {
         LOGGER.debug("Time taken by getTotalDemandBasedOnInputFilters() is : " + timeTaken + MILLISECS);
 
         startTime = System.currentTimeMillis();
-        int noOfMonths = DateUtils.noOfMonths(fromDate, toDate) + 1;
+        int noOfMonths = DateUtils.noOfMonthsBetween(fromDate, toDate) + 1;
         collectionIndexDetails.setTotalDmd(totalDemand);
 
         // Proportional Demand = (totalDemand/12)*noOfmonths
@@ -455,7 +455,7 @@ public class PropertyTaxElasticSearchIndexService {
                 taxDetail.setUlbName(fieldName);
             
             // Proportional Demand = (totalDemand/12)*noOfmonths
-            int noOfMonths = DateUtils.noOfMonths(fromDate, toDate) + 1;
+            int noOfMonths = DateUtils.noOfMonthsBetween(fromDate, toDate) + 1;
             totalDemandAggregation = entry.getAggregations().get(TOTALDEMAND);
             totalCollectionAggregation = entry.getAggregations().get(TOTAL_COLLECTION);
             arrearDmd = entry.getAggregations().get(ARREAR_DMD_STR);

@@ -80,6 +80,7 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.Position;
 import org.egov.tl.entity.License;
 import org.egov.tl.entity.LicenseDemand;
+import org.egov.tl.service.PenaltyRatesService;
 import org.egov.tl.service.TradeLicenseSmsAndEmailService;
 import org.egov.tl.service.es.LicenseApplicationIndexService;
 import org.egov.tl.utils.Constants;
@@ -115,17 +116,17 @@ import static org.egov.tl.utils.Constants.CHQ_BOUNCE_PENALTY;
 import static org.egov.tl.utils.Constants.DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY;
 import static org.egov.tl.utils.Constants.DEMANDRSN_STR_CHQ_BOUNCE_PENALTY;
 import static org.egov.tl.utils.Constants.DMD_STATUS_CHEQUE_BOUNCED;
+import static org.egov.tl.utils.Constants.LICENSE_FEE_TYPE;
 import static org.egov.tl.utils.Constants.PENALTY_DMD_REASON_CODE;
 import static org.egov.tl.utils.Constants.TL_SERVICE_CODE;
 import static org.egov.tl.utils.Constants.TRADELICENSE;
 import static org.egov.tl.utils.Constants.TRADE_LICENSE;
-import static org.egov.tl.utils.Constants.LICENSE_FEE_TYPE;
 
 @Service
 @Transactional(readOnly = true)
 public class LicenseBillService extends BillServiceInterface implements BillingIntegrationService {
-    private static final String TL_FUNCTION_CODE = "1500";
     private static final Logger LOG = LoggerFactory.getLogger(LicenseBillService.class);
+    private static final String TL_FUNCTION_CODE = "1500";
 
     @Autowired
     private EgBillDetailsDao egBillDetailsDao;
@@ -169,6 +170,9 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
     private LicenseUtils licenseUtils;
 
     @Autowired
+    private PenaltyRatesService penaltyRatesService;
+
+    @Autowired
     private LicenseNumberUtils licenseNumberUtils;
 
     @Transactional
@@ -180,7 +184,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
         licenseBill.setModule(licenseUtils.getModule(TRADE_LICENSE));
         licenseBill.setBillType(egBillDao.getBillTypeByCode(BILL_TYPE_AUTO));
         licenseBill.setDepartmentCode(licenseUtils.getDepartmentCodeForBillGenerate());
-        licenseBill.setLicenseUtils(licenseUtils);
+        licenseBill.setPenaltyRatesService(penaltyRatesService);
         licenseBill.setUserId(ApplicationThreadLocals.getUserId() == null ?
                 securityUtils.getCurrentUser().getId() : ApplicationThreadLocals.getUserId());
         licenseBill.setReferenceNumber(licenseNumberUtils.generateBillNumber());
@@ -923,7 +927,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
                 }
                 final BigDecimal demandAmount = demandDetail.getAmount().subtract(demandDetail.getAmtCollected());
                 feeByTypes.put(demandReason, demandAmount.setScale(0, RoundingMode.HALF_UP));
-                BigDecimal penaltyAmt = licenseUtils.calculatePenalty(license, fromDate, new Date(), demandAmount);
+                BigDecimal penaltyAmt = penaltyRatesService.calculatePenalty(license, fromDate, new Date(), demandAmount);
                 if (penaltyAmt.compareTo(ZERO) > 0)
                     feeByTypes.put("Penalty", penaltyAmt.setScale(0, RoundingMode.HALF_UP));
                 outstandingFee.put(installmentYear.getDescription(), feeByTypes);

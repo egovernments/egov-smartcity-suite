@@ -48,8 +48,8 @@ import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.tl.entity.License;
+import org.egov.tl.service.PenaltyRatesService;
 import org.egov.tl.utils.Constants;
-import org.egov.tl.utils.LicenseUtils;
 import org.joda.time.LocalDate;
 
 import java.math.BigDecimal;
@@ -76,7 +76,7 @@ public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalcu
     private Long userId;
     private Module module;
     private EgBillType billType;
-    private LicenseUtils licenseUtils;
+    private PenaltyRatesService penaltyRatesService;
 
     public License getLicense() {
         return license;
@@ -86,8 +86,8 @@ public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalcu
         this.license = license;
     }
 
-    public void setLicenseUtils(LicenseUtils licenseUtils) {
-        this.licenseUtils = licenseUtils;
+    public void setPenaltyRatesService(PenaltyRatesService penaltyRatesService) {
+        this.penaltyRatesService = penaltyRatesService;
     }
 
     public void setModuleName(String moduleName) {
@@ -284,7 +284,7 @@ public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalcu
 
     @Override
     public BigDecimal calculatePenalty(Date commencementDate, Date collectionDate, BigDecimal amount) {
-        return licenseUtils.calculatePenalty(license, commencementDate, collectionDate, amount);
+        return penaltyRatesService.calculatePenalty(license, commencementDate, collectionDate, amount);
     }
 
     @Override

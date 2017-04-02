@@ -921,12 +921,12 @@ public class WaterConnectionDetailsService {
                                 || stateHistory.getValue().equals(WaterTaxConstants.APPLICATION_STATUS_RE_CONN))
                             applicationDate = stateHistory.getLastModifiedDate();
                     if (applicationDate != null)
-                        elapsedDays = DateUtils.noOfDays(applicationDate, waterConnectionDetails.getLastModifiedDate());
+                        elapsedDays = DateUtils.daysBetween(applicationDate, waterConnectionDetails.getLastModifiedDate());
                     applicationIndex.setElapsedDays(elapsedDays);
                 }
                 if (waterConnectionDetails.getStatus().getCode()
                         .equals(WaterTaxConstants.APPLICATION_STATUS_SANCTIONED))
-                    applicationIndex.setElapsedDays(DateUtils.noOfDays(waterConnectionDetails.getApplicationDate(),
+                    applicationIndex.setElapsedDays(DateUtils.daysBetween(waterConnectionDetails.getApplicationDate(),
                             waterConnectionDetails.getExecutionDate()));
                 if (waterConnectionDetails.getStatus().getCode()
                         .equals(WaterTaxConstants.APPLICATION_STATUS__RECONNCTIONSANCTIONED)
