@@ -247,8 +247,8 @@ public class DemandNoticeController {
             // Eg: 31/03/2016 vs 31/01/2016 days penalty 0%
             // 31/03/2016 vs 29/02/2016 days penalty 0%
             // 31/03/2016 vs 31/03/2016 days penalty 25%
-            BigDecimal penaltyAmt = penaltyRatesService.calculatePenalty(previousInstallmentEndDate,
-                    monthEndDate, currLicenseFee, license);
+            BigDecimal penaltyAmt = penaltyRatesService.calculatePenalty(license, previousInstallmentEndDate,
+                    monthEndDate, currLicenseFee);
 
             demandBillDtl.setMonth(monthMap.get(i).concat(", ").concat(installmentYear));
             demandBillDtl.setArrersWithPenalty(arrLicenseFee.add(arrLicensePenalty));
