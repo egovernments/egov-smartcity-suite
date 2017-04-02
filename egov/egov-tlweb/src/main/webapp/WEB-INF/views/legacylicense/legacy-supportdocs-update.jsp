@@ -95,7 +95,7 @@
 			</c:choose>
 			<c:forEach items="${tradeLicense.documents[stat.index].files}" var="getdocuments">
 				<a href="javascript:viewDocument('<c:out value="${getdocuments.fileStoreId}"/>')">
-					<c:out value="${getdocuments.fileName}" /></a>
+					<c:out value="${getdocuments.fileName}" /></a><br/>
 			</c:forEach> 
 			<form:errors name="documents[${stat.index}].files" class="add-margin error-msg" />
 			</div>

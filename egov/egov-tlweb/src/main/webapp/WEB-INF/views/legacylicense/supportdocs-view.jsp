@@ -85,7 +85,7 @@
 					var="getdocuments">
 					<a href="javascript:viewDocument('<c:out value="${getdocuments.fileStoreId}"/>')">
 						<c:out value="${getdocuments.fileName}" />
-					</a>
+					</a><br/>
 				</c:forEach> </else>
 			</div>
 			<div class="col-md-3 col-xs-3">

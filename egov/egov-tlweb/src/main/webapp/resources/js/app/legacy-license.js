@@ -70,14 +70,16 @@ $(document).ready(function() {
 
 });
 
-jQuery('form').validate({
+$('form').validate({
     ignore: ".ignore",
     invalidHandler: function(e, validator){
         if(validator.errorList.length)
           $('#settingstab a[href="#' + 
-        		  jQuery(validator.errorList[0].element).closest(".tab-pane").attr('id') + '"]').tab('show');
+        		  $(validator.errorList[0].element).closest(".tab-pane").attr('id') + '"]').tab('show');
+					validator.errorList[0].element.focus();
     }
 });
+
 
 function applicationdate(){
 	

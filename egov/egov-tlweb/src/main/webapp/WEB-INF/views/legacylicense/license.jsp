@@ -45,11 +45,11 @@
 <script>
     $(document).ready(function () {
 
-        <c:if test="%{hasErrors() || mode=='view' || mode=='edit'}">
+      /*   <c:if test="%{hasErrors()}"> 
         if ($('#subCategory').val() != '-1') {
             getUom();
         }
-        </c:if>
+     		  </c:if> */ 
     });
 
 </script>
@@ -134,24 +134,27 @@
 </div>
 
 <div class="form-group">
-	<label class="col-sm-3 control-label text-right"><spring:message
-			code='license.remarks' /></label>
-	<div class="col-sm-3 add-margin">
-		<form:input path="remarks" id="remarks" value="${remarks}"
-			maxlength="250" class="form-control" />
-		<form:errors path="remarks" cssClass="error-msg" />
-	</div>
-
-	<label class="col-sm-2 control-label text-right"><spring:message
-			code='license.startdate' /><span class="mandatory"></span></label>
-	<div class="col-sm-3 add-margin">
-		<fmt:formatDate type="date" value="${commencementDate}"
-			pattern="dd/MM/yyyy" var="commencementDateFrmttd" />
-		<form:input path="commencementDate" id="startDate"
-			value="${commencementDateFrmttd}" format="dd/MM/yyyy"
-			class="form-control datepicker" required="true" maxlength="10" />
-		<form:errors path="commencementDate" cssClass="error-msg" />
-	</div>
+		<label class="col-sm-3 control-label text-right"><spring:message
+				code='license.remarks' /></label>
+		<div class="col-sm-3 add-margin">
+			<form:input path="remarks" id="remarks" value="${remarks}"
+				maxlength="250" class="form-control" />
+			<form:errors path="remarks" cssClass="error-msg" />
+		</div>
+	
+		<label class="col-sm-2 control-label text-right">
+			<spring:message code='license.startdate' /><span class="mandatory"></span>
+		</label>
+		<div class="col-sm-3 add-margin">
+			<fmt:formatDate type="date" value="${commencementDate}"
+				pattern="dd/MM/yyyy" var="commencementDateFrmttd" />
+			<form:input path="commencementDate" id="startDate"
+				value="${commencementDateFrmttd}" 
+				format="dd/MM/yyyy"
+				class="form-control datepicker"
+				data-date-end-date="0d" required="true" maxlength="10" />
+			<form:errors path="commencementDate" cssClass="error-msg" />
+		</div>
 </div>
 
 <c:set value="${outstandingFee}" var="feeInfo" target="stat" />
@@ -181,8 +184,9 @@
 	</table>
 </c:if>
 <div class="form-group">
-	<label class="col-sm-3 control-label text-right"><spring:message
-			code='license.traderCheckbox.lbl' /></label>
+	<label class="col-sm-3 control-label text-right">
+		<spring:message code='license.traderCheckbox.lbl' />
+	</label>
 	<div class="col-sm-3 add-margin">
 	     <c:if test="${tradeLicense.agreementDate !=null}">
 			<c:set value="${true}" var="showdetail"/>
@@ -203,13 +207,15 @@
 
 	<div class="form-group">
 		<label class="col-sm-3 control-label text-right"><spring:message
-				code='license.agreementDate.lbl' /><span class="mandatory"></span></label>
+				code='license.agreementDate.lbl' /><span class="mandatory"></span>
+		</label>
 		<div class="col-sm-3 add-margin">
 			<fmt:formatDate type="date" value="${trdaeLicense.agreementDate}"
 				pattern="dd/MM/yyyy" var="agreementDateFrmttd" />
 			<form:input path="agreementDate" id="agreementDate"
-				value="${agreementDateFrmttd}" Class="form-control datepicker"
-				data-date-end-date="0d" maxlength="10" />
+				value="${agreementDateFrmttd}" 
+				Class="form-control datepicker"
+				data-date-end-date="-1d" maxlength="10" />
 			<form:errors path="agreementDate" cssClass="error-msg" />
 		</div>
 

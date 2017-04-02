@@ -42,6 +42,7 @@ package org.egov.tl.service;
 import static java.math.BigDecimal.ZERO;
 import static org.egov.tl.utils.Constants.LICENSE_STATUS_ACTIVE;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Date;
@@ -58,6 +59,7 @@ import org.egov.demand.dao.DemandGenericHibDao;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.ModuleService;
+import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.utils.FileStoreUtils;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.tl.entity.License;
@@ -106,6 +108,9 @@ public class LegacyLicenseService {
 
     @Autowired
     protected TradeLicenseService tradeLicenseService;
+    
+    @Autowired
+    protected FileStoreService fileStoreService;
 
     @Transactional
     public void createLegacy(final TradeLicense license) {
@@ -279,15 +284,17 @@ public class LegacyLicenseService {
         licenseDemand.recalculateBaseDemand();
     }
 
-    public void storeDocument(final License license, final MultipartFile[] files) {
-        final List<LicenseDocument> documents = license.getDocuments();
-        if (files != null)
+    public void storeDocument(final License license, final MultipartFile[] files) throws IOException {
+        final List<LicenseDocument> documents  = license.getDocuments();
+                if (files != null)
             for (int i = 0; i < files.length; i++) {
                 documents.get(i).setType(licenseDocumentTypeRepository.findOne(documents.get(i).getType().getId()));
-
                 if (!files[i].isEmpty()) {
-                    documents.get(i).getFiles().addAll(fileStoreUtils.addToFileStore(files, "EGTL"));
-
+                    documents.get(i).getFiles()
+                            .add(fileStoreService.store(
+                                    files[i].getInputStream(), 
+                                    files[i].getOriginalFilename(),
+                                    files[i].getContentType(),"EGTL"));
                     documents.get(i).setEnclosed(true);
                 } else if (documents.get(i).getType().isMandatory() && files[i].isEmpty() && documents.isEmpty()) {
                     documents.get(i).getFiles().clear();
