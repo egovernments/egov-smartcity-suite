@@ -167,8 +167,7 @@ public class AdvertisementRateService {
     }
     
 
-   @SuppressWarnings("unchecked")
-   @ReadOnly
+    @SuppressWarnings("unchecked")
     public List<ScheduleOfRateSearch> getScheduleOfRateSearchResult(final String category, final String subCategory,final String unitofmeasure,
             final String classtype, final String finyear) {
         
