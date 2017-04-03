@@ -57,6 +57,7 @@ public class StakeHolderDocument extends AbstractAuditable {
     @JoinColumn(name = "stakeHolder")
     private StakeHolder stakeHolder;
     private Boolean isAttached;
+    private Long documentId;
 
     @Override
     public Long getId() {
@@ -90,5 +91,13 @@ public class StakeHolderDocument extends AbstractAuditable {
 
     public void setIsAttached(Boolean isAttached) {
         this.isAttached = isAttached;
+    }
+
+    public Long getDocumentId() {
+        return documentId;
+    }
+
+    public void setDocumentId(Long documentId) {
+        this.documentId = documentId;
     }
 }

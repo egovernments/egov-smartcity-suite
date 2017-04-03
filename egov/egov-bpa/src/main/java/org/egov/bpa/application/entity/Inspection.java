@@ -95,35 +95,35 @@ public class Inspection extends AbstractAuditable {
     private LandBldngZoneing landZoning;
     @ManyToOne(fetch = FetchType.LAZY)
     private LayoutMaster lndLayoutType;
-    private BigDecimal lndMinPlotExtent = new BigDecimal(0);
-    private BigDecimal lndProposedPlotExtent = new BigDecimal(0);
-    private BigDecimal lndOsrLandExtent = new BigDecimal(0);
-    private BigDecimal lndGuideLineValue = new BigDecimal(0);
+    private BigDecimal lndMinPlotExtent = BigDecimal.ZERO;
+    private BigDecimal lndProposedPlotExtent = BigDecimal.ZERO;
+    private BigDecimal lndOsrLandExtent = BigDecimal.ZERO;
+    private BigDecimal lndGuideLineValue = BigDecimal.ZERO;
     @ManyToOne(fetch = FetchType.LAZY)
     private LandBuildingTypes landUsage;
-    private BigDecimal lndRegularizationArea = new BigDecimal(0);
+    private BigDecimal lndRegularizationArea = BigDecimal.ZERO;
     private Integer lndPenaltyPeriod;
     private Boolean lndIsRegularisationCharges;
     // Building Details
     private LandBldngZoneing buildingZoning;
     @ManyToOne(fetch = FetchType.LAZY)
     private LandBuildingTypes buildingType;
-    private BigDecimal bldngBuildUpArea = new BigDecimal(0);
-    private BigDecimal bldngProposedPlotFrontage = new BigDecimal(0);
-    private BigDecimal bldngRoadWidth = new BigDecimal(0);
-    private BigDecimal bldngProposedBldngArea = new BigDecimal(0);
-    private BigDecimal bldngGFloorTiledFloor = new BigDecimal(0);
-    private BigDecimal bldngGFloorOtherTypes = new BigDecimal(0);
-    private BigDecimal bldngFrstFloorTotalArea = new BigDecimal(0);
+    private BigDecimal bldngBuildUpArea = BigDecimal.ZERO;
+    private BigDecimal bldngProposedPlotFrontage = BigDecimal.ZERO;
+    private BigDecimal bldngRoadWidth = BigDecimal.ZERO;
+    private BigDecimal bldngProposedBldngArea = BigDecimal.ZERO;
+    private BigDecimal bldngGFloorTiledFloor = BigDecimal.ZERO;
+    private BigDecimal bldngGFloorOtherTypes = BigDecimal.ZERO;
+    private BigDecimal bldngFrstFloorTotalArea = BigDecimal.ZERO;
     @ManyToOne(fetch = FetchType.LAZY)
     private StormWaterDrain bldngStormWaterDrain;
-    private BigDecimal bldngCompoundWall = new BigDecimal(0);
-    private BigDecimal bldngWellOhtSumpTankArea = new BigDecimal(0);
-    private BigDecimal bldngCommercial = new BigDecimal(0);
-    private BigDecimal bldngResidential = new BigDecimal(0);
+    private BigDecimal bldngCompoundWall = BigDecimal.ZERO;
+    private BigDecimal bldngWellOhtSumpTankArea = BigDecimal.ZERO;
+    private BigDecimal bldngCommercial = BigDecimal.ZERO;
+    private BigDecimal bldngResidential = BigDecimal.ZERO;
     private Boolean bldngIsRegularisationCharges;
     private Boolean bldngIsImprovementCharges;
-    private BigDecimal bldngAge = new BigDecimal(0);
+    private BigDecimal bldngAge = BigDecimal.ZERO;
     @Enumerated(EnumType.ORDINAL)
     private RoadType roadType;
     private BigDecimal bldngFsiArea;

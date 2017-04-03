@@ -42,12 +42,12 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.hibernate.validator.constraints.Length;
 
 @Entity
-@Table(name = "EGBPA_LAND_BUILDINGTYPES")
+@Table(name = " EGBPA_MSTR_LAND_BUILDINGTYPES")
 @SequenceGenerator(name = LandBuildingTypes.SEQ_LANDBUILDINGTYPES, sequenceName = LandBuildingTypes.SEQ_LANDBUILDINGTYPES, allocationSize = 1)
 public class LandBuildingTypes extends AbstractAuditable {
 
     private static final long serialVersionUID = 3078684328383202788L;
-    public static final String SEQ_LANDBUILDINGTYPES = "SEQ_EGBPA_LAND_BUILDINGTYPES";
+    public static final String SEQ_LANDBUILDINGTYPES = "SEQ_EGBPA_MSTR_LAND_BUILDINGTYPES";
     @Id
     @GeneratedValue(generator = SEQ_LANDBUILDINGTYPES, strategy = GenerationType.SEQUENCE)
     private Long id;

@@ -132,9 +132,6 @@ public class Application extends StateAware {
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "demand")
     private EgDemand demand;
-
-    @Length(min = 1, max = 128)
-    private String tapanNumber;
     @Length(min = 1, max = 128)
     private String remarks;
     @Length(min = 1, max = 128)
@@ -301,14 +298,6 @@ public class Application extends StateAware {
         this.demand = demand;
     }
 
-    public String getTapanNumber() {
-        return tapanNumber;
-    }
-
-    public void setTapanNumber(final String tapanNumber) {
-        this.tapanNumber = tapanNumber;
-    }
-
     public String getRemarks() {
         return remarks;
     }
@@ -465,6 +454,14 @@ public class Application extends StateAware {
     public String getStateDetails() {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    public Department getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(Department department) {
+        this.department = department;
     }
 
 }

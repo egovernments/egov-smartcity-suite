@@ -1,14 +1,19 @@
 package org.egov.bpa.application.entity;
 
+import java.util.Collections;
 import java.util.Date;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -17,6 +22,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.web.multipart.MultipartFile;
@@ -33,11 +39,12 @@ public class ApplicationDocument extends AbstractAuditable {
     @GeneratedValue(generator = SEQ_APPLICATIONDOCUMENT, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    /*
-     * @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-     * @JoinTable(name = "egwtr_documents", joinColumns = @JoinColumn(name = "applicationdocumentsid"), inverseJoinColumns
-     * = @JoinColumn(name = "filestoreid")) private Set<FileStoreMapper> supportDocs = Collections.emptySet();
-     */
+    
+      @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+      @JoinTable(name = "egwtr_documents", joinColumns = @JoinColumn(name = "applicationdocumentsid"), inverseJoinColumns
+      = @JoinColumn(name = "filestoreid"))
+      private Set<FileStoreMapper> supportDocs = Collections.emptySet();
+     
 
     private transient MultipartFile[] files;
     @ManyToOne

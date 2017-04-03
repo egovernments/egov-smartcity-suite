@@ -38,6 +38,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.hibernate.validator.constraints.Length;
@@ -56,6 +57,7 @@ public class UnconsiderCheckList extends AbstractAuditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "unconsider")
     private Unconsider unconsider;
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     private CheckListDetail checkListDetail;
     private Boolean isChecked;

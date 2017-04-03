@@ -30,6 +30,7 @@
 package org.egov.bpa.application.entity;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -54,6 +55,7 @@ public class StakeHolder extends User {
 
     private static final long serialVersionUID = 3078684328383202788L;
     @Enumerated(EnumType.ORDINAL)
+    @NotNull
     private StakeHolderType stakeHolderType;
 
     // ISACTIVE, RULES.. BELONG TO WHICH WARD/DEPARTMENT
@@ -67,11 +69,11 @@ public class StakeHolder extends User {
     private String businessLicenceNumber;
     @NotNull
     @Temporal(value = TemporalType.DATE)
-    private String businessLicenceDueDate;
+    private Date businessLicenceDueDate;
     @Length(min = 1, max = 64)
     private String coaEnrolmentNumber;
     @Temporal(value = TemporalType.DATE)
-    private String coaEnrolmentDueDate;
+    private Date coaEnrolmentDueDate;
     private Boolean isEnrolWithLocalBody;
     @Length(min = 1, max = 128)
     private String organizationName;
@@ -84,8 +86,8 @@ public class StakeHolder extends User {
     private Boolean isOnbehalfOfOrganization;
     @NotNull
     private Boolean isActive;
-    @Length(max = 10)
-    private String tan;
+    @Length(max = 11)
+    private String tinNumber;
 
     @OneToMany(mappedBy = "stakeHolder", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private final List<StakeHolderDocument> stakeHolderDocument = new ArrayList<>(0);
@@ -122,28 +124,12 @@ public class StakeHolder extends User {
         this.businessLicenceNumber = businessLicenceNumber;
     }
 
-    public String getBusinessLicenceDueDate() {
-        return businessLicenceDueDate;
-    }
-
-    public void setBusinessLicenceDueDate(String businessLicenceDueDate) {
-        this.businessLicenceDueDate = businessLicenceDueDate;
-    }
-
     public String getCoaEnrolmentNumber() {
         return coaEnrolmentNumber;
     }
 
     public void setCoaEnrolmentNumber(String coaEnrolmentNumber) {
         this.coaEnrolmentNumber = coaEnrolmentNumber;
-    }
-
-    public String getCoaEnrolmentDueDate() {
-        return coaEnrolmentDueDate;
-    }
-
-    public void setCoaEnrolmentDueDate(String coaEnrolmentDueDate) {
-        this.coaEnrolmentDueDate = coaEnrolmentDueDate;
     }
 
     public Boolean getIsEnrolWithLocalBody() {
@@ -194,12 +180,32 @@ public class StakeHolder extends User {
         this.isOnbehalfOfOrganization = isOnbehalfOfOrganization;
     }
 
-    public String getTan() {
-        return tan;
+    public String getTinNumber() {
+        return tinNumber;
     }
 
-    public void setTan(String tan) {
-        this.tan = tan;
+    public void setTinNumber(String tinNumber) {
+        this.tinNumber = tinNumber;
+    }
+
+    public Date getBusinessLicenceDueDate() {
+        return businessLicenceDueDate;
+    }
+
+    public void setBusinessLicenceDueDate(Date businessLicenceDueDate) {
+        this.businessLicenceDueDate = businessLicenceDueDate;
+    }
+
+    public List<StakeHolderDocument> getStakeHolderDocument() {
+        return stakeHolderDocument;
+    }
+
+    public Date getCoaEnrolmentDueDate() {
+        return coaEnrolmentDueDate;
+    }
+
+    public void setCoaEnrolmentDueDate(Date coaEnrolmentDueDate) {
+        this.coaEnrolmentDueDate = coaEnrolmentDueDate;
     }
 
 }

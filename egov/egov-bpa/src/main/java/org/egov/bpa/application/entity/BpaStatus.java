@@ -65,6 +65,7 @@ public class BpaStatus extends AbstractAuditable {
     @NotNull
     private Boolean isActive;
     @Length(min = 1, max = 64)
+    @NotNull
     private String moduleType;
 
     @Override
