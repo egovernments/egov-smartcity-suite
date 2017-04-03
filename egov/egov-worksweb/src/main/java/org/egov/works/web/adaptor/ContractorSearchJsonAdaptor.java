@@ -43,6 +43,7 @@ package org.egov.works.web.adaptor;
 import java.lang.reflect.Type;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.works.masters.entity.Contractor;
 import org.egov.works.masters.entity.ContractorDetail;
 import org.springframework.stereotype.Component;
@@ -63,7 +64,9 @@ public class ContractorSearchJsonAdaptor implements JsonSerializer<Contractor> {
             jsonObject.addProperty("name", contractor.getName());
             if (contractorDetails != null && !contractorDetails.isEmpty()) {
                 jsonObject.addProperty("class",
-                        contractorDetails.get(contractorDetails.size() - 1).getGrade().getGrade());
+                        contractorDetails.get(contractorDetails.size() - 1).getGrade() != null
+                                ? contractorDetails.get(contractorDetails.size() - 1).getGrade().getGrade()
+                                : StringUtils.EMPTY);
                 jsonObject.addProperty("status",
                         contractorDetails.get(contractorDetails.size() - 1).getStatus().getCode());
             }

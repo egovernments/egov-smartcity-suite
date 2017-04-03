@@ -135,7 +135,8 @@ $(document).ready(function(){
 
 function checkMobileNumber(){
 	var regx = /\d{10}$/;
-	if ($("#mobileNumber").val().length != 10 || !regx.test($("#mobileNumber").val())) {
+	var mobileNumberVal = $("#mobileNumber").val();
+	if (mobileNumberVal != "" && mobileNumberVal.length != 10 && !regx.test(mobileNumberVal)) {
 		  bootbox.alert( $("#mobileNumberErrorMsg").val());
 		  flag = true;
 		  return false;
@@ -144,7 +145,7 @@ function checkMobileNumber(){
 }
 function checkPanNumber(){
   var regx = /^[A-Za-z]{5}\d{4}[A-za-z]{1}$/;
-  if (!regx.test($("#panNumber").val())) {
+  if ($("#panNumber").val() != "" && !regx.test($("#panNumber").val())) {
 	  bootbox.alert( $("#panNumberMessage").val());
 	  flag = true;
 	  return false;
@@ -154,7 +155,7 @@ function checkPanNumber(){
 
 function checkTinNumber(){
   var regx = /^[A-Za-z0-9]+$/;
-  if (!regx.test($("#tinNumber").val())) {
+  if ($("#tinNumber").val() != "" && !regx.test($("#tinNumber").val())) {
 	  bootbox.alert( $("#tinNumberAlphaNeumericErrorMsg").val());
 	  flag = true;
 	  return false;
@@ -164,7 +165,7 @@ function checkTinNumber(){
 
 function checkContactPerson(){
 	var regx = /^[A-Za-z0-9 ]+$/;
-	  if (!regx.test($("#contactPerson").val())) {
+	  if ($("#contactPerson").val() != "" && !regx.test($("#contactPerson").val())) {
 		  bootbox.alert( $("#contactPersonAlphaNeumericErrorMsg").val());
 		  flag = true;
 		  return false;
@@ -174,7 +175,7 @@ function checkContactPerson(){
 
 function checkIfscCode(){
   var regx = /^[A-Za-z0-9]+$/;
-  if (!regx.test($("#ifscCode").val())) {
+  if ($("#ifscCode").val() != "" && !regx.test($("#ifscCode").val())) {
 	  bootbox.alert( $("#ifscCodeAlphaNeumericErrorMsg").val());
 	  flag = true;
 	  return false;
@@ -184,7 +185,7 @@ function checkIfscCode(){
 
 function checkBankAccountNumber(){
   var regx = /^[A-Za-z0-9]+$/;
-  if (!regx.test($("#bankAccount").val())) {
+  if ($("#bankAccount").val() != "" && !regx.test($("#bankAccount").val())) {
 	  bootbox.alert( $("#bankAccountAlphaNeumericErrorMsg").val());
 	  flag = true;
 	  return false;
@@ -194,21 +195,11 @@ function checkBankAccountNumber(){
 
 function checkEmail(){
 	var regx = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-	if (!regx.test($("#email").val())) {
+	if ($("#email").val() != "" && !regx.test($("#email").val())) {
 	  bootbox.alert( $("#emailInvalidErrorMsg").val());
 	  flag = true;
 	  return false;
 	}
-	return true;
-}
-
-function checkPwdApprovalCode(){
-	var regx = /^[A-Za-z0-9\-\/]+$/;
-	if (!regx.test($("#pwdApprovalCode").val())) {
-		  bootbox.alert( $("#pwdApprovalCodeAlphaNeumericErrorMsg").val());
-		  flag = true;
-		  return false;
-	  }
 	return true;
 }
 
@@ -400,7 +391,6 @@ function checkStartDateAndEndDate() {
 
 $('#submitBtn').click(function() {
 	if ($('#contractorForm').valid()) {
-		var isSuccess = true;
 		if (!checkCodeAndName()){
 			return false;
 		}
@@ -409,72 +399,35 @@ $('#submitBtn').click(function() {
 			return false;
 		}
 		
-		var mandatoryFields = $("#mandatory").val().replace(/[\[\]']+/g,'').replace(/, /g, ",").split(",");
-		var hiddenFields = $("#hide").val().replace(/[\[\]']+/g,'').replace(/, /g, ",").split(",");
-		var contractorMasterMandatoryFields = mandatoryFields.filter(function(val) {
-			  return hiddenFields.indexOf(val) == -1;
-			});
-		$.each(contractorMasterMandatoryFields.reverse(),function(){
-			var fieldName = this.toString().trim();
-			if (fieldName == "panNumber"){ 
-				isSuccess = checkPanNumber();
-				if(!isSuccess)
-					return false;
-			}
-			else if (fieldName == "tinNumber"){
-				isSuccess = checkTinNumber();
-				if(!isSuccess)
-					return false;
-			}
-			else if (fieldName == "contactPerson"){
-				isSuccess = checkContactPerson();
-				if(!isSuccess)
-					return false;
-			}
-			else if (fieldName == "email"){
-				isSuccess = checkEmail();
-				if(!isSuccess)
-					return false;
-			}
-			else if (fieldName == "mobileNumber"){
-				isSuccess = checkMobileNumber();
-				if(!isSuccess)
-					return false;
-			}
-			else if (fieldName == "bankAccount"){
-				isSuccess = checkBankAccountNumber();
-				if(!isSuccess)
-					return false;
-			}
-			else if (fieldName == "ifscCode"){
-				isSuccess = checkIfscCode();
-				if(!isSuccess)
-					return false;
-			}
-			else if (fieldName == "paymentAddress"){
-				isSuccess = checkPaymentAddress();
-				if(!isSuccess)
-					return false;
-			}
-			else if (fieldName == "narration"){
-				isSuccess = checkNarration();
-				if(!isSuccess)
-					return false;
-			}
-			else if (fieldName == "exemptionForm"){
-				isSuccess = checkExemptionForm();
-				if(!isSuccess)
-					return false;
-			}
-			else if (fieldName == "pwdApprovalCode"){
-				isSuccess = checkPwdApprovalCode();
-				if(!isSuccess)
-					return false;
-			}
-		});
+		if(!checkPanNumber()){
+			return false;
+		}
 		
-		if(isSuccess)
-			return true;
+		if (!checkTinNumber()){
+			return false;
+		}
+		
+		if(!checkEmail()){
+			return false;
+		}
+		
+		if(!checkMobileNumber()){
+			return false;
+		}
+		
+		if(!checkBankAccountNumber()){
+			return false;
+		}
+		
+		if(!checkIfscCode()){
+			return false;
+		}
+		
+		if(!checkContactPerson()){
+			return false;
+		}
+		
+		return true;
 	}
 	return false;
 });

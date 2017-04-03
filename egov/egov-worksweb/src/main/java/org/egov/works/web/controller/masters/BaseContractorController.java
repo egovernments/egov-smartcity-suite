@@ -67,14 +67,48 @@ public abstract class BaseContractorController {
             if (existingContractor != null && !existingContractor.getId().equals(contractorId))
                 resultBinder.reject("error.contractor.exists", "error.contractor.exists");
         }
-        if (contractor.getName() == null)
-            resultBinder.reject("error.contractor.name", "error.contractor.name");
-        if (contractor.getName() != null && !contractor.getName().matches(WorksConstants.ALPHANUMERICWITHSPECIALCHAR))
-            resultBinder.reject("error.name.invalid", "error.name.invalid");
+        checkValidationForNameAndPatternValidations(contractor, resultBinder);
+        checkValidationForPatterns(contractor, resultBinder);
         checkValidationForCode(contractor, resultBinder);
         checkValidationForConfigurableContractorMasterMandatoryFields(contractor, resultBinder,
                 contractorMasterMandatoryFields);
+    }
 
+    private void checkValidationForNameAndPatternValidations(final Contractor contractor,
+            final BindingResult resultBinder) {
+        final String contractorName = contractor.getName();
+        if (contractorName == null)
+            resultBinder.reject("error.contractor.name", "error.contractor.name");
+        if (contractorName != null && !contractorName.matches(WorksConstants.ALPHANUMERICWITHSPECIALCHAR))
+            resultBinder.reject("error.name.invalid", "error.name.invalid");
+        if (contractor.getPwdApprovalCode() != null
+                && !contractor.getPwdApprovalCode().matches(WorksConstants.ALPHANUMERICWITHHYPHENSLASH))
+            resultBinder.reject("error.contractor.pwdapprovalcode.invalid", "error.contractor.pwdapprovalcode.invalid");
+        if (contractor.getIfscCode() != null && !contractor.getIfscCode().matches(Constants.ALPHANUMERIC))
+            resultBinder.reject("error.contractor.ifsccode.alphanumeric", "error.contractor.ifsccode.alphanumeric");
+    }
+
+    private void checkValidationForPatterns(final Contractor contractor, final BindingResult resultBinder) {
+        if (contractor.getPanNumber() != null && !contractor.getPanNumber().matches(Constants.PANNUMBER))
+            resultBinder.reject("error.contractor.pannumber.alphanumeric", "error.contractor.pannumber.alphanumeric");
+        if (contractor.getTinNumber() != null && !contractor.getTinNumber().matches(Constants.ALPHANUMERIC))
+            resultBinder.reject("error.contractor.tinnumber.alphanumeric", "error.contractor.tinnumber.alphanumeric");
+        if (contractor.getBankAccount() != null && !contractor.getBankAccount().matches(Constants.ALPHANUMERIC))
+            resultBinder.reject("error.contractor.bankaccount.alphanumeric",
+                    "error.contractor.bankaccount.alphanumeric");
+        checkPatternValidationForContractPersonAndEmailAndMobileNumber(contractor, resultBinder);
+    }
+
+    private void checkPatternValidationForContractPersonAndEmailAndMobileNumber(final Contractor contractor,
+            final BindingResult resultBinder) {
+        if (contractor.getContactPerson() != null
+                && !contractor.getContactPerson().matches(Constants.ALPHANUMERIC_WITHSPACE))
+            resultBinder.reject("error.contractor.contactperson.alphanumeric",
+                    "error.contractor.contactperson.alphanumeric");
+        if (contractor.getEmail() != null && !contractor.getEmail().matches(Constants.EMAIL))
+            resultBinder.reject("error.contractor.email.invalid", "error.contractor.email.invalid");
+        if (contractor.getMobileNumber() != null && contractor.getMobileNumber().length() != 10)
+            resultBinder.reject("error.contractor.mobileno.length", "error.contractor.mobileno.length");
     }
 
     private void checkValidationForCode(final Contractor contractor, final BindingResult resultBinder) {
@@ -94,64 +128,50 @@ public abstract class BaseContractorController {
     private void checkValidationForConfigurableContractorMasterMandatoryFields(final Contractor contractor,
             final BindingResult resultBinder, final String[] contractorMasterMandatoryFields) {
         for (final String val : contractorMasterMandatoryFields) {
-            if ("contactPerson".equals(val) && StringUtils.isBlank(contractor.getContactPerson()))
-                resultBinder.reject("error.contractor.contactperson", "error.contractor.contactperson");
-            if ("narration".equals(val) && StringUtils.isBlank(contractor.getNarration()))
-                resultBinder.reject("error.contractor.narration", "error.contractor.narration");
             if ("exemptionForm".equals(val) && StringUtils.isBlank(contractor.getExemptionForm().toString()))
                 resultBinder.reject("error.contractor.exemptionform", "error.contractor.exemptionform");
             if ("pwdApprovalCode".equals(val) && StringUtils.isBlank(contractor.getPwdApprovalCode()))
                 resultBinder.reject("error.contractor.pwdapprovalcode", "error.contractor.pwdapprovalcode");
-            checkValidationForEmailAndMobileNumber(contractor, resultBinder, val);
+            checkValidationForContactPersonAndNarrationAndEmailAndMobileNumber(contractor, resultBinder, val);
             checkValidationForBank(contractor, resultBinder, val);
-            checkValidationForPanAndTinNumber(contractor, resultBinder, val);
-            checkValidationForAddresses(contractor, resultBinder, val);
+            checkValidationForPanAndTinNumberAndAdress(contractor, resultBinder, val);
         }
     }
 
-    private void checkValidationForEmailAndMobileNumber(final Contractor contractor, final BindingResult resultBinder,
-            final String val) {
-        final String email = contractor.getEmail();
-        final String mobileNumber = contractor.getMobileNumber();
-        if ("email".equals(val) && StringUtils.isBlank(email))
+    private void checkValidationForContactPersonAndNarrationAndEmailAndMobileNumber(final Contractor contractor,
+            final BindingResult resultBinder, final String val) {
+        if ("contactPerson".equals(val) && StringUtils.isBlank(contractor.getContactPerson()))
+            resultBinder.reject("error.contractor.contactperson", "error.contractor.contactperson");
+        if ("narration".equals(val) && StringUtils.isBlank(contractor.getNarration()))
+            resultBinder.reject("error.contractor.narration", "error.contractor.narration");
+        if ("email".equals(val) && StringUtils.isBlank(contractor.getEmail()))
             resultBinder.reject("error.contractor.email", "error.contractor.email");
-        if ("email".equals(val) && !email.matches(Constants.EMAIL))
-            resultBinder.reject("error.contractor.email.invalid", "error.contractor.email.invalid");
-        if ("mobileNumber".equals(val) && StringUtils.isBlank(mobileNumber))
+
+        if ("mobileNumber".equals(val) && StringUtils.isBlank(contractor.getMobileNumber()))
             resultBinder.reject("error.contractor.mobileno", "error.contractor.mobileno");
-        if ("mobileNumber".equals(val) && mobileNumber.length() != 10)
-            resultBinder.reject("error.contractor.mobileno.length", "error.contractor.mobileno.length");
     }
 
     private void checkValidationForBank(final Contractor contractor, final BindingResult resultBinder,
             final String val) {
         if ("bankAccount".equals(val) && StringUtils.isBlank(contractor.getBankAccount()))
             resultBinder.reject("error.contractor.bankaccount", "error.contractor.bankaccount");
-        if ("bank".equals(val) && (contractor.getBank() == null || contractor.getBank().getId() == -1))
+        if ("bank".equals(val) && contractor.getBank() == null)
             resultBinder.reject("error.bank.name", "error.bank.name");
         if ("ifscCode".equals(val) && StringUtils.isBlank(contractor.getIfscCode()))
             resultBinder.reject("error.contractor.ifsccode", "error.contractor.ifsccode");
-        if ("bankAccount".equals(val) && !contractor.getBankAccount().matches(Constants.ALPHANUMERIC))
-            resultBinder.reject("error.contractor.bankaccount.alphanumeric",
-                    "error.contractor.bankaccount.alphanumeric");
     }
 
-    private void checkValidationForPanAndTinNumber(final Contractor contractor, final BindingResult resultBinder,
-            final String val) {
+    private void checkValidationForPanAndTinNumberAndAdress(final Contractor contractor,
+            final BindingResult resultBinder, final String val) {
         if ("tinNumber".equals(val) && StringUtils.isBlank(contractor.getTinNumber()))
             resultBinder.reject("error.contractor.tinnumber", "error.contractor.tinnumber");
         if ("panNumber".equals(val) && StringUtils.isBlank(contractor.getPanNumber()))
             resultBinder.reject("error.contractor.pannumber", "error.contractor.pannumber");
-        if ("panNumber".equals(val) && !contractor.getPanNumber().matches(Constants.PANNUMBER))
-            resultBinder.reject("error.contractor.pannumber.alphanumeric", "error.contractor.pannumber.alphanumeric");
-    }
-
-    private void checkValidationForAddresses(final Contractor contractor, final BindingResult resultBinder,
-            final String val) {
         if ("correspondenceAddress".equals(val) && StringUtils.isBlank(contractor.getCorrespondenceAddress()))
             resultBinder.reject("error.contractor.correspondenceaddress", "error.contractor.correspondenceaddress");
         if ("paymentAddress".equals(val) && StringUtils.isBlank(contractor.getPaymentAddress()))
             resultBinder.reject("error.contractor.paymentaddress", "error.contractor.paymentaddress");
+
     }
 
     protected void validateContractorDetails(final Contractor contractor, final BindingResult resultBinder) {

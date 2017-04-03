@@ -78,7 +78,7 @@
 	<input type="hidden" id="contractorCategoryErrorMsg" value="<spring:message code='error.contractordetail.category.required' />" />
 	<input type="hidden" id="nameErrorLengthMsg" value="<spring:message code='error.contractor.name.length' />" />
 	<input type="hidden" id="pwdApprovalCodeAlphaNeumericErrorMsg" value="<spring:message code='error.contractor.pwdapprovalcode.alphanumeric' />" />
-	<input type="hidden" id="error.contractorDetailErrorMsg" value="<spring:message code='error.contractor.details.altleastone_details_needed' />" />
+	<input type="hidden" id="contractorDetailErrorMsg" value="<spring:message code='error.contractor.details.altleastone_details_needed' />" />
 	<input type="hidden" id='panNumberMessage' value="<spring:message code='error.contractor.pannumber.alphanumeric' />" >
 	<input type="hidden" id='fromDateGreaterThanEndDateError' value="<spring:message code='error.fromdate.cannot.be.grater.then.todate' />" >
 	
@@ -179,7 +179,7 @@
 			</div>
 			<label for="pwdApprovalCode" class="col-sm-2 control-label text-right"><spring:message code="lbl.pwdapprovalcode" /></label>
 			<div class="col-sm-3 add-margin">
-				<form:input path="pwdApprovalCode" id="pwdApprovalCode" class="form-control table-input" maxlength = "100" />
+				<form:input path="pwdApprovalCode" id="pwdApprovalCode" class="form-control table-input patternvalidation" data-pattern="alphanumerichyphenbackslash" maxlength = "100" />
 				<form:errors path="pwdApprovalCode" cssClass="add-margin error-msg" />
 			</div>
 		</div>
