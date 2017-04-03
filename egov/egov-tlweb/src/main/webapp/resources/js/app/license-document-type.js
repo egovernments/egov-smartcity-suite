@@ -70,7 +70,7 @@ $(document).ready(function(){
 	                     });
 
 	$("#document-Table").on('click','tbody tr td .edit',function(event) {
-		var id = tableContainer1.fnGetData($(this).parent().parent(),4);
+		var id = tableContainer1.fnGetData($(this).parent().parent(),5);
 		var url = '/tl/documenttype/edit/'+id ;
 		window.open(url,id,'width=900, height=700, top=300, left=260,scrollbars=yes');
 		
