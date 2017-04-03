@@ -58,7 +58,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 @Repository
-public class FinancialYearHibernateDAO  implements FinancialYearDAO {
+public class FinancialYearHibernateDAO implements FinancialYearDAO {
     @Transactional
     public CFinancialYear update(final CFinancialYear entity) {
         getCurrentSession().update(entity);
@@ -87,14 +87,11 @@ public class FinancialYearHibernateDAO  implements FinancialYearDAO {
     @PersistenceContext
     private EntityManager entityManager;
 
-    
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
 
     private final Logger logger = Logger.getLogger(getClass().getName());
-
-   
 
     public String getCurrYearFiscalId() {
         Date dt = new Date();
@@ -190,16 +187,25 @@ public class FinancialYearHibernateDAO  implements FinancialYearDAO {
                         "from CFinancialYear cfinancialyear where isActive=true and isActiveForPosting=true order by startingDate desc");
         return query.list();
     }
+
     public List<CFinancialYear> getAllNotClosedFinancialYears() {
         Query query = getCurrentSession()
                 .createQuery(
                         "from CFinancialYear cfinancialyear where cfinancialyear.isClosed=false  order by cfinancialyear.startingDate asc");
         return query.list();
     }
+
     public CFinancialYear getFinancialYearById(Long id) {
         Query query = getCurrentSession().createQuery("from CFinancialYear cfinancialyear where id=:id");
         query.setLong("id", id);
         return (CFinancialYear) query.uniqueResult();
+    }
+
+    public List<CFinancialYear> getAllActivePostingAndNotClosedFinancialYears() {
+        Query query = getCurrentSession()
+                .createQuery(
+                        "from CFinancialYear cfinancialyear where cfinancialyear.isClosed=false  and cfinancialyear.isActiveForPosting=true  order by cfinancialyear.startingDate asc");
+        return query.list();
     }
 
     /*
@@ -308,14 +314,13 @@ public class FinancialYearHibernateDAO  implements FinancialYearDAO {
         }
 
     }
-    
+
     public List<CFinancialYear> getAllPriorFinancialYears(Date date) {
         Query query = getCurrentSession()
                 .createQuery(
                         " from CFinancialYear cfinancialyear where cfinancialyear.startingDate <:sDate and isActive=true order by finYearRange desc ");
         query.setDate("sDate", date);
-       return query.list();
+        return query.list();
     }
 
-    
 }
