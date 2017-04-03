@@ -39,17 +39,39 @@
  */
 package org.egov.services.zuulproxy.models;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class UserInfo {
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class UserInfo implements Serializable {
+
+    private static final long serialVersionUID = -5184742701167113678L;
+
+    @JsonProperty("roles")
     private final List<Role> roles;
+
+    @JsonProperty("id")
     private final Long id;
+
+    @JsonProperty("userName")
     private final String userName;
+
+    @JsonProperty("name")
     private final String name;
+
+    @JsonProperty("emailId")
     private final String emailId;
+
+    @JsonProperty("mobileNumber")
     private final String mobileNumber;
+
+    @JsonProperty("type")
     private final String type;
+
+    @JsonProperty("tenantId")
     private final String tenantId;
 
     public UserInfo(final List<Role> roles, final Long id, final String userName, final String name, final String emailId,
