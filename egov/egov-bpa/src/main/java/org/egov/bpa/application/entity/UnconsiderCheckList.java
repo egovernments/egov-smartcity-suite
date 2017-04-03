@@ -78,7 +78,7 @@ public class UnconsiderCheckList extends AbstractAuditable {
         return unconsider;
     }
 
-    public void setUnconsider(Unconsider unconsider) {
+    public void setUnconsider(final Unconsider unconsider) {
         this.unconsider = unconsider;
     }
 
@@ -86,7 +86,7 @@ public class UnconsiderCheckList extends AbstractAuditable {
         return isChecked;
     }
 
-    public void setIsChecked(Boolean isChecked) {
+    public void setIsChecked(final Boolean isChecked) {
         this.isChecked = isChecked;
     }
 
@@ -94,7 +94,7 @@ public class UnconsiderCheckList extends AbstractAuditable {
         return remarks;
     }
 
-    public void setRemarks(String remarks) {
+    public void setRemarks(final String remarks) {
         this.remarks = remarks;
     }
 
@@ -102,7 +102,7 @@ public class UnconsiderCheckList extends AbstractAuditable {
         return checkListDetail;
     }
 
-    public void setCheckListDetail(CheckListDetail checkListDetail) {
+    public void setCheckListDetail(final CheckListDetail checkListDetail) {
         this.checkListDetail = checkListDetail;
     }
 

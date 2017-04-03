@@ -85,7 +85,7 @@ public class Unconsider extends AbstractAuditable {
         return rejectionDate;
     }
 
-    public void setRejectionDate(Date rejectionDate) {
+    public void setRejectionDate(final Date rejectionDate) {
         this.rejectionDate = rejectionDate;
     }
 
@@ -93,7 +93,7 @@ public class Unconsider extends AbstractAuditable {
         return remarks;
     }
 
-    public void setRemarks(String remarks) {
+    public void setRemarks(final String remarks) {
         this.remarks = remarks;
     }
 
@@ -101,7 +101,7 @@ public class Unconsider extends AbstractAuditable {
         return rejectionNumber;
     }
 
-    public void setRejectionNumber(String rejectionNumber) {
+    public void setRejectionNumber(final String rejectionNumber) {
         this.rejectionNumber = rejectionNumber;
     }
 
@@ -109,7 +109,7 @@ public class Unconsider extends AbstractAuditable {
         return unconsideList;
     }
 
-    public void setUnconsideList(List<UnconsiderCheckList> unconsideList) {
+    public void setUnconsideList(final List<UnconsiderCheckList> unconsideList) {
         this.unconsideList = unconsideList;
     }
 

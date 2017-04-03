@@ -40,17 +40,17 @@
 package org.egov.bpa.utils;
 
 public class BpaConstants {
-    
+
     public static final String ZONE = "Zone";
     public static final String WARD = "Ward";
     public static final String BLOCK = "Block";
     public static final String STREET = "Street";
-    public static final String EGMODULE_NAME ="BPA";
-    
-    public static final String BPASTATUSMODULETYPE ="BPAAPPLICATION";
+    public static final String EGMODULE_NAME = "BPA";
+
+    public static final String BPASTATUSMODULETYPE = "BPAAPPLICATION";
     public static final String ROLE_CITIZEN = "Citizen";
-    public static final String YEARLY ="Yearly";
-    public static final String ADMISSIONFEEREASON ="ADMISSION FEES";
+    public static final String YEARLY = "Yearly";
+    public static final String ADMISSIONFEEREASON = "ADMISSION FEES";
     public static final String WATER_CONN_BILLNO_SEQ = "SEQ_BILLNO_";
     public static final String USERNAME_ANONYMOUS = "anonymous";
     public static final String LOCALITY = "locality";
@@ -59,8 +59,6 @@ public class BpaConstants {
     public static final String LOCATION_HIERARCHY_TYPE = "LOCATION";
     public static final Character DMD_STATUS_CHEQUE_BOUNCED = 'B';
     public static final String DEMANDISHISTORY = "N";
-
-
-
+    public static final String STRING_VALIDATION = "Paid Amount is greater than Total Amount to be paid";
 
 }

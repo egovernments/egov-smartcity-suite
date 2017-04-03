@@ -44,6 +44,4 @@ package org.egov.bpa.application.workflow;
  */
 public class ApplicationWorkflowCustomDefaultImpl extends ApplicationWorkflowCustomImpl {
 
-  
-
 }

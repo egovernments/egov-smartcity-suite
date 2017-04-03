@@ -53,19 +53,18 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 
 @Service
-@Transactional(readOnly=true)
+@Transactional(readOnly = true)
 public class GenericBillGeneratorService {
     @Autowired
     private SecurityUtils securityUtils;
     @Autowired
     private UserService userService;
-    
+
     @Autowired
     private ApplicationBpaBillService applicationBpaBillService;
 
-    
     @Transactional
-    public String generateBillAndRedirectToCollection( final BpaApplication application,final Model model) {
+    public String generateBillAndRedirectToCollection(final BpaApplication application, final Model model) {
         if (ApplicationThreadLocals.getUserId() == null)
             if (securityUtils.getCurrentUser().getUsername().equals("anonymous"))
                 ApplicationThreadLocals.setUserId(userService.getUserByUsername(BpaConstants.USERNAME_ANONYMOUS).getId());
@@ -73,7 +72,7 @@ public class GenericBillGeneratorService {
         model.addAttribute("citizenrole", getCitizenUserRole());
         return "collecttax-redirection";
     }
-    
+
     public Boolean getCitizenUserRole() {
         Boolean citizenrole = Boolean.FALSE;
         if (ApplicationThreadLocals.getUserId() != null) {
@@ -92,4 +91,3 @@ public class GenericBillGeneratorService {
     }
 
 }
-

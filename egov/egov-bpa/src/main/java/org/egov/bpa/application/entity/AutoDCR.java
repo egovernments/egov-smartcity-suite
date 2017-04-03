@@ -567,7 +567,7 @@ public class AutoDCR extends AbstractAuditable {
         return appDcRFloorDetails;
     }
 
-    public void setAppDcRFloorDetails(List<AutoDCRFloorDetails> appDcRFloorDetails) {
+    public void setAppDcRFloorDetails(final List<AutoDCRFloorDetails> appDcRFloorDetails) {
         this.appDcRFloorDetails = appDcRFloorDetails;
     }
 

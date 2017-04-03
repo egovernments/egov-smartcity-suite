@@ -39,8 +39,6 @@
  */
 package org.egov.bpa.web.controller.application;
 
-
-
 import java.util.List;
 
 import org.egov.bpa.application.entity.ServiceType;
@@ -59,10 +57,9 @@ public abstract class BpaGenericApplicationController extends GenericWorkFlowCon
 
     @Autowired
     private BoundaryService boundaryService;
-    
+
     @Autowired
     private ServiceTypeService serviceTypeService;
-    
 
     @Autowired
     private StakeHolderService stakeHolderService;
@@ -77,13 +74,12 @@ public abstract class BpaGenericApplicationController extends GenericWorkFlowCon
     public List<ServiceType> getServiceTypeList() {
         return serviceTypeService.findAll();
     }
-    
-    
+
     @ModelAttribute("stakeHolderList")
     public List<StakeHolder> getStakeHolder() {
         return stakeHolderService.findAll();
     }
-    
+
     @ModelAttribute("wards")
     public List<Boundary> wards() {
         return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(BpaConstants.ELECTIONWARD_BNDRY_TYPE,
@@ -99,11 +95,8 @@ public abstract class BpaGenericApplicationController extends GenericWorkFlowCon
     @ModelAttribute("localitys")
     public List<Boundary> localitys() {
         return boundaryService
-                .getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(BpaConstants.LOCALITY, BpaConstants.LOCATION_HIERARCHY_TYPE);
+                .getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(BpaConstants.LOCALITY,
+                        BpaConstants.LOCATION_HIERARCHY_TYPE);
     }
-//servicetype
-    //stakeholder
-    //occupancy
-    //source
-    //
+
 }

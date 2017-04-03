@@ -81,7 +81,7 @@ public class DocketConstructionStage extends AbstractAuditable {
         return value;
     }
 
-    public void setValue(String value) {
+    public void setValue(final String value) {
         this.value = value;
     }
 
@@ -89,7 +89,7 @@ public class DocketConstructionStage extends AbstractAuditable {
         return remarks;
     }
 
-    public void setRemarks(String remarks) {
+    public void setRemarks(final String remarks) {
         this.remarks = remarks;
     }
 
@@ -97,7 +97,7 @@ public class DocketConstructionStage extends AbstractAuditable {
         return docket;
     }
 
-    public void setDocket(Docket docket) {
+    public void setDocket(final Docket docket) {
         this.docket = docket;
     }
 
@@ -105,7 +105,7 @@ public class DocketConstructionStage extends AbstractAuditable {
         return checkListDetail;
     }
 
-    public void setCheckListDetail(CheckListDetail checkListDetail) {
+    public void setCheckListDetail(final CheckListDetail checkListDetail) {
         this.checkListDetail = checkListDetail;
     }
 

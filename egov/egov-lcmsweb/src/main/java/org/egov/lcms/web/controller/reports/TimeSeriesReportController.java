@@ -98,8 +98,7 @@ public class TimeSeriesReportController {
         return "timeseriesreport-form";
     }
 
-    @ExceptionHandler(Exception.class)
-    @RequestMapping(value = "/timeSeriesReportresults", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
+    @RequestMapping(value = "/timeSeriesReportresults", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody String getTimeSeriesReportResult(@RequestParam final String aggregatedBy,
             @RequestParam final String period, @RequestParam final Date fromDate, @RequestParam final Date toDate,
             final HttpServletRequest request, final HttpServletResponse response) throws IOException {

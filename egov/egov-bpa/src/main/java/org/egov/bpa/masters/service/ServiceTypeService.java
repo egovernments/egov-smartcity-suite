@@ -50,12 +50,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 public class ServiceTypeService {
-    
+
     @Autowired
     private ServiceTypeRepository serviceTypeRepository;
-    
+
     public List<ServiceType> findAll() {
         return serviceTypeRepository.findAll();
     }
-    
+
 }

@@ -134,7 +134,7 @@ public class SiteDetail extends AbstractAuditable {
         return application;
     }
 
-    public void setApplication(BpaApplication application) {
+    public void setApplication(final BpaApplication application) {
         this.application = application;
     }
 
@@ -142,7 +142,7 @@ public class SiteDetail extends AbstractAuditable {
         return plotdoornumber;
     }
 
-    public void setPlotdoornumber(String plotdoornumber) {
+    public void setPlotdoornumber(final String plotdoornumber) {
         this.plotdoornumber = plotdoornumber;
     }
 
@@ -150,7 +150,7 @@ public class SiteDetail extends AbstractAuditable {
         return plotlandmark;
     }
 
-    public void setPlotlandmark(String plotlandmark) {
+    public void setPlotlandmark(final String plotlandmark) {
         this.plotlandmark = plotlandmark;
     }
 
@@ -158,7 +158,7 @@ public class SiteDetail extends AbstractAuditable {
         return plotnumber;
     }
 
-    public void setPlotnumber(String plotnumber) {
+    public void setPlotnumber(final String plotnumber) {
         this.plotnumber = plotnumber;
     }
 
@@ -166,7 +166,7 @@ public class SiteDetail extends AbstractAuditable {
         return plotsurveynumber;
     }
 
-    public void setPlotsurveynumber(String plotsurveynumber) {
+    public void setPlotsurveynumber(final String plotsurveynumber) {
         this.plotsurveynumber = plotsurveynumber;
     }
 
@@ -174,7 +174,7 @@ public class SiteDetail extends AbstractAuditable {
         return surveynumberType;
     }
 
-    public void setSurveynumberType(String surveynumberType) {
+    public void setSurveynumberType(final String surveynumberType) {
         this.surveynumberType = surveynumberType;
     }
 
@@ -182,7 +182,7 @@ public class SiteDetail extends AbstractAuditable {
         return oldSurveyNumber;
     }
 
-    public void setOldSurveyNumber(String oldSurveyNumber) {
+    public void setOldSurveyNumber(final String oldSurveyNumber) {
         this.oldSurveyNumber = oldSurveyNumber;
     }
 
@@ -190,7 +190,7 @@ public class SiteDetail extends AbstractAuditable {
         return streetaddress1;
     }
 
-    public void setStreetaddress1(String streetaddress1) {
+    public void setStreetaddress1(final String streetaddress1) {
         this.streetaddress1 = streetaddress1;
     }
 
@@ -198,7 +198,7 @@ public class SiteDetail extends AbstractAuditable {
         return streetaddress2;
     }
 
-    public void setStreetaddress2(String streetaddress2) {
+    public void setStreetaddress2(final String streetaddress2) {
         this.streetaddress2 = streetaddress2;
     }
 
@@ -206,7 +206,7 @@ public class SiteDetail extends AbstractAuditable {
         return area;
     }
 
-    public void setArea(String area) {
+    public void setArea(final String area) {
         this.area = area;
     }
 
@@ -214,7 +214,7 @@ public class SiteDetail extends AbstractAuditable {
         return citytown;
     }
 
-    public void setCitytown(String citytown) {
+    public void setCitytown(final String citytown) {
         this.citytown = citytown;
     }
 
@@ -222,7 +222,7 @@ public class SiteDetail extends AbstractAuditable {
         return taluk;
     }
 
-    public void setTaluk(String taluk) {
+    public void setTaluk(final String taluk) {
         this.taluk = taluk;
     }
 
@@ -230,7 +230,7 @@ public class SiteDetail extends AbstractAuditable {
         return street;
     }
 
-    public void setStreet(Boundary street) {
+    public void setStreet(final Boundary street) {
         this.street = street;
     }
 
@@ -238,7 +238,7 @@ public class SiteDetail extends AbstractAuditable {
         return village;
     }
 
-    public void setVillage(VillageName village) {
+    public void setVillage(final VillageName village) {
         this.village = village;
     }
 
@@ -246,7 +246,7 @@ public class SiteDetail extends AbstractAuditable {
         return district;
     }
 
-    public void setDistrict(String district) {
+    public void setDistrict(final String district) {
         this.district = district;
     }
 
@@ -254,7 +254,7 @@ public class SiteDetail extends AbstractAuditable {
         return state;
     }
 
-    public void setState(String state) {
+    public void setState(final String state) {
         this.state = state;
     }
 
@@ -262,7 +262,7 @@ public class SiteDetail extends AbstractAuditable {
         return sitePincode;
     }
 
-    public void setSitePincode(String sitePincode) {
+    public void setSitePincode(final String sitePincode) {
         this.sitePincode = sitePincode;
     }
 
@@ -270,7 +270,7 @@ public class SiteDetail extends AbstractAuditable {
         return natureofOwnership;
     }
 
-    public void setNatureofOwnership(String natureofOwnership) {
+    public void setNatureofOwnership(final String natureofOwnership) {
         this.natureofOwnership = natureofOwnership;
     }
 
@@ -278,7 +278,7 @@ public class SiteDetail extends AbstractAuditable {
         return extentinsqmts;
     }
 
-    public void setExtentinsqmts(BigDecimal extentinsqmts) {
+    public void setExtentinsqmts(final BigDecimal extentinsqmts) {
         this.extentinsqmts = extentinsqmts;
     }
 
@@ -286,7 +286,7 @@ public class SiteDetail extends AbstractAuditable {
         return registrarOffice;
     }
 
-    public void setRegistrarOffice(String registrarOffice) {
+    public void setRegistrarOffice(final String registrarOffice) {
         this.registrarOffice = registrarOffice;
     }
 
@@ -294,7 +294,7 @@ public class SiteDetail extends AbstractAuditable {
         return nearestbuildingnumber;
     }
 
-    public void setNearestbuildingnumber(String nearestbuildingnumber) {
+    public void setNearestbuildingnumber(final String nearestbuildingnumber) {
         this.nearestbuildingnumber = nearestbuildingnumber;
     }
 
@@ -302,7 +302,7 @@ public class SiteDetail extends AbstractAuditable {
         return subdivisionNumber;
     }
 
-    public void setSubdivisionNumber(String subdivisionNumber) {
+    public void setSubdivisionNumber(final String subdivisionNumber) {
         this.subdivisionNumber = subdivisionNumber;
     }
 
@@ -310,7 +310,7 @@ public class SiteDetail extends AbstractAuditable {
         return encroachmentIssuesPresent;
     }
 
-    public void setEncroachmentIssuesPresent(Boolean encroachmentIssuesPresent) {
+    public void setEncroachmentIssuesPresent(final Boolean encroachmentIssuesPresent) {
         this.encroachmentIssuesPresent = encroachmentIssuesPresent;
     }
 
@@ -318,7 +318,7 @@ public class SiteDetail extends AbstractAuditable {
         return encroachmentRemarks;
     }
 
-    public void setEncroachmentRemarks(String encroachmentRemarks) {
+    public void setEncroachmentRemarks(final String encroachmentRemarks) {
         this.encroachmentRemarks = encroachmentRemarks;
     }
 
@@ -326,7 +326,7 @@ public class SiteDetail extends AbstractAuditable {
         return siteinApprovedLayout;
     }
 
-    public void setSiteinApprovedLayout(Boolean siteinApprovedLayout) {
+    public void setSiteinApprovedLayout(final Boolean siteinApprovedLayout) {
         this.siteinApprovedLayout = siteinApprovedLayout;
     }
 
@@ -334,7 +334,7 @@ public class SiteDetail extends AbstractAuditable {
         return approvedLayoutDetail;
     }
 
-    public void setApprovedLayoutDetail(String approvedLayoutDetail) {
+    public void setApprovedLayoutDetail(final String approvedLayoutDetail) {
         this.approvedLayoutDetail = approvedLayoutDetail;
     }
 
@@ -342,7 +342,7 @@ public class SiteDetail extends AbstractAuditable {
         return setBackFront;
     }
 
-    public void setSetBackFront(BigDecimal setBackFront) {
+    public void setSetBackFront(final BigDecimal setBackFront) {
         this.setBackFront = setBackFront;
     }
 
@@ -350,7 +350,7 @@ public class SiteDetail extends AbstractAuditable {
         return setBackRear;
     }
 
-    public void setSetBackRear(BigDecimal setBackRear) {
+    public void setSetBackRear(final BigDecimal setBackRear) {
         this.setBackRear = setBackRear;
     }
 
@@ -358,7 +358,7 @@ public class SiteDetail extends AbstractAuditable {
         return setBackSide1;
     }
 
-    public void setSetBackSide1(BigDecimal setBackSide1) {
+    public void setSetBackSide1(final BigDecimal setBackSide1) {
         this.setBackSide1 = setBackSide1;
     }
 
@@ -366,12 +366,12 @@ public class SiteDetail extends AbstractAuditable {
         return setBackSide2;
     }
 
-    public void setSetBackSide2(BigDecimal setBackSide2) {
+    public void setSetBackSide2(final BigDecimal setBackSide2) {
         this.setBackSide2 = setBackSide2;
     }
 
     @Override
-    public void setId(Long id) {
+    public void setId(final Long id) {
         this.id = id;
     }
 
@@ -379,7 +379,7 @@ public class SiteDetail extends AbstractAuditable {
         return adminBoundary;
     }
 
-    public void setAdminBoundary(Boundary adminBoundary) {
+    public void setAdminBoundary(final Boundary adminBoundary) {
         this.adminBoundary = adminBoundary;
     }
 
@@ -387,7 +387,7 @@ public class SiteDetail extends AbstractAuditable {
         return locationBoundary;
     }
 
-    public void setLocationBoundary(Boundary locationBoundary) {
+    public void setLocationBoundary(final Boundary locationBoundary) {
         this.locationBoundary = locationBoundary;
     }
 
@@ -395,7 +395,7 @@ public class SiteDetail extends AbstractAuditable {
         return electionBoundary;
     }
 
-    public void setElectionBoundary(Boundary electionBoundary) {
+    public void setElectionBoundary(final Boundary electionBoundary) {
         this.electionBoundary = electionBoundary;
     }
 

@@ -85,7 +85,7 @@ public class PermittedFloorDetail extends AbstractAuditable {
         return floorNumber;
     }
 
-    public void setFloorNumber(Integer floorNumber) {
+    public void setFloorNumber(final Integer floorNumber) {
         this.floorNumber = floorNumber;
     }
 
@@ -93,7 +93,7 @@ public class PermittedFloorDetail extends AbstractAuditable {
         return floorType;
     }
 
-    public void setFloorType(String floorType) {
+    public void setFloorType(final String floorType) {
         this.floorType = floorType;
     }
 
@@ -101,7 +101,7 @@ public class PermittedFloorDetail extends AbstractAuditable {
         return block;
     }
 
-    public void setBlock(Integer block) {
+    public void setBlock(final Integer block) {
         this.block = block;
     }
 
@@ -109,7 +109,7 @@ public class PermittedFloorDetail extends AbstractAuditable {
         return area;
     }
 
-    public void setArea(BigDecimal area) {
+    public void setArea(final BigDecimal area) {
         this.area = area;
     }
 
@@ -117,7 +117,7 @@ public class PermittedFloorDetail extends AbstractAuditable {
         return noOfUnits;
     }
 
-    public void setNoOfUnits(Integer noOfUnits) {
+    public void setNoOfUnits(final Integer noOfUnits) {
         this.noOfUnits = noOfUnits;
     }
 
@@ -125,7 +125,7 @@ public class PermittedFloorDetail extends AbstractAuditable {
         return parking;
     }
 
-    public void setParking(BigDecimal parking) {
+    public void setParking(final BigDecimal parking) {
         this.parking = parking;
     }
 
@@ -133,7 +133,7 @@ public class PermittedFloorDetail extends AbstractAuditable {
         return usagePermitted;
     }
 
-    public void setUsagePermitted(BigDecimal usagePermitted) {
+    public void setUsagePermitted(final BigDecimal usagePermitted) {
         this.usagePermitted = usagePermitted;
     }
 
@@ -141,7 +141,7 @@ public class PermittedFloorDetail extends AbstractAuditable {
         return application;
     }
 
-    public void setApplication(BpaApplication application) {
+    public void setApplication(final BpaApplication application) {
         this.application = application;
     }
 
@@ -149,7 +149,7 @@ public class PermittedFloorDetail extends AbstractAuditable {
         return usageFrom;
     }
 
-    public void setUsageFrom(ChangeOfUsage usageFrom) {
+    public void setUsageFrom(final ChangeOfUsage usageFrom) {
         this.usageFrom = usageFrom;
     }
 
@@ -157,7 +157,7 @@ public class PermittedFloorDetail extends AbstractAuditable {
         return usageTo;
     }
 
-    public void setUsageTo(ChangeOfUsage usageTo) {
+    public void setUsageTo(final ChangeOfUsage usageTo) {
         this.usageTo = usageTo;
     }
 

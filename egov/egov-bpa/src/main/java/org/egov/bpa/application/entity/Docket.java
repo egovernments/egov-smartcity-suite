@@ -119,7 +119,7 @@ public class Docket extends AbstractAuditable {
         return inspection;
     }
 
-    public void setInspection(Inspection inspection) {
+    public void setInspection(final Inspection inspection) {
         this.inspection = inspection;
     }
 
@@ -127,7 +127,7 @@ public class Docket extends AbstractAuditable {
         return existingUsage;
     }
 
-    public void setExistingUsage(String existingUsage) {
+    public void setExistingUsage(final String existingUsage) {
         this.existingUsage = existingUsage;
     }
 
@@ -135,7 +135,7 @@ public class Docket extends AbstractAuditable {
         return proposedActivityIsPermissible;
     }
 
-    public void setProposedActivityIsPermissible(String proposedActivityIsPermissible) {
+    public void setProposedActivityIsPermissible(final String proposedActivityIsPermissible) {
         this.proposedActivityIsPermissible = proposedActivityIsPermissible;
     }
 
@@ -143,7 +143,7 @@ public class Docket extends AbstractAuditable {
         return oldProptaxPaidRecptEnclosed;
     }
 
-    public void setOldProptaxPaidRecptEnclosed(String oldProptaxPaidRecptEnclosed) {
+    public void setOldProptaxPaidRecptEnclosed(final String oldProptaxPaidRecptEnclosed) {
         this.oldProptaxPaidRecptEnclosed = oldProptaxPaidRecptEnclosed;
     }
 
@@ -151,7 +151,7 @@ public class Docket extends AbstractAuditable {
         return existingSanctionPlanOrPtTaxPaidRecptEnclosed;
     }
 
-    public void setExistingSanctionPlanOrPtTaxPaidRecptEnclosed(String existingSanctionPlanOrPtTaxPaidRecptEnclosed) {
+    public void setExistingSanctionPlanOrPtTaxPaidRecptEnclosed(final String existingSanctionPlanOrPtTaxPaidRecptEnclosed) {
         this.existingSanctionPlanOrPtTaxPaidRecptEnclosed = existingSanctionPlanOrPtTaxPaidRecptEnclosed;
     }
 
@@ -159,7 +159,7 @@ public class Docket extends AbstractAuditable {
         return abuttingRoadWidth;
     }
 
-    public void setAbuttingRoadWidth(BigDecimal abuttingRoadWidth) {
+    public void setAbuttingRoadWidth(final BigDecimal abuttingRoadWidth) {
         this.abuttingRoadWidth = abuttingRoadWidth;
     }
 
@@ -167,7 +167,7 @@ public class Docket extends AbstractAuditable {
         return abuttingRoadIsPrivateOrPublic;
     }
 
-    public void setAbuttingRoadIsPrivateOrPublic(String abuttingRoadIsPrivateOrPublic) {
+    public void setAbuttingRoadIsPrivateOrPublic(final String abuttingRoadIsPrivateOrPublic) {
         this.abuttingRoadIsPrivateOrPublic = abuttingRoadIsPrivateOrPublic;
     }
 
@@ -175,7 +175,7 @@ public class Docket extends AbstractAuditable {
         return abuttingRoadTakenUpForImprovement;
     }
 
-    public void setAbuttingRoadTakenUpForImprovement(String abuttingRoadTakenUpForImprovement) {
+    public void setAbuttingRoadTakenUpForImprovement(final String abuttingRoadTakenUpForImprovement) {
         this.abuttingRoadTakenUpForImprovement = abuttingRoadTakenUpForImprovement;
     }
 
@@ -183,7 +183,7 @@ public class Docket extends AbstractAuditable {
         return abuttingRoadgainsAceessThroughPassage;
     }
 
-    public void setAbuttingRoadgainsAceessThroughPassage(String abuttingRoadgainsAceessThroughPassage) {
+    public void setAbuttingRoadgainsAceessThroughPassage(final String abuttingRoadgainsAceessThroughPassage) {
         this.abuttingRoadgainsAceessThroughPassage = abuttingRoadgainsAceessThroughPassage;
     }
 
@@ -191,7 +191,7 @@ public class Docket extends AbstractAuditable {
         return abuttingRoadgainWidth;
     }
 
-    public void setAbuttingRoadgainWidth(BigDecimal abuttingRoadgainWidth) {
+    public void setAbuttingRoadgainWidth(final BigDecimal abuttingRoadgainWidth) {
         this.abuttingRoadgainWidth = abuttingRoadgainWidth;
     }
 
@@ -199,7 +199,7 @@ public class Docket extends AbstractAuditable {
         return abuttingRoadgainPrivateOrPublic;
     }
 
-    public void setAbuttingRoadgainPrivateOrPublic(String abuttingRoadgainPrivateOrPublic) {
+    public void setAbuttingRoadgainPrivateOrPublic(final String abuttingRoadgainPrivateOrPublic) {
         this.abuttingRoadgainPrivateOrPublic = abuttingRoadgainPrivateOrPublic;
     }
 
@@ -207,7 +207,7 @@ public class Docket extends AbstractAuditable {
         return planCompliesWithSideCondition;
     }
 
-    public void setPlanCompliesWithSideCondition(String planCompliesWithSideCondition) {
+    public void setPlanCompliesWithSideCondition(final String planCompliesWithSideCondition) {
         this.planCompliesWithSideCondition = planCompliesWithSideCondition;
     }
 
@@ -215,7 +215,7 @@ public class Docket extends AbstractAuditable {
         return remarks;
     }
 
-    public void setRemarks(String remarks) {
+    public void setRemarks(final String remarks) {
         this.remarks = remarks;
     }
 
@@ -223,7 +223,7 @@ public class Docket extends AbstractAuditable {
         return aeeInspectionReport;
     }
 
-    public void setAeeInspectionReport(String aeeInspectionReport) {
+    public void setAeeInspectionReport(final String aeeInspectionReport) {
         this.aeeInspectionReport = aeeInspectionReport;
     }
 
@@ -231,7 +231,7 @@ public class Docket extends AbstractAuditable {
         return totalFloorCount;
     }
 
-    public void setTotalFloorCount(Integer totalFloorCount) {
+    public void setTotalFloorCount(final Integer totalFloorCount) {
         this.totalFloorCount = totalFloorCount;
     }
 
@@ -239,7 +239,7 @@ public class Docket extends AbstractAuditable {
         return lengthOfCompoundWall;
     }
 
-    public void setLengthOfCompoundWall(BigDecimal lengthOfCompoundWall) {
+    public void setLengthOfCompoundWall(final BigDecimal lengthOfCompoundWall) {
         this.lengthOfCompoundWall = lengthOfCompoundWall;
     }
 
@@ -247,7 +247,7 @@ public class Docket extends AbstractAuditable {
         return diameterOfWell;
     }
 
-    public void setDiameterOfWell(BigDecimal diameterOfWell) {
+    public void setDiameterOfWell(final BigDecimal diameterOfWell) {
         this.diameterOfWell = diameterOfWell;
     }
 
@@ -255,7 +255,7 @@ public class Docket extends AbstractAuditable {
         return seperateLatORTank;
     }
 
-    public void setSeperateLatORTank(BigDecimal seperateLatORTank) {
+    public void setSeperateLatORTank(final BigDecimal seperateLatORTank) {
         this.seperateLatORTank = seperateLatORTank;
     }
 
@@ -263,7 +263,7 @@ public class Docket extends AbstractAuditable {
         return terraced;
     }
 
-    public void setTerraced(BigDecimal terraced) {
+    public void setTerraced(final BigDecimal terraced) {
         this.terraced = terraced;
     }
 
@@ -271,7 +271,7 @@ public class Docket extends AbstractAuditable {
         return tiledRoof;
     }
 
-    public void setTiledRoof(BigDecimal tiledRoof) {
+    public void setTiledRoof(final BigDecimal tiledRoof) {
         this.tiledRoof = tiledRoof;
     }
 
@@ -279,7 +279,7 @@ public class Docket extends AbstractAuditable {
         return plotWidthRear;
     }
 
-    public void setPlotWidthRear(BigDecimal plotWidthRear) {
+    public void setPlotWidthRear(final BigDecimal plotWidthRear) {
         this.plotWidthRear = plotWidthRear;
     }
 
@@ -287,7 +287,7 @@ public class Docket extends AbstractAuditable {
         return constructionWidthRear;
     }
 
-    public void setConstructionWidthRear(BigDecimal constructionWidthRear) {
+    public void setConstructionWidthRear(final BigDecimal constructionWidthRear) {
         this.constructionWidthRear = constructionWidthRear;
     }
 
@@ -295,7 +295,7 @@ public class Docket extends AbstractAuditable {
         return constructionHeightRear;
     }
 
-    public void setConstructionHeightRear(BigDecimal constructionHeightRear) {
+    public void setConstructionHeightRear(final BigDecimal constructionHeightRear) {
         this.constructionHeightRear = constructionHeightRear;
     }
 
@@ -303,7 +303,7 @@ public class Docket extends AbstractAuditable {
         return status;
     }
 
-    public void setStatus(BpaStatus status) {
+    public void setStatus(final BpaStatus status) {
         this.status = status;
     }
 
@@ -311,7 +311,7 @@ public class Docket extends AbstractAuditable {
         return docketConstructionStage;
     }
 
-    public void setDocketConstructionStage(List<DocketConstructionStage> docketConstructionStage) {
+    public void setDocketConstructionStage(final List<DocketConstructionStage> docketConstructionStage) {
         this.docketConstructionStage = docketConstructionStage;
     }
 
@@ -319,7 +319,7 @@ public class Docket extends AbstractAuditable {
         return docketDetail;
     }
 
-    public void setDocketDetail(List<DocketDetail> docketDetail) {
+    public void setDocketDetail(final List<DocketDetail> docketDetail) {
         this.docketDetail = docketDetail;
     }
 

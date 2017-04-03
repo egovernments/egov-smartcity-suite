@@ -175,15 +175,15 @@ public class ServiceType extends AbstractAuditable {
         return sla;
     }
 
-    public void setSiteApproval(Boolean siteApproval) {
+    public void setSiteApproval(final Boolean siteApproval) {
         this.siteApproval = siteApproval;
     }
 
-    public void setIsApplicationFeeRequired(Boolean isApplicationFeeRequired) {
+    public void setIsApplicationFeeRequired(final Boolean isApplicationFeeRequired) {
         this.isApplicationFeeRequired = isApplicationFeeRequired;
     }
 
-    public void setSla(Long sla) {
+    public void setSla(final Long sla) {
         this.sla = sla;
     }
 
@@ -191,7 +191,7 @@ public class ServiceType extends AbstractAuditable {
         return buildingPlanApproval;
     }
 
-    public void setBuildingPlanApproval(Boolean buildingPlanApproval) {
+    public void setBuildingPlanApproval(final Boolean buildingPlanApproval) {
         this.buildingPlanApproval = buildingPlanApproval;
     }
 

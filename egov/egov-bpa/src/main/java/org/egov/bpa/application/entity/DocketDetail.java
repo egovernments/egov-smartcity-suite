@@ -85,7 +85,7 @@ public class DocketDetail extends AbstractAuditable {
         return value;
     }
 
-    public void setValue(String value) {
+    public void setValue(final String value) {
         this.value = value;
     }
 
@@ -93,7 +93,7 @@ public class DocketDetail extends AbstractAuditable {
         return remarks;
     }
 
-    public void setRemarks(String remarks) {
+    public void setRemarks(final String remarks) {
         this.remarks = remarks;
     }
 
@@ -101,7 +101,7 @@ public class DocketDetail extends AbstractAuditable {
         return required;
     }
 
-    public void setRequired(String required) {
+    public void setRequired(final String required) {
         this.required = required;
     }
 
@@ -109,7 +109,7 @@ public class DocketDetail extends AbstractAuditable {
         return provided;
     }
 
-    public void setProvided(String provided) {
+    public void setProvided(final String provided) {
         this.provided = provided;
     }
 
@@ -117,7 +117,7 @@ public class DocketDetail extends AbstractAuditable {
         return extentOfViolation;
     }
 
-    public void setExtentOfViolation(String extentOfViolation) {
+    public void setExtentOfViolation(final String extentOfViolation) {
         this.extentOfViolation = extentOfViolation;
     }
 
@@ -125,7 +125,7 @@ public class DocketDetail extends AbstractAuditable {
         return percentageOfViolation;
     }
 
-    public void setPercentageOfViolation(String percentageOfViolation) {
+    public void setPercentageOfViolation(final String percentageOfViolation) {
         this.percentageOfViolation = percentageOfViolation;
     }
 
@@ -133,7 +133,7 @@ public class DocketDetail extends AbstractAuditable {
         return docket;
     }
 
-    public void setDocket(Docket docket) {
+    public void setDocket(final Docket docket) {
         this.docket = docket;
     }
 
@@ -141,7 +141,7 @@ public class DocketDetail extends AbstractAuditable {
         return checkListDetail;
     }
 
-    public void setCheckListDetail(CheckListDetail checkListDetail) {
+    public void setCheckListDetail(final CheckListDetail checkListDetail) {
         this.checkListDetail = checkListDetail;
     }
 

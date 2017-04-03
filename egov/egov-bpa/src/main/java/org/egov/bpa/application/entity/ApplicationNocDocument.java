@@ -77,7 +77,7 @@ public class ApplicationNocDocument extends AbstractAuditable {
         return checklist;
     }
 
-    public void setChecklist(CheckListDetail checklist) {
+    public void setChecklist(final CheckListDetail checklist) {
         this.checklist = checklist;
     }
 
@@ -117,7 +117,7 @@ public class ApplicationNocDocument extends AbstractAuditable {
         return createduser;
     }
 
-    public void setCreateduser(User createduser) {
+    public void setCreateduser(final User createduser) {
         this.createduser = createduser;
     }
 

@@ -55,10 +55,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 public class ApplicationBpaBillService extends BillServiceInterface {
-    
+
+    private static final String ISDEBIT = "N";
+
     @Autowired
     private AutonumberServiceBeanResolver beanResolver;
-    
+
     @Autowired
     private InstallmentDao installmentDao;
 
@@ -71,16 +73,16 @@ public class ApplicationBpaBillService extends BillServiceInterface {
     private FinancialYearDAO financialYearDAO;
     @Autowired
     private ModuleService moduleService;
-    
+
     @Autowired
     private EgBillDao egBillDAO;
     @Autowired
     private ApplicationContext context;
-    
+
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
-    
+
     public List<Object> getDmdCollAmtInstallmentWise(final EgDemand egDemand) {
         final StringBuilder queryStringBuilder = new StringBuilder();
         queryStringBuilder
@@ -92,42 +94,42 @@ public class ApplicationBpaBillService extends BillServiceInterface {
         return getCurrentSession().createSQLQuery(queryStringBuilder.toString()).setLong("dmdId", egDemand.getId())
                 .list();
     }
-    
-    
-public Criteria createCriteriaforFeeAmount(Long serviceTypeId,BigDecimal areasqmt, String feeType) {
-        
-        
-        Criteria feeCrit=getCurrentSession().createCriteria(BpaFeeDetail.class,"bpafeeDtl")
-                        .createAlias("bpafeeDtl.bpafee", "bpaFeeObj")
-                        .createAlias("bpaFeeObj.serviceType", "servicetypeObj"); 
+
+    public Criteria createCriteriaforFeeAmount(final Long serviceTypeId, final String feeType) {
+
+        final Criteria feeCrit = getCurrentSession().createCriteria(BpaFeeDetail.class, "bpafeeDtl")
+                .createAlias("bpafeeDtl.bpafee", "bpaFeeObj")
+                .createAlias("bpaFeeObj.serviceType", "servicetypeObj");
         feeCrit.add(Restrictions.eq("servicetypeObj.id", serviceTypeId));
-        feeCrit.add(Restrictions.eq("bpaFeeObj.isActive",Boolean.TRUE));
-        if(feeType!=null)
-                feeCrit.add(Restrictions.ilike("bpaFeeObj.feeType", feeType));
-        
-       feeCrit.add(Restrictions.le("startDate",new Date())).add(Restrictions.or(Restrictions.isNull("endDate"),Restrictions.ge("endDate",new Date())));
+        feeCrit.add(Restrictions.eq("bpaFeeObj.isActive", Boolean.TRUE));
+        if (feeType != null)
+            feeCrit.add(Restrictions.ilike("bpaFeeObj.feeType", feeType));
+
+        feeCrit.add(Restrictions.le("startDate", new Date()))
+                .add(Restrictions.or(Restrictions.isNull("endDate"), Restrictions.ge("endDate", new Date())));
         return feeCrit;
-}
+    }
+
     @Transactional
     public String generateBill(final BpaApplication application) {
         String collectXML;
         final SimpleDateFormat formatYear = new SimpleDateFormat("yyyy");
-        String currentInstallmentYear ;
+        String currentInstallmentYear;
         final BpaApplicationBillable bpaApplicationBillable = (BpaApplicationBillable) context
                 .getBean("bpaApplicationBillable");
         final BpaBillReferenceNumberGenerator billRefeNumber = beanResolver
                 .getAutoNumberServiceFor(BpaBillReferenceNumberGenerator.class);
 
-            currentInstallmentYear = formatYear.format(
-                    getCurrentInstallment(BpaConstants.EGMODULE_NAME, BpaConstants.YEARLY, new Date())
-                            .getInstallmentYear());
-     
-            bpaApplicationBillable.setApplication(application);
-            bpaApplicationBillable.getApplication();
-            bpaApplicationBillable.setUserId(ApplicationThreadLocals.getUserId());
+        currentInstallmentYear = formatYear.format(
+                getCurrentInstallment(BpaConstants.EGMODULE_NAME, BpaConstants.YEARLY, new Date())
+                        .getInstallmentYear());
 
-            bpaApplicationBillable.setReferenceNumber(billRefeNumber.generateBillNumber(currentInstallmentYear));
-            bpaApplicationBillable.setBillType(getBillTypeByCode("AUTO"));
+        bpaApplicationBillable.setApplication(application);
+        bpaApplicationBillable.getApplication();
+        bpaApplicationBillable.setUserId(ApplicationThreadLocals.getUserId());
+
+        bpaApplicationBillable.setReferenceNumber(billRefeNumber.generateBillNumber(currentInstallmentYear));
+        bpaApplicationBillable.setBillType(getBillTypeByCode("AUTO"));
 
         final String billXml = getBillXML(bpaApplicationBillable);
         try {
@@ -137,10 +139,11 @@ public Criteria createCriteriaforFeeAmount(Long serviceTypeId,BigDecimal areasqm
         }
         return collectXML;
     }
+
     public EgBillType getBillTypeByCode(final String typeCode) {
         return egBillDAO.getBillTypeByCode(typeCode);
     }
-    
+
     public Installment getCurrentInstallment(final String moduleName, final String installmentType, final Date date) {
         if (null == installmentType)
             return installmentDao.getInsatllmentByModuleForGivenDate(moduleService.getModuleByName(moduleName),
@@ -149,11 +152,7 @@ public Criteria createCriteriaforFeeAmount(Long serviceTypeId,BigDecimal areasqm
             return installmentDao.getInsatllmentByModuleForGivenDateAndInstallmentType(
                     moduleService.getModuleByName(moduleName), date, installmentType);
     }
-    
-   
 
-    
-    
     private EgDemandDetails createDemandDetails(final BigDecimal amount, final String demandReason,
             final Installment installment) {
         final EgDemandReason demandReasonObj = getDemandReasonByCodeAndInstallment(demandReason, installment);
@@ -166,51 +165,50 @@ public Criteria createCriteriaforFeeAmount(Long serviceTypeId,BigDecimal areasqm
         demandDetail.setModifiedDate(new Date());
         return demandDetail;
     }
+
     public EgDemandReason getDemandReasonByCodeAndInstallment(final String demandReason,
             final Installment installment) {
         final Query demandQuery = getCurrentSession().getNamedQuery("DEMANDREASONBY_CODE_AND_INSTALLMENTID");
         demandQuery.setParameter(0, demandReason);
         demandQuery.setParameter(1, installment.getId());
-        final EgDemandReason demandReasonObj = (EgDemandReason) demandQuery.uniqueResult();
-        return demandReasonObj;
+        return (EgDemandReason) demandQuery.uniqueResult();
     }
-    
+
     public EgDemand createDemand(final BpaApplication application) {
 
         final Map<String, BigDecimal> feeDetails = new HashMap<>();
-        EgDemand egDemand = null ;
-          Installment installment = installmentDao.getInsatllmentByModuleForGivenDateAndInstallmentType(
+        EgDemand egDemand = null;
+        final Installment installment = installmentDao.getInsatllmentByModuleForGivenDateAndInstallmentType(
                 moduleService.getModuleByName(BpaConstants.EGMODULE_NAME), new Date(), BpaConstants.YEARLY);
         // Not updating demand amount collected for new connection as per the
         // discussion.
         feeDetails.put(BpaConstants.ADMISSIONFEEREASON, application.getAdmissionfeeAmount());
         if (installment != null) {
-             final Set<EgDemandDetails> dmdDetailSet = new HashSet<>();
+            final Set<EgDemandDetails> dmdDetailSet = new HashSet<>();
             for (final String demandReason : feeDetails.keySet())
                 dmdDetailSet.add(createDemandDetails(feeDetails.get(demandReason), demandReason, installment));
-
             egDemand = new EgDemand();
             egDemand.setEgInstallmentMaster(installment);
             egDemand.getEgDemandDetails().addAll(dmdDetailSet);
             egDemand.setIsHistory("N");
-            egDemand.setBaseDemand( application.getAdmissionfeeAmount());
+            egDemand.setBaseDemand(application.getAdmissionfeeAmount());
             egDemand.setCreateDate(new Date());
             egDemand.setModifiedDate(new Date());
-        } 
-        
+        }
+
         return egDemand;
     }
 
-    
+    @SuppressWarnings("unchecked")
     @Override
     public List<EgBillDetails> getBilldetails(final Billable billObj) {
-        final List<EgBillDetails> billDetails = new ArrayList<EgBillDetails>();
+        final List<EgBillDetails> billDetails = new ArrayList<>();
         final EgDemand demand = billObj.getCurrentDemand();
         final Date currentDate = new Date();
         final Map installmentWise = new HashMap<Installment, List<EgDemandDetails>>();
-        final Set<Installment> sortedInstallmentSet = new TreeSet<Installment>();
+        final Set<Installment> sortedInstallmentSet = new TreeSet<>();
         final BpaDemandComparatorByOrderId demandComparatorByOrderId = new BpaDemandComparatorByOrderId();
-        final List<EgDemandDetails> orderedDetailsList = new ArrayList<EgDemandDetails>();
+        final List<EgDemandDetails> orderedDetailsList = new ArrayList<>();
         final Installment currInstallment = getCurrentInstallment(BpaConstants.EGMODULE_NAME, BpaConstants.YEARLY, new Date());
         final CFinancialYear finYear = financialYearDAO.getFinancialYearByDate(new Date());
         new TreeMap<Date, String>();
@@ -218,7 +216,7 @@ public Criteria createCriteriaforFeeAmount(Long serviceTypeId,BigDecimal areasqm
         for (final EgDemandDetails demandDetail : demand.getEgDemandDetails()) {
             final Installment installment = demandDetail.getEgDemandReason().getEgInstallmentMaster();
             if (installmentWise.get(installment) == null) {
-                final List<EgDemandDetails> detailsList = new ArrayList<EgDemandDetails>();
+                final List<EgDemandDetails> detailsList = new ArrayList<>();
                 detailsList.add(demandDetail);
                 installmentWise.put(demandDetail.getEgDemandReason().getEgInstallmentMaster(), detailsList);
                 sortedInstallmentSet.add(installment);
@@ -238,7 +236,7 @@ public Criteria createCriteriaforFeeAmount(Long serviceTypeId,BigDecimal areasqm
             final EgDemandReason reason = demandDetail.getEgDemandReason();
             final Installment installment = demandDetail.getEgDemandReason().getEgInstallmentMaster();
 
-            if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getIsDebit().equalsIgnoreCase("N")
+            if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getIsDebit().equalsIgnoreCase(ISDEBIT)
                     && demandDetail.getAmount().compareTo(demandDetail.getAmtCollected()) > 0) {
                 final EgBillDetails billdetail = new EgBillDetails();
                 if (demandDetail.getAmount() != null) {
@@ -259,14 +257,14 @@ public Criteria createCriteriaforFeeAmount(Long serviceTypeId,BigDecimal areasqm
                         reason.getEgDemandReasonMaster().getReasonMaster() + " - " + installment.getDescription()
                                 + " # " + billObj.getCurrentDemand().getEgInstallmentMaster().getDescription());
                 billdetail.setFunctionCode("01");
-             if (billdetail.getEgDemandReason().getEgInstallmentMaster().getFromDate()
-                            .compareTo(finYear.getStartingDate()) >= 0
-                            && billdetail.getEgDemandReason().getEgInstallmentMaster().getFromDate()
-                                    .compareTo(finYear.getEndingDate()) < 0)
-                        billdetail.setPurpose(PURPOSE.CURRENT_AMOUNT.toString());
-                    else
-                        billdetail.setPurpose(PURPOSE.OTHERS.toString());
-                     billdetail.setPurpose(PURPOSE.OTHERS.toString());
+                if (billdetail.getEgDemandReason().getEgInstallmentMaster().getFromDate()
+                        .compareTo(finYear.getStartingDate()) >= 0
+                        && billdetail.getEgDemandReason().getEgInstallmentMaster().getFromDate()
+                                .compareTo(finYear.getEndingDate()) < 0)
+                    billdetail.setPurpose(PURPOSE.CURRENT_AMOUNT.toString());
+                else
+                    billdetail.setPurpose(PURPOSE.OTHERS.toString());
+                billdetail.setPurpose(PURPOSE.OTHERS.toString());
                 if (currInstallment != null && installment.getFromDate().before(currInstallment.getToDate()))
                     billdetail.setAdditionalFlag(1);
                 else
@@ -277,11 +275,10 @@ public Criteria createCriteriaforFeeAmount(Long serviceTypeId,BigDecimal areasqm
 
         return billDetails;
     }
+
     public BpaApplication getApplicationByDemand(final EgDemand demand) {
         return applicationBpaRepository.findByDemand(demand);
     }
-
-    
 
     public EgBill updateBillWithLatest(final Long billId) {
         LOGGER.debug("updateBillWithLatest billId " + billId);
@@ -305,10 +302,11 @@ public Criteria createCriteriaforFeeAmount(Long serviceTypeId,BigDecimal areasqm
                 + egBillDetails);
         return bill;
     }
-    
+
     @Override
     public void cancelBill() {
-        // TODO Auto-generated method stub
-        
+        /*
+         * ncell Bill still not developed Ca
+         */
     }
 }

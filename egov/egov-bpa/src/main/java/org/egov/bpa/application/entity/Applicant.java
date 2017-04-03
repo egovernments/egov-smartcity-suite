@@ -168,12 +168,11 @@ public class Applicant extends AbstractAuditable {
         this.emailid = emailid;
     }
 
-  
     public BpaApplication getApplication() {
         return application;
     }
 
-    public void setApplication(BpaApplication application) {
+    public void setApplication(final BpaApplication application) {
         this.application = application;
     }
 

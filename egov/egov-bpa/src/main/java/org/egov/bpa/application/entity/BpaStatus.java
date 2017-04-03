@@ -82,7 +82,7 @@ public class BpaStatus extends AbstractAuditable {
         return code;
     }
 
-    public void setCode(String code) {
+    public void setCode(final String code) {
         this.code = code;
     }
 
@@ -90,7 +90,7 @@ public class BpaStatus extends AbstractAuditable {
         return description;
     }
 
-    public void setDescription(String description) {
+    public void setDescription(final String description) {
         this.description = description;
     }
 
@@ -98,7 +98,7 @@ public class BpaStatus extends AbstractAuditable {
         return isActive;
     }
 
-    public void setIsActive(Boolean isActive) {
+    public void setIsActive(final Boolean isActive) {
         this.isActive = isActive;
     }
 
@@ -106,7 +106,7 @@ public class BpaStatus extends AbstractAuditable {
         return moduleType;
     }
 
-    public void setModuleType(String moduleType) {
+    public void setModuleType(final String moduleType) {
         this.moduleType = moduleType;
     }
 

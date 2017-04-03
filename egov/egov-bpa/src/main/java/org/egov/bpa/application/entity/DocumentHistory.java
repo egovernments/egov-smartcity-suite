@@ -1,8 +1,8 @@
 /**
- * eGov suite of products aim to improve the internal efficiency,transparency, 
+ * eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
     Copyright (C) <2015>  eGovernments Foundation
-    The updated version of eGov suite of products as by eGovernments Foundation 
+    The updated version of eGov suite of products as by eGovernments Foundation
     is available at http://www.egovernments.org
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -13,17 +13,17 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
     You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or 
+    along with this program. If not, see http://www.gnu.org/licenses/ or
     http://www.gnu.org/licenses/gpl.html .
     In addition to the terms of the GPL license to be adhered to in using this
     program, the following additional terms are to be complied with:
-        1) All versions of this program, verbatim or modified must carry this 
+        1) All versions of this program, verbatim or modified must carry this
            Legal Notice.
-        2) Any misrepresentation of the origin of the material is prohibited. It 
-           is required that all modified versions of this material be marked in 
+        2) Any misrepresentation of the origin of the material is prohibited. It
+           is required that all modified versions of this material be marked in
            reasonable ways as different from the original version.
-        3) This license does not grant any rights to any user of the program 
-           with regards to rights under trademark law for use of the trade names 
+        3) This license does not grant any rights to any user of the program
+           with regards to rights under trademark law for use of the trade names
            or trademarks of eGovernments Foundation.
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
@@ -95,7 +95,7 @@ public class DocumentHistory extends AbstractAuditable {
         return documentNum;
     }
 
-    public void setDocumentNum(String documentNum) {
+    public void setDocumentNum(final String documentNum) {
         this.documentNum = documentNum;
     }
 
@@ -103,7 +103,7 @@ public class DocumentHistory extends AbstractAuditable {
         return docEnclosedextentInsqmt;
     }
 
-    public void setDocEnclosedextentInsqmt(BigDecimal docEnclosedextentInsqmt) {
+    public void setDocEnclosedextentInsqmt(final BigDecimal docEnclosedextentInsqmt) {
         this.docEnclosedextentInsqmt = docEnclosedextentInsqmt;
     }
 
@@ -111,7 +111,7 @@ public class DocumentHistory extends AbstractAuditable {
         return layoutdextentInsqmt;
     }
 
-    public void setLayoutdextentInsqmt(BigDecimal layoutdextentInsqmt) {
+    public void setLayoutdextentInsqmt(final BigDecimal layoutdextentInsqmt) {
         this.layoutdextentInsqmt = layoutdextentInsqmt;
     }
 
@@ -119,7 +119,7 @@ public class DocumentHistory extends AbstractAuditable {
         return wheatherdocumentEnclosed;
     }
 
-    public void setWheatherdocumentEnclosed(Boolean wheatherdocumentEnclosed) {
+    public void setWheatherdocumentEnclosed(final Boolean wheatherdocumentEnclosed) {
         this.wheatherdocumentEnclosed = wheatherdocumentEnclosed;
     }
 
@@ -127,7 +127,7 @@ public class DocumentHistory extends AbstractAuditable {
         return wheatherplotDevelopedBy;
     }
 
-    public void setWheatherplotDevelopedBy(Boolean wheatherplotDevelopedBy) {
+    public void setWheatherplotDevelopedBy(final Boolean wheatherplotDevelopedBy) {
         this.wheatherplotDevelopedBy = wheatherplotDevelopedBy;
     }
 
@@ -135,7 +135,7 @@ public class DocumentHistory extends AbstractAuditable {
         return wheatherpartOfLayout;
     }
 
-    public void setWheatherpartOfLayout(Boolean wheatherpartOfLayout) {
+    public void setWheatherpartOfLayout(final Boolean wheatherpartOfLayout) {
         this.wheatherpartOfLayout = wheatherpartOfLayout;
     }
 
@@ -143,7 +143,7 @@ public class DocumentHistory extends AbstractAuditable {
         return plotDevelopedBy;
     }
 
-    public void setPlotDevelopedBy(String plotDevelopedBy) {
+    public void setPlotDevelopedBy(final String plotDevelopedBy) {
         this.plotDevelopedBy = plotDevelopedBy;
     }
 
@@ -151,7 +151,7 @@ public class DocumentHistory extends AbstractAuditable {
         return wheatherFmsOrSketchCopyOfReg;
     }
 
-    public void setWheatherFmsOrSketchCopyOfReg(Boolean wheatherFmsOrSketchCopyOfReg) {
+    public void setWheatherFmsOrSketchCopyOfReg(final Boolean wheatherFmsOrSketchCopyOfReg) {
         this.wheatherFmsOrSketchCopyOfReg = wheatherFmsOrSketchCopyOfReg;
     }
 
@@ -159,7 +159,7 @@ public class DocumentHistory extends AbstractAuditable {
         return createdUser;
     }
 
-    public void setCreatedUser(User createdUser) {
+    public void setCreatedUser(final User createdUser) {
         this.createdUser = createdUser;
     }
 
@@ -167,7 +167,7 @@ public class DocumentHistory extends AbstractAuditable {
         return docEnclosedNumber;
     }
 
-    public void setDocEnclosedNumber(BigDecimal docEnclosedNumber) {
+    public void setDocEnclosedNumber(final BigDecimal docEnclosedNumber) {
         this.docEnclosedNumber = docEnclosedNumber;
     }
 
@@ -175,7 +175,7 @@ public class DocumentHistory extends AbstractAuditable {
         return docEnclosedDate;
     }
 
-    public void setDocEnclosedDate(BigDecimal docEnclosedDate) {
+    public void setDocEnclosedDate(final BigDecimal docEnclosedDate) {
         this.docEnclosedDate = docEnclosedDate;
     }
 
@@ -183,7 +183,7 @@ public class DocumentHistory extends AbstractAuditable {
         return application;
     }
 
-    public void setApplication(BpaApplication application) {
+    public void setApplication(final BpaApplication application) {
         this.application = application;
     }
 

@@ -42,16 +42,13 @@ package org.egov.bpa.application.entity;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.egov.bpa.utils.BpaConstants;
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.integration.models.BillAccountDetails.PURPOSE;
-import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
-import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.commons.dao.FunctionHibernateDAO;
 import org.egov.demand.model.EgBillDetails;
 import org.egov.infra.validation.exception.ValidationError;
@@ -67,12 +64,10 @@ public class CollectionApportioner {
 
     }
 
-    public void apportion(final BigDecimal amtPaid, final List<ReceiptDetail> receiptDetails,
-            final Map<String, BigDecimal> instDmdMap) {
-        LOGGER.info("receiptDetails before apportioning amount " + amtPaid + ": " + receiptDetails);
+    public void apportion(final BigDecimal amtPaid, final List<ReceiptDetail> receiptDetails) {
 
         Amount balance = new Amount(amtPaid);
-        BigDecimal crAmountToBePaid = BigDecimal.ZERO;
+        BigDecimal crAmountToBePaid;
         for (final ReceiptDetail rd : receiptDetails) {
 
             if (balance.isZero()) {
@@ -96,29 +91,23 @@ public class CollectionApportioner {
         if (balance.isGreaterThanZero()) {
             LOGGER.error("Apportioning failed: excess payment!");
             throw new ValidationException(
-                    Arrays.asList(new ValidationError("Paid Amount is greater than Total Amount to be paid",
-                            "Paid Amount is greater than Total Amount to be paid")));
+                    Arrays.asList(new ValidationError(BpaConstants.STRING_VALIDATION,
+                            BpaConstants.STRING_VALIDATION)));
         }
 
-        LOGGER.info("receiptDetails after apportioning: " + receiptDetails);
     }
 
     public List<ReceiptDetail> reConstruct(final BigDecimal amountPaid, final List<EgBillDetails> billDetails,
-            final FunctionHibernateDAO functionDAO, final ChartOfAccountsHibernateDAO chartOfAccountsDAO,
-            final FinancialYearDAO financialYearDAO) {
-        final List<ReceiptDetail> receiptDetails = new ArrayList<ReceiptDetail>(0);
-        LOGGER.info("receiptDetails before reApportion amount " + amountPaid + ": " + receiptDetails);
-        LOGGER.info("billDetails before reApportion " + billDetails);
+            final FunctionHibernateDAO functionDAO, final ChartOfAccountsHibernateDAO chartOfAccountsDAO) {
+        final List<ReceiptDetail> receiptDetails = new ArrayList<>(0);
         Amount balance = new Amount(amountPaid);
-        final CFinancialYear finYear = financialYearDAO.getFinancialYearByDate(new Date());
 
-        BigDecimal crAmountToBePaid = BigDecimal.ZERO;
+        BigDecimal crAmountToBePaid;
 
         for (final EgBillDetails billDetail : billDetails) {
             final String glCode = billDetail.getGlcode();
             final ReceiptDetail receiptDetail = new ReceiptDetail();
-           
-                receiptDetail.setPurpose(PURPOSE.OTHERS.toString());
+            receiptDetail.setPurpose(PURPOSE.OTHERS.toString());
             receiptDetail.setOrdernumber(Long.valueOf(billDetail.getOrderNo()));
             receiptDetail.setDescription(billDetail.getDescription());
             receiptDetail.setIsActualDemand(true);
@@ -154,8 +143,8 @@ public class CollectionApportioner {
         if (balance.isGreaterThanZero()) {
             LOGGER.error("reApportion failed: excess payment!");
             throw new ValidationException(
-                    Arrays.asList(new ValidationError("Paid Amount is greater than Total Amount to be paid",
-                            "Paid Amount is greater than Total Amount to be paid")));
+                    Arrays.asList(new ValidationError(BpaConstants.STRING_VALIDATION,
+                            BpaConstants.STRING_VALIDATION)));
         }
 
         LOGGER.info("receiptDetails after reApportion: " + receiptDetails);

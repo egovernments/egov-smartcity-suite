@@ -64,7 +64,6 @@ import org.egov.collection.integration.models.ReceiptAccountInfo;
 import org.egov.collection.integration.models.ReceiptAmountInfo;
 import org.egov.collection.integration.models.ReceiptInstrumentInfo;
 import org.egov.collection.integration.services.CollectionIntegrationService;
-import org.egov.commons.CFinancialYear;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.commons.dao.FinancialYearDAO;
@@ -98,7 +97,6 @@ public class BpaTaxCollection extends TaxCollection {
     @Autowired
     private ApplicationBpaService applicationBpaService;
 
-
     @Autowired
     @Qualifier("workflowService")
     private SimpleWorkflowService<BpaApplication> waterConnectionWorkflowService;
@@ -118,22 +116,16 @@ public class BpaTaxCollection extends TaxCollection {
     @Autowired
     private FunctionHibernateDAO functionDAO;
 
-
     @Autowired
     private ChartOfAccountsHibernateDAO chartOfAccountsDAO;
-
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
 
-    @Autowired
-    public BpaTaxCollection() {
-    }
-
     @Override
     @Transactional
-    public void updateDemandDetails(final BillReceiptInfo billRcptInfo) throws ApplicationRuntimeException {
+    public void updateDemandDetails(final BillReceiptInfo billRcptInfo) {
         final BigDecimal totalAmount = billRcptInfo.getTotalAmount();
         final EgDemand demand = getCurrentDemand(Long.valueOf(billRcptInfo.getBillReferenceNum()));
         final String indexNo = ((BillReceiptInfoImpl) billRcptInfo).getReceiptMisc().getReceiptHeader()
@@ -149,15 +141,11 @@ public class BpaTaxCollection extends TaxCollection {
             if (billRcptInfo.getEvent().equals(EVENT_RECEIPT_CREATED)) {
                 updateCollForRcptCreate(demand, billRcptInfo, totalAmount);
                 updateBpaApplication(demand);
-                
-            } else if (billRcptInfo.getEvent().equals(EVENT_RECEIPT_CANCELLED)) {
+
+            } else if (billRcptInfo.getEvent().equals(EVENT_RECEIPT_CANCELLED))
                 updateCollectionForRcptCancel(demand, billRcptInfo);
-                //updateWaterConnDetailsStatus(demand, billRcptInfo);
-                
-            } else if (billRcptInfo.getEvent().equals(EVENT_INSTRUMENT_BOUNCED)) {
+            else if (billRcptInfo.getEvent().equals(EVENT_INSTRUMENT_BOUNCED))
                 updateCollForChequeBounce(demand, billRcptInfo);
-               
-            }
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("updateDemandDetails : Demand after processed : " + demand);
         } catch (final Exception e) {
@@ -167,8 +155,6 @@ public class BpaTaxCollection extends TaxCollection {
     }
 
     private void updateCollForChequeBounce(final EgDemand demand, final BillReceiptInfo billRcptInfo) {
-        LOGGER.debug("reconcileCollForChequeBounce : Updating Collection Started For Demand : " + demand
-                + " with BillReceiptInfo - " + billRcptInfo);
         cancelBill(Long.valueOf(billRcptInfo.getBillReferenceNum()));
         demand.setStatus(BpaConstants.DMD_STATUS_CHEQUE_BOUNCED);
         updateDmdDetForRcptCancelAndCheckBounce(demand, billRcptInfo);
@@ -176,11 +162,11 @@ public class BpaTaxCollection extends TaxCollection {
     }
 
     @Transactional
-    private void updateDmdDetForRcptCancelAndCheckBounce(final EgDemand demand, final BillReceiptInfo billRcptInfo) {
+    public void updateDmdDetForRcptCancelAndCheckBounce(final EgDemand demand, final BillReceiptInfo billRcptInfo) {
         LOGGER.debug("Entering method updateDmdDetForRcptCancelAndCheckBounce");
-        String installment = "";
+        String installment;
         for (final ReceiptAccountInfo rcptAccInfo : billRcptInfo.getAccountDetails())
-            if (rcptAccInfo.getCrAmount() != null && rcptAccInfo.getCrAmount().compareTo(BigDecimal.ZERO) == 1
+            if (rcptAccInfo.getCrAmount() != null && rcptAccInfo.getCrAmount().compareTo(BigDecimal.ZERO) > 1
                     && !rcptAccInfo.getIsRevenueAccount()) {
                 final String[] desc = rcptAccInfo.getDescription().split("-", 2);
                 final String reason = desc[0].trim();
@@ -215,36 +201,20 @@ public class BpaTaxCollection extends TaxCollection {
     }
 
     /**
-     * @param demand
-     *            Updates WaterConnectionDetails Object once Collection Is done.
-     *            send Record move to Commissioner and Send SMS and Email after
-     *            Collection
+     * @param demand Updates WaterConnectionDetails Object once Collection Is done. send Record move to Commissioner and Send SMS
+     * and Email after Collection
      */
     @Transactional
     public void updateBpaApplication(final EgDemand demand) {
         final BpaApplication application = applicationBpaBillService
                 .getApplicationByDemand(demand);
-       /* if (!waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.ACTIVE)) {
-            waterConnectionDetails.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
-                    WaterTaxConstants.APPLICATION_STATUS_FEEPAID, WaterTaxConstants.MODULETYPE));
-            Long approvalPosition = 0l;
-            final ApplicationWorkflowCustomDefaultImpl applicationWorkflowCustomDefaultImpl = waterConnectionDetailsService
-                    .getInitialisedWorkFlowBean();
-            approvalPosition = waterTaxUtils.getApproverPosition(WaterTaxConstants.AE_TAPE_AEE__DESIGN,
-                    waterConnectionDetails);
-            applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(waterConnectionDetails,
-                    approvalPosition, WaterTaxConstants.FEE_COLLECTION_COMMENT,
-                    waterConnectionDetails.getApplicationType().getCode(), null);
-
-            waterConnectionSmsAndEmailService.sendSmsAndEmail(waterConnectionDetails, null);
-            waterConnectionDetailsService.saveAndFlushWaterConnectionDetail(waterConnectionDetails);
-        }*/
+        // update status and initialize workflow
         applicationBpaService.saveAndFlushApplication(application);
 
     }
 
     @Transactional
-    private void updateCollForRcptCreate(final EgDemand demand, final BillReceiptInfo billRcptInfo,
+    public void updateCollForRcptCreate(final EgDemand demand, final BillReceiptInfo billRcptInfo,
             final BigDecimal totalAmount) {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("updateCollForRcptCreate : Updating Collection Started For Demand : " + demand
@@ -259,7 +229,7 @@ public class BpaTaxCollection extends TaxCollection {
     }
 
     @Transactional
-    private void updateDemandDetailForReceiptCreate(final Set<ReceiptAccountInfo> accountDetails, final EgDemand demand,
+    public void updateDemandDetailForReceiptCreate(final Set<ReceiptAccountInfo> accountDetails, final EgDemand demand,
             final BillReceiptInfo billRcptInfo, final BigDecimal totalAmount) {
         final StringBuilder query = new StringBuilder(
                 "select dmdet FROM EgDemandDetails dmdet left join fetch dmdet.egDemandReason dmdRsn ")
@@ -268,51 +238,44 @@ public class BpaTaxCollection extends TaxCollection {
         final List<EgDemandDetails> demandDetailList = getCurrentSession().createQuery(query.toString())
                 .setLong("demand", demand.getId()).list();
         final Map<String, Map<String, EgDemandDetails>> installmentWiseDemandDetailsByReason = new HashMap<String, Map<String, EgDemandDetails>>();
-        Map<String, EgDemandDetails> demandDetailByReason = null;
-        EgDemandReason dmdRsn = null;
-        String installmentDesc = null;
+        Map<String, EgDemandDetails> demandDetailByReason;
+        EgDemandReason dmdRsn;
+        String installmentDesc;
 
-        for (final EgDemandDetails dmdDtls : demandDetailList)
-        {
-                dmdRsn = dmdDtls.getEgDemandReason();
-                installmentDesc = dmdRsn.getEgInstallmentMaster().getDescription();
-                demandDetailByReason = new HashMap<String, EgDemandDetails>(0);
-                if (installmentWiseDemandDetailsByReason.get(installmentDesc) == null) {
-                    demandDetailByReason.put(dmdRsn.getEgDemandReasonMaster().getReasonMaster(), dmdDtls);
-                    installmentWiseDemandDetailsByReason.put(installmentDesc, demandDetailByReason);
-                }
-                else
+        for (final EgDemandDetails dmdDtls : demandDetailList) {
+            dmdRsn = dmdDtls.getEgDemandReason();
+            installmentDesc = dmdRsn.getEgInstallmentMaster().getDescription();
+            demandDetailByReason = new HashMap<>(0);
+            if (installmentWiseDemandDetailsByReason.get(installmentDesc) == null) {
+                demandDetailByReason.put(dmdRsn.getEgDemandReasonMaster().getReasonMaster(), dmdDtls);
+                installmentWiseDemandDetailsByReason.put(installmentDesc, demandDetailByReason);
+            } else
                 installmentWiseDemandDetailsByReason.get(installmentDesc)
                         .put(dmdRsn.getEgDemandReasonMaster().getReasonMaster(), dmdDtls);
         }
 
-        EgDemandDetails demandDetail = null;
-        final Map<String, Installment> currInstallments = new HashMap<String, Installment>();
-        final Installment currFirstHalf =applicationBpaBillService.getCurrentInstallment(BpaConstants.EGMODULE_NAME, BpaConstants.YEARLY, new Date());
-      
+        EgDemandDetails demandDetail;
+        new HashMap<String, Installment>();
+        applicationBpaBillService.getCurrentInstallment(BpaConstants.EGMODULE_NAME,
+                BpaConstants.YEARLY, new Date());
+
         for (final ReceiptAccountInfo rcptAccInfo : accountDetails)
             if (rcptAccInfo.getDescription() != null && !rcptAccInfo.getDescription().isEmpty())
-                if (rcptAccInfo.getCrAmount() != null && rcptAccInfo.getCrAmount().compareTo(BigDecimal.ZERO) == 1) {
+                if (rcptAccInfo.getCrAmount() != null && rcptAccInfo.getCrAmount().compareTo(BigDecimal.ZERO) > 1) {
                     final String[] desc = rcptAccInfo.getDescription().split("-", 2);
                     final String[] installsplit = desc[1].split("#");
                     final String reason = desc[0].trim();
                     final String instDesc = installsplit[0].trim();
-                        demandDetail = installmentWiseDemandDetailsByReason.get(instDesc).get(reason);
-                        demandDetail.addCollectedWithOnePaisaTolerance(rcptAccInfo.getCrAmount());
-                        if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getIsDemand())
-                            demand.addCollected(rcptAccInfo.getCrAmount());
-                    
+                    demandDetail = installmentWiseDemandDetailsByReason.get(instDesc).get(reason);
+                    demandDetail.addCollectedWithOnePaisaTolerance(rcptAccInfo.getCrAmount());
+                    if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getIsDemand())
+                        demand.addCollected(rcptAccInfo.getCrAmount());
+
                     persistCollectedReceipts(demandDetail, billRcptInfo.getReceiptNum(), totalAmount,
                             billRcptInfo.getReceiptDate(), demandDetail.getAmtCollected());
-                    if (LOGGER.isDebugEnabled())
-                        LOGGER.debug("Persisted demand and receipt details for tax : " + reason + " installment : "
-                                + instDesc + " with receipt No : " + billRcptInfo.getReceiptNum() + " for Rs. "
-                                + rcptAccInfo.getCrAmount());
                 }
 
     }
-
-  
 
     public EgDemandDetails createDemandDetails(final EgDemandReason egDemandReason, final BigDecimal amtCollected,
             final BigDecimal dmdAmount) {
@@ -326,20 +289,19 @@ public class BpaTaxCollection extends TaxCollection {
 
     public EgDemand getCurrentDemand(final Long billId) {
         final EgBill egBill = egBillDAO.findById(billId, false);
-        BpaApplication application = null;
-        EgDemand demand = null;
+        final BpaApplication application = null;
+        EgDemand demand;
         if (egBill.getEgDemand() != null && egBill.getEgDemand().getIsHistory() != null
                 && egBill.getEgDemand().getIsHistory().equals(BpaConstants.DEMANDISHISTORY))
             demand = egBill.getEgDemand();
-        else {
-            demand=application.getDemand(); 
-        }
+        else
+            demand = application.getDemand();
         return demand;
     }
 
     // Receipt cancellation ,updating bill,demanddetails,demand
     @Transactional
-    private void updateCollectionForRcptCancel(final EgDemand demand, final BillReceiptInfo billRcptInfo) {
+    public void updateCollectionForRcptCancel(final EgDemand demand, final BillReceiptInfo billRcptInfo) {
         LOGGER.debug("reconcileCollForRcptCancel : Updating Collection Started For Demand : " + demand
                 + " with BillReceiptInfo - " + billRcptInfo);
         try {
@@ -353,7 +315,7 @@ public class BpaTaxCollection extends TaxCollection {
     }
 
     @Transactional
-    private void cancelBill(final Long billId) {
+    public void cancelBill(final Long billId) {
         if (billId != null) {
             final EgBill egBill = egBillDAO.findById(billId, false);
             egBill.setIs_Cancelled("Y");
@@ -361,11 +323,10 @@ public class BpaTaxCollection extends TaxCollection {
     }
 
     @Transactional
-    private void updateDmdDetForRcptCancel(final EgDemand demand, final BillReceiptInfo billRcptInfo) {
-        LOGGER.debug("Entering method updateDmdDetForRcptCancel");
-        String installment = "";
+    public void updateDmdDetForRcptCancel(final EgDemand demand, final BillReceiptInfo billRcptInfo) {
+        String installment;
         for (final ReceiptAccountInfo rcptAccInfo : billRcptInfo.getAccountDetails())
-            if (rcptAccInfo.getCrAmount() != null && rcptAccInfo.getCrAmount().compareTo(BigDecimal.ZERO) == 1
+            if (rcptAccInfo.getCrAmount() != null && rcptAccInfo.getCrAmount().compareTo(BigDecimal.ZERO) > 1
                     && !rcptAccInfo.getIsRevenueAccount()) {
 
                 final String[] desc = rcptAccInfo.getDescription().split("-", 2);
@@ -399,45 +360,17 @@ public class BpaTaxCollection extends TaxCollection {
         LOGGER.debug("Exiting method updateDmdDetForRcptCancel");
     }
 
-  /*  @Transactional
-    private void updateWaterConnDetailsStatus(final EgDemand demand, final BillReceiptInfo billRcptInfo) {
-        final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
-                .getWaterConnectionDetailsByDemand(demand);
-        StateHistory stateHistory = null;
-        if (waterConnectionDetails.getStatus().getCode()
-                .equalsIgnoreCase(WaterTaxConstants.APPLICATION_STATUS_FEEPAID)) {
-            waterConnectionDetails.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
-                    WaterTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN, WaterTaxConstants.MODULETYPE));
-            Long approvalPosition = Long.valueOf(0);
-            if (!waterConnectionDetails.getStateHistory().isEmpty() && waterConnectionDetails.getStateHistory() != null)
-                Collections.reverse(waterConnectionDetails.getStateHistory());
-            stateHistory = waterConnectionDetails.getStateHistory().get(0);
-            final Position owner = stateHistory.getOwnerPosition();
-            if (owner != null)
-                approvalPosition = owner.getId();
-            final ApplicationWorkflowCustomDefaultImpl applicationWorkflowCustomDefaultImpl = waterConnectionDetailsService
-                    .getInitialisedWorkFlowBean();
-            applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(waterConnectionDetails,
-                    approvalPosition, "Receipt Cancelled", WaterTaxConstants.NEW_CONNECTION_MATRIX_ADDL_RULE, null);
-        }
-
-    }*/
-
-   
-  
-
     @Override
     public List<ReceiptDetail> reconstructReceiptDetail(final String billReferenceNumber,
             final BigDecimal actualAmountPaid, final List<ReceiptDetail> receiptDetailList) {
         final Long billID = Long.valueOf(billReferenceNumber);
-        final List<EgBillDetails> billDetails = new ArrayList<EgBillDetails>(0);
+        final List<EgBillDetails> billDetails = new ArrayList<>(0);
         final EgBill bill = applicationBpaBillService.updateBillWithLatest(billID);
         LOGGER.debug("Reconstruct consumer code :" + bill.getConsumerId() + ", with bill reference number: "
                 + billReferenceNumber + ", for Amount Paid :" + actualAmountPaid);
         final CollectionApportioner apportioner = new CollectionApportioner();
         billDetails.addAll(bill.getEgBillDetails());
-        return apportioner.reConstruct(actualAmountPaid, billDetails, functionDAO, chartOfAccountsDAO,
-                financialYearDAO);
+        return apportioner.reConstruct(actualAmountPaid, billDetails, functionDAO, chartOfAccountsDAO);
     }
 
     @Override
@@ -461,16 +394,14 @@ public class BpaTaxCollection extends TaxCollection {
                 }
 
             }
-            if (egBill.getEgBillDetails().size() > 1)
-                if (billDet.getCrAmount().compareTo(BigDecimal.ZERO) == 1
-                        && reciptDetailList.get(0).getOrdernumber().equals(Long.valueOf(billDet.getOrderNo()))) {
-                    additionalInfo
-                            .append(formatter.format(billDet.getEgDemandReason().getEgInstallmentMaster().getToDate()));
-                    break;
-                }
+            if (egBill.getEgBillDetails().size() > 1 && billDet.getCrAmount().compareTo(BigDecimal.ZERO) > 1
+                    && reciptDetailList.get(0).getOrdernumber().equals(Long.valueOf(billDet.getOrderNo()))) {
+                additionalInfo
+                        .append(formatter.format(billDet.getEgDemandReason().getEgInstallmentMaster().getToDate()));
+                break;
+            }
         }
-
-        if (amounttobeCalc.compareTo(BigDecimal.ZERO) == 1)
+        if (amounttobeCalc.compareTo(BigDecimal.ZERO) > 1)
             additionalInfo = additionalInfo.append(" (Partialy)");
 
         return additionalInfo.toString();
@@ -481,23 +412,18 @@ public class BpaTaxCollection extends TaxCollection {
         final ReceiptAmountInfo receiptAmountInfo = new ReceiptAmountInfo();
         final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         final EgBill egBill = egBillDAO.findById(Long.valueOf(billReceiptInfo.getBillReferenceNum()), false);
-        final List<EgBillDetails> billDetails = new ArrayList<EgBillDetails>(egBill.getEgBillDetails());
-        final CFinancialYear financialyear = financialYearDAO.getFinancialYearByDate(new Date());
+        final List<EgBillDetails> billDetails = new ArrayList<>(egBill.getEgBillDetails());
+        financialYearDAO.getFinancialYearByDate(new Date());
         BigDecimal currentInstallmentAmount = BigDecimal.ZERO;
-        BigDecimal advanceInstallmentAmount = BigDecimal.ZERO;
-        BigDecimal arrearAmount = BigDecimal.ZERO;
-        final BpaApplication application = applicationBpaBillService
+        final BigDecimal advanceInstallmentAmount = BigDecimal.ZERO;
+        final BigDecimal arrearAmount = BigDecimal.ZERO;
+        applicationBpaBillService
                 .getApplicationByDemand(egBill.getEgDemand());
         final List<ReceiptDetail> reciptDetailList = collectionService
                 .getReceiptDetailListByReceiptNumber(billReceiptInfo.getReceiptNum());
         for (final ReceiptAccountInfo rcptAccInfo : billReceiptInfo.getAccountDetails())
-            if (rcptAccInfo.getCrAmount() != null && rcptAccInfo.getCrAmount().compareTo(BigDecimal.ZERO) == 1) {
-                final String[] desc = rcptAccInfo.getDescription().split("-", 2);
-                final String[] installsplit = desc[1].split("#");
-                final String[] installsplit1 = installsplit[0].split("-");
+            if (rcptAccInfo.getCrAmount() != null && rcptAccInfo.getCrAmount().compareTo(BigDecimal.ZERO) == 1)
                 currentInstallmentAmount = currentInstallmentAmount.add(rcptAccInfo.getCrAmount());
-
-            }
 
         for (final EgBillDetails billDet : egBill.getEgBillDetails()) {
             if (billDet.getOrderNo() == 1) {
@@ -510,14 +436,14 @@ public class BpaTaxCollection extends TaxCollection {
                 }
 
             }
-            if (egBill.getEgBillDetails().size() > 1 && billDet.getCrAmount().compareTo(BigDecimal.ZERO) == 1
+            if (egBill.getEgBillDetails().size() > 1 && billDet.getCrAmount().compareTo(BigDecimal.ZERO) > 1
                     && reciptDetailList.get(0).getOrdernumber().equals(Long.valueOf(billDet.getOrderNo()))) {
                 receiptAmountInfo.setInstallmentTo(
                         formatter.format(billDet.getEgDemandReason().getEgInstallmentMaster().getToDate()));
                 break;
             }
         }
-        String revenueWard = "Election Ward 1";
+        final String revenueWard = "Election Ward 1";
         receiptAmountInfo.setArrearsAmount(arrearAmount);
         receiptAmountInfo.setAdvanceAmount(advanceInstallmentAmount);
         receiptAmountInfo.setCurrentInstallmentAmount(currentInstallmentAmount);

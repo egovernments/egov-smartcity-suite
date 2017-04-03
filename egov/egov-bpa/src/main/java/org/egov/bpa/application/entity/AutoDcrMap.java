@@ -20,63 +20,65 @@ import org.hibernate.validator.constraints.Length;
 @SequenceGenerator(name = AutoDcrMap.SEQ_EGBPA_AUTODCRMAP, sequenceName = AutoDcrMap.SEQ_EGBPA_AUTODCRMAP, allocationSize = 1)
 public class AutoDcrMap extends AbstractAuditable {
 
-	private static final long serialVersionUID = 3078684328383202788L;
-	public static final String SEQ_EGBPA_AUTODCRMAP = "SEQ_EGBPA_AUTODCRMAP";
+    private static final long serialVersionUID = 3078684328383202788L;
+    public static final String SEQ_EGBPA_AUTODCRMAP = "SEQ_EGBPA_AUTODCRMAP";
 
-	@Id
-	@GeneratedValue(generator = SEQ_EGBPA_AUTODCRMAP, strategy = GenerationType.SEQUENCE)
-	private Long id;
-	@Length(min = 1, max = 128)
-	private String autodcrNumber;
-	@ManyToOne(cascade = CascadeType.ALL)
-	@Valid
-	@NotNull
-	@JoinColumn(name = "application", nullable = false)
-	private BpaApplication application;
-	@ManyToOne(cascade = CascadeType.ALL)
-        @Valid
-        @NotNull
-        @JoinColumn(name = "letterToParty")
-	private LettertoParty letterToParty; 
-	private Boolean isActive;
+    @Id
+    @GeneratedValue(generator = SEQ_EGBPA_AUTODCRMAP, strategy = GenerationType.SEQUENCE)
+    private Long id;
+    @Length(min = 1, max = 128)
+    private String autodcrNumber;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @Valid
+    @NotNull
+    @JoinColumn(name = "application", nullable = false)
+    private BpaApplication application;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @Valid
+    @NotNull
+    @JoinColumn(name = "letterToParty")
+    private LettertoParty letterToParty;
+    private Boolean isActive;
 
-	@Override
-	public Long getId() {
-		return id;
-	}
-	@Override
-	public void setId(final Long id) {
-		this.id = id;
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	public String getAutodcrNumber() {
-		return autodcrNumber;
-	}
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
+    }
 
-	public void setAutodcrNumber(final String autodcrNumber) {
-		this.autodcrNumber = autodcrNumber;
-	}
+    public String getAutodcrNumber() {
+        return autodcrNumber;
+    }
 
-	public BpaApplication getApplication() {
-		return application;
-	}
+    public void setAutodcrNumber(final String autodcrNumber) {
+        this.autodcrNumber = autodcrNumber;
+    }
 
-	public void setApplication(final BpaApplication application) {
-		this.application = application;
-	}
+    public BpaApplication getApplication() {
+        return application;
+    }
 
+    public void setApplication(final BpaApplication application) {
+        this.application = application;
+    }
 
-	public Boolean getIsActive() {
-		return isActive;
-	}
+    public Boolean getIsActive() {
+        return isActive;
+    }
 
-	public void setIsActive(final Boolean isActive) {
-		this.isActive = isActive;
-	}
+    public void setIsActive(final Boolean isActive) {
+        this.isActive = isActive;
+    }
+
     public LettertoParty getLetterToParty() {
         return letterToParty;
     }
-    public void setLetterToParty(LettertoParty letterToParty) {
+
+    public void setLetterToParty(final LettertoParty letterToParty) {
         this.letterToParty = letterToParty;
     }
 

@@ -42,7 +42,7 @@ package org.egov.bpa.application.entity.enums;
 import org.apache.commons.lang3.StringUtils;
 
 public enum GenderTitle {
-    MRS,MISS,MR;
+    MRS, MISS, MR;
 
     @Override
     public String toString() {

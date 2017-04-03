@@ -94,7 +94,7 @@ public class Checklist extends AbstractAuditable {
         return checklistType;
     }
 
-    public void setChecklistType(String checklistType) {
+    public void setChecklistType(final String checklistType) {
         this.checklistType = checklistType;
     }
 

@@ -43,12 +43,11 @@ import org.egov.bpa.application.autonumber.ApplicationNumberGenerator;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ApplicationNumberGeneratorImpl implements ApplicationNumberGenerator{
+public class ApplicationNumberGeneratorImpl implements ApplicationNumberGenerator {
 
     @Override
-    public String generateApplicationNumber()
-    {
-        //impliments to get sequence number 
+    public String generateApplicationNumber() {
+        // impliments to get sequence number
         return "";
     }
 }

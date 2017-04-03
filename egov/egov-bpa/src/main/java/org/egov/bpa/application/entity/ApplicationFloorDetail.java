@@ -59,7 +59,7 @@ public class ApplicationFloorDetail extends AbstractAuditable {
     }
 
     public void setInspectionid(final Inspection inspectionid) {
-        this.inspection = inspectionid;
+        inspection = inspectionid;
     }
 
     public BigDecimal getExistingbuildingArea() {
@@ -122,7 +122,7 @@ public class ApplicationFloorDetail extends AbstractAuditable {
         return inspection;
     }
 
-    public void setInspection(Inspection inspection) {
+    public void setInspection(final Inspection inspection) {
         this.inspection = inspection;
     }
 
@@ -130,7 +130,7 @@ public class ApplicationFloorDetail extends AbstractAuditable {
         return buildingDetail;
     }
 
-    public void setBuildingDetail(BuildingDetail buildingDetail) {
+    public void setBuildingDetail(final BuildingDetail buildingDetail) {
         this.buildingDetail = buildingDetail;
     }
 

@@ -39,12 +39,9 @@ public class ApplicationDocument extends AbstractAuditable {
     @GeneratedValue(generator = SEQ_APPLICATIONDOCUMENT, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    
-      @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-      @JoinTable(name = "egwtr_documents", joinColumns = @JoinColumn(name = "applicationdocumentsid"), inverseJoinColumns
-      = @JoinColumn(name = "filestoreid"))
-      private Set<FileStoreMapper> supportDocs = Collections.emptySet();
-     
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinTable(name = "egwtr_documents", joinColumns = @JoinColumn(name = "applicationdocumentsid"), inverseJoinColumns = @JoinColumn(name = "filestoreid"))
+    private final Set<FileStoreMapper> supportDocs = Collections.emptySet();
 
     private transient MultipartFile[] files;
     @ManyToOne
@@ -103,7 +100,7 @@ public class ApplicationDocument extends AbstractAuditable {
         return createduser;
     }
 
-    public void setCreateduser(User createduser) {
+    public void setCreateduser(final User createduser) {
         this.createduser = createduser;
     }
 
@@ -127,7 +124,7 @@ public class ApplicationDocument extends AbstractAuditable {
         return checklistDetail;
     }
 
-    public void setChecklistDetail(CheckListDetail checklistDetail) {
+    public void setChecklistDetail(final CheckListDetail checklistDetail) {
         this.checklistDetail = checklistDetail;
     }
 

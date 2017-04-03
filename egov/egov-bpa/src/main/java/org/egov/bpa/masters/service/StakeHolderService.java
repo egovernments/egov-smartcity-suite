@@ -50,12 +50,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 public class StakeHolderService {
-    
+
     @Autowired
     private StakeHolderRepository stakeHolderRepository;
-    
+
     public List<StakeHolder> findAll() {
         return stakeHolderRepository.findAll();
     }
-   
+
 }

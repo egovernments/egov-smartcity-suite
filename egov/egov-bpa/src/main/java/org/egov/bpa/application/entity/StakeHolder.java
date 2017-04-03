@@ -1,8 +1,8 @@
 /**
- * eGov suite of products aim to improve the internal efficiency,transparency, 
+ * eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
     Copyright (C) <2015>  eGovernments Foundation
-    The updated version of eGov suite of products as by eGovernments Foundation 
+    The updated version of eGov suite of products as by eGovernments Foundation
     is available at http://www.egovernments.org
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -13,17 +13,17 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
     You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or 
+    along with this program. If not, see http://www.gnu.org/licenses/ or
     http://www.gnu.org/licenses/gpl.html .
     In addition to the terms of the GPL license to be adhered to in using this
     program, the following additional terms are to be complied with:
-        1) All versions of this program, verbatim or modified must carry this 
+        1) All versions of this program, verbatim or modified must carry this
            Legal Notice.
-        2) Any misrepresentation of the origin of the material is prohibited. It 
-           is required that all modified versions of this material be marked in 
+        2) Any misrepresentation of the origin of the material is prohibited. It
+           is required that all modified versions of this material be marked in
            reasonable ways as different from the original version.
-        3) This license does not grant any rights to any user of the program 
-           with regards to rights under trademark law for use of the trade names 
+        3) This license does not grant any rights to any user of the program
+           with regards to rights under trademark law for use of the trade names
            or trademarks of eGovernments Foundation.
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
@@ -96,7 +96,7 @@ public class StakeHolder extends User {
         return isActive;
     }
 
-    public void setIsActive(Boolean isActive) {
+    public void setIsActive(final Boolean isActive) {
         this.isActive = isActive;
     }
 
@@ -104,7 +104,7 @@ public class StakeHolder extends User {
         return code;
     }
 
-    public void setCode(String code) {
+    public void setCode(final String code) {
         this.code = code;
     }
 
@@ -112,7 +112,7 @@ public class StakeHolder extends User {
         return stakeHolderType;
     }
 
-    public void setStakeHolderType(StakeHolderType stakeHolderType) {
+    public void setStakeHolderType(final StakeHolderType stakeHolderType) {
         this.stakeHolderType = stakeHolderType;
     }
 
@@ -120,7 +120,7 @@ public class StakeHolder extends User {
         return businessLicenceNumber;
     }
 
-    public void setBusinessLicenceNumber(String businessLicenceNumber) {
+    public void setBusinessLicenceNumber(final String businessLicenceNumber) {
         this.businessLicenceNumber = businessLicenceNumber;
     }
 
@@ -128,7 +128,7 @@ public class StakeHolder extends User {
         return coaEnrolmentNumber;
     }
 
-    public void setCoaEnrolmentNumber(String coaEnrolmentNumber) {
+    public void setCoaEnrolmentNumber(final String coaEnrolmentNumber) {
         this.coaEnrolmentNumber = coaEnrolmentNumber;
     }
 
@@ -136,7 +136,7 @@ public class StakeHolder extends User {
         return isEnrolWithLocalBody;
     }
 
-    public void setIsEnrolWithLocalBody(Boolean isEnrolWithLocalBody) {
+    public void setIsEnrolWithLocalBody(final Boolean isEnrolWithLocalBody) {
         this.isEnrolWithLocalBody = isEnrolWithLocalBody;
     }
 
@@ -144,7 +144,7 @@ public class StakeHolder extends User {
         return organizationName;
     }
 
-    public void setOrganizationName(String organizationName) {
+    public void setOrganizationName(final String organizationName) {
         this.organizationName = organizationName;
     }
 
@@ -152,7 +152,7 @@ public class StakeHolder extends User {
         return organizationAddress;
     }
 
-    public void setOrganizationAddress(String organizationAddress) {
+    public void setOrganizationAddress(final String organizationAddress) {
         this.organizationAddress = organizationAddress;
     }
 
@@ -160,7 +160,7 @@ public class StakeHolder extends User {
         return organizationUrl;
     }
 
-    public void setOrganizationUrl(String organizationUrl) {
+    public void setOrganizationUrl(final String organizationUrl) {
         this.organizationUrl = organizationUrl;
     }
 
@@ -168,7 +168,7 @@ public class StakeHolder extends User {
         return organizationMobNo;
     }
 
-    public void setOrganizationMobNo(String organizationMobNo) {
+    public void setOrganizationMobNo(final String organizationMobNo) {
         this.organizationMobNo = organizationMobNo;
     }
 
@@ -176,7 +176,7 @@ public class StakeHolder extends User {
         return isOnbehalfOfOrganization;
     }
 
-    public void setIsOnbehalfOfOrganization(Boolean isOnbehalfOfOrganization) {
+    public void setIsOnbehalfOfOrganization(final Boolean isOnbehalfOfOrganization) {
         this.isOnbehalfOfOrganization = isOnbehalfOfOrganization;
     }
 
@@ -184,7 +184,7 @@ public class StakeHolder extends User {
         return tinNumber;
     }
 
-    public void setTinNumber(String tinNumber) {
+    public void setTinNumber(final String tinNumber) {
         this.tinNumber = tinNumber;
     }
 
@@ -192,7 +192,7 @@ public class StakeHolder extends User {
         return businessLicenceDueDate;
     }
 
-    public void setBusinessLicenceDueDate(Date businessLicenceDueDate) {
+    public void setBusinessLicenceDueDate(final Date businessLicenceDueDate) {
         this.businessLicenceDueDate = businessLicenceDueDate;
     }
 
@@ -204,7 +204,7 @@ public class StakeHolder extends User {
         return coaEnrolmentDueDate;
     }
 
-    public void setCoaEnrolmentDueDate(Date coaEnrolmentDueDate) {
+    public void setCoaEnrolmentDueDate(final Date coaEnrolmentDueDate) {
         this.coaEnrolmentDueDate = coaEnrolmentDueDate;
     }
 

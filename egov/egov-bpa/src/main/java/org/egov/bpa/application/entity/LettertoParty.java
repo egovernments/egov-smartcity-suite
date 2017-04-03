@@ -116,7 +116,7 @@ public class LettertoParty extends AbstractAuditable {
         return inspection;
     }
 
-    public void setInspection(Inspection inspection) {
+    public void setInspection(final Inspection inspection) {
         this.inspection = inspection;
     }
 
@@ -124,7 +124,7 @@ public class LettertoParty extends AbstractAuditable {
         return acknowledgementNumber;
     }
 
-    public void setAcknowledgementNumber(String acknowledgementNumber) {
+    public void setAcknowledgementNumber(final String acknowledgementNumber) {
         this.acknowledgementNumber = acknowledgementNumber;
     }
 
@@ -132,7 +132,7 @@ public class LettertoParty extends AbstractAuditable {
         return lpReason;
     }
 
-    public void setLpReason(LpReason lpReason) {
+    public void setLpReason(final LpReason lpReason) {
         this.lpReason = lpReason;
     }
 
@@ -140,7 +140,7 @@ public class LettertoParty extends AbstractAuditable {
         return lpNumber;
     }
 
-    public void setLpNumber(String lpNumber) {
+    public void setLpNumber(final String lpNumber) {
         this.lpNumber = lpNumber;
     }
 
@@ -148,7 +148,7 @@ public class LettertoParty extends AbstractAuditable {
         return letterDate;
     }
 
-    public void setLetterDate(Date letterDate) {
+    public void setLetterDate(final Date letterDate) {
         this.letterDate = letterDate;
     }
 
@@ -156,7 +156,7 @@ public class LettertoParty extends AbstractAuditable {
         return scheduledby;
     }
 
-    public void setScheduledby(User scheduledby) {
+    public void setScheduledby(final User scheduledby) {
         this.scheduledby = scheduledby;
     }
 
@@ -164,7 +164,7 @@ public class LettertoParty extends AbstractAuditable {
         return scheduledPlace;
     }
 
-    public void setScheduledPlace(String scheduledPlace) {
+    public void setScheduledPlace(final String scheduledPlace) {
         this.scheduledPlace = scheduledPlace;
     }
 
@@ -172,7 +172,7 @@ public class LettertoParty extends AbstractAuditable {
         return scheduledtime;
     }
 
-    public void setScheduledtime(Date scheduledtime) {
+    public void setScheduledtime(final Date scheduledtime) {
         this.scheduledtime = scheduledtime;
     }
 
@@ -180,7 +180,7 @@ public class LettertoParty extends AbstractAuditable {
         return sentDate;
     }
 
-    public void setSentDate(Date sentDate) {
+    public void setSentDate(final Date sentDate) {
         this.sentDate = sentDate;
     }
 
@@ -188,7 +188,7 @@ public class LettertoParty extends AbstractAuditable {
         return replyDate;
     }
 
-    public void setReplyDate(Date replyDate) {
+    public void setReplyDate(final Date replyDate) {
         this.replyDate = replyDate;
     }
 
@@ -196,7 +196,7 @@ public class LettertoParty extends AbstractAuditable {
         return lpRemarks;
     }
 
-    public void setLpRemarks(String lpRemarks) {
+    public void setLpRemarks(final String lpRemarks) {
         this.lpRemarks = lpRemarks;
     }
 
@@ -204,7 +204,7 @@ public class LettertoParty extends AbstractAuditable {
         return lpReplyRemarks;
     }
 
-    public void setLpReplyRemarks(String lpReplyRemarks) {
+    public void setLpReplyRemarks(final String lpReplyRemarks) {
         this.lpReplyRemarks = lpReplyRemarks;
     }
 
@@ -212,7 +212,7 @@ public class LettertoParty extends AbstractAuditable {
         return lpDesc;
     }
 
-    public void setLpDesc(String lpDesc) {
+    public void setLpDesc(final String lpDesc) {
         this.lpDesc = lpDesc;
     }
 
@@ -220,7 +220,7 @@ public class LettertoParty extends AbstractAuditable {
         return lpReplyDesc;
     }
 
-    public void setLpReplyDesc(String lpReplyDesc) {
+    public void setLpReplyDesc(final String lpReplyDesc) {
         this.lpReplyDesc = lpReplyDesc;
     }
 
@@ -228,7 +228,7 @@ public class LettertoParty extends AbstractAuditable {
         return isHistory;
     }
 
-    public void setIsHistory(Boolean isHistory) {
+    public void setIsHistory(final Boolean isHistory) {
         this.isHistory = isHistory;
     }
 
@@ -236,7 +236,7 @@ public class LettertoParty extends AbstractAuditable {
         return documentid;
     }
 
-    public void setDocumentid(String documentid) {
+    public void setDocumentid(final String documentid) {
         this.documentid = documentid;
     }
 
@@ -244,7 +244,7 @@ public class LettertoParty extends AbstractAuditable {
         return application;
     }
 
-    public void setApplication(BpaApplication application) {
+    public void setApplication(final BpaApplication application) {
         this.application = application;
     }
 

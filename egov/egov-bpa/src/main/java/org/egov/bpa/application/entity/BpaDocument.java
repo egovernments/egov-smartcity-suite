@@ -118,7 +118,7 @@ public class BpaDocument extends AbstractAuditable {
         return serviceType;
     }
 
-    public void setServiceType(ServiceType serviceType) {
+    public void setServiceType(final ServiceType serviceType) {
         this.serviceType = serviceType;
     }
 

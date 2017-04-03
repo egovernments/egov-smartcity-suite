@@ -39,11 +39,11 @@
  */
 package org.egov.bpa.application.service.collection;
 
+import java.util.Comparator;
+
 import org.egov.demand.model.EgDemandDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Comparator;
 
 @Service
 @Transactional(readOnly = true)

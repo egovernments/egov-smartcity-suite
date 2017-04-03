@@ -49,53 +49,54 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 @SequenceGenerator(name = ApplicationFeeDetail.SEQ_APPLICATIONFEE_DETAIL, sequenceName = ApplicationFeeDetail.SEQ_APPLICATIONFEE_DETAIL, allocationSize = 1)
 public class ApplicationFeeDetail extends AbstractAuditable {
 
-	private static final long serialVersionUID = 3078684328383202788L;
-	public static final String SEQ_APPLICATIONFEE_DETAIL = "SEQ_EGBPA_APPLICATION_FEEDETAIL";
+    private static final long serialVersionUID = 3078684328383202788L;
+    public static final String SEQ_APPLICATIONFEE_DETAIL = "SEQ_EGBPA_APPLICATION_FEEDETAIL";
 
-	@Id
-	@GeneratedValue(generator = SEQ_APPLICATIONFEE_DETAIL, strategy = GenerationType.SEQUENCE)
-	private Long id;
-	@ManyToOne(fetch = FetchType.LAZY)
-	@NotNull
-	@JoinColumn(name = "bpaFee")
-	private BpaFee bpaFee;
-	@NotNull
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "applicationFee")
-	private ApplicationFee applicationFee;
-	private BigDecimal amount = BigDecimal.ZERO;
+    @Id
+    @GeneratedValue(generator = SEQ_APPLICATIONFEE_DETAIL, strategy = GenerationType.SEQUENCE)
+    private Long id;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @NotNull
+    @JoinColumn(name = "bpaFee")
+    private BpaFee bpaFee;
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "applicationFee")
+    private ApplicationFee applicationFee;
+    private BigDecimal amount = BigDecimal.ZERO;
 
-	@Override
-	public Long getId() {
-		return id;
-	}
-	@Override
-	public void setId(final Long id) {
-		this.id = id;
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	public BpaFee getBpaFee() {
-		return bpaFee;
-	}
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
+    }
 
-	public void setBpaFee(BpaFee bpaFee) {
-		this.bpaFee = bpaFee;
-	}
+    public BpaFee getBpaFee() {
+        return bpaFee;
+    }
 
-	public ApplicationFee getApplicationFee() {
-		return applicationFee;
-	}
+    public void setBpaFee(final BpaFee bpaFee) {
+        this.bpaFee = bpaFee;
+    }
 
-	public void setApplicationFee(ApplicationFee applicationFee) {
-		this.applicationFee = applicationFee;
-	}
+    public ApplicationFee getApplicationFee() {
+        return applicationFee;
+    }
 
-	public BigDecimal getAmount() {
-		return amount;
-	}
+    public void setApplicationFee(final ApplicationFee applicationFee) {
+        this.applicationFee = applicationFee;
+    }
 
-	public void setAmount(BigDecimal amount) {
-		this.amount = amount;
-	}
+    public BigDecimal getAmount() {
+        return amount;
+    }
+
+    public void setAmount(final BigDecimal amount) {
+        this.amount = amount;
+    }
 
 }

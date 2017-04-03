@@ -84,7 +84,7 @@ public class DDDetail extends AbstractAuditable {
         return ddAmount;
     }
 
-    public void setDdAmount(BigDecimal ddAmount) {
+    public void setDdAmount(final BigDecimal ddAmount) {
         this.ddAmount = ddAmount;
     }
 
@@ -92,7 +92,7 @@ public class DDDetail extends AbstractAuditable {
         return ddNumber;
     }
 
-    public void setDdNumber(String ddNumber) {
+    public void setDdNumber(final String ddNumber) {
         this.ddNumber = ddNumber;
     }
 
@@ -100,7 +100,7 @@ public class DDDetail extends AbstractAuditable {
         return ddDate;
     }
 
-    public void setDdDate(Date ddDate) {
+    public void setDdDate(final Date ddDate) {
         this.ddDate = ddDate;
     }
 
@@ -108,7 +108,7 @@ public class DDDetail extends AbstractAuditable {
         return ddType;
     }
 
-    public void setDdType(String ddType) {
+    public void setDdType(final String ddType) {
         this.ddType = ddType;
     }
 
@@ -116,7 +116,7 @@ public class DDDetail extends AbstractAuditable {
         return ddBank;
     }
 
-    public void setDdBank(Bank ddBank) {
+    public void setDdBank(final Bank ddBank) {
         this.ddBank = ddBank;
     }
 
@@ -124,7 +124,7 @@ public class DDDetail extends AbstractAuditable {
         return application;
     }
 
-    public void setApplication(BpaApplication application) {
+    public void setApplication(final BpaApplication application) {
         this.application = application;
     }
 

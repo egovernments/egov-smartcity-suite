@@ -107,7 +107,6 @@ public class BpaApplication extends StateAware {
     @JoinColumn(name = "serviceType")
     private ServiceType serviceType;
 
-    
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "status")
     private BpaStatus status;
@@ -137,24 +136,25 @@ public class BpaApplication extends StateAware {
     private String projectName;
     @Length(min = 1, max = 128)
     private String groupDevelopment;
-    
+
     private BigDecimal admissionfeeAmount;
 
     @OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<SiteDetail> siteDetail= new ArrayList<>(0);
-    
+    private List<SiteDetail> siteDetail = new ArrayList<>(0);
+
     @OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private  List<BuildingDetail> buildingDetail = new ArrayList<>(0);
+    private List<BuildingDetail> buildingDetail = new ArrayList<>(0);
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "application")
-    private List<DocumentHistory> documentHistory= new ArrayList<>();
+    private List<DocumentHistory> documentHistory = new ArrayList<>();
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "application")
-    private  List<PermittedFloorDetail> permittedFloorDetail= new ArrayList<>();
-  /*  @ManyToOne(fetch = FetchType.LAZY)
-    private Department department;*/
+    private List<PermittedFloorDetail> permittedFloorDetail = new ArrayList<>();
+    /*
+     * @ManyToOne(fetch = FetchType.LAZY) private Department department;
+     */
 
     @OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<AutoDcrMap> autoDcr = new ArrayList<>();
@@ -316,7 +316,7 @@ public class BpaApplication extends StateAware {
         return groupDevelopment;
     }
 
-    public void setGroupDevelopment(String groupDevelopment) {
+    public void setGroupDevelopment(final String groupDevelopment) {
         this.groupDevelopment = groupDevelopment;
     }
 
@@ -324,7 +324,7 @@ public class BpaApplication extends StateAware {
         return autoDcr;
     }
 
-    public void setAutoDcr(List<AutoDcrMap> autoDcr) {
+    public void setAutoDcr(final List<AutoDcrMap> autoDcr) {
         this.autoDcr = autoDcr;
     }
 
@@ -332,17 +332,15 @@ public class BpaApplication extends StateAware {
         return inspections;
     }
 
-    public void setInspections(List<Inspection> inspections) {
+    public void setInspections(final List<Inspection> inspections) {
         this.inspections = inspections;
     }
 
-    
-   
     public List<DocumentHistory> getDocumentHistory() {
         return documentHistory;
     }
 
-    public void setDocumentHistory(List<DocumentHistory> documentHistory) {
+    public void setDocumentHistory(final List<DocumentHistory> documentHistory) {
         this.documentHistory = documentHistory;
     }
 
@@ -350,7 +348,7 @@ public class BpaApplication extends StateAware {
         return permittedFloorDetail;
     }
 
-    public void setPermittedFloorDetail(List<PermittedFloorDetail> permittedFloorDetail) {
+    public void setPermittedFloorDetail(final List<PermittedFloorDetail> permittedFloorDetail) {
         this.permittedFloorDetail = permittedFloorDetail;
     }
 
@@ -358,7 +356,7 @@ public class BpaApplication extends StateAware {
         return lettertoParty;
     }
 
-    public void setLettertoParty(List<LettertoParty> lettertoParty) {
+    public void setLettertoParty(final List<LettertoParty> lettertoParty) {
         this.lettertoParty = lettertoParty;
     }
 
@@ -366,7 +364,7 @@ public class BpaApplication extends StateAware {
         return applicationFee;
     }
 
-    public void setApplicationFee(List<ApplicationFee> applicationFee) {
+    public void setApplicationFee(final List<ApplicationFee> applicationFee) {
         this.applicationFee = applicationFee;
     }
 
@@ -374,7 +372,7 @@ public class BpaApplication extends StateAware {
         return stakeHolder;
     }
 
-    public void setStakeHolder(List<ApplicationStakeHolder> stakeHolder) {
+    public void setStakeHolder(final List<ApplicationStakeHolder> stakeHolder) {
         this.stakeHolder = stakeHolder;
     }
 
@@ -382,7 +380,7 @@ public class BpaApplication extends StateAware {
         return source;
     }
 
-    public void setSource(Source source) {
+    public void setSource(final Source source) {
         this.source = source;
     }
 
@@ -390,7 +388,7 @@ public class BpaApplication extends StateAware {
         return serviceType;
     }
 
-    public void setServiceType(ServiceType serviceType) {
+    public void setServiceType(final ServiceType serviceType) {
         this.serviceType = serviceType;
     }
 
@@ -398,7 +396,7 @@ public class BpaApplication extends StateAware {
         return owner;
     }
 
-    public void setOwner(Applicant owner) {
+    public void setOwner(final Applicant owner) {
         this.owner = owner;
     }
 
@@ -406,7 +404,7 @@ public class BpaApplication extends StateAware {
         return siteDetail;
     }
 
-    public void setSiteDetail(List<SiteDetail> siteDetail) {
+    public void setSiteDetail(final List<SiteDetail> siteDetail) {
         this.siteDetail = siteDetail;
     }
 
@@ -414,7 +412,7 @@ public class BpaApplication extends StateAware {
         return buildingDetail;
     }
 
-    public void setBuildingDetail(List<BuildingDetail> buildingDetail) {
+    public void setBuildingDetail(final List<BuildingDetail> buildingDetail) {
         this.buildingDetail = buildingDetail;
     }
 
@@ -422,7 +420,7 @@ public class BpaApplication extends StateAware {
         return applicationDocument;
     }
 
-    public void setApplicationDocument(List<ApplicationDocument> applicationDocument) {
+    public void setApplicationDocument(final List<ApplicationDocument> applicationDocument) {
         this.applicationDocument = applicationDocument;
     }
 
@@ -430,7 +428,7 @@ public class BpaApplication extends StateAware {
         return applicationNOCDocument;
     }
 
-    public void setApplicationNOCDocument(List<ApplicationNocDocument> applicationNOCDocument) {
+    public void setApplicationNOCDocument(final List<ApplicationNocDocument> applicationNOCDocument) {
         this.applicationNOCDocument = applicationNOCDocument;
     }
 
@@ -438,7 +436,7 @@ public class BpaApplication extends StateAware {
         return buildingPlanApprovalDate;
     }
 
-    public void setBuildingPlanApprovalDate(Date buildingPlanApprovalDate) {
+    public void setBuildingPlanApprovalDate(final Date buildingPlanApprovalDate) {
         this.buildingPlanApprovalDate = buildingPlanApprovalDate;
     }
 
@@ -446,7 +444,7 @@ public class BpaApplication extends StateAware {
         return approvalDate;
     }
 
-    public void setApprovalDate(Date approvalDate) {
+    public void setApprovalDate(final Date approvalDate) {
         this.approvalDate = approvalDate;
     }
 
@@ -456,21 +454,17 @@ public class BpaApplication extends StateAware {
         return null;
     }
 
-   /* public Department getDepartment() {
-        return department;
-    }
-
-    public void setDepartment(Department department) {
-        this.department = department;
-    }*/
+    /*
+     * public Department getDepartment() { return department; } public void setDepartment(Department department) { this.department
+     * = department; }
+     */
 
     public BigDecimal getAdmissionfeeAmount() {
         return admissionfeeAmount;
     }
 
-    public void setAdmissionfeeAmount(BigDecimal admissionfeeAmount) {
+    public void setAdmissionfeeAmount(final BigDecimal admissionfeeAmount) {
         this.admissionfeeAmount = admissionfeeAmount;
     }
-    
 
 }

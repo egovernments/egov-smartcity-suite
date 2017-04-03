@@ -167,7 +167,7 @@ public class Inspection extends AbstractAuditable {
         return inspectionNumber;
     }
 
-    public void setInspectionNumber(String inspectionNumber) {
+    public void setInspectionNumber(final String inspectionNumber) {
         this.inspectionNumber = inspectionNumber;
     }
 
@@ -175,7 +175,7 @@ public class Inspection extends AbstractAuditable {
         return inspectionDate;
     }
 
-    public void setInspectionDate(Date inspectionDate) {
+    public void setInspectionDate(final Date inspectionDate) {
         this.inspectionDate = inspectionDate;
     }
 
@@ -183,7 +183,7 @@ public class Inspection extends AbstractAuditable {
         return parent;
     }
 
-    public void setParent(Inspection parent) {
+    public void setParent(final Inspection parent) {
         this.parent = parent;
     }
 
@@ -191,7 +191,7 @@ public class Inspection extends AbstractAuditable {
         return inspectedBy;
     }
 
-    public void setInspectedBy(User inspectedBy) {
+    public void setInspectedBy(final User inspectedBy) {
         this.inspectedBy = inspectedBy;
     }
 
@@ -199,7 +199,7 @@ public class Inspection extends AbstractAuditable {
         return isSiteVacant;
     }
 
-    public void setIsSiteVacant(Boolean isSiteVacant) {
+    public void setIsSiteVacant(final Boolean isSiteVacant) {
         this.isSiteVacant = isSiteVacant;
     }
 
@@ -207,7 +207,7 @@ public class Inspection extends AbstractAuditable {
         return isExistingBuildingAsPerPlan;
     }
 
-    public void setIsExistingBuildingAsPerPlan(Boolean isExistingBuildingAsPerPlan) {
+    public void setIsExistingBuildingAsPerPlan(final Boolean isExistingBuildingAsPerPlan) {
         this.isExistingBuildingAsPerPlan = isExistingBuildingAsPerPlan;
     }
 
@@ -215,7 +215,7 @@ public class Inspection extends AbstractAuditable {
         return isInspected;
     }
 
-    public void setIsInspected(Boolean isInspected) {
+    public void setIsInspected(final Boolean isInspected) {
         this.isInspected = isInspected;
     }
 
@@ -223,7 +223,7 @@ public class Inspection extends AbstractAuditable {
         return inspectionRemarks;
     }
 
-    public void setInspectionRemarks(String inspectionRemarks) {
+    public void setInspectionRemarks(final String inspectionRemarks) {
         this.inspectionRemarks = inspectionRemarks;
     }
 
@@ -231,7 +231,7 @@ public class Inspection extends AbstractAuditable {
         return isPostponed;
     }
 
-    public void setIsPostponed(Boolean isPostponed) {
+    public void setIsPostponed(final Boolean isPostponed) {
         this.isPostponed = isPostponed;
     }
 
@@ -239,7 +239,7 @@ public class Inspection extends AbstractAuditable {
         return postponementReason;
     }
 
-    public void setPostponementReason(String postponementReason) {
+    public void setPostponementReason(final String postponementReason) {
         this.postponementReason = postponementReason;
     }
 
@@ -247,7 +247,7 @@ public class Inspection extends AbstractAuditable {
         return postponedDate;
     }
 
-    public void setPostponedDate(Date postponedDate) {
+    public void setPostponedDate(final Date postponedDate) {
         this.postponedDate = postponedDate;
     }
 
@@ -255,7 +255,7 @@ public class Inspection extends AbstractAuditable {
         return landZoning;
     }
 
-    public void setLandZoning(LandBldngZoneing landZoning) {
+    public void setLandZoning(final LandBldngZoneing landZoning) {
         this.landZoning = landZoning;
     }
 
@@ -263,7 +263,7 @@ public class Inspection extends AbstractAuditable {
         return lndLayoutType;
     }
 
-    public void setLndLayoutType(LayoutMaster lndLayoutType) {
+    public void setLndLayoutType(final LayoutMaster lndLayoutType) {
         this.lndLayoutType = lndLayoutType;
     }
 
@@ -271,7 +271,7 @@ public class Inspection extends AbstractAuditable {
         return lndMinPlotExtent;
     }
 
-    public void setLndMinPlotExtent(BigDecimal lndMinPlotExtent) {
+    public void setLndMinPlotExtent(final BigDecimal lndMinPlotExtent) {
         this.lndMinPlotExtent = lndMinPlotExtent;
     }
 
@@ -279,7 +279,7 @@ public class Inspection extends AbstractAuditable {
         return lndProposedPlotExtent;
     }
 
-    public void setLndProposedPlotExtent(BigDecimal lndProposedPlotExtent) {
+    public void setLndProposedPlotExtent(final BigDecimal lndProposedPlotExtent) {
         this.lndProposedPlotExtent = lndProposedPlotExtent;
     }
 
@@ -287,7 +287,7 @@ public class Inspection extends AbstractAuditable {
         return lndOsrLandExtent;
     }
 
-    public void setLndOsrLandExtent(BigDecimal lndOsrLandExtent) {
+    public void setLndOsrLandExtent(final BigDecimal lndOsrLandExtent) {
         this.lndOsrLandExtent = lndOsrLandExtent;
     }
 
@@ -295,7 +295,7 @@ public class Inspection extends AbstractAuditable {
         return lndGuideLineValue;
     }
 
-    public void setLndGuideLineValue(BigDecimal lndGuideLineValue) {
+    public void setLndGuideLineValue(final BigDecimal lndGuideLineValue) {
         this.lndGuideLineValue = lndGuideLineValue;
     }
 
@@ -303,7 +303,7 @@ public class Inspection extends AbstractAuditable {
         return landUsage;
     }
 
-    public void setLandUsage(LandBuildingTypes landUsage) {
+    public void setLandUsage(final LandBuildingTypes landUsage) {
         this.landUsage = landUsage;
     }
 
@@ -311,7 +311,7 @@ public class Inspection extends AbstractAuditable {
         return lndRegularizationArea;
     }
 
-    public void setLndRegularizationArea(BigDecimal lndRegularizationArea) {
+    public void setLndRegularizationArea(final BigDecimal lndRegularizationArea) {
         this.lndRegularizationArea = lndRegularizationArea;
     }
 
@@ -319,7 +319,7 @@ public class Inspection extends AbstractAuditable {
         return lndPenaltyPeriod;
     }
 
-    public void setLndPenaltyPeriod(Integer lndPenaltyPeriod) {
+    public void setLndPenaltyPeriod(final Integer lndPenaltyPeriod) {
         this.lndPenaltyPeriod = lndPenaltyPeriod;
     }
 
@@ -327,7 +327,7 @@ public class Inspection extends AbstractAuditable {
         return lndIsRegularisationCharges;
     }
 
-    public void setLndIsRegularisationCharges(Boolean lndIsRegularisationCharges) {
+    public void setLndIsRegularisationCharges(final Boolean lndIsRegularisationCharges) {
         this.lndIsRegularisationCharges = lndIsRegularisationCharges;
     }
 
@@ -335,7 +335,7 @@ public class Inspection extends AbstractAuditable {
         return buildingZoning;
     }
 
-    public void setBuildingZoning(LandBldngZoneing buildingZoning) {
+    public void setBuildingZoning(final LandBldngZoneing buildingZoning) {
         this.buildingZoning = buildingZoning;
     }
 
@@ -343,7 +343,7 @@ public class Inspection extends AbstractAuditable {
         return buildingType;
     }
 
-    public void setBuildingType(LandBuildingTypes buildingType) {
+    public void setBuildingType(final LandBuildingTypes buildingType) {
         this.buildingType = buildingType;
     }
 
@@ -351,7 +351,7 @@ public class Inspection extends AbstractAuditable {
         return bldngBuildUpArea;
     }
 
-    public void setBldngBuildUpArea(BigDecimal bldngBuildUpArea) {
+    public void setBldngBuildUpArea(final BigDecimal bldngBuildUpArea) {
         this.bldngBuildUpArea = bldngBuildUpArea;
     }
 
@@ -359,7 +359,7 @@ public class Inspection extends AbstractAuditable {
         return bldngProposedPlotFrontage;
     }
 
-    public void setBldngProposedPlotFrontage(BigDecimal bldngProposedPlotFrontage) {
+    public void setBldngProposedPlotFrontage(final BigDecimal bldngProposedPlotFrontage) {
         this.bldngProposedPlotFrontage = bldngProposedPlotFrontage;
     }
 
@@ -367,7 +367,7 @@ public class Inspection extends AbstractAuditable {
         return bldngRoadWidth;
     }
 
-    public void setBldngRoadWidth(BigDecimal bldngRoadWidth) {
+    public void setBldngRoadWidth(final BigDecimal bldngRoadWidth) {
         this.bldngRoadWidth = bldngRoadWidth;
     }
 
@@ -375,7 +375,7 @@ public class Inspection extends AbstractAuditable {
         return bldngProposedBldngArea;
     }
 
-    public void setBldngProposedBldngArea(BigDecimal bldngProposedBldngArea) {
+    public void setBldngProposedBldngArea(final BigDecimal bldngProposedBldngArea) {
         this.bldngProposedBldngArea = bldngProposedBldngArea;
     }
 
@@ -383,7 +383,7 @@ public class Inspection extends AbstractAuditable {
         return bldngStormWaterDrain;
     }
 
-    public void setBldngStormWaterDrain(StormWaterDrain bldngStormWaterDrain) {
+    public void setBldngStormWaterDrain(final StormWaterDrain bldngStormWaterDrain) {
         this.bldngStormWaterDrain = bldngStormWaterDrain;
     }
 
@@ -391,7 +391,7 @@ public class Inspection extends AbstractAuditable {
         return bldngCompoundWall;
     }
 
-    public void setBldngCompoundWall(BigDecimal bldngCompoundWall) {
+    public void setBldngCompoundWall(final BigDecimal bldngCompoundWall) {
         this.bldngCompoundWall = bldngCompoundWall;
     }
 
@@ -399,7 +399,7 @@ public class Inspection extends AbstractAuditable {
         return bldngCommercial;
     }
 
-    public void setBldngCommercial(BigDecimal bldngCommercial) {
+    public void setBldngCommercial(final BigDecimal bldngCommercial) {
         this.bldngCommercial = bldngCommercial;
     }
 
@@ -407,7 +407,7 @@ public class Inspection extends AbstractAuditable {
         return bldngResidential;
     }
 
-    public void setBldngResidential(BigDecimal bldngResidential) {
+    public void setBldngResidential(final BigDecimal bldngResidential) {
         this.bldngResidential = bldngResidential;
     }
 
@@ -415,7 +415,7 @@ public class Inspection extends AbstractAuditable {
         return bldngIsRegularisationCharges;
     }
 
-    public void setBldngIsRegularisationCharges(Boolean bldngIsRegularisationCharges) {
+    public void setBldngIsRegularisationCharges(final Boolean bldngIsRegularisationCharges) {
         this.bldngIsRegularisationCharges = bldngIsRegularisationCharges;
     }
 
@@ -423,7 +423,7 @@ public class Inspection extends AbstractAuditable {
         return bldngIsImprovementCharges;
     }
 
-    public void setBldngIsImprovementCharges(Boolean bldngIsImprovementCharges) {
+    public void setBldngIsImprovementCharges(final Boolean bldngIsImprovementCharges) {
         this.bldngIsImprovementCharges = bldngIsImprovementCharges;
     }
 
@@ -431,7 +431,7 @@ public class Inspection extends AbstractAuditable {
         return bldngAge;
     }
 
-    public void setBldngAge(BigDecimal bldngAge) {
+    public void setBldngAge(final BigDecimal bldngAge) {
         this.bldngAge = bldngAge;
     }
 
@@ -439,7 +439,7 @@ public class Inspection extends AbstractAuditable {
         return roadType;
     }
 
-    public void setRoadType(RoadType roadType) {
+    public void setRoadType(final RoadType roadType) {
         this.roadType = roadType;
     }
 
@@ -447,7 +447,7 @@ public class Inspection extends AbstractAuditable {
         return bldngFsiArea;
     }
 
-    public void setBldngFsiArea(BigDecimal bldngFsiArea) {
+    public void setBldngFsiArea(final BigDecimal bldngFsiArea) {
         this.bldngFsiArea = bldngFsiArea;
     }
 
@@ -455,7 +455,7 @@ public class Inspection extends AbstractAuditable {
         return fsb;
     }
 
-    public void setFsb(BigDecimal fsb) {
+    public void setFsb(final BigDecimal fsb) {
         this.fsb = fsb;
     }
 
@@ -463,7 +463,7 @@ public class Inspection extends AbstractAuditable {
         return rsb;
     }
 
-    public void setRsb(BigDecimal rsb) {
+    public void setRsb(final BigDecimal rsb) {
         this.rsb = rsb;
     }
 
@@ -471,7 +471,7 @@ public class Inspection extends AbstractAuditable {
         return ssb1;
     }
 
-    public void setSsb1(BigDecimal ssb1) {
+    public void setSsb1(final BigDecimal ssb1) {
         this.ssb1 = ssb1;
     }
 
@@ -479,7 +479,7 @@ public class Inspection extends AbstractAuditable {
         return ssb2;
     }
 
-    public void setSsb2(BigDecimal ssb2) {
+    public void setSsb2(final BigDecimal ssb2) {
         this.ssb2 = ssb2;
     }
 
@@ -487,7 +487,7 @@ public class Inspection extends AbstractAuditable {
         return passageWidth;
     }
 
-    public void setPassageWidth(BigDecimal passageWidth) {
+    public void setPassageWidth(final BigDecimal passageWidth) {
         this.passageWidth = passageWidth;
     }
 
@@ -495,7 +495,7 @@ public class Inspection extends AbstractAuditable {
         return passageLength;
     }
 
-    public void setPassageLength(BigDecimal passageLength) {
+    public void setPassageLength(final BigDecimal passageLength) {
         this.passageLength = passageLength;
     }
 
@@ -503,7 +503,7 @@ public class Inspection extends AbstractAuditable {
         return surroundedByNorth;
     }
 
-    public void setSurroundedByNorth(SurroundedBldgDtl surroundedByNorth) {
+    public void setSurroundedByNorth(final SurroundedBldgDtl surroundedByNorth) {
         this.surroundedByNorth = surroundedByNorth;
     }
 
@@ -511,7 +511,7 @@ public class Inspection extends AbstractAuditable {
         return surroundedBySouth;
     }
 
-    public void setSurroundedBySouth(SurroundedBldgDtl surroundedBySouth) {
+    public void setSurroundedBySouth(final SurroundedBldgDtl surroundedBySouth) {
         this.surroundedBySouth = surroundedBySouth;
     }
 
@@ -519,7 +519,7 @@ public class Inspection extends AbstractAuditable {
         return surroundedByEast;
     }
 
-    public void setSurroundedByEast(SurroundedBldgDtl surroundedByEast) {
+    public void setSurroundedByEast(final SurroundedBldgDtl surroundedByEast) {
         this.surroundedByEast = surroundedByEast;
     }
 
@@ -527,7 +527,7 @@ public class Inspection extends AbstractAuditable {
         return surroundedByWest;
     }
 
-    public void setSurroundedByWest(SurroundedBldgDtl surroundedByWest) {
+    public void setSurroundedByWest(final SurroundedBldgDtl surroundedByWest) {
         this.surroundedByWest = surroundedByWest;
     }
 
@@ -535,7 +535,7 @@ public class Inspection extends AbstractAuditable {
         return constStages;
     }
 
-    public void setConstStages(ConstructionStages constStages) {
+    public void setConstStages(final ConstructionStages constStages) {
         this.constStages = constStages;
     }
 
@@ -543,7 +543,7 @@ public class Inspection extends AbstractAuditable {
         return dwellingUnit;
     }
 
-    public void setDwellingUnit(BigDecimal dwellingUnit) {
+    public void setDwellingUnit(final BigDecimal dwellingUnit) {
         this.dwellingUnit = dwellingUnit;
     }
 
@@ -551,7 +551,7 @@ public class Inspection extends AbstractAuditable {
         return docket;
     }
 
-    public void setDocket(Docket docket) {
+    public void setDocket(final Docket docket) {
         this.docket = docket;
     }
 
@@ -559,7 +559,7 @@ public class Inspection extends AbstractAuditable {
         return application;
     }
 
-    public void setApplication(BpaApplication application) {
+    public void setApplication(final BpaApplication application) {
         this.application = application;
     }
 
@@ -567,7 +567,7 @@ public class Inspection extends AbstractAuditable {
         return floorDetail;
     }
 
-    public void setFloorDetail(List<ApplicationFloorDetail> floorDetail) {
+    public void setFloorDetail(final List<ApplicationFloorDetail> floorDetail) {
         this.floorDetail = floorDetail;
     }
 
@@ -575,7 +575,7 @@ public class Inspection extends AbstractAuditable {
         return bldngGFloorTiledFloor;
     }
 
-    public void setBldngGFloorTiledFloor(BigDecimal bldngGFloorTiledFloor) {
+    public void setBldngGFloorTiledFloor(final BigDecimal bldngGFloorTiledFloor) {
         this.bldngGFloorTiledFloor = bldngGFloorTiledFloor;
     }
 
@@ -583,7 +583,7 @@ public class Inspection extends AbstractAuditable {
         return bldngGFloorOtherTypes;
     }
 
-    public void setBldngGFloorOtherTypes(BigDecimal bldngGFloorOtherTypes) {
+    public void setBldngGFloorOtherTypes(final BigDecimal bldngGFloorOtherTypes) {
         this.bldngGFloorOtherTypes = bldngGFloorOtherTypes;
     }
 
@@ -591,7 +591,7 @@ public class Inspection extends AbstractAuditable {
         return bldngFrstFloorTotalArea;
     }
 
-    public void setBldngFrstFloorTotalArea(BigDecimal bldngFrstFloorTotalArea) {
+    public void setBldngFrstFloorTotalArea(final BigDecimal bldngFrstFloorTotalArea) {
         this.bldngFrstFloorTotalArea = bldngFrstFloorTotalArea;
     }
 
@@ -599,7 +599,7 @@ public class Inspection extends AbstractAuditable {
         return bldngWellOhtSumpTankArea;
     }
 
-    public void setBldngWellOhtSumpTankArea(BigDecimal bldngWellOhtSumpTankArea) {
+    public void setBldngWellOhtSumpTankArea(final BigDecimal bldngWellOhtSumpTankArea) {
         this.bldngWellOhtSumpTankArea = bldngWellOhtSumpTankArea;
     }
 

@@ -70,6 +70,7 @@ public class BpaApplicationBillable extends AbstractBillable implements Billable
     private static final String DISPLAY_MESSAGE = "Bpa Admission Fee Collection";
     private BpaApplication application;
     private Long userId;
+    private Boolean isCallbackForApportion = Boolean.FALSE;
     private EgBillType billType;
     private String referenceNumber;
     private String transanctionReferenceNumber;
@@ -78,10 +79,9 @@ public class BpaApplicationBillable extends AbstractBillable implements Billable
     private EgBillDao egBillDAO;
     @Autowired
     private ModuleService moduleService;
-    
+
     @Autowired
     private ApplicationBpaBillService applicationBpaBillService;
-    
 
     @Override
     public String getBillPayee() {
@@ -90,8 +90,7 @@ public class BpaApplicationBillable extends AbstractBillable implements Billable
 
     @Override
     public String getBillAddress() {
-        
-        return  application.getOwner()!=null ?application.getOwner().getAddress():"";
+        return application.getOwner() != null ? application.getOwner().getAddress() : "";
     }
 
     @Override
@@ -106,9 +105,9 @@ public class BpaApplicationBillable extends AbstractBillable implements Billable
 
     @Override
     public List<EgDemand> getAllDemands() {
-       List<EgDemand> demandList=new ArrayList<>();
-       demandList.add(application.getDemand());
-       return demandList;
+        final List<EgDemand> demandList = new ArrayList<>();
+        demandList.add(application.getDemand());
+        return demandList;
     }
 
     @Override
@@ -125,8 +124,8 @@ public class BpaApplicationBillable extends AbstractBillable implements Billable
 
     @Override
     public Long getBoundaryNum() {
-        return application.getSiteDetail().get(0)!=null && application.getSiteDetail().get(0).getAdminBoundary()!=null?
-                application.getSiteDetail().get(0).getAdminBoundary().getBoundaryNum():0l;
+        return application.getSiteDetail().get(0) != null && application.getSiteDetail().get(0).getAdminBoundary() != null
+                ? application.getSiteDetail().get(0).getAdminBoundary().getBoundaryNum() : 0l;
     }
 
     @Override
@@ -176,8 +175,8 @@ public class BpaApplicationBillable extends AbstractBillable implements Billable
 
     @Override
     public Boolean getPartPaymentAllowed() {
-        
-            return false;
+
+        return false;
     }
 
     @Override
@@ -210,8 +209,8 @@ public class BpaApplicationBillable extends AbstractBillable implements Billable
 
     @Override
     public String getDescription() {
-       
-            return "Bpa Application Number: " + getApplication().getApplicationNumber();
+
+        return "Bpa Application Number: " + getApplication().getApplicationNumber();
     }
 
     @Override
@@ -237,21 +236,19 @@ public class BpaApplicationBillable extends AbstractBillable implements Billable
 
     @Override
     public Boolean isCallbackForApportion() {
-        return Boolean.FALSE;
+        return isCallbackForApportion;
     }
 
     @Override
     public void setCallbackForApportion(final Boolean b) {
+        isCallbackForApportion = b;
     }
-
-  
-  
 
     public BpaApplication getApplication() {
         return application;
     }
 
-    public void setApplication(BpaApplication application) {
+    public void setApplication(final BpaApplication application) {
         this.application = application;
     }
 
@@ -263,30 +260,13 @@ public class BpaApplicationBillable extends AbstractBillable implements Billable
         this.billType = billType;
     }
 
-    
-
     public String buildAddressDetails(final BpaApplication application) {
 
-   
         final StringBuilder address = new StringBuilder();
-        if (application.getSiteDetail().get(0) != null && !"".equals(application.getSiteDetail().get(0)))
+        if (application.getSiteDetail().get(0) != null)
             address.append(application.getSiteDetail().get(0).getArea());
-        /*else {
-            if (boundaryDetails.getZoneName() != null)
-                address.append(boundaryDetails.getZoneName());
-            if (boundaryDetails.getWardName() != null)
-                address.append(", ").append(boundaryDetails.getWardName());
-            if (boundaryDetails.getLocalityName() != null)
-                address.append(", ").append(boundaryDetails.getLocalityName());
-            if (boundaryDetails.getBlockName() != null)
-                address.append(", ").append(boundaryDetails.getBlockName());
-            if (boundaryDetails.getStreetName() != null)
-                address.append(", ").append(boundaryDetails.getStreetName());
-        }*/
         return address.toString();
     }
-
-   
 
     @Override
     public String getReferenceNumber() {

@@ -1,8 +1,8 @@
 /**
- * eGov suite of products aim to improve the internal efficiency,transparency, 
+ * eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
     Copyright (C) <2015>  eGovernments Foundation
-    The updated version of eGov suite of products as by eGovernments Foundation 
+    The updated version of eGov suite of products as by eGovernments Foundation
     is available at http://www.egovernments.org
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -13,17 +13,17 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
     You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or 
+    along with this program. If not, see http://www.gnu.org/licenses/ or
     http://www.gnu.org/licenses/gpl.html .
     In addition to the terms of the GPL license to be adhered to in using this
     program, the following additional terms are to be complied with:
-        1) All versions of this program, verbatim or modified must carry this 
+        1) All versions of this program, verbatim or modified must carry this
            Legal Notice.
-        2) Any misrepresentation of the origin of the material is prohibited. It 
-           is required that all modified versions of this material be marked in 
+        2) Any misrepresentation of the origin of the material is prohibited. It
+           is required that all modified versions of this material be marked in
            reasonable ways as different from the original version.
-        3) This license does not grant any rights to any user of the program 
-           with regards to rights under trademark law for use of the trade names 
+        3) This license does not grant any rights to any user of the program
+           with regards to rights under trademark law for use of the trade names
            or trademarks of eGovernments Foundation.
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
@@ -112,7 +112,7 @@ public class DocumentHistoryDetail extends AbstractAuditable {
         return docHistory;
     }
 
-    public void setDocHistory(DocumentHistory docHistory) {
+    public void setDocHistory(final DocumentHistory docHistory) {
         this.docHistory = docHistory;
     }
 
@@ -120,7 +120,7 @@ public class DocumentHistoryDetail extends AbstractAuditable {
         return vendor;
     }
 
-    public void setVendor(String vendor) {
+    public void setVendor(final String vendor) {
         this.vendor = vendor;
     }
 
@@ -128,7 +128,7 @@ public class DocumentHistoryDetail extends AbstractAuditable {
         return purchaser;
     }
 
-    public void setPurchaser(String purchaser) {
+    public void setPurchaser(final String purchaser) {
         this.purchaser = purchaser;
     }
 
@@ -136,7 +136,7 @@ public class DocumentHistoryDetail extends AbstractAuditable {
         return extentInsqmt;
     }
 
-    public void setExtentInsqmt(BigDecimal extentInsqmt) {
+    public void setExtentInsqmt(final BigDecimal extentInsqmt) {
         this.extentInsqmt = extentInsqmt;
     }
 
@@ -144,7 +144,7 @@ public class DocumentHistoryDetail extends AbstractAuditable {
         return srlNo;
     }
 
-    public void setSrlNo(Long srlNo) {
+    public void setSrlNo(final Long srlNo) {
         this.srlNo = srlNo;
     }
 
@@ -152,7 +152,7 @@ public class DocumentHistoryDetail extends AbstractAuditable {
         return natureOfDeed;
     }
 
-    public void setNatureOfDeed(String natureOfDeed) {
+    public void setNatureOfDeed(final String natureOfDeed) {
         this.natureOfDeed = natureOfDeed;
     }
 
@@ -160,7 +160,7 @@ public class DocumentHistoryDetail extends AbstractAuditable {
         return remarks;
     }
 
-    public void setRemarks(String remarks) {
+    public void setRemarks(final String remarks) {
         this.remarks = remarks;
     }
 
@@ -168,7 +168,7 @@ public class DocumentHistoryDetail extends AbstractAuditable {
         return referenceNumber;
     }
 
-    public void setReferenceNumber(String referenceNumber) {
+    public void setReferenceNumber(final String referenceNumber) {
         this.referenceNumber = referenceNumber;
     }
 
@@ -176,7 +176,7 @@ public class DocumentHistoryDetail extends AbstractAuditable {
         return northBoundary;
     }
 
-    public void setNorthBoundary(String northBoundary) {
+    public void setNorthBoundary(final String northBoundary) {
         this.northBoundary = northBoundary;
     }
 
@@ -184,7 +184,7 @@ public class DocumentHistoryDetail extends AbstractAuditable {
         return southBoundary;
     }
 
-    public void setSouthBoundary(String southBoundary) {
+    public void setSouthBoundary(final String southBoundary) {
         this.southBoundary = southBoundary;
     }
 
@@ -192,7 +192,7 @@ public class DocumentHistoryDetail extends AbstractAuditable {
         return westBoundary;
     }
 
-    public void setWestBoundary(String westBoundary) {
+    public void setWestBoundary(final String westBoundary) {
         this.westBoundary = westBoundary;
     }
 
@@ -200,7 +200,7 @@ public class DocumentHistoryDetail extends AbstractAuditable {
         return eastBoundary;
     }
 
-    public void setEastBoundary(String eastBoundary) {
+    public void setEastBoundary(final String eastBoundary) {
         this.eastBoundary = eastBoundary;
     }
 
@@ -208,7 +208,7 @@ public class DocumentHistoryDetail extends AbstractAuditable {
         return surveyNumber;
     }
 
-    public void setSurveyNumber(String surveyNumber) {
+    public void setSurveyNumber(final String surveyNumber) {
         this.surveyNumber = surveyNumber;
     }
 
@@ -216,7 +216,7 @@ public class DocumentHistoryDetail extends AbstractAuditable {
         return plotorStreetNumber;
     }
 
-    public void setPlotorStreetNumber(BigDecimal plotorStreetNumber) {
+    public void setPlotorStreetNumber(final BigDecimal plotorStreetNumber) {
         this.plotorStreetNumber = plotorStreetNumber;
     }
 
@@ -224,7 +224,7 @@ public class DocumentHistoryDetail extends AbstractAuditable {
         return documentDate;
     }
 
-    public void setDocumentDate(Date documentDate) {
+    public void setDocumentDate(final Date documentDate) {
         this.documentDate = documentDate;
     }
 
@@ -232,7 +232,7 @@ public class DocumentHistoryDetail extends AbstractAuditable {
         return documentType;
     }
 
-    public void setDocumentType(String documentType) {
+    public void setDocumentType(final String documentType) {
         this.documentType = documentType;
     }
 
@@ -240,7 +240,7 @@ public class DocumentHistoryDetail extends AbstractAuditable {
         return previousowner;
     }
 
-    public void setPreviousowner(String previousowner) {
+    public void setPreviousowner(final String previousowner) {
         this.previousowner = previousowner;
     }
 
@@ -248,7 +248,7 @@ public class DocumentHistoryDetail extends AbstractAuditable {
         return presentowner;
     }
 
-    public void setPresentowner(String presentowner) {
+    public void setPresentowner(final String presentowner) {
         this.presentowner = presentowner;
     }
 
@@ -256,7 +256,7 @@ public class DocumentHistoryDetail extends AbstractAuditable {
         return villeagename;
     }
 
-    public void setVilleagename(String villeagename) {
+    public void setVilleagename(final String villeagename) {
         this.villeagename = villeagename;
     }
 

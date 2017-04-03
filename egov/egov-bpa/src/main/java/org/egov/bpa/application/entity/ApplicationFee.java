@@ -74,7 +74,6 @@ public class ApplicationFee extends StateAware {
     @OneToMany(mappedBy = "applicationFee", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ApplicationFeeDetail> applicationFeeDetail = new ArrayList<ApplicationFeeDetail>(0);
 
-
     @Override
     public Long getId() {
         return id;
@@ -89,7 +88,7 @@ public class ApplicationFee extends StateAware {
         return feeDate;
     }
 
-    public void setFeeDate(Date feeDate) {
+    public void setFeeDate(final Date feeDate) {
         this.feeDate = feeDate;
     }
 
@@ -97,7 +96,7 @@ public class ApplicationFee extends StateAware {
         return feeRemarks;
     }
 
-    public void setFeeRemarks(String feeRemarks) {
+    public void setFeeRemarks(final String feeRemarks) {
         this.feeRemarks = feeRemarks;
     }
 
@@ -105,7 +104,7 @@ public class ApplicationFee extends StateAware {
         return status;
     }
 
-    public void setStatus(BpaStatus status) {
+    public void setStatus(final BpaStatus status) {
         this.status = status;
     }
 
@@ -113,7 +112,7 @@ public class ApplicationFee extends StateAware {
         return challanNumber;
     }
 
-    public void setChallanNumber(String challanNumber) {
+    public void setChallanNumber(final String challanNumber) {
         this.challanNumber = challanNumber;
     }
 
@@ -121,7 +120,7 @@ public class ApplicationFee extends StateAware {
         return application;
     }
 
-    public void setApplication(BpaApplication application) {
+    public void setApplication(final BpaApplication application) {
         this.application = application;
     }
 
@@ -135,7 +134,7 @@ public class ApplicationFee extends StateAware {
         return applicationFeeDetail;
     }
 
-    public void setApplicationFeeDetail(List<ApplicationFeeDetail> applicationFeeDetail) {
+    public void setApplicationFeeDetail(final List<ApplicationFeeDetail> applicationFeeDetail) {
         this.applicationFeeDetail = applicationFeeDetail;
     }
 
