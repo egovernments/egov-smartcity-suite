@@ -46,8 +46,8 @@ import org.hibernate.validator.constraints.Length;
 
 @Entity
 @Table(name = "EGBPA_MSTR_DOCUMENT")
-@SequenceGenerator(name = Document.SEQ_DOCUMENT, sequenceName = Document.SEQ_DOCUMENT, allocationSize = 1)
-public class Document extends AbstractAuditable {
+@SequenceGenerator(name = BpaDocument.SEQ_DOCUMENT, sequenceName = BpaDocument.SEQ_DOCUMENT, allocationSize = 1)
+public class BpaDocument extends AbstractAuditable {
 
     private static final long serialVersionUID = 3078684328383202788L;
     public static final String SEQ_DOCUMENT = "SEQ_EGBPA_MSTR_DOCUMENT";

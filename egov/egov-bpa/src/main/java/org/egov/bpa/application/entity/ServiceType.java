@@ -84,10 +84,10 @@ public class ServiceType extends AbstractAuditable {
     private Long sla;
 
     @OneToMany(mappedBy = "serviceType", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private final List<Document> document = new ArrayList<>(0);
+    private final List<BpaDocument> document = new ArrayList<>(0);
 
     @OneToMany(mappedBy = "serviceType", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private final List<Noc> noc = new ArrayList<>(0);
+    private final List<BpaNoc> noc = new ArrayList<>(0);
 
     @Override
     public Long getId() {
@@ -195,11 +195,11 @@ public class ServiceType extends AbstractAuditable {
         this.buildingPlanApproval = buildingPlanApproval;
     }
 
-    public List<Document> getDocument() {
+    public List<BpaDocument> getDocument() {
         return document;
     }
 
-    public List<Noc> getNoc() {
+    public List<BpaNoc> getNoc() {
         return noc;
     }
 
