@@ -50,6 +50,7 @@
             getUom();
         }
      		  </c:if> */ 
+     		  
     });
 
 </script>
@@ -214,8 +215,7 @@
 				pattern="dd/MM/yyyy" var="agreementDateFrmttd" />
 			<form:input path="agreementDate" id="agreementDate"
 				value="${agreementDateFrmttd}" 
-				Class="form-control datepicker"
-				data-date-end-date="-1d" maxlength="10" />
+				Class="form-control datepicker" maxlength="10" />
 			<form:errors path="agreementDate" cssClass="error-msg" />
 		</div>
 

@@ -39,7 +39,15 @@
  
 */
 $(document).ready(function() {
-	
+
+	 $('#startDate').change(function(){ 
+		 
+		 var dt =$("#startDate").datepicker('getDate');
+		 var agrementdate =new Date(dt.getFullYear(),dt.getMonth(),dt.getDate()-1);
+		 $("#agreementDate").datepicker('setEndDate', agrementdate);
+		 
+	 })
+		  
 	 $('#boundary').change(function() {
 		parentBoundary = '';
 	});
@@ -67,7 +75,7 @@ $(document).ready(function() {
 	var showdetail = $("#agreementDate").val();
 	if (showdetail != "")
 		$("#showAgreementDtl").prop("checked", true);
-
+	
 });
 
 $('form').validate({
