@@ -87,7 +87,7 @@
 									name="tempContractorDetails[0].department" data-idx="0"
 									data-optional="1"
 									data-errormsg="Department is mandatory!"
-									class="form-control table-input text-right department removeDefaultValues patternvalidation" required = "required">
+									class="form-control table-input department removeDefaultValues patternvalidation" required = "required">
 									<form:option value="" > <spring:message code="lbl.select" /></form:option>
 						           	<form:options items="${departmentList}" itemLabel="name" itemValue="id" />
 						        </form:select>
@@ -167,7 +167,7 @@
 										data-idx="${item.index}"
 										data-optional="1"
 										data-errormsg="Department is mandatory!"
-										class="form-control table-input text-right department removeDefaultValues patternvalidation" 
+										class="form-control table-input department removeDefaultValues patternvalidation" 
 										maxlength="1024" > 
 										<form:option value="" > <spring:message code="lbl.select" /></form:option>
 						           		<form:options items="${departmentList}" itemLabel="name" itemValue="id" />
