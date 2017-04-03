@@ -60,7 +60,7 @@ public class PenaltyRatesService {
     private PenaltyRatesRepository penaltyRatesRepository;
 
     public PenaltyRates findByDaysAndLicenseAppType(Integer days, LicenseAppType licenseAppType) {
-        return penaltyRatesRepository.findByDaysAndLicenseAppType(days, licenseAppType);
+        return penaltyRatesRepository.findByDaysAndLicenseAppType(Long.valueOf(days), licenseAppType);
     }
 
     public PenaltyRates findOne(Long id) {
