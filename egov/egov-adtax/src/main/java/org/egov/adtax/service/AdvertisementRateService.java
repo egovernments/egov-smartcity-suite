@@ -52,6 +52,7 @@ import org.egov.adtax.repository.AdvertisementRateDetailRepository;
 import org.egov.adtax.repository.AdvertisementRateRepository;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.repository.CFinancialYearRepository;
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,6 +91,7 @@ public class AdvertisementRateService {
         return ratesRepository.findOne(id);
     }
 
+    @ReadOnly
     public List<AdvertisementRatesDetails> findScheduleOfRateDetailsByCategorySubcategoryUomAndClass(
             final HoardingCategory category, final SubCategory subCategory, final UnitOfMeasure unitOfMeasure,
             final RatesClass ratesClass, final CFinancialYear financialYear) {
@@ -166,6 +168,7 @@ public class AdvertisementRateService {
     
 
    @SuppressWarnings("unchecked")
+   @ReadOnly
     public List<ScheduleOfRateSearch> getScheduleOfRateSearchResult(final String category, final String subCategory,final String unitofmeasure,
             final String classtype, final String finyear) {
         
