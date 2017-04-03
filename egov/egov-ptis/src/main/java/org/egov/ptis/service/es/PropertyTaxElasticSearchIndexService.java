@@ -163,7 +163,8 @@ public class PropertyTaxElasticSearchIndexService {
      * @return BigDecimal
      */
     public BigDecimal getTotalDemand() {
-        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery().filter(QueryBuilders.matchQuery(IS_ACTIVE, true))
+        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery().filter(QueryBuilders.rangeQuery(TOTAL_DEMAND).from(0).to(null))
+                .filter(QueryBuilders.matchQuery(IS_ACTIVE, true))
                 .filter(QueryBuilders.matchQuery(IS_EXEMPTED, false));
         SearchQuery searchQuery = new NativeSearchQueryBuilder().withIndices(PROPERTY_TAX_INDEX_NAME)
                 .withQuery(boolQuery)
@@ -199,10 +200,10 @@ public class PropertyTaxElasticSearchIndexService {
         if (StringUtils.isNotBlank(collectionDetailsRequest.getFromDate())
                 && StringUtils.isNotBlank(collectionDetailsRequest.getToDate())) {
             fromDate = DateUtils.getDate(collectionDetailsRequest.getFromDate(), "yyyy-MM-dd");
-            toDate = DateUtils.addDays(DateUtils.getDate(collectionDetailsRequest.getToDate(), "yyyy-MM-dd"), 1);
+            toDate = DateUtils.getDate(collectionDetailsRequest.getToDate(), "yyyy-MM-dd");
         } else {
             fromDate =DateUtils.startOfDay(currFinYear.getStartingDate());
-            toDate = DateUtils.addDays(new Date(), 1);
+            toDate = new Date();
         }
         Long startTime = System.currentTimeMillis();
         BigDecimal totalDemand = getTotalDemandBasedOnInputFilters(collectionDetailsRequest);

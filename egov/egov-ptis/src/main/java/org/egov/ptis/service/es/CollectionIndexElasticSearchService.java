@@ -459,6 +459,7 @@ public class CollectionIndexElasticSearchService {
         List<CollTableData> collIndDataList = new ArrayList<>();
         Date fromDate;
         Date toDate;
+        Date endDate;
         String name;
         CollTableData collIndData;
         BigDecimal cyArrearColl;
@@ -550,13 +551,15 @@ public class CollectionIndexElasticSearchService {
         if (StringUtils.isNotBlank(collectionDetailsRequest.getFromDate())
                 && StringUtils.isNotBlank(collectionDetailsRequest.getToDate())) {
             fromDate = DateUtils.getDate(collectionDetailsRequest.getFromDate(), DATE_FORMAT_YYYYMMDD);
-            toDate = DateUtils.addDays(DateUtils.getDate(collectionDetailsRequest.getToDate(), DATE_FORMAT_YYYYMMDD),
-                    1);
+            endDate = DateUtils.getDate(collectionDetailsRequest.getToDate(), DATE_FORMAT_YYYYMMDD);
+            toDate = DateUtils.addDays(endDate, 1);
+            
         } else {
             fromDate = DateUtils.startOfDay(financialYear.getStartingDate());
-            toDate = DateUtils.addDays(new Date(), 1);
+            endDate = new Date();
+            toDate = DateUtils.addDays(endDate, 1);
         }
-        noOfMonths = DateUtils.noOfMonthsBetween(fromDate, toDate) + 1;
+        noOfMonths = DateUtils.noOfMonthsBetween(fromDate, endDate) + 1;
 
         Map<String, BigDecimal> cytdCollMap = getCollectionAndDemandValues(collectionDetailsRequest, fromDate, toDate,
                 COLLECTION_INDEX_NAME, TOTAL_AMOUNT, aggregationField);
