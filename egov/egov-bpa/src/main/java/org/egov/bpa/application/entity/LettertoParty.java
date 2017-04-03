@@ -64,7 +64,7 @@ public class LettertoParty extends AbstractAuditable {
     private Long id;
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    private Application application;
+    private BpaApplication application;
     @ManyToOne(fetch = FetchType.LAZY)
     private Inspection inspection;
     @Length(min = 1, max = 32)
@@ -240,11 +240,11 @@ public class LettertoParty extends AbstractAuditable {
         this.documentid = documentid;
     }
 
-    public Application getApplication() {
+    public BpaApplication getApplication() {
         return application;
     }
 
-    public void setApplication(Application application) {
+    public void setApplication(BpaApplication application) {
         this.application = application;
     }
 

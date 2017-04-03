@@ -61,7 +61,7 @@ public class BuildingDetail extends AbstractAuditable {
     @Valid
     @NotNull
     @JoinColumn(name = "application", nullable = false)
-    private Application application;
+    private BpaApplication application;
     private Integer unitCount;
     @Length(min = 1, max = 128)
     private String unitClassification;
@@ -207,11 +207,11 @@ public class BuildingDetail extends AbstractAuditable {
         this.totalSlab = totalSlab;
     }
 
-    public Application getApplication() {
+    public BpaApplication getApplication() {
         return application;
     }
 
-    public void setApplication(final Application application) {
+    public void setApplication(final BpaApplication application) {
         this.application = application;
     }
 

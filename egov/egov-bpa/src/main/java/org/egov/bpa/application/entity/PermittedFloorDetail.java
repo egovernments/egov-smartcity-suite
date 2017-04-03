@@ -57,7 +57,7 @@ public class PermittedFloorDetail extends AbstractAuditable {
     private Long id;
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    private Application application;
+    private BpaApplication application;
     private Integer floorNumber;
     @Length(min = 1, max = 128)
     private String floorType;
@@ -137,11 +137,11 @@ public class PermittedFloorDetail extends AbstractAuditable {
         this.usagePermitted = usagePermitted;
     }
 
-    public Application getApplication() {
+    public BpaApplication getApplication() {
         return application;
     }
 
-    public void setApplication(Application application) {
+    public void setApplication(BpaApplication application) {
         this.application = application;
     }
 

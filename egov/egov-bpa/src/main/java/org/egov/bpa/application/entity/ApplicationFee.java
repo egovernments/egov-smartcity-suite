@@ -68,7 +68,7 @@ public class ApplicationFee extends StateAware {
     private BpaStatus status;
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    private Application application;
+    private BpaApplication application;
     @Length(min = 1, max = 128)
     private String challanNumber;
     @OneToMany(mappedBy = "applicationFee", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
@@ -117,11 +117,11 @@ public class ApplicationFee extends StateAware {
         this.challanNumber = challanNumber;
     }
 
-    public Application getApplication() {
+    public BpaApplication getApplication() {
         return application;
     }
 
-    public void setApplication(Application application) {
+    public void setApplication(BpaApplication application) {
         this.application = application;
     }
 

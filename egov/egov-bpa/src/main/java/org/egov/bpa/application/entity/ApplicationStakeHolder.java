@@ -53,7 +53,7 @@ public class ApplicationStakeHolder extends AbstractAuditable {
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "application")
-    private Application application;
+    private BpaApplication application;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "stakeHolder")
     private StakeHolder stakeHolder;
@@ -71,11 +71,11 @@ public class ApplicationStakeHolder extends AbstractAuditable {
 
     }
 
-    public Application getApplication() {
+    public BpaApplication getApplication() {
         return application;
     }
 
-    public void setApplication(Application application) {
+    public void setApplication(BpaApplication application) {
         this.application = application;
     }
 

@@ -61,7 +61,7 @@ public class DocumentHistory extends AbstractAuditable {
     private Long id;
     @NotNull
     @ManyToOne(cascade = CascadeType.ALL)
-    private Application application;
+    private BpaApplication application;
     @NotNull
     @Length(min = 1, max = 256)
     private String documentNum;
@@ -179,11 +179,11 @@ public class DocumentHistory extends AbstractAuditable {
         this.docEnclosedDate = docEnclosedDate;
     }
 
-    public Application getApplication() {
+    public BpaApplication getApplication() {
         return application;
     }
 
-    public void setApplication(Application application) {
+    public void setApplication(BpaApplication application) {
         this.application = application;
     }
 

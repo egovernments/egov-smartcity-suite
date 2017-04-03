@@ -61,7 +61,7 @@ public class SiteDetail extends AbstractAuditable {
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @NotNull
     @JoinColumn(name = "application", nullable = false)
-    private Application application;
+    private BpaApplication application;
     @Length(min = 1, max = 12)
     private String plotdoornumber;
     @Length(min = 1, max = 128)
@@ -130,11 +130,11 @@ public class SiteDetail extends AbstractAuditable {
         return id;
     }
 
-    public Application getApplication() {
+    public BpaApplication getApplication() {
         return application;
     }
 
-    public void setApplication(Application application) {
+    public void setApplication(BpaApplication application) {
         this.application = application;
     }
 

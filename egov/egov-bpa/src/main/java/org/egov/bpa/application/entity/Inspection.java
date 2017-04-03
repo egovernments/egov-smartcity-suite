@@ -151,7 +151,7 @@ public class Inspection extends AbstractAuditable {
     @OneToMany(mappedBy = "inspection", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ApplicationFloorDetail> floorDetail = new ArrayList<>(0);
     @ManyToOne(fetch = FetchType.LAZY)
-    private Application application;
+    private BpaApplication application;
 
     @Override
     public Long getId() {
@@ -555,11 +555,11 @@ public class Inspection extends AbstractAuditable {
         this.docket = docket;
     }
 
-    public Application getApplication() {
+    public BpaApplication getApplication() {
         return application;
     }
 
-    public void setApplication(Application application) {
+    public void setApplication(BpaApplication application) {
         this.application = application;
     }
 

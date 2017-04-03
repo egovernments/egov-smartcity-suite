@@ -68,7 +68,7 @@ public class DDDetail extends AbstractAuditable {
     private Bank ddBank;
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    private Application application;
+    private BpaApplication application;
 
     @Override
     public Long getId() {
@@ -120,11 +120,11 @@ public class DDDetail extends AbstractAuditable {
         this.ddBank = ddBank;
     }
 
-    public Application getApplication() {
+    public BpaApplication getApplication() {
         return application;
     }
 
-    public void setApplication(Application application) {
+    public void setApplication(BpaApplication application) {
         this.application = application;
     }
 

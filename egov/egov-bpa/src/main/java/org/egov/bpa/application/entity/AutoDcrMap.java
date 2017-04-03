@@ -32,7 +32,7 @@ public class AutoDcrMap extends AbstractAuditable {
 	@Valid
 	@NotNull
 	@JoinColumn(name = "application", nullable = false)
-	private Application application;
+	private BpaApplication application;
 	@ManyToOne(cascade = CascadeType.ALL)
         @Valid
         @NotNull
@@ -57,11 +57,11 @@ public class AutoDcrMap extends AbstractAuditable {
 		this.autodcrNumber = autodcrNumber;
 	}
 
-	public Application getApplication() {
+	public BpaApplication getApplication() {
 		return application;
 	}
 
-	public void setApplication(final Application application) {
+	public void setApplication(final BpaApplication application) {
 		this.application = application;
 	}
 

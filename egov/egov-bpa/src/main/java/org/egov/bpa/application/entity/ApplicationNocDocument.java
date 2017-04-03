@@ -46,7 +46,7 @@ public class ApplicationNocDocument extends AbstractAuditable {
     @ManyToOne(cascade = CascadeType.ALL)
     @NotNull
     @JoinColumn(name = "application", nullable = false)
-    private Application application;
+    private BpaApplication application;
     @Temporal(value = TemporalType.DATE)
     private Date submissionDate;
     private Boolean issubmitted;
@@ -105,11 +105,11 @@ public class ApplicationNocDocument extends AbstractAuditable {
         this.remarks = remarks;
     }
 
-    public Application getApplication() {
+    public BpaApplication getApplication() {
         return application;
     }
 
-    public void setApplication(final Application application) {
+    public void setApplication(final BpaApplication application) {
         this.application = application;
     }
 
