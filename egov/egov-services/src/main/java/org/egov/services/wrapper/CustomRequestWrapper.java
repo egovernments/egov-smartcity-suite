@@ -37,27 +37,55 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.services.zuulproxy.models;
+package org.egov.services.wrapper;
 
-import java.io.Serializable;
+import java.io.IOException;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.servlet.ServletInputStream;
+import javax.servlet.http.HttpServletRequest;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class Role implements Serializable {
+import org.apache.commons.io.IOUtils;
 
-    private static final long serialVersionUID = 692503190320200067L;
+import com.netflix.zuul.http.HttpServletRequestWrapper;
+import com.netflix.zuul.http.ServletInputStreamWrapper;
 
-    @JsonProperty("name")
-    private final String name;
+public class CustomRequestWrapper extends HttpServletRequestWrapper {
 
-    public Role(final String name) {
-        this.name = name;
+    private String payload;
+
+    public CustomRequestWrapper(final HttpServletRequest request) {
+        super(request);
+        convertInputStreamToString(request);
     }
 
-    public String getName() {
-        return name;
+    private void convertInputStreamToString(final HttpServletRequest request) {
+        try {
+            payload = IOUtils.toString(request.getInputStream());
+        } catch (final IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
+    public String getPayload() {
+        return payload;
+    }
+
+    public void setPayload(final String payload) {
+        this.payload = payload;
+    }
+
+    @Override
+    public int getContentLength() {
+        return payload.length();
+    }
+
+    @Override
+    public long getContentLengthLong() {
+        return payload.length();
+    }
+
+    @Override
+    public ServletInputStream getInputStream() {
+        return new ServletInputStreamWrapper(payload.getBytes());
+    }
 }
