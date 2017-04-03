@@ -1025,7 +1025,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
         else
             receiptHeader
                     .transition()
-                    .progress()
+                    .progressWithStateCopy()
                     .withSenderName(
                             receiptHeader.getCreatedBy().getUsername() + "::" + receiptHeader.getCreatedBy().getName())
                     .withComments(remarks).withStateValue(wfState).withOwner(ownerPosition).withDateInfo(new Date())
