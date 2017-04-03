@@ -40,6 +40,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
@@ -64,15 +65,18 @@ public class BpaFee extends AbstractAuditable {
     @Id
     @GeneratedValue(generator = SEQ_BPAFEE, strategy = GenerationType.SEQUENCE)
     private Long id;
-
+    @JoinColumn(name = "glcode")
     @ManyToOne(fetch = FetchType.LAZY)
     private CChartOfAccounts glcode;
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "function")
     private CFunction function;
     @ManyToOne(fetch = FetchType.LAZY)
     @NotNull
+    @JoinColumn(name = "servicetype")
     private ServiceType serviceType;
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "fund")
     private Fund fund;
     @NotNull
     @Length(min = 1, max = 128)

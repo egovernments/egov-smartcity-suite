@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
+<%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
@@ -37,35 +36,53 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  -->
-<!DOCTYPE tiles-definitions PUBLIC
-        "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN"
-        "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
-<tiles-definitions>
+  --%>
 
-    <definition name="base_layout" template="/WEB-INF/views/template/main.jsp">
-        <put-attribute name="title" value="eGov Urban Portal"/>
-        <put-attribute name="header" value="/WEB-INF/views/template/header.jsp"/>
-        <put-attribute name="body" value=""/>
-        <put-attribute name="footer" value="/WEB-INF/views/template/footer.jsp"/>
-    </definition>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 
-	<definition name="error" template="/WEB-INF/views/template/error.jsp">
-		<put-attribute name="page-title" value="title.error.page" cascade="true"/>
-        <put-attribute name="header" value="/WEB-INF/views/template/header.jsp"/>
-        <put-attribute name="body" value=""/>
-        <put-attribute name="footer" value="/WEB-INF/views/template/footer.jsp"/>
-	</definition>
-	<definition name="error/*" extends="error">
-		<put-attribute name="body" value="/WEB-INF/views/error/{1}.jsp" />
-	</definition>
-	  <definition name="collecttax-redirection" extends="base_layout">	 
-        <put-attribute name="page-title" value="title.collect.tax.view" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/application/collecttax-redirection.jsp"/>
-    </definition>
-	
-	<definition name="newapplication-form" extends="base_layout">
-        <put-attribute name="page-title" value="title.newconnection" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/application/newapplication-form.jsp"/>
-    </definition>
-</tiles-definitions>
+<%@ page language="java" pageEncoding="UTF-8"%>
+<html>
+	<head>
+		<title><spring:message code="title.collect.tax.view" /></title>
+		<script type="text/javascript">
+
+	 	jQuery(document).ready( function() {
+
+			var collectXML = '${collectxml}';
+			var citizenRole= '${citizenrole}';
+			
+			if(citizenRole =='true'){
+			jQuery('<form>.').attr({
+				method: 'post',
+				action: '/collection/citizen/onlineReceipt-newform.action',
+				target: '_self'
+			}).append(jQuery('<input>').attr({
+			    type: 'hidden',
+			    id: 'collectXML',
+			    name: 'collectXML',
+			    value: collectXML
+			})).appendTo( document.body ).submit();
+			}
+			else{
+				jQuery('<form>.').attr({
+					method: 'post',
+					action: '/collection/receipts/receipt-newform.action',
+					target: '_self'
+				}).append(jQuery('<input>').attr({
+				    type: 'hidden',
+				    id: 'collectXML',
+				    name: 'collectXML',
+				    value: collectXML
+				})).appendTo( document.body ).submit();
+				}
+		});
+		
+		</script>
+	</head>
+	<body>
+	</body>
+</html>

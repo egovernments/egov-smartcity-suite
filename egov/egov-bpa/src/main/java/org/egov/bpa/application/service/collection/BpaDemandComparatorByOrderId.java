@@ -37,8 +37,21 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.bpa.utils.constants;
+package org.egov.bpa.application.service.collection;
 
-public class BpaConstants {
+import org.egov.demand.model.EgDemandDetails;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Comparator;
+
+@Service
+@Transactional(readOnly = true)
+public class BpaDemandComparatorByOrderId implements Comparator<EgDemandDetails> {
+    @Override
+    public int compare(final EgDemandDetails demandOne, final EgDemandDetails demandTwo) {
+        return demandOne.getEgDemandReason().getEgDemandReasonMaster().getOrderId()
+                .compareTo(demandTwo.getEgDemandReason().getEgDemandReasonMaster().getOrderId());
+    }
 
 }

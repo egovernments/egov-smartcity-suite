@@ -37,25 +37,30 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.bpa.masters.service;
+package org.egov.bpa.utils;
 
-import java.util.List;
+public class BpaConstants {
+    
+    public static final String ZONE = "Zone";
+    public static final String WARD = "Ward";
+    public static final String BLOCK = "Block";
+    public static final String STREET = "Street";
+    public static final String EGMODULE_NAME ="BPA";
+    
+    public static final String BPASTATUSMODULETYPE ="BPAAPPLICATION";
+    public static final String ROLE_CITIZEN = "Citizen";
+    public static final String YEARLY ="Yearly";
+    public static final String ADMISSIONFEEREASON ="ADMISSION FEES";
+    public static final String WATER_CONN_BILLNO_SEQ = "SEQ_BILLNO_";
+    public static final String USERNAME_ANONYMOUS = "anonymous";
+    public static final String LOCALITY = "locality";
+    public static final String ELECTIONWARD_BNDRY_TYPE = "Election Ward";
+    public static final String LOCALITY_BNDRY_TYPE = "Locality";
+    public static final String LOCATION_HIERARCHY_TYPE = "LOCATION";
+    public static final Character DMD_STATUS_CHEQUE_BOUNCED = 'B';
+    public static final String DEMANDISHISTORY = "N";
 
-import org.egov.bpa.application.entity.ServiceType;
-import org.egov.bpa.masters.repository.ServiceTypeRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-@Service
-@Transactional(readOnly = true)
-public class ServiceTypeService {
-    
-    @Autowired
-    private ServiceTypeRepository serviceTypeRepository;
-    
-    public List<ServiceType> findAll() {
-        return serviceTypeRepository.findAll();
-    }
-    
+
+
 }

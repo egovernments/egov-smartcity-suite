@@ -39,6 +39,7 @@
  */
 package org.egov.bpa.application.entity;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -63,8 +64,6 @@ import javax.validation.constraints.NotNull;
 import org.egov.bpa.application.entity.enums.Occupancy;
 import org.egov.commons.entity.Source;
 import org.egov.demand.model.EgDemand;
-import org.egov.infra.admin.master.entity.Department;
-import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.workflow.entity.StateAware;
 import org.hibernate.validator.constraints.Length;
 
@@ -108,13 +107,13 @@ public class BpaApplication extends StateAware {
     @JoinColumn(name = "serviceType")
     private ServiceType serviceType;
 
-    @NotNull
+    
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "status")
     private BpaStatus status;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private User owner;
+    private Applicant owner;
     @Length(min = 1, max = 128)
     private String planPermissionNumber;
     @Temporal(value = TemporalType.DATE)
@@ -138,25 +137,24 @@ public class BpaApplication extends StateAware {
     private String projectName;
     @Length(min = 1, max = 128)
     private String groupDevelopment;
+    
+    private BigDecimal admissionfeeAmount;
 
-    @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "siteDetail")
-    private SiteDetail siteDetail;
-    @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "buildingDetail")
-    private BuildingDetail buildingDetail;
+    @OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<SiteDetail> siteDetail= new ArrayList<>(0);
+    
+    @OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private  List<BuildingDetail> buildingDetail = new ArrayList<>(0);
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "documentHistory")
-    private DocumentHistory documentHistory;
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "application")
+    private List<DocumentHistory> documentHistory= new ArrayList<>();
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "permittedFloorDetail")
-    private PermittedFloorDetail permittedFloorDetail;
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Department department;
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "application")
+    private  List<PermittedFloorDetail> permittedFloorDetail= new ArrayList<>();
+  /*  @ManyToOne(fetch = FetchType.LAZY)
+    private Department department;*/
 
     @OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<AutoDcrMap> autoDcr = new ArrayList<>();
@@ -338,27 +336,21 @@ public class BpaApplication extends StateAware {
         this.inspections = inspections;
     }
 
-    public BuildingDetail getBuildingDetail() {
-        return buildingDetail;
-    }
-
-    public void setBuildingDetail(BuildingDetail buildingDetail) {
-        this.buildingDetail = buildingDetail;
-    }
-
-    public DocumentHistory getDocumentHistory() {
+    
+   
+    public List<DocumentHistory> getDocumentHistory() {
         return documentHistory;
     }
 
-    public void setDocumentHistory(DocumentHistory documentHistory) {
+    public void setDocumentHistory(List<DocumentHistory> documentHistory) {
         this.documentHistory = documentHistory;
     }
 
-    public PermittedFloorDetail getPermittedFloorDetail() {
+    public List<PermittedFloorDetail> getPermittedFloorDetail() {
         return permittedFloorDetail;
     }
 
-    public void setPermittedFloorDetail(PermittedFloorDetail permittedFloorDetail) {
+    public void setPermittedFloorDetail(List<PermittedFloorDetail> permittedFloorDetail) {
         this.permittedFloorDetail = permittedFloorDetail;
     }
 
@@ -402,20 +394,28 @@ public class BpaApplication extends StateAware {
         this.serviceType = serviceType;
     }
 
-    public User getOwner() {
+    public Applicant getOwner() {
         return owner;
     }
 
-    public void setOwner(User owner) {
+    public void setOwner(Applicant owner) {
         this.owner = owner;
     }
 
-    public SiteDetail getSiteDetail() {
+    public List<SiteDetail> getSiteDetail() {
         return siteDetail;
     }
 
-    public void setSiteDetail(SiteDetail siteDetail) {
+    public void setSiteDetail(List<SiteDetail> siteDetail) {
         this.siteDetail = siteDetail;
+    }
+
+    public List<BuildingDetail> getBuildingDetail() {
+        return buildingDetail;
+    }
+
+    public void setBuildingDetail(List<BuildingDetail> buildingDetail) {
+        this.buildingDetail = buildingDetail;
     }
 
     public List<ApplicationDocument> getApplicationDocument() {
@@ -456,12 +456,21 @@ public class BpaApplication extends StateAware {
         return null;
     }
 
-    public Department getDepartment() {
+   /* public Department getDepartment() {
         return department;
     }
 
     public void setDepartment(Department department) {
         this.department = department;
+    }*/
+
+    public BigDecimal getAdmissionfeeAmount() {
+        return admissionfeeAmount;
     }
+
+    public void setAdmissionfeeAmount(BigDecimal admissionfeeAmount) {
+        this.admissionfeeAmount = admissionfeeAmount;
+    }
+    
 
 }

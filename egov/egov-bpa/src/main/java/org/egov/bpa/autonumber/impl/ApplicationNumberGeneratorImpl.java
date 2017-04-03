@@ -37,25 +37,18 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.bpa.masters.service;
+package org.egov.bpa.autonumber.impl;
 
-import java.util.List;
-
-import org.egov.bpa.application.entity.ServiceType;
-import org.egov.bpa.masters.repository.ServiceTypeRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.egov.bpa.application.autonumber.ApplicationNumberGenerator;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional(readOnly = true)
-public class ServiceTypeService {
-    
-    @Autowired
-    private ServiceTypeRepository serviceTypeRepository;
-    
-    public List<ServiceType> findAll() {
-        return serviceTypeRepository.findAll();
+public class ApplicationNumberGeneratorImpl implements ApplicationNumberGenerator{
+
+    @Override
+    public String generateApplicationNumber()
+    {
+        //impliments to get sequence number 
+        return "";
     }
-    
 }

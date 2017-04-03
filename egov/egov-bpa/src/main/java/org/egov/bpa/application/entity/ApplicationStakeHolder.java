@@ -62,12 +62,12 @@ public class ApplicationStakeHolder extends AbstractAuditable {
     @Override
     public Long getId() {
         // TODO Auto-generated method stub
-        return null;
+        return id;
     }
 
     @Override
     protected void setId(Long id) {
-        // TODO Auto-generated method stub
+        this.id=id;
 
     }
 

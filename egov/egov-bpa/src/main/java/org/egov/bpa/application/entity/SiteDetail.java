@@ -94,7 +94,7 @@ public class SiteDetail extends AbstractAuditable {
     private Boundary street;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "village", nullable = false)
+    @JoinColumn(name = "village")
     private VillageName village; // required ??
     // nameing correct ???
     @Length(min = 1, max = 128)

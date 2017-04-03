@@ -37,25 +37,28 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.bpa.masters.service;
+package org.egov.bpa.autonumber.impl;
 
-import java.util.List;
+import java.io.Serializable;
 
-import org.egov.bpa.application.entity.ServiceType;
-import org.egov.bpa.masters.repository.ServiceTypeRepository;
+import org.egov.bpa.application.autonumber.BpaBillReferenceNumberGenerator;
+import org.egov.bpa.utils.BpaConstants;
+import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional(readOnly = true)
-public class ServiceTypeService {
-    
+public class BpaBillReferenceNumberGeneratorImpl implements BpaBillReferenceNumberGenerator {
+
     @Autowired
-    private ServiceTypeRepository serviceTypeRepository;
-    
-    public List<ServiceType> findAll() {
-        return serviceTypeRepository.findAll();
+    private ApplicationSequenceNumberGenerator applicationSequenceNumberGenerator;
+
+
+    @Override
+    public String generateBillNumber(final String installmentYear) {
+        final String sequenceName = BpaConstants.WATER_CONN_BILLNO_SEQ + installmentYear;
+        final Serializable nextSequence = applicationSequenceNumberGenerator.getNextSequence(sequenceName);
+        return String.format("%s%06d", "01", nextSequence);
     }
-    
+
 }

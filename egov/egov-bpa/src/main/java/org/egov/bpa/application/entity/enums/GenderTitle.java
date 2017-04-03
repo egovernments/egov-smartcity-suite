@@ -37,25 +37,15 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.bpa.masters.service;
+package org.egov.bpa.application.entity.enums;
 
-import java.util.List;
+import org.apache.commons.lang3.StringUtils;
 
-import org.egov.bpa.application.entity.ServiceType;
-import org.egov.bpa.masters.repository.ServiceTypeRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+public enum GenderTitle {
+    MRS,MISS,MR;
 
-@Service
-@Transactional(readOnly = true)
-public class ServiceTypeService {
-    
-    @Autowired
-    private ServiceTypeRepository serviceTypeRepository;
-    
-    public List<ServiceType> findAll() {
-        return serviceTypeRepository.findAll();
+    @Override
+    public String toString() {
+        return StringUtils.capitalize(name());
     }
-    
 }
