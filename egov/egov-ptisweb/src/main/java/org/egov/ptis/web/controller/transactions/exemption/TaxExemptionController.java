@@ -81,6 +81,7 @@ import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.enums.TransactionType;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.DocumentType;
+import org.egov.ptis.domain.entity.property.Floor;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.TaxExemptionReason;
@@ -328,6 +329,10 @@ public class TaxExemptionController extends GenericWorkFlowController {
                 model.addAttribute(ERROR_MSG, "error.commercial.prop.notallowed");
                 return PROPERTY_VALIDATION;
             }
+            if (hasTenant((PropertyImpl)property)) {
+                model.addAttribute(ERROR_MSG, "error.tenant.exists");
+                return PROPERTY_VALIDATION;
+            }
             if (loggedUserIsMeesevaUser) {
                 final HashMap<String, String> meesevaParams = new HashMap<>();
                 meesevaParams.put("APPLICATIONNUMBER", ((PropertyImpl) property).getMeesevaApplicationNumber());
@@ -386,9 +391,24 @@ public class TaxExemptionController extends GenericWorkFlowController {
     }
     
     public Boolean checkCommercialProperty(PropertyImpl property) {
-        return property.getPropertyDetail().getCategoryType().equals(PropertyTaxConstants.CATEGORY_NON_RESIDENTIAL)
-                && (property.getTaxExemptedReason().getCode().equals(PropertyTaxConstants.EXEMPTION_EXSERVICE)
-                        || property.getTaxExemptedReason().getCode()
-                                .equals(PropertyTaxConstants.EXEMPTION_PUBLIC_WORSHIP));
+        return !checkPrivateResdProperty(property) && (property.getTaxExemptedReason().getCode()
+                .equals(PropertyTaxConstants.EXEMPTION_EXSERVICE)
+                || property.getTaxExemptedReason().getCode().equals(PropertyTaxConstants.EXEMPTION_PUBLIC_WORSHIP));
+    }
+
+    public Boolean checkPrivateResdProperty(PropertyImpl property) {
+        return property.getPropertyDetail().getCategoryType().equals(PropertyTaxConstants.CATEGORY_RESIDENTIAL)
+                && property.getPropertyDetail().getPropertyTypeMaster().getCode()
+                        .equals(PropertyTaxConstants.OWNERSHIP_TYPE_PRIVATE);
+    }
+    
+    public Boolean hasTenant(PropertyImpl property){
+        for(Floor floor : property.getPropertyDetail().getFloorDetails()){
+            if(floor.getPropertyOccupation().getOccupancyCode().equals(PropertyTaxConstants.OCC_TENANT)
+                    && property.getTaxExemptedReason().getCode()
+                    .equals(PropertyTaxConstants.EXEMPTION_EXSERVICE))
+                    return true;
+        }
+        return false;
     }
 }
