@@ -39,9 +39,23 @@
  */
 package org.egov.bpa.application.workflow;
 
+import org.egov.bpa.application.entity.BpaApplication;
+
 /**
- * The Class ApplicationCommonWorkflow.
+ * The Interface ApplicationCommonWorkflow.
  */
-public class ApplicationWorkflowCustomDefaultImpl extends ApplicationWorkflowCustomImpl {
+public interface BpaApplicationWorkflowCustom {
+
+    /***
+     * 
+     * @param bpaApplication
+     * @param approvalPosition
+     * @param approvalComent
+     * @param additionalRule
+     * @param workFlowAction
+     */
+     public void createCommonWorkflowTransition(BpaApplication bpaApplication,
+            Long approvalPosition,  String approvalComent,  String additionalRule,
+            String workFlowAction);
 
 }

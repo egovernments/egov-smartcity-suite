@@ -47,12 +47,11 @@ import org.egov.bpa.application.entity.BpaFeeDetail;
 import org.egov.bpa.application.entity.BpaStatus;
 import org.egov.bpa.application.repository.ApplicationBpaRepository;
 import org.egov.bpa.application.service.collection.GenericBillGeneratorService;
+import org.egov.bpa.service.BpaStatusService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infstr.services.PersistenceService;
 import org.hibernate.Criteria;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -64,8 +63,7 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
     private ApplicationBpaRepository applicationBpaRepository;
 
     @Autowired
-    @Qualifier("persistenceService")
-    private PersistenceService persistenceService;
+    private BpaStatusService bpaStatusService;
 
     @Autowired
     private ApplicationBpaBillService applicationBpaBillService;
@@ -79,7 +77,7 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         if (application.getOwner() != null)
             application.getOwner().setApplication(application);
         application.setApplicationNumber(applicationBpaBillService.generateApplicationnumber(application));
-        final BpaStatus bpaStatus = getStatusByCodeAndModuleType("REGISTERED", BpaConstants.BPASTATUSMODULETYPE);
+        final BpaStatus bpaStatus = getStatusByCodeAndModuleType("REGISTERED");
         application.setStatus(bpaStatus);
         if (application.getApplicantMode() != null)
             application.setApplicantMode("NEW");
@@ -87,9 +85,9 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         return applicationBpaRepository.save(application);
     }
 
-    public BpaStatus getStatusByCodeAndModuleType(final String code, final String moduleName) {
-        return (BpaStatus) persistenceService.find("from org.egov.bpa.application.entity.BpaStatus where moduleType=? and code=?",
-                moduleName, code);
+    public BpaStatus getStatusByCodeAndModuleType(final String code) {
+        return bpaStatusService
+                .findByModuleTypeAndCode(BpaConstants.APPLICATION_MODULE_TYPE, code);
     }
 
     @Transactional

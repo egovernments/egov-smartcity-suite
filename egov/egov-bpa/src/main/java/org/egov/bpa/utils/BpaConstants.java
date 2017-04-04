@@ -60,4 +60,19 @@ public class BpaConstants {
     public static final String DEMANDISHISTORY = "N";
     public static final String STRING_VALIDATION = "Paid Amount is greater than Total Amount to be paid";
 
+    public static final String APPLICATION_MODULE_TYPE = "BPA";
+    public static final String CSC_SOURCE ="CSC"; 
+    public static final String COLON_CONCATE = "::";
+    public static final String NATURE_OF_WORK = "Building Plan Approval";
+    public static final String WF_NEW_STATE = "NEW";
+    public static final String WF_REJECT_STATE = "Rejected";
+    public static final String WF_END_STATE = "END";
+    public static final String APPLICATION_STATUS_CREATED = "CREATED";
+    public static final String APPLICATION_STATUS_APPROVED = "APPROVED";
+
+    public static final String WF_APPROVE_BUTTON = "Approve";
+    public static final String WF_REJECT_BUTTON = "REJECT";
+    public static final String WF_CANCELAPPLICATION_BUTTON = "CANCEL APPLICATION";
+    public static final String APPLICATION_STATUS_CANCELLED = "Cancelled";
+    public static final String CREATE_ADDITIONAL_RULE_CREATE = "CREATEBPAAPPLICATION";
 }

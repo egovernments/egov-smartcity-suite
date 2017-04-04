@@ -39,9 +39,25 @@
  */
 package org.egov.bpa.application.workflow;
 
+import org.egov.bpa.application.entity.BpaApplication;
+import org.springframework.transaction.annotation.Transactional;
+
 /**
  * The Class ApplicationCommonWorkflow.
  */
-public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkflowCustom {
+public class BpaApplicationWorkflowCustomDefaultImpl extends BpaApplicationWorkflowCustomImpl {
 
+    public BpaApplicationWorkflowCustomDefaultImpl() {
+
+    }
+
+    @Override
+    @Transactional
+    public void createCommonWorkflowTransition(BpaApplication application,
+            final Long approvalPosition, final String approvalComent, final String additionalRule,
+            final String workFlowAction) {
+        super.createCommonWorkflowTransition(application, approvalPosition, approvalComent, additionalRule,
+                workFlowAction);
+    }
+ 
 }
