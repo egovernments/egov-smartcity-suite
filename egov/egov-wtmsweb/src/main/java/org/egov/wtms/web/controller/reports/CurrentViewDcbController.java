@@ -75,6 +75,7 @@ import org.egov.wtms.application.service.CurrentDcbService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.application.service.collection.WaterConnectionBillable;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
+import org.egov.wtms.utils.DemandComparatorByInstallmentOrder;
 import org.egov.wtms.utils.PropertyExtnUtils;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
@@ -185,9 +186,11 @@ public class CurrentViewDcbController {
             waterConnectionBillable.setAssessmentDetails(assessmentDetails);
             dcbService.setBillable(waterConnectionBillable);
             dCBReport = dcbService.getCurrentDCBAndReceipts(dcbDispInfo);
-
             final EgDemand demand = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
-            for (final EgDemandDetails demandDetails : demand.getEgDemandDetails())
+            final List<EgDemandDetails> egDemandDetailsList = new ArrayList<EgDemandDetails>(0);
+            egDemandDetailsList.addAll(demand.getEgDemandDetails());
+            Collections.sort(egDemandDetailsList, new DemandComparatorByInstallmentOrder());
+            for (final EgDemandDetails demandDetails : egDemandDetailsList)
                 if (WATERTAXREASONCODE.equals(demandDetails.getEgDemandReason().getEgDemandReasonMaster().getCode()))
                     installmentList.add(demandDetails.getEgDemandReason().getEgInstallmentMaster().getDescription());
             for (final String installment : installmentList)
