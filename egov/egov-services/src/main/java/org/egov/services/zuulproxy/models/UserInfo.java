@@ -51,28 +51,28 @@ public class UserInfo implements Serializable {
     private static final long serialVersionUID = -5184742701167113678L;
 
     @JsonProperty("roles")
-    private final List<Role> roles;
+    private List<Role> roles;
 
     @JsonProperty("id")
-    private final Long id;
+    private Long id;
 
     @JsonProperty("userName")
-    private final String userName;
+    private String userName;
 
     @JsonProperty("name")
-    private final String name;
+    private String name;
 
     @JsonProperty("emailId")
-    private final String emailId;
+    private String emailId;
 
     @JsonProperty("mobileNumber")
-    private final String mobileNumber;
+    private String mobileNumber;
 
     @JsonProperty("type")
-    private final String type;
+    private String type;
 
     @JsonProperty("tenantId")
-    private final String tenantId;
+    private String tenantId;
 
     public UserInfo(final List<Role> roles, final Long id, final String userName, final String name, final String emailId,
             final String mobileNumber, final String type, final String tenantId) {
@@ -85,6 +85,9 @@ public class UserInfo implements Serializable {
         this.mobileNumber = mobileNumber;
         this.type = type;
         this.tenantId = tenantId;
+    }
+
+    public UserInfo() {
     }
 
     public List<Role> getRoles() {
