@@ -79,17 +79,22 @@ import com.netflix.zuul.context.RequestContext;
 public class ZuulProxyFilter extends ZuulFilter {
 
     private static Logger log = LoggerFactory.getLogger(ZuulProxyFilter.class);
-    // private static final String USER_INFO = "x-user-info";
+    private static final String PRE = "pre";
     private static final String CLIENT_ID = "client.id";
     private static final String GET = "GET";
     private static final String FILESTORE_REGEX = "^/filestore/.*";
     private static final String REQUEST_INFO_FIELD_NAME = "RequestInfo";
     private static final String USER_INFO_FIELD_NAME = "userInfo";
+    private static final String SERVICES_CONTEXTROOT = "/services";
+    private static final String REQUEST_URI = "requestURI";
+    private static final String SERVICES_APPLICATION_PROPERTIES = "servicesApplicationProperties";
+    private static final String USER_SERVICE = "userService";
+    private static final String ENVIRONMENT = "environment";
     private ObjectMapper mapper = null;
 
     @Override
     public String filterType() {
-        return "pre";
+        return PRE;
     }
 
     @Override
@@ -116,7 +121,7 @@ public class ZuulProxyFilter extends ZuulFilter {
 
         final HashMap<String, String> zuulProxyRoutingUrls;
         final ServicesApplicationProperties applicationProperties = (ServicesApplicationProperties) springContext
-                .getBean("servicesApplicationProperties");
+                .getBean(SERVICES_APPLICATION_PROPERTIES);
         try {
             zuulProxyRoutingUrls = (HashMap<String, String>) applicationProperties
                     .zuulProxyRoutingUrls();
@@ -129,8 +134,8 @@ public class ZuulProxyFilter extends ZuulFilter {
             final URL requestURL = new URL(request.getRequestURL().toString());
 
             String endPointURI;
-            if (requestURL.getPath().startsWith("/services"))
-                endPointURI = requestURL.getPath().split("/services")[1];
+            if (requestURL.getPath().startsWith(SERVICES_CONTEXTROOT))
+                endPointURI = requestURL.getPath().split(SERVICES_CONTEXTROOT)[1];
             else
                 endPointURI = requestURL.getPath();
 
@@ -145,12 +150,12 @@ public class ZuulProxyFilter extends ZuulFilter {
             if (log.isInfoEnabled())
                 log.info(String.format("%s request to the url %s", request.getMethod(), request.getRequestURL().toString()));
 
-            if (StringUtils.isNoneBlank(request.getQueryString()))
+            if (StringUtils.isNotBlank(request.getQueryString()))
                 endPointURI = endPointURI + "?" + request.getQueryString();
 
             final URL routedHost = new URL(mappingURL + endPointURI);
             ctx.setRouteHost(routedHost);
-            ctx.set("requestURI", routedHost.getPath());
+            ctx.set(REQUEST_URI, routedHost.getPath());
             final String userInfo = getUserInfo(request, springContext);
             if (shouldPutUserInfoOnHeaders(ctx))
                 ctx.addZuulRequestHeader(USER_INFO_FIELD_NAME, userInfo);
@@ -197,7 +202,7 @@ public class ZuulProxyFilter extends ZuulFilter {
             log.info("userInfo is from the session... " + userInfoJson);
 
         if (StringUtils.isBlank(userInfoJson)) {
-            final UserService userService = (UserService) springContext.getBean("userService");
+            final UserService userService = (UserService) springContext.getBean(USER_SERVICE);
             final SecureUser userDetails = new SecureUser(
                     userService.getUserByUsername(request.getRemoteUser()));
 
@@ -206,11 +211,11 @@ public class ZuulProxyFilter extends ZuulFilter {
             final List<Role> roles = new ArrayList<Role>();
             userDetails.getUser().getRoles().forEach(authority -> roles.add(new Role(authority.getName())));
 
-            final Environment environment = (Environment) springContext.getBean("environment");
+            final Environment environment = (Environment) springContext.getBean(ENVIRONMENT);
             final String clientId = environment.getProperty(CLIENT_ID);
 
             String tenantId = ApplicationThreadLocals.getTenantID();
-            if (StringUtils.isNoneBlank(clientId))
+            if (StringUtils.isNotBlank(clientId))
                 tenantId = clientId + "." + tenantId;
 
             final UserInfo userInfo = new UserInfo(roles, userDetails.getUserId(), userDetails.getUsername(), user.getName(),
