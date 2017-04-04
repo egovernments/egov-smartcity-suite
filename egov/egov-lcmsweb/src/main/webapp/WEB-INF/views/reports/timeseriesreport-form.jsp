@@ -44,8 +44,8 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
-<div class="col-md-12">
-	<div class="row">
+<div class="row" id="page-content">
+	<div class="col-md-12">
 		<form:form method="get" modelAttribute="timeSeriesReportResult"
 			id="timeseriesreportForm"
 			class="form-horizontal form-groups-bordered"
@@ -53,7 +53,8 @@
 			<div class="row">
 				<div class="panel panel-primary" data-collapsed="0">
 					<div class="panel-heading">
-						<div class="panel-title">Time Series Report</div></div>
+						<div class="panel-title">Time Series Report</div>
+					</div>
 					<div class="form-group">
 						<label class="col-sm-2 control-label"><spring:message
 								code="lbl.aggregatedby" />:<span class="mandatory"></span></label>
@@ -87,43 +88,47 @@
 					</div>
 					<div class="form-group">
 						<label class="col-sm-2 control-label text-right"> <spring:message
-								code="lbl.fromDate" />:</label>
+								code="lbl.fromDate" />:
+						</label>
 						<div class="col-sm-3 add-margin">
-							<input type="text" name="fromDate" path="fromDate"
+							<input type="text" name="caseFromDate" path="caseFromDate"
 								class="form-control datepicker" data-date-end-date="0d"
-								id="fromDate" data-inputmask="'mask': 'd/m/y' onblur=" onchnageofDate()"/>
+								id="caseFromDate" data-inputmask="'mask': 'd/m/y' onblur=" onchnageofDate()"/>
 						</div>
 						<label class="col-sm-2 control-label text-right"> <spring:message
-								code="lbl.toDate" />:</label>
+								code="lbl.toDate" />:
+						</label>
 						<div class="col-sm-3 add-margin">
-							<input type="text" name="toDate" path="toDate"
+							<input type="text" name="caseToDate" path="caseToDate"
 								class="form-control datepicker today" data-date-end-date="0d"
-								id="toDate" data-inputmask="'mask': 'd/m/y'" />
+								id="caseToDate" data-inputmask="'mask': 'd/m/y'" />
 						</div>
 					</div>
 					<div class="row">
 						<div class="text-center">
 							<button type="button" id="timeSeriesReportSearch"
-								class="btn btn-primary"><spring:message code="lbl.search" /></button>
+								class="btn btn-primary">
+								<spring:message code="lbl.search" />
+							</button>
 							<a href="javascript:void(0)" class="btn btn-default"
 								onclick="self.close()"><spring:message code="lbl.close" /></a>
 						</div>
 					</div>
 				</div>
 			</div>
-
 		</form:form>
 		<div id="reportgeneration-header"
 			class="col-md-12 table-header text-left">
 			<fmt:formatDate value="${currentDate}" var="currDate"
 				pattern="dd-MM-yyyy" />
-			<spring:message code="lbl.reportgeneration" />:
+			<spring:message code="lbl.reportgeneration" />
+			:
 			<c:out value="${currDate}"></c:out>
 		</div>
 		<div id="tabledata">
-		<table class="table table-bordered table-hover multiheadertbl"
-			id="timeSeriesReportResult-table" >
-		</table>
+			<table class="table table-bordered table-hover multiheadertbl"
+				id="timeSeriesReportResult-table">
+			</table>
 		</div>
 	</div>
 </div>
@@ -153,7 +158,7 @@
 	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/buttons.print.min.js' context='/egi'/>"></script>
 <script
 	src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
-	<link rel="stylesheet"
+<link rel="stylesheet"
 	href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" />
 <script
 	src="<cdn:url value='/resources/js/app/timeSeriesReport.js?rnd=${app_release_no}'/>"

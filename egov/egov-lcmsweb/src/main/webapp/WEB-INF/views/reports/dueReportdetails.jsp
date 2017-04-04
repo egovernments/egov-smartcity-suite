@@ -49,17 +49,17 @@
 			code="lbl.fromDate" />:<span class="mandatory"></span>
 	</label>
 	<div class="col-sm-3 add-margin">
-		<input type="text" name="fromDate"
+		<input type="text" name="caseFromDate"
 			class="form-control datepicker" 
-			id="fromDate" data-inputmask="'mask': 'd/m/y'"
+			id="caseFromDate" data-inputmask="'mask': 'd/m/y'"
 			onblur="onchnageofDate()" required="required"/>
 	</div>
 	<label class="col-sm-2 control-label text-right"> <spring:message
 			code="lbl.toDate" />:<span class="mandatory"></label>
 	<div class="col-sm-3 add-margin">
-		<input type="text" name="toDate"
+		<input type="text" name="caseToDate"
 			class="form-control datepicker today" 
-			id="toDate" data-inputmask="'mask': 'd/m/y'" required="required" />
+			id="caseToDate" data-inputmask="'mask': 'd/m/y'" required="required" />
 	</div>
 </div>
 <div class="form-group">

@@ -41,14 +41,11 @@ package org.egov.lcms.reports.entity;
 
 import java.util.Date;
 
-import org.egov.lcms.transactions.entity.LegalCase;
-
-public class LcDueReportResult {
+public class LegalCommonReportResult {
     private String caseNumber;
     private String lcNumber;
-    private Date caseFromDate;
-    private LegalCase legalCase;
-    private Date caseToDate;
+    private String caseFromDate;
+    private String caseToDate;
     private String courtName;
     private String hearingDate;
     private Date judgementImplDate;
@@ -57,17 +54,42 @@ public class LcDueReportResult {
     private String caseStatus;
     private String petitionType;
     private String officerIncharge;
-    private String fromDate;
-    private String toDate;
     private String judgmentImplDate;
     private String caseTitle;
-    private String petName;
-    private String resName;
     private String standingCounsel;
     private String nextDate;
     private String pwrDueDate;
     private String caDueDate;
+    private String caseCategory;
+    private String courtType;
+    private String petitionerName;
+    private String respondantName;
+    private String aggregatedBy;
+    private String period;
+    private String year;
+    private String month;
+    private Long count;
+    private String aggregatedByValue;
+    private String judgmentType;
+    private String reportStatus;
 
+    public String getCaseFromDate() {
+        return caseFromDate;
+    }
+
+    public void setCaseFromDate(String caseFromDate) {
+        this.caseFromDate = caseFromDate;
+    }
+
+    public String getCaseToDate() {
+        return caseToDate;
+    }
+
+    public void setCaseToDate(String caseToDate) {
+        this.caseToDate = caseToDate;
+    }
+
+  
     public String getLcNumber() {
         return lcNumber;
     }
@@ -100,22 +122,6 @@ public class LcDueReportResult {
         this.caseTitle = caseTitle;
     }
 
-    public String getPetName() {
-        return petName;
-    }
-
-    public void setPetName(final String petName) {
-        this.petName = petName;
-    }
-
-    public String getResName() {
-        return resName;
-    }
-
-    public void setResName(final String resName) {
-        this.resName = resName;
-    }
-
     public String getStandingCounsel() {
         return standingCounsel;
     }
@@ -132,22 +138,6 @@ public class LcDueReportResult {
         this.nextDate = nextDate;
     }
 
-    public String getFromDate() {
-        return fromDate;
-    }
-
-    public void setFromDate(final String fromDate) {
-        this.fromDate = fromDate;
-    }
-
-    public String getToDate() {
-        return toDate;
-    }
-
-    public void setToDate(final String toDate) {
-        this.toDate = toDate;
-    }
-
     public String getJudgmentImplDate() {
         return judgmentImplDate;
     }
@@ -162,22 +152,6 @@ public class LcDueReportResult {
 
     public void setCaseNumber(final String caseNumber) {
         this.caseNumber = caseNumber;
-    }
-
-    public Date getCaseFromDate() {
-        return caseFromDate;
-    }
-
-    public void setCaseFromDate(final Date caseFromDate) {
-        this.caseFromDate = caseFromDate;
-    }
-
-    public Date getCaseToDate() {
-        return caseToDate;
-    }
-
-    public void setCaseToDate(final Date caseToDate) {
-        this.caseToDate = caseToDate;
     }
 
     public String getCourtName() {
@@ -202,14 +176,6 @@ public class LcDueReportResult {
 
     public void setIsStatusExcluded(final Boolean isStatusExcluded) {
         this.isStatusExcluded = isStatusExcluded;
-    }
-
-    public LegalCase getLegalCase() {
-        return legalCase;
-    }
-
-    public void setLegalCase(final LegalCase legalCase) {
-        this.legalCase = legalCase;
     }
 
     public String getReportBy() {
@@ -250,6 +216,102 @@ public class LcDueReportResult {
 
     public void setOfficerIncharge(final String officerIncharge) {
         this.officerIncharge = officerIncharge;
+    }
+
+    public String getCaseCategory() {
+        return caseCategory;
+    }
+
+    public void setCaseCategory(final String caseCategory) {
+        this.caseCategory = caseCategory;
+    }
+
+    public String getCourtType() {
+        return courtType;
+    }
+
+    public void setCourtType(final String courtType) {
+        this.courtType = courtType;
+    }
+
+    public String getPetitionerName() {
+        return petitionerName;
+    }
+
+    public void setPetitionerName(final String petitionerName) {
+        this.petitionerName = petitionerName;
+    }
+
+    public String getRespondantName() {
+        return respondantName;
+    }
+
+    public void setRespondantName(final String respondantName) {
+        this.respondantName = respondantName;
+    }
+
+    public String getAggregatedBy() {
+        return aggregatedBy;
+    }
+
+    public void setAggregatedBy(final String aggregatedBy) {
+        this.aggregatedBy = aggregatedBy;
+    }
+
+    public String getPeriod() {
+        return period;
+    }
+
+    public void setPeriod(final String period) {
+        this.period = period;
+    }
+
+    public String getYear() {
+        return year;
+    }
+
+    public void setYear(final String year) {
+        this.year = year;
+    }
+
+    public String getMonth() {
+        return month;
+    }
+
+    public void setMonth(final String month) {
+        this.month = month;
+    }
+
+    public Long getCount() {
+        return count;
+    }
+
+    public void setCount(final Long count) {
+        this.count = count;
+    }
+
+    public String getAggregatedByValue() {
+        return aggregatedByValue;
+    }
+
+    public void setAggregatedByValue(final String aggregatedByValue) {
+        this.aggregatedByValue = aggregatedByValue;
+    }
+
+    public String getJudgmentType() {
+        return judgmentType;
+    }
+
+    public void setJudgmentType(final String judgmentType) {
+        this.judgmentType = judgmentType;
+    }
+
+    public String getReportStatus() {
+        return reportStatus;
+    }
+
+    public void setReportStatus(final String reportStatus) {
+        this.reportStatus = reportStatus;
     }
 
 }
