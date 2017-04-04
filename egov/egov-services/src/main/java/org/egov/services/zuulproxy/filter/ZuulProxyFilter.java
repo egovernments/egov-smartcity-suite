@@ -165,6 +165,7 @@ public class ZuulProxyFilter extends ZuulFilter {
             throw new ApplicationRuntimeException("Could not form valid URL", e);
         } catch (final IOException ex) {
             ctx.setSendZuulResponse(false);
+            throw new ApplicationRuntimeException("Problem while setting RequestInfo..", ex);
         }
         return null;
     }
@@ -175,9 +176,10 @@ public class ZuulProxyFilter extends ZuulFilter {
     }
 
     @SuppressWarnings("unchecked")
-    private void appendUserInfoToRequestBody(final RequestContext ctx, final String userInfo) throws IOException {
+    private void appendUserInfoToRequestBody(final RequestContext ctx, final String userInfoJson) throws IOException {
         final HashMap<String, Object> requestBody = getRequestBody(ctx);
         final HashMap<String, Object> requestInfo = (HashMap<String, Object>) requestBody.get(REQUEST_INFO_FIELD_NAME);
+        final UserInfo userInfo = mapper.readValue(userInfoJson, UserInfo.class);
         requestInfo.put(USER_INFO_FIELD_NAME, userInfo);
         requestBody.put(REQUEST_INFO_FIELD_NAME, requestInfo);
         final CustomRequestWrapper requestWrapper = new CustomRequestWrapper(ctx.getRequest());

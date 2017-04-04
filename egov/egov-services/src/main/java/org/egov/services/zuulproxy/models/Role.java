@@ -50,7 +50,10 @@ public class Role implements Serializable {
     private static final long serialVersionUID = 692503190320200067L;
 
     @JsonProperty("name")
-    private final String name;
+    private String name;
+
+    public Role() {
+    }
 
     public Role(final String name) {
         this.name = name;
