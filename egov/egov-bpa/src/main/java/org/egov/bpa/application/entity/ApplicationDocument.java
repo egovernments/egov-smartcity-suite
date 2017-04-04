@@ -167,4 +167,9 @@ public class ApplicationDocument extends AbstractAuditable {
         this.checklistDetail = checklistDetail;
     }
 
+    public Set<FileStoreMapper> getSupportDocs() {
+        return supportDocs;
+    }
+    
+
 }

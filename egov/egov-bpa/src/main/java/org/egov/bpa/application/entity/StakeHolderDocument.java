@@ -61,12 +61,12 @@ public class StakeHolderDocument extends AbstractAuditable {
 
     @Override
     public Long getId() {
-        return null;
+        return id;
     }
 
     @Override
     protected void setId(final Long id) {
-
+        this.id=id;
     }
 
     public Checklist getChecklist() {

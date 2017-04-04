@@ -46,7 +46,6 @@ public class BpaConstants {
     public static final String BLOCK = "Block";
     public static final String STREET = "Street";
     public static final String EGMODULE_NAME = "BPA";
-
     public static final String BPASTATUSMODULETYPE = "BPAAPPLICATION";
     public static final String ROLE_CITIZEN = "Citizen";
     public static final String YEARLY = "Yearly";
