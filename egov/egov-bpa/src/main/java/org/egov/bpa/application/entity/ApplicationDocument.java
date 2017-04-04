@@ -170,6 +170,5 @@ public class ApplicationDocument extends AbstractAuditable {
     public Set<FileStoreMapper> getSupportDocs() {
         return supportDocs;
     }
-    
 
 }

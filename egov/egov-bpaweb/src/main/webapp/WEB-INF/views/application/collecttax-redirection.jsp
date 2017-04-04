@@ -38,51 +38,48 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 
 <%@ page language="java" pageEncoding="UTF-8"%>
 <html>
-	<head>
-		<title><spring:message code="title.collect.tax.view" /></title>
-		<script type="text/javascript">
+<head>
+<title><spring:message code="title.collect.tax.view" /></title>
+<script type="text/javascript">
+	jQuery(document).ready(function() {
 
-	 	jQuery(document).ready( function() {
+		var collectXML = '${collectxml}';
+		var citizenRole = '${citizenrole}';
 
-			var collectXML = '${collectxml}';
-			var citizenRole= '${citizenrole}';
-			
-			if(citizenRole =='true'){
+		if (citizenRole == 'true') {
 			jQuery('<form>.').attr({
-				method: 'post',
-				action: '/collection/citizen/onlineReceipt-newform.action',
-				target: '_self'
+				method : 'post',
+				action : '/collection/citizen/onlineReceipt-newform.action',
+				target : '_self'
 			}).append(jQuery('<input>').attr({
-			    type: 'hidden',
-			    id: 'collectXML',
-			    name: 'collectXML',
-			    value: collectXML
-			})).appendTo( document.body ).submit();
-			}
-			else{
-				jQuery('<form>.').attr({
-					method: 'post',
-					action: '/collection/receipts/receipt-newform.action',
-					target: '_self'
-				}).append(jQuery('<input>').attr({
-				    type: 'hidden',
-				    id: 'collectXML',
-				    name: 'collectXML',
-				    value: collectXML
-				})).appendTo( document.body ).submit();
-				}
-		});
-		
-		</script>
-	</head>
-	<body>
-	</body>
+				type : 'hidden',
+				id : 'collectXML',
+				name : 'collectXML',
+				value : collectXML
+			})).appendTo(document.body).submit();
+		} else {
+			jQuery('<form>.').attr({
+				method : 'post',
+				action : '/collection/receipts/receipt-newform.action',
+				target : '_self'
+			}).append(jQuery('<input>').attr({
+				type : 'hidden',
+				id : 'collectXML',
+				name : 'collectXML',
+				value : collectXML
+			})).appendTo(document.body).submit();
+		}
+	});
+</script>
+</head>
+<body>
+</body>
 </html>

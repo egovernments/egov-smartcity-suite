@@ -66,7 +66,7 @@ public class StakeHolderDocument extends AbstractAuditable {
 
     @Override
     protected void setId(final Long id) {
-        this.id=id;
+        this.id = id;
     }
 
     public Checklist getChecklist() {

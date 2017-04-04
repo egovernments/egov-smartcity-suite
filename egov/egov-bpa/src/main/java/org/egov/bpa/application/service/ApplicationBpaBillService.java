@@ -57,6 +57,7 @@ import java.util.TreeSet;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.egov.bpa.application.autonumber.ApplicationNumberGenerator;
 import org.egov.bpa.application.autonumber.BpaBillReferenceNumberGenerator;
 import org.egov.bpa.application.entity.BpaApplication;
 import org.egov.bpa.application.entity.BpaFeeDetail;
@@ -152,16 +153,13 @@ public class ApplicationBpaBillService extends BillServiceInterface {
     @Transactional
     public String generateBill(final BpaApplication application) {
         String collectXML;
-        final SimpleDateFormat formatYear = new SimpleDateFormat("yyyy");
         String currentInstallmentYear;
         final BpaApplicationBillable bpaApplicationBillable = (BpaApplicationBillable) context
                 .getBean("bpaApplicationBillable");
         final BpaBillReferenceNumberGenerator billRefeNumber = beanResolver
                 .getAutoNumberServiceFor(BpaBillReferenceNumberGenerator.class);
 
-        currentInstallmentYear = formatYear.format(
-                getCurrentInstallment(BpaConstants.EGMODULE_NAME, BpaConstants.YEARLY, new Date())
-                        .getInstallmentYear());
+        currentInstallmentYear = getCurrentInstallmentYear();
 
         bpaApplicationBillable.setApplication(application);
         bpaApplicationBillable.getApplication();
@@ -347,5 +345,25 @@ public class ApplicationBpaBillService extends BillServiceInterface {
         /*
          * ncell Bill still not developed Ca
          */
+    }
+
+    public String generateApplicationnumber(final BpaApplication application) {
+        final String currentInstallmentYear = getCurrentInstallmentYear();
+        final ApplicationNumberGenerator applicationnumber = beanResolver
+                .getAutoNumberServiceFor(ApplicationNumberGenerator.class);
+        return applicationnumber.generateApplicationNumber(
+                currentInstallmentYear, application.getServiceType(),
+                application.getSiteDetail() != null && application.getSiteDetail().get(0).getAdminBoundary() != null
+                        ? application.getSiteDetail().get(0).getAdminBoundary() : null);
+    }
+
+    private String getCurrentInstallmentYear() {
+        final SimpleDateFormat formatYear = new SimpleDateFormat("yyyy");
+        String currentInstallmentYear = null;
+        final Installment inst = getCurrentInstallment(
+                BpaConstants.EGMODULE_NAME, BpaConstants.YEARLY, new Date());
+        if (inst != null)
+            currentInstallmentYear = formatYear.format(inst.getInstallmentYear());
+        return currentInstallmentYear;
     }
 }

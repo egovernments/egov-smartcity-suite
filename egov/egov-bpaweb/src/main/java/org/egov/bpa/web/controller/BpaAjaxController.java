@@ -37,42 +37,11 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.bpa.autonumber.impl;
+package org.egov.bpa.web.controller;
 
-import java.io.Serializable;
+import org.springframework.stereotype.Controller;
 
-import org.egov.bpa.application.autonumber.ApplicationNumberGenerator;
-import org.egov.bpa.application.entity.ServiceType;
-import org.egov.bpa.utils.BpaConstants;
-import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+@Controller
+public class BpaAjaxController {
 
-@Service
-public class ApplicationNumberGeneratorImpl implements ApplicationNumberGenerator {
-
-    @Autowired
-    private ApplicationSequenceNumberGenerator applicationSequenceNumberGenerator;
-
-    @Override
-    public String generateApplicationNumber(final String installmentYear, final ServiceType serviceType, final Boundary zone) {
-        final String sequenceName = BpaConstants.WATER_CONN_BILLNO_SEQ + installmentYear;
-        final Serializable nextSequence = applicationSequenceNumberGenerator.getNextSequence(sequenceName);
-        final StringBuilder formatedNumber = new StringBuilder();
-        if (null != serviceType && serviceType.getServiceNumberPrefix() != null
-                && !"".equals(serviceType.getServiceNumberPrefix())) {
-
-            formatedNumber.append(serviceType.getServiceNumberPrefix().toUpperCase());
-            formatedNumber.append("/");
-            if (null != zone && zone.getName() != null && !"".equals(zone.getName())) {
-                formatedNumber.append(zone.getName());
-                formatedNumber.append("/");
-            }
-            formatedNumber.append(installmentYear);
-            formatedNumber.append("/");
-
-        }
-        return String.format("%s%06d", formatedNumber, nextSequence);
-    }
 }

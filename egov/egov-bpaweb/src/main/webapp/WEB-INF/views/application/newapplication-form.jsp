@@ -42,37 +42,42 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 <div class="row">
-	<div class="col-md-12"> 
-		<div class="text-right error-msg" style="font-size:14px;"><spring:message code="lbl.application.date"/> : <fmt:formatDate pattern="dd/MM/yyyy" value="${waterConnectionDetails.applicationDate}" /></div>
+	<div class="col-md-12">
+		<div class="text-right error-msg" style="font-size: 14px;">
+			<spring:message code="lbl.application.date" />
+			:
+			<fmt:formatDate pattern="dd/MM/yyyy"
+				value="${waterConnectionDetails.applicationDate}" />
+		</div>
 		<form:form role="form" action="newApplication-create" method="post"
 			modelAttribute="bpaApplication" id="newApplicationform"
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
-			
-			<form:hidden id="mode" path=""  value="${mode}"/>
-			
+
+			<form:hidden id="mode" path="" value="${mode}" />
+
 			<div class="panel panel-primary" data-collapsed="0">
-				
+
 				<div class="panel-body custom-form ">
-					<jsp:include page="applicantDetailForm.jsp"></jsp:include>
 					<jsp:include page="applicationDetails.jsp"></jsp:include>
+					<jsp:include page="applicantDetailForm.jsp"></jsp:include>
 					<jsp:include page="siteDetail.jsp"></jsp:include>
-					
-			</div>			
+
+				</div>
 			</div>
 			<%-- <jsp:include page="../common/commonWorkflowMatrix.jsp"/>
 				<div class="buttonbottom" align="center">
 					<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />
 				</div> --%>
-				<div class="buttonbottom" align="center">
+			<div class="buttonbottom" align="center">
 				<table>
 					<tr>
 						<td><form:button type="submit" id="Create"
-								class="btn btn-primary" value="Create" >Submit</form:button>
-							<input type="button" name="button2" id="button2" value="Close"
+								class="btn btn-primary" value="Create">Submit</form:button> <input
+							type="button" name="button2" id="button2" value="Close"
 							class="btn btn-primary" onclick="window.close();" /></td>
 					</tr>
 				</table>
@@ -81,5 +86,5 @@
 	</div>
 </div>
 
-<script src="<cdn:url value='/resources/js/app/connectiondetails.js?rnd=${app_release_no}'/>"></script>
-<script src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
+<script
+	src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>

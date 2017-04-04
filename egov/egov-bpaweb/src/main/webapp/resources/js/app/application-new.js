@@ -37,42 +37,37 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.bpa.autonumber.impl;
+var reportdatatable;
+jQuery(document).ready(function($) {
 
-import java.io.Serializable;
 
-import org.egov.bpa.application.autonumber.ApplicationNumberGenerator;
-import org.egov.bpa.application.entity.ServiceType;
-import org.egov.bpa.utils.BpaConstants;
-import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+});
 
-@Service
-public class ApplicationNumberGeneratorImpl implements ApplicationNumberGenerator {
+$('#serviceType').change(function(){
+	console.log("came on change of ward"+$('#ward').val());
+	jQuery.ajax({
+		url: "/bpa/ajax/getAdmissionFees",
+		type: "GET",
+		data: {
+			serviceType : jQuery('#serviceType').val()
+		},
+		cache: false,
+		dataType: "json",
+		success: function (response) {
+			jQuery.each(response, function(index, value) {
+				jQuery('#admissionfeeAmount').val(value);
+			});
+		}, 
+		error: function (response) {
+			
+		}
+	});
+});
 
-    @Autowired
-    private ApplicationSequenceNumberGenerator applicationSequenceNumberGenerator;
 
-    @Override
-    public String generateApplicationNumber(final String installmentYear, final ServiceType serviceType, final Boundary zone) {
-        final String sequenceName = BpaConstants.WATER_CONN_BILLNO_SEQ + installmentYear;
-        final Serializable nextSequence = applicationSequenceNumberGenerator.getNextSequence(sequenceName);
-        final StringBuilder formatedNumber = new StringBuilder();
-        if (null != serviceType && serviceType.getServiceNumberPrefix() != null
-                && !"".equals(serviceType.getServiceNumberPrefix())) {
 
-            formatedNumber.append(serviceType.getServiceNumberPrefix().toUpperCase());
-            formatedNumber.append("/");
-            if (null != zone && zone.getName() != null && !"".equals(zone.getName())) {
-                formatedNumber.append(zone.getName());
-                formatedNumber.append("/");
-            }
-            formatedNumber.append(installmentYear);
-            formatedNumber.append("/");
 
-        }
-        return String.format("%s%06d", formatedNumber, nextSequence);
-    }
-}
+
+
+
+

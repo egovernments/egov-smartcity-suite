@@ -39,10 +39,11 @@
  */
 package org.egov.bpa.application.autonumber;
 
-import org.springframework.stereotype.Service;
+import org.egov.bpa.application.entity.ServiceType;
+import org.egov.infra.admin.master.entity.Boundary;
 
-@Service
+@FunctionalInterface
 public interface ApplicationNumberGenerator {
 
-    public String generateApplicationNumber();
+    public String generateApplicationNumber(String installmentYear, ServiceType serviceType, Boundary zone);
 }

@@ -81,16 +81,20 @@ public class SiteDetail extends AbstractAuditable {
     @Length(min = 1, max = 128)
     private String area;
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "adminboundary")
     private Boundary adminBoundary;
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "locationBoundary")
     private Boundary locationBoundary;
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "electionBoundary")
     private Boundary electionBoundary;
     @Length(min = 1, max = 128)
     private String citytown; // required ??
     @Length(min = 1, max = 128)
     private String taluk;
     @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "street")
     private Boundary street;
 
     @ManyToOne(cascade = CascadeType.ALL)

@@ -41,230 +41,270 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
-<script src="<cdn:url value='/resources/js/app/connectiondetails.js?rnd=${app_release_no}'/>"></script>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
+
 <div class="panel-heading custom_form_panel_heading">
-	<div class="panel-title">
-		lbl.connection.details
-	</div>
+	<div class="panel-title">Application Details</div>
 </div>
 <form:hidden path="admissionfeeAmount" id="admissionfeeAmount" />
-<div class="form-group">
 
-<div class="col-sm-3 add-margin">
-<c:choose>
-		<c:when test="%{buildingPlanApprovalDate!=null}">
-		   <label class="col-sm-3 control-label text-right">Building PlanApproval Date /><span class="mandatory"></span></label> 
-							<form:input  path="buildingPlanApprovalDate"  
-								class="form-control datepicker" data-date-end-date="0d"
-								id="buildingPlanApprovalDate" data-inputmask="'mask': 'd/m/y'" required="required" />
-								<form:errors path="buildingPlanApprovalDate" cssClass="add-margin error-msg" />
-						    </c:when>
-         <c:otherwise>       
-	        <td class="bluebox">&nbsp;</td>
-			<td class="bluebox">&nbsp;</td>
-		</c:otherwise>
-		</c:choose>
-		</div> 
-		<div class="col-sm-3 add-margin">
+<div class="form-group">
+	<label class="col-sm-3 control-label text-right">ServiceType <span
+		class="mandatory"></span></label>
+	<div class="col-sm-3 add-margin">
+		<form:select path="serviceType" data-first-option="false" id=""
+			cssClass="form-control" required="required">
+			<form:option value="">
+				<spring:message code="lbl.select" />
+			</form:option>
+			<form:options items="${serviceTypeList}" />
+		</form:select>
+		<form:errors path="serviceType" cssClass="add-margin error-msg" />
+	</div>
+
+	<label class="col-sm-2 control-label text-right">Stake
+		HolderType </label>
+	<div class="col-sm-2 add-margin">
+		<form:select path="stakeHolder[0].stakeHolder"
+			data-first-option="false" id="" cssClass="form-control">
+			<form:option value="">
+				<spring:message code="lbl.select" />
+			</form:option>
+			<form:options items="${stakeHolderList}" />
+		</form:select>
+		<form:errors path="stakeHolder[0].stakeHolder"
+			cssClass="add-margin error-msg" />
+	</div>
+</div>
+
+
+
+<div class="form-group">
+	<label class="col-sm-3 control-label text-right">ApplicationNumber
+		<span class="mandatory"></span>
+	</label>
+	<div class="col-sm-3 add-margin">
+		<form:input class="form-control patternvalidation" maxlength="50"
+			id="applicationNumber" path="applicationNumber"  disabled="true"  />
+		<form:errors path="applicationNumber" cssClass="add-margin error-msg" />
+	</div>
+
+	<label class="col-sm-2 control-label text-right">Application
+		Date <span class="mandatory"></span>
+	</label>
+	<div class="col-sm-2 add-margin">
+		<form:input path="applicationDate" class="form-control datepicker"
+			data-date-end-date="0d" id="applicationDate"
+			data-inputmask="'mask': 'd/m/y'" required="required" />
+		<form:errors path="applicationDate" cssClass="add-margin error-msg" />
+	</div>
+
+
+</div>
+
+
+<div class="form-group">
+	<label class="col-sm-3 control-label text-right">Old
+		Application Number <span class="mandatory"></span>
+	</label>
+	<div class="col-sm-3 add-margin">
+		<form:input class="form-control" maxlength="50"
+			id="oldApplicationNumber" path="oldApplicationNumber" />
+		<form:errors path="oldApplicationNumber"
+			cssClass="add-margin error-msg" />
+	</div>
+	<label class="col-sm-2 control-label text-right">Approval
+				Date 
+			</label>
 		<c:choose>
-		<c:when  test="%{buildingplanapprovalnumber!=null}">
-		   <label class="col-sm-3 control-label text-right">Building PlanApproval Number /><span class="mandatory"></span></label> 
-					<form:input class="form-control patternvalidation" maxlength="50" id="buildingplanapprovalnumber" path="buildingplanapprovalnumber"/>
-					<form:errors path="buildingplanapprovalnumber" cssClass="add-margin error-msg" />
-						    </c:when>
-         <c:otherwise>       
-	        <td class="bluebox">&nbsp;</td>
-			<td class="bluebox">&nbsp;</td>
+		<c:when test="%{approvalDate!=null}">
+			<div class="col-sm-2 add-margin">
+			<form:input path="approvalDate" class="form-control datepicker"
+				data-date-end-date="0d" id="approveDate"
+				data-inputmask="'mask': 'd/m/y'" required="required" />
+			<form:errors path="approvalDate" cssClass="add-margin error-msg" /></div>
+		</c:when>
+		<c:otherwise>
+			<div class="col-sm-2 add-margin">
+			<form:input path="approvalDate" class="form-control datepicker"
+				data-date-end-date="0d" id="approveDate"
+				data-inputmask="'mask': 'd/m/y'" disabled="true" />
+			<form:errors path="approvalDate" cssClass="add-margin error-msg" /></div>
 		</c:otherwise>
+	</c:choose>
+
+</div>
+<div class="form-group">
+	<label class="col-sm-3 control-label text-right">Assessment
+		Number<span class="mandatory"></span>
+	</label>
+	<div class="col-sm-3 add-margin">
+		<div class="input-group">
+			<form:input id="assessmentNumber" path="assessmentNumber"
+				class="form-control" maxlength="50" />
+			<span class="input-group-addon"> <i
+				class="fa fa-search specific"></i></span>
+		</div>
+		<form:errors path="assessmentNumber" id="assessmentNumber"
+			cssClass="add-margin error-msg" />
+	</div>
+	<label class="col-sm-2 control-label text-right">Occupancy <span
+		class="mandatory"></span></label>
+	<div class="col-sm-2 add-margin">
+		<form:select path="occupancy" data-first-option="false" id=""
+			cssClass="form-control" required="required">
+			<form:option value="">
+				<spring:message code="lbl.select" />
+			</form:option>
+			<form:options items="${occupancy}" />
+		</form:select>
+		<form:errors path="occupancy" cssClass="add-margin error-msg" />
+	</div>
+</div>
+
+<div class="form-group">
+	<label class="col-sm-3 control-label text-right">Applicant Type<span
+		class="mandatory"></span></label>
+	<div class="col-sm-3 add-margin">
+		<div class="input-group">
+			<form:input id="applicantType" path="applicantType"
+				class="form-control patternvalidation" data-pattern="string"
+				maxlength="50" />
+			<span class="input-group-addon"> <i
+				class="fa fa-search specific"></i></span>
+		</div>
+		<form:errors path="applicantType" id="applicantType"
+			cssClass="add-margin error-msg" />
+	</div>
+	<label class="col-sm-2 control-label text-right">Source <span
+		class="mandatory"></span></label>
+	<div class="col-sm-2 add-margin">
+		<form:select path="source" data-first-option="false" id=""
+			cssClass="form-control" required="required">
+			<form:option value="">
+				<spring:message code="lbl.select" />
+			</form:option>
+			<form:options items="${souceList}" />
+		</form:select>
+		<form:errors path="source" cssClass="add-margin error-msg" />
+	</div>
+</div>
+
+<div class="form-group">
+	<label class="col-sm-3 control-label text-right">Project Name </label>
+	<div class="col-sm-3 add-margin">
+		<form:input class="form-control patternvalidation" maxlength="50"
+			id="projectName" path="projectName" />
+		<form:errors path="projectName" cssClass="add-margin error-msg" />
+	</div>
+
+	<label class="col-sm-2 control-label text-right">Group
+		Development</label>
+	<div class="col-sm-2 add-margin">
+		<form:input class="form-control patternvalidation" maxlength="50"
+			id="groupDevelopment" path="groupDevelopment" />
+		<form:errors path="groupDevelopment" cssClass="add-margin error-msg" />
+	</div>
+
+</div>
+<div class="form-group">
+	<label class="col-sm-3 control-label text-right">Tapan Number </label>
+	<div class="col-sm-3 add-margin">
+		<form:input class="form-control patternvalidation" maxlength="50"
+			id="tapalNumber" path="tapalNumber" />
+		<form:errors path="tapalNumber" cssClass="add-margin error-msg" />
+	</div>
+<label class="col-sm-2 control-label text-right">Admission Fees
+	</label>
+	<div class="col-sm-2 add-margin">
+		<form:input class="form-control patternvalidation" maxlength="50"
+			id="admissionfeeAmount" path="admissionfeeAmount" disabled="true" />
+		<form:errors path="admissionfeeAmount" cssClass="add-margin error-msg" />
+	</div>
+</div>
+
+<div class="form-group">
+	<label class="col-sm-3 control-label text-right">Remarks</label>
+	<div class="col-sm-3 add-margin">
+		<form:textarea class="form-control patternvalidation"
+			data-pattern="string" maxlength="128" id="remarks" path="remarks"
+			required="required" />
+		<form:errors path="remarks" cssClass="add-margin error-msg" />
+	</div>
+
+	
+</div>
+<div class="form-group">
+	<div class="col-sm-3 add-margin">
+		<c:choose>
+			<c:when test="%{buildingPlanApprovalDate!=null}">
+				<label class="col-sm-3 control-label text-right">Building
+					PlanApproval Date <span class="mandatory"></span>
+				</label>
+				<form:input path="buildingPlanApprovalDate"
+					class="form-control datepicker" data-date-end-date="0d"
+					id="buildingPlanApprovalDate" data-inputmask="'mask': 'd/m/y'"
+					required="required" />
+				<form:errors path="buildingPlanApprovalDate"
+					cssClass="add-margin error-msg" />
+			</c:when>
+			<c:otherwise>
+				<td class="bluebox">&nbsp;</td>
+				<td class="bluebox">&nbsp;</td>
+			</c:otherwise>
 		</c:choose>
-		</div> 
+	</div>
+	<div class="col-sm-3 add-margin">
+		<c:choose>
+			<c:when test="%{buildingplanapprovalnumber!=null}">
+				<label class="col-sm-3 control-label text-right">Building
+					PlanApproval Number <span class="mandatory"></span>
+				</label>
+				<form:input class="form-control patternvalidation" maxlength="50"
+					id="buildingplanapprovalnumber" path="buildingplanapprovalnumber" />
+				<form:errors path="buildingplanapprovalnumber"
+					cssClass="add-margin error-msg" />
+			</c:when>
+			<c:otherwise>
+				<td class="bluebox">&nbsp;</td>
+				<td class="bluebox">&nbsp;</td>
+			</c:otherwise>
+		</c:choose>
+	</div>
 </div>
 
 <div class="col-sm-3 add-margin">
-		<c:choose>
-		<c:when  test="%{planPermissionDate!=null}">
-		   <label class="col-sm-3 control-label text-right">Plan Submission Date /><span class="mandatory"></span></label> 
-							<form:input  path="planPermissionDate"  
-								class="form-control datepicker" data-date-end-date="0d"
-								id="planPermissionDate" data-inputmask="'mask': 'd/m/y'" required="required" />
-								<form:errors path="planPermissionDate" cssClass="add-margin error-msg" />
-						    </c:when>
-         <c:otherwise>       
-	        <td class="bluebox">&nbsp;</td>
-			<td class="bluebox">&nbsp;</td>
-		</c:otherwise>
-		</c:choose>
-		</div> 
-		<div class="col-sm-3 add-margin">
-		<c:choose>
-		<c:when  test="%{planPermissionNumber!=null}">
-		   <label class="col-sm-3 control-label text-right">PlanSubmission Number /><span class="mandatory"></span></label> 
-					<form:input class="form-control patternvalidation" maxlength="50" id="planPermissionNumber" path="planPermissionNumber"/>
-					<form:errors path="planPermissionNumber" cssClass="add-margin error-msg" />
-						    </c:when>
-         <c:otherwise>       
-	        <td class="bluebox">&nbsp;</td>
-			<td class="bluebox">&nbsp;</td>
-		</c:otherwise>
-		</c:choose>
-		</div> 
-
-<div class="form-group">
-	<label class="col-sm-3 control-label text-right">ServiceType
-	<span class="mandatory"></span></label>
-<div class="col-sm-3 add-margin">
-				<form:select path="serviceType" data-first-option="false" id="" cssClass="form-control" required="required"> 
-					<form:option value="">
-						<spring:message code="lbl.select" />
-					</form:option>
-					<form:options items="${serviceTypeList}" />
-				</form:select>
-				<form:errors path="serviceType" cssClass="add-margin error-msg" />
-			</div>
-			
-				<label class="col-sm-3 control-label text-right">Stake HolderType
-	</label>
-<div class="col-sm-3 add-margin">
-				<form:select path="stakeHolder[0].stakeHolder" data-first-option="false" id="" cssClass="form-control" > 
-					<form:option value="">
-						<spring:message code="lbl.select" />
-					</form:option>
-					<form:options items="${stakeHolderList}" />
-				</form:select>
-				<form:errors path="stakeHolder[0].stakeHolder" cssClass="add-margin error-msg" />
-			</div>
-			</div>
-			
-<div class="form-group" >
-	<label class="col-sm-3 control-label text-right">ApplicationNumber /><span class="mandatory"></span></label> 
-	<div class="col-sm-3 add-margin">
-		<form:input class="form-control patternvalidation" data-pattern="alphabetwithspace" maxlength="50" id="applicationNumber" path="applicationNumber" required="required"  />
-		<form:errors path="applicationNumber" cssClass="add-margin error-msg" />		
-	</div>
-	
-	<label class="col-sm-3 control-label text-right">Application Date /><span class="mandatory"></span></label> 
-		<div class="col-sm-3 add-margin">
-							<form:input  path="applicationDate"  
-								class="form-control datepicker" data-date-end-date="0d"
-								id="applicationDate" data-inputmask="'mask': 'd/m/y'" required="required" />
-								<form:errors path="applicationDate" cssClass="add-margin error-msg" />
-						</div>
-						
-	
-	</div>
-	
-	
-	<div class="form-group" >
-	<label class="col-sm-3 control-label text-right">Old Application Number /><span class="mandatory"></span></label> 
-	<div class="col-sm-3 add-margin">
-		<form:input class="form-control patternvalidation" data-pattern="alphabetwithspace" maxlength="50" id="oldApplicationNumber" path="oldApplicationNumber"  />
-		<form:errors path="oldApplicationNumber" cssClass="add-margin error-msg" />		
-	</div>
 	<c:choose>
-		<c:when test="%{approveDate!=null}">
-		   <label class="col-sm-3 control-label text-right">Approval Date /><span class="mandatory"></span></label> 
-							<form:input  path="approveDate"  
-								class="form-control datepicker" data-date-end-date="0d"
-								id="approveDate" data-inputmask="'mask': 'd/m/y'" required="required" />
-								<form:errors path="approveDate" cssClass="add-margin error-msg" />
-						    </c:when>
-         <c:otherwise>       
-	        <td class="bluebox">&nbsp;</td>
+		<c:when test="%{planPermissionDate!=null}">
+			<label class="col-sm-3 control-label text-right">Plan
+				Submission Date <span class="mandatory"></span>
+			</label>
+			<form:input path="planPermissionDate" class="form-control datepicker"
+				data-date-end-date="0d" id="planPermissionDate"
+				data-inputmask="'mask': 'd/m/y'" required="required" />
+			<form:errors path="planPermissionDate"
+				cssClass="add-margin error-msg" />
+		</c:when>
+		<c:otherwise>
 			<td class="bluebox">&nbsp;</td>
-		</c:otherwise></c:choose>
-	
-	</div>
-	<div class="form-group" >
-	<label class="col-sm-3 control-label text-right">Assessment Number<span class="mandatory"></span></label>
-	<div class="col-sm-3 add-margin">
-		<div class="input-group">
-			<form:input id="assessmentNumber" path="assessmentNumber" class="form-control patternvalidation" data-pattern="number" maxlength="50"  /> 
-			<span class="input-group-addon"> <i class="fa fa-search specific"></i></span>
-		</div>
-		<form:errors path="assessmentNumber" id="assessmentNumber" cssClass="add-margin error-msg" />
-	</div>
-	
-					<label class="col-sm-3 control-label text-right">Occupancy
-	<span class="mandatory"></span></label>
-	<div class="col-sm-3 add-margin">
-				<form:select path="occupancy" data-first-option="false" id="" cssClass="form-control" required="required"> 
-					<form:option value="">
-						<spring:message code="lbl.select" />
-					</form:option>
-					<form:options items="${occupancy}" />
-				</form:select>
-				<form:errors path="occupancy" cssClass="add-margin error-msg" />
-			</div>
-	</div>
-	
-		<div class="form-group" >
-	<label class="col-sm-3 control-label text-right">Applicant Type<span class="mandatory"></span></label>
-	<div class="col-sm-3 add-margin">
-		<div class="input-group">
-			<form:input id="applicantType" path="applicantType" class="form-control patternvalidation" data-pattern="string" maxlength="50"  /> 
-			<span class="input-group-addon"> <i class="fa fa-search specific"></i></span>
-		</div>
-		<form:errors path="applicantType" id="applicantType" cssClass="add-margin error-msg" />
-	</div>
-						<label class="col-sm-3 control-label text-right">Source
-	<span class="mandatory"></span></label>
-	<div class="col-sm-3 add-margin">
-				<form:select path="source" data-first-option="false" id="" cssClass="form-control" required="required"> 
-					<form:option value="">
-						<spring:message code="lbl.select" />
-					</form:option>
-					<form:options items="${souceList}" />
-				</form:select>
-				<form:errors path="source" cssClass="add-margin error-msg" />
-			</div>
-	</div>
-	
-	
-		<div class="form-group" >
-	<label class="col-sm-3 control-label text-right">Tapan Number </label> 
-	<div class="col-sm-3 add-margin">
-		<form:input class="form-control patternvalidation"  maxlength="50" id="tapalNumber" path="tapalNumber"  />
-		<form:errors path="tapalNumber" cssClass="add-margin error-msg" />		
-	</div>
-	
-	<label class="col-sm-3 control-label text-right">Tapan Number </label> 
-	<div class="col-sm-3 add-margin">
-		<form:input class="form-control patternvalidation"  maxlength="50" id="governmentType" path="governmentType"  />
-		<form:errors path="governmentType" cssClass="add-margin error-msg" />		
-	</div>
-	
-	</div>
-	
-	
-		
-	
-		<div class="form-group" >
-	<label class="col-sm-3 control-label text-right">Project Name </label> 
-	<div class="col-sm-3 add-margin">
-		<form:input class="form-control patternvalidation"  maxlength="50" id="projectName" path="projectName"  />
-		<form:errors path="projectName" cssClass="add-margin error-msg" />		
-	</div>
-	
-	<label class="col-sm-3 control-label text-right">Group Development</label> 
-	<div class="col-sm-3 add-margin">
-		<form:input class="form-control patternvalidation"  maxlength="50" id="groupDevelopment" path="groupDevelopment"  />
-		<form:errors path="groupDevelopment" cssClass="add-margin error-msg" />		
-	</div>
-	
-	</div>
-	
-	
-	<div class="form-group">
-				<label class="col-sm-3 control-label text-right">Remarks</label> 
-				<div class="col-sm-8 add-margin">
-					<form:textarea class="form-control patternvalidation" data-pattern="string" maxlength="256" id="remarks" path="remarks" required="required" />
-					<form:errors path="remarks" cssClass="add-margin error-msg" />		
-				</div>
-				
-<label class="col-sm-3 control-label text-right">Admission Fees </label> 
-	<div class="col-sm-3 add-margin">
-		<form:input class="form-control patternvalidation"  maxlength="50" id="admissionfeeAmount" path="admissionfeeAmount"  disabled="true"/> 
-		<form:errors path="admissionfeeAmount" cssClass="add-margin error-msg" />		
-	</div>
-		</div> 
+			<td class="bluebox">&nbsp;</td>
+		</c:otherwise>
+	</c:choose>
+</div>
+<div class="col-sm-3 add-margin">
+	<c:choose>
+		<c:when test="%{planPermissionNumber!=null}">
+			<label class="col-sm-3 control-label text-right">PlanSubmission
+				Number <span class="mandatory"></span>
+			</label>
+			<form:input class="form-control patternvalidation" maxlength="50"
+				id="planPermissionNumber" path="planPermissionNumber" />
+			<form:errors path="planPermissionNumber"
+				cssClass="add-margin error-msg" />
+		</c:when>
+		<c:otherwise>
+			<td class="bluebox">&nbsp;</td>
+			<td class="bluebox">&nbsp;</td>
+		</c:otherwise>
+	</c:choose>
+</div>

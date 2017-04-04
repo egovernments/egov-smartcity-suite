@@ -64,7 +64,6 @@ import org.egov.collection.integration.models.ReceiptAccountInfo;
 import org.egov.collection.integration.models.ReceiptAmountInfo;
 import org.egov.collection.integration.models.ReceiptInstrumentInfo;
 import org.egov.collection.integration.services.CollectionIntegrationService;
-import org.egov.commons.Installment;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.commons.dao.FunctionHibernateDAO;
@@ -166,7 +165,7 @@ public class BpaTaxCollection extends TaxCollection {
         LOGGER.debug("Entering method updateDmdDetForRcptCancelAndCheckBounce");
         String installment;
         for (final ReceiptAccountInfo rcptAccInfo : billRcptInfo.getAccountDetails())
-            if (rcptAccInfo.getCrAmount() != null && rcptAccInfo.getCrAmount().compareTo(BigDecimal.ZERO) > 1
+            if (rcptAccInfo.getCrAmount() != null && rcptAccInfo.getCrAmount().compareTo(BigDecimal.ZERO) == 1
                     && !rcptAccInfo.getIsRevenueAccount()) {
                 final String[] desc = rcptAccInfo.getDescription().split("-", 2);
                 final String reason = desc[0].trim();
@@ -255,13 +254,10 @@ public class BpaTaxCollection extends TaxCollection {
         }
 
         EgDemandDetails demandDetail;
-        new HashMap<String, Installment>();
-        applicationBpaBillService.getCurrentInstallment(BpaConstants.EGMODULE_NAME,
-                BpaConstants.YEARLY, new Date());
 
         for (final ReceiptAccountInfo rcptAccInfo : accountDetails)
             if (rcptAccInfo.getDescription() != null && !rcptAccInfo.getDescription().isEmpty())
-                if (rcptAccInfo.getCrAmount() != null && rcptAccInfo.getCrAmount().compareTo(BigDecimal.ZERO) > 1) {
+                if (rcptAccInfo.getCrAmount() != null && rcptAccInfo.getCrAmount().compareTo(BigDecimal.ZERO) == 1) {
                     final String[] desc = rcptAccInfo.getDescription().split("-", 2);
                     final String[] installsplit = desc[1].split("#");
                     final String reason = desc[0].trim();
@@ -326,7 +322,7 @@ public class BpaTaxCollection extends TaxCollection {
     public void updateDmdDetForRcptCancel(final EgDemand demand, final BillReceiptInfo billRcptInfo) {
         String installment;
         for (final ReceiptAccountInfo rcptAccInfo : billRcptInfo.getAccountDetails())
-            if (rcptAccInfo.getCrAmount() != null && rcptAccInfo.getCrAmount().compareTo(BigDecimal.ZERO) > 1
+            if (rcptAccInfo.getCrAmount() != null && rcptAccInfo.getCrAmount().compareTo(BigDecimal.ZERO) == 1
                     && !rcptAccInfo.getIsRevenueAccount()) {
 
                 final String[] desc = rcptAccInfo.getDescription().split("-", 2);
@@ -394,14 +390,14 @@ public class BpaTaxCollection extends TaxCollection {
                 }
 
             }
-            if (egBill.getEgBillDetails().size() > 1 && billDet.getCrAmount().compareTo(BigDecimal.ZERO) > 1
+            if (egBill.getEgBillDetails().size() > 1 && billDet.getCrAmount().compareTo(BigDecimal.ZERO) == 1
                     && reciptDetailList.get(0).getOrdernumber().equals(Long.valueOf(billDet.getOrderNo()))) {
                 additionalInfo
                         .append(formatter.format(billDet.getEgDemandReason().getEgInstallmentMaster().getToDate()));
                 break;
             }
         }
-        if (amounttobeCalc.compareTo(BigDecimal.ZERO) > 1)
+        if (amounttobeCalc.compareTo(BigDecimal.ZERO) == 1)
             additionalInfo = additionalInfo.append(" (Partialy)");
 
         return additionalInfo.toString();
@@ -436,7 +432,7 @@ public class BpaTaxCollection extends TaxCollection {
                 }
 
             }
-            if (egBill.getEgBillDetails().size() > 1 && billDet.getCrAmount().compareTo(BigDecimal.ZERO) > 1
+            if (egBill.getEgBillDetails().size() > 1 && billDet.getCrAmount().compareTo(BigDecimal.ZERO) == 1
                     && reciptDetailList.get(0).getOrdernumber().equals(Long.valueOf(billDet.getOrderNo()))) {
                 receiptAmountInfo.setInstallmentTo(
                         formatter.format(billDet.getEgDemandReason().getEgInstallmentMaster().getToDate()));

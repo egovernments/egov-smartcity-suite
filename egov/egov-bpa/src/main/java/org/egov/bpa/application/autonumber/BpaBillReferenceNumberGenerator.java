@@ -39,9 +39,7 @@
  */
 package org.egov.bpa.application.autonumber;
 
-import org.springframework.stereotype.Service;
-
-@Service
+@FunctionalInterface
 public interface BpaBillReferenceNumberGenerator {
 
     public String generateBillNumber(final String installmentYear);

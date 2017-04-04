@@ -42,38 +42,55 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
-<script src="<cdn:url value='/resources/js/app/connectiondetails.js?rnd=${app_release_no}'/>"></script>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 <div class="panel-heading custom_form_panel_heading">
-	<div class="panel-title">
-		Applicant Details
-	</div>
+	<div class="panel-title">Applicant Details</div>
 </div>
-		<form:hidden id="owner" name="owner" value="#{owner.id}" path=""/> 
+<form:hidden id="owner" name="owner" value="#{owner.id}" path="" />
 <div class="form-group">
 
-<label class="col-sm-3 control-label text-right">Applicant Name <span class="mandatory"></span></label> 
+	<label class="col-sm-3 control-label text-right">Applicant Name
+		<span class="mandatory"></span>
+	</label>
 	<div class="col-sm-3 add-margin">
-		<form:input class="form-control patternvalidation" data-pattern="alphabetwithspace" maxlength="50" id="owner.applicantName" path="owner.applicantName" required="required"  />
-		<form:errors path="owner.applicantName" cssClass="add-margin error-msg" />		
+		<form:input class="form-control patternvalidation"
+			data-pattern="alphabetwithspace" maxlength="50"
+			id="owner.applicantName" path="owner.applicantName"
+			required="required" />
+		<form:errors path="owner.applicantName"
+			cssClass="add-margin error-msg" />
 	</div>
-	
-	<label class="col-sm-3 control-label text-right">Applicant Address <span class="mandatory"></span></label> 
-	<div class="col-sm-3 add-margin">
-		<form:input class="form-control patternvalidation" data-pattern="string" maxlength="50" id="address" path="owner.address" required="required"  />
-		<form:errors path="owner.address" cssClass="add-margin error-msg" />		
+
+	<label class="col-sm-2 control-label text-right">Applicant
+		Address <span class="mandatory"></span>
+	</label>
+	<div class="col-sm-2 add-margin">
+		<form:input class="form-control patternvalidation"
+			data-pattern="string" maxlength="50" id="address"
+			path="owner.address" required="required" />
+		<form:errors path="owner.address" cssClass="add-margin error-msg" />
 	</div>
 </div>
 <div class="form-group">
-<label class="col-sm-3 control-label text-right">Mobile Number <span class="mandatory"></span></label> 
+	<label class="col-sm-3 control-label text-right">Mobile Number
+		<span class="mandatory"></span>
+	</label>
 	<div class="col-sm-3 add-margin">
-		<form:input class="form-control patternvalidation" data-pattern="string"  maxlength="15" onblur="return validateMobileNumber(this);" id="mobileNumber" path="owner.mobileNumber" required="required"  />
-		**SMS is sent to this<form:errors path="owner.mobileNumber" cssClass="add-margin error-msg" />		
+		<form:input class="form-control patternvalidation"
+			data-pattern="string" maxlength="15"
+			onblur="return validateMobileNumber(this);" id="mobileNumber"
+			path="owner.mobileNumber" required="required" />
+		**SMS is sent to this
+		<form:errors path="owner.mobileNumber" cssClass="add-margin error-msg" />
 	</div>
-	
-	<label class="col-sm-3 control-label text-right">Emial <span class="mandatory"></span></label> 
-	<div class="col-sm-3 add-margin">
-		<form:input class="form-control patternvalidation" data-pattern="string"  maxlength="15" onblur="" id="emailId" path="owner.emailid" required="required"  />
-		**SMS is sent to this<form:errors path="owner.emailid" cssClass="add-margin error-msg" />		
+
+	<label class="col-sm-2 control-label text-right">Emial <span
+		class="mandatory"></span></label>
+	<div class="col-sm-2 add-margin">
+		<form:input class="form-control patternvalidation"
+			data-pattern="string" maxlength="15" onblur="" id="emailId"
+			path="owner.emailid" required="required" />
+		**Mail is sent to this
+		<form:errors path="owner.emailid" cssClass="add-margin error-msg" />
 	</div>
 </div>
