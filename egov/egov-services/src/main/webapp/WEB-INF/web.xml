@@ -187,17 +187,17 @@
     <filter-mapping>
         <filter-name>ContextLifecycleFilter</filter-name>
         <url-pattern>/egov-common-masters/*</url-pattern>
-        <url-pattern>/egov-filestore/*</url-pattern>
-        <url-pattern>/egov-localization/*</url-pattern>
-        <url-pattern>/egov-location/*</url-pattern>
+        <url-pattern>/filestore/*</url-pattern>
+        <url-pattern>/localization/*</url-pattern>
+        <url-pattern>/v1/location/*</url-pattern>
         <url-pattern>/egov-notification-mail/*</url-pattern>
         <url-pattern>/egov-notification-sms/*</url-pattern>
-        <url-pattern>/egov-user/*</url-pattern>
+        <url-pattern>/user/*</url-pattern>
         <url-pattern>/egf-masters/*</url-pattern>
         <url-pattern>/demand-services/*</url-pattern>
         <url-pattern>/asset-services/*</url-pattern>
- 	<url-pattern>/asset-web/*</url-pattern>
-        <url-pattern>/egov-workflows/*</url-pattern>
+ 		<url-pattern>/asset-web/*</url-pattern>
+        <url-pattern>/egov-common-workflows/*</url-pattern>
         <url-pattern>/hr-attendance/*</url-pattern>
         <url-pattern>/hr-employee/*</url-pattern>
         <url-pattern>/hr-employee-indexer/*</url-pattern>
@@ -237,17 +237,17 @@
     <servlet-mapping>
         <servlet-name>ZuulServlet</servlet-name>
         <url-pattern>/egov-common-masters/*</url-pattern>
-        <url-pattern>/egov-filestore/*</url-pattern>
-        <url-pattern>/egov-localization/*</url-pattern>
-        <url-pattern>/egov-location/*</url-pattern>
+        <url-pattern>/filestore/*</url-pattern>
+        <url-pattern>/localization/*</url-pattern>
+        <url-pattern>/v1/location/*</url-pattern>
         <url-pattern>/egov-notification-mail/*</url-pattern>
         <url-pattern>/egov-notification-sms/*</url-pattern>
-        <url-pattern>/egov-user/*</url-pattern>
+        <url-pattern>/user/*</url-pattern>
         <url-pattern>/egf-masters/*</url-pattern>
         <url-pattern>/demand-services/*</url-pattern>
         <url-pattern>/asset-services/*</url-pattern>
-	<url-pattern>/asset-web/*</url-pattern>
-        <url-pattern>/egov-workflows/*</url-pattern>
+ 		<url-pattern>/asset-web/*</url-pattern>
+        <url-pattern>/egov-common-workflows/*</url-pattern>
         <url-pattern>/hr-attendance/*</url-pattern>
         <url-pattern>/hr-employee/*</url-pattern>
         <url-pattern>/hr-employee-indexer/*</url-pattern>
