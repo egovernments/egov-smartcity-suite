@@ -81,7 +81,7 @@
 	</field>
 	<sortField name="orderNumber"/>
 	<variable name="totalAmount" class="java.math.BigDecimal" calculation="Sum">
-		<variableExpression><![CDATA[!("ADVANCE_AMOUNT".equals($F{purpose})) ? ($F{creditAmountToBePaid}) : BigDecimal.ZERO]]></variableExpression>
+		<variableExpression><![CDATA[!("ADVANCE_AMOUNT".equals($F{purpose}) || "REBATE".equals($F{purpose})) ? ($F{creditAmountToBePaid}) : BigDecimal.ZERO]]></variableExpression>
 		<initialValueExpression><![CDATA[BigDecimal.valueOf(0)]]></initialValueExpression>
 	</variable>
 	<variable name="arrearFrom" class="java.lang.String" calculation="Lowest">
@@ -123,7 +123,7 @@
 		<variableExpression><![CDATA[$V{to_date}.substring($V{to_date}.length()-1)]]></variableExpression>
 	</variable>
 	<variable name="totalamounttobepaid" class="java.math.BigDecimal" calculation="Sum">
-		<variableExpression><![CDATA[!"ADVANCE_AMOUNT".equals($F{purpose}) ? ($F{creditAmountToBePaid}) : BigDecimal.ZERO]]></variableExpression>
+		<variableExpression><![CDATA[!("ADVANCE_AMOUNT".equals($F{purpose}) || "REBATE".equals($F{purpose})) ? ($F{creditAmountToBePaid}) : BigDecimal.ZERO]]></variableExpression>
 	</variable>
 	<variable name="totalpaid" class="java.math.BigDecimal" calculation="Sum">
 		<variableExpression><![CDATA[!("ADVANCE_AMOUNT".equals($F{purpose})) ? ($F{crAmount}) : BigDecimal.ZERO]]></variableExpression>
@@ -234,7 +234,7 @@
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="10" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[!$V{currentTotal}.equals(BigDecimal.ZERO)?$V{currentTotal} + $V{rebate}:BigDecimal.ZERO]]></textFieldExpression>
+					<textFieldExpression><![CDATA[!$V{currentTotal}.equals(BigDecimal.ZERO)?$V{currentTotal} :BigDecimal.ZERO]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" pattern="###0.00">
 					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="126" y="66" width="65" height="30" isPrintWhenDetailOverflows="true" uuid="a3d66d36-041e-4078-b46c-607d236abeac">
@@ -266,7 +266,7 @@
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="10" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[!$V{totalAmount}.equals(BigDecimal.ZERO)?$V{totalAmount} + $V{rebate}:BigDecimal.ZERO]]></textFieldExpression>
+					<textFieldExpression><![CDATA[!$V{totalAmount}.equals(BigDecimal.ZERO)?$V{totalAmount} :BigDecimal.ZERO]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 					<reportElement positionType="Float" x="37" y="2" width="218" height="20" isPrintWhenDetailOverflows="true" uuid="73c20945-d099-4509-a893-a3f3cba1fc0b">
