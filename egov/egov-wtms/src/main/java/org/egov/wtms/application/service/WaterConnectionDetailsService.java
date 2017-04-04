@@ -1152,6 +1152,8 @@ public class WaterConnectionDetailsService {
         final List<Assignment> assignmentList = new ArrayList<>();
         if (approvalPositionId != null && approvalPositionId != 0 && approvalPositionId != -1) {
             assignmentObj = assignmentService.getPrimaryAssignmentForPositionAndDate(approvalPositionId, new Date());
+            if (assignmentObj==null)
+                throw new ValidationException("err.user.not.defined");
             assignmentList.add(assignmentObj);
 
             final Gson jsonCreator = new GsonBuilder().registerTypeAdapter(Assignment.class, new AssignmentAdaptor())
