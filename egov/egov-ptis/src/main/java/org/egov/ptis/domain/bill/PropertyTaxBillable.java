@@ -479,21 +479,20 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
             /*
              * calculating early payment rebate if rebate period active and there is no partial payment for current installment
              */
-            calculateRebate(installmentPenaltyAndRebate, instWiseDmdMap, instWiseAmtCollMap);
+            calculateRebate(installmentPenaltyAndRebate, instWiseDmdMap, currentDemand);
         }
 
         return installmentPenaltyAndRebate;
     }
 
     private void calculateRebate(final Map<Installment, PenaltyAndRebate> installmentPenaltyAndRebate,
-            final Map<Installment, BigDecimal> instWiseDmdMap, final Map<Installment, BigDecimal> instWiseAmtCollMap) {
+            final Map<Installment, BigDecimal> instWiseDmdMap,EgDemand currentDemand) {
         if (isEarlyPayRebateActive()) {
+            BigDecimal rebateAmount=propertyTaxUtil.getRebateAmount(currentDemand);
             Map<String, Installment> currInstallments = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
                 BigDecimal currentannualtax = instWiseDmdMap.get(currInstallments.get(CURRENTYEAR_FIRST_HALF)).add(
                         instWiseDmdMap.get(currInstallments.get(CURRENTYEAR_SECOND_HALF)));
-                BigDecimal currentannualcollection = instWiseAmtCollMap.get(currInstallments.get(CURRENTYEAR_FIRST_HALF))
-                        .add(instWiseAmtCollMap.get(currInstallments.get(CURRENTYEAR_SECOND_HALF)));
-                if (currentannualtax.compareTo(currentannualcollection) > 0) {
+                if (rebateAmount.compareTo(BigDecimal.ZERO) == 0) {
                     if (installmentPenaltyAndRebate.get(currInstallments.get(CURRENTYEAR_FIRST_HALF)) != null) {
                         installmentPenaltyAndRebate.get(currInstallments.get(CURRENTYEAR_FIRST_HALF)).setRebate(
                                 calculateEarlyPayRebate(currentannualtax));
@@ -625,4 +624,5 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
     public void setVacantLandTaxPayment(final boolean vacantLandTaxPayment) {
         this.vacantLandTaxPayment = vacantLandTaxPayment;
     }
+    
 }

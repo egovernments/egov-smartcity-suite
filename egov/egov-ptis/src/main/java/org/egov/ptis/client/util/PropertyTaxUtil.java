@@ -2550,4 +2550,25 @@ public class PropertyTaxUtil {
         reportInput.setPrintDialogOnOpenReport(true);
         return reportService.createReport(reportInput);
     }
+    
+    @SuppressWarnings("unchecked")
+    public BigDecimal getRebateAmount(EgDemand currentDemand){
+        Object rebateAmt ;
+        Map<String, Installment> currInstallments = getInstallmentsForCurrYear(new Date());
+        Installment currentFirstHalf=currInstallments.get(CURRENTYEAR_FIRST_HALF);
+
+        final String selectQuery = " select dd.amt_rebate as rebateamount from eg_demand_details dd, eg_demand_reason dr,"
+                + " eg_demand_reason_master drm, eg_installment_master inst "
+                + " where dd.id_demand_reason = dr.id and drm.id = dr.id_demand_reason_master "
+                + " and dr.id_installment = inst.id and dd.id_demand =:currentDemandId and inst.start_date between "
+                + ":firstHlfFromdt and :firstHlfTodt and drm.code = :code";
+        
+        final Query qry = persistenceService.getSession().createSQLQuery(selectQuery)
+                .setLong("currentDemandId", currentDemand.getId())
+                .setDate("firstHlfFromdt",currentFirstHalf.getFromDate())
+                .setDate("firstHlfTodt", currentFirstHalf.getToDate())
+                .setString("code", PropertyTaxConstants.GEN_TAX);
+        rebateAmt = qry.uniqueResult();
+        return rebateAmt != null ? new BigDecimal((Double) rebateAmt) : BigDecimal.ZERO;
+    }
 }
