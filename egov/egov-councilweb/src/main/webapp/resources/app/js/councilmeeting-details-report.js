@@ -94,8 +94,14 @@ $(document).ready(function() {
 										"data" : "meetingNumber",
 										"sClass" : "text-left",
 										"render": function ( data, type, row, meta ) {
+											if(row.id!=null){
 											return '<a target="_new" onclick="openPopup(\'/council/councilmom/view/'+ row.id +'\')">'+data+'</a>' 
-										  }
+											}
+											else
+												{
+												return row.meetingNumber;
+												}
+										}
 									
 									}, {
 										"data" : "meetingDate",
