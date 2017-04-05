@@ -29,6 +29,7 @@
  */
 package org.egov.bpa.application.entity;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -39,6 +40,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 
 @Entity
@@ -52,12 +54,15 @@ public class StakeHolderDocument extends AbstractAuditable {
     @GeneratedValue(generator = SEQ_STAKEHOLDER_DOCUMENT, strategy = GenerationType.SEQUENCE)
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY)
-    private Checklist checklist;
+    @JoinColumn(name = "checklistdetail")
+    private CheckListDetail checkListDetail;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "stakeHolder")
     private StakeHolder stakeHolder;
     private Boolean isAttached;
-    private Long documentId;
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "documentId")
+    private FileStoreMapper documentId;
 
     @Override
     public Long getId() {
@@ -67,14 +72,6 @@ public class StakeHolderDocument extends AbstractAuditable {
     @Override
     protected void setId(final Long id) {
         this.id = id;
-    }
-
-    public Checklist getChecklist() {
-        return checklist;
-    }
-
-    public void setChecklist(final Checklist checklist) {
-        this.checklist = checklist;
     }
 
     public StakeHolder getStakeHolder() {
@@ -93,11 +90,20 @@ public class StakeHolderDocument extends AbstractAuditable {
         this.isAttached = isAttached;
     }
 
-    public Long getDocumentId() {
+    public CheckListDetail getCheckListDetail() {
+        return checkListDetail;
+    }
+
+    public void setCheckListDetail(CheckListDetail checkListDetail) {
+        this.checkListDetail = checkListDetail;
+    }
+
+    public FileStoreMapper getDocumentId() {
         return documentId;
     }
 
-    public void setDocumentId(final Long documentId) {
+    public void setDocumentId(FileStoreMapper documentId) {
         this.documentId = documentId;
     }
+    
 }

@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) <2017>  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -39,23 +39,149 @@
  */
 package org.egov.bpa.masters.service;
 
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+import org.egov.bpa.application.entity.CheckListDetail;
 import org.egov.bpa.application.entity.StakeHolder;
+import org.egov.bpa.application.entity.StakeHolderDocument;
+import org.egov.bpa.application.service.BPADocumentService;
+import org.egov.bpa.masters.repository.StakeHolderAddressRepository;
 import org.egov.bpa.masters.repository.StakeHolderRepository;
+import org.egov.bpa.utils.BpaConstants;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.infra.persistence.entity.Address;
+import org.hibernate.Criteria;
+import org.hibernate.Session;
+import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @Transactional(readOnly = true)
 public class StakeHolderService {
 
+    @PersistenceContext
+    private EntityManager entityManager;
     @Autowired
     private StakeHolderRepository stakeHolderRepository;
+    @Autowired
+    private StakeHolderAddressRepository stakeHolderAddressRepository;
+    @Autowired
+    private FileStoreService fileStoreService;
+
+    @Autowired
+    private BPADocumentService bpaDocumentService;
+
+    public Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
+    }
 
     public List<StakeHolder> findAll() {
         return stakeHolderRepository.findAll();
     }
 
+    @Transactional
+    public StakeHolder save(final StakeHolder stakeHolder) {
+        persistStakeHolderDocuments(stakeHolder);
+        return stakeHolderRepository.save(stakeHolder);
+    }
+
+    private void persistStakeHolderDocuments(final StakeHolder stakeHolder) {
+        final Map<Long, CheckListDetail> generalDocumentAndId = new HashMap<>();
+        bpaDocumentService.getStakeHolderDocuments()
+                .forEach(document -> generalDocumentAndId.put(document.getId(), document));
+        addDocumentsToFileStore(stakeHolder, generalDocumentAndId);
+    }
+
+    @Transactional
+    public StakeHolder update(final StakeHolder stakeHolder) {
+        persistStakeHolderDocuments(stakeHolder);
+        return stakeHolderRepository.save(stakeHolder);
+    }
+
+    @Transactional
+    public void removeAddress(List<Address> address) {
+        stakeHolderAddressRepository.deleteInBatch(address);
+    }
+
+    public StakeHolder findById(Long id) {
+        return stakeHolderRepository.findOne(id);
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<StakeHolder> search(final StakeHolder stakeHolder) {
+        final Criteria criteria = buildSearchCriteria(stakeHolder);
+        return criteria.list();
+    }
+
+    /**
+     * Adds the uploaded stake holder document to file store and associates with the stake holder
+     *
+     * @param registration
+     */
+    private void addDocumentsToFileStore(final StakeHolder stakeHolder,
+            final Map<Long, CheckListDetail> documentAndId) {
+        final List<CheckListDetail> documents = stakeHolder.getCheckListDocuments();
+        documents.stream()
+                .filter(document -> !document.getFile().isEmpty() && document.getFile().getSize() > 0)
+                .map(document -> {
+                    final StakeHolderDocument stakeHolderDocument = new StakeHolderDocument();
+                    stakeHolderDocument.setStakeHolder(stakeHolder);
+                    stakeHolderDocument.setCheckListDetail(documentAndId.get(document.getId()));
+                    stakeHolderDocument.setDocumentId(addToFileStore(document.getFile()));
+                    stakeHolderDocument.setIsAttached(true);
+                    return stakeHolderDocument;
+                }).collect(Collectors.toList())
+                .forEach(doc -> stakeHolder.addStakeHolderDocument(doc));
+    }
+
+    private FileStoreMapper addToFileStore(final MultipartFile file) {
+        FileStoreMapper fileStoreMapper = null;
+        try {
+            fileStoreMapper = fileStoreService.store(file.getInputStream(), file.getOriginalFilename(),
+                    file.getContentType(), BpaConstants.EGMODULE_NAME);
+        } catch (final IOException e) {
+            throw new ApplicationRuntimeException("Error occurred while getting inputstream", e);
+        }
+        return fileStoreMapper;
+    }
+
+    public Criteria buildSearchCriteria(final StakeHolder stakeHolder) {
+        final Criteria criteria = getCurrentSession().createCriteria(StakeHolder.class, "stakeHolder");
+
+        if (stakeHolder.getName() != null)
+            criteria.add(Restrictions.ilike("stakeHolder.name", stakeHolder.getName(),
+                    MatchMode.ANYWHERE));
+
+        if (stakeHolder.getAadhaarNumber() != null)
+            criteria.add(Restrictions.ilike("stakeHolder.aadhaarNumber", stakeHolder.getAadhaarNumber(),
+                    MatchMode.ANYWHERE));
+
+        if (stakeHolder.getPan() != null)
+            criteria.add(Restrictions.ilike("stakeHolder.pan", stakeHolder.getPan(),
+                    MatchMode.ANYWHERE));
+
+        if (stakeHolder.getBusinessLicenceNumber() != null)
+            criteria.add(Restrictions.ilike("stakeHolder.businessLicenceNumber", stakeHolder.getBusinessLicenceNumber(),
+                    MatchMode.ANYWHERE));
+
+        if (stakeHolder.getCoaEnrolmentNumber() != null)
+            criteria.add(Restrictions.ilike("stakeHolder.coaEnrolmentNumber", stakeHolder.getCoaEnrolmentNumber(),
+                    MatchMode.ANYWHERE));
+
+        criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+        return criteria;
+    }
 }

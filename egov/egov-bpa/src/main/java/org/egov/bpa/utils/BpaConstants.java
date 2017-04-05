@@ -75,4 +75,6 @@ public class BpaConstants {
     public static final String WF_CANCELAPPLICATION_BUTTON = "CANCEL APPLICATION";
     public static final String APPLICATION_STATUS_CANCELLED = "Cancelled";
     public static final String CREATE_ADDITIONAL_RULE_CREATE = "CREATEBPAAPPLICATION";
+    
+    public static final String STAKE_HOLDER_CHECK_LIST_TYPE = "stakeHolder";
 }

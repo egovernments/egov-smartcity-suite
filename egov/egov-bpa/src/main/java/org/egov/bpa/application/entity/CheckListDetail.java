@@ -29,6 +29,7 @@
  */
 package org.egov.bpa.application.entity;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -44,6 +45,7 @@ import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.hibernate.validator.constraints.Length;
+import org.springframework.web.multipart.MultipartFile;
 
 @Entity
 @Table(name = "EGBPA_MSTR_CHKLISTDETAIL")
@@ -67,7 +69,7 @@ public class CheckListDetail extends AbstractAuditable {
     @NotNull
     private Boolean isActive;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     @NotNull
     @JoinColumn(name = "checkList")
     private Checklist checkList;
@@ -76,6 +78,8 @@ public class CheckListDetail extends AbstractAuditable {
     private Boolean isMandatory;
     @Transient
     private Long srlNo;
+    
+    private transient MultipartFile file;
 
     @Override
     public Long getId() {
@@ -135,4 +139,11 @@ public class CheckListDetail extends AbstractAuditable {
         this.srlNo = srlNo;
     }
 
+    public MultipartFile getFile() {
+        return file;
+    }
+
+    public void setFile(MultipartFile file) {
+        this.file = file;
+    }
 }

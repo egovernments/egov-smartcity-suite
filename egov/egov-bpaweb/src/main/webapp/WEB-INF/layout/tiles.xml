@@ -68,4 +68,30 @@
         <put-attribute name="page-title" value="title.newconnection" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/application/newapplication-form.jsp"/>
     </definition>
+    
+    <definition name="stakeholder-new" extends="base_layout">
+    	<put-attribute name="page-title" value="title.stakehol.create" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/stakeholder/stakeholder-new.jsp"/>
+    </definition>
+    
+    <definition name="stakeholder-view" extends="base_layout">
+    	<put-attribute name="page-title" value="title.stakehol.view" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/stakeholder/stakeholder-view.jsp"/>
+    </definition>
+	<definition name="stakeholder-update" extends="base_layout">
+    	<put-attribute name="page-title" value="title.stakehol.update" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/stakeholder/stakeholder-update.jsp"/>
+    </definition>
+    <definition name="search-stakeholder-view" extends="base_layout">
+    	<put-attribute name="page-title" value="title.stakehol.view" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/stakeholder/search-stakeholder-view.jsp"/>
+    </definition>
+    <definition name="stakeholder-result" extends="base_layout">
+    	<put-attribute name="page-title" value="title.stakehol.success" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/stakeholder/stakeholder-result.jsp"/>
+    </definition>
+    <definition name="search-stakeholder-edit" extends="base_layout">
+    	<put-attribute name="page-title" value="title.stakehol.update" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/stakeholder/search-stakeholder-edit.jsp"/>
+    </definition>
 </tiles-definitions>

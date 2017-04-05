@@ -47,10 +47,14 @@ import javax.validation.constraints.NotNull;
 
 import org.egov.bpa.application.entity.enums.StakeHolderType;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.persistence.entity.CorrespondenceAddress;
+import org.egov.infra.persistence.entity.PermanentAddress;
+import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.validator.constraints.Length;
 
 @Entity
 @Table(name = "EGBPA_MSTR_STAKEHOLDER")
+@Unique(fields = {"code","businessLicenceNumber","coaEnrolmentNumber","tinNumber"}, enableDfltMsg = true)
 public class StakeHolder extends User {
 
     private static final long serialVersionUID = 3078684328383202788L;
@@ -58,7 +62,6 @@ public class StakeHolder extends User {
     @NotNull
     private StakeHolderType stakeHolderType;
 
-    // ISACTIVE, RULES.. BELONG TO WHICH WARD/DEPARTMENT
     @NotNull
     @Length(min = 1, max = 128)
     @Column(name = "code", unique = true)
@@ -91,7 +94,9 @@ public class StakeHolder extends User {
 
     @OneToMany(mappedBy = "stakeHolder", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private final List<StakeHolderDocument> stakeHolderDocument = new ArrayList<>(0);
-
+    private transient CorrespondenceAddress correspondenceAddress = new CorrespondenceAddress();
+    private transient PermanentAddress permanentAddress = new PermanentAddress();
+    private transient List<CheckListDetail> checkListDocuments = new ArrayList<>(0);
     public Boolean getIsActive() {
         return isActive;
     }
@@ -208,4 +213,30 @@ public class StakeHolder extends User {
         this.coaEnrolmentDueDate = coaEnrolmentDueDate;
     }
 
+    public CorrespondenceAddress getCorrespondenceAddress() {
+        return correspondenceAddress;
+    }
+
+    public void setCorrespondenceAddress(CorrespondenceAddress correspondenceAddress) {
+        this.correspondenceAddress = correspondenceAddress;
+    }
+
+    public PermanentAddress getPermanentAddress() {
+        return permanentAddress;
+    }
+
+    public void setPermanentAddress(PermanentAddress permanentAddress) {
+        this.permanentAddress = permanentAddress;
+    }
+    public void addStakeHolderDocument(final StakeHolderDocument stakeHolderDocument) {
+        stakeHolderDocument.setStakeHolder(this);
+        getStakeHolderDocument().add(stakeHolderDocument);
+    }
+    
+    public List<CheckListDetail> getCheckListDocuments() {
+        return checkListDocuments;
+    }
+    public void setCheckListDocuments(List<CheckListDetail> checkListDocuments) {
+        this.checkListDocuments = checkListDocuments;
+    }
 }
