@@ -7,7 +7,7 @@
             <module name="org.apache.log4j" export="true"/>
             <module name="org.slf4j" export="true"/>
             <module name="org.javassist" export="true"/>
-            <module name="javax.jcr" export="true"/>
+            <!--<module name="javax.jcr" export="true"/>-->
 	        <module name="javax.servlet.jstl.api" export="true"/>
             <module name="org.hibernate" export="true"/>
             <module name="org.infinispan" export="true"/>
