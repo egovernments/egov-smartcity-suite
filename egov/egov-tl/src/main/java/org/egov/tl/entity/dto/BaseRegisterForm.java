@@ -49,7 +49,7 @@ public class BaseRegisterForm {
     private Long subCategoryId;
     private Long statusId;
     private Long wardId;
-
+    private String filterName;
     private BigInteger licenseid;
     private String licensenumber;
     private String tradetitle;
@@ -262,5 +262,13 @@ public class BaseRegisterForm {
 
     public void setRateval(BigInteger rateval) {
         this.rateval = rateval;
+    }
+
+    public String getFilterName() {
+        return filterName;
+    }
+
+    public void setFilterName(String filterName) {
+        this.filterName = filterName;
     }
 }
