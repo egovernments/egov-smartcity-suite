@@ -76,7 +76,7 @@ public class BpaConstants {
     public static final String APPLICATION_STATUS_CANCELLED = "Cancelled";
     public static final String CREATE_ADDITIONAL_RULE_CREATE = "CREATEBPAAPPLICATION";
 
-    public static final String STAKE_HOLDER_CHECK_LIST_TYPE = "stakeHolder";
+    public static final String STAKE_HOLDER_CHECK_LIST_TYPE = "STAKEHOLDERDOCUMENT";
     public static final String ADMISSIONFEEREASON = "ADMISSIONFEES";
     public static final String BPAFEETYPE="AdmissionFee";
     public static final String BOUNDARY_TYPE_ZONE = "Zone";

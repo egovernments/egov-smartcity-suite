@@ -38,6 +38,7 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 package org.egov.bpa.masters.service;
+import static org.egov.bpa.utils.BpaConstants.FILESTORE_MODULECODE;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -54,7 +55,6 @@ import org.egov.bpa.application.entity.StakeHolderDocument;
 import org.egov.bpa.application.service.BPADocumentService;
 import org.egov.bpa.masters.repository.StakeHolderAddressRepository;
 import org.egov.bpa.masters.repository.StakeHolderRepository;
-import org.egov.bpa.utils.BpaConstants;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
@@ -151,7 +151,7 @@ public class StakeHolderService {
         FileStoreMapper fileStoreMapper = null;
         try {
             fileStoreMapper = fileStoreService.store(file.getInputStream(), file.getOriginalFilename(),
-                    file.getContentType(), BpaConstants.EGMODULE_NAME);
+                    file.getContentType(), FILESTORE_MODULECODE);
         } catch (final IOException e) {
             throw new ApplicationRuntimeException("Error occurred while getting inputstream", e);
         }

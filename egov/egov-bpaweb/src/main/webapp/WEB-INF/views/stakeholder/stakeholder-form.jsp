@@ -97,7 +97,7 @@
 		<form:errors path="gender" cssClass="error-msg" />
 	</div>
 	<label class="col-sm-2 control-label text-right"><spring:message
-			code="lbl.DOB" /> <span class="mandatory"></span></label>
+			code="lbl.dob" /> <span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin">
 		<form:input type="text" cssClass="form-control datepicker" path="dob"
 			id="birthDate" data-date-end-date="-18y" required="required" />
@@ -107,7 +107,7 @@
 
 <div class="form-group">
 	<label class="col-sm-3 control-label text-right"><spring:message
-			code="lbl.mobilenumber" /><span class="mandatory"></span></label>
+			code="lbl.mobileNo" /><span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin">
 		<form:input type="text" cssClass="form-control patternvalidation mobileno-field"
 			data-pattern="number" data-inputmask="'mask': '9999999999'"
@@ -192,17 +192,17 @@
 		<form:radiobutton path="isEnrolWithLocalBody" value="false" /> <spring:message code="lbl.no" />
 	</div>
 	<label class="col-sm-2 control-label text-right"><spring:message
-			code="lbl.tin.no" /><span class="mandatory"></span></label>
+			code="lbl.tin.no" /></label>
 	<div class="col-sm-3 add-margin">
 		<form:input type="text" cssClass="form-control" maxlength="11" path="tinNumber"
-			id="tinNumber" required="required" />
+			id="tinNumber" />
 		<form:errors path="tinNumber" cssClass="error-msg" />
 	</div>
 </div>
 
 <div class="form-group">
 	<label class="col-sm-3 control-label text-right"><spring:message
-			code="lbl.aadhar.no" /></label>
+			code="lbl.aadhar" /></label>
 	<div class="col-sm-3 add-margin">
 		<form:input type="text" cssClass="form-control patternvalidation"
 			path="aadhaarNumber" data-pattern="number" maxlength="12" id="aadhaarNumber" />
@@ -214,7 +214,7 @@
 </div>
 <div class="form-group">
 	<label class="col-sm-3 control-label text-right"><spring:message
-			code="lbl.pan.no" /></label>
+			code="lbl.pan" /></label>
 	<div class="col-sm-3 add-margin">
 		<form:input type="text" cssClass="form-control" path="pan"
 			id="panNumber" maxlength="10"/>
@@ -263,7 +263,7 @@
 			<form:errors path="organizationName" cssClass="error-msg" />
 		</div>
 		<label class="col-sm-2 control-label text-right toggle-madatory"><spring:message
-				code="lbl.org.contact.no" /><span class="mandatory"></span></label>
+				code="lbl.contactNo" /><span class="mandatory"></span></label>
 		<div class="col-sm-3 add-margin">
 			<form:input type="text" cssClass="form-control patternvalidation addremoverequired"
 				path="organizationMobNo" data-pattern="number" maxlength="11" id="organizationMobNo" />
