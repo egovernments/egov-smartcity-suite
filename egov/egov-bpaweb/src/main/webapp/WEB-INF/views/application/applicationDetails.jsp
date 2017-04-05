@@ -226,7 +226,7 @@
 	<div class="col-sm-3 add-margin">
 		<form:textarea class="form-control patternvalidation"
 			data-pattern="string" maxlength="128" id="remarks" path="remarks"
-			required="required" />
+			 />
 		<form:errors path="remarks" cssClass="add-margin error-msg" />
 	</div>
 

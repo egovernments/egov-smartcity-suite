@@ -76,7 +76,7 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         if (!application.getBuildingDetail().isEmpty())
             application.getBuildingDetail().get(0).setApplication(application);
         application.setApplicationNumber(applicationBpaBillService.generateApplicationnumber(application));
-        final BpaStatus bpaStatus = getStatusByCodeAndModuleType("REGISTERED");
+        final BpaStatus bpaStatus = getStatusByCodeAndModuleType("Registered");
         application.setStatus(bpaStatus);
         if (application.getApplicantMode() != null)
             application.setApplicantMode("NEW");
@@ -86,7 +86,7 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
 
     public BpaStatus getStatusByCodeAndModuleType(final String code) {
         return bpaStatusService
-                .findByModuleTypeAndCode(BpaConstants.APPLICATION_MODULE_TYPE, code);
+                .findByModuleTypeAndCode(BpaConstants.BPASTATUS_MODULETYPE, code);
     }
 
     @Transactional
@@ -103,7 +103,7 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         BigDecimal admissionfeeAmount;
        if (serviceType != null) {
            admissionfeeAmount = getTotalFeeAmountByPassingServiceTypeandArea(
-                   Long.valueOf(serviceType), BpaConstants.ADMISSIONFEEREASON);
+                   Long.valueOf(serviceType), BpaConstants.BPAFEETYPE);
        } else {
            admissionfeeAmount=BigDecimal.ZERO;
        }

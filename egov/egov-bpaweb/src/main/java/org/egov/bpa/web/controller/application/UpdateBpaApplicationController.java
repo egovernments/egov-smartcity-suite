@@ -75,6 +75,7 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
         BpaApplication application=getBpaApplication(applicationNumber);
         application.setApplicantMode("NEW");
         model.addAttribute("bpaApplication", application);
+        model.addAttribute("applicantMode", application.getApplicantMode());
         return "bpaapplication-Form";
     }
     
@@ -82,8 +83,14 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
     public String updateApplication(@Valid @ModelAttribute("bpaApplication") BpaApplication bpaApplication,@PathVariable final String applicationNumber,
             final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
             final HttpServletRequest request, final Model model, @RequestParam("files") final MultipartFile[] files) {
-
-        applicationBpaService.updateApplication(getBpaApplication(applicationNumber));
+        if(resultBinder.hasErrors())
+        {
+            model.addAttribute("bpaApplication", bpaApplication);
+            model.addAttribute("applicantMode", bpaApplication.getApplicantMode());
+            return "bpaapplication-Form";   
+        }
+        
+        applicationBpaService.updateApplication(bpaApplication);
         return bpaApplication.getApplicationNumber();
     }
     

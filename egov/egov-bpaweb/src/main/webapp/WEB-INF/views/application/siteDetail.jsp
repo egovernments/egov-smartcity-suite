@@ -332,7 +332,7 @@
 	<div class="col-sm-3 add-margin">
 		<form:textarea class="form-control patternvalidation"
 			data-pattern="string" maxlength="128" id="encroachmentRemarks"
-			path="siteDetail[0].encroachmentRemarks" required="required" />
+			path="siteDetail[0].encroachmentRemarks"  />
 		<form:errors path="siteDetail[0].encroachmentRemarks"
 			cssClass="add-margin error-msg" />
 	</div>

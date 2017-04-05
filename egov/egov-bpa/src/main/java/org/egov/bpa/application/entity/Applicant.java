@@ -67,7 +67,6 @@ public class Applicant extends AbstractAuditable {
     private GenderTitle title;
     @Length(min = 1, max = 128)
     private String username;
-    private BpaApplication application;
     @Length(min = 1, max = 128)
     private String gender;
     @Length(min = 1, max = 128)

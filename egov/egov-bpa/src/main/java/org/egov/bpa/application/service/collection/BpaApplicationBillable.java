@@ -181,7 +181,7 @@ public class BpaApplicationBillable extends AbstractBillable implements Billable
 
     @Override
     public String getServiceCode() {
-        return "BPADM";
+        return "BPA";
 
     }
 

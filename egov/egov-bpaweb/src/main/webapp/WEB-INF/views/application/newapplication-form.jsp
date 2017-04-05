@@ -56,6 +56,7 @@
 			modelAttribute="bpaApplication" id="newApplicationform"
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
+			<input type="hidden" id="bpaApplication" name="bpaApplication" value="${bpaApplication.id}" />
 
 			<form:hidden id="mode" path="" value="${mode}" />
 

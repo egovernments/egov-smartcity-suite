@@ -58,7 +58,7 @@
 	</bean> -->
 
 
-	<bean id="BPADMCollectionsInterface" class="org.egov.bpa.application.service.collection.BpaTaxCollection"/>
+	<bean id="BPACollectionsInterface" class="org.egov.bpa.application.service.collection.BpaTaxCollection"/>
 
 	<bean id="bpaApplicationWorkflowCustomDefaultImpl"
 		class="org.egov.bpa.application.workflow.BpaApplicationWorkflowCustomDefaultImpl" />

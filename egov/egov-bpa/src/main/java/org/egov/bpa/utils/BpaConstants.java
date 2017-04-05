@@ -49,7 +49,6 @@ public class BpaConstants {
     public static final String BPASTATUSMODULETYPE = "BPAAPPLICATION";
     public static final String ROLE_CITIZEN = "Citizen";
     public static final String YEARLY = "Yearly";
-    public static final String ADMISSIONFEEREASON = "ADMISSION FEES";
     public static final String WATER_CONN_BILLNO_SEQ = "SEQ_BILLNO_";
     public static final String USERNAME_ANONYMOUS = "anonymous";
     public static final String LOCALITY = "locality";
@@ -78,6 +77,8 @@ public class BpaConstants {
     public static final String CREATE_ADDITIONAL_RULE_CREATE = "CREATEBPAAPPLICATION";
 
     public static final String STAKE_HOLDER_CHECK_LIST_TYPE = "stakeHolder";
+    public static final String ADMISSIONFEEREASON = "ADMISSIONFEES";
+    public static final String BPAFEETYPE="AdmissionFee";
     public static final String BOUNDARY_TYPE_ZONE = "Zone";
     public static final String BOUNDARY_TYPE_CITY = "City";
 

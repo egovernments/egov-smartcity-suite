@@ -46,7 +46,6 @@
 <div class="panel-heading custom_form_panel_heading">
 	<div class="panel-title">Applicant Details</div>
 </div>
-<form:hidden id="owner" name="owner" value="#{owner.id}" path="" />
 <div id="applicantdet"> 
 <div class="form-group">
 
