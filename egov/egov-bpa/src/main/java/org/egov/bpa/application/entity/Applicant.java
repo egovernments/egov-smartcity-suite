@@ -41,17 +41,12 @@ package org.egov.bpa.application.entity;
 
 import java.util.Date;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 
 import org.egov.bpa.application.entity.enums.GenderTitle;
 import org.egov.infra.persistence.entity.AbstractAuditable;
@@ -72,10 +67,6 @@ public class Applicant extends AbstractAuditable {
     private GenderTitle title;
     @Length(min = 1, max = 128)
     private String username;
-    @ManyToOne(cascade = CascadeType.ALL)
-    @Valid
-    @NotNull
-    @JoinColumn(name = "application", nullable = false)
     private BpaApplication application;
     @Length(min = 1, max = 128)
     private String gender;
@@ -205,14 +196,6 @@ public class Applicant extends AbstractAuditable {
 
     public void setEmailid(final String emailid) {
         this.emailid = emailid;
-    }
-
-    public BpaApplication getApplication() {
-        return application;
-    }
-
-    public void setApplication(final BpaApplication application) {
-        this.application = application;
     }
 
     public String getFatherorHusbandName() {

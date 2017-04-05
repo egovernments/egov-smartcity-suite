@@ -75,8 +75,6 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         application.getSiteDetail().get(0).setApplication(application);
         if (!application.getBuildingDetail().isEmpty())
             application.getBuildingDetail().get(0).setApplication(application);
-        if (application.getOwner() != null)
-            application.getOwner().setApplication(application);
         application.setApplicationNumber(applicationBpaBillService.generateApplicationnumber(application));
         final BpaStatus bpaStatus = getStatusByCodeAndModuleType("REGISTERED");
         application.setStatus(bpaStatus);
