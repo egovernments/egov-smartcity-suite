@@ -1034,13 +1034,13 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
                 preparePropertyTaxDetails(propWF);
                 historyMap = propService.populateHistory(propWF);
             } else {
-                preparePropertyTaxDetails(basicProp.getActiveProperty());
-                historyMap = propService.populateHistory(basicProp.getActiveProperty());
+                preparePropertyTaxDetails(basicProp.getProperty());
+                historyMap = propService.populateHistory((PropertyImpl)basicProp.getProperty());
             }
         } else if (indexNumber != null && !indexNumber.trim().isEmpty()) {
             setBasicProp((BasicProperty) getPersistenceService().findByNamedQuery(QUERY_BASICPROPERTY_BY_UPICNO,
                     indexNumber));
-            preparePropertyTaxDetails(basicProp.getActiveProperty());
+            preparePropertyTaxDetails(basicProp.getProperty());
         }
 
         documentTypes = propService.getDocumentTypesForTransactionType(TransactionType.MODIFY);
