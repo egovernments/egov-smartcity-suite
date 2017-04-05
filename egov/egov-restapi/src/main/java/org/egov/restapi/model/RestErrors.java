@@ -40,20 +40,35 @@
 
 package org.egov.restapi.model;
 
+import static org.apache.commons.lang.StringUtils.EMPTY;
+
 public class RestErrors {
-	private String errorCode;
-	private String errorMessage;
-	public String getErrorCode() {
-		return errorCode;
-	}
-	public void setErrorCode(String errorCode) {
-		this.errorCode = errorCode;
-	}
-	public String getErrorMessage() {
-		return errorMessage;
-	}
-	public void setErrorMessage(String errorMessage) {
-		this.errorMessage = errorMessage;
-	}
+    private String errorCode;
+    private String errorMessage;
+
+    public RestErrors() {
+        this(EMPTY, EMPTY);
+    }
+
+    public RestErrors(String errorCode, String errorMessage) {
+        this.errorCode = errorCode;
+        this.errorMessage = errorMessage;
+    }
+
+    public String getErrorCode() {
+        return errorCode;
+    }
+
+    public void setErrorCode(String errorCode) {
+        this.errorCode = errorCode;
+    }
+
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
+    }
 
 }

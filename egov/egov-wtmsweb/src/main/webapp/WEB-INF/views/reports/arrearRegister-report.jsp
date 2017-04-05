@@ -58,7 +58,7 @@
 					<div class="panel panel-primary" data-collapsed="0">
 						<div class="panel-heading">
 							<div class="panel-title">
-								<strong><spring:message code="title.connectionreport" /></strong>
+								<strong><spring:message code="title.arrear.register" /></strong>
 							</div>
 						</div>
 						<div class="panel-body custom-form">

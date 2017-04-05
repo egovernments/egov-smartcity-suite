@@ -725,7 +725,7 @@ public class VacancyRemissionService {
             reportParams.put("locality", propertyId.getLocality().getName());
             reportParams.put("vrFromDate", formatter.format(vacancyRemission.getVacancyFromDate()));
             reportParams.put("vrToDate", formatter.format(vacancyRemission.getVacancyToDate()));
-            final int noOfMonths = DateUtils.noOfMonths(vacancyRemission.getVacancyFromDate(),
+            final int noOfMonths = DateUtils.noOfMonthsBetween(vacancyRemission.getVacancyFromDate(),
                     vacancyRemission.getVacancyToDate());
             reportParams.put("totalMonths", noOfMonths);
             final Map<String, BigDecimal> currentDemand = ptDemandDAO

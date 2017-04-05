@@ -46,6 +46,7 @@ jQuery(document).ready(function($) {
 				submitForm();
 
 		});
+
 	  var assignPosition = new Bloodhound({
 			datumTokenizer : function(datum) {
 				return Bloodhound.tokenizers
@@ -82,7 +83,7 @@ jQuery(document).ready(function($) {
 			source : assignPosition.ttAdapter()
 		});
 		
-		typeaheadWithEventsHandling(typeaheadobj, '#positionId'); 
+		typeaheadWithEventsHandling(typeaheadobj, '#officerIncharge'); 
 });
 
 var oTable = $('#dailyBoardReportResult-table');
@@ -93,7 +94,7 @@ function submitForm() {
 		var today = getdate();
 		$('#dailyBoardReportResult-header').show();
 		$('#reportgeneration-header').show();
-		$.post("/lcms/reports/dailyBoardReportresults/",$('#dailyboardreportForm').serialize())
+		$.get("/lcms/reports/dailyBoardReportresults/",$('#dailyboardreportForm').serialize())
 		.done(function(searchResult) {
 		console.log(JSON.stringify(searchResult));
 		oDataTable=oTable.DataTable({

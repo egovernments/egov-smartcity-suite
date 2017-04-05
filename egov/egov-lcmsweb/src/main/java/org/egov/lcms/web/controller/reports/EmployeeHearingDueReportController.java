@@ -40,27 +40,13 @@
 package org.egov.lcms.web.controller.reports;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
-import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.infra.utils.ApplicationConstant;
-import org.egov.lcms.entity.es.HearingsDocument;
-import org.egov.lcms.entity.es.LegalCaseDocument;
-import org.egov.lcms.reports.entity.LcDueReportResult;
-import org.egov.lcms.repository.es.HearingsDocumentRepository;
-import org.egov.lcms.repository.es.LegalCaseDocumentRepository;
+import org.egov.lcms.reports.entity.LegalCommonReportResult;
+import org.egov.lcms.transactions.service.LegalCommonReportService;
 import org.egov.lcms.utils.constants.LcmsConstants;
-import org.egov.lcms.web.controller.transactions.GenericLegalCaseController;
-import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
-import org.springframework.data.elasticsearch.core.query.SearchQuery;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -69,102 +55,16 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping(value = "/reports")
-public class EmployeeHearingDueReportController extends GenericLegalCaseController {
+public class EmployeeHearingDueReportController {
 
     @Autowired
-    private LegalCaseDocumentRepository legalCaseDocumentRepository;
+    private LegalCommonReportService legalCommonReportService;
 
-    @Autowired
-    private HearingsDocumentRepository hearingsDocumentRepository;
-
-    @RequestMapping(value = "/employeehearingDueReportResult", method = RequestMethod.POST)
+    @RequestMapping(value = "/employeehearingDueReportResult", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public List<LcDueReportResult> getEmployeeHearingReport(@ModelAttribute final LcDueReportResult searchRequest)
+    public List<LegalCommonReportResult> getEmployeeHearingReport(@ModelAttribute final LegalCommonReportResult searchRequest)
             throws ParseException {
-        final SimpleDateFormat dateFormat = new SimpleDateFormat("E MMM dd HH:mm:ss Z yyyy");
-        final SimpleDateFormat myFormat = new SimpleDateFormat(LcmsConstants.DATE_FORMAT_DDMMYYYY);
-        BoolQueryBuilder query;
-        SearchQuery searchQuery;
-        Iterable<LegalCaseDocument> legalcaseDocumentSearchList;
-        final List<LcDueReportResult> finalResult = new ArrayList<>();
-        final List<HearingsDocument> hearingsDocumentList = findAllHearingsIndexByFilter(searchRequest);
-        for (final HearingsDocument hearingsDocument : hearingsDocumentList) {
-            searchRequest.setLcNumber(hearingsDocument.getLcNumber());
-            query = getFilterQuery(searchRequest);
-            searchQuery = new NativeSearchQueryBuilder().withIndices(LcmsConstants.LEGALCASE_INDEX_NAME)
-                    .withQuery(query).build();
-            legalcaseDocumentSearchList = legalCaseDocumentRepository.search(searchQuery);
-            LcDueReportResult dueReportResultObj;
-            if (legalcaseDocumentSearchList != null)
-                for (final LegalCaseDocument legalcaseDocumentIndex : legalcaseDocumentSearchList) {
-                    dueReportResultObj = new LcDueReportResult();
-                    dueReportResultObj.setCaseNumber(legalcaseDocumentIndex.getCaseNumber());
-                    dueReportResultObj.setLcNumber(legalcaseDocumentIndex.getLcNumber());
-                    dueReportResultObj.setCaseTitle(legalcaseDocumentIndex.getCaseTitle());
-                    dueReportResultObj.setCaseNumber(legalcaseDocumentIndex.getCaseNumber());
-                    dueReportResultObj.setCourtName(legalcaseDocumentIndex.getCourtName());
-                    dueReportResultObj.setPetName(legalcaseDocumentIndex.getPetitionerNames());
-                    dueReportResultObj.setResName(legalcaseDocumentIndex.getRespondantNames());
-                    dueReportResultObj.setStandingCounsel(legalcaseDocumentIndex.getAdvocateName());
-                    dueReportResultObj.setOfficerIncharge(legalcaseDocumentIndex.getOfficerIncharge());
+        return legalCommonReportService.getEmployeeHearingResult(searchRequest, LcmsConstants.DUEEMPLOYEEHEARINGREPORT);
 
-                    dueReportResultObj
-                            .setNextDate(myFormat.format(dateFormat.parse(legalcaseDocumentIndex.getNextDate().toString())));
-                    finalResult.add(dueReportResultObj);
-                }
-
-        }
-        return finalResult;
-    }
-
-    private BoolQueryBuilder getFilterQuery(final LcDueReportResult searchRequest) throws ParseException {
-        final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-        final SimpleDateFormat newFormat = new SimpleDateFormat(ApplicationConstant.ES_DATE_FORMAT);
-        final List<String> statusCodeList = new ArrayList<>();
-        statusCodeList.add(LcmsConstants.LEGALCASE_STATUS_HEARING_DESC);
-        statusCodeList.add(LcmsConstants.LEGALCASE_INTERIMSTAY_STATUS_DESC);
-        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery()
-                .filter(QueryBuilders.termQuery("cityName", ApplicationThreadLocals.getCityName()))
-                .must(QueryBuilders.termsQuery("status", statusCodeList));
-
-        if (StringUtils.isNotBlank(searchRequest.getFromDate()))
-            boolQuery = boolQuery.filter(QueryBuilders.rangeQuery("caseDate")
-                    .gte(newFormat.format(formatter.parse(searchRequest.getFromDate())))
-                    .lte(new DateTime(newFormat.format(formatter.parse(searchRequest.getToDate())))));
-
-        if (StringUtils.isNotBlank(searchRequest.getOfficerIncharge()))
-            boolQuery = boolQuery
-                    .filter(QueryBuilders.termQuery("officerIncharge", searchRequest.getOfficerIncharge().split("@")[0]));
-
-        if (searchRequest.getLcNumber() != null)
-            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("lcNumber", searchRequest.getLcNumber()));
-
-        return boolQuery;
-    }
-
-    public List<HearingsDocument> findAllHearingsIndexByFilter(final LcDueReportResult searchRequest) throws ParseException {
-        final BoolQueryBuilder query = getHearingsFilterQuery(searchRequest);
-        final SearchQuery searchQuery = new NativeSearchQueryBuilder().withIndices(LcmsConstants.HEARINGS_INDEX_NAME)
-                .withQuery(query).withPageable(new PageRequest(0, 250)).build();
-        final Iterable<HearingsDocument> hearingsDocumentSearchList = hearingsDocumentRepository.search(searchQuery);
-        final List<HearingsDocument> hearingsDocumentList = new ArrayList<>();
-        for (final HearingsDocument documentObj : hearingsDocumentSearchList)
-            hearingsDocumentList.add(documentObj);
-
-        return hearingsDocumentList;
-    }
-
-    private BoolQueryBuilder getHearingsFilterQuery(final LcDueReportResult searchRequest) throws ParseException {
-        final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-        final SimpleDateFormat newFormat = new SimpleDateFormat(ApplicationConstant.ES_DATE_FORMAT);
-        BoolQueryBuilder boolQuery = new BoolQueryBuilder();
-        boolQuery = boolQuery.filter(QueryBuilders.termQuery("cityName", ApplicationThreadLocals.getCityName()));
-
-        if (StringUtils.isNotBlank(searchRequest.getFromDate()))
-            boolQuery = boolQuery.filter(QueryBuilders.rangeQuery("hearingDate")
-                    .gte(newFormat.format(formatter.parse(searchRequest.getFromDate())))
-                    .lte(new DateTime(newFormat.format(formatter.parse(searchRequest.getToDate())))));
-
-        return boolQuery;
     }
 }

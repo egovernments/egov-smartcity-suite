@@ -489,9 +489,6 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
             final Map<Installment, BigDecimal> instWiseDmdMap, final Map<Installment, BigDecimal> instWiseAmtCollMap) {
         if (isEarlyPayRebateActive()) {
             Map<String, Installment> currInstallments = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
-            BigDecimal currentannualcollection = instWiseAmtCollMap.get(currInstallments.get(CURRENTYEAR_FIRST_HALF))
-                    .add(instWiseAmtCollMap.get(currInstallments.get(CURRENTYEAR_SECOND_HALF)));
-            if (currentannualcollection.compareTo(BigDecimal.ZERO) == 0) {
                 BigDecimal currentannualtax = instWiseDmdMap.get(currInstallments.get(CURRENTYEAR_FIRST_HALF)).add(
                         instWiseDmdMap.get(currInstallments.get(CURRENTYEAR_SECOND_HALF)));
                 if (installmentPenaltyAndRebate.get(currInstallments.get(CURRENTYEAR_FIRST_HALF)) != null) {
@@ -503,7 +500,6 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
                     installmentPenaltyAndRebate.put(currInstallments.get(CURRENTYEAR_FIRST_HALF),
                             currentpenaltyAndRebate);
                 }
-            }
         }
     }
 

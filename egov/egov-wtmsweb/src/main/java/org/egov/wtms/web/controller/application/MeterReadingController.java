@@ -193,9 +193,9 @@ public class MeterReadingController {
 
         populateMeterReadingDetails(meterReadingConnectionDeatilObj, waterConnectionDetails);
         if (previousDate != null)
-            noofmonths = DateUtils.noOfMonths(previousDate, currentDate);
+            noofmonths = DateUtils.noOfMonthsBetween(previousDate, currentDate);
         else
-            noofmonths = DateUtils.noOfMonths(new Date(), currentDate);
+            noofmonths = DateUtils.noOfMonthsBetween(new Date(), currentDate);
         final Long currentToPreviousDiffOfUnits = Long.valueOf(request.getParameter("metercurrentReading"))
                 - previousReading;
         Long noOfUnitsForPerMonth;

@@ -40,13 +40,13 @@
 
 package org.egov.tl.repository;
 
-import java.util.List;
-
 import org.egov.tl.entity.License;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 public interface LicenseRepository extends JpaRepository<License, Long> {
@@ -58,6 +58,8 @@ public interface LicenseRepository extends JpaRepository<License, Long> {
     License findByLicenseNumber(String licenseNumber);
 
     License findByApplicationNumber(String applicationNumber);
+
+    List<License> findByIsActiveTrue();
 
     List<License> findByNatureOfBusinessName(String natureOfBusiness);
 

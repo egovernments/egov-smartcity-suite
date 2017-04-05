@@ -141,7 +141,7 @@ public class LicenseApplicationIndexService {
                     endDate = stateHistory.get().getLastModifiedDate();
                 else
                     endDate = license.getLastModifiedDate();
-                applicationIndex.setElapsedDays(DateUtils.noOfDays(license.getApplicationDate(), endDate));
+                applicationIndex.setElapsedDays(DateUtils.daysBetween(license.getApplicationDate(), endDate));
                 applicationIndex.setClosed(ClosureStatus.YES);
                 applicationIndex.setApproved(ApprovalStatus.APPROVED);
             }

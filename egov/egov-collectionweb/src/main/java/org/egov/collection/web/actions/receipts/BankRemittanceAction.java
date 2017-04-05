@@ -164,7 +164,7 @@ public class BankRemittanceAction extends BaseFormAction {
             addDropdownData(ACCOUNT_NUMBER_LIST, ajaxBankRemittanceAction.getBankAccountArrayList());
         } else
             addDropdownData(ACCOUNT_NUMBER_LIST, Collections.emptyList());
-        addDropdownData("financialYearList", financialYearDAO.getAllPriorFinancialYears(new Date()));
+        addDropdownData("financialYearList", financialYearDAO.getAllActivePostingAndNotClosedFinancialYears());
         final TreeMap<String, String> paymentModes = new TreeMap<>();
         paymentModes.put(CollectionConstants.INSTRUMENTTYPE_CASH, CollectionConstants.INSTRUMENTTYPE_CASH);
         paymentModes.put(CollectionConstants.INSTRUMENTTYPE_CHEQUEORDD, CollectionConstants.INSTRUMENTTYPE_CHEQUEORDD);

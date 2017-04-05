@@ -40,26 +40,14 @@
 package org.egov.lcms.web.controller.reports;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
-import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.infra.utils.ApplicationConstant;
-import org.egov.lcms.entity.es.LegalCaseDocument;
-import org.egov.lcms.reports.entity.DailyBoardReportResults;
-import org.egov.lcms.repository.es.LegalCaseDocumentRepository;
-import org.egov.lcms.utils.constants.LcmsConstants;
+import org.egov.lcms.reports.entity.LegalCommonReportResult;
+import org.egov.lcms.transactions.service.LegalCommonReportService;
 import org.egov.lcms.web.controller.transactions.GenericLegalCaseController;
-import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
-import org.springframework.data.elasticsearch.core.query.SearchQuery;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -72,80 +60,20 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class DailyBoardReportsController extends GenericLegalCaseController {
 
     @Autowired
-    private LegalCaseDocumentRepository legalCaseDocumentRepository;
+    private LegalCommonReportService legalCommonReportService;
 
     @RequestMapping(method = RequestMethod.GET, value = "/dailyBoardReport")
     public String searchForm(final Model model) {
-        model.addAttribute("dailyBoardReportResult", new DailyBoardReportResults());
+        model.addAttribute("commonReportResult", new LegalCommonReportResult());
         model.addAttribute("currentDate", new Date());
         return "dailyboardreport-form";
     }
 
-    @RequestMapping(value = "/dailyBoardReportresults", method = RequestMethod.POST)
+    @RequestMapping(value = "/dailyBoardReportresults", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public List<DailyBoardReportResults> getDailyBoardReport(@ModelAttribute final DailyBoardReportResults dailyBoardReport)
+    public List<LegalCommonReportResult> getDailyBoardReport(@ModelAttribute final LegalCommonReportResult legalDailyReportResult)
             throws ParseException {
-        final SimpleDateFormat dateFormat = new SimpleDateFormat("E MMM dd HH:mm:ss Z yyyy");
-        final SimpleDateFormat myFormat = new SimpleDateFormat(LcmsConstants.DATE_FORMAT_DDMMYYYY);
-        List<LegalCaseDocument> legalcaseDocumentTempList;
-        final List<DailyBoardReportResults> finalResult = new ArrayList<>();
-        DailyBoardReportResults dailyBoardReportResultObj;
-        legalcaseDocumentTempList = findAllLegalcaseDocumentIndexByFilter(dailyBoardReport);
-        for (final LegalCaseDocument legalcaseDocumentIndex : legalcaseDocumentTempList) {
-            dailyBoardReportResultObj = new DailyBoardReportResults();
-            dailyBoardReportResultObj.setLcNumber(legalcaseDocumentIndex.getLcNumber());
-            dailyBoardReportResultObj.setCaseTitle(legalcaseDocumentIndex.getCaseTitle());
-            dailyBoardReportResultObj.setCourtName(legalcaseDocumentIndex.getCourtName());
-            dailyBoardReportResultObj.setCaseNumber(legalcaseDocumentIndex.getCaseNumber());
-            dailyBoardReportResultObj.setPetitionerName(legalcaseDocumentIndex.getPetitionerNames());
-            dailyBoardReportResultObj.setRespondantName(legalcaseDocumentIndex.getRespondantNames());
-            dailyBoardReportResultObj.setPetitionType(legalcaseDocumentIndex.getPetitionType());
-            dailyBoardReportResultObj.setStandingCouncil(legalcaseDocumentIndex.getAdvocateName());
-            dailyBoardReportResultObj.setOfficerIncharge(legalcaseDocumentIndex.getOfficerIncharge());
-            dailyBoardReportResultObj.setCaseStatus(legalcaseDocumentIndex.getStatus());
-            dailyBoardReportResultObj
-                    .setNextDate(myFormat.format(dateFormat.parse(legalcaseDocumentIndex.getNextDate().toString())));
-            finalResult.add(dailyBoardReportResultObj);
-        }
-        return finalResult;
+        return legalCommonReportService.getLegalCommonReportsResults(legalDailyReportResult, null);
 
     }
-
-    public List<LegalCaseDocument> findAllLegalcaseDocumentIndexByFilter(final DailyBoardReportResults dailyBoardReport)
-            throws ParseException {
-
-        final BoolQueryBuilder query = getFilterQuery(dailyBoardReport);
-        final SearchQuery searchQuery = new NativeSearchQueryBuilder().withIndices(LcmsConstants.LEGALCASE_INDEX_NAME)
-                .withQuery(query).withPageable(new PageRequest(0, 250)).build();
-
-        final Iterable<LegalCaseDocument> legalcaseDocumentSearchList = legalCaseDocumentRepository.search(searchQuery);
-        final List<LegalCaseDocument> legalcaseDocumentList = new ArrayList<>();
-        for (final LegalCaseDocument documentObj : legalcaseDocumentSearchList)
-            legalcaseDocumentList.add(documentObj);
-
-        return legalcaseDocumentList;
-    }
-
-    private BoolQueryBuilder getFilterQuery(final DailyBoardReportResults searchRequest) throws ParseException {
-        final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-        final SimpleDateFormat newFormat = new SimpleDateFormat(ApplicationConstant.ES_DATE_FORMAT);
-
-        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery()
-                .filter(QueryBuilders.termQuery("cityName", ApplicationThreadLocals.getCityName()));
-
-        if (StringUtils.isNotBlank(searchRequest.getFromDate()))
-            boolQuery = boolQuery.filter(QueryBuilders.rangeQuery("caseDate")
-                    .gte(newFormat.format(formatter.parse(searchRequest.getFromDate())))
-                    .lte(new DateTime(newFormat.format(formatter.parse(searchRequest.getToDate())))));
-
-        if (StringUtils.isNotBlank(searchRequest.getCaseCategory()))
-            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("caseType", searchRequest.getCaseCategory()));
-
-        if (StringUtils.isNotBlank(searchRequest.getOfficerIncharge()))
-            boolQuery = boolQuery
-                    .filter(QueryBuilders.termQuery("officerIncharge", searchRequest.getOfficerIncharge().split("@")[0]));
-
-        return boolQuery;
-    }
-
 }

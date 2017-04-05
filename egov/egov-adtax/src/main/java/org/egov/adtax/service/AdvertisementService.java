@@ -64,6 +64,7 @@ import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
+import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -83,18 +84,18 @@ public class AdvertisementService {
 
     @Autowired
     private AdvertisementDemandService advertisementDemandService;
-    
+
     @Autowired
     @Qualifier("parentMessageSource")
     private MessageSource advertisementMessageSource;
 
     @Autowired
     private ReportService reportService;
-    
+
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
-    
+
     @Transactional
     public Advertisement createAdvertisement(final Advertisement hoarding) {
         if (hoarding != null && hoarding.getId() == null)
@@ -196,5 +197,9 @@ public class AdvertisementService {
             dueDate = DateUtils.addDays(currentDate, Integer.parseInt(slaRenewAdvertisement));
         return dueDate;
 
+    }
+    
+    public List<Advertisement> getAdvertisement(Example advertisement) {
+        return advertisementRepository.findAll(advertisement);
     }
 }

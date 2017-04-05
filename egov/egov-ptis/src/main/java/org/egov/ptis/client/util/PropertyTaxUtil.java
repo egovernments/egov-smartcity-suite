@@ -1829,7 +1829,7 @@ public class PropertyTaxUtil {
 
     public DepreciationMaster getDepreciationByDate(final Date constructionDate, final Date effectiveDate) {
         String depreciationYear = null;
-        final int years = DateUtils.noOfYears(constructionDate, effectiveDate);
+        final int years = DateUtils.noOfYearsBetween(constructionDate, effectiveDate);
         if (years >= 0 && years <= 25)
             depreciationYear = "0-25";
         else if (years > 25 && years <= 40)
@@ -2219,7 +2219,7 @@ public class PropertyTaxUtil {
             else {
                 final VacancyRemissionDetails vrd = vacancyRemission.getVacancyRemissionDetails().get(
                         vacancyRemission.getVacancyRemissionDetails().size() - 1);
-                final int noOfMonths = DateUtils.noOfMonths(vrd.getCheckinDate(), new Date());
+                final int noOfMonths = DateUtils.noOfMonthsBetween(vrd.getCheckinDate(), new Date());
                 if (noOfMonths != 0)
                     monthlyUpdateFlag = true;
             }

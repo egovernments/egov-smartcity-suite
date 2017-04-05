@@ -41,7 +41,6 @@ package org.egov.egf.web.actions.masters;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
@@ -59,7 +58,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import javax.servlet.http.HttpServletResponse;
-
 import java.io.IOException;
 import java.io.Writer;
 import java.util.List;
@@ -69,17 +67,17 @@ import java.util.List;
  * form saving
  **/
 public abstract class JQueryGridActionSupport extends BaseFormAction {
- @Autowired
- @Qualifier("persistenceService")
- protected PersistenceService persistenceService;
-
-    private static final long serialVersionUID = 1L;
     protected static final String ADD = "add";
     protected static final String EDIT = "edit";
     protected static final String DELETE = "del";
-    // Forjquery datatable pagination, saving and search filter.
+    private static final long serialVersionUID = 1L;
     protected Integer id;
     protected String oper;
+
+    @Autowired
+    @Qualifier("persistenceService")
+    protected PersistenceService persistenceService;
+
     private boolean _search;
     private Integer rows;
     private Integer page;
@@ -119,10 +117,9 @@ public abstract class JQueryGridActionSupport extends BaseFormAction {
      **/
     protected void sendAJAXResponse(final String response) {
         try {
-            final HttpServletResponse httpResponse = ServletActionContext.getResponse();
-            final Writer httpResponseWriter = httpResponse.getWriter();
+            HttpServletResponse httpResponse = ServletActionContext.getResponse();
+            Writer httpResponseWriter = httpResponse.getWriter();
             IOUtils.write(response, httpResponseWriter);
-            IOUtils.closeQuietly(httpResponseWriter);
         } catch (final IOException e) {
             LOG.error("Error occurred while processing Ajax response", e);
         }
@@ -149,9 +146,9 @@ public abstract class JQueryGridActionSupport extends BaseFormAction {
                 criteria.add(applyRestriction());
             else {
                 final MultipleSearchFilter multipleSearchFilter = getMultiSearchFilter();
-                if (multipleSearchFilter.getGroupOp().equals("AND"))
+                if ("AND".equals(multipleSearchFilter.getGroupOp()))
                     applyJunctionCriterion(Restrictions.conjunction(), criteria, multipleSearchFilter);
-                else if (multipleSearchFilter.getGroupOp().equals("OR"))
+                else if ("OR".equals(multipleSearchFilter.getGroupOp()))
                     applyJunctionCriterion(Restrictions.disjunction(), criteria, multipleSearchFilter);
             }
         criteria.addOrder(applyOrderBy());
@@ -161,7 +158,7 @@ public abstract class JQueryGridActionSupport extends BaseFormAction {
      * Used when search comes from jqgrid group filtering
      **/
     private void applyJunctionCriterion(final Junction junction, final Criteria criteria,
-            final MultipleSearchFilter multipleSearchFilter) {
+                                        final MultipleSearchFilter multipleSearchFilter) {
         for (final Rule rule : multipleSearchFilter.getRules()) {
             searchOper = rule.getOp();
             searchField = rule.getField();
@@ -173,13 +170,13 @@ public abstract class JQueryGridActionSupport extends BaseFormAction {
 
     /**
      * Implementing Action need to override this method incase the search criteria contains non string values. eg: <code>
-     *  protected Object convertType (String searchField, String searchValue) {
-     *  	Object convertedValue = null;
-     *  	if (searchField.equals("accountNumber")) {
-     *  		convertedValue = new BigDecimal(searchValue);
-     *      }
-     *  	return convertedValue;
-     *  }
+     * protected Object convertType (String searchField, String searchValue) {
+     * Object convertedValue = null;
+     * if (searchField.equals("accountNumber")) {
+     * convertedValue = new BigDecimal(searchValue);
+     * }
+     * return convertedValue;
+     * }
      * </code>
      **/
     protected Object convertValueType(final String searchField, final String searchValue) {
@@ -192,35 +189,35 @@ public abstract class JQueryGridActionSupport extends BaseFormAction {
     private Criterion applyRestriction() {
         final Object convertedValue = convertValueType(searchField, searchString);
 
-        if (searchOper.equals("eq"))
+        if ("eq".equals(searchOper))
             return Restrictions.eq(searchField, convertedValue);
-        else if (searchOper.equals("ne"))
+        else if ("ne".equals(searchOper))
             return Restrictions.ne(searchField, convertedValue);
 
         if (convertedValue instanceof String) {
-            if (searchOper.equals("bw"))
+            if ("bw".equals(searchOper))
                 return Restrictions.ilike(searchField, searchString + "%");
-            else if (searchOper.equals("cn"))
+            else if ("cn".equals(searchOper))
                 return Restrictions.ilike(searchField, "%" + searchString + "%");
-            else if (searchOper.equals("ew"))
+            else if ("ew".equals(searchOper))
                 return Restrictions.ilike(searchField, "%" + searchString);
-            else if (searchOper.equals("bn"))
+            else if ("bn".equals(searchOper))
                 return Restrictions.not(Restrictions.ilike(searchField, searchString + "%"));
-            else if (searchOper.equals("en"))
+            else if ("en".equals(searchOper))
                 return Restrictions.not(Restrictions.ilike(searchField, "%" + searchString));
-            else if (searchOper.equals("nc"))
+            else if ("nc".equals(searchOper))
                 return Restrictions.not(Restrictions.ilike(searchField, "%" + searchString + "%"));
-            else if (searchOper.equals("in"))
+            else if ("in".equals(searchOper))
                 return Restrictions.in(searchField, searchString.split(","));
-            else if (searchOper.equals("ni"))
+            else if ("ni".equals(searchOper))
                 return Restrictions.not(Restrictions.in(searchField, searchString.split(",")));
-        } else if (searchOper.equals("lt"))
+        } else if ("lt".equals(searchOper))
             return Restrictions.lt(searchField, convertedValue);
-        else if (searchOper.equals("le"))
+        else if ("le".equals(searchOper))
             return Restrictions.le(searchField, convertedValue);
-        else if (searchOper.equals("gt"))
+        else if ("gt".equals(searchOper))
             return Restrictions.gt(searchField, convertedValue);
-        else if (searchOper.equals("ge"))
+        else if ("ge".equals(searchOper))
             return Restrictions.ge(searchField, convertedValue);
         return null;
     }
@@ -231,7 +228,7 @@ public abstract class JQueryGridActionSupport extends BaseFormAction {
     private Order applyOrderBy() {
         final String orderBy = sord == null ? ord : sord;
         final String orderByField = sidx == null ? searchField : sidx;
-        if (orderBy.equals("asc"))
+        if ("asc".equals(orderBy))
             return Order.asc(orderByField);
         else
             return Order.desc(orderByField);
@@ -265,8 +262,8 @@ public abstract class JQueryGridActionSupport extends BaseFormAction {
         this.searchOper = searchOper;
     }
 
-    public void set_search(final boolean _search) {
-        this._search = _search;
+    public void set_search(final boolean search) {
+        this._search = search;
     }
 
     public void setSidx(final String sidx) {
@@ -311,6 +308,22 @@ public abstract class JQueryGridActionSupport extends BaseFormAction {
         private String groupOp;
         private List<Rule> rules;
 
+        public String getGroupOp() {
+            return groupOp;
+        }
+
+        public void setGroupOp(final String groupOp) {
+            this.groupOp = groupOp;
+        }
+
+        public List<Rule> getRules() {
+            return rules;
+        }
+
+        public void setRules(final List<Rule> rules) {
+            this.rules = rules;
+        }
+
         class Rule {
             private String field;
             private String op;
@@ -339,22 +352,6 @@ public abstract class JQueryGridActionSupport extends BaseFormAction {
             public void setData(final String data) {
                 this.data = data;
             }
-        }
-
-        public String getGroupOp() {
-            return groupOp;
-        }
-
-        public void setGroupOp(final String groupOp) {
-            this.groupOp = groupOp;
-        }
-
-        public List<Rule> getRules() {
-            return rules;
-        }
-
-        public void setRules(final List<Rule> rules) {
-            this.rules = rules;
         }
     }
 

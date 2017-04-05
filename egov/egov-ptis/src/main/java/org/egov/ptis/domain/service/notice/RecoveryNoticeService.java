@@ -408,7 +408,7 @@ public class RecoveryNoticeService {
                     basicProperty.getUpicNo());
             if (esdNotice == null)
                 errors.add("invalid.esd.not.generated");
-            else if (DateUtils.noOfDays(esdNotice.getNoticeDate(), new Date()) < 15)
+            else if (DateUtils.daysBetween(esdNotice.getNoticeDate(), new Date()) < 15)
                 errors.add("invalid.time.not.lapsed");
         }
     }

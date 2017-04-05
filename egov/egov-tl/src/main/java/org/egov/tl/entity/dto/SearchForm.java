@@ -124,7 +124,7 @@ public class SearchForm {
             if (license.isReadyForRenewal())
                 licenseActions.add("Renew License");
             Date fromRange = new DateTime().withMonthOfYear(1).withDayOfMonth(1).toDate();
-            Date toRange = new DateTime().withMonthOfYear(3).withDayOfMonth(31).toDate();
+            Date toRange = new DateTime().withMonthOfYear(4).withDayOfMonth(1).toDate();
             Date currentDate = new Date();
             if (currentDate.after(fromRange) && currentDate.before(toRange))
                 demandGenerationOption(licenseActions, license);

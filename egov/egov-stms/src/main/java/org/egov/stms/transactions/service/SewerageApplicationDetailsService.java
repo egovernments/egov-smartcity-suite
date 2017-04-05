@@ -88,7 +88,9 @@ import org.egov.demand.model.EgDemand;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.EisCommonService;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.elasticsearch.entity.ApplicationIndex;
 import org.egov.infra.elasticsearch.entity.enums.ApprovalStatus;
@@ -190,6 +192,9 @@ public class SewerageApplicationDetailsService {
 
     @Autowired
     private DocumentTypeMasterService documentTypeMasterService;
+    
+    @Autowired
+    private AppConfigValueService appConfigValuesService;
 
     @Autowired
     public SewerageApplicationDetailsService(
@@ -534,6 +539,19 @@ public class SewerageApplicationDetailsService {
             // final String url = "/stms/application/view/" + sewerageApplicationDetails.getApplicationNumber();
             if (LOG.isDebugEnabled())
                 LOG.debug("Application Index creation Started... ");
+            
+            AppConfigValues slaForSewerageConn =null;
+            if (sewerageApplicationDetails != null && sewerageApplicationDetails.getApplicationType() != null
+                    && SewerageTaxConstants.APPLICATION_TYPE_NAME_NEWCONNECTION
+                            .equals(sewerageApplicationDetails.getApplicationType().getName())) {
+                slaForSewerageConn = getSlaAppConfigValuesForMarriageReg(SewerageTaxConstants.MODULE_NAME,
+                        SewerageTaxConstants.SLAFORNEWSEWERAGECONNECTION);
+            } else if (sewerageApplicationDetails != null && sewerageApplicationDetails.getApplicationType() != null
+                    && SewerageTaxConstants.APPLICATION_TYPE_NAME_CHANGEINCLOSETS
+                            .equals(sewerageApplicationDetails.getApplicationType().getName())) {
+                slaForSewerageConn = getSlaAppConfigValuesForMarriageReg(SewerageTaxConstants.MODULE_NAME,
+                        SewerageTaxConstants.SLAFORCHANGEINCLOSET);
+            }
             applicationIndex = ApplicationIndex.builder().withModuleName(APPL_INDEX_MODULE_NAME)
                     .withApplicationNumber(sewerageApplicationDetails.getApplicationNumber())
                     .withApplicationDate(sewerageApplicationDetails.getApplicationDate())
@@ -547,6 +565,8 @@ public class SewerageApplicationDetailsService {
                     .withChannel(Source.SYSTEM.toString()).withDisposalDate(sewerageApplicationDetails.getDisposalDate())
                     .withMobileNumber(mobileNumber.toString()).withClosed(ClosureStatus.NO)
                     .withAadharNumber(aadharNumber.toString())
+                    .withSla(slaForSewerageConn != null && slaForSewerageConn.getValue() != null
+                    ? Integer.valueOf(slaForSewerageConn.getValue()) : 0)
                     .withApproved(ApprovalStatus.INPROGRESS).build();
             applicationIndexService.createApplicationIndex(applicationIndex);
             if (LOG.isDebugEnabled())
@@ -554,7 +574,12 @@ public class SewerageApplicationDetailsService {
             sewerageIndexService.createSewarageIndex(sewerageApplicationDetails, assessmentDetails);
         }
     }
-
+    
+    public AppConfigValues getSlaAppConfigValuesForMarriageReg(final String moduleName, final String keyName) {
+        final List<AppConfigValues> appConfigValues = appConfigValuesService.getConfigValuesByModuleAndKey(moduleName, keyName);
+        return !appConfigValues.isEmpty() ? appConfigValues.get(0) : null;
+    }
+    
     public BigDecimal getTotalAmount(final SewerageApplicationDetails sewerageApplicationDetails) {
         final BigDecimal balance = BigDecimal.ZERO;
         if (sewerageApplicationDetails != null) {

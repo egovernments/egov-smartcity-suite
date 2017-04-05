@@ -448,7 +448,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         basicPropertyService.applyAuditing(property.getState());
         if (loggedUserIsMeesevaUser && property.getMeesevaApplicationNumber() != null)
             basicProperty.setSource(PropertyTaxConstants.SOURCEOFDATA_MEESEWA);
-        propService.updateIndexes(property, APPLICATION_TYPE_NEW_ASSESSENT);
+       // propService.updateIndexes(property, APPLICATION_TYPE_NEW_ASSESSENT);
         propService.processAndStoreDocument(property.getAssessmentDocuments());
         if (!loggedUserIsMeesevaUser)
             basicPropertyService.persist(basicProperty);

@@ -128,6 +128,7 @@ public class ComplaintController extends ApiController {
     private static final String LOCATION_ID = "locationId";
     private static final String INVALID_PAGE_NUMBER_ERROR = "Invalid Page Number";
     private static final String HAS_NEXT_PAGE = "hasNextPage";
+
     @Autowired
     protected ComplaintStatusService complaintStatusService;
     @Autowired
@@ -364,7 +365,7 @@ public class ComplaintController extends ApiController {
      * This will upload complaint support document
      *
      * @param complaintNo
-     * @param files
+     * @param file
      * @return
      */
     @RequestMapping(value = {ApiUrl.COMPLAINT_UPLOAD_SUPPORT_DOCUMENT}, method = RequestMethod.POST)
@@ -399,9 +400,17 @@ public class ComplaintController extends ApiController {
             if (complaintNo == null)
                 return getResponseHandler().error("Invalid number");
             final Complaint complaint = complaintService.getComplaintByCRN(complaintNo);
+
+            Boolean isSkippableForward = false;
+
+            //this condition is only applicable for employee
+            if (securityUtils.getCurrentUser().getType().equals(UserType.EMPLOYEE))
+                isSkippableForward = complaintService.canSendToPreviousAssignee(complaint);
+
             if (complaint == null)
                 return getResponseHandler().error("no complaint information");
-            return getResponseHandler().setDataAdapter(new ComplaintAdapter()).success(complaint);
+            return getResponseHandler().setDataAdapter(new ComplaintAdapter(isSkippableForward)).success(complaint);
+
         } catch (final Exception e) {
             LOGGER.error(EGOV_API_ERROR, e);
             return getResponseHandler().error(getMessage(SERVER_ERROR));
@@ -488,8 +497,6 @@ public class ComplaintController extends ApiController {
     /**
      * This will returns resolved and unresolved complaints count in the city.
      *
-     * @param page
-     * @param pageSize
      * @return Complaint
      */
 
@@ -509,8 +516,6 @@ public class ComplaintController extends ApiController {
     /**
      * This will returns complaints count by status of current user.
      *
-     * @param page
-     * @param pageSize
      * @return Complaint
      */
 
@@ -675,7 +680,7 @@ public class ComplaintController extends ApiController {
      * This will update the status of the complaint.
      *
      * @param complaintNo
-     * @param As          a json object ( action, comment)
+     * @param jsonData    a json object ( action, comment)
      * @return Complaint
      */
 
@@ -752,17 +757,22 @@ public class ComplaintController extends ApiController {
             final Complaint complaint = complaintService.getComplaintByCRN(complaintNo);
             final ComplaintStatus cmpStatus = complaintStatusService.getByName(complaintJson.get("action").getAsString());
             final String keyApprovalPosition = "approvalposition";
+            final String keyIsSendBack="issendback";
 
             complaint.setStatus(cmpStatus);
 
             Long approvalPosition = 0l;
+            Boolean isSendBack=false;
 
             if (complaintJson.has(keyApprovalPosition))
                 approvalPosition = Long.valueOf(complaintJson.get(keyApprovalPosition).getAsString());
 
+            if(complaintJson.has(keyIsSendBack))
+                isSendBack=complaintJson.get(keyIsSendBack).getAsBoolean();
+
             if (files.length > 0)
                 complaint.getSupportDocs().addAll(addToFileStore(files));
-            complaintService.update(complaint, approvalPosition, complaintJson.get("comment").getAsString(), false);
+            complaintService.update(complaint, approvalPosition, complaintJson.get("comment").getAsString(), isSendBack);
             return getResponseHandler().success("", getMessage("msg.complaint.status.update.success"));
         } catch (final Exception e) {
             LOGGER.error(EGOV_API_ERROR, e);

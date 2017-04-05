@@ -39,6 +39,8 @@
  */
 
 jQuery(document).ready(function($) {
+	$('#dueReportResultForm-header').hide();
+	$('#reportgeneration-header').hide();
 	
 	var redirectUrl="";
 	var oTable="";
@@ -114,7 +116,7 @@ function submitForm(redirectUrl,oTable) {
 	if($('form').valid()){
 		var today = getdate();
 		$('#reportgeneration-header').show();
-		 $.post(redirectUrl+$('#dueReportResultForm').serialize())
+		 $.get(redirectUrl+$('#dueReportResultForm').serialize())
 			.done(function(searchResult) {
 				console.log(JSON.stringify(searchResult));
 		oDataTable=oTable.DataTable({
@@ -156,8 +158,8 @@ function submitForm(redirectUrl,oTable) {
 				          { "data" : "lcNumber", "title": "LC Number","sClass" : "text-center"},
 					      { "data" : "caseTitle" , "title": "Case Title","sClass" : "text-center"},  
 						  { "data" : "courtName", "title": "Court Name","sClass" : "text-center"},
-						  { "data" : "petName", "title": "Petitioners","sClass" : "text-center"},
-						  { "data" : "resName", "title": "Respondants","sClass" : "text-center"},
+						  { "data" : "petitionerName", "title": "Petitioners","sClass" : "text-center"},
+						  { "data" : "respondantName", "title": "Respondants","sClass" : "text-center"},
 						  { "data" : "standingCounsel", "title": "Standing Council","sClass" : "text-center"},
 						  { "data" : "officerIncharge", "title": "In Charge Officer","sClass" : "text-center"},
 						  { "data" : "nextDate", "title": "Important Date","sClass" : "text-center"}
@@ -182,4 +184,21 @@ function submitForm(redirectUrl,oTable) {
 	}
 function openLegalCase(lcNumber) {
 	window.open("/lcms/application/view/?lcNumber="+ lcNumber , "", "height=650,width=980,scrollbars=yes,left=0,top=0,status=yes");
+}
+
+function getdate()
+{
+	var today = new Date();
+    var dd = today.getDate();
+    var mm = today.getMonth()+1; //January is 0!
+
+    var yyyy = today.getFullYear();
+    if(dd<10){
+        dd='0'+dd
+    } 
+    if(mm<10){
+        mm='0'+mm
+    } 
+    var today = dd+'/'+mm+'/'+yyyy;
+    return today;
 }

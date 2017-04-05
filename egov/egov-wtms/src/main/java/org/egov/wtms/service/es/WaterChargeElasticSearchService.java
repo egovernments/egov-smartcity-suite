@@ -56,7 +56,6 @@ import java.util.Map.Entry;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.CFinancialYear;
-import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.commons.service.CFinancialYearService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.utils.DateUtils;
@@ -174,7 +173,7 @@ public class WaterChargeElasticSearchService {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Time taken by getTotalDemandBasedOnInputFilters() is (millisecs) : " + timeTaken);
         startTime = System.currentTimeMillis();
-        final int noOfMonths = DateUtils.noOfMonths(fromDate, toDate) + 1;
+        final int noOfMonths = DateUtils.noOfMonthsBetween(fromDate, toDate) + 1;
         collectionIndexDetails.setTotalDmd(totalDemand);
 
         // Proportional Demand = (totalDemand/12)*noOfmonths
@@ -411,7 +410,7 @@ public class WaterChargeElasticSearchService {
             } else
                 taxDetail.setUlbName(fieldName);
             // Proportional Demand = (totalDemand/12)*noOfmonths
-            final int noOfMonths = DateUtils.noOfMonths(fromDate, toDate) + 1;
+            final int noOfMonths = DateUtils.noOfMonthsBetween(fromDate, toDate) + 1;
             final Sum totalDemandAggregation = entry.getAggregations().get(TOTALDEMAND);
             final Sum totalCollectionAggregation = entry.getAggregations().get(TOTAL_COLLECTION);
             final BigDecimal totalDemandValue = BigDecimal.valueOf(totalDemandAggregation.getValue()).setScale(0,

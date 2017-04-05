@@ -1,17 +1,4 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: jayashree
-  Date: 7/3/17
-  Time: 3:40 PM
-  To change this template use File | Settings | File Templates.
---%>
 <%@ include file="/includes/taglibs.jsp" %>
-<%@ page language="java" pageEncoding="UTF-8" %>
-<html>
-<head>
-    <title>Title</title>
-</head>
-<body>
 <div id="content" class="printable">
     <div class="formmainbox panel-primary">
         <div class="subheadnew text-center" id="headingdiv">
@@ -30,7 +17,7 @@
         <s:set value="outstandingFee" var="feeInfo"></s:set>
         <s:if test="%{#attr.feeInfo.size > 0}">
             <div class="panel-heading  custom_form_panel_heading subheadnew">
-                <div class="panel-title"><s:text name='licensefee.verification.title'/></div>
+                <div class="panel-title"><s:text name='title.licensefee.detail'/></div>
             </div>
             <table class="table table-bordered" style="width:97%;margin:0 auto;">
                 <thead>
@@ -63,5 +50,3 @@
     <a href='javascript:void(0)' class='btn btn-default' onclick='self.close()'>Close</a>
 </div>
 </s:form>
-</body>
-</html>

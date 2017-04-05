@@ -88,6 +88,7 @@
                 <th><spring:message code="lbl.name"/></th>
                 <th><spring:message code="lbl.licenseAppType"/></th>
                 <th><spring:message code="lbl.mandatory"/></th>
+                <th><spring:message code="lbl.enabled"/></th>
                 <th><spring:message code="lbl.action"/></th>
             </tr>
             </thead>

@@ -42,6 +42,7 @@ package org.egov.infra.utils;
 
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.joda.time.DateTime;
+import org.joda.time.Days;
 import org.joda.time.LocalDate;
 import org.joda.time.Months;
 import org.joda.time.Years;
@@ -126,27 +127,22 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
         return new DateTime(date).withTimeAtStartOfDay().toDate();
     }
 
-    public static Date[] getStartAndEndOfDay(final Date startDate, final Date endDate) {
-        return new Date[]{startOfDay(startDate), endOfDay(endDate)};
-    }
-
-    public static int getNumberOfYearPassesed(final Date startDate, final Date endDate) {
-        return new DateTime(endDate).getYear() - new DateTime(startDate).getYear();
-    }
-
-    public static int noOfMonths(final Date startDate, final Date endDate) {
+    public static int noOfMonthsBetween(final Date startDate, final Date endDate) {
         final DateTime sDate = new DateTime(startDate);
         final DateTime eDate = new DateTime(endDate);
         return Months.monthsBetween(sDate.withDayOfMonth(sDate.getDayOfMonth()), eDate.withDayOfMonth(eDate.getDayOfMonth()))
                 .getMonths();
     }
 
-    public static int noOfDays(final Date startDate, final Date endDate) {
-        return (int) ((endDate.getTime() - startDate.getTime())
-                / (1000 * 60 * 60 * 24));
+    public static int daysBetween(final Date startDate, final Date endDate) {
+        return daysBetween(new DateTime(startDate), new DateTime(endDate));
     }
 
-    public static int noOfYears(final Date startDate, final Date endDate) {
+    public static int daysBetween(final DateTime startDate, final DateTime endDate) {
+        return Days.daysBetween(startDate, endDate).getDays();
+    }
+
+    public static int noOfYearsBetween(final Date startDate, final Date endDate) {
         final DateTime sDate = new DateTime(startDate);
         final DateTime eDate = new DateTime(endDate);
         Years years = Years.yearsBetween(sDate, eDate);

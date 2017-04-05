@@ -253,7 +253,7 @@ public class PTBillServiceImpl extends BillServiceInterface {
             key = installmentDate.getMonthOfYear() + "/" + installmentDate.getYear() + "-" + DEMANDRSN_CODE_REBATE;
             billDetailBean = new BillDetailBean(currInstallments.get(CURRENTYEAR_FIRST_HALF), orderMap.get(key), key,
                     earlyPayRebate, PropertyTaxConstants.GLCODE_FOR_TAXREBATE, DEMANDRSN_CODE_REBATE,
-                    Integer.valueOf(0), PURPOSE.REBATE.toString());
+                    Integer.valueOf(1), PURPOSE.REBATE.toString());
             billDetails.add(createBillDet(billDetailBean));
         }
     }

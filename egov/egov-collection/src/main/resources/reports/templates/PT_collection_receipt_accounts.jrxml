@@ -39,7 +39,7 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 <!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
-<!-- 2016-07-26T15:22:58 -->
+<!-- 2017-04-04T12:44:05 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="collection_receipt_accounts" language="groovy" pageWidth="551" pageHeight="802" columnWidth="551" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isFloatColumnFooter="true" uuid="dbbc36f2-fb09-429d-8985-50a04d1a0b3f">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -157,7 +157,7 @@
 		<initialValueExpression><![CDATA[BigDecimal.valueOf(0)]]></initialValueExpression>
 	</variable>
 	<variable name="totalAmountBalance" class="java.math.BigDecimal" calculation="Sum">
-		<variableExpression><![CDATA[!"ADVANCE_AMOUNT".equals($F{purpose}) ? ($F{creditAmountToBePaid}-$F{crAmount}) : BigDecimal.ZERO]]></variableExpression>
+		<variableExpression><![CDATA[!("ADVANCE_AMOUNT".equals($F{purpose}) || "REBATE".equals($F{purpose})) ? ($F{creditAmountToBePaid}-$F{crAmount}) : BigDecimal.ZERO]]></variableExpression>
 		<initialValueExpression><![CDATA[BigDecimal.valueOf(0)]]></initialValueExpression>
 	</variable>
 	<variable name="chequeBounceTotalBalance" class="java.math.BigDecimal" calculation="Sum">
