@@ -1160,8 +1160,8 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
         billReceipts.add(new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO, persistenceService,
                 bouncedInstrumentInfo));
 
-        if (updateBillingSystem(receiptHeader.getService(), billReceipts, billingService)
-                || receiptHeader.getService().getCode().equals(CollectionConstants.SERVICECODE_LAMS)) {
+        if (receiptHeader.getService().getCode().equals(CollectionConstants.SERVICECODE_LAMS)
+                || updateBillingSystem(receiptHeader.getService(), billReceipts, billingService)) {
             receiptHeader.setIsReconciled(true);
             // the receipts should be persisted again
             super.persist(receiptHeader);
