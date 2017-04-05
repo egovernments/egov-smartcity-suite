@@ -72,11 +72,11 @@ jQuery(document).ready(function($) {
 				},
 				filter : function(data) {
 			
-					return $.map(data, function(value, key) {
+					return $.map(data, function(value) {
 						
 						return {
 							name : value,
-							value : key
+							value : value
 						};
 						
 					});
@@ -171,7 +171,7 @@ function submitForm() {
 						"title" : "Aggregated By",
 						"sClass" : "text-center"
 					}, {
-						"data" : "noOfCase",
+						"data" : "count",
 						"title" : "Number Of Cases",
 						"sClass" : "text-center"
 					}
@@ -181,7 +181,7 @@ function submitForm() {
 							$('td:eq(2)', row).html(
 									'<a href="javascript:void(0);" onclick="setHiddenValueByLink(\''
 											+ data.aggregatedBy + '\')">'
-											+ data.noOfCase + '</a>');
+											+ data.count + '</a>');
 							return row;
 					  
 					}
@@ -218,12 +218,7 @@ function getdate() {
 
 function callAjaxBydrillDownReport(aggregatedByValues) {
 	
-	var caseNumber = $("#caseNumber").val();
-	var lcNumber = $("#lcNumber").val();
 	var aggregatedBy = $('#aggregatedBy').val();
-	var aggregatedByValue = aggregatedByValues;
-	var fromDate =$("#fromDate").val();
-	var toDate = $("#toDate").val();
 	var today = getdate();
 	
 	oDataTable.clear().draw();
@@ -234,6 +229,15 @@ function callAjaxBydrillDownReport(aggregatedByValues) {
 	
 	$('#genericSubReport-header').show();
 	$('#reportgeneration-header').show();
+	$.ajax({
+		type: "GET",
+		url: "/lcms/reports/genericdrilldownreportresults",
+		cache: true,
+		dataType: "json",
+		data:{'aggregatedBy' :aggregatedBy,
+			'aggregatedByValue': aggregatedByValues}
+	}).done(function(searchResult) {
+	console.log(JSON.stringify(searchResult));
 	oDataTable=oTable.DataTable({
 		dom : "<'row'<'col-xs-4 pull-right'f>r>t<'row add-margin'<'col-md-3 col-xs-6'i><'col-md-2 col-xs-6'l><'col-md-3 col-xs-6 text-right'B><'col-md-4 col-xs-6 text-right'p>>",
 		"autoWidth": false,
@@ -265,19 +269,12 @@ function callAjaxBydrillDownReport(aggregatedByValues) {
 				    }
 				}],
 
-				ajax : {
-					url : "/lcms/reports/genericdrilldownreportresults",
-					data : {
-						'aggregatedBy' :aggregatedBy,
-						'aggregatedByValue': aggregatedByValues
-						
-					}
-				
-				},
+				searchable : true,
+				data : searchResult,
 				columns : [
 				           {"title" : "S.no","sClass" : "text-left"}, 
 						{
-							"data" : "legalcaseno",
+							"data" : "lcNumber",
 							"sTitle" : "Legal Case Number",
 							"className" : "text-left",
 							"render" : function(data, type, full, meta) {
@@ -286,38 +283,38 @@ function callAjaxBydrillDownReport(aggregatedByValues) {
 							}
 						},
 						{
-							"data" : "casenumber",
+							"data" : "caseNumber",
 							"sTitle" : "Case Number",
 							"className" : "text-left"
 						},
 
 						{
-							"data" : "casetitle",
+							"data" : "caseTitle",
 							"sTitle" : "Case Title",
 							"className" : "text-left"
 						},
 						{
-							"data" : "courtname",
+							"data" : "courtName",
 							"sTitle" : "Court Name",
 							"className" : "text-left"
 						},
 						{
-							"data" : "standingcouncil",
+							"data" : "standingCouncil",
 							"sTitle" : "Standing Council",
 							"className" : "text-left"
 						},
 						{
-							"data" : "statusDesc",
+							"data" : "caseStatus",
 							"sTitle" : "Case Status",
 							"className" : "text-left"
 						},
 						{
-							"data" : "petitioners",
+							"data" : "petitionerName",
 							"sTitle" : "Petitioners",
 							"className" : "text-left"
 						},
 						{
-							"data" : "respondants",
+							"data" : "respondantName",
 							"sTitle" : "Respondents",
 							"className" : "text-left"
 						}
@@ -332,9 +329,12 @@ function callAjaxBydrillDownReport(aggregatedByValues) {
             } );
         } ).draw();
 		
+		
+	})
 
-	}
-
+	
+		
+}
 
 	
 
@@ -404,7 +404,7 @@ function submitSubReportStatusForm() {
 					columns : [
 					           {"title" : "S.no","sClass" : "text-left"}, 
 							{
-								"data" : "legalcaseno",
+								"data" : "lcNumber",
 								"sTitle" : "Legal Case Number",
 								"className" : "text-left",
 								"render" : function(data, type, full, meta) {
@@ -413,23 +413,23 @@ function submitSubReportStatusForm() {
 								}
 							},
 							{
-								"data" : "casenumber",
+								"data" : "caseNumber",
 								"sTitle" : "Case Number",
 								"className" : "text-left"
 							},
 
 							{
-								"data" : "casetitle",
+								"data" : "caseTitle",
 								"sTitle" : "Case Title",
 								"className" : "text-left"
 							},
 							{
-								"data" : "courtname",
+								"data" : "courtName",
 								"sTitle" : "Court Name",
 								"className" : "text-left"
 							},
 							{
-								"data" : "standingcouncil",
+								"data" : "standingCouncil",
 								"sTitle" : "Standing Council",
 								"className" : "text-left"
 							},
@@ -440,12 +440,12 @@ function submitSubReportStatusForm() {
 								
 							},
 							{
-								"data" : "petitioners",
+								"data" : "petitionerName",
 								"sTitle" : "Petitioners",
 								"className" : "text-left"
 							},
 							{
-								"data" : "respondants",
+								"data" : "respondantName",
 								"sTitle" : "Respondents",
 								"className" : "text-left"
 							}

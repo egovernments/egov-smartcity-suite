@@ -47,7 +47,7 @@
 	<div class="col-md-12">
 		<form:form class="form-horizontal form-groups-bordered"
 			id="genericSubregisterform" name="genericSubregisterform"
-			modelAttribute="genericSubReportResult" method="get">
+			modelAttribute="legalSubReportResult" method="get">
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
 					<div class="panel-title">Generic Sub Report</div>
@@ -81,13 +81,13 @@
 					<label class="col-sm-2 control-label"><spring:message
 							code="lbl.casecatagory" /> :</label>
 					<div class="col-sm-3 add-margin">
-						<form:select name="casecategoryId" path=""
-							data-first-option="false" id="casecategoryId"
+						<form:select name="caseCategory" path="caseCategory"
+							data-first-option="false" id="caseCategory"
 							cssClass="form-control">
 							<form:option value="">
 								<spring:message code="lbls.select" />
 							</form:option>
-							<form:options items="${caseTypeList}" itemValue="id"
+							<form:options items="${caseTypeList}" itemValue="caseType"
 								itemLabel="caseType" />
 						</form:select>
 					</div>
@@ -103,24 +103,24 @@
 					<label class="col-sm-2 control-label"><spring:message
 							code="lbl.courttype" /> :</label>
 					<div class="col-sm-3 add-margin">
-						<form:select name="courtType" path=""
+						<form:select name="courtType" path="courtType"
 							data-first-option="false" id="courtType" cssClass="form-control">
 							<form:option value="">
 								<spring:message code="lbls.select" />
 							</form:option>
-							<form:options items="${courtTypeList}" itemValue="id"
+							<form:options items="${courtTypeList}" itemValue="courtType"
 								itemLabel="courtType" />
 						</form:select>
 					</div>
 					<label class="col-sm-2 control-label text-right"><spring:message
 							code="lbl.court" /> :</label>
 					<div class="col-sm-3 add-margin">
-						<form:select name="courtId" path=""
-							data-first-option="false" id="courtId" cssClass="form-control">
+						<form:select name="courtName" path="courtName"
+							data-first-option="false" id="courtName" cssClass="form-control">
 							<form:option value="">
 								<spring:message code="lbls.select" />
 							</form:option>
-							<form:options items="${courtsList}" itemValue="id"
+							<form:options items="${courtsList}" itemValue="name"
 								itemLabel="name" />
 						</form:select>
 					</div>
@@ -130,26 +130,26 @@
 					<label class="col-sm-2 control-label"><spring:message
 							code="lbl.judgmentype" /> :</label>
 					<div class="col-sm-3 add-margin">
-						<form:select name="judgmentTypeId" path=""
-							data-first-option="false" id="judgmentTypeId"
+						<form:select name="judgmentType" path="judgmentType"
+							data-first-option="false" id="judgmentType"
 							cssClass="form-control">
 							<form:option value="">
 								<spring:message code="lbls.select" />
 							</form:option>
-							<form:options items="${judgmentTypeList}" itemValue="id"
+							<form:options items="${judgmentTypeList}" itemValue="name"
 								itemLabel="name" />
 						</form:select>
 					</div>
 					<label class="col-sm-2 control-label text-right"><spring:message
 							code="lbl.petitiontype" /> :</label>
 					<div class="col-sm-3 add-margin">
-						<form:select name="petitionTypeId" path=""
-							data-first-option="false" id="petitionTypeId"
+						<form:select name="petitionType" path="petitionType"
+							data-first-option="false" id="petitionType"
 							cssClass="form-control">
 							<form:option value="">
 								<spring:message code="lbls.select" />
 							</form:option>
-							<form:options items="${petitiontypeList}" itemValue="id"
+							<form:options items="${petitiontypeList}" itemValue="petitionType"
 								itemLabel="petitionType" />
 						</form:select>
 					</div>
@@ -158,12 +158,12 @@
 					<label class="col-sm-2 control-label text-right"><spring:message
 							code="lbl.casestatus" /> :</label>
 					<div class="col-sm-3 add-margin">
-						<form:select name="caseStatus" path=""
+						<form:select name="caseStatus" path="caseStatus"
 							data-first-option="false" id="caseStatus" cssClass="form-control">
 							<form:option value="">
 								<spring:message code="lbls.select" />
 							</form:option>
-							<form:options items="${statusList}" itemValue="code"
+							<form:options items="${statusList}" itemValue="description"
 								itemLabel="description" />
 						</form:select>
 					</div>
@@ -179,13 +179,13 @@
 					<label class="col-sm-2 control-label text-right"><spring:message
 							code="lbl.reportstatus" />:</label>
 					<div class="col-sm-3 add-margin">
-						<form:select name="reportStatusId" path=""
-							data-first-option="false" id="reportStatusId"
+						<form:select name="reportStatus" path="reportStatus"
+							data-first-option="false" id="reportStatus"
 							cssClass="form-control">
 							<form:option value="">
 								<spring:message code="lbls.select" />
 							</form:option>
-							<form:options items="${reportStatusList}" itemValue="id"
+							<form:options items="${reportStatusList}" itemValue="name"
 								itemLabel="name" />
 						</form:select>
 					</div>
@@ -195,17 +195,17 @@
 							code="lbl.fromDate" /> :
 					</label>
 					<div class="col-sm-3 add-margin">
-						<input type="text" name="fromDate" path=""
+						<input type="text" name="caseFromDate" path=""
 							class="form-control datepicker" data-date-end-date="0d"
-							id="fromDate" data-inputmask="'mask': 'd/m/y' onblur=" onchnageofDate()"/>
+							id="caseFromDate" data-inputmask="'mask': 'd/m/y' onblur=" onchnageofDate()"/>
 					</div>
 					<label class="col-sm-2 control-label text-right"> <spring:message
 							code="lbl.toDate" /> :
 					</label>
 					<div class="col-sm-3 add-margin">
-						<input type="text" name="toDate" path=""
-							class="form-control datepicker " data-date-end-date="0d"
-							id="toDate" data-inputmask="'mask': 'd/m/y'" />
+						<input type="text" name="caseToDate" path=""
+							class="form-control datepicker today" data-date-end-date="0d"
+							id="caseToDate" data-inputmask="'mask': 'd/m/y'" />
 					</div>
 				</div>
 				</div>

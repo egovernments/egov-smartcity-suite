@@ -80,6 +80,7 @@ public class LegalCommonReportService {
     public static final String MONTHLY = "monthly";
     public static final String YEARLY = "yearly";
     private static final String CASE_DATE = "caseDate";
+    private static final String JUDGEMENTOUTCOME = "judgmentOutcome";
 
     @Autowired
     private LegalCaseDocumentRepository legalCaseDocumentRepository;
@@ -144,6 +145,7 @@ public class LegalCommonReportService {
         legalCommonResultObj.setStandingCounsel(legalcaseDocument.getAdvocateName());
         legalCommonResultObj.setOfficerIncharge(legalcaseDocument.getOfficerIncharge());
         legalCommonResultObj.setCaseStatus(legalcaseDocument.getStatus());
+        legalCommonResultObj.setReportStatus(legalcaseDocument.getSubStatus());
         legalCommonResultObj.setPetitionType(legalcaseDocument.getPetitionType());
         legalCommonResultObj
                 .setNextDate(myFormat.format(dateFormat.parse(legalcaseDocument.getNextDate().toString())));
@@ -160,27 +162,25 @@ public class LegalCommonReportService {
 
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
         boolQuery.filter(QueryBuilders.termQuery("cityName", ApplicationThreadLocals.getCityName()));
-        if (StringUtils.isNotBlank(searchRequest.getAggregatedByValue()) &&
-                searchRequest.getAggregatedBy().equals(LcmsConstants.COURTNAME))
-            boolQuery.filter(QueryBuilders.matchQuery(COURTNAME, searchRequest.getAggregatedByValue()));
-        if (StringUtils.isNotBlank(searchRequest.getAggregatedByValue())
-                && searchRequest.getAggregatedBy().equals(LcmsConstants.PETITIONTYPE))
-            boolQuery.filter(QueryBuilders.matchQuery(PETITIONTYPE, searchRequest.getAggregatedByValue()));
-        else if (StringUtils.isNotBlank(searchRequest.getAggregatedByValue())
-                && searchRequest.getAggregatedBy().equals(LcmsConstants.CASECATEGORY))
-            boolQuery.filter(QueryBuilders.matchQuery(CASETYPE, searchRequest.getAggregatedByValue()));
-        else if (StringUtils.isNotBlank(searchRequest.getAggregatedByValue())
-                && searchRequest.getAggregatedBy().equals(LcmsConstants.CASESTATUS))
-            boolQuery.filter(QueryBuilders.matchQuery(CASESTATUS, searchRequest.getAggregatedByValue()));
-        else if (StringUtils.isNotBlank(searchRequest.getAggregatedByValue())
-                && searchRequest.getAggregatedBy().equals(LcmsConstants.COURTTYPE))
-            boolQuery.filter(QueryBuilders.matchQuery(COURTTYPE, searchRequest.getAggregatedByValue()));
-        else if (StringUtils.isNotBlank(searchRequest.getAggregatedByValue())
-                && searchRequest.getAggregatedBy().equals(LcmsConstants.OFFICERINCHRGE))
-            boolQuery.filter(QueryBuilders.matchQuery(OFFICERINCHRGE, searchRequest.getAggregatedByValue().split("@")[0]));
-        else if (StringUtils.isNotBlank(searchRequest.getAggregatedByValue())
-                && searchRequest.getAggregatedBy().equals(LcmsConstants.STANDINGCOUNSEL))
-            boolQuery.filter(QueryBuilders.matchQuery(STANDINGCOUNSEL, searchRequest.getAggregatedByValue()));
+        if (StringUtils.isNotBlank(searchRequest.getAggregatedByValue())) {
+
+            if (searchRequest.getAggregatedBy().equals(LcmsConstants.COURTNAME))
+                boolQuery.filter(QueryBuilders.matchQuery(COURTNAME, searchRequest.getAggregatedByValue()));
+            if (searchRequest.getAggregatedBy().equals(LcmsConstants.PETITIONTYPE))
+                boolQuery.filter(QueryBuilders.matchQuery(PETITIONTYPE, searchRequest.getAggregatedByValue()));
+            else if (searchRequest.getAggregatedBy().equals(LcmsConstants.CASECATEGORY))
+                boolQuery.filter(QueryBuilders.matchQuery(CASETYPE, searchRequest.getAggregatedByValue()));
+            else if (searchRequest.getAggregatedBy().equals(LcmsConstants.CASESTATUS))
+                boolQuery.filter(QueryBuilders.matchQuery(CASESTATUS, searchRequest.getAggregatedByValue()));
+            else if (searchRequest.getAggregatedBy().equals(LcmsConstants.COURTTYPE))
+                boolQuery.filter(QueryBuilders.matchQuery(COURTTYPE, searchRequest.getAggregatedByValue()));
+            else if (searchRequest.getAggregatedBy().equals(LcmsConstants.OFFICERINCHRGE))
+                boolQuery.filter(QueryBuilders.matchQuery(OFFICERINCHRGE, searchRequest.getAggregatedByValue().split("@")[0]));
+            else if (searchRequest.getAggregatedBy().equals(LcmsConstants.STANDINGCOUNSEL))
+                boolQuery.filter(QueryBuilders.matchQuery(STANDINGCOUNSEL, searchRequest.getAggregatedByValue()));
+            else if (searchRequest.getAggregatedBy().equals(LcmsConstants.JUDGEMENTOUTCOME))
+                boolQuery.filter(QueryBuilders.matchQuery(JUDGEMENTOUTCOME, searchRequest.getAggregatedByValue()));
+        }
         if (StringUtils.isNotBlank(searchRequest.getMonth()) && StringUtils.isNotBlank(searchRequest.getYear())) {
             final Integer monthName = monthValuesMapnumber.get(searchRequest.getMonth());
             // Prepare the start date based on the month number and year
@@ -236,17 +236,40 @@ public class LegalCommonReportService {
                             .lte(new DateTime(newFormat.format(formatter.parse(searchRequest.getCaseToDate())))));
 
             }
-        } else if (StringUtils.isNotBlank(searchRequest.getCaseFromDate()))
+        }
+
+        if (StringUtils.isNotBlank(searchRequest.getCaseFromDate()) && !reportType.equals(LcmsConstants.DUEJUDGEMENTIMPLPREPORT))
             boolQuery = boolQuery.filter(QueryBuilders.rangeQuery(CASE_DATE)
                     .gte(newFormat.format(formatter.parse(searchRequest.getCaseFromDate())))
                     .lte(new DateTime(newFormat.format(formatter.parse(searchRequest.getCaseToDate())))));
 
-        if (StringUtils.isNotBlank(searchRequest.getCaseCategory()))
-            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("caseType", searchRequest.getCaseCategory()));
-
         if (StringUtils.isNotBlank(searchRequest.getOfficerIncharge()))
             boolQuery = boolQuery
-                    .filter(QueryBuilders.termQuery("officerIncharge", searchRequest.getOfficerIncharge().split("@")[0]));
+                    .filter(QueryBuilders.termQuery(OFFICERINCHRGE, searchRequest.getOfficerIncharge().split("@")[0]));
+        if (StringUtils.isNotBlank(searchRequest.getCaseCategory()))
+            boolQuery = boolQuery
+                    .filter(QueryBuilders.termQuery(CASETYPE, searchRequest.getCaseCategory()));
+        if (StringUtils.isNotBlank(searchRequest.getCourtName()))
+            boolQuery = boolQuery
+                    .filter(QueryBuilders.termQuery(COURTNAME, searchRequest.getCourtName()));
+        if (StringUtils.isNotBlank(searchRequest.getCaseStatus()))
+            boolQuery = boolQuery
+                    .filter(QueryBuilders.termQuery(CASESTATUS, searchRequest.getCaseStatus()));
+        if (StringUtils.isNotBlank(searchRequest.getCourtType()))
+            boolQuery = boolQuery
+                    .filter(QueryBuilders.termQuery(COURTTYPE, searchRequest.getCourtType()));
+        if (StringUtils.isNotBlank(searchRequest.getPetitionType()))
+            boolQuery = boolQuery
+                    .filter(QueryBuilders.termQuery(PETITIONTYPE, searchRequest.getPetitionType()));
+        if (StringUtils.isNotBlank(searchRequest.getJudgmentType()))
+            boolQuery = boolQuery
+                    .filter(QueryBuilders.termQuery(JUDGEMENTOUTCOME, searchRequest.getJudgmentType()));
+        if (StringUtils.isNotBlank(searchRequest.getStandingCounsel()))
+            boolQuery = boolQuery
+                    .filter(QueryBuilders.termQuery("advocateName", searchRequest.getStandingCounsel()));
+        if (StringUtils.isNotBlank(searchRequest.getReportStatus()))
+            boolQuery = boolQuery
+                    .filter(QueryBuilders.termQuery("subStatus", searchRequest.getReportStatus()));
 
         return boolQuery;
     }
