@@ -491,15 +491,19 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
             Map<String, Installment> currInstallments = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
                 BigDecimal currentannualtax = instWiseDmdMap.get(currInstallments.get(CURRENTYEAR_FIRST_HALF)).add(
                         instWiseDmdMap.get(currInstallments.get(CURRENTYEAR_SECOND_HALF)));
-                if (installmentPenaltyAndRebate.get(currInstallments.get(CURRENTYEAR_FIRST_HALF)) != null) {
-                    installmentPenaltyAndRebate.get(currInstallments.get(CURRENTYEAR_FIRST_HALF)).setRebate(
-                            calculateEarlyPayRebate(currentannualtax));
-                } else {
-                    PenaltyAndRebate currentpenaltyAndRebate = new PenaltyAndRebate();
-                    currentpenaltyAndRebate.setRebate(calculateEarlyPayRebate(currentannualtax));
-                    installmentPenaltyAndRebate.put(currInstallments.get(CURRENTYEAR_FIRST_HALF),
-                            currentpenaltyAndRebate);
-                }
+                BigDecimal currentannualcollection = instWiseAmtCollMap.get(currInstallments.get(CURRENTYEAR_FIRST_HALF))
+                        .add(instWiseAmtCollMap.get(currInstallments.get(CURRENTYEAR_SECOND_HALF)));
+                if (currentannualtax.compareTo(currentannualcollection) >= 1) {
+                    if (installmentPenaltyAndRebate.get(currInstallments.get(CURRENTYEAR_FIRST_HALF)) != null) {
+                        installmentPenaltyAndRebate.get(currInstallments.get(CURRENTYEAR_FIRST_HALF)).setRebate(
+                                calculateEarlyPayRebate(currentannualtax));
+                    } else {
+                        PenaltyAndRebate currentpenaltyAndRebate = new PenaltyAndRebate();
+                        currentpenaltyAndRebate.setRebate(calculateEarlyPayRebate(currentannualtax));
+                        installmentPenaltyAndRebate.put(currInstallments.get(CURRENTYEAR_FIRST_HALF),
+                                currentpenaltyAndRebate);
+                    }
+             }
         }
     }
 
