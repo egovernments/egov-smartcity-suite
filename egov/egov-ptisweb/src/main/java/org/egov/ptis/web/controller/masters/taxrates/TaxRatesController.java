@@ -139,8 +139,9 @@ public class TaxRatesController {
     @RequestMapping(value = "/view", method = RequestMethod.GET)
     public String showTaxRates(final Model model) {
         DemandReasonDetailsBean taxRatesForm = new DemandReasonDetailsBean();
-        taxRatesForm.setDemandReasonDetails(taxRatesService.getTaxRates());
+        taxRatesForm.setDemandReasonDetails(taxRatesService.excludeOldTaxHeads(taxRatesService.getTaxRates()));
         model.addAttribute(TAX_RATES_FORM, taxRatesForm);
+        addTotalTaxHeadsToModel(model);
         return "taxrates-view";
     }
 
@@ -191,30 +192,16 @@ public class TaxRatesController {
         EgDemandReasonDetails existingDemandReasonDetails;
         BigDecimal netResdPercentage = BigDecimal.ZERO;
         BigDecimal netNonResdPercentage = BigDecimal.ZERO;
-        BigDecimal generalTaxNr = BigDecimal.ZERO;
-        BigDecimal generalTaxResd = BigDecimal.ZERO;
-        BigDecimal netOtherTaxPercentage = BigDecimal.ZERO;
         List<EgDemandReasonDetails> updatedTaxRatesForm = new ArrayList<>();
         for (EgDemandReasonDetails egDemandReasonDetail : taxRatesForm.getDemandReasonDetails()) {
             existingDemandReasonDetails = taxRatesService.getDemandReasonDetailsById(egDemandReasonDetail.getId());
             existingDemandReasonDetails.setPercentage(egDemandReasonDetail.getPercentage());
             updatedTaxRatesForm.add(existingDemandReasonDetails);
-            if (!(existingDemandReasonDetails.getEgDemandReason().getEgDemandReasonMaster().getCode()
-                    .equals(GENERAL_TAX_RESD)
-                    || existingDemandReasonDetails.getEgDemandReason().getEgDemandReasonMaster().getCode()
-                            .equals(GENERAL_TAX_NONRESD)
-                    || existingDemandReasonDetails.getEgDemandReason().getEgDemandReasonMaster().getCode()
-                            .equals(EDUCATIONAL_TAX)))
-                netOtherTaxPercentage = netOtherTaxPercentage.add(existingDemandReasonDetails.getPercentage());
-            else if (existingDemandReasonDetails.getEgDemandReason().getEgDemandReasonMaster().getCode()
-                    .equals(GENERAL_TAX_RESD))
-                generalTaxResd = existingDemandReasonDetails.getPercentage();
-            else if (existingDemandReasonDetails.getEgDemandReason().getEgDemandReasonMaster().getCode()
-                    .equals(GENERAL_TAX_NONRESD))
-                generalTaxNr = existingDemandReasonDetails.getPercentage();
+            if(existingDemandReasonDetails.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster().endsWith("Non Residential"))
+                netNonResdPercentage = netNonResdPercentage.add(existingDemandReasonDetails.getPercentage());
+            else 
+                netResdPercentage = netResdPercentage.add(existingDemandReasonDetails.getPercentage());
         }
-        netResdPercentage = netResdPercentage.add(generalTaxResd).add(netOtherTaxPercentage);
-        netNonResdPercentage = netNonResdPercentage.add(generalTaxNr).add(netOtherTaxPercentage);
         if (new BigDecimal(request.getParameter("genTaxResd")).compareTo(netResdPercentage) != 0) {
             taxRatesForm.setDemandReasonDetails(updatedTaxRatesForm);
             model.addAttribute(MESSAGE, "msg.taxrate.resd.valid");
@@ -232,11 +219,20 @@ public class TaxRatesController {
     }
 
     private void addTotalTaxHeadsToModel(Model model) {
+        BigDecimal totRsdTax=BigDecimal.ZERO;
+        BigDecimal totNRsdTax=BigDecimal.ZERO;
+        BigDecimal eduTax=BigDecimal.ZERO;
         for (EgDemandReasonDetails drd : taxRatesService.getTaxRates()) {
             if (drd.getEgDemandReason().getEgDemandReasonMaster().getCode().equals(TOTAL_TAX_RESD))
-                model.addAttribute("genTaxResd", drd.getPercentage().setScale(2, BigDecimal.ROUND_CEILING));
+                totRsdTax=drd.getPercentage();
             if (drd.getEgDemandReason().getEgDemandReasonMaster().getCode().equals(TOTAL_TAX_NONRESD))
-                model.addAttribute("genTaxNonResd", drd.getPercentage().setScale(2, BigDecimal.ROUND_CEILING));
+                totNRsdTax=drd.getPercentage();
+            if(drd.getEgDemandReason().getEgDemandReasonMaster().getCode().equals(EDUCATIONAL_TAX))
+                eduTax=drd.getPercentage();
         }
+        totRsdTax=totRsdTax.add(eduTax);
+        totNRsdTax=totNRsdTax.add(eduTax);
+        model.addAttribute("genTaxResd", totRsdTax.setScale(2, BigDecimal.ROUND_CEILING));
+        model.addAttribute("genTaxNonResd", totNRsdTax.setScale(2, BigDecimal.ROUND_CEILING));
     }
 }

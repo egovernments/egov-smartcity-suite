@@ -71,42 +71,64 @@
 										<thead>
 											<tr>
 												<th>S.No</th>
-												<th class="text-left">Name</th>
-												<th class="text-left">Percentage</th>
+												<th class="text-left"><spring:message
+														code="lbl.isResidential" /></th>
+												<th class="text-left"><spring:message
+														code="lbl.percentage" /></th>
+												<th class="text-left"><spring:message
+														code="lbl.propertytype.resd" /></th>
+												<th class="text-left"><spring:message
+														code="lbl.percentage" /></th>
 											</tr>
 										</thead>
 										<tbody>
-											<c:set var="count" value="1" />
-											<c:forEach var="taxRate"
-												items="${taxRatesForm.demandReasonDetails}"
-												varStatus="status">
-												<tr>
-													<td><c:out value="${status.count}" /></td>
-													<form:input path="demandReasonDetails[${status.index}].id"
-														type="hidden" value="${taxRate.id}" name="reasonDetailsId"
-														id="reasonDetailsId" />
-													<td><c:out
-															value="${taxRate.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster()}" /></td>
-													<td class="bluebox"><fmt:formatNumber
-															var="formattedRate" type="number" minFractionDigits="2"
-															maxFractionDigits="2" value="${taxRate.percentage}" /> <form:input
-															path="demandReasonDetails[${status.index}].percentage"
-															name="percentage" id="percentage"
-															value="${taxRate.percentage}" /></td>
-												</tr>
-												<c:set var="count" value="${status.count+1}" />
-											</c:forEach>
 											<tr>
-												<td></td>
-												<td>Total Residential Tax</td>
-												<td><input name="genTaxResd" id="sum"
-													value="${genTaxResd}" readonly="true"></td>
+												<c:set var="count" value="1" />
+												<c:forEach var="taxRate"
+													items="${taxRatesForm.demandReasonDetails}"
+													varStatus="status">
+													<c:if test="${status.index % 2 == 0}">
+											</tr>
+											<tr>
+												<td><c:out value="${count}" /></td>
+												<c:set var="count" value="${count + 1}" />
+												</c:if>
+
+												<form:input path="demandReasonDetails[${status.index}].id"
+													type="hidden" value="${taxRate.id}" name="reasonDetailsId"
+													id="reasonDetailsId" />
+												<c:choose>
+													<c:when
+														test="${fn:endsWith(taxRate.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster(), 'Non Residential')}">
+														<td><c:out
+																value="${fn:substringBefore(taxRate.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster(), 'Non')}" /></td>
+													</c:when>
+													<c:otherwise>
+														<td><c:out
+																value="${fn:substringBefore(taxRate.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster(), 'Residential')}" /></td>
+													</c:otherwise>
+												</c:choose>
+
+												<td class="bluebox"><fmt:formatNumber
+														var="formattedRate" type="number" minFractionDigits="2"
+														maxFractionDigits="2" value="${taxRate.percentage}" /> <form:input
+														path="demandReasonDetails[${status.index}].percentage"
+														name="percentage" id="percentage"
+														class="patternvalidation" data-pattern="decimalvalue"
+														autocomplete="off" maxlength="5"
+														value="${taxRate.percentage}" /></td>
+												</c:forEach>
 											</tr>
 											<tr>
 												<td></td>
-												<td>Total Non Residential Tax</td>
+												<td><spring:message code="lbl.total.nresd" /></td>
 												<td><input name="genTaxNonResd" id="sum"
 													value="${genTaxNonResd}" readonly="true"></td>
+
+												<td><spring:message code="lbl.total.resd" /></td>
+												<td><input name="genTaxResd" id="sum"
+													value="${genTaxResd}" readonly="true"></td>
+
 											</tr>
 										</tbody>
 									</table>
