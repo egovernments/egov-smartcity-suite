@@ -49,6 +49,7 @@ import org.egov.bpa.application.repository.ApplicationBpaRepository;
 import org.egov.bpa.application.service.collection.GenericBillGeneratorService;
 import org.egov.bpa.service.BpaStatusService;
 import org.egov.bpa.utils.BpaConstants;
+import org.egov.demand.model.EgDemand;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.hibernate.Criteria;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -95,17 +96,21 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         applicationBpaRepository.saveAndFlush(application);
     }
 
-    public void setAdmissionFeeAmountForRegistration(final BpaApplication application) {
-        if (application.getServiceType() != null && application.getServiceType().getId() != null) {
-            final BigDecimal admissionfeeAmount = getTotalFeeAmountByPassingServiceTypeandArea(
-                    application.getServiceType().getId(), BpaConstants.ADMISSIONFEEREASON);
-            application.setAdmissionfeeAmount(admissionfeeAmount);
-        } else {
-            final BigDecimal admissionfeeAmount = getTotalFeeAmountByPassingServiceTypeandArea(2l,
-                    BpaConstants.ADMISSIONFEEREASON);
-            application.setAdmissionfeeAmount(admissionfeeAmount);
-        }
+    @Transactional
+    public void updateApplication(final BpaApplication application) {
+        applicationBpaRepository.save(application);
     }
+
+    public BigDecimal setAdmissionFeeAmountForRegistration(final String serviceType) {
+        BigDecimal admissionfeeAmount;
+       if (serviceType != null) {
+           admissionfeeAmount = getTotalFeeAmountByPassingServiceTypeandArea(
+                   Long.valueOf(serviceType), BpaConstants.ADMISSIONFEEREASON);
+       } else {
+           admissionfeeAmount=BigDecimal.ZERO;
+       }
+       return admissionfeeAmount;
+   }
 
     public BigDecimal getTotalFeeAmountByPassingServiceTypeandArea(final Long serviceTypeId, final String feeType) {
         BigDecimal totalAmount = BigDecimal.ZERO;
@@ -118,6 +123,13 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
             throw new ApplicationRuntimeException("Service Type Id is mandatory.");
 
         return totalAmount;
+    }
+    
+    public BpaApplication getApplicationByDemand(final EgDemand demand) {
+        return applicationBpaRepository.findByDemand(demand);
+    }
+    public BpaApplication findByApplicationNumber(final String applicationNumber) {
+        return applicationBpaRepository.findByApplicationNumber(applicationNumber);
     }
 
 }

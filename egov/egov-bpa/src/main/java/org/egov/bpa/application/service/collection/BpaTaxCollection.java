@@ -56,6 +56,8 @@ import org.egov.bpa.application.entity.BpaApplication;
 import org.egov.bpa.application.entity.CollectionApportioner;
 import org.egov.bpa.application.service.ApplicationBpaBillService;
 import org.egov.bpa.application.service.ApplicationBpaService;
+import org.egov.bpa.application.workflow.BpaApplicationWorkflowCustomDefaultImpl;
+import org.egov.bpa.service.BpaUtils;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.integration.models.BillReceiptInfo;
@@ -92,6 +94,9 @@ public class BpaTaxCollection extends TaxCollection {
     private EgBillDao egBillDAO;
     @Autowired
     private ModuleService moduleService;
+    
+    @Autowired
+    private BpaUtils bpaUtils;
 
     @Autowired
     private ApplicationBpaService applicationBpaService;
@@ -205,8 +210,15 @@ public class BpaTaxCollection extends TaxCollection {
      */
     @Transactional
     public void updateBpaApplication(final EgDemand demand) {
-        final BpaApplication application = applicationBpaBillService
+        final BpaApplication application = applicationBpaService
                 .getApplicationByDemand(demand);
+           Long approvalPosition ;
+            final BpaApplicationWorkflowCustomDefaultImpl applicationWorkflowCustomDefaultImpl = bpaUtils
+                    .getInitialisedWorkFlowBean();
+            approvalPosition = bpaUtils.getUserPositionByZone(application.getSiteDetail().get(0)!=null ? application.getSiteDetail().get(0).getAdminBoundary():null);
+            applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(application,
+                    approvalPosition,"BPA Admission fees collected",
+                    BpaConstants.CREATE_ADDITIONAL_RULE_CREATE, null);
         // update status and initialize workflow
         applicationBpaService.saveAndFlushApplication(application);
 
@@ -413,7 +425,7 @@ public class BpaTaxCollection extends TaxCollection {
         BigDecimal currentInstallmentAmount = BigDecimal.ZERO;
         final BigDecimal advanceInstallmentAmount = BigDecimal.ZERO;
         final BigDecimal arrearAmount = BigDecimal.ZERO;
-        applicationBpaBillService
+        applicationBpaService
                 .getApplicationByDemand(egBill.getEgDemand());
         final List<ReceiptDetail> reciptDetailList = collectionService
                 .getReceiptDetailListByReceiptNumber(billReceiptInfo.getReceiptNum());

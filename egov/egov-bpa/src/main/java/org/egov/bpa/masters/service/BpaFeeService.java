@@ -37,29 +37,25 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.bpa.web.controller;
+package org.egov.bpa.masters.service;
 
-import java.math.BigDecimal;
+import java.util.List;
 
-import org.egov.bpa.application.service.ApplicationBpaService;
+import org.egov.bpa.application.entity.BpaFee;
+import org.egov.bpa.masters.repository.BpaFeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-@Controller
-public class BpaAjaxController {
-    
+@Service
+@Transactional(readOnly = true)
+public class BpaFeeService {
+
     @Autowired
-    private ApplicationBpaService  applicationBpaService;
-    
-    @RequestMapping(value = "/ajax/getAdmissionFees", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public BigDecimal isConnectionPresentForProperty(@RequestParam final String serviceType) {
-        return applicationBpaService.setAdmissionFeeAmountForRegistration(serviceType);
+    private BpaFeeRepository bpaFeeRepository;
+
+    public List<BpaFee> findAll() {
+        return bpaFeeRepository.findAll();
     }
 
 }

@@ -57,7 +57,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-@RequestMapping(value = "/application")
+@RequestMapping(value = "/application/")
 public class NewApplicationController extends BpaGenericApplicationController {
 
     @Autowired
@@ -69,7 +69,6 @@ public class NewApplicationController extends BpaGenericApplicationController {
     @RequestMapping(value = "/newApplication-newform", method = GET)
     public String showNewApplicationForm(@ModelAttribute final BpaApplication bpaApplication,
             final Model model, final HttpServletRequest request) {
-        applicationBpaService.setAdmissionFeeAmountForRegistration(bpaApplication);
         return "newapplication-form";
     }
 
@@ -78,7 +77,7 @@ public class NewApplicationController extends BpaGenericApplicationController {
             final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
             final HttpServletRequest request, final Model model,
             final BindingResult errors) {
-
+        bpaApplication.setAdmissionfeeAmount(applicationBpaService.setAdmissionFeeAmountForRegistration(String.valueOf(bpaApplication.getServiceType().getId())));
         applicationBpaService.createNewApplication(bpaApplication);
         return genericBillGeneratorService.generateBillAndRedirectToCollection(bpaApplication, model);
     }

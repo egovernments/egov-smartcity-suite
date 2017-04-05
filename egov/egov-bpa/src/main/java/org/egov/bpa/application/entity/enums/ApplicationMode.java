@@ -37,29 +37,15 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.bpa.web.controller;
+package org.egov.bpa.application.entity.enums;
 
-import java.math.BigDecimal;
+import org.apache.commons.lang3.StringUtils;
 
-import org.egov.bpa.application.service.ApplicationBpaService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+public enum ApplicationMode {
+    NEW , REVISED, OTHERS;
 
-@Controller
-public class BpaAjaxController {
-    
-    @Autowired
-    private ApplicationBpaService  applicationBpaService;
-    
-    @RequestMapping(value = "/ajax/getAdmissionFees", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public BigDecimal isConnectionPresentForProperty(@RequestParam final String serviceType) {
-        return applicationBpaService.setAdmissionFeeAmountForRegistration(serviceType);
+    @Override
+    public String toString() {
+        return StringUtils.capitalize(name());
     }
-
 }

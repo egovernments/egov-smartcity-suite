@@ -44,7 +44,7 @@ jQuery(document).ready(function($) {
 });
 
 $('#serviceType').change(function(){
-	console.log("came on change of ward"+$('#ward').val());
+	console.log("came on change of ward"+$('serviceType').val());
 	jQuery.ajax({
 		url: "/bpa/ajax/getAdmissionFees",
 		type: "GET",
@@ -54,9 +54,10 @@ $('#serviceType').change(function(){
 		cache: false,
 		dataType: "json",
 		success: function (response) {
-			jQuery.each(response, function(index, value) {
-				jQuery('#admissionfeeAmount').val(value);
-			});
+			
+				$("#admissionfeeAmount").prop("disabled", true);
+				jQuery('#admissionfeeAmount').val(response);
+
 		}, 
 		error: function (response) {
 			

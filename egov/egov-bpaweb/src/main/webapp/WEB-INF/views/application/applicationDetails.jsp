@@ -46,18 +46,19 @@
 <div class="panel-heading custom_form_panel_heading">
 	<div class="panel-title">Application Details</div>
 </div>
-<form:hidden path="admissionfeeAmount" id="admissionfeeAmount" />
 
+<div id="appDet">
 <div class="form-group">
 	<label class="col-sm-3 control-label text-right">ServiceType <span
 		class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin">
-		<form:select path="serviceType" data-first-option="false" id=""
+		<form:select path="serviceType" data-first-option="false" id="serviceType"
 			cssClass="form-control" required="required">
 			<form:option value="">
 				<spring:message code="lbl.select" />
 			</form:option>
-			<form:options items="${serviceTypeList}" />
+			<form:options items="${serviceTypeList}"  itemValue="id"
+						itemLabel="description" />
 		</form:select>
 		<form:errors path="serviceType" cssClass="add-margin error-msg" />
 	</div>
@@ -70,7 +71,8 @@
 			<form:option value="">
 				<spring:message code="lbl.select" />
 			</form:option>
-			<form:options items="${stakeHolderList}" />
+			<form:options items="${stakeHolderList}"  itemValue="id"
+						itemLabel="id" />
 		</form:select>
 		<form:errors path="stakeHolder[0].stakeHolder"
 			cssClass="add-margin error-msg" />
@@ -101,7 +103,7 @@
 
 
 </div>
-
+</div>
 
 <div class="form-group">
 	<label class="col-sm-3 control-label text-right">Old
@@ -166,13 +168,9 @@
 	<label class="col-sm-3 control-label text-right">Applicant Type<span
 		class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin">
-		<div class="input-group">
 			<form:input id="applicantType" path="applicantType"
 				class="form-control patternvalidation" data-pattern="string"
 				maxlength="50" />
-			<span class="input-group-addon"> <i
-				class="fa fa-search specific"></i></span>
-		</div>
 		<form:errors path="applicantType" id="applicantType"
 			cssClass="add-margin error-msg" />
 	</div>
@@ -217,8 +215,8 @@
 <label class="col-sm-2 control-label text-right">Admission Fees
 	</label>
 	<div class="col-sm-2 add-margin">
-		<form:input class="form-control patternvalidation" maxlength="50"
-			id="admissionfeeAmount" path="admissionfeeAmount" disabled="true" />
+		<form:input class="form-control patternvalidation" maxlength="50" name="admissionfeeAmount"
+			id="admissionfeeAmount" path="admissionfeeAmount" />
 		<form:errors path="admissionfeeAmount" cssClass="add-margin error-msg" />
 	</div>
 </div>

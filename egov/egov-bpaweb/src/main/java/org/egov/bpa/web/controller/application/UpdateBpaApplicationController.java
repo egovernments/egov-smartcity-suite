@@ -37,29 +37,56 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.bpa.web.controller;
+package org.egov.bpa.web.controller.application;
 
-import java.math.BigDecimal;
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
+import org.egov.bpa.application.entity.BpaApplication;
 import org.egov.bpa.application.service.ApplicationBpaService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-public class BpaAjaxController {
+@RequestMapping(value="/application")
+public class UpdateBpaApplicationController extends BpaGenericApplicationController{
     
     @Autowired
-    private ApplicationBpaService  applicationBpaService;
+    private ApplicationBpaService applicationBpaService;
     
-    @RequestMapping(value = "/ajax/getAdmissionFees", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public BigDecimal isConnectionPresentForProperty(@RequestParam final String serviceType) {
-        return applicationBpaService.setAdmissionFeeAmountForRegistration(serviceType);
+    @ModelAttribute
+    public BpaApplication getBpaApplication(@PathVariable final String applicationNumber) {
+        return applicationBpaService.findByApplicationNumber(applicationNumber);
     }
+
+    @RequestMapping(value="/update/{applicationNumber}",method=RequestMethod.GET)
+    public String updateApplicationForm(final Model model, @PathVariable final String applicationNumber,
+            final HttpServletRequest request)
+    {
+        BpaApplication application=getBpaApplication(applicationNumber);
+        application.setApplicantMode("NEW");
+        model.addAttribute("bpaApplication", application);
+        return "bpaapplication-Form";
+    }
+    
+    @RequestMapping(value = "/update/{applicationNumber}", method = RequestMethod.POST)
+    public String updateApplication(@Valid @ModelAttribute("bpaApplication") BpaApplication bpaApplication,@PathVariable final String applicationNumber,
+            final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
+            final HttpServletRequest request, final Model model, @RequestParam("files") final MultipartFile[] files) {
+
+        applicationBpaService.updateApplication(getBpaApplication(applicationNumber));
+        return bpaApplication.getApplicationNumber();
+    }
+    
+    
 
 }

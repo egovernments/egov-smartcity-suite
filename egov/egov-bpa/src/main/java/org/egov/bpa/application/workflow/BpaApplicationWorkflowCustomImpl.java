@@ -66,10 +66,6 @@ import org.springframework.transaction.annotation.Transactional;
 public abstract class BpaApplicationWorkflowCustomImpl implements BpaApplicationWorkflowCustom {
     private static final Logger LOG = LoggerFactory.getLogger(BpaApplicationWorkflowCustomImpl.class);
 
-    @Autowired
-    public BpaApplicationWorkflowCustomImpl() {
-
-    }
 
     @Autowired
     private SecurityUtils securityUtils;
@@ -87,6 +83,11 @@ public abstract class BpaApplicationWorkflowCustomImpl implements BpaApplication
     @Autowired
     private BpaWorkFlowService bpaWorkFlowService;
 
+    @Autowired
+    public BpaApplicationWorkflowCustomImpl() {
+
+    }
+    
     @Override
     @Transactional
     public void createCommonWorkflowTransition(final BpaApplication application,
@@ -109,7 +110,8 @@ public abstract class BpaApplicationWorkflowCustomImpl implements BpaApplication
                     null, additionalRule, BpaConstants.WF_NEW_STATE, null);
 
             if (wfmatrix != null) {
-                application.setStatus(getStatusByCurrentMatrxiStatus(wfmatrix));
+               // application.setStatus(getStatusByCurrentMatrxiStatus(wfmatrix));
+                BpaStatus temp=(getStatusByCurrentMatrxiStatus(wfmatrix));
                 application.transition().start()
                         .withSenderName(user.getUsername() + BpaConstants.COLON_CONCATE + user.getName())
                         .withComments(approvalComent).withInitiator(wfInitiator != null ? wfInitiator.getPosition() : null)
@@ -191,14 +193,14 @@ public abstract class BpaApplicationWorkflowCustomImpl implements BpaApplication
     private BpaStatus getStatusByCurrentMatrxiStatus(WorkFlowMatrix wfmatrix) {
         if (wfmatrix != null && wfmatrix.getNextStatus() != null && !"".equals(wfmatrix.getNextStatus()))
             return bpaStatusService
-                    .findByModuleTypeAndCode(BpaConstants.APPLICATION_MODULE_TYPE, wfmatrix.getNextStatus());
+                    .findByModuleTypeAndCode(BpaConstants.BPASTATUS_MODULETYPE, wfmatrix.getNextStatus());
         return null;
     }
 
     private BpaStatus getStatusByPassingCode(String code) {
         if (code != null && !"".equals(code))
             return bpaStatusService
-                    .findByModuleTypeAndCode(BpaConstants.APPLICATION_MODULE_TYPE, code);
+                    .findByModuleTypeAndCode(BpaConstants.BPASTATUS_MODULETYPE, code);
         return null;
     }
 

@@ -46,18 +46,9 @@
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 <div class="row">
 	<div class="col-md-12">
-		<div class="text-right error-msg" style="font-size: 14px;">
-			<spring:message code="lbl.application.date" />
-			:
-			<fmt:formatDate pattern="dd/MM/yyyy"
-				value="${waterConnectionDetails.applicationDate}" />
-		</div>
-		<form:form role="form" action="newApplication-create" method="post"
-			modelAttribute="bpaApplication" id="newApplicationform"
-			cssClass="form-horizontal form-groups-bordered"
-			enctype="multipart/form-data">
+<form:form role="form" method="post" modelAttribute="bpaApplication" 
+id="editWaterConnectionform" cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">		
 
-			<form:hidden id="mode" path="" value="${mode}" />
 
 			<div class="panel panel-primary" data-collapsed="0">
 
@@ -67,7 +58,7 @@
 					<jsp:include page="siteDetail.jsp"></jsp:include>
 
 				</div>
-			</div>
+			</div> 
 			<%-- <jsp:include page="../common/commonWorkflowMatrix.jsp"/>
 				<div class="buttonbottom" align="center">
 					<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />
@@ -75,8 +66,8 @@
 			<div class="buttonbottom" align="center">
 				<table>
 					<tr>
-						<td><form:button type="submit" id="Create"
-								class="btn btn-primary" value="Create">Submit</form:button> <input
+						<td><form:button type="submit" id="updateApplication"
+								class="btn btn-primary" value="updateApplication">Submit</form:button> <input
 							type="button" name="button2" id="button2" value="Close"
 							class="btn btn-primary" onclick="window.close();" /></td>
 					</tr>
@@ -88,5 +79,5 @@
 
 <script
 	src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
-<script src="<cdn:url value='/resources/js/app/application-new.js?rnd=${app_release_no}'/>"></script>
+	<script src="<cdn:url value='/resources/js/app/application-edit.js?rnd=${app_release_no}'/>"></script>
 	

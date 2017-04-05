@@ -47,6 +47,7 @@
 	<div class="panel-title">Applicant Details</div>
 </div>
 <form:hidden id="owner" name="owner" value="#{owner.id}" path="" />
+<div id="applicantdet"> 
 <div class="form-group">
 
 	<label class="col-sm-3 control-label text-right">Applicant Name
@@ -93,4 +94,5 @@
 		**Mail is sent to this
 		<form:errors path="owner.emailid" cssClass="add-margin error-msg" />
 	</div>
+</div>
 </div>
