@@ -122,6 +122,10 @@ public class CouncilMeetingService {
     public List<MeetingAttendence> findListOfAttendance(CouncilMeeting id) {
         return meetingAttendanceRepository.findByMeeting(id);
     }
+    
+    public CouncilMeeting findByMeetingNumber(String meetingNumber) {
+        return councilMeetingRepository.findByMeetingNumber(meetingNumber);
+    }
 
     public CouncilMeeting updateMoMStatus(CouncilMeeting councilMeeting) {
         for (MeetingMOM meetingMOM : councilMeeting.getMeetingMOMs()) {

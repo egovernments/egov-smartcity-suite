@@ -13,6 +13,7 @@ import org.egov.council.entity.es.CouncilMeetingDetailsSearchRequest;
 import org.egov.council.entity.es.CouncilMeetingDetailsSearchResult;
 import org.egov.council.entity.es.CouncilMeetingIndex;
 import org.egov.council.service.CommitteeTypeService;
+import org.egov.council.service.CouncilMeetingService;
 import org.egov.council.service.CouncilPreambleService;
 import org.egov.council.service.es.CouncilMeetingIndexService;
 import org.egov.council.web.adaptor.CouncilMeetingDetailsReportJsonAdaptor;
@@ -57,6 +58,8 @@ public class CouncilReportsController {
 	@Autowired
         private CommitteeTypeService committeeTypeService;
 	
+	@Autowired
+	private CouncilMeetingService councilMeetingService;
 	
 	@ModelAttribute("committeeType") public List<CommitteeType> getCommitteTypeList() {
             return committeeTypeService.getActiveCommiteeType();
@@ -120,6 +123,7 @@ public class CouncilReportsController {
             searchResult.setMeetingLocation(councilMeetingIndex.getMeetingLocation());
             searchResult.setMeetingNumber(councilMeetingIndex.getMeetingNumber());
             searchResult.setMeetingTime(councilMeetingIndex.getMeetingTime());
+            searchResult.setId(councilMeetingService.findByMeetingNumber(councilMeetingIndex.getMeetingNumber()).getId());
             searchResultFomatted.add(searchResult);
         }
         return  new StringBuilder("{\"data\":")

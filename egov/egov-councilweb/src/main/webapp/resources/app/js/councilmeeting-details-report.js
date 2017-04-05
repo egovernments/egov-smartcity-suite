@@ -92,7 +92,11 @@ $(document).ready(function() {
 										"sClass" : "text-left"
 									}, {
 										"data" : "meetingNumber",
-										"sClass" : "text-left"
+										"sClass" : "text-left",
+										"render": function ( data, type, row, meta ) {
+											return '<a target="_new" onclick="openPopup(\'/council/councilmom/view/'+ row.id +'\')">'+data+'</a>' 
+										  }
+									
 									}, {
 										"data" : "meetingDate",
 										"sClass" : "text-left"
@@ -142,3 +146,15 @@ function getFormData($form) {
 	return indexed_array;
 }
 
+$(document).on('change','.dropchange',function(){
+    var url = $(this).val();
+    if(url){
+    	openPopup(url);
+    }
+    
+});
+
+function openPopup(url)
+{
+	window.open(url,'window','scrollbars=yes,resizable=yes,height=700,width=800,status=yes');
+}
