@@ -410,10 +410,18 @@ public class PropertyTaxCollection extends TaxCollection {
                     } else {
                         demandDetail.addCollectedWithOnePaisaTolerance(rcptAccInfo.getCrAmount());
                         if (rebateAmount.compareTo(BigDecimal.ZERO) > 0
-                                && instDesc.equals(currInstallments.get(CURRENTYEAR_FIRST_HALF).getDescription())
-                                && demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
-                                        .equals(DEMANDRSN_CODE_GENERAL_TAX)) {
-                            demandDetail.setAmtRebate(rebateAmount);
+                                && (instDesc.equals(currInstallments.get(CURRENTYEAR_FIRST_HALF).getDescription()) 
+                                           || instDesc.equals(currInstallments.get(CURRENTYEAR_SECOND_HALF).getDescription()) )    ) {
+                            if(instDesc.equals(currInstallments.get(CURRENTYEAR_FIRST_HALF).getDescription()) && demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
+                                    .equals(DEMANDRSN_CODE_GENERAL_TAX)){
+                                demandDetail.setAmtRebate(rebateAmount);
+                                rebateAmount = BigDecimal.ZERO;
+                            }else{
+                                demandDetail = installmentWiseDemandDetailsByReason.get(currInstallments.get(CURRENTYEAR_FIRST_HALF).getDescription())
+                                        .get(PropertyTaxConstants.DEMANDRSN_STR_GENERAL_TAX);
+                                demandDetail.setAmtRebate(rebateAmount);
+                                rebateAmount = BigDecimal.ZERO;
+                            }
                         }
                     }
 

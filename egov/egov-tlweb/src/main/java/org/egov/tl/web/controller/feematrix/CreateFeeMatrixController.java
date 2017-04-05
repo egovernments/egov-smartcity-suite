@@ -99,7 +99,7 @@ public class CreateFeeMatrixController {
 
     @ModelAttribute
     public List<LicenseAppType> licenseAppTypes() {
-        return licenseAppTypeService.getLicenseAppTypes();
+        return licenseAppTypeService.findByDisplayTrue();
     }
 
     @ModelAttribute

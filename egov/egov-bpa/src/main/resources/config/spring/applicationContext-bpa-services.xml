@@ -46,7 +46,9 @@
 
 	<context:component-scan base-package="org.egov.bpa" />
 
-
+<bean id="bpaApplicationBillable"
+		class="org.egov.bpa.application.service.collection.BpaApplicationBillable"
+		scope="prototype" />
 
 
 	<!-- <bean id="RegistartionInboxRenderService"
@@ -56,6 +58,7 @@
 	</bean> -->
 
 
+	<bean id="BPADMCollectionsInterface" class="org.egov.bpa.application.service.collection.BpaTaxCollection"/>
 
 	<bean id="applicationWorkflowCustomDefaultImpl"
 		class="org.egov.bpa.application.workflow.ApplicationWorkflowCustomDefaultImpl" />

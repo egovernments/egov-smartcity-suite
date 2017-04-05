@@ -80,6 +80,7 @@ function showHideAgreement() {
 }
 
 function getUom() {
+	$('#uom').val('');
     $.ajax({
         url: "/tl/licensesubcategory/detail-by-feetype",
         type: "GET",

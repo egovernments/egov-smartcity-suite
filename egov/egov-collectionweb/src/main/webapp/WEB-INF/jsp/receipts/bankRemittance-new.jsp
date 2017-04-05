@@ -50,7 +50,7 @@
 			.ready(
 					function() {
 						jQuery('#remittanceDate').val("");
-						jQuery('#finYearId').prop("disabled", true);
+						//jQuery('#finYearId').prop("disabled", true);
 						jQuery("form").submit(function(event) {
 							doLoadingMask();
 						});

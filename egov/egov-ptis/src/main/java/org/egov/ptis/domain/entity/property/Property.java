@@ -213,6 +213,16 @@ public interface Property extends Auditable {
 
     public List<Document> getAssessmentDocuments();
 
-    public void setAssessmentDocuments(List<Document> assessmentDocumentsProxy);
+    public void setAssessmentDocuments(List<Document> assessmentDocuments);
+    
+    public List<Document> getTaxExemptionDocuments();
+
+    public void setTaxExemptionDocuments(List<Document> taxExemptionDocuments);
+    
+    public List<Document> getTaxExemptionDocumentsProxy();
+
+    public void setTaxExemptionDocumentsProxy(List<Document> taxExemptionDocumentsProxy);
+    
+    public void addTaxExemptionDocuments(Document exemptionDocument);
 
 }

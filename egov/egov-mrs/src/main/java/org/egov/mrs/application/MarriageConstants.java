@@ -144,6 +144,10 @@ public class MarriageConstants {
     public static final String CSC_OPERATOR_CREATED =  "CSC Operator created";
     public static final String APPLICATION_PDF = "application/pdf";
     public static final String SOURCE_CSC =  "CSC";
+    
+    public static final String SLAFORMARRIAGEREGISTRATION = "SLAFORMARRIAGEREGISTRATION";
+    public static final String SLAFORMARRIAGEREISSUE = "SLAFORMARRIAGEREISSUE";
+    
     private MarriageConstants() {
         // To hide implicit public
     }

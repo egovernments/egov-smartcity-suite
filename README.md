@@ -37,8 +37,10 @@ Create a database and user in postgres
 #### Elastic Search Setup
 Elastic seach server properties needs to be configured in `elasticsearch.yml` under `<ELASTICSEARCH_INSTALL_DIR>/config`
 ```properties
-cluster.name: elasticsearch-<username> ## Your local elasticsearch clustername, DO NOT use default clustername
-transport.tcp.port: 9300 ## This is the default port
+## Your local elasticsearch clustername, DO NOT use default clustername
+cluster.name: elasticsearch-<username>
+## This is the default port
+transport.tcp.port: 9300
 
 ```
 NB: `<username>` user name of the loggedin system, enter the below command in terminal to find the username.
@@ -57,18 +59,21 @@ $ git checkout develop
 2. Change directory to `<CLONED_REPO_DIR>/egov/egov-config/src/main/resources/config/` and create a file called `egov-erp-<username>.properties` and enter the following values based on your environment config.
 
  ```properties
- elasticsearch.hosts=localhost ##comma separated list of host names 
+ ##comma separated list of host names 
+ elasticsearch.hosts=localhost
  elasticsearch.port=9300
  elasticsearch.cluster.name=elasticsearch-<username>
-
- mail.enabled=false ##Enables or disabled email sending, this is disabled by default
+ 
+ ##Enables or disabled email sending, this is disabled by default
+ mail.enabled=false
  mail.port=465
  mail.host=smtp.gmail.com
  mail.protocol=smtps
  mail.sender.username=abc123@gmail.com
  mail.sender.password=12345
-
- sms.enabled=false  ##Enables or disables SMS sending, this is disabled by default
+ 
+ ##Enables or disables SMS sending, this is disabled by default
+ sms.enabled=false
  sms.provider.url=http://some.sms.provider.url
  sms.sender.username=sms_username
  sms.sender.password=sms_user_password
@@ -120,8 +125,10 @@ By default eGov suit uses embedded redis server (work only in Linux & OSx), to m
  to control the redis server host and port use the following property values (only required if installed with non default).
 
  ```properties
- redis.host.name=<your_redis_server_host> ## localhost by default
- redis.host.port=<your_redis_server_port> ## 6379 by default
+ ## Replace <your_redis_server_host> with your redis host, localhost by default
+ redis.host.name=<your_redis_server_host>
+ ## Replace <your_redis_server_port> with your redis port, 6379 by default
+ redis.host.port=<your_redis_server_port>
  ```
 
 #### Deploying Application

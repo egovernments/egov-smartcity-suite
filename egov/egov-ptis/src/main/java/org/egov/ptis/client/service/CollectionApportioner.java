@@ -80,7 +80,8 @@ public class CollectionApportioner {
         if (isEligibleForCurrentRebate) {
             BigDecimal totalCrAmountToBePaid = BigDecimal.ZERO;
             for (final ReceiptDetail receiptDetail : receiptDetails) {
-                totalCrAmountToBePaid = totalCrAmountToBePaid.add(receiptDetail.getCramountToBePaid());
+                if (!PURPOSE.ADVANCE_AMOUNT.toString().equals(receiptDetail.getPurpose()))
+                    totalCrAmountToBePaid = totalCrAmountToBePaid.add(receiptDetail.getCramountToBePaid());
             }
             if (amtPaid.compareTo(totalCrAmountToBePaid) >= 0) {
                 isFullPayment = Boolean.TRUE;

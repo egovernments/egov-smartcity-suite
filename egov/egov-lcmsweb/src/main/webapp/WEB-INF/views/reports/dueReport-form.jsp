@@ -47,7 +47,7 @@
 
 <div class="row" id="page-content">
 	<div class="col-md-12">
-		<form:form modelAttribute="dueReportResult" id="dueReportResultFormid" method="get"
+		<form:form modelAttribute="legalCommonReport" id="dueReportResultFormid" method="get"
 			class="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
 			<div class="row">

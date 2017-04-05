@@ -323,7 +323,7 @@ public class WaterChargeCollectionDocService {
         final BigDecimal totalDemand = getTotalDemandBasedOnInputFilters(collectionDetailsRequest);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Time taken by getTotalDemandBasedOnInputFilters() is (millisecs): " + timeTaken);
-        final int noOfMonths = DateUtils.noOfMonths(fromDate, toDate) + 1;
+        final int noOfMonths = DateUtils.noOfMonthsBetween(fromDate, toDate) + 1;
         collectionIndexDetails.setTotalDmd(totalDemand);
 
         // Proportional Demand = (totalDemand/12)*noOfmonths
@@ -416,7 +416,7 @@ public class WaterChargeCollectionDocService {
         final BigDecimal totalDemand = getTotalDemandBasedOnInputFilters(collectionDetailsRequest);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Time taken by getTotalDemandBasedOnInputFilters() is (millisecs): " + timeTaken);
-        final int noOfMonths = DateUtils.noOfMonths(fromDate, toDate) + 1;
+        final int noOfMonths = DateUtils.noOfMonthsBetween(fromDate, toDate) + 1;
         collectionIndexDetails.setTotalDmd(totalDemand);
 
         // Proportional Demand = (totalDemand/12)*noOfmonths
@@ -582,7 +582,7 @@ public class WaterChargeCollectionDocService {
             fromDate = DateUtils.startOfDay(financialYear.getStartingDate());
             toDate = org.apache.commons.lang3.time.DateUtils.addDays(new Date(), 1);
         }
-        final int noOfMonths = DateUtils.noOfMonths(fromDate, toDate) + 1;
+        final int noOfMonths = DateUtils.noOfMonthsBetween(fromDate, toDate) + 1;
 
         final Map<String, BigDecimal> cytdCollMap = getCollectionAndDemandValues(collectionDetailsRequest, fromDate,
                 toDate, COLLECTION_INDEX_NAME, TOTAL_AMOUNT, aggregationField);
@@ -1437,7 +1437,7 @@ public class WaterChargeCollectionDocService {
         final Date fromDate = new DateTime().withMonthOfYear(4).dayOfMonth().withMinimumValue().toDate();
         final Date toDate = org.apache.commons.lang3.time.DateUtils.addDays(new Date(), 1);
 
-        final int noOfMonths = DateUtils.noOfMonths(fromDate, toDate) + 1;
+        final int noOfMonths = DateUtils.noOfMonthsBetween(fromDate, toDate) + 1;
         final BigDecimal totalResDemandValue = !connectionResidentialTotalDemandMap.isEmpty()
                 && connectionResidentialTotalDemandMap.get(name) != null
                         ? connectionResidentialTotalDemandMap.get(name).setScale(0, BigDecimal.ROUND_HALF_UP)

@@ -91,6 +91,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 
+
 @ParentPackage("egov")
 @Results({@Result(name = NewTradeLicenseAction.NEW, location = "newTradeLicense-new.jsp"),
         @Result(name = Constants.ACKNOWLEDGEMENT, location = "newTradeLicense-acknowledgement.jsp"),
@@ -108,6 +109,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     private String mode;
     private String message;
     private String renewAppType;
+
     @Autowired
     @Qualifier("tradeLicenseService")
     private transient TradeLicenseService tradeLicenseService;
@@ -225,6 +227,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
                             + license().getCurrentState().getOwnerPosition().getName() + " inbox !</center>");
             return null;
         }
+        licenseHistory = tradeLicenseService.populateHistory(tradeLicense);
         return super.showForApproval();
     }
 
@@ -360,4 +363,6 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     public void setMessage(final String message) {
         this.message = message;
     }
+
+
 }

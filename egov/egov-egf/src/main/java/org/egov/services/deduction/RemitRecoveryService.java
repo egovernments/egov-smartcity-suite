@@ -112,15 +112,18 @@ public class RemitRecoveryService {
             throws ValidationException {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("RemitRecoveryService | getRecoveryDetails | Start");
-        final List<RemittanceBean> listRemitBean = new ArrayList<RemittanceBean>();
-        final StringBuilder DateQry = new StringBuilder();
-        
+        final List<RemittanceBean> listRemitBean = new ArrayList<>();
+        final StringBuilder dateQry = new StringBuilder();
+        StringBuilder query = new StringBuilder();
         if (remittanceBean.getFromVhDate() != null && voucherHeader.getVoucherDate() != null)
-            DateQry.append(" and vh.VOUCHERDATE >='" + Constants.DDMMYYYYFORMAT1.format(remittanceBean.getFromVhDate())
+            dateQry.append(" and vh.VOUCHERDATE >='" + Constants.DDMMYYYYFORMAT1.format(remittanceBean.getFromVhDate())
                     + "' and vh.VOUCHERDATE <='" + Constants.DDMMYYYYFORMAT1.format(voucherHeader.getVoucherDate()) + "' ");
         else
-            DateQry.append(" and vh.VOUCHERDATE <='" + Constants.DDMMYYYYFORMAT1.format(voucherHeader.getVoucherDate()) + "' ");
-        StringBuilder query = new StringBuilder();
+            dateQry.append(" and vh.VOUCHERDATE <='" + Constants.DDMMYYYYFORMAT1.format(voucherHeader.getVoucherDate()) + "' ");
+        if (remittanceBean.getBank() != null && remittanceBean.getBankBranchId() != null
+                && remittanceBean.getBankAccountId() != null) {
+            query = getRecoveryListForSelectedBank(remittanceBean, voucherHeader, dateQry);
+        }else{
         query.append(" SELECT vh.NAME  AS col_0_0_,  vh.VOUCHERNUMBER AS col_1_0_,  vh.VOUCHERDATE   AS col_2_0_,");
         query.append(" egr.GLDTLAMT   AS col_3_0_,  gld.DETAILTYPEID  AS col_4_0_,  gld.DETAILKEYID   AS col_5_0_,");
         query.append(" egr.ID    AS col_6_0_, (select  case when sum(egd.remittedamt) is null then 0 else sum(egd.remittedamt) end");
@@ -138,10 +141,10 @@ public class RemitRecoveryService {
         query .append(remittanceBean.getRecoveryId()).append(" AND (egr.TDSID = ");
         query.append(remittanceBean.getRecoveryId());
         query.append(" OR egr.TDSID  IS NULL) ");
-        query.append(DateQry);
+        query.append(dateQry);
         query.append(getMisSQlQuery(voucherHeader));
         query.append(" ORDER BY vh.VOUCHERNUMBER,  vh.VOUCHERDATE");
-                               
+        }                       
                                 
 
         if (LOGGER.isDebugEnabled())
@@ -155,6 +158,40 @@ public class RemitRecoveryService {
         return listRemitBean;
     }
     
+    public StringBuilder getRecoveryListForSelectedBank(final RemittanceBean remittanceBean, final CVoucherHeader voucherHeader,
+            final StringBuilder dateQuery) {
+        StringBuilder query = new StringBuilder();
+        query.append(" SELECT vh.NAME  AS col_0_0_,  vh.VOUCHERNUMBER AS col_1_0_,  vh.VOUCHERDATE   AS col_2_0_,");
+        query.append(" egr.GLDTLAMT   AS col_3_0_,  gld.DETAILTYPEID  AS col_4_0_,  gld.DETAILKEYID   AS col_5_0_,");
+        query.append(
+                " egr.ID    AS col_6_0_, (select  case when sum(egd.remittedamt) is null then 0 else sum(egd.remittedamt) end");
+        query.append(" from EG_REMITTANCE_GLDTL egr1,eg_remittance_detail egd,eg_remittance  eg,voucherheader vh");
+        query.append(
+                " where vh.status not in (4) and  eg.PAYMENTVHID=vh.id and egd.remittanceid=eg.id and egr1.id=egd.remittancegldtlid ");
+        query.append(" and egr1.id=egr.id) As col_7_0 , mis.departmentid as col_8_0,mis.functionid as col_9_0");
+        query.append(
+                "  FROM VOUCHERHEADER vh,  VOUCHERMIS mis,  GENERALLEDGER gl,  GENERALLEDGERDETAIL gld,  EG_REMITTANCE_GLDTL egr,  TDS recovery5_ ,PAYMENTHEADER ph,miscbilldetail misbill");
+        query.append(
+                " WHERE recovery5_.GLCODEID  =gl.GLCODEID AND gld.ID =egr.GLDTLID AND gl.ID =gld.GENERALLEDGERID AND vh.ID =gl.VOUCHERHEADERID");
+        query.append(
+                " AND mis.VOUCHERHEADERID  =vh.ID AND vh.STATUS    =0 and misbill.billvhid=vh.id and misbill.payvhid=ph.voucherheaderid and (select status from voucherheader where id=misbill.payvhid )=0  AND ph.bankaccountnumberid=");
+        query.append(remittanceBean.getBankAccountId()).append(" and vh.FUNDID    =");
+        query.append(voucherHeader.getFundId().getId());
+        query.append(" AND egr.GLDTLAMT-");
+        query.append(
+                " (select  case when sum(egd.remittedamt) is null then 0 else sum(egd.remittedamt) end from EG_REMITTANCE_GLDTL egr1,eg_remittance_detail egd,eg_remittance  eg,voucherheader vh");
+        query.append(
+                " where vh.status not in (1,2,4) and  eg.PAYMENTVHID=vh.id and egd.remittanceid=eg.id and egr1.id=egd.remittancegldtlid and egr1.id=egr.id)");
+        query.append(" <>0 AND recovery5_.ID  = ");
+        query.append(remittanceBean.getRecoveryId()).append(" AND (egr.TDSID = ");
+        query.append(remittanceBean.getRecoveryId());
+        query.append(" OR egr.TDSID  IS NULL) ");
+        query.append(dateQuery);
+        query.append(getMisSQlQuery(voucherHeader));
+        query.append(" ORDER BY vh.VOUCHERNUMBER,  vh.VOUCHERDATE");
+
+        return query;
+    }
     public List<RemittanceBean> getRecoveryDetails(final String selectedRows)
             throws ValidationException {
         if (LOGGER.isDebugEnabled())

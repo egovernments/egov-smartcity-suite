@@ -39,6 +39,7 @@
  */
 package org.egov.ptis.domain.repository.vacancyremission;
 
+import org.egov.ptis.domain.entity.enums.TransactionType;
 import org.egov.ptis.domain.entity.property.DocumentType;
 import org.egov.ptis.domain.entity.property.VacancyRemission;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -68,4 +69,8 @@ public interface VacancyRemissionRepository extends JpaRepository<VacancyRemissi
 
     @Query("select DT from DocumentType DT where DT.name=:name")
     DocumentType findDocumentTypeByName(@Param("name") String name);
+    
+    @Query("select dt from DocumentType dt where dt.name= :name and dt.transactionType= :transactionType")
+    DocumentType findDocumentTypeByNameAndTransactionType(@Param("name") String name, @Param("transactionType") TransactionType transactionType);
+
 }

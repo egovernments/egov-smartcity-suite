@@ -47,14 +47,20 @@ import org.egov.commons.Installment;
 import org.egov.commons.service.CFinancialYearService;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.eis.entity.Assignment;
+import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.Module;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.validation.exception.ValidationException;
+import org.egov.infra.workflow.entity.State;
+import org.egov.infra.workflow.entity.StateAware;
+import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.pims.commons.Position;
 import org.egov.tl.entity.License;
 import org.egov.tl.entity.LicenseAppType;
@@ -70,6 +76,7 @@ import org.hibernate.Criteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
@@ -82,6 +89,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.egov.infra.utils.DateUtils.currentDateToDefaultDateFormat;
 import static org.egov.infra.utils.DateUtils.getDefaultFormattedDate;
 import static org.egov.infra.utils.DateUtils.toYearFormat;
@@ -91,10 +100,10 @@ import static org.egov.tl.utils.Constants.LICENSE_FEE_TYPE;
 import static org.egov.tl.utils.Constants.NEW_LIC_APPTYPE;
 import static org.egov.tl.utils.Constants.RENEWAL_LIC_APPTYPE;
 import static org.egov.tl.utils.Constants.TRADE_LICENSE;
+import static org.egov.tl.utils.Constants.CLOSURE_LIC_APPTYPE;
 
 @Transactional(readOnly = true)
 public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
-
     @Autowired
     private TradeLicenseSmsAndEmailService tradeLicenseSmsAndEmailService;
 
@@ -112,6 +121,9 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
 
     @Autowired
     private CityService cityService;
+
+    @Autowired
+    private EisCommonService eisCommonService;
 
     @Override
     protected NatureOfBusiness getNatureOfBusiness() {
@@ -138,6 +150,11 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         return licenseAppTypeService.getLicenseAppTypeByName(NEW_LIC_APPTYPE);
     }
 
+    @Override
+    protected LicenseAppType getClosureLicenseApplicationType() {
+        return licenseAppTypeService.getLicenseAppTypeByName(CLOSURE_LIC_APPTYPE);
+    }
+
     @Transactional
     public void updateTradeLicense(final TradeLicense license, final WorkflowBean workflowBean) {
         licenseRepository.save(license);
@@ -153,7 +170,6 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         final Assignment userAssignment = assignmentService.getPrimaryAssignmentForUser(securityUtils.getCurrentUser().getId());
         final Position wfInitiator = getWorkflowInitiator(license);
         if (BUTTONAPPROVE.equals(workFlowAction)) {
-            license.setActive(true);
             if (license.getTempLicenseNumber() == null && license.isNewApplication())
                 license.setLicenseNumber(licenseNumberUtils.generateLicenseNumber());
 
@@ -176,6 +192,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         }
 
         if (Constants.GENERATECERTIFICATE.equals(workFlowAction)) {
+            license.setActive(true);
             license.setStatus(licenseStatusService.getLicenseStatusByCode(Constants.STATUS_ACTIVE));
             // setting license to non-legacy, old license number will be the only tracking
             // to check a license created as legacy or new hereafter.
@@ -281,6 +298,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         return reportParams;
     }
 
+    @ReadOnly
     public List<String> getTradeLicenseForGivenParam(final String paramValue, final String paramType) {
         List<String> licenseList = new ArrayList<>();
         if (paramType.equals(Constants.SEARCH_BY_APPNO))
@@ -307,6 +325,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         return licenseList;
     }
 
+    @ReadOnly
     public List<SearchForm> searchTradeLicense(final SearchForm searchForm) {
         final Criteria searchCriteria = entityQueryService.getSession().createCriteria(TradeLicense.class);
         searchCriteria.createAlias("licensee", "licc").createAlias("category", "cat")
@@ -347,6 +366,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         return finalList;
     }
 
+    @ReadOnly
     public List<OnlineSearchForm> onlineSearchTradeLicense(final OnlineSearchForm searchForm) {
         final Criteria searchCriteria = entityQueryService.getSession().createCriteria(TradeLicense.class);
         searchCriteria.createAlias("licensee", "licc").createAlias("category", "cat")
@@ -395,6 +415,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         return getInstallmentForDate(new Date(), module);
     }
 
+    @ReadOnly
     public List<DemandnoticeForm> searchLicensefordemandnotice(final DemandnoticeForm demandnoticeForm) {
         final Criteria searchCriteria = entityQueryService.getSession().createCriteria(TradeLicense.class);
         searchCriteria.createAlias("licensee", "licc").createAlias("category", "cat").createAlias("tradeName", "subcat")
@@ -446,5 +467,50 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
             ownerName = license.getLastModifiedBy().getName();
         return ownerName;
 
+    }
+
+    public List<HashMap<String, Object>> populateHistory(final StateAware stateAware) {
+        final List<HashMap<String, Object>> processHistoryDetails = new ArrayList<>();
+        if (stateAware.hasState()) {
+            State state = stateAware.getCurrentState();
+            final HashMap<String, Object> currentStateDetail = new HashMap<>();
+            currentStateDetail.put("date", state.getLastModifiedDate());
+            currentStateDetail.put("updatedBy", state.getLastModifiedBy().getName());
+            currentStateDetail.put("status", "END".equals(state.getValue()) ? "Completed" : state.getValue());
+            currentStateDetail.put("comments", defaultString(state.getComments()));
+            User ownerUser = state.getOwnerUser();
+            Position ownerPosition = state.getOwnerPosition();
+            if (ownerPosition != null) {
+                User usr = eisCommonService.getUserForPosition(ownerPosition.getId(), new Date());
+                currentStateDetail.put("user", usr == null ? EMPTY : usr.getName());
+            } else
+                currentStateDetail.put("user", ownerUser == null ? EMPTY : ownerUser.getName());
+
+            processHistoryDetails.add(currentStateDetail);
+            state.getHistory().stream().sorted(Comparator.comparing(StateHistory::getLastModifiedDate).reversed()).
+                    forEach(sh -> processHistoryDetails.add(constructHistory(sh)));
+        }
+        return processHistoryDetails;
+    }
+
+    private HashMap<String, Object> constructHistory(StateHistory stateHistory) {
+        final HashMap<String, Object> processHistory = new HashMap<>();
+        processHistory.put("date", stateHistory.getLastModifiedDate());
+        processHistory.put("updatedBy", stateHistory.getLastModifiedBy().getName());
+        processHistory.put("status", "END".equals(stateHistory.getValue()) ? "Completed" : stateHistory.getValue());
+        processHistory.put("comments", defaultString(stateHistory.getComments()));
+        Position ownerPosition = stateHistory.getOwnerPosition();
+        User ownerUser = stateHistory.getOwnerUser();
+        if (ownerPosition != null) {
+            User userPos = eisCommonService.getUserForPosition(ownerPosition.getId(), stateHistory.getLastModifiedDate());
+            processHistory.put("user", userPos == null ? EMPTY : userPos.getName());
+        } else
+            processHistory.put("user", ownerUser == null ? EMPTY : ownerUser.getName());
+        return processHistory;
+    }
+
+    @ReadOnly
+    public List<License> getLicenses(Example license) {
+        return licenseRepository.findAll(license);
     }
 }

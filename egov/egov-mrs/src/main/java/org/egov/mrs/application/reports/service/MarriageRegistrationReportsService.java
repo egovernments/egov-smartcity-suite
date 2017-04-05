@@ -54,6 +54,7 @@ import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
@@ -199,6 +200,7 @@ public class MarriageRegistrationReportsService {
         return monthEndDate;
     }
 
+    @ReadOnly
     @SuppressWarnings("unchecked")
     public List<Object[]> searchMarriageRegistrationsForCertificateReport(final MarriageCertificate certificate)
             throws ParseException {
@@ -288,6 +290,7 @@ public class MarriageRegistrationReportsService {
         return query.list();
     }
 
+    @ReadOnly
     @SuppressWarnings("unchecked")
     public List<String[]> searchRegistrationOfHusbandAgeWise(final int year, final MarriageRegistration registration)
             throws ParseException {
@@ -320,6 +323,7 @@ public class MarriageRegistrationReportsService {
 
     }
 
+    @ReadOnly
     @SuppressWarnings("unchecked")
     public List<String[]> searchRegistrationOfWifeAgeWise(final int year, final MarriageRegistration registration)
             throws ParseException {
@@ -353,6 +357,7 @@ public class MarriageRegistrationReportsService {
         return query.list();
     }
 
+    @ReadOnly
     @SuppressWarnings("unchecked")
     public List<String[]> searchRegistrationActWise(final MarriageRegistration registration, final int year)
             throws ParseException {
@@ -385,6 +390,7 @@ public class MarriageRegistrationReportsService {
         return query.list();
     }
 
+    @ReadOnly
     @SuppressWarnings("unchecked")
     public List<MarriageRegistration> getAgewiseDetails(final MarriageRegistration registration, final String regunit,
             final String age, final int year, final String applicant)
@@ -428,6 +434,7 @@ public class MarriageRegistrationReportsService {
                     .getId()));
     }
 
+    @ReadOnly
     @SuppressWarnings("unchecked")
     public List<MarriageRegistration> searchStatusAtTimeOfMarriage(final MarriageRegistration registration)
             throws ParseException {
@@ -444,6 +451,7 @@ public class MarriageRegistrationReportsService {
         return criteria.list();
     }
 
+    @ReadOnly
     @SuppressWarnings("unchecked")
     public List<String[]> getHusbandCountByMaritalStatus(final Date fromDate, final Date toDate, final String maritalStatus,
             final MarriageRegistration registration) throws ParseException {
@@ -533,6 +541,7 @@ public class MarriageRegistrationReportsService {
 
     }
 
+    @ReadOnly
     @SuppressWarnings("unchecked")
     public List<MarriageRegistration> getByMaritalStatusDetails(final MarriageRegistration registration, final String regunit,
             final String applicant,
@@ -578,6 +587,7 @@ public class MarriageRegistrationReportsService {
         return criteria.list();
     }
 
+    @ReadOnly
     @SuppressWarnings("unchecked")
     public List<MarriageRegistration> searchRegistrationBydate(
             final MarriageRegistration registration) throws ParseException {
@@ -628,6 +638,7 @@ public class MarriageRegistrationReportsService {
         return criteria.list();
     }
 
+    @ReadOnly
     @SuppressWarnings("unchecked")
     public List<String[]> getMonthwiseFundCollected(final MarriageRegistration registration, final String year) {
         final Map<String, String> params = new HashMap<>();
@@ -683,6 +694,7 @@ public class MarriageRegistrationReportsService {
                 "group by regunit.name,extract(month from applicationdate),to_char(applicationdate,'Month') order by regunit.name)");
     }
 
+    @ReadOnly
     @SuppressWarnings("unchecked")
     public List<String[]> getCountOfApplications(final MarriageRegistration registration) {
 
@@ -737,6 +749,7 @@ public class MarriageRegistrationReportsService {
         queryForApplns.append("group by regunit.name,to_char(applicationdate,'Mon') order by regunit.name)");
     }
 
+    @ReadOnly
     @SuppressWarnings("unchecked")
     public List<MarriageRegistration> searchRegistrationBymonth(
             final MarriageRegistration registration, final String month, final String registrationUnit) throws ParseException {
@@ -760,6 +773,7 @@ public class MarriageRegistrationReportsService {
         return criteria.list();
     }
 
+    @ReadOnly
     @SuppressWarnings("unchecked")
     public List<ReIssue> searchReissueBymonth(
             final MarriageRegistration registration, final String month, final String registrationUnit) throws ParseException {
@@ -847,6 +861,7 @@ public class MarriageRegistrationReportsService {
         return religionNameList;
     }
 
+    @ReadOnly
     @SuppressWarnings("unchecked")
     public List<String[]> searchRegistrationMrActWise(final int year, final MarriageRegistration registration) {
         final Map<String, Integer> params = new HashMap<>();
@@ -876,6 +891,7 @@ public class MarriageRegistrationReportsService {
         return query.list();
     }
 
+    @ReadOnly
     @SuppressWarnings("unchecked")
     public List<MarriageRegistration> getActwiseDetails(final int year, final String act)
             throws ParseException {
@@ -903,6 +919,7 @@ public class MarriageRegistrationReportsService {
 
     }
 
+    @ReadOnly
     @SuppressWarnings("unchecked")
     public List<MarriageRegistration> getmonthWiseActDetails(final int year,
             final int month, final Long actid) throws ParseException {
@@ -922,6 +939,7 @@ public class MarriageRegistrationReportsService {
         return criteria.list();
     }
 
+    @ReadOnly
     @SuppressWarnings("unchecked")
     public List<Object[]> getAgeingRegDetails(final String day, final int year)
             throws ParseException {
@@ -957,6 +975,7 @@ public class MarriageRegistrationReportsService {
         return query.list();
     }
 
+    @ReadOnly
     @SuppressWarnings("unchecked")
     public List<String[]> searchRegistrationbyDays(final int year, final MarriageRegistration registration)
             throws ParseException {
@@ -1021,6 +1040,7 @@ public class MarriageRegistrationReportsService {
 
     }
 
+    @ReadOnly
     @SuppressWarnings("unchecked")
     public List<String[]> getCountOfApplnsStatusWise(final String status, final Date fromDate, final Date toDate,
             final MarriageRegistrationUnit registrationUnit, final MarriageRegistration registration) {
@@ -1066,6 +1086,7 @@ public class MarriageRegistrationReportsService {
         return query.list();
     }
 
+    @ReadOnly
     @SuppressWarnings("unchecked")
     public List<MarriageRegistration> searchRegistrationByStatusForReport(final String registrationUnit, final String status,
             final Date fromDate, final Date toDate)

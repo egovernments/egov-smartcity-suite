@@ -39,6 +39,8 @@
  */
 package org.egov.egf.commons.bankaccount.repository;
 
+import java.util.List;
+
 import org.egov.commons.Bankaccount;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -52,4 +54,6 @@ import org.springframework.stereotype.Repository;
 public interface BankAccountRepository extends JpaRepository<Bankaccount, Long> {
 
     Bankaccount findByChartofaccounts_Glcode(final String glcode);
+
+    List<Bankaccount> findByBankbranch_Id(final Integer branchId);
 }

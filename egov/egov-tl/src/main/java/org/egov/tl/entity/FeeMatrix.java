@@ -43,7 +43,7 @@ package org.egov.tl.entity;
 import org.egov.commons.CFinancialYear;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.CompareDates;
-import org.egov.infra.persistence.validator.annotation.CompositeUnique;
+import org.egov.infra.persistence.validator.annotation.UniqueDateOverlap;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -69,9 +69,10 @@ import java.util.Objects;
 @Entity
 @Table(name = "egtl_feematrix")
 @SequenceGenerator(name = FeeMatrix.SEQ, sequenceName = FeeMatrix.SEQ, allocationSize = 1)
-@CompositeUnique(fields = {"natureOfBusiness", "licenseCategory", "subCategory", "licenseAppType",
-        "financialYear", "feeType"}, enableDfltMsg = true, message = "{feematrix.exist}")
 @CompareDates(fromDate = "effectiveFrom", toDate = "effectiveTo", message = "{feematrix.effective.date.range}")
+@UniqueDateOverlap(fromField = "effectiveFrom", toField = "effectiveTo", uniqueFields =
+        {"natureOfBusiness", "licenseCategory", "subCategory", "licenseAppType", "feeType"},
+        message = "{feematrix.exist}")
 public class FeeMatrix extends AbstractAuditable {
     public static final String SEQ = "seq_egtl_feematrix";
     private static final long serialVersionUID = 3119126267277124321L;

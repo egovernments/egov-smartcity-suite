@@ -41,7 +41,6 @@ package org.egov.collection.integration.services;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -65,7 +64,6 @@ import org.egov.commons.CGeneralLedger;
 import org.egov.commons.CGeneralLedgerDetail;
 import org.egov.commons.CVoucherHeader;
 import org.egov.commons.EgwStatus;
-import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.service.ChartOfAccountsService;
 import org.egov.infra.validation.exception.ValidationError;
@@ -75,7 +73,6 @@ import org.egov.model.instrument.DishonorCheque;
 import org.egov.model.instrument.DishonorChequeDetails;
 import org.egov.model.instrument.DishonorChequeSubLedgerDetails;
 import org.egov.model.instrument.InstrumentHeader;
-import org.egov.pims.commons.Position;
 import org.egov.services.instrument.FinancialIntegrationService;
 import org.egov.services.instrument.InstrumentHeaderService;
 import org.egov.services.voucher.GeneralLedgerDetailService;
@@ -152,12 +149,12 @@ public class DishonorChequeService implements FinancialIntegrationService {
                 createDishonorChequeWithoutVoucher(chequeForm, instrumentHeader);
         } catch (final ValidationException e) {
             LOGGER.error("Error in DishonorCheque >>>>" + e);
-            final List<ValidationError> errors = new ArrayList<ValidationError>();
+            final List<ValidationError> errors = new ArrayList<>();
             errors.add(new ValidationError("exp", e.getErrors().get(0).getMessage()));
             throw new ValidationException(errors);
         } catch (final Exception e) {
             LOGGER.error("Error in DishonorCheque >>>>" + e);
-            final List<ValidationError> errors = new ArrayList<ValidationError>();
+            final List<ValidationError> errors = new ArrayList<>();
             errors.add(new ValidationError("exp", e.getMessage()));
             throw new ValidationException(errors);
         }
@@ -272,26 +269,16 @@ public class DishonorChequeService implements FinancialIntegrationService {
             .add(populateDischonourChequedetails(chequeForm, dishonorChq, receiptGeneralLedger));
             dishonorChq.getDetails().add(
                     populateDischonourChequedetails(chequeForm, dishonorChq, remittanceGeneralLedger));
-            final Position position = collectionsUtil.getPositionOfUser(collectionsUtil.getLoggedInUser());
             persistenceService.applyAuditing(dishonorChq);
             persistenceService.persist(dishonorChq);
-            dishonorChq
-            .transition()
-            .start()
-            .end()
-            .withSenderName(
-                    collectionsUtil.getLoggedInUser().getUsername() + "::"
-                            + collectionsUtil.getLoggedInUser().getName())
-                            .withComments(CollectionConstants.WF_STATE_NEW).withStateValue(CollectionConstants.WF_STATE_NEW)
-                            .withOwner(position).withDateInfo(new Date()).withNextAction(CollectionConstants.WF_STATE_END);
         } catch (final ValidationException e) {
             LOGGER.error("Error in DishonorCheque >>>>" + e.getMessage());
-            final List<ValidationError> errors = new ArrayList<ValidationError>();
+            final List<ValidationError> errors = new ArrayList<>();
             errors.add(new ValidationError("exp", e.getErrors().get(0).getMessage()));
             throw new ValidationException(errors);
         } catch (final Exception e) {
             LOGGER.error("Error in DishonorCheque >>>>" + e.getMessage());
-            final List<ValidationError> errors = new ArrayList<ValidationError>();
+            final List<ValidationError> errors = new ArrayList<>();
             errors.add(new ValidationError("exp", e.getMessage()));
             throw new ValidationException(errors);
         }

@@ -1,0 +1,13 @@
+CREATE SEQUENCE SEQ_EGPGR_FORWARD_SKIPPABLE_POSITION
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+CREATE TABLE EGPGR_FORWARD_SKIPPABLE_POSITION (
+    id bigint NOT NULL,
+    position bigint NOT NULL,
+    skippable boolean,
+    version bigint
+);

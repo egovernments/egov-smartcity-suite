@@ -504,7 +504,7 @@ public class ReportService {
 
             CFinancialYear currentFinancialYear = financialYearDAO.getFinancialYearByDate(new Date());
             if (currentFinancialYear != null)
-                noofDays = DateUtils.noOfDays(new Date(), currentFinancialYear.getEndingDate());
+                noofDays = DateUtils.daysBetween(new Date(), currentFinancialYear.getEndingDate());
         }
         buildCollectionReport(listBcPayment, noofDays);
         return listBcPayment;
@@ -539,7 +539,7 @@ public class ReportService {
 
             CFinancialYear currentFinancialYear = financialYearDAO.getFinancialYearByDate(new Date());
             if (currentFinancialYear != null)
-                noofDays = DateUtils.noOfDays(new Date(), currentFinancialYear.getEndingDate());
+                noofDays = DateUtils.daysBetween(new Date(), currentFinancialYear.getEndingDate());
         }
         buildCollectionReport(listBcPayment, noofDays);
         return listBcPayment;

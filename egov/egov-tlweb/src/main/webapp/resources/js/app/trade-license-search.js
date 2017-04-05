@@ -457,7 +457,7 @@ function goToAction(obj, id) {
     if (obj.options[obj.selectedIndex].innerHTML == 'View Trade')
         window.open("../viewtradelicense/viewTradeLicense-view.action?id=" + id, 'vt' + id, 'scrollbars=yes,width=1000,height=700,status=yes');
     else if (obj.options[obj.selectedIndex].innerHTML == 'Modify Legacy License')
-        window.open("../entertradelicense/update-form.action?model.id=" + id, 'mll' + id, 'scrollbars=yes,width=1000,height=700,status=yes');
+        window.open("/tl/legacylicense/update/" + id, 'mll' + id, 'scrollbars=yes,width=1000,height=700,status=yes');
     else if (obj.options[obj.selectedIndex].innerHTML == 'Collect Fees')
         window.open("/tl/integration/licenseBillCollect.action?licenseId=" + id, 'cf' + id, 'scrollbars=yes,width=1000,height=700,status=yes');
     else if (obj.options[obj.selectedIndex].innerHTML == 'Print Certificate' || obj.options[obj.selectedIndex].innerHTML == 'Print Provisional Certificate')

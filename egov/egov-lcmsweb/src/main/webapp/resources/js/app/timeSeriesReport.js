@@ -54,7 +54,6 @@ var oDataTable;
 
 function submitForm() {
 	if($('form').valid()){
-		var aggregatedBy = $("#aggregatedBy").val();
 		var today = getdate();
 		
 		$('#timeSeriesReportResult-header').show();
@@ -91,16 +90,12 @@ function submitForm() {
 					    }
 					}
 					],
-				ajax : {
-					
-					url : "/lcms/timeseriesreports/timeSeriesReportresults",
-					data : {
-						'aggregatedBy' :aggregatedBy,
-						'period' : $("#period").val(),
-						'fromDate' :$("#fromDate").val(),
-						'toDate': $("#toDate").val()
-					}
-				},
+					ajax : {
+						url : "/lcms/timeseriesreports/timeSeriesReportresults?"+$('#timeseriesreportForm').serialize(),
+						
+						
+					},
+				
 				columns :[
 				         {"title" : "S.no","sClass" : "text-center"},  
 				         { "data" : "aggregatedBy" , "title": "Aggregated By","sClass" : "text-center"}, 
@@ -179,16 +174,10 @@ function getdate()
 
 function callAjaxBydrillDownReport(aggregatedByValues,monthh,yearr) {
 	
-
-	var caseNumber = $("#caseNumber").val();
-	var lcNumber = $("#lcNumber").val();
 	var aggregatedBy = $('#aggregatedBy').val();
-	var aggregatedByValue = aggregatedByValues;
 	var period = $("#period").val();
 	var month = monthh;
 	var year = yearr;
-	var fromDate =$("#fromDate").val();
-	var toDate = $("#toDate").val();
 	var today = getdate();
 	
 	oDataTable.clear().draw();
@@ -198,6 +187,18 @@ function callAjaxBydrillDownReport(aggregatedByValues,monthh,yearr) {
 	oTable= $('#timeSeriesReportResult-table');
 	$('#timeSeriesReportResult-header').show();
 	$('#reportgeneration-header').show();
+	$.ajax({
+		type: "GET",
+		url: "/lcms/timeseriesreports/drilldownreportresult",
+		cache: true,
+		dataType: "json",
+		data:{'aggregatedBy' :aggregatedBy,
+			'month' :month,
+			'year' :year,
+			'period':period,
+			'aggregatedByValue': aggregatedByValues}
+	}).done(function(searchResult) {
+	console.log(JSON.stringify(searchResult));
 	oDataTable=oTable.DataTable({
 		dom : "<'row'<'col-xs-4 pull-right'f>r>t<'row add-margin'<'col-md-3 col-xs-6'i><'col-md-2 col-xs-6'l><'col-md-3 col-xs-6 text-right'B><'col-md-4 col-xs-6 text-right'p>>",
 		"autoWidth": false,
@@ -229,22 +230,12 @@ function callAjaxBydrillDownReport(aggregatedByValues,monthh,yearr) {
 				    }
 				}],
 
-				ajax : {
-					url : "/lcms/timeseriesreports/drilldownreportresult",
-					data : {
-						'aggregatedBy' :aggregatedBy,
-						'month' :month,
-						'year' :year,
-						'period':period,
-						'aggregatedByValue': aggregatedByValues
-						
-					}
-				
-				},
+				searchable : true,
+				data : searchResult,
 				columns : [
 				           {"title" : "S.no","sClass" : "text-left"}, 
 						{
-							"data" : "legalcaseno",
+							"data" : "lcNumber",
 							"sTitle" : "Legal Case Number",
 							"className" : "text-left",
 							"render" : function(data, type, full, meta) {
@@ -253,38 +244,38 @@ function callAjaxBydrillDownReport(aggregatedByValues,monthh,yearr) {
 							}
 						},
 						{
-							"data" : "casenumber",
+							"data" : "caseNumber",
 							"sTitle" : "Case Number",
 							"className" : "text-left"
 						},
 
 						{
-							"data" : "casetitle",
+							"data" : "caseTitle",
 							"sTitle" : "Case Title",
 							"className" : "text-left"
 						},
 						{
-							"data" : "courtname",
+							"data" : "courtName",
 							"sTitle" : "Court Name",
 							"className" : "text-left"
 						},
 						{
-							"data" : "standingcouncil",
+							"data" : "standingCouncil",
 							"sTitle" : "Standing Council",
 							"className" : "text-left"
 						},
 						{
-							"data" : "statusDesc",
+							"data" : "caseStatus",
 							"sTitle" : "Case Status",
 							"className" : "text-left"
 						},
 						{
-							"data" : "petitioners",
+							"data" : "petitionerName",
 							"sTitle" : "Petitioners",
 							"className" : "text-left"
 						},
 						{
-							"data" : "respondants",
+							"data" : "respondantName",
 							"sTitle" : "Respondents",
 							"className" : "text-left"
 						}]
@@ -298,8 +289,13 @@ function callAjaxBydrillDownReport(aggregatedByValues,monthh,yearr) {
        } );
    } ).draw();
 	
+	
+	})
 
+	
+		
 }
+
 	
 
 function openLegalCase(lcNumber) {
@@ -311,5 +307,3 @@ function setHiddenValueByLink(aggregatedByValue,month,year) {
 	callAjaxBydrillDownReport(aggregatedByValue,month,year);
 	
 }
-
-

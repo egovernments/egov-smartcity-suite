@@ -47,14 +47,14 @@ function refreshInbox() {
 }
 
 $(document).ready(function () {
-
+	
     $('#category').change(function () {
         var val = $(this).val();
         if (val !== '') {
             var results = [];
             $.ajax({
                 type: "GET",
-                url: '../licensesubcategory/by-category',
+                url: '/tl/licensesubcategory/by-category',
                 data: {categoryId: val},
                 dataType: "json",
                 success: function (data) {

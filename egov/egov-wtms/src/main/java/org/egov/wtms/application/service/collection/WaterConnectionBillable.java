@@ -145,7 +145,7 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
 
     @Override
     public Long getBoundaryNum() {
-        return getAssessmentDetails().getBoundaryDetails().getWardNumber();
+        return getAssessmentDetails().getBoundaryDetails().getAdminWardNumber();
     }
 
     @Override

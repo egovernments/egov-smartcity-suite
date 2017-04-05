@@ -40,15 +40,14 @@
 package org.egov.lcms.web.controller.reports;
 
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.List;
 
-import org.egov.lcms.entity.es.LegalCaseDocument;
-import org.egov.lcms.reports.entity.LcDueReportResult;
-import org.egov.lcms.transactions.service.LcDueReportService;
+import org.egov.lcms.reports.entity.LegalCommonReportResult;
+import org.egov.lcms.transactions.service.LegalCommonReportService;
 import org.egov.lcms.utils.constants.LcmsConstants;
 import org.egov.lcms.web.controller.transactions.GenericLegalCaseController;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -60,19 +59,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class PwrDueReportController extends GenericLegalCaseController {
 
     @Autowired
-    private LcDueReportService lcDueReportService;
+    private LegalCommonReportService legalCommonReportService;
 
-    @RequestMapping(value = "/pwrDueReportResult", method = RequestMethod.POST)
+    @RequestMapping(value = "/pwrDueReportResult", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public List<LcDueReportResult> getPwrDueReport(@ModelAttribute final LcDueReportResult dueReportResult)
+    public List<LegalCommonReportResult> getPwrDueReport(@ModelAttribute final LegalCommonReportResult legalCommonReport,
+            final String reportType)
             throws ParseException {
-        List<LegalCaseDocument> legalcaseDocumentList;
-        final List<LcDueReportResult> finalResult = new ArrayList<>();
-        legalcaseDocumentList = lcDueReportService.findAllLegalcaseDocumentIndexByFilter(dueReportResult,
-                LcmsConstants.DUEPWRREPORT);
-        for (final LegalCaseDocument legalcaseDocument : legalcaseDocumentList)
-            lcDueReportService.buildLcDueReport(legalcaseDocument, finalResult);
-        return finalResult;
+        return legalCommonReportService.getLegalCommonReportsResults(legalCommonReport, LcmsConstants.DUEPWRREPORT);
 
     }
 

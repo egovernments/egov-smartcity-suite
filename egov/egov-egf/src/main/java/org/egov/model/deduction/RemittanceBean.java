@@ -68,6 +68,8 @@ public class RemittanceBean implements Predicate {
     private BigDecimal totalAmount;
     private boolean chkremit;
     private Integer bank;
+    private Integer bankBranchId;
+    private Long bankAccountId;
     private Integer detailTypeId;
     private Integer detailKeyid;
     private BigDecimal partialAmount;
@@ -81,12 +83,11 @@ public class RemittanceBean implements Predicate {
         return functionId;
     }
 
-    public void setFunctionId(Long functionId) {
+    public void setFunctionId(final Long functionId) {
         this.functionId = functionId;
     }
 
-    public Integer getRemittance_gl_dtlId()
-    {
+    public Integer getRemittance_gl_dtlId() {
         return remittance_gl_dtlId;
     }
 
@@ -274,8 +275,24 @@ public class RemittanceBean implements Predicate {
         return departmentId;
     }
 
-    public void setDepartmentId(Long departmentId) {
+    public void setDepartmentId(final Long departmentId) {
         this.departmentId = departmentId;
+    }
+
+    public Integer getBankBranchId() {
+        return bankBranchId;
+    }
+
+    public void setBankBranchId(final Integer bankBranchId) {
+        this.bankBranchId = bankBranchId;
+    }
+
+    public Long getBankAccountId() {
+        return bankAccountId;
+    }
+
+    public void setBankAccountId(final Long bankAccountId) {
+        this.bankAccountId = bankAccountId;
     }
 
 }

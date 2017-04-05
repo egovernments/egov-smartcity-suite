@@ -55,7 +55,7 @@
 	TYPE="text/css">
 <script type="text/javascript" src="/EGF/resources/javascript/tabber.js?rnd=${app_release_no}"></script>
 <script type="text/javascript"
-	src="/EGF/resources/javascript/RemitRecoveryHelper.js?rnd=${app_release_no}"></script>
+	src="/EGF/resources/javascript/remitrecovery-helper.js?rnd=${app_release_no}"></script>
 <script type="text/javascript"
 	src="/EGF/resources/javascript/tabber2.js?rnd=${app_release_no}"></script>
 <script type="text/javascript"

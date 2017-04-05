@@ -361,6 +361,9 @@
                             </div>
                         </div>
                     </div>
+                    <s:if test="%{hasState()== true}">
+                        <%@ include file='../common/workflowhistory.jsp' %>
+                    </s:if>
                 </div>
                 <div style="text-align: center;" hidden="true" id="closeDiv">
                     <input type="button" name="closeBtn" id="closeBtn" value="Close"

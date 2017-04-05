@@ -111,6 +111,10 @@ public class CreateBankAccountService {
         return bankAccountRepository.findByChartofaccounts_Glcode(glcode);
     }
 
+    public List<Bankaccount> getByBranchId(final Integer branchId) {
+        return bankAccountRepository.findByBankbranch_Id(branchId);
+    }
+    
     @Transactional
     public Bankaccount create(final Bankaccount bankaccount) {
         String newGLCode;

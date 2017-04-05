@@ -39,14 +39,10 @@
  */
 package org.egov.tl.web.controller;
 
-import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-
-import java.util.List;
-
 import org.egov.tl.entity.LicenseAppType;
 import org.egov.tl.entity.PenaltyRates;
 import org.egov.tl.entity.dto.PenaltyForm;
+import org.egov.tl.service.LicenseAppTypeService;
 import org.egov.tl.service.PenaltyRatesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -59,52 +55,60 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.List;
+
+import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+
 @Controller
 @RequestMapping("/penaltyRates")
 public class PenaltyRatesController {
 
-    public static final String PENALTYRATE_RESULT = "penaltyRates-result";
+    private static final String PENALTYRATE_RESULT = "penaltyRates-result";
 
     @Autowired
     private PenaltyRatesService penaltyRatesService;
 
+    @Autowired
+    private LicenseAppTypeService licenseAppTypeService;
+
     @ModelAttribute("licenseAppTypes")
     public List<LicenseAppType> licenseAppTypes() {
-        return penaltyRatesService.findAllLicenseAppType();
+        return licenseAppTypeService.findAllLicenseAppType();
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.GET)
-    public String penaltyRatesForm(@ModelAttribute final PenaltyForm penaltyForm, final Model model) {
+    public String penaltyRatesForm(@ModelAttribute PenaltyForm penaltyForm) {
         return "penaltyRates-create";
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
-    public String penaltyRatesCreate(@ModelAttribute final PenaltyForm penaltyForm, final BindingResult bindingResult,
-            final RedirectAttributes redirectAttributes, final Model model) {
+    public String penaltyRatesCreate(@ModelAttribute PenaltyForm penaltyForm, BindingResult bindingResult,
+                                     RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors())
             return PENALTYRATE_RESULT;
         penaltyRatesService.create(penaltyForm.getPenaltyRates());
         redirectAttributes.addFlashAttribute("message", "msg.penaltyRate.created");
         return "penaltyRates-view";
     }
-    
+
     @RequestMapping(value = "/view", method = RequestMethod.GET)
-    public String searchForm(@ModelAttribute final PenaltyForm penaltyForm, final Model model) {
-       
+    public String searchForm(@ModelAttribute PenaltyForm penaltyForm) {
+
         return "penaltyRates-search";
     }
 
     @RequestMapping(value = "/search", method = GET)
-    public String search(@ModelAttribute final PenaltyForm penaltyForm, final BindingResult errors, final Model model) {
+    public String search(@ModelAttribute PenaltyForm penaltyForm, BindingResult errors, Model model) {
         if (errors.hasErrors())
             return PENALTYRATE_RESULT;
         penaltyForm.setPenaltyRatesList(penaltyRatesService.search(penaltyForm.getLicenseAppType().getId()));
         model.addAttribute("penaltyForm", penaltyForm);
         return PENALTYRATE_RESULT;
     }
-   
+
     @RequestMapping(value = "/searchview", method = GET)
-    public String searchview(@ModelAttribute final PenaltyForm penaltyForm, final BindingResult errors, final Model model) {
+    public String searchview(@ModelAttribute PenaltyForm penaltyForm, BindingResult errors, Model model) {
         if (errors.hasErrors())
             return "penaltyRates-search";
         penaltyForm.setPenaltyRatesList(penaltyRatesService.search(penaltyForm.getLicenseAppType().getId()));
@@ -116,8 +120,8 @@ public class PenaltyRatesController {
 
     @RequestMapping(value = "/deleterow", method = GET, produces = TEXT_PLAIN_VALUE)
     @ResponseBody
-    public String deletepenaltyfeerow(@RequestParam final Long penaltyRateId) {
-        final PenaltyRates penaltyRates = penaltyRatesService.findOne(Long.valueOf(penaltyRateId));
+    public String removePenaltyRate(@RequestParam Long penaltyRateId) {
+        PenaltyRates penaltyRates = penaltyRatesService.findOne(penaltyRateId);
         if (penaltyRates != null)
             penaltyRatesService.delete(penaltyRates);
         return "success";

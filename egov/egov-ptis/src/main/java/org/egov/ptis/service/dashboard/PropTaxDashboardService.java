@@ -171,7 +171,7 @@ public class PropTaxDashboardService {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Time taken by Property Tax getTotalDemand() is : " + timeTaken + MILLISECS);
         int noOfMonths = DateUtils
-                .noOfMonths(DateUtils.startOfDay(currFinYear.getStartingDate()), new Date()) + 1;
+                .noOfMonthsBetween(DateUtils.startOfDay(currFinYear.getStartingDate()), new Date()) + 1;
         consolidatedData.setTotalDmd(totalDmd.divide(BigDecimal.valueOf(12), BigDecimal.ROUND_HALF_UP)
                 .multiply(BigDecimal.valueOf(noOfMonths)));
         consolidatedData.setPerformance(consolidatedData.getCytdColl().multiply(BIGDECIMAL_100)

@@ -256,7 +256,7 @@
         <module>egov-adtax</module>
         <module>egov-wtms</module>
         <module>egov-tl</module>
- 		<module>egov-bpa</module>
+ 		<!-- <module>egov-bpa</module> -->
         <module>egov-commonsweb</module>
         <module>egov-eisweb</module>
         <module>egov-egiweb</module>
@@ -273,7 +273,7 @@
         <module>egov-wtmsweb</module>
         <module>egov-dashboardweb</module>
         <module>egov-tlweb</module>
-		<module>egov-bpaweb</module>
+		<!-- <module>egov-bpaweb</module> -->
         <module>egov-ear</module>
         <module>egov-restapi</module>
         <module>egov-council</module>
