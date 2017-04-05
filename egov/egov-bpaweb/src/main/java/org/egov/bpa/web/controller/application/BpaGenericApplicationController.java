@@ -39,19 +39,31 @@
  */
 package org.egov.bpa.web.controller.application;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.ArrayUtils;
+import org.egov.bpa.application.entity.ApplicationDocument;
+import org.egov.bpa.application.entity.BpaApplication;
 import org.egov.bpa.application.entity.ServiceType;
 import org.egov.bpa.application.entity.StakeHolder;
+import org.egov.bpa.application.service.CheckListDetailService;
 import org.egov.bpa.masters.service.ServiceTypeService;
 import org.egov.bpa.masters.service.StakeHolderService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.multipart.MultipartFile;
 
 public abstract class BpaGenericApplicationController extends GenericWorkFlowController {
 
@@ -63,6 +75,13 @@ public abstract class BpaGenericApplicationController extends GenericWorkFlowCon
 
     @Autowired
     private StakeHolderService stakeHolderService;
+
+    @Autowired
+    private CheckListDetailService checkListDetailService;
+
+    @Autowired
+    @Qualifier("fileStoreService")
+    protected FileStoreService fileStoreService;
 
     @ModelAttribute("zones")
     public List<Boundary> zones() {
@@ -97,6 +116,34 @@ public abstract class BpaGenericApplicationController extends GenericWorkFlowCon
         return boundaryService
                 .getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(BpaConstants.LOCALITY,
                         BpaConstants.LOCATION_HIERARCHY_TYPE);
+    }
+
+    protected Set<FileStoreMapper> addToFileStore(final MultipartFile[] files) {
+        if (ArrayUtils.isNotEmpty(files))
+            return Arrays
+                    .asList(files)
+                    .stream()
+                    .filter(file -> !file.isEmpty())
+                    .map(file -> {
+                        try {
+                            return fileStoreService.store(file.getInputStream(), file.getOriginalFilename(),
+                                    file.getContentType(), BpaConstants.FILESTORE_MODULECODE);
+                        } catch (final Exception e) {
+                            throw new ApplicationRuntimeException("Error occurred while getting inputstream", e);
+                        }
+                    }).collect(Collectors.toSet());
+        else
+            return null;
+    }
+
+    protected void processAndStoreApplicationDocuments(final BpaApplication bpaApplication) {
+        if (!bpaApplication.getApplicationDocument().isEmpty())
+            for (final ApplicationDocument applicationDocument : bpaApplication.getApplicationDocument()) {
+                applicationDocument.setChecklistDetail(checkListDetailService.load(applicationDocument.getChecklistDetail()
+                        .getId()));
+                applicationDocument.setApplication(bpaApplication);
+                applicationDocument.setSupportDocs(addToFileStore(applicationDocument.getFiles()));
+            }
     }
 
 }

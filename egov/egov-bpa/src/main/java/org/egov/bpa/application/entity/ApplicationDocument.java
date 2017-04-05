@@ -79,8 +79,8 @@ public class ApplicationDocument extends AbstractAuditable {
     private Long id;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinTable(name = "egwtr_documents", joinColumns = @JoinColumn(name = "applicationdocumentsid"), inverseJoinColumns = @JoinColumn(name = "filestoreid"))
-    private final Set<FileStoreMapper> supportDocs = Collections.emptySet();
+    @JoinTable(name = "egbpa_documents", joinColumns = @JoinColumn(name = "applicationdocumentid"), inverseJoinColumns = @JoinColumn(name = "filestoreid"))
+    private Set<FileStoreMapper> supportDocs = Collections.emptySet();
 
     private transient MultipartFile[] files;
     @ManyToOne
@@ -97,6 +97,7 @@ public class ApplicationDocument extends AbstractAuditable {
     private Boolean issubmitted;
 
     @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "createduser")
     private User createduser;
     @Length(min = 1, max = 256)
     private String remarks;
@@ -169,6 +170,10 @@ public class ApplicationDocument extends AbstractAuditable {
 
     public Set<FileStoreMapper> getSupportDocs() {
         return supportDocs;
+    }
+
+    public void setSupportDocs(final Set<FileStoreMapper> supportDocs) {
+        this.supportDocs = supportDocs;
     }
 
 }
