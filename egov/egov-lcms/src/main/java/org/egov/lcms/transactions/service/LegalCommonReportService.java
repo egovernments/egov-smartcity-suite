@@ -236,9 +236,7 @@ public class LegalCommonReportService {
                             .lte(new DateTime(newFormat.format(formatter.parse(searchRequest.getCaseToDate())))));
 
             }
-        }
-
-        if (StringUtils.isNotBlank(searchRequest.getCaseFromDate()) && !reportType.equals(LcmsConstants.DUEJUDGEMENTIMPLPREPORT))
+        } else if (StringUtils.isNotBlank(searchRequest.getCaseFromDate()))
             boolQuery = boolQuery.filter(QueryBuilders.rangeQuery(CASE_DATE)
                     .gte(newFormat.format(formatter.parse(searchRequest.getCaseFromDate())))
                     .lte(new DateTime(newFormat.format(formatter.parse(searchRequest.getCaseToDate())))));
