@@ -789,17 +789,19 @@ public class CollectionsUtil {
             instrumentType = receiptHeader.getReceiptInstrument().iterator().next().getInstrumentType().getType();
 
         if (receiptHeader.getReceipttype() == CollectionConstants.RECEIPT_TYPE_BILL) {
-            final BillingIntegrationService billingServiceBean = (BillingIntegrationService) getBean(billingService
-                    .getCode() + CollectionConstants.COLLECTIONS_INTERFACE_SUFFIX);
             try {
                 final Set<BillReceiptInfo> billReceipts = new HashSet<>(0);
                 BillReceiptInfo billReceipt = new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO,
                         persistenceService, null);
                 billReceipts.add(billReceipt);
                 if (billingService.getCode().equals(CollectionConstants.SERVICECODE_LAMS))
-                    receiptAmountInfo = updateReceiptDetailsAndGetReceiptAmountInfo(new BillReceiptReq(billReceipt), billingService.getCode());
-                else
+                    receiptAmountInfo = updateReceiptDetailsAndGetReceiptAmountInfo(new BillReceiptReq(billReceipt),
+                            billingService.getCode());
+                else {
+                    final BillingIntegrationService billingServiceBean = (BillingIntegrationService) getBean(billingService
+                            .getCode() + CollectionConstants.COLLECTIONS_INTERFACE_SUFFIX);
                     receiptAmountInfo = billingServiceBean.receiptAmountBifurcation(billReceipt);
+                }
             } catch (final Exception e) {
                 final String errMsg = "Exception while constructing collection index for receipt number ["
                         + receiptHeader.getReceiptnumber() + "]!";
