@@ -44,6 +44,8 @@ import javax.validation.Valid;
 
 import org.egov.bpa.application.entity.BpaApplication;
 import org.egov.bpa.application.service.ApplicationBpaService;
+import org.egov.bpa.utils.BpaConstants;
+import org.egov.eis.web.contract.WorkflowContainer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -60,6 +62,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping(value="/application")
 public class UpdateBpaApplicationController extends BpaGenericApplicationController{
     
+    
+    private static final String ADDITIONALRULE = "additionalRule";
+
     @Autowired
     private ApplicationBpaService applicationBpaService;
     
@@ -73,10 +78,19 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
             final HttpServletRequest request)
     {
         BpaApplication application=getBpaApplication(applicationNumber);
-        application.setApplicantMode("NEW");
-        model.addAttribute("bpaApplication", application);
-        model.addAttribute("applicantMode", application.getApplicantMode());
+        loadViewdata(model, application);
         return "bpaapplication-Form";
+    }
+
+    private void loadViewdata(final Model model, BpaApplication application) {
+        model.addAttribute("stateType", application.getClass().getSimpleName());
+        final WorkflowContainer workflowContainer = new WorkflowContainer();
+        model.addAttribute(ADDITIONALRULE, BpaConstants.CREATE_ADDITIONAL_RULE_CREATE);
+        workflowContainer.setAdditionalRule(BpaConstants.CREATE_ADDITIONAL_RULE_CREATE);
+        prepareWorkflow(model, application, workflowContainer);
+        model.addAttribute("currentState", application.getCurrentState().getValue());
+        model.addAttribute("applicantMode", application.getApplicantMode());
+        model.addAttribute("bpaApplication", application);
     }
     
     @RequestMapping(value = "/update/{applicationNumber}", method = RequestMethod.POST)
@@ -85,12 +99,12 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
             final HttpServletRequest request, final Model model, @RequestParam("files") final MultipartFile[] files) {
         if(resultBinder.hasErrors())
         {
-            model.addAttribute("bpaApplication", bpaApplication);
-            model.addAttribute("applicantMode", bpaApplication.getApplicantMode());
+            loadViewdata(model, bpaApplication);
             return "bpaapplication-Form";   
         }
         
-        applicationBpaService.updateApplication(bpaApplication);
+        bpaApplication= applicationBpaService.updateApplication(bpaApplication);
+        System.out.println(bpaApplication);
         return bpaApplication.getApplicationNumber();
     }
     

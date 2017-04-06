@@ -40,6 +40,7 @@
 package org.egov.bpa.application.entity;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -59,6 +60,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import org.egov.bpa.application.entity.enums.Occupancy;
@@ -180,6 +182,12 @@ public class BpaApplication extends StateAware {
     @OneToMany(mappedBy = "stakeHolder", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ApplicationStakeHolder> stakeHolder = new ArrayList<>(0);
 
+    @Transient
+    private Long approvalDepartment;
+
+    @Transient
+    private String approvalComent;
+    
     @Override
     public Long getId() {
         return id;
@@ -188,6 +196,12 @@ public class BpaApplication extends StateAware {
     @Override
     public void setId(final Long id) {
         this.id = id;
+    }
+    
+    @Override
+    public String myLinkId() {
+        return applicationNumber != null ? applicationNumber : planPermissionNumber;
+
     }
 
     public String getBuildingplanapprovalnumber() {
@@ -272,6 +286,22 @@ public class BpaApplication extends StateAware {
 
     public String getTapalNumber() {
         return tapalNumber;
+    }
+
+    public Long getApprovalDepartment() {
+        return approvalDepartment;
+    }
+
+    public void setApprovalDepartment(Long approvalDepartment) {
+        this.approvalDepartment = approvalDepartment;
+    }
+
+    public String getApprovalComent() {
+        return approvalComent;
+    }
+
+    public void setApprovalComent(String approvalComent) {
+        this.approvalComent = approvalComent;
     }
 
     public void setTapalNumber(final String tapalNumber) {
@@ -456,14 +486,11 @@ public class BpaApplication extends StateAware {
 
     @Override
     public String getStateDetails() {
-        // TODO Auto-generated method stub
-        return null;
+        final SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+        return String.format("Application Number %s with application date %s.",
+                applicationNumber != null ? applicationNumber : planPermissionNumber,
+                applicationDate != null ? formatter.format(applicationDate) : formatter.format(new Date()));
     }
-
-    /*
-     * public Department getDepartment() { return department; } public void setDepartment(Department department) { this.department
-     * = department; }
-     */
 
     public BigDecimal getAdmissionfeeAmount() {
         return admissionfeeAmount;

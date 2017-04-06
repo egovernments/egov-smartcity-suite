@@ -108,8 +108,6 @@ public class NewApplicationController extends BpaGenericApplicationController {
         bpaApplication.getApplicationDocument().clear();
         bpaApplication.setApplicationDocument(applicationDocs);
         processAndStoreApplicationDocuments(bpaApplication);
-        applicationBpaService.createNewApplication(bpaApplication);
-
         bpaApplication.setAdmissionfeeAmount(applicationBpaService.setAdmissionFeeAmountForRegistration(String.valueOf(bpaApplication.getServiceType().getId())));
         applicationBpaService.createNewApplication(bpaApplication);
         return genericBillGeneratorService.generateBillAndRedirectToCollection(bpaApplication, model);

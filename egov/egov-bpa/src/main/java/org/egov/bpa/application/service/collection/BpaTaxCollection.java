@@ -213,19 +213,12 @@ public class BpaTaxCollection extends TaxCollection {
     public void updateBpaApplication(final EgDemand demand) {
         final BpaApplication application = applicationBpaService
                 .getApplicationByDemand(demand);
-           Long approvalPosition ;
-           WorkFlowMatrix  wfmatrix = bpaUtils.getWfMatrixByCurrentState(application, BpaConstants.WF_NEW_STATE);
-
-            final BpaApplicationWorkflowCustomDefaultImpl applicationWorkflowCustomDefaultImpl = bpaUtils
-                    .getInitialisedWorkFlowBean();
-            approvalPosition = bpaUtils.getUserPositionByZone(wfmatrix.getNextDesignation(),application.getSiteDetail().get(0)!=null ? application.getSiteDetail().get(0).getAdminBoundary():null);
-            applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(application,
-                    approvalPosition,"BPA Admission fees collected",
-                    BpaConstants.CREATE_ADDITIONAL_RULE_CREATE, null);
+            bpaUtils.redirectToBpaWorkFlow(application,BpaConstants.WF_NEW_STATE,"BPA Admission fees collected");
         // update status and initialize workflow
         applicationBpaService.saveAndFlushApplication(application);
-
     }
+
+    
 
     @Transactional
     public void updateCollForRcptCreate(final EgDemand demand, final BillReceiptInfo billRcptInfo,

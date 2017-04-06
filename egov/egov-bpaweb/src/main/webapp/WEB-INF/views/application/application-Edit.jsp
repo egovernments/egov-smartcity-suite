@@ -49,6 +49,9 @@
 <form:form role="form" method="post" modelAttribute="bpaApplication" 
 id="editWaterConnectionform" cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">		
 
+	<form:hidden path="" id="wfstate" value="${bpaApplication.state.id}"/> 
+	<form:hidden path="" id="workFlowAction" name="workFlowAction"/>
+			<form:hidden path="" id="wfstateDesc" value="${waterConnectionDetails.state.value}"/> 
 
 			<div class="panel panel-primary" data-collapsed="0">
 
@@ -59,10 +62,10 @@ id="editWaterConnectionform" cssClass="form-horizontal form-groups-bordered" enc
 
 				</div>
 			</div> 
-			<%-- <jsp:include page="../common/commonWorkflowMatrix.jsp"/>
+			<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
 				<div class="buttonbottom" align="center">
 					<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />
-				</div> --%>
+				</div>
 			<div class="buttonbottom" align="center">
 				<table>
 					<tr>

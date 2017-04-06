@@ -48,6 +48,7 @@ import org.egov.bpa.application.entity.BpaStatus;
 import org.egov.bpa.application.repository.ApplicationBpaRepository;
 import org.egov.bpa.application.service.collection.GenericBillGeneratorService;
 import org.egov.bpa.service.BpaStatusService;
+import org.egov.bpa.service.BpaUtils;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.demand.model.EgDemand;
 import org.egov.infra.exception.ApplicationRuntimeException;
@@ -65,6 +66,10 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
 
     @Autowired
     private BpaStatusService bpaStatusService;
+    
+    @Autowired
+    private BpaUtils bpaUtils;
+    
  
     @Autowired
     private ApplicationBpaBillService applicationBpaBillService;
@@ -95,8 +100,13 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
     }
 
     @Transactional
-    public void updateApplication(final BpaApplication application) {
-        applicationBpaRepository.save(application);
+    public BpaApplication updateApplication(final BpaApplication application) {
+        
+        BpaApplication updatedApplication = applicationBpaRepository
+                .save(application);
+        bpaUtils.redirectToBpaWorkFlow(application,application.getCurrentState().getValue(),null);
+
+        return updatedApplication;
     }
 
     public BigDecimal setAdmissionFeeAmountForRegistration(final String serviceType) {

@@ -84,5 +84,16 @@ public class BpaUtils {
         }
         return !assignment.isEmpty() ? assignment.get(0).getPosition().getId() : 26l;
     }
+    
+    @Transactional
+    public void redirectToBpaWorkFlow(final BpaApplication application,String currentState,String remarks) {
+        Long approvalPosition;
+        WorkFlowMatrix  wfmatrix = getWfMatrixByCurrentState(application, currentState);
+        final BpaApplicationWorkflowCustomDefaultImpl applicationWorkflowCustomDefaultImpl = getInitialisedWorkFlowBean();
+        approvalPosition =getUserPositionByZone(wfmatrix.getNextDesignation(),application.getSiteDetail().get(0)!=null ? application.getSiteDetail().get(0).getAdminBoundary():null);
+        applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(application,
+                approvalPosition,remarks,
+                BpaConstants.CREATE_ADDITIONAL_RULE_CREATE, null);
+    }
 
 }
