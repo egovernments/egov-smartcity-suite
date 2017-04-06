@@ -160,7 +160,7 @@ function submitForm(redirectUrl,oTable) {
 						  { "data" : "courtName", "title": "Court Name","sClass" : "text-center"},
 						  { "data" : "petitionerName", "title": "Petitioners","sClass" : "text-center"},
 						  { "data" : "respondantName", "title": "Respondants","sClass" : "text-center"},
-						  { "data" : "standingCounsel", "title": "Standing Council","sClass" : "text-center"},
+						  { "data" : "standingCounsel", "title": "Standing Counsel","sClass" : "text-center"},
 						  { "data" : "officerIncharge", "title": "In Charge Officer","sClass" : "text-center"},
 						  { "data" : "nextDate", "title": "Important Date","sClass" : "text-center"}
 						  ],

@@ -299,8 +299,8 @@ function callAjaxBydrillDownReport(aggregatedByValues) {
 							"className" : "text-left"
 						},
 						{
-							"data" : "standingCouncil",
-							"sTitle" : "Standing Council",
+							"data" : "standingCounsel",
+							"sTitle" : "Standing Counsel",
 							"className" : "text-left"
 						},
 						{
@@ -429,8 +429,8 @@ function submitSubReportStatusForm() {
 								"className" : "text-left"
 							},
 							{
-								"data" : "standingCouncil",
-								"sTitle" : "Standing Council",
+								"data" : "standingCounsel",
+								"sTitle" : "Standing Counsel",
 								"className" : "text-left"
 							},
 							{

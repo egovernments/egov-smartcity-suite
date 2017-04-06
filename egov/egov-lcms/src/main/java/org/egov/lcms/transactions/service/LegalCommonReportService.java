@@ -135,19 +135,25 @@ public class LegalCommonReportService {
         final SimpleDateFormat dateFormat = new SimpleDateFormat("E MMM dd HH:mm:ss Z yyyy");
         final SimpleDateFormat myFormat = new SimpleDateFormat(LcmsConstants.DATE_FORMAT_DDMMYYYY);
         final LegalCommonReportResult legalCommonResultObj = new LegalCommonReportResult();
-        legalCommonResultObj.setCaseNumber(legalcaseDocument.getCaseNumber());
-        legalCommonResultObj.setLcNumber(legalcaseDocument.getLcNumber());
-        legalCommonResultObj.setCaseTitle(legalcaseDocument.getCaseTitle());
-        legalCommonResultObj.setCourtName(legalcaseDocument.getCourtName());
-        legalCommonResultObj.setPetitionerName(legalcaseDocument.getPetitionerNames());
-        legalCommonResultObj.setRespondantName(legalcaseDocument.getRespondantNames());
-        legalCommonResultObj.setStandingCounsel(legalcaseDocument.getAdvocateName());
-        legalCommonResultObj.setOfficerIncharge(legalcaseDocument.getOfficerIncharge());
-        legalCommonResultObj.setCaseStatus(legalcaseDocument.getStatus());
-        legalCommonResultObj.setReportStatus(legalcaseDocument.getSubStatus());
-        legalCommonResultObj.setPetitionType(legalcaseDocument.getPetitionType());
+        legalCommonResultObj.setCaseNumber(legalcaseDocument.getCaseNumber() != null ? legalcaseDocument.getCaseNumber() : "");
+        legalCommonResultObj.setLcNumber(legalcaseDocument.getLcNumber() != null ? legalcaseDocument.getLcNumber() : "");
+        legalCommonResultObj.setCaseTitle(legalcaseDocument.getCaseTitle() != null ? legalcaseDocument.getCaseTitle() : "");
+        legalCommonResultObj.setCourtName(legalcaseDocument.getCourtName() != null ? legalcaseDocument.getCourtName() : "");
         legalCommonResultObj
-                .setNextDate(myFormat.format(dateFormat.parse(legalcaseDocument.getNextDate().toString())));
+                .setPetitionerName(legalcaseDocument.getPetitionerNames() != null ? legalcaseDocument.getPetitionerNames() : "");
+        legalCommonResultObj
+                .setRespondantName(legalcaseDocument.getRespondantNames() != null ? legalcaseDocument.getRespondantNames() : "");
+        legalCommonResultObj
+                .setStandingCounsel(legalcaseDocument.getAdvocateName() != null ? legalcaseDocument.getAdvocateName() : "");
+        legalCommonResultObj
+                .setOfficerIncharge(legalcaseDocument.getOfficerIncharge() != null ? legalcaseDocument.getOfficerIncharge() : "");
+        legalCommonResultObj.setCaseStatus(legalcaseDocument.getStatus() != null ? legalcaseDocument.getStatus() : "");
+        legalCommonResultObj.setReportStatus(legalcaseDocument.getSubStatus() != null ? legalcaseDocument.getSubStatus() : "");
+        legalCommonResultObj
+                .setPetitionType(legalcaseDocument.getPetitionType() != null ? legalcaseDocument.getPetitionType() : "");
+        legalCommonResultObj
+                .setNextDate(legalcaseDocument.getNextDate() != null
+                        ? myFormat.format(dateFormat.parse(legalcaseDocument.getNextDate().toString())) : "");
         finalResult.add(legalCommonResultObj);
         return finalResult;
 

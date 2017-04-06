@@ -67,7 +67,7 @@ public class GenericSubReportJsonAdaptor implements JsonSerializer<LegalCommonRe
             jsonObject.addProperty("courtName", genericSubResult.getCourtName());
             jsonObject.addProperty("petitionerName", genericSubResult.getPetitionerName());
             jsonObject.addProperty("respondantName", genericSubResult.getRespondantName());
-            jsonObject.addProperty("standingCouncil", genericSubResult.getStandingCounsel() != null
+            jsonObject.addProperty("standingCounsel", genericSubResult.getStandingCounsel() != null
                     ? genericSubResult.getStandingCounsel() : "");
             if (genericSubResult.getCaseStatus().equalsIgnoreCase(LcmsConstants.LEGALCASE_STATUS_CREATED_DESC))
                 jsonObject.addProperty("statusDesc", genericSubResult.getReportStatus() != null
