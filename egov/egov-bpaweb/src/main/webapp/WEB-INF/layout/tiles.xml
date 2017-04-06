@@ -79,9 +79,16 @@
         <put-attribute name="body" value="/WEB-INF/views/application/viewapplication-form.jsp"/>
     </definition>
     
+    
+    
     <definition name="documentscrutiny-form" extends="base_layout">
-        <put-attribute name="page-title" value="title.viewApplication" cascade="true"/>
+        <put-attribute name="page-title" value="title.documentScrutiny" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/application/documentscrutiny-form.jsp"/>
+    </definition>
+    
+     <definition name="createdocumentscrutiny-form" extends="base_layout">
+        <put-attribute name="page-title" value="title.documentScrutiny.create" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/application/createdocumentscrutiny-form.jsp"/>
     </definition>
     
     <definition name="stakeholder-new" extends="base_layout">

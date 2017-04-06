@@ -114,7 +114,15 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
 
         return updatedApplication;
     }
-
+    @Transactional
+    public BpaApplication updateApplication(BpaApplication bpaApplication, Long positionId) {
+        final BpaApplication updatedApplication = applicationBpaRepository
+                .save(bpaApplication);
+        //bpaUtils.redirectToBpaWorkFlow(bpaApplication, bpaApplication.getCurrentState().getValue(), null);
+// Enable later... add position as part of redirect bpaworkflow.
+        return updatedApplication;
+    }
+    
     public BigDecimal setAdmissionFeeAmountForRegistration(final String serviceType) {
         BigDecimal admissionfeeAmount;
         if (serviceType != null)

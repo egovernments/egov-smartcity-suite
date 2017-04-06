@@ -46,6 +46,7 @@ import org.egov.bpa.application.entity.BpaApplication;
 import org.egov.bpa.application.service.ApplicationBpaService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.eis.web.contract.WorkflowContainer;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -63,6 +64,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class UpdateBpaApplicationController extends BpaGenericApplicationController {
 
     private static final String ADDITIONALRULE = "additionalRule";
+    @Autowired
+    private SecurityUtils securityUtils;
 
     @Autowired
     private ApplicationBpaService applicationBpaService;
@@ -76,7 +79,7 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
     public String updateApplicationForm(final Model model, @PathVariable final String applicationNumber,
             final HttpServletRequest request) {
         final BpaApplication application = getBpaApplication(applicationNumber);
-        
+
         if (application != null) {
             loadViewdata(model, application);
             if (application.getState() != null
@@ -85,6 +88,34 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
             }
         }
         return "bpaapplication-Form";
+    }
+
+    @RequestMapping(value = "/documentscrutiny/{applicationNumber}", method = RequestMethod.GET)
+    public String documentScrutinyForm(final Model model, @PathVariable final String applicationNumber,
+            final HttpServletRequest request) {
+        final BpaApplication application = getBpaApplication(applicationNumber);
+        if (application != null && application.getState() != null
+                && application.getState().getValue().equalsIgnoreCase(BpaConstants.BPA_STATUS_SUPERINDENT_APPROVED)) {
+            loadViewdata(model, application);
+            model.addAttribute("loginUser", securityUtils.getCurrentUser());
+        }
+        // return to error page if status is not superindent approved.
+        return "createdocumentscrutiny-form";
+    }
+
+    @RequestMapping(value = "/documentscrutiny/{applicationNumber}", method = RequestMethod.POST)
+    public String documentScrutinyForm(@Valid @ModelAttribute("bpaApplication") BpaApplication bpaApplication,
+            @PathVariable final String applicationNumber,
+            final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
+            final HttpServletRequest request, final Model model, @RequestParam("files") final MultipartFile[] files) {
+        if (resultBinder.hasErrors()) {
+            loadViewdata(model, bpaApplication);
+            return "createdocumentscrutiny-form";
+        }
+
+        bpaApplication = applicationBpaService.updateApplication(bpaApplication,
+                Long.valueOf(request.getParameter("approvalPosition")));
+        return "viewapplication-form";
     }
 
     private void loadViewdata(final Model model, final BpaApplication application) {
