@@ -38,6 +38,7 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 package org.egov.bpa.masters.service;
+
 import static org.egov.bpa.utils.BpaConstants.FILESTORE_MODULECODE;
 
 import java.io.IOException;
@@ -61,6 +62,7 @@ import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.persistence.entity.Address;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -112,11 +114,11 @@ public class StakeHolderService {
     }
 
     @Transactional
-    public void removeAddress(List<Address> address) {
+    public void removeAddress(final List<Address> address) {
         stakeHolderAddressRepository.deleteInBatch(address);
     }
 
-    public StakeHolder findById(Long id) {
+    public StakeHolder findById(final Long id) {
         return stakeHolderRepository.findOne(id);
     }
 
@@ -181,7 +183,7 @@ public class StakeHolderService {
             criteria.add(Restrictions.ilike("stakeHolder.coaEnrolmentNumber", stakeHolder.getCoaEnrolmentNumber(),
                     MatchMode.ANYWHERE));
 
-        criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+        criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
         return criteria;
     }
 }

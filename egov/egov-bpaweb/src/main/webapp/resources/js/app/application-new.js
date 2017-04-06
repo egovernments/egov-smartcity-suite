@@ -39,7 +39,8 @@
  */
 var reportdatatable;
 jQuery(document).ready(function($) {
-
+	if($('#noJAORSAMessage') && $('#noJAORSAMessage').val())
+		bootbox.alert($('#noJAORSAMessage').val());
 
 });
 

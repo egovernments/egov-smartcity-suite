@@ -66,7 +66,6 @@ import org.springframework.transaction.annotation.Transactional;
 public abstract class BpaApplicationWorkflowCustomImpl implements BpaApplicationWorkflowCustom {
     private static final Logger LOG = LoggerFactory.getLogger(BpaApplicationWorkflowCustomImpl.class);
 
-
     @Autowired
     private SecurityUtils securityUtils;
 
@@ -87,7 +86,7 @@ public abstract class BpaApplicationWorkflowCustomImpl implements BpaApplication
     public BpaApplicationWorkflowCustomImpl() {
 
     }
-    
+
     @Override
     @Transactional
     public void createCommonWorkflowTransition(final BpaApplication application,
@@ -99,26 +98,25 @@ public abstract class BpaApplicationWorkflowCustomImpl implements BpaApplication
         final User user = securityUtils.getCurrentUser();
         final DateTime currentDate = new DateTime();
         Position pos = null;
-        Assignment wfInitiator = null ;
-        if(application.getCreatedBy()!=null)
-        wfInitiator = bpaWorkFlowService.getWorkFlowInitiator(application);
+        Assignment wfInitiator = null;
+        if (application.getCreatedBy() != null)
+            wfInitiator = bpaWorkFlowService.getWorkFlowInitiator(application);
 
         if (approvalPosition != null && approvalPosition > 0)
             pos = positionMasterService.getPositionById(approvalPosition);
 
-        WorkFlowMatrix wfmatrix ;
+        WorkFlowMatrix wfmatrix;
         if (null == application.getState()) { // go by status
             wfmatrix = bpaApplicationWorkflowService.getWfMatrix(application.getStateType(), null,
                     null, additionalRule, BpaConstants.WF_NEW_STATE, null);
 
-            if (wfmatrix != null) {
-                //application.setStatus(getStatusByCurrentMatrxiStatus(wfmatrix));
+            if (wfmatrix != null)
+                // application.setStatus(getStatusByCurrentMatrxiStatus(wfmatrix));
                 application.transition().start()
                         .withSenderName(user.getUsername() + BpaConstants.COLON_CONCATE + user.getName())
                         .withComments(approvalComent).withInitiator(wfInitiator != null ? wfInitiator.getPosition() : null)
                         .withStateValue(wfmatrix.getNextState()).withDateInfo(new Date()).withOwner(pos)
                         .withNextAction(wfmatrix.getNextAction()).withNatureOfTask(BpaConstants.NATURE_OF_WORK);
-            }
 
         } else if (BpaConstants.WF_APPROVE_BUTTON.equalsIgnoreCase(workFlowAction)) {
 
@@ -170,7 +168,7 @@ public abstract class BpaApplicationWorkflowCustomImpl implements BpaApplication
             if (wfmatrix != null) {
                 application.setStatus(getStatusByCurrentMatrxiStatus(wfmatrix));
 
-                if (wfmatrix.getNextAction().equalsIgnoreCase(BpaConstants.WF_END_STATE)) {
+                if (wfmatrix.getNextAction().equalsIgnoreCase(BpaConstants.WF_END_STATE))
                     application.transition().end().withSenderName((wfInitiator != null && wfInitiator.getEmployee() != null
                             ? wfInitiator.getEmployee().getUsername() : "") + BpaConstants.COLON_CONCATE
                             + (wfInitiator != null && wfInitiator.getEmployee() != null
@@ -178,27 +176,26 @@ public abstract class BpaApplicationWorkflowCustomImpl implements BpaApplication
                                     : ""))
                             .withComments(approvalComent).withDateInfo(currentDate.toDate())
                             .withNextAction(wfmatrix.getNextAction()).withNatureOfTask(BpaConstants.NATURE_OF_WORK);
-                } else {
+                else
                     application.transition().progressWithStateCopy()
                             .withSenderName(user.getUsername() + BpaConstants.COLON_CONCATE + user.getName())
                             .withComments(approvalComent)
                             .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
                             .withNextAction(wfmatrix.getNextAction()).withNatureOfTask(BpaConstants.NATURE_OF_WORK);
-                }
             }
         }
         if (LOG.isDebugEnabled())
             LOG.debug(" WorkFlow Transition Completed ");
     }
 
-    private BpaStatus getStatusByCurrentMatrxiStatus(WorkFlowMatrix wfmatrix) {
+    private BpaStatus getStatusByCurrentMatrxiStatus(final WorkFlowMatrix wfmatrix) {
         if (wfmatrix != null && wfmatrix.getNextStatus() != null && !"".equals(wfmatrix.getNextStatus()))
             return bpaStatusService
                     .findByModuleTypeAndCode(BpaConstants.BPASTATUS_MODULETYPE, wfmatrix.getNextStatus());
         return null;
     }
 
-    private BpaStatus getStatusByPassingCode(String code) {
+    private BpaStatus getStatusByPassingCode(final String code) {
         if (code != null && !"".equals(code))
             return bpaStatusService
                     .findByModuleTypeAndCode(BpaConstants.BPASTATUS_MODULETYPE, code);

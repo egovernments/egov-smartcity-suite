@@ -66,7 +66,7 @@ id="editWaterConnectionform" cssClass="form-horizontal form-groups-bordered" enc
 				<div class="buttonbottom" align="center">
 					<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />
 				</div>
-			<div class="buttonbottom" align="center">
+	<%-- 		<div class="buttonbottom" align="center">
 				<table>
 					<tr>
 						<td><form:button type="submit" id="updateApplication"
@@ -75,7 +75,7 @@ id="editWaterConnectionform" cssClass="form-horizontal form-groups-bordered" enc
 							class="btn btn-primary" onclick="window.close();" /></td>
 					</tr>
 				</table>
-			</div>
+			</div> --%>
 		</form:form>
 	</div>
 </div>

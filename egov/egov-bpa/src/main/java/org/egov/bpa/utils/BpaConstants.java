@@ -79,7 +79,7 @@ public class BpaConstants {
 
     public static final String STAKE_HOLDER_CHECK_LIST_TYPE = "STAKEHOLDERDOCUMENT";
     public static final String ADMISSIONFEEREASON = "ADMISSIONFEES";
-    public static final String BPAFEETYPE="AdmissionFee";
+    public static final String BPAFEETYPE = "AdmissionFee";
     public static final String BOUNDARY_TYPE_ZONE = "Zone";
     public static final String BOUNDARY_TYPE_CITY = "City";
 

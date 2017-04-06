@@ -43,7 +43,9 @@ import static org.egov.ptis.constants.PropertyTaxConstants.ADMIN_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WARD;
 
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -52,6 +54,7 @@ import org.egov.bpa.application.entity.ApplicationDocument;
 import org.egov.bpa.application.entity.BpaApplication;
 import org.egov.bpa.application.entity.ServiceType;
 import org.egov.bpa.application.entity.StakeHolder;
+import org.egov.bpa.application.entity.enums.ApplicantMode;
 import org.egov.bpa.application.service.CheckListDetailService;
 import org.egov.bpa.masters.service.ServiceTypeService;
 import org.egov.bpa.masters.service.StakeHolderService;
@@ -104,11 +107,11 @@ public abstract class BpaGenericApplicationController extends GenericWorkFlowCon
 
     @ModelAttribute("electionwards")
     public List<Boundary> wards() {
-        
+
         return boundaryService
                 .getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(WARD, ADMIN_HIERARCHY_TYPE);
     }
-    
+
     @ModelAttribute("wards")
     public List<Boundary> adminWards() {
         return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(WARD,
@@ -126,6 +129,18 @@ public abstract class BpaGenericApplicationController extends GenericWorkFlowCon
         return boundaryService
                 .getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(BpaConstants.LOCALITY,
                         BpaConstants.LOCATION_HIERARCHY_TYPE);
+    }
+
+    public @ModelAttribute("applicationModes") Map<String, String> applicationModes() {
+        return getApplicationModeMap();
+    }
+
+    public Map<String, String> getApplicationModeMap() {
+        final Map<String, String> applicationModeMap = new LinkedHashMap<>(0);
+        applicationModeMap.put(ApplicantMode.NEW.toString(), ApplicantMode.NEW.name());
+        applicationModeMap.put(ApplicantMode.REVISED.name(), ApplicantMode.REVISED.name());
+        applicationModeMap.put(ApplicantMode.OTHERS.name(), ApplicantMode.OTHERS.name());
+        return applicationModeMap;
     }
 
     protected Set<FileStoreMapper> addToFileStore(final MultipartFile[] files) {

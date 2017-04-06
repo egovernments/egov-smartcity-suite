@@ -49,7 +49,7 @@
 
 <div id="appDet">
 <div class="form-group">
-	<label class="col-sm-3 control-label text-right">ServiceType <span
+	<label class="col-sm-3 control-label text-right">Application Type <span
 		class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin">
 		<form:select path="serviceType" data-first-option="false" id="serviceType"
@@ -165,13 +165,17 @@
 </div>
 
 <div class="form-group">
-	<label class="col-sm-3 control-label text-right">Applicant Type<span
+	<label class="col-sm-3 control-label text-right">Applicant Mode<span
 		class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin">
-			<form:input id="applicantType" path="applicantType"
-				class="form-control patternvalidation" data-pattern="string"
-				maxlength="50" />
-		<form:errors path="applicantType" id="applicantType"
+			<form:select path="applicantMode" data-first-option="false" id=""
+			cssClass="form-control" required="required">
+			<form:option value="">
+				<spring:message code="lbl.select" />
+			</form:option>
+			<form:options items="${applicantModes}" />
+		</form:select>
+		<form:errors path="applicantMode" id="applicantMode"
 			cssClass="add-margin error-msg" />
 	</div>
 	<label class="col-sm-2 control-label text-right">Source <span

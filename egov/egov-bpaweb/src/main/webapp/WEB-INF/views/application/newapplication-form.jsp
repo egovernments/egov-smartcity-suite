@@ -57,6 +57,8 @@
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
 			<input type="hidden" id="bpaApplication" name="bpaApplication" value="${bpaApplication.id}" />
+						<input type="hidden" id="noJAORSAMessage" name="noJAORSAMessage" value="${noJAORSAMessage}" />
+			
 
 			<form:hidden id="mode" path="" value="${mode}" />
 

@@ -55,7 +55,7 @@
 	<label class="col-sm-3 control-label text-right"> Zone <span class="mandatory"></span>
 								</label>
 <div class="col-sm-3 add-margin">
-		<form:select path="siteDetail[0].adminBoundary" data-first-option="false" id="zone"
+		<form:select path="zoneId" data-first-option="false" id="zone"
 			cssClass="form-control" required="required">
 			<form:option value="">
 				<spring:message code="lbl.select" />
@@ -63,13 +63,13 @@
 			<form:options items="${zones}"  itemValue="id"
 						itemLabel="name" />
 		</form:select>
-		<form:errors path="siteDetail[0].adminBoundary" cssClass="add-margin error-msg" />
+		<form:errors path="zoneId" cssClass="add-margin error-msg" />
 	</div>
 								
 	<label class="col-sm-2 control-label text-right"> Ward <span class="mandatory"></span>
 								</label>
 							<div class="col-sm-2 add-margin">
-		<form:select path="siteDetail[0].adminBoundary" data-first-option="false" id="ward"
+		<form:select path="wardId" data-first-option="false" id="ward"
 			cssClass="form-control" required="required">
 			<form:option value="">
 				<spring:message code="lbl.select" />
@@ -77,7 +77,7 @@
 			<form:options items="${wards}"  itemValue="id"
 						itemLabel="name" />
 		</form:select>
-		<form:errors path="siteDetail[0].adminBoundary" cssClass="add-margin error-msg" />
+		<form:errors path="wardId" cssClass="add-margin error-msg" />
 	</div>
 								</div>
 						<div class="form-group">

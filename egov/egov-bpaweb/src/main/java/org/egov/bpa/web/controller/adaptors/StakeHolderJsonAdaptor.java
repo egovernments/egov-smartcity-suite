@@ -42,7 +42,6 @@ package org.egov.bpa.web.controller.adaptors;
 import java.lang.reflect.Type;
 
 import org.egov.bpa.application.entity.StakeHolder;
-import org.egov.infra.utils.StringUtils;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -55,11 +54,13 @@ public class StakeHolderJsonAdaptor implements JsonSerializer<StakeHolder> {
             final JsonSerializationContext jsc) {
         final JsonObject jsonObject = new JsonObject();
         if (stakeHolder != null) {
-            jsonObject.addProperty("name", StringUtils.defaultString(stakeHolder.getName()));
-            jsonObject.addProperty("code", StringUtils.defaultString(stakeHolder.getCode()));
-            jsonObject.addProperty("businessLicenceNumber", StringUtils.defaultString(stakeHolder.getBusinessLicenceNumber()));
-            jsonObject.addProperty("coaEnrolmentNumber", StringUtils.defaultString(stakeHolder.getCoaEnrolmentNumber()));
-            jsonObject.addProperty("tinNumber", StringUtils.defaultString(stakeHolder.getTinNumber()));
+            jsonObject.addProperty("name", org.apache.commons.lang.StringUtils.defaultString(stakeHolder.getName()));
+            jsonObject.addProperty("code", org.apache.commons.lang.StringUtils.defaultString(stakeHolder.getCode()));
+            jsonObject.addProperty("businessLicenceNumber",
+                    org.apache.commons.lang.StringUtils.defaultString(stakeHolder.getBusinessLicenceNumber()));
+            jsonObject.addProperty("coaEnrolmentNumber",
+                    org.apache.commons.lang.StringUtils.defaultString(stakeHolder.getCoaEnrolmentNumber()));
+            jsonObject.addProperty("tinNumber", org.apache.commons.lang.StringUtils.defaultString(stakeHolder.getTinNumber()));
             jsonObject.addProperty("id", stakeHolder.getId());
         }
         return jsonObject;

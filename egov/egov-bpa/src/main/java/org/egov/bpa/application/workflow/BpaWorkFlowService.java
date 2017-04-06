@@ -19,10 +19,10 @@ public class BpaWorkFlowService {
     @Autowired
     protected AssignmentService assignmentService;
 
-    public Assignment getWorkFlowInitiator(BpaApplication application) {
+    public Assignment getWorkFlowInitiator(final BpaApplication application) {
         Assignment wfInitiator = null;
         List<Assignment> assignment;
-        if (application != null) {
+        if (application != null)
             if (application.getState() != null
                     && application.getState().getInitiatorPosition() != null) {
                 wfInitiator = getUserAssignmentByPassingPositionAndUser(application
@@ -34,17 +34,13 @@ public class BpaWorkFlowService {
                                     new Date());
                     wfInitiator = getActiveAssignment(assignment);
                 }
-            } else {
-
+            } else
                 wfInitiator = assignmentService.getPrimaryAssignmentForUser(application
                         .getCreatedBy().getId());
-
-            }
-        }
         return wfInitiator;
     }
 
-    private Assignment getActiveAssignment(List<Assignment> assignment) {
+    private Assignment getActiveAssignment(final List<Assignment> assignment) {
         Assignment wfInitiator = null;
         for (final Assignment assign : assignment)
             if (assign.getEmployee().isActive()) {
@@ -54,32 +50,28 @@ public class BpaWorkFlowService {
         return wfInitiator;
     }
 
-    public boolean validateUserHasSamePositionAsInitiator(Long userId, Position position) {
+    public boolean validateUserHasSamePositionAsInitiator(final Long userId, final Position position) {
 
         Boolean userHasSamePosition = false;
 
         if (userId != null && position != null) {
-            List<Assignment> assignmentList = assignmentService.findByEmployeeAndGivenDate(userId, new Date());
-            for (final Assignment assignment : assignmentList) {
-                if (position.getId() == assignment.getPosition().getId()) {
+            final List<Assignment> assignmentList = assignmentService.findByEmployeeAndGivenDate(userId, new Date());
+            for (final Assignment assignment : assignmentList)
+                if (position.getId() == assignment.getPosition().getId())
                     userHasSamePosition = true;
-                }
-            }
         }
         return userHasSamePosition;
     }
 
-    private Assignment getUserAssignmentByPassingPositionAndUser(final User user, Position position) {
+    private Assignment getUserAssignmentByPassingPositionAndUser(final User user, final Position position) {
 
         Assignment wfInitiatorAssignment = null;
 
         if (user != null && position != null) {
-            List<Assignment> assignmentList = assignmentService.findByEmployeeAndGivenDate(user.getId(), new Date());
-            for (final Assignment assignment : assignmentList) {
-                if (position.getId() == assignment.getPosition().getId()) {
+            final List<Assignment> assignmentList = assignmentService.findByEmployeeAndGivenDate(user.getId(), new Date());
+            for (final Assignment assignment : assignmentList)
+                if (position.getId() == assignment.getPosition().getId())
                     wfInitiatorAssignment = assignment;
-                }
-            }
         }
 
         return wfInitiatorAssignment;

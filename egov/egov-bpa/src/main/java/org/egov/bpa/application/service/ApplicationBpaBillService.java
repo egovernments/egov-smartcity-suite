@@ -313,8 +313,6 @@ public class ApplicationBpaBillService extends BillServiceInterface {
         return billDetails;
     }
 
- 
-
     public EgBill updateBillWithLatest(final Long billId) {
         LOGGER.debug("updateBillWithLatest billId " + billId);
         final EgBill bill = egBillDAO.findById(billId, false);

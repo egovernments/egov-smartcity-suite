@@ -115,10 +115,9 @@ public class StakeHolderController {
             final Model model,
             final HttpServletRequest request,
             final BindingResult errors, final RedirectAttributes redirectAttributes) {
-        if (null == stakeHolder.getCode()) {
+        if (null == stakeHolder.getCode())
             stakeHolder.setCode(stakeHolderCodeGenerator.generateStakeHolderCode(stakeHolder));
-        }
-        List<Address> addressList = new ArrayList<>();
+        final List<Address> addressList = new ArrayList<>();
         addressList.add(setCorrespondenceAddress(stakeHolder));
         addressList.add(setPermanentAddress(stakeHolder));
         stakeHolder.setAddress(addressList);
@@ -131,7 +130,7 @@ public class StakeHolderController {
     }
 
     private CorrespondenceAddress setCorrespondenceAddress(final StakeHolder stakeHolder) {
-        CorrespondenceAddress correspondenceAddress = new CorrespondenceAddress();
+        final CorrespondenceAddress correspondenceAddress = new CorrespondenceAddress();
         correspondenceAddress.setHouseNoBldgApt(stakeHolder.getCorrespondenceAddress().getHouseNoBldgApt());
         correspondenceAddress.setStreetRoadLine(stakeHolder.getCorrespondenceAddress().getStreetRoadLine());
         correspondenceAddress.setAreaLocalitySector(stakeHolder.getCorrespondenceAddress().getAreaLocalitySector());
@@ -144,7 +143,7 @@ public class StakeHolderController {
     }
 
     private PermanentAddress setPermanentAddress(final StakeHolder stakeHolder) {
-        PermanentAddress permanentAddress = new PermanentAddress();
+        final PermanentAddress permanentAddress = new PermanentAddress();
         permanentAddress.setHouseNoBldgApt(stakeHolder.getPermanentAddress().getHouseNoBldgApt());
         permanentAddress.setStreetRoadLine(stakeHolder.getPermanentAddress().getStreetRoadLine());
         permanentAddress.setAreaLocalitySector(stakeHolder.getPermanentAddress().getAreaLocalitySector());
@@ -157,16 +156,14 @@ public class StakeHolderController {
     }
 
     @RequestMapping(value = "/update/{id}", method = RequestMethod.GET)
-    public String editStakeholder(@PathVariable Long id, final Model model) {
-        StakeHolder stakeHolder = stakeHolderService.findById(id);
+    public String editStakeholder(@PathVariable final Long id, final Model model) {
+        final StakeHolder stakeHolder = stakeHolderService.findById(id);
 
-        for (Address address : stakeHolder.getAddress()) {
-            if (AddressType.CORRESPONDENCE.equals(address.getType())) {
+        for (final Address address : stakeHolder.getAddress())
+            if (AddressType.CORRESPONDENCE.equals(address.getType()))
                 stakeHolder.setCorrespondenceAddress((CorrespondenceAddress) address);
-            } else {
+            else
                 stakeHolder.setPermanentAddress((PermanentAddress) address);
-            }
-        }
         model.addAttribute(STAKE_HOLDER, stakeHolder);
         return STAKEHOLDER_UPDATE;
     }
@@ -177,7 +174,7 @@ public class StakeHolderController {
             final HttpServletRequest request,
             final BindingResult errors, final RedirectAttributes redirectAttributes) {
         stakeHolderService.removeAddress(stakeHolder.getAddress());
-        List<Address> addressList = new ArrayList<>();
+        final List<Address> addressList = new ArrayList<>();
         addressList.add(stakeHolder.getCorrespondenceAddress());
         addressList.add(stakeHolder.getPermanentAddress());
         stakeHolder.setAddress(addressList);
@@ -187,13 +184,13 @@ public class StakeHolderController {
     }
 
     @RequestMapping(value = "/result/{id}", method = RequestMethod.GET)
-    public String resultStakeHolder(@PathVariable Long id, final Model model) {
+    public String resultStakeHolder(@PathVariable final Long id, final Model model) {
         model.addAttribute(STAKE_HOLDER, stakeHolderService.findById(id));
         return STAKEHOLDER_RESULT;
     }
 
     @RequestMapping(value = "/view/{id}", method = RequestMethod.GET)
-    public String viewStakeHolder(@PathVariable Long id, final Model model) {
+    public String viewStakeHolder(@PathVariable final Long id, final Model model) {
         model.addAttribute(STAKE_HOLDER, stakeHolderService.findById(id));
         return STAKEHOLDER_VIEW;
     }
@@ -207,7 +204,7 @@ public class StakeHolderController {
     @RequestMapping(value = "/search/update", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
     public String getStakeHolderResultForEdit(@ModelAttribute final StakeHolder stakeHolder, final Model model) {
-        List<StakeHolder> searchResultList = stakeHolderService.search(stakeHolder);
+        final List<StakeHolder> searchResultList = stakeHolderService.search(stakeHolder);
         return new StringBuilder(DATA).append(toJSON(searchResultList, StakeHolder.class, StakeHolderJsonAdaptor.class))
                 .append("}")
                 .toString();
@@ -222,7 +219,7 @@ public class StakeHolderController {
     @RequestMapping(value = "/search/view", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
     public String getStakeHolderForView(@ModelAttribute final StakeHolder stakeHolder, final Model model) {
-        List<StakeHolder> searchResultList = stakeHolderService.search(stakeHolder);
+        final List<StakeHolder> searchResultList = stakeHolderService.search(stakeHolder);
         return new StringBuilder(DATA).append(toJSON(searchResultList, StakeHolder.class, StakeHolderJsonAdaptor.class))
                 .append("}")
                 .toString();

@@ -42,6 +42,7 @@ package org.egov.bpa.masters.repository;
 import org.egov.infra.persistence.entity.Address;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
 @Repository
 public interface StakeHolderAddressRepository extends JpaRepository<Address, Long> {
 

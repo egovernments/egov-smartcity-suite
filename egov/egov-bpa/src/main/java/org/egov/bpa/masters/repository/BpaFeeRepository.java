@@ -45,7 +45,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface BpaFeeRepository extends JpaRepository<BpaFee, Long> {
-    
-    
 
 }

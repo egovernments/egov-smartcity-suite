@@ -40,26 +40,74 @@
 package org.egov.bpa.web.controller;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+
+import javax.servlet.http.HttpServletResponse;
 
 import org.egov.bpa.application.service.ApplicationBpaService;
+import org.egov.eis.entity.Assignment;
+import org.egov.eis.entity.AssignmentAdaptor;
+import org.egov.eis.service.AssignmentService;
+import org.egov.eis.service.DesignationService;
+import org.egov.pims.commons.Designation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+
 @Controller
 public class BpaAjaxController {
-    
+
     @Autowired
-    private ApplicationBpaService  applicationBpaService;
-    
+    private ApplicationBpaService applicationBpaService;
+
     @RequestMapping(value = "/ajax/getAdmissionFees", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public BigDecimal isConnectionPresentForProperty(@RequestParam final String serviceType) {
         return applicationBpaService.setAdmissionFeeAmountForRegistration(serviceType);
+    }
+
+    @Autowired
+    private DesignationService designationService;
+
+    @Autowired
+    private AssignmentService assignmentService;
+
+    @RequestMapping(value = "/ajax-designationsByDepartment", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<Designation> getDesignationsByDepartmentId(
+            @ModelAttribute("designations") @RequestParam final Long approvalDepartment) {
+        List<Designation> designations = new ArrayList<Designation>();
+        if (approvalDepartment != null && approvalDepartment != 0 && approvalDepartment != -1)
+            designations = designationService.getAllDesignationByDepartment(approvalDepartment, new Date());
+        designations.forEach(designation -> designation.toString());
+        return designations;
+    }
+
+    @RequestMapping(value = "/ajax-positionsByDepartmentAndDesignation", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
+    public @ResponseBody String getPositionByDepartmentAndDesignation(@RequestParam final Long approvalDepartment,
+            @RequestParam final Long approvalDesignation, final HttpServletResponse response) {
+        List<Assignment> assignmentList = new ArrayList<Assignment>();
+        if (approvalDepartment != null && approvalDepartment != 0 && approvalDepartment != -1
+                && approvalDesignation != null && approvalDesignation != 0 && approvalDesignation != -1) {
+            assignmentList = assignmentService.findAllAssignmentsByDeptDesigAndDates(approvalDepartment,
+                    approvalDesignation, new Date());
+            final Gson jsonCreator = new GsonBuilder().registerTypeAdapter(Assignment.class, new AssignmentAdaptor())
+                    .create();
+            return jsonCreator.toJson(assignmentList, new TypeToken<Collection<Assignment>>() {
+            }.getType());
+        }
+        return "[]";
     }
 
 }

@@ -52,11 +52,13 @@ public class BpaAppointmentSchedule extends AbstractAuditable {
     private BpaAppointmentSchedule parent;
     private boolean isPostponed;
 
+    @Override
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    @Override
+    public void setId(final Long id) {
         this.id = id;
     }
 
@@ -64,7 +66,7 @@ public class BpaAppointmentSchedule extends AbstractAuditable {
         return application;
     }
 
-    public void setApplication(BpaApplication application) {
+    public void setApplication(final BpaApplication application) {
         this.application = application;
     }
 
@@ -72,7 +74,7 @@ public class BpaAppointmentSchedule extends AbstractAuditable {
         return purpose;
     }
 
-    public void setPurpose(String purpose) {
+    public void setPurpose(final String purpose) {
         this.purpose = purpose;
     }
 
@@ -80,7 +82,7 @@ public class BpaAppointmentSchedule extends AbstractAuditable {
         return appointmentDate;
     }
 
-    public void setAppointmentDate(Date appointmentDate) {
+    public void setAppointmentDate(final Date appointmentDate) {
         this.appointmentDate = appointmentDate;
     }
 
@@ -88,7 +90,7 @@ public class BpaAppointmentSchedule extends AbstractAuditable {
         return appointmentTime;
     }
 
-    public void setAppointmentTime(String appointmentTime) {
+    public void setAppointmentTime(final String appointmentTime) {
         this.appointmentTime = appointmentTime;
     }
 
@@ -96,7 +98,7 @@ public class BpaAppointmentSchedule extends AbstractAuditable {
         return appointmentLocation;
     }
 
-    public void setAppointmentLocation(String appointmentLocation) {
+    public void setAppointmentLocation(final String appointmentLocation) {
         this.appointmentLocation = appointmentLocation;
     }
 
@@ -104,7 +106,7 @@ public class BpaAppointmentSchedule extends AbstractAuditable {
         return postponementReason;
     }
 
-    public void setPostponementReason(String postponementReason) {
+    public void setPostponementReason(final String postponementReason) {
         this.postponementReason = postponementReason;
     }
 
@@ -112,7 +114,7 @@ public class BpaAppointmentSchedule extends AbstractAuditable {
         return parent;
     }
 
-    public void setParent(BpaAppointmentSchedule parent) {
+    public void setParent(final BpaAppointmentSchedule parent) {
         this.parent = parent;
     }
 
@@ -120,7 +122,7 @@ public class BpaAppointmentSchedule extends AbstractAuditable {
         return isPostponed;
     }
 
-    public void setPostponed(boolean isPostponed) {
+    public void setPostponed(final boolean isPostponed) {
         this.isPostponed = isPostponed;
     }
 
@@ -128,7 +130,7 @@ public class BpaAppointmentSchedule extends AbstractAuditable {
         return remarks;
     }
 
-    public void setRemarks(String remarks) {
+    public void setRemarks(final String remarks) {
         this.remarks = remarks;
     }
 

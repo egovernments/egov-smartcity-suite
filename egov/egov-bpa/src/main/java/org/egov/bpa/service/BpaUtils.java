@@ -22,23 +22,23 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 public class BpaUtils {
-    
+
     @Autowired
     private ApplicationContext context;
-    
+
     @Autowired
     private AssignmentService assignmentService;
-    
+
     @Autowired
     private BoundaryService boundaryService;
-    
+
     @Autowired
     @Qualifier("workflowService")
     private SimpleWorkflowService<BpaApplication> bpaApplicationWorkflowService;
 
     @Autowired
     private DesignationService designationService;
-    
+
     public BpaApplicationWorkflowCustomDefaultImpl getInitialisedWorkFlowBean() {
         BpaApplicationWorkflowCustomDefaultImpl applicationWorkflowCustomDefaultImpl = null;
         if (null != context)
@@ -46,14 +46,15 @@ public class BpaUtils {
                     .getBean("bpaApplicationWorkflowCustomDefaultImpl");
         return applicationWorkflowCustomDefaultImpl;
     }
-    
-    public WorkFlowMatrix getWfMatrixByCurrentState(BpaApplication application,String currentState){
-   return    bpaApplicationWorkflowService.getWfMatrix(application.getStateType(), null,
-              null, BpaConstants.CREATE_ADDITIONAL_RULE_CREATE,currentState, null);
+
+    public WorkFlowMatrix getWfMatrixByCurrentState(final BpaApplication application, final String currentState) {
+        return bpaApplicationWorkflowService.getWfMatrix(application.getStateType(), null,
+                null, BpaConstants.CREATE_ADDITIONAL_RULE_CREATE, currentState, null);
     }
-    
+
     @Transactional(readOnly = true)
-    public Long getUserPositionByZone( String designation,Boundary boundaryObj) {
+    public Long getUserPositionByZone(final String designation, final Long boundary) {
+        final Boundary boundaryObj = getBoundaryById(boundary);
         final String[] designationarr = designation.split(",");
         List<Assignment> assignment = new ArrayList<>();
         for (final String desg : designationarr) {
@@ -66,33 +67,41 @@ public class BpaUtils {
                     assignment = assignmentService.findByDeptDesgnAndParentAndActiveChildBoundaries(
                             null,
                             designationService.getDesignationByName(desg).getId(), boundaryObj.getParent().getId());
-                    if (assignment.isEmpty()  && boundaryObj.getParent() != null && boundaryObj.getParent().getParent() != null
-                                && boundaryObj.getParent().getParent().getBoundaryType().getName()
-                                        .equals(BpaConstants.BOUNDARY_TYPE_CITY))
-                        assignment = assignmentService.findByDeptDesgnAndParentAndActiveChildBoundaries(null, designationService.getDesignationByName(desg).getId(), boundaryObj.getParent().getParent().getId());
+                    if (assignment.isEmpty() && boundaryObj.getParent() != null && boundaryObj.getParent().getParent() != null
+                            && boundaryObj.getParent().getParent().getBoundaryType().getName()
+                                    .equals(BpaConstants.BOUNDARY_TYPE_CITY))
+                        assignment = assignmentService.findByDeptDesgnAndParentAndActiveChildBoundaries(null,
+                                designationService.getDesignationByName(desg).getId(),
+                                boundaryObj.getParent().getParent().getId());
                 }
                 // ward->City mapp
                 if (assignment.isEmpty() && boundaryObj.getParent() != null && boundaryObj.getParent().getBoundaryType().getName()
-                            .equals(BpaConstants.BOUNDARY_TYPE_CITY))
-                        assignment = assignmentService.findByDeptDesgnAndParentAndActiveChildBoundaries(
-                                null,
-                                designationService.getDesignationByName(desg).getId(),
-                                boundaryObj.getParent().getId());
+                        .equals(BpaConstants.BOUNDARY_TYPE_CITY))
+                    assignment = assignmentService.findByDeptDesgnAndParentAndActiveChildBoundaries(
+                            null,
+                            designationService.getDesignationByName(desg).getId(),
+                            boundaryObj.getParent().getId());
             }
             if (!assignment.isEmpty())
                 break;
         }
-        return !assignment.isEmpty() ? assignment.get(0).getPosition().getId() : 26l;
+        return !assignment.isEmpty() ? assignment.get(0).getPosition().getId() : 0;
     }
-    
+
+    public Boundary getBoundaryById(final Long boundary) {
+
+        return boundaryService.getBoundaryById(boundary);
+    }
+
     @Transactional
-    public void redirectToBpaWorkFlow(final BpaApplication application,String currentState,String remarks) {
+    public void redirectToBpaWorkFlow(final BpaApplication application, final String currentState, final String remarks) {
         Long approvalPosition;
-        WorkFlowMatrix  wfmatrix = getWfMatrixByCurrentState(application, currentState);
+        final WorkFlowMatrix wfmatrix = getWfMatrixByCurrentState(application, currentState);
         final BpaApplicationWorkflowCustomDefaultImpl applicationWorkflowCustomDefaultImpl = getInitialisedWorkFlowBean();
-        approvalPosition =getUserPositionByZone(wfmatrix.getNextDesignation(),application.getSiteDetail().get(0)!=null ? application.getSiteDetail().get(0).getAdminBoundary():null);
+        approvalPosition = getUserPositionByZone(wfmatrix.getNextDesignation(), application.getSiteDetail().get(0) != null
+                ? application.getSiteDetail().get(0).getAdminBoundary().getId() : null);
         applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(application,
-                approvalPosition,remarks,
+                approvalPosition, remarks,
                 BpaConstants.CREATE_ADDITIONAL_RULE_CREATE, null);
     }
 

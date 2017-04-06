@@ -56,7 +56,6 @@ import org.egov.bpa.application.entity.BpaApplication;
 import org.egov.bpa.application.entity.CollectionApportioner;
 import org.egov.bpa.application.service.ApplicationBpaBillService;
 import org.egov.bpa.application.service.ApplicationBpaService;
-import org.egov.bpa.application.workflow.BpaApplicationWorkflowCustomDefaultImpl;
 import org.egov.bpa.service.BpaUtils;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.collection.entity.ReceiptDetail;
@@ -79,7 +78,6 @@ import org.egov.demand.model.EgDemandReason;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -95,7 +93,7 @@ public class BpaTaxCollection extends TaxCollection {
     private EgBillDao egBillDAO;
     @Autowired
     private ModuleService moduleService;
-    
+
     @Autowired
     private BpaUtils bpaUtils;
 
@@ -213,12 +211,10 @@ public class BpaTaxCollection extends TaxCollection {
     public void updateBpaApplication(final EgDemand demand) {
         final BpaApplication application = applicationBpaService
                 .getApplicationByDemand(demand);
-            bpaUtils.redirectToBpaWorkFlow(application,BpaConstants.WF_NEW_STATE,"BPA Admission fees collected");
+        bpaUtils.redirectToBpaWorkFlow(application, BpaConstants.WF_NEW_STATE, "BPA Admission fees collected");
         // update status and initialize workflow
         applicationBpaService.saveAndFlushApplication(application);
     }
-
-    
 
     @Transactional
     public void updateCollForRcptCreate(final EgDemand demand, final BillReceiptInfo billRcptInfo,

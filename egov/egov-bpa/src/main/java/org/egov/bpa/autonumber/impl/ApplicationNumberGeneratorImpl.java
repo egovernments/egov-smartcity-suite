@@ -65,10 +65,10 @@ public class ApplicationNumberGeneratorImpl implements ApplicationNumberGenerato
 
             formatedNumber.append(serviceType.getServiceNumberPrefix().toUpperCase());
             formatedNumber.append("-");
-          /*  if (null != zone && zone.getName() != null && !"".equals(zone.getName())) {
-                formatedNumber.append(zone.getName());
-                formatedNumber.append("-");
-            }*/
+            /*
+             * if (null != zone && zone.getName() != null && !"".equals(zone.getName())) { formatedNumber.append(zone.getName());
+             * formatedNumber.append("-"); }
+             */
             formatedNumber.append(installmentYear);
             formatedNumber.append("-");
 

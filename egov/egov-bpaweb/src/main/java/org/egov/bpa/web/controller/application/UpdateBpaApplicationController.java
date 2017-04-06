@@ -59,55 +59,50 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-@RequestMapping(value="/application")
-public class UpdateBpaApplicationController extends BpaGenericApplicationController{
-    
-    
+@RequestMapping(value = "/application")
+public class UpdateBpaApplicationController extends BpaGenericApplicationController {
+
     private static final String ADDITIONALRULE = "additionalRule";
 
     @Autowired
     private ApplicationBpaService applicationBpaService;
-    
+
     @ModelAttribute
     public BpaApplication getBpaApplication(@PathVariable final String applicationNumber) {
         return applicationBpaService.findByApplicationNumber(applicationNumber);
     }
 
-    @RequestMapping(value="/update/{applicationNumber}",method=RequestMethod.GET)
+    @RequestMapping(value = "/update/{applicationNumber}", method = RequestMethod.GET)
     public String updateApplicationForm(final Model model, @PathVariable final String applicationNumber,
-            final HttpServletRequest request)
-    {
-        BpaApplication application=getBpaApplication(applicationNumber);
+            final HttpServletRequest request) {
+        final BpaApplication application = getBpaApplication(applicationNumber);
         loadViewdata(model, application);
         return "bpaapplication-Form";
     }
 
-    private void loadViewdata(final Model model, BpaApplication application) {
+    private void loadViewdata(final Model model, final BpaApplication application) {
         model.addAttribute("stateType", application.getClass().getSimpleName());
         final WorkflowContainer workflowContainer = new WorkflowContainer();
         model.addAttribute(ADDITIONALRULE, BpaConstants.CREATE_ADDITIONAL_RULE_CREATE);
         workflowContainer.setAdditionalRule(BpaConstants.CREATE_ADDITIONAL_RULE_CREATE);
         prepareWorkflow(model, application, workflowContainer);
         model.addAttribute("currentState", application.getCurrentState().getValue());
-        model.addAttribute("applicantMode", application.getApplicantMode());
         model.addAttribute("bpaApplication", application);
     }
-    
+
     @RequestMapping(value = "/update/{applicationNumber}", method = RequestMethod.POST)
-    public String updateApplication(@Valid @ModelAttribute("bpaApplication") BpaApplication bpaApplication,@PathVariable final String applicationNumber,
+    public String updateApplication(@Valid @ModelAttribute("bpaApplication") BpaApplication bpaApplication,
+            @PathVariable final String applicationNumber,
             final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
             final HttpServletRequest request, final Model model, @RequestParam("files") final MultipartFile[] files) {
-        if(resultBinder.hasErrors())
-        {
+        if (resultBinder.hasErrors()) {
             loadViewdata(model, bpaApplication);
-            return "bpaapplication-Form";   
+            return "bpaapplication-Form";
         }
-        
-        bpaApplication= applicationBpaService.updateApplication(bpaApplication);
+
+        bpaApplication = applicationBpaService.updateApplication(bpaApplication);
         System.out.println(bpaApplication);
         return bpaApplication.getApplicationNumber();
     }
-    
-    
 
 }

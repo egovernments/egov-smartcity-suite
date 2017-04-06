@@ -52,7 +52,7 @@ public class BpaDocumentScrutiny extends AbstractAuditable {
     private String taluk;
     @Length(min = 1, max = 128)
     private String district;
-   
+
     private boolean neighoutOwnerDtlSubmitted;
     private boolean rightToMakeConstruction;
     @Length(min = 1, max = 64)
@@ -68,11 +68,13 @@ public class BpaDocumentScrutiny extends AbstractAuditable {
     @JoinColumn(name = "verifiedBy")
     private User verifiedBy;
 
+    @Override
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    @Override
+    public void setId(final Long id) {
         this.id = id;
     }
 
@@ -80,7 +82,7 @@ public class BpaDocumentScrutiny extends AbstractAuditable {
         return application;
     }
 
-    public void setApplication(BpaApplication application) {
+    public void setApplication(final BpaApplication application) {
         this.application = application;
     }
 
@@ -88,7 +90,7 @@ public class BpaDocumentScrutiny extends AbstractAuditable {
         return plotsurveynumber;
     }
 
-    public void setPlotsurveynumber(String plotsurveynumber) {
+    public void setPlotsurveynumber(final String plotsurveynumber) {
         this.plotsurveynumber = plotsurveynumber;
     }
 
@@ -96,7 +98,7 @@ public class BpaDocumentScrutiny extends AbstractAuditable {
         return subdivisionNumber;
     }
 
-    public void setSubdivisionNumber(String subdivisionNumber) {
+    public void setSubdivisionNumber(final String subdivisionNumber) {
         this.subdivisionNumber = subdivisionNumber;
     }
 
@@ -104,17 +106,15 @@ public class BpaDocumentScrutiny extends AbstractAuditable {
         return extentinsqmts;
     }
 
-    public void setExtentinsqmts(BigDecimal extentinsqmts) {
+    public void setExtentinsqmts(final BigDecimal extentinsqmts) {
         this.extentinsqmts = extentinsqmts;
     }
-
-    
 
     public String getNatureofOwnership() {
         return natureofOwnership;
     }
 
-    public void setNatureofOwnership(String natureofOwnership) {
+    public void setNatureofOwnership(final String natureofOwnership) {
         this.natureofOwnership = natureofOwnership;
     }
 
@@ -122,7 +122,7 @@ public class BpaDocumentScrutiny extends AbstractAuditable {
         return registrarOffice;
     }
 
-    public void setRegistrarOffice(String registrarOffice) {
+    public void setRegistrarOffice(final String registrarOffice) {
         this.registrarOffice = registrarOffice;
     }
 
@@ -130,7 +130,7 @@ public class BpaDocumentScrutiny extends AbstractAuditable {
         return village;
     }
 
-    public void setVillage(VillageName village) {
+    public void setVillage(final VillageName village) {
         this.village = village;
     }
 
@@ -138,7 +138,7 @@ public class BpaDocumentScrutiny extends AbstractAuditable {
         return taluk;
     }
 
-    public void setTaluk(String taluk) {
+    public void setTaluk(final String taluk) {
         this.taluk = taluk;
     }
 
@@ -146,7 +146,7 @@ public class BpaDocumentScrutiny extends AbstractAuditable {
         return district;
     }
 
-    public void setDistrict(String district) {
+    public void setDistrict(final String district) {
         this.district = district;
     }
 
@@ -154,7 +154,7 @@ public class BpaDocumentScrutiny extends AbstractAuditable {
         return isBoundaryDrawingSubmitted;
     }
 
-    public void setBoundaryDrawingSubmitted(boolean isBoundaryDrawingSubmitted) {
+    public void setBoundaryDrawingSubmitted(final boolean isBoundaryDrawingSubmitted) {
         this.isBoundaryDrawingSubmitted = isBoundaryDrawingSubmitted;
     }
 
@@ -162,7 +162,7 @@ public class BpaDocumentScrutiny extends AbstractAuditable {
         return neighoutOwnerDtlSubmitted;
     }
 
-    public void setNeighoutOwnerDtlSubmitted(boolean neighoutOwnerDtlSubmitted) {
+    public void setNeighoutOwnerDtlSubmitted(final boolean neighoutOwnerDtlSubmitted) {
         this.neighoutOwnerDtlSubmitted = neighoutOwnerDtlSubmitted;
     }
 
@@ -170,7 +170,7 @@ public class BpaDocumentScrutiny extends AbstractAuditable {
         return rightToMakeConstruction;
     }
 
-    public void setRightToMakeConstruction(boolean rightToMakeConstruction) {
+    public void setRightToMakeConstruction(final boolean rightToMakeConstruction) {
         this.rightToMakeConstruction = rightToMakeConstruction;
     }
 
@@ -178,7 +178,7 @@ public class BpaDocumentScrutiny extends AbstractAuditable {
         return deedNumber;
     }
 
-    public void setDeedNumber(String deedNumber) {
+    public void setDeedNumber(final String deedNumber) {
         this.deedNumber = deedNumber;
     }
 
@@ -186,7 +186,7 @@ public class BpaDocumentScrutiny extends AbstractAuditable {
         return deedDate;
     }
 
-    public void setDeedDate(Date deedDate) {
+    public void setDeedDate(final Date deedDate) {
         this.deedDate = deedDate;
     }
 
@@ -194,7 +194,7 @@ public class BpaDocumentScrutiny extends AbstractAuditable {
         return typeofLand;
     }
 
-    public void setTypeofLand(String typeofLand) {
+    public void setTypeofLand(final String typeofLand) {
         this.typeofLand = typeofLand;
     }
 
@@ -202,7 +202,7 @@ public class BpaDocumentScrutiny extends AbstractAuditable {
         return whetheralldocAttached;
     }
 
-    public void setWhetheralldocAttached(boolean whetheralldocAttached) {
+    public void setWhetheralldocAttached(final boolean whetheralldocAttached) {
         this.whetheralldocAttached = whetheralldocAttached;
     }
 
@@ -210,7 +210,7 @@ public class BpaDocumentScrutiny extends AbstractAuditable {
         return whetherallPageOfdocAttached;
     }
 
-    public void setWhetherallPageOfdocAttached(boolean whetherallPageOfdocAttached) {
+    public void setWhetherallPageOfdocAttached(final boolean whetherallPageOfdocAttached) {
         this.whetherallPageOfdocAttached = whetherallPageOfdocAttached;
     }
 
@@ -218,7 +218,7 @@ public class BpaDocumentScrutiny extends AbstractAuditable {
         return whetherdocumentMatch;
     }
 
-    public void setWhetherdocumentMatch(boolean whetherdocumentMatch) {
+    public void setWhetherdocumentMatch(final boolean whetherdocumentMatch) {
         this.whetherdocumentMatch = whetherdocumentMatch;
     }
 
@@ -226,7 +226,7 @@ public class BpaDocumentScrutiny extends AbstractAuditable {
         return verifiedBy;
     }
 
-    public void setVerifiedBy(User verifiedBy) {
+    public void setVerifiedBy(final User verifiedBy) {
         this.verifiedBy = verifiedBy;
     }
 

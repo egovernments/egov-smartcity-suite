@@ -46,6 +46,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -63,6 +64,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
+import org.egov.bpa.application.entity.enums.ApplicantMode;
 import org.egov.bpa.application.entity.enums.Occupancy;
 import org.egov.commons.entity.Source;
 import org.egov.demand.model.EgDemand;
@@ -97,13 +99,14 @@ public class BpaApplication extends StateAware {
     @NotNull
     @Enumerated(EnumType.ORDINAL)
     private Source source;
-    @NotNull
+
     @Length(min = 1, max = 128)
     private String applicantType;
     // same as source
     @NotNull
-    @Length(min = 1, max = 128)
-    private String applicantMode;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "applicantmode")
+    private ApplicantMode applicantMode;
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "serviceType")
@@ -172,7 +175,7 @@ public class BpaApplication extends StateAware {
 
     @OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ApplicationFee> applicationFee = new ArrayList<>();
-    
+
     @OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<BpaDocumentScrutiny> documentScrutiny = new ArrayList<>();
 
@@ -186,8 +189,14 @@ public class BpaApplication extends StateAware {
     private Long approvalDepartment;
 
     @Transient
+    private Long zoneId;
+
+    @Transient
+    private Long wardId;
+
+    @Transient
     private String approvalComent;
-    
+
     @Override
     public Long getId() {
         return id;
@@ -197,7 +206,7 @@ public class BpaApplication extends StateAware {
     public void setId(final Long id) {
         this.id = id;
     }
-    
+
     @Override
     public String myLinkId() {
         return applicationNumber != null ? applicationNumber : planPermissionNumber;
@@ -244,11 +253,11 @@ public class BpaApplication extends StateAware {
         this.applicantType = applicantType;
     }
 
-    public String getApplicantMode() {
+    public ApplicantMode getApplicantMode() {
         return applicantMode;
     }
 
-    public void setApplicantMode(final String applicantMode) {
+    public void setApplicantMode(final ApplicantMode applicantMode) {
         this.applicantMode = applicantMode;
     }
 
@@ -292,7 +301,7 @@ public class BpaApplication extends StateAware {
         return approvalDepartment;
     }
 
-    public void setApprovalDepartment(Long approvalDepartment) {
+    public void setApprovalDepartment(final Long approvalDepartment) {
         this.approvalDepartment = approvalDepartment;
     }
 
@@ -300,7 +309,7 @@ public class BpaApplication extends StateAware {
         return approvalComent;
     }
 
-    public void setApprovalComent(String approvalComent) {
+    public void setApprovalComent(final String approvalComent) {
         this.approvalComent = approvalComent;
     }
 
@@ -504,7 +513,7 @@ public class BpaApplication extends StateAware {
         return documentScrutiny;
     }
 
-    public void setDocumentScrutiny(List<BpaDocumentScrutiny> documentScrutiny) {
+    public void setDocumentScrutiny(final List<BpaDocumentScrutiny> documentScrutiny) {
         this.documentScrutiny = documentScrutiny;
     }
 
@@ -512,8 +521,24 @@ public class BpaApplication extends StateAware {
         return appointmentSchedule;
     }
 
-    public void setAppointmentSchedule(List<BpaAppointmentSchedule> appointmentSchedule) {
+    public void setAppointmentSchedule(final List<BpaAppointmentSchedule> appointmentSchedule) {
         this.appointmentSchedule = appointmentSchedule;
+    }
+
+    public Long getZoneId() {
+        return zoneId;
+    }
+
+    public void setZoneId(final Long zoneId) {
+        this.zoneId = zoneId;
+    }
+
+    public Long getWardId() {
+        return wardId;
+    }
+
+    public void setWardId(final Long wardId) {
+        this.wardId = wardId;
     }
 
 }

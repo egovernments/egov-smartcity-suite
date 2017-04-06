@@ -57,7 +57,9 @@ import org.egov.bpa.application.entity.CheckListDetail;
 import org.egov.bpa.application.service.ApplicationBpaService;
 import org.egov.bpa.application.service.CheckListDetailService;
 import org.egov.bpa.application.service.collection.GenericBillGeneratorService;
+import org.egov.bpa.service.BpaUtils;
 import org.egov.bpa.utils.BpaConstants;
+import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -73,6 +75,9 @@ public class NewApplicationController extends BpaGenericApplicationController {
 
     @Autowired
     private GenericBillGeneratorService genericBillGeneratorService;
+
+    @Autowired
+    private BpaUtils bpaUtils;
 
     @Autowired
     private ApplicationBpaService applicationBpaService;
@@ -91,13 +96,14 @@ public class NewApplicationController extends BpaGenericApplicationController {
             @ModelAttribute final CheckListDetail checkListDetail) {
         return checkListDetailService.findActiveCheckListByChecklistType(BpaConstants.CHECKLIST_TYPE);
     }
- 
+
     @RequestMapping(value = "/newApplication-create", method = POST)
     public String createNewConnection(@Valid @ModelAttribute final BpaApplication bpaApplication,
             final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
             final HttpServletRequest request, final Model model,
             final BindingResult errors) {
 
+        System.out.println(bpaApplication.getZoneId() + "" + bpaApplication.getWardId());
         final List<ApplicationDocument> applicationDocs = new ArrayList<>(0);
         int i = 0;
         if (!bpaApplication.getApplicationDocument().isEmpty())
@@ -105,10 +111,20 @@ public class NewApplicationController extends BpaGenericApplicationController {
                 validateDocuments(applicationDocs, applicationDocument, i, resultBinder);
                 i++;
             }
+        Long userPosition = null;
+        final WorkFlowMatrix wfmatrix = bpaUtils.getWfMatrixByCurrentState(bpaApplication, BpaConstants.WF_NEW_STATE);
+        if (wfmatrix != null)
+            userPosition = bpaUtils.getUserPositionByZone(wfmatrix.getNextDesignation(), bpaApplication.getWardId() != null
+                    ? bpaApplication.getWardId() : bpaApplication.getZoneId() != null ? bpaApplication.getZoneId() : null);
+        if (userPosition == null) {
+            model.addAttribute("noJAORSAMessage", "No Superintendant exists to forward the application.");
+            return "newapplication-form";
+        }
         bpaApplication.getApplicationDocument().clear();
         bpaApplication.setApplicationDocument(applicationDocs);
         processAndStoreApplicationDocuments(bpaApplication);
-        bpaApplication.setAdmissionfeeAmount(applicationBpaService.setAdmissionFeeAmountForRegistration(String.valueOf(bpaApplication.getServiceType().getId())));
+        bpaApplication.setAdmissionfeeAmount(applicationBpaService
+                .setAdmissionFeeAmountForRegistration(String.valueOf(bpaApplication.getServiceType().getId())));
         applicationBpaService.createNewApplication(bpaApplication);
         return genericBillGeneratorService.generateBillAndRedirectToCollection(bpaApplication, model);
     }
