@@ -75,4 +75,7 @@ public class CheckListDetailService {
         return checkListDetailRepository.findActiveCheckListByServiceType(serviceTypeId, checklistType);
     }
 
+    public List<CheckListDetail> findActiveCheckListByChecklistType(final String checklistType) {
+        return checkListDetailRepository.findActiveCheckListByChecklistType(checklistType);
+    }
 }

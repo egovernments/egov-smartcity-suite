@@ -66,9 +66,10 @@
 					<jsp:include page="applicationDetails.jsp"></jsp:include>
 					<jsp:include page="applicantDetailForm.jsp"></jsp:include>
 					<jsp:include page="siteDetail.jsp"></jsp:include>
+					<jsp:include page="bpaDocumentDetails.jsp"></jsp:include>
 
 				</div>
-			</div>
+			</div>     
 			<%-- <jsp:include page="../common/commonWorkflowMatrix.jsp"/>
 				<div class="buttonbottom" align="center">
 					<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />

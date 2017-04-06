@@ -79,7 +79,7 @@ public class ApplicationDocument extends AbstractAuditable {
     private Long id;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinTable(name = "egbpa_documents", joinColumns = @JoinColumn(name = "applicationdocumentid"), inverseJoinColumns = @JoinColumn(name = "filestoreid"))
+    @JoinTable(name = "egbpa_document", joinColumns = @JoinColumn(name = "applicationdocumentid"), inverseJoinColumns = @JoinColumn(name = "filestoreid"))
     private Set<FileStoreMapper> supportDocs = Collections.emptySet();
 
     private transient MultipartFile[] files;

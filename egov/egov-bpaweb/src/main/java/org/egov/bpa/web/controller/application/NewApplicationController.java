@@ -42,18 +42,30 @@ package org.egov.bpa.web.controller.application;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.apache.commons.lang3.ArrayUtils;
+import org.egov.bpa.application.entity.ApplicationDocument;
 import org.egov.bpa.application.entity.BpaApplication;
+import org.egov.bpa.application.entity.CheckListDetail;
 import org.egov.bpa.application.service.ApplicationBpaService;
+import org.egov.bpa.application.service.CheckListDetailService;
 import org.egov.bpa.application.service.collection.GenericBillGeneratorService;
+import org.egov.bpa.utils.BpaConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -66,20 +78,55 @@ public class NewApplicationController extends BpaGenericApplicationController {
     @Autowired
     private ApplicationBpaService applicationBpaService;
 
+    @Autowired
+    private CheckListDetailService checkListDetailService;
+
     @RequestMapping(value = "/newApplication-newform", method = GET)
     public String showNewApplicationForm(@ModelAttribute final BpaApplication bpaApplication,
             final Model model, final HttpServletRequest request) {
         return "newapplication-form";
     }
 
+    @ModelAttribute("checkListDetailList")
+    public List<CheckListDetail> checkListDetailList(
+            @ModelAttribute final CheckListDetail checkListDetail) {
+        return checkListDetailService.findActiveCheckListByChecklistType(BpaConstants.CHECKLIST_TYPE);
+    }
+ 
     @RequestMapping(value = "/newApplication-create", method = POST)
     public String createNewConnection(@Valid @ModelAttribute final BpaApplication bpaApplication,
             final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
             final HttpServletRequest request, final Model model,
             final BindingResult errors) {
-        bpaApplication.setAdmissionfeeAmount(applicationBpaService.setAdmissionFeeAmountForRegistration(String.valueOf(bpaApplication.getServiceType().getId())));
+
+        final List<ApplicationDocument> applicationDocs = new ArrayList<>(0);
+        int i = 0;
+        if (!bpaApplication.getApplicationDocument().isEmpty())
+            for (final ApplicationDocument applicationDocument : bpaApplication.getApplicationDocument()) {
+                validateDocuments(applicationDocs, applicationDocument, i, resultBinder);
+                i++;
+            }
+        bpaApplication.getApplicationDocument().clear();
+        bpaApplication.setApplicationDocument(applicationDocs);
+        processAndStoreApplicationDocuments(bpaApplication);
+        applicationBpaService.createNewApplication(bpaApplication);
+
+        bpaApplication.setAdmissionfeeAmount(new BigDecimal(10));
         applicationBpaService.createNewApplication(bpaApplication);
         return genericBillGeneratorService.generateBillAndRedirectToCollection(bpaApplication, model);
+    }
+
+    private void validateDocuments(final List<ApplicationDocument> applicationDocs,
+            final ApplicationDocument applicationDocument, final int i, final BindingResult resultBinder) {
+        Iterator<MultipartFile> stream = null;
+        if (ArrayUtils.isNotEmpty(applicationDocument.getFiles()))
+            stream = Arrays.asList(applicationDocument.getFiles()).stream().filter(file -> !file.isEmpty())
+                    .iterator();
+        if (stream == null) {
+            final String fieldError = "applicationDocs[" + i + "].files";
+            resultBinder.rejectValue(fieldError, "files.required");
+        } else
+            applicationDocs.add(applicationDocument);
     }
 
 }

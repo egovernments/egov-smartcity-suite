@@ -41,6 +41,11 @@ import org.springframework.stereotype.Repository;
 public interface CheckListDetailRepository extends JpaRepository<CheckListDetail, Long> {
 
     CheckListDetail findByCode(String code);
+
     @Query("from  CheckListDetail cd where cd.checkList.serviceType.id = :serviceTypeId AND cd.checkList.checklistType = :checklistType")
-    List<CheckListDetail> findActiveCheckListByServiceType(@Param("serviceTypeId") Long serviceTypeId,@Param("checklistType") String checklistType);
+    List<CheckListDetail> findActiveCheckListByServiceType(@Param("serviceTypeId") Long serviceTypeId,
+            @Param("checklistType") String checklistType);
+
+    @Query("from  CheckListDetail cd where cd.isActive = true AND  cd.checkList.checklistType = :checklistType")
+    List<CheckListDetail> findActiveCheckListByChecklistType(@Param("checklistType") String checklistType);
 }

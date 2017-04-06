@@ -84,4 +84,5 @@ public class BpaConstants {
     public static final String BOUNDARY_TYPE_CITY = "City";
 
     public static final String FILESTORE_MODULECODE = "BPA";
+    public static final String CHECKLIST_TYPE = "DOCUMENTATION";
 }
