@@ -104,16 +104,14 @@ public class ZuulProxyFilter extends ZuulFilter {
 
     @Override
     public boolean shouldFilter() {
-        if (log.isInfoEnabled())
-            log.info("Inside shouldFilter... ");
+
         final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         return auth != null;
     }
 
     @Override
     public Object run() {
-        if (log.isInfoEnabled())
-            log.info("Inside run() method..... ");
+
         mapper = new ObjectMapper();
         final RequestContext ctx = RequestContext.getCurrentContext();
         final HttpServletRequest request = ctx.getRequest();

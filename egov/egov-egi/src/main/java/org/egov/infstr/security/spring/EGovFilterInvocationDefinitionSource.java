@@ -48,8 +48,6 @@ import java.util.List;
 import org.egov.infra.admin.master.entity.Action;
 import org.egov.infra.admin.master.service.ActionService;
 import org.egov.infra.security.utils.SecurityConstants;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.access.SecurityConfig;
@@ -66,7 +64,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class EGovFilterInvocationDefinitionSource implements FilterInvocationSecurityMetadataSource {
     
-    private static Logger log = LoggerFactory.getLogger(EGovFilterInvocationDefinitionSource.class);
     private List<String> excludePatterns = new ArrayList<String>();
 
     @Autowired
@@ -94,11 +91,6 @@ public class EGovFilterInvocationDefinitionSource implements FilterInvocationSec
     }
 
     private Collection<ConfigAttribute> lookupAttributes(final String contextRoot, final String url) {
-        if (log.isInfoEnabled()) {
-            log.info("Inside lookupAttributes method of EGovFilterInvocationDefinitionSource..... ");
-            log.info("contextRoot..... "+contextRoot);
-            log.info("url..... "+url);
-        }
         if (url.startsWith(SecurityConstants.LOGIN_URI) || url.startsWith(SecurityConstants.PUBLIC_URI) || isPatternExcluded(url))
             return null;
         else {
