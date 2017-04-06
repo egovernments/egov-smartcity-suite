@@ -42,7 +42,6 @@ package org.egov.bpa.web.controller.application;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -69,7 +68,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-@RequestMapping(value = "/application/")
+@RequestMapping(value = "/application")
 public class NewApplicationController extends BpaGenericApplicationController {
 
     @Autowired
