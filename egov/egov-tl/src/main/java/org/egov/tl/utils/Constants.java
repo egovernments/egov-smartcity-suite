@@ -195,6 +195,7 @@ public final class Constants {
     public static final String TL_SERVICE_CODE = "TL";
     private static final Map<String, String> OWNERSHIP_TYPE = new HashMap<>();
     public static final String CLOSURE_LIC_APPTYPE = "Closure";
+    public static final String DMD_GENERATION_DATA = "demandgenerationdata";
 
     static {
 

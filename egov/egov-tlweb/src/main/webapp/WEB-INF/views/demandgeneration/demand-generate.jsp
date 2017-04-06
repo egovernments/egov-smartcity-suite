@@ -48,11 +48,14 @@
                 <div class="panel-title"><spring:message code="title.demand.generation"/></div>
             </div>
             <div class="panel-body">
-                <form:form role="form" action="generate" id="generatedemand" name="generatedemand" cssClass="form-horizontal form-groups-bordered" method="post">
+                <form:form role="form" id="generatedemand" name="generatedemand"
+                           cssClass="form-horizontal form-groups-bordered" method="post">
                     <div class="form-group">
-                        <label class="col-sm-4 control-label text-right"><spring:message code="lbl.financialyear"/> </label>
+                        <label class="col-sm-4 control-label text-right"><spring:message
+                                code="lbl.financialyear"/> </label>
                         <div class="col-sm-4 add-margin">
-                            <select name="installmentYear" id="installmentYear" class="form-control" required="required">
+                            <select name="installmentYear" id="installmentYear" class="form-control"
+                                    required="required">
                                 <option value=""><spring:message code="lbl.select"/></option>
                                 <c:forEach items="${financialYearList}" var="finYear">
                                     <option value="${finYear.finYearRange}">${finYear.finYearRange}</option>
@@ -65,45 +68,53 @@
                             <button type="submit" class='btn btn-primary' id="submit">
                                 <spring:message code='lbl.generate.demand'/>
                             </button>
-                            <button type="button" class="btn btn-default" data-dismiss="modal" onclick="window.close();">
+                            <button type="submit" class='btn btn-primary' id="genmissingbtn" name="generatemissing">
+                                <spring:message code="lbl.generate.missing.demand"/>
+                            </button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal"
+                                    onclick="window.close();">
                                 <spring:message code='lbl.close'/></button>
                         </div>
                     </div>
-                    <c:if test="${demandGenerationLog != null && not empty demandGenerationLog.details}">
-                        <div class="alert alert-info" role="alert"><spring:message code="${message}"/></div>
-                        <div class="text-center add-margin hidden" id="regeneratediv">
-                            <button type="submit" class='btn btn-primary' id="regenbtn" name="regenerate"><spring:message code="lbl.retry.failed.demand"/></button>
+                    <c:if test="${not empty demandgenerationdata}">
+                        <div class="col-md-12 form-group report-table-container">
+                            <table class="table table-bordered datatable dt-responsive table-hover multiheadertbl"
+                                   id="tbldemandgenerate">
+                            </table>
                         </div>
-                        <script>$("#installmentYear").val('${demandGenerationLog.installmentYear}');</script>
-                        <div class="col-md-12 text-center add-margin">
-                            <ul class="pagination pagination-xs pager" id="myPager"></ul>
-                        </div>
-                        <table class="table table-bordered" style="width:97%;margin:0 auto;">
-                            <thead>
-                            <tr>
-                                <th>License Number</th>
-                                <th>Status</th>
-                                <th>Details</th>
-                            </tr>
-                            </thead>
-                            <tbody id="dgdtl">
-                            <c:forEach items="${demandGenerationLog.details}" var="detail">
-                                <c:if test="${detail.status == 'INCOMPLETE'}">
-                                    <script>$('#regeneratediv').removeClass('hidden');</script>
-                                </c:if>
-                                <tr>
-                                    <td><a href="#" onclick="window.open('/tl/viewtradelicense/viewTradeLicense-view.action?id='+${detail.license.id}, '',
-                                            'scrollbars=yes,width=1000,height=700,status=yes'); return false;">${detail.license.licenseNumber}</a></td>
-                                    <td>${detail.status}</td>
-                                    <td><spring:message code="${detail.detail}" text="${detail.detail}"/></td>
-                                </tr>
-                            </c:forEach>
-                            </tbody>
-                        </table>
                     </c:if>
+
                 </form:form>
             </div>
         </div>
     </div>
 </div>
+<link rel="stylesheet"
+      href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>
+<link rel="stylesheet"
+      href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
+<script type="text/javascript"
+        src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
+<script type="text/javascript"
+        src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
+<script
+        src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/dataTables.buttons.min.js' context='/egi'/>"></script>
+<script
+        src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/buttons.bootstrap.min.js' context='/egi'/>"></script>
+<script
+        src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/buttons.flash.min.js' context='/egi'/>"></script>
+<script
+        src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/jszip.min.js' context='/egi'/>"></script>
+<script
+        src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/pdfmake.min.js' context='/egi'/>"></script>
+<script
+        src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/vfs_fonts.js' context='/egi'/>"></script>
+<script
+        src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/buttons.html5.min.js' context='/egi'/>"></script>
+<script
+        src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/buttons.print.min.js' context='/egi'/>"></script>
 <script src="<cdn:url  value='/resources/js/app/trade-license-demand-generation.js?rnd=${app_release_no}'/>"></script>
+<script>
+    var reportData =${demandgenerationdata};
+    populateData(reportData);
+</script>

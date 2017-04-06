@@ -62,7 +62,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.egov.infra.persistence.utils.PersistenceUtils.flushBatchUpdate;
 import static org.egov.tl.entity.enums.ProcessStatus.COMPLETED;
@@ -116,7 +118,8 @@ public class DemandGenerationService {
             throw new ApplicationRuntimeException("TL-006");
 
         demandGenerationLog = demandGenerationLogService.createDemandGenerationLog(installmentYearRange);
-        return generateDemand(demandGenerationLog, installmentYear);
+        List<License> licenses = licenseService.getAllLicensesByNatureOfBusiness(PERMANENT_NATUREOFBUSINESS);
+        return generateDemand(demandGenerationLog, installmentYear, licenses);
 
     }
 
@@ -153,13 +156,12 @@ public class DemandGenerationService {
     }
 
 
-    private DemandGenerationLog generateDemand(DemandGenerationLog demandGenerationLog, CFinancialYear installmentYear) {
+    private DemandGenerationLog generateDemand(DemandGenerationLog demandGenerationLog, CFinancialYear installmentYear, List<License> licenses) {
         Module module = moduleService.getModuleByName(TRADE_LICENSE);
         Installment installment = installmentDao.getInsatllmentByModuleForGivenDate(module, installmentYear.getStartingDate());
         if (installment == null)
             throw new ApplicationRuntimeException("TL-005");
         demandGenerationLog.setDemandGenerationStatus(INPROGRESS);
-        List<License> licenses = licenseService.getAllLicensesByNatureOfBusiness(PERMANENT_NATUREOFBUSINESS);
         int batchUpdateCount = 0;
         for (License license : licenses) {
             DemandGenerationLogDetail demandGenerationLogDetail = demandGenerationLogService.
@@ -201,4 +203,25 @@ public class DemandGenerationService {
     public CFinancialYear getLatestFinancialYear() {
         return financialYearService.getFinancialYearByDate(new DateTime().withMonthOfYear(4).withDayOfMonth(1).toDate());
     }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW, timeout = 7200)
+    public DemandGenerationLog generateMissingDemand(String installmentYearRange) {
+
+        DemandGenerationLog demandGenerationLog = demandGenerationLogService.getDemandGenerationLogByInstallmentYear(installmentYearRange);
+
+        DemandGenerationLog previousDemandGenerationLog = demandGenerationLogService.getPreviousInstallmentDemandGenerationLog(installmentYearRange);
+        if (previousDemandGenerationLog != null && previousDemandGenerationLog.getDemandGenerationStatus().equals(INCOMPLETE))
+            throw new ApplicationRuntimeException("TL-008");
+
+        CFinancialYear installmentYear = financialYearService.getFinacialYearByYearRange(installmentYearRange);
+        if (!installmentYearValidForDemandGeneration(installmentYear))
+            throw new ApplicationRuntimeException("TL-006");
+        List<License> licenses = licenseService.getAllLicensesByNatureOfBusiness(PERMANENT_NATUREOFBUSINESS);
+        Set<License> demandLogLicenses = new HashSet<>();
+        demandGenerationLog.getDetails().stream().forEach(demandGenerationLogDetail -> demandLogLicenses.add(demandGenerationLogDetail.getLicense()));
+        licenses.removeAll(demandLogLicenses);
+        return generateDemand(demandGenerationLog, installmentYear, licenses);
+
+    }
+
 }
