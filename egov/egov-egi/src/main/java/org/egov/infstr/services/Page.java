@@ -53,7 +53,7 @@ public class Page<T> {
     private int recordTotal;
 
     public Page(Query query, int pageNumber, int pageSize, int recordTotal) {
-        this(query, pageNumber, pageSize);
+        this(query, ++pageNumber, pageSize);
         this.recordTotal = recordTotal;
     }
 
