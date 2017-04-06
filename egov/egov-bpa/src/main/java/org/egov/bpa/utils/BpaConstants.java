@@ -85,4 +85,5 @@ public class BpaConstants {
 
     public static final String FILESTORE_MODULECODE = "BPA";
     public static final String CHECKLIST_TYPE = "DOCUMENTATION";
+    public static final String BPA_STATUS_SUPERINDENT_APPROVED="Superintendent Approved";
 }

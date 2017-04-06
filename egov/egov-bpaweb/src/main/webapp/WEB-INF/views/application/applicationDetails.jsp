@@ -180,14 +180,14 @@
 	<label class="col-sm-2 control-label text-right">Source <span
 		class="mandatory"></span></label>
 	<div class="col-sm-2 add-margin">
-		<%-- <form:select path="source" data-first-option="false" id=""
+		<form:select path="source" data-first-option="false" id=""
 			cssClass="form-control" required="required">
 			<form:option value="">
 				<spring:message code="lbl.select" />
 			</form:option>
 			<form:options items="${souceList}" />
 		</form:select>
-		<form:errors path="source" cssClass="add-margin error-msg" /> --%>
+		<form:errors path="source" cssClass="add-margin error-msg" />
 	</div>
 </div>
 

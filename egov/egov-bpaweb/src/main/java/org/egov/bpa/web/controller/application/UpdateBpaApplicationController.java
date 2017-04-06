@@ -76,7 +76,14 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
     public String updateApplicationForm(final Model model, @PathVariable final String applicationNumber,
             final HttpServletRequest request) {
         final BpaApplication application = getBpaApplication(applicationNumber);
-        loadViewdata(model, application);
+        
+        if (application != null) {
+            loadViewdata(model, application);
+            if (application.getState() != null
+                    && application.getState().getValue().equalsIgnoreCase(BpaConstants.BPA_STATUS_SUPERINDENT_APPROVED)) {
+                return "documentscrutiny-form";
+            }
+        }
         return "bpaapplication-Form";
     }
 
