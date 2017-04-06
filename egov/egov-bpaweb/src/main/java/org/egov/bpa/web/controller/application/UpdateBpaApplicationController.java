@@ -100,7 +100,7 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
             return "bpaapplication-Form";
         }
         bpaApplication = applicationBpaService.updateApplication(bpaApplication);
-        return "viewapplication-form.jsp";
+        return "viewapplication-form";
     }
 
 }
