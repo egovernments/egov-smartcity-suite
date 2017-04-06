@@ -55,7 +55,7 @@
 			<spring:message code="lbl.applicant.name" />
 		</div>
 		<div class="col-sm-3 add-margin view-content">
-			<c:out value="${bpaApplication.owner.applicantName}"></c:out>
+			<c:out value="${bpaApplication.owner.applicantName}" default="N/A"></c:out>
 		</div>
 		<div class="col-sm-3 add-margin">
 			<spring:message code="lbl.owner.address" />
@@ -70,7 +70,7 @@
 			<spring:message code="lbl.mobileNo" />
 		</div>
 		<div class="col-sm-3 add-margin view-content">
-			<c:out value="${bpaApplication.owner.mobileNumber}"></c:out>
+			<c:out value="${bpaApplication.owner.mobileNumber}" default="N/A"></c:out>
 		</div>
 		<div class="col-sm-3 add-margin">
 			<spring:message code="lbl.emailid" />

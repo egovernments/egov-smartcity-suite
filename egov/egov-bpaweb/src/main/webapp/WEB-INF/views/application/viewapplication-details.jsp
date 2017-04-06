@@ -45,167 +45,159 @@
 
 <div class="panel-heading custom_form_panel_heading">
 	<div class="panel-title">
-		lbl.connection.details
+		<spring:message code="lbl.appln.details" />
 	</div>
 </div>
+<div class="panel-body">
+	<div class="row add-border">
+		<div class="col-sm-3 add-margin">
+			<spring:message code="lbl.build.plan.apprvl.date" />
+		</div>
+		<div class="col-sm-3 add-margin view-content">
+			<c:out value="${bpaApplication.buildingPlanApprovalDate}" default="N/A"></c:out>
+		</div>
+		<div class="col-sm-3 add-margin">
+			<spring:message code="lbl.plan.approval.no" />
+		</div>
+		<div class="col-sm-3 add-margin view-content">
+			<c:out value="${bpaApplication.buildingplanapprovalnumber}"
+				default="N/A"></c:out>
+		</div>
+	</div>
 
-<div class="row add-border">
-	<div class="col-sm-3 add-margin">
-		<spring:message code="lbl.build.plan.apprvl.date" />
+	<div class="row add-border">
+		<div class="col-sm-3 add-margin">
+			<spring:message code="lbl.build.plan.permission.date" />
+		</div>
+		<div class="col-sm-3 add-margin view-content">
+			<c:out value="${bpaApplication.planPermissionDate}" default="N/A"></c:out>
+		</div>
+		<div class="col-sm-3 add-margin">
+			<spring:message code="lbl.plan.permission.no" />
+		</div>
+		<div class="col-sm-3 add-margin view-content">
+			<c:out value="${bpaApplication.planPermissionNumber}" default="N/A"></c:out>
+		</div>
 	</div>
-	<div class="col-sm-3 add-margin view-content">
-		<c:out value="${bpaApplication.buildingPlanApprovalDate}"></c:out>
-	</div>
-	<div class="col-sm-3 add-margin">
-		<spring:message code="lbl.plan.approval.no" />
-	</div>
-	<div class="col-sm-3 add-margin view-content">
-		<c:out value="${bpaApplication.buildingplanapprovalnumber}"
-			default="N/A"></c:out>
-	</div>
-</div>
 
-<div class="row add-border">
-	<div class="col-sm-3 add-margin">
-		<spring:message code="lbl.build.plan.permission.date" />
+	<div class="row add-border">
+		<div class="col-sm-3 add-margin">
+			<spring:message code="lbl.service.type" />
+		</div>
+		<div class="col-sm-3 add-margin view-content">
+			<c:out value="${bpaApplication.serviceType.description}" default="N/A"></c:out>
+		</div>
+		<div class="col-sm-3 add-margin">
+			<spring:message code="lbl.stakeholder.type" />
+		</div>
+		<div class="col-sm-3 add-margin view-content">
+			<c:out value="${bpaApplication.stakeHolder[0].stakeHolder}"
+				default="N/A"></c:out>
+		</div>
 	</div>
-	<div class="col-sm-3 add-margin view-content">
-		<c:out value="${bpaApplication.planPermissionDate}"></c:out>
-	</div>
-	<div class="col-sm-3 add-margin">
-		<spring:message code="lbl.plan.submission.no" />
-	</div>
-	<div class="col-sm-3 add-margin view-content">
-		<c:out value="${bpaApplication.planPermissionNumber}"
-			default="N/A"></c:out>
-	</div>
-</div>
 
-<div class="row add-border">
-	<div class="col-sm-3 add-margin">
-		<spring:message code="lbl.service.type" />
+	<div class="row add-border">
+		<div class="col-sm-3 add-margin">
+			<spring:message code="lbl.application.no" />
+		</div>
+		<div class="col-sm-3 add-margin view-content">
+			<c:out value="${bpaApplication.applicationNumber}" default="N/A"></c:out>
+		</div>
+		<div class="col-sm-3 add-margin">
+			<spring:message code="lbl.application.date" />
+		</div>
+		<div class="col-sm-3 add-margin view-content">
+			<c:out value="${bpaApplication.applicationDate}" default="N/A"></c:out>
+		</div>
 	</div>
-	<div class="col-sm-3 add-margin view-content">
-		<c:out value="${bpaApplication.serviceType}"></c:out>
-	</div>
-	<div class="col-sm-3 add-margin">
-		<spring:message code="lbl.stakeholder.type" />
-	</div>
-	<div class="col-sm-3 add-margin view-content">
-		<c:out value="${bpaApplication.stakeHolder[0].stakeHolder}"
-			default="N/A"></c:out>
-	</div>
-</div>
 
-<div class="row add-border">
-	<div class="col-sm-3 add-margin">
-		<spring:message code="lbl.application.no" />
+	<div class="row add-border">
+		<div class="col-sm-3 add-margin">
+			<spring:message code="lbl.old.appln.no" />
+		</div>
+		<div class="col-sm-3 add-margin view-content">
+			<c:out value="${bpaApplication.oldApplicationNumber}" default="N/A"></c:out>
+		</div>
+		<div class="col-sm-3 add-margin">
+			<spring:message code="lbl.approval.date" />
+		</div>
+		<div class="col-sm-3 add-margin view-content">
+			<c:out value="${bpaApplication.approvalDate}" default="N/A"></c:out>
+		</div>
 	</div>
-	<div class="col-sm-3 add-margin view-content">
-		<c:out value="${bpaApplication.applicationNumber}"></c:out>
-	</div>
-	<div class="col-sm-3 add-margin">
-		<spring:message code="lbl.application.date" />
-	</div>
-	<div class="col-sm-3 add-margin view-content">
-		<c:out value="${bpaApplication.applicationDate}"
-			default="N/A"></c:out>
-	</div>
-</div>
 
-<div class="row add-border">
-	<div class="col-sm-3 add-margin">
-		<spring:message code="lbl.old.appln.no" />
+	<div class="row add-border">
+		<div class="col-sm-3 add-margin">
+			<spring:message code="lbl.assessmt.no" />
+		</div>
+		<div class="col-sm-3 add-margin view-content">
+			<c:out value="${bpaApplication.assessmentNumber}" default="N/A"></c:out>
+		</div>
+		<div class="col-sm-3 add-margin">
+			<spring:message code="lbl.occupancy" />
+		</div>
+		<div class="col-sm-3 add-margin view-content">
+			<c:out value="${bpaApplication.occupancy}" default="N/A"></c:out>
+		</div>
 	</div>
-	<div class="col-sm-3 add-margin view-content">
-		<c:out value="${bpaApplication.oldApplicationNumber}"></c:out>
-	</div>
-	<div class="col-sm-3 add-margin">
-		<spring:message code="lbl.approval.date" />
-	</div>
-	<div class="col-sm-3 add-margin view-content">
-		<c:out value="${bpaApplication.approveDate}"
-			default="N/A"></c:out>
-	</div>
-</div>
-	
-<div class="row add-border">
-	<div class="col-sm-3 add-margin">
-		<spring:message code="lbl.assessmt.no" />
-	</div>
-	<div class="col-sm-3 add-margin view-content">
-		<c:out value="${bpaApplication.assessmentNumber}"></c:out>
-	</div>
-	<div class="col-sm-3 add-margin">
-		<spring:message code="lbl.occupancy" />
-	</div>
-	<div class="col-sm-3 add-margin view-content">
-		<c:out value="${bpaApplication.occupancy}"
-			default="N/A"></c:out>
-	</div>
-</div>	
 
-<div class="row add-border">
-	<div class="col-sm-3 add-margin">
-		<spring:message code="lbl.applicant.type" />
+	<div class="row add-border">
+		<div class="col-sm-3 add-margin">
+			<spring:message code="lbl.applicant.type" />
+		</div>
+		<div class="col-sm-3 add-margin view-content">
+			<c:out value="${bpaApplication.applicantType}" default="N/A"></c:out>
+		</div>
+		<div class="col-sm-3 add-margin">
+			<spring:message code="lbl.source" />
+		</div>
+		<div class="col-sm-3 add-margin view-content">
+			<c:out value="${bpaApplication.source}" default="N/A"></c:out>
+		</div>
 	</div>
-	<div class="col-sm-3 add-margin view-content">
-		<c:out value="${bpaApplication.applicantType}"></c:out>
-	</div>
-	<div class="col-sm-3 add-margin">
-		<spring:message code="lbl.source" />
-	</div>
-	<div class="col-sm-3 add-margin view-content">
-		<c:out value="${bpaApplication.source}"
-			default="N/A"></c:out>
-	</div>
-</div>	
-	
-<div class="row add-border">
-	<div class="col-sm-3 add-margin">
-		<spring:message code="lbl.tapal.no" />
-	</div>
-	<div class="col-sm-3 add-margin view-content">
-		<c:out value="${bpaApplication.tapalNumber}"></c:out>
-	</div>
-	<div class="col-sm-3 add-margin">
-		<spring:message code="lbl.government.type" />
-	</div>
-	<div class="col-sm-3 add-margin view-content">
-		<c:out value="${bpaApplication.governmentType}"
-			default="N/A"></c:out>
-	</div>
-</div>
-	
-<div class="row add-border">
-	<div class="col-sm-3 add-margin">
-		<spring:message code="lbl.project.name" />
-	</div>
-	<div class="col-sm-3 add-margin view-content">
-		<c:out value="${bpaApplication.projectName}"></c:out>
-	</div>
-	<div class="col-sm-3 add-margin">
-		<spring:message code="lbl.group.development" />
-	</div>
-	<div class="col-sm-3 add-margin view-content">
-		<c:out value="${bpaApplication.groupDevelopment}"
-			default="N/A"></c:out>
-	</div>
-</div>
 
-<div class="row add-border">
-	<div class="col-sm-3 add-margin">
-		<spring:message code="lbl.remarks" />
+	<div class="row add-border">
+		<div class="col-sm-3 add-margin">
+			<spring:message code="lbl.tapal.no" />
+		</div>
+		<div class="col-sm-3 add-margin view-content">
+			<c:out value="${bpaApplication.tapalNumber}" default="N/A"></c:out>
+		</div>
+		<div class="col-sm-3 add-margin">
+			<spring:message code="lbl.government.type" />
+		</div>
+		<div class="col-sm-3 add-margin view-content">
+			<c:out value="${bpaApplication.governmentType}" default="N/A"></c:out>
+		</div>
 	</div>
-	<div class="col-sm-3 add-margin view-content">
-		<c:out value="${bpaApplication.remarks}"></c:out>
+
+	<div class="row add-border">
+		<div class="col-sm-3 add-margin">
+			<spring:message code="lbl.project.name" />
+		</div>
+		<div class="col-sm-3 add-margin view-content">
+			<c:out value="${bpaApplication.projectName}" default="N/A"></c:out>
+		</div>
+		<div class="col-sm-3 add-margin">
+			<spring:message code="lbl.group.development" />
+		</div>
+		<div class="col-sm-3 add-margin view-content">
+			<c:out value="${bpaApplication.groupDevelopment}" default="N/A"></c:out>
+		</div>
 	</div>
-	<div class="col-sm-3 add-margin">
-		<spring:message code="lbl.admission.fees" />
-	</div>
-	<div class="col-sm-3 add-margin view-content">
-		<c:out value="${bpaApplication.admissionfeeAmount}"
-			default="N/A"></c:out>
+
+	<div class="row add-border">
+		<div class="col-sm-3 add-margin">
+			<spring:message code="lbl.remarks" />
+		</div>
+		<div class="col-sm-3 add-margin view-content">
+			<c:out value="${bpaApplication.remarks}" default="N/A"></c:out>
+		</div>
+		<div class="col-sm-3 add-margin">
+			<spring:message code="lbl.admission.fees" />
+		</div>
+		<div class="col-sm-3 add-margin view-content">
+			<c:out value="${bpaApplication.admissionfeeAmount}" default="N/A"></c:out>
+		</div>
 	</div>
 </div>
-			
