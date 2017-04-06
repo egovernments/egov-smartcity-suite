@@ -84,6 +84,7 @@ import org.egov.ptis.bean.dashboard.StateCityInfo;
 import org.egov.ptis.bean.dashboard.TaxDefaulters;
 import org.egov.ptis.bean.dashboard.TaxPayerResponseDetails;
 import org.egov.ptis.bean.dashboard.TotalCollectionStats;
+import org.egov.ptis.bean.dashboard.DemandVariance;
 import org.egov.ptis.bean.dashboard.WeeklyDCB;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.model.ErrorDetails;
@@ -373,6 +374,10 @@ public class PropTaxDashboardService {
         collectionIndexDetails
                 .setResponseDetails(collectionIndexElasticSearchService.getResponseTableData(collectionDetailsRequest, true));
         return collectionIndexDetails;
+    }
+    
+    public List<DemandVariance> getDemandVariationDetails(String ulbCode) {
+        return propertyTaxElasticSearchIndexService.prepareDemandVariationDetails(ulbCode);
     }
    
 }
