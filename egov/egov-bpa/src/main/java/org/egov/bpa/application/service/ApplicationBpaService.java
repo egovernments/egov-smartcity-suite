@@ -47,6 +47,7 @@ import org.egov.bpa.application.entity.BpaFeeDetail;
 import org.egov.bpa.application.entity.BpaStatus;
 import org.egov.bpa.application.repository.ApplicationBpaRepository;
 import org.egov.bpa.application.service.collection.GenericBillGeneratorService;
+import org.egov.bpa.application.workflow.BpaApplicationWorkflowCustomDefaultImpl;
 import org.egov.bpa.service.BpaStatusService;
 import org.egov.bpa.service.BpaUtils;
 import org.egov.bpa.utils.BpaConstants;
@@ -78,17 +79,18 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
     public BpaApplication createNewApplication(final BpaApplication application) {
         final Boundary boundaryObj = bpaUtils.getBoundaryById(application.getWardId() != null ? application.getWardId()
                 : application.getZoneId() != null ? application.getZoneId() : null);
-
-        System.out.println(boundaryObj.getBoundaryType().getName());
         application.getSiteDetail().get(0).setAdminBoundary(boundaryObj);
-
         application.getSiteDetail().get(0).setApplication(application);
         if (!application.getBuildingDetail().isEmpty())
             application.getBuildingDetail().get(0).setApplication(application);
         application.setApplicationNumber(applicationBpaBillService.generateApplicationnumber(application));
         final BpaStatus bpaStatus = getStatusByCodeAndModuleType("Registered");
         application.setStatus(bpaStatus);
-
+       /*final BpaApplicationWorkflowCustomDefaultImpl applicationWorkflowCustomDefaultImpl = bpaUtils
+                .getInitialisedWorkFlowBean();
+        applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(application,
+                null,BpaConstants.WF_NEW_STATE,
+                BpaConstants.CREATE_ADDITIONAL_RULE_CREATE, null);*/
         application.setDemand(applicationBpaBillService.createDemand(application));
         return applicationBpaRepository.save(application);
     }
@@ -105,7 +107,7 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
 
     @Transactional
     public BpaApplication updateApplication(final BpaApplication application) {
-
+       
         final BpaApplication updatedApplication = applicationBpaRepository
                 .save(application);
         bpaUtils.redirectToBpaWorkFlow(application, application.getCurrentState().getValue(), null);

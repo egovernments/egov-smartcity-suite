@@ -103,7 +103,6 @@ public class NewApplicationController extends BpaGenericApplicationController {
             final HttpServletRequest request, final Model model,
             final BindingResult errors) {
 
-        System.out.println(bpaApplication.getZoneId() + "" + bpaApplication.getWardId());
         final List<ApplicationDocument> applicationDocs = new ArrayList<>(0);
         int i = 0;
         if (!bpaApplication.getApplicationDocument().isEmpty())

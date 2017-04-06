@@ -68,6 +68,12 @@ import com.google.gson.reflect.TypeToken;
 
 @Controller
 public class BpaAjaxController {
+    
+    @Autowired
+    private DesignationService designationService;
+
+    @Autowired
+    private AssignmentService assignmentService;
 
     @Autowired
     private ApplicationBpaService applicationBpaService;
@@ -78,11 +84,7 @@ public class BpaAjaxController {
         return applicationBpaService.setAdmissionFeeAmountForRegistration(serviceType);
     }
 
-    @Autowired
-    private DesignationService designationService;
-
-    @Autowired
-    private AssignmentService assignmentService;
+   
 
     @RequestMapping(value = "/ajax-designationsByDepartment", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<Designation> getDesignationsByDepartmentId(

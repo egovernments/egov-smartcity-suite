@@ -57,7 +57,7 @@
 		<c:out value="${bpaApplication.buildingPlanApprovalDate}"></c:out>
 	</div>
 	<div class="col-sm-3 add-margin">
-		<spring:message code="llbl.plan.approval.no" />
+		<spring:message code="lbl.plan.approval.no" />
 	</div>
 	<div class="col-sm-3 add-margin view-content">
 		<c:out value="${bpaApplication.buildingplanapprovalnumber}"

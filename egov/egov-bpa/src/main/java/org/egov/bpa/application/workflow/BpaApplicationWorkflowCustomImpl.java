@@ -44,6 +44,7 @@ import java.util.Date;
 import org.egov.bpa.application.entity.BpaApplication;
 import org.egov.bpa.application.entity.BpaStatus;
 import org.egov.bpa.service.BpaStatusService;
+import org.egov.bpa.service.BpaUtils;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.PositionMasterService;
@@ -81,6 +82,10 @@ public abstract class BpaApplicationWorkflowCustomImpl implements BpaApplication
 
     @Autowired
     private BpaWorkFlowService bpaWorkFlowService;
+    
+    
+    @Autowired
+    private BpaUtils bpaUtils;
 
     @Autowired
     public BpaApplicationWorkflowCustomImpl() {
@@ -90,7 +95,7 @@ public abstract class BpaApplicationWorkflowCustomImpl implements BpaApplication
     @Override
     @Transactional
     public void createCommonWorkflowTransition(final BpaApplication application,
-            final Long approvalPosition, final String approvalComent, final String additionalRule,
+             Long approvalPosition, final String approvalComent, final String additionalRule,
             final String workFlowAction) {
 
         if (LOG.isDebugEnabled())
@@ -109,14 +114,20 @@ public abstract class BpaApplicationWorkflowCustomImpl implements BpaApplication
         if (null == application.getState()) { // go by status
             wfmatrix = bpaApplicationWorkflowService.getWfMatrix(application.getStateType(), null,
                     null, additionalRule, BpaConstants.WF_NEW_STATE, null);
-
-            if (wfmatrix != null)
-                // application.setStatus(getStatusByCurrentMatrxiStatus(wfmatrix));
+           Long userPosition ;
+            if (wfmatrix != null){
+                if(pos==null)
+                {
+                    userPosition=  bpaUtils.getUserPositionByZone(wfmatrix.getNextDesignation(),application.getSiteDetail().get(0)!=null && application.getSiteDetail().get(0).getAdminBoundary()!=null ? application.getSiteDetail().get(0).getAdminBoundary().getId():null);
+                    pos = positionMasterService.getPositionById(userPosition);
+                }
+                application.setStatus(getStatusByCurrentMatrxiStatus(wfmatrix));
                 application.transition().start()
                         .withSenderName(user.getUsername() + BpaConstants.COLON_CONCATE + user.getName())
                         .withComments(approvalComent).withInitiator(wfInitiator != null ? wfInitiator.getPosition() : null)
                         .withStateValue(wfmatrix.getNextState()).withDateInfo(new Date()).withOwner(pos)
                         .withNextAction(wfmatrix.getNextAction()).withNatureOfTask(BpaConstants.NATURE_OF_WORK);
+        }
 
         } else if (BpaConstants.WF_APPROVE_BUTTON.equalsIgnoreCase(workFlowAction)) {
 
