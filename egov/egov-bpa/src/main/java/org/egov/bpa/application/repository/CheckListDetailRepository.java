@@ -42,7 +42,7 @@ public interface CheckListDetailRepository extends JpaRepository<CheckListDetail
 
     CheckListDetail findByCode(String code);
 
-    @Query("from  CheckListDetail cd where cd.checkList.serviceType.id = :serviceTypeId AND cd.checkList.checklistType = :checklistType")
+    @Query("from  CheckListDetail cd where cd.isActive = true AND cd.checkList.serviceType.id = :serviceTypeId AND cd.checkList.checklistType = :checklistType")
     List<CheckListDetail> findActiveCheckListByServiceType(@Param("serviceTypeId") Long serviceTypeId,
             @Param("checklistType") String checklistType);
 
