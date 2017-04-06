@@ -201,7 +201,7 @@ public class WaterTaxCollection extends TaxCollection {
     }
 
     @Transactional
-    private void updateDmdDetForRcptCancelAndCheckBounce(final EgDemand demand, final BillReceiptInfo billRcptInfo) {
+    public void updateDmdDetForRcptCancelAndCheckBounce(final EgDemand demand, final BillReceiptInfo billRcptInfo) {
         LOGGER.debug("Entering method updateDmdDetForRcptCancelAndCheckBounce");
         String installment = "";
         for (final ReceiptAccountInfo rcptAccInfo : billRcptInfo.getAccountDetails())
@@ -267,8 +267,8 @@ public class WaterTaxCollection extends TaxCollection {
     }
 
     @Transactional
-    private void updateCollForRcptCreate(final EgDemand demand, final BillReceiptInfo billRcptInfo,
-            final BigDecimal totalAmount) {
+    public void updateCollForRcptCreate(final EgDemand demand, final BillReceiptInfo billRcptInfo,
+            final BigDecimal totalAmount) throws ApplicationRuntimeException{
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("updateCollForRcptCreate : Updating Collection Started For Demand : " + demand
                     + " with BillReceiptInfo - " + billRcptInfo);
@@ -282,8 +282,8 @@ public class WaterTaxCollection extends TaxCollection {
     }
 
     @Transactional
-    private void updateDemandDetailForReceiptCreate(final Set<ReceiptAccountInfo> accountDetails, final EgDemand demand,
-            final BillReceiptInfo billRcptInfo, final BigDecimal totalAmount) {
+    public void updateDemandDetailForReceiptCreate (final Set<ReceiptAccountInfo> accountDetails, final EgDemand demand,
+            final BillReceiptInfo billRcptInfo, final BigDecimal totalAmount) throws ApplicationRuntimeException {
         final StringBuilder query = new StringBuilder(
                 "select dmdet FROM EgDemandDetails dmdet left join fetch dmdet.egDemandReason dmdRsn ")
                         .append("left join fetch dmdRsn.egDemandReasonMaster dmdRsnMstr left join fetch dmdRsn.egInstallmentMaster installment ")
@@ -362,9 +362,13 @@ public class WaterTaxCollection extends TaxCollection {
                         if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getIsDemand())
                             demand.addCollected(rcptAccInfo.getCrAmount());
                     }
-
-                    persistCollectedReceipts(demandDetail, billRcptInfo.getReceiptNum(), totalAmount,
-                            billRcptInfo.getReceiptDate(), demandDetail.getAmtCollected());
+                    try {
+                        persistCollectedReceipts(demandDetail, billRcptInfo.getReceiptNum(), totalAmount,
+                                billRcptInfo.getReceiptDate(), demandDetail.getAmtCollected());
+                        LOGGER.debug("Persisted Collected Receipts ,amount:" + totalAmount);
+                    } catch (final Exception e) {
+                        throw new ApplicationRuntimeException("Error while persisting receipts " + e.getMessage(), e);
+                    }
                     if (LOGGER.isDebugEnabled())
                         LOGGER.debug("Persisted demand and receipt details for tax : " + reason + " installment : "
                                 + instDesc + " with receipt No : " + billRcptInfo.getReceiptNum() + " for Rs. "
@@ -433,7 +437,7 @@ public class WaterTaxCollection extends TaxCollection {
 
     // Receipt cancellation ,updating bill,demanddetails,demand
     @Transactional
-    private void updateCollectionForRcptCancel(final EgDemand demand, final BillReceiptInfo billRcptInfo) {
+    public void updateCollectionForRcptCancel(final EgDemand demand, final BillReceiptInfo billRcptInfo) {
         LOGGER.debug("reconcileCollForRcptCancel : Updating Collection Started For Demand : " + demand
                 + " with BillReceiptInfo - " + billRcptInfo);
         try {
@@ -494,7 +498,7 @@ public class WaterTaxCollection extends TaxCollection {
     }
 
     @Transactional
-    private void updateWaterConnDetailsStatus(final EgDemand demand, final BillReceiptInfo billRcptInfo) {
+    public void updateWaterConnDetailsStatus(final EgDemand demand, final BillReceiptInfo billRcptInfo) {
         final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
                 .getWaterConnectionDetailsByDemand(demand);
         StateHistory stateHistory = null;
