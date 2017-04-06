@@ -45,72 +45,74 @@ import org.hibernate.Query;
 
 import java.util.List;
 
-public class Page {
+public class Page<T> {
 
-	final private List results;
-	final private Integer pageSize;
-	final private int pageNumber;
+    private final List<T> results;
+    private final int pageSize;
+    private final int pageNumber;
+    private int recordTotal;
 
-	/**
-	 * @param query Hibernate Query object that is executed to obtain list
-	 * @param pageNumber The page number
-	 * @param pageSize No of records to be returned. If this parameter is null, all the records are returned. The page parameter will be ignored in this case.
-	 */
-	public Page(final Query query, Integer pageNumber, final Integer pageSize) {
-		if (pageNumber < 1) {
-			pageNumber = 1;
-		}
+    public Page(Query query, int pageNumber, int pageSize, int recordTotal) {
+        this(query, pageNumber, pageSize);
+        this.recordTotal = recordTotal;
+    }
 
-		this.pageNumber = pageNumber;
-		if (pageSize != null && pageSize > 0) {
-			query.setFirstResult((pageNumber - 1) * pageSize);
-			query.setMaxResults(pageSize + 1);
-			this.pageSize = pageSize;
-		} else {
-			this.pageSize = -1;
-		}
-		this.results = query.list();
-	}
+    public Page(Query query, int pageNumber, int pageSize) {
+        int currentPageNo = pageNumber;
+        if (pageNumber < 1) {
+            currentPageNo = 1;
+        }
 
-	/**
-	 * @param criteria Hibernate Criteria object that is executed to obtain list
-	 * @param pageNumber The page number
-	 * @param pageSize No of records to be returned. If this parameter is null, all the records are returned. The page parameter will be ignored in this case.
-	 */
-	public Page(final Criteria criteria, Integer pageNumber, final Integer pageSize) {
-		if (pageNumber < 1) {
-			pageNumber = 1;
-		}
+        this.pageNumber = currentPageNo;
+        if (pageSize > 0) {
+            query.setFirstResult((currentPageNo - 1) * pageSize);
+            query.setMaxResults(pageSize + 1);
+            this.pageSize = pageSize;
+        } else {
+            this.pageSize = -1;
+        }
+        this.results = query.list();
+    }
 
-		this.pageNumber = pageNumber;
+    public Page(Criteria criteria, int pageNumber, int pageSize) {
+        int currentPageNo = pageNumber;
+        if (pageNumber < 1) {
+            currentPageNo = 1;
+        }
 
-		if (pageSize != null && pageSize > 0) {
-			criteria.setFirstResult((pageNumber - 1) * pageSize);
-			criteria.setMaxResults(pageSize + 1);
-			this.pageSize = pageSize;
-		} else {
-			this.pageSize = -1;
-		}
-		this.results = criteria.list();
-	}
+        this.pageNumber = currentPageNo;
 
-	public boolean isNextPage() {
-		return (this.pageSize != -1 && this.results.size() > this.pageSize);
-	}
+        if (pageSize > 0) {
+            criteria.setFirstResult((currentPageNo - 1) * pageSize);
+            criteria.setMaxResults(pageSize + 1);
+            this.pageSize = pageSize;
+        } else {
+            this.pageSize = -1;
+        }
+        this.results = criteria.list();
+    }
 
-	public boolean isPreviousPage() {
-		return this.pageNumber > 0;
-	}
+    public boolean isNextPage() {
+        return this.pageSize != -1 && this.results.size() > this.pageSize;
+    }
 
-	public List getList() {
-		return isNextPage() ? this.results.subList(0, this.pageSize) : this.results;
-	}
+    public boolean isPreviousPage() {
+        return this.pageNumber > 0;
+    }
 
-	public Integer getPageNo() {
-		return this.pageNumber;
-	}
+    public List<T> getList() {
+        return isNextPage() ? this.results.subList(0, this.pageSize) : this.results;
+    }
 
-	public Integer getPageSize() {
-		return this.pageSize;
-	}
+    public int getPageNo() {
+        return this.pageNumber;
+    }
+
+    public int getPageSize() {
+        return this.pageSize;
+    }
+
+    public int getRecordTotal() {
+        return this.recordTotal;
+    }
 }

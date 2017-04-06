@@ -59,6 +59,10 @@ public class DataTable<T> {
         this(draw, pages.getTotalElements(), pages.getNumber(), pages.getTotalElements(), pages.getContent());
     }
 
+    public DataTable(org.egov.infstr.services.Page<T> pages, long draw) {
+        this(draw, pages.getRecordTotal(), pages.getPageSize(), pages.getList().size(), pages.getList());
+    }
+
     public DataTable(long draw, long recordsTotal, long totalDisplayRecords, long recordsFiltered, List<T> data) {
         this.draw = draw;
         this.recordsTotal = recordsTotal;
@@ -71,32 +75,16 @@ public class DataTable<T> {
         return draw;
     }
 
-    public void setDraw(final int draw) {
-        this.draw = draw;
-    }
-
     public long getRecordsTotal() {
         return recordsTotal;
-    }
-
-    public void setRecordsTotal(final int recordsTotal) {
-        this.recordsTotal = recordsTotal;
     }
 
     public long getTotalDisplayRecords() {
         return totalDisplayRecords;
     }
 
-    public void setTotalDisplayRecords(final int totalDisplayRecords) {
-        this.totalDisplayRecords = totalDisplayRecords;
-    }
-
     public long getRecordsFiltered() {
         return recordsFiltered;
-    }
-
-    public void setRecordsFiltered(final int recordsFiltered) {
-        this.recordsFiltered = recordsFiltered;
     }
 
     public List<T> getData() {
