@@ -1171,7 +1171,8 @@ public interface PropertyTaxConstants {
     public static final String EDU_CESS = "EDU_CESS";
     public static final String LIB_CESS = "LIB_CESS";
     public static final String SEW_TAX = "LIB_CESS";
-
+    public static final String VAC_LAND_TAX="VAC_LAND_TAX";
+    
     public static final String THIRD_PARTY_ERR_CODE_SUCCESS = "PTIS-REST-0";
     public static final String THIRD_PARTY_ERR_MSG_SUCCESS = "SUCCESS";
     public static final String THIRD_PARTY_ERR_CODE_INVALIDCREDENTIALS = "PTIS-REST-1";

@@ -2561,13 +2561,13 @@ public class PropertyTaxUtil {
                 + " eg_demand_reason_master drm, eg_installment_master inst "
                 + " where dd.id_demand_reason = dr.id and drm.id = dr.id_demand_reason_master "
                 + " and dr.id_installment = inst.id and dd.id_demand =:currentDemandId and inst.start_date between "
-                + ":firstHlfFromdt and :firstHlfTodt and drm.code = :code";
+                + ":firstHlfFromdt and :firstHlfTodt and drm.code in (:codelist)";
         
         final Query qry = persistenceService.getSession().createSQLQuery(selectQuery)
                 .setLong("currentDemandId", currentDemand.getId())
                 .setDate("firstHlfFromdt",currentFirstHalf.getFromDate())
                 .setDate("firstHlfTodt", currentFirstHalf.getToDate())
-                .setString("code", PropertyTaxConstants.GEN_TAX);
+                .setParameterList("codelist", Arrays.asList(PropertyTaxConstants.GEN_TAX,PropertyTaxConstants.VAC_LAND_TAX));
         rebateAmt = qry.uniqueResult();
         return rebateAmt != null ? new BigDecimal((Double) rebateAmt) : BigDecimal.ZERO;
     }

@@ -45,6 +45,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_SECOND_HA
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_ADVANCE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_VACANT_TAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_ADVANCE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_CHQ_BOUNCE_PENALTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_LIBRARY_CESS;
@@ -89,6 +90,7 @@ import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.commons.dao.FunctionHibernateDAO;
 import org.egov.demand.dao.DemandGenericDao;
 import org.egov.demand.dao.EgBillDao;
+import org.egov.demand.dao.EgDemandDetailsDao;
 import org.egov.demand.integration.TaxCollection;
 import org.egov.demand.model.EgBill;
 import org.egov.demand.model.EgBillDetails;
@@ -157,6 +159,9 @@ public class PropertyTaxCollection extends TaxCollection {
 
     @Autowired
     private CollectionIntegrationService collectionService;
+    
+    @Autowired
+    private EgDemandDetailsDao demanddetailsDao;
 
     @Override
     protected Module module() {
@@ -410,18 +415,13 @@ public class PropertyTaxCollection extends TaxCollection {
                     } else {
                         demandDetail.addCollectedWithOnePaisaTolerance(rcptAccInfo.getCrAmount());
                         if (rebateAmount.compareTo(BigDecimal.ZERO) > 0
-                                && (instDesc.equals(currInstallments.get(CURRENTYEAR_FIRST_HALF).getDescription()) 
-                                           || instDesc.equals(currInstallments.get(CURRENTYEAR_SECOND_HALF).getDescription()) )    ) {
-                            if(instDesc.equals(currInstallments.get(CURRENTYEAR_FIRST_HALF).getDescription()) && demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
-                                    .equals(DEMANDRSN_CODE_GENERAL_TAX)){
+                                && instDesc.equals(currInstallments.get(CURRENTYEAR_FIRST_HALF).getDescription())
+                                && (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
+                                        .equals(DEMANDRSN_CODE_GENERAL_TAX)
+                                        || demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
+                                                .equals(DEMANDRSN_CODE_VACANT_TAX))) {
                                 demandDetail.setAmtRebate(rebateAmount);
                                 rebateAmount = BigDecimal.ZERO;
-                            }else{
-                                demandDetail = installmentWiseDemandDetailsByReason.get(currInstallments.get(CURRENTYEAR_FIRST_HALF).getDescription())
-                                        .get(PropertyTaxConstants.DEMANDRSN_STR_GENERAL_TAX);
-                                demandDetail.setAmtRebate(rebateAmount);
-                                rebateAmount = BigDecimal.ZERO;
-                            }
                         }
                     }
 
@@ -431,6 +431,18 @@ public class PropertyTaxCollection extends TaxCollection {
                             + instDesc + " with receipt No : " + billRcptInfo.getReceiptNum() + " for Rs. "
                             + rcptAccInfo.getCrAmount());
                 }
+        if(rebateAmount.compareTo(BigDecimal.ZERO) > 0){
+            demandDetail = installmentWiseDemandDetailsByReason.get(currInstallments.get(CURRENTYEAR_FIRST_HALF).getDescription())
+                    .get(PropertyTaxConstants.DEMANDRSN_STR_GENERAL_TAX);
+            if(demandDetail == null)
+                demandDetail = installmentWiseDemandDetailsByReason.get(currInstallments.get(CURRENTYEAR_FIRST_HALF).getDescription())
+                    .get(PropertyTaxConstants.DEMANDRSN_STR_VACANT_TAX);
+            demandDetail.setAmtRebate(rebateAmount);
+            demanddetailsDao.update(demandDetail);
+           LOGGER.info("Persisted demand and receipt details for 2nd half tax : " + demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode() 
+                    + rebateAmount);
+        }
+        
         LOGGER.debug("Exiting method saveCollectionDetails");
     }
 
