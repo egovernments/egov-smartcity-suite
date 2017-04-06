@@ -67,22 +67,18 @@ import org.egov.infra.utils.DateUtils;
 import org.egov.ptis.bean.dashboard.CollectionDetails;
 import org.egov.ptis.bean.dashboard.CollectionDetailsRequest;
 import org.egov.ptis.bean.dashboard.DCBDetails;
+import org.egov.ptis.bean.dashboard.DemandVariance;
 import org.egov.ptis.bean.dashboard.DemandVariationDetails;
 import org.egov.ptis.bean.dashboard.PropertyTaxDefaultersRequest;
 import org.egov.ptis.bean.dashboard.TaxDefaulters;
 import org.egov.ptis.bean.dashboard.TaxPayerDetails;
 import org.egov.ptis.bean.dashboard.TaxPayerResponseDetails;
-import org.egov.ptis.bean.dashboard.DemandVariance;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.es.BillCollectorIndex;
-import org.egov.ptis.domain.entity.es.DemandVariationIndex;
 import org.egov.ptis.domain.entity.es.PropertyTaxIndex;
-import org.egov.ptis.repository.es.DemandIndexRepository;
 import org.egov.ptis.repository.es.PropertyTaxIndexRepository;
-import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.aggregations.AggregationBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.Aggregations;
@@ -154,7 +150,6 @@ public class PropertyTaxElasticSearchIndexService {
 
     private final PropertyTaxIndexRepository propertyTaxIndexRepository;
 
-    private DemandIndexRepository demandIndexRepository;
     @Autowired
     private CFinancialYearService cFinancialYearService;
 
@@ -243,10 +238,10 @@ public class PropertyTaxElasticSearchIndexService {
         // variance = ((currentYearCollection - lastYearCollection)*100)/lastYearCollection
         BigDecimal variation;
         if (collectionIndexDetails.getLytdColl().compareTo(BigDecimal.ZERO) == 0)
-            variation = PropertyTaxConstants.BIGDECIMAL_100;
+            variation = BIGDECIMAL_100;
         else
             variation = collectionIndexDetails.getCytdColl().subtract(collectionIndexDetails.getLytdColl())
-                    .multiply(PropertyTaxConstants.BIGDECIMAL_100).divide(collectionIndexDetails.getLytdColl(), 1,
+                    .multiply(BIGDECIMAL_100).divide(collectionIndexDetails.getLytdColl(), 1,
                             BigDecimal.ROUND_HALF_UP);
         collectionIndexDetails.setLyVar(variation);
         timeTaken = System.currentTimeMillis() - startTime;
@@ -302,9 +297,9 @@ public class PropertyTaxElasticSearchIndexService {
             // Prepare Bill Collector wise tax payers details
             prepareTaxersInfoForBillCollectors(collectionDetailsRequest, billCollectorWiseMap,
                     billCollectorWiseTaxPayerDetails);
-            taxProducers = getTaxPayersForBillCollector(collectionDetailsRequest, false, wardWiseTaxProducers,
+            taxProducers = getTaxPayersForBillCollector(false,
                     billCollectorWiseTaxPayerDetails, true);
-            taxAchievers = getTaxPayersForBillCollector(collectionDetailsRequest, false, wardWiseTaxProducers,
+            taxAchievers = getTaxPayersForBillCollector(false,
                     billCollectorWiseTaxPayerDetails, false);
         } else {
             taxProducers = returnUlbWiseAggregationResults(collectionDetailsRequest, PROPERTY_TAX_INDEX_NAME, false,
@@ -345,10 +340,8 @@ public class PropertyTaxElasticSearchIndexService {
             // Prepare Bill Collector wise tax payers details
             prepareTaxersInfoForBillCollectors(collectionDetailsRequest, billCollectorWiseMap,
                     billCollectorWiseTaxPayerDetails);
-            taxProducers = getTaxPayersForBillCollector(collectionDetailsRequest, true, wardWiseTaxProducers,
-                    billCollectorWiseTaxPayerDetails, true);
-            taxAchievers = getTaxPayersForBillCollector(collectionDetailsRequest, true, wardWiseTaxProducers,
-                    billCollectorWiseTaxPayerDetails, false);
+            taxProducers = getTaxPayersForBillCollector(true, billCollectorWiseTaxPayerDetails, true);
+            taxAchievers = getTaxPayersForBillCollector(true, billCollectorWiseTaxPayerDetails, false);
         } else {
             taxProducers = returnUlbWiseAggregationResults(collectionDetailsRequest, PROPERTY_TAX_INDEX_NAME, true,
                     TOTAL_COLLECTION, 10, false);
@@ -412,12 +405,12 @@ public class PropertyTaxElasticSearchIndexService {
         // Apply the ordering and max results size only if the type is not
         // billcollector
         if (!isBillCollectorWise) {
-            aggregation = prepareAggregationForTaxPayers(orderingAggregationName, size, groupingField)
+            aggregation = prepareAggregationForTaxPayers(size, groupingField)
                     .order(Terms.Order.aggregation(orderingAggregationName, order));
             searchQueryColl = new NativeSearchQueryBuilder().withIndices(indexName).withQuery(boolQuery)
                     .addAggregation(aggregation).build();
         } else {
-            aggregation = prepareAggregationForTaxPayers(orderingAggregationName, 250, groupingField);
+            aggregation = prepareAggregationForTaxPayers(250, groupingField);
             searchQueryColl = new NativeSearchQueryBuilder().withIndices(indexName).withQuery(boolQuery)
                     .withPageable(new PageRequest(0, 250)).addAggregation(aggregation).build();
         }
@@ -515,10 +508,10 @@ public class PropertyTaxElasticSearchIndexService {
             // lastYearCollection)*100)/lastYearCollection
 
             if (lastYearCollection.compareTo(BigDecimal.ZERO) == 0)
-                variation = PropertyTaxConstants.BIGDECIMAL_100;
+                variation = BIGDECIMAL_100;
             else
                 variation = totalCollections.subtract(lastYearCollection)
-                        .multiply(PropertyTaxConstants.BIGDECIMAL_100).divide(lastYearCollection, 1,
+                        .multiply(BIGDECIMAL_100).divide(lastYearCollection, 1,
                                 BigDecimal.ROUND_HALF_UP);
             taxDetail.setLyVar(variation);
             taxPayers.add(taxDetail);
@@ -534,8 +527,7 @@ public class PropertyTaxElasticSearchIndexService {
             return returnTopResults(taxPayers, size, order);
     }
 
-    private TermsBuilder prepareAggregationForTaxPayers(final String orderingAggregationName, final int size,
-            final String groupingField) {
+    private TermsBuilder prepareAggregationForTaxPayers(final int size, final String groupingField) {
         return AggregationBuilders.terms(BY_AGGREGATION_FIELD).field(groupingField).size(size)
                 .subAggregation(AggregationBuilders.sum(TOTALDEMAND).field(TOTAL_DEMAND))
                 .subAggregation(AggregationBuilders.sum(TOTAL_COLLECTION).field("totalCollection"))
@@ -543,7 +535,7 @@ public class PropertyTaxElasticSearchIndexService {
                 .subAggregation(AggregationBuilders.sum(ANNUAL_COLLECTION).field(ANNUAL_COLLECTION))
                 .subAggregation(AggregationBuilders.sum(ARREAR_INTEREST_COLLECTION).field(ARREAR_INTEREST_COLLECTION))
                 .subAggregation(AggregationBuilders.sum(CURRENT_INTEREST_COLLECTION).field(CURRENT_INTEREST_COLLECTION))
-                .subAggregation(AggregationBuilders.sum(ARREAR_DMD_STR).field("arrearDemand"))
+                .subAggregation(AggregationBuilders.sum(ARREAR_DMD_STR).field(ARREAR_DEMAND))
                 .subAggregation(AggregationBuilders.sum(CURR_DMD).field("annualDemand"))
                 .subAggregation(AggregationBuilders.sum(ARREAR_INTEREST_DMD).field("arrearInterestDemand"))
                 .subAggregation(AggregationBuilders.sum(CURR_INTEREST_DMD).field("currentInterestDemand"));
@@ -731,9 +723,7 @@ public class PropertyTaxElasticSearchIndexService {
      * @param isForProducers
      * @return
      */
-    private List<TaxPayerDetails> getTaxPayersForBillCollector(final CollectionDetailsRequest collectionDetailsRequest,
-            final boolean order, final List<TaxPayerDetails> wardWiseTaxProducers,
-            final List<TaxPayerDetails> billCollectorWiseTaxPayerDetails, final boolean isForProducers) {
+    private List<TaxPayerDetails> getTaxPayersForBillCollector(final boolean order, final List<TaxPayerDetails> billCollectorWiseTaxPayerDetails, final boolean isForProducers) {
         final Map<BigDecimal, TaxPayerDetails> sortedTaxersMap = new HashMap<>();
         // For propducers, prepare sorted list of totalCollection
         // For achievers, prepare sorted list of achievement
@@ -806,7 +796,7 @@ public class PropertyTaxElasticSearchIndexService {
                     .setAchievement(cytdColl.multiply(BIGDECIMAL_100).divide(cytdDmd, 1, BigDecimal.ROUND_HALF_UP));
             if (lytdColl.compareTo(BigDecimal.ZERO) == 0) {
             } else
-                cytdColl.subtract(lytdColl).multiply(PropertyTaxConstants.BIGDECIMAL_100)
+                cytdColl.subtract(lytdColl).multiply(BIGDECIMAL_100)
                         .divide(lytdColl, 1, BigDecimal.ROUND_HALF_UP);
 
             billCollectorWiseTaxPayerDetails.add(taxPayerDetails);
@@ -895,10 +885,10 @@ public class PropertyTaxElasticSearchIndexService {
         final Map<String, Map<String, BigDecimal>> demandDivisionMap = new HashMap<>();
         final Map<String, BigDecimal> assessmentsCountMap = collectionIndexElasticSearchService
                 .getCollectionAndDemandCountResults(collectionDetailsRequest,
-                        null, null, PROPERTY_TAX_INDEX_NAME, "consumerCode", "cityName");
+                        null, null, PROPERTY_TAX_INDEX_NAME, "consumerCode", CITY_NAME);
         final StringTerms individualDmdDetails = collectionIndexElasticSearchService.getIndividualDemands(
                 collectionDetailsRequest,
-                PROPERTY_TAX_INDEX_NAME, "cityName", true);
+                PROPERTY_TAX_INDEX_NAME, CITY_NAME, true);
         prepareDCBDetailsMap(individualDmdDetails, demandDivisionMap);
         for (final Map.Entry<String, Map<String, BigDecimal>> entry : demandDivisionMap.entrySet()) {
             dCBDetails = new DCBDetails();
