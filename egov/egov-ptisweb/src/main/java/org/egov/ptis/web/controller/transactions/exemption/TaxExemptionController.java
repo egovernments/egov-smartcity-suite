@@ -325,11 +325,11 @@ public class TaxExemptionController extends GenericWorkFlowController {
                 workFlowAction = request.getParameter("workFlowAction");
             if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
                 approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
-            if (checkCommercialProperty((PropertyImpl)property)) {
+            if (checkCommercialProperty((PropertyImpl)property) && property.getTaxExemptedReason() != null) {
                 model.addAttribute(ERROR_MSG, "error.commercial.prop.notallowed");
                 return PROPERTY_VALIDATION;
             }
-            if (hasTenant((PropertyImpl)property)) {
+            if (hasTenant((PropertyImpl)property) && property.getTaxExemptedReason() != null) {
                 model.addAttribute(ERROR_MSG, "error.tenant.exists");
                 return PROPERTY_VALIDATION;
             }
