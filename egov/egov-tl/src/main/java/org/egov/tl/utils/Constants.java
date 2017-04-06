@@ -196,6 +196,8 @@ public final class Constants {
     private static final Map<String, String> OWNERSHIP_TYPE = new HashMap<>();
     public static final String CLOSURE_LIC_APPTYPE = "Closure";
     public static final String DMD_GENERATION_DATA = "demandgenerationdata";
+    public static final String DMD_GEN_INSTALLMENT = "installmentYear";
+    public static final String DMD_GEN_RETRY = "retry";
 
     static {
 

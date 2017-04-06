@@ -76,7 +76,16 @@
                                 <spring:message code='lbl.close'/></button>
                         </div>
                     </div>
+                    <div class="text-center add-margin hidden" id="regeneratediv">
+                        <button type="submit" class='btn btn-primary' id="regenbtn" name="regenerate"><spring:message
+                                code="lbl.retry.failed.demand"/></button>
+                    </div>
+                    <c:if test="${retry == 'true'}">
+                        <script>$('#regeneratediv').removeClass('hidden');</script>
+                    </c:if>
                     <c:if test="${not empty demandgenerationdata}">
+                        <script>$("#installmentYear").val('${installmentYear}');</script>
+                        <div class="alert alert-info" role="alert"><spring:message code="${message}"/></div>
                         <div class="col-md-12 form-group report-table-container">
                             <table class="table table-bordered datatable dt-responsive table-hover multiheadertbl"
                                    id="tbldemandgenerate">
