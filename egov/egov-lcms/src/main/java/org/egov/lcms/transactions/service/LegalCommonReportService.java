@@ -138,7 +138,6 @@ public class LegalCommonReportService {
         legalCommonResultObj.setCaseNumber(legalcaseDocument.getCaseNumber());
         legalCommonResultObj.setLcNumber(legalcaseDocument.getLcNumber());
         legalCommonResultObj.setCaseTitle(legalcaseDocument.getCaseTitle());
-        legalCommonResultObj.setCaseNumber(legalcaseDocument.getCaseNumber());
         legalCommonResultObj.setCourtName(legalcaseDocument.getCourtName());
         legalCommonResultObj.setPetitionerName(legalcaseDocument.getPetitionerNames());
         legalCommonResultObj.setRespondantName(legalcaseDocument.getRespondantNames());
@@ -230,8 +229,9 @@ public class LegalCommonReportService {
                 boolQuery.must(QueryBuilders.termsQuery(CASESTATUS, statusCodeList));
                 if (searchRequest.getLcNumber() != null)
                     boolQuery = boolQuery.filter(QueryBuilders.matchQuery("lcNumber", searchRequest.getLcNumber()));
+
                 if (StringUtils.isNotBlank(searchRequest.getCaseFromDate()))
-                    boolQuery = boolQuery.filter(QueryBuilders.rangeQuery("hearingDate")
+                    boolQuery = boolQuery.filter(QueryBuilders.rangeQuery(CASE_DATE)
                             .gte(newFormat.format(formatter.parse(searchRequest.getCaseFromDate())))
                             .lte(new DateTime(newFormat.format(formatter.parse(searchRequest.getCaseToDate())))));
 
@@ -275,23 +275,45 @@ public class LegalCommonReportService {
     public List<LegalCommonReportResult> getEmployeeHearingResult(final LegalCommonReportResult legalCommonReport,
             final String reportType)
             throws ParseException {
-        final List<LegalCaseDocument> legalcaseDocumentList = null;
-        List<LegalCommonReportResult> finalResult = new ArrayList<>();
-        final List<HearingsDocument> hearingsDocumentList = findAllHearingsIndexByFilter(legalCommonReport, reportType);
+        final SimpleDateFormat dateFormat = new SimpleDateFormat("E MMM dd HH:mm:ss Z yyyy");
+        final SimpleDateFormat myFormat = new SimpleDateFormat(LcmsConstants.DATE_FORMAT_DDMMYYYY);
+        BoolQueryBuilder query;
+        SearchQuery searchQuery;
+        Iterable<LegalCaseDocument> legalcaseDocumentSearchList;
+        final List<LegalCommonReportResult> finalResult = new ArrayList<>();
+        final List<HearingsDocument> hearingsDocumentList = findAllHearingsIndexByFilter(legalCommonReport);
         for (final HearingsDocument hearingsDocument : hearingsDocumentList) {
             legalCommonReport.setLcNumber(hearingsDocument.getLcNumber());
-            getLegalcaseIndex(legalCommonReport, reportType);
-            if (legalcaseDocumentList != null)
-                finalResult = prepareLegalCaseDocumentList(legalcaseDocumentList);
+            query = getFilterQuery(legalCommonReport, reportType);
+            searchQuery = new NativeSearchQueryBuilder().withIndices(LcmsConstants.LEGALCASE_INDEX_NAME)
+                    .withQuery(query).build();
+            legalcaseDocumentSearchList = legalCaseDocumentRepository.search(searchQuery);
+            LegalCommonReportResult hearingsDueReportResultObj;
+            if (legalcaseDocumentSearchList != null)
+                for (final LegalCaseDocument legalcaseDocumentIndex : legalcaseDocumentSearchList) {
+                    hearingsDueReportResultObj = new LegalCommonReportResult();
+                    hearingsDueReportResultObj.setCaseNumber(legalcaseDocumentIndex.getCaseNumber());
+                    hearingsDueReportResultObj.setLcNumber(legalcaseDocumentIndex.getLcNumber());
+                    hearingsDueReportResultObj.setCaseTitle(legalcaseDocumentIndex.getCaseTitle());
+                    hearingsDueReportResultObj.setCaseNumber(legalcaseDocumentIndex.getCaseNumber());
+                    hearingsDueReportResultObj.setCourtName(legalcaseDocumentIndex.getCourtName());
+                    hearingsDueReportResultObj.setPetitionerName(legalcaseDocumentIndex.getPetitionerNames());
+                    hearingsDueReportResultObj.setRespondantName(legalcaseDocumentIndex.getRespondantNames());
+                    hearingsDueReportResultObj.setStandingCounsel(legalcaseDocumentIndex.getAdvocateName());
+                    hearingsDueReportResultObj.setOfficerIncharge(legalcaseDocumentIndex.getOfficerIncharge());
+
+                    hearingsDueReportResultObj
+                            .setNextDate(myFormat.format(dateFormat.parse(legalcaseDocumentIndex.getNextDate().toString())));
+                    finalResult.add(hearingsDueReportResultObj);
+                }
+
         }
         return finalResult;
-
     }
 
-    public List<HearingsDocument> findAllHearingsIndexByFilter(final LegalCommonReportResult searchRequest,
-            final String reportType)
+    public List<HearingsDocument> findAllHearingsIndexByFilter(final LegalCommonReportResult searchRequest)
             throws ParseException {
-        final BoolQueryBuilder query = getFilterQuery(searchRequest, reportType);
+        final BoolQueryBuilder query = getHearingsFilterQuery(searchRequest);
         final SearchQuery searchQuery = new NativeSearchQueryBuilder().withIndices(LcmsConstants.HEARINGS_INDEX_NAME)
                 .withQuery(query).withPageable(new PageRequest(0, 250)).build();
         final Iterable<HearingsDocument> hearingsDocumentSearchList = hearingsDocumentRepository.search(searchQuery);
@@ -300,6 +322,21 @@ public class LegalCommonReportService {
             hearingsDocumentList.add(documentObj);
 
         return hearingsDocumentList;
+
+    }
+
+    private BoolQueryBuilder getHearingsFilterQuery(final LegalCommonReportResult searchRequest) throws ParseException {
+        final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        final SimpleDateFormat newFormat = new SimpleDateFormat(ApplicationConstant.ES_DATE_FORMAT);
+        BoolQueryBuilder boolQuery = new BoolQueryBuilder();
+        boolQuery = boolQuery.filter(QueryBuilders.termQuery("cityName", ApplicationThreadLocals.getCityName()));
+
+        if (StringUtils.isNotBlank(searchRequest.getCaseFromDate()))
+            boolQuery = boolQuery.filter(QueryBuilders.rangeQuery("hearingDate")
+                    .gte(newFormat.format(formatter.parse(searchRequest.getCaseFromDate())))
+                    .lte(new DateTime(newFormat.format(formatter.parse(searchRequest.getCaseToDate())))));
+
+        return boolQuery;
     }
 
 }

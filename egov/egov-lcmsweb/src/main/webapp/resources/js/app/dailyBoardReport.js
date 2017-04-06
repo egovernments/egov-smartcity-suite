@@ -142,7 +142,7 @@ function submitForm() {
 						  { "data" : "petitionerName", "title": "Petitioners","sClass" : "text-center"},
 						  { "data" : "respondantName", "title": "Respondants","sClass" : "text-center"},
 						  { "data" : "petitionType", "title": "Petition Type","sClass" : "text-center"},
-						  { "data" : "standingCouncil", "title": "Standing Council","sClass" : "text-center"},
+						  { "data" : "standingCounsel", "title": "Standing Council","sClass" : "text-center"},
 						  { "data" : "officerIncharge", "title": "In Charge Officer","sClass" : "text-center"},
 						  { "data" : "caseStatus", "title": "Status","sClass" : "text-center"},
 						  { "data" : "nextDate", "title": "Next Imp Date","sClass" : "text-center"}
