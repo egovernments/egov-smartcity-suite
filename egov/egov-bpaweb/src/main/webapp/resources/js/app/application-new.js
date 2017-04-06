@@ -43,8 +43,32 @@ jQuery(document).ready(function($) {
 
 });
 
+$('#ward').change(function(){
+	jQuery.ajax({
+		url: "/egi/public/boundary/ajaxBoundary-blockByWard.action",
+		type: "GET",
+		data: {
+			wardId : jQuery('#ward').val()
+		},
+		cache: false,
+		dataType: "json",
+		success: function (response) {
+			console.log("success"+response);
+			jQuery('#block').html("");
+			jQuery('#block').append("<option value=''>Select</option>");
+			jQuery.each(response, function(index, value) {
+				jQuery('#block').append($('<option>').text(value.blockName).attr('value', value.blockId));
+			});
+		}, 
+		error: function (response) {
+			jQuery('#block').html("");
+			jQuery('#block').append("<option value=''>Select</option>");
+			console.log("failed");
+		}
+	});
+});
+
 $('#serviceType').change(function(){
-	console.log("came on change of ward"+$('serviceType').val());
 	jQuery.ajax({
 		url: "/bpa/ajax/getAdmissionFees",
 		type: "GET",

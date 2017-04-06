@@ -79,6 +79,7 @@ import org.egov.demand.model.EgDemandReason;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -213,9 +214,11 @@ public class BpaTaxCollection extends TaxCollection {
         final BpaApplication application = applicationBpaService
                 .getApplicationByDemand(demand);
            Long approvalPosition ;
+           WorkFlowMatrix  wfmatrix = bpaUtils.getWfMatrixByCurrentState(application, BpaConstants.WF_NEW_STATE);
+
             final BpaApplicationWorkflowCustomDefaultImpl applicationWorkflowCustomDefaultImpl = bpaUtils
                     .getInitialisedWorkFlowBean();
-            approvalPosition = bpaUtils.getUserPositionByZone(application.getSiteDetail().get(0)!=null ? application.getSiteDetail().get(0).getAdminBoundary():null);
+            approvalPosition = bpaUtils.getUserPositionByZone(wfmatrix.getNextDesignation(),application.getSiteDetail().get(0)!=null ? application.getSiteDetail().get(0).getAdminBoundary():null);
             applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(application,
                     approvalPosition,"BPA Admission fees collected",
                     BpaConstants.CREATE_ADDITIONAL_RULE_CREATE, null);

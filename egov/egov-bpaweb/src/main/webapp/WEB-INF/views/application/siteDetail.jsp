@@ -47,6 +47,84 @@
 	<div class="panel-title">Site Details</div>
 </div>
 
+
+<div class="panel-heading custom_form_panel_heading">
+	<div class="panel-title">Boundary Details</div>
+</div>
+<div class="form-group">
+	<label class="col-sm-3 control-label text-right"> Zone <span class="mandatory"></span>
+								</label>
+<div class="col-sm-3 add-margin">
+		<form:select path="siteDetail[0].adminBoundary" data-first-option="false" id="zone"
+			cssClass="form-control" required="required">
+			<form:option value="">
+				<spring:message code="lbl.select" />
+			</form:option>
+			<form:options items="${zones}"  itemValue="id"
+						itemLabel="name" />
+		</form:select>
+		<form:errors path="siteDetail[0].adminBoundary" cssClass="add-margin error-msg" />
+	</div>
+								
+	<label class="col-sm-2 control-label text-right"> Ward <span class="mandatory"></span>
+								</label>
+							<div class="col-sm-2 add-margin">
+		<form:select path="siteDetail[0].adminBoundary" data-first-option="false" id="ward"
+			cssClass="form-control" required="required">
+			<form:option value="">
+				<spring:message code="lbl.select" />
+			</form:option>
+			<form:options items="${wards}"  itemValue="id"
+						itemLabel="name" />
+		</form:select>
+		<form:errors path="siteDetail[0].adminBoundary" cssClass="add-margin error-msg" />
+	</div>
+								</div>
+						<div class="form-group">
+								<label class="col-sm-3 control-label text-right"><spring:message
+										code="lbl.block" /></label>
+								<div class="col-sm-3 add-margin">
+									<form:select name="block" id="block" path="siteDetail[0].locationBoundary"
+										cssClass="form-control" cssErrorClass="form-control error">
+										<form:option value="">
+									--select--
+								</form:option>
+									</form:select>
+								</div>
+								
+								<label for="field-1" class="col-sm-2 control-label"><spring:message
+										code="lbl.locality" /></label>
+								<div class="col-sm-2 add-margin">
+									<form:select name="localitys" id="localitys" path="siteDetail[0].locationBoundary"
+										cssClass="form-control" cssErrorClass="form-control error">
+										<form:option value="">
+									--select--
+								</form:option>
+										<form:options items="${localitys}" itemValue="id"
+											itemLabel="name" />
+
+									</form:select>
+							
+							</div>
+						</div>
+								</div>
+								
+								<div class="form-group">
+								<label class="col-sm-3 control-label text-right"> Elelction Ward
+								</label>
+								<div class="col-sm-3 add-margin">
+		<form:select path="siteDetail[0].electionBoundary" data-first-option="false" id="zone"
+			cssClass="form-control" >
+			<form:option value="">
+				<spring:message code="lbl.select" />
+			</form:option>
+			<form:options items="${electionwards}"  itemValue="id"
+						itemLabel="name" />
+		</form:select>
+		<form:errors path="siteDetail[0].electionBoundary" cssClass="add-margin error-msg" />
+	</div>
+	</div>
+
 <div class="form-group">
 	<label class="col-sm-3 control-label text-right">Door Number </label>
 	<div class="col-sm-3 add-margin">
@@ -338,55 +416,3 @@
 	</div>
 
 </div>
-<%-- 	<div class="form-group">
-	<label class="col-sm-3 control-label text-right"> Zone <span class="mandatory"></span>
-								</label>
-								<div class="col-sm-6 add-margin">
-									<form:select path="siteDetail[0].adminBoundary" multiple="true" size="10" id="adminBoundary"
-										cssClass="form-control" cssErrorClass="form-control error"
-										required="required">
-										<form:options items="${zones}" itemValue="id" itemLabel="name" />
-									</form:select>
-
-									<form:errors path="siteDetail[0].adminBoundary" cssClass="error-msg" />
-								</div>
-								
-								<label class="col-sm-3 control-label text-right"> LocationBoundary <span class="mandatory"></span>
-								</label>
-								<div class="col-sm-6 add-margin">
-									<form:select path="siteDetail[0].locationBoundary" multiple="true" size="10" id="locationBoundary"
-										cssClass="form-control" cssErrorClass="form-control error"
-										required="required">
-										<form:options items="${localitys}" itemValue="id" itemLabel="name" />
-									</form:select>
-
-									<form:errors path="siteDetail[0].locationBoundary" cssClass="error-msg" />
-								</div>
-	</div>
-		<div class="form-group">
-	
-	<label class="col-sm-3 control-label text-right"> ElectionBoundary <span class="mandatory"></span>
-								</label>
-								<div class="col-sm-6 add-margin">
-									<form:select path="siteDetail[0].electionBoundary" multiple="true" size="10" id="electionBoundary"
-										cssClass="form-control" cssErrorClass="form-control error"
-										required="required">
-										<form:options items="${wards}" itemValue="id" itemLabel="name" />
-									</form:select>
-
-									<form:errors path="siteDetail[0].electionBoundary" cssClass="error-msg" />
-								</div>
-								
-								<label class="col-sm-3 control-label text-right">Street <span class="mandatory"></span>
-								</label>
-								<div class="col-sm-6 add-margin">
-									<form:select path="siteDetail[0].electionBoundary" multiple="true" size="10" id="electionBoundary"
-										cssClass="form-control" cssErrorClass="form-control error"
-										required="required">
-										<form:options items="${street}" itemValue="id" itemLabel="name" />
-									</form:select>
-
-									<form:errors path="siteDetail[0].street" cssClass="error-msg" />
-								</div>
-	</div> --%>
-

@@ -99,19 +99,20 @@ public abstract class BpaApplicationWorkflowCustomImpl implements BpaApplication
         final User user = securityUtils.getCurrentUser();
         final DateTime currentDate = new DateTime();
         Position pos = null;
-        Assignment wfInitiator = bpaWorkFlowService.getWorkFlowInitiator(application);
+        Assignment wfInitiator = null ;
+        if(application.getCreatedBy()!=null)
+        wfInitiator = bpaWorkFlowService.getWorkFlowInitiator(application);
 
         if (approvalPosition != null && approvalPosition > 0)
             pos = positionMasterService.getPositionById(approvalPosition);
 
-        WorkFlowMatrix wfmatrix = null;
+        WorkFlowMatrix wfmatrix ;
         if (null == application.getState()) { // go by status
             wfmatrix = bpaApplicationWorkflowService.getWfMatrix(application.getStateType(), null,
                     null, additionalRule, BpaConstants.WF_NEW_STATE, null);
 
             if (wfmatrix != null) {
-               // application.setStatus(getStatusByCurrentMatrxiStatus(wfmatrix));
-                BpaStatus temp=(getStatusByCurrentMatrxiStatus(wfmatrix));
+                //application.setStatus(getStatusByCurrentMatrxiStatus(wfmatrix));
                 application.transition().start()
                         .withSenderName(user.getUsername() + BpaConstants.COLON_CONCATE + user.getName())
                         .withComments(approvalComent).withInitiator(wfInitiator != null ? wfInitiator.getPosition() : null)

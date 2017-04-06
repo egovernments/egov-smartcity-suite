@@ -39,6 +39,9 @@
  */
 package org.egov.bpa.web.controller.application;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.ADMIN_HIERARCHY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WARD;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -99,10 +102,17 @@ public abstract class BpaGenericApplicationController extends GenericWorkFlowCon
         return stakeHolderService.findAll();
     }
 
-    @ModelAttribute("wards")
+    @ModelAttribute("electionwards")
     public List<Boundary> wards() {
-        return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(BpaConstants.ELECTIONWARD_BNDRY_TYPE,
-                PropertyTaxConstants.REVENUE_HIERARCHY_TYPE);
+        
+        return boundaryService
+                .getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(WARD, ADMIN_HIERARCHY_TYPE);
+    }
+    
+    @ModelAttribute("wards")
+    public List<Boundary> adminWards() {
+        return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(WARD,
+                BpaConstants.REVENUE_HIERARCHY_TYPE);
     }
 
     @ModelAttribute("street")

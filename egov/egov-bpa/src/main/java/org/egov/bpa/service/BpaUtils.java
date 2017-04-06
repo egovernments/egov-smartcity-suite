@@ -3,6 +3,7 @@ package org.egov.bpa.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.egov.bpa.application.entity.BpaApplication;
 import org.egov.bpa.application.workflow.BpaApplicationWorkflowCustomDefaultImpl;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.eis.entity.Assignment;
@@ -10,7 +11,10 @@ import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.DesignationService;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
+import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +31,10 @@ public class BpaUtils {
     
     @Autowired
     private BoundaryService boundaryService;
+    
+    @Autowired
+    @Qualifier("workflowService")
+    private SimpleWorkflowService<BpaApplication> bpaApplicationWorkflowService;
 
     @Autowired
     private DesignationService designationService;
@@ -38,13 +46,17 @@ public class BpaUtils {
                     .getBean("bpaApplicationWorkflowCustomDefaultImpl");
         return applicationWorkflowCustomDefaultImpl;
     }
+    
+    public WorkFlowMatrix getWfMatrixByCurrentState(BpaApplication application,String currentState){
+   return    bpaApplicationWorkflowService.getWfMatrix(application.getStateType(), null,
+              null, BpaConstants.CREATE_ADDITIONAL_RULE_CREATE,currentState, null);
+    }
+    
     @Transactional(readOnly = true)
-    public Long getUserPositionByZone( Boundary boundaryObj) {
-        final String designationStr ="Superintendent";
-        boundaryObj=boundaryService.getBoundaryById(2l);
-        final String[] designation = designationStr.split(",");
+    public Long getUserPositionByZone( String designation,Boundary boundaryObj) {
+        final String[] designationarr = designation.split(",");
         List<Assignment> assignment = new ArrayList<>();
-        for (final String desg : designation) {
+        for (final String desg : designationarr) {
             assignment = assignmentService.findByDepartmentDesignationAndBoundary(null,
                     designationService.getDesignationByName(desg).getId(), boundaryObj.getId());
             if (assignment.isEmpty()) {
@@ -70,7 +82,7 @@ public class BpaUtils {
             if (!assignment.isEmpty())
                 break;
         }
-        return !assignment.isEmpty() ? assignment.get(0).getPosition().getId() : 0;
+        return !assignment.isEmpty() ? assignment.get(0).getPosition().getId() : 26l;
     }
 
 }
