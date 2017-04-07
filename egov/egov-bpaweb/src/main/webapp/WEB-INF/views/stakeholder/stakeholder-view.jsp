@@ -50,7 +50,7 @@
 		<div class="text-right error-msg"></div>
 		<ul class="nav nav-tabs" id="settingstab">
 			<li class="active"><a data-toggle="tab" href="#applicant-info"
-				data-tabidx=0><spring:message code='lbl.applicant.info'/></a></li>
+				data-tabidx=0><spring:message code='lbl.appln.details'/></a></li>
 			<li><a data-toggle="tab" href="#checklist-info" data-tabidx=1><spring:message code='lbl.checklist' /></a></li>
 		</ul>
 		<div class="tab-content">

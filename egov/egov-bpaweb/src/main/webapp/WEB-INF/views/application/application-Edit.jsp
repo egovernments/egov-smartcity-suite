@@ -2,7 +2,7 @@
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~      accountability and the service delivery of the government  organizations.
   ~
-  ~       Copyright (C) 2016  eGovernments Foundation
+  ~       Copyright (C) <2017>  eGovernments Foundation
   ~
   ~       The updated version of eGov suite of products as by eGovernments Foundation
   ~       is available at http://www.egovernments.org
@@ -46,29 +46,34 @@
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 <div class="row">
 	<div class="col-md-12">
-<form:form role="form" method="post" modelAttribute="bpaApplication" 
-id="editWaterConnectionform" cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">		
+		<form:form role="form" method="post" modelAttribute="bpaApplication"
+			id="editWaterConnectionform"
+			cssClass="form-horizontal form-groups-bordered"
+			enctype="multipart/form-data">
 
-	<form:hidden path="" id="wfstate" value="${bpaApplication.state.id}"/> 
-	<form:hidden path="" id="workFlowAction" name="workFlowAction"/>
-			<form:hidden path="" id="wfstateDesc" value="${waterConnectionDetails.state.value}"/> 
-
-	<form:hidden path="" id="mode" name="mode" value="${mode}"/> 
-
+			<form:hidden path="" id="wfstate" value="${bpaApplication.state.id}" />
+			<form:hidden path="" id="workFlowAction" name="workFlowAction" />
+			<form:hidden path="" id="wfstateDesc" value="${waterConnectionDetails.state.value}" />
+			<form:hidden path="" id="mode" name="mode" value="${mode}" />
+			
 			<div class="panel panel-primary" data-collapsed="0">
-
-				<div class="panel-body custom-form ">
-					<jsp:include page="applicationDetails.jsp"></jsp:include>
-					<jsp:include page="applicantDetailForm.jsp"></jsp:include>
-					<jsp:include page="siteDetail.jsp"></jsp:include>
-					<jsp:include page="buildingDetails.jsp"/>
-				</div>
-			</div> 
-			<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
-				<div class="buttonbottom" align="center">
-					<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />
-				</div>
-	<%-- 		<div class="buttonbottom" align="center">
+				<jsp:include page="applicationDetails.jsp"></jsp:include>
+			</div>
+			<div class="panel panel-primary" data-collapsed="0">
+				<jsp:include page="applicantDetailForm.jsp"></jsp:include>
+			</div>
+			<div class="panel panel-primary" data-collapsed="0">
+				<jsp:include page="siteDetail.jsp"></jsp:include>
+			</div>
+			<div class="panel panel-primary" data-collapsed="0">
+				<jsp:include page="buildingDetails.jsp" />
+			</div>
+			
+			<jsp:include page="../common/commonWorkflowMatrix.jsp" />
+			<div class="buttonbottom" align="center">
+				<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />
+			</div>
+			<%-- 		<div class="buttonbottom" align="center">
 				<table>
 					<tr>
 						<td><form:button type="submit" id="updateApplication"
@@ -84,5 +89,5 @@ id="editWaterConnectionform" cssClass="form-horizontal form-groups-bordered" enc
 
 <script
 	src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
-	<script src="<cdn:url value='/resources/js/app/application-edit.js?rnd=${app_release_no}'/>"></script>
-	
+<script
+	src="<cdn:url value='/resources/js/app/application-edit.js?rnd=${app_release_no}'/>"></script>

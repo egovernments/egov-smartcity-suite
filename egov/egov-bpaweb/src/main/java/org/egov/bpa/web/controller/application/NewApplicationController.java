@@ -44,6 +44,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -82,6 +83,7 @@ public class NewApplicationController extends BpaGenericApplicationController {
     @RequestMapping(value = "/newApplication-newform", method = GET)
     public String showNewApplicationForm(@ModelAttribute final BpaApplication bpaApplication,
             final Model model, final HttpServletRequest request) {
+        bpaApplication.setApplicationDate(new Date());
         model.addAttribute("mode", "");
         return "newapplication-form";
     }

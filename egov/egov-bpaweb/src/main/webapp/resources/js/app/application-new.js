@@ -167,10 +167,19 @@ $('#serviceType').change(function(){
 });*/
 
 
+//toggle between multiple tab
+jQuery('form').validate({
+	ignore: ".ignore",
+	invalidHandler: function(e, validator){
+	if(validator.errorList.length)
+	$('#settingstab a[href="#' + jQuery(validator.errorList[0].element).closest(".tab-pane").attr('id') + '"]').tab('show');
+	}
+	});
 
-
-
-
-
-
-
+$('#buttonSubmit').click(function(e) {
+	if ($('form').valid()) {
+		console.log('submitted')
+	} else {
+		e.preventDefault();
+	}
+});

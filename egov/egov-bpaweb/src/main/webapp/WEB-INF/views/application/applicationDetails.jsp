@@ -2,7 +2,7 @@
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~     Copyright (C) <2017>  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -62,10 +62,9 @@
 		</form:select>
 		<form:errors path="serviceType" cssClass="add-margin error-msg" />
 	</div>
-
 	<label class="col-sm-2 control-label text-right">Stake
 		HolderType </label>
-	<div class="col-sm-2 add-margin">
+	<div class="col-sm-3 add-margin">
 		<form:select path="stakeHolder[0].stakeHolder"
 			data-first-option="false" id="" cssClass="form-control">
 			<form:option value="">
@@ -78,9 +77,6 @@
 			cssClass="add-margin error-msg" />
 	</div>
 </div>
-
-
-
 <div class="form-group">
 	<label class="col-sm-3 control-label text-right">ApplicationNumber
 		<span class="mandatory"></span>
@@ -90,21 +86,17 @@
 			id="applicationNumber" path="applicationNumber"  disabled="true"  />
 		<form:errors path="applicationNumber" cssClass="add-margin error-msg" />
 	</div>
-
 	<label class="col-sm-2 control-label text-right">Application
 		Date <span class="mandatory"></span>
 	</label>
-	<div class="col-sm-2 add-margin">
+	<div class="col-sm-3 add-margin">
 		<form:input path="applicationDate" class="form-control datepicker"
 			data-date-end-date="0d" id="applicationDate"
 			data-inputmask="'mask': 'd/m/y'" required="required" />
 		<form:errors path="applicationDate" cssClass="add-margin error-msg" />
 	</div>
-
-
 </div>
 </div>
-
 <div class="form-group">
 	<label class="col-sm-3 control-label text-right">Old
 		Application Number 
@@ -115,26 +107,23 @@
 		<form:errors path="oldApplicationNumber"
 			cssClass="add-margin error-msg" />
 	</div>
-	<label class="col-sm-2 control-label text-right">Approval
-				Date 
-			</label>
+	<label class="col-sm-2 control-label text-right">Approval Date </label>
 		<c:choose>
 		<c:when test="%{approvalDate!=null}">
-			<div class="col-sm-2 add-margin">
+			<div class="col-sm-3 add-margin">
 			<form:input path="approvalDate" class="form-control datepicker"
 				data-date-end-date="0d" id="approveDate"
 				data-inputmask="'mask': 'd/m/y'" required="required" />
 			<form:errors path="approvalDate" cssClass="add-margin error-msg" /></div>
 		</c:when>
 		<c:otherwise>
-			<div class="col-sm-2 add-margin">
+			<div class="col-sm-3 add-margin">
 			<form:input path="approvalDate" class="form-control datepicker"
 				data-date-end-date="0d" id="approveDate"
 				data-inputmask="'mask': 'd/m/y'" disabled="true" />
 			<form:errors path="approvalDate" cssClass="add-margin error-msg" /></div>
 		</c:otherwise>
 	</c:choose>
-
 </div>
 <div class="form-group">
 	<label class="col-sm-3 control-label text-right">Property Number
@@ -151,7 +140,7 @@
 	</div>
 	<label class="col-sm-2 control-label text-right">Occupancy <span
 		class="mandatory"></span></label>
-	<div class="col-sm-2 add-margin">
+	<div class="col-sm-3 add-margin">
 		<form:select path="occupancy" data-first-option="false" id=""
 			cssClass="form-control" required="required">
 			<form:option value="">
@@ -162,7 +151,6 @@
 		<form:errors path="occupancy" cssClass="add-margin error-msg" />
 	</div>
 </div>
-
 <div class="form-group">
 	<label class="col-sm-3 control-label text-right">Applicant Mode<span
 		class="mandatory"></span></label>
@@ -178,7 +166,7 @@
 			cssClass="add-margin error-msg" />
 	</div>
 	<label class="col-sm-2 control-label text-right">Tapan Number </label>
-	<div class="col-sm-2 add-margin">
+	<div class="col-sm-3 add-margin">
 		<form:input class="form-control patternvalidation" maxlength="50"
 			id="tapalNumber" path="tapalNumber" />
 		<form:errors path="tapalNumber" cssClass="add-margin error-msg" />
@@ -196,7 +184,6 @@
 		<form:errors path="source" cssClass="add-margin error-msg" />
 	</div> --%>
 </div>
-
 <div class="form-group">
 	<label class="col-sm-3 control-label text-right">Project Name </label>
 	<div class="col-sm-3 add-margin">
@@ -204,15 +191,13 @@
 			id="projectName" path="projectName" />
 		<form:errors path="projectName" cssClass="add-margin error-msg" />
 	</div>
-
 	<label class="col-sm-2 control-label text-right">Group
 		Development</label>
-	<div class="col-sm-2 add-margin">
+	<div class="col-sm-3 add-margin">
 		<form:input class="form-control patternvalidation" maxlength="50"
 			id="groupDevelopment" path="groupDevelopment" />
 		<form:errors path="groupDevelopment" cssClass="add-margin error-msg" />
 	</div>
-
 </div>
 <div class="form-group">
 	<label class="col-sm-3 control-label text-right">Remarks</label>
@@ -224,13 +209,12 @@
 	</div>
 <label class="col-sm-2 control-label text-right">Admission Fees
 	</label>
-	<div class="col-sm-2 add-margin">
+	<div class="col-sm-3 add-margin">
 		<form:input class="form-control patternvalidation" maxlength="50" name="admissionfeeAmount"
 			id="admissionfeeAmount" path="admissionfeeAmount" />
 		<form:errors path="admissionfeeAmount" cssClass="add-margin error-msg" />
 	</div>
 </div>
-
 <div class="form-group">
 	<div class="col-sm-3 add-margin">
 		<c:choose>
