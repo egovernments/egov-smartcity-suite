@@ -56,7 +56,6 @@ import org.egov.bpa.application.entity.BpaApplication;
 import org.egov.bpa.application.service.ApplicationBpaService;
 import org.egov.bpa.application.service.collection.GenericBillGeneratorService;
 import org.egov.bpa.service.BpaUtils;
-import org.egov.bpa.utils.BPASmsAndEmailService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,8 +77,7 @@ public class NewApplicationController extends BpaGenericApplicationController {
     private BpaUtils bpaUtils;
     @Autowired
     private ApplicationBpaService applicationBpaService;
-    @Autowired
-    private BPASmsAndEmailService bpaSmsAndEmailService;
+ 
 
     @RequestMapping(value = "/newApplication-newform", method = GET)
     public String showNewApplicationForm(@ModelAttribute final BpaApplication bpaApplication,
@@ -116,7 +114,6 @@ public class NewApplicationController extends BpaGenericApplicationController {
         bpaApplication.setAdmissionfeeAmount(applicationBpaService
                 .setAdmissionFeeAmountForRegistration(String.valueOf(bpaApplication.getServiceType().getId())));
         BpaApplication bpaApplicationRes = applicationBpaService.createNewApplication(bpaApplication);
-        bpaSmsAndEmailService.sendSMSAndEmail(bpaApplicationRes);
         return genericBillGeneratorService.generateBillAndRedirectToCollection(bpaApplicationRes, model);
     }
 

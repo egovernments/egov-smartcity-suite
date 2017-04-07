@@ -57,6 +57,7 @@ import org.egov.bpa.application.entity.CollectionApportioner;
 import org.egov.bpa.application.service.ApplicationBpaBillService;
 import org.egov.bpa.application.service.ApplicationBpaService;
 import org.egov.bpa.service.BpaUtils;
+import org.egov.bpa.utils.BPASmsAndEmailService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.integration.models.BillReceiptInfo;
@@ -121,6 +122,9 @@ public class BpaTaxCollection extends TaxCollection {
 
     @Autowired
     private ChartOfAccountsHibernateDAO chartOfAccountsDAO;
+    
+    @Autowired
+    private BPASmsAndEmailService bpaSmsAndEmailService;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -214,6 +218,8 @@ public class BpaTaxCollection extends TaxCollection {
         bpaUtils.redirectToBpaWorkFlow(application, BpaConstants.WF_NEW_STATE, "BPA Admission fees collected");
         // update status and initialize workflow
         applicationBpaService.saveAndFlushApplication(application);
+        bpaSmsAndEmailService.sendSMSAndEmail(application);
+
     }
 
     @Transactional
