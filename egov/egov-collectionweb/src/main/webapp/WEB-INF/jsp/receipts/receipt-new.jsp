@@ -1160,8 +1160,8 @@ function showHideMandataryMark(obj){
 		   <td class="bluebox"><s:textfield label="paidBy" id="paidBy" maxlength="150" name="paidBy" value="%{payeeName}" /></td>
 	    </tr>
 	    </s:if>
-		<table id="manualreceipt" >
-		<s:if test="%{!isBillSourcemisc() && manualReceiptNumberAndDateReq}">
+		<table id="manualreceipt" style="display:none">
+		<s:if test="%{!isBillSourcemisc()}">
 					<tr>
 					<td class="bluebox" width="3%" ></td>
 					<td class="bluebox"><s:text name="billreceipt.manualreceiptinfo"/><span id="asteriskId"  class="mandatory1">*</span></td>
@@ -1169,7 +1169,7 @@ function showHideMandataryMark(obj){
 					</tr>
 		 </s:if>
 		 
-		 <s:if test="%{!isBillSourcemisc() && manualReceiptNumberAndDateReq}">
+		 <s:if test="%{!isBillSourcemisc()}">
 				<tr>
 				    <td class="bluebox" width="3%" ></td>
 					<td class="bluebox"><s:text name="billreceipt.manualreceipt.receiptnumber"/></td>
