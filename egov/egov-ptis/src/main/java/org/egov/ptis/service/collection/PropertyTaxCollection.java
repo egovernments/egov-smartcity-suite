@@ -798,7 +798,8 @@ public class PropertyTaxCollection extends TaxCollection {
 
     @Override
     public String constructAdditionalInfoForReceipt(final BillReceiptInfo billReceiptInfo) {
-
+        final EgBill egBill = egBillDAO.findById(Long.valueOf(billReceiptInfo.getBillReferenceNum()), false);
+        return (egBill != null && egBill.getDescription().contains(SUPER_STRUCTURE)) ? SUPER_STRUCTURE : null;
         return null;
     }
 
