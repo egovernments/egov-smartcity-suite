@@ -37,43 +37,33 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.web.adaptor;
+package org.egov.works.web.controller.masters;
 
-import java.lang.reflect.Type;
-
-import org.apache.commons.lang.StringUtils;
+import org.egov.infra.exception.ApplicationException;
 import org.egov.works.masters.entity.EstimateTemplate;
+import org.egov.works.masters.service.EstimateTemplateService;
 import org.egov.works.utils.WorksConstants;
-import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
+@Controller
+@RequestMapping(value = "/masters")
+public class ViewEstimateTemplateController {
 
-@Component
-public class EstimateTemplateJsonAdaptor implements JsonSerializer<EstimateTemplate> {
+    @Autowired
+    private EstimateTemplateService estimateTemplateService;
 
-    @Override
-    public JsonElement serialize(final EstimateTemplate estimateTemplate, final Type typeOfSrc,
-            final JsonSerializationContext context) {
-        final JsonObject jsonObject = new JsonObject();
-        if (estimateTemplate != null) {
-            jsonObject.addProperty("id", estimateTemplate.getId());
-            jsonObject.addProperty("code", estimateTemplate.getCode());
-            jsonObject.addProperty("description", estimateTemplate.getDescription());
-            jsonObject.addProperty("name", estimateTemplate.getName());
-            jsonObject.addProperty("typeOfWork", estimateTemplate.getTypeOfWork().getName());
-            if (estimateTemplate.getSubTypeOfWork() != null)
-                jsonObject.addProperty("subTypeOfWork", estimateTemplate.getSubTypeOfWork().getName());
-            else
-                jsonObject.addProperty("subTypeOfWork", StringUtils.EMPTY);
-            if (!estimateTemplate.isStatus())
-                jsonObject.addProperty("status", "INACTIVE");
-            else
-                jsonObject.addProperty("status", WorksConstants.ACTIVE);
-            jsonObject.addProperty("estimateTemplateId", estimateTemplate.getId());
-        }
-        return jsonObject;
+    @RequestMapping(value = "/estimatetemplate-view/{id}", method = RequestMethod.GET)
+    public String viewEstimateTemplate(@PathVariable final Long id, final Model model) throws ApplicationException {
+        final EstimateTemplate estimateTemplate = estimateTemplateService.getEstimateTemplateById(id);
+        model.addAttribute("estimateTemplate", estimateTemplate);
+        model.addAttribute(WorksConstants.MODE, WorksConstants.VIEW);
+        estimateTemplateService.setEstimateTemplateTempSorAndNonSorList(estimateTemplate);
+        return "estimatetemplate-view";
     }
+
 }

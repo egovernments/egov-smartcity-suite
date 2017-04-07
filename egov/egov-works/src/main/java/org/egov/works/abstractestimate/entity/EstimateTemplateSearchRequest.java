@@ -44,7 +44,7 @@ public class EstimateTemplateSearchRequest {
     private Long subTypeOfWork;
     private String templateCode;
     private String templateName;
-    private Integer status;
+    private boolean status = true;
     private String templateDescription;
 
     public Long getTypeOfWork() {
@@ -79,14 +79,6 @@ public class EstimateTemplateSearchRequest {
         this.templateName = templateName;
     }
 
-    public Integer getStatus() {
-        return status;
-    }
-
-    public void setStatus(final Integer status) {
-        this.status = status;
-    }
-
     public String getTemplateDescription() {
         return templateDescription;
     }
@@ -94,4 +86,13 @@ public class EstimateTemplateSearchRequest {
     public void setTemplateDescription(final String templateDescription) {
         this.templateDescription = templateDescription;
     }
+
+    public boolean isStatus() {
+        return status;
+    }
+
+    public void setStatus(boolean status) {
+        this.status = status;
+    }
+
 }

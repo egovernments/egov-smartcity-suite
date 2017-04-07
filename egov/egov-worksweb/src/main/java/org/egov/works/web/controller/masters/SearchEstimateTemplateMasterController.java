@@ -37,43 +37,41 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.web.adaptor;
+package org.egov.works.web.controller.masters;
 
-import java.lang.reflect.Type;
+import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang.StringUtils;
-import org.egov.works.masters.entity.EstimateTemplate;
+import org.egov.commons.service.TypeOfWorkService;
+import org.egov.infra.exception.ApplicationException;
+import org.egov.works.abstractestimate.entity.EstimateTemplateSearchRequest;
 import org.egov.works.utils.WorksConstants;
-import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
+@Controller
+@RequestMapping(value = "/masters")
+public class SearchEstimateTemplateMasterController {
 
-@Component
-public class EstimateTemplateJsonAdaptor implements JsonSerializer<EstimateTemplate> {
+    @Autowired
+    private TypeOfWorkService typeOfWorkService;
 
-    @Override
-    public JsonElement serialize(final EstimateTemplate estimateTemplate, final Type typeOfSrc,
-            final JsonSerializationContext context) {
-        final JsonObject jsonObject = new JsonObject();
-        if (estimateTemplate != null) {
-            jsonObject.addProperty("id", estimateTemplate.getId());
-            jsonObject.addProperty("code", estimateTemplate.getCode());
-            jsonObject.addProperty("description", estimateTemplate.getDescription());
-            jsonObject.addProperty("name", estimateTemplate.getName());
-            jsonObject.addProperty("typeOfWork", estimateTemplate.getTypeOfWork().getName());
-            if (estimateTemplate.getSubTypeOfWork() != null)
-                jsonObject.addProperty("subTypeOfWork", estimateTemplate.getSubTypeOfWork().getName());
-            else
-                jsonObject.addProperty("subTypeOfWork", StringUtils.EMPTY);
-            if (!estimateTemplate.isStatus())
-                jsonObject.addProperty("status", "INACTIVE");
-            else
-                jsonObject.addProperty("status", WorksConstants.ACTIVE);
-            jsonObject.addProperty("estimateTemplateId", estimateTemplate.getId());
-        }
-        return jsonObject;
+    @RequestMapping(value = "/estimatetemplate-search", method = RequestMethod.GET)
+    public String searchContractorClass(
+            @ModelAttribute("estimateTemplateSearchRequest") final EstimateTemplateSearchRequest estimateTemplateSearchRequest,
+            final Model model, final HttpServletRequest request) throws ApplicationException {
+        final String mode = request.getParameter(WorksConstants.MODE);
+        model.addAttribute(WorksConstants.MODE, mode);
+        if (WorksConstants.EDIT.equalsIgnoreCase(mode))
+            model.addAttribute("typeOfWork",
+                    typeOfWorkService.getActiveTypeOfWorksByPartyType(WorksConstants.PARTY_TYPE_CONTRACTOR));
+        else
+            model.addAttribute("typeOfWork",
+                    typeOfWorkService.getTypeOfWorkByPartyType(WorksConstants.PARTY_TYPE_CONTRACTOR));
+        return "searchestimatetemplate";
     }
+
 }

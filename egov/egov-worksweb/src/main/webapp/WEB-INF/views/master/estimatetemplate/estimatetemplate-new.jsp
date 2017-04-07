@@ -1,5 +1,3 @@
-<%@ page contentType="text/json" %>
-<%@ taglib prefix="s" uri="/struts-tags" %>  
 <%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
@@ -40,30 +38,38 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
-{
-"ResultSet": {
-    "Result":[
-    <s:iterator var="s" value="estimateTemplate.estimateTemplateActivities" status="status">
-    {<s:if test="%{schedule!=null}">
-    "sor":"yes",
-    "Id":"<s:property value="%{schedule.id}" />",
-    "Description":"<s:property value="%{schedule.summary}" />",
-    "Code":"<s:property value="%{schedule.code}" />",
-    "FullDescription":"<s:property value="%{schedule.description}" />",
-    "UOM":"<s:property value="%{schedule.uom.uom}" />",
-    "UnitRate":"<s:if test="%{schedule.getRateOn(estimateDate)!=null}"><s:property value="%{schedule.getRateOn(estimateDate).rate.value}" /></s:if><s:else>0.0</s:else>"
-    </s:if>
-   	<s:else>
-   	"sor":"no",
-   	"Id":"<s:property value="nonSor.id"/>",
-   	"Description":"<s:property value="nonSor.descriptionJS" escape="false"/>",
-   	"UOM":"<s:property value="nonSor.uom.id"/>",
-   	"UnitRate":"<s:property value="rate"/>",
-   	"Code":"",
-   	"FullDescription":""
-    </s:else> 
-   } <s:if test="!#status.last">,</s:if>
-    </s:iterator>       
-    ]
-  }
-}
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ taglib uri="/WEB-INF/taglibs/cdn.tld" prefix="cdn"%>
+
+<form:form name="estimateTemplateForm" id="estimateTemplateForm" role="form"
+	action="/egworks/masters/estimatetemplate-save" modelAttribute="estimateTemplate"
+	class="form-horizontal form-groups-bordered">
+	<spring:hasBindErrors name="estimateTemplate">
+		<div class="alert alert-danger col-md-12">
+			<form:errors cssClass="add-margin" />
+			<br />
+		</div>
+	</spring:hasBindErrors>
+	<div class="row">
+		<div class="col-md-12">
+			<jsp:include page="estimatetemplate-header.jsp" />
+			<jsp:include page="estimatetemplate-sor.jsp" />
+			<jsp:include page="estimatetemplate-nonsor.jsp" />
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-sm-12 text-center">
+			<button type="submit" name="submit" id="submitBtn" class="btn btn-primary" value="Save" >
+				<spring:message code="lbl.save" />
+			</button>
+			<button type="button" class="btn btn-default" id="button2"
+				onclick="window.close();">
+				<spring:message code="lbl.close" />
+			</button>
+		</div>
+	</div>
+</form:form>
+<script src="<cdn:url value='/resources/js/master/estimatetemplate.js?rnd=${app_release_no}'/>"></script> 

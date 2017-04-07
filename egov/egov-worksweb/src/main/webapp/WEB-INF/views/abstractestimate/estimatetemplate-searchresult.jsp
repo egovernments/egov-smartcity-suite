@@ -38,6 +38,7 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <div class="row display-hide report-section">
 	<div class="col-md-12 table-header text-left">
 		<spring:message code="title.lineestimate.search" />
@@ -47,7 +48,9 @@
 			id="resultTable">
 			<thead>
 				<tr>
-					<th><spring:message code="lbl.selectonly" /><br />
+					<c:if test="${mode != 'edit' && mode != 'view' }">
+						<th><spring:message code="lbl.selectonly" /></th>
+					</c:if>					
 					<th><spring:message code="lbl.slno" /></th>
 					<th><spring:message code="lbl.templatecode" /></th>
 					<th><spring:message code="lbl.templatedescription" /></th>
@@ -55,15 +58,20 @@
 					<th><spring:message code="lbl.typeofwork" /></th>
 					<th><spring:message code="lbl.subtypeofwork" /></th>
 					<th><spring:message code="lbl.status" /></th>
+					<c:if test="${mode == 'edit'}"> 
+						<th><spring:message code="lbl.modify" /></th>
+					</c:if>
 				</tr>
 			</thead>
 		</table>
 	</div>
-	<div class="row">
-		<div class="col-sm-12 text-center">
-			<button type='button' class='btn btn-primary' id="btnadd">
-				<spring:message code='lbl.add.template' />
-			</button>
+	<c:if test="${mode != 'edit' && mode != 'view' }">
+		<div class="row">
+			<div class="col-sm-12 text-center">
+				<button type='button' class='btn btn-primary' id="btnadd">
+					<spring:message code='lbl.add.template' />
+				</button>
+			</div>
 		</div>
-	</div>
+	</c:if>
 </div>

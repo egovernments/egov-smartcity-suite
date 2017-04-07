@@ -43,7 +43,7 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/taglibs/cdn.tld" prefix="cdn"%>
-		<form name="estimateTemplateSearchRequest" role="form" action="" id="estimateTemplateSearchRequest" class="form-horizontal form-groups-bordered">
+		<form:form modelAttribute="estimateTemplateSearchRequest" role="form" action="" id="estimateTemplateSearchRequest" class="form-horizontal form-groups-bordered">
 			<input type="hidden" id="errorSelect" value="<spring:message code='msg.select.estimatetemplate' />">
 			<input type="hidden" id="estimateTemplateConfirmMsg" value="<spring:message code='msg.estimate.template.confirm.reset' />"/>
 			<div class="row">
@@ -60,7 +60,7 @@
 				onclick='self.close()'><spring:message code='lbl.close' /></a>
 				</div>
 			</div>
-		</form>  
+		</form:form>  
 	<jsp:include page="estimatetemplate-searchresult.jsp"/>
 <script>
 	$('#btnsearch').click(function(e) {
@@ -70,4 +70,14 @@
 		}
 	});
 </script>
-<script src="<cdn:url value='/resources/js/abstractestimate/searchestimatetemplatehelper.js?rnd=${app_release_no}'/>"></script>
+<c:choose>
+	<c:when test="${mode == 'edit' }">
+		<script src="<cdn:url value='/resources/js/master/estimatetemplate.js?rnd=${app_release_no}'/>"></script>
+	</c:when>
+	<c:when test="${mode == 'view' }">
+		<script src="<cdn:url value='/resources/js/master/searchestimatetemplate.js?rnd=${app_release_no}'/>"></script>
+	</c:when>
+	<c:otherwise>
+		<script src="<cdn:url value='/resources/js/abstractestimate/searchestimatetemplatehelper.js?rnd=${app_release_no}'/>"></script>
+	</c:otherwise>
+</c:choose>

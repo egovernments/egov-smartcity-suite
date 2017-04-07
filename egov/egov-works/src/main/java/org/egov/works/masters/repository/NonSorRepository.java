@@ -37,43 +37,13 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.web.adaptor;
+package org.egov.works.masters.repository;
 
-import java.lang.reflect.Type;
+import org.egov.works.abstractestimate.entity.NonSor;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-import org.apache.commons.lang.StringUtils;
-import org.egov.works.masters.entity.EstimateTemplate;
-import org.egov.works.utils.WorksConstants;
-import org.springframework.stereotype.Component;
+@Repository
+public interface NonSorRepository extends JpaRepository<NonSor, Long> {
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
-
-@Component
-public class EstimateTemplateJsonAdaptor implements JsonSerializer<EstimateTemplate> {
-
-    @Override
-    public JsonElement serialize(final EstimateTemplate estimateTemplate, final Type typeOfSrc,
-            final JsonSerializationContext context) {
-        final JsonObject jsonObject = new JsonObject();
-        if (estimateTemplate != null) {
-            jsonObject.addProperty("id", estimateTemplate.getId());
-            jsonObject.addProperty("code", estimateTemplate.getCode());
-            jsonObject.addProperty("description", estimateTemplate.getDescription());
-            jsonObject.addProperty("name", estimateTemplate.getName());
-            jsonObject.addProperty("typeOfWork", estimateTemplate.getTypeOfWork().getName());
-            if (estimateTemplate.getSubTypeOfWork() != null)
-                jsonObject.addProperty("subTypeOfWork", estimateTemplate.getSubTypeOfWork().getName());
-            else
-                jsonObject.addProperty("subTypeOfWork", StringUtils.EMPTY);
-            if (!estimateTemplate.isStatus())
-                jsonObject.addProperty("status", "INACTIVE");
-            else
-                jsonObject.addProperty("status", WorksConstants.ACTIVE);
-            jsonObject.addProperty("estimateTemplateId", estimateTemplate.getId());
-        }
-        return jsonObject;
-    }
 }

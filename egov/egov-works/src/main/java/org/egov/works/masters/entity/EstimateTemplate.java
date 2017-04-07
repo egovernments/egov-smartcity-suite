@@ -40,48 +40,96 @@
 package org.egov.works.masters.entity;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
 
-import javax.validation.Valid;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.egov.commons.EgwTypeOfWork;
+import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.OptionalPattern;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.persistence.validator.annotation.Unique;
-import org.egov.infra.validation.exception.ValidationError;
-import org.egov.infstr.models.BaseModel;
 import org.egov.works.utils.WorksConstants;
+import org.hibernate.validator.constraints.SafeHtml;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-@Unique(fields = { "code" }, id = "id", tableName = "EGW_ESTIMATE_TEMPLATE", columnName = {
-        "CODE" }, message = "estimateTemplate.code.isunique")
-public class EstimateTemplate extends BaseModel {
+@Entity
+@Table(name = "EGW_ESTIMATE_TEMPLATE")
+@Unique(fields = { "code" }, enableDfltMsg = true)
+@SequenceGenerator(name = EstimateTemplate.SEQ_EGW_ESTIMATE_TEMPLATE, sequenceName = EstimateTemplate.SEQ_EGW_ESTIMATE_TEMPLATE, allocationSize = 1)
+public class EstimateTemplate extends AbstractAuditable {
 
     private static final long serialVersionUID = -1150757466961896868L;
+
+    public static final String SEQ_EGW_ESTIMATE_TEMPLATE = "SEQ_EGW_ESTIMATE_TEMPLATE";
+
+    @Id
+    @GeneratedValue(generator = SEQ_EGW_ESTIMATE_TEMPLATE, strategy = GenerationType.SEQUENCE)
+    private Long id;
+
+    @NotNull
+    @SafeHtml
     @Required(message = "estimatetemplate.code.not.null")
     private String code;
 
+    @NotNull
+    @SafeHtml
     @OptionalPattern(regex = WorksConstants.ALPHANUMERICWITHALLSPECIALCHAR, message = "estimatetemplate.name.alphaNumeric")
     @Required(message = "estimatetemplate.name.not.null")
     private String name;
 
+    @NotNull
+    @SafeHtml
     @OptionalPattern(regex = WorksConstants.ALPHANUMERICWITHALLSPECIALCHAR, message = "estimatetemplate.description.alphaNumeric")
     @Required(message = "estimatetemplate.description.not.null")
     private String description;
-    private int status;
-    @Valid
-    @Required(message = "estimatetemplate.workType.not.null")
-    private EgwTypeOfWork workType;
-    private EgwTypeOfWork subType;
 
-    @Valid
-    @JsonIgnore
-    private List<EstimateTemplateActivity> estimateTemplateActivities = new LinkedList<EstimateTemplateActivity>();
+    private boolean status = true;
+
+    @Required(message = "estimatetemplate.workType.not.null")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "WORKTYPE_ID", nullable = false)
+    private EgwTypeOfWork typeOfWork;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "WORKSUBTYPE_ID")
+    private EgwTypeOfWork subTypeOfWork;
+
+    @OrderBy("id")
+    @OneToMany(mappedBy = "estimateTemplate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = EstimateTemplateActivity.class)
+    private final List<EstimateTemplateActivity> estimateTemplateActivities = new ArrayList<EstimateTemplateActivity>(
+            0);
+
+    @Transient
+    private List<EstimateTemplateActivity> tempEstimateTemplateSorActivities = new ArrayList<EstimateTemplateActivity>(
+            0);
+
+    @Transient
+    private List<EstimateTemplateActivity> tempEstimateTemplateNonSorActivities = new ArrayList<EstimateTemplateActivity>(
+            0);
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
+    }
 
     public String getCode() {
         return code;
@@ -107,66 +155,56 @@ public class EstimateTemplate extends BaseModel {
         this.description = StringEscapeUtils.unescapeHtml(description);
     }
 
-    public int getStatus() {
-        return status;
+    public EgwTypeOfWork getTypeOfWork() {
+        return typeOfWork;
     }
 
-    public void setStatus(final int status) {
-        this.status = status;
+    public void setTypeOfWork(final EgwTypeOfWork typeOfWork) {
+        this.typeOfWork = typeOfWork;
     }
 
-    public EgwTypeOfWork getWorkType() {
-        return workType;
+    public EgwTypeOfWork getSubTypeOfWork() {
+        return subTypeOfWork;
     }
 
-    public void setWorkType(final EgwTypeOfWork workType) {
-        this.workType = workType;
-    }
-
-    public EgwTypeOfWork getSubType() {
-        return subType;
-    }
-
-    public void setSubType(final EgwTypeOfWork subType) {
-        this.subType = subType;
+    public void setSubTypeOfWork(final EgwTypeOfWork subTypeOfWork) {
+        this.subTypeOfWork = subTypeOfWork;
     }
 
     public List<EstimateTemplateActivity> getEstimateTemplateActivities() {
         return estimateTemplateActivities;
     }
 
+    public boolean isStatus() {
+        return status;
+    }
+
+    public void setStatus(final boolean status) {
+        this.status = status;
+    }
+
+    public List<EstimateTemplateActivity> getTempEstimateTemplateSorActivities() {
+        return tempEstimateTemplateSorActivities;
+    }
+
+    public void setTempEstimateTemplateSorActivities(
+            final List<EstimateTemplateActivity> tempEstimateTemplateSorActivities) {
+        this.tempEstimateTemplateSorActivities = tempEstimateTemplateSorActivities;
+    }
+
+    public List<EstimateTemplateActivity> getTempEstimateTemplateNonSorActivities() {
+        return tempEstimateTemplateNonSorActivities;
+    }
+
+    public void setTempEstimateTemplateNonSorActivities(
+            final List<EstimateTemplateActivity> tempEstimateTemplateNonSorActivities) {
+        this.tempEstimateTemplateNonSorActivities = tempEstimateTemplateNonSorActivities;
+    }
+
     public void setEstimateTemplateActivities(final List<EstimateTemplateActivity> estimateTemplateActivities) {
-        this.estimateTemplateActivities = estimateTemplateActivities;
-    }
-
-    public void addActivity(final EstimateTemplateActivity estimateTemplateActivity) {
-        estimateTemplateActivities.add(estimateTemplateActivity);
-    }
-
-    @JsonIgnore
-    public Collection<EstimateTemplateActivity> getSORActivities() {
-        return CollectionUtils.select(estimateTemplateActivities,
-                activity -> ((EstimateTemplateActivity) activity).getSchedule() != null);
-    }
-
-    @JsonIgnore
-    public Collection<EstimateTemplateActivity> getNonSORActivities() {
-        return CollectionUtils.select(estimateTemplateActivities,
-                activity -> ((EstimateTemplateActivity) activity).getNonSor() != null);
-    }
-
-    public List<ValidationError> validateActivities() {
-        final List<ValidationError> validationErrors = new ArrayList<ValidationError>();
-        for (final EstimateTemplateActivity estimateTemplateActivity : estimateTemplateActivities)
-            validationErrors.addAll(estimateTemplateActivity.validate());
-        return validationErrors;
-    }
-
-    @Override
-    public List<ValidationError> validate() {
-        final List<ValidationError> validationErrors = new ArrayList<ValidationError>();
-        validationErrors.addAll(validateActivities());
-        return validationErrors;
+        this.estimateTemplateActivities.clear();
+        if (estimateTemplateActivities != null)
+            this.estimateTemplateActivities.addAll(estimateTemplateActivities);
     }
 
 }

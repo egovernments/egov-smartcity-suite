@@ -37,43 +37,35 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.web.adaptor;
+package org.egov.works.web.controller.masters;
 
-import java.lang.reflect.Type;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
-import org.egov.works.masters.entity.EstimateTemplate;
-import org.egov.works.utils.WorksConstants;
-import org.springframework.stereotype.Component;
+import org.egov.works.masters.entity.ScheduleOfRate;
+import org.egov.works.masters.service.ScheduleOfRateService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
+@Controller
+@RequestMapping(value = "/masters")
+public class AjaxEstimateTemplateController {
 
-@Component
-public class EstimateTemplateJsonAdaptor implements JsonSerializer<EstimateTemplate> {
+    @Autowired
+    private ScheduleOfRateService scheduleOfRateService;
 
-    @Override
-    public JsonElement serialize(final EstimateTemplate estimateTemplate, final Type typeOfSrc,
-            final JsonSerializationContext context) {
-        final JsonObject jsonObject = new JsonObject();
-        if (estimateTemplate != null) {
-            jsonObject.addProperty("id", estimateTemplate.getId());
-            jsonObject.addProperty("code", estimateTemplate.getCode());
-            jsonObject.addProperty("description", estimateTemplate.getDescription());
-            jsonObject.addProperty("name", estimateTemplate.getName());
-            jsonObject.addProperty("typeOfWork", estimateTemplate.getTypeOfWork().getName());
-            if (estimateTemplate.getSubTypeOfWork() != null)
-                jsonObject.addProperty("subTypeOfWork", estimateTemplate.getSubTypeOfWork().getName());
-            else
-                jsonObject.addProperty("subTypeOfWork", StringUtils.EMPTY);
-            if (!estimateTemplate.isStatus())
-                jsonObject.addProperty("status", "INACTIVE");
-            else
-                jsonObject.addProperty("status", WorksConstants.ACTIVE);
-            jsonObject.addProperty("estimateTemplateId", estimateTemplate.getId());
-        }
-        return jsonObject;
+    @RequestMapping(value = "/ajax-sorbyschedulecategories", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
+    @ResponseBody
+    public List<ScheduleOfRate> getSorByScheduleCategories(@RequestParam("code") final String code,
+            @RequestParam("scheduleCategories") final String scheduleCategories) {
+        if (!"null".equalsIgnoreCase(scheduleCategories))
+            return scheduleOfRateService.getScheduleOfRatesByCodeAndScheduleOfCategories(code, scheduleCategories,
+                    new Date());
+        return Collections.emptyList();
     }
 }

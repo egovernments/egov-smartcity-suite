@@ -39,34 +39,67 @@
  */
 package org.egov.works.masters.entity;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
-import javax.validation.Valid;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 
 import org.egov.common.entity.UOM;
-import org.egov.infra.persistence.entity.component.Money;
-import org.egov.infra.validation.exception.ValidationError;
-import org.egov.infstr.models.BaseModel;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.works.abstractestimate.entity.NonSor;
 
-public class EstimateTemplateActivity extends BaseModel {
+@Entity
+@Table(name = "EGW_EST_TEMPLATE_ACTIVITY")
+@Unique(id = "id", tableName = "EGW_EST_TEMPLATE_ACTIVITY", enableDfltMsg = true)
+@SequenceGenerator(name = EstimateTemplateActivity.SEQ_EGW_EST_TEMPLATE_ACTIVITY, sequenceName = EstimateTemplateActivity.SEQ_EGW_EST_TEMPLATE_ACTIVITY, allocationSize = 1)
+public class EstimateTemplateActivity extends AbstractAuditable {
 
     private static final long serialVersionUID = 7697746931463590763L;
 
+    public static final String SEQ_EGW_EST_TEMPLATE_ACTIVITY = "SEQ_EGW_EST_TEMPLATE_ACTIVITY";
+
+    @Id
+    @GeneratedValue(generator = SEQ_EGW_EST_TEMPLATE_ACTIVITY, strategy = GenerationType.SEQUENCE)
+    private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ESTIMATE_TEMPLATE_ID", nullable = false, updatable = false)
     private EstimateTemplate estimateTemplate;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "SCHEDULEOFRATE_ID")
     private ScheduleOfRate schedule;
 
-    @Valid
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "NONSOR_ID")
     private NonSor nonSor;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "UOM_ID")
     private UOM uom;
 
-    private Money rate = new Money(0.0);
+    private double value;
 
     private transient Date estimateDate;
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
+    }
 
     public EstimateTemplate getEstimateTemplate() {
         return estimateTemplate;
@@ -100,34 +133,20 @@ public class EstimateTemplateActivity extends BaseModel {
         this.uom = uom;
     }
 
-    public Money getRate() {
-        return rate;
-    }
-
-    public void setRate(final Money rate) {
-        this.rate = rate;
-    }
-
-    @Override
-    public List<ValidationError> validate() {
-        final List<ValidationError> validationErrors = new ArrayList<ValidationError>();
-        /*
-         * if (rate.getValue() <= 0.0) { validationErrors.add(new ValidationError("estimateTemplateActivity.rate.not.null",
-         * "estimateTemplateActivity.rate.not.null")); }
-         */
-        if (nonSor != null
-                && (nonSor.getUom() == null || nonSor.getUom().getId() == null || nonSor.getUom().getId() == 0))
-            validationErrors.add(new ValidationError("estimateTemplateActivity.nonsor.invalid",
-                    "estimateTemplateActivity.nonsor.invalid"));
-        return validationErrors;
-    }
-
     public Date getEstimateDate() {
         return estimateDate;
     }
 
     public void setEstimateDate(final Date estimateDate) {
         this.estimateDate = estimateDate;
+    }
+
+    public double getValue() {
+        return value;
+    }
+
+    public void setValue(final double value) {
+        this.value = value;
     }
 
 }

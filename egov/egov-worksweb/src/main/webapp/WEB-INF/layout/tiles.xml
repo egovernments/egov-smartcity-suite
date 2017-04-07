@@ -670,4 +670,29 @@
         <put-attribute name="page-title" value="lbl.viewcontractor" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/master/contractor/contractor-success.jsp"/>
     </definition>
+    
+    <definition name="searchestimatetemplate" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.searchestimatetemplate" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/abstractestimate/searchestimatetemplate-form.jsp"/>
+    </definition>
+    
+    <definition name="estimatetemplate-form" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.createestimatetemplate" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/master/estimatetemplate/estimatetemplate-new.jsp"/>
+    </definition>
+    
+    <definition name="estimatetemplate-modify" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.modifyestimatetemplate" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/master/estimatetemplate/estimatetemplate-modify.jsp"/>
+    </definition>
+    
+    <definition name="estimatetemplate-view" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.viewestimatetemplate" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/master/estimatetemplate/estimatetemplate-success.jsp"/>
+    </definition>
+    
+    <definition name="estimatetemplate-success" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.viewestimatetemplate" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/master/estimatetemplate/estimatetemplate-success.jsp"/>
+    </definition>
 </tiles-definitions>

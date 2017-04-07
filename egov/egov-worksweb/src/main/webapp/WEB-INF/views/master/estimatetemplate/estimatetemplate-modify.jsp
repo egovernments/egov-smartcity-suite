@@ -38,39 +38,39 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
-<%@ include file="/includes/taglibs.jsp" %>
-<script src="<cdn:url value='/resources/js/works.js?rnd=${app_release_no}'/>"></script> 
-<html>
-<title><s:text name="page.title.estimate.template" /></title>
-<body>
-<style>
-ul{
-list-style-type:none;
-padding:0;
-}
-</style>
-<s:if test="%{hasActionMessages()}">
-<div id="msgsDiv" class="new-page-header">
-	<s:actionmessage theme="simple" />
-</div>
-</s:if>
-<s:if test="%{mode == 'view'}">
-	<div class="new-page-header">
-		<s:text name="estimate.template.view" />
-	</div>
-</s:if>
-<s:hidden name="id" id="id" />
-<s:hidden name="mode" id="mode" />
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ taglib uri="/WEB-INF/taglibs/cdn.tld" prefix="cdn"%>
 
-	<%@ include file='estimateTemplate-commonView.jsp' %>
-
-<div class="row text-center">
-	<div class="add-margin">
-	<s:if test="%{mode != 'edit' && mode != 'view'}">
-		<input type="submit" name="create" Class="btn btn-primary" value="Create New Estimate Template" id="CREATE" name="button" onclick="createNewEsimate();" />
-	</s:if>
-	<input type="submit" name="closeButton"	id="closeButton" value="Close" Class="btn btn-default" onclick="window.close();" />
+<form:form name="estimateTemplateForm" id="estimateTemplateForm" role="form"
+	action="/egworks/masters/estimatetemplate-edit" modelAttribute="estimateTemplate"
+	class="form-horizontal form-groups-bordered">
+	<input type = "hidden" name = "mode" value = "${mode }"	/>
+	<spring:hasBindErrors name="estimateTemplate">
+		<div class="alert alert-danger col-md-12">
+			<form:errors cssClass="add-margin" />
+			<br />
+		</div>
+	</spring:hasBindErrors>
+	<div class="row">
+		<div class="col-md-12">
+			<jsp:include page="estimatetemplate-header.jsp" />
+			<jsp:include page="estimatetemplate-sor.jsp" />
+			<jsp:include page="estimatetemplate-nonsor.jsp" />
+		</div>
 	</div>
-</div>
-</body>
-</html>
+	<div class="row">
+		<div class="col-sm-12 text-center">
+			<button type="submit" name="submit" id="submitBtn" class="btn btn-primary" value="Save" >
+				<spring:message code="lbl.modify" />
+			</button>
+			<button type="button" class="btn btn-default" id="button2"
+				onclick="window.close();">
+				<spring:message code="lbl.close" />
+			</button>
+		</div>
+	</div>
+</form:form>
+<script src="<cdn:url value='/resources/js/master/estimatetemplate.js?rnd=${app_release_no}'/>"></script> 

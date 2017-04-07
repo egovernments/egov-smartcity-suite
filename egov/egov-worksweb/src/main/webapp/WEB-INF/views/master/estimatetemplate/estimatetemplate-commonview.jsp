@@ -37,51 +37,62 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
-
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ page contentType="text/html" language="java"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <div class="row">
 	<div class="col-md-12">
 		<div class="panel panel-primary" data-collapsed="0">
-			<div class="panel-heading"></div>
+			<div class="panel-heading">
+				<c:if test="${mode == 'view' }">
+					<div class="panel-title" style="text-align:center;" ><spring:message code="lbl.viewestimatetemplate" /></div>
+				</c:if>
+			</div>
 			<div class="panel-body">
 				<div class="row add-border">
 					<div class="col-xs-3 add-margin">
-						<s:text name="estimate.template.code" />
+						<spring:message code="lbl.templatecode" />
 					</div>
 					<div class="col-xs-3 add-margin view-content">
-						<s:property value="%{code}" />
+						<c:out value="${estimateTemplate.code}" />
 					</div>
 					<div class="col-xs-3 add-margin">
-						<s:text name="estimate.template.name" />
+						<spring:message code="lbl.templatename" />
 					</div>
 					<div class="col-xs-3 add-margin view-content">
-						<s:property value="%{name}" />
+						<c:out value="${estimateTemplate.name}" />
 					</div>
 				</div>
 				<div class="row add-border">
 					<div class="col-xs-3 add-margin">
-						<s:text name="estimate.template.description" />
+						<spring:message code="lbl.description" />
 					</div>
 					<div class="col-xs-3 add-margin view-content">
-						<s:property value="%{description}" />
+						<c:out value="${estimateTemplate.description}" />
 					</div>
 					<div class="col-xs-3 add-margin">
-						<s:text name="milestone.estimate.typeofwork" />
+						<spring:message code="lbl.typeofwork" />
 					</div>
 					<div class="col-xs-3 add-margin view-content">
-						<s:property value="%{workType.name}" />
+						<c:out value="${estimateTemplate.typeOfWork.name}" />
 					</div>
 				</div>
-				<s:if test="%{subType.name != null}" >
-					<div class="row add-border">
-							<div class="col-xs-3 add-margin">
-								<s:text name="estimate.work.subtype" />
-							</div>
-							<div class="col-xs-3 add-margin view-content">
-								<s:property value="%{subType.name}" />
-							</div>
+				<div class="row add-border">
+					<div class="col-xs-3 add-margin">
+						<spring:message code="lbl.subtypeofwork" />
 					</div>
-				</s:if>
+					<div class="col-xs-3 add-margin view-content">
+						<c:choose>
+							<c:when test="${estimateTemplate.subTypeOfWork != null}">
+								<c:out value="${estimateTemplate.subTypeOfWork.name}" />
+							</c:when>
+							<c:otherwise>
+								<c:out value="NA" />
+							</c:otherwise>
+						</c:choose>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -89,61 +100,59 @@
 <div class="panel panel-primary" data-collapsed="0">
 	<div class="panel-heading">
 		<div class="panel-title">
-			<s:text name="page.title.estimate.SOR" />
+			<spring:message code="title.sor" />
 		</div>
 	</div>
 	<div class="panel-body">
 		<table class="table table-bordered">
 			<thead>
 				<tr>
-					<th><s:text name="column.title.SLNo" /></th>
-					<th><s:text name="scheduleCategory.sor.category" /></th>
-					<th><s:text name="master.sor.code" /></th>
-					<th><s:text name="master.sor.description" /></th>
-					<th><s:text name="column.title.UOM" /></th>
+					<th><spring:message code="lbl.slNo" /></th>
+					<th><spring:message code="lbl.sor.category" /></th>
+					<th><spring:message code="lbl.code" /></th>
+					<th><spring:message code="lbl.description" /></th>
+					<th><spring:message code="lbl.uom" /></th>
 				</tr>
 			</thead>
 			<tbody>
-				<s:iterator var="soriterator" value="SORActivities" status="row_status">
+				<c:forEach	var="etasor" items = "${estimateTemplate.getTempEstimateTemplateSorActivities() }" varStatus="item">
 					<tr>
-						<td><s:property value="#row_status.count" /></td>
-						<td><s:property value="%{schedule.scheduleCategory.code}" /></td>
-						<td><s:property value="%{schedule.code}" /></td>
-						<td><s:property value="%{schedule.descriptionJS}" /></td>
-						<td><s:property value="%{schedule.uom.uom}" /></td>
+						<td><c:out value="${item.index + 1}" /></td>
+						<td><c:out value="${etasor.schedule.scheduleCategory.code}" /></td>
+						<td><c:out value="${etasor.schedule.code}" /></td>
+						<td><c:out value="${etasor.schedule.description}" /></td>
+						<td><c:out value="${etasor.schedule.uom.uom}" /></td>
 					</tr>
-				</s:iterator>
+				</c:forEach>
 			</tbody>
-
 		</table>
-
 	</div>
+</div>
+<div class="panel panel-primary" data-collapsed="0">
 	<div class="panel-heading">
 		<div class="panel-title">
-			<s:text name="page.title.estimate.NonSOR" />
+			<spring:message code="title.nonsor" />
 		</div>
 	</div>
 	<div class="panel-body">
 		<table class="table table-bordered">
 			<thead>
 				<tr>
-					<th><s:text name="column.title.SLNo" /></th>
-					<th><s:text name="estimate.template.nonsor.descriprion" /></th>
-					<th><s:text name="column.title.UOM" /></th>
-					<th><s:text name="column.title.unitrate" /></th>
+					<th><spring:message code="lbl.slNo" /></th>
+					<th><spring:message code="lbl.description" /></th>
+					<th><spring:message code="lbl.uom" /></th>
+					<th><spring:message code="lbl.unitrate" /></th>
 				</tr>
 			</thead>
 			<tbody>
-				<s:iterator var="nonsoriterator" value="NonSORActivities" status="row_status">
+				<c:forEach	var="etanonsor" items = "${estimateTemplate.getTempEstimateTemplateNonSorActivities() }" varStatus="item">
 					<tr>
-						<td><s:property value="#row_status.count" /></td>
-						<td><s:property value="%{nonSor.descriptionJS}" /></td>
-						<td><s:property value="%{uom.uom}" /></td>
-						<td align="right">
-						<fmt:formatNumber  maxFractionDigits="2" minFractionDigits="2" pattern="#.##"><s:property value="%{rate}" /></fmt:formatNumber>
-						</td>
+						<td><c:out value="${item.index + 1}" /></td>
+						<td><c:out value="${etanonsor.nonSor.description}" /></td>
+						<td><c:out value="${etanonsor.nonSor.uom.uom}" /></td>
+						<td class="text-right"><fmt:formatNumber type="number" pattern="#0.00#" value="${etanonsor.value}" /></td>
 					</tr>
-				</s:iterator>
+				</c:forEach>
 			</tbody>
 		</table>
 	</div>

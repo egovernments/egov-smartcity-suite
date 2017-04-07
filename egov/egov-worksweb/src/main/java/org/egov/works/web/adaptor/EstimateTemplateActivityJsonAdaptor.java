@@ -70,7 +70,8 @@ public class EstimateTemplateActivityJsonAdaptor implements JsonSerializer<Estim
                 jsonObject.addProperty("scheduleUom", schedule.getUom().getUom());
                 jsonObject.addProperty("scheduleUomId", schedule.getUom().getId());
                 try {
-                    schedule.setSorRateValue(schedule.getRateOn(estimateTemplateActivity.getEstimateDate()).getRate().getValue());
+                    schedule.setSorRateValue(
+                            schedule.getRateOn(estimateTemplateActivity.getEstimateDate()).getRate().getValue());
                 } catch (final ApplicationRuntimeException e) {
                     schedule.setSorRateValue(0D);
                 }
@@ -80,7 +81,7 @@ public class EstimateTemplateActivityJsonAdaptor implements JsonSerializer<Estim
                 jsonObject.addProperty("nonSorDescription", nonSor.getDescription());
                 jsonObject.addProperty("nonSorUomId", estimateTemplateActivity.getUom().getId());
                 jsonObject.addProperty("nonSorUom", estimateTemplateActivity.getUom().getUom());
-                jsonObject.addProperty("nonSorRate", estimateTemplateActivity.getRate().getValue());
+                jsonObject.addProperty("nonSorRate", estimateTemplateActivity.getValue());
             }
         return jsonObject;
     }

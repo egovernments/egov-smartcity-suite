@@ -154,14 +154,15 @@ public class AjaxAbstractEstimateController {
 
     public Object toSearchAbstractEstimateForLOAResultJson(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(AbstractEstimate.class, new AbstractEstimateForLOAJsonAdaptor())
-                .create();
+        final Gson gson = gsonBuilder
+                .registerTypeAdapter(AbstractEstimate.class, new AbstractEstimateForLOAJsonAdaptor()).create();
         final String json = gson.toJson(object);
         return json;
     }
 
     @RequestMapping(value = "/getpercentageorlumpsumbyoverheadid", method = RequestMethod.GET)
-    public @ResponseBody OverheadRate getPercentageOrLumpsumByOverhead(@RequestParam("overheadId") final Long overheadId) {
+    public @ResponseBody OverheadRate getPercentageOrLumpsumByOverhead(
+            @RequestParam("overheadId") final Long overheadId) {
 
         Overhead overhead = new Overhead();
         OverheadRate overheadRate = new OverheadRate();
@@ -186,17 +187,19 @@ public class AjaxAbstractEstimateController {
             @RequestParam("scheduleCategories") final String scheduleCategories,
             @RequestParam("estimateDate") final Date estimateDate) {
         if (!scheduleCategories.equals("null"))
-            return scheduleOfRateService.getScheduleOfRatesByCodeAndScheduleOfCategories(code, scheduleCategories, estimateDate);
+            return scheduleOfRateService.getScheduleOfRatesByCodeAndScheduleOfCategories(code, scheduleCategories,
+                    estimateDate);
         return null;
     }
 
     @RequestMapping(value = "/ajaxsor-byschedulecategoriesandestimateid", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
-    public @ResponseBody List<ScheduleOfRate> findSorByScheduleCategoriesAndEstimateId(@RequestParam("code") final String code,
+    public @ResponseBody List<ScheduleOfRate> findSorByScheduleCategoriesAndEstimateId(
+            @RequestParam("code") final String code,
             @RequestParam("scheduleCategories") final String scheduleCategories,
             @RequestParam("estimateDate") final Date estimateDate, @RequestParam("estimateId") final Long estimateId) {
         if (!scheduleCategories.equals("null"))
-            return scheduleOfRateService.getScheduleOfRatesByCodeAndScheduleOfCategoriesAndEstimateId(code, scheduleCategories,
-                    estimateDate, estimateId);
+            return scheduleOfRateService.getScheduleOfRatesByCodeAndScheduleOfCategoriesAndEstimateId(code,
+                    scheduleCategories, estimateDate, estimateId);
         return null;
     }
 
@@ -206,11 +209,10 @@ public class AjaxAbstractEstimateController {
     }
 
     @RequestMapping(value = "/ajaxgetestimatetemplatebyid", method = RequestMethod.GET)
-    public @ResponseBody String populateMilestoneTemplateActivity(@RequestParam final String id,
-            final Model model, @RequestParam final Date estimateDate)
-            throws ApplicationException {
-        final List<EstimateTemplateActivity> activities = estimateTemplateService.getEstimateTemplateById(Long.valueOf(id))
-                .getEstimateTemplateActivities();
+    public @ResponseBody String populateMilestoneTemplateActivity(@RequestParam final String id, final Model model,
+            @RequestParam final Date estimateDate) throws ApplicationException {
+        final List<EstimateTemplateActivity> activities = estimateTemplateService
+                .getEstimateTemplateById(Long.valueOf(id)).getEstimateTemplateActivities();
         for (final EstimateTemplateActivity estimateTemplateActivitys : activities)
             estimateTemplateActivitys.setEstimateDate(estimateDate);
         final String result = estimateTemplateToJson(activities);
@@ -219,14 +221,15 @@ public class AjaxAbstractEstimateController {
 
     public String estimateTemplateToJson(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(EstimateTemplateActivity.class, estimateTemplateActivityJsonAdaptor)
-                .create();
+        final Gson gson = gsonBuilder
+                .registerTypeAdapter(EstimateTemplateActivity.class, estimateTemplateActivityJsonAdaptor).create();
         final String json = gson.toJson(object);
         return json;
     }
 
     @RequestMapping(value = "/getabstractestimatesbynumber", method = RequestMethod.GET)
-    public @ResponseBody List<String> findAbstractEstimateNumbersForAbstractEstimate(@RequestParam final String estimateNumber) {
+    public @ResponseBody List<String> findAbstractEstimateNumbersForAbstractEstimate(
+            @RequestParam final String estimateNumber) {
         return estimateService.getAbstractEstimateByEstimateNumberLike(estimateNumber);
     }
 
@@ -235,15 +238,15 @@ public class AjaxAbstractEstimateController {
             @ModelAttribute final AbstractEstimateForLoaSearchRequest abstractEstimateForLoaSearchRequest) {
         final List<AbstractEstimateForLoaSearchResult> searchResultList = estimateService
                 .searchAbstractEstimatesForLOA(abstractEstimateForLoaSearchRequest);
-        final String result = new StringBuilder("{ \"data\":").append(toSearchAbstractEstimateForLOAResultJson(searchResultList))
-                .append("}").toString();
+        final String result = new StringBuilder("{ \"data\":")
+                .append(toSearchAbstractEstimateForLOAResultJson(searchResultList)).append("}").toString();
         return result;
     }
 
     @RequestMapping(value = "/ajax-assignmentByDesignation", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody String getAssignmentByDesignation(
-            @RequestParam("approvalDesignation") final Long approvalDesignation)
-            throws JsonGenerationException, JsonMappingException, IOException, NumberFormatException, ApplicationException {
+            @RequestParam("approvalDesignation") final Long approvalDesignation) throws JsonGenerationException,
+            JsonMappingException, IOException, NumberFormatException, ApplicationException {
         final List<User> users = new ArrayList<User>();
         List<Assignment> assignments = new ArrayList<Assignment>();
         if (approvalDesignation != null && approvalDesignation != 0 && approvalDesignation != -1)
@@ -263,15 +266,13 @@ public class AjaxAbstractEstimateController {
         final List<AbstractEstimate> abstractEstimates = estimateService
                 .searchEstimatesToCancel(searchRequestCancelEstimate);
         final String result = new StringBuilder("{ \"data\":").append(toSearchEstimatesToCancelJson(abstractEstimates))
-                .append("}")
-                .toString();
+                .append("}").toString();
         return result;
     }
 
     public Object toSearchEstimatesToCancelJson(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(AbstractEstimate.class, searchEstimatesToCancelJson)
-                .create();
+        final Gson gson = gsonBuilder.registerTypeAdapter(AbstractEstimate.class, searchEstimatesToCancelJson).create();
         final String json = gson.toJson(object);
         return json;
     }
@@ -282,15 +283,14 @@ public class AjaxAbstractEstimateController {
         final List<AbstractEstimate> searchResultList = estimateService
                 .searchAbstractEstimatesForOfflineStatus(abstractEstimateForLoaSearchRequest);
         final String result = new StringBuilder("{ \"data\":")
-                .append(toSearchAbstractEstimateForOfflineStatusJson(searchResultList))
-                .append("}").toString();
+                .append(toSearchAbstractEstimateForOfflineStatusJson(searchResultList)).append("}").toString();
         return result;
     }
 
     public Object toSearchAbstractEstimateForOfflineStatusJson(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(AbstractEstimate.class, abstractEstimateForOfflineStatusJsonAdaptor)
-                .create();
+        final Gson gson = gsonBuilder
+                .registerTypeAdapter(AbstractEstimate.class, abstractEstimateForOfflineStatusJsonAdaptor).create();
         final String json = gson.toJson(object);
         return json;
     }
@@ -306,7 +306,8 @@ public class AjaxAbstractEstimateController {
     }
 
     @RequestMapping(value = "/ajaxestimatenumbers-tocreateloa", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody List<String> findApprovedEstimateNumbersForCreateLOA(@RequestParam final String estimateNumber) {
+    public @ResponseBody List<String> findApprovedEstimateNumbersForCreateLOA(
+            @RequestParam final String estimateNumber) {
         return estimateService.getApprovedEstimateNumbersForCreateLOA(estimateNumber);
     }
 
@@ -336,9 +337,8 @@ public class AjaxAbstractEstimateController {
     }
 
     @RequestMapping(value = "/ajaxactivities-estimatetocopy", method = RequestMethod.GET)
-    public @ResponseBody String populateEstimateActivity(@RequestParam final String id,
-            final Model model, @RequestParam final Date estimateDate)
-            throws ApplicationException {
+    public @ResponseBody String populateEstimateActivity(@RequestParam final String id, final Model model,
+            @RequestParam final Date estimateDate) throws ApplicationException {
         final List<Activity> activities = estimateService.getActivitiesByEstimate(Long.valueOf(id));
         for (final Activity activity : activities)
             activity.setEstimateDate(estimateDate);
@@ -348,8 +348,7 @@ public class AjaxAbstractEstimateController {
 
     public String estimateActivitiesToJson(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(Activity.class, estimateActivityJsonAdaptor)
-                .create();
+        final Gson gson = gsonBuilder.registerTypeAdapter(Activity.class, estimateActivityJsonAdaptor).create();
         final String json = gson.toJson(object);
         return json;
     }
@@ -358,7 +357,8 @@ public class AjaxAbstractEstimateController {
     public @ResponseBody String searchActivities(
             @ModelAttribute final AbstractEstimateForCopyEstimate abstractEstimateForCopyEstimate,
             final HttpServletRequest request) {
-        final List<AbstractEstimate> abstractEstimates = estimateService.searchEstimatesToCopy(abstractEstimateForCopyEstimate);
+        final List<AbstractEstimate> abstractEstimates = estimateService
+                .searchEstimatesToCopy(abstractEstimateForCopyEstimate);
         final String result = new StringBuilder("{ \"data\":").append(toSearchEstimateResultJson(abstractEstimates))
                 .append("}").toString();
         return result;
@@ -372,14 +372,14 @@ public class AjaxAbstractEstimateController {
     }
 
     @RequestMapping(value = "/ajaxestimatetemplates-search", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
-    public @ResponseBody String searchEstimateTemplates(
+    @ResponseBody
+    public String searchEstimateTemplates(
             @ModelAttribute final EstimateTemplateSearchRequest estimateTemplateSearchRequest,
             final HttpServletRequest request) {
-        estimateTemplateSearchRequest.setStatus(1);
-        final List<EstimateTemplate> estimateTemplates = estimateService.searchEstimateTemplates(estimateTemplateSearchRequest);
-        final String result = new StringBuilder("{ \"data\":").append(toSearchEstimateTemplatesResultJson(estimateTemplates))
+        final List<EstimateTemplate> estimateTemplates = estimateTemplateService
+                .searchEstimateTemplates(estimateTemplateSearchRequest);
+        return new StringBuilder("{ \"data\":").append(toSearchEstimateTemplatesResultJson(estimateTemplates))
                 .append("}").toString();
-        return result;
     }
 
     public Object toSearchEstimateTemplatesResultJson(final Object object) {
@@ -391,30 +391,27 @@ public class AjaxAbstractEstimateController {
 
     @SuppressWarnings("unchecked")
     @RequestMapping(value = "/ajax-showhideappravaldetails", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody boolean findWorkFlowMatrix(
-            @RequestParam final BigDecimal amountRule, @RequestParam final String additionalRule) {
+    public @ResponseBody boolean findWorkFlowMatrix(@RequestParam final BigDecimal amountRule,
+            @RequestParam final String additionalRule) {
         final Map<String, Object> map = new HashMap<String, Object>();
 
         map.putAll((Map<String, Object>) scriptService.executeScript(WorksConstants.ABSTRACTESTIMATE_APPROVALRULES,
-                ScriptService.createContext("estimateValue", amountRule,
-                        "cityGrade", additionalRule)));
+                ScriptService.createContext("estimateValue", amountRule, "cityGrade", additionalRule)));
         return (boolean) map.get("createAndApproveFieldsRequired");
     }
 
     @RequestMapping(value = "/ajaxsearch", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String searchAbstractEstimates(
             @ModelAttribute final SearchAbstractEstimate searchAbstractEstimate, final Model model) {
-        final List<AbstractEstimate> abstractEstimates = estimateService.searchAbstractEstimates(searchAbstractEstimate);
-        final String result = new StringBuilder("{ \"data\":")
-                .append(toJson(abstractEstimates))
-                .append("}").toString();
+        final List<AbstractEstimate> abstractEstimates = estimateService
+                .searchAbstractEstimates(searchAbstractEstimate);
+        final String result = new StringBuilder("{ \"data\":").append(toJson(abstractEstimates)).append("}").toString();
         return result;
     }
 
     public Object toJson(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(AbstractEstimate.class,
-                abstractEstimateJsonAdaptor).create();
+        final Gson gson = gsonBuilder.registerTypeAdapter(AbstractEstimate.class, abstractEstimateJsonAdaptor).create();
         final String json = gson.toJson(object);
         return json;
     }

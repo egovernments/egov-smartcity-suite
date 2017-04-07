@@ -91,15 +91,26 @@
 			</div>
 			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.templatename" /></label>
 			<div class="col-sm-3 add-margin">
-				<textarea name="templateName" id="templateName" value="" class="form-control"></textarea>
+				<input name="templateName" id="templateName" value="" class="form-control"></textarea>
 			</div>
 		</div>
 		<div class="form-group">
 			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.templatestatus" /></label>
 			<div class="col-sm-3 add-margin">
-				<select name="status" data-first-option="false" id="status" disabled="disabled" class="form-control">
-					<option value="1">ACTIVE</option>
-				</select>
+			<c:choose>
+				<c:when test="${mode != 'edit' && mode != 'view' }">
+					<select name="status" data-first-option="false" id="status" disabled="disabled" class="form-control">
+						<option value="true"><c:out value = "ACTIVE" /></option>
+					</select>
+				</c:when>
+				<c:otherwise>
+					<form:select path="status" id="status" cssClass="form-control">
+						<form:option value="false" ><c:out value="INACTIVE" /></form:option>
+						<form:option value="true" ><c:out value="ACTIVE" /></form:option>
+			        </form:select>
+			        <form:errors path="status" cssClass="error" />
+				</c:otherwise>
+			</c:choose>
 			</div>
 		</div>
 	</div>
