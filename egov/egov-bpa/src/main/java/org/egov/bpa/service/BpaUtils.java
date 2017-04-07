@@ -94,12 +94,14 @@ public class BpaUtils {
     }
 
     @Transactional
-    public void redirectToBpaWorkFlow(final BpaApplication application, final String currentState, final String remarks) {
-        Long approvalPosition;
+    public void redirectToBpaWorkFlow(Long approvalPosition,final BpaApplication application, final String currentState, final String remarks) {
+       
         final WorkFlowMatrix wfmatrix = getWfMatrixByCurrentState(application, currentState);
         final BpaApplicationWorkflowCustomDefaultImpl applicationWorkflowCustomDefaultImpl = getInitialisedWorkFlowBean();
+        if(approvalPosition ==null){
         approvalPosition = getUserPositionByZone(wfmatrix.getNextDesignation(), application.getSiteDetail().get(0) != null
                 ? application.getSiteDetail().get(0).getAdminBoundary().getId() : null);
+        }
         applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(application,
                 approvalPosition, remarks,
                 BpaConstants.CREATE_ADDITIONAL_RULE_CREATE, null);

@@ -47,7 +47,6 @@ import org.egov.bpa.application.entity.BpaFeeDetail;
 import org.egov.bpa.application.entity.BpaStatus;
 import org.egov.bpa.application.repository.ApplicationBpaRepository;
 import org.egov.bpa.application.service.collection.GenericBillGeneratorService;
-import org.egov.bpa.application.workflow.BpaApplicationWorkflowCustomDefaultImpl;
 import org.egov.bpa.service.BpaStatusService;
 import org.egov.bpa.service.BpaUtils;
 import org.egov.bpa.utils.BpaConstants;
@@ -109,22 +108,14 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
     }
 
     @Transactional
-    public BpaApplication updateApplication(final BpaApplication application) {
+    public BpaApplication updateApplication(final BpaApplication application,final Long approvalPosition) {
        
         application.setSource(Source.SYSTEM);
         final BpaApplication updatedApplication = applicationBpaRepository
                 .save(application);
         
-        bpaUtils.redirectToBpaWorkFlow(application, application.getCurrentState().getValue(), null);
+        bpaUtils.redirectToBpaWorkFlow(approvalPosition,application, application.getCurrentState().getValue(), null);
 
-        return updatedApplication;
-    }
-    @Transactional
-    public BpaApplication updateApplication(BpaApplication bpaApplication, Long positionId) {
-        final BpaApplication updatedApplication = applicationBpaRepository
-                .save(bpaApplication);
-        //bpaUtils.redirectToBpaWorkFlow(bpaApplication, bpaApplication.getCurrentState().getValue(), null);
-// Enable later... add position as part of redirect bpaworkflow.
         return updatedApplication;
     }
     

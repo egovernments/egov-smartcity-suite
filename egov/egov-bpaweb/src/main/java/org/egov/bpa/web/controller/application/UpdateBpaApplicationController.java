@@ -73,6 +73,8 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
     private static final String RESCHEDULE_APPIONTMENT = "reschedule-appiontment";
 
     private static final String BPA_APPOINTMENT_SCHEDULE = "bpaAppointmentSchedule";
+    
+    private static final String APPRIVALPOSITION = "approvalPosition";
 
     private static final String VIEW_SCHEDULE_APPIONTMENT = "view-schedule-appiontment";
 
@@ -161,7 +163,10 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
             loadViewdata(model, bpaApplication);
             return "bpaapplication-Form";
         }
-        bpaApplication = applicationBpaService.updateApplication(bpaApplication);
+        Long approvalPosition = null;
+        if (request.getParameter(APPRIVALPOSITION) != null)
+            approvalPosition = Long.valueOf(request.getParameter(APPRIVALPOSITION));
+        bpaApplication = applicationBpaService.updateApplication(bpaApplication,approvalPosition);
         return "viewapplication-form";
     }
     
