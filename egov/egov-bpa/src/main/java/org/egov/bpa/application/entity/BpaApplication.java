@@ -157,9 +157,6 @@ public class BpaApplication extends StateAware {
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "application")
     private List<PermittedFloorDetail> permittedFloorDetail = new ArrayList<>();
-    /*
-     * @ManyToOne(fetch = FetchType.LAZY) private Department department;
-     */
 
     @OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<AutoDcrMap> autoDcr = new ArrayList<>();
@@ -182,7 +179,7 @@ public class BpaApplication extends StateAware {
     @OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<BpaAppointmentSchedule> appointmentSchedule = new ArrayList<>();
 
-    @OneToMany(mappedBy = "stakeHolder", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ApplicationStakeHolder> stakeHolder = new ArrayList<>(0);
 
     @Transient

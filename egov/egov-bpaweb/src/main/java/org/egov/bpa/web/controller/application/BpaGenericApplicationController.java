@@ -52,10 +52,13 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.ArrayUtils;
 import org.egov.bpa.application.entity.ApplicationDocument;
 import org.egov.bpa.application.entity.BpaApplication;
+import org.egov.bpa.application.entity.BuildingCategory;
+import org.egov.bpa.application.entity.CheckListDetail;
 import org.egov.bpa.application.entity.ServiceType;
 import org.egov.bpa.application.entity.StakeHolder;
 import org.egov.bpa.application.entity.enums.ApplicantMode;
 import org.egov.bpa.application.service.CheckListDetailService;
+import org.egov.bpa.masters.service.BuildingCategoryService;
 import org.egov.bpa.masters.service.ServiceTypeService;
 import org.egov.bpa.masters.service.StakeHolderService;
 import org.egov.bpa.utils.BpaConstants;
@@ -88,6 +91,9 @@ public abstract class BpaGenericApplicationController extends GenericWorkFlowCon
     @Autowired
     @Qualifier("fileStoreService")
     protected FileStoreService fileStoreService;
+    
+    @Autowired
+    private BuildingCategoryService buildingCategoryService;
 
     @ModelAttribute("zones")
     public List<Boundary> zones() {
@@ -98,6 +104,14 @@ public abstract class BpaGenericApplicationController extends GenericWorkFlowCon
     @ModelAttribute("serviceTypeList")
     public List<ServiceType> getServiceTypeList() {
         return serviceTypeService.findAll();
+    }
+    @ModelAttribute("checkListDetailList")
+    public List<CheckListDetail> checkListDetailList() {
+        return checkListDetailService.findActiveCheckListByChecklistType(BpaConstants.CHECKLIST_TYPE);
+    }
+    @ModelAttribute("buildingCategorYlist")
+    public List<BuildingCategory> getAllBuildingCategoryList() {
+        return buildingCategoryService.findAll();
     }
 
     @ModelAttribute("stakeHolderList")

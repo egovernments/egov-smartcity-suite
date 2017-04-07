@@ -53,13 +53,15 @@ id="editWaterConnectionform" cssClass="form-horizontal form-groups-bordered" enc
 	<form:hidden path="" id="workFlowAction" name="workFlowAction"/>
 			<form:hidden path="" id="wfstateDesc" value="${waterConnectionDetails.state.value}"/> 
 
+	<form:hidden path="" id="mode" name="mode" value="${mode}"/> 
+
 			<div class="panel panel-primary" data-collapsed="0">
 
 				<div class="panel-body custom-form ">
 					<jsp:include page="applicationDetails.jsp"></jsp:include>
 					<jsp:include page="applicantDetailForm.jsp"></jsp:include>
 					<jsp:include page="siteDetail.jsp"></jsp:include>
-
+					<jsp:include page="buildingDetails.jsp"/>
 				</div>
 			</div> 
 			<jsp:include page="../common/commonWorkflowMatrix.jsp"/>

@@ -43,7 +43,65 @@ jQuery(document).ready(function($) {
 		bootbox.alert($('#noJAORSAMessage').val());
 
 });
+function validateMobileNumber(obj)
+{
 
+	var text = obj.value;
+	if(text!=''){
+		
+		if(text.length!=10)
+		{		
+			obj.value="";
+			
+			bootbox.alert("Invalid Mobile length");
+			return false;
+	
+		}
+	validatePhoneNumber(obj,'mobile');
+	}
+	return true;
+}
+
+function validatePhoneNumber(obj,mode){
+	var text = obj.value;
+	if(text!=""){
+		
+	var msg;
+	if(mode=='mobile')
+		msg='<s:text name="invalid.mobileno" />';
+	else
+		msg='<s:text name="invalid.teleno" />';
+	if(isNaN(text))
+	{
+		dom.get("bpa_error_area").style.display = '';
+		document.getElementById("bpa_error_area").innerHTML = msg;
+		obj.value="";
+		return false;
+	}
+	if(text<=0)
+	{
+		dom.get("bpa_error_area").style.display = '';
+		document.getElementById("bpa_error_area").innerHTML = msg;
+		obj.value="";
+		return false;
+	}
+	if(text.replace(".","~").search("~")!=-1)
+	{
+		dom.get("bpa_error_area").style.display = '';
+		document.getElementById("bpa_error_area").innerHTML = '<s:text name="period.notallowed" />';
+		obj.value='';
+		return false;
+	}
+	if(text.replace("+","~").search("~")!=-1)
+	{
+		dom.get("bpa_error_area").style.display = '';
+		document.getElementById("bpa_error_area").innerHTML = '<s:text name="plus.notallowed" />';
+		obj.value='';
+		return false;
+	}
+	}
+	return true;
+}
 $('#ward').change(function(){
 	jQuery.ajax({
 		url: "/egi/public/boundary/ajaxBoundary-blockByWard.action",
@@ -89,6 +147,25 @@ $('#serviceType').change(function(){
 		}
 	});
 });
+/*$('#serviceType').change(function(){
+	jQuery.ajax({
+		url: "/bpa/ajax/getDocumentListByServiceType",
+		type: "GET",
+		data: {
+			serviceType : jQuery('#serviceType').val()
+		},
+		cache: false,
+		dataType: "json",
+		success: function (response) {
+			
+
+		}, 
+		error: function (response) {
+			
+		}
+	});
+});*/
+
 
 
 

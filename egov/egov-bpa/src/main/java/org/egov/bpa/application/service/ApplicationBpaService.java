@@ -51,6 +51,7 @@ import org.egov.bpa.application.workflow.BpaApplicationWorkflowCustomDefaultImpl
 import org.egov.bpa.service.BpaStatusService;
 import org.egov.bpa.service.BpaUtils;
 import org.egov.bpa.utils.BpaConstants;
+import org.egov.commons.entity.Source;
 import org.egov.demand.model.EgDemand;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.exception.ApplicationRuntimeException;
@@ -81,11 +82,13 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
                 : application.getZoneId() != null ? application.getZoneId() : null);
         application.getSiteDetail().get(0).setAdminBoundary(boundaryObj);
         application.getSiteDetail().get(0).setApplication(application);
+        application.getBuildingDetail().get(0).setApplication(application);
         if (!application.getBuildingDetail().isEmpty())
             application.getBuildingDetail().get(0).setApplication(application);
         application.setApplicationNumber(applicationBpaBillService.generateApplicationnumber(application));
         final BpaStatus bpaStatus = getStatusByCodeAndModuleType("Registered");
         application.setStatus(bpaStatus);
+        application.setSource(Source.SYSTEM);
        /*final BpaApplicationWorkflowCustomDefaultImpl applicationWorkflowCustomDefaultImpl = bpaUtils
                 .getInitialisedWorkFlowBean();
         applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(application,
@@ -108,8 +111,10 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
     @Transactional
     public BpaApplication updateApplication(final BpaApplication application) {
        
+        application.setSource(Source.SYSTEM);
         final BpaApplication updatedApplication = applicationBpaRepository
                 .save(application);
+        
         bpaUtils.redirectToBpaWorkFlow(application, application.getCurrentState().getValue(), null);
 
         return updatedApplication;

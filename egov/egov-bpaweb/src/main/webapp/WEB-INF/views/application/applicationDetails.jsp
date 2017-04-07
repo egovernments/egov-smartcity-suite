@@ -72,7 +72,7 @@
 				<spring:message code="lbl.select" />
 			</form:option>
 			<form:options items="${stakeHolderList}"  itemValue="id"
-						itemLabel="id" />
+						itemLabel="code" />
 		</form:select>
 		<form:errors path="stakeHolder[0].stakeHolder"
 			cssClass="add-margin error-msg" />
@@ -177,7 +177,13 @@
 		<form:errors path="applicantMode" id="applicantMode"
 			cssClass="add-margin error-msg" />
 	</div>
-	<label class="col-sm-2 control-label text-right">Source <span
+	<label class="col-sm-2 control-label text-right">Tapan Number </label>
+	<div class="col-sm-2 add-margin">
+		<form:input class="form-control patternvalidation" maxlength="50"
+			id="tapalNumber" path="tapalNumber" />
+		<form:errors path="tapalNumber" cssClass="add-margin error-msg" />
+	</div>
+	<%-- <label class="col-sm-2 control-label text-right">Source <span
 		class="mandatory"></span></label>
 	<div class="col-sm-2 add-margin">
 		<form:select path="source" data-first-option="false" id=""
@@ -188,7 +194,7 @@
 			<form:options items="${souceList}" />
 		</form:select>
 		<form:errors path="source" cssClass="add-margin error-msg" />
-	</div>
+	</div> --%>
 </div>
 
 <div class="form-group">
@@ -209,11 +215,12 @@
 
 </div>
 <div class="form-group">
-	<label class="col-sm-3 control-label text-right">Tapan Number </label>
+	<label class="col-sm-3 control-label text-right">Remarks</label>
 	<div class="col-sm-3 add-margin">
-		<form:input class="form-control patternvalidation" maxlength="50"
-			id="tapalNumber" path="tapalNumber" />
-		<form:errors path="tapalNumber" cssClass="add-margin error-msg" />
+		<form:textarea class="form-control patternvalidation"
+			data-pattern="string" maxlength="128" id="remarks" path="remarks"
+			 />
+		<form:errors path="remarks" cssClass="add-margin error-msg" />
 	</div>
 <label class="col-sm-2 control-label text-right">Admission Fees
 	</label>
@@ -224,17 +231,6 @@
 	</div>
 </div>
 
-<div class="form-group">
-	<label class="col-sm-3 control-label text-right">Remarks</label>
-	<div class="col-sm-3 add-margin">
-		<form:textarea class="form-control patternvalidation"
-			data-pattern="string" maxlength="128" id="remarks" path="remarks"
-			 />
-		<form:errors path="remarks" cssClass="add-margin error-msg" />
-	</div>
-
-	
-</div>
 <div class="form-group">
 	<div class="col-sm-3 add-margin">
 		<c:choose>

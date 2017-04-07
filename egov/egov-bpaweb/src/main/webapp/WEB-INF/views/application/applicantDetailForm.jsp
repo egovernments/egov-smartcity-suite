@@ -77,7 +77,7 @@
 	</label>
 	<div class="col-sm-3 add-margin">
 		<form:input class="form-control patternvalidation"
-			data-pattern="string" maxlength="15"
+			data-pattern="number" maxlength="15"
 			onblur="return validateMobileNumber(this);" id="mobileNumber"
 			path="owner.mobileNumber" required="required" />
 		**SMS is sent to this
@@ -87,8 +87,8 @@
 	<label class="col-sm-2 control-label text-right">Emial <span
 		class="mandatory"></span></label>
 	<div class="col-sm-2 add-margin">
-		<form:input class="form-control patternvalidation"
-			data-pattern="string" maxlength="15" onblur="" id="emailId"
+		<form:input class="form-control "
+			maxlength="15" onblur="" id="emailId"
 			path="owner.emailid" required="required" />
 		**Mail is sent to this
 		<form:errors path="owner.emailid" cssClass="add-margin error-msg" />

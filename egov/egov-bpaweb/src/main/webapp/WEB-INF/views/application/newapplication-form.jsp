@@ -60,7 +60,7 @@
 						<input type="hidden" id="noJAORSAMessage" name="noJAORSAMessage" value="${noJAORSAMessage}" />
 			
 
-			<form:hidden id="mode" path="" value="${mode}" />
+			<input type="hidden" id="mode" name="mode" value="${mode}" />
 
 			<div class="panel panel-primary" data-collapsed="0">
 
@@ -68,6 +68,7 @@
 					<jsp:include page="applicationDetails.jsp"></jsp:include>
 					<jsp:include page="applicantDetailForm.jsp"></jsp:include>
 					<jsp:include page="siteDetail.jsp"></jsp:include>
+						<jsp:include page="buildingDetails.jsp"/>
 					<jsp:include page="bpaDocumentDetails.jsp"></jsp:include>
 
 				</div>

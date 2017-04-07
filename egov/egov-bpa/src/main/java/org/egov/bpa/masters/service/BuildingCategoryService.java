@@ -37,22 +37,25 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-jQuery(document).ready(function($) {
+package org.egov.bpa.masters.service;
 
-	$("#applicantdet").disable();
-	$("#appDet").disable();
-	$("#serviceType").prop("disabled",true);
-	$(".btn-primary")
-	.click(
-			function() {
-	document.forms[0].submit();
-			});
+import java.util.List;
 
-});
+import org.egov.bpa.application.entity.BuildingCategory;
+import org.egov.bpa.masters.repository.BuildingCategoryRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+@Service
+@Transactional(readOnly = true)
+public class BuildingCategoryService {
 
+    @Autowired
+    private  BuildingCategoryRepository buildingCategoryRepository;
 
+    public List<BuildingCategory> findAll() {
+        return buildingCategoryRepository.findAll();
+    }
 
-
-
-
+}
