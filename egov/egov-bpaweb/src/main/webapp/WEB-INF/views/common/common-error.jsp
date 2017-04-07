@@ -38,39 +38,34 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
-<%@ page contentType="text/html;charset=UTF-8" language="java"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
-<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
+
+<%@ page language="java" pageEncoding="UTF-8"%>
+	
 <div class="row">
 	<div class="col-md-12">
-		<form:form role="form" action="" method="post"
-			modelAttribute="bpaApplication" id="viewApplicationform"
-			cssClass="form-horizontal form-groups-bordered"
-			enctype="multipart/form-data">
-			<div class="panel panel-primary" data-collapsed="0">
-				<jsp:include page="view-applicantdetails.jsp"></jsp:include>
+		<div class="panel panel-primary" data-collapsed="0">
+			<div class="panel-heading">
+				<div class="panel-title text-center no-float">
+							<c:if test="${not empty message}">
+                    			<strong><spring:message code="${message}"/></strong>
+                			</c:if>
+				</div>
 			</div>
-			<div class="panel panel-primary" data-collapsed="0">
-				<jsp:include page="viewapplication-details.jsp"></jsp:include>
-			</div>
-			<div class="panel panel-primary" data-collapsed="0">
-				<jsp:include page="view-sitedetail.jsp"></jsp:include>
-			</div>
-			<div class="buttonbottom" align="center">
-				<table>
-					<tr>
-						<input type="button" name="button2" id="button2" value="Close"
-							class="btn btn-primary" onclick="window.close();" />
-						</td>
-					</tr>
-				</table>
-			</div>
-		</form:form>
+			
+				<div class="row text-center">
+						<div class="row">
+							<div class="text-center">
+								<button type="button" class="btn btn-default" data-dismiss="modal" onclick="self.close()" ><spring:message code="lbl.close"/></button>
+							</div>
+						</div>
+					</div>
+	
+		</div>
 	</div>
-</div>
+</div>				
 
-<script
-	src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>

@@ -4,6 +4,8 @@ import java.util.Date;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -16,6 +18,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
+import org.egov.bpa.application.entity.enums.AppointmentSchedulePurpose;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.hibernate.validator.constraints.Length;
 
@@ -30,11 +33,11 @@ public class BpaAppointmentSchedule extends AbstractAuditable {
     @GeneratedValue(generator = SEQ_EGBPA_APPOINTMENT_SCHEDULE, strategy = GenerationType.SEQUENCE)
     private Long id;
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @NotNull
-    @JoinColumn(name = "application", nullable = false)
+    @JoinColumn(name = "application")
     private BpaApplication application;
-    @Length(min = 1, max = 32)
-    private String purpose;
+    @Enumerated(EnumType.ORDINAL)
+    @NotNull
+    private AppointmentSchedulePurpose purpose;
     @Temporal(value = TemporalType.DATE)
     private Date appointmentDate;
 
@@ -70,11 +73,11 @@ public class BpaAppointmentSchedule extends AbstractAuditable {
         this.application = application;
     }
 
-    public String getPurpose() {
+    public AppointmentSchedulePurpose getPurpose() {
         return purpose;
     }
 
-    public void setPurpose(final String purpose) {
+    public void setPurpose(AppointmentSchedulePurpose purpose) {
         this.purpose = purpose;
     }
 

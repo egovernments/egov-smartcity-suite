@@ -54,6 +54,7 @@ import org.egov.bpa.application.entity.StakeHolder;
 import org.egov.bpa.application.entity.enums.StakeHolderType;
 import org.egov.bpa.application.service.BPADocumentService;
 import org.egov.bpa.masters.service.StakeHolderService;
+import org.egov.bpa.utils.BPASmsAndEmailService;
 import org.egov.bpa.web.controller.adaptors.StakeHolderJsonAdaptor;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.persistence.entity.CorrespondenceAddress;
@@ -93,6 +94,8 @@ public class StakeHolderController {
     private StakeHolderCodeGenerator stakeHolderCodeGenerator;
     @Autowired
     private BPADocumentService bpaDocumentService;
+    @Autowired
+    private BPASmsAndEmailService bpaSmsAndEmailService;
 
     private static final String STAKEHOLDER_NEW = "stakeholder-new";
 
@@ -124,9 +127,10 @@ public class StakeHolderController {
         stakeHolder.setUsername(stakeHolder.getEmailId());
         stakeHolder.setPassword(stakeHolder.getMobileNumber());
         stakeHolder.setType(UserType.BUSINESS);
-        stakeHolderService.save(stakeHolder);
+        StakeHolder stakeHolderRes = stakeHolderService.save(stakeHolder);
+        bpaSmsAndEmailService.sendEmailForStakeHolder(stakeHolderRes);
         redirectAttributes.addFlashAttribute("message", messageSource.getMessage("msg.create.stakeholder.success", null, null));
-        return "redirect:/stakeholder/result/" + stakeHolder.getId();
+        return "redirect:/stakeholder/result/" + stakeHolderRes.getId();
     }
 
     private CorrespondenceAddress setCorrespondenceAddress(final StakeHolder stakeHolder) {

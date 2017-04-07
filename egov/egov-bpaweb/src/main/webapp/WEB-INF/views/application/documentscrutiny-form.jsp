@@ -46,30 +46,41 @@
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <div class="row">
 	<div class="col-md-12">
-		<form:form role="form" action="" method="post"
-			modelAttribute="bpaApplication" id="documentscrutinyform"
+		<form:form role="form" method="post" modelAttribute="bpaApplication"
+			id="documentscrutinyform"
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
 
 			<div class="panel panel-primary" data-collapsed="0">
-
-				<div class="panel-body custom-form ">
-					<jsp:include page="view-applicantdetails.jsp"></jsp:include>
-					<jsp:include page="viewapplication-details.jsp"></jsp:include>
-					<jsp:include page="view-sitedetail.jsp"></jsp:include>
-				</div>
+				<jsp:include page="view-applicantdetails.jsp"></jsp:include>
 			</div>
-			<div class="buttonbottom" align="center">
-				<table>
-					<tr>
-						<input type="button" name="button2" id="button2" value="Close"
-							class="btn btn-primary" onclick="window.close();" />
-						</td>
-					</tr>
-				</table>
+			<div class="panel panel-primary" data-collapsed="0">
+				<jsp:include page="viewapplication-details.jsp"></jsp:include>
+			</div>
+			<div class="panel panel-primary" data-collapsed="0">
+				<jsp:include page="view-sitedetail.jsp"></jsp:include>
+			</div>
+			<div align="center">
+				<c:if test="${mode eq 'newappointment'}">
+					<a
+						href="/bpa/application/scheduleappointment/${bpaApplication.applicationNumber}"
+						class="btn btn-primary"> New Appointment </a>
+				</c:if>
+				<c:if test="${mode eq 'postponeappointment'}">
+					<a
+						href="/bpa/application/postponeappointment/${bpaApplication.applicationNumber}"
+						class="btn btn-primary"> Reschedule Appointment </a>
+				</c:if>
+				<a
+					href="/bpa/application/documentscrutiny/${bpaApplication.applicationNumber}"
+					class="btn btn-primary"> Document Scrutiny </a> <input
+					type="button" name="button2" id="button2" value="Close"
+					class="btn btn-default" onclick="window.close();" />
+				</td>
 			</div>
 		</form:form>
 	</div>
 </div>
 
-<script src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
+<script
+	src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>

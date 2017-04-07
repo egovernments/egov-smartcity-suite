@@ -56,6 +56,7 @@ import org.egov.bpa.application.entity.BpaApplication;
 import org.egov.bpa.application.service.ApplicationBpaService;
 import org.egov.bpa.application.service.collection.GenericBillGeneratorService;
 import org.egov.bpa.service.BpaUtils;
+import org.egov.bpa.utils.BPASmsAndEmailService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,22 +74,19 @@ public class NewApplicationController extends BpaGenericApplicationController {
 
     @Autowired
     private GenericBillGeneratorService genericBillGeneratorService;
-
     @Autowired
     private BpaUtils bpaUtils;
-
     @Autowired
     private ApplicationBpaService applicationBpaService;
-
-  
+    @Autowired
+    private BPASmsAndEmailService bpaSmsAndEmailService;
 
     @RequestMapping(value = "/newApplication-newform", method = GET)
     public String showNewApplicationForm(@ModelAttribute final BpaApplication bpaApplication,
             final Model model, final HttpServletRequest request) {
-        model.addAttribute("mode","");
+        model.addAttribute("mode", "");
         return "newapplication-form";
     }
-
 
     @RequestMapping(value = "/newApplication-create", method = POST)
     public String createNewConnection(@Valid @ModelAttribute final BpaApplication bpaApplication,
@@ -117,8 +115,9 @@ public class NewApplicationController extends BpaGenericApplicationController {
         processAndStoreApplicationDocuments(bpaApplication);
         bpaApplication.setAdmissionfeeAmount(applicationBpaService
                 .setAdmissionFeeAmountForRegistration(String.valueOf(bpaApplication.getServiceType().getId())));
-        applicationBpaService.createNewApplication(bpaApplication);
-        return genericBillGeneratorService.generateBillAndRedirectToCollection(bpaApplication, model);
+        BpaApplication bpaApplicationRes = applicationBpaService.createNewApplication(bpaApplication);
+        bpaSmsAndEmailService.sendSMSAndEmail(bpaApplicationRes);
+        return genericBillGeneratorService.generateBillAndRedirectToCollection(bpaApplicationRes, model);
     }
 
     private void validateDocuments(final List<ApplicationDocument> applicationDocs,

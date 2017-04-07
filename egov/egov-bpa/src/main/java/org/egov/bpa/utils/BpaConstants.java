@@ -86,4 +86,10 @@ public class BpaConstants {
     public static final String FILESTORE_MODULECODE = "BPA";
     public static final String CHECKLIST_TYPE = "DOCUMENTATION";
     public static final String BPA_STATUS_SUPERINDENT_APPROVED="Superintendent Approved";
+    
+    public static final String SENDSMSFORBPA = "SENDSMSFROOMBPAMODULE";
+    public static final String SENDEMAILFORBPA = "SENDEMAILFROOMBPAMODULE";
+    
+ // Sms And Email Code For New Connection
+    public static final String SMSEMAILTYPENEWBPAREGISTERED = "newbparegistered";
 }

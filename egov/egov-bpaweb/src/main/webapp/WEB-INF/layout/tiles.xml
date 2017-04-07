@@ -116,4 +116,16 @@
     	<put-attribute name="page-title" value="title.stakehol.update" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/stakeholder/search-stakeholder-edit.jsp"/>
     </definition>
+     <definition name="schedule-appiontment-new" extends="base_layout">
+        <put-attribute name="page-title" value="title.schedule.appmnt" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/application/schedule-appiontment-new.jsp"/>
+    </definition>
+     <definition name="reschedule-appiontment" extends="base_layout">
+        <put-attribute name="page-title" value="title.reschedule.appmnt" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/application/reschedule-appiontment.jsp"/>
+    </definition>
+     <definition name="view-schedule-appiontment" extends="base_layout">
+        <put-attribute name="page-title" value="title.view.schedule.appmnt" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/application/view-schedule-appiontment.jsp"/>
+    </definition>
 </tiles-definitions>

@@ -2,7 +2,7 @@
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~     Copyright (C) <2017>  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -45,53 +45,70 @@
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 <div class="panel-heading custom_form_panel_heading">
 	<div class="panel-title">
-		<spring:message code="lbl.applicant.details" />
+		<spring:message code="lbl.existing.schedule.scrutiny" />
 	</div>
 </div>
-<div id="applicantdet">
-	<div class="form-group">
-
-		<label class="col-sm-3 control-label text-right"><spring:message
-				code="lbl.applicant.name" /> <span class="mandatory"></span> </label>
-		<div class="col-sm-3 add-margin">
-			<form:input class="form-control patternvalidation"
-				data-pattern="alphabetwithspace" maxlength="128"
-				id="owner.applicantName" path="owner.applicantName"
-				required="required" />
-			<form:errors path="owner.applicantName"
-				cssClass="add-margin error-msg" />
+<div class="panel-body" data-collapsed="0">
+	<c:forEach items="${appointmentScheduledList}" var="appoimnt"
+		varStatus="counter">
+		<div class="panel-heading custom_form_panel_heading">
+			<div class="panel-title">
+				Scheduled Appointment
+				<c:out value="${counter.index+1}"></c:out>
+			</div>
+		</div>
+		<div class="row add-border">
+			<div class="col-sm-3 add-margin">
+				<spring:message code="lbl.purpose" />
+			</div>
+			<div class="col-sm-3 add-margin view-content">
+				<c:out value="${appoimnt.purpose}" default="N/A"></c:out>
+			</div>
+			<div class="col-sm-3 add-margin">
+				<spring:message code="lbl.appmnt.date" />
+			</div>
+			<div class="col-sm-3 add-margin view-content">
+				<c:out value="${appoimnt.appointmentDate}" default="N/A"></c:out>
+			</div>
 		</div>
 
-		<label class="col-sm-2 control-label text-right"><spring:message
-				code="lbl.owner.address" /><span class="mandatory"></span> </label>
-		<div class="col-sm-3 add-margin">
-			<form:textarea path="owner.address" id="address"
-				class="form-control patternvalidation"
-				data-pattern="alphanumericwithspace" required="required"
-				maxlength="256" cols="5" rows="4" />
-			<form:errors path="owner.address" cssClass="add-margin error-msg" />
-		</div>
-	</div>
-	<div class="form-group">
-		<label class="col-sm-3 control-label text-right"><spring:message
-				code="lbl.mobileNo" /> <span class="mandatory"></span> </label>
-		<div class="col-sm-3 add-margin">
-			<form:input class="form-control patternvalidation"
-				data-pattern="number" maxlength="10"
-				onblur="return validateMobileNumber(this);" id="mobileNumber"
-				path="owner.mobileNumber" required="required" />
-			**SMS is sent to this
-			<form:errors path="owner.mobileNumber"
-				cssClass="add-margin error-msg" />
+		<div class="row add-border">
+			<div class="col-sm-3 add-margin">
+				<spring:message code="lbl.appmnt.time" />
+			</div>
+			<div class="col-sm-3 add-margin view-content">
+				<c:out value="${appoimnt.appointmentTime}" default="N/A"></c:out>
+			</div>
+			<div class="col-sm-3 add-margin">
+				<spring:message code="lbl.appmnt.location" />
+			</div>
+			<div class="col-sm-3 add-margin view-content">
+				<c:out value="${appoimnt.appointmentLocation}" default="N/A"></c:out>
+			</div>
 		</div>
 
-		<label class="col-sm-2 control-label text-right"><spring:message
-				code="lbl.emailid" /> <span class="mandatory"></span></label>
-		<div class="col-sm-3 add-margin">
-			<form:input class="form-control " maxlength="128" onblur=""
-				id="emailId" path="owner.emailid" required="required" />
-			**Mail is sent to this
-			<form:errors path="owner.emailid" cssClass="add-margin error-msg" />
+		<div class="row add-border">
+			<div class="col-sm-3 add-margin">
+				<spring:message code="lbl.remarks" />
+			</div>
+			<div class="col-sm-3 add-margin view-content">
+				<c:out value="${appoimnt.remarks}" default="N/A"></c:out>
+			</div>
+			<div class="col-sm-3 add-margin">
+				<spring:message code="lbl.ispostponed" />
+			</div>
+			<div class="col-sm-3 add-margin view-content">
+				<c:out value="${appoimnt.postponed ? 'YES' : 'NO'}" default="N/A"></c:out>
+			</div>
 		</div>
-	</div>
+
+		<div class="row add-border">
+			<div class="col-sm-3 add-margin">
+				<spring:message code="lbl.postpone.reason" />
+			</div>
+			<div class="col-sm-3 add-margin view-content">
+				<c:out value="${appoimnt.postponementReason}" default="N/A"></c:out>
+			</div>
+		</div>
+	</c:forEach>
 </div>

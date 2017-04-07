@@ -38,39 +38,34 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
-<%@ page contentType="text/html;charset=UTF-8" language="java"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@page import="org.python.modules.jarray"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
-<div class="row">
-	<div class="col-md-12">
-		<form:form role="form" action="" method="post"
-			modelAttribute="bpaApplication" id="viewApplicationform"
-			cssClass="form-horizontal form-groups-bordered"
-			enctype="multipart/form-data">
-			<div class="panel panel-primary" data-collapsed="0">
-				<jsp:include page="view-applicantdetails.jsp"></jsp:include>
-			</div>
-			<div class="panel panel-primary" data-collapsed="0">
-				<jsp:include page="viewapplication-details.jsp"></jsp:include>
-			</div>
-			<div class="panel panel-primary" data-collapsed="0">
-				<jsp:include page="view-sitedetail.jsp"></jsp:include>
-			</div>
-			<div class="buttonbottom" align="center">
-				<table>
-					<tr>
-						<input type="button" name="button2" id="button2" value="Close"
-							class="btn btn-primary" onclick="window.close();" />
-						</td>
-					</tr>
-				</table>
-			</div>
-		</form:form>
-	</div>
-</div>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 
-<script
-	src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
+<form:form role="form" method="post" action=""
+	modelAttribute="bpaAppointmentSchedule" id="bpaAppointmentScheduleForm"
+	cssClass="form-horizontal form-groups-bordered"
+	enctype="multipart/form-data">
+
+	<input type="hidden" name="applicationNumber" id="applicationNumber"
+		value="${applicationNumber}">
+	<div class="panel-heading custom_form_panel_heading">
+		<div class="panel-title">
+			<spring:message code="lbl.schedule.doc.scrutiny" />
+		</div>
+	</div>
+	<div class="panel panel-primary" data-collapsed="0">
+		<div class="panel-body custom-form ">
+			<jsp:include page="schedule-appiontment-form.jsp"></jsp:include>
+		</div>
+	</div>
+	<div class="text-center">
+		<button type="submit" class='btn btn-primary' id="scheduleSubmit">
+			<spring:message code='lbl.schedule' />
+		</button>
+		<a href='javascript:void(0)' class='btn btn-default'
+			onclick='self.close()'><spring:message code='lbl.close' /></a>
+	</div>
+</form:form>
