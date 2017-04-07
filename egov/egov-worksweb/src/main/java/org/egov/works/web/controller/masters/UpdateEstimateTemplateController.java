@@ -43,7 +43,9 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.egov.infra.exception.ApplicationException;
 import org.egov.works.masters.entity.EstimateTemplate;
+import org.egov.works.masters.entity.EstimateTemplateActivity;
 import org.egov.works.masters.service.EstimateTemplateService;
+import org.egov.works.masters.service.ScheduleOfRateService;
 import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -60,6 +62,9 @@ public class UpdateEstimateTemplateController extends BaseEstimateTemplateContro
 
     @Autowired
     private EstimateTemplateService estimateTemplateService;
+
+    @Autowired
+    private ScheduleOfRateService scheduleOfRateService;
 
     @RequestMapping(value = "/estimatetemplate-edit/{estimateTemplateId}", method = RequestMethod.GET)
     public String showEstimateTemplateFormToModify(final Model model, @PathVariable final Long estimateTemplateId)
@@ -83,7 +88,10 @@ public class UpdateEstimateTemplateController extends BaseEstimateTemplateContro
             model.addAttribute(WorksConstants.MODE, mode);
 
         if (resultBinder.hasErrors()) {
+            model.addAttribute(WorksConstants.MODE, WorksConstants.EDIT);
             estimateTemplateService.loadModelValues(model, mode);
+            for (final EstimateTemplateActivity activity : estimateTemplate.getTempEstimateTemplateSorActivities())
+                activity.setSchedule(scheduleOfRateService.getScheduleOfRateById(activity.getSchedule().getId()));
             return "estimatetemplate-modify";
         }
         estimateTemplateService.createEstimateTemplateActivities(estimateTemplate);

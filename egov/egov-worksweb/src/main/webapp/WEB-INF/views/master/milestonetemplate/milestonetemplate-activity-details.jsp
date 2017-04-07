@@ -82,7 +82,7 @@
 									data-idx="0"
 									data-optional="0"
 									data-errormsg="Stage Order Number is mandatory!"
-									class="form-control table-input" required = "required" />
+									class="form-control stageordernumber table-input" required = "required" />
 								<form:errors path="tempMilestoneTemplateActivities[0].stageOrderNo"
 									cssClass="add-margin error-msg" /></td>
 							<td><form:textarea path="tempMilestoneTemplateActivities[0].description" 

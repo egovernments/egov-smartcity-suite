@@ -53,7 +53,6 @@
 			</c:if>
 			<input type="submit" name="closeButton" id="closeButton"
 				value="Close" Class="btn btn-default" onclick="window.close();" />
-				<div></div>
 		</div>
 	</div>
 </div>

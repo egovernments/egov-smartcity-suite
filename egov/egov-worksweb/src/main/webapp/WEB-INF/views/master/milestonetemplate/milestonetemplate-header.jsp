@@ -54,6 +54,7 @@
 	</div>
 	<input type="hidden" value="<spring:message code='error.row.delete' />" id = "rowDeleteErrorMessage" />
 	<input type="hidden" value="<spring:message code='error.milestonetemplate.totalvalue' />" id='milestoneTemplateActivityTotalValueError'>
+	<input type="hidden" value="<spring:message code='error.milestonetemplate.stageordernumber.invalid' />" id='stageOrderNumberInvalidError'>
 	<c:if test="${mode == 'edit' }">
 		<input type="hidden" value="${milestoneTemplate.id }"  name="milestoneTemplate" />
 	</c:if>

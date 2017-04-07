@@ -47,51 +47,30 @@
 	</div>
 	<div class="panel-body">
 		<div class="form-group">
-			<label class="col-sm-3 control-label text-right"> <spring:message code="lbl.typeofwork" /></label>
+			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.typeofwork" /></label>
 			<div class="col-sm-3 add-margin">
-				<select name="typeOfWork" data-first-option="false" id="typeOfWork" class="form-control disablefield">
-					<option value="">
-						<spring:message code="lbl.select" />
-					</option>
-					<c:forEach items="${typeOfWork}" var="work">
-						<c:choose>
-							<c:when test="${typeOfWorkId == work.id }">
-								<option value="${work.id }" selected="selected">${work.name }</option>
-							</c:when>
-							<c:otherwise>
-								<option value="${work.id }">${work.name }</option>
-							</c:otherwise>
-						</c:choose>
-					</c:forEach>
-				</select>
+				<form:select  path="typeOfWork" id="typeOfWork" cssClass="form-control">
+		           <form:option value="" > <spring:message code="lbl.select" /></form:option>
+		           <form:options items="${typeOfWork}" itemLabel="name" itemValue="id" />
+		        </form:select>
+		        <form:errors path="typeOfWork" cssClass="error" />
 			</div>
-			<label class="col-sm-2 control-label text-right"> <spring:message code="lbl.subtypeofwork" /></label>
+			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.subtypeofwork" /></label>
 			<div class="col-sm-3 add-margin">
-				<select name="subTypeOfWork" data-first-option="false" id="subTypeOfWork" class="form-control">
-					<option value="">
-						<spring:message code="lbl.select" />
-					</option>
-					<c:forEach items="${subTypeOfWork}" var="work">
-						<c:choose>
-							<c:when test="${subTypeOfWorkId == work.id }">
-								<option value="${work.id }" selected="selected">${work.name }</option>
-							</c:when>
-							<c:otherwise>
-								<option value="${work.id }">${work.name }</option>
-							</c:otherwise>
-						</c:choose>
-					</c:forEach>
-				</select>
+				<form:select  path="subTypeOfWork" id="subTypeOfWork" cssClass="form-control">
+		           <form:option value="" > <spring:message code="lbl.select" /></form:option>
+		        </form:select>
+		        <form:errors path="subTypeOfWork" cssClass="error" />
 			</div>
 		</div>
 		<div class="form-group">
 			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.templatecode" /></label>
 			<div class="col-sm-3 add-margin">
-				<input name="templateCode" id="templateCode" class="form-control" />
+				<form:input path="templateCode" id="templateCode" class="form-control" />
 			</div>
 			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.templatename" /></label>
 			<div class="col-sm-3 add-margin">
-				<input name="templateName" id="templateName" value="" class="form-control"></textarea>
+				<form:input path="templateName" id="templateName" value="" class="form-control" />
 			</div>
 		</div>
 		<div class="form-group">
@@ -99,9 +78,10 @@
 			<div class="col-sm-3 add-margin">
 			<c:choose>
 				<c:when test="${mode != 'edit' && mode != 'view' }">
-					<select name="status" data-first-option="false" id="status" disabled="disabled" class="form-control">
-						<option value="true"><c:out value = "ACTIVE" /></option>
-					</select>
+					<form:select path="status" id="status" cssClass="form-control" disabled = "disabled">
+						<form:option value="true" ><c:out value="ACTIVE" /></form:option>
+			        </form:select>
+			        <form:errors path="status" cssClass="error" />
 				</c:when>
 				<c:otherwise>
 					<form:select path="status" id="status" cssClass="form-control">

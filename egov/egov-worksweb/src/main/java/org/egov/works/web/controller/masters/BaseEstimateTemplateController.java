@@ -62,7 +62,8 @@ public abstract class BaseEstimateTemplateController {
         final EstimateTemplate existingEstimateTemplate = estimateTemplateService
                 .getEstimateTemplateByCode(estimateTemplate.getCode());
         if (existingEstimateTemplate != null && !existingEstimateTemplate.getId().equals(estimateTemplate.getId()))
-            resultBinder.reject("error.estimatetemplate.exists", "error.estimatetemplate.exists");
+            resultBinder.reject("error.estimatetemplate.exists", new String[] { estimateTemplate.getCode() },
+                    "error.estimatetemplate.exists");
 
         if (estimateTemplate.getCode() == null)
             resultBinder.reject("error.estimatetemplate.code", "error.estimatetemplate.code");

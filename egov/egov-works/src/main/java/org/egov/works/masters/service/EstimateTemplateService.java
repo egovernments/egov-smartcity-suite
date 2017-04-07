@@ -144,27 +144,26 @@ public class EstimateTemplateService {
     }
 
     public void createEstimateTemplateActivities(final EstimateTemplate estimateTemplate) {
-        EstimateTemplateActivity etaSor;
-        EstimateTemplateActivity etaNonSor;
+        EstimateTemplateActivity estimateTemplateActivity;
         estimateTemplate.getEstimateTemplateActivities().clear();
         for (final EstimateTemplateActivity eta : estimateTemplate.getTempEstimateTemplateSorActivities()) {
-            etaSor = getEstimateTemplateActivity();
+            estimateTemplateActivity = getEstimateTemplateActivity();
             final ScheduleOfRate sor = eta.getSchedule();
             sor.setUom(eta.getSchedule().getUom());
-            etaSor.setSchedule(sor);
-            etaSor.setEstimateTemplate(estimateTemplate);
-            estimateTemplate.getEstimateTemplateActivities().add(etaSor);
+            estimateTemplateActivity.setSchedule(sor);
+            estimateTemplateActivity.setEstimateTemplate(estimateTemplate);
+            estimateTemplate.getEstimateTemplateActivities().add(estimateTemplateActivity);
         }
         int indexForNonSOr = 0;
         for (final EstimateTemplateActivity eta : estimateTemplate.getTempEstimateTemplateNonSorActivities())
             if (estimateTemplate.getTempEstimateTemplateNonSorActivities().get(indexForNonSOr).getNonSor().getUom()
                     .getId() != null) {
-                etaNonSor = getEstimateTemplateActivity();
-                etaNonSor.setNonSor(createNonSor(eta));
-                etaNonSor.setUom(uomService.findOne(eta.getNonSor().getUom().getId()));
-                etaNonSor.setValue(eta.getValue());
-                etaNonSor.setEstimateTemplate(estimateTemplate);
-                estimateTemplate.getEstimateTemplateActivities().add(etaNonSor);
+                estimateTemplateActivity = getEstimateTemplateActivity();
+                estimateTemplateActivity.setNonSor(createNonSor(eta));
+                estimateTemplateActivity.setUom(uomService.findOne(eta.getNonSor().getUom().getId()));
+                estimateTemplateActivity.setValue(eta.getValue());
+                estimateTemplateActivity.setEstimateTemplate(estimateTemplate);
+                estimateTemplate.getEstimateTemplateActivities().add(estimateTemplateActivity);
                 indexForNonSOr++;
             }
 

@@ -131,9 +131,17 @@ $('#submitBtn').click(function() {
 		
 		if(parseFloat($("#totalPercentageValue").html()) != 100){
 			isSuccess=false;
-			var message = $("#milestoneTemplateActivityTotalValueError").val();
-			bootbox.alert(message);
+			bootbox.alert($("#milestoneTemplateActivityTotalValueError").val());
 			return isSuccess;
+		}
+		
+		var elements = $(".stageordernumber")
+		for (var i=0;i<elements.length;i++){
+			if(!$.isNumeric($(elements[i]).val()) || $(elements[i]).val() == "0.0"){
+				isSuccess=false;
+				bootbox.alert($("#stageOrderNumberInvalidError").val());
+				break;
+			}
 		}
 		
 		if(isSuccess)
@@ -145,7 +153,7 @@ $('#submitBtn').click(function() {
 function deleteMilestoneTemplateActivity(obj) {
     var rIndex = getRow(obj).rowIndex;
     
-	var tbl=$('#tblmilestonetemplate');	
+	var tbl=document.getElementById('tblmilestonetemplate');	
 	var rowcount=$("#tblmilestonetemplate tbody tr").length;
 
     if(rowcount<=1) {

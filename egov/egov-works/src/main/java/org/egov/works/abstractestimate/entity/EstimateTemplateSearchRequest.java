@@ -91,7 +91,7 @@ public class EstimateTemplateSearchRequest {
         return status;
     }
 
-    public void setStatus(boolean status) {
+    public void setStatus(final boolean status) {
         this.status = status;
     }
 
