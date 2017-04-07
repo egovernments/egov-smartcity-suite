@@ -66,6 +66,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.STR_INSTRUMENTTYPE_CH
 import static org.egov.ptis.constants.PropertyTaxConstants.STR_INSTRUMENTTYPE_DD;
 import static org.egov.ptis.constants.PropertyTaxConstants.STR_REALIZATION;
 import static org.egov.ptis.constants.PropertyTaxConstants.STR_WITH_AMOUNT;
+import static org.egov.ptis.constants.PropertyTaxConstants.SUPER_STRUCTURE;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -800,7 +801,6 @@ public class PropertyTaxCollection extends TaxCollection {
     public String constructAdditionalInfoForReceipt(final BillReceiptInfo billReceiptInfo) {
         final EgBill egBill = egBillDAO.findById(Long.valueOf(billReceiptInfo.getBillReferenceNum()), false);
         return (egBill != null && egBill.getDescription().contains(SUPER_STRUCTURE)) ? SUPER_STRUCTURE : null;
-        return null;
     }
 
     @Override
