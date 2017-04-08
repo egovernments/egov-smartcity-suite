@@ -112,7 +112,6 @@ $('#ward').change(function(){
 		cache: false,
 		dataType: "json",
 		success: function (response) {
-			console.log("success"+response);
 			jQuery('#block').html("");
 			jQuery('#block').append("<option value=''>Select</option>");
 			jQuery.each(response, function(index, value) {
@@ -122,7 +121,6 @@ $('#ward').change(function(){
 		error: function (response) {
 			jQuery('#block').html("");
 			jQuery('#block').append("<option value=''>Select</option>");
-			console.log("failed");
 		}
 	});
 });
@@ -178,8 +176,28 @@ jQuery('form').validate({
 
 $('#buttonSubmit').click(function(e) {
 	if ($('form').valid()) {
-		console.log('submitted')
+		//
 	} else {
 		e.preventDefault();
 	}
+});
+
+$('#stakeHolderType').change(function(){
+	$.ajax({
+		url: "/bpa/ajax/stakeholdersbytype",     
+		type: "GET",
+		data: {
+			stakeHolderType : $('#stakeHolderType').val()    
+		},
+		dataType: "json",
+		success: function (response) {
+			$('#stakeHolder').empty();
+			$('#stakeHolder').append($("<option value=''>Select from below</option>"));
+			$.each(response, function(index, value) {
+				$('#stakeHolder').append($('<option>').text(value.name).attr('value', value.id));  
+			});
+		}, 
+		error: function (response) {
+		}
+	});
 });

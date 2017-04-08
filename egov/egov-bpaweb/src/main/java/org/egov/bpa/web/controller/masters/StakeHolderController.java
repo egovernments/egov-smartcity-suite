@@ -128,6 +128,7 @@ public class StakeHolderController {
         stakeHolder.setPassword(stakeHolder.getMobileNumber());
         stakeHolder.setType(UserType.BUSINESS);
         StakeHolder stakeHolderRes = stakeHolderService.save(stakeHolder);
+        bpaSmsAndEmailService.sendSMSForStakeHolder(stakeHolderRes);
         bpaSmsAndEmailService.sendEmailForStakeHolder(stakeHolderRes);
         redirectAttributes.addFlashAttribute("message", messageSource.getMessage("msg.create.stakeholder.success", null, null));
         return "redirect:/stakeholder/result/" + stakeHolderRes.getId();

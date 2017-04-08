@@ -48,55 +48,84 @@
 </div>
 
 <div id="appDet">
-<div class="form-group">
-	<label class="col-sm-3 control-label text-right">Application Type <span
-		class="mandatory"></span></label>
-	<div class="col-sm-3 add-margin">
-		<form:select path="serviceType" data-first-option="false" id="serviceType"
-			cssClass="form-control" required="required">
-			<form:option value="">
-				<spring:message code="lbl.select" />
-			</form:option>
-			<form:options items="${serviceTypeList}"  itemValue="id"
-						itemLabel="description" />
-		</form:select>
-		<form:errors path="serviceType" cssClass="add-margin error-msg" />
+	<div class="form-group">
+		<label class="col-sm-3 control-label text-right">Application
+			Type <span class="mandatory"></span>
+		</label>
+		<div class="col-sm-3 add-margin">
+			<form:select path="serviceType" data-first-option="false"
+				id="serviceType" cssClass="form-control" required="required">
+				<form:option value="">
+					<spring:message code="lbl.select" />
+				</form:option>
+				<form:options items="${serviceTypeList}" itemValue="id"
+					itemLabel="description" />
+			</form:select>
+			<form:errors path="serviceType" cssClass="add-margin error-msg" />
+		</div>
+
+		<label class="col-sm-2 control-label text-right">Application
+			Date <span class="mandatory"></span>
+		</label>
+		<div class="col-sm-3 add-margin">
+			<form:input path="applicationDate" class="form-control datepicker"
+				data-date-end-date="0d" id="applicationDate"
+				data-inputmask="'mask': 'd/m/y'" required="required" />
+			<form:errors path="applicationDate" cssClass="add-margin error-msg" />
+		</div>
 	</div>
-	
-	<label class="col-sm-2 control-label text-right">Application
-		Date <span class="mandatory"></span>
-	</label>
-	<div class="col-sm-3 add-margin">
-		<form:input path="applicationDate" class="form-control datepicker"
-			data-date-end-date="0d" id="applicationDate"
-			data-inputmask="'mask': 'd/m/y'" required="required" />
-		<form:errors path="applicationDate" cssClass="add-margin error-msg" />
+	<div class="form-group">
+		<label class="col-sm-3 control-label text-right">ApplicationNumber
+			<span class="mandatory"></span>
+		</label>
+		<div class="col-sm-3 add-margin">
+			<form:input class="form-control patternvalidation" maxlength="50"
+				id="applicationNumber" path="applicationNumber" disabled="true" />
+			<form:errors path="applicationNumber" cssClass="add-margin error-msg" />
+		</div>
+		<label class="col-sm-2 control-label text-right">Admission
+			Fees </label>
+		<div class="col-sm-3 add-margin">
+			<form:input class="form-control patternvalidation" maxlength="50"
+				name="admissionfeeAmount" id="admissionfeeAmount"
+				path="admissionfeeAmount" />
+			<form:errors path="admissionfeeAmount"
+				cssClass="add-margin error-msg" />
+		</div>
 	</div>
 </div>
 <div class="form-group">
-	<label class="col-sm-3 control-label text-right">ApplicationNumber
-		<span class="mandatory"></span>
-	</label>
+	<label class="col-sm-3 control-label text-right"><spring:message
+			code="lbl.stakeholder.type" /> <span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin">
-		<form:input class="form-control patternvalidation" maxlength="50"
-			id="applicationNumber" path="applicationNumber"  disabled="true"  />
-		<form:errors path="applicationNumber" cssClass="add-margin error-msg" />
-	</div>
-		<label class="col-sm-2 control-label text-right">Stake
-		HolderType </label>
-	<div class="col-sm-3 add-margin">
-		<form:select path="stakeHolder[0].stakeHolder"
-			data-first-option="false" id="" cssClass="form-control">
+		<form:select path="stakeHolder[0].stakeHolder.stakeHolderType"
+			id="stakeHolderType"
+			value="${bpaApplication.stakeHolder[0].stakeHolder.stakeHolderType}"
+			required="required" cssClass="form-control">
 			<form:option value="">
 				<spring:message code="lbl.select" />
 			</form:option>
-			<form:options items="${stakeHolderList}"  itemValue="id"
-						itemLabel="code" />
+			<form:options items="${stakeHolderTypeList}" />
 		</form:select>
 		<form:errors path="stakeHolder[0].stakeHolder"
 			cssClass="add-margin error-msg" />
 	</div>
-</div>
+	<label class="col-sm-2 control-label text-right"><spring:message
+			code="lbl.stakeholder.name" /><span class="mandatory"></span> </label>
+	<div class="col-sm-3 add-margin">
+		<form:hidden path="stakeHolder[0].application" />
+		<form:select path="stakeHolder[0].stakeHolder" id="stakeHolder"
+			value="${bpaApplication.stakeHolder[0].stakeHolder.name}"
+			required="required" cssClass="form-control">
+			<form:option value="">
+				<spring:message code="lbl.select" />
+			</form:option>
+			<form:options items="${stakeHolderList}" itemValue="id"
+				itemLabel="name" />
+		</form:select>
+		<form:errors path="stakeHolder[0].stakeHolder"
+			cssClass="add-margin error-msg" />
+	</div>
 </div>
 <div class="form-group">
 	<label class="col-sm-3 control-label text-right">Old
@@ -207,13 +236,6 @@
 			data-pattern="string" maxlength="128" id="remarks" path="remarks"
 			 />
 		<form:errors path="remarks" cssClass="add-margin error-msg" />
-	</div>
-<label class="col-sm-2 control-label text-right">Admission Fees
-	</label>
-	<div class="col-sm-3 add-margin">
-		<form:input class="form-control patternvalidation" maxlength="50" name="admissionfeeAmount"
-			id="admissionfeeAmount" path="admissionfeeAmount" />
-		<form:errors path="admissionfeeAmount" cssClass="add-margin error-msg" />
 	</div>
 </div>
 <div class="form-group">

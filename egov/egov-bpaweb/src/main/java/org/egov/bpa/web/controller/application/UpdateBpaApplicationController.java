@@ -48,6 +48,7 @@ import org.egov.bpa.application.entity.BpaApplication;
 import org.egov.bpa.application.entity.BpaAppointmentSchedule;
 import org.egov.bpa.application.service.ApplicationBpaService;
 import org.egov.bpa.application.service.BpaAppointmentScheduleService;
+import org.egov.bpa.masters.service.StakeHolderService;
 import org.egov.bpa.utils.BPASmsAndEmailService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.eis.web.contract.WorkflowContainer;
@@ -83,14 +84,15 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
     private static final String ADDITIONALRULE = "additionalRule";
     @Autowired
     private SecurityUtils securityUtils;
-
     @Autowired
     private ApplicationBpaService applicationBpaService;
     @Autowired
     private BpaAppointmentScheduleService bpaAppointmentScheduleService;
     @Autowired
     private BPASmsAndEmailService bpaSmsAndEmailService;
-
+    @Autowired
+    private StakeHolderService stakeHolderService;
+    
     @ModelAttribute
     public BpaApplication getBpaApplication(@PathVariable final String applicationNumber) {
         return applicationBpaService.findByApplicationNumber(applicationNumber);
@@ -111,6 +113,8 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
             mode="edit";
         }
         model.addAttribute("mode", mode);
+        model.addAttribute("stakeHolderList", stakeHolderService
+                .getStakeHolderListByType(application.getStakeHolder().get(0).getStakeHolder().getStakeHolderType()));
         if (application != null) {
             loadViewdata(model, application);
             if (application.getState() != null

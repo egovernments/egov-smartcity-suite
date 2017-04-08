@@ -47,7 +47,10 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.egov.bpa.application.entity.StakeHolder;
+import org.egov.bpa.application.entity.enums.StakeHolderType;
 import org.egov.bpa.application.service.ApplicationBpaService;
+import org.egov.bpa.masters.service.StakeHolderService;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.AssignmentAdaptor;
 import org.egov.eis.service.AssignmentService;
@@ -77,19 +80,19 @@ public class BpaAjaxController {
 
     @Autowired
     private ApplicationBpaService applicationBpaService;
-
+    @Autowired
+    private StakeHolderService stakeHolderService;
     @RequestMapping(value = "/ajax/getAdmissionFees", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public BigDecimal isConnectionPresentForProperty(@RequestParam final String serviceType) {
         return applicationBpaService.setAdmissionFeeAmountForRegistration(serviceType);
     }
 
-   
-
     @RequestMapping(value = "/ajax-designationsByDepartment", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody List<Designation> getDesignationsByDepartmentId(
+    @ResponseBody
+    public List<Designation> getDesignationsByDepartmentId(
             @ModelAttribute("designations") @RequestParam final Long approvalDepartment) {
-        List<Designation> designations = new ArrayList<Designation>();
+        List<Designation> designations = new ArrayList<>();
         if (approvalDepartment != null && approvalDepartment != 0 && approvalDepartment != -1)
             designations = designationService.getAllDesignationByDepartment(approvalDepartment, new Date());
         designations.forEach(designation -> designation.toString());
@@ -97,9 +100,10 @@ public class BpaAjaxController {
     }
 
     @RequestMapping(value = "/ajax-positionsByDepartmentAndDesignation", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
-    public @ResponseBody String getPositionByDepartmentAndDesignation(@RequestParam final Long approvalDepartment,
+    @ResponseBody
+    public String getPositionByDepartmentAndDesignation(@RequestParam final Long approvalDepartment,
             @RequestParam final Long approvalDesignation, final HttpServletResponse response) {
-        List<Assignment> assignmentList = new ArrayList<Assignment>();
+        List<Assignment> assignmentList = new ArrayList<>();
         if (approvalDepartment != null && approvalDepartment != 0 && approvalDepartment != -1
                 && approvalDesignation != null && approvalDesignation != 0 && approvalDesignation != -1) {
             assignmentList = assignmentService.findAllAssignmentsByDeptDesigAndDates(approvalDepartment,
@@ -111,5 +115,10 @@ public class BpaAjaxController {
         }
         return "[]";
     }
-
+    
+    @RequestMapping(value = "/ajax/stakeholdersbytype", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<StakeHolder> getStakeHolderByType(@RequestParam final StakeHolderType stakeHolderType) {
+        return stakeHolderService.getStakeHolderListByType(stakeHolderType);
+    }
 }

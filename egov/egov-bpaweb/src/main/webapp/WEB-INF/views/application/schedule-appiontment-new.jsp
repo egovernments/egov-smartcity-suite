@@ -51,11 +51,7 @@
 
 	<input type="hidden" name="applicationNumber" id="applicationNumber"
 		value="${applicationNumber}">
-	<div class="panel-heading custom_form_panel_heading">
-		<div class="panel-title">
-			<spring:message code="lbl.schedule.doc.scrutiny" />
-		</div>
-	</div>
+	
 	<div class="panel panel-primary" data-collapsed="0">
 		<div class="panel-body custom-form ">
 			<jsp:include page="schedule-appiontment-form.jsp"></jsp:include>

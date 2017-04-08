@@ -39,8 +39,8 @@
  */
 jQuery(document).ready(function($) {
 
-	$("#applicantdet").disable();
-	$("#appDet").disable();
+	$("#applicantdet").prop("disabled",true);
+	$("#appDet").prop("disabled",true);
 	$("#serviceType").prop("disabled",true);
 	$(".btn-primary")
 	.click(

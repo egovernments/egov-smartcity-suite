@@ -53,6 +53,7 @@ import javax.persistence.PersistenceContext;
 import org.egov.bpa.application.entity.CheckListDetail;
 import org.egov.bpa.application.entity.StakeHolder;
 import org.egov.bpa.application.entity.StakeHolderDocument;
+import org.egov.bpa.application.entity.enums.StakeHolderType;
 import org.egov.bpa.application.service.BPADocumentService;
 import org.egov.bpa.masters.repository.StakeHolderAddressRepository;
 import org.egov.bpa.masters.repository.StakeHolderRepository;
@@ -125,6 +126,14 @@ public class StakeHolderService {
     @SuppressWarnings("unchecked")
     public List<StakeHolder> search(final StakeHolder stakeHolder) {
         final Criteria criteria = buildSearchCriteria(stakeHolder);
+        return criteria.list();
+    }
+    
+    @SuppressWarnings("unchecked")
+    public List<StakeHolder> getStakeHolderListByType(final StakeHolderType stakeholderType) {
+        final Criteria criteria = getCurrentSession().createCriteria(StakeHolder.class, "stakeHolder");
+        criteria.add(Restrictions.eq("stakeHolder.stakeHolderType", stakeholderType));
+        criteria.add(Restrictions.eq("stakeHolder.isActive", true));
         return criteria.list();
     }
 

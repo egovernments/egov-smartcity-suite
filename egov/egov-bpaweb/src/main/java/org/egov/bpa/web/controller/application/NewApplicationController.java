@@ -53,6 +53,7 @@ import javax.validation.Valid;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.egov.bpa.application.entity.ApplicationDocument;
+import org.egov.bpa.application.entity.ApplicationStakeHolder;
 import org.egov.bpa.application.entity.BpaApplication;
 import org.egov.bpa.application.service.ApplicationBpaService;
 import org.egov.bpa.application.service.collection.GenericBillGeneratorService;
@@ -110,6 +111,12 @@ public class NewApplicationController extends BpaGenericApplicationController {
             model.addAttribute("noJAORSAMessage", "No Superintendant exists to forward the application.");
             return "newapplication-form";
         }
+        List<ApplicationStakeHolder> applicationStakeHolders = new ArrayList<>();
+        ApplicationStakeHolder applicationStakeHolder= new ApplicationStakeHolder();
+        applicationStakeHolder.setApplication(bpaApplication);
+        applicationStakeHolder.setStakeHolder(bpaApplication.getStakeHolder().get(0).getStakeHolder());
+        applicationStakeHolders.add(applicationStakeHolder);
+        bpaApplication.setStakeHolder(applicationStakeHolders);
         bpaApplication.getApplicationDocument().clear();
         bpaApplication.setApplicationDocument(applicationDocs);
         processAndStoreApplicationDocuments(bpaApplication);

@@ -88,10 +88,25 @@
 			<c:out value="${bpaApplication.serviceType.description}" default="N/A"></c:out>
 		</div>
 		<div class="col-sm-3 add-margin">
+			<spring:message code="lbl.admission.fees" />
+		</div>
+		<div class="col-sm-3 add-margin view-content">
+			<c:out value="${bpaApplication.admissionfeeAmount}" default="N/A"></c:out>
+		</div>
+	</div>
+	
+	<div class="row add-border">
+		<div class="col-sm-3 add-margin">
 			<spring:message code="lbl.stakeholder.type" />
 		</div>
 		<div class="col-sm-3 add-margin view-content">
-			<c:out value="${bpaApplication.stakeHolder[0].stakeHolder}"
+			<c:out value="${bpaApplication.stakeHolder[0].stakeHolder.stakeHolderType}" default="N/A"></c:out>
+		</div>
+		<div class="col-sm-3 add-margin">
+			<spring:message code="lbl.stakeholder.name" />
+		</div>
+		<div class="col-sm-3 add-margin view-content">
+			<c:out value="${bpaApplication.stakeHolder[0].stakeHolder.name}"
 				default="N/A"></c:out>
 		</div>
 	</div>
@@ -192,12 +207,6 @@
 		</div>
 		<div class="col-sm-3 add-margin view-content">
 			<c:out value="${bpaApplication.remarks}" default="N/A"></c:out>
-		</div>
-		<div class="col-sm-3 add-margin">
-			<spring:message code="lbl.admission.fees" />
-		</div>
-		<div class="col-sm-3 add-margin view-content">
-			<c:out value="${bpaApplication.admissionfeeAmount}" default="N/A"></c:out>
 		</div>
 	</div>
 </div>

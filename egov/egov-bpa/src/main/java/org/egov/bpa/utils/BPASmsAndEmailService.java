@@ -101,17 +101,23 @@ public class BPASmsAndEmailService {
     }
 
     public void sendSMSAndEmail(final BpaApplication bpaApplication) {
-        String mobileNo = null;
-        String email = null;
-        String applicantName = null;
+        String mobileNo ;
+        String email ;
+        String applicantName ;
         if (isSmsEnabled() || isEmailEnabled()) {
             for (ApplicationStakeHolder applnStakeHolder : bpaApplication.getStakeHolder()) {
                 if (applnStakeHolder.getApplication() != null && applnStakeHolder.getApplication().getOwner() != null) {
                     applicantName = applnStakeHolder.getApplication().getOwner().getApplicantName();
                     email = applnStakeHolder.getApplication().getOwner().getEmailid();
                     mobileNo = applnStakeHolder.getApplication().getOwner().getMobileNumber();
+                    buildSmsAndEmailForBPANewAppln(bpaApplication, applicantName, mobileNo, email);
                 }
-                buildSmsAndEmailForBPANewAppln(bpaApplication, applicantName, mobileNo, email);
+                if (applnStakeHolder.getStakeHolder() != null) {
+                    applicantName = applnStakeHolder.getStakeHolder().getName();
+                    email = applnStakeHolder.getStakeHolder().getEmailId();
+                    mobileNo = applnStakeHolder.getStakeHolder().getMobileNumber();
+                    buildSmsAndEmailForBPANewAppln(bpaApplication, applicantName, mobileNo, email);
+                }
             }
         }
     }

@@ -55,13 +55,12 @@ import org.egov.bpa.application.entity.BpaApplication;
 import org.egov.bpa.application.entity.BuildingCategory;
 import org.egov.bpa.application.entity.CheckListDetail;
 import org.egov.bpa.application.entity.ServiceType;
-import org.egov.bpa.application.entity.StakeHolder;
 import org.egov.bpa.application.entity.VillageName;
 import org.egov.bpa.application.entity.enums.ApplicantMode;
+import org.egov.bpa.application.entity.enums.StakeHolderType;
 import org.egov.bpa.application.service.CheckListDetailService;
 import org.egov.bpa.masters.service.BuildingCategoryService;
 import org.egov.bpa.masters.service.ServiceTypeService;
-import org.egov.bpa.masters.service.StakeHolderService;
 import org.egov.bpa.masters.service.VillageNameService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
@@ -80,22 +79,15 @@ public abstract class BpaGenericApplicationController extends GenericWorkFlowCon
 
     @Autowired
     private BoundaryService boundaryService;
-
     @Autowired
     private ServiceTypeService serviceTypeService;
-
-    @Autowired
-    private StakeHolderService stakeHolderService;
-
     @Autowired
     private VillageNameService villageNameService;
     @Autowired
     private CheckListDetailService checkListDetailService;
-
     @Autowired
     @Qualifier("fileStoreService")
     protected FileStoreService fileStoreService;
-    
     @Autowired
     private BuildingCategoryService buildingCategoryService;
 
@@ -117,10 +109,9 @@ public abstract class BpaGenericApplicationController extends GenericWorkFlowCon
     public List<BuildingCategory> getAllBuildingCategoryList() {
         return buildingCategoryService.findAll();
     }
-
-    @ModelAttribute("stakeHolderList")
-    public List<StakeHolder> getStakeHolder() {
-        return stakeHolderService.findAll();
+    @ModelAttribute("stakeHolderTypeList")
+    public List<StakeHolderType> getStakeHolderType() {
+        return Arrays.asList(StakeHolderType.values());
     }
 
     @ModelAttribute("villageNames")     
