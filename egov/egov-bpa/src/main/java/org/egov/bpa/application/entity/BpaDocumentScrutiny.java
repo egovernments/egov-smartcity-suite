@@ -150,11 +150,13 @@ public class BpaDocumentScrutiny extends AbstractAuditable {
         this.district = district;
     }
 
-    public boolean isBoundaryDrawingSubmitted() {
+    
+
+    public boolean getIsBoundaryDrawingSubmitted() {
         return isBoundaryDrawingSubmitted;
     }
 
-    public void setBoundaryDrawingSubmitted(final boolean isBoundaryDrawingSubmitted) {
+    public void setIsBoundaryDrawingSubmitted(boolean isBoundaryDrawingSubmitted) {
         this.isBoundaryDrawingSubmitted = isBoundaryDrawingSubmitted;
     }
 

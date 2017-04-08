@@ -56,11 +56,13 @@ import org.egov.bpa.application.entity.BuildingCategory;
 import org.egov.bpa.application.entity.CheckListDetail;
 import org.egov.bpa.application.entity.ServiceType;
 import org.egov.bpa.application.entity.StakeHolder;
+import org.egov.bpa.application.entity.VillageName;
 import org.egov.bpa.application.entity.enums.ApplicantMode;
 import org.egov.bpa.application.service.CheckListDetailService;
 import org.egov.bpa.masters.service.BuildingCategoryService;
 import org.egov.bpa.masters.service.ServiceTypeService;
 import org.egov.bpa.masters.service.StakeHolderService;
+import org.egov.bpa.masters.service.VillageNameService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.entity.Boundary;
@@ -85,6 +87,8 @@ public abstract class BpaGenericApplicationController extends GenericWorkFlowCon
     @Autowired
     private StakeHolderService stakeHolderService;
 
+    @Autowired
+    private VillageNameService villageNameService;
     @Autowired
     private CheckListDetailService checkListDetailService;
 
@@ -119,6 +123,12 @@ public abstract class BpaGenericApplicationController extends GenericWorkFlowCon
         return stakeHolderService.findAll();
     }
 
+    @ModelAttribute("villageNames")     
+    public List<VillageName> getVillage() {
+        return villageNameService.findAll();
+    }
+
+    
     @ModelAttribute("electionwards")
     public List<Boundary> wards() {
 
