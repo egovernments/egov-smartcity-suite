@@ -100,11 +100,17 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
     public String updateApplicationForm(final Model model, @PathVariable final String applicationNumber,
             final HttpServletRequest request) {
         final BpaApplication application = getBpaApplication(applicationNumber);
+        String mode;
         if(application.getAppointmentSchedule().isEmpty()){
-            model.addAttribute("mode", "newappointment");
+            mode= "newappointment";
         } else {
-            model.addAttribute("mode", "postponeappointment");
+            mode= "postponeappointment";
         }
+        if(mode.isEmpty())
+        {
+            mode="edit";
+        }
+        model.addAttribute("mode", mode);
         if (application != null) {
             loadViewdata(model, application);
             if (application.getState() != null

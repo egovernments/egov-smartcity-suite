@@ -84,7 +84,7 @@ public class NewApplicationController extends BpaGenericApplicationController {
     public String showNewApplicationForm(@ModelAttribute final BpaApplication bpaApplication,
             final Model model, final HttpServletRequest request) {
         bpaApplication.setApplicationDate(new Date());
-        model.addAttribute("mode", "");
+        model.addAttribute("mode", "new");
         return "newapplication-form";
     }
 

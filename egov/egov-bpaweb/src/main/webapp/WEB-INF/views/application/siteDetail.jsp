@@ -52,14 +52,14 @@
 		class="mandatory"></span>
 	</label>
 	<div class="col-sm-3 add-margin">
-		<c:if test="${mode != '' && mode =='edit'}">
+		<c:if test="${mode =='newappointment'}">
 			<form:select path="zoneId" data-first-option="false" id="zone"
 				cssClass="form-control" required="required">
 				<form:options items="${zones}" itemValue="id" itemLabel="name" />
 			</form:select>
 			<form:errors path="zoneId" cssClass="add-margin error-msg" />
 		</c:if>
-		<c:if test="${mode == '' && mode =='new'}">
+		<c:if test="${mode=='new'}">
 			<form:select path="zoneId" data-first-option="false" id="zone"
 				cssClass="form-control" required="required">
 				<form:options items="${zones}" itemValue="id" itemLabel="name" />
@@ -72,7 +72,7 @@
 	</label>
 	<div class="col-sm-3 add-margin">
 
-		<c:if test="${mode != '' && mode =='edit'}">
+		<c:if test="${mode =='newappointment'}">
 			<form:select path="siteDetail[0].adminBoundary"
 				data-first-option="false" id="zone" cssClass="form-control">
 				<form:option value="">
@@ -83,7 +83,7 @@
 			<form:errors path="siteDetail[0].adminBoundary"
 				cssClass="add-margin error-msg" />
 		</c:if>
-		<c:if test="${mode == '' && mode =='new'}">
+		<c:if test="${ mode =='new'}">
 			<form:select path="wardId" data-first-option="false" id="ward"
 				cssClass="form-control" required="required">
 				<form:option value="">
@@ -119,10 +119,11 @@
 
 <div class="form-group">
 	<label class="col-sm-3 control-label text-right"> Elelction
-		Ward </label>
+		Ward <span
+		class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin">
 		<form:select path="siteDetail[0].electionBoundary"
-			data-first-option="false" id="zone" cssClass="form-control">
+			data-first-option="false" id="zone" cssClass="form-control" required="required">
 			<form:option value="">
 				<spring:message code="lbl.select" />
 			</form:option>
@@ -218,7 +219,28 @@
 			cssClass="add-margin error-msg" />
 	</div>
 </div>
-
+<div class="form-group">
+<label class="col-sm-3 control-label text-right">Revenue Village </label>
+	<div class="col-sm-3 add-margin">
+		<form:select path="siteDetail[0].village"
+			data-first-option="false" id="village" cssClass="form-control">
+			<form:option value="">
+				<spring:message code="lbl.select" />
+			</form:option>
+			<form:options items="${villageNames}"  itemValue="id"
+						itemLabel="name" />
+		</form:select>
+		<form:errors path="siteDetail[0].village"
+			cssClass="add-margin error-msg" />
+	</div>
+	<label class="col-sm-2 control-label text-right">State </label>
+	<div class="col-sm-2 add-margin">
+		<form:input class="form-control patternvalidation"
+			data-pattern="string" id="state" path="siteDetail[0].state" />
+		<form:errors path="siteDetail[0].state"
+			cssClass="add-margin error-msg" />
+	</div>
+	</div>
 <div class="form-group">
 	<label class="col-sm-3 control-label text-right">District </label>
 	<div class="col-sm-3 add-margin">
@@ -237,21 +259,25 @@
 </div>
 
 <div class="form-group">
-	<label class="col-sm-3 control-label text-right">State </label>
+	
+	<label class="col-sm-3 control-label text-right">Site Pincode</label>
 	<div class="col-sm-3 add-margin">
 		<form:input class="form-control patternvalidation"
-			data-pattern="string" id="state" path="siteDetail[0].state" />
-		<form:errors path="siteDetail[0].state"
-			cssClass="add-margin error-msg" />
-	</div>
-	<label class="col-sm-2 control-label text-right">Site Pincode</label>
-	<div class="col-sm-3 add-margin">
-		<form:input class="form-control patternvalidation"
-			data-pattern="string" id="sitePincode"
+			data-pattern="number" id="sitePincode"
 			path="siteDetail[0].sitePincode" />
 		<form:errors path="siteDetail[0].sitePincode"
 			cssClass="add-margin error-msg" />
 	</div>
+	<div class="form-group" id="statusdiv">
+		<label class="col-sm-2 control-label text-right">Encroachment
+			IssuesPresent</label>
+		<div class="col-sm-2 add-margin">
+			<form:checkbox id="encroachmentIssuesPresent"
+				path="siteDetail[0].encroachmentIssuesPresent"
+				value="encroachmentIssuesPresent" />
+			<form:errors path="siteDetail[0].encroachmentIssuesPresent" />
+		</div>
+	</div>	
 </div>
 
 <div class="form-group">
@@ -362,14 +388,5 @@
 		<form:errors path="siteDetail[0].encroachmentRemarks"
 			cssClass="add-margin error-msg" />
 	</div>
-	<div class="form-group" id="statusdiv">
-		<label class="col-sm-2 control-label text-right">Encroachment
-			IssuesPresent</label>
-		<div class="col-sm-3 add-margin">
-			<form:checkbox id="encroachmentIssuesPresent"
-				path="siteDetail[0].encroachmentIssuesPresent"
-				value="encroachmentIssuesPresent" />
-			<form:errors path="siteDetail[0].encroachmentIssuesPresent" />
-		</div>
-	</div>
+
 </div>

@@ -42,7 +42,7 @@ package org.egov.bpa.application.entity.enums;
 import org.apache.commons.lang3.StringUtils;
 
 public enum ApplicantMode {
-    NEW, REVISED, OTHERS;
+    NEW, OTHERS;
 
     @Override
     public String toString() {

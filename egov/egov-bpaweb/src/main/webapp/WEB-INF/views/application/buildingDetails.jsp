@@ -56,7 +56,7 @@
 		<form:errors path="buildingDetail[0].unitCount"
 			cssClass="add-margin error-msg" />
 	</div>
-	<label class="col-sm-2 control-label text-right">BuildingDetail
+	<label class="col-sm-2 control-label text-right">Building
 		UnitClassification</label>
 	<div class="col-sm-3 add-margin">
 		<form:input class="form-control patternvalidation" maxlength="128"
@@ -66,7 +66,7 @@
 	</div>
 </div>
 <div class="form-group">
-	<label class="col-sm-3 control-label text-right">BuildingDetail
+	<label class="col-sm-3 control-label text-right">Building
 		FloorCount</label>
 	<div class="col-sm-3 add-margin">
 		<form:input class="form-control patternvalidation"
@@ -75,7 +75,7 @@
 		<form:errors path="buildingDetail[0].floorCount"
 			cssClass="add-margin error-msg" />
 	</div>
-	<label class="col-sm-2 control-label text-right">BuildingDetail
+	<label class="col-sm-2 control-label text-right">Building
 		NooOfBasementUnit </label>
 	<div class="col-sm-3 add-margin">
 		<form:input class="form-control patternvalidation" maxlength="50"
@@ -130,7 +130,7 @@
 		<form:errors path="buildingDetail[0].proposedSitalinSqmt"
 			cssClass="add-margin error-msg" />
 	</div>
-	<label class="col-sm-2 control-label text-right">BuildingDetail
+	<label class="col-sm-2 control-label text-right">Building
 		ProposedFloorArea</label>
 	<div class="col-sm-3 add-margin">
 		<form:input class="form-control patternvalidation"

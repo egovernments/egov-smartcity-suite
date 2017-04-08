@@ -154,15 +154,14 @@ public abstract class BpaGenericApplicationController extends GenericWorkFlowCon
                 .getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(BpaConstants.LOCALITY,
                         BpaConstants.LOCATION_HIERARCHY_TYPE);
     }
-
-    public @ModelAttribute("applicationModes") Map<String, String> applicationModes() {
+    @ModelAttribute("applicationModes")
+    public  Map<String, String> applicationModes() {
         return getApplicationModeMap();
     }
-
+    
     public Map<String, String> getApplicationModeMap() {
         final Map<String, String> applicationModeMap = new LinkedHashMap<>(0);
         applicationModeMap.put(ApplicantMode.NEW.toString(), ApplicantMode.NEW.name());
-        applicationModeMap.put(ApplicantMode.REVISED.name(), ApplicantMode.REVISED.name());
         applicationModeMap.put(ApplicantMode.OTHERS.name(), ApplicantMode.OTHERS.name());
         return applicationModeMap;
     }
