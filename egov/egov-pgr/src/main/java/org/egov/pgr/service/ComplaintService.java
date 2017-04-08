@@ -194,7 +194,7 @@ public class ComplaintService {
             complaint.setDepartment(assignee.getDeptDesig().getDepartment());
         if (complaint.getPriority() == null)
             complaint.setPriority(priorityService.getPriorityByCode(pgrApplicationProperties.defaultComplaintPriority()));
-        complaintRepository.save(complaint);
+        complaintRepository.saveAndFlush(complaint);
         pushMessage(complaint);
         sendEmailandSms(complaint);
 
