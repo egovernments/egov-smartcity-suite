@@ -591,7 +591,7 @@ public class SearchNoticesAction extends SearchFormAction {
         // To show only the active Demand Bill
         if (NOTICE_TYPE_BILL.equalsIgnoreCase(noticeType))
             criteriaString = criteriaString.append(
-                    " and bill.isactive = true and bill.billnumber = notice.noticeNo and pmv.propertyId=bill.assessmentNo");
+                    " and bill.isactive = true and bill.isHistory='N' and bill.billnumber = notice.noticeNo and pmv.propertyId=bill.assessmentNo");
         else
             criteriaString = criteriaString.append(" and bp.upicNo=pmv.propertyId");
         if (ownerName != null && !ownerName.equals("")) {
