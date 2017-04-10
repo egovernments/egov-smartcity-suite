@@ -527,15 +527,108 @@ $(document).ready(function(){
 		$("#isactive_yes").prop("checked",false);
 	});
 	
-	$("#submit").click(function () {
-		var count = 0;
-        jQuery(".table-bordered tr").find('input').each(function(){
-                if(jQuery(this).val() == "true"){
-                        count++;
-                }
-        });
-	});
+	function getdate() {
+		var today = new Date();
+		var dd = today.getDate();
+		var mm = today.getMonth() + 1; // January is 0!
 
+		var yyyy = today.getFullYear();
+		if (dd < 10) {
+			dd = '0' + dd
+		}
+		if (mm < 10) {
+			mm = '0' + mm
+		}
+		var today = dd + '/' + mm + '/' + yyyy;
+		return today;
+	}
+	
+   $('#btnsubmit').click(function(e){
+	   
+	   if($('form').valid()){
+		 
+		var count = 0;
+		var isactive_no = $("#isactive_no").prop("checked");
+		var i=1;
+		var length = $("#assignmentTable tr").length;
+		if($("#mode").val()=="update") //create
+		{
+		i=0;
+		length = length-1;
+		}
+
+			//assignments['+index+'].toDate
+        if(($("#assignmentTable tr").length-1)>=1 && isactive_no && ($("#mode").val()=="update")){
+        	for(i;i<length;i++) {
+        		var date = $("#table_date_range"+i).val();
+    			var stsplit = date.split("-");
+    			var toDate = stsplit[1];
+        		
+        		var currDate = getdate();
+        		if (dateDifference(currDate, toDate) <= 0) {
+        			count++;
+        			break;        			
+        		} 				
+			}			
+		}
+        if((length == 0) && isactive_no){
+			bootbox.alert("Employee should have assignment");
+			return false;
+        }
+        
+        var submit = true;
+
+		if(count>0){
+			bootbox.confirm("There are assignment/s still open for this user, it may affect the workflow items if any associated with this user.  Do you still want to deactivate the user ?", function (result) {
+    			if(result){
+    				$("form").submit();
+				}
+    			else{
+    			}
+    				
+    		});
+		}
+		else{
+		$("form").submit();
+		}
+
+	   }
+		
+   })
+
+   function validateDateRange() {
+
+		if($("#fromDate").val() != '' && $("#toDate").val() != ''){
+			var start = $("#fromDate").val();
+			var end = $("#toDate").val();
+			
+			if (dateDifference(start,end) < 0) {
+				bootbox.alert("From date  should not be greater than the To Date.");
+				$('#toDate').val('');
+				return false;
+			} else {
+				return true;
+			}
+			return true;
+		}
+	}
+	
+   function dateDifference(start,end){
+		var stsplit = start.split("/");
+		var ensplit = end.split("/");
+
+		start = stsplit[1] + "/" + stsplit[0] + "/" + stsplit[2];
+		end = ensplit[1] + "/" + ensplit[0] + "/" + ensplit[2];
+
+
+		var startDate = Date.parse(start);
+		var endDate = Date.parse(end);
+
+		// Check the date range, 86400000 is the number of milliseconds in one day
+		var difference = (endDate - startDate) / (86400000 * 7);
+		return difference;
+	
+	}
 	
 	function validateJurisdiction() {
 		$('.boundaryTypeerror').hide();
