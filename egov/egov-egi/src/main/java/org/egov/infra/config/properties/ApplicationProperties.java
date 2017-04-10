@@ -40,68 +40,68 @@
 
 package org.egov.infra.config.properties;
 
-import static java.lang.String.format;
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.springframework.core.Ordered.LOWEST_PRECEDENCE;
-
-import java.util.Arrays;
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
 
+import java.util.Arrays;
+import java.util.List;
+
+import static java.lang.String.format;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.springframework.core.Ordered.LOWEST_PRECEDENCE;
+
 @Configuration
 @PropertySource(value = {
         "classpath:config/application-config.properties",
         "classpath:config/egov-erp-${user.name}.properties",
         "classpath:config/application-config-${client.id}.properties",
-        "classpath:config/egov-erp-override.properties" }, ignoreResourceNotFound = true)
+        "classpath:config/egov-erp-override.properties"}, ignoreResourceNotFound = true)
 @Order(LOWEST_PRECEDENCE)
 public class ApplicationProperties {
 
-    public static final String FILESTORE_BASE_DIR = "filestore.base.dir";
-    public static final String FILESTORESERVICE_BEANNAME = "filestoreservice.beanname";
-    public static final String DEFAULT_DATE_PATTERN = "default.date.pattern";
-    public static final String MAIL_PORT = "mail.port";
-    public static final String MAIL_HOST = "mail.host";
-    public static final String MAIL_PROTOCOL = "mail.protocol";
-    public static final String MAIL_SENDER_USERNAME = "mail.sender.username";
-    public static final String MAIL_SENDER_PASWRD = "mail.sender.password";
-    public static final String MAIL_SMTPS_AUTH = "mail.smtps.auth";
-    public static final String MAIL_SMTPS_STARTTLS_ENABLE = "mail.smtps.starttls.enable";
-    public static final String MAIL_SMTPS_DEBUG = "mail.smtps.debug";
-    public static final String SMS_PROVIDER_URL = "sms.provider.url";
-    public static final String SMS_SENDER_USERNAME = "sms.sender.username";
-    public static final String SMS_SENDER_PASWRD = "sms.sender.password";
-    public static final String SMS_SENDER = "sms.sender";
-    public static final String COMMON_PROPERTIES_FILES = "common.properties.files";
-    public static final String DEV_MODE = "dev.mode";
-    public static final String MAIL_ENABLED = "mail.enabled";
-    public static final String SMS_ENABLED = "sms.enabled";
-    public static final String USER_PASWRD_EXPIRY_DAYS = "user.pwd.expiry.days";
-    public static final String SMS_ERROR_CODES = "sms.error.codes";
-    public static final String MULTITENANCY_ENABLED = "multitenancy.enabled";
-    public static final String APP_VERSION = "app.version";
-    public static final String APP_BUILD_NO = "app.build.no";
-    public static final String APP_RELEASE_NO = "%s_%s";
-    public static final String APP_CORE_BUILD_NO = "app.core.build.no";
-    public static final String ISSUE_REPORT_URL = "issue.report.url";
-    public static final String PORTAL_FEATURE_ENABLED = "portal.feature.enabled";
-    public static final String STATEWIDE_MIGRATION_REQUIRED = "statewide.migration.required";
-    public static final String HIBERNATE_JDBC_BATCH_SIZE = "hibernate.jdbc.batch_size";
-    public static final String USER_PASWRD_STRENGTH = "user.pwd.strength";
-    public static final String REDIS_ENABLE_SENTINEL = "redis.enable.sentinel";
-    public static final String REDIS_SENTINEL_HOSTS = "redis.sentinel.hosts";
-    public static final String REDIS_SENTINEL_MASTER_NAME = "redis.sentinel.master.name";
-    public static final String REDIS_ENABLE_EMBEDDED = "redis.enable.embedded";
-    public static final String REDIS_HOST_NAME = "redis.host.name";
-    public static final String REDIS_HOST_PORT = "redis.host.port";
-    public static final String MASTER_SERVER = "master.server";
-    public static final String DB_MIGRATION_ENABLED = "db.migration.enabled";
-    public static final String FLYWAY_VALIDATEON_MIGRATE = "db.flyway.validateon.migrate";
+    private static final String FILESTORE_BASE_DIR = "filestore.base.dir";
+    private static final String FILESTORESERVICE_BEANNAME = "filestoreservice.beanname";
+    private static final String DEFAULT_DATE_PATTERN = "default.date.pattern";
+    private static final String MAIL_PORT = "mail.port";
+    private static final String MAIL_HOST = "mail.host";
+    private static final String MAIL_PROTOCOL = "mail.protocol";
+    private static final String MAIL_SENDER_USERNAME = "mail.sender.username";
+    private static final String MAIL_SENDER_PASWRD = "mail.sender.password";
+    private static final String MAIL_SMTPS_AUTH = "mail.smtps.auth";
+    private static final String MAIL_SMTPS_STARTTLS_ENABLE = "mail.smtps.starttls.enable";
+    private static final String MAIL_SMTPS_DEBUG = "mail.smtps.debug";
+    private static final String SMS_PROVIDER_URL = "sms.provider.url";
+    private static final String SMS_SENDER_USERNAME = "sms.sender.username";
+    private static final String SMS_SENDER_PASWRD = "sms.sender.password";
+    private static final String SMS_SENDER = "sms.sender";
+    private static final String COMMON_PROPERTIES_FILES = "common.properties.files";
+    private static final String DEV_MODE = "dev.mode";
+    private static final String MAIL_ENABLED = "mail.enabled";
+    private static final String SMS_ENABLED = "sms.enabled";
+    private static final String USER_PASWRD_EXPIRY_DAYS = "user.pwd.expiry.days";
+    private static final String SMS_ERROR_CODES = "sms.error.codes";
+    private static final String MULTITENANCY_ENABLED = "multitenancy.enabled";
+    private static final String APP_VERSION = "app.version";
+    private static final String APP_BUILD_NO = "app.build.no";
+    private static final String APP_RELEASE_NO = "%s_%s";
+    private static final String APP_CORE_BUILD_NO = "app.core.build.no";
+    private static final String ISSUE_REPORT_URL = "issue.report.url";
+    private static final String PORTAL_FEATURE_ENABLED = "portal.feature.enabled";
+    private static final String STATEWIDE_MIGRATION_REQUIRED = "statewide.migration.required";
+    private static final String HIBERNATE_JDBC_BATCH_SIZE = "hibernate.jdbc.batch_size";
+    private static final String USER_PASWRD_STRENGTH = "user.pwd.strength";
+    private static final String REDIS_ENABLE_SENTINEL = "redis.enable.sentinel";
+    private static final String REDIS_SENTINEL_HOSTS = "redis.sentinel.hosts";
+    private static final String REDIS_SENTINEL_MASTER_NAME = "redis.sentinel.master.name";
+    private static final String REDIS_ENABLE_EMBEDDED = "redis.enable.embedded";
+    private static final String REDIS_HOST_NAME = "redis.host.name";
+    private static final String REDIS_HOST_PORT = "redis.host.port";
+    private static final String MASTER_SERVER = "master.server";
+    private static final String DB_MIGRATION_ENABLED = "db.migration.enabled";
+    private static final String FLYWAY_VALIDATEON_MIGRATE = "db.flyway.validateon.migrate";
     private static final String SEARCH_HOSTS = "elasticsearch.hosts";
     private static final String SEARCH_PORT = "elasticsearch.port";
     private static final String SEARCH_CLUSTER_NAME = "elasticsearch.cluster.name";

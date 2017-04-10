@@ -74,7 +74,7 @@ public class SMSService {
     private static final String DEST_MOBILENUM_PARAM_NAME = "sms.destination.mobile.req.param.name";
     private static final String DEST_MESSAGE_PARAM_NAME = "sms.message.req.param.name";
     private static final String SMS_EXTRA_REQ_PARAMS = "sms.extra.req.params";
-    private static final String MOBILE_NUMBER_PREFIX = "mobile.number.prefix";
+    private static final String MOBILE_NUMBER_PREFIX = "default.country.code";
 
     @Autowired
     private ApplicationProperties applicationProperties;
@@ -97,14 +97,15 @@ public class SMSService {
                 urlParameters.add(new BasicNameValuePair(applicationProperties.getProperty(SENDERID_PARAM_NAME),
                         applicationProperties.smsSender()));
                 urlParameters.add(new BasicNameValuePair(applicationProperties.getProperty(DEST_MOBILENUM_PARAM_NAME),
-                        applicationProperties.getProperty(MOBILE_NUMBER_PREFIX)+mobileNumber));
+                        applicationProperties.getProperty(MOBILE_NUMBER_PREFIX) + mobileNumber));
                 urlParameters.add(new BasicNameValuePair(applicationProperties.getProperty(DEST_MESSAGE_PARAM_NAME), message));
                 setAdditionalParameters(urlParameters, priority);
                 post.setEntity(new UrlEncodedFormEntity(urlParameters, UTF_8));
                 HttpResponse response = client.execute(post);
                 String responseCode = IOUtils.toString(response.getEntity().getContent(), UTF_8);
-                LOGGER.info("SMS sending completed with response code [{}] - [{}]", responseCode,
-                        applicationProperties.smsResponseMessageForCode(responseCode));
+                if (LOGGER.isInfoEnabled())
+                    LOGGER.info("SMS sending completed with response code [{}] - [{}]", responseCode,
+                            applicationProperties.smsResponseMessageForCode(responseCode));
                 return applicationProperties.smsErrorCodes().parallelStream()
                         .noneMatch(responseCode::startsWith);
             } catch (UnsupportedOperationException | IOException e) {
