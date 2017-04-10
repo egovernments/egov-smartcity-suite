@@ -63,7 +63,7 @@ public class RestAdvertisementController {
 
     @GetMapping(value = "/details", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public List<AdvertisementDetails> advertisementDetails(final AdvertisementRequest request) {
-        return advertisementService.getAdvertisement(request.advertisementLike())
+        return advertisementService.getAdvertisement(request.getWardNumber(),request.getAdvertisementNo())
                 .parallelStream().map(AdvertisementDetails::new)
                 .collect(Collectors.toList());
     }

@@ -40,13 +40,6 @@
 
 package org.egov.restapi.model;
 
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-
-import org.egov.adtax.entity.Advertisement;
-import org.egov.adtax.entity.enums.AdvertisementStatus;
-import org.egov.infra.admin.master.entity.Boundary;
-import org.springframework.data.domain.Example;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -78,17 +71,6 @@ public class AdvertisementRequest {
 
     public void setAdvertisementNo(final String advertisementNo) {
         this.advertisementNo = advertisementNo;
-    }
-
-    public Example advertisementLike() {
-        final Advertisement advertisement = new Advertisement();
-        if (isNotBlank(advertisementNo))
-            advertisement.setAdvertisementNumber(advertisementNo);
-        final Boundary ward = new Boundary();
-        ward.setBoundaryNum(wardNumber);
-        advertisement.setWard(ward);
-        advertisement.setStatus(AdvertisementStatus.ACTIVE);
-        return Example.of(advertisement);
     }
 
 }
