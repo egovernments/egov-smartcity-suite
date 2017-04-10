@@ -44,6 +44,7 @@ import java.text.ParseException;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.wtms.application.entity.GenerateConnectionBill;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
@@ -59,10 +60,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class GenerateConnectionBillService {
 
     @Qualifier("entityQueryService")
-    private @Autowired PersistenceService entityQueryService;
+    @Autowired
+    private PersistenceService entityQueryService;
 
     private static final Logger LOGGER = Logger.getLogger(GenerateConnectionBillService.class);
 
+    @ReadOnly
     public List<GenerateConnectionBill> getBillReportDetails(final String zone, final String ward,
             final String propertyType, final String applicationType, final String connectionType,
             final String consumerCode, final String houseNumber, final String assessmentNumber) throws ParseException {

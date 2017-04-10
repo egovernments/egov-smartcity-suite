@@ -199,7 +199,7 @@ public class NewConnectionController extends GenericConnectionController {
 
         final String sourceChannel = request.getParameter("Source");
         validatePropertyID(waterConnectionDetails, resultBinder);
-        waterConnectionDetailsService.validateWaterRateAndDonationHeader(waterConnectionDetails, resultBinder);
+        waterConnectionDetailsService.validateWaterRateAndDonationHeader(waterConnectionDetails);
         final List<ApplicationDocuments> applicationDocs = new ArrayList<>();
         int i = 0;
         final String documentRequired = waterTaxUtils.documentRequiredForBPLCategory();

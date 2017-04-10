@@ -72,6 +72,7 @@ import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.elasticsearch.entity.ApplicationIndex;
 import org.egov.infra.elasticsearch.entity.enums.ApprovalStatus;
 import org.egov.infra.elasticsearch.entity.enums.ClosureStatus;
@@ -125,7 +126,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.BindingResult;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -366,6 +366,7 @@ public class WaterConnectionDetailsService {
         return waterConnectionDetailsRepository.getAllConnectionDetailsExceptInactiveStatusByPropertyID(propertyIdentifier);
     }
 
+    @ReadOnly
     public List<Hashtable<String, Object>> getHistory(final WaterConnectionDetails waterConnectionDetails) {
         User user;
         final List<Hashtable<String, Object>> historyTable = new ArrayList<>(0);
@@ -564,18 +565,13 @@ public class WaterConnectionDetailsService {
         if (null != waterConnectionDetails && null != waterConnectionDetails.getStatus()
                 && null != waterConnectionDetails.getStatus().getCode())
             if (waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_CREATED)
-                    && waterConnectionDetails.getState() != null && workFlowAction.equals("Submit"))
+                    && waterConnectionDetails.getState() != null && "Submit".equals(workFlowAction))
                 waterConnectionDetails.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
                         WaterTaxConstants.APPLICATION_STATUS_VERIFIED, WaterTaxConstants.MODULETYPE));
             else if (workFlowAction.equals(WaterTaxConstants.WF_STATE_BUTTON_GENERATEESTIMATE)
                     && waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_VERIFIED))
                 waterConnectionDetails.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
                         WaterTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN, WaterTaxConstants.MODULETYPE));
-            /*
-             * else if (waterConnectionDetails.getStatus().getCode()
-             * .equals(WaterTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN)) waterConnectionDetails.setStatus(waterTaxUtils.
-             * getStatusByCodeAndModuleType( WaterTaxConstants.APPLICATION_STATUS_FEEPAID, WaterTaxConstants.MODULETYPE));
-             */
             else if (waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_FEEPAID)
                     && workFlowAction.equalsIgnoreCase(WaterTaxConstants.APPROVEWORKFLOWACTION)) {
 
@@ -605,8 +601,8 @@ public class WaterConnectionDetailsService {
                 waterConnectionDetails.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
                         WaterTaxConstants.APPLICATION_STATUS_CLOSERINITIATED, WaterTaxConstants.MODULETYPE));
                 updateIndexes(waterConnectionDetails, sourceChannel);
-            } else if (!workFlowAction.equals("Reject"))
-                if (!mode.equals("closeredit")
+            } else if (!"Reject".equals(workFlowAction))
+                if (!"closeredit".equals(mode)
                         && WaterTaxConstants.APPLICATION_STATUS_CLOSERINITIATED
                                 .equalsIgnoreCase(waterConnectionDetails.getStatus().getCode())
                         && waterConnectionDetails.getCloseConnectionType() != null)
@@ -639,8 +635,8 @@ public class WaterConnectionDetailsService {
                     waterConnectionDetails.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
                             WaterTaxConstants.WORKFLOW_RECONNCTIONINITIATED, WaterTaxConstants.MODULETYPE));
                     updateIndexes(waterConnectionDetails, sourceChannel);
-                } else if (!workFlowAction.equals("Reject"))
-                    if (!mode.equals("reconnectioneredit"))
+                } else if (!"Reject".equals(workFlowAction))
+                    if (!"reconnectioneredit".equals(mode))
                         if (WaterTaxConstants.WORKFLOW_RECONNCTIONINITIATED
                                 .equalsIgnoreCase(waterConnectionDetails.getStatus().getCode())
                                 && waterConnectionDetails.getCloseConnectionType()
@@ -711,7 +707,7 @@ public class WaterConnectionDetailsService {
                 && waterConnectionDetails.getStatus().getCode() != null)
             if (waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_CREATED)
                     && waterConnectionDetails.getState() != null)
-                if (mode.equals("edit"))
+                if ("edit".equals(mode))
                     approvalPosition = waterConnectionDetails.getState().getOwnerPosition().getId();
                 else
                     approvalPosition = waterTaxUtils.getApproverPosition(wfmatrix.getNextDesignation(),
@@ -1134,8 +1130,7 @@ public class WaterConnectionDetailsService {
 
     }
 
-    public void validateWaterRateAndDonationHeader(final WaterConnectionDetails waterConnectionDetails,
-            final BindingResult errors) {
+    public void validateWaterRateAndDonationHeader(final WaterConnectionDetails waterConnectionDetails) {
         final DonationDetails donationDetails = connectionDemandService.getDonationDetails(waterConnectionDetails);
         if (donationDetails == null)
             throw new ValidationException("donation.combination.required");
@@ -1152,7 +1147,7 @@ public class WaterConnectionDetailsService {
         final List<Assignment> assignmentList = new ArrayList<>();
         if (approvalPositionId != null && approvalPositionId != 0 && approvalPositionId != -1) {
             assignmentObj = assignmentService.getPrimaryAssignmentForPositionAndDate(approvalPositionId, new Date());
-            if (assignmentObj==null)
+            if (assignmentObj == null)
                 throw new ValidationException("err.user.not.defined");
             assignmentList.add(assignmentObj);
 

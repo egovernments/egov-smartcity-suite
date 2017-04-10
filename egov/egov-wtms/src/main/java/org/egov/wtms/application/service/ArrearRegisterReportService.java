@@ -46,6 +46,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.egov.commons.Installment;
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.wtms.application.entity.WaterChargeMaterlizeView;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.hibernate.Query;
@@ -58,59 +59,54 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class ArrearRegisterReportService {
 
-	@PersistenceContext
-	private EntityManager entityManager;
+    @PersistenceContext
+    private EntityManager entityManager;
 
-	@Autowired
-	private ConnectionDemandService connectionDemandService;
+    @Autowired
+    private ConnectionDemandService connectionDemandService;
 
-	public Session getCurrentSession() {
-		return entityManager.unwrap(Session.class);
-	}
+    public Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
+    }
 
-	public List<WaterChargeMaterlizeView> prepareQueryforArrearRegisterReport(final Long zoneId, final Long wardId,
-			final Long locality) {
-		// Get current installment
-		final Installment currentInst = connectionDemandService
-				.getCurrentInstallment(WaterTaxConstants.WATER_RATES_NONMETERED_PTMODULE, null, new Date());
-		final StringBuilder query = new StringBuilder();
-		List<WaterChargeMaterlizeView> propertyViewList;
+    @ReadOnly
+    public List<WaterChargeMaterlizeView> prepareQueryforArrearRegisterReport(final Long zoneId, final Long wardId,
+            final Long locality) {
+        // Get current installment
+        final Installment currentInst = connectionDemandService
+                .getCurrentInstallment(WaterTaxConstants.WATER_RATES_NONMETERED_PTMODULE, null, new Date());
+        final StringBuilder query = new StringBuilder();
+        List<WaterChargeMaterlizeView> propertyViewList;
 
-		query.append(
-				"select distinct pmv  from WaterChargeMaterlizeView pmv,InstDmdCollResponse idc where "
-						+ "pmv.connectiondetailsid = idc.waterMatView.connectiondetailsid and pmv.connectionstatus = 'ACTIVE'"
-						+ " and idc.installment.fromDate not between  ('"
-                + currentInst.getFromDate() + "') and ('" + currentInst.getToDate() + "') ");
+        query.append(
+                "select distinct pmv  from WaterChargeMaterlizeView pmv,InstDmdCollResponse idc where "
+                        + "pmv.connectiondetailsid = idc.waterMatView.connectiondetailsid and pmv.connectionstatus = 'ACTIVE'"
+                        + " and idc.installment.fromDate not between  ('"
+                        + currentInst.getFromDate() + "') and ('" + currentInst.getToDate() + "') ");
 
-		if (locality != null && locality != -1)
-			query.append(" and pmv.locality= :locality ");
+        if (locality != null && locality != -1)
+            query.append(" and pmv.locality= :locality ");
 
-		if (zoneId != null && zoneId != -1)
-			query.append(" and pmv.zoneid= :zoneId ");
+        if (zoneId != null && zoneId != -1)
+            query.append(" and pmv.zoneid= :zoneId ");
 
-		if (wardId != null && wardId != -1)
-			query.append("  and pmv.wardid= :wardId ");
+        if (wardId != null && wardId != -1)
+            query.append("  and pmv.wardid= :wardId ");
 
-		query.append(" order by pmv.connectiondetailsid ");
-		final Query qry = getCurrentSession().createQuery(query.toString());
-		// qry.setMaxResults(100);
+        query.append(" order by pmv.connectiondetailsid ");
+        final Query qry = getCurrentSession().createQuery(query.toString());
 
-		if (locality != null && locality != -1)
-			qry.setParameter("locality", locality);
+        if (locality != null && locality != -1)
+            qry.setParameter("locality", locality);
 
-		if (zoneId != null && zoneId != -1)
-			qry.setParameter("zoneId", zoneId);
+        if (zoneId != null && zoneId != -1)
+            qry.setParameter("zoneId", zoneId);
 
-		if (wardId != null && wardId != -1)
-			qry.setParameter("wardId", wardId);
+        if (wardId != null && wardId != -1)
+            qry.setParameter("wardId", wardId);
 
-		/*
-		 * if (areaId != null && areaId != -1) qry.setParameter("areaId",
-		 * areaId);
-		 */
+        propertyViewList = qry.list();
 
-		propertyViewList = qry.list();
-
-		return propertyViewList;
-	}
+        return propertyViewList;
+    }
 }

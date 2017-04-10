@@ -161,7 +161,7 @@ public class ChangeOfUseController extends GenericConnectionController {
                     applicationDocs.add(applicationDocument);
                 i++;
             }
-        waterConnectionDetailsService.validateWaterRateAndDonationHeader(changeOfUse, resultBinder);
+        waterConnectionDetailsService.validateWaterRateAndDonationHeader(changeOfUse);
         if (resultBinder.hasErrors()) {
             final WaterConnectionDetails parentConnectionDetails = waterConnectionDetailsService
                     .getActiveConnectionDetailsByConnection(changeOfUse.getConnection());
