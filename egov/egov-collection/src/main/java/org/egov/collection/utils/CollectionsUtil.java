@@ -774,10 +774,22 @@ public class CollectionsUtil {
             throw new ApplicationRuntimeException(errMsg, e);
         }
         HttpEntity<String> entity = new HttpEntity<>(json, headers);
+        LOGGER.info("updateReceiptDetailsAndGetReceiptAmountInfo - json" + json);
+        LOGGER.info("updateReceiptDetailsAndGetReceiptAmountInfo - billReceipt" + billReceipt);
+        LOGGER.info("updateReceiptDetailsAndGetReceiptAmountInfo - before calling LAMS update");
         String url = ApplicationThreadLocals.getDomainURL().concat(
                 collectionApplicationProperties.getUpdateDemandUrl(serviceCode.toLowerCase()));
-        ResponseEntity<ReceiptAmountInfo> response = restTemplate.postForEntity(url, entity, ReceiptAmountInfo.class);
-        return response.getBody();
+        LOGGER.info("updateReceiptDetailsAndGetReceiptAmountInfo - url" + url);
+        //ResponseEntity<ReceiptAmountInfo> response = restTemplate.postForEntity(url, entity, ReceiptAmountInfo.class);
+        ReceiptAmountInfo response = null;
+        try{
+        response = restTemplate.postForObject(url, billReceipt, ReceiptAmountInfo.class);
+        }catch(Exception e){
+            e.printStackTrace();
+            LOGGER.error(e);
+        }
+        LOGGER.info("updateReceiptDetailsAndGetReceiptAmountInfo - response" + response);
+        return response;
     }
 
     public CollectionIndex constructCollectionIndex(final ReceiptHeader receiptHeader) {
