@@ -116,7 +116,7 @@ public class ContractorService extends PersistenceService<Contractor, Long> impl
     @Override
     public List<Contractor> filterActiveEntities(final String filterKey, final int maxRecords,
             final Integer accountDetailTypeId) {
-        final Integer pageSize = maxRecords > 0 ? maxRecords : null;
+        final Integer pageSize = maxRecords > 0 ? maxRecords : 0;
         final String param = "%" + filterKey.toUpperCase() + "%";
         final String qry = "select distinct cont from Contractor cont, ContractorDetail contractorDet "
                 + "where cont.id=contractorDet.contractor.id and contractorDet.status.description=? and contractorDet.status.moduletype=? and (upper(cont.code) like ? "
@@ -316,7 +316,7 @@ public class ContractorService extends PersistenceService<Contractor, Long> impl
 
     public List<Contractor> filterActiveEntitiesByCode(final String filterKey, final int maxRecords,
             final Integer accountDetailTypeId) {
-        final Integer pageSize = maxRecords > 0 ? maxRecords : null;
+        final Integer pageSize = maxRecords > 0 ? maxRecords : 0;
         final String param = "%" + filterKey.toUpperCase() + "%";
         final String qry = "select distinct cont from Contractor cont, ContractorDetail contractorDet "
                 + "where cont.id=contractorDet.contractor.id and contractorDet.status.description=? and contractorDet.status.moduletype=? and upper(cont.code) like ? "

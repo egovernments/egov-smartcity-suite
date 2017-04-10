@@ -726,6 +726,7 @@ public class LineEstimateService {
                 appropriationnumber = lineEstimateAppropriation.getBudgetUsage().getAppropriationnumber();
             final BudgetAppropriationNumberGenerator b = beanResolver
                     .getAutoNumberServiceFor(BudgetAppropriationNumberGenerator.class);
+            try{
             budgetUsage = budgetDetailsDAO.releaseEncumbranceBudget(
                     lineEstimateAppropriation.getBudgetUsage() == null ? null
                             : b.generateCancelledBudgetAppropriationNumber(appropriationnumber),
@@ -753,6 +754,9 @@ public class LineEstimateService {
 
             if (lineEstimateAppropriation.getLineEstimateDetails() != null)
                 persistBudgetReleaseDetails(lineEstimateDetails, budgetUsage);
+            }catch(final ValidationException v) {
+                throw new ValidationException(v.getErrors());
+            }
         }
         return flag;
     }
@@ -865,8 +869,12 @@ public class LineEstimateService {
                 LineEstimateStatus.CANCELLED.toString()));
         if (!BudgetControlType.BudgetCheckOption.NONE.toString()
                 .equalsIgnoreCase(budgetControlTypeService.getConfigValue()))
+            try{
             for (final LineEstimateDetails led : lineEstimate.getLineEstimateDetails())
                 releaseBudgetOnReject(led, null, null);
+            }catch(final ValidationException v) {
+                throw new ValidationException(v.getErrors());
+            }
 
         for (final LineEstimateDetails led : lineEstimate.getLineEstimateDetails()) {
             final Long id = led.getId();

@@ -515,7 +515,11 @@ public class LetterOfAcceptanceService {
                     .equalsIgnoreCase(budgetControlTypeService.getConfigValue())) {
                 String appropriationNumber = lineEstimateAppropriationService
                         .generateBudgetAppropriationNumber(lineEstimateDetails);
+                try{
                 lineEstimateService.releaseBudgetOnReject(lineEstimateDetails, appropriationAmount, appropriationNumber);
+                }catch(final ValidationException v) {
+                    throw new ValidationException(v.getErrors());
+                }
             }
         }
         final WorkOrder savedworkOrder = letterOfAcceptanceRepository.save(workOrder);
