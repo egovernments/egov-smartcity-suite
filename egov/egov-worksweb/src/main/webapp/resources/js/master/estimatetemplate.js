@@ -141,6 +141,18 @@ $(document).ready(function(){
 				bootbox.alert($("#msgschedulecategory").val());
 				isSuccess = false;
 			}
+			
+			if($("#nonSorRow").is(":not(':hidden')")){
+				var unitRateElements = $(".unitrate")
+				for (var i=0;i<unitRateElements.length;i++){
+					if(parseFloat($(unitRateElements[i]).val()) == 0){
+						bootbox.alert($("#nonSorValueError").val());
+						isSuccess = false;
+						break;
+					}
+				}
+			}
+			
 			if(isSuccess)
 				return true;
 		}
@@ -150,6 +162,14 @@ $(document).ready(function(){
 	$('#btnsearch').click(function(e) {
 		callAjaxSearch();
 	});
+	
+	$('.textfieldsvalidate').on('input',function(){
+		var regexp_textfields = /[^0-9a-zA-Z_@./#&+-/!(){}\",^$%*|=;:<>?`~ ]/g;
+		if($(this).val().match(regexp_textfields)){
+			$(this).val( $(this).val().replace(regexp_textfields,'') );
+		}
+	});
+	
 });
 $('#typeOfWork').change(function(){
 	 if ($('#typeOfWork').val() === '') {

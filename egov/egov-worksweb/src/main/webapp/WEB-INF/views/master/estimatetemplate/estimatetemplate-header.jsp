@@ -55,6 +55,7 @@
 	<c:if test="${mode == 'edit' }">
 		<input type="hidden" value="${estimateTemplate.id }"  name="estimateTemplate" />
 	</c:if>
+	<input type="hidden" id = "nonSorValueError" value ="<spring:message code = 'error.estimatetemplate.value' />" />
 	<div class="panel-body">
 		<div class="form-group">
 			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.templatecode" /><span
@@ -84,7 +85,7 @@
 			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.templatedescription" /><span
 						class="mandatory"></span></label>
 			<div class="col-sm-3 add-margin">
-				<form:textarea path="description" id="description" class="form-control table-input patternvalidation" data-pattern="alphanumericwithallspecialcharacters" maxlength = "100" required = "required"/>
+				<form:textarea path="description" id="description" class="form-control table-input textfieldsvalidate" maxlength = "100" required = "required"/>
 				<form:errors path="description" cssClass="add-margin error-msg" />
 			</div>
 		</div>

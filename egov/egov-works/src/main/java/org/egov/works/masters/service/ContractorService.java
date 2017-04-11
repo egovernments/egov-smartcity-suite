@@ -266,7 +266,6 @@ public class ContractorService implements EntityTypeService {
         final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(Contractor.class)
                 .createAlias("contractorDetails", "contractorDetail")
                 .createAlias("contractorDetail.department", "department")
-                .createAlias("contractorDetail.grade", "contractorClass")
                 .createAlias("contractorDetail.status", "status");
         if (searchRequestContractor != null) {
             if (StringUtils.isNotBlank(searchRequestContractor.getNameOfAgency()))
@@ -279,7 +278,7 @@ public class ContractorService implements EntityTypeService {
             if (searchRequestContractor.getStatus() != null)
                 criteria.add(Restrictions.eq("status.id", searchRequestContractor.getStatus()));
             if (searchRequestContractor.getContractorClass() != null)
-                criteria.add(Restrictions.eq("contractorClass.id", searchRequestContractor.getContractorClass()));
+                criteria.add(Restrictions.eq("contractorDetail.grade.id", searchRequestContractor.getContractorClass()));
         }
         criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
         return criteria.list();

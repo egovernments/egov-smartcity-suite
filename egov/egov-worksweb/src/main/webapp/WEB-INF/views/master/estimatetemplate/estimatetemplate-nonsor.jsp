@@ -105,7 +105,8 @@
 									data-idx="0"
 									data-optional="0"
 									data-errormsg="Unit Rate is mandatory!"
-									class="form-control table-input text-right removeDefaultValues unitrate" 
+									class="form-control table-input text-right removeDefaultValues unitrate patternvalidation" 
+									data-pattern="decimalvalue"
 									required = "required" /> 
 								<form:errors path="tempEstimateTemplateNonSorActivities[0].value"
 									cssClass="add-margin error-msg" /></td>
@@ -154,7 +155,8 @@
 										data-idx="0"
 										data-optional="0"
 										data-errormsg="Unit Rate is mandatory!"
-										class="form-control table-input text-right removeDefaultValues unitrate" 
+										class="form-control table-input text-right removeDefaultValues unitrate patternvalidation" 
+										data-pattern="decimalvalue"
 										required = "required" /> 
 									<form:errors path="tempEstimateTemplateNonSorActivities[${item.index}].value"
 										cssClass="add-margin error-msg" /></td>
