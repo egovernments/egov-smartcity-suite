@@ -618,7 +618,12 @@ function verifyChequeDetails(table,len1)
 	    		}
 	    		check=false;
 	    	 } else {
-	 	    		var receiptDate = document.getElementById("voucherDate").value;
+	 	    		var receiptDate;
+	    		 	if(document.getElementById("voucherDate"))
+	 					receiptDate = document.getElementById("voucherDate").value;
+	 				else
+	 					receiptDate ="${currDate}"; 
+	 				
 	 	 	    	if(instrDate.value != null && instrDate.value!= '' && check==true && process(instrDate.value) > process(receiptDate)){
 	 	 	    		document.getElementById("receipt_error_area").innerHTML+=
 	 	 					'<s:text name="miscreceipt.error.instrumentdate.greaterthan.receiptdate" />'+ '<br>';   	
@@ -937,7 +942,10 @@ function checkForCurrentDate(obj)
 		</s:if>
 		<s:else>
 		{
-		receiptDate = document.getElementById("voucherDate").value; 
+			if(document.getElementById("voucherDate"))
+				receiptDate = document.getElementById("voucherDate").value;
+			else
+				receiptDate ="${currDate}";
 		}
 		</s:else>
 	   var finDate = new Date('2012-04-01');
