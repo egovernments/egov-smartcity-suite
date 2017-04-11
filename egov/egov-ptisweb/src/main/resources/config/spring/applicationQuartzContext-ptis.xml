@@ -87,7 +87,7 @@
         <property name="jobDetail" ref="bulkBillGenerationJobScheduler0" />
         <property name="group" value="PTIS_TRIGGER_GROUP"/>
 		<property name="name" value="PTISBillTrigger0"/>
-        <property name="cronExpression" value="0 */59 * * * ?" />
+        <property name="cronExpression" value="0 */5 * * * ?" />
 		<property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_DO_NOTHING"/>
     </bean>
 
@@ -120,7 +120,7 @@
         <property name="jobDetail" ref="bulkBillGenerationJobScheduler1" />
         <property name="group" value="PTIS_TRIGGER_GROUP"/>
 		<property name="name" value="PTISBillTrigger1"/>
-        <property name="cronExpression" value="0 */59 * * * ?" />
+		<property name="cronExpression" value="0 */5 * * * ?" />
 		<property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_DO_NOTHING"/>
     </bean>
 
@@ -153,7 +153,7 @@
         <property name="jobDetail" ref="bulkBillGenerationJobScheduler2" />
         <property name="group" value="PTIS_TRIGGER_GROUP"/>
 		<property name="name" value="PTISBillTrigger2"/>
-        <property name="cronExpression" value="0 */59 * * * ?" />
+        <property name="cronExpression" value="0 */5 * * * ?" />
 		<property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_DO_NOTHING"/>
     </bean>
 
@@ -186,7 +186,7 @@
         <property name="jobDetail" ref="bulkBillGenerationJobScheduler3" />
         <property name="group" value="PTIS_TRIGGER_GROUP"/>
 		<property name="name" value="PTISBillTrigger3"/>
-        <property name="cronExpression" value="0 */59 * * * ?" />
+        <property name="cronExpression" value="0 */5 * * * ?" />
 		<property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_DO_NOTHING"/>
     </bean>
 
@@ -219,7 +219,7 @@
         <property name="jobDetail" ref="bulkBillGenerationJobScheduler4" />
         <property name="group" value="PTIS_TRIGGER_GROUP"/>
 		<property name="name" value="PTISBillTrigger4"/>
-        <property name="cronExpression" value="0 */59 * * * ?" />
+        <property name="cronExpression" value="0 */5 * * * ?" />
 		<property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_DO_NOTHING"/>
     </bean>
 
