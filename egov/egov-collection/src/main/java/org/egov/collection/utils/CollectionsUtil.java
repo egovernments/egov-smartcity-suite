@@ -96,6 +96,7 @@ import org.egov.infra.messaging.MessagingService;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
+import org.egov.infra.rest.client.SimpleRestClient;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
@@ -111,14 +112,6 @@ import org.hibernate.Query;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.RestTemplate;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class CollectionsUtil {
     public static final SimpleDateFormat CHEQUE_DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy");
@@ -161,6 +154,8 @@ public class CollectionsUtil {
     private MessagingService messagingService;
     @Autowired
     private CollectionApplicationProperties collectionApplicationProperties;
+    @Autowired
+    private SimpleRestClient simpleRestClient;
 
     /**
      * Returns the Status object for given status code for a receipt
@@ -761,9 +756,10 @@ public class CollectionsUtil {
     }
 
     public ReceiptAmountInfo updateReceiptDetailsAndGetReceiptAmountInfo(BillReceiptReq billReceipt, String serviceCode) {
-        RestTemplate restTemplate = new RestTemplate();
+        /*RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
+        
         String json = null;
         try {
             json = new ObjectMapper().writeValueAsString(billReceipt);
@@ -789,7 +785,14 @@ public class CollectionsUtil {
             LOGGER.error(e);
         }
         LOGGER.info("updateReceiptDetailsAndGetReceiptAmountInfo - response" + response);
-        return response;
+        return response;*/
+        
+        String url = ApplicationThreadLocals.getDomainURL().concat(
+                collectionApplicationProperties.getUpdateDemandUrl(serviceCode.toLowerCase()));
+        LOGGER.info("updateReceiptDetailsAndGetReceiptAmountInfo - url" + url);
+        System.out.println("updateReceiptDetailsAndGetReceiptAmountInfo  $$$$$$$$$$$$$$$$$$$$$$$: "+simpleRestClient.getRESTResponseAsMap(url).toString());
+        return new ReceiptAmountInfo();
+        
     }
 
     public CollectionIndex constructCollectionIndex(final ReceiptHeader receiptHeader) {
