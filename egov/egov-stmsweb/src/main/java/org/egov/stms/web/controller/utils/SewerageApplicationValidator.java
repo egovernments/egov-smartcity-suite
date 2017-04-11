@@ -398,7 +398,6 @@ public class SewerageApplicationValidator extends SewerageApplicationCommonValid
 
         validatePropertyAndConnection(errors, request, sewerageApplicationDetails);
         validateDemandBeanList(sewerageApplicationDetails, errors);
-        validateDonationAmount(errors, sewerageApplicationDetails);
     }
 
     // validate number of closets entered or not

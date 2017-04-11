@@ -342,7 +342,69 @@ function validateDemandDetailsOnSubmit(){
     return true;
 }
 
+function loadDonationAmount(){
+	var propertytype = document.getElementById('propertyType').value;
+	var noofclosetsnonresidential = document.getElementById('noOfClosetsNonResidential').value;
+	var noofclosetsresidential = document.getElementById('noOfClosetsResidential').value;
+	if(propertytype=="MIXED" && noofclosetsresidential=="" || propertytype=="MIXED" && noofclosetsnonresidential==""){
+		return false;
+	}
+	else{
+		fetchdonationamount();
+	}
+}
 
+function fetchdonationamount(){
+	var noofclosetsresidential=0;
+	var noofclosetsnonresidential=0;
+	var propertytype = document.getElementById('propertyType').value;
+	if(propertytype=='RESIDENTIAL')
+		noofclosetsresidential = document.getElementById('noOfClosetsResidential').value;
+	else if(propertytype=='NON_RESIDENTIAL')
+		noofclosetsnonresidential = document.getElementById('noOfClosetsNonResidential').value;
+	else{
+		noofclosetsresidential = document.getElementById('noOfClosetsResidential').value;
+		noofclosetsnonresidential = document.getElementById('noOfClosetsNonResidential').value;
+	}
+	
+	if(propertytype != '' ) {
+		$.ajax({
+			url: "/stms/ajaxconnection/getlegacy-donation-amount",      
+			type: "GET",
+			data: {
+				propertytype : propertytype,
+				noofclosetsresidential : noofclosetsresidential,
+				noofclosetsnonresidential : noofclosetsnonresidential
+			},
+			dataType: "json",
+			success: function (response) { 
+				if(jQuery.isNumeric(response)){
+				var inspectionDtlTable = document.getElementById('inspectionChargesDetails');
+				var rowCount = inspectionDtlTable.rows.length;
+				var i;
+				for(i=0;i<=rowCount-1;i++){
+				var feeName = $(inspectionDtlTable.rows[i].cells[1]).text();
+				if(feeName.trim()==="Donation Charge"){
+					var j=i-1;
+					var donation = document.getElementById('feesDetail'+j+'amount').value;
+					$('#feesDetail'+j+'amount').attr('value', parseFloat(response));
+				}
+				}
+				return true;
+				}
+				else{
+					bootbox.alert(response);
+					return false;
+				}
+			}, 
+			error: function (response) {
+				bootbox.alert("connection validation failed");
+				return false;
+			}
+		});
+	}		
+	
+}
 
 function addDemandDetailRow(instlmntDesc,reasondsc,demandamount,collectionamount,instlmntId,dmndReasonId) {
     var table = document.getElementById('legacyDemandDetails');
