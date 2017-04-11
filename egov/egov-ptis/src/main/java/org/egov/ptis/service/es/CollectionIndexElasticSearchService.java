@@ -1104,9 +1104,7 @@ public class CollectionIndexElasticSearchService {
         Integer month;
         Sum aggregateSum;
         String aggregationField = StringUtils.EMPTY;
-        CFinancialYear financialYear = cFinancialYearService.getFinancialYearByDate(new Date());
-        Date finYearStartDate = financialYear.getStartingDate();
-        Date finYearEndDate = financialYear.getEndingDate();
+        CFinancialYear financialYear;
         Map<Integer, String> monthValuesMap = DateUtils.getAllMonthsWithFullNames();
         String monthName;
         List<Map<String, BigDecimal>> yearwiseMonthlyCollList = new ArrayList<>();
@@ -1123,11 +1121,15 @@ public class CollectionIndexElasticSearchService {
             fromDate = DateUtils.getDate(collectionDetailsRequest.getFromDate(), DATE_FORMAT_YYYYMMDD);
             toDate = DateUtils.addDays(DateUtils.getDate(collectionDetailsRequest.getToDate(), DATE_FORMAT_YYYYMMDD),
                     1);
+            financialYear = cFinancialYearService.getFinancialYearByDate(fromDate);
         } else {
+            financialYear = cFinancialYearService.getFinancialYearByDate(new Date());
             fromDate = DateUtils.startOfDay(financialYear.getStartingDate());
             toDate = DateUtils.addDays(new Date(), 1);
         }
 
+        Date finYearStartDate = financialYear.getStartingDate();
+        Date finYearEndDate = financialYear.getEndingDate();
         Long startTime = System.currentTimeMillis();
         for (int count = 0; count <= 2; count++) {
             monthwiseColl = new LinkedHashMap<>();
