@@ -360,10 +360,16 @@ function validate()
 			else {
 				var receiptDate;
 				 <s:if test="%{!isBillSourcemisc()}">
-				 receiptDate = document.getElementById("manualReceiptDate").value;
+				 	if(document.getElementById("manualReceiptDate"))
+				 		receiptDate = document.getElementById("manualReceiptDate").value;
+				 	else
+				 		receiptDate = "${currDate}";
 				</s:if>
 				<s:else>
-				receiptDate = document.getElementById("voucherDate").value;
+					if(document.getElementById("voucherDate"))
+						receiptDate = document.getElementById("voucherDate").value;
+					else
+						receiptDate = "${currDate}";
 				</s:else>
 				if(receiptDate!=null && process(bankChallanDate) > process(receiptDate)){
  	 	    		document.getElementById("receipt_error_area").innerHTML+=
@@ -503,8 +509,8 @@ function validate()
    		document.getElementById("receipt_error_area").innerHTML+='<s:text name="billreceipt.missingpayeename.errormessage" /> ' + '<br>';
 		validation = false;
    	}
-
-   	<s:if test="%{!isBillSourcemisc() && manualReceiptNumberAndDateReq}"> 
+	
+   	<s:if test="%{!isBillSourcemisc()}"> 
 	 if(eval(document.getElementById("totalamountdisplay").value)>eval(document.getElementById("totalamounttobepaid").value)){
 		 var r = confirm('Collected amount is more than the amount to be paid. Do you want to collect advance amount?');
 		 if(r !=true)
