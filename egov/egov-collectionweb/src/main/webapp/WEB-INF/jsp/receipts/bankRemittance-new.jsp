@@ -48,7 +48,30 @@
 	var isDatepickerOpened = false;
 	jQuery(document)
 			.ready(
-					function() {
+					function($) {
+						
+						if(jQuery("#finYearId").val()!=-1){
+							$("#dateDiv").hide();
+							$("#fromDate").val("");
+							$("#toDate").val("");
+						}
+						else if(jQuery("#finYearId").val()==-1){
+							$("#dateDiv").show();
+						}
+						
+						//hide or show date fields on selecting year from drop down
+						jQuery("#finYearId").on("change",function(){
+							if(jQuery("#finYearId").val()!=-1){
+								$("#dateDiv").hide();
+								$("#fromDate").val("");
+								$("#toDate").val("");
+							}
+							else if(jQuery("#finYearId").val()==-1){
+								$("#dateDiv").show();
+							}
+						});
+
+						
 						jQuery('#remittanceDate').val("");
 						//jQuery('#finYearId').prop("disabled", true);
 						jQuery("form").submit(function(event) {
@@ -225,7 +248,7 @@
 			}
 		}
 	}
-
+	
 	function validate() {
 		dom.get("bankselectionerror").style.display = "none";
 		dom.get("accountselectionerror").style.display = "none";
@@ -287,6 +310,10 @@
 	}
 
 	function searchDataToRemit() {
+		if(jQuery("#finYearId").val()==-1 && jQuery("#fromDate").val()=="" && jQuery("#toDate").val()==""){
+			bootbox.alert("Please enter either financial year or from date and to date");
+			return false;
+		}
 		if (dom.get("bankBranchMaster").value != null
 				&& dom.get("bankBranchMaster").value == -1) {
 			dom.get("bankselectionerror").style.display = "block";
@@ -459,7 +486,7 @@
 							<td width="4%" class="bluebox">&nbsp;</td>
 							<td class="bluebox"><s:text
 									name="bankremittance.financialyear" />:</td>
-							<td class="bluebox"><s:select headerKey="-1"
+							<td class="bluebox"><s:select headerKey="-1" headerValue="--Select--"
 									list="dropdownData.financialYearList" listKey="id"
 									id="finYearId" listValue="finYearRange" label="finYearRange"
 									name="finYearId" value="%{finYearId}" /></td>
@@ -470,7 +497,7 @@
 									id="paymentMode" label="paymentMode" name="paymentMode"
 									value="%{paymentMode}" /></td>
 						</tr>
-						<tr>
+						<tr id="dateDiv">
 							<td width="4%" class="bluebox">&nbsp;</td>
 							<td class="bluebox"><s:text name="bankremittance.fromdate" /></td>
 							<s:date name="fromDate" var="fromFormat" format="dd/MM/yyyy" />
@@ -674,6 +701,7 @@
 						</div>
 					</s:if>
 				</s:if>
+			</div>
 			</div>
 		</s:push>
 	</s:form>
