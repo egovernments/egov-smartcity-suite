@@ -481,7 +481,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
             User ownerUser = state.getOwnerUser();
             Position ownerPosition = state.getOwnerPosition();
             if (ownerPosition != null) {
-                User usr = eisCommonService.getUserForPosition(ownerPosition.getId(), new Date());
+                User usr = eisCommonService.getUserForPosition(ownerPosition.getId(), state.getLastModifiedDate());
                 currentStateDetail.put("user", usr == null ? EMPTY : usr.getName());
             } else
                 currentStateDetail.put("user", ownerUser == null ? EMPTY : ownerUser.getName());
