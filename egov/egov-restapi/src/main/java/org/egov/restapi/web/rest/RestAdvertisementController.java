@@ -44,7 +44,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.egov.adtax.service.AdvertisementService;
+import org.egov.adtax.service.AdvertisementPermitDetailService;
 import org.egov.restapi.model.AdvertisementDetails;
 import org.egov.restapi.model.AdvertisementRequest;
 import org.egov.restapi.model.RestErrors;
@@ -59,13 +59,15 @@ import org.springframework.web.bind.annotation.RestController;
 public class RestAdvertisementController {
 
     @Autowired
-    private AdvertisementService advertisementService;
+    private AdvertisementPermitDetailService advertisementPermitDetailService;
 
     @GetMapping(value = "/details", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public List<AdvertisementDetails> advertisementDetails(final AdvertisementRequest request) {
-        return advertisementService.getAdvertisement(request.getWardNumber(),request.getAdvertisementNo())
+        return advertisementPermitDetailService
+                .getAdvertisementPermitDetailByWardAndAdvertisementNumber(request.getWardNumber(), request.getAdvertisementNo())
                 .parallelStream().map(AdvertisementDetails::new)
                 .collect(Collectors.toList());
+
     }
 
     @ExceptionHandler(RuntimeException.class)

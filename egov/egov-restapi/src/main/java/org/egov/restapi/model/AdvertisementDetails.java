@@ -40,7 +40,6 @@
 
 package org.egov.restapi.model;
 
-import org.egov.adtax.entity.Advertisement;
 import org.egov.adtax.entity.AdvertisementPermitDetail;
 
 public class AdvertisementDetails {
@@ -65,43 +64,43 @@ public class AdvertisementDetails {
     private String advertisementDuration;
     private String electricityServiceNo;
 
-    public AdvertisementDetails(Advertisement advertisement) {
+    public AdvertisementDetails(AdvertisementPermitDetail advPermitDtl) {
 
-        AdvertisementPermitDetail advPermitDtl = null;
-        for (final AdvertisementPermitDetail advPermitDetail : advertisement.getAdvertisementPermitDetail()) {
-            if (advPermitDetail.getIsActive()) {
-                advPermitDtl = advPermitDetail;
-                break;
-            }
-        }
-        if (advPermitDtl != null) {
-            this.permissionNumber = advPermitDtl.getPermissionNumber();
-            this.length = advPermitDtl.getLength();
-            this.width = advPermitDtl.getWidth();
-            this.measurement = advPermitDtl.getMeasurement();
-            this.heightOfStructure = advPermitDtl.getTotalHeight();
+        this.permissionNumber = advPermitDtl.getPermissionNumber();
+        this.length = advPermitDtl.getLength();
+        this.width = advPermitDtl.getWidth();
+        this.measurement = advPermitDtl.getMeasurement();
+        this.heightOfStructure = advPermitDtl.getTotalHeight();
 
-            this.advertisementDuration = advPermitDtl.getAdvertisementDuration() != null
-                    ? advPermitDtl.getAdvertisementDuration().name() : null;
-            if (advPermitDtl.getAgency() != null)
-                this.agencyAdvertiser = advPermitDtl.getAgency().getName();
-            else
-                this.agencyAdvertiser = advPermitDtl.getAdvertiser();
+        this.advertisementDuration = advPermitDtl.getAdvertisementDuration() != null
+                ? advPermitDtl.getAdvertisementDuration().name() : null;
+        if (advPermitDtl.getAgency() != null)
+            this.agencyAdvertiser = advPermitDtl.getAgency().getName();
+        else
+            this.agencyAdvertiser = advPermitDtl.getAdvertiser();
 
-        }
-        this.advertisementNo = advertisement.getAdvertisementNumber();
-        this.advertisementType = advertisement.getType() != null ? advertisement.getType().name() : null;
-        this.advertisementStatus = advertisement.getStatus() != null ? advertisement.getStatus().name() : null;
+        this.advertisementNo = advPermitDtl.getAdvertisement().getAdvertisementNumber();
+        this.advertisementType = advPermitDtl.getAdvertisement().getType() != null
+                ? advPermitDtl.getAdvertisement().getType().name() : null;
+        this.advertisementStatus = advPermitDtl.getAdvertisement().getStatus() != null
+                ? advPermitDtl.getAdvertisement().getStatus().name() : null;
 
-        this.locality = advertisement.getLocality() != null ? advertisement.getLocality().getName() : null;
-        this.revenueWard = advertisement.getWard() != null ? advertisement.getWard().getName() : null;
-        this.adminWard = advertisement.getElectionWard() != null ? advertisement.getElectionWard().getName() : null;
-        this.address = advertisement.getAddress();
-        this.structure = advertisement.getType() != null ? advertisement.getType().name() : null;
-        this.category = advertisement.getCategory() != null ? advertisement.getCategory().getName() : null;
-        this.subCategory = advertisement.getSubCategory() != null ? advertisement.getSubCategory().getDescription() : null;
-        this.TPBORInumber = advertisement.getRevenueInspector() != null ? advertisement.getRevenueInspector().getName() : null;
-        this.electricityServiceNo = advertisement.getElectricityServiceNumber();
+        this.locality = advPermitDtl.getAdvertisement().getLocality() != null
+                ? advPermitDtl.getAdvertisement().getLocality().getName() : null;
+        this.revenueWard = advPermitDtl.getAdvertisement().getWard() != null ? advPermitDtl.getAdvertisement().getWard().getName()
+                : null;
+        this.adminWard = advPermitDtl.getAdvertisement().getElectionWard() != null
+                ? advPermitDtl.getAdvertisement().getElectionWard().getName() : null;
+        this.address = advPermitDtl.getAdvertisement().getAddress();
+        this.structure = advPermitDtl.getAdvertisement().getType() != null ? advPermitDtl.getAdvertisement().getType().name()
+                : null;
+        this.category = advPermitDtl.getAdvertisement().getCategory() != null
+                ? advPermitDtl.getAdvertisement().getCategory().getName() : null;
+        this.subCategory = advPermitDtl.getAdvertisement().getSubCategory() != null
+                ? advPermitDtl.getAdvertisement().getSubCategory().getDescription() : null;
+        this.TPBORInumber = advPermitDtl.getAdvertisement().getRevenueInspector() != null
+                ? advPermitDtl.getAdvertisement().getRevenueInspector().getName() : null;
+        this.electricityServiceNo = advPermitDtl.getAdvertisement().getElectricityServiceNumber();
 
     }
 
