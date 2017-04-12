@@ -50,7 +50,9 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Role;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.FileStoreUtils;
 import org.egov.mrs.application.MarriageConstants;
@@ -95,6 +97,9 @@ public class SearchRegistrationController {
     private FileStoreUtils fileStoreUtils;
     @Autowired
     protected MarriageRegistrationUnitService marriageRegistrationUnitService;
+
+    @Autowired
+    private AppConfigValueService appConfigValuesService;
 
     @Autowired
     public SearchRegistrationController(final MarriageRegistrationService marriageRegistrationService,
@@ -232,6 +237,16 @@ public class SearchRegistrationController {
     @ResponseBody
     public String searchApprovedMarriageRecords(final Model model, @ModelAttribute final MarriageCertificate certificate) {
         final List<MarriageCertificate> searchResultList = marriageCertificateService.searchMarriageCertificates(certificate);
+        int noOfToDaysToPrint = 0;
+        final List<AppConfigValues> appConfigValues = appConfigValuesService
+                .getConfigValuesByModuleAndKey(MarriageConstants.MODULE_NAME, MarriageConstants.NOOFDAYSTOPRINT);
+        if (appConfigValues != null && appConfigValues.get(0).getValue() != null) {
+            noOfToDaysToPrint = Integer.parseInt(appConfigValues.get(0).getValue().toString());
+        }
+
+        for (MarriageCertificate certficateobj : searchResultList) {
+            certficateobj.setPrintCertificateResrictionDays(noOfToDaysToPrint);
+        }
         return new StringBuilder(DATA)
                 .append(toJSON(searchResultList, MarriageCertificate.class, MarriageCerftificateJsonAdaptor.class)).append("}")
                 .toString();

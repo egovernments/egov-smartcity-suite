@@ -41,7 +41,6 @@
 package org.egov.mrs.web.adaptor;
 
 import java.lang.reflect.Type;
-
 import java.util.Date;
 
 import org.egov.mrs.domain.entity.MarriageCertificate;
@@ -59,8 +58,7 @@ public class MarriageCerftificateJsonAdaptor implements JsonSerializer<MarriageC
     @Override
     public JsonElement serialize(final MarriageCertificate marriageCertificate, final Type type,
             final JsonSerializationContext jsc) {
-        int noOfDays = 7;
-
+        
         final JsonObject jsonObject = new JsonObject();
         if (marriageCertificate != null) {
             if (marriageCertificate.getCertificateNo() != null)
@@ -98,7 +96,7 @@ public class MarriageCerftificateJsonAdaptor implements JsonSerializer<MarriageC
                 jsonObject.addProperty("certificateType", org.apache.commons.lang.StringUtils.EMPTY);
 
             if (new DateTime(new Date())
-                    .isBefore(new DateTime(marriageCertificate.getCertificateDate()).plusDays(noOfDays + 1))) {
+                    .isBefore(new DateTime(marriageCertificate.getCertificateDate()).plusDays(marriageCertificate.getPrintCertificateResrictionDays() + 1))) {
                 jsonObject.addProperty("showprintcertificate", true);
             }
             jsonObject.addProperty("id", marriageCertificate.getId());

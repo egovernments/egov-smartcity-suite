@@ -101,6 +101,9 @@ public class MarriageCertificate extends AbstractAuditable {
     @Transient
     private String frequency;
 
+    @Transient
+    private int printCertificateResrictionDays;
+    
     @Override
     public Long getId() {
         return id;
@@ -191,4 +194,14 @@ public class MarriageCertificate extends AbstractAuditable {
         return frequency;
     }
 
+    public int getPrintCertificateResrictionDays() {
+        return printCertificateResrictionDays;
+    }
+
+    public void setPrintCertificateResrictionDays(int printCertificateResrictionDays) {
+        this.printCertificateResrictionDays = printCertificateResrictionDays;
+    }
+
+    
+    
 }
