@@ -62,8 +62,10 @@ import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.entity.ReceiptHeader;
 import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.collection.integration.models.BillReceiptInfoImpl;
+import org.egov.collection.integration.models.BillReceiptInfoReq;
 import org.egov.collection.integration.models.BillReceiptReq;
 import org.egov.collection.integration.models.ReceiptAmountInfo;
+import org.egov.collection.integration.models.RequestInfo;
 import org.egov.collection.integration.services.BillingIntegrationService;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.EgwStatus;
@@ -111,10 +113,8 @@ import org.hibernate.Query;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -762,29 +762,28 @@ public class CollectionsUtil {
 
     public ReceiptAmountInfo updateReceiptDetailsAndGetReceiptAmountInfo(BillReceiptReq billReceipt, String serviceCode) {
         RestTemplate restTemplate = new RestTemplate();
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
+        org.egov.collection.integration.models.User userInfo = new org.egov.collection.integration.models.User();
+        userInfo.setId(securityUtils.getCurrentUser().getId());
+        userInfo.setName(securityUtils.getCurrentUser().getName());
+        //TODO: To set the tenant Id once available
+        userInfo.setTenantId(ApplicationThreadLocals.getCityName());
+        RequestInfo requestInfo = new RequestInfo();
+        requestInfo.setApiId("apiId");
+        requestInfo.setVer("ver");
+        requestInfo.setTs(new Date().toString());
+        requestInfo.setUserInfo(userInfo);
         billReceipt.setTenantId(ApplicationThreadLocals.getCityName());
-        String json = null;
-        try {
-            json = new ObjectMapper().writeValueAsString(billReceipt);
-        } catch (JsonProcessingException e) {
-            final String errMsg = "Exception while updating receiptdetails through rest for receipt number ["
-                    + billReceipt.getReceiptNum() + "]!";
-            LOGGER.error(errMsg, e);
-            throw new ApplicationRuntimeException(errMsg, e);
-        }
-        //HttpEntity<String> entity = new HttpEntity<>(json, headers);
-        LOGGER.info("updateReceiptDetailsAndGetReceiptAmountInfo - json" + json);
+        BillReceiptInfoReq billReceiptInfoReq = new BillReceiptInfoReq();
+        billReceiptInfoReq.setBillReceiptInfo(billReceipt);
+        billReceiptInfoReq.setRequestInfo(requestInfo);
         LOGGER.info("updateReceiptDetailsAndGetReceiptAmountInfo - billReceipt" + billReceipt);
         LOGGER.info("updateReceiptDetailsAndGetReceiptAmountInfo - before calling LAMS update");
         String url = collectionApplicationProperties.getLamsServiceUrl().concat(
                 collectionApplicationProperties.getUpdateDemandUrl(serviceCode.toLowerCase()));
         LOGGER.info("updateReceiptDetailsAndGetReceiptAmountInfo - url" + url);
-        //ResponseEntity<ReceiptAmountInfo> response = restTemplate.postForEntity(url, entity, ReceiptAmountInfo.class);
         ReceiptAmountInfo response = null;
         try{
-        response = restTemplate.postForObject(url, billReceipt, ReceiptAmountInfo.class);
+        response = restTemplate.postForObject(url, billReceiptInfoReq, ReceiptAmountInfo.class);
         }catch(Exception e){
             final String errMsg = "Exception while updateReceiptDetailsAndGetReceiptAmountInfo for bill number  ["
                     + billReceipt.getBillReferenceNum() + "]!";
