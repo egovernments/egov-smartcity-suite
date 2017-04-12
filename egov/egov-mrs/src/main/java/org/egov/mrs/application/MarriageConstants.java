@@ -99,6 +99,8 @@ public class MarriageConstants {
     public static final String PASSPORT = "Passport";
     public static final String AADHAR = "Aadhar";
     public static final String YEAR = "year";
+    public static final String NOOFDAYSTOPRINT = "NOOFDAYSTOPRINT";
+
 
     public static final String APPCONFKEY_DIGITALSIGNINWORKFLOW = "DIGITALSIGN_IN_WORKFLOW";
 
