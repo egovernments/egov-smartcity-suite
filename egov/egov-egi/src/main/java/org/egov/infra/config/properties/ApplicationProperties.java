@@ -51,6 +51,7 @@ import java.util.List;
 
 import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.egov.infra.config.core.GlobalSettings.DEFAULT_DATE_PATTERN_KEY;
 import static org.springframework.core.Ordered.LOWEST_PRECEDENCE;
 
 @Configuration
@@ -64,7 +65,6 @@ public class ApplicationProperties {
 
     private static final String FILESTORE_BASE_DIR = "filestore.base.dir";
     private static final String FILESTORESERVICE_BEANNAME = "filestoreservice.beanname";
-    private static final String DEFAULT_DATE_PATTERN = "default.date.pattern";
     private static final String MAIL_PORT = "mail.port";
     private static final String MAIL_HOST = "mail.host";
     private static final String MAIL_PROTOCOL = "mail.protocol";
@@ -77,6 +77,7 @@ public class ApplicationProperties {
     private static final String SMS_SENDER_USERNAME = "sms.sender.username";
     private static final String SMS_SENDER_PASWRD = "sms.sender.password";
     private static final String SMS_SENDER = "sms.sender";
+    private static final String SMS_PRIORITY_ENABLED = "sms.priority.enabled";
     private static final String COMMON_PROPERTIES_FILES = "common.properties.files";
     private static final String DEV_MODE = "dev.mode";
     private static final String MAIL_ENABLED = "mail.enabled";
@@ -119,7 +120,7 @@ public class ApplicationProperties {
     }
 
     public String defaultDatePattern() {
-        return this.environment.getProperty(DEFAULT_DATE_PATTERN);
+        return this.environment.getProperty(DEFAULT_DATE_PATTERN_KEY);
     }
 
     public Integer mailPort() {
@@ -168,6 +169,10 @@ public class ApplicationProperties {
 
     public String smsSender() {
         return this.environment.getProperty(SMS_SENDER);
+    }
+
+    public boolean smsPriorityEnabled() {
+        return this.environment.getProperty(SMS_PRIORITY_ENABLED, Boolean.class);
     }
 
     public String[] commonMessageFiles() {

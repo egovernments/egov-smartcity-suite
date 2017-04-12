@@ -59,8 +59,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.egov.infra.config.core.GlobalSettings.countryCode;
+import static org.egov.infra.config.core.GlobalSettings.defaultEncoding;
 import static org.egov.infra.messaging.MessagePriority.MEDIUM;
 
 @Service
@@ -74,7 +75,7 @@ public class SMSService {
     private static final String DEST_MOBILENUM_PARAM_NAME = "sms.destination.mobile.req.param.name";
     private static final String DEST_MESSAGE_PARAM_NAME = "sms.message.req.param.name";
     private static final String SMS_EXTRA_REQ_PARAMS = "sms.extra.req.params";
-    private static final String MOBILE_NUMBER_PREFIX = "default.country.code";
+    private static final String SMS_PRIORITY_PARAM_NAME = "sms.priority.param.name";
 
     @Autowired
     private ApplicationProperties applicationProperties;
@@ -97,12 +98,12 @@ public class SMSService {
                 urlParameters.add(new BasicNameValuePair(applicationProperties.getProperty(SENDERID_PARAM_NAME),
                         applicationProperties.smsSender()));
                 urlParameters.add(new BasicNameValuePair(applicationProperties.getProperty(DEST_MOBILENUM_PARAM_NAME),
-                        applicationProperties.getProperty(MOBILE_NUMBER_PREFIX) + mobileNumber));
+                        countryCode() + mobileNumber));
                 urlParameters.add(new BasicNameValuePair(applicationProperties.getProperty(DEST_MESSAGE_PARAM_NAME), message));
                 setAdditionalParameters(urlParameters, priority);
-                post.setEntity(new UrlEncodedFormEntity(urlParameters, UTF_8));
+                post.setEntity(new UrlEncodedFormEntity(urlParameters, defaultEncoding()));
                 HttpResponse response = client.execute(post);
-                String responseCode = IOUtils.toString(response.getEntity().getContent(), UTF_8);
+                String responseCode = IOUtils.toString(response.getEntity().getContent(), defaultEncoding());
                 if (LOGGER.isInfoEnabled())
                     LOGGER.info("SMS sending completed with response code [{}] - [{}]", responseCode,
                             applicationProperties.smsResponseMessageForCode(responseCode));
@@ -128,8 +129,8 @@ public class SMSService {
                 }
         }
 
-        if (applicationProperties.getProperty("sms.priority.enabled", Boolean.class)) {
-            urlParameters.add(new BasicNameValuePair(applicationProperties.getProperty("sms.priority.param.name"),
+        if (applicationProperties.smsPriorityEnabled()) {
+            urlParameters.add(new BasicNameValuePair(applicationProperties.getProperty(SMS_PRIORITY_PARAM_NAME),
                     applicationProperties.getProperty(
                             String.format(SMS_PRIORITY_PARAM_VALUE, priority.toString()))
             ));

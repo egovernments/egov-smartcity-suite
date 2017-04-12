@@ -49,24 +49,22 @@ import org.joda.time.Years;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.egov.infra.config.core.GlobalSettings.defaultDatePattern;
+import static org.egov.infra.config.core.GlobalSettings.defaultDateTimePattern;
+import static org.egov.infra.config.core.GlobalSettings.locale;
 
 public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
 
-    public static final String DEFAULT_DATE_FORMAT = "dd/MM/yyyy";
-    public static final String DEFAULT_DATE_WITH_HR_AND_MIN_FORMAT = "dd/MM/yyyy HH:mm";
-
-    public static final DateTimeFormatter DATE_TO_YEAR_FORMATTER = DateTimeFormat.forPattern("yyyy");
-    public static final DateTimeFormatter DEFAULT_DATE_FORMATTER = DateTimeFormat.forPattern(DEFAULT_DATE_FORMAT);
-    public static final DateTimeFormatter DEFAULT_DATE_WITH_HR_AND_MIN_FORMATTER = DateTimeFormat.forPattern(DEFAULT_DATE_WITH_HR_AND_MIN_FORMAT);
+    private static final String DEFAULT_YEAR_PATTERN = "yyyy";
+    private static final Map<String, DateTimeFormatter> DATE_FORMATTER_HOLDER = new ConcurrentHashMap<>(3);
 
     private static final String[] DATE_IN_WORDS = {
             "First", "Second", "Third", "Fourth", "Fifth", "Sixth", "Seventh", "Eighth", "Ninth", "Tenth", "Eleventh",
@@ -84,11 +82,11 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
     }
 
     public static String toYearFormat(final LocalDate date) {
-        return DATE_TO_YEAR_FORMATTER.print(date);
+        return formatter(DEFAULT_YEAR_PATTERN).print(date);
     }
 
     public static String toYearFormat(final Date date) {
-        return DATE_TO_YEAR_FORMATTER.print(new LocalDate(date));
+        return toYearFormat(new LocalDate(date));
     }
 
     public static String currentDateToDefaultDateFormat() {
@@ -96,7 +94,7 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
     }
 
     public static String toDefaultDateFormat(final LocalDate date) {
-        return DEFAULT_DATE_FORMATTER.print(date);
+        return formatter(defaultDatePattern()).print(date);
     }
 
     public static String toDefaultDateFormat(final Date date) {
@@ -104,7 +102,7 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
     }
 
     public static String toDefaultDateTimeFormat(final Date date) {
-        return DEFAULT_DATE_WITH_HR_AND_MIN_FORMATTER.print(new LocalDate(date));
+        return formatter(defaultDateTimePattern()).print(new DateTime(date));
     }
 
     public static Date endOfDay(final Date date) {
@@ -143,23 +141,9 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
     }
 
     public static int noOfYearsBetween(final Date startDate, final Date endDate) {
-        final DateTime sDate = new DateTime(startDate);
-        final DateTime eDate = new DateTime(endDate);
-        Years years = Years.yearsBetween(sDate, eDate);
-        return years.getYears();
+        return Years.yearsBetween(new DateTime(startDate), new DateTime(endDate)).getYears();
     }
 
-    /**
-     * Adds given number of days/months/years to given date and returns the
-     * resulting date.
-     *
-     * @param inputDate Input date
-     * @param addType   type to be added
-     *                  (Calendar.DAY_OF_MONTH/Calendar.MONTH/Calendar.YEAR)
-     * @param addAmount Number of days/months/years to be added to the input date
-     * @return Date after adding given number of days/months/years to the input
-     * date
-     */
     public static Date add(final Date inputDate, final int addType, final int addAmount) {
         final Calendar calendar = Calendar.getInstance();
         calendar.setTime(inputDate);
@@ -167,32 +151,10 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
         return calendar.getTime();
     }
 
-    /**
-     * This method will return true<br/>
-     * if any of the given date is null or firstDate comes before the secondDate
-     * or both dates are same<br/>
-     * will return false<br/>
-     * if firstDate comes after secondDate
-     *
-     * @param firstDate
-     * @param secondDate
-     * @return boolean
-     */
     public static boolean compareDates(final Date firstDate, final Date secondDate) {
-        return firstDate == null || secondDate == null ? true : firstDate.before(secondDate) ? false : true;
+        return firstDate == null || secondDate == null || !firstDate.before(secondDate);
     }
 
-    /**
-     * Constructs the Date range for the given From Date and To Date The given
-     * dates will change like following<br/>
-     * From date will construct time as 0:0:0 AM<br/>
-     * To Date will construct time as To Date + 1 [one day advance] 0:0:0.
-     *
-     * @param fromDate Date
-     * @param toDate   Date. return Date[] converted Date String values of From Date
-     *                 and To Date
-     * @return the java.util. date[]
-     */
     public static Date[] constructDateRange(final Date fromDate, final Date toDate) {
         final Date[] dates = new Date[2];
         final Calendar calfrom = Calendar.getInstance();
@@ -212,30 +174,6 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
         return dates;
     }
 
-    /**
-     * Constructs the Date range for the given From Date and To Date value using
-     * default Date Range formatting using DATEFORMATTER value.<br/>
-     * The given dates will change like following<br/>
-     * From date will construct time as 0:0:0 AM<br/>
-     * To Date will construct time as To Date + 1 [one day advance] 0:0:0.
-     *
-     * @param fromDate String
-     * @param toDate   String. return Date[] converted Date String values of From
-     *                 Date and To Date
-     * @return the java.util. date[]
-     * @throws ParseException the parse exception
-     */
-    public static Date[] constructDateRange(final String fromDate, final String toDate) throws ParseException {
-        return constructDateRange(getDateFormatter(DEFAULT_DATE_FORMAT).parse(fromDate),
-                getDateFormatter(DEFAULT_DATE_FORMAT).parse(toDate));
-    }
-
-    /**
-     * Creates the date.
-     *
-     * @param year the year
-     * @return the java.util. date
-     */
     public static Date createDate(final int year) {
         final Calendar date = Calendar.getInstance();
         date.set(Calendar.YEAR, year);
@@ -244,11 +182,6 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
         return date.getTime();
     }
 
-    /**
-     * Gets the all months.
-     *
-     * @return the all months
-     */
     public static Map<Integer, String> getAllMonths() {
         final Map<Integer, String> monthMap = new HashMap<>();
         monthMap.put(1, "Jan");
@@ -266,11 +199,6 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
         return monthMap;
     }
 
-    /**
-     * Gets all months with full names.
-     *
-     * @return all months
-     */
     public static Map<Integer, String> getAllMonthsWithFullNames() {
         final Map<Integer, String> monthMap = new HashMap<>();
         monthMap.put(1, "January");
@@ -288,9 +216,6 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
         return monthMap;
     }
 
-    /**
-     * Get the java.util.Date for the given date string value in given pattern.
-     **/
     public static Date getDate(final String date, final String pattern) {
         try {
             return isNotBlank(date) && isNotBlank(pattern) ? getDateFormatter(pattern).parse(date) : null;
@@ -299,119 +224,47 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
         }
     }
 
-    /**
-     * Gets the date.
-     *
-     * @param year  the year
-     * @param month the month
-     * @param date  the date
-     * @return date object representing given year, month and date
-     */
     public static Date getDate(final int year, final int month, final int date) {
         final Calendar calendar = Calendar.getInstance();
         calendar.set(year, month, date);
         return calendar.getTime();
     }
 
-    /**
-     * Will format the given Date by dd/MM/yyyy pattern.
-     *
-     * @param date the date
-     * @return the default formatted date
-     */
     public static String getDefaultFormattedDate(final Date date) {
-        return getDateFormatter(DEFAULT_DATE_FORMAT).format(date);
+        return toDefaultDateFormat(date);
     }
 
-    /**
-     * Will format the given Date by given pattern.
-     *
-     * @param date    the date
-     * @param pattern the pattern
-     * @return the formatted date
-     */
     public static String getFormattedDate(final Date date, final String pattern) {
-        return getDateFormatter(pattern).format(date);
+        return formatter(pattern).print(new DateTime(date));
     }
 
-    /**
-     * Now.
-     *
-     * @return Date object representing current time
-     */
     public static Date now() {
         return new Date();
     }
 
-    /**
-     * Today.
-     *
-     * @return Date object representing today
-     */
     public static Date today() {
         final Calendar calendar = Calendar.getInstance();
         return getDate(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
     }
 
-    /**
-     * Tomorrow.
-     *
-     * @return Date object representing tomorrow
-     */
     public static Date tomorrow() {
-        final Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DAY_OF_MONTH, 1);
-        return calendar.getTime();
+        return new DateTime().plusDays(1).toDate();
     }
 
-    /**
-     * Converts the given Date to word representation <br/>
-     * eg: for 08/12/2008 date converted in to Eighth December Two Thousand
-     * Eight<br/>
-     * .
-     *
-     * @param dateToConvert the date to convert
-     * @return String word rep of date
-     */
     public static String convertToWords(final Date dateToConvert) {
-        /** Word representation for dates */
-
         final Calendar cal = Calendar.getInstance();
         cal.setTime(dateToConvert);
         final StringBuilder dateInWord = new StringBuilder();
         dateInWord.append(DATE_IN_WORDS[cal.get(Calendar.DATE) - 1]).append(' ');
-        dateInWord.append(getDateFormatter("dd-MMMMM-yyyy").format(dateToConvert).split("-")[1]).append(' ');
+        dateInWord.append(formatter("dd-MMMMM-yyyy").print(new DateTime(dateToConvert)).split("-")[1]).append(' ');
         dateInWord.append(NumberToWord.translateToWord(String.valueOf(cal.get(Calendar.YEAR))));
         return dateInWord.toString();
     }
 
-    /**
-     * Gets the date formatter.
-     *
-     * @param pattern the pattern
-     * @return the date formatter This is not threadsafe
-     */
-    public static SimpleDateFormat getDateFormatter(final String pattern) {
-        return new SimpleDateFormat(pattern, Locale.getDefault());
-    }
-
-    /**
-     * Checks if the given date is between the 2 dates
-     *
-     * @param date
-     * @param fromDate
-     * @param toDate
-     * @return boolean
-     */
-    public static boolean between(final Date date, final Date fromDate, final Date toDate) {
+    public static boolean between(Date date, Date fromDate, Date toDate) {
         return (date.after(fromDate) || date.equals(fromDate)) && date.before(toDate) || date.equals(toDate);
     }
 
-    /**
-     * Gets all months for a financial year with full names.
-     *
-     * @return all months
-     */
     public static Map<Integer, String> getAllFinancialYearMonthsWithFullNames() {
         final Map<Integer, String> monthMap = new HashMap<>();
         monthMap.put(1, "April");
@@ -427,5 +280,18 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
         monthMap.put(11, "Feburary");
         monthMap.put(12, "March");
         return monthMap;
+    }
+
+    public static SimpleDateFormat getDateFormatter(final String pattern) {
+        return new SimpleDateFormat(pattern, locale());
+    }
+
+    public static DateTimeFormatter formatter(String pattern) {
+        DateTimeFormatter formatter = DATE_FORMATTER_HOLDER.get(pattern);
+        if (formatter == null) {
+            formatter = DateTimeFormat.forPattern(pattern).withLocale(locale());
+            DATE_FORMATTER_HOLDER.putIfAbsent(pattern, formatter);
+        }
+        return formatter;
     }
 }
