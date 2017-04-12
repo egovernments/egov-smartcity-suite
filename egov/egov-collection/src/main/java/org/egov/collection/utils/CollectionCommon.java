@@ -201,7 +201,7 @@ public class CollectionCommon {
                 newReceiptDetail.setAccounthead((CChartOfAccounts) persistenceService.findByNamedQuery(
                         CollectionConstants.QUERY_CHARTOFACCOUNT_BY_INSTRTYPE_SERVICE,
                         CollectionConstants.INSTRUMENTTYPE_ONLINE, receiptHeader.getOnlinePayment().getService()
-                        .getId()));
+                                .getId()));
             newReceiptDetail.setDramount(debitAmount);
             newReceiptDetail.setCramount(BigDecimal.ZERO);
             newReceiptDetail.setReceiptHeader(receiptHeader);
@@ -331,16 +331,18 @@ public class CollectionCommon {
         } else
             for (final ReceiptHeader receiptHeader : receipts) {
                 String additionalMessage = null;
-                if (receiptType == CollectionConstants.RECEIPT_TYPE_BILL)
-                    additionalMessage = receiptHeaderService.getAdditionalInfoForReceipt(serviceCode,
-                            new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO, persistenceService,
-                                    null));
-                if (additionalMessage != null)
-                    receiptList.add(new BillReceiptInfoImpl(receiptHeader, additionalMessage,
-                            chartOfAccountsHibernateDAO, persistenceService));
-                else
-                    receiptList.add(new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO,
-                            persistenceService, null));
+                if (receiptType == CollectionConstants.RECEIPT_TYPE_BILL) {
+                    if (!receiptHeader.getService().getCode().equals(CollectionConstants.SERVICECODE_LAMS))
+                        additionalMessage = receiptHeaderService.getAdditionalInfoForReceipt(serviceCode,
+                                new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO, persistenceService,
+                                        null));
+                    if (additionalMessage != null)
+                        receiptList.add(new BillReceiptInfoImpl(receiptHeader, additionalMessage,
+                                chartOfAccountsHibernateDAO, persistenceService));
+                    else
+                        receiptList.add(new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO,
+                                persistenceService, null));
+                }
             }
         final ReportRequest reportInput = new ReportRequest(templateName, receiptList, reportParams);
 
@@ -507,7 +509,7 @@ public class CollectionCommon {
                 oldReceiptHeader.getReceipttype(), oldReceiptHeader.getCollectiontype(), oldReceiptHeader.getPaidBy(),
                 oldReceiptHeader.getService(), oldReceiptHeader.getReferencenumber(),
                 oldReceiptHeader.getReferenceDesc(), oldReceiptHeader.getTotalAmount());
-           // receipt status is PENDING
+        // receipt status is PENDING
         newReceiptHeader.setStatus(collectionsUtil.getStatusForModuleAndCode(
                 CollectionConstants.MODULE_NAME_RECEIPTHEADER, CollectionConstants.RECEIPT_STATUS_CODE_PENDING));
         // the new receipt has reference to the cancelled receipt
@@ -748,24 +750,24 @@ public class CollectionCommon {
         if (paytInfoChequeDD.getInstrumentAmount() == null
                 || paytInfoChequeDD.getInstrumentAmount().compareTo(BigDecimal.ZERO) <= 0)
             invalidChequeDDPaytMsg.append("Invalid cheque/DD Instrument Amount[")
-            .append(paytInfoChequeDD.getInstrumentAmount()).append("] \n");
+                    .append(paytInfoChequeDD.getInstrumentAmount()).append("] \n");
         if (paytInfoChequeDD.getInstrumentNumber() == null
                 || CollectionConstants.BLANK.equals(paytInfoChequeDD.getInstrumentNumber())
                 || !MoneyUtils.isInteger(paytInfoChequeDD.getInstrumentNumber())
                 || paytInfoChequeDD.getInstrumentNumber().length() != 6)
             invalidChequeDDPaytMsg.append("Invalid Cheque/DD Instrument Number[")
-            .append(paytInfoChequeDD.getInstrumentNumber()).append("]. \n");
+                    .append(paytInfoChequeDD.getInstrumentNumber()).append("]. \n");
         if (paytInfoChequeDD.getInstrumentDate() == null)
             invalidChequeDDPaytMsg.append("Missing Cheque/DD Transaction Date \n");
         if (new Date().compareTo(paytInfoChequeDD.getInstrumentDate()) == -1)
             invalidChequeDDPaytMsg.append("Cheque/DD Transaction Date[").append(paytInfoChequeDD.getInstrumentDate())
-            .append("] cannot be a future date \n");
+                    .append("] cannot be a future date \n");
         Bank bank = null;
         if (paytInfoChequeDD.getBankId() != null) {
             bank = bankDAO.findById(paytInfoChequeDD.getBankId().intValue(), false);
             if (bank == null)
                 invalidChequeDDPaytMsg.append("No bank present for bank id [").append(paytInfoChequeDD.getBankId())
-                .append("] \n");
+                        .append("] \n");
         }
 
         if (!invalidChequeDDPaytMsg.toString().isEmpty())
