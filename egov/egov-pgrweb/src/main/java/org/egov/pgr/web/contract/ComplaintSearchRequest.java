@@ -46,11 +46,10 @@ import org.elasticsearch.index.query.QueryBuilders;
 import org.joda.time.DateTime;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.egov.infra.config.core.GlobalSettings.defaultDatePattern;
 import static org.egov.infra.utils.ApplicationConstant.ES_DATE_FORMAT;
 import static org.egov.infra.utils.DateUtils.endOfGivenDate;
-import static org.egov.infra.utils.DateUtils.formatter;
 import static org.egov.infra.utils.DateUtils.startOfGivenDate;
+import static org.egov.infra.utils.DateUtils.toDateTimeUsingDefaultPattern;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
 
@@ -106,12 +105,12 @@ public class ComplaintSearchRequest {
 
     public void setFromDate(final String fromDate) {
         if (fromDate != null)
-            this.fromDate = startOfGivenDate(formatter(defaultDatePattern()).parseDateTime(fromDate)).toString(ES_DATE_FORMAT);
+            this.fromDate = startOfGivenDate(toDateTimeUsingDefaultPattern(fromDate)).toString(ES_DATE_FORMAT);
     }
 
     public void setToDate(final String toDate) {
         if (toDate != null)
-            this.toDate = endOfGivenDate(formatter(defaultDatePattern()).parseDateTime(toDate)).toString(ES_DATE_FORMAT);
+            this.toDate = endOfGivenDate(toDateTimeUsingDefaultPattern(toDate)).toString(ES_DATE_FORMAT);
     }
 
     public void setComplaintDepartment(final String complaintDepartment) {

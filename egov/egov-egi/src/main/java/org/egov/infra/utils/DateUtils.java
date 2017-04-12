@@ -61,7 +61,7 @@ import static org.egov.infra.config.core.GlobalSettings.defaultDatePattern;
 import static org.egov.infra.config.core.GlobalSettings.defaultDateTimePattern;
 import static org.egov.infra.config.core.GlobalSettings.locale;
 
-public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
+public final class DateUtils extends org.apache.commons.lang3.time.DateUtils {
 
     private static final String DEFAULT_YEAR_PATTERN = "yyyy";
     private static final Map<String, DateTimeFormatter> DATE_FORMATTER_HOLDER = new ConcurrentHashMap<>(3);
@@ -81,11 +81,11 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
         return toYearFormat(new LocalDate());
     }
 
-    public static String toYearFormat(final LocalDate date) {
+    public static String toYearFormat(LocalDate date) {
         return formatter(DEFAULT_YEAR_PATTERN).print(date);
     }
 
-    public static String toYearFormat(final Date date) {
+    public static String toYearFormat(Date date) {
         return toYearFormat(new LocalDate(date));
     }
 
@@ -93,78 +93,86 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
         return toDefaultDateFormat(new LocalDate());
     }
 
-    public static String toDefaultDateFormat(final LocalDate date) {
+    public static String toDefaultDateFormat(LocalDate date) {
         return formatter(defaultDatePattern()).print(date);
     }
 
-    public static String toDefaultDateFormat(final Date date) {
+    public static String toDefaultDateFormat(Date date) {
         return toDefaultDateFormat(new LocalDate(date));
     }
 
-    public static String toDefaultDateTimeFormat(final Date date) {
+    public static DateTime toDateTimeUsingDefaultPattern(String date) {
+        return formatter(defaultDatePattern()).parseDateTime(date);
+    }
+
+    public static Date toDateUsingDefaultPattern(String date) {
+        return toDateTimeUsingDefaultPattern(date).toDate();
+    }
+
+    public static String toDefaultDateTimeFormat(Date date) {
         return formatter(defaultDateTimePattern()).print(new DateTime(date));
     }
 
-    public static Date endOfDay(final Date date) {
-        return new DateTime(date).withHourOfDay(23).withMinuteOfHour(59).withSecondOfMinute(59).toDate();
+    public static Date endOfDay(Date date) {
+        return endOfGivenDate(new DateTime(date)).toDate();
     }
 
     public static DateTime endOfToday() {
-        return new DateTime().withHourOfDay(23).withMinuteOfHour(59).withSecondOfMinute(59);
+        return endOfGivenDate(new DateTime());
     }
 
-    public static DateTime endOfGivenDate(final DateTime dateTime) {
-        return dateTime.withHourOfDay(23).withMinuteOfHour(59).withSecondOfMinute(59);
+    public static DateTime endOfGivenDate(DateTime dateTime) {
+        return dateTime.millisOfDay().withMaximumValue();
     }
 
-    public static DateTime startOfGivenDate(final DateTime dateTime) {
-        return dateTime.withHourOfDay(0).withMinuteOfHour(0).withSecondOfMinute(0);
+    public static DateTime startOfGivenDate(DateTime dateTime) {
+        return dateTime.withTimeAtStartOfDay();
     }
 
-    public static Date startOfDay(final Date date) {
-        return new DateTime(date).withTimeAtStartOfDay().toDate();
+    public static Date startOfDay(Date date) {
+        return startOfGivenDate(new DateTime(date)).toDate();
     }
 
-    public static int noOfMonthsBetween(final Date startDate, final Date endDate) {
-        final DateTime sDate = new DateTime(startDate);
-        final DateTime eDate = new DateTime(endDate);
+    public static int noOfMonthsBetween(Date startDate, Date endDate) {
+        DateTime sDate = new DateTime(startDate);
+        DateTime eDate = new DateTime(endDate);
         return Months.monthsBetween(sDate.withDayOfMonth(sDate.getDayOfMonth()), eDate.withDayOfMonth(eDate.getDayOfMonth()))
                 .getMonths();
     }
 
-    public static int daysBetween(final Date startDate, final Date endDate) {
+    public static int daysBetween(Date startDate, Date endDate) {
         return daysBetween(new DateTime(startDate), new DateTime(endDate));
     }
 
-    public static int daysBetween(final DateTime startDate, final DateTime endDate) {
+    public static int daysBetween(DateTime startDate, DateTime endDate) {
         return Days.daysBetween(startDate, endDate).getDays();
     }
 
-    public static int noOfYearsBetween(final Date startDate, final Date endDate) {
+    public static int noOfYearsBetween(Date startDate, Date endDate) {
         return Years.yearsBetween(new DateTime(startDate), new DateTime(endDate)).getYears();
     }
 
-    public static Date add(final Date inputDate, final int addType, final int addAmount) {
-        final Calendar calendar = Calendar.getInstance();
+    public static Date add(Date inputDate, int addType, int addAmount) {
+        Calendar calendar = Calendar.getInstance();
         calendar.setTime(inputDate);
         calendar.add(addType, addAmount);
         return calendar.getTime();
     }
 
-    public static boolean compareDates(final Date firstDate, final Date secondDate) {
+    public static boolean compareDates(Date firstDate, Date secondDate) {
         return firstDate == null || secondDate == null || !firstDate.before(secondDate);
     }
 
-    public static Date[] constructDateRange(final Date fromDate, final Date toDate) {
-        final Date[] dates = new Date[2];
-        final Calendar calfrom = Calendar.getInstance();
+    public static Date[] constructDateRange(Date fromDate, Date toDate) {
+        Date[] dates = new Date[2];
+        Calendar calfrom = Calendar.getInstance();
         calfrom.setTime(fromDate);
         calfrom.set(Calendar.HOUR, 0);
         calfrom.set(Calendar.MINUTE, 0);
         calfrom.set(Calendar.SECOND, 0);
         calfrom.set(Calendar.AM_PM, Calendar.AM);
         dates[0] = calfrom.getTime();
-        final Calendar calto = Calendar.getInstance();
+        Calendar calto = Calendar.getInstance();
         calto.setTime(toDate);
         calto.set(Calendar.HOUR, 0);
         calto.set(Calendar.MINUTE, 0);
@@ -174,8 +182,8 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
         return dates;
     }
 
-    public static Date createDate(final int year) {
-        final Calendar date = Calendar.getInstance();
+    public static Date createDate(int year) {
+        Calendar date = Calendar.getInstance();
         date.set(Calendar.YEAR, year);
         date.set(Calendar.MONTH, 0);
         date.set(Calendar.DATE, 1);
@@ -183,7 +191,7 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
     }
 
     public static Map<Integer, String> getAllMonths() {
-        final Map<Integer, String> monthMap = new HashMap<>();
+        Map<Integer, String> monthMap = new HashMap<>();
         monthMap.put(1, "Jan");
         monthMap.put(2, "Feb");
         monthMap.put(3, "Mar");
@@ -200,7 +208,7 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
     }
 
     public static Map<Integer, String> getAllMonthsWithFullNames() {
-        final Map<Integer, String> monthMap = new HashMap<>();
+        Map<Integer, String> monthMap = new HashMap<>();
         monthMap.put(1, "January");
         monthMap.put(2, "Feburary");
         monthMap.put(3, "March");
@@ -216,25 +224,25 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
         return monthMap;
     }
 
-    public static Date getDate(final String date, final String pattern) {
+    public static Date getDate(String date, String pattern) {
         try {
             return isNotBlank(date) && isNotBlank(pattern) ? getDateFormatter(pattern).parse(date) : null;
-        } catch (final Exception e) {
+        } catch (Exception e) {
             throw new ApplicationRuntimeException("Date or Pattern value is not valid", e);
         }
     }
 
-    public static Date getDate(final int year, final int month, final int date) {
-        final Calendar calendar = Calendar.getInstance();
+    public static Date getDate(int year, int month, int date) {
+        Calendar calendar = Calendar.getInstance();
         calendar.set(year, month, date);
         return calendar.getTime();
     }
 
-    public static String getDefaultFormattedDate(final Date date) {
+    public static String getDefaultFormattedDate(Date date) {
         return toDefaultDateFormat(date);
     }
 
-    public static String getFormattedDate(final Date date, final String pattern) {
+    public static String getFormattedDate(Date date, String pattern) {
         return formatter(pattern).print(new DateTime(date));
     }
 
@@ -243,7 +251,7 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
     }
 
     public static Date today() {
-        final Calendar calendar = Calendar.getInstance();
+        Calendar calendar = Calendar.getInstance();
         return getDate(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
     }
 
@@ -251,10 +259,10 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
         return new DateTime().plusDays(1).toDate();
     }
 
-    public static String convertToWords(final Date dateToConvert) {
-        final Calendar cal = Calendar.getInstance();
+    public static String convertToWords(Date dateToConvert) {
+        Calendar cal = Calendar.getInstance();
         cal.setTime(dateToConvert);
-        final StringBuilder dateInWord = new StringBuilder();
+        StringBuilder dateInWord = new StringBuilder();
         dateInWord.append(DATE_IN_WORDS[cal.get(Calendar.DATE) - 1]).append(' ');
         dateInWord.append(formatter("dd-MMMMM-yyyy").print(new DateTime(dateToConvert)).split("-")[1]).append(' ');
         dateInWord.append(NumberToWord.translateToWord(String.valueOf(cal.get(Calendar.YEAR))));
@@ -266,7 +274,7 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
     }
 
     public static Map<Integer, String> getAllFinancialYearMonthsWithFullNames() {
-        final Map<Integer, String> monthMap = new HashMap<>();
+        Map<Integer, String> monthMap = new HashMap<>();
         monthMap.put(1, "April");
         monthMap.put(2, "May");
         monthMap.put(3, "June");
@@ -282,7 +290,7 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
         return monthMap;
     }
 
-    public static SimpleDateFormat getDateFormatter(final String pattern) {
+    public static SimpleDateFormat getDateFormatter(String pattern) {
         return new SimpleDateFormat(pattern, locale());
     }
 
