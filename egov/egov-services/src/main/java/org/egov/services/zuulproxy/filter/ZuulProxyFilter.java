@@ -90,6 +90,7 @@ public class ZuulProxyFilter extends ZuulFilter {
     private static final String SERVICES_APPLICATION_PROPERTIES = "servicesApplicationProperties";
     private static final String USER_SERVICE = "userService";
     private static final String ENVIRONMENT = "environment";
+    private static final String TENANT_ID = "tenantId";
     private ObjectMapper mapper = null;
 
     @Override
@@ -150,13 +151,16 @@ public class ZuulProxyFilter extends ZuulFilter {
             if (log.isInfoEnabled())
                 log.info(String.format("%s request to the url %s", request.getMethod(), request.getRequestURL().toString()));
 
-            if (StringUtils.isNotBlank(request.getQueryString()))
-                endPointURI = endPointURI + "?" + request.getQueryString();
+            final String tenantId = getTanentId(springContext);
+            endPointURI = endPointURI + "?" + updateQueryString(request.getQueryString(), TENANT_ID, tenantId);
+
+            if (log.isInfoEnabled())
+                log.info("endPointURI  " + endPointURI);
 
             final URL routedHost = new URL(mappingURL + endPointURI);
             ctx.setRouteHost(routedHost);
             ctx.set(REQUEST_URI, routedHost.getPath());
-            final String userInfo = getUserInfo(request, springContext);
+            final String userInfo = getUserInfo(request, springContext, tenantId);
             if (shouldPutUserInfoOnHeaders(ctx))
                 ctx.addZuulRequestHeader(USER_INFO_FIELD_NAME, userInfo);
             else
@@ -193,7 +197,8 @@ public class ZuulProxyFilter extends ZuulFilter {
         });
     }
 
-    private String getUserInfo(final HttpServletRequest request, final WebApplicationContext springContext) {
+    private String getUserInfo(final HttpServletRequest request, final WebApplicationContext springContext,
+            final String tenantId) {
         final HttpSession session = request.getSession();
         String userInfoJson = null;
 
@@ -213,13 +218,6 @@ public class ZuulProxyFilter extends ZuulFilter {
             final List<Role> roles = new ArrayList<Role>();
             userDetails.getUser().getRoles().forEach(authority -> roles.add(new Role(authority.getName())));
 
-            final Environment environment = (Environment) springContext.getBean(ENVIRONMENT);
-            final String clientId = environment.getProperty(CLIENT_ID);
-
-            String tenantId = ApplicationThreadLocals.getTenantID();
-            if (StringUtils.isNotBlank(clientId))
-                tenantId = clientId + "." + tenantId;
-
             final UserInfo userInfo = new UserInfo(roles, userDetails.getUserId(), userDetails.getUsername(), user.getName(),
                     user.getEmailId(), user.getMobileNumber(), userDetails.getUserType().toString(),
                     tenantId);
@@ -235,6 +233,29 @@ public class ZuulProxyFilter extends ZuulFilter {
         }
 
         return userInfoJson;
+    }
+
+    private String getTanentId(final WebApplicationContext springContext) {
+
+        final Environment environment = (Environment) springContext.getBean(ENVIRONMENT);
+        final String clientId = environment.getProperty(CLIENT_ID);
+
+        String tenantId = ApplicationThreadLocals.getTenantID();
+        if (StringUtils.isNotBlank(clientId))
+            tenantId = clientId + "." + tenantId;
+        return tenantId;
+
+    }
+
+    private static String updateQueryString(String queryString, final String name, final String value) {
+        if (queryString != null)
+            queryString = queryString.replaceAll(name + "=.*?($|&)", "").replaceFirst("&$", "");
+        return addParameter(queryString, name, value);
+    }
+
+    public static String addParameter(final String queryString, final String name, final String value) {
+        return StringUtils.isEmpty(queryString) ? name + "=" + value : queryString + "&" + name + "=" + value;
+
     }
 
 }
