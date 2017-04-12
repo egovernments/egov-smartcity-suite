@@ -764,6 +764,7 @@ public class CollectionsUtil {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
+        billReceipt.setTenantId(ApplicationThreadLocals.getCityName());
         String json = null;
         try {
             json = new ObjectMapper().writeValueAsString(billReceipt);
@@ -773,11 +774,11 @@ public class CollectionsUtil {
             LOGGER.error(errMsg, e);
             throw new ApplicationRuntimeException(errMsg, e);
         }
-        HttpEntity<String> entity = new HttpEntity<>(json, headers);
+        //HttpEntity<String> entity = new HttpEntity<>(json, headers);
         LOGGER.info("updateReceiptDetailsAndGetReceiptAmountInfo - json" + json);
         LOGGER.info("updateReceiptDetailsAndGetReceiptAmountInfo - billReceipt" + billReceipt);
         LOGGER.info("updateReceiptDetailsAndGetReceiptAmountInfo - before calling LAMS update");
-        String url = ApplicationThreadLocals.getDomainURL().concat(
+        String url = collectionApplicationProperties.getLamsServiceUrl().concat(
                 collectionApplicationProperties.getUpdateDemandUrl(serviceCode.toLowerCase()));
         LOGGER.info("updateReceiptDetailsAndGetReceiptAmountInfo - url" + url);
         //ResponseEntity<ReceiptAmountInfo> response = restTemplate.postForEntity(url, entity, ReceiptAmountInfo.class);
@@ -785,8 +786,10 @@ public class CollectionsUtil {
         try{
         response = restTemplate.postForObject(url, billReceipt, ReceiptAmountInfo.class);
         }catch(Exception e){
-            e.printStackTrace();
-            LOGGER.error(e);
+            final String errMsg = "Exception while updateReceiptDetailsAndGetReceiptAmountInfo for bill number  ["
+                    + billReceipt.getBillReferenceNum() + "]!";
+            LOGGER.error(errMsg, e);
+            throw new ApplicationRuntimeException(errMsg, e);
         }
         LOGGER.info("updateReceiptDetailsAndGetReceiptAmountInfo - response" + response);
         return response;
