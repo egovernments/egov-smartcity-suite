@@ -1162,7 +1162,7 @@ public class CollectionIndexElasticSearchService {
                 toDate = DateUtils.addYears(toDate, -1);
             } else {
                 fromDate = DateUtils.addYears(finYearStartDate, -1);
-                toDate = DateUtils.addYears(finYearEndDate, -1);
+                toDate = DateUtils.addYears(DateUtils.addDays(finYearEndDate, 1), -1);
             }
             finYearStartDate = DateUtils.addYears(finYearStartDate, -1);
             finYearEndDate = DateUtils.addYears(finYearEndDate, -1);
