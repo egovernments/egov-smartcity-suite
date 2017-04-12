@@ -777,6 +777,7 @@ public class CollectionsUtil {
         billReceiptInfoReq.setBillReceiptInfo(billReceipt);
         billReceiptInfoReq.setRequestInfo(requestInfo);
         LOGGER.info("updateReceiptDetailsAndGetReceiptAmountInfo - billReceipt" + billReceipt);
+        LOGGER.info("updateReceiptDetailsAndGetReceiptAmountInfo - billReceipt" + billReceipt.getAccountDetails());
         LOGGER.info("updateReceiptDetailsAndGetReceiptAmountInfo - before calling LAMS update");
         String url = collectionApplicationProperties.getLamsServiceUrl().concat(
                 collectionApplicationProperties.getUpdateDemandUrl(serviceCode.toLowerCase()));
