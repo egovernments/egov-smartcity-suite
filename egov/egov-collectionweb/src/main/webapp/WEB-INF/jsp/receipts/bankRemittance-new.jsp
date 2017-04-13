@@ -511,6 +511,7 @@
 									placeholder="DD/MM/YYYY" /></td>
 						</tr>
 					</table>
+					</div>
 					<div class="buttonbottom">
 						<input name="search" type="submit" class="buttonsubmit"
 							id="search" value="Search" onclick="return searchDataToRemit()" />
@@ -643,7 +644,7 @@
 								</display:column>
 							</s:if>
 						</display:table>
-				</div>
+				
 				<br />
 				<div id="loadingMask"
 					style="display: none; overflow: hidden; text-align: center">
@@ -701,7 +702,6 @@
 						</div>
 					</s:if>
 				</s:if>
-			</div>
 			</div>
 		</s:push>
 	</s:form>
