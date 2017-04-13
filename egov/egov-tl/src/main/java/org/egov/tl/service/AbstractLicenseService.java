@@ -52,6 +52,7 @@ import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.DesignationService;
 import org.egov.eis.service.PositionMasterService;
+import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.DepartmentService;
@@ -62,6 +63,7 @@ import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.services.PersistenceService;
+import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.tl.entity.FeeMatrixDetail;
 import org.egov.tl.entity.License;
@@ -93,6 +95,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import static java.math.BigDecimal.ZERO;
@@ -221,17 +224,20 @@ public abstract class AbstractLicenseService<T extends License> {
     }
 
     private void wfWithCscOperator(final T license, final WorkflowBean workflowBean) {
-        List<Assignment> assignmentList = assignmentService
-                .findAllAssignmentsByDeptDesigAndDates(departmentService.getDepartmentByName(PUBLIC_HEALTH_DEPT).getId(),
-                        designationService.getDesignationByName(JA_DESIGNATION).getId(), new Date());
-        if (assignmentList.isEmpty())
+        Department nextAssigneeDept = departmentService.getDepartmentByName(PUBLIC_HEALTH_DEPT);
+        Designation nextAssigneeDesig = designationService.getDesignationByName(JA_DESIGNATION);
+        List<Assignment> assignmentList = assignmentService.
+                findAllAssignmentsByDeptDesigAndDates(nextAssigneeDept.getId(), nextAssigneeDesig.getId(), new Date());
+        if (assignmentList.isEmpty()) {
+            nextAssigneeDesig = Optional.ofNullable(designationService.getDesignationByName(RC_DESIGNATION)).
+                    orElseThrow(() -> new ValidationException(LICENSE_WF_INITIATOR_NOT_DEFINED, LICENSE_WF_INITIATOR_NOT_DEFINED));
             assignmentList = assignmentService
-                    .findAllAssignmentsByDeptDesigAndDates(departmentService.getDepartmentByName(PUBLIC_HEALTH_DEPT).getId(),
-                            designationService.getDesignationByName(RC_DESIGNATION).getId(), new Date());
+                    .findAllAssignmentsByDeptDesigAndDates(nextAssigneeDept.getId(),
+                            nextAssigneeDesig.getId(), new Date());
+        }
         if (!assignmentList.isEmpty()) {
             final Assignment wfAssignment = assignmentList.get(0);
-            final String natureOfWork = license.isReNewApplication()
-                    ? RENEWAL_NATUREOFWORK : NEW_NATUREOFWORK;
+            final String natureOfWork = license.isReNewApplication() ? RENEWAL_NATUREOFWORK : NEW_NATUREOFWORK;
             final WorkFlowMatrix wfmatrix = this.licenseWorkflowService.getWfMatrix(license.getStateType(), PUBLIC_HEALTH_DEPT,
                     null, workflowBean.getAdditionaRule(), workflowBean.getCurrentState(), null);
             if (!license.hasState())
