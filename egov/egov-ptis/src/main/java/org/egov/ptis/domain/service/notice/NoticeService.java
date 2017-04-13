@@ -46,6 +46,9 @@ import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.commons.lang.StringUtils;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.FinancialYearDAO;
@@ -78,7 +81,9 @@ public class NoticeService extends PersistenceService<PtNotice, Long> {
     protected FileStoreService fileStoreService;
     @Autowired
     private FinancialYearDAO financialYearDAO;
-
+    @PersistenceContext
+    private EntityManager eManager;
+    
     public NoticeService() {
         super(PtNotice.class);
     }
@@ -167,7 +172,7 @@ public class NoticeService extends PersistenceService<PtNotice, Long> {
 
     public String getNoticeByApplicationNo(final String applicationNo) {
         final StringBuilder queryStr = new StringBuilder(500);
-        String noticeNum = "";
+        String noticeNum;
         queryStr.append(
                 "select notice.noticeNo from PtNotice notice left join notice.basicProperty bp , PropertyMutation mt ");
         queryStr.append(" where notice.applicationNumber=:applicationNo");
@@ -176,14 +181,16 @@ public class NoticeService extends PersistenceService<PtNotice, Long> {
         final Query query = getSession().createQuery(queryStr.toString());
         if (StringUtils.isNotBlank(applicationNo))
             query.setString("applicationNo", applicationNo);
+        @SuppressWarnings("unchecked")
         final List<String> notices = query.list();
-        if (notices.size() != 0)
+        if (!notices.isEmpty())
             noticeNum = (String) query.list().get(0);
         else
             noticeNum = "";
         return noticeNum;
     }
 
+    @SuppressWarnings("unchecked")
     public List<PropertyMutation> getListofMutations(final String indexNumber) {
         final StringBuilder queryStr = new StringBuilder();
         queryStr.append("select mt from PropertyMutation mt left join mt.basicProperty bp ");
@@ -193,8 +200,7 @@ public class NoticeService extends PersistenceService<PtNotice, Long> {
         final Query query = getSession().createQuery(queryStr.toString());
         if (StringUtils.isNotBlank(indexNumber))
             query.setString("assessmentNo", indexNumber);
-        final List<PropertyMutation> mutations = query.list();
-        return mutations;
+        return query.list();
     }
     
     public PtNotice getNoticeByTypeUpicNoAndFinYear(final String noticeType, final String assessementNumber) {
@@ -211,4 +217,12 @@ public class NoticeService extends PersistenceService<PtNotice, Long> {
         qry.setParameterList("noticeType", noticeType);
         return (PtNotice) qry.uniqueResult();
     }
+    
+    @SuppressWarnings("unchecked")
+    public List<PtNotice> getNoticeByAssessmentNumner(final String assessementNumber) {
+        final javax.persistence.Query qry = eManager.createNamedQuery("getAllNoticesByAssessmentNo");
+        qry.setParameter(1, assessementNumber);
+        return qry.getResultList();
+    }
+    
 }

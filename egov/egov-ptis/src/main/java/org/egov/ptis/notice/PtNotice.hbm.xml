@@ -66,4 +66,5 @@
         </many-to-one>
 	</class>
  <query name="getNoticeByNoticeNo"><![CDATA[from PtNotice where noticeNo=?]]></query>
+ <query name="getAllNoticesByAssessmentNo"><![CDATA[from PtNotice where basicProperty.upicNo=?]]></query>
 </hibernate-mapping>

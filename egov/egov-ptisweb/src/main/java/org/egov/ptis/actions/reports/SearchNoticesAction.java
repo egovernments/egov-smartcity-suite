@@ -84,6 +84,7 @@ import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
+import org.egov.infra.utils.StringUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.SearchFormAction;
@@ -92,6 +93,7 @@ import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQueryHQL;
 import org.egov.ptis.actions.common.CommonServices;
 import org.egov.ptis.bean.CitizenMutationInfo;
+import org.egov.ptis.bean.CitizenNoticeBean;
 import org.egov.ptis.domain.dao.property.PropertyTypeMasterDAO;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
@@ -115,16 +117,17 @@ import com.lowagie.text.pdf.PdfWriter;
                 "inputName", "fileStream", "contentDisposition", "attachment; filename=${fileName}" }),
         @Result(name = "RENDER_NOTICE", location = "/commons/htmlFileRenderer.jsp"),
         @Result(name = SearchNoticesAction.NEW, location = "reports/citizen-search-notice.jsp"),
+        @Result(name = SearchNoticesAction.CITIZEN_SEARCH, location = "reports/citizen-searchnotice.jsp"),
         @Result(name = SearchNoticesAction.INDEX, location = "reports/searchNotices.jsp") })
 public class SearchNoticesAction extends SearchFormAction {
     private static final Logger LOGGER = Logger.getLogger(SearchNoticesAction.class);
     private static final long serialVersionUID = 1L;
     protected static final String SUCCESS = "success";
-    private static final String ERROR = "error";
     private static final String FROM_CLAUSE = " from PtNotice notice left join notice.basicProperty bp,PropertyMaterlizeView pmv";
     private static final String BILL_FROM_CLAUSE = " from DemandBill bill, PtNotice notice left join notice.basicProperty bp, PropertyMaterlizeView pmv";
     private static final String ORDER_BY = " order by notice.noticeDate desc";
     private static final String BILL_ORDER_BY = " order by notice.basicProperty.address.houseNoBldgApt asc";
+    protected static final String CITIZEN_SEARCH = "citizen_search";
     private String ownerName;
     private Long zoneId;
     private Long wardId;
@@ -144,6 +147,8 @@ public class SearchNoticesAction extends SearchFormAction {
     private InputStream fileStream;
     private Long contentLength;
     private String partNo;
+    private transient List<CitizenNoticeBean> citizenNotices;
+    private String applicationNo;
 
     @Autowired
     private PropertyTypeMasterDAO propertyTypeMasterDAO;
@@ -260,12 +265,12 @@ public class SearchNoticesAction extends SearchFormAction {
     private List<CitizenMutationInfo> getMutationsList(String indexNumber) {
 
         List<PropertyMutation> mutations = noticeService.getListofMutations(indexNumber);
-        List<CitizenMutationInfo> citizenMutationInfo = new LinkedList<CitizenMutationInfo>();
+        List<CitizenMutationInfo> citizenMutationInfo = new LinkedList<>();
         for (PropertyMutation mt : mutations) {
             CitizenMutationInfo citizenMutationBean = new CitizenMutationInfo();
             citizenMutationBean.setAssessmentNo(indexNumber);
-            citizenMutationBean.setNewOwnerName(mt.getFullTranfereeName().toString());
-            citizenMutationBean.setOldOwnerName(mt.getFullTranferorName().toString());
+            citizenMutationBean.setNewOwnerName(mt.getFullTranfereeName());
+            citizenMutationBean.setOldOwnerName(mt.getFullTranferorName());
             citizenMutationBean.setApplicationNo(mt.getApplicationNo());
             citizenMutationBean.setMutationFee(mt.getMutationFee() != null ? mt.getMutationFee() : BigDecimal.ZERO);
             citizenMutationBean.setReceiptNo(mt.getReceiptNum() != null ? mt.getReceiptNum() : "");
@@ -299,7 +304,7 @@ public class SearchNoticesAction extends SearchFormAction {
             return INDEX;
         }
 
-        final List<InputStream> pdfs = new ArrayList<InputStream>();
+        final List<InputStream> pdfs = new ArrayList<>();
 
         for (final PtNotice ptNotice : noticeList)
             try {
@@ -483,18 +488,18 @@ public class SearchNoticesAction extends SearchFormAction {
         }
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unused" })
     private void prepareWardDropDownData(final boolean zoneExists, final boolean wardExists) {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Entered into prepareWardDropDownData method");
             LOGGER.debug("Zone Exists ? : " + zoneExists + ", " + "Ward Exists ? : " + wardExists);
         }
         if (zoneExists && wardExists) {
-            List<Boundary> wardNewList = new ArrayList<Boundary>();
+            List<Boundary> wardNewList = new ArrayList<>();
             wardNewList = boundaryService.getActiveChildBoundariesByBoundaryId(getZoneId());
             addDropdownData("wardList", wardNewList);
         } else
-            addDropdownData("wardList", Collections.EMPTY_LIST);
+            addDropdownData("wardList", Collections.emptyList());
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Exit from prepareWardDropDownData method");
     }
@@ -846,6 +851,67 @@ public class SearchNoticesAction extends SearchFormAction {
         }
         return formattedStr.toString();
     }
+    
+    @SkipValidation
+    @Actions({ @Action(value = "/citizen-searchnotices"), @Action(value = "/public/citizen-searchnotices") })
+    public String searchNotices() {
+        return CITIZEN_SEARCH;
+    }
+
+    @SkipValidation
+    @ValidationErrorPage(value = CITIZEN_SEARCH)
+    @Actions({ @Action(value = "/searchnotice-result"), @Action(value = "/public/searchnotice-result") })
+    public String getNotices() {
+
+        if (!indexNumber.isEmpty()) {
+            reportHeader = reportHeader + ", propertyId: " + indexNumber;
+            setIndexNumber(indexNumber);
+
+            citizenNotices = getAllNoticesByAssessmentNo(indexNumber);
+        } else {
+            reportHeader = reportHeader + ", applicationNumber: " + applicationNo;
+            setApplicationNo(applicationNo);
+            List<CitizenNoticeBean> citizenNoticeList = new LinkedList<>();
+            CitizenNoticeBean noticeBean = getNoticeByApplicationNo(applicationNo);
+            if (!StringUtils.isBlank(noticeBean.getNotice())) {
+                citizenNoticeList.add(noticeBean);
+                setCitizenNotices(citizenNoticeList);
+            }
+        }
+
+        return CITIZEN_SEARCH;
+    }
+
+    private List<CitizenNoticeBean> getAllNoticesByAssessmentNo(final String assessementNumber) {
+        List<PtNotice> ptNoticeList = noticeService.getNoticeByAssessmentNumner(assessementNumber);
+        List<CitizenNoticeBean> citizenNoticeList = new LinkedList<>();
+        if (!ptNoticeList.isEmpty()) {
+            for (PtNotice notice : ptNoticeList) {
+                CitizenNoticeBean citizenNoticeBean = new CitizenNoticeBean();
+                setNoticeDetails(citizenNoticeBean, notice);
+                citizenNoticeList.add(citizenNoticeBean);
+            }
+        }
+        return citizenNoticeList;
+    }
+
+    private CitizenNoticeBean getNoticeByApplicationNo(final String applicationNumber) {
+        PtNotice ptNotice = noticeService.getNoticeByApplicationNumber(applicationNumber);
+        CitizenNoticeBean citizenNoticeBean = new CitizenNoticeBean();
+        if (ptNotice != null)
+            setNoticeDetails(citizenNoticeBean, ptNotice);
+        return citizenNoticeBean;
+    }
+
+    private void setNoticeDetails(CitizenNoticeBean citizenNoticeBean, PtNotice notice) {
+        citizenNoticeBean.setAssessmentNo(notice.getBasicProperty().getUpicNo());
+        citizenNoticeBean.setNotice(notice.getNoticeNo());
+        citizenNoticeBean.setNoticeDate(notice.getNoticeDate());
+        citizenNoticeBean.setNoticeType(notice.getNoticeType());
+        citizenNoticeBean.setAddress(notice.getBasicProperty().getAddress().toString());
+        citizenNoticeBean.setOwnerName(notice.getBasicProperty().getPrimaryOwner().getName());
+        citizenNoticeBean.setHouseNo(notice.getBasicProperty().getAddress().getHouseNoBldgApt());
+    }
 
     public String getOwnerName() {
         return ownerName;
@@ -1021,6 +1087,26 @@ public class SearchNoticesAction extends SearchFormAction {
 
     public void setMutationList(List<CitizenMutationInfo> mutationList) {
         this.mutationList = mutationList;
+    }
+
+    public List<CitizenNoticeBean> getCitizenNotices() {
+        return citizenNotices;
+    }
+
+    public void setCitizenNotices(List<CitizenNoticeBean> citizenNotices) {
+        this.citizenNotices = citizenNotices;
+    }
+    
+    public void addCitizenNotices(CitizenNoticeBean citizenNoticeBean){
+        this.citizenNotices.add(citizenNoticeBean);
+    }
+
+    public String getApplicationNo() {
+        return applicationNo;
+    }
+
+    public void setApplicationNo(String applicationNo) {
+        this.applicationNo = applicationNo;
     }
 
 }
