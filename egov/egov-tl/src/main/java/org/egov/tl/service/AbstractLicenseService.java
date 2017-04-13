@@ -40,6 +40,7 @@
 
 package org.egov.tl.service;
 
+import org.egov.commons.CFinancialYear;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.dao.InstallmentHibDao;
@@ -771,5 +772,10 @@ public abstract class AbstractLicenseService<T extends License> {
 
     public boolean checkOldLicenseNumberIsDuplicated(final T t) {
         return licenseRepository.findByOldLicenseNumberAndIdIsNot(t.getOldLicenseNumber(), t.getId()) != null;
+    }
+
+    public List<License> getLicensesForDemandGeneration(final String natureOfBusiness, final CFinancialYear installmentYear, String licenseNotActive) {
+        Installment installment = installmentDao.getInsatllmentByModuleForGivenDate(getModuleName(), installmentYear.getStartingDate());
+        return licenseRepository.findByNatureOfBusinessNameAndStatusName(natureOfBusiness, LICENSE_STATUS_ACTIVE, installment.getFromDate());
     }
 }

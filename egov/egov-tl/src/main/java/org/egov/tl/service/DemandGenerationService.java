@@ -62,6 +62,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -216,11 +217,15 @@ public class DemandGenerationService {
         CFinancialYear installmentYear = financialYearService.getFinacialYearByYearRange(installmentYearRange);
         if (!installmentYearValidForDemandGeneration(installmentYear))
             throw new ApplicationRuntimeException("TL-006");
-        List<License> licenses = licenseService.getAllLicensesByNatureOfBusiness(PERMANENT_NATUREOFBUSINESS);
+        List<License> licenses = licenseService.getLicensesForDemandGeneration(PERMANENT_NATUREOFBUSINESS, installmentYear, LICENSE_NOT_ACTIVE);
+        List<License> demandMissingLicenses = new ArrayList<>();
         Set<License> demandLogLicenses = new HashSet<>();
-        demandGenerationLog.getDetails().stream().forEach(demandGenerationLogDetail -> demandLogLicenses.add(demandGenerationLogDetail.getLicense()));
-        licenses.removeAll(demandLogLicenses);
-        return generateDemand(demandGenerationLog, installmentYear, licenses);
+        demandGenerationLog.getDetails().stream().filter(demandGenerationLogDetail -> !LICENSE_NOT_ACTIVE.equals(demandGenerationLogDetail.getDetail())).forEach(demandGenerationLogDetail -> demandLogLicenses.add(demandGenerationLogDetail.getLicense()));
+        licenses.stream().forEach(license -> {
+            if (!demandLogLicenses.contains(license))
+                demandMissingLicenses.add(license);
+        });
+        return generateDemand(demandGenerationLog, installmentYear, demandMissingLicenses);
 
     }
 
