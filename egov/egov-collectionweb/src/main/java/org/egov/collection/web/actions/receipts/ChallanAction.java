@@ -371,7 +371,8 @@ public class ChallanAction extends BaseFormAction {
         addDropdownData("approverDepartmentList", collectionsUtil.getDepartmentsAllowedForChallanApproval());
         populateAndPersistChallanReceipt();
         if (receiptHeader.getChallan().getState() != null
-                && receiptHeader.getChallan().getState().getOwnerPosition() != null)
+                && receiptHeader.getChallan().getState().getOwnerPosition() != null &&
+                !CollectionConstants.WF_ACTION_NAME_VALIDATE_CHALLAN.equals(actionName))
             addActionMessage(getText(
                     "challan.savechallan.success",
                     new String[] {
