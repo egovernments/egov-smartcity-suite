@@ -57,6 +57,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_PROPERTY_TY
 import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_PROPERTY_TYPE_CENTRAL_GOVT_LIST;
 import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_PROPERTY_TYPE_COURTCASES;
 import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_PROPERTY_TYPE_PRIVATE;
+import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_USAGE_TYPE_ALL;
 import static org.egov.ptis.constants.PropertyTaxConstants.DATEFORMATTER_YYYY_MM_DD;
 import static org.egov.ptis.constants.PropertyTaxConstants.DATE_FORMAT_YYYYMMDD;
 import static org.egov.ptis.constants.PropertyTaxConstants.DAY;
@@ -64,7 +65,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.MONTH;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_EWSHS;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_TAX_INDEX_NAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.WEEK;
-import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_USAGE_TYPE_ALL;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -460,29 +460,6 @@ public class CollectionIndexElasticSearchService {
         Date fromDate;
         Date toDate;
         Date endDate;
-        String name;
-        CollTableData collIndData;
-        BigDecimal cyArrearColl;
-        BigDecimal cyCurrentColl;
-        BigDecimal cyPenaltyColl;
-        BigDecimal cyRebate;
-        BigDecimal cyAdvance;
-        BigDecimal lyArrearColl;
-        BigDecimal lyCurrentColl;
-        BigDecimal lyPenaltyColl;
-        BigDecimal lyRebate;
-        BigDecimal lyAdvance;
-        BigDecimal arrearDemand;
-        BigDecimal currentDemand;
-        BigDecimal arrearInterestDemand;
-        BigDecimal currentInterestDemand;
-        BigDecimal totalAssessments;
-        BigDecimal currentYearTotalDemand;
-        BigDecimal lyTotalArrearColl;
-        BigDecimal lyTotalCurrentColl;
-        BigDecimal lyTotalPenaltyColl;
-        BigDecimal lyTotalRebate;
-        BigDecimal lyTotalAdvance;
         String aggregationField = StringUtils.EMPTY;
         if(!isForMISReports)
             aggregationField = REGION_NAME;
@@ -595,6 +572,54 @@ public class CollectionIndexElasticSearchService {
         LOGGER.debug("Time taken by getCollectionAndDemandValues() is : " + timeTaken + MILLISECS);
 
         startTime = System.currentTimeMillis();
+        if(StringUtils.isBlank(collectionDetailsRequest.getPropertyType()))
+            setDataForCollectionTab(collectionDetailsRequest, collIndDataList, aggregationField, wardWiseBillCollectors,
+                    currYrTillDateCollDivisionMap, lastYrTillDateCollDivisionMap, lastFinYrCollDivisionMap, noOfMonths,
+                    totalDemandMap, currYrTotalDemandMap, demandDivisionMap, assessmentsCountMap, todayCollMap, lyTodayCollMap,
+                    cytdCollMap, lytdCollMap, lastFinYrCollMap);
+        else
+            setDataForDCBTab(collectionDetailsRequest, collIndDataList, aggregationField, wardWiseBillCollectors,
+                    currYrTillDateCollDivisionMap, lastYrTillDateCollDivisionMap, lastFinYrCollDivisionMap, noOfMonths,
+                    totalDemandMap, currYrTotalDemandMap, demandDivisionMap, assessmentsCountMap, todayCollMap, lyTodayCollMap,
+                    cytdCollMap, lytdCollMap, lastFinYrCollMap);
+
+        timeTaken = System.currentTimeMillis() - startTime;
+        LOGGER.debug("Time taken for setting values in getResponseTableData() is : " + timeTaken + MILLISECS);
+        return collIndDataList;
+    }
+
+    private void setDataForCollectionTab(CollectionDetailsRequest collectionDetailsRequest, List<CollTableData> collIndDataList,
+            String aggregationField, Map<String, BillCollectorIndex> wardWiseBillCollectors,
+            Map<String, Map<String, BigDecimal>> currYrTillDateCollDivisionMap,
+            Map<String, Map<String, BigDecimal>> lastYrTillDateCollDivisionMap,
+            Map<String, Map<String, BigDecimal>> lastFinYrCollDivisionMap, int noOfMonths, Map<String, BigDecimal> totalDemandMap,
+            Map<String, BigDecimal> currYrTotalDemandMap, Map<String, Map<String, BigDecimal>> demandDivisionMap,
+            Map<String, BigDecimal> assessmentsCountMap, Map<String, BigDecimal> todayCollMap,
+            Map<String, BigDecimal> lyTodayCollMap, Map<String, BigDecimal> cytdCollMap, Map<String, BigDecimal> lytdCollMap,
+            Map<String, BigDecimal> lastFinYrCollMap) {
+        String name;
+        CollTableData collIndData;
+        BigDecimal cyArrearColl;
+        BigDecimal cyCurrentColl;
+        BigDecimal cyPenaltyColl;
+        BigDecimal cyRebate;
+        BigDecimal cyAdvance;
+        BigDecimal lyArrearColl;
+        BigDecimal lyCurrentColl;
+        BigDecimal lyPenaltyColl;
+        BigDecimal lyRebate;
+        BigDecimal lyAdvance;
+        BigDecimal arrearDemand;
+        BigDecimal currentDemand;
+        BigDecimal arrearInterestDemand;
+        BigDecimal currentInterestDemand;
+        BigDecimal totalAssessments;
+        BigDecimal currentYearTotalDemand;
+        BigDecimal lyTotalArrearColl;
+        BigDecimal lyTotalCurrentColl;
+        BigDecimal lyTotalPenaltyColl;
+        BigDecimal lyTotalRebate;
+        BigDecimal lyTotalAdvance;
         for (Map.Entry<String, BigDecimal> entry : cytdCollMap.entrySet()) {
             collIndData = new CollTableData();
             totalAssessments = BigDecimal.ZERO;
@@ -709,10 +734,153 @@ public class CollectionIndexElasticSearchService {
                     totalDemandMap);
             collIndDataList.add(collIndData);
         }
+    }
+    
+    private void setDataForDCBTab(CollectionDetailsRequest collectionDetailsRequest, List<CollTableData> collIndDataList,
+            String aggregationField, Map<String, BillCollectorIndex> wardWiseBillCollectors,
+            Map<String, Map<String, BigDecimal>> currYrTillDateCollDivisionMap,
+            Map<String, Map<String, BigDecimal>> lastYrTillDateCollDivisionMap,
+            Map<String, Map<String, BigDecimal>> lastFinYrCollDivisionMap, int noOfMonths, Map<String, BigDecimal> totalDemandMap,
+            Map<String, BigDecimal> currYrTotalDemandMap, Map<String, Map<String, BigDecimal>> demandDivisionMap,
+            Map<String, BigDecimal> assessmentsCountMap, Map<String, BigDecimal> todayCollMap,
+            Map<String, BigDecimal> lyTodayCollMap, Map<String, BigDecimal> cytdCollMap, Map<String, BigDecimal> lytdCollMap,
+            Map<String, BigDecimal> lastFinYrCollMap) {
+        String name;
+        CollTableData collIndData;
+        BigDecimal cyArrearColl;
+        BigDecimal cyCurrentColl;
+        BigDecimal cyPenaltyColl;
+        BigDecimal cyRebate;
+        BigDecimal cyAdvance;
+        BigDecimal lyArrearColl;
+        BigDecimal lyCurrentColl;
+        BigDecimal lyPenaltyColl;
+        BigDecimal lyRebate;
+        BigDecimal lyAdvance;
+        BigDecimal arrearDemand;
+        BigDecimal currentDemand;
+        BigDecimal arrearInterestDemand;
+        BigDecimal currentInterestDemand;
+        BigDecimal totalAssessments;
+        BigDecimal cytdColl;
+        BigDecimal lyTotalArrearColl;
+        BigDecimal lyTotalCurrentColl;
+        BigDecimal lyTotalPenaltyColl;
+        BigDecimal lyTotalRebate;
+        BigDecimal lyTotalAdvance;
+        for (Map.Entry<String, BigDecimal> entry : currYrTotalDemandMap.entrySet()) {
+            collIndData = new CollTableData();
+            totalAssessments = BigDecimal.ZERO;
+            arrearDemand = BigDecimal.ZERO;
+            currentDemand = BigDecimal.ZERO;
+            arrearInterestDemand = BigDecimal.ZERO;
+            currentInterestDemand = BigDecimal.ZERO;
+            cyArrearColl = BigDecimal.ZERO;
+            cyCurrentColl = BigDecimal.ZERO;
+            cyPenaltyColl = BigDecimal.ZERO;
+            cyRebate = BigDecimal.ZERO;
+            cyAdvance = BigDecimal.ZERO;
+            lyArrearColl = BigDecimal.ZERO;
+            lyCurrentColl = BigDecimal.ZERO;
+            lyPenaltyColl = BigDecimal.ZERO;
+            lyRebate = BigDecimal.ZERO;
+            lyAdvance = BigDecimal.ZERO;
+            lyTotalArrearColl = BigDecimal.ZERO;
+            lyTotalCurrentColl = BigDecimal.ZERO;
+            lyTotalPenaltyColl = BigDecimal.ZERO;
+            lyTotalRebate = BigDecimal.ZERO;
+            lyTotalAdvance = BigDecimal.ZERO;
+            
+            name = entry.getKey();
+            if (!assessmentsCountMap.isEmpty() && assessmentsCountMap.get(name) != null)
+                totalAssessments = assessmentsCountMap.get(name) == null ? BigDecimal.ZERO : assessmentsCountMap.get(name);
 
-        timeTaken = System.currentTimeMillis() - startTime;
-        LOGGER.debug("Time taken for setting values in getResponseTableData() is : " + timeTaken + MILLISECS);
-        return collIndDataList;
+            if (!currYrTillDateCollDivisionMap.isEmpty() && currYrTillDateCollDivisionMap.get(name) != null) {
+                cyArrearColl = (currYrTillDateCollDivisionMap.get(name).get(CY_ARREAR_AMOUNT) == null ? BigDecimal.ZERO
+                        : currYrTillDateCollDivisionMap.get(name).get(CY_ARREAR_AMOUNT))
+                                .add(currYrTillDateCollDivisionMap.get(name).get(CY_ARREAR_CESS) == null ? BigDecimal.ZERO
+                                        : currYrTillDateCollDivisionMap.get(name).get(CY_ARREAR_CESS));
+                cyCurrentColl = (currYrTillDateCollDivisionMap.get(name).get(CY_CURRENT_AMOUNT) == null ? BigDecimal.ZERO
+                        : currYrTillDateCollDivisionMap.get(name).get(CY_CURRENT_AMOUNT))
+                                .add(currYrTillDateCollDivisionMap.get(name).get(CY_CURRENT_CESS) == null ? BigDecimal.ZERO
+                                        : currYrTillDateCollDivisionMap.get(name).get(CY_CURRENT_CESS));
+                cyPenaltyColl = (currYrTillDateCollDivisionMap.get(name).get(CY_PENALTY) == null ? BigDecimal.ZERO
+                        : currYrTillDateCollDivisionMap.get(name).get(CY_PENALTY))
+                                .add(currYrTillDateCollDivisionMap.get(name).get(CY_LATE_PAYMENT_PENALTY) == null ? BigDecimal.ZERO
+                                        : currYrTillDateCollDivisionMap.get(name).get(CY_LATE_PAYMENT_PENALTY));
+                cyRebate = currYrTillDateCollDivisionMap.get(name).get(CY_REBATE) == null ? BigDecimal.ZERO
+                        : currYrTillDateCollDivisionMap.get(name).get(CY_REBATE);
+                cyAdvance = currYrTillDateCollDivisionMap.get(name).get(CY_ADVANCE) == null ? BigDecimal.ZERO
+                        : currYrTillDateCollDivisionMap.get(name).get(CY_ADVANCE);
+            }
+            //For last year till date collections
+            if (!lastYrTillDateCollDivisionMap.isEmpty() && lastYrTillDateCollDivisionMap.get(name) != null) {
+                lyArrearColl = (lastYrTillDateCollDivisionMap.get(name).get(LY_ARREAR_AMOUNT) == null ? BigDecimal.ZERO
+                        : lastYrTillDateCollDivisionMap.get(name).get(LY_ARREAR_AMOUNT))
+                                .add(lastYrTillDateCollDivisionMap.get(name).get(LY_ARREAR_CESS) == null ? BigDecimal.ZERO
+                                        : lastYrTillDateCollDivisionMap.get(name).get(LY_ARREAR_CESS));
+                lyCurrentColl = (lastYrTillDateCollDivisionMap.get(name).get(LY_CURRENT_AMOUNT) == null ? BigDecimal.ZERO
+                        : lastYrTillDateCollDivisionMap.get(name).get(LY_CURRENT_AMOUNT))
+                                .add(lastYrTillDateCollDivisionMap.get(name).get(LY_CURRENT_CESS) == null ? BigDecimal.ZERO
+                                        : lastYrTillDateCollDivisionMap.get(name).get(LY_CURRENT_CESS));
+                lyPenaltyColl = (lastYrTillDateCollDivisionMap.get(name).get(LY_PENALTY) == null ? BigDecimal.ZERO
+                        : lastYrTillDateCollDivisionMap.get(name).get(LY_PENALTY))
+                                .add(lastYrTillDateCollDivisionMap.get(name).get(LY_LATE_PAYMENT_PENALTY) == null ? BigDecimal.ZERO
+                                        : lastYrTillDateCollDivisionMap.get(name).get(LY_LATE_PAYMENT_PENALTY));
+                lyRebate = lastYrTillDateCollDivisionMap.get(name).get(LY_REBATE) == null ? BigDecimal.ZERO
+                        : lastYrTillDateCollDivisionMap.get(name).get(LY_REBATE);
+                lyAdvance = lastYrTillDateCollDivisionMap.get(name).get(LY_ADVANCE) == null ? BigDecimal.ZERO
+                        : lastYrTillDateCollDivisionMap.get(name).get(LY_ADVANCE);
+            }
+            //For last financial year complete collections
+            if (!lastFinYrCollDivisionMap.isEmpty() && lastFinYrCollDivisionMap.get(name) != null) {
+                lyTotalArrearColl = (lastFinYrCollDivisionMap.get(name).get(LY_ARREAR_AMOUNT) == null ? BigDecimal.ZERO
+                        : lastFinYrCollDivisionMap.get(name).get(LY_ARREAR_AMOUNT))
+                                .add(lastFinYrCollDivisionMap.get(name).get(LY_ARREAR_CESS) == null ? BigDecimal.ZERO
+                                        : lastFinYrCollDivisionMap.get(name).get(LY_ARREAR_CESS));
+                lyTotalCurrentColl = (lastFinYrCollDivisionMap.get(name).get(LY_CURRENT_AMOUNT) == null ? BigDecimal.ZERO
+                        : lastFinYrCollDivisionMap.get(name).get(LY_CURRENT_AMOUNT))
+                                .add(lastFinYrCollDivisionMap.get(name).get(LY_CURRENT_CESS) == null ? BigDecimal.ZERO
+                                        : lastFinYrCollDivisionMap.get(name).get(LY_CURRENT_CESS));
+                lyTotalPenaltyColl = (lastFinYrCollDivisionMap.get(name).get(LY_PENALTY) == null ? BigDecimal.ZERO
+                        : lastFinYrCollDivisionMap.get(name).get(LY_PENALTY))
+                                .add(lastFinYrCollDivisionMap.get(name).get(LY_LATE_PAYMENT_PENALTY) == null ? BigDecimal.ZERO
+                                        : lastFinYrCollDivisionMap.get(name).get(LY_LATE_PAYMENT_PENALTY));
+                lyTotalRebate = lastFinYrCollDivisionMap.get(name).get(LY_REBATE) == null ? BigDecimal.ZERO
+                        : lastFinYrCollDivisionMap.get(name).get(LY_REBATE);
+                lyTotalAdvance = lastFinYrCollDivisionMap.get(name).get(LY_ADVANCE) == null ? BigDecimal.ZERO
+                        : lastFinYrCollDivisionMap.get(name).get(LY_ADVANCE);
+            }
+
+            if (!demandDivisionMap.isEmpty() && demandDivisionMap.get(name) != null) {
+                arrearDemand = demandDivisionMap.get(name).get(ARREAR_DMD) == null ? BigDecimal.ZERO
+                        : demandDivisionMap.get(name).get(ARREAR_DMD);
+                currentDemand = demandDivisionMap.get(name).get(CURRENT_DMD) == null ? BigDecimal.ZERO
+                        : demandDivisionMap.get(name).get(CURRENT_DMD);
+                arrearInterestDemand = demandDivisionMap.get(name).get(ARREAR_INT_DMD) == null ? BigDecimal.ZERO
+                        : demandDivisionMap.get(name).get(ARREAR_INT_DMD);
+                currentInterestDemand = demandDivisionMap.get(name).get(CURRENT_INT_DMD) == null ? BigDecimal.ZERO
+                        : demandDivisionMap.get(name).get(CURRENT_INT_DMD);
+
+            }
+            cytdColl = cytdCollMap.get(name) == null ? BigDecimal.valueOf(0)
+                    : cytdCollMap.get(name);
+
+            setBoundaryDateForTable(collectionDetailsRequest, name, collIndData, aggregationField, wardWiseBillCollectors);
+            setCollAmountsForTableData(collIndData, todayCollMap.get(name) == null ? BigDecimal.ZERO : todayCollMap.get(name),
+                    lyTodayCollMap.get(name) == null ? BigDecimal.ZERO : lyTodayCollMap.get(name), cytdColl,
+                    lytdCollMap.get(name) == null ? BigDecimal.ZERO : lytdCollMap.get(name),
+                    lastFinYrCollMap.get(name) == null ? BigDecimal.ZERO : lastFinYrCollMap.get(name));
+            setCurrYearTillDateCollBreakUpForTableData(collIndData, cyArrearColl, cyCurrentColl, cyPenaltyColl, cyRebate, cyAdvance);
+            setLastYearTillDateCollBreakUpForTableData(collIndData, lyArrearColl, lyCurrentColl, lyPenaltyColl, lyRebate, lyAdvance);
+            setLastFinYearCollBreakUpForTableData(collIndData, lyTotalArrearColl, lyTotalCurrentColl, lyTotalPenaltyColl,
+                    lyTotalRebate, lyTotalAdvance);
+            setDemandBreakUpForTableData(collIndData, arrearDemand, currentDemand, arrearInterestDemand,
+                    currentInterestDemand, noOfMonths);
+            setDemandAmountsForTableData(name, collIndData, totalAssessments, entry.getValue(), noOfMonths,
+                    totalDemandMap);
+            collIndDataList.add(collIndData);
+        }
     }
 
     private void setDemandAmountsForTableData(String name, CollTableData collIndData, BigDecimal totalAssessments,
