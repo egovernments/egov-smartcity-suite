@@ -53,27 +53,25 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
-public class CitizenComplaintRegistrationControllerTest
-        extends AbstractContextControllerTest<CitizenComplaintRegistrationController> {
+public class CitizenComplaintRegistrationControllerTest extends AbstractContextControllerTest<CitizenComplaintRegistrationController> {
 
     @Mock
     private ComplaintService complaintService;
     @Mock
     private ComplaintTypeService complaintTypeService;
-
+    
     @Mock
     private ComplaintTypeCategoryService complaintTypeCategoryService;
 
     @Mock
     private ReceivingModeService receivingModeService;
-
+    
     @Mock
     private SecurityUtils securityUtils;
     @InjectMocks
@@ -90,11 +88,6 @@ public class CitizenComplaintRegistrationControllerTest
         mockMvc = mvcBuilder.build();
     }
 
-    @Test
-    public void dummyTest() throws Exception {
-        assertTrue(Boolean.TRUE);
-    }
-
     @Ignore
     public void assertCitizenRegistrationPageViewReturns() throws Exception {
         mockMvc.perform(get("/complaint/citizen/show-reg-form"))
@@ -108,7 +101,7 @@ public class CitizenComplaintRegistrationControllerTest
                 .andExpect(view().name("complaint/citizen/anonymous-registration-form"))
                 .andExpect(status().isOk());
     }
-
+    
     @Override
     protected CitizenComplaintRegistrationController initController() {
         initMocks(this);
