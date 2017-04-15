@@ -49,7 +49,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -77,8 +76,8 @@ public class AppConfigService {
     }
 
     public Page<AppConfig> getAllAppConfig(AppConfigSearchRequest searchRequest) {
-        Pageable pageable = new PageRequest(searchRequest.getPageNumber(), searchRequest.getPageSize(),
-                Sort.Direction.ASC, "module.name");
+        Pageable pageable = new PageRequest(searchRequest.pageNumber(), searchRequest.pageSize(),
+                searchRequest.orderDir(), searchRequest.orderBy());
         return isBlank(searchRequest.getModuleName()) ? appConfigRepository.findAll(pageable) :
                 appConfigRepository.findByModuleName(searchRequest.getModuleName(), pageable);
     }

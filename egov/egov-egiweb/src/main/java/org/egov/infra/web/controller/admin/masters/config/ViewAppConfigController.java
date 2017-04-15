@@ -85,7 +85,7 @@ public class ViewAppConfigController {
     @ResponseBody
     public String showAppConfigs(AppConfigSearchRequest searchRequest) {
         return new DataTable<>(appConfigService.getAllAppConfig(searchRequest),
-                searchRequest.getDraw()).toJson(AppConfigJsonAdapter.class);
+                searchRequest.draw()).toJson(AppConfigJsonAdapter.class);
     }
 
 }
