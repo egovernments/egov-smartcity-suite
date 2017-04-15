@@ -47,7 +47,6 @@ import org.egov.pgr.service.ComplaintTypeService;
 import org.egov.pgr.service.ReceivingModeService;
 import org.egov.pgr.web.controller.AbstractContextControllerTest;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -88,14 +87,14 @@ public class CitizenComplaintRegistrationControllerTest extends AbstractContextC
         mockMvc = mvcBuilder.build();
     }
 
-    @Ignore
+    @Test
     public void assertCitizenRegistrationPageViewReturns() throws Exception {
         mockMvc.perform(get("/complaint/citizen/show-reg-form"))
                 .andExpect(view().name("complaint/citizen/registration-form"))
                 .andExpect(status().isOk());
     }
 
-    @Ignore
+    @Test
     public void assertAnonymousRegistrationPageViewReturns() throws Exception {
         mockMvc.perform(get("/complaint/citizen/anonymous/show-reg-form"))
                 .andExpect(view().name("complaint/citizen/anonymous-registration-form"))
