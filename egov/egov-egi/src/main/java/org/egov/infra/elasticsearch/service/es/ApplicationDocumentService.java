@@ -561,7 +561,7 @@ public class ApplicationDocumentService {
             if (StringUtils.isNotBlank(applicationIndexRequest.getAgeing())) {
                 if ("0-1Wdays".equalsIgnoreCase(applicationIndexRequest.getAgeing()))
                     slaQuery = slaQuery
-                            .filter(QueryBuilders.rangeQuery(SLA_GAP).gte(0).lt(8));
+                            .filter(QueryBuilders.rangeQuery(SLA_GAP).gte(1).lt(8));
                 else if ("1W-1M".equalsIgnoreCase(applicationIndexRequest.getAgeing()))
                     slaQuery = slaQuery
                             .filter(QueryBuilders.rangeQuery(SLA_GAP).gte(8).lt(31));
@@ -942,7 +942,7 @@ public class ApplicationDocumentService {
             appStatusQuery = appStatusQuery.filter(QueryBuilders.matchQuery(IS_CLOSED, 0))
                     .must(QueryBuilders.rangeQuery(SLA_GAP).gt(0));
         else if (SLAB1BEYOND_SLA.equalsIgnoreCase(applicationStatus))
-            appStatusQuery = appStatusQuery.filter(QueryBuilders.rangeQuery(SLA_GAP).gte(0).lt(8));
+            appStatusQuery = appStatusQuery.filter(QueryBuilders.rangeQuery(SLA_GAP).gte(1).lt(8));
         else if (SLAB2BEYOND_SLA.equalsIgnoreCase(applicationStatus))
             appStatusQuery = appStatusQuery.filter(QueryBuilders.rangeQuery(SLA_GAP).gte(8).lt(31));
         else if (SLAB3BEYOND_SLA.equalsIgnoreCase(applicationStatus))
