@@ -331,17 +331,10 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
     }
 
     private void populateAddress() {
-        if (basicProp.getPropertyOwnerInfo() != null
-                && !basicProp.getPropertyOwnerInfo().isEmpty())
-            for (final PropertyOwnerInfo propOwner : basicProp.getPropertyOwnerInfo()) {
-                final List<Address> addrSet = propOwner.getOwner().getAddress();
-                for (final Address address : addrSet) {
-                    propAddress = address.toString();
-                    doorNo = address.getHouseNoBldgApt() == null ? NOT_AVAILABLE : address.getHouseNoBldgApt();
-                    pinCode = address.getPinCode();
-                    break;
-                }
-            }
+        propAddress = basicProp.getAddress().toString();
+        doorNo = basicProp.getAddress().getHouseNoBldgApt() == null ? NOT_AVAILABLE : basicProp.getAddress().getHouseNoBldgApt();
+        pinCode = basicProp.getAddress().getPinCode();
+
     }
 
     private void populatePropertyDetails() {
