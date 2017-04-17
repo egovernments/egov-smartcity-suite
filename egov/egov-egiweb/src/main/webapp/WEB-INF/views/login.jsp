@@ -398,7 +398,6 @@
 		</div>
 		<script>
 		$(document).ready(function(){
-				localStorage.clear();
 				$('#resetpwd').modal('show', {backdrop: 'static'});
 		});
 		</script>
