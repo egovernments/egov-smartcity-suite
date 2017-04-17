@@ -41,6 +41,7 @@
 $(document).ready(function()
 {
 	
+	localStorage.clear();
 	$('.recovrbtn').click(function(){
 		if($('#emailOrMobileNum').val()===""){
 			$('#emailOrMobileNoReq').show();
