@@ -39,7 +39,7 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2016-12-06T13:24:17 -->
+<!-- 2017-04-17T17:54:50 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="BillOfQunatities" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="0" uuid="c4f28d66-9453-4365-9c94-520990d7d3ae">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<import value="java.math.BigDecimal"/>
@@ -61,9 +61,6 @@
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
-	<field name="nonSor" class="org.egov.works.abstractestimate.entity.NonSor">
-		<fieldDescription><![CDATA[nonSor]]></fieldDescription>
-	</field>
 	<field name="uom" class="org.egov.common.entity.UOM">
 		<fieldDescription><![CDATA[uom]]></fieldDescription>
 	</field>
@@ -73,17 +70,17 @@
 	<field name="quantity" class="java.lang.Double">
 		<fieldDescription><![CDATA[quantity]]></fieldDescription>
 	</field>
-	<field name="amount" class="org.egov.infra.persistence.entity.component.Money">
-		<fieldDescription><![CDATA[amount]]></fieldDescription>
+	<field name="rate" class="java.lang.Double">
+		<fieldDescription><![CDATA[rate]]></fieldDescription>
 	</field>
 	<field name="estimateRate" class="java.lang.Double">
 		<fieldDescription><![CDATA[estimateRate]]></fieldDescription>
 	</field>
 	<variable name="amount_sum" class="java.lang.Double" calculation="Sum">
-		<variableExpression><![CDATA[$F{amount}.getValue()]]></variableExpression>
+		<variableExpression><![CDATA[$F{rate}]]></variableExpression>
 	</variable>
 	<variable name="description" class="java.lang.String">
-		<variableExpression><![CDATA[$F{schedule}==null?$F{nonSor}.getDescription():$F{schedule}.getDescription()]]></variableExpression>
+		<variableExpression><![CDATA[$F{schedule}==null?"":$F{schedule}.getDescription()]]></variableExpression>
 	</variable>
 	<group name="dummy detail">
 		<groupExpression><![CDATA[$V{PAGE_COUNT}]]></groupExpression>
@@ -567,7 +564,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Times New Roman"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{amount}.getValue()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{rate}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToTallestObject" x="2" y="0" width="40" height="23" uuid="60907fd4-46a7-474f-a98e-5ab32d7a7db7">

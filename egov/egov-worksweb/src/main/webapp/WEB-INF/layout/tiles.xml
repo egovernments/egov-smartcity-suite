@@ -695,4 +695,29 @@
         <put-attribute name="page-title" value="lbl.viewestimatetemplate" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/master/estimatetemplate/estimatetemplate-success.jsp"/>
     </definition>
+    
+    <definition name="searchscheduleofrate" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.searchratemaster" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/master/scheduleofrate/scheduleofrate-search.jsp"/>
+    </definition>
+    
+    <definition name="scheduleofrate-form" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.createratemaster" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/master/scheduleofrate/scheduleofrate-new.jsp"/>
+    </definition>
+    
+    <definition name="scheduleofrate-modify" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.modifyratemaster" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/master/scheduleofrate/scheduleofrate-modify.jsp"/>
+    </definition>
+    
+    <definition name="scheduleofrate-view" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.viewratemaster" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/master/scheduleofrate/scheduleofrate-success.jsp"/>
+    </definition>
+    
+    <definition name="scheduleofrate-success" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.viewratemaster" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/master/scheduleofrate/scheduleofrate-success.jsp"/>
+    </definition>
 </tiles-definitions>

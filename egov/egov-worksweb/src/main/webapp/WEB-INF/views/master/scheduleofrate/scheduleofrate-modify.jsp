@@ -1,5 +1,3 @@
-<%@ page contentType="text/json" %>
-<%@ taglib prefix="s" uri="/struts-tags" %>  
 <%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
@@ -40,10 +38,39 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
-{
-"ResultSet": {
-    "Result":[
-    {"Value":"<s:property value="%{estimatesExists}" />"}    
-    ]
-  }
-}
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ taglib uri="/WEB-INF/taglibs/cdn.tld" prefix="cdn"%>
+
+<form:form name="scheduleOfRateForm" id="scheduleOfRateForm" role="form"
+	action="/egworks/masters/scheduleofrate-edit" modelAttribute="scheduleOfRate"
+	class="form-horizontal form-groups-bordered">
+	<input type = "hidden" name = "mode" value = "${mode }"	/>
+	<spring:hasBindErrors name="scheduleOfRate">
+		<div class="alert alert-danger col-md-12">
+			<form:errors cssClass="add-margin" />
+			<br />
+		</div>
+	</spring:hasBindErrors>
+	<div class="row">
+		<div class="col-md-12">
+			<jsp:include page="scheduleofrate-header.jsp" />
+			<jsp:include page="scheduleofrate-sor.jsp" />
+			<jsp:include page="scheduleofrate-marketrate.jsp" />
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-sm-12 text-center">
+			<button type="submit" name="submit" id="submitBtn" class="btn btn-primary" value="Save" >
+				<spring:message code="lbl.save" />
+			</button>
+			<button type="button" class="btn btn-default" id="button2"
+				onclick="window.close();">
+				<spring:message code="lbl.close" />
+			</button>
+		</div>
+	</div>
+</form:form>
+<script src="<cdn:url value='/resources/js/master/scheduleofrate.js?rnd=${app_release_no}'/>"></script> 

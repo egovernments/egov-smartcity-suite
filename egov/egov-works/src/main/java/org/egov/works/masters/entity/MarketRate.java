@@ -39,34 +39,51 @@
  */
 package org.egov.works.masters.entity;
 
-import java.util.ArrayList;
-import java.util.List;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 
-import javax.validation.Valid;
-
+import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.entity.component.Money;
 import org.egov.infra.persistence.entity.component.Period;
-import org.egov.infra.validation.exception.ValidationError;
-import org.egov.infstr.models.BaseModel;
+import org.egov.infra.persistence.validator.annotation.Unique;
 
-public class MarketRate extends BaseModel {
-    /**
-     *
-     */
+@Entity
+@Table(name = "EGW_MARKETRATE")
+@Unique(fields = { "code" }, enableDfltMsg = true)
+@SequenceGenerator(name = MarketRate.SEQ_EGW_MARKETRATE, sequenceName = MarketRate.SEQ_EGW_MARKETRATE, allocationSize = 1)
+public class MarketRate extends AbstractAuditable {
+
     private static final long serialVersionUID = -6785284745222705060L;
 
+    public static final String SEQ_EGW_MARKETRATE = "SEQ_EGW_MARKETRATE";
+
+    @Id
+    @GeneratedValue(generator = SEQ_EGW_MARKETRATE, strategy = GenerationType.SEQUENCE)
+    private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "SCHEDULEOFRATE_ID", nullable = false, updatable = false)
     private ScheduleOfRate scheduleOfRate;
 
-    @Valid
     private Money marketRate;
+
     private Period validity;
 
-    public ScheduleOfRate getScheduleOfRate() {
-        return scheduleOfRate;
+    @Override
+    public Long getId() {
+        return id;
     }
 
-    public void setScheduleOfRate(final ScheduleOfRate scheduleOfRate) {
-        this.scheduleOfRate = scheduleOfRate;
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
     }
 
     public Money getMarketRate() {
@@ -85,39 +102,12 @@ public class MarketRate extends BaseModel {
         this.validity = validity;
     }
 
-    public MarketRate() {
-
+    public ScheduleOfRate getScheduleOfRate() {
+        return scheduleOfRate;
     }
 
-    public MarketRate(final Money sorrate) {
-        marketRate = sorrate;
+    public void setScheduleOfRate(final ScheduleOfRate scheduleOfRate) {
+        this.scheduleOfRate = scheduleOfRate;
     }
 
-    @Override
-    public List<ValidationError> validate() {
-        final List<ValidationError> validationErrors = new ArrayList<ValidationError>();
-        if (marketRate == null || marketRate.getValue() == 0.0 || marketRate != null && marketRate.getValue() == 0.0)
-            validationErrors.add(new ValidationError("marketRate", "sor.marketrate.lessthan.0"));
-
-        if (validity == null || validity != null && validity.getStartDate() == null)
-            validationErrors.add(new ValidationError("validity", "sor.marketrate.startDate__empty"));
-        else if (validity == null
-                || validity != null && !compareDates(validity.getStartDate(), validity.getEndDate()))
-            validationErrors.add(new ValidationError("validity", "sor.rate.invalid_date_range"));
-
-        return validationErrors.isEmpty() ? null : validationErrors;
-
-    }
-
-    public static boolean compareDates(final java.util.Date startDate, final java.util.Date endDate) {
-        if (startDate == null)
-            return false;
-
-        if (endDate == null)
-            return true;
-
-        if (endDate.before(startDate))
-            return false;
-        return true;
-    }
 }

@@ -40,65 +40,91 @@
 package org.egov.works.masters.entity;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 import javax.persistence.Transient;
-import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.log4j.Logger;
 import org.egov.common.entity.UOM;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.entity.component.Period;
 import org.egov.infra.persistence.validator.annotation.OptionalPattern;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.utils.StringUtils;
-import org.egov.infra.validation.exception.ValidationError;
-import org.egov.infstr.models.BaseModel;
 import org.egov.works.utils.WorksConstants;
-import org.hibernate.validator.constraints.NotEmpty;
+import org.hibernate.validator.constraints.SafeHtml;
 import org.joda.time.LocalDate;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-@Unique(fields = { "code" }, id = "id", tableName = "EGW_SCHEDULEOFRATE", columnName = {
-        "CODE" }, message = "sor.code.isunique")
-public class ScheduleOfRate extends BaseModel {
+@Entity
+@Table(name = "EGW_SCHEDULEOFRATE")
+@Unique(fields = { "code" }, enableDfltMsg = true)
+@SequenceGenerator(name = ScheduleOfRate.SEQ_EGW_SCHEDULEOFRATE, sequenceName = ScheduleOfRate.SEQ_EGW_SCHEDULEOFRATE, allocationSize = 1)
+public class ScheduleOfRate extends AbstractAuditable {
     private static final long serialVersionUID = -7797787370112941401L;
-    private static final Logger logger = Logger.getLogger(ScheduleOfRate.class);
-    static Integer MAX_DESCRIPTION_LENGTH = 100;
 
+    public static final String SEQ_EGW_SCHEDULEOFRATE = "SEQ_EGW_SCHEDULEOFRATE";
+    public static final Integer MAX_DESCRIPTION_LENGTH = 100;
+
+    @Id
+    @GeneratedValue(generator = SEQ_EGW_SCHEDULEOFRATE, strategy = GenerationType.SEQUENCE)
+    private Long id;
+
+    @NotNull
+    @SafeHtml
     @OptionalPattern(regex = WorksConstants.ALPHANUMERICWITHALLSPECIALCHARWITHOUTSPACE, message = "sor.code.alphaNumeric")
-    @NotEmpty(message = "sor.code.not.empty")
     private String code;
+
     @Required(message = "sor.category.not.null")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "SOR_CATEGORY_ID")
     private ScheduleCategory scheduleCategory;
 
+    @NotNull
+    @SafeHtml
     @OptionalPattern(regex = WorksConstants.ALPHANUMERICWITHALLSPECIALCHAR, message = "sor.description.alphaNumeric")
-    @NotEmpty(message = "sor.description.not.empty")
     private String description;
+
     @Required(message = "sor.uom.not.null")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "UOM_ID")
     private UOM uom;
+    
+    @JsonIgnore
+    @OrderBy("id")
+    @OneToMany(mappedBy = "scheduleOfRate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = SORRate.class)
+    private List<SORRate> sorRates = new ArrayList<SORRate>(0);
 
-    public ScheduleOfRate() {
-    }
-
-    public ScheduleOfRate(final String code, final String description) {
-        this.code = code;
-        this.description = description;
-    }
-
-    private List<SORRate> sorRates = new LinkedList<SORRate>();
-
-    private List<MarketRate> marketRates = new LinkedList<MarketRate>();
+    @OrderBy("id")
+    @OneToMany(mappedBy = "scheduleOfRate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = MarketRate.class)
+    private List<MarketRate> marketRates = new ArrayList<MarketRate>(0);
 
     @Transient
     private Double sorRateValue;
+
+    @Transient
+    private List<SORRate> tempSorRates = new ArrayList<SORRate>(0);
+
+    @Transient
+    private List<MarketRate> tempMarketRates = new ArrayList<MarketRate>(0);
 
     public String getCode() {
         return code;
@@ -108,7 +134,6 @@ public class ScheduleOfRate extends BaseModel {
         this.code = code;
     }
 
-    @Valid
     public ScheduleCategory getScheduleCategory() {
         return scheduleCategory;
     }
@@ -207,9 +232,6 @@ public class ScheduleOfRate extends BaseModel {
         else
             return start.compareTo(date) <= 0 && end.compareTo(date) >= 0;
 
-        // return (end!=null)? start.compareTo(date)<=0 &&
-        // end.compareTo(date)>=0 : start.compareTo(date)<=0;
-
     }
 
     public boolean hasValidRateFor(final Date estimateDate) {
@@ -217,46 +239,8 @@ public class ScheduleOfRate extends BaseModel {
             final SORRate rate = getRateOn(estimateDate);
             return rate != null;
         } catch (final ApplicationRuntimeException e) {
-            logger.error("Rate :" + e.getMessage());
             return false;
         }
-    }
-
-    private List<ValidationError> checkForNoRatePresent() {
-
-        if (sorRates != null && sorRates.isEmpty())
-            return Arrays.asList(new ValidationError("sorRate", "sor.rate.altleastone_sorRate_needed"));
-        else
-            return null;
-
-    }
-
-    private void removeEmptyRates() {
-        final List<SORRate> emptyRateObjs = new LinkedList<SORRate>();
-        for (final SORRate rat : sorRates)
-            if ((rat.getRate() == null || rat.getRate().getValue() == 0.0)
-                    && (rat.getValidity() == null || rat.getValidity().getStartDate() == null
-                            && rat.getValidity().getEndDate() == null))
-                emptyRateObjs.add(rat);
-        sorRates.removeAll(emptyRateObjs);
-    }
-
-    protected List<ValidationError> validateRates() {
-        List<ValidationError> errorList = null;
-        boolean openEndedRangeFlag = false;
-
-        for (final SORRate rate : sorRates) {
-            if (rate.getValidity().getEndDate() == null && openEndedRangeFlag)
-                return Arrays.asList(new ValidationError("openendedrange", "sor.rate.multiple.openendedrange"));
-            if (rate.getValidity().getEndDate() == null)
-                openEndedRangeFlag = true;
-
-            errorList = rate.validate();
-
-            if (errorList != null)
-                return errorList;
-        }
-        return errorList;
     }
 
     public void setSorRate(final List<SORRate> sorRates) {
@@ -267,70 +251,14 @@ public class ScheduleOfRate extends BaseModel {
         sorRates.add(sorRate);
     }
 
-    private List<ValidationError> validateDateRanges() {
-        final List<Period> validDates = new ArrayList<Period>();
-        validDates.add(0, sorRates.get(0).getValidity());
-        Date existingStartDate = null;
-        Date existingEndDate = null;
-        Date checkStartDate = null;
-        Date checkEndDate = null;
-        Period existingPeriod = null;
-        Period checkPeriod1 = null;
-        boolean flag1 = true;
-        int k = 1;
-
-        for (int i = 1; i < sorRates.size(); i++) {
-            checkStartDate = sorRates.get(i).getValidity().getStartDate();
-            checkEndDate = sorRates.get(i).getValidity().getEndDate();
-            checkPeriod1 = new Period(checkStartDate, checkEndDate);
-
-            for (int j = 0; j < validDates.size(); j++) {
-                existingStartDate = validDates.get(j).getStartDate();
-                existingPeriod = validDates.get(j);
-
-                if (validDates.get(j).getEndDate() == null)
-                    existingEndDate = null;
-                else
-                    existingEndDate = validDates.get(j).getEndDate();
-
-                // check if the period to be checked is within any of the
-                // existing periods.
-                if (isWithin(existingPeriod, checkStartDate) || isWithin(checkPeriod1, existingStartDate)
-                        || checkEndDate != null && isWithin(existingPeriod, checkEndDate) || existingEndDate != null
-                                && isWithin(checkPeriod1, existingEndDate)) {
-                    flag1 = false;
-                    break;
-                } else if (checkEndDate != null && existingEndDate != null
-                        && (isWithin(existingPeriod, checkEndDate) || isWithin(checkPeriod1, existingEndDate))) {
-                    flag1 = false;
-                    break;
-                }
-            }
-
-            if (flag1)
-                validDates.add(k++, checkPeriod1);
-            else
-                return Arrays.asList(new ValidationError("dateoverlap", "sor.rate.dates.overlap"));
-        }
-        return null;
-    }
-
-    /* start market rate */
-    /**
-     * @return the marketRates
-     */
     public List<MarketRate> getMarketRates() {
         return marketRates;
     }
 
-    /**
-     * @param marketRates the marketRates to set
-     */
     public void setMarketRates(final List<MarketRate> marketRates) {
         this.marketRates = marketRates;
     }
 
-    /* market rate */
     public MarketRate getMarketRateOn(final Date estimateDate) {
         if (estimateDate == null)
             return null;
@@ -345,34 +273,6 @@ public class ScheduleOfRate extends BaseModel {
         return marketRate != null;
     }
 
-    private void removeEmptyMarketRates() {
-        final List<MarketRate> emptyMarketRateObjs = new LinkedList<MarketRate>();
-        for (final MarketRate marketRate : marketRates)
-            if ((marketRate.getMarketRate() == null || marketRate.getMarketRate().getValue() == 0.0)
-                    && (marketRate.getValidity() == null || marketRate.getValidity().getStartDate() == null
-                            && marketRate.getValidity().getEndDate() == null))
-                emptyMarketRateObjs.add(marketRate);
-        marketRates.removeAll(emptyMarketRateObjs);
-    }
-
-    protected List<ValidationError> validateMarketRates() {
-        List<ValidationError> errorList = null;
-        boolean openEndedRangeFlag = false;
-
-        for (final MarketRate marketRate : marketRates)
-            if (marketRate != null) {
-                if (marketRate.getValidity().getEndDate() == null && openEndedRangeFlag)
-                    return Arrays
-                            .asList(new ValidationError("openendedrange", "sor.marketrate.multiple.openendedrange"));
-                if (marketRate.getValidity().getEndDate() == null)
-                    openEndedRangeFlag = true;
-                errorList = marketRate.validate();
-                if (errorList != null)
-                    return errorList;
-            }
-        return errorList;
-    }
-
     public void setMarketRate(final List<MarketRate> marketRates) {
         this.marketRates = marketRates;
     }
@@ -381,89 +281,39 @@ public class ScheduleOfRate extends BaseModel {
         marketRates.add(marketRate);
     }
 
-    private List<ValidationError> validateDateRangesForMarketRate() {
-        final List<Period> validDates = new ArrayList<Period>();
-        validDates.add(0, marketRates.get(0).getValidity());
-        Date existingStartDate = null;
-        Date existingEndDate = null;
-        Date checkStartDate = null;
-        Date checkEndDate = null;
-        Period existingPeriod = null;
-        Period checkPeriod1 = null;
-        boolean flag1 = true;
-        int k = 1;
-
-        for (int i = 1; i < marketRates.size(); i++) {
-            checkStartDate = marketRates.get(i).getValidity().getStartDate();
-            checkEndDate = marketRates.get(i).getValidity().getEndDate();
-            checkPeriod1 = new Period(checkStartDate, checkEndDate);
-
-            for (int j = 0; j < validDates.size(); j++) {
-                existingStartDate = validDates.get(j).getStartDate();
-                existingPeriod = validDates.get(j);
-                if (validDates.get(j).getEndDate() == null)
-                    existingEndDate = null;
-                else
-                    existingEndDate = validDates.get(j).getEndDate();
-
-                // check if the period to be checked is within any of the
-                // existing periods.
-                if (isWithin(existingPeriod, checkStartDate) || isWithin(checkPeriod1, existingStartDate)
-                        || checkEndDate != null && isWithin(existingPeriod, checkEndDate) || existingEndDate != null
-                                && isWithin(checkPeriod1, existingEndDate)) {
-                    flag1 = false;
-                    break;
-                } else if (checkEndDate != null && existingEndDate != null
-                        && (isWithin(existingPeriod, checkEndDate) || isWithin(checkPeriod1, existingEndDate))) {
-                    flag1 = false;
-                    break;
-                }
-            }
-            if (flag1)
-                validDates.add(k++, checkPeriod1);
-            else
-                return Arrays.asList(new ValidationError("dateoverlap", "sor.marketrate.dates.overlap"));
-        }
-
-        return null;
-    }
-
-    /* ends market rate */
-
-    @Override
-    public List<ValidationError> validate() {
-        List<ValidationError> errorList = null;
-        removeEmptyRates();
-        if (marketRates != null && !marketRates.isEmpty())
-            removeEmptyMarketRates();
-
-        if ((errorList = checkForNoRatePresent()) != null)
-            return errorList;
-
-        if ((errorList = validateDateRanges()) != null)
-            return errorList;
-
-        if ((errorList = validateRates()) != null)
-            return errorList;
-
-        /* for market rate */
-        if (marketRates != null && !marketRates.isEmpty()) {
-            if ((errorList = validateDateRangesForMarketRate()) != null)
-                return errorList;
-            if ((errorList = validateMarketRates()) != null)
-                return errorList;
-        }
-
-        return errorList;
-
-    }
-
     public Double getSorRateValue() {
         return sorRateValue;
     }
 
     public void setSorRateValue(final Double sorRateValue) {
         this.sorRateValue = sorRateValue;
+    }
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    protected void setId(final Long id) {
+        this.id = id;
+
+    }
+
+    public List<SORRate> getTempSorRates() {
+        return tempSorRates;
+    }
+
+    public void setTempSorRates(final List<SORRate> tempSorRates) {
+        this.tempSorRates = tempSorRates;
+    }
+
+    public List<MarketRate> getTempMarketRates() {
+        return tempMarketRates;
+    }
+
+    public void setTempMarketRates(final List<MarketRate> tempMarketRates) {
+        this.tempMarketRates = tempMarketRates;
     }
 
 }

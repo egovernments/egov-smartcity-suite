@@ -37,173 +37,390 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-function validateSORFormAndSubmit(){
+$(document).ready(function(){
+	if($("#marketRateRow td:eq(2) input.marketratefromdate").val() == "") {
+		$("#marketRateRow td input.marketrate").val('0.0');
+		$("#marketRateRow").hide();
+	}
+	else
+		$("#marketRateRow").show();
 	
-    if (document.getElementById("scheduleCategory").value == '' || document.getElementById("scheduleCategory").value == '-1') {
-    	var message = document.getElementById('selectCategory').value;
-        showMessage('sor_error', message);
-        window.scrollTo(0, 0);
-    	return false;
-    }
-    
-    if (document.getElementById("code").value == '') {
-    	var message = document.getElementById('selectCodeForSor').value;
-        showMessage('sor_error', message);
-        window.scrollTo(0, 0);
-        return false;
-    }
+	if(parseFloat($(".marketratetable tr td:eq(1)").html()) == 0){
+		$(".marketrateview").hide();
+	}
+	
+	$('.textfieldsvalidate').on('input',function(){
+		var regexp_textfields = /[^0-9a-zA-Z_@./#&+-/!(){}\",^$%*|=;:<>?`~ ]/g;
+		if($(this).val().match(regexp_textfields)){
+			$(this).val( $(this).val().replace(regexp_textfields,'') );
+		}
+	});
+});
 
-    if (document.getElementById("description").value == '') {
-    	var message = document.getElementById('selectDescription').value;
-        showMessage('sor_error', message);
-        window.scrollTo(0, 0);
-        return false;
-    }
-    
-    if (document.getElementById("uom").value == '' || document.getElementById("uom").value == '-1') {
-    	var message = document.getElementById('selectUOM').value;
-        showMessage('sor_error', message);
-        window.scrollTo(0, 0);
-    	return false;
-    }
-    
-    var sorActivity=document.getElementsByClassName("selectmultilinewk");
-    if(sorActivity.length == 0){
-    	var message = document.getElementById('selectAtleastOneSOR').value;
-        showMessage('sor_error', message);
-        window.scrollTo(0, 0);
-    	   return false;
-    }
-    var rate = document.getElementsByClassName("rateforsor");
-    for(var i = 0; i < rate.length; i++)
-    {
-       if(rate.item(i).value == '') {
-       	var message = document.getElementById('selectSORRate').value;
-        showMessage('sor_error', message);
-        window.scrollTo(0, 0);
-    	   return false;
-       }
-    }
-    
-    var startDate = document.getElementsByClassName("startdate");
-    var endDate = document.getElementsByClassName("enddate");
-    for(var i = 0; i < startDate.length; i++) {
-       if(startDate.item(i).value == '') {
-       	var message = document.getElementById('selectSORStartDate').value;
-        showMessage('sor_error', message);
-        window.scrollTo(0, 0);
-    	   return false;
-       }
-    }
-    
-    for(var i = 0; i < startDate.length; i++) {
-		if(endDate.item(i).value)
-		{
-		  if(new Date((startDate.item(i).value).split('/').reverse().join('-')).getTime() >  new Date((endDate.item(i).value).split('/').reverse().join('-')).getTime()) {
-	    	var message = document.getElementById('errorDateValidate').value;
-	    	showMessage('sor_error', message);
-	    	window.scrollTo(0, 0);
+$('#submitBtn').click(function() {
+	if ($('#scheduleOfRateForm').valid()) {
+		var isSuccess=true;
+		if($("#marketRateRow").is(":not(':hidden')")){
+			var marketRateElements = $(".marketrate")
+			for (var i=0;i<marketRateElements.length;i++){
+				if(!$.isNumeric($(marketRateElements[i]).val()) || parseFloat($(marketRateElements[i]).val()) == 0){
+					bootbox.alert($("#marketRateErrorMessage").val());
+					isSuccess = false;
+					break;
+				}
+			}
+		}
+		var sorRateElements = $(".sorrate")
+		for (var j=0;j<sorRateElements.length;j++){
+			if(!$.isNumeric($(sorRateElements[j]).val()) || parseFloat($(sorRateElements[j]).val()) == 0){
+				bootbox.alert($("#sorRateErrorMessage").val());
+				isSuccess = false;
+				break;
+			}
+		}
+		
+		if(!checkSorRateStartDateAndEndDate())
+			isSuccess = false;
+		
+		if(!checkMarketRateStartDateAndEndDate())
+			isSuccess = false;
+		
+		if(!checkSorRateDateBetweenStages())
+			isSuccess = false;
+		
+		if(!checkMarketRateDateBetweenStages())
+			isSuccess = false;
+		
+		if(isSuccess)
+			return true;
+	}
+	return false;
+});
+
+$('#btnsearch').click(function() {
+	if ($('#scheduleOfRateSearchRequestForm').valid()) {
+		callAjaxSearch();
+		return true;
+	}
+	return false;
+});
+
+function checkStartDateAndEndDate(tblId,fromDateElements,toDateElements) {
+	var checkDateFlag = true;
+	$.each(toDateElements, function(index) {
+		var fromDateValue = $(fromDateElements[index]).val().split("/");
+		var toDateValue = $(this).val().split("/");
+		if ($(this).val() != ""
+				&& (new Date(fromDateValue[2], fromDateValue[1] - 1,
+						fromDateValue[0]) > new Date(toDateValue[2],
+						toDateValue[1] - 1, toDateValue[0]))) {
+			if(tblId == "tblsorrate")
+				bootbox.alert($("#sorInvalidDateRangeErrorMessage").val());
+			else
+				bootbox.alert($("#marketRateInvalidDateRangeErrorMessage").val());
+			checkDateFlag = false;
 			return false;
-		   }
-	    }
-   }
-    
-    for(var i = 0; i < startDate.length-1; i++) {
-		if(endDate.length != 1 && endDate.item(i).value == ''){
-			var message = document.getElementById('selectSOREndDateValidate').value;
-	    	showMessage('sor_error', message);
-	    	window.scrollTo(0, 0);
-			return false;
-		}else {
-		  if(new Date((startDate.item(i+1).value).split('/').reverse().join('-')).getTime() <  new Date((endDate.item(i).value).split('/').reverse().join('-')).getTime()) {
-	    	var message = document.getElementById('selectSORDateValidate').value;
-	    	showMessage('sor_error', message);
-	    	window.scrollTo(0, 0);
-			return false;
-		   }
-	    }
-   }
-    
-    var marketRateActivity = document.getElementsByClassName("marketrate");
-    //marketrate length validtion
-    if(marketRateActivity.length != 0){
-    	//marketRate rate validation
-        var rate = document.getElementsByClassName("marketrate");
-        for(var i = 0; i < rate.length; i++)
-        {
-           if(rate.item(i).value == '') {
-           	var message = document.getElementById('selectMarketRate').value;
-            showMessage('sor_error', message);
-            window.scrollTo(0, 0);
-        	   return false;
-           }
-        }
-        //market rate date validation
-        var startDate = document.getElementsByClassName("marketRateStartDate");
-        var endDate = document.getElementsByClassName("marketRateEndDate");
-        for(var i = 0; i < startDate.length; i++) {
-           if(startDate.item(i).value == '') {
-           	var message = document.getElementById('selectMarketRateDate').value;
-            showMessage('sor_error', message);
-            window.scrollTo(0, 0);
-        	   return false;
-           }
-        }
-        
-        for(var i = 0; i < startDate.length; i++) {
-    		if(endDate.item(i).value)
-    		{
-    		  if(new Date((startDate.item(i).value).split('/').reverse().join('-')).getTime() >  new Date((endDate.item(i).value).split('/').reverse().join('-')).getTime()) {
-    	    	var message = document.getElementById('errorMarketDateValidate').value;
-    	    	showMessage('sor_error', message);
-    	    	window.scrollTo(0, 0);
-    			return false;
-    		   }
-    	    }
-       }
-        
-       for(var i = 0; i < startDate.length-1; i++) {
-    	   if(endDate.length != 1 && endDate.item(i).value == ''){
-   			var message = document.getElementById('selectMarketRateEndDateValidate').value;
-   	    	showMessage('sor_error', message);
-   	    	window.scrollTo(0, 0);
-   			return false;
-   		}else {
-    		  if(new Date((startDate.item(i+1).value).split('/').reverse().join('-')).getTime() <  new Date((endDate.item(i).value).split('/').reverse().join('-')).getTime()) {
-    	    	var message = document.getElementById('selectMarketRateDateValidate').value;
-    	    	showMessage('sor_error', message);
-    	    	window.scrollTo(0, 0);
-    			return false;
-    		   }
-    	    }
-       }
-    }
-    var elements = document.getElementsByClassName('rateforsor');
-    for (var i = 0; i < elements.length; i++) {
-    	if(document.getElementById('idyui-rec'+i).value != "")
-    		elements[i].disabled = false;
-    }
-    var startdate = document.getElementsByClassName('startdate');
-    for (var i = 0; i < startdate.length; i++) {
-    	if(document.getElementById('idyui-rec'+i).value != "")
-    		startdate[i].disabled = false;
-    }
-    return true;
-    
+		}
+	});
+	if (checkDateFlag)
+		return true;
+	else
+		return false;
 }
 
-$(document).ready(function() {
-	var mode = document.getElementById('displData').value;
-	if (mode == 'disable') {
-		var elements = document.getElementsByClassName('rateforsor');
-		for (var i = 0; i < elements.length; i++) {
-			if (document.getElementById('idyui-rec' + i).value != "")
-				elements[i].disabled = true;
+function checkStartDateAndEndDateBetweenStages(tblId){
+	var rowcount=$("#"+tblId+" tbody tr").length;
+	for(var i=1;i<= rowcount;i++){
+		var temp = i-1;
+		if(tblId == "tblsorrate"){
+			var sorPreviousStageEndDateVal = $("#tempSorRates"+temp+"\\.validity\\.endDate").val();
+			var sorCurrentStageStartDateVal = $("#tempSorRates"+i+"\\.validity\\.startDate").val();
+			if(sorPreviousStageEndDateVal != "" && sorCurrentStageStartDateVal != undefined){
+				var sorPreviousStageEndDate = sorPreviousStageEndDateVal.split("/");
+				var sorCurrentStageStartDate = sorCurrentStageStartDateVal.split("/");
+				if(new Date(sorPreviousStageEndDate[2], sorPreviousStageEndDate[1] - 1,
+						sorPreviousStageEndDate[0]) > new Date(sorCurrentStageStartDate[2],
+								sorCurrentStageStartDate[1] - 1, sorCurrentStageStartDate[0])){
+						bootbox.alert($("#sorStartEndDateErrorMessage").val());
+						return false;
+				}
 		}
-		var startdate = document.getElementsByClassName('startdate');
-		for (var i = 0; i < startdate.length; i++) {
-			if (document.getElementById('idyui-rec' + i).value != "")
-				startdate[i].disabled = true;
+	}else if(tblId == "tblmarketrate"){
+			var marketPreviousStageEndDateVal = $("#tempMarketRates"+temp+"\\.validity\\.endDate").val();
+			var marketCurrentStageStartDateVal = $("#tempMarketRates"+i+"\\.validity\\.startDate").val();
+			if(marketPreviousStageEndDateVal != "" && marketCurrentStageStartDateVal != undefined){
+				var marketPreviousStageEndDate = marketPreviousStageEndDateVal.split("/");
+				var marketCurrentStageStartDate = marketCurrentStageStartDateVal.split("/");
+				if(new Date(marketPreviousStageEndDate[2], marketPreviousStageEndDate[1] - 1,
+					marketPreviousStageEndDate[0]) > new Date(marketCurrentStageStartDate[2],
+							marketCurrentStageStartDate[1] - 1, marketCurrentStageStartDate[0])){
+					bootbox.alert($("#marketRateStartEndDateErrorMessage").val());
+					return false;
+			}
+	}
 		}
 	}
-});
+	return true;
+}
+
+function checkSorRateDateBetweenStages(){
+	return checkStartDateAndEndDateBetweenStages("tblsorrate");
+}
+
+function checkMarketRateDateBetweenStages(){
+	if($("#marketRateRow").is(":not(':hidden')")){
+		return checkStartDateAndEndDateBetweenStages("tblmarketrate");
+	}else
+		return true;
+}
+
+function checkSorRateStartDateAndEndDate(){
+	return checkStartDateAndEndDate("tblsorrate",$(".sorratefromdate"),$(".sorratetodate"));
+}
+
+function checkMarketRateStartDateAndEndDate(){
+	if($("#marketRateRow").is(":not(':hidden')")){
+		return checkStartDateAndEndDate("tblmarketrate",$(".marketratefromdate"),$(".marketratetodate"));
+	}else
+		return true;
+}
+
+function addSorRate() {
+	addRow("tblsorrate","sorRateRow");
+}
+
+function addMarketRate(){
+	if($("#marketRateRow").is(":visible")) 
+		addRow("tblmarketrate","marketRateRow");
+	$("#marketRateRow").show();
+}
+
+function deleteSorRateRow(obj){
+	deleteRow(obj,"tblsorrate");
+}
+
+function deleteMarketRateRow(obj){
+	var rowcount=$("#tblmarketrate tbody tr").length;
+	if(rowcount == 1){
+		$("#marketRateRow td").eq(0).find("input").val('');
+		$("#marketRateRow td").eq(1).find("input").val('');
+		$("#marketRateRow td").eq(2).find("input").val('');
+		$("#marketRateRow td").eq(3).find("input").val('');
+		$("#marketRateRow").hide();
+	}else{
+		deleteRow(obj,"tblmarketrate");
+	}
+}
+
+function addRow(tblId,rowId){
+	var rowcount = $("#"+tblId+" tbody tr").length;
+	if (rowcount < 30) {
+		if ($('#'+rowId+'') != null) {
+			// get Next Row Index to Generate
+			var nextIdx = 0;
+			nextIdx = $("#"+tblId+" tbody tr").length;
+			
+			// validate status variable for exiting function
+			var isValid = 1;// for default have success value 0
+
+			// validate existing rows in table
+			$("#"+tblId+" tbody tr").find('input').each(
+					function() {
+						if (($(this).data('optional') === 0)
+								&& (!$(this).val())) {
+							$(this).focus();
+							bootbox.alert($(this).data('errormsg'));
+							isValid = 0;// set validation failure
+							return false;
+						}
+			});
+
+			if (isValid === 0) {
+				return false;
+			}
+			
+			// Generate all textboxes Id and name with new index
+			$("#"+rowId+"").clone().find("input, errors").each(
+					function() {
+
+						if ($(this).data('server')) {
+							$(this).removeAttr('data-server');
+						}
+						
+							$(this).attr(
+									{
+										'id' : function(_, id) {
+											return id.replace(/\d+/, nextIdx);
+										},
+										'name' : function(_, name) {
+											return name.replace(/\d+/, nextIdx);
+										},
+										'data-idx' : function(_,dataIdx)
+										{
+											return nextIdx;
+										}
+									});
+
+							// if element is static attribute hold values for
+							// next row, otherwise it will be reset
+							if (!$(this).data('static')) {
+								$(this).val('');
+								// set default selection for dropdown
+								if ($(this).is("select")) {
+									$(this).prop('selectedIndex', 0);
+								}
+							}
+							
+							$(this).removeAttr('disabled');
+							$(this).prop('checked', false);
+
+					}).end().appendTo("#"+tblId+" tbody");
+			
+			generateSno();
+			initializeDatePicker();
+		}
+	} else {
+		  bootbox.alert('limit reached!');
+	}
+}
+
+function deleteRow(obj,tblId) {
+    var rIndex = getRow(obj).rowIndex;
+    
+	var tbl=document.getElementById(''+tblId+'');	
+	var rowcount=$("#"+tblId+" tbody tr").length;
+
+    if(tblId != "tblmarketrate" && rowcount<=1) {
+		bootbox.alert($("#rowDeleteErrorMessage").val());
+		return false;
+	} else {
+		tbl.deleteRow(rIndex);
+		//starting index for table fields
+		var idx= 0;
+		var sno = 1;
+		//regenerate index existing inputs in table row
+		jQuery("#"+tblId+" tbody tr").each(function() {
+		
+				jQuery(this).find("input, select, textarea, errors, span, input:hidden").each(function() {
+					var classval = jQuery(this).attr('class');
+					if(classval == 'spansno') {
+						jQuery(this).text(sno);
+						sno++;
+					} else {
+					jQuery(this).attr({
+					      'name': function(_, name) {
+					    	  if(!(jQuery(this).attr('name')===undefined))
+					    		  return name.replace(/\[.\]/g, '['+ idx +']'); 
+					      },
+					      'id': function(_, id) {
+					    	  if(!(jQuery(this).attr('id')===undefined))
+					    		  return id.replace(/\[.\]/g, '['+ idx +']'); 
+					      },
+					      'class' : function(_, name) {
+								if(!(jQuery(this).attr('class')===undefined))
+									return name.replace(/\[.\]/g, '['+ idx +']'); 
+							},
+						  'data-idx' : function(_,dataIdx)
+						  {
+							  return idx;
+						  }
+					   });
+					}
+			    });
+				
+				idx++;
+		});
+		generateSno();
+		initializeDatePicker();
+		return true;
+	}	
+}
+
+function callAjaxSearch() {
+	drillDowntableContainer = jQuery("#resultTable");
+	jQuery('.report-section').removeClass('display-hide');
+	reportdatatable = drillDowntableContainer
+	.dataTable({
+		ajax : {
+			url : "/egworks/masters/scheduleofrate-searchdetails",
+			type : "POST",
+			"data" : getFormData(jQuery('form'))
+		},
+		"bDestroy" : true,
+		'bAutoWidth': false,
+		"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-xs-3'i><'col-xs-3 col-right'l><'col-xs-3 col-right'<'export-data'T>><'col-xs-3 text-right'p>>",
+		"aLengthMenu" : [ [ 10, 25, 50, -1 ], [ 10, 25, 50, "All" ] ],
+		"oTableTools" : {
+			"sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
+			"aButtons" : []
+		},
+		"fnRowCallback" : function(row, data, index) {
+			$('td:eq(0)',row).html(index+1);
+			$('td:eq(7)', row).html(
+					'<a href="javascript:void(0);" onclick="modifyScheduleOfRate(\''
+							+ data.scheduleOfRateId + '\')">Modify</a>');
+			return row;
+		},
+		aaSorting : [],
+		columns : [{
+				"data" : ""} ,{
+				"data" : "sorCode"},{
+				"data" : "unitOfMeasure"},{
+				"data" : "sorDescription"},{
+				"data" : "rate"},{
+				"data" : "fromDate"},{
+				"data" : "toDate"},{
+				"data" : ""
+				}]
+	});
+}
+
+function getFormData($form) {
+	var unindexed_array = $form.serializeArray();
+	var indexed_array = {};
+
+	$.map(unindexed_array, function(n, i) {
+		indexed_array[n['name']] = n['value'];
+	});
+
+	return indexed_array;
+}
+
+function generateSno()
+{
+	var idx=1;
+	$(".spansno").each(function(){
+		$(this).text(idx);
+		idx++;
+	});
+}
+
+function getRow(obj) {
+	if(!obj)
+		return null;
+	tag = obj.nodeName.toUpperCase();
+	while(tag != 'BODY'){
+		if (tag == 'TR') 
+			return obj;
+		obj=obj.parentNode ;
+		tag = obj.nodeName.toUpperCase();
+	}
+	return null;
+}
+
+function initializeDatePicker()
+{
+	$(".datepicker").datepicker({
+		format: "dd/mm/yyyy",
+		autoclose:true
+	});
+	try { $(".datepicker").inputmask(); }catch(e){}	
+}
+
+function createNewScheduleOfRate(){
+	window.location = "scheduleofrate-newform";
+}
+
+function modifyScheduleOfRate(scheduleOfRateId) {
+	window.location = '/egworks/masters/scheduleofrate-edit/'+scheduleOfRateId;
+}

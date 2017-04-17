@@ -188,7 +188,7 @@
 							<td>
 								<span class="spansorslno">1</span>
 								<form:hidden path="sorActivities[0].id" id="activityid_0" class="activityid" />
-								<form:hidden path="sorActivities[0].schedule.id" id="id_0" class="sorhiddenid" />
+								<form:hidden path="sorActivities[0].schedule" id="id_0" class="sorhiddenid" />
 							</td>
 							<td>
 								<span class="categoryCode_0"></span>
@@ -244,7 +244,7 @@
 									<td>
 										<span class="spansorslno">${item.index + 1 }</span>
 										<form:hidden path="sorActivities[${item.index }].id" id="soractivityid_${item.index }" class="soractivityid" value="${activity.id }" />
-										<form:hidden path="sorActivities[${item.index }].schedule.id" id="id_${item.index }" class="sorhiddenid" value="${activity.schedule.id }" />
+										<form:hidden path="sorActivities[${item.index }].schedule" id="id_${item.index }" class="sorhiddenid" value="${activity.schedule.id }" />
 									</td>
 									<td>
 										<span class="categoryCode_${item.index }">${activity.schedule.scheduleCategory.code }</span>

@@ -1,5 +1,3 @@
-<%@ page contentType="text/json" %>
-<%@ taglib prefix="s" uri="/struts-tags" %>  
 <%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
@@ -40,10 +38,29 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
-{
-"ResultSet": {
-    "Result":[
-    {"Value":"<s:property value="%{codenoCheck}" />"}    
-    ]
-  }
-}
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<div class="row display-hide report-section">
+	<div class="col-md-12 table-header text-left">
+		<spring:message code="title.searchresult" />
+	</div>
+	<div class="col-md-12 form-group report-table-container">
+		<table class="table table-bordered table-hover"
+			id="resultTable">
+			<thead>
+				<tr>
+					<th><spring:message code="lbl.slno" /></th>
+					<th><spring:message code="lbl.sorcode" /></th>
+					<th><spring:message code="lbl.uom" /></th>
+					<th><spring:message code="lbl.sordescription" /></th>
+					<th><spring:message code="lbl.rate" /></th>
+					<th><spring:message code="lbl.fromdate" /></th>
+					<th><spring:message code="lbl.todate" /></th>
+					<c:if test="${mode != 'view'}"> 
+						<th><spring:message code="lbl.modify" /></th>
+					</c:if>
+				</tr>
+			</thead>
+		</table>
+	</div>
+</div>

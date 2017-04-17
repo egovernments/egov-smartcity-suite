@@ -39,28 +39,52 @@
  */
 package org.egov.works.masters.entity;
 
-import java.util.ArrayList;
-import java.util.List;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 
-import javax.validation.Valid;
-
+import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.entity.component.Money;
 import org.egov.infra.persistence.entity.component.Period;
-import org.egov.infra.validation.exception.ValidationError;
-import org.egov.infstr.models.BaseModel;
+import org.egov.infra.persistence.validator.annotation.Unique;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-public class SORRate extends BaseModel {
+@Entity
+@Table(name = "EGW_SOR_RATE")
+@Unique(fields = { "code" }, enableDfltMsg = true)
+@SequenceGenerator(name = SORRate.SEQ_EGW_SOR_RATE, sequenceName = SORRate.SEQ_EGW_SOR_RATE, allocationSize = 1)
+public class SORRate extends AbstractAuditable {
 
     private static final long serialVersionUID = 4057715980589711248L;
 
-    @JsonIgnore
+    public static final String SEQ_EGW_SOR_RATE = "SEQ_EGW_SOR_RATE";
+
+    @Id
+    @GeneratedValue(generator = SEQ_EGW_SOR_RATE, strategy = GenerationType.SEQUENCE)
+    private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "SCHEDULEOFRATE_ID", nullable = false, updatable = false)
     private ScheduleOfRate scheduleOfRate;
 
-    @Valid
     private Money rate;
+
     private Period validity;
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
+    }
 
     public ScheduleOfRate getScheduleOfRate() {
         return scheduleOfRate;
@@ -86,41 +110,4 @@ public class SORRate extends BaseModel {
         this.validity = validity;
     }
 
-    public SORRate() {
-    }
-
-    public SORRate(final Money sorrate) {
-        rate = sorrate;
-    }
-
-    @Override
-    public List<ValidationError> validate() {
-
-        final List<ValidationError> validationErrors = new ArrayList<ValidationError>();
-        if (rate == null || rate.getValue() == 0.0 || rate != null && rate.getValue() == 0.0)
-            validationErrors.add(new ValidationError("rate", "sor.rate.lessthan.0"));
-
-        if (validity == null || validity != null && validity.getStartDate() == null)
-            validationErrors.add(new ValidationError("validity", "sor.rate.startDate__empty"));
-        else if (validity == null
-                || validity != null && !compareDates(validity.getStartDate(), validity.getEndDate()))
-            validationErrors.add(new ValidationError("validity", "sor.rate.invalid_date_range"));
-
-        if (validationErrors.isEmpty())
-            return null;
-        else
-            return validationErrors;
-    }
-
-    public static boolean compareDates(final java.util.Date startDate, final java.util.Date endDate) {
-        if (startDate == null)
-            return false;
-
-        if (endDate == null)
-            return true;
-
-        if (endDate.before(startDate))
-            return false;
-        return true;
-    }
 }

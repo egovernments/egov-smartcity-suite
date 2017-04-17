@@ -48,23 +48,25 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import org.egov.commons.service.UOMService;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.persistence.entity.component.Money;
 import org.egov.infra.persistence.entity.component.Period;
-import org.egov.infstr.search.SearchQuery;
-import org.egov.infstr.search.SearchQueryHQL;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.abstractestimate.service.EstimateService;
 import org.egov.works.masters.entity.MarketRate;
 import org.egov.works.masters.entity.SORRate;
 import org.egov.works.masters.entity.ScheduleOfRate;
+import org.egov.works.masters.entity.ScheduleOfRateSearchRequest;
 import org.egov.works.masters.repository.ScheduleOfRateRepository;
-import org.egov.works.services.WorksService;
 import org.egov.works.uploadsor.UploadScheduleOfRate;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
+import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.criterion.CriteriaSpecification;
+import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Restrictions;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -72,6 +74,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.Model;
 
 @Service
 @Transactional(readOnly = true)
@@ -80,69 +83,47 @@ public class ScheduleOfRateService {
     @PersistenceContext
     private EntityManager entityManager;
 
-    @Autowired
-    private ScheduleOfRateRepository scheduleOfRateRepository;
-
-    @Autowired
-    private WorksService worksService;
+    private final ScheduleOfRateRepository scheduleOfRateRepository;
 
     @Autowired
     private EstimateService estimateService;
 
     @Autowired
-    private UserService userService;
-
-    @Autowired
     @Qualifier("parentMessageSource")
     private MessageSource messageSource;
 
+    @Autowired
+    private ScheduleCategoryService scheduleCategoryService;
+
+    @Autowired
+    private UOMService uomService;
+
+    @Autowired
+    public ScheduleOfRateService(final ScheduleOfRateRepository scheduleOfRateRepository) {
+        this.scheduleOfRateRepository = scheduleOfRateRepository;
+    }
+
     public ScheduleOfRate getScheduleOfRateById(final Long scheduleOfRateId) {
-        final ScheduleOfRate scheduleOfRate = entityManager.find(ScheduleOfRate.class,
-                scheduleOfRateId);
-        return scheduleOfRate;
+        return entityManager.find(ScheduleOfRate.class, scheduleOfRateId);
     }
 
     public List<ScheduleOfRate> getAllScheduleOfRates() {
         final Query query = entityManager.createQuery("from ScheduleOfRate sor order by code asc");
-        final List<ScheduleOfRate> scheduleOfRateList = query.getResultList();
-        return scheduleOfRateList;
+        return query.getResultList();
     }
 
-    public List getAllAbstractEstimateByScheduleOrRateId(final Long scheduleOfRateId) {
+    public List<AbstractEstimate> getAllAbstractEstimateByScheduleOrRateId(final Long scheduleOfRateId) {
         final Query query = entityManager.createQuery(
                 "select ae from AbstractEstimate ae, Activity act where act.abstractEstimate = ae and act.abstractEstimate.parent is null and act.abstractEstimate.egwStatus.code <> 'CANCELLED' and act.schedule.id = :scheduleOfRateId");
         query.setParameter("scheduleOfRateId", scheduleOfRateId);
-        final List list = query.getResultList();
-        return list;
+        return query.getResultList();
     }
 
-    public List getAllWorkOrderEstimateByScheduleOfRateId(final Long scheduleOfRateId) {
+    public List<WorkOrderEstimate> getAllWorkOrderEstimateByScheduleOfRateId(final Long scheduleOfRateId) {
         final Query query = entityManager.createQuery(
                 "select distinct(woa.workOrderEstimate) from WorkOrderActivity woa where woa.workOrderEstimate.estimate.parent.id is not null and woa.workOrderEstimate.estimate.egwStatus.code<> 'CANCELLED' and exists (select sor.id from ScheduleOfRate sor where sor.id = woa.activity.schedule.id and sor.id = :scheduleOfRateId )");
         query.setParameter("scheduleOfRateId", scheduleOfRateId);
-        final List list = query.getResultList();
-        return list;
-    }
-
-    public SearchQuery prepareSearchQuery(final Long scheduleCategoryId, final String code, final String description) {
-        final StringBuffer scheduleOfRateSql = new StringBuffer(100);
-        String scheduleOfRateStr = "";
-        final List<Object> paramList = new ArrayList<Object>();
-        scheduleOfRateSql.append(" from ScheduleOfRate sor where sor.scheduleCategory.id=?");
-        paramList.add(scheduleCategoryId);
-
-        if (code != null && !code.equals("")) {
-            scheduleOfRateSql.append(" and UPPER(sor.code) like ?");
-            paramList.add("%" + code.toUpperCase() + "%");
-        }
-
-        if (description != null && !description.equals("")) {
-            scheduleOfRateSql.append(" and UPPER(sor.description) like ?");
-            paramList.add("%" + description.toUpperCase() + "%");
-        }
-        scheduleOfRateStr = scheduleOfRateSql.toString();
-        final String countQuery = "select count(*) " + scheduleOfRateStr;
-        return new SearchQueryHQL(scheduleOfRateStr, countQuery, paramList);
+        return query.getResultList();
     }
 
     @Transactional
@@ -194,38 +175,6 @@ public class ScheduleOfRateService {
         return scheduleOfRates;
     }
 
-    // TODO: Need to remove this method after getting better alternate option
-    public ScheduleOfRate setPrimaryDetails(final ScheduleOfRate scheduleOfRate) {
-        final User user = userService.getUserById(worksService.getCurrentLoggedInUserId());
-        if (scheduleOfRate.getId() == null) {
-            scheduleOfRate.setCreatedBy(user);
-            scheduleOfRate.setCreatedDate(new Date());
-        }
-        scheduleOfRate.setModifiedBy(user);
-        scheduleOfRate.setModifiedDate(new Date());
-        return scheduleOfRate;
-    }
-
-    // TODO: Need to remove this method after getting better alternate option
-    public SORRate setPrimaryDetailsForSorRates(final SORRate sorRate) {
-        final User user = userService.getUserById(worksService.getCurrentLoggedInUserId());
-        sorRate.setCreatedBy(user);
-        sorRate.setCreatedDate(new Date());
-        sorRate.setModifiedBy(user);
-        sorRate.setModifiedDate(new Date());
-        return sorRate;
-    }
-
-    // TODO: Need to remove this method after getting better alternate option
-    public MarketRate setPrimaryDetailsForMarketRates(final MarketRate marketRate) {
-        final User user = userService.getUserById(worksService.getCurrentLoggedInUserId());
-        marketRate.setCreatedBy(user);
-        marketRate.setCreatedDate(new Date());
-        marketRate.setModifiedBy(user);
-        marketRate.setModifiedDate(new Date());
-        return marketRate;
-    }
-
     public ScheduleOfRate getByCode(final String code) {
         return scheduleOfRateRepository.findByCode(code);
     }
@@ -252,21 +201,21 @@ public class ScheduleOfRateService {
             sorRate.setCreatedBy(
                     entityManager.unwrap(Session.class).load(User.class, ApplicationThreadLocals.getUserId()));
             sorRate.setCreatedDate(currentDate);
-            sorRate.setModifiedBy(
+            sorRate.setLastModifiedBy(
                     entityManager.unwrap(Session.class).load(User.class, ApplicationThreadLocals.getUserId()));
-            sorRate.setModifiedDate(currentDate);
+            sorRate.setLastModifiedDate(currentDate);
             scheduleOfRate.getSorRates().add(sorRate);
             if (obj.getMarketRate() != null) {
 
                 marketRate.setMarketRate(new Money(obj.getMarketRate().doubleValue()));
-                marketRate.setValidity(
-                        new Period(obj.getMarketFromDate(), obj.getMarketToDate() != null ? obj.getMarketToDate() : null));
+                marketRate.setValidity(new Period(obj.getMarketFromDate(),
+                        obj.getMarketToDate() != null ? obj.getMarketToDate() : null));
                 marketRate.setCreatedBy(
                         entityManager.unwrap(Session.class).load(User.class, ApplicationThreadLocals.getUserId()));
                 marketRate.setCreatedDate(currentDate);
-                marketRate.setModifiedBy(
+                marketRate.setLastModifiedBy(
                         entityManager.unwrap(Session.class).load(User.class, ApplicationThreadLocals.getUserId()));
-                marketRate.setModifiedDate(currentDate);
+                marketRate.setLastModifiedDate(currentDate);
                 marketRate.setScheduleOfRate(scheduleOfRate);
                 scheduleOfRate.getMarketRates().add(marketRate);
             }
@@ -274,9 +223,9 @@ public class ScheduleOfRateService {
             scheduleOfRate.setCreatedBy(
                     entityManager.unwrap(Session.class).load(User.class, ApplicationThreadLocals.getUserId()));
             scheduleOfRate.setCreatedDate(currentDate);
-            scheduleOfRate.setModifiedBy(
+            scheduleOfRate.setLastModifiedBy(
                     entityManager.unwrap(Session.class).load(User.class, ApplicationThreadLocals.getUserId()));
-            scheduleOfRate.setModifiedDate(currentDate);
+            scheduleOfRate.setLastModifiedDate(currentDate);
             save(scheduleOfRate);
             obj.setFinalStatus("Success");
         }
@@ -298,28 +247,28 @@ public class ScheduleOfRateService {
             sorRate.setCreatedBy(
                     entityManager.unwrap(Session.class).load(User.class, ApplicationThreadLocals.getUserId()));
             sorRate.setCreatedDate(currentDate);
-            sorRate.setModifiedBy(
+            sorRate.setLastModifiedBy(
                     entityManager.unwrap(Session.class).load(User.class, ApplicationThreadLocals.getUserId()));
-            sorRate.setModifiedDate(currentDate);
+            sorRate.setLastModifiedDate(currentDate);
             scheduleOfRate.getSorRates().add(sorRate);
             if (obj.getMarketRate() != null) {
 
                 marketRate.setMarketRate(new Money(obj.getMarketRate().doubleValue()));
-                marketRate.setValidity(
-                        new Period(obj.getMarketFromDate(), obj.getMarketToDate() != null ? obj.getMarketToDate() : null));
+                marketRate.setValidity(new Period(obj.getMarketFromDate(),
+                        obj.getMarketToDate() != null ? obj.getMarketToDate() : null));
                 marketRate.setCreatedBy(
                         entityManager.unwrap(Session.class).load(User.class, ApplicationThreadLocals.getUserId()));
                 marketRate.setCreatedDate(currentDate);
-                marketRate.setModifiedBy(
+                marketRate.setLastModifiedBy(
                         entityManager.unwrap(Session.class).load(User.class, ApplicationThreadLocals.getUserId()));
-                marketRate.setModifiedDate(currentDate);
+                marketRate.setLastModifiedDate(currentDate);
                 marketRate.setScheduleOfRate(scheduleOfRate);
                 scheduleOfRate.getMarketRates().add(marketRate);
             }
 
-            scheduleOfRate.setModifiedBy(
+            scheduleOfRate.setLastModifiedBy(
                     entityManager.unwrap(Session.class).load(User.class, ApplicationThreadLocals.getUserId()));
-            scheduleOfRate.setModifiedDate(currentDate);
+            scheduleOfRate.setLastModifiedDate(currentDate);
             save(scheduleOfRate);
             obj.setFinalStatus("Success");
         }
@@ -502,6 +451,46 @@ public class ScheduleOfRateService {
             errorInMasterData = true;
 
         return errorInMasterData;
+    }
+
+    public List<ScheduleOfRate> searchScheduleOfRate(final ScheduleOfRateSearchRequest scheduleOfRateSearchRequest) {
+        final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(ScheduleOfRate.class);
+        if (scheduleOfRateSearchRequest != null) {
+            criteria.add(Restrictions.eq("scheduleCategory.id", scheduleOfRateSearchRequest.getCategoryType()));
+            if (scheduleOfRateSearchRequest.getSorDescription() != null)
+                criteria.add(Restrictions.ilike("description", scheduleOfRateSearchRequest.getSorDescription(),
+                        MatchMode.ANYWHERE));
+            if (scheduleOfRateSearchRequest.getSorCode() != null)
+                criteria.add(Restrictions.ilike("code", scheduleOfRateSearchRequest.getSorCode(), MatchMode.ANYWHERE));
+        }
+        criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+        return criteria.list();
+    }
+
+    public void loadModelValues(final Model model) {
+        model.addAttribute("sorcategories", scheduleCategoryService.getAllScheduleCategories());
+        model.addAttribute("uomlist", uomService.findAll());
+    }
+
+    public void createSORAndMarketRateDetails(final ScheduleOfRate scheduleOfRate) {
+        SORRate sorRate;
+        MarketRate marketRate;
+        scheduleOfRate.getSorRates().clear();
+        for (final SORRate sor : scheduleOfRate.getTempSorRates()) {
+            sorRate = new SORRate();
+            sorRate.setRate(sor.getRate());
+            sorRate.setValidity(sor.getValidity());
+            sorRate.setScheduleOfRate(scheduleOfRate);
+            scheduleOfRate.getSorRates().add(sorRate);
+        }
+        scheduleOfRate.getMarketRates().clear();
+        for (final MarketRate mr : scheduleOfRate.getTempMarketRates()) {
+            marketRate = new MarketRate();
+            marketRate.setMarketRate(mr.getMarketRate());
+            marketRate.setValidity(mr.getValidity());
+            marketRate.setScheduleOfRate(scheduleOfRate);
+            scheduleOfRate.getMarketRates().add(marketRate);
+        }
     }
 
 }
