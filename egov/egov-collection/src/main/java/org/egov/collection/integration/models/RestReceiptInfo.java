@@ -39,10 +39,10 @@
  */
 package org.egov.collection.integration.models;
 
-import java.math.BigDecimal;
-
 import org.egov.collection.entity.ReceiptHeader;
-import org.egov.collection.utils.CollectionsUtil;
+
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 
 public class RestReceiptInfo {
     private String transactionId = "";
@@ -65,7 +65,7 @@ public class RestReceiptInfo {
         receiptNo = receiptHeader.getReceiptnumber();
         referenceNo = receiptHeader.getConsumerCode();
         amount = receiptHeader.getTotalAmount();
-        txnDate = CollectionsUtil.CHEQUE_DATE_FORMAT.format(receiptHeader.getReceiptdate());
+        txnDate = new SimpleDateFormat("dd-MM-yyyy").format(receiptHeader.getReceiptdate());
         serviceName = receiptHeader.getService().getName();
         payeeName = receiptHeader.getPayeeName();
         receiptStatus = receiptHeader.getStatus().getDescription();

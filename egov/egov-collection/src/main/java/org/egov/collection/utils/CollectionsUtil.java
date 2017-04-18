@@ -40,18 +40,8 @@
 
 package org.egov.collection.utils;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.log4j.Logger;
 import org.egov.collection.config.properties.CollectionApplicationProperties;
 import org.egov.collection.constants.CollectionConstants;
@@ -110,63 +100,95 @@ import org.egov.pims.utils.EisManagersUtill;
 import org.hibernate.Query;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
+@Service
 public class CollectionsUtil {
-    public static final SimpleDateFormat CHEQUE_DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy");
     private static final Logger LOGGER = Logger.getLogger(CollectionsUtil.class);
     @Autowired
     protected AssignmentService assignmentService;
+
+    @Autowired
+    @Qualifier("persistenceService")
     private PersistenceService persistenceService;
+
     @Autowired
     private UserService userService;
+
     @Autowired
     private ModuleService moduleService;
+
     @Autowired
     private AppConfigValueService appConfigValuesService;
+
     @Autowired
     private EisCommonService eisCommonService;
+
     @Autowired
     private SearchPositionService searchPositionService;
+
     @Autowired
     private ApplicationContext context;
+
     @Autowired
     private EISServeable eisService;
+
     @Autowired
     private SecurityUtils securityUtils;
+
     @Autowired
     private PositionMasterService posService;
+
     @Autowired
     private DepartmentService departmentService;
+
     @Autowired
     private InstallmentHibDao installmentHibDao;
+
     @Autowired
     private DesignationService designationService;
+
     @Autowired
     private EgwStatusHibernateDAO egwStatusDAO;
+
     @Autowired
     private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
+
     @Autowired
     private FinancialYearDAO financialYearDAO;
+
+    @Autowired
     private ReportService reportService;
+
     @Autowired
     private MessagingService messagingService;
+
     @Autowired
     private CollectionApplicationProperties collectionApplicationProperties;
 
     /**
      * Returns the Status object for given status code for a receipt
      *
-     * @param statusCode
-     *            Status code for which status object is to be returned
+     * @param statusCode Status code for which status object is to be returned
      * @return the Status object for given status code for a receipt
      */
     public EgwStatus getReceiptStatusForCode(final String statusCode) {
@@ -177,10 +199,8 @@ public class CollectionsUtil {
      * This method returns the <code>EgwStatus</code> for the given module type
      * and status code
      *
-     * @param moduleName
-     *            Module name of the required status
-     * @param statusCode
-     *            Status code of the required status
+     * @param moduleName Module name of the required status
+     * @param statusCode Status code of the required status
      * @return the <code>EgwStatus</code> instance
      */
     public EgwStatus getStatusForModuleAndCode(final String moduleName, final String statusCode) {
@@ -197,8 +217,7 @@ public class CollectionsUtil {
     }
 
     /**
-     * @param sessionMap
-     *            Map of session variables
+     * @param sessionMap Map of session variables
      * @return user name of currently logged in user
      */
     public String getLoggedInUserName() {
@@ -208,8 +227,7 @@ public class CollectionsUtil {
     /**
      * This method returns the User instance associated with the logged in user
      *
-     * @param sessionMap
-     *            Map of session variables
+     * @param sessionMap Map of session variables
      * @return the logged in user
      */
     public User getLoggedInUser() {
@@ -217,8 +235,7 @@ public class CollectionsUtil {
     }
 
     /**
-     * @param user
-     *            the user whose department is to be returned
+     * @param user the user whose department is to be returned
      * @return department of the given user
      */
     public Department getDepartmentOfUser(final User user) {
@@ -229,8 +246,7 @@ public class CollectionsUtil {
     }
 
     /**
-     * @param sessionMap
-     *            map of session variables
+     * @param sessionMap map of session variables
      * @return department of currently logged in user
      */
     public Department getDepartmentOfLoggedInUser() {
@@ -250,8 +266,7 @@ public class CollectionsUtil {
     }
 
     /**
-     * @param sessionMap
-     *            Map of session variables
+     * @param sessionMap Map of session variables
      * @return Location object for given user
      */
     public Location getLocationOfUser(final Map<String, Object> sessionMap) {
@@ -310,10 +325,9 @@ public class CollectionsUtil {
      * This method returns the collection modes that are not allowed based on
      * rules configured in the script
      *
-     * @param loggedInUser
-     *            a <code>User</code> entity representing the logged in user.
+     * @param loggedInUser a <code>User</code> entity representing the logged in user.
      * @return a <code>List</code> of <code>String</code> values representing
-     *         the mode of payments supported.
+     * the mode of payments supported.
      */
     public List<String> getCollectionModesNotAllowed(final User loggedInUser) {
         final List<String> collectionsModeNotAllowed = new ArrayList<>(0);
@@ -374,7 +388,7 @@ public class CollectionsUtil {
         for (final String dept : department) {
             for (final String desg : designation) {
                 assignment = assignmentService.findByDepartmentDesignationAndBoundary(departmentService
-                        .getDepartmentByName(dept).getId(), designationService.getDesignationByName(desg).getId(),
+                                .getDepartmentByName(dept).getId(), designationService.getDesignationByName(desg).getId(),
                         boundary.getId());
                 if (!assignment.isEmpty())
                     break;
@@ -398,8 +412,7 @@ public class CollectionsUtil {
     }
 
     /**
-     * @param sessionMap
-     *            Map of session variables
+     * @param sessionMap Map of session variables
      * @return Position of logged in user
      */
     public Position getPositionOfUser(final User user) {
@@ -413,8 +426,7 @@ public class CollectionsUtil {
     /**
      * Gets position by given position name
      *
-     * @param positionName
-     *            Position name
+     * @param positionName Position name
      * @return Position object for given position name
      */
     public Position getPositionByName(final String positionName) {
@@ -424,11 +436,10 @@ public class CollectionsUtil {
     /**
      * This method retrieves the <code>CFinancialYear</code> for the given date.
      *
-     * @param date
-     *            an instance of <code>Date</code> for which the financial year
-     *            is to be retrieved.
+     * @param date an instance of <code>Date</code> for which the financial year
+     *             is to be retrieved.
      * @return an instance of <code></code> representing the financial year for
-     *         the given date
+     * the given date
      */
     public CFinancialYear getFinancialYearforDate(final Date date) {
         return (CFinancialYear) persistenceService
@@ -442,11 +453,10 @@ public class CollectionsUtil {
     /**
      * This method checks if the given challan is valid.
      *
-     * @param challan
-     *            the <code>Challan</code> instance whose validity has to be
-     *            checked
+     * @param challan the <code>Challan</code> instance whose validity has to be
+     *                checked
      * @return a boolean value - true indicating that the challan is valid and
-     *         false indicating that teh challan is not valid
+     * false indicating that teh challan is not valid
      */
     public boolean checkChallanValidity(final Challan challan) {
         final Calendar current = Calendar.getInstance();
@@ -477,8 +487,7 @@ public class CollectionsUtil {
     /**
      * Fetches given bean from application context
      *
-     * @param beanName
-     *            name of bean to be fetched
+     * @param beanName name of bean to be fetched
      * @return given bean from application context
      */
     public Object getBean(final String beanName) {
@@ -499,12 +508,10 @@ public class CollectionsUtil {
      * This method returns the currently active config value for the given
      * module name and key
      *
-     * @param moduleName
-     *            a <code>String<code> representing the module name
-     * &#64;param key
-     *            a <code>String</code> representing the key
-     * @param defaultValue
-     *            Default value to be returned in case the key is not defined
+     * @param moduleName   a <code>String<code> representing the module name
+     *                     &#64;param key
+     *                     a <code>String</code> representing the key
+     * @param defaultValue Default value to be returned in case the key is not defined
      * @return <code>String</code> representing the configuration value
      */
     public String getAppConfigValue(final String moduleName, final String key, final String defaultValue) {
@@ -515,10 +522,9 @@ public class CollectionsUtil {
     /**
      * This method returns the config value for the given module name and key
      *
-     * @param moduleName
-     *            a <code>String<code> representing the module name
-     * &#64;param key
-     *            a <code>String</code> representing the key
+     * @param moduleName a <code>String<code> representing the module name
+     *                   &#64;param key
+     *                   a <code>String</code> representing the key
      * @return <code>String</code> representing the configuration value
      */
     public String getAppConfigValue(final String moduleName, final String key) {
@@ -534,12 +540,11 @@ public class CollectionsUtil {
      * This method returns the list of config values for the given module name
      * and key
      *
-     * @param moduleName
-     *            a <code>String<code> representing the module name
-     * &#64;param key
-     *            a <code>String</code> representing the key
+     * @param moduleName a <code>String<code> representing the module name
+     *                   &#64;param key
+     *                   a <code>String</code> representing the key
      * @return <code>List<AppConfigValues></code> representing the list of
-     *         configuration values
+     * configuration values
      */
     public List<AppConfigValues> getAppConfigValues(final String moduleName, final String key) {
         return appConfigValuesService.getConfigValuesByModuleAndKey(moduleName, key);
@@ -548,8 +553,7 @@ public class CollectionsUtil {
     /**
      * Gets position by given position id
      *
-     * @param positionId
-     *            Position Id
+     * @param positionId Position Id
      * @return Position object for given position id
      */
     public Position getPositionById(final Long positionId) {
@@ -560,8 +564,7 @@ public class CollectionsUtil {
      * This method is invoked from the ReceiptHeader.workFlow script and returns
      * the position for the employee id passed as parameter
      *
-     * @param employeeId
-     *            PersonalInformation Id
+     * @param employeeId PersonalInformation Id
      * @return Position object for Employee Id passed as parameter
      */
 
@@ -574,19 +577,15 @@ public class CollectionsUtil {
      * Employee object for the given Department Id, Designation Id ,Boundary Id
      * and FunctionaryId
      *
-     * @param deptId
-     *            Department Id
-     * @param designationId
-     *            Designation Id
-     * @param boundaryId
-     *            Boundary Id
-     * @param functionaryId
-     *            Functionary Id
+     * @param deptId        Department Id
+     * @param designationId Designation Id
+     * @param boundaryId    Boundary Id
+     * @param functionaryId Functionary Id
      * @return PersonalInformation
      */
 
     public PersonalInformation getEmployeeByDepartmentDesignationBoundaryandFunctionary(final Long deptId,
-            final Long designationId, final Integer boundaryId, final Integer functionaryId) {
+                                                                                        final Long designationId, final Integer boundaryId, final Integer functionaryId) {
         PersonalInformation personalInformation = null;
         try {
             personalInformation = EisManagersUtill.getEmployeeService().getEmployeeByFunctionary(deptId, designationId,
@@ -609,8 +608,7 @@ public class CollectionsUtil {
     }
 
     /**
-     * @param user
-     *            the user whose non-primary department list is to be returned
+     * @param user the user whose non-primary department list is to be returned
      * @return list of non-primary department of the given user
      */
     public List<Department> getAllNonPrimaryAssignmentsOfUser(final User user) {
@@ -633,10 +631,9 @@ public class CollectionsUtil {
     }
 
     /**
-     * @param user
-     *            the user whose non-primary department is to be returned
+     * @param user the user whose non-primary department is to be returned
      * @return non-primary department of the given user. In case user has
-     *         multiple non-primary departments, the first one will be returned.
+     * multiple non-primary departments, the first one will be returned.
      */
     public Department getNonPrimaryDeptOfUser(final User user) {
         final List<Department> nonPrimaryAssignments = getAllNonPrimaryAssignmentsOfUser(user);
@@ -678,12 +675,10 @@ public class CollectionsUtil {
      * representing an arrear account head (for Property Tax). The glcodes for
      * such accounts are retrieved from App Config.
      *
-     * @param glcode
-     *            The Chart of Accounts Code
-     * @param description
-     *            Description of the glcode
+     * @param glcode      The Chart of Accounts Code
+     * @param description Description of the glcode
      * @returna a <code>Boolean</code> indicating if the glcode is arrear
-     *          account head
+     * account head
      */
     public boolean isPropertyTaxArrearAccountHead(final String glcode, final String description) {
         final List<AppConfigValues> list = appConfigValuesService.getConfigValuesByModuleAndKey(
@@ -714,8 +709,8 @@ public class CollectionsUtil {
     }
 
     public List<EmployeeView> getPositionBySearchParameters(final String beginsWith, final Integer desId,
-            final Integer deptId, final Integer jurdId, final Integer roleId, final Date userDate,
-            final Integer maxResults) throws NoSuchObjectException {
+                                                            final Integer deptId, final Integer jurdId, final Integer roleId, final Date userDate,
+                                                            final Integer maxResults) throws NoSuchObjectException {
 
         return searchPositionService.getPositionBySearchParameters(beginsWith, desId, deptId,
                 jurdId != null ? Long.valueOf(jurdId) : null, roleId, userDate, maxResults);
@@ -870,7 +865,7 @@ public class CollectionsUtil {
     }
 
     public List<ReceiptDetail> reconstructReceiptDetail(final ReceiptHeader receiptHeader,
-            final List<ReceiptDetail> receiptDetailList) {
+                                                        final List<ReceiptDetail> receiptDetailList) {
         final BillingIntegrationService billingService = (BillingIntegrationService) getBean(receiptHeader.getService()
                 .getCode() + CollectionConstants.COLLECTIONS_INTERFACE_SUFFIX);
         return billingService.reconstructReceiptDetail(receiptHeader.getReferencenumber(),
@@ -917,41 +912,40 @@ public class CollectionsUtil {
     }
 
     /**
-     * @param serviceCode
-     *            Billing service code for which the receipt template is to be
-     *            returned
+     * @param serviceCode Billing service code for which the receipt template is to be
+     *                    returned
      * @return Receipt template to be used for given billing service code.
      */
     public String getReceiptTemplateName(final char receiptType, final String serviceCode) {
         String templateName = null;
 
         switch (receiptType) {
-        case CollectionConstants.RECEIPT_TYPE_BILL:
-            templateName = serviceCode + CollectionConstants.SEPARATOR_UNDERSCORE
-                    + CollectionConstants.RECEIPT_TEMPLATE_NAME;// <servicecode>_collection_receipt
-            if (!isValidTemplate(templateName)) {
-                LOGGER.info("Billing system specific report template [" + templateName
-                        + "] not available. Using the default template [" + CollectionConstants.RECEIPT_TEMPLATE_NAME
-                        + "]");
-                templateName = "PT_collection_receipt"; // CollectionConstants.RECEIPT_TEMPLATE_NAME;
-
+            case CollectionConstants.RECEIPT_TYPE_BILL:
+                templateName = serviceCode + CollectionConstants.SEPARATOR_UNDERSCORE
+                        + CollectionConstants.RECEIPT_TEMPLATE_NAME;// <servicecode>_collection_receipt
                 if (!isValidTemplate(templateName)) {
-                    // No template available for creating the receipt report.
-                    // Throw
-                    // exception.
-                    final String errMsg = "Report template [" + templateName
-                            + "] not available! Receipt report cannot be generated.";
-                    LOGGER.error(errMsg);
-                    throw new ApplicationRuntimeException(errMsg);
+                    LOGGER.info("Billing system specific report template [" + templateName
+                            + "] not available. Using the default template [" + CollectionConstants.RECEIPT_TEMPLATE_NAME
+                            + "]");
+                    templateName = "PT_collection_receipt"; // CollectionConstants.RECEIPT_TEMPLATE_NAME;
+
+                    if (!isValidTemplate(templateName)) {
+                        // No template available for creating the receipt report.
+                        // Throw
+                        // exception.
+                        final String errMsg = "Report template [" + templateName
+                                + "] not available! Receipt report cannot be generated.";
+                        LOGGER.error(errMsg);
+                        throw new ApplicationRuntimeException(errMsg);
+                    }
                 }
-            }
-            break;
-        case CollectionConstants.RECEIPT_TYPE_CHALLAN:
-            templateName = CollectionConstants.CHALLAN_RECEIPT_TEMPLATE_NAME;
-            break;
-        case CollectionConstants.RECEIPT_TYPE_ADHOC:
-            templateName = CollectionConstants.RECEIPT_TEMPLATE_NAME;
-            break;
+                break;
+            case CollectionConstants.RECEIPT_TYPE_CHALLAN:
+                templateName = CollectionConstants.CHALLAN_RECEIPT_TEMPLATE_NAME;
+                break;
+            case CollectionConstants.RECEIPT_TYPE_ADHOC:
+                templateName = CollectionConstants.RECEIPT_TEMPLATE_NAME;
+                break;
         }
         return templateName;
     }
@@ -965,18 +959,6 @@ public class CollectionsUtil {
         emailSubject = String.format(emailSubject, receiptHeader.getService().getName());
         messagingService.sendEmailWithAttachment(receiptHeader.getPayeeEmail(), emailSubject, emailBody,
                 "application/pdf", "Receipt" + receiptHeader.getReceiptdate().toString(), attachment);
-    }
-
-    public void setUserService(final UserService userService) {
-        this.userService = userService;
-    }
-
-    public void setPersistenceService(final PersistenceService persistenceService) {
-        this.persistenceService = persistenceService;
-    }
-
-    public void setReportService(final ReportService reportService) {
-        this.reportService = reportService;
     }
 
 }

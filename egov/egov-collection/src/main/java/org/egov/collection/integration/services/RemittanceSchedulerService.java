@@ -39,9 +39,6 @@
  */
 package org.egov.collection.integration.services;
 
-import java.util.List;
-import java.util.Map;
-
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.RemittanceInstrument;
 import org.egov.collection.utils.CollectionsUtil;
@@ -52,14 +49,30 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.model.instrument.InstrumentHeader;
 import org.egov.model.instrument.InstrumentType;
 import org.hibernate.Query;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.Map;
+
 @Transactional(readOnly = true)
+@Service
 public class RemittanceSchedulerService {
 
+    @Autowired
+    @Qualifier("persistenceService")
     private PersistenceService persistenceService;
+
+    @Autowired
+    @Qualifier("remittanceInstrumentService")
     private PersistenceService<RemittanceInstrument, Long> remittanceInstrumentService;
+
+    @Autowired
     private FinancialsUtil financialsUtil;
+
+    @Autowired
     private CollectionsUtil collectionsUtil;
 
     @SuppressWarnings("unchecked")
@@ -113,7 +126,7 @@ public class RemittanceSchedulerService {
     }
 
     private Map<String, Object> constructInstrumentMap(final Map<String, Object> instrumentDepositMap,
-            final Bankaccount bankaccount, final InstrumentHeader instrumentHeader, final CVoucherHeader voucherHeader) {
+                                                       final Bankaccount bankaccount, final InstrumentHeader instrumentHeader, final CVoucherHeader voucherHeader) {
         final InstrumentType instrumentType = (InstrumentType) persistenceService.find(
                 "select it from InstrumentType it,InstrumentHeader ih where " + "ih.instrumentType=it.id and ih.id=?",
                 instrumentHeader.getId());
@@ -126,27 +139,6 @@ public class RemittanceSchedulerService {
         instrumentDepositMap.put("ispaycheque", instrumentHeader.getIsPayCheque());
         instrumentDepositMap.put("payinid", voucherHeader.getId());
         return instrumentDepositMap;
-    }
-
-    public void setFinancialsUtil(final FinancialsUtil financialsUtils) {
-        this.financialsUtil = financialsUtils;
-    }
-
-    public void setCollectionsUtil(final CollectionsUtil collectionsUtils) {
-        this.collectionsUtil = collectionsUtils;
-    }
-
-    public void setRemittanceInstrumentService(
-            final PersistenceService<RemittanceInstrument, Long> remittanceInstService) {
-        this.remittanceInstrumentService = remittanceInstService;
-    }
-
-    public PersistenceService getPersistenceService() {
-        return persistenceService;
-    }
-
-    public void setPersistenceService(final PersistenceService persistService) {
-        this.persistenceService = persistService;
     }
 
 }

@@ -41,10 +41,13 @@ package org.egov.collection.scheduler;
 
 import org.egov.collection.integration.services.RemittanceSchedulerService;
 import org.egov.infra.scheduler.quartz.AbstractQuartzJob;
+import org.springframework.beans.factory.annotation.Autowired;
 
-public class RemittanceInstrumentJob  extends AbstractQuartzJob {
+public class RemittanceInstrumentJob extends AbstractQuartzJob {
 
     private static final long serialVersionUID = -8293830861860894611L;
+
+    @Autowired
     private transient RemittanceSchedulerService remittanceSchedulerService;
     private String instrumentType;
     private Integer modulo;
@@ -56,10 +59,6 @@ public class RemittanceInstrumentJob  extends AbstractQuartzJob {
 
     public void setInstrumentType(String instType) {
         this.instrumentType = instType;
-    }
-
-    public void setRemittanceSchedulerService(RemittanceSchedulerService remitSchedulerService) {
-        this.remittanceSchedulerService = remitSchedulerService;
     }
 
     public void setModulo(Integer modul) {

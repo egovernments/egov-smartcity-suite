@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) 2016  eGovernments Foundation
+ *  Copyright (C) 2017  eGovernments Foundation
  *
  *  The updated version of eGov suite of products as by eGovernments Foundation
  *  is available at http://www.egovernments.org
@@ -38,27 +38,20 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.infra.scheduler.quartz;
+package org.egov.infra.config.scheduling;
 
-import org.quartz.spi.TriggerFiredBundle;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-import org.springframework.scheduling.quartz.SpringBeanJobFactory;
+import org.springframework.context.annotation.ConditionContext;
+import org.springframework.context.annotation.ConfigurationCondition;
+import org.springframework.core.type.AnnotatedTypeMetadata;
 
-public class QuartzJobAwareBeanFactory extends SpringBeanJobFactory implements ApplicationContextAware {
-
-    private transient AutowireCapableBeanFactory beanFactory;
-
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        beanFactory = applicationContext.getAutowireCapableBeanFactory();
+public class SchedulerConfigCondition implements ConfigurationCondition {
+    @Override
+    public ConfigurationPhase getConfigurationPhase() {
+        return ConfigurationPhase.REGISTER_BEAN;
     }
 
     @Override
-    protected Object createJobInstance(TriggerFiredBundle bundle) throws Exception {
-        final Object job = super.createJobInstance(bundle);
-        beanFactory.autowireBean(job);
-        return job;
+    public boolean matches(final ConditionContext context, final AnnotatedTypeMetadata metadata) {
+        return context.getEnvironment().getProperty("scheduler.enabled", Boolean.class);
     }
 }

@@ -40,28 +40,6 @@
 
 package org.egov.pgr.service.es;
 
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.egov.infra.config.core.ApplicationThreadLocals.getCityCode;
-import static org.egov.pgr.utils.constants.PGRConstants.CITY_CODE;
-import static org.egov.pgr.utils.constants.PGRConstants.DASHBOARD_GROUPING_ALL_FUNCTIONARY;
-import static org.egov.pgr.utils.constants.PGRConstants.DASHBOARD_GROUPING_ALL_LOCALITIES;
-import static org.egov.pgr.utils.constants.PGRConstants.DASHBOARD_GROUPING_ALL_ULB;
-import static org.egov.pgr.utils.constants.PGRConstants.DASHBOARD_GROUPING_ALL_WARDS;
-import static org.egov.pgr.utils.constants.PGRConstants.DASHBOARD_GROUPING_CITY;
-import static org.egov.pgr.utils.constants.PGRConstants.NOASSIGNMENT;
-import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
-import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
-import static org.elasticsearch.index.query.QueryBuilders.termQuery;
-import static org.elasticsearch.index.query.QueryBuilders.termsQuery;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
 import org.apache.commons.lang.time.DateUtils;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
@@ -102,8 +80,32 @@ import org.elasticsearch.search.aggregations.metrics.valuecount.ValueCount;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.egov.infra.config.core.ApplicationThreadLocals.getCityCode;
+import static org.egov.pgr.utils.constants.PGRConstants.CITY_CODE;
+import static org.egov.pgr.utils.constants.PGRConstants.DASHBOARD_GROUPING_ALL_FUNCTIONARY;
+import static org.egov.pgr.utils.constants.PGRConstants.DASHBOARD_GROUPING_ALL_LOCALITIES;
+import static org.egov.pgr.utils.constants.PGRConstants.DASHBOARD_GROUPING_ALL_ULB;
+import static org.egov.pgr.utils.constants.PGRConstants.DASHBOARD_GROUPING_ALL_WARDS;
+import static org.egov.pgr.utils.constants.PGRConstants.DASHBOARD_GROUPING_CITY;
+import static org.egov.pgr.utils.constants.PGRConstants.NOASSIGNMENT;
+import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
+import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
+import static org.elasticsearch.index.query.QueryBuilders.termQuery;
+import static org.elasticsearch.index.query.QueryBuilders.termsQuery;
 
 @Service
+@Transactional(readOnly = true)
 public class ComplaintIndexService {
 
     private static final String SOURCE = "source";
@@ -227,7 +229,7 @@ public class ComplaintIndexService {
     }
 
     public void updateComplaintIndex(final Complaint complaint, final Long approvalPosition,
-            final String approvalComment) {
+                                     final String approvalComment) {
         // fetch the complaint from index and then update the new fields
         ComplaintIndex complaintIndex = complaintIndexRepository.findByCrnAndCityCode(complaint.getCrn(), getCityCode());
         final String status = complaintIndex.getComplaintStatusName();
@@ -880,7 +882,7 @@ public class ComplaintIndexService {
     }
 
     private void setAgeingResults(ComplaintDashBoardResponse responseDetail, Bucket closedCountbucket, String weeklyAggregation,
-            String hourlyAggregation) {
+                                  String hourlyAggregation) {
         Range ageingRange = closedCountbucket.getAggregations().get(weeklyAggregation);
         Range.Bucket rangeBucket = ageingRange.getBuckets().get(0);
         responseDetail.setAgeingGroup1(rangeBucket.getDocCount());
@@ -1204,7 +1206,7 @@ public class ComplaintIndexService {
     }
 
     private List<ComplaintSourceResponse> getResponseDetailsList(final String groupByField, final Terms terms,
-            final List<ComplaintSourceResponse> responseDetailsList, final ComplaintDashBoardRequest complaintDashBoardRequest) {
+                                                                 final List<ComplaintSourceResponse> responseDetailsList, final ComplaintDashBoardRequest complaintDashBoardRequest) {
         for (final Bucket bucket : terms.getBuckets()) {
             final ComplaintSourceResponse complaintSouce = new ComplaintSourceResponse();
             final TopHits topHits = bucket.getAggregations().get("complaintrecord");
@@ -1212,11 +1214,11 @@ public class ComplaintIndexService {
             complaintSouce.setUlbName(hit[0].field("cityName").getValue());
             complaintSouce.setDistrictName(hit[0].field("cityDistrictName").getValue());
             complaintSouce.setWardName(hit[0].field("wardName").getValue());
-            if(hit[0].field("departmentName") != null){
+            if (hit[0].field("departmentName") != null) {
                 complaintSouce.setDepartmentName(hit[0].field("departmentName").getValue());
             }
             if (hit[0].field(INITIAL_FUNCTIONARY_NAME) == null) {
-            } else{
+            } else {
                 complaintSouce.setFunctionaryName(hit[0].field(INITIAL_FUNCTIONARY_NAME).getValue());
             }
             if (hit[0].field(INITIAL_FUNCTIONARY_MOBILE_NUMBER) == null) {
@@ -1274,11 +1276,11 @@ public class ComplaintIndexService {
         if (complaintDashBoardRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_ALL_ULB) ||
                 complaintDashBoardRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_ALL_WARDS) ||
                 complaintDashBoardRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_ALL_LOCALITIES) ||
-                complaintDashBoardRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_ALL_FUNCTIONARY)){
+                complaintDashBoardRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_ALL_FUNCTIONARY)) {
             boolQuery = filterBasedOnSource(complaintDashBoardRequest, boolQuery);
             return boolQuery;
         }
-            
+
         if (isNotBlank(complaintDashBoardRequest.getRegionName()))
             boolQuery = boolQuery.filter(matchQuery(CITY_REGION_NAME, complaintDashBoardRequest.getRegionName()));
         if (isNotBlank(complaintDashBoardRequest.getUlbGrade()))
@@ -1310,12 +1312,12 @@ public class ComplaintIndexService {
             boolQuery = boolQuery.filter(matchQuery(INITIAL_FUNCTIONARY_NAME,
                     complaintDashBoardRequest.getFunctionaryName()));
         boolQuery = filterBasedOnSource(complaintDashBoardRequest, boolQuery);
-            
+
         return boolQuery;
     }
 
     private BoolQueryBuilder filterBasedOnSource(ComplaintDashBoardRequest complaintDashBoardRequest,
-            BoolQueryBuilder boolQuery) {
+                                                 BoolQueryBuilder boolQuery) {
         BoolQueryBuilder sourceQuery = boolQuery;
         if (isNotBlank(complaintDashBoardRequest.getIncludedSources()))
             sourceQuery = sourceQuery.must(termsQuery(SOURCE, complaintDashBoardRequest.getIncludedSources().split("~")));
@@ -1325,8 +1327,8 @@ public class ComplaintIndexService {
     }
 
     private ComplaintDashBoardResponse populateResponse(final ComplaintDashBoardRequest complaintDashBoardRequest,
-            final Bucket bucket,
-            final String groupByField) {
+                                                        final Bucket bucket,
+                                                        final String groupByField) {
         ComplaintDashBoardResponse responseDetail = new ComplaintDashBoardResponse();
 
         responseDetail = setDefaultValues(responseDetail);
@@ -1424,11 +1426,11 @@ public class ComplaintIndexService {
 
     // This is a generic method to fetch all complaints based on fieldName and its value
     public List<ComplaintIndex> getFilteredComplaints(final ComplaintDashBoardRequest complaintDashBoardRequest,
-            final String fieldName, final String fieldValue, Integer lowerLimit, Integer upperLimit) {
+                                                      final String fieldName, final String fieldValue, Integer lowerLimit, Integer upperLimit) {
         BoolQueryBuilder boolQuery = getFilterQuery(complaintDashBoardRequest);
         if (isNotBlank(fieldValue))
             boolQuery.filter(matchQuery(fieldName, fieldValue));
-        else 
+        else
             boolQuery = boolQuery.filter(matchQuery("ifClosed", 1)).filter(rangeQuery(fieldName).gte(lowerLimit).lte(upperLimit));
 
         final List<ComplaintIndex> complaints = complaintIndexRepository.findAllComplaintsByField(complaintDashBoardRequest,
