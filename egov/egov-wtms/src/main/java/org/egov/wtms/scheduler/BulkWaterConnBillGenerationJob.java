@@ -39,7 +39,6 @@
  */
 package org.egov.wtms.scheduler;
 
-import com.google.common.base.Stopwatch;
 import org.egov.infra.scheduler.quartz.AbstractQuartzJob;
 import org.egov.wtms.service.bill.WaterConnectionBillService;
 import org.egov.wtms.utils.WaterTaxUtils;
@@ -48,8 +47,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-
-import java.util.concurrent.TimeUnit;
 
 public class BulkWaterConnBillGenerationJob extends AbstractQuartzJob {
 
@@ -69,7 +66,7 @@ public class BulkWaterConnBillGenerationJob extends AbstractQuartzJob {
     public void executeJob() {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting water tax bulk bill generation for {}", waterTaxUtils.getCityCode());
-        Stopwatch stopwatch = new Stopwatch().start();
+        long startTimeMillis = System.currentTimeMillis();
         WaterConnectionBillService waterConnectionBillService = null;
         try {
             waterConnectionBillService = (WaterConnectionBillService) beanProvider.getBean("waterConnectionBillService");
@@ -78,9 +75,11 @@ public class BulkWaterConnBillGenerationJob extends AbstractQuartzJob {
         }
         if (waterConnectionBillService != null && waterTaxUtils.getAppconfigValueForSchedulearEnabled())
             waterConnectionBillService.bulkBillGeneration(modulo, billsCount);
-        if (LOGGER.isDebugEnabled())
+        if (LOGGER.isDebugEnabled()){
+            long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
             LOGGER.debug("Water tax bulk bill generation completed for {} in {} seconds", waterTaxUtils.getCityCode(),
-                    stopwatch.stop().elapsedTime(TimeUnit.SECONDS));
+                    elapsedTimeMillis);
+        }
     }
 
     public void setBillsCount(Integer billsCount) {
