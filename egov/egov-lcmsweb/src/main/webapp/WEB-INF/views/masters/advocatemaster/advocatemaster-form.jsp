@@ -156,8 +156,8 @@
 					<label class="col-sm-2 control-label text-right"><spring:message
 							code="lbl.paymentmode" />:<span class="mandatory"></span> </label>
 					<div class="col-sm-2 add-margin">
-						<form:select id="paymentmode" name="paymentmode"
-							path="paymentmode" cssClass="form-control"
+						<form:select id="paymentMode" name="paymentMode"
+							path="paymentMode" cssClass="form-control"
 							cssErrorClass="form-control error">
 							<c:forEach items="${paymentModeList}" var="paymentmodevalue">
 								<form:option value="${paymentmodevalue}">${paymentmodevalue}</form:option>
@@ -225,10 +225,10 @@
 					<label class="col-sm-2 control-label text-right"><spring:message
 							code="lbl.bankaccount" />:<span class="mandatory"></span></label>
 					<div class="col-sm-3 add-margin">
-						<form:input path="bankaccount"
+						<form:input path="bankAccount"
 							class="form-control text-left patternvalidation"
 							data-pattern="number" maxlength="20" required="required" />
-						<form:errors path="bankaccount" cssClass="error-msg" />
+						<form:errors path="bankAccount" cssClass="error-msg" />
 					</div>
 
 				</div>
@@ -244,10 +244,10 @@
 					<label class="col-sm-2 control-label text-right"><spring:message
 							code="lbl.tinumber" />:<span class="mandatory"></span> </label>
 					<div class="col-sm-3 add-margin">
-						<form:input path="tinumber"
+						<form:input path="tinNumber"
 							class="form-control text-left patternvalidation"
 							data-pattern="alphanumeric" maxlength="20" required="required" />
-						<form:errors path="tinumber" cssClass="error-msg" />
+						<form:errors path="tinNumber" cssClass="error-msg" />
 					</div>
 
 				</div>

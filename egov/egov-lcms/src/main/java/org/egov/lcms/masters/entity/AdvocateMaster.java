@@ -39,6 +39,7 @@
  */
 package org.egov.lcms.masters.entity;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -139,11 +140,11 @@ public class AdvocateMaster extends AbstractAuditable implements EntityType {
     private boolean isSenioradvocate;
 
     @Audited
-    private String paymentmode;
+    private String paymentMode;
 
     @Length(max = 20)
     @Audited
-    private String bankaccount;
+    private String bankAccount;
 
     @Length(max = 20)
     @Audited
@@ -151,7 +152,8 @@ public class AdvocateMaster extends AbstractAuditable implements EntityType {
 
     @Length(max = 20)
     @Audited
-    private String tinumber;
+    @Column(name = "tinumber")
+    private String tinNumber;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "bankname")
@@ -276,18 +278,6 @@ public class AdvocateMaster extends AbstractAuditable implements EntityType {
         this.bankBranch = bankBranch;
     }
 
-    public void setBankaccount(final String bankaccount) {
-        this.bankaccount = bankaccount;
-    }
-
-    public String getTinumber() {
-        return tinumber;
-    }
-
-    public void setTinumber(final String tinumber) {
-        this.tinumber = tinumber;
-    }
-
     public void setSenioradvocate(final boolean isSenioradvocate) {
         this.isSenioradvocate = isSenioradvocate;
     }
@@ -316,14 +306,6 @@ public class AdvocateMaster extends AbstractAuditable implements EntityType {
         this.isSenioradvocate = isSenioradvocate;
     }
 
-    public String getPaymentmode() {
-        return paymentmode;
-    }
-
-    public void setPaymentmode(final String paymentmode) {
-        this.paymentmode = paymentmode;
-    }
-
     public String getIfscCode() {
         return ifscCode;
     }
@@ -340,6 +322,29 @@ public class AdvocateMaster extends AbstractAuditable implements EntityType {
         this.monthlyRenumeration = monthlyRenumeration;
     }
 
+    public String getPaymentMode() {
+        return paymentMode;
+    }
+
+    public void setPaymentMode(final String paymentMode) {
+        this.paymentMode = paymentMode;
+    }
+
+    public String getBankAccount() {
+        return bankAccount;
+    }
+
+    public void setBankAccount(final String bankAccount) {
+        this.bankAccount = bankAccount;
+    }
+
+    public String getTinNumber() {
+        return tinNumber;
+    }
+
+    public void setTinNumber(final String tinNumber) {
+        this.tinNumber = tinNumber;
+    }
     @Override
     public String getName() {
         return name;
@@ -351,8 +356,9 @@ public class AdvocateMaster extends AbstractAuditable implements EntityType {
 
     @Override
     public String getBankaccount() {
-        return bankaccount;
+        return bankAccount;
     }
+
     @Override
     public String getBankname() {
         if (bankName == null)
@@ -368,12 +374,12 @@ public class AdvocateMaster extends AbstractAuditable implements EntityType {
 
     @Override
     public String getTinno() {
-        return tinumber;
+        return tinNumber;
     }
 
     @Override
     public String getModeofpay() {
-        return paymentmode;
+        return paymentMode;
     }
 
     @Override

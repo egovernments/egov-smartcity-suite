@@ -119,7 +119,7 @@
 						<spring:message code="lbl.paymentmode" />
 					</div>
 					<div class="col-sm-3 add-margin view-content">
-						${advocateMaster.paymentmode}</div>
+						${advocateMaster.paymentMode}</div>
 				</div>
 				<div class="row add-border">
 					<div class="col-xs-3 add-margin">
@@ -138,7 +138,7 @@
 						${advocateMaster.isRetaineradvocate}</div>
 				</div>
 				<c:choose>
-					<c:when test="${advocateMaster.paymentmode == 'RTGS'}">
+					<c:when test="${advocateMaster.paymentMode == 'RTGS'}">
 						<div class="row add-border">
 							<div class="col-xs-3 add-margin">
 								<spring:message code="lbl.bankname" />
@@ -157,7 +157,7 @@
 								<spring:message code="lbl.bankaccount" />
 							</div>
 							<div class="col-sm-3 add-margin view-content">
-								${advocateMaster.bankaccount}</div>
+								${advocateMaster.bankAccount}</div>
 						</div>
 						<div class="row add-border">
 							<div class="col-xs-3 add-margin">
@@ -169,7 +169,7 @@
 								<spring:message code="lbl.tinumber" />
 							</div>
 							<div class="col-sm-3 add-margin view-content">
-								${advocateMaster.tinumber}</div>
+								${advocateMaster.tinNumber}</div>
 
 						</div>
 					</c:when>
