@@ -217,7 +217,7 @@ public class DemandGenerationService {
         CFinancialYear installmentYear = financialYearService.getFinacialYearByYearRange(installmentYearRange);
         if (!installmentYearValidForDemandGeneration(installmentYear))
             throw new ApplicationRuntimeException("TL-006");
-        List<License> licenses = licenseService.getLicensesForDemandGeneration(PERMANENT_NATUREOFBUSINESS, installmentYear, LICENSE_NOT_ACTIVE);
+        List<License> licenses = licenseService.getLicensesForDemandGeneration(PERMANENT_NATUREOFBUSINESS, installmentYear);
         List<License> demandMissingLicenses = new ArrayList<>();
         Set<License> demandLogLicenses = new HashSet<>();
         demandGenerationLog.getDetails().stream().filter(demandGenerationLogDetail -> !LICENSE_NOT_ACTIVE.equals(demandGenerationLogDetail.getDetail())).forEach(demandGenerationLogDetail -> demandLogLicenses.add(demandGenerationLogDetail.getLicense()));

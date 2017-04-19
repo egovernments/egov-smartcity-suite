@@ -225,17 +225,7 @@ public abstract class AbstractLicenseService<T extends License> {
     }
 
     private void wfWithCscOperator(final T license, final WorkflowBean workflowBean) {
-        Department nextAssigneeDept = departmentService.getDepartmentByName(PUBLIC_HEALTH_DEPT);
-        Designation nextAssigneeDesig = designationService.getDesignationByName(JA_DESIGNATION);
-        List<Assignment> assignmentList = assignmentService.
-                findAllAssignmentsByDeptDesigAndDates(nextAssigneeDept.getId(), nextAssigneeDesig.getId(), new Date());
-        if (assignmentList.isEmpty()) {
-            nextAssigneeDesig = Optional.ofNullable(designationService.getDesignationByName(RC_DESIGNATION)).
-                    orElseThrow(() -> new ValidationException(LICENSE_WF_INITIATOR_NOT_DEFINED, LICENSE_WF_INITIATOR_NOT_DEFINED));
-            assignmentList = assignmentService
-                    .findAllAssignmentsByDeptDesigAndDates(nextAssigneeDept.getId(),
-                            nextAssigneeDesig.getId(), new Date());
-        }
+        List<Assignment> assignmentList = getAssignments();
         if (!assignmentList.isEmpty()) {
             final Assignment wfAssignment = assignmentList.get(0);
             final String natureOfWork = license.isReNewApplication() ? RENEWAL_NATUREOFWORK : NEW_NATUREOFWORK;
@@ -254,6 +244,28 @@ public abstract class AbstractLicenseService<T extends License> {
                     egwStatusHibernateDAO.getStatusByModuleAndCode(TRADELICENSEMODULE, APPLICATION_STATUS_CREATED_CODE));
         } else
             throw new ValidationException(LICENSE_WF_INITIATOR_NOT_DEFINED, LICENSE_WF_INITIATOR_NOT_DEFINED);
+    }
+
+    private List<Assignment> getAssignments() {
+        Department nextAssigneeDept = departmentService.getDepartmentByName(PUBLIC_HEALTH_DEPT);
+        Designation nextAssigneeDesig = designationService.getDesignationByName(JA_DESIGNATION);
+        List<Assignment> assignmentList = getAssignmentsForDeptAndDesignation(nextAssigneeDept, nextAssigneeDesig);
+        if (assignmentList.isEmpty()) {
+            nextAssigneeDesig = Optional.ofNullable(designationService.getDesignationByName(SA_DESIGNATION)).
+                    orElseThrow(() -> new ValidationException(LICENSE_WF_INITIATOR_NOT_DEFINED, LICENSE_WF_INITIATOR_NOT_DEFINED));
+            assignmentList = getAssignmentsForDeptAndDesignation(nextAssigneeDept, nextAssigneeDesig);
+        }
+        if (assignmentList.isEmpty()) {
+            nextAssigneeDesig = Optional.ofNullable(designationService.getDesignationByName(RC_DESIGNATION)).
+                    orElseThrow(() -> new ValidationException(LICENSE_WF_INITIATOR_NOT_DEFINED, LICENSE_WF_INITIATOR_NOT_DEFINED));
+            assignmentList = getAssignmentsForDeptAndDesignation(nextAssigneeDept, nextAssigneeDesig);
+        }
+        return assignmentList;
+    }
+
+    private List<Assignment> getAssignmentsForDeptAndDesignation(Department nextAssigneeDept, Designation nextAssigneeDesig) {
+        return assignmentService.
+                findAllAssignmentsByDeptDesigAndDates(nextAssigneeDept.getId(), nextAssigneeDesig.getId(), new Date());
     }
 
     private BigDecimal raiseNewDemand(final T license) {
@@ -746,13 +758,7 @@ public abstract class AbstractLicenseService<T extends License> {
 
     private void closureWfWithOperator(final T license) {
         final String natureOfWork = CLOSURE_NATUREOFTASK;
-        List<Assignment> assignmentList = assignmentService
-                .findAllAssignmentsByDeptDesigAndDates(departmentService.getDepartmentByName(PUBLIC_HEALTH_DEPT).getId(),
-                        designationService.getDesignationByName(JA_DESIGNATION).getId(), new Date());
-        if (assignmentList.isEmpty())
-            assignmentList = assignmentService
-                    .findAllAssignmentsByDeptDesigAndDates(departmentService.getDepartmentByName(PUBLIC_HEALTH_DEPT).getId(),
-                            designationService.getDesignationByName(RC_DESIGNATION).getId(), new Date());
+        List<Assignment> assignmentList = getAssignments();
         if (!assignmentList.isEmpty()) {
             final Assignment wfAssignment = assignmentList.get(0);
             if (!license.hasState())
@@ -774,7 +780,7 @@ public abstract class AbstractLicenseService<T extends License> {
         return licenseRepository.findByOldLicenseNumberAndIdIsNot(t.getOldLicenseNumber(), t.getId()) != null;
     }
 
-    public List<License> getLicensesForDemandGeneration(final String natureOfBusiness, final CFinancialYear installmentYear, String licenseNotActive) {
+    public List<License> getLicensesForDemandGeneration(final String natureOfBusiness, final CFinancialYear installmentYear) {
         Installment installment = installmentDao.getInsatllmentByModuleForGivenDate(getModuleName(), installmentYear.getStartingDate());
         return licenseRepository.findByNatureOfBusinessNameAndStatusName(natureOfBusiness, LICENSE_STATUS_ACTIVE, installment.getFromDate());
     }
