@@ -48,6 +48,8 @@
 	action="/egworks/masters/scheduleofrate-edit" modelAttribute="scheduleOfRate"
 	class="form-horizontal form-groups-bordered">
 	<input type = "hidden" name = "mode" value = "${mode }"	/>
+	<input type = "hidden" id = "abstractEstimateExists" value = "${abstractEstimateExists }" />
+	<input type = "hidden" id = "workOrderEstimateExists" value = "${workOrderEstimateExists }" />
 	<spring:hasBindErrors name="scheduleOfRate">
 		<div class="alert alert-danger col-md-12">
 			<form:errors cssClass="add-margin" />

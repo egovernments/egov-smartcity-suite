@@ -45,6 +45,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
@@ -74,8 +75,8 @@ public class ViewBillOfQuantitiesXlsController {
     private ReportService reportService;
 
     @RequestMapping(value = "/viewBillOfQuantitiesXls/{abstractEstimateId}", method = RequestMethod.GET)
-    public @ResponseBody ResponseEntity<byte[]> viewBillOfQuantities(@PathVariable final Long abstractEstimateId,
-            final Model model) {
+    @ResponseBody
+    public ResponseEntity<byte[]> viewBillOfQuantities(@PathVariable final Long abstractEstimateId, final Model model) {
         final AbstractEstimate estimate = estimateService.getAbstractEstimateById(abstractEstimateId);
         final ReportRequest reportRequest = new ReportRequest("BillOfQuantities", estimate.getSORActivities(),
                 createHeaderParams(estimate, BOQ));
@@ -87,7 +88,7 @@ public class ViewBillOfQuantitiesXlsController {
         return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
     }
 
-    private Map createHeaderParams(final AbstractEstimate estimate, final String type) {
+    private Map<String, Object> createHeaderParams(final AbstractEstimate estimate, final String type) {
         final Map<String, Object> reportParams = new HashMap<String, Object>();
         final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm a");
@@ -99,9 +100,11 @@ public class ViewBillOfQuantitiesXlsController {
                     estimate.getSORActivities() == null ? 0 : estimate.getSORActivities().size());
             reportParams.put("NonSOR_Activities", estimate.getNonSORActivities());
             reportParams.put("grandTotalAmt", BigDecimal.valueOf(estimate.getWorkValue()));
-            reportParams.put("estimateDate",
-                    estimate.getEstimateDate() != null ? formatter.format(estimate.getEstimateDate()) : "");
+            reportParams.put("estimateDate", estimate.getEstimateDate() != null
+                    ? formatter.format(estimate.getEstimateDate()) : StringUtils.EMPTY);
             reportParams.put("currDate", sdf.format(new Date()));
+            reportParams.put("nonSorActivitiesSize",
+                    estimate.getNonSORActivities() == null ? 0 : estimate.getNonSORActivities().size());
         }
         return reportParams;
     }

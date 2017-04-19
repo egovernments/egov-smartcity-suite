@@ -39,12 +39,16 @@
  */
 package org.egov.works.web.controller.masters;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.egov.infra.exception.ApplicationException;
+import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.masters.entity.ScheduleOfRate;
 import org.egov.works.masters.service.ScheduleOfRateService;
 import org.egov.works.utils.WorksConstants;
+import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -67,9 +71,7 @@ public class UpdateScheduleOfRateController extends BaseScheduleOfRateController
         final ScheduleOfRate scheduleOfRate = scheduleOfRateService.findById(scheduleOfRateId, true);
         scheduleOfRate.setTempSorRates(scheduleOfRate.getSorRates());
         scheduleOfRate.setTempMarketRates(scheduleOfRate.getMarketRates());
-        model.addAttribute(SCHEDULEOFRATE, scheduleOfRate);
-        model.addAttribute(WorksConstants.MODE, WorksConstants.EDIT);
-        scheduleOfRateService.loadModelValues(model);
+        setModelValues(model, scheduleOfRate);
         return "scheduleofrate-modify";
     }
 
@@ -85,16 +87,31 @@ public class UpdateScheduleOfRateController extends BaseScheduleOfRateController
         getRateDetailsForSORForREValidation(scheduleOfRate, resultBinder);
         if (WorksConstants.EDIT.equalsIgnoreCase(mode) && scheduleOfRate.getId() != null)
             model.addAttribute(WorksConstants.MODE, mode);
-
         if (resultBinder.hasErrors()) {
-            model.addAttribute(WorksConstants.MODE, WorksConstants.EDIT);
-            scheduleOfRateService.loadModelValues(model);
+            setModelValues(model, scheduleOfRate);
             return "scheduleofrate-modify";
         }
         scheduleOfRateService.createSORAndMarketRateDetails(scheduleOfRate);
         scheduleOfRateService.save(scheduleOfRate);
         return "redirect:/masters/scheduleofrate-success?scheduleOfRateId=" + scheduleOfRate.getId();
+    }
 
+    private void setModelValues(final Model model, final ScheduleOfRate scheduleOfRate) {
+        checkIfEstimateExistsForScheduleOfrate(model, scheduleOfRate);
+        model.addAttribute(SCHEDULEOFRATE, scheduleOfRate);
+        model.addAttribute(WorksConstants.MODE, WorksConstants.EDIT);
+        scheduleOfRateService.loadModelValues(model);
+    }
+
+    private void checkIfEstimateExistsForScheduleOfrate(final Model model, final ScheduleOfRate scheduleOfRate) {
+        final List<AbstractEstimate> abstractEstimateList = scheduleOfRateService
+                .getAllAbstractEstimateByScheduleOrRateId(scheduleOfRate.getId());
+        final List<WorkOrderEstimate> woeList = scheduleOfRateService
+                .getAllWorkOrderEstimateByScheduleOfRateId(scheduleOfRate.getId());
+        if (abstractEstimateList != null && !abstractEstimateList.isEmpty())
+            model.addAttribute("abstractEstimateExists", true);
+        if (woeList != null && !woeList.isEmpty())
+            model.addAttribute("workOrderEstimateExists", true);
     }
 
 }

@@ -39,7 +39,7 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-04-17T17:54:50 -->
+<!-- 2017-04-18T19:46:32 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="BillOfQunatities" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="0" uuid="c4f28d66-9453-4365-9c94-520990d7d3ae">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<import value="java.math.BigDecimal"/>
@@ -55,12 +55,16 @@
 	<parameter name="estimateNo" class="java.lang.String"/>
 	<parameter name="activitySize" class="java.lang.Integer"/>
 	<parameter name="grandTotalAmt" class="java.math.BigDecimal"/>
+	<parameter name="nonSorActivitiesSize" class="java.lang.Integer"/>
 	<parameter name="estimateDate" class="java.lang.String">
 		<defaultValueExpression><![CDATA[$P{estimateDate}]]></defaultValueExpression>
 	</parameter>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
+	<field name="nonSor" class="org.egov.works.abstractestimate.entity.NonSor">
+		<fieldDescription><![CDATA[nonSor]]></fieldDescription>
+	</field>
 	<field name="uom" class="org.egov.common.entity.UOM">
 		<fieldDescription><![CDATA[uom]]></fieldDescription>
 	</field>
@@ -76,17 +80,20 @@
 	<field name="estimateRate" class="java.lang.Double">
 		<fieldDescription><![CDATA[estimateRate]]></fieldDescription>
 	</field>
+	<variable name="amount" class="java.lang.Double">
+		<variableExpression><![CDATA[$F{rate}*$F{quantity}]]></variableExpression>
+	</variable>
 	<variable name="amount_sum" class="java.lang.Double" calculation="Sum">
-		<variableExpression><![CDATA[$F{rate}]]></variableExpression>
+		<variableExpression><![CDATA[$V{amount}]]></variableExpression>
 	</variable>
 	<variable name="description" class="java.lang.String">
-		<variableExpression><![CDATA[$F{schedule}==null?"":$F{schedule}.getDescription()]]></variableExpression>
+		<variableExpression><![CDATA[$F{schedule}==null?$F{nonSor}.getDescription():$F{schedule}.getDescription()]]></variableExpression>
 	</variable>
 	<group name="dummy detail">
 		<groupExpression><![CDATA[$V{PAGE_COUNT}]]></groupExpression>
 		<groupFooter>
 			<band height="63">
-				<printWhenExpression><![CDATA[$V{REPORT_COUNT}==$P{activitySize} && $P{activitySize}!=0]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$P{activitySize}!=0 && $V{REPORT_COUNT}==$P{activitySize}]]></printWhenExpression>
 				<staticText>
 					<reportElement stretchType="RelativeToBandHeight" x="1" y="10" width="57" height="26" backcolor="#33FFFF" uuid="ef1f09e1-1801-4a8b-ac00-ca93aff35a55"/>
 					<box>
@@ -145,7 +152,7 @@
 				</staticText>
 			</band>
 			<band height="97">
-				<printWhenExpression><![CDATA[$V{REPORT_COUNT}==$P{activitySize} && $P{activitySize}!=0]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$P{nonSorActivitiesSize}!=0]]></printWhenExpression>
 				<subreport>
 					<reportElement x="69" y="11" width="780" height="39" uuid="bf55c998-855b-4ab5-9038-ef0fbc1d2a72"/>
 					<subreportParameter name="originalEstimateNo">
@@ -172,7 +179,7 @@
 				</textField>
 				<textField isStretchWithOverflow="true" pattern="###0.00" isBlankWhenNull="true">
 					<reportElement positionType="FixRelativeToBottom" x="118" y="50" width="189" height="22" uuid="a4494204-15b9-4350-a574-f83d9aa874da">
-						<printWhenExpression><![CDATA[$P{activitySize}!=0 && $P{NonSOR_Activities}!=null && $P{NonSOR_Activities}.size()!=0]]></printWhenExpression>
+						<printWhenExpression><![CDATA[$P{nonSorActivitiesSize}!=0 && $P{NonSOR_Activities}!=null && $P{NonSOR_Activities}.size()!=0]]></printWhenExpression>
 					</reportElement>
 					<box>
 						<pen lineWidth="0.25"/>
@@ -564,7 +571,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Times New Roman"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{rate}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{amount}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToTallestObject" x="2" y="0" width="40" height="23" uuid="60907fd4-46a7-474f-a98e-5ab32d7a7db7">
@@ -617,7 +624,7 @@
 	</pageFooter>
 	<summary>
 		<band height="49" splitType="Prevent">
-			<printWhenExpression><![CDATA[$P{activitySize}==0]]></printWhenExpression>
+			<printWhenExpression><![CDATA[$P{nonSorActivitiesSize}!=0]]></printWhenExpression>
 			<subreport>
 				<reportElement x="1" y="6" width="780" height="39" uuid="11837a5f-2688-431c-84e4-e26b3a1a1800"/>
 				<subreportParameter name="originalEstimateNo">

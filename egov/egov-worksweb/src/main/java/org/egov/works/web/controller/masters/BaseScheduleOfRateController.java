@@ -65,7 +65,8 @@ public abstract class BaseScheduleOfRateController {
     private ScheduleOfRateService scheduleOfRateService;
 
     protected void validateScheduleOfRate(final ScheduleOfRate scheduleOfRate, final BindingResult resultBinder) {
-        final ScheduleOfRate existingScheduleOfRate = scheduleOfRateService.getByCode(scheduleOfRate.getCode());
+        final ScheduleOfRate existingScheduleOfRate = scheduleOfRateService
+                .getByCodeAndScheduleCategoryId(scheduleOfRate.getCode(), scheduleOfRate.getScheduleCategory().getId());
         if (existingScheduleOfRate != null && !existingScheduleOfRate.getId().equals(scheduleOfRate.getId()))
             resultBinder.reject("error.scheduleofrate.exists", new String[] { scheduleOfRate.getCode() },
                     "error.scheduleofrate.exists");
@@ -98,15 +99,19 @@ public abstract class BaseScheduleOfRateController {
 
     protected void validateSORRateDetails(final ScheduleOfRate scheduleOfRate, final BindingResult resultBinder) {
         int index = 0;
-        compareStartDateAndEndDateBetweenStages(scheduleOfRate.getTempSorRates(), resultBinder);
-        for (final SORRate sorRate : scheduleOfRate.getTempSorRates()) {
-            compareStartDateAndEndDate(resultBinder, sorRate);
-            if (sorRate.getRate() == null)
-                resultBinder.rejectValue("tempSorRates[" + index + "].rate", "error.scheduleofrate.sorrate.value");
-            if (sorRate.getValidity().getStartDate() == null)
-                resultBinder.rejectValue("tempSorRates[" + index + "].validity.startDate",
-                        "error.contractordetail.fromdate");
-            index++;
+        if (scheduleOfRate.getTempSorRates() == null && scheduleOfRate.getTempSorRates().isEmpty())
+            resultBinder.reject("error.sorrate.atleastone", "error.sorrate.atleastone");
+        else {
+            compareStartDateAndEndDateBetweenStages(scheduleOfRate.getTempSorRates(), resultBinder);
+            for (final SORRate sorRate : scheduleOfRate.getTempSorRates()) {
+                compareStartDateAndEndDate(resultBinder, sorRate);
+                if (sorRate.getRate() == null)
+                    resultBinder.rejectValue("tempSorRates[" + index + "].rate", "error.scheduleofrate.sorrate.value");
+                if (sorRate.getValidity().getStartDate() == null)
+                    resultBinder.rejectValue("tempSorRates[" + index + "].validity.startDate",
+                            "error.contractordetail.fromdate");
+                index++;
+            }
         }
     }
 
@@ -143,15 +148,17 @@ public abstract class BaseScheduleOfRateController {
         Period validity;
         if (obj.getClass() == MarketRate.class) {
             validity = ((MarketRate) obj).getValidity();
-            if (validity != null && validity.getStartDate() != null && validity.getEndDate() != null
-                    && validity.getStartDate().compareTo(validity.getEndDate()) > 0)
-                resultBinder.reject("error.marketrate.invaliddaterange", "error.marketrate.invaliddaterange");
+            checkDateValidity(resultBinder, validity, "marketrate");
         } else {
             validity = ((SORRate) obj).getValidity();
-            if (validity != null && validity.getStartDate() != null && validity.getEndDate() != null
-                    && validity.getStartDate().compareTo(validity.getEndDate()) > 0)
-                resultBinder.reject("error.sorrate.invaliddaterange", "error.sorrate.invaliddaterange");
+            checkDateValidity(resultBinder, validity, "sorrate");
         }
+    }
+
+    private void checkDateValidity(final BindingResult resultBinder, final Period validity, final String errorCode) {
+        if (validity != null && validity.getStartDate() != null && validity.getEndDate() != null
+                && validity.getStartDate().compareTo(validity.getEndDate()) > 0)
+            resultBinder.reject("error." + errorCode + ".invaliddaterange", "error." + errorCode + ".invaliddaterange");
     }
 
     protected void validateMarketRateDetails(final ScheduleOfRate scheduleOfRate, final BindingResult resultBinder) {

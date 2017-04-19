@@ -39,7 +39,7 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2016-12-06T13:24:09 -->
+<!-- 2017-04-19T11:58:49 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="BOQ_NonSOR" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="822" leftMargin="10" rightMargin="10" topMargin="10" bottomMargin="10" uuid="f1f45257-e70e-42dd-b2d0-4bfdfccf64d7">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<import value="java.math.BigDecimal"/>
@@ -51,15 +51,18 @@
 	<field name="abstractEstimate" class="org.egov.works.abstractestimate.entity.AbstractEstimate"/>
 	<field name="schedule" class="org.egov.works.masters.entity.ScheduleOfRate"/>
 	<field name="nonSor" class="org.egov.works.abstractestimate.entity.NonSor"/>
+	<field name="rate" class="java.lang.Double"/>
 	<field name="quantity" class="java.lang.Double"/>
 	<field name="uom" class="org.egov.common.entity.UOM"/>
 	<field name="estimateRate" class="java.lang.Double"/>
-	<field name="amount" class="org.egov.infra.persistence.entity.component.Money"/>
+	<variable name="amount" class="java.lang.Double">
+		<variableExpression><![CDATA[$F{rate}*$F{quantity}]]></variableExpression>
+	</variable>
 	<variable name="description" class="java.lang.String">
 		<variableExpression><![CDATA[$F{schedule}==null?$F{nonSor}.getDescription():$F{schedule}.getDescription()]]></variableExpression>
 	</variable>
 	<variable name="sumOfAmount" class="java.lang.Double" calculation="Sum">
-		<variableExpression><![CDATA[$F{amount}.getValue()]]></variableExpression>
+		<variableExpression><![CDATA[$V{amount}]]></variableExpression>
 	</variable>
 	<background>
 		<band splitType="Stretch"/>
@@ -176,7 +179,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Times New Roman"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{amount}.getValue()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{amount}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="###0.00" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToTallestObject" x="45" y="0" width="421" height="24" uuid="a4f4e901-7cd9-47cb-8f36-f028e418d809"/>

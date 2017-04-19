@@ -55,6 +55,12 @@ $(document).ready(function(){
 			$(this).val( $(this).val().replace(regexp_textfields,'') );
 		}
 	});
+	
+	if($("#abstractEstimateExists").val() == "true" || $("#workOrderEstimateExists").val() == "true"){
+		$($(".sorrate")[0]).attr('readonly', true);
+		$($(".sorratefromdate")[0]).attr('readonly', true);
+		$($(".deletesorrate")[0]).hide();
+	}
 });
 
 $('#submitBtn').click(function() {
@@ -185,8 +191,15 @@ function checkMarketRateStartDateAndEndDate(){
 		return true;
 }
 
+var sorRateRowIndex = 0;
 function addSorRate() {
 	addRow("tblsorrate","sorRateRow");
+	if($("#abstractEstimateExists").val() == "true" ||  $("#workOrderEstimateExists").val() == "true"){
+		sorRateRowIndex++;
+		$($(".sorrate")[sorRateRowIndex]).attr('readonly', false);
+		$($(".sorratefromdate")[sorRateRowIndex]).attr('readonly', false);
+		$($(".deletesorrate")[sorRateRowIndex]).show();
+	}
 }
 
 function addMarketRate(){
@@ -197,13 +210,15 @@ function addMarketRate(){
 
 function deleteSorRateRow(obj){
 	deleteRow(obj,"tblsorrate");
+	if($("#abstractEstimateExists").val() == "true" ||  $("#workOrderEstimateExists").val() == "true")
+		sorRateRowIndex--;
 }
 
 function deleteMarketRateRow(obj){
 	var rowcount=$("#tblmarketrate tbody tr").length;
 	if(rowcount == 1){
 		$("#marketRateRow td").eq(0).find("input").val('');
-		$("#marketRateRow td").eq(1).find("input").val('');
+		$("#marketRateRow td").eq(1).find("input").val('0.0');
 		$("#marketRateRow td").eq(2).find("input").val('');
 		$("#marketRateRow td").eq(3).find("input").val('');
 		$("#marketRateRow").hide();
@@ -276,7 +291,10 @@ function addRow(tblId,rowId){
 
 					}).end().appendTo("#"+tblId+" tbody");
 			
-			generateSno();
+			if(tblId == "tblmarketrate")
+				generateSno("marketrate");
+			else
+				generateSno("sorrate");
 			initializeDatePicker();
 		}
 	} else {
@@ -330,7 +348,10 @@ function deleteRow(obj,tblId) {
 				
 				idx++;
 		});
-		generateSno();
+		if(tblId == "tblmarketrate")
+			generateSno("marketrate");
+		else
+			generateSno("sorrate");
 		initializeDatePicker();
 		return true;
 	}	
@@ -386,10 +407,10 @@ function getFormData($form) {
 	return indexed_array;
 }
 
-function generateSno()
+function generateSno(tblName)
 {
 	var idx=1;
-	$(".spansno").each(function(){
+	$("."+tblName+"spansno").each(function(){
 		$(this).text(idx);
 		idx++;
 	});

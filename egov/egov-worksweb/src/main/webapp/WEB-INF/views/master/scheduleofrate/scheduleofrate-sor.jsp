@@ -73,7 +73,7 @@
 				<c:choose>
 					<c:when test="${scheduleOfRate.tempSorRates.size() == 0}">
 						<tr id="sorRateRow">
-							<td><span class="spansno">1</span> 
+							<td><span class="sorratespansno">1</span> 
 								<form:hidden
 									path="tempSorRates[0].id"
 									class="form-control table-input hidden-input"/></td>
@@ -100,7 +100,7 @@
 									maxlength="10" data-inputmask="'mask': 'd/m/y'" /> <form:errors
 									path="tempSorRates[0].validity.endDate"
 									cssClass="add-margin error-msg" /></td>
-							<td><span class="add-padding"
+							<td><span class="add-padding deletesorrate"
 								onclick="deleteSorRateRow(this);"><i class="fa fa-trash"
 									data-toggle="tooltip" title="" data-original-title="Delete!"></i></span>
 							</td>
@@ -110,7 +110,7 @@
 						<c:forEach items="${scheduleOfRate.tempSorRates}" var="sorRate"
 							varStatus="item">
 							<tr id="sorRateRow">
-								<td><span class="spansno"><c:out
+								<td><span class="sorratespansno"><c:out
 										value="${item.index + 1}" /></span> 
 									<form:hidden
 										path="tempSorRates[${item.index}].id"
@@ -143,7 +143,7 @@
 										maxlength="10" data-inputmask="'mask': 'd/m/y'" /> <form:errors
 										path="tempSorRates[${item.index}].validity.endDate"
 										cssClass="add-margin error-msg" /></td>
-								<td><span class="add-padding"
+								<td><span class="add-padding deletesorrate"
 									onclick="deleteSorRateRow(this);"><i class="fa fa-trash"
 										data-toggle="tooltip" title="" data-original-title="Delete!"></i></span>
 								</td>

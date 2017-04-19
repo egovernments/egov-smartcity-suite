@@ -48,6 +48,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.service.UOMService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.config.core.ApplicationThreadLocals;
@@ -79,6 +80,8 @@ import org.springframework.ui.Model;
 @Service
 @Transactional(readOnly = true)
 public class ScheduleOfRateService {
+    
+    private static final String SORRATEDATESOVERLAPERRORCODE = "error.sor.rate.dates.overlap";
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -188,15 +191,15 @@ public class ScheduleOfRateService {
         final Date currentDate = new Date();
         for (final UploadScheduleOfRate obj : uploadSORRatesList) {
 
-            final ScheduleOfRate scheduleOfRate = new ScheduleOfRate();
-            final SORRate sorRate = new SORRate();
-            final MarketRate marketRate = new MarketRate();
+            final ScheduleOfRate scheduleOfRate = getScheduleOfRateObj();
+            final SORRate sorRate = getSorRateObj();
+            final MarketRate marketRate = getMarketRateObj();
             scheduleOfRate.setCode(obj.getSorCode());
             scheduleOfRate.setScheduleCategory(obj.getScheduleCategory());
             scheduleOfRate.setUom(obj.getUom());
             scheduleOfRate.setDescription(obj.getSorDescription());
-            sorRate.setRate(new Money(obj.getRate().doubleValue()));
-            sorRate.setValidity(new Period(obj.getFromDate(), obj.getToDate() != null ? obj.getToDate() : null));
+            sorRate.setRate(getMoneyObj(obj.getRate().doubleValue()));
+            sorRate.setValidity(getPeriodObj(obj.getFromDate(), obj.getToDate() != null ? obj.getToDate() : null));
             sorRate.setScheduleOfRate(scheduleOfRate);
             sorRate.setCreatedBy(
                     entityManager.unwrap(Session.class).load(User.class, ApplicationThreadLocals.getUserId()));
@@ -207,8 +210,8 @@ public class ScheduleOfRateService {
             scheduleOfRate.getSorRates().add(sorRate);
             if (obj.getMarketRate() != null) {
 
-                marketRate.setMarketRate(new Money(obj.getMarketRate().doubleValue()));
-                marketRate.setValidity(new Period(obj.getMarketFromDate(),
+                marketRate.setMarketRate(getMoneyObj(obj.getMarketRate().doubleValue()));
+                marketRate.setValidity(getPeriodObj(obj.getMarketFromDate(),
                         obj.getMarketToDate() != null ? obj.getMarketToDate() : null));
                 marketRate.setCreatedBy(
                         entityManager.unwrap(Session.class).load(User.class, ApplicationThreadLocals.getUserId()));
@@ -239,10 +242,10 @@ public class ScheduleOfRateService {
         for (final UploadScheduleOfRate obj : uploadSORRatesList) {
 
             final ScheduleOfRate scheduleOfRate = obj.getScheduleOfRate();
-            final SORRate sorRate = new SORRate();
-            final MarketRate marketRate = new MarketRate();
-            sorRate.setRate(new Money(obj.getRate().doubleValue()));
-            sorRate.setValidity(new Period(obj.getFromDate(), obj.getToDate() != null ? obj.getToDate() : null));
+            final SORRate sorRate = getSorRateObj();
+            final MarketRate marketRate = getMarketRateObj();
+            sorRate.setRate(getMoneyObj(obj.getRate().doubleValue()));
+            sorRate.setValidity(getPeriodObj(obj.getFromDate(), obj.getToDate() != null ? obj.getToDate() : null));
             sorRate.setScheduleOfRate(scheduleOfRate);
             sorRate.setCreatedBy(
                     entityManager.unwrap(Session.class).load(User.class, ApplicationThreadLocals.getUserId()));
@@ -253,8 +256,8 @@ public class ScheduleOfRateService {
             scheduleOfRate.getSorRates().add(sorRate);
             if (obj.getMarketRate() != null) {
 
-                marketRate.setMarketRate(new Money(obj.getMarketRate().doubleValue()));
-                marketRate.setValidity(new Period(obj.getMarketFromDate(),
+                marketRate.setMarketRate(getMoneyObj(obj.getMarketRate().doubleValue()));
+                marketRate.setValidity(getPeriodObj(obj.getMarketFromDate(),
                         obj.getMarketToDate() != null ? obj.getMarketToDate() : null));
                 marketRate.setCreatedBy(
                         entityManager.unwrap(Session.class).load(User.class, ApplicationThreadLocals.getUserId()));
@@ -279,20 +282,19 @@ public class ScheduleOfRateService {
     @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
     public Boolean validateRates(final List<UploadScheduleOfRate> uploadSORRatesList) {
         Boolean errorInMasterData = false;
-        List<AbstractEstimate> estimates = null;
-        List<WorkOrderEstimate> woe = null;
-        Period checkPeriod = null;
-        String error = "";
-        LocalDate existingStartDate = null;
+        List<AbstractEstimate> estimates;
+        List<WorkOrderEstimate> woe;
+        Period checkPeriod;
+        String error = StringUtils.EMPTY;
+        LocalDate existingStartDate;
         LocalDate existingEndDate = null;
-        LocalDate checkStartDate = null;
-        Boolean toDateUpdated = false;
-        Boolean isLatestRate = false;
+        LocalDate checkStartDate;
+        Boolean toDateUpdated;
+        Boolean isLatestRate;
         for (final UploadScheduleOfRate obj : uploadSORRatesList) {
-            checkPeriod = new Period(obj.getFromDate(), obj.getToDate());
-            error = "";
-            if (obj.getScheduleOfRate() != null)
-                if (obj.getScheduleOfRate().getSorRatesOrderById().get(0).getValidity().getEndDate() == null)
+            checkPeriod = getPeriodObj(obj.getFromDate(), obj.getToDate());
+            error = StringUtils.EMPTY;
+            if (obj.getScheduleOfRate() != null && obj.getScheduleOfRate().getSorRatesOrderById().get(0).getValidity().getEndDate() == null)
                     obj.setIsToDateNull(true);
             isLatestRate = false;
             toDateUpdated = false;
@@ -309,7 +311,7 @@ public class ScheduleOfRateService {
 
                     if (isLatestRate)
                         if (checkStartDate.compareTo(existingStartDate) <= 0) {
-                            error = error + " " + messageSource.getMessage("error.sor.rate.dates.overlap", null, null) + ",";
+                            error = error + " " + messageSource.getMessage(SORRATEDATESOVERLAPERRORCODE, null, null) + ",";
                             if (obj.getErrorReason() != null)
                                 error = obj.getErrorReason() + error;
                             obj.setErrorReason(error);
@@ -354,9 +356,9 @@ public class ScheduleOfRateService {
                             final LocalDate rateFromDate = new LocalDate(rate.getValidity().getStartDate());
                             final LocalDate previousDay = new LocalDate(obj.getFromDate()).minusDays(1);
                             if (previousDay.compareTo(rateFromDate) > 0)
-                                rate.setValidity(new Period(rate.getValidity().getStartDate(), previousDay.toDate()));
+                                rate.setValidity(getPeriodObj(rate.getValidity().getStartDate(), previousDay.toDate()));
                             else {
-                                error = error + " " + messageSource.getMessage("error.sor.rate.dates.overlap", null, null) + ",";
+                                error = error + " " + messageSource.getMessage(SORRATEDATESOVERLAPERRORCODE, null, null) + ",";
                                 if (obj.getErrorReason() != null)
                                     error = obj.getErrorReason() + error;
                                 obj.setErrorReason(error);
@@ -372,7 +374,7 @@ public class ScheduleOfRateService {
                                 || obj.getScheduleOfRate().isWithin(checkPeriod, rate.getValidity().getStartDate())
                                 || rate.getValidity().getEndDate() != null
                                         && obj.getScheduleOfRate().isWithin(checkPeriod, rate.getValidity().getEndDate())) {
-                            error = error + " " + messageSource.getMessage("error.sor.rate.dates.overlap", null, null) + ",";
+                            error = error + " " + messageSource.getMessage(SORRATEDATESOVERLAPERRORCODE, null, null) + ",";
                             if (obj.getErrorReason() != null)
                                 error = obj.getErrorReason() + error;
                             obj.setErrorReason(error);
@@ -418,9 +420,10 @@ public class ScheduleOfRateService {
                                 final LocalDate rateFromDate = new LocalDate(rate.getValidity().getStartDate());
                                 final LocalDate previousDay = new LocalDate(obj.getFromDate()).minusDays(1);
                                 if (previousDay.compareTo(rateFromDate) > 0)
-                                    rate.setValidity(new Period(rate.getValidity().getStartDate(), previousDay.toDate()));
+                                    rate.setValidity(
+                                            getPeriodObj(rate.getValidity().getStartDate(), previousDay.toDate()));
                                 else {
-                                    error = error + " " + messageSource.getMessage("error.sor.rate.dates.overlap", null, null)
+                                    error = error + " " + messageSource.getMessage(SORRATEDATESOVERLAPERRORCODE, null, null)
                                             + ",";
                                     if (obj.getErrorReason() != null)
                                         error = obj.getErrorReason() + error;
@@ -437,7 +440,7 @@ public class ScheduleOfRateService {
                                 || obj.getScheduleOfRate().isWithin(checkPeriod, rate.getValidity().getStartDate())
                                 || rate.getValidity().getEndDate() != null
                                         && obj.getScheduleOfRate().isWithin(checkPeriod, rate.getValidity().getEndDate())) {
-                            error = error + " " + messageSource.getMessage("error.sor.rate.dates.overlap", null, null) + ",";
+                            error = error + " " + messageSource.getMessage(SORRATEDATESOVERLAPERRORCODE, null, null) + ",";
                             if (obj.getErrorReason() != null)
                                 error = obj.getErrorReason() + error;
                             obj.setErrorReason(error);
@@ -447,7 +450,7 @@ public class ScheduleOfRateService {
 
         }
 
-        if (!error.equalsIgnoreCase(""))
+        if (!StringUtils.EMPTY.equalsIgnoreCase(error))
             errorInMasterData = true;
 
         return errorInMasterData;
@@ -477,7 +480,7 @@ public class ScheduleOfRateService {
         MarketRate marketRate;
         scheduleOfRate.getSorRates().clear();
         for (final SORRate sor : scheduleOfRate.getTempSorRates()) {
-            sorRate = new SORRate();
+            sorRate = getSorRateObj();
             sorRate.setRate(sor.getRate());
             sorRate.setValidity(sor.getValidity());
             sorRate.setScheduleOfRate(scheduleOfRate);
@@ -485,7 +488,7 @@ public class ScheduleOfRateService {
         }
         scheduleOfRate.getMarketRates().clear();
         for (final MarketRate mr : scheduleOfRate.getTempMarketRates()) {
-            marketRate = new MarketRate();
+            marketRate = getMarketRateObj();
             marketRate.setMarketRate(mr.getMarketRate());
             marketRate.setValidity(mr.getValidity());
             marketRate.setScheduleOfRate(scheduleOfRate);
@@ -493,4 +496,23 @@ public class ScheduleOfRateService {
         }
     }
 
+    private ScheduleOfRate getScheduleOfRateObj() {
+        return new ScheduleOfRate();
+    }
+
+    private MarketRate getMarketRateObj() {
+        return new MarketRate();
+    }
+
+    private SORRate getSorRateObj() {
+        return new SORRate();
+    }
+
+    private Money getMoneyObj(final double val) {
+        return new Money(val);
+    }
+
+    private Period getPeriodObj(final Date startDate, final Date endDate) {
+        return new Period(startDate, endDate);
+    }
 }

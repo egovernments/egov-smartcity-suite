@@ -73,7 +73,7 @@
 				<c:choose>
 					<c:when test="${scheduleOfRate.tempMarketRates.size() == 0}">
 						<tr id="marketRateRow">
-							<td><span class="spansno">1</span> 
+							<td><span class="marketratespansno">1</span> 
 								<form:hidden
 									path="tempMarketRates[0].id"
 									class="form-control table-input hidden-input"/></td>
@@ -110,7 +110,7 @@
 						<c:forEach items="${scheduleOfRate.tempMarketRates}" var="marketRate"
 							varStatus="item">
 							<tr id="marketRateRow">
-								<td><span class="spansno"><c:out
+								<td><span class="marketratespansno"><c:out
 										value="${item.index + 1}" /></span> 
 									<form:hidden
 										path="tempMarketRates[${item.index}].id"

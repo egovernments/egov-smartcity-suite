@@ -70,16 +70,16 @@ public class ScheduleOfRateSearchJsonAdaptor implements JsonSerializer<ScheduleO
             if (!sorRates.isEmpty()) {
                 jsonObject.addProperty("rate", sorRates.get(sorRates.size() - 1).getRate().getValue());
                 final Period validity = scheduleOfRate.getSorRates().get(0).getValidity();
-                if (validity != null) {
+                if (validity != null)
                     jsonObject.addProperty("fromDate", formatter.format(validity.getStartDate()));
-                    if (validity.getEndDate() != null)
-                        jsonObject.addProperty("toDate", formatter.format(validity.getEndDate()));
-                }
-            } else {
+                else
+                    jsonObject.addProperty("fromDate", StringUtils.EMPTY);
+                if (validity != null && validity.getEndDate() != null)
+                    jsonObject.addProperty("toDate", formatter.format(validity.getEndDate()));
+                else
+                    jsonObject.addProperty("toDate", StringUtils.EMPTY);
+            } else
                 jsonObject.addProperty("rate", StringUtils.EMPTY);
-                jsonObject.addProperty("fromDate", StringUtils.EMPTY);
-                jsonObject.addProperty("toDate", StringUtils.EMPTY);
-            }
             jsonObject.addProperty("scheduleOfRateId", scheduleOfRate.getId());
         }
         return jsonObject;
