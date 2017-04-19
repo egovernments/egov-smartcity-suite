@@ -52,7 +52,7 @@ $(document).ready(function(){
 			
 	$("#executionDate" ).datepicker({
 		format: "dd/mm/yyyy",
-		startDate: new Date(2005, 03, 1),
+		startDate: new Date(1998, 03, 1),
 		autoclose: true 
 	}).on('changeDate', function(ev) {
 		if(isValidDate($('#executionDate').val())){
