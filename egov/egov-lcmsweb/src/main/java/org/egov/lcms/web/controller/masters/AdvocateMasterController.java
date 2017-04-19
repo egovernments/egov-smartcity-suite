@@ -157,7 +157,6 @@ public class AdvocateMasterController {
             advocateMaster.setBankBranch(null);
 
         advocateMasterService.persist(advocateMaster);
-        advocateMasterService.createAccountDetailKey(advocateMaster);
         redirectAttrs.addFlashAttribute("message", messageSource.getMessage("msg.advocateMaster.update", null, null));
         return "redirect:/advocatemaster/result/" + advocateMaster.getId();
     }

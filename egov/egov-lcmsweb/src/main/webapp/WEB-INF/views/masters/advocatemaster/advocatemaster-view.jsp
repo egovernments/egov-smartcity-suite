@@ -164,7 +164,7 @@
 								<spring:message code="lbl.ifsccode" />
 							</div>
 							<div class="col-sm-3 add-margin view-content">
-								${advocateMaster.ifsccode}</div>
+								${advocateMaster.ifscCode}</div>
 							<div class="col-xs-3 add-margin">
 								<spring:message code="lbl.tinumber" />
 							</div>

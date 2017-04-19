@@ -236,10 +236,10 @@
 					<label class="col-sm-2 control-label text-right"><spring:message
 							code="lbl.ifsccode" />:<span class="mandatory"></span></label>
 					<div class="col-sm-3 add-margin">
-						<form:input path="ifsccode"
+						<form:input path="ifscCode"
 							class="form-control text-left patternvalidation"
 							data-pattern="alphanumeric" maxlength="20" required="required" />
-						<form:errors path="ifsccode" cssClass="error-msg" />
+						<form:errors path="ifscCode" cssClass="error-msg" />
 					</div>
 					<label class="col-sm-2 control-label text-right"><spring:message
 							code="lbl.tinumber" />:<span class="mandatory"></span> </label>

@@ -53,6 +53,8 @@ import javax.validation.constraints.Pattern;
 
 import org.egov.commons.Bank;
 import org.egov.commons.Bankbranch;
+import org.egov.commons.EgwStatus;
+import org.egov.commons.utils.EntityType;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.lcms.utils.constants.LcmsConstants;
@@ -71,7 +73,7 @@ import org.hibernate.validator.constraints.SafeHtml;
 @SequenceGenerator(name = AdvocateMaster.SEQ_ADVOCATE_MASTER, sequenceName = AdvocateMaster.SEQ_ADVOCATE_MASTER, allocationSize = 1)
 @AuditOverrides({ @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy"),
         @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate") })
-public class AdvocateMaster extends AbstractAuditable {
+public class AdvocateMaster extends AbstractAuditable implements EntityType {
 
     private static final long serialVersionUID = 796823780349590496L;
     public static final String SEQ_ADVOCATE_MASTER = "SEQ_EGLC_ADVOCATE_MASTER";
@@ -145,7 +147,7 @@ public class AdvocateMaster extends AbstractAuditable {
 
     @Length(max = 20)
     @Audited
-    private String ifsccode;
+    private String ifscCode;
 
     @Length(max = 20)
     @Audited
@@ -274,28 +276,8 @@ public class AdvocateMaster extends AbstractAuditable {
         this.bankBranch = bankBranch;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(final String name) {
-        this.name = name;
-    }
-
-    public String getBankaccount() {
-        return bankaccount;
-    }
-
     public void setBankaccount(final String bankaccount) {
         this.bankaccount = bankaccount;
-    }
-
-    public String getIfsccode() {
-        return ifsccode;
-    }
-
-    public void setIfsccode(final String ifsccode) {
-        this.ifsccode = ifsccode;
     }
 
     public String getTinumber() {
@@ -342,12 +324,81 @@ public class AdvocateMaster extends AbstractAuditable {
         this.paymentmode = paymentmode;
     }
 
+    public String getIfscCode() {
+        return ifscCode;
+    }
+
+    public void setIfscCode(final String ifscCode) {
+        this.ifscCode = ifscCode;
+    }
+
     public double getMonthlyRenumeration() {
         return monthlyRenumeration;
     }
 
     public void setMonthlyRenumeration(final double monthlyRenumeration) {
         this.monthlyRenumeration = monthlyRenumeration;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    public void setName(final String name) {
+        this.name = name;
+    }
+
+    @Override
+    public String getBankaccount() {
+        return bankaccount;
+    }
+    @Override
+    public String getBankname() {
+        if (bankName == null)
+            return "";
+        else
+            return bankName.getName();
+    }
+
+    @Override
+    public String getPanno() {
+        return panNumber;
+    }
+
+    @Override
+    public String getTinno() {
+        return tinumber;
+    }
+
+    @Override
+    public String getModeofpay() {
+        return paymentmode;
+    }
+
+    @Override
+    public String getCode() {
+        return name;
+    }
+
+    @Override
+    public String getIfsccode() {
+        return ifscCode;
+    }
+
+    @Override
+    public Integer getEntityId() {
+        return Integer.valueOf(id.toString());
+    }
+
+    @Override
+    public String getEntityDescription() {
+        return getName();
+    }
+
+    @Override
+    public EgwStatus getEgwStatus() {
+        return null;
     }
 
 }
