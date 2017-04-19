@@ -938,7 +938,7 @@ public class PropertyTaxElasticSearchIndexService {
         BoolQueryBuilder boolQuery = new BoolQueryBuilder();
 
         if (!isprimaryDemand) {
-            boolQuery = boolQuery.should(QueryBuilders.matchQuery(CITY_CODE, ulbCode))
+            boolQuery = boolQuery.must(QueryBuilders.matchQuery(CITY_CODE, ulbCode))
                     .filter(QueryBuilders.rangeQuery(DEMAND_DATE)
                             .gte(DATEFORMATTER_YYYY_MM_DD.format(financialYear.getStartingDate()))
                             .lte(DATEFORMATTER_YYYY_MM_DD.format(financialYear.getEndingDate())).includeUpper(false));
@@ -950,7 +950,7 @@ public class PropertyTaxElasticSearchIndexService {
                             .subAggregation(AggregationBuilders.sum(TOTAL_DEMAND).field(TOTAL_DEMAND)))
                     .size(250);
         } else {
-            boolQuery = boolQuery.should(QueryBuilders.matchQuery(CITY_CODE, ulbCode))
+            boolQuery = boolQuery.must(QueryBuilders.matchQuery(CITY_CODE, ulbCode))
                     .filter(QueryBuilders.rangeQuery(DEMAND_DATE)
                             .lt(DATEFORMATTER_YYYY_MM_DD.format(financialYear.getStartingDate())).includeUpper(false));
             aggregation = AggregationBuilders.terms(BY_WARD).field(REVENUE_WARD)
@@ -977,6 +977,7 @@ public class PropertyTaxElasticSearchIndexService {
          */
         Aggregations aggr = getDemandVarianceAggregations(true, ulbCode);
         StringTerms wards = aggr.get(BY_WARD);
+        
         for (final Terms.Bucket entry : wards.getBuckets()) {
             demandDetails = new DemandVariance();
             demandDetails.setName(entry.getKeyAsString());
