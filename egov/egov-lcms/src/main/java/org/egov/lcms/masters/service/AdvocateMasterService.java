@@ -171,7 +171,7 @@ public class AdvocateMasterService implements EntityTypeService {
     }
 
     @Override
-    public List<EntityType> getAllActiveEntities(final Integer employeeId) {
+    public List<EntityType> getAllActiveEntities(final Integer advocateId) {
         final List<EntityType> entities = new ArrayList<>();
         final List<AdvocateMaster> advocateNames = getActiveAdvocateMaster();
         entities.addAll(advocateNames);
