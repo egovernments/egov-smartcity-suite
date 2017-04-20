@@ -97,6 +97,7 @@
 									name="tempContractorDetails[0].registrationNumber"
 									id="registrationNumber" data-idx="0"
 									data-optional="1"
+									maxlength="50"
 									class="form-control table-input registrationNumber removeDefaultValues patternvalidation" data-pattern="alphanumerichyphenbackslash" />
 								<form:errors path="tempContractorDetails[0].registrationNumber"
 									cssClass="add-margin error-msg" /></td>
@@ -179,6 +180,7 @@
 										path="tempContractorDetails[${item.index}].registrationNumber"
 										name="tempContractorDetails[${item.index}].registrationNumber" id="registrationNumber"
 										data-idx="${item.index}"  data-optional="1" data-pattern="alphanumerichyphenbackslash"
+										maxlength="50"
 										class="form-control table-input registrationNumber removeDefaultValues patternvalidation" />
 									<form:errors path="tempContractorDetails[${item.index}].registrationNumber"
 										cssClass="add-margin error-msg" /></td>
@@ -187,7 +189,7 @@
 										name="tempContractorDetails[${item.index}].category"
 										data-idx="${item.index}"
 										class="form-control table-input category removeDefaultValues"
-										maxlength="1024" > 
+										maxlength="100" > 
 										<form:option value="" > <spring:message code="lbl.select" /></form:option>
 										<c:forEach items = "${contractorDetailsCategoryValues }" var = "category">
 											<form:option value="${category}">${category}</form:option>

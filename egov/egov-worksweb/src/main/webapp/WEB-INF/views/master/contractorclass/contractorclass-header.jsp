@@ -49,7 +49,7 @@
 			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.contractorclass" /><span
 						class="mandatory"></span></label>
 			<div class="col-sm-3 add-margin">
-				<form:input path="grade" id="grade" class="form-control table-input" maxlength = "50" required = "required"/>
+				<form:input path="grade" id="grade" class="form-control table-input" maxlength = "20" required = "required"/>
 				<form:errors path="grade" cssClass="add-margin error-msg" />
 			</div>
 			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.description" /><span

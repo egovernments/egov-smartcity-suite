@@ -82,6 +82,7 @@
 									data-idx="0"
 									data-optional="0"
 									data-errormsg="Description is mandatory!"
+									maxlength = "1024"
 									class="form-control nonsordescription table-input" required = "required" />
 								<form:errors path="tempEstimateTemplateNonSorActivities[0].nonSor.description"
 									cssClass="add-margin error-msg" /></td>

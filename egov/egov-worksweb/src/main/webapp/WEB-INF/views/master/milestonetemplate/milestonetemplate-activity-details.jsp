@@ -90,7 +90,7 @@
 									data-optional="0"
 									data-errormsg="Description of stage is mandatory!"
 									data-pattern="alphanumericwithallspecialcharacters" 
-									maxlength = "100" required = "required" />
+									maxlength = "1024" required = "required" />
 								<form:errors path="tempMilestoneTemplateActivities[0].description" 
 									cssClass="add-margin error-msg" /></td>
 							<td><form:input path="tempMilestoneTemplateActivities[0].percentage"

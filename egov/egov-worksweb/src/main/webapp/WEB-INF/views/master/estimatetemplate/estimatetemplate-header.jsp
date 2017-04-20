@@ -79,13 +79,13 @@
 			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.templatename" /><span
 						class="mandatory"></span></label>
 			<div class="col-sm-3 add-margin">
-				<form:input path="name" id="name" class="form-control table-input patternvalidation" data-pattern="alphabetwithspace" maxlength = "50" required = "required"/>
+				<form:input path="name" id="name" class="form-control table-input patternvalidation" data-pattern="alphabetwithspace" maxlength = "256" required = "required"/>
 				<form:errors path="name" cssClass="add-margin error-msg" />
 			</div>
 			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.templatedescription" /><span
 						class="mandatory"></span></label>
 			<div class="col-sm-3 add-margin">
-				<form:textarea path="description" id="description" class="form-control table-input textfieldsvalidate" maxlength = "100" required = "required"/>
+				<form:textarea path="description" id="description" class="form-control table-input textfieldsvalidate" maxlength = "1024" required = "required"/>
 				<form:errors path="description" cssClass="add-margin error-msg" />
 			</div>
 		</div>

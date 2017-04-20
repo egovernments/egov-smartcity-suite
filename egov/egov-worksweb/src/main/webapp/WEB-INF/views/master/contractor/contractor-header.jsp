@@ -104,38 +104,38 @@
 			<label for="name" class="col-sm-2 control-label text-right"><spring:message code="lbl.name" /><span
 						class="mandatory"></span></label>
 			<div class="col-sm-3 add-margin">
-				<form:input path="name" id="name" class="form-control table-input patternvalidation" data-pattern="alphabetwithspace" maxlength = "50" required = "required"/>
+				<form:input path="name" id="name" class="form-control table-input patternvalidation" data-pattern="alphabetwithspace" maxlength = "100" required = "required"/>
 		        <form:errors path="name" cssClass="error" />
 			</div>
 		</div>
 		<div class="form-group">
 			<label for="correspondenceAddress" class="col-sm-3 control-label text-right"><spring:message code="lbl.correspondenceaddress" /></label>
 			<div class="col-sm-3 add-margin">
-				<form:textarea path="correspondenceAddress" id="correspondenceAddress" class="form-control table-input textfieldsvalidate"  maxlength = "50"/>
+				<form:textarea path="correspondenceAddress" id="correspondenceAddress" class="form-control table-input textfieldsvalidate"  maxlength = "250"/>
 				<form:errors path="correspondenceAddress" cssClass="add-margin error-msg" />
 			</div>
 			<label for="paymentAddress" class="col-sm-2 control-label text-right"><spring:message code="lbl.paymentaddress" /></label>
 			<div class="col-sm-3 add-margin">
-				<form:textarea path="paymentAddress" id="paymentAddress" class="form-control table-input textfieldsvalidate"  maxlength = "50" />
+				<form:textarea path="paymentAddress" id="paymentAddress" class="form-control table-input textfieldsvalidate"  maxlength = "250" />
 		        <form:errors path="paymentAddress" cssClass="error" />
 			</div>
 		</div>
 		<div class="form-group">
 			<label for="contactPerson" class="col-sm-3 control-label text-right"><spring:message code="lbl.contactperson" /></label>
 			<div class="col-sm-3 add-margin">
-				<form:input path="contactPerson" id="contactPerson" class="form-control table-input" maxlength = "50"/>
+				<form:input path="contactPerson" id="contactPerson" class="form-control table-input" maxlength = "100"/>
 				<form:errors path="contactPerson" cssClass="add-margin error-msg" />
 			</div>
 			<label for="email" class="col-sm-2 control-label text-right"><spring:message code="lbl.email" /></label>
 			<div class="col-sm-3 add-margin">
-				<form:input path="email" id="email" class="form-control table-input" maxlength = "50" />
+				<form:input path="email" id="email" class="form-control table-input" maxlength = "100" />
 		        <form:errors path="email" cssClass="error" />
 			</div>
 		</div>
 		<div class="form-group">
 			<label for="narration" class="col-sm-3 control-label text-right"><spring:message code="lbl.narration" /></label>
 			<div class="col-sm-3 add-margin">
-				<form:textarea path="narration" id="narration" class="form-control table-input textfieldsvalidate" maxlength = "50" />
+				<form:textarea path="narration" id="narration" class="form-control table-input textfieldsvalidate" maxlength = "1024" />
 				<form:errors path="narration" cssClass="add-margin error-msg" />
 			</div>
 			<label for="mobileNumber" class="col-sm-2 control-label text-right"><spring:message code="lbl.mobilenumber" /></label>
@@ -147,12 +147,12 @@
 		<div class="form-group">
 			<label for="panNumber" class="col-sm-3 control-label text-right"><spring:message code="lbl.pannumber" /></label>
 			<div class="col-sm-3 add-margin">
-				<form:input path="panNumber" id="panNumber" class="form-control table-input" maxlength = "50" />
+				<form:input path="panNumber" id="panNumber" class="form-control table-input" maxlength = "10" />
 				<form:errors path="panNumber" cssClass="add-margin error-msg" />
 			</div>
 			<label for="tinNumber" class="col-sm-2 control-label text-right"><spring:message code="lbl.tinnumber" /></label>
 			<div class="col-sm-3 add-margin">
-				<form:input path="tinNumber" id="tinNumber" class="form-control table-input" maxlength = "100" />
+				<form:input path="tinNumber" id="tinNumber" class="form-control table-input" maxlength = "14" />
 				<form:errors path="tinNumber" cssClass="add-margin error-msg" />
 			</div>
 		</div>
@@ -167,19 +167,19 @@
 			</div>
 			<label for="ifscCode" class="col-sm-2 control-label text-right"><spring:message code="lbl.ifsccode" /></label>
 			<div class="col-sm-3 add-margin">
-				<form:input path="ifscCode" id="ifscCode" class="form-control table-input" maxlength = "100" />
+				<form:input path="ifscCode" id="ifscCode" class="form-control table-input" maxlength = "15" />
 				<form:errors path="ifscCode" cssClass="add-margin error-msg" />
 			</div>
 		</div>
 		<div class="form-group">
 			<label for="bankAccount" class="col-sm-3 control-label text-right"><spring:message code="lbl.bankaccount" /></label>
 			<div class="col-sm-3 add-margin">
-				<form:input path="bankAccount" id="bankAccount" class="form-control table-input" maxlength = "50" />
+				<form:input path="bankAccount" id="bankAccount" class="form-control table-input" maxlength = "22" />
 				<form:errors path="bankAccount" cssClass="add-margin error-msg" />
 			</div>
 			<label for="pwdApprovalCode" class="col-sm-2 control-label text-right"><spring:message code="lbl.pwdapprovalcode" /></label>
 			<div class="col-sm-3 add-margin">
-				<form:input path="pwdApprovalCode" id="pwdApprovalCode" class="form-control table-input patternvalidation" data-pattern="alphanumerichyphenbackslash" maxlength = "100" />
+				<form:input path="pwdApprovalCode" id="pwdApprovalCode" class="form-control table-input patternvalidation" data-pattern="alphanumerichyphenbackslash" maxlength = "50" />
 				<form:errors path="pwdApprovalCode" cssClass="add-margin error-msg" />
 			</div>
 		</div>

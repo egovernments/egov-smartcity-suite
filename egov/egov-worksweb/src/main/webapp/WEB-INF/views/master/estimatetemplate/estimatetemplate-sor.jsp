@@ -101,15 +101,14 @@
 						<tr id="sorRow">
 							<td>
 								<span class="spansorno">1</span>
- 								<form:hidden path="tempEstimateTemplateSorActivities[0].schedule.id" class="sorhiddenid" />
+ 								<form:hidden path="tempEstimateTemplateSorActivities[0].schedule" class="sorhiddenid" />
 							</td>
 							<td>
 								<span class="sorCategoryCode"></span>
-								<form:hidden path="tempEstimateTemplateSorActivities[0].schedule.scheduleCategory.id" class="sorschedulecategoryhiddenid" />
+								<form:hidden path="tempEstimateTemplateSorActivities[0].schedule.scheduleCategory" class="sorschedulecategoryhiddenid" />
 							</td>
 							<td>
 								<span class="sorCode"></span>
-								<form:hidden path="tempEstimateTemplateSorActivities[0].schedule.scheduleCategory.code" class="sorschedulecategoryhiddencode" />
 							</td>
 							<td>
 								<span class="sorSummary"></span>
@@ -117,7 +116,7 @@
 							</td>
 							<td>
 								<span class="sorUom"></span>
-								<form:hidden path="tempEstimateTemplateSorActivities[0].schedule.uom.id" class="soruomhiddenid"/>
+								<form:hidden path="tempEstimateTemplateSorActivities[0].schedule.uom" class="soruomhiddenid"/>
 							</td>
 							<td>
 								<span class="add-padding deletesor" onclick="deleteSor(this);"><i class="fa fa-trash" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span>
@@ -131,15 +130,14 @@
 								<tr id="sorRow" class="sorRow" align="center">
 									<td>
 										<span class="spansorno">${item.index + 1 }</span>
- 										<form:hidden path="tempEstimateTemplateSorActivities[${item.index }].schedule.id" id="id_${item.index }" class="sorhiddenid" value="${activity.schedule.id }" />
+ 										<form:hidden path="tempEstimateTemplateSorActivities[${item.index }].schedule" id="id_${item.index }" class="sorhiddenid" value="${activity.schedule.id }" />
 									</td>
 									<td>
 										<span class="sorCategoryCode">${sor.schedule.scheduleCategory.code }</span>
-										<form:hidden path="tempEstimateTemplateSorActivities[${item.index }].schedule.scheduleCategory.id" class="sorschedulecategoryhiddenid" />
+										<form:hidden path="tempEstimateTemplateSorActivities[${item.index }].schedule.scheduleCategory" class="sorschedulecategoryhiddenid" />
 									</td>
 									<td>
 										<span class="sorCode">${sor.schedule.code }</span>
-										<form:hidden path="tempEstimateTemplateSorActivities[${item.index }].schedule.scheduleCategory.code" class="sorschedulecategoryhiddencode" />
 									</td>
 									<td>
 										<span class="sorSummary">${sor.schedule.getSummary() }</span>
@@ -147,7 +145,7 @@
 									</td>
 									<td>
 										<span class="sorUom">${sor.schedule.uom.uom }</span>
-										<form:hidden path="tempEstimateTemplateSorActivities[${item.index }].uom.id" class="uomhiddenid" value="${sor.schedule.uom.id }"/>
+										<form:hidden path="tempEstimateTemplateSorActivities[${item.index }].schedule.uom" class="uomhiddenid" value="${sor.schedule.uom.id }"/>
 									</td>
 									<td>
 										<span class="add-padding deletesor" onclick="deleteSor(this);"><i class="fa fa-trash" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span>
