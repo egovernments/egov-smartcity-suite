@@ -311,7 +311,7 @@ body {
 											<c:when test="${propertyOwner.property.basicProperty.propertyOwnerInfo[status.index].owner.aadhaarNumber!=null ||  not empty propertyOwner.property.basicProperty.propertyOwnerInfo[status.index].owner.aadhaarNumber}" >
 											<td class="blueborderfortd" align="center"><form:input
 													path="propertyOwnerInfo[${status.index}].owner.aadhaarNumber"
-													id="aadharNumber" maxlength="12" cssClass="form-control" readonly="true"/>
+													id="aadharNumber" maxlength="12" cssClass="form-control" readonly="false"/>
 													<form:hidden path="ownerAudit[${status.index}].aadhaarNo" />
 													</td>
 											
