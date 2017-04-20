@@ -58,6 +58,7 @@ import javax.validation.constraints.NotNull;
 import org.egov.infra.elasticsearch.entity.enums.ApprovalStatus;
 import org.egov.infra.elasticsearch.entity.enums.ClosureStatus;
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.utils.DateUtils;
 import org.hibernate.validator.constraints.Length;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -97,6 +98,9 @@ public class ApplicationIndex extends AbstractAuditable {
     @Length(max = 250)
     private String applicantAddress;
 
+    /*
+     * Actual Disposal Date which should be updated when application is closed
+     */
     private Date disposalDate;
 
     @NotNull
@@ -221,6 +225,10 @@ public class ApplicationIndex extends AbstractAuditable {
     }
 
     public Date getDisposalDate() {
+        if (closed.name().equals(ClosureStatus.YES.toString()))
+            disposalDate = new Date();
+        else if (closed.name().equals(ClosureStatus.NO.toString()))
+            disposalDate = null;
         return disposalDate;
     }
 
@@ -295,6 +303,10 @@ public class ApplicationIndex extends AbstractAuditable {
     }
 
     public Integer getElapsedDays() {
+        if (closed.name().equals(ClosureStatus.YES.toString()))
+            elapsedDays = DateUtils.daysBetween(getCreatedDate(), disposalDate);
+        else if (closed.name().equals(ClosureStatus.NO.toString()))
+            elapsedDays = DateUtils.daysBetween(getCreatedDate(), new Date());
         return elapsedDays;
     }
 
@@ -548,7 +560,7 @@ public class ApplicationIndex extends AbstractAuditable {
             applicationIndex.setRegionName(regionName);
             applicationIndex.setClosed(closed);
             applicationIndex.setSla(sla);
-            applicationIndex.setSlaGap(sla - elapsedDays);
+            applicationIndex.setSlaGap(elapsedDays - sla);
             return applicationIndex;
         }
     }

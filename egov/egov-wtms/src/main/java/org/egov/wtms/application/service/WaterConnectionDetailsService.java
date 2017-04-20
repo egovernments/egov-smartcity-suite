@@ -51,7 +51,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -367,11 +366,11 @@ public class WaterConnectionDetailsService {
     }
 
     @ReadOnly
-    public List<Hashtable<String, Object>> getHistory(final WaterConnectionDetails waterConnectionDetails) {
+    public List<HashMap<String, Object>> getHistory(final WaterConnectionDetails waterConnectionDetails) {
         User user;
-        final List<Hashtable<String, Object>> historyTable = new ArrayList<>(0);
+        final List<HashMap<String, Object>> historyTable = new ArrayList<>(0);
         final State state = waterConnectionDetails.getState();
-        final Hashtable<String, Object> map = new Hashtable<>(0);
+        final HashMap<String, Object> map = new HashMap<>(0);
         if (null != state) {
             map.put("date", state.getDateInfo());
             map.put("comments", state.getComments() != null ? state.getComments() : "");
@@ -393,26 +392,26 @@ public class WaterConnectionDetailsService {
             if (!waterConnectionDetails.getStateHistory().isEmpty() && waterConnectionDetails.getStateHistory() != null)
                 Collections.reverse(waterConnectionDetails.getStateHistory());
             for (final StateHistory stateHistory : waterConnectionDetails.getStateHistory()) {
-                final Hashtable<String, Object> HistoryMap = new Hashtable<>(0);
-                HistoryMap.put("date", stateHistory.getDateInfo());
-                HistoryMap.put("comments", stateHistory.getComments() != null ? stateHistory.getComments() : "");
-                HistoryMap.put("updatedBy", stateHistory.getLastModifiedBy().getUsername() + "::"
+                final HashMap<String, Object> historyMap = new HashMap<>(0);
+                historyMap.put("date", stateHistory.getDateInfo());
+                historyMap.put("comments", stateHistory.getComments() != null ? stateHistory.getComments() : "");
+                historyMap.put("updatedBy", stateHistory.getLastModifiedBy().getUsername() + "::"
                         + stateHistory.getLastModifiedBy().getName());
-                HistoryMap.put("status", stateHistory.getValue());
+                historyMap.put("status", stateHistory.getValue());
                 final Position owner = stateHistory.getOwnerPosition();
                 user = stateHistory.getOwnerUser();
                 if (null != user) {
-                    HistoryMap.put("user", user.getUsername() + "::" + user.getName());
-                    HistoryMap.put("department", null != eisCommonService.getDepartmentForUser(user.getId())
+                    historyMap.put("user", user.getUsername() + "::" + user.getName());
+                    historyMap.put("department", null != eisCommonService.getDepartmentForUser(user.getId())
                             ? eisCommonService.getDepartmentForUser(user.getId()).getName() : "");
                 } else if (null != owner && null != owner.getDeptDesig()) {
                     user = eisCommonService.getUserForPosition(owner.getId(), stateHistory.getCreatedDate());
-                    HistoryMap.put("user",
+                    historyMap.put("user",
                             null != user.getUsername() ? user.getUsername() + "::" + user.getName() : "");
-                    HistoryMap.put("department", null != owner.getDeptDesig().getDepartment()
+                    historyMap.put("department", null != owner.getDeptDesig().getDepartment()
                             ? owner.getDeptDesig().getDepartment().getName() : "");
                 }
-                historyTable.add(HistoryMap);
+                historyTable.add(historyMap);
             }
         }
         return historyTable;
@@ -905,25 +904,6 @@ public class WaterConnectionDetailsService {
                     applicationIndex.setChannel(WaterTaxConstants.SYSTEM);
                 else
                     applicationIndex.setChannel(sourceChannel);
-                int elapsedDays = 0;
-                if (waterConnectionDetails.getStatus().getCode()
-                        .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERSANCTIONED)
-                        || waterConnectionDetails.getStatus().getCode()
-                                .equals(WaterTaxConstants.APPLICATION_STATUS__RECONNCTIONSANCTIONED)) {
-                    final List<StateHistory> stateHistoryList = waterConnectionDetails.getStateHistory();
-                    Date applicationDate = null;
-                    for (final StateHistory stateHistory : stateHistoryList)
-                        if (stateHistory.getValue().equals(WaterTaxConstants.APPLICATION_STATUS_CLOSER)
-                                || stateHistory.getValue().equals(WaterTaxConstants.APPLICATION_STATUS_RE_CONN))
-                            applicationDate = stateHistory.getLastModifiedDate();
-                    if (applicationDate != null)
-                        elapsedDays = DateUtils.daysBetween(applicationDate, waterConnectionDetails.getLastModifiedDate());
-                    applicationIndex.setElapsedDays(elapsedDays);
-                }
-                if (waterConnectionDetails.getStatus().getCode()
-                        .equals(WaterTaxConstants.APPLICATION_STATUS_SANCTIONED))
-                    applicationIndex.setElapsedDays(DateUtils.daysBetween(waterConnectionDetails.getApplicationDate(),
-                            waterConnectionDetails.getExecutionDate()));
                 if (waterConnectionDetails.getStatus().getCode()
                         .equals(WaterTaxConstants.APPLICATION_STATUS__RECONNCTIONSANCTIONED)
                         || waterConnectionDetails.getStatus().getCode()
@@ -977,6 +957,9 @@ public class WaterConnectionDetailsService {
                 createWaterChargeIndex(waterConnectionDetails, assessmentDetails, amountTodisplayInIndex);
             }
         } else {
+            final Integer appProcessTime = applicationProcessTimeService.getApplicationProcessTime(
+                    waterConnectionDetails.getApplicationType(),
+                    waterConnectionDetails.getCategory());
             final String strQuery = "select md from EgModules md where md.name=:name";
             final Query hql = getCurrentSession().createQuery(strQuery);
             hql.setParameter("name", WaterTaxConstants.EGMODULES_NAME);
@@ -1003,9 +986,9 @@ public class WaterConnectionDetailsService {
                         .withApplicantAddress(assessmentDetails.getPropertyAddress())
                         .withOwnername(user.getUsername() + "::" + user.getName())
                         .withChannel(sourceChannel != null ? sourceChannel : channel)
-                        .withDisposalDate(waterConnectionDetails.getDisposalDate())
                         .withMobileNumber(mobileNumber.toString()).withClosed(ClosureStatus.NO)
-                        .withAadharNumber(aadharNumber.toString()).withApproved(ApprovalStatus.INPROGRESS).build();
+                        .withAadharNumber(aadharNumber.toString()).withApproved(ApprovalStatus.INPROGRESS)
+                        .withSla(appProcessTime != null ? appProcessTime : 0).build();
                 if (!waterConnectionDetails.getLegacy() && !waterConnectionDetails.getStatus().getCode()
                         .equals(WaterTaxConstants.APPLICATION_STATUS_SANCTIONED))
                     applicationIndexService.createApplicationIndex(applicationIndex);
