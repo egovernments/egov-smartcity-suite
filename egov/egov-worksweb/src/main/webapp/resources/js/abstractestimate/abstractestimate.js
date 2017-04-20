@@ -1160,12 +1160,14 @@ $('#searchTemplate').click(function() {
 			if(ans) {
 				clearActivities();
 				getActivitiesForTemplate(templateId);
+				$('#templateCode').val('');
 			}
 			else {
 				return false;		
 			}
 		}else{
 			getActivitiesForTemplate(templateId);
+			$('#templateCode').val('');
 		}
 	}
 

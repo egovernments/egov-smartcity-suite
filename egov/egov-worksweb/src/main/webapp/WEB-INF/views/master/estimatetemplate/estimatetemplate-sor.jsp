@@ -145,7 +145,7 @@
 									</td>
 									<td>
 										<span class="sorUom">${sor.schedule.uom.uom }</span>
-										<form:hidden path="tempEstimateTemplateSorActivities[${item.index }].schedule.uom" class="uomhiddenid" value="${sor.schedule.uom.id }"/>
+										<form:hidden path="tempEstimateTemplateSorActivities[${item.index }].schedule.uom" class="soruomhiddenid" value="${sor.schedule.uom.id }"/>
 									</td>
 									<td>
 										<span class="add-padding deletesor" onclick="deleteSor(this);"><i class="fa fa-trash" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span>
