@@ -170,12 +170,18 @@ function checkZero(obj,msg)
 		{
 			val=eval(obj.value);			
 			//bootbox.alert("val="+val);
-			if(val==0)
+			if(val<=0)
 			{
+				if(val < 0){
+					bootbox.alert("Value should be greater than Zero");
+				}
+				else{
 				bootbox.alert("Series of Zeroes is Not a Valid "+msg);
+				}
 				obj.value="";
 				obj.focus();
 				return false;
+				
 			}
 		}
 	}
