@@ -70,6 +70,11 @@ public class StmsSchedulerConfiguration extends QuartzSchedulerConfiguration {
         return stmsScheduler;
     }
 
+    @Bean("generateDemandForSewerageTaxJob")
+    public GenerateDemandForSewerageTaxJob generateDemandForSewerageTaxJob() {
+        return new GenerateDemandForSewerageTaxJob();
+    }
+
     @Bean
     public JobDetailFactoryBean stmsDemandGenerationJobDetail() {
         JobDetailFactoryBean stmsDemandGenerationJobDetail = new JobDetailFactoryBean();

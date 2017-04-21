@@ -81,54 +81,134 @@ public class WtmsSchedulerConfiguration extends QuartzSchedulerConfiguration {
         return wtmsScheduler;
     }
 
+    @Bean("bulkWaterConnBillGenerationJob0")
+    public BulkWaterConnBillGenerationJob bulkWaterConnBillGenerationJob0() {
+        BulkWaterConnBillGenerationJob bulkWaterConnBillGenerationJob = new BulkWaterConnBillGenerationJob();
+        bulkWaterConnBillGenerationJob.setBillsCount(50);
+        bulkWaterConnBillGenerationJob.setModulo(0);
+        return bulkWaterConnBillGenerationJob;
+    }
+
+    @Bean("bulkWaterConnBillGenerationJob1")
+    public BulkWaterConnBillGenerationJob bulkWaterConnBillGenerationJob1() {
+        BulkWaterConnBillGenerationJob bulkWaterConnBillGenerationJob = new BulkWaterConnBillGenerationJob();
+        bulkWaterConnBillGenerationJob.setBillsCount(50);
+        bulkWaterConnBillGenerationJob.setModulo(1);
+        return bulkWaterConnBillGenerationJob;
+    }
+
+    @Bean("bulkWaterConnBillGenerationJob2")
+    public BulkWaterConnBillGenerationJob bulkWaterConnBillGenerationJob2() {
+        BulkWaterConnBillGenerationJob bulkWaterConnBillGenerationJob = new BulkWaterConnBillGenerationJob();
+        bulkWaterConnBillGenerationJob.setBillsCount(50);
+        bulkWaterConnBillGenerationJob.setModulo(2);
+        return bulkWaterConnBillGenerationJob;
+    }
+
+    @Bean("bulkWaterConnBillGenerationJob3")
+    public BulkWaterConnBillGenerationJob bulkWaterConnBillGenerationJob3() {
+        BulkWaterConnBillGenerationJob bulkWaterConnBillGenerationJob = new BulkWaterConnBillGenerationJob();
+        bulkWaterConnBillGenerationJob.setBillsCount(50);
+        bulkWaterConnBillGenerationJob.setModulo(3);
+        return bulkWaterConnBillGenerationJob;
+    }
+
+    @Bean("bulkWaterConnBillGenerationJob4")
+    public BulkWaterConnBillGenerationJob bulkWaterConnBillGenerationJob4() {
+        BulkWaterConnBillGenerationJob bulkWaterConnBillGenerationJob = new BulkWaterConnBillGenerationJob();
+        bulkWaterConnBillGenerationJob.setBillsCount(50);
+        bulkWaterConnBillGenerationJob.setModulo(4);
+        return bulkWaterConnBillGenerationJob;
+    }
+
+    @Bean("bulkWaterConnBillGenerationJob5")
+    public BulkWaterConnBillGenerationJob bulkWaterConnBillGenerationJob5() {
+        BulkWaterConnBillGenerationJob bulkWaterConnBillGenerationJob = new BulkWaterConnBillGenerationJob();
+        bulkWaterConnBillGenerationJob.setBillsCount(50);
+        bulkWaterConnBillGenerationJob.setModulo(5);
+        return bulkWaterConnBillGenerationJob;
+    }
+
+    @Bean("bulkWaterConnBillGenerationJob6")
+    public BulkWaterConnBillGenerationJob bulkWaterConnBillGenerationJob6() {
+        BulkWaterConnBillGenerationJob bulkWaterConnBillGenerationJob = new BulkWaterConnBillGenerationJob();
+        bulkWaterConnBillGenerationJob.setBillsCount(50);
+        bulkWaterConnBillGenerationJob.setModulo(6);
+        return bulkWaterConnBillGenerationJob;
+    }
+
+    @Bean("bulkWaterConnBillGenerationJob7")
+    public BulkWaterConnBillGenerationJob bulkWaterConnBillGenerationJob7() {
+        BulkWaterConnBillGenerationJob bulkWaterConnBillGenerationJob = new BulkWaterConnBillGenerationJob();
+        bulkWaterConnBillGenerationJob.setBillsCount(50);
+        bulkWaterConnBillGenerationJob.setModulo(7);
+        return bulkWaterConnBillGenerationJob;
+    }
+
+    @Bean("bulkWaterConnBillGenerationJob8")
+    public BulkWaterConnBillGenerationJob bulkWaterConnBillGenerationJob8() {
+        BulkWaterConnBillGenerationJob bulkWaterConnBillGenerationJob = new BulkWaterConnBillGenerationJob();
+        bulkWaterConnBillGenerationJob.setBillsCount(50);
+        bulkWaterConnBillGenerationJob.setModulo(8);
+        return bulkWaterConnBillGenerationJob;
+    }
+
+    @Bean("bulkWaterConnBillGenerationJob9")
+    public BulkWaterConnBillGenerationJob bulkWaterConnBillGenerationJob9() {
+        BulkWaterConnBillGenerationJob bulkWaterConnBillGenerationJob = new BulkWaterConnBillGenerationJob();
+        bulkWaterConnBillGenerationJob.setBillsCount(50);
+        bulkWaterConnBillGenerationJob.setModulo(9);
+        return bulkWaterConnBillGenerationJob;
+    }
+
     @Bean
     public JobDetailFactoryBean wtmsBulkBillGenerationJobDetail0() {
-        return createJobDetailFactory(50, 0);
+        return createJobDetailFactory(0);
     }
 
     @Bean
     public JobDetailFactoryBean wtmsBulkBillGenerationJobDetail1() {
-        return createJobDetailFactory(50, 1);
+        return createJobDetailFactory(1);
     }
 
     @Bean
     public JobDetailFactoryBean wtmsBulkBillGenerationJobDetail2() {
-        return createJobDetailFactory(50, 2);
+        return createJobDetailFactory(2);
     }
 
     @Bean
     public JobDetailFactoryBean wtmsBulkBillGenerationJobDetail3() {
-        return createJobDetailFactory(50, 3);
+        return createJobDetailFactory(3);
     }
 
     @Bean
     public JobDetailFactoryBean wtmsBulkBillGenerationJobDetail4() {
-        return createJobDetailFactory(50, 4);
+        return createJobDetailFactory(4);
     }
 
     @Bean
     public JobDetailFactoryBean wtmsBulkBillGenerationJobDetail5() {
-        return createJobDetailFactory(50, 5);
+        return createJobDetailFactory(5);
     }
 
     @Bean
     public JobDetailFactoryBean wtmsBulkBillGenerationJobDetail6() {
-        return createJobDetailFactory(50, 6);
+        return createJobDetailFactory(6);
     }
 
     @Bean
     public JobDetailFactoryBean wtmsBulkBillGenerationJobDetail7() {
-        return createJobDetailFactory(50, 7);
+        return createJobDetailFactory(7);
     }
 
     @Bean
     public JobDetailFactoryBean wtmsBulkBillGenerationJobDetail8() {
-        return createJobDetailFactory(50, 8);
+        return createJobDetailFactory(8);
     }
 
     @Bean
     public JobDetailFactoryBean wtmsBulkBillGenerationJobDetail9() {
-        return createJobDetailFactory(50, 9);
+        return createJobDetailFactory(9);
     }
 
     @Bean
@@ -181,7 +261,7 @@ public class WtmsSchedulerConfiguration extends QuartzSchedulerConfiguration {
         return createCronTrigger(wtmsBulkBillGenerationJobDetail9(), 9);
     }
 
-    private JobDetailFactoryBean createJobDetailFactory(int billsCount, int modulo) {
+    private JobDetailFactoryBean createJobDetailFactory(int modulo) {
         JobDetailFactoryBean wtmsBulkBillGenerationJobDetail = new JobDetailFactoryBean();
         wtmsBulkBillGenerationJobDetail.setGroup("WTMS_JOB_GROUP");
         wtmsBulkBillGenerationJobDetail.setName("WTMS_BULK_BILL_GEN_" + modulo + "_JOB");
@@ -190,8 +270,6 @@ public class WtmsSchedulerConfiguration extends QuartzSchedulerConfiguration {
         wtmsBulkBillGenerationJobDetail.setRequestsRecovery(true);
         Map<String, String> jobDetailMap = new HashMap<>();
         jobDetailMap.put("jobBeanName", "bulkWaterConnBillGenerationJob" + modulo);
-        jobDetailMap.put("modulo", String.valueOf(modulo));
-        jobDetailMap.put("billsCount", String.valueOf(billsCount));
         jobDetailMap.put("userName", "egovernments");
         jobDetailMap.put("cityDataRequired", "true");
         jobDetailMap.put("moduleName", "wtms");

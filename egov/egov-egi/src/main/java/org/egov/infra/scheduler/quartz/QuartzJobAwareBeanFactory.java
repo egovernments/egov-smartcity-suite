@@ -40,25 +40,73 @@
 
 package org.egov.infra.scheduler.quartz;
 
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.quartz.JobDataMap;
+import org.quartz.SchedulerContext;
+import org.quartz.SchedulerException;
+import org.quartz.impl.SchedulerRepository;
 import org.quartz.spi.TriggerFiredBundle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
+import org.springframework.beans.MutablePropertyValues;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.scheduling.quartz.SpringBeanJobFactory;
 
 public class QuartzJobAwareBeanFactory extends SpringBeanJobFactory implements ApplicationContextAware {
 
-    private transient AutowireCapableBeanFactory beanFactory;
+    private static final Logger LOGGER = LoggerFactory.getLogger(QuartzJobAwareBeanFactory.class);
+    private static final String SCHEDULER_NAME = "%s-scheduler";
+    private static final String MODULE_NAME_KEY = "moduleName";
+    private static final String JOB_BEAN_NAME_KEY = "jobBeanName";
+
+    private String[] ignoredUnknownProperties;
+    private ApplicationContext applicationContext;
 
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        beanFactory = applicationContext.getAutowireCapableBeanFactory();
+        this.applicationContext = applicationContext;
     }
 
     @Override
-    protected Object createJobInstance(TriggerFiredBundle bundle) throws Exception {
-        final Object job = super.createJobInstance(bundle);
-        beanFactory.autowireBean(job);
-        return job;
+    public void setIgnoredUnknownProperties(final String[] ignoredUnknownProperties) {
+        super.setIgnoredUnknownProperties(ignoredUnknownProperties);
+        this.ignoredUnknownProperties = ignoredUnknownProperties;
+    }
+
+    @Override
+    protected Object createJobInstance(final TriggerFiredBundle bundle) {
+        try {
+            JobDataMap jobDataMap = bundle.getJobDetail().getJobDataMap();
+            SchedulerContext schedulerContext = SchedulerRepository.getInstance().
+                    lookup(String.format(SCHEDULER_NAME, jobDataMap.getString(MODULE_NAME_KEY))).
+                    getContext();
+            Object job = applicationContext.getBean(jobDataMap.getString(JOB_BEAN_NAME_KEY), bundle.getJobDetail().getJobClass());
+            BeanWrapper bw = new BeanWrapperImpl(job);
+            if (isEligibleForPropertyPopulation(bw.getWrappedInstance())) {
+                final MutablePropertyValues pvs = new MutablePropertyValues();
+                if (schedulerContext != null) {
+                    pvs.addPropertyValues(schedulerContext);
+                }
+                pvs.addPropertyValues(jobDataMap);
+                pvs.addPropertyValues(bundle.getTrigger().getJobDataMap());
+                if (ignoredUnknownProperties != null) {
+                    for (String property : ignoredUnknownProperties) {
+                        if (pvs.contains(property) && !bw.isWritableProperty(property)) {
+                            pvs.removePropertyValue(property);
+                        }
+                    }
+                    bw.setPropertyValues(pvs);
+                } else {
+                    bw.setPropertyValues(pvs, true);
+                }
+            }
+            return bw.getWrappedInstance();
+        } catch (SchedulerException e) {
+            LOGGER.error("Error occurred while initializing Scheduler Job Beans", e);
+            throw new ApplicationRuntimeException("Error occurred while initializing Scheduler", e);
+        }
     }
 }

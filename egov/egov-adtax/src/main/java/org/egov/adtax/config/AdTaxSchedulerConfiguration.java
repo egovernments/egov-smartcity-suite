@@ -70,6 +70,11 @@ public class AdTaxSchedulerConfiguration extends QuartzSchedulerConfiguration {
         return adTaxScheduler;
     }
 
+    @Bean("generateDemandForAdvertisementTaxJob")
+    public GenerateDemandForAdvertisementTaxJob generateDemandForAdvertisementTaxJob() {
+        return new GenerateDemandForAdvertisementTaxJob();
+    }
+
     @Bean
     public JobDetailFactoryBean adtaxDemandGenerationJobDetail() {
         JobDetailFactoryBean adtaxDemandGenerationJobDetail = new JobDetailFactoryBean();

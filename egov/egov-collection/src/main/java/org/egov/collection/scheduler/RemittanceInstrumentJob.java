@@ -61,7 +61,7 @@ public class RemittanceInstrumentJob extends AbstractQuartzJob {
         this.instrumentType = instType;
     }
 
-    public void setModulo(Integer modul) {
-        this.modulo = modul;
+    public void setModulo(Integer modulo) {
+        this.modulo = modulo;
     }
 }

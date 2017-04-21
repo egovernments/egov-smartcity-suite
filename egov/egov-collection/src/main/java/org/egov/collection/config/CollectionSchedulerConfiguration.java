@@ -61,6 +61,10 @@ import static org.quartz.CronTrigger.MISFIRE_INSTRUCTION_DO_NOTHING;
 @Conditional(SchedulerConfigCondition.class)
 public class CollectionSchedulerConfiguration extends QuartzSchedulerConfiguration {
 
+    private static final String INSTRUMENT_TYPE_CHEQUE = "cheque";
+    private static final String INSTRUMENT_TYPE_CASH = "cash";
+    private static final String INSTRUMENT_TYPE_DD = "dd";
+
     @Bean
     public SchedulerFactoryBean collectionScheduler(DataSource dataSource) {
         SchedulerFactoryBean collectionScheduler = createSchedular(dataSource);
@@ -108,75 +112,127 @@ public class CollectionSchedulerConfiguration extends QuartzSchedulerConfigurati
 
     @Bean
     public JobDetailFactoryBean remittanceCashInstrumentJobDetail0() {
-        return createJobDetailFactory("cash", 0);
+        return createJobDetailFactory(INSTRUMENT_TYPE_CASH, 0);
     }
 
     @Bean
     public JobDetailFactoryBean remittanceCashInstrumentJobDetail1() {
-        return createJobDetailFactory("cash", 1);
+        return createJobDetailFactory(INSTRUMENT_TYPE_CASH, 1);
     }
 
     @Bean
     public JobDetailFactoryBean remittanceDDInstrumentJobDetail0() {
-        return createJobDetailFactory("dd", 0);
+        return createJobDetailFactory(INSTRUMENT_TYPE_DD, 0);
     }
 
     @Bean
     public JobDetailFactoryBean remittanceDDInstrumentJobDetail1() {
-        return createJobDetailFactory("dd", 1);
+        return createJobDetailFactory(INSTRUMENT_TYPE_DD, 1);
     }
 
     @Bean
     public JobDetailFactoryBean remittanceChequeInstrumentJobDetail0() {
-        return createJobDetailFactory("cheque", 0);
+        return createJobDetailFactory(INSTRUMENT_TYPE_CHEQUE, 0);
     }
 
     @Bean
     public JobDetailFactoryBean remittanceChequeInstrumentJobDetail1() {
-        return createJobDetailFactory("cheque", 1);
+        return createJobDetailFactory(INSTRUMENT_TYPE_CHEQUE, 1);
     }
 
     @Bean
     public CronTriggerFactoryBean remittanceCashInstrumentCronTrigger0() {
-        return createCronTrigger(remittanceCashInstrumentJobDetail0(), 0);
+        return createCronTrigger(remittanceCashInstrumentJobDetail0(), INSTRUMENT_TYPE_CASH, 0);
     }
 
     @Bean
     public CronTriggerFactoryBean remittanceCashInstrumentCronTrigger1() {
-        return createCronTrigger(remittanceCashInstrumentJobDetail1(), 1);
+        return createCronTrigger(remittanceCashInstrumentJobDetail1(), INSTRUMENT_TYPE_CASH, 1);
     }
 
     @Bean
     public CronTriggerFactoryBean remittanceDDInstrumentCronTrigger0() {
-        return createCronTrigger(remittanceDDInstrumentJobDetail0(), 0);
+        return createCronTrigger(remittanceDDInstrumentJobDetail0(), INSTRUMENT_TYPE_DD, 0);
     }
 
     @Bean
     public CronTriggerFactoryBean remittanceDDInstrumentCronTrigger1() {
-        return createCronTrigger(remittanceDDInstrumentJobDetail1(), 1);
+        return createCronTrigger(remittanceDDInstrumentJobDetail1(), INSTRUMENT_TYPE_DD, 1);
     }
 
     @Bean
     public CronTriggerFactoryBean remittanceChequeInstrumentCronTrigger0() {
-        return createCronTrigger(remittanceChequeInstrumentJobDetail0(), 0);
+        return createCronTrigger(remittanceChequeInstrumentJobDetail0(), INSTRUMENT_TYPE_CHEQUE, 0);
     }
 
     @Bean
     public CronTriggerFactoryBean remittanceChequeInstrumentCronTrigger1() {
-        return createCronTrigger(remittanceChequeInstrumentJobDetail1(), 1);
+        return createCronTrigger(remittanceChequeInstrumentJobDetail1(), INSTRUMENT_TYPE_CHEQUE, 1);
+    }
+
+    @Bean("remittanceddInstrumentJob0")
+    public RemittanceInstrumentJob remittanceddInstrumentJob0() {
+        RemittanceInstrumentJob remittanceInstrumentJob = new RemittanceInstrumentJob();
+        remittanceInstrumentJob.setModulo(0);
+        remittanceInstrumentJob.setInstrumentType(INSTRUMENT_TYPE_DD);
+        return remittanceInstrumentJob;
+
+    }
+
+    @Bean("remittanceddInstrumentJob1")
+    public RemittanceInstrumentJob remittanceddInstrumentJob1() {
+        RemittanceInstrumentJob remittanceInstrumentJob = new RemittanceInstrumentJob();
+        remittanceInstrumentJob.setModulo(1);
+        remittanceInstrumentJob.setInstrumentType(INSTRUMENT_TYPE_DD);
+        return remittanceInstrumentJob;
+
+    }
+
+    @Bean("remittancechequeInstrumentJob0")
+    public RemittanceInstrumentJob remittancechequeInstrumentJob0() {
+        RemittanceInstrumentJob remittanceInstrumentJob = new RemittanceInstrumentJob();
+        remittanceInstrumentJob.setModulo(0);
+        remittanceInstrumentJob.setInstrumentType(INSTRUMENT_TYPE_CHEQUE);
+        return remittanceInstrumentJob;
+
+    }
+
+    @Bean("remittancechequeInstrumentJob1")
+    public RemittanceInstrumentJob remittancechequeInstrumentJob1() {
+        RemittanceInstrumentJob remittanceInstrumentJob = new RemittanceInstrumentJob();
+        remittanceInstrumentJob.setModulo(1);
+        remittanceInstrumentJob.setInstrumentType(INSTRUMENT_TYPE_CHEQUE);
+        return remittanceInstrumentJob;
+
+    }
+
+    @Bean("remittancecashInstrumentJob0")
+    public RemittanceInstrumentJob remittancecashInstrumentJob0() {
+        RemittanceInstrumentJob remittanceInstrumentJob = new RemittanceInstrumentJob();
+        remittanceInstrumentJob.setModulo(0);
+        remittanceInstrumentJob.setInstrumentType(INSTRUMENT_TYPE_CASH);
+        return remittanceInstrumentJob;
+
+    }
+
+    @Bean("remittancecashInstrumentJob1")
+    public RemittanceInstrumentJob remittancecashInstrumentJob1() {
+        RemittanceInstrumentJob remittanceInstrumentJob = new RemittanceInstrumentJob();
+        remittanceInstrumentJob.setModulo(1);
+        remittanceInstrumentJob.setInstrumentType(INSTRUMENT_TYPE_CASH);
+        return remittanceInstrumentJob;
+
     }
 
     private JobDetailFactoryBean createJobDetailFactory(String instrumentType, int modulo) {
         JobDetailFactoryBean remittanceInstrumentJobDetail = new JobDetailFactoryBean();
         remittanceInstrumentJobDetail.setGroup("COLLECTION_JOB_GROUP");
-        remittanceInstrumentJobDetail.setName(String.format("COLLECTION_REMIT_INSTRMNT_%d_JOB", modulo));
+        remittanceInstrumentJobDetail.setName(String.format("COLLECTION_REMIT_INSTRMNT_%s%d_JOB", instrumentType, modulo));
         remittanceInstrumentJobDetail.setDurability(true);
         remittanceInstrumentJobDetail.setJobClass(RemittanceInstrumentJob.class);
         remittanceInstrumentJobDetail.setRequestsRecovery(true);
         Map<String, String> jobDetailMap = new HashMap<>();
         jobDetailMap.put("jobBeanName", String.format("remittance%sInstrumentJob%d", instrumentType, modulo));
-        jobDetailMap.put("modulo", String.valueOf(modulo));
-        jobDetailMap.put("instrumentType", instrumentType);
         jobDetailMap.put("userName", "egovernments");
         jobDetailMap.put("cityDataRequired", "true");
         jobDetailMap.put("moduleName", "collection");
@@ -184,11 +240,11 @@ public class CollectionSchedulerConfiguration extends QuartzSchedulerConfigurati
         return remittanceInstrumentJobDetail;
     }
 
-    private CronTriggerFactoryBean createCronTrigger(JobDetailFactoryBean jobDetail, int modulo) {
+    private CronTriggerFactoryBean createCronTrigger(JobDetailFactoryBean jobDetail, String instrumentType, int modulo) {
         CronTriggerFactoryBean remittanceCron = new CronTriggerFactoryBean();
         remittanceCron.setJobDetail(jobDetail.getObject());
         remittanceCron.setGroup("COLLECTION_TRIGGER_GROUP");
-        remittanceCron.setName(String.format("COLLECTION_REMIT_INSTRMNT_%d_TRIGGER", modulo));
+        remittanceCron.setName(String.format("COLLECTION_REMIT_INSTRMNT_%s%d_TRIGGER", instrumentType, modulo));
         remittanceCron.setCronExpression("0 */10 * * * ?");
         remittanceCron.setMisfireInstruction(MISFIRE_INSTRUCTION_DO_NOTHING);
         return remittanceCron;

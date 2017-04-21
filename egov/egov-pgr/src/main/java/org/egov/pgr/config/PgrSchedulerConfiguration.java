@@ -71,6 +71,11 @@ public class PgrSchedulerConfiguration extends QuartzSchedulerConfiguration {
         return pgrScheduler;
     }
 
+    @Bean("complaintEscalationJob")
+    public ComplaintEscalationJob complaintEscalationJob() {
+        return new ComplaintEscalationJob();
+    }
+
     @Bean
     public JobDetailFactoryBean complaintEscalationJobDetail() {
         JobDetailFactoryBean escalationJobDetail = new JobDetailFactoryBean();
@@ -96,6 +101,11 @@ public class PgrSchedulerConfiguration extends QuartzSchedulerConfiguration {
         escalationCron.setName("PGR_ESCALATION_TRIGGER");
         escalationCron.setCronExpression("0 */52 * * * ?");
         return escalationCron;
+    }
+
+    @Bean("complaintIndexingJob")
+    public ComplaintIndexingJob complaintIndexingJob() {
+        return new ComplaintIndexingJob();
     }
 
     @Bean

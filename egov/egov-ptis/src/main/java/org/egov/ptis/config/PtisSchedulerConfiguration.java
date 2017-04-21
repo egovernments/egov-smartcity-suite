@@ -109,6 +109,11 @@ public class PtisSchedulerConfiguration extends QuartzSchedulerConfiguration {
         return recoveryNoticeJobDetail;
     }
 
+    @Bean("demandActivationJob")
+    public DemandActivationJob demandActivationJob() {
+        return new DemandActivationJob();
+    }
+
     @Bean
     public JobDetailFactoryBean demandActivationJobDetail() {
         JobDetailFactoryBean demandActivationJobDetail = new JobDetailFactoryBean();
@@ -137,29 +142,70 @@ public class PtisSchedulerConfiguration extends QuartzSchedulerConfiguration {
         return demandActivationCron;
     }
 
+    @Bean("bulkBillGenerationJob0")
+    public BulkBillGenerationJob bulkBillGenerationJob0() {
+        BulkBillGenerationJob bulkBillGenerationJob = new BulkBillGenerationJob();
+        bulkBillGenerationJob.setModulo(0);
+        bulkBillGenerationJob.setBillsCount(50);
+        return bulkBillGenerationJob;
+    }
+
+    @Bean("bulkBillGenerationJob1")
+    public BulkBillGenerationJob bulkBillGenerationJob1() {
+        BulkBillGenerationJob bulkBillGenerationJob = new BulkBillGenerationJob();
+        bulkBillGenerationJob.setModulo(1);
+        bulkBillGenerationJob.setBillsCount(50);
+        return bulkBillGenerationJob;
+    }
+
+    @Bean("bulkBillGenerationJob2")
+    public BulkBillGenerationJob bulkBillGenerationJob2() {
+        BulkBillGenerationJob bulkBillGenerationJob = new BulkBillGenerationJob();
+        bulkBillGenerationJob.setModulo(2);
+        bulkBillGenerationJob.setBillsCount(50);
+        return bulkBillGenerationJob;
+    }
+
+    @Bean("bulkBillGenerationJob3")
+    public BulkBillGenerationJob bulkBillGenerationJob3() {
+        BulkBillGenerationJob bulkBillGenerationJob = new BulkBillGenerationJob();
+        bulkBillGenerationJob.setModulo(3);
+        bulkBillGenerationJob.setBillsCount(50);
+        return bulkBillGenerationJob;
+    }
+
+    @Bean("bulkBillGenerationJob4")
+    public BulkBillGenerationJob bulkBillGenerationJob4() {
+        BulkBillGenerationJob bulkBillGenerationJob = new BulkBillGenerationJob();
+        bulkBillGenerationJob.setModulo(4);
+        bulkBillGenerationJob.setBillsCount(50);
+        return bulkBillGenerationJob;
+    }
+
+
     @Bean
     public JobDetailFactoryBean ptisBulkBillGenerationJobDetail0() {
-        return createJobDetailFactory(50, 0);
+        return createJobDetailFactory(0);
     }
 
     @Bean
     public JobDetailFactoryBean ptisBulkBillGenerationJobDetail1() {
-        return createJobDetailFactory(50, 1);
+        return createJobDetailFactory(1);
     }
 
     @Bean
     public JobDetailFactoryBean ptisBulkBillGenerationJobDetail2() {
-        return createJobDetailFactory(50, 2);
+        return createJobDetailFactory(2);
     }
 
     @Bean
     public JobDetailFactoryBean ptisBulkBillGenerationJobDetail3() {
-        return createJobDetailFactory(50, 3);
+        return createJobDetailFactory(3);
     }
 
     @Bean
     public JobDetailFactoryBean ptisBulkBillGenerationJobDetail4() {
-        return createJobDetailFactory(50, 4);
+        return createJobDetailFactory(4);
     }
 
     @Bean
@@ -187,7 +233,7 @@ public class PtisSchedulerConfiguration extends QuartzSchedulerConfiguration {
         return createCronTrigger(ptisBulkBillGenerationJobDetail4(), 4);
     }
 
-    private JobDetailFactoryBean createJobDetailFactory(int billsCount, int modulo) {
+    private JobDetailFactoryBean createJobDetailFactory(int modulo) {
         JobDetailFactoryBean ptisBulkBillGenerationJobDetail = new JobDetailFactoryBean();
         ptisBulkBillGenerationJobDetail.setGroup("PTIS_JOB_GROUP");
         ptisBulkBillGenerationJobDetail.setName("PTIS_BULK_BILL_GEN_" + modulo + "_JOB");
@@ -196,8 +242,6 @@ public class PtisSchedulerConfiguration extends QuartzSchedulerConfiguration {
         ptisBulkBillGenerationJobDetail.setRequestsRecovery(true);
         Map<String, String> jobDetailMap = new HashMap<>();
         jobDetailMap.put("jobBeanName", "bulkBillGenerationJob" + modulo);
-        jobDetailMap.put("modulo", String.valueOf(modulo));
-        jobDetailMap.put("billsCount", String.valueOf(billsCount));
         jobDetailMap.put("userName", "egovernments");
         jobDetailMap.put("cityDataRequired", "true");
         jobDetailMap.put("moduleName", "ptis");

@@ -70,6 +70,11 @@ public class EisSchedulerConfiguration extends QuartzSchedulerConfiguration {
         return eisScheduler;
     }
 
+    @Bean("userRoleMappingJob")
+    public UserRoleMappingJob userRoleMappingJob() {
+        return new UserRoleMappingJob();
+    }
+
     @Bean
     public JobDetailFactoryBean userRoleMappingJobDetail() {
         JobDetailFactoryBean userRoleMappingJobDetail = new JobDetailFactoryBean();
