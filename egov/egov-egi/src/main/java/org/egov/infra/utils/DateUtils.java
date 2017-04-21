@@ -134,22 +134,23 @@ public final class DateUtils extends org.apache.commons.lang3.time.DateUtils {
     }
 
     public static int noOfMonthsBetween(Date startDate, Date endDate) {
-        DateTime sDate = new DateTime(startDate);
-        DateTime eDate = new DateTime(endDate);
-        return Months.monthsBetween(sDate.withDayOfMonth(sDate.getDayOfMonth()), eDate.withDayOfMonth(eDate.getDayOfMonth()))
-                .getMonths();
+        return monthsBetween(new LocalDate(startDate), new LocalDate(endDate));
+    }
+
+    public static int monthsBetween(LocalDate startDate, LocalDate endDate) {
+        return Months.monthsBetween(startDate, endDate).getMonths();
     }
 
     public static int daysBetween(Date startDate, Date endDate) {
-        return daysBetween(new DateTime(startDate), new DateTime(endDate));
+        return daysBetween(new LocalDate(startDate), new LocalDate(endDate));
     }
 
-    public static int daysBetween(DateTime startDate, DateTime endDate) {
+    public static int daysBetween(LocalDate startDate, LocalDate endDate) {
         return Days.daysBetween(startDate, endDate).getDays();
     }
 
     public static int noOfYearsBetween(Date startDate, Date endDate) {
-        return Years.yearsBetween(new DateTime(startDate), new DateTime(endDate)).getYears();
+        return Years.yearsBetween(new LocalDate(startDate), new LocalDate(endDate)).getYears();
     }
 
     public static Date add(Date inputDate, int addType, int addAmount) {
