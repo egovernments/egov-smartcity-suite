@@ -109,6 +109,11 @@ public class CollectionSchedulerConfiguration extends QuartzSchedulerConfigurati
         axisReconciliationCron.setMisfireInstruction(MISFIRE_INSTRUCTION_DO_NOTHING);
         return axisReconciliationCron;
     }
+    
+    @Bean("axisReconciliationJob")
+    public AxisReconciliationJob axisReconciliationJob() {
+        return new AxisReconciliationJob();
+    }
 
     @Bean
     public JobDetailFactoryBean remittanceCashInstrumentJobDetail0() {
@@ -245,7 +250,7 @@ public class CollectionSchedulerConfiguration extends QuartzSchedulerConfigurati
         remittanceCron.setJobDetail(jobDetail.getObject());
         remittanceCron.setGroup("COLLECTION_TRIGGER_GROUP");
         remittanceCron.setName(String.format("COLLECTION_REMIT_INSTRMNT_%s%d_TRIGGER", instrumentType, modulo));
-        remittanceCron.setCronExpression("0 */10 * * * ?");
+        remittanceCron.setCronExpression("0 */5 * * * ?");
         remittanceCron.setMisfireInstruction(MISFIRE_INSTRUCTION_DO_NOTHING);
         return remittanceCron;
     }
