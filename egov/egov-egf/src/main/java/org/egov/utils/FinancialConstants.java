@@ -252,6 +252,8 @@ public interface FinancialConstants {
     public static final String APPCONFIG_EXCLUDE_STATUS = "exclude_status_forbudget_actual";
     public static final String APPCONFIG_AUTO_BANKACCOUNT_GLCODE = "auto_bankaccount_glcode";
     public static final String DELIMITER_FOR_VOUCHER_STATUS_TO_CHECK_BANK_BALANCE = ",";
+    public static final String APPCONFIG_BILLACCOUNTING_ACCROSS_YEARS = "allow_billsaccounting_across_years";
+    public static final String APPCONFIG_BILLACCOUNTING_ACCROSS_YEARS_ENDDATE = "billsaccounting_accrossyears_enddate";
 
     public static final String BANKACCOUNT_WALKIN_PAYMENT_DESCRIPTION = "Walkin payment account";
 
@@ -365,4 +367,5 @@ public interface FinancialConstants {
     public static final String MANDATORY = "mandatory";
     public static final String WARNING = "warning";
     public static final String NONE = "none";
+    public static final String MODE_OF_PAYMENT = "Mode of Payment";
 }
