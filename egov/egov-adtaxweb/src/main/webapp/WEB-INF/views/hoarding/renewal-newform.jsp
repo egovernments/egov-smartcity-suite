@@ -400,7 +400,9 @@
 			</div>
 			</div>
 		</div>
+		<c:if test="${isEmployee}">
 			<jsp:include page="../workflow/commonWorkflowMatrix.jsp"/>
+		</c:if>
 			<div class="buttonbottom" align="center">
 				<jsp:include page="../workflow/commonWorkflowMatrix-button.jsp" />
 			</div>
