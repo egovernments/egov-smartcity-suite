@@ -678,6 +678,8 @@ public abstract class AbstractLicenseService<T extends License> {
                 licenseUtils.applicationStatusChange(license, Constants.APPLICATION_STATUS_GENECERT_CODE);
                 license.setStatus(licenseStatusService.getLicenseStatusByName(Constants.LICENSE_STATUS_ACTIVE));
                 license.setActive(true);
+                if (license.getState().getExtraInfo() != null)
+                    license.setLicenseAppType(licenseAppTypeService.getLicenseAppTypeByName(license.getState().getExtraInfo()));
                 license.transition().end().withSenderName(currentUser.getUsername() + DELIMITER_COLON + currentUser.getName())
                         .withComments(workflowBean.getApproverComments())
                         .withDateInfo(new DateTime().toDate());
@@ -694,7 +696,6 @@ public abstract class AbstractLicenseService<T extends License> {
             }
         else if (license.getState() == null || "END".equals(license.getState().getValue())
                 || "Closed".equals(license.getState().getValue())) {
-            license.setLicenseAppType(getClosureLicenseApplicationType());
             final WorkFlowMatrix newwfmatrix = this.licenseWorkflowService.getWfMatrix(license.getStateType(), null,
                     null, workflowBean.getAdditionaRule(), "NEW", null);
             final Assignment wfInitiator = this.assignmentService
@@ -708,11 +709,12 @@ public abstract class AbstractLicenseService<T extends License> {
                         .withSenderName(currentUser.getUsername() + DELIMITER_COLON + currentUser.getName())
                         .withComments(workflowBean.getApproverComments()).withNatureOfTask(natureOfWork)
                         .withStateValue(newwfmatrix.getNextState()).withDateInfo(new DateTime().toDate()).withOwner(owner)
-                        .withNextAction(newwfmatrix.getNextAction()).withInitiator(wfInitiator.getPosition());
+                        .withNextAction(newwfmatrix.getNextAction()).withInitiator(wfInitiator.getPosition()).withExtraInfo(license.getLicenseAppType().getName());
             } else
                 closureWfWithOperator(license);
             licenseUtils.applicationStatusChange(license, APPLICATION_STATUS_CREATED_CODE);
             license.setStatus(licenseStatusService.getLicenseStatusByName(LICENSE_STATUS_ACKNOWLEDGED));
+            license.setLicenseAppType(getClosureLicenseApplicationType());
             tradeLicenseSmsAndEmailService.sendSMsAndEmailOnClosure(license, workflowBean.getWorkFlowAction());
 
         } else if ("NEW".equals(license.getState().getValue())) {
