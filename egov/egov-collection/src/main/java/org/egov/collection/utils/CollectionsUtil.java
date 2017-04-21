@@ -770,7 +770,7 @@ public class CollectionsUtil {
         RequestInfo requestInfo = new RequestInfo();
         requestInfo.setApiId("apiId");
         requestInfo.setVer("ver");
-        requestInfo.setTs(new Date().toString());
+        requestInfo.setTs(new Date());
         requestInfo.setUserInfo(userInfo);
         billReceipt.setTenantId(ApplicationThreadLocals.getCityName());
         BillReceiptInfoReq billReceiptInfoReq = new BillReceiptInfoReq();
