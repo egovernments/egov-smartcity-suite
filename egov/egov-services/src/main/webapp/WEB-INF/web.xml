@@ -189,7 +189,7 @@
         <url-pattern>/egov-common-masters/*</url-pattern>
         <url-pattern>/filestore/*</url-pattern>
         <url-pattern>/localization/*</url-pattern>
-        <url-pattern>/v1/location/*</url-pattern>
+        <url-pattern>/egov-location/*</url-pattern>
         <url-pattern>/egov-notification-mail/*</url-pattern>
         <url-pattern>/egov-notification-sms/*</url-pattern>
         <url-pattern>/user/*</url-pattern>
@@ -239,7 +239,7 @@
         <url-pattern>/egov-common-masters/*</url-pattern>
         <url-pattern>/filestore/*</url-pattern>
         <url-pattern>/localization/*</url-pattern>
-        <url-pattern>/v1/location/*</url-pattern>
+        <url-pattern>/egov-location/*</url-pattern>
         <url-pattern>/egov-notification-mail/*</url-pattern>
         <url-pattern>/egov-notification-sms/*</url-pattern>
         <url-pattern>/user/*</url-pattern>
