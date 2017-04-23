@@ -55,8 +55,6 @@ import org.springframework.scheduling.quartz.SpringBeanJobFactory;
 import javax.sql.DataSource;
 import java.util.Properties;
 
-import static org.apache.commons.lang3.StringUtils.isBlank;
-
 public class QuartzSchedulerConfiguration {
 
     @Autowired
@@ -88,7 +86,7 @@ public class QuartzSchedulerConfiguration {
     }
 
     protected SchedulerFactoryBean createSchedular(DataSource dataSource) {
-        return this.createSchedular(dataSource, null);
+        return this.createSchedular(dataSource, env.getProperty("scheduler.default.table.prefix"));
     }
 
     protected SchedulerFactoryBean createSchedular(DataSource dataSource, String schemaPrefix) {
@@ -105,9 +103,9 @@ public class QuartzSchedulerConfiguration {
         return schedulerFactory;
     }
 
-    private Properties quartzProperties(String schemaPrefix) {
+    private Properties quartzProperties(String tablePrefix) {
         Properties quartzProps = new Properties();
-        String tablePrefix = isBlank(schemaPrefix) ? "QRTZ_" : schemaPrefix + ".QRTZ_";
+
         //Scheduler config
         quartzProps.put(StdSchedulerFactory.PROP_SCHED_INSTANCE_ID, "AUTO");
         quartzProps.put(StdSchedulerFactory.PROP_SCHED_INSTANCE_NAME, "ERP_APP_SCHEDULER");

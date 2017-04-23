@@ -83,7 +83,7 @@ public class PtisSchedulerConfiguration extends QuartzSchedulerConfiguration {
 
     @Bean(name = "recoveryNoticeScheduler", destroyMethod = "destroy")
     public SchedulerFactoryBean recoveryNoticeScheduler(DataSource dataSource) {
-        SchedulerFactoryBean recoveryNoticeScheduler = createSchedular(dataSource, "public");
+        SchedulerFactoryBean recoveryNoticeScheduler = createSchedular(dataSource, "public.qrtz_");
         recoveryNoticeScheduler.setSchedulerName("recovery-notice-scheduler");
         recoveryNoticeScheduler.setAutoStartup(true);
         recoveryNoticeScheduler.setOverwriteExistingJobs(true);
