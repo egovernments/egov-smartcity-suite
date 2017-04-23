@@ -64,7 +64,7 @@ import static org.quartz.CronTrigger.MISFIRE_INSTRUCTION_DO_NOTHING;
 @Conditional(SchedulerConfigCondition.class)
 public class PtisSchedulerConfiguration extends QuartzSchedulerConfiguration {
 
-    @Bean
+    @Bean(destroyMethod = "destroy")
     public SchedulerFactoryBean ptisScheduler(DataSource dataSource) {
         SchedulerFactoryBean ptisScheduler = createSchedular(dataSource);
         ptisScheduler.setSchedulerName("ptis-scheduler");
@@ -81,7 +81,7 @@ public class PtisSchedulerConfiguration extends QuartzSchedulerConfiguration {
         return ptisScheduler;
     }
 
-    @Bean(name = "recoveryNoticeScheduler")
+    @Bean(name = "recoveryNoticeScheduler", destroyMethod = "destroy")
     public SchedulerFactoryBean recoveryNoticeScheduler(DataSource dataSource) {
         SchedulerFactoryBean recoveryNoticeScheduler = createSchedular(dataSource, "public");
         recoveryNoticeScheduler.setSchedulerName("recovery-notice-scheduler");

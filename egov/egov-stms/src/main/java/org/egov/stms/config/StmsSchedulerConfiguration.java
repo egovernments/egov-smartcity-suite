@@ -60,7 +60,7 @@ import static org.quartz.CronTrigger.MISFIRE_INSTRUCTION_DO_NOTHING;
 @Conditional(SchedulerConfigCondition.class)
 public class StmsSchedulerConfiguration extends QuartzSchedulerConfiguration {
 
-    @Bean
+    @Bean(destroyMethod = "destroy")
     public SchedulerFactoryBean stmsScheduler(DataSource dataSource) {
         SchedulerFactoryBean stmsScheduler = createSchedular(dataSource);
         stmsScheduler.setSchedulerName("stms-scheduler");

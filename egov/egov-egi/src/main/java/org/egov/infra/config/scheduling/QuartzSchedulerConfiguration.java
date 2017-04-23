@@ -116,7 +116,7 @@ public class QuartzSchedulerConfiguration {
         quartzProps.put("org.quartz.scheduler.threadsInheritContextClassLoaderOfInitializer", "true");
 
         //Cluster job store config
-        quartzProps.put("org.quartz.jobStore.isClustered", "true");
+        quartzProps.put("org.quartz.jobStore.isClustered", env.getProperty("scheduler.clustered"));
         quartzProps.put("org.quartz.jobStore.clusterCheckinInterval", "60000");
         quartzProps.put("org.quartz.jobStore.acquireTriggersWithinLock", "false");
         quartzProps.put("org.quartz.jobStore.txIsolationLevelReadCommitted", "true");

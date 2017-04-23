@@ -60,7 +60,7 @@ import static org.quartz.CronTrigger.MISFIRE_INSTRUCTION_DO_NOTHING;
 @Conditional(SchedulerConfigCondition.class)
 public class EisSchedulerConfiguration extends QuartzSchedulerConfiguration {
 
-    @Bean
+    @Bean(destroyMethod = "destroy")
     public SchedulerFactoryBean eisScheduler(DataSource dataSource) {
         SchedulerFactoryBean eisScheduler = createSchedular(dataSource);
         eisScheduler.setSchedulerName("eis-scheduler");

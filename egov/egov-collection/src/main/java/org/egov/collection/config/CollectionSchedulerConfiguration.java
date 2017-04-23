@@ -65,7 +65,7 @@ public class CollectionSchedulerConfiguration extends QuartzSchedulerConfigurati
     private static final String INSTRUMENT_TYPE_CASH = "cash";
     private static final String INSTRUMENT_TYPE_DD = "dd";
 
-    @Bean
+    @Bean(destroyMethod = "destroy")
     public SchedulerFactoryBean collectionScheduler(DataSource dataSource) {
         SchedulerFactoryBean collectionScheduler = createSchedular(dataSource);
         collectionScheduler.setSchedulerName("collection-scheduler");

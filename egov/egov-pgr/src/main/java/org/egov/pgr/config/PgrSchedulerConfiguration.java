@@ -59,7 +59,7 @@ import java.util.Map;
 @Conditional(SchedulerConfigCondition.class)
 public class PgrSchedulerConfiguration extends QuartzSchedulerConfiguration {
 
-    @Bean
+    @Bean(destroyMethod = "destroy")
     public SchedulerFactoryBean pgrScheduler(DataSource dataSource) {
         SchedulerFactoryBean pgrScheduler = createSchedular(dataSource);
         pgrScheduler.setSchedulerName("pgr-scheduler");
