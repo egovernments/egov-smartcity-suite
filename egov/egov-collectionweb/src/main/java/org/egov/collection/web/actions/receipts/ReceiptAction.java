@@ -91,7 +91,6 @@ import org.egov.commons.dao.BankHibernateDAO;
 import org.egov.commons.dao.BankaccountHibernateDAO;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
-import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.commons.dao.FunctionHibernateDAO;
 import org.egov.commons.dao.FunctionaryHibernateDAO;
 import org.egov.commons.dao.FundHibernateDAO;
@@ -117,9 +116,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @ParentPackage("egov")
 @Results({ @Result(name = ReceiptAction.NEW, location = "receipt-new.jsp"),
-    @Result(name = ReceiptAction.INDEX, location = "receipt-index.jsp"),
-    @Result(name = ReceiptAction.REDIRECT, location = "receipt-redirect.jsp"),
-    @Result(name = CollectionConstants.REPORT, location = "receipt-report.jsp") })
+        @Result(name = ReceiptAction.INDEX, location = "receipt-index.jsp"),
+        @Result(name = ReceiptAction.REDIRECT, location = "receipt-redirect.jsp"),
+        @Result(name = CollectionConstants.REPORT, location = "receipt-report.jsp") })
 public class ReceiptAction extends BaseFormAction {
     private static final String ACCOUNT_NUMBER_LIST = "accountNumberList";
     private static final String BANK_BRANCH_LIST = "bankBranchList";
@@ -305,11 +304,6 @@ public class ReceiptAction extends BaseFormAction {
     private List<CChartOfAccounts> bankCOAList;
     private Long functionId;
 
-    @Autowired
-    private FinancialYearDAO financialYearDAO;
-
-    private Date financialYearDate;
-
     private String instrumentType;
 
     private PaymentRequest paymentRequest;
@@ -372,7 +366,6 @@ public class ReceiptAction extends BaseFormAction {
             instrumentCount = 0;
         else
             instrumentCount = instrumentProxyList.size();
-        financialYearDate = financialYearDAO.getFinancialYearByDate(new Date()).getStartingDate();
     }
 
     private String decodeBillXML() {
@@ -400,27 +393,27 @@ public class ReceiptAction extends BaseFormAction {
             addDropdownData(BANK_BRANCH_LIST, ajaxBankRemittanceAction.getBankBranchArrayList());
             addDropdownData(ACCOUNT_NUMBER_LIST, Collections.emptyList());
         } else // to load branch list and account list while returning after an
-            // error
-            if (getServiceName() != null && receiptMisc.getFund() != null) {
-                final Fund fund = fundDAO.fundById(receiptMisc.getFund().getId(), false);
-                ajaxBankRemittanceAction.setFundName(fund.getName());
-                ajaxBankRemittanceAction.bankBranchList();
-                addDropdownData(BANK_BRANCH_LIST, ajaxBankRemittanceAction.getBankBranchArrayList());
+               // error
+        if (getServiceName() != null && receiptMisc.getFund() != null) {
+            final Fund fund = fundDAO.fundById(receiptMisc.getFund().getId(), false);
+            ajaxBankRemittanceAction.setFundName(fund.getName());
+            ajaxBankRemittanceAction.bankBranchList();
+            addDropdownData(BANK_BRANCH_LIST, ajaxBankRemittanceAction.getBankBranchArrayList());
 
-                // account list should be populated only if bank branch had been
-                // chosen
-                if (bankBranchId != null && bankBranchId != 0) {
-                    final Bankbranch branch = bankBranchDAO.findById(bankBranchId, false);
+            // account list should be populated only if bank branch had been
+            // chosen
+            if (bankBranchId != null && bankBranchId != 0) {
+                final Bankbranch branch = bankBranchDAO.findById(bankBranchId, false);
 
-                    ajaxBankRemittanceAction.setBranchId(branch.getId());
-                    ajaxBankRemittanceAction.accountList();
-                    addDropdownData(ACCOUNT_NUMBER_LIST, ajaxBankRemittanceAction.getBankAccountArrayList());
-                } else
-                    addDropdownData(ACCOUNT_NUMBER_LIST, Collections.emptyList());
-            } else {
-                addDropdownData(BANK_BRANCH_LIST, Collections.emptyList());
+                ajaxBankRemittanceAction.setBranchId(branch.getId());
+                ajaxBankRemittanceAction.accountList();
+                addDropdownData(ACCOUNT_NUMBER_LIST, ajaxBankRemittanceAction.getBankAccountArrayList());
+            } else
                 addDropdownData(ACCOUNT_NUMBER_LIST, Collections.emptyList());
-            }
+        } else {
+            addDropdownData(BANK_BRANCH_LIST, Collections.emptyList());
+            addDropdownData(ACCOUNT_NUMBER_LIST, Collections.emptyList());
+        }
     }
 
     /**
@@ -554,7 +547,7 @@ public class ReceiptAction extends BaseFormAction {
         if (validateRebateData(billRebateDetailslist, subLedgerlist)) {
             for (final ReceiptDetailInfo voucherDetails : billRebateDetailslist)
                 if (voucherDetails.getGlcodeDetail() != null
-                && org.apache.commons.lang.StringUtils.isNotBlank(voucherDetails.getGlcodeDetail())) {
+                        && org.apache.commons.lang.StringUtils.isNotBlank(voucherDetails.getGlcodeDetail())) {
                     final CChartOfAccounts account = chartOfAccountsDAO.getCChartOfAccountsByGlCode(voucherDetails
                             .getGlcodeDetail());
                     CFunction function = null;
@@ -589,7 +582,7 @@ public class ReceiptAction extends BaseFormAction {
             final ReceiptDetail receiptDetail) {
         for (final ReceiptDetailInfo subvoucherDetails : subLedgerlist)
             if (subvoucherDetails.getGlcode() != null && subvoucherDetails.getGlcode().getId() != 0
-            && subvoucherDetails.getGlcode().getId().equals(receiptDetail.getAccounthead().getId())) {
+                    && subvoucherDetails.getGlcode().getId().equals(receiptDetail.getAccounthead().getId())) {
 
                 final Accountdetailtype accdetailtype = (Accountdetailtype) getPersistenceService().findByNamedQuery(
                         CollectionConstants.QUERY_ACCOUNTDETAILTYPE_BY_ID, subvoucherDetails.getDetailType().getId());
@@ -773,7 +766,7 @@ public class ReceiptAction extends BaseFormAction {
                             if (creditChangeReceiptDetail.getReceiptHeader().getReferencenumber()
                                     .equals(receiptDetail.getReceiptHeader().getReferencenumber())
                                     && receiptDetail.getOrdernumber()
-                                    .equals(creditChangeReceiptDetail.getOrdernumber())) {
+                                            .equals(creditChangeReceiptDetail.getOrdernumber())) {
 
                                 receiptDetail.setCramount(creditChangeReceiptDetail.getCramount());
                                 receiptDetail.setDramount(creditChangeReceiptDetail.getDramount());
@@ -1074,8 +1067,8 @@ public class ReceiptAction extends BaseFormAction {
         for (final ReceiptDetail oldDetail : oldReceiptHeader.getReceiptDetails())
             // debit account heads for revenue accounts should not be considered
             if (oldDetail.getOrdernumber() != null
-                    && !FinancialsUtil
-                            .isRevenueAccountHead(oldDetail.getAccounthead(), bankCOAList, persistenceService)) {
+            && !FinancialsUtil
+            .isRevenueAccountHead(oldDetail.getAccounthead(), bankCOAList, persistenceService)) {
                 final ReceiptDetail receiptDetail = new ReceiptDetail(oldDetail.getAccounthead(),
                         oldDetail.getFunction(), oldDetail.getCramount(), oldDetail.getDramount(),
                         oldDetail.getCramount(), oldDetail.getOrdernumber(), oldDetail.getDescription(),
@@ -1093,8 +1086,8 @@ public class ReceiptAction extends BaseFormAction {
 
                 if (oldDetail.getIsActualDemand())
                     totalAmntToBeCollected = totalAmntToBeCollected.add(oldDetail.getCramountToBePaid())
-                    .subtract(oldDetail.getDramount())
-                    .setScale(CollectionConstants.AMOUNT_PRECISION_DEFAULT, BigDecimal.ROUND_UP);
+                            .subtract(oldDetail.getDramount())
+                            .setScale(CollectionConstants.AMOUNT_PRECISION_DEFAULT, BigDecimal.ROUND_UP);
                 setTotalAmntToBeCollected(totalAmntToBeCollected);
                 receiptHeader.addReceiptDetail(receiptDetail);
             }
@@ -1179,7 +1172,6 @@ public class ReceiptAction extends BaseFormAction {
      */
     @Action(value = "/receipts/receipt-saveOnCancel")
     public String saveOnCancel() {
-        String instType = "";
         boolean isInstrumentDeposited = false;
 
         final ReceiptHeader receiptHeaderToBeCancelled = receiptHeaderService.findById(oldReceiptId, false);
@@ -1224,12 +1216,10 @@ public class ReceiptAction extends BaseFormAction {
             receiptHeaderToBeCancelled.setIsReconciled(false);
             receiptHeaderToBeCancelled.setReasonForCancellation(reasonForCancellation);
 
-            for (final InstrumentHeader instrumentHeader : receiptHeaderToBeCancelled.getReceiptInstrument()) {
+            for (final InstrumentHeader instrumentHeader : receiptHeaderToBeCancelled.getReceiptInstrument())
                 instrumentHeader.setStatusId(statusDAO.getStatusByModuleAndCode(
                         CollectionConstants.MODULE_NAME_INSTRUMENTHEADER,
                         CollectionConstants.INSTRUMENTHEADER_STATUS_CANCELLED));
-
-            }
             for (final ReceiptVoucher receiptVoucher : receiptHeaderToBeCancelled.getReceiptVoucher())
                 receiptHeaderService.createReversalVoucher(receiptVoucher);
 
@@ -1699,8 +1689,8 @@ public class ReceiptAction extends BaseFormAction {
                     }
                     final StringBuilder subledgerDetailRow = new StringBuilder();
                     subledgerDetailRow.append(rDetails.getGlcode().getId().toString())
-                    .append(rDetails.getDetailType().getId().toString())
-                    .append(rDetails.getDetailKeyId().toString());
+                            .append(rDetails.getDetailType().getId().toString())
+                            .append(rDetails.getDetailKeyId().toString());
                     if (null == subLedgerMap.get(subledgerDetailRow.toString()))
                         subLedgerMap.put(subledgerDetailRow.toString(), subledgerDetailRow.toString());
                     else {
@@ -1931,14 +1921,6 @@ public class ReceiptAction extends BaseFormAction {
 
     public void setServiceId(final Long serviceId) {
         this.serviceId = serviceId;
-    }
-
-    public Date getFinancialYearDate() {
-        return financialYearDate;
-    }
-
-    public void setFinancialYearDate(final Date financialYearDate) {
-        this.financialYearDate = financialYearDate;
     }
 
     public String getInstrumentType() {

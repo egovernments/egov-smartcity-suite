@@ -91,18 +91,7 @@ function validateMiscReceipt()
     if(!validateMiscDetails()){
     	document.getElementById("receipt_error_area").style.display="block";
         return false;
-    }else{
-    	var receiptDate = document.getElementById("voucherDate").value;
-        var financialYearDate = document.getElementById("financialYearDate").value;
-    	if(process(financialYearDate) > process(receiptDate)) {
-			 document.getElementById("receipt_error_area").style.display="block";
-    		document.getElementById("receipt_error_area").innerHTML+=
-				'<s:text name="challan.error.receiptdate.lessthan.financialyear" />'+ '<br>';   	
-			       window.scroll(0,0);
-				return false;
-   		}
     }
-    
 	return true;
 }
 
@@ -779,8 +768,6 @@ var totaldbamt=0,totalcramt=0;
                 url='receipts/ajaxBankRemittance-bankBranchList.action' selectedValue="%{bankbranch.id}"/> 
           <egov:ajaxdropdown id="schemeIdDropdown" fields="['Text','Value']" dropdownId='schemeId' url='receipts/ajaxReceiptCreate-ajaxLoadSchemes.action' />
          <s:hidden label="receiptMisc.fund.id" id="receiptMisc.fund.id"  name="receiptMisc.fund.id"/>
-         <s:date name="financialYearDate" var="financialYearDateFormat" format="dd/MM/yyyy"/>
-         <s:hidden id="financialYearDate"  name="financialYearDate" value="%{financialYearDateFormat}"/>
           </td>
           </s:if>
            <s:else>
