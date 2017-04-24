@@ -87,7 +87,8 @@ public class AdvertisementPenaltyCalculatorImpl implements AdvertisementPenaltyC
                 for (final EgDemandDetails demandDtl : advPermitDetail.getAdvertisement().getDemandId()
                         .getEgDemandDetails()) {
                     additinalTax = getAdditionalFeeAmountByPassingDemandDetail(demandDtl, additionalTaxRates);
-                    penaltyAmt = penaltyAmt.add(getPenaltyAmount(advPermitDetail, demandDtl, additinalTax));
+                    penaltyAmt = penaltyAmt.add(getPenaltyAmount(advPermitDetail, demandDtl, additinalTax)).setScale(0,
+                            BigDecimal.ROUND_HALF_UP);
                 }
         }
         return penaltyAmt.setScale(0, BigDecimal.ROUND_HALF_UP);
