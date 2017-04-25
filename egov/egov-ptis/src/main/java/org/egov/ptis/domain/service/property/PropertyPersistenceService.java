@@ -106,10 +106,10 @@ public class PropertyPersistenceService extends PersistenceService<BasicProperty
                                     .getGender());
                 if (user == null) {
                     final Citizen newOwner = new Citizen();
-                    createNewOwner(ownerInfo, newOwner);
+                    user = createNewOwner(ownerInfo, newOwner);
                     persistUponPaymentResponse(basicProperty);
                     ownerInfo.setBasicProperty(basicProperty);
-                    ownerInfo.setOwner(newOwner);
+                    ownerInfo.setOwner(user);
                     ownerInfo.setOrderNo(orderNo);
                     ownerInfo.getOwner().addAddress(ownerAddress);
                 } else {
@@ -144,10 +144,10 @@ public class PropertyPersistenceService extends PersistenceService<BasicProperty
                                     .getGender());
                 if (user == null) {
                     final Citizen newOwner = new Citizen();
-                    createNewOwner(ownerInfo, newOwner);
+                    user = createNewOwner(ownerInfo, newOwner);
                     persistUponPaymentResponse(basicProperty);
                     owner.setBasicProperty(basicProperty);
-                    owner.setOwner(newOwner);
+                    owner.setOwner(user);
                     owner.setOrderNo(orderNo);
                     owner.setOwnerType(ownerInfo.getOwnerType());
                     owner.setSource(ownerInfo.getSource());
@@ -170,7 +170,7 @@ public class PropertyPersistenceService extends PersistenceService<BasicProperty
         }
     }
 
-    private void createNewOwner(final PropertyOwnerInfo ownerInfo, final Citizen newOwner) {
+    private User createNewOwner(final PropertyOwnerInfo ownerInfo, final Citizen newOwner) {
         newOwner.setAadhaarNumber(ownerInfo.getOwner().getAadhaarNumber());
         newOwner.setMobileNumber(ownerInfo.getOwner().getMobileNumber());
         newOwner.setEmailId(ownerInfo.getOwner().getEmailId());
@@ -179,9 +179,9 @@ public class PropertyPersistenceService extends PersistenceService<BasicProperty
         newOwner.setGuardianRelation(ownerInfo.getOwner().getGuardianRelation());
         newOwner.setName(ownerInfo.getOwner().getName());
         newOwner.setSalutation(ownerInfo.getOwner().getSalutation());
-        newOwner.setPassword("NOT SET");
+        newOwner.setPassword("NOTSET");
         newOwner.setUsername(propertyTaxUtil.generateUserName(ownerInfo.getOwner().getName()));
-        userService.createUser(newOwner);
+        return userService.createUser(newOwner);
     }
 
     public BasicProperty persistUponPaymentResponse(final BasicProperty basicProperty) {
@@ -262,10 +262,10 @@ public class PropertyPersistenceService extends PersistenceService<BasicProperty
                                     .getGender());
                 if (user == null) {
                     orderNo++;
-                    final Citizen newOwner = new Citizen();
-                    createNewOwner(ownerInfo, newOwner);
+                    Citizen newOwner = new Citizen();
+                    user = createNewOwner(ownerInfo, newOwner);
                     ownerInfo.setBasicProperty(basicProp);
-                    ownerInfo.setOwner(newOwner);
+                    ownerInfo.setOwner(user);
                     ownerInfo.setOrderNo(orderNo);
                     LOGGER.debug("createOwners: OwnerAddress: " + ownerAddress);
                     ownerInfo.getOwner().addAddress(ownerAddress);
