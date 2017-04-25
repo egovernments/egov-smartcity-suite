@@ -74,8 +74,10 @@ import org.egov.tl.entity.LicenseDocument;
 import org.egov.tl.entity.LicenseDocumentType;
 import org.egov.tl.entity.NatureOfBusiness;
 import org.egov.tl.entity.TradeLicense;
+import org.egov.tl.entity.LicenseSubCategoryDetails;
 import org.egov.tl.entity.WorkflowBean;
 import org.egov.tl.entity.enums.ApplicationType;
+import org.egov.tl.entity.enums.RateTypeEnum;
 import org.egov.tl.repository.LicenseDocumentTypeRepository;
 import org.egov.tl.repository.LicenseRepository;
 import org.egov.tl.service.es.LicenseApplicationIndexService;
@@ -179,6 +181,11 @@ public abstract class AbstractLicenseService<T extends License> {
 
     @Autowired
     private TradeLicenseSmsAndEmailService tradeLicenseSmsAndEmailService;
+
+    @Autowired
+    private SubCategoryDetailsService subCategoryDetailsService;
+    @Autowired
+    private FeeTypeService feeTypeService;
 
     protected abstract LicenseAppType getLicenseApplicationTypeForRenew();
 
@@ -285,21 +292,35 @@ public abstract class AbstractLicenseService<T extends License> {
         for (final FeeMatrixDetail fm : feeMatrixDetails) {
             final EgDemandReasonMaster reasonMaster = this.demandGenericDao
                     .getDemandReasonMasterByCode(fm.getFeeMatrix().getFeeType().getName(), moduleName);
-            final EgDemandReason reason = this.demandGenericDao.getDmdReasonByDmdReasonMsterInstallAndMod(reasonMaster,
-                    installment,
-                    moduleName);
+            final EgDemandReason reason = this.demandGenericDao.getDmdReasonByDmdReasonMsterInstallAndMod(reasonMaster, installment, moduleName);
             if (fm.getFeeMatrix().getFeeType().getName().contains("Late"))
                 continue;
 
             if (reason != null) {
-                ld.getEgDemandDetails().add(EgDemandDetails.fromReasonAndAmounts(fm.getAmount(), reason, ZERO));
-                totalAmount = totalAmount.add(fm.getAmount());
+                BigDecimal tradeAmt = calculateAmountByRateType(license, fm);
+                ld.getEgDemandDetails().add(EgDemandDetails.fromReasonAndAmounts(tradeAmt, reason, ZERO));
+                totalAmount = totalAmount.add(tradeAmt);
             }
         }
 
         ld.setBaseDemand(totalAmount);
         license.setLicenseDemand(ld);
         return totalAmount;
+    }
+
+    private BigDecimal calculateAmountByRateType(License license, FeeMatrixDetail feeMatrixDetail) {
+        Long feeTypeId = feeTypeService.findByName(LICENSE_FEE_TYPE).getId();
+        LicenseSubCategoryDetails licenseSubCategoryDetails = subCategoryDetailsService.getSubcategoryDetailBySubcategoryAndFeeType(license.getTradeName().getId(), feeTypeId);
+        BigDecimal amt = BigDecimal.ZERO;
+        if (licenseSubCategoryDetails != null) {
+            if (RateTypeEnum.Flat_by_Range.equals(licenseSubCategoryDetails.getRateType()))
+                amt = feeMatrixDetail.getAmount();
+            else if (RateTypeEnum.Percentage.equals(licenseSubCategoryDetails.getRateType()))
+                amt = license.getTradeArea_weight().multiply(feeMatrixDetail.getAmount()).divide(new BigDecimal(100));
+            else if (RateTypeEnum.Unit_by_Range.equals(licenseSubCategoryDetails.getRateType()))
+                amt = license.getTradeArea_weight().multiply(feeMatrixDetail.getAmount());
+        }
+        return amt;
     }
 
     public License updateDemandForChangeTradeArea(final T license) {
@@ -313,7 +334,8 @@ public abstract class AbstractLicenseService<T extends License> {
                 if (licenseDemand.getEgInstallmentMaster().equals(dmd.getEgDemandReason().getEgInstallmentMaster()) &&
                         dmd.getEgDemandReason().getEgDemandReasonMaster().getCode()
                                 .equalsIgnoreCase(fm.getFeeMatrix().getFeeType().getName())) {
-                    dmd.setAmount(fm.getAmount());
+                    BigDecimal tradeAmt = calculateAmountByRateType(license, fm);
+                    dmd.setAmount(tradeAmt);
                     dmd.setModifiedDate(new Date());
                 }
         licenseDemand.recalculateBaseDemand();
@@ -330,7 +352,8 @@ public abstract class AbstractLicenseService<T extends License> {
                 if (licenseDemand.getEgInstallmentMaster().equals(dmd.getEgDemandReason().getEgInstallmentMaster()) &&
                         dmd.getEgDemandReason().getEgDemandReasonMaster().getCode()
                                 .equalsIgnoreCase(fm.getFeeMatrix().getFeeType().getName())) {
-                    dmd.setAmount(fm.getAmount().setScale(0, RoundingMode.HALF_UP));
+                    BigDecimal tradeAmt = calculateAmountByRateType(license, fm);
+                    dmd.setAmount(tradeAmt.setScale(0, RoundingMode.HALF_UP));
                     dmd.setAmtCollected(ZERO);
                 }
         licenseDemand.recalculateBaseDemand();
@@ -386,11 +409,12 @@ public abstract class AbstractLicenseService<T extends License> {
             if (reason == null)
                 throw new ValidationException("TL-007", "Demand reason missing for " + feeType);
             final EgDemandDetails licenseDemandDetail = reasonWiseDemandDetails.get(reason);
+            BigDecimal tradeAmt = calculateAmountByRateType(license, feeMatrixDetail);
             if (licenseDemandDetail == null)
                 license.getLicenseDemand().getEgDemandDetails()
-                        .add(EgDemandDetails.fromReasonAndAmounts(feeMatrixDetail.getAmount(), reason, ZERO));
+                        .add(EgDemandDetails.fromReasonAndAmounts(tradeAmt, reason, ZERO));
             else if (licenseDemandDetail.getBalance().compareTo(ZERO) != 0)
-                licenseDemandDetail.setAmount(feeMatrixDetail.getAmount());
+                licenseDemandDetail.setAmount(tradeAmt);
             if (license.getCurrentDemand().getEgInstallmentMaster().getInstallmentYear().before(installment.getInstallmentYear()))
                 license.getLicenseDemand().setEgInstallmentMaster(installment);
         }
@@ -648,8 +672,10 @@ public abstract class AbstractLicenseService<T extends License> {
                 : license.getLicenseDemand().getEgInstallmentMaster().getFromDate();
         final List<FeeMatrixDetail> feeList = this.feeMatrixService.getLicenseFeeDetails(license, licenseDate);
         BigDecimal totalAmount = ZERO;
-        for (final FeeMatrixDetail fm : feeList)
-            totalAmount = totalAmount.add(fm.getAmount());
+        for (final FeeMatrixDetail fm : feeList) {
+            BigDecimal tradeAmt = calculateAmountByRateType(license, fm);
+            totalAmount = totalAmount.add(tradeAmt);
+        }
         return totalAmount;
     }
 
