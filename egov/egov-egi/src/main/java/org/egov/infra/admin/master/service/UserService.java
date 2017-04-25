@@ -40,25 +40,48 @@
 
 package org.egov.infra.admin.master.service;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.repository.UserRepository;
+import org.egov.infra.config.properties.ApplicationProperties;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.microservice.contract.CreateUserRequest;
+import org.egov.infra.microservice.contract.UserDetailResponse;
+import org.egov.infra.microservice.contract.UserRequest;
+import org.egov.infra.microservice.utils.MicroserviceUtils;
 import org.egov.infra.persistence.entity.enums.Gender;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import org.springframework.web.client.RestTemplate;
 
 @Service
 @Transactional(readOnly = true)
 public class UserService {
 
+    private static final Logger LOGGER = Logger.getLogger(UserService.class);
+
+    private static final String ROLE_EMPLOYEE = "Employee";
+    private static final String ROLE_CITIZEN = "Citizen";
+
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private ApplicationProperties applicationProperties;
+
+    @Autowired
+    private MicroserviceUtils microserviceUtils;
+
+    @Autowired
+    private RoleService roleService;
 
     @Transactional
     public User updateUser(final User user) {
@@ -67,7 +90,12 @@ public class UserService {
 
     @Transactional
     public User createUser(final User user) {
-        return userRepository.save(user);
+        final String createUserServiceUrl = applicationProperties.getCreateUserServiceUrl();
+
+        if (StringUtils.isNotBlank(createUserServiceUrl))
+            return createUserMicroservice(user, createUserServiceUrl);
+        else
+            return userRepository.save(user);
     }
 
     public Set<User> getUsersByUsernameLike(final String userName) {
@@ -109,7 +137,7 @@ public class UserService {
     public List<User> getUserByAadhaarNumberAndType(final String aadhaarNumber, final UserType type) {
         return userRepository.findByAadhaarNumberAndType(aadhaarNumber, type);
     }
-    
+
     public User getUserByMobileNumber(final String mobileNumber) {
         return userRepository.findByMobileNumber(mobileNumber);
     }
@@ -133,8 +161,34 @@ public class UserService {
     public List<User> getUsersByUsernameAndRolename(final String userName, final String roleName) {
         return userRepository.findUsersByUserAndRoleName(userName, roleName);
     }
-    
-    public User getUserByNameAndMobileNumberForGender(String name, String mobileNumber, Gender gender){
+
+    public User getUserByNameAndMobileNumberForGender(final String name, final String mobileNumber, final Gender gender) {
         return userRepository.findByNameAndMobileNumberAndGender(name, mobileNumber, gender);
     }
+
+    private User createUserMicroservice(final User user, final String createUserServiceUrl) {
+
+        if (user.getRoles().isEmpty())
+            if (user.getType().equals(UserType.CITIZEN))
+                user.addRole(roleService.getRoleByName(ROLE_CITIZEN));
+            else if (user.getType().equals(UserType.EMPLOYEE))
+                user.addRole(roleService.getRoleByName(ROLE_EMPLOYEE));
+
+        final CreateUserRequest createUserRequest = new CreateUserRequest();
+        final UserRequest userRequest = new UserRequest(user, microserviceUtils.getTanentId());
+        createUserRequest.setUserRequest(userRequest);
+        createUserRequest.setRequestInfo(microserviceUtils.createRequestInfo());
+
+        final RestTemplate restTemplate = new RestTemplate();
+        UserDetailResponse userDetailResponse = null;
+        try {
+            userDetailResponse = restTemplate.postForObject(createUserServiceUrl, createUserRequest, UserDetailResponse.class);
+        } catch (final Exception e) {
+            final String errMsg = "Exception while creating User in microservice ";
+            LOGGER.error(errMsg, e);
+            throw new ApplicationRuntimeException(errMsg, e);
+        }
+        return getUserByUsername(userDetailResponse.getUser().get(0).getUserName());
+    }
+
 }
