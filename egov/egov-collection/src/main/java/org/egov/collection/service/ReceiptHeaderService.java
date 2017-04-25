@@ -1107,6 +1107,10 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
             final Date cutOffDate = getDataEntryCutOffDate();
             if (cutOffDate != null && receiptHeader.getReceiptdate().after(cutOffDate))
                 startWorkflow(receiptHeader);
+            else
+                receiptHeader.setStatus(collectionsUtil
+                        .getStatusForModuleAndCode(CollectionConstants.MODULE_NAME_RECEIPTHEADER,
+                                CollectionConstants.RECEIPT_STATUS_CODE_APPROVED));
             if (receiptHeader.getService().getServiceType().equalsIgnoreCase(CollectionConstants.SERVICE_TYPE_BILLING)) {
 
                 updateBillingSystemWithReceiptInfo(receiptHeader, null, null);
