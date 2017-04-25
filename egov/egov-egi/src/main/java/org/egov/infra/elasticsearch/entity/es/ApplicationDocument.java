@@ -290,9 +290,9 @@ public class ApplicationDocument {
     public void setClosed(final String closed) {
         this.closed = closed;
         if (this.closed.equals(ClosureStatus.YES.toString()))
-            isClosed = 0;
-        else
             isClosed = 1;
+        else
+            isClosed = 0;
     }
 
     public String getApproved() {
