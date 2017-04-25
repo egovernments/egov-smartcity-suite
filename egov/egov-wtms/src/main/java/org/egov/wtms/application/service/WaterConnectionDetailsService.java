@@ -76,13 +76,13 @@ import org.egov.infra.elasticsearch.entity.ApplicationIndex;
 import org.egov.infra.elasticsearch.entity.enums.ApprovalStatus;
 import org.egov.infra.elasticsearch.entity.enums.ClosureStatus;
 import org.egov.infra.elasticsearch.service.ApplicationIndexService;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
-import org.egov.infra.utils.DateUtils;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
@@ -114,6 +114,7 @@ import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.jfree.util.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -405,7 +406,13 @@ public class WaterConnectionDetailsService {
                     historyMap.put("department", null != eisCommonService.getDepartmentForUser(user.getId())
                             ? eisCommonService.getDepartmentForUser(user.getId()).getName() : "");
                 } else if (null != owner && null != owner.getDeptDesig()) {
-                    user = eisCommonService.getUserForPosition(owner.getId(), stateHistory.getCreatedDate());
+                    try {
+                        user = eisCommonService.getUserForPosition(owner.getId(), stateHistory.getCreatedDate());
+                    } catch (final ApplicationRuntimeException e) {
+                        if (Log.isErrorEnabled())
+                            Log.error("Exception while getting history of record :" + e);
+                        throw new ApplicationRuntimeException("err.user.not.found");
+                    }
                     historyMap.put("user",
                             null != user.getUsername() ? user.getUsername() + "::" + user.getName() : "");
                     historyMap.put("department", null != owner.getDeptDesig().getDepartment()
