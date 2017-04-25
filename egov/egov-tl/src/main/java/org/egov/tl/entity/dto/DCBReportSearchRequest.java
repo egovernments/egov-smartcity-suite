@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2017 eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -37,43 +37,42 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.tl.web.controller.payment;
 
-import static org.egov.infra.utils.JsonUtils.toJSON;
+package org.egov.tl.entity.dto;
 
-import java.io.IOException;
+import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
+import org.egov.infra.web.support.search.DataTableSearchRequest;
 
-import org.egov.tl.entity.License;
-import org.egov.tl.entity.dto.DCBReportSearchRequest;
-import org.egov.tl.entity.view.DCBReportResult;
-import org.egov.tl.service.DCBReportService;
-import org.egov.tl.service.TradeLicenseService;
-import org.egov.tl.web.response.adaptor.OnlineDCBReportResponseAdaptor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+public class DCBReportSearchRequest extends DataTableSearchRequest {
 
-@Controller
-public class ViewDCBController {
+    private Long licenseid;
 
-    @Autowired
-    private TradeLicenseService tradeLicenseService;
+    private String licensenumber;
 
-    @Autowired
-    private DCBReportService dCBReportService;
+    private FileFormat printFormat;
 
-    @GetMapping(value = "/public/view-license-dcb/{id}")
-    public String search(@PathVariable final Long id, final Model model, final DCBReportSearchRequest searchRequest)
-            throws IOException {
-        License licenseObj;
-        licenseObj = tradeLicenseService.getLicenseById(id);
-        searchRequest.setLicensenumber(licenseObj.getLicenseNumber());
-        model.addAttribute("license", licenseObj);
-        model.addAttribute("dcbreport", toJSON(dCBReportService.onlineReportResult(searchRequest), DCBReportResult.class,
-                OnlineDCBReportResponseAdaptor.class));
-
-        return "view-license-dcb";
+    public String getLicensenumber() {
+        return licensenumber;
     }
+
+    public void setLicensenumber(final String licensenumber) {
+        this.licensenumber = licensenumber;
+    }
+
+    public FileFormat getPrintFormat() {
+        return printFormat;
+    }
+
+    public void setPrintFormat(final FileFormat printFormat) {
+        this.printFormat = printFormat;
+    }
+
+    public Long getLicenseid() {
+        return licenseid;
+    }
+
+    public void setLicenseid(final Long licenseid) {
+        this.licenseid = licenseid;
+    }
+
 }

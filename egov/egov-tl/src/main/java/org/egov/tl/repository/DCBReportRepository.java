@@ -37,51 +37,27 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.tl.service;
 
-import static org.apache.commons.lang3.StringUtils.isBlank;
+package org.egov.tl.repository;
 
-import java.util.List;
-
-import org.egov.tl.entity.dto.DCBReportSearchRequest;
 import org.egov.tl.entity.view.DCBReportResult;
-import org.egov.tl.repository.DCBReportRepository;
-import org.egov.tl.repository.specs.DCBReportSpec;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
-@Service
-@Transactional(readOnly = true)
-public class DCBReportService {
+@Repository
+public interface DCBReportRepository extends JpaRepository<DCBReportResult, Long>, JpaSpecificationExecutor<DCBReportResult> {
 
-    @Autowired
-    private DCBReportRepository dCBReportRepository;
+    @Query("select sum(arreardemand) ,sum(currentdemand),sum(currentdemand+arreardemand) as total_demand,"
+            + "sum(arrearcollection),sum(currentcollection),sum(arrearcollection+currentcollection) as total_coll,"
+            + "sum(arrearbalance), sum(currentbalance) as curr_balance,sum(arrearbalance+currentbalance) as total_balance from DCBReportResult")
+    String findSumByColumn();
 
-    public Page<DCBReportResult> generateReportResult(final DCBReportSearchRequest searchRequest) {
-        final Pageable pageable = new PageRequest(searchRequest.pageNumber(),
-                searchRequest.pageSize(),
-                searchRequest.orderDir(), searchRequest.orderBy());
-        return isBlank(searchRequest.getLicensenumber()) ? dCBReportRepository.findAll(pageable)
-                : dCBReportRepository.findAll(DCBReportSpec.dCBReportSpecification(searchRequest), pageable);
+    @Query("select sum(arreardemand) ,sum(currentdemand),sum(currentdemand+arreardemand) as total_demand,"
+            + "sum(arrearcollection),sum(currentcollection),sum(arrearcollection+currentcollection) as total_coll,"
+            + "sum(arrearbalance), sum(currentbalance) as curr_balance,sum(arrearbalance+currentbalance) as total_balance from DCBReportResult where licensenumber =:licenseNumber ")
+    String findSumByLicenseNumber(@Param("licenseNumber") String licenseNumber);
 
-    }
-
-    public List<DCBReportResult> prepareReport(final DCBReportSearchRequest searchRequest) {
-        return dCBReportRepository.findAll(DCBReportSpec.dCBReportSpecification(searchRequest));
-    }
-
-    public List<DCBReportResult> onlineReportResult(final DCBReportSearchRequest searchRequest) {
-        return dCBReportRepository.findAll(DCBReportSpec.dCBReportSpecification(searchRequest));
-    }
-
-    public String reportTotalColumwise(final DCBReportSearchRequest searchRequest) {
-        if (searchRequest.getLicensenumber() != null)
-            return dCBReportRepository.findSumByLicenseNumber(searchRequest.getLicensenumber());
-        else
-            return dCBReportRepository.findSumByColumn();
-    }
 }

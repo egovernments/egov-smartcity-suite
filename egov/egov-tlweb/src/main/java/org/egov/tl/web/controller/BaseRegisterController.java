@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *     accountability and the service delivery of the government  organizations.
  *
- *      Copyright (C) 2016  eGovernments Foundation
+ *      Copyright (C) 2017 eGovernments Foundation
  *
  *      The updated version of eGov suite of products as by eGovernments Foundation
  *      is available at http://www.egovernments.org
@@ -40,67 +40,110 @@
 
 package org.egov.tl.web.controller;
 
+import static org.egov.tl.utils.Constants.LOCALITY;
+import static org.egov.tl.utils.Constants.LOCATION_HIERARCHY_TYPE;
+import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.egov.infra.admin.master.service.BoundaryService;
-import org.egov.tl.entity.dto.BaseRegisterForm;
+import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
+import org.egov.infra.reporting.engine.ReportOutput;
+import org.egov.infra.reporting.engine.ReportRequest;
+import org.egov.infra.reporting.engine.ReportService;
+import org.egov.infra.web.support.ui.DataTable;
+import org.egov.tl.entity.dto.BaseRegisterRequest;
+import org.egov.tl.entity.view.BaseRegister;
 import org.egov.tl.service.BaseRegisterService;
-import org.egov.tl.service.LicenseStatusService;
 import org.egov.tl.service.LicenseCategoryService;
+import org.egov.tl.service.LicenseStatusService;
 import org.egov.tl.utils.Constants;
 import org.egov.tl.web.response.adaptor.BaseRegisterResponseAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
-
-import static org.egov.infra.utils.JsonUtils.toJSON;
-import static org.egov.tl.utils.Constants.LOCALITY;
-import static org.egov.tl.utils.Constants.LOCATION_HIERARCHY_TYPE;
-
-
 @Controller
-@RequestMapping(value = {"baseregister", "/public/baseregister"})
+@RequestMapping(value = { "baseregister", "/public/baseregister" })
 public class BaseRegisterController {
     private final LicenseStatusService licenseStatusService;
+
+    @Autowired
     private final BaseRegisterService baseRegisterService;
+
     private final LicenseCategoryService licenseCategoryService;
 
     private final BoundaryService boundaryService;
 
     @Autowired
-    public BaseRegisterController(BoundaryService boundaryService, LicenseCategoryService licenseCategoryService, BaseRegisterService baseRegisterService, LicenseStatusService licenseStatusService) {
+    private ReportService reportService;
+
+    @Autowired
+    public BaseRegisterController(final BoundaryService boundaryService, final LicenseCategoryService licenseCategoryService,
+            final BaseRegisterService baseRegisterService, final LicenseStatusService licenseStatusService) {
         this.boundaryService = boundaryService;
         this.licenseCategoryService = licenseCategoryService;
         this.baseRegisterService = baseRegisterService;
         this.licenseStatusService = licenseStatusService;
     }
 
-    @RequestMapping(value = "/search-form", method = RequestMethod.GET)
-    public String searchBaseRegister(Model model) {
-        model.addAttribute("baseRegisterForm", new BaseRegisterForm());
+    @GetMapping(value = "/search-form")
+    public String searchBaseRegister(final Model model) {
+        model.addAttribute("baseRegister", new BaseRegister());
         model.addAttribute("categories", licenseCategoryService.getCategoriesOrderByName());
         model.addAttribute("subcategories", Collections.emptyList());
         model.addAttribute("statusList", licenseStatusService.findAll());
         model.addAttribute("filters", Arrays.asList("All", "Defaulters"));
         boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
                 LOCALITY, LOCATION_HIERARCHY_TYPE);
-        model.addAttribute("wardList", boundaryService.getBoundariesByBndryTypeNameAndHierarchyTypeName(Constants.REVENUE_WARD, Constants.REVENUE_HIERARCHY_TYPE));
+        model.addAttribute("wardList", boundaryService.getBoundariesByBndryTypeNameAndHierarchyTypeName(Constants.REVENUE_WARD,
+                Constants.REVENUE_HIERARCHY_TYPE));
         return "baseregister-report";
     }
 
-    @RequestMapping(value = "/search-resultList", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
+    @GetMapping(value = "/search-resultList", produces = TEXT_PLAIN_VALUE)
     @ResponseBody
-    public String search(@ModelAttribute BaseRegisterForm baseRegisterForm) throws IOException {
-        return new StringBuilder().append("{ \"data\":").append(toJSON(
-                baseRegisterService.search(baseRegisterForm),
-                BaseRegisterForm.class, BaseRegisterResponseAdaptor.class)).append("}").toString();
+    public String search(final BaseRegisterRequest baseRegisterRequest) {
+        return new DataTable<>(baseRegisterService.generatebasereport(baseRegisterRequest),
+                baseRegisterRequest.draw())
+                        .toJson(BaseRegisterResponseAdaptor.class);
     }
 
+    @GetMapping("/reportwisetotal")
+    @ResponseBody
+    public Object[] reportTotal(final BaseRegisterRequest baseRegisterRequest) {
+        return baseRegisterService.basereporttotal(baseRegisterRequest);
+    }
+
+    @GetMapping("/report")
+    @ResponseBody
+    public ResponseEntity<byte[]> searchReport(final BaseRegisterRequest baseRegisterRequest) {
+        final Map<String, Object> responseParams = new HashMap<>();
+        final ReportRequest reportRequest = new ReportRequest("tl_baseregister_report",
+                baseRegisterService.preparereport(baseRegisterRequest), responseParams);
+        reportRequest.setReportFormat(baseRegisterRequest.getPrintFormat());
+        return reportResponse(reportRequest);
+
+    }
+
+    private ResponseEntity<byte[]> reportResponse(final ReportRequest reportRequest) {
+        final HttpHeaders headers = new HttpHeaders();
+        if (reportRequest.getReportFormat().equals(FileFormat.PDF))
+            headers.setContentType(MediaType.parseMediaType("application/pdf"));
+        else if (reportRequest.getReportFormat().equals(FileFormat.XLS))
+            headers.setContentType(MediaType.parseMediaType("application/vnd.ms-excel"));
+        headers.add("content-disposition", "inline;filename=Base_Register_Report." + reportRequest.getReportFormat());
+        final ReportOutput reportOutput = reportService.createReport(reportRequest);
+        return new ResponseEntity<>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
+    }
 }

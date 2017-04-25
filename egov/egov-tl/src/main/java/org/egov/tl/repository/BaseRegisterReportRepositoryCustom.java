@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) 2016  eGovernments Foundation
+ *  Copyright (C) 2017  eGovernments Foundation
  *
  *  The updated version of eGov suite of products as by eGovernments Foundation
  *  is available at http://www.egovernments.org
@@ -38,26 +38,12 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.infra.reporting.engine;
+package org.egov.tl.repository;
 
-public final class ReportConstants {
+import org.egov.tl.entity.dto.BaseRegisterRequest;
 
-    public static final String IMAGES_BASE_PATH = "/egi/resources/global/images/";
-    public static final String DEFAULT_REPORT_FILE_PATH = "/reports/templates/%s";
-    public static final String REPORT_CONFIG_FILE = "/config/reports.properties";
-    public static final String REQ_PARAM_REPORT_ID = "reportId";
-    public static final String HTTP_HEADER_CONTENT_DISPOSITION = "Content-disposition";
-    public static final String IMAGE_CONTEXT_PATH = "/egi";
+public interface BaseRegisterReportRepositoryCustom {
 
-    private ReportConstants() {
-        // only static final fields
-    }
+    Object[] findByBaseRegisterRequest(BaseRegisterRequest baseRegisterRequest);
 
-    public enum FileFormat {
-        PDF, XLS, RTF, HTM, TXT, CSV;
-
-        public String toString() {
-            return this.name().toLowerCase();
-        }
-    }
 }

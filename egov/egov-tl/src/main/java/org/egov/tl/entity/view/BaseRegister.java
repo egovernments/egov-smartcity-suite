@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *     accountability and the service delivery of the government  organizations.
  *
- *      Copyright (C) 2016  eGovernments Foundation
+ *      Copyright (C) 2017  eGovernments Foundation
  *
  *      The updated version of eGov suite of products as by eGovernments Foundation
  *      is available at http://www.egovernments.org
@@ -38,19 +38,46 @@
  *    In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.tl.entity.dto;
+package org.egov.tl.entity.view;
 
+import java.io.Serializable;
 import java.math.BigInteger;
-import java.text.SimpleDateFormat;
+import java.util.Date;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 
-public class BaseRegisterForm {
+import org.egov.infra.utils.DateUtils;
+import org.hibernate.annotations.Immutable;
+
+@Entity
+@Immutable
+@Table(name = "EGTL_MV_BASEREGISTER_VIEW")
+public class BaseRegister implements Serializable {
+
+    private static final long serialVersionUID = -5366096182840879108L;
+
+    @Column(name = "cat")
     private Long categoryId;
+
+    @Column(name = "subcat")
     private Long subCategoryId;
+
+    @Column(name = "status")
     private Long statusId;
+
+    @Column(name = "ward")
     private Long wardId;
-    private String filterName;
+
+    @Id
     private BigInteger licenseid;
+
+    @Transient
+    private String filterName;
+
     private String licensenumber;
     private String tradetitle;
     private String owner;
@@ -59,23 +86,28 @@ public class BaseRegisterForm {
     private String subcategoryname;
     private String assessmentno;
     private String wardname;
+
     private String localityname;
     private String tradeaddress;
     private String commencementdate;
     private String statusname;
-    private BigInteger arrearlicensefee = BigInteger.ZERO;
-    private BigInteger arrearpenaltyfee = BigInteger.ZERO;
-    private BigInteger curlicensefee = BigInteger.ZERO;
-    private BigInteger curpenaltyfee = BigInteger.ZERO;
+    private BigInteger arrearlicensefee;
+    private BigInteger arrearpenaltyfee;
+    private BigInteger curlicensefee;
+    private BigInteger curpenaltyfee;
     private String unitofmeasure;
-    private BigInteger tradewt = BigInteger.ZERO;
-    private BigInteger rateval = BigInteger.ZERO;
+    private BigInteger tradewt;
+    private BigInteger rateval;
+    private Long locality;
+    private Long uom;
+    private Long apptype;
+    private Date appdate;
 
     public Long getCategoryId() {
         return categoryId;
     }
 
-    public void setCategoryId(Long categoryId) {
+    public void setCategoryId(final Long categoryId) {
         this.categoryId = categoryId;
     }
 
@@ -83,7 +115,7 @@ public class BaseRegisterForm {
         return subCategoryId;
     }
 
-    public void setSubCategoryId(Long subCategoryId) {
+    public void setSubCategoryId(final Long subCategoryId) {
         this.subCategoryId = subCategoryId;
     }
 
@@ -91,7 +123,7 @@ public class BaseRegisterForm {
         return statusId;
     }
 
-    public void setStatusId(Long statusId) {
+    public void setStatusId(final Long statusId) {
         this.statusId = statusId;
     }
 
@@ -99,7 +131,7 @@ public class BaseRegisterForm {
         return wardId;
     }
 
-    public void setWardId(Long wardId) {
+    public void setWardId(final Long wardId) {
         this.wardId = wardId;
     }
 
@@ -107,7 +139,7 @@ public class BaseRegisterForm {
         return licensenumber;
     }
 
-    public void setLicensenumber(String licensenumber) {
+    public void setLicensenumber(final String licensenumber) {
         this.licensenumber = licensenumber;
     }
 
@@ -115,7 +147,7 @@ public class BaseRegisterForm {
         return tradetitle;
     }
 
-    public void setTradetitle(String tradetitle) {
+    public void setTradetitle(final String tradetitle) {
         this.tradetitle = tradetitle;
     }
 
@@ -123,7 +155,7 @@ public class BaseRegisterForm {
         return owner;
     }
 
-    public void setOwner(String owner) {
+    public void setOwner(final String owner) {
         this.owner = owner;
     }
 
@@ -131,7 +163,7 @@ public class BaseRegisterForm {
         return mobile;
     }
 
-    public void setMobile(String mobile) {
+    public void setMobile(final String mobile) {
         this.mobile = mobile;
     }
 
@@ -139,7 +171,7 @@ public class BaseRegisterForm {
         return categoryname;
     }
 
-    public void setCategoryname(String categoryname) {
+    public void setCategoryname(final String categoryname) {
         this.categoryname = categoryname;
     }
 
@@ -147,7 +179,7 @@ public class BaseRegisterForm {
         return subcategoryname;
     }
 
-    public void setSubcategoryname(String subcategoryname) {
+    public void setSubcategoryname(final String subcategoryname) {
         this.subcategoryname = subcategoryname;
     }
 
@@ -155,7 +187,7 @@ public class BaseRegisterForm {
         return assessmentno;
     }
 
-    public void setAssessmentno(String assessmentno) {
+    public void setAssessmentno(final String assessmentno) {
         this.assessmentno = assessmentno;
     }
 
@@ -163,7 +195,7 @@ public class BaseRegisterForm {
         return wardname;
     }
 
-    public void setWardname(String wardname) {
+    public void setWardname(final String wardname) {
         this.wardname = wardname;
     }
 
@@ -171,7 +203,7 @@ public class BaseRegisterForm {
         return localityname;
     }
 
-    public void setLocalityname(String localityname) {
+    public void setLocalityname(final String localityname) {
         this.localityname = localityname;
     }
 
@@ -179,7 +211,7 @@ public class BaseRegisterForm {
         return tradeaddress;
     }
 
-    public void setTradeaddress(String tradeaddress) {
+    public void setTradeaddress(final String tradeaddress) {
         this.tradeaddress = tradeaddress;
     }
 
@@ -187,16 +219,15 @@ public class BaseRegisterForm {
         return commencementdate;
     }
 
-    public void setCommencementdate(java.sql.Date commencementdate) {
-        final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-        this.commencementdate = sdf.format(commencementdate);
+    public void setCommencementdate(final Date commencementdate) {
+        this.commencementdate = DateUtils.getDefaultFormattedDate(commencementdate);
     }
 
     public String getStatusname() {
         return statusname;
     }
 
-    public void setStatusname(String statusname) {
+    public void setStatusname(final String statusname) {
         this.statusname = statusname;
     }
 
@@ -204,7 +235,7 @@ public class BaseRegisterForm {
         return arrearlicensefee;
     }
 
-    public void setArrearlicensefee(BigInteger arrearlicensefee) {
+    public void setArrearlicensefee(final BigInteger arrearlicensefee) {
         this.arrearlicensefee = arrearlicensefee;
     }
 
@@ -212,7 +243,7 @@ public class BaseRegisterForm {
         return arrearpenaltyfee;
     }
 
-    public void setArrearpenaltyfee(BigInteger arrearpenaltyfee) {
+    public void setArrearpenaltyfee(final BigInteger arrearpenaltyfee) {
         this.arrearpenaltyfee = arrearpenaltyfee;
     }
 
@@ -220,7 +251,7 @@ public class BaseRegisterForm {
         return curlicensefee;
     }
 
-    public void setCurlicensefee(BigInteger curlicensefee) {
+    public void setCurlicensefee(final BigInteger curlicensefee) {
         this.curlicensefee = curlicensefee;
     }
 
@@ -228,7 +259,7 @@ public class BaseRegisterForm {
         return curpenaltyfee;
     }
 
-    public void setCurpenaltyfee(BigInteger curpenaltyfee) {
+    public void setCurpenaltyfee(final BigInteger curpenaltyfee) {
         this.curpenaltyfee = curpenaltyfee;
     }
 
@@ -236,7 +267,7 @@ public class BaseRegisterForm {
         return licenseid;
     }
 
-    public void setLicenseid(BigInteger licenseid) {
+    public void setLicenseid(final BigInteger licenseid) {
         this.licenseid = licenseid;
     }
 
@@ -244,7 +275,7 @@ public class BaseRegisterForm {
         return unitofmeasure;
     }
 
-    public void setUnitofmeasure(String unitofmeasure) {
+    public void setUnitofmeasure(final String unitofmeasure) {
         this.unitofmeasure = unitofmeasure;
     }
 
@@ -252,7 +283,7 @@ public class BaseRegisterForm {
         return tradewt;
     }
 
-    public void setTradewt(BigInteger tradewt) {
+    public void setTradewt(final BigInteger tradewt) {
         this.tradewt = tradewt;
     }
 
@@ -260,15 +291,77 @@ public class BaseRegisterForm {
         return rateval;
     }
 
-    public void setRateval(BigInteger rateval) {
+    public void setRateval(final BigInteger rateval) {
         this.rateval = rateval;
+    }
+
+    public Long getLocality() {
+        return locality;
+    }
+
+    public void setLocality(final Long locality) {
+        this.locality = locality;
+    }
+
+    public Long getUom() {
+        return uom;
+    }
+
+    public void setUom(final Long uom) {
+        this.uom = uom;
+    }
+
+    public Long getApptype() {
+        return apptype;
+    }
+
+    public void setApptype(final Long apptype) {
+        this.apptype = apptype;
+    }
+
+    public Date getAppdate() {
+        return appdate;
+    }
+
+    public void setAppdate(final Date appdate) {
+        this.appdate = appdate;
+    }
+
+    public void setCommencementdate(final String commencementdate) {
+        this.commencementdate = commencementdate;
     }
 
     public String getFilterName() {
         return filterName;
     }
 
-    public void setFilterName(String filterName) {
+    public void setFilterName(final String filterName) {
         this.filterName = filterName;
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + (licenseid == null ? 0 : licenseid.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        final BaseRegister other = (BaseRegister) obj;
+        if (licenseid == null) {
+            if (other.licenseid != null)
+                return false;
+        } else if (!licenseid.equals(other.licenseid))
+            return false;
+        return true;
+    }
+
 }

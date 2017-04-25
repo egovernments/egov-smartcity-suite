@@ -37,51 +37,28 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.tl.service;
 
-import static org.apache.commons.lang3.StringUtils.isBlank;
+package org.egov.tl.repository.specs;
 
-import java.util.List;
+import javax.persistence.criteria.Predicate;
 
 import org.egov.tl.entity.dto.DCBReportSearchRequest;
 import org.egov.tl.entity.view.DCBReportResult;
-import org.egov.tl.repository.DCBReportRepository;
-import org.egov.tl.repository.specs.DCBReportSpec;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.jpa.domain.Specification;
 
-@Service
-@Transactional(readOnly = true)
-public class DCBReportService {
+public class DCBReportSpec {
 
-    @Autowired
-    private DCBReportRepository dCBReportRepository;
-
-    public Page<DCBReportResult> generateReportResult(final DCBReportSearchRequest searchRequest) {
-        final Pageable pageable = new PageRequest(searchRequest.pageNumber(),
-                searchRequest.pageSize(),
-                searchRequest.orderDir(), searchRequest.orderBy());
-        return isBlank(searchRequest.getLicensenumber()) ? dCBReportRepository.findAll(pageable)
-                : dCBReportRepository.findAll(DCBReportSpec.dCBReportSpecification(searchRequest), pageable);
+    private DCBReportSpec() {
 
     }
 
-    public List<DCBReportResult> prepareReport(final DCBReportSearchRequest searchRequest) {
-        return dCBReportRepository.findAll(DCBReportSpec.dCBReportSpecification(searchRequest));
-    }
+    public static Specification<DCBReportResult> dCBReportSpecification(final DCBReportSearchRequest dCBReportSearchRequest) {
+        return (root, query, builder) -> {
+            final Predicate result = builder.conjunction();
+            if (dCBReportSearchRequest.getLicensenumber() != null)
+                result.getExpressions().add(builder.equal(root.get("licensenumber"), dCBReportSearchRequest.getLicensenumber()));
 
-    public List<DCBReportResult> onlineReportResult(final DCBReportSearchRequest searchRequest) {
-        return dCBReportRepository.findAll(DCBReportSpec.dCBReportSpecification(searchRequest));
-    }
-
-    public String reportTotalColumwise(final DCBReportSearchRequest searchRequest) {
-        if (searchRequest.getLicensenumber() != null)
-            return dCBReportRepository.findSumByLicenseNumber(searchRequest.getLicensenumber());
-        else
-            return dCBReportRepository.findSumByColumn();
+            return result;
+        };
     }
 }

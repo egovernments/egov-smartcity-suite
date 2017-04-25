@@ -356,7 +356,11 @@ $(document).ready(function () {
                 var inactive = $('#inactive').is(":checked");
                 reportdatatable = drillDowntableContainer
                     .dataTable({
-                        scrollY:        "300px",
+                    	 processing : true,
+	       		         serverSide : true,
+	       		         sort : true,
+	       		         filter : true,
+                        scrollY:        "500px",
                         scrollX:        true,
                         scrollCollapse: true,
                         fixedColumns:   {
@@ -364,7 +368,8 @@ $(document).ready(function () {
                         },
                         ajax: {
                             url: "../search/searchtrade-search",
-                            data: {
+                            data:function (args) {
+                       		 return {"args": JSON.stringify(args),
                                 applicationNumber: applicationNumber,
                                 licenseNumber: licenseNumber,
                                 oldLicenseNumber: oldLicenseNumber,
@@ -379,9 +384,11 @@ $(document).ready(function () {
                                 expiryYear: expiryYear,
                                 inactive: inactive
                             }
+                            }
                         },
                         "bDestroy": true,
                         "autoWidth": false,
+                        "order": [[1, 'asc']],
                         "sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-xs-3'i><'col-xs-3 col-right'l><'col-xs-3 col-right'<'export-data'T>><'col-xs-3 text-right'p>>",
                         aaSorting: [],
                         columns: [{
@@ -392,42 +399,56 @@ $(document).ready(function () {
                                 return '<a href="javascript:void(0);" onclick="goToView(' + row.licenseId + ');" data-hiddenele="licenseId" data-eleval="'
                                     + data.id + '">' + data.name + '</a>';
                             },
-                            "sTitle": "Application Number"
+                            "sTitle": "Application Number",
+                          "name":"applicationNumber"
                         }, {
                             "data": "tlNumber",
+                            "name":"licenseNumber",
                             "sTitle": "TL Number"
                         }, {
                             "data": "oldTLNumber",
+                          "name":"oldLicenseNumber",
                             "sTitle": "Old TL Number"
                         }, {
                             "data": "category",
+                             "name":"category.id",
                             "sTitle": "Category"
                         }, {
                             "data": "subCategory",
+                            "name":"tradeName.id",
                             "sTitle": "Sub-Category"
                         }, {
                             "data": "tradeTitle",
+                            "name":"nameOfEstablishment",
                             "sTitle": "Title of Trade"
                         }, {
                             "data": "tradeOwner",
+                           "name":"licensee.applicantName",
                             "sTitle": "Trade Owner"
                         }, {
                             "data": "mobileNumber",
+                            "name":"licensee.mobilePhoneNumber",
                             "sTitle": "Mobile Number"
                         }, {
                             "data": "propertyAssmntNo",
+                            "name":"assessmentNo",
                             "sTitle": "Property Assessment Number"
                         }, {
                             "data": "expiryYear",
+                             "name":"dateOfExpiry",
                             "sTitle": "Financial Year"
                         }, {
                             "data": "status",
+                             "name":"status.id",
                             "sTitle": "Application Status"
                         }, {
                             "data": "active",
+                           "name":"isActive",
                             "sTitle": "License Active"
                         }, {
                             "data": "ownerName",
+                            "orderable": false,
+                            "sortable": false,
                             "sTitle": "Owner Name"
                         }, {
                             "sTitle": "Actions",

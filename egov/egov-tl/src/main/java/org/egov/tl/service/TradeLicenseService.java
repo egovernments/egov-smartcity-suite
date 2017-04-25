@@ -70,6 +70,8 @@ import org.egov.tl.entity.WorkflowBean;
 import org.egov.tl.entity.dto.DemandnoticeForm;
 import org.egov.tl.entity.dto.OnlineSearchForm;
 import org.egov.tl.entity.dto.SearchForm;
+import org.egov.tl.repository.SearchTradeRepository;
+import org.egov.tl.repository.specs.SearchTradeSpec;
 import org.egov.tl.utils.Constants;
 import org.egov.tl.utils.LicenseUtils;
 import org.hibernate.Criteria;
@@ -77,6 +79,10 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
@@ -115,6 +121,9 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
 
     @Autowired
     private ModuleService moduleService;
+    
+    @Autowired
+    private SearchTradeRepository searchTradeRepository;
 
     @Autowired
     private CFinancialYearService cFinancialYearService;
@@ -326,44 +335,18 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
     }
 
     @ReadOnly
-    public List<SearchForm> searchTradeLicense(final SearchForm searchForm) {
-        final Criteria searchCriteria = entityQueryService.getSession().createCriteria(TradeLicense.class);
-        searchCriteria.createAlias("licensee", "licc").createAlias("category", "cat")
-                .createAlias("tradeName", "subcat").createAlias("status", "licstatus");
-        if (StringUtils.isNotBlank(searchForm.getApplicationNumber()))
-            searchCriteria.add(Restrictions.eq("applicationNumber", searchForm.getApplicationNumber()).ignoreCase());
-        if (StringUtils.isNotBlank(searchForm.getLicenseNumber()))
-            searchCriteria.add(Restrictions.eq("licenseNumber", searchForm.getLicenseNumber()).ignoreCase());
-        if (StringUtils.isNotBlank(searchForm.getOldLicenseNumber()))
-            searchCriteria.add(Restrictions.eq("oldLicenseNumber", searchForm.getOldLicenseNumber()).ignoreCase());
-        if (searchForm.getCategoryId() != null)
-            searchCriteria.add(Restrictions.eq("cat.id", searchForm.getCategoryId()));
-        if (searchForm.getSubCategoryId() != null)
-            searchCriteria.add(Restrictions.eq("subcat.id", searchForm.getSubCategoryId()));
-        if (StringUtils.isNotBlank(searchForm.getTradeTitle()))
-            searchCriteria.add(Restrictions.eq("nameOfEstablishment", searchForm.getTradeTitle()).ignoreCase());
-        if (StringUtils.isNotBlank(searchForm.getTradeOwnerName()))
-            searchCriteria.add(Restrictions.eq("licc.applicantName", searchForm.getTradeOwnerName()).ignoreCase());
-        if (StringUtils.isNotBlank(searchForm.getPropertyAssessmentNo()))
-            searchCriteria.add(Restrictions.eq("assessmentNo", searchForm.getPropertyAssessmentNo()).ignoreCase());
-        if (StringUtils.isNotBlank(searchForm.getMobileNo()))
-            searchCriteria.add(Restrictions.eq("licc.mobilePhoneNumber", searchForm.getMobileNo()));
-        if (searchForm.getStatusId() != null)
-            searchCriteria.add(Restrictions.eq("status.id", searchForm.getStatusId()));
-        if (searchForm.getInactive() != null && searchForm.getInactive().equals(Boolean.TRUE))
-            searchCriteria.add(Restrictions.eq("isActive", false));
-
-        searchCriteria.add(Restrictions.isNotNull("applicationNumber"));
-        searchCriteria.addOrder(Order.asc("id"));
+    public Page<SearchForm> searchTradeLicense(final SearchForm searchForm) {
+        final Pageable pageable = new PageRequest(searchForm.pageNumber(),
+                searchForm.pageSize(), searchForm.orderDir(), searchForm.orderBy());
         final String currentUserRoles = securityUtils.getCurrentUser().getRoles().toString();
-        final List<SearchForm> finalList = new LinkedList<>();
-
-        for (final License license : (List<License>) searchCriteria.list()) {
+        Page<License> licenses = searchTradeRepository.findAll(SearchTradeSpec.searchTrade(searchForm), pageable);
+        List<SearchForm> searchResults = new ArrayList<>();
+        licenses.forEach(license -> {
             final CFinancialYear financialYear = cFinancialYearService.getFinancialYearByDate(license.getDateOfExpiry());
             final String expiryYear = financialYear != null ? financialYear.getFinYearRange() : "";
-            finalList.add(new SearchForm(license, currentUserRoles, getOwnerName(license), expiryYear));
-        }
-        return finalList;
+            searchResults.add(new SearchForm(license, currentUserRoles, getOwnerName(license), expiryYear));
+        });
+        return new PageImpl<>(searchResults, pageable, licenses.getTotalElements());
     }
 
     @ReadOnly

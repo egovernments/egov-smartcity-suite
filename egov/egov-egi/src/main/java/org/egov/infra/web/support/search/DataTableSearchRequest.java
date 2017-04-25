@@ -109,7 +109,7 @@ public class DataTableSearchRequest {
         }
 
         public String orderBy() {
-            return defaultIfBlank(this.columns.get(order.get(0).column).name, "createdDate");
+            return defaultIfBlank(this.columns.get(order.get(0).column).name, "id");
         }
 
         public String orderDir() {

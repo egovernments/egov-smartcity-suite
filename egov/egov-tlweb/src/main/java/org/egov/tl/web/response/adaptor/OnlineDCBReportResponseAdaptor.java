@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *     accountability and the service delivery of the government  organizations.
  *
- *      Copyright (C) 2017 eGovernments Foundation
+ *      Copyright (C) 2016  eGovernments Foundation
  *
  *      The updated version of eGov suite of products as by eGovernments Foundation
  *      is available at http://www.egovernments.org
@@ -38,42 +38,39 @@
  *    In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.tl.service;
+package org.egov.tl.web.response.adaptor;
 
-import java.util.List;
+import java.lang.reflect.Type;
 
-import org.egov.tl.entity.dto.BaseRegisterRequest;
-import org.egov.tl.entity.view.BaseRegister;
-import org.egov.tl.repository.BaseRegisterReportRepository;
-import org.egov.tl.repository.specs.BaseRegisterSpec;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.apache.commons.lang3.StringUtils;
+import org.egov.tl.entity.view.DCBReportResult;
 
-@Service
-@Transactional(readOnly = true)
-public class BaseRegisterService {
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 
-    @Autowired
-    private BaseRegisterReportRepository baseRegisterReportRepository;
+public class OnlineDCBReportResponseAdaptor implements JsonSerializer<DCBReportResult> {
 
-    public Page<BaseRegister> generatebasereport(final BaseRegisterRequest baseRegisterRequest) {
-        final Pageable pageable = new PageRequest(baseRegisterRequest.pageNumber(),
-                baseRegisterRequest.pageSize(),
-                baseRegisterRequest.orderDir(), baseRegisterRequest.orderBy());
-      return baseRegisterReportRepository.findAll(BaseRegisterSpec.baseRegisterSpecification(baseRegisterRequest),pageable);
-         
-    }
+    @Override
+    public JsonElement serialize(final DCBReportResult dCBReportObj, final Type type, final JsonSerializationContext jsc) {
+        final JsonObject dcbReportResponse = new JsonObject();
+        if (dCBReportObj != null) {
+            dcbReportResponse.addProperty("licenseid", dCBReportObj.getLicenseid());
+            dcbReportResponse.addProperty("licensenumber", StringUtils.defaultIfBlank(dCBReportObj.getLicensenumber(), "N/A"));
+            dcbReportResponse.addProperty("username", dCBReportObj.getUsername());
+            dcbReportResponse.addProperty("curr_demand", dCBReportObj.getCurrentdemand());
+            dcbReportResponse.addProperty("arr_demand", dCBReportObj.getArreardemand());
+            dcbReportResponse.addProperty("total_demand", dCBReportObj.getTotaldemand());
+            dcbReportResponse.addProperty("curr_coll", dCBReportObj.getCurrentcollection());
+            dcbReportResponse.addProperty("arr_coll", dCBReportObj.getArrearcollection());
+            dcbReportResponse.addProperty("total_coll", dCBReportObj.getTotalcollection());
+            dcbReportResponse.addProperty("curr_balance", dCBReportObj.getCurrentbalance());
+            dcbReportResponse.addProperty("arr_balance", dCBReportObj.getArrearbalance());
+            dcbReportResponse.addProperty("total_balance", dCBReportObj.getTotalbalance());
 
-    public List<BaseRegister> preparereport(final BaseRegisterRequest baseRegisterRequest) {
-        return baseRegisterReportRepository.findAll(BaseRegisterSpec.baseRegisterSpecification(baseRegisterRequest));
-    }
-
-    public Object[] basereporttotal(final BaseRegisterRequest baseRegisterRequest) {
-        return baseRegisterReportRepository.findByBaseRegisterRequest(baseRegisterRequest);
+        }
+        return dcbReportResponse;
     }
 
 }

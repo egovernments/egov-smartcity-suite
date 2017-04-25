@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *     accountability and the service delivery of the government  organizations.
  *
- *      Copyright (C) 2016  eGovernments Foundation
+ *      Copyright (C) 2017  eGovernments Foundation
  *
  *      The updated version of eGov suite of products as by eGovernments Foundation
  *      is available at http://www.egovernments.org
@@ -40,39 +40,50 @@
 
 package org.egov.tl.web.response.adaptor;
 
+import java.lang.reflect.Type;
+import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
+import org.egov.infra.web.support.json.adapter.DataTableJsonAdapter;
+import org.egov.infra.web.support.ui.DataTable;
+import org.egov.tl.entity.view.BaseRegister;
+
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
-import org.egov.tl.entity.dto.BaseRegisterForm;
 
-import java.lang.reflect.Type;
-
-
-public class BaseRegisterResponseAdaptor implements JsonSerializer<BaseRegisterForm> {
+public class BaseRegisterResponseAdaptor implements DataTableJsonAdapter<BaseRegister> {
     @Override
-    public JsonElement serialize(BaseRegisterForm baseRegisterForm, Type type, JsonSerializationContext jsc) {
-        JsonObject baseRegisterResponse = new JsonObject();
-        baseRegisterResponse.addProperty("tinno", baseRegisterForm.getLicensenumber() != null ? baseRegisterForm.getLicensenumber() : "NA");
-        baseRegisterResponse.addProperty("licenseId", baseRegisterForm.getLicenseid());
-        baseRegisterResponse.addProperty("tradetitle", baseRegisterForm.getTradetitle());
-        baseRegisterResponse.addProperty("category", baseRegisterForm.getCategoryname());
-        baseRegisterResponse.addProperty("subcategory", baseRegisterForm.getSubcategoryname());
-        baseRegisterResponse.addProperty("owner", baseRegisterForm.getOwner());
-        baseRegisterResponse.addProperty("mobile", baseRegisterForm.getMobile());
-        baseRegisterResponse.addProperty("assessmentno", baseRegisterForm.getAssessmentno() != null && !baseRegisterForm.getAssessmentno().isEmpty() ? baseRegisterForm.getAssessmentno() : "NA");
-        baseRegisterResponse.addProperty("wardname", baseRegisterForm.getWardname());
-        baseRegisterResponse.addProperty("localityname", baseRegisterForm.getLocalityname());
-        baseRegisterResponse.addProperty("tradeaddress", baseRegisterForm.getTradeaddress());
-        baseRegisterResponse.addProperty("commencementdate", baseRegisterForm.getCommencementdate());
-        baseRegisterResponse.addProperty("status", baseRegisterForm.getStatusname());
-        baseRegisterResponse.addProperty("arrearlicfee", baseRegisterForm.getArrearlicensefee());
-        baseRegisterResponse.addProperty("arrearpenaltyfee", baseRegisterForm.getArrearpenaltyfee());
-        baseRegisterResponse.addProperty("curlicfee", baseRegisterForm.getCurlicensefee());
-        baseRegisterResponse.addProperty("curpenaltyfee", baseRegisterForm.getCurpenaltyfee());
-        baseRegisterResponse.addProperty("unitofmeasure", baseRegisterForm.getUnitofmeasure());
-        baseRegisterResponse.addProperty("tradearea", baseRegisterForm.getTradewt());
-        baseRegisterResponse.addProperty("rate", baseRegisterForm.getRateval());
-        return baseRegisterResponse;
+    public JsonElement serialize(final DataTable<BaseRegister> baseRegisterResponse, final Type type,
+            final JsonSerializationContext jsc) {
+        final List<BaseRegister> baseRegisterResult = baseRegisterResponse.getData();
+        final JsonArray baseRegisterResultData = new JsonArray();
+        baseRegisterResult.forEach(baseForm -> {
+            final JsonObject baseRegisterJson = new JsonObject();
+            baseRegisterJson.addProperty("tinno", StringUtils.defaultIfBlank(baseForm.getLicensenumber(), "N/A"));
+            baseRegisterJson.addProperty("licenseId", baseForm.getLicenseid());
+            baseRegisterJson.addProperty("tradetitle", baseForm.getTradetitle());
+            baseRegisterJson.addProperty("category", baseForm.getCategoryname());
+            baseRegisterJson.addProperty("subcategory", baseForm.getSubcategoryname());
+            baseRegisterJson.addProperty("owner", baseForm.getOwner());
+            baseRegisterJson.addProperty("mobile", baseForm.getMobile());
+            baseRegisterJson.addProperty("assessmentno", StringUtils.defaultIfBlank(baseForm.getAssessmentno(), "N/A"));
+            baseRegisterJson.addProperty("wardname", baseForm.getWardname());
+            baseRegisterJson.addProperty("localityname", baseForm.getLocalityname());
+            baseRegisterJson.addProperty("tradeaddress", baseForm.getTradeaddress());
+            baseRegisterJson.addProperty("commencementdate", baseForm.getCommencementdate());
+            baseRegisterJson.addProperty("status", baseForm.getStatusname());
+            baseRegisterJson.addProperty("arrearlicfee", baseForm.getArrearlicensefee());
+            baseRegisterJson.addProperty("arrearpenaltyfee", baseForm.getArrearpenaltyfee());
+            baseRegisterJson.addProperty("curlicfee", baseForm.getCurlicensefee());
+            baseRegisterJson.addProperty("curpenaltyfee", baseForm.getCurpenaltyfee());
+            baseRegisterJson.addProperty("unitofmeasure", baseForm.getUnitofmeasure());
+            baseRegisterJson.addProperty("tradearea", baseForm.getTradewt());
+            baseRegisterJson.addProperty("rate", baseForm.getRateval());
+
+            baseRegisterResultData.add(baseRegisterJson);
+        });
+        return enhance(baseRegisterResultData, baseRegisterResponse);
     }
 }

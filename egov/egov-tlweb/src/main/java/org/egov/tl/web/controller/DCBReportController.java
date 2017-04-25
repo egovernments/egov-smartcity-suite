@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -40,26 +40,34 @@
 
 package org.egov.tl.web.controller;
 
-import org.egov.tl.entity.dto.DCBReportResult;
+import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
+import org.egov.infra.reporting.engine.ReportOutput;
+import org.egov.infra.reporting.engine.ReportRequest;
+import org.egov.infra.reporting.engine.ReportService;
+import org.egov.infra.web.support.ui.DataTable;
+import org.egov.tl.entity.dto.DCBReportSearchRequest;
+import org.egov.tl.entity.view.DCBReportResult;
 import org.egov.tl.service.DCBReportService;
 import org.egov.tl.web.response.adaptor.DCBReportResponseAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
-
-import static org.apache.commons.lang3.StringUtils.defaultString;
-import static org.egov.infra.utils.JsonUtils.toJSON;
-import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-
 @Controller
-@RequestMapping(value = {"/tlreports", "/public/report"})
+@RequestMapping(value = { "/tlreports", "/public/report" })
 public class DCBReportController {
 
     private static final String LICENSE = "license";
@@ -68,26 +76,53 @@ public class DCBReportController {
     @Autowired
     private DCBReportService dCBReportService;
 
+    @Autowired
+    private ReportService reportService;
+
     @ModelAttribute("dCBReportResult")
     public DCBReportResult dCBReportResultModel() {
         return new DCBReportResult();
     }
 
-    @RequestMapping(value = "/dcbreport/licensenumberwise", method = GET)
-    public String licenseNumberWisesearch(Model model) {
+    @GetMapping(value = "/dcbreport/licensenumberwise")
+    public String licenseNumberWisesearch(final Model model) {
         model.addAttribute("mode", LICENSE);
         model.addAttribute(REPORT_TYPE_ATTRIB_NAME, LICENSE);
         return "dCBReport-search";
     }
 
-    @RequestMapping(value = "/dcbreportlist", method = GET, produces = TEXT_PLAIN_VALUE)
+    @GetMapping(value = "/dcbreportlist", produces = TEXT_PLAIN_VALUE)
     @ResponseBody
-    public String search(HttpServletRequest request) throws IOException {
-        return new StringBuilder("{ \"data\":")
-                .append(toJSON(
-                        dCBReportService.generateReportResult(
-                                defaultString(request.getParameter("licensenumber")),
-                                defaultString(request.getParameter("mode"))),
-                        DCBReportResult.class, DCBReportResponseAdaptor.class)).append("}").toString();
+    public String search(final DCBReportSearchRequest searchRequest) {
+        return new DataTable<>(dCBReportService.generateReportResult(searchRequest),
+                searchRequest.draw()).toJson(DCBReportResponseAdaptor.class);
+    }
+
+    @GetMapping("/reporttotal")
+    @ResponseBody
+    public String calculateReportToatl(final DCBReportSearchRequest searchRequest) {
+        return dCBReportService.reportTotalColumwise(searchRequest);
+    }
+
+    @GetMapping("/report")
+    @ResponseBody
+    public ResponseEntity<byte[]> searchReport(final DCBReportSearchRequest searchRequest) {
+        final Map<String, Object> responseParams = new HashMap<>();
+        final ReportRequest reportRequest = new ReportRequest("tl_dcb_report", dCBReportService.prepareReport(searchRequest),
+                responseParams);
+        reportRequest.setReportFormat(searchRequest.getPrintFormat());
+        return reportResponse(reportRequest);
+
+    }
+
+    private ResponseEntity<byte[]> reportResponse(final ReportRequest reportRequest) {
+        final HttpHeaders headers = new HttpHeaders();
+        if (reportRequest.getReportFormat().equals(FileFormat.PDF))
+            headers.setContentType(MediaType.parseMediaType("application/pdf"));
+        else if (reportRequest.getReportFormat().equals(FileFormat.XLS))
+            headers.setContentType(MediaType.parseMediaType("application/vnd.ms-excel"));
+        headers.add("content-disposition", "inline;filename=DCB_Report." + reportRequest.getReportFormat());
+        final ReportOutput reportOutput = reportService.createReport(reportRequest);
+        return new ResponseEntity<>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
     }
 }

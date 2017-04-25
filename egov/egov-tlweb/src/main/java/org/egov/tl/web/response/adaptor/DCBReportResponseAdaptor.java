@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *     accountability and the service delivery of the government  organizations.
  *
- *      Copyright (C) 2016  eGovernments Foundation
+ *      Copyright (C) 2017  eGovernments Foundation
  *
  *      The updated version of eGov suite of products as by eGovernments Foundation
  *      is available at http://www.egovernments.org
@@ -40,35 +40,43 @@
 
 package org.egov.tl.web.response.adaptor;
 
+import java.lang.reflect.Type;
+import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
+import org.egov.infra.web.support.json.adapter.DataTableJsonAdapter;
+import org.egov.infra.web.support.ui.DataTable;
+import org.egov.tl.entity.view.DCBReportResult;
+
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
-import org.egov.tl.entity.dto.DCBReportResult;
 
-import java.lang.reflect.Type;
-
-public class DCBReportResponseAdaptor implements JsonSerializer<DCBReportResult> {
+public class DCBReportResponseAdaptor implements DataTableJsonAdapter<DCBReportResult> {
 
     @Override
-    public JsonElement serialize(DCBReportResult dCBReportObj, Type type, JsonSerializationContext jsc) {
-        JsonObject dcbReportResponse = new JsonObject();
-        if (dCBReportObj != null) {
-            dcbReportResponse.addProperty("licenseid", dCBReportObj.getLicenseid());
-            dcbReportResponse.addProperty("licensenumber", dCBReportObj.getLicensenumber() != null ? dCBReportObj.getLicensenumber() : "N/A");
-            dcbReportResponse.addProperty("username", dCBReportObj.getUsername());
-            dcbReportResponse.addProperty("curr_demand", dCBReportObj.getCurr_demand());
-            dcbReportResponse.addProperty("arr_demand", dCBReportObj.getArr_demand());
-            dcbReportResponse.addProperty("total_demand", dCBReportObj.getTotal_demand());
-            dcbReportResponse.addProperty("curr_coll", dCBReportObj.getCurr_coll());
-            dcbReportResponse.addProperty("arr_coll", dCBReportObj.getArr_coll());
-            dcbReportResponse.addProperty("total_coll", dCBReportObj.getTotal_coll());
-            dcbReportResponse.addProperty("curr_balance", dCBReportObj.getCurr_balance());
-            dcbReportResponse.addProperty("arr_balance", dCBReportObj.getArr_balance());
-            dcbReportResponse.addProperty("total_balance", dCBReportObj.getTotal_balance());
+    public JsonElement serialize(final DataTable<DCBReportResult> dcbReportResponse, final Type type,
+            final JsonSerializationContext jsc) {
+        final List<DCBReportResult> dCBReportResult = dcbReportResponse.getData();
+        final JsonArray dCBReportResultData = new JsonArray();
+        dCBReportResult.forEach(dCBReport -> {
+            final JsonObject dCBReportResultJson = new JsonObject();
+            dCBReportResultJson.addProperty("licenseid", dCBReport.getLicenseid());
+            dCBReportResultJson.addProperty("licensenumber", StringUtils.defaultIfBlank(dCBReport.getLicensenumber(), "N/A"));
+            dCBReportResultJson.addProperty("username", dCBReport.getUsername());
+            dCBReportResultJson.addProperty("currentdemand", dCBReport.getCurrentdemand());
+            dCBReportResultJson.addProperty("arreardemand", dCBReport.getArreardemand());
+            dCBReportResultJson.addProperty("totaldemand", dCBReport.getTotaldemand());
+            dCBReportResultJson.addProperty("currentcollection", dCBReport.getCurrentcollection());
+            dCBReportResultJson.addProperty("arrearcollection", dCBReport.getArrearcollection());
+            dCBReportResultJson.addProperty("totalcollection", dCBReport.getTotalcollection());
+            dCBReportResultJson.addProperty("currentbalance", dCBReport.getCurrentbalance());
+            dCBReportResultJson.addProperty("arrearbalance", dCBReport.getArrearbalance());
+            dCBReportResultJson.addProperty("totalbalance", dCBReport.getTotalbalance());
 
-        }
-        return dcbReportResponse;
+            dCBReportResultData.add(dCBReportResultJson);
+        });
+        return enhance(dCBReportResultData, dcbReportResponse);
     }
-
 }

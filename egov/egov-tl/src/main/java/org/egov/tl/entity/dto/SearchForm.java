@@ -40,17 +40,18 @@
 
 package org.egov.tl.entity.dto;
 
-import org.egov.tl.entity.License;
-import org.egov.tl.utils.Constants;
-import org.joda.time.DateTime;
+import static org.egov.tl.utils.Constants.CSCOPERATOR;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import static org.egov.tl.utils.Constants.CSCOPERATOR;
+import org.egov.infra.web.support.search.DataTableSearchRequest;
+import org.egov.tl.entity.License;
+import org.egov.tl.utils.Constants;
+import org.joda.time.DateTime;
 
-public class SearchForm {
+public class SearchForm extends DataTableSearchRequest {
     private Long licenseId;
     private String applicationNumber;
     private String licenseNumber;
@@ -106,15 +107,15 @@ public class SearchForm {
                 licenseActions.add("Modify Legacy License");
             if (license.getStatus() != null)
                 addRoleSpecificActions(license, userRoles, licenseActions);
-        } else if (license.isReadyForRenewal()) {
+        } else if (license.isReadyForRenewal())
             licenseActions.add("Renew License");
-        }
         setActions(licenseActions);
     }
 
-    private void addRoleSpecificActions(License license, String userRoles, List<String> licenseActions) {
+    private void addRoleSpecificActions(final License license, final String userRoles, final List<String> licenseActions) {
 
-        if (userRoles.contains(Constants.ROLE_BILLCOLLECTOR) && license.canCollectFee() && !Constants.CLOSURE_NATUREOFTASK.equals(license.getState().getNatureOfTask()))
+        if (userRoles.contains(Constants.ROLE_BILLCOLLECTOR) && license.canCollectFee()
+                && !Constants.CLOSURE_NATUREOFTASK.equals(license.getState().getNatureOfTask()))
             licenseActions.add("Collect Fees");
         else if (userRoles.contains(Constants.TL_CREATOR_ROLENAME) || userRoles.contains(Constants.TL_APPROVER_ROLENAME)) {
             if (license.isStatusActive() && !license.isLegacy())
@@ -123,21 +124,21 @@ public class SearchForm {
                 licenseActions.add("Print Provisional Certificate");
             if (license.isReadyForRenewal())
                 licenseActions.add("Renew License");
-            Date fromRange = new DateTime().withMonthOfYear(1).withDayOfMonth(1).toDate();
-            Date toRange = new DateTime().withMonthOfYear(4).withDayOfMonth(1).toDate();
-            Date currentDate = new Date();
+            final Date fromRange = new DateTime().withMonthOfYear(1).withDayOfMonth(1).toDate();
+            final Date toRange = new DateTime().withMonthOfYear(4).withDayOfMonth(1).toDate();
+            final Date currentDate = new Date();
             if (currentDate.after(fromRange) && currentDate.before(toRange))
                 demandGenerationOption(licenseActions, license);
         }
 
     }
 
-    private void demandGenerationOption(List<String> licenseActions, License license) {
-        Date nextYearInstallment = new DateTime().withMonthOfYear(4).withDayOfMonth(1).toDate();
-        Date currentYearInstallment = license.getLicenseDemand().getEgInstallmentMaster().getToDate();
-        if (license.isNewPermanentApplication() && !license.isLegacyWithNoState() && license.getIsActive() && currentYearInstallment.before(nextYearInstallment)) {
+    private void demandGenerationOption(final List<String> licenseActions, final License license) {
+        final Date nextYearInstallment = new DateTime().withMonthOfYear(4).withDayOfMonth(1).toDate();
+        final Date currentYearInstallment = license.getLicenseDemand().getEgInstallmentMaster().getToDate();
+        if (license.isNewPermanentApplication() && !license.isLegacyWithNoState() && license.getIsActive()
+                && currentYearInstallment.before(nextYearInstallment))
             licenseActions.add("Generate Demand");
-        }
     }
 
     public String getApplicationNumber() {
@@ -288,7 +289,7 @@ public class SearchForm {
         return active;
     }
 
-    public void setActive(String active) {
+    public void setActive(final String active) {
         this.active = active;
     }
 
@@ -296,7 +297,7 @@ public class SearchForm {
         return inactive;
     }
 
-    public void setInactive(Boolean inactive) {
+    public void setInactive(final Boolean inactive) {
         this.inactive = inactive;
     }
 }

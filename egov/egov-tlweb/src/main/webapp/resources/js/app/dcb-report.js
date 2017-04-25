@@ -39,12 +39,16 @@
  */
 
 var reportdatatable;
-
+var recordTotal=[];
 $(document).ready(function(e) {
 	drillDowntableContainer = $("#tbldcbdrilldown");
 	$('#report-backbutton').hide();
 	$('form').submit(function(e) {
 		callAjaxByBoundary(e);
+		var table = $('#tbldcbdrilldown').DataTable();
+		var info = table.page.info();
+		if(info.start==0)
+		getSumOfRecords();
 	});
 
 	$('#backButton').click(function(e) {
@@ -53,6 +57,20 @@ $(document).ready(function(e) {
 
 });
 
+function getSumOfRecords(){
+	
+	$.ajax({
+		url:"../reporttotal?licensenumber="+$('#licensenumber').val(),
+		type:'GET',
+		success: function (data){
+		  recordTotal=[];
+		  var sum=data.replace(/[{ }]/g, "").split(",");
+		  for (var i = 0; i < sum.length; i++){
+			  recordTotal.push(sum[i]);
+		  }
+		}
+	})
+}
 function openTradeLicense(obj) {
 	window.open("../../viewtradelicense/viewTradeLicense-view.action?id="
 			+ $(obj).data('eleval'), '',
@@ -68,47 +86,46 @@ function callAjaxByBoundary(event) {
 	$('.report-section').removeClass('display-hide');
 	$('#report-footer').show();
 	event.preventDefault();
+	$("#tbldcbdrilldown").dataTable().fnDestroy();
+	
 	var reportdatatable = drillDowntableContainer
 			.dataTable({
+				 processing : true,
+		         serverSide : true,
+		         sort : true,
+		         filter : true,
+		         "searching":false,
 				dom : "<'row'<'col-xs-4 pull-right'f>r>t<'row add-margin'<'col-md-3 col-xs-6'i><'col-md-2 col-xs-6'l><'col-md-3 col-xs-6 text-right'B><'col-md-4 col-xs-6 text-right'p>>",
 	 			"autoWidth" : false,
 	 			"bDestroy" : true,
-	 		    	buttons : [  {
-						extend : 'pdf',
-						title : 'DCB Report By Trade Wise',
-						filename : 'DCB Report By Trade Wiset',
-						orientation : 'landscape',
-						footer : true,
-						pageSize:'A3',
-						exportOptions : {
-							columns : ':visible'
-						}
-					}, {
-						extend : 'excel',
-						filename : 'DCB Report By Trade Wise',
-						footer : true,
-						exportOptions : {
-							columns : ':visible'
-						}
-					}, {
-						extend : 'print',
-						title : 'DCB Report By Trade Wise',
-						filename : 'DCB Report By Trade Wise',
-						footer : true,
-						exportOptions : {
-							columns : ':visible'
-						}
-					} ],
-				type : 'GET',
+	 		    	buttons : [ 
+	 		    	    {
+		                  text: 'PDF',
+		                  action: function ( e, dt, node, config ) {
+		                     var url="/tl/tlreports/report?licensenumber="+licenseNumbertemp+"&printFormat=PDF";
+		                     window.open(url,'','scrollbars=yes,width=1300,height=700,status=yes');
+		                  }
+			            }, 
+			            {
+			                  text: 'XLS',
+			                  action: function ( e, dt, node, config ) 
+			                  {
+			                     var url="/tl/tlreports/report?licensenumber="+licenseNumbertemp+"&printFormat=XLS";
+			                     window.open(url,'_self','scrollbars=yes,width=1300,height=700,status=yes');
+			                  }
+				            }],
 				responsive : true,
 				destroy : true,
+	             "order": [[1, 'asc']],
 				ajax : {
 					url : "../dcbreportlist",
-					data : {
-						'mode' : modeVal,
-						'licensenumber' : licenseNumbertemp
+					type:'GET',
+                    data:function (args) {
+                    		 return {"args": JSON.stringify(args) ,'licensenumber' : licenseNumbertemp
 					}
+                  }
 				},
+				
 				columns : [
 						{
 							"data" : function(row, type, set, meta) {
@@ -121,37 +138,46 @@ function callAjaxByBoundary(event) {
 								return '<a href="javascript:void(0);" onclick="openTradeLicense(this);" data-hiddenele="id" data-eleval="'
 										+ data.id + '">' + data.name + '</a>';
 							},
-							"sTitle" : "License No."
+							"sTitle" : "License No.",
+							"name":"licensenumber",
 						}, {
-							"data" : "arr_demand",
+							"data" : "arreardemand",
+							"name":"arreardemand",
 							"sTitle" : "Arrears"
 						}, {
-							"data" : "curr_demand",
+							"data" : "currentdemand",
+							"name":"currentdemand",
 							"sTitle" : "Current"
-						}, {
-							"data" : "username",
-							"sTitle" : "username",
-							"bVisible" : false
-						}, {
-							"data" : "total_demand",
+						},  {
+							"data" : "totaldemand",
+							"orderable": false,
+			                "sortable": false,
 							"sTitle" : "Total"
 						}, {
-							"data" : "arr_coll",
+							"data" : "arrearcollection",
+							"name":"arrearcollection",
 							"sTitle" : "Arrears"
 						}, {
-							"data" : "curr_coll",
+							"data" : "currentcollection",
+							"name":"currentcollection",
 							"sTitle" : "Current"
 						}, {
-							"data" : "total_coll",
+							"data" : "totalcollection",
+							"orderable": false,
+			                "sortable": false,
 							"sTitle" : "Total"
 						}, {
-							"data" : "arr_balance",
+							"data" : "arrearbalance",
+							"name":"arrearbalance",
 							"sTitle" : "Arrears"
 						}, {
-							"data" : "curr_balance",
+							"data" : "currentbalance",
+							"name":"currentbalance",
 							"sTitle" : "Current"
 						}, {
-							"data" : "total_balance",
+							"data" : "totalbalance",
+							 "orderable": false,
+			                 "sortable": false,
 							"sTitle" : "Total"
 						} ],
 				"footerCallback" : function(row, data, start, end, display) {
@@ -162,15 +188,15 @@ function callAjaxByBoundary(event) {
 						$('#report-footer').show();
 					}
 					if (data.length > 0) {
-						updateTotalFooter(1, api);
-						updateTotalFooter(2, api);
-						updateTotalFooter(4, api);
-						updateTotalFooter(5, api);
-						updateTotalFooter(6, api);
-						updateTotalFooter(7, api);
-						updateTotalFooter(8, api);
-						updateTotalFooter(9, api);
-						updateTotalFooter(10, api);
+						updateTotalFooter(1, api, true);
+						updateTotalFooter(2, api, true);
+						updateTotalFooter(3, api, true);
+						updateTotalFooter(4, api, true);
+						updateTotalFooter(5, api, true);
+						updateTotalFooter(6, api, true);
+						updateTotalFooter(7, api, true);
+						updateTotalFooter(8, api, true);
+						updateTotalFooter(9, api, true);
 					}
 				},
 				"aoColumnDefs" : [ {
@@ -188,7 +214,7 @@ function callAjaxByBoundary(event) {
 		reportdatatable.fnSetColumnVis(1, true);
 	}
 }
-function updateTotalFooter(colidx, api) {
+function updateTotalFooter(colidx, api, isServerSide) {
 	// Remove the formatting to get integer data for summation
 	var intVal = function(i) {
 		return typeof i === 'string' ? i.replace(/[\$,]/g, '') * 1
@@ -196,9 +222,12 @@ function updateTotalFooter(colidx, api) {
 	};
 
 	// Total over all pages
-	total = api.column(colidx).data().reduce(function(a, b) {
-		return intVal(a) + intVal(b);
-	});
+	if(isServerSide && recordTotal!=null)
+		total= recordTotal[colidx-1];
+	else
+		total = api.column(colidx).data().reduce(function(a, b) {
+			return intVal(a) + intVal(b);
+		});
 
 	// Total over this page
 	pageTotal = api.column(colidx, {
@@ -209,7 +238,7 @@ function updateTotalFooter(colidx, api) {
 
 	// Update footer
 	$(api.column(colidx).footer()).html(
-			formatNumberInr(pageTotal) + ' (' + formatNumberInr(total) + ')');
+			formatNumberInr(pageTotal) +' (' + formatNumberInr(total) + ')');
 }
 
 // inr formatting number
