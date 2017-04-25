@@ -42,9 +42,12 @@ package org.egov.tl.web.controller;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.service.CFinancialYearService;
 import org.egov.tl.entity.DemandGenerationLog;
+import org.egov.tl.entity.DemandGenerationLogDetail;
 import org.egov.tl.entity.License;
+import org.egov.tl.entity.enums.ProcessStatus;
 import org.egov.tl.service.DemandGenerationService;
 import org.egov.tl.service.TradeLicenseService;
+import org.egov.tl.web.response.adaptor.DemandGenerationResponseAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -56,8 +59,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
+import static org.egov.infra.utils.JsonUtils.toJSON;
+import static org.egov.tl.utils.Constants.DMD_GEN_INSTALLMENT;
+import static org.egov.tl.utils.Constants.DMD_GEN_RETRY;
+import static org.egov.tl.utils.Constants.DMD_GENERATION_DATA;
 import static org.egov.tl.utils.Constants.MESSAGE;
-
 @Controller
 @RequestMapping("/demand")
 public class DemandGenerationController {
@@ -84,7 +90,9 @@ public class DemandGenerationController {
     @RequestMapping(value = "generate", method = RequestMethod.POST)
     public String generateDemand(@RequestParam String installmentYear, RedirectAttributes responseAttribs) {
         DemandGenerationLog bulkDemandGenerationLog = demandGenerationService.generateDemand(installmentYear);
-        responseAttribs.addFlashAttribute("demandGenerationLog", bulkDemandGenerationLog);
+        responseAttribs.addFlashAttribute(DMD_GEN_INSTALLMENT, bulkDemandGenerationLog.getInstallmentYear());
+        responseAttribs.addFlashAttribute(DMD_GEN_RETRY, bulkDemandGenerationLog.getDemandGenerationStatus().equals(ProcessStatus.INCOMPLETE) ? true : false);
+        responseAttribs.addFlashAttribute(DMD_GENERATION_DATA, toJSON(bulkDemandGenerationLog.getDetails(), DemandGenerationLogDetail.class, DemandGenerationResponseAdaptor.class));
         responseAttribs.addFlashAttribute(MESSAGE,
                 "msg.demand.generation." + bulkDemandGenerationLog.getDemandGenerationStatus());
         return "redirect:/demand/generate";
@@ -93,7 +101,20 @@ public class DemandGenerationController {
     @RequestMapping(value = "regenerate", method = RequestMethod.POST)
     public String regenerateDemand(@RequestParam String installmentYear, RedirectAttributes responseAttribs) {
         DemandGenerationLog bulkDemandGenerationLog = demandGenerationService.retryFailedDemandGeneration(installmentYear);
-        responseAttribs.addFlashAttribute("demandGenerationLog", bulkDemandGenerationLog);
+        responseAttribs.addFlashAttribute(DMD_GEN_INSTALLMENT, bulkDemandGenerationLog.getInstallmentYear());
+        responseAttribs.addFlashAttribute(DMD_GEN_RETRY, bulkDemandGenerationLog.getDemandGenerationStatus().equals(ProcessStatus.INCOMPLETE) ? true : false);
+        responseAttribs.addFlashAttribute(DMD_GENERATION_DATA, toJSON(bulkDemandGenerationLog.getDetails(), DemandGenerationLogDetail.class, DemandGenerationResponseAdaptor.class));
+        responseAttribs.addFlashAttribute(MESSAGE,
+                "msg.demand.generation." + bulkDemandGenerationLog.getDemandGenerationStatus());
+        return "redirect:/demand/generate";
+    }
+
+    @RequestMapping(value = "generatemissing", method = RequestMethod.POST)
+    public String generateMissingDemand(@RequestParam String installmentYear, RedirectAttributes responseAttribs) {
+        DemandGenerationLog bulkDemandGenerationLog = demandGenerationService.generateMissingDemand(installmentYear);
+        responseAttribs.addFlashAttribute(DMD_GEN_INSTALLMENT, bulkDemandGenerationLog.getInstallmentYear());
+        responseAttribs.addFlashAttribute(DMD_GEN_RETRY, bulkDemandGenerationLog.getDemandGenerationStatus().equals(ProcessStatus.INCOMPLETE) ? true : false);
+        responseAttribs.addFlashAttribute(DMD_GENERATION_DATA, toJSON(bulkDemandGenerationLog.getDetails(), DemandGenerationLogDetail.class, DemandGenerationResponseAdaptor.class));
         responseAttribs.addFlashAttribute(MESSAGE,
                 "msg.demand.generation." + bulkDemandGenerationLog.getDemandGenerationStatus());
         return "redirect:/demand/generate";

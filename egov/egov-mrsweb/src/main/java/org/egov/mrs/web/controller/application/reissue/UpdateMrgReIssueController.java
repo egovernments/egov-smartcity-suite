@@ -56,6 +56,7 @@ import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.mrs.application.MarriageConstants;
 import org.egov.mrs.application.MarriageUtils;
 import org.egov.mrs.application.service.MarriageCertificateService;
@@ -92,6 +93,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping(value = "/reissue")
 public class UpdateMrgReIssueController extends GenericWorkFlowController {
 
+    private static final String IS_EMPLOYEE = "isEmployee";
+
     @Autowired
     private ReIssueService reIssueService;
     @Autowired
@@ -113,11 +116,15 @@ public class UpdateMrgReIssueController extends GenericWorkFlowController {
     @Autowired
     private MarriageCertificateService marriageCertificateService;
 
+    @Autowired
+    private SecurityUtils securityUtils;
+
     private static final Logger LOGGER = Logger.getLogger(UpdateMrgReIssueController.class);
 
     public void prepareNewForm(final Model model) {
         model.addAttribute("marriageRegistrationUnit",
                 marriageRegistrationUnitService.getActiveRegistrationunit());
+        model.addAttribute(IS_EMPLOYEE, registrationWorkflowService.isEmployee(securityUtils.getCurrentUser()));
     }
 
     @RequestMapping(value = "/update/{id}", method = RequestMethod.GET)
@@ -218,14 +225,12 @@ public class UpdateMrgReIssueController extends GenericWorkFlowController {
                 MarriageCertificate marriageCertificate = null;
                 final List<MarriageCertificate> certificateReIssued = marriageCertificateService
                         .getGeneratedReIssueCertificate(reIssue);
-                if (certificateReIssued != null && !certificateReIssued.isEmpty()) {
+                if (certificateReIssued != null && !certificateReIssued.isEmpty())
                     for (final MarriageCertificate certificateobj : certificateReIssued)
                         marriageCertificate = certificateobj;
-
-                } else {
+                else
                     marriageCertificate = reIssueService
                             .generateReIssueCertificate(reIssue, workflowContainer, request);
-                }
 
                 model.addAttribute("fileStoreIds", marriageCertificate.getFileStore().getFileStoreId());
                 model.addAttribute("ulbCode", ApplicationThreadLocals.getCityCode());

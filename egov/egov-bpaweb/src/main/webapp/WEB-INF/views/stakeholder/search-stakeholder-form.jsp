@@ -85,7 +85,7 @@
 
 				<div class="form-group">
 					<label class="col-sm-3 control-label text-right"><spring:message
-							code="lbl.aadhar.no" /></label>
+							code="lbl.aadhar" /></label>
 					<div class="col-sm-3 add-margin">
 						<form:input type="text" cssClass="form-control"
 							path="aadhaarNumber" id="aadhaarNumber" />
@@ -93,7 +93,7 @@
 							cssClass="error-msg" />
 					</div>
 					<label class="col-sm-2 control-label text-right"><spring:message
-							code="lbl.pan.no" /></label>
+							code="lbl.pan" /></label>
 					<div class="col-sm-3 add-margin">
 						<form:input type="text" cssClass="form-control" path="pan"
 							id="panNumber" maxlength="10" />

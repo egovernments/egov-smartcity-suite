@@ -63,10 +63,10 @@ public class BpaFeeDetail extends AbstractAuditable {
     @NotNull
     @JoinColumn(name = "bpafee")
     private BpaFee bpafee;
-    private double fromAreasqmt;
-    private double toAreasqmt;
+    private Double fromAreasqmt;
+    private Double toAreasqmt;
     @NotNull
-    private double amount;
+    private Double amount;
     @Transient
     private Long srlNo;
     @Length(min = 1, max = 128)
@@ -99,15 +99,15 @@ public class BpaFeeDetail extends AbstractAuditable {
         return bpafee;
     }
 
-    public double getFromAreasqmt() {
+    public Double getFromAreasqmt() {
         return fromAreasqmt;
     }
 
-    public double getToAreasqmt() {
+    public Double getToAreasqmt() {
         return toAreasqmt;
     }
 
-    public double getAmount() {
+    public Double getAmount() {
         return amount;
     }
 
@@ -147,15 +147,15 @@ public class BpaFeeDetail extends AbstractAuditable {
         this.bpafee = bpafee;
     }
 
-    public void setFromAreasqmt(final double fromAreasqmt) {
+    public void setFromAreasqmt(final Double fromAreasqmt) {
         this.fromAreasqmt = fromAreasqmt;
     }
 
-    public void setToAreasqmt(final double toAreasqmt) {
+    public void setToAreasqmt(final Double toAreasqmt) {
         this.toAreasqmt = toAreasqmt;
     }
 
-    public void setAmount(final double amount) {
+    public void setAmount(final Double amount) {
         this.amount = amount;
     }
 

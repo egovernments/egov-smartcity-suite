@@ -207,7 +207,7 @@ function validate()
 	document.getElementById("invaliddateformat").style.display="none";
 	document.getElementById("receipt_dateerror_area").style.display="none";
 	var validation = true;
-		<s:if test="%{!isBillSourcemisc()}"> 
+		<s:if test="%{!isBillSourcemisc() && manualReceiptNumberAndDateReq}"> 
 		if(document.getElementById('manualreceiptinfo').checked==true){
 				if(document.getElementById("manualReceiptDate").value=="" ){
 							document.getElementById("receipt_error_area").innerHTML+=
@@ -360,10 +360,16 @@ function validate()
 			else {
 				var receiptDate;
 				 <s:if test="%{!isBillSourcemisc()}">
-				 receiptDate = document.getElementById("manualReceiptDate").value;
+				 	if(document.getElementById("manualReceiptDate"))
+				 		receiptDate = document.getElementById("manualReceiptDate").value;
+				 	else
+				 		receiptDate = "${currDate}";
 				</s:if>
 				<s:else>
-				receiptDate = document.getElementById("voucherDate").value;
+					if(document.getElementById("voucherDate"))
+						receiptDate = document.getElementById("voucherDate").value;
+					else
+						receiptDate = "${currDate}";
 				</s:else>
 				if(receiptDate!=null && process(bankChallanDate) > process(receiptDate)){
  	 	    		document.getElementById("receipt_error_area").innerHTML+=
@@ -503,7 +509,7 @@ function validate()
    		document.getElementById("receipt_error_area").innerHTML+='<s:text name="billreceipt.missingpayeename.errormessage" /> ' + '<br>';
 		validation = false;
    	}
-
+	
    	<s:if test="%{!isBillSourcemisc()}"> 
 	 if(eval(document.getElementById("totalamountdisplay").value)>eval(document.getElementById("totalamounttobepaid").value)){
 		 var r = confirm('Collected amount is more than the amount to be paid. Do you want to collect advance amount?');
@@ -587,7 +593,7 @@ function verifyChequeDetails(table,len1)
 	    //validate if valid date has been entered
 	    if(getControlInBranch(table.rows[j],'instrumentDate')!=null){
 	    var instrDate=getControlInBranch(table.rows[j],'instrumentDate');
-	    <s:if test="%{!isBillSourcemisc()}">
+	    <s:if test="%{!isBillSourcemisc() && manualReceiptNumberAndDateReq}">
 	    	if(instrDate.value==null || instrDate.value=="" || instrDate.value=="DD/MM/YYYY"){
 	    		if(instrDateErrMsg==""){
 	    		    instrDateErrMsg='<s:text name="billreceipt.missingchequedate.errormessage" />' + '<br>';
@@ -618,7 +624,12 @@ function verifyChequeDetails(table,len1)
 	    		}
 	    		check=false;
 	    	 } else {
-	 	    		var receiptDate = document.getElementById("voucherDate").value;
+	 	    		var receiptDate;
+	    		 	if(document.getElementById("voucherDate"))
+	 					receiptDate = document.getElementById("voucherDate").value;
+	 				else
+	 					receiptDate ="${currDate}"; 
+	 				
 	 	 	    	if(instrDate.value != null && instrDate.value!= '' && check==true && process(instrDate.value) > process(receiptDate)){
 	 	 	    		document.getElementById("receipt_error_area").innerHTML+=
 	 	 					'<s:text name="miscreceipt.error.instrumentdate.greaterthan.receiptdate" />'+ '<br>';   	
@@ -923,7 +934,7 @@ function checkForCurrentDate(obj)
 	var receiptDate;
 	   document.getElementById("receipt_dateerror_area").style.display="none";
 		document.getElementById("receipt_dateerror_area").innerHTML="";
-	   <s:if test="%{!isBillSourcemisc()}">
+	   <s:if test="%{!isBillSourcemisc() && manualReceiptNumberAndDateReq}">
 		   if (  document.getElementById('manualreceiptinfo').checked==true){
 			   if(document.getElementById("manualReceiptDate").value != null  && document.getElementById("manualReceiptDate").value != ''){
 			   receiptDate = document.getElementById("manualReceiptDate").value;
@@ -937,7 +948,10 @@ function checkForCurrentDate(obj)
 		</s:if>
 		<s:else>
 		{
-		receiptDate = document.getElementById("voucherDate").value; 
+			if(document.getElementById("voucherDate"))
+				receiptDate = document.getElementById("voucherDate").value;
+			else
+				receiptDate ="${currDate}";
 		}
 		</s:else>
 	   var finDate = new Date('2012-04-01');
@@ -948,7 +962,7 @@ function checkForCurrentDate(obj)
 
 	   if(obj.value != null && obj.value != "") {
 	   if(!validatedays(obj.value,receiptDate)){
-		   <s:if test="%{!isBillSourcemisc()}">
+		   <s:if test="%{!isBillSourcemisc() && manualReceiptNumberAndDateReq}">
 		   if (document.getElementById("manualReceiptDate").value != null && document.getElementById("manualReceiptDate").value != '') {
 			if(receiptDateFormat<finDate) {
 				 document.getElementById("receipt_dateerror_area").style.display="block";
@@ -1160,8 +1174,8 @@ function showHideMandataryMark(obj){
 		   <td class="bluebox"><s:textfield label="paidBy" id="paidBy" maxlength="150" name="paidBy" value="%{payeeName}" /></td>
 	    </tr>
 	    </s:if>
-		<table id="manualreceipt" style="display:none">
-		<s:if test="%{!isBillSourcemisc()}">
+		<table id="manualreceipt" >
+		<s:if test="%{!isBillSourcemisc() && manualReceiptNumberAndDateReq}">
 					<tr>
 					<td class="bluebox" width="3%" ></td>
 					<td class="bluebox"><s:text name="billreceipt.manualreceiptinfo"/><span id="asteriskId"  class="mandatory1">*</span></td>
@@ -1169,7 +1183,7 @@ function showHideMandataryMark(obj){
 					</tr>
 		 </s:if>
 		 
-		 <s:if test="%{!isBillSourcemisc()}">
+		 <s:if test="%{!isBillSourcemisc() && manualReceiptNumberAndDateReq}">
 				<tr>
 				    <td class="bluebox" width="3%" ></td>
 					<td class="bluebox"><s:text name="billreceipt.manualreceipt.receiptnumber"/></td>

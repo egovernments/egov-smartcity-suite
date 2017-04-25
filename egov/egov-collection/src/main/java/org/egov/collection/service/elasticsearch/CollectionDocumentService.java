@@ -65,7 +65,6 @@ public class CollectionDocumentService {
     public CollectionDocument persistCollectionDocument(final CollectionIndex collectionIndex) {
         final CollectionDocument collectionDocument = beanMapperConfiguration.map(collectionIndex,
                 CollectionDocument.class);
-        return null;
-                //collectionDocumentRepository.save(collectionDocument);
+        return collectionDocumentRepository.save(collectionDocument);
     }
 }

@@ -57,13 +57,11 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.ServletRequestAware;
 import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
-import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
@@ -82,9 +80,6 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
         @Result(name = SearchAction.TARGETFORM, type = "redirectAction", location = "viewDCBProperty-displayPropInfo", params = {
                 "namespace", "/view", "propertyId", "${assessmentNum}", "searchUrl", "${searchUrl}" }) })
 public class SearchAction extends BaseFormAction implements ServletRequestAware {
-    /**
-     *
-     */
     private static final long serialVersionUID = -7506891911359323204L;
 
     private final Logger LOGGER = Logger.getLogger(getClass());
@@ -102,17 +97,13 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
     private String searchUrl;
     private boolean isDemandActive;
     
-    List<Map<String, String>> searchList = new ArrayList<Map<String, String>>();
+    List<Map<String, String>> searchList = new ArrayList<>();
     public static final String TARGET = "result";
     public static final String NEWFORM = "newForm";
     public static final String TARGETFORM = "targetForm";
 
     @Autowired
-    private UserService userService;
-    @Autowired
     private BasicPropertyDAO basicPropertyDAO;
-    @Autowired
-    private PtDemandDao ptDemandDAO;
     @Autowired
     private PropertyService propertyService;
     @Autowired
@@ -160,7 +151,7 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
                 setSearchValue("Door number :" + doorNo);
 
         } catch (final Exception e) {
-            LOGGER.error("Exception in Search Property By Door number ", e);
+            LOGGER.warn("Exception in Search Property By Door number ", e);
             throw new ApplicationRuntimeException("Exception : ", e);
         }
         if (LOGGER.isDebugEnabled())
@@ -193,7 +184,7 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
                 return NEWFORM;
             }
         } catch (final Exception e) {
-            LOGGER.error("Exception in Search Property By Door number ", e);
+            LOGGER.warn("Exception in Search Property By Door number ", e);
             throw new ApplicationRuntimeException("Exception : ", e);
         }
 

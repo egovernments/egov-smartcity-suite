@@ -45,7 +45,6 @@ import static org.egov.mrs.application.MarriageConstants.APPROVED;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
 import org.egov.commons.entity.Source;
@@ -92,16 +91,15 @@ public class MarriageRegistrationUpdateIndexesService {
     private MarriageRegistrationService marriageRegistrationService;
 
     public void updateIndexes(final MarriageRegistration marriageRegistration) {
-        Assignment assignment = null;
+        Assignment assignment;
         User user = null;
-        Integer elapsedDays = 0;
         List<Assignment> asignList = null;
 
         if (marriageRegistration.getState() != null && marriageRegistration.getState().getOwnerPosition() != null) {
             assignment = assignmentService.getPrimaryAssignmentForPositionAndDate(
                     marriageRegistration.getState().getOwnerPosition().getId(), new Date());
             if (assignment != null) {
-                asignList = new ArrayList<Assignment>();
+                asignList = new ArrayList<>();
                 asignList.add(assignment);
             } else if (assignment == null)
                 asignList = assignmentService.getAssignmentsForPosition(
@@ -122,10 +120,6 @@ public class MarriageRegistrationUpdateIndexesService {
 
             // mark application index as closed on Application Approved
             if (APPROVED.equals(marriageRegistration.getStatus().getCode())) {
-                elapsedDays = (int) TimeUnit.DAYS.convert(
-                        new Date().getTime() - marriageRegistration.getApplicationDate().getTime(),
-                        TimeUnit.MILLISECONDS);
-                applicationIndex.setElapsedDays(elapsedDays);
                 applicationIndex.setApproved(ApprovalStatus.APPROVED);
                 applicationIndex.setClosed(ClosureStatus.YES);
             }
@@ -135,10 +129,6 @@ public class MarriageRegistrationUpdateIndexesService {
                     .equals(marriageRegistration.getStatus().getCode())
                     || MarriageRegistration.RegistrationStatus.CANCELLED.toString()
                             .equals(marriageRegistration.getStatus().getCode())) {
-                elapsedDays = (int) TimeUnit.DAYS.convert(
-                        new Date().getTime() - marriageRegistration.getApplicationDate().getTime(),
-                        TimeUnit.MILLISECONDS);
-                applicationIndex.setElapsedDays(elapsedDays);
                 applicationIndex.setApproved(ApprovalStatus.REJECTED);
                 applicationIndex.setClosed(ClosureStatus.YES);
             }
@@ -154,7 +144,7 @@ public class MarriageRegistrationUpdateIndexesService {
             if (LOG.isDebugEnabled())
                 LOG.debug("Application Index creation Started... ");
 
-            final AppConfigValues marriageSla =marriageRegistrationService.getSlaAppConfigValuesForMarriageReg(
+            final AppConfigValues marriageSla = marriageRegistrationService.getSlaAppConfigValuesForMarriageReg(
                     MarriageConstants.MODULE_NAME, MarriageConstants.SLAFORMARRIAGEREGISTRATION);
             applicationIndex = ApplicationIndex.builder().withModuleName(APPL_INDEX_MODULE_NAME)
                     .withApplicationNumber(marriageRegistration.getApplicationNo())
@@ -165,8 +155,9 @@ public class MarriageRegistrationUpdateIndexesService {
                     .withStatus(marriageRegistration.getStatus().getDescription()).withUrl(
                             String.format(url))
                     .withApplicantAddress(marriageRegistration.getHusband().getContactInfo().getResidenceAddress())
-                    .withOwnername(user != null ?user.getUsername() + "::" + user.getName():"")
-                    .withChannel(marriageRegistration.getSource() == null ? Source.SYSTEM.toString() : marriageRegistration.getSource())
+                    .withOwnername(user != null ? user.getUsername() + "::" + user.getName() : "")
+                    .withChannel(marriageRegistration.getSource() == null ? Source.SYSTEM.toString()
+                            : marriageRegistration.getSource())
                     .withMobileNumber(marriageRegistration.getHusband().getContactInfo().getMobileNo())
                     .withClosed(ClosureStatus.NO)
                     .withSla(marriageSla != null && marriageSla.getValue() != null

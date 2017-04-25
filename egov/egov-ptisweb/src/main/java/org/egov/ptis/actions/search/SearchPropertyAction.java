@@ -103,7 +103,6 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
@@ -118,11 +117,10 @@ import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyMaterlizeView;
-import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.domain.entity.property.PropertyStatusValues;
 import org.egov.ptis.domain.service.property.PropertyService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.opensymphony.xwork2.validator.annotations.Validations;
 
@@ -133,30 +131,34 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
         @Result(name = SearchPropertyAction.TARGET, location = "searchProperty-result.jsp"),
         @Result(name = SearchPropertyAction.COMMON_FORM, location = "searchProperty-commonForm.jsp"),
         @Result(name = APPLICATION_TYPE_ALTER_ASSESSENT, type = "redirectAction", location = "modifyProperty-modifyForm", params = {
-                "namespace", "${actionNamespace}", "indexNumber", "${assessmentNum}", "modifyRsn", "ADD_OR_ALTER", "applicationType",
-                "${applicationType}","applicationSource","${applicationSource}" }),
+                "namespace", "${actionNamespace}", "indexNumber", "${assessmentNum}", "modifyRsn", "ADD_OR_ALTER",
+                "applicationType",
+                "${applicationType}", "applicationSource", "${applicationSource}" }),
         @Result(name = APPLICATION_TYPE_BIFURCATE_ASSESSENT, type = "redirectAction", location = "modifyProperty-modifyForm", params = {
                 "namespace", "/modify", "indexNumber", "${assessmentNum}", "modifyRsn", "BIFURCATE", "applicationType",
                 "${applicationType}" }),
         @Result(name = APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP, type = "redirectAction", location = "redirect", params = {
-                "namespace", "${actionNamespace}", "assessmentNo", "${assessmentNum}", "applicationType", "${applicationType}","applicationSource","${applicationSource}" }),
+                "namespace", "${actionNamespace}", "assessmentNo", "${assessmentNum}", "applicationType", "${applicationType}",
+                "applicationSource", "${applicationSource}" }),
         @Result(name = APPLICATION_TYPE_MEESEVA_TRANSFER_OF_OWNERSHIP, type = "redirectAction", location = "redirect", params = {
                 "namespace", "/property/transfer", "assessmentNo", "${assessmentNum}", "meesevaApplicationNumber",
                 "${meesevaApplicationNumber}", "meesevaServiceCode", "${meesevaServiceCode}", "applicationType",
                 "${applicationType}" }),
         @Result(name = APPLICATION_TYPE_REVISION_PETITION, type = "redirectAction", location = "revPetition-newForm", params = {
-                "namespace", "${actionNamespace}", "propertyId", "${assessmentNum}", "wfType", "RP","applicationSource","${applicationSource}" }),
+                "namespace", "${actionNamespace}", "propertyId", "${assessmentNum}", "wfType", "RP", "applicationSource",
+                "${applicationSource}" }),
         @Result(name = APPLICATION_TYPE_GRP, type = "redirectAction", location = "genRevPetition-newForm", params = {
-                "namespace", "${actionNamespace}", "propertyId", "${assessmentNum}", "wfType", "GRP","applicationSource","${applicationSource}" }),
+                "namespace", "${actionNamespace}", "propertyId", "${assessmentNum}", "wfType", "GRP", "applicationSource",
+                "${applicationSource}" }),
         @Result(name = "meesevaerror", location = "/WEB-INF/jsp/common/meeseva-errorPage.jsp"),
         @Result(name = APPLICATION_TYPE_COLLECT_TAX, type = "redirectAction", location = "searchProperty-searchOwnerDetails", params = {
                 "namespace", "/search", "assessmentNum", "${assessmentNum}" }),
         @Result(name = APPLICATION_TYPE_DEMAND_BILL, type = "redirectAction", location = "billGeneration-generateDemandBill", params = {
                 "namespace", "/bills", "indexNumber", "${assessmentNum}" }),
         @Result(name = APPLICATION_TYPE_VACANCY_REMISSION, type = "redirect", location = "../vacancyremission/create/${assessmentNum},${mode}", params = {
-                "meesevaApplicationNumber", "${meesevaApplicationNumber}","applicationSource","${applicationSource}" }),
+                "meesevaApplicationNumber", "${meesevaApplicationNumber}", "applicationSource", "${applicationSource}" }),
         @Result(name = APPLICATION_TYPE_TAX_EXEMTION, type = "redirect", location = "..//exemption/form/${assessmentNum}", params = {
-                "meesevaApplicationNumber", "${meesevaApplicationNumber}","applicationSource","${applicationSource}" }),
+                "meesevaApplicationNumber", "${meesevaApplicationNumber}", "applicationSource", "${applicationSource}" }),
         @Result(name = APPLICATION_TYPE_EDIT_DEMAND, type = "redirectAction", location = "editDemand-newEditForm", params = {
                 "namespace", "/edit", "propertyId", "${assessmentNum}" }),
         @Result(name = APPLICATION_TYPE_ADD_DEMAND, type = "redirectAction", location = "addDemand-newAddForm", params = {
@@ -256,7 +258,7 @@ public class SearchPropertyAction extends BaseFormAction {
 
     @Autowired
     private UserService userService;
-    
+
     @Autowired
     private PropertyTaxCommonUtils propertyTaxCommonUtils;
 
@@ -305,7 +307,8 @@ public class SearchPropertyAction extends BaseFormAction {
      * @return
      */
     @ValidationErrorPage(value = COMMON_FORM)
-    @Actions({ @Action(value = "/search/searchProperty-commonSearch"), @Action(value = "/citizen/search/searchProperty-commonSearch") })
+    @Actions({ @Action(value = "/search/searchProperty-commonSearch"),
+            @Action(value = "/citizen/search/searchProperty-commonSearch") })
     public String commonSearch() {
         final BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByIndexNumAndParcelID(assessmentNum, null);
         if (basicProperty == null) {
@@ -401,7 +404,7 @@ public class SearchPropertyAction extends BaseFormAction {
                 return COMMON_FORM;
             }
 
-        } else if (APPLICATION_TYPE_DEMAND_BILL.equals(applicationType)){
+        } else if (APPLICATION_TYPE_DEMAND_BILL.equals(applicationType)) {
             Ptdemand currentDemand = null;
 
             for (final Ptdemand ptdemand : basicProperty.getProperty().getPtDemandSet())
@@ -409,9 +412,9 @@ public class SearchPropertyAction extends BaseFormAction {
                     currentDemand = ptdemand;
                     break;
                 }
-            if(currentDemand ==null){
+            if (currentDemand == null) {
                 addActionError(getText("error.msg.no.demand") + basicProperty.getUpicNo());
-                return COMMON_FORM; 
+                return COMMON_FORM;
             }
             if (basicProperty.getProperty().getIsExemptedFromTax()) {
                 addActionError(getText("error.msg.taxExempted"));
@@ -982,13 +985,8 @@ public class SearchPropertyAction extends BaseFormAction {
             setMobileNumber(getPropertyOwner().getMobileNumber());
             if (StringUtils.isBlank(propertyOwner.getMobileNumber()))
                 propertyOwner.setMobileNumber("N/A");
-            for (final PropertyOwnerInfo propOwner : basicProperty.getPropertyOwnerInfo()) {
-                final List<Address> addrSet = propOwner.getOwner().getAddress();
-                for (final Address address : addrSet) {
-                    setDoorNo(address.getHouseNoBldgApt() == null ? NOT_AVAILABLE : address.getHouseNoBldgApt());
-                    break;
-                }
-            }
+            setDoorNo(basicProperty.getAddress().getHouseNoBldgApt() == null ? NOT_AVAILABLE
+                    : basicProperty.getAddress().getHouseNoBldgApt());
             return USER_DETAILS;
         }
     }
@@ -1007,11 +1005,10 @@ public class SearchPropertyAction extends BaseFormAction {
     @Actions({ @Action(value = "/search/searchproperty-alter-assessment"),
             @Action(value = "/citizen/search/searchproperty-alter-assessment") })
     public String alterAssessment() {
-        if (StringUtils.isNotBlank(applicationSource) && SOURCE_ONLINE.equalsIgnoreCase(applicationSource)) {
+        if (StringUtils.isNotBlank(applicationSource) && SOURCE_ONLINE.equalsIgnoreCase(applicationSource))
             setActionNamespace("/citizen/modify");
-        } else {
+        else
             setActionNamespace("/modify");
-        }
         setApplicationType(APPLICATION_TYPE_ALTER_ASSESSENT);
         return commonForm();
     }
@@ -1044,11 +1041,10 @@ public class SearchPropertyAction extends BaseFormAction {
     @Actions({ @Action(value = "/search/searchproperty-transferownership"),
             @Action(value = "/citizen/search/searchproperty-transferownership") })
     public String transferOwnership() {
-        if (StringUtils.isNotBlank(applicationSource) && SOURCE_ONLINE.equalsIgnoreCase(applicationSource)) {
+        if (StringUtils.isNotBlank(applicationSource) && SOURCE_ONLINE.equalsIgnoreCase(applicationSource))
             setActionNamespace("/citizen/property/transfer");
-        } else {
+        else
             setActionNamespace("/property/transfer");
-        }
         setApplicationType(APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP);
         return commonForm();
     }
@@ -1062,11 +1058,10 @@ public class SearchPropertyAction extends BaseFormAction {
     @Actions({ @Action(value = "/search/searchproperty-revisionpetition"),
             @Action(value = "/citizen/search/searchproperty-revisionpetition") })
     public String revisionPetition() {
-        if (StringUtils.isNotBlank(applicationSource) && SOURCE_ONLINE.equalsIgnoreCase(applicationSource)) {
+        if (StringUtils.isNotBlank(applicationSource) && SOURCE_ONLINE.equalsIgnoreCase(applicationSource))
             setActionNamespace("/citizen/revPetition");
-        } else {
+        else
             setActionNamespace("/revPetition");
-        }
         setApplicationType(APPLICATION_TYPE_REVISION_PETITION);
         return commonForm();
     }
@@ -1074,11 +1069,10 @@ public class SearchPropertyAction extends BaseFormAction {
     @Actions({ @Action(value = "/search/searchproperty-general-revisionpetition"),
             @Action(value = "/citizen/search/searchproperty-general-revisionpetition") })
     public String generalRevisionPetition() {
-        if (StringUtils.isNotBlank(applicationSource) && SOURCE_ONLINE.equalsIgnoreCase(applicationSource)) {
+        if (StringUtils.isNotBlank(applicationSource) && SOURCE_ONLINE.equalsIgnoreCase(applicationSource))
             setActionNamespace("/citizen/revPetition");
-        } else {
+        else
             setActionNamespace("/revPetition");
-        }
         setApplicationType(APPLICATION_TYPE_GRP);
         return commonForm();
     }
@@ -1087,7 +1081,7 @@ public class SearchPropertyAction extends BaseFormAction {
             @Action(value = "/citizen/search/searchproperty-demolition") })
     public String demolition() {
         setApplicationType(APPLICATION_TYPE_DEMOLITION);
-        if(StringUtils.isBlank(applicationSource))
+        if (StringUtils.isBlank(applicationSource))
             setApplicationSource("system");
         return commonForm();
     }
@@ -1393,7 +1387,7 @@ public class SearchPropertyAction extends BaseFormAction {
         return applicationSource;
     }
 
-    public void setApplicationSource(String applicationSource) {
+    public void setApplicationSource(final String applicationSource) {
         this.applicationSource = applicationSource;
     }
 
@@ -1401,7 +1395,7 @@ public class SearchPropertyAction extends BaseFormAction {
         return actionNamespace;
     }
 
-    public void setActionNamespace(String actionNamespace) {
+    public void setActionNamespace(final String actionNamespace) {
         this.actionNamespace = actionNamespace;
     }
 }

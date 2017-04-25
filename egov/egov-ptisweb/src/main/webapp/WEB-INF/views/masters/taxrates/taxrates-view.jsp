@@ -63,50 +63,70 @@
 
 						</div>
 						<div class="panel-body history-slide">
-							<%-- <div
-								class="row hidden-xs visible-sm visible-md visible-lg view-content header-color">
-								<div class="col-sm-2 col-xs-6 add-margin">
-									<spring:message code="lbl.taxRates.value" />
-								</div>
-							</div> --%>
 							<div class="form-group col-sm-6 col-sm-offset-3">
 								<table class="table table-bordered table-hover">
 									<thead>
 										<tr>
 											<th>S.No</th>
-											<th class="text-left">Name</th>
-											<th class="text-right">Percentage</th>
-											<th class="text-left">From Date</th>
-											<th class="text-left">To Date</th>
+											<th class="text-left"><spring:message
+													code="lbl.isResidential" /></th>
+											<th class="text-left"><spring:message
+													code="lbl.percentage" /></th>
+											<!-- <th class="text-left">From Date</th>
+											<th class="text-left">To Date</th> -->
+											<th class="text-left"><spring:message
+													code="lbl.propertytype.resd" /></th>
+											<th class="text-left"><spring:message
+													code="lbl.percentage" /></th>
+											<!-- <th class="text-left">From Date</th>
+											<th class="text-left">To Date</th> -->
 										</tr>
 									</thead>
 									<tbody>
-										<c:set var="count" value="1" />
-										<c:forEach var="taxRate"
-											items="${taxRatesForm.demandReasonDetails}">
-											<tr>
-												<c:choose>
-													<c:when
-														test="${taxRate.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster() ne 'Total Residential Tax'
-												&& taxRate.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster() ne 'Total Non Residential Tax'}">
-														<td><c:out value="${count}" /></td>
-														<td><c:out
-																value="${taxRate.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster()}" /></td>
-														<td class="text-right"><fmt:formatNumber
-																var="formattedRate" type="number" minFractionDigits="2"
-																maxFractionDigits="2" value="${taxRate.percentage}" />
-															<c:out value="${formattedRate}" /></td>
-														<td><fmt:formatDate value="${taxRate.fromDate}"
+										<tr>
+											<c:set var="count" value="1" />
+											<c:forEach var="taxRate"
+												items="${taxRatesForm.demandReasonDetails}"
+												varStatus="status">
+												<c:if test="${status.index % 2 == 0}">
+										</tr>
+										<tr>
+											<td><c:out value="${count}" /></td>
+											<c:set var="count" value="${count + 1}" />
+											</c:if>
+											<c:choose>
+												<c:when
+													test="${fn:endsWith(taxRate.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster(), 'Non Residential')}">
+													<td><c:out
+															value="${fn:substringBefore(taxRate.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster(), 'Non')}" /></td>
+												</c:when>
+												<c:otherwise>
+													<td><c:out
+															value="${fn:substringBefore(taxRate.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster(), 'Residential')}" /></td>
+												</c:otherwise>
+											</c:choose>
+											<td class="text-right"><fmt:formatNumber
+													var="formattedRate" type="number" minFractionDigits="2"
+													maxFractionDigits="2" value="${taxRate.percentage}" /> <c:out
+													value="${formattedRate}" /></td>
+											<%-- <td><fmt:formatDate value="${taxRate.fromDate}"
 																pattern="dd-MM-yyyy" /></td>
 														<td><fmt:formatDate value="${taxRate.toDate}"
-																pattern="dd-MM-yyyy" /></td>
-													</c:when>
-													<c:otherwise>
-													</c:otherwise>
-												</c:choose>
-											</tr>
-											<c:set var="count" value="${count+1}" />
-										</c:forEach>
+																pattern="dd-MM-yyyy" /></td> --%>
+
+											</c:forEach>
+										</tr>
+										<tr>
+											<td></td>
+											<td><spring:message code="lbl.total.nresd" /></td>
+											<td class="text-right"><input name="genTaxNonResd" id="sum"
+												value="${genTaxNonResd}" readonly="true"></td>
+
+											<td><spring:message code="lbl.total.resd" /></td>
+											<td class="text-right"><input name="genTaxResd" id="sum"
+												value="${genTaxResd}" readonly="true"></td>
+
+										</tr>
 									</tbody>
 								</table>
 							</div>

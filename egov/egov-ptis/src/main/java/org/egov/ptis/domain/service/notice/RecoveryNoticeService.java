@@ -431,13 +431,16 @@ public class RecoveryNoticeService {
         return errors;
     }
 
-    private List<String> validateOccupierNotice(final List<String> errors, final BasicProperty basicProperty) {
+    private List<String> validateOccupierNotice(final List<String> errors, final BasicProperty basicProperty) {  
         Boolean hasTenant = Boolean.FALSE;
         for (final Floor floor : basicProperty.getProperty().getPropertyDetail().getFloorDetails())
             if (OCC_TENANT.equalsIgnoreCase(floor.getPropertyOccupation().getOccupancyCode()))
                 hasTenant = Boolean.TRUE;
         if (!hasTenant)
             errors.add("error.tenant.not.exist");
+        final boolean billExists = getDemandBillByAssessmentNo(basicProperty);
+        if (!billExists)
+            errors.add("common.demandbill.not.exists");
         return errors;
     }
 

@@ -56,26 +56,16 @@ public class CouncilMeetingDetailsReportJsonAdaptor implements JsonSerializer<Co
             final JsonSerializationContext jsc) {
             final JsonObject jsonObject = new JsonObject();
             if (response != null) {
-            if (response.getCommitteeType() != null)
-                jsonObject.addProperty("committeeType", response.getCommitteeType());
-            else
-                jsonObject.addProperty("committeeType", StringUtils.EMPTY);
-            if (response.getMeetingLocation() != null)
-                jsonObject.addProperty("meetingLocation", response.getMeetingLocation());
-            else
-                jsonObject.addProperty("meetingLocation", StringUtils.EMPTY);
+
+            jsonObject.addProperty("committeeType", StringUtils.defaultString(response.getCommitteeType()));
+            jsonObject.addProperty("meetingLocation", StringUtils.defaultString(response.getMeetingLocation()));
+            jsonObject.addProperty("meetingTime", StringUtils.defaultString(response.getMeetingTime()));
+            jsonObject.addProperty("meetingNumber", StringUtils.defaultString(response.getMeetingNumber()));
+                
             if (response.getMeetingDate() != null)
                 jsonObject.addProperty("meetingDate", response.getMeetingDate().toString());
             else
                 jsonObject.addProperty("meetingDate", StringUtils.EMPTY);
-            if (response.getMeetingTime() != null)
-                jsonObject.addProperty("meetingTime", response.getMeetingTime());
-            else
-                jsonObject.addProperty("meetingTime", StringUtils.EMPTY);
-            if (response.getMeetingNumber() != null)
-                jsonObject.addProperty("meetingNumber", response.getMeetingNumber());
-            else
-                jsonObject.addProperty("meetingNumber", StringUtils.EMPTY);
             if (response.getTotalPreambles() != null)
                 jsonObject.addProperty("totalPreamblesUsed", response.getTotalPreambles().toString());
             else
@@ -88,7 +78,7 @@ public class CouncilMeetingDetailsReportJsonAdaptor implements JsonSerializer<Co
                 jsonObject.addProperty("adjournedPreambles", response.getAdjournedPreambles().toString());
             else
                 jsonObject.addProperty("adjournedPreambles", StringUtils.EMPTY);
-            
+
             if (response.getRejectedPreambles() != null)
                 jsonObject.addProperty("rejectedPreambles", response.getRejectedPreambles().toString());
             else
@@ -105,7 +95,9 @@ public class CouncilMeetingDetailsReportJsonAdaptor implements JsonSerializer<Co
                 jsonObject.addProperty("noOfAbsent", response.getNoOfCommitteMembersAbsent().toString());
             else
                 jsonObject.addProperty("noOfAbsent", StringUtils.EMPTY);
-           
+            if (response.getId() != null) {
+                jsonObject.addProperty("id", response.getId().toString());
+            }
         }
         return jsonObject;
     }

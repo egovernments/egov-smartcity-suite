@@ -52,75 +52,61 @@ import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.MutablePropertyValues;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.scheduling.quartz.SpringBeanJobFactory;
-import org.springframework.web.context.support.XmlWebApplicationContext;
 
-/**
- * Wrapper around {@link SpringBeanJobFactory} which is responsible for initialising
- * Job Class. This wrapper will get the already available Job Class bean from the respective
- * Application Context and wire it altogether and returns the Job class instance. 
- * This will work only if 
- * 1) scheduler application context file name is applicationQuartzContext-xyz (xyz=module name) 
- * 2) The below have to be set in JobDetailBean definition's jobDataAsMap
- * 	a) jobBeanName (name or id of the job class bean)
- * 	b) moduleName
- *   
- **/
-public class QuartzJobAwareBeanFactory extends SpringBeanJobFactory {
+public class QuartzJobAwareBeanFactory extends SpringBeanJobFactory implements ApplicationContextAware {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(QuartzJobAwareBeanFactory.class);
-	/**This value will be prefixed with moduleName value to get invoking application context file*/
-	private static final String APP_CTX_NAME_PREFIX = "applicationQuartzContext-";
-	/**This value will be suffixed with moduleName value to get target Scheduler*/
-	private static final String SCHEDULER_NAME_SUFFIX = "-scheduler";
-	
-	private String[] ignoredUnknownProperties;
-	
-	@Override
-	public void setIgnoredUnknownProperties(final String[] ignoredUnknownProperties) {
-		super.setIgnoredUnknownProperties(ignoredUnknownProperties);
-		this.ignoredUnknownProperties = ignoredUnknownProperties;
-	}
+    private static final Logger LOGGER = LoggerFactory.getLogger(QuartzJobAwareBeanFactory.class);
+    private static final String SCHEDULER_NAME = "%s-scheduler";
+    private static final String MODULE_NAME_KEY = "moduleName";
+    private static final String JOB_BEAN_NAME_KEY = "jobBeanName";
 
-	/**
-	 * An implementation of SpringBeanJobFactory that retrieves the bean from
-	 * the Spring application context for a particular module and wrap it up
-	 * with other values from jobDataAsMap. 
-	 */
-	@Override
-	protected Object createJobInstance(final TriggerFiredBundle bundle) {
-		try {
-			final JobDataMap jobDataMap = bundle.getJobDetail().getJobDataMap();
-			final SchedulerContext schedulerContext = SchedulerRepository.getInstance().lookup(jobDataMap.getString("moduleName")+SCHEDULER_NAME_SUFFIX).getContext();
-			final XmlWebApplicationContext ctx = (XmlWebApplicationContext) schedulerContext.get(APP_CTX_NAME_PREFIX+ jobDataMap.getString("moduleName"));
-			final Object job = ctx.getBean(jobDataMap.getString("jobBeanName"),	bundle.getJobDetail().getJobClass());
-			final BeanWrapper bw = new BeanWrapperImpl(job);
-			if (isEligibleForPropertyPopulation(bw.getWrappedInstance())) {
-				final MutablePropertyValues pvs = new MutablePropertyValues();
-				if (schedulerContext != null) {
-					pvs.addPropertyValues(schedulerContext);
-				}
-				pvs.addPropertyValues(jobDataMap);
-				pvs.addPropertyValues(bundle.getTrigger().getJobDataMap());
-				if (ignoredUnknownProperties != null) {
-					for (final String ignoredUnknownPropertie : ignoredUnknownProperties) {
-						final String propName = ignoredUnknownPropertie;
-						if (pvs.contains(propName) && !bw.isWritableProperty(propName)) {
-							pvs.removePropertyValue(propName);
-						}
-					}
-					bw.setPropertyValues(pvs);
-				} else {
-					bw.setPropertyValues(pvs, true);
-				}
-			}
-			return bw.getWrappedInstance();
-		} catch (BeansException e) {
-			LOGGER.error("Error occurred while initializing Scheduler Job Beans, cause : ",e);
-			throw new  ApplicationRuntimeException("Error occurred while initializing Scheduler Job Beans, cause : ",e);
-		} catch (SchedulerException e) {
-			LOGGER.error("Error occurred while initializing Scheduler Job Beans, cause : ",e);
-			throw new  ApplicationRuntimeException("Error occurred while initializing Scheduler, cause : ",e);
-		}
-	}
+    private String[] ignoredUnknownProperties;
+    private ApplicationContext applicationContext;
+
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
+    }
+
+    @Override
+    public void setIgnoredUnknownProperties(final String[] ignoredUnknownProperties) {
+        super.setIgnoredUnknownProperties(ignoredUnknownProperties);
+        this.ignoredUnknownProperties = ignoredUnknownProperties;
+    }
+
+    @Override
+    protected Object createJobInstance(final TriggerFiredBundle bundle) {
+        try {
+            JobDataMap jobDataMap = bundle.getJobDetail().getJobDataMap();
+            SchedulerContext schedulerContext = SchedulerRepository.getInstance().
+                    lookup(String.format(SCHEDULER_NAME, jobDataMap.getString(MODULE_NAME_KEY))).
+                    getContext();
+            Object job = applicationContext.getBean(jobDataMap.getString(JOB_BEAN_NAME_KEY), bundle.getJobDetail().getJobClass());
+            BeanWrapper bw = new BeanWrapperImpl(job);
+            if (isEligibleForPropertyPopulation(bw.getWrappedInstance())) {
+                final MutablePropertyValues pvs = new MutablePropertyValues();
+                if (schedulerContext != null) {
+                    pvs.addPropertyValues(schedulerContext);
+                }
+                pvs.addPropertyValues(jobDataMap);
+                pvs.addPropertyValues(bundle.getTrigger().getJobDataMap());
+                if (ignoredUnknownProperties != null) {
+                    for (String property : ignoredUnknownProperties) {
+                        if (pvs.contains(property) && !bw.isWritableProperty(property)) {
+                            pvs.removePropertyValue(property);
+                        }
+                    }
+                    bw.setPropertyValues(pvs);
+                } else {
+                    bw.setPropertyValues(pvs, true);
+                }
+            }
+            return bw.getWrappedInstance();
+        } catch (SchedulerException e) {
+            LOGGER.error("Error occurred while initializing Scheduler Job Beans", e);
+            throw new ApplicationRuntimeException("Error occurred while initializing Scheduler", e);
+        }
+    }
 }

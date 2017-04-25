@@ -137,11 +137,11 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <build.number>${timestamp}</build.number>
         <app.version>${project.version}</app.version>
-        <versioneye.key />
-        <db.driver />
-        <db.url />
-        <db.user />
-        <db.password />
+        <versioneye.key/>
+        <db.driver/>
+        <db.url/>
+        <db.user/>
+        <db.password/>
         <disable.drop.db>true</disable.drop.db>
         <!-- Sonar properties -->
         <sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
@@ -256,7 +256,7 @@
         <module>egov-adtax</module>
         <module>egov-wtms</module>
         <module>egov-tl</module>
- 		<!-- <module>egov-bpa</module> -->
+        <!-- <module>egov-bpa</module> -->
         <module>egov-commonsweb</module>
         <module>egov-eisweb</module>
         <module>egov-egiweb</module>
@@ -273,7 +273,7 @@
         <module>egov-wtmsweb</module>
         <module>egov-dashboardweb</module>
         <module>egov-tlweb</module>
-		<!-- <module>egov-bpaweb</module> -->
+        <!-- <module>egov-bpaweb</module> -->
         <module>egov-ear</module>
         <module>egov-restapi</module>
         <module>egov-council</module>
@@ -282,7 +282,7 @@
              <module>egov-inventoryweb</module> -->
         <module>egov-stms</module>
         <module>egov-stmsweb</module>
-	     <module>egov-mrs</module>
+        <module>egov-mrs</module>
         <module>egov-mrsweb</module>
         <module>egov-services</module>
     </modules>
@@ -1195,13 +1195,17 @@
         </dependency>
         <!-- DATABASE END -->
 
-		<!-- https://mvnrepository.com/artifact/com.netflix.zuul/zuul-core -->
-		<dependency>
-		    <groupId>com.netflix.zuul</groupId>
-		    <artifactId>zuul-core</artifactId>
-		    <version>1.3.0</version>
-		</dependency>
-		
+        <!-- https://mvnrepository.com/artifact/com.netflix.zuul/zuul-core -->
+        <dependency>
+            <groupId>com.netflix.zuul</groupId>
+            <artifactId>zuul-core</artifactId>
+            <version>1.3.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-jpamodelgen</artifactId>
+            <version>${hibernate-version}</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -1235,7 +1239,7 @@
                                         </goals>
                                     </pluginExecutionFilter>
                                     <action>
-                                        <ignore />
+                                        <ignore/>
                                     </action>
                                 </pluginExecution>
                             </pluginExecutions>
@@ -1373,18 +1377,18 @@
                 <version>${mvn.surefire.plugin.version}</version>
             </plugin>
             <plugin>
-		 <groupId>org.flywaydb</groupId>
-                 <artifactId>flyway-maven-plugin</artifactId>
-                 <version>${flyway-core-version}</version>
-                 <configuration>
-                     <driver>${db.driver}</driver>
-                     <url>${db.url}</url>
-                     <user>${db.user}</user>
-                     <password>${db.password}</password>
-                     <skip>true</skip>
-                 </configuration>
-             </plugin>
-	     <plugin>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-maven-plugin</artifactId>
+                <version>${flyway-core-version}</version>
+                <configuration>
+                    <driver>${db.driver}</driver>
+                    <url>${db.url}</url>
+                    <user>${db.user}</user>
+                    <password>${db.password}</password>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>com.versioneye</groupId>
                 <artifactId>versioneye-maven-plugin</artifactId>
                 <version>${mvn.versioneye.plugin.version}</version>

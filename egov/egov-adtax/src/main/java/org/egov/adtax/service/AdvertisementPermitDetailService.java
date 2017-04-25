@@ -94,7 +94,7 @@ public class AdvertisementPermitDetailService {
     @Qualifier("adtaxWorkflowCustomDefaultImpl")
     private AdtaxWorkflowCustomDefaultImpl adtaxWorkflowCustomDefaultImpl;
 
-    @Autowired  
+    @Autowired
     private EgwStatusHibernateDAO egwStatusHibernateDAO;
 
     @Autowired
@@ -105,10 +105,10 @@ public class AdvertisementPermitDetailService {
 
     @Autowired
     private AdvertisementPermitDetailUpdateIndexService advertisementPermitDetailUpdateIndexService;
-    
+
     @Autowired
     private AdvertisementWorkFlowService advertisementWorkFlowService;
-    
+
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
@@ -630,6 +630,27 @@ public class AdvertisementPermitDetailService {
          */
         if (ward != null)
             query.setParameter("ward", ward);
+        return query.list();
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<AdvertisementPermitDetail> getAdvertisementPermitDetailByWardAndAdvertisementNumber(Long wardno,
+            String advertisementNo) {
+
+        final StringBuilder queryString = new StringBuilder();
+        queryString
+                .append(" from AdvertisementPermitDetail B where B.isActive=true and B.advertisement.status=:advertismentStatus ");
+        if (advertisementNo != null)
+            queryString.append(" and B.advertisement.advertisementNumber =:advertisementNo ");
+        if (wardno != null)
+            queryString.append(" and B.advertisement.ward.boundaryNum =:ward ");
+        final Query query = entityManager.unwrap(Session.class).createQuery(queryString.toString());
+
+        if (advertisementNo != null)
+            query.setParameter("advertisementNo", advertisementNo);
+        query.setParameter("advertismentStatus", AdvertisementStatus.ACTIVE);
+        if (wardno != null)
+            query.setParameter("ward", wardno);
         return query.list();
     }
 }

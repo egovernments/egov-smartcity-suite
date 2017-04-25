@@ -56,4 +56,7 @@ public interface AdvocateMasterRepository extends JpaRepository<AdvocateMaster, 
     List<AdvocateMaster> findByNameContainingIgnoreCaseAndIsSeniorAdvocate(@Param("name") String name,
             @Param("isSeniorAdvocate") Boolean isSeniorAdvocate);
 
+    List<AdvocateMaster> findByIsActiveTrueOrderByNameAsc();
+
+    public List<AdvocateMaster> findByNameLike(String name);
 }

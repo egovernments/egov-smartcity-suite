@@ -43,12 +43,14 @@ package org.egov.adtax.service.es;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.apache.log4j.Logger;
 import org.egov.adtax.entity.AdvertisementPermitDetail;
 import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
 import org.egov.commons.entity.Source;
@@ -69,6 +71,8 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class AdvertisementPermitDetailUpdateIndexService {
+    private static final Logger LOGGER = Logger.getLogger(AdvertisementPermitDetailUpdateIndexService.class);
+
     private static final String ADTAX_APPLICATION_VIEW = "/adtax/hoarding/view/%s";
     @PersistenceContext
     private EntityManager entityManager;
@@ -101,23 +105,32 @@ public class AdvertisementPermitDetailUpdateIndexService {
 
         Assignment assignment = null;
         User user = null;
-        List<Assignment> asignList = null;
-        if (advertisementPermitDetail.getState() != null && advertisementPermitDetail.getState().getOwnerPosition() != null) {
+        List<Assignment> asignList = Collections.emptyList();
+         if (advertisementPermitDetail.getState() != null && advertisementPermitDetail.getState().getOwnerPosition() != null) {
             assignment = assignmentService
                     .getPrimaryAssignmentForPositionAndDate(advertisementPermitDetail.getState().getOwnerPosition()
                             .getId(), new Date());
             if (assignment != null) {
-                asignList = new ArrayList<Assignment>();
+                asignList = new ArrayList<>();
                 asignList.add(assignment);
             } else if (assignment == null)
                 asignList = assignmentService.getAssignmentsForPosition(
                         advertisementPermitDetail.getState().getOwnerPosition().getId(),
                         new Date());
-            if (!asignList.isEmpty())
+            if (!asignList.isEmpty()) {
                 user = userService.getUserById(asignList.get(0).getEmployee().getId());
-        } else
-            user = securityUtils.getCurrentUser();
-
+                if (LOGGER.isInfoEnabled()) {
+                    LOGGER.info("Get user from asignList ....");
+                    LOGGER.info(user != null ? user : "user is null");
+                }
+            } else {
+                user = securityUtils.getCurrentUser();
+                if (LOGGER.isInfoEnabled()) {
+                    LOGGER.info("Get curent  user....");
+                    LOGGER.info(user != null ? user : "user is null");
+                }
+            }
+         }
         // For legacy application - create only advertisementIndex
         if (advertisementPermitDetail.getAdvertisement().getLegacy()
                 && (null == advertisementPermitDetail.getId() || (null != advertisementPermitDetail.getId()
@@ -208,7 +221,8 @@ public class AdvertisementPermitDetailUpdateIndexService {
                         .withApplicantName(applicantName)
                         .withStatus(advertisementPermitDetail.getStatus().getDescription()).withUrl(
                                 String.format(ADTAX_APPLICATION_VIEW, advertisementPermitDetail.getId()))
-                        .withApplicantAddress(address).withOwnername(user.getUsername() + "::" + user.getName())
+                        .withApplicantAddress(address)
+                        .withOwnername(user != null ? user.getUsername() + "::" + user.getName() : "")
                         .withChannel(advertisementPermitDetail.getSource() == null ? Source.SYSTEM.toString()
                                 : advertisementPermitDetail.getSource())
                         .withMobileNumber(advertisementPermitDetail.getAgency() != null

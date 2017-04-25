@@ -11,6 +11,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
 
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
+
 
 @Service
 @Transactional(readOnly = true)
@@ -48,6 +50,8 @@ public class BaseRegisterService {
             whereQry = whereQry.append(" and statusname not in ('Cancelled','Suspended')");
         if (baseRegisterForm.getWardId() != null)
             whereQry = whereQry.append(" and ward = :wardId");
+        if (isNotEmpty(baseRegisterForm.getFilterName()) && "Defaulters".equals(baseRegisterForm.getFilterName()))
+            whereQry = whereQry.append(" and (arrearlicensefee > 0 or arrearpenaltyfee > 0 or curlicensefee > 0 or curpenaltyfee > 0)");
         return entityManager.unwrap(Session.class).createSQLQuery(selectQry.append(whereQry).toString());
     }
 

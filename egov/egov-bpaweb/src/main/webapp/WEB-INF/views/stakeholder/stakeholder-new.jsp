@@ -2,7 +2,7 @@
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~     Copyright (C) <2017>  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -47,8 +47,8 @@
 	enctype="multipart/form-data">
 	<ul class="nav nav-tabs" id="settingstab">
 		<li class="active"><a data-toggle="tab" href="#applicant-info"
-			data-tabidx=0>Applicant's Information</a></li>
-		<li><a data-toggle="tab" href="#checklist-info" data-tabidx=2>Checklist</a></li>
+			data-tabidx=0><spring:message code='lbl.applicant.info'/></a></li>
+		<li><a data-toggle="tab" href="#checklist-info" data-tabidx=1><spring:message code='lbl.checklist'/></a></li>
 	</ul>
 	<div class="tab-content">
 		<div id="applicant-info" class="tab-pane fade in active">

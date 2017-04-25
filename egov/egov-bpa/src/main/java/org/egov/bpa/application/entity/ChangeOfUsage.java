@@ -62,11 +62,6 @@ public class ChangeOfUsage extends AbstractAuditable {
     private String description;
 
     @NotNull
-    @Length(min = 1, max = 128)
-    @Column(name = "name", unique = true)
-    private String name;
-
-    @NotNull
     private Boolean isActive;
 
     @Override
@@ -85,14 +80,6 @@ public class ChangeOfUsage extends AbstractAuditable {
 
     public void setIsActive(final Boolean isActive) {
         this.isActive = isActive;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(final String name) {
-        this.name = name;
     }
 
     public String getCode() {

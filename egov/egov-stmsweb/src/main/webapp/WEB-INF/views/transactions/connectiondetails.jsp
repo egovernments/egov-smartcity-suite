@@ -66,13 +66,13 @@
 	<label class="col-sm-2 control-label text-right" hidden="true" id="lblResidential"><spring:message
 			code="lbl.residential" /><span class="mandatory"></span></label> 
 	<div class="col-sm-3 add-margin" hidden="true" id="valResidential">
-		<form:input class="form-control patternvalidation propertyTypeValidate" data-pattern="number" maxlength="6" id="noOfClosetsResidential" onblur="loadDonationAmount();" path="connectionDetail.noOfClosetsResidential" required="required" />
+		<form:input class="form-control patternvalidation propertyTypeValidate" data-pattern="number" maxlength="6" id="noOfClosetsResidential"  path="connectionDetail.noOfClosetsResidential" required="required" />
 		<form:errors path="connectionDetail.noOfClosetsResidential" cssClass="add-margin error-msg" />		
 	</div>
 	<label class="col-sm-3 control-label text-right" hidden="true" id="lblNonResidential"><spring:message
 			code="lbl.nonresidential" /><span class="mandatory"></label> 
 	<div class="col-sm-3 add-margin" hidden="true" id="valNonResidential">
-		<form:input class="form-control patternvalidation propertyTypeValidate" data-pattern="number" maxlength="3" id="noOfClosetsNonResidential" onblur="loadDonationAmount();" path="connectionDetail.noOfClosetsNonResidential" required="required" />
+		<form:input class="form-control patternvalidation propertyTypeValidate" data-pattern="number" maxlength="3" id="noOfClosetsNonResidential"  path="connectionDetail.noOfClosetsNonResidential" required="required" />
 		<form:errors path="connectionDetail.noOfClosetsNonResidential" cssClass="add-margin error-msg" />		
 	</div>
 </div>

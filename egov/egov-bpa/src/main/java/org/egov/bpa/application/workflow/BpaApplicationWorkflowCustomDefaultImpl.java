@@ -53,11 +53,11 @@ public class BpaApplicationWorkflowCustomDefaultImpl extends BpaApplicationWorkf
 
     @Override
     @Transactional
-    public void createCommonWorkflowTransition(BpaApplication application,
+    public void createCommonWorkflowTransition(final BpaApplication application,
             final Long approvalPosition, final String approvalComent, final String additionalRule,
             final String workFlowAction) {
         super.createCommonWorkflowTransition(application, approvalPosition, approvalComent, additionalRule,
                 workFlowAction);
     }
- 
+
 }

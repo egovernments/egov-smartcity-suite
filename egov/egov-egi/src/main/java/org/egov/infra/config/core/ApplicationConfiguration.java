@@ -46,6 +46,7 @@ import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.reporting.engine.jasper.JasperReportService;
 import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.MethodInvokingFactoryBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -56,10 +57,24 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+
+import static org.egov.infra.config.core.GlobalSettings.DEFAULT_COUNTRY_CODE_KEY;
+import static org.egov.infra.config.core.GlobalSettings.DEFAULT_CURRENCY_CODE_KEY;
+import static org.egov.infra.config.core.GlobalSettings.DEFAULT_CURRENCY_NAME_KEY;
+import static org.egov.infra.config.core.GlobalSettings.DEFAULT_CURRENCY_NAME_SHORT_KEY;
+import static org.egov.infra.config.core.GlobalSettings.DEFAULT_CURRENCY_SYMBOL_HEX_KEY;
+import static org.egov.infra.config.core.GlobalSettings.DEFAULT_CURRENCY_SYMBOL_UTF8_KEY;
+import static org.egov.infra.config.core.GlobalSettings.DEFAULT_DATE_PATTERN_KEY;
+import static org.egov.infra.config.core.GlobalSettings.DEFAULT_DATE_TIME_PATTERN_KEY;
+import static org.egov.infra.config.core.GlobalSettings.DEFAULT_ENCODING_KEY;
+import static org.egov.infra.config.core.GlobalSettings.DEFAULT_LOCALE_KEY;
+import static org.egov.infra.config.core.GlobalSettings.DEFAULT_TIME_ZONE_KEY;
 
 @Configuration
 @EnableAspectJAutoProxy(proxyTargetClass = true)
@@ -117,5 +132,27 @@ public class ApplicationConfiguration {
     @Bean
     public ReportService reportService() {
         return new JasperReportService(10, 30);
+    }
+
+    @PostConstruct
+    public void enhanceSystemProperties() throws InvocationTargetException, IllegalAccessException, NoSuchMethodException, ClassNotFoundException {
+        MethodInvokingFactoryBean methodInvokingFactoryBean = new MethodInvokingFactoryBean();
+        methodInvokingFactoryBean.setTargetObject(System.getProperties());
+        methodInvokingFactoryBean.setTargetMethod("putAll");
+        Properties properties = new Properties();
+        properties.setProperty(DEFAULT_TIME_ZONE_KEY, applicationProperties.getProperty(DEFAULT_TIME_ZONE_KEY));
+        properties.setProperty(DEFAULT_COUNTRY_CODE_KEY, applicationProperties.getProperty(DEFAULT_COUNTRY_CODE_KEY));
+        properties.setProperty(DEFAULT_CURRENCY_CODE_KEY, applicationProperties.getProperty(DEFAULT_CURRENCY_CODE_KEY));
+        properties.setProperty(DEFAULT_CURRENCY_NAME_KEY, applicationProperties.getProperty(DEFAULT_CURRENCY_NAME_KEY));
+        properties.setProperty(DEFAULT_CURRENCY_NAME_SHORT_KEY, applicationProperties.getProperty(DEFAULT_CURRENCY_NAME_SHORT_KEY));
+        properties.setProperty(DEFAULT_CURRENCY_SYMBOL_UTF8_KEY, applicationProperties.getProperty(DEFAULT_CURRENCY_SYMBOL_UTF8_KEY));
+        properties.setProperty(DEFAULT_CURRENCY_SYMBOL_HEX_KEY, applicationProperties.getProperty(DEFAULT_CURRENCY_SYMBOL_HEX_KEY));
+        properties.setProperty(DEFAULT_LOCALE_KEY, applicationProperties.getProperty(DEFAULT_LOCALE_KEY));
+        properties.setProperty(DEFAULT_ENCODING_KEY, applicationProperties.getProperty(DEFAULT_ENCODING_KEY));
+        properties.setProperty(DEFAULT_DATE_PATTERN_KEY, applicationProperties.getProperty(DEFAULT_DATE_PATTERN_KEY));
+        properties.setProperty(DEFAULT_DATE_TIME_PATTERN_KEY, applicationProperties.getProperty(DEFAULT_DATE_TIME_PATTERN_KEY));
+        methodInvokingFactoryBean.setArguments(new Object[]{properties});
+        methodInvokingFactoryBean.prepare();
+        methodInvokingFactoryBean.invoke();
     }
 }

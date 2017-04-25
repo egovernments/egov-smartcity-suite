@@ -454,12 +454,6 @@ public class SewerageDCBReporService {
         final HashMap<String, SewerageRateDCBResult> sewerageReportMap = new HashMap<>();
         if (sewerageApplicationDetails.getConnection() != null) {
 
-            final CFinancialYear financialYear = financialYearService.getCurrentFinancialYear();
-            final List<Installment> installmentList = installmentDao.getAllInstallmentsByModuleAndStartDate(
-                    moduleService.getModuleByName(MODULE_NAME), financialYear.getStartingDate());
-            for (final Installment intallment : installmentList)
-                if (intallment.getFromDate().after(new Date()))
-                    installmentList.remove(intallment);
 
             SewerageRateDCBResult dcbResult;
             if (sewerageApplicationDetails.getCurrentDemand() != null

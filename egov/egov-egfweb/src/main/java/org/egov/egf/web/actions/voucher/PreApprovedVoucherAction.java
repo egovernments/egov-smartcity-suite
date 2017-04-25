@@ -75,8 +75,10 @@ import org.egov.commons.utils.EntityType;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.eis.service.EisCommonService;
 import org.egov.eis.web.actions.workflow.GenericWorkFlowAction;
+import org.egov.infra.admin.master.entity.AppConfig;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.service.AppConfigService;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationException;
@@ -169,6 +171,9 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction {
     @Autowired
     private ChartOfAccountDetailService chartOfAccountDetailService;
     
+    @Autowired
+    private AppConfigService appConfigService;
+    
     private static final Logger LOGGER = Logger.getLogger(PreApprovedVoucherAction.class);
     protected FinancialYearHibernateDAO financialYearDAO;
     private final PreApprovedVoucher preApprovedVoucher = new PreApprovedVoucher();
@@ -197,7 +202,6 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction {
     private String action = "";
     SimpleWorkflowService<ContraJournalVoucher> contraWorkflowService;
     private Map<String, Object> billDetails;
-    // private Long vhid;
     private VoucherHelper voucherHelper;
     private JournalVoucherModifyAction journalvouchermodify;
     private boolean showVoucherDate;
@@ -566,14 +570,8 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction {
             methodName = "save";
             String voucherDate = formatter1.format(voucherHeader.getVoucherDate());
             String cutOffDate1 = null;
-            // check budgetary check
             egBillregister = billsService.getBillRegisterById(Integer.valueOf(parameters.get(BILLID)[0]));
-            // egBillregister = (EgBillregister) getPersistenceService().find(" from EgBillregister where id=?",
-            // Long.valueOf(parameters.get(BILLID)[0]));
-            if (!financialYearDAO.isSameFinancialYear(egBillregister.getBilldate(), voucherHeader.getVoucherDate()))
-                throw new ValidationException(
-                        "Voucher could not be permitted in the current year for the Bill prepared in the previous financial year/s",
-                        "Voucher could not be permitted in the current year for the Bill prepared in the previous financial year/s");
+            validateBillVoucherDate(egBillregister,voucherHeader);
             getMasterDataForBill();
             populateWorkflowBean();
             voucherHeader = preApprovedActionHelper.createVoucherFromBill(voucherHeader, workflowBean,
@@ -655,6 +653,36 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction {
 
     }
 
+    private void validateBillVoucherDate(EgBillregister egBillregister, CVoucherHeader voucherHeader) {
+        // Allow bills accounting accross years (appacofig key :allow_billsaccounting_across_years and values are 'yes' and 'no')
+        AppConfig appConfigAccrossYears = appConfigService.getAppConfigByModuleNameAndKeyName(
+                FinancialConstants.MODULE_NAME_APPCONFIG,
+                FinancialConstants.APPCONFIG_BILLACCOUNTING_ACCROSS_YEARS);
+        AppConfig appConfigAccrossYearsEndDate = appConfigService.getAppConfigByModuleNameAndKeyName(
+                FinancialConstants.MODULE_NAME_APPCONFIG,
+                FinancialConstants.APPCONFIG_BILLACCOUNTING_ACCROSS_YEARS_ENDDATE);
+        try {
+            if ("no".equalsIgnoreCase(appConfigAccrossYears.getConfValues().get(0).getValue())
+                    && !financialYearDAO.isSameFinancialYear(egBillregister.getBilldate(), voucherHeader.getVoucherDate())) {
+                throw new ValidationException(
+                        "bill.accounting.year.check", "bill.accounting.year.check");
+            }
+
+            if ("yes".equalsIgnoreCase(appConfigAccrossYears.getConfValues().get(0).getValue())
+                    && !appConfigAccrossYearsEndDate.getConfValues().isEmpty() && voucherHeader.getVoucherDate()
+                            .after(df.parse(appConfigAccrossYearsEndDate.getConfValues().get(0).getValue())))
+                throw new ValidationException(
+                        "bill.accounting.voucherdate.enddate.check", getText("bill.accounting.voucherdate.enddate.check",
+                                new String[] { appConfigAccrossYearsEndDate.getConfValues().get(0).getValue() }));
+
+            if (egBillregister.getBilldate().after(voucherHeader.getVoucherDate())) {
+                throw new ValidationException(
+                        "bill.accounting.voucher.date.check", "bill.accounting.voucher.date.check");
+            }
+        } catch (ParseException e) {
+            LOGGER.error(e.getMessage());
+        }
+    }
     @Action(value = "/voucher/preApprovedVoucher-update")
     public String update() throws ValidationException {
         if (LOGGER.isDebugEnabled())

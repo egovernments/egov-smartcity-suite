@@ -106,8 +106,8 @@ public class WaterTaxSearchController {
     }
 
     /**
-     * Assumptions: assuming appconfig Key "RolesForSearchWaterTaxConnection"
-     * List Contals 1st Entry "CSC Operator" order by value asc
+     * Assumptions: assuming appconfig Key "RolesForSearchWaterTaxConnection" List Contals 1st Entry "CSC Operator" order by value
+     * asc
      *
      * @return String if Logged in User is CSC Operattor
      */
@@ -145,8 +145,8 @@ public class WaterTaxSearchController {
     }
 
     /**
-     * Assumptions: assuming appconfig Key "RolesForSearchWaterTaxConnection"
-     * List Contals 4th Entry "ULB Operator" order by value asc
+     * Assumptions: assuming appconfig Key "RolesForSearchWaterTaxConnection" List Contals 4th Entry "ULB Operator" order by value
+     * asc
      *
      * @return String if Logged in User is ULB Operattor
      */
@@ -209,8 +209,8 @@ public class WaterTaxSearchController {
     }
 
     /**
-     * Assumptions: assuming appconfig Key "RolesForSearchWaterTaxConnection"
-     * List Contals 3th Entry "Water Tax Approver" order by value asc
+     * Assumptions: assuming appconfig Key "RolesForSearchWaterTaxConnection" List Contals 3th Entry "Water Tax Approver" order by
+     * value asc
      *
      * @return String if Logged in User is Water Tax Approver
      */
@@ -233,8 +233,7 @@ public class WaterTaxSearchController {
     }
 
     /**
-     * Assumptions: assuming appconfig Key "RolesForSearchWaterTaxConnection"
-     * List Contals 5th Entry "Operator"
+     * Assumptions: assuming appconfig Key "RolesForSearchWaterTaxConnection" List Contals 5th Entry "Operator"
      *
      * @return String if Logged in User is Operator
      */
@@ -283,8 +282,8 @@ public class WaterTaxSearchController {
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
     public List<ConnectionSearchRequest> searchConnection(@ModelAttribute final ConnectionSearchRequest searchRequest) {
-        List<WaterChargeDocument> temList = new ArrayList<WaterChargeDocument>();
-        final List<ConnectionSearchRequest> finalResult = new ArrayList<ConnectionSearchRequest>();
+        List<WaterChargeDocument> temList = new ArrayList<>();
+        final List<ConnectionSearchRequest> finalResult = new ArrayList<>();
         temList = findAllWaterChargeIndexByFilter(searchRequest);
         for (final WaterChargeDocument waterChargeIndex : temList) {
             final ConnectionSearchRequest customerObj = new ConnectionSearchRequest();
@@ -333,11 +332,6 @@ public class WaterTaxSearchController {
         final SearchQuery searchQuery = new NativeSearchQueryBuilder().withIndices(WATER_TAX_INDEX_NAME)
                 .withQuery(query).withPageable(new PageRequest(0, 250)).build();
 
-        /*
-         * final List<WaterChargeDocument> sampleEntities =
-         * elasticsearchTemplate.queryForList(searchQuery,
-         * WaterChargeDocument.class);
-         */
         final Iterable<WaterChargeDocument> sampleEntities = waterChargeDocumentRepository.search(searchQuery);
         final List<WaterChargeDocument> sampleEntitiesTemp = new ArrayList<>();
         for (final WaterChargeDocument document : sampleEntities)

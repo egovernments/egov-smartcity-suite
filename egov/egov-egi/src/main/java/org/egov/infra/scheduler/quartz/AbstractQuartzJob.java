@@ -80,14 +80,17 @@ public abstract class AbstractQuartzJob extends QuartzJobBean implements Generic
 
     private String userName;
 
+    private String moduleName;
+
     private boolean cityDataRequired;
 
     @Override
     protected void executeInternal(JobExecutionContext jobCtx) throws JobExecutionException {
         try {
-            MDC.put("appname", jobCtx.getJobDetail().getKey().getName());
+            MDC.put("appname", String.format("%s-%s", moduleName, jobCtx.getJobDetail().getKey().getName()));
             for (String tenant : this.cities) {
                 MDC.put("ulbcode", tenant);
+
                 this.prepareThreadLocal(tenant);
                 this.executeJob();
             }
@@ -98,6 +101,10 @@ public abstract class AbstractQuartzJob extends QuartzJobBean implements Generic
             ApplicationThreadLocals.clearValues();
             MDC.clear();
         }
+    }
+
+    public void setModuleName(final String moduleName) {
+        this.moduleName = moduleName;
     }
 
     public void setUserName(String userName) {
@@ -111,7 +118,7 @@ public abstract class AbstractQuartzJob extends QuartzJobBean implements Generic
     private void prepareThreadLocal(String tenant) {
         ApplicationThreadLocals.setTenantID(tenant);
         ApplicationThreadLocals.setUserId(this.userService.getUserByUsername(this.userName).getId());
-        if(cityDataRequired) {
+        if (cityDataRequired) {
             City city = this.cityService.findAll().get(0);
             ApplicationThreadLocals.setCityCode(city.getCode());
             ApplicationThreadLocals.setCityName(city.getName());

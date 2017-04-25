@@ -94,7 +94,7 @@ public class StakeHolderDocument extends AbstractAuditable {
         return checkListDetail;
     }
 
-    public void setCheckListDetail(CheckListDetail checkListDetail) {
+    public void setCheckListDetail(final CheckListDetail checkListDetail) {
         this.checkListDetail = checkListDetail;
     }
 
@@ -102,8 +102,8 @@ public class StakeHolderDocument extends AbstractAuditable {
         return documentId;
     }
 
-    public void setDocumentId(FileStoreMapper documentId) {
+    public void setDocumentId(final FileStoreMapper documentId) {
         this.documentId = documentId;
     }
-    
+
 }

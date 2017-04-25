@@ -69,7 +69,7 @@ public class CheckListDetail extends AbstractAuditable {
     @NotNull
     private Boolean isActive;
 
-    @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @NotNull
     @JoinColumn(name = "checkList")
     private Checklist checkList;
@@ -78,7 +78,7 @@ public class CheckListDetail extends AbstractAuditable {
     private Boolean isMandatory;
     @Transient
     private Long srlNo;
-    
+
     private transient MultipartFile file;
 
     @Override
@@ -143,7 +143,7 @@ public class CheckListDetail extends AbstractAuditable {
         return file;
     }
 
-    public void setFile(MultipartFile file) {
+    public void setFile(final MultipartFile file) {
         this.file = file;
     }
 }

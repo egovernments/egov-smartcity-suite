@@ -57,6 +57,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
 
 import static org.egov.infra.utils.JsonUtils.toJSON;
@@ -81,16 +82,13 @@ public class BaseRegisterController {
         this.licenseStatusService = licenseStatusService;
     }
 
-    @ModelAttribute
-    public BaseRegisterForm baseRegisterForm() {
-        return new BaseRegisterForm();
-    }
-
     @RequestMapping(value = "/search-form", method = RequestMethod.GET)
     public String searchBaseRegister(Model model) {
+        model.addAttribute("baseRegisterForm", new BaseRegisterForm());
         model.addAttribute("categories", licenseCategoryService.getCategoriesOrderByName());
         model.addAttribute("subcategories", Collections.emptyList());
         model.addAttribute("statusList", licenseStatusService.findAll());
+        model.addAttribute("filters", Arrays.asList("All", "Defaulters"));
         boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
                 LOCALITY, LOCATION_HIERARCHY_TYPE);
         model.addAttribute("wardList", boundaryService.getBoundariesByBndryTypeNameAndHierarchyTypeName(Constants.REVENUE_WARD, Constants.REVENUE_HIERARCHY_TYPE));

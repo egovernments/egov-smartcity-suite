@@ -44,7 +44,7 @@ import org.egov.infra.admin.master.contracts.AppConfigSearchRequest;
 import org.egov.infra.admin.master.entity.AppConfig;
 import org.egov.infra.admin.master.service.AppConfigService;
 import org.egov.infra.admin.master.service.ModuleService;
-import org.egov.infra.web.controller.admin.masters.config.adaptor.AppConfigJsonAdapter;
+import org.egov.infra.web.response.adapter.AppConfigJsonAdapter;
 import org.egov.infra.web.support.ui.DataTable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -85,7 +85,7 @@ public class ViewAppConfigController {
     @ResponseBody
     public String showAppConfigs(AppConfigSearchRequest searchRequest) {
         return new DataTable<>(appConfigService.getAllAppConfig(searchRequest),
-                searchRequest.getDraw()).toJson(AppConfigJsonAdapter.class);
+                searchRequest.draw()).toJson(AppConfigJsonAdapter.class);
     }
 
 }

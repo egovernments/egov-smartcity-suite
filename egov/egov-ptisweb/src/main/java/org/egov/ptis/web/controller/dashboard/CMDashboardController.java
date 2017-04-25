@@ -66,6 +66,7 @@ import org.egov.ptis.bean.dashboard.StateCityInfo;
 import org.egov.ptis.bean.dashboard.TaxDefaulters;
 import org.egov.ptis.bean.dashboard.TaxPayerResponseDetails;
 import org.egov.ptis.bean.dashboard.TotalCollectionStats;
+import org.egov.ptis.bean.dashboard.DemandVariance;
 import org.egov.ptis.bean.dashboard.WeeklyDCB;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.service.dashboard.PropTaxDashboardService;
@@ -78,6 +79,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -378,5 +380,11 @@ public class CMDashboardController {
         if(LOGGER.isDebugEnabled())
             LOGGER.debug("Time taken to serve dailytarget is : " + timeTaken + MILLISECS);
         return collectionDetails;
+    }
+
+    @RequestMapping(value = "/demanddetails", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<DemandVariance> getDemandDetails(@RequestParam String ulbCode) {
+        return propTaxDashboardService.getDemandVariationDetails(ulbCode);
+
     }
 }

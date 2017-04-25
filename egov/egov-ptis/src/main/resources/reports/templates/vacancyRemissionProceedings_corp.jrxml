@@ -39,7 +39,7 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-03-06T16:38:42 -->
+<!-- 2017-04-08T17:14:01 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="vacancyRemissionProceedings_corp" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="15" rightMargin="25" topMargin="0" bottomMargin="0" uuid="bfa584a8-aba2-402c-aa8b-d9cf2f66bfb3">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -80,7 +80,7 @@
 				<textElement textAlignment="Justified" verticalAlignment="Middle" markup="none">
 					<font size="12" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[" PROCEEDINGS OF COMMISSIONER, "+$P{cityName}.toUpperCase()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[" PROCEEDINGS OF THE COMMISSIONER, "+$P{cityName}.toUpperCase()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
 				<reportElement x="162" y="66" width="234" height="17" uuid="ee9c98ae-41d4-4a67-95a8-1ed3cb14b1e1"/>
@@ -183,7 +183,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Vaccant Period of the Premises]]></text>
+				<text><![CDATA[Vacant Period of the Premises]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="182" y="341" width="78" height="21" uuid="dd90a462-df05-4145-b27a-5ad89864186d"/>

@@ -37,6 +37,7 @@
  *  
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+/*
 $.fn.pageMe = function(opts){
     var $this = this,
         defaults = {
@@ -138,14 +139,79 @@ $.fn.pageMe = function(opts){
 
     }
 };
+*/
+function openTradeLicense(obj) {
+    window.open("/tl/public/viewtradelicense/viewTradeLicense-view.action?id="
+        + $(obj).data('eleval'), '',
+        'scrollbars=yes,width=1000,height=700,status=yes');
+}
+
+function populateData(reponsedata) {
+    $('.report-section').removeClass('display-hide');
+    $('#report-footer').show();
+    var tbl = $("#tbldemandgenerate");
+    var reportdatatable = tbl.dataTable({
+            dom : "<'row'<'col-xs-4 pull-right'f>r>t<'row add-margin'<'col-md-3 col-xs-6'i><'col-md-2 col-xs-6'l><'col-md-3 col-xs-6 text-right'B><'col-md-4 col-xs-6 text-right'p>>",
+            "autoWidth" : false,
+            "bDestroy" : true,
+            responsive : true,
+            destroy : true,
+            'aaData' : reponsedata,
+            buttons : [  {
+                extend : 'pdf',
+                title : 'Demand Generation Log',
+                filename : 'Demand Generation Log',
+                orientation : 'portrait',
+                pageSize:'A4',
+                exportOptions : {
+                    columns : ':visible'
+                }
+            }, {
+                extend : 'excel',
+                filename : 'Demand Generation Log',
+                exportOptions : {
+                    columns : ':visible'
+                }
+            }, {
+                extend : 'print',
+                title : 'Demand Generation Log',
+                filename : 'Demand Generation Log',
+                exportOptions : {
+                    columns : ':visible'
+                }
+            } ],
+            columns : [
+                {
+                    "data" : function(row, type, set, meta) {
+                        return {
+                            name : row.licensenumber,
+                            id : row.licenseid
+                        };
+                    },
+                    "render" : function(data, type, row) {
+                        return '<a href="javascript:void(0);" onclick="openTradeLicense(this);" data-hiddenele="id" data-eleval="'
+                            + data.id + '">' + data.name + '</a>';
+                    },
+                    "sTitle" : "License No."
+                }, {
+                    "data" : "detail",
+                    "sTitle" : "Details"
+                }, {
+                    "data" : "status",
+                    "sTitle" : "Status"
+                }]});
+    $('.loader-class').modal('hide');
+}
 
 $(document).ready(function(){
-    $('#dgdtl').pageMe({pagerSelector:'#myPager',showPrevNext:true,hidePageNumbers:false,perPage:100});
     $('#regenbtn').click(function() {
 		$('#generatedemand').attr('method', 'post');
 		$('#generatedemand').attr('action', '/tl/demand/regenerate');
 	});
-
+    $('#genmissingbtn').click(function() {
+        $('#generatedemand').attr('method', 'post');
+        $('#generatedemand').attr('action', '/tl/demand/generatemissing');
+    });
     $(".alert-success").fadeTo(5000, 5000).slideUp(500, function(){
         $(".alert-success").alert('close');
     });

@@ -39,6 +39,7 @@
  */
 package org.egov.works.web.controller.letterofacceptance;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.dao.budget.BudgetDetailsDAO;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -132,10 +133,12 @@ public class UpdateLetterOfAcceptanceController {
                 WorksConstants.APPROVED, ContractorBillRegister.BillStatus.CANCELLED.toString());
         if (grossBillAmount == null)
             grossBillAmount = 0.0;
-        if (revisedWorkOrderAmount >= 0 && workOrder.getPercentageSign().equals("-")) {
+        final BigDecimal ledGrossBillAmount = lineEstimateDetails.getGrossAmountBilled();
+        if (revisedWorkOrderAmount >= 0 && "-".equals(workOrder.getPercentageSign())) {
             if (lineEstimateDetails.getLineEstimate().isSpillOverFlag())
-                balanceAmount = workOrder.getWorkOrderAmount() - grossBillAmount - revisedValue
-                        - lineEstimateDetails.getGrossAmountBilled().doubleValue();
+                balanceAmount = ledGrossBillAmount != null  ? workOrder.getWorkOrderAmount() - grossBillAmount - revisedValue
+                        - ledGrossBillAmount.doubleValue() : workOrder.getWorkOrderAmount() - grossBillAmount - revisedValue;
+            
             else
                 balanceAmount = workOrder.getWorkOrderAmount() - grossBillAmount - revisedValue;
             if (balanceAmount < 0) {
@@ -143,14 +146,14 @@ public class UpdateLetterOfAcceptanceController {
                     grossBillAmount += lineEstimateDetails.getGrossAmountBilled().doubleValue();
                 
                 resultBinder.rejectValue("", "error.modify.loa.appropriation.amount",
-                        new String[] { df.format(grossBillAmount).toString(), df.format(revisedWorkOrderAmount).toString() },
+                        new String[] { df.format(grossBillAmount), df.format(revisedWorkOrderAmount) },
                         null);
             }
-        } else if (revisedWorkOrderAmount >= 0 && workOrder.getPercentageSign().equals("+"))
+        } else if (revisedWorkOrderAmount >= 0 && "+".equals(workOrder.getPercentageSign()))
             balanceAmount = revisedWorkOrderAmount - workOrder.getWorkOrderAmount();
 
         if (revisedWorkOrderAmount == 0)
-            resultBinder.rejectValue("", "error.modify.loa.agreement.amount");
+            resultBinder.rejectValue(StringUtils.EMPTY, "error.modify.loa.agreement.amount");
 
         if (resultBinder.hasErrors()) {
             model.addAttribute("lineEstimateDetails", lineEstimateDetails);
@@ -164,28 +167,30 @@ public class UpdateLetterOfAcceptanceController {
                 savedWorkOrder = letterOfAcceptanceService.update(workOrder, lineEstimateDetails, revisedValue,
                         revisedWorkOrderAmount);
             } catch (final ValidationException e) {
-                final List<Long> budgetheadid = new ArrayList<Long>();
+                final List<Long> budgetheadid = new ArrayList<>();
                 budgetheadid.add(lineEstimateDetails.getLineEstimate().getBudgetHead().getId());
 
-                final BigDecimal budgetAvailable = budgetDetailsDAO
-                        .getPlanningBudgetAvailable(
-                                lineEstimateService.getCurrentFinancialYear(new Date()).getId(),
-                                Integer.parseInt(lineEstimateDetails.getLineEstimate()
-                                        .getExecutingDepartment().getId().toString()),
-                                lineEstimateDetails.getLineEstimate().getFunction().getId(),
-                                        null,
-                                        lineEstimateDetails.getLineEstimate().getScheme() == null ? null : Integer
-                                        .parseInt(lineEstimateDetails.getLineEstimate().getScheme().getId()
-                                                .toString()),
-                                lineEstimateDetails.getLineEstimate().getSubScheme() == null ? null
-                                                        : Integer.parseInt(lineEstimateDetails.getLineEstimate().getSubScheme().getId()
-                                                                .toString()),
-                                                                null, budgetheadid, Integer.parseInt(lineEstimateDetails.getLineEstimate().getFund()
-                                                                        .getId().toString()));
+                try {
+                    final BigDecimal budgetAvailable = budgetDetailsDAO.getPlanningBudgetAvailable(
+                            lineEstimateService.getCurrentFinancialYear(new Date()).getId(),
+                            Integer.parseInt(
+                                    lineEstimateDetails.getLineEstimate().getExecutingDepartment().getId().toString()),
+                            lineEstimateDetails.getLineEstimate().getFunction().getId(), null,
+                            lineEstimateDetails.getLineEstimate().getScheme() == null ? null
+                                    : Integer.parseInt(
+                                            lineEstimateDetails.getLineEstimate().getScheme().getId().toString()),
+                            lineEstimateDetails.getLineEstimate().getSubScheme() == null ? null
+                                    : Integer.parseInt(
+                                            lineEstimateDetails.getLineEstimate().getSubScheme().getId().toString()),
+                            null, budgetheadid,
+                            Integer.parseInt(lineEstimateDetails.getLineEstimate().getFund().getId().toString()));
+                    final String errorMessage = messageSource.getMessage("error.budgetappropriation.amount",
+                            new String[] { budgetAvailable.toString(), df.format(balanceAmount) }, null);
+                    model.addAttribute("message", errorMessage);
+                } catch (final ValidationException v) {
+                    model.addAttribute("errorMessage", v.getErrors().get(0).getMessage());
+                }
 
-                final String errorMessage = messageSource.getMessage("error.budgetappropriation.amount",
-                        new String[] { budgetAvailable.toString(), df.format(balanceAmount).toString() }, null);
-                model.addAttribute("message", errorMessage);
                 return "lineestimate-success";
             }
             return "redirect:/letterofacceptance/loa-success?loaNumber=" + savedWorkOrder.getWorkOrderNumber() + "&isModify=true";

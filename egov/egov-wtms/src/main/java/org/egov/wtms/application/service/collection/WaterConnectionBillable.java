@@ -145,7 +145,11 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
 
     @Override
     public Long getBoundaryNum() {
+        if(getAssessmentDetails()!=null && getAssessmentDetails().getBoundaryDetails()!=null)
         return getAssessmentDetails().getBoundaryDetails().getAdminWardNumber();
+        else
+        throw new ApplicationRuntimeException("Property BoundaryDetails are null...");
+            
     }
 
     @Override

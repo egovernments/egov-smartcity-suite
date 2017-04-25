@@ -42,15 +42,12 @@ package org.egov.eis.service.scheduler.jobs;
 
 import org.egov.eis.service.EmployeeService;
 import org.egov.infra.scheduler.quartz.AbstractQuartzJob;
+import org.quartz.DisallowConcurrentExecution;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
-@Transactional
+@DisallowConcurrentExecution
 public class UserRoleMappingJob extends AbstractQuartzJob {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = -3773843512394830336L;
 
     @Autowired

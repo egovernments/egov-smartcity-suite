@@ -1103,21 +1103,16 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
             LOGGER.info("Persisted receipts");
             // Start work flow for newly created receipt.This might internally
             // create voucher also, based on configuration.
-            startWorkflow(receiptHeader);
             LOGGER.info("Workflow started for newly created receipts");
-            final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-            final Date cutOffDate = getDataEntryCutOffDate(sdf);
-            if (!receiptHeader.getService().getServiceType().equalsIgnoreCase(CollectionConstants.SERVICE_TYPE_BILLING))
-                if (cutOffDate != null && receiptHeader.getReceiptdate().before(cutOffDate))
-                    performWorkflow(CollectionConstants.WF_ACTION_APPROVE, receiptHeader,
-                            "Legacy data Receipt Approval based on cutoff date");
-                else
-                    updateCollectionIndexAndPushMail(receiptHeader);
+            final Date cutOffDate = getDataEntryCutOffDate();
+            if (cutOffDate != null && receiptHeader.getReceiptdate().after(cutOffDate))
+                startWorkflow(receiptHeader);
             if (receiptHeader.getService().getServiceType().equalsIgnoreCase(CollectionConstants.SERVICE_TYPE_BILLING)) {
 
                 updateBillingSystemWithReceiptInfo(receiptHeader, null, null);
                 LOGGER.info("Updated billing system ");
-            }
+            } else
+                updateCollectionIndexAndPushMail(receiptHeader);
 
         } catch (final HibernateException e) {
             LOGGER.error("Receipt Service HException while persisting ReceiptHeader", e);
@@ -1128,7 +1123,8 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
         }
     }// end of method
 
-    public Date getDataEntryCutOffDate(final SimpleDateFormat sdf) {
+    public Date getDataEntryCutOffDate() {
+        final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         Date cutOffDate = null;
         try {
             cutOffDate = sdf.parse(collectionsUtil.getAppConfigValue(

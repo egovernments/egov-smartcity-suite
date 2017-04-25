@@ -686,8 +686,8 @@
 				
 				
 				<div class="row">
-					<div class="text-center">
-						<button type="submit" id="submit" class="btn btn-primary"><spring:message code="lbl.submit"/></button>
+										<div class="text-center">
+						<button type="button" id="btnsubmit" class="btn btn-primary"><spring:message code="lbl.submit"/></button>
 						<a href="javascript:void(0);" id="com_cancel" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close" /></a>
 					</div>
 				</div>

@@ -165,8 +165,6 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
     @Transactional
     public void updateStatusInWorkFlowProgress(TradeLicense license, final String workFlowAction) {
 
-        final BigDecimal currentDemandAmount = recalculateLicenseFee(license.getCurrentDemand());
-        final BigDecimal recalDemandAmount = calculateFeeAmount(license);
         final Assignment userAssignment = assignmentService.getPrimaryAssignmentForUser(securityUtils.getCurrentUser().getId());
         final Position wfInitiator = getWorkflowInitiator(license);
         if (BUTTONAPPROVE.equals(workFlowAction)) {
@@ -215,10 +213,12 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
                 licenseUtils.applicationStatusChange(license,
                         Constants.APPLICATION_STATUS_REJECTED);
             }
-        if (license.hasState()
-                && license.getState().getValue().contains(Constants.WF_REVENUECLERK_APPROVED)
-                && recalDemandAmount.compareTo(currentDemandAmount) >= 0)
-            updateDemandForChangeTradeArea(license);
+        if (license.hasState() && license.getState().getValue().contains(Constants.WF_REVENUECLERK_APPROVED)) {
+            final BigDecimal currentDemandAmount = recalculateLicenseFee(license.getCurrentDemand());
+            final BigDecimal recalDemandAmount = calculateFeeAmount(license);
+            if (recalDemandAmount.compareTo(currentDemandAmount) >= 0)
+                updateDemandForChangeTradeArea(license);
+        }
     }
 
     public ReportRequest prepareReportInputData(final License license) {
@@ -481,7 +481,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
             User ownerUser = state.getOwnerUser();
             Position ownerPosition = state.getOwnerPosition();
             if (ownerPosition != null) {
-                User usr = eisCommonService.getUserForPosition(ownerPosition.getId(), new Date());
+                User usr = eisCommonService.getUserForPosition(ownerPosition.getId(), state.getLastModifiedDate());
                 currentStateDetail.put("user", usr == null ? EMPTY : usr.getName());
             } else
                 currentStateDetail.put("user", ownerUser == null ? EMPTY : ownerUser.getName());

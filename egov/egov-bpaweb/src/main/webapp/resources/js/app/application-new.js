@@ -39,12 +39,93 @@
  */
 var reportdatatable;
 jQuery(document).ready(function($) {
+	if($('#noJAORSAMessage') && $('#noJAORSAMessage').val())
+		bootbox.alert($('#noJAORSAMessage').val());
 
+});
+function validateMobileNumber(obj)
+{
 
+	var text = obj.value;
+	if(text!=''){
+		
+		if(text.length!=10)
+		{		
+			obj.value="";
+			
+			bootbox.alert("Invalid Mobile length");
+			return false;
+	
+		}
+	validatePhoneNumber(obj,'mobile');
+	}
+	return true;
+}
+
+function validatePhoneNumber(obj,mode){
+	var text = obj.value;
+	if(text!=""){
+		
+	var msg;
+	if(mode=='mobile')
+		msg='<s:text name="invalid.mobileno" />';
+	else
+		msg='<s:text name="invalid.teleno" />';
+	if(isNaN(text))
+	{
+		dom.get("bpa_error_area").style.display = '';
+		document.getElementById("bpa_error_area").innerHTML = msg;
+		obj.value="";
+		return false;
+	}
+	if(text<=0)
+	{
+		dom.get("bpa_error_area").style.display = '';
+		document.getElementById("bpa_error_area").innerHTML = msg;
+		obj.value="";
+		return false;
+	}
+	if(text.replace(".","~").search("~")!=-1)
+	{
+		dom.get("bpa_error_area").style.display = '';
+		document.getElementById("bpa_error_area").innerHTML = '<s:text name="period.notallowed" />';
+		obj.value='';
+		return false;
+	}
+	if(text.replace("+","~").search("~")!=-1)
+	{
+		dom.get("bpa_error_area").style.display = '';
+		document.getElementById("bpa_error_area").innerHTML = '<s:text name="plus.notallowed" />';
+		obj.value='';
+		return false;
+	}
+	}
+	return true;
+}
+$('#ward').change(function(){
+	jQuery.ajax({
+		url: "/egi/public/boundary/ajaxBoundary-blockByWard.action",
+		type: "GET",
+		data: {
+			wardId : jQuery('#ward').val()
+		},
+		cache: false,
+		dataType: "json",
+		success: function (response) {
+			jQuery('#block').html("");
+			jQuery('#block').append("<option value=''>Select</option>");
+			jQuery.each(response, function(index, value) {
+				jQuery('#block').append($('<option>').text(value.blockName).attr('value', value.blockId));
+			});
+		}, 
+		error: function (response) {
+			jQuery('#block').html("");
+			jQuery('#block').append("<option value=''>Select</option>");
+		}
+	});
 });
 
 $('#serviceType').change(function(){
-	console.log("came on change of ward"+$('#ward').val());
 	jQuery.ajax({
 		url: "/bpa/ajax/getAdmissionFees",
 		type: "GET",
@@ -54,20 +135,69 @@ $('#serviceType').change(function(){
 		cache: false,
 		dataType: "json",
 		success: function (response) {
-			jQuery.each(response, function(index, value) {
-				jQuery('#admissionfeeAmount').val(value);
-			});
+			
+				$("#admissionfeeAmount").prop("disabled", true);
+				jQuery('#admissionfeeAmount').val(response);
+
 		}, 
 		error: function (response) {
 			
 		}
 	});
 });
+/*$('#serviceType').change(function(){
+	jQuery.ajax({
+		url: "/bpa/ajax/getDocumentListByServiceType",
+		type: "GET",
+		data: {
+			serviceType : jQuery('#serviceType').val()
+		},
+		cache: false,
+		dataType: "json",
+		success: function (response) {
+			
+
+		}, 
+		error: function (response) {
+			
+		}
+	});
+});*/
 
 
+//toggle between multiple tab
+jQuery('form').validate({
+	ignore: ".ignore",
+	invalidHandler: function(e, validator){
+	if(validator.errorList.length)
+	$('#settingstab a[href="#' + jQuery(validator.errorList[0].element).closest(".tab-pane").attr('id') + '"]').tab('show');
+	}
+	});
 
+$('#buttonSubmit').click(function(e) {
+	if ($('form').valid()) {
+		//
+	} else {
+		e.preventDefault();
+	}
+});
 
-
-
-
-
+$('#stakeHolderType').change(function(){
+	$.ajax({
+		url: "/bpa/ajax/stakeholdersbytype",     
+		type: "GET",
+		data: {
+			stakeHolderType : $('#stakeHolderType').val()    
+		},
+		dataType: "json",
+		success: function (response) {
+			$('#stakeHolder').empty();
+			$('#stakeHolder').append($("<option value=''>Select from below</option>"));
+			$.each(response, function(index, value) {
+				$('#stakeHolder').append($('<option>').text(value.name).attr('value', value.id));  
+			});
+		}, 
+		error: function (response) {
+		}
+	});
+});

@@ -44,6 +44,7 @@ import java.util.Date;
 import org.egov.bpa.application.entity.BpaApplication;
 import org.egov.bpa.application.entity.BpaStatus;
 import org.egov.bpa.service.BpaStatusService;
+import org.egov.bpa.service.BpaUtils;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.PositionMasterService;
@@ -67,11 +68,6 @@ public abstract class BpaApplicationWorkflowCustomImpl implements BpaApplication
     private static final Logger LOG = LoggerFactory.getLogger(BpaApplicationWorkflowCustomImpl.class);
 
     @Autowired
-    public BpaApplicationWorkflowCustomImpl() {
-
-    }
-
-    @Autowired
     private SecurityUtils securityUtils;
 
     @Autowired
@@ -86,11 +82,20 @@ public abstract class BpaApplicationWorkflowCustomImpl implements BpaApplication
 
     @Autowired
     private BpaWorkFlowService bpaWorkFlowService;
+    
+    
+    @Autowired
+    private BpaUtils bpaUtils;
+
+    @Autowired
+    public BpaApplicationWorkflowCustomImpl() {
+
+    }
 
     @Override
     @Transactional
     public void createCommonWorkflowTransition(final BpaApplication application,
-            final Long approvalPosition, final String approvalComent, final String additionalRule,
+             Long approvalPosition, final String approvalComent, final String additionalRule,
             final String workFlowAction) {
 
         if (LOG.isDebugEnabled())
@@ -98,24 +103,31 @@ public abstract class BpaApplicationWorkflowCustomImpl implements BpaApplication
         final User user = securityUtils.getCurrentUser();
         final DateTime currentDate = new DateTime();
         Position pos = null;
-        Assignment wfInitiator = bpaWorkFlowService.getWorkFlowInitiator(application);
+        Assignment wfInitiator = null;
+        if (application.getCreatedBy() != null)
+            wfInitiator = bpaWorkFlowService.getWorkFlowInitiator(application);
 
         if (approvalPosition != null && approvalPosition > 0)
             pos = positionMasterService.getPositionById(approvalPosition);
 
-        WorkFlowMatrix wfmatrix = null;
+        WorkFlowMatrix wfmatrix;
         if (null == application.getState()) { // go by status
             wfmatrix = bpaApplicationWorkflowService.getWfMatrix(application.getStateType(), null,
                     null, additionalRule, BpaConstants.WF_NEW_STATE, null);
-
-            if (wfmatrix != null) {
+           Long userPosition ;
+            if (wfmatrix != null){
+                if(pos==null)
+                {
+                    userPosition=  bpaUtils.getUserPositionByZone(wfmatrix.getNextDesignation(),application.getSiteDetail().get(0)!=null && application.getSiteDetail().get(0).getAdminBoundary()!=null ? application.getSiteDetail().get(0).getAdminBoundary().getId():null);
+                    pos = positionMasterService.getPositionById(userPosition);
+                }
                 application.setStatus(getStatusByCurrentMatrxiStatus(wfmatrix));
                 application.transition().start()
                         .withSenderName(user.getUsername() + BpaConstants.COLON_CONCATE + user.getName())
                         .withComments(approvalComent).withInitiator(wfInitiator != null ? wfInitiator.getPosition() : null)
                         .withStateValue(wfmatrix.getNextState()).withDateInfo(new Date()).withOwner(pos)
                         .withNextAction(wfmatrix.getNextAction()).withNatureOfTask(BpaConstants.NATURE_OF_WORK);
-            }
+        }
 
         } else if (BpaConstants.WF_APPROVE_BUTTON.equalsIgnoreCase(workFlowAction)) {
 
@@ -167,7 +179,7 @@ public abstract class BpaApplicationWorkflowCustomImpl implements BpaApplication
             if (wfmatrix != null) {
                 application.setStatus(getStatusByCurrentMatrxiStatus(wfmatrix));
 
-                if (wfmatrix.getNextAction().equalsIgnoreCase(BpaConstants.WF_END_STATE)) {
+                if (wfmatrix.getNextAction().equalsIgnoreCase(BpaConstants.WF_END_STATE))
                     application.transition().end().withSenderName((wfInitiator != null && wfInitiator.getEmployee() != null
                             ? wfInitiator.getEmployee().getUsername() : "") + BpaConstants.COLON_CONCATE
                             + (wfInitiator != null && wfInitiator.getEmployee() != null
@@ -175,30 +187,29 @@ public abstract class BpaApplicationWorkflowCustomImpl implements BpaApplication
                                     : ""))
                             .withComments(approvalComent).withDateInfo(currentDate.toDate())
                             .withNextAction(wfmatrix.getNextAction()).withNatureOfTask(BpaConstants.NATURE_OF_WORK);
-                } else {
+                else
                     application.transition().progressWithStateCopy()
                             .withSenderName(user.getUsername() + BpaConstants.COLON_CONCATE + user.getName())
                             .withComments(approvalComent)
                             .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
                             .withNextAction(wfmatrix.getNextAction()).withNatureOfTask(BpaConstants.NATURE_OF_WORK);
-                }
             }
         }
         if (LOG.isDebugEnabled())
             LOG.debug(" WorkFlow Transition Completed ");
     }
 
-    private BpaStatus getStatusByCurrentMatrxiStatus(WorkFlowMatrix wfmatrix) {
+    private BpaStatus getStatusByCurrentMatrxiStatus(final WorkFlowMatrix wfmatrix) {
         if (wfmatrix != null && wfmatrix.getNextStatus() != null && !"".equals(wfmatrix.getNextStatus()))
             return bpaStatusService
-                    .findByModuleTypeAndCode(BpaConstants.APPLICATION_MODULE_TYPE, wfmatrix.getNextStatus());
+                    .findByModuleTypeAndCode(BpaConstants.BPASTATUS_MODULETYPE, wfmatrix.getNextStatus());
         return null;
     }
 
-    private BpaStatus getStatusByPassingCode(String code) {
+    private BpaStatus getStatusByPassingCode(final String code) {
         if (code != null && !"".equals(code))
             return bpaStatusService
-                    .findByModuleTypeAndCode(BpaConstants.APPLICATION_MODULE_TYPE, code);
+                    .findByModuleTypeAndCode(BpaConstants.BPASTATUS_MODULETYPE, code);
         return null;
     }
 

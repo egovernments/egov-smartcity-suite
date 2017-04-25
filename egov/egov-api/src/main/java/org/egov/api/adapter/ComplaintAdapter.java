@@ -44,35 +44,33 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
-
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.utils.StringUtils;
 import org.egov.pgr.entity.Complaint;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 
 public class ComplaintAdapter extends DataAdapter<Complaint> {
 
-    Boolean isSkippableForward=false;
+    private Boolean isSkippableForward = false;
 
-    public ComplaintAdapter(){
+    public ComplaintAdapter() {
     }
 
-    public ComplaintAdapter(Boolean isSkippableForward){
-        this.isSkippableForward=isSkippableForward;
+    public ComplaintAdapter(Boolean isSkippableForward) {
+        this.isSkippableForward = isSkippableForward;
     }
 
-    public Boolean getSkippableForward() {
+    private Boolean getSkippableForward() {
         return isSkippableForward;
     }
 
     @Override
     public JsonElement serialize(Complaint complaint, Type type, JsonSerializationContext context) {
-        JsonObject jo = new JsonObject(); 
+        JsonObject jo = new JsonObject();
         jo.addProperty("detail", complaint.getDetails());
         jo.addProperty("crn", complaint.getCrn());
         jo.addProperty("status", complaint.getStatus().getName());
@@ -80,71 +78,69 @@ public class ComplaintAdapter extends DataAdapter<Complaint> {
         jo.addProperty("lastModifiedDate", complaint.getLastModifiedDate().toString());
         jo.addProperty("complainantName", complaint.getComplainant().getName());
         jo.addProperty("complainantMobileNo", complaint.getComplainant().getMobile());
-        jo.addProperty("complainantEmail", StringUtils.isNotBlank(complaint.getComplainant().getEmail())?complaint.getComplainant().getEmail():"");
-        jo.addProperty("citizenFeedback", complaint.getCitizenFeedback()!=null?complaint.getCitizenFeedback().name():"");
+        jo.addProperty("complainantEmail", StringUtils.isNotBlank(complaint.getComplainant().getEmail()) ? complaint.getComplainant().getEmail() : "");
+        jo.addProperty("citizenFeedback", complaint.getCitizenFeedback() != null ? complaint.getCitizenFeedback().name() : "");
         jo.addProperty("isSkippable", getSkippableForward()); //flag for send back functionality
 
-        if(complaint.getReceivingMode()!=null)
-        {
-        	JsonObject receivingMode=new JsonObject();
-        	receivingMode.addProperty("name", complaint.getReceivingMode().getName());
-        	receivingMode.addProperty("code", complaint.getReceivingMode().getCode());
-        	jo.add("receivingMode", receivingMode);
+        if (complaint.getReceivingMode() != null) {
+            JsonObject receivingMode = new JsonObject();
+            receivingMode.addProperty("name", complaint.getReceivingMode().getName());
+            receivingMode.addProperty("code", complaint.getReceivingMode().getCode());
+            jo.add("receivingMode", receivingMode);
         }
-        
-        if(complaint.getPriority()!=null)
-        {
-        	JsonObject priority=new JsonObject();
-        	priority.addProperty("name", complaint.getPriority().getName());
-        	priority.addProperty("code", complaint.getPriority().getCode());
-        	priority.addProperty("weight", complaint.getPriority().getWeight());
-        	jo.add("priority", priority);
+
+        if (complaint.getPriority() != null) {
+            JsonObject priority = new JsonObject();
+            priority.addProperty("name", complaint.getPriority().getName());
+            priority.addProperty("code", complaint.getPriority().getCode());
+            priority.addProperty("weight", complaint.getPriority().getWeight());
+            jo.add("priority", priority);
         }
-        
+
         if (complaint.getLat() > 0 && complaint.getLng() > 0) {
             jo.addProperty("lat", complaint.getLat());
             jo.addProperty("lng", complaint.getLng());
         } else if (complaint.getLocation() != null) {
-        	if(complaint.getChildLocation().getLocalName() !=null)
-        	{
-        		jo.addProperty("childLocationName", complaint.getChildLocation().getLocalName());
-        	}
+            if (complaint.getChildLocation().getLocalName() != null) {
+                jo.addProperty("childLocationName", complaint.getChildLocation().getLocalName());
+            }
             jo.addProperty("locationName", complaint.getLocation().getLocalName());
         }
-        
+
         if (complaint.getComplaintType() != null) {
             jo.addProperty("complaintTypeId", complaint.getComplaintType().getId());
             jo.addProperty("complaintTypeName", complaint.getComplaintType().getName());
-            jo.addProperty("complaintTypeImage", complaint.getComplaintType().getCode()+".jpg");
-        }                 
+            String complaintTypeLocalName = complaint.getComplaintType().getLocalName();
+            if (StringUtils.isNotBlank(complaintTypeLocalName))
+                jo.addProperty("complaintTypeLocalName", complaintTypeLocalName);
+            jo.addProperty("complaintTypeImage", complaint.getComplaintType().getCode() + ".jpg");
+        }
         if (complaint.getLandmarkDetails() != null)
             jo.addProperty("landmarkDetails", complaint.getLandmarkDetails());
         jo.addProperty("createdDate", complaint.getCreatedDate().toString());
         jo.addProperty("supportDocsSize", complaint.getSupportDocs().size());
-        
-        
+
+
         //sorting files based on index
-        List<FileStoreMapper> supportDocs=new ArrayList<FileStoreMapper>();
-        supportDocs.addAll(complaint.getSupportDocs());
+        Set<FileStoreMapper> supportDocs = complaint.getSupportDocs();
         
        /* Collections.sort(supportDocs, new Comparator<FileStoreMapper>() {
-			@Override
+            @Override
 			public int compare(FileStoreMapper f1, FileStoreMapper f2) {
 
 				return f1.getIndexId().compareTo(f2.getIndexId());
 			}
         });*/
-        
-        JsonArray jsonArry=new JsonArray();
-        for(FileStoreMapper file:supportDocs)
-        {
-            JsonObject fileobj=new JsonObject();
+
+        JsonArray jsonArry = new JsonArray();
+        for (FileStoreMapper file : supportDocs) {
+            JsonObject fileobj = new JsonObject();
             fileobj.addProperty("fileId", file.getFileStoreId());
             fileobj.addProperty("fileContentType", file.getContentType());
-           // fileobj.addProperty("fileIndexId", file.getIndexId());
+            // fileobj.addProperty("fileIndexId", file.getIndexId());
             jsonArry.add(fileobj);
         }
-        
+
         jo.add("supportDocs", jsonArry);
 
         return jo;

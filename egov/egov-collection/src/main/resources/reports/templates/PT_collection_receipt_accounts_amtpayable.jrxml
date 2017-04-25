@@ -3,7 +3,7 @@
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~     Copyright (C) <2017>  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -38,8 +38,8 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
-<!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.1.1  -->
-<!-- 2016-05-25T18:17:32 -->
+<!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
+<!-- 2017-04-06T11:14:06 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PT_collection_receipt_accounts_amtpayable" language="groovy" pageWidth="257" pageHeight="802" columnWidth="257" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isFloatColumnFooter="true" uuid="d6dde3bd-46d2-4d95-aed5-b446b5d9af4e">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -140,11 +140,12 @@
 	<group name="REPORT_GROUP">
 		<groupExpression><![CDATA["DUMMY_GROUP"]]></groupExpression>
 		<groupFooter>
-			<band height="100" splitType="Stretch">
+			<band height="101" splitType="Stretch">
 				<staticText>
-					<reportElement positionType="Float" x="1" y="46" width="65" height="20" uuid="9511f8ac-41df-46af-9208-cbe3a5152146">
+					<reportElement positionType="Float" x="1" y="46" width="50" height="20" uuid="9511f8ac-41df-46af-9208-cbe3a5152146">
 						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					</reportElement>
 					<box leftPadding="5" rightPadding="5">
 						<topPen lineWidth="0.5"/>
@@ -153,14 +154,13 @@
 						<rightPen lineWidth="0.5"/>
 					</box>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font size="11" isBold="false"/>
+						<font size="10" isBold="false"/>
 					</textElement>
 					<text><![CDATA[Arrears]]></text>
 				</staticText>
 				<staticText>
-					<reportElement positionType="Float" x="66" y="46" width="60" height="20" uuid="0d6e039d-07d4-41f6-92dc-aced348bf587">
+					<reportElement positionType="Float" x="51" y="46" width="50" height="20" uuid="0d6e039d-07d4-41f6-92dc-aced348bf587">
 						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					</reportElement>
 					<box leftPadding="5" rightPadding="5">
 						<topPen lineWidth="0.5"/>
@@ -169,14 +169,13 @@
 						<rightPen lineWidth="0.5"/>
 					</box>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font size="11" isBold="false"/>
+						<font size="10" isBold="false"/>
 					</textElement>
 					<text><![CDATA[Current]]></text>
 				</staticText>
 				<staticText>
-					<reportElement positionType="Float" x="126" y="46" width="65" height="20" uuid="0a12ad1e-da2f-43a7-8dbd-37363fd31d40">
+					<reportElement positionType="Float" x="101" y="46" width="50" height="20" uuid="0a12ad1e-da2f-43a7-8dbd-37363fd31d40">
 						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					</reportElement>
 					<box leftPadding="5" rightPadding="5">
 						<topPen lineWidth="0.5"/>
@@ -185,12 +184,12 @@
 						<rightPen lineWidth="0.5"/>
 					</box>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font size="11" isBold="false"/>
+						<font size="10" isBold="false"/>
 					</textElement>
 					<text><![CDATA[Interest]]></text>
 				</staticText>
 				<staticText>
-					<reportElement positionType="Float" x="191" y="46" width="64" height="20" uuid="ceef559a-483c-40ae-8719-a6c30ec7a5c1">
+					<reportElement positionType="Float" x="197" y="46" width="58" height="20" uuid="ceef559a-483c-40ae-8719-a6c30ec7a5c1">
 						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					</reportElement>
@@ -201,12 +200,12 @@
 						<rightPen lineWidth="0.5"/>
 					</box>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font size="11" isBold="false"/>
+						<font size="10" isBold="false"/>
 					</textElement>
 					<text><![CDATA[Total]]></text>
 				</staticText>
 				<textField isStretchWithOverflow="true" pattern="###0.00">
-					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="1" y="66" width="65" height="30" isPrintWhenDetailOverflows="true" uuid="70715818-3d37-4a0e-a7cd-87fdfe062d47">
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="1" y="66" width="50" height="30" isPrintWhenDetailOverflows="true" uuid="70715818-3d37-4a0e-a7cd-87fdfe062d47">
 						<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					</reportElement>
@@ -217,12 +216,12 @@
 						<rightPen lineWidth="0.5"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font size="10" isBold="false"/>
+						<font size="8" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[!$V{arrearTotal}.equals(BigDecimal.ZERO)?$V{arrearTotal}:BigDecimal.ZERO]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" pattern="###0.00">
-					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="66" y="66" width="60" height="30" isPrintWhenDetailOverflows="true" uuid="9991a373-55c6-4541-b22d-0c4cedc23620">
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="51" y="66" width="50" height="30" isPrintWhenDetailOverflows="true" uuid="9991a373-55c6-4541-b22d-0c4cedc23620">
 						<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
 					</reportElement>
 					<box leftPadding="5" rightPadding="5">
@@ -232,12 +231,12 @@
 						<rightPen lineWidth="0.5"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font size="10" isBold="false"/>
+						<font size="8" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[!$V{currentTotal}.equals(BigDecimal.ZERO)?$V{currentTotal} :BigDecimal.ZERO]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" pattern="###0.00">
-					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="126" y="66" width="65" height="30" isPrintWhenDetailOverflows="true" uuid="a3d66d36-041e-4078-b46c-607d236abeac">
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="101" y="66" width="50" height="30" isPrintWhenDetailOverflows="true" uuid="a3d66d36-041e-4078-b46c-607d236abeac">
 						<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					</reportElement>
@@ -248,12 +247,12 @@
 						<rightPen lineWidth="0.5"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font size="10" isBold="false"/>
+						<font size="8" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[!$V{penaltyTotal}.equals(BigDecimal.ZERO)?$V{penaltyTotal}:BigDecimal.ZERO]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" pattern="###0.00">
-					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="191" y="66" width="64" height="30" isPrintWhenDetailOverflows="true" uuid="641501af-9eac-43fc-9c9d-34347962c5eb">
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="197" y="66" width="58" height="30" isPrintWhenDetailOverflows="true" uuid="641501af-9eac-43fc-9c9d-34347962c5eb">
 						<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					</reportElement>
@@ -264,9 +263,9 @@
 						<rightPen lineWidth="0.5"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font size="10" isBold="false"/>
+						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[!$V{totalAmount}.equals(BigDecimal.ZERO)?$V{totalAmount} :BigDecimal.ZERO]]></textFieldExpression>
+					<textFieldExpression><![CDATA[!$V{totalAmount}.equals(BigDecimal.ZERO)?$V{totalAmount} - $V{rebate} :BigDecimal.ZERO]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 					<reportElement positionType="Float" x="37" y="2" width="218" height="20" isPrintWhenDetailOverflows="true" uuid="73c20945-d099-4509-a893-a3f3cba1fc0b">
@@ -302,6 +301,37 @@
 					</textElement>
 					<text><![CDATA[Amount Payable]]></text>
 				</staticText>
+				<staticText>
+					<reportElement positionType="Float" x="151" y="46" width="46" height="20" uuid="a6cd2d41-2974-4def-8464-b489c95f59b2">
+						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					</reportElement>
+					<box leftPadding="5" rightPadding="5">
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="10" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Rebate]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" pattern="###0.00">
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="151" y="66" width="46" height="30" isPrintWhenDetailOverflows="true" uuid="093f266c-58d0-46ca-8dce-b654f87a5fe2">
+						<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
+					<box leftPadding="5" rightPadding="5">
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[!$V{rebate}.equals(BigDecimal.ZERO)?$V{rebate}:BigDecimal.ZERO]]></textFieldExpression>
+				</textField>
 			</band>
 		</groupFooter>
 	</group>

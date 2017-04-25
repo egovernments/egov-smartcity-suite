@@ -42,8 +42,10 @@ package org.egov.stms.service.scheduler.jobs;
 import org.apache.log4j.Logger;
 import org.egov.infra.scheduler.quartz.AbstractQuartzJob;
 import org.egov.stms.transactions.service.SewerageBatchDemandGenService;
+import org.quartz.DisallowConcurrentExecution;
 import org.springframework.beans.factory.annotation.Autowired;
 
+@DisallowConcurrentExecution
 public class GenerateDemandForSewerageTaxJob extends AbstractQuartzJob {
 
     private static final Logger LOGGER = Logger.getLogger(GenerateDemandForSewerageTaxJob.class);

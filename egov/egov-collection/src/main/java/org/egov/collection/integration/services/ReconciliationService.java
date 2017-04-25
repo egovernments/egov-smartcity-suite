@@ -39,10 +39,6 @@
  */
 package org.egov.collection.integration.services;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.log4j.Logger;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.ReceiptDetail;
@@ -56,15 +52,31 @@ import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.infstr.services.PersistenceService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
+@Service
+@Transactional(readOnly = true)
 public class ReconciliationService {
     private static final Logger LOGGER = Logger.getLogger(ReconciliationService.class);
+
+    @Autowired
     public ReceiptHeaderService receiptHeaderService;
+
+    @Autowired
     private CollectionsUtil collectionsUtil;
+
     @Autowired
     private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
+
+    @Autowired
     private CollectionCommon collectionCommon;
+
+    @Autowired
     private PersistenceService persistenceService;
 
     /**
@@ -147,21 +159,4 @@ public class ReconciliationService {
 
         LOGGER.debug("Cancelled receipt after receiving failure message from the payment gateway");
     }
-
-    public void setReceiptHeaderService(final ReceiptHeaderService receiptHeaderService) {
-        this.receiptHeaderService = receiptHeaderService;
-    }
-
-    public void setCollectionsUtil(final CollectionsUtil collectionsUtil) {
-        this.collectionsUtil = collectionsUtil;
-    }
-
-    public void setCollectionCommon(final CollectionCommon collectionCommon) {
-        this.collectionCommon = collectionCommon;
-    }
-
-    public void setPersistenceService(final PersistenceService persistenceService) {
-        this.persistenceService = persistenceService;
-    }
-
 }

@@ -210,6 +210,7 @@ import org.egov.ptis.domain.entity.property.PropertyStatus;
 import org.egov.ptis.domain.entity.property.PropertyStatusValues;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.egov.ptis.domain.entity.property.PropertyUsage;
+import org.egov.ptis.domain.entity.property.PtApplicationType;
 import org.egov.ptis.domain.entity.property.RoofType;
 import org.egov.ptis.domain.entity.property.StructureClassification;
 import org.egov.ptis.domain.entity.property.TaxExemptionReason;
@@ -328,6 +329,10 @@ public class PropertyService {
     
     @Autowired
     private PropertyTypeMasterDAO propertyTypeMasterDAO;
+    
+    @Autowired
+    @Qualifier("ptaxApplicationTypeService")
+    private PersistenceService<PtApplicationType, Long> ptaxApplicationTypeService;
     
     /**
      * Creates a new property if property is in transient state else updates persisted property
@@ -2104,28 +2109,39 @@ public class PropertyService {
     public void updateIndexes(final StateAware stateAwareObject, final String applictionType) {
         final Position position = stateAwareObject.getState().getOwnerPosition();
         User user;
+        int sla;
+        sla = getSlaValue(applictionType);
         if (position == null)
             user = stateAwareObject.getState().getCreatedBy();
         else
             user = assignmentService.getAssignmentsForPosition(position.getId(), new Date()).get(0).getEmployee();
-		if (!applictionType.isEmpty() && (applictionType.equalsIgnoreCase(APPLICATION_TYPE_NEW_ASSESSENT)
-				|| applictionType.equalsIgnoreCase(APPLICATION_TYPE_ALTER_ASSESSENT)
-				|| applictionType.equalsIgnoreCase(APPLICATION_TYPE_BIFURCATE_ASSESSENT))) {
+        if (!applictionType.isEmpty() && (applictionType.equalsIgnoreCase(APPLICATION_TYPE_NEW_ASSESSENT)
+                || applictionType.equalsIgnoreCase(APPLICATION_TYPE_ALTER_ASSESSENT)
+                || applictionType.equalsIgnoreCase(APPLICATION_TYPE_BIFURCATE_ASSESSENT))) {
             final PropertyImpl property = (PropertyImpl) stateAwareObject;
             ApplicationIndex applicationIndex = applicationIndexService.findByApplicationNumber(property
                     .getApplicationNo());
             User owner = property.getBasicProperty().getPrimaryOwner();
             String source = propertyTaxCommonUtils.getPropertySource(property);
-            if (applicationIndex==null) {
+            if (applicationIndex == null) {
                 applicationIndex = ApplicationIndex.builder().withModuleName(PTMODULENAME)
-                        .withApplicationNumber(property.getApplicationNo()).withApplicationDate(property.getCreatedDate()!=null?property.getCreatedDate():new Date())
+                        .withApplicationNumber(property.getApplicationNo())
+                        .withApplicationDate(property.getCreatedDate() != null ? property.getCreatedDate() : new Date())
                         .withApplicationType(applictionType).withApplicantName(owner.getName())
-                        .withStatus(property.getState().getValue()).withUrl(format(APPLICATION_VIEW_URL, property.getApplicationNo(), applictionType))
-                        .withApplicantAddress(property.getBasicProperty().getAddress().toString()).withOwnername(user.getUsername() + "::" + user.getName())
+                        .withStatus(property.getState().getValue())
+                        .withUrl(format(APPLICATION_VIEW_URL, property.getApplicationNo(), applictionType))
+                        .withApplicantAddress(property.getBasicProperty().getAddress().toString())
+                        .withOwnername(user.getUsername() + "::" + user.getName())
                         .withChannel(source).withMobileNumber(owner.getMobileNumber())
                         .withAadharNumber(owner.getAadhaarNumber()).withConsumerCode(property.getBasicProperty().getUpicNo())
-                        .withClosed(property.getState().getValue().contains(WF_STATE_CLOSED)?ClosureStatus.YES:ClosureStatus.NO)
-                        .withApproved(property.getState().getValue().contains(WF_STATE_COMMISSIONER_APPROVED)?ApprovalStatus.APPROVED:property.getState().getValue().contains(WF_STATE_REJECTED)||property.getState().getValue().contains(WF_STATE_CLOSED)?ApprovalStatus.REJECTED:ApprovalStatus.INPROGRESS)
+                        .withClosed(
+                                property.getState().getValue().contains(WF_STATE_CLOSED) ? ClosureStatus.YES : ClosureStatus.NO)
+                        .withApproved(
+                                property.getState().getValue().contains(WF_STATE_COMMISSIONER_APPROVED) ? ApprovalStatus.APPROVED
+                                        : property.getState().getValue().contains(WF_STATE_REJECTED)
+                                                || property.getState().getValue().contains(WF_STATE_CLOSED)
+                                                        ? ApprovalStatus.REJECTED : ApprovalStatus.INPROGRESS)
+                        .withSla(sla)
                         .build();
 
                 applicationIndexService.createApplicationIndex(applicationIndex);
@@ -2133,14 +2149,21 @@ public class PropertyService {
                 applicationIndex.setStatus(property.getState().getValue());
                 if (applictionType.equalsIgnoreCase(APPLICATION_TYPE_NEW_ASSESSENT)
                         || applictionType.equalsIgnoreCase(APPLICATION_TYPE_ALTER_ASSESSENT) || applictionType
-                        .equalsIgnoreCase(APPLICATION_TYPE_BIFURCATE_ASSESSENT)|| applictionType.equalsIgnoreCase(APPLICATION_TYPE_GRP)) {
+                                .equalsIgnoreCase(APPLICATION_TYPE_BIFURCATE_ASSESSENT)
+                        || applictionType.equalsIgnoreCase(APPLICATION_TYPE_GRP)) {
                     applicationIndex.setConsumerCode(property.getBasicProperty().getUpicNo());
                     applicationIndex.setApplicantName(owner.getName());
-                    applicationIndex.setOwnerName(user.getUsername()+"::"+user.getName());
+                    applicationIndex.setOwnerName(user.getUsername() + "::" + user.getName());
                     applicationIndex.setMobileNumber(owner.getMobileNumber());
                     applicationIndex.setAadharNumber(owner.getAadhaarNumber());
-                    applicationIndex.setClosed(property.getState().getValue().contains(WF_STATE_CLOSED)?ClosureStatus.YES:ClosureStatus.NO);
-                    applicationIndex.setApproved(property.getState().getValue().contains(WF_STATE_COMMISSIONER_APPROVED)?ApprovalStatus.APPROVED:property.getState().getValue().contains(WF_STATE_REJECTED)||property.getState().getValue().contains(WF_STATE_CLOSED)?ApprovalStatus.REJECTED:ApprovalStatus.INPROGRESS);
+                    applicationIndex.setClosed(
+                            property.getState().getValue().contains(WF_STATE_CLOSED) ? ClosureStatus.YES : ClosureStatus.NO);
+                    applicationIndex.setApproved(
+                            property.getState().getValue().contains(WF_STATE_COMMISSIONER_APPROVED) ? ApprovalStatus.APPROVED
+                                    : property.getState().getValue().contains(WF_STATE_REJECTED)
+                                            || property.getState().getValue().contains(WF_STATE_CLOSED) ? ApprovalStatus.REJECTED
+                                                    : ApprovalStatus.INPROGRESS);
+
                 }
                 applicationIndexService.updateApplicationIndex(applicationIndex);
             }
@@ -2153,21 +2176,36 @@ public class PropertyService {
             if (applicationIndex == null) {
                 User owner = property.getBasicProperty().getPrimaryOwner();
                 applicationIndex = ApplicationIndex.builder().withModuleName(PTMODULENAME)
-                        .withApplicationNumber(property.getObjectionNumber()).withApplicationDate(property.getCreatedDate()!=null?property.getCreatedDate():new Date())
+                        .withApplicationNumber(property.getObjectionNumber())
+                        .withApplicationDate(property.getCreatedDate() != null ? property.getCreatedDate() : new Date())
                         .withApplicationType(applictionType).withApplicantName(owner.getName())
-                        .withStatus(property.getState().getValue()).withUrl(format(APPLICATION_VIEW_URL, property.getObjectionNumber(), applictionType))
-                        .withApplicantAddress(property.getBasicProperty().getAddress().toString()).withOwnername(user.getUsername() + "::" + user.getName())
+                        .withStatus(property.getState().getValue())
+                        .withUrl(format(APPLICATION_VIEW_URL, property.getObjectionNumber(), applictionType))
+                        .withApplicantAddress(property.getBasicProperty().getAddress().toString())
+                        .withOwnername(user.getUsername() + "::" + user.getName())
                         .withChannel(source).withMobileNumber(owner.getMobileNumber())
                         .withAadharNumber(owner.getAadhaarNumber()).withConsumerCode(property.getBasicProperty().getUpicNo())
-                        .withClosed(property.getState().getValue().contains(WF_STATE_CLOSED)?ClosureStatus.YES:ClosureStatus.NO)
-                        .withApproved(property.getState().getValue().contains(WF_STATE_COMMISSIONER_APPROVED)?ApprovalStatus.APPROVED:property.getState().getValue().contains(WF_STATE_REJECTED)||property.getState().getValue().contains(WF_STATE_CLOSED)?ApprovalStatus.REJECTED:ApprovalStatus.INPROGRESS)
+                        .withClosed(
+                                property.getState().getValue().contains(WF_STATE_CLOSED) ? ClosureStatus.YES : ClosureStatus.NO)
+                        .withApproved(
+                                property.getState().getValue().contains(WF_STATE_COMMISSIONER_APPROVED) ? ApprovalStatus.APPROVED
+                                        : property.getState().getValue().contains(WF_STATE_REJECTED)
+                                                || property.getState().getValue().contains(WF_STATE_CLOSED)
+                                                        ? ApprovalStatus.REJECTED : ApprovalStatus.INPROGRESS)
+                        .withSla(sla)
                         .build();
                 applicationIndexService.createApplicationIndex(applicationIndex);
             } else {
                 applicationIndex.setStatus(property.getState().getValue());
-                applicationIndex.setOwnerName(user.getUsername()+"::"+user.getName());
-                applicationIndex.setClosed(property.getState().getValue().contains(WF_STATE_CLOSED)?ClosureStatus.YES:ClosureStatus.NO);
-                applicationIndex.setApproved(property.getState().getValue().contains(WF_STATE_COMMISSIONER_APPROVED)?ApprovalStatus.APPROVED:property.getState().getValue().contains(WF_STATE_REJECTED)||property.getState().getValue().contains(WF_STATE_CLOSED)?ApprovalStatus.REJECTED:ApprovalStatus.INPROGRESS);
+                applicationIndex.setOwnerName(user.getUsername() + "::" + user.getName());
+                applicationIndex.setClosed(
+                        property.getState().getValue().contains(WF_STATE_CLOSED) ? ClosureStatus.YES : ClosureStatus.NO);
+                applicationIndex.setApproved(
+                        property.getState().getValue().contains(WF_STATE_COMMISSIONER_APPROVED) ? ApprovalStatus.APPROVED
+                                : property.getState().getValue().contains(WF_STATE_REJECTED)
+                                        || property.getState().getValue().contains(WF_STATE_CLOSED) ? ApprovalStatus.REJECTED
+                                                : ApprovalStatus.INPROGRESS);
+
                 applicationIndexService.updateApplicationIndex(applicationIndex);
             }
 
@@ -2179,58 +2217,111 @@ public class PropertyService {
             String source = propertyTaxCommonUtils.getMutationSource(property);
             if (applicationIndex == null) {
                 applicationIndex = ApplicationIndex.builder().withModuleName(PTMODULENAME)
-                        .withApplicationNumber(property.getApplicationNo()).withApplicationDate(property.getCreatedDate()!=null?property.getCreatedDate():new Date())
+                        .withApplicationNumber(property.getApplicationNo())
+                        .withApplicationDate(property.getCreatedDate() != null ? property.getCreatedDate() : new Date())
                         .withApplicationType(applictionType).withApplicantName(owner.getName())
-                        .withStatus(property.getState().getValue()).withUrl(format(APPLICATION_VIEW_URL, property.getApplicationNo(), applictionType))
-                        .withApplicantAddress(property.getBasicProperty().getAddress().toString()).withOwnername(user.getUsername() + "::" + user.getName())
+                        .withStatus(property.getState().getValue())
+                        .withUrl(format(APPLICATION_VIEW_URL, property.getApplicationNo(), applictionType))
+                        .withApplicantAddress(property.getBasicProperty().getAddress().toString())
+                        .withOwnername(user.getUsername() + "::" + user.getName())
                         .withChannel(source).withMobileNumber(owner.getMobileNumber())
                         .withAadharNumber(owner.getAadhaarNumber()).withConsumerCode(property.getBasicProperty().getUpicNo())
-                        .withClosed(property.getState().getValue().contains(WF_STATE_CLOSED)?ClosureStatus.YES:ClosureStatus.NO)
-                        .withApproved(property.getState().getValue().contains(WF_STATE_COMMISSIONER_APPROVED)?ApprovalStatus.APPROVED:property.getState().getValue().contains(WF_STATE_REJECTED)||property.getState().getValue().contains(WF_STATE_CLOSED)?ApprovalStatus.REJECTED:ApprovalStatus.INPROGRESS)
+                        .withClosed(
+                                property.getState().getValue().contains(WF_STATE_CLOSED) ? ClosureStatus.YES : ClosureStatus.NO)
+                        .withApproved(
+                                property.getState().getValue().contains(WF_STATE_COMMISSIONER_APPROVED) ? ApprovalStatus.APPROVED
+                                        : property.getState().getValue().contains(WF_STATE_REJECTED)
+                                                || property.getState().getValue().contains(WF_STATE_CLOSED)
+                                                        ? ApprovalStatus.REJECTED : ApprovalStatus.INPROGRESS)
+                        .withSla(sla)
                         .build();
                 applicationIndexService.createApplicationIndex(applicationIndex);
             } else {
                 applicationIndex.setStatus(property.getState().getValue());
                 applicationIndex.setApplicantName(owner.getName());
-                applicationIndex.setOwnerName(user.getUsername()+"::"+user.getName());
+                applicationIndex.setOwnerName(user.getUsername() + "::" + user.getName());
                 applicationIndex.setMobileNumber(owner.getMobileNumber());
                 applicationIndex.setAadharNumber(owner.getAadhaarNumber());
-                applicationIndex.setClosed(property.getState().getValue().contains(WF_STATE_CLOSED)?ClosureStatus.YES:ClosureStatus.NO);
-                applicationIndex.setApproved(property.getState().getValue().contains(WF_STATE_COMMISSIONER_APPROVED)?ApprovalStatus.APPROVED:property.getState().getValue().contains(WF_STATE_REJECTED)||property.getState().getValue().contains(WF_STATE_CLOSED)?ApprovalStatus.REJECTED:ApprovalStatus.INPROGRESS);
+                applicationIndex.setClosed(
+                        property.getState().getValue().contains(WF_STATE_CLOSED) ? ClosureStatus.YES : ClosureStatus.NO);
+                applicationIndex.setApproved(
+                        property.getState().getValue().contains(WF_STATE_COMMISSIONER_APPROVED) ? ApprovalStatus.APPROVED
+                                : property.getState().getValue().contains(WF_STATE_REJECTED)
+                                        || property.getState().getValue().contains(WF_STATE_CLOSED) ? ApprovalStatus.REJECTED
+                                                : ApprovalStatus.INPROGRESS);
                 applicationIndexService.updateApplicationIndex(applicationIndex);
             }
 
-        }else if (!applictionType.isEmpty() && applictionType.equalsIgnoreCase(APPLICATION_TYPE_VACANCY_REMISSION)) {
+        } else if (!applictionType.isEmpty() && applictionType.equalsIgnoreCase(APPLICATION_TYPE_VACANCY_REMISSION)) {
             final VacancyRemission vacancyRemission = (VacancyRemission) stateAwareObject;
-            ApplicationIndex applicationIndex = applicationIndexService.findByApplicationNumber(vacancyRemission.getApplicationNumber());
+            ApplicationIndex applicationIndex = applicationIndexService
+                    .findByApplicationNumber(vacancyRemission.getApplicationNumber());
             User owner = vacancyRemission.getBasicProperty().getPrimaryOwner();
             VacancyRemissionApproval vacancyRemissionApproval = vacancyRemission.getVacancyRemissionApproval().get(0);
             String source = propertyTaxCommonUtils.getVRSource(vacancyRemission);
             if (applicationIndex == null) {
                 applicationIndex = ApplicationIndex.builder().withModuleName(PTMODULENAME)
-                        .withApplicationNumber(vacancyRemission.getApplicationNumber()).withApplicationDate(vacancyRemission.getCreatedDate()!=null?vacancyRemission.getCreatedDate():new Date())
+                        .withApplicationNumber(vacancyRemission.getApplicationNumber()).withApplicationDate(
+                                vacancyRemission.getCreatedDate() != null ? vacancyRemission.getCreatedDate() : new Date())
                         .withApplicationType(applictionType).withApplicantName(owner.getName())
-                        .withStatus(vacancyRemissionApproval.getState().getValue()).withUrl(format(APPLICATION_VIEW_URL, vacancyRemission.getApplicationNumber(), applictionType))
-                        .withApplicantAddress(vacancyRemission.getBasicProperty().getAddress().toString()).withOwnername(user.getUsername() + "::" + user.getName())
+                        .withStatus(vacancyRemissionApproval.getState().getValue())
+                        .withUrl(format(APPLICATION_VIEW_URL, vacancyRemission.getApplicationNumber(), applictionType))
+                        .withApplicantAddress(vacancyRemission.getBasicProperty().getAddress().toString())
+                        .withOwnername(user.getUsername() + "::" + user.getName())
                         .withChannel(source).withMobileNumber(owner.getMobileNumber())
-                        .withAadharNumber(owner.getAadhaarNumber()).withConsumerCode(vacancyRemission.getBasicProperty().getUpicNo())
-                        .withClosed(vacancyRemissionApproval.getState().getValue().contains(WF_STATE_CLOSED)?ClosureStatus.YES:ClosureStatus.NO)
-                        .withApproved(vacancyRemissionApproval.getState().getValue().contains(WF_STATE_COMMISSIONER_APPROVED)?ApprovalStatus.APPROVED:vacancyRemissionApproval.getState().getValue().contains(WF_STATE_REJECTED)||vacancyRemissionApproval.getState().getValue().contains(WF_STATE_CLOSED)?ApprovalStatus.REJECTED:ApprovalStatus.INPROGRESS)
+                        .withAadharNumber(owner.getAadhaarNumber())
+                        .withConsumerCode(vacancyRemission.getBasicProperty().getUpicNo())
+                        .withClosed(vacancyRemissionApproval.getState().getValue().contains(WF_STATE_CLOSED) ? ClosureStatus.YES
+                                : ClosureStatus.NO)
+                        .withApproved(vacancyRemissionApproval.getState().getValue().contains(WF_STATE_COMMISSIONER_APPROVED)
+                                ? ApprovalStatus.APPROVED
+                                : vacancyRemissionApproval.getState().getValue().contains(WF_STATE_REJECTED)
+                                        || vacancyRemissionApproval.getState().getValue().contains(WF_STATE_CLOSED)
+                                                ? ApprovalStatus.REJECTED : ApprovalStatus.INPROGRESS)
+                        .withSla(sla)
                         .build();
                 applicationIndexService.createApplicationIndex(applicationIndex);
             } else {
                 applicationIndex.setStatus(vacancyRemissionApproval.getState().getValue());
                 applicationIndex.setApplicantName(owner.getName());
-                applicationIndex.setOwnerName(user.getUsername()+"::"+user.getName());
+                applicationIndex.setOwnerName(user.getUsername() + "::" + user.getName());
                 applicationIndex.setMobileNumber(owner.getMobileNumber());
                 applicationIndex.setAadharNumber(owner.getAadhaarNumber());
-                applicationIndex.setClosed(vacancyRemissionApproval.getState().getValue().contains(WF_STATE_CLOSED)?ClosureStatus.YES:ClosureStatus.NO);
-                applicationIndex.setApproved(vacancyRemissionApproval.getState().getValue().contains(WF_STATE_COMMISSIONER_APPROVED)?ApprovalStatus.APPROVED:vacancyRemissionApproval.getState().getValue().contains(WF_STATE_REJECTED)||vacancyRemissionApproval.getState().getValue().contains(WF_STATE_CLOSED)?ApprovalStatus.REJECTED:ApprovalStatus.INPROGRESS);
+                applicationIndex.setClosed(vacancyRemissionApproval.getState().getValue().contains(WF_STATE_CLOSED)
+                        ? ClosureStatus.YES : ClosureStatus.NO);
+                applicationIndex
+                        .setApproved(vacancyRemissionApproval.getState().getValue().contains(WF_STATE_COMMISSIONER_APPROVED)
+                                ? ApprovalStatus.APPROVED
+                                : vacancyRemissionApproval.getState().getValue().contains(WF_STATE_REJECTED)
+                                        || vacancyRemissionApproval.getState().getValue().contains(WF_STATE_CLOSED)
+                                                ? ApprovalStatus.REJECTED : ApprovalStatus.INPROGRESS);
                 applicationIndexService.updateApplicationIndex(applicationIndex);
             }
 
         }
 
+    }
+
+    public int getSlaValue(final String applicationType) {
+        int sla = 0;
+        if (APPLICATION_TYPE_NEW_ASSESSENT.equals(applicationType)) {
+            sla = ptaxApplicationTypeService.findByNamedQuery(PtApplicationType.BY_CODE, "CREATE").getResolutionTime().intValue();
+        } else if (APPLICATION_TYPE_ALTER_ASSESSENT.equals(applicationType)) {
+            sla = ptaxApplicationTypeService.findByNamedQuery(PtApplicationType.BY_CODE, "MODIFY").getResolutionTime().intValue();
+        } else if (APPLICATION_TYPE_GRP.equals(applicationType)) {
+            sla = ptaxApplicationTypeService.findByNamedQuery(PtApplicationType.BY_CODE, "GENERAL_REVISION_PETETION")
+                    .getResolutionTime().intValue();
+        } else if (APPLICATION_TYPE_REVISION_PETITION.equals(applicationType)) {
+            sla = ptaxApplicationTypeService.findByNamedQuery(PtApplicationType.BY_CODE, "REVISION_PETETION").getResolutionTime()
+                    .intValue();
+        } else if (APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP.equals(applicationType)) {
+            sla = ptaxApplicationTypeService.findByNamedQuery(PtApplicationType.BY_CODE, "TRANSFER").getResolutionTime()
+                    .intValue();
+        } else if (APPLICATION_TYPE_VACANCY_REMISSION.equals(applicationType)) {
+            sla = ptaxApplicationTypeService.findByNamedQuery(PtApplicationType.BY_CODE, "VACANCY_REMISSION").getResolutionTime()
+                    .intValue();
+        }
+        return sla;
     }
 
     /**

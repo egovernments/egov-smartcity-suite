@@ -39,15 +39,14 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
-<beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <bean name="erpApplicationContext" class="org.springframework.context.support.ClassPathXmlApplicationContext">
         <constructor-arg>
             <list>
                 <value>classpath*:config/spring/applicationContext-security.xml</value>
-                <value>classpath*:config/spring/applicationContext-quartz.xml</value>
                 <value>classpath*:config/spring/applicationContext-*-services.xml</value>
             </list>
         </constructor-arg>

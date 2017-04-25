@@ -42,7 +42,6 @@ package org.egov.bpa.web.controller.adaptors;
 import java.lang.reflect.Type;
 
 import org.egov.bpa.application.entity.StakeHolder;
-import org.egov.infra.utils.StringUtils;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -55,33 +54,15 @@ public class StakeHolderJsonAdaptor implements JsonSerializer<StakeHolder> {
             final JsonSerializationContext jsc) {
         final JsonObject jsonObject = new JsonObject();
         if (stakeHolder != null) {
-            if (stakeHolder.getName() != null)
-                jsonObject.addProperty("name", stakeHolder.getName());
-            else
-                jsonObject.addProperty("name", StringUtils.EMPTY);
-
-            if (stakeHolder.getCode() != null)
-                jsonObject.addProperty("code", stakeHolder.getCode());
-            else
-                jsonObject.addProperty("code", StringUtils.EMPTY);
-            if (stakeHolder.getBusinessLicenceNumber() != null)
-                jsonObject.addProperty("businessLicenceNumber", stakeHolder.getBusinessLicenceNumber());
-            else
-                jsonObject.addProperty("businessLicenceNumber", StringUtils.EMPTY);
-
-            if (stakeHolder.getCoaEnrolmentNumber() != null)
-                jsonObject.addProperty("coaEnrolmentNumber", stakeHolder.getCoaEnrolmentNumber());
-            else
-                jsonObject.addProperty("coaEnrolmentNumber", StringUtils.EMPTY);
-
-            if (stakeHolder.getTinNumber() != null)
-                jsonObject.addProperty("tinNumber", stakeHolder.getTinNumber());
-            else
-                jsonObject.addProperty("tinNumber", StringUtils.EMPTY);
-
+            jsonObject.addProperty("name", org.apache.commons.lang.StringUtils.defaultString(stakeHolder.getName()));
+            jsonObject.addProperty("code", org.apache.commons.lang.StringUtils.defaultString(stakeHolder.getCode()));
+            jsonObject.addProperty("businessLicenceNumber",
+                    org.apache.commons.lang.StringUtils.defaultString(stakeHolder.getBusinessLicenceNumber()));
+            jsonObject.addProperty("coaEnrolmentNumber",
+                    org.apache.commons.lang.StringUtils.defaultString(stakeHolder.getCoaEnrolmentNumber()));
+            jsonObject.addProperty("tinNumber", org.apache.commons.lang.StringUtils.defaultString(stakeHolder.getTinNumber()));
             jsonObject.addProperty("id", stakeHolder.getId());
         }
         return jsonObject;
     }
-
 }

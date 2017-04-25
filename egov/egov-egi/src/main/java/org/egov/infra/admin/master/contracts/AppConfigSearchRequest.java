@@ -40,9 +40,9 @@
 
 package org.egov.infra.admin.master.contracts;
 
-import org.egov.infra.web.support.search.SearchRequest;
+import org.egov.infra.web.support.search.DataTableSearchRequest;
 
-public class AppConfigSearchRequest extends SearchRequest {
+public class AppConfigSearchRequest extends DataTableSearchRequest {
 
     private String moduleName;
 

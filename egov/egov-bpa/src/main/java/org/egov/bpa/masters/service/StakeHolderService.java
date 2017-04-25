@@ -39,6 +39,8 @@
  */
 package org.egov.bpa.masters.service;
 
+import static org.egov.bpa.utils.BpaConstants.FILESTORE_MODULECODE;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -51,16 +53,17 @@ import javax.persistence.PersistenceContext;
 import org.egov.bpa.application.entity.CheckListDetail;
 import org.egov.bpa.application.entity.StakeHolder;
 import org.egov.bpa.application.entity.StakeHolderDocument;
+import org.egov.bpa.application.entity.enums.StakeHolderType;
 import org.egov.bpa.application.service.BPADocumentService;
 import org.egov.bpa.masters.repository.StakeHolderAddressRepository;
 import org.egov.bpa.masters.repository.StakeHolderRepository;
-import org.egov.bpa.utils.BpaConstants;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.persistence.entity.Address;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -112,17 +115,25 @@ public class StakeHolderService {
     }
 
     @Transactional
-    public void removeAddress(List<Address> address) {
+    public void removeAddress(final List<Address> address) {
         stakeHolderAddressRepository.deleteInBatch(address);
     }
 
-    public StakeHolder findById(Long id) {
+    public StakeHolder findById(final Long id) {
         return stakeHolderRepository.findOne(id);
     }
 
     @SuppressWarnings("unchecked")
     public List<StakeHolder> search(final StakeHolder stakeHolder) {
         final Criteria criteria = buildSearchCriteria(stakeHolder);
+        return criteria.list();
+    }
+    
+    @SuppressWarnings("unchecked")
+    public List<StakeHolder> getStakeHolderListByType(final StakeHolderType stakeholderType) {
+        final Criteria criteria = getCurrentSession().createCriteria(StakeHolder.class, "stakeHolder");
+        criteria.add(Restrictions.eq("stakeHolder.stakeHolderType", stakeholderType));
+        criteria.add(Restrictions.eq("stakeHolder.isActive", true));
         return criteria.list();
     }
 
@@ -151,7 +162,7 @@ public class StakeHolderService {
         FileStoreMapper fileStoreMapper = null;
         try {
             fileStoreMapper = fileStoreService.store(file.getInputStream(), file.getOriginalFilename(),
-                    file.getContentType(), BpaConstants.EGMODULE_NAME);
+                    file.getContentType(), FILESTORE_MODULECODE);
         } catch (final IOException e) {
             throw new ApplicationRuntimeException("Error occurred while getting inputstream", e);
         }
@@ -181,7 +192,7 @@ public class StakeHolderService {
             criteria.add(Restrictions.ilike("stakeHolder.coaEnrolmentNumber", stakeHolder.getCoaEnrolmentNumber(),
                     MatchMode.ANYWHERE));
 
-        criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+        criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
         return criteria;
     }
 }

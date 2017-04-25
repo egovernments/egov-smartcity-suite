@@ -1149,6 +1149,7 @@ public interface PropertyTaxConstants {
     public static final String IMAGES_BASE_PATH = "/egi/resources/global/images/";
     public static final String IMAGE_CONTEXT_PATH = "/egi";
     public static final String REPORT_TEMPLATENAME_DEMANDNOTICE_GENERATION = "DemandBill";
+    public static final String REPORT_TEMPLATENAME_INTEGRATED_DEMANDNOTICE_GENERATION = "integratedDemandBill";
     public static final String REPORT_TEMPLATENAME_REVISIONPETITION_HEARINGNOTICE = "mainHearingNotice";
     public static final String NOTICE_TYPE_REVISIONPETITION_HEARINGNOTICE = "Revision Petition Hearing Notice";
     public static final String REPORT_TEMPLATENAME_REVISIONPETITION_ENDORSEMENT = "revPetitionEndorsement";
@@ -1171,7 +1172,8 @@ public interface PropertyTaxConstants {
     public static final String EDU_CESS = "EDU_CESS";
     public static final String LIB_CESS = "LIB_CESS";
     public static final String SEW_TAX = "LIB_CESS";
-
+    public static final String VAC_LAND_TAX="VAC_LAND_TAX";
+    
     public static final String THIRD_PARTY_ERR_CODE_SUCCESS = "PTIS-REST-0";
     public static final String THIRD_PARTY_ERR_MSG_SUCCESS = "SUCCESS";
     public static final String THIRD_PARTY_ERR_CODE_INVALIDCREDENTIALS = "PTIS-REST-1";
@@ -1693,7 +1695,7 @@ public interface PropertyTaxConstants {
         }
     };
     public static final List<String> ASSESSMENT_DOCUMENT_NAMES = ImmutableList.of("Patta Certificate (Issued by Revenue Department)",
-            "Registered Will Document", "Un-registered Will Document", "Decree by Civil Court", "Registered Document");
+            "Registered Will Document", "Un-registered Will Document", "Decree by Civil Court", "Registered Document", "Un-registered Document / Notary document");
     public static final String DOCUMENT_TYPE_PATTA_CERTIFICATE = "Patta Certificate";
     public static final String DOCUMENT_TYPE_MRO_PROCEEDINGS = "MRO Proceedings";
     public static final String DOCUMENT_TYPE_WILL_DEED = "Will Deed";
@@ -1722,4 +1724,5 @@ public interface PropertyTaxConstants {
     public static final String WATER_TAX_DUES = "totalTaxDue";
     public static final String UNDER_WTMS_WF = "isInWorkFlow";
     
+    public static final String SUPER_STRUCTURE = "Super Structure";
 }

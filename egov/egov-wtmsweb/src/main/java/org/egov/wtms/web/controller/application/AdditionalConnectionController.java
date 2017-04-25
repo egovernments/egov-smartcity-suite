@@ -167,7 +167,7 @@ public class AdditionalConnectionController extends GenericConnectionController 
                     applicationDocs.add(applicationDocument);
                 i++;
             }
-        waterConnectionDetailsService.validateWaterRateAndDonationHeader(addConnection, resultBinder);
+        waterConnectionDetailsService.validateWaterRateAndDonationHeader(addConnection);
         if (addConnection.getState() == null)
             addConnection.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
                     WaterTaxConstants.APPLICATION_STATUS_CREATED, WaterTaxConstants.MODULETYPE));
