@@ -78,10 +78,7 @@ public class DCBReportService {
         return dCBReportRepository.findAll(DCBReportSpec.dCBReportSpecification(searchRequest));
     }
 
-    public String reportTotalColumwise(final DCBReportSearchRequest searchRequest) {
-        if (searchRequest.getLicensenumber() != null)
-            return dCBReportRepository.findSumByLicenseNumber(searchRequest.getLicensenumber());
-        else
-            return dCBReportRepository.findSumByColumn();
+    public Object[] reportTotalColumwise(final DCBReportSearchRequest searchRequest) {
+        return dCBReportRepository.findByBaseRegisterRequest(searchRequest);
     }
 }

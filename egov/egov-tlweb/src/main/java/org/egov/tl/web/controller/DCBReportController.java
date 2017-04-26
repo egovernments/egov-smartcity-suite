@@ -100,7 +100,7 @@ public class DCBReportController {
 
     @GetMapping("/reporttotal")
     @ResponseBody
-    public String calculateReportToatl(final DCBReportSearchRequest searchRequest) {
+    public Object[] calculateReportToatl(final DCBReportSearchRequest searchRequest) {
         return dCBReportService.reportTotalColumwise(searchRequest);
     }
 

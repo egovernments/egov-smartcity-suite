@@ -56,7 +56,7 @@ public class SearchTradeSpec {
         return (root, query, builder) -> {
             final Predicate predicate = builder.conjunction();
             if (searchForm.getLicenseNumber() != null)
-                predicate.getExpressions().add(builder.equal(root.get("licensenumber"), searchForm.getLicenseNumber()));
+                predicate.getExpressions().add(builder.equal(root.get("licenseNumber"), searchForm.getLicenseNumber()));
             if (searchForm.getApplicationNumber() != null)
                 predicate.getExpressions().add(builder.equal(root.get("applicationNumber"), searchForm.getApplicationNumber()));
             if (searchForm.getOldLicenseNumber() != null)

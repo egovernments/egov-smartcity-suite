@@ -43,21 +43,10 @@ package org.egov.tl.repository;
 import org.egov.tl.entity.view.DCBReportResult;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface DCBReportRepository extends JpaRepository<DCBReportResult, Long>, JpaSpecificationExecutor<DCBReportResult> {
-
-    @Query("select sum(arreardemand) ,sum(currentdemand),sum(currentdemand+arreardemand) as total_demand,"
-            + "sum(arrearcollection),sum(currentcollection),sum(arrearcollection+currentcollection) as total_coll,"
-            + "sum(arrearbalance), sum(currentbalance) as curr_balance,sum(arrearbalance+currentbalance) as total_balance from DCBReportResult")
-    String findSumByColumn();
-
-    @Query("select sum(arreardemand) ,sum(currentdemand),sum(currentdemand+arreardemand) as total_demand,"
-            + "sum(arrearcollection),sum(currentcollection),sum(arrearcollection+currentcollection) as total_coll,"
-            + "sum(arrearbalance), sum(currentbalance) as curr_balance,sum(arrearbalance+currentbalance) as total_balance from DCBReportResult where licensenumber =:licenseNumber ")
-    String findSumByLicenseNumber(@Param("licenseNumber") String licenseNumber);
+public interface DCBReportRepository
+        extends DCBReportRepositoryCustom, JpaRepository<DCBReportResult, Long>, JpaSpecificationExecutor<DCBReportResult> {
 
 }

@@ -64,8 +64,8 @@ public class BaseRegisterService {
         final Pageable pageable = new PageRequest(baseRegisterRequest.pageNumber(),
                 baseRegisterRequest.pageSize(),
                 baseRegisterRequest.orderDir(), baseRegisterRequest.orderBy());
-      return baseRegisterReportRepository.findAll(BaseRegisterSpec.baseRegisterSpecification(baseRegisterRequest),pageable);
-         
+        return baseRegisterReportRepository.findAll(BaseRegisterSpec.baseRegisterSpecification(baseRegisterRequest), pageable);
+
     }
 
     public List<BaseRegister> preparereport(final BaseRegisterRequest baseRegisterRequest) {

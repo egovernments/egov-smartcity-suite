@@ -64,9 +64,8 @@ function getSumOfRecords(){
 		type:'GET',
 		success: function (data){
 		  recordTotal=[];
-		  var sum=data.replace(/[{ }]/g, "").split(",");
-		  for (var i = 0; i < sum.length; i++){
-			  recordTotal.push(sum[i]);
+		  for (var i = 0; i < data.length; i++){
+			  recordTotal.push(data[i]);
 		  }
 		}
 	})
@@ -200,7 +199,7 @@ function callAjaxByBoundary(event) {
 					}
 				},
 				"aoColumnDefs" : [ {
-					"aTargets" : [ 2, 3, 4, 5, 6, 7, 8, 9, 10 ],
+					"aTargets" : [1, 2, 3, 4, 5, 6, 7, 8, 9 ],
 					"mRender" : function(data, type, full) {
 						return formatNumberInr(data);
 					}
