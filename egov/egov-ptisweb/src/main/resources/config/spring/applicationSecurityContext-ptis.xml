@@ -125,6 +125,8 @@
 				<security:filter-chain pattern="/citizen/create/createProperty-printAck.action" filters="none" />
 				<security:filter-chain pattern="/reportViewer**" filters="none" />
 				<security:filter-chain pattern="/create/createProperty-calculateTax.action" filters="none" />
+				<security:filter-chain pattern="/citizen/property/transfer/search.action" filters="none" />
+				<security:filter-chain pattern="/citizen/property/transfer/collect-fee.action" filters="none" />
 				<security:filter-chain pattern="/**"  filters="concurrentSessionFilter,securityContextPersistenceFilter,logoutFilter,authenticationProcessingFilter,securityContextHolderAwareRequestFilter,rememberMeAuthenticationFilter,anonymousAuthenticationFilter,exceptionTranslationFilter,filterSecurityInterceptor" />
 			</list>
 		</constructor-arg>

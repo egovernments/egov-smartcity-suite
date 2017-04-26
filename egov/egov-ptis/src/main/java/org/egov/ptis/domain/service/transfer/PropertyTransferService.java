@@ -40,6 +40,7 @@ l * eGov suite of products aim to improve the internal efficiency,transparency,
 package org.egov.ptis.domain.service.transfer;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_REGISTERED_TRANSFER;
+import static org.egov.ptis.constants.PropertyTaxConstants.ANONYMOUS_USER;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP;
 import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
@@ -562,7 +563,11 @@ public class PropertyTransferService {
         propertyTaxBillable.setBasicProperty(propertyMutation.getBasicProperty());
         propertyTaxBillable.setMutationFeePayment(Boolean.TRUE);
         propertyTaxBillable.setMutationFee(propertyMutation.getMutationFee());
-        propertyTaxBillable.setCollectionType(DemandConstants.COLLECTIONTYPE_COUNTER);
+        if (ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName())) {
+            propertyTaxBillable.setCollectionType(DemandConstants.COLLECTIONTYPE_ONLINE);
+        } else {
+            propertyTaxBillable.setCollectionType(DemandConstants.COLLECTIONTYPE_COUNTER);
+        }
         propertyTaxBillable.setCallbackForApportion(Boolean.FALSE);
         propertyTaxBillable.setMutationApplicationNo(propertyMutation.getApplicationNo());
         propertyTaxBillable.setUserId(ApplicationThreadLocals.getUserId());

@@ -160,6 +160,7 @@ import com.opensymphony.xwork2.ActionContext;
         @Result(name = PropertyTransferAction.ERROR, location = "common/meeseva-errorPage.jsp"),
         @Result(name = PropertyTransferAction.MEESEVA_RESULT_ACK, location = "common/meesevaAck.jsp"),
         @Result(name = PropertyTransferAction.COLLECT_FEE, location = "collection/collectPropertyTax-view.jsp"),
+        @Result(name = PropertyTransferAction.COLLECT_ONLINE_FEE, location = "citizen/collection/collection-collectTax.jsp"),
         @Result(name = PropertyTransferAction.REDIRECT_SUCCESS, location = PropertyTransferAction.REDIRECT_SUCCESS, type = "redirectAction", params = {
                 "assessmentNo", "${assessmentNo}", "mutationId", "${mutationId}" }),
         @Result(name = PropertyTransferAction.COMMON_FORM, location = "search/searchProperty-commonForm.jsp"),
@@ -183,6 +184,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     public static final String COLLECT_FEE = "collect-fee";
     public static final String MEESEVA_RESULT_ACK = "meesevaAck";
     private static final String PROPERTY_MODIFY_REJECT_FAILURE = "property.modify.reject.failure";
+    public static final String COLLECT_ONLINE_FEE = "onlineCollection";
 
     // Form Binding Model
     private PropertyMutation propertyMutation = new PropertyMutation();
@@ -417,8 +419,14 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
             addActionError(getText("mutationfee.notexists"));
             target = SEARCH;
         } else {
+            if (ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName())
+                    && ApplicationThreadLocals.getUserId() == null) {
+                ApplicationThreadLocals.setUserId(securityUtils.getCurrentUser().getId());
+                target = COLLECT_ONLINE_FEE;
+            }
             collectXML = transferOwnerService.generateReceipt(propertyMutation);
-            target = COLLECT_FEE;
+            if (StringUtils.isBlank(target))
+                target = COLLECT_FEE;
         }
         return target;
     }
