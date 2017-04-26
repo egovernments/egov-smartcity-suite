@@ -65,7 +65,6 @@ import org.egov.collection.integration.models.BillReceiptInfoImpl;
 import org.egov.collection.integration.models.BillReceiptInfoReq;
 import org.egov.collection.integration.models.BillReceiptReq;
 import org.egov.collection.integration.models.ReceiptAmountInfo;
-import org.egov.collection.integration.models.RequestInfo;
 import org.egov.collection.integration.services.BillingIntegrationService;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.EgwStatus;
@@ -95,6 +94,7 @@ import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.messaging.MessagingService;
+import org.egov.infra.microservice.utils.MicroserviceUtils;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
@@ -180,6 +180,9 @@ public class CollectionsUtil {
 
     @Autowired
     private CollectionApplicationProperties collectionApplicationProperties;
+    
+    @Autowired
+    MicroserviceUtils microserviceUtils;
 
     /**
      * Returns the Status object for given status code for a receipt
@@ -753,22 +756,10 @@ public class CollectionsUtil {
 
     public ReceiptAmountInfo updateReceiptDetailsAndGetReceiptAmountInfo(BillReceiptReq billReceipt, String serviceCode) {
         RestTemplate restTemplate = new RestTemplate();
-        org.egov.collection.integration.models.User userInfo = new org.egov.collection.integration.models.User();
-        userInfo.setId(securityUtils.getCurrentUser().getId());
-        userInfo.setName(securityUtils.getCurrentUser().getName());
-        //TODO: To set the tenant Id once available
-        userInfo.setTenantId(ApplicationThreadLocals.getCityName());
-        RequestInfo requestInfo = new RequestInfo();
-        requestInfo.setApiId("apiId");
-        requestInfo.setVer("ver");
-        requestInfo.setTs(new Date());
-        requestInfo.setUserInfo(userInfo);
-        billReceipt.setTenantId(ApplicationThreadLocals.getCityName());
+        billReceipt.setTenantId(microserviceUtils.getTanentId());
         BillReceiptInfoReq billReceiptInfoReq = new BillReceiptInfoReq();
         billReceiptInfoReq.setBillReceiptInfo(billReceipt);
-        billReceiptInfoReq.setRequestInfo(requestInfo);
-        LOGGER.info("updateReceiptDetailsAndGetReceiptAmountInfo - billReceipt" + billReceipt);
-        LOGGER.info("updateReceiptDetailsAndGetReceiptAmountInfo - billReceipt AccountDetails" + billReceipt.getAccountDetails());
+        billReceiptInfoReq.setRequestInfo(microserviceUtils.createRequestInfo());
         LOGGER.info("updateReceiptDetailsAndGetReceiptAmountInfo - before calling LAMS update");
         String url = collectionApplicationProperties.getLamsServiceUrl().concat(
                 collectionApplicationProperties.getUpdateDemandUrl(serviceCode.toLowerCase()));
