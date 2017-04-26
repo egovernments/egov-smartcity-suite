@@ -39,6 +39,8 @@
  */
 package org.egov.collection.integration.models;
 
+import org.egov.infra.microservice.models.RequestInfo;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class BillReceiptInfoReq {
