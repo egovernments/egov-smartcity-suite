@@ -198,6 +198,9 @@
     <bean id="bulkBillGenerationPersistenceService" parent="abstractPersistenceService">
         <constructor-arg name="type" value="org.egov.ptis.domain.entity.demand.BulkBillGeneration"/>
     </bean>
+    
+    <bean id="demandRegisterService" class="org.egov.ptis.domain.service.report.DemandRegisterService" scope="prototype" autowire-candidate="true" />
+		
 
     <!-- Collection Integration Service Bean Starts-->
     <bean id="PTCollectionsInterface" class="org.egov.ptis.service.collection.PropertyTaxCollection" scope="prototype">

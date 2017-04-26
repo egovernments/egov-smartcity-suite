@@ -50,10 +50,14 @@ public final class ReportConstants {
     public static final String IMAGE_CONTEXT_PATH = "/egi";
 
     private ReportConstants() {
-        //only static final fields
+        // only static final fields
     }
 
     public enum FileFormat {
-        PDF, XLS, RTF, HTM, TXT, CSV
+        PDF, XLS, RTF, HTM, TXT, CSV;
+
+        public String toString() {
+            return this.name().toLowerCase();
+        }
     }
 }

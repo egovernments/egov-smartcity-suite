@@ -55,6 +55,7 @@ function populateData(reportData) {
 	 			"bDestroy" : true,
 				responsive : true,
 				destroy : true,
+		         "searching":false,
 				'aaData' : reportData,
 				buttons : [  {
 					extend : 'pdf',

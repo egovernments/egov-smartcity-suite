@@ -84,6 +84,7 @@ import javax.persistence.PersistenceContext;
 import org.apache.log4j.Logger;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.ReceiptHeader;
+import org.egov.commons.CFinancialYear;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
 import org.egov.eis.entity.Assignment;
@@ -159,11 +160,9 @@ public class PropertyTaxCommonUtils {
      * @return Installment - the first half of the current financial year for PT module
      */
     public Installment getCurrentInstallment() {
-        final Query query = entityManager
-                .unwrap(Session.class)
-                .createQuery(
-                        "select installment from Installment installment,CFinancialYear finYear where installment.module.name =:moduleName  and (cast(:currDate as date)) between finYear.startingDate and finYear.endingDate "
-                                + " and cast(installment.fromDate as date) >= cast(finYear.startingDate as date) and cast(installment.toDate as date) <= cast(finYear.endingDate as date) order by installment.fromDate asc ");
+        final Query query = getSession().createQuery(
+                "select installment from Installment installment,CFinancialYear finYear where installment.module.name =:moduleName  and (cast(:currDate as date)) between finYear.startingDate and finYear.endingDate "
+                        + " and cast(installment.fromDate as date) >= cast(finYear.startingDate as date) and cast(installment.toDate as date) <= cast(finYear.endingDate as date) order by installment.fromDate asc ");
         query.setString("moduleName", PropertyTaxConstants.PTMODULENAME);
         query.setDate("currDate", new Date());
         final List<Installment> installments = query.list();
@@ -275,7 +274,7 @@ public class PropertyTaxCommonUtils {
         List<Installment> advanceInstallments = new ArrayList<Installment>();
         final String query = "select inst from Installment inst where inst.module.name = '" + PTMODULENAME
                 + "' and inst.fromDate >= :startdate order by inst.fromDate asc ";
-        advanceInstallments = entityManager.unwrap(Session.class).createQuery(query)
+        advanceInstallments = getSession().createQuery(query)
                 .setParameter("startdate", startDate)
                 .setMaxResults(PropertyTaxConstants.MAX_ADVANCES_ALLOWED).list();
         return advanceInstallments;
@@ -560,5 +559,18 @@ public class PropertyTaxCommonUtils {
                 break;
         }
         return !assignment.isEmpty() ? assignment.get(0) : null;
+    }
+    
+    public Session getSession() {
+        return entityManager.unwrap(Session.class);
+    }
+    
+    @SuppressWarnings("unchecked")
+    public List<CFinancialYear> getAllFinancialYearsBetweenDates(Date fromDate, Date toDate) {
+        Query query = getSession().createQuery(
+                " from CFinancialYear cfinancialyear where cfinancialyear.startingDate <:eDate and cfinancialyear.endingDate >=:sDate order by finYearRange asc ");
+        query.setDate("sDate", fromDate);
+        query.setDate("eDate", toDate);
+        return query.list();
     }
 }

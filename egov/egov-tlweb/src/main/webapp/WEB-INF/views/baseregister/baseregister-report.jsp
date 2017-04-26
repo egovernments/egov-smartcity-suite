@@ -46,7 +46,7 @@
 <div class="row">
     <div class="col-md-12">
         <form:form class="form-horizontal form-groups-bordered" action=""
-                   id="baseregisterform" modelAttribute="baseRegisterForm" method="post">
+                   id="baseregisterform" modelAttribute="baseRegister" method="post">
             <div class="panel panel-primary" data-collapsed="0">
                 <div class="panel-heading">
                     <div class="panel-title">

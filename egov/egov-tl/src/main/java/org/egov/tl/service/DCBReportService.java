@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -39,47 +39,46 @@
  */
 package org.egov.tl.service;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
+
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
-import org.egov.tl.entity.dto.DCBReportResult;
-import org.hibernate.SQLQuery;
-import org.hibernate.Session;
-import org.hibernate.transform.AliasToBeanResultTransformer;
+import org.egov.tl.entity.dto.DCBReportSearchRequest;
+import org.egov.tl.entity.view.DCBReportResult;
+import org.egov.tl.repository.DCBReportRepository;
+import org.egov.tl.repository.specs.DCBReportSpec;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
 public class DCBReportService {
-    @PersistenceContext
-    private EntityManager entityManager;
 
-    private SQLQuery prepareQuery(final String licensenumber, final String mode) {
-        final StringBuilder selectQry1 = new StringBuilder();
-        StringBuilder fromQry;
-        StringBuilder whereQry = new StringBuilder();
-        final StringBuilder selectQry2 = new StringBuilder("  cast(arr_demand as bigint) AS arr_demand,cast(curr_demand as bigint) AS curr_demand,cast(arr_coll as bigint) AS arr_coll,cast(curr_coll as bigint) AS curr_coll,"
-                + "cast(arr_balance as bigint) AS arr_balance,cast(curr_balance as bigint) AS curr_balance ");
-        fromQry = new StringBuilder(" from egtl_mv_dcb_view dcbinfo,eg_boundary boundary ");
+    @Autowired
+    private DCBReportRepository dCBReportRepository;
 
-        if ("license".equalsIgnoreCase(mode)) {
-            selectQry1
-                    .append("select distinct dcbinfo.licenseNumber as licenseNumber ,cast(dcbinfo.licenseId as integer) as licenseid,dcbinfo.username as \"username\", ");
-            fromQry = new StringBuilder(" from egtl_mv_dcb_view dcbinfo ");
-            if (licensenumber != null && !"".equals(licensenumber))
-                whereQry = whereQry.append(" where  dcbinfo.licenseNumber = '" + licensenumber.toUpperCase() + "'");
-        }
+    public Page<DCBReportResult> generateReportResult(final DCBReportSearchRequest searchRequest) {
+        final Pageable pageable = new PageRequest(searchRequest.pageNumber(),
+                searchRequest.pageSize(),
+                searchRequest.orderDir(), searchRequest.orderBy());
+        return isBlank(searchRequest.getLicensenumber()) ? dCBReportRepository.findAll(pageable)
+                : dCBReportRepository.findAll(DCBReportSpec.dCBReportSpecification(searchRequest), pageable);
 
-        StringBuilder query = selectQry1.append(selectQry2).append(fromQry).append(whereQry);
-        return entityManager.unwrap(Session.class).createSQLQuery(query.toString());
     }
 
-    public List<DCBReportResult> generateReportResult(final String licensenumber, final String mode) {
-        final SQLQuery finalQuery = prepareQuery(licensenumber, mode);
-        finalQuery.setResultTransformer(new AliasToBeanResultTransformer(DCBReportResult.class));
-        return finalQuery.list();
+    public List<DCBReportResult> prepareReport(final DCBReportSearchRequest searchRequest) {
+        return dCBReportRepository.findAll(DCBReportSpec.dCBReportSpecification(searchRequest));
+    }
+
+    public List<DCBReportResult> onlineReportResult(final DCBReportSearchRequest searchRequest) {
+        return dCBReportRepository.findAll(DCBReportSpec.dCBReportSpecification(searchRequest));
+    }
+
+    public Object[] reportTotalColumwise(final DCBReportSearchRequest searchRequest) {
+        return dCBReportRepository.findByBaseRegisterRequest(searchRequest);
     }
 }

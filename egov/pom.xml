@@ -115,6 +115,10 @@
             <id>JBoss Repository</id>
             <url>https://repository.jboss.org/nexus/content/groups/public/</url>
         </repository>
+        <repository>
+            <id>JSPRESSO</id>
+            <url>http://repository.jspresso.org/maven2/</url>
+        </repository>
     </repositories>
 
     <pluginRepositories>
@@ -219,7 +223,7 @@
         <log4j-version>1.2.17</log4j-version>
         <google-guava-version>21.0</google-guava-version>
         <recaptcha.version>0.0.8</recaptcha.version>
-
+        <javaxt.core.version>1.7.8</javaxt.core.version>
         <!-- Plugin dependency versions-->
         <mvn.javadoc.plugin.version>2.10.4</mvn.javadoc.plugin.version>
         <mvn.release.plugin.version>2.5.3</mvn.release.plugin.version>
@@ -810,6 +814,11 @@
                 <artifactId>recaptcha4j</artifactId>
                 <version>${recaptcha.version}</version>
             </dependency>
+            <dependency>
+                <groupId>javaxt</groupId>
+                <artifactId>javaxt-core</artifactId>
+                <version>${javaxt.core.version}</version>
+            </dependency>
             <!-- MISC END -->
 
             <!-- SCRIPTING ENGINE STARTS -->
@@ -1126,6 +1135,10 @@
         <dependency>
             <groupId>com.google.code.maven-play-plugin.net.tanesha.recaptcha4j</groupId>
             <artifactId>recaptcha4j</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javaxt</groupId>
+            <artifactId>javaxt-core</artifactId>
         </dependency>
         <!-- MISC ENDS -->
 

@@ -49,8 +49,9 @@ import org.egov.infra.elasticsearch.service.ApplicationIndexService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.workflow.entity.StateHistory;
+import org.egov.tl.config.properties.TlApplicationProperties;
 import org.egov.tl.entity.License;
-import org.egov.tl.utils.Constants;
+import org.egov.tl.entity.LicenseAppType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -63,17 +64,13 @@ import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.egov.commons.entity.Source.SYSTEM;
 import static org.egov.infra.elasticsearch.entity.enums.ApprovalStatus.INPROGRESS;
 import static org.egov.infra.elasticsearch.entity.enums.ClosureStatus.NO;
-import static org.egov.tl.utils.Constants.APPLICATION_STATUS_APPROVED_CODE;
-import static org.egov.tl.utils.Constants.APPLICATION_STATUS_CREATED_CODE;
-import static org.egov.tl.utils.Constants.APPLICATION_STATUS_FIRSTCOLLECTIONDONE_CODE;
-import static org.egov.tl.utils.Constants.APPLICATION_STATUS_GENECERT_CODE;
-import static org.egov.tl.utils.Constants.APPLICATION_STATUS_INSPE_CODE;
-import static org.egov.tl.utils.Constants.APPLICATION_STATUS_SECONDCOLLECTION_CODE;
 import static org.egov.tl.utils.Constants.DELIMITER_COLON;
-import static org.egov.tl.utils.Constants.STATUS_CANCELLED;
+import static org.egov.tl.utils.Constants.NEW_LIC_APPTYPE;
 import static org.egov.tl.utils.Constants.TRADE_LICENSE;
+import static org.egov.tl.utils.Constants.RENEWAL_LIC_APPTYPE;
+import static org.egov.tl.utils.Constants.APPLICATION_STATUS_GENECERT_CODE;
+import static org.egov.tl.utils.Constants.STATUS_CANCELLED;
 import static org.egov.tl.utils.Constants.WF_STATE_GENERATE_CERTIFICATE;
-import static org.egov.tl.utils.Constants.WORKFLOW_STATE_REJECTED;
 
 @Service
 public class LicenseApplicationIndexService {
@@ -89,6 +86,9 @@ public class LicenseApplicationIndexService {
     @Autowired
     private SecurityUtils securityUtils;
 
+    @Autowired
+    private TlApplicationProperties tlApplicationProperties;
+
     public void createOrUpdateLicenseApplicationIndex(final License license) {
         ApplicationIndex applicationIndex = applicationIndexService.findByApplicationNumber(license.getApplicationNumber());
 
@@ -103,6 +103,7 @@ public class LicenseApplicationIndexService {
         Optional<User> user = getApplicationCurrentOwner(license);
         if (license.getApplicationDate() == null)
             license.setApplicationDate(new Date());
+        Integer slaConfig = getSlaForAppType(license.getLicenseAppType());
         applicationIndexService.createApplicationIndex(ApplicationIndex.builder().withModuleName(TRADE_LICENSE)
                 .withApplicationNumber(license.getApplicationNumber()).withApplicationDate(license.getApplicationDate())
                 .withApplicationType(license.getLicenseAppType().getName()).withApplicantName(license.getLicensee().getApplicantName())
@@ -110,48 +111,46 @@ public class LicenseApplicationIndexService {
                 .withApplicantAddress(license.getAddress()).withOwnername(user.isPresent() ?
                         user.get().getUsername() + DELIMITER_COLON + user.get().getName() : EMPTY)
                 .withChannel(SYSTEM.toString()).withMobileNumber(license.getLicensee().getMobilePhoneNumber())
-                .withAadharNumber(license.getLicensee().getUid()).withClosed(NO).withApproved(INPROGRESS)
+                .withAadharNumber(license.getLicensee().getUid()).withClosed(NO).withApproved(INPROGRESS).withSla(slaConfig != null ? slaConfig : 0)
                 .build());
     }
 
-    private void updateLicenseApplicationIndex(License license, ApplicationIndex applicationIndex) {
-        //FIXME too many conditions
-        if (license.getId() != null && license.getEgwStatus() != null
-                && (license.getEgwStatus().getCode().equals(APPLICATION_STATUS_INSPE_CODE)
-                || license.getEgwStatus().getCode().equals(APPLICATION_STATUS_APPROVED_CODE)
-                || license.getEgwStatus().getCode().equals(APPLICATION_STATUS_SECONDCOLLECTION_CODE)
-                || license.getEgwStatus().getCode().equals(APPLICATION_STATUS_GENECERT_CODE) || license
-                .getEgwStatus().getCode().equals(Constants.APPLICATION_STATUS_DIGUPDATE_CODE))
-                || license.getStatus().getStatusCode().equals(STATUS_CANCELLED)
-                || license.getEgwStatus().getCode().equals(APPLICATION_STATUS_CREATED_CODE)
-                || license.getStatus().getStatusCode().equals(APPLICATION_STATUS_FIRSTCOLLECTIONDONE_CODE)
-                && license.getState().getValue().contains(WORKFLOW_STATE_REJECTED)) {
-            Optional<User> user = getApplicationCurrentOwner(license);
-            applicationIndex.setStatus(license.getEgwStatus().getDescription());
-            applicationIndex.setApplicantAddress(license.getAddress());
-            applicationIndex.setOwnerName(user.isPresent() ? user.get().getUsername() + DELIMITER_COLON + user.get().getName() : EMPTY);
-            applicationIndex.setConsumerCode(license.getLicenseNumber());
-            applicationIndex.setClosed(NO);
-            applicationIndex.setApproved(INPROGRESS);
-            if (license.getEgwStatus().getCode().equals(APPLICATION_STATUS_GENECERT_CODE)) {
-                Optional<StateHistory> stateHistory = license.getStateHistory().parallelStream().
-                        filter(state -> WF_STATE_GENERATE_CERTIFICATE.equalsIgnoreCase(state.getValue())).findFirst();
-                Date endDate;
-                if (stateHistory.isPresent())
-                    endDate = stateHistory.get().getLastModifiedDate();
-                else
-                    endDate = license.getLastModifiedDate();
-                applicationIndex.setElapsedDays(DateUtils.daysBetween(license.getApplicationDate(), endDate));
-                applicationIndex.setClosed(ClosureStatus.YES);
-                applicationIndex.setApproved(ApprovalStatus.APPROVED);
-            }
-            if (license.getStatus().getStatusCode().equals(STATUS_CANCELLED)) {
-                applicationIndex.setApproved(ApprovalStatus.REJECTED);
-                applicationIndex.setClosed(ClosureStatus.YES);
-            }
+    private Integer getSlaForAppType(LicenseAppType licenseAppType) {
+        if (NEW_LIC_APPTYPE.equals(licenseAppType.getName()))
+            return tlApplicationProperties.getValue("sla.new.apptype");
+        else if (RENEWAL_LIC_APPTYPE.equals(licenseAppType.getName()))
+            return tlApplicationProperties.getValue("sla.renew.apptype");
+        else
+            return tlApplicationProperties.getValue("sla.closure.apptype");
+    }
 
-            applicationIndexService.updateApplicationIndex(applicationIndex);
+    private void updateLicenseApplicationIndex(License license, ApplicationIndex applicationIndex) {
+        Optional<User> user = getApplicationCurrentOwner(license);
+        applicationIndex.setStatus(license.getEgwStatus().getDescription());
+        applicationIndex.setApplicantAddress(license.getAddress());
+        applicationIndex.setOwnerName(user.isPresent() ? user.get().getUsername() + DELIMITER_COLON + user.get().getName() : EMPTY);
+        applicationIndex.setConsumerCode(license.getLicenseNumber());
+        applicationIndex.setClosed(NO);
+        applicationIndex.setApproved(INPROGRESS);
+        if (license.getEgwStatus().getCode().equals(APPLICATION_STATUS_GENECERT_CODE)) {
+            Optional<StateHistory> stateHistory = license.getStateHistory().parallelStream().
+                    filter(state -> WF_STATE_GENERATE_CERTIFICATE.equalsIgnoreCase(state.getValue())).findFirst();
+            Date endDate;
+            if (stateHistory.isPresent())
+                endDate = stateHistory.get().getLastModifiedDate();
+            else
+                endDate = license.getLastModifiedDate();
+            applicationIndex.setElapsedDays(DateUtils.daysBetween(license.getApplicationDate(), endDate));
+            applicationIndex.setClosed(ClosureStatus.YES);
+            applicationIndex.setApproved(ApprovalStatus.APPROVED);
         }
+        if (license.getStatus().getStatusCode().equals(STATUS_CANCELLED)) {
+            applicationIndex.setApproved(ApprovalStatus.REJECTED);
+            applicationIndex.setClosed(ClosureStatus.YES);
+        }
+
+        applicationIndexService.updateApplicationIndex(applicationIndex);
+
     }
 
     private Optional<User> getApplicationCurrentOwner(final License license) {

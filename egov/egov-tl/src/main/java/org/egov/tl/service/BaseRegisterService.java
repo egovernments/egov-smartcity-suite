@@ -1,59 +1,79 @@
+/*
+ * eGov suite of products aim to improve the internal efficiency,transparency,
+ *     accountability and the service delivery of the government  organizations.
+ *
+ *      Copyright (C) 2017 eGovernments Foundation
+ *
+ *      The updated version of eGov suite of products as by eGovernments Foundation
+ *      is available at http://www.egovernments.org
+ *
+ *      This program is free software: you can redistribute it and/or modify
+ *      it under the terms of the GNU General Public License as published by
+ *      the Free Software Foundation, either version 3 of the License, or
+ *      any later version.
+ *
+ *      This program is distributed in the hope that it will be useful,
+ *      but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *      GNU General Public License for more details.
+ *
+ *      You should have received a copy of the GNU General Public License
+ *      along with this program. If not, see http://www.gnu.org/licenses/ or
+ *      http://www.gnu.org/licenses/gpl.html .
+ *
+ *      In addition to the terms of the GPL license to be adhered to in using this
+ *      program, the following additional terms are to be complied with:
+ *
+ *          1) All versions of this program, verbatim or modified must carry this
+ *             Legal Notice.
+ *
+ *          2) Any misrepresentation of the origin of the material is prohibited. It
+ *             is required that all modified versions of this material be marked in
+ *             reasonable ways as different from the original version.
+ *
+ *          3) This license does not grant any rights to any user of the program
+ *             with regards to rights under trademark law for use of the trade names
+ *             or trademarks of eGovernments Foundation.
+ *
+ *    In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ */
+
 package org.egov.tl.service;
 
-import org.egov.tl.entity.dto.BaseRegisterForm;
-import org.hibernate.SQLQuery;
-import org.hibernate.Session;
-import org.hibernate.transform.AliasToBeanResultTransformer;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.List;
 
-import static org.apache.commons.lang3.StringUtils.isNotEmpty;
-
+import org.egov.tl.entity.dto.BaseRegisterRequest;
+import org.egov.tl.entity.view.BaseRegister;
+import org.egov.tl.repository.BaseRegisterReportRepository;
+import org.egov.tl.repository.specs.BaseRegisterSpec;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
 public class BaseRegisterService {
-    @PersistenceContext
-    private EntityManager entityManager;
 
-    public List<BaseRegisterForm> search(final BaseRegisterForm baseRegisterForm) {
-        final SQLQuery finalQuery = prepareQuery(baseRegisterForm);
-        finalQuery.setResultTransformer(new AliasToBeanResultTransformer(BaseRegisterForm.class));
-        if (baseRegisterForm.getCategoryId() != null)
-            finalQuery.setParameter("categoryId", baseRegisterForm.getCategoryId());
-        if (baseRegisterForm.getSubCategoryId() != null)
-            finalQuery.setParameter("subCategoryId", baseRegisterForm.getSubCategoryId());
-        if (baseRegisterForm.getStatusId() != null)
-            finalQuery.setParameter("statusId", baseRegisterForm.getStatusId());
-        if (baseRegisterForm.getWardId() != null)
-            finalQuery.setParameter("wardId", baseRegisterForm.getWardId());
-        return finalQuery.list();
+    @Autowired
+    private BaseRegisterReportRepository baseRegisterReportRepository;
+
+    public Page<BaseRegister> generatebasereport(final BaseRegisterRequest baseRegisterRequest) {
+        final Pageable pageable = new PageRequest(baseRegisterRequest.pageNumber(),
+                baseRegisterRequest.pageSize(),
+                baseRegisterRequest.orderDir(), baseRegisterRequest.orderBy());
+        return baseRegisterReportRepository.findAll(BaseRegisterSpec.baseRegisterSpecification(baseRegisterRequest), pageable);
+
     }
 
-    private SQLQuery prepareQuery(final BaseRegisterForm baseRegisterForm) {
-        StringBuilder whereQry = new StringBuilder();
-        final StringBuilder selectQry = new StringBuilder("select \"licenseid\", \"licensenumber\", \"tradetitle\", \"owner\", \"mobile\", \"categoryname\", \"subcategoryname\", \"assessmentno\"," +
-                " \"wardname\", \"localityname\", trim(regexp_replace(\"tradeaddress\", '\\s+', ' ', 'g')) as \"tradeaddress\", \"commencementdate\", \"statusname\", cast(arrearlicensefee as bigint) " +
-                "AS \"arrearlicensefee\", cast(arrearpenaltyfee as bigint) AS \"arrearpenaltyfee\", cast(curlicensefee as bigint) " +
-                "AS \"curlicensefee\", cast(curpenaltyfee as bigint) AS \"curpenaltyfee\",\"unitofmeasure\",\"tradewt\",\"rateval\"  from egtl_mv_baseregister_view where 1=1 ");
-        if (baseRegisterForm.getCategoryId() != null)
-            whereQry = whereQry.append(" and cat = :categoryId");
-        if (baseRegisterForm.getSubCategoryId() != null)
-            whereQry = whereQry.append(" and subcat = :subCategoryId");
-        if (baseRegisterForm.getStatusId() != null)
-            whereQry = whereQry.append(" and status = :statusId");
-        else
-            whereQry = whereQry.append(" and statusname not in ('Cancelled','Suspended')");
-        if (baseRegisterForm.getWardId() != null)
-            whereQry = whereQry.append(" and ward = :wardId");
-        if (isNotEmpty(baseRegisterForm.getFilterName()) && "Defaulters".equals(baseRegisterForm.getFilterName()))
-            whereQry = whereQry.append(" and (arrearlicensefee > 0 or arrearpenaltyfee > 0 or curlicensefee > 0 or curpenaltyfee > 0)");
-        return entityManager.unwrap(Session.class).createSQLQuery(selectQry.append(whereQry).toString());
+    public List<BaseRegister> preparereport(final BaseRegisterRequest baseRegisterRequest) {
+        return baseRegisterReportRepository.findAll(BaseRegisterSpec.baseRegisterSpecification(baseRegisterRequest));
     }
 
+    public Object[] basereporttotal(final BaseRegisterRequest baseRegisterRequest) {
+        return baseRegisterReportRepository.findByBaseRegisterRequest(baseRegisterRequest);
+    }
 
 }

@@ -421,8 +421,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                     .withComments(CollectionConstants.WF_STATE_RECEIPT_CREATED)
                     .withStateValue(CollectionConstants.WF_STATE_RECEIPT_CREATED).withOwner(position)
                     .withDateInfo(new Date()).withNextAction(CollectionConstants.WF_ACTION_SUBMIT);
-        else if (createVoucherForBillingService) {
-            createVoucherForReceipt(receiptHeader);
+        else if (createVoucherForBillingService)
             receiptHeader
             .transition()
             .start()
@@ -431,7 +430,6 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                     .withComments("Receipt voucher created")
                     .withStateValue(CollectionConstants.WF_ACTION_CREATE_VOUCHER).withOwner(position)
                     .withDateInfo(new Date()).withNextAction(CollectionConstants.WF_ACTION_SUBMIT);
-        }
 
         if (receiptHeader.getReceiptMisc().getDepositedInBank() != null)
             receiptHeader
@@ -770,7 +768,6 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
         if (receiptVoucher.getVoucherheader() != null) {
             reversalVoucherInfo.put(CollectionConstants.FINANCIALS_VOUCHERREVERSAL_ORIGINALVOUCHERID, receiptVoucher
                     .getVoucherheader().getId());
-            reversalVoucherInfo.put(CollectionConstants.FINANCIALS_VOUCHERREVERSAL_DATE, new Date());
 
             if (receiptVoucher.getVoucherheader().getType()
                     .equals(CollectionConstants.FINANCIAL_JOURNALVOUCHER_VOUCHERTYPE)) {
@@ -1101,14 +1098,19 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
         try {
             persist(receiptHeader);
             LOGGER.info("Persisted receipts");
-            // Start work flow for newly created receipt.This might internally
-            // create voucher also, based on configuration.
             LOGGER.info("Workflow started for newly created receipts");
             final Date cutOffDate = getDataEntryCutOffDate();
-            if (cutOffDate != null && receiptHeader.getReceiptdate().after(cutOffDate))
+            // No work flow before cut off Date else Start work flow for newly created receipt.
+            if (cutOffDate != null && receiptHeader.getReceiptdate().before(cutOffDate))
+                receiptHeader.setStatus(collectionsUtil
+                        .getStatusForModuleAndCode(CollectionConstants.MODULE_NAME_RECEIPTHEADER,
+                                CollectionConstants.RECEIPT_STATUS_CODE_APPROVED));
+            else
                 startWorkflow(receiptHeader);
+            // create voucher based on configuration.
+            if (collectionsUtil.checkVoucherCreation(receiptHeader))
+                createVoucherForReceipt(receiptHeader);
             if (receiptHeader.getService().getServiceType().equalsIgnoreCase(CollectionConstants.SERVICE_TYPE_BILLING)) {
-
                 updateBillingSystemWithReceiptInfo(receiptHeader, null, null);
                 LOGGER.info("Updated billing system ");
             } else

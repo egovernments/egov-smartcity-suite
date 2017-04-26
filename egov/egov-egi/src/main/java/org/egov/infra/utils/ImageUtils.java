@@ -40,27 +40,37 @@
 
 package org.egov.infra.utils;
 
+import javaxt.io.Image;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.IIOImage;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
+import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Paths;
+import java.util.Iterator;
+import java.util.Optional;
 
 import static javax.imageio.ImageIO.createImageOutputStream;
 import static javax.imageio.ImageIO.getImageWritersByFormatName;
 import static javax.imageio.ImageIO.read;
 import static javax.imageio.ImageWriteParam.MODE_EXPLICIT;
 import static org.apache.commons.io.FilenameUtils.getExtension;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.defaultString;
 
-public class ImageUtils {
-
+public final class ImageUtils {
     public static final String JPG_EXTN = ".jpg";
+    public static final String JPG_FORMAT_NAME = "jpeg";
+    private static final Logger LOG = LoggerFactory.getLogger(ImageUtils.class);
 
     private ImageUtils() {
         //Not to be initialized
@@ -73,7 +83,7 @@ public class ImageUtils {
     public static File compressImage(final InputStream imageStream, String imageFileName, boolean closeStream) throws IOException {
         File compressedImage = Paths.get(imageFileName).toFile();
         try (final ImageOutputStream imageOutput = createImageOutputStream(compressedImage)) {
-            ImageWriter writer = getImageWritersByFormatName(defaultString(getExtension(imageFileName), "jpeg")).next();
+            ImageWriter writer = getImageWritersByFormatName(defaultString(getExtension(imageFileName), JPG_FORMAT_NAME)).next();
             writer.setOutput(imageOutput);
             ImageWriteParam writeParam = writer.getDefaultWriteParam();
             if (writeParam.canWriteCompressed()) {
@@ -87,5 +97,24 @@ public class ImageUtils {
                 imageStream.close();
         }
         return compressedImage;
+    }
+
+    public static double[] findGeoCoordinates(File jpegImage) {
+        Optional<double[]> coordinates = Optional.empty();
+        if (JPG_FORMAT_NAME.equalsIgnoreCase(imageFormat(jpegImage))) {
+            Image image = new Image(jpegImage);
+            coordinates = Optional.ofNullable(image.getGPSCoordinate());
+        }
+        return coordinates.orElse(new double[]{0D, 0D});
+    }
+
+    public static String imageFormat(File image) {
+        try (ImageInputStream iis = ImageIO.createImageInputStream(image)) {
+            Iterator<ImageReader> imageReaders = ImageIO.getImageReaders(iis);
+            return imageReaders.hasNext() ? imageReaders.next().getFormatName() : EMPTY;
+        } catch (IOException e) {
+            LOG.warn("Could not read image format from file", e);
+            return EMPTY;
+        }
     }
 }

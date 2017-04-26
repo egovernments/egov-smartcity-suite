@@ -40,9 +40,6 @@
 
 package org.egov.ptis.scheduler;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.apache.log4j.Logger;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -58,13 +55,13 @@ import org.quartz.JobExecutionException;
 import org.quartz.impl.JobDetailImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.quartz.QuartzJobBean;
-import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
- *
  * @author subhash
- *
  */
 @DisallowConcurrentExecution
 public class RecoveryNoticesJob extends QuartzJobBean {
@@ -96,11 +93,10 @@ public class RecoveryNoticesJob extends QuartzJobBean {
             final String tenantId = jobDetail.getName().split("_")[0];
             ApplicationThreadLocals.setTenantID(tenantId);
             final List<String> assessments = Arrays.asList(assessmentNumbers.split(", "));
-            final TransactionTemplate txTemplate = new TransactionTemplate(transactionTemplate.getTransactionManager());
             for (final String assessmentNo : assessments) {
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug("Generating " + noticeType + " for assessment : " + assessmentNo);
-                generateAssessmentNotice(noticeType, txTemplate, assessmentNo);
+                generateAssessmentNotice(noticeType, assessmentNo);
             }
         } catch (final Exception ex) {
             LOGGER.error("Unable to complete execution Scheduler ", ex);
@@ -110,11 +106,10 @@ public class RecoveryNoticesJob extends QuartzJobBean {
         }
     }
 
-    private void generateAssessmentNotice(final String noticeType, final TransactionTemplate txTemplate,
-            final String assessmentNo) {
+    private void generateAssessmentNotice(final String noticeType,
+                                          final String assessmentNo) {
         try {
-            txTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-            txTemplate.execute(result -> {
+            transactionTemplate.execute(result -> {
                 final List<String> errors = recoveryNoticesService.validateRecoveryNotices(assessmentNo, noticeType);
                 final RecoveryNoticesInfo noticeInfo = recoveryNoticesService
                         .getRecoveryNoticeInfoByAssessmentAndNoticeType(assessmentNo, noticeType);
@@ -126,7 +121,7 @@ public class RecoveryNoticesJob extends QuartzJobBean {
                 }
             });
         } catch (final Exception e) {
-            txTemplate.execute(result -> {
+            transactionTemplate.execute(result -> {
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.error("Exception in Generating " + noticeType + " for assessment : " + assessmentNo);
                     LOGGER.error(e);
