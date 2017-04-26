@@ -1105,14 +1105,14 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
             // create voucher also, based on configuration.
             LOGGER.info("Workflow started for newly created receipts");
             final Date cutOffDate = getDataEntryCutOffDate();
-            if (cutOffDate != null && receiptHeader.getReceiptdate().after(cutOffDate))
-                startWorkflow(receiptHeader);
-            else
+            if (cutOffDate != null && receiptHeader.getReceiptdate().before(cutOffDate))
                 receiptHeader.setStatus(collectionsUtil
                         .getStatusForModuleAndCode(CollectionConstants.MODULE_NAME_RECEIPTHEADER,
                                 CollectionConstants.RECEIPT_STATUS_CODE_APPROVED));
+            else
+                startWorkflow(receiptHeader);
+            
             if (receiptHeader.getService().getServiceType().equalsIgnoreCase(CollectionConstants.SERVICE_TYPE_BILLING)) {
-
                 updateBillingSystemWithReceiptInfo(receiptHeader, null, null);
                 LOGGER.info("Updated billing system ");
             } else
