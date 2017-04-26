@@ -768,7 +768,6 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
         if (receiptVoucher.getVoucherheader() != null) {
             reversalVoucherInfo.put(CollectionConstants.FINANCIALS_VOUCHERREVERSAL_ORIGINALVOUCHERID, receiptVoucher
                     .getVoucherheader().getId());
-            reversalVoucherInfo.put(CollectionConstants.FINANCIALS_VOUCHERREVERSAL_DATE, new Date());
 
             if (receiptVoucher.getVoucherheader().getType()
                     .equals(CollectionConstants.FINANCIAL_JOURNALVOUCHER_VOUCHERTYPE)) {
