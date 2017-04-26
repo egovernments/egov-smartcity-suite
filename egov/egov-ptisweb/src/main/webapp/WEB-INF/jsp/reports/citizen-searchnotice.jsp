@@ -86,7 +86,7 @@
 	<s:form action="citizen-searchnotices" theme="simple" validate="true">
 		<div class="formmainbox">
 			<div class="headingbg">
-				<s:text name="lbl.citizen.searchnotices" />
+				<s:text name="lbl.heading.search.notice.citizen" />
 			</div>
 			<table width="100%" border="0" cellspacing="0" cellpadding="0">
 
