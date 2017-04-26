@@ -1145,6 +1145,7 @@ public interface PropertyTaxConstants {
     public static final SimpleDateFormat DATEFORMATTER_DDMMYYYY = new SimpleDateFormat("dd/MM/yyyy");
     public static final String BEANNAME_PROPERTY_TAX_BILLABLE = "propertyTaxBillable";
 
+    // PDF Report constants
     public static final String REPORT_TEMPLATENAME_SPECIAL_NOTICE = "mainSpecialNotice";
     public static final String IMAGES_BASE_PATH = "/egi/resources/global/images/";
     public static final String IMAGE_CONTEXT_PATH = "/egi";
@@ -1164,6 +1165,8 @@ public interface PropertyTaxConstants {
     public static final String REPORT_ESD_NOTICE_MUNICIPALITY = "ESDNotice_Municipality";
     public static final String REPORT_DISTRESS_CORPORATION = "DistressWarrant_Corporation";
     public static final String REPORT_DISTRESS_MUNICIPALITY = "DistressWarrant_Municipality";
+    public static final String REPORT_ARREAR_DEMAND_REGISTER = "arreardemand-register";
+    public static final String ADR_REPORT= "ADR Report";
 
     // Property Transfer related constants
     public static final String TRANSFER_FEE_COLLECTED = "Transfer Fee Collected";

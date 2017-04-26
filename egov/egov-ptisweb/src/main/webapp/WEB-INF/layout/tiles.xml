@@ -481,4 +481,9 @@
 		<put-attribute name="page-title" value="lbl.title.integrated.demand.bill"  cascade="true" />
 		<put-attribute name="body" value="/WEB-INF/views/reports/integrateddemandbill-form.jsp" />
 	</definition>
+	
+	<definition name="arrdmdrgstr-pt-form" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.arrear.dmd.register" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/reports/arreardmdregister-form.jsp"/>
+    </definition>
 </tiles-definitions> 
