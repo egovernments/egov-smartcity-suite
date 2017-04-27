@@ -80,6 +80,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_DIGITAL_SIGN
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REVENUE_OFFICER_APPROVAL_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONAL_COMMISSIONER_DESIGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_DEMOLITION;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -254,6 +255,7 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
         for (final Ptdemand ptDemand : modProperty.getPtDemandSet())
             propertyPerService.applyAuditing(ptDemand.getDmdCalculations());
         adjustCollection(oldCurrPtDmd, currPtDmd, effectiveInstall);
+        propertyService.updateIndexes(propertyModel, APPLICATION_TYPE_DEMOLITION);
         propertyPerService.update(basicProperty);
         getSession().flush();
     }
@@ -293,6 +295,7 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
             final Long approverPosition,
             final String additionalRule) {
         transitionWorkFlow((PropertyImpl) newProperty, comments, workFlowAction, approverPosition, additionalRule);
+        propertyService.updateIndexes((PropertyImpl) newProperty, APPLICATION_TYPE_DEMOLITION);
         propertyPerService.update(newProperty.getBasicProperty());
         getSession().flush();
     }

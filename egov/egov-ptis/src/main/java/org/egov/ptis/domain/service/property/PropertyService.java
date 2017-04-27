@@ -50,6 +50,9 @@ import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_NEW_
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_REVISION_PETITION;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_VACANCY_REMISSION;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TAX_EXEMTION;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_DEMOLITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_AMALGAMATION;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.BIGDECIMAL_100;
@@ -2117,7 +2120,10 @@ public class PropertyService {
             user = assignmentService.getAssignmentsForPosition(position.getId(), new Date()).get(0).getEmployee();
         if (!applictionType.isEmpty() && (applictionType.equalsIgnoreCase(APPLICATION_TYPE_NEW_ASSESSENT)
                 || applictionType.equalsIgnoreCase(APPLICATION_TYPE_ALTER_ASSESSENT)
-                || applictionType.equalsIgnoreCase(APPLICATION_TYPE_BIFURCATE_ASSESSENT))) {
+                || applictionType.equalsIgnoreCase(APPLICATION_TYPE_BIFURCATE_ASSESSENT)
+                || applictionType.equalsIgnoreCase(APPLICATION_TYPE_TAX_EXEMTION)
+                || applictionType.equalsIgnoreCase(APPLICATION_TYPE_DEMOLITION)
+                || applictionType.equalsIgnoreCase(APPLICATION_TYPE_AMALGAMATION))) {
             final PropertyImpl property = (PropertyImpl) stateAwareObject;
             ApplicationIndex applicationIndex = applicationIndexService.findByApplicationNumber(property
                     .getApplicationNo());
@@ -2148,9 +2154,11 @@ public class PropertyService {
             } else {
                 applicationIndex.setStatus(property.getState().getValue());
                 if (applictionType.equalsIgnoreCase(APPLICATION_TYPE_NEW_ASSESSENT)
-                        || applictionType.equalsIgnoreCase(APPLICATION_TYPE_ALTER_ASSESSENT) || applictionType
-                                .equalsIgnoreCase(APPLICATION_TYPE_BIFURCATE_ASSESSENT)
-                        || applictionType.equalsIgnoreCase(APPLICATION_TYPE_GRP)) {
+                        || applictionType.equalsIgnoreCase(APPLICATION_TYPE_ALTER_ASSESSENT) 
+                        || applictionType.equalsIgnoreCase(APPLICATION_TYPE_BIFURCATE_ASSESSENT)
+                        || applictionType.equalsIgnoreCase(APPLICATION_TYPE_TAX_EXEMTION)
+                        || applictionType.equalsIgnoreCase(APPLICATION_TYPE_DEMOLITION)
+                        || applictionType.equalsIgnoreCase(APPLICATION_TYPE_AMALGAMATION)) {
                     applicationIndex.setConsumerCode(property.getBasicProperty().getUpicNo());
                     applicationIndex.setApplicantName(owner.getName());
                     applicationIndex.setOwnerName(user.getUsername() + "::" + user.getName());
@@ -2163,12 +2171,14 @@ public class PropertyService {
                                     : property.getState().getValue().contains(WF_STATE_REJECTED)
                                             || property.getState().getValue().contains(WF_STATE_CLOSED) ? ApprovalStatus.REJECTED
                                                     : ApprovalStatus.INPROGRESS);
+                    applicationIndex.setDisposalDate(property.getState().getValue().contains(WF_STATE_CLOSED)? new Date() : null);
 
                 }
                 applicationIndexService.updateApplicationIndex(applicationIndex);
             }
 
-        } else if (!applictionType.isEmpty() && (applictionType.equalsIgnoreCase(APPLICATION_TYPE_REVISION_PETITION))) {
+        } else if (!applictionType.isEmpty() && (applictionType.equalsIgnoreCase(APPLICATION_TYPE_REVISION_PETITION)
+        		|| applictionType.equalsIgnoreCase(APPLICATION_TYPE_GRP))) {
             final RevisionPetition property = (RevisionPetition) stateAwareObject;
             ApplicationIndex applicationIndex = applicationIndexService.findByApplicationNumber(property
                     .getObjectionNumber());
@@ -2197,6 +2207,8 @@ public class PropertyService {
                 applicationIndexService.createApplicationIndex(applicationIndex);
             } else {
                 applicationIndex.setStatus(property.getState().getValue());
+                if (applictionType.equalsIgnoreCase(APPLICATION_TYPE_REVISION_PETITION)
+                        || applictionType.equalsIgnoreCase(APPLICATION_TYPE_GRP)){
                 applicationIndex.setOwnerName(user.getUsername() + "::" + user.getName());
                 applicationIndex.setClosed(
                         property.getState().getValue().contains(WF_STATE_CLOSED) ? ClosureStatus.YES : ClosureStatus.NO);
@@ -2205,7 +2217,8 @@ public class PropertyService {
                                 : property.getState().getValue().contains(WF_STATE_REJECTED)
                                         || property.getState().getValue().contains(WF_STATE_CLOSED) ? ApprovalStatus.REJECTED
                                                 : ApprovalStatus.INPROGRESS);
-
+                applicationIndex.setDisposalDate(property.getState().getValue().contains(WF_STATE_CLOSED)? new Date() : null);
+                }
                 applicationIndexService.updateApplicationIndex(applicationIndex);
             }
 
@@ -2249,6 +2262,7 @@ public class PropertyService {
                                 : property.getState().getValue().contains(WF_STATE_REJECTED)
                                         || property.getState().getValue().contains(WF_STATE_CLOSED) ? ApprovalStatus.REJECTED
                                                 : ApprovalStatus.INPROGRESS);
+                applicationIndex.setDisposalDate(property.getState().getValue().contains(WF_STATE_CLOSED)? new Date() : null);
                 applicationIndexService.updateApplicationIndex(applicationIndex);
             }
 
@@ -2295,6 +2309,7 @@ public class PropertyService {
                                 : vacancyRemissionApproval.getState().getValue().contains(WF_STATE_REJECTED)
                                         || vacancyRemissionApproval.getState().getValue().contains(WF_STATE_CLOSED)
                                                 ? ApprovalStatus.REJECTED : ApprovalStatus.INPROGRESS);
+                applicationIndex.setDisposalDate(vacancyRemissionApproval.getState().getValue().contains(WF_STATE_CLOSED)? new Date() : null);
                 applicationIndexService.updateApplicationIndex(applicationIndex);
             }
 

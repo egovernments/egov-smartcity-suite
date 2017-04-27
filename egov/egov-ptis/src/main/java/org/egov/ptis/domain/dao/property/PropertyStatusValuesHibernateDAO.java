@@ -114,7 +114,7 @@ public class PropertyStatusValuesHibernateDAO implements PropertyStatusValuesDAO
     public List<PropertyStatusValues> getPropertyStatusValuesByReferenceBasicProperty(final BasicProperty basicProperty) {
         final Query qry = getCurrentSession()
                 .createQuery(
-                        "from PropertyStatusValues PSV left join fetch PSV.propertyStatus PS where PSV.referenceBasicProperty.id =:BasicPropertyId and PS.statusCode = 'CREATE' and PSV.isActive='Y' and PSV.remarks != :appurTenant");
+                        "from PropertyStatusValues PSV left join fetch PSV.propertyStatus PS where PSV.referenceBasicProperty.id =:BasicPropertyId and PS.statusCode = 'CREATE' and PSV.isActive='Y' and (PSV.remarks is null or PSV.remarks != :appurTenant)");
         qry.setParameter("BasicPropertyId", basicProperty.getId());
         qry.setString("appurTenant", APPURTENANT_PROPERTY);
         return qry.list();

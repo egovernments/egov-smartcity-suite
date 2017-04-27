@@ -74,6 +74,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_DIGITAL_SIGNATURE_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONAL_COMMISSIONER_DESIGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TAX_EXEMTION;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -270,6 +271,7 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
         basicProperty.addProperty(propertyModel);
         transitionWorkFlow(propertyModel, approvalComment, workFlowAction, approvalPosition, additionalRule,
                 propertyByEmployee);
+        propertyService.updateIndexes(propertyModel, APPLICATION_TYPE_TAX_EXEMTION);
         return propertyPerService.update(basicProperty);
 
     }
@@ -279,6 +281,7 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
             final Long approverPosition, final Boolean propertyByEmployee, final String additionalRule) {
         transitionWorkFlow((PropertyImpl) newProperty, comments, workFlowAction, approverPosition, additionalRule,
                 propertyByEmployee);
+        propertyService.updateIndexes(propertyModel, APPLICATION_TYPE_TAX_EXEMTION);
         propertyPerService.update(newProperty.getBasicProperty());
     }
 
