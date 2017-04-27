@@ -60,12 +60,7 @@ import static java.lang.String.format;
 @Configuration
 public class DBMigrationConfiguration {
 
-    public static final String MAIN_MIGRATION_FILE_PATH = "classpath:/db/migration/main/";
-    public static final String SAMPLE_MIGRATION_FILE_PATH = "classpath:/db/migration/sample/";
-    public static final String TENANT_MIGRATION_FILE_PATH = "classpath:/db/migration/%s/";
-    public static final String STATEWIDE_MIGRATION_FILE_PATH = "classpath:/db/migration/statewide/";
     public static final String PUBLIC_SCHEMA = "public";
-
 
     @Autowired
     private ApplicationProperties applicationProperties;
@@ -77,22 +72,28 @@ public class DBMigrationConfiguration {
     @DependsOn("dataSource")
     public Flyway flyway(DataSource dataSource, @Qualifier("cities") List<String> cities) {
         if (applicationProperties.dbMigrationEnabled()) {
+            String mainMigrationFilePath = applicationProperties.getProperty("db.flyway.main.migration.file.path");
+            String sampleMigrationFilePath = applicationProperties.getProperty("db.flyway.sample.migration.file.path");
+            String tenantMigrationFilePath = applicationProperties.getProperty("db.flyway.tenant.migration.file.path");
             boolean devMode = applicationProperties.devMode();
-            cities.parallelStream().forEach(schema -> {
-                if (devMode)
-                    migrateDatabase(dataSource, schema, MAIN_MIGRATION_FILE_PATH, SAMPLE_MIGRATION_FILE_PATH,
-                            format(TENANT_MIGRATION_FILE_PATH, schema));
-                else
-                    migrateDatabase(dataSource, schema, MAIN_MIGRATION_FILE_PATH,
-                            format(TENANT_MIGRATION_FILE_PATH, schema));
+            cities.stream().forEach(schema -> {
+                if (devMode) {
+                    migrateDatabase(dataSource, schema, mainMigrationFilePath, sampleMigrationFilePath,
+                            format(tenantMigrationFilePath, schema));
+                } else {
+                    migrateDatabase(dataSource, schema, mainMigrationFilePath,
+                            format(tenantMigrationFilePath, schema));
+                }
             });
 
-            if (applicationProperties.statewideMigrationRequired() && !devMode)
-                migrateDatabase(dataSource, PUBLIC_SCHEMA, MAIN_MIGRATION_FILE_PATH, STATEWIDE_MIGRATION_FILE_PATH,
-                        format(TENANT_MIGRATION_FILE_PATH, PUBLIC_SCHEMA));
-            else if (!devMode)
-                migrateDatabase(dataSource, PUBLIC_SCHEMA, MAIN_MIGRATION_FILE_PATH,
-                        format(TENANT_MIGRATION_FILE_PATH, PUBLIC_SCHEMA));
+            if (applicationProperties.statewideMigrationRequired() && !devMode) {
+                String statewideMigrationFilePath = applicationProperties.getProperty("db.flyway.statewide.migration.file.path");
+                migrateDatabase(dataSource, PUBLIC_SCHEMA, mainMigrationFilePath, statewideMigrationFilePath,
+                        format(tenantMigrationFilePath, PUBLIC_SCHEMA));
+            } else if (!devMode) {
+                migrateDatabase(dataSource, PUBLIC_SCHEMA, mainMigrationFilePath,
+                        format(tenantMigrationFilePath, PUBLIC_SCHEMA));
+            }
         }
 
         return new Flyway();
