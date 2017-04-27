@@ -67,9 +67,9 @@ public class DemandRegisterController {
     
     @ResponseBody
     @RequestMapping(value = "/arrdmdrgstr/result", method = RequestMethod.GET)
-    public ResponseEntity<byte[]> generateNotice(final Model model, @RequestParam final Long wardId, @RequestParam final Long financialYearId ) {
+    public ResponseEntity<byte[]> generateNotice(final Model model, @RequestParam final Long wardId, @RequestParam final Long financialYearId, @RequestParam final String mode ) {
         final CFinancialYear financialYear = financialYearDAO.getFinancialYearById(financialYearId);
-        ReportOutput reportOutput = transactionsService.generateDemandRegisterReport(PropertyTaxConstants.ADR_REPORT, wardId, financialYear.getStartingDate());
+        ReportOutput reportOutput = transactionsService.generateDemandRegisterReport(PropertyTaxConstants.ADR_REPORT, wardId, financialYear.getStartingDate(), mode);
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType("application/pdf"));
         headers.add("content-disposition", "inline;filename=ArrearDemandRegister_"+financialYear.getFinYearRange()+".pdf");

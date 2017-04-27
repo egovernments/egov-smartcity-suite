@@ -39,7 +39,7 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 <!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
-<!-- 2017-04-26T14:48:59 -->
+<!-- 2017-04-27T19:14:12 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="arreardemand-register-subreport" pageWidth="655" pageHeight="1157" columnWidth="655" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="0bb0e5bf-8634-481a-b624-67c26bf93bf4">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -59,19 +59,58 @@
 	<field name="balanceAmount" class="java.math.BigDecimal"/>
 	<field name="writeOff" class="java.math.BigDecimal"/>
 	<field name="financialYear" class="java.lang.String"/>
-	<variable name="subTotalCollectedAmount" class="java.math.BigDecimal" resetType="Group" resetGroup="subTotalTax" calculation="Sum">
+	<variable name="balance" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[($F{demand}.subtract($F{collectedAmount})).setScale(2,BigDecimal.ROUND_HALF_DOWN)]]></variableExpression>
+	</variable>
+	<variable name="yearCollectedAmount" class="java.math.BigDecimal" resetType="Group" resetGroup="yearWiseTotalTax" calculation="Sum">
 		<variableExpression><![CDATA[$F{collectedAmount}.setScale(2,BigDecimal.ROUND_HALF_DOWN)]]></variableExpression>
 	</variable>
-	<variable name="indexNumCount" class="java.lang.Integer" resetType="Group" resetGroup="subTotalTax" calculation="Count">
+	<variable name="yearTotalCollection" class="java.math.BigDecimal" resetType="Group" resetGroup="yearWiseTotalTax" calculation="Sum">
+		<variableExpression><![CDATA[$F{totalCollection}.setScale(2,BigDecimal.ROUND_HALF_DOWN)]]></variableExpression>
+	</variable>
+	<variable name="yearDemand" class="java.math.BigDecimal" resetType="Group" resetGroup="yearWiseTotalTax" calculation="Sum">
+		<variableExpression><![CDATA[$F{demand}.setScale(2,BigDecimal.ROUND_HALF_DOWN)]]></variableExpression>
+	</variable>
+	<variable name="yearAdvance" class="java.math.BigDecimal" resetType="Group" resetGroup="yearWiseTotalTax" calculation="Sum">
+		<variableExpression><![CDATA[$F{advanceAmount}.setScale(2,BigDecimal.ROUND_HALF_DOWN)]]></variableExpression>
+	</variable>
+	<variable name="yearWriteOff" class="java.math.BigDecimal" resetType="Group" resetGroup="yearWiseTotalTax" calculation="Sum">
+		<variableExpression><![CDATA[$F{writeOff}.setScale(2,BigDecimal.ROUND_HALF_DOWN)]]></variableExpression>
+	</variable>
+	<variable name="yearBalance" class="java.math.BigDecimal" resetType="Group" resetGroup="yearWiseTotalTax">
+		<variableExpression><![CDATA[($V{yearDemand}.subtract($V{yearTotalCollection})).setScale(2,BigDecimal.ROUND_HALF_DOWN)]]></variableExpression>
+	</variable>
+	<variable name="pageCollectedAmount" class="java.math.BigDecimal" resetType="Page" calculation="Sum">
+		<variableExpression><![CDATA[$F{collectedAmount}.setScale(2,BigDecimal.ROUND_HALF_DOWN)]]></variableExpression>
+	</variable>
+	<variable name="pageTotalCollection" class="java.math.BigDecimal" resetType="Page" calculation="Sum">
+		<variableExpression><![CDATA[$F{totalCollection}.setScale(2,BigDecimal.ROUND_HALF_DOWN)]]></variableExpression>
+	</variable>
+	<variable name="pageDemand" class="java.math.BigDecimal" resetType="Page" calculation="Sum">
+		<variableExpression><![CDATA[$F{demand}.setScale(2,BigDecimal.ROUND_HALF_DOWN)]]></variableExpression>
+	</variable>
+	<variable name="pageAdvance" class="java.math.BigDecimal" resetType="Page" calculation="Sum">
+		<variableExpression><![CDATA[$F{advanceAmount}.setScale(2,BigDecimal.ROUND_HALF_DOWN)]]></variableExpression>
+	</variable>
+	<variable name="pageWriteOff" class="java.math.BigDecimal" resetType="Page" calculation="Sum">
+		<variableExpression><![CDATA[$F{writeOff}.setScale(2,BigDecimal.ROUND_HALF_DOWN)]]></variableExpression>
+	</variable>
+	<variable name="pageBalance" class="java.math.BigDecimal" resetType="Page">
+		<variableExpression><![CDATA[($V{pageDemand}.subtract($V{pageCollectedAmount})).setScale(2,BigDecimal.ROUND_HALF_DOWN)]]></variableExpression>
+	</variable>
+	<variable name="indexNumCountYear" class="java.lang.Integer" resetType="Group" resetGroup="yearWiseTotalTax" calculation="Count">
 		<variableExpression><![CDATA[$F{financialYear}]]></variableExpression>
 	</variable>
-	<group name="subTotalTax">
+	<variable name="indexNumCountPage" class="java.lang.Integer" resetType="Page" calculation="Count">
+		<variableExpression><![CDATA[$V{PAGE_NUMBER}]]></variableExpression>
+	</variable>
+	<group name="yearWiseTotalTax">
 		<groupExpression><![CDATA[$F{financialYear}]]></groupExpression>
 		<groupFooter>
 			<band height="37" splitType="Prevent">
 				<staticText>
 					<reportElement x="130" y="0" width="95" height="20" uuid="5fc0dcf8-c666-4dfa-9cc6-80864a57262c">
-						<printWhenExpression><![CDATA[$V{indexNumCount} > 1]]></printWhenExpression>
+						<printWhenExpression><![CDATA[$V{indexNumCountYear} > 1]]></printWhenExpression>
 					</reportElement>
 					<box>
 						<topPen lineWidth="0.25" lineStyle="Dashed"/>
@@ -94,6 +133,7 @@
 						<rightPen lineWidth="0.0"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$V{yearDemand}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true">
 					<reportElement x="345" y="0" width="60" height="20" uuid="99ffec28-9472-46e9-a6a9-5ed4fc0e7059">
@@ -107,6 +147,7 @@
 						<rightPen lineWidth="0.0"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$V{yearCollectedAmount}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true">
 					<reportElement x="465" y="0" width="60" height="20" uuid="0efaf72a-c0c2-4e6d-8c7a-2b3ec1b60588">
@@ -120,6 +161,7 @@
 						<rightPen lineWidth="0.0"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$V{yearTotalCollection}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true">
 					<reportElement x="561" y="0" width="60" height="20" uuid="db6cd591-cab5-409b-afac-eed84381d0e8">
@@ -133,6 +175,7 @@
 						<rightPen lineWidth="0.0"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$V{yearBalance}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true">
 					<reportElement x="621" y="0" width="30" height="20" uuid="d6d0165f-124f-4ab7-a82e-db19127782ad">
@@ -146,6 +189,7 @@
 						<rightPen lineWidth="0.0"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$V{yearAdvance}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true">
 					<reportElement x="525" y="0" width="36" height="20" uuid="f6880a70-fb4f-4e25-8c28-01481dfa8689">
@@ -159,6 +203,125 @@
 						<rightPen lineWidth="0.0"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$V{yearWriteOff}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement x="69" y="0" width="60" height="20" uuid="061a6b9c-edd0-469f-8c31-7202273189e3">
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
+					<box rightPadding="2">
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25" lineStyle="Dashed"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$F{financialYear}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="pageWiseTotalTax">
+		<groupExpression><![CDATA[$V{PAGE_NUMBER}]]></groupExpression>
+		<groupFooter>
+			<band height="37" splitType="Prevent">
+				<staticText>
+					<reportElement x="130" y="0" width="95" height="20" uuid="5fc0dcf8-c666-4dfa-9cc6-80864a57262c">
+						<printWhenExpression><![CDATA[$V{indexNumCountPage} > 0]]></printWhenExpression>
+					</reportElement>
+					<box>
+						<topPen lineWidth="0.25" lineStyle="Dashed"/>
+						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[Page Wise Total :]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" evaluationTime="Page">
+					<reportElement x="225" y="0" width="60" height="20" uuid="88db655a-ff2f-4055-a3e9-8d22482f99dc">
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
+					<box rightPadding="2">
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25" lineStyle="Dashed"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$V{pageDemand}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" evaluationTime="Page">
+					<reportElement x="345" y="0" width="60" height="20" uuid="99ffec28-9472-46e9-a6a9-5ed4fc0e7059">
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
+					<box rightPadding="2">
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25" lineStyle="Dashed"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$V{pageCollectedAmount}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" evaluationTime="Page">
+					<reportElement x="465" y="0" width="60" height="20" uuid="0efaf72a-c0c2-4e6d-8c7a-2b3ec1b60588">
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
+					<box rightPadding="2">
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25" lineStyle="Dashed"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$V{pageTotalCollection}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" evaluationTime="Page">
+					<reportElement x="561" y="0" width="60" height="20" uuid="db6cd591-cab5-409b-afac-eed84381d0e8">
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
+					<box rightPadding="2">
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25" lineStyle="Dashed"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$V{pageBalance}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" evaluationTime="Page">
+					<reportElement x="621" y="0" width="30" height="20" uuid="d6d0165f-124f-4ab7-a82e-db19127782ad">
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
+					<box rightPadding="2">
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25" lineStyle="Dashed"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$V{pageAdvance}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" evaluationTime="Page">
+					<reportElement x="525" y="0" width="36" height="20" uuid="f6880a70-fb4f-4e25-8c28-01481dfa8689">
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
+					<box rightPadding="2">
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25" lineStyle="Dashed"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$V{pageWriteOff}]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupFooter>
@@ -247,14 +410,16 @@
 				<textFieldExpression><![CDATA[$F{writeOff}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="561" y="0" width="60" height="33" uuid="ab9a2379-930e-42d9-9a7f-9889bb4d20be"/>
+				<reportElement x="561" y="0" width="50" height="33" uuid="ab9a2379-930e-42d9-9a7f-9889bb4d20be">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="10"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{balanceAmount}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{balance}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="621" y="0" width="30" height="33" uuid="1d9f6574-3d48-4691-8a08-5e800a55fc95"/>
+				<reportElement x="611" y="0" width="40" height="33" uuid="1d9f6574-3d48-4691-8a08-5e800a55fc95"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="10"/>
 				</textElement>

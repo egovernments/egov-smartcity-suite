@@ -53,8 +53,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface AssessmentTransactionsRepository extends JpaRepository<AssessmentTransactions, Long> {
 
-    @Query(value = "select distinct on(bp.propertyid) bp.propertyid from egpt_basic_property bp, egpt_assessment_transactions at where bp.id=at.basicproperty and at.ward=:ward and at.transaction_date <:finYearStartDate", nativeQuery = true)
-    List<String> getPriorAssessmentsByWard(@Param("ward") Long ward, @Param("finYearStartDate") Date finYearStartDate);
+    @Query(value = "select distinct on(bp.propertyid) bp.propertyid from egpt_basic_property bp, egpt_assessment_transactions at, egpt_property_type_master ptm where bp.id=at.basicproperty and at.ward=:ward and at.transaction_date <:finYearStartDate and at.propertytype=ptm.id and ptm.code =:mode", nativeQuery = true)
+    List<String> getPriorAssessmentsByWard(@Param("ward") Long ward, @Param("finYearStartDate") Date finYearStartDate, @Param("mode") String mode);
 
     @Query(value = "select min(at.transaction_date) from egpt_assessment_transactions at, egpt_basic_property bp where at.basicproperty=bp.id and bp.propertyid in (:assessmentList)", nativeQuery = true)
     Date getMinTransactionDateForAssessmentList(@Param("assessmentList") List<String> assessmentList);
