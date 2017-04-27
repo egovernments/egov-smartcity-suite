@@ -267,7 +267,7 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
 
     @Override
     public String getCollModesNotAllowed() {
-        return CollectionConstants.INSTRUMENTTYPE_BANK;
+        return "";
     }
 
     @Override
