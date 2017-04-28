@@ -281,7 +281,7 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
             final Long approverPosition, final Boolean propertyByEmployee, final String additionalRule) {
         transitionWorkFlow((PropertyImpl) newProperty, comments, workFlowAction, approverPosition, additionalRule,
                 propertyByEmployee);
-        propertyService.updateIndexes(propertyModel, APPLICATION_TYPE_TAX_EXEMTION);
+        propertyService.updateIndexes((PropertyImpl) newProperty, APPLICATION_TYPE_TAX_EXEMTION);
         propertyPerService.update(newProperty.getBasicProperty());
     }
 
