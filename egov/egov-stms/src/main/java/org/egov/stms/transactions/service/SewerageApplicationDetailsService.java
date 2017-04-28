@@ -60,7 +60,7 @@ import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_INSPEC
 import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_INSPECTIONFEE_PENDING;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_PAYMENTDONE;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_REJECTED;
-
+import static org.egov.stms.utils.constants.SewerageTaxConstants.FEES_DONATIONCHARGE_CODE;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -118,7 +118,9 @@ import org.egov.stms.notice.service.SewerageNoticeService;
 import org.egov.stms.service.es.SewerageIndexService;
 import org.egov.stms.transactions.entity.SewerageApplicationDetails;
 import org.egov.stms.transactions.entity.SewerageApplicationDetailsDocument;
+import org.egov.stms.transactions.entity.SewerageConnectionFee;
 import org.egov.stms.transactions.entity.SewerageDemandConnection;
+import org.egov.stms.transactions.entity.SewerageDemandDetail;
 import org.egov.stms.transactions.repository.SewerageApplicationDetailsRepository;
 import org.egov.stms.transactions.workflow.ApplicationWorkflowCustomDefaultImpl;
 import org.egov.stms.utils.SewerageTaxUtils;
@@ -143,7 +145,7 @@ public class SewerageApplicationDetailsService {
     private static final String STMS_APPLICATION_VIEW = "/stms/existing/sewerage/view/%s/%s";
     private static final String APPLICATION_WORKFLOW_INITIALIZATION_DONE = "applicationWorkflowCustomDefaultImpl initialization is done";
     private static final String DEPARTMENT = "department";
-
+    
     @Autowired
     private SewerageTaxUtils sewerageTaxUtils;
 
@@ -244,7 +246,22 @@ public class SewerageApplicationDetailsService {
         final Date disposalDate = getDisposalDate(sewerageApplicationDetails,
                 sewerageApplicationDetails.getApplicationType().getProcessingTime());
         sewerageApplicationDetails.setDisposalDate(disposalDate);
-
+        // checking is donation charge collection is required ?
+        if(sewerageTaxUtils.isDonationChargeCollectionRequiredForLegacy()){
+        //Capturing pending Donation charge for legacy records
+        SewerageDemandDetail sewerageDemandDetail = new SewerageDemandDetail();
+        BigDecimal donationaAmtCollected = new BigDecimal(request.getParameter("amountCollected"));
+        sewerageDemandDetail.setActualCollection(donationaAmtCollected);
+        for (final SewerageConnectionFee fees : sewerageApplicationDetails.getConnectionFees()) {
+            if (FEES_DONATIONCHARGE_CODE.equals(fees.getFeesDetail().getCode())) {
+                sewerageDemandDetail.setActualAmount(BigDecimal.valueOf(fees.getAmount()));
+            }
+        }
+        sewerageDemandDetail.setInstallmentId(sewerageDemandService.getCurrentInstallment().getId());
+        sewerageDemandDetail.setReasonMaster(FEES_DONATIONCHARGE_CODE);
+        sewerageApplicationDetails.getDemandDetailBeanList().add(sewerageDemandDetail);
+        }
+            
         if (sewerageApplicationDetails.getCurrentDemand() == null) {
             final EgDemand demand = sewerageDemandService.createDemandOnLegacyConnection(
                     sewerageApplicationDetails.getDemandDetailBeanList(), sewerageApplicationDetails);

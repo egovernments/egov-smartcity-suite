@@ -161,7 +161,8 @@ public class SewerageLegacyConnectionController extends GenericWorkFlowControlle
         model.addAttribute("currentUser", sewerageTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
         model.addAttribute("stateType", sewerageApplicationDetails.getClass().getSimpleName());
         model.addAttribute("typeOfConnection", SewerageTaxConstants.NEWSEWERAGECONNECTION);
-
+        model.addAttribute("legacy", true);
+        model.addAttribute("isDonationChargeCollectionRequired",sewerageTaxUtils.isDonationChargeCollectionRequiredForLegacy());
         createSewerageConnectionFee(sewerageApplicationDetails,
                 SewerageTaxConstants.FEES_ESTIMATIONCHARGES_CODE);
         createSewerageConnectionFee(sewerageApplicationDetails,
@@ -217,8 +218,7 @@ public class SewerageLegacyConnectionController extends GenericWorkFlowControlle
         sewerageApplicationDetails.setAppDetailsDocument(applicationDocs);
         sewerageConnectionService.processAndStoreApplicationDocuments(sewerageApplicationDetails);
         populateFeesDetails(sewerageApplicationDetails);
-        final SewerageApplicationDetails newSewerageApplicationDetails = sewerageApplicationDetailsService
-                .createLegacySewerageConnection(sewerageApplicationDetails, request);
+        final SewerageApplicationDetails newSewerageApplicationDetails = sewerageApplicationDetailsService.createLegacySewerageConnection(sewerageApplicationDetails, request);
         final String pathVars = newSewerageApplicationDetails.getApplicationNumber();
         return "redirect:/transactions/sewerageLegacyApplication-success?pathVars=" + pathVars;
     }

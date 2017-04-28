@@ -502,6 +502,20 @@ function addDemandDetailRow(instlmntDesc,reasondsc,demandamount,collectionamount
     patternvalidation();
 }
 
+$("#amountCollected,#feesDetail1amount")
+	.blur(
+		function() {
+			var amountCollected = $('#amountCollected').val();
+			var donationCharge = $('#feesDetail1amount').val();
+			var amountToBeCollected = parseFloat(donationCharge)
+					- parseFloat(amountCollected);
+			if (parseFloat(amountCollected) > parseFloat(donationCharge)) {
+				alert("Collected Donation Charge should not be greater than the actual donation charge");
+			} else {
+				$("#amountForCollection").val(amountToBeCollected);
+			}
+	});
+
 function validateDemand(obj) {
 	$( "input[name$='actualAmount']" ).on("keyup", function(){
 	    var valid = /^[1-9](\d{0,9})(\.\d{0,3})?$/.test(this.value),
