@@ -121,7 +121,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
 
     @Autowired
     private ModuleService moduleService;
-    
+
     @Autowired
     private SearchTradeRepository searchTradeRepository;
 
@@ -171,7 +171,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(license);
     }
 
-    @Transactional
+
     public void updateStatusInWorkFlowProgress(TradeLicense license, final String workFlowAction) {
 
         final Assignment userAssignment = assignmentService.getPrimaryAssignmentForUser(securityUtils.getCurrentUser().getId());
