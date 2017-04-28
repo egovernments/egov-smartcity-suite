@@ -202,6 +202,7 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
         final PropertyDetail propertyDetail = oldProperty.getPropertyDetail();
         propertyDetail.getDateOfCompletion();
         propertyModel = (PropertyImpl) newProperty;
+        propertyModel.setPropertyModifyReason(EXEMPTION);
         propertyModel.setStatus(status);
         if (propertyModel.getApplicationNo() == null)
             propertyModel.setApplicationNo(applicationNumberGenerator.generate());

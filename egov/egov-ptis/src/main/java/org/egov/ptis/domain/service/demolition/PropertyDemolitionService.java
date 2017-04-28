@@ -59,6 +59,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_GENERAL
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_LIBRARY_CESS;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_VACANT_TAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEPUTY_COMMISSIONER_DESIGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMOLITION;
 import static org.egov.ptis.constants.PropertyTaxConstants.JUNIOR_ASSISTANT;
 import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_DEMOLITION;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
@@ -226,6 +227,7 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
         propertyModel.getPropertyDetail().setCategoryType(VACANTLAND_PROPERTY_CATEGORY);
         basicProperty.setUnderWorkflow(TRUE);
         propertyModel.setBasicProperty(basicProperty);
+        propertyModel.setPropertyModifyReason(DEMOLITION);
         basicProperty.addProperty(propertyModel);
         getSession().setFlushMode(FlushMode.MANUAL);
         transitionWorkFlow(propertyModel, comments, workFlowAction, approverPosition, additionalRule);
