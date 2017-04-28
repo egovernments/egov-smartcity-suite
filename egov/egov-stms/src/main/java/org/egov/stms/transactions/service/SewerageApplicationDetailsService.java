@@ -247,19 +247,19 @@ public class SewerageApplicationDetailsService {
                 sewerageApplicationDetails.getApplicationType().getProcessingTime());
         sewerageApplicationDetails.setDisposalDate(disposalDate);
         // checking is donation charge collection is required ?
-        if(sewerageTaxUtils.isDonationChargeCollectionRequiredForLegacy()){
-        //Capturing pending Donation charge for legacy records
-        SewerageDemandDetail sewerageDemandDetail = new SewerageDemandDetail();
-        BigDecimal donationaAmtCollected = new BigDecimal(request.getParameter("amountCollected"));
-        sewerageDemandDetail.setActualCollection(donationaAmtCollected);
-        for (final SewerageConnectionFee fees : sewerageApplicationDetails.getConnectionFees()) {
-            if (FEES_DONATIONCHARGE_CODE.equals(fees.getFeesDetail().getCode())) {
-                sewerageDemandDetail.setActualAmount(BigDecimal.valueOf(fees.getAmount()));
+        if (sewerageTaxUtils.isDonationChargeCollectionRequiredForLegacy()) {
+            // Capturing pending Donation charge for legacy records
+            SewerageDemandDetail sewerageDemandDetail = new SewerageDemandDetail();
+            BigDecimal donationaAmtCollected = new BigDecimal(request.getParameter("amountCollected"));
+            sewerageDemandDetail.setActualCollection(donationaAmtCollected);
+            for (final SewerageConnectionFee fees : sewerageApplicationDetails.getConnectionFees()) {
+                if (FEES_DONATIONCHARGE_CODE.equals(fees.getFeesDetail().getCode())) {
+                    sewerageDemandDetail.setActualAmount(BigDecimal.valueOf(fees.getAmount()));
+                }
             }
-        }
-        sewerageDemandDetail.setInstallmentId(sewerageDemandService.getCurrentInstallment().getId());
-        sewerageDemandDetail.setReasonMaster(FEES_DONATIONCHARGE_CODE);
-        sewerageApplicationDetails.getDemandDetailBeanList().add(sewerageDemandDetail);
+            sewerageDemandDetail.setInstallmentId(sewerageDemandService.getCurrentInstallment().getId());
+            sewerageDemandDetail.setReasonMaster(FEES_DONATIONCHARGE_CODE);
+            sewerageApplicationDetails.getDemandDetailBeanList().add(sewerageDemandDetail);
         }
             
         if (sewerageApplicationDetails.getCurrentDemand() == null) {
