@@ -83,10 +83,24 @@ $(document).ready(function(){
 			var workOrderDate = $('#workOrderDate').data('datepicker').date;
 			var workCompletionDate = $('#workCompletionDate').data('datepicker').date;
 			var currentDate = new Date();
+			var currentFinYearDate;
+			var cutOffDate;
 			if(currentDate.getMonth() == 0 || currentDate.getMonth() == 1 || currentDate.getMonth() == 2) {
 				currentDate = new Date(currentDate.getFullYear() - 1, 3, 1);
 			}
-			var currentFinYearDate = new Date(currentDate.getFullYear(), 3, 1);
+			if($("#isSpillOver").val() =="true" && $("#defaultCutOffDate").val() != null && $("#defaultCutOffDate").val().length != 0){
+				var cutOffDateString = $("#defaultCutOffDate").val().split("-");
+				cutOffDate = new Date(cutOffDateString[2],cutOffDateString[1]-1,cutOffDateString[0]);
+			}
+			else
+				currentFinYearDate = new Date(currentDate.getFullYear(), 3, 1);
+			
+			if(billDate < cutOffDate) {
+				bootbox.alert($('#errorBillCutOffDate').val() +" " +$("#defaultCutOffDate").val());
+				$('#billdate').val(""); 
+				return false;
+			}
+			
 			if(billDate < currentFinYearDate) {
 				bootbox.alert($('#errorBillDateFinYear').val());
 				$('#billdate').val(""); 
