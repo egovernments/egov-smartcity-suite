@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 @RequestMapping(value = "/report")
 public class DemandRegisterController {
-    
+
     @Autowired
     private BoundaryService boundaryService;
     @Autowired
@@ -37,23 +37,24 @@ public class DemandRegisterController {
     private FinancialYearDAO financialYearDAO;
     @Autowired
     private DemandRegisterService transactionsService;
-    
+
     @ModelAttribute("wards")
     public List<Boundary> wardBoundaries() {
         return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(PropertyTaxConstants.WARD,
                 PropertyTaxConstants.REVENUE_HIERARCHY_TYPE);
     }
-    
+
     @ModelAttribute("financialYears")
-    public List<CFinancialYear> getFinancialYears(){
-       
+    public List<CFinancialYear> getFinancialYears() {
+
         return financialYearDAO.getAllPriorFinancialYears(new Date());
     }
-    
+
     @RequestMapping(value = "/arrdmdrgstr-vlt/form", method = RequestMethod.GET)
     public String searchVLTArrearDemandRegisterForm(final Model model) {
         model.addAttribute("currDate", new Date());
         model.addAttribute("mode", PropertyTaxConstants.CATEGORY_TYPE_VACANTLAND_TAX);
+        model.addAttribute("ADRReport", new AssessmentTransactions());
         return "arrdmdrgstr-vlt-form";
     }
 
@@ -64,15 +65,18 @@ public class DemandRegisterController {
         model.addAttribute("ADRReport", new AssessmentTransactions());
         return "arrdmdrgstr-pt-form";
     }
-    
+
     @ResponseBody
     @RequestMapping(value = "/arrdmdrgstr/result", method = RequestMethod.GET)
-    public ResponseEntity<byte[]> generateNotice(final Model model, @RequestParam final Long wardId, @RequestParam final Long financialYearId, @RequestParam final String mode ) {
+    public ResponseEntity<byte[]> generateNotice(final Model model, @RequestParam final Long wardId,
+            @RequestParam final Long financialYearId, @RequestParam final String mode) {
         final CFinancialYear financialYear = financialYearDAO.getFinancialYearById(financialYearId);
-        ReportOutput reportOutput = transactionsService.generateDemandRegisterReport(PropertyTaxConstants.ADR_REPORT, wardId, financialYear.getStartingDate(), mode);
+        ReportOutput reportOutput = transactionsService.generateDemandRegisterReport(PropertyTaxConstants.ADR_REPORT,
+                wardId, financialYear.getStartingDate(), mode);
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType("application/pdf"));
-        headers.add("content-disposition", "inline;filename=ArrearDemandRegister_"+financialYear.getFinYearRange()+".pdf");
+        headers.add("content-disposition",
+                "inline;filename=ArrearDemandRegister_" + financialYear.getFinYearRange() + ".pdf");
         return new ResponseEntity<>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
     }
 

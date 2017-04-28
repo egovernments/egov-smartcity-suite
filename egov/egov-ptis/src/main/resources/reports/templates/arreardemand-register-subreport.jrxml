@@ -39,7 +39,7 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 <!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
-<!-- 2017-04-27T19:14:12 -->
+<!-- 2017-04-28T11:19:15 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="arreardemand-register-subreport" pageWidth="655" pageHeight="1157" columnWidth="655" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="0bb0e5bf-8634-481a-b624-67c26bf93bf4">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -79,6 +79,9 @@
 	</variable>
 	<variable name="yearBalance" class="java.math.BigDecimal" resetType="Group" resetGroup="yearWiseTotalTax">
 		<variableExpression><![CDATA[($V{yearDemand}.subtract($V{yearTotalCollection})).setScale(2,BigDecimal.ROUND_HALF_DOWN)]]></variableExpression>
+	</variable>
+	<variable name="yearAssessmentCount" class="java.lang.Integer" resetType="Group" resetGroup="yearWiseTotalTax" calculation="Count">
+		<variableExpression><![CDATA[$F{assessmentNo}]]></variableExpression>
 	</variable>
 	<variable name="pageCollectedAmount" class="java.math.BigDecimal" resetType="Page" calculation="Sum">
 		<variableExpression><![CDATA[$F{collectedAmount}.setScale(2,BigDecimal.ROUND_HALF_DOWN)]]></variableExpression>
@@ -206,7 +209,7 @@
 					<textFieldExpression><![CDATA[$V{yearWriteOff}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true">
-					<reportElement x="69" y="0" width="60" height="20" uuid="061a6b9c-edd0-469f-8c31-7202273189e3">
+					<reportElement x="1" y="0" width="69" height="20" uuid="061a6b9c-edd0-469f-8c31-7202273189e3">
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					</reportElement>
 					<box rightPadding="2">
@@ -217,7 +220,7 @@
 						<rightPen lineWidth="0.0"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle"/>
-					<textFieldExpression><![CDATA[$F{financialYear}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{yearAssessmentCount}]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupFooter>
@@ -228,7 +231,7 @@
 			<band height="37" splitType="Prevent">
 				<staticText>
 					<reportElement x="130" y="0" width="95" height="20" uuid="5fc0dcf8-c666-4dfa-9cc6-80864a57262c">
-						<printWhenExpression><![CDATA[$V{indexNumCountPage} > 0]]></printWhenExpression>
+						<printWhenExpression><![CDATA[$V{PAGE_NUMBER} > 0]]></printWhenExpression>
 					</reportElement>
 					<box>
 						<topPen lineWidth="0.25" lineStyle="Dashed"/>
