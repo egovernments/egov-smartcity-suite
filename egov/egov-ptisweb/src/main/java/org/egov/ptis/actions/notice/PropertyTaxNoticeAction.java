@@ -133,6 +133,7 @@ import org.egov.ptis.report.bean.PropertyAckNoticeInfo;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.egov.pims.commons.Position;
 
 @ParentPackage("egov")
 @Results({ @Result(name = PropertyTaxNoticeAction.NOTICE, location = "propertyTaxNotice-notice.jsp"),
@@ -297,9 +298,11 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
     private String generatePropertyNotice(final Long basicPropertyId, final String type) {
         BasicPropertyImpl basicProperty = null;
         PtNotice notice = null;
+        Position ownerPosition =null;
         RevisionPetition revisionPetition = null;
         if (GRP.equalsIgnoreCase(type) || RP.equalsIgnoreCase(type)) {
             revisionPetition = revisionPetitionService.findById(basicPropertyId, false);
+            ownerPosition = revisionPetition.getCurrentState().getOwnerPosition();
             basicProperty = (BasicPropertyImpl) revisionPetition.getBasicProperty();
             property = (PropertyImpl) basicProperty.getProperty();
             if (property == null)
@@ -312,6 +315,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
             property = (PropertyImpl) basicProperty.getProperty();
             if (property == null)
                 property = (PropertyImpl) basicProperty.getWFProperty();
+            ownerPosition = property.getCurrentState().getOwnerPosition();
             notice = noticeService.getNoticeByNoticeTypeAndApplicationNumber(noticeType, property.getApplicationNo());
         }
         ReportOutput reportOutput = new ReportOutput();
@@ -320,7 +324,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
         propertyNotice = new PropertyNoticeInfo(property, noticeNo);
         ReportRequest reportInput = null;
         if (!noticeMode.equalsIgnoreCase(NOTICE_TYPE_EXEMPTION))
-            reportInput = generateNoticeReportRequest(basicProperty, propertyNotice, type, basicPropertyId);
+            reportInput = generateNoticeReportRequest(basicProperty, propertyNotice, ownerPosition);
         else if (noticeMode.equalsIgnoreCase(NOTICE_TYPE_EXEMPTION))
             reportInput = generateExemptedNoticeReportRequest(basicProperty, propertyNotice,
                     noticeNo);
@@ -366,12 +370,13 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
     @Action(value = "/notice/propertyTaxNotice-generateNotice")
     public String generateNotice() {
         setUlbCode(ApplicationThreadLocals.getCityCode());
+        Position ownerPosition = null;
         final BasicPropertyImpl basicProperty = (BasicPropertyImpl) getPersistenceService()
                 .findByNamedQuery(QUERY_BASICPROPERTY_BY_BASICPROPID, basicPropId);
         property = (PropertyImpl) basicProperty.getProperty();
         if (property == null)
             property = (PropertyImpl) basicProperty.getWFProperty();
-
+        ownerPosition = property.getCurrentState().getOwnerPosition();
         final PtNotice notice = noticeService.getNoticeByNoticeTypeAndApplicationNumber(noticeType,
                 property.getApplicationNo());
         ReportOutput reportOutput = new ReportOutput();
@@ -394,7 +399,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
             if (WFLOW_ACTION_STEP_SIGN.equals(actionType) && notice == null)
                 noticeNo = propertyTaxNumberGenerator.generateNoticeNumber(noticeType);
             propertyNotice = new PropertyNoticeInfo(property, noticeNo);
-            final ReportRequest reportInput = generateNoticeReportRequest(basicProperty, propertyNotice, null, null);
+            final ReportRequest reportInput = generateNoticeReportRequest(basicProperty, propertyNotice, ownerPosition);
             reportOutput = reportService.createReport(reportInput);
             if (reportOutput != null && reportOutput.getReportOutputData() != null)
                 NoticePDF = new ByteArrayInputStream(reportOutput.getReportOutputData());
@@ -482,18 +487,19 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
     public String generateSpecialNotice() {
         new HashMap<String, Object>();
         ReportRequest reportInput = null;
+        Position ownerPosition = null ;
         final BasicPropertyImpl basicProperty = (BasicPropertyImpl) getPersistenceService()
                 .findByNamedQuery(QUERY_BASICPROPERTY_BY_BASICPROPID, basicPropId);
         property = (PropertyImpl) basicProperty.getProperty();
 
         if (property == null)
             property = (PropertyImpl) basicProperty.getWFProperty();
-
+        ownerPosition = property.getCurrentState().getOwnerPosition();
         ReportOutput reportOutput = new ReportOutput();
         PropertyNoticeInfo propertyNotice = null;
         final String noticeNo = propertyTaxNumberGenerator.generateNoticeNumber(noticeType);
         propertyNotice = new PropertyNoticeInfo(property, noticeNo);
-        reportInput = generateNoticeReportRequest(basicProperty, propertyNotice, null, null);
+        reportInput = generateNoticeReportRequest(basicProperty, propertyNotice, ownerPosition);
         reportOutput = reportService.createReport(reportInput);
         reportId = reportViewerUtil.addReportToTempCache(reportOutput);
         if (reportOutput != null && reportOutput.getReportOutputData() != null)
@@ -523,7 +529,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
     }
 
     private ReportRequest generateNoticeReportRequest(final BasicPropertyImpl basicProperty,
-            final PropertyNoticeInfo propertyNotice, final String type, final Long basicPropertyId) {
+            final PropertyNoticeInfo propertyNotice, final Position ownerPosition) {
         final Map<String, Object> reportParams = new HashMap<String, Object>();
         List<Assignment> loggedInUserAssignment;
         String loggedInUserDesignation;
@@ -550,13 +556,8 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
                 isCorporation = false;
             reportParams.put("isCorporation", isCorporation);
             final User user = securityUtils.getCurrentUser();
-            if (type != null && (GRP.equalsIgnoreCase(type) || RP.equalsIgnoreCase(type))) {
-                final RevisionPetition revisionPetition = revisionPetitionService.findById(basicPropertyId, false);
-                loggedInUserAssignment = assignmentService.getAssignmentByPositionAndUserAsOnDate(
-                        revisionPetition.getCurrentState().getOwnerPosition().getId(), user.getId(), new Date());
-            } else
-                loggedInUserAssignment = assignmentService.getAssignmentByPositionAndUserAsOnDate(
-                        property.getCurrentState().getOwnerPosition().getId(), user.getId(), new Date());
+            loggedInUserAssignment = assignmentService.getAssignmentByPositionAndUserAsOnDate(
+                        ownerPosition.getId(), user.getId(), new Date());
             loggedInUserDesignation = !loggedInUserAssignment.isEmpty() ? loggedInUserAssignment.get(0).getDesignation().getName()
                     : "";
             if (COMMISSIONER_DESGN.equalsIgnoreCase(loggedInUserDesignation))
