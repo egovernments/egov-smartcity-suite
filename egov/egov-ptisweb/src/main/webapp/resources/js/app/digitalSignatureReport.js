@@ -56,9 +56,15 @@ function generateNotice(obj, actionName, currentState){
 	var noticeType='Special Notice';  
 	var type = currentState.split(":");
 	var url = null;
-	if (type[0] == 'Create' || type[0] == 'Alter' || type[0] == 'Bifurcate' || type[0] == 'Demolition' || type[0] == 'Exemption') {
+	if (type[0] == 'Create' || type[0] == 'Bifurcate') {
 		url = "/ptis/notice/propertyTaxNotice-generateNotice.action?basicPropId="+basicPropertyId+"&noticeType="+noticeType+"&noticeMode=create&actionType="+actionName;
-	} else if (type[0] == 'Revision Petition') {
+	}else if (type[0] == 'Alter') {
+		url = "/ptis/notice/propertyTaxNotice-generateNotice.action?basicPropId="+basicPropertyId+"&noticeType="+noticeType+"&noticeMode=modify&actionType="+actionName;
+	}else if (type[0] == 'Exemption') {
+		url = "/ptis/notice/propertyTaxNotice-generateNoticeForActionExemption.action?basicPropId="+basicPropertyId+"&actionType="+actionName;
+	}else if (type[0] == 'Demolition') {
+        url = "/ptis/notice/propertyTaxNotice-generateNotice.action?basicPropId="+basicPropertyId+"&noticeType="+noticeType+"&noticeMode=Demolition&actionType="+actionName;
+	}else if (type[0] == 'RP' || type[0] == 'GRP') {
 		url = "/ptis/revPetition/revPetition-generateSpecialNotice.action?actionType="+ actionName + '&objectionId=' + basicPropertyId;
 	} else {
 		url = "/ptis/property/transfer/printNotice.action?actionType="+ actionName + '&mutationId=' + basicPropertyId;
