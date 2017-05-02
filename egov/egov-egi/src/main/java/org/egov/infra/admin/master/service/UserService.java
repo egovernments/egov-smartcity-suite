@@ -180,15 +180,14 @@ public class UserService {
         createUserRequest.setRequestInfo(microserviceUtils.createRequestInfo());
 
         final RestTemplate restTemplate = new RestTemplate();
-        UserDetailResponse userDetailResponse = null;
         try {
-            userDetailResponse = restTemplate.postForObject(createUserServiceUrl, createUserRequest, UserDetailResponse.class);
+            restTemplate.postForObject(createUserServiceUrl, createUserRequest, UserDetailResponse.class);
         } catch (final Exception e) {
             final String errMsg = "Exception while creating User in microservice ";
             LOGGER.error(errMsg, e);
             throw new ApplicationRuntimeException(errMsg, e);
         }
-        return getUserByUsername(userDetailResponse.getUser().get(0).getUserName());
+        return userRepository.save(user);
     }
 
 }
