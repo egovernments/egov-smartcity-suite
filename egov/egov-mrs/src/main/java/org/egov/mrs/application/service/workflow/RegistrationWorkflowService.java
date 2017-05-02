@@ -39,6 +39,7 @@
 
 package org.egov.mrs.application.service.workflow;
 
+import static org.egov.mrs.application.MarriageConstants.ANONYMOUS_USER;
 import static org.egov.mrs.application.MarriageConstants.MODULE_NAME;
 import static org.egov.mrs.application.MarriageConstants.MRG_ROLEFORNONEMPLOYEE;
 import static org.egov.mrs.application.MarriageConstants.MRG_WORKFLOWDEPARTEMENT_FOR_CSCOPERATOR;
@@ -49,6 +50,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import org.egov.commons.entity.Source;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.DesignationService;
@@ -127,8 +129,10 @@ public class RegistrationWorkflowService {
         String nextAction = null;
         String currentState;
         Assignment assignment = getWorkFlowInitiator(registration);
-        // In case of CSC Operator will execute this block
-        if (isCscOperator(user)) {
+
+        final Boolean isCscOperator = isCscOperator(user);
+        // In case of CSC Operator will execute this block or online user
+        if (isCscOperator || ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName())) {
             currentState = MarriageConstants.CSC_OPERATOR_CREATED;
             nextStateOwner = positionMasterService.getPositionById(workflowContainer.getApproverPositionId());
             if (nextStateOwner != null) {
@@ -139,8 +143,11 @@ public class RegistrationWorkflowService {
                     REGISTRATION_ADDNL_RULE, currentState, null);
             nextState = workflowMatrix.getNextState();
             nextAction = workflowMatrix.getNextAction();
-            registration.setSource(MarriageConstants.SOURCE_CSC);
-        } else if (workflowContainer == null) {
+            registration.setSource(isCscOperator ? Source.CSC.toString() : MarriageConstants.SOURCE_ONLINE);
+
+        }
+
+        else if (workflowContainer == null) {
             nextStateOwner = assignmentService.getPrimaryAssignmentForUser(registration.getCreatedBy().getId()).getPosition();
             workflowMatrix = marriageRegistrationWorkflowService.getWfMatrix(WorkflowType.MarriageRegistration.name(), null, null,
                     REGISTRATION_ADDNL_RULE, registration.getCurrentState().getValue(), null);
@@ -216,8 +223,9 @@ public class RegistrationWorkflowService {
         String nextAction = null;
         String currentState;
         Assignment assignment = getWorkFlowInitiatorForReissue(reIssue);
+        final Boolean isCscOperator = isCscOperator(user);
         // In case of CSC Operator will execute this block
-        if (isCscOperator(user)) {
+        if (isCscOperator || ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName())) {
             currentState = MarriageConstants.CSC_OPERATOR_CREATED;
             nextStateOwner = positionMasterService.getPositionById(workflowContainer.getApproverPositionId());
             if (nextStateOwner != null) {
@@ -228,7 +236,8 @@ public class RegistrationWorkflowService {
                     REGISTRATION_ADDNL_RULE, currentState, null);
             nextState = workflowMatrix.getNextState();
             nextAction = workflowMatrix.getNextAction();
-            reIssue.setSource(MarriageConstants.SOURCE_CSC);
+            reIssue.setSource(isCscOperator ? Source.CSC.toString() : MarriageConstants.SOURCE_ONLINE);
+
         } else if (workflowContainer == null) {
             nextStateOwner = assignment != null ? assignment.getPosition() : null;
             workflowMatrix = reIssueWorkflowService.getWfMatrix(WorkflowType.ReIssue.name(), null, null,
@@ -440,7 +449,8 @@ public class RegistrationWorkflowService {
                 final List<Assignment> assignmentList = assignmentService
                         .getAssignmentsForPosition(marriageRegistration.getState().getInitiatorPosition().getId());
                 return !assignmentList.isEmpty() ? assignmentList.get(0) : null;
-            } else if (isEmployee(marriageRegistration.getCreatedBy()))
+            } else if (isEmployee(marriageRegistration.getCreatedBy())
+                    && !ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName()))
                 return assignmentService.getPrimaryAssignmentForUser(marriageRegistration
                         .getCreatedBy().getId());
         return null;

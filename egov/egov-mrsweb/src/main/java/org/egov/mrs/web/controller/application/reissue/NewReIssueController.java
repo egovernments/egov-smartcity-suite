@@ -39,6 +39,7 @@
 
 package org.egov.mrs.web.controller.application.reissue;
 
+import static org.egov.mrs.application.MarriageConstants.ANONYMOUS_USER;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 import java.io.IOException;
@@ -50,6 +51,7 @@ import org.egov.eis.entity.Assignment;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.mrs.application.MarriageConstants;
@@ -88,7 +90,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
  *
  */
 @Controller
-@RequestMapping(value = "/reissue")
+@RequestMapping(value = { "/reissue", "/citizen/reissue" })
 public class NewReIssueController extends GenericWorkFlowController {
 
     private static final String IS_EMPLOYEE = "isEmployee";
@@ -143,6 +145,7 @@ public class NewReIssueController extends GenericWorkFlowController {
     public String showReIssueForm(@PathVariable final Long registrationId, final Model model) {
 
         final MarriageRegistration registration = marriageRegistrationService.get(registrationId);
+        final User logedinUser = securityUtils.getCurrentUser();
         if (registration == null) {
             model.addAttribute(MESSAGE, "msg.invalid.request");
             return "marriagecommon-error";
@@ -153,7 +156,9 @@ public class NewReIssueController extends GenericWorkFlowController {
             model.addAttribute(MESSAGE, "msg.workflow.alreadyPresent");
             return "marriagecommon-error";
         }
-        model.addAttribute(IS_EMPLOYEE, registrationWorkFlowService.isEmployee(securityUtils.getCurrentUser()));
+        model.addAttribute(IS_EMPLOYEE,
+                !ANONYMOUS_USER.equalsIgnoreCase(logedinUser.getName()) && registrationWorkFlowService.isEmployee(logedinUser));
+        model.addAttribute("isOnline", ANONYMOUS_USER.equalsIgnoreCase(logedinUser.getName()));
         final ReIssue reIssue = new ReIssue();
         reIssue.setRegistration(registration);
         prepareNewForm(model, reIssue);
@@ -177,14 +182,17 @@ public class NewReIssueController extends GenericWorkFlowController {
             final HttpServletRequest request,
             final BindingResult errors,
             final RedirectAttributes redirectAttributes) {
-        final Boolean isEmployee = registrationWorkFlowService.isEmployee(securityUtils.getCurrentUser());
+        final User logedinUser = securityUtils.getCurrentUser();
+        final Boolean isEmployee = !ANONYMOUS_USER.equalsIgnoreCase(logedinUser.getName())
+                && registrationWorkFlowService.isEmployee(logedinUser);
         marriageFormValidator.validateReIssue(reIssue, errors);
         registrationWorkFlowService.validateAssignmentForCscUser(null, reIssue, isEmployee, errors);
         if (errors.hasErrors()) {
             final MarriageRegistration registration = marriageRegistrationService.get(reIssue.getRegistration().getId());
             reIssue.setRegistration(registration);
             final Double fees = reIssue.getFeePaid();
-            model.addAttribute(IS_EMPLOYEE, registrationWorkFlowService.isEmployee(securityUtils.getCurrentUser()));
+            model.addAttribute(IS_EMPLOYEE, !ANONYMOUS_USER.equalsIgnoreCase(logedinUser.getName())
+                    && registrationWorkFlowService.isEmployee(logedinUser));
             prepareNewForm(model, reIssue);
             reIssue.setFeePaid(fees);
             return "reissue-form";
@@ -217,7 +225,11 @@ public class NewReIssueController extends GenericWorkFlowController {
         model.addAttribute("feepaid", reIssue.getFeePaid().doubleValue());
         if (!isEmployee) {
             redirectAttributes.addFlashAttribute(MESSAGE, message);
-            return "redirect:/reissue/reissue-certificate-ackowledgement/" + appNo;
+            if (ANONYMOUS_USER.equalsIgnoreCase(logedinUser.getName()))
+                return "redirect:/citizen/reissue/reissue-certificate-ackowledgement/" + appNo;
+            else
+                return "redirect:/reissue/reissue-certificate-ackowledgement/" + appNo;
+
         } else
             return "reissue-ack";
     }
@@ -281,8 +293,10 @@ public class NewReIssueController extends GenericWorkFlowController {
 
     @RequestMapping(value = "/reissue-certificate-ackowledgement/{applnNo}", method = RequestMethod.GET)
     public String showAcknowledgemnt(@PathVariable final String applnNo, final Model model) {
+        final User logedinUser = securityUtils.getCurrentUser();
         model.addAttribute("applicationNo", applnNo);
         model.addAttribute("applnType", "REISSUE");
+        model.addAttribute("isOnlineApplication", ANONYMOUS_USER.equalsIgnoreCase(logedinUser.getName()));
         return ACKOWLEDGEMENT;
     }
 

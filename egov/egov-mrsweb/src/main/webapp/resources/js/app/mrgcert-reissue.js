@@ -39,6 +39,8 @@
  */
 
 $(document).ready( function () {
+	var isonline = $('#isonline').val();
+	
 	//Added to avoid submitting parent form on Preview button click
 	//Used to preview certificate in case of Digital signture
 	$("#Preview").toggleClass('btn-primary btn-default');
@@ -90,7 +92,12 @@ $(document).ready( function () {
 	});
 	
 	$('#select-registrationunit').change( function () { 
-		showRegistrationUnit(); 
+		var url;
+		if(isonline)
+			url ='/mrs/citizen/registration/getmrregistrationunitzone'
+			else
+			url='/mrs/registration/getmrregistrationunitzone'
+		showRegistrationUnit(url); 
 	})
 	
 	$('#Preview').click(function() {
@@ -98,7 +105,7 @@ $(document).ready( function () {
 		window.open(url);
 	});
 	
-	function showRegistrationUnit()
+	function showRegistrationUnit(url)
 	{
 	 if ($('#select-registrationunit').val() === '') {
 	 	$('#txt-zone').val('');
@@ -107,7 +114,7 @@ $(document).ready( function () {
 			
 				$.ajax({
 					type: "GET",
-					url: "/mrs/registration/getmrregistrationunitzone",
+					url: url,
 					cache: true,
 					dataType: "json",
 					data:{

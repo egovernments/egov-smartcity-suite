@@ -39,6 +39,8 @@
  */
 
 $(document).ready( function () {
+	var applicationSource = $('#app').val();
+
 $('.mobileno-field').blur( function () {
 	 var mobileno = $(this).val();
 		if (mobileno.length < 10) {
@@ -84,7 +86,12 @@ $('#txt-dateOfMarriage').datepicker()
     .on('changeDate', function(e) {
     	var str=$('#txt-dateOfMarriage').val(); 
     	if(isValidDate(str)){
-    		showMarriageFee();
+    		var url;
+    		if(applicationSource=='online')
+    			url = '/mrs/citizen/registration/calculatemarriagefee'
+    			else
+    				url = '/mrs/registration/calculatemarriagefee'
+    		showMarriageFee(url);
     	}
 });
 
@@ -135,7 +142,12 @@ $('a[id^="signature"]').click( function () {
 })
 
 	$('#select-registrationunit').change( function () {
-		showRegistrationUnit();
+		var url;
+		if(applicationSource=='online')
+			url= '/mrs/citizen/registration/getmrregistrationunitzone'
+			else
+			url = '/mrs/registration/getmrregistrationunitzone'
+		showRegistrationUnit(url);
 	})
 	
 	
@@ -156,11 +168,11 @@ $('a[id^="signature"]').click( function () {
 			});
 		}*/
 	
-function showMarriageFee()
+function showMarriageFee(url)
 {
 			$.ajax({
 				type: "GET",
-				url: "/mrs/registration/calculatemarriagefee",
+				url: url,
 				cache: true,
 				dataType: "json",
 				data:{
@@ -214,7 +226,7 @@ function showMarriageFee()
 		
 	   }
 	*/
-	function showRegistrationUnit()
+	function showRegistrationUnit(url)
 	{
 	 if ($('#select-registrationunit').val() === '') {
 	 	$('#txt-zone').val('');
@@ -223,7 +235,7 @@ function showMarriageFee()
 			
 				$.ajax({
 					type: "GET",
-					url: "/mrs/registration/getmrregistrationunitzone",
+					url: url,
 					cache: true,
 					dataType: "json",
 					data:{
