@@ -68,6 +68,7 @@ import org.egov.collection.handler.BillCollectXmlHandler;
 import org.egov.collection.integration.models.BillAccountDetails.PURPOSE;
 import org.egov.collection.integration.models.BillInfoImpl;
 import org.egov.collection.integration.pgi.PaymentRequest;
+import org.egov.collection.integration.services.DebitAccountHeadDetailsService;
 import org.egov.collection.service.CollectionService;
 import org.egov.collection.service.ReceiptHeaderService;
 import org.egov.collection.utils.CollectionCommon;
@@ -113,6 +114,7 @@ import org.egov.infstr.models.ServiceDetails;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.model.instrument.InstrumentHeader;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 
 @ParentPackage("egov")
 @Results({ @Result(name = ReceiptAction.NEW, location = "receipt-new.jsp"),
@@ -307,6 +309,9 @@ public class ReceiptAction extends BaseFormAction {
     private String instrumentType;
 
     private PaymentRequest paymentRequest;
+
+    @Autowired
+    private ApplicationContext beanProvider;
 
     @Override
     public void prepare() {
@@ -782,12 +787,14 @@ public class ReceiptAction extends BaseFormAction {
 
                     if (cashOrCardInstrumenttotal != null && cashOrCardInstrumenttotal.compareTo(BigDecimal.ZERO) != 0)
                         receiptHeader.setTotalAmount(cashOrCardInstrumenttotal);
+                    DebitAccountHeadDetailsService debitAccountHeadService = (DebitAccountHeadDetailsService) beanProvider
+                            .getBean(collectionsUtil.getBeanNameForDebitAccountHead());
                     if (isBillSourcemisc())
-                        receiptHeader.addReceiptDetail(collectionCommon.addDebitAccountHeadDetails(totalDebitAmount,
-                                receiptHeader, chequeInstrumenttotal, cashOrCardInstrumenttotal,
+                        receiptHeader.addReceiptDetail(debitAccountHeadService.addDebitAccountHeadDetails(
+                                totalDebitAmount, receiptHeader, chequeInstrumenttotal, cashOrCardInstrumenttotal,
                                 instrumentTypeCashOrCard));
                     else
-                        receiptHeader.addReceiptDetail(collectionCommon.addDebitAccountHeadDetails(debitAmount,
+                        receiptHeader.addReceiptDetail(debitAccountHeadService.addDebitAccountHeadDetails(debitAmount,
                                 receiptHeader, chequeInstrumenttotal, cashOrCardInstrumenttotal,
                                 instrumentTypeCashOrCard));
 
@@ -1067,8 +1074,8 @@ public class ReceiptAction extends BaseFormAction {
         for (final ReceiptDetail oldDetail : oldReceiptHeader.getReceiptDetails())
             // debit account heads for revenue accounts should not be considered
             if (oldDetail.getOrdernumber() != null
-            && !FinancialsUtil
-            .isRevenueAccountHead(oldDetail.getAccounthead(), bankCOAList, persistenceService)) {
+                    && !FinancialsUtil
+                            .isRevenueAccountHead(oldDetail.getAccounthead(), bankCOAList, persistenceService)) {
                 final ReceiptDetail receiptDetail = new ReceiptDetail(oldDetail.getAccounthead(),
                         oldDetail.getFunction(), oldDetail.getCramount(), oldDetail.getDramount(),
                         oldDetail.getCramount(), oldDetail.getOrdernumber(), oldDetail.getDescription(),

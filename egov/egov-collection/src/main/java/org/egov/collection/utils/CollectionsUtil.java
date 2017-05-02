@@ -92,6 +92,7 @@ import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.config.properties.ApplicationProperties;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.messaging.MessagingService;
 import org.egov.infra.microservice.utils.MicroserviceUtils;
@@ -184,10 +185,14 @@ public class CollectionsUtil {
     @Autowired
     MicroserviceUtils microserviceUtils;
 
+    @Autowired
+    private ApplicationProperties applicationProperties;
+
     /**
      * Returns the Status object for given status code for a receipt
      *
-     * @param statusCode Status code for which status object is to be returned
+     * @param statusCode
+     *            Status code for which status object is to be returned
      * @return the Status object for given status code for a receipt
      */
     public EgwStatus getReceiptStatusForCode(final String statusCode) {
@@ -198,8 +203,10 @@ public class CollectionsUtil {
      * This method returns the <code>EgwStatus</code> for the given module type
      * and status code
      *
-     * @param moduleName Module name of the required status
-     * @param statusCode Status code of the required status
+     * @param moduleName
+     *            Module name of the required status
+     * @param statusCode
+     *            Status code of the required status
      * @return the <code>EgwStatus</code> instance
      */
     public EgwStatus getStatusForModuleAndCode(final String moduleName, final String statusCode) {
@@ -216,7 +223,8 @@ public class CollectionsUtil {
     }
 
     /**
-     * @param sessionMap Map of session variables
+     * @param sessionMap
+     *            Map of session variables
      * @return user name of currently logged in user
      */
     public String getLoggedInUserName() {
@@ -226,7 +234,8 @@ public class CollectionsUtil {
     /**
      * This method returns the User instance associated with the logged in user
      *
-     * @param sessionMap Map of session variables
+     * @param sessionMap
+     *            Map of session variables
      * @return the logged in user
      */
     public User getLoggedInUser() {
@@ -924,32 +933,32 @@ public class CollectionsUtil {
         String templateName = null;
 
         switch (receiptType) {
-            case CollectionConstants.RECEIPT_TYPE_BILL:
-                templateName = serviceCode + CollectionConstants.SEPARATOR_UNDERSCORE
-                        + CollectionConstants.RECEIPT_TEMPLATE_NAME;// <servicecode>_collection_receipt
-                if (!isValidTemplate(templateName)) {
-                    LOGGER.info("Billing system specific report template [" + templateName
-                            + "] not available. Using the default template [" + CollectionConstants.RECEIPT_TEMPLATE_NAME
-                            + "]");
-                    templateName = "PT_collection_receipt"; // CollectionConstants.RECEIPT_TEMPLATE_NAME;
+        case CollectionConstants.RECEIPT_TYPE_BILL:
+            templateName = serviceCode + CollectionConstants.SEPARATOR_UNDERSCORE
+                    + CollectionConstants.RECEIPT_TEMPLATE_NAME;// <servicecode>_collection_receipt
+            if (!isValidTemplate(templateName)) {
+                LOGGER.info("Billing system specific report template [" + templateName
+                        + "] not available. Using the default template [" + CollectionConstants.RECEIPT_TEMPLATE_NAME
+                        + "]");
+                templateName = "PT_collection_receipt"; // CollectionConstants.RECEIPT_TEMPLATE_NAME;
 
-                    if (!isValidTemplate(templateName)) {
-                        // No template available for creating the receipt report.
-                        // Throw
-                        // exception.
-                        final String errMsg = "Report template [" + templateName
-                                + "] not available! Receipt report cannot be generated.";
-                        LOGGER.error(errMsg);
-                        throw new ApplicationRuntimeException(errMsg);
-                    }
+                if (!isValidTemplate(templateName)) {
+                    // No template available for creating the receipt report.
+                    // Throw
+                    // exception.
+                    final String errMsg = "Report template [" + templateName
+                            + "] not available! Receipt report cannot be generated.";
+                    LOGGER.error(errMsg);
+                    throw new ApplicationRuntimeException(errMsg);
                 }
-                break;
-            case CollectionConstants.RECEIPT_TYPE_CHALLAN:
-                templateName = CollectionConstants.CHALLAN_RECEIPT_TEMPLATE_NAME;
-                break;
-            case CollectionConstants.RECEIPT_TYPE_ADHOC:
-                templateName = CollectionConstants.RECEIPT_TEMPLATE_NAME;
-                break;
+            }
+            break;
+        case CollectionConstants.RECEIPT_TYPE_CHALLAN:
+            templateName = CollectionConstants.CHALLAN_RECEIPT_TEMPLATE_NAME;
+            break;
+        case CollectionConstants.RECEIPT_TYPE_ADHOC:
+            templateName = CollectionConstants.RECEIPT_TEMPLATE_NAME;
+            break;
         }
         return templateName;
     }
@@ -975,6 +984,23 @@ public class CollectionsUtil {
 
     public void setReportService(final ReportService reportService) {
         this.reportService = reportService;
+    }
+    
+    public String getBeanNameForDebitAccountHead() {
+        Class<?> service = null;
+        try {
+            service = Class.forName(applicationProperties.getProperty("collection.debitaccounthead.client.impl.class"));
+        } catch (ClassNotFoundException e) {
+            LOGGER.error("Error getting Class name for Debit Account Head" + e);
+        }
+        // getting the entity type service.
+        String serviceClassName = null;
+        if (service != null)
+            serviceClassName = service.getSimpleName();
+        if (serviceClassName != null)
+            serviceClassName = Character.toLowerCase(serviceClassName.charAt(0))
+                + serviceClassName.substring(1).substring(0, serviceClassName.length() - 5);
+        return serviceClassName;
     }
 
 }
