@@ -57,7 +57,6 @@ import org.egov.collection.entity.ReceiptHeader;
 import org.egov.collection.entity.ReceiptMisc;
 import org.egov.collection.entity.ReceiptVoucher;
 import org.egov.collection.integration.models.BillAccountDetails;
-import org.egov.collection.integration.models.BillAccountDetails.PURPOSE;
 import org.egov.collection.integration.models.BillDetails;
 import org.egov.collection.integration.models.BillInfo;
 import org.egov.collection.integration.models.BillPayeeDetails;
@@ -161,53 +160,6 @@ public class CollectionCommon {
      */
     public void setFinancialsUtil(final FinancialsUtil financialsUtil) {
         this.financialsUtil = financialsUtil;
-    }
-
-    public ReceiptDetail addDebitAccountHeadDetails(final BigDecimal debitAmount, final ReceiptHeader receiptHeader,
-            final BigDecimal chequeInstrumenttotal, final BigDecimal otherInstrumenttotal, final String instrumentType) {
-
-        final ReceiptDetail newReceiptDetail = new ReceiptDetail();
-        newReceiptDetail.setPurpose(PURPOSE.OTHERS.toString());
-        if (chequeInstrumenttotal.toString() != null
-                && !chequeInstrumenttotal.toString().trim().equals(CollectionConstants.ZERO_INT)
-                && !chequeInstrumenttotal.toString().trim().equals(CollectionConstants.ZERO_DOUBLE)) {
-
-            newReceiptDetail.setAccounthead((CChartOfAccounts) persistenceService.findByNamedQuery(
-                    CollectionConstants.QUERY_CHARTOFACCOUNT_BY_INSTRTYPE, CollectionConstants.INSTRUMENTTYPE_CHEQUE));
-
-            newReceiptDetail.setDramount(debitAmount);
-            newReceiptDetail.setCramount(BigDecimal.valueOf(0));
-            newReceiptDetail.setReceiptHeader(receiptHeader);
-            newReceiptDetail.setFunction(receiptHeader.getReceiptDetails().iterator().next().getFunction());
-        }
-
-        if (otherInstrumenttotal.toString() != null
-                && !otherInstrumenttotal.toString().trim().equals(CollectionConstants.ZERO_INT)
-                && !otherInstrumenttotal.toString().trim().equals(CollectionConstants.ZERO_DOUBLE)) {
-            if (instrumentType.equals(CollectionConstants.INSTRUMENTTYPE_CASH))
-                newReceiptDetail
-                        .setAccounthead((CChartOfAccounts) persistenceService.findByNamedQuery(
-                                CollectionConstants.QUERY_CHARTOFACCOUNT_BY_INSTRTYPE,
-                                CollectionConstants.INSTRUMENTTYPE_CASH));
-            else if (instrumentType.equals(CollectionConstants.INSTRUMENTTYPE_CARD))
-                newReceiptDetail
-                        .setAccounthead((CChartOfAccounts) persistenceService.findByNamedQuery(
-                                CollectionConstants.QUERY_CHARTOFACCOUNT_BY_INSTRTYPE,
-                                CollectionConstants.INSTRUMENTTYPE_CARD));
-            else if (instrumentType.equals(CollectionConstants.INSTRUMENTTYPE_BANK))
-                newReceiptDetail.setAccounthead(receiptHeader.getReceiptInstrument().iterator().next()
-                        .getBankAccountId().getChartofaccounts());
-            else if (instrumentType.equals(CollectionConstants.INSTRUMENTTYPE_ONLINE))
-                newReceiptDetail.setAccounthead((CChartOfAccounts) persistenceService.findByNamedQuery(
-                        CollectionConstants.QUERY_CHARTOFACCOUNT_BY_INSTRTYPE_SERVICE,
-                        CollectionConstants.INSTRUMENTTYPE_ONLINE, receiptHeader.getOnlinePayment().getService()
-                        .getId()));
-            newReceiptDetail.setDramount(debitAmount);
-            newReceiptDetail.setCramount(BigDecimal.ZERO);
-            newReceiptDetail.setReceiptHeader(receiptHeader);
-            newReceiptDetail.setFunction(receiptHeader.getReceiptDetails().iterator().next().getFunction());
-        }
-        return newReceiptDetail;
     }
 
     /**
@@ -507,7 +459,7 @@ public class CollectionCommon {
                 oldReceiptHeader.getReceipttype(), oldReceiptHeader.getCollectiontype(), oldReceiptHeader.getPaidBy(),
                 oldReceiptHeader.getService(), oldReceiptHeader.getReferencenumber(),
                 oldReceiptHeader.getReferenceDesc(), oldReceiptHeader.getTotalAmount());
-           // receipt status is PENDING
+        // receipt status is PENDING
         newReceiptHeader.setStatus(collectionsUtil.getStatusForModuleAndCode(
                 CollectionConstants.MODULE_NAME_RECEIPTHEADER, CollectionConstants.RECEIPT_STATUS_CODE_PENDING));
         // the new receipt has reference to the cancelled receipt
@@ -748,24 +700,24 @@ public class CollectionCommon {
         if (paytInfoChequeDD.getInstrumentAmount() == null
                 || paytInfoChequeDD.getInstrumentAmount().compareTo(BigDecimal.ZERO) <= 0)
             invalidChequeDDPaytMsg.append("Invalid cheque/DD Instrument Amount[")
-            .append(paytInfoChequeDD.getInstrumentAmount()).append("] \n");
+                    .append(paytInfoChequeDD.getInstrumentAmount()).append("] \n");
         if (paytInfoChequeDD.getInstrumentNumber() == null
                 || CollectionConstants.BLANK.equals(paytInfoChequeDD.getInstrumentNumber())
                 || !MoneyUtils.isInteger(paytInfoChequeDD.getInstrumentNumber())
                 || paytInfoChequeDD.getInstrumentNumber().length() != 6)
             invalidChequeDDPaytMsg.append("Invalid Cheque/DD Instrument Number[")
-            .append(paytInfoChequeDD.getInstrumentNumber()).append("]. \n");
+                    .append(paytInfoChequeDD.getInstrumentNumber()).append("]. \n");
         if (paytInfoChequeDD.getInstrumentDate() == null)
             invalidChequeDDPaytMsg.append("Missing Cheque/DD Transaction Date \n");
         if (new Date().compareTo(paytInfoChequeDD.getInstrumentDate()) == -1)
             invalidChequeDDPaytMsg.append("Cheque/DD Transaction Date[").append(paytInfoChequeDD.getInstrumentDate())
-            .append("] cannot be a future date \n");
+                    .append("] cannot be a future date \n");
         Bank bank = null;
         if (paytInfoChequeDD.getBankId() != null) {
             bank = bankDAO.findById(paytInfoChequeDD.getBankId().intValue(), false);
             if (bank == null)
                 invalidChequeDDPaytMsg.append("No bank present for bank id [").append(paytInfoChequeDD.getBankId())
-                .append("] \n");
+                        .append("] \n");
         }
 
         if (!invalidChequeDDPaytMsg.toString().isEmpty())
