@@ -51,6 +51,7 @@
 			<input type="hidden" name="isSpillover" id="isSpillOver" value="${workOrderEstimate.estimate.lineEstimateDetails.lineEstimate.spillOverFlag}"/>
 			<input type="hidden"  name="workOrderEstimateId" id="workOrderEstimateId" value="${workOrderEstimate.id}" /> 
 			<input type="hidden" name="mode" id="mode" value="${mode }" />
+			<input type="hidden" id="defaultCutOffDate" value="${defaultCutOffDate }" />
 					<div class="panel panel-primary" data-collapsed="0">
 						<div class="panel-heading">
 							<div class="panel-title"><spring:message code="lbl.header" /></div> 

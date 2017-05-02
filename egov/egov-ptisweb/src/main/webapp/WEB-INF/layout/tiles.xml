@@ -486,4 +486,9 @@
     	<put-attribute name="page-title" value="lbl.arrear.dmd.register" cascade="true"/>
     	<put-attribute name="body" value="/WEB-INF/views/reports/arreardmdregister-form.jsp"/>
     </definition>
+    
+    <definition name="arrdmdrgstr-vlt-form" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.arrear.dmd.register" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/reports/arreardmdregister-form.jsp"/>
+    </definition>
 </tiles-definitions> 

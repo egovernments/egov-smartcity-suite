@@ -166,7 +166,19 @@ public class ApplicationDocumentService {
 
     private static final String TOTAL_BEYOND_SLA = "totalBeyondSLA";
 
-    private static final String TOTAL_WITHIN_SLA = "totalWithinSLA";
+    private static final String TOTAL_WITHIN_SLA = "totalWithinSLA"; 
+    
+    private static final String MODULE_PROPERTY_TAX = "Property Tax";
+    
+    private static final String MODULE_WATER_TAX = "Water Tax";
+    
+    private static final String MODULE_TRADE_LICENSE = "Trade License";
+    
+    private static final String MODULE_ADVERTISEMENT_TAX = "Advertisement Tax";
+    
+    private static final String MODULE_MARRIAGE_REGISTRATION = "Marriage Registration";
+    
+    private static final String SLA = "sla";
 
     private final ApplicationDocumentRepository applicationDocumentRepository;
 
@@ -609,6 +621,8 @@ public class ApplicationDocumentService {
         ApplicationDetails applicationDetails;
         Map detailsForAggregationField = Collections.emptyMap();
         Map<String, Long> delayDaysMap = new HashMap<>();
+        Map<String, List<ApplicationDetails>> moduleWiseDetailsMap = new LinkedHashMap<>();
+        List<ApplicationDetails> modulewiseDetails;
 
         if (StringUtils.isNotBlank(applicationIndexRequest.getAggregationLevel())) {
             Map<String, String> aggrTypeAndSize = fetchAggregationTypeAndSize(applicationIndexRequest.getAggregationLevel());
@@ -664,14 +678,14 @@ public class ApplicationDocumentService {
         Map<String, Long> otherApplications = getAggregationWiseApplicationCounts(applicationIndexRequest, fromDate, toDate,
                 OTHERS_TOTAL, OTHERS_TOTAL, aggregationField, size);
 
-        if (APPLICATION_TYPE.equalsIgnoreCase(aggregationField))
+        if (APPLICATION_TYPE.equalsIgnoreCase(aggregationField) || OWNER_NAME.equalsIgnoreCase(aggregationField))
             delayDaysMap = getDelayedDaysAggregate(applicationIndexRequest, fromDate, toDate, aggregationField, size);
 
         for (Map.Entry<String, Long> entry : totalRcvdApplications.entrySet()) {
             applicationDetails = new ApplicationDetails();
             name = entry.getKey();
             if (DISTRICT_NAME.equalsIgnoreCase(aggregationField) || CITY_NAME.equalsIgnoreCase(aggregationField)
-                    || APPLICATION_TYPE.equalsIgnoreCase(aggregationField))
+                    || APPLICATION_TYPE.equalsIgnoreCase(aggregationField) || OWNER_NAME.equalsIgnoreCase(aggregationField))
                 detailsForAggregationField = getDetailsForAggregationType(applicationIndexRequest, fromDate, toDate, name,
                         aggregationField);
 
@@ -693,7 +707,7 @@ public class ApplicationDocumentService {
                 applicationDetails.setServiceType(name);
                 if (!detailsForAggregationField.isEmpty()) {
                     applicationDetails.setServiceGroup(detailsForAggregationField.get(MODULE_NAME).toString());
-                    applicationDetails.setSlaPeriod((Integer) detailsForAggregationField.get("sla"));
+                    applicationDetails.setSlaPeriod((Integer) detailsForAggregationField.get(SLA));
                 }
                 if (!delayDaysMap.isEmpty() && delayDaysMap.get(name) != null)
                     applicationDetails.setDelayedDays(delayDaysMap.get(name));
@@ -703,8 +717,17 @@ public class ApplicationDocumentService {
                 applicationDetails.setServiceGroup(name);
             else if (CHANNEL.equalsIgnoreCase(aggregationField))
                 applicationDetails.setSource(name);
-            else if (OWNER_NAME.equalsIgnoreCase(aggregationField))
+            else if (OWNER_NAME.equalsIgnoreCase(aggregationField)){
                 applicationDetails.setFunctionaryName(name);
+                if (StringUtils.isNotBlank(applicationIndexRequest.getService()))
+                    applicationDetails.setServiceType(applicationIndexRequest.getService());
+                if (!detailsForAggregationField.isEmpty()) {
+                    applicationDetails.setUlbName(detailsForAggregationField.get(CITY_NAME).toString());
+                    applicationDetails.setSlaPeriod((Integer) detailsForAggregationField.get(SLA));
+                }
+                if (!delayDaysMap.isEmpty() && delayDaysMap.get(name) != null)
+                    applicationDetails.setDelayedDays(delayDaysMap.get(name));
+            }
 
             applicationDetails.setTotalReceived(entry.getValue());
             applicationDetails.setTotalClosed(totalClosedApplications.get(name) == null ? 0 : totalClosedApplications.get(name));
@@ -731,7 +754,23 @@ public class ApplicationDocumentService {
             applicationDetails.setUlbTotal(ulbApplications.get(name) == null ? 0 : ulbApplications.get(name));
             applicationDetails.setOthersTotal(otherApplications.get(name) == null ? 0 : otherApplications.get(name));
 
-            applicationDetailsList.add(applicationDetails);
+            if (APPLICATION_TYPE.equalsIgnoreCase(aggregationField)) {
+                if(moduleWiseDetailsMap.get(applicationDetails.getServiceGroup()) == null){
+                    modulewiseDetails = new ArrayList<>();
+                    modulewiseDetails.add(applicationDetails);
+                    moduleWiseDetailsMap.put(applicationDetails.getServiceGroup(), modulewiseDetails);
+                } else
+                    moduleWiseDetailsMap.get(applicationDetails.getServiceGroup()).add(applicationDetails);
+            } else 
+                applicationDetailsList.add(applicationDetails);
+        }
+       
+        if (APPLICATION_TYPE.equalsIgnoreCase(aggregationField)) {
+            applicationDetailsList.addAll(moduleWiseDetailsMap.get(MODULE_PROPERTY_TAX));
+            applicationDetailsList.addAll(moduleWiseDetailsMap.get(MODULE_WATER_TAX));
+            applicationDetailsList.addAll(moduleWiseDetailsMap.get(MODULE_TRADE_LICENSE));
+            applicationDetailsList.addAll(moduleWiseDetailsMap.get(MODULE_ADVERTISEMENT_TAX));
+            applicationDetailsList.addAll(moduleWiseDetailsMap.get(MODULE_MARRIAGE_REGISTRATION));
         }
         return applicationDetailsList;
     }
@@ -992,7 +1031,12 @@ public class ApplicationDocumentService {
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery(APPLICATION_TYPE, value));
             requiredFields = new String[2];
             requiredFields[0] = MODULE_NAME;
-            requiredFields[1] = "sla";
+            requiredFields[1] = SLA;
+        } else if (OWNER_NAME.equalsIgnoreCase(aggregationField)){
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery(OWNER_NAME, value));
+            requiredFields = new String[2];
+            requiredFields[0] = CITY_NAME;
+            requiredFields[1] = SLA;
         }
 
         Map applicationTypeDetails = new HashMap<>();
@@ -1170,7 +1214,7 @@ public class ApplicationDocumentService {
                 .setQuery(boolQuery).setSize(size)
                 .addSort(APPLICATION_DATE, SortOrder.DESC)
                 .setFetchSource(new String[] { APPLICATION_DATE, APPLICATION_NUMBER, APPLICATION_TYPE, "applicantName",
-                        "applicantAddress", "status", CHANNEL, "sla" }, null)
+                        "applicantAddress", "status", CHANNEL, SLA, MODULE_NAME, SLA_GAP, CITY_NAME, OWNER_NAME }, null)
                 .execute().actionGet();
 
         for (SearchHit hit : response.getHits())
@@ -1186,7 +1230,11 @@ public class ApplicationDocumentService {
                 appInfo.setApplicantAddress(details.get("applicantAddress").toString());
                 appInfo.setAppStatus(details.get("status").toString());
                 appInfo.setSource(details.get(CHANNEL).toString());
-                appInfo.setSla(details.get("sla") == null ? 0 : (int) details.get("sla"));
+                appInfo.setSla(details.get(SLA) == null ? 0 : (int) details.get(SLA));
+                appInfo.setServiceGroup(details.get(MODULE_NAME).toString());
+                appInfo.setAge(details.get(SLA_GAP) == null ? 0 : (int) details.get(SLA_GAP));
+                appInfo.setPendingWith(details.get(OWNER_NAME).toString());
+                appInfo.setUlbName(details.get(CITY_NAME).toString());
                 applications.add(appInfo);
             }
         }

@@ -66,7 +66,7 @@
 				<div class="panel-body">
 					<div class="form-group">
 						<label class="col-sm-2 control-label text-right"> <spring:message
-								code="lbl.ward" /> :
+								code="lbl.ward" /> :<span class="mandatory1">*</span>
 						</label>
 						<div class="col-sm-3 add-margin">
 							<form:select name="wardId" id="wardId" path=""
@@ -78,7 +78,7 @@
 							</form:select>
 						</div>
 						<label class="col-sm-2 control-label text-right"> <spring:message
-								code="lbl.fin.year" /> :
+								code="lbl.fin.year" /> :<span class="mandatory1">*</span>
 						</label>
 						<div class="col-sm-3 add-margin">
 							<form:select name="financialYearId" id="financialYearId" path=""

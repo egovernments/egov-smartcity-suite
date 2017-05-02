@@ -513,7 +513,21 @@ public class UpdateConnectionController extends GenericConnectionController {
                 && request.getParameter(APPRIVALPOSITION) != null
                 && !request.getParameter(APPRIVALPOSITION).isEmpty())
             approvalPosition = Long.valueOf(request.getParameter(APPRIVALPOSITION));
-
+        // For ReConnection and Closure Connection
+        if ((workFlowAction.equals(WFLOW_ACTION_STEP_REJECT)
+                || workFlowAction.equalsIgnoreCase(WF_RECONNECTIONACKNOWLDGEENT_BUTTON))
+                && (waterConnectionDetails.getStatus().getCode()
+                        .equals(WORKFLOW_RECONNCTIONINITIATED)
+                        || waterConnectionDetails.getStatus().getCode()
+                                .equals(APPLICATION_STATUS__RECONNCTIONINPROGRESS)
+                        || waterConnectionDetails.getStatus().getCode()
+                                .equals(APPLICATION_STATUS_CLOSERINPROGRESS)
+                        || waterConnectionDetails.getStatus().getCode()
+                                .equals(APPLICATION_STATUS_CLOSERINITIATED)))
+            approvalPosition = waterTaxUtils.getApproverPosition(ROLE_CLERKFORADONI,
+                    waterConnectionDetails);
+        if (approvalPosition == null)
+            throw new ValidationException("err.nouserdefinedforworkflow");
         if (!resultBinder.hasErrors()) {
             try {
                 // For Closure Connection
@@ -641,19 +655,7 @@ public class UpdateConnectionController extends GenericConnectionController {
                 return "redirect:/application/ReconnacknowlgementNotice?pathVar="
 
                         + waterConnectionDetails.getApplicationNumber();
-            // For ReConnection and Closure Connection
-            if ((workFlowAction.equals(WFLOW_ACTION_STEP_REJECT)
-                    || workFlowAction.equalsIgnoreCase(WF_RECONNECTIONACKNOWLDGEENT_BUTTON))
-                    && (waterConnectionDetails.getStatus().getCode()
-                            .equals(WORKFLOW_RECONNCTIONINITIATED)
-                            || waterConnectionDetails.getStatus().getCode()
-                                    .equals(APPLICATION_STATUS__RECONNCTIONINPROGRESS)
-                            || waterConnectionDetails.getStatus().getCode()
-                                    .equals(APPLICATION_STATUS_CLOSERINPROGRESS)
-                            || waterConnectionDetails.getStatus().getCode()
-                                    .equals(APPLICATION_STATUS_CLOSERINITIATED)))
-                approvalPosition = waterTaxUtils.getApproverPosition(ROLE_CLERKFORADONI,
-                        waterConnectionDetails);
+
             final Assignment currentUserAssignment = assignmentService
                     .getPrimaryAssignmentForGivenRange(securityUtils.getCurrentUser().getId(), new Date(), new Date());
             String nextDesign = "";

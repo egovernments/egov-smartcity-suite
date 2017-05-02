@@ -49,6 +49,10 @@ public class ApplicationInfo {
     private String appStatus;
     private String source;
     private int sla;
+    private String serviceGroup;
+    private String pendingWith;
+    private int age;
+    private String ulbName;
 
     public String getAppDate() {
         return appDate;
@@ -112,6 +116,38 @@ public class ApplicationInfo {
 
     public void setSla(int sla) {
         this.sla = sla;
+    }
+
+    public String getServiceGroup() {
+        return serviceGroup;
+    }
+
+    public void setServiceGroup(String serviceGroup) {
+        this.serviceGroup = serviceGroup;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public String getPendingWith() {
+        return pendingWith;
+    }
+
+    public void setPendingWith(String pendingWith) {
+        this.pendingWith = pendingWith;
+    }
+
+    public String getUlbName() {
+        return ulbName;
+    }
+
+    public void setUlbName(String ulbName) {
+        this.ulbName = ulbName;
     }
 
 }

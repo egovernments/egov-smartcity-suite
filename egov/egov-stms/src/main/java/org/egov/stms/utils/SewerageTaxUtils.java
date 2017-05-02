@@ -422,6 +422,7 @@ public class SewerageTaxUtils {
         return false;
     }
 
+    
     public List<Role> getLoginUserRoles() {
 
         List<Role> roleList = new ArrayList<Role>();
@@ -476,5 +477,15 @@ public class SewerageTaxUtils {
                     }).collect(Collectors.toSet());
         else
             return null;
+    }
+    
+    public boolean isDonationChargeCollectionRequiredForLegacy() {
+        final AppConfigValues donationChargeConfig = appConfigValuesService.getConfigValuesByModuleAndKey(
+                SewerageTaxConstants.MODULE_NAME, SewerageTaxConstants.APPCONFIG_COLLECT_LEGACY_DONATIONCHARGE).get(0);
+        if (donationChargeConfig != null && donationChargeConfig.getValue() != null
+                && "YES".equals(donationChargeConfig.getValue()))
+            return true;
+
+        return false;
     }
 }

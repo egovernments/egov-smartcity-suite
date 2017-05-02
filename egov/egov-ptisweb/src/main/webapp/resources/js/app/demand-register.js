@@ -38,13 +38,21 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-jQuery(document).ready(
-		function() {
 jQuery('#btnsearch').click(
 		function() {
-			jQuery('#adrReportSearch').attr('method', 'get');
-			jQuery('#adrReportSearch').attr(
-					'action',
-					'/ptis/report/arrdmdrgstr/result') ;
-		});
+			var wardId = jQuery('#wardId').val();
+			var financialYearId = jQuery('#financialYearId').val();
+			if (wardId == -1) {
+				bootbox.alert("Please select the Ward");
+				return false;
+			} 
+			else if(financialYearId == -1){
+				bootbox.alert("Please select the Financial Year");
+				return false;
+			}
+			else {
+				jQuery('#adrReportSearch').attr('method', 'get');
+				jQuery('#adrReportSearch').attr('action',
+						'/ptis/report/arrdmdrgstr/result');
+			}
 		});

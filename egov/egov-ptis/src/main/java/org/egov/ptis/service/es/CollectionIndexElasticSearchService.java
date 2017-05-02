@@ -468,6 +468,7 @@ public class CollectionIndexElasticSearchService {
         Map<String, Map<String, BigDecimal>> currYrTillDateCollDivisionMap = new HashMap<>();
         Map<String, Map<String, BigDecimal>> lastYrTillDateCollDivisionMap = new HashMap<>();
         Map<String, Map<String, BigDecimal>> lastFinYrCollDivisionMap = new HashMap<>();
+        Map<String, CollTableData> tableDataMap = new HashMap<>();
         final CFinancialYear financialYear = cFinancialYearService.getFinancialYearByDate(new Date());
 
         /**
@@ -573,22 +574,38 @@ public class CollectionIndexElasticSearchService {
 
         startTime = System.currentTimeMillis();
         if(StringUtils.isBlank(collectionDetailsRequest.getPropertyType()))
-            setDataForCollectionTab(collectionDetailsRequest, collIndDataList, aggregationField, wardWiseBillCollectors,
+            setDataForCollectionTab(collectionDetailsRequest, tableDataMap, aggregationField, wardWiseBillCollectors,
                     currYrTillDateCollDivisionMap, lastYrTillDateCollDivisionMap, lastFinYrCollDivisionMap, noOfMonths,
                     totalDemandMap, currYrTotalDemandMap, demandDivisionMap, assessmentsCountMap, todayCollMap, lyTodayCollMap,
                     cytdCollMap, lytdCollMap, lastFinYrCollMap);
         else
-            setDataForDCBTab(collectionDetailsRequest, collIndDataList, aggregationField, wardWiseBillCollectors,
+            setDataForDCBTab(collectionDetailsRequest, tableDataMap, aggregationField, wardWiseBillCollectors,
                     currYrTillDateCollDivisionMap, lastYrTillDateCollDivisionMap, lastFinYrCollDivisionMap, noOfMonths,
                     totalDemandMap, currYrTotalDemandMap, demandDivisionMap, assessmentsCountMap, todayCollMap, lyTodayCollMap,
                     cytdCollMap, lytdCollMap, lastFinYrCollMap);
 
+        List<String> cityDetails = getCityDetails(collectionDetailsRequest, aggregationField);
+        if (cityDetails.size() != tableDataMap.size()) {
+            CollTableData collTableData;
+            for (String name : cityDetails) {
+                if (tableDataMap.get(name) == null) {
+                    collTableData = new CollTableData();
+                    setBoundaryDateForTable(collectionDetailsRequest, name, collTableData, aggregationField,
+                            wardWiseBillCollectors);
+                    collIndDataList.add(collTableData);
+                } else
+                    collIndDataList.add(tableDataMap.get(name));
+            }
+        } else
+            for (Map.Entry<String, CollTableData> entry : tableDataMap.entrySet())
+                collIndDataList.add(entry.getValue());
+        
         timeTaken = System.currentTimeMillis() - startTime;
         LOGGER.debug("Time taken for setting values in getResponseTableData() is : " + timeTaken + MILLISECS);
         return collIndDataList;
     }
 
-    private void setDataForCollectionTab(CollectionDetailsRequest collectionDetailsRequest, List<CollTableData> collIndDataList,
+    private void setDataForCollectionTab(CollectionDetailsRequest collectionDetailsRequest, Map<String, CollTableData> tableDataMap,
             String aggregationField, Map<String, BillCollectorIndex> wardWiseBillCollectors,
             Map<String, Map<String, BigDecimal>> currYrTillDateCollDivisionMap,
             Map<String, Map<String, BigDecimal>> lastYrTillDateCollDivisionMap,
@@ -732,11 +749,11 @@ public class CollectionIndexElasticSearchService {
                     currentInterestDemand, noOfMonths);
             setDemandAmountsForTableData(name, collIndData, totalAssessments, currentYearTotalDemand, noOfMonths,
                     totalDemandMap);
-            collIndDataList.add(collIndData);
+            tableDataMap.put(name, collIndData);
         }
     }
     
-    private void setDataForDCBTab(CollectionDetailsRequest collectionDetailsRequest, List<CollTableData> collIndDataList,
+    private void setDataForDCBTab(CollectionDetailsRequest collectionDetailsRequest, Map<String, CollTableData> tableDataMap,
             String aggregationField, Map<String, BillCollectorIndex> wardWiseBillCollectors,
             Map<String, Map<String, BigDecimal>> currYrTillDateCollDivisionMap,
             Map<String, Map<String, BigDecimal>> lastYrTillDateCollDivisionMap,
@@ -879,7 +896,7 @@ public class CollectionIndexElasticSearchService {
                     currentInterestDemand, noOfMonths);
             setDemandAmountsForTableData(name, collIndData, totalAssessments, entry.getValue(), noOfMonths,
                     totalDemandMap);
-            collIndDataList.add(collIndData);
+            tableDataMap.put(name, collIndData);
         }
     }
 
@@ -2577,6 +2594,41 @@ public class CollectionIndexElasticSearchService {
             citywiseTableData.addAll(wardWiseData);
         }
         return citywiseTableData;
+    }
+    
+    public List<String> getCityDetails(CollectionDetailsRequest collectionDetailsRequest, String aggregationField) {
+        List<String> nameList = new ArrayList<>();
+        String fieldName = StringUtils.EMPTY;
+        int size = 0;
+        if (REGION_NAME.equalsIgnoreCase(aggregationField)) {
+            fieldName = "regionname";
+            size = 4;
+        } else if (DISTRICT_NAME.equalsIgnoreCase(aggregationField)) {
+            fieldName = "districtname";
+            size = 13;
+        } else if (CITY_NAME.equalsIgnoreCase(aggregationField)) {
+            fieldName = "name";
+            size = 112;
+        } else if (CITY_GRADE.equalsIgnoreCase(aggregationField)) {
+            fieldName = "citygrade";
+            size = 7;
+        }
+
+        if (!REVENUE_WARD.equalsIgnoreCase(aggregationField)) {
+            AggregationBuilder agg = AggregationBuilders.terms("uniqueAggr").field(fieldName).size(size);
+            SearchResponse response1 = elasticsearchTemplate.getClient().prepareSearch("city")
+                    .setSize(size)
+                    .addAggregation(agg)
+                    .execute().actionGet();
+            Terms aggTerms = response1.getAggregations().get("uniqueAggr");
+            for (Terms.Bucket bucket : aggTerms.getBuckets())
+                nameList.add(bucket.getKeyAsString());
+        } else {
+            List<BillCollectorIndex> billCollectors = getBillCollectorDetails(collectionDetailsRequest);
+            for (BillCollectorIndex billCollector : billCollectors)
+                nameList.add(billCollector.getRevenueWard());
+        }
+        return nameList;
     }
     
 }

@@ -373,7 +373,7 @@ public abstract class AbstractLicenseService<T extends License> {
 
     }
 
-    @Transactional
+
     public void recalculateDemand(final List<FeeMatrixDetail> feeList, final T license) {
         final LicenseDemand licenseDemand = license.getCurrentDemand();
         // Recalculating current demand detail according to fee matrix
@@ -461,7 +461,7 @@ public abstract class AbstractLicenseService<T extends License> {
         return reasonWiseDemandDetails;
     }
 
-    @Transactional
+
     public void transitionWorkFlow(final T license, final WorkflowBean workflowBean) {
         final DateTime currentDate = new DateTime();
         final User user = this.securityUtils.getCurrentUser();
@@ -567,7 +567,7 @@ public abstract class AbstractLicenseService<T extends License> {
             return license.getState().getInitiatorPosition();
     }
 
-    @Transactional
+
     public void processAndStoreDocument(final List<LicenseDocument> documents, final License license) {
         documents.forEach(document -> {
             document.setType(licenseDocumentTypeRepository.findOne(document.getType().getId()));

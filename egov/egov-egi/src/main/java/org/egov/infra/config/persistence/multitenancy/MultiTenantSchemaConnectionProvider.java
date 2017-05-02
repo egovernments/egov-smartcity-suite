@@ -54,14 +54,12 @@ import org.slf4j.LoggerFactory;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Map;
 
 public class MultiTenantSchemaConnectionProvider implements MultiTenantConnectionProvider, ServiceRegistryAwareService {
     private static final long serialVersionUID = -6022082859572861041L;
     private static final Logger LOG = LoggerFactory.getLogger(MultiTenantSchemaConnectionProvider.class);
     private transient DataSource dataSource;
-    private String databaseType;
 
     @Override
     public Connection getAnyConnection() throws SQLException {
@@ -75,26 +73,20 @@ public class MultiTenantSchemaConnectionProvider implements MultiTenantConnectio
 
     @Override
     public Connection getConnection(final String tenantId) throws SQLException {
-        final Connection connection = getAnyConnection();
-        try (Statement statement = connection.createStatement()) {
-            if ("POSTGRESQL".equals(databaseType))
-                statement.execute(new StringBuilder().append("SET SCHEMA '").append(tenantId).append("'").toString());
-            else
-                statement.execute("USE " + tenantId);
+        try {
+            Connection connection = getAnyConnection();
+            connection.setSchema(tenantId);
+            return connection;
         } catch (final SQLException e) {
             LOG.error("Error occurred while switching tenant schema upon getting connection", e);
             throw new HibernateException("Could not alter JDBC connection to specified schema [" + tenantId + "]", e);
         }
-        return connection;
     }
 
     @Override
     public void releaseConnection(final String tenantId, final Connection connection) throws SQLException {
-        try (Statement statement = connection.createStatement()) {
-            if ("POSTGRESQL".equals(databaseType))
-                statement.execute(new StringBuilder().append("SET SCHEMA '").append(tenantId).append("'").toString());
-            else
-                statement.execute("USE " + tenantId);
+        try {
+            connection.setSchema(tenantId);
         } catch (final SQLException e) {
             LOG.warn("Error occurred while switching schema upon release connection", e);
         }
@@ -124,6 +116,5 @@ public class MultiTenantSchemaConnectionProvider implements MultiTenantConnectio
     public void injectServices(final ServiceRegistryImplementor serviceRegistry) {
         final Map<String, Object> settings = serviceRegistry.getService(ConfigurationService.class).getSettings();
         dataSource = (DataSource) settings.get(AvailableSettings.DATASOURCE);
-        databaseType = (String) settings.get("hibernate.database.type");
     }
 }

@@ -79,14 +79,14 @@ jQuery(document).ready(function() {
 			return false;
 		}
 		
-		if ((fromDate != null && fromDate != "" && fromDate != 'DD/MM/YYYY')){
+		/*if ((fromDate != null && fromDate != "" && fromDate != 'DD/MM/YYYY')){
 			if(compareDate(finyearSDate,fromDate)== -1){
 				dom.get("titleTransferError").style.display='';
 		        dom.get("titleTransferError").innerHTML='From Date Should be greater or equal to Current Financial Year Date'+" "+finyearSDate;;
 				return false;
 			}
 			
-		} 
+		} */
 		if((fromDate != null && fromDate != "" && fromDate != 'DD/MM/YYYY') &&
 				(toDate != null && toDate != "" && toDate != 'DD/MM/YYYY')) {
 			if(compareDate(fromDate,toDate)== -1){

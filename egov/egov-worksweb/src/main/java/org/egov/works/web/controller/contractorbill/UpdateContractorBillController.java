@@ -57,6 +57,7 @@ import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.model.bills.EgBilldetails;
+import org.egov.works.config.properties.WorksApplicationProperties;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.contractorbill.entity.enums.BillTypes;
 import org.egov.works.contractorbill.service.ContractorBillRegisterService;
@@ -97,6 +98,9 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
 
     @Autowired
     private MBHeaderService mbHeaderService;
+    
+    @Autowired
+    private WorksApplicationProperties worksApplicationProperties;
 
     @ModelAttribute
     public ContractorBillRegister getContractorBillRegister(@PathVariable final String contractorBillRegisterId) {
@@ -344,6 +348,7 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
             newcontractorBillRegister.setMbHeader(mbHeaders.get(0));
 
         contractorBillRegister.setApprovalDepartment(worksUtils.getDefaultDepartmentId());
+        model.addAttribute("defaultCutOffDate", worksApplicationProperties.getContractorBillCutOffDate());
 
         return "contractorBill-update";
     }
