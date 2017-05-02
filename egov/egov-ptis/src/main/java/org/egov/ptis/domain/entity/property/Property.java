@@ -40,11 +40,6 @@
 
 package org.egov.ptis.domain.entity.property;
 
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
-
 import org.egov.commons.Installment;
 import org.egov.exceptions.InvalidPropertyException;
 import org.egov.infra.admin.master.entity.Boundary;
@@ -52,6 +47,11 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.persistence.entity.Auditable;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
+
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 /**
  * This is the interface for the Property which reperesents the Status and
@@ -64,165 +64,164 @@ import org.egov.ptis.domain.entity.demand.Ptdemand;
  */
 public interface Property extends Auditable {
 
-    public User getCreatedBy();
+    User getCreatedBy();
 
-    public void setCreatedBy(User createdBy);
+    void setCreatedBy(User createdBy);
 
-    public Date getCreatedDate();
+    Date getCreatedDate();
 
-    public void setCreatedDate(Date createdDate);
+    void setCreatedDate(Date createdDate);
 
-    public BasicProperty getBasicProperty();
+    BasicProperty getBasicProperty();
 
-    public void setBasicProperty(BasicProperty basicProperty);
+    void setBasicProperty(BasicProperty basicProperty);
 
-    public Boolean isVacant();
+    Boolean isVacant();
 
-    public void setVacant(Boolean vacant);
+    void setVacant(Boolean vacant);
 
-    public Address getPropertyAddress();
+    Address getPropertyAddress();
 
-    public void setPropertyAddress(Address address);
+    void setPropertyAddress(Address address);
 
-    public PropertySource getPropertySource();
+    PropertySource getPropertySource();
 
-    public void setPropertySource(PropertySource propertySource);
+    void setPropertySource(PropertySource propertySource);
 
-    public boolean validateProperty() throws InvalidPropertyException;
+    boolean validateProperty() throws InvalidPropertyException;
 
     /*
-     * public void addPropertyTenants(Citizen citzen); public void
+     * void addPropertyTenants(Citizen citzen); void
      * removePropertyTenants(Citizen citzen);
      */
-    public Character getIsDefaultProperty();
+    Character getIsDefaultProperty();
 
     /**
-     * @param isDefaultProperty
-     *            The isDefaultProperty to set. If a property is set to default,
-     *            this application will consider this property's details for all
-     *            the demand calculation etc.
+     * @param isDefaultProperty The isDefaultProperty to set. If a property is set to default,
+     *                          this application will consider this property's details for all
+     *                          the demand calculation etc.
      */
 
-    public void setIsDefaultProperty(Character isDefaultProperty);
+    void setIsDefaultProperty(Character isDefaultProperty);
 
-    public Character getStatus();
+    Character getStatus();
 
-    public void setStatus(Character status);
+    void setStatus(Character status);
 
-    public void setEffectiveDate(Date date);
+    Date getEffectiveDate();
 
-    public Date getEffectiveDate();
+    void setEffectiveDate(Date date);
 
-    public Set<Ptdemand> getPtDemandSet();
+    Set<Ptdemand> getPtDemandSet();
 
-    public void setPtDemandSet(Set<Ptdemand> ptDemandSet);
+    void setPtDemandSet(Set<Ptdemand> ptDemandSet);
 
-    public void addPtDemand(Ptdemand ptDmd);
+    void addPtDemand(Ptdemand ptDmd);
 
-    public void removePtDemand(Ptdemand ptDmd);
+    void removePtDemand(Ptdemand ptDmd);
 
-    public PropertyDetail getPropertyDetail();
+    PropertyDetail getPropertyDetail();
 
-    public void setPropertyDetail(PropertyDetail propertyDetail);
+    void setPropertyDetail(PropertyDetail propertyDetail);
 
-    public void setIsChecked(Character isChecked);
+    Character getIsChecked();
 
-    public Character getIsChecked();
+    void setIsChecked(Character isChecked);
 
-    public String getRemarks();
+    String getRemarks();
 
-    public void setRemarks(String remarks);
+    void setRemarks(String remarks);
 
-    public String getPropertyModifyReason();
+    String getPropertyModifyReason();
 
-    public void setPropertyModifyReason(String propertyModifyReason);
+    void setPropertyModifyReason(String propertyModifyReason);
 
     /*
-     * public Set<PtDemandARV> getPtDemandARVSet(); public void
-     * setPtDemandARVSet(Set<PtDemandARV> ptDemandARVSet); public void
+     * Set<PtDemandARV> getPtDemandARVSet(); void
+     * setPtDemandARVSet(Set<PtDemandARV> ptDemandARVSet); void
      * addPtDemandARV(PtDemandARV ptDemandARV);
      */
 
-    public void setInstallment(Installment installment);
+    Installment getInstallment();
 
-    public Installment getInstallment();
+    void setInstallment(Installment installment);
 
-    public Property createPropertyclone();
+    Property createPropertyclone();
 
-    public Boolean getIsExemptedFromTax();
+    Boolean getIsExemptedFromTax();
 
-    public void setIsExemptedFromTax(Boolean isExemptedFromTax);
+    void setIsExemptedFromTax(Boolean isExemptedFromTax);
 
-    public TaxExemptionReason getTaxExemptedReason();
+    TaxExemptionReason getTaxExemptedReason();
 
-    public void setTaxExemptedReason(TaxExemptionReason taxExemptedReason);
+    void setTaxExemptedReason(TaxExemptionReason taxExemptedReason);
 
-    public String getDocNumber();
+    String getDocNumber();
 
-    public void setDocNumber(String docNumber);
+    void setDocNumber(String docNumber);
 
-    public BigDecimal getManualAlv();
+    BigDecimal getManualAlv();
 
-    public void setManualAlv(BigDecimal manualAlv);
+    void setManualAlv(BigDecimal manualAlv);
 
-    public String getOccupierName();
+    String getOccupierName();
 
-    public void setOccupierName(String occupierName);
+    void setOccupierName(String occupierName);
 
-    public Boundary getAreaBndry();
+    Boundary getAreaBndry();
 
-    public void setAreaBndry(Boundary areaBndry);
+    void setAreaBndry(Boundary areaBndry);
 
-    public BigDecimal getAlv();
+    BigDecimal getAlv();
 
-    public void setAlv(BigDecimal Alv);
+    void setAlv(BigDecimal Alv);
 
-    public Set<UnitCalculationDetail> getUnitCalculationDetails();
+    Set<UnitCalculationDetail> getUnitCalculationDetails();
 
-    public void setUnitCalculationDetails(Set<UnitCalculationDetail> unitCalculationDetails);
+    void setUnitCalculationDetails(Set<UnitCalculationDetail> unitCalculationDetails);
 
-    public void addUnitCalculationDetails(UnitCalculationDetail unitCalculationDetail);
+    void addUnitCalculationDetails(UnitCalculationDetail unitCalculationDetail);
 
-    public void addAllUnitCalculationDetails(Set<UnitCalculationDetail> unitCalculationDetails);
+    void addAllUnitCalculationDetails(Set<UnitCalculationDetail> unitCalculationDetails);
 
-    public List<Document> getDocuments();
+    List<Document> getDocuments();
 
-    public void setDocuments(List<Document> documents);
+    void setDocuments(List<Document> documents);
 
-    public String getApplicationNo();
+    String getApplicationNo();
 
-    public void setApplicationNo(String applicationNo);
+    void setApplicationNo(String applicationNo);
 
-    public String getDemolitionReason();
+    String getDemolitionReason();
 
-    public void setDemolitionReason(String demolitionReason);
+    void setDemolitionReason(String demolitionReason);
 
-    public String getSource();
+    String getSource();
 
-    public void setSource(String source);
+    void setSource(String source);
 
-    public List<AmalgamationOwner> getAmalgamationOwners();
+    List<AmalgamationOwner> getAmalgamationOwners();
 
-    public void setAmalgamationOwners(List<AmalgamationOwner> amalgamationOwners);
+    void setAmalgamationOwners(List<AmalgamationOwner> amalgamationOwners);
 
-    public List<AmalgamationOwner> getAmalgamationOwnersProxy();
+    List<AmalgamationOwner> getAmalgamationOwnersProxy();
 
-    public void setAmalgamationOwnersProxy(List<AmalgamationOwner> amalgamationOwnersProxy);
+    void setAmalgamationOwnersProxy(List<AmalgamationOwner> amalgamationOwnersProxy);
 
-    public void addAmalgamationOwners(AmalgamationOwner ownerInfo);
+    void addAmalgamationOwners(AmalgamationOwner ownerInfo);
 
-    public List<Document> getAssessmentDocuments();
+    List<Document> getAssessmentDocuments();
 
-    public void setAssessmentDocuments(List<Document> assessmentDocuments);
-    
-    public List<Document> getTaxExemptionDocuments();
+    void setAssessmentDocuments(List<Document> assessmentDocuments);
 
-    public void setTaxExemptionDocuments(List<Document> taxExemptionDocuments);
-    
-    public List<Document> getTaxExemptionDocumentsProxy();
+    List<Document> getTaxExemptionDocuments();
 
-    public void setTaxExemptionDocumentsProxy(List<Document> taxExemptionDocumentsProxy);
-    
-    public void addTaxExemptionDocuments(Document exemptionDocument);
+    void setTaxExemptionDocuments(List<Document> taxExemptionDocuments);
+
+    List<Document> getTaxExemptionDocumentsProxy();
+
+    void setTaxExemptionDocumentsProxy(List<Document> taxExemptionDocumentsProxy);
+
+    void addTaxExemptionDocuments(Document exemptionDocument);
 
 }
