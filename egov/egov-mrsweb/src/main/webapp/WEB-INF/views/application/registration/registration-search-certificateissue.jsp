@@ -46,6 +46,8 @@
 <form:form role="form" method="post"
 	cssClass="form-horizontal form-groups-bordered" id="usageform"
 	modelAttribute="registration">
+			<input type="hidden" name="applicationSource" id =app value="${applicationSource}" />
+	
 	<jsp:include page="registration-searchform.jsp"></jsp:include>
 </form:form>
 <br />

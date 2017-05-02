@@ -66,6 +66,7 @@ import org.egov.collection.entity.ReceiptDetailInfo;
 import org.egov.collection.entity.ReceiptHeader;
 import org.egov.collection.entity.ReceiptMisc;
 import org.egov.collection.integration.models.BillAccountDetails.PURPOSE;
+import org.egov.collection.integration.services.DebitAccountHeadDetailsService;
 import org.egov.collection.service.ChallanService;
 import org.egov.collection.service.ReceiptHeaderService;
 import org.egov.collection.utils.CollectionCommon;
@@ -105,6 +106,7 @@ import org.egov.model.instrument.InstrumentHeader;
 import org.egov.pims.commons.Position;
 import org.hibernate.StaleObjectStateException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 
 @ParentPackage("egov")
 @Results({ @Result(name = ChallanAction.NEW, location = "challan-new.jsp"),
@@ -244,6 +246,8 @@ public class ChallanAction extends BaseFormAction {
     private Long functionId;
     private Date cutOffDate;
     private String instrumentType;
+    @Autowired
+    private ApplicationContext beanProvider;
 
     public ChallanAction() {
         addRelatedEntity("receiptMisc.fund", Fund.class);
@@ -455,7 +459,9 @@ public class ChallanAction extends BaseFormAction {
             for (final ReceiptDetail receiptDetail : receiptHeader.getReceiptDetails())
                 debitAmount = debitAmount.add(receiptDetail.getCramount());
 
-            receiptHeader.addReceiptDetail(collectionCommon.addDebitAccountHeadDetails(debitAmount, receiptHeader,
+            DebitAccountHeadDetailsService debitAccountHeadService = (DebitAccountHeadDetailsService) beanProvider
+                    .getBean(collectionsUtil.getBeanNameForDebitAccountHead());
+            receiptHeader.addReceiptDetail(debitAccountHeadService.addDebitAccountHeadDetails(debitAmount, receiptHeader,
                     chequeInstrumenttotal, cashOrCardInstrumenttotal, instrumentTypeCashOrCard));
 
             if (chequeInstrumenttotal != null && chequeInstrumenttotal.compareTo(BigDecimal.ZERO) != 0)

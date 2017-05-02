@@ -52,6 +52,7 @@ import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.infstr.services.PersistenceService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -78,6 +79,9 @@ public class ReconciliationService {
 
     @Autowired
     private PersistenceService persistenceService;
+    
+    @Autowired
+    private ApplicationContext beanProvider;
 
     /**
      * This method processes the success message arriving from the payment gateway. The receipt status is changed from PENDING to
@@ -120,10 +124,13 @@ public class ReconciliationService {
                 existingReceiptDetails);
 
         ReceiptDetail debitAccountDetail = null;
-        if (reconstructedList != null)
-            debitAccountDetail = collectionCommon.addDebitAccountHeadDetails(
+        if (reconstructedList != null){
+            DebitAccountHeadDetailsService debitAccountHeadService = (DebitAccountHeadDetailsService) beanProvider
+                    .getBean(collectionsUtil.getBeanNameForDebitAccountHead());
+            debitAccountDetail = debitAccountHeadService.addDebitAccountHeadDetails(
                     onlinePaymentReceiptHeader.getTotalAmount(), onlinePaymentReceiptHeader, BigDecimal.ZERO,
                     onlinePaymentReceiptHeader.getTotalAmount(), CollectionConstants.INSTRUMENTTYPE_ONLINE);
+        }
 
         receiptHeaderService.reconcileOnlineSuccessPayment(onlinePaymentReceiptHeader, paymentResponse.getTxnDate(),
                 paymentResponse.getTxnReferenceNo(), paymentResponse.getTxnAmount(), paymentResponse.getAuthStatus(),

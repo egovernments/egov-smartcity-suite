@@ -69,6 +69,7 @@ import org.egov.collection.handler.BillCollectXmlHandler;
 import org.egov.collection.integration.models.BillInfoImpl;
 import org.egov.collection.integration.pgi.PaymentRequest;
 import org.egov.collection.integration.pgi.PaymentResponse;
+import org.egov.collection.integration.services.DebitAccountHeadDetailsService;
 import org.egov.collection.service.CollectionService;
 import org.egov.collection.service.ReceiptHeaderService;
 import org.egov.collection.utils.CollectionCommon;
@@ -89,13 +90,14 @@ import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.models.ServiceDetails;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 
 @ParentPackage("egov")
 @Results({ @Result(name = OnlineReceiptAction.NEW, location = "onlineReceipt-new.jsp"),
-    @Result(name = OnlineReceiptAction.REDIRECT, location = "onlineReceipt-redirect.jsp"),
-    @Result(name = OnlineReceiptAction.RESULT, location = "onlineReceipt-result.jsp"),
-    @Result(name = OnlineReceiptAction.RECONRESULT, location = "onlineReceipt-reconresult.jsp"),
-    @Result(name = CollectionConstants.REPORT, location = "onlineReceipt-report.jsp") })
+        @Result(name = OnlineReceiptAction.REDIRECT, location = "onlineReceipt-redirect.jsp"),
+        @Result(name = OnlineReceiptAction.RESULT, location = "onlineReceipt-result.jsp"),
+        @Result(name = OnlineReceiptAction.RECONRESULT, location = "onlineReceipt-reconresult.jsp"),
+        @Result(name = CollectionConstants.REPORT, location = "onlineReceipt-report.jsp") })
 public class OnlineReceiptAction extends BaseFormAction {
 
     private static final Logger LOGGER = Logger.getLogger(OnlineReceiptAction.class);
@@ -155,6 +157,8 @@ public class OnlineReceiptAction extends BaseFormAction {
     private String[] transactionDate;
     private String[] statusCode;
     private String[] remarks;
+    @Autowired
+    private ApplicationContext beanProvider;
 
     @Override
     public Object getModel() {
@@ -351,10 +355,13 @@ public class OnlineReceiptAction extends BaseFormAction {
                         existingReceiptDetails);
 
                 ReceiptDetail debitAccountDetail = null;
-                if (reconstructedList != null)
-                    debitAccountDetail = collectionCommon.addDebitAccountHeadDetails(receipts[i].getTotalAmount(),
+                if (reconstructedList != null) {
+                    DebitAccountHeadDetailsService debitAccountHeadService = (DebitAccountHeadDetailsService) beanProvider
+                            .getBean(collectionsUtil.getBeanNameForDebitAccountHead());
+                    debitAccountDetail = debitAccountHeadService.addDebitAccountHeadDetails(receipts[i].getTotalAmount(),
                             receipts[i], BigDecimal.ZERO, receipts[i].getTotalAmount(),
                             CollectionConstants.INSTRUMENTTYPE_ONLINE);
+                }
 
                 receiptHeaderService.reconcileOnlineSuccessPayment(receipts[i], transDate, getTransactionId()[i],
                         receipts[i].getTotalAmount(), null, reconstructedList, debitAccountDetail);

@@ -100,6 +100,8 @@ public class MarriageConstants {
     public static final String AADHAR = "Aadhar";
     public static final String YEAR = "year";
     public static final String NOOFDAYSTOPRINT = "NOOFDAYSTOPRINT";
+    public static final String ANONYMOUS_USER= "Anonymous";
+    public static final String SOURCE_ONLINE = "ONLINE";
 
 
     public static final String APPCONFKEY_DIGITALSIGNINWORKFLOW = "DIGITALSIGN_IN_WORKFLOW";
@@ -145,7 +147,7 @@ public class MarriageConstants {
     public static final String JUNIOR_SENIOR_ASSISTANCE_APPROVAL_PENDING ="Junior/Senior Assistance approval pending";
     public static final String CSC_OPERATOR_CREATED =  "CSC Operator created";
     public static final String APPLICATION_PDF = "application/pdf";
-    public static final String SOURCE_CSC =  "CSC";
+    
     
     public static final String SLAFORMARRIAGEREGISTRATION = "SLAFORMARRIAGEREGISTRATION";
     public static final String SLAFORMARRIAGEREISSUE = "SLAFORMARRIAGEREISSUE";

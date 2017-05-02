@@ -61,9 +61,6 @@ import org.egov.ptis.domain.entity.recovery.Recovery;
 import org.egov.ptis.notice.PtNotice;
 
 public class BasicPropertyImpl extends BaseModel implements BasicProperty {
-    /**
-     *
-     */
     private static final long serialVersionUID = 7842150965429140561L;
     private Boolean active;
     private String upicNo;
@@ -71,22 +68,22 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
     private PropertyAddress address;
     private Boundary boundary;
     private String oldMuncipalNum;
-    private Set<PropertyStatusValues> propertyStatusValuesSet = new HashSet<PropertyStatusValues>();
-    private Set<PropertyMutation> propertyMutations = new HashSet<PropertyMutation>();
+    private Set<PropertyStatusValues> propertyStatusValuesSet = new HashSet<>();
+    private Set<PropertyMutation> propertyMutations = new HashSet<>();
     private PropertyMutationMaster propertyMutationMaster;
     private Date propOccupationDate;
-    private Set<Property> propertySet = new HashSet<Property>();
+    private Set<Property> propertySet = new HashSet<>();
     private PropertyStatus status;
     private String extraField1;
     private String extraField2;
     private String extraField3;
     private String gisReferenceNo;
     private String partNo;
-    private Set<PtNotice> notices = new HashSet<PtNotice>();
-    private Set<RevisionPetition> objections = new HashSet<RevisionPetition>();
-    private Set<Recovery> recoveries = new HashSet<Recovery>();
+    private Set<PtNotice> notices = new HashSet<>();
+    private Set<RevisionPetition> objections = new HashSet<>();
+    private Set<Recovery> recoveries = new HashSet<>();
     private Character source = 'A';
-    private Set<PropertyDocs> propertyDocsSet = new HashSet<PropertyDocs>();
+    private Set<PropertyDocs> propertyDocsSet = new HashSet<>();
     private Boolean allChangesCompleted;
     private Character isBillCreated;
     private String billCrtError;
@@ -97,11 +94,11 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
     private String regdDocNo;
     private Date regdDocDate;
     private String vacantLandAssmtNo;
-    private List<PropertyOwnerInfo> propertyOwnerInfo = new ArrayList<PropertyOwnerInfo>();
-    private List<PropertyOwnerInfo> propertyOwnerInfoProxy = new ArrayList<PropertyOwnerInfo>();
+    private List<PropertyOwnerInfo> propertyOwnerInfo = new ArrayList<>();
+    private List<PropertyOwnerInfo> propertyOwnerInfoProxy = new ArrayList<>();
     private boolean underWorkflow;
     private Date assessmentdate;
-    private List<VacancyRemission> vacancyRemissions = new ArrayList<VacancyRemission>();
+    private List<VacancyRemission> vacancyRemissions = new ArrayList<>();
     private Double longitude;
     private Double latitude;
     private boolean eligible;
@@ -202,7 +199,7 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
 
     @Override
     public List<ValidationError> validate() {
-        return new ArrayList<ValidationError>();
+        return new ArrayList<>();
     }
 
     @Override
@@ -278,6 +275,7 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
 
     @Override
     public void setPropertyReference(final PropertyReference propertyReference) {
+        //Do Nothing
     }
 
     @Override
@@ -434,7 +432,7 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
      */
     @Override
     public Map<String, String> getPropertyWfStatus() {
-        Map<String, String> wfMap = new HashMap<String, String>();
+        Map<String, String> wfMap = new HashMap<>();
         Boolean isPropInWf = Boolean.FALSE;
         String wfOwner = "";
         PropertyImpl wfProperty = null;
@@ -459,7 +457,7 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
     }
 
     private Map<String, String> propertyInObjectionWf() {
-        final Map<String, String> wfMap = new HashMap<String, String>();
+        final Map<String, String> wfMap = new HashMap<>();
         RevisionPetition wfObjection = null;
         for (final RevisionPetition objection : getObjections()) {
             wfObjection = objection;
@@ -481,7 +479,7 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
     private Map<String, String> propertyInRecoverynWf() {
         Boolean isPropInWf = Boolean.FALSE;
         String wfOwner = "";
-        final Map<String, String> wfMap = new HashMap<String, String>();
+        final Map<String, String> wfMap = new HashMap<>();
         for (final Recovery recovery : getRecoveries())
             if (!recovery.transitionCompleted()) {
                 isPropInWf = Boolean.TRUE;
@@ -694,7 +692,7 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
 
     @Override
     public Map<String, String> getOwnerMap() {
-        Map<String, String> ownerMap = new HashMap<String, String>();
+        Map<String, String> ownerMap = new HashMap<>();
         final StringBuilder ownerName = new StringBuilder();
         final StringBuilder mobileNo = new StringBuilder();
         final StringBuilder aadharNo = new StringBuilder();

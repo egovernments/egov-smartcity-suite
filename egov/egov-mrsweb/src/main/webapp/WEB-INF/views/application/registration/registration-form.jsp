@@ -55,7 +55,15 @@
 <div class="row">
 	<div class="col-md-12">
 		<div class="text-right error-msg" style="font-size: 14px;"></div>
+		<input type="hidden" name="applicationSource" id = app value="${applicationSource}" />
+		
 		<c:set value="/mrs/registration/register" var="actionUrl" />
+		<c:if test="${applicationSource == 'online'}">
+		<c:set
+		value="/mrs/citizen/registration/register" var="actionUrl" />
+		
+		
+		</c:if>
 		<c:if test="${marriageRegistration.status == 'Rejected'}">
 			<c:set
 				value="/mrs/registration/workflow?id=${marriageRegistration.id}"
