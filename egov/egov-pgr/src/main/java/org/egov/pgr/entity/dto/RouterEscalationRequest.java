@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *     accountability and the service delivery of the government  organizations.
  *
- *      Copyright (C) 2016  eGovernments Foundation
+ *      Copyright (C) 2017  eGovernments Foundation
  *
  *      The updated version of eGov suite of products as by eGovernments Foundation
  *      is available at http://www.egovernments.org
@@ -38,40 +38,57 @@
  *    In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.pgr.service.reports;
+package org.egov.pgr.entity.dto;
 
-import java.util.List;
+import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
+import org.egov.infra.web.support.search.DataTableSearchRequest;
 
-import org.egov.pgr.entity.dto.RouterEscalationForm;
-import org.egov.pgr.entity.dto.RouterEscalationRequest;
-import org.egov.pgr.repository.RouterEscalationReportRepository;
-import org.egov.pgr.repository.specs.RouterEscalationSpec;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+public class RouterEscalationRequest extends DataTableSearchRequest {
 
-@Service
-@Transactional(readOnly = true)
-public class RouterEscalationService {
+    private Long complainttype;
+    private Long categoryid;
+    private Long boundary;
+    private Long position;
+    private FileFormat printFormat;
 
-    @Autowired
-    private RouterEscalationReportRepository routerEscalationReportRepository;
-
-    public Page<RouterEscalationForm> search(final RouterEscalationRequest routerEscalationRequest) {
-        final Pageable pageable = new PageRequest(routerEscalationRequest.pageNumber(),
-                routerEscalationRequest.pageSize(),
-                routerEscalationRequest.orderDir(), routerEscalationRequest.orderBy());
-        final Specification<RouterEscalationForm> spec = new RouterEscalationSpec(routerEscalationRequest);
-        return routerEscalationReportRepository.findAll(spec, pageable);
+    public Long getComplainttype() {
+        return complainttype;
     }
 
-    public List<RouterEscalationForm> prepareReport(final RouterEscalationRequest routerEscalationRequest) {
-        final Specification<RouterEscalationForm> spec = new RouterEscalationSpec(routerEscalationRequest);
-        return routerEscalationReportRepository.findAll(spec);
+    public void setComplainttype(final Long complainttype) {
+        this.complainttype = complainttype;
+    }
+
+    public Long getCategoryid() {
+        return categoryid;
+    }
+
+    public void setCategoryid(final Long categoryid) {
+        this.categoryid = categoryid;
+    }
+
+    public Long getBoundary() {
+        return boundary;
+    }
+
+    public void setBoundary(final Long boundary) {
+        this.boundary = boundary;
+    }
+
+    public Long getPosition() {
+        return position;
+    }
+
+    public void setPosition(final Long position) {
+        this.position = position;
+    }
+
+    public FileFormat getPrintFormat() {
+        return printFormat;
+    }
+
+    public void setPrintFormat(final FileFormat printFormat) {
+        this.printFormat = printFormat;
     }
 
 }

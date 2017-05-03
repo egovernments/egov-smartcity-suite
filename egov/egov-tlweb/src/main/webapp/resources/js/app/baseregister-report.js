@@ -76,7 +76,7 @@ var recordTotal=[];
 function getSumOfRecords(){
 	
 	$.ajax({
-		url:"/tl/baseregister/reportwisetotal?"+$("#baseregisterform").serialize(),
+		url:"../baseregister/reportwisetotal?"+$("#baseregisterform").serialize(),
 		type:'GET',
 		success: function (data){
 		  recordTotal=[];
@@ -112,13 +112,13 @@ function onSubmitEvent(event) {
 	            {
                   text: 'PDF',
                   action: function ( e, dt, node, config ) {
-                	 window.open("/tl/baseregister/report?"+ $("#baseregisterform").serialize()+"&printFormat=PDF",'','scrollbars=yes,width=1300,height=700,status=yes');
+                	 window.open("../baseregister/report?"+ $("#baseregisterform").serialize()+"&printFormat=PDF",'','scrollbars=yes,width=1300,height=700,status=yes');
                   }
 	            },
                 {
 	            	  text: 'XLS',
 	                  action: function ( e, dt, node, config ) {
-	                     window.open("/tl/baseregister/report?"+ $("#baseregisterform").serialize()+"&printFormat=XLS",'_self');
+	                     window.open("../baseregister/report?"+ $("#baseregisterform").serialize()+"&printFormat=XLS",'_self');
 	                  }
                 }],
                 type: 'GET',

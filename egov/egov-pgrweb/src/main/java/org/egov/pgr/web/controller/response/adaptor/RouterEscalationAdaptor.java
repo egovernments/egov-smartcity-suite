@@ -40,25 +40,35 @@
 
 package org.egov.pgr.web.controller.response.adaptor;
 
+import java.lang.reflect.Type;
+import java.util.List;
+
+import org.egov.infra.web.support.json.adapter.DataTableJsonAdapter;
+import org.egov.infra.web.support.ui.DataTable;
+import org.egov.pgr.entity.dto.RouterEscalationForm;
+
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
-import org.egov.pgr.entity.dto.RouterEscalationForm;
 
-import java.lang.reflect.Type;
-
-
-public class RouterEscalationAdaptor implements JsonSerializer<RouterEscalationForm> {
+public class RouterEscalationAdaptor implements DataTableJsonAdapter<RouterEscalationForm> {
     @Override
-    public JsonElement serialize(RouterEscalationForm routerEscalationForm, Type type, JsonSerializationContext jsc) {
-        JsonObject routerEscalationResponse = new JsonObject();
-        routerEscalationResponse.addProperty("complainttype", routerEscalationForm.getCtname());
-        routerEscalationResponse.addProperty("ward", routerEscalationForm.getBndryname());
-        routerEscalationResponse.addProperty("routedto", routerEscalationForm.getRouterposname());
-        routerEscalationResponse.addProperty("firstescpos", routerEscalationForm.getEsclvl1posname());
-        routerEscalationResponse.addProperty("secondescpos", routerEscalationForm.getEsclvl2posname());
-        routerEscalationResponse.addProperty("thirdescpos", routerEscalationForm.getEsclvl3posname());
-        return routerEscalationResponse;
+    public JsonElement serialize(final DataTable<RouterEscalationForm> routerEscalationForm, final Type type,
+            final JsonSerializationContext jsc) {
+        final List<RouterEscalationForm> routerEscalationReport = routerEscalationForm.getData();
+        final JsonArray routerEscalationReportData = new JsonArray();
+        routerEscalationReport.forEach(routerEscalation -> {
+            final JsonObject routerEscalationResponse = new JsonObject();
+            routerEscalationResponse.addProperty("complainttype", routerEscalation.getCtname());
+            routerEscalationResponse.addProperty("ward", routerEscalation.getBndryname());
+            routerEscalationResponse.addProperty("routedto", routerEscalation.getRouterposname());
+            routerEscalationResponse.addProperty("firstescpos", routerEscalation.getEsclvl1posname());
+            routerEscalationResponse.addProperty("secondescpos", routerEscalation.getEsclvl2posname());
+            routerEscalationResponse.addProperty("thirdescpos", routerEscalation.getEsclvl3posname());
+
+            routerEscalationReportData.add(routerEscalationResponse);
+        });
+        return enhance(routerEscalationReportData, routerEscalationForm);
     }
 }

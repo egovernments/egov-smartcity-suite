@@ -101,7 +101,7 @@ function callAjaxByBoundary(event) {
 	 		    	    {
 		                  text: 'PDF',
 		                  action: function ( e, dt, node, config ) {
-		                     var url="/tl/tlreports/report?licensenumber="+licenseNumbertemp+"&printFormat=PDF";
+		                     var url="../report?licensenumber="+licenseNumbertemp+"&printFormat=PDF";
 		                     window.open(url,'','scrollbars=yes,width=1300,height=700,status=yes');
 		                  }
 			            }, 
@@ -109,7 +109,7 @@ function callAjaxByBoundary(event) {
 			                  text: 'XLS',
 			                  action: function ( e, dt, node, config ) 
 			                  {
-			                     var url="/tl/tlreports/report?licensenumber="+licenseNumbertemp+"&printFormat=XLS";
+			                     var url="../report?licensenumber="+licenseNumbertemp+"&printFormat=XLS";
 			                     window.open(url,'_self','scrollbars=yes,width=1300,height=700,status=yes');
 			                  }
 				            }],
