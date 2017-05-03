@@ -127,7 +127,7 @@ public class RouterEscalationReportController {
             headers.setContentType(MediaType.parseMediaType("application/pdf"));
         else if (reportRequest.getReportFormat().equals(FileFormat.XLS))
             headers.setContentType(MediaType.parseMediaType("application/vnd.ms-excel"));
-        headers.add("content-disposition", "inline;filename=DCB_Report." + reportRequest.getReportFormat());
+        headers.add("content-disposition", "inline;filename=Router_Escalation_report." + reportRequest.getReportFormat());
         final ReportOutput reportOutput = reportService.createReport(reportRequest);
         return new ResponseEntity<>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
     }
