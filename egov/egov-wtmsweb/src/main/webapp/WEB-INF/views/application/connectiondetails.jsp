@@ -239,7 +239,7 @@
 		$('#donationChargesInput').attr('required','required');
 	}
 	else if($('#connectionType').val()=='NON_METERED'){
-		$('#donationChargesDiv').show();
+		$('#donationChargesDiv').hide();
 		$('#donationChargesInput').attr('disabled', true);
 	}
 </script>
