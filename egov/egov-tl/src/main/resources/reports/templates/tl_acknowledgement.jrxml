@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Blank_A4" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="aec3a077-3cdb-4d34-aa53-7dc22f2ae903">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="116"/>
+	<property name="ireport.y" value="0"/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<parameter name="wardName" class="java.lang.String"/>
 	<parameter name="licenceAddress" class="java.lang.String"/>
@@ -94,25 +93,9 @@
 				<reportElement x="400" y="190" width="100" height="30" uuid="c2f2f03e-ec8f-4725-a9e1-e28e85c937c1"/>
 				<textFieldExpression><![CDATA[$P{dueDate}]]></textFieldExpression>
 			</textField>
-			<staticText>
-				<reportElement x="0" y="330" width="470" height="30" uuid="b2988873-9bc4-44cc-bba1-75428f5e5951"/>
-				<text><![CDATA[2.  If the service is not closed on or before the due date, Rs. 50/- will be paid for each day of delay as compensation.]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="0" y="360" width="370" height="30" uuid="a7286968-be57-4210-8db3-05402e21da72"/>
-				<text><![CDATA[3.  Don’t consult any mediator/broker.]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="0" y="280" width="70" height="20" uuid="751f884c-23d9-4b78-88f0-cb3b9647409d"/>
-				<text><![CDATA[Note :]]></text>
-			</staticText>
 			<break>
 				<reportElement x="0" y="387" width="555" height="1" uuid="2734870e-0d9f-4aa9-8c00-27fb7e53a353"/>
 			</break>
-			<textField>
-				<reportElement x="0" y="300" width="460" height="30" uuid="a672c9f9-dd23-4ade-a50f-3437e2675896"/>
-				<textFieldExpression><![CDATA["1. You can track the status of your application from "+$P{cityname} +".cdma.ap.gov.in"]]></textFieldExpression>
-			</textField>
 			<staticText>
 				<reportElement x="310" y="240" width="190" height="20" uuid="aa3b190c-e9ad-40e4-a071-49418aacf1ab"/>
 				<text><![CDATA[Signature Of the counter operator]]></text>
@@ -185,22 +168,6 @@
 			<textField>
 				<reportElement x="100" y="180" width="200" height="30" uuid="0d83b174-0448-4e4d-b372-ea2d34f80170"/>
 				<textFieldExpression><![CDATA[$P{appType}]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement x="0" y="490" width="370" height="30" uuid="538380fb-ae78-418f-9348-d4e7fb952916"/>
-				<text><![CDATA[3.  Don’t consult any mediator/broker.]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="0" y="460" width="470" height="30" uuid="bc634c23-d47f-422e-bb90-fc85895e3595"/>
-				<text><![CDATA[2.  If the service is not closed on or before the due date, Rs. 50/- will be paid for each day of delay as compensation.]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="0" y="410" width="70" height="20" uuid="14ce1dc8-f122-4fd2-8db9-5896cdaec9b3"/>
-				<text><![CDATA[Note :]]></text>
-			</staticText>
-			<textField>
-				<reportElement x="0" y="430" width="460" height="30" uuid="255c8b92-c342-45ae-8236-55172f5b5b3e"/>
-				<textFieldExpression><![CDATA["1. You can track the status of your application from "+$P{cityname} +".cdma.ap.gov.in"]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="3" y="7" width="100" height="30" uuid="0d07a14c-7865-4b27-b69d-3375c212630a"/>

@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-02-28T13:48:08 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="tldemandnoticereport" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="28d1468c-93d7-467e-ba37-8e4c557005e0">
 	<property name="ireport.zoom" value="1.1"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="76"/>
+	<property name="ireport.y" value="0"/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<style name="Table_TH" mode="Opaque" backcolor="#F0F8FF">
 		<box>
@@ -314,13 +312,6 @@
 				</textElement>
 				<text><![CDATA[Dated]]></text>
 			</staticText>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="3" y="0" width="550" height="13" uuid="370db5ae-48e5-48a4-920d-20375a70d131"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="10" isBold="false"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{actDeclaration}]]></textFieldExpression>
-			</textField>
 		</band>
 		<band height="31">
 			<subreport>
@@ -329,7 +320,7 @@
 					<subreportParameterExpression><![CDATA[$P{installmentYear}]]></subreportParameterExpression>
 				</subreportParameter>
 				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{monthWiseDemandDetails})]]></dataSourceExpression>
-				<subreportExpression><![CDATA[org.egov.infra.reporting.util.ReportUtil.getTemplateAsStream("tldemandnoticeSubreport.jasper")]]></subreportExpression>
+				<subreportExpression><![CDATA[org.egov.infra.reporting.util.ReportUtil.getTemplateAsStream("tl_demandnotice_Subreport.jasper")]]></subreportExpression>
 			</subreport>
 		</band>
 		<band height="50">

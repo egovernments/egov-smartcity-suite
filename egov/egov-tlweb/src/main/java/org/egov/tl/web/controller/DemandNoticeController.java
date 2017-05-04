@@ -199,7 +199,7 @@ public class DemandNoticeController {
 
             }
         }
-        ReportRequest reportInput = new ReportRequest("tldemandnotice", license, reportParams);
+        ReportRequest reportInput = new ReportRequest("tl_demand_notice", license, reportParams);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType("application/pdf"));

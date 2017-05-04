@@ -234,10 +234,10 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         final String cityGrade = getCityGrade();
         if (cityGrade != null && cityGrade.equalsIgnoreCase(Constants.CITY_GRADE_CORPORATION)) {
             final Map<String, Object> reportParams = getReportParamsForCertificate(license, null, null);
-            return new ReportRequest("licenseCertificateForCorp", license, reportParams);
+            return new ReportRequest("tl_licenseCertificateForCorp", license, reportParams);
         } else {
             final Map<String, Object> reportParams = getReportParamsForCertificate(license, null, null);
-            return new ReportRequest("licenseCertificate", license, reportParams);
+            return new ReportRequest("tl_licenseCertificate", license, reportParams);
         }
     }
 
@@ -250,11 +250,11 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         final String cityGrade = getCityGrade();
         if (cityGrade != null && cityGrade.equalsIgnoreCase(Constants.CITY_GRADE_CORPORATION)) {
             return reportService.createReport(
-                    new ReportRequest("licenseCertificateForCorp", license, getReportParamsForCertificate(license, districtName,
+                    new ReportRequest("tl_licenseCertificateForCorp", license, getReportParamsForCertificate(license, districtName,
                             cityMunicipalityName)));
         } else {
             return reportService.createReport(
-                    new ReportRequest("licenseCertificate", license, getReportParamsForCertificate(license, districtName,
+                    new ReportRequest("tl_licenseCertificate", license, getReportParamsForCertificate(license, districtName,
                             cityMunicipalityName)));
         }
     }

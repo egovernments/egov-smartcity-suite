@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-04-11T11:29:15 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="test" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="cee583e3-a0f8-4d29-92e7-b2c0afa5f324">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="116"/>
+	<property name="ireport.y" value="0"/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<parameter name="applicationnumber" class="java.lang.String"/>
 	<parameter name="licencenumber" class="java.lang.String"/>
@@ -37,35 +35,28 @@
 	<title>
 		<band height="174" splitType="Stretch">
 			<staticText>
-				<reportElement x="3" y="81" width="547" height="21" isPrintInFirstWholeBand="true" uuid="c58d977b-8206-48c6-94c4-35619ef6a4a7"/>
+				<reportElement x="1" y="80" width="549" height="21" isPrintInFirstWholeBand="true" uuid="c58d977b-8206-48c6-94c4-35619ef6a4a7"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="14" isBold="true"/>
+					<font fontName="SansSerif" size="12" isBold="true"/>
 				</textElement>
 				<text><![CDATA[TRADE  LICENSE]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="3" y="124" width="547" height="20" uuid="35aa238f-85ba-4bbd-8173-f31a5dc79943"/>
+				<reportElement x="1" y="124" width="549" height="20" uuid="35aa238f-85ba-4bbd-8173-f31a5dc79943"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="styled">
-					<font fontName="SansSerif" size="12" isBold="true"/>
+					<font fontName="SansSerif" size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["for the year "+$P{installMentYear}+""]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="3" y="60" width="547" height="20" uuid="e55a933f-8d49-424e-b388-87a0078a2d26"/>
+				<reportElement x="1" y="60" width="549" height="20" uuid="e55a933f-8d49-424e-b388-87a0078a2d26"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="styled">
 					<font fontName="SansSerif" size="12" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{municipality}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true">
-				<reportElement x="3" y="144" width="547" height="30" uuid="7250628c-58c0-4d79-87e3-2480bba3e774"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle" markup="styled">
-					<font fontName="SansSerif" size="12" isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA["(Issued under Section 263, 264, 272. 275 &amp; 288 etc., of APM Act, 1965)"]]></textFieldExpression>
-			</textField>
 			<staticText>
-				<reportElement x="3" y="102" width="547" height="21" isPrintInFirstWholeBand="true" uuid="ef636f14-e3f2-41cb-a205-35c032d02fe2"/>
+				<reportElement x="1" y="102" width="549" height="21" isPrintInFirstWholeBand="true" uuid="dcde3516-84f2-4f15-9709-749dc4b5e860"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="12" isBold="true"/>
 				</textElement>
@@ -74,9 +65,9 @@
 		</band>
 	</title>
 	<detail>
-		<band height="251">
+		<band height="447">
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToTallestObject" x="70" y="17" width="126" height="20" uuid="3f3b5796-18d3-4cdb-8e10-f1307fc22c96"/>
+				<reportElement stretchType="RelativeToTallestObject" x="74" y="17" width="126" height="20" uuid="3f3b5796-18d3-4cdb-8e10-f1307fc22c96"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -90,14 +81,14 @@
 				<textFieldExpression><![CDATA[$P{applicationnumber}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="26" y="47" width="500" height="49" uuid="fe129b4c-1eec-4825-a342-be2d9302bfa7"/>
-				<textElement textAlignment="Left" verticalAlignment="Middle" markup="html">
+				<reportElement x="28" y="47" width="500" height="54" uuid="fe129b4c-1eec-4825-a342-be2d9302bfa7"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled">
 					<font fontName="SansSerif" size="10" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA["1. Trade License is issued to Sri/Smt "+$P{applicantName}+", to carry on the Trade / Operation of M/s "+$P{nameOfEstablishment}+ " ("+$P{category}+","+$P{subCategory}+ ") at premises No: "+$P{licenceAddress}+" Vide TIN No: "+($P{licencenumber}==null?"-----":$P{licencenumber})+" for the year "+$P{installMentYear}+"."]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" x="5" y="17" width="65" height="20" uuid="53e788d3-5a77-41ae-93a8-00760a41f0ad"/>
+				<reportElement stretchType="RelativeToTallestObject" x="19" y="17" width="55" height="20" uuid="53e788d3-5a77-41ae-93a8-00760a41f0ad"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -139,75 +130,18 @@
 				<textFieldExpression><![CDATA[$P{applicationdate}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="53" y="164" width="473" height="87" isPrintWhenDetailOverflows="true" uuid="8aece0f8-5e61-4f50-826d-0eab46059551">
+				<reportElement x="28" y="101" width="500" height="31" isPrintWhenDetailOverflows="true" uuid="e6ed44c7-1ffc-48d3-95ae-17cd820fa97c">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
 				<textElement textAlignment="Justified" verticalAlignment="Middle" markup="styled">
-					<font fontName="SansSerif" size="10" isBold="false"/>
-				</textElement>
-				<textFieldExpression><![CDATA["1. Exclusive container (Dust-bin) for storing the waste generated within the premises shall be installed and maintained by the Trader.\n"+"2. Street littering is to be avoided by the Trader.\n"+"3. Plastic carry bags less than 40 microns thickness shall not be used by the Trader for any purposes.\n"+"4. In case of eating establishments, the conditions prescribed under Prevention of Food Adulteration Act, 1954 and Food Safety and Standards Authority of India are to be followed by the Trader scrupulously. "]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="26" y="133" width="500" height="31" isPrintWhenDetailOverflows="true" uuid="2ea72899-e421-4062-b1b3-12b214470500">
-					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-				</reportElement>
-				<textElement textAlignment="Justified" verticalAlignment="Middle" markup="styled">
-					<font fontName="SansSerif" size="10" isBold="false"/>
-				</textElement>
-				<textFieldExpression><![CDATA["The trader shall fulfill the following conditions; otherwise the trade license will be cancelled by the undersigned without giving any further notice."]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement x="26" y="96" width="500" height="37" uuid="7d35a8da-8e59-47b6-929e-646aa9200987">
-					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-				</reportElement>
-				<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled">
 					<font fontName="SansSerif" size="10" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA["2. License Fee Rs: "+$P{demandTotalamt}+"/- is paid on "+$P{demandUpdateDate}+" for running "+$P{appType}+ " of Trade License for the financial year " +$P{installMentYear}+".\n\n"]]></textFieldExpression>
 			</textField>
 		</band>
-		<band height="181">
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="26" y="51" width="500" height="30" uuid="a6796b42-7083-4ff4-a936-7cece08d1895">
-					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-				</reportElement>
-				<textElement textAlignment="Justified" verticalAlignment="Middle" markup="styled">
-					<font fontName="SansSerif" size="10" isBold="false"/>
-				</textElement>
-				<textFieldExpression><![CDATA["4. The License is invalid if the building structure is un-authorizedly constructed / effecting the road widening or not fulfilling the provisions of the A.P. Municipalities Act, 1965 (or) rules framed thereunder."]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="26" y="1" width="500" height="50" isPrintWhenDetailOverflows="true" uuid="b25abdc8-1aa3-4468-b649-90ba04e7a77c">
-					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-				</reportElement>
-				<textElement textAlignment="Justified" verticalAlignment="Middle" markup="styled">
-					<font fontName="SansSerif" size="10" isBold="false"/>
-				</textElement>
-				<textFieldExpression><![CDATA["3. This notice is deemed to be suspended / cancelled, if the undersigned considers such action necessary on the grounds of public health, convenience of safety or if any of the restrictions or conditions of license or any provisions of the Act or those bye-laws are infringed or if the license has been obtained by any fraud or misrepresentation."]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="26" y="82" width="500" height="44" uuid="77b66e20-af11-46dc-808e-26bb3e3a788e">
-					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-				</reportElement>
-				<textElement textAlignment="Justified" verticalAlignment="Middle" markup="styled">
-					<font fontName="SansSerif" size="10" isBold="false"/>
-				</textElement>
-				<textFieldExpression><![CDATA["5. This license is only for TRADE PURPOSE. It does not confer any power of permission for either temporary or permanent exemption from the provisions of any other section of the A.P. Municipalities Act, 1965 (or) rules framed thereunder."]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="26" y="126" width="500" height="55" isPrintWhenDetailOverflows="true" uuid="930aede7-4365-4911-88d2-8fa7e13183ae">
-					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-					<printWhenExpression><![CDATA[$P{certificateType}.equals("provisional")]]></printWhenExpression>
-				</reportElement>
-				<textElement textAlignment="Justified" verticalAlignment="Middle" markup="styled">
-					<font fontName="SansSerif" size="10" isBold="false"/>
-				</textElement>
-				<textFieldExpression><![CDATA["6. This license is issued subject to inspection by the competent authority. After inspection, if any trade, other than the trade applied for, is noticed, this license will be treated as null &amp; void. Final license with TIN No will be issued after inspection, on payment of difference amount if any by the Applicant. The same can be availed (or) downloaded from the ULB Website/Municipal Office Counter/Meeseva centre."]]></textFieldExpression>
-			</textField>
-		</band>
 		<band height="91">
 			<staticText>
-				<reportElement x="352" y="35" width="194" height="21" uuid="d7dd9cdd-c936-471b-83df-bdc2ed64ef3d"/>
+				<reportElement x="354" y="35" width="194" height="21" uuid="d7dd9cdd-c936-471b-83df-bdc2ed64ef3d"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="12" isBold="true"/>
 				</textElement>
@@ -215,7 +149,7 @@
 ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" x="12" y="34" width="46" height="20" uuid="5293554e-36ec-4151-8fee-9a3e93b997cc"/>
+				<reportElement stretchType="RelativeToTallestObject" x="6" y="34" width="54" height="20" uuid="5293554e-36ec-4151-8fee-9a3e93b997cc"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -224,12 +158,12 @@
 					<rightPen lineWidth="0.0"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="10" isBold="true"/>
+					<font fontName="SansSerif" size="12" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Date:]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToTallestObject" x="58" y="34" width="164" height="20" uuid="e68cd804-1bf0-4767-b6a1-ade7313e83b0"/>
+				<reportElement stretchType="RelativeToTallestObject" x="60" y="34" width="164" height="20" uuid="e68cd804-1bf0-4767-b6a1-ade7313e83b0"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
