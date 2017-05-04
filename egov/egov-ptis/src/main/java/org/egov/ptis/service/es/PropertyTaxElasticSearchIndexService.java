@@ -136,7 +136,7 @@ public class PropertyTaxElasticSearchIndexService {
     private static final String ARREAR_DEMAND = "arrearDemand";
     private static final String CURRENT_DEMAND = "currentDemand";
     private static final String TOTALDEMAND = "totaldemand";
-    private static final String BY_WARD = "ByWardName";
+    private static final String BY_TYPE = "ByType";
     private static final String BY_APPLICATION = "By_Applicationtype";
     private static final String APPLICATION_TYPE = "applicationType";
     private static final String DEMAND_DATE = "demandDate";
@@ -932,42 +932,7 @@ public class PropertyTaxElasticSearchIndexService {
         return dcbDetailsList;
     }
     
-    public Aggregations getDemandVarianceAggregations(final Boolean isprimaryDemand, final String ulbCode) {
-        final CFinancialYear financialYear = cFinancialYearService.getFinancialYearByDate(new Date());
-        AggregationBuilder aggregation;
-        BoolQueryBuilder boolQuery = new BoolQueryBuilder();
-
-        if (!isprimaryDemand) {
-            boolQuery = boolQuery.must(QueryBuilders.matchQuery(CITY_CODE, ulbCode))
-                    .filter(QueryBuilders.rangeQuery(DEMAND_DATE)
-                            .gte(DATEFORMATTER_YYYY_MM_DD.format(financialYear.getStartingDate()))
-                            .lte(DATEFORMATTER_YYYY_MM_DD.format(financialYear.getEndingDate())).includeUpper(false));
-
-            aggregation = AggregationBuilders.terms(BY_WARD).field(REVENUE_WARD)
-                    .subAggregation(AggregationBuilders.terms(BY_APPLICATION).field(APPLICATION_TYPE)
-                            .subAggregation(AggregationBuilders.sum(ARREAR_DEMAND).field(ARREAR_DEMAND))
-                            .subAggregation(AggregationBuilders.sum(CURRENT_DEMAND).field(CURRENT_DEMAND))
-                            .subAggregation(AggregationBuilders.sum(TOTAL_DEMAND).field(TOTAL_DEMAND)))
-                    .size(250);
-        } else {
-            boolQuery = boolQuery.must(QueryBuilders.matchQuery(CITY_CODE, ulbCode))
-                    .filter(QueryBuilders.rangeQuery(DEMAND_DATE)
-                            .lt(DATEFORMATTER_YYYY_MM_DD.format(financialYear.getStartingDate())).includeUpper(false));
-            aggregation = AggregationBuilders.terms(BY_WARD).field(REVENUE_WARD)
-                    .subAggregation(AggregationBuilders.sum(ARREAR_DEMAND).field(ARREAR_DEMAND))
-                    .subAggregation(AggregationBuilders.sum(CURRENT_DEMAND).field(CURRENT_DEMAND))
-                    .subAggregation(AggregationBuilders.sum(TOTAL_DEMAND).field(TOTAL_DEMAND))
-                    .size(250);
-        }
-        final SearchQuery searchQueryColl = new NativeSearchQueryBuilder().withIndices(DEMAND_VARIATION)
-                .withQuery(boolQuery)
-                .withSort(new FieldSortBuilder(REVENUE_WARD).order(SortOrder.ASC))
-                .addAggregation(aggregation).build();
-        return elasticsearchTemplate.query(searchQueryColl,
-                response -> response.getAggregations());
-    }
-
-    public List<DemandVariance> prepareDemandVariationDetails(final String ulbCode) {
+    public List<DemandVariance> prepareDemandVariationDetails(CollectionDetailsRequest collectionDetailsRequest) {
         DemandVariance demandDetails = new DemandVariance();
         final List<DemandVariance> demandVarianceList = new ArrayList<>();
         DemandVariationDetails demandVariationDetails;
@@ -975,8 +940,8 @@ public class PropertyTaxElasticSearchIndexService {
         /**
          * To prepare details of primary demand
          */
-        Aggregations aggr = getDemandVarianceAggregations(true, ulbCode);
-        StringTerms wards = aggr.get(BY_WARD);
+        Aggregations aggr = getDemandVarianceAggregations(true,collectionDetailsRequest);
+        StringTerms wards = aggr.get(BY_TYPE);
         
         for (final Terms.Bucket entry : wards.getBuckets()) {
             demandDetails = new DemandVariance();
@@ -991,8 +956,8 @@ public class PropertyTaxElasticSearchIndexService {
         /**
          * To prepare details of demands for different application types
          */
-        aggr = getDemandVarianceAggregations(false, ulbCode);
-        wards = aggr.get(BY_WARD);
+        aggr = getDemandVarianceAggregations(false,collectionDetailsRequest);
+        wards = aggr.get(BY_TYPE);
         for (final Terms.Bucket entry : wards.getBuckets()) {
             exists = false;
             for (final DemandVariance demandVariance : demandVarianceList)
@@ -1045,5 +1010,49 @@ public class PropertyTaxElasticSearchIndexService {
         demand = sum.getValue();
         demandVariationDetails.setTotalDemand(demand);
     }
+    
+    public Aggregations getDemandVarianceAggregations(final Boolean isprimaryDemand,CollectionDetailsRequest collectionDetailsRequest) {
+        AggregationBuilder aggregation;
+        BoolQueryBuilder boolQuery =filterByTypeForAggregation(collectionDetailsRequest);
+        final CFinancialYear financialYear = cFinancialYearService.getFinancialYearByDate(new Date());
+        String aggregationField = StringUtils.EMPTY;
+        if (StringUtils.isNotBlank(collectionDetailsRequest.getType())) {
+            aggregationField = collectionIndexElasticSearchService.getAggregrationField(collectionDetailsRequest);
+        }
+        if (!isprimaryDemand) {
+            boolQuery = boolQuery
+                    .filter(QueryBuilders.rangeQuery(DEMAND_DATE)
+                            .gte(DATEFORMATTER_YYYY_MM_DD.format(financialYear.getStartingDate()))
+                            .lte(DATEFORMATTER_YYYY_MM_DD.format(financialYear.getEndingDate())).includeUpper(false));
+            aggregation = AggregationBuilders.terms(BY_TYPE).field(aggregationField)
+                    .subAggregation(AggregationBuilders.terms(BY_APPLICATION).field(APPLICATION_TYPE)
+                            .subAggregation(AggregationBuilders.sum(ARREAR_DEMAND).field(ARREAR_DEMAND))
+                            .subAggregation(AggregationBuilders.sum(CURRENT_DEMAND).field(CURRENT_DEMAND))
+                            .subAggregation(AggregationBuilders.sum(TOTAL_DEMAND).field(TOTAL_DEMAND)))
+                    .size(250);
+        } else {
+            boolQuery = boolQuery
+                    .filter(QueryBuilders.rangeQuery(DEMAND_DATE)
+                            .lt(DATEFORMATTER_YYYY_MM_DD.format(financialYear.getStartingDate())).includeUpper(false));
+            aggregation = AggregationBuilders.terms(BY_TYPE).field(aggregationField)
+                    .subAggregation(AggregationBuilders.sum(ARREAR_DEMAND).field(ARREAR_DEMAND))
+                    .subAggregation(AggregationBuilders.sum(CURRENT_DEMAND).field(CURRENT_DEMAND))
+                    .subAggregation(AggregationBuilders.sum(TOTAL_DEMAND).field(TOTAL_DEMAND))
+                    .size(250);
+        }
+        
+        final SearchQuery searchQueryColl = new NativeSearchQueryBuilder().withIndices(DEMAND_VARIATION)
+                .withQuery(boolQuery)
+                .addAggregation(aggregation).build();
+        return elasticsearchTemplate.query(searchQueryColl,
+                response -> response.getAggregations());
+    }
 
+    private BoolQueryBuilder filterByTypeForAggregation(CollectionDetailsRequest collectionDetailsRequest) {
+        BoolQueryBuilder boolQuery = new BoolQueryBuilder();
+        if (DASHBOARD_GROUPING_WARDWISE.equalsIgnoreCase(collectionDetailsRequest.getType()))
+            boolQuery = boolQuery.must(QueryBuilders.matchQuery(CITY_CODE, collectionDetailsRequest.getUlbCode()));
+
+        return boolQuery;
+    }
 }

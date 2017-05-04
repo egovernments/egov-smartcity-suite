@@ -383,8 +383,8 @@ public class CMDashboardController {
     }
 
     @RequestMapping(value = "/demanddetails", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<DemandVariance> getDemandDetails(@RequestParam String ulbCode) {
-        return propTaxDashboardService.getDemandVariationDetails(ulbCode);
+    public List<DemandVariance> getDemandDetails(CollectionDetailsRequest collectionDetailsRequest) {
+        return propTaxDashboardService.getDemandVariationDetails(collectionDetailsRequest);
 
     }
 }

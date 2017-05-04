@@ -376,8 +376,8 @@ public class PropTaxDashboardService {
         return collectionIndexDetails;
     }
     
-    public List<DemandVariance> getDemandVariationDetails(String ulbCode) {
-        return propertyTaxElasticSearchIndexService.prepareDemandVariationDetails(ulbCode);
+    public List<DemandVariance> getDemandVariationDetails(CollectionDetailsRequest collectionDetailsRequest) {
+        return propertyTaxElasticSearchIndexService.prepareDemandVariationDetails(collectionDetailsRequest);
     }
    
 }
