@@ -128,19 +128,12 @@ public class LicenseApplicationIndexService {
         Optional<User> user = getApplicationCurrentOwner(license);
         applicationIndex.setStatus(license.getEgwStatus().getDescription());
         applicationIndex.setApplicantAddress(license.getAddress());
-        applicationIndex.setOwnerName(user.isPresent() ? user.get().getUsername() + DELIMITER_COLON + user.get().getName() : EMPTY);
+        applicationIndex
+                .setOwnerName(user.isPresent() ? user.get().getUsername() + DELIMITER_COLON + user.get().getName() : EMPTY);
         applicationIndex.setConsumerCode(license.getLicenseNumber());
         applicationIndex.setClosed(NO);
         applicationIndex.setApproved(INPROGRESS);
         if (license.getEgwStatus().getCode().equals(APPLICATION_STATUS_GENECERT_CODE)) {
-            Optional<StateHistory> stateHistory = license.getStateHistory().parallelStream().
-                    filter(state -> WF_STATE_GENERATE_CERTIFICATE.equalsIgnoreCase(state.getValue())).findFirst();
-            Date endDate;
-            if (stateHistory.isPresent())
-                endDate = stateHistory.get().getLastModifiedDate();
-            else
-                endDate = license.getLastModifiedDate();
-            applicationIndex.setElapsedDays(DateUtils.daysBetween(license.getApplicationDate(), endDate));
             applicationIndex.setClosed(ClosureStatus.YES);
             applicationIndex.setApproved(ApprovalStatus.APPROVED);
         }

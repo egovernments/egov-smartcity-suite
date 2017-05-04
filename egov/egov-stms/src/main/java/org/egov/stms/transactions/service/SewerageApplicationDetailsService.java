@@ -527,9 +527,6 @@ public class SewerageApplicationDetailsService {
             // mark application index as closed on Connection Sanction
             if (sewerageApplicationDetails.getStatus().getCode()
                     .equals(APPLICATION_STATUS_SANCTIONED)) {
-                elapsedDays = (int) TimeUnit.DAYS.convert(new Date().getTime()
-                        - sewerageApplicationDetails.getApplicationDate().getTime(), TimeUnit.MILLISECONDS);
-                applicationIndex.setElapsedDays(elapsedDays);
                 applicationIndex.setApproved(ApprovalStatus.APPROVED);
                 applicationIndex.setClosed(ClosureStatus.YES);
             }
@@ -537,9 +534,6 @@ public class SewerageApplicationDetailsService {
             // cancellation
             else if (sewerageApplicationDetails.getStatus().getCode()
                     .equals(APPLICATION_STATUS_CANCELLED)) {
-                elapsedDays = (int) TimeUnit.DAYS.convert(new Date().getTime()
-                        - sewerageApplicationDetails.getApplicationDate().getTime(), TimeUnit.MILLISECONDS);
-                applicationIndex.setElapsedDays(elapsedDays);
                 applicationIndex.setApproved(ApprovalStatus.REJECTED);
                 applicationIndex.setClosed(ClosureStatus.YES);
             }
@@ -556,8 +550,8 @@ public class SewerageApplicationDetailsService {
             // final String url = "/stms/application/view/" + sewerageApplicationDetails.getApplicationNumber();
             if (LOG.isDebugEnabled())
                 LOG.debug("Application Index creation Started... ");
-            
-            AppConfigValues slaForSewerageConn =null;
+
+            AppConfigValues slaForSewerageConn = null;
             if (sewerageApplicationDetails != null && sewerageApplicationDetails.getApplicationType() != null
                     && SewerageTaxConstants.APPLICATION_TYPE_NAME_NEWCONNECTION
                             .equals(sewerageApplicationDetails.getApplicationType().getName())) {
@@ -583,7 +577,7 @@ public class SewerageApplicationDetailsService {
                     .withMobileNumber(mobileNumber.toString()).withClosed(ClosureStatus.NO)
                     .withAadharNumber(aadharNumber.toString())
                     .withSla(slaForSewerageConn != null && slaForSewerageConn.getValue() != null
-                    ? Integer.valueOf(slaForSewerageConn.getValue()) : 0)
+                            ? Integer.valueOf(slaForSewerageConn.getValue()) : 0)
                     .withApproved(ApprovalStatus.INPROGRESS).build();
             applicationIndexService.createApplicationIndex(applicationIndex);
             if (LOG.isDebugEnabled())
