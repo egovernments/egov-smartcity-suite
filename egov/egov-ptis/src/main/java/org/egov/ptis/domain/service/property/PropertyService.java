@@ -157,6 +157,7 @@ import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.elasticsearch.entity.ApplicationIndex;
 import org.egov.infra.elasticsearch.entity.enums.ApprovalStatus;
 import org.egov.infra.elasticsearch.entity.enums.ClosureStatus;
@@ -2681,6 +2682,7 @@ public class PropertyService {
      * @param toDemand
      * @return List of property having demand between fromDemand and toDemand
      */
+    @ReadOnly
     @SuppressWarnings("unchecked")
     public List<PropertyMaterlizeView> getPropertyByDemand(final String fromDemand, final String toDemand) {
         final StringBuilder queryStr = new StringBuilder();
@@ -2735,6 +2737,7 @@ public class PropertyService {
      * @param ownerName
      * @return List of property matching the input params
      */
+    @ReadOnly
     @SuppressWarnings("unchecked")
     public List<PropertyMaterlizeView> getPropertyByLocation(final Integer locationId, final String houseNo,
             final String ownerName) {
@@ -2763,6 +2766,7 @@ public class PropertyService {
      * @param houseNum
      * @return List of property matching the input params
      */
+    @ReadOnly
     @SuppressWarnings("unchecked")
     public List<PropertyMaterlizeView> getPropertyByBoundary(final Long zoneId, final Long wardId,
             final String ownerName, final String houseNum) {
@@ -2793,7 +2797,8 @@ public class PropertyService {
         final List<PropertyMaterlizeView> propertyList = query.list();
         return propertyList;
     }
-
+    
+    @ReadOnly
     @SuppressWarnings("unchecked")
     public List<PropertyMaterlizeView> getPropertyByDoorNo(final String doorNo) {
         final StringBuilder queryStr = new StringBuilder();
@@ -2807,6 +2812,7 @@ public class PropertyService {
         return propertyList;
     }
     
+    @ReadOnly
     @SuppressWarnings("unchecked")
     public List<PropertyMaterlizeView> getPropertyByOldMunicipalNo(final String oldMuncipalNum) {
         final StringBuilder queryStr = new StringBuilder();
@@ -2819,7 +2825,8 @@ public class PropertyService {
         final List<PropertyMaterlizeView> propertyList = query.list();
         return propertyList;
     }
-
+    
+    @ReadOnly
     @SuppressWarnings("unchecked")
     public List<PropertyMaterlizeView> getPropertyByMobileNumber(final String MobileNo) {
         final StringBuilder queryStr = new StringBuilder();
