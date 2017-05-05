@@ -1,0 +1,402 @@
+//Default settings - Font
+=font-face($font-name, $font-src)
+    @font-face
+        font-family: $font-name
+        src: url($font-src)
+
+=htmlbody
+    background: $white-color
+    font-family: regular
+    width: 100%
+    height: 100%
+    overflow: auto
+    font-size: 14px
+    position: relative
+
++font-face("light", "../fonts/Roboto-Light.ttf")
+
++font-face("regular", "../fonts/Roboto-Regular.ttf")
+
++font-face("bold", "../fonts/Roboto-Medium.ttf")
+
+$white-color: #fff
+$break-xs: 768px
+$break-sm: 990px
+
+a, a:hover, a:focus, a:active, a:visited
+    text-decoration: none
+
+.btn:not(:first-child)
+    margin: 0 5px
+
+html
+    +htmlbody
+
+    body
+        +htmlbody
+
+        .modal.in .modal-dialog
+            position: fixed
+            max-height: 100%
+            overflow-y: auto
+            bottom: 0
+            right: 0
+            margin: 0
+
+            .modal-title
+                color: #26A69A
+
+            .modal-body
+                [class*='col-']
+                    margin: 10px 0
+
+                    label
+                        font-family: light
+                        font-weight: normal
+                        font-size: 13px
+
+                    .field
+                        font-family: regular
+
+            @media screen and (min-width: 768px)
+                width: 100%
+
+        .modal.fade .modal-dialog
+            transform: scale(0)
+            opacity: 0
+            -webkit-transition: all 0.25s linear
+            -o-transition: all 0.25s linear
+            transition: all 0.25s linear
+
+        .modal.fade.in .modal-dialog
+            opacity: 1
+            transform: scale(1)
+
+        .timeline
+            list-style-type: none
+            display: flex
+            justify-content: center
+            margin: 10px 0
+            padding: 0
+
+            @media screen and (max-width: $break-xs)
+                margin: 25px auto
+                display: table
+                width: 50%
+
+            .li
+                transition: all 200ms ease-in
+
+                @media screen and (max-width: $break-xs)
+                    width: 100%
+                    display: table-row
+
+                .timestamp
+                    margin-bottom: 20px
+                    padding: 0px 40px
+                    display: flex
+                    flex-direction: column
+                    align-items: center
+                    font-family: light
+
+                    @media screen and (max-width: $break-xs)
+                        display: table-cell
+                        width: 50%
+                        text-align: right
+                        padding: 0 40px 40px 40px
+
+                &.complete .status
+                    border-top: 2px solid #0099cc
+
+                    @media screen and (max-width: $break-xs)
+                        border-left: 2px solid #0099cc
+                        border-top: none
+
+                    &:before
+                        background-color: #0099cc
+                        border: none
+                        transition: all 200ms ease-in
+
+                    h4
+                        color: #0099cc
+                        font-family: bold
+
+                .status
+                    padding: 10px 40px
+                    display: flex
+                    justify-content: center
+                    border-top: 2px solid #D6DCE0
+                    position: relative
+                    transition: all 200ms ease-in
+
+                    @media screen and (max-width: $break-xs)
+                        display: table-cell
+                        width: 50%
+                        border-left: 2px solid #D6DCE0
+                        border-top: none
+
+                    &:before
+                        content: ""
+                        width: 15px
+                        height: 15px
+                        background-color: white
+                        border-radius: 15px
+                        border: 1px solid #ddd
+                        position: absolute
+                        top: -9px
+                        left: 42%
+                        transition: all 200ms ease-in
+
+                        @media screen and (max-width: $break-xs)
+                            top: 22px
+                            left: -4.6%
+
+                    h4
+                        font-weight: normal
+                        font-family: regular
+                        font-size: 15px
+                        color: #9e9e9e
+
+        .container-fluid
+            padding: 0
+            background: $white-color
+            position: relative
+
+            .badge
+                background: red
+                color: $white-color
+
+            .left-menu
+                background: #1C1C1C
+                height: 100vh
+                width: 120px
+                float: left
+                position: relative
+
+                .modules-ul
+                    margin: 0
+                    padding: 0 10px
+                    text-align: center
+                    position: relative
+
+                    .modules-li
+                        padding: 20px 0
+                        font-family: bold
+                        position: relative
+                        z-index: 1
+
+                        &:nth-child(2)
+                            padding-top: 110px
+
+                        a
+                            color: #64676D
+
+                            .img-view
+                                font-size: 22px
+
+                            .module-text
+                                font-size: 13px
+                                overflow-wrap: break-word
+                                font-family: regular
+
+                            &:hover, &:focus, &:visited
+                                text-decoration: none
+
+                                i
+                                    color: #0099cc
+
+                                .module-text
+                                    color: $white-color
+                                    font-family: bold
+
+                        &.inbox
+                            position: fixed
+                            padding: 30px 0
+                            background: #1C1C1C
+                            z-index: 10
+                            width: 86px
+                            left: 1%
+
+                            @media screen and (max-width: $break-sm)
+                                left: 1.5%
+
+                            @media screen and (max-width: $break-xs)
+                                left: 2%
+
+                            .inbox-notification
+                                position: absolute
+                                right: 15px
+                                top: 20px
+
+                        &.active
+                            .module-text
+                                color: $white-color
+                                font-family: bold
+
+                            i
+                                color: #0099cc
+
+            .right-content
+                width: calc(100% - 120px)
+                float: left
+                position: relative
+                height: 100vh
+
+                header
+                    position: relative
+
+                    nav
+                        position: relative
+                        margin: 0
+                        padding: 10px
+                        border-bottom: 1px solid #ddd
+
+                        .corporation-name
+                            font-size: 1.5em
+                            font-family: regular
+                            padding: 0 10px
+                            vertical-align: middle
+
+                        .profile-dd
+                            padding: 0 10px 0 20px
+                            line-height: 3.8
+
+                            & i:hover
+                                cursor: pointer
+
+                        .profile-name
+                            position: relative
+                            line-height: 3.8
+                            font-size: 1em
+                            font-family: light
+
+                            .profile-name-img
+                                height: 42px
+                                object-fit: cover
+                                border-radius: 50%
+
+                            .text
+                                font-family: regular
+
+                            .dropdown-menu:before
+                                position: absolute
+                                top: -7px
+                                left: 9px
+                                display: inline-block
+                                border-right: 7px solid transparent
+                                border-bottom: 7px solid #ccc
+                                border-left: 7px solid transparent
+                                border-bottom-color: rgba(0, 0, 0, 0.2)
+                                content: ""
+
+                            .dropdown-menu:after
+                                position: absolute
+                                top: -6px
+                                left: 10px
+                                display: inline-block
+                                border-right: 6px solid transparent
+                                border-bottom: 6px solid $white-color
+                                border-left: 6px solid transparent
+                                content: ""
+
+                            &:hover
+                                cursor: pointer
+
+                                .dropdown-menu
+                                    display: block
+                                    top: 95%
+                                    left: 0
+
+                .main-content
+                    padding: 25px
+
+                    .action-bar
+                        text-align: right
+                        margin-bottom: 25px
+                        margin-right: 15px
+
+                        .action-item
+                            color: #9CA1A7
+                            cursor: pointer
+                            height: 28px
+                            display: inline-block
+                            vertical-align: top
+
+                            input[type="text"]
+                                font-size: 16px
+                                border: none
+                                border-bottom: 2px solid #e4e4e4
+                                outline: 0
+                                padding: 5px
+                                font-family: regular
+                                color: #333
+
+                    table
+                        thead
+                            background: #00519F
+                            color: $white-color
+
+                            tr
+                                th
+                                    font-family: regular
+                                    font-weight: normal
+                                    border: none
+                                    padding: 10px
+                                    vertical-align: top
+
+                        tbody
+                            tr
+                                td
+                                    padding: 10px
+                                    font-size: 13px
+
+                                &:hover
+                                    cursor: pointer
+
+                    .services-item [class*='col-'].services
+                        display: none
+
+                    .services-item [class*='col-'].services, .stats-item [class*='col-'].services
+                        margin: 15px 0 10px 0
+
+                        .content
+                            padding: 10px
+                            box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26)
+                            color: #333
+
+                            .count
+                                font-size: 2em
+                                font-family: bold
+                                color: #26A69A
+
+                            .text
+                                padding: 10px 0
+                                text-transform: uppercase
+                                font-family: bold
+
+                            &.a
+                                border-left: 5px solid #CCDB38
+
+                            &.b
+                                border-left: 5px solid #00c853
+
+                            &.c
+                                border-left: 5px solid #ffeb3b
+
+                            &.d
+                                border-left: 5px solid #26A69A
+
+                            &.e
+                                border-left: 5px solid #FE5621
+
+                            &.f
+                                border-left: 5px solid #aa00ff
+
+                            &.x
+                                border-top: 5px solid #CCDB38
+
+                            &.y
+                                border-top: 5px solid #00c853
+
+                            &.z
+                                border-top: 5px solid #ffeb3b
