@@ -45,7 +45,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 
@@ -161,16 +160,14 @@ public class ZuulProxyFilter extends ZuulFilter {
             final URL routedHost = new URL(mappingURL + endPointURI);
             ctx.setRouteHost(routedHost);
             ctx.set(REQUEST_URI, routedHost.getPath());
-            log.info(request.getParameterMap().toString());
-            log.info(routedHost.getQuery());
-            final Map qp = request.getParameterMap();
-            log.info("qp.toString() before setting tenantId ==> " + qp.toString()); 
-            final List<String> tenants = new ArrayList<String>();
-            tenants.add(tenantId);
-            qp.put(TENANT_ID, tenants.toString()); 
-            ctx.setRequestQueryParams(qp);
-            log.info("qp.get(TENANT_ID) after setting tenantId ==> " + qp.get(TENANT_ID));
-            log.info("ctx.getRequestQueryParams() ==> " + ctx.getRequestQueryParams());
+
+            final CustomRequestWrapper requestWrapper = new CustomRequestWrapper(ctx.getRequest());
+            requestWrapper.addParameter(TENANT_ID, tenantId);
+            ctx.setRequest(requestWrapper);
+
+            log.info("ctx.getRequest().getParameterMap()==> " + ctx.getRequest().getParameterMap().toString());
+            log.info("ctx.getRequest().getParameterMap().get(TENANT_ID)[0]==> "
+                    + ctx.getRequest().getParameterMap().get(TENANT_ID)[0]);
 
             final String userInfo = getUserInfo(request, springContext, tenantId);
             if (shouldPutUserInfoOnHeaders(ctx))
