@@ -55,6 +55,8 @@ public class WaterTaxDue {
     private String errorMessage;
     private Boolean isSuccess;
     private Boolean isInWorkFlow;
+    private BigDecimal currentInstDemand;
+
 
     public Boolean getIsInWorkFlow() {
         return isInWorkFlow;
@@ -150,6 +152,14 @@ public class WaterTaxDue {
 
     public void setErrorMessage(final String errorMessage) {
         this.errorMessage = errorMessage;
+    }
+
+    public BigDecimal getCurrentInstDemand() {
+        return currentInstDemand;
+    }
+
+    public void setCurrentInstDemand(BigDecimal currentInstDemand) {
+        this.currentInstDemand = currentInstDemand;
     }
 
 }

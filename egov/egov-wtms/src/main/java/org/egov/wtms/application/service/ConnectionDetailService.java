@@ -140,6 +140,7 @@ public class ConnectionDetailService {
         BigDecimal currDmd = new BigDecimal(0);
         BigDecimal currColl = new BigDecimal(0);
         BigDecimal totalDue = new BigDecimal(0);
+        BigDecimal currentInstDue = new BigDecimal(0);
         WaterTaxDue waterTaxDue;
         final List<WaterConnection> waterConnections = waterConnectionService
                 .findByPropertyIdentifier(propertyIdentifier);
@@ -167,6 +168,7 @@ public class ConnectionDetailService {
                         arrColl = arrColl.add(waterTaxDue.getArrearCollection());
                         currDmd = currDmd.add(waterTaxDue.getCurrentDemand());
                         currColl = currColl.add(waterTaxDue.getCurrentCollection());
+                        currentInstDue = currentInstDue.add(waterTaxDue.getCurrentInstDemand());
                         totalDue = totalDue.add(waterTaxDue.getTotalTaxDue());
                     }
                 }
@@ -175,6 +177,7 @@ public class ConnectionDetailService {
             waterTaxDue.setCurrentDemand(currDmd);
             waterTaxDue.setCurrentCollection(currColl);
             waterTaxDue.setTotalTaxDue(totalDue);
+            waterTaxDue.setCurrentInstDemand(currentInstDue);
             waterTaxDue.setConsumerCode(consumerCodes);
             waterTaxDue.setConnectionCount(waterConnections.size());
             waterTaxDue.setIsSuccess(true);
@@ -349,6 +352,9 @@ public class ConnectionDetailService {
             // Calculating tax dues
             final BigDecimal taxDue = currDmd.add(arrDmd).subtract(currCollection).subtract(arrCollection);
             waterTaxDue.setTotalTaxDue(taxDue);
+            BigDecimal currentInstDemand = waterConnectionDetailsService.getCurrentDue(waterConnectionDetails);
+            waterTaxDue.setCurrentInstDemand(currentInstDemand);
+
         }
         return waterTaxDue;
     }
