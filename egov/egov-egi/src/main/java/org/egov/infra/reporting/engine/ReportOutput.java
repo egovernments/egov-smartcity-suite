@@ -40,14 +40,12 @@
 
 package org.egov.infra.reporting.engine;
 
-import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
-
 import java.io.Serializable;
 
 public class ReportOutput implements Serializable {
     private static final long serialVersionUID = -2559611205589631905L;
     private byte[] reportOutputData;
-    private FileFormat reportFormat;
+    private ReportFormat reportFormat;
 
     public ReportOutput() {
         //default constructor
@@ -66,11 +64,11 @@ public class ReportOutput implements Serializable {
         this.reportOutputData = reportOutputData;
     }
 
-    public FileFormat getReportFormat() {
+    public ReportFormat getReportFormat() {
         return this.reportFormat;
     }
 
-    public void setReportFormat(FileFormat reportFormat) {
+    public void setReportFormat(ReportFormat reportFormat) {
         this.reportFormat = reportFormat;
     }
 }

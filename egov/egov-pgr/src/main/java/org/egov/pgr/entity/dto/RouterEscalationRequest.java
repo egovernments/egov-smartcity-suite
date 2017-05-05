@@ -40,7 +40,7 @@
 
 package org.egov.pgr.entity.dto;
 
-import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
+import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.web.support.search.DataTableSearchRequest;
 
 public class RouterEscalationRequest extends DataTableSearchRequest {
@@ -49,7 +49,7 @@ public class RouterEscalationRequest extends DataTableSearchRequest {
     private Long categoryid;
     private Long boundary;
     private Long position;
-    private FileFormat printFormat;
+    private ReportFormat printFormat;
 
     public Long getComplainttype() {
         return complainttype;
@@ -83,11 +83,11 @@ public class RouterEscalationRequest extends DataTableSearchRequest {
         this.position = position;
     }
 
-    public FileFormat getPrintFormat() {
+    public ReportFormat getPrintFormat() {
         return printFormat;
     }
 
-    public void setPrintFormat(final FileFormat printFormat) {
+    public void setPrintFormat(final ReportFormat printFormat) {
         this.printFormat = printFormat;
     }
 

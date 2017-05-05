@@ -160,7 +160,7 @@ import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.entity.Address;
-import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
+import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
@@ -2546,7 +2546,7 @@ public class PropertyTaxUtil {
         reportParams.put(ACK_NO, applicationNumberGenerator.generate());
         reportParams.put(SERVICE_TYPE, serviceType);
         reportInput = new ReportRequest("MainCitizenCharterAcknowledgement", reportParams, reportParams);
-        reportInput.setReportFormat(FileFormat.PDF);
+        reportInput.setReportFormat(ReportFormat.PDF);
         reportInput.setPrintDialogOnOpenReport(true);
         return reportService.createReport(reportInput);
     }

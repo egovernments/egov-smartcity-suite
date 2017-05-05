@@ -83,7 +83,7 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
-import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
+import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.utils.StringUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
@@ -795,7 +795,7 @@ public class SearchNoticesAction extends SearchFormAction {
         return outputStream.toByteArray();
     }
 
-    protected String getContentDisposition(final FileFormat fileFormat) {
+    protected String getContentDisposition(final ReportFormat fileFormat) {
         return "inline; filename=report." + fileFormat.toString();
     }
 

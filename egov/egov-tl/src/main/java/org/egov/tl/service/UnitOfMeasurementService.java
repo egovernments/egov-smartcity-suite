@@ -40,6 +40,7 @@
 
 package org.egov.tl.service;
 
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.tl.entity.UnitOfMeasurement;
 import org.egov.tl.repository.UnitOfMeasurementRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,6 +69,7 @@ public class UnitOfMeasurementService {
         return unitOfMeasurementRepository.findAllByActiveTrue();
     }
 
+    @ReadOnly
     public List<UnitOfMeasurement> getAllUOM() {
         return unitOfMeasurementRepository.findAll();
     }

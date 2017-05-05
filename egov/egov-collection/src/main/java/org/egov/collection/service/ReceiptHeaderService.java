@@ -82,7 +82,7 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.reporting.engine.ReportConstants;
+import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
@@ -1217,7 +1217,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                         null));
         }
         final ReportRequest reportInput = new ReportRequest(templateName, receiptList, reportParams);
-        reportInput.setReportFormat(ReportConstants.FileFormat.PDF);
+        reportInput.setReportFormat(ReportFormat.PDF);
         reportInput.setPrintDialogOnOpenReport(false);
         return reportInput;
     }

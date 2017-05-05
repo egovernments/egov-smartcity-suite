@@ -83,19 +83,26 @@ public class DemandGenerationService {
     private static final String SUCCESSFUL = "Successful";
     private static final String DEMAND_EXIST = "Demand exist";
     private static final String ERRORMSG = "Error occurred while generating demand for license {}";
+
     @Autowired
-    public DemandGenerationLogService demandGenerationLogService;
+    private DemandGenerationLogService demandGenerationLogService;
+
     @PersistenceContext
-    public EntityManager entityManager;
+    private EntityManager entityManager;
+
     @Autowired
     private CFinancialYearService financialYearService;
+
     @Autowired
     private InstallmentDao installmentDao;
+
     @Autowired
     private ModuleService moduleService;
+
     @Autowired
     @Qualifier("tradeLicenseService")
     private AbstractLicenseService licenseService;
+
     private int batchSize;
 
     @Autowired

@@ -47,7 +47,7 @@ import org.apache.commons.lang.WordUtils;
 import org.egov.council.entity.CouncilAgendaDetails;
 import org.egov.council.entity.CouncilMeeting;
 import org.egov.council.entity.MeetingMOM;
-import org.egov.infra.reporting.engine.ReportConstants;
+import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
@@ -78,7 +78,7 @@ public class CouncilReportService {
             agendaDetails.put("agendaList", agendaDetailsList);
             reportInput = new ReportRequest(AGENDA, agendaDetails, buildReportParameters(councilMeeting, logoPath));
         }
-        reportInput.setReportFormat(ReportConstants.FileFormat.RTF);
+        reportInput.setReportFormat(ReportFormat.RTF);
         reportInput.setPrintDialogOnOpenReport(false);
         return createReport(reportInput).getReportOutputData();
 
@@ -93,7 +93,7 @@ public class CouncilReportService {
             momDetails.put("meetingMOMList", meetingMomList);
             reportInput = new ReportRequest(MEETINGMOM, momDetails, buildReportParameters(councilMeeting, logoPath));
         }
-        reportInput.setReportFormat(ReportConstants.FileFormat.RTF);
+        reportInput.setReportFormat(ReportFormat.RTF);
         reportInput.setPrintDialogOnOpenReport(false);
         return createReport(reportInput).getReportOutputData();
 

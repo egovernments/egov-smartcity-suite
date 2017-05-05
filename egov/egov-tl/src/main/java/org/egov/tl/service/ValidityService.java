@@ -41,6 +41,7 @@
 package org.egov.tl.service;
 
 import org.egov.demand.model.EgDemandDetails;
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.tl.entity.License;
 import org.egov.tl.entity.Validity;
@@ -81,6 +82,7 @@ public class ValidityService {
         return validityRepository.findOne(id);
     }
 
+    @ReadOnly
     public List<Validity> search(Long natureOfBusiness, Long licenseCategory) {
         if (natureOfBusiness != null && licenseCategory != null)
             return Arrays.asList(validityRepository.findByNatureOfBusinessIdAndLicenseCategoryId(natureOfBusiness, licenseCategory));

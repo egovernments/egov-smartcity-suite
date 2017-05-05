@@ -57,7 +57,7 @@ import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
-import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
+import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
@@ -139,7 +139,7 @@ public class IntgDemandBillService {
                 try {
                     bFile = FileUtils.readFileToByteArray(file);
                     reportOutput.setReportOutputData(bFile);
-                    reportOutput.setReportFormat(FileFormat.PDF);
+                    reportOutput.setReportFormat(ReportFormat.PDF);
                 } catch (IOException e) {
                     throw new ApplicationRuntimeException(
                             "IntgDemandBillService.getBill() : Integrated Bill Generation Exception : " + e);

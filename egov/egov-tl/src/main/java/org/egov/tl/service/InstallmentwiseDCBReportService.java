@@ -42,6 +42,7 @@ package org.egov.tl.service;
 
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.service.CFinancialYearService;
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.tl.entity.dto.InstallmentWiseDCBForm;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
@@ -60,9 +61,11 @@ import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 @Service
 @Transactional(readOnly = true)
-public class InstallmentWiseDCBService {
+public class InstallmentwiseDCBReportService {
+
     @PersistenceContext
     private EntityManager entityManager;
+
     @Autowired
     private CFinancialYearService cFinancialYearService;
 
@@ -72,6 +75,7 @@ public class InstallmentWiseDCBService {
         return financialYearList;
     }
 
+    @ReadOnly
     public List<InstallmentWiseDCBForm> getReportResult(String licenseNumber, String financialYear) {
         CFinancialYear cFinancialYear = cFinancialYearService.getFinacialYearByYearRange(financialYear);
         final SQLQuery finalQuery = prepareQuery(licenseNumber, cFinancialYear);
@@ -89,25 +93,25 @@ public class InstallmentWiseDCBService {
         StringBuilder selectQry = new StringBuilder();
         StringBuilder whereQry = new StringBuilder();
         if (financialYear != null) {
-            selectQry.append("select mv.licensenumber as licensenumber,cast(mv.licenseid as integer) as licenseid," +
-                    "coalesce(cast(sum(mv.curr_demand) as bigint),0) as currentdemand,coalesce(cast(sum(mv.curr_coll) as bigint),0) as currentcoll," +
-                    "coalesce(cast(sum(mv.curr_balance) as bigint),0) as currentbalance ,coalesce(cast(sum(mv.arr_demand) as bigint),0) as arreardemand," +
-                    "coalesce(cast(sum(mv.arr_coll) as bigint),0) as arrearcoll,coalesce(cast(sum(arr_balance) as bigint),0) as arrearbalance " +
-                    "from (select aggrdcb.licensenumber,aggrdcb.licenseid," +
-                    "case when aggrdcb.installment = :fromDate then aggrdcb.curr_demand end as curr_demand," +
-                    "case when aggrdcb.installment = :fromDate then aggrdcb.curr_coll end as curr_coll," +
-                    "case when aggrdcb.installment = :fromDate then aggrdcb.curr_balance end as curr_balance," +
-                    "case when aggrdcb.installment < :fromDate then aggrdcb.curr_demand end as arr_demand," +
-                    "case when aggrdcb.installment < :fromDate then aggrdcb.curr_coll end as arr_coll," +
-                    "case when aggrdcb.installment < :fromDate then aggrdcb.curr_balance end as arr_balance " +
-                    "from egtl_dcb_aggr_view aggrdcb where 1=1 ");
+            selectQry.append("select mv.licensenumber as licensenumber,cast(mv.licenseid as integer) as licenseid,")
+                    .append("coalesce(cast(sum(mv.curr_demand) as bigint),0) as currentdemand,coalesce(cast(sum(mv.curr_coll) as bigint),0) as currentcoll,")
+                    .append("coalesce(cast(sum(mv.curr_balance) as bigint),0) as currentbalance ,coalesce(cast(sum(mv.arr_demand) as bigint),0) as arreardemand,")
+                    .append("coalesce(cast(sum(mv.arr_coll) as bigint),0) as arrearcoll,coalesce(cast(sum(arr_balance) as bigint),0) as arrearbalance ")
+                    .append("from (select aggrdcb.licensenumber,aggrdcb.licenseid,")
+                    .append("case when aggrdcb.installment = :fromDate then aggrdcb.curr_demand end as curr_demand,")
+                    .append("case when aggrdcb.installment = :fromDate then aggrdcb.curr_coll end as curr_coll,")
+                    .append("case when aggrdcb.installment = :fromDate then aggrdcb.curr_balance end as curr_balance,")
+                    .append("case when aggrdcb.installment < :fromDate then aggrdcb.curr_demand end as arr_demand,")
+                    .append("case when aggrdcb.installment < :fromDate then aggrdcb.curr_coll end as arr_coll,")
+                    .append("case when aggrdcb.installment < :fromDate then aggrdcb.curr_balance end as arr_balance ")
+                    .append("from egtl_dcb_aggr_view aggrdcb where 1=1 ");
             whereQry.append("and aggrdcb.installment <=:fromDate ");
             if (isNotEmpty(licenseNumber))
                 whereQry.append("and aggrdcb.licensenumber =:licenseNumber ");
 
             whereQry.append("order by aggrdcb.licenseid) as mv group by mv.licensenumber,mv.licenseid order by mv.licenseid");
         }
-        StringBuilder query = selectQry.append(whereQry);
-        return entityManager.unwrap(Session.class).createSQLQuery(query.toString());
+        selectQry.append(whereQry);
+        return entityManager.unwrap(Session.class).createSQLQuery(selectQry.toString());
     }
 }

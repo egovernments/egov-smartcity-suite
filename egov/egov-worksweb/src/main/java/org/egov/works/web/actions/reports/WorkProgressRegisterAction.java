@@ -75,7 +75,7 @@ import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
-import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
+import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
@@ -670,7 +670,7 @@ public class WorkProgressRegisterAction extends SearchFormAction {
         final ReportRequest reportInput = new ReportRequest("workProgressRegister",
                 getWorkProgressRegisterList(workPorgressRegisterList), reportParams);
         if (PRINT_EXCEL.equalsIgnoreCase(exportType))
-            reportInput.setReportFormat(FileFormat.XLS);
+            reportInput.setReportFormat(ReportFormat.XLS);
         final ReportOutput reportOutput = reportService.createReport(reportInput);
         if (reportOutput != null && reportOutput.getReportOutputData() != null)
             workProgressRegisterStream = new ByteArrayInputStream(reportOutput.getReportOutputData());

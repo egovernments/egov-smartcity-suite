@@ -63,7 +63,7 @@ import org.egov.eis.web.actions.workflow.GenericWorkFlowAction;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
+import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
@@ -257,7 +257,7 @@ public class AbstractEstimateAction extends GenericWorkFlowAction {
         final AbstractEstimate estimate = abstractEstimateService.findById(id, false);
         final ReportRequest reportRequest = new ReportRequest("BillOfQuantities", estimate.getSORActivities(),
                 createHeaderParams(estimate, BOQ));
-        reportRequest.setReportFormat(FileFormat.XLS);
+        reportRequest.setReportFormat(ReportFormat.XLS);
         final ReportOutput reportOutput = reportService.createReport(reportRequest);
         if (reportOutput != null && reportOutput.getReportOutputData() != null)
             xlsInputStream = new ByteArrayInputStream(reportOutput.getReportOutputData());

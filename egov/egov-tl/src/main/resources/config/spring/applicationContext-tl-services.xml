@@ -50,8 +50,6 @@
 
     <bean id="baseLicenseService" class="org.egov.tl.service.AbstractLicenseService" scope="prototype" abstract="true"/>
 
-    <bean id="licenseReportService" class="org.egov.tl.service.LicenseReportService" scope="prototype"/>
-
     <bean id="tradeLicenseService" class="org.egov.tl.service.TradeLicenseService" parent="baseLicenseService">
         <property name="licenseWorkflowService" ref="tradeLicenseWorkflowService"/>
     </bean>

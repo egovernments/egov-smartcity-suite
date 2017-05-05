@@ -90,7 +90,7 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.reporting.engine.ReportConstants;
+import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.utils.MoneyUtils;
@@ -298,7 +298,7 @@ public class CollectionCommon {
 
         // Set the flag so that print dialog box is automatically opened
         // whenever the PDF is opened
-        reportInput.setReportFormat(ReportConstants.FileFormat.PDF);
+        reportInput.setReportFormat(ReportFormat.PDF);
         reportInput.setPrintDialogOnOpenReport(flag);
         return reportViewerUtil.addReportToTempCache(collectionsUtil.createReport(reportInput));
     }

@@ -72,7 +72,7 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.elasticsearch.entity.ApplicationIndex;
 import org.egov.infra.elasticsearch.service.ApplicationIndexService;
 import org.egov.infra.messaging.MessagingService;
-import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
+import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
@@ -384,7 +384,7 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
      */
     public ReportOutput createHearingNoticeReport(ReportOutput reportOutput, final RevisionPetition objection,
             final String noticeNo) {
-        reportOutput.setReportFormat(FileFormat.PDF);
+        reportOutput.setReportFormat(ReportFormat.PDF);
         final HashMap<String, Object> reportParams = new HashMap<>();
         final SimpleDateFormat dateformat = new SimpleDateFormat("dd/MM/yyyy");
         String natureOfWork;
@@ -440,7 +440,7 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
      */
     public ReportOutput createEndoresement(ReportOutput reportOutput, final RevisionPetition objection) {
 
-        reportOutput.setReportFormat(FileFormat.PDF);
+        reportOutput.setReportFormat(ReportFormat.PDF);
         final HashMap<String, Object> reportParams = new HashMap<>();
         final SimpleDateFormat dateformat = new SimpleDateFormat("dd/MM/yyyy");
         String natureOfWork;

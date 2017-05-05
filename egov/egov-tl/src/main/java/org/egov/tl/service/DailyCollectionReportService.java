@@ -39,10 +39,6 @@
  */
 package org.egov.tl.service;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
-
 import org.apache.commons.lang3.StringUtils;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.es.CollectionDocument;
@@ -50,7 +46,6 @@ import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.infra.utils.ApplicationConstant;
 import org.egov.infra.utils.DateUtils;
 import org.egov.tl.entity.dto.DCRSearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
@@ -58,31 +53,35 @@ import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.metrics.valuecount.ValueCount;
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.stereotype.Service;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
+
+import static org.egov.infra.utils.ApplicationConstant.ES_DATE_FORMAT;
+import static org.egov.infra.utils.DateUtils.getFormattedDate;
+
 @Service
-public class DCRService {
+public class DailyCollectionReportService {
 
     private static final String RECEIPT_COUNT = "receipt_count";
-    private static final String COLLECTION_INDEX_NAME="receipts";
+    private static final String COLLECTION_INDEX_NAME = "receipts";
     private static final String COLLECION_BILLING_SERVICE_TL = "Trade License";
-    private static final DateTimeFormatter YYYY_MM_DD_FORMAT = DateTimeFormat.forPattern(ApplicationConstant.ES_DATE_FORMAT);
+
+    @Autowired
+    private AssignmentService assignmentService;
+
+    @Autowired
+    private AppConfigValueService appConfigValueService;
 
     @Autowired
     private ElasticsearchTemplate elasticsearchTemplate;
-
-    @Autowired
-    public AssignmentService assignmentService;
-
-    @Autowired
-    public AppConfigValueService appConfigValueService;
 
     public Set<User> getCollectionOperators() {
         String operatorDesignation = appConfigValueService.getAppConfigValueByDate(
@@ -106,8 +105,7 @@ public class DCRService {
                 withQuery(dcrSearchCriteria).
                 addAggregation(AggregationBuilders.count(RECEIPT_COUNT).field("consumerCode")).
                 withPageable(
-                        new PageRequest(0, Long.valueOf(receiptCount.getValue()).intValue() == 0 ? 1
-                                : Long.valueOf(receiptCount.getValue()).intValue())).
+                        new PageRequest(0, receiptCount.getValue() == 0 ? 1 : (int) receiptCount.getValue())).
                 build();
         return elasticsearchTemplate.queryForList(dcrSearchQuery, CollectionDocument.class);
     }
@@ -115,17 +113,17 @@ public class DCRService {
     public BoolQueryBuilder getCollectionFilterQuery(DCRSearchRequest searchRequest) {
         Date fromDate = null;
         Date toDate = null;
-        if (searchRequest.getFromDate()!= null) 
+        if (searchRequest.getFromDate() != null)
             fromDate = DateUtils.startOfDay(searchRequest.getFromDate());
-        
+
         if (searchRequest.getToDate() != null)
             toDate = DateUtils.endOfDay(searchRequest.getToDate());
         BoolQueryBuilder boolQuery = QueryBuilders.
                 boolQuery().
-                filter(QueryBuilders.matchQuery("billingService",COLLECION_BILLING_SERVICE_TL)).
+                filter(QueryBuilders.matchQuery("billingService", COLLECION_BILLING_SERVICE_TL)).
                 filter(QueryBuilders.rangeQuery("receiptDate").
-                        gte(YYYY_MM_DD_FORMAT.print(new DateTime(fromDate))).
-                        lte(YYYY_MM_DD_FORMAT.print(new DateTime(toDate))).
+                        gte(getFormattedDate(fromDate, ES_DATE_FORMAT)).
+                        lte(getFormattedDate(toDate, ES_DATE_FORMAT)).
                         includeUpper(false));
 
         boolQuery = boolQuery.filter(QueryBuilders.matchQuery("cityName", ApplicationThreadLocals.getCityName()));

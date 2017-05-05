@@ -46,7 +46,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.egov.infra.admin.master.service.BoundaryService;
-import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
+import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
@@ -123,9 +123,9 @@ public class RouterEscalationReportController {
 
     private ResponseEntity<byte[]> reportResponse(final ReportRequest reportRequest) {
         final HttpHeaders headers = new HttpHeaders();
-        if (reportRequest.getReportFormat().equals(FileFormat.PDF))
+        if (reportRequest.getReportFormat().equals(ReportFormat.PDF))
             headers.setContentType(MediaType.parseMediaType("application/pdf"));
-        else if (reportRequest.getReportFormat().equals(FileFormat.XLS))
+        else if (reportRequest.getReportFormat().equals(ReportFormat.XLS))
             headers.setContentType(MediaType.parseMediaType("application/vnd.ms-excel"));
         headers.add("content-disposition", "inline;filename=Router_Escalation_report." + reportRequest.getReportFormat());
         final ReportOutput reportOutput = reportService.createReport(reportRequest);

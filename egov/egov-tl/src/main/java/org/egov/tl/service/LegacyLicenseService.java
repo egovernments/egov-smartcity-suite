@@ -39,19 +39,6 @@
  */
 package org.egov.tl.service;
 
-import static java.math.BigDecimal.ZERO;
-import static org.egov.tl.utils.Constants.LICENSE_STATUS_ACTIVE;
-
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentHibDao;
@@ -60,7 +47,6 @@ import org.egov.demand.model.EgDemandDetails;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.filestore.service.FileStoreService;
-import org.egov.infra.utils.FileStoreUtils;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.tl.entity.License;
 import org.egov.tl.entity.LicenseDemand;
@@ -74,43 +60,54 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import static java.math.BigDecimal.ZERO;
+import static org.egov.tl.utils.Constants.LICENSE_STATUS_ACTIVE;
+
 @Service
 public class LegacyLicenseService {
-    @Autowired
-    protected LicenseRepository licenseRepository;
 
     @Autowired
-    protected LicenseStatusService licenseStatusService;
+    private LicenseRepository licenseRepository;
 
     @Autowired
-    protected LicenseNumberUtils licenseNumberUtils;
+    private LicenseStatusService licenseStatusService;
 
     @Autowired
-    protected ValidityService validityService;
+    private LicenseNumberUtils licenseNumberUtils;
 
     @Autowired
-    protected DemandGenericHibDao demandGenericDao;
+    private ValidityService validityService;
 
     @Autowired
-    protected InstallmentHibDao installmentDao;
+    private DemandGenericHibDao demandGenericDao;
 
     @Autowired
-    protected ModuleService moduleService;
+    private InstallmentHibDao installmentDao;
 
     @Autowired
-    protected LicenseAppTypeService licenseAppTypeService;
+    private ModuleService moduleService;
 
     @Autowired
-    protected LicenseDocumentTypeRepository licenseDocumentTypeRepository;
+    private LicenseAppTypeService licenseAppTypeService;
 
     @Autowired
-    protected FileStoreUtils fileStoreUtils;
+    private LicenseDocumentTypeRepository licenseDocumentTypeRepository;
 
     @Autowired
-    protected TradeLicenseService tradeLicenseService;
-    
+    private TradeLicenseService tradeLicenseService;
+
     @Autowired
-    protected FileStoreService fileStoreService;
+    private FileStoreService fileStoreService;
 
     @Transactional
     public void createLegacy(final TradeLicense license) {
@@ -262,7 +259,7 @@ public class LegacyLicenseService {
     }
 
     private void updateNewLegacyDemand(final Map<Integer, Integer> updatedInstallmentFees,
-            final Map<Integer, Boolean> legacyFeePayStatus, final LicenseDemand licenseDemand) {
+                                       final Map<Integer, Boolean> legacyFeePayStatus, final LicenseDemand licenseDemand) {
 
         final Module module = moduleService.getModuleByName("Trade License");
         for (final Entry<Integer, Integer> updatedInstallmentFee : updatedInstallmentFees.entrySet())
@@ -275,26 +272,26 @@ public class LegacyLicenseService {
                 final BigDecimal amtCollected = legacyFeePayStatus.get(updatedInstallmentFee.getKey()) == null
                         || !legacyFeePayStatus.get(updatedInstallmentFee.getKey()) ? ZERO : demandAmount;
                 licenseDemand.getEgDemandDetails().add(EgDemandDetails.fromReasonAndAmounts(demandAmount,
-                                demandGenericDao.getDmdReasonByDmdReasonMsterInstallAndMod(
+                        demandGenericDao.getDmdReasonByDmdReasonMsterInstallAndMod(
                                 demandGenericDao.getDemandReasonMasterByCode("License Fee", module),
                                 installment, module),
-                                amtCollected));
+                        amtCollected));
             }
         // Recalculating BasedDemand
         licenseDemand.recalculateBaseDemand();
     }
 
     public void storeDocument(final License license, final MultipartFile[] files) throws IOException {
-        final List<LicenseDocument> documents  = license.getDocuments();
-                if (files != null)
+        final List<LicenseDocument> documents = license.getDocuments();
+        if (files != null)
             for (int i = 0; i < files.length; i++) {
                 documents.get(i).setType(licenseDocumentTypeRepository.findOne(documents.get(i).getType().getId()));
                 if (!files[i].isEmpty()) {
                     documents.get(i).getFiles()
                             .add(fileStoreService.store(
-                                    files[i].getInputStream(), 
+                                    files[i].getInputStream(),
                                     files[i].getOriginalFilename(),
-                                    files[i].getContentType(),"EGTL"));
+                                    files[i].getContentType(), "EGTL"));
                     documents.get(i).setEnclosed(true);
                 } else if (documents.get(i).getType().isMandatory() && files[i].isEmpty() && documents.isEmpty()) {
                     documents.get(i).getFiles().clear();

@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2017>  eGovernments Foundation
+ *     Copyright (C) <2015>  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -37,62 +37,53 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.tl.web.controller.report;
 
-import static org.egov.tl.utils.Constants.REVENUE_HIERARCHY_TYPE;
-import static org.egov.tl.utils.Constants.WARD;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-
-import java.util.Date;
-import java.util.List;
-
-import org.egov.collection.constants.CollectionConstants;
-import org.egov.collection.entity.es.CollectionDocument;
-import org.egov.commons.dao.EgwStatusHibernateDAO;
-import org.egov.infra.admin.master.service.BoundaryService;
-import org.egov.tl.entity.dto.DCRSearchRequest;
-import org.egov.tl.service.DCRService;
+import org.egov.tl.entity.dto.InstallmentWiseDCBForm;
+import org.egov.tl.service.InstallmentwiseDCBReportService;
+import org.egov.tl.web.response.adaptor.InstallmentWiseDCBResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+
+import static org.apache.commons.lang3.StringUtils.defaultString;
+import static org.egov.infra.utils.JsonUtils.toJSON;
+
+
 @Controller
-@RequestMapping("/reports/dailycollectionreport")
-public class DCRController {
+@RequestMapping(value = {"/installmentwise", "/public/installmentwise"})
+public class InstallmentwiseDCBReportController {
 
     @Autowired
-    public EgwStatusHibernateDAO egwStatusHibernateDAO;
+    private InstallmentwiseDCBReportService installmentWiseDCBService;
 
-    @Autowired
-    private BoundaryService boundaryService;
-
-    @Autowired
-    private DCRService dCRService;
-
-    @ModelAttribute("dcrSearchRequest")
-    public DCRSearchRequest dcrSearchRequest() {
-        return new DCRSearchRequest();
+    @ModelAttribute
+    public InstallmentWiseDCBForm installmentWiseDCBForm() {
+        return new InstallmentWiseDCBForm();
     }
 
-    @RequestMapping(method = GET)
-    public String search(final Model model) {
-        model.addAttribute("currentDate", new Date());
-        model.addAttribute("operators", dCRService.getCollectionOperators());
-        model.addAttribute("status", egwStatusHibernateDAO.getStatusByModule(CollectionConstants.MODULE_NAME_RECEIPTHEADER));
-        model.addAttribute("wards",
-                boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(WARD, REVENUE_HIERARCHY_TYPE));
-        return "dcr-search";
+    @GetMapping(value = "/dcbreport")
+    public String search(Model model) {
+        model.addAttribute("financialYears", installmentWiseDCBService.getFinancialYears());
+        return "yearwiseDCBReport-search";
     }
 
-    @RequestMapping(method = RequestMethod.POST)
+    @GetMapping(value = "/dcbresult", produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
-    public List<CollectionDocument> searchCollection(@ModelAttribute final DCRSearchRequest searchRequest) {
-        return dCRService.searchDailyCollection(searchRequest);
-
+    public String result(HttpServletRequest request) throws IOException {
+        return new StringBuilder("{ \"data\":")
+                .append(toJSON(installmentWiseDCBService.getReportResult(
+                        defaultString(request.getParameter("licensenumber")),
+                        defaultString(request.getParameter("financialYear"))), InstallmentWiseDCBForm.class,
+                        InstallmentWiseDCBResponse.class)).append("}").toString();
     }
-
 }

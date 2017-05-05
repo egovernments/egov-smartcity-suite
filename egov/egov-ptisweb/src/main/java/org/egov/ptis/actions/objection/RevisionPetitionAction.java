@@ -132,7 +132,7 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.messaging.MessagingService;
 import org.egov.infra.persistence.entity.Address;
-import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
+import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
@@ -595,7 +595,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                 throw new ApplicationRuntimeException(HEARING_NOTCIE_EXCEPTION_MESSAGE + e);
             }
             reportOutput.setReportOutputData(bFile);
-            reportOutput.setReportFormat(FileFormat.PDF);
+            reportOutput.setReportFormat(ReportFormat.PDF);
             reportId = reportViewerUtil.addReportToTempCache(reportOutput);
         } else
             addActionMessage(getText("objection.nohearingNotice"));
@@ -758,7 +758,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                 throw new ApplicationRuntimeException("Exception while generating Special Notcie : " + e);
             }
             reportOutput.setReportOutputData(bFile);
-            reportOutput.setReportFormat(FileFormat.PDF);
+            reportOutput.setReportFormat(ReportFormat.PDF);
             reportId = reportViewerUtil.addReportToTempCache(reportOutput);
         } else {
             if (WFLOW_ACTION_STEP_SIGN.equals(actionType) && notice == null)
@@ -794,7 +794,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
             reportInput = new ReportRequest(PropertyTaxConstants.REPORT_TEMPLATENAME_RP_SPECIAL_NOTICE, propertyNotice,
                     reportParams);
             reportInput.setPrintDialogOnOpenReport(true);
-            reportInput.setReportFormat(FileFormat.PDF);
+            reportInput.setReportFormat(ReportFormat.PDF);
             reportOutput = reportService.createReport(reportInput);
 
             final User user = securityUtils.getCurrentUser();
@@ -984,7 +984,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                     throw new ApplicationRuntimeException(HEARING_NOTCIE_EXCEPTION_MESSAGE + e);
                 }
                 reportOutput.setReportOutputData(bFile);
-                reportOutput.setReportFormat(FileFormat.PDF);
+                reportOutput.setReportFormat(ReportFormat.PDF);
                 reportId = reportViewerUtil.addReportToTempCache(reportOutput);
             }
         } else
@@ -1054,7 +1054,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                     throw new ApplicationRuntimeException(HEARING_NOTCIE_EXCEPTION_MESSAGE + e);
                 }
                 reportOutput.setReportOutputData(bFile);
-                reportOutput.setReportFormat(FileFormat.PDF);
+                reportOutput.setReportFormat(ReportFormat.PDF);
                 reportId = reportViewerUtil.addReportToTempCache(reportOutput);
             }
         }
@@ -1109,7 +1109,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                     throw new ApplicationRuntimeException(HEARING_NOTCIE_EXCEPTION_MESSAGE + e);
                 }
                 reportOutput.setReportOutputData(bFile);
-                reportOutput.setReportFormat(FileFormat.PDF);
+                reportOutput.setReportFormat(ReportFormat.PDF);
                 if (!WFLOW_ACTION_STEP_SIGN.equals(actionType))
                     reportId = reportViewerUtil.addReportToTempCache(reportOutput);
             }

@@ -81,7 +81,7 @@ import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.persistence.entity.enums.Gender;
 import org.egov.infra.persistence.entity.enums.UserType;
-import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
+import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
@@ -389,7 +389,7 @@ public class PropertyTransferService {
         // .getResolutionTime().toString());
 
         final ReportRequest reportInput = new ReportRequest("mainTransferPropertyAck", ackBean, reportParams);
-        reportInput.setReportFormat(FileFormat.PDF);
+        reportInput.setReportFormat(ReportFormat.PDF);
         return reportService.createReport(reportInput);
     }
 
@@ -413,7 +413,7 @@ public class PropertyTransferService {
                 throw new ApplicationRuntimeException("Exception while generating Mutation Certificate : " + e);
             }
             reportOutput.setReportOutputData(bFile);
-            reportOutput.setReportFormat(FileFormat.PDF);
+            reportOutput.setReportFormat(ReportFormat.PDF);
             propertyMutation.transition().end();
             basicProperty.setUnderWorkflow(false);
         } else {
@@ -464,7 +464,7 @@ public class PropertyTransferService {
 
             final ReportRequest reportInput = new ReportRequest(
                     PropertyTaxConstants.REPORT_TEMPLATENAME_TRANSFER_CERTIFICATE, noticeBean, reportParams);
-            reportInput.setReportFormat(FileFormat.PDF);
+            reportInput.setReportFormat(ReportFormat.PDF);
             reportOutput = reportService.createReport(reportInput);
             if (WFLOW_ACTION_STEP_SIGN.equals(actionType)) {
                 if (notice == null)

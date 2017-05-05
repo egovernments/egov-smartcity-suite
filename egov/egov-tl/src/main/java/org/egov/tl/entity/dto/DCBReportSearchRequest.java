@@ -40,7 +40,7 @@
 
 package org.egov.tl.entity.dto;
 
-import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
+import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.web.support.search.DataTableSearchRequest;
 
 public class DCBReportSearchRequest extends DataTableSearchRequest {
@@ -49,7 +49,7 @@ public class DCBReportSearchRequest extends DataTableSearchRequest {
 
     private String licensenumber;
 
-    private FileFormat printFormat;
+    private ReportFormat printFormat;
 
     public String getLicensenumber() {
         return licensenumber;
@@ -59,11 +59,11 @@ public class DCBReportSearchRequest extends DataTableSearchRequest {
         this.licensenumber = licensenumber;
     }
 
-    public FileFormat getPrintFormat() {
+    public ReportFormat getPrintFormat() {
         return printFormat;
     }
 
-    public void setPrintFormat(final FileFormat printFormat) {
+    public void setPrintFormat(final ReportFormat printFormat) {
         this.printFormat = printFormat;
     }
 

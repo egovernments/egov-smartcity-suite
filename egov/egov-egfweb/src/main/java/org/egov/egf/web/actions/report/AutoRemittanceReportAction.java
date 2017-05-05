@@ -57,7 +57,7 @@ import org.egov.egf.commons.EgovCommon;
 import org.egov.egf.model.AutoRemittanceBeanReport;
 import org.egov.eis.entity.DrawingOfficer;
 import org.egov.infra.admin.master.entity.Department;
-import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
+import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
@@ -291,7 +291,7 @@ public class AutoRemittanceReportAction extends BaseFormAction {
             map.put("autoremittanceList", autoRemittance);
             populateCOCLevelSummaryData();
             final ReportRequest reportInput = new ReportRequest(cocLevelJasperpath, map, getParamMap());
-            reportInput.setReportFormat(FileFormat.XLS);
+            reportInput.setReportFormat(ReportFormat.XLS);
             final ReportOutput reportOutput = reportService.createReport(reportInput);
             inputStream = new ByteArrayInputStream(reportOutput.getReportOutputData());
             return "summary-XLS";
@@ -299,7 +299,7 @@ public class AutoRemittanceReportAction extends BaseFormAction {
         else
         {
             final ReportRequest reportInput = new ReportRequest(deptLevelJasperpath, autoRemittance, getParamMap());
-            reportInput.setReportFormat(FileFormat.XLS);
+            reportInput.setReportFormat(ReportFormat.XLS);
             final ReportOutput reportOutput = reportService.createReport(reportInput);
             inputStream = new ByteArrayInputStream(reportOutput.getReportOutputData());
             return "XLS";

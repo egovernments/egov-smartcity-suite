@@ -101,7 +101,7 @@ import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.persistence.entity.Address;
-import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
+import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
@@ -390,7 +390,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
                 throw new ApplicationRuntimeException("Exception while generating Special Notcie : " + e);
             }
             reportOutput.setReportOutputData(bFile);
-            reportOutput.setReportFormat(FileFormat.PDF);
+            reportOutput.setReportFormat(ReportFormat.PDF);
             reportId = reportViewerUtil.addReportToTempCache(reportOutput);
             endWorkFlow(basicProperty);
         } else {
@@ -447,7 +447,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
                 throw new ApplicationRuntimeException("Exception while generating Special Notcie : " + e);
             }
             reportOutput.setReportOutputData(bFile);
-            reportOutput.setReportFormat(FileFormat.PDF);
+            reportOutput.setReportFormat(ReportFormat.PDF);
             reportId = reportViewerUtil.addReportToTempCache(reportOutput);
             endWorkFlow(basicProperty);
         } else {
@@ -523,7 +523,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
         }
         final ReportOutput reportOutput = new ReportOutput();
         reportOutput.setReportOutputData(bFile);
-        reportOutput.setReportFormat(FileFormat.PDF);
+        reportOutput.setReportFormat(ReportFormat.PDF);
         reportId = reportViewerUtil.addReportToTempCache(reportOutput);
         return NOTICE;
     }
@@ -580,7 +580,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
             reportInput = new ReportRequest(PropertyTaxConstants.REPORT_TEMPLATENAME_SPECIAL_NOTICE, propertyNotice,
                     reportParams);
             reportInput.setPrintDialogOnOpenReport(true);
-            reportInput.setReportFormat(FileFormat.PDF);
+            reportInput.setReportFormat(ReportFormat.PDF);
         }
         return reportInput;
     }
@@ -649,7 +649,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
                 reportParams);
         if (reportInput != null) {
             reportInput.setPrintDialogOnOpenReport(true);
-            reportInput.setReportFormat(FileFormat.PDF);
+            reportInput.setReportFormat(ReportFormat.PDF);
         }
         return reportInput;
     }
