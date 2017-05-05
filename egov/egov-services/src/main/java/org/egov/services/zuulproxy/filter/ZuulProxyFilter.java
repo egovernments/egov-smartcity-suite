@@ -59,6 +59,7 @@ import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.config.security.authentication.SecureUser;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.services.config.properties.ServicesApplicationProperties;
+import org.egov.services.wrapper.CustomHttpServletRequestWrapper;
 import org.egov.services.wrapper.CustomRequestWrapper;
 import org.egov.services.zuulproxy.models.Role;
 import org.egov.services.zuulproxy.models.UserInfo;
@@ -161,7 +162,7 @@ public class ZuulProxyFilter extends ZuulFilter {
             ctx.setRouteHost(routedHost);
             ctx.set(REQUEST_URI, routedHost.getPath());
 
-            final CustomRequestWrapper requestWrapper = new CustomRequestWrapper(ctx.getRequest());
+            final CustomHttpServletRequestWrapper requestWrapper = new CustomHttpServletRequestWrapper(ctx.getRequest());
             requestWrapper.addParameter(TENANT_ID, tenantId);
             ctx.setRequest(requestWrapper);
 
