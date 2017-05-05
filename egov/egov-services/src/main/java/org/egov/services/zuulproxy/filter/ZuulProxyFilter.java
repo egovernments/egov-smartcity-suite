@@ -43,8 +43,10 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 
@@ -160,6 +162,14 @@ public class ZuulProxyFilter extends ZuulFilter {
             final URL routedHost = new URL(mappingURL + endPointURI);
             ctx.setRouteHost(routedHost);
             ctx.set(REQUEST_URI, routedHost.getPath());
+            log.info(request.getParameterMap().toString());
+            log.info(routedHost.getQuery());
+            final Map qp = request.getParameterMap();
+            log.info("qp.toString() before setting tenantId ==> " + qp.toString());
+            qp.put(TENANT_ID, Arrays.asList(tenantId));
+            ctx.setRequestQueryParams(qp);
+            log.info("qp.get(TENANT_ID) after setting tenantId ==> " + qp.get(TENANT_ID));
+            log.info("ctx.getRouteHost()==> " + ctx.getRouteHost());
             final String userInfo = getUserInfo(request, springContext, tenantId);
             if (shouldPutUserInfoOnHeaders(ctx))
                 ctx.addZuulRequestHeader(USER_INFO_FIELD_NAME, userInfo);
