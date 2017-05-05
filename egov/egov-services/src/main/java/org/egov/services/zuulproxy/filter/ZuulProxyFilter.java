@@ -166,10 +166,11 @@ public class ZuulProxyFilter extends ZuulFilter {
             log.info(routedHost.getQuery());
             final Map qp = request.getParameterMap();
             log.info("qp.toString() before setting tenantId ==> " + qp.toString());
-            qp.put(TENANT_ID, Arrays.asList(tenantId));
+            qp.put(TENANT_ID, tenantId);
             ctx.setRequestQueryParams(qp);
             log.info("qp.get(TENANT_ID) after setting tenantId ==> " + qp.get(TENANT_ID));
-            log.info("ctx.getRouteHost()==> " + ctx.getRouteHost());
+            log.info("ctx.getRequestQueryParams()==> " + ctx.getRequestQueryParams());
+            
             final String userInfo = getUserInfo(request, springContext, tenantId);
             if (shouldPutUserInfoOnHeaders(ctx))
                 ctx.addZuulRequestHeader(USER_INFO_FIELD_NAME, userInfo);
