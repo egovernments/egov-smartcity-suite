@@ -43,6 +43,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -76,6 +77,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
+import com.netflix.zuul.util.HTTPRequestUtils;
 
 public class ZuulProxyFilter extends ZuulFilter {
 
@@ -159,28 +161,40 @@ public class ZuulProxyFilter extends ZuulFilter {
                 log.info("endPointURI  " + endPointURI);
 
             final URL routedHost = new URL(mappingURL + endPointURI);
-            ctx.setRouteHost(routedHost);
+            ctx.setRouteHost(routedHost); 
             ctx.set(REQUEST_URI, routedHost.getPath());
 
             /*
              * final CustomHttpServletRequestWrapper requestWrapper = new CustomHttpServletRequestWrapper(ctx.getRequest());
              * requestWrapper.addParameter(TENANT_ID, tenantId); ctx.setRequest(requestWrapper);
              */
-
-            final Map queryParams = addParameter(ctx.getRequest().getParameterMap(), TENANT_ID, tenantId);
-            ctx.setRequestQueryParams(queryParams);
-            if (log.isInfoEnabled())
+            
+          /*  final Map queryParams = addParameter(ctx.getRequest().getParameterMap(), TENANT_ID, tenantId);
+            ctx.setRequestQueryParams(queryParams);*/
+            
+            Map<String, List<String>> map = HTTPRequestUtils.getInstance().getQueryParams();
+            if (map == null) {
+                RequestContext.getCurrentContext().setRequestQueryParams(new HashMap<String, List<String>>());
+                map = HTTPRequestUtils.getInstance().getQueryParams();
+            }
+            map.put(TENANT_ID, Arrays.asList(tenantId));
+            ctx.setRequestQueryParams(map);
+            //ctx.getRequest().setAttribute(TENANT_ID, tenantId);
+            
+            if (log.isInfoEnabled()) {
                 // log.info("ctx.getRequest().getParameterMap()==> " + ctx.getRequest().getParameterMap().toString());
                 // log.info("ctx.getRequest().getParameterMap().get(TENANT_ID)[0]==> "
                 // + ctx.getRequest().getParameterMap().get(TENANT_ID)[0]);
                 log.info("ctx.getRequestQueryParams().toString()==> " + ctx.getRequestQueryParams().toString());
-
+                log.info("ctx.getRequest().getQueryString()   1 .. "+ ctx.getRequest().getQueryString()); 
+                log.info(ctx.getRequestQueryParams().get(TENANT_ID).toString());
+            }
             final String userInfo = getUserInfo(request, springContext, tenantId);
             if (shouldPutUserInfoOnHeaders(ctx))
                 ctx.addZuulRequestHeader(USER_INFO_FIELD_NAME, userInfo);
             else
                 appendUserInfoToRequestBody(ctx, userInfo);
-
+            
             if (log.isInfoEnabled())
                 log.info(".... end of processing request ...");
 
@@ -221,6 +235,8 @@ public class ZuulProxyFilter extends ZuulFilter {
         final CustomRequestWrapper requestWrapper = new CustomRequestWrapper(ctx.getRequest());
         requestWrapper.setPayload(mapper.writeValueAsString(requestBody));
         ctx.setRequest(requestWrapper);
+        if (log.isInfoEnabled())
+            log.info("ctx.getRequest().getQueryString()   "+ ctx.getRequest().getQueryString()); 
     }
 
     private HashMap<String, Object> getRequestBody(final RequestContext ctx) throws IOException {
