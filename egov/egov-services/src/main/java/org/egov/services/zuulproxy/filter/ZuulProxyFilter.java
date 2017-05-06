@@ -162,19 +162,24 @@ public class ZuulProxyFilter extends ZuulFilter {
             ctx.setRouteHost(routedHost);
             ctx.set(REQUEST_URI, routedHost.getPath());
 
-            final CustomHttpServletRequestWrapper requestWrapper = new CustomHttpServletRequestWrapper(ctx.getRequest());
+           /* final CustomHttpServletRequestWrapper requestWrapper = new CustomHttpServletRequestWrapper(ctx.getRequest());
             requestWrapper.addParameter(TENANT_ID, tenantId);
-            ctx.setRequest(requestWrapper);
-
-            log.info("ctx.getRequest().getParameterMap()==> " + ctx.getRequest().getParameterMap().toString());
-            log.info("ctx.getRequest().getParameterMap().get(TENANT_ID)[0]==> "
-                    + ctx.getRequest().getParameterMap().get(TENANT_ID)[0]);
+            ctx.setRequest(requestWrapper);*/
+           /* if (log.isInfoEnabled()) {
+                log.info("ctx.getRequest().getParameterMap()==> " + ctx.getRequest().getParameterMap().toString());
+                log.info("ctx.getRequest().getParameterMap().get(TENANT_ID)[0]==> "
+                        + ctx.getRequest().getParameterMap().get(TENANT_ID)[0]);
+            }*/
 
             final String userInfo = getUserInfo(request, springContext, tenantId);
             if (shouldPutUserInfoOnHeaders(ctx))
                 ctx.addZuulRequestHeader(USER_INFO_FIELD_NAME, userInfo);
             else
                 appendUserInfoToRequestBody(ctx, userInfo);
+            
+            if (log.isInfoEnabled())
+                log.info(".... end of processing request ...");
+            
         } catch (final MalformedURLException e) {
             throw new ApplicationRuntimeException("Could not form valid URL", e);
         } catch (final IOException ex) {
