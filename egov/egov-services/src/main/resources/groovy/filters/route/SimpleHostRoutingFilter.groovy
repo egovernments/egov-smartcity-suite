@@ -249,33 +249,44 @@ class SimpleHostRoutingFilter extends ZuulFilter {
     }
 
     String getQueryString() {
-        String encoding = "UTF-8"
-        HttpServletRequest request = RequestContext.getCurrentContext().getRequest();
-        String currentQueryString = request.getQueryString()
-        if (currentQueryString == null || currentQueryString.equals("")) {
-            return ""
-        }
-
-        String rebuiltQueryString = ""
-        for (String keyPair : currentQueryString.split("&")) {
-            if (rebuiltQueryString.length() > 0) {
-                rebuiltQueryString = rebuiltQueryString + "&"
-            }
-
-            if (keyPair.contains("=")) {
-                def (name,value) = keyPair.split("=", 2)
-                value = URLDecoder.decode(value, encoding)
-                value = new URI(null, null, null, value, null).toString().substring(1)
-                value = value.replaceAll('&', '%26')
-                rebuiltQueryString = rebuiltQueryString + name + "=" + value
-            } else {
-                def value = URLDecoder.decode(keyPair, encoding)
-                value = new URI(null, null, null, value, null).toString().substring(1)
-                rebuiltQueryString = rebuiltQueryString + value
-            }
-        }
-        return "?" + rebuiltQueryString
-    }
+	    String encoding = "UTF-8"
+	    HttpServletRequest request = RequestContext.getCurrentContext().getRequest();
+	    String currentQueryString = request.getQueryString()
+	
+	    //get the tenantId from the contextQueryParam map
+	    Map queryParams = RequestContext.getCurrentContext().getRequestQueryParams();
+	    String[] tenantId = queryParams.get("tenantId")
+	
+	    //always append the tenantId as the first query string value
+	    String rebuiltQueryString = "?tenantId=" + tenantId[0]
+	    
+	    if (currentQueryString == null || currentQueryString.equals("")) {
+	        return rebuiltQueryString
+	    }
+	    
+	    for (String keyPair : currentQueryString.split("&")) {
+	        if (rebuiltQueryString.length() > 0) {
+	            rebuiltQueryString = rebuiltQueryString + "&"
+	        }
+	
+	        if (keyPair.contains("=")) {
+	            def (name,value) = keyPair.split("=", 2)
+	            if("tenantId".equalsIgnoreCase(name)){
+	                //skip if we find tenantId in the query string sent by the client
+	                continue
+	            }
+	            value = URLDecoder.decode(value, encoding)
+	            value = new URI(null, null, null, value, null).toString().substring(1)
+	            value = value.replaceAll('&', '%26')
+	            rebuiltQueryString = rebuiltQueryString + name + "=" + value
+	        } else {
+	            def value = URLDecoder.decode(keyPair, encoding)
+	            value = new URI(null, null, null, value, null).toString().substring(1)
+	            rebuiltQueryString = rebuiltQueryString + value
+	        }
+	    }
+	    return rebuiltQueryString
+	}
 
     HttpHost getHttpHost() {
         HttpHost httpHost
