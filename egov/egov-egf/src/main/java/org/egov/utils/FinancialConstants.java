@@ -39,10 +39,11 @@
  */
 package org.egov.utils;
 
+import org.egov.infstr.utils.EGovConfig;
+
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.GregorianCalendar;
-
-import org.egov.infstr.utils.EGovConfig;
 
 /**
  *
@@ -368,4 +369,8 @@ public interface FinancialConstants {
     public static final String WARNING = "warning";
     public static final String NONE = "none";
     public static final String MODE_OF_PAYMENT = "Mode of Payment";
+
+    public static final String FINANCIAL_VOUCHER_INDEX_NAME = "financialsvoucherdata";
+    public static final SimpleDateFormat DATEFORMATTER_YYYY_MM_DD = new SimpleDateFormat("yyyy-MM-dd");
+
 }

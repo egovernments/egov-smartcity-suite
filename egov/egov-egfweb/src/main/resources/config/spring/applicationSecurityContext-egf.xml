@@ -85,6 +85,7 @@
 				<security:filter-chain pattern="/contra/contraBTB-beforeView.action" filters="none" />
 				<security:filter-chain pattern="/voucher/common-ajaxLoadAllBanks.action" filters="none" />
 				<security:filter-chain pattern="/payment/directBankPayment-beforeView.action" filters="none" />
+				<security:filter-chain pattern="/findashboard/*" filters="none" />
 				<security:filter-chain pattern="/**"  filters="concurrentSessionFilter,securityContextPersistenceFilter,logoutFilter,authenticationProcessingFilter,securityContextHolderAwareRequestFilter,rememberMeAuthenticationFilter,anonymousAuthenticationFilter,exceptionTranslationFilter,filterSecurityInterceptor" />
 			</list> 
 		</constructor-arg>
