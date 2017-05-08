@@ -170,7 +170,7 @@ public class ApplicationDocumentService {
     
     private static final String MODULE_PROPERTY_TAX = "Property Tax";
     
-    private static final String MODULE_WATER_TAX = "Water Tax";
+    private static final String MODULE_WATER_TAX = "Water Charges";
     
     private static final String MODULE_TRADE_LICENSE = "Trade License";
     
