@@ -85,7 +85,7 @@ public class ZuulProxyFilter extends ZuulFilter {
     private static final String PRE = "pre";
     private static final String CLIENT_ID = "client.id";
     private static final String GET = "GET";
-    private static final String FILESTORE_REGEX = "/filestore/.*";
+    private static final String FILESTORE_REGEX = "(.*)filestore(.*)";
     private static final String REQUEST_INFO_FIELD_NAME = "RequestInfo";
     private static final String USER_INFO_FIELD_NAME = "userInfo";
     private static final String SERVICES_CONTEXTROOT = "/services";
