@@ -62,7 +62,7 @@ public class EisSchedulerConfiguration extends QuartzSchedulerConfiguration {
 
     @Bean(destroyMethod = "destroy")
     public SchedulerFactoryBean eisScheduler(DataSource dataSource) {
-        SchedulerFactoryBean eisScheduler = createSchedular(dataSource);
+        SchedulerFactoryBean eisScheduler = createScheduler(dataSource);
         eisScheduler.setSchedulerName("eis-scheduler");
         eisScheduler.setAutoStartup(true);
         eisScheduler.setOverwriteExistingJobs(true);

@@ -62,7 +62,7 @@ public class WtmsSchedulerConfiguration extends QuartzSchedulerConfiguration {
 
     @Bean(destroyMethod = "destroy")
     public SchedulerFactoryBean wtmsScheduler(DataSource dataSource) {
-        SchedulerFactoryBean wtmsScheduler = createSchedular(dataSource);
+        SchedulerFactoryBean wtmsScheduler = createScheduler(dataSource);
         wtmsScheduler.setSchedulerName("wtms-scheduler");
         wtmsScheduler.setAutoStartup(true);
         wtmsScheduler.setOverwriteExistingJobs(true);

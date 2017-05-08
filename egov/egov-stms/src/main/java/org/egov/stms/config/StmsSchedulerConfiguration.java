@@ -62,7 +62,7 @@ public class StmsSchedulerConfiguration extends QuartzSchedulerConfiguration {
 
     @Bean(destroyMethod = "destroy")
     public SchedulerFactoryBean stmsScheduler(DataSource dataSource) {
-        SchedulerFactoryBean stmsScheduler = createSchedular(dataSource);
+        SchedulerFactoryBean stmsScheduler = createScheduler(dataSource);
         stmsScheduler.setSchedulerName("stms-scheduler");
         stmsScheduler.setAutoStartup(true);
         stmsScheduler.setOverwriteExistingJobs(true);

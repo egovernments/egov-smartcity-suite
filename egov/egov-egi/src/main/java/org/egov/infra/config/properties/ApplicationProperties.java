@@ -41,9 +41,10 @@
 package org.egov.infra.config.properties;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.core.annotation.Order;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.env.Environment;
 
 import java.util.Arrays;
@@ -52,7 +53,6 @@ import java.util.List;
 import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.egov.infra.config.core.GlobalSettings.DEFAULT_DATE_PATTERN_KEY;
-import static org.springframework.core.Ordered.LOWEST_PRECEDENCE;
 
 @Configuration
 @PropertySource(value = {
@@ -60,7 +60,6 @@ import static org.springframework.core.Ordered.LOWEST_PRECEDENCE;
         "classpath:config/egov-erp-${user.name}.properties",
         "classpath:config/application-config-${client.id}.properties",
         "classpath:config/egov-erp-override.properties"}, ignoreResourceNotFound = true)
-@Order(LOWEST_PRECEDENCE)
 public class ApplicationProperties {
 
     private static final String FILESTORE_BASE_DIR = "filestore.base.dir";
@@ -103,13 +102,20 @@ public class ApplicationProperties {
     private static final String MASTER_SERVER = "master.server";
     private static final String DB_MIGRATION_ENABLED = "db.migration.enabled";
     private static final String FLYWAY_VALIDATEON_MIGRATE = "db.flyway.validateon.migrate";
+    private static final String FLYWAY_MIGRATION_REPAIR = "db.flyway.migration.repair";
     private static final String SEARCH_HOSTS = "elasticsearch.hosts";
     private static final String SEARCH_PORT = "elasticsearch.port";
     private static final String SEARCH_CLUSTER_NAME = "elasticsearch.cluster.name";
     private static final String CDN_URL = "cdn.domain.url";
+    private static final String STATE_WIDE_SCHEMA_NAME = "statewide.schema.name";
 
     @Autowired
     private Environment environment;
+
+    @Bean
+    public static PropertySourcesPlaceholderConfigurer applicationPropertyPlaceHolderConfigurer() {
+        return new PropertySourcesPlaceholderConfigurer();
+    }
 
     public String fileStoreBaseDir() {
         return this.environment.getProperty(FILESTORE_BASE_DIR);
@@ -283,6 +289,10 @@ public class ApplicationProperties {
         return this.environment.getProperty(FLYWAY_VALIDATEON_MIGRATE, Boolean.class);
     }
 
+    public boolean flywayRepair() {
+        return this.environment.getProperty(FLYWAY_MIGRATION_REPAIR, Boolean.class);
+    }
+
     public List<String> searchHosts() {
         return Arrays.asList(environment.getProperty(SEARCH_HOSTS).split(","));
     }
@@ -301,5 +311,9 @@ public class ApplicationProperties {
 
     public String cdnURL() {
         return environment.getProperty(CDN_URL, EMPTY);
+    }
+
+    public String statewideSchemaName() {
+        return environment.getProperty(STATE_WIDE_SCHEMA_NAME);
     }
 }

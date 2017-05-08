@@ -41,25 +41,23 @@
 package org.egov.infra.config.persistence.multitenancy;
 
 import org.hibernate.HibernateException;
-import org.hibernate.cfg.AvailableSettings;
-import org.hibernate.engine.config.spi.ConfigurationService;
 import org.hibernate.engine.jdbc.connections.spi.AbstractMultiTenantConnectionProvider;
 import org.hibernate.engine.jdbc.connections.spi.MultiTenantConnectionProvider;
 import org.hibernate.service.UnknownUnwrapTypeException;
-import org.hibernate.service.spi.ServiceRegistryAwareService;
-import org.hibernate.service.spi.ServiceRegistryImplementor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Map;
 
-public class MultiTenantSchemaConnectionProvider implements MultiTenantConnectionProvider, ServiceRegistryAwareService {
+public class MultiTenantSchemaConnectionProvider implements MultiTenantConnectionProvider {
     private static final long serialVersionUID = -6022082859572861041L;
     private static final Logger LOG = LoggerFactory.getLogger(MultiTenantSchemaConnectionProvider.class);
-    private transient DataSource dataSource;
+
+    @Autowired
+    private DataSource dataSource;
 
     @Override
     public Connection getAnyConnection() throws SQLException {
@@ -67,27 +65,27 @@ public class MultiTenantSchemaConnectionProvider implements MultiTenantConnectio
     }
 
     @Override
-    public void releaseAnyConnection(final Connection connection) throws SQLException {
+    public void releaseAnyConnection(Connection connection) throws SQLException {
         connection.close();
     }
 
     @Override
-    public Connection getConnection(final String tenantId) throws SQLException {
+    public Connection getConnection(String tenantId) throws SQLException {
         try {
             Connection connection = getAnyConnection();
             connection.setSchema(tenantId);
             return connection;
-        } catch (final SQLException e) {
+        } catch (SQLException e) {
             LOG.error("Error occurred while switching tenant schema upon getting connection", e);
             throw new HibernateException("Could not alter JDBC connection to specified schema [" + tenantId + "]", e);
         }
     }
 
     @Override
-    public void releaseConnection(final String tenantId, final Connection connection) throws SQLException {
+    public void releaseConnection(String tenantId, Connection connection) throws SQLException {
         try {
             connection.setSchema(tenantId);
-        } catch (final SQLException e) {
+        } catch (SQLException e) {
             LOG.warn("Error occurred while switching schema upon release connection", e);
         }
         releaseAnyConnection(connection);
@@ -99,22 +97,16 @@ public class MultiTenantSchemaConnectionProvider implements MultiTenantConnectio
     }
 
     @Override
-    public boolean isUnwrappableAs(final Class unwrapType) {
+    public boolean isUnwrappableAs(Class unwrapType) {
         return MultiTenantConnectionProvider.class.equals(unwrapType)
                 || AbstractMultiTenantConnectionProvider.class.isAssignableFrom(unwrapType);
     }
 
     @Override
-    public <T> T unwrap(final Class<T> unwrapType) {
+    public <T> T unwrap(Class<T> unwrapType) {
         if (isUnwrappableAs(unwrapType))
             return (T) this;
         else
             throw new UnknownUnwrapTypeException(unwrapType);
-    }
-
-    @Override
-    public void injectServices(final ServiceRegistryImplementor serviceRegistry) {
-        final Map<String, Object> settings = serviceRegistry.getService(ConfigurationService.class).getSettings();
-        dataSource = (DataSource) settings.get(AvailableSettings.DATASOURCE);
     }
 }

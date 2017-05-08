@@ -60,8 +60,6 @@ import static java.lang.String.format;
 @Configuration
 public class DBMigrationConfiguration {
 
-    public static final String PUBLIC_SCHEMA = "public";
-
     @Autowired
     private ApplicationProperties applicationProperties;
 
@@ -77,22 +75,21 @@ public class DBMigrationConfiguration {
             String tenantMigrationFilePath = applicationProperties.getProperty("db.flyway.tenant.migration.file.path");
             boolean devMode = applicationProperties.devMode();
             cities.stream().forEach(schema -> {
-                if (devMode) {
-                    migrateDatabase(dataSource, schema, mainMigrationFilePath, sampleMigrationFilePath,
-                            format(tenantMigrationFilePath, schema));
-                } else {
-                    migrateDatabase(dataSource, schema, mainMigrationFilePath,
-                            format(tenantMigrationFilePath, schema));
-                }
+                if (devMode)
+                    migrateDatabase(dataSource, schema,
+                            mainMigrationFilePath, sampleMigrationFilePath, format(tenantMigrationFilePath, schema));
+                else
+                    migrateDatabase(dataSource, schema,
+                            mainMigrationFilePath, format(tenantMigrationFilePath, schema));
             });
 
             if (applicationProperties.statewideMigrationRequired() && !devMode) {
                 String statewideMigrationFilePath = applicationProperties.getProperty("db.flyway.statewide.migration.file.path");
-                migrateDatabase(dataSource, PUBLIC_SCHEMA, mainMigrationFilePath, statewideMigrationFilePath,
-                        format(tenantMigrationFilePath, PUBLIC_SCHEMA));
+                String statewideSchemaName = applicationProperties.getProperty("statewide.schema.name");
+                migrateDatabase(dataSource, statewideSchemaName, mainMigrationFilePath, statewideMigrationFilePath);
             } else if (!devMode) {
-                migrateDatabase(dataSource, PUBLIC_SCHEMA, mainMigrationFilePath,
-                        format(tenantMigrationFilePath, PUBLIC_SCHEMA));
+                String statewideSchemaName = applicationProperties.getProperty("statewide.schema.name");
+                migrateDatabase(dataSource, statewideSchemaName, mainMigrationFilePath);
             }
         }
 
@@ -107,6 +104,8 @@ public class DBMigrationConfiguration {
         flyway.setLocations(locations);
         flyway.setDataSource(dataSource);
         flyway.setSchemas(schema);
+        if (applicationProperties.flywayRepair())
+            flyway.repair();
         flyway.migrate();
     }
 

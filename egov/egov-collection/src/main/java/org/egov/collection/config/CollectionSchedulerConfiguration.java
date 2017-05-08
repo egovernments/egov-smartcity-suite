@@ -67,7 +67,7 @@ public class CollectionSchedulerConfiguration extends QuartzSchedulerConfigurati
 
     @Bean(destroyMethod = "destroy")
     public SchedulerFactoryBean collectionScheduler(DataSource dataSource) {
-        SchedulerFactoryBean collectionScheduler = createSchedular(dataSource);
+        SchedulerFactoryBean collectionScheduler = createScheduler(dataSource);
         collectionScheduler.setSchedulerName("collection-scheduler");
         collectionScheduler.setAutoStartup(true);
         collectionScheduler.setOverwriteExistingJobs(true);

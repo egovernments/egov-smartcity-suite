@@ -62,7 +62,7 @@ public class AdTaxSchedulerConfiguration extends QuartzSchedulerConfiguration {
 
     @Bean(destroyMethod = "destroy")
     public SchedulerFactoryBean adTaxScheduler(DataSource dataSource) {
-        SchedulerFactoryBean adTaxScheduler = createSchedular(dataSource);
+        SchedulerFactoryBean adTaxScheduler = createScheduler(dataSource);
         adTaxScheduler.setSchedulerName("adtax-scheduler");
         adTaxScheduler.setAutoStartup(true);
         adTaxScheduler.setOverwriteExistingJobs(true);

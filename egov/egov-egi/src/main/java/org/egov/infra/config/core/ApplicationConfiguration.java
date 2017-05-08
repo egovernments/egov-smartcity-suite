@@ -120,7 +120,7 @@ public class ApplicationConfiguration {
     public List<String> cities() {
         final List<String> cities = new ArrayList<>(tenants);
         if (!applicationProperties.devMode())
-            cities.remove("public");
+            cities.remove(applicationProperties.statewideSchemaName());
         return cities;
     }
 

@@ -61,7 +61,7 @@ public class PgrSchedulerConfiguration extends QuartzSchedulerConfiguration {
 
     @Bean(destroyMethod = "destroy")
     public SchedulerFactoryBean pgrScheduler(DataSource dataSource) {
-        SchedulerFactoryBean pgrScheduler = createSchedular(dataSource);
+        SchedulerFactoryBean pgrScheduler = createScheduler(dataSource);
         pgrScheduler.setSchedulerName("pgr-scheduler");
         pgrScheduler.setAutoStartup(true);
         pgrScheduler.setOverwriteExistingJobs(true);
