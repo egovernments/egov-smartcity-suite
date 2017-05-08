@@ -49,7 +49,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.CollectionSummaryHeadWiseReport;
 import org.egov.collection.entity.CollectionSummaryHeadWiseReportResult;
