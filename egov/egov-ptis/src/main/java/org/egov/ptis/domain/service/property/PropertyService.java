@@ -3533,6 +3533,7 @@ public class PropertyService {
      * @param basicProperty
      * @return Total property tax due
      */
+    @ReadOnly
     public BigDecimal getTotalPropertyTaxDue(final BasicProperty basicProperty) {
         final Map<String, BigDecimal> propertyTaxDetails = ptDemandDAO.getDemandCollMap(basicProperty.getProperty());
         Map<String, BigDecimal> currentTaxAndDue = getCurrentTaxAndBalance(propertyTaxDetails,
@@ -3557,6 +3558,7 @@ public class PropertyService {
             return Collections.emptySet();
     }
     
+    @ReadOnly
     public BigDecimal getTotalPropertyTaxDueIncludingPenalty(final BasicProperty basicProperty) {
         final Map<String, BigDecimal> propertyTaxDetails = ptDemandDAO.getDemandIncludingPenaltyCollMap(basicProperty.getProperty());
         BigDecimal crntFirstHalfTaxDue = propertyTaxDetails.get(CURR_FIRSTHALF_DMD_STR).subtract(

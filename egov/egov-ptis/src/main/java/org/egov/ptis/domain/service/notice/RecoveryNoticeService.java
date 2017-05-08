@@ -84,6 +84,7 @@ import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.ModuleService;
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
@@ -589,7 +590,8 @@ public class RecoveryNoticeService {
 
         prepareDemandBillDetails(reportParams, basicProperty);
     }
-
+    
+    @ReadOnly
     private Query getSearchQuery(final NoticeRequest noticeRequest) {
         final Map<String, Object> params = new HashMap<>();
         final StringBuilder query = new StringBuilder(500);
