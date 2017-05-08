@@ -56,20 +56,24 @@ import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.CollectionSummaryReport;
 import org.egov.collection.entity.CollectionSummaryReportResult;
 import org.egov.collection.entity.OnlinePaymentResult;
+import org.egov.infra.config.properties.ApplicationProperties;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.BigDecimalType;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class CollectionReportService {
+    private static final Logger LOGGER = Logger.getLogger(CollectionReportService.class);
 
     @PersistenceContext
     EntityManager entityManager;
 
-    private static final Logger LOGGER = Logger.getLogger(CollectionReportService.class);
+    @Autowired
+    ApplicationProperties applicationProperties;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -79,7 +83,8 @@ public class CollectionReportService {
             final String toDate, final String transactionId) {
         final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
         final StringBuilder queryStr = new StringBuilder(500);
-        queryStr.append("select * from public.onlinepayment_view opv where 1=1");
+        queryStr.append("select * from ").append(applicationProperties.statewideSchemaName())
+                .append("onlinepayment_view opv where 1=1");
 
         if (StringUtils.isNotBlank(districtName))
             queryStr.append(" and opv.districtName=:districtName ");
@@ -115,8 +120,8 @@ public class CollectionReportService {
     }
 
     public List<Object[]> getUlbNames(final String districtName) {
-        final StringBuilder queryStr = new StringBuilder(
-                "select distinct ulbname from public.onlinepayment_view opv where 1=1");
+        final StringBuilder queryStr = new StringBuilder("select distinct ulbname from ").append(
+                applicationProperties.statewideSchemaName()).append("onlinepayment_view opv where 1=1");
         if (StringUtils.isNotBlank(districtName))
             queryStr.append(" and opv.districtName=:districtName ");
         final SQLQuery query = getCurrentSession().createSQLQuery(queryStr.toString());
@@ -126,7 +131,8 @@ public class CollectionReportService {
     }
 
     public List<Object[]> getDistrictNames() {
-        final StringBuilder queryStr = new StringBuilder("select distinct districtname from public.onlinepayment_view");
+        final StringBuilder queryStr = new StringBuilder("select distinct districtname from ").append(
+                applicationProperties.statewideSchemaName()).append("onlinepayment_view");
         final SQLQuery query = getCurrentSession().createSQLQuery(queryStr.toString());
         return query.list();
     }
@@ -291,7 +297,8 @@ public class CollectionReportService {
                 .append(" ) AS RESULT GROUP BY RESULT.source,RESULT.counterName,RESULT.employeeName,RESULT.USERID,RESULT.serviceName order by source,employeeName, serviceName ");
 
         final SQLQuery query = (SQLQuery) getCurrentSession().createSQLQuery(finalQueryStr.toString())
-                .addScalar("cashCount", org.hibernate.type.StringType.INSTANCE).addScalar("cashAmount", BigDecimalType.INSTANCE)
+                .addScalar("cashCount", org.hibernate.type.StringType.INSTANCE)
+                .addScalar("cashAmount", BigDecimalType.INSTANCE)
                 .addScalar("chequeddCount", org.hibernate.type.StringType.INSTANCE)
                 .addScalar("chequeddAmount", BigDecimalType.INSTANCE)
                 .addScalar("onlineCount", org.hibernate.type.StringType.INSTANCE)
@@ -300,13 +307,15 @@ public class CollectionReportService {
                 .addScalar("serviceName", org.hibernate.type.StringType.INSTANCE)
                 .addScalar("counterName", org.hibernate.type.StringType.INSTANCE)
                 .addScalar("employeeName", org.hibernate.type.StringType.INSTANCE)
-                .addScalar("bankCount", org.hibernate.type.StringType.INSTANCE).addScalar("bankAmount", BigDecimalType.INSTANCE)
-                .addScalar("cardAmount", BigDecimalType.INSTANCE).addScalar("cardCount", org.hibernate.type.StringType.INSTANCE)
+                .addScalar("bankCount", org.hibernate.type.StringType.INSTANCE)
+                .addScalar("bankAmount", BigDecimalType.INSTANCE).addScalar("cardAmount", BigDecimalType.INSTANCE)
+                .addScalar("cardCount", org.hibernate.type.StringType.INSTANCE)
                 .addScalar("totalReceiptCount", org.hibernate.type.StringType.INSTANCE)
                 .setResultTransformer(Transformers.aliasToBean(CollectionSummaryReport.class));
 
         final SQLQuery aggrQuery = (SQLQuery) getCurrentSession().createSQLQuery(finalAggregateQryStr.toString())
-                .addScalar("cashCount", org.hibernate.type.StringType.INSTANCE).addScalar("cashAmount", BigDecimalType.INSTANCE)
+                .addScalar("cashCount", org.hibernate.type.StringType.INSTANCE)
+                .addScalar("cashAmount", BigDecimalType.INSTANCE)
                 .addScalar("chequeddCount", org.hibernate.type.StringType.INSTANCE)
                 .addScalar("chequeddAmount", BigDecimalType.INSTANCE)
                 .addScalar("onlineCount", org.hibernate.type.StringType.INSTANCE)
@@ -315,8 +324,9 @@ public class CollectionReportService {
                 .addScalar("serviceName", org.hibernate.type.StringType.INSTANCE)
                 .addScalar("counterName", org.hibernate.type.StringType.INSTANCE)
                 .addScalar("employeeName", org.hibernate.type.StringType.INSTANCE)
-                .addScalar("bankCount", org.hibernate.type.StringType.INSTANCE).addScalar("bankAmount", BigDecimalType.INSTANCE)
-                .addScalar("cardAmount", BigDecimalType.INSTANCE).addScalar("cardCount", org.hibernate.type.StringType.INSTANCE)
+                .addScalar("bankCount", org.hibernate.type.StringType.INSTANCE)
+                .addScalar("bankAmount", BigDecimalType.INSTANCE).addScalar("cardAmount", BigDecimalType.INSTANCE)
+                .addScalar("cardCount", org.hibernate.type.StringType.INSTANCE)
                 .addScalar("totalReceiptCount", org.hibernate.type.StringType.INSTANCE)
                 .setResultTransformer(Transformers.aliasToBean(CollectionSummaryReport.class));
         if (!source.isEmpty() && !source.equals(CollectionConstants.ALL)) {
@@ -379,10 +389,8 @@ public class CollectionReportService {
             if (collectionSummaryReport.getCardAmount() == null)
                 collectionSummaryReport.setCardAmount(BigDecimal.ZERO);
             collectionSummaryReport.setTotalAmount(collectionSummaryReport.getCardAmount()
-                    .add(collectionSummaryReport.getBankAmount())
-                    .add(collectionSummaryReport.getOnlineAmount())
-                    .add(collectionSummaryReport.getChequeddAmount())
-                    .add(collectionSummaryReport.getCashAmount()));
+                    .add(collectionSummaryReport.getBankAmount()).add(collectionSummaryReport.getOnlineAmount())
+                    .add(collectionSummaryReport.getChequeddAmount()).add(collectionSummaryReport.getCashAmount()));
 
         }
         return queryResults;

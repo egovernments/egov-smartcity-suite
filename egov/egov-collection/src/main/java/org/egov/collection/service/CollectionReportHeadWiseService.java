@@ -39,7 +39,6 @@
  */
 package org.egov.collection.service;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -54,10 +53,8 @@ import org.apache.log4j.Logger;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.CollectionSummaryHeadWiseReport;
 import org.egov.collection.entity.CollectionSummaryHeadWiseReportResult;
-import org.egov.collection.entity.OnlinePaymentResult;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
-import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.DoubleType;
 import org.springframework.stereotype.Service;
@@ -68,65 +65,8 @@ public class CollectionReportHeadWiseService {
     @PersistenceContext
     EntityManager entityManager;
 
-    private static final Logger LOGGER = Logger.getLogger(CollectionReportHeadWiseService.class);
-
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
-    }
-
-    public SQLQuery getOnlinePaymentReportData(final String districtName, final String ulbName, final String fromDate,
-            final String toDate, final String transactionId) {
-        final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
-        final StringBuilder queryStr = new StringBuilder(500);
-        queryStr.append("select * from public.onlinepayment_view opv where 1=1");
-
-        if (StringUtils.isNotBlank(districtName))
-            queryStr.append(" and opv.districtName=:districtName ");
-        if (StringUtils.isNotBlank(ulbName))
-            queryStr.append(" and opv.ulbName=:ulbName ");
-        if (StringUtils.isNotBlank(fromDate))
-            queryStr.append(" and opv.transactiondate>=:fromDate ");
-        if (StringUtils.isNotBlank(toDate))
-            queryStr.append(" and opv.transactiondate<=:toDate ");
-        if (StringUtils.isNotBlank(transactionId))
-            queryStr.append(" and opv.transactionnumber like :transactionnumber ");
-        queryStr.append(" order by receiptdate desc ");
-
-        final SQLQuery query = getCurrentSession().createSQLQuery(queryStr.toString());
-
-        if (StringUtils.isNotBlank(districtName))
-            query.setString("districtName", districtName);
-        if (StringUtils.isNotBlank(ulbName))
-            query.setString("ulbName", ulbName);
-        try {
-            if (StringUtils.isNotBlank(fromDate))
-                query.setDate("fromDate", dateFormatter.parse(fromDate));
-            if (StringUtils.isNotBlank(toDate))
-                query.setDate("toDate", dateFormatter.parse(toDate));
-        } catch (final ParseException e) {
-            LOGGER.error("Exception parsing Date" + e.getMessage());
-        }
-        if (StringUtils.isNotBlank(transactionId))
-            query.setString("transactionnumber", "%" + transactionId + "%");
-        queryStr.append(" order by opv.receiptdate desc");
-        query.setResultTransformer(new AliasToBeanResultTransformer(OnlinePaymentResult.class));
-        return query;
-    }
-
-    public List<Object[]> getUlbNames(final String districtName) {
-        final StringBuilder queryStr = new StringBuilder("select distinct ulbname from public.onlinepayment_view opv where 1=1");
-        if (StringUtils.isNotBlank(districtName))
-            queryStr.append(" and opv.districtName=:districtName ");
-        final SQLQuery query = getCurrentSession().createSQLQuery(queryStr.toString());
-        if (StringUtils.isNotBlank(districtName))
-            query.setString("districtName", districtName);
-        return query.list();
-    }
-
-    public List<Object[]> getDistrictNames() {
-        final StringBuilder queryStr = new StringBuilder("select distinct districtname from public.onlinepayment_view");
-        final SQLQuery query = getCurrentSession().createSQLQuery(queryStr.toString());
-        return query.list();
     }
 
     public CollectionSummaryHeadWiseReportResult getCollectionSummaryReport(final Date fromDate, final Date toDate,
@@ -344,14 +284,13 @@ public class CollectionReportHeadWiseService {
             if (collectionSummaryHeadWiseReport.getTotalReceiptCount() == null)
                 collectionSummaryHeadWiseReport.setTotalReceiptCount("");
             if (collectionSummaryHeadWiseReport.getCashAmount() == null)
-                collectionSummaryHeadWiseReport.setCashAmount(new Double(0.0));
+                collectionSummaryHeadWiseReport.setCashAmount(0.0);
             if (collectionSummaryHeadWiseReport.getChequeddAmount() == null)
-                collectionSummaryHeadWiseReport.setChequeddAmount(new Double(0.0));
+                collectionSummaryHeadWiseReport.setChequeddAmount(0.0);
             if (collectionSummaryHeadWiseReport.getOnlineAmount() == null)
-                collectionSummaryHeadWiseReport.setOnlineAmount(new Double(0.0));
+                collectionSummaryHeadWiseReport.setOnlineAmount(0.0);
             if (collectionSummaryHeadWiseReport.getCardAmount() == null)
-                collectionSummaryHeadWiseReport.setCardAmount(new Double(0.0));
-            new Double(0.0);
+                collectionSummaryHeadWiseReport.setCardAmount(0.0);
             collectionSummaryHeadWiseReport.getOnlineAmount();
             collectionSummaryHeadWiseReport.setTotalAmount(Double.sum(collectionSummaryHeadWiseReport.getCardAmount(),
                     Double.sum(collectionSummaryHeadWiseReport.getChequeddAmount(),

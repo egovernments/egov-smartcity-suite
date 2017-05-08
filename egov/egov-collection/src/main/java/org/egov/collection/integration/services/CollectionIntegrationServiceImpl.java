@@ -80,6 +80,7 @@ import org.egov.commons.entity.Source;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.config.properties.ApplicationProperties;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
@@ -125,6 +126,9 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
 
     @Autowired
     private ApplicationContext beanProvider;
+    
+    @Autowired
+    ApplicationProperties applicationProperties;
 
     public CollectionIntegrationServiceImpl() {
         super(ReceiptHeader.class);
@@ -489,7 +493,8 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
 
         final List<RestAggregatePaymentInfo> listAggregatePaymentInfo = new ArrayList<>(0);
         final StringBuilder queryBuilder = new StringBuilder(
-                "select  sum(recordcount) as records,ulb, sum(total) as total,service  from public.receipt_aggr_view "
+                "select  sum(recordcount) as records,ulb, sum(total) as total,service  from ").append(applicationProperties.statewideSchemaName())
+                .append("receipt_aggr_view "
                         + " where receipt_date>=:fromDate and receipt_date<=:toDate and service=:serviceCode "
                         + " and source=:source and ulb=:ulbCode  group by ulb,service  ");
 
