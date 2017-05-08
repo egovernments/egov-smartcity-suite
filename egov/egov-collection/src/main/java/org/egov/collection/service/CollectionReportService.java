@@ -84,7 +84,7 @@ public class CollectionReportService {
         final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
         final StringBuilder queryStr = new StringBuilder(500);
         queryStr.append("select * from ").append(applicationProperties.statewideSchemaName())
-                .append("onlinepayment_view opv where 1=1");
+                .append(".onlinepayment_view opv where 1=1");
 
         if (StringUtils.isNotBlank(districtName))
             queryStr.append(" and opv.districtName=:districtName ");
@@ -121,7 +121,7 @@ public class CollectionReportService {
 
     public List<Object[]> getUlbNames(final String districtName) {
         final StringBuilder queryStr = new StringBuilder("select distinct ulbname from ").append(
-                applicationProperties.statewideSchemaName()).append("onlinepayment_view opv where 1=1");
+                applicationProperties.statewideSchemaName()).append(".onlinepayment_view opv where 1=1");
         if (StringUtils.isNotBlank(districtName))
             queryStr.append(" and opv.districtName=:districtName ");
         final SQLQuery query = getCurrentSession().createSQLQuery(queryStr.toString());
@@ -132,7 +132,7 @@ public class CollectionReportService {
 
     public List<Object[]> getDistrictNames() {
         final StringBuilder queryStr = new StringBuilder("select distinct districtname from ").append(
-                applicationProperties.statewideSchemaName()).append("onlinepayment_view");
+                applicationProperties.statewideSchemaName()).append(".onlinepayment_view");
         final SQLQuery query = getCurrentSession().createSQLQuery(queryStr.toString());
         return query.list();
     }

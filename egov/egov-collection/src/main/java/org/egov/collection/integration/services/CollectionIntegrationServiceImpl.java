@@ -494,7 +494,7 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
         final List<RestAggregatePaymentInfo> listAggregatePaymentInfo = new ArrayList<>(0);
         final StringBuilder queryBuilder = new StringBuilder(
                 "select  sum(recordcount) as records,ulb, sum(total) as total,service  from ").append(applicationProperties.statewideSchemaName())
-                .append("receipt_aggr_view "
+                .append(".receipt_aggr_view "
                         + " where receipt_date>=:fromDate and receipt_date<=:toDate and service=:serviceCode "
                         + " and source=:source and ulb=:ulbCode  group by ulb,service  ");
 
