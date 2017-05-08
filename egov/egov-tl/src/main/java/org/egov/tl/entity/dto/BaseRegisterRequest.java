@@ -40,7 +40,7 @@
 
 package org.egov.tl.entity.dto;
 
-import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
+import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.web.support.search.DataTableSearchRequest;
 
 public class BaseRegisterRequest extends DataTableSearchRequest {
@@ -55,7 +55,7 @@ public class BaseRegisterRequest extends DataTableSearchRequest {
 
     private String filterName;
 
-    private FileFormat printFormat;
+    private ReportFormat printFormat;
 
     public Long getCategoryId() {
         return categoryId;
@@ -97,11 +97,11 @@ public class BaseRegisterRequest extends DataTableSearchRequest {
         this.filterName = filterName;
     }
 
-    public FileFormat getPrintFormat() {
+    public ReportFormat getPrintFormat() {
         return printFormat;
     }
 
-    public void setPrintFormat(final FileFormat printFormat) {
+    public void setPrintFormat(final ReportFormat printFormat) {
         this.printFormat = printFormat;
     }
 

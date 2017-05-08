@@ -72,9 +72,9 @@ import org.egov.tl.entity.LicenseAppType;
 import org.egov.tl.entity.LicenseDemand;
 import org.egov.tl.entity.LicenseDocument;
 import org.egov.tl.entity.LicenseDocumentType;
+import org.egov.tl.entity.LicenseSubCategoryDetails;
 import org.egov.tl.entity.NatureOfBusiness;
 import org.egov.tl.entity.TradeLicense;
-import org.egov.tl.entity.LicenseSubCategoryDetails;
 import org.egov.tl.entity.WorkflowBean;
 import org.egov.tl.entity.enums.ApplicationType;
 import org.egov.tl.entity.enums.RateTypeEnum;
@@ -101,36 +101,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import static java.math.BigDecimal.ZERO;
-import static org.egov.tl.utils.Constants.CSCOPERATOR;
-import static org.egov.tl.utils.Constants.LICENSE_STATUS_ACKNOWLEDGED;
-import static org.egov.tl.utils.Constants.RENEWAL_NATUREOFWORK;
-import static org.egov.tl.utils.Constants.NEW_NATUREOFWORK;
-import static org.egov.tl.utils.Constants.PUBLIC_HEALTH_DEPT;
-import static org.egov.tl.utils.Constants.DELIMITER_COLON;
-import static org.egov.tl.utils.Constants.TRADELICENSEMODULE;
-import static org.egov.tl.utils.Constants.APPLICATION_STATUS_CREATED_CODE;
-import static org.egov.tl.utils.Constants.JA_DESIGNATION;
-import static org.egov.tl.utils.Constants.SA_DESIGNATION;
-import static org.egov.tl.utils.Constants.RC_DESIGNATION;
-import static org.egov.tl.utils.Constants.LICENSE_FEE_TYPE;
-import static org.egov.tl.utils.Constants.BUTTONREJECT;
-import static org.egov.tl.utils.Constants.WORKFLOW_STATE_REJECTED;
-import static org.egov.tl.utils.Constants.WF_STATE_SANITORY_INSPECTOR_APPROVAL_PENDING;
-import static org.egov.tl.utils.Constants.GENERATECERTIFICATE;
-import static org.egov.tl.utils.Constants.BUTTONAPPROVE;
-import static org.egov.tl.utils.Constants.CLOSURE_NATUREOFTASK;
-import static org.egov.tl.utils.Constants.LICENSE_STATUS_ACTIVE;
-import static org.egov.tl.utils.Constants.APPLICATION_STATUS_SECONDCOLLECTION_CODE;
-import static org.egov.tl.utils.Constants.APPLICATION_STATUS_APPROVED_CODE;
-import static org.egov.tl.utils.Constants.WF_COMMISSIONER_APPRVD_WITHOUT_COLLECTION;
-import static org.egov.tl.utils.Constants.WF_CERTIFICATE_GEN_PENDING;
-import static org.egov.tl.utils.Constants.WF_ACTION_DIGI_PENDING;
-import static org.egov.tl.utils.Constants.WF_ACTION_DIGI_SIGN_COMMISSION_NO_COLLECTION;
-import static org.egov.tl.utils.Constants.PENALTY_DMD_REASON_CODE;
-import static org.egov.tl.utils.Constants.APPLICATION_STATUS_GENECERT_CODE;
-import static org.egov.tl.utils.Constants.LICENSE_STATUS_UNDERWORKFLOW;
-import static org.egov.tl.utils.Constants.LICENSE_STATUS_CANCELLED;
-import static org.egov.tl.utils.Constants.APPLICATION_STATUS_CANCELLED;
+import static org.egov.tl.utils.Constants.*;
 
 @Transactional(readOnly = true)
 public abstract class AbstractLicenseService<T extends License> {
@@ -832,10 +803,6 @@ public abstract class AbstractLicenseService<T extends License> {
                     egwStatusHibernateDAO.getStatusByModuleAndCode(TRADELICENSEMODULE, APPLICATION_STATUS_CREATED_CODE));
         } else
             throw new ValidationException(LICENSE_WF_INITIATOR_NOT_DEFINED, LICENSE_WF_INITIATOR_NOT_DEFINED);
-    }
-
-    public boolean checkOldLicenseNumberIsDuplicated(final T t) {
-        return licenseRepository.findByOldLicenseNumberAndIdIsNot(t.getOldLicenseNumber(), t.getId()) != null;
     }
 
     public List<License> getLicensesForDemandGeneration(final String natureOfBusiness, final CFinancialYear installmentYear) {

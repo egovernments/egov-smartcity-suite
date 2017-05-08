@@ -157,6 +157,7 @@ import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.elasticsearch.entity.ApplicationIndex;
 import org.egov.infra.elasticsearch.entity.enums.ApprovalStatus;
 import org.egov.infra.elasticsearch.entity.enums.ClosureStatus;
@@ -2154,7 +2155,7 @@ public class PropertyService {
             } else {
                 applicationIndex.setStatus(property.getState().getValue());
                 if (applictionType.equalsIgnoreCase(APPLICATION_TYPE_NEW_ASSESSENT)
-                        || applictionType.equalsIgnoreCase(APPLICATION_TYPE_ALTER_ASSESSENT) 
+                        || applictionType.equalsIgnoreCase(APPLICATION_TYPE_ALTER_ASSESSENT)
                         || applictionType.equalsIgnoreCase(APPLICATION_TYPE_BIFURCATE_ASSESSENT)
                         || applictionType.equalsIgnoreCase(APPLICATION_TYPE_TAX_EXEMTION)
                         || applictionType.equalsIgnoreCase(APPLICATION_TYPE_DEMOLITION)
@@ -2171,14 +2172,13 @@ public class PropertyService {
                                     : property.getState().getValue().contains(WF_STATE_REJECTED)
                                             || property.getState().getValue().contains(WF_STATE_CLOSED) ? ApprovalStatus.REJECTED
                                                     : ApprovalStatus.INPROGRESS);
-                    applicationIndex.setDisposalDate(property.getState().getValue().contains(WF_STATE_CLOSED)? new Date() : null);
 
                 }
                 applicationIndexService.updateApplicationIndex(applicationIndex);
             }
 
         } else if (!applictionType.isEmpty() && (applictionType.equalsIgnoreCase(APPLICATION_TYPE_REVISION_PETITION)
-        		|| applictionType.equalsIgnoreCase(APPLICATION_TYPE_GRP))) {
+                || applictionType.equalsIgnoreCase(APPLICATION_TYPE_GRP))) {
             final RevisionPetition property = (RevisionPetition) stateAwareObject;
             ApplicationIndex applicationIndex = applicationIndexService.findByApplicationNumber(property
                     .getObjectionNumber());
@@ -2208,16 +2208,15 @@ public class PropertyService {
             } else {
                 applicationIndex.setStatus(property.getState().getValue());
                 if (applictionType.equalsIgnoreCase(APPLICATION_TYPE_REVISION_PETITION)
-                        || applictionType.equalsIgnoreCase(APPLICATION_TYPE_GRP)){
-                applicationIndex.setOwnerName(user.getUsername() + "::" + user.getName());
-                applicationIndex.setClosed(
-                        property.getState().getValue().contains(WF_STATE_CLOSED) ? ClosureStatus.YES : ClosureStatus.NO);
-                applicationIndex.setApproved(
-                        property.getState().getValue().contains(WF_STATE_COMMISSIONER_APPROVED) ? ApprovalStatus.APPROVED
-                                : property.getState().getValue().contains(WF_STATE_REJECTED)
-                                        || property.getState().getValue().contains(WF_STATE_CLOSED) ? ApprovalStatus.REJECTED
-                                                : ApprovalStatus.INPROGRESS);
-                applicationIndex.setDisposalDate(property.getState().getValue().contains(WF_STATE_CLOSED)? new Date() : null);
+                        || applictionType.equalsIgnoreCase(APPLICATION_TYPE_GRP)) {
+                    applicationIndex.setOwnerName(user.getUsername() + "::" + user.getName());
+                    applicationIndex.setClosed(
+                            property.getState().getValue().contains(WF_STATE_CLOSED) ? ClosureStatus.YES : ClosureStatus.NO);
+                    applicationIndex.setApproved(
+                            property.getState().getValue().contains(WF_STATE_COMMISSIONER_APPROVED) ? ApprovalStatus.APPROVED
+                                    : property.getState().getValue().contains(WF_STATE_REJECTED)
+                                            || property.getState().getValue().contains(WF_STATE_CLOSED) ? ApprovalStatus.REJECTED
+                                                    : ApprovalStatus.INPROGRESS);
                 }
                 applicationIndexService.updateApplicationIndex(applicationIndex);
             }
@@ -2262,7 +2261,6 @@ public class PropertyService {
                                 : property.getState().getValue().contains(WF_STATE_REJECTED)
                                         || property.getState().getValue().contains(WF_STATE_CLOSED) ? ApprovalStatus.REJECTED
                                                 : ApprovalStatus.INPROGRESS);
-                applicationIndex.setDisposalDate(property.getState().getValue().contains(WF_STATE_CLOSED)? new Date() : null);
                 applicationIndexService.updateApplicationIndex(applicationIndex);
             }
 
@@ -2309,7 +2307,6 @@ public class PropertyService {
                                 : vacancyRemissionApproval.getState().getValue().contains(WF_STATE_REJECTED)
                                         || vacancyRemissionApproval.getState().getValue().contains(WF_STATE_CLOSED)
                                                 ? ApprovalStatus.REJECTED : ApprovalStatus.INPROGRESS);
-                applicationIndex.setDisposalDate(vacancyRemissionApproval.getState().getValue().contains(WF_STATE_CLOSED)? new Date() : null);
                 applicationIndexService.updateApplicationIndex(applicationIndex);
             }
 
@@ -2334,6 +2331,18 @@ public class PropertyService {
                     .intValue();
         } else if (APPLICATION_TYPE_VACANCY_REMISSION.equals(applicationType)) {
             sla = ptaxApplicationTypeService.findByNamedQuery(PtApplicationType.BY_CODE, "VACANCY_REMISSION").getResolutionTime()
+                    .intValue();
+        } else if (APPLICATION_TYPE_TAX_EXEMTION.equals(applicationType)) {
+            sla = ptaxApplicationTypeService.findByNamedQuery(PtApplicationType.BY_CODE, "TAX_EXEMPTION").getResolutionTime()
+                    .intValue();
+        } else if (APPLICATION_TYPE_DEMOLITION.equals(applicationType)) {
+            sla = ptaxApplicationTypeService.findByNamedQuery(PtApplicationType.BY_CODE, "DEMOLITION").getResolutionTime()
+                    .intValue();
+        } else if (APPLICATION_TYPE_AMALGAMATION.equals(applicationType)) {
+            sla = ptaxApplicationTypeService.findByNamedQuery(PtApplicationType.BY_CODE, "AMALGAMATION").getResolutionTime()
+                    .intValue();
+        } else if (APPLICATION_TYPE_BIFURCATE_ASSESSENT.equals(applicationType)) {
+            sla = ptaxApplicationTypeService.findByNamedQuery(PtApplicationType.BY_CODE, "BIFURCATION").getResolutionTime()
                     .intValue();
         }
         return sla;
@@ -2673,6 +2682,7 @@ public class PropertyService {
      * @param toDemand
      * @return List of property having demand between fromDemand and toDemand
      */
+    @ReadOnly
     @SuppressWarnings("unchecked")
     public List<PropertyMaterlizeView> getPropertyByDemand(final String fromDemand, final String toDemand) {
         final StringBuilder queryStr = new StringBuilder();
@@ -2727,6 +2737,7 @@ public class PropertyService {
      * @param ownerName
      * @return List of property matching the input params
      */
+    @ReadOnly
     @SuppressWarnings("unchecked")
     public List<PropertyMaterlizeView> getPropertyByLocation(final Integer locationId, final String houseNo,
             final String ownerName) {
@@ -2755,6 +2766,7 @@ public class PropertyService {
      * @param houseNum
      * @return List of property matching the input params
      */
+    @ReadOnly
     @SuppressWarnings("unchecked")
     public List<PropertyMaterlizeView> getPropertyByBoundary(final Long zoneId, final Long wardId,
             final String ownerName, final String houseNum) {
@@ -2785,7 +2797,8 @@ public class PropertyService {
         final List<PropertyMaterlizeView> propertyList = query.list();
         return propertyList;
     }
-
+    
+    @ReadOnly
     @SuppressWarnings("unchecked")
     public List<PropertyMaterlizeView> getPropertyByDoorNo(final String doorNo) {
         final StringBuilder queryStr = new StringBuilder();
@@ -2799,6 +2812,7 @@ public class PropertyService {
         return propertyList;
     }
     
+    @ReadOnly
     @SuppressWarnings("unchecked")
     public List<PropertyMaterlizeView> getPropertyByOldMunicipalNo(final String oldMuncipalNum) {
         final StringBuilder queryStr = new StringBuilder();
@@ -2811,7 +2825,8 @@ public class PropertyService {
         final List<PropertyMaterlizeView> propertyList = query.list();
         return propertyList;
     }
-
+    
+    @ReadOnly
     @SuppressWarnings("unchecked")
     public List<PropertyMaterlizeView> getPropertyByMobileNumber(final String MobileNo) {
         final StringBuilder queryStr = new StringBuilder();

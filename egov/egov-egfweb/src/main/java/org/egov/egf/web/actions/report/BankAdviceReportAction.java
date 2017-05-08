@@ -66,7 +66,7 @@ import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.commons.utils.EntityType;
 import org.egov.egf.model.BankAdviceReportInfo;
-import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
+import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
@@ -386,9 +386,9 @@ public class BankAdviceReportAction extends BaseFormAction {
         reportParams.put("accountNumber", getBankAccountNumber(bankaccount.getId()));
         final List<BankAdviceReportInfo> subLedgerList = getBankAdviceReportList();
         final ReportRequest reportInput = new ReportRequest("bankAdviceExcelReport", subLedgerList, reportParams);
-        reportInput.setReportFormat(FileFormat.XLS);
-        contentType = ReportViewerUtil.getContentType(FileFormat.XLS);
-        fileName = "BankAdviceReport." + FileFormat.XLS.toString().toLowerCase();
+        reportInput.setReportFormat(ReportFormat.XLS);
+        contentType = ReportViewerUtil.getContentType(ReportFormat.XLS);
+        fileName = "BankAdviceReport." + ReportFormat.XLS.toString().toLowerCase();
         final ReportOutput reportOutput = reportService.createReport(reportInput);
         if (reportOutput != null && reportOutput.getReportOutputData() != null)
             inputStream = new ByteArrayInputStream(reportOutput.getReportOutputData());
@@ -414,9 +414,9 @@ public class BankAdviceReportAction extends BaseFormAction {
         reportParams.put("chequeDate", getInstrumentDate(instrumentnumber.getId()));
         final List<BankAdviceReportInfo> subLedgerList = getBankAdviceReportList();
         final ReportRequest reportInput = new ReportRequest("bankAdviceReport", subLedgerList, reportParams);
-        reportInput.setReportFormat(FileFormat.HTM);
-        contentType = ReportViewerUtil.getContentType(FileFormat.HTM);
-        fileName = "BankAdviceReport." + FileFormat.HTM.toString().toLowerCase();
+        reportInput.setReportFormat(ReportFormat.HTM);
+        contentType = ReportViewerUtil.getContentType(ReportFormat.HTM);
+        fileName = "BankAdviceReport." + ReportFormat.HTM.toString().toLowerCase();
         final ReportOutput reportOutput = reportService.createReport(reportInput);
         if (reportOutput != null && reportOutput.getReportOutputData() != null)
             inputStream = new ByteArrayInputStream(reportOutput.getReportOutputData());
@@ -470,9 +470,9 @@ public class BankAdviceReportAction extends BaseFormAction {
         final List<BankAdviceReportInfo> subLedgerList = getBankAdviceReportList();
         reportParams.put("totalAmount", totalAmount);
         final ReportRequest reportInput = new ReportRequest("bankAdviceReport", subLedgerList, reportParams);
-        reportInput.setReportFormat(FileFormat.PDF);
-        contentType = ReportViewerUtil.getContentType(FileFormat.PDF);
-        fileName = "BankAdviceReport." + FileFormat.PDF.toString().toLowerCase();
+        reportInput.setReportFormat(ReportFormat.PDF);
+        contentType = ReportViewerUtil.getContentType(ReportFormat.PDF);
+        fileName = "BankAdviceReport." + ReportFormat.PDF.toString().toLowerCase();
         final ReportOutput reportOutput = reportService.createReport(reportInput);
         if (reportOutput != null && reportOutput.getReportOutputData() != null)
             inputStream = new ByteArrayInputStream(reportOutput.getReportOutputData());

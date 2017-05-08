@@ -42,7 +42,7 @@ package org.egov.infra.reporting.viewer;
 
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.reporting.engine.ReportConstants;
-import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
+import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -90,7 +90,7 @@ public class ReportViewer extends HttpServlet {
                 return;
             }
 
-            FileFormat reportFormat = reportOutput.getReportFormat();
+            ReportFormat reportFormat = reportOutput.getReportFormat();
             if (reportFormat == null) {
                 renderHtml(resp, "Report format not available");
                 return;
@@ -112,10 +112,10 @@ public class ReportViewer extends HttpServlet {
     }
 
     private void renderHtml(HttpServletResponse resp, String htmContent) {
-        renderReport(resp, String.format(REPORT_ERROR_CONTENT, htmContent).getBytes(), FileFormat.HTM);
+        renderReport(resp, String.format(REPORT_ERROR_CONTENT, htmContent).getBytes(), ReportFormat.HTM);
     }
 
-    private void renderReport(HttpServletResponse resp, byte[] reportData, FileFormat reportFormat) {
+    private void renderReport(HttpServletResponse resp, byte[] reportData, ReportFormat reportFormat) {
         try (BufferedOutputStream outputStream = new BufferedOutputStream(resp.getOutputStream());) {
             resp.setHeader(ReportConstants.HTTP_HEADER_CONTENT_DISPOSITION, ReportViewerUtil.getContentDisposition(reportFormat));
             resp.setContentType(ReportViewerUtil.getContentType(reportFormat));

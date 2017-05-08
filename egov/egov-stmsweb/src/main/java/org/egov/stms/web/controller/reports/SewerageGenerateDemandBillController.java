@@ -53,7 +53,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
-import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
+import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.stms.notice.entity.SewerageNotice;
 import org.egov.stms.notice.service.SewerageNoticeService;
@@ -69,11 +69,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping(value = "/reports")
@@ -129,7 +127,7 @@ public class SewerageGenerateDemandBillController {
                     } catch (final IOException e) {
                         LOGGER.error("Error in loading sewerage demand bill" + e.getMessage(), e);
                     }
-                    reportOutput.setReportFormat(FileFormat.PDF);
+                    reportOutput.setReportFormat(ReportFormat.PDF);
                 }
             } else if (sewerageDemandService
                     .checkAnyTaxIsPendingToCollectExcludingAdvance(sewerageApplicationDetails.getCurrentDemand()))

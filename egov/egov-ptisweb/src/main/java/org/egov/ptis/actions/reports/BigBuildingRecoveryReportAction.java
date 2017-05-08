@@ -43,16 +43,14 @@ import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.Installment;
-import org.egov.infra.reporting.engine.ReportRequest.ReportDataSourceType;
+import org.egov.infra.reporting.engine.ReportDataSourceType;
 import org.egov.infra.web.struts.actions.ReportFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.ptis.bean.ReportInfo;
-import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.entity.property.InstDmdCollMaterializeView;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.hibernate.Criteria;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;

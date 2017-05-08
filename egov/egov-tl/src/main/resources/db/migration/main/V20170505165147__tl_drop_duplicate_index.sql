@@ -1,0 +1,15 @@
+drop index IF EXISTS idx_egtl_penaltyrates;
+drop index IF EXISTS idx_egtl_subcategory_details;
+drop index IF EXISTS idx_egtl_mstr_app_type;
+drop index IF EXISTS idx_egtl_mstr_fee_type;
+drop index IF EXISTS idx_egtl_mstr_license_type;
+drop index IF EXISTS idx_egtl_mstr_license_sub_type;
+drop index IF EXISTS idx_egtl_mstr_business_nature;
+drop index IF EXISTS idx_egtl_mstr_category;
+drop index IF EXISTS idx_id_egtl_mstr_sub_category;
+drop index IF EXISTS idx_egtl_mstr_status;
+drop index IF EXISTS idx_egtl_license_details;
+drop index IF EXISTS idx_old_license_number;
+drop index IF EXISTS idx_egtl_licensee;
+drop index IF EXISTS idx_code_egtl_mstr_sub_category;
+alter table egtl_mstr_sub_category  drop constraint if exists unq_egtl_mstr_sub_categoryunique;

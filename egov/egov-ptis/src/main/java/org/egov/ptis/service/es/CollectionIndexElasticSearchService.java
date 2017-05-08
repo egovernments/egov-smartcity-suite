@@ -1007,7 +1007,7 @@ public class CollectionIndexElasticSearchService {
         }
     }
 
-    private String getAggregrationField(CollectionDetailsRequest collectionDetailsRequest) {
+    public String getAggregrationField(CollectionDetailsRequest collectionDetailsRequest) {
         String aggregationField = REGION_NAME;
         if (collectionDetailsRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_REGIONWISE))
             aggregationField = REGION_NAME;

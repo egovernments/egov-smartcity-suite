@@ -45,8 +45,8 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.infra.admin.master.entity.Department;
-import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
-import org.egov.infra.reporting.engine.ReportRequest.ReportDataSourceType;
+import org.egov.infra.reporting.engine.ReportFormat;
+import org.egov.infra.reporting.engine.ReportDataSourceType;
 import org.egov.infra.web.struts.actions.ReportFormAction;
 
 @Results({ @Result(name = BankRemittanceReportAction.INDEX, location = "bankRemittanceReport-index.jsp"),
@@ -66,7 +66,7 @@ public class BankRemittanceReportAction extends ReportFormAction {
      */
     @Override
     public void prepare() {
-        setReportFormat(FileFormat.PDF);
+        setReportFormat(ReportFormat.PDF);
         setDataSourceType(ReportDataSourceType.SQL);
     }
 

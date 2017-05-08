@@ -40,17 +40,6 @@
 
 package org.egov.tl.web.controller;
 
-import static org.egov.infra.utils.JsonUtils.toJSON;
-import static org.egov.tl.utils.Constants.LOCALITY;
-import static org.egov.tl.utils.Constants.LOCATION_HIERARCHY_TYPE;
-import static org.egov.tl.utils.Constants.STATUS_CANCELLED;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
-
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.web.support.ui.DataTable;
 import org.egov.tl.entity.LicenseStatus;
@@ -69,6 +58,17 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+
+import static org.egov.infra.utils.JsonUtils.toJSON;
+import static org.egov.tl.utils.Constants.LOCALITY;
+import static org.egov.tl.utils.Constants.LOCATION_HIERARCHY_TYPE;
+import static org.egov.tl.utils.Constants.STATUS_CANCELLED;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 
 @Controller
 public class SearchTradeController {
@@ -108,7 +108,7 @@ public class SearchTradeController {
     @GetMapping(value = "/search/tradeLicense", produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     public List<String> searchautocomplete(@RequestParam final String searchParamValue,
-            @RequestParam final String searchParamType) {
+                                           @RequestParam final String searchParamType) {
         return tradeLicenseService.getTradeLicenseForGivenParam(searchParamValue, searchParamType);
     }
 
@@ -131,7 +131,7 @@ public class SearchTradeController {
     @ResponseBody
     public String searchResult(@ModelAttribute final DemandnoticeForm demandnoticeForm) throws IOException {
         return new StringBuilder("{ \"data\":")
-                .append(toJSON(tradeLicenseService.searchLicensefordemandnotice(demandnoticeForm),
+                .append(toJSON(tradeLicenseService.getLicenseDemandNotices(demandnoticeForm),
                         DemandnoticeForm.class, DemandNoticeAdaptor.class))
                 .append("}").toString();
     }

@@ -88,7 +88,7 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.persistence.entity.Address;
-import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
+import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
@@ -295,7 +295,7 @@ public class RecoveryNoticeService {
 
         if (!NOTICE_TYPE_OCCUPIER.equals(noticeType)) {
             reportInput.setPrintDialogOnOpenReport(true);
-            reportInput.setReportFormat(FileFormat.PDF);
+            reportInput.setReportFormat(ReportFormat.PDF);
             reportOutput = reportService.createReport(reportInput);
         }
         if (reportOutput != null && reportOutput.getReportOutputData() != null)
@@ -312,7 +312,7 @@ public class RecoveryNoticeService {
         final List<InputStream> pdfs = new ArrayList<>();
         reportInput = generateOccupierNotice(basicProperty, reportParams, city, noticeNo);
         reportInput.setPrintDialogOnOpenReport(true);
-        reportInput.setReportFormat(FileFormat.PDF);
+        reportInput.setReportFormat(ReportFormat.PDF);
         for (final Floor floor : basicProperty.getProperty().getPropertyDetail().getFloorDetails())
             if (OCC_TENANT.equalsIgnoreCase(floor.getPropertyOccupation().getOccupancyCode())) {
                 reportOutput = reportService.createReport(reportInput);
@@ -380,7 +380,7 @@ public class RecoveryNoticeService {
             throw new ApplicationRuntimeException("Exception while retrieving " + noticeType + " : " + e);
         }
         reportOutput.setReportOutputData(bFile);
-        reportOutput.setReportFormat(FileFormat.PDF);
+        reportOutput.setReportFormat(ReportFormat.PDF);
         return reportOutput;
     }
 

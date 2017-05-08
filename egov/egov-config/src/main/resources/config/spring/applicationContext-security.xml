@@ -46,80 +46,89 @@
 	   http://www.springframework.org/schema/security
 	   http://www.springframework.org/schema/security/spring-security.xsd" default-lazy-init="true">
 
-	<security:global-method-security secured-annotations="disabled" access-decision-manager-ref="accessDecisionManager" />
-	
-	<bean class="org.egov.infstr.security.spring.event.listeners.ApplicationSecurityEventListenerAdaptor">
-		<property name="applicationSecurityEventActions">
-			<!-- Here the Map entry key must be of type EventType and values are list of bean which implements ApplicationSecurityAction -->
-			<map key-type="org.egov.infstr.security.spring.event.EventType">
-				<entry key="InteractiveAuthenticationSuccessEvent">
-					<list>
-						<bean class="org.egov.infstr.security.spring.event.actions.AuthenticationSuccessEventAction"/>
-					</list>
-				</entry>
-			</map>
-		</property>
-	</bean>	
-	
-	<bean id="concurrentSessionFilter" class="org.springframework.security.web.session.ConcurrentSessionFilter">
-		<constructor-arg index="0" ref="sessionRegistry" />
-		<constructor-arg index="1" value="/login/secure?sessionExpired=1" />
-	</bean>
-	
-	<bean id="sessionRegistry" class="org.springframework.security.core.session.SessionRegistryImpl" />
-	
-	<bean id="concurrentSessionControlStrategy" class="org.springframework.security.web.authentication.session.ConcurrentSessionControlAuthenticationStrategy">
-		<constructor-arg index="0" ref="sessionRegistry" />
-		<property name="exceptionIfMaximumExceeded" value="false" />
-		<property name="maximumSessions" value="-1" />
-	</bean>
-	
-	<bean id="securityContextPersistenceFilter" class="org.springframework.security.web.context.SecurityContextPersistenceFilter" />
-	
-	<bean id="logoutFilter" class="org.springframework.security.web.authentication.logout.LogoutFilter">
-		<constructor-arg value="/index.jsp" />
-		<constructor-arg>
-			<list>
-				<ref bean="customLogoutHandler"/>
-				<bean class="org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler" />
-			</list>
-		</constructor-arg>
-		<property name="filterProcessesUrl" value="/logout" />
-	</bean>
-	
-	<bean id="authenticationProcessingFilter" class="org.egov.infstr.security.spring.filter.EgovAuthenticationProcessingFilter">
-		<property name="authenticationManager" ref="authenticationManager" />
-		<property name="filterProcessesUrl" value="/j_security_check" />
-		<property name="rememberMeServices" ref="rememberMeServices" />
-		<property name="sessionAuthenticationStrategy" ref="sessionAuthenticationStrategy" />
-		<property name="credentialFields">
-			<list>
-				<value>j_password</value>
-				<value>locationId</value>
-				<value>loginType</value>
-				<value>ipAddress</value>
-				<value>userAgentInfo</value>
-			</list>
-		</property>
-		<property name="authenticationSuccessHandler" ref="authenticationSuccessHandler" />
-		<property name="authenticationFailureHandler" ref="authenticationFailureHandler" />
-	</bean>
-	
-	<bean id="authenticationFailureHandler" class="org.springframework.security.web.authentication.ExceptionMappingAuthenticationFailureHandler">
-		<property name="defaultFailureUrl" value="/login/secure?error=true" />
-		<property name="useForward" value="false" />
-	</bean>
-	
-	<bean id="authenticationSuccessHandler" class="org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler">
-		<property name="alwaysUseDefaultTargetUrl" value="false" />
-		<property name="defaultTargetUrl" value="/home" />
-	</bean>
-	
-	<bean id="securityContextHolderAwareRequestFilter" class="org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter" />
+    <security:global-method-security secured-annotations="disabled"
+                                     access-decision-manager-ref="accessDecisionManager"/>
 
-	<bean id="sessionFixationProtectionStrategy" class="org.springframework.security.web.authentication.session.ChangeSessionIdAuthenticationStrategy"/>
+    <bean class="org.egov.infstr.security.spring.event.listeners.ApplicationSecurityEventListenerAdaptor">
+        <property name="applicationSecurityEventActions">
+            <!-- Here the Map entry key must be of type EventType and values are list of bean which implements ApplicationSecurityAction -->
+            <map key-type="org.egov.infstr.security.spring.event.EventType">
+                <entry key="InteractiveAuthenticationSuccessEvent">
+                    <list>
+                        <bean class="org.egov.infstr.security.spring.event.actions.AuthenticationSuccessEventAction"/>
+                    </list>
+                </entry>
+            </map>
+        </property>
+    </bean>
 
-    <bean id="sessionAuthenticationStrategy" class="org.springframework.security.web.authentication.session.CompositeSessionAuthenticationStrategy">
+    <bean id="concurrentSessionFilter" class="org.springframework.security.web.session.ConcurrentSessionFilter">
+        <constructor-arg index="0" ref="sessionRegistry"/>
+        <constructor-arg index="1" value="/login/secure?sessionExpired=1"/>
+    </bean>
+
+    <bean id="sessionRegistry" class="org.springframework.security.core.session.SessionRegistryImpl"/>
+
+    <bean id="concurrentSessionControlStrategy"
+          class="org.springframework.security.web.authentication.session.ConcurrentSessionControlAuthenticationStrategy">
+        <constructor-arg index="0" ref="sessionRegistry"/>
+        <property name="exceptionIfMaximumExceeded" value="false"/>
+        <property name="maximumSessions" value="-1"/>
+    </bean>
+
+    <bean id="securityContextPersistenceFilter"
+          class="org.springframework.security.web.context.SecurityContextPersistenceFilter"/>
+
+    <bean id="logoutFilter" class="org.springframework.security.web.authentication.logout.LogoutFilter">
+        <constructor-arg value="/index.jsp"/>
+        <constructor-arg>
+            <list>
+                <ref bean="customLogoutHandler"/>
+                <bean class="org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler"/>
+            </list>
+        </constructor-arg>
+        <property name="filterProcessesUrl" value="/logout"/>
+    </bean>
+
+    <bean id="authenticationProcessingFilter"
+          class="org.egov.infstr.security.spring.filter.EgovAuthenticationProcessingFilter">
+        <property name="authenticationManager" ref="authenticationManager"/>
+        <property name="filterProcessesUrl" value="/j_security_check"/>
+        <property name="rememberMeServices" ref="rememberMeServices"/>
+        <property name="sessionAuthenticationStrategy" ref="sessionAuthenticationStrategy"/>
+        <property name="credentialFields">
+            <list>
+                <value>j_password</value>
+                <value>locationId</value>
+                <value>loginType</value>
+                <value>ipAddress</value>
+                <value>userAgentInfo</value>
+            </list>
+        </property>
+        <property name="authenticationSuccessHandler" ref="authenticationSuccessHandler"/>
+        <property name="authenticationFailureHandler" ref="authenticationFailureHandler"/>
+    </bean>
+
+    <bean id="authenticationFailureHandler"
+          class="org.springframework.security.web.authentication.ExceptionMappingAuthenticationFailureHandler">
+        <property name="defaultFailureUrl" value="/login/secure?error=true"/>
+        <property name="useForward" value="false"/>
+    </bean>
+
+    <bean id="authenticationSuccessHandler"
+          class="org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler">
+        <property name="alwaysUseDefaultTargetUrl" value="false"/>
+        <property name="defaultTargetUrl" value="/home"/>
+    </bean>
+
+    <bean id="securityContextHolderAwareRequestFilter"
+          class="org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter"/>
+
+    <bean id="sessionFixationProtectionStrategy"
+          class="org.springframework.security.web.authentication.session.ChangeSessionIdAuthenticationStrategy"/>
+
+    <bean id="sessionAuthenticationStrategy"
+          class="org.springframework.security.web.authentication.session.CompositeSessionAuthenticationStrategy">
         <constructor-arg name="delegateStrategies">
             <list>
                 <ref bean="concurrentSessionControlStrategy"/>
@@ -128,132 +137,96 @@
         </constructor-arg>
     </bean>
 
-	<bean id="rememberMeAuthenticationFilter" class="org.springframework.security.web.authentication.rememberme.RememberMeAuthenticationFilter">
-		<constructor-arg name="authenticationManager" ref="authenticationManager"/>
-		<constructor-arg name="rememberMeServices" ref="rememberMeServices"/>
-	</bean>
-	
-	<bean id="anonymousAuthenticationFilter" class="org.springframework.security.web.authentication.AnonymousAuthenticationFilter">
-		<constructor-arg name="key" value="anonymous"/>
-	</bean>
-	
-	<bean id="exceptionTranslationFilter" class="org.springframework.security.web.access.ExceptionTranslationFilter">
-		<constructor-arg index="0" ref="authenticationEntryPoint"/>
-		<property name="accessDeniedHandler">
-			<bean class="org.springframework.security.web.access.AccessDeniedHandlerImpl">
-				<property name="errorPage" value="/error/403" />
-			</bean>
-		</property>
-	</bean>
-	
-	<bean id="authenticationEntryPoint" class="org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint">
-		<constructor-arg index="0" value="/index.jsp"/>
-		<property name="forceHttps" value="false" />
-	</bean>
-	
-	<bean id="filterSecurityInterceptor" class="org.springframework.security.web.access.intercept.FilterSecurityInterceptor">
-		<property name="authenticationManager" ref="authenticationManager" />
-		<property name="accessDecisionManager" ref="accessDecisionManager" />
-		<property name="securityMetadataSource" ref="egovFilterInvocationDefinitionSource" />
-		<property name="rejectPublicInvocations" value="true" />
-	</bean>
-	
-	<bean id="accessDecisionManager" class="org.springframework.security.access.vote.AffirmativeBased">
-		<constructor-arg index="0">
-			<list>
-				<bean class="org.springframework.security.access.vote.RoleVoter">
-					<property name="rolePrefix" value="" />
-				</bean>
-			</list>
-		</constructor-arg>
-		<property name="allowIfAllAbstainDecisions" value="false" />
-	</bean>
-	
-	<bean id="rememberMeServices" class="org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices">
-		<constructor-arg index="0" value="23_*!cdU='612./e;NrI" />
-		<constructor-arg index="1" ref="userDetailsService" />
-		<property name="parameter" value="rememberMe" />
-	</bean>
-	
-	<bean id="authenticationManager" class="org.springframework.security.authentication.ProviderManager">
-		<constructor-arg>
-			<list>
-				<ref bean="daoAuthenticationProvider" />
-				<ref bean="anonymousAuthenticationProvider" />
-				<ref bean="rememberMeAuthenticationProvider" />
-			</list>
-		</constructor-arg>
-		<property name="eraseCredentialsAfterAuthentication" value="false" />
-	</bean>
-	
-	<bean id="daoAuthenticationProvider" class="org.egov.infstr.security.spring.dao.EgovDaoAuthenticationProvider">
-		<property name="userDetailsService" ref="userDetailsService" />
-		<property name="preAuthenticationChecks" ref="activationPreAuthenticationChecker"></property>
-	</bean>
-	
-	<bean id="anonymousAuthenticationProvider" class="org.springframework.security.authentication.AnonymousAuthenticationProvider">
-		<constructor-arg index="0" value="anonymous"/>
-	</bean>
-	
-	<bean id="rememberMeAuthenticationProvider" class="org.springframework.security.authentication.RememberMeAuthenticationProvider">
-		<constructor-arg index="0" value="23_*!cdU='612./e;NrI" />
-	</bean>
-	
-	<bean id="userDetailsService" class="org.egov.infra.config.security.authentication.UserDetailService">
-		<constructor-arg ref="userService"/>
-	</bean>
-	
-	<bean id="egovFilterInvocationDefinitionSource" class="org.egov.infstr.security.spring.EGovFilterInvocationDefinitionSource" />
-	
-	<!-- SSL Switching: to use this, configure it in the securityFilterChain bean -->
-	<bean id="channelProcessingFilter" class="org.springframework.security.web.access.channel.ChannelProcessingFilter">
-		<property name="channelDecisionManager" ref="channelDecisionManager" />
-		<property name="securityMetadataSource">
-            <security:filter-security-metadata-source request-matcher="ant">
-				<security:intercept-url pattern="/login/secure**"/>
-				<security:intercept-url pattern="/j_security_check*"/>
-			</security:filter-security-metadata-source>
-		</property>
-	</bean>
-	
-	<bean id="channelDecisionManager" class="org.springframework.security.web.access.channel.ChannelDecisionManagerImpl">
-		<property name="channelProcessors">
-			<list>
-				<ref bean="secureChannelProcessor" />
-				<ref bean="insecureChannelProcessor" />
-			</list>
-		</property>
-	</bean>
-	
-	<bean id="secureChannelProcessor" class="org.springframework.security.web.access.channel.SecureChannelProcessor">
-		<property name="entryPoint" ref="retryWithHttps" />
-	</bean>
-	
-	<bean id="insecureChannelProcessor" class="org.springframework.security.web.access.channel.InsecureChannelProcessor">
-		<property name="entryPoint" ref="retryWithHttp" />
-	</bean>
-	
-	<bean id="retryWithHttp" class="org.springframework.security.web.access.channel.RetryWithHttpEntryPoint">
-		<property name="portResolver" ref="portResolverImpl" />
-		<property name="portMapper" ref="portMapperImpl" />
-	</bean>
-	
-	<bean id="retryWithHttps" class="org.springframework.security.web.access.channel.RetryWithHttpsEntryPoint">
-		<property name="portResolver" ref="portResolverImpl" />
-		<property name="portMapper" ref="portMapperImpl"/>
-	</bean>
-	
-	<bean id="portResolverImpl" class="org.springframework.security.web.PortResolverImpl">
-		<property name="portMapper" ref="portMapperImpl" />
-	</bean>
-	
-	<!--Add an entry where key is HTTP port where your server is running and the value is HTTPS port number (HTTP Port Number + 363 = HTTPS Port Number) -->
-	<bean id="portMapperImpl" class="org.springframework.security.web.PortMapperImpl">
-		<property name="portMappings">
-			<map>
-				<entry key="8080" value="8443" />
-				<entry key="80" value="443" />
-			</map>
-		</property>
-	</bean>
+    <bean id="rememberMeAuthenticationFilter"
+          class="org.springframework.security.web.authentication.rememberme.RememberMeAuthenticationFilter">
+        <constructor-arg name="authenticationManager" ref="authenticationManager"/>
+        <constructor-arg name="rememberMeServices" ref="rememberMeServices"/>
+    </bean>
+
+    <bean id="anonymousAuthenticationFilter"
+          class="org.springframework.security.web.authentication.AnonymousAuthenticationFilter">
+        <constructor-arg name="key" value="anonymous"/>
+        <constructor-arg name="principal" value="anonymous"/>
+        <constructor-arg name="authorities">
+            <list value-type="org.springframework.security.core.GrantedAuthority">
+                <bean class="org.springframework.security.core.authority.SimpleGrantedAuthority">
+                    <constructor-arg name="role" value="PUBLIC"/>
+                </bean>
+            </list>
+        </constructor-arg>
+    </bean>
+
+    <bean id="exceptionTranslationFilter" class="org.springframework.security.web.access.ExceptionTranslationFilter">
+        <constructor-arg index="0" ref="authenticationEntryPoint"/>
+        <property name="accessDeniedHandler">
+            <bean class="org.springframework.security.web.access.AccessDeniedHandlerImpl">
+                <property name="errorPage" value="/error/403"/>
+            </bean>
+        </property>
+    </bean>
+
+    <bean id="authenticationEntryPoint"
+          class="org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint">
+        <constructor-arg index="0" value="/index.jsp"/>
+        <property name="forceHttps" value="false"/>
+    </bean>
+
+    <bean id="filterSecurityInterceptor"
+          class="org.springframework.security.web.access.intercept.FilterSecurityInterceptor">
+        <property name="authenticationManager" ref="authenticationManager"/>
+        <property name="accessDecisionManager" ref="accessDecisionManager"/>
+        <property name="securityMetadataSource" ref="egovFilterInvocationDefinitionSource"/>
+        <property name="rejectPublicInvocations" value="true"/>
+    </bean>
+
+    <bean id="accessDecisionManager" class="org.springframework.security.access.vote.AffirmativeBased">
+        <constructor-arg index="0">
+            <list>
+                <bean class="org.springframework.security.access.vote.RoleVoter">
+                    <property name="rolePrefix" value=""/>
+                </bean>
+            </list>
+        </constructor-arg>
+        <property name="allowIfAllAbstainDecisions" value="false"/>
+    </bean>
+
+    <bean id="rememberMeServices"
+          class="org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices">
+        <constructor-arg index="0" value="23_*!cdU='612./e;NrI"/>
+        <constructor-arg index="1" ref="userDetailsService"/>
+        <property name="parameter" value="rememberMe"/>
+    </bean>
+
+    <bean id="authenticationManager" class="org.springframework.security.authentication.ProviderManager">
+        <constructor-arg>
+            <list>
+                <ref bean="daoAuthenticationProvider"/>
+                <ref bean="anonymousAuthenticationProvider"/>
+                <ref bean="rememberMeAuthenticationProvider"/>
+            </list>
+        </constructor-arg>
+        <property name="eraseCredentialsAfterAuthentication" value="false"/>
+    </bean>
+
+    <bean id="daoAuthenticationProvider" class="org.egov.infstr.security.spring.dao.EgovDaoAuthenticationProvider">
+        <property name="userDetailsService" ref="userDetailsService"/>
+        <property name="preAuthenticationChecks" ref="activationPreAuthenticationChecker"></property>
+    </bean>
+
+    <bean id="anonymousAuthenticationProvider"
+          class="org.springframework.security.authentication.AnonymousAuthenticationProvider">
+        <constructor-arg index="0" value="anonymous"/>
+    </bean>
+
+    <bean id="rememberMeAuthenticationProvider"
+          class="org.springframework.security.authentication.RememberMeAuthenticationProvider">
+        <constructor-arg index="0" value="23_*!cdU='612./e;NrI"/>
+    </bean>
+
+    <bean id="userDetailsService" class="org.egov.infra.config.security.authentication.UserDetailService">
+        <constructor-arg ref="userService"/>
+    </bean>
+
+    <bean id="egovFilterInvocationDefinitionSource"
+          class="org.egov.infstr.security.spring.EGovFilterInvocationDefinitionSource"/>
 </beans>

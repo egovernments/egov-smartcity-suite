@@ -63,6 +63,10 @@
 		<td class="bluebox"><s:select name="bankAccId" id="bankAccId"
 				list="dropdownData.accNumList" listKey="id" listValue="name"
 				headerKey="-1" headerValue="----Choose----" /></td>
+		<td class="greybox">Financial Year <span class="mandatory1">*</span></td>
+		<td class="greybox"><s:select name="financialYearId" id="financialYearId"
+				list="dropdownData.financialYearList" listKey="id" listValue="finYearRange"
+				headerKey="-1" headerValue="----Choose----"/></td>
 
 	</tr>
 </table>
@@ -90,8 +94,9 @@
 			return false;
 		}
 		var bankAccId = document.getElementById('bankAccId').value;
+		var finId = document.getElementById('financialYearId').value;
 		window.location = "../masters/accountCheque-manipulateCheques.action?bankAccId="
-				+ bankAccId;
+				+ bankAccId+"&finId="+finId;
 
 	}
 	function viewChq() {
@@ -99,8 +104,9 @@
 			return false;
 		}
 		var bankAccId = document.getElementById('bankAccId').value;
+		var finId = document.getElementById('financialYearId').value;
 		window.location = "../masters/accountCheque-viewCheques.action?bankAccId="
-				+ bankAccId;
+				+ bankAccId+"&finId="+finId;
 
 	}
 	function validate() {
@@ -115,6 +121,11 @@
 		} else if (document.getElementById("bankAccId").value == -1) {
 
 			document.getElementById("lblError").innerHTML = "Please select bank account number";
+			return false;
+		}
+		else if (document.getElementById("financialYearId").value == -1) {
+
+			document.getElementById("lblError").innerHTML = "Please select financial year";
 			return false;
 		}
 	}

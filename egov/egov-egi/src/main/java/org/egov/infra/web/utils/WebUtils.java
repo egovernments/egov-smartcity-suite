@@ -40,6 +40,14 @@
 
 package org.egov.infra.web.utils;
 
+import org.egov.infra.reporting.engine.ReportFormat;
+import org.egov.infra.reporting.engine.ReportOutput;
+import org.egov.infra.reporting.engine.ReportRequest;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 
@@ -96,5 +104,15 @@ public class WebUtils {
 
     public static String currentContextPath(ServletRequest request) {
         return request.getServletContext().getContextPath().toUpperCase().replace("/", EMPTY);
+    }
+
+    public static ResponseEntity<byte[]> toReportResponseEntity(ReportRequest reportRequest, ReportOutput reportOutput) {
+        HttpHeaders headers = new HttpHeaders();
+        if (reportRequest.getReportFormat().equals(ReportFormat.PDF))
+            headers.setContentType(MediaType.parseMediaType("application/pdf"));
+        else if (reportRequest.getReportFormat().equals(ReportFormat.XLS))
+            headers.setContentType(MediaType.parseMediaType("application/vnd.ms-excel"));
+        headers.add("content-disposition", "inline;filename=" + reportRequest.reportOutputFileName());
+        return new ResponseEntity<>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
     }
 }

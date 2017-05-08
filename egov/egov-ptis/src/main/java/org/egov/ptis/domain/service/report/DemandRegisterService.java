@@ -55,7 +55,7 @@ import org.egov.commons.dao.InstallmentDao;
 import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.repository.BoundaryRepository;
 import org.egov.infra.admin.master.service.ModuleService;
-import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
+import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
@@ -94,7 +94,7 @@ public class DemandRegisterService {
         ReportRequest reportInput;
         reportInput = generateADRReport(reportParams, wardId, finYearStartDate, mode);
         reportInput.setPrintDialogOnOpenReport(true);
-        reportInput.setReportFormat(FileFormat.PDF);
+        reportInput.setReportFormat(ReportFormat.PDF);
         reportOutput = reportService.createReport(reportInput);
         return reportOutput;
 

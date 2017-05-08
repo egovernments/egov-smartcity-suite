@@ -40,50 +40,38 @@
 
 package org.egov.pgr.service.reports;
 
-import org.egov.pgr.entity.dto.RouterEscalationForm;
-import org.hibernate.SQLQuery;
-import org.hibernate.Session;
-import org.hibernate.transform.AliasToBeanResultTransformer;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.List;
 
+import org.egov.pgr.entity.dto.RouterEscalationForm;
+import org.egov.pgr.entity.dto.RouterEscalationRequest;
+import org.egov.pgr.repository.RouterEscalationReportRepository;
+import org.egov.pgr.repository.specs.RouterEscalationSpec;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
 public class RouterEscalationService {
-    @PersistenceContext
-    private EntityManager entityManager;
 
-    public List<RouterEscalationForm> search(final RouterEscalationForm routerEscalationForm) {
-        final SQLQuery finalQuery = prepareQuery(routerEscalationForm);
-        finalQuery.setResultTransformer(new AliasToBeanResultTransformer(RouterEscalationForm.class));
-        if (routerEscalationForm.getCategory() != null)
-            finalQuery.setParameter("categoryId", routerEscalationForm.getCategory());
-        if (routerEscalationForm.getComplainttype() != null)
-            finalQuery.setParameter("ctnameId", routerEscalationForm.getComplainttype());
-        if (routerEscalationForm.getBoundary() != null)
-            finalQuery.setParameter("bndryId", routerEscalationForm.getBoundary());
-        if (routerEscalationForm.getPosition() != null)
-            finalQuery.setParameter("posId", routerEscalationForm.getPosition());
-        return finalQuery.list();
+    @Autowired
+    private RouterEscalationReportRepository routerEscalationReportRepository;
+
+    public Page<RouterEscalationForm> search(final RouterEscalationRequest routerEscalationRequest) {
+        final Pageable pageable = new PageRequest(routerEscalationRequest.pageNumber(),
+                routerEscalationRequest.pageSize(),
+                routerEscalationRequest.orderDir(), routerEscalationRequest.orderBy());
+        final Specification<RouterEscalationForm> spec = new RouterEscalationSpec(routerEscalationRequest);
+        return routerEscalationReportRepository.findAll(spec, pageable);
     }
 
-    private SQLQuery prepareQuery(final RouterEscalationForm routerEscalationForm) {
-        StringBuilder whereQry = new StringBuilder();
-        final StringBuilder selectQry = new StringBuilder("select \"ctname\", \"bndryname\", \"routerposname\", \"esclvl1posname\", \"esclvl2posname\", \"esclvl3posname\" from pgr_router_escalation_view where 1=1 ");
-        if (routerEscalationForm.getCategory() != null)
-            whereQry = whereQry.append(" and categoryid = :categoryId");
-        if (routerEscalationForm.getComplainttype() != null)
-            whereQry = whereQry.append(" and ctid = :ctnameId");
-        if (routerEscalationForm.getBoundary() != null)
-            whereQry = whereQry.append(" and bndryid = :bndryId");
-        if (routerEscalationForm.getPosition() != null)
-            whereQry = whereQry.append(" and routerpos = :posId");
-        return entityManager.unwrap(Session.class).createSQLQuery(selectQry.append(whereQry).toString());
+    public List<RouterEscalationForm> prepareReport(final RouterEscalationRequest routerEscalationRequest) {
+        final Specification<RouterEscalationForm> spec = new RouterEscalationSpec(routerEscalationRequest);
+        return routerEscalationReportRepository.findAll(spec);
     }
 
 }

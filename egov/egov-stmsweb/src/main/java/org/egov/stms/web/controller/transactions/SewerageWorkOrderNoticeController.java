@@ -50,7 +50,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.io.FileUtils;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
-import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
+import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.stms.notice.entity.SewerageNotice;
 import org.egov.stms.notice.service.SewerageNoticeService;
@@ -109,7 +109,7 @@ public class SewerageWorkOrderNoticeController {
             final FileStoreMapper fmp = sewerageNotice.getFileStore();
             final File file = fileStoreService.fetch(fmp, SewerageTaxConstants.FILESTORE_MODULECODE);
             reportOutput.setReportOutputData(FileUtils.readFileToByteArray(file));
-            reportOutput.setReportFormat(FileFormat.PDF);
+            reportOutput.setReportFormat(ReportFormat.PDF);
         } else {
             reportOutput = sewerageNoticeService.generateReportOutputForWorkOrder(sewerageApplicationDetails, session, request);
             if (reportOutput != null && reportOutput.getReportOutputData() != null) {

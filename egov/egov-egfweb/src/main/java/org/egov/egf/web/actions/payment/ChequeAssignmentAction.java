@@ -88,7 +88,7 @@ import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
+import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.script.entity.Script;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.infra.validation.exception.ValidationError;
@@ -2145,7 +2145,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
         final List<Object> data = new ArrayList<Object>();
         data.add(bankAdvice);
 
-        setFileName(instrumentHeader.getVoucherHeaderId().getVoucherNumber() + "." + FileFormat.XLS.toString().toLowerCase());
+        setFileName(instrumentHeader.getVoucherHeaderId().getVoucherNumber() + "." + ReportFormat.XLS.toString().toLowerCase());
         inputStream = reportHelper.exportXls(getInputStream(), bankAdviceJasperPath, null, data);
         return "bankAdvice-XLS";
     }

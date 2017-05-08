@@ -40,7 +40,6 @@
 
 package org.egov.tl.web.actions;
 
-import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
@@ -49,20 +48,16 @@ import org.egov.commons.Installment;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
-import org.egov.eis.service.DesignationService;
-import org.egov.eis.service.EisCommonService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.eis.web.actions.workflow.GenericWorkFlowAction;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
-import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.reporting.engine.ReportOutput;
-import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.NumberToWord;
@@ -88,7 +83,6 @@ import org.egov.tl.utils.LicenseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -121,9 +115,10 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
 
     protected transient WorkflowBean workflowBean = new WorkflowBean();
     protected transient List<String> buildingTypeList;
-    protected String roleName;
-    protected String reportId;
-    protected boolean showAgreementDtl;
+    protected transient String roleName;
+    protected transient String reportId;
+    protected transient List<HashMap<String, Object>> licenseHistory = new ArrayList<>();
+    protected transient boolean showAgreementDtl;
     @Autowired
     protected transient LicenseUtils licenseUtils;
     @Autowired
@@ -134,12 +129,6 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     protected transient AssignmentService assignmentService;
     @Autowired
     protected transient BoundaryService boundaryService;
-    @Autowired
-    protected transient DesignationService designationService;
-    @Autowired
-    protected transient EisCommonService eisCommonService;
-    @Autowired
-    protected transient UserService userService;
     @Autowired
     @Qualifier("licenseCategoryService")
     protected transient LicenseCategoryService licenseCategoryService;
@@ -154,17 +143,14 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     protected transient FileStoreService fileStoreService;
     @Autowired
     protected transient ReportViewerUtil reportViewerUtil;
-    protected transient List<HashMap<String, Object>> licenseHistory = new ArrayList<>();
-    private boolean hasCscOperatorRole;
-    private Long feeTypeId;
-    private String fileStoreIds;
-    private String ulbCode;
-    private String signedFileStoreId;
+    private transient String fileStoreIds;
+    private transient String ulbCode;
+    private transient String signedFileStoreId;
+    private transient Long feeTypeId;
+    private transient boolean hasCscOperatorRole;
     private transient TradeLicenseSmsAndEmailService tradeLicenseSmsAndEmailService;
     @Autowired
     private transient TradeLicenseService tradeLicenseService;
-    @Autowired
-    private transient ReportService reportService;
     @Autowired
     @Qualifier("feeTypeService")
     private transient FeeTypeService feeTypeService;
@@ -210,18 +196,12 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     }
 
     private String redirectToPrintCertificate() {
-        reportId = reportViewerUtil.addReportToTempCache(
-                reportService.createReport(tradeLicenseService.prepareReportInputData(license())));
+        reportId = reportViewerUtil.addReportToTempCache(tradeLicenseService.generateLicenseCertificate(license()));
         return "report";
     }
 
     private String digitalSignRedirection() {
-        final HttpServletRequest request = ServletActionContext.getRequest();
-        final String cityMunicipalityName = (String) request.getSession().getAttribute("citymunicipalityname");
-        final String districtName = (String) request.getSession().getAttribute("districtName");
-        ReportOutput reportOutput = tradeLicenseService.prepareReportInputDataForDig(license(), districtName,
-                cityMunicipalityName);
-
+        ReportOutput reportOutput = tradeLicenseService.generateLicenseCertificate(license());
         if (reportOutput != null) {
             String fileName = SIGNED_DOCUMENT_PREFIX + license().getApplicationNumber() + ".pdf";
             final InputStream fileStream = new ByteArrayInputStream(reportOutput.getReportOutputData());

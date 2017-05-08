@@ -52,12 +52,4 @@ public final class ReportConstants {
     private ReportConstants() {
         // only static final fields
     }
-
-    public enum FileFormat {
-        PDF, XLS, RTF, HTM, TXT, CSV;
-
-        public String toString() {
-            return this.name().toLowerCase();
-        }
-    }
 }

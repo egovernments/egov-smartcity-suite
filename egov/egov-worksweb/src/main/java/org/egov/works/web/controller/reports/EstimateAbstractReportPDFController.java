@@ -56,7 +56,7 @@ import javax.servlet.http.HttpSession;
 import org.egov.commons.dao.EgwTypeOfWorkHibernateDAO;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.DepartmentService;
-import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
+import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
@@ -268,11 +268,11 @@ public class EstimateAbstractReportPDFController {
 
         final HttpHeaders headers = new HttpHeaders();
         if (contentType.equalsIgnoreCase("pdf")) {
-            reportInput.setReportFormat(FileFormat.PDF);
+            reportInput.setReportFormat(ReportFormat.PDF);
             headers.setContentType(MediaType.parseMediaType("application/pdf"));
             headers.add("content-disposition", "inline;filename=EstimateAbstractReportByDepartmentWise.pdf");
         } else {
-            reportInput.setReportFormat(FileFormat.XLS);
+            reportInput.setReportFormat(ReportFormat.XLS);
             headers.setContentType(MediaType.parseMediaType("application/vnd.ms-excel"));
             headers.add("content-disposition", "inline;filename=EstimateAbstractReportByDepartmentWise.xls");
         }
@@ -475,11 +475,11 @@ public class EstimateAbstractReportPDFController {
 
         final HttpHeaders headers = new HttpHeaders();
         if (contentType.equalsIgnoreCase("pdf")) {
-            reportInput.setReportFormat(FileFormat.PDF);
+            reportInput.setReportFormat(ReportFormat.PDF);
             headers.setContentType(MediaType.parseMediaType("application/pdf"));
             headers.add("content-disposition", "inline;filename=EstimateAbstractReportByTypeOfWorkWise.pdf");
         } else {
-            reportInput.setReportFormat(FileFormat.XLS);
+            reportInput.setReportFormat(ReportFormat.XLS);
             headers.setContentType(MediaType.parseMediaType("application/vnd.ms-excel"));
             headers.add("content-disposition", "inline;filename=EstimateAbstractReportByTypeOfWorkWise.xls");
         }

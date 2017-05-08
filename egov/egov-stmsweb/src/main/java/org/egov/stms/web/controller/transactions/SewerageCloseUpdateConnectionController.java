@@ -62,7 +62,7 @@ import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
-import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
+import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.ptis.domain.model.AssessmentDetails;
@@ -275,7 +275,7 @@ public class SewerageCloseUpdateConnectionController extends GenericWorkFlowCont
         try {
             if (file != null)
                 reportOutput.setReportOutputData(FileUtils.readFileToByteArray(file));
-            reportOutput.setReportFormat(FileFormat.PDF);
+            reportOutput.setReportFormat(ReportFormat.PDF);
         } catch (final IOException ioe) {
             LOGGER.error("Exception while generating close connection notice", ioe);
             throw new ValidationException(ioe.getMessage());

@@ -169,7 +169,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
                 ? NEW_LIC_APPTYPE.equals(license.getLicenseAppType().getName()) ? "New Trade" : "Renewal of Trade"
                 : "New");
 
-        final ReportRequest reportInput = new ReportRequest("acknowledgement", license, reportParams);
+        final ReportRequest reportInput = new ReportRequest("tl_acknowledgement", license, reportParams);
 
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType("application/pdf"));

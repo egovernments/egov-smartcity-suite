@@ -47,8 +47,6 @@ import org.egov.infra.elasticsearch.entity.enums.ApprovalStatus;
 import org.egov.infra.elasticsearch.entity.enums.ClosureStatus;
 import org.egov.infra.elasticsearch.service.ApplicationIndexService;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.infra.utils.DateUtils;
-import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.tl.config.properties.TlApplicationProperties;
 import org.egov.tl.entity.License;
 import org.egov.tl.entity.LicenseAppType;
@@ -64,13 +62,12 @@ import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.egov.commons.entity.Source.SYSTEM;
 import static org.egov.infra.elasticsearch.entity.enums.ApprovalStatus.INPROGRESS;
 import static org.egov.infra.elasticsearch.entity.enums.ClosureStatus.NO;
+import static org.egov.tl.utils.Constants.APPLICATION_STATUS_GENECERT_CODE;
 import static org.egov.tl.utils.Constants.DELIMITER_COLON;
 import static org.egov.tl.utils.Constants.NEW_LIC_APPTYPE;
-import static org.egov.tl.utils.Constants.TRADE_LICENSE;
 import static org.egov.tl.utils.Constants.RENEWAL_LIC_APPTYPE;
-import static org.egov.tl.utils.Constants.APPLICATION_STATUS_GENECERT_CODE;
 import static org.egov.tl.utils.Constants.STATUS_CANCELLED;
-import static org.egov.tl.utils.Constants.WF_STATE_GENERATE_CERTIFICATE;
+import static org.egov.tl.utils.Constants.TRADE_LICENSE;
 
 @Service
 public class LicenseApplicationIndexService {
@@ -128,19 +125,12 @@ public class LicenseApplicationIndexService {
         Optional<User> user = getApplicationCurrentOwner(license);
         applicationIndex.setStatus(license.getEgwStatus().getDescription());
         applicationIndex.setApplicantAddress(license.getAddress());
-        applicationIndex.setOwnerName(user.isPresent() ? user.get().getUsername() + DELIMITER_COLON + user.get().getName() : EMPTY);
+        applicationIndex
+                .setOwnerName(user.isPresent() ? user.get().getUsername() + DELIMITER_COLON + user.get().getName() : EMPTY);
         applicationIndex.setConsumerCode(license.getLicenseNumber());
         applicationIndex.setClosed(NO);
         applicationIndex.setApproved(INPROGRESS);
         if (license.getEgwStatus().getCode().equals(APPLICATION_STATUS_GENECERT_CODE)) {
-            Optional<StateHistory> stateHistory = license.getStateHistory().parallelStream().
-                    filter(state -> WF_STATE_GENERATE_CERTIFICATE.equalsIgnoreCase(state.getValue())).findFirst();
-            Date endDate;
-            if (stateHistory.isPresent())
-                endDate = stateHistory.get().getLastModifiedDate();
-            else
-                endDate = license.getLastModifiedDate();
-            applicationIndex.setElapsedDays(DateUtils.daysBetween(license.getApplicationDate(), endDate));
             applicationIndex.setClosed(ClosureStatus.YES);
             applicationIndex.setApproved(ApprovalStatus.APPROVED);
         }

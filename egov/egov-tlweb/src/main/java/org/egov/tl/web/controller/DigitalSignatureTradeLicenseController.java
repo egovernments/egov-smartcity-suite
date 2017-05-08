@@ -75,7 +75,8 @@ import java.util.Map;
 public class DigitalSignatureTradeLicenseController {
 
     @Qualifier("fileStoreService")
-    protected FileStoreService fileStoreService;
+    @Autowired
+    private FileStoreService fileStoreService;
 
     @Autowired
     private AssignmentService assignmentService;

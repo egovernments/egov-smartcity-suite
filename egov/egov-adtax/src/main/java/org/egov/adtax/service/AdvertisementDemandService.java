@@ -158,7 +158,7 @@ public class AdvertisementDemandService {
      * @return
      */
     private EgDemand createDemand(final Set<EgDemandDetails> demandDetailSet, final Installment installment,
-                                  final BigDecimal totalDemandAmount) {
+            final BigDecimal totalDemandAmount) {
         final EgDemand egDemand = new EgDemand();
         egDemand.setEgInstallmentMaster(installment);
         egDemand.getEgDemandDetails().addAll(demandDetailSet);
@@ -206,7 +206,7 @@ public class AdvertisementDemandService {
      * @return
      */
     public EgDemandDetails createDemandDetails(final BigDecimal dmdAmount, final EgDemandReason egDemandReason,
-                                               final BigDecimal amtCollected) {
+            final BigDecimal amtCollected) {
         return EgDemandDetails.fromReasonAndAmounts(dmdAmount.setScale(0, BigDecimal.ROUND_HALF_UP), egDemandReason,
                 amtCollected);
     }
@@ -314,7 +314,7 @@ public class AdvertisementDemandService {
                         .getEgDemandDetails())
                     if (demandDtl.getAmount().subtract(demandDtl.getAmtCollected()).compareTo(BigDecimal.ZERO) > 0
                             && currentInstallment.getId() == demandDtl.getEgDemandReason().getEgInstallmentMaster()
-                            .getId()) {
+                                    .getId()) {
                         amountCollectionPendingInCurrentYear = true;
                         break;
                     }
@@ -334,7 +334,7 @@ public class AdvertisementDemandService {
                 for (final EgDemandDetails demandDtl : advertisement.getDemandId().getEgDemandDetails())
                     if (demandDtl.getAmtCollected().compareTo(BigDecimal.ZERO) > 0
                             && currentInstallment.getId() == demandDtl.getEgDemandReason().getEgInstallmentMaster()
-                            .getId()) {
+                                    .getId()) {
                         amountCollectedInCurrentYear = true;
                         break;
                     }
@@ -343,7 +343,7 @@ public class AdvertisementDemandService {
     }
 
     public List<EgDemandDetails> getDemandDetailByPassingDemandDemandReason(final EgDemand demand,
-                                                                            final EgDemandReason demandReason) {
+            final EgDemandReason demandReason) {
 
         return demandGenericDao.getDemandDetailsForDemandAndReasons(
                 demand, Arrays.asList(demandReason));
@@ -674,6 +674,7 @@ public class AdvertisementDemandService {
                                 installment),
                         taxFullyPaidForCurrentYear ? advertisementPermitDetail.getEncroachmentFee() : BigDecimal.ZERO));
                 totalDemandAmount = totalDemandAmount.add(advertisementPermitDetail.getEncroachmentFee());
+                demand.setEgInstallmentMaster(installment);
             }
             if (!arrearsTaxalreadyExistInDemand && advertisementPermitDetail.getAdvertisement().getPendingTax() != null
                     && advertisementPermitDetail.getAdvertisement().getPendingTax().compareTo(BigDecimal.ZERO) > 0) {
@@ -683,6 +684,7 @@ public class AdvertisementDemandService {
                                 installment),
                         BigDecimal.ZERO));
                 totalDemandAmount = totalDemandAmount.add(advertisementPermitDetail.getAdvertisement().getPendingTax());
+                demand.setEgInstallmentMaster(installment);
             }
             if (!taxalreadyExistInDemand && advertisementPermitDetail.getTaxAmount() != null
                     && advertisementPermitDetail.getTaxAmount().compareTo(BigDecimal.ZERO) > 0) {
@@ -692,6 +694,7 @@ public class AdvertisementDemandService {
                                 installment),
                         taxFullyPaidForCurrentYear ? advertisementPermitDetail.getTaxAmount() : BigDecimal.ZERO));
                 totalDemandAmount = totalDemandAmount.add(advertisementPermitDetail.getTaxAmount());
+                demand.setEgInstallmentMaster(installment);
             }
             demand.addBaseDemand(totalDemandAmount.setScale(0, BigDecimal.ROUND_HALF_UP));
 
@@ -701,7 +704,7 @@ public class AdvertisementDemandService {
     }
 
     public int generateDemandForNextInstallment(final List<Advertisement> advertisements,
-                                                final List<Installment> previousInstallment, final Installment advDmdGenerationInstallment) {
+            final List<Installment> previousInstallment, final Installment advDmdGenerationInstallment) {
         int totalRecordsProcessed = 0;
         if (LOGGER.isInfoEnabled())
             LOGGER.debug("****************** total  records in generateDemandForNextInstallment "
@@ -718,10 +721,8 @@ public class AdvertisementDemandService {
                     AdvertisementTaxConstants.DEMANDREASON_ADVERTISEMENTTAX, advDmdGenerationInstallment);
 
             AdvertisementDemandGenerationLog generationLog;
-            generationLog = transactionTemplate.execute(result ->
-                    adTaxDemandGenerationLogService
-                            .createDemandGenerationLog(advDmdGenerationInstallment.getFinYearRange())
-            );
+            generationLog = transactionTemplate.execute(result -> adTaxDemandGenerationLogService
+                    .createDemandGenerationLog(advDmdGenerationInstallment.getFinYearRange()));
 
             for (final Advertisement advertisement : advertisements)
                 try {
@@ -768,8 +769,8 @@ public class AdvertisementDemandService {
      */
 
     private EgDemand generateNextYearDemandForAdvertisement(final Advertisement advertisement,
-                                                            final EgDemandReason oldencroachmentFeeReasonInstallment, final EgDemandReason oldtaxReasonInstallment,
-                                                            final EgDemandReason newencroachmentFeeReasonInstallment, final EgDemandReason newtaxReasonInstallment) {
+            final EgDemandReason oldencroachmentFeeReasonInstallment, final EgDemandReason oldtaxReasonInstallment,
+            final EgDemandReason newencroachmentFeeReasonInstallment, final EgDemandReason newtaxReasonInstallment) {
         BigDecimal totalDemandAmount = BigDecimal.ZERO;
         final EgDemand demand = advertisement.getDemandId();
 
@@ -841,7 +842,8 @@ public class AdvertisementDemandService {
         demandFeeType.put(AdvertisementTaxConstants.TOTAL_DEMAND, totalDemand);
         demandFeeType.put(AdvertisementTaxConstants.TOTALCOLLECTION, totalCollection);
         demandFeeType.put(AdvertisementTaxConstants.PENALTYAMOUNT, penaltyAmount);
-        demandFeeType.put(AdvertisementTaxConstants.ADDITIONALTAXAMOUNT, additionalTaxAmount.setScale(0, BigDecimal.ROUND_HALF_UP));
+        demandFeeType.put(AdvertisementTaxConstants.ADDITIONALTAXAMOUNT,
+                additionalTaxAmount.setScale(0, BigDecimal.ROUND_HALF_UP));
         return demandFeeType;
     }
 

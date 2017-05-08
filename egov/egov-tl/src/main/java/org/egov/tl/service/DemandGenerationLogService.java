@@ -123,13 +123,4 @@ public class DemandGenerationLogService {
         logDetail.setDetail(error);
         demandGenerationLog.setDemandGenerationStatus(INCOMPLETE);
     }
-
-    @Transactional
-    public DemandGenerationLog completeDemandGenerationLog(DemandGenerationLog demandGenerationLog, DemandGenerationLogDetail demandGenerationLogDetail) {
-        if (demandGenerationLogDetail.getStatus().equals(INCOMPLETE))
-            demandGenerationLog.setDemandGenerationStatus(INCOMPLETE);
-        return demandGenerationLogRepository.save(demandGenerationLog);
-    }
-
-
 }

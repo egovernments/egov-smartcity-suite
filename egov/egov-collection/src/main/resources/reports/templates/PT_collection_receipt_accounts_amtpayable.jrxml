@@ -39,7 +39,7 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 <!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
-<!-- 2017-04-06T11:14:06 -->
+<!-- 2017-05-05T14:27:20 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PT_collection_receipt_accounts_amtpayable" language="groovy" pageWidth="257" pageHeight="802" columnWidth="257" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isFloatColumnFooter="true" uuid="d6dde3bd-46d2-4d95-aed5-b446b5d9af4e">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -129,7 +129,7 @@
 		<variableExpression><![CDATA[!("ADVANCE_AMOUNT".equals($F{purpose})) ? ($F{crAmount}) : BigDecimal.ZERO]]></variableExpression>
 	</variable>
 	<variable name="rebate" class="java.math.BigDecimal" calculation="Sum">
-		<variableExpression><![CDATA["REBATE".equals($F{purpose}) ? ($F{drAmount}) : BigDecimal.ZERO]]></variableExpression>
+		<variableExpression><![CDATA["REBATE".equals($F{purpose}) ? ($F{creditAmountToBePaid}) : BigDecimal.ZERO]]></variableExpression>
 		<initialValueExpression><![CDATA[BigDecimal.valueOf(0)]]></initialValueExpression>
 	</variable>
 	<variable name="advance" class="java.math.BigDecimal" calculation="Sum">
@@ -265,7 +265,7 @@
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[!$V{totalAmount}.equals(BigDecimal.ZERO)?$V{totalAmount} - $V{rebate} :BigDecimal.ZERO]]></textFieldExpression>
+					<textFieldExpression><![CDATA[!$V{totalAmount}.equals(BigDecimal.ZERO)?$V{totalAmount} + $V{rebate} :BigDecimal.ZERO]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 					<reportElement positionType="Float" x="37" y="2" width="218" height="20" isPrintWhenDetailOverflows="true" uuid="73c20945-d099-4509-a893-a3f3cba1fc0b">
@@ -330,7 +330,7 @@
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[!$V{rebate}.equals(BigDecimal.ZERO)?$V{rebate}:BigDecimal.ZERO]]></textFieldExpression>
+					<textFieldExpression><![CDATA[!$V{rebate}.equals(BigDecimal.ZERO)?ABS($V{rebate}):BigDecimal.ZERO]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupFooter>

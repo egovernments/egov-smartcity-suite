@@ -140,7 +140,7 @@ import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.persistence.entity.Address;
-import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
+import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
@@ -1641,7 +1641,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
             reportInput = new ReportRequest(GRP_ACK_TEMPLATE, reportParams, reportParams);
         } else
             reportInput = new ReportRequest(MODIFY_ACK_TEMPLATE, reportParams, reportParams);
-        reportInput.setReportFormat(FileFormat.PDF);
+        reportInput.setReportFormat(ReportFormat.PDF);
         final ReportOutput reportOutput = reportService.createReport(reportInput);
         reportId = reportViewerUtil.addReportToTempCache(reportOutput);
         return PRINT_ACK;

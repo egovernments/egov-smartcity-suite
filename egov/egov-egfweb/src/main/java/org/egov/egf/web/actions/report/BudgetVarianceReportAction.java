@@ -73,7 +73,7 @@ import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.AppConfigValueService;
-import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
+import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
@@ -442,7 +442,7 @@ public class BudgetVarianceReportAction extends BaseFormAction {
     public String exportXls() throws JRException, IOException {
         populateData();
         final ReportRequest reportInput = new ReportRequest(jasperpath, budgetVarianceEntries, getParamMap());
-        reportInput.setReportFormat(FileFormat.XLS);
+        reportInput.setReportFormat(ReportFormat.XLS);
         final ReportOutput reportOutput = reportService.createReport(reportInput);
         inputStream = new ByteArrayInputStream(reportOutput.getReportOutputData());
         return "XLS";

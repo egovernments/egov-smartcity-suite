@@ -46,7 +46,7 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.DepartmentService;
-import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
+import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
@@ -532,7 +532,7 @@ public class RetentionMoneyRecoveryRegisterAction extends SearchFormAction {
         reportParams.put("reportSubTitle", reportSubTitle);
         final ReportRequest reportRequest = new ReportRequest("RetentionMoneyRecoveryRegister", reportData,
                 reportParams);
-        reportRequest.setReportFormat(FileFormat.XLS);
+        reportRequest.setReportFormat(ReportFormat.XLS);
         final ReportOutput reportOutput = reportService.createReport(reportRequest);
         if (reportOutput != null && reportOutput.getReportOutputData() != null)
             excelInputStream = new ByteArrayInputStream(reportOutput.getReportOutputData());
