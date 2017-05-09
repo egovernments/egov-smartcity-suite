@@ -51,6 +51,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.apache.commons.lang.StringUtils;
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.joda.time.DateTime;
@@ -68,6 +69,7 @@ public class DrillDownReportService {
     public static final String NOT_AVAILABLE = "NOT AVAILABLE";
     public static final String LOCALITY_SELECT_QRY = "select coalesce(cbndry.name,'GIS_LOCATION') as name, ";
 
+    @ReadOnly
     public SQLQuery getDrillDownReportQuery(final DateTime fromDate, final DateTime toDate,
             final String complaintDateType, final String groupBy, final String department, final String boundary,
             final String complainttype, final String selecteduser, final String locality) {
@@ -240,6 +242,7 @@ public class DrillDownReportService {
         return new LocalDateTime().withTime(0, 0, 0, 0).toDateTime();
     }
 
+    @ReadOnly
     public SQLQuery getDrillDownReportQuery(final DateTime fromDate, final DateTime toDate,
             final String complaintDateType, final String department, final String boundary, final String complainttype,
             final String selecteduser, final String locality) {

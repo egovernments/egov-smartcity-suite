@@ -42,6 +42,7 @@ package org.egov.pgr.service.reports;
 
 import java.util.List;
 
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.pgr.entity.dto.RouterEscalationForm;
 import org.egov.pgr.entity.dto.RouterEscalationRequest;
 import org.egov.pgr.repository.RouterEscalationReportRepository;
@@ -61,6 +62,7 @@ public class RouterEscalationService {
     @Autowired
     private RouterEscalationReportRepository routerEscalationReportRepository;
 
+    @ReadOnly
     public Page<RouterEscalationForm> search(final RouterEscalationRequest routerEscalationRequest) {
         final Pageable pageable = new PageRequest(routerEscalationRequest.pageNumber(),
                 routerEscalationRequest.pageSize(),
@@ -69,6 +71,7 @@ public class RouterEscalationService {
         return routerEscalationReportRepository.findAll(spec, pageable);
     }
 
+    @ReadOnly
     public List<RouterEscalationForm> prepareReport(final RouterEscalationRequest routerEscalationRequest) {
         final Specification<RouterEscalationForm> spec = new RouterEscalationSpec(routerEscalationRequest);
         return routerEscalationReportRepository.findAll(spec);

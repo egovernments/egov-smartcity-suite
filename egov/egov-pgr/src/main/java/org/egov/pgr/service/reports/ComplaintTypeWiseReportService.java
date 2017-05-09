@@ -42,6 +42,7 @@ package org.egov.pgr.service.reports;
 
 import static org.egov.pgr.utils.constants.PGRConstants.FROMDATE;
 
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.joda.time.DateTime;
@@ -60,6 +61,7 @@ public class ComplaintTypeWiseReportService {
     @PersistenceContext
     private EntityManager entityManager;
 
+    @ReadOnly
     public SQLQuery getComplaintTypeWiseReportQuery(final DateTime fromDate, final DateTime toDate,
                                                     final String complaintType, final String complaintDateType) {
 

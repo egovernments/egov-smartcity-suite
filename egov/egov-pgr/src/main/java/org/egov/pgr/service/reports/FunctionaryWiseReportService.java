@@ -5,6 +5,7 @@ import java.util.Date;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.joda.time.DateTime;
@@ -18,6 +19,7 @@ public class FunctionaryWiseReportService {
     @PersistenceContext
     private EntityManager entityManager;
 
+    @ReadOnly
     public SQLQuery getFunctionaryWiseReportQuery(final DateTime fromDate, final DateTime toDate,final String usrid, final String complaintDateType) {
 
         final StringBuilder query = new StringBuilder();
@@ -94,6 +96,7 @@ public class FunctionaryWiseReportService {
         return new LocalDateTime().withTime(0, 0, 0, 0).toDateTime();
     }
 
+    @ReadOnly
     public SQLQuery getFunctionaryWiseReportQuery(final DateTime fromDate, final DateTime toDate,String usrid,
             final String complaintDateType, final String status) {
 

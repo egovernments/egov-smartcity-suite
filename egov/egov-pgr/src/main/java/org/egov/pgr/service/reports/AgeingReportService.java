@@ -44,6 +44,7 @@ import static org.egov.pgr.utils.constants.PGRConstants.BYBOUNDARY;
 import static org.egov.pgr.utils.constants.PGRConstants.FROMDATE;
 import static org.egov.pgr.utils.constants.PGRConstants.TODATE;
 
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.joda.time.DateTime;
@@ -64,6 +65,7 @@ public class AgeingReportService {
     @PersistenceContext
     private EntityManager entityManager;
 
+    @ReadOnly
     public SQLQuery getageingReportQuery(final DateTime fromDate, final DateTime toDate, final String typeofReport,
                                          final String complaintDateType, final String groupBy) {
 
