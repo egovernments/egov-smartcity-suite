@@ -124,7 +124,7 @@ public class MarriageCertificateService {
 	private InputStream generateCertificatePDF;;
 	@Autowired
 	private AssignmentService assignmentService;
-	
+
 	private Session getCurrentSession() {
 
 		return entityManager.unwrap(Session.class);
@@ -333,7 +333,7 @@ public class MarriageCertificateService {
 		calForApplnDate.setTime(reIssue.getRegistration().getApplicationDate());
 		calForMrgDate.setTime(reIssue.getRegistration().getDateOfMarriage());
 		reportParams.put("certificateno", certificateNo);
-		User user =securityUtils.getCurrentUser();
+		User user = securityUtils.getCurrentUser();
 		List<Assignment> loggedInUserAssignment;
 		String loggedInUserDesignation;
 		loggedInUserAssignment = assignmentService.getAssignmentByPositionAndUserAsOnDate(
@@ -346,7 +346,6 @@ public class MarriageCertificateService {
 			reportParams.put("isCommissioner", false);
 		reportParams.put("userSignature",
 				user.getSignature() != null ? new ByteArrayInputStream(user.getSignature()) : "");
-
 
 		reportParams.put("cityName", cityName);
 		reportParams.put(CERTIFICATE_DATE, new Date());
