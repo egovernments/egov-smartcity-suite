@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.0  -->
-<!-- 2017-02-28T15:35:13 -->
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2017-05-09T12:01:30 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="registrationcertificate" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="02afdd73-b1f8-4b82-bdec-843293ab245b">
 	<property name="ireport.zoom" value="2.0"/>
 	<property name="ireport.x" value="0"/>
@@ -18,6 +18,8 @@
 	<parameter name="applicationdatemonth" class="java.lang.String"/>
 	<parameter name="applicationdateyear" class="java.lang.String"/>
 	<parameter name="marriagedateday" class="java.lang.String"/>
+	<parameter name="isCommissioner" class="java.lang.Boolean"/>
+	<parameter name="userSignature" class="java.lang.Object"/>
 	<parameter name="marriagedatemonth" class="java.lang.String"/>
 	<parameter name="marriagedateyear" class="java.lang.String"/>
 	<parameter name="serialno" class="java.lang.String"/>
@@ -195,6 +197,17 @@
 					<font size="14" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{registrationcenter}]]></textFieldExpression>
+			</textField>
+			<image hAlign="Center" vAlign="Bottom" isUsingCache="true" onErrorType="Blank">
+				<reportElement x="400" y="150" width="140" height="64" uuid="cd8d388a-aa37-47e0-8494-079da7583ff8"/>
+				<imageExpression><![CDATA[$P{userSignature}]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="390" y="220" width="160" height="21" uuid="6246e4bd-d628-45dd-85e7-3e7778b67712"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{isCommissioner}?"Commissioner":"For Commissioner"]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
