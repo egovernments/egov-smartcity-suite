@@ -55,9 +55,9 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
-@Table(name = "egp_firmusers")
-@SequenceGenerator(name = FirmUsers.SEQ_EGP_FIRMUSERS, sequenceName = FirmUsers.SEQ_EGP_FIRMUSERS, allocationSize = 1)
-public class FirmUsers extends AbstractAuditable {
+@Table(name = "egp_firmuser")
+@SequenceGenerator(name = FirmUser.SEQ_EGP_FIRMUSERS, sequenceName = FirmUser.SEQ_EGP_FIRMUSERS, allocationSize = 1)
+public class FirmUser extends AbstractAuditable {
 
     private static final long serialVersionUID = 1L;
 

@@ -39,103 +39,62 @@
  */
 package org.egov.portal.entity;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.persistence.validator.annotation.Unique;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.admin.master.entity.User;
 
 @Entity
-@Table(name = "egp_firm")
-@Unique(fields = {
-"pan" }, enableDfltMsg = true)
-@SequenceGenerator(name = Firm.SEQ_EGP_FIRM, sequenceName = Firm.SEQ_EGP_FIRM, allocationSize = 1)
-public class Firm extends AbstractAuditable {
+@Table(name = "egp_inboxusers")
+@SequenceGenerator(name = PortalInboxUser.SEQ_EGP_INBOXUSERS, sequenceName = PortalInboxUser.SEQ_EGP_INBOXUSERS, allocationSize = 1)
+public class PortalInboxUser {
 
-    private static final long serialVersionUID = 1L;
-
-    public static final String SEQ_EGP_FIRM = "SEQ_EGP_FIRM";
+    public static final String SEQ_EGP_INBOXUSERS = "SEQ_EGP_INBOXUSERS";
 
     @Id
-    @GeneratedValue(generator = SEQ_EGP_FIRM, strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = SEQ_EGP_INBOXUSERS, strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @NotNull
-    @SafeHtml
-    private String firmName;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "userid", nullable = false)
+    private User user;
 
     @NotNull
-    @SafeHtml
-    private String pan;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "portalInbox", nullable = false)
+    private PortalInbox portalInbox;
 
-    @SafeHtml
-    private String address;
-
-    @OrderBy("id")
-    @OneToMany(mappedBy = "firm", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = FirmUser.class)
-    private final List<FirmUser> firmUsers = new ArrayList<>(0);
-
-    @Transient
-    private List<FirmUser> tempFirmUsers = new ArrayList<>(0);
-
-    @Override
     public Long getId() {
         return id;
     }
 
-    @Override
-    public void setId(final Long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public String getFirmName() {
-        return firmName;
+    public User getUser() {
+        return user;
     }
 
-    public void setFirmName(final String firmName) {
-        this.firmName = firmName;
+    public void setUser(User user) {
+        this.user = user;
     }
 
-    public String getPan() {
-        return pan;
+    public PortalInbox getPortalInbox() {
+        return portalInbox;
     }
 
-    public void setPan(final String pan) {
-        this.pan = pan;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(final String address) {
-        this.address = address;
-    }
-
-    public List<FirmUser> getTempFirmUsers() {
-        return tempFirmUsers;
-    }
-
-    public void setTempFirmUsers(final List<FirmUser> tempFirmUsers) {
-        this.tempFirmUsers = tempFirmUsers;
-    }
-
-    public List<FirmUser> getFirmUsers() {
-        return firmUsers;
+    public void setPortalInbox(PortalInbox portalInbox) {
+        this.portalInbox = portalInbox;
     }
 
 }

@@ -39,68 +39,10 @@
  */
 package org.egov.portal.entity;
 
-import java.util.ArrayList;
-import java.util.List;
+public class SearchRequestFirm {
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.validation.constraints.NotNull;
-
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.persistence.validator.annotation.Unique;
-import org.hibernate.validator.constraints.SafeHtml;
-
-@Entity
-@Table(name = "egp_firm")
-@Unique(fields = {
-"pan" }, enableDfltMsg = true)
-@SequenceGenerator(name = Firm.SEQ_EGP_FIRM, sequenceName = Firm.SEQ_EGP_FIRM, allocationSize = 1)
-public class Firm extends AbstractAuditable {
-
-    private static final long serialVersionUID = 1L;
-
-    public static final String SEQ_EGP_FIRM = "SEQ_EGP_FIRM";
-
-    @Id
-    @GeneratedValue(generator = SEQ_EGP_FIRM, strategy = GenerationType.SEQUENCE)
-    private Long id;
-
-    @NotNull
-    @SafeHtml
     private String firmName;
-
-    @NotNull
-    @SafeHtml
     private String pan;
-
-    @SafeHtml
-    private String address;
-
-    @OrderBy("id")
-    @OneToMany(mappedBy = "firm", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = FirmUser.class)
-    private final List<FirmUser> firmUsers = new ArrayList<>(0);
-
-    @Transient
-    private List<FirmUser> tempFirmUsers = new ArrayList<>(0);
-
-    @Override
-    public Long getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(final Long id) {
-        this.id = id;
-    }
 
     public String getFirmName() {
         return firmName;
@@ -116,26 +58,6 @@ public class Firm extends AbstractAuditable {
 
     public void setPan(final String pan) {
         this.pan = pan;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(final String address) {
-        this.address = address;
-    }
-
-    public List<FirmUser> getTempFirmUsers() {
-        return tempFirmUsers;
-    }
-
-    public void setTempFirmUsers(final List<FirmUser> tempFirmUsers) {
-        this.tempFirmUsers = tempFirmUsers;
-    }
-
-    public List<FirmUser> getFirmUsers() {
-        return firmUsers;
     }
 
 }

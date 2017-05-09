@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
+<%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
@@ -37,46 +36,26 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  -->
-<!DOCTYPE tiles-definitions PUBLIC
-        "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN"
-        "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
-<tiles-definitions>
+  --%>
 
-    <definition name="base_layout" template="/WEB-INF/views/template/main.jsp">
-        <put-attribute name="title" value="eGov Urban Portal"/>
-        <put-attribute name="header" value="/WEB-INF/views/template/header.jsp"/>
-        <put-attribute name="body" value=""/>
-        <put-attribute name="footer" value="/WEB-INF/views/template/footer.jsp"/>
-    </definition>
-
-	<definition name="error" template="/WEB-INF/views/template/error.jsp"/>
-
-    <definition name="citizen-home" extends="base_layout">
-        <put-attribute name="page-title" value="title.citizenHome" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/citizen-home.jsp"/>
-    </definition>
-    
-    <definition name="signup" template="/WEB-INF/views/signup/signup.jsp">
-    </definition>
-
-    <definition name="error/*" extends="error">
-		<put-attribute name="body" value="/WEB-INF/views/error/{1}.jsp" />
-	</definition>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
+<div class="page-container" id="page-container">
+<input type="hidden" name="mode" value="${mode}" />
 	
-	<definition name="firm-form" extends="base_layout">
-		<put-attribute name="page-title" value="lbl.createfirm" cascade="true"/>
-		<put-attribute name="body" value="/WEB-INF/views/firm/firm-form.jsp"/>
-	</definition>
-	
-	<definition name="firm-success" extends="base_layout">
-		<put-attribute name="page-title" value="lbl.createfirm" cascade="true"/>
-		<put-attribute name="body" value="/WEB-INF/views/firm/firm-success.jsp"/>
-	</definition>
-	
-	<definition name="firm-search" extends="base_layout">
-		<put-attribute name="page-title" value="lbl.searchfirm" cascade="true"/>
-		<put-attribute name="body" value="/WEB-INF/views/firm/firm-search.jsp"/>
-	</definition>
-	
-</tiles-definitions>
+		<c:if test="${ mode != 'view'}">
+			<div class="new-page-header">
+				${success}
+			</div>
+			</c:if>
+				<jsp:include page="firm-commonview.jsp" />
+			<div class="col-sm-12 text-center">
+				<div class="row">
+					<input type="submit" name="closeButton" id="closeButton"
+						value="Close" Class="btn btn-default" onclick="window.close();" />
+				</div>
+			</div>
+		
+</div>

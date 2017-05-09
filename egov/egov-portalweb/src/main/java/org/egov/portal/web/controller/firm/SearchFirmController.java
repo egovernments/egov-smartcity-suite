@@ -37,64 +37,45 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.portal.entity;
+package org.egov.portal.web.controller.firm;
 
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
+import javax.servlet.http.HttpServletRequest;
 
-import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.exception.ApplicationException;
+import org.egov.portal.entity.Firm;
+import org.egov.portal.entity.SearchRequestFirm;
+import org.egov.portal.firm.service.FirmService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
-@Entity
-@Table(name = "egp_inboxusers")
-@SequenceGenerator(name = PortalInboxUsers.SEQ_EGP_INBOXUSERS, sequenceName = PortalInboxUsers.SEQ_EGP_INBOXUSERS, allocationSize = 1)
-public class PortalInboxUsers {
+@Controller
+@RequestMapping(value = "/firm")
+public class SearchFirmController {
 
-    public static final String SEQ_EGP_INBOXUSERS = "SEQ_EGP_INBOXUSERS";
+    @Autowired
+    private FirmService firmService;
 
-    @Id
-    @GeneratedValue(generator = SEQ_EGP_INBOXUSERS, strategy = GenerationType.SEQUENCE)
-    private Long id;
-
-    @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "userid", nullable = false)
-    private User user;
-
-    @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "portalInbox", nullable = false)
-    private PortalInbox portalInbox;
-
-    public Long getId() {
-        return id;
+    @RequestMapping(value = "/firm-view/{id}", method = RequestMethod.GET)
+    public String viewFirm(@PathVariable final String id, final Model model,
+            final HttpServletRequest request)
+            throws ApplicationException {
+        final Firm firm = firmService.getFirmById(Long.valueOf(id));
+        model.addAttribute("firm", firm);
+        return "firm-success";
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public PortalInbox getPortalInbox() {
-        return portalInbox;
-    }
-
-    public void setPortalInbox(PortalInbox portalInbox) {
-        this.portalInbox = portalInbox;
+    @RequestMapping(value = "/firm-search", method = RequestMethod.GET)
+    public String searchFirm(
+            @ModelAttribute final SearchRequestFirm searchRequestFirm,
+            final Model model, final HttpServletRequest request) throws ApplicationException {
+        model.addAttribute("searchRequestFirm", searchRequestFirm);
+        model.addAttribute("mode", request.getParameter("mode"));
+        return "firm-search";
     }
 
 }

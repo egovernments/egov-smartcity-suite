@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
+<%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
@@ -37,46 +36,54 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  -->
-<!DOCTYPE tiles-definitions PUBLIC
-        "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN"
-        "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
-<tiles-definitions>
+  --%>
 
-    <definition name="base_layout" template="/WEB-INF/views/template/main.jsp">
-        <put-attribute name="title" value="eGov Urban Portal"/>
-        <put-attribute name="header" value="/WEB-INF/views/template/header.jsp"/>
-        <put-attribute name="body" value=""/>
-        <put-attribute name="footer" value="/WEB-INF/views/template/footer.jsp"/>
-    </definition>
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 
-	<definition name="error" template="/WEB-INF/views/template/error.jsp"/>
-
-    <definition name="citizen-home" extends="base_layout">
-        <put-attribute name="page-title" value="title.citizenHome" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/citizen-home.jsp"/>
-    </definition>
-    
-    <definition name="signup" template="/WEB-INF/views/signup/signup.jsp">
-    </definition>
-
-    <definition name="error/*" extends="error">
-		<put-attribute name="body" value="/WEB-INF/views/error/{1}.jsp" />
-	</definition>
+<form:form name="firm" id="firm" role="form" action="/portal/firm/firm-save" modelAttribute="firm"  class="form-horizontal form-groups-bordered">
+	<%-- <input type="hidden" value="<spring:message code='overhead.overheadRates.invalid' />" id='overheadRateDetails'> --%>
+	<spring:hasBindErrors name="firm">
+		<div class="alert alert-danger col-md-10 col-md-offset-1">
+			<form:errors path="*" cssClass="add-margin" />
+			<br />
+		</div>
+	</spring:hasBindErrors>
+	<div class="row">
+		<div class="col-md-12">
+			<div class="panel panel-primary" data-collapsed="0">
+	<input type="hidden" value="${firm.id }" id="firmid" name="firm" />
 	
-	<definition name="firm-form" extends="base_layout">
-		<put-attribute name="page-title" value="lbl.createfirm" cascade="true"/>
-		<put-attribute name="body" value="/WEB-INF/views/firm/firm-form.jsp"/>
-	</definition>
 	
-	<definition name="firm-success" extends="base_layout">
-		<put-attribute name="page-title" value="lbl.createfirm" cascade="true"/>
-		<put-attribute name="body" value="/WEB-INF/views/firm/firm-success.jsp"/>
-	</definition>
-	
-	<definition name="firm-search" extends="base_layout">
-		<put-attribute name="page-title" value="lbl.searchfirm" cascade="true"/>
-		<put-attribute name="body" value="/WEB-INF/views/firm/firm-search.jsp"/>
-	</definition>
-	
-</tiles-definitions>
+			<jsp:include page="firmheader.jsp" />
+			<jsp:include page="firmusers.jsp" />
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-sm-12 text-center">
+		<c:choose>
+			<c:when test="${mode == 'edit' }">
+				<button type="submit" name="submit" id="save"
+					class="btn btn-primary" value="Modify">
+					<spring:message code="lbl.modify" />
+				</button>
+			</c:when>
+			<c:otherwise>
+				<button type="submit" name="submit" id="save"
+					class="btn btn-primary" value="Save">
+					<spring:message code="lbl.save" />
+				</button>
+			</c:otherwise>
+		</c:choose>
+			<button type="button" class="btn btn-default" id="button2"
+				onclick="window.close();">
+				<spring:message code="lbl.close" />
+			</button>
+		</div>
+	</div>
+</form:form>
+        <script src="<cdn:url value='/resources/js/firm.js?rnd=${app_release_no}'/>"></script>

@@ -46,7 +46,6 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -90,47 +89,36 @@ public class PortalInbox extends AbstractAuditable {
 
     @NotNull
     @Length(max = 128)
-    @Column(name = "SERVICETYPE")
     private String serviceType;
 
     @Length(max = 50)
-    @Column(name = "applicationNumber")
     private String applicationNumber;
 
     @NotNull
     @Length(max = 50)
-    @Column(name = "entityRefNumber")
     private String entityRefNumber;
 
     @NotNull
-    @Column(name = "ENTITYREFID")
     private Long entityRefId;
 
     @Length(max = 256)
-    @Column(name = "header_msg")
-    private String header_msg;
+    private String headermessage;
 
     @NotNull
     @Length(max = 2048)
-    @Column(name = "DETAILEDMESSAGE")
     private String detailedMessage;
 
     @Length(max = 256)
-    @Column(name = "LINK")
     private String link;
 
-    @Column(name = "READ")
     private boolean read;
 
-    @Column(name = "ISRESOLVED")
-    private boolean isResolved;
+    private boolean resolved;
 
-    @Column(name = "slaEndDate")
     private Date slaEndDate;
 
     @Temporal(TemporalType.TIMESTAMP)
     @NotNull
-    @Column(name = "applicationdate")
     private Date applicationdate;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -139,21 +127,21 @@ public class PortalInbox extends AbstractAuditable {
 
     @OrderBy("id")
     @OneToMany(mappedBy = "portalInbox", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private final List<PortalInboxUsers> portalInboxUsers = new ArrayList<>(0);
+    private final List<PortalInboxUser> portalInboxUsers = new ArrayList<>(0);
 
     @Length(max = 20)
-    @Column(name = "PRIORITY")
     private Priority priority;
 
     @Length(max = 100)
-    @Column(name = "STATUS")
     private String status;
 
+    @Override
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    @Override
+    public void setId(final Long id) {
         this.id = id;
     }
 
@@ -161,7 +149,7 @@ public class PortalInbox extends AbstractAuditable {
         return module;
     }
 
-    public void setModule(Module module) {
+    public void setModule(final Module module) {
         this.module = module;
     }
 
@@ -169,7 +157,7 @@ public class PortalInbox extends AbstractAuditable {
         return serviceType;
     }
 
-    public void setServiceType(String serviceType) {
+    public void setServiceType(final String serviceType) {
         this.serviceType = serviceType;
     }
 
@@ -177,7 +165,7 @@ public class PortalInbox extends AbstractAuditable {
         return applicationNumber;
     }
 
-    public void setApplicationNumber(String applicationNumber) {
+    public void setApplicationNumber(final String applicationNumber) {
         this.applicationNumber = applicationNumber;
     }
 
@@ -185,7 +173,7 @@ public class PortalInbox extends AbstractAuditable {
         return entityRefNumber;
     }
 
-    public void setEntityRefNumber(String entityRefNumber) {
+    public void setEntityRefNumber(final String entityRefNumber) {
         this.entityRefNumber = entityRefNumber;
     }
 
@@ -193,23 +181,15 @@ public class PortalInbox extends AbstractAuditable {
         return entityRefId;
     }
 
-    public void setEntityRefId(Long entityRefId) {
+    public void setEntityRefId(final Long entityRefId) {
         this.entityRefId = entityRefId;
-    }
-
-    public String getHeader_msg() {
-        return header_msg;
-    }
-
-    public void setHeader_msg(String header_msg) {
-        this.header_msg = header_msg;
     }
 
     public String getDetailedMessage() {
         return detailedMessage;
     }
 
-    public void setDetailedMessage(String detailedMessage) {
+    public void setDetailedMessage(final String detailedMessage) {
         this.detailedMessage = detailedMessage;
     }
 
@@ -217,7 +197,7 @@ public class PortalInbox extends AbstractAuditable {
         return link;
     }
 
-    public void setLink(String link) {
+    public void setLink(final String link) {
         this.link = link;
     }
 
@@ -225,23 +205,15 @@ public class PortalInbox extends AbstractAuditable {
         return read;
     }
 
-    public void setRead(boolean read) {
+    public void setRead(final boolean read) {
         this.read = read;
-    }
-
-    public boolean isResolved() {
-        return isResolved;
-    }
-
-    public void setResolved(boolean isResolved) {
-        this.isResolved = isResolved;
     }
 
     public Date getSlaEndDate() {
         return slaEndDate;
     }
 
-    public void setSlaEndDate(Date slaEndDate) {
+    public void setSlaEndDate(final Date slaEndDate) {
         this.slaEndDate = slaEndDate;
     }
 
@@ -249,7 +221,7 @@ public class PortalInbox extends AbstractAuditable {
         return applicationdate;
     }
 
-    public void setApplicationdate(Date applicationdate) {
+    public void setApplicationdate(final Date applicationdate) {
         this.applicationdate = applicationdate;
     }
 
@@ -257,7 +229,7 @@ public class PortalInbox extends AbstractAuditable {
         return state;
     }
 
-    public void setState(State state) {
+    public void setState(final State state) {
         this.state = state;
     }
 
@@ -265,7 +237,7 @@ public class PortalInbox extends AbstractAuditable {
         return priority;
     }
 
-    public void setPriority(Priority priority) {
+    public void setPriority(final Priority priority) {
         this.priority = priority;
     }
 
@@ -273,12 +245,28 @@ public class PortalInbox extends AbstractAuditable {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(final String status) {
         this.status = status;
     }
 
-    public List<PortalInboxUsers> getPortalInboxUsers() {
+    public List<PortalInboxUser> getPortalInboxUsers() {
         return portalInboxUsers;
+    }
+
+    public String getHeadermessage() {
+        return headermessage;
+    }
+
+    public void setHeadermessage(final String headermessage) {
+        this.headermessage = headermessage;
+    }
+
+    public boolean isResolved() {
+        return resolved;
+    }
+
+    public void setResolved(final boolean resolved) {
+        this.resolved = resolved;
     }
 
 }
