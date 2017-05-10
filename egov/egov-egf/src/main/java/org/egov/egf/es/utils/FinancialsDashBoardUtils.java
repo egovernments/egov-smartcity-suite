@@ -62,30 +62,24 @@ public class FinancialsDashBoardUtils {
     private static final String ULBCODE = "ulbcode";
     private static final String VOUCHER_DATE = "vouchercreateddate";
     private static final String ADM_ZONE = "admZone";
-    private static final String FUND_CODE = "voucherfundname";
+    private static final String FUND_NAME = "voucherfundname";
     private static final String DEPARTMENT_CODE = "vouchermisdepartmentname";
     private static final String FUNCTION_CODE = "vouchermisfunctionname";
     private static final String FUNDSOURCE_CODE = "vouchermisfundsourcename";
     private static final String SCHEME_CODE = "vouchermisschemename";
     private static final String SUBSCHEME_CODE = "vouchermissubschemename";
-    private static final String MAJOR_CODE = "majorCode";
-    private static final String MINOR_CODE = "minorCode";
+    private static final String MAJOR_CODE = "majorcode";
+    private static final String MINOR_CODE = "minorcode";
     private static final String DETAILED_CODE = "glcode";
+    private static final String OBCREATEDDATE = "createddate";
 
     public static String getAggregationGroupingField(final FinancialsDetailsRequest financialsDetailsRequest) {
         String aggregationField = DISTRICT;
 
         if (StringUtils.isNotBlank(financialsDetailsRequest.getAggregationLevel())) {
-            if ("district".equalsIgnoreCase(financialsDetailsRequest.getAggregationLevel()))
-                aggregationField = DISTRICT;
-            if ("region".equalsIgnoreCase(financialsDetailsRequest.getAggregationLevel()))
-                aggregationField = REGION;
-            if ("grade".equalsIgnoreCase(financialsDetailsRequest.getAggregationLevel()))
-                aggregationField = GRADE;
-            if ("ulb".equalsIgnoreCase(financialsDetailsRequest.getAggregationLevel()))
-                aggregationField = ULBCODE;
+            aggregationField = setAggregateLevel(financialsDetailsRequest);
             if ("fund".equalsIgnoreCase(financialsDetailsRequest.getAggregationLevel()))
-                aggregationField = FUND_CODE;
+                aggregationField = FUND_NAME;
             if ("department".equalsIgnoreCase(financialsDetailsRequest.getAggregationLevel()))
                 aggregationField = DEPARTMENT_CODE;
             if ("function".equalsIgnoreCase(financialsDetailsRequest.getAggregationLevel()))
@@ -96,16 +90,7 @@ public class FinancialsDashBoardUtils {
                 aggregationField = SCHEME_CODE;
             if ("subscheme".equalsIgnoreCase(financialsDetailsRequest.getAggregationLevel()))
                 aggregationField = SUBSCHEME_CODE;
-            if ("majorCoa".equalsIgnoreCase(financialsDetailsRequest.getAggregationLevel()))
-                aggregationField = MAJOR_CODE;
-            if ("minorCoa".equalsIgnoreCase(financialsDetailsRequest.getAggregationLevel()))
-                aggregationField = MINOR_CODE;
-            if ("detailedCoa".equalsIgnoreCase(financialsDetailsRequest.getAggregationLevel()))
-                aggregationField = DETAILED_CODE;
-            if ("admz".equalsIgnoreCase(financialsDetailsRequest.getAggregationLevel()))
-                aggregationField = ADM_ZONE;
-            if ("admw".equalsIgnoreCase(financialsDetailsRequest.getAggregationLevel()))
-                aggregationField = ADM_WARD;
+
 
         }
 
@@ -114,70 +99,137 @@ public class FinancialsDashBoardUtils {
 
     public static BoolQueryBuilder prepareWhereClause(final FinancialsDetailsRequest financialsDetailsRequest) {
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
-        if (StringUtils.isNotBlank(financialsDetailsRequest.getAdmWard()))
-            boolQuery = boolQuery
-                    .filter(QueryBuilders.matchQuery(ADM_WARD, financialsDetailsRequest.getAdmWard()));
-
-        if (StringUtils.isNotBlank(financialsDetailsRequest.getAdmZone()))
-            boolQuery = boolQuery
-                    .filter(QueryBuilders.matchQuery(ADM_ZONE, financialsDetailsRequest.getAdmZone()));
-
+        boolQuery = prepareWhereCluase(financialsDetailsRequest, boolQuery);
         if (StringUtils.isNotBlank(financialsDetailsRequest.getDepartmentCode()))
-            boolQuery = boolQuery
+            boolQuery
                     .filter(QueryBuilders.matchQuery(DEPARTMENT_CODE, financialsDetailsRequest.getDepartmentCode()));
 
-        if (StringUtils.isNotBlank(financialsDetailsRequest.getDetailedCode()))
-            boolQuery = boolQuery
-                    .filter(QueryBuilders.matchQuery(DETAILED_CODE, financialsDetailsRequest.getDetailedCode()));
-
-        if (StringUtils.isNotBlank(financialsDetailsRequest.getDistrict()))
-            boolQuery = boolQuery
-                    .filter(QueryBuilders.matchQuery(DISTRICT, financialsDetailsRequest.getDistrict()));
 
         if (StringUtils.isNotBlank(financialsDetailsRequest.getFromDate()))
-            boolQuery = boolQuery
+            boolQuery
                     .filter(QueryBuilders.rangeQuery(VOUCHER_DATE)
                             .gte(FinancialConstants.DATEFORMATTER_YYYY_MM_DD.format(financialsDetailsRequest.getFromDate())));
 
         if (StringUtils.isNotBlank(financialsDetailsRequest.getToDate()))
-            boolQuery = boolQuery
+            boolQuery
                     .filter(QueryBuilders.rangeQuery(VOUCHER_DATE)
                             .lte(FinancialConstants.DATEFORMATTER_YYYY_MM_DD.format(financialsDetailsRequest.getToDate())));
 
         if (StringUtils.isNotBlank(financialsDetailsRequest.getFunctionCode()))
-            boolQuery = boolQuery
+            boolQuery
                     .filter(QueryBuilders.matchQuery(FUNCTION_CODE, financialsDetailsRequest.getFunctionCode()));
         if (StringUtils.isNotBlank(financialsDetailsRequest.getFundCode()))
-            boolQuery = boolQuery
-                    .filter(QueryBuilders.matchQuery(FUND_CODE, financialsDetailsRequest.getFundCode()));
+            boolQuery
+                    .filter(QueryBuilders.matchQuery(FUND_NAME, financialsDetailsRequest.getFundCode()));
 
         if (StringUtils.isNotBlank(financialsDetailsRequest.getFundSource()))
-            boolQuery = boolQuery
+            boolQuery
                     .filter(QueryBuilders.matchQuery(FUNDSOURCE_CODE, financialsDetailsRequest.getFundSource()));
 
-        if (StringUtils.isNotBlank(financialsDetailsRequest.getGrade()))
-            boolQuery = boolQuery
-                    .filter(QueryBuilders.matchQuery(GRADE, financialsDetailsRequest.getGrade()));
-        if (StringUtils.isNotBlank(financialsDetailsRequest.getMajorCode()))
-            boolQuery = boolQuery
-                    .filter(QueryBuilders.matchQuery(MAJOR_CODE, financialsDetailsRequest.getMajorCode()));
-        if (StringUtils.isNotBlank(financialsDetailsRequest.getMinorCode()))
-            boolQuery = boolQuery
-                    .filter(QueryBuilders.matchQuery(MINOR_CODE, financialsDetailsRequest.getMinorCode()));
         if (StringUtils.isNotBlank(financialsDetailsRequest.getSchemeCode()))
-            boolQuery = boolQuery
+            boolQuery
                     .filter(QueryBuilders.matchQuery(SCHEME_CODE, financialsDetailsRequest.getSchemeCode()));
         if (StringUtils.isNotBlank(financialsDetailsRequest.getSubschemeCode()))
-            boolQuery = boolQuery
+            boolQuery
                     .filter(QueryBuilders.matchQuery(SUBSCHEME_CODE, financialsDetailsRequest.getSubschemeCode()));
 
-        if (StringUtils.isNotBlank(financialsDetailsRequest.getUlbCode()))
-            boolQuery = boolQuery
-                    .filter(QueryBuilders.matchQuery(ULBCODE, financialsDetailsRequest.getUlbCode()));
-        if (StringUtils.isNotBlank(financialsDetailsRequest.getRegion()))
-            boolQuery = boolQuery
-                    .filter(QueryBuilders.matchQuery(REGION, financialsDetailsRequest.getRegion()));
 
         return boolQuery;
+    }
+
+    public static BoolQueryBuilder prepareOpeningBlncWhereClause(final FinancialsDetailsRequest financialsDetailsRequest) {
+        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
+        boolQuery = prepareWhereCluase(financialsDetailsRequest, boolQuery);
+        if (StringUtils.isNotBlank(financialsDetailsRequest.getFromDate()))
+            boolQuery
+                    .filter(QueryBuilders.rangeQuery(OBCREATEDDATE)
+                            .gte(FinancialConstants.DATEFORMATTER_YYYY_MM_DD.format(financialsDetailsRequest.getFromDate())));
+
+        if (StringUtils.isNotBlank(financialsDetailsRequest.getToDate()))
+            boolQuery
+                    .filter(QueryBuilders.rangeQuery(OBCREATEDDATE)
+                            .lte(FinancialConstants.DATEFORMATTER_YYYY_MM_DD.format(financialsDetailsRequest.getToDate())));
+        if (StringUtils.isNotBlank(financialsDetailsRequest.getFundCode()))
+            boolQuery
+                    .filter(QueryBuilders.matchQuery("fundname", financialsDetailsRequest.getFundCode()));
+        if (StringUtils.isNotBlank(financialsDetailsRequest.getDepartmentCode()))
+            boolQuery
+                    .filter(QueryBuilders.matchQuery("departmentname", financialsDetailsRequest.getDepartmentCode()));
+        if (StringUtils.isNotBlank(financialsDetailsRequest.getFunctionCode()))
+            boolQuery
+                    .filter(QueryBuilders.matchQuery("functionname", financialsDetailsRequest.getFunctionCode()));
+        return boolQuery;
+    }
+
+    private static BoolQueryBuilder prepareWhereCluase(FinancialsDetailsRequest financialsDetailsRequest, BoolQueryBuilder boolQuery) {
+        if (StringUtils.isNotBlank(financialsDetailsRequest.getAdmWard()))
+            boolQuery
+                    .filter(QueryBuilders.matchQuery(ULBCODE, financialsDetailsRequest.getUlbCode()));
+        if (StringUtils.isNotBlank(financialsDetailsRequest.getDistrict()))
+            boolQuery
+                    .filter(QueryBuilders.matchQuery(DISTRICT, financialsDetailsRequest.getDistrict()));
+        if (StringUtils.isNotBlank(financialsDetailsRequest.getRegion()))
+            boolQuery
+                    .filter(QueryBuilders.matchQuery(REGION, financialsDetailsRequest.getRegion()));
+        if (StringUtils.isNotBlank(financialsDetailsRequest.getGrade()))
+            boolQuery
+                    .filter(QueryBuilders.matchQuery(GRADE, financialsDetailsRequest.getGrade()));
+        if (StringUtils.isNotBlank(financialsDetailsRequest.getDetailedCode()))
+            boolQuery
+                    .filter(QueryBuilders.matchQuery(DETAILED_CODE, financialsDetailsRequest.getDetailedCode()));
+        if (StringUtils.isNotBlank(financialsDetailsRequest.getMajorCode()))
+            boolQuery
+                    .filter(QueryBuilders.matchQuery(MAJOR_CODE, financialsDetailsRequest.getMajorCode()));
+        if (StringUtils.isNotBlank(financialsDetailsRequest.getMinorCode()))
+            boolQuery
+                    .filter(QueryBuilders.matchQuery(MINOR_CODE, financialsDetailsRequest.getMinorCode()));
+        if (StringUtils.isNotBlank(financialsDetailsRequest.getAdmWard()))
+            boolQuery
+                    .filter(QueryBuilders.matchQuery(ADM_WARD, financialsDetailsRequest.getAdmWard()));
+
+        if (StringUtils.isNotBlank(financialsDetailsRequest.getAdmZone()))
+            boolQuery
+                    .filter(QueryBuilders.matchQuery(ADM_ZONE, financialsDetailsRequest.getAdmZone()));
+        return boolQuery;
+    }
+
+    public static String getOpeningBlncAggrGroupingField(final FinancialsDetailsRequest financialsDetailsRequest) {
+        String aggregationField = DISTRICT;
+        if (StringUtils.isNotBlank(financialsDetailsRequest.getAggregationLevel())) {
+            aggregationField = setAggregateLevel(financialsDetailsRequest);
+            if ("fund".equalsIgnoreCase(financialsDetailsRequest.getAggregationLevel()))
+                aggregationField = "fundname";
+            if ("department".equalsIgnoreCase(financialsDetailsRequest.getAggregationLevel()))
+                aggregationField = "departmentname";
+            if ("function".equalsIgnoreCase(financialsDetailsRequest.getAggregationLevel()))
+                aggregationField = "functionname";
+
+
+        }
+
+        return aggregationField;
+    }
+
+    private static String setAggregateLevel(FinancialsDetailsRequest financialsDetailsRequest) {
+        String aggregationField = DISTRICT;
+        if ("district".equalsIgnoreCase(financialsDetailsRequest.getAggregationLevel()))
+            aggregationField = DISTRICT;
+        if ("region".equalsIgnoreCase(financialsDetailsRequest.getAggregationLevel()))
+            aggregationField = REGION;
+        if ("grade".equalsIgnoreCase(financialsDetailsRequest.getAggregationLevel()))
+            aggregationField = GRADE;
+        if ("ulb".equalsIgnoreCase(financialsDetailsRequest.getAggregationLevel()))
+            aggregationField = ULBCODE;
+        if ("majorCoa".equalsIgnoreCase(financialsDetailsRequest.getAggregationLevel()))
+            aggregationField = MAJOR_CODE;
+        if ("minorCoa".equalsIgnoreCase(financialsDetailsRequest.getAggregationLevel()))
+            aggregationField = MINOR_CODE;
+        if ("detailedCoa".equalsIgnoreCase(financialsDetailsRequest.getAggregationLevel()))
+            aggregationField = DETAILED_CODE;
+        if ("admz".equalsIgnoreCase(financialsDetailsRequest.getAggregationLevel()))
+            aggregationField = ADM_ZONE;
+        if ("admw".equalsIgnoreCase(financialsDetailsRequest.getAggregationLevel()))
+            aggregationField = ADM_WARD;
+        return aggregationField;
     }
 }

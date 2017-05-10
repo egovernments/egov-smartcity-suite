@@ -63,9 +63,9 @@ public class FinancialsDetailsRequest {
     private String fundSource;
     private String schemeCode;
     private String subschemeCode;
-    private String majorCode;
-    private String minorCode;
-    private String detailedCode;
+    private String majorCode = "";
+    private String minorCode = "";
+    private String detailedCode = "";
     private String aggregationLevel;
 
     public String getRegion() {

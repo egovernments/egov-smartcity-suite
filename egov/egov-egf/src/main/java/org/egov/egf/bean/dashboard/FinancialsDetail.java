@@ -57,8 +57,16 @@ public class FinancialsDetail {
     private BigDecimal expenseCreditAmount = BigDecimal.ZERO;
     private BigDecimal incomeNetAmount = BigDecimal.ZERO;
     private BigDecimal expenseNetAmount = BigDecimal.ZERO;
-    private BigDecimal netAmount = BigDecimal.ZERO;
-    private BigDecimal opbAmount = BigDecimal.ZERO;
+    private BigDecimal ieNetAmount = BigDecimal.ZERO;
+    private BigDecimal liabilitiesDebitAmount = BigDecimal.ZERO;
+    private BigDecimal liabilitiesCreditAmount = BigDecimal.ZERO;
+    private BigDecimal assetsDebitAmount = BigDecimal.ZERO;
+    private BigDecimal assetsCreditAmount = BigDecimal.ZERO;
+    private BigDecimal liabilitiesNetAmount = BigDecimal.ZERO;
+    private BigDecimal assetsNetAmount = BigDecimal.ZERO;
+    private BigDecimal alNetAmount = BigDecimal.ZERO;
+    private BigDecimal liabilitiesOpbAmount = BigDecimal.ZERO;
+    private BigDecimal assetsOpbAmount = BigDecimal.ZERO;
     private String region;
     private String district;
     private String grade;
@@ -76,6 +84,72 @@ public class FinancialsDetail {
     private String majorCode;
     private String minorCode;
     private String detailedCode;
+
+
+    public BigDecimal getIeNetAmount() {
+        return ieNetAmount;
+    }
+
+    public void setIeNetAmount(BigDecimal ieNetAmount) {
+        this.ieNetAmount = ieNetAmount;
+    }
+
+    public BigDecimal getAlNetAmount() {
+        return alNetAmount;
+    }
+
+    public void setAlNetAmount(BigDecimal alNetAmount) {
+        this.alNetAmount = alNetAmount;
+    }
+
+
+    public BigDecimal getLiabilitiesDebitAmount() {
+        return liabilitiesDebitAmount;
+    }
+
+    public void setLiabilitiesDebitAmount(BigDecimal liabilitiesDebitAmount) {
+        this.liabilitiesDebitAmount = liabilitiesDebitAmount;
+    }
+
+    public BigDecimal getLiabilitiesCreditAmount() {
+        return liabilitiesCreditAmount;
+    }
+
+    public void setLiabilitiesCreditAmount(BigDecimal liabilitiesCreditAmount) {
+        this.liabilitiesCreditAmount = liabilitiesCreditAmount;
+    }
+
+    public BigDecimal getAssetsDebitAmount() {
+        return assetsDebitAmount;
+    }
+
+    public void setAssetsDebitAmount(BigDecimal assetsDebitAmount) {
+        this.assetsDebitAmount = assetsDebitAmount;
+    }
+
+    public BigDecimal getAssetsCreditAmount() {
+        return assetsCreditAmount;
+    }
+
+    public void setAssetsCreditAmount(BigDecimal assetsCreditAmount) {
+        this.assetsCreditAmount = assetsCreditAmount;
+    }
+
+    public BigDecimal getLiabilitiesNetAmount() {
+        return liabilitiesNetAmount;
+    }
+
+    public void setLiabilitiesNetAmount(BigDecimal liabilitiesNetAmount) {
+        this.liabilitiesNetAmount = liabilitiesNetAmount;
+    }
+
+    public BigDecimal getAssetsNetAmount() {
+        return assetsNetAmount;
+    }
+
+    public void setAssetsNetAmount(BigDecimal assetsNetAmount) {
+        this.assetsNetAmount = assetsNetAmount;
+    }
 
     public BigDecimal getIncomeDebitAmount() {
         return incomeDebitAmount;
@@ -245,20 +319,20 @@ public class FinancialsDetail {
         this.detailedCode = detailedCode;
     }
 
-    public BigDecimal getNetAmount() {
-        return netAmount;
+    public BigDecimal getLiabilitiesOpbAmount() {
+        return liabilitiesOpbAmount;
     }
 
-    public void setNetAmount(final BigDecimal netAmount) {
-        this.netAmount = netAmount;
+    public void setLiabilitiesOpbAmount(BigDecimal liabilitiesOpbAmount) {
+        this.liabilitiesOpbAmount = liabilitiesOpbAmount;
     }
 
-    public BigDecimal getOpbAmount() {
-        return opbAmount;
+    public BigDecimal getAssetsOpbAmount() {
+        return assetsOpbAmount;
     }
 
-    public void setOpbAmount(final BigDecimal opbAmount) {
-        this.opbAmount = opbAmount;
+    public void setAssetsOpbAmount(BigDecimal assetsOpbAmount) {
+        this.assetsOpbAmount = assetsOpbAmount;
     }
 
     public String getAdmZoneName() {

@@ -371,6 +371,7 @@ public interface FinancialConstants {
     public static final String MODE_OF_PAYMENT = "Mode of Payment";
 
     public static final String FINANCIAL_VOUCHER_INDEX_NAME = "financialsvoucherdata";
+    public static final String FINANCIAL_OPENINGBALANCE_INDEX_NAME = "financialsobdata";
     public static final SimpleDateFormat DATEFORMATTER_YYYY_MM_DD = new SimpleDateFormat("yyyy-MM-dd");
 
 }

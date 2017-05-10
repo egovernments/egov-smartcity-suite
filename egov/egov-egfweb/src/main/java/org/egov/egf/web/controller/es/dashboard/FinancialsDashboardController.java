@@ -78,7 +78,7 @@ public class FinancialsDashboardController {
      * @return response JSON
      * @throws IOException
      */
-    @RequestMapping(value = "/iedashboard", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/finreports", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public List<FinancialsDetail> getFinancialDetails(FinancialsDetailsRequest financialsDetailsRequest)
             throws IOException {
         if (LOGGER.isDebugEnabled())
@@ -90,7 +90,7 @@ public class FinancialsDashboardController {
                     + financialsDetailsRequest.getAggregationLevel());
         BoolQueryBuilder boolQuery = FinancialsDashBoardUtils.prepareWhereClause(financialsDetailsRequest);
         String aggrField = FinancialsDashBoardUtils.getAggregationGroupingField(financialsDetailsRequest);
-        return financialsDashboardService.getIncomeExpDetails(financialsDetailsRequest, boolQuery, aggrField);
+        return financialsDashboardService.getFinancialsData(financialsDetailsRequest, boolQuery, aggrField);
     }
 
 }
