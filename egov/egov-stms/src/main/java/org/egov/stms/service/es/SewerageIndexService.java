@@ -442,7 +442,7 @@ public class SewerageIndexService {
         if (StringUtils.isNotBlank(locality))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("locationName", locality));
 
-        final SearchResponse consolidatedResponse = elasticsearchTemplate.getClient().prepareSearch("sewerage")
+        final SearchResponse consolidatedResponse = elasticsearchTemplate.getClient().prepareSearch("sewerage").setSize(100)
                 .setQuery(boolQuery).addAggregation(getCountWithGroupingWardAndOrder(GROUPBYFIELD, "ward", "ward", "desc")
                         .subAggregation(getCountWithGroupingWardAndOrder(GROUPBYFIELD, "applicationType", "ward", "desc")))
                 .execute().actionGet();
