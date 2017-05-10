@@ -442,7 +442,7 @@ public class SewerageIndexService {
         if (StringUtils.isNotBlank(locality))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("locationName", locality));
 
-        final SearchResponse consolidatedResponse = elasticsearchTemplate.getClient().prepareSearch("sewerage").setSize(100)
+        final SearchResponse consolidatedResponse = elasticsearchTemplate.getClient().prepareSearch("sewerage")
                 .setQuery(boolQuery).addAggregation(getCountWithGroupingWardAndOrder(GROUPBYFIELD, "ward", "ward", "desc")
                         .subAggregation(getCountWithGroupingWardAndOrder(GROUPBYFIELD, "applicationType", "ward", "desc")))
                 .execute().actionGet();
@@ -472,7 +472,7 @@ public class SewerageIndexService {
     public static AggregationBuilder getCountWithGroupingWardAndOrder(final String aggregationName, final String fieldName,
             final String sortField, final String sortOrder) {
 
-        final TermsBuilder aggregation = AggregationBuilders.terms(aggregationName).field(fieldName);
+        final TermsBuilder aggregation = AggregationBuilders.terms(aggregationName).field(fieldName).size(75);
         if (StringUtils.isNotBlank(sortField) && StringUtils.isNotEmpty(sortField) && "ward".equalsIgnoreCase(sortField)) {
             Boolean order = true;
             if (StringUtils.isNotEmpty(sortOrder) && StringUtils.isNotBlank(sortOrder)
