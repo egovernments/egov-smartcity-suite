@@ -60,13 +60,13 @@
 			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.firmname" /><span
 						class="mandatory"></span></label>
 			<div class="col-sm-3 add-margin">
-				<form:input path="firmName" name="firmName" value="${name}" id="firmname" class="form-control table-input name" maxlength="250" required="required"/>
-				<form:errors path="firmName" cssClass="add-margin error-msg" />
+				<form:input path="name" name="name" value="${name}" id="firmname" class="form-control table-input name" maxlength="250"/>
+				<form:errors path="name" cssClass="add-margin error-msg" />
 			</div>
 			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.pan" /><span
 						class="mandatory"></span></label>
 			<div class="col-sm-3 add-margin">
-				<form:input path="pan" class="form-control" id="pan" maxlength="10" required="required" />
+				<form:input path="pan" class="form-control" id="pan" maxlength="10" />
 				<form:errors path="pan" cssClass="add-margin error-msg" />
 			</div>
 		</div>

@@ -39,13 +39,11 @@
  */
 package org.egov.portal.firm.service;
 
-import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.apache.commons.lang3.time.DateUtils;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.persistence.entity.enums.UserType;
@@ -53,12 +51,8 @@ import org.egov.portal.entity.Firm;
 import org.egov.portal.entity.FirmUser;
 import org.egov.portal.entity.SearchRequestFirm;
 import org.egov.portal.firm.repository.FirmRepository;
-import org.hibernate.Criteria;
-import org.hibernate.Session;
-import org.hibernate.criterion.CriteriaSpecification;
-import org.hibernate.criterion.MatchMode;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
+import org.egov.portal.repository.specs.SearchFirmSpec;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -70,13 +64,13 @@ public class FirmService {
 
     @Autowired
     private FirmRepository firmRepository;
-    
+
     @PersistenceContext
     private EntityManager entityManager;
-    
+
     @Autowired
     private PasswordEncoder passwordEncoder;
-    
+
     @Autowired
     private UserService userService;
 
@@ -88,11 +82,11 @@ public class FirmService {
     public Firm getFirmById(final Long firmId) {
         return firmRepository.findOne(firmId);
     }
-    
+
     public Firm getFirmByPan(final String pan) {
         return firmRepository.findByPan(pan);
     }
-    
+
     @Transactional
     public void createFirm(final Firm firm) {
         FirmUser firmUsers = null;
@@ -101,21 +95,9 @@ public class FirmService {
             User user;
             firmUsers = createFirmUserObject();
             user = userService.getUserByUsername(firmUser.getEmailId());
-            if(user == null) {
-                user = createUserObject();
-                user.setUsername(firmUser.getEmailId());
-                user.setName(firmUser.getName());
-                user.setMobileNumber(firmUser.getMobileNumber());
-                user.setPassword(passwordEncoder.encode(firmUser.getMobileNumber()));
-                user.setEmailId(firmUser.getEmailId());
-                user.setType(UserType.BUSINESS);
-                user.setActive(true);
-                user.setPwdExpiryDate(DateUtils.addMonths(getNewDate(), 6));
-                
-                user=userService.createUser(user);
-            }
+            if (user == null)
+                user = createUser(firmUser);
             firmUsers.setUser(user);
-           
             firmUsers.setMobileNumber(firmUser.getMobileNumber());
             firmUsers.setEmailId(firmUser.getEmailId());
             firmUsers.setName(firmUser.getName());
@@ -125,36 +107,29 @@ public class FirmService {
         firmRepository.save(firm);
     }
 
-    private Date getNewDate() {
-        return new Date();
-    }
+    private User createUser(final FirmUser firmUser) {
+        User user;
+        user = new User();
+        user.setUsername(firmUser.getEmailId());
+        user.setName(firmUser.getName());
+        user.setMobileNumber(firmUser.getMobileNumber());
+        user.setPassword(passwordEncoder.encode(firmUser.getMobileNumber()));
+        user.setEmailId(firmUser.getEmailId());
+        user.setType(UserType.BUSINESS);
+        user.setActive(true);
+        user.setPwdExpiryDate(DateTime.now().plusMonths(6).toDate());
 
-    public static Date addDays(Date d, int days)
-    {
-        d.setTime(d.getTime() + days * 1000 * 60 * 60 * 24);
-        return d;
+        user = userService.createUser(user);
+        return user;
     }
 
     private FirmUser createFirmUserObject() {
         return new FirmUser();
     }
 
-    private User createUserObject() {
-        return new User();
+    public List<Firm> searchFirm(final SearchRequestFirm searchRequestFirm) {
+        final List<Firm> firms = firmRepository.findAll(SearchFirmSpec.searchFirm(searchRequestFirm));
+        return firms;
     }
 
-    public List<Firm> searchFirm(final SearchRequestFirm searchRequestFirm) {
-        final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(Firm.class)
-                .addOrder(Order.asc("createdDate"));
-        if (searchRequestFirm != null) {
-            if (searchRequestFirm.getFirmName() != null)
-                criteria.add(
-                        Restrictions.ilike("firmName", searchRequestFirm.getFirmName(), MatchMode.ANYWHERE));
-            if (searchRequestFirm.getPan() != null)
-                criteria.add(Restrictions.eq("pan", searchRequestFirm.getPan()).ignoreCase());
-        }
-        criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
-        return criteria.list();
-    }
-    
 }

@@ -37,30 +37,15 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.portal.web.adaptor;
+package org.egov.portal.firm.repository;
 
-import java.lang.reflect.Type;
+import org.egov.portal.entity.FirmUser;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-import org.egov.portal.entity.Firm;
-import org.springframework.stereotype.Component;
+@Repository
+public interface FirmUserRepository extends JpaRepository<FirmUser, Long> {
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
+    FirmUser findByEmailId(String emailId);
 
-@Component
-public class SearchFirmJsonAdaptor implements JsonSerializer<Firm> {
-    @Override
-    public JsonElement serialize(final Firm firm, final Type type,
-            final JsonSerializationContext jsc) {
-        final JsonObject jsonObject = new JsonObject();
-        if (firm != null) {
-            jsonObject.addProperty("name", firm.getName());
-            jsonObject.addProperty("pan", firm.getPan());
-            jsonObject.addProperty("address", firm.getAddress());
-            jsonObject.addProperty("id", firm.getId());
-        }
-        return jsonObject;
-    }
 }

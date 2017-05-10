@@ -62,7 +62,7 @@ import org.hibernate.validator.constraints.SafeHtml;
 @Entity
 @Table(name = "egp_firm")
 @Unique(fields = {
-"pan" }, enableDfltMsg = true)
+        "pan" }, enableDfltMsg = true)
 @SequenceGenerator(name = Firm.SEQ_EGP_FIRM, sequenceName = Firm.SEQ_EGP_FIRM, allocationSize = 1)
 public class Firm extends AbstractAuditable {
 
@@ -76,7 +76,7 @@ public class Firm extends AbstractAuditable {
 
     @NotNull
     @SafeHtml
-    private String firmName;
+    private String name;
 
     @NotNull
     @SafeHtml
@@ -100,14 +100,6 @@ public class Firm extends AbstractAuditable {
     @Override
     public void setId(final Long id) {
         this.id = id;
-    }
-
-    public String getFirmName() {
-        return firmName;
-    }
-
-    public void setFirmName(final String firmName) {
-        this.firmName = firmName;
     }
 
     public String getPan() {
@@ -136,6 +128,14 @@ public class Firm extends AbstractAuditable {
 
     public List<FirmUser> getFirmUsers() {
         return firmUsers;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(final String name) {
+        this.name = name;
     }
 
 }

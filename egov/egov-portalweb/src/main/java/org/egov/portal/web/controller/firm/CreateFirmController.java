@@ -39,14 +39,9 @@
  */
 package org.egov.portal.web.controller.firm;
 
-import java.io.IOException;
+import javax.validation.Valid;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.egov.infra.exception.ApplicationException;
-import org.egov.infra.validation.regex.Constants;
 import org.egov.portal.entity.Firm;
-import org.egov.portal.entity.FirmUser;
 import org.egov.portal.firm.service.FirmService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -54,13 +49,16 @@ import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping(value = "/firm")
-public class CreateFirmController {
+public class CreateFirmController extends BaseFirmController {
 
     @Autowired
     private FirmService firmService;
@@ -69,69 +67,33 @@ public class CreateFirmController {
     @Qualifier("messageSource")
     private MessageSource messageSource;
 
-    @RequestMapping(value = "/firm-newform", method = RequestMethod.GET)
+    @GetMapping("/create")
     public String showNewForm(final Model model) {
         final Firm firm = new Firm();
         firm.setTempFirmUsers(firm.getFirmUsers());
         model.addAttribute("firm", firm);
-        return "firm-form";
+        return "firm-create";
     }
 
-    @RequestMapping(value = "/firm-save", method = RequestMethod.POST)
-    public String create(@ModelAttribute final Firm firm, final Model model, final HttpServletRequest request,
-            final BindingResult resultBinder) throws ApplicationException, IOException {
-        validateFirm(firm, resultBinder);
+    @PostMapping("/create")
+    public String create(@Valid @ModelAttribute final Firm firm,
+            final BindingResult resultBinder, final Model model) {
+        validateEmail(firm, resultBinder, "create");
         if (resultBinder.hasErrors()) {
             model.addAttribute("firm", firm);
-            return "firm-form";
+            return "firm-create";
         }
         firmService.createFirm(firm);
         final Long firmId = firm.getId();
         return "redirect:/firm/firm-success?firmId=" + firmId;
     }
 
-    private void validateFirm(final Firm firm, final BindingResult resultBinder) {
-
-        validateFirmHeader(firm, resultBinder);
-
-        int index = 0;
-        for (final FirmUser firmUsers : firm.getTempFirmUsers()) {
-
-            if (firmUsers.getEmailId() != null && !firmUsers.getEmailId().matches(Constants.EMAIL))
-                resultBinder.rejectValue("tempFirmUsers[" + index + "].emailId",
-                        "error.firm.emailid");
-            if (firmUsers.getMobileNumber() != null && firmUsers.getMobileNumber().length() != 10)
-                resultBinder.rejectValue("tempFirmUsers[" + index + "].mobileNumber",
-                        "Pattern.citizen.mobileNumber");
-            index++;
-        }
-    }
-
-    private void validateFirmHeader(final Firm firm, final BindingResult resultBinder) {
-        if (firm.getTempFirmUsers() == null)
-            resultBinder.reject("error.firm.altleastone.overusers.needed",
-                    "error.firm.altleastone.firmusers.needed");
-        if (firm.getFirmName() == null)
-            resultBinder.reject("error.firm.firmname", "error.firm.firmname");
-        if (firm.getPan() == null)
-            resultBinder.reject("error.firm.pan", "error.firm.pan");
-        if (firm.getPan() != null && firm.getId() == null) {
-            resultBinder.reject("error.firm.pan.unique", "error.firm.pan.unique");
-        }
-        if (firm.getPan() != null) {
-            final Firm exitingFirm = firmService.getFirmByPan(firm.getPan());
-            if (exitingFirm != null && firm.getId() != null && !exitingFirm.getId().equals(firm.getId()))
-                resultBinder.reject("error.firm.pan.unique", "error.firm.pan.unique");
-        }
-    }
-
     @RequestMapping(value = "/firm-success", method = RequestMethod.GET)
-    public String successView(final Model model, final HttpServletRequest request) {
-        final Long firmId = Long.valueOf(request.getParameter("firmId"));
-        final Firm firm = firmService.getFirmById(firmId);
+    public String successView(final Model model, @RequestParam final String firmId) {
+        final Firm firm = firmService.getFirmById(Long.valueOf(firmId));
         model.addAttribute("firm", firm);
         model.addAttribute("success",
-                messageSource.getMessage("msg.firm.create.success", new String[] { firm.getFirmName() }, null));
+                messageSource.getMessage("msg.firm.create.success", new String[] { firm.getName() }, null));
         return "firm-success";
     }
 

@@ -37,75 +37,41 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
-<%@ page contentType="text/html" language="java"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
-<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
-<div class="row">
-	<div class="col-md-12">
-		<div id="firmTable" class="panel panel-primary" data-collapsed="0"
-			style="text-align: left">
-			<div class="panel-heading">
-			</div>
-			<div class="panel-body">
-				<div class="row add-border">
-					<div class="col-xs-3 add-margin">
-						<spring:message code="lbl.firmname" />
-					</div>
-					<div class="col-xs-3 add-margin view-content">
-						<c:out value="${firm.name}" />
-					</div>
-					<div class="col-xs-3 add-margin">
-						<spring:message code="lbl.pan" />
-					</div>
-					<div class="col-xs-3 add-margin view-content">
-						<c:out value="${firm.pan}" />
-					</div>
-				</div>
-				<div class="row add-border">
-					<div class="col-xs-3 add-margin">
-						<spring:message code="lbl.address" />
-					</div>
-					<div class="col-xs-5 add-margin view-content">
-						<c:out value="${firm.address}" />
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
 
-<div class="row">
-	<div class="col-md-12">
-		<div class="panel panel-primary" data-collapsed="0">
-			<div class="panel-heading">
-				<div class="panel-title">
-					<spring:message code="lbl.firmusers" />
-				</div>
-			</div>
-			<div class="panel-body">
-				<table class="table table-bordered">
-					<thead>
-						<tr>
-							<th><spring:message code="lbl.slno" /></th>
-							<th><spring:message code="lbl.name" /></th>
-							<th><spring:message code="lbl.mobilenumber" /></th>
-							<th><spring:message code="lbl.emailid" /></th>
-						</tr>
-					</thead>
-					<tbody>
-						<c:forEach items="${firm.getFirmUsers()}"
-							var="firmDtls" varStatus="item" >
-							<tr>
-								<td><c:out value="${item.index + 1}" /></td>
-								<td><c:out value="${firmDtls.name}" /></td>
-								<td><c:out value="${firmDtls.mobileNumber}" /></td>
-								<td><c:out value="${firmDtls.emailId}" /></td>
-							</tr>
-						</c:forEach>
-					</tbody>
-				</table>
-			</div>
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
+
+<form:form name="firm" id="firm" role="form" action="/portal/firm/update" modelAttribute="firm"  class="form-horizontal form-groups-bordered">
+	<spring:hasBindErrors name="firm">
+		<div class="alert alert-danger col-md-10 col-md-offset-1">
+			<form:errors path="*" cssClass="add-margin" />
+			<br />
+		</div>
+	</spring:hasBindErrors>
+	<div class="row">
+		<div class="col-md-12">
+			<div class="panel panel-primary" data-collapsed="0">
+	<input type="hidden" value="${firm.id }" id="firmid" name="firm" />
+	
+			<jsp:include page="firmheader.jsp" />
+			<jsp:include page="firmusers.jsp" />
 		</div>
 	</div>
-</div>
+	<div class="row">
+		<div class="col-sm-12 text-center">
+			<button type="submit" name="submit" id="save"
+				class="btn btn-primary" value="Modify">
+				<spring:message code="lbl.modify" />
+			</button>
+			<button type="button" class="btn btn-default" id="button2"
+				onclick="window.close();">
+				<spring:message code="lbl.close" />
+			</button>
+		</div>
+	</div>
+</form:form>
+        <script src="<cdn:url value='/resources/js/firm.js?rnd=${app_release_no}'/>"></script>

@@ -41,16 +41,8 @@ package org.egov.portal.entity;
 
 public class SearchRequestFirm {
 
-    private String firmName;
+    private String name;
     private String pan;
-
-    public String getFirmName() {
-        return firmName;
-    }
-
-    public void setFirmName(final String firmName) {
-        this.firmName = firmName;
-    }
 
     public String getPan() {
         return pan;
@@ -58,6 +50,14 @@ public class SearchRequestFirm {
 
     public void setPan(final String pan) {
         this.pan = pan;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(final String name) {
+        this.name = name;
     }
 
 }

@@ -59,8 +59,8 @@
 					<div class="form-group">
 						<label class="col-sm-3 control-label text-right"><spring:message code="lbl.firmname" /></label>
 						<div class="col-sm-3 add-margin">
-							<form:input path="firmName" class="form-control" id="firmName" />
-							<form:errors path="firmName" cssClass="add-margin error-msg" />
+							<form:input path="name" class="form-control" id="firmName" />
+							<form:errors path="name" cssClass="add-margin error-msg" />
 						</div>
 						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.pan" /></label>
 						<div class="col-sm-3 add-margin">
@@ -112,16 +112,6 @@
 		}
 	});
 </script>
-<%-- <c:choose>
-<c:when test="${mode!='view'}">
-<script
-	src="<cdn:url value='/resources/js/master/modifyoverhead.js?rnd=${app_release_no}'/>"></script>
-</c:when>
-<c:otherwise>
-<script
-	src="<cdn:url value='/resources/js/master/viewoverhead.js?rnd=${app_release_no}'/>"></script>
-</c:otherwise>
-</c:choose> --%>
 <script
 	src="<cdn:url value='/resources/js/viewfirm.js?rnd=${app_release_no}'/>"></script>
 	

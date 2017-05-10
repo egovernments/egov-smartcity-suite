@@ -102,7 +102,7 @@ public class PortalInbox extends AbstractAuditable {
     private Long entityRefId;
 
     @Length(max = 256)
-    private String headermessage;
+    private String headerMessage;
 
     @NotNull
     @Length(max = 2048)
@@ -119,7 +119,7 @@ public class PortalInbox extends AbstractAuditable {
 
     @Temporal(TemporalType.TIMESTAMP)
     @NotNull
-    private Date applicationdate;
+    private Date applicationDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "STATE_ID")
@@ -217,14 +217,6 @@ public class PortalInbox extends AbstractAuditable {
         this.slaEndDate = slaEndDate;
     }
 
-    public Date getApplicationdate() {
-        return applicationdate;
-    }
-
-    public void setApplicationdate(final Date applicationdate) {
-        this.applicationdate = applicationdate;
-    }
-
     public State getState() {
         return state;
     }
@@ -253,20 +245,28 @@ public class PortalInbox extends AbstractAuditable {
         return portalInboxUsers;
     }
 
-    public String getHeadermessage() {
-        return headermessage;
-    }
-
-    public void setHeadermessage(final String headermessage) {
-        this.headermessage = headermessage;
-    }
-
     public boolean isResolved() {
         return resolved;
     }
 
     public void setResolved(final boolean resolved) {
         this.resolved = resolved;
+    }
+
+    public String getHeaderMessage() {
+        return headerMessage;
+    }
+
+    public void setHeaderMessage(final String headerMessage) {
+        this.headerMessage = headerMessage;
+    }
+
+    public Date getApplicationDate() {
+        return applicationDate;
+    }
+
+    public void setApplicationDate(final Date applicationDate) {
+        this.applicationDate = applicationDate;
     }
 
 }

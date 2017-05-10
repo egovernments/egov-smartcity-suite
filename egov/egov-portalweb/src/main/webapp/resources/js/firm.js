@@ -237,7 +237,6 @@ function getRow(obj) {
 }
 
 $('#save').click(function() {
-	if ($('#firm').valid()) {
 		
 		var mobileNumber = $('#tblfirm tbody tr').length - 1;
 		var index;
@@ -266,6 +265,5 @@ $('#save').click(function() {
 			  return false;
 		  }
 		return true;
-	}
 	return false;
 });

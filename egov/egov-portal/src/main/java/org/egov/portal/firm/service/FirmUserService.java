@@ -37,49 +37,23 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.portal.web.controller.firm;
+package org.egov.portal.firm.service;
 
-import java.util.List;
-
-import org.egov.portal.entity.Firm;
-import org.egov.portal.entity.SearchRequestFirm;
-import org.egov.portal.firm.service.FirmService;
-import org.egov.portal.web.adaptor.SearchFirmJsonAdaptor;
+import org.egov.portal.entity.FirmUser;
+import org.egov.portal.firm.repository.FirmUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
-@Controller
-@RequestMapping(value = "/firm")
-public class AjaxFirmController {
+@Service
+@Transactional(readOnly = true)
+public class FirmUserService {
 
     @Autowired
-    private FirmService firmService;
+    private FirmUserRepository firmUserRepository;
 
-    @Autowired
-    private SearchFirmJsonAdaptor searchFirmJsonAdaptor;
-
-    @RequestMapping(value = "/ajaxsearch-viewfirm", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
-    public @ResponseBody String ajaxSearchOverheadToModify(final Model model,
-            @ModelAttribute final SearchRequestFirm searchRequestFirm) {
-        final List<Firm> searchResultList = firmService.searchFirm(searchRequestFirm);
-        final String result = new StringBuilder("{ \"data\":").append(toSearchFirmResultJson(searchResultList))
-                .append("}").toString();
-        return result;
+    public FirmUser getFirmUserByEmail(final String emailId) {
+        return firmUserRepository.findByEmailId(emailId);
     }
 
-    public Object toSearchFirmResultJson(final Object object) {
-        final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(Firm.class, searchFirmJsonAdaptor).create();
-        final String json = gson.toJson(object);
-        return json;
-    }
 }

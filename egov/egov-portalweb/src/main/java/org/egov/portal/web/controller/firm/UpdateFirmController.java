@@ -39,37 +39,45 @@
  */
 package org.egov.portal.web.controller.firm;
 
-import org.egov.infra.exception.ApplicationException;
 import org.egov.portal.entity.Firm;
 import org.egov.portal.firm.service.FirmService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
 @RequestMapping(value = "/firm")
-public class UpdateFirmController {
+public class UpdateFirmController extends BaseFirmController {
 
     @Autowired
     private FirmService firmService;
 
-    @Autowired
-    @Qualifier("messageSource")
-    private MessageSource messageSource;
-
-    @RequestMapping(value = "/firm-update/{firmId}", method = RequestMethod.GET)
-    public String updateFirm(final Model model, @PathVariable final String firmId)
-            throws ApplicationException {
+    @GetMapping("/update/{firmId}")
+    public String updateFirm(final Model model, @PathVariable final String firmId) {
         final Firm firm = firmService.getFirmById(Long.parseLong(firmId));
         firm.setTempFirmUsers(firm.getFirmUsers());
         model.addAttribute("firm", firm);
         model.addAttribute("mode", "edit");
-        return "firm-form";
+        return "firm-update";
+    }
+
+    @PostMapping("/update")
+    public String update(@ModelAttribute final Firm firm,
+            final BindingResult resultBinder, final Model model) {
+        validateFirm(firm, resultBinder);
+        if (resultBinder.hasErrors()) {
+            model.addAttribute("firm", firm);
+            return "firm-update";
+        }
+        firmService.createFirm(firm);
+        final Long firmId = firm.getId();
+        return "redirect:/firm/firm-success?firmId=" + firmId;
     }
 
 }

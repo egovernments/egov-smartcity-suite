@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) <2017>  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -37,30 +37,30 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.portal.web.adaptor;
 
-import java.lang.reflect.Type;
+package org.egov.portal.repository.specs;
+
+import javax.persistence.criteria.Predicate;
 
 import org.egov.portal.entity.Firm;
-import org.springframework.stereotype.Component;
+import org.egov.portal.entity.SearchRequestFirm;
+import org.springframework.data.jpa.domain.Specification;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
+public class SearchFirmSpec {
 
-@Component
-public class SearchFirmJsonAdaptor implements JsonSerializer<Firm> {
-    @Override
-    public JsonElement serialize(final Firm firm, final Type type,
-            final JsonSerializationContext jsc) {
-        final JsonObject jsonObject = new JsonObject();
-        if (firm != null) {
-            jsonObject.addProperty("name", firm.getName());
-            jsonObject.addProperty("pan", firm.getPan());
-            jsonObject.addProperty("address", firm.getAddress());
-            jsonObject.addProperty("id", firm.getId());
-        }
-        return jsonObject;
+    private SearchFirmSpec() {
+
     }
+
+    public static Specification<Firm> searchFirm(final SearchRequestFirm searchRequestFirm) {
+        return (root, query, builder) -> {
+            final Predicate predicate = builder.conjunction();
+            if (searchRequestFirm.getName() != null)
+                predicate.getExpressions().add(builder.equal(root.get("name"), searchRequestFirm.getName()));
+            if (searchRequestFirm.getPan() != null)
+                predicate.getExpressions().add(builder.equal(root.get("pan"), searchRequestFirm.getPan()));
+            return predicate;
+        };
+    }
+
 }

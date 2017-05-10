@@ -41,11 +41,12 @@ package org.egov.portal.firm.repository;
 
 import org.egov.portal.entity.Firm;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface FirmRepository extends JpaRepository<Firm, Long> {
+public interface FirmRepository extends JpaRepository<Firm, Long>, JpaSpecificationExecutor<Firm> {
 
-    Firm findByPan(final String pan);
+    Firm findByPan(String pan);
 
 }

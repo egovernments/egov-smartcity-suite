@@ -53,7 +53,7 @@ function callAjaxViewSearch() {
 	reportdatatable = drillDowntableContainer
 			.dataTable({
 				ajax : {
-					url : "/portal/firm/ajaxsearch-viewfirm",
+					url : "/portal/firm/search",
 					type : "POST",
 					"data" : getFormData(jQuery('form'))
 				},
@@ -72,7 +72,7 @@ function callAjaxViewSearch() {
 							'click',
 							function() {
 								console.log(data.id);
-								window.open('/portal/firm/firm-view/'
+								window.open('/portal/firm/view/'
 										+ data.id, '',
 										'width=800, height=600');
 							});
@@ -83,7 +83,7 @@ function callAjaxViewSearch() {
 					"data" : "",
 					"sClass" : "text-center","sWidth": "1%"
 				}, {
-					"data" : "firmname",
+					"data" : "name",
 					"sClass" : "text-left","sWidth": "20%"
 				}, {
 					"data" : "pan",
@@ -101,7 +101,7 @@ function callAjaxModifySearch() {
 	reportdatatable = drillDowntableContainer
 			.dataTable({
 				ajax : {
-					url : "/portal/firm/ajaxsearch-viewfirm",
+					url : "/portal/firm/search",
 					type : "POST",
 					"data" : getFormData(jQuery('form'))
 				},
@@ -127,7 +127,7 @@ function callAjaxModifySearch() {
 					"data" : "",
 					"sClass" : "text-center","sWidth": "1%"
 				}, {
-					"data" : "firmname",
+					"data" : "name",
 					"sClass" : "text-left","sWidth": "20%"
 				}, {
 					"data" : "pan",
@@ -154,5 +154,5 @@ function getFormData($form){
 }
 
 function openFirm(firmId) {
-	window.location = "/portal/firm/firm-update/"+firmId;
+	window.location = "/portal/firm/update/"+firmId;
 }

@@ -45,8 +45,7 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 
-<form:form name="firm" id="firm" role="form" action="/portal/firm/firm-save" modelAttribute="firm"  class="form-horizontal form-groups-bordered">
-	<%-- <input type="hidden" value="<spring:message code='overhead.overheadRates.invalid' />" id='overheadRateDetails'> --%>
+<form:form name="firm" id="firm" role="form" action="/portal/firm/create" modelAttribute="firm"  class="form-horizontal form-groups-bordered">
 	<spring:hasBindErrors name="firm">
 		<div class="alert alert-danger col-md-10 col-md-offset-1">
 			<form:errors path="*" cssClass="add-margin" />
@@ -65,20 +64,10 @@
 	</div>
 	<div class="row">
 		<div class="col-sm-12 text-center">
-		<c:choose>
-			<c:when test="${mode == 'edit' }">
-				<button type="submit" name="submit" id="save"
-					class="btn btn-primary" value="Modify">
-					<spring:message code="lbl.modify" />
-				</button>
-			</c:when>
-			<c:otherwise>
-				<button type="submit" name="submit" id="save"
-					class="btn btn-primary" value="Save">
-					<spring:message code="lbl.save" />
-				</button>
-			</c:otherwise>
-		</c:choose>
+			<button type="submit" name="submit" id="save"
+				class="btn btn-primary" value="Save">
+				<spring:message code="lbl.save" />
+			</button>
 			<button type="button" class="btn btn-default" id="button2"
 				onclick="window.close();">
 				<spring:message code="lbl.close" />

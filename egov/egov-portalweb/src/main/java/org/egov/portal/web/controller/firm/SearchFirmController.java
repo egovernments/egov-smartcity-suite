@@ -39,19 +39,25 @@
  */
 package org.egov.portal.web.controller.firm;
 
+import static org.egov.infra.utils.JsonUtils.toJSON;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.egov.infra.exception.ApplicationException;
 import org.egov.portal.entity.Firm;
 import org.egov.portal.entity.SearchRequestFirm;
 import org.egov.portal.firm.service.FirmService;
+import org.egov.portal.web.adaptor.SearchFirmJsonAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping(value = "/firm")
@@ -60,22 +66,31 @@ public class SearchFirmController {
     @Autowired
     private FirmService firmService;
 
-    @RequestMapping(value = "/firm-view/{id}", method = RequestMethod.GET)
-    public String viewFirm(@PathVariable final String id, final Model model,
-            final HttpServletRequest request)
+    @RequestMapping(value = "/view/{firmId}", method = RequestMethod.GET)
+    public String viewFirm(@PathVariable final String firmId, final Model model)
             throws ApplicationException {
-        final Firm firm = firmService.getFirmById(Long.valueOf(id));
+        final Firm firm = firmService.getFirmById(Long.valueOf(firmId));
         model.addAttribute("firm", firm);
         return "firm-success";
     }
 
-    @RequestMapping(value = "/firm-search", method = RequestMethod.GET)
+    @GetMapping("/search")
     public String searchFirm(
             @ModelAttribute final SearchRequestFirm searchRequestFirm,
             final Model model, final HttpServletRequest request) throws ApplicationException {
         model.addAttribute("searchRequestFirm", searchRequestFirm);
         model.addAttribute("mode", request.getParameter("mode"));
         return "firm-search";
+    }
+
+    @RequestMapping(value = "/search", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    public @ResponseBody String searchFirmToModify(final Model model,
+            @ModelAttribute final SearchRequestFirm searchRequestFirm) {
+        return new StringBuilder("{ \"data\":")
+                .append(toJSON(firmService.searchFirm(searchRequestFirm),
+                        Firm.class, SearchFirmJsonAdaptor.class))
+                .append("}").toString();
+
     }
 
 }

@@ -62,9 +62,9 @@
 				<tr>
 					<th><spring:message code="lbl.slno" /></th>
 					<th><spring:message code="lbl.name" /><span	class="mandatory"></span></th>
-					<th><spring:message code="lbl.mobilenumber" /><span	class="mandatory"></span></th>
+					<th><spring:message code="lbl.mobileNo" /><span	class="mandatory"></span></th>
 					<th><spring:message code="lbl.emailid" /><span	class="mandatory"></span></th>
-					<th><spring:message code="lbl.action" /></th>
+					<th><spring:message code="lbl.actions" /></th>
 				</tr>
 			</thead>
 			<tbody id="firmDetailsTbl">
@@ -113,7 +113,7 @@
 								<td><span class="spansno"><c:out
 											value="${item.index + 1}" /></span> <form:hidden
 										path="tempFirmUsers[${item.index}].id"
-										name="tempFirmUsers[${item.index}].id" value="${firm.id}"
+										name="tempFirmUsers[${item.index}].id" value="${firmUsers.id}"
 										class="form-control table-input hidden-input " /></td>
 								<td><form:input path="tempFirmUsers[${item.index}].name"
 									name="tempFirmUsers[${item.index}].name" data-idx="0"
