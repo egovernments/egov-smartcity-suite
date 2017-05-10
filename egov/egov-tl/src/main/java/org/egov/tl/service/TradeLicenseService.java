@@ -97,6 +97,7 @@ import java.util.Optional;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.defaultString;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.egov.infra.utils.DateUtils.currentDateToDefaultDateFormat;
 import static org.egov.infra.utils.DateUtils.getDefaultFormattedDate;
 import static org.egov.infra.utils.DateUtils.toYearFormat;
@@ -179,7 +180,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         final Assignment userAssignment = assignmentService.getPrimaryAssignmentForUser(securityUtils.getCurrentUser().getId());
         final Position wfInitiator = getWorkflowInitiator(license);
         if (BUTTONAPPROVE.equals(workFlowAction)) {
-            if (license.getTempLicenseNumber() == null && license.isNewApplication())
+            if (isEmpty(license.getLicenseNumber()) && license.isNewApplication())
                 license.setLicenseNumber(licenseNumberUtils.generateLicenseNumber());
 
             if (license.getCurrentDemand().getBaseDemand().compareTo(license.getCurrentDemand().getAmtCollected()) <= 0)
