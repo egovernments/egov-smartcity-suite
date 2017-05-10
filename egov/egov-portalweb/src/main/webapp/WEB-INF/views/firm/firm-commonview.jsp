@@ -89,7 +89,7 @@
 						<tr>
 							<th><spring:message code="lbl.slno" /></th>
 							<th><spring:message code="lbl.name" /></th>
-							<th><spring:message code="lbl.mobilenumber" /></th>
+							<th><spring:message code="lbl.mobileNo" /></th>
 							<th><spring:message code="lbl.emailid" /></th>
 						</tr>
 					</thead>
