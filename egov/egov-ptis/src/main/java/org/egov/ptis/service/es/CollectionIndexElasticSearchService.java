@@ -1005,6 +1005,7 @@ public class CollectionIndexElasticSearchService {
                         : wardWiseBillCollectors.get(name).getMobileNumber());
             }
         }
+        collIndData.setBoundaryName(name);
     }
 
     public String getAggregrationField(CollectionDetailsRequest collectionDetailsRequest) {
@@ -2056,7 +2057,6 @@ public class CollectionIndexElasticSearchService {
         if (StringUtils.isNotBlank(collectionDetailsRequest.getType())) 
             aggregationField = getAggregrationField(collectionDetailsRequest);
         
-        CFinancialYear financialYear = cFinancialYearService.getFinancialYearByDate(new Date());
         Map<Integer, String> monthValuesMap = DateUtils.getAllMonthsWithFullNames();
         Map<String, Map<String, BigDecimal>> intervalwiseCollMap = new HashMap<>();
         CollectionAnalysis collectionAnalysis = new CollectionAnalysis();
@@ -2069,7 +2069,8 @@ public class CollectionIndexElasticSearchService {
             toDate = DateUtils.addDays(DateUtils.getDate(collectionDetailsRequest.getToDate(), DATE_FORMAT_YYYYMMDD),
                     1);
         }
-
+        
+        CFinancialYear financialYear = cFinancialYearService.getFinancialYearByDate(fromDate);
         Long startTime = System.currentTimeMillis();
         Aggregations collAggr = getMonthwiseCollectionsForConsecutiveYears(collectionDetailsRequest, fromDate,
                 toDate, true, intervalType, aggregationField);
