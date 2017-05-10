@@ -44,6 +44,11 @@ import static org.egov.pgr.utils.constants.PGRConstants.BYBOUNDARY;
 import static org.egov.pgr.utils.constants.PGRConstants.FROMDATE;
 import static org.egov.pgr.utils.constants.PGRConstants.TODATE;
 
+import java.util.Date;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
@@ -51,10 +56,6 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDateTime;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.util.Date;
 
 @Service
 @Transactional(readOnly = true)
@@ -67,7 +68,7 @@ public class AgeingReportService {
 
     @ReadOnly
     public SQLQuery getageingReportQuery(final DateTime fromDate, final DateTime toDate, final String typeofReport,
-                                         final String complaintDateType, final String groupBy) {
+            final String complaintDateType, final String groupBy) {
 
         final StringBuilder query = new StringBuilder();
 
@@ -78,21 +79,21 @@ public class AgeingReportService {
 
         if (COMPLAINTSTATUS_COMPLETED.equals(typeofReport) || COMPLAINTSTATUS_REJECTED.equals(typeofReport)) {
             query.append(
-                    " COUNT(CASE WHEN date_part('day',(cd.createddate - state.createddate)) > :grtthn30 THEN 1 END) grtthn30, ");
+                    " COUNT(CASE WHEN date_part('day',(state.lastmodifieddate - cd.createddate)) > :grtthn30 THEN 1 END) grtthn30, ");
             query.append(
-                    " COUNT(CASE WHEN date_part('day',(cd.createddate - state.createddate)) BETWEEN :grtthn10 AND :lsthn30 THEN 1 END) btw10to30, ");
+                    " COUNT(CASE WHEN date_part('day',(state.lastmodifieddate - cd.createddate)) BETWEEN :grtthn10 AND :lsthn30 THEN 1 END) btw10to30, ");
             query.append(
-                    " COUNT(CASE WHEN date_part('day',(cd.createddate - state.createddate)) BETWEEN :grtthn5 AND :lsthn10 THEN 1 END) btw5to10, ");
+                    " COUNT(CASE WHEN date_part('day',(state.lastmodifieddate - cd.createddate)) BETWEEN :grtthn5 AND :lsthn10 THEN 1 END) btw5to10, ");
             query.append(
-                    " COUNT(CASE WHEN date_part('day',(cd.createddate - state.createddate)) BETWEEN :grtthn2 AND :lsthn5 THEN 1 END) btw2to5, ");
+                    " COUNT(CASE WHEN date_part('day',(state.lastmodifieddate - cd.createddate)) BETWEEN :grtthn2 AND :lsthn5 THEN 1 END) btw2to5, ");
             query.append(
-                    " COUNT(CASE WHEN date_part('day',(cd.createddate - state.createddate)) BETWEEN :zero AND :lsthn2 THEN 1 END) lsthn2 ");
+                    " COUNT(CASE WHEN date_part('day',(state.lastmodifieddate - cd.createddate)) BETWEEN :zero AND :lsthn2 THEN 1 END) lsthn2 ");
             query.append(" FROM egpgr_complaintstatus cs  ,egpgr_complainttype ctype, eg_wf_states state, egpgr_complaint cd  ");
         } else {
             query.append(" COUNT(CASE WHEN cd.createddate < :grtthn30 THEN 1 END) grtthn30, ");
-            query.append(" COUNT(CASE WHEN cd.createddate BETWEEN :lsthn10 AND :grtthn30 THEN 1 END) btw10to30, ");
-            query.append(" COUNT(CASE WHEN cd.createddate BETWEEN :lsthn5 AND  :grtthn10 THEN 1 END) btw5to10, ");
-            query.append(" COUNT(CASE WHEN cd.createddate BETWEEN :lsthn2 AND  :grtthn5 THEN 1 END) btw2to5, ");
+            query.append(" COUNT(CASE WHEN cd.createddate BETWEEN :lsthn30 AND :grtthn10 THEN 1 END) btw10to30, ");
+            query.append(" COUNT(CASE WHEN cd.createddate BETWEEN :lsthn10 AND  :grtthn5 THEN 1 END) btw5to10, ");
+            query.append(" COUNT(CASE WHEN cd.createddate BETWEEN :lsthn5  AND  :grtthn2 THEN 1 END) btw2to5, ");
             query.append(" COUNT(CASE WHEN cd.createddate BETWEEN :lsthn2 AND :currdate THEN 1 END) lsthn2 ");
             query.append(" FROM egpgr_complaintstatus cs  ,egpgr_complainttype ctype ,egpgr_complaint cd  ");
         }
@@ -113,7 +114,7 @@ public class AgeingReportService {
     }
 
     private void buildWhereClause(final DateTime fromDate, final DateTime toDate, final String typeofReport,
-                                  final String complaintDateType, final StringBuilder query) {
+            final String complaintDateType, final StringBuilder query) {
 
         if (COMPLAINTSTATUS_COMPLETED.equals(typeofReport)) {
             query.append(" WHERE  cd.state_id=state.id and  cd.status  = cs.id and cd.complainttype= ctype.id  ");
@@ -128,14 +129,15 @@ public class AgeingReportService {
 
         if (fromDate != null && toDate != null)
             query.append(" and ( cd.createddate BETWEEN :fromDates and :toDates) ");
-        else if ("lastsevendays".equals(complaintDateType) || "lastthirtydays".equals(complaintDateType) || "lastninetydays".equals(complaintDateType) || fromDate != null)
+        else if ("lastsevendays".equals(complaintDateType) || "lastthirtydays".equals(complaintDateType)
+                || "lastninetydays".equals(complaintDateType) || fromDate != null)
             query.append(" and cd.createddate >=   :fromDates ");
         else if (toDate != null)
             query.append(" and cd.createddate <=  :toDates ");
     }
 
     private SQLQuery setParameterForAgeingReport(final String querykey, final String typeofReport, final DateTime fromDate,
-                                                 final DateTime toDate, final String complaintDateType) {
+            final DateTime toDate, final String complaintDateType) {
         final SQLQuery qry = entityManager.unwrap(Session.class).createSQLQuery(querykey);
 
         if (COMPLAINTSTATUS_COMPLETED.equals(typeofReport) || COMPLAINTSTATUS_REJECTED.equals(typeofReport)) {
@@ -151,12 +153,14 @@ public class AgeingReportService {
 
         } else {
 
-            qry.setParameter("grtthn30", getCurrentDateWithOutTime().minusDays(30).toDate());
-            qry.setParameter("grtthn10", getCurrentDateWithOutTime().minusDays(11).toDate());
-            qry.setParameter("grtthn5", getCurrentDateWithOutTime().minusDays(6).toDate());
-            qry.setParameter("lsthn10", getCurrentDateWithEndOfDayTime().minusDays(10).toDate());
-            qry.setParameter("lsthn5", getCurrentDateWithOutTime().minusDays(5).toDate());
-            qry.setParameter("lsthn2", getCurrentDateWithOutTime().minusDays(2).toDate());
+            qry.setParameter("grtthn30", getCurrentDateWithEndOfDayTime().minusDays(30).toDate());
+            qry.setParameter("grtthn10", getCurrentDateWithEndOfDayTime().minusDays(10).toDate());
+            qry.setParameter("grtthn5", getCurrentDateWithEndOfDayTime().minusDays(5).toDate());
+            qry.setParameter("grtthn2", getCurrentDateWithEndOfDayTime().minusDays(2).toDate());
+            qry.setParameter("lsthn30", getCurrentDateWithOutTime().minusDays(29).toDate());
+            qry.setParameter("lsthn10", getCurrentDateWithOutTime().minusDays(9).toDate());
+            qry.setParameter("lsthn5", getCurrentDateWithOutTime().minusDays(4).toDate());
+            qry.setParameter("lsthn2", getCurrentDateWithOutTime().minusDays(1).toDate());
             qry.setParameter("currdate", getCurrentDateWithEndOfDayTime().toDate());
         }
 
