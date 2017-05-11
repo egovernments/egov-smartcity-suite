@@ -411,11 +411,11 @@ $(document).ready(function () {
                             "sTitle": "Old TL Number"
                         }, {
                             "data": "category",
-                             "name":"category.id",
+                             "name":"categoryName",
                             "sTitle": "Category"
                         }, {
                             "data": "subCategory",
-                            "name":"tradeName.id",
+                            "name":"tradeName.name",
                             "sTitle": "Sub-Category"
                         }, {
                             "data": "tradeTitle",

@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) <2017>  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -38,36 +38,32 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.pgr.web.controller.masters.escalationTime;
+package org.egov.pgr.repository.specs;
 
-import java.lang.reflect.Type;
-import java.util.List;
+import javax.persistence.criteria.Predicate;
 
-import org.egov.infra.web.support.json.adapter.DataTableJsonAdapter;
-import org.egov.infra.web.support.ui.DataTable;
 import org.egov.pgr.entity.Escalation;
+import org.egov.pgr.entity.dto.EscalationTimeSearchRequest;
+import org.springframework.data.jpa.domain.Specification;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
+public final class EscalationTimeSpec {
 
-public class EscalationTimeAdaptor implements DataTableJsonAdapter<Escalation> {
-    @Override
-    public JsonElement serialize(final DataTable<Escalation> escalationResponse, final Type type,
-            final JsonSerializationContext jsc) {
-        final List<Escalation> escalationResult = escalationResponse.getData();
-        final JsonArray escalationDate = new JsonArray();
-        escalationResult.forEach(escalation -> {
-            final JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("complaintType",
-                    null != escalation.getComplaintType() ? escalation.getComplaintType().getName() : "NA");
-            jsonObject.addProperty("designation",
-                    null != escalation.getDesignation() ? escalation.getDesignation().getName() : "NA");
-            jsonObject.addProperty("noOfHours", null != escalation.getNoOfHrs() ? escalation.getNoOfHrs().toString() : "NA");
+    private EscalationTimeSpec() {
+        // Due to static method
+    }
 
-            escalationDate.add(jsonObject);
-        });
-        return enhance(escalationDate, escalationResponse);
+    public static Specification<Escalation> search(
+            final EscalationTimeSearchRequest escalationTimeSearchRequest) {
+        return (root, query, builder) -> {
+            final Predicate predicate = builder.conjunction();
+            if (escalationTimeSearchRequest.getDesignationId() != null)
+                predicate.getExpressions()
+                        .add(builder.equal(root.get("designation").get("id"), escalationTimeSearchRequest.getDesignationId()));
+            if (escalationTimeSearchRequest.getComplaintTypeId() != null)
+                predicate.getExpressions()
+                        .add(builder.equal(root.get("complaintType").get("id"),
+                                escalationTimeSearchRequest.getComplaintTypeId()));
+            return predicate;
+        };
     }
 }

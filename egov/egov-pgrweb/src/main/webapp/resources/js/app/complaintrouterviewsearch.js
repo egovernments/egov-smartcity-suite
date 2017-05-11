@@ -155,19 +155,19 @@ jQuery(document).ready(function($)
 			"columns" : [
 			  { "mData" : "boundaryType",
 				"sTitle" : "Boundary Type",
-				 "name" :"boundary"
+				 "name" :"boundary.boundaryType.name"
 			  },
 			  { "mData" : "boundary",
 				"sTitle" : "Boundary",
-				 "name" :"boundary"
+				"name" : "boundary"
 			  }, 
 			  { "mData" : "complaintType",
 				"sTitle" : "Grievance Type",
-				 "name" :"complaintType"
+				"name" :"complaintType.name"
 			  }, 
 			  { "mData" : "position",
 				"sTitle" : "Position",
-				 "name" :"position"
+				"name" :"position"
 			  },
 			  { "mData" : "routerId",
 				"visible": false
