@@ -39,14 +39,19 @@
  */
 package org.egov.stms.masters.entity;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -86,6 +91,9 @@ public class SewerageRatesMaster extends AbstractAuditable {
     private Date toDate;
 
     private boolean active;
+    
+    @OneToMany(mappedBy = "sewerageratemaster", cascade = CascadeType.ALL, fetch = FetchType.LAZY , orphanRemoval = true)
+    private List<SewerageRatesMasterDetails> sewerageDetailmaster = new ArrayList<SewerageRatesMasterDetails>(0);
 
     @Override
     public Long getId() {
@@ -137,4 +145,20 @@ public class SewerageRatesMaster extends AbstractAuditable {
         this.active = active;
     }
 
+    public List<SewerageRatesMasterDetails> getSewerageDetailmaster() {
+        return sewerageDetailmaster;
+    }
+
+    public void setSewerageDetailmaster(List<SewerageRatesMasterDetails> sewerageDetailmaster) {
+        this.sewerageDetailmaster = sewerageDetailmaster;
+    }
+    
+    public void deleteSewerageRateDetail(final  SewerageRatesMasterDetails sewerageRateDetail) {
+        if(this.sewerageDetailmaster!=null)
+                this.sewerageDetailmaster.remove(sewerageRateDetail) ;
+    }
+    public void addSewerageRateDetail(final  SewerageRatesMasterDetails sewerageRateDetail) {
+        if(this.sewerageDetailmaster!=null)
+        this.sewerageDetailmaster.add(sewerageRateDetail) ;
+    }
 }

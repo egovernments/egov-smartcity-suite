@@ -40,6 +40,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
@@ -47,6 +48,9 @@
 						<spring:message code="title.seweragecharges"/>
 					</div>
 				</div>
+				<form:hidden id="mode" path="" name="mode" value="${mode}"/>
+				<form:hidden id="editdonationcharge" path="" name="editdonationcharge" value="${editdonationcharge}"/>
+				 
 				<div class="panel-body">
 					<table class="table table-striped table-bordered" id="sewerageChargesDetail" style="width:50%;margin:0 auto;">
 						<thead>
@@ -61,7 +65,19 @@
 								<tr>
 									<td  class="text-center"><c:out value="${counter.index+1}" /></td>
 									<td id="description"><c:out value="${inspection.feesDetail.description}" /></td>
-									<td class="text-right"><c:out value="${inspection.amount}" /></td>
+									
+									<c:choose>
+									<c:when test="${editdonationcharge && (sewerageApplicationDetails.status.code == 'INITIALAPPROVED') && (inspection.feesDetail.description)=='Donation Charge'}">
+									<td class="text-right"><%-- <c:out value="${inspection.amount}" /> --%>
+									<form:input class="form-control table-input text-right patternvalidation" data-pattern="decimalvalue" path="connectionFees[${counter.index}].amount" id="feesDetail${counter.index}amount"  value="${inspection.amount}"/>
+									</c:when>
+									
+									<c:otherwise>
+									<td class="text-right"><c:out value="${inspection.amount}" />
+									
+									</c:otherwise>
+									</c:choose>
+									</td>
 								</tr>
 							</c:forEach>
 						</tbody>

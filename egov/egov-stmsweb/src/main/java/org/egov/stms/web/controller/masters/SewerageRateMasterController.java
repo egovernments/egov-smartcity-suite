@@ -43,8 +43,11 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -53,13 +56,17 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.service.FinancialYearService;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.config.properties.ApplicationProperties;
 import org.egov.infra.utils.DateUtils;
 import org.egov.stms.masters.entity.SewerageRatesMaster;
+import org.egov.stms.masters.entity.SewerageRatesMasterDetails;
 import org.egov.stms.masters.entity.enums.PropertyType;
 import org.egov.stms.masters.entity.enums.SewerageRateStatus;
+import org.egov.stms.masters.pojo.SewerageRateComparatorOrderById;
 import org.egov.stms.masters.pojo.SewerageRatesSearch;
 import org.egov.stms.masters.service.SewerageRatesMasterService;
+import org.egov.stms.utils.constants.SewerageTaxConstants;
 import org.egov.stms.web.controller.utils.SewerageMasterDataValidator;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -99,16 +106,30 @@ public class SewerageRateMasterController {
     @Autowired
     private SewerageMasterDataValidator sewerageMasterDataValidator;
 
+    private Boolean getAppconfigValue() {
+        AppConfigValues appconfigvalue = sewerageRatesMasterService.getAppConfigValuesForSeweargeRate(
+                SewerageTaxConstants.MODULE_NAME, SewerageTaxConstants.SEWERAGE_MONTHLY_RATES);
+        if (appconfigvalue != null && appconfigvalue.getValue().equalsIgnoreCase("YES"))
+            return false;
+        else
+            return true;
+
+    }
+
     @RequestMapping(value = "/seweragerates", method = RequestMethod.GET)
     public String showForm(
-            @ModelAttribute final SewerageRatesMaster sewerageRatesMaster,
             final Model model) {
         final CFinancialYear financialYear = financialYearService.getCurrentFinancialYear();
         if (financialYear != null)
             model.addAttribute("endDate", financialYear.getEndingDate());
         model.addAttribute("propertyTypes", PropertyType.values());
+        model.addAttribute("sewerageRatesMaster", new SewerageRatesMaster());
+        if (getAppconfigValue()) {
+            return "sewerageRates-master";
+        } else {
+            return "seweragemonthlyRates-master";
 
-        return "sewerageRates-master";
+        }
     }
 
     @RequestMapping(value = "/seweragerates", method = RequestMethod.POST)
@@ -116,18 +137,22 @@ public class SewerageRateMasterController {
             @ModelAttribute final SewerageRatesMaster sewerageRatesMaster,
             final RedirectAttributes redirectAttrs, final Model model,
             final BindingResult resultBinder) {
-        sewerageMasterDataValidator.validateMonthlyRate(sewerageRatesMaster, resultBinder);
+
+        final List<SewerageRatesMasterDetails> sewerageRatesMasterDetailslist = new ArrayList<>();
+        sewerageMasterDataValidator.validateMonthlyRate(sewerageRatesMaster, getAppconfigValue(), resultBinder);
         if (resultBinder.hasErrors()) {
             model.addAttribute("monthlyRate", sewerageRatesMaster.getMonthlyRate());
             model.addAttribute(SEWERAGE_RATES_MASTER, sewerageRatesMaster);
-            return "sewerageRates-master";
+            if (getAppconfigValue())
+                return "sewerageRates-master";
+            else
+                return "seweragemonthlyRates-master";
         }
 
         final List<SewerageRatesMaster> existingsewerageRatesMasterList = sewerageRatesMasterService
                 .getLatestActiveRecord(sewerageRatesMaster.getPropertyType(), true);
 
-        SewerageRatesMaster sewerageRatesMasterExisting;
-        sewerageRatesMasterExisting = sewerageRatesMasterService
+        SewerageRatesMaster sewerageRatesMasterExisting = sewerageRatesMasterService
                 .findByPropertyTypeAndFromDateAndActive(
                         sewerageRatesMaster.getPropertyType(),
                         sewerageRatesMaster.getFromDate(), true);
@@ -141,6 +166,11 @@ public class SewerageRateMasterController {
             sewerageRatesMasterService.update(sewerageRatesMasterExisting);
 
             sewerageRatesMaster.setActive(true);
+            for (final SewerageRatesMasterDetails sewerageRatesMasterDetails : sewerageRatesMaster.getSewerageDetailmaster()) {
+                sewerageRatesMasterDetails.setSewerageratemaster(sewerageRatesMaster);
+                sewerageRatesMasterDetailslist.add(sewerageRatesMasterDetails);
+            }
+            sewerageRatesMaster.getSewerageDetailmaster().addAll(sewerageRatesMasterDetailslist);
             sewerageRatesMasterService.create(sewerageRatesMaster);
         } else {
             SewerageRatesMaster sewerageRatesMasterOld = null;
@@ -156,6 +186,12 @@ public class SewerageRateMasterController {
                 sewerageRatesMasterService.update(sewerageRatesMasterOld);
             }
             sewerageRatesMaster.setActive(true);
+            for (final SewerageRatesMasterDetails sewerageRatesMasterDetails : sewerageRatesMaster.getSewerageDetailmaster()) {
+                sewerageRatesMasterDetails.setSewerageratemaster(sewerageRatesMaster);
+                sewerageRatesMasterDetailslist.add(sewerageRatesMasterDetails);
+            }
+            sewerageRatesMaster.getSewerageDetailmaster().clear();
+            sewerageRatesMaster.getSewerageDetailmaster().addAll(sewerageRatesMasterDetailslist);
             sewerageRatesMasterService.create(sewerageRatesMaster);
         }
         redirectAttrs.addFlashAttribute(MESSAGE, "msg.seweragemonthlyrate.creation.success");
@@ -166,8 +202,18 @@ public class SewerageRateMasterController {
     @RequestMapping(value = "/getseweragerates/{id}", method = RequestMethod.GET)
     public String getSeweragerates(@PathVariable("id") final Long id, final Model model) {
         final SewerageRatesMaster sewerageRatesMaster = sewerageRatesMasterService.findBy(id);
+        if (getAppconfigValue() != null && !getAppconfigValue()) {
+            for (final SewerageRatesMasterDetails swdm : sewerageRatesMaster.getSewerageDetailmaster())
+                swdm.setAmount(BigDecimal.valueOf(swdm.getAmount()).setScale(2, BigDecimal.ROUND_HALF_EVEN).doubleValue());
+
+            Collections.sort(sewerageRatesMaster.getSewerageDetailmaster(), new SewerageRateComparatorOrderById());
+        }
         model.addAttribute(SEWERAGE_RATES_MASTER, sewerageRatesMaster);
-        return "sewerageRates-success";
+        if (getAppconfigValue())
+
+            return "sewerageRates-success";
+        else
+            return "seweragemonthlyRates-success";
     }
 
     @RequestMapping(value = "/ajaxexistingseweragevalidate", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -178,7 +224,7 @@ public class SewerageRateMasterController {
         sewerageRatesMasterExist = sewerageRatesMasterService
                 .findByPropertyTypeAndFromDateAndActive(propertyType, fromDate, true);
         if (sewerageRatesMasterExist != null)
-            return sewerageRatesMasterExist.getMonthlyRate();
+            return sewerageRatesMasterExist.getMonthlyRate() != null ? sewerageRatesMasterExist.getMonthlyRate() : 1;
         else
             return 0;
     }
@@ -188,7 +234,7 @@ public class SewerageRateMasterController {
     public String getLatestActiveFromDate(@RequestParam("propertyType") final PropertyType propertyType,
             @RequestParam("fromDate") final Date fromDate) {
         SimpleDateFormat newFormat = new SimpleDateFormat("dd-MM-yyyy");
-     
+
         final List<SewerageRatesMaster> existingsewerageRatesMasterList = sewerageRatesMasterService
                 .getLatestActiveRecord(propertyType, true);
         if (!existingsewerageRatesMasterList.isEmpty() && fromDate != null) {
@@ -223,7 +269,8 @@ public class SewerageRateMasterController {
             throws IOException {
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         SimpleDateFormat newFormat = new SimpleDateFormat("dd-MM-yyyy");
-     
+        final AppConfigValues showmonthlyrates = sewerageRatesMasterService.getAppConfigValuesForSeweargeRate(
+                SewerageTaxConstants.MODULE_NAME, SewerageTaxConstants.SEWERAGE_MONTHLY_RATES);
         PropertyType type = null;
         String effectivefromDate = null;
         if (sewerageRatesSearch.getPropertyType() != null)
@@ -235,9 +282,20 @@ public class SewerageRateMasterController {
             } catch (final ParseException e) {
                 LOG.error("Parse Exception " + e);
             }
+        List<SewerageRatesSearch> seweragesearchlist = sewerageRatesMasterService.getSewerageMasters(type, effectivefromDate,
+                sewerageRatesSearch.getStatus());
+        List<SewerageRatesSearch> displyalist = new ArrayList<>();
+        for (SewerageRatesSearch seRatesSearch : seweragesearchlist) {
+            if (showmonthlyrates.getValue().equals("YES") && seRatesSearch.getMonthlyRate() != null) {
+                displyalist.add(seRatesSearch);
+            }
 
+            else if (showmonthlyrates.getValue().equals("NO") && seRatesSearch.getMonthlyRate() == null) {
+                displyalist.add(seRatesSearch);
+            }
+        }
         IOUtils.write("{ \"data\":" + new GsonBuilder().setDateFormat(applicationProperties.defaultDatePattern()).create()
-                .toJson(sewerageRatesMasterService.getSewerageMasters(type, effectivefromDate, sewerageRatesSearch.getStatus()))
+                .toJson(displyalist)
                 + "}", response.getWriter());
     }
 
@@ -246,32 +304,52 @@ public class SewerageRateMasterController {
             final Model model) {
         final SewerageRatesMaster existingratesMaster = sewerageRatesMasterService.findBy(id);
         model.addAttribute(SEWERAGE_RATES_MASTER, existingratesMaster);
-        return "sewerageRates-update";
+        if (getAppconfigValue())
+            return "sewerageRates-update";
+        else {
+            Collections.sort(existingratesMaster.getSewerageDetailmaster(), new SewerageRateComparatorOrderById());
+            model.addAttribute(SEWERAGE_RATES_MASTER, existingratesMaster);
+            model.addAttribute("sewerageDetailmaster", existingratesMaster.getSewerageDetailmaster());
+            return "seweragemonthlyRates-update";
+        }
     }
 
     @RequestMapping(value = "update/{id}", method = POST)
     public String update(@ModelAttribute final SewerageRatesMaster sewerageRatesMaster, @PathVariable final Long id,
             final Model model, final RedirectAttributes redirectAttrs, final BindingResult errors) throws ParseException {
         SimpleDateFormat newFormat = new SimpleDateFormat("dd-MM-yyyy");
-     
+
         final SewerageRatesMaster ratesMaster = sewerageRatesMasterService.findBy(id);
 
         final String todaysdate = newFormat.format(new Date());
         final String effectiveFromDate = newFormat.format(ratesMaster.getFromDate());
         final Date currentDate = newFormat.parse(todaysdate);
         final Date effectiveDate = newFormat.parse(effectiveFromDate);
-        sewerageMasterDataValidator.validateSewerageMonthlyRateUpdate(sewerageRatesMaster, errors);
+        if (getAppconfigValue())
+            sewerageMasterDataValidator.validateSewerageMonthlyRateUpdate(sewerageRatesMaster, errors);
         if (errors.hasErrors()) {
             model.addAttribute("sewerageRatesMaster", sewerageRatesMaster);
-            return "sewerageRates-update";
+            if (getAppconfigValue())
+                return "seweragemonthlyRates-update";
+            else
+                return "sewerageRates-update";
         }
 
         if (effectiveDate.compareTo(currentDate) < 0) {
             model.addAttribute(MESSAGE, "msg.seweragerate.modification.rejected");
             return "sewerageRates-update";
         }
-        ratesMaster.setMonthlyRate(sewerageRatesMaster.getMonthlyRate());
-        sewerageRatesMasterService.update(ratesMaster);
+        if (getAppconfigValue()) {
+
+            final List<SewerageRatesMasterDetails> existingSewerageDetailList = new ArrayList<>();
+            if (sewerageRatesMaster != null && !sewerageRatesMaster.getSewerageDetailmaster().isEmpty())
+                existingSewerageDetailList.addAll(ratesMaster.getSewerageDetailmaster());
+            if (sewerageRatesMaster != null && sewerageRatesMaster.getSewerageDetailmaster() != null)
+                sewerageRatesMasterService.updateSewerageRateMaster(sewerageRatesMaster, ratesMaster, existingSewerageDetailList);
+        } else {
+            ratesMaster.setMonthlyRate(sewerageRatesMaster.getMonthlyRate());
+            sewerageRatesMasterService.update(ratesMaster);
+        }
         redirectAttrs.addFlashAttribute(MESSAGE, "msg.seweragemonthlyrate.update.success");
         return SEWERAGE_RATES_SUCCESS_PAGE + id;
     }

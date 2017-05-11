@@ -49,6 +49,7 @@ import static org.egov.stms.utils.constants.SewerageTaxConstants.CHANGEINCLOSETS
 import static org.egov.stms.utils.constants.SewerageTaxConstants.CHANGEINCLOSETS_NOCOLLECTION;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.CLOSESEWERAGECONNECTION;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.DOCTYPE_OTHERS;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.FEES_DONATIONCHARGE_CODE;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.MODULETYPE;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.NOTICE_TYPE_WORK_ORDER_NOTICE;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.WFLOW_ACTION_STEP_CANCEL;
@@ -60,7 +61,7 @@ import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_INSPEC
 import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_INSPECTIONFEE_PENDING;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_PAYMENTDONE;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_REJECTED;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.FEES_DONATIONCHARGE_CODE;
+
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -74,7 +75,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -145,7 +145,7 @@ public class SewerageApplicationDetailsService {
     private static final String STMS_APPLICATION_VIEW = "/stms/existing/sewerage/view/%s/%s";
     private static final String APPLICATION_WORKFLOW_INITIALIZATION_DONE = "applicationWorkflowCustomDefaultImpl initialization is done";
     private static final String DEPARTMENT = "department";
-    
+
     @Autowired
     private SewerageTaxUtils sewerageTaxUtils;
 
@@ -194,7 +194,7 @@ public class SewerageApplicationDetailsService {
 
     @Autowired
     private DocumentTypeMasterService documentTypeMasterService;
-    
+
     @Autowired
     private AppConfigValueService appConfigValuesService;
 
@@ -261,7 +261,7 @@ public class SewerageApplicationDetailsService {
             sewerageDemandDetail.setReasonMaster(FEES_DONATIONCHARGE_CODE);
             sewerageApplicationDetails.getDemandDetailBeanList().add(sewerageDemandDetail);
         }
-            
+
         if (sewerageApplicationDetails.getCurrentDemand() == null) {
             final EgDemand demand = sewerageDemandService.createDemandOnLegacyConnection(
                     sewerageApplicationDetails.getDemandDetailBeanList(), sewerageApplicationDetails);
@@ -585,12 +585,12 @@ public class SewerageApplicationDetailsService {
             sewerageIndexService.createSewarageIndex(sewerageApplicationDetails, assessmentDetails);
         }
     }
-    
+
     public AppConfigValues getSlaAppConfigValuesForMarriageReg(final String moduleName, final String keyName) {
         final List<AppConfigValues> appConfigValues = appConfigValuesService.getConfigValuesByModuleAndKey(moduleName, keyName);
         return !appConfigValues.isEmpty() ? appConfigValues.get(0) : null;
     }
-    
+
     public BigDecimal getTotalAmount(final SewerageApplicationDetails sewerageApplicationDetails) {
         final BigDecimal balance = BigDecimal.ZERO;
         if (sewerageApplicationDetails != null) {
@@ -634,10 +634,11 @@ public class SewerageApplicationDetailsService {
         return modelParams;
     }
 
-    public SewerageApplicationDetails updateSewerageApplicationDetails(final SewerageApplicationDetails sewerageApplicationDetails)
-    {
+    public SewerageApplicationDetails updateSewerageApplicationDetails(
+            final SewerageApplicationDetails sewerageApplicationDetails) {
         return sewerageApplicationDetailsRepository.saveAndFlush(sewerageApplicationDetails);
     }
+
     @Transactional
     public SewerageApplicationDetails updateSewerageApplicationDetails(
             final SewerageApplicationDetails sewerageApplicationDetails, final Long approvalPosition,
@@ -998,7 +999,7 @@ public class SewerageApplicationDetailsService {
     public String isConnectionExistsForProperty(final String propertyId) {
         return checkConnectionPresentForProperty(propertyId);
     }
-    
+
     @SuppressWarnings("unchecked")
     @Transactional
     public List<SewerageApplicationDetails> findActiveSewerageApplnsByCurrentInstallmentAndNumberOfResultToFetch(
@@ -1018,4 +1019,8 @@ public class SewerageApplicationDetailsService {
         return sewerageCriteria.list();
     }
 
+    public AppConfigValues getAppConfigValuesForDonationCharge(final String moduleName, final String keyName) {
+        final List<AppConfigValues> appConfigValues = appConfigValuesService.getConfigValuesByModuleAndKey(moduleName, keyName);
+        return !appConfigValues.isEmpty() ? appConfigValues.get(0) : null;
+    }
 }
