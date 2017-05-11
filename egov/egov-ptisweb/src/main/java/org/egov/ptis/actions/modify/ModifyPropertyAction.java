@@ -905,10 +905,9 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         final Assignment wfInitiator = validateInitiatorOnReject();
         if (logger.isDebugEnabled())
             logger.debug("reject: Property rejection started");
-        if (isBlank(approverComments)) {
+        if (isBlank(approverComments))
             addActionError(getText("property.workflow.remarks"));
-        }
-        if (hasActionErrors()) 
+        if (hasActionErrors())
             return isAssistantOrRIApprovalPending() ? NEW : VIEW;
         if (propertyModel.getPropertyDetail().getPropertyTypeMaster().getCode()
                 .equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
@@ -939,29 +938,28 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
     }
 
     /**
-     * @return 
-     * 
+     * @return
+     *
      */
     private Assignment validateInitiatorOnReject() {
         String loggedInUserDesignation = "";
         if (propertyModel.getState() != null) {
-            List<Assignment> loggedInUserAssign = assignmentService.getAssignmentByPositionAndUserAsOnDate(
-                    propertyModel.getCurrentState().getOwnerPosition().getId(), securityUtils.getCurrentUser().getId(), new Date());
+            final List<Assignment> loggedInUserAssign = assignmentService.getAssignmentByPositionAndUserAsOnDate(
+                    propertyModel.getCurrentState().getOwnerPosition().getId(), securityUtils.getCurrentUser().getId(),
+                    new Date());
             loggedInUserDesignation = !loggedInUserAssign.isEmpty() ? loggedInUserAssign.get(0).getDesignation().getName() : null;
         }
-        Assignment wfInitiator = getWorkflowInitiator(loggedInUserDesignation);
-        if (WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction) && wfInitiator == null) {
-            if (propertyTaxCommonUtils.isRoOrCommissioner(loggedInUserDesignation)) {
+        final Assignment wfInitiator = getWorkflowInitiator(loggedInUserDesignation);
+        if (WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction) && wfInitiator == null)
+            if (propertyTaxCommonUtils.isRoOrCommissioner(loggedInUserDesignation))
                 addActionError(getText("reject.error.initiator.inactive", Arrays.asList(REVENUE_INSPECTOR_DESGN)));
-            } else {
+            else
                 addActionError(
                         getText("reject.error.initiator.inactive", Arrays.asList(JUNIOR_ASSISTANT + "/" + SENIOR_ASSISTANT)));
-            }
-        }
         return wfInitiator;
     }
 
-    private Assignment getWorkflowInitiator(String loggedInUserDesignation) {
+    private Assignment getWorkflowInitiator(final String loggedInUserDesignation) {
         Assignment wfInitiator;
         if (propertyTaxCommonUtils.isRoOrCommissioner(loggedInUserDesignation))
             wfInitiator = propService.getUserOnRejection(propertyModel);
@@ -969,7 +967,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
             wfInitiator = propService.getWorkflowInitiator(propertyModel);
         return wfInitiator;
     }
-    
+
     private boolean isCommissionerRoOrBillCollector() {
         return StringUtils.containsIgnoreCase(userDesignationList, BILL_COLLECTOR_DESGN)
                 || StringUtils.containsIgnoreCase(userDesignationList, COMMISSIONER_DESGN)
@@ -1002,7 +1000,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         setUserInfo();
         setUserDesignations();
         propertyByEmployee = propService.isEmployee(securityUtils.getCurrentUser())
-                && !ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName());;
+                && !ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName());
         if (getModelId() != null && !getModelId().isEmpty())
             prepareWorkflowPropInfo();
         else if (indexNumber != null && !indexNumber.trim().isEmpty()) {
@@ -1131,7 +1129,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
     }
 
     /**
-     * 
+     *
      */
     private void setPropertyTypeMaster() {
         if (propTypeId != null && !propTypeId.trim().isEmpty() && !"-1".equals(propTypeId))

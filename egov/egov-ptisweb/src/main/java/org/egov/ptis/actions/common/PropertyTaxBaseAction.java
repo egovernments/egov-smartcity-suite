@@ -595,7 +595,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
         Assignment wfInitiator = null;
         String approverDesignation = "";
 
-        Assignment assignment = getApproverAssignment(property);
+        final Assignment assignment = getApproverAssignment(property);
         if (assignment != null) {
             approverDesignation = assignment.getDesignation().getName();
             if (!propertyByEmployee || ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName()))
@@ -656,7 +656,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
      * @param approverDesignation
      * @return
      */
-    private String getNextAction(final PropertyImpl property, String approverDesignation) {
+    private String getNextAction(final PropertyImpl property, final String approverDesignation) {
         String nextAction = "";
         if (WFLOW_ACTION_STEP_FORWARD.equalsIgnoreCase(workFlowAction)
                 && COMMISSIONER_DESIGNATIONS.contains(approverDesignation))
@@ -681,8 +681,8 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
      * @param approverDesignation
      * @param loggedInUserDesignation
      */
-    private void transition(final PropertyImpl property, Assignment wfInitiator,
-            final String nature, String approverDesignation, String loggedInUserDesignation) {
+    private void transition(final PropertyImpl property, final Assignment wfInitiator,
+            final String nature, final String approverDesignation, final String loggedInUserDesignation) {
         final DateTime currentDate = new DateTime();
         final User user = securityUtils.getCurrentUser();
         Position pos;
@@ -705,7 +705,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
             property.transition().end().withSenderName(user.getUsername() + "::" + user.getName())
                     .withComments(approverComments).withDateInfo(currentDate.toDate());
         else {
-            String nextAction = getNextAction(property, approverDesignation);
+            final String nextAction = getNextAction(property, approverDesignation);
             wfmatrix = propertyWorkflowService.getWfMatrix(property.getStateType(), null,
                     null, getAdditionalRule(), property.getCurrentState().getValue(),
                     property.getState().getNextAction(), null, loggedInUserDesignation);
@@ -718,7 +718,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
     }
 
     /**
-     * 
+     *
      */
     private void prepareAckMessage() {
         if (approverName != null && !approverName.isEmpty() && !approverName.equalsIgnoreCase(CHOOSE)) {
@@ -736,8 +736,8 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
      * @param approverDesignation
      * @param loggedInUserDesignation
      */
-    private void transitionReject(final PropertyImpl property, Assignment wfInitiator, String approverDesignation,
-            String loggedInUserDesignation) {
+    private void transitionReject(final PropertyImpl property, final Assignment wfInitiator, final String approverDesignation,
+            final String loggedInUserDesignation) {
         final DateTime currentDate = new DateTime();
         final User user = securityUtils.getCurrentUser();
         Position owner = null;
@@ -786,7 +786,8 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
         if (property.getState() != null) {
             assignments = assignmentService.getAssignmentByPositionAndUserAsOnDate(
                     property.getCurrentState().getOwnerPosition().getId(), securityUtils.getCurrentUser().getId(), new Date());
-            designation = !assignments.isEmpty() ? assignments.get(0).getDesignation().getName() : null;
+            if (!assignments.isEmpty())
+                designation = assignments.get(0).getDesignation().getName();
         }
         return designation;
     }
