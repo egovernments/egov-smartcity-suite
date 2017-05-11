@@ -39,126 +39,125 @@
  */
 
 function openTradeLicense(obj) {
-	window.open("/tl/public/viewtradelicense/viewTradeLicense-view.action?id="
-			+ $(obj).data('eleval'), '',
-			'scrollbars=yes,width=1000,height=700,status=yes');
+    window.open("/tl/viewtradelicense/viewTradeLicense-view.action?id="
+        + $(obj).data('eleval'), '',
+        'scrollbars=yes,width=1000,height=700,status=yes');
 }
 
 function populateData(reportData) {
-	$('.report-section').removeClass('display-hide');
-	$('#report-footer').show();
-	var dcbTable = $("#tbldcbdrilldown");
-	var reportdatatable = dcbTable
-			.dataTable({
-				dom : "<'row'<'col-xs-4 pull-right'f>r>t<'row add-margin'<'col-md-3 col-xs-6'i><'col-md-2 col-xs-6'l><'col-md-3 col-xs-6 text-right'B><'col-md-4 col-xs-6 text-right'p>>",
-	 			"autoWidth" : false,
-	 			"bDestroy" : true,
-				responsive : true,
-				destroy : true,
-		         "searching":false,
-				'aaData' : reportData,
-				buttons : [  {
-					extend : 'pdf',
-					title : 'DCB Report By Trade Wise',
-					filename : 'DCB Report By Trade Wiset',
-					orientation : 'landscape',
-					footer : true,
-					pageSize:'A3',
-					exportOptions : {
-						columns : ':visible'
-					}
-				}, {
-					extend : 'excel',
-					filename : 'DCB Report By Trade Wise',
-					footer : true,
-					exportOptions : {
-						columns : ':visible'
-					}
-				}, {
-					extend : 'print',
-					title : 'DCB Report By Trade Wise',
-					filename : 'DCB Report By Trade Wise',
-					footer : true,
-					exportOptions : {
-						columns : ':visible'
-					}
-				} ],
-				columns : [
-						{
-							"data" : function(row, type, set, meta) {
-								return {
-									name : row.licensenumber,
-									id : row.licenseid
-								};
-							},
-							"render" : function(data, type, row) {
-								return '<a href="javascript:void(0);" onclick="openTradeLicense(this);" data-hiddenele="id" data-eleval="'
-										+ data.id + '">' + data.name + '</a>';
-							},
-							"sTitle" : "License No."
-						}, {
-							"data" : "arr_demand",
-							"sTitle" : "Arrears"
-						}, {
-							"data" : "curr_demand",
-							"sTitle" : "Current"
-						}, {
-							"data" : "username",
-							"sTitle" : "username",
-							"bVisible" : false
-						}, {
-							"data" : "total_demand",
-							"sTitle" : "Total"
-						}, {
-							"data" : "arr_coll",
-							"sTitle" : "Arrears"
-						}, {
-							"data" : "curr_coll",
-							"sTitle" : "Current"
-						}, {
-							"data" : "total_coll",
-							"sTitle" : "Total"
-						}, {
-							"data" : "arr_balance",
-							"sTitle" : "Arrears"
-						}, {
-							"data" : "curr_balance",
-							"sTitle" : "Current"
-						}, {
-							"data" : "total_balance",
-							"sTitle" : "Total"
-						} ],
-				"footerCallback" : function(row, data, start, end, display) {
-					var api = this.api(), data;
-					if (data.length == 0) {
-						$('#report-footer').hide();
-					} else {
-						$('#report-footer').show();
-					}
-					if (data.length > 0) {
-						updateTotalFooter(1, api);
-						updateTotalFooter(2, api);
-						updateTotalFooter(4, api);
-						updateTotalFooter(5, api);
-						updateTotalFooter(6, api);
-						updateTotalFooter(7, api);
-						updateTotalFooter(8, api);
-						updateTotalFooter(9, api);
-						updateTotalFooter(10, api);
-					}
-				},
-				"aoColumnDefs" : [ {
-					"aTargets" : [ 2, 3, 4, 5, 6, 7, 8, 9, 10 ],
-					"mRender" : function(data, type, full) {
-						return formatNumberInr(data);
-					}
-				} ]
-			});
-	$('.loader-class').modal('hide');
+    $('.report-section').removeClass('display-hide');
+    $('#report-footer').show();
+    var dcbTable = $("#tbldcbdrilldown");
+    reportdatatable = dcbTable.dataTable({
+        dom: "<'row'<'col-xs-4 pull-right'f>r>t<'row add-margin'<'col-md-3 col-xs-6'i><'col-md-2 col-xs-6'l><'col-md-3 col-xs-6 text-right'B><'col-md-4 col-xs-6 text-right'p>>",
+        "autoWidth": false,
+        "bDestroy": true,
+        responsive: true,
+        destroy: true,
+        "searching": false,
+        'aaData': reportData,
+        buttons: [{
+            extend: 'pdf',
+            title: 'DCB Report By Trade Wise',
+            filename: 'DCB Report By Trade Wiset',
+            orientation: 'landscape',
+            footer: true,
+            pageSize: 'A3',
+            exportOptions: {
+                columns: ':visible'
+            }
+        }, {
+            extend: 'excel',
+            filename: 'DCB Report By Trade Wise',
+            footer: true,
+            exportOptions: {
+                columns: ':visible'
+            }
+        }, {
+            extend: 'print',
+            title: 'DCB Report By Trade Wise',
+            filename: 'DCB Report By Trade Wise',
+            footer: true,
+            exportOptions: {
+                columns: ':visible'
+            }
+        }],
+        columns: [
+            {
+                "data": function (row, type, set, meta) {
+                    return {
+                        name: row.licensenumber,
+                        id: row.licenseid
+                    };
+                },
+                "render": function (data, type, row) {
+                    return '<a href="javascript:void(0);" onclick="openTradeLicense(this);" data-hiddenele="id" data-eleval="'
+                        + data.id + '">' + data.name + '</a>';
+                },
+                "sTitle": "License No."
+            }, {
+                "data": "arr_demand",
+                "sTitle": "Arrears"
+            }, {
+                "data": "curr_demand",
+                "sTitle": "Current"
+            }, {
+                "data": "username",
+                "sTitle": "username",
+                "bVisible": false
+            }, {
+                "data": "total_demand",
+                "sTitle": "Total"
+            }, {
+                "data": "arr_coll",
+                "sTitle": "Arrears"
+            }, {
+                "data": "curr_coll",
+                "sTitle": "Current"
+            }, {
+                "data": "total_coll",
+                "sTitle": "Total"
+            }, {
+                "data": "arr_balance",
+                "sTitle": "Arrears"
+            }, {
+                "data": "curr_balance",
+                "sTitle": "Current"
+            }, {
+                "data": "total_balance",
+                "sTitle": "Total"
+            }],
+        "footerCallback": function (row, data, start, end, display) {
+            var api = this.api(), data;
+            if (data.length == 0) {
+                $('#report-footer').hide();
+            } else {
+                $('#report-footer').show();
+            }
+            if (data.length > 0) {
+                updateTotalFooter(1, api);
+                updateTotalFooter(2, api);
+                updateTotalFooter(4, api);
+                updateTotalFooter(5, api);
+                updateTotalFooter(6, api);
+                updateTotalFooter(7, api);
+                updateTotalFooter(8, api);
+                updateTotalFooter(9, api);
+                updateTotalFooter(10, api);
+            }
+        },
+        "aoColumnDefs": [{
+            "aTargets": [2, 3, 4, 5, 6, 7, 8, 9, 10],
+            "mRender": function (data, type, full) {
+                return formatNumberInr(data);
+            }
+        }]
+    });
+    $('.loader-class').modal('hide');
 
-	if ($('#mode').val() == 'property') {
-		reportdatatable.fnSetColumnVis(1, false);
-	} else {
-		reportdatatable.fnSetColumnVis(1, true);
-	}
+    if ($('#mode').val() == 'property') {
+        reportdatatable.fnSetColumnVis(1, false);
+    } else {
+        reportdatatable.fnSetColumnVis(1, true);
+    }
 }

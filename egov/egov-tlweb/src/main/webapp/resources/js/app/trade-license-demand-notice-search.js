@@ -50,7 +50,7 @@ $(document).ready(function () {
         },
         queryTokenizer: Bloodhound.tokenizers.whitespace,
         remote: {
-            url: '../search/searchtlfordemandnotice',
+            url: '/tl/search/autocomplete',
             replace: function (url, query) {
                 return url + '?searchParamValue=' + query + '&searchParamType=LicenseNumber';
             },
@@ -85,7 +85,7 @@ $(document).ready(function () {
         },
         queryTokenizer: Bloodhound.tokenizers.whitespace,
         remote: {
-            url: '../search/searchtlfordemandnotice',
+            url: '/tl/search/autocomplete',
             replace: function (url, query) {
                 return url + '?searchParamValue=' + query + '&searchParamType=OldLicenseNumber';
             },
@@ -123,7 +123,7 @@ $(document).ready(function () {
             var results = [];
             $.ajax({
                 type: "GET",
-                url: '../licensesubcategory/by-category',
+                url: '/tl/licensesubcategory/by-category',
                 dataType: "json",
                 data: {categoryId: val},
                 success: function (data) {
@@ -147,7 +147,7 @@ $(document).ready(function () {
             function (e) {
                 if ($('form').valid()) {
 
-                    var action = '/tl/demandnotice/generate';
+                    var action = 'generate';
                     $('#demandnoticesearchForm').attr('method', 'get');
                     $('#demandnoticesearchForm').attr('action', action);
                     document.forms["demandnoticesearchForm"].submit();
@@ -178,11 +178,8 @@ $(document).ready(function () {
                 var oldLicenseNumber = $('#oldLicenseNumber').val();
                 var category = $('#category').val();
                 var subCategory = $('#subCategory').val();
-                var tradeTitle = $('#tradeTitle').val();
                 var wardId = $('#wardId').val();
                 var localityId = $('#localityId').val();
-                var tradeOwnerName = $('#tradeOwnerName').val();
-                var ownerName = $('#ownerName').val();
                 var status = $('#status').val();
 
                 if (!licenseNumber && !oldLicenseNumber && !category && !subCategory && !wardId && !localityId && !status) {
@@ -195,7 +192,7 @@ $(document).ready(function () {
                 reportdatatable = drillDowntableContainer
                     .dataTable({
                         ajax: {
-                            url: "../search/demandnotice-result",
+                            type:"POST",
                             data: {
                                 licenseNumber: licenseNumber,
                                 oldLicenseNumber: oldLicenseNumber,
@@ -203,9 +200,6 @@ $(document).ready(function () {
                                 subCategoryId: subCategory,
                                 wardId: wardId,
                                 localityId: localityId,
-                                tradeTitle: tradeTitle,
-                                tradeOwnerName: tradeOwnerName,
-                                ownerName: ownerName,
                                 statusId: status,
 
                             }
@@ -280,7 +274,7 @@ $(document).ready(function () {
     );
 });
 function goToView(id) {
-    window.open("/tl/demandnotice/report?licenseId=" + id, 'dn' + id, 'scrollbars=yes,width=1000,height=700,status=yes');
+    window.open("generate/" + id, 'dn' + id, 'scrollbars=yes,width=1000,height=700,status=yes');
 } 
 
 

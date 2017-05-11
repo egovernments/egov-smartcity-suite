@@ -42,7 +42,6 @@ package org.egov.tl.web.actions.viewtradelicense;
 
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
-import org.apache.struts2.convention.annotation.Actions;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
@@ -89,10 +88,7 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
         return super.showForApproval();
     }
 
-    @Actions({
-            @Action(value = "/viewtradelicense/viewTradeLicense-view"),
-            @Action(value = "/public/viewtradelicense/viewTradeLicense-view")
-    })
+    @Action(value = "/viewtradelicense/viewTradeLicense-view")
     public String view() {
         if (license() != null && license().getId() != null)
             tradeLicense = tradeLicenseService.getLicenseById(license().getId());

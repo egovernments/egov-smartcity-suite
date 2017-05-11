@@ -66,7 +66,7 @@ public class ViewSubCategoryController {
     @Autowired
     private SubCategoryDetailsService subCategoryDetailsService;
 
-    @RequestMapping(value = {"/licensesubcategory/by-category", "/public/licensesubcategory/by-category"}, method = GET, produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/licensesubcategory/by-category", method = GET, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     public List<LicenseSubCategory> subcategories(@RequestParam Long categoryId) {
         return licenseSubCategoryService.getSubCategoriesByCategory(categoryId);

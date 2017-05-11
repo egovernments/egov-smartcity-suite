@@ -48,7 +48,7 @@ $(document).ready(function () {
         },
         queryTokenizer: Bloodhound.tokenizers.whitespace,
         remote: {
-            url: '../search/tradeLicense',
+            url: 'autocomplete',
             replace: function (url, query) {
                 return url + '?searchParamValue=' + query + '&searchParamType=ApplicationNumber';
             },
@@ -85,7 +85,7 @@ $(document).ready(function () {
         },
         queryTokenizer: Bloodhound.tokenizers.whitespace,
         remote: {
-            url: '../search/tradeLicense',
+            url: 'autocomplete',
             replace: function (url, query) {
                 return url + '?searchParamValue=' + query + '&searchParamType=LicenseNumber';
             },
@@ -120,7 +120,7 @@ $(document).ready(function () {
         },
         queryTokenizer: Bloodhound.tokenizers.whitespace,
         remote: {
-            url: '../search/tradeLicense',
+            url: 'autocomplete',
             replace: function (url, query) {
                 return url + '?searchParamValue=' + query + '&searchParamType=OldLicenseNumber';
             },
@@ -156,7 +156,7 @@ $(document).ready(function () {
         },
         queryTokenizer: Bloodhound.tokenizers.whitespace,
         remote: {
-            url: '../search/tradeLicense',
+            url: 'autocomplete',
             replace: function (url, query) {
                 return url + '?searchParamValue=' + query + '&searchParamType=TradeTitle';
             },
@@ -192,7 +192,7 @@ $(document).ready(function () {
         },
         queryTokenizer: Bloodhound.tokenizers.whitespace,
         remote: {
-            url: '../search/tradeLicense',
+            url: 'autocomplete',
             replace: function (url, query) {
                 return url + '?searchParamValue=' + query + '&searchParamType=TradeOwnerName';
             },
@@ -229,7 +229,7 @@ $(document).ready(function () {
         },
         queryTokenizer: Bloodhound.tokenizers.whitespace,
         remote: {
-            url: '../search/tradeLicense',
+            url: 'autocomplete',
             replace: function (url, query) {
                 return url + '?searchParamValue=' + query + '&searchParamType=PropertyAssessmentNo';
             },
@@ -266,7 +266,7 @@ $(document).ready(function () {
         },
         queryTokenizer: Bloodhound.tokenizers.whitespace,
         remote: {
-            url: '../search/tradeLicense',
+            url: 'autocomplete',
             replace: function (url, query) {
                 return url + '?searchParamValue=' + query + '&searchParamType=MobileNo';
             },
@@ -302,7 +302,7 @@ $(document).ready(function () {
             var results = [];
             $.ajax({
                 type: "GET",
-                url: '../licensesubcategory/by-category',
+                url: '/tl/licensesubcategory/by-category',
                 data: {categoryId: val},
                 dataType: "json",
                 success: function (data) {
@@ -367,7 +367,7 @@ $(document).ready(function () {
                             leftColumns: 1
                         },
                         ajax: {
-                            url: "../search/searchtrade-search",
+                            type:"POST",
                             data:function (args) {
                        		 return {"args": JSON.stringify(args),
                                 applicationNumber: applicationNumber,
@@ -471,12 +471,12 @@ $(document).ready(function () {
     );
 });
 function goToView(id) {
-    window.open("../viewtradelicense/viewTradeLicense-view.action?id=" + id, '', 'scrollbars=yes,width=1000,height=700,status=yes');
+    window.open("/tl/viewtradelicense/viewTradeLicense-view.action?id=" + id, '', 'scrollbars=yes,width=1000,height=700,status=yes');
 }
 
 function goToAction(obj, id) {
     if (obj.options[obj.selectedIndex].innerHTML == 'View Trade')
-        window.open("../viewtradelicense/viewTradeLicense-view.action?id=" + id, 'vt' + id, 'scrollbars=yes,width=1000,height=700,status=yes');
+        window.open("/tl/viewtradelicense/viewTradeLicense-view.action?id=" + id, 'vt' + id, 'scrollbars=yes,width=1000,height=700,status=yes');
     else if (obj.options[obj.selectedIndex].innerHTML == 'Modify Legacy License')
         window.open("/tl/legacylicense/update/" + id, 'mll' + id, 'scrollbars=yes,width=1000,height=700,status=yes');
     else if (obj.options[obj.selectedIndex].innerHTML == 'Collect Fees')
@@ -484,11 +484,11 @@ function goToAction(obj, id) {
     else if (obj.options[obj.selectedIndex].innerHTML == 'Print Certificate' || obj.options[obj.selectedIndex].innerHTML == 'Print Provisional Certificate')
         window.open("/tl/viewtradelicense/viewTradeLicense-generateCertificate.action?model.id=" + id, 'gc' + id, 'scrollbars=yes,width=1000,height=700,status=yes');
     else if (obj.options[obj.selectedIndex].innerHTML == 'Renew License')
-        window.open("../newtradelicense/newTradeLicense-beforeRenew.action?model.id=" + id, 'rl' + id, 'scrollbars=yes,width=1000,height=700,status=yes');
+        window.open("/tl/newtradelicense/newTradeLicense-beforeRenew.action?model.id=" + id, 'rl' + id, 'scrollbars=yes,width=1000,height=700,status=yes');
     else if (obj.options[obj.selectedIndex].innerHTML == 'Generate Demand Notice')
         window.open("/tl/demandnotice/report?licenseId=" + id, 'dn' + id, 'scrollbars=yes,width=1000,height=700,status=yes');
     else if (obj.options[obj.selectedIndex].innerHTML == 'Closure')
-        window.open("../viewtradelicense/showclosureform.action?id=" + id, 'vt' + id, 'scrollbars=yes,width=1000,height=700,status=yes');
+        window.open("/tl/viewtradelicense/showclosureform.action?id=" + id, 'vt' + id, 'scrollbars=yes,width=1000,height=700,status=yes');
     else if(obj.options[obj.selectedIndex].innerHTML == 'Generate Demand')
         window.open("/tl/demand/licensedemandgenerate?licenseId=" + id, 'gd' + id, 'scrollbars=yes,width=1000,height=700,status=yes');
     $(obj).val('');

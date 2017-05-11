@@ -43,19 +43,25 @@ import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentHibDao;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.utils.DateUtils;
+import org.egov.tl.entity.LicenseStatus;
 import org.egov.tl.entity.PenaltyRates;
 import org.egov.tl.entity.TradeLicense;
-import org.egov.tl.entity.dto.DemandnoticeForm;
+import org.egov.tl.entity.dto.DemandNoticeForm;
+import org.egov.tl.service.LicenseCategoryService;
+import org.egov.tl.service.LicenseStatusService;
 import org.egov.tl.service.PenaltyRatesService;
 import org.egov.tl.service.TradeLicenseService;
+import org.egov.tl.utils.Constants;
 import org.egov.tl.utils.LicenseUtils;
 import org.egov.tl.utils.TradeLicenseDemandBillHelper;
+import org.egov.tl.web.response.adaptor.DemandNoticeAdaptor;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
@@ -65,10 +71,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletResponse;
@@ -78,6 +86,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -89,14 +98,19 @@ import static org.egov.infra.utils.ApplicationConstant.CITY_CORP_GRADE_KEY;
 import static org.egov.infra.utils.DateUtils.currentDateToDefaultDateFormat;
 import static org.egov.infra.utils.DateUtils.getDefaultFormattedDate;
 import static org.egov.infra.utils.DateUtils.toYearFormat;
+import static org.egov.infra.utils.JsonUtils.toJSON;
 import static org.egov.infra.utils.PdfUtils.appendFiles;
 import static org.egov.tl.utils.Constants.CITY_GRADE_CORPORATION;
+import static org.egov.tl.utils.Constants.LOCALITY;
+import static org.egov.tl.utils.Constants.LOCATION_HIERARCHY_TYPE;
+import static org.egov.tl.utils.Constants.STATUS_CANCELLED;
 import static org.egov.tl.utils.Constants.TL_LICENSE_ACT_CORPORATION;
 import static org.egov.tl.utils.Constants.TL_LICENSE_ACT_DEFAULT;
 import static org.egov.tl.utils.Constants.TRADE_LICENSE;
+import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 
 @Controller
-@RequestMapping("/demandnotice")
+@RequestMapping("/demand-notice")
 public class DemandNoticeController {
 
     @Autowired
@@ -120,12 +134,71 @@ public class DemandNoticeController {
     @Autowired
     private ReportService reportService;
 
+    @Autowired
+    private LicenseStatusService licenseStatusService;
 
-    @RequestMapping(value = "/report", method = RequestMethod.GET)
+    @Autowired
+    private BoundaryService boundaryService;
+
+    @Autowired
+    private LicenseCategoryService licenseCategoryService;
+
+    @GetMapping("search")
+    public String searchFormforNotice(final Model model) {
+        model.addAttribute("demandnoticesearchForm", new DemandNoticeForm());
+        model.addAttribute("categoryList", licenseCategoryService.getCategories());
+        model.addAttribute("subCategoryList", Collections.emptyList());
+        final List<LicenseStatus> statuslist = licenseStatusService.findAll();
+        statuslist.remove(licenseStatusService.getLicenseStatusByCode(STATUS_CANCELLED));
+        model.addAttribute("statusList", statuslist);
+        model.addAttribute("localityList", boundaryService
+                .getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(LOCALITY, LOCATION_HIERARCHY_TYPE));
+        model.addAttribute("wardList", boundaryService.getBoundariesByBndryTypeNameAndHierarchyTypeName(
+                Constants.REVENUE_WARD, Constants.REVENUE_HIERARCHY_TYPE));
+        return "search-demandnotice";
+    }
+
+    @PostMapping(value = "search", produces = TEXT_PLAIN_VALUE)
     @ResponseBody
-    public ResponseEntity<byte[]> generateDemandNotice(@RequestParam Long licenseId) {
+    public String searchResult(@ModelAttribute final DemandNoticeForm demandnoticeForm) throws IOException {
+        return new StringBuilder("{ \"data\":")
+                .append(toJSON(tradeLicenseService.getLicenseDemandNotices(demandnoticeForm),
+                        DemandNoticeForm.class, DemandNoticeAdaptor.class))
+                .append("}").toString();
+    }
+
+    @GetMapping("generate/{licenseId}")
+    @ResponseBody
+    public ResponseEntity<byte[]> generateDemandNotice(@PathVariable Long licenseId) {
         TradeLicense license = tradeLicenseService.getLicenseById(licenseId);
         return generateReport(license);
+    }
+
+    @GetMapping("generate")
+    @ResponseBody
+    public String mergeAndDownload(@ModelAttribute DemandNoticeForm searchRequest, HttpServletResponse response) throws IOException {
+        List<DemandNoticeForm> demandNotices = tradeLicenseService.getLicenseDemandNotices(searchRequest);
+        List<InputStream> demandNoticePDFStreams = new ArrayList<>();
+
+        if (!demandNotices.isEmpty()) {
+            for (DemandNoticeForm tlNotice : demandNotices) {
+                if (tlNotice != null) {
+                    ResponseEntity<byte[]> demandNotice = generateReport(tradeLicenseService.getLicenseById(tlNotice.getLicenseId()));
+                    byte[] bFile = demandNotice.getBody();
+                    demandNoticePDFStreams.add(new ByteArrayInputStream(bFile));
+                }
+            }
+
+            if (!demandNoticePDFStreams.isEmpty()) {
+                ByteArrayOutputStream output = new ByteArrayOutputStream();
+                byte[] data = appendFiles(demandNoticePDFStreams, output);
+                response.setHeader("content-disposition", "inline;filename=License Demand Notice.pdf");
+                response.setContentType("application/pdf");
+                response.setContentLength(data.length);
+                response.getOutputStream().write(data);
+            }
+        }
+        return EMPTY;
     }
 
     private ResponseEntity<byte[]> generateReport(TradeLicense license) {
@@ -287,32 +360,5 @@ public class DemandNoticeController {
         }
         return penaltylist.toString();
 
-    }
-
-    @RequestMapping(value = "/generate", method = RequestMethod.GET)
-    @ResponseBody
-    public String mergeAndDownload(@ModelAttribute DemandnoticeForm searchRequest, HttpServletResponse response) throws IOException {
-        List<DemandnoticeForm> demandNotices = tradeLicenseService.getLicenseDemandNotices(searchRequest);
-        List<InputStream> demandNoticePDFStreams = new ArrayList<>();
-
-        if (!demandNotices.isEmpty()) {
-            for (DemandnoticeForm tlNotice : demandNotices) {
-                if (tlNotice != null) {
-                    ResponseEntity<byte[]> demandNotice = generateReport(tradeLicenseService.getLicenseById(tlNotice.getLicenseId()));
-                    byte[] bFile = demandNotice.getBody();
-                    demandNoticePDFStreams.add(new ByteArrayInputStream(bFile));
-                }
-            }
-
-            if (!demandNoticePDFStreams.isEmpty()) {
-                ByteArrayOutputStream output = new ByteArrayOutputStream();
-                byte[] data = appendFiles(demandNoticePDFStreams, output);
-                response.setHeader("content-disposition", "inline;filename=License Demand Notice.pdf");
-                response.setContentType("application/pdf");
-                response.setContentLength(data.length);
-                response.getOutputStream().write(data);
-            }
-        }
-        return EMPTY;
     }
 }

@@ -39,223 +39,219 @@
  */
 
 var reportdatatable;
-var recordTotal=[];
-$(document).ready(function(e) {
-	drillDowntableContainer = $("#tbldcbdrilldown");
-	$('#report-backbutton').hide();
-	$('form').submit(function(e) {
-		callAjaxByBoundary(e);
-		var table = $('#tbldcbdrilldown').DataTable();
-		var info = table.page.info();
-		if(info.start==0)
-		getSumOfRecords();
-	});
+var recordTotal = [];
+$(document).ready(function (e) {
+    drillDowntableContainer = $("#tbldcbdrilldown");
+    $('#report-backbutton').hide();
+    $('form').submit(function (e) {
+        searchDCBReport(e);
+        var table = $('#tbldcbdrilldown').DataTable();
+        var info = table.page.info();
+        if (info.start == 0)
+            getSumOfRecords();
+    });
 
-	$('#backButton').click(function(e) {
-		callAjaxByBoundary(e);
-	});
+    $('#backButton').click(function (e) {
+        searchDCBReport(e);
+    });
 
 });
 
-function getSumOfRecords(){
-	
-	$.ajax({
-		url:"../reporttotal?licensenumber="+$('#licensenumber').val(),
-		type:'GET',
-		success: function (data){
-		  recordTotal=[];
-		  for (var i = 0; i < data.length; i++){
-			  recordTotal.push(data[i]);
-		  }
-		}
-	})
+function getSumOfRecords() {
+
+    $.ajax({
+        url: "grand-total?licensenumber=" + $('#licensenumber').val(),
+        type: 'GET',
+        success: function (data) {
+            recordTotal = [];
+            for (var i = 0; i < data.length; i++) {
+                recordTotal.push(data[i]);
+            }
+        }
+    })
 }
 function openTradeLicense(obj) {
-	window.open("../../viewtradelicense/viewTradeLicense-view.action?id="
-			+ $(obj).data('eleval'), '',
-			'scrollbars=yes,width=1000,height=700,status=yes');
+    window.open("/tl/viewtradelicense/viewTradeLicense-view.action?id="
+        + $(obj).data('eleval'), '',
+        'scrollbars=yes,width=1000,height=700,status=yes');
 }
 
-function callAjaxByBoundary(event) {
-	var modeVal = "";
-	var temp = "";
-	modeVal = $('#mode').val();
-	$('#report-backbutton').show();
-	var licenseNumbertemp = $('#licensenumber').val();
-	$('.report-section').removeClass('display-hide');
-	$('#report-footer').show();
-	event.preventDefault();
-	$("#tbldcbdrilldown").dataTable().fnDestroy();
-	
-	var reportdatatable = drillDowntableContainer
-			.dataTable({
-				 processing : true,
-		         serverSide : true,
-		         sort : true,
-		         filter : true,
-		         "searching":false,
-				dom : "<'row'<'col-xs-4 pull-right'f>r>t<'row add-margin'<'col-md-3 col-xs-6'i><'col-md-2 col-xs-6'l><'col-md-3 col-xs-6 text-right'B><'col-md-4 col-xs-6 text-right'p>>",
-	 			"autoWidth" : false,
-	 			"bDestroy" : true,
-	 		    	buttons : [ 
-	 		    	    {
-		                  text: 'PDF',
-		                  action: function ( e, dt, node, config ) {
-		                     var url="../report?licensenumber="+licenseNumbertemp+"&printFormat=PDF";
-		                     window.open(url,'','scrollbars=yes,width=1300,height=700,status=yes');
-		                  }
-			            }, 
-			            {
-			                  text: 'XLS',
-			                  action: function ( e, dt, node, config ) 
-			                  {
-			                     var url="../report?licensenumber="+licenseNumbertemp+"&printFormat=XLS";
-			                     window.open(url,'_self','scrollbars=yes,width=1300,height=700,status=yes');
-			                  }
-				            }],
-				responsive : true,
-				destroy : true,
-	             "order": [[1, 'asc']],
-				ajax : {
-					url : "../dcbreportlist",
-					type:'GET',
-                    data:function (args) {
-                    		 return {"args": JSON.stringify(args) ,'licensenumber' : licenseNumbertemp
-					}
-                  }
-				},
-				
-				columns : [
-						{
-							"data" : function(row, type, set, meta) {
-								return {
-									name : row.licensenumber,
-									id : row.licenseid
-								};
-							},
-							"render" : function(data, type, row) {
-								return '<a href="javascript:void(0);" onclick="openTradeLicense(this);" data-hiddenele="id" data-eleval="'
-										+ data.id + '">' + data.name + '</a>';
-							},
-							"sTitle" : "License No.",
-							"name":"licensenumber",
-						}, {
-							"data" : "arreardemand",
-							"name":"arreardemand",
-							"sTitle" : "Arrears"
-						}, {
-							"data" : "currentdemand",
-							"name":"currentdemand",
-							"sTitle" : "Current"
-						},  {
-							"data" : "totaldemand",
-							"orderable": false,
-			                "sortable": false,
-							"sTitle" : "Total"
-						}, {
-							"data" : "arrearcollection",
-							"name":"arrearcollection",
-							"sTitle" : "Arrears"
-						}, {
-							"data" : "currentcollection",
-							"name":"currentcollection",
-							"sTitle" : "Current"
-						}, {
-							"data" : "totalcollection",
-							"orderable": false,
-			                "sortable": false,
-							"sTitle" : "Total"
-						}, {
-							"data" : "arrearbalance",
-							"name":"arrearbalance",
-							"sTitle" : "Arrears"
-						}, {
-							"data" : "currentbalance",
-							"name":"currentbalance",
-							"sTitle" : "Current"
-						}, {
-							"data" : "totalbalance",
-							 "orderable": false,
-			                 "sortable": false,
-							"sTitle" : "Total"
-						} ],
-				"footerCallback" : function(row, data, start, end, display) {
-					var api = this.api(), data;
-					if (data.length == 0) {
-						$('#report-footer').hide();
-					} else {
-						$('#report-footer').show();
-					}
-					if (data.length > 0) {
-						updateTotalFooter(1, api, true);
-						updateTotalFooter(2, api, true);
-						updateTotalFooter(3, api, true);
-						updateTotalFooter(4, api, true);
-						updateTotalFooter(5, api, true);
-						updateTotalFooter(6, api, true);
-						updateTotalFooter(7, api, true);
-						updateTotalFooter(8, api, true);
-						updateTotalFooter(9, api, true);
-					}
-				},
-				"aoColumnDefs" : [ {
-					"aTargets" : [1, 2, 3, 4, 5, 6, 7, 8, 9 ],
-					"mRender" : function(data, type, full) {
-						return formatNumberInr(data);
-					}
-				} ]
-			});
-	$('.loader-class').modal('hide');
+function searchDCBReport(event) {
+    $('#report-backbutton').show();
+    var licenseNumbertemp = $('#licensenumber').val();
+    $('.report-section').removeClass('display-hide');
+    $('#report-footer').show();
+    event.preventDefault();
+    $("#tbldcbdrilldown").dataTable().fnDestroy();
 
-	if ($('#mode').val() == 'property') {
-		reportdatatable.fnSetColumnVis(1, false);
-	} else {
-		reportdatatable.fnSetColumnVis(1, true);
-	}
+    reportdatatable = drillDowntableContainer.dataTable({
+        processing: true,
+        serverSide: true,
+        sort: true,
+        filter: true,
+        "searching": false,
+        dom: "<'row'<'col-xs-4 pull-right'f>r>t<'row add-margin'<'col-md-3 col-xs-6'i><'col-md-2 col-xs-6'l><'col-md-3 col-xs-6 text-right'B><'col-md-4 col-xs-6 text-right'p>>",
+        "autoWidth": false,
+        "bDestroy": true,
+        buttons: [
+            {
+                text: 'PDF',
+                action: function (e, dt, node, config) {
+                    var url = "download?licensenumber=" + licenseNumbertemp + "&printFormat=PDF";
+                    window.open(url, '', 'scrollbars=yes,width=1300,height=700,status=yes');
+                }
+            },
+            {
+                text: 'XLS',
+                action: function (e, dt, node, config) {
+                    var url = "download?licensenumber=" + licenseNumbertemp + "&printFormat=XLS";
+                    window.open(url, '_self', 'scrollbars=yes,width=1300,height=700,status=yes');
+                }
+            }],
+        responsive: true,
+        destroy: true,
+        "order": [[1, 'asc']],
+        ajax: {
+            url: "search",
+            type: 'POST',
+            data: function (args) {
+                return {
+                    "args": JSON.stringify(args), 'licensenumber': licenseNumbertemp
+                }
+            }
+        },
+
+        columns: [
+            {
+                "data": function (row, type, set, meta) {
+                    return {
+                        name: row.licensenumber,
+                        id: row.licenseid
+                    };
+                },
+                "render": function (data, type, row) {
+                    return '<a href="javascript:void(0);" onclick="openTradeLicense(this);" data-hiddenele="id" data-eleval="'
+                        + data.id + '">' + data.name + '</a>';
+                },
+                "sTitle": "License No.",
+                "name": "licensenumber",
+            }, {
+                "data": "arreardemand",
+                "name": "arreardemand",
+                "sTitle": "Arrears"
+            }, {
+                "data": "currentdemand",
+                "name": "currentdemand",
+                "sTitle": "Current"
+            }, {
+                "data": "totaldemand",
+                "orderable": false,
+                "sortable": false,
+                "sTitle": "Total"
+            }, {
+                "data": "arrearcollection",
+                "name": "arrearcollection",
+                "sTitle": "Arrears"
+            }, {
+                "data": "currentcollection",
+                "name": "currentcollection",
+                "sTitle": "Current"
+            }, {
+                "data": "totalcollection",
+                "orderable": false,
+                "sortable": false,
+                "sTitle": "Total"
+            }, {
+                "data": "arrearbalance",
+                "name": "arrearbalance",
+                "sTitle": "Arrears"
+            }, {
+                "data": "currentbalance",
+                "name": "currentbalance",
+                "sTitle": "Current"
+            }, {
+                "data": "totalbalance",
+                "orderable": false,
+                "sortable": false,
+                "sTitle": "Total"
+            }],
+        "footerCallback": function (row, data, start, end, display) {
+            var api = this.api(), data;
+            if (data.length == 0) {
+                $('#report-footer').hide();
+            } else {
+                $('#report-footer').show();
+            }
+            if (data.length > 0) {
+                updateTotalFooter(1, api, true);
+                updateTotalFooter(2, api, true);
+                updateTotalFooter(3, api, true);
+                updateTotalFooter(4, api, true);
+                updateTotalFooter(5, api, true);
+                updateTotalFooter(6, api, true);
+                updateTotalFooter(7, api, true);
+                updateTotalFooter(8, api, true);
+                updateTotalFooter(9, api, true);
+            }
+        },
+        "aoColumnDefs": [{
+            "aTargets": [1, 2, 3, 4, 5, 6, 7, 8, 9],
+            "mRender": function (data, type, full) {
+                return formatNumberInr(data);
+            }
+        }]
+    });
+    $('.loader-class').modal('hide');
+
+    if ($('#mode').val() == 'property') {
+        reportdatatable.fnSetColumnVis(1, false);
+    } else {
+        reportdatatable.fnSetColumnVis(1, true);
+    }
 }
 function updateTotalFooter(colidx, api, isServerSide) {
-	// Remove the formatting to get integer data for summation
-	var intVal = function(i) {
-		return typeof i === 'string' ? i.replace(/[\$,]/g, '') * 1
-				: typeof i === 'number' ? i : 0;
-	};
+    // Remove the formatting to get integer data for summation
+    var intVal = function (i) {
+        return typeof i === 'string' ? i.replace(/[\$,]/g, '') * 1
+            : typeof i === 'number' ? i : 0;
+    };
 
-	// Total over all pages
-	if(isServerSide && recordTotal!=null)
-		total= recordTotal[colidx-1];
-	else
-		total = api.column(colidx).data().reduce(function(a, b) {
-			return intVal(a) + intVal(b);
-		});
+    // Total over all pages
+    if (isServerSide && recordTotal != null)
+        total = recordTotal[colidx - 1];
+    else
+        total = api.column(colidx).data().reduce(function (a, b) {
+            return intVal(a) + intVal(b);
+        });
 
-	// Total over this page
-	pageTotal = api.column(colidx, {
-		page : 'current'
-	}).data().reduce(function(a, b) {
-		return intVal(a) + intVal(b);
-	}, 0);
+    // Total over this page
+    pageTotal = api.column(colidx, {
+        page: 'current'
+    }).data().reduce(function (a, b) {
+        return intVal(a) + intVal(b);
+    }, 0);
 
-	// Update footer
-	$(api.column(colidx).footer()).html(
-			formatNumberInr(pageTotal) +' (' + formatNumberInr(total) + ')');
+    // Update footer
+    $(api.column(colidx).footer()).html(
+        formatNumberInr(pageTotal) + ' (' + formatNumberInr(total) + ')');
 }
 
 // inr formatting number
 function formatNumberInr(x) {
-	if (x) {
-		x = x.toString();
-		var afterPoint = '';
-		if (x.indexOf('.') > 0)
-			afterPoint = x.substring(x.indexOf('.'), x.length);
-		x = Math.floor(x);
-		x = x.toString();
-		var lastThree = x.substring(x.length - 3);
-		var otherNumbers = x.substring(0, x.length - 3);
-		if (otherNumbers != '')
-			lastThree = ',' + lastThree;
-		var res = otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ",")
-				+ lastThree + afterPoint;
-		return res;
-	}
-	return x;
+    if (x) {
+        x = x.toString();
+        var afterPoint = '';
+        if (x.indexOf('.') > 0)
+            afterPoint = x.substring(x.indexOf('.'), x.length);
+        x = Math.floor(x);
+        x = x.toString();
+        var lastThree = x.substring(x.length - 3);
+        var otherNumbers = x.substring(0, x.length - 3);
+        if (otherNumbers != '')
+            lastThree = ',' + lastThree;
+        var res = otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ",")
+            + lastThree + afterPoint;
+        return res;
+    }
+    return x;
 }

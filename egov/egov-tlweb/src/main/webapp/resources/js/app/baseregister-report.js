@@ -47,7 +47,7 @@ $(document).ready(function () {
             var results = [];
             $.ajax({
                 type: "GET",
-                url: '../licensesubcategory/by-category',
+                url: '/tl/licensesubcategory/by-category',
                 dataType: "json",
                 data: {categoryId: val},
                 success: function (data) {
@@ -72,188 +72,185 @@ $(document).ready(function () {
     });
 });
 
-var recordTotal=[];
-function getSumOfRecords(){
-	
-	$.ajax({
-		url:"../baseregister/reportwisetotal?"+$("#baseregisterform").serialize(),
-		type:'GET',
-		success: function (data){
-		  recordTotal=[];
-		  for (var i = 0; i <data.length; i++){
-			  recordTotal.push(data[i]);
-		  }
-		}
-	})
+var recordTotal = [];
+function getSumOfRecords() {
+
+    $.ajax({
+        url: "grand-total?" + $("#baseregisterform").serialize(),
+        type: 'GET',
+        success: function (data) {
+            recordTotal = [];
+            for (var i = 0; i < data.length; i++) {
+                recordTotal.push(data[i]);
+            }
+        }
+    })
 }
 
 function openTradeLicense(id) {
-    window.open("../viewtradelicense/viewTradeLicense-view.action?id=" + id,
+    window.open("/tl/viewtradelicense/viewTradeLicense-view.action?id=" + id,
         '', 'scrollbars=yes,width=1000,height=700,status=yes');
 }
 function onSubmitEvent(event) {
     $('.report-section').removeClass('display-hide');
     event.preventDefault();
-    var reportdatatable = $("#baseregistertbl")
-        .dataTable(
+    $("#baseregistertbl").dataTable({
+        processing: true,
+        serverSide: true,
+        sort: true,
+        filter: true,
+        "searching": false,
+        responsive: true,
+        destroy: true,
+        "order": [[1, 'asc']],
+        dom: "<'row'<'col-xs-4 pull-right'f>r>t<'row add-margin'<'col-md-3 col-xs-6'i><'col-md-2 col-xs-6'l><'col-md-3 col-xs-6 text-right'B><'col-md-4 col-xs-6 text-right'p>>",
+        "autoWidth": false,
+        "bDestroy": true,
+        buttons: [
             {
-            	processing : true,
-		         serverSide : true,
-		         sort : true,
-		         filter : true,
-		         "searching":false,
-		         responsive: true,
-	             destroy: true,
-	             "order": [[1, 'asc']],
-                dom: "<'row'<'col-xs-4 pull-right'f>r>t<'row add-margin'<'col-md-3 col-xs-6'i><'col-md-2 col-xs-6'l><'col-md-3 col-xs-6 text-right'B><'col-md-4 col-xs-6 text-right'p>>",
-                "autoWidth": false,
-                "bDestroy": true,
-                buttons: [
-	            {
-                  text: 'PDF',
-                  action: function ( e, dt, node, config ) {
-                	 window.open("../baseregister/report?"+ $("#baseregisterform").serialize()+"&printFormat=PDF",'','scrollbars=yes,width=1300,height=700,status=yes');
-                  }
-	            },
-                {
-	            	  text: 'XLS',
-	                  action: function ( e, dt, node, config ) {
-	                     window.open("../baseregister/report?"+ $("#baseregisterform").serialize()+"&printFormat=XLS",'_self');
-	                  }
-                }],
-                type: 'GET',
-                ajax: {
-                    url: "/tl/public/baseregister/search-resultList",
-                    type:'GET',
-                    data:function (args) {
-                    		 return {
-                    			 "args": JSON.stringify(args),
-                    			 "categoryId":$("#category").val(),
-                    			 "subCategoryId":$("#subCategory").val(),
-                    			 "statusId":$("#status").val(),
-                    			 "wardId":$("#ward").val(),
-                    			 "filterName":$("#filter").val()
-                    			 };
-                    		}
-                   
+                text: 'PDF',
+                action: function (e, dt, node, config) {
+                    window.open("download?" + $("#baseregisterform").serialize() + "&printFormat=PDF", '', 'scrollbars=yes,width=1300,height=700,status=yes');
+                }
+            },
+            {
+                text: 'XLS',
+                action: function (e, dt, node, config) {
+                    window.open("download?" + $("#baseregisterform").serialize() + "&printFormat=XLS", '_self');
+                }
+            }],
+        ajax: {
+            url: "search",
+            type: 'POST',
+            data: function (args) {
+                return {
+                    "args": JSON.stringify(args),
+                    "categoryId": $("#category").val(),
+                    "subCategoryId": $("#subCategory").val(),
+                    "statusId": $("#status").val(),
+                    "wardId": $("#ward").val(),
+                    "filterName": $("#filter").val()
+                };
+            }
+
+        },
+        columns: [
+            {
+                "data": function (row, type, set, meta) {
+                    return {
+                        name: row.tinno,
+                        id: row.licenseId
+                    };
                 },
-                columns: [
-                    {
-                        "data": function (row, type, set, meta) {
-                            return {
-                                name: row.tinno,
-                                id: row.licenseId
-                            };
-                        },
-                        "render": function (data, type, row) {
-                            return '<a href="javascript:void(0);" onclick="openTradeLicense('
-                                + row.licenseId
-                                + ');">'
-                                + data.name + '</a>';
-                        },
-                        "sTitle": "TIN NO.",
-                        "name":"licensenumber"
-                    }, {
-                        "data": "tradetitle",
-                        "name":"tradetitle",
-                        "sTitle": "Trade Title"
-                    }, {
-                        "data": "category",
-                        "name":"categoryname",
-                        "sTitle": "Category"
-                    }, {
-                        "data": "subcategory",
-                        "name":"subcategoryname",
-                        "sTitle": "Subcategory"
-                    }, {
-                        "data": "owner",
-                        "name":"owner",
-                        "sTitle": "Trade Owner"
-                    }, {
-                        "data": "mobile",
-                        "name":"mobile",
-                        "sTitle": "Owner MobileNo"
-                    }, {
-                        "data": "assessmentno",
-                        "name":"assessmentno",
-                        "sTitle": "Assessment No"
-                    }, {
-                        "data": "wardname",
-                        "name":"wardname",
-                        "sTitle": "Ward No"
-                    }, {
-                        "data": "localityname",
-                        "name":"localityname",
-                        "sTitle": "Locality"
-                    }, {
-                        "data": "tradeaddress",
-                        "name":"tradeaddress",
-                        "sTitle": "Trade Address"
-                    }, {
-                        "data": "commencementdate",
-                        "name":"commencementdate",
-                        "sTitle": "Commencement Date"
-                    }, {
-                        "data": "status",
-                        "name":"statusname",
-                        "sTitle": "Status"
-                    }, {
-                        "data": "unitofmeasure",
-                        "name":"uom",
-                        "sTitle": "UOM"
-                    }, {
-                        "data": "tradearea",
-                        "name":"tradewt",
-                        "sTitle": "Unit value"
-                    }, {
-                        "data": "rate",
-                        "name":"rateval",
-                        "sTitle": "Rate"
-                    }, {
-                        "data": "arrearlicfee",
-                        "name":"arrearlicensefee",
-                        "sTitle": "License Fee(Arrears)"
-                    }, {
-                        "data": "arrearpenaltyfee",
-                        "name":"arrearpenaltyfee",
-                        "sTitle": "Penalty(Arrears)"
-                    }, {
-                        "data": "curlicfee",
-                        "name":"curlicensefee",
-                        "sTitle": "License Fee(Current)"
-                    }, {
-                        "data": "curpenaltyfee",
-                        "name":"curpenaltyfee",
-                        "sTitle": "Penalty(Current)"
-                    }],
-                "aaSorting": [[2, 'asc']],
-                "footerCallback": function (row, data, start, end,
-                                            display) {
-                    var api = this.api(), data;
-                    if (data.length == 0) {
-                        $('#report-footer').hide();
-                    } else {
-                        $('#report-footer').show();
-                    }
-                    if (data.length > 0) {
-                        updateTotalFooter(15, api);
-                        updateTotalFooter(16, api);
-                        updateTotalFooter(17, api);
-                        updateTotalFooter(18, api);
-                    }
+                "render": function (data, type, row) {
+                    return '<a href="javascript:void(0);" onclick="openTradeLicense('
+                        + row.licenseId
+                        + ');">'
+                        + data.name + '</a>';
                 },
-                "aoColumnDefs": [{
-                    "aTargets": [15, 16, 17, 18],
-                    "mRender": function (data, type, full) {
-                        return formatNumberInr(data);
-                    }
-                }]
-            });
+                "sTitle": "TIN NO.",
+                "name": "licensenumber"
+            }, {
+                "data": "tradetitle",
+                "name": "tradetitle",
+                "sTitle": "Trade Title"
+            }, {
+                "data": "category",
+                "name": "categoryname",
+                "sTitle": "Category"
+            }, {
+                "data": "subcategory",
+                "name": "subcategoryname",
+                "sTitle": "Subcategory"
+            }, {
+                "data": "owner",
+                "name": "owner",
+                "sTitle": "Trade Owner"
+            }, {
+                "data": "mobile",
+                "name": "mobile",
+                "sTitle": "Owner MobileNo"
+            }, {
+                "data": "assessmentno",
+                "name": "assessmentno",
+                "sTitle": "Assessment No"
+            }, {
+                "data": "wardname",
+                "name": "wardname",
+                "sTitle": "Ward No"
+            }, {
+                "data": "localityname",
+                "name": "localityname",
+                "sTitle": "Locality"
+            }, {
+                "data": "tradeaddress",
+                "name": "tradeaddress",
+                "sTitle": "Trade Address"
+            }, {
+                "data": "commencementdate",
+                "name": "commencementdate",
+                "sTitle": "Commencement Date"
+            }, {
+                "data": "status",
+                "name": "statusname",
+                "sTitle": "Status"
+            }, {
+                "data": "unitofmeasure",
+                "name": "uom",
+                "sTitle": "UOM"
+            }, {
+                "data": "tradearea",
+                "name": "tradewt",
+                "sTitle": "Unit value"
+            }, {
+                "data": "rate",
+                "name": "rateval",
+                "sTitle": "Rate"
+            }, {
+                "data": "arrearlicfee",
+                "name": "arrearlicensefee",
+                "sTitle": "License Fee(Arrears)"
+            }, {
+                "data": "arrearpenaltyfee",
+                "name": "arrearpenaltyfee",
+                "sTitle": "Penalty(Arrears)"
+            }, {
+                "data": "curlicfee",
+                "name": "curlicensefee",
+                "sTitle": "License Fee(Current)"
+            }, {
+                "data": "curpenaltyfee",
+                "name": "curpenaltyfee",
+                "sTitle": "Penalty(Current)"
+            }],
+        "aaSorting": [[2, 'asc']],
+        "footerCallback": function (row, data, start, end,
+                                    display) {
+            var api = this.api(), data;
+            if (data.length == 0) {
+                $('#report-footer').hide();
+            } else {
+                $('#report-footer').show();
+            }
+            if (data.length > 0) {
+                updateTotalFooter(15, api);
+                updateTotalFooter(16, api);
+                updateTotalFooter(17, api);
+                updateTotalFooter(18, api);
+            }
+        },
+        "aoColumnDefs": [{
+            "aTargets": [15, 16, 17, 18],
+            "mRender": function (data, type, full) {
+                return formatNumberInr(data);
+            }
+        }]
+    });
     $('.loader-class').modal('hide');
     var table = $('#baseregistertbl').DataTable();
-	var info = table.page.info();
-	if(info.start==0)
-	getSumOfRecords();
+    var info = table.page.info();
+    if (info.start == 0)
+        getSumOfRecords();
 }
 
 function updateTotalFooter(colidx, api) {
@@ -264,7 +261,7 @@ function updateTotalFooter(colidx, api) {
     };
 
     // Total over all pages
-    total= recordTotal[colidx-15];
+    total = recordTotal[colidx - 15];
 
     // Total over this page
     pageTotal = api.column(colidx, {
@@ -275,7 +272,7 @@ function updateTotalFooter(colidx, api) {
 
     // Update footer
     $(api.column(colidx).footer()).html(
-        formatNumberInr(pageTotal)+ ' (' + formatNumberInr(total) + ')');
+        formatNumberInr(pageTotal) + ' (' + formatNumberInr(total) + ')');
 }
 
 //inr formatting number

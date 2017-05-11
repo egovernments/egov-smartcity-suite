@@ -53,6 +53,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -63,7 +64,7 @@ import static org.egov.infra.web.utils.WebUtils.toReportResponseEntity;
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 
 @Controller
-@RequestMapping(value = {"/tlreports", "/public/report"})
+@RequestMapping("/report/dcb")
 public class DCBReportController {
 
     private static final String LICENSE = "license";
@@ -80,27 +81,27 @@ public class DCBReportController {
         return new DCBReportResult();
     }
 
-    @GetMapping(value = "/dcbreport/licensenumberwise")
+    @GetMapping("search")
     public String dcbSearchForm(final Model model) {
         model.addAttribute("mode", LICENSE);
         model.addAttribute(REPORT_TYPE_ATTRIB_NAME, LICENSE);
         return "dCBReport-search";
     }
 
-    @GetMapping(value = "/dcbreportlist", produces = TEXT_PLAIN_VALUE)
+    @PostMapping(value = "search", produces = TEXT_PLAIN_VALUE)
     @ResponseBody
     public String searchDCBReport(DCBReportSearchRequest searchRequest) {
         return new DataTable<>(dCBReportService.pagedDCBRecords(searchRequest),
                 searchRequest.draw()).toJson(DCBReportResponseAdaptor.class);
     }
 
-    @GetMapping("/reporttotal")
+    @GetMapping("grand-total")
     @ResponseBody
     public Object[] dcbGrandTotal(DCBReportSearchRequest searchRequest) {
         return dCBReportService.dcbGrandTotal(searchRequest);
     }
 
-    @GetMapping("/report")
+    @GetMapping("download")
     @ResponseBody
     public ResponseEntity<byte[]> dcbReportDownload(final DCBReportSearchRequest searchRequest) {
         final Map<String, Object> responseParams = new HashMap<>();
