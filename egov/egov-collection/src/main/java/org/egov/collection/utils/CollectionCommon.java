@@ -331,18 +331,16 @@ public class CollectionCommon {
         } else
             for (final ReceiptHeader receiptHeader : receipts) {
                 String additionalMessage = null;
-                if (receiptType == CollectionConstants.RECEIPT_TYPE_BILL) {
-                    if (!receiptHeader.getService().getCode().equals(CollectionConstants.SERVICECODE_LAMS))
-                        additionalMessage = receiptHeaderService.getAdditionalInfoForReceipt(serviceCode,
-                                new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO, persistenceService,
-                                        null));
-                    if (additionalMessage != null)
-                        receiptList.add(new BillReceiptInfoImpl(receiptHeader, additionalMessage,
-                                chartOfAccountsHibernateDAO, persistenceService));
-                    else
-                        receiptList.add(new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO,
-                                persistenceService, null));
-                }
+                if (receiptType == CollectionConstants.RECEIPT_TYPE_BILL)
+                    additionalMessage = receiptHeaderService.getAdditionalInfoForReceipt(serviceCode,
+                            new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO, persistenceService,
+                                    null));
+                if (additionalMessage != null)
+                    receiptList.add(new BillReceiptInfoImpl(receiptHeader, additionalMessage,
+                            chartOfAccountsHibernateDAO, persistenceService));
+                else
+                    receiptList.add(new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO,
+                            persistenceService, null));
             }
         final ReportRequest reportInput = new ReportRequest(templateName, receiptList, reportParams);
 
