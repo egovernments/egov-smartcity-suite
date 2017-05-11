@@ -40,6 +40,9 @@
 
 package org.egov.pgr.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
@@ -47,14 +50,16 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.ComplaintRouter;
 import org.egov.pgr.entity.ComplaintType;
+import org.egov.pgr.entity.dto.ComplaintRouterSearchRequest;
 import org.egov.pgr.repository.ComplaintRouterRepository;
+import org.egov.pgr.repository.specs.ComplaintRouterSpec;
 import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 public class ComplaintRouterService {
@@ -64,7 +69,7 @@ public class ComplaintRouterService {
 
     @Autowired
     public ComplaintRouterService(final ComplaintRouterRepository complaintRouterRepository,
-                                  final BoundaryService boundaryService) {
+            final BoundaryService boundaryService) {
         this.complaintRouterRepository = complaintRouterRepository;
         this.boundaryService = boundaryService;
     }
@@ -166,21 +171,12 @@ public class ComplaintRouterService {
     }
 
     @ReadOnly
-    public List<ComplaintRouter> getPageOfRouters(final Long boundaryTypeId, final Long complaintTypeId,
-                                                  final Long boundaryId) {
-        if (boundaryId != 0 && complaintTypeId != 0 && boundaryTypeId != 0)
-            return complaintRouterRepository.findRoutersByComplaintTypeAndBoundaryTypeAndBoundary(complaintTypeId,
-                    boundaryTypeId, boundaryId);
-        else if (boundaryTypeId != 0 && boundaryId == 0 && complaintTypeId != 0)
-            return complaintRouterRepository.findRoutersByComplaintTypeAndBoundaryType(complaintTypeId, boundaryTypeId);
-        else if (boundaryTypeId != 0 && boundaryId != 0 && complaintTypeId == 0)
-            return complaintRouterRepository.findRoutersByBoundaryAndBoundaryType(boundaryTypeId, boundaryId);
-        else if (boundaryTypeId != 0 && boundaryId == 0 && complaintTypeId == 0)
-            return complaintRouterRepository.findRoutersByBoundaryType(boundaryTypeId);
-        else if (boundaryTypeId == 0 && boundaryId == 0 && complaintTypeId != 0)
-            return complaintRouterRepository.findRoutersByComplaintType(complaintTypeId);
-        else
-            return complaintRouterRepository.findRoutersByAll();
+    public Page<ComplaintRouter> getComplaintRouter(final ComplaintRouterSearchRequest routerSearchRequest) {
+        final Pageable pageable = new PageRequest(routerSearchRequest.pageNumber(),
+                routerSearchRequest.pageSize(),
+                routerSearchRequest.orderDir(), routerSearchRequest.orderBy());
+        return complaintRouterRepository
+                .findAll(ComplaintRouterSpec.search(routerSearchRequest), pageable);
     }
 
     public void getParentBoundaries(final Long bndryId, final List<Boundary> boundaryList) {
@@ -193,7 +189,7 @@ public class ComplaintRouterService {
     }
 
     public List<ComplaintRouter> getRoutersByComplaintTypeBoundary(final List<ComplaintType> complaintTypes,
-                                                                   final List<Boundary> boundaries) {
+            final List<Boundary> boundaries) {
         return complaintRouterRepository.findRoutersByComplaintTypesBoundaries(complaintTypes, boundaries);
     }
 }

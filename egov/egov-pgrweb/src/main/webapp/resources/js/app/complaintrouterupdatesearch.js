@@ -130,42 +130,44 @@ jQuery(document).ready(function($)
 	});
 
 	$('#routerSearch').click(function(e){
-		if($('#boundaryId').val()=="")
-			var bndryId=0;
-		else
-			var bndryId=$('#boundaryId').val();
-		
-		if($('#complaintTypeId').val()=="")
-			var cmTypeId=0;
-		else
-			var cmTypeId=$('#complaintTypeId').val();
-		
 		oTable= $('#com_routing_search');
 		oTable.dataTable({
+			processing : true,
+	        serverSide : true,
+	        sort : true,
+	        filter : true,
+	        "searching":false,
 			"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
 			"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
 			"autoWidth": false,
 			"bDestroy": true,
 			"ajax": {
-			        	url : "/pgr/router/resultList-view",
-			        	data : {
-			        		boundaryTypeId : $('#boundary_type_id').val(),
-			        		boundaryId : bndryId,
-			        		complaintTypeId : cmTypeId
-			        	}
+		        	url : "/pgr/router/resultList-view",
+		        	type:'GET',
+                    data:function (args) {
+                    		 return {"args": JSON.stringify(args) ,
+                    			 'boundaryTypeId' : $('#boundary_type_id').val(),
+                    			 'boundaryId' : $('#boundaryId').val(),
+     			        		 'complaintTypeId' :$('#complaintTypeId').val()
+						}
+	                  }
 			        },
-			"columns" : [
+		"columns" : [
 			  { "mData" : "boundaryType",
-				"sTitle" : "Boundary Type"
+				"sTitle" : "Boundary Type",
+				 "name" :"boundary"
 			  },
 			  { "mData" : "boundary",
-				"sTitle" : "Boundary"
+				"sTitle" : "Boundary",
+				 "name" :"boundary"
 			  }, 
 			  { "mData" : "complaintType",
-				"sTitle" : "Grievance Type"
+				"sTitle" : "Grievance Type",
+				 "name" :"complaintType"
 			  }, 
 			  { "mData" : "position",
-				"sTitle" : "Position"
+				"sTitle" : "Position",
+				 "name" :"position"
 			  },
 			  { "mData" : "routerId",
 				"visible": false
