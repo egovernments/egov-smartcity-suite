@@ -109,7 +109,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_CLOSED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WTMS_TAXDUE_RESTURL;
-
+import static org.egov.ptis.constants.PropertyTaxConstants.WTMS_AMALGAMATE_WATER_CONNECTIONS_URL;
 import java.io.File;
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -234,6 +234,7 @@ import org.egov.ptis.domain.repository.master.vacantland.LayoutApprovalAuthority
 import org.egov.ptis.domain.repository.master.vacantland.VacantLandPlotAreaRepository;
 import org.egov.ptis.exceptions.TaxCalculatorExeption;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
+import org.egov.ptis.bean.AmalgamateWaterConnection;
 import org.hibernate.Query;
 import org.joda.time.DateTime;
 import org.json.JSONArray;
@@ -242,7 +243,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-
+import org.springframework.web.client.RestTemplate;
 /**
  * Service class to perform services related to an Assessment
  *
@@ -3735,6 +3736,15 @@ public class PropertyService {
             }
         }
         return documentTypes;
+        
+    }
+    
+    public void amalgamateWaterConnections(final String assessmentNo, final List<String> childAssessments, final HttpServletRequest request) {
+        RestTemplate restTemplate = new RestTemplate();
+        final String wtmsRestURL = format(WTMS_AMALGAMATE_WATER_CONNECTIONS_URL, WebUtils.extractRequestDomainURL(request, false));
+        AmalgamateWaterConnection amalgamateWaterConnection = new AmalgamateWaterConnection(assessmentNo);
+        amalgamateWaterConnection.setChildAssessmentNumber(childAssessments);
+        restTemplate.postForObject(wtmsRestURL, amalgamateWaterConnection, AmalgamateWaterConnection.class);
         
     }
     

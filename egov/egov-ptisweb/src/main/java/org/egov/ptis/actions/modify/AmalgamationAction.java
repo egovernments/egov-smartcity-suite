@@ -81,6 +81,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -91,6 +92,7 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.ResultPath;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
+import org.apache.struts2.ServletActionContext;
 import org.egov.commons.Area;
 import org.egov.commons.Installment;
 import org.egov.eis.entity.Assignment;
@@ -225,6 +227,8 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
     private transient PropertyOccupationService propertyOccupationService;
     @Autowired
     private ReportViewerUtil reportViewerUtil;
+    @Autowired
+    private transient PropertyService propertyService;
 
     public AmalgamationAction() {
         super();
@@ -851,6 +855,8 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
     @SkipValidation
     @Action(value = "/amalgamation-approve")
     public String approve() {
+        final HttpServletRequest request = ServletActionContext.getRequest();
+        final List<String> childProperties = new ArrayList<>();
         if (logger.isDebugEnabled())
             logger.debug("Enter method approve");
         propertyModel = (PropertyImpl) getPersistenceService().findByNamedQuery(QUERY_PROPERTYIMPL_BYID,
@@ -859,6 +865,11 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
             logger.debug("approve: Workflow property: " + propertyModel);
         basicProp = propertyModel.getBasicProperty();
         oldProperty = (PropertyImpl) basicProp.getProperty();
+        for (final Amalgamation childProperty : basicProp.getAmalgamations()) {
+            childProperties.add(childProperty.getAmalgamatedProperty().getUpicNo());
+        }
+        propertyService.amalgamateWaterConnections(propertyModel.getBasicProperty().getUpicNo().toString(), childProperties,
+                request);
         transitionWorkFlow(propertyModel);
         setModifyRsn(propertyModel.getPropertyDetail().getPropertyMutationMaster().getCode());
         createPropertyStatusValues();
