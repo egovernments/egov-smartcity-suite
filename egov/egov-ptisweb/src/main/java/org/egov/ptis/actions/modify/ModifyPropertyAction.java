@@ -1001,7 +1001,8 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         super.prepare();
         setUserInfo();
         setUserDesignations();
-        propertyByEmployee = propService.isEmployee(securityUtils.getCurrentUser());
+        propertyByEmployee = propService.isEmployee(securityUtils.getCurrentUser())
+                && !ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName());;
         if (getModelId() != null && !getModelId().isEmpty())
             prepareWorkflowPropInfo();
         else if (indexNumber != null && !indexNumber.trim().isEmpty()) {

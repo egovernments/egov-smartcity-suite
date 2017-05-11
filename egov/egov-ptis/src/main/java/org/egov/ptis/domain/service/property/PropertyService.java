@@ -2199,7 +2199,8 @@ public class PropertyService {
         applicationIndex.setAadharNumber(owner.getAadhaarNumber());
         applicationIndex.setClosed(vacancyRemissionApproval.getState().getValue().contains(WF_STATE_CLOSED)
                 ? ClosureStatus.YES : ClosureStatus.NO);
-        applicationIndex
+        if (!ApprovalStatus.APPROVED.equals(applicationIndex.getApproved()))
+            applicationIndex
                 .setApproved(vacancyRemissionApproval.getState().getValue().contains(WF_STATE_COMMISSIONER_APPROVED)
                         ? ApprovalStatus.APPROVED
                         : vacancyRemissionApproval.getState().getValue().contains(WF_STATE_REJECTED)
@@ -2256,7 +2257,8 @@ public class PropertyService {
         applicationIndex.setAadharNumber(owner.getAadhaarNumber());
         applicationIndex.setClosed(
                 propertyMutation.getState().getValue().contains(WF_STATE_CLOSED) ? ClosureStatus.YES : ClosureStatus.NO);
-        applicationIndex.setApproved(
+        if (!ApprovalStatus.APPROVED.equals(applicationIndex.getApproved()))
+            applicationIndex.setApproved(
                 propertyMutation.getState().getValue().contains(WF_STATE_COMMISSIONER_APPROVED) ? ApprovalStatus.APPROVED
                         : propertyMutation.getState().getValue().contains(WF_STATE_REJECTED)
                                 || propertyMutation.getState().getValue().contains(WF_STATE_CLOSED) ? ApprovalStatus.REJECTED
@@ -2311,7 +2313,8 @@ public class PropertyService {
             applicationIndex.setOwnerName(stateOwner.getUsername() + "::" + stateOwner.getName());
             applicationIndex.setClosed(
                     revisionPetition.getState().getValue().contains(WF_STATE_CLOSED) ? ClosureStatus.YES : ClosureStatus.NO);
-            applicationIndex.setApproved(
+            if (!ApprovalStatus.APPROVED.equals(applicationIndex.getApproved()))
+                applicationIndex.setApproved(
                     revisionPetition.getState().getValue().contains(WF_STATE_COMMISSIONER_APPROVED) ? ApprovalStatus.APPROVED
                             : revisionPetition.getState().getValue().contains(WF_STATE_REJECTED)
                                     || revisionPetition.getState().getValue().contains(WF_STATE_CLOSED) ? ApprovalStatus.REJECTED
@@ -2386,7 +2389,8 @@ public class PropertyService {
             applicationIndex.setAadharNumber(owner.getAadhaarNumber());
             applicationIndex.setClosed(
                     property.getState().getValue().contains(WF_STATE_CLOSED) ? ClosureStatus.YES : ClosureStatus.NO);
-            applicationIndex.setApproved(
+            if (!ApprovalStatus.APPROVED.equals(applicationIndex.getApproved()))
+                applicationIndex.setApproved(
                     property.getState().getValue().contains(WF_STATE_COMMISSIONER_APPROVED) ? ApprovalStatus.APPROVED
                             : property.getState().getValue().contains(WF_STATE_REJECTED)
                                     || property.getState().getValue().contains(WF_STATE_CLOSED) ? ApprovalStatus.REJECTED

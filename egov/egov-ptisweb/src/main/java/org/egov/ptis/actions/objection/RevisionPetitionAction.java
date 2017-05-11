@@ -45,6 +45,7 @@ package org.egov.ptis.actions.objection;
 import static org.egov.ptis.constants.PropertyTaxConstants.ADDITIONAL_COMMISSIONER_DESIGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.ANONYMOUS_USER;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_GRP;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_REVISION_PETITION;
 import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_COMMISSIONER_DESIGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.DATE_FORMAT_DDMMYYY;
@@ -380,7 +381,8 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         if (null != objection && null != objection.getState())
             historyMap = propService.populateHistory(objection);
 
-        loggedUserIsEmployee = propService.isEmployee(securityUtils.getCurrentUser());
+        loggedUserIsEmployee = propService.isEmployee(securityUtils.getCurrentUser())
+                && !ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName());
         isMeesevaUser = propService.isMeesevaUser(securityUtils.getCurrentUser());
         super.prepare();
         setUserInfo();
@@ -1135,7 +1137,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                         propertyStatusDAO.getPropertyStatusByCode(PropertyTaxConstants.STATUS_CODE_ASSESSED));
                 objection.getBasicProperty().setUnderWorkflow(Boolean.FALSE);
 
-                objection.transition().end().withStateValue(PropertyTaxConstants.WFLOW_ACTION_END).withOwner(position)
+                objection.transition().end().withOwner(position)
                         .withOwner(user).withComments(approverComments);
             } else if (!WFLOW_ACTION_STEP_SIGN.equals(actionType))
                 updateStateAndStatus(objection);
@@ -1163,6 +1165,12 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                 if (!WFLOW_ACTION_STEP_SIGN.equals(actionType))
                     reportId = reportViewerUtil.addReportToTempCache(reportOutput);
             }
+        }
+        if (WFLOW_ACTION_STEP_PRINT_NOTICE.equals(actionType)) {
+            if (wfType.equalsIgnoreCase(NATURE_OF_WORK_RP))
+                propService.updateIndexes(objection, APPLICATION_TYPE_REVISION_PETITION);
+            else
+                propService.updateIndexes(objection, APPLICATION_TYPE_GRP);
         }
 
         return WFLOW_ACTION_STEP_SIGN.equals(actionType) ? DIGITAL_SIGNATURE_REDIRECTION : NOTICE;
@@ -1421,7 +1429,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                 addActionMessage(getText(OBJECTION_FORWARD,
                         new String[] { user.getName().concat("~").concat(position.getName()) }));
             if (wfType.equalsIgnoreCase(NATURE_OF_WORK_RP))
-                propService.updateIndexes(objection, PropertyTaxConstants.APPLICATION_TYPE_REVISION_PETITION);
+                propService.updateIndexes(objection, APPLICATION_TYPE_REVISION_PETITION);
             else
                 propService.updateIndexes(objection, APPLICATION_TYPE_GRP);
 
@@ -1453,7 +1461,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                 workFlowTransition(objection, workFlowAction, approverComments, wfmatrix, position, loggedInUser);
             // Update elastic search index on each workflow.
             if (wfType.equalsIgnoreCase(NATURE_OF_WORK_RP))
-                propService.updateIndexes(objection, PropertyTaxConstants.APPLICATION_TYPE_REVISION_PETITION);
+                propService.updateIndexes(objection, APPLICATION_TYPE_REVISION_PETITION);
             else
                 propService.updateIndexes(objection, APPLICATION_TYPE_GRP);
 

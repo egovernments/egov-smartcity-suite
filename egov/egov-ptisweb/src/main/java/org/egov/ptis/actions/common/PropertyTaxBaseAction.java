@@ -158,10 +158,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
-    
+
     private static Logger logger = Logger.getLogger(PropertyTaxBaseAction.class);
     private static final long serialVersionUID = 1L;
-    
+
     private static final String CHOOSE = "----Choose----";
     private static final String CANCEL = "cancel";
     private static final String END = "END";
@@ -592,19 +592,45 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
      * @param property
      */
     public void transitionWorkFlow(final PropertyImpl property) {
-        final DateTime currentDate = new DateTime();
-        final User user = securityUtils.getCurrentUser();
-        Position pos;
         Assignment wfInitiator = null;
-        final String nature = getNatureOfTasks().get(getAdditionalRule());
-        Assignment assignment;
-        String nextAction = "";
         String approverDesignation = "";
-        WorkFlowMatrix wfmatrix;
 
+        Assignment assignment = getApproverAssignment(property);
+        if (assignment != null) {
+            approverDesignation = assignment.getDesignation().getName();
+            if (!propertyByEmployee || ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName()))
+                wfInitiator = assignment;
+        }
+        if (property.getId() != null)
+            wfInitiator = propertyService.getWorkflowInitiator(property);
+        else if (wfInitiator == null)
+            wfInitiator = propertyTaxCommonUtils.getWorkflowInitiatorAssignment(securityUtils.getCurrentUser().getId());
+
+        String loggedInUserDesignation = getDesignationByPositionAndLoggedInUser(property);
+
+        if (JUNIOR_ASSISTANT.equals(loggedInUserDesignation) || SENIOR_ASSISTANT.equals(loggedInUserDesignation))
+            loggedInUserDesignation = null;
+
+        final String nature = getNatureOfTasks().get(getAdditionalRule());
+
+        if (WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction))
+            transitionReject(property, wfInitiator, approverDesignation, loggedInUserDesignation);
+        else
+            transition(property, wfInitiator, nature, approverDesignation, loggedInUserDesignation);
+        prepareAckMessage();
+        if (logger.isDebugEnabled())
+            logger.debug("Exiting method : transitionWorkFlow");
+    }
+
+    /**
+     * @param property
+     * @return
+     */
+    private Assignment getApproverAssignment(final PropertyImpl property) {
+        Assignment assignment = null;
         if (!propertyByEmployee || ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName())) {
             currentState = "Created";
-            if (propertyService.isCscOperator(user))
+            if (propertyService.isCscOperator(securityUtils.getCurrentUser()))
                 assignment = propertyService.getMappedAssignmentForCscOperator(property.getBasicProperty());
             else
                 assignment = propertyService.getUserPositionByZone(property.getBasicProperty(), false);
@@ -612,8 +638,6 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                 approverPositionId = assignment.getPosition().getId();
                 approverName = assignment.getEmployee().getName().concat("~").concat(
                         assignment.getPosition().getName());
-                wfInitiator = assignment;
-                approverDesignation = assignment.getDesignation().getName();
             }
         } else {
             currentState = null;
@@ -622,21 +646,18 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                         .get(0);
                 approverName = assignment.getEmployee().getName().concat("~")
                         .concat(assignment.getPosition().getName());
-                approverDesignation = assignment.getDesignation().getName();
             }
         }
+        return assignment;
+    }
 
-        List<Assignment> loggedInUserAssign;
-        String loggedInUserDesignation = "";
-        if (property.getState() != null) {
-            loggedInUserAssign = assignmentService.getAssignmentByPositionAndUserAsOnDate(
-                    property.getCurrentState().getOwnerPosition().getId(), user.getId(), new Date());
-            loggedInUserDesignation = !loggedInUserAssign.isEmpty() ? loggedInUserAssign.get(0).getDesignation().getName() : null;
-        }
-
-        if (loggedInUserDesignation.equals(JUNIOR_ASSISTANT) || loggedInUserDesignation.equals(SENIOR_ASSISTANT))
-            loggedInUserDesignation = null;
-
+    /**
+     * @param property
+     * @param approverDesignation
+     * @return
+     */
+    private String getNextAction(final PropertyImpl property, String approverDesignation) {
+        String nextAction = "";
         if (WFLOW_ACTION_STEP_FORWARD.equalsIgnoreCase(workFlowAction)
                 && COMMISSIONER_DESIGNATIONS.contains(approverDesignation))
             if (property.getCurrentState().getNextAction().equalsIgnoreCase(WF_STATE_DIGITAL_SIGNATURE_PENDING))
@@ -650,71 +671,56 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                             .append(WF_STATE_COMMISSIONER_APPROVAL_PENDING)
                             .toString();
             }
+        return nextAction;
+    }
 
-        if (property.getId() != null)
-            wfInitiator = propertyService.getWorkflowInitiator(property);
-        else if (wfInitiator == null)
-            wfInitiator = propertyTaxCommonUtils.getWorkflowInitiatorAssignment(user.getId());
+    /**
+     * @param property
+     * @param wfInitiator
+     * @param nature
+     * @param approverDesignation
+     * @param loggedInUserDesignation
+     */
+    private void transition(final PropertyImpl property, Assignment wfInitiator,
+            final String nature, String approverDesignation, String loggedInUserDesignation) {
+        final DateTime currentDate = new DateTime();
+        final User user = securityUtils.getCurrentUser();
+        Position pos;
+        WorkFlowMatrix wfmatrix;
+        if (WFLOW_ACTION_STEP_APPROVE.equalsIgnoreCase(workFlowAction))
+            pos = property.getCurrentState().getOwnerPosition();
+        else if (null != approverPositionId && approverPositionId != -1)
+            pos = (Position) persistenceService.find("from Position where id=?", approverPositionId);
+        else
+            pos = wfInitiator.getPosition();
 
-        if (WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction)) {
-            if (wfInitiator.getPosition().equals(property.getState().getOwnerPosition())) {
-                property.transition().end().withSenderName(user.getUsername() + "::" + user.getName())
-                        .withComments(approverComments).withDateInfo(currentDate.toDate());
-                property.setStatus(STATUS_CANCELLED);
-                property.getBasicProperty().setUnderWorkflow(FALSE);
-            } else {
-                if (REVENUE_OFFICER_DESGN.equalsIgnoreCase(loggedInUserDesignation)
-                        || COMMISSIONER_DESIGNATIONS.contains(loggedInUserDesignation)) {
-                    nextAction = UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
-                    final Assignment assignmentOnreject = propertyService.getUserOnRejection(property);
-                    wfInitiator = assignmentOnreject;
-                    setInitiator(assignmentOnreject.getEmployee().getName().concat("~")
-                            .concat(assignmentOnreject.getPosition().getName()));
-                } else if (BILL_COLLECTOR_DESGN.equalsIgnoreCase(loggedInUserDesignation)
-                        || REVENUE_INSPECTOR_DESGN.equalsIgnoreCase(loggedInUserDesignation)) {
-                    nextAction = WF_STATE_ASSISTANT_APPROVAL_PENDING;
-                    setInitiator(wfInitiator.getEmployee().getName().concat("~")
-                            .concat(wfInitiator.getPosition().getName()));
-                }
-
-                final String stateValue = property.getCurrentState().getValue().split(":")[0] + ":" + WF_STATE_REJECTED;
-                property.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
-                        .withComments(approverComments).withStateValue(stateValue).withDateInfo(currentDate.toDate())
-                        .withOwner(wfInitiator != null ? wfInitiator.getPosition() : null).withNextAction(
-                                property.getBasicProperty().getSource().equals(SOURCEOFDATA_MOBILE)
-                                        ? UD_REVENUE_INSPECTOR_APPROVAL_PENDING
-                                        : nextAction);
-            }
-
-        } else {
-            if (WFLOW_ACTION_STEP_APPROVE.equalsIgnoreCase(workFlowAction))
-                pos = property.getCurrentState().getOwnerPosition();
-            else if (null != approverPositionId && approverPositionId != -1)
-                pos = (Position) persistenceService.find("from Position where id=?", approverPositionId);
-            else
-                pos = wfInitiator.getPosition();
-
-            if (property.getState() == null) {
-                wfmatrix = propertyWorkflowService.getWfMatrix(property.getStateType(), null,
-                        null, getAdditionalRule(), currentState, null);
-                property.transition().start().withSenderName(user.getUsername() + "::" + user.getName())
-                        .withComments(approverComments).withStateValue(wfmatrix.getNextState())
-                        .withDateInfo(currentDate.toDate()).withOwner(pos).withNextAction(wfmatrix.getNextAction())
-                        .withNatureOfTask(nature).withInitiator(wfInitiator != null ? wfInitiator.getPosition() : null);
-            } else if (property.getCurrentState().getNextAction().equalsIgnoreCase(END))
-                property.transition().end().withSenderName(user.getUsername() + "::" + user.getName())
-                        .withComments(approverComments).withDateInfo(currentDate.toDate());
-            else {
-                wfmatrix = propertyWorkflowService.getWfMatrix(property.getStateType(), null,
-                        null, getAdditionalRule(), property.getCurrentState().getValue(),
-                        property.getState().getNextAction(), null, loggedInUserDesignation);
-                property.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
-                        .withComments(approverComments)
-                        .withStateValue(wfmatrix.getNextState())
-                        .withDateInfo(currentDate.toDate()).withOwner(pos)
-                        .withNextAction(StringUtils.isNotBlank(nextAction) ? nextAction : wfmatrix.getNextAction());
-            }
+        if (property.getState() == null) {
+            wfmatrix = propertyWorkflowService.getWfMatrix(property.getStateType(), null,
+                    null, getAdditionalRule(), currentState, null);
+            property.transition().start().withSenderName(user.getUsername() + "::" + user.getName())
+                    .withComments(approverComments).withStateValue(wfmatrix.getNextState())
+                    .withDateInfo(currentDate.toDate()).withOwner(pos).withNextAction(wfmatrix.getNextAction())
+                    .withNatureOfTask(nature).withInitiator(wfInitiator != null ? wfInitiator.getPosition() : null);
+        } else if (property.getCurrentState().getNextAction().equalsIgnoreCase(END))
+            property.transition().end().withSenderName(user.getUsername() + "::" + user.getName())
+                    .withComments(approverComments).withDateInfo(currentDate.toDate());
+        else {
+            String nextAction = getNextAction(property, approverDesignation);
+            wfmatrix = propertyWorkflowService.getWfMatrix(property.getStateType(), null,
+                    null, getAdditionalRule(), property.getCurrentState().getValue(),
+                    property.getState().getNextAction(), null, loggedInUserDesignation);
+            property.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
+                    .withComments(approverComments)
+                    .withStateValue(wfmatrix.getNextState())
+                    .withDateInfo(currentDate.toDate()).withOwner(pos)
+                    .withNextAction(StringUtils.isNotBlank(nextAction) ? nextAction : wfmatrix.getNextAction());
         }
+    }
+
+    /**
+     * 
+     */
+    private void prepareAckMessage() {
         if (approverName != null && !approverName.isEmpty() && !approverName.equalsIgnoreCase(CHOOSE)) {
             final String approvalmesg = " Succesfully Forwarded to : ";
             ackMessage = ackMessage == null ? approvalmesg : ackMessage + approvalmesg;
@@ -722,8 +728,67 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
             final String approvalmesg = " Succesfully Cancelled.";
             ackMessage = ackMessage == null ? approvalmesg : ackMessage + approvalmesg;
         }
-        if (logger.isDebugEnabled())
-            logger.debug("Exiting method : transitionWorkFlow");
+    }
+
+    /**
+     * @param property
+     * @param wfInitiator
+     * @param approverDesignation
+     * @param loggedInUserDesignation
+     */
+    private void transitionReject(final PropertyImpl property, Assignment wfInitiator, String approverDesignation,
+            String loggedInUserDesignation) {
+        final DateTime currentDate = new DateTime();
+        final User user = securityUtils.getCurrentUser();
+        Position owner = null;
+        if (wfInitiator.getPosition().equals(property.getState().getOwnerPosition())) {
+            property.transition().end().withSenderName(user.getUsername() + "::" + user.getName())
+                    .withComments(approverComments).withDateInfo(currentDate.toDate());
+            property.setStatus(STATUS_CANCELLED);
+            property.getBasicProperty().setUnderWorkflow(FALSE);
+        } else {
+            String nextAction = getNextAction(property, approverDesignation);
+            if (REVENUE_OFFICER_DESGN.equalsIgnoreCase(loggedInUserDesignation)
+                    || COMMISSIONER_DESIGNATIONS.contains(loggedInUserDesignation)) {
+                nextAction = UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
+                final Assignment assignmentOnreject = propertyService.getUserOnRejection(property);
+                owner = assignmentOnreject.getPosition();
+                setInitiator(assignmentOnreject.getEmployee().getName().concat("~")
+                        .concat(assignmentOnreject.getPosition().getName()));
+            } else if (BILL_COLLECTOR_DESGN.equalsIgnoreCase(loggedInUserDesignation)
+                    || REVENUE_INSPECTOR_DESGN.equalsIgnoreCase(loggedInUserDesignation)) {
+                nextAction = WF_STATE_ASSISTANT_APPROVAL_PENDING;
+                setInitiator(wfInitiator.getEmployee().getName().concat("~")
+                        .concat(wfInitiator.getPosition().getName()));
+            }
+
+            if (owner == null)
+                owner = wfInitiator.getPosition();
+
+            final String stateValue = property.getCurrentState().getValue().split(":")[0] + ":" + WF_STATE_REJECTED;
+            property.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
+                    .withComments(approverComments).withStateValue(stateValue).withDateInfo(currentDate.toDate())
+                    .withOwner(owner).withNextAction(
+                            property.getBasicProperty().getSource().equals(SOURCEOFDATA_MOBILE)
+                                    ? UD_REVENUE_INSPECTOR_APPROVAL_PENDING
+                                    : nextAction);
+        }
+    }
+
+    /**
+     * @param property
+     * @param user
+     * @return
+     */
+    private String getDesignationByPositionAndLoggedInUser(final PropertyImpl property) {
+        List<Assignment> assignments;
+        String designation = "";
+        if (property.getState() != null) {
+            assignments = assignmentService.getAssignmentByPositionAndUserAsOnDate(
+                    property.getCurrentState().getOwnerPosition().getId(), securityUtils.getCurrentUser().getId(), new Date());
+            designation = !assignments.isEmpty() ? assignments.get(0).getDesignation().getName() : null;
+        }
+        return designation;
     }
 
     private Map<String, String> getNatureOfTasks() {
