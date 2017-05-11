@@ -39,22 +39,16 @@
  */
 package org.egov.ptis.web.controller.transactions.digitalsignature;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_ALTER_ASSESSMENT;
-import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_BIFURCATE_ASSESSMENT;
-import static org.egov.ptis.constants.PropertyTaxConstants.AMALGAMATION;
 import static org.egov.ptis.constants.PropertyTaxConstants.ANONYMOUS_USER;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_AMALGAMATION;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_BIFURCATE_ASSESSENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_DEMOLITION;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_GRP;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_NEW_ASSESSENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TAX_EXEMTION;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_VACANCY_REMISSION;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMOLITION;
-import static org.egov.ptis.constants.PropertyTaxConstants.EXEMPTION;
-import static org.egov.ptis.constants.PropertyTaxConstants.GENERAL_REVISION_PETITION;
-import static org.egov.ptis.constants.PropertyTaxConstants.NEW_ASSESSMENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISHISTORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_EXEMPTION;
@@ -69,6 +63,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -114,6 +111,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping(value = "/digitalSignature")
 public class DigitalSignatureWorkflowController {
 
+    private static final String SUCCESS_MESSAGE = "successMessage";
+
+    private static final String FALSE = "false";
+
+    private static final String APPLICATION_NO = "applicationNo";
+
     private static final String DIGISIGN_SUCCESS_MESSAGE = "Digitally Signed Successfully";
 
     private static final String NOTICE_SUCCESS_MESSAGE = "Notice Generated Successfully";
@@ -131,6 +134,8 @@ public class DigitalSignatureWorkflowController {
     private static final String DIGITAL_SIGNATURE_SUCCESS = "digitalSignature-success";
 
     private static final String AMALG = "Amalgamation";
+
+    private static final String INITIATOR_INACTIVE_MESSAGE = "Digital signature can not be completed as initiator assignment is inactive for the applicatoin number: ";
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -180,99 +185,159 @@ public class DigitalSignatureWorkflowController {
         final String fileStoreIds = request.getParameter("fileStoreId");
         final String isDigiEnabled = request.getParameter("isDigiEnabled");
         final String[] fileStoreId = fileStoreIds.split(",");
+        Boolean assignmentExsits = Boolean.TRUE;
+        String applicationNumber = null;
         for (final String id : fileStoreId) {
-            final String applicationNumber = (String) getCurrentSession()
+            applicationNumber = (String) getCurrentSession()
                     .createQuery(
                             "select notice.applicationNumber from PtNotice notice where notice.fileStore.fileStoreId = :id")
                     .setParameter("id", id).uniqueResult();
-            final PropertyImpl property = (PropertyImpl) getCurrentSession()
-                    .createQuery("from PropertyImpl where applicationNo = :applicationNo")
-                    .setParameter("applicationNo", applicationNumber).uniqueResult();
-            if (property != null) {
-                final BasicProperty basicProperty = property.getBasicProperty();
-                final String applicationType = transitionWorkFlow(property);
-                propertyService.updateIndexes(property, getTypeForUpdateIndexes(applicationType));
-                basicPropertyService.update(basicProperty);
-            } else {
-                final RevisionPetition revisionPetition = (RevisionPetition) getCurrentSession()
-                        .createQuery("from RevisionPetition where objectionNumber = :applicationNo")
-                        .setParameter("applicationNo", applicationNumber).uniqueResult();
-                if (revisionPetition != null) {
-                    transitionWorkFlow(revisionPetition);
-                    propertyService.updateIndexes(revisionPetition, "RP".equalsIgnoreCase(revisionPetition.getType())
-                            ? PropertyTaxConstants.APPLICATION_TYPE_REVISION_PETITION : APPLICATION_TYPE_GRP);
-                    revisionPetitionService.updateRevisionPetition(revisionPetition);
-                } else {
-                    final PropertyMutation propertyMutation = (PropertyMutation) getCurrentSession()
-                            .createQuery("from PropertyMutation where applicationNo = :applicationNo")
-                            .setParameter("applicationNo", applicationNumber).uniqueResult();
-                    if (propertyMutation != null) {
-                        final BasicProperty basicProperty = propertyMutation.getBasicProperty();
-                        transitionWorkFlow(propertyMutation);
-                        propertyService.updateIndexes(propertyMutation, APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP);
-                        basicPropertyService.persist(basicProperty);
-                    } else {
-                        final VacancyRemission vacancyRemission = (VacancyRemission) getCurrentSession()
-                                .createQuery("from VacancyRemission where applicationNumber = :applicationNo")
-                                .setParameter("applicationNo", applicationNumber).uniqueResult();
-                        if (vacancyRemission != null) {
-                            final BasicProperty basicProperty = vacancyRemission.getBasicProperty();
-                            transitionWorkFlow(vacancyRemission);
-                            propertyService.updateIndexes(vacancyRemission, APPLICATION_TYPE_VACANCY_REMISSION);
-                            vacancyRemissionApprovalRepository.save(vacancyRemission.getVacancyRemissionApproval().get(0));
-                            basicPropertyService.persist(basicProperty);
-                        }
-                    }
-
-                }
-            }
+            final PropertyImpl property = getPropertyByApplicationNo(applicationNumber);
+            if (property != null)
+                assignmentExsits = updateProperty(property);
+            else
+                assignmentExsits = updateOthers(applicationNumber);
+            if (!assignmentExsits)
+                break;
         }
-        if (isDigiEnabled != null && isDigiEnabled.equals("false"))
-            model.addAttribute("successMessage", NOTICE_SUCCESS_MESSAGE);
+        if (!assignmentExsits)
+            model.addAttribute(SUCCESS_MESSAGE, INITIATOR_INACTIVE_MESSAGE + applicationNumber);
+        else if (isDigiEnabled != null && isDigiEnabled.equals(FALSE))
+            model.addAttribute(SUCCESS_MESSAGE, NOTICE_SUCCESS_MESSAGE);
         else
-            model.addAttribute("successMessage", DIGISIGN_SUCCESS_MESSAGE);
-        model.addAttribute("fileStoreId", fileStoreId.length == 1 ? fileStoreId[0] : "");
+            model.addAttribute(SUCCESS_MESSAGE, DIGISIGN_SUCCESS_MESSAGE);
+        if (assignmentExsits)
+            model.addAttribute("fileStoreId", fileStoreId.length == 1 ? fileStoreId[0] : "");
         return DIGITAL_SIGNATURE_SUCCESS;
     }
 
-    private String getTypeForUpdateIndexes(final String applicationType) {
-        return applicationType.equals(NEW_ASSESSMENT) ? APPLICATION_TYPE_NEW_ASSESSENT : applicationType
-                .equals(ADDTIONAL_RULE_ALTER_ASSESSMENT) ? APPLICATION_TYPE_ALTER_ASSESSENT : applicationType
-                        .equals(ADDTIONAL_RULE_BIFURCATE_ASSESSMENT) ? APPLICATION_TYPE_BIFURCATE_ASSESSENT : applicationType
-                                .equals(DEMOLITION) ? PropertyTaxConstants.APPLICATION_TYPE_DEMOLITION : applicationType
-                                        .equals(EXEMPTION) ? APPLICATION_TYPE_TAX_EXEMTION : applicationType
-                                                .equals(AMALGAMATION) ? APPLICATION_TYPE_AMALGAMATION : applicationType
-                                                        .equals(GENERAL_REVISION_PETITION) ? APPLICATION_TYPE_GRP : null;
+    private Boolean updateProperty(final PropertyImpl property) {
+        final BasicProperty basicProperty = property.getBasicProperty();
+        final String applicationType = transition(property);
+        final List<Assignment> assignments = getCurrentOwnerAssignments(property);
+        if (assignments.isEmpty())
+            return Boolean.FALSE;
+        propertyService.updateIndexes(property, getApplicationTypes().get(applicationType));
+        basicPropertyService.update(basicProperty);
+        return Boolean.TRUE;
     }
 
-    private String transitionWorkFlow(final PropertyImpl property) {
-        final String applicationType = property.getCurrentState().getValue().startsWith(CREATE) ? NEW_ASSESSMENT
-                : property.getCurrentState().getValue().startsWith(ALTER) ? ADDTIONAL_RULE_ALTER_ASSESSMENT : property
-                        .getCurrentState().getValue().startsWith(BIFURCATE) ? ADDTIONAL_RULE_BIFURCATE_ASSESSMENT
-                                : property.getCurrentState().getValue().startsWith(STR_DEMOLITION) ? DEMOLITION : property
-                                        .getCurrentState().getValue().startsWith(GRP) ? GENERAL_REVISION_PETITION : property
-                                                .getCurrentState().getValue().startsWith(WFLOW_ACTION_NAME_EXEMPTION) ? EXEMPTION
-                                                        : property.getCurrentState().getValue().startsWith(AMALG) ? AMALGAMATION
-                                                                : null;
+    private Boolean updateOthers(final String applicationNumber) {
+        final RevisionPetition revisionPetition = getRevisionPetitionByApplicationNo(applicationNumber);
+        if (revisionPetition != null)
+            return updateRevisionPetition(revisionPetition);
+        else {
+            final PropertyMutation propertyMutation = getPropertyMutationByApplicationNo(applicationNumber);
+            if (propertyMutation != null)
+                return updatePropertyMutation(propertyMutation);
+            else
+                return updateVacanyRemission(applicationNumber);
+        }
+    }
+
+    private Boolean updateRevisionPetition(final RevisionPetition revisionPetition) {
+        transition(revisionPetition);
+        final List<Assignment> assignments = getCurrentOwnerAssignments(revisionPetition);
+        if (assignments.isEmpty())
+            return Boolean.FALSE;
+        propertyService.updateIndexes(revisionPetition, "RP".equalsIgnoreCase(revisionPetition.getType())
+                ? PropertyTaxConstants.APPLICATION_TYPE_REVISION_PETITION : APPLICATION_TYPE_GRP);
+        revisionPetitionService.updateRevisionPetition(revisionPetition);
+        return Boolean.TRUE;
+    }
+
+    private Boolean updatePropertyMutation(final PropertyMutation propertyMutation) {
+        final BasicProperty basicProperty = propertyMutation.getBasicProperty();
+        transition(propertyMutation);
+        final List<Assignment> assignments = getCurrentOwnerAssignments(propertyMutation);
+        if (assignments.isEmpty())
+            return Boolean.FALSE;
+        propertyService.updateIndexes(propertyMutation, APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP);
+        basicPropertyService.persist(basicProperty);
+        return Boolean.TRUE;
+    }
+
+    private Boolean updateVacanyRemission(final String applicationNumber) {
+        final VacancyRemission vacancyRemission = getVacancyRemissionByApplicationNo(applicationNumber);
+        if (vacancyRemission != null) {
+            final BasicProperty basicProperty = vacancyRemission.getBasicProperty();
+            transition(vacancyRemission);
+            final List<Assignment> assignments = getCurrentOwnerAssignments(vacancyRemission);
+            if (assignments.isEmpty())
+                return Boolean.FALSE;
+            propertyService.updateIndexes(vacancyRemission, APPLICATION_TYPE_VACANCY_REMISSION);
+            vacancyRemissionApprovalRepository.save(vacancyRemission.getVacancyRemissionApproval().get(0));
+            basicPropertyService.persist(basicProperty);
+        }
+        return Boolean.TRUE;
+    }
+
+    private List<Assignment> getCurrentOwnerAssignments(final StateAware stateAware) {
+        return assignmentService.getAssignmentsForPosition(
+                stateAware.getState().getOwnerPosition().getId(),
+                new Date());
+    }
+
+    private VacancyRemission getVacancyRemissionByApplicationNo(final String applicationNumber) {
+        return (VacancyRemission) getCurrentSession()
+                .createQuery("from VacancyRemission where applicationNumber = :applicationNo")
+                .setParameter(APPLICATION_NO, applicationNumber).uniqueResult();
+    }
+
+    private PropertyMutation getPropertyMutationByApplicationNo(final String applicationNumber) {
+        return (PropertyMutation) getCurrentSession()
+                .createQuery("from PropertyMutation where applicationNo = :applicationNo")
+                .setParameter(APPLICATION_NO, applicationNumber).uniqueResult();
+    }
+
+    private RevisionPetition getRevisionPetitionByApplicationNo(final String applicationNumber) {
+        return (RevisionPetition) getCurrentSession()
+                .createQuery("from RevisionPetition where objectionNumber = :applicationNo")
+                .setParameter(APPLICATION_NO, applicationNumber).uniqueResult();
+    }
+
+    private PropertyImpl getPropertyByApplicationNo(final String applicationNumber) {
+        return (PropertyImpl) getCurrentSession()
+                .createQuery("from PropertyImpl where applicationNo = :applicationNo")
+                .setParameter(APPLICATION_NO, applicationNumber).uniqueResult();
+    }
+
+    private Map<String, String> getApplicationTypes() {
+        final Map<String, String> applicationTypes = new HashMap<>();
+        applicationTypes.put(CREATE, APPLICATION_TYPE_NEW_ASSESSENT);
+        applicationTypes.put(ALTER, APPLICATION_TYPE_ALTER_ASSESSENT);
+        applicationTypes.put(BIFURCATE, APPLICATION_TYPE_BIFURCATE_ASSESSENT);
+        applicationTypes.put(STR_DEMOLITION, APPLICATION_TYPE_DEMOLITION);
+        applicationTypes.put(GRP, APPLICATION_TYPE_GRP);
+        applicationTypes.put(WFLOW_ACTION_NAME_EXEMPTION, APPLICATION_TYPE_TAX_EXEMTION);
+        applicationTypes.put(AMALG, APPLICATION_TYPE_AMALGAMATION);
+        return applicationTypes;
+    }
+
+    private String transition(final PropertyImpl property) {
+        final String applicationType = property.getCurrentState().getValue().split(":")[0];
         if (propertyService.isMeesevaUser(property.getCreatedBy())) {
             property.transition().end();
             property.getBasicProperty().setUnderWorkflow(false);
         } else {
             final User user = securityUtils.getCurrentUser();
             final DateTime currentDate = new DateTime();
-            final Assignment wfInitiator = getWorkflowInitiator(property, property.getBasicProperty());
+            Position initiator = property.getCurrentState().getInitiatorPosition();
+            if (initiator == null) {
+                final Assignment wfInitiator = getWorkflowInitiator(property, property.getBasicProperty());
+                initiator = wfInitiator != null ? wfInitiator.getPosition() : null;
+            }
             final String currentState = new StringBuilder(property.getCurrentState().getValue().split(":")[0]).append(":")
                     .append(WF_STATE_DIGITALLY_SIGNED).toString();
             property.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
                     .withStateValue(currentState).withDateInfo(currentDate.toDate())
-                    .withOwner(property.getCurrentState().getInitiatorPosition() != null
-                            ? property.getCurrentState().getInitiatorPosition() : wfInitiator.getPosition())
+                    .withOwner(initiator)
                     .withNextAction(WF_STATE_NOTICE_PRINT_PENDING);
         }
         return applicationType;
     }
 
-    private void transitionWorkFlow(final RevisionPetition revPetition) {
+    private void transition(final RevisionPetition revPetition) {
         if (propertyService.isMeesevaUser(revPetition.getCreatedBy())) {
             revPetition.getBasicProperty().setStatus(
                     propertyStatusDAO.getPropertyStatusByCode(PropertyTaxConstants.STATUS_CODE_ASSESSED));
@@ -282,17 +347,20 @@ public class DigitalSignatureWorkflowController {
             revPetition.transition().end();
         } else {
             final User user = securityUtils.getCurrentUser();
-            final Assignment wfInitiator = getWorkflowInitiator(revPetition, revPetition.getBasicProperty());
+            Position initiator = revPetition.getCurrentState().getInitiatorPosition();
+            if (initiator == null) {
+                final Assignment wfInitiator = getWorkflowInitiator(revPetition, revPetition.getBasicProperty());
+                initiator = wfInitiator != null ? wfInitiator.getPosition() : null;
+            }
             revPetition.transition().progressWithStateCopy()
                     .withStateValue(revPetition.getType().concat(":").concat(WF_STATE_DIGITALLY_SIGNED))
-                    .withOwner(revPetition.getCurrentState().getInitiatorPosition() != null
-                            ? revPetition.getCurrentState().getInitiatorPosition() : wfInitiator.getPosition())
+                    .withOwner(initiator)
                     .withSenderName(user.getUsername() + "::" + user.getName()).withDateInfo(new DateTime().toDate())
                     .withNextAction(WFLOW_ACTION_STEP_PRINT_NOTICE);
         }
     }
 
-    public void transitionWorkFlow(final PropertyMutation propertyMutation) {
+    public void transition(final PropertyMutation propertyMutation) {
         if (propertyService.isMeesevaUser(propertyMutation.getCreatedBy())
                 || propertyMutation.getType().equals(PropertyTaxConstants.ADDTIONAL_RULE_FULL_TRANSFER)) {
             propertyMutation.transition().end();
@@ -300,29 +368,35 @@ public class DigitalSignatureWorkflowController {
         } else {
             final DateTime currentDate = new DateTime();
             final User user = securityUtils.getCurrentUser();
-            final Assignment wfInitiator = getWorkflowInitiator(propertyMutation, propertyMutation.getBasicProperty());
+            Position initiator = propertyMutation.getCurrentState().getInitiatorPosition();
+            if (initiator == null) {
+                final Assignment wfInitiator = getWorkflowInitiator(propertyMutation, propertyMutation.getBasicProperty());
+                initiator = wfInitiator != null ? wfInitiator.getPosition() : null;
+            }
             propertyMutation.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
                     .withStateValue(WF_STATE_DIGITALLY_SIGNED).withDateInfo(currentDate.toDate())
-                    .withOwner(propertyMutation.getCurrentState().getInitiatorPosition() != null
-                            ? propertyMutation.getCurrentState().getInitiatorPosition() : wfInitiator.getPosition())
+                    .withOwner(initiator)
                     .withNextAction(WF_STATE_TRANSFER_NOTICE_PRINT_PENDING);
         }
     }
 
-    private void transitionWorkFlow(final VacancyRemission vacancyRemission) {
+    private void transition(final VacancyRemission vacancyRemission) {
         if (propertyService.isMeesevaUser(vacancyRemission.getCreatedBy())) {
             vacancyRemission.transition().end();
             vacancyRemission.getBasicProperty().setUnderWorkflow(false);
         } else {
             final DateTime currentDate = new DateTime();
             final User user = securityUtils.getCurrentUser();
-            final Assignment wfInitiator = getWorkflowInitiator(vacancyRemission, vacancyRemission.getBasicProperty());
-            final Position pos = wfInitiator.getPosition();
+            Position initiator = vacancyRemission.getCurrentState().getInitiatorPosition();
+            if (initiator == null) {
+                final Assignment wfInitiator = getWorkflowInitiator(vacancyRemission, vacancyRemission.getBasicProperty());
+                initiator = wfInitiator != null ? wfInitiator.getPosition() : null;
+            }
             final VacancyRemissionApproval vacancyRemissionApproval = vacancyRemission.getVacancyRemissionApproval().get(0);
-            vacancyRemissionApproval.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
+            vacancyRemissionApproval.transition().progressWithStateCopy()
+                    .withSenderName(user.getUsername() + "::" + user.getName())
                     .withStateValue(WF_STATE_DIGITALLY_SIGNED).withDateInfo(currentDate.toDate())
-                    .withOwner(vacancyRemission.getCurrentState().getInitiatorPosition() != null
-                            ? vacancyRemission.getCurrentState().getInitiatorPosition() : pos)
+                    .withOwner(initiator)
                     .withNextAction(WF_STATE_NOTICE_PRINT_PENDING);
         }
     }
@@ -331,11 +405,11 @@ public class DigitalSignatureWorkflowController {
         Assignment wfInitiator = null;
         if (basicProperty.getSource().equals(PropertyTaxConstants.SOURCEOFDATA_ONLINE)) {
             if (!state.getStateHistory().isEmpty())
-                wfInitiator = assignmentService.getPrimaryAssignmentForPositon(state.getStateHistory().get(0)
-                        .getOwnerPosition().getId());
+                wfInitiator = assignmentService.getAssignmentsForPosition(state.getStateHistory().get(0)
+                        .getOwnerPosition().getId(), new Date()).get(0);
         } else if (propertyService.isEmployee(state.getCreatedBy())
                 && !ANONYMOUS_USER.equalsIgnoreCase(state.getCreatedBy().getName()))
-            wfInitiator = assignmentService.getPrimaryAssignmentForUser(state.getCreatedBy().getId());
+            wfInitiator = assignmentService.getAllActiveEmployeeAssignmentsByEmpId(state.getCreatedBy().getId()).get(0);
         else if (!state.getStateHistory().isEmpty())
             wfInitiator = assignmentService.getAssignmentsForPosition(
                     state.getStateHistory().get(0).getOwnerPosition().getId(), new Date()).get(0);

@@ -755,7 +755,7 @@ public interface PropertyTaxConstants {
 
     // Designations
     public static final String ASSISTANT_DESGN = "Assistant";
-    public static final String REVENUE_OFFICER_DESGN = "Revenue officer";
+    public static final String REVENUE_OFFICER_DESGN = "Revenue Officer";
     public static final String REVENUE_INSPECTOR_DESGN = "UD Revenue Inspector";
     public static final String REVENUE_CLERK_DESGN = "Revenue Clerk";
     public static final String COMMISSIONER_DESGN = "Commissioner";
@@ -1711,8 +1711,8 @@ public interface PropertyTaxConstants {
     public static final String DOCUMENT_NAME_UNREGD_WILL_DOCUMENT = "Un-registered Will Document";
     public static final String DOCUMENT_NAME_DECREE_BY_CIVILCOURT = "Decree by Civil Court";
     public static final String DOCUMENT_NAME_NOTARY_DOCUMENT = "Un-registered Document / Notary document";
-    public static final List<String> COMMISSIONER_DESIGNATIONS = ImmutableList.of("Assistant Commissioner",
-            "Zonal Commissioner", "Deputy Commissioner", "Additional Commissioner", "Commissioner");
+    public static final List<String> COMMISSIONER_DESIGNATIONS = ImmutableList.of(ASSISTANT_COMMISSIONER_DESIGN,
+            ZONAL_COMMISSIONER_DESIGN, DEPUTY_COMMISSIONER_DESIGN, ADDITIONAL_COMMISSIONER_DESIGN, COMMISSIONER_DESGN);
     public static final String INTEGRATED_BILL = "Integrated Bill";
     
     //Source of Application

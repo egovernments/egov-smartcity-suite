@@ -40,7 +40,6 @@
 package org.egov.ptis.actions.modify;
 
 import static org.apache.commons.lang.StringUtils.isBlank;
-import static org.egov.ptis.constants.PropertyTaxConstants.ADDITIONAL_COMMISSIONER_DESIGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_ALTER_ASSESSMENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_BIFURCATE_ASSESSMENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.ALTERATION_OF_ASSESSMENT;
@@ -52,7 +51,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_BIFU
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_GRP;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_COMMISSIONER_DESIGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_ROLE;
 import static org.egov.ptis.constants.PropertyTaxConstants.BIFURCATION_OF_ASSESSMENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.BILL_COLLECTOR_DESGN;
@@ -65,7 +63,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.CSC_OPERATOR_ROLE;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_BAL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.DATE_FORMAT_DDMMYYY;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEPUTY_COMMISSIONER_DESIGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEVIATION_PERCENTAGE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DOCS_AMALGAMATE_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.DOCS_BIFURCATE_PROPERTY;
@@ -103,15 +100,16 @@ import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_WORKFLOW_ERROR
 import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.VAC_LAND_PROPERTY_TYPE_CATEGORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NEW;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_ASSISTANT_APPROVAL_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
-import static org.egov.ptis.constants.PropertyTaxConstants.ZONAL_COMMISSIONER_DESIGN;
 
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -214,7 +212,7 @@ import com.google.gson.GsonBuilder;
         @Result(name = ModifyPropertyAction.COMMON_FORM, location = "search/searchProperty-commonForm.jsp"),
         @Result(name = ModifyPropertyAction.MEESEVA_ERROR, location = "common/meeseva-errorPage.jsp"),
         @Result(name = ModifyPropertyAction.MEESEVA_RESULT_ACK, location = "common/meesevaAck.jsp") })
-@Namespaces(value={@Namespace("/modify"),@Namespace("/citizen/modify")})
+@Namespaces(value = { @Namespace("/modify"), @Namespace("/citizen/modify") })
 public class ModifyPropertyAction extends PropertyTaxBaseAction {
     private static final String FROM_PROPERTY_TYPE_MASTER_WHERE_ID = "from PropertyTypeMaster ptm where ptm.id = ?";
     private final Logger logger = Logger.getLogger(getClass());
@@ -382,8 +380,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
     public String modifyForm() {
         final User currentUser = securityUtils.getCurrentUser();
         if (logger.isDebugEnabled())
-            logger.debug("Entered into modifyForm, \nIndexNumber: " + indexNumber + ", BasicProperty: " + basicProp
-                    + ", OldProperty: " + oldProperty + ", PropertyModel: " + propertyModel);
+            logger.debug("Entered into modifyForm");
         if (propertyModel.getStatus().equals(STATUS_DEMAND_INACTIVE)) {
             addActionError(getText("error.msg.demandInactive"));
             return COMMON_FORM;
@@ -397,12 +394,8 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
                 return MEESEVA_ERROR;
             } else
                 propertyModel.setMeesevaApplicationNumber(getMeesevaApplicationNumber());
-        if (logger.isDebugEnabled()) {
-            logger.debug("modifyForm: IsAuthProp: " + getIsAuthProp() + ", AreaOfPlot: " + getAreaOfPlot()
-                    + ", PropTypeId: " + getPropTypeId() + ", PropertyCategory: " + getPropertyCategory()
-                    + ", PropUsageId: " + getPropUsageId() + ", PropOccId: " + getPropOccId());
+        if (logger.isDebugEnabled())
             logger.debug("Exiting from modifyForm");
-        }
         showTaxCalculateButton();
         if (isBlank(applicationSource)
                 && propService.isEmployee(currentUser) && !propertyTaxCommonUtils.isEligibleInitiator(currentUser.getId())) {
@@ -425,16 +418,13 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
     @Action(value = "/modifyProperty-modifyDataEntry")
     public String modifyDataEntry() {
         if (logger.isDebugEnabled())
-            logger.debug("Entered into modifyForm, \nIndexNumber: " + indexNumber + ", BasicProperty: " + basicProp
+            logger.debug("Entered into modifyDataEntry, \nIndexNumber: " + indexNumber + ", BasicProperty: " + basicProp
                     + ", OldProperty: " + oldProperty + ", PropertyModel: " + propertyModel);
         String target;
         target = populateFormData(Boolean.FALSE);
-        if (logger.isDebugEnabled()) {
-            logger.debug("modifyForm: IsAuthProp: " + getIsAuthProp() + ", AreaOfPlot: " + getAreaOfPlot()
-                    + ", PropTypeId: " + getPropTypeId() + ", PropTypeCategoryId: " + getPropertyCategory()
-                    + ", PropUsageId: " + getPropUsageId() + ", PropOccId: " + getPropOccId());
-            logger.debug("Exiting from modifyForm");
-        }
+        if (logger.isDebugEnabled())
+            logger.debug("Exiting from modifyDataEntry");
+
         return target;
     }
 
@@ -461,11 +451,8 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         propertyModel.setPropertyModifyReason(modifyRsn);
         propertyModel.setBasicProperty(basicProp);
         propertyModel.setEffectiveDate(propCompletionDate);
-        if (logger.isDebugEnabled()) {
-            logger.debug("modifyForm: AreaOfPlot: " + getAreaOfPlot() + ", PropTypeId: " + getPropTypeId()
-                    + ", PropUsageId: " + getPropUsageId() + ", PropOccId: " + getPropOccId());
-            logger.debug("Exiting from modifyForm");
-        }
+        if (logger.isDebugEnabled())
+            logger.debug("Exiting from saveDataEntry");
         final long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
         if (logger.isInfoEnabled())
             logger.info("updateData: Property modified successfully in system with Index Number: " + basicProp.getUpicNo()
@@ -495,8 +482,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
                 msgParams.add(PROPERTY_GENERAL_REVISION_PETITION);
             setWfErrorMsg(getText(WF_PENDING_MSG, msgParams));
             target = TARGET_WORKFLOW_ERROR;
-        } 
-        else {
+        } else {
             if (PROPERTY_MODIFY_REASON_BIFURCATE.equalsIgnoreCase(modifyRsn) && !fromInbox) {
                 if (isUnderWtmsWF()) {
                     wfErrorMsg = getText("msg.under.wtms.wf.modify");
@@ -560,7 +546,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
                 vacantLandPlotAreaId = propertyModel.getPropertyDetail().getVacantLandPlotArea().getId();
             if (propertyModel.getPropertyDetail().getLayoutApprovalAuthority() != null)
                 layoutApprovalAuthorityId = propertyModel.getPropertyDetail().getLayoutApprovalAuthority().getId();
-            if(StringUtils.isNotBlank(applicationSource))
+            if (StringUtils.isNotBlank(applicationSource))
                 target = CITIZEN_NEW;
             else
                 target = NEW;
@@ -672,10 +658,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
             logger.debug("forwardModify: Modify property started " + propertyModel);
         setOldPropertyTypeCode(basicProp.getProperty().getPropertyDetail().getPropertyTypeMaster().getCode());
         validate();
-        if (hasErrors() && (StringUtils.containsIgnoreCase(userDesignationList, REVENUE_INSPECTOR_DESGN) ||
-                StringUtils.containsIgnoreCase(userDesignationList, JUNIOR_ASSISTANT) ||
-                StringUtils.containsIgnoreCase(userDesignationList, SENIOR_ASSISTANT))
-                && PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn)) {
+        if (hasErrors() && eligibleToShowTaxCalc()) {
             showTaxCalcBtn = Boolean.TRUE;
             allowEditDocument = Boolean.TRUE;
         }
@@ -720,7 +703,8 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
             if (propTypeMstr.getType().equals(OWNERSHIP_TYPE_VAC_LAND_STR))
                 addActionError(getText("error.nonVacantToVacant"));
         if (hasErrors())
-            if (!propertyByEmployee || ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName()) || isAssistantOrRIApprovalPending())
+            if (!propertyByEmployee || ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName())
+                    || isAssistantOrRIApprovalPending())
                 return NEW;
             else if (isCommissionerRoOrBillCollector())
                 return VIEW;
@@ -767,12 +751,11 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         final Boolean rejected = wfInitiatorRejected == null ? Boolean.FALSE : wfInitiatorRejected;
         if (ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName()))
             showAckBtn = Boolean.TRUE;
-        if (!showAckBtn) {
+        if (!showAckBtn)
             for (final Role role : securityUtils.getCurrentUser().getRoles())
                 if (ROLE_ULB_OPERATOR.equalsIgnoreCase(role.getName()) && !rejected && getModel().getState() == null
-                    || CSC_OPERATOR_ROLE.equalsIgnoreCase(role.getName()))
+                        || CSC_OPERATOR_ROLE.equalsIgnoreCase(role.getName()))
                     showAckBtn = Boolean.TRUE;
-        }
     }
 
     @Override
@@ -842,22 +825,8 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 
         setModifyRsn(propertyModel.getPropertyDetail().getPropertyMutationMaster().getCode());
 
-        /**
-         * The old property will be made history and the workflow property will be made active only when all the changes are
-         * completed in case of modify reason is 'ADD_OR_ALTER' or 'BIFURCATE'
-         */
-        if (PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn) || PROPERTY_MODIFY_REASON_BIFURCATE.equals(modifyRsn)
-                || PROPERTY_MODIFY_REASON_GENERAL_REVISION_PETITION.equals(modifyRsn)) {
-            propertyModel.setStatus(STATUS_DEMAND_INACTIVE);
-            oldProperty.setStatus(STATUS_ISHISTORY);
-            final String clientSpecificDmdBill = propertyTaxCommonUtils.getAppConfigValue(APPCONFIG_CLIENT_SPECIFIC_DMD_BILL,
-                    PTMODULENAME);
-            if ("Y".equalsIgnoreCase(clientSpecificDmdBill))
-                propertyTaxCommonUtils.makeExistingDemandBillInactive(basicProp.getUpicNo());
-            else
-                propertyTaxUtil.makeTheEgBillAsHistory(basicProp);
+        updatePropertyStatus();
 
-        }
         processAndStoreDocumentsWithReason(basicProp, getReason(modifyRsn));
         if (PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn) || PROPERTY_MODIFY_REASON_BIFURCATE.equals(modifyRsn)
                 || PROPERTY_MODIFY_REASON_AMALG.equals(modifyRsn)
@@ -874,6 +843,28 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         if (logger.isDebugEnabled())
             logger.debug("Exiting approve");
         return RESULT_ACK;
+    }
+
+    /**
+     *
+     */
+    private void updatePropertyStatus() {
+        /**
+         * The old property will be made history and the workflow property will be made active only when all the changes are
+         * completed in case of modify reason is 'ADD_OR_ALTER' or 'BIFURCATE'
+         */
+        if (PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn) || PROPERTY_MODIFY_REASON_BIFURCATE.equals(modifyRsn)
+                || PROPERTY_MODIFY_REASON_GENERAL_REVISION_PETITION.equals(modifyRsn)) {
+            propertyModel.setStatus(STATUS_DEMAND_INACTIVE);
+            oldProperty.setStatus(STATUS_ISHISTORY);
+            final String clientSpecificDmdBill = propertyTaxCommonUtils.getAppConfigValue(APPCONFIG_CLIENT_SPECIFIC_DMD_BILL,
+                    PTMODULENAME);
+            if ("Y".equalsIgnoreCase(clientSpecificDmdBill))
+                propertyTaxCommonUtils.makeExistingDemandBillInactive(basicProp.getUpicNo());
+            else
+                propertyTaxUtil.makeTheEgBillAsHistory(basicProp);
+
+        }
     }
 
     private void createPropertyStatusValues() {
@@ -909,17 +900,16 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
     @SkipValidation
     @Action(value = "/modifyProperty-reject")
     public String reject() {
+        propertyModel = (PropertyImpl) getPersistenceService().findByNamedQuery(QUERY_PROPERTYIMPL_BYID,
+                Long.valueOf(getModelId()));
+        final Assignment wfInitiator = validateInitiatorOnReject();
         if (logger.isDebugEnabled())
             logger.debug("reject: Property rejection started");
         if (isBlank(approverComments)) {
             addActionError(getText("property.workflow.remarks"));
-            if (isAssistantOrRIApprovalPending())
-                return NEW;
-            else if (isCommissionerRoOrBillCollector())
-                return VIEW;
         }
-        propertyModel = (PropertyImpl) getPersistenceService().findByNamedQuery(QUERY_PROPERTYIMPL_BYID,
-                Long.valueOf(getModelId()));
+        if (hasActionErrors()) 
+            return isAssistantOrRIApprovalPending() ? NEW : VIEW;
         if (propertyModel.getPropertyDetail().getPropertyTypeMaster().getCode()
                 .equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
             propertyModel.getPropertyDetail().getFloorDetails().clear();
@@ -931,19 +921,6 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         if (logger.isDebugEnabled())
             logger.debug("reject: BasicProperty: " + basicProperty);
 
-        final User user = securityUtils.getCurrentUser();
-        String loggedInUserDesignation = "";
-        List<Assignment> loggedInUserAssign;
-        if (propertyModel.getState() != null) {
-            loggedInUserAssign = assignmentService.getAssignmentByPositionAndUserAsOnDate(
-                    propertyModel.getCurrentState().getOwnerPosition().getId(), user.getId(), new Date());
-            loggedInUserDesignation = !loggedInUserAssign.isEmpty() ? loggedInUserAssign.get(0).getDesignation().getName() : null;
-        }
-        Assignment wfInitiator;
-        if (isRoOrCommissioner(loggedInUserDesignation))
-            wfInitiator = propService.getUserOnRejection(propertyModel);
-        else
-            wfInitiator = propService.getWorkflowInitiator(propertyModel);
         if (wfInitiator != null) {
             transitionWorkFlow(propertyModel);
             propService.updateIndexes(propertyModel, getApplicationType());
@@ -961,38 +938,42 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         return RESULT_ACK;
     }
 
+    /**
+     * @return 
+     * 
+     */
+    private Assignment validateInitiatorOnReject() {
+        String loggedInUserDesignation = "";
+        if (propertyModel.getState() != null) {
+            List<Assignment> loggedInUserAssign = assignmentService.getAssignmentByPositionAndUserAsOnDate(
+                    propertyModel.getCurrentState().getOwnerPosition().getId(), securityUtils.getCurrentUser().getId(), new Date());
+            loggedInUserDesignation = !loggedInUserAssign.isEmpty() ? loggedInUserAssign.get(0).getDesignation().getName() : null;
+        }
+        Assignment wfInitiator = getWorkflowInitiator(loggedInUserDesignation);
+        if (WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction) && wfInitiator == null) {
+            if (propertyTaxCommonUtils.isRoOrCommissioner(loggedInUserDesignation)) {
+                addActionError(getText("reject.error.initiator.inactive", Arrays.asList(REVENUE_INSPECTOR_DESGN)));
+            } else {
+                addActionError(
+                        getText("reject.error.initiator.inactive", Arrays.asList(JUNIOR_ASSISTANT + "/" + SENIOR_ASSISTANT)));
+            }
+        }
+        return wfInitiator;
+    }
+
+    private Assignment getWorkflowInitiator(String loggedInUserDesignation) {
+        Assignment wfInitiator;
+        if (propertyTaxCommonUtils.isRoOrCommissioner(loggedInUserDesignation))
+            wfInitiator = propService.getUserOnRejection(propertyModel);
+        else
+            wfInitiator = propService.getWorkflowInitiator(propertyModel);
+        return wfInitiator;
+    }
+    
     private boolean isCommissionerRoOrBillCollector() {
         return StringUtils.containsIgnoreCase(userDesignationList, BILL_COLLECTOR_DESGN)
                 || StringUtils.containsIgnoreCase(userDesignationList, COMMISSIONER_DESGN)
                 || StringUtils.containsIgnoreCase(userDesignationList, REVENUE_OFFICER_DESGN);
-    }
-
-    private boolean isRoOrCommissioner(final String loggedInUserDesignation) {
-        boolean isany;
-        if (!REVENUE_OFFICER_DESGN.equalsIgnoreCase(loggedInUserDesignation))
-            isany = isCommissioner(loggedInUserDesignation);
-        else
-            isany = true;
-        return isany;
-    }
-
-    private boolean isCommissioner(final String loggedInUserDesignation) {
-        boolean isanyone;
-        if (!ASSISTANT_COMMISSIONER_DESIGN.equalsIgnoreCase(loggedInUserDesignation)
-                || !ADDITIONAL_COMMISSIONER_DESIGN.equalsIgnoreCase(loggedInUserDesignation))
-            isanyone = isDeputyOrAbove(loggedInUserDesignation);
-        else
-            isanyone = true;
-        return isanyone;
-    }
-
-    private boolean isDeputyOrAbove(final String loggedInUserDesignation) {
-        boolean isanyone = false;
-        if (DEPUTY_COMMISSIONER_DESIGN.equalsIgnoreCase(loggedInUserDesignation)
-                || COMMISSIONER_DESGN.equalsIgnoreCase(loggedInUserDesignation)
-                || ZONAL_COMMISSIONER_DESIGN.equalsIgnoreCase(loggedInUserDesignation))
-            isanyone = true;
-        return isanyone;
     }
 
     private void getAckMsg(final String username, final Assignment wfInitiator) {
@@ -1014,7 +995,6 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public void prepare() {
         if (logger.isDebugEnabled())
             logger.debug("Entered into preapre, ModelId: " + getModelId());
@@ -1022,70 +1002,48 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         setUserInfo();
         setUserDesignations();
         propertyByEmployee = propService.isEmployee(securityUtils.getCurrentUser());
-        if (getModelId() != null && !getModelId().isEmpty()) {
-            setBasicProp((BasicProperty) getPersistenceService().find(
-                    "select prop.basicProperty from PropertyImpl prop where prop.id=?", Long.valueOf(getModelId())));
-            if (logger.isDebugEnabled())
-                logger.debug("prepare: BasicProperty: " + basicProp);
-            propWF = (PropertyImpl) getPersistenceService().findByNamedQuery(QUERY_WORKFLOW_PROPERTYIMPL_BYID,
-                    Long.valueOf(getModelId()));
-            if (propWF != null) {
-                setProperty(propWF);
-                preparePropertyTaxDetails(propWF);
-                historyMap = propService.populateHistory(propWF);
-            } else {
-                preparePropertyTaxDetails(basicProp.getProperty());
-                historyMap = propService.populateHistory((PropertyImpl)basicProp.getProperty());
-            }
-        } else if (indexNumber != null && !indexNumber.trim().isEmpty()) {
+        if (getModelId() != null && !getModelId().isEmpty())
+            prepareWorkflowPropInfo();
+        else if (indexNumber != null && !indexNumber.trim().isEmpty()) {
             setBasicProp((BasicProperty) getPersistenceService().findByNamedQuery(QUERY_BASICPROPERTY_BY_UPICNO,
                     indexNumber));
             preparePropertyTaxDetails(basicProp.getProperty());
         }
-
         documentTypes = propService.getDocumentTypesForTransactionType(TransactionType.MODIFY);
-        final List<FloorType> floorTypes = getPersistenceService().findAllBy("from FloorType order by name");
-        final List<RoofType> roofTypes = getPersistenceService().findAllBy("from RoofType order by name");
-        final List<WallType> wallTypes = getPersistenceService().findAllBy("from WallType order by name");
-        final List<WoodType> woodTypes = getPersistenceService().findAllBy("from WoodType order by name");
-        final List<PropertyTypeMaster> propTypeList = getPersistenceService().findAllBy(
-                "from PropertyTypeMaster where type != 'EWSHS' order by orderNo");
-        final List<String> structureList = getPersistenceService().findAllBy("from StructureClassification");
-        List<PropertyUsage> usageList = getPersistenceService().findAllBy("from PropertyUsage order by usageName");
-        final List<PropertyOccupation> propOccList = getPersistenceService().findAllBy("from PropertyOccupation");
-        final List<String> ageFacList = getPersistenceService().findAllBy("from DepreciationMaster");
-        final List<String> apartmentsList = getPersistenceService().findAllBy("from Apartment order by name");
-        final List<String> taxExemptionReasonList = getPersistenceService().findAllBy(
-                "from TaxExemptionReason where isActive = true order by name");
-        setFloorNoMap(FLOOR_MAP);
-        addDropdownData("floorType", floorTypes);
-        addDropdownData("roofType", roofTypes);
-        addDropdownData("wallType", wallTypes);
-        addDropdownData("woodType", woodTypes);
-        addDropdownData("PropTypeMaster", propTypeList);
-        addDropdownData("OccupancyList", propOccList);
-        addDropdownData("StructureList", structureList);
-        addDropdownData("AgeFactorList", ageFacList);
-        addDropdownData("apartments", apartmentsList);
-        addDropdownData("taxExemptionReasonList", taxExemptionReasonList);
-        populatePropertyTypeCategory();
-        setDeviationPercentageMap(DEVIATION_PERCENTAGE);
+        populateDropdowns();
         if (getBasicProp() != null)
             setPropAddress(getBasicProp().getAddress().toString());
-        if (propWF != null) {
-            setOwnerName(propWF.getBasicProperty().getFullOwnerName());
-            final List<PropertyOwnerInfo> ownerSet = propWF.getBasicProperty().getPropertyOwnerInfo();
-            if (ownerSet != null && !ownerSet.isEmpty())
-                for (final PropertyOwnerInfo owner : ownerSet)
-                    for (final Address address : owner.getOwner().getAddress()) {
-                        corrsAddress = address.toString();
-                        break;
-                    }
-            for (final PropertyStatusValues propstatval : basicProp.getPropertyStatusValuesSet())
-                if ("W".equals(propstatval.getIsActive()))
-                    setPropStatValForView(propstatval);
-        }
+        if (propWF != null)
+            prepareOwnerDetails();
 
+        populateUsages();
+        if (logger.isDebugEnabled())
+            logger.debug("Exiting from preapre, ModelId: " + getModelId());
+    }
+
+    /**
+     *
+     */
+    private void prepareOwnerDetails() {
+        setOwnerName(propWF.getBasicProperty().getFullOwnerName());
+        final List<PropertyOwnerInfo> ownerSet = propWF.getBasicProperty().getPropertyOwnerInfo();
+        if (ownerSet != null && !ownerSet.isEmpty())
+            for (final PropertyOwnerInfo owner : ownerSet)
+                for (final Address address : owner.getOwner().getAddress()) {
+                    corrsAddress = address.toString();
+                    break;
+                }
+        for (final PropertyStatusValues propstatval : basicProp.getPropertyStatusValuesSet())
+            if ("W".equals(propstatval.getIsActive()))
+                setPropStatValForView(propstatval);
+    }
+
+    /**
+     *
+     */
+    @SuppressWarnings("unchecked")
+    private void populateUsages() {
+        List<PropertyUsage> usageList = getPersistenceService().findAllBy("from PropertyUsage order by usageName");
         // Loading property usages based on property category
         if (StringUtils.isNoneBlank(propertyCategory))
             if (propertyCategory.equals(CATEGORY_MIXED))
@@ -1098,18 +1056,83 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
                         "From PropertyUsage where isResidential = false order by usageName");
 
         addDropdownData("UsageList", usageList);
+    }
+
+    /**
+     *
+     */
+    @SuppressWarnings("unchecked")
+    private void populateDropdowns() {
+        setFloorNoMap(FLOOR_MAP);
+        final List<PropertyTypeMaster> propTypeList = getPersistenceService().findAllBy(
+                "from PropertyTypeMaster where type != 'EWSHS' order by orderNo");
+        final List<PropertyOccupation> propOccList = getPersistenceService().findAllBy("from PropertyOccupation");
+        final List<String> structureList = getPersistenceService().findAllBy("from StructureClassification");
+        final List<String> ageFacList = getPersistenceService().findAllBy("from DepreciationMaster");
+        final List<String> taxExemptionReasonList = getPersistenceService().findAllBy(
+                "from TaxExemptionReason where isActive = true order by name");
+        final List<String> apartmentsList = getPersistenceService().findAllBy("from Apartment order by name");
+        final List<FloorType> floorTypes = getPersistenceService().findAllBy("from FloorType order by name");
+        final List<RoofType> roofTypes = getPersistenceService().findAllBy("from RoofType order by name");
+        final List<WallType> wallTypes = getPersistenceService().findAllBy("from WallType order by name");
+        final List<WoodType> woodTypes = getPersistenceService().findAllBy("from WoodType order by name");
         setVacantLandPlotAreaList(vacantLandPlotAreaRepository.findAll());
         setLayoutApprovalAuthorityList(layoutApprovalAuthorityRepository.findAll());
         addDropdownData("vacantLandPlotAreaList", vacantLandPlotAreaList);
         addDropdownData("layoutApprovalAuthorityList", layoutApprovalAuthorityList);
+        addDropdownData("floorType", floorTypes);
+        addDropdownData("roofType", roofTypes);
+        addDropdownData("wallType", wallTypes);
+        addDropdownData("woodType", woodTypes);
+        addDropdownData("PropTypeMaster", propTypeList);
+        addDropdownData("OccupancyList", propOccList);
+        addDropdownData("StructureList", structureList);
+        addDropdownData("AgeFactorList", ageFacList);
+        addDropdownData("apartments", apartmentsList);
+        addDropdownData("taxExemptionReasonList", taxExemptionReasonList);
+        populatePropertyTypeCategory();
+        setDeviationPercentageMap(DEVIATION_PERCENTAGE);
+    }
+
+    /**
+     *
+     */
+    private void prepareWorkflowPropInfo() {
+        setBasicProp((BasicProperty) getPersistenceService().find(
+                "select prop.basicProperty from PropertyImpl prop where prop.id=?", Long.valueOf(getModelId())));
         if (logger.isDebugEnabled())
-            logger.debug("Exiting from preapre, ModelId: " + getModelId());
+            logger.debug("prepare: BasicProperty: " + basicProp);
+        propWF = (PropertyImpl) getPersistenceService().findByNamedQuery(QUERY_WORKFLOW_PROPERTYIMPL_BYID,
+                Long.valueOf(getModelId()));
+        if (propWF != null) {
+            setProperty(propWF);
+            preparePropertyTaxDetails(propWF);
+            historyMap = propService.populateHistory(propWF);
+        } else {
+            preparePropertyTaxDetails(basicProp.getProperty());
+            historyMap = propService.populateHistory((PropertyImpl) basicProp.getProperty());
+        }
     }
 
     /**
      * Populates Property type categories based on the property type
      */
     private void populatePropertyTypeCategory() {
+        setPropertyTypeMaster();
+
+        if (propTypeMstr != null) {
+            if (propTypeMstr.getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
+                setPropTypeCategoryMap(VAC_LAND_PROPERTY_TYPE_CATEGORY);
+            else
+                setPropTypeCategoryMap(NON_VAC_LAND_PROPERTY_TYPE_CATEGORY);
+        } else
+            setPropTypeCategoryMap(Collections.emptyMap());
+    }
+
+    /**
+     * 
+     */
+    private void setPropertyTypeMaster() {
         if (propTypeId != null && !propTypeId.trim().isEmpty() && !"-1".equals(propTypeId))
             propTypeMstr = (PropertyTypeMaster) getPersistenceService().find(
                     FROM_PROPERTY_TYPE_MASTER_WHERE_ID, Long.valueOf(propTypeId));
@@ -1119,14 +1142,6 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
             propTypeMstr = propertyModel.getPropertyDetail().getPropertyTypeMaster();
         else if (basicProp != null)
             propTypeMstr = basicProp.getProperty().getPropertyDetail().getPropertyTypeMaster();
-
-        if (propTypeMstr != null) {
-            if (propTypeMstr.getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
-                setPropTypeCategoryMap(VAC_LAND_PROPERTY_TYPE_CATEGORY);
-            else
-                setPropTypeCategoryMap(NON_VAC_LAND_PROPERTY_TYPE_CATEGORY);
-        } else
-            setPropTypeCategoryMap(Collections.emptyMap());
     }
 
     /**
@@ -1143,7 +1158,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
                     + (amalgPropIds != null ? amalgPropIds.length : "NULL"));
         }
         Date propCompletionDate;
-        if(SOURCE_ONLINE.equalsIgnoreCase(applicationSource) && ApplicationThreadLocals.getUserId() == null) 
+        if (SOURCE_ONLINE.equalsIgnoreCase(applicationSource) && ApplicationThreadLocals.getUserId() == null)
             ApplicationThreadLocals.setUserId(securityUtils.getCurrentUser().getId());
         final Character status = STATUS_WORKFLOW;
         final PropertyTypeMaster proptypeMstr = propertyTypeMasterDAO.findById(Integer.valueOf(propTypeId), false);
@@ -1274,7 +1289,6 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         propDetail.setWallType(propertyDetail.getWallType());
         propDetail.setWoodType(propertyDetail.getWoodType());
         propDetail.setExtentSite(propertyDetail.getExtentSite());
-        // propDetail.setStructure(propertyDetail.isStructure());
         propDetail.setExtentAppartenauntLand(propertyDetail.getExtentAppartenauntLand());
         if (numOfFloors == 0)
             propDetail.setPropertyUsage(propertyDetail.getPropertyUsage());
@@ -1346,10 +1360,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
             logger.debug("Entered into validate, ModifyRsn: " + modifyRsn);
         propertyModel.setBasicProperty(basicProp);
         Date propCompletionDate = null;
-        if (!propTypeMstr.getType().equals(OWNERSHIP_TYPE_VAC_LAND_STR) && oldPropertyTypeCode.equals(OWNERSHIP_TYPE_VAC_LAND)
-                && modifyRsn.equals(PROPERTY_MODIFY_REASON_ADD_OR_ALTER))
-            if (houseNo == null || houseNo.isEmpty())
-                addActionError(getText("mandatory.doorNo"));
+        validateHouseno();
         if (basicProp.getSource() == SOURCEOFDATA_MIGRATION || basicProp.getSource() == SOURCEOFDATA_DATAENTRY) {
             setOldProperty((PropertyImpl) getBasicProp().getProperty());
             propCompletionDate = propertyTaxUtil.getLowestInstallmentForProperty(oldProperty);
@@ -1360,15 +1371,31 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
                 propOccId, floorTypeId, roofTypeId, wallTypeId, woodTypeId, modifyRsn, propCompletionDate, vacantLandPlotAreaId,
                 layoutApprovalAuthorityId, null);
         validateApproverDetails();
+        validateInitiatorAssignment();
+        if (logger.isDebugEnabled())
+            logger.debug("Exiting from validate, BasicProperty: " + getBasicProp());
+    }
+
+    private void validateHouseno() {
+        if (!propTypeMstr.getType().equals(OWNERSHIP_TYPE_VAC_LAND_STR) && oldPropertyTypeCode.equals(OWNERSHIP_TYPE_VAC_LAND)
+                && modifyRsn.equals(PROPERTY_MODIFY_REASON_ADD_OR_ALTER))
+            if (houseNo == null || houseNo.isEmpty())
+                addActionError(getText("mandatory.doorNo"));
+    }
+
+    private void validateInitiatorAssignment() {
         if (!propertyByEmployee && null != basicProp) {
             final Assignment assignment = propService.isCscOperator(securityUtils.getCurrentUser())
                     ? propService.getAssignmentByDeptDesigElecWard(basicProp)
                     : null;
             if (assignment == null && propService.getUserPositionByZone(basicProp, false) == null)
                 addActionError(getText("notexists.position"));
+        } else if (propertyModel.getId() == null) {
+            final Assignment initiator = propertyTaxCommonUtils
+                    .getWorkflowInitiatorAssignment(securityUtils.getCurrentUser().getId());
+            if (initiator == null)
+                addActionError(getText("notexists.position"));
         }
-        if (logger.isDebugEnabled())
-            logger.debug("Exiting from validate, BasicProperty: " + getBasicProp());
     }
 
     /**
@@ -1418,19 +1445,20 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
      * @return
      */
     private String getModifyReasonString() {
-        final String action = PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn) ? ALTERATION_OF_ASSESSMENT
-                : PROPERTY_MODIFY_REASON_BIFURCATE.equals(modifyRsn) ? BIFURCATION_OF_ASSESSMENT
-                        : PROPERTY_MODIFY_REASON_GENERAL_REVISION_PETITION.equals(modifyRsn) ? GRP_OF_ASSESSMENT
-                                : AMALGAMATION_OF_ASSESSMENT;
-        return action;
+        final Map<String, String> modifyReasons = new HashMap<>();
+        modifyReasons.put(PROPERTY_MODIFY_REASON_ADD_OR_ALTER, ALTERATION_OF_ASSESSMENT);
+        modifyReasons.put(PROPERTY_MODIFY_REASON_BIFURCATE, BIFURCATION_OF_ASSESSMENT);
+        modifyReasons.put(PROPERTY_MODIFY_REASON_GENERAL_REVISION_PETITION, GRP_OF_ASSESSMENT);
+        modifyReasons.put(PROPERTY_MODIFY_REASON_AMALG, AMALGAMATION_OF_ASSESSMENT);
+        return modifyReasons.get(modifyRsn);
     }
 
     private String getReason(final String modifyReason) {
-        if (PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn))
+        if (PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyReason))
             return DOCS_MODIFY_PROPERTY;
-        else if (PROPERTY_MODIFY_REASON_BIFURCATE.equals(modifyRsn))
+        else if (PROPERTY_MODIFY_REASON_BIFURCATE.equals(modifyReason))
             return DOCS_BIFURCATE_PROPERTY;
-        else if (PROPERTY_MODIFY_REASON_AMALG.equals(modifyRsn))
+        else if (PROPERTY_MODIFY_REASON_AMALG.equals(modifyReason))
             return DOCS_AMALGAMATE_PROPERTY;
         return org.apache.commons.lang.StringUtils.EMPTY;
     }
@@ -1577,7 +1605,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
     public String modifyOrDataUpdateForm() {
         if (logger.isDebugEnabled())
             logger.debug("Entered into modifyOrDataUpdateForm");
-        String resultPage = "";
+        String resultPage;
         if (PROPERTY_MODIFY_REASON_DATA_UPDATE.equals(modifyRsn)
                 && basicProp.getSource().equals(PropertyTaxConstants.SOURCEOFDATA_APPLICATION)) {
             setErrorMessage(" This is not a migrated property ");
@@ -1617,18 +1645,19 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         final String imagePath = url.concat(PropertyTaxConstants.IMAGE_CONTEXT_PATH).concat(
                 (String) request.getSession().getAttribute("citylogo"));
         final String cityName = request.getSession().getAttribute("citymunicipalityname").toString();
-        if(ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName()) && ApplicationThreadLocals.getUserId() == null) {
+        if (ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName())
+                && ApplicationThreadLocals.getUserId() == null) {
             ApplicationThreadLocals.setUserId(securityUtils.getCurrentUser().getId());
             setApplicationSource(propertyModel.getSource().toLowerCase());
         }
-        final Map<String, Object> reportParams = new HashMap<String, Object>();
+        final Map<String, Object> reportParams = new HashMap<>();
         reportParams.put("ownerName", basicProp.getFullOwnerName());
-        reportParams.put("applicationDate", new SimpleDateFormat("dd/MM/yyyy").format(basicProp.getCreatedDate()));
+        reportParams.put("applicationDate", dateFormatter.format(basicProp.getCreatedDate()));
         reportParams.put("ownerAddress", basicProp.getAddress().toString());
         reportParams.put("applicationNo", propertyModel.getApplicationNo());
-        reportParams.put("approvedDate", new SimpleDateFormat("dd/MM/yyyy").format(propWF.getState().getCreatedDate()));
+        reportParams.put("approvedDate", dateFormatter.format(propWF.getState().getCreatedDate()));
         final Date noticeDueDate = DateUtils.add(propWF.getState().getCreatedDate(), Calendar.DAY_OF_MONTH, 15);
-        reportParams.put("noticeDueDate", new SimpleDateFormat("dd/MM/yyyy").format(noticeDueDate));
+        reportParams.put("noticeDueDate", dateFormatter.format(noticeDueDate));
         reportParams.put("creationReason", modifyRsn);
         reportParams.put("logoPath", imagePath);
         reportParams.put("cityName", cityName);
@@ -1666,7 +1695,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
                 area.setArea(new Float(areaOfPlot));
                 propertyModel.getPropertyDetail().setSitalArea(area);
             }
-            if (propTypeId != null && !propTypeId.trim().isEmpty() && !propTypeId.equals("-1"))
+            if (propTypeId != null && !propTypeId.trim().isEmpty() && !"-1".equals(propTypeId))
                 propTypeMstr = (PropertyTypeMaster) getPersistenceService().find(
                         FROM_PROPERTY_TYPE_MASTER_WHERE_ID, Long.valueOf(propTypeId));
             propertyModel.getPropertyDetail().setPropertyTypeMaster(propTypeMstr);
@@ -1693,7 +1722,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
                 else
                     changePropertyDetail(propertyModel, new BuiltUpProperty(), propertyModel.getPropertyDetail()
                             .getNoofFloors());
-            HashMap<Installment, TaxCalculationInfo> instTaxMap = new HashMap<Installment, TaxCalculationInfo>();
+            HashMap<Installment, TaxCalculationInfo> instTaxMap = new HashMap<>();
             try {
                 instTaxMap = taxCalculator.calculatePropertyTax(propertyModel, propCompletionDate);
             } catch (final TaxCalculatorExeption e) {
@@ -1713,19 +1742,28 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
     }
 
     public void showTaxCalculateButton() {
-        if ((StringUtils.containsIgnoreCase(userDesignationList, REVENUE_INSPECTOR_DESGN) ||
-                StringUtils.containsIgnoreCase(userDesignationList, JUNIOR_ASSISTANT) ||
-                StringUtils.containsIgnoreCase(userDesignationList, SENIOR_ASSISTANT))
-                && PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn))
+        if (eligibleToShowTaxCalc())
             showTaxCalcBtn = Boolean.TRUE;
     }
-    
-    private BigDecimal getWaterTaxDues(){
-        return propertyService.getWaterTaxDues(basicProp.getUpicNo()).get(PropertyTaxConstants.WATER_TAX_DUES) == null ? BigDecimal.ZERO : new BigDecimal(
-                Double.valueOf((Double) propertyService.getWaterTaxDues(basicProp.getUpicNo()).get(PropertyTaxConstants.WATER_TAX_DUES)));
+
+    /**
+     * @return
+     */
+    private boolean eligibleToShowTaxCalc() {
+        return (StringUtils.containsIgnoreCase(userDesignationList, REVENUE_INSPECTOR_DESGN) ||
+                StringUtils.containsIgnoreCase(userDesignationList, JUNIOR_ASSISTANT) ||
+                StringUtils.containsIgnoreCase(userDesignationList, SENIOR_ASSISTANT))
+                && PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn);
     }
-    
-    private Boolean isUnderWtmsWF(){
+
+    private BigDecimal getWaterTaxDues() {
+        return propertyService.getWaterTaxDues(basicProp.getUpicNo()).get(PropertyTaxConstants.WATER_TAX_DUES) == null
+                ? BigDecimal.ZERO : new BigDecimal(
+                        Double.valueOf((Double) propertyService.getWaterTaxDues(basicProp.getUpicNo())
+                                .get(PropertyTaxConstants.WATER_TAX_DUES)));
+    }
+
+    private Boolean isUnderWtmsWF() {
         return propertyService.getWaterTaxDues(basicProp.getUpicNo()).get(PropertyTaxConstants.UNDER_WTMS_WF) == null
                 ? Boolean.FALSE
                 : Boolean.valueOf((Boolean) propertyService.getWaterTaxDues(basicProp.getUpicNo())
@@ -2478,7 +2516,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         return applicationSource;
     }
 
-    public void setApplicationSource(String applicationSource) {
+    public void setApplicationSource(final String applicationSource) {
         this.applicationSource = applicationSource;
     }
 }

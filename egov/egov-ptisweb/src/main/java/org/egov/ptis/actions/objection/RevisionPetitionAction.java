@@ -54,6 +54,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME
 import static org.egov.ptis.constants.PropertyTaxConstants.FLOOR_MAP;
 import static org.egov.ptis.constants.PropertyTaxConstants.GENERAL_REVISION_PETITION;
 import static org.egov.ptis.constants.PropertyTaxConstants.GRP_STATUS_CODE;
+import static org.egov.ptis.constants.PropertyTaxConstants.GRP_WF_REGISTERED;
 import static org.egov.ptis.constants.PropertyTaxConstants.HEARING_TIMINGS;
 import static org.egov.ptis.constants.PropertyTaxConstants.JUNIOR_ASSISTANT;
 import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_GENERAL_REVISION_PETITION;
@@ -71,6 +72,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASO
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_INSPECTOR_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVISIONPETITION_STATUS_CODE;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVISION_PETITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.RP_WF_REGISTERED;
 import static org.egov.ptis.constants.PropertyTaxConstants.SENIOR_ASSISTANT;
 import static org.egov.ptis.constants.PropertyTaxConstants.SOURCE_ONLINE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
@@ -95,6 +97,7 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -215,6 +218,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
         @Result(name = RevisionPetitionAction.MEESEVA_ERROR, location = "common/meeseva-errorPage.jsp") })
 public class RevisionPetitionAction extends PropertyTaxBaseAction {
 
+    private static final String NOTEXISTS_POSITION = "notexists.position";
     private static final String APPROVE = "Approve";
     private static final String PRINT_ENDORESEMENT = "Print Endoresement";
     private static final String REJECT = "reject";
@@ -377,6 +381,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
             historyMap = propService.populateHistory(objection);
 
         loggedUserIsEmployee = propService.isEmployee(securityUtils.getCurrentUser());
+        isMeesevaUser = propService.isMeesevaUser(securityUtils.getCurrentUser());
         super.prepare();
         setUserInfo();
         documentTypes = propService.getDocumentTypesForTransactionType(TransactionType.OBJECTION);
@@ -479,6 +484,11 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
     public String create() {
         if (logger.isDebugEnabled())
             logger.debug("ObjectionAction | Create | start " + objection);
+        validateInitiator();
+        if (hasActionErrors()) {
+            getPropertyView(objection.getBasicProperty().getUpicNo());
+            return NEW;
+        }
 
         if (objection != null && objection.getBasicProperty() != null && objection.getState() == null
                 && objection.getBasicProperty().isUnderWorkflow()) {
@@ -529,6 +539,31 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         return isMeesevaUser ? MEESEVA_RESULT_ACK : STRUTS_RESULT_MESSAGE;
     }
 
+    private void validateInitiator() {
+        Assignment assignment = null;
+        if (isMeesevaUser || !loggedUserIsEmployee) {
+            assignment = propService.isCscOperator(securityUtils.getCurrentUser())
+                    ? propService.getAssignmentByDeptDesigElecWard(objection.getBasicProperty())
+                    : null;
+            if (assignment == null)
+                assignment = propService.getUserPositionByZone(objection.getBasicProperty(), false);
+        } else if (objection.getId() == null) {
+            assignment = propertyTaxCommonUtils.getWorkflowInitiatorAssignment(securityUtils.getCurrentUser().getId());
+        } else if (objection.getState().getValue().equals(RP_WF_REGISTERED)
+                || objection.getState().getValue().equals(GRP_WF_REGISTERED)) {
+            if (objection.getState().getInitiatorPosition() == null)
+                assignment = revisionPetitionService.getWorkflowInitiator(objection);
+            else {
+                List<Assignment> assignments = assignmentService
+                        .getAssignmentsForPosition(objection.getState().getInitiatorPosition().getId());
+                if (!assignments.isEmpty())
+                    assignment = assignments.get(0);
+            }
+        }
+        if (assignment == null)
+            addActionError(getText(NOTEXISTS_POSITION));
+    }
+
     /**
      * Method to add hearing date
      *
@@ -538,6 +573,11 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
     public String addHearingDate() {
         if (logger.isDebugEnabled())
             logger.debug("ObjectionAction | addHearingDate | start " + objection);
+        validateInitiator();
+        if (hasActionErrors()) {
+            getPropertyView(objection.getBasicProperty().getUpicNo());
+            return "view";
+        }
         InputStream hearingNoticePdf = null;
         ReportOutput reportOutput = new ReportOutput();
         final String noticeNo = propertyTaxNumberGenerator.generateNoticeNumber(NOTICE_TYPE_REVISIONPETITION_HEARINGNOTICE);
@@ -679,7 +719,17 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
     @ValidationErrorPage(value = "view")
     @Action(value = "/revPetition-rejectInspectionDetails")
     public String rejectInspectionDetails() {
-
+        List<Assignment> loggedInUserAssignment = assignmentService.getAssignmentByPositionAndUserAsOnDate(
+                objection.getCurrentState().getOwnerPosition().getId(), securityUtils.getCurrentUser().getId(), new Date());
+        String loggedInUserDesignation = !loggedInUserAssignment.isEmpty()
+                ? loggedInUserAssignment.get(0).getDesignation().getName()
+                : "";
+        Assignment initiator = propService.getUserOnRejection(objection);
+        if (propertyTaxCommonUtils.isRoOrCommissioner(loggedInUserDesignation) && initiator == null) {
+            getPropertyView(objection.getBasicProperty().getUpicNo());
+            addActionError(getText("reject.error.initiator.inactive", Arrays.asList(REVENUE_INSPECTOR_DESGN)));
+            return "view";
+        }
         updateStateAndStatus(objection);
         revisionPetitionService.updateRevisionPetition(objection);
         return STRUTS_RESULT_MESSAGE;
@@ -1363,7 +1413,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                     .withDateInfo(new DateTime().toDate()).withOwner(position)
                     .withSenderName(loggedInUser.getUsername() + "::" + loggedInUser.getName()).withOwner(user)
                     .withComments(approverComments).withNextAction(wfmatrix.getNextAction())
-                    .withInitiator(wfInitiator != null ? wfInitiator.getPosition() : position)
+                    .withInitiator(wfInitiator != null ? wfInitiator.getPosition() : null)
                     .withNatureOfTask(NATURE_OF_WORK_RP.equalsIgnoreCase(wfType) ? NATURE_REVISION_PETITION
                             : NATURE_GENERAL_REVISION_PETITION);
 
@@ -1482,7 +1532,8 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                                     .equalsIgnoreCase(PropertyTaxConstants.GRP_WF_REGISTERED)) {
                         positionFoundInHistory = true;
                         updateRevisionPetitionStatus(wfmatrix, objection, PropertyTaxConstants.OBJECTION_HEARING_FIXED);
-                        position = wfInitiator.getPosition();
+                        position = objection.getState().getInitiatorPosition() != null
+                                ? objection.getState().getInitiatorPosition() : wfInitiator.getPosition();
                         addActionMessage(getText(OBJECTION_FORWARD, new String[] { wfInitiator.getEmployee().getName()
                                 .concat("~").concat(wfInitiator.getPosition().getName()) }));
                     }
