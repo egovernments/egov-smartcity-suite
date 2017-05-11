@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-05-09T12:01:30 -->
+<!-- 2017-05-11T17:29:37 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="registrationcertificate" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="02afdd73-b1f8-4b82-bdec-843293ab245b">
 	<property name="ireport.zoom" value="2.0"/>
 	<property name="ireport.x" value="0"/>
@@ -113,18 +113,19 @@
 			</textField>
 		</band>
 		<band/>
-		<band height="288">
+		<band height="282">
 			<staticText>
-				<reportElement x="390" y="248" width="155" height="20" uuid="1cb4d697-fd0e-4d1f-81d4-221a3a0acc75"/>
+				<reportElement x="388" y="230" width="155" height="19" uuid="1cb4d697-fd0e-4d1f-81d4-221a3a0acc75"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="14"/>
 				</textElement>
 				<text><![CDATA[Registrar of Marriage]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="410" y="268" width="130" height="20" uuid="0e89869e-8cd9-439e-bf81-9dc2f029a709"/>
+				<reportElement x="370" y="246" width="181" height="30" uuid="0e89869e-8cd9-439e-bf81-9dc2f029a709"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="14" isBold="true"/>
+					<font size="10" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{zoneName}]]></textFieldExpression>
 			</textField>
@@ -199,11 +200,11 @@
 				<textFieldExpression><![CDATA[$P{registrationcenter}]]></textFieldExpression>
 			</textField>
 			<image hAlign="Center" vAlign="Bottom" isUsingCache="true" onErrorType="Blank">
-				<reportElement x="400" y="150" width="140" height="64" uuid="cd8d388a-aa37-47e0-8494-079da7583ff8"/>
+				<reportElement x="398" y="140" width="140" height="64" uuid="cd8d388a-aa37-47e0-8494-079da7583ff8"/>
 				<imageExpression><![CDATA[$P{userSignature}]]></imageExpression>
 			</image>
 			<textField>
-				<reportElement x="390" y="220" width="160" height="21" uuid="6246e4bd-d628-45dd-85e7-3e7778b67712"/>
+				<reportElement x="388" y="210" width="160" height="20" uuid="6246e4bd-d628-45dd-85e7-3e7778b67712"/>
 				<textElement textAlignment="Center" verticalAlignment="Bottom">
 					<font size="12" isBold="true"/>
 				</textElement>
