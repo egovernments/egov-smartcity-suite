@@ -1031,7 +1031,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     
     private BigDecimal getWaterTaxDues(){
         return propertyService.getWaterTaxDues(assessmentNo).get(PropertyTaxConstants.WATER_TAX_DUES) == null ? BigDecimal.ZERO : new BigDecimal(
-                Double.valueOf((Double) propertyService.getWaterTaxDues(assessmentNo).get(PropertyTaxConstants.WATER_TAX_DUES)));
+                Double.valueOf((Double) propertyService.getWaterTaxDues(assessmentNo).get("currentInstDemand")));
     }
     
     private Boolean isUnderWtmsWF(){
