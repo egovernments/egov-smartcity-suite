@@ -41,6 +41,12 @@
 package org.egov.pgr.service.reports;
 
 import static org.egov.pgr.utils.constants.PGRConstants.FROMDATE;
+import static org.egov.pgr.utils.constants.PGRConstants.TODATE;
+
+import java.util.Date;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.hibernate.SQLQuery;
@@ -49,10 +55,6 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDateTime;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.util.Date;
 
 @Service
 @Transactional(readOnly = true)
@@ -63,7 +65,7 @@ public class ComplaintTypeWiseReportService {
 
     @ReadOnly
     public SQLQuery getComplaintTypeWiseReportQuery(final DateTime fromDate, final DateTime toDate,
-                                                    final String complaintType, final String complaintDateType) {
+            final String complaintType, final String complaintDateType) {
 
         final StringBuilder query = new StringBuilder();
 
@@ -73,7 +75,7 @@ public class ComplaintTypeWiseReportService {
                 "SUM(CASE WHEN state.value in ('COMPLETED','REJECTED','WITHDRAWN') AND (cd.createddate - state.lastmodifieddate) < (interval '1h' * ctype.slahours) THEN 1 WHEN (state.value not in ('COMPLETED','REJECTED','WITHDRAWN') AND (cd.createddate - CURRENT_DATE) < (interval '1h' * ctype.slahours)) THEN 1 else 0 END) withinsla, ");
         query.append(
                 "SUM(CASE WHEN state.value in ('COMPLETED','REJECTED','WITHDRAWN') AND (cd.createddate - state.lastmodifieddate) > (interval '1h' * ctype.slahours) THEN 1 WHEN (state.value not in ('COMPLETED','REJECTED','WITHDRAWN') AND (cd.createddate - CURRENT_DATE ) > (interval '1h' * ctype.slahours)) THEN 1 ELSE 0 END) beyondsla ");
-        query.append("FROM egpgr_complaintstatus cs ,egpgr_complainttype ctype ,egpgr_complaint cd ,eg_wf_states state ");
+        query.append("FROM egpgr_complaintstatus cs ,egpgr_complainttype ctype ,eg_wf_states state  ,egpgr_complaint cd");
         buildWhereClause(fromDate, toDate, complaintType, complaintDateType, query);
         query.append(" group by ctype.name,ctype.id ");
 
@@ -82,14 +84,14 @@ public class ComplaintTypeWiseReportService {
     }
 
     private void buildWhereClause(final DateTime fromDate, final DateTime toDate, final String complaintType,
-                                  final String complaintDateType, final StringBuilder query) {
+            final String complaintDateType, final StringBuilder query) {
 
         query.append(" WHERE cd.status = cs.id and cd.complainttype= ctype.id  and cd.state_id = state.id");
-
-        if (fromDate != null || "lastsevendays".equals(complaintDateType) || "lastthirtydays".equals(complaintDateType) || "lastninetydays".equals(complaintDateType))
-            query.append(" and cd.createddate >=   :fromDates ");
-        else if (fromDate != null && toDate != null)
+        if (fromDate != null && toDate != null)
             query.append(" and ( cd.createddate BETWEEN :fromDates and :toDates) ");
+        else if (fromDate != null || "lastsevendays".equals(complaintDateType) || "lastthirtydays".equals(complaintDateType)
+                || "lastninetydays".equals(complaintDateType))
+            query.append(" and cd.createddate >=   :fromDates ");
         else if (toDate != null)
             query.append(" and cd.createddate <=  :toDates ");
         if (complaintType != null && !"".equals(complaintType)) {
@@ -100,7 +102,7 @@ public class ComplaintTypeWiseReportService {
     }
 
     private SQLQuery setParameterForComplaintTypeReportQuery(final String querykey, final DateTime fromDate,
-                                                             final DateTime toDate, final String complaintDateType) {
+            final DateTime toDate, final String complaintDateType) {
         final SQLQuery qry = entityManager.unwrap(Session.class).createSQLQuery(querykey);
 
         if ("lastsevendays".equals(complaintDateType))
@@ -111,12 +113,11 @@ public class ComplaintTypeWiseReportService {
             qry.setParameter(FROMDATE, getCurrentDateWithOutTime().minusDays(90).toDate());
         else if (fromDate != null && toDate != null) {
             qry.setParameter(FROMDATE, resetTimeByPassingDate(fromDate));
-            qry.setParameter("toDates", getEndOfDayByDate(toDate));
-
+            qry.setParameter(TODATE, getEndOfDayByDate(toDate));
         } else if (fromDate != null)
             qry.setParameter(FROMDATE, resetTimeByPassingDate(fromDate));
         else if (toDate != null)
-            qry.setParameter("toDates", getEndOfDayByDate(toDate));
+            qry.setParameter(TODATE, getEndOfDayByDate(toDate));
         return qry;
 
     }
@@ -134,7 +135,7 @@ public class ComplaintTypeWiseReportService {
     }
 
     public SQLQuery getComplaintTypeWiseReportQuery(final DateTime fromDate, final DateTime toDate,
-                                                    final String complaintDateType, final String complaintTypeWithStatus, final String status) {
+            final String complaintDateType, final String complaintTypeWithStatus, final String status) {
 
         final StringBuilder query = new StringBuilder();
 
