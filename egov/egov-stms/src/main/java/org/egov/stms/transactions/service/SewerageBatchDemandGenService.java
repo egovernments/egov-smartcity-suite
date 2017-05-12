@@ -30,6 +30,8 @@
  */
 package org.egov.stms.transactions.service;
 
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.egov.commons.Installment;
 import org.egov.demand.dao.EgDemandDao;
@@ -41,10 +43,9 @@ import org.egov.stms.transactions.repository.SewerageTaxBatchDemandGenRepository
 import org.egov.stms.utils.constants.SewerageTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
-
-import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -135,11 +136,17 @@ public class SewerageBatchDemandGenService {
                 }
             }
             sewerageDmdGen.setActive(false);
-            sewerageDmdGen.setTotalRecords((recordsResult != null && recordsResult.length > 0 && recordsResult[0] != null) ? recordsResult[0] : 0);
-            sewerageDmdGen.setSuccessfullRecords((recordsResult != null && recordsResult.length >= 2 && recordsResult[1] != null) ? recordsResult[1] : 0);
-            sewerageDmdGen.setFailureRecords((recordsResult != null && recordsResult.length >= 3 && recordsResult[2] != null) ? recordsResult[2] : 0);
+            sewerageDmdGen.setTotalRecords(
+                    (recordsResult != null && recordsResult.length > 0 && recordsResult[0] != null) ? recordsResult[0] : 0);
+            sewerageDmdGen.setSuccessfullRecords(
+                    (recordsResult != null && recordsResult.length >= 2 && recordsResult[1] != null) ? recordsResult[1] : 0);
+            sewerageDmdGen.setFailureRecords(
+                    (recordsResult != null && recordsResult.length >= 3 && recordsResult[2] != null) ? recordsResult[2] : 0);
 
-            transactionTemplate.execute(result -> {
+            final TransactionTemplate txTemplate = new TransactionTemplate(transactionTemplate.getTransactionManager());
+            txTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+
+            txTemplate.execute(result -> {
                 updateSewerageTaxBatchDemandGenerate(sewerageDmdGen);
                 return Boolean.TRUE;
             });
@@ -147,6 +154,5 @@ public class SewerageBatchDemandGenService {
 
         return (recordsResult != null && recordsResult.length >= 2 && recordsResult[1] != null) ? recordsResult[1] : 0;
     }
-
 
 }

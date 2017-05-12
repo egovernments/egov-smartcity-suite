@@ -40,6 +40,12 @@
 
 package org.egov.adtax.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.log4j.Logger;
 import org.egov.adtax.entity.Advertisement;
 import org.egov.adtax.entity.AdvertisementBatchDemandGenerate;
@@ -52,13 +58,9 @@ import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -154,8 +156,10 @@ public class AdvertisementBatchDemandGenService {
                 advDmdGen.setActive(false);
                 advDmdGen.setTotalRecords(totalRecordsProcessed);
             }
+            final TransactionTemplate txTemplate = new TransactionTemplate(transactionTemplate.getTransactionManager());
+            txTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
 
-            transactionTemplate.execute(result -> {
+            txTemplate.execute(result -> {
                 updateAdvertisementBatchDemandGenerate(advDmdGen);
                 return Boolean.TRUE;
             });
