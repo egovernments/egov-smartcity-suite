@@ -88,7 +88,7 @@
 				</div>
 			</td>
 			<egov:ajaxdropdown id="floorUsage" fields="['Text','Value']" dropdownId="floorUsage"
-			url="/common/ajaxCommon-usageByPropType.action" afterSuccess="loadUsages"/>
+			url="/public/common/ajaxCommon-usageByPropType.action" afterSuccess="loadUsages"/>
 			<td class="blueborderfortd" style="padding: 2px 2px">
 				<div align="center">
 					<s:select headerKey="" headerValue="%{getText('default.select')}"
@@ -265,7 +265,7 @@
 					</div>
 				</td>
 				<egov:ajaxdropdown id="floorUsage" fields="['Text','Value']" dropdownId="floorUsage"
-			          url="/common/ajaxCommon-usageByPropType.action" afterSuccess="loadUsages"/>
+			          url="/public/common/ajaxCommon-usageByPropType.action" afterSuccess="loadUsages"/>
 				<td class="blueborderfortd" style="padding: 2px 2px">
 					<div align="center">
 							<s:select headerKey=""
