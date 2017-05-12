@@ -642,7 +642,7 @@ public class WaterTaxUtils {
         Boolean citizenrole = Boolean.FALSE;
         if (ApplicationThreadLocals.getUserId() != null) {
             final User currentUser = userService.getUserById(ApplicationThreadLocals.getUserId());
-            if (securityUtils.getCurrentUser().getUsername().equals(WaterTaxConstants.USERNAME_ANONYMOUS))
+            if (currentUser.getUsername().equals(WaterTaxConstants.USERNAME_ANONYMOUS))
                 citizenrole = Boolean.TRUE;
             for (final Role userrole : currentUser.getRoles())
                 if (userrole != null && userrole.getName().equals(WaterTaxConstants.ROLE_CITIZEN)) {
