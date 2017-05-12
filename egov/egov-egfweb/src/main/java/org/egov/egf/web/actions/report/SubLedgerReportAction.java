@@ -54,6 +54,7 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.Fund;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
@@ -130,6 +131,7 @@ public class SubLedgerReportAction extends BaseFormAction {
     @ValidationErrorPage(value = FinancialConstants.STRUTS_RESULT_PAGE_SEARCH)
     @SkipValidation
     @Action(value = "/report/subLedgerReport-search")
+    @ReadOnly
     public String search() throws TaskFailedException {
         subLedgerReport.setReportType("sl");
         if (LOGGER.isDebugEnabled())

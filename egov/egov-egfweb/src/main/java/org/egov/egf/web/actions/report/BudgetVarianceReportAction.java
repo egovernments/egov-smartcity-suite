@@ -73,6 +73,7 @@ import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
@@ -298,6 +299,7 @@ public class BudgetVarianceReportAction extends BaseFormAction {
         return paramMap;
     }
 
+    @ReadOnly
     private void populateData() {
         final CFinancialYear financialYear = financialYearDAO.getFinancialYearByDate(asOnDate);
         final boolean hasApprovedReForYear = budgetService.hasApprovedReForYear(financialYear.getId());

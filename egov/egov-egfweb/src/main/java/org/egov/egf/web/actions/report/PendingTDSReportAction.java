@@ -57,6 +57,7 @@ import org.egov.deduction.model.EgRemittanceDetail;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.egf.model.TDSEntry;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.reporting.engine.ReportFormat;
@@ -253,6 +254,7 @@ public class PendingTDSReportAction extends BaseFormAction {
         return paramMap;
     }
 
+    @ReadOnly
     private void populateData() {
         validateFinYear();
         if (getFieldErrors().size() > 0)
@@ -386,6 +388,7 @@ public class PendingTDSReportAction extends BaseFormAction {
     /**
      * show only pending TDSes
      */
+    @ReadOnly
     private void populateSummaryData() {
         recovery = (Recovery) persistenceService.find("from Recovery where id=?", recovery.getId());
         type = recovery.getType();

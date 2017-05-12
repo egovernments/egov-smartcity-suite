@@ -68,6 +68,7 @@ import org.egov.egf.model.BudgetAppDisplay;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.services.PersistenceService;
@@ -156,6 +157,7 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
             budgetGroup = (BudgetGroup) persistenceService.find("from BudgetGroup where id=?", budgetGroup.getId());
     }
 
+    @ReadOnly
     @SkipValidation
     @Action(value = "/report/budgetAppropriationRegisterReport-search")
     public String search() {

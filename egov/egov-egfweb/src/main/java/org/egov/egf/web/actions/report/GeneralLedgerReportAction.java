@@ -57,6 +57,7 @@ import org.egov.commons.Fund;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.services.PersistenceService;
@@ -154,6 +155,7 @@ public class GeneralLedgerReportAction extends BaseFormAction {
     @ValidationErrorPage(value = FinancialConstants.STRUTS_RESULT_PAGE_SEARCH)
     @SkipValidation
     @Action(value = "/report/generalLedgerReport-ajaxSearch")
+    @ReadOnly
     public String ajaxSearch() throws TaskFailedException {
 
         persistenceService.getSession().setDefaultReadOnly(true);
