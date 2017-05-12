@@ -40,7 +40,6 @@
 
 package org.egov.infra.elasticsearch.service;
 
-import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.elasticsearch.entity.ApplicationIndex;
@@ -49,6 +48,15 @@ import org.egov.infra.elasticsearch.service.es.ApplicationDocumentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Map;
+
+import static org.apache.commons.lang3.StringUtils.defaultString;
+import static org.egov.infra.utils.ApplicationConstant.CITY_CODE_KEY;
+import static org.egov.infra.utils.ApplicationConstant.CITY_CORP_GRADE_KEY;
+import static org.egov.infra.utils.ApplicationConstant.CITY_DIST_NAME_KEY;
+import static org.egov.infra.utils.ApplicationConstant.CITY_NAME_KEY;
+import static org.egov.infra.utils.ApplicationConstant.CITY_REGION_NAME_KEY;
 
 @Service
 @Transactional(readOnly = true)
@@ -61,33 +69,33 @@ public class ApplicationIndexService {
     private CityService cityService;
 
     @Autowired
-    public ApplicationIndexService(final ApplicationIndexRepository applicationIndexRepository,
-            final ApplicationDocumentService applicationDocumentService) {
+    public ApplicationIndexService(ApplicationIndexRepository applicationIndexRepository,
+                                   ApplicationDocumentService applicationDocumentService) {
         this.applicationIndexRepository = applicationIndexRepository;
         this.applicationDocumentService = applicationDocumentService;
     }
 
     @Transactional
-    public ApplicationIndex createApplicationIndex(final ApplicationIndex applicationIndex) {
-        final City cityObj = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
-        applicationIndex.setCityCode(cityObj.getCode());
-        applicationIndex.setCityName(cityObj.getName());
-        applicationIndex.setCityGrade(cityObj.getGrade());
-        applicationIndex.setDistrictName(cityObj.getDistrictName());
-        applicationIndex.setRegionName(cityObj.getRegionName());
+    public ApplicationIndex createApplicationIndex(ApplicationIndex applicationIndex) {
+        Map<String, Object> cityInfo = cityService.cityDataAsMap();
+        applicationIndex.setCityCode(defaultString((String) cityInfo.get(CITY_CODE_KEY)));
+        applicationIndex.setCityName(defaultString((String) cityInfo.get(CITY_NAME_KEY)));
+        applicationIndex.setCityGrade(defaultString((String) cityInfo.get(CITY_CORP_GRADE_KEY)));
+        applicationIndex.setDistrictName(defaultString((String) cityInfo.get(CITY_DIST_NAME_KEY)));
+        applicationIndex.setRegionName(defaultString((String) cityInfo.get(CITY_REGION_NAME_KEY)));
         applicationIndexRepository.save(applicationIndex);
         applicationDocumentService.createOrUpdateApplicationDocument(applicationIndex);
         return applicationIndex;
     }
 
     @Transactional
-    public ApplicationIndex updateApplicationIndex(final ApplicationIndex applicationIndex) {
+    public ApplicationIndex updateApplicationIndex(ApplicationIndex applicationIndex) {
         applicationIndexRepository.save(applicationIndex);
         applicationDocumentService.createOrUpdateApplicationDocument(applicationIndex);
         return applicationIndex;
     }
 
-    public ApplicationIndex findByApplicationNumber(final String applicationNumber) {
+    public ApplicationIndex findByApplicationNumber(String applicationNumber) {
         return applicationIndexRepository.findByApplicationNumberAndCityName(applicationNumber,
                 ApplicationThreadLocals.getCityName());
     }
