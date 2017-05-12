@@ -82,7 +82,7 @@ public class SewerageBatchDemandGenService {
     public SewerageTaxBatchDemandGenerate createSewerageTaxBatchDemandGenerate(final SewerageTaxBatchDemandGenerate advBatchDmd) {
         return sewerageTaxBatchDemandGenRepository.save(advBatchDmd);
     }
-
+    @Transactional
     public SewerageTaxBatchDemandGenerate updateSewerageTaxBatchDemandGenerate(final SewerageTaxBatchDemandGenerate advBatchDmd) {
         return sewerageTaxBatchDemandGenRepository.save(advBatchDmd);
     }
