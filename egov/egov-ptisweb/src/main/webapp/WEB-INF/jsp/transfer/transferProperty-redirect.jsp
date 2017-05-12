@@ -65,12 +65,8 @@ function submit(obj) {
   	var meesevaServiceCode = '<s:property value = "%{meesevaServiceCode}"/>';
   	var applicationType = '<s:property value = "%{applicationType}"/>';
   	var applicationSource = '<s:property value = "%{applicationSource}"/>';
-  	var url ='';
-  	if ("online" === applicationSource.toLowerCase()) {
-  		url = '/ptis/citizen/property/transfer/new.action';
-  	} else {
-  		url = '/ptis/property/transfer/new.action';
-  	}
+  	var url ='/ptis/property/transfer/new.action';
+  	
 	jQuery('<form>.').attr({
 		method: 'post',
 		action: url,

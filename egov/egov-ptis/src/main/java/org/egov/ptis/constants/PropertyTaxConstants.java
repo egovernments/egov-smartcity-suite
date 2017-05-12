@@ -752,6 +752,7 @@ public interface PropertyTaxConstants {
     public static final String ROLE_ULB_OPERATOR = "ULB Operator";
     public static final String ROLE_COLLECTION_OPERATOR = "Collection Operator";
     public static final String ROLE_PTADMINISTRATOR = "Property Administrator";
+    public static final String ROLE_DATAENTRY_OPERATOR ="Data Entry Operator";
 
     // Designations
     public static final String ASSISTANT_DESGN = "Assistant";

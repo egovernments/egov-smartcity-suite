@@ -125,7 +125,6 @@ import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
-import org.apache.struts2.convention.annotation.Namespaces;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.ResultPath;
@@ -204,7 +203,6 @@ import com.google.gson.GsonBuilder;
 @Results({ @Result(name = ModifyPropertyAction.RESULT_ACK, location = "modify/modifyProperty-ack.jsp"),
         @Result(name = ModifyPropertyAction.EDIT, location = "modify/modifyProperty-new.jsp"),
         @Result(name = ModifyPropertyAction.NEW, location = "modify/modifyProperty-new.jsp"),
-        @Result(name = ModifyPropertyAction.CITIZEN_NEW, location = "citizen/modify/modifyProperty-new.jsp"),
         @Result(name = ModifyPropertyAction.VIEW, location = "modify/modifyProperty-view.jsp"),
         @Result(name = TARGET_WORKFLOW_ERROR, location = "workflow/workflow-error.jsp"),
         @Result(name = ModifyPropertyAction.BALANCE, location = "modify/modifyProperty-balance.jsp"),
@@ -212,7 +210,7 @@ import com.google.gson.GsonBuilder;
         @Result(name = ModifyPropertyAction.COMMON_FORM, location = "search/searchProperty-commonForm.jsp"),
         @Result(name = ModifyPropertyAction.MEESEVA_ERROR, location = "common/meeseva-errorPage.jsp"),
         @Result(name = ModifyPropertyAction.MEESEVA_RESULT_ACK, location = "common/meesevaAck.jsp") })
-@Namespaces(value = { @Namespace("/modify"), @Namespace("/citizen/modify") })
+@Namespace("/modify")
 public class ModifyPropertyAction extends PropertyTaxBaseAction {
     private static final String FROM_PROPERTY_TYPE_MASTER_WHERE_ID = "from PropertyTypeMaster ptm where ptm.id = ?";
     private final Logger logger = Logger.getLogger(getClass());
@@ -220,7 +218,6 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
     protected static final String BALANCE = "balance";
     protected static final String RESULT_ACK = "ack";
     protected static final String VIEW = "view";
-    protected static final String CITIZEN_NEW = "citizenNewForm";
 
     private static final String PROPERTY_MODIFY_REJECT_SUCCESS = "property.modify.reject.success";
     private static final String PROPERTY_MODIFY_FINAL_REJECT_SUCCESS = "property.modify.final.reject.success";
@@ -546,9 +543,6 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
                 vacantLandPlotAreaId = propertyModel.getPropertyDetail().getVacantLandPlotArea().getId();
             if (propertyModel.getPropertyDetail().getLayoutApprovalAuthority() != null)
                 layoutApprovalAuthorityId = propertyModel.getPropertyDetail().getLayoutApprovalAuthority().getId();
-            if (StringUtils.isNotBlank(applicationSource))
-                target = CITIZEN_NEW;
-            else
                 target = NEW;
         }
         if (logger.isDebugEnabled())

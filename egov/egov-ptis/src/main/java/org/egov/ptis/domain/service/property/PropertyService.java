@@ -58,6 +58,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.BIGDECIMAL_100;
 import static org.egov.ptis.constants.PropertyTaxConstants.BUILT_UP_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.CSC_OPERATOR_ROLE;
+import static org.egov.ptis.constants.PropertyTaxConstants.ROLE_DATAENTRY_OPERATOR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_BAL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
@@ -2626,6 +2627,13 @@ public class PropertyService {
         return false;
     }
 
+	public Boolean isDataEntryOperator(User user) {
+		for (final Role role : user.getRoles())
+            if (role != null && role.getName().equalsIgnoreCase(ROLE_DATAENTRY_OPERATOR))
+                return true;
+        return false;
+	}
+	
     /**
      * Getting User assignment based on designation ,department and zone boundary Reading Designation and Department from
      * appconfig values and Values should be 'Senior Assistant,Junior Assistant' for designation and

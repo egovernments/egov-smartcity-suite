@@ -112,7 +112,7 @@ import org.springframework.web.servlet.view.RedirectView;
  * @author subhash
  */
 @Controller
-@RequestMapping(value = { "/exemption","/citizen/exemption" })
+@RequestMapping(value = { "/exemption" })
 public class TaxExemptionController extends GenericWorkFlowController {
 
     private static final String APPLICATION_SOURCE = "applicationSource";

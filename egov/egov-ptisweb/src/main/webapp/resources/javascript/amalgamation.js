@@ -282,7 +282,7 @@ jQuery(document).on('blur', ".mobileno", function () {
 
 	var rowidx=jQuery(this).data('idx');
     jQuery.ajax({
-        url: "/ptis/public/common/ajaxCommon-getUserByMobileNo.action",
+        url: "/ptis/common/ajaxCommon-getUserByMobileNo.action",
         type: "GET",
         data:{"mobileNumber":jQuery(this).val()},
         dataType: "json",
