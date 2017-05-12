@@ -111,7 +111,8 @@ public class SewerageChargeCalculationServiceImpl implements SewerageChargeCalcu
 
     @Override
     public BigDecimal calculateSewerageCharges(final SewerageApplicationDetails sewerageApplicationDetails) {
-        Integer noOfClosets, numberOfInstallments = 1;
+        Integer noOfClosets;
+        Integer numberOfInstallments = 1;
         BigDecimal sewerateRate = BigDecimal.ZERO;
         Double monthlyRateAmount = 0.0;
         if (sewerageApplicationDetails.getConnection() != null
@@ -141,7 +142,7 @@ public class SewerageChargeCalculationServiceImpl implements SewerageChargeCalcu
                                         PropertyType.RESIDENTIAL);
 
                         if (monthlyRateAmount != null)
-                            sewerateRate = BigDecimal.valueOf(numberOfInstallments * noOfClosets * monthlyRateAmount);
+                            sewerateRate = BigDecimal.valueOf(numberOfInstallments * monthlyRateAmount);
                         noOfClosets = sewerageConnectionDetail.getNoOfClosetsNonResidential();
                         monthlyRateAmount = sewerageRatesMasterService
                                 .getSewerageMonthlyRatesByPropertytype(sewerageConnectionDetail.getNoOfClosetsNonResidential(),
@@ -149,7 +150,7 @@ public class SewerageChargeCalculationServiceImpl implements SewerageChargeCalcu
 
                         if (monthlyRateAmount != null)
                             sewerateRate = sewerateRate
-                                    .add(BigDecimal.valueOf(numberOfInstallments * noOfClosets * monthlyRateAmount));
+                                    .add(BigDecimal.valueOf(numberOfInstallments * monthlyRateAmount));
                         return sewerateRate;
                     } else {
                         noOfClosets = sewerageConnectionDetail.getPropertyType().equals(PropertyType.RESIDENTIAL)
@@ -161,38 +162,34 @@ public class SewerageChargeCalculationServiceImpl implements SewerageChargeCalcu
                         monthlyRateAmount = sewerageRatesMasterService
                                 .getSewerageMonthlyRatesByPropertytype(noOfClosets, sewerageConnectionDetail.getPropertyType());
                         if (monthlyRateAmount != null)
-                            sewerateRate = BigDecimal.valueOf(numberOfInstallments * monthlyRateAmount * noOfClosets);
+                            sewerateRate = BigDecimal.valueOf(numberOfInstallments * monthlyRateAmount);
                     }
+                } else if (sewerageConnectionDetail.getPropertyType().equals(PropertyType.MIXED)) {
+                    noOfClosets = sewerageConnectionDetail.getNoOfClosetsResidential();
+                    monthlyRateAmount = sewerageRatesMasterService
+                            .getSewerageMonthlyRatesByPropertytype(PropertyType.RESIDENTIAL);
+
+                    if (monthlyRateAmount != null)
+                        sewerateRate = BigDecimal.valueOf(numberOfInstallments * noOfClosets * monthlyRateAmount);
+                    noOfClosets = sewerageConnectionDetail.getNoOfClosetsNonResidential();
+                    monthlyRateAmount = sewerageRatesMasterService
+                            .getSewerageMonthlyRatesByPropertytype(PropertyType.NON_RESIDENTIAL);
+
+                    if (monthlyRateAmount != null)
+                        sewerateRate = sewerateRate
+                                .add(BigDecimal.valueOf(numberOfInstallments * noOfClosets * monthlyRateAmount));
+                    return sewerateRate;
                 } else {
-
-                    if (sewerageConnectionDetail.getPropertyType().equals(PropertyType.MIXED)) {
-                        noOfClosets = sewerageConnectionDetail.getNoOfClosetsResidential();
-                        monthlyRateAmount = sewerageRatesMasterService
-                                .getSewerageMonthlyRatesByPropertytype(PropertyType.RESIDENTIAL);
-
-                        if (monthlyRateAmount != null)
-                            sewerateRate = BigDecimal.valueOf(numberOfInstallments * noOfClosets * monthlyRateAmount);
-                        noOfClosets = sewerageConnectionDetail.getNoOfClosetsNonResidential();
-                        monthlyRateAmount = sewerageRatesMasterService
-                                .getSewerageMonthlyRatesByPropertytype(PropertyType.NON_RESIDENTIAL);
-
-                        if (monthlyRateAmount != null)
-                            sewerateRate = sewerateRate
-                                    .add(BigDecimal.valueOf(numberOfInstallments * noOfClosets * monthlyRateAmount));
-                        return sewerateRate;
-                    } else {
-                        noOfClosets = sewerageConnectionDetail.getPropertyType().equals(PropertyType.RESIDENTIAL)
-                                ? sewerageConnectionDetail
-                                        .getNoOfClosetsResidential()
-                                : sewerageConnectionDetail.getPropertyType().equals(
-                                        PropertyType.NON_RESIDENTIAL) ? sewerageConnectionDetail.getNoOfClosetsNonResidential()
-                                                : 0;
-                        monthlyRateAmount = sewerageRatesMasterService
-                                .getSewerageMonthlyRatesByPropertytype(sewerageConnectionDetail.getPropertyType());
-                        if (monthlyRateAmount != null)
-                            sewerateRate = BigDecimal.valueOf(numberOfInstallments * monthlyRateAmount * noOfClosets);
-                    }
-
+                    noOfClosets = sewerageConnectionDetail.getPropertyType().equals(PropertyType.RESIDENTIAL)
+                            ? sewerageConnectionDetail
+                                    .getNoOfClosetsResidential()
+                            : sewerageConnectionDetail.getPropertyType().equals(
+                                    PropertyType.NON_RESIDENTIAL) ? sewerageConnectionDetail.getNoOfClosetsNonResidential()
+                                            : 0;
+                    monthlyRateAmount = sewerageRatesMasterService
+                            .getSewerageMonthlyRatesByPropertytype(sewerageConnectionDetail.getPropertyType());
+                    if (monthlyRateAmount != null)
+                        sewerateRate = BigDecimal.valueOf(numberOfInstallments * monthlyRateAmount * noOfClosets);
                 }
             }
         }
