@@ -119,7 +119,7 @@ public class Inbox implements Comparable<Inbox> {
 	@Override
 	public int compareTo(Inbox o) {
 		if (this.createdDate != null && o.createdDate != null)
-			return this.createdDate.compareTo(o.createdDate);
+			return o.createdDate.compareTo(this.createdDate);
 		else
 			return 0;
 	}
