@@ -161,6 +161,8 @@ public class ApplicationSearchController {
         if (StringUtils.isNotBlank(searchRequest.getApplicationStatus()))
             if (WaterTaxConstants.APPLICATIONSTATUSOPEN.equals(searchRequest.getApplicationStatus()))
                 boolQuery = boolQuery.filter(QueryBuilders.matchQuery("isClosed", Integer.toString(0)));
+            else if (searchRequest.getApplicationStatus().equals(WaterTaxConstants.APPLICATIONSTATUSCLOSED))
+                boolQuery = boolQuery.filter(QueryBuilders.matchQuery("isClosed", Integer.toString(1)));
         if (StringUtils.isNotBlank(searchRequest.getMobileNumber()))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("mobileNumber", searchRequest.getMobileNumber()));
 
