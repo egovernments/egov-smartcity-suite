@@ -1057,7 +1057,6 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
             persist(receiptHeader);
             LOGGER.info("Persisted receipts");
             LOGGER.info("Workflow started for newly created receipts");
-            final Date cutOffDate = getDataEntryCutOffDate();
             if (isReceiptCreateApprovedStatus(receiptHeader))
                 setReceiptApprovedStatus(receiptHeader);
             else

@@ -737,7 +737,7 @@ public class ReceiptAction extends BaseFormAction {
                     // receiptHeader.getService().getServiceType();
                     receiptHeader.setCollectiontype(CollectionConstants.COLLECTION_TYPE_COUNTER);
                     // Bank Collection Operator location is not captured.
-                    if ((!collectionsUtil.isBankCollectionOperator(receiptCreatedByCounterOperator))
+                    if (!collectionsUtil.isBankCollectionOperator(receiptCreatedByCounterOperator)
                             && receiptHeader.getLocation() == null)
                         receiptHeader.setLocation(collectionsUtil.getLocationOfUser(getSession()));
                     receiptHeader.setStatus(collectionsUtil.getStatusForModuleAndCode(
