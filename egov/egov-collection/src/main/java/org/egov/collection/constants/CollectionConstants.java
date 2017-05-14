@@ -154,7 +154,7 @@ public final class CollectionConstants {
     public static final String APPCONFIG_VALUE_COLLECTION_BANKREMITTANCE_SHOWREMITDATE = "COLLECTION_BANKREMITTANCE_SHOWREMITDATE";
     public static final String APPCONFIG_VALUE_COLLECTIONDATAENTRYCUTOFFDATE = "COLLECTIONDATAENTRYCUTOFFDATE";
     public static final String APPCONFIG_VALUE_COLLECTIONSOURCEDEBITACCOUNTHEAD = "COLLECTIONSOURCEDEBITACCOUNTHEAD";
-
+    public static final String APPCONFIG_VALUE_ROLES_CREATERECEIPT_APPROVEDSTATUS = "ROLES_CREATERECEIPT_APPROVEDSTATUS";
 
     // named queries (collections)
     public static final String QUERY_RECEIPTS_FOR_VOUCHERS = "RECEIPTS_FOR_VOUCHERS";
@@ -226,7 +226,7 @@ public final class CollectionConstants {
     public static final String QUERY_GET_LOCATIONBYID = "getLocationById";
     public static final String QUERY_GET_CONTRAVOUCHERBYVOUCHERHEADERID = "getContraVoucherbyVoucherHeaderId";
     public static final String QUERY_GET_INSTRUMENTHEADER_BY_ID = "INSTRUMENTHEADERBYID";
-    public static final String QUERY_CREATEDBYUSERS_OF_PAYMENT_RECEIPTS="CREATEDBYUSERS_OF_PAYMENT_RECEIPTS";
+    public static final String QUERY_CREATEDBYUSERS_OF_PAYMENT_RECEIPTS = "CREATEDBYUSERS_OF_PAYMENT_RECEIPTS";
 
     // Workflow actions
     public static final String WF_ACTION_CREATE_RECEIPT = "Create Receipt";
@@ -363,9 +363,8 @@ public final class CollectionConstants {
     public static final String SERVICECODE_PROFESSIONALTAX = "PRFT";
     public static final String SERVICECODE_AXIS = "AXIS";
     public static final String SERVICECODE_SBIMOPS = "SBIMOPS";
-    
-    public static final String SERVICECODE_LAMS = "LAMS";
 
+    public static final String SERVICECODE_LAMS = "LAMS";
 
     // Online Payment Statuses
     public static final String ONLINEPAYMENT_STATUS_CODE_PENDING = "ONLINE_STATUS_PENDING";
@@ -525,9 +524,9 @@ public final class CollectionConstants {
     public static final String AXIS_FAILED_ABORTED_MESSAGE = "Failed/Aborted Transaction.";
     public static final String AXIS_CHECK_DR_EXISTS = "vpc_DRExists";
     public static final String AXIS_ABORTED_AUTH_STATUS = "A";
-    
-    //SBIMOPS payment gateway variables
-    public static final String SBIMOPS_DEPTCODE ="deptcode";
+
+    // SBIMOPS payment gateway variables
+    public static final String SBIMOPS_DEPTCODE = "deptcode";
     public static final String SBIMOPS_DDCODE = "ddocode";
     public static final String SBIMOPS_HOA = "hoa";
     public static final String SBIMOPS_DEPTTRANSID = "depttransid";
@@ -540,8 +539,6 @@ public final class CollectionConstants {
     public static final String SBIMOPS_BANK_AMOUNT = "bankamount";
     public static final String SBIMOPS_BANK_NAME = "bankname";
     public static final String SBIMOPS_UAMOUNT = "uamount";
-
-    
 
     // This is an array for creating hex chars
     public static final char[] AXIS_HEX_TABLE = new char[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A',
@@ -599,7 +596,7 @@ public final class CollectionConstants {
     public static final char[] REVENUEHEADS = new char[] { 'I', 'A', 'L' };
     public static final Integer DEFAULT_PAGE_SIZE = 30;
     public static final Integer QUARTZ_BULKBILL_JOBS = 2;
-    
+
     public static final String DATE_FORMAT_YYYYMMDD = "yyyy-MM-dd";
     public static final SimpleDateFormat DATEFORMATTER_YYYY_MM_DD = new SimpleDateFormat(DATE_FORMAT_YYYYMMDD);
 
@@ -611,8 +608,11 @@ public final class CollectionConstants {
     public static final String DASHBOARD_GROUPING_CITYWISE = "city";
     public static final String COLLECTION_INDEX_NAME = "receipts";
     public static final BigDecimal BIGDECIMAL_100 = BigDecimal.valueOf(100);
-    public static final String DISTINCT_SERVICE_DETAILS="DISTINCT_SERVICE_DETAILS";
+    public static final String DISTINCT_SERVICE_DETAILS = "DISTINCT_SERVICE_DETAILS";
     public static final String DASHBOARD_OTHERS = "OTHERS";
-    
-    
+
+    public static final String BANK_COLLECTION_OPERATOR = "Bank Collection Operator";
+    public static final String QUERY_ACTIVE_BRANCHUSER_BY_USESR = "QUERY_ACTIVE_BRANCHUSER_BY_USESR";
+    public static final String QUERY_BRANCHUSER_BRANCH = "QUERY_BRANCHUSER_BRANCH";
+
 }

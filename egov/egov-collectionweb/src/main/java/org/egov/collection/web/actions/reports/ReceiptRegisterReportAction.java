@@ -45,17 +45,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.utils.CollectionsUtil;
+import org.egov.commons.Bankbranch;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.entity.Source;
 import org.egov.infra.admin.master.entity.Department;
-import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportDataSourceType;
+import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.web.struts.actions.ReportFormAction;
 
 /**
@@ -76,12 +81,16 @@ public class ReceiptRegisterReportAction extends ReportFormAction {
     private static final String EGOV_STATUS_ID = "EGOV_STATUS_ID";
     private static final String EGOV_SOURCE = "EGOV_SOURCE";
     private static final String EGOV_SERVICE_ID = "EGOV_SERVICE_ID";
-    private static final String EGOV_CLASSIFICATION="EGOV_CLASSIFICATION";
+    private static final String EGOV_CLASSIFICATION = "EGOV_CLASSIFICATION";
+    private static final String EGOV_BRANCH_ID = "EGOV_BRANCH_ID";
+    public static final String DROPDOWN_BRANCHUSER_BRANCH = "bankBranchlist";
 
     private final Map<String, String> paymentModes = createPaymentModeList();
     private final Map<String, String> sources = createSourceList();
     private CollectionsUtil collectionsUtil;
     private TreeMap<String, String> serviceTypeMap = new TreeMap<String, String>();
+    @PersistenceContext
+    private EntityManager entityManager;
 
     /**
      * @return the payment mode list to be shown to user in criteria screen
@@ -91,7 +100,7 @@ public class ReceiptRegisterReportAction extends ReportFormAction {
         paymentModesMap.put(CollectionConstants.INSTRUMENTTYPE_CASH, CollectionConstants.INSTRUMENTTYPE_CASH);
         paymentModesMap.put(CollectionConstants.INSTRUMENTTYPE_CHEQUEORDD, CollectionConstants.INSTRUMENTTYPE_CHEQUEORDD);
         paymentModesMap.put(CollectionConstants.INSTRUMENTTYPE_CARD, CollectionConstants.INSTRUMENTTYPE_CARD);
-        paymentModesMap.put(CollectionConstants.INSTRUMENTTYPE_BANK, CollectionConstants.INSTRUMENTTYPE_BANK); 
+        paymentModesMap.put(CollectionConstants.INSTRUMENTTYPE_BANK, CollectionConstants.INSTRUMENTTYPE_BANK);
         paymentModesMap.put(CollectionConstants.INSTRUMENTTYPE_ONLINE, CollectionConstants.INSTRUMENTTYPE_ONLINE);
         return paymentModesMap;
     }
@@ -111,6 +120,8 @@ public class ReceiptRegisterReportAction extends ReportFormAction {
      */
     @Override
     public void prepare() {
+        final Query query = entityManager.createNamedQuery(CollectionConstants.QUERY_BRANCHUSER_BRANCH, Bankbranch.class);
+        addDropdownData(DROPDOWN_BRANCHUSER_BRANCH, query.getResultList());
         setReportFormat(ReportFormat.PDF);
         setDataSourceType(ReportDataSourceType.SQL);
     }
@@ -205,7 +216,7 @@ public class ReceiptRegisterReportAction extends ReportFormAction {
     public void setStatusId(final Integer statusId) {
         setReportParam(EGOV_STATUS_ID, statusId);
     }
-  
+
     /**
      * @return the payment modes
      */
@@ -262,7 +273,7 @@ public class ReceiptRegisterReportAction extends ReportFormAction {
     public void setServiceId(final Long serviceId) {
         setReportParam(EGOV_SERVICE_ID, serviceId);
     }
-    
+
     public String getClassificationType() {
         return (String) getReportParam(EGOV_CLASSIFICATION);
     }
@@ -270,14 +281,20 @@ public class ReceiptRegisterReportAction extends ReportFormAction {
     public void setClassificationType(final String classification) {
         setReportParam(EGOV_CLASSIFICATION, classification);
     }
-    
-    
+
     public TreeMap<String, String> getServiceTypeMap() {
         return serviceTypeMap;
     }
 
     public void setServiceTypeMap(final TreeMap<String, String> serviceTypeMap) {
         this.serviceTypeMap = serviceTypeMap;
-    }   
-    
+    }
+
+    public Long getBranchId() {
+        return (Long) getReportParam(EGOV_BRANCH_ID);
+    }
+
+    public void setBranchId(final Long branchId) {
+        setReportParam(EGOV_BRANCH_ID, branchId);
+    }
 }

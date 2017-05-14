@@ -38,8 +38,6 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
-<!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
-<!-- 2016-08-02T19:15:02 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="collection_receipt" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" resourceBundle="custom" uuid="97372054-cc7e-41ed-9c4d-7a7a1652d8c6">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -243,7 +241,7 @@
 				<textElement verticalAlignment="Middle">
 					<font size="10" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{receiptMisc}.getDepositedInBank() != null ? $F{receiptNum} : $F{receiptNum}+($F{receiptMisc}.getReceiptHeader().getManualreceiptnumber()==null? "":"("+$F{receiptMisc}.getReceiptHeader().getManualreceiptnumber()+")")+"\n"+new java.text.SimpleDateFormat("dd-MM-yyyy hh:mm:ss").format($F{receiptDate})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{receiptNum}+($F{receiptMisc}.getReceiptHeader().getManualreceiptnumber()==null? "":"("+$F{receiptMisc}.getReceiptHeader().getManualreceiptnumber()+")")+"\n"+new java.text.SimpleDateFormat("dd-MM-yyyy hh:mm:ss").format($F{receiptDate})]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement positionType="Float" x="0" y="85" width="89" height="15" uuid="8c0e4556-4764-451d-9d42-f531309889c0">

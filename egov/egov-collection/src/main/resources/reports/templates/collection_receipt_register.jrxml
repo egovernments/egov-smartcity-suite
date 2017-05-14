@@ -38,8 +38,6 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
-<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-01-03T10:18:22 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="receipt_register" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="NoDataSection" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="45cae798-aa6d-4b62-a802-37fd9ecaa359">
 	<property name="ireport.zoom" value="1.0000000000000009"/>
 	<property name="ireport.x" value="0"/>
@@ -84,6 +82,10 @@
 		<parameterDescription><![CDATA[The Service]]></parameterDescription>
 		<defaultValueExpression><![CDATA[-1]]></defaultValueExpression>
 	</parameter>
+	<parameter name="EGOV_BRANCH_ID" class="java.lang.Long">
+		<parameterDescription><![CDATA[The Branch]]></parameterDescription>
+		<defaultValueExpression><![CDATA[-1]]></defaultValueExpression>
+	</parameter>
 	<parameter name="EGOV_CLASSIFICATION" class="java.lang.String">
 		<defaultValueExpression><![CDATA["All"]]></defaultValueExpression>
 	</parameter>
@@ -94,6 +96,10 @@
 	<parameter name="Q_SERVICE_ID" class="java.lang.String" isForPrompting="false">
 		<parameterDescription><![CDATA[Where clause for service id]]></parameterDescription>
 		<defaultValueExpression><![CDATA[($P{EGOV_SERVICE_ID} == null || $P{EGOV_SERVICE_ID} == -1) ? "" : " AND EGCL_COLLECTIONHEADER.SERVICEDETAILS = '"+$P{EGOV_SERVICE_ID}+"'"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="Q_BRANCH_ID" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Where clause for service id]]></parameterDescription>
+		<defaultValueExpression><![CDATA[($P{EGOV_BRANCH_ID} == null || $P{EGOV_BRANCH_ID} == -1) ? "" : " AND EGCL_COLLECTIONMIS.DEPOSITEDBRANCH = '"+$P{EGOV_BRANCH_ID}+"'"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="Q_STATUS_ID" class="java.lang.String" isForPrompting="false">
 		<parameterDescription><![CDATA[Where clause for status id]]></parameterDescription>
@@ -141,6 +147,7 @@ WHERE
      $P!{Q_SOURCES}
      $P!{Q_SERVICE_ID}
      $P!{Q_CLASSIFICATION}
+     $P!{Q_BRANCH_ID}
 ORDER BY
      EGCL_COLLECTIONHEADER.RECEIPTDATE,
      EGCL_COLLECTIONHEADER.RECEIPTNUMBER,
@@ -515,7 +522,8 @@ ORDER BY
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="211" splitType="Stretch">
+		<band height="232" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 			<staticText>
 				<reportElement style="Title" x="256" y="10" width="296" height="33" uuid="a72ca086-2b3e-46a0-95cf-57cf3ac6e149"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -678,6 +686,22 @@ ORDER BY
 					<font fontName="Times New Roman" size="12" pdfFontName="Times-Roman"/>
 				</textElement>
 				<textFieldExpression><![CDATA[($P{EGOV_CLASSIFICATION}.equalsIgnoreCase("C")?"Challan Collection" :($P{EGOV_CLASSIFICATION}.equalsIgnoreCase("M")?"Miscelleneous Collection":$P{EGOV_CLASSIFICATION}.equalsIgnoreCase("B")?"Bill Based":"ALL"))]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="52" y="207" width="79" height="25" uuid="769c0c31-3af1-42d8-98aa-f37f840d49be"/>
+				<box leftPadding="5" rightPadding="5"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" pdfFontName="Times-Roman"/>
+				</textElement>
+				<text><![CDATA[Bankbranch:]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy">
+				<reportElement stretchType="RelativeToTallestObject" x="131" y="207" width="162" height="25" uuid="dc8eccf9-d16b-49cc-99ac-572d3c70285c"/>
+				<box leftPadding="5" rightPadding="5"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" pdfFontName="Times-Roman"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($P{EGOV_BRANCH_ID} == null || $P{EGOV_BRANCH_ID} == -1) ? "" : ReportUtil.fetchFromDBSql($P{REPORT_CONNECTION}, "SELECT BRANCHNAME FROM BANKBRANCH WHERE ID = " + $P{EGOV_BRANCH_ID})]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>
@@ -916,7 +940,7 @@ ORDER BY
 		<band height="30" splitType="Stretch"/>
 	</summary>
 	<noData>
-		<band height="211">
+		<band height="232">
 			<staticText>
 				<reportElement x="210" y="180" width="368" height="31" uuid="2d8d45b5-8f9b-4781-acdf-2b7a6202986f"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -1083,6 +1107,22 @@ ORDER BY
 				</textElement>
 				<text><![CDATA[Classification:]]></text>
 			</staticText>
+			<staticText>
+				<reportElement x="30" y="151" width="79" height="25" uuid="3a9a42b9-1d8e-400c-8837-8b9c2775a39c"/>
+				<box leftPadding="5" rightPadding="5"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" pdfFontName="Times-Roman"/>
+				</textElement>
+				<text><![CDATA[Bankbranch:]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy">
+				<reportElement stretchType="RelativeToTallestObject" x="109" y="151" width="162" height="25" uuid="ada72c38-1e2c-4aa7-92ed-aa29761453c1"/>
+				<box leftPadding="5" rightPadding="5"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" pdfFontName="Times-Roman"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($P{EGOV_BRANCH_ID} == null || $P{EGOV_BRANCH_ID} == -1) ? "" : ReportUtil.fetchFromDBSql($P{REPORT_CONNECTION}, "SELECT BRANCHNAME FROM BANKBRANCH WHERE ID = " + $P{EGOV_BRANCH_ID})]]></textFieldExpression>
+			</textField>
 		</band>
 	</noData>
 </jasperReport>

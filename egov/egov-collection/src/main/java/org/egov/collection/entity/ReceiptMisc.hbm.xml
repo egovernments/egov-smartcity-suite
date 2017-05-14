@@ -74,14 +74,12 @@
         <many-to-one name="idFunctionary" class="org.egov.commons.Functionary" fetch="select">
             <column name="functionary" precision="22" scale="0" />
         </many-to-one>
-        <many-to-one name="depositedInBank" class="org.egov.commons.Bank" fetch="select">
-            <column name="depositedinbank" precision="22" scale="0" />
+         <many-to-one name="depositedBranch" class="org.egov.commons.Bankbranch" fetch="select">
+            <column name="depositedBranch" precision="22" scale="0" />
         </many-to-one>
     </class>
     
     <query name="getAllReceiptBoundary">
     <![CDATA[select distinct boundary from ReceiptMisc ]]></query>
-    <query name="getAllBankForCOC">
-    <![CDATA[select distinct rm.depositedInBank from org.egov.collection.entity.ReceiptMisc rm where rm.depositedInBank is not null]]></query>
     
 </hibernate-mapping>

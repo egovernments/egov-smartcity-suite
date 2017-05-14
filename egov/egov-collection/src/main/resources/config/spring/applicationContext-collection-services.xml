@@ -153,5 +153,9 @@
 		scope="prototype">
 		<property name="persistenceService" ref="persistenceService" />
 	</bean>
+	<bean id="branchUserMapService" parent="abstractPersistenceService">
+		<constructor-arg name="type"
+			value="org.egov.collection.entity.BranchUserMap" />
+	</bean>
 	
 </beans>
