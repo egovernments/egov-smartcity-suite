@@ -120,7 +120,7 @@ public class ReceiptRegisterReportAction extends ReportFormAction {
      */
     @Override
     public void prepare() {
-        final Query query = entityManager.createNamedQuery(CollectionConstants.QUERY_BRANCHUSER_BRANCH, Bankbranch.class);
+        final Query query = entityManager.createNamedQuery(CollectionConstants.QUERY_RECEIPT_BRANCH, Bankbranch.class);
         addDropdownData(DROPDOWN_BRANCHUSER_BRANCH, query.getResultList());
         setReportFormat(ReportFormat.PDF);
         setDataSourceType(ReportDataSourceType.SQL);
