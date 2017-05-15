@@ -693,7 +693,7 @@ ORDER BY
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="12" pdfFontName="Times-Roman"/>
 				</textElement>
-				<text><![CDATA[Bankbranch:]]></text>
+				<text><![CDATA[Bank Branch:]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy">
 				<reportElement stretchType="RelativeToTallestObject" x="131" y="207" width="162" height="25" uuid="dc8eccf9-d16b-49cc-99ac-572d3c70285c"/>
@@ -1113,7 +1113,7 @@ ORDER BY
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="12" pdfFontName="Times-Roman"/>
 				</textElement>
-				<text><![CDATA[Bankbranch:]]></text>
+				<text><![CDATA[Bank Branch:]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy">
 				<reportElement stretchType="RelativeToTallestObject" x="109" y="151" width="162" height="25" uuid="ada72c38-1e2c-4aa7-92ed-aa29761453c1"/>
