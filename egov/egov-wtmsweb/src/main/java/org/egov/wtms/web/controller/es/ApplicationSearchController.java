@@ -40,6 +40,16 @@
 
 package org.egov.wtms.web.controller.es;
 
+import static java.lang.Math.toIntExact;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATIONSTATUSCLOSED;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATIONSTATUSOPEN;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_TAX_INDEX_NAME;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.elasticsearch.entity.ApplicationIndex;
@@ -47,7 +57,6 @@ import org.egov.infra.elasticsearch.entity.es.ApplicationDocument;
 import org.egov.wtms.entity.es.ApplicationSearchRequest;
 import org.egov.wtms.service.es.ApplicationSearchService;
 import org.egov.wtms.utils.WaterTaxUtils;
-import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -68,19 +77,22 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import static java.lang.Math.toIntExact;
-
 @Controller
 @RequestMapping(value = "/elastic/appSearch/")
 public class ApplicationSearchController {
 
     private static final String APPLICATION_COUNT = "application_count";
     private static final String APPLICATION_NUMBER = "applicationNumber";
+    private static final String CITY_NAME = "cityName";
+    private static final String APPLICANT_NAME = "applicantName";
+    private static final String CONSUMER_CODE = "consumerCode";
+    private static final String ISCLOSED = "isClosed";
+    private static final String MOBILE_NUMBER = "mobileNumber";
+    private static final String APPLICATION_TYPE = "applicationType";
+    private static final String CHANNEL = "channel";
+    private static final String MODULE_NAME = "moduleName";
+    private static final String APPLICATION_DATE = "applicationDate";
+
     private final ApplicationSearchService applicationSearchService;
     @Autowired
     private WaterTaxUtils waterTaxUtils;
@@ -132,7 +144,7 @@ public class ApplicationSearchController {
             @ModelAttribute final ApplicationSearchRequest searchRequest) {
         final SimpleDateFormat ft = new SimpleDateFormat("dd/MM/yyyy");
         final List<ApplicationSearchRequest> finalResult = new ArrayList<>();
-        List<ApplicationDocument> applicationDocumentList = findAllAppicationIndexByFilter(searchRequest);
+        final List<ApplicationDocument> applicationDocumentList = findAllAppicationIndexByFilter(searchRequest);
         for (final ApplicationDocument applicationIndex : applicationDocumentList) {
             final ApplicationSearchRequest customerObj = new ApplicationSearchRequest();
             customerObj.setApplicantName(applicationIndex.getApplicantName());
@@ -153,18 +165,19 @@ public class ApplicationSearchController {
     }
 
     private BoolQueryBuilder getFilterQuery(final ApplicationSearchRequest searchRequest) {
-        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery().filter(QueryBuilders.termQuery("cityName", ApplicationThreadLocals.getCityName()));
+        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery()
+                .filter(QueryBuilders.termQuery(CITY_NAME, ApplicationThreadLocals.getCityName()));
         if (StringUtils.isNotBlank(searchRequest.getApplicantName()))
-            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("applicantName", searchRequest.getApplicantName()));
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery(APPLICANT_NAME, searchRequest.getApplicantName()));
         if (StringUtils.isNotBlank(searchRequest.getConsumerCode()))
-            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("consumerCode", searchRequest.getConsumerCode()));
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery(CONSUMER_CODE, searchRequest.getConsumerCode()));
         if (StringUtils.isNotBlank(searchRequest.getApplicationStatus()))
-            if (WaterTaxConstants.APPLICATIONSTATUSOPEN.equals(searchRequest.getApplicationStatus()))
-                boolQuery = boolQuery.filter(QueryBuilders.matchQuery("isClosed", Integer.toString(0)));
-            else if (searchRequest.getApplicationStatus().equals(WaterTaxConstants.APPLICATIONSTATUSCLOSED))
-                boolQuery = boolQuery.filter(QueryBuilders.matchQuery("isClosed", Integer.toString(1)));
+            if (APPLICATIONSTATUSOPEN.equals(searchRequest.getApplicationStatus()))
+                boolQuery = boolQuery.filter(QueryBuilders.matchQuery(ISCLOSED, Integer.toString(0)));
+            else if (APPLICATIONSTATUSCLOSED.equals(searchRequest.getApplicationStatus()))
+                boolQuery = boolQuery.filter(QueryBuilders.matchQuery(ISCLOSED, Integer.toString(1)));
         if (StringUtils.isNotBlank(searchRequest.getMobileNumber()))
-            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("mobileNumber", searchRequest.getMobileNumber()));
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery(MOBILE_NUMBER, searchRequest.getMobileNumber()));
 
         if (StringUtils.isNotBlank(searchRequest.getApplicationNumber()))
             boolQuery = boolQuery
@@ -172,16 +185,16 @@ public class ApplicationSearchController {
 
         if (StringUtils.isNotBlank(searchRequest.getApplicationType()))
             boolQuery = boolQuery
-                    .filter(QueryBuilders.matchQuery("applicationType", searchRequest.getApplicationType()));
+                    .filter(QueryBuilders.matchQuery(APPLICATION_TYPE, searchRequest.getApplicationType()));
 
         if (StringUtils.isNotBlank(searchRequest.getSource()))
-            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("channel", searchRequest.getSource()));
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery(CHANNEL, searchRequest.getSource()));
 
         if (StringUtils.isNotBlank(searchRequest.getModuleName()))
-            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("moduleName", searchRequest.getModuleName()));
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery(MODULE_NAME, searchRequest.getModuleName()));
 
         if (StringUtils.isNotBlank(searchRequest.getFromDate()) && StringUtils.isNotBlank(searchRequest.getToDate()))
-            boolQuery = boolQuery.must(QueryBuilders.rangeQuery("applicationDate").from(searchRequest.getFromDate())
+            boolQuery = boolQuery.must(QueryBuilders.rangeQuery(APPLICATION_DATE).from(searchRequest.getFromDate())
                     .to(searchRequest.getToDate()));
 
         return boolQuery;
@@ -191,15 +204,15 @@ public class ApplicationSearchController {
         final BoolQueryBuilder query = getFilterQuery(searchRequest);
         SearchQuery searchQuery = new NativeSearchQueryBuilder()
                 .addAggregation(AggregationBuilders.count(APPLICATION_COUNT).field(APPLICATION_NUMBER))
-                .withIndices(WaterTaxConstants.APPLICATION_TAX_INDEX_NAME).withQuery(query).build();
+                .withIndices(APPLICATION_TAX_INDEX_NAME).withQuery(query).build();
 
         final Aggregations applicationCountAggr = elasticsearchTemplate.query(searchQuery, SearchResponse::getAggregations);
         final ValueCount aggr = applicationCountAggr.get(APPLICATION_COUNT);
 
-        searchQuery = new NativeSearchQueryBuilder().withIndices(WaterTaxConstants.APPLICATION_TAX_INDEX_NAME)
+        searchQuery = new NativeSearchQueryBuilder().withIndices(APPLICATION_TAX_INDEX_NAME)
                 .withQuery(query)
                 .addAggregation(AggregationBuilders.count(APPLICATION_COUNT).field(APPLICATION_NUMBER))
-                //Casting long to int is unsafe, since long value can go out bounds of int
+                // Casting long to int is unsafe, since long value can go out bounds of int
                 .withPageable(new PageRequest(0, toIntExact(aggr.getValue() == 0 ? 1 : aggr.getValue())))
                 .build();
         return elasticsearchTemplate.queryForList(searchQuery, ApplicationDocument.class);
