@@ -67,6 +67,8 @@ public class FinancialsDetailsRequest {
     private String minorCode = "";
     private String detailedCode = "";
     private String aggregationLevel;
+    private String currentFinancialYear;
+    private String LastFinancialYear;
 
     public String getRegion() {
         return region;
@@ -212,4 +214,19 @@ public class FinancialsDetailsRequest {
         this.aggregationLevel = aggregationLevel;
     }
 
+    public String getCurrentFinancialYear() {
+        return currentFinancialYear;
+    }
+
+    public void setCurrentFinancialYear(String currentFinancialYear) {
+        this.currentFinancialYear = currentFinancialYear;
+    }
+
+    public String getLastFinancialYear() {
+        return LastFinancialYear;
+    }
+
+    public void setLastFinancialYear(String lastFinancialYear) {
+        LastFinancialYear = lastFinancialYear;
+    }
 }

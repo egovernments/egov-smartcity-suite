@@ -49,7 +49,6 @@ package org.egov.egf.es.utils;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.egf.bean.dashboard.FinancialsDetailsRequest;
-import org.egov.utils.FinancialConstants;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 
@@ -60,7 +59,7 @@ public class FinancialsDashBoardUtils {
     private static final String DISTRICT = "distname";
     private static final String GRADE = "ulbgrade";
     private static final String ULBCODE = "ulbcode";
-    private static final String VOUCHER_DATE = "vouchercreateddate";
+    private static final String VOUCHER_DATE = "vouchereffectivedate";
     private static final String ADM_ZONE = "admZone";
     private static final String FUND_NAME = "voucherfundname";
     private static final String DEPARTMENT_CODE = "vouchermisdepartmentname";
@@ -71,7 +70,6 @@ public class FinancialsDashBoardUtils {
     private static final String MAJOR_CODE = "majorcode";
     private static final String MINOR_CODE = "minorcode";
     private static final String DETAILED_CODE = "glcode";
-    private static final String OBCREATEDDATE = "createddate";
 
     public static String getAggregationGroupingField(final FinancialsDetailsRequest financialsDetailsRequest) {
         String aggregationField = DISTRICT;
@@ -105,15 +103,10 @@ public class FinancialsDashBoardUtils {
                     .filter(QueryBuilders.matchQuery(DEPARTMENT_CODE, financialsDetailsRequest.getDepartmentCode()));
 
 
-        if (StringUtils.isNotBlank(financialsDetailsRequest.getFromDate()))
+        if (StringUtils.isNotBlank(financialsDetailsRequest.getFromDate()) || StringUtils.isNotBlank(financialsDetailsRequest.getToDate()))
             boolQuery
                     .filter(QueryBuilders.rangeQuery(VOUCHER_DATE)
-                            .gte(FinancialConstants.DATEFORMATTER_YYYY_MM_DD.format(financialsDetailsRequest.getFromDate())));
-
-        if (StringUtils.isNotBlank(financialsDetailsRequest.getToDate()))
-            boolQuery
-                    .filter(QueryBuilders.rangeQuery(VOUCHER_DATE)
-                            .lte(FinancialConstants.DATEFORMATTER_YYYY_MM_DD.format(financialsDetailsRequest.getToDate())));
+                            .from(financialsDetailsRequest.getFromDate()).to(financialsDetailsRequest.getToDate()));
 
         if (StringUtils.isNotBlank(financialsDetailsRequest.getFunctionCode()))
             boolQuery
@@ -140,15 +133,6 @@ public class FinancialsDashBoardUtils {
     public static BoolQueryBuilder prepareOpeningBlncWhereClause(final FinancialsDetailsRequest financialsDetailsRequest) {
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
         boolQuery = prepareWhereCluase(financialsDetailsRequest, boolQuery);
-        if (StringUtils.isNotBlank(financialsDetailsRequest.getFromDate()))
-            boolQuery
-                    .filter(QueryBuilders.rangeQuery(OBCREATEDDATE)
-                            .gte(FinancialConstants.DATEFORMATTER_YYYY_MM_DD.format(financialsDetailsRequest.getFromDate())));
-
-        if (StringUtils.isNotBlank(financialsDetailsRequest.getToDate()))
-            boolQuery
-                    .filter(QueryBuilders.rangeQuery(OBCREATEDDATE)
-                            .lte(FinancialConstants.DATEFORMATTER_YYYY_MM_DD.format(financialsDetailsRequest.getToDate())));
         if (StringUtils.isNotBlank(financialsDetailsRequest.getFundCode()))
             boolQuery
                     .filter(QueryBuilders.matchQuery("fundname", financialsDetailsRequest.getFundCode()));
