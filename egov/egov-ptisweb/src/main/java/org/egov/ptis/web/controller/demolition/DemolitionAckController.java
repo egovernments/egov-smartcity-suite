@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
-@RequestMapping(value = { "/demolition/ack", "/citizen/demolition/ack" })
+@RequestMapping(value = { "/demolition/ack" })
 public class DemolitionAckController {
     
     @Autowired

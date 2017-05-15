@@ -62,6 +62,7 @@ import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
@@ -205,6 +206,13 @@ public class SewerageUpdateConnectionController extends GenericWorkFlowControlle
             final SewerageApplicationDetails sewerageApplicationDetails) {
         String inspectionDate = "";
         model.addAttribute("stateType", sewerageApplicationDetails.getClass().getSimpleName());
+
+        AppConfigValues editDonationCharge = sewerageApplicationDetailsService.getAppConfigValuesForDonationCharge(
+                SewerageTaxConstants.MODULE_NAME, SewerageTaxConstants.EDIT_DONATION_CHARGE);
+        model.addAttribute("editdonationcharge",
+                editDonationCharge != null && editDonationCharge.getValue().equalsIgnoreCase("YES") ? Boolean.TRUE
+                        : Boolean.FALSE);
+
         for (final SewerageFieldInspection fieldInspection : sewerageApplicationDetails.getFieldInspections())
             Collections.sort(fieldInspection.getFieldInspectionDetails(), new SewerageInspectionDetailsComparatorById());
         model.addAttribute("additionalRule", sewerageApplicationDetails.getApplicationType().getCode());

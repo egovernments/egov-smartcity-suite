@@ -42,12 +42,18 @@ package org.egov.infra.config.persistence.multitenancy;
 
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.hibernate.context.spi.CurrentTenantIdentifierResolver;
+import org.springframework.beans.factory.annotation.Value;
+
+import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 
 public class DomainBasedSchemaTenantIdentifierResolver implements CurrentTenantIdentifierResolver {
 
+    @Value("${default.schema.name}")
+    private String defaultSchema;
+
     @Override
     public String resolveCurrentTenantIdentifier() {
-        return ApplicationThreadLocals.getTenantID() == null ? "public" : ApplicationThreadLocals.getTenantID();
+        return defaultIfBlank(ApplicationThreadLocals.getTenantID(), defaultSchema);
     }
 
     @Override

@@ -307,8 +307,7 @@ public class SearchPropertyAction extends BaseFormAction {
      * @return
      */
     @ValidationErrorPage(value = COMMON_FORM)
-    @Actions({ @Action(value = "/search/searchProperty-commonSearch"),
-            @Action(value = "/citizen/search/searchProperty-commonSearch") })
+    @Action(value = "/search/searchProperty-commonSearch")
     public String commonSearch() {
         final BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByIndexNumAndParcelID(assessmentNum, null);
         if (basicProperty == null) {
@@ -1002,13 +1001,9 @@ public class SearchPropertyAction extends BaseFormAction {
         return UPDATEMOBILE_FORM;
     }
 
-    @Actions({ @Action(value = "/search/searchproperty-alter-assessment"),
-            @Action(value = "/citizen/search/searchproperty-alter-assessment") })
+    @Action(value = "/search/searchproperty-alter-assessment")
     public String alterAssessment() {
-        if (StringUtils.isNotBlank(applicationSource) && SOURCE_ONLINE.equalsIgnoreCase(applicationSource))
-            setActionNamespace("/citizen/modify");
-        else
-            setActionNamespace("/modify");
+        setActionNamespace("/modify");
         setApplicationType(APPLICATION_TYPE_ALTER_ASSESSENT);
         return commonForm();
     }
@@ -1019,8 +1014,7 @@ public class SearchPropertyAction extends BaseFormAction {
         return commonForm();
     }
 
-    @Actions({ @Action(value = "/search/searchproperty-taxexemption"),
-            @Action(value = "/citizen/search/searchproperty-taxexemption") })
+    @Action(value = "/search/searchproperty-taxexemption")
     public String taxExemption() {
         setApplicationType(APPLICATION_TYPE_TAX_EXEMTION);
         return commonForm();
@@ -1038,12 +1032,8 @@ public class SearchPropertyAction extends BaseFormAction {
         return commonForm();
     }
 
-    @Actions({ @Action(value = "/search/searchproperty-transferownership"),
-            @Action(value = "/citizen/search/searchproperty-transferownership") })
+    @Action(value = "/search/searchproperty-transferownership")
     public String transferOwnership() {
-        if (StringUtils.isNotBlank(applicationSource) && SOURCE_ONLINE.equalsIgnoreCase(applicationSource))
-            setActionNamespace("/citizen/property/transfer");
-        else
             setActionNamespace("/property/transfer");
         setApplicationType(APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP);
         return commonForm();
@@ -1055,30 +1045,21 @@ public class SearchPropertyAction extends BaseFormAction {
         return commonForm();
     }
 
-    @Actions({ @Action(value = "/search/searchproperty-revisionpetition"),
-            @Action(value = "/citizen/search/searchproperty-revisionpetition") })
+    @Action(value = "/search/searchproperty-revisionpetition")
     public String revisionPetition() {
-        if (StringUtils.isNotBlank(applicationSource) && SOURCE_ONLINE.equalsIgnoreCase(applicationSource))
-            setActionNamespace("/citizen/revPetition");
-        else
-            setActionNamespace("/revPetition");
+        setActionNamespace("/revPetition");
         setApplicationType(APPLICATION_TYPE_REVISION_PETITION);
         return commonForm();
     }
 
-    @Actions({ @Action(value = "/search/searchproperty-general-revisionpetition"),
-            @Action(value = "/citizen/search/searchproperty-general-revisionpetition") })
+    @Action(value = "/search/searchproperty-general-revisionpetition")
     public String generalRevisionPetition() {
-        if (StringUtils.isNotBlank(applicationSource) && SOURCE_ONLINE.equalsIgnoreCase(applicationSource))
-            setActionNamespace("/citizen/revPetition");
-        else
-            setActionNamespace("/revPetition");
+        setActionNamespace("/revPetition");
         setApplicationType(APPLICATION_TYPE_GRP);
         return commonForm();
     }
 
-    @Actions({ @Action(value = "/search/searchproperty-demolition"),
-            @Action(value = "/citizen/search/searchproperty-demolition") })
+    @Action(value = "/search/searchproperty-demolition")
     public String demolition() {
         setApplicationType(APPLICATION_TYPE_DEMOLITION);
         if (StringUtils.isBlank(applicationSource))
@@ -1086,8 +1067,7 @@ public class SearchPropertyAction extends BaseFormAction {
         return commonForm();
     }
 
-    @Actions({ @Action(value = "/search/searchproperty-vacancyremission"),
-            @Action(value = "/citizen/search/searchproperty-vacancyremission") })
+    @Action(value = "/search/searchproperty-vacancyremission")
     public String vacancyRemission() {
         setApplicationType(APPLICATION_TYPE_VACANCY_REMISSION);
         return commonForm();

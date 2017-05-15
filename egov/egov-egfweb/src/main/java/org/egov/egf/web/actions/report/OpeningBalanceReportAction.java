@@ -53,6 +53,7 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.Fund;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
@@ -116,6 +117,7 @@ public class OpeningBalanceReportAction extends BaseFormAction {
         return FinancialConstants.STRUTS_RESULT_PAGE_SEARCH;
     }
 
+    @ReadOnly
     @Validations(requiredFields = { @RequiredFieldValidator(fieldName = "finYear", message = "", key = FinancialConstants.REQUIRED) })
     @ValidationErrorPage(value = FinancialConstants.STRUTS_RESULT_PAGE_SEARCH)
     @Action(value = "/report/openingBalanceReport-ajaxSearch")

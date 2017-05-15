@@ -118,6 +118,9 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 @Service
 public class CollectionsUtil {
     private static final Logger LOGGER = Logger.getLogger(CollectionsUtil.class);
@@ -191,8 +194,7 @@ public class CollectionsUtil {
     /**
      * Returns the Status object for given status code for a receipt
      *
-     * @param statusCode
-     *            Status code for which status object is to be returned
+     * @param statusCode Status code for which status object is to be returned
      * @return the Status object for given status code for a receipt
      */
     public EgwStatus getReceiptStatusForCode(final String statusCode) {
@@ -200,13 +202,10 @@ public class CollectionsUtil {
     }
 
     /**
-     * This method returns the <code>EgwStatus</code> for the given module type
-     * and status code
+     * This method returns the <code>EgwStatus</code> for the given module type and status code
      *
-     * @param moduleName
-     *            Module name of the required status
-     * @param statusCode
-     *            Status code of the required status
+     * @param moduleName Module name of the required status
+     * @param statusCode Status code of the required status
      * @return the <code>EgwStatus</code> instance
      */
     public EgwStatus getStatusForModuleAndCode(final String moduleName, final String statusCode) {
@@ -223,8 +222,7 @@ public class CollectionsUtil {
     }
 
     /**
-     * @param sessionMap
-     *            Map of session variables
+     * @param sessionMap Map of session variables
      * @return user name of currently logged in user
      */
     public String getLoggedInUserName() {
@@ -234,8 +232,7 @@ public class CollectionsUtil {
     /**
      * This method returns the User instance associated with the logged in user
      *
-     * @param sessionMap
-     *            Map of session variables
+     * @param sessionMap Map of session variables
      * @return the logged in user
      */
     public User getLoggedInUser() {
@@ -263,8 +260,7 @@ public class CollectionsUtil {
     }
 
     /**
-     * This method returns the User instance for the userName passed as
-     * parameter
+     * This method returns the User instance for the userName passed as parameter
      *
      * @param userName
      * @return User
@@ -330,12 +326,15 @@ public class CollectionsUtil {
     }
 
     /**
-     * This method returns the collection modes that are not allowed based on
-     * rules configured in the script
+     * This method returns the collection modes that are not allowed based on rules configured in the script
      *
      * @param loggedInUser a <code>User</code> entity representing the logged in user.
+<<<<<<< HEAD
      * @return a <code>List</code> of <code>String</code> values representing
      * the mode of payments supported.
+=======
+     * @return a <code>List</code> of <code>String</code> values representing the mode of payments supported.
+>>>>>>> develop
      */
     public List<String> getCollectionModesNotAllowed(final User loggedInUser) {
         final List<String> collectionsModeNotAllowed = new ArrayList<>(0);
@@ -354,10 +353,15 @@ public class CollectionsUtil {
                 if (!deptCodes.isEmpty() && deptCodes.contains(assign.getDepartment().getCode()))
                     isDeptAllowed = true;
         }
-
         if (isEmp && !isDeptAllowed)
             throw new ValidationException(Arrays.asList(new ValidationError("Department",
                     "billreceipt.counter.deptcode.null")));
+        if (isBankCollectionOperator(loggedInUser)) {
+            // Bank Collection Operator cash, cheque and dd collection modes are allowed.
+            collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_CARD);
+            collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_BANK);
+            collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_ONLINE);
+        }
         return collectionsModeNotAllowed;
     }
 
@@ -444,27 +448,38 @@ public class CollectionsUtil {
     /**
      * This method retrieves the <code>CFinancialYear</code> for the given date.
      *
+<<<<<<< HEAD
      * @param date an instance of <code>Date</code> for which the financial year
      *             is to be retrieved.
      * @return an instance of <code></code> representing the financial year for
      * the given date
+=======
+     * @param date an instance of <code>Date</code> for which the financial year is to be retrieved.
+     * @return an instance of <code></code> representing the financial year for the given date
+>>>>>>> develop
      */
     public CFinancialYear getFinancialYearforDate(final Date date) {
         return (CFinancialYear) persistenceService
                 .getSession()
                 .createQuery(
                         "from CFinancialYear cfinancialyear where ? between "
-                                + "cfinancialyear.startingDate and cfinancialyear.endingDate").setDate(0, date).list()
+                                + "cfinancialyear.startingDate and cfinancialyear.endingDate")
+                .setDate(0, date).list()
                 .get(0);
     }
 
     /**
      * This method checks if the given challan is valid.
      *
+<<<<<<< HEAD
      * @param challan the <code>Challan</code> instance whose validity has to be
      *                checked
      * @return a boolean value - true indicating that the challan is valid and
      * false indicating that teh challan is not valid
+=======
+     * @param challan the <code>Challan</code> instance whose validity has to be checked
+     * @return a boolean value - true indicating that the challan is valid and false indicating that teh challan is not valid
+>>>>>>> develop
      */
     public boolean checkChallanValidity(final Challan challan) {
         final Calendar current = Calendar.getInstance();
@@ -513,10 +528,13 @@ public class CollectionsUtil {
     }
 
     /**
-     * This method returns the currently active config value for the given
-     * module name and key
+     * This method returns the currently active config value for the given module name and key
      *
+<<<<<<< HEAD
      * @param moduleName   a <code>String<code> representing the module name
+=======
+     * @param moduleName a <code>String<code> representing the module name
+>>>>>>> develop
      *                     &#64;param key
      *                     a <code>String</code> representing the key
      * @param defaultValue Default value to be returned in case the key is not defined
@@ -545,14 +563,17 @@ public class CollectionsUtil {
     }
 
     /**
-     * This method returns the list of config values for the given module name
-     * and key
+     * This method returns the list of config values for the given module name and key
      *
      * @param moduleName a <code>String<code> representing the module name
      *                   &#64;param key
      *                   a <code>String</code> representing the key
+<<<<<<< HEAD
      * @return <code>List<AppConfigValues></code> representing the list of
      * configuration values
+=======
+     * @return <code>List<AppConfigValues></code> representing the list of configuration values
+>>>>>>> develop
      */
     public List<AppConfigValues> getAppConfigValues(final String moduleName, final String key) {
         return appConfigValuesService.getConfigValuesByModuleAndKey(moduleName, key);
@@ -569,8 +590,8 @@ public class CollectionsUtil {
     }
 
     /**
-     * This method is invoked from the ReceiptHeader.workFlow script and returns
-     * the position for the employee id passed as parameter
+     * This method is invoked from the ReceiptHeader.workFlow script and returns the position for the employee id passed as
+     * parameter
      *
      * @param employeeId PersonalInformation Id
      * @return Position object for Employee Id passed as parameter
@@ -581,13 +602,18 @@ public class CollectionsUtil {
     }
 
     /**
-     * This method is invoked from the ReceiptHeader.workFlow script and returns
-     * Employee object for the given Department Id, Designation Id ,Boundary Id
-     * and FunctionaryId
+     * This method is invoked from the ReceiptHeader.workFlow script and returns Employee object for the given Department Id,
+     * Designation Id ,Boundary Id and FunctionaryId
      *
+<<<<<<< HEAD
      * @param deptId        Department Id
      * @param designationId Designation Id
      * @param boundaryId    Boundary Id
+=======
+     * @param deptId Department Id
+     * @param designationId Designation Id
+     * @param boundaryId Boundary Id
+>>>>>>> develop
      * @param functionaryId Functionary Id
      * @return PersonalInformation
      */
@@ -624,7 +650,7 @@ public class CollectionsUtil {
         try {
             final HashMap<String, String> paramMap = new HashMap<>();
             paramMap.put("code", EisManagersUtill.getEmployeeService().getEmpForUserId(user.getId()).getCode());
-            final List<EmployeeView> employeeViewList = (List<EmployeeView>) eisService.getEmployeeInfoList(paramMap);
+            final List<EmployeeView> employeeViewList =(List<EmployeeView>)eisService.getEmployeeInfoList(paramMap);
             if (!employeeViewList.isEmpty())
                 for (final EmployeeView employeeView : employeeViewList)
                     if (!employeeView.getAssignment().getPrimary())
@@ -640,8 +666,13 @@ public class CollectionsUtil {
 
     /**
      * @param user the user whose non-primary department is to be returned
+<<<<<<< HEAD
      * @return non-primary department of the given user. In case user has
      * multiple non-primary departments, the first one will be returned.
+=======
+     * @return non-primary department of the given user. In case user has multiple non-primary departments, the first one will be
+     * returned.
+>>>>>>> develop
      */
     public Department getNonPrimaryDeptOfUser(final User user) {
         final List<Department> nonPrimaryAssignments = getAllNonPrimaryAssignmentsOfUser(user);
@@ -679,14 +710,19 @@ public class CollectionsUtil {
     }
 
     /**
-     * This method checks if the given glcode belongs to an account head
-     * representing an arrear account head (for Property Tax). The glcodes for
-     * such accounts are retrieved from App Config.
+     * This method checks if the given glcode belongs to an account head representing an arrear account head (for Property Tax).
+     * The glcodes for such accounts are retrieved from App Config.
      *
+<<<<<<< HEAD
      * @param glcode      The Chart of Accounts Code
      * @param description Description of the glcode
      * @returna a <code>Boolean</code> indicating if the glcode is arrear
      * account head
+=======
+     * @param glcode The Chart of Accounts Code
+     * @param description Description of the glcode
+     * @returna a <code>Boolean</code> indicating if the glcode is arrear account head
+>>>>>>> develop
      */
     public boolean isPropertyTaxArrearAccountHead(final String glcode, final String description) {
         final List<AppConfigValues> list = appConfigValuesService.getConfigValuesByModuleAndKey(
@@ -919,14 +955,18 @@ public class CollectionsUtil {
         Boolean voucherTypeForChequeDDCard = false;
         if (getAppConfigValue(CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
                 CollectionConstants.APPCONFIG_VALUE_REMITTANCEVOUCHERTYPEFORCHEQUEDDCARD).equals(
-                CollectionConstants.FINANCIAL_RECEIPTS_VOUCHERTYPE))
+                        CollectionConstants.FINANCIAL_RECEIPTS_VOUCHERTYPE))
             voucherTypeForChequeDDCard = true;
         return voucherTypeForChequeDDCard;
     }
 
     /**
+<<<<<<< HEAD
      * @param serviceCode Billing service code for which the receipt template is to be
      *                    returned
+=======
+     * @param serviceCode Billing service code for which the receipt template is to be returned
+>>>>>>> develop
      * @return Receipt template to be used for given billing service code.
      */
     public String getReceiptTemplateName(final char receiptType, final String serviceCode) {
@@ -967,7 +1007,8 @@ public class CollectionsUtil {
         String emailBody = collectionApplicationProperties.getEmailBody();
         emailBody = String.format(emailBody, ApplicationThreadLocals.getCityName(), receiptHeader.getTotalAmount()
                 .toString(), receiptHeader.getService().getName(), receiptHeader.getConsumerCode(), receiptHeader
-                .getReceiptdate().toString(), ApplicationThreadLocals.getCityName());
+                        .getReceiptdate().toString(),
+                ApplicationThreadLocals.getCityName());
         String emailSubject = collectionApplicationProperties.getEmailSubject();
         emailSubject = String.format(emailSubject, receiptHeader.getService().getName());
         messagingService.sendEmailWithAttachment(receiptHeader.getPayeeEmail(), emailSubject, emailBody,
@@ -999,8 +1040,29 @@ public class CollectionsUtil {
             serviceClassName = service.getSimpleName();
         if (serviceClassName != null)
             serviceClassName = Character.toLowerCase(serviceClassName.charAt(0))
-                + serviceClassName.substring(1).substring(0, serviceClassName.length() - 5);
+                    + serviceClassName.substring(1).substring(0, serviceClassName.length() - 5);
         return serviceClassName;
     }
 
+    public Boolean isBankCollectionOperator(final User user) {
+        for (final Role role : user.getRoles())
+            if (role != null && role.getName().equals(CollectionConstants.BANK_COLLECTION_OPERATOR))
+                return true;
+        return false;
+    }
+
+    public Boolean isRoleToCreateReceiptApprovedStatus(final User user) {
+        final List<AppConfigValues> appConfigValuesList = getAppConfigValues(
+                CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
+                CollectionConstants.APPCONFIG_VALUE_ROLES_CREATERECEIPT_APPROVEDSTATUS);
+        String value;
+        for (final AppConfigValues appConfigVal : appConfigValuesList) {
+            value = appConfigVal.getValue();
+            for (final Role role : user.getRoles()) {
+                if (role != null && role.getName().equals(value))
+                    return true;
+            }
+        }
+        return false;
+    }
 }

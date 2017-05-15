@@ -40,6 +40,7 @@
 
 package org.egov.model.service;
 
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.model.budget.Budget;
 import org.egov.model.budget.BudgetUploadReport;
@@ -68,6 +69,7 @@ public class BudgetUploadReportService {
     @Qualifier("persistenceService")
     private PersistenceService persistenceService;
 
+    @ReadOnly
     public List<BudgetUploadReport> search(BudgetUploadReport budgetUploadReport) {
 
         String reMaterializedPath = "", beMaterializedPath = "";

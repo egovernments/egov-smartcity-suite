@@ -45,7 +45,8 @@ import java.math.BigDecimal;
 import org.apache.commons.lang3.StringUtils;
 
 public class CollTableData {
-
+     
+    private String boundaryName = StringUtils.EMPTY;
     private String regionName = StringUtils.EMPTY;
     private String districtName = StringUtils.EMPTY;
     private String ulbGrade = StringUtils.EMPTY;
@@ -90,6 +91,14 @@ public class CollTableData {
     private BigDecimal lyCurrentPenaltyColl = BigDecimal.ZERO;
     private BigDecimal cyArrearsPenaltyColl = BigDecimal.ZERO;
     private BigDecimal cyCurrentPenaltyColl = BigDecimal.ZERO;
+
+    public String getBoundaryName() {
+        return boundaryName;
+    }
+
+    public void setBoundaryName(String boundaryName) {
+        this.boundaryName = boundaryName;
+    }
 
     public String getRegionName() {
         return regionName;

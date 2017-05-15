@@ -90,8 +90,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-@RequestMapping(value = { "/property/demolition/{assessmentNo}/{applicationSource}",
-        "/citizen/property/demolition/{assessmentNo}/{applicationSource}" })
+@RequestMapping(value = { "/property/demolition/{assessmentNo}/{applicationSource}" })
 public class PropertyDemolitionController extends GenericWorkFlowController {
 
     protected static final String COMMON_FORM = "commonForm";

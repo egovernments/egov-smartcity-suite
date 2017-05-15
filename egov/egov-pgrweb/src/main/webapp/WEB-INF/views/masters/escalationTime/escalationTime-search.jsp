@@ -104,10 +104,6 @@
 			</form:form>
 			<div class="row display-hide report-section">
 				<div class="col-md-6 col-xs-6 table-header"><spring:message code="lbl.escalationtime.details"/></div>
-				<div class="col-md-6 col-xs-6 add-margin text-right">
-					<span class="inline-elem">Search</span> <span class="inline-elem"><input
-						type="text" id="searchEscalationByCompTypeDesig" class="form-control input-sm"></span>
-				</div>
 				<div class="col-md-12">
 					<table class="table table-bordered datatable" id="escalationTime-table">
 						<thead>

@@ -245,6 +245,11 @@ $(document).ready(function(){
 	$("#btn-add").click(function() {
 		var primary = $("#primary_yes").prop("checked");
 
+		if($("#mode").val()=="update") {
+			$("#fromDate").prop('disabled', false);
+			$('#fromDate').addClass( "form-control datepicker" );
+		}
+
 		if(validateAssignment() && validateDateRange()) {
 			if(!edit){
 				if(primary==true){
@@ -434,6 +439,12 @@ $(document).ready(function(){
 	
 	
 	$(document).on('click',"#edit_row",function (){
+
+		if($("#mode").val()=="update") {
+			$("#fromDate").prop('disabled', true);
+			$('#fromDate').removeClass( "datepicker" );
+		}
+		
 		
 		if($("#table_assignid"+$(this).attr("value")+"").val()!=undefined){
 		 $("#editassignIds").val($("#table_assignid"+$(this).attr("value")+"").val());

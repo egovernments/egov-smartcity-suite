@@ -40,11 +40,14 @@
 
 package org.egov.infra.config.persistence;
 
+import org.egov.infra.config.persistence.multitenancy.DomainBasedSchemaTenantIdentifierResolver;
+import org.egov.infra.config.persistence.multitenancy.MultiTenantSchemaConnectionProvider;
 import org.egov.infra.config.properties.ApplicationProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
@@ -91,7 +94,7 @@ public class JpaConfiguration {
     @Bean
     @DependsOn("flyway")
     public EntityManagerFactory entityManagerFactory() {
-        final LocalContainerEntityManagerFactoryBean entityManagerFactory = new LocalContainerEntityManagerFactoryBean();
+        LocalContainerEntityManagerFactoryBean entityManagerFactory = new LocalContainerEntityManagerFactoryBean();
         entityManagerFactory.setJtaDataSource(dataSource);
         entityManagerFactory.setPersistenceUnitName("EgovPersistenceUnit");
         entityManagerFactory.setPackagesToScan(new String[]{"org.egov.**.entity"});
@@ -108,7 +111,7 @@ public class JpaConfiguration {
 
     @Bean
     public JpaVendorAdapter jpaVendorAdapter() {
-        final HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
+        HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
         vendorAdapter.setDatabase(env.getProperty("jpa.database", Database.class));
         vendorAdapter.setShowSql(applicationProperties.getProperty("jpa.showSql", Boolean.class));
         vendorAdapter.setGenerateDdl(env.getProperty("jpa.generateDdl", Boolean.class));
@@ -116,7 +119,7 @@ public class JpaConfiguration {
     }
 
     private Map<String, Object> additionalProperties() {
-        final HashMap<String, Object> properties = new HashMap<>();
+        HashMap<String, Object> properties = new HashMap<>();
         properties.put("hibernate.validator.apply_to_ddl", false);
         properties.put("hibernate.validator.autoregister_listeners", false);
         properties.put("hibernate.temp.use_jdbc_metadata_defaults", false);
@@ -142,17 +145,8 @@ public class JpaConfiguration {
         if (applicationProperties.multiTenancyEnabled()) {
             properties.put(MULTI_TENANT, env.getProperty(MULTI_TENANT));
             properties.put("hibernate.database.type", env.getProperty("jpa.database"));
-            if ("SCHEMA".equals(env.getProperty(MULTI_TENANT))) {
-                properties.put(MULTI_TENANT_CONNECTION_PROVIDER,
-                        "org.egov.infra.config.persistence.multitenancy.MultiTenantSchemaConnectionProvider");
-                properties.put(MULTI_TENANT_IDENTIFIER_RESOLVER,
-                        "org.egov.infra.config.persistence.multitenancy.DomainBasedSchemaTenantIdentifierResolver");
-            } else if ("DATABASE".equals(env.getProperty(MULTI_TENANT))) {
-                properties.put(MULTI_TENANT_CONNECTION_PROVIDER,
-                        "org.egov.infra.config.persistence.multitenancy.MultiTenantDatabaseConnectionProvider");
-                properties.put(MULTI_TENANT_IDENTIFIER_RESOLVER,
-                        "org.egov.infra.config.persistence.multitenancy.DomainBasedDatabaseTenantIdentifierResolver");
-            }
+            properties.put(MULTI_TENANT_CONNECTION_PROVIDER, multiTenantSchemaConnectionProvider());
+            properties.put(MULTI_TENANT_IDENTIFIER_RESOLVER, domainBasedSchemaTenantIdentifierResolver());
         }
         return properties;
     }
@@ -162,5 +156,17 @@ public class JpaConfiguration {
         TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager());
         transactionTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
         return transactionTemplate;
+    }
+
+    @Bean
+    @Lazy
+    public MultiTenantSchemaConnectionProvider multiTenantSchemaConnectionProvider() {
+        return new MultiTenantSchemaConnectionProvider();
+    }
+
+    @Bean
+    @Lazy
+    public DomainBasedSchemaTenantIdentifierResolver domainBasedSchemaTenantIdentifierResolver() {
+        return new DomainBasedSchemaTenantIdentifierResolver();
     }
 }

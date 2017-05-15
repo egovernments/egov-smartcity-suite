@@ -32,7 +32,9 @@ FAQ related to various deployment and development issues are discussed [here][FA
 * Install [JDK 8 update 112 or higher][JDK8 build]
 
 #### Database Setup
-Create a database and user in postgres
+1. Create a database and user in postgres
+2. Create a schema called `generic`
+3. Execute `ALTER ROLE <your_login_role> SET search_path TO generic,public;`
 
 #### Elastic Search Setup
 Elastic seach server properties needs to be configured in `elasticsearch.yml` under `<ELASTICSEARCH_INSTALL_DIR>/config`

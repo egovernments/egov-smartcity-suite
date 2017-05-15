@@ -39,6 +39,7 @@
  */
 package org.egov.restapi.web.rest;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -70,14 +71,15 @@ import org.egov.restapi.model.RestResponse;
 import org.egov.restapi.util.JsonConvertor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.CacheControl;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -247,24 +249,25 @@ public class RestPaymentReportConroller {
 
     }
 
-    @RequestMapping(value = "/downloadReceipt", method = RequestMethod.POST)
-    public ResponseEntity<byte[]> downloadReceiptByReceiptAndConsumerNo(
-            @RequestBody final PaymentInfoSearchRequest paymentInfoSearchRequest) {
-        ResponseEntity<byte[]> receipt = null;
-        byte[] receiptPdf = null;
-
-        if (paymentInfoSearchRequest.getReceiptNo() != null && !paymentInfoSearchRequest.getReceiptNo().isEmpty()
-                && paymentInfoSearchRequest.getReferenceNo() != null
-                && !paymentInfoSearchRequest.getReferenceNo().isEmpty()) {
-            receiptPdf = collectionService.downloadReceiptByReceiptAndConsumerNo(
-                    paymentInfoSearchRequest.getReceiptNo(), paymentInfoSearchRequest.getReferenceNo());
-            final HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.parseMediaType("application/pdf"));
-            headers.add("content-disposition", "inline;filename=Receipt.pdf");
-            receipt = new ResponseEntity<byte[]>(receiptPdf, headers, HttpStatus.CREATED);
-        } else if (receipt == null)
-            receipt = new ResponseEntity("File Not Found", HttpStatus.OK);
-        return receipt;
+    @RequestMapping(value = "/downloadReceipt", method = RequestMethod.GET, produces = "application/pdf")
+    public ResponseEntity<InputStreamResource> downloadReceiptByReceiptAndConsumerNo(
+            @RequestParam String receiptNo, @RequestParam String referenceNo) {
+        if (receiptNo != null && !receiptNo.isEmpty()
+                && referenceNo != null
+                && !referenceNo.isEmpty()) {
+            byte[] receiptPdf = collectionService.downloadReceiptByReceiptAndConsumerNo(
+                    receiptNo, referenceNo);
+            return ResponseEntity.ok()
+                    .contentLength(receiptPdf.length)
+                    .contentType(MediaType.APPLICATION_PDF)
+                    .cacheControl(CacheControl.noCache())
+                    .header("Content-Disposition", "attachment; filename=receipt.pdf")
+                    .body(new InputStreamResource(new ByteArrayInputStream(receiptPdf)));
+        } else {
+            return ResponseEntity.ok()
+                    .contentType(MediaType.TEXT_HTML)
+                    .body(new InputStreamResource(new ByteArrayInputStream("File Not Found".getBytes())));
+        }
     }
 
     @RequestMapping(value = "/services", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)

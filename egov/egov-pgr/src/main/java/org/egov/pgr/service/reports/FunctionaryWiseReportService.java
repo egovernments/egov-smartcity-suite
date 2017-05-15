@@ -5,6 +5,7 @@ import java.util.Date;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.joda.time.DateTime;
@@ -18,28 +19,32 @@ public class FunctionaryWiseReportService {
     @PersistenceContext
     private EntityManager entityManager;
 
-    public SQLQuery getFunctionaryWiseReportQuery(final DateTime fromDate, final DateTime toDate,final String usrid, final String complaintDateType) {
+    @ReadOnly
+    public SQLQuery getFunctionaryWiseReportQuery(final DateTime fromDate, final DateTime toDate, final String usrid,
+            final String complaintDateType) {
 
         final StringBuilder query = new StringBuilder();
 
         query.append(
-                "SELECT usr.id as  usrid, usr.name as name,COUNT(CASE WHEN cs.name IN ('REGISTERED') THEN 1 END) registered ,  COUNT(CASE WHEN cs.name IN ('FORWARDED','PROCESSING','NOTCOMPLETED') THEN 1 END) inprocess, COUNT(CASE WHEN cs.name IN ('COMPLETED','CLOSED') THEN 1 END) Completed, COUNT(CASE WHEN cs.name IN ('REOPENED') THEN 1 END) reopened, COUNT(CASE WHEN cs.name IN ('WITHDRAWN','REJECTED') THEN 1 END) Rejected ,");
+                "SELECT cast(usr.employee as bigint) as  usrid, usr.name as name,COUNT(CASE WHEN cs.name IN ('REGISTERED') THEN 1 END) registered ,  COUNT(CASE WHEN cs.name IN ('FORWARDED','PROCESSING','NOTCOMPLETED') THEN 1 END) inprocess, COUNT(CASE WHEN cs.name IN ('COMPLETED','CLOSED') THEN 1 END) Completed, COUNT(CASE WHEN cs.name IN ('REOPENED') THEN 1 END) reopened, COUNT(CASE WHEN cs.name IN ('WITHDRAWN','REJECTED') THEN 1 END) Rejected ,");
         query.append(
                 "SUM(CASE WHEN state.value in ('COMPLETED','REJECTED','WITHDRAWN') AND (cd.createddate - state.lastmodifieddate) < (interval '1h' * ctype.slahours) THEN 1 WHEN (state.value not in ('COMPLETED','REJECTED','WITHDRAWN') AND (cd.createddate - CURRENT_DATE) < (interval '1h' * ctype.slahours)) THEN 1 else 0 END) withinsla, ");
         query.append(
                 "SUM(CASE WHEN state.value in ('COMPLETED','REJECTED','WITHDRAWN') AND (cd.createddate - state.lastmodifieddate) > (interval '1h' * ctype.slahours) THEN 1 WHEN (state.value not in ('COMPLETED','REJECTED','WITHDRAWN') AND (cd.createddate - CURRENT_DATE ) > (interval '1h' * ctype.slahours)) THEN 1 ELSE 0 END) beyondsla ");
-        query.append(" FROM egpgr_complaintstatus cs ,egpgr_complainttype ctype,view_egeis_employee usr ,egpgr_complaint cd ,eg_wf_states state ");
-        buildWhereClause(fromDate, toDate, usrid,complaintDateType, query);
-        query.append(" group by usr.name,usr.id ");
+        query.append(
+                " FROM egpgr_complaintstatus cs ,egpgr_complainttype ctype,view_egeis_employee usr ,egpgr_complaint cd ,eg_wf_states state ");
+        buildWhereClause(fromDate, toDate, usrid, complaintDateType, query);
+        query.append(" group by usr.employee,usr.name ");
 
         return setParameterForFunctionaryReportQuery(query.toString(), fromDate, toDate, complaintDateType);
 
     }
 
-    private void buildWhereClause(final DateTime fromDate, final DateTime toDate,String userid,
+    private void buildWhereClause(final DateTime fromDate, final DateTime toDate, final String userid,
             final String complaintDateType, final StringBuilder query) {
 
-        query.append(" WHERE cd.status = cs.id and cd.complainttype= ctype.id  and cd.state_id = state.id and cd.assignee= usr.position ");
+        query.append(
+                " WHERE cd.status = cs.id and cd.complainttype= ctype.id  and cd.state_id = state.id and cd.assignee= usr.position ");
 
         if (complaintDateType != null && complaintDateType.equals("lastsevendays"))
             query.append(" and cd.createddate >=   :fromDates ");
@@ -53,9 +58,9 @@ public class FunctionaryWiseReportService {
             query.append(" and cd.createddate >=   :fromDates ");
         else if (toDate != null)
             query.append(" and cd.createddate <=  :toDates ");
-        
+
         if (userid != null && !"".equals(userid)) {
-            query.append(" and (usr.id)= '");
+            query.append(" and (usr.employee)= '");
             query.append(userid.toUpperCase()).append("' ");
         }
     }
@@ -94,7 +99,8 @@ public class FunctionaryWiseReportService {
         return new LocalDateTime().withTime(0, 0, 0, 0).toDateTime();
     }
 
-    public SQLQuery getFunctionaryWiseReportQuery(final DateTime fromDate, final DateTime toDate,String usrid,
+    @ReadOnly
+    public SQLQuery getFunctionaryWiseReportQuery(final DateTime fromDate, final DateTime toDate, final String usrid,
             final String complaintDateType, final String status) {
 
         final StringBuilder query = new StringBuilder();
@@ -112,7 +118,7 @@ public class FunctionaryWiseReportService {
         query.append(
                 "left join eg_position pos on cd.assignee=pos.id left join view_egeis_employee emp on pos.id=emp.position , egpgr_complainant complainant ");
 
-        buildWhereClause(fromDate, toDate,usrid, complaintDateType, query);
+        buildWhereClause(fromDate, toDate, usrid, complaintDateType, query);
         query.append(" and complainant.id=cd.complainant   ");
         if (status != null && !"".equals(status))
             if (status.equalsIgnoreCase("registered"))

@@ -175,5 +175,5 @@
 <script type="text/javascript"
 	src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
 <script type="text/javascript"
-	src="<cdn:url  value='/resources/js/app/tl-demandnoticesearch.js?rnd=${app_release_no}'/>"></script>
+	src="<cdn:url  value='/resources/js/app/trade-license-demand-notice-search.js?rnd=${app_release_no}'/>"></script>
 

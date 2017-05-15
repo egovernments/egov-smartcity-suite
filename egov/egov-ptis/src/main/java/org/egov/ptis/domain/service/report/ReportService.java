@@ -66,6 +66,8 @@ import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.commons.service.RegionalHeirarchyService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
+import org.egov.infra.config.properties.ApplicationProperties;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.client.util.PropertyTaxUtil;
@@ -126,6 +128,8 @@ public class ReportService {
     private PropertyTaxUtil propertyTaxUtil;
     @Autowired
     private BasicPropertyDAO basicPropertyDAO;
+    @Autowired
+    private ApplicationProperties applicationProperties;
 
     /**
      * Method gives List of properties with current and arrear individual demand
@@ -135,6 +139,7 @@ public class ReportService {
      * @param block
      * @return
      */
+    @ReadOnly
     public List<BaseRegisterResult> getPropertyByWardAndBlock(final String ward, final String block, final boolean exemptedCase) {
 
         final StringBuilder queryStr = new StringBuilder(500);
@@ -288,7 +293,8 @@ public class ReportService {
         }
 
     }
-
+    
+    @ReadOnly
     public List<DailyCollectionReportResult> getCollectionDetails(Date fromDate, Date toDate, String collectionMode,
                                                                   String collectionOperator, String status, String ward) throws ParseException {
         final StringBuilder queryStr = new StringBuilder(500);
@@ -375,7 +381,8 @@ public class ReportService {
 
         return dailyCollectionReportList;
     }
-
+    
+    @ReadOnly
     public List<CurrentInstDCBReportResult> getCurrentInstallmentDCB(String ward) {
         final StringBuilder queryStr = new StringBuilder(500);
 
@@ -405,7 +412,8 @@ public class ReportService {
     public void setPropPerServ(PersistenceService propPerServ) {
         this.propPerServ = propPerServ;
     }
-
+    
+    @ReadOnly
     public List<BillCollectorDailyCollectionReportResult> getBillCollectorWiseDailyCollection(Date date,
                                                                                               BillCollectorDailyCollectionReportResult bcDailyCollectionReportResult) {
         boolean whereConditionAdded = false;
@@ -415,8 +423,7 @@ public class ReportService {
         final StringBuilder queryBuilder = new StringBuilder(
                 " select distinct district,ulbname  \"ulbName\" ,ulbcode \"ulbCode\" ,collectorname,mobilenumber,sum(target_arrears_demand) \"target_arrears_demand\",sum(target_current_demand) \"target_current_demand\",sum(today_arrears_collection) \"today_arrears_collection\",sum(today_currentyear_collection) \"today_currentyear_collection\", "
                         + " sum(cummulative_arrears_collection) \"cummulative_arrears_collection\",sum(cummulative_currentyear_collection) \"cummulative_currentyear_collection\",sum(lastyear_collection) \"lastyear_collection\",sum(lastyear_cummulative_collection) \"lastyear_cummulative_collection\"   "
-                        + " from public.billColl_DialyCollection_view  ");
-
+                        + "from "+applicationProperties.statewideSchemaName()+".billColl_DialyCollection_view ");
         String value_ALL = "ALL";
 
         if (bcDailyCollectionReportResult != null) {
@@ -519,6 +526,7 @@ public class ReportService {
         return conditionTocheckAlreadyAdded;
     }
 
+    @ReadOnly
     public List<BillCollectorDailyCollectionReportResult> getUlbWiseDailyCollection(Date date) {
 
         List<BillCollectorDailyCollectionReportResult> listBcPayment = new ArrayList<BillCollectorDailyCollectionReportResult>(
@@ -529,7 +537,7 @@ public class ReportService {
                 " select distinct district,ulbname \"ulbName\" ,ulbcode \"ulbCode\"  ,  collectorname \"collectorname\" ,mobilenumber \"mobilenumber\",  "
                         + "target_arrears_demand,target_current_demand,today_arrears_collection,today_currentyear_collection,   "
                         + "cummulative_arrears_collection,cummulative_currentyear_collection,lastyear_collection,lastyear_cummulative_collection  "
-                        + "from  public.ulbWise_DialyCollection_view  order by district,ulbname ");
+                        + "from "+applicationProperties.statewideSchemaName()+".ulbWise_DialyCollection_view  order by district,ulbname ");
         final Query query = propPerServ.getSession().createSQLQuery(queryBuilder.toString());
         query.setResultTransformer(new AliasToBeanResultTransformer(BillCollectorDailyCollectionReportResult.class));
 
@@ -635,7 +643,8 @@ public class ReportService {
 
         return result;
     }
-
+    
+    @ReadOnly
     public List<BillCollectorDailyCollectionReportResult> getUlbWiseDcbCollection(Date date,
                                                                                   BillCollectorDailyCollectionReportResult bcDailyCollectionReportResult) {
 
@@ -645,7 +654,7 @@ public class ReportService {
         int noofDays = 0;
         final StringBuilder queryBuilder = new StringBuilder(
                 " select distinct district,ulbname  \"ulbName\" ,ulbcode \"ulbCode\",collectorname,mobilenumber ,sum(totalaccessments) \"totalaccessments\" , sum(current_demand) \"current_demand\", sum(arrears_demand) \"arrears_demand\", sum(current_demand_collection) \"current_demand_collection\" ,sum(arrears_demand_collection) \"arrears_demand_collection\" , sum(current_penalty) \"current_penalty\", sum(arrears_penalty) \"arrears_penalty\"  , sum(current_penalty_collection) \"current_penalty_collection\"  , sum(arrears_penalty_collection) \"arrears_penalty_collection\"  "
-                        + " from public.ulbWise_DCBCollection_view  ");
+                        + "from "+applicationProperties.statewideSchemaName()+".ulbWise_DCBCollection_view ");
 
         String value_ALL = "ALL";
 
@@ -938,6 +947,7 @@ public class ReportService {
      * @param block
      * @return
      */
+    @ReadOnly
     public List<BaseRegisterVLTResult> getVLTPropertyByWardAndBlock(final String ward, final String block, final boolean exemptedCase) {
         BigDecimal taxRate = getTaxRate(PropertyTaxConstants.DEMANDRSN_CODE_VACANT_TAX);
         final StringBuilder queryStr = new StringBuilder(500);
@@ -1060,6 +1070,7 @@ public class ReportService {
      * @param propertyViewList
      * @return list
      */
+    @ReadOnly
     public List<DefaultersInfo> getDefaultersInformation(List<PropertyMaterlizeView> propertyViewList,final String noofyrs,final Integer limit) {
         List<DefaultersInfo> defaultersList = new ArrayList<>();
         List<DefaultersInfo> defaultersListForYrs = new ArrayList<>();
@@ -1118,7 +1129,8 @@ public class ReportService {
 
         return defaultersListForYrs.isEmpty()?defaultersList:defaultersListForYrs;
     }
-
+    
+    @ReadOnly
     private DefaultersInfo getInstDmdInfo(PropertyMaterlizeView propView){
         DefaultersInfo defaultersInfo = new DefaultersInfo();
 

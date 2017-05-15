@@ -141,7 +141,7 @@ $.fn.pageMe = function(opts){
 };
 */
 function openTradeLicense(obj) {
-    window.open("/tl/public/viewtradelicense/viewTradeLicense-view.action?id="
+    window.open("/tl/viewtradelicense/viewTradeLicense-view.action?id="
         + $(obj).data('eleval'), '',
         'scrollbars=yes,width=1000,height=700,status=yes');
 }

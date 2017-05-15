@@ -49,6 +49,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -60,7 +61,7 @@ import static org.egov.infra.utils.JsonUtils.toJSON;
 
 
 @Controller
-@RequestMapping(value = {"/installmentwise", "/public/installmentwise"})
+@RequestMapping("/report/dcb/yearwise")
 public class InstallmentwiseDCBReportController {
 
     @Autowired
@@ -71,13 +72,13 @@ public class InstallmentwiseDCBReportController {
         return new InstallmentWiseDCBForm();
     }
 
-    @GetMapping(value = "/dcbreport")
+    @GetMapping("/search")
     public String search(Model model) {
         model.addAttribute("financialYears", installmentWiseDCBService.getFinancialYears());
         return "yearwiseDCBReport-search";
     }
 
-    @GetMapping(value = "/dcbresult", produces = MediaType.TEXT_PLAIN_VALUE)
+    @PostMapping(value = "/search", produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
     public String result(HttpServletRequest request) throws IOException {
         return new StringBuilder("{ \"data\":")

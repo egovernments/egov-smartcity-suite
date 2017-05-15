@@ -56,6 +56,7 @@ import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
@@ -1207,6 +1208,7 @@ public class BudgetReportAction extends BaseFormAction {
         return "";
     }
 
+    @ReadOnly
     protected Map<String, Object> getParamMap() {
         Map<String, Object> paramMap = new HashMap<String, Object>();
         paramMap.put("finYear", budgetReport.getFinancialYear().getFinYearRange());
@@ -1273,6 +1275,7 @@ public class BudgetReportAction extends BaseFormAction {
         return appConfigValuesService.getConfigValuesByModuleAndKey(module, key).get(0).getValue();
     }
 
+    @ReadOnly
     protected void populateData() {
         final String finalStatus = getFinalStatus();
         final String isBeRe = getBudgetType(finalStatus);

@@ -55,6 +55,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -70,7 +71,7 @@ import static org.egov.tl.utils.Constants.REVENUE_WARD;
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 
 @Controller
-@RequestMapping(value = {"baseregister", "/public/baseregister"})
+@RequestMapping("/report/base-register")
 public class BaseRegisterController {
 
     @Autowired
@@ -88,7 +89,7 @@ public class BaseRegisterController {
     @Autowired
     private ReportService reportService;
 
-    @GetMapping(value = "/search-form")
+    @GetMapping("search")
     public String baseRegisterSearchForm(Model model) {
         model.addAttribute("baseRegister", new BaseRegister());
         model.addAttribute("categories", licenseCategoryService.getCategoriesOrderByName());
@@ -101,7 +102,7 @@ public class BaseRegisterController {
         return "baseregister-report";
     }
 
-    @GetMapping(value = "/search-resultList", produces = TEXT_PLAIN_VALUE)
+    @PostMapping(value = "search", produces = TEXT_PLAIN_VALUE)
     @ResponseBody
     public String searchBaseRegister(BaseRegisterRequest baseRegisterRequest) {
         return new DataTable<>(baseRegisterService.pagedBaseRegisterRecords(baseRegisterRequest),
@@ -109,15 +110,15 @@ public class BaseRegisterController {
                 .toJson(BaseRegisterResponseAdaptor.class);
     }
 
-    @GetMapping("/reportwisetotal")
+    @GetMapping("grand-total")
     @ResponseBody
     public Object[] baseRegisterGrandTotal(BaseRegisterRequest baseRegisterRequest) {
         return baseRegisterService.baseRegisterGrandTotal(baseRegisterRequest);
     }
 
-    @GetMapping("/report")
+    @GetMapping("download")
     @ResponseBody
-    public ResponseEntity<byte[]> searchReport(BaseRegisterRequest baseRegisterRequest) {
+    public ResponseEntity<byte[]> downloadReport(BaseRegisterRequest baseRegisterRequest) {
         ReportRequest reportRequest = new ReportRequest("tl_baseregister_report",
                 baseRegisterService.getAllBaseRegisterRecords(baseRegisterRequest), new HashMap<>());
         reportRequest.setReportFormat(baseRegisterRequest.getPrintFormat());

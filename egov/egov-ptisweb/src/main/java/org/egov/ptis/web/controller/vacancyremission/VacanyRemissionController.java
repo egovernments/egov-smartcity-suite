@@ -105,7 +105,7 @@ import org.springframework.web.servlet.support.RequestContextUtils;
 import org.springframework.web.servlet.view.RedirectView;
 
 @Controller
-@RequestMapping(value = { "/vacancyremission","/citizen/vacancyremission" })
+@RequestMapping(value = { "/vacancyremission" })
 public class VacanyRemissionController extends GenericWorkFlowController {
 
     private static final String STATE_TYPE = "stateType";

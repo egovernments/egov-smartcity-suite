@@ -38,83 +38,80 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-jQuery(document)
-		.ready(
-				function($) {
+jQuery(document).ready(function($) {
 
-					tableContainer1 = $("#escalationTime-table");
+	tableContainer1 = $("#escalationTime-table");
+	
+	$('#escalationTimeSearch').click(function() {
+		callajaxdatatable();
+	});
 
-					$('#escalationTimeSearch').click(function() {
-						callajaxdatatable();
-					});
+function callajaxdatatable() {
+$('.report-section').removeClass('display-hide');
+tableContainer1
+		.dataTable({
+			processing: true,
+	        serverSide: true,
+	        sort: true,
+	        filter: true,
+	        "searching": false,
+	        responsive : true,
+			destroy : true,
+	        "order": [[0, 'asc']],
+			ajax : {
+				url : "/pgr/escalationTime/resultList-update",
+				type:'GET',
+                data:function (args) {
+                		 return {"args": JSON.stringify(args) ,
+                			 'complaintTypeId' : $('#complaintTypeId').val(),
+                			 'designationId' : $('#designationId').val()
+				}
+              }
+			},
+			"aLengthMenu" : [ [ 10, 25, 50, -1 ],
+					[ 10, 25, 50, "All" ] ],
+			"autoWidth": false,
+			"bDestroy": true,
+			"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
+			columns : [ {
+				"data" : "complaintType",
+			    "name" : "complaintType.name"
+			}, {
+				"data" : "designation",
+				"name" : "designation.name"	
+			}, {
+				"data" : "noOfHours",
+				"name" : "noOfHrs"
+			} ]
+		});
+	}
+	$('#searchEscalationByCompTypeDesig').keyup(function() {
+		tableContainer1.fnFilter(this.value);
+	});
 
-					function callajaxdatatable() {
-						$('.report-section').removeClass('display-hide');
-						tableContainer1
-								.dataTable({
-									processing : true,
-									serverSide : true,
-									type : 'GET',
-									responsive : true,
-									destroy : true,
-									ajax : {
-										url : "/pgr/escalationTime/resultList-update",
-										data : {
-											complaintTypeId : $(
-													'#complaintTypeId').val(),
-											designationId : $('#designationId')
-													.val()
-										}
-									},
-									"aLengthMenu" : [ [ 10, 25, 50, -1 ],
-											[ 10, 25, 50, "All" ] ],
-									"autoWidth" : false,
-									"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
-									/*
-									 * columns : [{ "mData" : "complaintType",
-									 * "sTitle" : "Complaint Type" },{ "mData" :
-									 * "designation", "sTitle" : "Designation"
-									 * },{ "mData" : "noOfHours", "sTitle" :
-									 * "No.of Hours" }]
-									 */
-									columns : [ {
-										"data" : "complaintType"
-									}, {
-										"data" : "designation"
-									}, {
-										"data" : "noOfHours"
-									} ]
-								});
-
-					}
-
-					$('#searchEscalationByCompTypeDesig').keyup(function() {
-						tableContainer1.fnFilter(this.value);
-					});
-
-					// Instantiate the Bloodhound suggestion engine
-					// Complaint Type auto-complere
-					var complaintType = new Bloodhound(
-							{
-								datumTokenizer : function(datum) {
-									return Bloodhound.tokenizers
-											.whitespace(datum.value);
-								},
-								queryTokenizer : Bloodhound.tokenizers.whitespace,
-								remote : {
-									url : '/pgr/complaint/search/complaintTypes?complaintTypeName=%QUERY',
-									filter : function(data) {
-										// Map the remote source JSON array to a
-										// JavaScript object array
-										return $.map(data, function(ct) {
-											return {
-												name : ct.name,
-												value : ct.id
-											};
-										});
-									}
-								}
+		// Instantiate the Bloodhound suggestion engine
+		// Complaint Type auto-complere
+		var complaintType = new Bloodhound(
+				{
+					datumTokenizer : function(datum) {
+						return Bloodhound.tokenizers
+								.whitespace(datum.value);
+					},
+					queryTokenizer : Bloodhound.tokenizers.whitespace,
+					remote : {
+						url : '/pgr/complaint/search/complaintTypes?complaintTypeName=%QUERY',
+						filter : function(data) {
+							// Map the remote source JSON array to a
+							// JavaScript object array
+							return $.map(data, function(ct) {
+								return {
+									name : ct.name,
+									value : ct.id
+								};
 							});
+						}
+					}
+				});
 
 					complaintType.initialize();
 

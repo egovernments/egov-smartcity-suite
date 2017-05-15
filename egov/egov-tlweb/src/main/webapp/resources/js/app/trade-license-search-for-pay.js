@@ -49,7 +49,7 @@ $(document).ready(function () {
         },
         queryTokenizer: Bloodhound.tokenizers.whitespace,
         remote: {
-            url: '../search/tradeLicense',
+            url: '/tl/search/autocomplete',
             replace: function (url, query) {
                 return url + '?searchParamValue=' + query + '&searchParamType=ApplicationNumber';
             },
@@ -86,7 +86,7 @@ $(document).ready(function () {
         },
         queryTokenizer: Bloodhound.tokenizers.whitespace,
         remote: {
-            url: '../search/tradeLicense',
+            url: '/tl/search/autocomplete',
             replace: function (url, query) {
                 return url + '?searchParamValue=' + query + '&searchParamType=LicenseNumber';
             },
@@ -114,216 +114,6 @@ $(document).ready(function () {
     }).on('typeahead:selected', function () {
 
     });
-    // Instantiate the old license number Bloodhound suggestion engine
-    var oldlicensenoengine = new Bloodhound({
-        datumTokenizer: function (datum) {
-            return Bloodhound.tokenizers.whitespace(datum.value);
-        },
-        queryTokenizer: Bloodhound.tokenizers.whitespace,
-        remote: {
-            url: '../search/tradeLicense',
-            replace: function (url, query) {
-                return url + '?searchParamValue=' + query + '&searchParamType=OldLicenseNumber';
-            },
-            filter: function (data) {
-                // Map the remote source JSON array to a JavaScript object array
-                return $.map(data, function (oldLicenseNumber) {
-                    return {
-                        name: oldLicenseNumber
-                    }
-                });
-            }
-        }
-    });
-    // Initialize the Bloodhound suggestion engine
-    oldlicensenoengine.initialize();
-
-    // Instantiate the Typeahead UI
-    $('#oldLicenseNumber').typeahead({
-        hint: false,
-        highlight: true,
-        minLength: 3
-    }, {
-        displayKey: 'name',
-        source: oldlicensenoengine.ttAdapter()
-    }).on('typeahead:selected', function () {
-
-    });
-
-    // Instantiate the trade title Bloodhound suggestion engine
-    var tradetitleengine = new Bloodhound({
-        datumTokenizer: function (datum) {
-            return Bloodhound.tokenizers.whitespace(datum.value);
-        },
-        queryTokenizer: Bloodhound.tokenizers.whitespace,
-        remote: {
-            url: '../search/tradeLicense',
-            replace: function (url, query) {
-                return url + '?searchParamValue=' + query + '&searchParamType=TradeTitle';
-            },
-            filter: function (data) {
-                // Map the remote source JSON array to a JavaScript object array
-                return $.map(data, function (tradeTitle) {
-                    return {
-                        name: tradeTitle
-                    }
-                });
-            }
-        }
-    });
-
-    // Initialize the Bloodhound suggestion engine
-    tradetitleengine.initialize();
-
-    // Instantiate the Typeahead UI
-    $('#tradeTitle').typeahead({
-        hint: false,
-        highlight: true,
-        minLength: 3
-    }, {
-        displayKey: 'name',
-        source: tradetitleengine.ttAdapter()
-    }).on('typeahead:selected', function () {
-
-    });
-    // Instantiate the trade owner Bloodhound suggestion engine
-    var tradeownerengine = new Bloodhound({
-        datumTokenizer: function (datum) {
-            return Bloodhound.tokenizers.whitespace(datum.value);
-        },
-        queryTokenizer: Bloodhound.tokenizers.whitespace,
-        remote: {
-            url: '../search/tradeLicense',
-            replace: function (url, query) {
-                return url + '?searchParamValue=' + query + '&searchParamType=TradeOwnerName';
-            },
-            filter: function (data) {
-                // Map the remote source JSON array to a JavaScript object array
-                return $.map(data, function (tradeOwnerName) {
-                    return {
-                        name: tradeOwnerName
-                    }
-                });
-            }
-        }
-    });
-
-    // Initialize the Bloodhound suggestion engine
-    tradeownerengine.initialize();
-
-    // Instantiate the Typeahead UI
-    $('#tradeOwnerName').typeahead({
-        hint: false,
-        highlight: true,
-        minLength: 3
-    }, {
-        displayKey: 'name',
-        source: tradeownerengine.ttAdapter()
-    }).on('typeahead:selected', function () {
-
-    });
-
-    // Instantiate the property assessment Bloodhound suggestion engine
-    var propassessnoengine = new Bloodhound({
-        datumTokenizer: function (datum) {
-            return Bloodhound.tokenizers.whitespace(datum.value);
-        },
-        queryTokenizer: Bloodhound.tokenizers.whitespace,
-        remote: {
-            url: '../search/tradeLicense',
-            replace: function (url, query) {
-                return url + '?searchParamValue=' + query + '&searchParamType=PropertyAssessmentNo';
-            },
-            filter: function (data) {
-                // Map the remote source JSON array to a JavaScript object array
-                return $.map(data, function (propertyAssessmentNo) {
-                    return {
-                        name: propertyAssessmentNo
-                    }
-                });
-            }
-        }
-    });
-
-    // Initialize the Bloodhound suggestion engine
-    propassessnoengine.initialize();
-
-    // Instantiate the Typeahead UI
-    $('#propertyAssessmentNo').typeahead({
-        hint: false,
-        highlight: true,
-        minLength: 3
-    }, {
-        displayKey: 'name',
-        source: propassessnoengine.ttAdapter()
-    }).on('typeahead:selected', function () {
-
-    });
-
-// Instantiate the mobile number Bloodhound suggestion engine
-    var mobilenoengine = new Bloodhound({
-        datumTokenizer: function (datum) {
-            return Bloodhound.tokenizers.whitespace(datum.value);
-        },
-        queryTokenizer: Bloodhound.tokenizers.whitespace,
-        remote: {
-            url: '../search/tradeLicense',
-            replace: function (url, query) {
-                return url + '?searchParamValue=' + query + '&searchParamType=MobileNo';
-            },
-            filter: function (data) {
-                // Map the remote source JSON array to a JavaScript object array
-                return $.map(data, function (mobileNo) {
-                    return {
-                        name: mobileNo
-                    }
-                });
-            }
-        }
-    });
-
-    // Initialize the Bloodhound suggestion engine
-    mobilenoengine.initialize();
-
-    // Instantiate the Typeahead UI
-    $('#mobileNo').typeahead({
-        hint: false,
-        highlight: true,
-        minLength: 3
-    }, {
-        displayKey: 'name',
-        source: mobilenoengine.ttAdapter()
-    }).on('typeahead:selected', function () {
-
-    });
-
-    $('#category').change(function () {
-        var val = $(this).val();
-        if (val !== '') {
-            var results = [];
-            $.ajax({
-                type: "GET",
-                url: '../licensesubcategory/by-category',
-                data: {categoryId: val},
-                dataType: "json",
-                success: function (data) {
-                    $.each(data, function (i) {
-                        var obj = {};
-                        obj['id'] = data[i]['id']
-                        obj['text'] = data[i]['name'];
-                        results.push(obj);
-                    });
-
-                    select2initialize($("#subCategory"), results, false);
-
-                },
-                error: function () {
-                    bootbox.alert('something went wrong on server');
-                }
-            });
-        }
-    });
-
 
     $("#btnsearch").click(
         function () {
@@ -344,31 +134,19 @@ $(document).ready(function () {
                 $('.report-section').show();
                 var applicationNumber = $('#applicationNumber').val();
                 var licenseNumber = $('#licenseNumber').val();
-                var tradeOwnerName = $('#tradeOwnerName').val();
-                var propertyAssessmentNo = $('#propertyAssessmentNo').val();
-                var mobileNo = $('#mobileNo').val();
-                var arrDmd = $('#arrDmd').val();
-                var currDmd = $('#currDmd').val();
-                var totColl = $('#totColl').val();
                 reportdatatable = drillDowntableContainer
                     .dataTable({
-                        scrollY:        "300px",
-                        scrollX:        true,
+                        scrollY: "300px",
+                        scrollX: true,
                         scrollCollapse: true,
-                        fixedColumns:   {
+                        fixedColumns: {
                             leftColumns: 1
                         },
                         ajax: {
-                            url: "../search/searchtrade-search",
+                            type:"POST",
                             data: {
                                 applicationNumber: applicationNumber,
                                 licenseNumber: licenseNumber,
-                                tradeOwnerName: tradeOwnerName,
-                                propertyAssessmentNo: propertyAssessmentNo,
-                                mobileNo: mobileNo,
-                                arrDmd: arrDmd,
-                                currDmd:currDmd,
-                                totColl:totColl
                             }
                         },
                         "bDestroy": true,
@@ -402,10 +180,10 @@ $(document).ready(function () {
                         }, {
                             "data": "currDmd",
                             "sTitle": "Current Demand"
-                        },{
+                        }, {
                             "data": "totColl",
                             "sTitle": "Total Collection"
-                        },{
+                        }, {
                             "sTitle": "Actions",
                             "render": function (data, type, row) {
                                 var option = "<option value=''>Select from Below</option>";
@@ -426,11 +204,11 @@ $(document).ready(function () {
     );
 });
 function goToView(id) {
-    window.open("/tl/public/viewtradelicense/viewTradeLicense-view.action?id=" + id, '', 'scrollbars=yes,width=1000,height=700,status=yes');
+    window.open("/tl/viewtradelicense/viewTradeLicense-view.action?id=" + id, '', 'scrollbars=yes,width=1000,height=700,status=yes');
 }
 function goToAction(obj, id) {
-   if (obj.options[obj.selectedIndex].innerHTML == 'Payment')
-        window.open("/tl/public/licenseonlinepayment-form/" + id);
-   else if (obj.options[obj.selectedIndex].innerHTML == 'View DCB')
-       window.open("/tl/public/view-license-dcb/" + id);
+    if (obj.options[obj.selectedIndex].innerHTML == 'Payment')
+        window.open("/tl/pay/online/" + id);
+    else if (obj.options[obj.selectedIndex].innerHTML == 'View DCB')
+        window.open("/tl/dcb/view/" + id);
 }

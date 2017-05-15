@@ -55,6 +55,7 @@ import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infstr.services.PersistenceService;
@@ -138,7 +139,8 @@ public class NoticeService extends PersistenceService<PtNotice, Long> {
         getSession().flush();
         return notice;
     }
-
+    
+    @ReadOnly
     public PtNotice getPtNoticeByNoticeNumberAndNoticeType(final String noticeNo, final String noticeType) {
 
         final Query qry = getSession().createQuery(
@@ -147,16 +149,19 @@ public class NoticeService extends PersistenceService<PtNotice, Long> {
         qry.setString("noticeType", noticeType.toUpperCase());
         return (PtNotice) qry.uniqueResult();
     }
-
+    
+    @ReadOnly
     public PtNotice getNoticeByApplicationNumber(final String applicationNo) {
         return (PtNotice) basicPropertyService.find("from PtNotice where applicationNumber = ?", applicationNo);
     }
-
+    
+    @ReadOnly
     public PtNotice getNoticeByNoticeTypeAndApplicationNumber(final String noticeType, final String applicationNo) {
         return (PtNotice) basicPropertyService.find("from PtNotice where noticeType = ? and applicationNumber = ?",
                 noticeType, applicationNo);
     }
 
+    @ReadOnly
     public PtNotice getNoticeByNoticeTypeAndAssessmentNumner(final String noticeType, final String assessementNumber) {
         return (PtNotice) basicPropertyService.find("from PtNotice where noticeType = ? and basicProperty.upicNo = ?",
                 noticeType, assessementNumber);
@@ -169,7 +174,8 @@ public class NoticeService extends PersistenceService<PtNotice, Long> {
     public void setbasicPropertyService(final PersistenceService<BasicProperty, Long> basicPropertyService) {
         this.basicPropertyService = basicPropertyService;
     }
-
+    
+    @ReadOnly
     public String getNoticeByApplicationNo(final String applicationNo) {
         final StringBuilder queryStr = new StringBuilder(500);
         String noticeNum;
@@ -189,7 +195,8 @@ public class NoticeService extends PersistenceService<PtNotice, Long> {
             noticeNum = "";
         return noticeNum;
     }
-
+    
+    @ReadOnly
     @SuppressWarnings("unchecked")
     public List<PropertyMutation> getListofMutations(final String indexNumber) {
         final StringBuilder queryStr = new StringBuilder();
@@ -203,13 +210,15 @@ public class NoticeService extends PersistenceService<PtNotice, Long> {
         return query.list();
     }
     
+    @ReadOnly
     public PtNotice getNoticeByTypeUpicNoAndFinYear(final String noticeType, final String assessementNumber) {
         final CFinancialYear currFinYear = financialYearDAO.getFinancialYearByDate(new Date());
         return (PtNotice) basicPropertyService.find("from PtNotice where noticeType = ? and basicProperty.upicNo = ? "
                 + " and noticeDate between ? and ? ",
                 noticeType, assessementNumber, currFinYear.getStartingDate(), currFinYear.getEndingDate());
     }
-
+    
+    @ReadOnly
     public PtNotice getPtNoticeByNoticeNumberAndBillType(final String noticeNo, final List<String> noticeType) {
         final Query qry = getSession().createQuery(
                 "from PtNotice Pn where upper(Pn.noticeNo) = :noticeNumber and upper(noticeType) in (:noticeType) ");
@@ -218,6 +227,7 @@ public class NoticeService extends PersistenceService<PtNotice, Long> {
         return (PtNotice) qry.uniqueResult();
     }
     
+    @ReadOnly
     @SuppressWarnings("unchecked")
     public List<PtNotice> getNoticeByAssessmentNumner(final String assessementNumber) {
         final javax.persistence.Query qry = eManager.createNamedQuery("getAllNoticesByAssessmentNo");

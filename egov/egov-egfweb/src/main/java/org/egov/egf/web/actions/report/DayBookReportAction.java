@@ -55,6 +55,7 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.Fund;
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.services.PersistenceService;
@@ -129,6 +130,7 @@ public class DayBookReportAction extends BaseFormAction {
             @RequiredFieldValidator(fieldName = "endDate", message = "", key = FinancialConstants.REQUIRED),
             @RequiredFieldValidator(fieldName = "fundId", message = "", key = FinancialConstants.REQUIRED), })
     @ValidationErrorPage(value = FinancialConstants.STRUTS_RESULT_PAGE_SEARCH)
+    @ReadOnly
     @Action(value = "/report/dayBookReport-ajaxSearch")
     public String ajaxSearch() throws TaskFailedException {
         if (LOGGER.isDebugEnabled())

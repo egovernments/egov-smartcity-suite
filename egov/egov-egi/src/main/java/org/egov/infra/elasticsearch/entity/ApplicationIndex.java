@@ -409,11 +409,6 @@ public class ApplicationIndex extends AbstractAuditable {
         private ClosureStatus closed;
         private ApprovalStatus approved;
         private String channel;
-        private String cityCode;
-        private String cityName;
-        private String cityGrade;
-        private String districtName;
-        private String regionName;
         private Integer sla = 0;
 
         private Builder() {
@@ -504,31 +499,6 @@ public class ApplicationIndex extends AbstractAuditable {
             return this;
         }
 
-        public Builder withCityCode(final String cityCode) {
-            this.cityCode = cityCode;
-            return this;
-        }
-
-        public Builder withCityName(final String cityName) {
-            this.cityName = cityName;
-            return this;
-        }
-
-        public Builder withCityGrade(final String cityGrade) {
-            this.cityGrade = cityGrade;
-            return this;
-        }
-
-        public Builder withDistrictName(final String districtName) {
-            this.districtName = districtName;
-            return this;
-        }
-
-        public Builder withRegionName(final String regionName) {
-            this.regionName = regionName;
-            return this;
-        }
-
         public Builder withSla(final Integer sla) {
             this.sla = sla;
             return this;
@@ -553,11 +523,6 @@ public class ApplicationIndex extends AbstractAuditable {
             applicationIndex.setClosed(closed);
             applicationIndex.setApproved(approved);
             applicationIndex.setChannel(channel);
-            applicationIndex.setCityCode(cityCode);
-            applicationIndex.setCityName(cityName);
-            applicationIndex.setCityGrade(cityGrade);
-            applicationIndex.setDistrictName(districtName);
-            applicationIndex.setRegionName(regionName);
             applicationIndex.setClosed(closed);
             applicationIndex.setSla(sla);
             applicationIndex.setSlaGap(elapsedDays - sla);

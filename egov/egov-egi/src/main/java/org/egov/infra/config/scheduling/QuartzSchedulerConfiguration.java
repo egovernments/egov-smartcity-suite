@@ -85,11 +85,7 @@ public class QuartzSchedulerConfiguration {
         return taskExecutor;
     }
 
-    protected SchedulerFactoryBean createSchedular(DataSource dataSource) {
-        return this.createSchedular(dataSource, env.getProperty("scheduler.default.table.prefix"));
-    }
-
-    protected SchedulerFactoryBean createSchedular(DataSource dataSource, String schemaPrefix) {
+    protected SchedulerFactoryBean createScheduler(DataSource dataSource) {
         SchedulerFactoryBean schedulerFactory = new SchedulerFactoryBean();
         schedulerFactory.setOverwriteExistingJobs(true);
         schedulerFactory.setAutoStartup(false);
@@ -97,13 +93,13 @@ public class QuartzSchedulerConfiguration {
         schedulerFactory.setJobFactory(springBeanJobFactory());
         schedulerFactory.setTaskExecutor(taskExecutor());
         schedulerFactory.setWaitForJobsToCompleteOnShutdown(false);
-        schedulerFactory.setQuartzProperties(quartzProperties(schemaPrefix));
+        schedulerFactory.setQuartzProperties(quartzProperties());
         schedulerFactory.setDataSource(dataSource);
 
         return schedulerFactory;
     }
 
-    private Properties quartzProperties(String tablePrefix) {
+    private Properties quartzProperties() {
         Properties quartzProps = new Properties();
 
         //Scheduler config
@@ -122,14 +118,14 @@ public class QuartzSchedulerConfiguration {
         quartzProps.put("org.quartz.jobStore.useProperties", "true");
         quartzProps.put("org.quartz.jobStore.dataSource", "quartzDS");
         quartzProps.put("org.quartz.jobStore.nonManagedTXDataSource", "quartzNoTXDS");
-        quartzProps.put("org.quartz.jobStore.tablePrefix", tablePrefix);
+        quartzProps.put("org.quartz.jobStore.tablePrefix", env.getProperty("scheduler.default.table.prefix"));
         quartzProps.put("org.quartz.jobStore.class", "org.quartz.impl.jdbcjobstore.JobStoreCMT");
         quartzProps.put("org.quartz.jobStore.dontSetNonManagedTXConnectionAutoCommitFalse", "false");
         quartzProps.put("org.quartz.jobStore.dontSetAutoCommitFalse", "true");
 
         //Datasource config
         quartzProps.put("org.quartz.dataSource.quartzDS.jndiURL", env.getProperty("default.jdbc.jndi.datasource"));
-        quartzProps.put("org.quartz.dataSource.quartzNoTXDS.jndiURL", env.getProperty("default.jdbc.jndi.quartz.datasource"));
+        quartzProps.put("org.quartz.dataSource.quartzNoTXDS.jndiURL", env.getProperty("scheduler.datasource.jndi.url"));
 
         //Logging plugin config
         quartzProps.put("org.quartz.plugin.jobHistory.class", "org.quartz.plugins.history.LoggingJobHistoryPlugin");

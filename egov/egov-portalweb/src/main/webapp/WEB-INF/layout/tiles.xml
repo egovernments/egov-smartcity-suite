@@ -64,4 +64,24 @@
 		<put-attribute name="body" value="/WEB-INF/views/error/{1}.jsp" />
 	</definition>
 	
+	<definition name="firm-create" extends="base_layout">
+		<put-attribute name="page-title" value="lbl.createfirm" cascade="true"/>
+		<put-attribute name="body" value="/WEB-INF/views/firm/firm-create.jsp"/>
+	</definition>
+	
+	<definition name="firm-success" extends="base_layout">
+		<put-attribute name="page-title" value="lbl.createfirm" cascade="true"/>
+		<put-attribute name="body" value="/WEB-INF/views/firm/firm-success.jsp"/>
+	</definition>
+	
+	<definition name="firm-search" extends="base_layout">
+		<put-attribute name="page-title" value="lbl.searchfirm" cascade="true"/>
+		<put-attribute name="body" value="/WEB-INF/views/firm/firm-search.jsp"/>
+	</definition>
+	
+	<definition name="firm-update" extends="base_layout">
+		<put-attribute name="page-title" value="lbl.createfirm" cascade="true"/>
+		<put-attribute name="body" value="/WEB-INF/views/firm/firm-update.jsp"/>
+	</definition>
+	
 </tiles-definitions>

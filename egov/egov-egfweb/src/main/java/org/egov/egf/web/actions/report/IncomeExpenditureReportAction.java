@@ -54,6 +54,7 @@ import org.egov.commons.Fund;
 import org.egov.egf.model.Statement;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.reporting.util.ReportUtil;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.services.PersistenceService;
@@ -224,6 +225,7 @@ public class IncomeExpenditureReportAction extends BaseFormAction {
         return "report";
     }
 
+    @ReadOnly
     @Action(value = "/report/incomeExpenditureReport-generateIncomeExpenditureSubReport")
     public String generateIncomeExpenditureSubReport() {
         setDetailReport(false);
@@ -231,12 +233,14 @@ public class IncomeExpenditureReportAction extends BaseFormAction {
         return "scheduleResults";
     }
 
+    @ReadOnly
     @Action(value = "/report/incomeExpenditureReport-generateScheduleReport")
     public String generateScheduleReport() {
         populateDataSourceForAllSchedules();
         return "allScheduleResults";
     }
 
+    @ReadOnly
     @Action(value = "/report/incomeExpenditureReport-generateDetailCodeReport")
     public String generateDetailCodeReport() {
         setDetailReport(true);
@@ -259,6 +263,7 @@ public class IncomeExpenditureReportAction extends BaseFormAction {
             incomeExpenditureScheduleService.populateDetailcode(incomeExpenditureStatement);
         }
     }
+
 
     private void populateDataSourceForSchedule() {
         setDetailReport(false);
@@ -323,6 +328,7 @@ public class IncomeExpenditureReportAction extends BaseFormAction {
         }
     }
 
+    @ReadOnly
     @Action(value = "/report/incomeExpenditureReport-generateIncomeExpenditurePdf")
     public String generateIncomeExpenditurePdf() throws Exception {
         populateDataSource();
@@ -334,6 +340,7 @@ public class IncomeExpenditureReportAction extends BaseFormAction {
         return INCOME_EXPENSE_PDF;
     }
 
+    @ReadOnly
     @Action(value = "/report/incomeExpenditureReport-generateDetailCodePdf")
     public String generateDetailCodePdf() throws Exception {
         populateSchedulewiseDetailCodeReport();
@@ -345,6 +352,7 @@ public class IncomeExpenditureReportAction extends BaseFormAction {
         return INCOME_EXPENSE_PDF;
     }
 
+    @ReadOnly
     @Action(value = "/report/incomeExpenditureReport-generateDetailCodeXls")
     public String generateDetailCodeXls() throws Exception {
         populateSchedulewiseDetailCodeReport();
@@ -366,6 +374,8 @@ public class IncomeExpenditureReportAction extends BaseFormAction {
         return "";
     }*/
 
+
+    @ReadOnly
     @Action(value = "/report/incomeExpenditureReport-generateIncomeExpenditureXls")
     public String generateIncomeExpenditureXls() throws Exception {
         populateDataSource();
@@ -378,6 +388,7 @@ public class IncomeExpenditureReportAction extends BaseFormAction {
         return INCOME_EXPENSE_XLS;
     }
 
+    @ReadOnly
     @Action(value = "/report/incomeExpenditureReport-generateSchedulePdf")
     public String generateSchedulePdf() throws Exception {
         populateDataSourceForAllSchedules();
@@ -388,6 +399,7 @@ public class IncomeExpenditureReportAction extends BaseFormAction {
         return INCOME_EXPENSE_PDF;
     }
 
+    @ReadOnly
     @Action(value = "/report/incomeExpenditureReport-generateScheduleXls")
     public String generateScheduleXls() throws Exception {
         populateDataSourceForAllSchedules();
@@ -398,6 +410,7 @@ public class IncomeExpenditureReportAction extends BaseFormAction {
         return INCOME_EXPENSE_XLS;
     }
 
+    @ReadOnly
     @Action(value = "/report/incomeExpenditureReport-generateIncomeExpenditureSchedulePdf")
     public String generateIncomeExpenditureSchedulePdf() throws Exception {
         populateDataSourceForSchedule();
@@ -410,6 +423,7 @@ public class IncomeExpenditureReportAction extends BaseFormAction {
         return INCOME_EXPENSE_PDF;
     }
 
+    @ReadOnly
     @Action(value = "/report/incomeExpenditureReport-generateIncomeExpenditureScheduleXls")
     public String generateIncomeExpenditureScheduleXls() throws Exception {
         populateDataSourceForSchedule();

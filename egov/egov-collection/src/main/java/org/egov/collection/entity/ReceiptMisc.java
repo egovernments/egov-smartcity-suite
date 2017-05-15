@@ -39,9 +39,7 @@
  */
 package org.egov.collection.entity;
 
-// Generated 10 Sep, 2009 12:59:27 PM by Hibernate Tools 3.2.0.CR1
-
-import org.egov.commons.Bank;
+import org.egov.commons.Bankbranch;
 import org.egov.commons.Functionary;
 import org.egov.commons.Fund;
 import org.egov.commons.Fundsource;
@@ -66,14 +64,14 @@ public class ReceiptMisc implements java.io.Serializable {
     private Scheme scheme;
     private SubScheme subscheme;
     private Functionary idFunctionary;
-    private Bank depositedInBank;
+    private Bankbranch depositedBranch;
 
     public ReceiptMisc() {
     }
 
     public ReceiptMisc(final Boundary boundary, final Fund fund, final Functionary functionary,
             final Fundsource fundSource, final Department department, final ReceiptHeader receiptHeader,
-            final Scheme scheme, final SubScheme subscheme, final Bank depositedInBank) {
+            final Scheme scheme, final SubScheme subscheme, final Bankbranch depositedBranch) {
         this.boundary = boundary;
         this.fund = fund;
         idFunctionary = functionary;
@@ -82,7 +80,7 @@ public class ReceiptMisc implements java.io.Serializable {
         this.receiptHeader = receiptHeader;
         this.scheme = scheme;
         this.subscheme = subscheme;
-        this.depositedInBank = depositedInBank;
+        this.depositedBranch = depositedBranch;
     }
 
     public Long getId() {
@@ -164,12 +162,12 @@ public class ReceiptMisc implements java.io.Serializable {
         this.idFunctionary = idFunctionary;
     }
 
-    public Bank getDepositedInBank() {
-        return depositedInBank;
+    public Bankbranch getDepositedBranch() {
+        return depositedBranch;
     }
 
-    public void setDepositedInBank(final Bank depositedInBank) {
-        this.depositedInBank = depositedInBank;
+    public void setDepositedBranch(Bankbranch depositedBranch) {
+        this.depositedBranch = depositedBranch;
     }
 
 }

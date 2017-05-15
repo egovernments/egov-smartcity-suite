@@ -41,20 +41,16 @@ package org.egov.ptis.actions.create;
 
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.egov.ptis.constants.PropertyTaxConstants.ADDITIONAL_COMMISSIONER_DESIGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.ADMIN_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.ANONYMOUS_USER;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_NEW_ASSESSENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPURTENANT_PROPERTY;
-import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_COMMISSIONER_DESIGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_CENTRAL_GOVT;
 import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_MIXED;
 import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_NON_RESIDENTIAL;
 import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_RESIDENTIAL;
 import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_STATE_GOVT;
 import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_VACANT_LAND;
-import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEPUTY_COMMISSIONER_DESIGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEVIATION_PERCENTAGE;
 import static org.egov.ptis.constants.PropertyTaxConstants.ELECTIONWARD_BNDRY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.ELECTION_HIERARCHY_TYPE;
@@ -77,7 +73,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN_NEWPR
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPERTYIMPL_BYID;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_INSPECTOR_DESGN;
-import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_OFFICER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.SENIOR_ASSISTANT;
 import static org.egov.ptis.constants.PropertyTaxConstants.SOURCE_ONLINE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_BILL_NOTCREATED;
@@ -94,12 +89,12 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APP
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
-import static org.egov.ptis.constants.PropertyTaxConstants.ZONAL_COMMISSIONER_DESIGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
 
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -117,7 +112,6 @@ import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
-import org.apache.struts2.convention.annotation.Namespaces;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.ResultPath;
@@ -190,10 +184,9 @@ import com.google.gson.GsonBuilder;
  * @author parvati
  */
 @ParentPackage("egov")
-@Namespaces(value={@Namespace("/create"),@Namespace("/citizen/create")})
+@Namespace("/create")
 @ResultPath("/WEB-INF/jsp/")
 @Results({ @Result(name = "new", location = "create/createProperty-new.jsp"),
-        @Result(name = CreatePropertyAction.CITIZEN_NEW, location = "citizen/create/createProperty-citizenNew.jsp"),
         @Result(name = "dataEntry", location = "create/createProperty-dataEntry.jsp"),
         @Result(name = "ack", location = "create/createProperty-ack.jsp"),
         @Result(name = "dataEntry-ack", location = "create/createProperty-dataEntryAck.jsp"),
@@ -223,8 +216,6 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     private static final String UNIT_RATE_ERROR = "unitrate.error";
     private static final String USAGE_LIST = "UsageList";
     private static final String EXEMPTED_REASON_LIST = "taxExemptedList";
-    private static final String PROPERTY_CREATE_REJECT_FAILURE = "Initiator is not active so can not do rejection with application number ";
-    protected static final String CITIZEN_NEW = "citizenNewForm";
 
     private transient Logger logger = Logger.getLogger(getClass());
     private PropertyImpl property = new PropertyImpl();
@@ -306,6 +297,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     private transient ReportViewerUtil reportViewerUtil;
 
     private Boolean loggedUserIsMeesevaUser = Boolean.FALSE;
+    private Boolean isDataEntryOperator = Boolean.FALSE;
     private String indexNumber;
     private String modifyRsn;
     private Boolean showTaxCalcBtn = Boolean.FALSE;
@@ -381,14 +373,9 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             }
         }
         showCalculateTaxButton();
-        if(StringUtils.isBlank(applicationSource)) {
-            validateInitiatorDesgn();
-            return RESULT_NEW;   
-        }
-        else
-            return CITIZEN_NEW;
+        return RESULT_NEW;
     }
-    
+
     private void showCalculateTaxButton() {
         if (StringUtils.containsIgnoreCase(userDesignationList, REVENUE_INSPECTOR_DESGN)
                 || StringUtils.containsIgnoreCase(userDesignationList, JUNIOR_ASSISTANT)
@@ -417,7 +404,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             property.setApplicationNo(property.getMeesevaApplicationNumber());
             property.setSource(PropertyTaxConstants.SOURCE_MEESEVA);
         }
-        if(SOURCE_ONLINE.equalsIgnoreCase(applicationSource) && ApplicationThreadLocals.getUserId() == null) 
+        if (SOURCE_ONLINE.equalsIgnoreCase(applicationSource) && ApplicationThreadLocals.getUserId() == null)
             ApplicationThreadLocals.setUserId(securityUtils.getCurrentUser().getId());
 
         if (property.getPropertyDetail().isAppurtenantLandChecked()) {
@@ -509,8 +496,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     }
 
     private void createVacantProperty(final Character status, final PropertyImpl nonVacantProperty,
-            final BasicProperty vacantBasicProperty)
-            throws TaxCalculatorExeption {
+            final BasicProperty vacantBasicProperty) throws TaxCalculatorExeption {
         final PropertyImpl vacantProperty = createAppurTenantProperty(status, vacantBasicProperty, Boolean.FALSE);
         vacantProperty.setPropertyDetail(changePropertyDetail(vacantProperty));
         vacantProperty.getPropertyDetail().setCategoryType(getCategoryByNonVacantPropertyType(nonVacantProperty));
@@ -526,18 +512,16 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     }
 
     private PropertyStatusValues updatePropertyStatusValuesRemarks(final BasicProperty basicProperty) {
-        final PropertyStatusValues propStatusVal = basicProperty.getPropertyStatusValuesSet()
-                .iterator().next();
+        final PropertyStatusValues propStatusVal = basicProperty.getPropertyStatusValuesSet().iterator().next();
         propStatusVal.setRemarks(APPURTENANT_PROPERTY);
         return propStatusVal;
     }
 
     private String getCategoryByNonVacantPropertyType(final PropertyImpl nonVacantProperty) {
         final String propertyType = nonVacantProperty.getPropertyDetail().getPropertyTypeMaster().getCode();
-        return OWNERSHIP_TYPE_PRIVATE.equals(propertyType)
-                || OWNERSHIP_TYPE_VAC_LAND.equals(propertyType) ? CATEGORY_VACANT_LAND
-                        : OWNERSHIP_TYPE_STATE_GOVT.equals(propertyType) ? CATEGORY_STATE_GOVT
-                                : CATEGORY_CENTRAL_GOVT;
+        return OWNERSHIP_TYPE_PRIVATE.equals(propertyType) || OWNERSHIP_TYPE_VAC_LAND.equals(propertyType)
+                ? CATEGORY_VACANT_LAND
+                : OWNERSHIP_TYPE_STATE_GOVT.equals(propertyType) ? CATEGORY_STATE_GOVT : CATEGORY_CENTRAL_GOVT;
     }
 
     private void persistAndMessage(final BasicProperty basicProperty, final PropertyImpl property) {
@@ -578,14 +562,14 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
 
         taxExemptionId = taxExemptionId == null || taxExemptionId.isEmpty() ? "-1" : taxExemptionId;
         clonedProp = propService.createProperty(clonedProp, getAreaOfPlot(),
-                basicProperty.getPropertyMutationMaster().getCode(),
-                propTypeId,
-                propUsageId, propOccId, status, getDocNumber(), getNonResPlotArea(), getFloorTypeId(), getRoofTypeId(),
-                getWallTypeId(), getWoodTypeId(), Long.valueOf(taxExemptionId), getPropertyDepartmentId(),
-                getVacantLandPlotAreaId(), getLayoutApprovalAuthorityId(), nonVacant);
+                basicProperty.getPropertyMutationMaster().getCode(), propTypeId, propUsageId, propOccId, status,
+                getDocNumber(), getNonResPlotArea(), getFloorTypeId(), getRoofTypeId(), getWallTypeId(),
+                getWoodTypeId(), Long.valueOf(taxExemptionId), getPropertyDepartmentId(), getVacantLandPlotAreaId(),
+                getLayoutApprovalAuthorityId(), nonVacant);
         clonedProp.setStatus(status);
         if (!clonedProp.getPropertyDetail().getPropertyTypeMaster().getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
-            propCompletionDate = propService.getLowestDtOfCompFloorWise(clonedProp.getPropertyDetail().getFloorDetails());
+            propCompletionDate = propService
+                    .getLowestDtOfCompFloorWise(clonedProp.getPropertyDetail().getFloorDetails());
         else
             propCompletionDate = clonedProp.getPropertyDetail().getDateOfCompletion();
         basicProperty.setPropOccupationDate(propCompletionDate);
@@ -782,6 +766,23 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         if (logger.isDebugEnabled())
             logger.debug("Entered into forward, BasicProperty: " + basicProp + ", Property: " + property
                     + ", userDesgn: " + userDesgn);
+        String loggedInUserDesignation = "";
+        if (property.getState() != null) {
+            final List<Assignment> loggedInUserAssign = assignmentService.getAssignmentByPositionAndUserAsOnDate(
+                    property.getCurrentState().getOwnerPosition().getId(), securityUtils.getCurrentUser().getId(),
+                    new Date());
+            loggedInUserDesignation = !loggedInUserAssign.isEmpty()
+                    ? loggedInUserAssign.get(0).getDesignation().getName() : null;
+        }
+        final Assignment wfInitiator = getWorkflowInitiator(loggedInUserDesignation);
+        if (WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction) && wfInitiator == null) {
+            if (propertyTaxCommonUtils.isRoOrCommissioner(loggedInUserDesignation))
+                addActionError(getText("reject.error.initiator.inactive", Arrays.asList(REVENUE_INSPECTOR_DESGN)));
+            else
+                addActionError(getText("reject.error.initiator.inactive",
+                        Arrays.asList(JUNIOR_ASSISTANT + "/" + SENIOR_ASSISTANT)));
+            return mode.equalsIgnoreCase(EDIT) ? RESULT_NEW : RESULT_VIEW;
+        }
         if (mode.equalsIgnoreCase(EDIT)) {
             validate();
             if (hasErrors() && (StringUtils.containsIgnoreCase(userDesignationList, REVENUE_INSPECTOR_DESGN)
@@ -805,32 +806,15 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             if (hasErrors())
                 return RESULT_VIEW;
         }
-        final User user = securityUtils.getCurrentUser();
-        String loggedInUserDesignation = "";
-        List<Assignment> loggedInUserAssign;
-        if (property.getState() != null) {
-            loggedInUserAssign = assignmentService.getAssignmentByPositionAndUserAsOnDate(
-                    property.getCurrentState().getOwnerPosition().getId(), user.getId(), new Date());
-            loggedInUserDesignation = !loggedInUserAssign.isEmpty() ? loggedInUserAssign.get(0).getDesignation().getName() : null;
-        }
-        Assignment wfInitiator;
-        if (isRoOrCommissioner(loggedInUserDesignation))
-            wfInitiator = propService.getUserOnRejection(property);
-        else
-            wfInitiator = propService.getWorkflowInitiator(property);
         if (!WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction))
             transitionWorkFlow(property);
 
         if (WFLOW_ACTION_STEP_APPROVE.equalsIgnoreCase(workFlowAction))
             return approve();
-        else if (WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction))
-            if (wfInitiator != null) {
-                transitionWorkFlow(property);
-                return reject();
-            } else {
-                setAckMessage(getText(PROPERTY_CREATE_REJECT_FAILURE));
-                return RESULT_ACK;
-            }
+        else if (WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction)) {
+            transitionWorkFlow(property);
+            return reject();
+        }
 
         basicProp.setUnderWorkflow(true);
         basicPropertyService.applyAuditing(property.getState());
@@ -848,6 +832,19 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             logger.debug("forward: Property forward ended");
         }
         return RESULT_ACK;
+    }
+
+    /**
+     * @param loggedInUserDesignation
+     * @return
+     */
+    private Assignment getWorkflowInitiator(final String loggedInUserDesignation) {
+        Assignment wfInitiator;
+        if (propertyTaxCommonUtils.isRoOrCommissioner(loggedInUserDesignation))
+            wfInitiator = propService.getUserOnRejection(property);
+        else
+            wfInitiator = propService.getWorkflowInitiator(property);
+        return wfInitiator;
     }
 
     public void updatePropertyDetails() {
@@ -927,7 +924,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         basicProp.setStatus(propStatus);
         final PropertyMutationMaster propertyMutationMaster = (PropertyMutationMaster) getPersistenceService()
                 .find(MUTATION_MASTER_QUERY, PROP_CREATE_RSN, basicProp.getPropertyMutationMaster().getId());
-        if (!propertyMutationMaster.getCode().equals(PROP_CREATE_RSN_BIFUR) && basicProp.getPropertyStatusValuesSet().isEmpty()
+        if (!propertyMutationMaster.getCode().equals(PROP_CREATE_RSN_BIFUR)
+                && basicProp.getPropertyStatusValuesSet().isEmpty()
                 && WFLOW_ACTION_STEP_APPROVE.equalsIgnoreCase(workFlowAction))
             basicProp.addPropertyStatusValues(propService.createPropStatVal(basicProp, PROP_CREATE_RSN, null, null,
                     null, null, getParentIndex()));
@@ -1022,6 +1020,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         propertyByEmployee = propService.isEmployee(securityUtils.getCurrentUser())
                 && !ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName());
         loggedUserIsMeesevaUser = propService.isMeesevaUser(securityUtils.getCurrentUser());
+        isDataEntryOperator = propService.isDataEntryOperator(securityUtils.getCurrentUser());
         if (isNotBlank(getModelId())) {
             property = (PropertyImpl) getPersistenceService().findByNamedQuery(QUERY_PROPERTYIMPL_BYID,
                     Long.valueOf(getModelId()));
@@ -1046,13 +1045,13 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                 .findAllBy("from PropertyTypeMaster where type != 'EWSHS' order by orderNo");
         final List<PropertyOccupation> propOccList = getPersistenceService().findAllBy("from PropertyOccupation");
         List<PropertyMutationMaster> mutationList;
-        if (StringUtils.isBlank(applicationSource)) {
-            mutationList = getPersistenceService()
-                    .findAllBy("from PropertyMutationMaster pmm where pmm.type=?", PROP_CREATE_RSN);
-        } else {
-            mutationList = getPersistenceService().findAllBy("from PropertyMutationMaster pmm where pmm.type=? and pmm.code=?",
-                    PROP_CREATE_RSN, PROP_CREATE_RSN_NEWPROPERTY_CODE);
-        }
+        if (StringUtils.isBlank(applicationSource))
+            mutationList = getPersistenceService().findAllBy("from PropertyMutationMaster pmm where pmm.type=?",
+                    PROP_CREATE_RSN);
+        else
+            mutationList = getPersistenceService().findAllBy(
+                    "from PropertyMutationMaster pmm where pmm.type=? and pmm.code=?", PROP_CREATE_RSN,
+                    PROP_CREATE_RSN_NEWPROPERTY_CODE);
         if (null != property && property.getMeesevaServiceCode() != null) {
             if (property.getMeesevaServiceCode().equalsIgnoreCase(MEESEVA_SERVICE_CODE_NEWPROPERTY))
                 getMutationListByCode(PROP_CREATE_RSN_NEWPROPERTY_CODE);
@@ -1237,8 +1236,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             logger.debug("Entered into changePropertyDetail, Property is Vacant land");
 
         final PropertyDetail propertyDetail = property.getPropertyDetail();
-        if (getDocumentTypeDetails().getDocumentName() != null
-                && getDocumentTypeDetails().getDocumentName().equals(PropertyTaxConstants.DOCUMENT_NAME_NOTARY_DOCUMENT))
+        if (getDocumentTypeDetails().getDocumentName() != null && getDocumentTypeDetails().getDocumentName()
+                .equals(PropertyTaxConstants.DOCUMENT_NAME_NOTARY_DOCUMENT))
             propertyDetail.setStructure(true);
         final VacantProperty vacantProperty = new VacantProperty(propertyDetail.getSitalArea(),
                 propertyDetail.getTotalBuiltupArea(), propertyDetail.getCommBuiltUpArea(),
@@ -1485,18 +1484,23 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
 
             if (null != getElectionWardId() && getElectionWardId() != -1 && null != property.getBasicProperty()) {
                 final Assignment assignment = propService.isCscOperator(securityUtils.getCurrentUser())
-                        ? propService.getAssignmentByDeptDesigElecWard(property.getBasicProperty())
-                        : null;
+                        ? propService.getAssignmentByDeptDesigElecWard(property.getBasicProperty()) : null;
                 if (assignment == null && propService.getUserPositionByZone(property.getBasicProperty(), false) == null)
                     addActionError(getText("notexists.position"));
             }
 
+        } else if (property.getId() == null && !isDataEntryOperator) {
+            final Assignment initiator = propertyTaxCommonUtils
+                    .getWorkflowInitiatorAssignment(securityUtils.getCurrentUser().getId());
+            if (initiator == null)
+                addActionError(getText("notexists.position"));
         }
         validateApproverDetails();
         super.validate();
         if (isBlank(getModelId()))
             showCalculateTaxButton();
-        if (propTypeMstr != null && propTypeMstr.getCode().equalsIgnoreCase(PropertyTaxConstants.OWNERSHIP_TYPE_STATE_GOVT)
+        if (propTypeMstr != null
+                && propTypeMstr.getCode().equalsIgnoreCase(PropertyTaxConstants.OWNERSHIP_TYPE_STATE_GOVT)
                 && propertyDepartmentId == null)
             addActionError(getText("mandatory.property.department"));
         if (upicNo == null || "".equals(upicNo))
@@ -1511,9 +1515,9 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         final String cityLogo = url.concat(PropertyTaxConstants.IMAGE_CONTEXT_PATH)
                 .concat((String) request.getSession().getAttribute("citylogo"));
         final String cityName = request.getSession().getAttribute("citymunicipalityname").toString();
-        if(ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName()) && ApplicationThreadLocals.getUserId() == null) {
+        if (ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName())
+                && ApplicationThreadLocals.getUserId() == null)
             ApplicationThreadLocals.setUserId(securityUtils.getCurrentUser().getId());
-        }
         reportId = reportViewerUtil
                 .addReportToTempCache(basicPropertyService.propertyAcknowledgement(property, cityLogo, cityName));
         return PRINT_ACK;
@@ -1657,7 +1661,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             property = propService.createProperty(property, getAreaOfPlot(), propertyMutationMaster.getCode(),
                     propTypeId, propUsageId, propOccId, STATUS_DEMAND_INACTIVE, getDocNumber(), getNonResPlotArea(),
                     getFloorTypeId(), getRoofTypeId(), getWallTypeId(), getWoodTypeId(), Long.valueOf(taxExemptionId),
-                    getPropertyDepartmentId(), getVacantLandPlotAreaId(), getLayoutApprovalAuthorityId(), Boolean.FALSE);
+                    getPropertyDepartmentId(), getVacantLandPlotAreaId(), getLayoutApprovalAuthorityId(),
+                    Boolean.FALSE);
             if (!propTypeMstr.getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
                 propCompletionDate = propService
                         .getLowestDtOfCompFloorWise(property.getPropertyDetail().getFloorDetails());
@@ -2321,34 +2326,6 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         this.documentTypeDetails = documentTypeDetails;
     }
 
-    private boolean isRoOrCommissioner(final String loggedInUserDesignation) {
-        boolean isany;
-        if (!REVENUE_OFFICER_DESGN.equalsIgnoreCase(loggedInUserDesignation))
-            isany = isCommissioner(loggedInUserDesignation);
-        else
-            isany = true;
-        return isany;
-    }
-
-    private boolean isCommissioner(final String loggedInUserDesignation) {
-        boolean isanyone;
-        if (!ASSISTANT_COMMISSIONER_DESIGN.equalsIgnoreCase(loggedInUserDesignation)
-                || !ADDITIONAL_COMMISSIONER_DESIGN.equalsIgnoreCase(loggedInUserDesignation))
-            isanyone = isDeputyOrAbove(loggedInUserDesignation);
-        else
-            isanyone = true;
-        return isanyone;
-    }
-
-    private boolean isDeputyOrAbove(final String loggedInUserDesignation) {
-        boolean isanyone = false;
-        if (DEPUTY_COMMISSIONER_DESIGN.equalsIgnoreCase(loggedInUserDesignation)
-                || COMMISSIONER_DESGN.equalsIgnoreCase(loggedInUserDesignation)
-                || ZONAL_COMMISSIONER_DESIGN.equalsIgnoreCase(loggedInUserDesignation))
-            isanyone = true;
-        return isanyone;
-    }
-
     public boolean isFloorDetailsEntered() {
         return floorDetailsEntered;
     }
@@ -2377,7 +2354,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         return applicationSource;
     }
 
-    public void setApplicationSource(String applicationSource) {
+    public void setApplicationSource(final String applicationSource) {
         this.applicationSource = applicationSource;
     }
 

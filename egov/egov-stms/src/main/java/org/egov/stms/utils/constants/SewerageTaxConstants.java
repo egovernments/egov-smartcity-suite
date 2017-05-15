@@ -310,6 +310,8 @@ public class SewerageTaxConstants {
     
     public static final String SLAFORNEWSEWERAGECONNECTION = "SLAFORNEWSEWERAGECONNECTION";
     public static final String SLAFORCHANGEINCLOSET = "SLAFORCHANGEINCLOSET";
+    public static final String SEWERAGE_MONTHLY_RATES ="SEWERAGE MONTHLY RATES BY MULTIPLE CLOSETS";
+    public static final String EDIT_DONATION_CHARGE ="EDIT_DONATION_CHARGE";
     
     
 }

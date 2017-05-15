@@ -46,7 +46,6 @@ import org.egov.infra.config.scheduling.SchedulerConfigCondition;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.scheduling.quartz.CronTriggerFactoryBean;
 import org.springframework.scheduling.quartz.JobDetailFactoryBean;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 
@@ -54,19 +53,17 @@ import javax.sql.DataSource;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.quartz.CronTrigger.MISFIRE_INSTRUCTION_DO_NOTHING;
-
 @Configuration
 @Conditional(SchedulerConfigCondition.class)
 public class EisSchedulerConfiguration extends QuartzSchedulerConfiguration {
 
     @Bean(destroyMethod = "destroy")
     public SchedulerFactoryBean eisScheduler(DataSource dataSource) {
-        SchedulerFactoryBean eisScheduler = createSchedular(dataSource);
+        SchedulerFactoryBean eisScheduler = createScheduler(dataSource);
         eisScheduler.setSchedulerName("eis-scheduler");
         eisScheduler.setAutoStartup(true);
         eisScheduler.setOverwriteExistingJobs(true);
-        eisScheduler.setTriggers(userRoleMappingCronTrigger().getObject());
+        //eisScheduler.setTriggers(userRoleMappingCronTrigger().getObject());
         return eisScheduler;
     }
 
@@ -92,7 +89,7 @@ public class EisSchedulerConfiguration extends QuartzSchedulerConfiguration {
         return userRoleMappingJobDetail;
     }
 
-    @Bean
+    /*@Bean
     public CronTriggerFactoryBean userRoleMappingCronTrigger() {
         CronTriggerFactoryBean userRoleMappingCron = new CronTriggerFactoryBean();
         userRoleMappingCron.setJobDetail(userRoleMappingJobDetail().getObject());
@@ -101,5 +98,5 @@ public class EisSchedulerConfiguration extends QuartzSchedulerConfiguration {
         userRoleMappingCron.setCronExpression("0 0 3 * * ?");
         userRoleMappingCron.setMisfireInstruction(MISFIRE_INSTRUCTION_DO_NOTHING);
         return userRoleMappingCron;
-    }
+    }*/
 }

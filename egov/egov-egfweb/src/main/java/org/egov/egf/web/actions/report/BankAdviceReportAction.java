@@ -66,6 +66,7 @@ import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.commons.utils.EntityType;
 import org.egov.egf.model.BankAdviceReportInfo;
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
@@ -314,6 +315,7 @@ public class BankAdviceReportAction extends BaseFormAction {
         return "downloadText";
     }
 
+    @ReadOnly
     private List populateSubLedgerDetails(final List subList) {
 
         final List<Object[]> retList = subList;

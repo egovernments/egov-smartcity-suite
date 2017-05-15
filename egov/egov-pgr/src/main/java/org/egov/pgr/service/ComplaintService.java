@@ -52,6 +52,7 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.admin.master.service.RoleService;
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.messaging.MessagingService;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -503,16 +504,19 @@ public class ComplaintService {
         }
     }
 
+    @ReadOnly
     public Page<Complaint> getLatest(final int page, final int pageSize) {
         final int offset = page - 1;
         return complaintRepository.findByLatestComplaint(securityUtils.getCurrentUser(), new PageRequest(offset, pageSize));
     }
 
+    @ReadOnly
     public Page<Complaint> getMyComplaint(final int page, final int pageSize) {
         final int offset = page - 1;
         return complaintRepository.findByMyComplaint(securityUtils.getCurrentUser(), new PageRequest(offset, pageSize));
     }
 
+    @ReadOnly
     public List<Complaint> getNearByComplaint(final int page, final float lat, final float lng, final int distance,
                                               final int pageSize) {
         final Long offset = (page - 1L) * pageSize;
@@ -543,6 +547,7 @@ public class ComplaintService {
         return emailBody.toString();
     }
 
+    @ReadOnly
     public List<Complaint> getPendingGrievances() {
         final User user = securityUtils.getCurrentUser();
         final String[] pendingStatus = {COMPLAINT_REGISTERED, "FORWARDED", "PROCESSING", "NOTCOMPLETED", "REOPENED"};
@@ -553,24 +558,28 @@ public class ComplaintService {
         return criteria.list();
     }
 
+    @ReadOnly
     public Page<Complaint> getMyPendingGrievances(final int page, final int pageSize) {
         final int offset = page - 1;
         return complaintRepository.findMyComplaintyByStatus(securityUtils.getCurrentUser(), PENDING_STATUS,
                 new PageRequest(offset, pageSize));
     }
 
+    @ReadOnly
     public Page<Complaint> getMyCompletedGrievances(final int page, final int pageSize) {
         final int offset = page - 1;
         return complaintRepository.findMyComplaintyByStatus(securityUtils.getCurrentUser(), COMPLETED_STATUS,
                 new PageRequest(offset, pageSize));
     }
 
+    @ReadOnly
     public Page<Complaint> getMyRejectedGrievances(final int page, final int pageSize) {
         final int offset = page - 1;
         return complaintRepository.findMyComplaintyByStatus(securityUtils.getCurrentUser(), REJECTED_STATUS,
                 new PageRequest(offset, pageSize));
     }
 
+    @ReadOnly
     public Map<String, Integer> getMyComplaintsCount() {
         final HashMap<String, Integer> complaintsCount = new HashMap<>();
         complaintsCount.put(COMPLAINT_ALL,
@@ -584,6 +593,7 @@ public class ComplaintService {
         return complaintsCount;
     }
 
+    @ReadOnly
     public Map<String, Integer> getComplaintsTotalCount() {
         final HashMap<String, Integer> complaintsCount = new HashMap<>();
         complaintsCount.put(COMPLAINTS_FILED, complaintRepository.getTotalComplaintsCount().intValue());
@@ -592,6 +602,7 @@ public class ComplaintService {
         return complaintsCount;
     }
 
+    @ReadOnly
     public List<Complaint> getOpenComplaints() {
         final List<String> statusList = Arrays.asList(COMPLAINT_REGISTERED, "FORWARDED", "REOPENED", "PROCESSING");
         return complaintRepository.findByStatusNameIn(statusList);

@@ -47,6 +47,8 @@
 
 <form:form role="form" method="post" modelAttribute="sewerageApplicationDetails" id="editSewerageApplicationDetailsForm" cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">				
 	<form:hidden id="mode" path="" name="mode" value="${mode}"/> 
+	<form:hidden id="editdonationcharge" path="" name="editdonationcharge" value="${editdonationcharge}"/> 
+	
 	<form:hidden id="showApprovalDtls" path="" name="showApprovalDtls" value="${showApprovalDtls}"/> 
 	<form:hidden path="" id="approvalPositionExist" value="${approvalPositionExist}"/>
 	<form:hidden path="status.code" id="statuscode" value="${sewerageApplicationDetails.status.code}"/>

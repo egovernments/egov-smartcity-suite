@@ -472,7 +472,7 @@ public class SewerageIndexService {
     public static AggregationBuilder getCountWithGroupingWardAndOrder(final String aggregationName, final String fieldName,
             final String sortField, final String sortOrder) {
 
-        final TermsBuilder aggregation = AggregationBuilders.terms(aggregationName).field(fieldName);
+        final TermsBuilder aggregation = AggregationBuilders.terms(aggregationName).field(fieldName).size(75);
         if (StringUtils.isNotBlank(sortField) && StringUtils.isNotEmpty(sortField) && "ward".equalsIgnoreCase(sortField)) {
             Boolean order = true;
             if (StringUtils.isNotEmpty(sortOrder) && StringUtils.isNotBlank(sortOrder)

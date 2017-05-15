@@ -686,12 +686,8 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
         final Address ownerAddress = basicProperty.getAddress();
         BigDecimal totalTax = BigDecimal.ZERO;
         BigDecimal propertyTax = BigDecimal.ZERO;
-
-        if (basicProperty.getPropertyOwnerInfo().size() > 1)
-            infoBean.setOwnerName(basicProperty.getFullOwnerName().concat(" and others"));
-        else
-            infoBean.setOwnerName(basicProperty.getFullOwnerName());
-
+        
+        infoBean.setOwnerName(basicProperty.getFullOwnerName());
         infoBean.setOwnerAddress(basicProperty.getAddress().toString());
         infoBean.setApplicationNo(property.getApplicationNo());
         infoBean.setDoorNo(ownerAddress.getHouseNoBldgApt());

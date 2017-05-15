@@ -67,7 +67,7 @@ import org.egov.tl.entity.LicenseAppType;
 import org.egov.tl.entity.NatureOfBusiness;
 import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.entity.WorkflowBean;
-import org.egov.tl.entity.dto.DemandnoticeForm;
+import org.egov.tl.entity.dto.DemandNoticeForm;
 import org.egov.tl.entity.dto.OnlineSearchForm;
 import org.egov.tl.entity.dto.SearchForm;
 import org.egov.tl.repository.SearchTradeRepository;
@@ -97,6 +97,7 @@ import java.util.Optional;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.defaultString;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.egov.infra.utils.DateUtils.currentDateToDefaultDateFormat;
 import static org.egov.infra.utils.DateUtils.getDefaultFormattedDate;
 import static org.egov.infra.utils.DateUtils.toYearFormat;
@@ -179,7 +180,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         final Assignment userAssignment = assignmentService.getPrimaryAssignmentForUser(securityUtils.getCurrentUser().getId());
         final Position wfInitiator = getWorkflowInitiator(license);
         if (BUTTONAPPROVE.equals(workFlowAction)) {
-            if (license.getTempLicenseNumber() == null && license.isNewApplication())
+            if (isEmpty(license.getLicenseNumber()) && license.isNewApplication())
                 license.setLicenseNumber(licenseNumberUtils.generateLicenseNumber());
 
             if (license.getCurrentDemand().getBaseDemand().compareTo(license.getCurrentDemand().getAmtCollected()) <= 0)
@@ -380,7 +381,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
     }
 
     @ReadOnly
-    public List<DemandnoticeForm> getLicenseDemandNotices(final DemandnoticeForm demandnoticeForm) {
+    public List<DemandNoticeForm> getLicenseDemandNotices(final DemandNoticeForm demandnoticeForm) {
         final Criteria searchCriteria = entityQueryService.getSession().createCriteria(TradeLicense.class);
         searchCriteria.createAlias("licensee", "licc").createAlias("category", "cat").createAlias("tradeName", "subcat")
                 .createAlias("status", "licstatus");
@@ -405,7 +406,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
             searchCriteria.add(Restrictions.ne("licstatus.statusCode", StringUtils.upperCase("CAN")));
 
         searchCriteria.addOrder(Order.asc("id"));
-        final List<DemandnoticeForm> finalList = new LinkedList<>();
+        final List<DemandNoticeForm> finalList = new LinkedList<>();
 
         for (final TradeLicense license : (List<TradeLicense>) searchCriteria.list()) {
             Installment currentInstallment = license.getCurrentDemand().getEgInstallmentMaster();
@@ -415,7 +416,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
             Map<String, Map<String, BigDecimal>> outstandingFees = getOutstandingFeeForDemandNotice(license,
                     currentInstallment, previousInstallment.get(0));
             Map<String, BigDecimal> licenseFees = outstandingFees.get(LICENSE_FEE_TYPE);
-            finalList.add(new DemandnoticeForm(license, licenseFees, getOwnerName(license)));
+            finalList.add(new DemandNoticeForm(license, licenseFees, getOwnerName(license)));
         }
         return finalList;
     }

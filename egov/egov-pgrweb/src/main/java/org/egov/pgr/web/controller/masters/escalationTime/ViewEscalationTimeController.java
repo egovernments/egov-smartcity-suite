@@ -40,99 +40,65 @@
 
 package org.egov.pgr.web.controller.masters.escalationTime;
 
-import org.apache.commons.io.IOUtils;
+import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
+
 import org.egov.eis.service.DesignationService;
+import org.egov.infra.web.support.ui.DataTable;
 import org.egov.pgr.entity.Escalation;
+import org.egov.pgr.entity.dto.EscalationTimeSearchRequest;
 import org.egov.pgr.service.ComplaintTypeService;
 import org.egov.pgr.service.EscalationService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.List;
-
-import static org.egov.infra.utils.JsonUtils.toJSON;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @Controller
 @RequestMapping(value = "/escalationTime")
 public class ViewEscalationTimeController {
-	public static final String CONTENTTYPE_JSON = "application/json";
+    public static final String CONTENTTYPE_JSON = "application/json";
 
+    protected ComplaintTypeService complaintTypeService;
+    protected EscalationService escalationService;
+    protected DesignationService designationService;
 
-	protected ComplaintTypeService complaintTypeService;
-	protected EscalationService escalationService;
-	protected DesignationService designationService;
-
-	@Autowired
-	public ViewEscalationTimeController(
-			final ComplaintTypeService complaintTypeService,
-			EscalationService escalationService,
-			DesignationService designationService) {
-		this.complaintTypeService = complaintTypeService;
-		this.escalationService = escalationService;
-		this.designationService = designationService;
-	}
-
-	@ModelAttribute
-	public Escalation escalation() {
-		return new Escalation();
-	}
-
-	
-	@RequestMapping(value = "/search", method = GET)
-	public String searchForm(@ModelAttribute Escalation escalation,
-			final Model model) {
-		model.addAttribute("mode", "new");
-		return "escalationTime-search";
-	}
-
-	@RequestMapping(value = "/search", method = RequestMethod.POST)
-	public String searchEscalationTimeForm(
-			@ModelAttribute Escalation escalation, final Model model) {
-		model.addAttribute("mode", "new");
-		return "escalationTime-search";
-	}
-
-	@RequestMapping(value = "resultList-update", method = RequestMethod.GET)
-    public @ResponseBody void springPaginationDataTablesUpdate(final HttpServletRequest request,
-            final HttpServletResponse response) throws IOException {
-		 Long complaintTypeId = Long.valueOf(0),designationId=  Long.valueOf(0);
-        final int pageStart = Integer.valueOf(request.getParameter("start"));
-        final int pageSize = Integer.valueOf(request.getParameter("length"));
-        if(request.getParameter("complaintTypeId")!=null && !"".equals(request.getParameter("complaintTypeId")))
-          complaintTypeId = Long.valueOf(request.getParameter("complaintTypeId"));
-        if(request.getParameter("designationId")!=null && !"".equals(request.getParameter("designationId"))) 
-        	designationId = Long.valueOf(request.getParameter("designationId"));
-        final int pageNumber = pageStart / pageSize + 1;
-        
-        final String escalationTimeRouterJSONData = commonSearchResult(pageNumber, pageSize, complaintTypeId,
-        		designationId);
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        IOUtils.write(escalationTimeRouterJSONData, response.getWriter());
+    @Autowired
+    public ViewEscalationTimeController(
+            final ComplaintTypeService complaintTypeService,
+            EscalationService escalationService,
+            DesignationService designationService) {
+        this.complaintTypeService = complaintTypeService;
+        this.escalationService = escalationService;
+        this.designationService = designationService;
     }
 
- public String commonSearchResult(final Integer pageNumber, final Integer pageSize, final Long complaintTypeId,
-            final Long designationId) {
-		 
-        final Page<Escalation> pageOfEscalation = escalationService.getPageOfEscalations(pageNumber, pageSize,
-        		complaintTypeId, designationId);
-        final List<Escalation> positionList = pageOfEscalation.getContent();
-        final StringBuilder complaintRouterJSONData = new StringBuilder();
-        complaintRouterJSONData.append("{\"draw\": ").append("0");
-        complaintRouterJSONData.append(",\"recordsTotal\":").append(pageOfEscalation.getTotalElements());
-        complaintRouterJSONData.append(",\"totalDisplayRecords\":").append(pageSize);
-        complaintRouterJSONData.append(",\"recordsFiltered\":").append(pageOfEscalation.getTotalElements());
-       complaintRouterJSONData.append(",\"data\":").append(toJSON(positionList, Escalation.class, EscalationTimeAdaptor.class)).append("}");
-        return complaintRouterJSONData.toString();
+    @ModelAttribute
+    public Escalation escalation() {
+        return new Escalation();
+    }
+
+    @GetMapping("/search")
+    public String searchForm(@ModelAttribute Escalation escalation,
+            final Model model) {
+        model.addAttribute("mode", "new");
+        return "escalationTime-search";
+    }
+
+    @PostMapping("/search")
+    public String searchEscalationTimeForm(
+            @ModelAttribute Escalation escalation, final Model model) {
+        model.addAttribute("mode", "new");
+        return "escalationTime-search";
+    }
+
+    @GetMapping(value = "resultList-update", produces = TEXT_PLAIN_VALUE)
+    @ResponseBody
+    public String search(EscalationTimeSearchRequest escalationTimeSearchRequest) {
+        return new DataTable<>(escalationService.getEscalationsTime(escalationTimeSearchRequest),
+                escalationTimeSearchRequest.draw()).toJson(EscalationTimeAdaptor.class);
     }
 }
