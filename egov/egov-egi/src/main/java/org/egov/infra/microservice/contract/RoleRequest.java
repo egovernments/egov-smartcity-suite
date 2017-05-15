@@ -39,10 +39,6 @@
  */
 package org.egov.infra.microservice.contract;
 
-import java.util.Date;
-
-import com.fasterxml.jackson.annotation.JsonFormat;
-
 public class RoleRequest {
 
     private Long id;
@@ -51,18 +47,6 @@ public class RoleRequest {
 
     private String code;
 
-    private String description;
-
-    private Long createdBy;
-
-    @JsonFormat(pattern = "MM/dd/yyyy")
-    private Date createdDate;
-
-    private Long lastModifiedBy;
-    @JsonFormat(pattern = "MM/dd/yyyy")
-
-    private Date lastModifiedDate;
-
     public RoleRequest() {
     }
 
@@ -70,11 +54,6 @@ public class RoleRequest {
         id = roleEntity.getId();
         name = roleEntity.getName();
         code = roleEntity.getName();
-        description = roleEntity.getDescription();
-        createdBy = roleEntity.getCreatedBy() == null ? 0L : roleEntity.getCreatedBy().getId();
-        createdDate = roleEntity.getCreatedDate();
-        lastModifiedBy = roleEntity.getLastModifiedBy() == null ? 0L : roleEntity.getLastModifiedBy().getId();
-        lastModifiedDate = roleEntity.getLastModifiedDate();
     }
 
     public Long getId() {
@@ -88,25 +67,4 @@ public class RoleRequest {
     public String getCode() {
         return code;
     }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public Long getCreatedBy() {
-        return createdBy;
-    }
-
-    public Date getCreatedDate() {
-        return createdDate;
-    }
-
-    public Long getLastModifiedBy() {
-        return lastModifiedBy;
-    }
-
-    public Date getLastModifiedDate() {
-        return lastModifiedDate;
-    }
-
 }
