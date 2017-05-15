@@ -764,8 +764,8 @@ public interface PropertyTaxConstants {
     public static final String END_APPROVER_DESGN = "RO";
     public static final String JUNIOR_ASSISTANT = "Junior Assistant";
     public static final String SENIOR_ASSISTANT = "Senior Assistant";
-    public static final String ASSISTANT_COMMISSIONER_DESIGN = "Assistant commissioner";
-    public static final String DEPUTY_COMMISSIONER_DESIGN = "Deputy commissioner";
+    public static final String ASSISTANT_COMMISSIONER_DESIGN = "Assistant Commissioner";
+    public static final String DEPUTY_COMMISSIONER_DESIGN = "Deputy Commissioner";
     public static final String ADDITIONAL_COMMISSIONER_DESIGN = "Additional Commissioner";
     public static final String ZONAL_COMMISSIONER_DESIGN = "Zonal Commissioner";
     public static final String JUNIOR_OR_SENIOR_ASSISTANT_DESIGN = "Senior Assistant,Junior Assistant";
