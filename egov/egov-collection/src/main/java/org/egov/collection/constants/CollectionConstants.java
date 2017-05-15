@@ -612,7 +612,7 @@ public final class CollectionConstants {
     public static final String DASHBOARD_OTHERS = "OTHERS";
 
     public static final String BANK_COLLECTION_OPERATOR = "Bank Collection Operator";
-    public static final String QUERY_ACTIVE_BRANCHUSER_BY_USESR = "QUERY_ACTIVE_BRANCHUSER_BY_USESR";
+    public static final String QUERY_ACTIVE_BRANCHUSER_BY_USER = "QUERY_ACTIVE_BRANCHUSER_BY_USESR";
     public static final String QUERY_BRANCHUSER_BRANCH = "QUERY_BRANCHUSER_BRANCH";
     public static final String QUERY_RECEIPT_BRANCH = "getAllReceiptBranch";
 
