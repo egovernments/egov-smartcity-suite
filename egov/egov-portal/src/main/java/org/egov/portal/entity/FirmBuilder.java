@@ -37,13 +37,59 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.portal.repository;
+package org.egov.portal.entity;
 
-import org.egov.portal.entity.PortalInbox;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import java.util.ArrayList;
+import java.util.Arrays;
 
-@Repository
-public interface PortalInboxRepository extends JpaRepository<PortalInbox, Long> {
-    PortalInbox findByApplicationNumberAndModule_Id(final String applicationNumber, final Long moduleId);
+import org.egov.infra.exception.ApplicationRuntimeException;
+
+public class FirmBuilder {
+
+    private Firm firm;
+
+    private FirmUser firmUser;
+
+    public FirmBuilder(final String name, final String pan, final String address) {
+        firm = new Firm();
+        firm.setName(name);
+        firm.setPan(pan);
+        firm.setAddress(address);
+    }
+
+    public FirmBuilder setFirmUser(final String name, final String mobileNumber, final String emailId, final Long userId) {
+        firmUser = new FirmUser();
+        firmUser.setName(name);
+        firmUser.setMobileNumber(mobileNumber);
+        firmUser.setEmailId(emailId);
+        firmUser.setEgUserId(userId);
+        if (firm.getTempFirmUsers().isEmpty())
+            firm.setTempFirmUsers(new ArrayList<FirmUser>(Arrays.asList(firmUser)));
+        else
+            firm.getTempFirmUsers().add(firmUser);
+        return this;
+    }
+
+    public Firm build() throws ApplicationRuntimeException {
+        validate();
+        return firm;
+    }
+
+    private void validate() throws ApplicationRuntimeException {
+        // add validation for mandatory fields
+        if (firm.getName().isEmpty() && firm.getName() == null)
+            throw new ApplicationRuntimeException("Firm Name is mandatory");
+        if (firm.getPan().isEmpty() && firm.getPan() == null)
+            throw new ApplicationRuntimeException("Pan is mandatory");
+
+        if (firm.getTempFirmUsers() != null && !firm.getTempFirmUsers().isEmpty()) {
+            for (FirmUser user : firm.getTempFirmUsers()) {
+                if (user.getEgUserId() == null) {
+                    if (user.getEmailId().isEmpty() && user.getEmailId() == null)
+                        throw new ApplicationRuntimeException("Firm User EmailId is mandatory");
+                }
+            }
+        }
+    }
+
 }

@@ -39,6 +39,17 @@
  */
 package org.egov.portal.service;
 
+import java.util.Date;
+
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.persistence.entity.enums.UserType;
+import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.workflow.entity.State;
+import org.egov.portal.entity.PortalInbox;
+import org.egov.portal.entity.PortalInboxUser;
+import org.egov.portal.repository.PortalInboxRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,5 +57,60 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class PortalInboxService {
 
-    
+    private final PortalInboxRepository portalInboxRepository;
+
+    @Autowired
+    private SecurityUtils securityUtils;
+
+    @Autowired
+    public PortalInboxService(final PortalInboxRepository portalInboxRepository) {
+        this.portalInboxRepository = portalInboxRepository;
+    }
+
+    @Transactional
+    public void pushInboxMessage(final PortalInbox portalInbox) {
+        if (portalInbox.getTempPortalInboxUser().isEmpty()) {
+            User user = getLoggedInUser();
+            if (user != null) {
+                if ((UserType.BUSINESS.toString().equalsIgnoreCase(user.getType().toString()) || UserType.CITIZEN
+                        .toString().equalsIgnoreCase(user.getType().toString()))) {
+                    PortalInboxUser portalInboxUser = new PortalInboxUser();
+                    portalInboxUser.setUser(user);
+                    portalInbox.getPortalInboxUsers().add(portalInboxUser);
+                    portalInboxUser.setPortalInbox(portalInbox);
+                } else
+                    throw new ApplicationRuntimeException("Logged in User must be a Citizen or Business User.");
+            }
+        } else {
+            portalInbox.getPortalInboxUsers().addAll(portalInbox.getTempPortalInboxUser());
+        }
+        portalInboxRepository.save(portalInbox);
+    }
+
+    @Transactional
+    public void updateInboxMessage(final String applicationNumber, final Long moduleId, final String status,
+            final Boolean isResolved, final Date slaEndDate, final State state, final User user) {
+        PortalInbox portalInbox = getPortalInboxByApplicationNo(applicationNumber, moduleId);
+        if (portalInbox != null) {
+            portalInbox.setStatus(status);
+            portalInbox.setResolved(isResolved);
+            if (portalInbox.getSlaEndDate() != null)
+                portalInbox.setSlaEndDate(slaEndDate);
+            portalInbox.setState(state);
+            portalInboxRepository.save(portalInbox);
+        }
+    }
+
+    public PortalInbox getPortalInboxByApplicationNo(final String applicationNumber, final Long moduleId) {
+        return portalInboxRepository.findByApplicationNumberAndModule_Id(applicationNumber, moduleId);
+    }
+
+    /**
+     * This method returns the User instance associated with the logged in user
+     *
+     * @return the logged in user
+     */
+    public User getLoggedInUser() {
+        return securityUtils.getCurrentUser();
+    }
 }

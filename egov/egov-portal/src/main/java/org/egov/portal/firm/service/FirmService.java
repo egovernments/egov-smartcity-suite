@@ -46,11 +46,13 @@ import javax.persistence.PersistenceContext;
 
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.portal.entity.Firm;
 import org.egov.portal.entity.FirmUser;
 import org.egov.portal.entity.SearchRequestFirm;
 import org.egov.portal.firm.repository.FirmRepository;
+import org.egov.portal.firm.repository.FirmUserRepository;
 import org.egov.portal.repository.specs.SearchFirmSpec;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,6 +67,9 @@ public class FirmService {
     @Autowired
     private FirmRepository firmRepository;
 
+    @Autowired
+    private FirmUserRepository firmUserRepository;
+
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -76,7 +81,53 @@ public class FirmService {
 
     @Transactional
     public Firm create(final Firm firm) {
+        validateFirmUsers(firm);
+        FirmUser firmUsers;
+        for (final FirmUser firmUser : firm.getTempFirmUsers()) {
+            firmUsers = new FirmUser();
+            if (firmUser.getEgUserId() == null) {
+                User user;
+                user = userService.getUserByUsername(firmUser.getEmailId());
+                if (user == null) {
+                    user = createUser(firmUser);
+                }
+                firmUsers.setUser(user);
+            } else {
+                firmUsers.setUser(firmUser.getUser());
+            }
+            firmUsers.setMobileNumber(firmUser.getMobileNumber());
+            firmUsers.setEmailId(firmUser.getEmailId());
+            firmUsers.setName(firmUser.getName());
+            firmUsers.setFirm(firm);
+            firm.getFirmUsers().add(firmUsers);
+        }
         return firmRepository.save(firm);
+    }
+
+    private void validateFirmUsers(Firm firm) throws ApplicationRuntimeException {
+        // add validation for mandatory fields
+        if (firm != null && firm.getTempFirmUsers() != null && !firm.getTempFirmUsers().isEmpty()) {
+            for (FirmUser firmUser : firm.getTempFirmUsers()) {
+                if (firmUser.getEgUserId() != null)
+                    firmUser.setUser(userService.getUserById(firmUser.getEgUserId()));
+                if (firmUser.getUser() == null) {
+                    if (!(firmUser.getEmailId().isEmpty() && firmUser.getEmailId() == null)) {
+                        if (getFirmUserByEmailId(firmUser.getEmailId()) != null) {
+                            throw new ApplicationRuntimeException(
+                                    "Email is already mapped to a Firm. Please Use different Email Id.");
+                        }
+                    }
+                } else {
+                    if (firmUser.getUser() != null) {
+                        if (!firmUser.getUser().getType().toString().equalsIgnoreCase(UserType.BUSINESS.toString()))
+                            throw new ApplicationRuntimeException("User should be a Business User.");
+                        if (getFirmUserByUserId(firmUser.getUser().getId()) != null)
+                            throw new ApplicationRuntimeException(
+                                    "User is already mapped to a Firm. Please Use different User Id.");
+                    }
+                }
+            }
+        }
     }
 
     public Firm getFirmById(final Long firmId) {
@@ -85,6 +136,14 @@ public class FirmService {
 
     public Firm getFirmByPan(final String pan) {
         return firmRepository.findByPan(pan);
+    }
+
+    public FirmUser getFirmUserByEmailId(final String emailId) {
+        return firmUserRepository.findByEmailId(emailId);
+    }
+
+    public FirmUser getFirmUserByUserId(final Long userId) {
+        return firmUserRepository.findByUser_Id(userId);
     }
 
     @Transactional

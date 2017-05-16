@@ -53,6 +53,7 @@ import javax.validation.constraints.NotNull;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.hibernate.validator.constraints.SafeHtml;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name = "egp_firmuser")
@@ -61,7 +62,7 @@ public class FirmUser extends AbstractAuditable {
 
     private static final long serialVersionUID = 1L;
 
-    public static final String SEQ_EGP_FIRMUSERS = "SEQ_EGP_FIRMUSERS";
+    public static final String SEQ_EGP_FIRMUSERS = "SEQ_EGP_FIRMUSERS"; 
 
     @Id
     @GeneratedValue(generator = SEQ_EGP_FIRMUSERS, strategy = GenerationType.SEQUENCE)
@@ -84,7 +85,10 @@ public class FirmUser extends AbstractAuditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "firmid", nullable = false)
     private Firm firm;
-
+    
+    @Transient
+    private Long egUserId;
+    
     @Override
     public Long getId() {
         return id;
@@ -133,6 +137,14 @@ public class FirmUser extends AbstractAuditable {
 
     public void setName(final String name) {
         this.name = name;
+    }
+
+    public Long getEgUserId() {
+        return egUserId;
+    }
+
+    public void setEgUserId(Long egUserId) {
+        this.egUserId = egUserId;
     }
 
 }
