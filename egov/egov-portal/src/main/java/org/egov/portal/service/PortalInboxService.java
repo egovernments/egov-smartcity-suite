@@ -72,8 +72,8 @@ public class PortalInboxService {
         if (portalInbox.getTempPortalInboxUser().isEmpty()) {
             User user = getLoggedInUser();
             if (user != null) {
-                if ((UserType.BUSINESS.toString().equalsIgnoreCase(user.getType().toString()) || UserType.CITIZEN
-                        .toString().equalsIgnoreCase(user.getType().toString()))) {
+                if (UserType.BUSINESS.toString().equalsIgnoreCase(user.getType().toString()) || UserType.CITIZEN
+                        .toString().equalsIgnoreCase(user.getType().toString())) {
                     PortalInboxUser portalInboxUser = new PortalInboxUser();
                     portalInboxUser.setUser(user);
                     portalInbox.getPortalInboxUsers().add(portalInboxUser);

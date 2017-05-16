@@ -48,6 +48,6 @@ public interface FirmUserRepository extends JpaRepository<FirmUser, Long> {
 
     FirmUser findByEmailId(String emailId);
 
-    FirmUser findByUser_Id(final Long userId);
+    FirmUser findByUser_Id(Long userId);
 
 }

@@ -84,7 +84,7 @@ public class FirmService {
         validateFirmUsers(firm);
         FirmUser firmUsers;
         for (final FirmUser firmUser : firm.getTempFirmUsers()) {
-            firmUsers = new FirmUser();
+            firmUsers = createFirmUserObject();
             if (firmUser.getEgUserId() == null) {
                 User user;
                 user = userService.getUserByUsername(firmUser.getEmailId());
@@ -108,26 +108,27 @@ public class FirmService {
         // add validation for mandatory fields
         if (firm != null && firm.getTempFirmUsers() != null && !firm.getTempFirmUsers().isEmpty()) {
             for (FirmUser firmUser : firm.getTempFirmUsers()) {
-                if (firmUser.getEgUserId() != null)
-                    firmUser.setUser(userService.getUserById(firmUser.getEgUserId()));
+                initializeUser(firmUser);
                 if (firmUser.getUser() == null) {
-                    if (!(firmUser.getEmailId().isEmpty() && firmUser.getEmailId() == null)) {
-                        if (getFirmUserByEmailId(firmUser.getEmailId()) != null) {
-                            throw new ApplicationRuntimeException(
-                                    "Email is already mapped to a Firm. Please Use different Email Id.");
-                        }
+                    if (!(firmUser.getEmailId() == null || firmUser.getEmailId().isEmpty())
+                            && getFirmUserByEmailId(firmUser.getEmailId()) != null) {
+                        throw new ApplicationRuntimeException(
+                                "Email is already mapped to a Firm. Please Use different Email Id.");
                     }
                 } else {
-                    if (firmUser.getUser() != null) {
-                        if (!firmUser.getUser().getType().toString().equalsIgnoreCase(UserType.BUSINESS.toString()))
-                            throw new ApplicationRuntimeException("User should be a Business User.");
-                        if (getFirmUserByUserId(firmUser.getUser().getId()) != null)
-                            throw new ApplicationRuntimeException(
-                                    "User is already mapped to a Firm. Please Use different User Id.");
-                    }
+                    if (!firmUser.getUser().getType().toString().equalsIgnoreCase(UserType.BUSINESS.toString()))
+                        throw new ApplicationRuntimeException("User should be a Business User.");
+                    if (getFirmUserByUserId(firmUser.getUser().getId()) != null)
+                        throw new ApplicationRuntimeException(
+                                "User is already mapped to a Firm. Please Use different User Id.");
                 }
             }
         }
+    }
+
+    private void initializeUser(FirmUser firmUser) {
+        if (firmUser.getEgUserId() != null)
+            firmUser.setUser(userService.getUserById(firmUser.getEgUserId()));
     }
 
     public Firm getFirmById(final Long firmId) {

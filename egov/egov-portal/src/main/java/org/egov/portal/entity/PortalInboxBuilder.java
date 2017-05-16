@@ -52,8 +52,7 @@ import org.egov.infra.workflow.entity.State;
 
 public class PortalInboxBuilder {
 
-    private PortalInbox portalInbox;
-    private PortalInboxUser portalInboxUser;
+    private final PortalInbox portalInbox;
 
     public PortalInboxBuilder(final Module module, final String serviceType, final String applicationNumber,
             final String entityRefNo, final Long entityRefId, final String headerMsg, final String detailedMessage,
@@ -77,7 +76,7 @@ public class PortalInboxBuilder {
         if (user != null
                 && (UserType.BUSINESS.toString().equalsIgnoreCase(user.getType().toString()) || UserType.CITIZEN
                         .toString().equalsIgnoreCase(user.getType().toString()))) {
-            portalInboxUser = new PortalInboxUser();
+            PortalInboxUser portalInboxUser = new PortalInboxUser();
             portalInboxUser.setUser(user);
             portalInboxUser.setPortalInbox(portalInbox);
             portalInbox.setTempPortalInboxUser(new ArrayList<PortalInboxUser>(Arrays.asList(portalInboxUser)));
@@ -91,28 +90,32 @@ public class PortalInboxBuilder {
 
     private void validate() throws ApplicationRuntimeException {
         // add validation for mandatory fields
-        if (portalInbox.getModule() == null)
-            throw new ApplicationRuntimeException("Module is mandatory");
-        if (portalInbox.getServiceType() == null && portalInbox.getServiceType().isEmpty())
-            throw new ApplicationRuntimeException("ServiceType is mandatory");
-        if (portalInbox.getApplicationNumber() == null && portalInbox.getApplicationNumber().isEmpty())
-            throw new ApplicationRuntimeException("ApplicationNumber is mandatory");
-        if (portalInbox.getDetailedMessage() == null && portalInbox.getDetailedMessage().isEmpty())
-            throw new ApplicationRuntimeException("DetailedMessage is mandatory");
-        if (portalInbox.getLink() == null && portalInbox.getLink().isEmpty())
+        validateParams();
+        if (portalInbox.getLink() == null || portalInbox.getLink().isEmpty())
             throw new ApplicationRuntimeException("Link is mandatory");
-        if (portalInbox.getStatus() == null && portalInbox.getStatus().isEmpty())
+        if (portalInbox.getStatus() == null || portalInbox.getStatus().isEmpty())
             throw new ApplicationRuntimeException("Status is mandatory");
         if (portalInbox.getState() == null)
             throw new ApplicationRuntimeException("State is mandatory");
         if (portalInbox.getTempPortalInboxUser() != null && !portalInbox.getTempPortalInboxUser().isEmpty()) {
             User user = portalInbox.getTempPortalInboxUser().get(0).getUser();
             if (user != null
-                    && (!(UserType.BUSINESS.toString().equalsIgnoreCase(user.getType().toString()) || UserType.CITIZEN
-                            .toString().equalsIgnoreCase(user.getType().toString()))))
+                    && !(UserType.BUSINESS.toString().equalsIgnoreCase(user.getType().toString()) || UserType.CITIZEN
+                            .toString().equalsIgnoreCase(user.getType().toString())))
                 throw new ApplicationRuntimeException("User must be a Citizen or Business User.");
         }
 
+    }
+
+    private void validateParams() {
+        if (portalInbox.getModule() == null)
+            throw new ApplicationRuntimeException("Module is mandatory");
+        if (portalInbox.getServiceType() == null || portalInbox.getServiceType().isEmpty())
+            throw new ApplicationRuntimeException("ServiceType is mandatory");
+        if (portalInbox.getApplicationNumber() == null || portalInbox.getApplicationNumber().isEmpty())
+            throw new ApplicationRuntimeException("ApplicationNumber is mandatory");
+        if (portalInbox.getDetailedMessage() == null || portalInbox.getDetailedMessage().isEmpty())
+            throw new ApplicationRuntimeException("DetailedMessage is mandatory");
     }
 
 }

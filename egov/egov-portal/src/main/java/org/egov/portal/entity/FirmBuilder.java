@@ -46,9 +46,7 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 
 public class FirmBuilder {
 
-    private Firm firm;
-
-    private FirmUser firmUser;
+    private final Firm firm;
 
     public FirmBuilder(final String name, final String pan, final String address) {
         firm = new Firm();
@@ -58,7 +56,7 @@ public class FirmBuilder {
     }
 
     public FirmBuilder setFirmUser(final String name, final String mobileNumber, final String emailId, final Long userId) {
-        firmUser = new FirmUser();
+        FirmUser firmUser = new FirmUser();
         firmUser.setName(name);
         firmUser.setMobileNumber(mobileNumber);
         firmUser.setEmailId(emailId);
@@ -77,19 +75,25 @@ public class FirmBuilder {
 
     private void validate() throws ApplicationRuntimeException {
         // add validation for mandatory fields
-        if (firm.getName().isEmpty() && firm.getName() == null)
-            throw new ApplicationRuntimeException("Firm Name is mandatory");
-        if (firm.getPan().isEmpty() && firm.getPan() == null)
-            throw new ApplicationRuntimeException("Pan is mandatory");
-
+        validateNameAndPan();
         if (firm.getTempFirmUsers() != null && !firm.getTempFirmUsers().isEmpty()) {
             for (FirmUser user : firm.getTempFirmUsers()) {
-                if (user.getEgUserId() == null) {
-                    if (user.getEmailId().isEmpty() && user.getEmailId() == null)
-                        throw new ApplicationRuntimeException("Firm User EmailId is mandatory");
+                if (user.getEgUserId() == null && (user.getEmailId() == null || user.getEmailId().isEmpty())) {
+                    throw runtimeException();
                 }
             }
         }
+    }
+
+    private void validateNameAndPan() {
+        if (firm.getName() == null || firm.getName().isEmpty())
+            throw new ApplicationRuntimeException("Firm Name is mandatory");
+        if (firm.getPan() == null || firm.getPan().isEmpty())
+            throw new ApplicationRuntimeException("Pan is mandatory");
+    }
+
+    private ApplicationRuntimeException runtimeException() {
+        return new ApplicationRuntimeException("Firm User EmailId is mandatory");
     }
 
 }

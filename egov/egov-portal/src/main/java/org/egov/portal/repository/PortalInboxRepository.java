@@ -45,5 +45,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PortalInboxRepository extends JpaRepository<PortalInbox, Long> {
-    PortalInbox findByApplicationNumberAndModule_Id(final String applicationNumber, final Long moduleId);
+    PortalInbox findByApplicationNumberAndModule_Id(String applicationNumber, Long moduleId);
 }
