@@ -38,22 +38,21 @@
   
     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 -->
-<beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
+       xmlns="http://www.springframework.org/schema/beans"
        xsi:schemaLocation="
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <import resource="classpath*:config/spring/applicationContext-mrs.xml"/>    
-	<import resource="applicationSecurityContext-mrs.xml"/>
-	<context:property-placeholder />
+    <import resource="applicationSecurityContext-mrs.xml"/>
+    <context:property-placeholder/>
     <context:component-scan base-package="org.egov.mrs.web">
         <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
     </context:component-scan>
-	
-	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver" >
-    	<property name="maxUploadSize" value="${max.file.upload.size}"/>
-		<property name="maxInMemorySize" value="${max.file.inmemory.size}"/>
-	</bean>
+
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <property name="maxUploadSize" value="${max.file.upload.size}"/>
+        <property name="maxInMemorySize" value="${max.file.inmemory.size}"/>
+    </bean>
 </beans>

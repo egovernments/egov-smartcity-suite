@@ -48,6 +48,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.dao.budget.BudgetDetailsDAO;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
@@ -231,11 +232,12 @@ public class UpdateLetterOfAcceptanceController extends GenericWorkFlowControlle
                 WorksConstants.APPROVED, ContractorBillRegister.BillStatus.CANCELLED.toString());
         if (grossBillAmount == null)
             grossBillAmount = 0.0;
-        if (revisedWorkOrderAmount >= 0 && workOrder.getPercentageSign().equals("-")) {
+        final BigDecimal ledGrossBillAmount = abstractEstimate.getGrossAmountBilled();
+            if (revisedWorkOrderAmount >= 0 && "-".equals(workOrder.getPercentageSign())) {
             if (abstractEstimate != null
                     && abstractEstimate.isSpillOverFlag())
-                balanceAmount = workOrder.getWorkOrderAmount() - grossBillAmount - revisedValue
-                        - abstractEstimate.getGrossAmountBilled().doubleValue();
+                balanceAmount = ledGrossBillAmount != null  ? workOrder.getWorkOrderAmount() - grossBillAmount - revisedValue
+                       - ledGrossBillAmount.doubleValue() : workOrder.getWorkOrderAmount() - grossBillAmount - revisedValue;
             else
                 balanceAmount = workOrder.getWorkOrderAmount() - grossBillAmount - revisedValue;
             if (balanceAmount < 0) {
@@ -245,14 +247,14 @@ public class UpdateLetterOfAcceptanceController extends GenericWorkFlowControlle
 
                 resultBinder.rejectValue(
                         "", "error.modify.loa.appropriation.amount", new String[] {
-                                df.format(grossBillAmount).toString(), df.format(revisedWorkOrderAmount).toString() },
+                                df.format(grossBillAmount), df.format(revisedWorkOrderAmount) },
                         null);
             }
-        } else if (revisedWorkOrderAmount >= 0 && workOrder.getPercentageSign().equals("+"))
+        } else if (revisedWorkOrderAmount >= 0 && "+".equals(workOrder.getPercentageSign()))
             balanceAmount = revisedWorkOrderAmount - workOrder.getWorkOrderAmount();
 
         if (revisedWorkOrderAmount == 0)
-            resultBinder.rejectValue("", "error.modify.loa.agreement.amount");
+            resultBinder.rejectValue(StringUtils.EMPTY, "error.modify.loa.agreement.amount");
 
         if (resultBinder.hasErrors()) {
             model.addAttribute("abstractEstimate", abstractEstimate);
@@ -265,21 +267,24 @@ public class UpdateLetterOfAcceptanceController extends GenericWorkFlowControlle
                 savedWorkOrder = letterOfAcceptanceService.update(workOrder, abstractEstimate, revisedValue,
                         revisedWorkOrderAmount);
             } catch (final ValidationException e) {
-                final List<Long> budgetheadid = new ArrayList<Long>();
+                final List<Long> budgetheadid = new ArrayList<>();
                 BigDecimal budgetAvailable = null;
                 if (abstractEstimate != null) {
                     final FinancialDetail financialDetail = abstractEstimate.getFinancialDetails().get(0);
                     budgetheadid.add(financialDetail.getBudgetGroup().getId());
-
-                    budgetAvailable = budgetDetailsDAO.getPlanningBudgetAvailable(
-                            worksUtils.getFinancialYearByDate(new Date()).getId(),
-                            Integer.parseInt(abstractEstimate.getExecutingDepartment().getId().toString()),
-                            financialDetail.getFunction().getId(), null,
-                            financialDetail.getScheme() == null ? null
-                                    : Integer.parseInt(financialDetail.getScheme().getId().toString()),
-                            financialDetail.getSubScheme() == null ? null
-                                    : Integer.parseInt(financialDetail.getSubScheme().getId().toString()),
-                            null, budgetheadid, Integer.parseInt(financialDetail.getFund().getId().toString()));
+                    try {
+                        budgetAvailable = budgetDetailsDAO.getPlanningBudgetAvailable(
+                                worksUtils.getFinancialYearByDate(new Date()).getId(),
+                                Integer.parseInt(abstractEstimate.getExecutingDepartment().getId().toString()),
+                                financialDetail.getFunction().getId(), null,
+                                financialDetail.getScheme() == null ? null
+                                        : Integer.parseInt(financialDetail.getScheme().getId().toString()),
+                                financialDetail.getSubScheme() == null ? null
+                                        : Integer.parseInt(financialDetail.getSubScheme().getId().toString()),
+                                null, budgetheadid, Integer.parseInt(financialDetail.getFund().getId().toString()));
+                        } catch (final ValidationException v) {
+                            model.addAttribute("errorMessage", v.getErrors().get(0).getMessage());
+                        }
                 }
 
                 final String errorMessage = messageSource.getMessage("error.budgetappropriation.amount",

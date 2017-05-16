@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -42,22 +42,27 @@ package org.egov.tl.web.response.adaptor;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.List;
 
+import org.egov.infra.web.support.json.adapter.DataTableJsonAdapter;
+import org.egov.infra.web.support.ui.DataTable;
 import org.egov.tl.entity.dto.SearchForm;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
 
-public class SearchTradeResultHelperAdaptor implements JsonSerializer<SearchForm> {
+public class SearchTradeResultHelperAdaptor implements DataTableJsonAdapter<SearchForm> {
 
     @Override
-    public JsonElement serialize(final SearchForm searchFormObj, final Type type,
-                                 final JsonSerializationContext jsc) {
-        final JsonObject jsonObject = new JsonObject();
-        if (searchFormObj != null) {
+    public JsonElement serialize(final DataTable<SearchForm> searchFormDate, final Type type,
+            final JsonSerializationContext jsc) {
+        final List<SearchForm> searchFormResponse = searchFormDate.getData();
+        final JsonArray searchTradeResult = new JsonArray();
+        searchFormResponse.forEach(searchFormObj -> {
+            final JsonObject jsonObject = new JsonObject();
             jsonObject.addProperty("licenseId", searchFormObj.getLicenseId());
             jsonObject.addProperty("applicationNumber", searchFormObj.getApplicationNumber());
             jsonObject.addProperty("tlNumber", searchFormObj.getLicenseNumber());
@@ -81,7 +86,8 @@ public class SearchTradeResultHelperAdaptor implements JsonSerializer<SearchForm
                 list.add(objectInList);
             }
             jsonObject.addProperty("actions", gson.toJson(list));
-        }
-        return jsonObject;
+            searchTradeResult.add(jsonObject);
+        });
+        return enhance(searchTradeResult, searchFormDate);
     }
 }

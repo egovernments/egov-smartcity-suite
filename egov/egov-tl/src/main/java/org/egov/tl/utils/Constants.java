@@ -189,12 +189,16 @@ public final class Constants {
     public static final String PUBLIC_HEALTH_DEPT = "PUBLIC HEALTH AND SANITATION";
     public static final String JA_DESIGNATION = "Junior Assistant";
     public static final String RC_DESIGNATION = "Revenue Clerk";
+    public static final String SA_DESIGNATION = "Senior Assistant";
     public static final String CLOSURE_NATUREOFTASK = "Closure License";
     public static final String BILL_TYPE_AUTO = "AUTO";
     public static final String TRADE_LICENSE = "Trade License";
     public static final String TL_SERVICE_CODE = "TL";
     private static final Map<String, String> OWNERSHIP_TYPE = new HashMap<>();
     public static final String CLOSURE_LIC_APPTYPE = "Closure";
+    public static final String DMD_GENERATION_DATA = "demandgenerationdata";
+    public static final String DMD_GEN_INSTALLMENT = "installmentYear";
+    public static final String DMD_GEN_RETRY = "retry";
 
     static {
 

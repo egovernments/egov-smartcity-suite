@@ -61,6 +61,7 @@
 <input type="hidden" id="confirmmsg" value="<spring:message code='msg.reloadmbdata.createbill' />" /> 
 <input type="hidden" id="errorcutoffdatemsg1" value="<spring:message code='error.billdate.cutoffdate.errmsg1' />" />
 <input type="hidden" id="errorcutoffdatemsg2" value="<spring:message code='error.billdate.cutoffdate.errmsg2' />" />
+<input type="hidden" id="errorBillCutOffDate" value="<spring:message code='error.billdate.cutoff' />" />
 <div class="panel-body custom-form">
 <div class="form-group">
 	<!-- TODO: remove this condition to make billdate editable after user finishes data entry -->

@@ -53,8 +53,8 @@
 					<div class="panel-title">
 						<strong><spring:message code="title.licensewisedcbreport" /></strong>
 					</div>
-				</div>
-				<form:hidden path="mode" id="mode" value="${mode}" />
+				</div><%-- 
+				<form:hidden path="mode" id="mode" value="${mode}" /> --%>
 				<div class="panel-body"></div>
 				<div class="form-group">
 					<label class="col-sm-3 control-label text-right"> License
@@ -92,12 +92,11 @@
 			<thead>
 				<tr>
 					<th rowspan="2"></th>
-					<th colspan="4"><spring:message code="lbl.demand" /></th>
+					<th colspan="3"><spring:message code="lbl.demand" /></th>
 					<th colspan="3"><spring:message code="lbl.collection" /></th>
 					<th colspan="3"><spring:message code="lbl.balance" /></th>
 				</tr>
 				<tr>
-					<th></th>
 					<th><spring:message code="lbl.arrear" /></th>
 					<th><spring:message code="lbl.current" /></th>
 					<th><spring:message code="lbl.total" /></th>
@@ -113,7 +112,6 @@
 				<tr>
 					<td colspan="1" align="center"><spring:message
 							code="lbl.total" /></td>
-					<td></td>
 					<td></td>
 					<td></td>
 					<td></td>

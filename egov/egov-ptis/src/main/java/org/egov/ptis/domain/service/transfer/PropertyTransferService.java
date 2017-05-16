@@ -40,6 +40,7 @@ l * eGov suite of products aim to improve the internal efficiency,transparency,
 package org.egov.ptis.domain.service.transfer;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_REGISTERED_TRANSFER;
+import static org.egov.ptis.constants.PropertyTaxConstants.ANONYMOUS_USER;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP;
 import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
@@ -80,7 +81,7 @@ import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.persistence.entity.enums.Gender;
 import org.egov.infra.persistence.entity.enums.UserType;
-import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
+import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
@@ -388,7 +389,7 @@ public class PropertyTransferService {
         // .getResolutionTime().toString());
 
         final ReportRequest reportInput = new ReportRequest("mainTransferPropertyAck", ackBean, reportParams);
-        reportInput.setReportFormat(FileFormat.PDF);
+        reportInput.setReportFormat(ReportFormat.PDF);
         return reportService.createReport(reportInput);
     }
 
@@ -412,7 +413,7 @@ public class PropertyTransferService {
                 throw new ApplicationRuntimeException("Exception while generating Mutation Certificate : " + e);
             }
             reportOutput.setReportOutputData(bFile);
-            reportOutput.setReportFormat(FileFormat.PDF);
+            reportOutput.setReportFormat(ReportFormat.PDF);
             propertyMutation.transition().end();
             basicProperty.setUnderWorkflow(false);
         } else {
@@ -463,7 +464,7 @@ public class PropertyTransferService {
 
             final ReportRequest reportInput = new ReportRequest(
                     PropertyTaxConstants.REPORT_TEMPLATENAME_TRANSFER_CERTIFICATE, noticeBean, reportParams);
-            reportInput.setReportFormat(FileFormat.PDF);
+            reportInput.setReportFormat(ReportFormat.PDF);
             reportOutput = reportService.createReport(reportInput);
             if (WFLOW_ACTION_STEP_SIGN.equals(actionType)) {
                 if (notice == null)
@@ -562,7 +563,11 @@ public class PropertyTransferService {
         propertyTaxBillable.setBasicProperty(propertyMutation.getBasicProperty());
         propertyTaxBillable.setMutationFeePayment(Boolean.TRUE);
         propertyTaxBillable.setMutationFee(propertyMutation.getMutationFee());
-        propertyTaxBillable.setCollectionType(DemandConstants.COLLECTIONTYPE_COUNTER);
+        if (ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName())) {
+            propertyTaxBillable.setCollectionType(DemandConstants.COLLECTIONTYPE_ONLINE);
+        } else {
+            propertyTaxBillable.setCollectionType(DemandConstants.COLLECTIONTYPE_COUNTER);
+        }
         propertyTaxBillable.setCallbackForApportion(Boolean.FALSE);
         propertyTaxBillable.setMutationApplicationNo(propertyMutation.getApplicationNo());
         propertyTaxBillable.setUserId(ApplicationThreadLocals.getUserId());

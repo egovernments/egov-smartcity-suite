@@ -41,10 +41,10 @@
 package org.egov.infra.web.struts.actions;
 
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
+import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
-import org.egov.infra.reporting.engine.ReportRequest.ReportDataSourceType;
+import org.egov.infra.reporting.engine.ReportDataSourceType;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,7 +86,7 @@ public abstract class ReportFormAction extends BaseFormAction {
 	/**
 	 * The report format. default = PDF
 	 */
-	private FileFormat reportFormat = FileFormat.PDF;
+	private ReportFormat reportFormat = ReportFormat.PDF;
 
 	/**
 	 * The report data source type (jdbc/hibernate)
@@ -143,14 +143,14 @@ public abstract class ReportFormAction extends BaseFormAction {
 	/**
 	 * @param reportFormat the reportFormat to set
 	 */
-	public void setReportFormat(final FileFormat reportFormat) {
+	public void setReportFormat(final ReportFormat reportFormat) {
 		this.reportFormat = reportFormat;
 	}
 
 	/**
 	 * @return the reportFormat
 	 */
-	public FileFormat getReportFormat() {
+	public ReportFormat getReportFormat() {
 		return this.reportFormat;
 	}
 

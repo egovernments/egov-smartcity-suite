@@ -40,12 +40,12 @@
 
 package org.egov.infra.reporting.engine.jasper;
 
-import static org.egov.infra.reporting.engine.ReportConstants.FileFormat.CSV;
-import static org.egov.infra.reporting.engine.ReportConstants.FileFormat.HTM;
-import static org.egov.infra.reporting.engine.ReportConstants.FileFormat.PDF;
-import static org.egov.infra.reporting.engine.ReportConstants.FileFormat.RTF;
-import static org.egov.infra.reporting.engine.ReportConstants.FileFormat.TXT;
-import static org.egov.infra.reporting.engine.ReportConstants.FileFormat.XLS;
+import static org.egov.infra.reporting.engine.ReportFormat.CSV;
+import static org.egov.infra.reporting.engine.ReportFormat.HTM;
+import static org.egov.infra.reporting.engine.ReportFormat.PDF;
+import static org.egov.infra.reporting.engine.ReportFormat.RTF;
+import static org.egov.infra.reporting.engine.ReportFormat.TXT;
+import static org.egov.infra.reporting.engine.ReportFormat.XLS;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

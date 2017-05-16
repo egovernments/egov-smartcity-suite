@@ -72,7 +72,7 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.elasticsearch.entity.ApplicationIndex;
 import org.egov.infra.elasticsearch.service.ApplicationIndexService;
 import org.egov.infra.messaging.MessagingService;
-import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
+import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
@@ -360,14 +360,14 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
                     wfInitiator = propertyTaxCommonUtils.getUserAssignmentByPassingPositionAndUser(objection
                     .getCreatedBy(),objection.getState().getInitiatorPosition());
                 else 
-                    wfInitiator = assignmentService.getPrimaryAssignmentForUser(objection.getCreatedBy().getId());
+                	wfInitiator = assignmentService.getAllActiveEmployeeAssignmentsByEmpId(objection.getCreatedBy().getId()).get(0);
         }
         else if (!objection.getStateHistory().isEmpty())
-            wfInitiator = assignmentService.getPrimaryAssignmentForPositon(objection.getStateHistory().get(0)
-                    .getOwnerPosition().getId());
+            wfInitiator = assignmentService.getAssignmentsForPosition(objection.getStateHistory().get(0)
+                    .getOwnerPosition().getId(), new Date()).get(0);
         else{
-            wfInitiator = assignmentService.getPrimaryAssignmentForPositon(objection.getState().getOwnerPosition()
-                    .getId());
+            wfInitiator = assignmentService.getAssignmentsForPosition(objection.getState().getOwnerPosition()
+                    .getId(), new Date()).get(0);
         }
         return wfInitiator;
     }
@@ -384,7 +384,7 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
      */
     public ReportOutput createHearingNoticeReport(ReportOutput reportOutput, final RevisionPetition objection,
             final String noticeNo) {
-        reportOutput.setReportFormat(FileFormat.PDF);
+        reportOutput.setReportFormat(ReportFormat.PDF);
         final HashMap<String, Object> reportParams = new HashMap<>();
         final SimpleDateFormat dateformat = new SimpleDateFormat("dd/MM/yyyy");
         String natureOfWork;
@@ -440,7 +440,7 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
      */
     public ReportOutput createEndoresement(ReportOutput reportOutput, final RevisionPetition objection) {
 
-        reportOutput.setReportFormat(FileFormat.PDF);
+        reportOutput.setReportFormat(ReportFormat.PDF);
         final HashMap<String, Object> reportParams = new HashMap<>();
         final SimpleDateFormat dateformat = new SimpleDateFormat("dd/MM/yyyy");
         String natureOfWork;

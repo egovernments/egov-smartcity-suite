@@ -9,6 +9,9 @@
     </parent>
     <name>e-governments database</name>
     <artifactId>egov-database</artifactId>
+    <properties>
+        <validateOnMigrate>true</validateOnMigrate>
+    </properties>
     <build>
         <resources>
             <!-- This way we instruct maven to inject values from filters into the resources -->
@@ -201,12 +204,14 @@
                         <configuration>
                             <skip>false</skip>
                             <cleanDisabled>true</cleanDisabled>
+                            <validateOnMigrate>${validateOnMigrate}</validateOnMigrate>
                         </configuration>
                         <executions>
                             <execution>
                                 <id>migrate-database</id>
                                 <phase>process-resources</phase>
                                 <goals>
+                                    <goal>repair</goal>
                                     <goal>migrate</goal>
                                 </goals>
                                 <configuration>

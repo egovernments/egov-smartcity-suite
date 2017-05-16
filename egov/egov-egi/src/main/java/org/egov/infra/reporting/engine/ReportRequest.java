@@ -40,7 +40,6 @@
 
 package org.egov.infra.reporting.engine;
 
-import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infra.reporting.util.ReportUtil;
 
 import java.util.Collection;
@@ -52,7 +51,8 @@ public class ReportRequest {
     private static final Properties REPORT_CONFIG = ReportUtil.loadReportConfig();
     private ReportDataSourceType reportDataSourceType;
     private String reportTemplate;
-    private FileFormat reportFormat;
+    private String reportName;
+    private ReportFormat reportFormat;
     private Object reportInputData;
     private Map<String, Object> reportParams = new HashMap<>();
     private boolean printDialogOnOpenReport = false;
@@ -80,9 +80,9 @@ public class ReportRequest {
         this.reportTemplate = reportTemplate;
         this.reportParams = reportParams;
         if (REPORT_CONFIG == null) {
-            this.reportFormat = FileFormat.PDF;
+            this.reportFormat = ReportFormat.PDF;
         } else {
-            this.reportFormat = FileFormat.valueOf(REPORT_CONFIG.getProperty(this.reportTemplate, FileFormat.PDF.name()));
+            this.reportFormat = ReportFormat.valueOf(REPORT_CONFIG.getProperty(this.reportTemplate, ReportFormat.PDF.name()));
         }
     }
 
@@ -90,11 +90,11 @@ public class ReportRequest {
         return this.reportTemplate;
     }
 
-    public FileFormat getReportFormat() {
+    public ReportFormat getReportFormat() {
         return this.reportFormat;
     }
 
-    public void setReportFormat(FileFormat reportFormat) {
+    public void setReportFormat(ReportFormat reportFormat) {
         this.reportFormat = reportFormat;
     }
 
@@ -122,7 +122,11 @@ public class ReportRequest {
         this.printDialogOnOpenReport = printDialogOnOpenReport;
     }
 
-    public enum ReportDataSourceType {
-        JAVABEAN, SQL, HQL
+    public void setReportName(String reportName) {
+        this.reportName = reportName;
+    }
+
+    public String reportOutputFileName() {
+        return new StringBuilder().append(reportName).append(".").append(reportFormat).toString();
     }
 }

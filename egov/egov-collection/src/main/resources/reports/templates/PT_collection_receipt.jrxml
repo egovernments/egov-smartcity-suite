@@ -38,13 +38,14 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
-<!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
-<!-- 2016-09-30T14:04:17 -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="collection_receipt" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" resourceBundle="custom" uuid="97372054-cc7e-41ed-9c4d-7a7a1652d8c6">
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2017-05-11T11:00:12 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="collection_receipt" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="NoPages" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" resourceBundle="custom" uuid="97372054-cc7e-41ed-9c4d-7a7a1652d8c6">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="39"/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<import value="org.egov.infstr.utils.*"/>
 	<import value="org.egov.collection.constants.CollectionConstants"/>
 	<import value="org.egov.infra.reporting.util.ReportUtil"/>
@@ -93,6 +94,9 @@
 	<field name="createdBy" class="org.egov.infra.admin.master.entity.User"/>
 	<field name="source" class="java.lang.String">
 		<fieldDescription><![CDATA[source]]></fieldDescription>
+	</field>
+	<field name="additionalInfo" class="java.lang.String">
+		<fieldDescription><![CDATA[additionalInfo]]></fieldDescription>
 	</field>
 	<variable name="amountReceived" class="java.math.BigDecimal">
 		<initialValueExpression><![CDATA[new java.math.BigDecimal(0)]]></initialValueExpression>
@@ -243,7 +247,7 @@
 				<textElement verticalAlignment="Middle">
 					<font size="10" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{receiptMisc}.getDepositedInBank() != null ? $F{receiptNum} : $F{receiptNum}+($F{receiptMisc}.getReceiptHeader().getManualreceiptnumber()==null? "":"("+$F{receiptMisc}.getReceiptHeader().getManualreceiptnumber()+")")+"\n"+new java.text.SimpleDateFormat("dd-MM-yyyy hh:mm:ss").format($F{receiptDate})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{receiptNum}+($F{receiptMisc}.getReceiptHeader().getManualreceiptnumber()==null? "":"("+$F{receiptMisc}.getReceiptHeader().getManualreceiptnumber()+")")+"\n"+new java.text.SimpleDateFormat("dd-MM-yyyy hh:mm:ss").format($F{receiptDate})]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement positionType="Float" x="0" y="85" width="89" height="15" uuid="8c0e4556-4764-451d-9d42-f531309889c0">
@@ -315,7 +319,7 @@
 				<textElement verticalAlignment="Middle">
 					<font size="10" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA["PROPERTY TAX"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{serviceName}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
@@ -384,7 +388,7 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="11" isBold="false"/>
+					<font fontName="Times New Roman" size="11" isBold="false"/>
 				</textElement>
 				<text><![CDATA[Mode]]></text>
 			</staticText>
@@ -399,7 +403,7 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="11" isBold="false"/>
+					<font fontName="Times New Roman" size="11" isBold="false"/>
 				</textElement>
 				<text><![CDATA[Cheque / DD / Bank Challan / Online Transaction Number & Date]]></text>
 			</staticText>
@@ -415,10 +419,17 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="11" isBold="false"/>
+					<font fontName="Times New Roman" size="11" isBold="false"/>
 				</textElement>
 				<text><![CDATA[Bank Name & Branch]]></text>
 			</staticText>
+			<textField>
+				<reportElement x="5" y="338" width="545" height="30" uuid="b10dfbfb-9c30-41ba-8cb3-0d1c3f6b44ff"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{additionalInfo}.equals("Super Structure") ? "Note:- 1) This receipt is issued towards payment of PT and penalty levied on the building constructed unauthorizedly by the holder of the premises without valid documents.\n2) This receipt does not confer anyOwnership on the land to the holder of the premises (nor) regularization of the U.C made on the land." : ""]]></textFieldExpression>
+			</textField>
 		</band>
 	</summary>
 </jasperReport>

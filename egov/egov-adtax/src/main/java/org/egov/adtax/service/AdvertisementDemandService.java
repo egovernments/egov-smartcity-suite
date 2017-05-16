@@ -40,20 +40,6 @@
 
 package org.egov.adtax.service;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.apache.log4j.Logger;
 import org.egov.adtax.entity.Advertisement;
 import org.egov.adtax.entity.AdvertisementDemandGenerationLog;
@@ -76,9 +62,21 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @Service
 @Transactional(readOnly = true)
@@ -88,19 +86,12 @@ public class AdvertisementDemandService {
 
     @Autowired
     private InstallmentDao installmentDao;
-
     @Autowired
     private DemandGenericDao demandGenericDao;
-
     @Autowired
     private ModuleService moduleService;
-
     @PersistenceContext
     private EntityManager entityManager;
-
-    @Autowired
-    AdvertisementPenaltyRatesService advertisementPenaltyRatesService;
-
     @Autowired
     private AdvertisementPenaltyCalculator advertisementPenaltyCalculator;
 
@@ -122,7 +113,6 @@ public class AdvertisementDemandService {
     }
 
     /**
-     *
      * @param advertisementPermitDetail
      * @return
      */
@@ -150,7 +140,6 @@ public class AdvertisementDemandService {
     }
 
     /**
-     *
      * @param demandReason
      * @param installment
      * @return
@@ -159,12 +148,10 @@ public class AdvertisementDemandService {
         final Query demandQuery = getCurrentSession().getNamedQuery("DEMANDREASONBY_CODE_AND_INSTALLMENTID");
         demandQuery.setParameter(0, demandReason);
         demandQuery.setParameter(1, installment.getId());
-        final EgDemandReason demandReasonObj = (EgDemandReason) demandQuery.uniqueResult();
-        return demandReasonObj;
+        return (EgDemandReason) demandQuery.uniqueResult();
     }
 
     /**
-     *
      * @param demandDetailSet
      * @param installment
      * @param totalDemandAmount
@@ -183,7 +170,6 @@ public class AdvertisementDemandService {
     }
 
     /**
-     *
      * @return
      */
     public Installment getCurrentInstallment() {
@@ -214,7 +200,6 @@ public class AdvertisementDemandService {
     }
 
     /**
-     *
      * @param dmdAmount
      * @param egDemandReason
      * @param amtCollected
@@ -227,7 +212,6 @@ public class AdvertisementDemandService {
     }
 
     /**
-     *
      * @param advertisement
      * @return
      */
@@ -248,6 +232,7 @@ public class AdvertisementDemandService {
 
     /**
      * Check any tax pay pending for selected advertisement in selected installment
+     *
      * @param advertisement
      * @param installment
      * @return
@@ -303,7 +288,6 @@ public class AdvertisementDemandService {
     }
 
     /**
-     *
      * @param advertisementPermitDetail
      * @return
      */
@@ -312,7 +296,6 @@ public class AdvertisementDemandService {
     }
 
     /**
-     *
      * @param advertisementPermitDetail
      * @return
      */
@@ -387,7 +370,7 @@ public class AdvertisementDemandService {
             if (advertisementPermitDetail.getAdvertisement() != null && advertisementPermitDetail.getAdvertisement().getLegacy()
                     && advertisementPermitDetail.getAdvertisement().getTaxPaidForCurrentYear())
                 taxFullyPaidForCurrentYear = true; // Tax and encroachment fee is fully paid. Arrears will not be considered as
-                                                   // paid.
+            // paid.
 
             if (advertisementPermitDetail.getTaxAmount() != null
                     || advertisementPermitDetail.getAdvertisement().getPendingTax() != null) {
@@ -511,6 +494,7 @@ public class AdvertisementDemandService {
     /**
      * Update demand details of current or latest year data on renewal. Assumption: There is no partial payment collected for
      * selected year.
+     *
      * @param advertisementPermitDetail
      * @param demand
      * @return
@@ -690,6 +674,7 @@ public class AdvertisementDemandService {
                                 installment),
                         taxFullyPaidForCurrentYear ? advertisementPermitDetail.getEncroachmentFee() : BigDecimal.ZERO));
                 totalDemandAmount = totalDemandAmount.add(advertisementPermitDetail.getEncroachmentFee());
+                demand.setEgInstallmentMaster(installment);
             }
             if (!arrearsTaxalreadyExistInDemand && advertisementPermitDetail.getAdvertisement().getPendingTax() != null
                     && advertisementPermitDetail.getAdvertisement().getPendingTax().compareTo(BigDecimal.ZERO) > 0) {
@@ -699,6 +684,7 @@ public class AdvertisementDemandService {
                                 installment),
                         BigDecimal.ZERO));
                 totalDemandAmount = totalDemandAmount.add(advertisementPermitDetail.getAdvertisement().getPendingTax());
+                demand.setEgInstallmentMaster(installment);
             }
             if (!taxalreadyExistInDemand && advertisementPermitDetail.getTaxAmount() != null
                     && advertisementPermitDetail.getTaxAmount().compareTo(BigDecimal.ZERO) > 0) {
@@ -708,6 +694,7 @@ public class AdvertisementDemandService {
                                 installment),
                         taxFullyPaidForCurrentYear ? advertisementPermitDetail.getTaxAmount() : BigDecimal.ZERO));
                 totalDemandAmount = totalDemandAmount.add(advertisementPermitDetail.getTaxAmount());
+                demand.setEgInstallmentMaster(installment);
             }
             demand.addBaseDemand(totalDemandAmount.setScale(0, BigDecimal.ROUND_HALF_UP));
 
@@ -733,18 +720,13 @@ public class AdvertisementDemandService {
             final EgDemandReason taxReasonNewInstallment = getDemandReasonByCodeAndInstallment(
                     AdvertisementTaxConstants.DEMANDREASON_ADVERTISEMENTTAX, advDmdGenerationInstallment);
 
-            final TransactionTemplate txTemplate = new TransactionTemplate(transactionTemplate.getTransactionManager());
-            txTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-
             AdvertisementDemandGenerationLog generationLog;
-            generationLog = txTemplate.execute(result -> {
-                return adTaxDemandGenerationLogService
-                        .createDemandGenerationLog(advDmdGenerationInstallment.getFinYearRange());
-            });
+            generationLog = transactionTemplate.execute(result -> adTaxDemandGenerationLogService
+                    .createDemandGenerationLog(advDmdGenerationInstallment.getFinYearRange()));
 
             for (final Advertisement advertisement : advertisements)
                 try {
-                    txTemplate.execute(result -> {
+                    transactionTemplate.execute(result -> {
                         final AdvertisementDemandGenerationLog generationLogObject;
                         if (generationLog != null) {
                             generationLogObject = adTaxDemandGenerationLogRepository.findById(generationLog.getId());
@@ -763,7 +745,7 @@ public class AdvertisementDemandService {
                     totalRecordsProcessed++;
                 } catch (final Exception e) {
 
-                    txTemplate.execute(result -> {
+                    transactionTemplate.execute(result -> {
                         final AdvertisementDemandGenerationLog generationLogObject;
                         if (generationLog != null) {
                             generationLogObject = adTaxDemandGenerationLogRepository.findById(generationLog.getId());
@@ -860,7 +842,8 @@ public class AdvertisementDemandService {
         demandFeeType.put(AdvertisementTaxConstants.TOTAL_DEMAND, totalDemand);
         demandFeeType.put(AdvertisementTaxConstants.TOTALCOLLECTION, totalCollection);
         demandFeeType.put(AdvertisementTaxConstants.PENALTYAMOUNT, penaltyAmount);
-        demandFeeType.put(AdvertisementTaxConstants.ADDITIONALTAXAMOUNT, additionalTaxAmount.setScale(0, BigDecimal.ROUND_HALF_UP)); 
+        demandFeeType.put(AdvertisementTaxConstants.ADDITIONALTAXAMOUNT,
+                additionalTaxAmount.setScale(0, BigDecimal.ROUND_HALF_UP));
         return demandFeeType;
     }
 
@@ -878,9 +861,9 @@ public class AdvertisementDemandService {
     }
 
     /**
-     * @description returns reasonwise demand and collected amount
      * @param advPermitDetail
      * @return
+     * @description returns reasonwise demand and collected amount
      */
     public Map<String, Map<String, BigDecimal>> getReasonWiseDemandAndCollection(
             final AdvertisementPermitDetail advPermitDetail) {

@@ -41,19 +41,30 @@
 
 $(document).ready( function () {
 	
-	var updateurl='/mrs/reissue/create/';
+	var applicationSource = $('#app').val();
+	var updateurl;
+	if(applicationSource == 'online')
+		updateurl='/mrs/citizen/reissue/create/';
+	else
+	 updateurl='/mrs/reissue/create/';
 	
+
 	$('#btnregistrationsearch').click( function () {
-		callAjaxSearch();
+		var url;
+		if(applicationSource == 'online')
+			url= '/mrs/citizen/registration/searchregisteredrecord'
+			else
+				url = '/mrs/registration/searchregisteredrecord'
+		callAjaxSearch(url);
 	});
 	
-	function callAjaxSearch() {
+	function callAjaxSearch(url) {
 		$('.report-section').removeClass('display-hide');
 		var reportdatatable =	$("#registration_table")
 				.dataTable(
 						{
 							ajax : {
-								url : "/mrs/registration/searchregisteredrecord",
+								url : url,
 								type : "POST",
 								beforeSend:function(){
 									$('.loader-class').modal('show', {backdrop: 'static'});

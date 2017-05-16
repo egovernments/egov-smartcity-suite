@@ -48,9 +48,9 @@ import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -168,7 +168,7 @@ public class CurrentViewDcbController {
         List<Receipt> cancelRcpt;
         List<Receipt> activeRcpts;
         DCBReport dCBReport = new DCBReport();
-        final Map<Installment, DCBRecord> finalResultMap = new HashMap<>();
+        final Map<Installment, DCBRecord> finalResultMap = new TreeMap<>();
         final List<String> installmentList = new ArrayList<>();
 
         model.addAttribute(WATERCHARGES_CONSUMERCODE, waterConnectionDetails.getApplicationNumber());

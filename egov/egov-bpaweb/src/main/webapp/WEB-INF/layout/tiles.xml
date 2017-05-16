@@ -65,8 +65,30 @@
     </definition>
 	
 	<definition name="newapplication-form" extends="base_layout">
-        <put-attribute name="page-title" value="title.newconnection" cascade="true"/>
+        <put-attribute name="page-title" value="title.newApplication" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/application/newapplication-form.jsp"/>
+    </definition>
+        
+    <definition name="bpaapplication-Form" extends="base_layout">
+        <put-attribute name="page-title" value="title.updateApplication" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/application/application-Edit.jsp"/>
+    </definition>
+            
+    <definition name="viewapplication-form" extends="base_layout">
+        <put-attribute name="page-title" value="title.viewApplication" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/application/viewapplication-form.jsp"/>
+    </definition>
+    
+    
+    
+    <definition name="documentscrutiny-form" extends="base_layout">
+        <put-attribute name="page-title" value="title.documentScrutiny" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/application/documentscrutiny-form.jsp"/>
+    </definition>
+    
+     <definition name="createdocumentscrutiny-form" extends="base_layout">
+        <put-attribute name="page-title" value="title.documentScrutiny.create" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/application/createdocumentscrutiny-form.jsp"/>
     </definition>
     
     <definition name="stakeholder-new" extends="base_layout">
@@ -93,5 +115,17 @@
     <definition name="search-stakeholder-edit" extends="base_layout">
     	<put-attribute name="page-title" value="title.stakehol.update" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/stakeholder/search-stakeholder-edit.jsp"/>
+    </definition>
+     <definition name="schedule-appiontment-new" extends="base_layout">
+        <put-attribute name="page-title" value="title.schedule.appmnt" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/application/schedule-appiontment-new.jsp"/>
+    </definition>
+     <definition name="reschedule-appiontment" extends="base_layout">
+        <put-attribute name="page-title" value="title.reschedule.appmnt" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/application/reschedule-appiontment.jsp"/>
+    </definition>
+     <definition name="view-schedule-appiontment" extends="base_layout">
+        <put-attribute name="page-title" value="title.view.schedule.appmnt" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/application/view-schedule-appiontment.jsp"/>
     </definition>
 </tiles-definitions>

@@ -46,8 +46,8 @@ import org.apache.struts2.convention.annotation.Result;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.infra.admin.master.entity.Department;
-import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
-import org.egov.infra.reporting.engine.ReportRequest.ReportDataSourceType;
+import org.egov.infra.reporting.engine.ReportFormat;
+import org.egov.infra.reporting.engine.ReportDataSourceType;
 import org.egov.infra.web.struts.actions.ReportFormAction;
 
 /**
@@ -67,7 +67,7 @@ public class PendingChallansReportAction extends ReportFormAction {
     public void prepare() {
         super.prepare();
 
-        setReportFormat(FileFormat.PDF);
+        setReportFormat(ReportFormat.PDF);
         setDataSourceType(ReportDataSourceType.HQL);
     }
 

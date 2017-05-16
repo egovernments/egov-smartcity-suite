@@ -58,13 +58,13 @@ import java.util.List;
 /**
  * ObjectDefinitionSource for Spring security filter to determine access based
  * on url
- *      
+ *
  * @author sahina bose
  */
 @Component
 public class EGovFilterInvocationDefinitionSource implements FilterInvocationSecurityMetadataSource {
 
-    private List<String> excludePatterns = new ArrayList<String>();
+    private List<String> excludePatterns = new ArrayList<>();
 
     @Autowired
     private ActionService actionService;
@@ -74,7 +74,7 @@ public class EGovFilterInvocationDefinitionSource implements FilterInvocationSec
     }
 
     @Override
-    public Collection<ConfigAttribute> getAttributes(final Object object) throws IllegalArgumentException {
+    public Collection<ConfigAttribute> getAttributes(final Object object) {
         final FilterInvocation invocation = (FilterInvocation) object;
         final String contextRoot = invocation.getHttpRequest().getContextPath().replace("/", "");
         return lookupAttributes(contextRoot, invocation.getRequestUrl());
@@ -92,18 +92,18 @@ public class EGovFilterInvocationDefinitionSource implements FilterInvocationSec
 
     private Collection<ConfigAttribute> lookupAttributes(final String contextRoot, final String url) {
         if (url.startsWith(SecurityConstants.LOGIN_URI) || url.startsWith(SecurityConstants.PUBLIC_URI) || isPatternExcluded(url))
-            return null;
+            return Collections.emptyList();
         else {
             final Action action = actionService.getActionByUrlAndContextRoot(url, contextRoot);
             if (action != null) {
-                final List<ConfigAttribute> configAttributes = new ArrayList<ConfigAttribute>();
-                action.getRoles().forEach(role -> {
-                    configAttributes.add(new SecurityConfig(role.getName()));
-                });
+                final List<ConfigAttribute> configAttributes = new ArrayList<>();
+                action.getRoles().forEach(role ->
+                        configAttributes.add(new SecurityConfig(role.getName()))
+                );
                 return configAttributes;
             }
         }
-        return null;
+        return Collections.emptyList();
     }
 
     private Boolean isPatternExcluded(final String pattern) {

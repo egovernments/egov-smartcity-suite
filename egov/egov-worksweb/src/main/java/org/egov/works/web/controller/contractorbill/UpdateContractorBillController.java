@@ -65,6 +65,7 @@ import org.egov.pims.commons.Position;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.contractoradvance.entity.ContractorAdvanceRequisition.ContractorAdvanceRequisitionStatus;
 import org.egov.works.contractoradvance.service.ContractorAdvanceService;
+import org.egov.works.config.properties.WorksApplicationProperties;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.contractorbill.entity.enums.BillTypes;
 import org.egov.works.contractorbill.service.ContractorBillRegisterService;
@@ -104,6 +105,9 @@ public class UpdateContractorBillController extends BaseContractorBillController
 
     @Autowired
     private MBHeaderService mbHeaderService;
+    
+    @Autowired
+    private WorksApplicationProperties worksApplicationProperties;
 
     @Autowired
     private MBForCancelledBillService mbForCancelledBillService;
@@ -462,6 +466,7 @@ public class UpdateContractorBillController extends BaseContractorBillController
         model.addAttribute("mbHeaders", mbHeaders);
 
         contractorBillRegister.setApprovalDepartment(worksUtils.getDefaultDepartmentId());
+        model.addAttribute("defaultCutOffDate", worksApplicationProperties.getContractorBillCutOffDate());
 
         return "contractorBill-update";
     }

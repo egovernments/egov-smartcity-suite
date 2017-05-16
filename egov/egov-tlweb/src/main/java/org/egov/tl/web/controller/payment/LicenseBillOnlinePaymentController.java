@@ -45,23 +45,23 @@ import org.egov.tl.service.TradeLicenseService;
 import org.egov.tl.service.integration.LicenseBillService;
 import org.egov.tl.web.response.adaptor.OnlineSearchTradeResultHelperAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.IOException;
 import java.net.URLEncoder;
-import java.util.List;
 
 import static org.egov.infra.utils.JsonUtils.toJSON;
+import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 
 @Controller
+@RequestMapping("/pay/online")
 public class LicenseBillOnlinePaymentController {
 
     @Autowired
@@ -75,8 +75,8 @@ public class LicenseBillOnlinePaymentController {
         return new OnlineSearchForm();
     }
 
-    @RequestMapping(value = "/public/licenseonlinepayment-form/{id}", method = RequestMethod.GET)
-    public String execute(@PathVariable final Long id, Model model) throws IOException {
+    @GetMapping("{id}")
+    public String showPaymentForm(@PathVariable final Long id, Model model) throws IOException {
         final License license = tradeLicenseService.getLicenseById(id);
         if (license.isPaid()) {
             model.addAttribute("paymentdone", "License Fee already collected");
@@ -87,24 +87,15 @@ public class LicenseBillOnlinePaymentController {
         return "license-onlinepayment";
     }
 
-    @RequestMapping(value = "/public/search/searchlicensepayment-form", method = RequestMethod.GET)
-    public String searchLicenseForPayment() {
+    @GetMapping
+    public String searchForPayment() {
         return "searchtrade-licenseforpay";
     }
 
-    @RequestMapping(value = "/public/search/searchtrade-search", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
+    @PostMapping(produces = TEXT_PLAIN_VALUE)
     @ResponseBody
-    public String search(@ModelAttribute final OnlineSearchForm searchForm) throws IOException {
+    public String searchLicense(final OnlineSearchForm searchForm) {
         return new StringBuilder("{ \"data\":").append(toJSON(tradeLicenseService.onlineSearchTradeLicense(searchForm),
                 OnlineSearchForm.class, OnlineSearchTradeResultHelperAdaptor.class)).append("}").toString();
     }
-
-    @RequestMapping(value = "/public/search/tradeLicense", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public List<String> searchautocomplete(@RequestParam final String searchParamValue,
-                                           @RequestParam final String searchParamType) {
-        return tradeLicenseService.getTradeLicenseForGivenParam(searchParamValue, searchParamType);
-
-    }
-
 }

@@ -45,6 +45,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.stms.masters.entity.DonationMaster;
 import org.egov.stms.masters.entity.SewerageRatesMaster;
 import org.egov.stms.masters.service.DonationMasterService;
@@ -82,10 +83,11 @@ public class SewerageMasterDataValidator extends SewerageApplicationCommonValida
     private SewerageRatesMasterService sewerageRatesMasterService;
 
     // validate sewerage monthly rate screen inputs
-    public void validateMonthlyRate(final SewerageRatesMaster sewerageRatesMaster, final Errors errors) {
+    public void validateMonthlyRate(final SewerageRatesMaster sewerageRatesMaster, final Boolean swgRateappconfig, final Errors errors) {
 
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "propertyType", NOTEMPTY_SEWERAGE_PROPERTYTYPE);
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "fromDate", NOTEMPTY_SEWERAGE_FROMDATE);
+        if (swgRateappconfig)
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "monthlyRate", NOTEMPTY_SEWERAGE_MONTHLY_RATE);
 
         try {

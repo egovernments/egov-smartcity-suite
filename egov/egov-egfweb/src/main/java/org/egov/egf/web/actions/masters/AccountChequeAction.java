@@ -84,6 +84,8 @@ public class AccountChequeAction extends BaseFormAction {
     private List<ChequeDeptMapping> chequeList;
     private Bankaccount bankaccount;
     private List<ChequeDetail> chequeDetailsList;
+    private Long financialYearId;
+
 
     @Autowired
     @Qualifier("persistenceService")
@@ -144,9 +146,11 @@ public class AccountChequeAction extends BaseFormAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("AccountChequeAction | manipulateCheques | Start");
         final Long bankAccId = Long.valueOf(parameters.get("bankAccId")[0]);
+        final Long finId = Long.valueOf(parameters.get("finId")[0]);
+        setFinancialYearId(finId);
         // Get cheque leafs presents for this particular account number
         bankaccount =bankAccountService.findById(bankAccId, false);
-        chequeList = accountChequesService.getChequeListByBankAccId(bankAccId);
+        chequeList = accountChequesService.getChequesByBankAccIdFinId(bankAccId,Long.valueOf(financialYearId));
         if (chequeList.size() > 0)
             prepareChequeDetails(chequeList);
         return "manipulateCheques";
@@ -157,8 +161,9 @@ public class AccountChequeAction extends BaseFormAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("AccountChequeAction | manipulateCheques | Start");
         final Long bankAccId = Long.valueOf(parameters.get("bankAccId")[0]);
+        final Long finId = Long.valueOf(parameters.get("finId")[0]);
         bankaccount =bankAccountService.findById(bankAccId, false);
-        chequeList = accountChequesService.getChequeListByBankAccId(bankAccId);
+        chequeList = accountChequesService.getChequesByBankAccIdFinId(bankAccId,finId);
         if (chequeList.size() > 0)
             prepareChequeDetails(chequeList);
         return "viewCheques";
@@ -219,8 +224,7 @@ public class AccountChequeAction extends BaseFormAction {
         accountChequesService.deleteRecords(deletedChqDeptId, bankaccount);
         // Get cheque leafs presents for this particular account number
         final StringBuffer query = new StringBuffer(200);
-        query.append("select cd from ChequeDeptMapping cd where accountCheque.bankAccountId.id =? ");
-        chequeList = persistenceService.findAllBy(query.toString(), bankaccount.getId());
+        chequeList = accountChequesService.getChequesByBankAccIdFinId(bankaccount.getId(),Long.valueOf(financialYearId));
         if (chequeList.size() > 0)
             prepareChequeDetails(chequeList);
         addActionMessage("Cheque Master updated Successfully");
@@ -282,4 +286,11 @@ public class AccountChequeAction extends BaseFormAction {
         this.deletedChqDeptId = deletedChqDeptId;
     }
 
+    public Long getFinancialYearId() {
+        return financialYearId;
+    }
+
+    public void setFinancialYearId(final Long financialYearId) {
+        this.financialYearId = financialYearId;
+    }
 }

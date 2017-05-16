@@ -110,6 +110,7 @@
 				</table>
 
 				<s:hidden name="bankAccId" id="bankAccId" value="%{bankaccount.id}" />
+				<s:hidden name="financialYearId" id="financialYearId" value="%{financialYearId}" />
 			</s:if>
 			<br />
 			<table width="100%" cellspacing="0" cellpadding="0" border="0"

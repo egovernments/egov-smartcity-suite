@@ -40,10 +40,13 @@
 package org.egov.ptis.service.utils;
 
 import static org.egov.collection.constants.CollectionConstants.QUERY_RECEIPTS_BY_RECEIPTNUM;
+import static org.egov.ptis.constants.PropertyTaxConstants.ADDITIONAL_COMMISSIONER_DESIGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPCONFIG_DIGITAL_SIGNATURE;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARREARS;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_COMMISSIONER_DESIGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.CSC_OPERATOR_ROLE;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_FIRST_HALF;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_SECOND_HALF;
@@ -63,9 +66,12 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_GENERAL
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_LIBRARY_CESS;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_UNAUTHORIZED_PENALTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_VACANT_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEPUTY_COMMISSIONER_DESIGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.MEESEVA_OPERATOR_ROLE;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_OFFICER_DESGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.ZONAL_COMMISSIONER_DESIGN;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -84,6 +90,7 @@ import javax.persistence.PersistenceContext;
 import org.apache.log4j.Logger;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.ReceiptHeader;
+import org.egov.commons.CFinancialYear;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
 import org.egov.eis.entity.Assignment;
@@ -159,11 +166,9 @@ public class PropertyTaxCommonUtils {
      * @return Installment - the first half of the current financial year for PT module
      */
     public Installment getCurrentInstallment() {
-        final Query query = entityManager
-                .unwrap(Session.class)
-                .createQuery(
-                        "select installment from Installment installment,CFinancialYear finYear where installment.module.name =:moduleName  and (cast(:currDate as date)) between finYear.startingDate and finYear.endingDate "
-                                + " and cast(installment.fromDate as date) >= cast(finYear.startingDate as date) and cast(installment.toDate as date) <= cast(finYear.endingDate as date) order by installment.fromDate asc ");
+        final Query query = getSession().createQuery(
+                "select installment from Installment installment,CFinancialYear finYear where installment.module.name =:moduleName  and (cast(:currDate as date)) between finYear.startingDate and finYear.endingDate "
+                        + " and cast(installment.fromDate as date) >= cast(finYear.startingDate as date) and cast(installment.toDate as date) <= cast(finYear.endingDate as date) order by installment.fromDate asc ");
         query.setString("moduleName", PropertyTaxConstants.PTMODULENAME);
         query.setDate("currDate", new Date());
         final List<Installment> installments = query.list();
@@ -275,7 +280,7 @@ public class PropertyTaxCommonUtils {
         List<Installment> advanceInstallments = new ArrayList<Installment>();
         final String query = "select inst from Installment inst where inst.module.name = '" + PTMODULENAME
                 + "' and inst.fromDate >= :startdate order by inst.fromDate asc ";
-        advanceInstallments = entityManager.unwrap(Session.class).createQuery(query)
+        advanceInstallments = getSession().createQuery(query)
                 .setParameter("startdate", startDate)
                 .setMaxResults(PropertyTaxConstants.MAX_ADVANCES_ALLOWED).list();
         return advanceInstallments;
@@ -560,5 +565,33 @@ public class PropertyTaxCommonUtils {
                 break;
         }
         return !assignment.isEmpty() ? assignment.get(0) : null;
+    }
+    
+    public Session getSession() {
+        return entityManager.unwrap(Session.class);
+    }
+    
+    @SuppressWarnings("unchecked")
+    public List<CFinancialYear> getAllFinancialYearsBetweenDates(Date fromDate, Date toDate) {
+        Query query = getSession().createQuery(
+                " from CFinancialYear cfinancialyear where cfinancialyear.startingDate <:eDate and cfinancialyear.endingDate >=:sDate order by finYearRange asc ");
+        query.setDate("sDate", fromDate);
+        query.setDate("eDate", toDate);
+        return query.list();
+    }
+    
+    public boolean isRoOrCommissioner(final String designation) {
+        return commissionerDesginations().contains(designation);
+    }
+
+    public List<String> commissionerDesginations() {
+        List<String> designations = new ArrayList<>();
+        designations.add(REVENUE_OFFICER_DESGN);
+        designations.add(ASSISTANT_COMMISSIONER_DESIGN);
+        designations.add(ADDITIONAL_COMMISSIONER_DESIGN);
+        designations.add(DEPUTY_COMMISSIONER_DESIGN);
+        designations.add(COMMISSIONER_DESGN);
+        designations.add(ZONAL_COMMISSIONER_DESIGN);
+        return designations;
     }
 }

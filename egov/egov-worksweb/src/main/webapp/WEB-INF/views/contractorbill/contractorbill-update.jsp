@@ -58,6 +58,7 @@
 			<input type="hidden" name="contractorBillId" id="contractorBillId" value="${contractorBillRegister.id}" /> 
 			<input type="hidden"  name="workOrderEstimateId" id="workOrderEstimateId" value="${contractorBillRegister.workOrderEstimate.id}" />
 			<input type="hidden" name="isBillEditable" id="isBillEditable" value="${isBillEditable }" /> 
+			<input type="hidden" id="defaultCutOffDate" value="${defaultCutOffDate }" />
 					<div class="panel panel-primary" data-collapsed="0">
 						
 						<div class="panel-heading">

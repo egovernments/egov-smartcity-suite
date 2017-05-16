@@ -104,7 +104,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
-import org.apache.struts2.convention.annotation.Namespaces;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
@@ -150,7 +149,6 @@ import com.opensymphony.xwork2.ActionContext;
         @Result(name = BaseFormAction.EDIT, location = "transfer/transferProperty-edit.jsp"),
         @Result(name = BaseFormAction.VIEW, location = "transfer/transferProperty-view.jsp"),
         @Result(name = PropertyTransferAction.REDIRECT, location = "transfer/transferProperty-redirect.jsp"),
-        @Result(name = PropertyTransferAction.CITIZEN_REDIRECT, location = "citizen/transfer/transferProperty-redirect.jsp"),
         @Result(name = TARGET_WORKFLOW_ERROR, location = "workflow/workflow-error.jsp"),
         @Result(name = PropertyTransferAction.ACK, location = "transfer/transferProperty-ack.jsp"),
         @Result(name = PropertyTransferAction.REJECT_ON_TAXDUE, location = "transfer/transferProperty-balance.jsp"),
@@ -160,17 +158,16 @@ import com.opensymphony.xwork2.ActionContext;
         @Result(name = PropertyTransferAction.ERROR, location = "common/meeseva-errorPage.jsp"),
         @Result(name = PropertyTransferAction.MEESEVA_RESULT_ACK, location = "common/meesevaAck.jsp"),
         @Result(name = PropertyTransferAction.COLLECT_FEE, location = "collection/collectPropertyTax-view.jsp"),
+        @Result(name = PropertyTransferAction.COLLECT_ONLINE_FEE, location = "citizen/collection/collection-collectTax.jsp"),
         @Result(name = PropertyTransferAction.REDIRECT_SUCCESS, location = PropertyTransferAction.REDIRECT_SUCCESS, type = "redirectAction", params = {
                 "assessmentNo", "${assessmentNo}", "mutationId", "${mutationId}" }),
         @Result(name = PropertyTransferAction.COMMON_FORM, location = "search/searchProperty-commonForm.jsp"),
         @Result(name = PropertyTransferAction.DIGITAL_SIGNATURE_REDIRECTION, location = "transfer/transferProperty-digitalSignatureRedirection.jsp") })
-@Namespaces(value={@Namespace("/property/transfer"),@Namespace("/citizen/property/transfer")})
+@Namespace("/property/transfer")
 public class PropertyTransferAction extends GenericWorkFlowAction {
     protected static final String COMMON_FORM = "commonForm";
     protected static final String REDIRECT = "redirect";
     protected static final String DIGITAL_SIGNATURE_REDIRECTION = "digitalSignatureRedirection";
-    protected static final String CITIZEN_REDIRECT = "citizenRedirect";
-
     private static final String PROPERTY_TRANSFER = "property transfer";
     private static final long serialVersionUID = 1L;
     public static final String ACK = "ack";
@@ -183,6 +180,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     public static final String COLLECT_FEE = "collect-fee";
     public static final String MEESEVA_RESULT_ACK = "meesevaAck";
     private static final String PROPERTY_MODIFY_REJECT_FAILURE = "property.modify.reject.failure";
+    public static final String COLLECT_ONLINE_FEE = "onlineCollection";
 
     // Form Binding Model
     private PropertyMutation propertyMutation = new PropertyMutation();
@@ -272,9 +270,6 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     @SkipValidation
     @Action(value = "/redirect")
     public String redirect() {
-        if (StringUtils.isNotBlank(applicationSource))
-            return CITIZEN_REDIRECT;
-        else 
             return REDIRECT;
     }
 
@@ -417,8 +412,14 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
             addActionError(getText("mutationfee.notexists"));
             target = SEARCH;
         } else {
+            if (ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName())
+                    && ApplicationThreadLocals.getUserId() == null) {
+                ApplicationThreadLocals.setUserId(securityUtils.getCurrentUser().getId());
+                target = COLLECT_ONLINE_FEE;
+            }
             collectXML = transferOwnerService.generateReceipt(propertyMutation);
-            target = COLLECT_FEE;
+            if (StringUtils.isBlank(target))
+                target = COLLECT_FEE;
         }
         return target;
     }
@@ -1023,7 +1024,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     
     private BigDecimal getWaterTaxDues(){
         return propertyService.getWaterTaxDues(assessmentNo).get(PropertyTaxConstants.WATER_TAX_DUES) == null ? BigDecimal.ZERO : new BigDecimal(
-                Double.valueOf((Double) propertyService.getWaterTaxDues(assessmentNo).get(PropertyTaxConstants.WATER_TAX_DUES)));
+                Double.valueOf((Double) propertyService.getWaterTaxDues(assessmentNo).get("currentInstDemand")));
     }
     
     private Boolean isUnderWtmsWF(){

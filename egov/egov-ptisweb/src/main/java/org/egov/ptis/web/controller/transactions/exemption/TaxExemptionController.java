@@ -112,7 +112,7 @@ import org.springframework.web.servlet.view.RedirectView;
  * @author subhash
  */
 @Controller
-@RequestMapping(value = { "/exemption","/citizen/exemption" })
+@RequestMapping(value = { "/exemption" })
 public class TaxExemptionController extends GenericWorkFlowController {
 
     private static final String APPLICATION_SOURCE = "applicationSource";
@@ -325,11 +325,11 @@ public class TaxExemptionController extends GenericWorkFlowController {
                 workFlowAction = request.getParameter("workFlowAction");
             if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
                 approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
-            if (checkCommercialProperty((PropertyImpl)property)) {
+            if (property.getTaxExemptedReason() != null && checkCommercialProperty((PropertyImpl)property)) {
                 model.addAttribute(ERROR_MSG, "error.commercial.prop.notallowed");
                 return PROPERTY_VALIDATION;
             }
-            if (hasTenant((PropertyImpl)property)) {
+            if (property.getTaxExemptedReason() != null && hasTenant((PropertyImpl)property)) {
                 model.addAttribute(ERROR_MSG, "error.tenant.exists");
                 return PROPERTY_VALIDATION;
             }

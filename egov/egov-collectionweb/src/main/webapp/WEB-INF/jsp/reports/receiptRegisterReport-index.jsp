@@ -191,6 +191,16 @@
 							list="dropdownData.servicetypeList" listKey="id" listValue="name"
 							value="%{serviceId}" /></td>
 				</tr>
+				<tr>
+				    <td class="bluebox">&nbsp;</td>
+					<td class="bluebox"><s:text
+							name="receiptregisterReport.criteria.bankbranch" /></td>
+				<td class="greybox"><s:select headerKey="-1"
+								headerValue="----Choose----" name="branchId" id="branchId"
+								cssClass="selectwk" list="dropdownData.bankBranchlist"
+								listKey="id" listValue="branchname"
+								value="%{branchId}" />
+				</tr>
 			</table>
 			<div align="left" class="mandatorycoll">
 				<s:text name="common.mandatoryfields" />

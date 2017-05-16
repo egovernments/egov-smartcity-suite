@@ -57,10 +57,20 @@ $(document).ready( function () {
 			bootbox.alert("Please enter either Aadhar Number or PAN Number is Mandatory");
 		}
 		if ($('form').valid()) {
+			console.log('submitted')
 		} else {
 			e.preventDefault();
 		}
 	});
+	
+	//validate form while toggle between multiple tab
+	jQuery('form').validate({
+		ignore: ".ignore",
+		invalidHandler: function(e, validator){
+		if(validator.errorList.length)
+		$('#settingstab a[href="#' + jQuery(validator.errorList[0].element).closest(".tab-pane").attr('id') + '"]').tab('show');
+		}
+		});
 	
 // mobile number validation
 $('.mobileno-field').blur( function () {

@@ -752,10 +752,11 @@ public interface PropertyTaxConstants {
     public static final String ROLE_ULB_OPERATOR = "ULB Operator";
     public static final String ROLE_COLLECTION_OPERATOR = "Collection Operator";
     public static final String ROLE_PTADMINISTRATOR = "Property Administrator";
+    public static final String ROLE_DATAENTRY_OPERATOR ="Data Entry Operator";
 
     // Designations
     public static final String ASSISTANT_DESGN = "Assistant";
-    public static final String REVENUE_OFFICER_DESGN = "Revenue officer";
+    public static final String REVENUE_OFFICER_DESGN = "Revenue Officer";
     public static final String REVENUE_INSPECTOR_DESGN = "UD Revenue Inspector";
     public static final String REVENUE_CLERK_DESGN = "Revenue Clerk";
     public static final String COMMISSIONER_DESGN = "Commissioner";
@@ -763,8 +764,8 @@ public interface PropertyTaxConstants {
     public static final String END_APPROVER_DESGN = "RO";
     public static final String JUNIOR_ASSISTANT = "Junior Assistant";
     public static final String SENIOR_ASSISTANT = "Senior Assistant";
-    public static final String ASSISTANT_COMMISSIONER_DESIGN = "Assistant commissioner";
-    public static final String DEPUTY_COMMISSIONER_DESIGN = "Deputy commissioner";
+    public static final String ASSISTANT_COMMISSIONER_DESIGN = "Assistant Commissioner";
+    public static final String DEPUTY_COMMISSIONER_DESIGN = "Deputy Commissioner";
     public static final String ADDITIONAL_COMMISSIONER_DESIGN = "Additional Commissioner";
     public static final String ZONAL_COMMISSIONER_DESIGN = "Zonal Commissioner";
     public static final String JUNIOR_OR_SENIOR_ASSISTANT_DESIGN = "Senior Assistant,Junior Assistant";
@@ -1145,10 +1146,12 @@ public interface PropertyTaxConstants {
     public static final SimpleDateFormat DATEFORMATTER_DDMMYYYY = new SimpleDateFormat("dd/MM/yyyy");
     public static final String BEANNAME_PROPERTY_TAX_BILLABLE = "propertyTaxBillable";
 
+    // PDF Report constants
     public static final String REPORT_TEMPLATENAME_SPECIAL_NOTICE = "mainSpecialNotice";
     public static final String IMAGES_BASE_PATH = "/egi/resources/global/images/";
     public static final String IMAGE_CONTEXT_PATH = "/egi";
     public static final String REPORT_TEMPLATENAME_DEMANDNOTICE_GENERATION = "DemandBill";
+    public static final String REPORT_TEMPLATENAME_INTEGRATED_DEMANDNOTICE_GENERATION = "integratedDemandBill";
     public static final String REPORT_TEMPLATENAME_REVISIONPETITION_HEARINGNOTICE = "mainHearingNotice";
     public static final String NOTICE_TYPE_REVISIONPETITION_HEARINGNOTICE = "Revision Petition Hearing Notice";
     public static final String REPORT_TEMPLATENAME_REVISIONPETITION_ENDORSEMENT = "revPetitionEndorsement";
@@ -1163,6 +1166,8 @@ public interface PropertyTaxConstants {
     public static final String REPORT_ESD_NOTICE_MUNICIPALITY = "ESDNotice_Municipality";
     public static final String REPORT_DISTRESS_CORPORATION = "DistressWarrant_Corporation";
     public static final String REPORT_DISTRESS_MUNICIPALITY = "DistressWarrant_Municipality";
+    public static final String REPORT_ARREAR_DEMAND_REGISTER = "arreardemand-register";
+    public static final String ADR_REPORT= "ADR Report";
 
     // Property Transfer related constants
     public static final String TRANSFER_FEE_COLLECTED = "Transfer Fee Collected";
@@ -1171,7 +1176,8 @@ public interface PropertyTaxConstants {
     public static final String EDU_CESS = "EDU_CESS";
     public static final String LIB_CESS = "LIB_CESS";
     public static final String SEW_TAX = "LIB_CESS";
-
+    public static final String VAC_LAND_TAX="VAC_LAND_TAX";
+    
     public static final String THIRD_PARTY_ERR_CODE_SUCCESS = "PTIS-REST-0";
     public static final String THIRD_PARTY_ERR_MSG_SUCCESS = "SUCCESS";
     public static final String THIRD_PARTY_ERR_CODE_INVALIDCREDENTIALS = "PTIS-REST-1";
@@ -1579,7 +1585,7 @@ public interface PropertyTaxConstants {
     public String WTMS_TAXDUE_RESTURL = "%s/wtms/rest/watertax/due/byptno/%s";
     public String WTMS_TOTALDEMAND_RESTURL = "%s/wtms/rest/watertax/totaldemandamount/";
     public String WTMS_CONNECT_DTLS_RESTURL = "%s/wtms/rest/watertax/connectiondetails/byptno/%s";
-
+    public String WTMS_AMALGAMATE_WATER_CONNECTIONS_URL = "%s/wtms/rest/watertax/updateConnectionForAmulgamation";
 
     public static final String TRANSACTION_TYPE_CREATE = "Create";
     public static final String TRANSACTION_TYPE_DEMOLITION = "Demolition";
@@ -1593,7 +1599,7 @@ public interface PropertyTaxConstants {
 
     public static final String COLLECION_BILLING_SERVICE_PT = "Property Tax";
     public static final String COLLECION_BILLING_SERVICE_VLT = "Property Tax (On Land)";
-    public static final String COLLECION_BILLING_SERVICE_WTMS = "Water Tax";
+    public static final String COLLECION_BILLING_SERVICE_WTMS = "Water Charges";
 
     public static final String PROPERTY_TAX_INDEX_NAME = "propertytax";
     public static final String COLLECTION_INDEX_NAME = "receipts";
@@ -1693,7 +1699,7 @@ public interface PropertyTaxConstants {
         }
     };
     public static final List<String> ASSESSMENT_DOCUMENT_NAMES = ImmutableList.of("Patta Certificate (Issued by Revenue Department)",
-            "Registered Will Document", "Un-registered Will Document", "Decree by Civil Court", "Registered Document");
+            "Registered Will Document", "Un-registered Will Document", "Decree by Civil Court", "Registered Document", "Un-registered Document / Notary document");
     public static final String DOCUMENT_TYPE_PATTA_CERTIFICATE = "Patta Certificate";
     public static final String DOCUMENT_TYPE_MRO_PROCEEDINGS = "MRO Proceedings";
     public static final String DOCUMENT_TYPE_WILL_DEED = "Will Deed";
@@ -1706,8 +1712,8 @@ public interface PropertyTaxConstants {
     public static final String DOCUMENT_NAME_UNREGD_WILL_DOCUMENT = "Un-registered Will Document";
     public static final String DOCUMENT_NAME_DECREE_BY_CIVILCOURT = "Decree by Civil Court";
     public static final String DOCUMENT_NAME_NOTARY_DOCUMENT = "Un-registered Document / Notary document";
-    public static final List<String> COMMISSIONER_DESIGNATIONS = ImmutableList.of("Assistant Commissioner",
-            "Zonal Commissioner", "Deputy Commissioner", "Additional Commissioner", "Commissioner");
+    public static final List<String> COMMISSIONER_DESIGNATIONS = ImmutableList.of(ASSISTANT_COMMISSIONER_DESIGN,
+            ZONAL_COMMISSIONER_DESIGN, DEPUTY_COMMISSIONER_DESIGN, ADDITIONAL_COMMISSIONER_DESIGN, COMMISSIONER_DESGN);
     public static final String INTEGRATED_BILL = "Integrated Bill";
     
     //Source of Application
@@ -1722,4 +1728,5 @@ public interface PropertyTaxConstants {
     public static final String WATER_TAX_DUES = "totalTaxDue";
     public static final String UNDER_WTMS_WF = "isInWorkFlow";
     
+    public static final String SUPER_STRUCTURE = "Super Structure";
 }

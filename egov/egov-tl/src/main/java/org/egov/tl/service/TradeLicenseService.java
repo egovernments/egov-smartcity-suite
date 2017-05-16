@@ -67,9 +67,11 @@ import org.egov.tl.entity.LicenseAppType;
 import org.egov.tl.entity.NatureOfBusiness;
 import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.entity.WorkflowBean;
-import org.egov.tl.entity.dto.DemandnoticeForm;
+import org.egov.tl.entity.dto.DemandNoticeForm;
 import org.egov.tl.entity.dto.OnlineSearchForm;
 import org.egov.tl.entity.dto.SearchForm;
+import org.egov.tl.repository.SearchTradeRepository;
+import org.egov.tl.repository.specs.SearchTradeSpec;
 import org.egov.tl.utils.Constants;
 import org.egov.tl.utils.LicenseUtils;
 import org.hibernate.Criteria;
@@ -77,6 +79,10 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
@@ -91,19 +97,22 @@ import java.util.Optional;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.defaultString;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.egov.infra.utils.DateUtils.currentDateToDefaultDateFormat;
 import static org.egov.infra.utils.DateUtils.getDefaultFormattedDate;
 import static org.egov.infra.utils.DateUtils.toYearFormat;
 import static org.egov.tl.utils.Constants.BUTTONAPPROVE;
 import static org.egov.tl.utils.Constants.BUTTONREJECT;
+import static org.egov.tl.utils.Constants.CITY_GRADE_CORPORATION;
+import static org.egov.tl.utils.Constants.CLOSURE_LIC_APPTYPE;
 import static org.egov.tl.utils.Constants.LICENSE_FEE_TYPE;
 import static org.egov.tl.utils.Constants.NEW_LIC_APPTYPE;
 import static org.egov.tl.utils.Constants.RENEWAL_LIC_APPTYPE;
 import static org.egov.tl.utils.Constants.TRADE_LICENSE;
-import static org.egov.tl.utils.Constants.CLOSURE_LIC_APPTYPE;
 
 @Transactional(readOnly = true)
 public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
+
     @Autowired
     private TradeLicenseSmsAndEmailService tradeLicenseSmsAndEmailService;
 
@@ -115,6 +124,9 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
 
     @Autowired
     private ModuleService moduleService;
+
+    @Autowired
+    private SearchTradeRepository searchTradeRepository;
 
     @Autowired
     private CFinancialYearService cFinancialYearService;
@@ -162,15 +174,13 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(license);
     }
 
-    @Transactional
+
     public void updateStatusInWorkFlowProgress(TradeLicense license, final String workFlowAction) {
 
-        final BigDecimal currentDemandAmount = recalculateLicenseFee(license.getCurrentDemand());
-        final BigDecimal recalDemandAmount = calculateFeeAmount(license);
         final Assignment userAssignment = assignmentService.getPrimaryAssignmentForUser(securityUtils.getCurrentUser().getId());
         final Position wfInitiator = getWorkflowInitiator(license);
         if (BUTTONAPPROVE.equals(workFlowAction)) {
-            if (license.getTempLicenseNumber() == null && license.isNewApplication())
+            if (isEmpty(license.getLicenseNumber()) && license.isNewApplication())
                 license.setLicenseNumber(licenseNumberUtils.generateLicenseNumber());
 
             if (license.getCurrentDemand().getBaseDemand().compareTo(license.getCurrentDemand().getAmtCollected()) <= 0)
@@ -215,43 +225,26 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
                 licenseUtils.applicationStatusChange(license,
                         Constants.APPLICATION_STATUS_REJECTED);
             }
-        if (license.hasState()
-                && license.getState().getValue().contains(Constants.WF_REVENUECLERK_APPROVED)
-                && recalDemandAmount.compareTo(currentDemandAmount) >= 0)
-            updateDemandForChangeTradeArea(license);
-    }
-
-    public ReportRequest prepareReportInputData(final License license) {
-        final String cityGrade = getCityGrade();
-        if (cityGrade != null && cityGrade.equalsIgnoreCase(Constants.CITY_GRADE_CORPORATION)) {
-            final Map<String, Object> reportParams = getReportParamsForCertificate(license, null, null);
-            return new ReportRequest("licenseCertificateForCorp", license, reportParams);
-        } else {
-            final Map<String, Object> reportParams = getReportParamsForCertificate(license, null, null);
-            return new ReportRequest("licenseCertificate", license, reportParams);
+        if (license.hasState() && license.getState().getValue().contains(Constants.WF_REVENUECLERK_APPROVED)) {
+            final BigDecimal currentDemandAmount = recalculateLicenseFee(license.getCurrentDemand());
+            final BigDecimal recalDemandAmount = calculateFeeAmount(license);
+            if (recalDemandAmount.compareTo(currentDemandAmount) >= 0)
+                updateDemandForChangeTradeArea(license);
         }
     }
 
-    private String getCityGrade() {
-        return cityService.getCityByURL(ApplicationThreadLocals.getDomainName()).getGrade();
-    }
-
-    public ReportOutput prepareReportInputDataForDig(final License license, final String districtName,
-                                                     final String cityMunicipalityName) {
-        final String cityGrade = getCityGrade();
-        if (cityGrade != null && cityGrade.equalsIgnoreCase(Constants.CITY_GRADE_CORPORATION)) {
+    @ReadOnly
+    public ReportOutput generateLicenseCertificate(License license) {
+        if (CITY_GRADE_CORPORATION.equals(cityService.getCityGrade())) {
             return reportService.createReport(
-                    new ReportRequest("licenseCertificateForCorp", license, getReportParamsForCertificate(license, districtName,
-                            cityMunicipalityName)));
+                    new ReportRequest("tl_licenseCertificateForCorp", license, getReportParamsForCertificate(license)));
         } else {
             return reportService.createReport(
-                    new ReportRequest("licenseCertificate", license, getReportParamsForCertificate(license, districtName,
-                            cityMunicipalityName)));
+                    new ReportRequest("tl_licenseCertificate", license, getReportParamsForCertificate(license)));
         }
     }
 
-    private Map<String, Object> getReportParamsForCertificate(final License license, final String districtName,
-                                                              final String cityMunicipalityName) {
+    private Map<String, Object> getReportParamsForCertificate(License license) {
 
         final Map<String, Object> reportParams = new HashMap<>();
         reportParams.put("applicationnumber", license.getApplicationNumber());
@@ -261,8 +254,8 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         reportParams.put("cscNumber", "");
         reportParams.put("nameOfEstablishment", license.getNameOfEstablishment());
         reportParams.put("licenceAddress", StringEscapeUtils.escapeXml(license.getAddress()));
-        reportParams.put("municipality", cityMunicipalityName);
-        reportParams.put("district", districtName);
+        reportParams.put("municipality", cityService.getMunicipalityName());
+        reportParams.put("district", cityService.getDistrictName());
         reportParams.put("category", license.getCategory().getName());
         reportParams.put("subCategory", license.getTradeName().getName());
 
@@ -272,9 +265,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
 
         reportParams.put("appType", license.isNewApplication() ? "New Trade" : "Renewal");
         reportParams.put("currentDate", currentDateToDefaultDateFormat());
-        if (ApplicationThreadLocals.getMunicipalityName().contains("Corporation"))
-            reportParams.put("carporationulbType", Boolean.TRUE);
-        reportParams.put("municipality", ApplicationThreadLocals.getMunicipalityName());
+        reportParams.put("carporationulbType", ApplicationThreadLocals.getMunicipalityName().contains("Corporation"));
         String startYear;
         String endYear;
         BigDecimal amtPaid;
@@ -326,44 +317,18 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
     }
 
     @ReadOnly
-    public List<SearchForm> searchTradeLicense(final SearchForm searchForm) {
-        final Criteria searchCriteria = entityQueryService.getSession().createCriteria(TradeLicense.class);
-        searchCriteria.createAlias("licensee", "licc").createAlias("category", "cat")
-                .createAlias("tradeName", "subcat").createAlias("status", "licstatus");
-        if (StringUtils.isNotBlank(searchForm.getApplicationNumber()))
-            searchCriteria.add(Restrictions.eq("applicationNumber", searchForm.getApplicationNumber()).ignoreCase());
-        if (StringUtils.isNotBlank(searchForm.getLicenseNumber()))
-            searchCriteria.add(Restrictions.eq("licenseNumber", searchForm.getLicenseNumber()).ignoreCase());
-        if (StringUtils.isNotBlank(searchForm.getOldLicenseNumber()))
-            searchCriteria.add(Restrictions.eq("oldLicenseNumber", searchForm.getOldLicenseNumber()).ignoreCase());
-        if (searchForm.getCategoryId() != null)
-            searchCriteria.add(Restrictions.eq("cat.id", searchForm.getCategoryId()));
-        if (searchForm.getSubCategoryId() != null)
-            searchCriteria.add(Restrictions.eq("subcat.id", searchForm.getSubCategoryId()));
-        if (StringUtils.isNotBlank(searchForm.getTradeTitle()))
-            searchCriteria.add(Restrictions.eq("nameOfEstablishment", searchForm.getTradeTitle()).ignoreCase());
-        if (StringUtils.isNotBlank(searchForm.getTradeOwnerName()))
-            searchCriteria.add(Restrictions.eq("licc.applicantName", searchForm.getTradeOwnerName()).ignoreCase());
-        if (StringUtils.isNotBlank(searchForm.getPropertyAssessmentNo()))
-            searchCriteria.add(Restrictions.eq("assessmentNo", searchForm.getPropertyAssessmentNo()).ignoreCase());
-        if (StringUtils.isNotBlank(searchForm.getMobileNo()))
-            searchCriteria.add(Restrictions.eq("licc.mobilePhoneNumber", searchForm.getMobileNo()));
-        if (searchForm.getStatusId() != null)
-            searchCriteria.add(Restrictions.eq("status.id", searchForm.getStatusId()));
-        if (searchForm.getInactive() != null && searchForm.getInactive().equals(Boolean.TRUE))
-            searchCriteria.add(Restrictions.eq("isActive", false));
-
-        searchCriteria.add(Restrictions.isNotNull("applicationNumber"));
-        searchCriteria.addOrder(Order.asc("id"));
+    public Page<SearchForm> searchTradeLicense(final SearchForm searchForm) {
+        final Pageable pageable = new PageRequest(searchForm.pageNumber(),
+                searchForm.pageSize(), searchForm.orderDir(), searchForm.orderBy());
         final String currentUserRoles = securityUtils.getCurrentUser().getRoles().toString();
-        final List<SearchForm> finalList = new LinkedList<>();
-
-        for (final License license : (List<License>) searchCriteria.list()) {
+        Page<License> licenses = searchTradeRepository.findAll(SearchTradeSpec.searchTrade(searchForm), pageable);
+        List<SearchForm> searchResults = new ArrayList<>();
+        licenses.forEach(license -> {
             final CFinancialYear financialYear = cFinancialYearService.getFinancialYearByDate(license.getDateOfExpiry());
             final String expiryYear = financialYear != null ? financialYear.getFinYearRange() : "";
-            finalList.add(new SearchForm(license, currentUserRoles, getOwnerName(license), expiryYear));
-        }
-        return finalList;
+            searchResults.add(new SearchForm(license, currentUserRoles, getOwnerName(license), expiryYear));
+        });
+        return new PageImpl<>(searchResults, pageable, licenses.getTotalElements());
     }
 
     @ReadOnly
@@ -416,7 +381,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
     }
 
     @ReadOnly
-    public List<DemandnoticeForm> searchLicensefordemandnotice(final DemandnoticeForm demandnoticeForm) {
+    public List<DemandNoticeForm> getLicenseDemandNotices(final DemandNoticeForm demandnoticeForm) {
         final Criteria searchCriteria = entityQueryService.getSession().createCriteria(TradeLicense.class);
         searchCriteria.createAlias("licensee", "licc").createAlias("category", "cat").createAlias("tradeName", "subcat")
                 .createAlias("status", "licstatus");
@@ -441,7 +406,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
             searchCriteria.add(Restrictions.ne("licstatus.statusCode", StringUtils.upperCase("CAN")));
 
         searchCriteria.addOrder(Order.asc("id"));
-        final List<DemandnoticeForm> finalList = new LinkedList<>();
+        final List<DemandNoticeForm> finalList = new LinkedList<>();
 
         for (final TradeLicense license : (List<TradeLicense>) searchCriteria.list()) {
             Installment currentInstallment = license.getCurrentDemand().getEgInstallmentMaster();
@@ -451,7 +416,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
             Map<String, Map<String, BigDecimal>> outstandingFees = getOutstandingFeeForDemandNotice(license,
                     currentInstallment, previousInstallment.get(0));
             Map<String, BigDecimal> licenseFees = outstandingFees.get(LICENSE_FEE_TYPE);
-            finalList.add(new DemandnoticeForm(license, licenseFees, getOwnerName(license)));
+            finalList.add(new DemandNoticeForm(license, licenseFees, getOwnerName(license)));
         }
         return finalList;
     }
@@ -481,7 +446,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
             User ownerUser = state.getOwnerUser();
             Position ownerPosition = state.getOwnerPosition();
             if (ownerPosition != null) {
-                User usr = eisCommonService.getUserForPosition(ownerPosition.getId(), new Date());
+                User usr = eisCommonService.getUserForPosition(ownerPosition.getId(), state.getLastModifiedDate());
                 currentStateDetail.put("user", usr == null ? EMPTY : usr.getName());
             } else
                 currentStateDetail.put("user", ownerUser == null ? EMPTY : ownerUser.getName());

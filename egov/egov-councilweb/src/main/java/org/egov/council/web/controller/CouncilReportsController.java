@@ -8,11 +8,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.egov.council.entity.CommitteeType;
+import org.egov.council.entity.CouncilMeeting;
 import org.egov.council.entity.CouncilPreamble;
 import org.egov.council.entity.es.CouncilMeetingDetailsSearchRequest;
 import org.egov.council.entity.es.CouncilMeetingDetailsSearchResult;
 import org.egov.council.entity.es.CouncilMeetingIndex;
 import org.egov.council.service.CommitteeTypeService;
+import org.egov.council.service.CouncilMeetingService;
 import org.egov.council.service.CouncilPreambleService;
 import org.egov.council.service.es.CouncilMeetingIndexService;
 import org.egov.council.web.adaptor.CouncilMeetingDetailsReportJsonAdaptor;
@@ -57,6 +59,8 @@ public class CouncilReportsController {
 	@Autowired
         private CommitteeTypeService committeeTypeService;
 	
+	@Autowired
+	private CouncilMeetingService councilMeetingService;
 	
 	@ModelAttribute("committeeType") public List<CommitteeType> getCommitteTypeList() {
             return committeeTypeService.getActiveCommiteeType();
@@ -107,6 +111,7 @@ public class CouncilReportsController {
         final FieldSortBuilder sort = new FieldSortBuilder("committeeType").order(SortOrder.DESC);
         List<CouncilMeetingIndex> detailsSearchResults = councilMeetingIndexService.getSearchResultByBoolQuery(boolQuery, sort);
         for (CouncilMeetingIndex councilMeetingIndex : detailsSearchResults) {
+            CouncilMeeting councilmeeting =null;
             CouncilMeetingDetailsSearchResult searchResult = new CouncilMeetingDetailsSearchResult();
             searchResult.setCommitteeType(councilMeetingIndex.getCommitteeType());
             searchResult.setTotalPreambles(councilMeetingIndex.getTotalNoOfPreamblesUsed());
@@ -120,6 +125,14 @@ public class CouncilReportsController {
             searchResult.setMeetingLocation(councilMeetingIndex.getMeetingLocation());
             searchResult.setMeetingNumber(councilMeetingIndex.getMeetingNumber());
             searchResult.setMeetingTime(councilMeetingIndex.getMeetingTime());
+            if (councilMeetingIndex.getMeetingNumber() != null) {
+                councilmeeting = councilMeetingService.findByMeetingNumber(councilMeetingIndex.getMeetingNumber());
+
+            }
+            if (councilmeeting != null) {
+                searchResult.setId(councilmeeting.getId());
+            } else
+                searchResult.setId(null);
             searchResultFomatted.add(searchResult);
         }
         return  new StringBuilder("{\"data\":")

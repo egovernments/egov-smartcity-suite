@@ -56,7 +56,7 @@ import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
-import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
+import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
 import org.egov.ptis.constants.PropertyTaxConstants;
@@ -159,7 +159,7 @@ public class ApproveAcknowledgementController {
                 throw new ApplicationRuntimeException("Exception while generating VRSpecial Notcie : " + e);
             }
             noticeOutput.setReportOutputData(bFile);
-            noticeOutput.setReportFormat(FileFormat.PDF);
+            noticeOutput.setReportFormat(ReportFormat.PDF);
             fileName = notice.getNoticeNo();
         } else {
             noticeOutput = vacancyRemissionService.generateReport(vacancyRemission, request, approverName, null);

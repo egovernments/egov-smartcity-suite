@@ -49,6 +49,7 @@ import static org.egov.stms.utils.constants.SewerageTaxConstants.CHANGEINCLOSETS
 import static org.egov.stms.utils.constants.SewerageTaxConstants.CHANGEINCLOSETS_NOCOLLECTION;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.CLOSESEWERAGECONNECTION;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.DOCTYPE_OTHERS;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.FEES_DONATIONCHARGE_CODE;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.MODULETYPE;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.NOTICE_TYPE_WORK_ORDER_NOTICE;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.WFLOW_ACTION_STEP_CANCEL;
@@ -74,7 +75,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -118,7 +118,9 @@ import org.egov.stms.notice.service.SewerageNoticeService;
 import org.egov.stms.service.es.SewerageIndexService;
 import org.egov.stms.transactions.entity.SewerageApplicationDetails;
 import org.egov.stms.transactions.entity.SewerageApplicationDetailsDocument;
+import org.egov.stms.transactions.entity.SewerageConnectionFee;
 import org.egov.stms.transactions.entity.SewerageDemandConnection;
+import org.egov.stms.transactions.entity.SewerageDemandDetail;
 import org.egov.stms.transactions.repository.SewerageApplicationDetailsRepository;
 import org.egov.stms.transactions.workflow.ApplicationWorkflowCustomDefaultImpl;
 import org.egov.stms.utils.SewerageTaxUtils;
@@ -192,7 +194,7 @@ public class SewerageApplicationDetailsService {
 
     @Autowired
     private DocumentTypeMasterService documentTypeMasterService;
-    
+
     @Autowired
     private AppConfigValueService appConfigValuesService;
 
@@ -244,6 +246,21 @@ public class SewerageApplicationDetailsService {
         final Date disposalDate = getDisposalDate(sewerageApplicationDetails,
                 sewerageApplicationDetails.getApplicationType().getProcessingTime());
         sewerageApplicationDetails.setDisposalDate(disposalDate);
+        // checking is donation charge collection is required ?
+        if (sewerageTaxUtils.isDonationChargeCollectionRequiredForLegacy()) {
+            // Capturing pending Donation charge for legacy records
+            SewerageDemandDetail sewerageDemandDetail = new SewerageDemandDetail();
+            BigDecimal donationaAmtCollected = new BigDecimal(request.getParameter("amountCollected"));
+            sewerageDemandDetail.setActualCollection(donationaAmtCollected);
+            for (final SewerageConnectionFee fees : sewerageApplicationDetails.getConnectionFees()) {
+                if (FEES_DONATIONCHARGE_CODE.equals(fees.getFeesDetail().getCode())) {
+                    sewerageDemandDetail.setActualAmount(BigDecimal.valueOf(fees.getAmount()));
+                }
+            }
+            sewerageDemandDetail.setInstallmentId(sewerageDemandService.getCurrentInstallment().getId());
+            sewerageDemandDetail.setReasonMaster(FEES_DONATIONCHARGE_CODE);
+            sewerageApplicationDetails.getDemandDetailBeanList().add(sewerageDemandDetail);
+        }
 
         if (sewerageApplicationDetails.getCurrentDemand() == null) {
             final EgDemand demand = sewerageDemandService.createDemandOnLegacyConnection(
@@ -510,9 +527,6 @@ public class SewerageApplicationDetailsService {
             // mark application index as closed on Connection Sanction
             if (sewerageApplicationDetails.getStatus().getCode()
                     .equals(APPLICATION_STATUS_SANCTIONED)) {
-                elapsedDays = (int) TimeUnit.DAYS.convert(new Date().getTime()
-                        - sewerageApplicationDetails.getApplicationDate().getTime(), TimeUnit.MILLISECONDS);
-                applicationIndex.setElapsedDays(elapsedDays);
                 applicationIndex.setApproved(ApprovalStatus.APPROVED);
                 applicationIndex.setClosed(ClosureStatus.YES);
             }
@@ -520,9 +534,6 @@ public class SewerageApplicationDetailsService {
             // cancellation
             else if (sewerageApplicationDetails.getStatus().getCode()
                     .equals(APPLICATION_STATUS_CANCELLED)) {
-                elapsedDays = (int) TimeUnit.DAYS.convert(new Date().getTime()
-                        - sewerageApplicationDetails.getApplicationDate().getTime(), TimeUnit.MILLISECONDS);
-                applicationIndex.setElapsedDays(elapsedDays);
                 applicationIndex.setApproved(ApprovalStatus.REJECTED);
                 applicationIndex.setClosed(ClosureStatus.YES);
             }
@@ -539,8 +550,8 @@ public class SewerageApplicationDetailsService {
             // final String url = "/stms/application/view/" + sewerageApplicationDetails.getApplicationNumber();
             if (LOG.isDebugEnabled())
                 LOG.debug("Application Index creation Started... ");
-            
-            AppConfigValues slaForSewerageConn =null;
+
+            AppConfigValues slaForSewerageConn = null;
             if (sewerageApplicationDetails != null && sewerageApplicationDetails.getApplicationType() != null
                     && SewerageTaxConstants.APPLICATION_TYPE_NAME_NEWCONNECTION
                             .equals(sewerageApplicationDetails.getApplicationType().getName())) {
@@ -566,7 +577,7 @@ public class SewerageApplicationDetailsService {
                     .withMobileNumber(mobileNumber.toString()).withClosed(ClosureStatus.NO)
                     .withAadharNumber(aadharNumber.toString())
                     .withSla(slaForSewerageConn != null && slaForSewerageConn.getValue() != null
-                    ? Integer.valueOf(slaForSewerageConn.getValue()) : 0)
+                            ? Integer.valueOf(slaForSewerageConn.getValue()) : 0)
                     .withApproved(ApprovalStatus.INPROGRESS).build();
             applicationIndexService.createApplicationIndex(applicationIndex);
             if (LOG.isDebugEnabled())
@@ -574,12 +585,12 @@ public class SewerageApplicationDetailsService {
             sewerageIndexService.createSewarageIndex(sewerageApplicationDetails, assessmentDetails);
         }
     }
-    
+
     public AppConfigValues getSlaAppConfigValuesForMarriageReg(final String moduleName, final String keyName) {
         final List<AppConfigValues> appConfigValues = appConfigValuesService.getConfigValuesByModuleAndKey(moduleName, keyName);
         return !appConfigValues.isEmpty() ? appConfigValues.get(0) : null;
     }
-    
+
     public BigDecimal getTotalAmount(final SewerageApplicationDetails sewerageApplicationDetails) {
         final BigDecimal balance = BigDecimal.ZERO;
         if (sewerageApplicationDetails != null) {
@@ -623,10 +634,11 @@ public class SewerageApplicationDetailsService {
         return modelParams;
     }
 
-    public SewerageApplicationDetails updateSewerageApplicationDetails(final SewerageApplicationDetails sewerageApplicationDetails)
-    {
+    public SewerageApplicationDetails updateSewerageApplicationDetails(
+            final SewerageApplicationDetails sewerageApplicationDetails) {
         return sewerageApplicationDetailsRepository.saveAndFlush(sewerageApplicationDetails);
     }
+
     @Transactional
     public SewerageApplicationDetails updateSewerageApplicationDetails(
             final SewerageApplicationDetails sewerageApplicationDetails, final Long approvalPosition,
@@ -987,7 +999,7 @@ public class SewerageApplicationDetailsService {
     public String isConnectionExistsForProperty(final String propertyId) {
         return checkConnectionPresentForProperty(propertyId);
     }
-    
+
     @SuppressWarnings("unchecked")
     @Transactional
     public List<SewerageApplicationDetails> findActiveSewerageApplnsByCurrentInstallmentAndNumberOfResultToFetch(
@@ -1007,4 +1019,8 @@ public class SewerageApplicationDetailsService {
         return sewerageCriteria.list();
     }
 
+    public AppConfigValues getAppConfigValuesForDonationCharge(final String moduleName, final String keyName) {
+        final List<AppConfigValues> appConfigValues = appConfigValuesService.getConfigValuesByModuleAndKey(moduleName, keyName);
+        return !appConfigValues.isEmpty() ? appConfigValues.get(0) : null;
+    }
 }

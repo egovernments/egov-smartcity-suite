@@ -337,11 +337,11 @@ public class ReportController {
         reportParams.put("advertisementTaxSum",
                 curntInsAdvertisement.add(arrInsAdvertisement).setScale(2, BigDecimal.ROUND_HALF_EVEN));
         reportParams.put("encrochmentFeeSum", curntInsEncrocFee.add(arrInsEncrocFee).setScale(2, BigDecimal.ROUND_HALF_EVEN));
-        reportParams.put("serviceTaxSum", curntInsServiceTax.add(arrInsServiceTax).setScale(2, BigDecimal.ROUND_HALF_EVEN));
+        reportParams.put("serviceTaxSum", curntInsServiceTax.add(arrInsServiceTax).setScale(0, BigDecimal.ROUND_HALF_UP));
         reportParams.put("swachBharatCessSum",
-                curntInsSwachBharatCess.add(arrInsSwachBharatCess).setScale(2, BigDecimal.ROUND_HALF_EVEN));
+                curntInsSwachBharatCess.add(arrInsSwachBharatCess).setScale(0, BigDecimal.ROUND_HALF_UP));
         reportParams.put("krishiKalyanCessSum",
-                curntInsKrishiKalyanCess.add(arrInsKrishiKalyanCess).setScale(2, BigDecimal.ROUND_HALF_EVEN));
+                curntInsKrishiKalyanCess.add(arrInsKrishiKalyanCess).setScale(0, BigDecimal.ROUND_HALF_UP));
         reportParams.put("penalitySum", curntInsPenaltyFee.add(arrInsPenaltyFee).setScale(2, BigDecimal.ROUND_HALF_EVEN));
 
         reportParams.put("adParticular", advertisementPermitDetail.getAdvertisementParticular());
@@ -356,7 +356,7 @@ public class ReportController {
     private BigDecimal calculateAdditionalTaxes( BigDecimal curntInsTotalTaxableAmt,
             final BigDecimal entry) {
         return entry.multiply(curntInsTotalTaxableAmt).divide(BigDecimal.valueOf(100))
-                .setScale(4, BigDecimal.ROUND_HALF_UP);
+                .setScale(0, BigDecimal.ROUND_HALF_UP);
     }
 
     private String getCityGrade() {

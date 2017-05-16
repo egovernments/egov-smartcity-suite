@@ -156,7 +156,6 @@ public class AdvertisementBatchDemandGenService {
                 advDmdGen.setActive(false);
                 advDmdGen.setTotalRecords(totalRecordsProcessed);
             }
-
             final TransactionTemplate txTemplate = new TransactionTemplate(transactionTemplate.getTransactionManager());
             txTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
 

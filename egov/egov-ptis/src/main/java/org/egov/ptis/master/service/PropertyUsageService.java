@@ -51,6 +51,7 @@ import org.apache.commons.lang.StringUtils;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.property.PropertyUsageDAO;
 import org.egov.ptis.domain.entity.property.PropertyUsage;
@@ -96,11 +97,13 @@ public class PropertyUsageService {
 
         return propertyUsage;
     }
-
+    
+    @ReadOnly
     public List<PropertyUsage> getAllActivePropertyUsages() {
         return propertyUsageHibernateDAO.getAllActivePropertyUsage();
     }
-
+    
+    @ReadOnly
     public PropertyUsage findById(Long id) {
         return propertyUsageHibernateDAO.findById(id, false);
     }
@@ -116,6 +119,7 @@ public class PropertyUsageService {
         return roleNameList.toString().toUpperCase();
     }
     
+    @ReadOnly
     public List<PropertyUsageSearchResult> getPropertyUsageByTypeUsgAndfromDate(final PropertyUsage propertyUsage) {
         StringBuffer queryString =  new StringBuffer(200);
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
@@ -150,10 +154,12 @@ public class PropertyUsageService {
         return propertyUsageSearchList;
     }
     
+    @ReadOnly
     public List<PropertyUsage> getResidentialPropertyUsages(){
         return propertyUsageRepository.findByIsResidentialTrueAndIsActiveTrueOrderByUsageName();
     }
     
+    @ReadOnly
     public List<PropertyUsage> getNonResidentialPropertyUsages(){
         return propertyUsageRepository.findByIsResidentialFalseAndIsActiveTrueOrderByUsageName();
     }

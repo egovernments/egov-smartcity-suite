@@ -741,11 +741,14 @@ public class PropertyExternalService {
         propertyTaxBillable.setTransanctionReferenceNumber(payPropertyTaxDetails.getTransactionId());
         final EgBill egBill = ptBillServiceImpl.generateBill(propertyTaxBillable);
         
-        for(EgBillDetails billDetails : egBill.getEgBillDetails()){
-        	if(!billDetails.getDescription().contains(PropertyTaxConstants.DEMANDRSN_STR_ADVANCE) 
-    				&& billDetails.getCrAmount().compareTo(BigDecimal.ZERO) > 0){
-        		totalAmountToBePaid = totalAmountToBePaid.add(billDetails.getCrAmount());
-    		}
+        for (EgBillDetails billDetails : egBill.getEgBillDetails()) {
+            if (!(billDetails.getDescription().contains(PropertyTaxConstants.DEMANDRSN_STR_ADVANCE)
+                    || billDetails.getDescription().contains(PropertyTaxConstants.DEMANDRSN_CODE_REBATE))
+                    && billDetails.getCrAmount().compareTo(BigDecimal.ZERO) > 0) {
+                totalAmountToBePaid = totalAmountToBePaid.add(billDetails.getCrAmount());
+            } else if (billDetails.getDescription().contains(PropertyTaxConstants.DEMANDRSN_CODE_REBATE)) {
+                totalAmountToBePaid = totalAmountToBePaid.subtract(billDetails.getDrAmount());
+            }
         }
 
         final CollectionHelper collectionHelper = new CollectionHelper(egBill);

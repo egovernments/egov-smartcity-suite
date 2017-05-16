@@ -43,6 +43,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.works.lineestimate.entity.LineEstimate;
 import org.egov.works.lineestimate.entity.LineEstimateSearchRequest;
 import org.egov.works.lineestimate.service.LineEstimateService;
@@ -109,7 +110,11 @@ public class CancelLineEstimateController {
 
         lineEstimate.setCancellationReason(cancellationReason);
         lineEstimate.setCancellationRemarks(cancellationRemarks);
-        lineEstimate = lineEstimateService.cancel(lineEstimate);
+        try {
+            lineEstimate = lineEstimateService.cancel(lineEstimate);
+        } catch (final ValidationException v) {
+            model.addAttribute("errorMessage", v.getErrors().get(0).getMessage());
+        }
         model.addAttribute("lineEstimate", lineEstimate);
         model.addAttribute("mode", "cancel");
         return "lineestimate-success";

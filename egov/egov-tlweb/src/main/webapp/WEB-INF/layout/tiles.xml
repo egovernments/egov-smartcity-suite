@@ -263,4 +263,8 @@
         <put-attribute name="page-title" value="title.legacylicense" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/legacylicense/legacy-update.jsp"/>
     </definition>
+    <definition name="yearwiseDCBReport-search" extends="base_layout">
+            <put-attribute name="page-title" value="lbl.installmentwise.dcb.report" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/dcb/installmentwisedcbreport-search.jsp"/>
+    </definition>
 </tiles-definitions>

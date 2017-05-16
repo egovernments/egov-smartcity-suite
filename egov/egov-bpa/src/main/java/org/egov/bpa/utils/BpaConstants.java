@@ -49,19 +49,20 @@ public class BpaConstants {
     public static final String BPASTATUSMODULETYPE = "BPAAPPLICATION";
     public static final String ROLE_CITIZEN = "Citizen";
     public static final String YEARLY = "Yearly";
-    public static final String ADMISSIONFEEREASON = "ADMISSION FEES";
     public static final String WATER_CONN_BILLNO_SEQ = "SEQ_BILLNO_";
     public static final String USERNAME_ANONYMOUS = "anonymous";
     public static final String LOCALITY = "locality";
     public static final String ELECTIONWARD_BNDRY_TYPE = "Election Ward";
     public static final String LOCALITY_BNDRY_TYPE = "Locality";
     public static final String LOCATION_HIERARCHY_TYPE = "LOCATION";
+    public static final String REVENUE_HIERARCHY_TYPE = "REVENUE";
     public static final Character DMD_STATUS_CHEQUE_BOUNCED = 'B';
     public static final String DEMANDISHISTORY = "N";
     public static final String STRING_VALIDATION = "Paid Amount is greater than Total Amount to be paid";
 
     public static final String APPLICATION_MODULE_TYPE = "BPA";
-    public static final String CSC_SOURCE ="CSC"; 
+    public static final String BPASTATUS_MODULETYPE = "REGISTRATION";
+    public static final String CSC_SOURCE = "CSC";
     public static final String COLON_CONCATE = "::";
     public static final String NATURE_OF_WORK = "Building Plan Approval";
     public static final String WF_NEW_STATE = "NEW";
@@ -75,6 +76,20 @@ public class BpaConstants {
     public static final String WF_CANCELAPPLICATION_BUTTON = "CANCEL APPLICATION";
     public static final String APPLICATION_STATUS_CANCELLED = "Cancelled";
     public static final String CREATE_ADDITIONAL_RULE_CREATE = "CREATEBPAAPPLICATION";
+
+    public static final String STAKE_HOLDER_CHECK_LIST_TYPE = "STAKEHOLDERDOCUMENT";
+    public static final String ADMISSIONFEEREASON = "ADMISSIONFEES";
+    public static final String BPAFEETYPE = "AdmissionFee";
+    public static final String BOUNDARY_TYPE_ZONE = "Zone";
+    public static final String BOUNDARY_TYPE_CITY = "City";
+
+    public static final String FILESTORE_MODULECODE = "BPA";
+    public static final String CHECKLIST_TYPE = "DOCUMENTATION";
+    public static final String BPA_STATUS_SUPERINDENT_APPROVED="Superintendent Approved";
     
-    public static final String STAKE_HOLDER_CHECK_LIST_TYPE = "stakeHolder";
+    public static final String SENDSMSFORBPA = "SENDSMSFROOMBPAMODULE";
+    public static final String SENDEMAILFORBPA = "SENDEMAILFROOMBPAMODULE";
+    
+ // Sms And Email Code For New Connection
+    public static final String SMSEMAILTYPENEWBPAREGISTERED = "newbparegistered";
 }

@@ -39,6 +39,7 @@
 
 package org.egov.mrs.web.controller.application.registration;
 
+import static org.egov.mrs.application.MarriageConstants.ANONYMOUS_USER;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
@@ -50,6 +51,7 @@ import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.mrs.application.MarriageConstants;
 import org.egov.mrs.application.service.MarriageFeeCalculator;
@@ -80,7 +82,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
  */
 
 @Controller
-@RequestMapping(value = "/registration")
+@RequestMapping(value = { "/registration", "/citizen/registration" })
 public class NewRegistrationController extends MarriageRegistrationController {
 
     private static final String ACKOWLEDGEMENT = "acknowledgement";
@@ -101,16 +103,21 @@ public class NewRegistrationController extends MarriageRegistrationController {
     private RegistrationWorkflowService registrationWorkFlowService;
 
     @RequestMapping(value = "/register", method = RequestMethod.GET)
-    public String showRegistration(final Model model) {
+    public String showRegistration(final Model model, HttpServletRequest request) {
         /*
          * Assignment currentuser; final Integer loggedInUser = ApplicationThreadLocals.getUserId().intValue(); currentuser =
          * assignmentService.getPrimaryAssignmentForUser(loggedInUser.longValue()); if (null == currentuser) {
          * model.addAttribute(MESSAGE, "msg.superuser"); return "marriagecommon-error"; }
          */
+
         final MarriageRegistration marriageRegistration = new MarriageRegistration();
-        model.addAttribute("isEmployee", registrationWorkFlowService.isEmployee(securityUtils.getCurrentUser()));
+        User logedinUser = securityUtils.getCurrentUser();
+        model.addAttribute("isEmployee",
+                !ANONYMOUS_USER.equalsIgnoreCase(logedinUser.getName()) && registrationWorkFlowService.isEmployee(logedinUser));
         marriageRegistration.setFeePaid(calculateMarriageFee(new Date()));
         model.addAttribute(MARRIAGE_REGISTRATION, marriageRegistration);
+        model.addAttribute("applicationSource",
+                request.getParameter("applicationSource") != null ? request.getParameter("applicationSource").toLowerCase() : "");
         prepareWorkFlowForNewMarriageRegistration(marriageRegistration, model);
         return "registration-form";
     }
@@ -130,12 +137,15 @@ public class NewRegistrationController extends MarriageRegistrationController {
             final Model model,
             final HttpServletRequest request,
             final BindingResult errors, final RedirectAttributes redirectAttributes) {
+        User logedinUser = securityUtils.getCurrentUser();
         validateApplicationDate(marriageRegistration, errors, request);
         marriageFormValidator.validate(marriageRegistration, errors, "registration");
-        final Boolean isEmployee = registrationWorkFlowService.isEmployee(securityUtils.getCurrentUser());
+        final Boolean isEmployee = !ANONYMOUS_USER.equalsIgnoreCase(logedinUser.getName())
+                && registrationWorkFlowService.isEmployee(logedinUser);
         registrationWorkFlowService.validateAssignmentForCscUser(marriageRegistration, null, isEmployee, errors);
         if (errors.hasErrors()) {
-            model.addAttribute("isEmployee", registrationWorkFlowService.isEmployee(securityUtils.getCurrentUser()));
+            model.addAttribute("isEmployee", !ANONYMOUS_USER.equalsIgnoreCase(logedinUser.getName())
+                    && registrationWorkFlowService.isEmployee(securityUtils.getCurrentUser()));
             model.addAttribute(MARRIAGE_REGISTRATION, marriageRegistration);
             prepareWorkFlowForNewMarriageRegistration(marriageRegistration, model);
             return "registration-form";
@@ -172,7 +182,10 @@ public class NewRegistrationController extends MarriageRegistrationController {
         model.addAttribute("isEmployee", isEmployee);
         if (!isEmployee) {
             redirectAttributes.addFlashAttribute(MESSAGE, message);
-            return "redirect:/registration/new-mrgregistration-ackowledgement/" + appNo;
+            if (ANONYMOUS_USER.equalsIgnoreCase(logedinUser.getName()))
+                return "redirect:/citizen/registration/new-mrgregistration-ackowledgement/" + appNo;
+            else
+                return "redirect:/registration/new-mrgregistration-ackowledgement/" + appNo;
         } else
             return "registration-ack";
     }
@@ -248,8 +261,10 @@ public class NewRegistrationController extends MarriageRegistrationController {
 
     @RequestMapping(value = "/new-mrgregistration-ackowledgement/{applnNo}", method = GET)
     public String showAcknowledgemnt(@PathVariable final String applnNo, final Model model) {
+        User logedinUser = securityUtils.getCurrentUser();
         model.addAttribute("applicationNo", applnNo);
         model.addAttribute("applnType", "NEW");
+        model.addAttribute("isOnlineApplication", ANONYMOUS_USER.equalsIgnoreCase(logedinUser.getName()));
         return ACKOWLEDGEMENT;
     }
 

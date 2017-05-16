@@ -56,6 +56,7 @@ import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.commons.service.EntityTypeService;
 import org.egov.commons.utils.EntityType;
 import org.egov.egf.model.BankAdviceReportInfo;
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.reporting.util.ReportUtil;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.services.PersistenceService;
@@ -239,6 +240,7 @@ public class RtgsIssueRegisterReportAction extends ReportAction {
 
     @SuppressWarnings("unchecked")
     @ValidationErrorPage(NEW)
+    @ReadOnly
     @Action(value = "/report/rtgsIssueRegisterReport-search")
     public String search() {
         searchResult = Boolean.TRUE;

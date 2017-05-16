@@ -87,27 +87,30 @@ public class AjaxCommonController {
         final AmalgamatedPropInfo amalgamatedProp = new AmalgamatedPropInfo();
         amalgamatedProp.setValidationMsg("");
         final BasicProperty basicProp = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
-        if (basicProp.isUnderWorkflow())
-            amalgamatedProp.setValidationMsg("Assessment: " + basicProp.getUpicNo() + " is under workflow!");
-        if (!basicProp.isActive())
-            amalgamatedProp.setValidationMsg("Assessment: " + basicProp.getUpicNo() + " is deactivated!");
-        final BigDecimal totalDue = propService.getTotalPropertyTaxDue(basicProp);
-        final boolean hasDues = totalDue.compareTo(BigDecimal.ZERO) > 0 ? true : false;
-        if (hasDues)
-            amalgamatedProp.setValidationMsg("This property has dues!");
-        else
-            for (final PropertyOwnerInfo propOwner : basicProp.getPropertyOwnerInfo()) {
-                final List<Address> addrSet = propOwner.getOwner().getAddress();
-                for (final Address address : addrSet) {
-                    amalgamatedProp.setAssessmentNo(assessmentNo);
-                    amalgamatedProp.setOwnerName(propOwner.getOwner().getName());
-                    amalgamatedProp.setMobileNo(propOwner.getOwner().getMobileNumber());
-                    amalgamatedProp.setPropertyAddress(address.toString());
-                    amalgamatedProp.setPaymentDone(totalDue.compareTo(BigDecimal.ZERO) == 0 ? true : false);
-                    break;
-                }
+        amalgamatedProp.setAssessmentNo(assessmentNo);
+        if (basicProp == null)
+            amalgamatedProp.setValidationMsg("Assessment does not exist!");
+        else {
+            if (basicProp.isUnderWorkflow())
+                amalgamatedProp.setValidationMsg("Assessment: " + basicProp.getUpicNo() + " is under workflow!");
+            else {
+                final BigDecimal totalDue = propService.getTotalPropertyTaxDue(basicProp);
+                final boolean hasDues = totalDue.compareTo(BigDecimal.ZERO) > 0 ? true : false;
+                if (hasDues)
+                    amalgamatedProp.setValidationMsg("This property has dues!");
+                else
+                    for (final PropertyOwnerInfo propOwner : basicProp.getPropertyOwnerInfo()) {
+                        final List<Address> addrSet = propOwner.getOwner().getAddress();
+                        for (final Address address : addrSet) {
+                            amalgamatedProp.setOwnerName(propOwner.getOwner().getName());
+                            amalgamatedProp.setMobileNo(propOwner.getOwner().getMobileNumber());
+                            amalgamatedProp.setPropertyAddress(address.toString());
+                            amalgamatedProp.setPaymentDone(totalDue.compareTo(BigDecimal.ZERO) == 0 ? true : false);
+                            break;
+                        }
+                    }
             }
-
+        }
         return amalgamatedProp;
     }
 

@@ -52,6 +52,7 @@ import javax.persistence.PersistenceContext;
 
 import org.egov.adtax.entity.Advertisement;
 import org.egov.adtax.entity.AdvertisementPermitDetail;
+import org.egov.adtax.entity.enums.AdvertisementStatus;
 import org.egov.adtax.repository.AdvertisementRepository;
 import org.egov.collection.integration.services.CollectionIntegrationService;
 import org.egov.commons.Installment;
@@ -60,14 +61,17 @@ import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.utils.DateUtils;
+import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
-import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
 
 @Service
 @Transactional(readOnly = true)
@@ -198,8 +202,18 @@ public class AdvertisementService {
         return dueDate;
 
     }
-    
-    public List<Advertisement> getAdvertisement(Example advertisement) {
-        return advertisementRepository.findAll(advertisement);
+
+    public List<Advertisement> getAdvertisement(Long wardno, String advertisementNo) {
+        final Criteria criteria = getCurrentSession().createCriteria(Advertisement.class, "advertisement");
+        if (wardno != null) {
+            criteria.createAlias("advertisement.ward", "ward");
+            criteria.add(Restrictions.eq("ward.boundaryNum", wardno));
+        }
+        if (advertisementNo != null)
+            criteria.add(Restrictions.eq("advertisementNumber", advertisementNo));
+        criteria.add(Restrictions.eq("status", AdvertisementStatus.ACTIVE));
+        return criteria.list();
+
     }
+
 }

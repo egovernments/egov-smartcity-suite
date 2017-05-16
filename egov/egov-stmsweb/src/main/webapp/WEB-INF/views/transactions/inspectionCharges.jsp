@@ -40,6 +40,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %> 
+
  <div class="panel panel-primary" data-collapsed="0"> 
 	<div class="panel-heading">
 		<div class="panel-title">
@@ -95,13 +97,20 @@
 							     	<c:when test="${fm.feesDetail.isMandatory == 'true'}">
 							     	     <form:input type="text" class="form-control table-input text-right patternvalidation" data-pattern="decimalvalue" path="connectionFees[${counter.index}].amount" id="feesDetail${counter.index}amount"  value="${fm.amount}" required="required" /> 
 							     	 </c:when>
-							     	<c:otherwise>   
-							     	    <form:input type="text" class="form-control table-input text-right patternvalidation" data-pattern="decimalvalue" path="connectionFees[${counter.index}].amount" id="feesDetail${counter.index}amount"  value="${fm.amount}" /> 
+							     	<c:otherwise>  
+							     	<c:choose> 
+							       <c:when test="${legacy && sewerageApplicationDetails.connectionFees[counter.index].feesDetail.code == 'DONATIONCHARGE' }">
+								     	     <input type="text" class="form-control table-input text-right patternvalidation" data-pattern="number" id="feesDetail${counter.index}amount" name="connectionFees[${counter.index}].amount" value='<fmt:formatNumber type="number"  value="${fm.amount}" />' required="required" /> 
+								     	 </c:when>
+								     	<c:otherwise>  
+							     	    <form:input type="text" class="form-control table-input text-right patternvalidation" data-pattern="decimalvalue" name="connectionFees[${counter.index}].amount" path="connectionFees[${counter.index}].amount" id="feesDetail${counter.index}amount"  value="${fm.amount}" /> 
+							     	      </c:otherwise> 	
+								       </c:choose>
 							        </c:otherwise> 	
 							       </c:choose>
 							   </c:when> 
 							     <c:when test="${mode !='edit'}">  
-							       			<form:input type="text" class="form-control table-input text-right patternvalidation" data-pattern="decimalvalue" path="connectionFees[${counter.index}].amount" id="feesDetail${counter.index}amount"  value="${fm.amount}" readonly="true" /> 
+							       			<form:input type="text" class="form-control table-input text-right patternvalidation"  data-pattern="decimalvalue" path="connectionFees[${counter.index}].amount" id="feesDetail${counter.index}amount"  value="${fm.amount}" readonly="true" /> 
 							   </c:when> 
 						   </c:choose>	
 						 </c:otherwise> 	 
@@ -109,9 +118,27 @@
 							</td> 
 					    </tr>  
 			
-			</c:forEach>
+			</c:forEach>	
 
 		</tbody>
+			<c:if test="${legacy && isDonationChargeCollectionRequired }">
+				<tr>
+					<td class="text-right" colspan="2"><span class="mandatory"
+						id="collectedDonationAmount">Collected Donation charges</span></td>
+					<td><input type="text"
+						class="form-control table-input text-right patternvalidation"
+						name="amountCollected" data-pattern="number"  maxlength="6" id="amountCollected"
+						required="required" /></td>
+				</tr>
+				<tr>
+					<td class="text-right" colspan="2" id="BalanceAmount">Balance
+						Donation charges</td>
+
+					<td><input type="text" name="donationAmountForCollection" data-pattern="number" 
+						class="form-control table-input text-right patternvalidation"
+						id="amountForCollection" readonly="true"  /></td>
+				</tr>
+			</c:if>
 		</table>
 	</div>
 </div>

@@ -170,4 +170,4 @@
 	</tr>
 </table>
 <script type="text/javascript"
-	src="<cdn:url value='/resources/js/app/vacantland.js?rnd=${app_release_no}'/>"></script>
+	src="<cdn:url value='/resources/js/app/vacantland.js?rnd=${app_release_no}' context='/ptis'/>"></script>

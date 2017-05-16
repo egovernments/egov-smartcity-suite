@@ -60,12 +60,27 @@ jQuery(document)
 					});
 
 					$('#complaintTypeReportSearch').click(function(e) {
+						var fromDate = $("#start_date").datepicker('getDate');
+						var toDate = $("#end_date").datepicker('getDate');
+						if($("#end_date").datepicker('getDate')==null)
+							toDate=Date();
+						validRange(fromDate,toDate);
 						callajaxdatatableForCompTypeReport();
 						
 						$('#compTypeReport-table_wrapper').show();
 						$('#compReport-table_wrapper').hide();
 					});
 
+					function validRange(start, end) {
+
+				        if (start.getTime() > end.getTime() ) {
+				        	bootbox.alert("From date  should not be greater than the To Date.");
+							$('#end_date').val('');
+							return false;
+							} else
+							return true;
+					}
+					
 					function callajaxdatatableForCompTypeReport() {
 						var startDate = "";
 						var endDate = "";
@@ -102,15 +117,58 @@ jQuery(document)
 											status: ""
 										}
 									},
-									"autoWidth" : false,
-									"bDestroy" : true,
-									"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-3 col-xs-12'i><'col-md-3 col-xs-6 col-right'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-md-3 col-xs-6 text-right'p>>",
-									"aLengthMenu" : [ [ 10, 25, 50, -1 ],
-											[ 10, 25, 50, "All" ] ],
-									"oTableTools" : {
-										"sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
-										"aButtons" : [ "xls", "pdf", "print" ]
-									},
+									dom : "<'row'<'col-xs-4 pull-right'f>r>t<'row add-margin'<'col-md-3 col-xs-6'i><'col-md-2 col-xs-6'l><'col-md-3 col-xs-6 text-right'B><'col-md-4 col-xs-6 text-right'p>>",
+						 			"autoWidth" : false,
+						 			"bDestroy" : true,
+						 		    	buttons : [  {
+											extend : 'pdf',
+											title : 'Complaint Type Wise Report',
+											filename : 'Complaint Type Wise Report',
+											orientation : 'landscape',
+											footer : true,
+											pageSize:'A3',
+											exportOptions : {
+												columns : ':visible'
+											},
+											customize: function ( doc ) {
+												var body=doc.content[1].table.body;
+												if(body){
+													$.each(body[body.length-1], function(idx, obj){
+														obj.text=obj.text.match(/\(([^)]+)\)/)[1];
+													});
+												}
+											}
+											
+										}, {
+											extend : 'excel',
+											filename : 'Complaint Type Wise Report',
+											footer : true,
+											exportOptions : {
+												columns : ':visible'
+											},
+										 customize: function(xlsx) {
+											 var sheet = xlsx.xl.worksheets['sheet1.xml'];
+											 $lastRow=$(sheet).find('row:nth-child('+ $(sheet).find('row').length +')');
+											 $lastRow.find('c').each(function(idx){
+												 $(this).find('t').html($(this).find('t').html().match(/\(([^)]+)\)/)[1]);
+											 });
+								          }
+										
+										}, {
+											extend : 'print',
+											title : 'Complaint Type Wise Report',
+											filename : 'Complaint Type Wise Report',
+											footer : true,
+											exportOptions : {
+												columns : ':visible'
+											},
+											customize: function ( win ) {
+											    $(win.document.body).find('table tfoot th').each(function(idx){
+													$(this).html($(this).html().match(/\(([^)]+)\)/)[1]);
+												});
+							                }
+										
+										} ],
 									columns : [
 											{
 												"data" : "name",

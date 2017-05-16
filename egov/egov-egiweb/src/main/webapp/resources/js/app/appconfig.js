@@ -42,7 +42,7 @@ $(document).ready(function () {
 
     $('#appConfigModuleName').change(function () {
         $.ajax({
-            url: "/egi/app/config/formodule/"+$('#appConfigModuleName').val(),
+            url: "/egi/app/config/formodule/" + $('#appConfigModuleName').val(),
             type: "GET",
             dataType: "json",
             success: function (response) {
@@ -60,155 +60,176 @@ $(document).ready(function () {
     });
 
     $('#search-view-btn').on('click', function () {
-        oTable=	$('#view-appConfig-tbl').DataTable({
-            processing : true,
-            serverSide : true,
-            type : 'GET',
-            sort : true,
-            filter : true,
-            responsive : true,
-            destroy : true,
+        oTable = $('#view-appConfig-tbl').DataTable({
+            processing: true,
+            serverSide: true,
+            type: 'GET',
+            sort: true,
+            filter: true,
+            responsive: true,
+            destroy: true,
             "autoWidth": false,
-            ajax : "list?moduleName="+$("#moduleName").val(),
-            "aLengthMenu" : [ [ 10, 25, 50, -1 ],
-                [ 10, 25, 50, "All" ] ],
-            "sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
-            columns : [
-				{
-				    "className":      'details-control',
-				    "orderable":      false,
-				    "sortable":      false,
-				    "data":           null,
-				    "defaultContent": ''
-				},
+            "order": [[1, 'asc']],
+            ajax: {
+                url: "list",
+                type: "GET",
+                data: function (args) {
+                    return {"args": JSON.stringify(args), "moduleName": $("#moduleName").val()};
+                }
+            },
+            "aLengthMenu": [[10, 25, 50, -1],
+                [10, 25, 50, "All"]],
+            "sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
+            columns: [
                 {
-                    "mData" : "module",
-                    "sTitle" : "Module Name"
+                    "className": 'details-control',
+                    "orderable": false,
+                    "sortable": false,
+                    "searchable": false,
+                    "data": null,
+                    "defaultContent": ''
                 },
                 {
-                    "mData" : "keyName",
-                    "sTitle" : "Key Name",
-                },{
-                    "mData" : "description",
-                    "sTitle" : "Description"
-                } ,{
-                    "mData" : "id",
+                    "mData": "module",
+                    'name': "module.name",
+                    "sTitle": "Module Name"
+                },
+                {
+                    "mData": "keyName",
+                    "name": "keyName",
+                    "sTitle": "Key Name",
+                }, {
+                    "mData": "description",
+                    "name": "description",
+                    "sTitle": "Description"
+                }, {
+                    "mData": "id",
+                    "orderable": false,
+                    "sortable": false,
+                    "searchable": false,
                     "visible": false
-                },{
-                    "mData" : "values",
+                }, {
+                    "mData": "values",
+                    "orderable": false,
+                    "sortable": false,
+                    "searchable": false,
                     "visible": false
                 }]
         });
     });
-    
+
     // Add event listener for opening and closing details
     $('#view-appConfig-tbl').on('click', 'tbody tr td.details-control', function () {
         var tr = $(this).closest('tr');
-        var row = oTable.row( tr );
- 
-        if ( row.child.isShown() ) {
+        var row = oTable.row(tr);
+
+        if (row.child.isShown()) {
             // This row is already open - close it
             row.child.hide();
             tr.removeClass('shown');
         }
         else {
             // Open this row
-            row.child( format(row.data()) ).show();
+            row.child(format(row.data())).show();
             tr.addClass('shown');
         }
-    } );
-    
-    function format ( d ) {
-        // `d` is the original data object for the row
-    	var tablerows='';
-    	$.each(d.values, function( index, value ) {
-		  console.log( value["Effective Date"]+'<--->'+value["Value"] );
-		  var tr = '<tr><td>'+value["Effective Date"]+'</td><td>'+value["Value"]+'</td></tr>';
-		  tablerows+=tr;
-		});
-        return '<table class="table table-bordered" style="width: 90%;margin: 0 auto;"><thead><th>Effective Date</th><th>Values</th></thead><tbody>'+tablerows+'</tbody></table>';
-    }
-    
-   
-    $('#addrow').click(function(){
-    	var count = $("#configs tbody  tr").length - 1;
-    	var $tableBody = $('#configs').find("tbody"),
-        $trLast = $tableBody.find("tr:last"),
-        $trNew = $trLast.clone();
-    	
-    	if( !$.trim($trLast.find('input.effectiveFrom').val()) || !$.trim($trLast.find('input.confValues').val())){
-    		bootbox.alert('Date effective from and values are mandatory!');
-    	}else{
-    		count++;
-    		$trNew.find("input").each(function(){
-    	        $(this).attr({
-    	        	'name': function(_, name) { return name.replace(/\[.\]/g, '['+ count +']'); } ,
-    	        	'id': function(_, id) { return id.replace(/\[.\]/g, '['+ count +']'); }
-    	        });
-    	    });
-    		$trLast.after($trNew);
-        	$trNew.show().find('input').val('').removeAttr('disabled').addClass('dynamicInput');
-            $trNew.find('input.markedForRemoval').val('false');
-        	dateinitialize();
-    	}
     });
-    
-    var regexp_alphanumericcomma = /[^a-zA-Z0-9 ,]/g ;
-    
-    $('.confValues').on('keyup',function(e){
-    	obj = $(this);
-    	if(jQuery(obj).val().match(regexp_alphanumericcomma)){
-    		jQuery(obj).val( jQuery(obj).val().replace(regexp_alphanumericcomma,'') );
-    	}
-    })
-    	
-    function dateinitialize(){
-    	$(".datepicker").datepicker({
-			format: "dd/mm/yyyy",
-			autoclose: true 
-		}); 
+
+    function format(d) {
+        // `d` is the original data object for the row
+        var tablerows = '';
+        $.each(d.values, function (index, value) {
+            console.log(value["Effective Date"] + '<--->' + value["Value"]);
+            var tr = '<tr><td>' + value["Effective Date"] + '</td><td>' + value["Value"] + '</td></tr>';
+            tablerows += tr;
+        });
+        return '<table class="table table-bordered" style="width: 90%;margin: 0 auto;"><thead><th>Effective Date</th><th>Values</th></thead><tbody>' + tablerows + '</tbody></table>';
     }
-    
-    $(document).on('click','#deleterow',function(){
-    	var length = $('#configs').find("tbody tr:visible").length;
-    	if(length == 1){
-    		bootbox.alert('First row cannot be deleted!');
-    	}else{
-            if($(this).data('func')){
-            	deleteandreplaceindexintable($(this));
+
+
+    $('#addrow').click(function () {
+        var count = $("#configs tbody  tr").length - 1;
+        var $tableBody = $('#configs').find("tbody"),
+            $trLast = $tableBody.find("tr:last"),
+            $trNew = $trLast.clone();
+
+        if (!$.trim($trLast.find('input.effectiveFrom').val()) || !$.trim($trLast.find('input.confValues').val())) {
+            bootbox.alert('Date effective from and values are mandatory!');
+        } else {
+            count++;
+            $trNew.find("input").each(function () {
+                $(this).attr({
+                    'name': function (_, name) {
+                        return name.replace(/\[.\]/g, '[' + count + ']');
+                    },
+                    'id': function (_, id) {
+                        return id.replace(/\[.\]/g, '[' + count + ']');
+                    }
+                });
+            });
+            $trLast.after($trNew);
+            $trNew.show().find('input').val('').removeAttr('disabled').addClass('dynamicInput');
+            $trNew.find('input.markedForRemoval').val('false');
+            dateinitialize();
+        }
+    });
+
+    var regexp_alphanumericcomma = /[^a-zA-Z0-9 ,]/g;
+
+    $('.confValues').on('keyup', function (e) {
+        obj = $(this);
+        if (jQuery(obj).val().match(regexp_alphanumericcomma)) {
+            jQuery(obj).val(jQuery(obj).val().replace(regexp_alphanumericcomma, ''));
+        }
+    })
+
+    function dateinitialize() {
+        $(".datepicker").datepicker({
+            format: "dd/mm/yyyy",
+            autoclose: true
+        });
+    }
+
+    $(document).on('click', '#deleterow', function () {
+        var length = $('#configs').find("tbody tr:visible").length;
+        if (length == 1) {
+            bootbox.alert('First row cannot be deleted!');
+        } else {
+            if ($(this).data('func')) {
+                deleteandreplaceindexintable($(this));
             } else {
-                if($(this).closest('tr').find('input').hasClass('dynamicInput')){
-                	console.log('Dynamic Row deleted');
-                	deleteandreplaceindexintable($(this));
+                if ($(this).closest('tr').find('input').hasClass('dynamicInput')) {
+                    console.log('Dynamic Row deleted');
+                    deleteandreplaceindexintable($(this));
                 }
-                else{
-                	console.log('Existing Row deleted');
-                	$(this).closest('tr').hide().find('input.markedForRemoval').val('true');
+                else {
+                    console.log('Existing Row deleted');
+                    $(this).closest('tr').hide().find('input.markedForRemoval').val('true');
                 }
-                
+
             }
-    		
-    	}
-    		
+
+        }
+
     })
 
 });
 
-function deleteandreplaceindexintable(obj){
-	obj.closest('tr').remove();
-	var idx=0;
+function deleteandreplaceindexintable(obj) {
+    obj.closest('tr').remove();
+    var idx = 0;
     //regenerate index existing inputs in table row
-    jQuery("#configs tbody tr").each(function() {
-		 jQuery(this).find("input").each(function() {
-			 jQuery(this).attr({
-			 'id': function(_, id) {
-				 return id.replace(/\[.\]/g, '['+ idx +']');
-			 },
-			 'name': function(_, name) {
-				 return name.replace(/\[.\]/g, '['+ idx +']');
-			 }
-			 });
-		 });
-		 idx++;
-     });
+    jQuery("#configs tbody tr").each(function () {
+        jQuery(this).find("input").each(function () {
+            jQuery(this).attr({
+                'id': function (_, id) {
+                    return id.replace(/\[.\]/g, '[' + idx + ']');
+                },
+                'name': function (_, name) {
+                    return name.replace(/\[.\]/g, '[' + idx + ']');
+                }
+            });
+        });
+        idx++;
+    });
 }

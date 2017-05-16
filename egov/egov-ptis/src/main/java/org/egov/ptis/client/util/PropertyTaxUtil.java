@@ -160,7 +160,7 @@ import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.entity.Address;
-import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
+import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
@@ -2546,8 +2546,29 @@ public class PropertyTaxUtil {
         reportParams.put(ACK_NO, applicationNumberGenerator.generate());
         reportParams.put(SERVICE_TYPE, serviceType);
         reportInput = new ReportRequest("MainCitizenCharterAcknowledgement", reportParams, reportParams);
-        reportInput.setReportFormat(FileFormat.PDF);
+        reportInput.setReportFormat(ReportFormat.PDF);
         reportInput.setPrintDialogOnOpenReport(true);
         return reportService.createReport(reportInput);
+    }
+    
+    @SuppressWarnings("unchecked")
+    public BigDecimal getRebateAmount(EgDemand currentDemand){
+        Object rebateAmt ;
+        Map<String, Installment> currInstallments = getInstallmentsForCurrYear(new Date());
+        Installment currentFirstHalf=currInstallments.get(CURRENTYEAR_FIRST_HALF);
+
+        final String selectQuery = " select dd.amt_rebate as rebateamount from eg_demand_details dd, eg_demand_reason dr,"
+                + " eg_demand_reason_master drm, eg_installment_master inst "
+                + " where dd.id_demand_reason = dr.id and drm.id = dr.id_demand_reason_master "
+                + " and dr.id_installment = inst.id and dd.id_demand =:currentDemandId and inst.start_date between "
+                + ":firstHlfFromdt and :firstHlfTodt and drm.code in (:codelist)";
+        
+        final Query qry = persistenceService.getSession().createSQLQuery(selectQuery)
+                .setLong("currentDemandId", currentDemand.getId())
+                .setDate("firstHlfFromdt",currentFirstHalf.getFromDate())
+                .setDate("firstHlfTodt", currentFirstHalf.getToDate())
+                .setParameterList("codelist", Arrays.asList(PropertyTaxConstants.GEN_TAX,PropertyTaxConstants.VAC_LAND_TAX));
+        rebateAmt = qry.uniqueResult();
+        return rebateAmt != null ? new BigDecimal((Double) rebateAmt) : BigDecimal.ZERO;
     }
 }

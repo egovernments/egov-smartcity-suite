@@ -140,6 +140,7 @@ public class ConnectionDetailService {
         BigDecimal currDmd = new BigDecimal(0);
         BigDecimal currColl = new BigDecimal(0);
         BigDecimal totalDue = new BigDecimal(0);
+        BigDecimal currentInstDue = new BigDecimal(0);
         WaterTaxDue waterTaxDue;
         final List<WaterConnection> waterConnections = waterConnectionService
                 .findByPropertyIdentifier(propertyIdentifier);
@@ -167,6 +168,7 @@ public class ConnectionDetailService {
                         arrColl = arrColl.add(waterTaxDue.getArrearCollection());
                         currDmd = currDmd.add(waterTaxDue.getCurrentDemand());
                         currColl = currColl.add(waterTaxDue.getCurrentCollection());
+                        currentInstDue = currentInstDue.add(waterTaxDue.getCurrentInstDemand());
                         totalDue = totalDue.add(waterTaxDue.getTotalTaxDue());
                     }
                 }
@@ -175,6 +177,7 @@ public class ConnectionDetailService {
             waterTaxDue.setCurrentDemand(currDmd);
             waterTaxDue.setCurrentCollection(currColl);
             waterTaxDue.setTotalTaxDue(totalDue);
+            waterTaxDue.setCurrentInstDemand(currentInstDue);
             waterTaxDue.setConsumerCode(consumerCodes);
             waterTaxDue.setConnectionCount(waterConnections.size());
             waterTaxDue.setIsSuccess(true);
@@ -215,16 +218,15 @@ public class ConnectionDetailService {
                             .getAllConnectionDetailsExceptInactiveStatusByPropertyID(childAssessmentNumber);
 
                     for (final WaterConnectionDetails waterConnectionDetailObj : waterConnectionDetailslist)
-                        if (waterConnectionDetailObj != null && waterConnectionDetailObj.getApplicationType()
-                                .getCode().equals(WaterTaxConstants.NEWCONNECTION)) {
+                        if (waterConnectionDetailObj != null && waterConnectionDetailObj.getApplicationType().getCode()
+                                .equals(WaterTaxConstants.NEWCONNECTION)) {
                             final WaterConnection connectiontemp = waterConnectionDetailObj.getConnection();
                             connectiontemp.setOldPropertyIdentifier(childAssessmentNumber);
                             connectiontemp.setPropertyIdentifier(waterTaxDetailRequest.getAssessmentNumber());
                             connectiontemp.setParentConnection(waterConnectionDetailsRetainer.getConnection());
                             waterConnectionDetailObj.setApplicationType(additionAppType);
                             waterConnectionDetailObj.setConnection(connectiontemp);
-                            waterConnectionDetailsRepository
-                                    .save(waterConnectionDetailObj);
+                            waterConnectionDetailsRepository.save(waterConnectionDetailObj);
                         } else if (waterConnectionDetailObj != null) {
                             final WaterConnection connectiontemp = waterConnectionDetailObj.getConnection();
                             connectiontemp.setOldPropertyIdentifier(connectiontemp.getPropertyIdentifier());
@@ -238,7 +240,8 @@ public class ConnectionDetailService {
             final WaterConnectionDetails waterConnectionDetailsRetainerObj = waterConnectionDetailsService
                     .findParentConnectionDetailsByConsumerCodeAndConnectionStatus(waterConnection.getConsumerCode(),
                             ConnectionStatus.ACTIVE);
-            if (waterConnectionDetailsRetainerObj != null && !waterTaxDetailRequest.getChildAssessmentNumber().isEmpty())
+            if (waterConnectionDetailsRetainerObj != null
+                    && !waterTaxDetailRequest.getChildAssessmentNumber().isEmpty())
                 for (final String childAssessmentNumber : waterTaxDetailRequest.getChildAssessmentNumber()) {
                     waterConnectionDetails = waterConnectionDetailsService
                             .getPrimaryConnectionDetailsByPropertyIdentifier(childAssessmentNumber);
@@ -249,8 +252,7 @@ public class ConnectionDetailService {
                         connectiontemp.setParentConnection(waterConnectionDetailsRetainerObj.getConnection());
                         waterConnectionDetails.setApplicationType(additionAppType);
                         waterConnectionDetails.setConnection(connectiontemp);
-                        waterConnectionDetailsRepository
-                                .save(waterConnectionDetails);
+                        waterConnectionDetailsRepository.save(waterConnectionDetails);
                     } else {
                         waterConnectionDetailslist = waterConnectionDetailsService
                                 .getChildConnectionDetailsByPropertyID(childAssessmentNumber);
@@ -266,33 +268,46 @@ public class ConnectionDetailService {
         return waterTaxDetailRequest.getAssessmentNumber();
     }
 
-    public List<WaterChargesDetails> getWaterTaxDetailsByPropertyId(final String propertyIdentifier, final String ulbCode) {
-        final List<WaterConnection> waterConnections = waterConnectionService
-                .findByPropertyIdentifier(propertyIdentifier);
+    public List<WaterChargesDetails> getWaterTaxDetailsByPropertyId(final String propertyIdentifier,
+            final String ulbCode, final String consumerNumber) {
         final List<WaterChargesDetails> waterChargesDetailsList = new ArrayList<>();
-        if (waterConnections.isEmpty())
+        if (consumerNumber != null) {
+            final WaterConnection waterConnection = waterConnectionService.findByConsumerCode(consumerNumber);
+            if (waterConnection != null)
+                waterChargesDetailsList
+                        .add(getWaterChargesDetailsList(consumerNumber, waterConnection.getPropertyIdentifier(), ulbCode));
             return waterChargesDetailsList;
-        else {
-            WaterChargesDetails waterChargesDetails = new WaterChargesDetails();
-            for (final WaterConnection connection : waterConnections)
-                if (connection.getConsumerCode() != null) {
-                    WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
-                            .findByConsumerCodeAndConnectionStatus(connection.getConsumerCode(),
-                                    ConnectionStatus.ACTIVE);
-                    if (waterConnectionDetails != null)
-                        waterChargesDetails = getWatertaxDetails(waterConnectionDetails, connection.getConsumerCode(),
-                                propertyIdentifier, ulbCode);
-                    else {
-                        waterConnectionDetails = waterConnectionDetailsService.findByConsumerCodeAndConnectionStatus(
-                                connection.getConsumerCode(), ConnectionStatus.INACTIVE);
-                        if (waterConnectionDetails != null)
-                            waterChargesDetails = getWatertaxDetails(waterConnectionDetails,
-                                    connection.getConsumerCode(), propertyIdentifier, ulbCode);
-                    }
-                    waterChargesDetailsList.add(waterChargesDetails);
-                }
-            return waterChargesDetailsList;
+        } else {
+            final List<WaterConnection> waterConnections = waterConnectionService
+                    .findByPropertyIdentifier(propertyIdentifier);
+            if (waterConnections.isEmpty())
+                return waterChargesDetailsList;
+            else {
+                for (final WaterConnection connection : waterConnections)
+                    if (connection.getConsumerCode() != null)
+                        waterChargesDetailsList
+                                .add(getWaterChargesDetailsList(connection.getConsumerCode(), propertyIdentifier, ulbCode));
+                return waterChargesDetailsList;
+            }
         }
+    }
+
+    private WaterChargesDetails getWaterChargesDetailsList(final String consumerNumber, final String propertyIdentifier,
+            final String ulbCode) {
+        WaterChargesDetails waterChargesDetails = new WaterChargesDetails();
+        WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
+                .findByConsumerCodeAndConnectionStatus(consumerNumber, ConnectionStatus.ACTIVE);
+        if (waterConnectionDetails != null)
+            waterChargesDetails = getWatertaxDetails(waterConnectionDetails, consumerNumber, propertyIdentifier,
+                    ulbCode);
+        else {
+            waterConnectionDetails = waterConnectionDetailsService.findByConsumerCodeAndConnectionStatus(consumerNumber,
+                    ConnectionStatus.INACTIVE);
+            if (waterConnectionDetails != null)
+                waterChargesDetails = getWatertaxDetails(waterConnectionDetails, consumerNumber, propertyIdentifier,
+                        ulbCode);
+        }
+        return waterChargesDetails;
     }
 
     public WaterChargesDetails getWatertaxDetails(final WaterConnectionDetails waterConnectionDetails,
@@ -307,8 +322,8 @@ public class ConnectionDetailService {
         waterChargesDetails.setPipesize(waterConnectionDetails.getPipeSize().getCode());
         waterChargesDetails.setWaterSource(waterConnectionDetails.getWaterSource().getDescription());
         waterChargesDetails.setUlbCode(ulbCode);
-        waterChargesDetails.setWaterSupplyType(
-                waterConnectionDetails.getWaterSupply() != null ? waterConnectionDetails.getWaterSupply().getDescription() : "");
+        waterChargesDetails.setWaterSupplyType(waterConnectionDetails.getWaterSupply() != null
+                ? waterConnectionDetails.getWaterSupply().getDescription() : "");
         waterChargesDetails.setCategory(waterConnectionDetails.getCategory().getDescription());
         waterChargesDetails.setSumpCapacity(waterConnectionDetails.getSumpCapacity());
         waterChargesDetails.setUsageType(waterConnectionDetails.getUsageType().getDescription());
@@ -337,6 +352,9 @@ public class ConnectionDetailService {
             // Calculating tax dues
             final BigDecimal taxDue = currDmd.add(arrDmd).subtract(currCollection).subtract(arrCollection);
             waterTaxDue.setTotalTaxDue(taxDue);
+            BigDecimal currentInstDemand = waterConnectionDetailsService.getCurrentDue(waterConnectionDetails);
+            waterTaxDue.setCurrentInstDemand(currentInstDemand);
+
         }
         return waterTaxDue;
     }

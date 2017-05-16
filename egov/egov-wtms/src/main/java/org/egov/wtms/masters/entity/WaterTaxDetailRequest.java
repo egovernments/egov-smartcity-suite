@@ -49,34 +49,47 @@ public class WaterTaxDetailRequest implements Serializable {
      */
     private static final long serialVersionUID = 7083364740584612941L;
     private String assessmentNumber;
+    private String consumerNumber;
     private String ulbCode;
-    
+
     private List<String> childAssessmentNumber;
+
     public String getAssessmentNumber() {
         return assessmentNumber;
     }
-    public void setAssessmentNumber(String assessmentNumber) {
+
+    public void setAssessmentNumber(final String assessmentNumber) {
         this.assessmentNumber = assessmentNumber;
     }
+
     public String getUlbCode() {
         return ulbCode;
     }
-    public void setUlbCode(String ulbCode) {
+
+    public void setUlbCode(final String ulbCode) {
         this.ulbCode = ulbCode;
     }
-    
+
     public List<String> getChildAssessmentNumber() {
         return childAssessmentNumber;
     }
-    public void setChildAssessmentNumber(List<String> childAssessmentNumber) {
+
+    public void setChildAssessmentNumber(final List<String> childAssessmentNumber) {
         this.childAssessmentNumber = childAssessmentNumber;
     }
+
+    public String getConsumerNumber() {
+        return consumerNumber;
+    }
+
+    public void setConsumerNumber(final String consumerNumber) {
+        this.consumerNumber = consumerNumber;
+    }
+
     @Override
     public String toString() {
-        return "WaterTaxDetailRequest [assessmentNumber=" + assessmentNumber + ", ulbCode=" + ulbCode + "]";
+        return "WaterTaxDetailRequest [assessmentNumber=" + assessmentNumber + ", ulbCode=" + ulbCode + ", consumerNumber="
+                + consumerNumber + "]";
     }
-   
-
-    
 
 }

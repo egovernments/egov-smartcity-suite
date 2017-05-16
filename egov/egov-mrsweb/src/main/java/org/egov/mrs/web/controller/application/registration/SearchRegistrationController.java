@@ -48,9 +48,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Role;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.FileStoreUtils;
 import org.egov.mrs.application.MarriageConstants;
@@ -82,7 +85,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
  *
  */
 @Controller
-@RequestMapping(value = "/registration")
+@RequestMapping(value = { "/registration", "/citizen/registration" })
 public class SearchRegistrationController {
 
     private static final String DATA = "{ \"data\":";
@@ -95,6 +98,9 @@ public class SearchRegistrationController {
     private FileStoreUtils fileStoreUtils;
     @Autowired
     protected MarriageRegistrationUnitService marriageRegistrationUnitService;
+
+    @Autowired
+    private AppConfigValueService appConfigValuesService;
 
     @Autowired
     public SearchRegistrationController(final MarriageRegistrationService marriageRegistrationService,
@@ -213,9 +219,11 @@ public class SearchRegistrationController {
     }
 
     @RequestMapping(value = "/reissuecertificate", method = RequestMethod.GET)
-    public String reissueCertificateSearch(final Model model) {
+    public String reissueCertificateSearch(final Model model, final HttpServletRequest request) {
         model.addAttribute(REGISTRATION, new MarriageRegistration());
         prepareSearchForm(model);
+        model.addAttribute("applicationSource",
+                request.getParameter("applicationSource") != null ? request.getParameter("applicationSource").toLowerCase() : "");
         return "registration-search-certificateissue";
     }
 
@@ -232,6 +240,14 @@ public class SearchRegistrationController {
     @ResponseBody
     public String searchApprovedMarriageRecords(final Model model, @ModelAttribute final MarriageCertificate certificate) {
         final List<MarriageCertificate> searchResultList = marriageCertificateService.searchMarriageCertificates(certificate);
+        int noOfToDaysToPrint = 0;
+        final List<AppConfigValues> appConfigValues = appConfigValuesService
+                .getConfigValuesByModuleAndKey(MarriageConstants.MODULE_NAME, MarriageConstants.NOOFDAYSTOPRINT);
+        if (appConfigValues != null && appConfigValues.get(0).getValue() != null)
+            noOfToDaysToPrint = Integer.parseInt(appConfigValues.get(0).getValue().toString());
+
+        for (final MarriageCertificate certficateobj : searchResultList)
+            certficateobj.setPrintCertificateResrictionDays(noOfToDaysToPrint);
         return new StringBuilder(DATA)
                 .append(toJSON(searchResultList, MarriageCertificate.class, MarriageCerftificateJsonAdaptor.class)).append("}")
                 .toString();

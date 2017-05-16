@@ -55,6 +55,9 @@ import java.util.List;
 import java.util.Map;
 
 import static org.egov.infra.utils.ApplicationConstant.CITY_CODE_KEY;
+import static org.egov.infra.utils.ApplicationConstant.CITY_CORP_GRADE_KEY;
+import static org.egov.infra.utils.ApplicationConstant.CITY_CORP_NAME_KEY;
+import static org.egov.infra.utils.ApplicationConstant.CITY_DIST_NAME_KEY;
 
 @Service
 @Transactional(readOnly = true)
@@ -72,7 +75,7 @@ public class CityService {
 
     @Autowired
     private RedisTemplate<Object, Object> redisTemplate;
-    
+
     @Autowired
     public CityService(final CityRepository cityRepository) {
         this.cityRepository = cityRepository;
@@ -108,7 +111,7 @@ public class CityService {
         Map<String, Object> cityPrefs = cityPrefCache.entries(cityPrefCacheKey());
         if (cityPrefs.isEmpty()) {
             cityPrefCache.putAll(cityPrefCacheKey(), getCityByURL(ApplicationThreadLocals.getDomainName()).toMap());
-            cityPrefs =  cityPrefCache.entries(cityPrefCacheKey());
+            cityPrefs = cityPrefCache.entries(cityPrefCacheKey());
         }
         return cityPrefs;
     }
@@ -117,10 +120,22 @@ public class CityService {
         return (String) cityDataForKey(CITY_CODE_KEY);
     }
 
+    public String getMunicipalityName() {
+        return (String) cityDataForKey(CITY_CORP_NAME_KEY);
+    }
+
+    public String getCityGrade() {
+        return (String) cityDataForKey(CITY_CORP_GRADE_KEY);
+    }
+
+    public String getDistrictName() {
+        return (String) cityDataForKey(CITY_DIST_NAME_KEY);
+    }
+
     public String cityPrefCacheKey() {
         return String.format(CITY_PREFS_CK, ApplicationThreadLocals.getDomainName());
     }
-    
+
     public Object cityDataForKey(final String key) {
         return cityPrefCache.entries(cityPrefCacheKey()).get(key);
     }

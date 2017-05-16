@@ -67,6 +67,7 @@ import org.egov.egf.model.BankAdviceReportInfo;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.reporting.util.ReportUtil;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
@@ -328,6 +329,7 @@ public class ChequeIssueRegisterReportAction extends BaseFormAction {
         return "XLS";
     }
 
+    @ReadOnly
     @Action(value = "/report/chequeIssueRegisterReport-ajaxPrint")
     public String ajaxPrint() throws JRException, IOException {
         generateReport();

@@ -41,6 +41,7 @@
 package org.egov.pgr.service;
 
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.ComplaintType;
 import org.egov.pgr.repository.ComplaintTypeRepository;
@@ -115,6 +116,7 @@ public class ComplaintTypeService {
         return complaintTypeRepository.getOne(id);
     }
 
+    @ReadOnly
     public Page<ComplaintType> getListOfComplaintTypes(final Integer pageNumber, final Integer pageSize) {
         final Pageable pageable = new PageRequest(pageNumber - 1, pageSize, Sort.Direction.ASC, "name");
         return complaintTypeRepository.findAll(pageable);
@@ -125,6 +127,7 @@ public class ComplaintTypeService {
      *
      * @return complaint Type list
      */
+    @ReadOnly
     public List<ComplaintType> getFrequentlyFiledComplaints() {
 
         DateTime previousDate = new DateTime();

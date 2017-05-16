@@ -63,14 +63,7 @@
 			<div class="row">
 				<div class="text-center">
 					<c:if test="${showAckBtn}">
-						<c:choose>
-  							<c:when test="${isOnlineApplication}">
-  								<a href="/ptis/citizen/demolition/ack/printAck/${propertyId}" class="btn btn-default">Generate Acknowledgment</a>
-  							</c:when>
-  							<c:otherwise>
-  								<a href="/ptis/demolition/ack/printAck/${propertyId}" class="btn btn-default">Generate Acknowledgment</a>
-							</c:otherwise>
-						</c:choose>
+						<a href="/ptis/demolition/ack/printAck/${propertyId}" class="btn btn-default">Generate Acknowledgment</a>
 					</c:if>
 			        <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a> 
 				</div>

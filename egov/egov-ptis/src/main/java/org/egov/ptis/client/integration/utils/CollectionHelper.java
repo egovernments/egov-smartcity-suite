@@ -187,14 +187,14 @@ public class CollectionHelper {
 	            receiptDetails.add(initReceiptDetail(billDet.getGlcode(),
 	                    billDet.getCrAmount(),
 	                    billDet.getCrAmount().subtract(billDet.getDrAmount()), billDet.getDrAmount(),
-	                    billDet.getDescription()));
+	                    billDet.getDescription(), billDet.getPurpose()));
 	        }
         }else{
 	        for (EgBillDetails billDet : billDetails) {
 	            receiptDetails.add(initReceiptDetail(billDet.getGlcode(),
 	                    BigDecimal.ZERO, // billDet.getCrAmount(),
 	                    billDet.getCrAmount().subtract(billDet.getDrAmount()), billDet.getDrAmount(),
-	                    billDet.getDescription()));
+	                    billDet.getDescription(), billDet.getPurpose()));
 	        }
         	SpringBeanUtil.getPropertyTaxCollection().apportionPaidAmount(String.valueOf(bill.getId()), amountPaid,
         			receiptDetails);
@@ -257,7 +257,7 @@ public class CollectionHelper {
     }
 
     private ReceiptDetail initReceiptDetail(String glCode, BigDecimal crAmount, BigDecimal crAmountToBePaid,
-            BigDecimal drAmount, String description) {
+            BigDecimal drAmount, String description, String purpose) {
         ReceiptDetail receiptDetail = new ReceiptDetail();
         CChartOfAccounts accountHead = new CChartOfAccounts();
         accountHead.setGlcode(glCode);
@@ -266,6 +266,7 @@ public class CollectionHelper {
         receiptDetail.setCramount(crAmount);
         receiptDetail.setCramountToBePaid(crAmountToBePaid);
         receiptDetail.setDramount(drAmount);
+        receiptDetail.setPurpose(purpose);
         return receiptDetail;
     }
 

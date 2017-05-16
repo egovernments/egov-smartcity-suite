@@ -58,8 +58,8 @@ import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.commons.entity.Source;
 import org.egov.infra.admin.master.entity.Department;
-import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
-import org.egov.infra.reporting.engine.ReportRequest.ReportDataSourceType;
+import org.egov.infra.reporting.engine.ReportFormat;
+import org.egov.infra.reporting.engine.ReportDataSourceType;
 import org.egov.infra.web.struts.actions.ReportFormAction;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -123,7 +123,7 @@ public class CollectionSummaryHeadWiseAction extends ReportFormAction {
      */
     @Override
     public void prepare() {
-        setReportFormat(FileFormat.PDF);
+        setReportFormat(ReportFormat.PDF);
         setDataSourceType(ReportDataSourceType.JAVABEAN);
     }
 

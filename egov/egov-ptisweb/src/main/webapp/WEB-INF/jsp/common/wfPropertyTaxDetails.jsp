@@ -56,36 +56,64 @@
 						<span class="bold"><s:property value="wfPropTaxDetailsMap.firstHalf" /></span>
 					  </td>
 					  <td class="blueborderfortd" align="center">
-					  Rs.<s:text name="format.money">
-									<s:param value="wfPropTaxDetailsMap.firstHalfGT" />
-								</s:text>
+						<s:if test="%{wfPropTaxDetailsMap.firstHalfGT != null }">
+							 Rs.<s:text name="format.money"><s:param value="wfPropTaxDetailsMap.firstHalfGT" /></s:text>
+							 </s:if>
+						<s:else>
+							Rs.<s:text name="format.money">
+								<s:param value="0" />
+							</s:text>
+						</s:else>
 					  </td>
 					  <td class="blueborderfortd" align="center">
-					  Rs.<s:text name="format.money">
-									<s:param value="wfPropTaxDetailsMap.firstHalfEC" />
-								</s:text>
-					  </td>
-					  
-					  <td class="blueborderfortd" align="center">
-					  Rs.<s:text name="format.money">
-									<s:param value="wfPropTaxDetailsMap.firstHalfLC" />
-								</s:text>
-					  </td>
-					  
-					  <td class="blueborderfortd" align="center">
-					  Rs.<s:text name="format.money">
-									<s:param value="wfPropTaxDetailsMap.firstHalfUAP" />
-								</s:text>
+						<s:if test="%{wfPropTaxDetailsMap.firstHalfEC != null }">
+							 Rs.<s:text name="format.money"><s:param value="wfPropTaxDetailsMap.firstHalfEC" /></s:text>
+							 </s:if>
+						<s:else>
+							Rs.<s:text name="format.money">
+								<s:param value="0" />
+							</s:text>
+						</s:else>
 					  </td>
 					  <td class="blueborderfortd" align="center">
-					  Rs.<s:text name="format.money">
-									<s:param value="wfPropTaxDetailsMap.firstHalfTotal" /> 
-								</s:text>
+						<s:if test="%{wfPropTaxDetailsMap.firstHalfLC != null }">
+							 Rs.<s:text name="format.money"><s:param value="wfPropTaxDetailsMap.firstHalfLC" /></s:text>
+							 </s:if>
+						<s:else>
+							Rs.<s:text name="format.money">
+								<s:param value="0" />
+							</s:text>
+						</s:else>
 					  </td>
 					  <td class="blueborderfortd" align="center">
-					  Rs.<s:text name="format.money">
-									<s:param value="wfPropTaxDetailsMap.firstHalfTaxDue" />  
-								</s:text>
+						<s:if test="%{wfPropTaxDetailsMap.firstHalfUAP != null }">
+							 Rs.<s:text name="format.money"><s:param value="wfPropTaxDetailsMap.firstHalfUAP" /></s:text>
+							 </s:if>
+						<s:else>
+							Rs.<s:text name="format.money">
+								<s:param value="0" />
+							</s:text>
+						</s:else>
+					  </td>
+					  <td class="blueborderfortd" align="center">
+						<s:if test="%{wfPropTaxDetailsMap.firstHalfTotal != null }">
+							 Rs.<s:text name="format.money"><s:param value="wfPropTaxDetailsMap.firstHalfTotal" /></s:text>
+							 </s:if>
+						<s:else>
+							Rs.<s:text name="format.money">
+								<s:param value="0" />
+							</s:text>
+						</s:else>
+					  </td>
+					  <td class="blueborderfortd" align="center">
+						<s:if test="%{wfPropTaxDetailsMap.firstHalfTaxDue != null }">
+							 Rs.<s:text name="format.money"><s:param value="wfPropTaxDetailsMap.firstHalfTaxDue" /></s:text>
+							 </s:if>
+						<s:else>
+							Rs.<s:text name="format.money">
+								<s:param value="0" />
+							</s:text>
+						</s:else>
 					  </td>
 				</tr>
 				<tr>
@@ -94,35 +122,64 @@
 						<span class="bold"><s:property value="wfPropTaxDetailsMap.secondHalf" /></span>
 					  </td>
 					  <td class="blueborderfortd" align="center">
-					  Rs.<s:text name="format.money">
-									<s:param value="wfPropTaxDetailsMap.secondHalfGT" />
-								</s:text>
+						<s:if test="%{wfPropTaxDetailsMap.secondHalfGT != null }">
+							 Rs.<s:text name="format.money"><s:param value="wfPropTaxDetailsMap.secondHalfGT" /></s:text>
+							 </s:if>
+						<s:else>
+							Rs.<s:text name="format.money">
+								<s:param value="0" />
+							</s:text>
+						</s:else>
 					  </td>
 					  <td class="blueborderfortd" align="center">
-					  Rs.<s:text name="format.money">
-									<s:param value="wfPropTaxDetailsMap.secondHalfEC" />
-								</s:text>
-					  </td>
-					  
-					  <td class="blueborderfortd" align="center">
-					  Rs.<s:text name="format.money">
-									<s:param value="wfPropTaxDetailsMap.secondHalfLC" />
-								</s:text>
-					  </td>
-					   <td class="blueborderfortd" align="center">
-					  Rs.<s:text name="format.money">
-									<s:param value="wfPropTaxDetailsMap.secondHalfUAP" />
-								</s:text>
+						<s:if test="%{wfPropTaxDetailsMap.secondHalfEC != null }">
+							 Rs.<s:text name="format.money"><s:param value="wfPropTaxDetailsMap.secondHalfEC" /></s:text>
+							 </s:if>
+						<s:else>
+							Rs.<s:text name="format.money">
+								<s:param value="0" />
+							</s:text>
+						</s:else>
 					  </td>
 					  <td class="blueborderfortd" align="center">
-					  Rs.<s:text name="format.money">
-									<s:param value="wfPropTaxDetailsMap.secondHalfTotal" />
-								</s:text>
+						<s:if test="%{wfPropTaxDetailsMap.secondHalfLC != null }">
+							 Rs.<s:text name="format.money"><s:param value="wfPropTaxDetailsMap.secondHalfLC" /></s:text>
+							 </s:if>
+						<s:else>
+							Rs.<s:text name="format.money">
+								<s:param value="0" />
+							</s:text>
+						</s:else>
 					  </td>
 					  <td class="blueborderfortd" align="center">
-					  Rs.<s:text name="format.money">
-									<s:param value="wfPropTaxDetailsMap.secondHalfTaxDue" />
-								</s:text>
+						<s:if test="%{wfPropTaxDetailsMap.secondHalfUAP != null }">
+							 Rs.<s:text name="format.money"><s:param value="wfPropTaxDetailsMap.secondHalfUAP" /></s:text>
+							 </s:if>
+						<s:else>
+							Rs.<s:text name="format.money">
+								<s:param value="0" />
+							</s:text>
+						</s:else>
+					  </td>
+					  <td class="blueborderfortd" align="center">
+						<s:if test="%{wfPropTaxDetailsMap.secondHalfTotal != null }">
+							 Rs.<s:text name="format.money"><s:param value="wfPropTaxDetailsMap.secondHalfTotal" /></s:text>
+							 </s:if>
+						<s:else>
+							Rs.<s:text name="format.money">
+								<s:param value="0" />
+							</s:text>
+						</s:else>
+					  </td>
+					  <td class="blueborderfortd" align="center">
+						<s:if test="%{wfPropTaxDetailsMap.secondHalfTaxDue != null }">
+							 Rs.<s:text name="format.money"><s:param value="wfPropTaxDetailsMap.secondHalfTaxDue" /></s:text>
+							 </s:if>
+						<s:else>
+							Rs.<s:text name="format.money">
+								<s:param value="0" />
+							</s:text>
+						</s:else>
 					  </td>
 				 </tr>
 				 <tr>
@@ -139,15 +196,24 @@
 					  <td class="blueborderfortd" align="center">
 					  </td>
 					  <td class="blueborderfortd" align="center">
-					  Rs.<s:text name="format.money">
-									<s:param value="wfPropTaxDetailsMap.arrearTax" />
-								</s:text>
+						<s:if test="%{wfPropTaxDetailsMap.arrearTax != null }">
+							 Rs.<s:text name="format.money"><s:param value="wfPropTaxDetailsMap.arrearTax" /></s:text>
+							 </s:if>
+						<s:else>
+							Rs.<s:text name="format.money">
+								<s:param value="0" />
+							</s:text>
+						</s:else>
 					  </td>
 					  <td class="blueborderfortd" align="center">
-					  Rs.<s:text name="format.money">
-									<s:param value="wfPropTaxDetailsMap.totalArrDue" />
-								</s:text>
-					  </td>
-					  
+						<s:if test="%{wfPropTaxDetailsMap.totalArrDue != null }">
+							 Rs.<s:text name="format.money"><s:param value="wfPropTaxDetailsMap.totalArrDue" /></s:text>
+							 </s:if>
+						<s:else>
+							Rs.<s:text name="format.money">
+								<s:param value="0" />
+							</s:text>
+						</s:else>
+					  </td>	  
 				 </tr>
 </table>

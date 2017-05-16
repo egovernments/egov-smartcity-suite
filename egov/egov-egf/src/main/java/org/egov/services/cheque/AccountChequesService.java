@@ -157,4 +157,9 @@ public class AccountChequesService extends PersistenceService<AccountCheques, Lo
     {
         return persistenceService.findAllBy("from ChequeDeptMapping where accountCheque.bankAccountId.id =?", bankAccountId);
     }
+
+    public List<ChequeDeptMapping> getChequesByBankAccIdFinId(Long bankAccountId, Long financialYearId) {
+        return persistenceService.findAllBy("from ChequeDeptMapping where accountCheque.bankAccountId.id =? " +
+                "and accountCheque.serialNo =?", bankAccountId, financialYearId);
+    }
 }

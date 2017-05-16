@@ -48,10 +48,13 @@ import org.egov.collection.entity.OnlinePayment;
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.entity.ReceiptHeader;
 import org.egov.collection.integration.pgi.PaymentRequest;
+import org.egov.collection.integration.services.DebitAccountHeadDetailsService;
 import org.egov.collection.utils.CollectionCommon;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.commons.entity.Source;
 import org.egov.infstr.models.ServiceDetails;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -60,6 +63,8 @@ public class CollectionService {
     private CollectionsUtil collectionsUtil;
     private ReceiptHeaderService receiptHeaderService;
     private CollectionCommon collectionCommon;
+    @Autowired
+    private ApplicationContext beanProvider;
 
     public PaymentRequest populateAndPersistReceipts(final ServiceDetails paymentService,
             final ReceiptHeader receiptHeader, final List<ReceiptDetail> receiptDetailList,
@@ -107,8 +112,9 @@ public class CollectionService {
             onlinePayment.setService(paymentService);
 
             receiptHeader.setOnlinePayment(onlinePayment);
-
-            receiptHeader.addReceiptDetail(collectionCommon.addDebitAccountHeadDetails(debitAmount, receiptHeader,
+            DebitAccountHeadDetailsService debitAccountHeadService = (DebitAccountHeadDetailsService) beanProvider
+                    .getBean(collectionsUtil.getBeanNameForDebitAccountHead());
+            receiptHeader.addReceiptDetail(debitAccountHeadService.addDebitAccountHeadDetails(debitAmount, receiptHeader,
                     BigDecimal.ZERO, paymentAmount, CollectionConstants.INSTRUMENTTYPE_ONLINE));
 
         }

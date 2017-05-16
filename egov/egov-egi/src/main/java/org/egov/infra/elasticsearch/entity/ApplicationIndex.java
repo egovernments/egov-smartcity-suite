@@ -58,6 +58,7 @@ import javax.validation.constraints.NotNull;
 import org.egov.infra.elasticsearch.entity.enums.ApprovalStatus;
 import org.egov.infra.elasticsearch.entity.enums.ClosureStatus;
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.utils.DateUtils;
 import org.hibernate.validator.constraints.Length;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -97,6 +98,9 @@ public class ApplicationIndex extends AbstractAuditable {
     @Length(max = 250)
     private String applicantAddress;
 
+    /*
+     * Actual Disposal Date which should be updated when application is closed
+     */
     private Date disposalDate;
 
     @NotNull
@@ -221,6 +225,10 @@ public class ApplicationIndex extends AbstractAuditable {
     }
 
     public Date getDisposalDate() {
+        if (closed.name().equals(ClosureStatus.YES.toString()))
+            disposalDate = new Date();
+        else if (closed.name().equals(ClosureStatus.NO.toString()))
+            disposalDate = null;
         return disposalDate;
     }
 
@@ -295,6 +303,10 @@ public class ApplicationIndex extends AbstractAuditable {
     }
 
     public Integer getElapsedDays() {
+        if (closed.name().equals(ClosureStatus.YES.toString()))
+            elapsedDays = DateUtils.daysBetween(getCreatedDate(), disposalDate);
+        else if (closed.name().equals(ClosureStatus.NO.toString()))
+            elapsedDays = DateUtils.daysBetween(getCreatedDate(), new Date());
         return elapsedDays;
     }
 
@@ -397,11 +409,6 @@ public class ApplicationIndex extends AbstractAuditable {
         private ClosureStatus closed;
         private ApprovalStatus approved;
         private String channel;
-        private String cityCode;
-        private String cityName;
-        private String cityGrade;
-        private String districtName;
-        private String regionName;
         private Integer sla = 0;
 
         private Builder() {
@@ -492,31 +499,6 @@ public class ApplicationIndex extends AbstractAuditable {
             return this;
         }
 
-        public Builder withCityCode(final String cityCode) {
-            this.cityCode = cityCode;
-            return this;
-        }
-
-        public Builder withCityName(final String cityName) {
-            this.cityName = cityName;
-            return this;
-        }
-
-        public Builder withCityGrade(final String cityGrade) {
-            this.cityGrade = cityGrade;
-            return this;
-        }
-
-        public Builder withDistrictName(final String districtName) {
-            this.districtName = districtName;
-            return this;
-        }
-
-        public Builder withRegionName(final String regionName) {
-            this.regionName = regionName;
-            return this;
-        }
-
         public Builder withSla(final Integer sla) {
             this.sla = sla;
             return this;
@@ -541,14 +523,9 @@ public class ApplicationIndex extends AbstractAuditable {
             applicationIndex.setClosed(closed);
             applicationIndex.setApproved(approved);
             applicationIndex.setChannel(channel);
-            applicationIndex.setCityCode(cityCode);
-            applicationIndex.setCityName(cityName);
-            applicationIndex.setCityGrade(cityGrade);
-            applicationIndex.setDistrictName(districtName);
-            applicationIndex.setRegionName(regionName);
             applicationIndex.setClosed(closed);
             applicationIndex.setSla(sla);
-            applicationIndex.setSlaGap(sla - elapsedDays);
+            applicationIndex.setSlaGap(elapsedDays - sla);
             return applicationIndex;
         }
     }

@@ -174,6 +174,9 @@ public class WorkOrderController {
             reportParams.put("municipality", session.getAttribute("citymunicipalityname"));
             reportParams.put("district", session.getAttribute("districtName"));
             reportParams.put("purpose", connectionDetails.getUsageType().getName());
+            final User user = securityUtils.getCurrentUser();
+            Assignment assignment = assignmentService.getPrimaryAssignmentForUser(user.getId());
+            String userDesignation = assignment.getDesignation().getName();
             if (null != workFlowAction) {
                 if (workFlowAction.equalsIgnoreCase(WaterTaxConstants.WF_WORKORDER_BUTTON)) {
                     reportParams.put("workOrderDate", formatter.format(connectionDetails.getWorkOrderDate()));
@@ -186,10 +189,10 @@ public class WorkOrderController {
                 if (workFlowAction.equalsIgnoreCase(WaterTaxConstants.WF_SIGN_BUTTON)) {
                     reportParams.put("workOrderDate", formatter.format(connectionDetails.getWorkOrderDate()));
                     reportParams.put("workOrderNo", connectionDetails.getWorkOrderNumber());
-                    final User user = securityUtils.getCurrentUser();
                     reportParams.put("userId", user.getId());
                 }
             }
+            reportParams.put("designation", userDesignation);
             reportParams.put("workFlowAction", workFlowAction);
             reportParams.put("consumerNumber", connectionDetails.getConnection().getConsumerCode());
             reportParams.put("applicantName", WordUtils.capitalize(ownerName));

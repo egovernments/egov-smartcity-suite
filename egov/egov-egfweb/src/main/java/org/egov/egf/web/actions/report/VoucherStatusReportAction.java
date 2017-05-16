@@ -65,6 +65,7 @@ import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
@@ -256,6 +257,8 @@ public class VoucherStatusReportAction extends BaseFormAction
         return "search";
     }
 
+
+    @ReadOnly
     @ValidationErrorPage(value = "search")
     @Action(value = "/report/voucherStatusReport-search")
     public String search() throws ApplicationException, ParseException

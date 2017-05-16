@@ -193,10 +193,6 @@ public class BankRemittanceAction extends BaseFormAction {
     public String listData() {
         isListData = true;
         populateRemittanceList();
-        if (fromDate != null && fromDate.before(financialYearDAO.getFinancialYearByDate(new Date()).getStartingDate()))
-            addActionError(getText("bankremittance.error.fromdate.lessthan.financialyear"));
-        if (toDate != null && toDate.before(financialYearDAO.getFinancialYearByDate(new Date()).getStartingDate()))
-            addActionError(getText("bankremittance.error.todate.lessthan.financialyear"));
         if (fromDate != null && toDate != null && toDate.before(fromDate))
             addActionError(getText("bankremittance.before.fromdate"));
         if (!hasErrors()) {

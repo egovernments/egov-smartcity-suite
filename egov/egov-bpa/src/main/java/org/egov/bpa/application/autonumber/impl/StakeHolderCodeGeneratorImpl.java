@@ -50,20 +50,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class StakeHolderCodeGeneratorImpl implements StakeHolderCodeGenerator{
+public class StakeHolderCodeGeneratorImpl implements StakeHolderCodeGenerator {
 
     private static final String SEQ_STAKEHOLDERCODE = "SEQ_EGBPA_STAKEHOLDER_CODE";
 
     @Autowired
     private SequenceNumberGenerator sequenceNoGenerator;
+
     @Override
-    public String generateStakeHolderCode(StakeHolder stakeHolder) {
-        
+    public String generateStakeHolderCode(final StakeHolder stakeHolder) {
+
         final Serializable referenceNumber = sequenceNoGenerator.getNextSequence(SEQ_STAKEHOLDERCODE);
-        return new  SimpleDateFormat("ddMMyyyy").format(new Date())
+        return new SimpleDateFormat("ddMMyyyy").format(new Date())
                 .concat(String.format(
-                "%s%06d", "", referenceNumber));
-       
+                        "%s%06d", "", referenceNumber));
+
     }
 
 }

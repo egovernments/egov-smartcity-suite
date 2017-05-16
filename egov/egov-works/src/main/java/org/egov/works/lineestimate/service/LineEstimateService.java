@@ -780,7 +780,11 @@ public class LineEstimateService {
         if (!BudgetControlType.BudgetCheckOption.NONE.toString()
                 .equalsIgnoreCase(budgetControlTypeService.getConfigValue()))
             for (final LineEstimateDetails led : lineEstimate.getLineEstimateDetails())
-                estimateAppropriationService.releaseBudgetOnReject(led, null, null);
+                try{
+                    estimateAppropriationService.releaseBudgetOnReject(led, null, null);
+                }catch(final ValidationException v) {
+                    throw new ValidationException(v.getErrors());
+                }
 
         for (final LineEstimateDetails led : lineEstimate.getLineEstimateDetails()) {
             final Long id = led.getId();

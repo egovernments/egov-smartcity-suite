@@ -87,7 +87,7 @@ public class TaxRatesService {
     
     protected static final Map<String, String> TAX_RATES_MAP = ImmutableMap.of("VAC_LAND_TAX", PropertyTaxConstants.DEMANDRSN_STR_VACANT_TAX,
             "TOT_RESD_TAX", "Total Residential Tax", "LIB_CESS", PropertyTaxConstants.DEMANDRSN_STR_LIBRARY_CESS, "TOT_NR_RESD_TAX",
-            "Total Non Residential Tax");
+            "Total Non Residential Tax", "EDU_CESS", PropertyTaxConstants.DEMANDRSN_STR_EDUCATIONAL_CESS);
     
     @Autowired
     public TaxRatesService(final TaxRatesRepository taxRatesRepository) {

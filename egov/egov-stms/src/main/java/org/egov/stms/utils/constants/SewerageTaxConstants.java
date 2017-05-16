@@ -58,6 +58,8 @@ public class SewerageTaxConstants {
     public static final String NEWCONNECTIONALLOWEDIFPTDUE = "NEWCONNECTIONALLOWEDIFPTDUE";
     public static final String APPCONFIG_COLLECT_INSPECTIONFEE = "SEWERAGE_COLLECTINSPECTION_FEE";
     public static final String APPCONFIG_NUMBEROFMONTHS_ADVANCESEWERAGETAX = "SEWERAGE_ADVANCESEWERAGETAX_INMONTHS";
+    public static final String APPCONFIG_COLLECT_LEGACY_DONATIONCHARGE = "LEGACY_DONATION_CHARGE";
+
 
     // application status constants - start
     public static final String APPLICATION_STATUS_CREATED = "CREATED";
@@ -308,6 +310,8 @@ public class SewerageTaxConstants {
     
     public static final String SLAFORNEWSEWERAGECONNECTION = "SLAFORNEWSEWERAGECONNECTION";
     public static final String SLAFORCHANGEINCLOSET = "SLAFORCHANGEINCLOSET";
+    public static final String SEWERAGE_MONTHLY_RATES ="SEWERAGE MONTHLY RATES BY MULTIPLE CLOSETS";
+    public static final String EDIT_DONATION_CHARGE ="EDIT_DONATION_CHARGE";
     
     
 }

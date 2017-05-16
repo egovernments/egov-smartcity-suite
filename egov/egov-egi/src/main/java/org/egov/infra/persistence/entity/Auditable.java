@@ -40,6 +40,8 @@
 
 package org.egov.infra.persistence.entity;
 
+import java.io.Serializable;
+
 /**
  * A marker interface to identify non jpa entities which extends
  * {@link AbstractAuditable}, which required auditing done. Since spring jpa
@@ -47,6 +49,6 @@ package org.egov.infra.persistence.entity;
  * to handle auditing of those entities in {@link HibernateEventListener} This
  * can be removed in future once all entities are moved to pure JPA annotation.
  **/
-public interface Auditable {
+public interface Auditable extends Serializable {
 
 }

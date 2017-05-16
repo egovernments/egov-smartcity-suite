@@ -40,18 +40,39 @@
 
 package org.egov.pgr.entity.dto;
 
-import java.math.BigInteger;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
-/**
- * Created by jayashree on 19/12/16.
- */
+import org.hibernate.annotations.Immutable;
+
+@Entity
+@Immutable
+@Table(name = "pgr_router_escalation_view")
 public class RouterEscalationForm {
+
+    @Id
+    private Long id;
+
+    @Column(name = "ctid")
     private Long complainttype;
-    private Long category;
+
+    private Long categoryid;
+
+    @Column(name = "bndryid")
     private Long boundary;
+
+    @Column(name = "routerpos")
     private Long position;
 
+    private Long esclvl1;
+    private Long esclvl2;
+    private Long esclvl3;
+
+    private String ctcode;
     private String ctname;
+    private String categoryname;
     private String bndryname;
     private String routerposname;
     private String esclvl1posname;
@@ -62,23 +83,23 @@ public class RouterEscalationForm {
         return complainttype;
     }
 
-    public void setComplainttype(Long complainttype) {
+    public void setComplainttype(final Long complainttype) {
         this.complainttype = complainttype;
     }
 
-    public Long getCategory() {
-        return category;
+    public Long getCategoryid() {
+        return categoryid;
     }
 
-    public void setCategory(Long category) {
-        this.category = category;
+    public void setCategoryid(final Long categoryid) {
+        this.categoryid = categoryid;
     }
 
     public Long getBoundary() {
         return boundary;
     }
 
-    public void setBoundary(Long boundary) {
+    public void setBoundary(final Long boundary) {
         this.boundary = boundary;
     }
 
@@ -86,7 +107,7 @@ public class RouterEscalationForm {
         return position;
     }
 
-    public void setPosition(Long position) {
+    public void setPosition(final Long position) {
         this.position = position;
     }
 
@@ -94,7 +115,7 @@ public class RouterEscalationForm {
         return ctname;
     }
 
-    public void setCtname(String ctname) {
+    public void setCtname(final String ctname) {
         this.ctname = ctname;
     }
 
@@ -102,7 +123,7 @@ public class RouterEscalationForm {
         return bndryname;
     }
 
-    public void setBndryname(String bndryname) {
+    public void setBndryname(final String bndryname) {
         this.bndryname = bndryname;
     }
 
@@ -110,7 +131,7 @@ public class RouterEscalationForm {
         return routerposname;
     }
 
-    public void setRouterposname(String routerposname) {
+    public void setRouterposname(final String routerposname) {
         this.routerposname = routerposname;
     }
 
@@ -118,7 +139,7 @@ public class RouterEscalationForm {
         return esclvl1posname;
     }
 
-    public void setEsclvl1posname(String esclvl1posname) {
+    public void setEsclvl1posname(final String esclvl1posname) {
         this.esclvl1posname = esclvl1posname;
     }
 
@@ -126,7 +147,7 @@ public class RouterEscalationForm {
         return esclvl2posname;
     }
 
-    public void setEsclvl2posname(String esclvl2posname) {
+    public void setEsclvl2posname(final String esclvl2posname) {
         this.esclvl2posname = esclvl2posname;
     }
 
@@ -134,7 +155,48 @@ public class RouterEscalationForm {
         return esclvl3posname;
     }
 
-    public void setEsclvl3posname(String esclvl3posname) {
+    public void setEsclvl3posname(final String esclvl3posname) {
         this.esclvl3posname = esclvl3posname;
     }
+
+    public Long getEsclvl1() {
+        return esclvl1;
+    }
+
+    public void setEsclvl1(final Long esclvl1) {
+        this.esclvl1 = esclvl1;
+    }
+
+    public Long getEsclvl2() {
+        return esclvl2;
+    }
+
+    public void setEsclvl2(final Long esclvl2) {
+        this.esclvl2 = esclvl2;
+    }
+
+    public Long getEsclvl3() {
+        return esclvl3;
+    }
+
+    public void setEsclvl3(final Long esclvl3) {
+        this.esclvl3 = esclvl3;
+    }
+
+    public String getCtcode() {
+        return ctcode;
+    }
+
+    public void setCtcode(final String ctcode) {
+        this.ctcode = ctcode;
+    }
+
+    public String getCategoryname() {
+        return categoryname;
+    }
+
+    public void setCategoryname(final String categoryname) {
+        this.categoryname = categoryname;
+    }
+
 }

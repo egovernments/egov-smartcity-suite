@@ -68,7 +68,7 @@
 							<spring:message code="lbl.router.boundaryType" /></label>
 							<div class="col-sm-6 add-margin">
 		                 		<select id="boundary_type_id" class="form-control">
-		                     		<option value="0"> <spring:message code="lbl.select"/> </option>
+		                     		<option value=""> <spring:message code="lbl.select"/> </option>
 		                     		<c:forEach items="${boundaryTypes}" var="boundaryType">
 		                     			<option value="${boundaryType.id}"> ${boundaryType.name}</option>
 		                     		</c:forEach>

@@ -17,7 +17,7 @@ public class BpaStatusService {
         this.bpaStatusRepository = bpaStatusRepository;
     }
 
-    public BpaStatus findByModuleTypeAndCode(String moduleType, String code) {
+    public BpaStatus findByModuleTypeAndCode(final String moduleType, final String code) {
         return bpaStatusRepository.findByModuleTypeContainingIgnoreCaseAndCode(moduleType, code);
     }
 }

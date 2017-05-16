@@ -56,7 +56,7 @@ import javax.servlet.http.HttpSession;
 import org.egov.commons.service.TypeOfWorkService;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.DepartmentService;
-import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
+import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
@@ -318,15 +318,16 @@ public class EstimateAbstractReportPDFController {
 
     private HttpHeaders setDocumentWisePDFHeaders(final String contentType, final ReportRequest reportInput) {
         final HttpHeaders headers = new HttpHeaders();
+
         if (WorksConstants.PDF.equalsIgnoreCase(contentType)) {
-            reportInput.setReportFormat(FileFormat.PDF);
+            reportInput.setReportFormat(ReportFormat.PDF);
             headers.setContentType(MediaType.parseMediaType("application/pdf"));
             if (worksApplicationProperties.lineEstimateRequired())
                 headers.add(WorkProgressRegisterService.CONTENTDISPOSITION, "inline;filename=EstimateAbstractReportByDepartmentWise.pdf");
             else
                 headers.add(WorkProgressRegisterService.CONTENTDISPOSITION, "inline;filename=EstimateAbstractReportForDepartmentWise.pdf");
         } else {
-            reportInput.setReportFormat(FileFormat.XLS);
+            reportInput.setReportFormat(ReportFormat.XLS);
             headers.setContentType(MediaType.parseMediaType("application/vnd.ms-excel"));
             headers.add(WorkProgressRegisterService.CONTENTDISPOSITION, "inline;filename=EstimateAbstractReportByDepartmentWise.xls");
         }
@@ -641,15 +642,16 @@ public class EstimateAbstractReportPDFController {
 
     private HttpHeaders setTOWWiseReportHeaderValues(final String contentType, final ReportRequest reportInput) {
         final HttpHeaders headers = new HttpHeaders();
+
         if (WorksConstants.PDF.equalsIgnoreCase(contentType)) {
-            reportInput.setReportFormat(FileFormat.PDF);
+            reportInput.setReportFormat(ReportFormat.PDF);
             headers.setContentType(MediaType.parseMediaType("application/pdf"));
             if (worksApplicationProperties.lineEstimateRequired())
                 headers.add(WorkProgressRegisterService.CONTENTDISPOSITION, "inline;filename=EstimateAbstractReportByTypeOfWorkWise.pdf");
             else
                 headers.add(WorkProgressRegisterService.CONTENTDISPOSITION, "inline;filename=EstimateAbstractReportForTypeOfWorkWise.pdf");
         } else {
-            reportInput.setReportFormat(FileFormat.XLS);
+            reportInput.setReportFormat(ReportFormat.XLS);
             headers.setContentType(MediaType.parseMediaType("application/vnd.ms-excel"));
             headers.add(WorkProgressRegisterService.CONTENTDISPOSITION, "inline;filename=EstimateAbstractReportByTypeOfWorkWise.xls");
         }

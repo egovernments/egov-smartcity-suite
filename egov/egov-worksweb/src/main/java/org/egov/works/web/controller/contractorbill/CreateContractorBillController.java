@@ -41,6 +41,8 @@ package org.egov.works.web.controller.contractorbill;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -66,6 +68,7 @@ import org.egov.model.bills.EgBilldetails;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.abstractestimate.entity.AbstractEstimateDeduction;
 import org.egov.works.autonumber.ContractorBillNumberGenerator;
+import org.egov.works.config.properties.WorksApplicationProperties;
 import org.egov.works.contractoradvance.entity.ContractorAdvanceRequisition.ContractorAdvanceRequisitionStatus;
 import org.egov.works.contractoradvance.service.ContractorAdvanceService;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
@@ -97,6 +100,8 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping(value = "/contractorbill")
 public class CreateContractorBillController extends BaseContractorBillController {
 
+    private static final String BILLDATE = "billdate";
+    
     @Autowired
     private LetterOfAcceptanceService letterOfAcceptanceService;
 
@@ -139,6 +144,9 @@ public class CreateContractorBillController extends BaseContractorBillController
 
     @Autowired
     private CityService cityService;
+    
+    @Autowired
+    private WorksApplicationProperties worksApplicationProperties;
 
     @RequestMapping(value = "/newform", method = RequestMethod.GET)
     public String showNewForm(
@@ -178,6 +186,7 @@ public class CreateContractorBillController extends BaseContractorBillController
                 offlineStatus != null ? offlineStatus.getStatusDate() : StringUtils.EMPTY);
         model.addAttribute("workOrderEstimate", workOrderEstimate);
         model.addAttribute("contractorBillRegister", contractorBillRegister);
+        model.addAttribute("defaultCutOffDate", worksApplicationProperties.getContractorBillCutOffDate());
         if (estimate.isSpillOverFlag()) {
             model.addAttribute("cutOffDate", worksUtils.getCutOffDate() != null ? worksUtils.getCutOffDate() : StringUtils.EMPTY);
             model.addAttribute("currFinYearStartDate", worksUtils.getFinancialYearByDate(new Date()).getStartingDate());
@@ -300,7 +309,8 @@ public class CreateContractorBillController extends BaseContractorBillController
 
             model.addAttribute("billDetailsMap",
                     contractorBillRegisterService.getBillDetailsMap(contractorBillRegister, model));
-
+            model.addAttribute("cutOffDate", worksApplicationProperties.getContractorBillCutOffDate());
+            
             return "contractorBill-form";
         } else {
 
@@ -496,14 +506,27 @@ public class CreateContractorBillController extends BaseContractorBillController
         }
 
         if (workOrderEstimate.getEstimate().isSpillOverFlag()) {
-            final Date currentFinYearStartDate = worksUtils.getFinancialYearByDate(currentDate).getStartingDate();
-            if (contractorBillRegister.getBilldate().after(currentDate))
-                resultBinder.rejectValue("billdate", "error.billdate.futuredate");
-            if (contractorBillRegister.getBilldate()
-                    .before(contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getWorkOrderDate()))
-                resultBinder.rejectValue("billdate", "error.billdate.workorderdate");
-            if (contractorBillRegister.getBilldate().before(currentFinYearStartDate))
-                resultBinder.rejectValue("billdate", "error.billdate.finyear");
+            final String cutoffDateString = worksApplicationProperties.getContractorBillCutOffDate();
+            final DateFormat df = new SimpleDateFormat("dd-MM-yyyy");
+            try {
+                if (StringUtils.isNotBlank(cutoffDateString)) {
+                    final Date cutOffdate = df.parse(cutoffDateString);
+                    if (contractorBillRegister.getBilldate().before(cutOffdate))
+                        resultBinder.rejectValue(BILLDATE, "error.billdate.cutoff");
+                } else {
+                    final Date currentFinYear = worksUtils.getFinancialYearByDate(currentDate).getStartingDate();
+                    if (contractorBillRegister.getBilldate().before(currentFinYear))
+                        resultBinder.rejectValue(BILLDATE, "error.billdate.finyear");
+                }
+                if (contractorBillRegister.getBilldate().after(currentDate))
+                    resultBinder.rejectValue(BILLDATE, "error.billdate.futuredate");
+                if (contractorBillRegister.getBilldate()
+                        .before(contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getWorkOrderDate()))
+                    resultBinder.rejectValue(BILLDATE, "error.billdate.workorderdate");
+
+            } catch (final ParseException e) {
+                e.printStackTrace();
+            }
         }
 
         final MBHeader mBHeader = mBHeaderService.getLatestMBHeaderToValidateBillDate(

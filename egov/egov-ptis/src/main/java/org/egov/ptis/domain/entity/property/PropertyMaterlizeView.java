@@ -48,9 +48,6 @@ import java.util.Set;
 
 public class PropertyMaterlizeView implements Serializable {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = -6146352214041057969L;
     private Integer basicPropertyID;
     private String propertyId;

@@ -260,8 +260,8 @@ function callAjaxBydrillDownReport(aggregatedByValues,monthh,yearr) {
 							"className" : "text-left"
 						},
 						{
-							"data" : "standingCouncil",
-							"sTitle" : "Standing Council",
+							"data" : "standingCounsel",
+							"sTitle" : "Standing Counsel",
 							"className" : "text-left"
 						},
 						{

@@ -80,6 +80,7 @@ import org.egov.commons.entity.Source;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.config.properties.ApplicationProperties;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
@@ -98,7 +99,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Transactional(readOnly = true)
 public class CollectionIntegrationServiceImpl extends PersistenceService<ReceiptHeader, Long> implements
-CollectionIntegrationService {
+        CollectionIntegrationService {
 
     private static final Logger LOGGER = Logger.getLogger(CollectionIntegrationServiceImpl.class);
 
@@ -125,6 +126,9 @@ CollectionIntegrationService {
 
     @Autowired
     private ApplicationContext beanProvider;
+    
+    @Autowired
+    ApplicationProperties applicationProperties;
 
     public CollectionIntegrationServiceImpl() {
         super(ReceiptHeader.class);
@@ -335,8 +339,9 @@ CollectionIntegrationService {
             debitAmount = debitAmount.add(receiptDetail.getCramount());
             debitAmount = debitAmount.subtract(receiptDetail.getDramount());
         }
-
-        receiptHeader.addReceiptDetail(collectionCommon.addDebitAccountHeadDetails(debitAmount, receiptHeader,
+        DebitAccountHeadDetailsService debitAccountHeadService = (DebitAccountHeadDetailsService) beanProvider
+                .getBean(collectionsUtil.getBeanNameForDebitAccountHead());
+        receiptHeader.addReceiptDetail(debitAccountHeadService.addDebitAccountHeadDetails(debitAmount, receiptHeader,
                 chequeDDInstrumenttotal, otherInstrumenttotal, paymentInfoList.get(0).getInstrumentType().toString()));
 
         receiptHeaderService.persistFieldReceipt(receiptHeader, instrumentHeaderList);
@@ -442,8 +447,9 @@ CollectionIntegrationService {
             debitAmount = debitAmount.add(receiptDetail.getCramount());
             debitAmount = debitAmount.subtract(receiptDetail.getDramount());
         }
-
-        receiptHeader.addReceiptDetail(collectionCommon.addDebitAccountHeadDetails(debitAmount, receiptHeader,
+        DebitAccountHeadDetailsService debitAccountHeadService = (DebitAccountHeadDetailsService) beanProvider
+                .getBean(collectionsUtil.getBeanNameForDebitAccountHead());
+        receiptHeader.addReceiptDetail(debitAccountHeadService.addDebitAccountHeadDetails(debitAmount, receiptHeader,
                 chequeDDInstrumenttotal, otherInstrumenttotal, paymentInfoList.get(0).getInstrumentType().toString()));
 
         receiptHeaderService.persist(receiptHeader);
@@ -487,7 +493,8 @@ CollectionIntegrationService {
 
         final List<RestAggregatePaymentInfo> listAggregatePaymentInfo = new ArrayList<>(0);
         final StringBuilder queryBuilder = new StringBuilder(
-                "select  sum(recordcount) as records,ulb, sum(total) as total,service  from public.receipt_aggr_view "
+                "select  sum(recordcount) as records,ulb, sum(total) as total,service  from ").append(applicationProperties.statewideSchemaName())
+                .append(".receipt_aggr_view "
                         + " where receipt_date>=:fromDate and receipt_date<=:toDate and service=:serviceCode "
                         + " and source=:source and ulb=:ulbCode  group by ulb,service  ");
 
@@ -688,8 +695,11 @@ CollectionIntegrationService {
 
             receiptHeader.setOnlinePayment(onlinePayment);
             // end of outer for loop
-            receiptHeader.addReceiptDetail(collectionCommon.addDebitAccountHeadDetails(debitAmount, receiptHeader,
-                    BigDecimal.ZERO, receiptHeader.getTotalAmount(), CollectionConstants.INSTRUMENTTYPE_ONLINE));
+            DebitAccountHeadDetailsService debitAccountHeadService = (DebitAccountHeadDetailsService) beanProvider
+                    .getBean(collectionsUtil.getBeanNameForDebitAccountHead());
+            receiptHeader.addReceiptDetail(debitAccountHeadService.addDebitAccountHeadDetails(debitAmount,
+                    receiptHeader, BigDecimal.ZERO, receiptHeader.getTotalAmount(),
+                    CollectionConstants.INSTRUMENTTYPE_ONLINE));
 
         }
         receiptHeaderService.persistReceiptObject(receiptHeader);
@@ -733,7 +743,8 @@ CollectionIntegrationService {
     @Override
     public byte[] downloadReceiptByReceiptAndConsumerNo(final String receiptNumber, final String consumerCode) {
         final ReceiptHeader receiptHeader = (ReceiptHeader) persistenceService.findByNamedQuery(
-                CollectionConstants.QUERY_RECEIPT_BY_SERVICE_RECEIPTNUMBER_CONSUMERCODE, receiptNumber,receiptNumber, consumerCode);
+                CollectionConstants.QUERY_RECEIPT_BY_SERVICE_RECEIPTNUMBER_CONSUMERCODE, receiptNumber, receiptNumber,
+                consumerCode);
         return collectionsUtil.createReport(receiptHeaderService.getReportRequest(receiptHeader)).getReportOutputData();
     }
 

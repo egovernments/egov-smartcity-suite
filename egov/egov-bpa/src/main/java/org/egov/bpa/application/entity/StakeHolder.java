@@ -54,7 +54,7 @@ import org.hibernate.validator.constraints.Length;
 
 @Entity
 @Table(name = "EGBPA_MSTR_STAKEHOLDER")
-@Unique(fields = {"code","businessLicenceNumber","coaEnrolmentNumber","tinNumber"}, enableDfltMsg = true)
+@Unique(fields = { "code", "businessLicenceNumber", "coaEnrolmentNumber", "tinNumber" }, enableDfltMsg = true)
 public class StakeHolder extends User {
 
     private static final long serialVersionUID = 3078684328383202788L;
@@ -97,6 +97,7 @@ public class StakeHolder extends User {
     private transient CorrespondenceAddress correspondenceAddress = new CorrespondenceAddress();
     private transient PermanentAddress permanentAddress = new PermanentAddress();
     private transient List<CheckListDetail> checkListDocuments = new ArrayList<>(0);
+
     public Boolean getIsActive() {
         return isActive;
     }
@@ -217,7 +218,7 @@ public class StakeHolder extends User {
         return correspondenceAddress;
     }
 
-    public void setCorrespondenceAddress(CorrespondenceAddress correspondenceAddress) {
+    public void setCorrespondenceAddress(final CorrespondenceAddress correspondenceAddress) {
         this.correspondenceAddress = correspondenceAddress;
     }
 
@@ -225,18 +226,20 @@ public class StakeHolder extends User {
         return permanentAddress;
     }
 
-    public void setPermanentAddress(PermanentAddress permanentAddress) {
+    public void setPermanentAddress(final PermanentAddress permanentAddress) {
         this.permanentAddress = permanentAddress;
     }
+
     public void addStakeHolderDocument(final StakeHolderDocument stakeHolderDocument) {
         stakeHolderDocument.setStakeHolder(this);
         getStakeHolderDocument().add(stakeHolderDocument);
     }
-    
+
     public List<CheckListDetail> getCheckListDocuments() {
         return checkListDocuments;
     }
-    public void setCheckListDocuments(List<CheckListDetail> checkListDocuments) {
+
+    public void setCheckListDocuments(final List<CheckListDetail> checkListDocuments) {
         this.checkListDocuments = checkListDocuments;
     }
 }

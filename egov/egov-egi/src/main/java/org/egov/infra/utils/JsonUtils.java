@@ -73,4 +73,8 @@ public class JsonUtils {
             throw new ApplicationRuntimeException("Could not convert object to json string", e);
         }
     }
+
+    public static <T> T fromJSON(String json, Class<T> clazz) {
+        return new GsonBuilder().create().fromJson(json, clazz);
+    }
 }

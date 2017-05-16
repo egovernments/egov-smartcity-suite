@@ -48,7 +48,11 @@ import org.egov.bpa.application.entity.BpaStatus;
 import org.egov.bpa.application.repository.ApplicationBpaRepository;
 import org.egov.bpa.application.service.collection.GenericBillGeneratorService;
 import org.egov.bpa.service.BpaStatusService;
+import org.egov.bpa.service.BpaUtils;
 import org.egov.bpa.utils.BpaConstants;
+import org.egov.commons.entity.Source;
+import org.egov.demand.model.EgDemand;
+import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.hibernate.Criteria;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,28 +70,36 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
     private BpaStatusService bpaStatusService;
 
     @Autowired
+    private BpaUtils bpaUtils;
+
+    @Autowired
     private ApplicationBpaBillService applicationBpaBillService;
 
     @Transactional
     public BpaApplication createNewApplication(final BpaApplication application) {
-
+        final Boundary boundaryObj = bpaUtils.getBoundaryById(application.getWardId() != null ? application.getWardId()
+                : application.getZoneId() != null ? application.getZoneId() : null);
+        application.getSiteDetail().get(0).setAdminBoundary(boundaryObj);
         application.getSiteDetail().get(0).setApplication(application);
+        application.getBuildingDetail().get(0).setApplication(application);
         if (!application.getBuildingDetail().isEmpty())
             application.getBuildingDetail().get(0).setApplication(application);
-        if (application.getOwner() != null)
-            application.getOwner().setApplication(application);
         application.setApplicationNumber(applicationBpaBillService.generateApplicationnumber(application));
-        final BpaStatus bpaStatus = getStatusByCodeAndModuleType("REGISTERED");
+        final BpaStatus bpaStatus = getStatusByCodeAndModuleType("Registered");
         application.setStatus(bpaStatus);
-        if (application.getApplicantMode() != null)
-            application.setApplicantMode("NEW");
+        application.setSource(Source.SYSTEM);
+       /*final BpaApplicationWorkflowCustomDefaultImpl applicationWorkflowCustomDefaultImpl = bpaUtils
+                .getInitialisedWorkFlowBean();
+        applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(application,
+                null,BpaConstants.WF_NEW_STATE,
+                BpaConstants.CREATE_ADDITIONAL_RULE_CREATE, null);*/
         application.setDemand(applicationBpaBillService.createDemand(application));
         return applicationBpaRepository.save(application);
     }
 
     public BpaStatus getStatusByCodeAndModuleType(final String code) {
         return bpaStatusService
-                .findByModuleTypeAndCode(BpaConstants.APPLICATION_MODULE_TYPE, code);
+                .findByModuleTypeAndCode(BpaConstants.BPASTATUS_MODULETYPE, code);
     }
 
     @Transactional
@@ -95,16 +107,26 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         applicationBpaRepository.saveAndFlush(application);
     }
 
-    public void setAdmissionFeeAmountForRegistration(final BpaApplication application) {
-        if (application.getServiceType() != null && application.getServiceType().getId() != null) {
-            final BigDecimal admissionfeeAmount = getTotalFeeAmountByPassingServiceTypeandArea(
-                    application.getServiceType().getId(), BpaConstants.ADMISSIONFEEREASON);
-            application.setAdmissionfeeAmount(admissionfeeAmount);
-        } else {
-            final BigDecimal admissionfeeAmount = getTotalFeeAmountByPassingServiceTypeandArea(2l,
-                    BpaConstants.ADMISSIONFEEREASON);
-            application.setAdmissionfeeAmount(admissionfeeAmount);
-        }
+    @Transactional
+    public BpaApplication updateApplication(final BpaApplication application,final Long approvalPosition) {
+       
+        application.setSource(Source.SYSTEM);
+        final BpaApplication updatedApplication = applicationBpaRepository
+                .save(application);
+        
+        bpaUtils.redirectToBpaWorkFlow(approvalPosition,application, application.getCurrentState().getValue(), null);
+
+        return updatedApplication;
+    }
+    
+    public BigDecimal setAdmissionFeeAmountForRegistration(final String serviceType) {
+        BigDecimal admissionfeeAmount;
+        if (serviceType != null)
+            admissionfeeAmount = getTotalFeeAmountByPassingServiceTypeandArea(
+                    Long.valueOf(serviceType), BpaConstants.BPAFEETYPE);
+        else
+            admissionfeeAmount = BigDecimal.ZERO;
+        return admissionfeeAmount;
     }
 
     public BigDecimal getTotalFeeAmountByPassingServiceTypeandArea(final Long serviceTypeId, final String feeType) {
@@ -118,6 +140,14 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
             throw new ApplicationRuntimeException("Service Type Id is mandatory.");
 
         return totalAmount;
+    }
+
+    public BpaApplication getApplicationByDemand(final EgDemand demand) {
+        return applicationBpaRepository.findByDemand(demand);
+    }
+
+    public BpaApplication findByApplicationNumber(final String applicationNumber) {
+        return applicationBpaRepository.findByApplicationNumber(applicationNumber);
     }
 
 }

@@ -59,7 +59,7 @@ import org.egov.eis.service.PositionMasterService;
 import org.egov.eis.utils.EisUtils;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.DepartmentService;
-import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
+import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.utils.DateUtils;
 import org.egov.pims.commons.Designation;
@@ -203,12 +203,12 @@ public class EmployeeAssignmentReportPDFController {
         reportOutput.setReportOutputData(outputBytes.toByteArray());
         final HttpHeaders headers = new HttpHeaders();
         if (contentType.equalsIgnoreCase("pdf")) {
-            reportOutput.setReportFormat(FileFormat.PDF);
-            reportOutput.setReportFormat(FileFormat.PDF);
+            reportOutput.setReportFormat(ReportFormat.PDF);
+            reportOutput.setReportFormat(ReportFormat.PDF);
             headers.setContentType(MediaType.parseMediaType("application/pdf"));
             headers.add("content-disposition", "inline;filename=EmployeeAssignment.pdf");
         } else {
-            reportOutput.setReportFormat(FileFormat.XLS);
+            reportOutput.setReportFormat(ReportFormat.XLS);
             headers.setContentType(MediaType.parseMediaType("application/vnd.ms-excel"));
             headers.add("content-disposition", "inline;filename=EmployeeAssignment.xls");
         }

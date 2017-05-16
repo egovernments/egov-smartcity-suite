@@ -40,6 +40,7 @@
 
 package org.egov.tl.service;
 
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.tl.entity.LicenseSubCategoryDetails;
 import org.egov.tl.repository.SubCategoryDetailsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,6 +56,7 @@ public class SubCategoryDetailsService {
     @Autowired
     private SubCategoryDetailsRepository subCategoryDetailsRepository;
 
+    @ReadOnly
     public List<LicenseSubCategoryDetails> getSubcategoryDetailsBySubcategoryId(Long subCategoryId) {
         return subCategoryDetailsRepository.findBySubCategoryId(subCategoryId);
     }

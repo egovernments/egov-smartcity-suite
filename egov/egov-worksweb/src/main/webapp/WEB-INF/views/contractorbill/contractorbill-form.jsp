@@ -61,7 +61,7 @@
 			<input id="errorRetentionMoney" type="hidden" value="<spring:message code="error.accountcode.retention.money" />" />
 			<input id="erroradvancecode" type="hidden" value="<spring:message code="error.advance.code.mandatory" />" />
 			<input id="erroradvanceamount" type="hidden" value="<spring:message code="error.advance.amount.mandatory" />" />
-
+			<input type="hidden" id="defaultCutOffDate" value="${defaultCutOffDate }" />
 					<div class="panel panel-primary" data-collapsed="0">
 						<div class="panel-heading">
 							<div class="panel-title"><spring:message code="lbl.header" /></div> 

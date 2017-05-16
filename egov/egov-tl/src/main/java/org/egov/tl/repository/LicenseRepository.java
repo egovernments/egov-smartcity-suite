@@ -46,6 +46,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 
 @Repository
@@ -83,4 +84,8 @@ public interface LicenseRepository extends JpaRepository<License, Long> {
 
     @Query("select l.licensee.mobilePhoneNumber from License l where l.licensee.mobilePhoneNumber like '%'||:mobilePhoneNumber||'%'")
     List<String> findAllMobilePhoneNumberLike(@Param("mobilePhoneNumber") String mobilePhoneNumber);
+
+    @Query("select l from org.egov.tl.entity.License l where l.natureOfBusiness.name=:natureOfBusiness and l.status.name=:status and l.licenseDemand.egInstallmentMaster.fromDate < :installmentFromDate ")
+    List<License> findByNatureOfBusinessNameAndStatusName(@Param("natureOfBusiness") String natureOfBusiness, @Param("status") String status, @Param("installmentFromDate") Date installmentFromDate);
+
 }

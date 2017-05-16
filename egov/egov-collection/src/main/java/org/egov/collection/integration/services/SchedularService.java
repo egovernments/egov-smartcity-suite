@@ -39,12 +39,6 @@
  */
 package org.egov.collection.integration.services;
 
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-
 import org.apache.log4j.Logger;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.OnlinePayment;
@@ -55,13 +49,26 @@ import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infstr.services.PersistenceService;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Transactional(readOnly = true)
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
+@Service
 public class SchedularService {
 
     private static final Logger LOGGER = Logger.getLogger(SchedularService.class);
+
+    @Autowired
+    @Qualifier("persistenceService")
     private PersistenceService persistenceService;
+
+    @Autowired
     private ReconciliationService reconciliationService;
 
     @Autowired
@@ -78,7 +85,7 @@ public class SchedularService {
                 .createQuery(
                         "select receipt from org.egov.collection.entity.OnlinePayment as receipt where receipt.status.code=:onlinestatuscode"
                                 + " and receipt.service.code=:paymentservicecode and receipt.createdDate<:thirtyminslesssysdate")
-                                .setMaxResults(50);
+                .setMaxResults(50);
         qry.setString("onlinestatuscode", CollectionConstants.ONLINEPAYMENT_STATUS_CODE_PENDING);
         qry.setString("paymentservicecode", CollectionConstants.SERVICECODE_AXIS);
         qry.setParameter("thirtyminslesssysdate", new Date(cal.getTimeInMillis()));
@@ -107,19 +114,10 @@ public class SchedularService {
                     LOGGER.info("$$$$$$ Online Receipt Persisted with Receipt Number: "
                             + onlinePaymentReceiptHeader.getReceiptnumber()
                             + (onlinePaymentReceiptHeader.getConsumerCode() != null ? " and consumer code: "
-                                    + onlinePaymentReceiptHeader.getConsumerCode() : "") + "; Time taken(ms) = "
-                                    + elapsedTimeInMillis);
+                            + onlinePaymentReceiptHeader.getConsumerCode() : "") + "; Time taken(ms) = "
+                            + elapsedTimeInMillis);
                 }
             }
         }
     }
-
-    public void setPersistenceService(final PersistenceService persistenceService) {
-        this.persistenceService = persistenceService;
-    }
-
-    public void setReconciliationService(final ReconciliationService reconciliationService) {
-        this.reconciliationService = reconciliationService;
-    }
-
 }

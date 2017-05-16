@@ -46,7 +46,7 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
-import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
+import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
@@ -344,9 +344,9 @@ public class ConsolidatedBudgetReportAction extends BaseFormAction {
         // this for jasper report
         bpBeanList.addAll(bpBeanDetList);
         final ReportRequest reportInput = new ReportRequest("consolidatedBudgetReport", bpBeanList, reportParams);
-        reportInput.setReportFormat(FileFormat.PDF);
-        contentType = ReportViewerUtil.getContentType(FileFormat.PDF);
-        fileName = "ConsolidatedBudgetReport." + FileFormat.PDF.toString().toLowerCase();
+        reportInput.setReportFormat(ReportFormat.PDF);
+        contentType = ReportViewerUtil.getContentType(ReportFormat.PDF);
+        fileName = "ConsolidatedBudgetReport." + ReportFormat.PDF.toString().toLowerCase();
         final ReportOutput reportOutput = reportService.createReport(reportInput);
         if (reportOutput != null && reportOutput.getReportOutputData() != null)
             inputStream = new ByteArrayInputStream(reportOutput.getReportOutputData());
@@ -376,9 +376,9 @@ public class ConsolidatedBudgetReportAction extends BaseFormAction {
         // this for jasper report
         bpBeanList.addAll(bpBeanDetList);
         final ReportRequest reportInput = new ReportRequest("consolidatedBudgetReport", bpBeanList, reportParams);
-        reportInput.setReportFormat(FileFormat.XLS);
-        contentType = ReportViewerUtil.getContentType(FileFormat.XLS);
-        fileName = "ConsolidatedBudgetReport." + FileFormat.XLS.toString().toLowerCase();
+        reportInput.setReportFormat(ReportFormat.XLS);
+        contentType = ReportViewerUtil.getContentType(ReportFormat.XLS);
+        fileName = "ConsolidatedBudgetReport." + ReportFormat.XLS.toString().toLowerCase();
         final ReportOutput reportOutput = reportService.createReport(reportInput);
         if (reportOutput != null && reportOutput.getReportOutputData() != null)
             inputStream = new ByteArrayInputStream(reportOutput.getReportOutputData());

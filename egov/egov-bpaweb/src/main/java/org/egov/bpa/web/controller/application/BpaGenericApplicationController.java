@@ -39,30 +39,57 @@
  */
 package org.egov.bpa.web.controller.application;
 
-import java.util.List;
+import static org.egov.ptis.constants.PropertyTaxConstants.ADMIN_HIERARCHY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WARD;
 
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.ArrayUtils;
+import org.egov.bpa.application.entity.ApplicationDocument;
+import org.egov.bpa.application.entity.BpaApplication;
+import org.egov.bpa.application.entity.BuildingCategory;
+import org.egov.bpa.application.entity.CheckListDetail;
 import org.egov.bpa.application.entity.ServiceType;
-import org.egov.bpa.application.entity.StakeHolder;
+import org.egov.bpa.application.entity.VillageName;
+import org.egov.bpa.application.entity.enums.ApplicantMode;
+import org.egov.bpa.application.entity.enums.StakeHolderType;
+import org.egov.bpa.application.service.CheckListDetailService;
+import org.egov.bpa.masters.service.BuildingCategoryService;
 import org.egov.bpa.masters.service.ServiceTypeService;
-import org.egov.bpa.masters.service.StakeHolderService;
+import org.egov.bpa.masters.service.VillageNameService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.multipart.MultipartFile;
 
 public abstract class BpaGenericApplicationController extends GenericWorkFlowController {
 
     @Autowired
     private BoundaryService boundaryService;
-
     @Autowired
     private ServiceTypeService serviceTypeService;
-
     @Autowired
-    private StakeHolderService stakeHolderService;
+    private VillageNameService villageNameService;
+    @Autowired
+    private CheckListDetailService checkListDetailService;
+    @Autowired
+    @Qualifier("fileStoreService")
+    protected FileStoreService fileStoreService;
+    @Autowired
+    private BuildingCategoryService buildingCategoryService;
 
     @ModelAttribute("zones")
     public List<Boundary> zones() {
@@ -74,16 +101,36 @@ public abstract class BpaGenericApplicationController extends GenericWorkFlowCon
     public List<ServiceType> getServiceTypeList() {
         return serviceTypeService.findAll();
     }
+    @ModelAttribute("checkListDetailList")
+    public List<CheckListDetail> checkListDetailList() {
+        return checkListDetailService.findActiveCheckListByChecklistType(BpaConstants.CHECKLIST_TYPE);
+    }
+    @ModelAttribute("buildingCategorYlist")
+    public List<BuildingCategory> getAllBuildingCategoryList() {
+        return buildingCategoryService.findAll();
+    }
+    @ModelAttribute("stakeHolderTypeList")
+    public List<StakeHolderType> getStakeHolderType() {
+        return Arrays.asList(StakeHolderType.values());
+    }
 
-    @ModelAttribute("stakeHolderList")
-    public List<StakeHolder> getStakeHolder() {
-        return stakeHolderService.findAll();
+    @ModelAttribute("villageNames")     
+    public List<VillageName> getVillage() {
+        return villageNameService.findAll();
+    }
+
+    
+    @ModelAttribute("electionwards")
+    public List<Boundary> wards() {
+
+        return boundaryService
+                .getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(WARD, ADMIN_HIERARCHY_TYPE);
     }
 
     @ModelAttribute("wards")
-    public List<Boundary> wards() {
-        return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(BpaConstants.ELECTIONWARD_BNDRY_TYPE,
-                PropertyTaxConstants.REVENUE_HIERARCHY_TYPE);
+    public List<Boundary> adminWards() {
+        return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(WARD,
+                BpaConstants.REVENUE_HIERARCHY_TYPE);
     }
 
     @ModelAttribute("street")
@@ -97,6 +144,45 @@ public abstract class BpaGenericApplicationController extends GenericWorkFlowCon
         return boundaryService
                 .getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(BpaConstants.LOCALITY,
                         BpaConstants.LOCATION_HIERARCHY_TYPE);
+    }
+    @ModelAttribute("applicationModes")
+    public  Map<String, String> applicationModes() {
+        return getApplicationModeMap();
+    }
+    
+    public Map<String, String> getApplicationModeMap() {
+        final Map<String, String> applicationModeMap = new LinkedHashMap<>(0);
+        applicationModeMap.put(ApplicantMode.NEW.toString(), ApplicantMode.NEW.name());
+        applicationModeMap.put(ApplicantMode.OTHERS.name(), ApplicantMode.OTHERS.name());
+        return applicationModeMap;
+    }
+
+    protected Set<FileStoreMapper> addToFileStore(final MultipartFile[] files) {
+        if (ArrayUtils.isNotEmpty(files))
+            return Arrays
+                    .asList(files)
+                    .stream()
+                    .filter(file -> !file.isEmpty())
+                    .map(file -> {
+                        try {
+                            return fileStoreService.store(file.getInputStream(), file.getOriginalFilename(),
+                                    file.getContentType(), BpaConstants.FILESTORE_MODULECODE);
+                        } catch (final Exception e) {
+                            throw new ApplicationRuntimeException("Error occurred while getting inputstream", e);
+                        }
+                    }).collect(Collectors.toSet());
+        else
+            return null;
+    }
+
+    protected void processAndStoreApplicationDocuments(final BpaApplication bpaApplication) {
+        if (!bpaApplication.getApplicationDocument().isEmpty())
+            for (final ApplicationDocument applicationDocument : bpaApplication.getApplicationDocument()) {
+                applicationDocument.setChecklistDetail(checkListDetailService.load(applicationDocument.getChecklistDetail()
+                        .getId()));
+                applicationDocument.setApplication(bpaApplication);
+                applicationDocument.setSupportDocs(addToFileStore(applicationDocument.getFiles()));
+            }
     }
 
 }

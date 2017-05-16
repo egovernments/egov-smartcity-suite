@@ -39,38 +39,37 @@
  */
 package org.egov.tl.web.response.adaptor;
 
-import java.lang.reflect.Type;
-
-import org.egov.tl.entity.dto.DemandnoticeForm;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import org.egov.tl.entity.dto.DemandNoticeForm;
 
-public class DemandNoticeAdaptor implements JsonSerializer<DemandnoticeForm> {
-	@Override
-	public JsonElement serialize(final DemandnoticeForm searchFormObj, final Type type,
-			final JsonSerializationContext jsc) {
-		final JsonObject jsonObject = new JsonObject();
-		if (searchFormObj != null) {
+import java.lang.reflect.Type;
 
-			jsonObject.addProperty("applicationNumber", searchFormObj.getApplicationNumber());
-			jsonObject.addProperty("licenseId", searchFormObj.getLicenseId());
-			jsonObject.addProperty("tlNumber", searchFormObj.getLicenseNumber());
-			jsonObject.addProperty("oldTLNumber", searchFormObj.getOldLicenseNumber());
-			jsonObject.addProperty("category", searchFormObj.getCategoryName());
-			jsonObject.addProperty("subCategory", searchFormObj.getSubCategoryName());
-			jsonObject.addProperty("tradeTitle", searchFormObj.getTradeTitle());
-			jsonObject.addProperty("tradeOwner", searchFormObj.getTradeOwnerName());
-			jsonObject.addProperty("tlArrearFee", searchFormObj.getTlArrearFee());
-			jsonObject.addProperty("tlCurrentFee", searchFormObj.getTlCurrentFee());
-			jsonObject.addProperty("tlArrearPenalty", searchFormObj.getTlArrearPenalty());
-			jsonObject.addProperty("status", searchFormObj.getStatus());
-			jsonObject.addProperty("ownerName", searchFormObj.getOwnerName());
-			jsonObject.addProperty("wardname", searchFormObj.getWarName());
+public class DemandNoticeAdaptor implements JsonSerializer<DemandNoticeForm> {
+    @Override
+    public JsonElement serialize(final DemandNoticeForm searchFormObj, final Type type,
+                                 final JsonSerializationContext jsc) {
+        final JsonObject jsonObject = new JsonObject();
+        if (searchFormObj != null) {
 
-		}
-		return jsonObject;
-	}
+            jsonObject.addProperty("applicationNumber", searchFormObj.getApplicationNumber());
+            jsonObject.addProperty("licenseId", searchFormObj.getLicenseId());
+            jsonObject.addProperty("tlNumber", searchFormObj.getLicenseNumber());
+            jsonObject.addProperty("oldTLNumber", searchFormObj.getOldLicenseNumber());
+            jsonObject.addProperty("category", searchFormObj.getCategoryName());
+            jsonObject.addProperty("subCategory", searchFormObj.getSubCategoryName());
+            jsonObject.addProperty("tradeTitle", searchFormObj.getTradeTitle());
+            jsonObject.addProperty("tradeOwner", searchFormObj.getTradeOwnerName());
+            jsonObject.addProperty("tlArrearFee", searchFormObj.getTlArrearFee());
+            jsonObject.addProperty("tlCurrentFee", searchFormObj.getTlCurrentFee());
+            jsonObject.addProperty("tlArrearPenalty", searchFormObj.getTlArrearPenalty());
+            jsonObject.addProperty("status", searchFormObj.getStatus());
+            jsonObject.addProperty("ownerName", searchFormObj.getOwnerName());
+            jsonObject.addProperty("wardname", searchFormObj.getWarName());
+
+        }
+        return jsonObject;
+    }
 }

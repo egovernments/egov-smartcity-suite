@@ -65,6 +65,7 @@ import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.SearchFormAction;
@@ -233,6 +234,7 @@ public class BillRegisterReportAction extends SearchFormAction {
         return NEW;
     }
 
+    @ReadOnly
     @ValidationErrorPage(value = "completeBill")
     @Action(value = "/report/billRegisterReport-billSearch")
     public String billSearch() throws Exception {

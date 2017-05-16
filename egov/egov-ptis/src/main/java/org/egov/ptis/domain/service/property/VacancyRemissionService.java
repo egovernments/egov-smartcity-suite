@@ -684,7 +684,7 @@ public class VacancyRemissionService {
     }
 
     public DocumentType getDocType(final String docname) {
-        return vacancyRemissionRepository.findDocumentTypeByName(docname);
+        return vacancyRemissionRepository.findDocumentTypeByNameAndTransactionType(docname, TransactionType.VACANCYREMISSION);
 
     }
 

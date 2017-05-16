@@ -59,7 +59,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.data.elasticsearch.core.query.SearchQuery;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -86,10 +85,9 @@ public class RestWaterTaxController {
     }
 
     /*
-     * Returns Total tax due for the water connection for a given ConsumerCode
-     * from ELastic Search
+     * Returns Total tax due for the water connection for a given ConsumerCode from ELastic Search
      */
-    @RequestMapping(value = "rest/watertax/totaldemandamount/", method = RequestMethod.GET, produces =APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "rest/watertax/totaldemandamount/", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
     public WaterTaxDue getTotalDemand() throws JsonGenerationException, JsonMappingException, IOException {
         final SearchQuery searchQuery = new NativeSearchQueryBuilder().withIndices(WATER_TAX_INDEX_NAME)
                 .addAggregation(AggregationBuilders.sum("totaldemand").field("totalDemand")).build();
@@ -102,8 +100,7 @@ public class RestWaterTaxController {
     }
 
     /*
-     * Returns Total tax due for list of water connections for a given
-     * PropertyIdentifier
+     * Returns Total tax due for list of water connections for a given PropertyIdentifier
      */
     @RequestMapping(value = {
             "rest/watertax/due/byptno/{assessmentNumber}" }, method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
@@ -117,20 +114,20 @@ public class RestWaterTaxController {
             "rest/watertax/connectiondetails/byptno/{assessmentNumber}" }, method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
     public List<WaterChargesDetails> getWaterConnectionDetailsByPropertyId(@PathVariable final String assessmentNumber)
             throws JsonGenerationException, JsonMappingException, IOException {
-        return connectionDetailService.getWaterTaxDetailsByPropertyId(assessmentNumber, null);
+        return connectionDetailService.getWaterTaxDetailsByPropertyId(assessmentNumber, null, null);
 
     }
 
     @RequestMapping(value = "rest/watertax/connectiondetails", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
-    public List<WaterChargesDetails> getWaterConnectionDetailsByPropertyId(WaterTaxDetailRequest waterTaxDetailRequest)
-            throws IOException {
+    public List<WaterChargesDetails> getWaterConnectionDetailsByPropertyId(
+            final WaterTaxDetailRequest waterTaxDetailRequest) throws IOException {
         return connectionDetailService.getWaterTaxDetailsByPropertyId(waterTaxDetailRequest.getAssessmentNumber(),
-                waterTaxDetailRequest.getUlbCode());
+                waterTaxDetailRequest.getUlbCode(), waterTaxDetailRequest.getConsumerNumber());
 
     }
-    
-    @RequestMapping(value =  "rest/watertax/updateConnectionForAmulgamation" , method = RequestMethod.POST, produces = APPLICATION_JSON_VALUE)
-    public String updateWaterConnectionForAmalagamation(@RequestBody WaterTaxDetailRequest waterTaxDetailRequest)
+
+    @RequestMapping(value = "rest/watertax/updateConnectionForAmulgamation", method = RequestMethod.POST, produces = APPLICATION_JSON_VALUE)
+    public String updateWaterConnectionForAmalagamation(@RequestBody final WaterTaxDetailRequest waterTaxDetailRequest)
             throws IOException {
         return connectionDetailService.updateWaterConnectionDetails(waterTaxDetailRequest);
     }

@@ -79,7 +79,6 @@ import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infstr.services.PersistenceService;
@@ -94,7 +93,6 @@ import org.egov.ptis.domain.entity.property.Floor;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
-import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.domain.service.transfer.PropertyTransferService;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -109,7 +107,6 @@ public class ViewPropertyAction extends BaseFormAction {
     private String propertyId;
     private BasicProperty basicProperty;
     private PropertyImpl property;
-    private String ownerAddress;
     private Map<String, Object> viewMap;
     private PropertyTaxUtil propertyTaxUtil;
     private String roleName;
@@ -136,8 +133,6 @@ public class ViewPropertyAction extends BaseFormAction {
     @Autowired
     private PropertyTaxCommonUtils propertyTaxCommonUtils;
 
-    private boolean isNagarPanchayat = false;
-
     private Map<String, Map<String, BigDecimal>> demandCollMap = new TreeMap<String, Map<String, BigDecimal>>();
 
     @Override
@@ -163,7 +158,7 @@ public class ViewPropertyAction extends BaseFormAction {
                 property = (PropertyImpl) getBasicProperty().getProperty();
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("viewForm : Property : " + property);
-            Ptdemand ptDemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(property);
+            final Ptdemand ptDemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(property);
             if (ptDemand == null) {
                 setErrorMessage("No Tax details for current Demand period.");
                 return "view";
@@ -171,28 +166,20 @@ public class ViewPropertyAction extends BaseFormAction {
             if (property.getPropertyDetail().getFloorDetails().size() > 0)
                 setFloorDetails(property);
             checkIsDemandActive(property);
-            if (getBasicProperty().getPropertyOwnerInfo() != null
-                    && !getBasicProperty().getPropertyOwnerInfo().isEmpty()) {
-                for (final PropertyOwnerInfo propOwner : getBasicProperty().getPropertyOwnerInfo()) {
-                    final List<Address> addrSet = propOwner.getOwner().getAddress();
-                    for (final Address address : addrSet) {
-                        ownerAddress = address.toString();
-                        viewMap.put("doorNo",
-                                address.getHouseNoBldgApt() == null ? NOT_AVAILABLE : address.getHouseNoBldgApt());
-                        break;
-                    }
-                }
-                viewMap.put("ownerAddress", ownerAddress == null ? NOT_AVAILABLE : ownerAddress);
-                viewMap.put("ownershipType", basicProperty.getProperty() != null ? basicProperty.getProperty().getPropertyDetail().getPropertyTypeMaster().getType()
-                        : property.getPropertyDetail().getPropertyTypeMaster()
-                        .getType());
-            }
+            viewMap.put("doorNo", getBasicProperty().getAddress().getHouseNoBldgApt() == null ? NOT_AVAILABLE
+                    : getBasicProperty().getAddress().getHouseNoBldgApt());
+            viewMap.put("ownerAddress",
+                    getBasicProperty().getAddress() == null ? NOT_AVAILABLE : getBasicProperty().getAddress());
+            viewMap.put("ownershipType", basicProperty.getProperty() != null
+                    ? basicProperty.getProperty().getPropertyDetail().getPropertyTypeMaster().getType()
+                    : property.getPropertyDetail().getPropertyTypeMaster()
+                            .getType());
             if (!property.getIsExemptedFromTax()) {
                 demandCollMap = propertyTaxUtil.prepareDemandDetForView(property,
                         propertyTaxCommonUtils.getCurrentInstallment());
-                for (Entry<String, Map<String, BigDecimal>> entry : demandCollMap.entrySet()) {
-                    String key = entry.getKey();
-                    Map<String, BigDecimal> reasonDmd = entry.getValue();
+                for (final Entry<String, Map<String, BigDecimal>> entry : demandCollMap.entrySet()) {
+                    final String key = entry.getKey();
+                    final Map<String, BigDecimal> reasonDmd = entry.getValue();
                     if (key.equals(CURRENTYEAR_FIRST_HALF)) {
                         viewMap.put("firstHalf", CURRENTYEAR_FIRST_HALF);
                         viewMap.put(
@@ -209,7 +196,7 @@ public class ViewPropertyAction extends BaseFormAction {
                                 reasonDmd.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY) != null ? reasonDmd
                                         .get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY) : BigDecimal.ZERO);
                         viewMap.put(
-                                "firstHalfTotal",reasonDmd.get(CURR_FIRSTHALF_DMD_STR));
+                                "firstHalfTotal", reasonDmd.get(CURR_FIRSTHALF_DMD_STR));
                         viewMap.put(
                                 "firstHalfTaxDue",
                                 reasonDmd.get(CURR_FIRSTHALF_DMD_STR)
@@ -231,7 +218,7 @@ public class ViewPropertyAction extends BaseFormAction {
                                 reasonDmd.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY) != null ? reasonDmd
                                         .get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY) : BigDecimal.ZERO);
                         viewMap.put(
-                                "secondHalfTotal",reasonDmd.get(CURR_SECONDHALF_DMD_STR));
+                                "secondHalfTotal", reasonDmd.get(CURR_SECONDHALF_DMD_STR));
                         viewMap.put(
                                 "secondHalfTaxDue",
                                 reasonDmd.get(CURR_SECONDHALF_DMD_STR)
@@ -429,7 +416,7 @@ public class ViewPropertyAction extends BaseFormAction {
         return errorMessage;
     }
 
-    public void setErrorMessage(String errorMessage) {
+    public void setErrorMessage(final String errorMessage) {
         this.errorMessage = errorMessage;
     }
 
@@ -437,15 +424,14 @@ public class ViewPropertyAction extends BaseFormAction {
         return propertyTaxUtil.checkIsNagarPanchayat();
     }
 
-    public void setIsNagarPanchayat(boolean isNagarPanchayat) {
-        this.isNagarPanchayat = isNagarPanchayat;
+    public void setIsNagarPanchayat(final boolean isNagarPanchayat) {
     }
 
     public Map<String, Map<String, BigDecimal>> getDemandCollMap() {
         return demandCollMap;
     }
 
-    public void setDemandCollMap(Map<String, Map<String, BigDecimal>> demandCollMap) {
+    public void setDemandCollMap(final Map<String, Map<String, BigDecimal>> demandCollMap) {
         this.demandCollMap = demandCollMap;
     }
 
@@ -453,7 +439,7 @@ public class ViewPropertyAction extends BaseFormAction {
         return isCitizen;
     }
 
-    public void setIsCitizen(String isCitizen) {
+    public void setIsCitizen(final String isCitizen) {
         this.isCitizen = isCitizen;
     }
 
@@ -461,7 +447,7 @@ public class ViewPropertyAction extends BaseFormAction {
         return propertyTaxCommonUtils;
     }
 
-    public void setPropertyTaxCommonUtils(PropertyTaxCommonUtils propertyTaxCommonUtils) {
+    public void setPropertyTaxCommonUtils(final PropertyTaxCommonUtils propertyTaxCommonUtils) {
         this.propertyTaxCommonUtils = propertyTaxCommonUtils;
     }
 

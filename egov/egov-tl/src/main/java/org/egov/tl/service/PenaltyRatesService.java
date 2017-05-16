@@ -39,6 +39,7 @@
  */
 package org.egov.tl.service;
 
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.utils.DateUtils;
 import org.egov.tl.entity.License;
 import org.egov.tl.entity.LicenseAppType;
@@ -72,11 +73,10 @@ public class PenaltyRatesService {
         return penaltyRatesRepository.save(penaltyRates);
     }
 
+    @ReadOnly
     public List<PenaltyRates> search(Long licenseAppType) {
-        if (licenseAppType != null)
-            return penaltyRatesRepository.findByLicenseAppTypeIdOrderByIdAsc(licenseAppType);
-        else
-            return penaltyRatesRepository.findAll();
+        return licenseAppType != null ?
+                penaltyRatesRepository.findByLicenseAppTypeIdOrderByIdAsc(licenseAppType) : penaltyRatesRepository.findAll();
     }
 
     @Transactional

@@ -55,6 +55,7 @@ import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.egf.model.Statement;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.EgovMasterDataCaching;
@@ -263,12 +264,14 @@ public class BalanceSheetReportAction extends BaseFormAction {
         return "report";
     }
 
+    @ReadOnly
     @Action(value = "/report/balanceSheetReport-generateBalanceSheetSubReport")
     public String generateBalanceSheetSubReport() {
         populateDataSourceForSchedule();
         return "scheduleResults";
     }
 
+    @ReadOnly
     @Action(value = "/report/balanceSheetReport-generateScheduleReport")
     public String generateScheduleReport() {
         populateDataSourceForAllSchedules();
@@ -276,6 +279,7 @@ public class BalanceSheetReportAction extends BaseFormAction {
     }
 
     /* for Detailed */
+    @ReadOnly
     @SkipValidation
     @Action(value = "/report/balanceSheetReport-generateScheduleReportDetailed")
     public String generateScheduleReportDetailed() {
@@ -316,12 +320,15 @@ public class BalanceSheetReportAction extends BaseFormAction {
             balanceSheet.setFunds(balanceSheetService.getFunds());
         balanceSheetScheduleService.populateDataForAllSchedulesDetailed(balanceSheet);
     }
+
+    @ReadOnly
     @Action(value = "/report/balanceSheetReport-printBalanceSheetReport")
     public String printBalanceSheetReport() {
         populateDataSource();
         return "report";
     }
 
+    @ReadOnly
     @Action(value = "/report/balanceSheetReport-generateBalanceSheetPdf")
     public String generateBalanceSheetPdf() throws Exception {
         populateDataSource();
@@ -333,6 +340,7 @@ public class BalanceSheetReportAction extends BaseFormAction {
         return BALANCE_SHEET_PDF;
     }
 
+    @ReadOnly
     @Action(value = "/report/balanceSheetReport-generateBalanceSheetXls")
     public String generateBalanceSheetXls() throws Exception {
         populateDataSource();
@@ -349,6 +357,7 @@ public class BalanceSheetReportAction extends BaseFormAction {
         return BALANCE_SHEET_XLS;
     }
 
+    @ReadOnly
     @Action(value = "/report/balanceSheetReport-generateSchedulePdf")
     public String generateSchedulePdf() throws Exception {
         populateDataSourceForAllSchedules();
@@ -360,6 +369,7 @@ public class BalanceSheetReportAction extends BaseFormAction {
         return BALANCE_SHEET_PDF;
     }
 
+    @ReadOnly
     @Action(value = "/report/balanceSheetReport-generateScheduleXls")
     public String generateScheduleXls() throws Exception {
         populateDataSourceForAllSchedules();
@@ -372,6 +382,7 @@ public class BalanceSheetReportAction extends BaseFormAction {
     }
 
     /* for detailed */
+    @ReadOnly
     @Action(value = "/report/balanceSheetReport-generateDetailedSchedulePdf")
     public String generateDetailedSchedulePdf() throws Exception {
         populateDataSourceForAllSchedulesDetailed();
@@ -384,6 +395,7 @@ public class BalanceSheetReportAction extends BaseFormAction {
     }
 
     /* for detailed */
+    @ReadOnly
     @Action(value = "/report/balanceSheetReport-generateDetailedScheduleXls")
     public String generateDetailedScheduleXls() throws Exception {
         populateDataSourceForAllSchedulesDetailed();
@@ -395,6 +407,7 @@ public class BalanceSheetReportAction extends BaseFormAction {
         return BALANCE_SHEET_XLS;
     }
 
+    @ReadOnly
     @Action(value = "/report/balanceSheetReport-generateBalanceSheetSchedulePdf")
     public String generateBalanceSheetSchedulePdf() throws Exception {
         populateDataSourceForSchedule();
@@ -405,6 +418,7 @@ public class BalanceSheetReportAction extends BaseFormAction {
         return BALANCE_SHEET_PDF;
     }
 
+    @ReadOnly
     @Action(value = "/report/balanceSheetReport-generateBalanceSheetScheduleXls")
     public String generateBalanceSheetScheduleXls() throws Exception {
         populateDataSourceForSchedule();

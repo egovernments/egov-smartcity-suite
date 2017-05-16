@@ -41,14 +41,12 @@
 package org.egov.tl.web.actions.viewtradelicense;
 
 import org.apache.struts2.ServletActionContext;
-import org.apache.struts2.convention.annotation.Actions;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.eis.entity.Assignment;
-import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.web.struts.annotation.ValidationErrorPageExt;
 import org.egov.tl.entity.TradeLicense;
@@ -75,8 +73,6 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     private String applicationNo;
     private Long licenseid;
     @Autowired
-    private ReportService reportService;
-    @Autowired
     private TradeLicenseService tradeLicenseService;
 
     @Override
@@ -92,10 +88,7 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
         return super.showForApproval();
     }
 
-    @Actions({
-            @Action(value = "/viewtradelicense/viewTradeLicense-view"),
-            @Action(value = "/public/viewtradelicense/viewTradeLicense-view")
-    })
+    @Action(value = "/viewtradelicense/viewTradeLicense-view")
     public String view() {
         if (license() != null && license().getId() != null)
             tradeLicense = tradeLicenseService.getLicenseById(license().getId());
@@ -111,7 +104,7 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
         setLicenseIdIfServletRedirect();
         tradeLicense = tradeLicenseService.getLicenseById(license().getId());
         reportId = reportViewerUtil
-                .addReportToTempCache(reportService.createReport(tradeLicenseService.prepareReportInputData(license())));
+                .addReportToTempCache(tradeLicenseService.generateLicenseCertificate(license()));
         return "report";
     }
 

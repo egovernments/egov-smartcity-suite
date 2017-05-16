@@ -39,16 +39,17 @@
  */
 package org.egov.ptis.domain.entity.property;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.ptis.domain.entity.objection.RevisionPetition;
 import org.egov.ptis.domain.entity.recovery.Recovery;
 import org.egov.ptis.notice.PtNotice;
+
+import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * This is the interface for the BasicProperty which represents the Basic, Minimum details for the Property. Every Basicproprty
@@ -58,188 +59,187 @@ import org.egov.ptis.notice.PtNotice;
  * @version 2.00
  * @see BasicPropertyImpl.java
  */
-public interface BasicProperty {
-    public Long getId();
+public interface BasicProperty extends Serializable {
 
-    public void setId(Long id);
+    Long getId();
 
-    public User getCreatedBy();
+    void setId(Long id);
 
-    public void setCreatedBy(User createdBy);
+    User getCreatedBy();
 
-    public Date getCreatedDate();
+    void setCreatedBy(User createdBy);
 
-    public void setCreatedDate(Date createdDate);
+    Date getCreatedDate();
 
-    public User getModifiedBy();
+    void setCreatedDate(Date createdDate);
 
-    public void setModifiedBy(User modifiedBy);
+    User getModifiedBy();
 
-    public Date getModifiedDate();
+    void setModifiedBy(User modifiedBy);
 
-    public void setModifiedDate(Date modifiedDate);
+    Date getModifiedDate();
 
-    public Boolean isActive();
+    void setModifiedDate(Date modifiedDate);
 
-    public PropertyID getPropertyID();
+    Boolean isActive();
 
-    public PropertyAddress getAddress();
+    PropertyID getPropertyID();
 
-    public Property getProperty();
+    void setPropertyID(PropertyID propertyID);
 
-    public void setActive(Boolean active);
+    PropertyAddress getAddress();
 
-    public void setPropertyID(PropertyID propertyID);
+    void setAddress(PropertyAddress address);
 
-    public void setAddress(PropertyAddress address);
+    Property getProperty();
 
-    public String getUpicNo();
+    String getUpicNo();
 
-    public void setUpicNo(String UpicNo);
+    void setUpicNo(String UpicNo);
 
-    public String getOldMuncipalNum();
+    String getOldMuncipalNum();
 
-    public void setOldMuncipalNum(String oldMuncipalNum);
+    void setOldMuncipalNum(String oldMuncipalNum);
 
-    public Boundary getBoundary();
+    Boundary getBoundary();
 
-    public void setBoundary(Boundary boundary);
+    void setBoundary(Boundary boundary);
 
-    public void setPropertyStatusValuesSet(Set<PropertyStatusValues> propertyStatusValuesSet);
+    Set<PropertyStatusValues> getPropertyStatusValuesSet();
 
-    public Set<PropertyStatusValues> getPropertyStatusValuesSet();
+    void setPropertyStatusValuesSet(Set<PropertyStatusValues> propertyStatusValuesSet);
 
-    public void addPropertyStatusValues(PropertyStatusValues propertyStatusValues);
+    void addPropertyStatusValues(PropertyStatusValues propertyStatusValues);
 
-    public void removePropertyStatusValues(PropertyStatusValues propertyStatusValues);
+    void removePropertyStatusValues(PropertyStatusValues propertyStatusValues);
 
-    // public PropertyReference getPropertyReference();
+    void setPropertyReference(PropertyReference propertyReference);
 
-    public void setPropertyReference(PropertyReference propertyReference);
+    // PropertyReference getPropertyReference();
 
-    public Set<PropertyMutation> getPropertyMutations();
+    Set<PropertyMutation> getPropertyMutations();
 
-    public void setPropertyMutations(Set<PropertyMutation> propMutationSet);
+    void setPropertyMutations(Set<PropertyMutation> propMutationSet);
 
-    public PropertyMutationMaster getPropertyMutationMaster();
+    PropertyMutationMaster getPropertyMutationMaster();
 
-    public void setPropertyMutationMaster(PropertyMutationMaster propertyMutationMaster);
+    void setPropertyMutationMaster(PropertyMutationMaster propertyMutationMaster);
 
-    public Date getPropOccupationDate();
+    Date getPropOccupationDate();
 
-    public void setPropOccupationDate(Date propOccupationDate);
+    void setPropOccupationDate(Date propOccupationDate);
 
-    public Set<Property> getPropertySet();
+    Set<Property> getPropertySet();
 
-    public void setPropertySet(Set<Property> propertySet);
+    void setPropertySet(Set<Property> propertySet);
 
-    public void addProperty(Property property);
+    void addProperty(Property property);
 
-    public void removeProperty(Property property);
+    void removeProperty(Property property);
 
-    public PropertyStatus getStatus();
+    PropertyStatus getStatus();
 
-    public void setStatus(PropertyStatus propertyStatus);
+    void setStatus(PropertyStatus propertyStatus);
 
-    public String getExtraField1();
+    String getExtraField1();
 
-    public void setExtraField1(String extraField1);
+    void setExtraField1(String extraField1);
 
-    public String getExtraField2();
+    String getExtraField2();
 
-    public void setExtraField2(String extraField2);
+    void setExtraField2(String extraField2);
 
-    public String getExtraField3();
+    String getExtraField3();
 
-    public void setExtraField3(String extraField3);
+    void setExtraField3(String extraField3);
 
-    public boolean validateBasicProp();
+    boolean validateBasicProp();
 
-    public String getGisReferenceNo();
+    String getGisReferenceNo();
 
-    public void setGisReferenceNo(String gisReferenceNo);
+    void setGisReferenceNo(String gisReferenceNo);
 
-    public Set<PtNotice> getNotices();
+    Set<PtNotice> getNotices();
 
-    public void setNotices(Set<PtNotice> noticeForms);
+    void setNotices(Set<PtNotice> noticeForms);
 
-    public void addNotice(PtNotice ptNotice);
+    void addNotice(PtNotice ptNotice);
 
-    public void removeNotice(PtNotice ptNotice);
+    void removeNotice(PtNotice ptNotice);
 
-    public Set<RevisionPetition> getObjections();
+    Set<RevisionPetition> getObjections();
 
-    public void setObjections(Set<RevisionPetition> objections);
+    void setObjections(Set<RevisionPetition> objections);
 
-    public void addObjection(RevisionPetition objection);
+    void addObjection(RevisionPetition objection);
 
-    public void removeObjection(RevisionPetition objection);
+    void removeObjection(RevisionPetition objection);
 
-    public Map<String, String> getPropertyWfStatus();
+    Map<String, String> getPropertyWfStatus();
 
-    public Set<Recovery> getRecoveries();
+    Set<Recovery> getRecoveries();
 
-    public void setRecoveries(Set<Recovery> recoveries);
+    void setRecoveries(Set<Recovery> recoveries);
 
-    public void addRecoveries(Recovery recovery);
+    void addRecoveries(Recovery recovery);
 
-    public void removeRecoveries(Recovery recovery);
+    void removeRecoveries(Recovery recovery);
 
-    public Set<PropertyDocs> getPropertyDocsSet();
+    Set<PropertyDocs> getPropertyDocsSet();
 
-    public void setPropertyDocsSet(Set<PropertyDocs> propertyDocsSet);
+    void setPropertyDocsSet(Set<PropertyDocs> propertyDocsSet);
 
-    public void addDocs(PropertyDocs propertyDocs);
+    void addDocs(PropertyDocs propertyDocs);
 
-    public void removeDocs(PropertyDocs propertyDocs);
+    void removeDocs(PropertyDocs propertyDocs);
 
-    public String getPartNo();
+    String getPartNo();
 
-    public void setPartNo(String partNo);
+    void setPartNo(String partNo);
 
-    public Boolean getAllChangesCompleted();
+    Boolean getAllChangesCompleted();
 
-    public void setAllChangesCompleted(Boolean allChangesCompleted);
+    void setAllChangesCompleted(Boolean allChangesCompleted);
 
-    public Property getWFProperty();
+    Property getWFProperty();
 
-    public Character getIsBillCreated();
+    Character getIsBillCreated();
 
-    public void setIsBillCreated(Character isBillCreated);
+    void setIsBillCreated(Character isBillCreated);
 
-    public String getBillCrtError();
+    String getBillCrtError();
 
-    public void setBillCrtError(String billCrtError);
+    void setBillCrtError(String billCrtError);
 
-    public Character getIsTaxXMLMigrated();
+    Character getIsTaxXMLMigrated();
 
-    public void setIsTaxXMLMigrated(Character isTaxXMLMigrated);
+    void setIsTaxXMLMigrated(Character isTaxXMLMigrated);
 
-    public boolean getIsDemandActive();
+    boolean getIsDemandActive();
 
-    public void setIsDemandActive(boolean isDemandActive);
+    void setIsDemandActive(boolean isDemandActive);
 
-    public PropertyImpl getActiveProperty();
+    PropertyImpl getActiveProperty();
 
-    public PropertyImpl getInactiveProperty();
+    void setActiveProperty(PropertyImpl activeProperty);
 
-    public void setActiveProperty(PropertyImpl activeProperty);
+    PropertyImpl getInactiveProperty();
 
-    public void setInactiveProperty(PropertyImpl inactiveProperty);
+    void setInactiveProperty(PropertyImpl inactiveProperty);
 
-    public String getVacantLandAssmtNo();
+    String getVacantLandAssmtNo();
 
-    public void setVacantLandAssmtNo(String vacantLandAssmtNo);
+    void setVacantLandAssmtNo(String vacantLandAssmtNo);
 
-    public String getRegdDocNo();
+    String getRegdDocNo();
 
-    public void setRegdDocNo(String regdDocNo);
+    void setRegdDocNo(String regdDocNo);
 
-    public Date getRegdDocDate();
+    Date getRegdDocDate();
 
-    public void setRegdDocDate(Date regdDocDate);
+    void setRegdDocDate(Date regdDocDate);
 
-    public List<PropertyOwnerInfo> getPropertyOwnerInfo();
+    List<PropertyOwnerInfo> getPropertyOwnerInfo();
 
     void setPropertyOwnerInfo(List<PropertyOwnerInfo> propertyOwnerSet);
 
@@ -257,53 +257,55 @@ public interface BasicProperty {
 
     String getAadharNumber();
 
-    public Map<String, String> getOwnerMap();
+    Map<String, String> getOwnerMap();
 
-    public Boolean getActive();
+    Boolean getActive();
 
-    public List<PropertyOwnerInfo> getPropertyOwnerInfoProxy();
+    void setActive(Boolean active);
 
-    public void setPropertyOwnerInfoProxy(List<PropertyOwnerInfo> propertyOwnerInfoProxy);
+    List<PropertyOwnerInfo> getPropertyOwnerInfoProxy();
 
-    public User getPrimaryOwner();
+    void setPropertyOwnerInfoProxy(List<PropertyOwnerInfo> propertyOwnerInfoProxy);
 
-    public Character getSource();
+    User getPrimaryOwner();
 
-    public void setSource(Character source);
+    Character getSource();
 
-    public Date getAssessmentdate();
+    void setSource(Character source);
 
-    public void setAssessmentdate(Date assessmentdate);
+    Date getAssessmentdate();
 
-    public List<VacancyRemission> getVacancyRemissions();
+    void setAssessmentdate(Date assessmentdate);
 
-    public void setVacancyRemissions(List<VacancyRemission> vacancyRemissionSet);
+    List<VacancyRemission> getVacancyRemissions();
 
-    public Property getPropertyForBasicProperty();
+    void setVacancyRemissions(List<VacancyRemission> vacancyRemissionSet);
 
-    public Double getLongitude();
+    Property getPropertyForBasicProperty();
 
-    public void setLongitude(Double longitude);
+    Double getLongitude();
 
-    public Double getLatitude();
+    void setLongitude(Double longitude);
 
-    public void setLatitude(Double latitude);
+    Double getLatitude();
 
-    public boolean isEligible();
+    void setLatitude(Double latitude);
 
-    public void setEligible(boolean eligible);
+    boolean isEligible();
 
-    public List<Amalgamation> getAmalgamations();
-    
-    public void setAmalgamations(List<Amalgamation> amalgamations);
-    
-    public List<Amalgamation> getAmalgamationsProxy();
+    void setEligible(boolean eligible);
 
-    public void setAmalgamationsProxy(List<Amalgamation> amalgamationsProxy);
-    
-    public void addAmalgamations(Amalgamation amalgamation);
+    List<Amalgamation> getAmalgamations();
 
-    public Character getIsIntgBillCreated();
+    void setAmalgamations(List<Amalgamation> amalgamations);
 
-    public void setIsIntgBillCreated(Character isIntgBillCreated);
+    List<Amalgamation> getAmalgamationsProxy();
+
+    void setAmalgamationsProxy(List<Amalgamation> amalgamationsProxy);
+
+    void addAmalgamations(Amalgamation amalgamation);
+
+    Character getIsIntgBillCreated();
+
+    void setIsIntgBillCreated(Character isIntgBillCreated);
 }

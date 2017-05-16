@@ -39,20 +39,6 @@
  */
 package org.egov.ptis.web.controller.transactions.notice;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.NON_VAC_LAND_PROPERTY_TYPE_CATEGORY;
-import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
-import static org.egov.ptis.constants.PropertyTaxConstants.RECOVERY_NOTICETYPES;
-import static org.egov.ptis.constants.PropertyTaxConstants.VAC_LAND_PROPERTY_TYPE_CATEGORY;
-import static org.egov.ptis.constants.PropertyTaxConstants.WARD;
-
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-
-import javax.validation.Valid;
-
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
@@ -76,10 +62,21 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import javax.validation.Valid;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
+import static org.egov.ptis.constants.PropertyTaxConstants.NON_VAC_LAND_PROPERTY_TYPE_CATEGORY;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
+import static org.egov.ptis.constants.PropertyTaxConstants.RECOVERY_NOTICETYPES;
+import static org.egov.ptis.constants.PropertyTaxConstants.VAC_LAND_PROPERTY_TYPE_CATEGORY;
+import static org.egov.ptis.constants.PropertyTaxConstants.WARD;
+
 /**
- *
  * @author subhash
- *
  */
 @Controller
 @RequestMapping(value = "/recoveryNotices")
@@ -144,7 +141,7 @@ public class RecoveryNoticesController {
 
     @RequestMapping(value = "/form", method = RequestMethod.POST)
     public String generateNotices(@Valid @ModelAttribute final NoticeRequest noticeRequest, final Model model,
-            final BindingResult errors) {
+                                  final BindingResult errors) {
         validate(noticeRequest, errors);
         if (errors.hasErrors()) {
             model.addAttribute(NOTICE_REQUEST, noticeRequest);
@@ -161,8 +158,8 @@ public class RecoveryNoticesController {
                 return RECOVERY_FORM;
             }
 
-            final JobDetailImpl jobDetail = (JobDetailImpl) beanProvider.getBean("recoveryNoticesJobDetails");
-            final Scheduler scheduler = (Scheduler) beanProvider.getBean("recoveryNoticesSchedular");
+            final JobDetailImpl jobDetail = (JobDetailImpl) beanProvider.getBean("recoveryNoticeJobDetail");
+            final Scheduler scheduler = (Scheduler) beanProvider.getBean("recoveryNoticeScheduler");
             try {
                 jobDetail.setName(
                         ApplicationThreadLocals.getTenantID().concat("_")

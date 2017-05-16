@@ -56,6 +56,8 @@ import org.egov.bpa.application.entity.BpaApplication;
 import org.egov.bpa.application.entity.CollectionApportioner;
 import org.egov.bpa.application.service.ApplicationBpaBillService;
 import org.egov.bpa.application.service.ApplicationBpaService;
+import org.egov.bpa.service.BpaUtils;
+import org.egov.bpa.utils.BPASmsAndEmailService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.integration.models.BillReceiptInfo;
@@ -94,6 +96,9 @@ public class BpaTaxCollection extends TaxCollection {
     private ModuleService moduleService;
 
     @Autowired
+    private BpaUtils bpaUtils;
+
+    @Autowired
     private ApplicationBpaService applicationBpaService;
 
     @Autowired
@@ -117,6 +122,9 @@ public class BpaTaxCollection extends TaxCollection {
 
     @Autowired
     private ChartOfAccountsHibernateDAO chartOfAccountsDAO;
+    
+    @Autowired
+    private BPASmsAndEmailService bpaSmsAndEmailService;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -205,10 +213,12 @@ public class BpaTaxCollection extends TaxCollection {
      */
     @Transactional
     public void updateBpaApplication(final EgDemand demand) {
-        final BpaApplication application = applicationBpaBillService
+        final BpaApplication application = applicationBpaService
                 .getApplicationByDemand(demand);
+        bpaUtils.redirectToBpaWorkFlow(null,application, BpaConstants.WF_NEW_STATE, "BPA Admission fees collected");
         // update status and initialize workflow
         applicationBpaService.saveAndFlushApplication(application);
+        bpaSmsAndEmailService.sendSMSAndEmail(application);
 
     }
 
@@ -413,7 +423,7 @@ public class BpaTaxCollection extends TaxCollection {
         BigDecimal currentInstallmentAmount = BigDecimal.ZERO;
         final BigDecimal advanceInstallmentAmount = BigDecimal.ZERO;
         final BigDecimal arrearAmount = BigDecimal.ZERO;
-        applicationBpaBillService
+        applicationBpaService
                 .getApplicationByDemand(egBill.getEgDemand());
         final List<ReceiptDetail> reciptDetailList = collectionService
                 .getReceiptDetailListByReceiptNumber(billReceiptInfo.getReceiptNum());

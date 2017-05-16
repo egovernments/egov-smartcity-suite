@@ -373,9 +373,14 @@ function cleardependentfield(dependentfield){
 
 function disableRefresh(e) {
 	var key = (e.which || e.keyCode);
-	if (e.ctrlKey)
+	if (e.ctrlKey){
 		if (key == 82 || key == 116)
 			e.preventDefault();
+	}
+	else if(key == 116){
+		e.preventDefault();
+	}
+			
 }
 
 function preventBack(){

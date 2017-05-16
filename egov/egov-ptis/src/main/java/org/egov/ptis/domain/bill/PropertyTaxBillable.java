@@ -294,13 +294,16 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
 
     @Override
     public String getDescription() {
-    	String description = "";
-    	if (!isMutationFeePayment()) {
-    		description = "Property Tax Assessment Number: " + getBasicProperty().getUpicNo();
-    	} else{
-    		description = "Property Tax Assessment Number: " + getBasicProperty().getUpicNo() + " (" + mutationApplicationNo + ")";
-    	}
-    	return description;
+        String description;
+        if (!isMutationFeePayment()) {
+            description = "Property Tax Assessment Number: " + getBasicProperty().getUpicNo();
+            if (getBasicProperty().getProperty().getPropertyDetail().isStructure())
+                description = PropertyTaxConstants.SUPER_STRUCTURE + "-" + description;
+        } else {
+            description = "Property Tax Assessment Number: " + getBasicProperty().getUpicNo() + " (" + mutationApplicationNo
+                    + ")";
+        }
+        return description;
     }
 
     /**
@@ -479,27 +482,30 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
             /*
              * calculating early payment rebate if rebate period active and there is no partial payment for current installment
              */
-            calculateRebate(installmentPenaltyAndRebate, instWiseDmdMap, instWiseAmtCollMap);
+            calculateRebate(installmentPenaltyAndRebate, instWiseDmdMap, currentDemand);
         }
 
         return installmentPenaltyAndRebate;
     }
 
     private void calculateRebate(final Map<Installment, PenaltyAndRebate> installmentPenaltyAndRebate,
-            final Map<Installment, BigDecimal> instWiseDmdMap, final Map<Installment, BigDecimal> instWiseAmtCollMap) {
+            final Map<Installment, BigDecimal> instWiseDmdMap,EgDemand currentDemand) {
         if (isEarlyPayRebateActive()) {
+            BigDecimal rebateAmount=propertyTaxUtil.getRebateAmount(currentDemand);
             Map<String, Installment> currInstallments = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
                 BigDecimal currentannualtax = instWiseDmdMap.get(currInstallments.get(CURRENTYEAR_FIRST_HALF)).add(
                         instWiseDmdMap.get(currInstallments.get(CURRENTYEAR_SECOND_HALF)));
-                if (installmentPenaltyAndRebate.get(currInstallments.get(CURRENTYEAR_FIRST_HALF)) != null) {
-                    installmentPenaltyAndRebate.get(currInstallments.get(CURRENTYEAR_FIRST_HALF)).setRebate(
-                            calculateEarlyPayRebate(currentannualtax));
-                } else {
-                    PenaltyAndRebate currentpenaltyAndRebate = new PenaltyAndRebate();
-                    currentpenaltyAndRebate.setRebate(calculateEarlyPayRebate(currentannualtax));
-                    installmentPenaltyAndRebate.put(currInstallments.get(CURRENTYEAR_FIRST_HALF),
-                            currentpenaltyAndRebate);
-                }
+                if (rebateAmount.compareTo(BigDecimal.ZERO) == 0) {
+                    if (installmentPenaltyAndRebate.get(currInstallments.get(CURRENTYEAR_FIRST_HALF)) != null) {
+                        installmentPenaltyAndRebate.get(currInstallments.get(CURRENTYEAR_FIRST_HALF)).setRebate(
+                                calculateEarlyPayRebate(currentannualtax));
+                    } else {
+                        PenaltyAndRebate currentpenaltyAndRebate = new PenaltyAndRebate();
+                        currentpenaltyAndRebate.setRebate(calculateEarlyPayRebate(currentannualtax));
+                        installmentPenaltyAndRebate.put(currInstallments.get(CURRENTYEAR_FIRST_HALF),
+                                currentpenaltyAndRebate);
+                    }
+             }
         }
     }
 
@@ -621,4 +627,5 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
     public void setVacantLandTaxPayment(final boolean vacantLandTaxPayment) {
         this.vacantLandTaxPayment = vacantLandTaxPayment;
     }
+    
 }

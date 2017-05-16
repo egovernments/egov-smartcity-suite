@@ -66,7 +66,7 @@ $(document).ready(function(){
 					
 				}
 				else{
-					$('#donationChargesDiv').show();
+					$('#donationChargesDiv').hide();
 					$('#donationChargesInput').removeAttr('required');
 					$('#donationChargesInput').attr('disabled',true	);
 					$('#donationChargesInput').val(0.0);
