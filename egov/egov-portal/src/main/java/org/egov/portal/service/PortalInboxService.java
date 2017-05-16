@@ -100,9 +100,8 @@ public class PortalInboxService {
             if (portalInbox.getSlaEndDate() != null)
                 portalInbox.setSlaEndDate(slaEndDate);
             portalInbox.setState(state);
-            if (!containsUser(portalInbox.getPortalInboxUsers(), user.getId()))
-                if (user != null)
-                    createPortalUser(portalInbox, user);
+            if (user != null && !containsUser(portalInbox.getPortalInboxUsers(), user.getId()))
+                createPortalUser(portalInbox, user);
             portalInboxRepository.save(portalInbox);
         }
     }
