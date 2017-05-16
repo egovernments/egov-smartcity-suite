@@ -83,5 +83,19 @@
 		<put-attribute name="page-title" value="lbl.createfirm" cascade="true"/>
 		<put-attribute name="body" value="/WEB-INF/views/firm/firm-update.jsp"/>
 	</definition>
+    
+    <definition name="portalservicetype-search" extends="base_layout">
+      	<put-attribute name="page-title" value="title.servicetype" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/servicetype/portalservicetype-search.jsp"/>
+    </definition>
 	
+	 <definition name="portalservicetype-edit" extends="base_layout">
+      	<put-attribute name="page-title" value="title.servicetype" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/servicetype/portalservicetype-edit.jsp"/>
+    </definition>
+    
+    <definition name="portalservicetype-ack" extends="base_layout">
+      	<put-attribute name="page-title" value="title.servicetype" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/servicetype/portalservicetype-ack.jsp"/>
+    </definition>
 </tiles-definitions>
