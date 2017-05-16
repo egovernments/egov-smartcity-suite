@@ -40,6 +40,7 @@
 package org.egov.portal.service;
 
 import java.util.Date;
+import java.util.List;
 
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.exception.ApplicationRuntimeException;
@@ -70,35 +71,44 @@ public class PortalInboxService {
     @Transactional
     public void pushInboxMessage(final PortalInbox portalInbox) {
         if (portalInbox.getTempPortalInboxUser().isEmpty()) {
-            User user = getLoggedInUser();
-            if (user != null) {
-                if (UserType.BUSINESS.toString().equalsIgnoreCase(user.getType().toString()) || UserType.CITIZEN
-                        .toString().equalsIgnoreCase(user.getType().toString())) {
-                    PortalInboxUser portalInboxUser = new PortalInboxUser();
-                    portalInboxUser.setUser(user);
-                    portalInbox.getPortalInboxUsers().add(portalInboxUser);
-                    portalInboxUser.setPortalInbox(portalInbox);
-                } else
-                    throw new ApplicationRuntimeException("Logged in User must be a Citizen or Business User.");
-            }
-        } else {
+            final User user = getLoggedInUser();
+            if (user != null)
+                createPortalUser(portalInbox, user);
+        } else
             portalInbox.getPortalInboxUsers().addAll(portalInbox.getTempPortalInboxUser());
-        }
         portalInboxRepository.save(portalInbox);
+    }
+
+    private void createPortalUser(final PortalInbox portalInbox, final User user) {
+        if (UserType.BUSINESS.toString().equalsIgnoreCase(user.getType().toString())
+                || UserType.CITIZEN.toString().equalsIgnoreCase(user.getType().toString())) {
+            final PortalInboxUser portalInboxUser = new PortalInboxUser();
+            portalInboxUser.setUser(user);
+            portalInbox.getPortalInboxUsers().add(portalInboxUser);
+            portalInboxUser.setPortalInbox(portalInbox);
+        } else
+            throw new ApplicationRuntimeException("Logged in User must be a Citizen or Business User.");
     }
 
     @Transactional
     public void updateInboxMessage(final String applicationNumber, final Long moduleId, final String status,
             final Boolean isResolved, final Date slaEndDate, final State state, final User user) {
-        PortalInbox portalInbox = getPortalInboxByApplicationNo(applicationNumber, moduleId);
+        final PortalInbox portalInbox = getPortalInboxByApplicationNo(applicationNumber, moduleId);
         if (portalInbox != null) {
             portalInbox.setStatus(status);
             portalInbox.setResolved(isResolved);
             if (portalInbox.getSlaEndDate() != null)
                 portalInbox.setSlaEndDate(slaEndDate);
             portalInbox.setState(state);
+            if (!containsUser(portalInbox.getPortalInboxUsers(), user.getId()))
+                if (user != null)
+                    createPortalUser(portalInbox, user);
             portalInboxRepository.save(portalInbox);
         }
+    }
+
+    public boolean containsUser(final List<PortalInboxUser> list, final Long userId) {
+        return list.stream().anyMatch(item -> item.getUser().getId().equals(userId));
     }
 
     public PortalInbox getPortalInboxByApplicationNo(final String applicationNumber, final Long moduleId) {
