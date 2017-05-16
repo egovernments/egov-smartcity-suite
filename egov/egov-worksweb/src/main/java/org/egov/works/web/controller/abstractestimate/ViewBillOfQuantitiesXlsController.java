@@ -46,7 +46,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
-import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
+import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
@@ -80,7 +80,7 @@ public class ViewBillOfQuantitiesXlsController {
         final AbstractEstimate estimate = estimateService.getAbstractEstimateById(abstractEstimateId);
         final ReportRequest reportRequest = new ReportRequest("BillOfQuantities", estimate.getSORActivities(),
                 createHeaderParams(estimate, BOQ));
-        reportRequest.setReportFormat(FileFormat.XLS);
+        reportRequest.setReportFormat(ReportFormat.XLS);
         final ReportOutput reportOutput = reportService.createReport(reportRequest);
         final HttpHeaders headers = new HttpHeaders();
         headers.add("content-disposition",

@@ -53,7 +53,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.service.CFinancialYearService;
 import org.egov.infra.admin.master.service.BoundaryService;
-import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
+import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
@@ -312,11 +312,11 @@ public class ContractorWiseAbstractReportPDFController {
                                 : StringUtils.EMPTY);
         final HttpHeaders headers = new HttpHeaders();
         if (contentType.equalsIgnoreCase("pdf")) {
-            reportInput.setReportFormat(FileFormat.PDF);
+            reportInput.setReportFormat(ReportFormat.PDF);
             headers.setContentType(MediaType.parseMediaType("application/pdf"));
             headers.add("content-disposition", "inline;filename=ContractorWiseAbstractReport.pdf");
         } else {
-            reportInput.setReportFormat(FileFormat.XLS);
+            reportInput.setReportFormat(ReportFormat.XLS);
             headers.setContentType(MediaType.parseMediaType("application/vnd.ms-excel"));
             headers.add("content-disposition", "inline;filename=ContractorWiseAbstractReport.xls");
         }
