@@ -2099,6 +2099,8 @@ public class PropertyService {
                             document.getUploadsFileName().get(fileCount),
                             document.getUploadsContentType().get(fileCount++), FILESTORE_MODULE_NAME);
                     document.getFiles().add(fileStore);
+                    if (document.getId() != null && document.getType() != null)
+                        document.setType(documentTypePersistenceService.load(document.getType().getId(), DocumentType.class));
                 }
             }
             if (document.getId() == null || document.getType() == null)
