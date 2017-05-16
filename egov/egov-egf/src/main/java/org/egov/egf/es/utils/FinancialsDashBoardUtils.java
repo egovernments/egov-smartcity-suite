@@ -48,12 +48,15 @@
 package org.egov.egf.es.utils;
 
 import org.apache.commons.lang3.StringUtils;
+import org.egov.egf.bean.dashboard.FinancialsDetailResponse;
 import org.egov.egf.bean.dashboard.FinancialsDetailsRequest;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 
 public class FinancialsDashBoardUtils {
 
+    public static final String FUND = "fund";
+    public static final String FUNCTION = "function";
     private static final String ADM_WARD = "admWard";
     private static final String REGION = "regname";
     private static final String DISTRICT = "distname";
@@ -70,17 +73,18 @@ public class FinancialsDashBoardUtils {
     private static final String MAJOR_CODE = "majorcode";
     private static final String MINOR_CODE = "minorcode";
     private static final String DETAILED_CODE = "glcode";
+    private static final String DEPARTMENT = "department";
 
     public static String getAggregationGroupingField(final FinancialsDetailsRequest financialsDetailsRequest) {
         String aggregationField = DISTRICT;
 
         if (StringUtils.isNotBlank(financialsDetailsRequest.getAggregationLevel())) {
             aggregationField = setAggregateLevel(financialsDetailsRequest);
-            if ("fund".equalsIgnoreCase(financialsDetailsRequest.getAggregationLevel()))
+            if (FUND.equalsIgnoreCase(financialsDetailsRequest.getAggregationLevel()))
                 aggregationField = FUND_NAME;
-            if ("department".equalsIgnoreCase(financialsDetailsRequest.getAggregationLevel()))
+            if (DEPARTMENT.equalsIgnoreCase(financialsDetailsRequest.getAggregationLevel()))
                 aggregationField = DEPARTMENT_CODE;
-            if ("function".equalsIgnoreCase(financialsDetailsRequest.getAggregationLevel()))
+            if (FUNCTION.equalsIgnoreCase(financialsDetailsRequest.getAggregationLevel()))
                 aggregationField = FUNCTION_CODE;
             if ("fundsource".equalsIgnoreCase(financialsDetailsRequest.getAggregationLevel()))
                 aggregationField = FUNDSOURCE_CODE;
@@ -181,11 +185,11 @@ public class FinancialsDashBoardUtils {
         String aggregationField = DISTRICT;
         if (StringUtils.isNotBlank(financialsDetailsRequest.getAggregationLevel())) {
             aggregationField = setAggregateLevel(financialsDetailsRequest);
-            if ("fund".equalsIgnoreCase(financialsDetailsRequest.getAggregationLevel()))
+            if (FUND.equalsIgnoreCase(financialsDetailsRequest.getAggregationLevel()))
                 aggregationField = "fundname";
-            if ("department".equalsIgnoreCase(financialsDetailsRequest.getAggregationLevel()))
+            if (DEPARTMENT.equalsIgnoreCase(financialsDetailsRequest.getAggregationLevel()))
                 aggregationField = "departmentname";
-            if ("function".equalsIgnoreCase(financialsDetailsRequest.getAggregationLevel()))
+            if (FUNCTION.equalsIgnoreCase(financialsDetailsRequest.getAggregationLevel()))
                 aggregationField = "functionname";
 
 
@@ -204,16 +208,50 @@ public class FinancialsDashBoardUtils {
             aggregationField = GRADE;
         if ("ulb".equalsIgnoreCase(financialsDetailsRequest.getAggregationLevel()))
             aggregationField = ULBCODE;
-        if ("majorCoa".equalsIgnoreCase(financialsDetailsRequest.getAggregationLevel()))
+        if ("majorCode".equalsIgnoreCase(financialsDetailsRequest.getAggregationLevel()))
             aggregationField = MAJOR_CODE;
-        if ("minorCoa".equalsIgnoreCase(financialsDetailsRequest.getAggregationLevel()))
+        if ("minorCode".equalsIgnoreCase(financialsDetailsRequest.getAggregationLevel()))
             aggregationField = MINOR_CODE;
-        if ("detailedCoa".equalsIgnoreCase(financialsDetailsRequest.getAggregationLevel()))
+        if ("detailedCode".equalsIgnoreCase(financialsDetailsRequest.getAggregationLevel()))
             aggregationField = DETAILED_CODE;
         if ("admz".equalsIgnoreCase(financialsDetailsRequest.getAggregationLevel()))
             aggregationField = ADM_ZONE;
         if ("admw".equalsIgnoreCase(financialsDetailsRequest.getAggregationLevel()))
             aggregationField = ADM_WARD;
         return aggregationField;
+    }
+
+    public static void setValues(String keyName, FinancialsDetailResponse financialsDetail, String aggrField) {
+
+        if (DISTRICT.equalsIgnoreCase(aggrField))
+            financialsDetail.setDistrict(keyName);
+        if (REGION.equalsIgnoreCase(aggrField))
+            financialsDetail.setRegion(keyName);
+        if (GRADE.equalsIgnoreCase(aggrField))
+            financialsDetail.setGrade(keyName);
+        if (ULBCODE.equalsIgnoreCase(aggrField))
+            financialsDetail.setUlbName(keyName);
+        if (MAJOR_CODE.equalsIgnoreCase(aggrField))
+            financialsDetail.setMajorCode(keyName);
+        if (MINOR_CODE.equalsIgnoreCase(aggrField))
+            financialsDetail.setMinorCode(keyName);
+        if (DETAILED_CODE.equalsIgnoreCase(aggrField))
+            financialsDetail.setDetailedCode(keyName);
+        if (ADM_ZONE.equalsIgnoreCase(aggrField))
+            financialsDetail.setAdmZoneName(keyName);
+        if (ADM_WARD.equalsIgnoreCase(aggrField))
+            financialsDetail.setAdmWardName(keyName);
+        if (FUND_NAME.equalsIgnoreCase(aggrField))
+            financialsDetail.setFundCode(keyName);
+        if (DEPARTMENT_CODE.equalsIgnoreCase(aggrField))
+            financialsDetail.setDepartmentCode(keyName);
+        if (FUNCTION_CODE.equalsIgnoreCase(aggrField))
+            financialsDetail.setFunctionCode(keyName);
+        if (FUNDSOURCE_CODE.equalsIgnoreCase(aggrField))
+            financialsDetail.setFundSource(keyName);
+        if (SCHEME_CODE.equalsIgnoreCase(aggrField))
+            financialsDetail.setSchemeCode(keyName);
+        if (SUBSCHEME_CODE.equalsIgnoreCase(aggrField))
+            financialsDetail.setSubschemeCode(keyName);
     }
 }

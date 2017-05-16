@@ -51,6 +51,23 @@ import java.math.BigDecimal;
 
 public class FinancialsDetailResponse {
 
+    private String region;
+    private String district;
+    private String grade;
+    private String ulbName;
+    private String fromDate;
+    private String toDate;
+    private String admZoneName;
+    private String admWardName;
+    private String fundCode;
+    private String departmentCode;
+    private String functionCode;
+    private String fundSource;
+    private String schemeCode;
+    private String subschemeCode;
+    private String majorCode;
+    private String minorCode;
+    private String detailedCode;
     private BigDecimal cyIncomeDebitAmount = BigDecimal.ZERO;
     private BigDecimal lyIncomeDebitAmount = BigDecimal.ZERO;
     private BigDecimal cyIncomeCreditAmount = BigDecimal.ZERO;
@@ -83,23 +100,6 @@ public class FinancialsDetailResponse {
     private BigDecimal lyLiabilitiesOpbAmount = BigDecimal.ZERO;
     private BigDecimal cyAssetsOpbAmount = BigDecimal.ZERO;
     private BigDecimal lyAssetsOpbAmount = BigDecimal.ZERO;
-    private String region;
-    private String district;
-    private String grade;
-    private String ulbName;
-    private String fromDate;
-    private String toDate;
-    private String admZoneName;
-    private String admWardName;
-    private String fundCode;
-    private String departmentCode;
-    private String functionCode;
-    private String fundSource;
-    private String schemeCode;
-    private String subschemeCode;
-    private String majorCode;
-    private String minorCode;
-    private String detailedCode;
 
 
     public BigDecimal getCyIncomeDebitAmount() {
