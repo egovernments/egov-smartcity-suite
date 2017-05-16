@@ -53,20 +53,6 @@
 				<security:filter-chain pattern="/resources/**" filters="none" />
 				<security:filter-chain pattern="/index.jsp" filters="none" />
 				<security:filter-chain pattern="/error/**" filters="none" />
-				<security:filter-chain pattern="/reports/workprogressregister/searchform" filters="none" />
-				<security:filter-chain pattern="/reports/ajax-wincodestosearchworkprogressregister" filters="none" />
-				<security:filter-chain pattern="/reports/ajax-workprogressregister" filters="none" />
-				<security:filter-chain pattern="/reports/workprogressregister/pdf" filters="none" />
-				<security:filter-chain pattern="/reports/estimateabstractreport/departmentwise-searchform" filters="none" />
-				<security:filter-chain pattern="/reports/ajax-estimateabstractreportbydepartmentwise" filters="none" />
-				<security:filter-chain pattern="/lineestimate/getfinancilyearbyid" filters="none" />
-				<security:filter-chain pattern="/reports/estimateabstractreport/departmentwise/pdf" filters="none" />
-				<security:filter-chain pattern="/lineestimate/getsubschemesbyschemeid" filters="none" />				
-				<security:filter-chain pattern="/reports/estimateabstractreport/typeofworkwise-searchform" filters="none" />
-				<security:filter-chain pattern="/reports/ajax-estimateabstractreportbytypeofworkwise" filters="none" />
-				<security:filter-chain pattern="/reports/estimateabstractreport/typeofworkwise/pdf" filters="none" />
-				<security:filter-chain pattern="/lineestimate/getsubtypeofwork" filters="none" />
-				<security:filter-chain pattern="/public/**" filters="none"/>
 				<security:filter-chain pattern="/**"  filters="concurrentSessionFilter,securityContextPersistenceFilter,logoutFilter,authenticationProcessingFilter,securityContextHolderAwareRequestFilter,rememberMeAuthenticationFilter,anonymousAuthenticationFilter,exceptionTranslationFilter,filterSecurityInterceptor" />
 			</list> 
 		</constructor-arg>

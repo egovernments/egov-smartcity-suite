@@ -79,7 +79,7 @@ import com.google.gson.GsonBuilder;
  */
 
 @RestController
-@RequestMapping(value = "/public/worksdashboard")
+@RequestMapping(value = "/worksdashboard")
 public class StateLevelDashboardController {
 
     private static final String DATA = "{ \"data\":";
