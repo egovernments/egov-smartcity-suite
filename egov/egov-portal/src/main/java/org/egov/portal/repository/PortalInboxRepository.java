@@ -41,9 +41,19 @@ package org.egov.portal.repository;
 
 import org.egov.portal.entity.PortalInbox;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PortalInboxRepository extends JpaRepository<PortalInbox, Long> {
+
     PortalInbox findByApplicationNumberAndModule_Id(String applicationNumber, Long moduleId);
+
+    @Query("select count(*) from PortalInbox as pi where pi.resolved = :resolved")
+    Long getPortalInboxByStatus(@Param("resolved") boolean resolved);
+
+    @Query("select count(*) from PortalInbox")
+    Long getPortalInboxCount();
+
 }

@@ -1,5 +1,26 @@
 $(document).ready(function(){
 
+	$('.totalServicesAppliedHide').hide();
+	$('.totalServicesCompletedHide').hide();
+	
+	$('#totalServicesAppliedDiv').click(function() {
+		$('.servicesUnderScrutinyHide').hide();
+		$('.totalServicesCompletedHide').hide();
+		$('.totalServicesAppliedHide').show();
+	});
+	
+	$('#servicesUnderScrutinyDiv').click(function() {
+		$('.totalServicesAppliedHide').hide();
+		$('.totalServicesCompletedHide').hide();
+		$('.servicesUnderScrutinyHide').show();
+	});
+	
+	$('#servicesCmpletedDiv').click(function() {
+		$('.totalServicesAppliedHide').hide();
+		$('.servicesUnderScrutinyHide').hide();
+		$('.totalServicesCompletedHide').show();
+	});
+	
   var module;
 
   $('.services .content').matchHeight();
@@ -71,4 +92,8 @@ function rightcontentheight(){
 //Short code
 function matchRuleShort(str, rule) {
   return new RegExp("^" + rule.split("*").join(".*") + "$").test(str);
+}
+
+function showApplication(url) {
+	window.open(url , "", "height=650,width=980,scrollbars=yes,left=0,top=0,status=yes");
 }

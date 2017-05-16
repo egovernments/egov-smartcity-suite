@@ -77,4 +77,13 @@ public class PortalServiceTypeService {
     public void update(final PortalServiceType portalService) {
         portalServiceTypeRepository.save(portalService);
     }
+
+    public List<String> getDistinctModuleNames() {
+        return portalServiceTypeRepository.getDistinctModuleNames();
+    }
+
+    public List<PortalServiceType> getAllPortalService() {
+        return portalServiceTypeRepository.findAll();
+    }
+
 }

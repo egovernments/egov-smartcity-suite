@@ -68,6 +68,14 @@ public class PortalInboxService {
         this.portalInboxRepository = portalInboxRepository;
     }
 
+    public Long getPortalInboxByStatus(final boolean resolved) {
+        return portalInboxRepository.getPortalInboxByStatus(resolved);
+    }
+
+    public Long getPortalInboxCount() {
+        return portalInboxRepository.getPortalInboxCount();
+    }
+
     @Transactional
     public void pushInboxMessage(final PortalInbox portalInbox) {
         if (portalInbox.getTempPortalInboxUser().isEmpty()) {

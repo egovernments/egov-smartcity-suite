@@ -39,11 +39,31 @@
  */
 package org.egov.portal.service;
 
+import java.util.List;
+
+import org.egov.portal.entity.PortalInboxUser;
+import org.egov.portal.repository.PortalInboxUserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
 public class PortalInboxUserService {
+
+    @Autowired
+    private PortalInboxUserRepository portalInboxUserRepository;
+
+    public List<PortalInboxUser> getPortalInboxByResolved(final Long userId, final boolean resolved) {
+        return portalInboxUserRepository.getPortalInboxByResolved(userId, resolved);
+    }
+
+    public List<PortalInboxUser> getPortalInboxByUserId(final Long userId) {
+        return portalInboxUserRepository.findByUser_Id(userId);
+    }
+
+    public Long getPortalInboxUserCount(final Long userId) {
+        return portalInboxUserRepository.getPortalInboxUserCount(userId);
+    }
 
 }

@@ -128,7 +128,7 @@ public class HomeController {
     public String showHome(HttpServletRequest request, HttpServletResponse response, ModelMap modelData) {
         User user = securityUtils.getCurrentUser();
         setUserLocale(user, request, response);
-        if (securityUtils.currentUserType().equals(UserType.CITIZEN))
+        if (securityUtils.currentUserType().equals(UserType.CITIZEN) || securityUtils.currentUserType().equals(UserType.BUSINESS))
             return "redirect:/../portal/home";
         else
             return prepareOfficialHomePage(user, modelData);

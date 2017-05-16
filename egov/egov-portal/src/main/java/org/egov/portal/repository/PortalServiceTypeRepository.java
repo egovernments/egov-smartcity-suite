@@ -61,4 +61,7 @@ public interface PortalServiceTypeRepository
     @Query("select distinct pst.name from PortalServiceType pst where pst.module.id=:moduleId order by pst.name asc")
     List<String> findAllServiceTypes(@Param("moduleId") Long moduleId);
 
+    @Query("select distinct(module.displayName) from PortalServiceType as pst")
+    List<String> getDistinctModuleNames();
+
 }

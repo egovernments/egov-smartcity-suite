@@ -51,7 +51,19 @@
     </definition>
 
 	<definition name="error" template="/WEB-INF/views/template/error.jsp"/>
+	
+	<definition name="homepage_base_layout" template="/WEB-INF/views/template/homepage.jsp">
+        <put-attribute name="title" value="eGov Urban Portal"/>
+        <put-attribute name="header" value="/WEB-INF/views/template/homepage_header.jsp"/>
+        <put-attribute name="body" value=""/>
+        <put-attribute name="footer" value="/WEB-INF/views/template/footer.jsp"/>
+    </definition>
 
+    <definition name="business-home" extends="homepage_base_layout">
+        <put-attribute name="page-title" value="title.citizenHome" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/business-home.jsp"/>
+    </definition>
+    
     <definition name="citizen-home" extends="base_layout">
         <put-attribute name="page-title" value="title.citizenHome" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/citizen-home.jsp"/>

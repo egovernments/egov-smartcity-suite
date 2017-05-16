@@ -114,6 +114,8 @@ public class PortalInbox extends AbstractAuditable {
 
     private boolean resolved;
 
+    private Date resolvedDate;
+
     private Date slaEndDate;
 
     @Temporal(TemporalType.TIMESTAMP)
@@ -275,8 +277,16 @@ public class PortalInbox extends AbstractAuditable {
         return tempPortalInboxUser;
     }
 
-    public void setTempPortalInboxUser(List<PortalInboxUser> tempPortalInboxUser) {
+    public void setTempPortalInboxUser(final List<PortalInboxUser> tempPortalInboxUser) {
         this.tempPortalInboxUser = tempPortalInboxUser;
+    }
+
+    public Date getResolvedDate() {
+        return resolvedDate;
+    }
+
+    public void setResolvedDate(final Date resolvedDate) {
+        this.resolvedDate = resolvedDate;
     }
 
 }
