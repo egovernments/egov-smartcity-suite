@@ -173,6 +173,8 @@ public interface PropertyTaxConstants {
     public static final String GRP_INSPECTION_COMPLETE = "GRP:Inspection completed";
     public static final String GRP_REGISTRATION = "GRP:Registration";
     public static final String GRP_WF_REGISTERED = "GRP:Registered";
+    public static final String RP_NEW = "RP:NEW";
+    public static final String GRP_NEW = "GRP:NEW";
     public static final String GRP_CREATED = "GRP:CREATED";
     public static final String NATURE_OF_WORK_GRP = "GRP";
     public static final String NATURE_OF_WORK_RP = "RP";

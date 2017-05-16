@@ -157,7 +157,7 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
                 "namespace", "/bills", "indexNumber", "${assessmentNum}" }),
         @Result(name = APPLICATION_TYPE_VACANCY_REMISSION, type = "redirect", location = "../vacancyremission/create/${assessmentNum},${mode}", params = {
                 "meesevaApplicationNumber", "${meesevaApplicationNumber}", "applicationSource", "${applicationSource}" }),
-        @Result(name = APPLICATION_TYPE_TAX_EXEMTION, type = "redirect", location = "..//exemption/form/${assessmentNum}", params = {
+        @Result(name = APPLICATION_TYPE_TAX_EXEMTION, type = "redirect", location = "../exemption/form/${assessmentNum}", params = {
                 "meesevaApplicationNumber", "${meesevaApplicationNumber}", "applicationSource", "${applicationSource}" }),
         @Result(name = APPLICATION_TYPE_EDIT_DEMAND, type = "redirectAction", location = "editDemand-newEditForm", params = {
                 "namespace", "/edit", "propertyId", "${assessmentNum}" }),

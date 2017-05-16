@@ -1022,10 +1022,13 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         return propertyMutation.getType().equals(ADDTIONAL_RULE_FULL_TRANSFER) ? null : assignment;
     }
     
-    private BigDecimal getWaterTaxDues(){
-        return propertyService.getWaterTaxDues(assessmentNo).get(PropertyTaxConstants.WATER_TAX_DUES) == null ? BigDecimal.ZERO : new BigDecimal(
-                Double.valueOf((Double) propertyService.getWaterTaxDues(assessmentNo).get("currentInstDemand")));
-    }
+	private BigDecimal getWaterTaxDues() {
+		BigDecimal waterTaxDues = BigDecimal.ZERO;
+		Map<String, Object> waterTaxDetails = propertyService.getWaterTaxDues(assessmentNo);
+		if (waterTaxDetails.get("currentInstDemand") != null)
+			waterTaxDues = BigDecimal.valueOf((double) waterTaxDetails.get("currentInstDemand"));
+		return waterTaxDues;
+	}
     
     private Boolean isUnderWtmsWF(){
         return propertyService.getWaterTaxDues(assessmentNo).get(PropertyTaxConstants.UNDER_WTMS_WF) == null
