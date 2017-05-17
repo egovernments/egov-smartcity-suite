@@ -169,7 +169,7 @@ public class DrillDownReportService {
             final String locality) {
 
         query.append(
-                " WHERE cd.status  = cs.id and cd.complainttype= ctype.id  and cd.state_id = state.id and emp.isprimary = true");
+                " WHERE cd.status  = cs.id and cd.complainttype= ctype.id  and cd.state_id = state.id and emp.isprimary = true and emp.todate >= :currdate");
 
         if (fromDate != null && toDate != null)
             query.append(" and ( cd.createddate BETWEEN :fromDates and :toDates) ");
@@ -221,11 +221,11 @@ public class DrillDownReportService {
         else if (fromDate != null && toDate != null) {
             qry.setParameter(FROMDATE, resetTimeByPassingDate(fromDate));
             qry.setParameter("toDates", getEndOfDayByDate(toDate));
-
         } else if (fromDate != null)
             qry.setParameter(FROMDATE, resetTimeByPassingDate(fromDate));
         else if (toDate != null)
             qry.setParameter("toDates", getEndOfDayByDate(toDate));
+        qry.setParameter("currdate", getCurrentDateWithOutTime().toDate());
         return qry;
 
     }
