@@ -42,7 +42,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 
 <form:form role="form" action="" modelAttribute="portalServiceType"
@@ -102,18 +101,6 @@
 	<div class="col-md-12 form-group report-table-container">
 		<table class="table table-bordered table-hover"
 			id="tblSearchPortalService">
-			<thead>
-				<tr>
-					<th></th>
-					<th class="text-left">SL No.</th>
-					<th class="text-left">Module</th>
-					<th class="text-left">Service Name</th>
-					<th class="text-left">SLA</th>
-					<th class="text-left">Active</th>
-					<th class="text-left">UserService</th>
-					<th class="text-left">Business User Service</th>
-				</tr>
-			</thead>
 		</table>
 	</div>
 </div>

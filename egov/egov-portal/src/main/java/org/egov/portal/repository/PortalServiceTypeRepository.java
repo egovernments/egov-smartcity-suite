@@ -53,8 +53,6 @@ import org.springframework.stereotype.Repository;
 public interface PortalServiceTypeRepository
         extends JpaRepository<PortalServiceType, Long>, JpaSpecificationExecutor<PortalServiceType> {
 
-    PortalServiceType findById(Long id);
-
     @Query("select distinct pst.module from PortalServiceType pst")
     List<Module> findAllModules();
 

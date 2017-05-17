@@ -45,28 +45,6 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
-<style>
-body {
-	font-family: regular !important;
-	font-size: 14px;
-}
-</style>
-<script type="text/javascript">
-	function submitForm(obj) {
-		
-		if(document.getElementById('inputsla').value == "")
-	        document.getElementById('inputsla').value = 0;
-	}
-	function isNumber(evt) {
-	    evt = (evt) ? evt : window.event;
-	    var charCode = (evt.which) ? evt.which : evt.keyCode;
-	    if (charCode > 31 && (charCode < 48 || charCode > 57)) {
-	        return false;
-	    }
-	    return true;
-	}
-	
-</script>
 <div class="row">
 	<div class="col-md-12">
 		<form:form id="EditPortalServiceType" method="post"
@@ -123,7 +101,7 @@ body {
 			</div>
 			<div class="row" align="center">
 				<form:button type="submit" id="submit" class="btn btn-primary"
-					value="submit" onclick="submitForm(this)">Update</form:button>
+					value="submit" onclick="submitForm()"><spring:message code='lbl.update' /></form:button>
 				<input type="button" name="button2" id="button2" value="Close"
 					class="btn btn-default" onclick="window.close();" />
 			</div>

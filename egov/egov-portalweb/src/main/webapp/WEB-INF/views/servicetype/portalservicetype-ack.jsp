@@ -40,12 +40,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<style>
-body {
-	font-family: regular !important;
-	font-size: 14px;
-}
-</style>
 <script>
 	function submitForm(obj) {
 		window.opener.location = '/portal/portalservicetype/search';
@@ -61,9 +55,7 @@ body {
 					<div class="panel-body">
 						<div class="row">&nbsp;</div>
 						<div class="col-xs-12 add-margin" align="center">
-							<spring:message code="editPortalServicetype.success.message" />
-							for
-							<c:out value="${name}" />
+						<spring:message code="editPortalServicetype.success.message" /><c:out value="${name}" />
 						</div>
 						<div class="row">&nbsp;</div>
 						<div class="row">&nbsp;</div>
