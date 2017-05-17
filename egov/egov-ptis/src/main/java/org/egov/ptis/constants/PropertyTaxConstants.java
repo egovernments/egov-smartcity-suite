@@ -394,6 +394,7 @@ public interface PropertyTaxConstants {
         }
     };
     // Un authorized penalty percentages on property tax
+    public static final BigDecimal DEVIATION_TAXPERC_10 = BigDecimal.valueOf(0.1);// 10%
     public static final BigDecimal BPA_DEVIATION_TAXPERC_1_10 = new BigDecimal(0.25);// 25%
     public static final BigDecimal BPA_DEVIATION_TAXPERC_ABOVE_11 = new BigDecimal(0.5);// 50%
     public static final BigDecimal BPA_DEVIATION_TAXPERC_NOT_DEFINED = new BigDecimal(1);// 100%

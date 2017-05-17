@@ -43,6 +43,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.BIGDECIMAL_100;
 import static org.egov.ptis.constants.PropertyTaxConstants.BPA_DEVIATION_TAXPERC_1_10;
 import static org.egov.ptis.constants.PropertyTaxConstants.BPA_DEVIATION_TAXPERC_ABOVE_11;
 import static org.egov.ptis.constants.PropertyTaxConstants.BPA_DEVIATION_TAXPERC_NOT_DEFINED;
+import static org.egov.ptis.constants.PropertyTaxConstants.CITY_GRADE_CORPORATION;
 import static org.egov.ptis.constants.PropertyTaxConstants.DATE_FORMAT_DDMMYYY;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_CESS;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX;
@@ -51,6 +52,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_PRIMAR
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_SEWERAGE_TAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_UNAUTHORIZED_PENALTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_VACANT_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEVIATION_TAXPERC_10;
 import static org.egov.ptis.constants.PropertyTaxConstants.FLOOR_MAP;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_BASERATE_BY_OCCUPANCY_ZONE;
@@ -69,6 +71,8 @@ import java.util.Properties;
 import org.apache.log4j.Logger;
 import org.egov.commons.Installment;
 import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.service.CityService;
+import org.egov.infra.utils.DateUtils;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.client.handler.TaxCalculationInfoXmlHandler;
 import org.egov.ptis.client.model.calculator.APMiscellaneousTax;
@@ -92,7 +96,12 @@ public class APTaxCalculator implements PropertyTaxCalculator {
     private static final Logger LOGGER = Logger.getLogger(APTaxCalculator.class);
     private static final BigDecimal RESD_OWNER_DEPRECIATION = new BigDecimal(40);
     private static final BigDecimal SEASHORE_ADDITIONAL_DEPRECIATION = new BigDecimal(5);
-    private static final String UNAUTHPENALTY_STARTDATE = "01/04/1987";
+    private static final String CORP_UAC_PENALTY_CASE1_STARTDATE = "01/03/1994";
+    private static final String CORP_UAC_PENALTY_CASE1_ENDDATE = "14/12/2007";
+    private static final String CORP_UAC_PENALTY_CASE2_STARTDATE = "15/12/2007";
+    private static final String CORP_UAC_PENALTY_CASE2_ENDDATE = "04/08/2013";
+    private static final String NONCORP_UAC_PENALTY_CASE1_STARTDATE = "09/03/1999";
+    private static final String NONCORP_UAC_PENALTY_CASE1_ENDDATE = "04/08/2013";
     private static final BigDecimal BUILDING_VALUE = new BigDecimal(2).divide(new BigDecimal(3), 5, BigDecimal.ROUND_HALF_UP);
     private static final BigDecimal SITE_VALUE = new BigDecimal(1).divide(new BigDecimal(3), 5, BigDecimal.ROUND_HALF_UP);
     private Boolean isCorporation = Boolean.FALSE;
@@ -100,6 +109,7 @@ public class APTaxCalculator implements PropertyTaxCalculator {
     private Boolean isPrimaryServiceChrApplicable = Boolean.FALSE;
     private final HashMap<Installment, TaxCalculationInfo> taxCalculationMap = new HashMap<>();
     private Properties taxRateProps = null;
+    private String unAuthPenaltyStartDate;
 
     @SuppressWarnings("rawtypes")
     @Autowired
@@ -108,6 +118,9 @@ public class APTaxCalculator implements PropertyTaxCalculator {
 
     @Autowired
     private PropertyTaxUtil propertyTaxUtil;
+
+    @Autowired
+    private CityService cityService;
 
     /**
      * @param property Property Object
@@ -123,10 +136,13 @@ public class APTaxCalculator implements PropertyTaxCalculator {
         BigDecimal totalNetArv;
         BoundaryCategory boundaryCategory;
         taxRateProps = propertyTaxUtil.loadTaxRates();
-        isCorporation = propertyTaxUtil.isCorporation();
+        isCorporation = CITY_GRADE_CORPORATION.equalsIgnoreCase(cityService.getCityGrade());
         isSeaShoreULB = propertyTaxUtil.isSeaShoreULB();
-        if (isCorporation)
+        if (isCorporation) {
             isPrimaryServiceChrApplicable = propertyTaxUtil.isPrimaryServiceApplicable();
+            unAuthPenaltyStartDate = "28/02/1994";
+        } else
+            unAuthPenaltyStartDate = "08/03/1999";
 
         final List<String> applicableTaxes = prepareApplicableTaxes(property);
         final List<Installment> taxInstallments = propertyTaxUtil.getInstallmentsListByEffectiveDate(occupationDate);
@@ -270,19 +286,20 @@ public class APTaxCalculator implements PropertyTaxCalculator {
             }
         }
         // calculating Un Authorized Penalty
-        if (!propTypeCode.equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
+        if (!propTypeCode.equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)) {
             try {
                 if (floor != null && floor.getConstructionDate()
-                        .after(new SimpleDateFormat(DATE_FORMAT_DDMMYYY).parse(UNAUTHPENALTY_STARTDATE)))
+                        .after(new SimpleDateFormat(DATE_FORMAT_DDMMYYY).parse(unAuthPenaltyStartDate)))
                     if (!(checkUnAuthDeviationPerc(unAuthDeviationPerc)
                             || unAuthDeviationPerc != null && unAuthDeviationPerc.intValue() == 0)) {
-                        halfYearHeadTax = calculateUnAuthPenalty(unAuthDeviationPerc, totalHalfTaxPayable);
+                        halfYearHeadTax = calculateUnAuthPenalty(unAuthDeviationPerc, totalHalfTaxPayable, floor.getConstructionDate());
                         totalHalfTaxPayable = totalHalfTaxPayable.add(halfYearHeadTax);
                         createMiscTax(DEMANDRSN_CODE_UNAUTHORIZED_PENALTY, halfYearHeadTax, unitTaxCalculationInfo);
                     }
             } catch (final ParseException e) {
                 LOGGER.error(e);
             }
+        }
         // calculating Public Service Charges
         if (isPrimaryServiceChrApplicable) {
             halfYearHeadTax = roundOffToNearestEven(calcPublicServiceCharges(totalHalfTaxPayable));
@@ -465,7 +482,31 @@ public class APTaxCalculator implements PropertyTaxCalculator {
         return deviationPerc;
     }
 
-    private BigDecimal calculateUnAuthPenalty(final BigDecimal deviationPerc, final BigDecimal totalPropertyTax) {
+    private BigDecimal calculateUnAuthPenalty(final BigDecimal deviationPerc, final BigDecimal totalPropertyTax, Date constructionDate) {
+        BigDecimal unAuthPenalty = BigDecimal.ZERO;
+        if(isCorporation){
+            if (DateUtils.between(constructionDate,
+                    DateUtils.getDate(CORP_UAC_PENALTY_CASE1_STARTDATE, DATE_FORMAT_DDMMYYY),
+                    DateUtils.getDate(CORP_UAC_PENALTY_CASE1_ENDDATE, DATE_FORMAT_DDMMYYY))) 
+                unAuthPenalty = totalPropertyTax.multiply(DEVIATION_TAXPERC_10);
+            else if (DateUtils.between(constructionDate,
+                    DateUtils.getDate(CORP_UAC_PENALTY_CASE2_STARTDATE, DATE_FORMAT_DDMMYYY),
+                    DateUtils.getDate(CORP_UAC_PENALTY_CASE2_ENDDATE, DATE_FORMAT_DDMMYYY)))
+                unAuthPenalty = totalPropertyTax.multiply(BPA_DEVIATION_TAXPERC_1_10);
+            else if(constructionDate.after(DateUtils.getDate(CORP_UAC_PENALTY_CASE2_ENDDATE, DATE_FORMAT_DDMMYYY))) 
+                unAuthPenalty = calculateUACPenaltyForDeviationPerc(deviationPerc, totalPropertyTax);
+        } else {
+            if (DateUtils.between(constructionDate,
+                    DateUtils.getDate(NONCORP_UAC_PENALTY_CASE1_STARTDATE, DATE_FORMAT_DDMMYYY),
+                    DateUtils.getDate(NONCORP_UAC_PENALTY_CASE1_ENDDATE, DATE_FORMAT_DDMMYYY))) {
+                unAuthPenalty = totalPropertyTax.multiply(DEVIATION_TAXPERC_10);
+            } else if(constructionDate.after(DateUtils.getDate(NONCORP_UAC_PENALTY_CASE1_ENDDATE, DATE_FORMAT_DDMMYYY)))
+                unAuthPenalty = calculateUACPenaltyForDeviationPerc(deviationPerc, totalPropertyTax);
+        }
+        return unAuthPenalty;
+    }
+
+    private BigDecimal calculateUACPenaltyForDeviationPerc(BigDecimal deviationPerc, BigDecimal totalPropertyTax){
         BigDecimal unAuthPenalty = BigDecimal.ZERO;
         /*
          * deviationPerc between 1-10, Penalty perc = 25%, deviationPerc > 10, Penalty perc = 50%, no Building plan details,
