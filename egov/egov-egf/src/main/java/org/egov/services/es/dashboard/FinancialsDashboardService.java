@@ -86,6 +86,8 @@ public class FinancialsDashboardService {
     private static final String CURRENT_YEAR = "currentYear";
     private static final String LAST_YEAR = "lastYear";
     private static final String FINANCIALYEAR = "financialyear";
+    private static final String MAJOR_CODE = "majorcode";
+    private static final String MINOR_CODE = "minorcode";
 
 
     @Autowired
@@ -154,9 +156,10 @@ public class FinancialsDashboardService {
     private Map<String, SearchResponse> getVoucherSearchResponse(FinancialsDetailsRequest financialsDetailsRequest, BoolQueryBuilder boolQuery, String coaType,
                                                                  final String aggrField) {
         Map<String, SearchResponse> response = new HashMap<>();
-        if (StringUtils.isBlank(financialsDetailsRequest.getDetailedCode()) && StringUtils.isBlank(financialsDetailsRequest.getMajorCode())
-                && StringUtils.isBlank(financialsDetailsRequest.getMinorCode()))
-            boolQuery = prepareQuery(financialsDetailsRequest, coaType);
+        if (!aggrField.equalsIgnoreCase(DETAILED_CODE) && !aggrField.equalsIgnoreCase(MAJOR_CODE) && !aggrField.equalsIgnoreCase(MINOR_CODE))
+            if (StringUtils.isBlank(financialsDetailsRequest.getDetailedCode()) && StringUtils.isBlank(financialsDetailsRequest.getMajorCode())
+                    && StringUtils.isBlank(financialsDetailsRequest.getMinorCode()))
+                boolQuery = prepareQuery(financialsDetailsRequest, coaType);
         boolQuery.filter(QueryBuilders.matchQuery("voucherstatusid", FinancialConstants.CREATEDVOUCHERSTATUS));
         SearchResponse currentYearResponse = elasticsearchTemplate.getClient().prepareSearch(FinancialConstants.FINANCIAL_VOUCHER_INDEX_NAME).setQuery(boolQuery)
                 .addAggregation(AggregationBuilders.terms(AGGRFIELD).field(aggrField)
