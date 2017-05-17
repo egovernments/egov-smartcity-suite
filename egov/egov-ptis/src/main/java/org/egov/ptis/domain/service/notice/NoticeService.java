@@ -155,7 +155,6 @@ public class NoticeService extends PersistenceService<PtNotice, Long> {
         return (PtNotice) basicPropertyService.find("from PtNotice where applicationNumber = ?", applicationNo);
     }
     
-    @ReadOnly
     public PtNotice getNoticeByNoticeTypeAndApplicationNumber(final String noticeType, final String applicationNo) {
         return (PtNotice) basicPropertyService.find("from PtNotice where noticeType = ? and applicationNumber = ?",
                 noticeType, applicationNo);
