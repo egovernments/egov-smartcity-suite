@@ -85,7 +85,7 @@ public class CurrentDcbService {
 
     }
 
-    public SQLQuery getMigratedReceipttDetails(final String consumerNumber) throws ParseException {
+    public List<WaterChargesReceiptInfo> getMigratedReceipttDetails(final String consumerNumber) throws ParseException {
         final StringBuilder queryStr = new StringBuilder();
         queryStr.append(
                 "select distinct(i_bookno) as \"bookNumber\", cast(i_ctrrcptno as varchar) as \"receiptNumber\",dt_ctrrcptdt as \"receiptDate\",dt_paidfrmprddt as \"fromDate\",dt_paidtoprddt as \"toDate\","
@@ -93,7 +93,7 @@ public class CurrentDcbService {
                         + " order by dt_ctrrcptdt desc");
         final SQLQuery finalQuery = getCurrentSession().createSQLQuery(queryStr.toString());
         finalQuery.setResultTransformer(new AliasToBeanResultTransformer(WaterChargesReceiptInfo.class));
-        return finalQuery;
+        return finalQuery.list();
 
     }
 
