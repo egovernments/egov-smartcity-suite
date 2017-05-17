@@ -335,7 +335,7 @@ public class WaterTaxConstants {
     public static final String APPLICATION_TAX_INDEX_NAME = "applications";
     public static final String COLLECTION_INDEX_NAME = "receipts";
     public static final String WATER_TAX_INDEX_NAME = "waterchargeconsumer";
-    public static final String COLLECION_BILLING_SERVICE_WTMS = "Water Tax";
+    public static final String COLLECION_BILLING_SERVICE_WTMS = "Water Charges";
     public static final BigDecimal BIGDECIMAL_100 = new BigDecimal("100");
     
     public static final String DASHBOARD_GROUPING_DISTRICTWISE = "district";
