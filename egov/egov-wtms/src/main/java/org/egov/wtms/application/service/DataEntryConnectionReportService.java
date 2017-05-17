@@ -40,10 +40,12 @@
 package org.egov.wtms.application.service;
 
 import java.text.ParseException;
+import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.wtms.application.entity.DataEntryConnectionReport;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
@@ -62,7 +64,8 @@ public class DataEntryConnectionReportService {
         return entityManager.unwrap(Session.class);
     }
 
-    public SQLQuery getDataEntryConnectionReportDetails(final String ward) throws ParseException {
+    @ReadOnly
+    public List<DataEntryConnectionReport> getDataEntryConnectionReportDetails(final String ward) throws ParseException {
         final StringBuilder queryStr = new StringBuilder();
         queryStr.append(
                 "select dcbinfo.hscno as \"hscNo\", dcbinfo.propertyid as \"assessmentNo\", dcbinfo.username as \"ownerName\", zoneboundary.name as \"zone\", wardboundary.name as \"revenueWard\","
@@ -79,9 +82,9 @@ public class DataEntryConnectionReportService {
                 " where dcbinfo.connectionstatus = 'ACTIVE' and dcbinfo.legacy = true and dcbinfo.approvalnumber IS NULL  and dcbinfo.connectiontype = 'NON_METERED' ");
         if (ward != null && !ward.isEmpty())
             queryStr.append(" and wardboundary.name = " + "'" + ward + "'");
-        final SQLQuery finalQuery = getCurrentSession().createSQLQuery(queryStr.toString());
-        finalQuery.setResultTransformer(new AliasToBeanResultTransformer(DataEntryConnectionReport.class));
-        return finalQuery;
+        final SQLQuery query = getCurrentSession().createSQLQuery(queryStr.toString());
+        query.setResultTransformer(new AliasToBeanResultTransformer(DataEntryConnectionReport.class));
+        return query.list();
 
     }
 }

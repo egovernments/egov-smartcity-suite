@@ -43,7 +43,6 @@ import static org.egov.infra.utils.JsonUtils.toJSON;
 
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -57,11 +56,11 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.ModuleService;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.wtms.application.entity.BaseRegisterResult;
 import org.egov.wtms.application.service.BaseRegisterReportService;
 import org.egov.wtms.reports.entity.BaseRegisterResultAdaptor;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
-import org.hibernate.SQLQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -106,32 +105,37 @@ public class BaseRegisterReportController {
     }
 
     @RequestMapping(value = "/result", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody void springPaginationDataTableUpdate(final HttpServletRequest request,
-            final HttpServletResponse response) throws IOException, ParseException {
+    @ResponseBody
+    public void springPaginationDataTableUpdate(final HttpServletRequest request,
+            final HttpServletResponse response) throws IOException {
         String ward = "";
+        String result;
         if (null != request.getParameter("ward"))
             ward = request.getParameter("ward");
-        List<BaseRegisterResult> baseRegisterResultList = new ArrayList<BaseRegisterResult>();
-        final SQLQuery query = baseRegisterReportService.getBaseRegisterReportDetails(ward);
-        baseRegisterResultList = query.list();
-        final Module nonMeteredModule = moduleService
-                .getModuleByName(WaterTaxConstants.WATER_RATES_NONMETERED_PTMODULE);
-        final Module meteredModule = moduleService.getModuleByName(WaterTaxConstants.EGMODULE_NAME);
-        final Installment currInstallmentForNonMetered = installmentDao
-                .getInsatllmentByModuleForGivenDate(nonMeteredModule, new Date());
-        final Installment currInstallmentForMetered = installmentDao
-                .getInsatllmentByModuleForGivenDateAndInstallmentType(meteredModule, new Date(),
-                        WaterTaxConstants.MONTHLY);
-        for (final BaseRegisterResult br : baseRegisterResultList)
-            if (br.getConnectionType().equals(WaterTaxConstants.NON_METERED_CODE))
-                br.setPeriod(currInstallmentForNonMetered.getDescription());
-            else
-                br.setPeriod(currInstallmentForMetered.getDescription());
-        String result = "";
-        result = new StringBuilder("{ \"data\":")
-                .append(toJSON(baseRegisterResultList, BaseRegisterResult.class, BaseRegisterResultAdaptor.class))
-                .append("}").toString();
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        IOUtils.write(result, response.getWriter());
+        List<BaseRegisterResult> baseRegisterResultList;
+        try {
+            baseRegisterResultList = baseRegisterReportService.getBaseRegisterReportDetails(ward);
+
+            final Module nonMeteredModule = moduleService
+                    .getModuleByName(WaterTaxConstants.WATER_RATES_NONMETERED_PTMODULE);
+            final Module meteredModule = moduleService.getModuleByName(WaterTaxConstants.EGMODULE_NAME);
+            final Installment currInstallmentForNonMetered = installmentDao
+                    .getInsatllmentByModuleForGivenDate(nonMeteredModule, new Date());
+            final Installment currInstallmentForMetered = installmentDao
+                    .getInsatllmentByModuleForGivenDateAndInstallmentType(meteredModule, new Date(),
+                            WaterTaxConstants.MONTHLY);
+            for (final BaseRegisterResult br : baseRegisterResultList)
+                if (br.getConnectionType().equals(WaterTaxConstants.NON_METERED_CODE))
+                    br.setPeriod(currInstallmentForNonMetered.getDescription());
+                else
+                    br.setPeriod(currInstallmentForMetered.getDescription());
+            result = new StringBuilder("{ \"data\":")
+                    .append(toJSON(baseRegisterResultList, BaseRegisterResult.class, BaseRegisterResultAdaptor.class))
+                    .append("}").toString();
+            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+            IOUtils.write(result, response.getWriter());
+        } catch (final ParseException e) {
+            throw new ApplicationRuntimeException("Error while getting base register report " + e);
+        }
     }
 }

@@ -40,11 +40,13 @@
 package org.egov.wtms.application.service;
 
 import java.text.ParseException;
+import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.apache.commons.lang.StringUtils;
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.wtms.application.entity.BaseRegisterResult;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.hibernate.SQLQuery;
@@ -64,7 +66,8 @@ public class BaseRegisterReportService {
         return entityManager.unwrap(Session.class);
     }
 
-    public SQLQuery getBaseRegisterReportDetails(final String ward) throws ParseException {
+    @ReadOnly
+    public List<BaseRegisterResult> getBaseRegisterReportDetails(final String ward) throws ParseException {
 
         final StringBuilder queryStr = new StringBuilder();
         queryStr.append(
@@ -88,11 +91,11 @@ public class BaseRegisterReportService {
                         + ConnectionStatus.ACTIVE.toString() + "'");
         if (StringUtils.isNotBlank(ward))
             queryStr.append(" and wardboundary.id = :ward");
-        final SQLQuery finalQuery = getCurrentSession().createSQLQuery(queryStr.toString());
+        final SQLQuery query = getCurrentSession().createSQLQuery(queryStr.toString());
         if (StringUtils.isNotBlank(ward))
-            finalQuery.setLong("ward", Long.valueOf(ward));
-        finalQuery.setResultTransformer(new AliasToBeanResultTransformer(BaseRegisterResult.class));
-        return finalQuery;
+            query.setLong("ward", Long.valueOf(ward));
+        query.setResultTransformer(new AliasToBeanResultTransformer(BaseRegisterResult.class));
+        return query.list();
 
     }
 
