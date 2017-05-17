@@ -50,21 +50,16 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
-import org.egov.pgr.repository.AgeingReportRepository;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDateTime;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
 public class AgeingReportService {
-
-    @Autowired
-    public AgeingReportRepository ageingReportRepository;
 
     private static final String COMPLAINTSTATUS_COMPLETED = "Completed";
     private static final String COMPLAINTSTATUS_REJECTED = "Rejected";
