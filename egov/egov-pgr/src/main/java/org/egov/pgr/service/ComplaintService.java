@@ -221,9 +221,9 @@ public class ComplaintService {
             userName = securityUtils.getCurrentUser().getName();
         else
             userName = securityUtils.getCurrentUser().getUsername() + DELIMITER_COLON + securityUtils.getCurrentUser().getName();
-        if (complaint.getStatus().getName().equalsIgnoreCase(ComplaintStatus.COMPLETED.toString())
+        if (!complaint.getState().isEnded() && (complaint.getStatus().getName().equalsIgnoreCase(ComplaintStatus.COMPLETED.toString())
                 || complaint.getStatus().getName().equalsIgnoreCase(ComplaintStatus.WITHDRAWN.toString())
-                || complaint.getStatus().getName().equalsIgnoreCase(ComplaintStatus.REJECTED.toString())) {
+                || complaint.getStatus().getName().equalsIgnoreCase(ComplaintStatus.REJECTED.toString()))) {
             complaint.setDepartment(complaint.getAssignee().getDeptDesig().getDepartment());
             LOG.debug("Terminating Grievance Workflow");
             if (!securityUtils.getCurrentUser().getRoles().contains(goRole))
@@ -239,12 +239,8 @@ public class ComplaintService {
             final Position owner = positionMasterService.getPositionById(nextOwnerId);
             complaint.setAssignee(owner);
             complaint.setDepartment(complaint.getAssignee().getDeptDesig().getDepartment());
-            if (!securityUtils.getCurrentUser().getRoles().contains(goRole))
-                complaint.transition().progressWithStateCopy().withOwner(owner).withComments(approvalComment).withSenderName(userName)
-                        .withStateValue(complaint.getStatus().getName()).withDateInfo(new Date());
-            else
-                complaint.transition().progressWithStateCopy().withComments(approvalComment).withStateValue(complaint.getStatus().getName())
-                        .withSenderName(userName).withDateInfo(new Date()).withOwner(owner);
+            complaint.transition().progressWithStateCopy().withOwner(owner).withComments(approvalComment).withSenderName(userName)
+                    .withStateValue(complaint.getStatus().getName()).withDateInfo(new Date());
         } else if (sendToPrevAssignee && canSendToPreviousAssignee(complaint)) {
             Position nextAssignee = complaint.previousAssignee();
             complaint.setDepartment(nextAssignee.getDeptDesig().getDepartment());
@@ -254,19 +250,19 @@ public class ComplaintService {
 
         } else {
             complaint.setDepartment(complaint.getAssignee().getDeptDesig().getDepartment());
-            if (!securityUtils.getCurrentUser().getRoles().contains(goRole))
-                complaint.transition().progressWithStateCopy().withComments(approvalComment).withSenderName(userName)
-                        .withStateValue(complaint.getStatus().getName()).withDateInfo(new Date());
-            else
-                complaint.transition().progressWithStateCopy().withComments(approvalComment).withSenderName(userName)
-                        .withStateValue(complaint.getStatus().getName()).withDateInfo(new Date())
-                        .withOwner(complaint.getState().getOwnerPosition());
-
+            complaint.transition().progressWithStateCopy().withComments(approvalComment).withSenderName(userName)
+                    .withStateValue(complaint.getStatus().getName()).withDateInfo(new Date());
         }
 
         complaintRepository.saveAndFlush(complaint);
         complaintIndexService.updateComplaintIndex(complaint, nextOwnerId, approvalComment);
         pushMessage(complaint);
+        smsByStatus(complaint);
+
+        return complaint;
+    }
+
+    private void smsByStatus(Complaint complaint) {
         if (complaint.getStatus().getName().equalsIgnoreCase(ComplaintStatus.COMPLETED.toString()) ||
                 complaint.getStatus().getName().equalsIgnoreCase(ComplaintStatus.REJECTED.toString()))
             sendSmsOnCompletion(complaint);
@@ -274,8 +270,6 @@ public class ComplaintService {
                 !complaint.getStatus().getName().equalsIgnoreCase(ComplaintStatus.REJECTED.toString())
                 && !complaint.getStatus().getName().equalsIgnoreCase(ComplaintStatus.WITHDRAWN.toString()))
             sendSmsToOfficials(complaint);
-
-        return complaint;
     }
 
     public Complaint getComplaintById(final Long complaintID) {
