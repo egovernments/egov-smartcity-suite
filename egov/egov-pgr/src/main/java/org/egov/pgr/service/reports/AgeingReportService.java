@@ -50,16 +50,21 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
+import org.egov.pgr.repository.AgeingReportRepository;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDateTime;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
 public class AgeingReportService {
+
+    @Autowired
+    public AgeingReportRepository ageingReportRepository;
 
     private static final String COMPLAINTSTATUS_COMPLETED = "Completed";
     private static final String COMPLAINTSTATUS_REJECTED = "Rejected";
@@ -79,15 +84,15 @@ public class AgeingReportService {
 
         if (COMPLAINTSTATUS_COMPLETED.equals(typeofReport) || COMPLAINTSTATUS_REJECTED.equals(typeofReport)) {
             query.append(
-                    " COUNT(CASE WHEN date_part('day',(state.lastmodifieddate - cd.createddate)) > :grtthn30 THEN 1 END) grtthn30, ");
+                    " COUNT(CASE WHEN EXTRACT(EPOCH FROM state.lastmodifieddate - cd.createddate)/86400 > :grtthn30 THEN 1 END) grtthn30, ");
             query.append(
-                    " COUNT(CASE WHEN date_part('day',(state.lastmodifieddate - cd.createddate)) BETWEEN :grtthn10 AND :lsthn30 THEN 1 END) btw10to30, ");
+                    " COUNT(CASE WHEN EXTRACT(EPOCH FROM state.lastmodifieddate - cd.createddate)/86400 BETWEEN :grtthn10 AND :lsthn30 THEN 1 END) btw10to30, ");
             query.append(
-                    " COUNT(CASE WHEN date_part('day',(state.lastmodifieddate - cd.createddate)) BETWEEN :grtthn5 AND :lsthn10 THEN 1 END) btw5to10, ");
+                    " COUNT(CASE WHEN EXTRACT(EPOCH FROM state.lastmodifieddate - cd.createddate)/86400 BETWEEN :grtthn5 AND :lsthn10 THEN 1 END) btw5to10, ");
             query.append(
-                    " COUNT(CASE WHEN date_part('day',(state.lastmodifieddate - cd.createddate)) BETWEEN :grtthn2 AND :lsthn5 THEN 1 END) btw2to5, ");
+                    " COUNT(CASE WHEN EXTRACT(EPOCH FROM state.lastmodifieddate - cd.createddate)/86400 BETWEEN :grtthn2 AND :lsthn5 THEN 1 END) btw2to5, ");
             query.append(
-                    " COUNT(CASE WHEN date_part('day',(state.lastmodifieddate - cd.createddate)) BETWEEN :zero AND :lsthn2 THEN 1 END) lsthn2 ");
+                    " COUNT(CASE WHEN EXTRACT(EPOCH FROM state.lastmodifieddate - cd.createddate)/86400 BETWEEN :zero AND :lsthn2 THEN 1 END) lsthn2 ");
             query.append(" FROM egpgr_complaintstatus cs  ,egpgr_complainttype ctype, eg_wf_states state, egpgr_complaint cd  ");
         } else {
             query.append(" COUNT(CASE WHEN cd.createddate < :grtthn30 THEN 1 END) grtthn30, ");
@@ -143,12 +148,12 @@ public class AgeingReportService {
         if (COMPLAINTSTATUS_COMPLETED.equals(typeofReport) || COMPLAINTSTATUS_REJECTED.equals(typeofReport)) {
             qry.setParameter("grtthn30", 30);
             qry.setParameter("lsthn30", 30);
-            qry.setParameter("grtthn10", 10.0001);
-            qry.setParameter("grtthn5", 5.0001);
+            qry.setParameter("grtthn10", 10);
+            qry.setParameter("grtthn5", 5);
             qry.setParameter("lsthn10", 10);
             qry.setParameter("lsthn5", 5);
             qry.setParameter("lsthn2", 2);
-            qry.setParameter("grtthn2", 2.0001);
+            qry.setParameter("grtthn2", 2);
             qry.setParameter("zero", 0);
 
         } else {
