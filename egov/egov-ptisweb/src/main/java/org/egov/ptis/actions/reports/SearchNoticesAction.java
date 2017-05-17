@@ -72,7 +72,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
-import org.apache.struts2.convention.annotation.Actions;
 import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
@@ -235,7 +234,7 @@ public class SearchNoticesAction extends SearchFormAction {
     }
 
     @SkipValidation
-    @Actions({ @Action(value = "/searchNotices-citizen"), @Action(value = "/public/searchNotices-citizen") })
+    @Action(value = "/searchNotices-citizen")
     public String citizen() {
         return NEW;
     }
@@ -246,8 +245,7 @@ public class SearchNoticesAction extends SearchFormAction {
      */
     @SkipValidation
     @ValidationErrorPage(value = NEW)
-    @Actions({ @Action(value = "/searchNotices-citizenSearch"),
-            @Action(value = "/public/searchNotices-citizenSearch") })
+    @Action(value = "/searchNotices-citizenSearch")
     public String searchNotice() {
 
         if (!indexNumber.isEmpty()) {
@@ -407,7 +405,7 @@ public class SearchNoticesAction extends SearchFormAction {
      * @throws IOException
      */
     @SkipValidation
-    @Actions({ @Action(value = "/searchNotices-showNotice"), @Action(value = "/public/searchNotices-showNotice") })
+    @Action(value = "/searchNotices-showNotice")
     public String showNotice() throws IOException {
         final PtNotice ptNotice = (PtNotice) getPersistenceService().find("from PtNotice notice where noticeNo=?",
                 noticeNumber);
@@ -853,14 +851,14 @@ public class SearchNoticesAction extends SearchFormAction {
     }
     
     @SkipValidation
-    @Actions({ @Action(value = "/citizen-searchnotices"), @Action(value = "/public/citizen-searchnotices") })
+    @Action(value = "/citizen-searchnotices")
     public String searchNotices() {
         return CITIZEN_SEARCH;
     }
 
     @SkipValidation
     @ValidationErrorPage(value = CITIZEN_SEARCH)
-    @Actions({ @Action(value = "/searchnotice-result"), @Action(value = "/public/searchnotice-result") })
+    @Action(value = "/searchnotice-result")
     public String getNotices() {
 
         if (!indexNumber.isEmpty()) {
