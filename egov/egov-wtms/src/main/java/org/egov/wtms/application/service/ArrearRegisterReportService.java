@@ -80,7 +80,7 @@ public class ArrearRegisterReportService {
 
         query.append(
                 "select distinct pmv  from WaterChargeMaterlizeView pmv,InstDmdCollResponse idc where "
-                        + "pmv.connectiondetailsid = idc.waterMatView.connectiondetailsid and pmv.connectionstatus = 'ACTIVE'"
+                        + "pmv.connectiondetailsid = idc.waterMatView.connectiondetailsid and pmv.connectionstatus = 'ACTIVE' and pmv.arrearbalance > 0"
                         + " and idc.installment.fromDate not between  ('"
                         + currentInst.getFromDate() + "') and ('" + currentInst.getToDate() + "') ");
 
