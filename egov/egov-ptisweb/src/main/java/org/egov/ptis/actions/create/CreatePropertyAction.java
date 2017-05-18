@@ -1400,8 +1400,11 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         if (blockId == null || blockId == -1)
             addActionError(getText("mandatory.block"));
         else if (null != propTypeMstr && !propTypeMstr.getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
-            if (!StringUtils.isBlank(houseNumber))
-                validateHouseNumber(wardId, houseNumber, basicProp);
+            if (!StringUtils.isBlank(houseNumber)) {
+                if (propService.isDuplicateDoorNumber(houseNumber, basicProp))
+                    addActionError(getText("houseNo.duplicate"));
+            }
+
             else if (property != null && property.getState() != null && property.getState().getNextAction() != null
                     && property.getState().getNextAction()
                             .equalsIgnoreCase(WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING))
