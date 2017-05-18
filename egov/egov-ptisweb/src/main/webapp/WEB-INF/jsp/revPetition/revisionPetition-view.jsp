@@ -225,7 +225,7 @@
 			if (statusCode == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_INSPECTION_VERIFY}"/>') {
 				//if (validateObjectionOutcome()) {
 					/*  if(document.getElementById('approverPositionId').value=="-1") {
-					        bootbox.alert("Please Select the Approver ");
+					        bootbox.alert("Please Select the Employee ");
 							return false;
 					    } */
 					action = 'revPetition-recordObjectionOutcome.action?objectionId='

@@ -59,7 +59,7 @@
 		}   
 		<s:if test="%{getNextAction()!='END'}">
 	    if((name=="Forward" || name=="forward") && approverPosId && (approverPosId.value == -1 || approverPosId.value == "")) {
-	        bootbox.alert("Please Select the Approver ");
+	        bootbox.alert("Please Select the Employee ");
 			return false;
 	    }
 	    if ((name=="Reject" || name=="reject")) {
