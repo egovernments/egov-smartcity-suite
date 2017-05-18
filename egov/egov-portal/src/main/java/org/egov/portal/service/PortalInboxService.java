@@ -100,18 +100,28 @@ public class PortalInboxService {
 
     @Transactional
     public void updateInboxMessage(final String applicationNumber, final Long moduleId, final String status,
-            final Boolean isResolved, final Date slaEndDate, final State state, final User user) {
+            final Boolean isResolved, final Date slaEndDate, final State state, final User user,
+            final String entityRefNo, final String link) {
         final PortalInbox portalInbox = getPortalInboxByApplicationNo(applicationNumber, moduleId);
         if (portalInbox != null) {
             portalInbox.setStatus(status);
             portalInbox.setResolved(isResolved);
-            if (portalInbox.getSlaEndDate() != null)
-                portalInbox.setSlaEndDate(slaEndDate);
             portalInbox.setState(state);
+            updatePortalInboxData(slaEndDate, entityRefNo, link, portalInbox);
             if (user != null && !containsUser(portalInbox.getPortalInboxUsers(), user.getId()))
                 createPortalUser(portalInbox, user);
             portalInboxRepository.save(portalInbox);
         }
+    }
+
+    private void updatePortalInboxData(final Date slaEndDate, final String entityRefNo, final String link,
+            final PortalInbox portalInbox) {
+        if (entityRefNo != null && !entityRefNo.isEmpty())
+            portalInbox.setEntityRefNumber(entityRefNo);
+        if (link != null && !link.isEmpty())
+            portalInbox.setLink(link);
+        if (slaEndDate != null)
+            portalInbox.setSlaEndDate(slaEndDate);
     }
 
     public boolean containsUser(final List<PortalInboxUser> list, final Long userId) {
