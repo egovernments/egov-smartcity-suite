@@ -46,7 +46,7 @@
 		<div class="panel panel-primary" data-collapsed="0" >				
 			<div class="panel-heading">
 				<div class="panel-title">
-					<spring:message code="lbl.approverdetails"/>
+					<spring:message code="lbl.forwardto"/>
 				</div>					
 			</div>
 			<div class="panel-body">
@@ -68,7 +68,7 @@
 <form:hidden path="" name="stateType" id="stateType" value="${stateType}"/>	
 				<div class="row show-row"  id="approverDetailHeading">
 				<div class="show-row form-group" >
-					<label class="col-sm-3 control-label text-right"><spring:message code="lbl.approverdepartment"/><span class="mandatory"></span></label>
+					<label class="col-sm-3 control-label text-right"><spring:message code="lbl.department"/><span class="mandatory"></span></label>
 					<div class="col-sm-3 add-margin">
 						<form:select path="" data-first-option="false"
 							id="approvalDepartment" cssClass="form-control"
@@ -80,7 +80,7 @@
 								itemLabel="name" />     
 						</form:select>
 					</div>
-					<label class="col-sm-2 control-label text-right"><spring:message code="lbl.approverdesignation"/><span class="mandatory"></span></label>
+					<label class="col-sm-2 control-label text-right"><spring:message code="lbl.designation"/><span class="mandatory"></span></label>
 					<div class="col-sm-3 add-margin">
 						<form:select path="" data-first-option="false" 
 							id="approvalDesignation" cssClass="form-control" onfocus="callAlertForDepartment();"
@@ -92,7 +92,7 @@
 					</div>
 				</div>
 				<div class="show-row form-group">
-					<label class="col-sm-3 control-label text-right"><spring:message code="lbl.approver"/><span class="mandatory"></span></label>
+					<label class="col-sm-3 control-label text-right"><spring:message code="lbl.employee"/><span class="mandatory"></span></label>
 					<div class="col-sm-3 add-margin">
 					<form:select path="" data-first-option="false" 
 						id="approvalPosition" name="approvalPosition" cssClass="form-control" onfocus="callAlertForDesignation();" 

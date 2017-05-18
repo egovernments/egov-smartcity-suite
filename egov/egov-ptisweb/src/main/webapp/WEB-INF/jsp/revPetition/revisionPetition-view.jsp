@@ -134,7 +134,7 @@
 		if(actionName == 'Reject Inspection') {
 			var comments = jQuery("#approverComments").val();
 			if(comments == null || comments == '') {
-				bootbox.alert("Please Enter Approver Remarks ");
+				bootbox.alert("Please Enter Remarks ");
 				return false;
 			}
 	    }
