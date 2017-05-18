@@ -57,6 +57,7 @@
 				<security:filter-chain pattern="/javascript/**" filters="none" />
 				<security:filter-chain pattern="/resources/**" filters="none" />
 				<security:filter-chain pattern="/citizen/search/search-searchForm.action" filters="none" />
+				<security:filter-chain pattern="/citizen/search/search-srchByAssessmentAndOwnerDetail.action" filters="none" />
 				<security:filter-chain pattern="/citizen/register" filters="anonymousAuthenticationFilter"/>
 				<security:filter-chain pattern="/citizen/activation/**" filters="anonymousAuthenticationFilter"/>
 				<security:filter-chain pattern="/reportviewer**" filters="anonymousAuthenticationFilter" />
