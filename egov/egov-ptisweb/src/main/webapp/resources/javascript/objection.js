@@ -180,7 +180,7 @@ function validateApproval(obj) {
 	} else if (document.getElementById("approverUserId")
 			&& document.getElementById("approverUserId").value == "-1") {
 		document.getElementById("lblError").style.display = 'block';
-		document.getElementById("lblError").innerHTML = 'Please select approver ';
+		document.getElementById("lblError").innerHTML = 'Please select Employee';
 		return false;
 	} else {
 		return true;
