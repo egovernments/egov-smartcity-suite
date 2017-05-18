@@ -1,24 +1,34 @@
 $(document).ready(function(){
-
+	$('.password-error').hide();
 	$('.totalServicesAppliedHide').hide();
 	$('.totalServicesCompletedHide').hide();
-	
+	$('#servicesUnderScrutinyDiv').attr('style', 'opacity: 0.3;cursor: pointer');
 	$('#totalServicesAppliedDiv').click(function() {
 		$('.servicesUnderScrutinyHide').hide();
 		$('.totalServicesCompletedHide').hide();
 		$('.totalServicesAppliedHide').show();
+		$('#totalServicesAppliedDiv').attr('style', 'opacity: 0.3;cursor: pointer');
+		$('#servicesUnderScrutinyDiv').attr('style', 'opacity: 1;cursor: pointer');
+		$('#servicesCmpletedDiv').attr('style', 'opacity: 1;cursor: pointer');
 	});
 	
 	$('#servicesUnderScrutinyDiv').click(function() {
 		$('.totalServicesAppliedHide').hide();
 		$('.totalServicesCompletedHide').hide();
 		$('.servicesUnderScrutinyHide').show();
+		$('#servicesUnderScrutinyDiv').attr('style', 'opacity: 0.3;cursor: pointer');
+		$('#servicesCmpletedDiv').attr('style', 'opacity: 1;cursor: pointer');
+		$('#totalServicesAppliedDiv').attr('style', 'opacity: 1;cursor: pointer');
 	});
 	
 	$('#servicesCmpletedDiv').click(function() {
 		$('.totalServicesAppliedHide').hide();
 		$('.servicesUnderScrutinyHide').hide();
 		$('.totalServicesCompletedHide').show();
+		$('#servicesCmpletedDiv').attr('style', 'opacity: 0.3;cursor: pointer');
+		$('#totalServicesAppliedDiv').attr('style', 'opacity: 1;cursor: pointer');
+		$('#servicesUnderScrutinyDiv').attr('style', 'opacity: 1;cursor: pointer');
+
 	});
 	
   var module;
@@ -51,7 +61,7 @@ $(document).ready(function(){
     $(this).addClass('active');
     module = $(this).data('module');
     $('.services-item .services').hide();
-    if(module == 'inbox'){
+    if(module == 'home'){
       $('.inbox-modules').show();
       $('.action-bar').addClass('hide');
     }
@@ -69,6 +79,52 @@ $(document).ready(function(){
 
   $('table tbody tr').click(function(){
     $('#myModal').modal('show');
+  });
+  
+
+  $('.checkpassword').blur(function(){
+  	if(($('#new-pass').val()!="") && ($('#retype-pass').val()!=""))
+  	{
+  		if ($('#new-pass').val() === $('#retype-pass').val()) {
+  			
+  			}else{
+  			$('.password-error').show();
+  			$('#retype-pass').addClass('error');
+  		}
+  	}
+  });
+
+  $('#passwordForm').on('submit', function(e){
+         e.preventDefault();
+         $.ajax({
+             url: '/egi/home/password/update',
+             type: 'GET',
+             data: {'currentPwd': $("#old-pass").val(), 'newPwd':$("#new-pass").val(),'retypeNewPwd':$("#retype-pass").val()},
+             success: function(data) {
+             	var msg = "";
+             	if (data == "SUCCESS") {
+             		msg = "Your password has been updated."
+             	} else if (data == "NEWPWD_UNMATCH") {
+             		msg = "New password you have entered does not match with retyped password."
+             		$('#retype-pass').val('');
+             		$('#new-pass').val('');
+             		$('#old-pass').val('');
+             		$('.password-error').hide();
+             	} else if (data == "CURRPWD_UNMATCH") {
+             		msg = "Old password you have entered is incorrect."
+             		$('#retype-pass').val('');
+             		$('#new-pass').val('');
+             		$('#old-pass').val('');
+             		$('.password-error').hide();
+             	} 
+             	bootbox.alert(msg);
+             },
+             error: function() {
+             	bootbox.alert("Internal server error occurred, please try after sometime.");
+             }, complete : function() {
+             	$('.change-password, .loader-class').modal('hide');
+             }
+     }); 
   });
 
 });
@@ -94,6 +150,7 @@ function matchRuleShort(str, rule) {
   return new RegExp("^" + rule.split("*").join(".*") + "$").test(str);
 }
 
-function showApplication(url) {
-	window.open(url , "", "height=650,width=980,scrollbars=yes,left=0,top=0,status=yes");
+var url;
+function openPopUp(url) {
+	window.open(url, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
 }

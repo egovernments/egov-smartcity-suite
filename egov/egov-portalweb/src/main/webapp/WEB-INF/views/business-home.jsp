@@ -44,11 +44,10 @@
       <div class="">
         <div class="left-menu">
           <ul class="modules-ul">
-            <li class="modules-li inbox active" data-module="inbox">
+            <li class="modules-li inbox active" data-module="home">
               <a href="javascript:void(0)">
-                <span class="badge inbox-notification">9</span>
-                <div><i class="fa fa-envelope img-view"></i></div>
-                <div class="module-text">Inbox</div>
+                <div><i class="fa fa-home img-view"></i></div>
+                <div class="module-text">Home</div>
               </a>
             </li>
             <c:forEach items="${moduleNames}" var="moduleName" varStatus="item">
@@ -75,8 +74,9 @@
                 <span class="pull-right profile-name">
                   <span class="text hidden-sm">${userName }</span> <span><i class="fa fa-caret-down" aria-hidden="true"></i></span>
                   <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-                    <li><a href="/egi/home/profile/edit" >Edit Profile</a></li>
-                    <li><a href="javascript:void(0)">Change Password</a></li>
+                  
+                    <li><a href="/egi/home/profile/edit"  onClick="MyWindow=window.open('/egi/home/profile/edit','MyWindow',width=980,height=650); return false;" >Edit Profile</a></li>
+                    <li><a href="javascript:void(0)" onclick="jQuery('.change-password').modal('show', {backdrop: 'static'});" >Change Password</a></li>
                   </ul>
                 </span>
               </div>
@@ -90,7 +90,7 @@
             <div class="inbox-modules">
               <div class="row stats-item">
                 <div class="col-md-4 col-sm-4 services">
-                <div id="totalServicesAppliedDiv">
+                <div id="totalServicesAppliedDiv" style="cursor: pointer">
                   <div class="content x ">
                     <div class="count">
                       ${totalServicesAppliedSize }
@@ -102,7 +102,7 @@
                   </div>
                 </div>
                 <div class="col-md-4 col-sm-4 services">
-                <div id="servicesUnderScrutinyDiv">
+                <div id="servicesUnderScrutinyDiv" style="cursor: pointer" >
                   <div class="content y">
                     <div class="count">
                       ${totalServicesPendingSize}
@@ -114,7 +114,7 @@
                   </div>
                 </div>
                 <div class="col-md-4 col-sm-4 services">
-                 <div id="servicesCmpletedDiv">
+                 <div id="servicesCmpletedDiv" style="cursor: pointer">
                   <div class="content z">
                     <div class="count">
                       ${totalServicesCompletedSize }
@@ -142,55 +142,142 @@
                 </thead>
                 <tbody class="servicesUnderScrutinyHide">
                 <c:forEach items="${totalServicesPending}" var="inboxItem" varStatus="item">
-		                 <tr onclick="location.href='${inboxItem.portalInbox.link}'">
+		                 <tr onclick="openPopUp('${inboxItem.portalInbox.link}');">
 		                   <td>${item.index + 1}</td>
 		                   <td>${inboxItem.portalInbox.applicationNumber}</td>
 		                   <td>${inboxItem.portalInbox.applicationDate}</td>
 		                   <td>${inboxItem.portalInbox.serviceType}</td>
 		                   <td>${inboxItem.portalInbox.status}</td>
 		                   <td>
-								<c:if test="${inboxItem.portalInbox.state != null }">
-									${inboxItem.portalInbox.state.value}
-								</c:if>
+								<c:choose>
+		 							<c:when test="${inboxItem.portalInbox.state != null && inboxItem.portalInbox.state.nextAction != ''}">
+		 								${inboxItem.portalInbox.state.nextAction}
+	 								</c:when>
+	 								<c:otherwise>
+	 									<div class="text-center">
+	 										<c:out value="-" ></c:out>
+	 									</div>
+	 								</c:otherwise>
+		 						</c:choose>
 							</td>
-		                   <td>${inboxItem.portalInbox.slaEndDate}</td>
-		                   <td>${inboxItem.portalInbox.resolvedDate}</td>
+		                   <td>
+		 						<c:choose>
+		 							<c:when test="${inboxItem.portalInbox.slaEndDate != null }">
+		 								${inboxItem.portalInbox.state.slaEndDate}
+	 								</c:when>
+	 								<c:otherwise>
+	 									<div class="text-center">
+	 										<c:out value="-" ></c:out>
+	 									</div>
+	 								</c:otherwise>
+		 						</c:choose>
+		 					</td>
+		 					<td>
+		 						<c:choose>
+		 							<c:when test="${inboxItem.portalInbox.resolvedDate != null }">
+		 								${inboxItem.portalInbox.resolvedDate}
+	 								</c:when>
+	 								<c:otherwise>
+	 									<div class="text-center">
+	 										<c:out value="-" ></c:out>
+	 									</div>
+	 								</c:otherwise>
+		 						</c:choose>
+		 					</td>
 		                 </tr>
                   </c:forEach>
                 </tbody>
                 <tbody class="totalServicesAppliedHide">
                 <c:forEach items="${totalServicesApplied}" var="inboxItem" varStatus="item">
-	                	<tr onclick="location.href='${inboxItem.portalInbox.link}'">
+	                	<tr onclick="openPopUp('${inboxItem.portalInbox.link}');">
 	                    <td>${item.index + 1}</td>
 	                    <td>${inboxItem.portalInbox.applicationNumber}</td>
 	                    <td>${inboxItem.portalInbox.applicationDate}</td>
 	                    <td>${inboxItem.portalInbox.serviceType}</td>
 	                    <td>${inboxItem.portalInbox.status}</td>
 	                    <td>
-	 						<c:if test="${inboxItem.portalInbox.state != null }">
-	 							${inboxItem.portalInbox.state.value}
-	 						</c:if>
+	 						<c:choose>
+	 							<c:when test="${inboxItem.portalInbox.state != null && inboxItem.portalInbox.state.nextAction != ''}">
+	 								${inboxItem.portalInbox.state.nextAction}
+ 								</c:when>
+ 								<c:otherwise>
+ 									<div class="text-center">
+ 										<c:out value="-" ></c:out>
+ 									</div>
+ 								</c:otherwise>
+	 						</c:choose>
 	 					</td>
-	                    <td>${inboxItem.portalInbox.slaEndDate}</td>
-	                    <td>${inboxItem.portalInbox.resolvedDate}</td>
+	                    <td>
+	 						<c:choose>
+	 							<c:when test="${inboxItem.portalInbox.slaEndDate != null }">
+	 								${inboxItem.portalInbox.state.slaEndDate}
+ 								</c:when>
+ 								<c:otherwise>
+ 									<div class="text-center">
+ 										<c:out value="-" ></c:out>
+ 									</div>
+ 								</c:otherwise>
+	 						</c:choose>
+	 					</td>
+	                    <td>
+	 						<c:choose>
+	 							<c:when test="${inboxItem.portalInbox.resolvedDate != null }">
+	 								${inboxItem.portalInbox.resolvedDate}
+ 								</c:when>
+ 								<c:otherwise>
+ 									<div class="text-center">
+ 										<c:out value="-" ></c:out>
+ 									</div>
+ 								</c:otherwise>
+	 						</c:choose>
+	 					</td>
 	                  	</tr>
                   </c:forEach>
                 </tbody>
                  <tbody class="totalServicesCompletedHide">
                 <c:forEach items="${totalServicesCompleted}" var="inboxItem" varStatus="item">
-	                  <tr onclick="location.href='${inboxItem.portalInbox.link}'">
+	                  <tr onclick="openPopUp('${inboxItem.portalInbox.link}');">
 	                    <td>${item.index + 1}</td>
 	                    <td>${inboxItem.portalInbox.applicationNumber}</td>
 	                    <td>${inboxItem.portalInbox.applicationDate}</td>
 	                    <td>${inboxItem.portalInbox.serviceType}</td>
 	                    <td>${inboxItem.portalInbox.status}</td>
 	                    <td>
-	 						<c:if test="${inboxItem.portalInbox.state != null }">
-	 							${inboxItem.portalInbox.state.value}
-	 						</c:if>
+	 						<c:choose>
+	 							<c:when test="${inboxItem.portalInbox.state != null && inboxItem.portalInbox.state.nextAction != ''}">
+	 								${inboxItem.portalInbox.state.nextAction}
+ 								</c:when>
+ 								<c:otherwise>
+ 									<div class="text-center">
+ 										<c:out value="-" ></c:out>
+ 									</div>
+ 								</c:otherwise>
+	 						</c:choose>
 	 					</td>
-	                    <td>${inboxItem.portalInbox.slaEndDate}</td>
-	                    <td>${inboxItem.portalInbox.resolvedDate}</td>
+	                    <td>
+	 						<c:choose>
+	 							<c:when test="${inboxItem.portalInbox.slaEndDate != null }">
+	 								${inboxItem.portalInbox.state.slaEndDate}
+ 								</c:when>
+ 								<c:otherwise>
+ 									<div class="text-center">
+ 										<c:out value="-" ></c:out>
+ 									</div>
+ 								</c:otherwise>
+	 						</c:choose>
+	 					</td>
+	                    <td>
+	 						<c:choose>
+	 							<c:when test="${inboxItem.portalInbox.resolvedDate != null }">
+	 								${inboxItem.portalInbox.resolvedDate}
+ 								</c:when>
+ 								<c:otherwise>
+ 									<div class="text-center">
+ 										<c:out value="-" ></c:out>
+ 									</div>
+ 								</c:otherwise>
+	 						</c:choose>
+	 					</td>
 	                  </tr>
                   </c:forEach>
                 </tbody>
