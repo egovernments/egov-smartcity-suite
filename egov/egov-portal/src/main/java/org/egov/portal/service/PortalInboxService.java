@@ -50,6 +50,7 @@ import org.egov.infra.workflow.entity.State;
 import org.egov.portal.entity.PortalInbox;
 import org.egov.portal.entity.PortalInboxUser;
 import org.egov.portal.repository.PortalInboxRepository;
+import org.egov.portal.service.es.PortalInboxIndexService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -60,12 +61,16 @@ public class PortalInboxService {
 
     private final PortalInboxRepository portalInboxRepository;
 
+    private final PortalInboxIndexService portalInboxIndexService;
+
     @Autowired
     private SecurityUtils securityUtils;
 
     @Autowired
-    public PortalInboxService(final PortalInboxRepository portalInboxRepository) {
+    public PortalInboxService(final PortalInboxRepository portalInboxRepository,
+            final PortalInboxIndexService portalInboxIndexService) {
         this.portalInboxRepository = portalInboxRepository;
+        this.portalInboxIndexService = portalInboxIndexService;
     }
 
     public Long getPortalInboxByStatus(final boolean resolved) {
@@ -85,6 +90,7 @@ public class PortalInboxService {
         } else
             portalInbox.getPortalInboxUsers().addAll(portalInbox.getTempPortalInboxUser());
         portalInboxRepository.save(portalInbox);
+        portalInboxIndexService.createPortalInboxIndex(portalInbox);
     }
 
     private void createPortalUser(final PortalInbox portalInbox, final User user) {
@@ -111,6 +117,7 @@ public class PortalInboxService {
             if (user != null && !containsUser(portalInbox.getPortalInboxUsers(), user.getId()))
                 createPortalUser(portalInbox, user);
             portalInboxRepository.save(portalInbox);
+            portalInboxIndexService.createPortalInboxIndex(portalInbox);
         }
     }
 
