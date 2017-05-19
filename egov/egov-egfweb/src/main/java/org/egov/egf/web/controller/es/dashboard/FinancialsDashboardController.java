@@ -85,7 +85,7 @@ public class FinancialsDashboardController {
      * @return response JSON
      * @throws IOException
      */
-    @RequestMapping(value = "/finreports", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/dashboard", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public List<FinancialsDetailResponse> getFinancialDetails(FinancialsDetailsRequest financialsDetailsRequest)
             throws IOException {
         if (LOGGER.isDebugEnabled())

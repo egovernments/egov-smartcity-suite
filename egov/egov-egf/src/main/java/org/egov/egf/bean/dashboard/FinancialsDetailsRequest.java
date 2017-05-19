@@ -53,6 +53,7 @@ public class FinancialsDetailsRequest {
     private String district;
     private String grade;
     private String ulbCode;
+    private String ulbName;
     private String fromDate;
     private String toDate;
     private String admZone;
@@ -229,4 +230,13 @@ public class FinancialsDetailsRequest {
     public void setLastFinancialYear(String lastFinancialYear) {
         LastFinancialYear = lastFinancialYear;
     }
+
+    public String getUlbName() {
+        return ulbName;
+    }
+
+    public void setUlbName(String ulbName) {
+        this.ulbName = ulbName;
+    }
+
 }

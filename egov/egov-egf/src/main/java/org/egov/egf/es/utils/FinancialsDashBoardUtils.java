@@ -62,6 +62,7 @@ public class FinancialsDashBoardUtils {
     private static final String DISTRICT = "distname";
     private static final String GRADE = "ulbgrade";
     private static final String ULBCODE = "ulbcode";
+    private static final String ULBNAME = "ulbname";
     private static final String VOUCHER_DATE = "vouchereffectivedate";
     private static final String ADM_ZONE = "admZone";
     private static final String FUND_NAME = "voucherfundname";
@@ -150,9 +151,12 @@ public class FinancialsDashBoardUtils {
     }
 
     private static BoolQueryBuilder prepareWhereCluase(FinancialsDetailsRequest financialsDetailsRequest, BoolQueryBuilder boolQuery) {
-        if (StringUtils.isNotBlank(financialsDetailsRequest.getAdmWard()))
+        if (StringUtils.isNotBlank(financialsDetailsRequest.getUlbCode()))
             boolQuery
                     .filter(QueryBuilders.matchQuery(ULBCODE, financialsDetailsRequest.getUlbCode()));
+        if (StringUtils.isNotBlank(financialsDetailsRequest.getUlbName()))
+            boolQuery
+                    .filter(QueryBuilders.matchQuery(ULBNAME, financialsDetailsRequest.getUlbName()));
         if (StringUtils.isNotBlank(financialsDetailsRequest.getDistrict()))
             boolQuery
                     .filter(QueryBuilders.matchQuery(DISTRICT, financialsDetailsRequest.getDistrict()));
@@ -221,16 +225,25 @@ public class FinancialsDashBoardUtils {
         return aggregationField;
     }
 
-    public static void setValues(String keyName, FinancialsDetailResponse financialsDetail, String aggrField) {
+    public static void setValues(final String keyName, FinancialsDetailResponse financialsDetail, final String aggrField, final FinancialsDetailResponse finResponse) {
 
-        if (DISTRICT.equalsIgnoreCase(aggrField))
+        if (DISTRICT.equalsIgnoreCase(aggrField)) {
             financialsDetail.setDistrict(keyName);
-        if (REGION.equalsIgnoreCase(aggrField))
+            financialsDetail.setRegion(finResponse.getRegion());
+        }
+        if (REGION.equalsIgnoreCase(aggrField)) {
             financialsDetail.setRegion(keyName);
-        if (GRADE.equalsIgnoreCase(aggrField))
+        }
+        if (GRADE.equalsIgnoreCase(aggrField)) {
             financialsDetail.setGrade(keyName);
-        if (ULBCODE.equalsIgnoreCase(aggrField))
-            financialsDetail.setUlbName(keyName);
+        }
+        if (ULBCODE.equalsIgnoreCase(aggrField)) {
+            financialsDetail.setUlbCode(keyName);
+            financialsDetail.setUlbName(finResponse.getUlbName());
+            financialsDetail.setDistrict(finResponse.getDistrict());
+            financialsDetail.setGrade(finResponse.getGrade());
+            financialsDetail.setRegion(finResponse.getRegion());
+        }
         if (MAJOR_CODE.equalsIgnoreCase(aggrField))
             financialsDetail.setMajorCode(keyName);
         if (MINOR_CODE.equalsIgnoreCase(aggrField))

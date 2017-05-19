@@ -47,27 +47,30 @@
 
 package org.egov.egf.bean.dashboard;
 
+import org.egov.infra.utils.StringUtils;
+
 import java.math.BigDecimal;
 
 public class FinancialsDetailResponse {
 
-    private String region;
-    private String district;
-    private String grade;
-    private String ulbName;
-    private String fromDate;
-    private String toDate;
-    private String admZoneName;
-    private String admWardName;
-    private String fundCode;
-    private String departmentCode;
-    private String functionCode;
-    private String fundSource;
-    private String schemeCode;
-    private String subschemeCode;
-    private String majorCode;
-    private String minorCode;
-    private String detailedCode;
+    private String region = StringUtils.EMPTY;
+    private String district = StringUtils.EMPTY;
+    private String grade = StringUtils.EMPTY;
+    private String ulbCode = StringUtils.EMPTY;
+    private String ulbName = StringUtils.EMPTY;
+    private String fromDate = StringUtils.EMPTY;
+    private String toDate = StringUtils.EMPTY;
+    private String admZoneName = StringUtils.EMPTY;
+    private String admWardName = StringUtils.EMPTY;
+    private String fundCode = StringUtils.EMPTY;
+    private String departmentCode = StringUtils.EMPTY;
+    private String functionCode = StringUtils.EMPTY;
+    private String fundSource = StringUtils.EMPTY;
+    private String schemeCode = StringUtils.EMPTY;
+    private String subschemeCode = StringUtils.EMPTY;
+    private String majorCode = StringUtils.EMPTY;
+    private String minorCode = StringUtils.EMPTY;
+    private String detailedCode = StringUtils.EMPTY;
     private BigDecimal cyIncomeDebitAmount = BigDecimal.ZERO;
     private BigDecimal lyIncomeDebitAmount = BigDecimal.ZERO;
     private BigDecimal cyIncomeCreditAmount = BigDecimal.ZERO;
@@ -492,5 +495,13 @@ public class FinancialsDetailResponse {
 
     public void setDetailedCode(String detailedCode) {
         this.detailedCode = detailedCode;
+    }
+
+    public String getUlbCode() {
+        return ulbCode;
+    }
+
+    public void setUlbCode(String ulbCode) {
+        this.ulbCode = ulbCode;
     }
 }
