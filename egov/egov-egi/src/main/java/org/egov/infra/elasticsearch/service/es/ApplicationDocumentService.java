@@ -717,7 +717,7 @@ public class ApplicationDocumentService {
                 applicationDetails.setServiceGroup(name);
             else if (CHANNEL.equalsIgnoreCase(aggregationField))
                 applicationDetails.setSource(name);
-            else if (OWNER_NAME.equalsIgnoreCase(aggregationField)){
+            else if (OWNER_NAME.equalsIgnoreCase(aggregationField)) {
                 applicationDetails.setFunctionaryName(name);
                 if (StringUtils.isNotBlank(applicationIndexRequest.getService()))
                     applicationDetails.setServiceType(applicationIndexRequest.getService());
@@ -755,22 +755,27 @@ public class ApplicationDocumentService {
             applicationDetails.setOthersTotal(otherApplications.get(name) == null ? 0 : otherApplications.get(name));
 
             if (APPLICATION_TYPE.equalsIgnoreCase(aggregationField)) {
-                if(moduleWiseDetailsMap.get(applicationDetails.getServiceGroup()) == null){
+                if (moduleWiseDetailsMap.get(applicationDetails.getServiceGroup()) == null) {
                     modulewiseDetails = new ArrayList<>();
                     modulewiseDetails.add(applicationDetails);
                     moduleWiseDetailsMap.put(applicationDetails.getServiceGroup(), modulewiseDetails);
                 } else
                     moduleWiseDetailsMap.get(applicationDetails.getServiceGroup()).add(applicationDetails);
-            } else 
+            } else
                 applicationDetailsList.add(applicationDetails);
         }
-       
+
         if (APPLICATION_TYPE.equalsIgnoreCase(aggregationField)) {
-            applicationDetailsList.addAll(moduleWiseDetailsMap.get(MODULE_PROPERTY_TAX));
-            applicationDetailsList.addAll(moduleWiseDetailsMap.get(MODULE_WATER_TAX));
-            applicationDetailsList.addAll(moduleWiseDetailsMap.get(MODULE_TRADE_LICENSE));
-            applicationDetailsList.addAll(moduleWiseDetailsMap.get(MODULE_ADVERTISEMENT_TAX));
-            applicationDetailsList.addAll(moduleWiseDetailsMap.get(MODULE_MARRIAGE_REGISTRATION));
+            if (moduleWiseDetailsMap.get(MODULE_PROPERTY_TAX) != null)
+                applicationDetailsList.addAll(moduleWiseDetailsMap.get(MODULE_PROPERTY_TAX));
+            if (moduleWiseDetailsMap.get(MODULE_WATER_TAX) != null)
+                applicationDetailsList.addAll(moduleWiseDetailsMap.get(MODULE_WATER_TAX));
+            if (moduleWiseDetailsMap.get(MODULE_TRADE_LICENSE) != null)
+                applicationDetailsList.addAll(moduleWiseDetailsMap.get(MODULE_TRADE_LICENSE));
+            if (moduleWiseDetailsMap.get(MODULE_ADVERTISEMENT_TAX) != null)
+                applicationDetailsList.addAll(moduleWiseDetailsMap.get(MODULE_ADVERTISEMENT_TAX));
+            if (moduleWiseDetailsMap.get(MODULE_MARRIAGE_REGISTRATION) != null)
+                applicationDetailsList.addAll(moduleWiseDetailsMap.get(MODULE_MARRIAGE_REGISTRATION));
         }
         return applicationDetailsList;
     }
