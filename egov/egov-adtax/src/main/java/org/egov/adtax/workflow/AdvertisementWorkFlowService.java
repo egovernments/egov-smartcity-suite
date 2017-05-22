@@ -261,7 +261,7 @@ public class AdvertisementWorkFlowService {
                 }
             } else {
 
-                if (!isEmployee(advertisementPermitDetail.getCreatedBy())) {
+                if (!isEmployee(advertisementPermitDetail.getCreatedBy())|| advertisementPermitDetail.getCreatedBy().getName().equalsIgnoreCase("anonymous") ) {
                     wfInitiator = getUserAssignment(advertisementPermitDetail.getCreatedBy(), advertisementPermitDetail);
                 } else {
                     wfInitiator = assignmentService.getPrimaryAssignmentForUser(advertisementPermitDetail
@@ -305,8 +305,9 @@ public class AdvertisementWorkFlowService {
 
     public Assignment getUserAssignment(User user, AdvertisementPermitDetail advertisementPermitDetail) {
         Assignment assignment;
-        if (isCscOperator(user))
+        if (isCscOperator(user)|| user.getUsername().equalsIgnoreCase("anonymous"))
             assignment = getMappedAssignmentForCscOperator(advertisementPermitDetail);
+            
         else
             assignment = getWorkFlowInitiator(advertisementPermitDetail);
         return assignment;

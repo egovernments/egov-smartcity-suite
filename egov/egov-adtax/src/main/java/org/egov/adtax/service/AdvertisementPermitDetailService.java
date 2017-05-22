@@ -66,6 +66,7 @@ import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -116,11 +117,13 @@ public class AdvertisementPermitDetailService {
     @Transactional
     public AdvertisementPermitDetail createAdvertisementPermitDetail(final AdvertisementPermitDetail advertisementPermitDetail,
             final Long approvalPosition, final String approvalComent, final String additionalRule,
-            final String workFlowAction) {
-        if (advertisementPermitDetail != null && advertisementPermitDetail.getId() == null)
-            advertisementPermitDetail.getAdvertisement()
-                    .setDemandId(advertisementDemandService.createDemand(advertisementPermitDetail));
-        roundOfAllTaxAmount(advertisementPermitDetail);
+            final String workFlowAction, User user) {
+        if (advertisementWorkFlowService.isEmployee(user) && !user.getUsername().equalsIgnoreCase("anonymous")) {
+            if (advertisementPermitDetail != null && advertisementPermitDetail.getId() == null)
+                advertisementPermitDetail.getAdvertisement()
+                        .setDemandId(advertisementDemandService.createDemand(advertisementPermitDetail));
+            roundOfAllTaxAmount(advertisementPermitDetail);
+        }
         if (advertisementPermitDetail.getApplicationNumber() == null)
             advertisementPermitDetail
                     .setApplicationNumber(beanResolver.getAutoNumberServiceFor(AdvertisementApplicationNumberGenerator.class)
@@ -174,6 +177,28 @@ public class AdvertisementPermitDetailService {
             final String workFlowAction) {
         final boolean anyDemandPendingForCollection = advertisementDemandService
                 .anyDemandPendingForCollection(advertisementPermitDetail);
+        /*
+         * if new application is created by anonymous user or using CSC operator then demand is created here. if application is
+         * renewed by anonymous user or CSC operator then demand is updated. if application is renewed by authorized user then
+         * demand is updated.
+         */
+        if (advertisementPermitDetail.getSource() != null && (advertisementPermitDetail.getSource().equalsIgnoreCase("online")
+                || advertisementPermitDetail.getSource().equalsIgnoreCase("CSC"))) {
+            if ( advertisementPermitDetail.getAdvertisement().getDemandId() == null) {
+                if (advertisementPermitDetail != null && advertisementPermitDetail.getId() != null)
+                    advertisementPermitDetail.getAdvertisement()
+                            .setDemandId(advertisementDemandService.createDemand(advertisementPermitDetail));
+            } else {
+                if (anyDemandPendingForCollection && advertisementPermitDetail.getPreviousapplicationid() == null)
+                    advertisementDemandService.updateDemand(advertisementPermitDetail,
+                            advertisementPermitDetail.getAdvertisement().getDemandId());
+            }
+
+        } else {
+            if (anyDemandPendingForCollection && advertisementPermitDetail.getPreviousapplicationid() == null)
+                advertisementDemandService.updateDemand(advertisementPermitDetail,
+                        advertisementPermitDetail.getAdvertisement().getDemandId());
+        }
 
         /*
          * if (!actualHoarding.getAgency().equals(advertisementPermitDetail.getAgency()) && anyDemandPendingForCollection) throw
@@ -199,9 +224,6 @@ public class AdvertisementPermitDetailService {
         // If demand pending for collection, then only update demand details.
         // If demand fully paid and user changed tax details, then no need to
         // update demand details.
-        if (anyDemandPendingForCollection && advertisementPermitDetail.getPreviousapplicationid() == null)
-            advertisementDemandService.updateDemand(advertisementPermitDetail,
-                    advertisementPermitDetail.getAdvertisement().getDemandId());
 
         roundOfAllTaxAmount(advertisementPermitDetail);
         advertisementPermitDetailRepository.save(advertisementPermitDetail);

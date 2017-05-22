@@ -47,6 +47,8 @@
 
 <div class="row">
 	<div class="col-md-12">
+		<input type="hidden" name="isEmployee" id="isEmployee" value="${isEmployee}" /> 
+	
 		<c:if test="${not empty message}">
 			<div class="alert alert-success" role="alert"><spring:message code="${message}"/></div>
 		</c:if>
