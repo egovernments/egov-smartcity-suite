@@ -106,9 +106,11 @@ public class SewerageLegacyConnectionController extends GenericWorkFlowControlle
     private final SewerageTaxUtils sewerageTaxUtils;
     private static final String MESSAGE = "message";
     private static final String COMMON_ERROR_PAGE = "common-error";
+    private static final String SEWERAGEAPPLICATIONDETAILS = "sewerageApplicationDetails";
+    private static final String PROPERTYTYPES =  "propertyTypes";
 
     private final SewerageApplicationDetailsService sewerageApplicationDetailsService;
-
+    
     @Autowired
     private SewerageConnectionService sewerageConnectionService;
 
@@ -175,7 +177,7 @@ public class SewerageLegacyConnectionController extends GenericWorkFlowControlle
         final SewerageConnection connection = new SewerageConnection();
         connection.setStatus(SewerageConnectionStatus.ACTIVE);
         sewerageApplicationDetails.setConnection(connection);
-        model.addAttribute("propertyTypes", PropertyType.values());
+        model.addAttribute(PROPERTYTYPES, PropertyType.values());
 
         model.addAttribute("additionalRule", sewerageApplicationDetails.getApplicationType().getCode());
         model.addAttribute("currentUser", sewerageTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
@@ -225,9 +227,9 @@ public class SewerageLegacyConnectionController extends GenericWorkFlowControlle
 
         if (resultBinder.hasErrors()) {
             sewerageApplicationDetails.setApplicationDate(new Date());
-            model.addAttribute("sewerageApplicationDetails", sewerageApplicationDetails);
+            model.addAttribute(SEWERAGEAPPLICATIONDETAILS, sewerageApplicationDetails);
             model.addAttribute("demandDetailList", sewerageApplicationDetails.getDemandDetailBeanList());
-            model.addAttribute("propertyTypes", PropertyType.values());
+            model.addAttribute(PROPERTYTYPES, PropertyType.values());
             model.addAttribute("executionDate", sewerageApplicationDetails.getConnection().getExecutionDate());
             return "legacySewerageConnection-form";
         }
@@ -275,7 +277,7 @@ public class SewerageLegacyConnectionController extends GenericWorkFlowControlle
         if (applicationNumber != null)
             applicationDetails = sewerageApplicationDetailsService.findByApplicationNumber(applicationNumber);
 
-        return new ModelAndView("sewerageLegacyApplication-success", "sewerageApplicationDetails", applicationDetails);
+        return new ModelAndView("sewerageLegacyApplication-success", SEWERAGEAPPLICATIONDETAILS, applicationDetails);
     }
 
     @RequestMapping(value = "/sewerage/sewerageLegacyApplication-updateForm/{consumernumber}/{assessmentnumber}", method = RequestMethod.GET)
@@ -291,14 +293,14 @@ public class SewerageLegacyConnectionController extends GenericWorkFlowControlle
                     .getBilReceiptsByDemand(sewerageApplicationDetails.getCurrentDemand());
             if (sewerageReceipts != null && sewerageReceipts.isEmpty()) {
                 model.addAttribute(MESSAGE, "msg.validate.modification.notallowed");
-                return new ModelAndView(COMMON_ERROR_PAGE, "sewerageApplicationDetails", sewerageApplicationDetails);
+                return new ModelAndView(COMMON_ERROR_PAGE, SEWERAGEAPPLICATIONDETAILS, sewerageApplicationDetails);
             }
         }
-        model.addAttribute("propertyTypes", PropertyType.values());
+        model.addAttribute(PROPERTYTYPES, PropertyType.values());
         model.addAttribute("legacy", true);
         model.addAttribute("isDonationChargeCollectionRequired", sewerageTaxUtils.isDonationChargeCollectionRequiredForLegacy());
-        model.addAttribute("demandDetailList", loadDemandDetails(model, sewerageApplicationDetails));
-        return new ModelAndView("edit-legacySewerageConnection-form", "sewerageApplicationDetails", sewerageApplicationDetails);
+        model.addAttribute("demandDetailList", loadDemandDetails(sewerageApplicationDetails));
+        return new ModelAndView("edit-legacySewerageConnection-form", SEWERAGEAPPLICATIONDETAILS, sewerageApplicationDetails);
 
     }
 
@@ -328,7 +330,7 @@ public class SewerageLegacyConnectionController extends GenericWorkFlowControlle
 
     }
 
-    private List<SewerageDemandDetail> loadDemandDetails(final Model model,
+    private List<SewerageDemandDetail> loadDemandDetails(
             final SewerageApplicationDetails sewerageApplicationDetails) {
         final List<SewerageDemandDetail> demandDetailBeanList = new ArrayList<>();
         final Set<SewerageDemandDetail> tempDemandDetail = new LinkedHashSet<>();

@@ -208,7 +208,7 @@ public class SewerageIndexService {
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("ward", searchRequest.getRevenueWard()));
         if (StringUtils.isNotBlank(searchRequest.getDoorNumber()))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("doorNo", searchRequest.getDoorNumber()));
-        if((searchRequest.getLegacy()!=null))
+        if(searchRequest.getLegacy()!=null)
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("islegacy", searchRequest.getLegacy()));
         return boolQuery;
     }

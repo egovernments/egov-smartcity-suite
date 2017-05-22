@@ -387,7 +387,7 @@ public class SewerageDemandService {
                     demandDtlPresent = true;
                     dmdDtl.setAmount(sdd.getActualAmount());
                     dmdDtl.setAmtCollected(sdd.getActualCollection());
-                    totalDemandAmount = totalDemandAmount.add((sdd.getActualAmount()));
+                    totalDemandAmount = totalDemandAmount.add(sdd.getActualAmount());
                     totalCollectedAmount = totalCollectedAmount.add(sdd.getActualCollection());
 
                 }
