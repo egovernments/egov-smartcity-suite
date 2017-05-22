@@ -2,32 +2,33 @@ $(document).ready(function(){
 	$('.password-error').hide();
 	$('.totalServicesAppliedHide').hide();
 	$('.totalServicesCompletedHide').hide();
-	$('#servicesUnderScrutinyDiv').attr('style', 'opacity: 0.3;cursor: pointer');
+	$('#servicesCmpletedDiv').attr('style', 'opacity: 0.3;cursor: pointer');
+	$('#totalServicesAppliedDiv').attr('style', 'opacity: 0.3;cursor: pointer');
 	$('#totalServicesAppliedDiv').click(function() {
 		$('.servicesUnderScrutinyHide').hide();
 		$('.totalServicesCompletedHide').hide();
 		$('.totalServicesAppliedHide').show();
-		$('#totalServicesAppliedDiv').attr('style', 'opacity: 0.3;cursor: pointer');
-		$('#servicesUnderScrutinyDiv').attr('style', 'opacity: 1;cursor: pointer');
-		$('#servicesCmpletedDiv').attr('style', 'opacity: 1;cursor: pointer');
+		$('#totalServicesAppliedDiv').attr('style', 'opacity: 1;cursor: pointer');
+		$('#servicesUnderScrutinyDiv').attr('style', 'opacity: 0.3;cursor: pointer');
+		$('#servicesCmpletedDiv').attr('style', 'opacity: 0.3;cursor: pointer');
 	});
 	
 	$('#servicesUnderScrutinyDiv').click(function() {
 		$('.totalServicesAppliedHide').hide();
 		$('.totalServicesCompletedHide').hide();
 		$('.servicesUnderScrutinyHide').show();
-		$('#servicesUnderScrutinyDiv').attr('style', 'opacity: 0.3;cursor: pointer');
-		$('#servicesCmpletedDiv').attr('style', 'opacity: 1;cursor: pointer');
-		$('#totalServicesAppliedDiv').attr('style', 'opacity: 1;cursor: pointer');
+		$('#servicesUnderScrutinyDiv').attr('style', 'opacity: 1;cursor: pointer');
+		$('#servicesCmpletedDiv').attr('style', 'opacity: 0.3;cursor: pointer');
+		$('#totalServicesAppliedDiv').attr('style', 'opacity: 0.3;cursor: pointer');
 	});
 	
 	$('#servicesCmpletedDiv').click(function() {
 		$('.totalServicesAppliedHide').hide();
 		$('.servicesUnderScrutinyHide').hide();
 		$('.totalServicesCompletedHide').show();
-		$('#servicesCmpletedDiv').attr('style', 'opacity: 0.3;cursor: pointer');
-		$('#totalServicesAppliedDiv').attr('style', 'opacity: 1;cursor: pointer');
-		$('#servicesUnderScrutinyDiv').attr('style', 'opacity: 1;cursor: pointer');
+		$('#servicesCmpletedDiv').attr('style', 'opacity: 1;cursor: pointer');
+		$('#totalServicesAppliedDiv').attr('style', 'opacity: 0.3;cursor: pointer');
+		$('#servicesUnderScrutinyDiv').attr('style', 'opacity: 0.3;cursor: pointer');
 
 	});
 	

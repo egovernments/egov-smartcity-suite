@@ -89,7 +89,7 @@ public class PortalInboxService {
                 createPortalUser(portalInbox, user);
         } else
             portalInbox.getPortalInboxUsers().addAll(portalInbox.getTempPortalInboxUser());
-        portalInboxRepository.save(portalInbox);
+        portalInboxRepository.saveAndFlush(portalInbox);
         portalInboxIndexService.createPortalInboxIndex(portalInbox);
     }
 
@@ -116,7 +116,7 @@ public class PortalInboxService {
             updatePortalInboxData(slaEndDate, entityRefNo, link, portalInbox);
             if (user != null && !containsUser(portalInbox.getPortalInboxUsers(), user.getId()))
                 createPortalUser(portalInbox, user);
-            portalInboxRepository.save(portalInbox);
+            portalInboxRepository.saveAndFlush(portalInbox);
             portalInboxIndexService.createPortalInboxIndex(portalInbox);
         }
     }
