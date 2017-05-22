@@ -39,17 +39,29 @@
  */
 package org.egov.stms.web.controller.transactions;
 
+import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.egov.commons.Installment;
+import org.egov.demand.model.BillReceipt;
+import org.egov.demand.model.EgDemandDetails;
+import org.egov.demand.model.EgDemandReason;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.stms.masters.entity.DocumentTypeMaster;
 import org.egov.stms.masters.entity.FeesDetailMaster;
 import org.egov.stms.masters.entity.SewerageApplicationType;
@@ -62,8 +74,10 @@ import org.egov.stms.transactions.entity.SewerageApplicationDetails;
 import org.egov.stms.transactions.entity.SewerageApplicationDetailsDocument;
 import org.egov.stms.transactions.entity.SewerageConnection;
 import org.egov.stms.transactions.entity.SewerageConnectionFee;
+import org.egov.stms.transactions.entity.SewerageDemandDetail;
 import org.egov.stms.transactions.service.SewerageApplicationDetailsService;
 import org.egov.stms.transactions.service.SewerageConnectionService;
+import org.egov.stms.transactions.service.SewerageDemandService;
 import org.egov.stms.utils.SewerageTaxUtils;
 import org.egov.stms.utils.constants.SewerageTaxConstants;
 import org.egov.stms.web.controller.utils.SewerageApplicationValidator;
@@ -76,6 +90,7 @@ import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -89,6 +104,8 @@ public class SewerageLegacyConnectionController extends GenericWorkFlowControlle
 
     private static final Logger LOG = LoggerFactory.getLogger(SewerageLegacyConnectionController.class);
     private final SewerageTaxUtils sewerageTaxUtils;
+    private static final String MESSAGE = "message";
+    private static final String COMMON_ERROR_PAGE = "common-error";
 
     private final SewerageApplicationDetailsService sewerageApplicationDetailsService;
 
@@ -116,6 +133,9 @@ public class SewerageLegacyConnectionController extends GenericWorkFlowControlle
 
     @Autowired
     private SewerageApplicationValidator sewerageApplicationValidator;
+
+    @Autowired
+    private SewerageDemandService sewerageDemandService;
 
     @Autowired
     public SewerageLegacyConnectionController(final SewerageTaxUtils sewerageTaxUtils,
@@ -162,7 +182,7 @@ public class SewerageLegacyConnectionController extends GenericWorkFlowControlle
         model.addAttribute("stateType", sewerageApplicationDetails.getClass().getSimpleName());
         model.addAttribute("typeOfConnection", SewerageTaxConstants.NEWSEWERAGECONNECTION);
         model.addAttribute("legacy", true);
-        model.addAttribute("isDonationChargeCollectionRequired",sewerageTaxUtils.isDonationChargeCollectionRequiredForLegacy());
+        model.addAttribute("isDonationChargeCollectionRequired", sewerageTaxUtils.isDonationChargeCollectionRequiredForLegacy());
         createSewerageConnectionFee(sewerageApplicationDetails,
                 SewerageTaxConstants.FEES_ESTIMATIONCHARGES_CODE);
         createSewerageConnectionFee(sewerageApplicationDetails,
@@ -218,7 +238,8 @@ public class SewerageLegacyConnectionController extends GenericWorkFlowControlle
         sewerageApplicationDetails.setAppDetailsDocument(applicationDocs);
         sewerageConnectionService.processAndStoreApplicationDocuments(sewerageApplicationDetails);
         populateFeesDetails(sewerageApplicationDetails);
-        final SewerageApplicationDetails newSewerageApplicationDetails = sewerageApplicationDetailsService.createLegacySewerageConnection(sewerageApplicationDetails, request);
+        final SewerageApplicationDetails newSewerageApplicationDetails = sewerageApplicationDetailsService
+                .createLegacySewerageConnection(sewerageApplicationDetails, request);
         final String pathVars = newSewerageApplicationDetails.getApplicationNumber();
         return "redirect:/transactions/sewerageLegacyApplication-success?pathVars=" + pathVars;
     }
@@ -255,6 +276,124 @@ public class SewerageLegacyConnectionController extends GenericWorkFlowControlle
             applicationDetails = sewerageApplicationDetailsService.findByApplicationNumber(applicationNumber);
 
         return new ModelAndView("sewerageLegacyApplication-success", "sewerageApplicationDetails", applicationDetails);
+    }
+
+    @RequestMapping(value = "/sewerage/sewerageLegacyApplication-updateForm/{consumernumber}/{assessmentnumber}", method = RequestMethod.GET)
+    public ModelAndView updateLegacy(@PathVariable final String consumernumber, @PathVariable final String assessmentnumber,
+            final Model model, final ModelMap modelMap,
+            final HttpServletRequest request) {
+        SewerageApplicationDetails sewerageApplicationDetails = null;
+        if (consumernumber != null)
+            sewerageApplicationDetails = sewerageApplicationDetailsService.findByApplicationNumber(consumernumber);
+
+        if (sewerageApplicationDetails != null) {
+            List<BillReceipt> sewerageReceipts = sewerageDemandService
+                    .getBilReceiptsByDemand(sewerageApplicationDetails.getCurrentDemand());
+            if (sewerageReceipts != null && sewerageReceipts.isEmpty()) {
+                model.addAttribute(MESSAGE, "msg.validate.modification.notallowed");
+                return new ModelAndView(COMMON_ERROR_PAGE, "sewerageApplicationDetails", sewerageApplicationDetails);
+            }
+        }
+        model.addAttribute("propertyTypes", PropertyType.values());
+        model.addAttribute("legacy", true);
+        model.addAttribute("isDonationChargeCollectionRequired", sewerageTaxUtils.isDonationChargeCollectionRequiredForLegacy());
+        model.addAttribute("demandDetailList", loadDemandDetails(model, sewerageApplicationDetails));
+        return new ModelAndView("edit-legacySewerageConnection-form", "sewerageApplicationDetails", sewerageApplicationDetails);
+
+    }
+
+    @RequestMapping(value = "/sewerageLegacyApplication-update", method = RequestMethod.POST)
+    public String updateLegacyConnection(
+            SewerageApplicationDetails sewerageApplicationDetails, final BindingResult errors,
+            final RedirectAttributes redirectAttributes, final BindingResult resultBinder,
+            final HttpServletRequest request, final Model model,
+            @RequestParam("files") final MultipartFile[] files) {
+
+        final List<SewerageApplicationDetailsDocument> applicationDocs = new ArrayList<>();
+        int i = 0;
+        if (!sewerageApplicationDetails.getAppDetailsDocument().isEmpty())
+            for (final SewerageApplicationDetailsDocument applicationDocument : sewerageApplicationDetails
+                    .getAppDetailsDocument()) {
+                sewerageConnectionService.validateDocuments(applicationDocs, applicationDocument, i, resultBinder);
+                i++;
+            }
+        sewerageApplicationDetails.getAppDetailsDocument().clear();
+        sewerageApplicationDetails.setAppDetailsDocument(applicationDocs);
+        sewerageConnectionService.processAndStoreApplicationDocuments(sewerageApplicationDetails);
+
+        final String pathVars = sewerageApplicationDetails.getApplicationNumber();
+        sewerageApplicationDetailsService.updateLegacySewerageConnection(sewerageApplicationDetails, request);
+
+        return "redirect:/transactions/sewerageLegacyApplication-success?pathVars=" + pathVars;
+
+    }
+
+    private List<SewerageDemandDetail> loadDemandDetails(final Model model,
+            final SewerageApplicationDetails sewerageApplicationDetails) {
+        final List<SewerageDemandDetail> demandDetailBeanList = new ArrayList<>();
+        final Set<SewerageDemandDetail> tempDemandDetail = new LinkedHashSet<>();
+        List<Installment> allInstallments = new ArrayList<>();
+        final DateFormat dateFormat = new SimpleDateFormat(PropertyTaxConstants.DATE_FORMAT_DDMMYYY);
+        try {
+
+            allInstallments = sewerageTaxUtils
+                    .getInstallmentsForCurrYear(
+                            dateFormat.parse(dateFormat.format(sewerageApplicationDetails.getConnection().getExecutionDate())));
+
+        } catch (final ParseException e) {
+            throw new ApplicationRuntimeException("Error while getting all installments from start date", e);
+        }
+        SewerageDemandDetail dmdDtl = null;
+
+        for (final Installment installObj : allInstallments) {
+            if (installObj.getFromDate().compareTo(new Date()) < 0) {
+                final EgDemandReason demandReasonObj = sewerageDemandService
+                        .getDemandReasonByCodeAndInstallment(SewerageTaxConstants.FEES_SEWERAGETAX_CODE, installObj.getId());
+                if (demandReasonObj != null) {
+                    EgDemandDetails demanddet = null;
+                    if (sewerageApplicationDetails.getCurrentDemand() != null)
+                        demanddet = getDemandDetailsExist(sewerageApplicationDetails, demandReasonObj);
+                    if (demanddet != null)
+                        dmdDtl = createDemandDetailBean(installObj, demandReasonObj, demanddet.getAmount(),
+                                demanddet.getAmtCollected(), demanddet.getId());
+                    else
+                        dmdDtl = createDemandDetailBean(installObj, demandReasonObj, BigDecimal.ZERO, BigDecimal.ZERO, null);
+
+                }
+                tempDemandDetail.add(dmdDtl);
+            }
+        }
+        for (final SewerageDemandDetail demandDetList : tempDemandDetail)
+            if (demandDetList != null)
+                demandDetailBeanList.add(demandDetList);
+
+        return demandDetailBeanList;
+    }
+
+    private EgDemandDetails getDemandDetailsExist(final SewerageApplicationDetails sewerageApplicationDetails,
+            final EgDemandReason demandReasonObj) {
+        EgDemandDetails demandDet = null;
+        for (final EgDemandDetails dd : sewerageApplicationDetails.getCurrentDemand()
+                .getEgDemandDetails())
+            if (dd.getEgDemandReason().equals(demandReasonObj)) {
+                demandDet = dd;
+                break;
+            }
+        return demandDet;
+
+    }
+
+    private SewerageDemandDetail createDemandDetailBean(final Installment installment, final EgDemandReason demandReasonObj,
+            final BigDecimal amount, final BigDecimal amountCollected, final Long demanddetailId) {
+        final SewerageDemandDetail demandDetail = new SewerageDemandDetail();
+        demandDetail.setInstallment(installment.getDescription());
+        demandDetail.setReasonMaster(demandReasonObj.getEgDemandReasonMaster().getCode());
+        demandDetail.setInstallmentId(installment.getId());
+        demandDetail.setDemandReasonId(demanddetailId);
+        demandDetail.setActualAmount(amount);
+        demandDetail.setActualCollection(amountCollected);
+        demandDetail.setReasonMasterDesc(demandReasonObj.getEgDemandReasonMaster().getReasonMaster());
+        return demandDetail;
     }
 
 }

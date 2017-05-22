@@ -154,7 +154,9 @@ public class SewerageTaxConstants {
     public static final String CLOSECONNECTION_ACTIONDROPDOWN = "Close Sewerage Connection";
     public static final String CLOSESEWERAGECONNECTIONURL = "/stms/transactions/closeConnection/{shscNumber}";
     public static final String GENERATEBEMANDBILL = "Generate Demand Bill";
+    public static final String MODIFYLEGACYCONNECTION = "Modify Legacy Connection";
     public static final String GENERATEBEMANDBILLURL = "/stms/reports/generate-sewerage-demand-bill/{consumerno}/{assessmentno}";
+    public static final String MODIFYLEGACYCONNECTIONURL = "/stms/transactions/sewerage/sewerageLegacyApplication-updateForm/{consumerno}/{assessmentno}";
     // Elastic Search Constants
     public static final String SEARCHABLE_SHSCNO = "searchable.shscnumber";
     public static final String CLAUSES_CITYNAME = "clauses.cityname";
@@ -312,6 +314,7 @@ public class SewerageTaxConstants {
     public static final String SLAFORCHANGEINCLOSET = "SLAFORCHANGEINCLOSET";
     public static final String SEWERAGE_MONTHLY_RATES ="SEWERAGE MONTHLY RATES BY MULTIPLE CLOSETS";
     public static final String EDIT_DONATION_CHARGE ="EDIT_DONATION_CHARGE";
+    public static final String MODIFYLEGACYCONNECTIONACTIONDROPDOWN="MODIFYLEGACYCONNECTION";
     
     
 }

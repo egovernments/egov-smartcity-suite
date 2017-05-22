@@ -52,6 +52,7 @@ public class SewerageConnSearchRequest {
     private String doorNumber;
     private String ulbName;
     private String applicationDate;
+    private Boolean legacy;
 
     public String getModuleName() {
         return moduleName;
@@ -113,21 +114,19 @@ public class SewerageConnSearchRequest {
         this.searchText = searchText;
     }
 
-    /*public Filters searchFilters() {
-        final List<Filter> andFilters = new ArrayList<>(0);
-        andFilters.add(termsStringFilter(SewerageTaxConstants.SEARCHABLE_SHSCNO, shscNumber));
-        andFilters.add(termsStringFilter(SewerageTaxConstants.CLAUSES_CITYNAME, ulbName));
-        andFilters.add(queryStringFilter(SewerageTaxConstants.SEARCHABLE_CONSUMER_NAME, applicantName));
-        andFilters.add(queryStringFilter(SewerageTaxConstants.CLAUSES_MOBILENO, mobileNumber));
-        andFilters.add(termsStringFilter(SewerageTaxConstants.CLAUSES_DOORNO, doorNumber));
-        andFilters.add(termsStringFilter(SewerageTaxConstants.CLAUSES_REVWARD_NAME, revenueWard));
-        andFilters.add(queryStringFilter(SewerageTaxConstants.CLAUSES_APPLICATION_DATE, applicationDate));
-        andFilters.add(termsStringFilter(SewerageTaxConstants.CLAUSES_APPLICATIONNO, consumerNumber));
-        andFilters.add(termsStringFilter(SewerageTaxConstants.CLAUSES_ISACTIVE, "true"));
-        if (logger.isDebugEnabled())
-            logger.debug("finished filters");
-        return Filters.withAndFilters(andFilters);
-    }*/
+    /*
+     * public Filters searchFilters() { final List<Filter> andFilters = new ArrayList<>(0);
+     * andFilters.add(termsStringFilter(SewerageTaxConstants.SEARCHABLE_SHSCNO, shscNumber));
+     * andFilters.add(termsStringFilter(SewerageTaxConstants.CLAUSES_CITYNAME, ulbName));
+     * andFilters.add(queryStringFilter(SewerageTaxConstants.SEARCHABLE_CONSUMER_NAME, applicantName));
+     * andFilters.add(queryStringFilter(SewerageTaxConstants.CLAUSES_MOBILENO, mobileNumber));
+     * andFilters.add(termsStringFilter(SewerageTaxConstants.CLAUSES_DOORNO, doorNumber));
+     * andFilters.add(termsStringFilter(SewerageTaxConstants.CLAUSES_REVWARD_NAME, revenueWard));
+     * andFilters.add(queryStringFilter(SewerageTaxConstants.CLAUSES_APPLICATION_DATE, applicationDate));
+     * andFilters.add(termsStringFilter(SewerageTaxConstants.CLAUSES_APPLICATIONNO, consumerNumber));
+     * andFilters.add(termsStringFilter(SewerageTaxConstants.CLAUSES_ISACTIVE, "true")); if (logger.isDebugEnabled())
+     * logger.debug("finished filters"); return Filters.withAndFilters(andFilters); }
+     */
 
     public String searchQuery() {
         return searchText;
@@ -157,5 +156,14 @@ public class SewerageConnSearchRequest {
         this.consumerNumber = consumerNumber;
     }
 
+    public Boolean getLegacy() {
+        return legacy;
+    }
+
+    public void setLegacy(Boolean legacy) {
+        this.legacy = legacy;
+    }
+
+  
 
 }

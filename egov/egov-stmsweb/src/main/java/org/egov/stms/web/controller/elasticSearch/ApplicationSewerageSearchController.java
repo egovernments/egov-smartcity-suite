@@ -112,6 +112,12 @@ public class ApplicationSewerageSearchController {
         return "sewerageTaxSearch-form";
     }
 
+    @RequestMapping(value = "/legacysearch", method = RequestMethod.GET)
+    public String newLeagacySearchForm(final Model model) {
+        model.addAttribute("isLegacy", true);
+        return "sewerageTaxSearch-form";
+    }
+
     @ModelAttribute("revenueWards")
     public List<Boundary> revenueWardList() {
         return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(

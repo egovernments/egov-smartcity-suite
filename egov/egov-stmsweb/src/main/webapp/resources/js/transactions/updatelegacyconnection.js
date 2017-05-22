@@ -39,17 +39,23 @@
 #-------------------------------------------------------------------------------*/
 $(document).ready(function(){
 	validateDemand(this);
-	propertyID=$('#propertyIdentifier').val()
+	/*propertyID=$('#propertyIdentifier').val()
 	if(propertyID != '')
-		validateSewerageConnection();
+		validateSewerageConnection();*/
+	loadPropertyDetails();
+	//formDemandDetailTable();
 	$('#propertyIdentifier').blur(function(){
 		validateSewerageConnection();
 	});
 	
-	if($('#executionDate').val() != ''){
-		$("#legacyDemandDetails").show();	
+	if($('#sewerageApplicationDetails').val() != ''){
+		$('#propertyIdentifier').attr('disabled','true');
+		$('#shscNumber').attr('disabled','true');
 	}
-			
+	if($('#executionDate').val() != ''){
+		$("#legacyDemandDetails").show();
+		}
+	
 	$("#executionDate" ).datepicker({
 		format: "dd/mm/yyyy",
 		startDate: new Date(1998, 03, 1),
@@ -507,11 +513,18 @@ $("#amountCollected,#feesDetail1amount")
 		function() {
 			var amountCollected = $('#amountCollected').val();
 			var donationCharge = $('#feesDetail1amount').val();
+			if(donationCharge=='') donationCharge=0;
+			if(amountCollected=='') amountCollected=0;
 			var amountToBeCollected = parseFloat(donationCharge)
 					- parseFloat(amountCollected);
 			if (parseFloat(amountCollected) > parseFloat(donationCharge)) {
 				alert("Collected Donation Charge should not be greater than the actual donation charge");
-				$('#amountCollected').val();
+				$('#amountCollected').val('');
+				
+				if($('#amountCollected').val()=='')
+					amountCollected=0;
+				$("#amountForCollection").val( parseFloat(donationCharge)
+						- parseFloat(amountCollected));
 			} else {
 				$("#amountForCollection").val(amountToBeCollected);
 			}

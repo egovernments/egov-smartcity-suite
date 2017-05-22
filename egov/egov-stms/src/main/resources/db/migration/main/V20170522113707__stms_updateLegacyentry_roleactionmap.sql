@@ -1,0 +1,14 @@
+INSERT INTO EG_ACTION (ID,NAME,URL,QUERYPARAMS,PARENTMODULE,ORDERNUMBER,DISPLAYNAME,ENABLED,CONTEXTROOT,VERSION,CREATEDBY,CREATEDDATE,LASTMODIFIEDBY,LASTMODIFIEDDATE,APPLICATION) values (NEXTVAL('SEQ_EG_ACTION'),'SearchLegacySewerageConnection','/existing/sewerage/legacysearch',null,(select id from EG_MODULE where name = 'sewerageMasters'),null,'Modify Legacy Connection',true,'stms',0,1,now(),1,now(),(select id from eg_module  where name = 'Sewerage Tax Management'));
+
+INSERT INTO EG_ROLEACTION (roleid, actionid) values ((select id from eg_role where name = 'Super User'),(select id from eg_action where name ='SearchLegacySewerageConnection' and contextroot = 'stms'));
+INSERT INTO EG_ROLEACTION (roleid, actionid) values ((select id from eg_role where name = 'Sewerage Tax Administrator'),(select id from eg_action where name ='SearchLegacySewerageConnection' and contextroot = 'stms'));
+
+INSERT INTO EG_ACTION (ID,NAME,URL,QUERYPARAMS,PARENTMODULE,ORDERNUMBER,DISPLAYNAME,ENABLED,CONTEXTROOT,VERSION,CREATEDBY,CREATEDDATE,LASTMODIFIEDBY,LASTMODIFIEDDATE,APPLICATION) values (NEXTVAL('SEQ_EG_ACTION'),'UpdateLegacySewerageConnection','/transactions/sewerage/sewerageLegacyApplication-updateForm',null,(select id from EG_MODULE where name = 'sewerageMasters'),null,'Modify Legacy Connection',false,'stms',0,1,now(),1,now(), (select id from eg_module  where name = 'Sewerage Tax Management'));
+
+INSERT INTO EG_ROLEACTION (roleid, actionid) values ((select id from eg_role where name = 'Super User'),(select id from eg_action where name ='UpdateLegacySewerageConnection' and contextroot = 'stms'));
+INSERT INTO EG_ROLEACTION (roleid, actionid) values ((select id from eg_role where name = 'Sewerage Tax Administrator'),(select id from eg_action where name ='UpdateLegacySewerageConnection' and contextroot = 'stms'));
+
+INSERT INTO EG_ACTION (ID,NAME,URL,QUERYPARAMS,PARENTMODULE,ORDERNUMBER,DISPLAYNAME,ENABLED,CONTEXTROOT,VERSION,CREATEDBY,CREATEDDATE,LASTMODIFIEDBY,LASTMODIFIEDDATE,APPLICATION) values (NEXTVAL('SEQ_EG_ACTION'),'updateLegacySewerage','/transactions/sewerageLegacyApplication-update',null,(select id from EG_MODULE where name = 'sewerageMasters'),null,'Update Legacy Connection',false,'stms',0,1,now(),1,now(),(select id from eg_module  where name = 'Sewerage Tax Management'));
+
+INSERT INTO EG_ROLEACTION (roleid, actionid) values ((select id from eg_role where name = 'Super User'),(select id from eg_action where name ='updateLegacySewerage' and contextroot = 'stms'));
+INSERT INTO EG_ROLEACTION (roleid, actionid) values ((select id from eg_role where name = 'Sewerage Tax Administrator'),(select id from eg_action where name ='updateLegacySewerage' and contextroot = 'stms'));
