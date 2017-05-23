@@ -42,7 +42,6 @@ package org.egov.pgr.service;
 
 import static org.egov.infra.config.core.ApplicationThreadLocals.getDomainURL;
 import static org.egov.infra.config.core.ApplicationThreadLocals.getMunicipalityName;
-import static org.egov.infra.utils.DateUtils.toDefaultDateTimeFormat;
 
 import java.util.Date;
 import java.util.List;
@@ -201,16 +200,8 @@ public class ComplaintCommunicationService {
                 .getAssignmentsForPosition(previousAssignee.getId(), new Date());
         final User previousOwner = !prevUserAssignments.isEmpty() ? prevUserAssignments.get(0).getEmployee() : null;
 
-        final String emailBody = complaintMessageSource.getMessage(
-                "msg.complaint.escalation.email.body",
-                new String[] { nextOwner.getName(), complaint.getCrn(), complaint.getComplaintType().getName(),
-                        complaint.getLocation().getName(), complaint.getDetails(),
-                        complaint.getStatus().getName(), nextOwner.getName(),
-                        toDefaultDateTimeFormat(complaint.getEscalationDate()) },
-                locale);
-
         final String emailSubject = complaintMessageSource.getMessage("msg.complaint.escalation.email.subject",
-                new String[] { complaint.getCrn(), complaint.getStatus().getName() }, locale);
+                new String[] { complaint.getComplaintType().getSlaHours().toString() }, locale);
 
         final String previousowner = previousOwner != null ? previousOwner.getName()
                 : previousAssignee.getName();
@@ -229,9 +220,11 @@ public class ComplaintCommunicationService {
                         complaint.getComplaintType().getName()
                 },
                 locale);
-        messagingService.sendEmail(nextOwner.getEmailId(), emailSubject, emailBody);
+        if (previousOwner != null) {
+            messagingService.sendEmail(previousOwner.getEmailId(), emailSubject, smsMsgPreviousOwner);
+            messagingService.sendSMS(previousOwner.getMobileNumber(), smsMsgPreviousOwner);
+        }
+        messagingService.sendEmail(nextOwner.getEmailId(), emailSubject, smsMsgnextOwner);
         messagingService.sendSMS(nextOwner.getMobileNumber(), smsMsgnextOwner);
-        messagingService.sendSMS(nextOwner.getMobileNumber(), smsMsgPreviousOwner);
-
     }
 }
