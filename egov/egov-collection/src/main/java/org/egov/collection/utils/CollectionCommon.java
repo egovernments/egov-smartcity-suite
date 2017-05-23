@@ -349,7 +349,7 @@ public class CollectionCommon {
         } else
             for (final ReceiptHeader receiptHeader : receipts) {
                 String additionalMessage = null;
-                if (receiptType == CollectionConstants.RECEIPT_TYPE_BILL) {
+                if (receiptType == CollectionConstants.RECEIPT_TYPE_BILL) 
                     if (!receiptHeader.getService().getCode().equals(CollectionConstants.SERVICECODE_LAMS))
                         additionalMessage = receiptHeaderService.getAdditionalInfoForReceipt(serviceCode,
                                 new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO, persistenceService,
@@ -361,7 +361,6 @@ public class CollectionCommon {
                         receiptList.add(new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO,
                                 persistenceService, null));
                 }
-            }
         final ReportRequest reportInput = new ReportRequest(templateName, receiptList, reportParams);
 
         // Set the flag so that print dialog box is automatically opened
