@@ -47,10 +47,11 @@ import org.egov.infra.admin.master.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
@@ -62,28 +63,28 @@ public class UpdateUserRoleController {
     private final RoleService roleService;
 
     @Autowired
-    public UpdateUserRoleController(final UserService userService, final RoleService roleService) {
+    public UpdateUserRoleController(UserService userService, RoleService roleService) {
         this.userService = userService;
         this.roleService = roleService;
     }
 
     @ModelAttribute
-    public User user(@PathVariable final Long userId) {
+    public User user(@PathVariable Long userId) {
         return userService.getUserById(userId);
     }
 
     @ModelAttribute("roles")
     public List<Role> roles() {
-        return roleService.getAllRoles();
+        return roleService.getNonInternalRoles();
     }
 
-    @RequestMapping(method = RequestMethod.GET)
+    @GetMapping
     public String updateUserRoleView() {
         return "userrole-update";
     }
 
-    @RequestMapping(method = RequestMethod.POST)
-    public String updateUserRoles(@ModelAttribute final User user, final BindingResult errors, final RedirectAttributes redirectAttrs) {
+    @PostMapping
+    public String updateUserRoles(@ModelAttribute User user, BindingResult errors, RedirectAttributes redirectAttrs) {
         if (errors.hasErrors())
             return "/userrole/update/" + user.getId();
         userService.updateUser(user);

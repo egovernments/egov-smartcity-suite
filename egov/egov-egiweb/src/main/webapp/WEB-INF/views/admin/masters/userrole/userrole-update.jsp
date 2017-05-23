@@ -38,110 +38,110 @@
   ~  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
-<%@ page contentType="text/html;charset=UTF-8" language="java"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
-<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <div class="row" id="page-content">
-	<div class="col-md-12">
-		<div class="panel" data-collapsed="0">
-			<div class="panel-body">
-				<c:if test="${not empty message}">
-					<div class="alert alert-success" role="alert">
-						<spring:message code="${message}" />
-					</div>
-				</c:if>
-				<form:form id="updateuserRoleForm" action="${user.id}" method="post"
-					modelAttribute="user" commandName="user"
-					class="form-horizontal form-groups-bordered">
-					
-					<div class="panel panel-primary" data-collapsed="0">
-						<div class="panel-heading">
-							<div class="panel-title">
-								<strong><spring:message code="lbl.hdr.userrole.info" /> For : <span style="
+    <div class="col-md-12">
+        <div class="panel" data-collapsed="0">
+            <div class="panel-body">
+                <c:if test="${not empty message}">
+                    <div class="alert alert-success" role="alert">
+                        <spring:message code="${message}"/>
+                    </div>
+                </c:if>
+                <form:form id="updateuserRoleForm" action="${user.id}" method="post"
+                           modelAttribute="user" commandName="user"
+                           class="form-horizontal form-groups-bordered">
+
+                    <div class="panel panel-primary" data-collapsed="0">
+                        <div class="panel-heading">
+                            <div class="panel-title">
+                                <strong><spring:message code="lbl.hdr.userrole.info"/> For : <span style="
     font-family: semibold;
     font-size: 16px;
 "><c:out value="${user.username}"></c:out></span></strong>
-							</div>
-						</div>
-						<form:hidden path="id" id="id" value="${user.id}" />
-						<form:hidden path="username" id="username" value="${user.username}" />
-						<div class="row">
-							<div class="col-md-12 text-center">
-								<div class="panel-body">
-									<div class="row">
-										<div class="col-xs-5">
-											<div>
-												<spring:message code="lbl.roles" />
-											</div>
-											<br/>
-											<form:select path="roles" multiple="true" size="11"
-												id="multiselect" cssClass="form-control"
-												cssErrorClass="form-control error">
-												<form:options items="${roles}" itemValue="id"
-													itemLabel="name" />
-											</form:select>
-										</div>
-										<div class="col-xs-2">
-											<div>&nbsp;</div>
-											<br/>
-												<button type="button" id="multiselect_rightSelected"
-													class="btn btn-block btn-default">
-													<i class="glyphicon glyphicon-chevron-right"></i>
-												</button>
-												<button type="button" id="multiselect_leftSelected"
-													class="btn btn-block btn-default">
-													<i class="glyphicon glyphicon-chevron-left"></i>
-												</button>
-										</div>
-										<div class="col-xs-5">
-											<div>
-												<spring:message code="lbl.assigned.roles" />
-											</div>
-											<br/>
-											<form:select path="roles" multiple="true" size="11"
-												id="multiselect_to" cssClass="form-control"
-												cssErrorClass="form-control">
-											</form:select>
-											<form:errors path="roles" cssClass="error-msg" />
-										</div>
-									</div>
-									<div>&nbsp;</div>
-									<div>&nbsp;</div>
-									<div class="form-group"></div>
-								</div>
-							</div>
-						</div>
-					</div>
-				<div class="row">
-					<div class="text-center">
-						<button type="submit" id="userroleUpdateBtn"
-							class="btn btn-primary">
-							<spring:message code="lbl.update" />
-						</button>
-						<button type="button" id="userroleSearchBtn"
-							class="btn btn-primary">
-							<spring:message code="lbl.search" />
-						</button>
-						<button type="button" class="btn btn-default"
-							data-dismiss="modal" onclick="window.close();">
-							<spring:message code="lbl.close" />
-						</button>
-					</div>
-				</div>
-				</form:form>
-			</div>
-		</div>
-	</div>
+                            </div>
+                        </div>
+                        <form:hidden path="id" id="id" value="${user.id}"/>
+                        <form:hidden path="username" id="username" value="${user.username}"/>
+                        <div class="row">
+                            <div class="col-md-12 text-center">
+                                <div class="panel-body">
+                                    <div class="row">
+                                        <div class="col-xs-5">
+                                            <div>
+                                                <spring:message code="lbl.roles"/>
+                                            </div>
+                                            <br/>
+                                            <form:select path="roles" multiple="true" size="11"
+                                                         id="multiselect" cssClass="form-control"
+                                                         cssErrorClass="form-control error">
+                                                <form:options items="${roles}" itemValue="id"
+                                                              itemLabel="name"/>
+                                            </form:select>
+                                        </div>
+                                        <div class="col-xs-2">
+                                            <div>&nbsp;</div>
+                                            <br/>
+                                            <button type="button" id="multiselect_rightSelected"
+                                                    class="btn btn-block btn-default">
+                                                <i class="glyphicon glyphicon-chevron-right"></i>
+                                            </button>
+                                            <button type="button" id="multiselect_leftSelected"
+                                                    class="btn btn-block btn-default">
+                                                <i class="glyphicon glyphicon-chevron-left"></i>
+                                            </button>
+                                        </div>
+                                        <div class="col-xs-5">
+                                            <div>
+                                                <spring:message code="lbl.assigned.roles"/>
+                                            </div>
+                                            <br/>
+                                            <form:select path="roles" multiple="true" size="11"
+                                                         id="multiselect_to" cssClass="form-control"
+                                                         cssErrorClass="form-control">
+                                            </form:select>
+                                            <form:errors path="roles" cssClass="error-msg"/>
+                                        </div>
+                                    </div>
+                                    <div>&nbsp;</div>
+                                    <div>&nbsp;</div>
+                                    <div class="form-group"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="text-center">
+                            <button type="submit" id="userroleUpdateBtn"
+                                    class="btn btn-primary">
+                                <spring:message code="lbl.update"/>
+                            </button>
+                            <button type="button" id="userroleSearchBtn"
+                                    class="btn btn-primary">
+                                <spring:message code="lbl.search"/>
+                            </button>
+                            <button type="button" class="btn btn-default"
+                                    data-dismiss="modal" onclick="window.close();">
+                                <spring:message code="lbl.close"/>
+                            </button>
+                        </div>
+                    </div>
+                </form:form>
+            </div>
+        </div>
+    </div>
 </div>
 <script src="<cdn:url  value='/resources/js/app/userrole.js?rnd=${app_release_no}'/>"></script>
 <script>
-	$('#userroleSearchBtn').click(function() {
-		window.location = '/egi/userrole/search';
-	})
+    $('#userroleSearchBtn').click(function () {
+        window.location = '/egi/userrole/search';
+    })
 </script>
 <script src="<cdn:url  value='/resources/global/js/jquery/plugins/multiselect.js'/>"></script>
 <script type="text/javascript">
-	$('#multiselect').multiselect();
+    $('#multiselect').multiselect();
 </script>
