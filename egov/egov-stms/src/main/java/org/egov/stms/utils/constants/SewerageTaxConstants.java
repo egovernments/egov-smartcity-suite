@@ -123,13 +123,13 @@ public class SewerageTaxConstants {
     public static final String DESIGNATION_COMMISSIONER = "Commissioner";
 
     // User roles
-    public static final String ROLE_SUPERUSER = "Super User";
+    public static final String ROLE_SUPERUSER = "SYSTEM";
     public static final String ROLE_EXECUTIVEDEPARTEMNT = "Engineering";
     public static final String ROLE_DEPUTYDEPARTEMNT = "Engineering";
     public static final String ROLE_CSCOPERTAOR = "CSC Operator";
     public static final String ROLE_ULBOPERATOR = "ULB Operator";
     public static final String ROLE_COLLECTIONOPERATOR = "Collection Operator";
-    public static final String ROLE_CITIZEN = "Citizen";
+    public static final String ROLE_CITIZEN = "CITIZEN";
     public static final String ROLE_SEWERAGETAX_CREATOR = "Sewerage Tax Creator";
     public static final String ROLE_SEWERAGETAX_ADMINISTRATOR = "Sewerage Tax Administrator";
     public static final String ROLE_SEWERAGETAX_APPROVER = "Sewerage Tax Approver";

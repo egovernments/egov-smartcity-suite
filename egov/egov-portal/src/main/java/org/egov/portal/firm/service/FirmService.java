@@ -65,7 +65,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class FirmService {
 
-    public static final String ROLE_BUSINESS_USER = "Business User";
+    public static final String ROLE_BUSINESS_USER = "BUSINESS";
 
     @Autowired
     private FirmRepository firmRepository;

@@ -247,7 +247,7 @@ public class WorksConstants {
     // public static final String NEWCONTRACTORBILLREGISTER = "NEWCONTRACTORBILLREGISTER";
 
     // User roles
-    public static final String ROLE_SUPERUSER = "Super User";
+    public static final String ROLE_SUPERUSER = "SYSTEM";
 
     public static final String LINEESTIMATE_CREATE = "create";
     public static final String LINEESTIMATE_UPDATE = "update";
