@@ -82,6 +82,16 @@
               </div>
             </nav>
           </header>
+          
+          <div id="showServiceGroup">
+			<div class="col-md-9 col-sm-9 add-margin text-right" ><spring:message code="lbl.servicegroup" /> :</div>
+			<select class="col-md-2 col-sm-6 pull-left" id="serviceGroup" >
+			  <option value="" >ALL</option>
+				<c:forEach items="${distinctModuleNames}" var="module" varStatus="item">
+						  <option value="${module.contextRoot }">${module.displayName}</option>
+			          </c:forEach>
+			</select>		
+          </div>
           <div class="main-content">
             <div class="action-bar hide">
               <div class="action-item"><input type="text" id="search" placeholder="Search"></div>
@@ -92,7 +102,7 @@
                 <div class="col-md-4 col-sm-4 services">
                 <div id="totalServicesAppliedDiv" style="cursor: pointer">
                   <div class="content x ">
-                    <div class="count">
+                    <div class="count" id="totalServicesAppliedSize">
                       ${totalServicesAppliedSize }
                     </div>
                     <div class="text">
@@ -104,7 +114,7 @@
                 <div class="col-md-4 col-sm-4 services">
                 <div id="servicesUnderScrutinyDiv" style="cursor: pointer" >
                   <div class="content y">
-                    <div class="count">
+                    <div class="count" id="totalServicesPendingSize">
                       ${totalServicesPendingSize}
                     </div>
                     <div class="text">
@@ -116,7 +126,7 @@
                 <div class="col-md-4 col-sm-4 services">
                  <div id="servicesCmpletedDiv" style="cursor: pointer">
                   <div class="content z">
-                    <div class="count">
+                    <div class="count" id="totalServicesCompletedSize">
                       ${totalServicesCompletedSize }
                     </div>
                     <div class="text">
@@ -127,12 +137,13 @@
                 </div>
               </div><br>
               <%-- ${inboxItems.portalInbox} --%>
-              <table class="table table-striped">
+              <table class="table table-striped" id="tabelPortal">
                 <thead>
                   <tr>
                     <th><spring:message code="lbl.slno" /></th>
                     <th><spring:message code="lbl.applicartionno" /></th>
                     <th><spring:message code="lbl.applicationdate" /></th>
+                    <th><spring:message code="lbl.servicegroup" /></th>
                     <th><spring:message code="lbl.servicename" /></th>
                     <th><spring:message code="lbl.status" /></th>
                     <th><spring:message code="lbl.pendingaction" /></th>
@@ -142,10 +153,11 @@
                 </thead>
                 <tbody class="servicesUnderScrutinyHide">
                 <c:forEach items="${totalServicesPending}" var="inboxItem" varStatus="item">
-		                 <tr onclick="openPopUp('${inboxItem.portalInbox.link}');">
+		                 <tr onclick="openPopUp('${inboxItem.portalInbox.link}');" class = "${inboxItem.portalInbox.module.contextRoot } showAll">
 		                   <td>${item.index + 1}</td>
 		                   <td>${inboxItem.portalInbox.applicationNumber}</td>
 		                   <td>${inboxItem.portalInbox.applicationDate}</td>
+		                   <td>${inboxItem.portalInbox.module.displayName}</td>
 		                   <td>${inboxItem.portalInbox.serviceType}</td>
 		                   <td>${inboxItem.portalInbox.status}</td>
 		                   <td>
@@ -189,10 +201,11 @@
                 </tbody>
                 <tbody class="totalServicesAppliedHide">
                 <c:forEach items="${totalServicesApplied}" var="inboxItem" varStatus="item">
-	                	<tr onclick="openPopUp('${inboxItem.portalInbox.link}');">
+	                	<tr onclick="openPopUp('${inboxItem.portalInbox.link}');" class = "${inboxItem.portalInbox.module.contextRoot } showAll">
 	                    <td>${item.index + 1}</td>
 	                    <td>${inboxItem.portalInbox.applicationNumber}</td>
 	                    <td>${inboxItem.portalInbox.applicationDate}</td>
+	                    <td>${inboxItem.portalInbox.module.displayName}</td>
 	                    <td>${inboxItem.portalInbox.serviceType}</td>
 	                    <td>${inboxItem.portalInbox.status}</td>
 	                    <td>
@@ -236,10 +249,11 @@
                 </tbody>
                  <tbody class="totalServicesCompletedHide">
                 <c:forEach items="${totalServicesCompleted}" var="inboxItem" varStatus="item">
-	                  <tr onclick="openPopUp('${inboxItem.portalInbox.link}');">
+	                  <tr onclick="openPopUp('${inboxItem.portalInbox.link}');" class = "${inboxItem.portalInbox.module.contextRoot } showAll">
 	                    <td>${item.index + 1}</td>
 	                    <td>${inboxItem.portalInbox.applicationNumber}</td>
 	                    <td>${inboxItem.portalInbox.applicationDate}</td>
+	                    <td>${inboxItem.portalInbox.module.displayName}</td>
 	                    <td>${inboxItem.portalInbox.serviceType}</td>
 	                    <td>${inboxItem.portalInbox.status}</td>
 	                    <td>
@@ -286,7 +300,7 @@
             <c:forEach items="${services}" var="service" varStatus="item">
 	            <div class="is-flex services-item">
 	              <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 services" data-services="${service.module.displayName }">
-	                <a href="${service.url }">
+	                <a href="javascript:openPopUp('${service.url}')" >
 	                  <div class="content a">${service.name}</div>
 	                </a>
 	              </div>
@@ -296,197 +310,3 @@
         </div>
       </div>
     </div>
-
-    <!-- Modal -->
-    <!-- <div id="myModal" class="modal fade" role="dialog" tabindex='-1'>
-      <div class="modal-dialog">
-
-        Modal content
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal">&times;</button>
-            <h4 class="modal-title">W102416170000303</h4>
-          </div>
-          <div class="modal-body">
-            <ul class="timeline" id="timeline">
-              <li class="li complete">
-                <div class="timestamp">
-                  <span class="date">16/03/2017<span>
-                </div>
-                <div class="status">
-                  <h4> Application Received </h4>
-                </div>
-              </li>
-              <li class="li complete">
-                <div class="timestamp">
-                  <span class="date">16/03/2017<span>
-                </div>
-                <div class="status">
-                  <h4> Preliminary Check of Documents </h4>
-                </div>
-              </li>
-              <li class="li complete">
-                <div class="timestamp">
-                  <span class="date">16/03/2017<span>
-                </div>
-                <div class="status">
-                  <h4> Processing </h4>
-                </div>
-              </li>
-              <li class="li">
-                <div class="timestamp">
-                  <span class="date">TBD<span>
-                </div>
-                <div class="status">
-                  <h4> Approval </h4>
-                </div>
-              </li>
-              <li class="li">
-                <div class="timestamp">
-                  <span class="date">TBD<span>
-                </div>
-                <div class="status">
-                  <h4> Certificate Print </h4>
-                </div>
-              </li>
-             </ul>  
-            <div class="row">
-              <div class="col-md-12 title">
-                <h4 class="modal-title">Primary Details</h4>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-3 col-sm-4 col-xs-6">
-                <label for="">Application Date</label>
-                <div class="field">15/03/2017</div>
-              </div>
-              <div class="col-md-3 col-sm-4 col-xs-6">
-                <label for="">Service Name</label>
-                <div class="field">Water Connection</div>
-              </div>
-              <div class="col-md-3 col-sm-4 col-xs-6">
-                <label for="">Status</label>
-                <div class="field">Rejected</div>
-              </div>
-              <div class="col-md-3 col-sm-4 col-xs-6">
-                <label for="">Pending User Action</label>
-                <div class="field">-</div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-3 col-sm-4 col-xs-6">
-                <label for="">Maximum Days For Issuing Certificate</label>
-                <div class="field">15</div>
-              </div>
-              <div class="col-md-3 col-sm-4 col-xs-6">
-                <label for="">Expected Service Delivery Date</label>
-                <div class="field">30/03/2017</div>
-              </div>
-              <div class="col-md-3 col-sm-4 col-xs-6">
-                <label for="">Actual Service Delivery Date</label>
-                <div class="field">15/03/2017</div>
-              </div>
-              <div class="col-md-3 col-sm-4 col-xs-6">
-                <label for="">Application Fee</label>
-                <div class="field"><span>&#8377; </span>40</div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-3 col-sm-4 col-xs-6">
-                <label for="">Processing Fee</label>
-                <div class="field"><span>&#8377; </span>500</div>
-              </div>
-              <div class="col-md-3 col-sm-4 col-xs-6">
-                <label for="">Rejection Reason</label>
-                <div class="field">It is rejected since the property has pending tax dues.Please pay the taxes and apply again</div>
-              </div>
-              <div class="col-md-3 col-sm-4 col-xs-6">
-                <label for="">Payment Receipt</label>
-                <div class="field"><button class="btn btn-xs btn-success">Download</button></div>
-              </div>
-              <div class="col-md-3 col-sm-4 col-xs-6">
-                <label for="">Print</label>
-                <div class="field"><button class="btn btn-xs btn-info">Print Acknowledgement</button></div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-3 col-sm-4 col-xs-6">
-                <label for="">Download Certifcate</label>
-                <div class="field"><button class="btn btn-xs btn-success">Download</button></div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-12 title">
-                <h4 class="modal-title">Applicant Details</h4>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-3 col-sm-4 col-xs-6">
-                <label for="">Name</label>
-                <div class="field">Natalie Portman</div>
-              </div>
-              <div class="col-md-3 col-sm-4 col-xs-6">
-                <label for="">Mobile No.</label>
-                <div class="field">9784563210</div>
-              </div>
-              <div class="col-md-3 col-sm-4 col-xs-6">
-                <label for="">Email ID</label>
-                <div class="field">natalie.portman@gmail.com</div>
-              </div>
-              <div class="col-md-3 col-sm-4 col-xs-6">
-                <label for="">Address</label>
-                <div class="field">25, 13th cross, 17th main, Madiwala</div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-3 col-sm-4 col-xs-6">
-                <label for="">UID</label>
-                <div class="field">2546965896578</div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-12 title">
-                <h4 class="modal-title">CheckList</h4>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-3 col-sm-3 col-xs-3">
-                <label for="">S.no</label>
-              </div>
-              <div class="col-md-3 col-sm-3 col-xs-3">
-                <label for="">Document Name</label>
-              </div>
-              <div class="col-md-3 col-sm-3 col-xs-3">
-                <label for="">File</label>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-3 col-sm-3 col-xs-3">
-                <div class="field">1</div>
-              </div>
-              <div class="col-md-3 col-sm-3 col-xs-3">
-                <div class="field">Proof of address for bride , bride groom and witnesses</div>
-              </div>
-              <div class="col-md-3 col-sm-3 col-xs-3">
-                <div class="field"><a href="javascript:void(0)">address.pdf</a></div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-3 col-sm-3 col-xs-3">
-                <div class="field">2</div>
-              </div>
-              <div class="col-md-3 col-sm-3 col-xs-3">
-                <div class="field">Proof of age for bride , bride groom and witnesses</div>
-              </div>
-              <div class="col-md-3 col-sm-3 col-xs-3">
-                <div class="field"><a href="javascript:void(0)">age.pdf</a></div>
-              </div>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-          </div>
-        </div>
-
-      </div>
-    </div> -->

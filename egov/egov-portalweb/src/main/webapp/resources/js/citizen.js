@@ -62,9 +62,11 @@ $(document).ready(function(){
     $(this).addClass('active');
     module = $(this).data('module');
     $('.services-item .services').hide();
+    $('#showServiceGroup').hide();
     if(module == 'home'){
       $('.inbox-modules').show();
       $('.action-bar').addClass('hide');
+      $('#showServiceGroup').show();
     }
     else{
       $('.inbox-modules').hide();
@@ -126,6 +128,26 @@ $(document).ready(function(){
              	$('.change-password, .loader-class').modal('hide');
              }
      }); 
+  });
+  
+  $('#serviceGroup').change(function(){
+	  var total = $( "#totalServicesAppliedSize" ).html().trim();
+	  var length = document.getElementsByClassName($(this).val()).length / 2;
+	  if($(this).val() == "") {
+		  $('.showAll').show();
+		  $( "#totalServicesAppliedSize" ).html($( "#tabelPortal tbody.totalServicesAppliedHide tr.showAll" ).length);
+		  $( "#totalServicesCompletedSize" ).html($( "#tabelPortal tbody.totalServicesCompletedHide tr.showAll" ).length);
+		  $( "#totalServicesPendingSize" ).html($( "#tabelPortal tbody.servicesUnderScrutinyHide tr.showAll" ).length);
+	  } else {
+		  $('.showAll').hide();
+		  $('.'+$(this).val()).show();
+		  $( "#totalServicesAppliedSize" ).html($( "#tabelPortal tbody.totalServicesAppliedHide tr."+$(this).val() ).length);
+		  $( "#totalServicesCompletedSize" ).html($( "#tabelPortal tbody.totalServicesCompletedHide tr."+$(this).val() ).length);
+		  $( "#totalServicesPendingSize" ).html($( "#tabelPortal tbody.servicesUnderScrutinyHide tr."+$(this).val() ).length);
+
+	  }
+		  
+	  
   });
 
 });

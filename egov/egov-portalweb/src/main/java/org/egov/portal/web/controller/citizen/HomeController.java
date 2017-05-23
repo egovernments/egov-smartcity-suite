@@ -114,6 +114,7 @@ public class HomeController {
 
         modelData.addAttribute("moduleNames", portalServiceTypeService.getDistinctModuleNames());
         modelData.addAttribute("services", portalServiceTypeService.getAllPortalService());
+        modelData.addAttribute("distinctModuleNames", portalServiceTypeService.getAllModules());
         modelData.addAttribute("userId", user.getId());
 
         List<PortalInboxUser> totalServicesApplied = portalInboxUserService.getPortalInboxByUserId(user.getId());
