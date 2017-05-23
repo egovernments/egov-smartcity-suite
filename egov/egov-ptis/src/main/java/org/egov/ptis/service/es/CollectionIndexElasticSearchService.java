@@ -2616,12 +2616,14 @@ public class CollectionIndexElasticSearchService {
         }
 
         if (!REVENUE_WARD.equalsIgnoreCase(aggregationField)) {
+            BoolQueryBuilder boolQuery=prepareQueryForAgg(collectionDetailsRequest);
             AggregationBuilder agg = AggregationBuilders.terms("uniqueAggr").field(fieldName).size(size);
-            SearchResponse response1 = elasticsearchTemplate.getClient().prepareSearch("city")
+            SearchResponse cityResponse = elasticsearchTemplate.getClient().prepareSearch("city")
+                    .setQuery(boolQuery)
                     .setSize(size)
                     .addAggregation(agg)
                     .execute().actionGet();
-            Terms aggTerms = response1.getAggregations().get("uniqueAggr");
+            Terms aggTerms = cityResponse.getAggregations().get("uniqueAggr");
             for (Terms.Bucket bucket : aggTerms.getBuckets())
                 nameList.add(bucket.getKeyAsString());
         } else {
@@ -2631,5 +2633,17 @@ public class CollectionIndexElasticSearchService {
         }
         return nameList;
     }
-    
+
+    private BoolQueryBuilder prepareQueryForAgg(CollectionDetailsRequest collectionDetailsRequest) {
+        BoolQueryBuilder boolQuery = new BoolQueryBuilder();
+        if (StringUtils.isNotBlank(collectionDetailsRequest.getDistrictName())) {
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("districtname", collectionDetailsRequest.getDistrictName()));
+        }
+        if (StringUtils.isNotBlank(collectionDetailsRequest.getRegionName())) {
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("regionname", collectionDetailsRequest.getRegionName()));
+        }
+        if (StringUtils.isNotBlank(collectionDetailsRequest.getUlbGrade()))
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("citygrade", collectionDetailsRequest.getUlbGrade()));
+        return boolQuery;
+    }
 }
