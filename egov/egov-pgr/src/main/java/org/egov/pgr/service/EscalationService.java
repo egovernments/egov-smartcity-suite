@@ -40,7 +40,6 @@
 
 package org.egov.pgr.service;
 
-import static org.egov.infra.utils.DateUtils.toDefaultDateTimeFormat;
 import static org.egov.pgr.utils.constants.PGRConstants.EG_OBJECT_TYPE_COMPLAINT;
 import static org.egov.pgr.utils.constants.PGRConstants.MODULE_NAME;
 
@@ -60,7 +59,6 @@ import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.UserService;
-import org.egov.infra.messaging.MessagingService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.pgr.config.properties.PgrApplicationProperties;
 import org.egov.pgr.entity.Complaint;
@@ -103,9 +101,6 @@ public class EscalationService {
     private ComplaintRepository complaintRepository;
 
     @Autowired
-    private MessagingService messagingService;
-
-    @Autowired
     private PgrApplicationProperties pgrApplicationProperties;
 
     @Autowired
@@ -125,6 +120,9 @@ public class EscalationService {
 
     @Autowired
     private ComplaintIndexService complaintIndexService;
+    
+    @Autowired
+    private ComplaintCommunicationService complaintCommunicationService;
 
     @Autowired
     public EscalationService(final EscalationRepository escalationRepository) {
@@ -214,37 +212,9 @@ public class EscalationService {
             complaintRepository.saveAndFlush(complaint);
             complaintIndexService.updateComplaintEscalationIndexValues(complaint);
             if (sendMessage)
-                sendEscalationMessage(complaint, nextOwner, previousAssignee);
+                complaintCommunicationService.sendEscalationMessage(complaint, nextOwner, previousAssignee);
 
         }
-    }
-
-    private void sendEscalationMessage(final Complaint complaint, final User nextOwner, final Position previousAssignee) {
-        final List<Assignment> prevUserAssignments = assignmentService
-                .getAssignmentsForPosition(previousAssignee.getId(), new Date());
-        final User previousOwner = !prevUserAssignments.isEmpty() ? prevUserAssignments.get(0).getEmployee() : null;
-        final StringBuilder emailBody = new StringBuilder().append("Dear ").append(nextOwner.getName())
-                .append(",\n \n     The complaint Number (").append(complaint.getCrn())
-                .append(") is escalated.\n").append("\n Complaint Details - \n \n Complaint type - ")
-                .append(complaint.getComplaintType().getName()).append(" \n Location details - ")
-                .append(complaint.getLocation().getName()).append("\n Complaint description - ")
-                .append(complaint.getDetails()).append("\n Complaint status -")
-                .append(complaint.getStatus().getName()).append("\n Complaint escalated to - ")
-                .append(nextOwner.getName()).append("\n Escalation Time - ")
-                .append(toDefaultDateTimeFormat(complaint.getEscalationDate()));
-        final StringBuilder emailSubject = new StringBuilder().append("Escalated Complaint Number -")
-                .append(complaint.getCrn()).append(" (").append(complaint.getStatus().getName()).append(")");
-        final StringBuilder smsBody = new StringBuilder().append("Dear ").append(nextOwner.getName())
-                .append(", ").append(complaint.getCrn() + " by ")
-                .append(complaint.getComplainant().getName() != null ? complaint.getComplainant().getName()
-                        : "Anonymous User")
-                .append(", " + complaint.getComplainant().getMobile())
-                .append(" for " + complaint.getComplaintType().getName() + " from ")
-                .append(complaint.getLocation().getName()).append(" handled by ")
-                .append(previousOwner != null ? previousOwner.getName()
-                        : previousAssignee.getName() + " has been escalated to you. ");
-        messagingService.sendEmail(nextOwner.getEmailId(), emailSubject.toString(), emailBody.toString());
-        messagingService.sendSMS(nextOwner.getMobileNumber(), smsBody.toString());
     }
 
     public Date getExpiryDate(final Complaint complaint) {
