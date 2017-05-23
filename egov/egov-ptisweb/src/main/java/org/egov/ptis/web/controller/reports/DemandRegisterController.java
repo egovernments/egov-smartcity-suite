@@ -8,6 +8,7 @@ import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.reporting.engine.ReportOutput;
+import org.egov.infra.utils.DateUtils;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.transactions.AssessmentTransactions;
@@ -47,7 +48,7 @@ public class DemandRegisterController {
     @ModelAttribute("financialYears")
     public List<CFinancialYear> getFinancialYears() {
 
-        return financialYearDAO.getAllPriorFinancialYears(new Date());
+        return financialYearDAO.getAllPriorFinancialYears(DateUtils.getDate("2017-03-31", "yyyy-MM-dd"));
     }
 
     @RequestMapping(value = "/arrdmdrgstr-vlt/form", method = RequestMethod.GET)
@@ -72,7 +73,7 @@ public class DemandRegisterController {
             @RequestParam final Long financialYearId, @RequestParam final String mode) {
         final CFinancialYear financialYear = financialYearDAO.getFinancialYearById(financialYearId);
         ReportOutput reportOutput = transactionsService.generateDemandRegisterReport(PropertyTaxConstants.ADR_REPORT,
-                wardId, financialYear.getStartingDate(), mode);
+                wardId, financialYear, mode);
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType("application/pdf"));
         headers.add("content-disposition",

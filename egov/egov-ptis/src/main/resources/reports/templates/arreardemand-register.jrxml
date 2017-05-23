@@ -39,7 +39,7 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 <!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
-<!-- 2017-04-27T19:04:44 -->
+<!-- 2017-05-23T14:01:12 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="arreardemand-register" pageWidth="695" pageHeight="852" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="0a0a6bfd-1cdf-4285-89bc-0be3643eba33">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="5"/>
@@ -53,45 +53,28 @@
 	<parameter name="districtName" class="java.lang.String"/>
 	<parameter name="ward" class="java.lang.String"/>
 	<parameter name="propertyType" class="java.lang.String"/>
+	<parameter name="selectedYear" class="java.lang.String"/>
+	<parameter name="cityGrade" class="java.lang.String"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="131" splitType="Stretch">
+		<band height="90" splitType="Stretch">
+			<textField evaluationTime="Auto">
+				<reportElement x="10" y="4" width="640" height="25" uuid="1ae617d7-2e83-43b0-9cab-3b21245028ff">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="18" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{cityGrade}.equals("Corp") ? $P{cityName} + " Municipal Corporation": $P{cityGrade}.equals("NP") ? $P{cityName} + " Nagar Panchayat" : $P{cityName} + " Municipality"]]></textFieldExpression>
+			</textField>
 			<textField>
-				<reportElement x="67" y="106" width="253" height="20" uuid="44459ea5-380b-4fa9-a3d7-45d31e50c4e0"/>
-				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font size="14"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{ward}]]></textFieldExpression>
-			</textField>
-			<textField evaluationTime="Auto">
-				<reportElement x="142" y="4" width="412" height="20" uuid="1ae617d7-2e83-43b0-9cab-3b21245028ff"/>
+				<reportElement x="10" y="38" width="640" height="25" uuid="3d4b7593-6e06-45dc-a563-75b52231030e"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="14"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{cityName}]]></textFieldExpression>
-			</textField>
-			<textField evaluationTime="Auto">
-				<reportElement x="142" y="27" width="412" height="20" uuid="355e817e-0628-4761-9b85-84192b9f3655"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="14"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{districtName}+" District"]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement x="5" y="106" width="62" height="20" uuid="1b7555ef-cb3c-4dda-80aa-220518d21ca5"/>
-				<textElement verticalAlignment="Middle">
 					<font size="12" isBold="true"/>
 				</textElement>
-				<text><![CDATA[   Ward :  ]]></text>
-			</staticText>
-			<textField>
-				<reportElement x="170" y="52" width="321" height="25" uuid="3d4b7593-6e06-45dc-a563-75b52231030e"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="18" isBold="false"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{propertyType}.equals("PT") ? "Arrear Demand Register Report PT" : "Arrear Demand Register Report VLT"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{propertyType}.equals("PT") ? "Arrear Demand Register Report PT for the year " + $P{selectedYear} + " :: Revenue Ward No. " + $P{ward} : "Arrear Demand Register Report VLT for the year " + $P{selectedYear} + " :: Revenue Ward No. " + $P{ward}]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>
@@ -101,7 +84,7 @@
 	<columnHeader>
 		<band height="43" splitType="Stretch">
 			<staticText>
-				<reportElement x="0" y="0" width="70" height="38" uuid="e53d48ae-fe46-4395-a4be-9f36a52904d6">
+				<reportElement x="40" y="0" width="60" height="38" uuid="e53d48ae-fe46-4395-a4be-9f36a52904d6">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
 				<box leftPadding="0">
@@ -117,7 +100,7 @@
 				<text><![CDATA[Assessment Number]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="165" y="0" width="60" height="38" uuid="0a9dcd31-542b-4830-96ac-203ae5c5de16">
+				<reportElement x="195" y="0" width="60" height="38" uuid="0a9dcd31-542b-4830-96ac-203ae5c5de16">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
 				<box leftPadding="0">
@@ -133,7 +116,7 @@
 				<text><![CDATA[Door No. ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="70" y="0" width="95" height="38" uuid="39e1355e-a25b-418c-b7b0-9ed355f864e0"/>
+				<reportElement x="100" y="0" width="95" height="38" uuid="39e1355e-a25b-418c-b7b0-9ed355f864e0"/>
 				<box leftPadding="0">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -147,7 +130,7 @@
 				<text><![CDATA[Owner Name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="225" y="0" width="60" height="38" uuid="04e69349-335f-49c0-b23f-4a1f31c2e746"/>
+				<reportElement x="255" y="0" width="60" height="38" uuid="04e69349-335f-49c0-b23f-4a1f31c2e746"/>
 				<box leftPadding="0">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -161,7 +144,9 @@
 				<text><![CDATA[Demand]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="285" y="0" width="60" height="38" uuid="cfa97e38-685b-4003-80b9-c333fae65365"/>
+				<reportElement x="315" y="0" width="50" height="38" uuid="cfa97e38-685b-4003-80b9-c333fae65365">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
 				<box leftPadding="0">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -175,7 +160,7 @@
 				<text><![CDATA[Collection Date]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="345" y="0" width="60" height="38" uuid="85e1d449-1630-4a63-9fc1-50285c63d8e1">
+				<reportElement x="365" y="0" width="60" height="38" uuid="85e1d449-1630-4a63-9fc1-50285c63d8e1">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
 				<box leftPadding="0">
@@ -191,7 +176,9 @@
 				<text><![CDATA[Collected Amount]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="405" y="0" width="60" height="38" uuid="48cfda6b-a1d3-4b04-985f-a91ecddd79dc"/>
+				<reportElement x="425" y="0" width="40" height="38" uuid="48cfda6b-a1d3-4b04-985f-a91ecddd79dc">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
 				<box leftPadding="0">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -265,6 +252,22 @@
 					<font size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Balance]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="0" width="40" height="38" uuid="3d963a78-1855-4bc8-a40a-a04880ca80b2">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<box leftPadding="0">
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[S.no.]]></text>
 			</staticText>
 		</band>
 	</columnHeader>

@@ -39,7 +39,7 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 <!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
-<!-- 2017-04-28T11:19:15 -->
+<!-- 2017-05-23T13:55:06 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="arreardemand-register-subreport" pageWidth="655" pageHeight="1157" columnWidth="655" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="0bb0e5bf-8634-481a-b624-67c26bf93bf4">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -60,7 +60,7 @@
 	<field name="writeOff" class="java.math.BigDecimal"/>
 	<field name="financialYear" class="java.lang.String"/>
 	<variable name="balance" class="java.math.BigDecimal">
-		<variableExpression><![CDATA[($F{demand}.subtract($F{collectedAmount})).setScale(2,BigDecimal.ROUND_HALF_DOWN)]]></variableExpression>
+		<variableExpression><![CDATA[($F{demand}.subtract($F{totalCollection})).setScale(2,BigDecimal.ROUND_HALF_DOWN)]]></variableExpression>
 	</variable>
 	<variable name="yearCollectedAmount" class="java.math.BigDecimal" resetType="Group" resetGroup="yearWiseTotalTax" calculation="Sum">
 		<variableExpression><![CDATA[$F{collectedAmount}.setScale(2,BigDecimal.ROUND_HALF_DOWN)]]></variableExpression>
@@ -99,18 +99,45 @@
 		<variableExpression><![CDATA[$F{writeOff}.setScale(2,BigDecimal.ROUND_HALF_DOWN)]]></variableExpression>
 	</variable>
 	<variable name="pageBalance" class="java.math.BigDecimal" resetType="Page">
-		<variableExpression><![CDATA[($V{pageDemand}.subtract($V{pageCollectedAmount})).setScale(2,BigDecimal.ROUND_HALF_DOWN)]]></variableExpression>
+		<variableExpression><![CDATA[($V{pageDemand}.subtract($V{pageTotalCollection})).setScale(2,BigDecimal.ROUND_HALF_DOWN)]]></variableExpression>
+	</variable>
+	<variable name="reportCollectedAmount" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{collectedAmount}.setScale(2,BigDecimal.ROUND_HALF_DOWN)]]></variableExpression>
+	</variable>
+	<variable name="reportTotalCollection" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{totalCollection}.setScale(2,BigDecimal.ROUND_HALF_DOWN)]]></variableExpression>
+	</variable>
+	<variable name="reportDemand" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{demand}.setScale(2,BigDecimal.ROUND_HALF_DOWN)]]></variableExpression>
+	</variable>
+	<variable name="reportAdvance" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{advanceAmount}.setScale(2,BigDecimal.ROUND_HALF_DOWN)]]></variableExpression>
+	</variable>
+	<variable name="reportWriteOff" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{writeOff}.setScale(2,BigDecimal.ROUND_HALF_DOWN)]]></variableExpression>
+	</variable>
+	<variable name="reportBalance" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[($V{reportDemand}.subtract($V{reportTotalCollection})).setScale(2,BigDecimal.ROUND_HALF_DOWN)]]></variableExpression>
 	</variable>
 	<variable name="indexNumCountYear" class="java.lang.Integer" resetType="Group" resetGroup="yearWiseTotalTax" calculation="Count">
 		<variableExpression><![CDATA[$F{financialYear}]]></variableExpression>
 	</variable>
-	<variable name="indexNumCountPage" class="java.lang.Integer" resetType="Page" calculation="Count">
-		<variableExpression><![CDATA[$V{PAGE_NUMBER}]]></variableExpression>
-	</variable>
-	<group name="yearWiseTotalTax">
+	<variable name="serialNumber" class="java.lang.Integer" resetType="Group" resetGroup="yearWiseTotalTax" calculation="Count"/>
+	<group name="yearWiseTotalTax" isStartNewPage="true" keepTogether="true">
 		<groupExpression><![CDATA[$F{financialYear}]]></groupExpression>
+		<groupHeader>
+			<band height="33" splitType="Prevent">
+				<textField>
+					<reportElement x="3" y="2" width="100" height="30" uuid="635d383a-9f5e-4302-b192-854c7eae3eb3"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="11" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{financialYear}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
 		<groupFooter>
-			<band height="37" splitType="Prevent">
+			<band height="44" splitType="Prevent">
 				<staticText>
 					<reportElement x="130" y="0" width="95" height="20" uuid="5fc0dcf8-c666-4dfa-9cc6-80864a57262c">
 						<printWhenExpression><![CDATA[$V{indexNumCountYear} > 1]]></printWhenExpression>
@@ -119,10 +146,10 @@
 						<topPen lineWidth="0.25" lineStyle="Dashed"/>
 						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
 					</box>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font isBold="true"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font size="9" isBold="true"/>
 					</textElement>
-					<text><![CDATA[Year Wise Total :]]></text>
+					<text><![CDATA[Year Total :]]></text>
 				</staticText>
 				<textField isStretchWithOverflow="true">
 					<reportElement x="225" y="0" width="60" height="20" uuid="88db655a-ff2f-4055-a3e9-8d22482f99dc">
@@ -135,7 +162,9 @@
 						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
 						<rightPen lineWidth="0.0"/>
 					</box>
-					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
 					<textFieldExpression><![CDATA[$V{yearDemand}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true">
@@ -149,7 +178,9 @@
 						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
 						<rightPen lineWidth="0.0"/>
 					</box>
-					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
 					<textFieldExpression><![CDATA[$V{yearCollectedAmount}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true">
@@ -163,7 +194,9 @@
 						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
 						<rightPen lineWidth="0.0"/>
 					</box>
-					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
 					<textFieldExpression><![CDATA[$V{yearTotalCollection}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true">
@@ -177,7 +210,9 @@
 						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
 						<rightPen lineWidth="0.0"/>
 					</box>
-					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
 					<textFieldExpression><![CDATA[$V{yearBalance}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true">
@@ -191,7 +226,9 @@
 						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
 						<rightPen lineWidth="0.0"/>
 					</box>
-					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
 					<textFieldExpression><![CDATA[$V{yearAdvance}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true">
@@ -205,11 +242,13 @@
 						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
 						<rightPen lineWidth="0.0"/>
 					</box>
-					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
 					<textFieldExpression><![CDATA[$V{yearWriteOff}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true">
-					<reportElement x="1" y="0" width="69" height="20" uuid="061a6b9c-edd0-469f-8c31-7202273189e3">
+					<reportElement x="70" y="0" width="52" height="20" uuid="061a6b9c-edd0-469f-8c31-7202273189e3">
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					</reportElement>
 					<box rightPadding="2">
@@ -219,113 +258,20 @@
 						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
 						<rightPen lineWidth="0.0"/>
 					</box>
-					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
 					<textFieldExpression><![CDATA[$V{yearAssessmentCount}]]></textFieldExpression>
 				</textField>
-			</band>
-		</groupFooter>
-	</group>
-	<group name="pageWiseTotalTax">
-		<groupExpression><![CDATA[$V{PAGE_NUMBER}]]></groupExpression>
-		<groupFooter>
-			<band height="37" splitType="Prevent">
 				<staticText>
-					<reportElement x="130" y="0" width="95" height="20" uuid="5fc0dcf8-c666-4dfa-9cc6-80864a57262c">
-						<printWhenExpression><![CDATA[$V{PAGE_NUMBER} > 0]]></printWhenExpression>
+					<reportElement x="0" y="0" width="80" height="20" uuid="26c24bb7-0931-4591-80e2-aca0235f85a0">
+						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					</reportElement>
-					<box>
-						<topPen lineWidth="0.25" lineStyle="Dashed"/>
-						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
-					</box>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font isBold="true"/>
+					<textElement verticalAlignment="Middle">
+						<font size="9" isBold="true"/>
 					</textElement>
-					<text><![CDATA[Page Wise Total :]]></text>
+					<text><![CDATA[Year Count]]></text>
 				</staticText>
-				<textField isStretchWithOverflow="true" evaluationTime="Page">
-					<reportElement x="225" y="0" width="60" height="20" uuid="88db655a-ff2f-4055-a3e9-8d22482f99dc">
-						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-					</reportElement>
-					<box rightPadding="2">
-						<pen lineWidth="0.25"/>
-						<topPen lineWidth="0.25" lineStyle="Dashed"/>
-						<leftPen lineWidth="0.0"/>
-						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
-						<rightPen lineWidth="0.0"/>
-					</box>
-					<textElement textAlignment="Right" verticalAlignment="Middle"/>
-					<textFieldExpression><![CDATA[$V{pageDemand}]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="true" evaluationTime="Page">
-					<reportElement x="345" y="0" width="60" height="20" uuid="99ffec28-9472-46e9-a6a9-5ed4fc0e7059">
-						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-					</reportElement>
-					<box rightPadding="2">
-						<pen lineWidth="0.25"/>
-						<topPen lineWidth="0.25" lineStyle="Dashed"/>
-						<leftPen lineWidth="0.0"/>
-						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
-						<rightPen lineWidth="0.0"/>
-					</box>
-					<textElement textAlignment="Right" verticalAlignment="Middle"/>
-					<textFieldExpression><![CDATA[$V{pageCollectedAmount}]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="true" evaluationTime="Page">
-					<reportElement x="465" y="0" width="60" height="20" uuid="0efaf72a-c0c2-4e6d-8c7a-2b3ec1b60588">
-						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-					</reportElement>
-					<box rightPadding="2">
-						<pen lineWidth="0.25"/>
-						<topPen lineWidth="0.25" lineStyle="Dashed"/>
-						<leftPen lineWidth="0.0"/>
-						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
-						<rightPen lineWidth="0.0"/>
-					</box>
-					<textElement textAlignment="Right" verticalAlignment="Middle"/>
-					<textFieldExpression><![CDATA[$V{pageTotalCollection}]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="true" evaluationTime="Page">
-					<reportElement x="561" y="0" width="60" height="20" uuid="db6cd591-cab5-409b-afac-eed84381d0e8">
-						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-					</reportElement>
-					<box rightPadding="2">
-						<pen lineWidth="0.25"/>
-						<topPen lineWidth="0.25" lineStyle="Dashed"/>
-						<leftPen lineWidth="0.0"/>
-						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
-						<rightPen lineWidth="0.0"/>
-					</box>
-					<textElement textAlignment="Right" verticalAlignment="Middle"/>
-					<textFieldExpression><![CDATA[$V{pageBalance}]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="true" evaluationTime="Page">
-					<reportElement x="621" y="0" width="30" height="20" uuid="d6d0165f-124f-4ab7-a82e-db19127782ad">
-						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-					</reportElement>
-					<box rightPadding="2">
-						<pen lineWidth="0.25"/>
-						<topPen lineWidth="0.25" lineStyle="Dashed"/>
-						<leftPen lineWidth="0.0"/>
-						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
-						<rightPen lineWidth="0.0"/>
-					</box>
-					<textElement textAlignment="Right" verticalAlignment="Middle"/>
-					<textFieldExpression><![CDATA[$V{pageAdvance}]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="true" evaluationTime="Page">
-					<reportElement x="525" y="0" width="36" height="20" uuid="f6880a70-fb4f-4e25-8c28-01481dfa8689">
-						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-					</reportElement>
-					<box rightPadding="2">
-						<pen lineWidth="0.25"/>
-						<topPen lineWidth="0.25" lineStyle="Dashed"/>
-						<leftPen lineWidth="0.0"/>
-						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
-						<rightPen lineWidth="0.0"/>
-					</box>
-					<textElement textAlignment="Right" verticalAlignment="Middle"/>
-					<textFieldExpression><![CDATA[$V{pageWriteOff}]]></textFieldExpression>
-				</textField>
 			</band>
 		</groupFooter>
 	</group>
@@ -342,64 +288,68 @@
 		<band splitType="Stretch"/>
 	</columnHeader>
 	<detail>
-		<band height="39" splitType="Prevent">
+		<band height="46" splitType="Prevent">
 			<textField isStretchWithOverflow="true">
-				<reportElement x="70" y="1" width="95" height="32" isPrintWhenDetailOverflows="true" uuid="20a195b4-8157-4293-a3d7-79275a77668e"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="10"/>
+				<reportElement x="100" y="0" width="95" height="32" isPrintWhenDetailOverflows="true" uuid="20a195b4-8157-4293-a3d7-79275a77668e"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{ownerName}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="285" y="1" width="60" height="32" uuid="8bc2ee64-480f-4900-a285-07964f03846c"/>
+				<reportElement x="315" y="0" width="50" height="32" uuid="8bc2ee64-480f-4900-a285-07964f03846c">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="10"/>
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{collectionDate}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="345" y="0" width="60" height="33" uuid="93fcd1d6-0ad5-4469-9462-b1a90f30504c"/>
+				<reportElement x="365" y="0" width="60" height="33" uuid="93fcd1d6-0ad5-4469-9462-b1a90f30504c"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="10"/>
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{collectedAmount}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="465" y="0" width="60" height="33" uuid="33f6096a-5776-4789-8957-09abbe8bc9e0"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="10"/>
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{totalCollection}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="165" y="1" width="60" height="32" isPrintWhenDetailOverflows="true" uuid="6ffd2c9c-8ff5-41ab-b2ab-9450cbf08b4a">
+				<reportElement x="195" y="0" width="60" height="32" isPrintWhenDetailOverflows="true" uuid="6ffd2c9c-8ff5-41ab-b2ab-9450cbf08b4a">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="10"/>
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{houseNo}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="0" y="1" width="70" height="32" isPrintWhenDetailOverflows="true" uuid="0c76dbf8-8081-4afd-8ece-916ae053a9c6">
+				<reportElement x="40" y="0" width="60" height="32" isPrintWhenDetailOverflows="true" uuid="0c76dbf8-8081-4afd-8ece-916ae053a9c6">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="10"/>
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{assessmentNo}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="405" y="0" width="60" height="33" uuid="95c3e789-736e-49aa-ac73-392e9a776d30"/>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="10"/>
+				<reportElement x="425" y="0" width="40" height="33" uuid="95c3e789-736e-49aa-ac73-392e9a776d30">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{collectionMode}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="225" y="0" width="60" height="33" uuid="4861d7f5-57f7-46d3-b7d5-d939a8e26eed"/>
+				<reportElement x="255" y="0" width="60" height="33" uuid="4861d7f5-57f7-46d3-b7d5-d939a8e26eed"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="10"/>
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{demand}]]></textFieldExpression>
 			</textField>
@@ -408,7 +358,7 @@
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="10"/>
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{writeOff}]]></textFieldExpression>
 			</textField>
@@ -417,16 +367,23 @@
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="10"/>
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{balance}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="611" y="0" width="40" height="33" uuid="1d9f6574-3d48-4691-8a08-5e800a55fc95"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="10"/>
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{advanceAmount}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="0" width="40" height="32" uuid="aca40d65-5c6d-4690-8761-39a9612101e8"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
@@ -434,9 +391,205 @@
 		<band splitType="Stretch"/>
 	</columnFooter>
 	<pageFooter>
-		<band splitType="Stretch"/>
+		<band height="42" splitType="Stretch">
+			<staticText>
+				<reportElement x="130" y="0" width="95" height="20" uuid="cd1668e2-21bc-4039-9295-7486fcef5a54">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.25" lineStyle="Dashed"/>
+					<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Page Total :]]></text>
+			</staticText>
+			<textField evaluationTime="Page" isBlankWhenNull="true">
+				<reportElement x="225" y="0" width="60" height="20" uuid="2ab5971e-6831-4965-bbe2-4e17f5d8f648"/>
+				<box rightPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25" lineStyle="Dashed"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{pageDemand}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Page" isBlankWhenNull="true">
+				<reportElement x="345" y="0" width="60" height="20" uuid="a5afb446-c5d7-4022-a3c4-fe9d34f82710"/>
+				<box rightPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25" lineStyle="Dashed"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{pageCollectedAmount}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Page" isBlankWhenNull="true">
+				<reportElement x="466" y="0" width="59" height="20" uuid="1cfbca7b-b50d-4bd4-a421-89502f394b4d"/>
+				<box rightPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25" lineStyle="Dashed"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{pageTotalCollection}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Page" isBlankWhenNull="true">
+				<reportElement x="562" y="0" width="59" height="20" uuid="d79b3fbd-f226-4dfd-9103-4c8eea639920"/>
+				<box rightPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25" lineStyle="Dashed"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{pageBalance}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Page" isBlankWhenNull="true">
+				<reportElement x="620" y="0" width="35" height="20" uuid="eb2f2164-46d4-4028-8d32-f1d7071b36ef"/>
+				<box rightPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25" lineStyle="Dashed"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{pageAdvance}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Page" isBlankWhenNull="true">
+				<reportElement x="525" y="0" width="37" height="20" uuid="031ecb1a-f7e8-4493-a65d-4d6fb3304059"/>
+				<box rightPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25" lineStyle="Dashed"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{pageWriteOff}]]></textFieldExpression>
+			</textField>
+		</band>
 	</pageFooter>
 	<summary>
-		<band splitType="Stretch"/>
+		<band height="35" splitType="Stretch">
+			<textField evaluationTime="Report">
+				<reportElement x="225" y="0" width="60" height="20" uuid="d3efaf93-af0c-4d0f-bf04-08942296953b">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<box rightPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25" lineStyle="Dashed"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{reportDemand}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="130" y="0" width="94" height="20" uuid="6ad9af0d-fe29-4b51-9fb8-4a0de2be01fc"/>
+				<box>
+					<topPen lineWidth="0.25" lineStyle="Dashed"/>
+					<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Grand Total :]]></text>
+			</staticText>
+			<textField evaluationTime="Report">
+				<reportElement x="465" y="0" width="60" height="20" uuid="0e97e0fd-8f05-4ba9-8c46-be3d221995f1"/>
+				<box rightPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25" lineStyle="Dashed"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{reportTotalCollection}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="345" y="0" width="60" height="20" uuid="83523241-c538-4939-9d10-5a04323203c9"/>
+				<box rightPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25" lineStyle="Dashed"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{reportCollectedAmount}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="525" y="0" width="37" height="20" uuid="d786544b-31ba-4e40-8de6-843b92edb2e2"/>
+				<box rightPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25" lineStyle="Dashed"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{reportWriteOff}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="562" y="0" width="59" height="20" uuid="c9c0ce0f-1a71-44fa-90a6-47e5fc64e77d"/>
+				<box rightPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25" lineStyle="Dashed"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{reportBalance}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="621" y="0" width="34" height="20" uuid="0e5a2f9b-6e51-40f4-8e83-822788af65ef"/>
+				<box rightPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25" lineStyle="Dashed"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{reportAdvance}]]></textFieldExpression>
+			</textField>
+		</band>
 	</summary>
 </jasperReport>
