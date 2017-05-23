@@ -8,7 +8,6 @@ import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.reporting.engine.ReportOutput;
-import org.egov.infra.utils.DateUtils;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.transactions.AssessmentTransactions;
@@ -48,7 +47,7 @@ public class DemandRegisterController {
     @ModelAttribute("financialYears")
     public List<CFinancialYear> getFinancialYears() {
 
-        return financialYearDAO.getAllPriorFinancialYears(DateUtils.getDate("2017-03-31", "yyyy-MM-dd"));
+        return financialYearDAO.getAllPriorFinancialYears(new Date());
     }
 
     @RequestMapping(value = "/arrdmdrgstr-vlt/form", method = RequestMethod.GET)
