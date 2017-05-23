@@ -1,3 +1,4 @@
 /bin/
 egov-erp-*.properties
 persistence-config.properties
+application-config.properties
