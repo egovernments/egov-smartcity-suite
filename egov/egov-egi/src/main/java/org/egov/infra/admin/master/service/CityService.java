@@ -111,7 +111,6 @@ public class CityService {
     public Map<String, Object> cityDataAsMap() {
         Map<String, Object> cityPrefs = cityPrefCache.entries(cityPrefCacheKey());
         if (cityPrefs.isEmpty()) {
-            System.out.println("ApplicationThreadLocals.getDomainName()>>>>>>>>>"+ApplicationThreadLocals.getDomainName());
             cityPrefCache.putAll(cityPrefCacheKey(), getCityByURL(ApplicationThreadLocals.getDomainName()).toMap());
             cityPrefs = cityPrefCache.entries(cityPrefCacheKey());
         }
