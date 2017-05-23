@@ -107,10 +107,10 @@ public class SewerageLegacyConnectionController extends GenericWorkFlowControlle
     private static final String MESSAGE = "message";
     private static final String COMMON_ERROR_PAGE = "common-error";
     private static final String SEWERAGEAPPLICATIONDETAILS = "sewerageApplicationDetails";
-    private static final String PROPERTYTYPES =  "propertyTypes";
+    private static final String PROPERTYTYPES = "propertyTypes";
 
     private final SewerageApplicationDetailsService sewerageApplicationDetailsService;
-    
+
     @Autowired
     private SewerageConnectionService sewerageConnectionService;
 
@@ -289,7 +289,7 @@ public class SewerageLegacyConnectionController extends GenericWorkFlowControlle
             sewerageApplicationDetails = sewerageApplicationDetailsService.findByApplicationNumber(consumernumber);
 
         if (sewerageApplicationDetails != null) {
-            List<BillReceipt> sewerageReceipts = sewerageDemandService
+            final List<BillReceipt> sewerageReceipts = sewerageDemandService
                     .getBilReceiptsByDemand(sewerageApplicationDetails.getCurrentDemand());
             if (sewerageReceipts != null && sewerageReceipts.isEmpty()) {
                 model.addAttribute(MESSAGE, "msg.validate.modification.notallowed");
@@ -306,7 +306,7 @@ public class SewerageLegacyConnectionController extends GenericWorkFlowControlle
 
     @RequestMapping(value = "/sewerageLegacyApplication-update", method = RequestMethod.POST)
     public String updateLegacyConnection(
-            SewerageApplicationDetails sewerageApplicationDetails, final BindingResult errors,
+            final SewerageApplicationDetails sewerageApplicationDetails, final BindingResult errors,
             final RedirectAttributes redirectAttributes, final BindingResult resultBinder,
             final HttpServletRequest request, final Model model,
             @RequestParam("files") final MultipartFile[] files) {
@@ -348,22 +348,22 @@ public class SewerageLegacyConnectionController extends GenericWorkFlowControlle
         SewerageDemandDetail dmdDtl = null;
 
         for (final Installment installObj : allInstallments) {
-            if (installObj.getFromDate().compareTo(new Date()) < 0) {
-                final EgDemandReason demandReasonObj = sewerageDemandService
-                        .getDemandReasonByCodeAndInstallment(SewerageTaxConstants.FEES_SEWERAGETAX_CODE, installObj.getId());
-                if (demandReasonObj != null) {
-                    EgDemandDetails demanddet = null;
-                    if (sewerageApplicationDetails.getCurrentDemand() != null)
-                        demanddet = getDemandDetailsExist(sewerageApplicationDetails, demandReasonObj);
-                    if (demanddet != null)
-                        dmdDtl = createDemandDetailBean(installObj, demandReasonObj, demanddet.getAmount(),
-                                demanddet.getAmtCollected(), demanddet.getId());
-                    else
-                        dmdDtl = createDemandDetailBean(installObj, demandReasonObj, BigDecimal.ZERO, BigDecimal.ZERO, null);
 
-                }
-                tempDemandDetail.add(dmdDtl);
+            final EgDemandReason demandReasonObj = sewerageDemandService
+                    .getDemandReasonByCodeAndInstallment(SewerageTaxConstants.FEES_SEWERAGETAX_CODE, installObj.getId());
+            if (demandReasonObj != null) {
+                EgDemandDetails demanddet = null;
+                if (sewerageApplicationDetails.getCurrentDemand() != null)
+                    demanddet = getDemandDetailsExist(sewerageApplicationDetails, demandReasonObj);
+                if (demanddet != null)
+                    dmdDtl = createDemandDetailBean(installObj, demandReasonObj, demanddet.getAmount(),
+                            demanddet.getAmtCollected(), demanddet.getId());
+                else
+                    dmdDtl = createDemandDetailBean(installObj, demandReasonObj, BigDecimal.ZERO, BigDecimal.ZERO, null);
+
             }
+            tempDemandDetail.add(dmdDtl);
+
         }
         for (final SewerageDemandDetail demandDetList : tempDemandDetail)
             if (demandDetList != null)

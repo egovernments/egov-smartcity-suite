@@ -47,6 +47,7 @@
 <div class="row">
 	<div class="col-md-12">
 	<form:form id="sewerageSearchRequestForm" method="get" class="form-horizontal form-groups-bordered" modelAttribute="sewerage" commandName="">
+		<input type="hidden" name="legacy" id="legacy" value="${legacy}">
 		<div class="panel panel-primary" data-collapsed="0">
 			<div class="panel-heading">
 				<div class="panel-title">
