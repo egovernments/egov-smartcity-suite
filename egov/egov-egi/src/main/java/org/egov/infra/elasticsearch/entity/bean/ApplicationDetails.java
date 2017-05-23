@@ -40,25 +40,27 @@
 
 package org.egov.infra.elasticsearch.entity.bean;
 
+import org.apache.commons.lang3.StringUtils;
+
 public class ApplicationDetails {
 
-    private String region;
-    private String district;
-    private String grade;
-    private String ulbName;
-    private String ulbCode;
-    private String revZone;
-    private String revWard;
-    private String admZone;
-    private String admWard;
-    private String locality;
-    private String commName;
-    private String commMobile;
-    private String serviceGroup;
-    private String serviceType;
-    private String functionaryName;
-    private String functionaryCode;
-    private String source;
+    private String region = StringUtils.EMPTY;
+    private String district = StringUtils.EMPTY;
+    private String grade = StringUtils.EMPTY;
+    private String ulbName = StringUtils.EMPTY;
+    private String ulbCode = StringUtils.EMPTY;
+    private String revZone = StringUtils.EMPTY;
+    private String revWard = StringUtils.EMPTY;
+    private String admZone = StringUtils.EMPTY;
+    private String admWard = StringUtils.EMPTY;
+    private String locality = StringUtils.EMPTY;
+    private String commName = StringUtils.EMPTY;
+    private String commMobile = StringUtils.EMPTY;
+    private String serviceGroup = StringUtils.EMPTY;
+    private String serviceType = StringUtils.EMPTY;
+    private String functionaryName = StringUtils.EMPTY;
+    private String functionaryCode = StringUtils.EMPTY;
+    private String source = StringUtils.EMPTY;
     private long totalReceived = 0;
     private long totalClosed = 0;
     private long totalOpen = 0;
