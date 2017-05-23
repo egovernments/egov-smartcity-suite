@@ -62,6 +62,7 @@
 				<security:filter-chain pattern="/citizen/activation/**" filters="anonymousAuthenticationFilter"/>
 				<security:filter-chain pattern="/reportviewer**" filters="anonymousAuthenticationFilter" />
 				<security:filter-chain pattern="/dashboard/**" filters="anonymousAuthenticationFilter"/>
+				<security:filter-chain pattern="/public/mobile/paytax/**" filters="none"/>
 				<security:filter-chain pattern="/error/**" filters="none" />
 				<security:filter-chain pattern="/index.jsp" filters="none" />
 				<security:filter-chain pattern="/image/**" filters="none" />
