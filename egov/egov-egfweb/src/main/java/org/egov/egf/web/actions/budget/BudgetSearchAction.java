@@ -397,7 +397,7 @@ public class BudgetSearchAction extends BaseFormAction {
     }
 
     public String divideAndRoundBigDecToString(final BigDecimal amount) {
-        BigDecimal value = BigDecimal.ZERO;
+        BigDecimal value = amount;
         value = value.divide(new BigDecimal(1000), 2, BigDecimal.ROUND_HALF_UP);
         return value.toString();
     }
