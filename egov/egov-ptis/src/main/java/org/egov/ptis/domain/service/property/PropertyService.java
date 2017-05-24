@@ -44,21 +44,21 @@ import static java.lang.String.format;
 import static java.math.BigDecimal.ZERO;
 import static org.egov.ptis.constants.PropertyTaxConstants.ANONYMOUS_USER;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_AMALGAMATION;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_BIFURCATE_ASSESSENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_DEMOLITION;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_GRP;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_NEW_ASSESSENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_REVISION_PETITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TAX_EXEMTION;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_VACANCY_REMISSION;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TAX_EXEMTION;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_DEMOLITION;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_AMALGAMATION;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.BIGDECIMAL_100;
 import static org.egov.ptis.constants.PropertyTaxConstants.BUILT_UP_PROPERTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.CITIZEN_ROLE;
 import static org.egov.ptis.constants.PropertyTaxConstants.CSC_OPERATOR_ROLE;
-import static org.egov.ptis.constants.PropertyTaxConstants.ROLE_DATAENTRY_OPERATOR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_BAL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
@@ -100,6 +100,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.PT_WORKFLOWDESIGNATION_MOBILE;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPSTATVALUE_BY_UPICNO_CODE_ISACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVISIONPETITION_STATUS_CODE;
+import static org.egov.ptis.constants.PropertyTaxConstants.ROLE_DATAENTRY_OPERATOR;
 import static org.egov.ptis.constants.PropertyTaxConstants.SQUARE_YARD_TO_SQUARE_METER_VALUE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_CANCELLED;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
@@ -109,8 +110,9 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_APPROVAL_PEN
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_CLOSED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
-import static org.egov.ptis.constants.PropertyTaxConstants.WTMS_TAXDUE_RESTURL;
 import static org.egov.ptis.constants.PropertyTaxConstants.WTMS_AMALGAMATE_WATER_CONNECTIONS_URL;
+import static org.egov.ptis.constants.PropertyTaxConstants.WTMS_TAXDUE_RESTURL;
+
 import java.io.File;
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -178,6 +180,10 @@ import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.Position;
 import org.egov.pims.commons.service.EisCommonsService;
+import org.egov.portal.entity.PortalInbox;
+import org.egov.portal.entity.PortalInboxBuilder;
+import org.egov.portal.service.PortalInboxService;
+import org.egov.ptis.bean.AmalgamateWaterConnection;
 import org.egov.ptis.client.bill.PTBillServiceImpl;
 import org.egov.ptis.client.model.calculator.APTaxCalculationInfo;
 import org.egov.ptis.client.service.PenaltyCalculationService;
@@ -235,7 +241,6 @@ import org.egov.ptis.domain.repository.master.vacantland.LayoutApprovalAuthority
 import org.egov.ptis.domain.repository.master.vacantland.VacantLandPlotAreaRepository;
 import org.egov.ptis.exceptions.TaxCalculatorExeption;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
-import org.egov.ptis.bean.AmalgamateWaterConnection;
 import org.hibernate.Query;
 import org.joda.time.DateTime;
 import org.json.JSONArray;
@@ -243,8 +248,8 @@ import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
 /**
  * Service class to perform services related to an Assessment
  *
@@ -339,6 +344,11 @@ public class PropertyService {
     @Autowired
     @Qualifier("ptaxApplicationTypeService")
     private PersistenceService<PtApplicationType, Long> ptaxApplicationTypeService;
+    
+    @Autowired
+    private PortalInboxService portalInboxService;
+    
+   // Module module = moduleDao.getModuleByName(PropertyTaxConstants.PTMODULENAME);
     
     /**
      * Creates a new property if property is in transient state else updates persisted property
@@ -2615,7 +2625,12 @@ public class PropertyService {
                 return true;
         return false;
     }
-    
+    public Boolean isCitizenPortalUser(final User user) {
+        for (final Role role : user.getRoles())
+            if (role != null && role.getName().equalsIgnoreCase(CITIZEN_ROLE))
+                return true;
+        return false;
+    }
     /**
      * Checks whether user is csc operator or not
      *
@@ -3794,5 +3809,53 @@ public class PropertyService {
 
     public void setTotalAlv(final BigDecimal totalAlv) {
         this.totalAlv = totalAlv;
+    }
+    
+    /**
+     * Method to push data for citizen portal inbox
+     */
+    
+    @Transactional
+    public void pushPortalMessage(final PropertyImpl property,final String applictionType) {
+        Module module = moduleDao.getModuleByName(PropertyTaxConstants.PTMODULENAME);
+        BasicProperty basicProperty = property.getBasicProperty();
+        final PortalInboxBuilder portalInboxBuilder = new PortalInboxBuilder(module,property.getPropertyModifyReason()+" "+module.getDisplayName(),
+                property.getApplicationNo(),basicProperty.getUpicNo(),basicProperty.getId(),
+                property.getPropertyModifyReason(),getDetailedMessage(property),property.myLinkId(),
+                isResolved(property),basicProperty.getStatus().getName(),getSlaEndDate(applictionType),property.getState(),securityUtils.getCurrentUser());
+        final PortalInbox portalInbox = portalInboxBuilder.build();
+        portalInboxService.pushInboxMessage(portalInbox);
+    }
+    
+    /**
+     * Method to update data for citizen portal inbox
+     */
+    @Transactional
+    public void updatePortalMessage(final PropertyImpl property,final String applictionType){
+        Module module = moduleDao.getModuleByName(PropertyTaxConstants.PTMODULENAME);
+        BasicProperty basicProperty = property.getBasicProperty();
+        portalInboxService.updateInboxMessage(property.getApplicationNo(), module.getId(),basicProperty.getStatus().getName(),
+                isResolved(property), getSlaEndDate(applictionType), property.getState(), null,
+                basicProperty.getUpicNo(), property.myLinkId());
+    }
+    
+    private Date getSlaEndDate(final String applictionType){
+        Calendar c = Calendar.getInstance();
+        c.setTime(new Date());
+        c.add(Calendar.DATE, getSlaValue(applictionType));
+        return  c.getTime();
+    }
+    
+    private String getDetailedMessage(final PropertyImpl property) {
+        Module module = moduleDao.getModuleByName(PropertyTaxConstants.PTMODULENAME);
+        final StringBuilder detailedMessage = new StringBuilder();
+        detailedMessage.append("Application No. ").append(property.getApplicationNo()).append(" regarding ")
+                .append(property.getPropertyModifyReason()+" "+module.getDisplayName()).append(" in ")
+                .append(property.getBasicProperty().getStatus().getName()).append(" status.");
+        return detailedMessage.toString();
+    }
+
+    private boolean isResolved(PropertyImpl property){
+        return "CLOSED".equalsIgnoreCase(property.getState().getValue());
     }
 }
