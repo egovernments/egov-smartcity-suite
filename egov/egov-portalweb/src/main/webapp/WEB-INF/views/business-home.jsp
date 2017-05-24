@@ -163,7 +163,7 @@
 		                   <td>
 		 						<c:choose>
 		 							<c:when test="${inboxItem.portalInbox.slaEndDate != null }">
-		 								${inboxItem.portalInbox.state.slaEndDate}
+		 								${inboxItem.portalInbox.slaEndDate}
 	 								</c:when>
 	 								<c:otherwise>
 	 									<div class="text-center">
@@ -210,7 +210,7 @@
 	                    <td>
 	 						<c:choose>
 	 							<c:when test="${inboxItem.portalInbox.slaEndDate != null }">
-	 								${inboxItem.portalInbox.state.slaEndDate}
+	 								${inboxItem.portalInbox.slaEndDate}
  								</c:when>
  								<c:otherwise>
  									<div class="text-center">
@@ -257,7 +257,7 @@
 	                    <td>
 	 						<c:choose>
 	 							<c:when test="${inboxItem.portalInbox.slaEndDate != null }">
-	 								${inboxItem.portalInbox.state.slaEndDate}
+	 								${inboxItem.portalInbox.slaEndDate}
  								</c:when>
  								<c:otherwise>
  									<div class="text-center">

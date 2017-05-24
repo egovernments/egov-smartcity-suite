@@ -51,6 +51,8 @@ import org.egov.portal.entity.PortalInbox;
 import org.egov.portal.entity.PortalInboxUser;
 import org.egov.portal.repository.PortalInboxRepository;
 import org.egov.portal.service.es.PortalInboxIndexService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -62,6 +64,8 @@ public class PortalInboxService {
     private final PortalInboxRepository portalInboxRepository;
 
     private final PortalInboxIndexService portalInboxIndexService;
+
+    private static final Logger LOG = LoggerFactory.getLogger(PortalInboxService.class);
 
     @Autowired
     private SecurityUtils securityUtils;
@@ -115,7 +119,11 @@ public class PortalInboxService {
             portalInbox.setState(state);
             updatePortalInboxData(slaEndDate, entityRefNo, link, portalInbox);
             if (user != null && !containsUser(portalInbox.getPortalInboxUsers(), user.getId()))
-                createPortalUser(portalInbox, user);
+                try {
+                    createPortalUser(portalInbox, user);
+                } catch (final ApplicationRuntimeException exception) {
+                    LOG.error("++++++++ updateInboxMessage ++++++++" + exception.getMessage());
+                }
             portalInboxRepository.saveAndFlush(portalInbox);
             portalInboxIndexService.createPortalInboxIndex(portalInbox);
         }
