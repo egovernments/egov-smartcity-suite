@@ -132,7 +132,7 @@
 							<form:hidden path="advertisement.legacy" id="legacy" value="${advertisementPermitDetail.advertisement.legacy}" />
 								<form:hidden path="advertisement.status" id="advStatus" value="${advertisement.status}" />
 								<c:choose>
-								<c:when test="${applicationSource !='online' || advertisementPermitDetail.advertisement.legacy == 'true'}">
+								<c:when test="${isEmployee == 'true' || advertisementPermitDetail.advertisement.legacy == 'true'}">
 								<label class="col-sm-3 control-label text-right ">
 								<spring:message code="lbl.advertisement.application.no"/>
 								</label>

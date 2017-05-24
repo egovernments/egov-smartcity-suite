@@ -40,6 +40,8 @@
 
 $(document).ready(function(){
 	 var applicationSource=$('#applicationSource').val();
+	 var isEmployee=$('#isEmployee').val();
+	 
    var agency = new Bloodhound({
 		datumTokenizer: function (datum) {
 			return Bloodhound.tokenizers.whitespace(datum.value);
@@ -86,6 +88,7 @@ $(document).ready(function(){
        $(this).parent().before('<div class="col-sm-3 add-margin"> <input type="file" class="form-control" required> </div>');
    });
    
+   if(isEmployee == "true"){
    $('#measurement').change(function(){
 	   calculateTax();
 	});
@@ -98,7 +101,7 @@ $(document).ready(function(){
    $('#rateClass').change(function(){
 	   calculateTax();
 	});
-   
+   }
    $('#propertyNumber').change(function(){
 	   callPropertyTaxRest(); 
 	});
