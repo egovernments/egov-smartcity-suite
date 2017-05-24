@@ -214,7 +214,7 @@ html {
               padding: 0 10px;
               vertical-align: middle; }
             html body .container-fluid .right-content header nav .profile-dd {
-              padding: 0 10px 0 20px;
+              padding: 0 20px;
               line-height: 3.8; }
               html body .container-fluid .right-content header nav .profile-dd i:hover {
                 cursor: pointer; }

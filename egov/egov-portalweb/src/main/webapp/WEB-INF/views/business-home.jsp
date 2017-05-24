@@ -83,22 +83,13 @@
             </nav>
           </header>
           
-          <div id="showServiceGroup">
-			<div class="col-md-9 col-sm-9 add-margin text-right" ><spring:message code="lbl.servicegroup" /> :</div>
-			<select class="col-md-2 col-sm-6 pull-left" id="serviceGroup" >
-			  <option value="" >ALL</option>
-				<c:forEach items="${distinctModuleNames}" var="module" varStatus="item">
-						  <option value="${module.contextRoot }">${module.displayName}</option>
-			          </c:forEach>
-			</select>		
-          </div>
           <div class="main-content">
             <div class="action-bar hide">
               <div class="action-item"><input type="text" id="search" placeholder="Search"></div>
               <div class="action-item"><i class="material-icons">search</i></div>
             </div>
             <div class="inbox-modules">
-              <div class="row stats-item">
+              <div class="stats-item" style="overflow:auto;">
                 <div class="col-md-4 col-sm-4 services">
                 <div id="totalServicesAppliedDiv" style="cursor: pointer">
                   <div class="content x ">
@@ -136,8 +127,19 @@
                   </div>
                 </div>
               </div><br>
-              <%-- ${inboxItems.portalInbox} --%>
-              <table class="table table-striped" id="tabelPortal">
+              <div id="showServiceGroup">
+				<div class="col-md-3 col-md-offset-6 text-right" style="line-height: 2.3;"><spring:message code="lbl.servicegroup" /> :</div>
+				<div class="col-md-3">
+					<select class="form-control" id="serviceGroup" >
+					  <option value="" >ALL</option>
+						<c:forEach items="${distinctModuleNames}" var="module" varStatus="item">
+								  <option value="${module.contextRoot }">${module.displayName}</option>
+					          </c:forEach>
+					</select>
+				</div>
+             </div>
+             <div class="col-md-12"><br>
+          	<table class="table table-striped datatable" id="tabelPortal">
                 <thead>
                   <tr>
                     <th><spring:message code="lbl.slno" /></th>
@@ -148,13 +150,13 @@
                     <th><spring:message code="lbl.status" /></th>
                     <th><spring:message code="lbl.pendingaction" /></th>
                     <th><spring:message code="lbl.expectedservicedelivery" /></th>
-                    <th><spring:message code="lbl.actualservicedelivery" /></th>
+                    <th><spring:message code="lbl.description" /></th>
                   </tr>
                 </thead>
                 <tbody class="servicesUnderScrutinyHide">
                 <c:forEach items="${totalServicesPending}" var="inboxItem" varStatus="item">
 		                 <tr onclick="openPopUp('${inboxItem.portalInbox.link}');" class = "${inboxItem.portalInbox.module.contextRoot } showAll">
-		                   <td>${item.index + 1}</td>
+		                   <td><span class="spansno">${item.index + 1}</span></td>
 		                   <td>${inboxItem.portalInbox.applicationNumber}</td>
 		                   <td>${inboxItem.portalInbox.applicationDate}</td>
 		                   <td>${inboxItem.portalInbox.module.displayName}</td>
@@ -173,28 +175,12 @@
 		 						</c:choose>
 							</td>
 		                   <td>
-		 						<c:choose>
-		 							<c:when test="${inboxItem.portalInbox.slaEndDate != null }">
-		 								${inboxItem.portalInbox.slaEndDate}
-	 								</c:when>
-	 								<c:otherwise>
-	 									<div class="text-center">
-	 										<c:out value="-" ></c:out>
-	 									</div>
-	 								</c:otherwise>
-		 						</c:choose>
+		 						<div class="text-center">
+								<c:out default="-" value="${inboxItem.portalInbox.slaEndDate}" ></c:out>
+							</div>
 		 					</td>
 		 					<td>
-		 						<c:choose>
-		 							<c:when test="${inboxItem.portalInbox.resolvedDate != null }">
-		 								${inboxItem.portalInbox.resolvedDate}
-	 								</c:when>
-	 								<c:otherwise>
-	 									<div class="text-center">
-	 										<c:out value="-" ></c:out>
-	 									</div>
-	 								</c:otherwise>
-		 						</c:choose>
+ 								${inboxItem.portalInbox.detailedMessage}
 		 					</td>
 		                 </tr>
                   </c:forEach>
@@ -202,7 +188,7 @@
                 <tbody class="totalServicesAppliedHide">
                 <c:forEach items="${totalServicesApplied}" var="inboxItem" varStatus="item">
 	                	<tr onclick="openPopUp('${inboxItem.portalInbox.link}');" class = "${inboxItem.portalInbox.module.contextRoot } showAll">
-	                    <td>${item.index + 1}</td>
+	                    <td><span class="spansno">${item.index + 1}</span></td>
 	                    <td>${inboxItem.portalInbox.applicationNumber}</td>
 	                    <td>${inboxItem.portalInbox.applicationDate}</td>
 	                    <td>${inboxItem.portalInbox.module.displayName}</td>
@@ -221,28 +207,12 @@
 	 						</c:choose>
 	 					</td>
 	                    <td>
-	 						<c:choose>
-	 							<c:when test="${inboxItem.portalInbox.slaEndDate != null }">
-	 								${inboxItem.portalInbox.slaEndDate}
- 								</c:when>
- 								<c:otherwise>
- 									<div class="text-center">
- 										<c:out value="-" ></c:out>
- 									</div>
- 								</c:otherwise>
-	 						</c:choose>
+	 						<div class="text-center">
+								<c:out default="-" value="${inboxItem.portalInbox.slaEndDate}" ></c:out>
+							</div>
 	 					</td>
 	                    <td>
-	 						<c:choose>
-	 							<c:when test="${inboxItem.portalInbox.resolvedDate != null }">
-	 								${inboxItem.portalInbox.resolvedDate}
- 								</c:when>
- 								<c:otherwise>
- 									<div class="text-center">
- 										<c:out value="-" ></c:out>
- 									</div>
- 								</c:otherwise>
-	 						</c:choose>
+	 						${inboxItem.portalInbox.detailedMessage}
 	 					</td>
 	                  	</tr>
                   </c:forEach>
@@ -250,7 +220,7 @@
                  <tbody class="totalServicesCompletedHide">
                 <c:forEach items="${totalServicesCompleted}" var="inboxItem" varStatus="item">
 	                  <tr onclick="openPopUp('${inboxItem.portalInbox.link}');" class = "${inboxItem.portalInbox.module.contextRoot } showAll">
-	                    <td>${item.index + 1}</td>
+	                    <td><span class="spansno">${item.index + 1}</span></td>
 	                    <td>${inboxItem.portalInbox.applicationNumber}</td>
 	                    <td>${inboxItem.portalInbox.applicationDate}</td>
 	                    <td>${inboxItem.portalInbox.module.displayName}</td>
@@ -269,34 +239,20 @@
 	 						</c:choose>
 	 					</td>
 	                    <td>
-	 						<c:choose>
-	 							<c:when test="${inboxItem.portalInbox.slaEndDate != null }">
-	 								${inboxItem.portalInbox.slaEndDate}
- 								</c:when>
- 								<c:otherwise>
- 									<div class="text-center">
- 										<c:out value="-" ></c:out>
- 									</div>
- 								</c:otherwise>
-	 						</c:choose>
+							<div class="text-center">
+								<c:out default="-" value="${inboxItem.portalInbox.slaEndDate}" ></c:out>
+							</div>
 	 					</td>
 	                    <td>
-	 						<c:choose>
-	 							<c:when test="${inboxItem.portalInbox.resolvedDate != null }">
-	 								${inboxItem.portalInbox.resolvedDate}
- 								</c:when>
- 								<c:otherwise>
- 									<div class="text-center">
- 										<c:out value="-" ></c:out>
- 									</div>
- 								</c:otherwise>
-	 						</c:choose>
+	 						${inboxItem.portalInbox.detailedMessage}
 	 					</td>
 	                  </tr>
                   </c:forEach>
                 </tbody>
               </table>
-            </div>
+          </div>
+            </div><br>
+            
             <c:forEach items="${services}" var="service" varStatus="item">
 	            <div class="is-flex services-item">
 	              <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 services" data-services="${service.module.displayName }">
@@ -310,3 +266,11 @@
         </div>
       </div>
     </div>
+    
+    <link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>
+		<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">		
+	 	
+	 	<script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
+		<script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
+		<script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js' context='/egi'/>"></script>
+		<script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"></script>
