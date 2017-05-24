@@ -56,6 +56,8 @@ import static org.egov.ptis.constants.PropertyTaxConstants.FLOOR_MAP;
 import static org.egov.ptis.constants.PropertyTaxConstants.GENERAL_REVISION_PETITION;
 import static org.egov.ptis.constants.PropertyTaxConstants.GRP_STATUS_CODE;
 import static org.egov.ptis.constants.PropertyTaxConstants.GRP_WF_REGISTERED;
+import static org.egov.ptis.constants.PropertyTaxConstants.GRP_NEW;
+import static org.egov.ptis.constants.PropertyTaxConstants.RP_NEW;
 import static org.egov.ptis.constants.PropertyTaxConstants.HEARING_TIMINGS;
 import static org.egov.ptis.constants.PropertyTaxConstants.JUNIOR_ASSISTANT;
 import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_GENERAL_REVISION_PETITION;
@@ -540,30 +542,29 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         return isMeesevaUser ? MEESEVA_RESULT_ACK : STRUTS_RESULT_MESSAGE;
     }
 
-    private void validateInitiator() {
-        Assignment assignment = null;
-        if (isMeesevaUser || !loggedUserIsEmployee) {
-            assignment = propService.isCscOperator(securityUtils.getCurrentUser())
-                    ? propService.getAssignmentByDeptDesigElecWard(objection.getBasicProperty())
-                    : null;
-            if (assignment == null)
-                assignment = propService.getUserPositionByZone(objection.getBasicProperty(), false);
-        } else if (objection.getId() == null) {
-            assignment = propertyTaxCommonUtils.getWorkflowInitiatorAssignment(securityUtils.getCurrentUser().getId());
-        } else if (objection.getState().getValue().equals(RP_WF_REGISTERED)
-                || objection.getState().getValue().equals(GRP_WF_REGISTERED)) {
-            if (objection.getState().getInitiatorPosition() == null)
-                assignment = revisionPetitionService.getWorkflowInitiator(objection);
-            else {
-                List<Assignment> assignments = assignmentService
-                        .getAssignmentsForPosition(objection.getState().getInitiatorPosition().getId());
-                if (!assignments.isEmpty())
-                    assignment = assignments.get(0);
-            }
-        }
-        if (assignment == null)
-            addActionError(getText(NOTEXISTS_POSITION));
-    }
+	private void validateInitiator() {
+		Assignment assignment = null;
+		if (isMeesevaUser || !loggedUserIsEmployee) {
+			assignment = propService.isCscOperator(securityUtils.getCurrentUser())
+					? propService.getAssignmentByDeptDesigElecWard(objection.getBasicProperty()) : null;
+			if (assignment == null)
+				assignment = propService.getUserPositionByZone(objection.getBasicProperty(), false);
+		} else if (objection.getId() == null) {
+			assignment = propertyTaxCommonUtils.getWorkflowInitiatorAssignment(securityUtils.getCurrentUser().getId());
+		} else if (Arrays.asList(RP_WF_REGISTERED, GRP_WF_REGISTERED, RP_NEW, GRP_NEW)
+				.contains(objection.getState().getValue())) {
+			if (objection.getState().getInitiatorPosition() == null)
+				assignment = revisionPetitionService.getWorkflowInitiator(objection);
+			else {
+				List<Assignment> assignments = assignmentService
+						.getAssignmentsForPosition(objection.getState().getInitiatorPosition().getId());
+				if (!assignments.isEmpty())
+					assignment = assignments.get(0);
+			}
+		}
+		if (assignment == null)
+			addActionError(getText(NOTEXISTS_POSITION));
+	}
 
     /**
      * Method to add hearing date

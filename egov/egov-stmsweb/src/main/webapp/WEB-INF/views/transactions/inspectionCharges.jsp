@@ -100,7 +100,7 @@
 							     	<c:otherwise>  
 							     	<c:choose> 
 							       <c:when test="${legacy && sewerageApplicationDetails.connectionFees[counter.index].feesDetail.code == 'DONATIONCHARGE' }">
-								     	     <input type="text" class="form-control table-input text-right patternvalidation" data-pattern="number" id="feesDetail${counter.index}amount" name="connectionFees[${counter.index}].amount" value='<fmt:formatNumber type="number"  value="${fm.amount}" />' required="required" /> 
+								     	     <input type="text" class="form-control table-input text-right patternvalidation" data-pattern="number" id="feesDetail${counter.index}amount" name="connectionFees[${counter.index}].amount" value="${fm.amount}"  required="required" /> 
 								     	 </c:when>
 								     	<c:otherwise>  
 							     	    <form:input type="text" class="form-control table-input text-right patternvalidation" data-pattern="decimalvalue" name="connectionFees[${counter.index}].amount" path="connectionFees[${counter.index}].amount" id="feesDetail${counter.index}amount"  value="${fm.amount}" /> 

@@ -49,7 +49,6 @@ import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.properties.ApplicationProperties;
-import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.persistence.utils.PersistenceUtils;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.validation.ValidatorUtils;
@@ -67,9 +66,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.web.servlet.support.RequestContextUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -91,6 +88,7 @@ import static org.egov.infra.web.support.ui.Menu.NAVIGATION_NONE;
 import static org.egov.infra.web.support.ui.Menu.SELFSERVICE_MENU_ICON;
 import static org.egov.infra.web.support.ui.Menu.SELFSERVICE_MENU_TITLE;
 import static org.egov.infra.web.support.ui.Menu.SELFSERVICE_MODULE;
+import static org.egov.infra.web.utils.WebUtils.setUserLocale;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
@@ -128,10 +126,7 @@ public class HomeController {
     public String showHome(HttpServletRequest request, HttpServletResponse response, ModelMap modelData) {
         User user = securityUtils.getCurrentUser();
         setUserLocale(user, request, response);
-        if (securityUtils.currentUserType().equals(UserType.CITIZEN))
-            return "redirect:/../portal/home";
-        else
-            return prepareOfficialHomePage(user, modelData);
+        return prepareOfficialHomePage(user, modelData);
     }
 
     @ResponseBody
@@ -196,11 +191,6 @@ public class HomeController {
     @InitBinder
     public void initBinder(final WebDataBinder binder) {
         binder.setDisallowedFields("id", "username");
-    }
-
-    private void setUserLocale(User user, HttpServletRequest request, HttpServletResponse response) {
-        LocaleResolver localeResolver = RequestContextUtils.getLocaleResolver(request);
-        localeResolver.setLocale(request, response, user.locale());
     }
 
     private String prepareOfficialHomePage(User user, ModelMap modelData) {

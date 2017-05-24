@@ -271,7 +271,8 @@ public class CollectionCommon {
                 Bankbranch bankBranch = null;
                 if (collectionsUtil.isBankCollectionOperator(loggedInUser)) {
                     BranchUserMap branchUserMap = branchUserMapService.findByNamedQuery(
-                            CollectionConstants.QUERY_ACTIVE_BRANCHUSER_BY_USESR, loggedInUser.getId());
+                            CollectionConstants.QUERY_ACTIVE_BRANCHUSER_BY_USER,
+                            loggedInUser.getId());
                     if (branchUserMap != null && branchUserMap.getBankbranch() != null)
                         bankBranch = branchUserMap.getBankbranch();
                 }

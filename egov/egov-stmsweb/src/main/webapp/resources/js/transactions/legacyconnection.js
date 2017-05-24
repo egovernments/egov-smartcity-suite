@@ -511,6 +511,7 @@ $("#amountCollected,#feesDetail1amount")
 					- parseFloat(amountCollected);
 			if (parseFloat(amountCollected) > parseFloat(donationCharge)) {
 				alert("Collected Donation Charge should not be greater than the actual donation charge");
+				$('#amountCollected').val();
 			} else {
 				$("#amountForCollection").val(amountToBeCollected);
 			}

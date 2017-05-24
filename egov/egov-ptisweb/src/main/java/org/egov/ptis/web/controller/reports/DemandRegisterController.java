@@ -72,7 +72,7 @@ public class DemandRegisterController {
             @RequestParam final Long financialYearId, @RequestParam final String mode) {
         final CFinancialYear financialYear = financialYearDAO.getFinancialYearById(financialYearId);
         ReportOutput reportOutput = transactionsService.generateDemandRegisterReport(PropertyTaxConstants.ADR_REPORT,
-                wardId, financialYear.getStartingDate(), mode);
+                wardId, financialYear, mode);
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType("application/pdf"));
         headers.add("content-disposition",

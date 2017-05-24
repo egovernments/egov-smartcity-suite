@@ -81,5 +81,6 @@
     
     <query name="getAllReceiptBoundary">
     <![CDATA[select distinct boundary from ReceiptMisc ]]></query>
-    
+    <query name="getAllReceiptBranch">
+    <![CDATA[select distinct rm.depositedBranch from org.egov.collection.entity.ReceiptMisc rm where rm.depositedBranch is not null]]></query>   
 </hibernate-mapping>

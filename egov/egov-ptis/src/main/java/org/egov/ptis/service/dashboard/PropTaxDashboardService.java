@@ -194,7 +194,10 @@ public class PropTaxDashboardService {
             consolidatedData.setLytdColl(consolidatedColl.get("lytdColln"));
         }
         startTime = System.currentTimeMillis();
-        consolidatedData.setTotalDmd(getWaterChargeTotalDemand(request));
+        BigDecimal totalDemandValue = getWaterChargeTotalDemand(request);
+        int numberOfMonths = DateUtils.noOfMonthsBetween(DateUtils.startOfDay(currFinYear.getStartingDate()), new Date()) + 1;
+        consolidatedData.setTotalDmd(totalDemandValue.divide(BigDecimal.valueOf(12), BigDecimal.ROUND_HALF_UP)
+                .multiply(BigDecimal.valueOf(numberOfMonths)));
         timeTaken = System.currentTimeMillis() - startTime;
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Time taken by Water Tax getTotalDemand() is : " + timeTaken + MILLISECS);
@@ -202,7 +205,7 @@ public class PropTaxDashboardService {
                 .divide(consolidatedData.getTotalDmd(), 1, BigDecimal.ROUND_HALF_UP));
         consolidatedData.setLyVar(
                 (consolidatedData.getCytdColl().subtract(consolidatedData.getLytdColl()).multiply(BIGDECIMAL_100))
-                        .divide(consolidatedData.getCytdColl(), 1, BigDecimal.ROUND_HALF_UP));
+                        .divide(consolidatedData.getLytdColl(), 1, BigDecimal.ROUND_HALF_UP));
         consolidatedCollectionDetails.setWaterTax(consolidatedData);
 
         // Other collections - temporarily set to 0

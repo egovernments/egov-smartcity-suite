@@ -40,10 +40,15 @@
 package org.egov.portal.web.controller.citizen;
 
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.config.properties.ApplicationProperties;
+import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.portal.entity.CitizenInbox;
+import org.egov.portal.entity.PortalInboxUser;
 import org.egov.portal.service.CitizenInboxService;
+import org.egov.portal.service.PortalInboxUserService;
+import org.egov.portal.service.PortalServiceTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -53,8 +58,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+
+import static org.egov.infra.web.utils.WebUtils.setUserLocale;
 
 @Controller
 @RequestMapping(value = "/home")
@@ -65,35 +72,65 @@ public class HomeController {
 
     @Autowired
     private SecurityUtils securityUtils;
-    
+
     @Autowired
     private ApplicationProperties applicationProperties;
 
+    @Autowired
+    private PortalInboxUserService portalInboxUserService;
+
+    @Autowired
+    private PortalServiceTypeService portalServiceTypeService;
+
+    @Autowired
+    private CityService cityService;
+
     @RequestMapping(method = RequestMethod.GET)
-    public String LoginForm(final HttpServletRequest request, final HttpSession session, final ModelMap modelData) {
-        return setupHomePage(request, session, modelData);
+    public String LoginForm(HttpServletRequest request, HttpServletResponse response, ModelMap modelData) {
+        User user = securityUtils.getCurrentUser();
+        setUserLocale(user, request, response);
+        return setupHomePage(modelData);
 
     }
 
     @RequestMapping(value = "/refreshInbox", method = RequestMethod.GET)
-    public @ResponseBody Integer refreshInbox(@RequestParam final Long citizenInboxId) {
+    public @ResponseBody
+    Integer refreshInbox(@RequestParam final Long citizenInboxId) {
         final CitizenInbox citizenInbox = citizenInboxService.getInboxMessageById(citizenInboxId);
         citizenInbox.setRead(true);
         citizenInboxService.updateMessage(citizenInbox);
         return citizenInboxService.findUnreadMessagesCount(securityUtils.getCurrentUser());
     }
 
-    private String setupHomePage(final HttpServletRequest request, final HttpSession session, final ModelMap modelData) {
+    private String setupHomePage(final ModelMap modelData) {
         final User user = securityUtils.getCurrentUser();
-        modelData.addAttribute("userName", user.getName());
         modelData.addAttribute("unreadMessageCount", getUnreadMessageCount());
         modelData.addAttribute("inboxMessages", getAllInboxMessages());
         modelData.addAttribute("myAccountMessages", getMyAccountMessages());
-        modelData.addAttribute("cityLogo", session.getAttribute("citylogo"));
-        modelData.addAttribute("cityName", session.getAttribute("citymunicipalityname"));
+        modelData.addAttribute("cityLogo", cityService.getCityLogoPath());
+        modelData.addAttribute("cityName", cityService.getMunicipalityName());
         modelData.addAttribute("enabledFeatures", applicationProperties.portalEnabledFeatures());
         modelData.addAttribute("userName", user.getName() == null ? "Anonymous" : user.getName());
-        return "citizen-home";
+
+        modelData.addAttribute("moduleNames", portalServiceTypeService.getDistinctModuleNames());
+        modelData.addAttribute("services", portalServiceTypeService.getAllPortalService());
+        modelData.addAttribute("distinctModuleNames", portalServiceTypeService.getAllModules());
+        modelData.addAttribute("userId", user.getId());
+
+        List<PortalInboxUser> totalServicesApplied = portalInboxUserService.getPortalInboxByUserId(user.getId());
+        List<PortalInboxUser> totalServicesCompleted = portalInboxUserService.getPortalInboxByResolved(user.getId(), true);
+        List<PortalInboxUser> totalServicesPending = portalInboxUserService.getPortalInboxByResolved(user.getId(), false);
+        modelData.addAttribute("totalServicesPending", totalServicesPending);
+        modelData.addAttribute("totalServicesApplied", totalServicesApplied);
+        modelData.addAttribute("totalServicesCompleted", totalServicesCompleted);
+
+        modelData.addAttribute("totalServicesPendingSize", totalServicesPending.size());
+        modelData.addAttribute("totalServicesAppliedSize", totalServicesApplied.size());
+        modelData.addAttribute("totalServicesCompletedSize", totalServicesCompleted.size());
+        if (securityUtils.currentUserType().equals(UserType.CITIZEN))
+            return "citizen-home";
+        else
+            return "business-home";
     }
 
     private List<CitizenInbox> getMyAccountMessages() {

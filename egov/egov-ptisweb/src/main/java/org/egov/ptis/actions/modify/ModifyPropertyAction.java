@@ -543,7 +543,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
                 vacantLandPlotAreaId = propertyModel.getPropertyDetail().getVacantLandPlotArea().getId();
             if (propertyModel.getPropertyDetail().getLayoutApprovalAuthority() != null)
                 layoutApprovalAuthorityId = propertyModel.getPropertyDetail().getLayoutApprovalAuthority().getId();
-                target = NEW;
+            target = NEW;
         }
         if (logger.isDebugEnabled())
             logger.debug("populateFormData - target : " + target + "\n Exiting from populateFormData");
@@ -1374,6 +1374,8 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
                 && modifyRsn.equals(PROPERTY_MODIFY_REASON_ADD_OR_ALTER))
             if (houseNo == null || houseNo.isEmpty())
                 addActionError(getText("mandatory.doorNo"));
+            else if (propService.isDuplicateDoorNumber(houseNo, basicProp))
+                addActionError(getText("houseNo.duplicate"));
     }
 
     private void validateInitiatorAssignment() {

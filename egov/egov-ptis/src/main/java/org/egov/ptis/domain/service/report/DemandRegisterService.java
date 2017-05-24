@@ -89,11 +89,12 @@ public class DemandRegisterService {
     private BoundaryRepository boundaryRepository;
 
     public ReportOutput generateDemandRegisterReport(final String reportType, final Long wardId,
-            final Date finYearStartDate, final String mode) {
+            final CFinancialYear finYear, final String mode) {
         ReportOutput reportOutput;
         final Map<String, Object> reportParams = new HashMap<>();
         ReportRequest reportInput;
-        reportInput = generateADRReport(reportParams, wardId, finYearStartDate, mode);
+        reportParams.put("selectedYear", finYear.getFinYearRange());
+        reportInput = generateADRReport(reportParams, wardId, finYear.getStartingDate(), mode);
         reportInput.setPrintDialogOnOpenReport(true);
         reportInput.setReportFormat(ReportFormat.PDF);
         reportOutput = reportService.createReport(reportInput);
@@ -124,6 +125,7 @@ public class DemandRegisterService {
         reportParams.put("districtName", city.getDistrictName());
         reportParams.put("ward", boundaryRepository.getOne(wardId).getName());
         reportParams.put("propertyType", mode);
+        reportParams.put("cityGrade", city.getGrade());
         reportInput = new ReportRequest(PropertyTaxConstants.REPORT_ARREAR_DEMAND_REGISTER, reportParams, reportParams);
         return reportInput;
     }
@@ -150,7 +152,7 @@ public class DemandRegisterService {
         String propertyType = getPropertyType(mode);
         StringBuilder query = new StringBuilder(
                 "select bp.propertyid \"assessmentNo\", at.ownersname \"ownerName\", at.doorno \"houseNo\", instm.financial_year \"financialYear\", cast(idi.demand as numeric) \"demand\", coalesce(cast(ici.collectiondate as character varying), '-') \"collectionDate\","
-                        + "cast(coalesce(ici.amount, 0) as numeric) \"collectedAmount\", ici.collectionmode \"collectionMode\", cast(idi.totalcollection as numeric) \"totalCollection\", cast(idi.writeoff as numeric) \"writeOff\", cast(idi.advance as numeric) \"advanceAmount\" "
+                        + "cast(coalesce(ici.amount, 0) as numeric) \"collectedAmount\", coalesce(ici.collectionmode, '-') \"collectionMode\", cast(idi.totalcollection as numeric) \"totalCollection\", cast(idi.writeoff as numeric) \"writeOff\", cast(idi.advance as numeric) \"advanceAmount\" "
                         + " from egpt_assessment_transactions at, egpt_basic_property bp, egpt_installment_demand_info idi left join egpt_installment_collection_info ici on idi.id=ici.installment_demand_info, eg_installment_master instm, egpt_property_type_master ptm where "
                         + "idi.assessment_transactions=at.id and at.basicproperty=bp.id and idi.installment=instm.id and instm.financial_year=:finYear and at.ward =:ward and at.propertytype=ptm.id and ptm.code =:propertyType order by bp.propertyid, at.transaction_date");
         final SQLQuery sqlQuery = ptCommonUtils.getSession().createSQLQuery(query.toString());

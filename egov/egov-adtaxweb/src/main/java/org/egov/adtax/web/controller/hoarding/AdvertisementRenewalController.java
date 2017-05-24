@@ -39,6 +39,7 @@
  */
 package org.egov.adtax.web.controller.hoarding;
 
+import static org.egov.adtax.utils.constants.AdvertisementTaxConstants.ANONYMOUS_USER;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
@@ -53,6 +54,7 @@ import org.egov.adtax.web.controller.common.HoardingControllerSupport;
 import org.egov.adtax.workflow.AdvertisementWorkFlowService;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.web.contract.WorkflowContainer;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -107,14 +109,14 @@ public class AdvertisementRenewalController extends HoardingControllerSupport {
             model.addAttribute(MESSAGE, "msg.renewal.paymentPending");
             return RENEWAL_ERROR;
         }
-        
+        User currentuser=securityUtils.getCurrentUser();
         
         loadBasicData(model, parentPermitDetail, renewalPermitDetail);
         model.addAttribute("renewalPermitDetail", renewalPermitDetail);
         model.addAttribute("additionalRule", AdvertisementTaxConstants.RENEWAL_ADDITIONAL_RULE);
         model.addAttribute("stateType", renewalPermitDetail.getClass().getSimpleName());
         model.addAttribute("currentState", "NEW");
-        model.addAttribute("isEmployee", advertisementWorkFlowService.isEmployee(securityUtils.getCurrentUser()));
+        model.addAttribute("isEmployee", !ANONYMOUS_USER.equalsIgnoreCase(currentuser.getName()) && advertisementWorkFlowService.isEmployee(currentuser));
         WorkflowContainer workFlowContainer = new WorkflowContainer();
         workFlowContainer.setAdditionalRule(AdvertisementTaxConstants.RENEWAL_ADDITIONAL_RULE);
         prepareWorkflow(model, renewalPermitDetail, workFlowContainer);
@@ -153,7 +155,7 @@ public class AdvertisementRenewalController extends HoardingControllerSupport {
             final Model model,
             @RequestParam String workFlowAction, @PathVariable final String id) {
         
-        Boolean isEmployee = advertisementWorkFlowService.isEmployee(securityUtils.getCurrentUser());
+        Boolean isEmployee =  !ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName()) &&  advertisementWorkFlowService.isEmployee(securityUtils.getCurrentUser());
         validateAssignmentForCscUser(renewalPermitDetail, isEmployee, resultBinder);
         
         validateHoardingDocsOnUpdate(renewalPermitDetail, resultBinder, redirAttrib);

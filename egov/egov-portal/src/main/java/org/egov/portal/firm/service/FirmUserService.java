@@ -56,4 +56,8 @@ public class FirmUserService {
         return firmUserRepository.findByEmailId(emailId);
     }
 
+    public FirmUser getFirmUserByUserId(final Long userId) {
+        return firmUserRepository.findByUser_Id(userId);
+    }
+
 }

@@ -1,0 +1,7 @@
+INSERT INTO eg_role(id, name, description, createddate, createdby, lastmodifiedby, lastmodifieddate, version) VALUES (nextval('seq_eg_role'), 'Business User', 'One who can access the different service', now(), 1, 1, now(), 0);
+INSERT INTO eg_roleaction (ROLEID, ACTIONID) values ((select id from eg_role where name LIKE 'Business User') ,(select id FROM eg_action  WHERE name = 'CreateFirm'));
+INSERT INTO eg_roleaction (ROLEID, ACTIONID) values ((select id from eg_role where name LIKE 'Business User') ,(select id FROM eg_action  WHERE name = 'SuccessFirm'));
+INSERT INTO eg_roleaction (ROLEID, ACTIONID) values ((select id from eg_role where name LIKE 'Business User') ,(select id FROM eg_action  WHERE name = 'VIEWFIRM'));
+INSERT INTO eg_roleaction (ROLEID, ACTIONID) values ((select id from eg_role where name LIKE 'Business User') ,(select id FROM eg_action  WHERE name = 'searchFirm'));
+INSERT INTO eg_roleaction (ROLEID, ACTIONID) values ((select id from eg_role where name LIKE 'Business User') ,(select id FROM eg_action  WHERE name = 'UpdateFirm'));
+INSERT INTO eg_roleaction (ROLEID, ACTIONID) values ((select id from eg_role where name LIKE 'Business User') ,(select id FROM eg_action  WHERE name = 'SearchFirmToModify'));

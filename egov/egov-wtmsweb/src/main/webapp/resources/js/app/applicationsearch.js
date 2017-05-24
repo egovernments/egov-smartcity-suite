@@ -56,7 +56,10 @@ jQuery(document).ready(function ($) {
 		}
 		 }*/
 	    $('#searchapplication').click(function () {
-	    	submitForm();
+	    	if($('#applicationSearchRequestForm').valid())
+	    		submitForm();
+	    	else
+	    		return false;
 	    });
 		
 	

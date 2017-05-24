@@ -126,34 +126,31 @@ public class SewerageTaxUtils {
 
     @Autowired
     private EgwStatusHibernateDAO egwStatusHibernateDAO;
-    
+
     @Autowired
     private ModuleService moduleService;
 
     @Autowired
     private InstallmentDao installmentDao;
-    
+
     @Autowired
     @Qualifier("fileStoreService")
     protected FileStoreService fileStoreService;
 
-
     /**
-     * @return false by default. If configuration value is Yes, then returns
-     *         true.
+     * @return false by default. If configuration value is Yes, then returns true.
      */
     public Boolean isNewConnectionAllowedIfPTDuePresent() {
 
-        List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
+        final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
                 SewerageTaxConstants.MODULE_NAME, SewerageTaxConstants.NEWCONNECTIONALLOWEDIFPTDUE);
 
-        if (appConfigValue != null && appConfigValue.size() > 0) {
-            return "YES".equalsIgnoreCase((appConfigValue.get(0)).getValue());
-        }
+        if (appConfigValue != null && appConfigValue.size() > 0)
+            return "YES".equalsIgnoreCase(appConfigValue.get(0).getValue());
 
         return false;
     }
-    
+
     @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
     public EgwStatus getStatusByCodeAndModuleType(final String code, final String moduleName) {
         return egwStatusHibernateDAO.getStatusByModuleAndCode(moduleName, code);
@@ -175,10 +172,8 @@ public class SewerageTaxUtils {
 
     public Boolean getCurrentUserRole(final User currentUser) {
         /*
-         * Boolean applicationByOthers = false; for (final Role userrole :
-         * currentUser.getRoles()) for (final AppConfigValues appconfig :
-         * getThirdPartyUserRoles()) if (userrole != null &&
-         * userrole.getName().equals(appconfig.getValue())) {
+         * Boolean applicationByOthers = false; for (final Role userrole : currentUser.getRoles()) for (final AppConfigValues
+         * appconfig : getThirdPartyUserRoles()) if (userrole != null && userrole.getName().equals(appconfig.getValue())) {
          * applicationByOthers = true; break; } return applicationByOthers;
          */
         return true;
@@ -192,9 +187,8 @@ public class SewerageTaxUtils {
         if (assignment != null) {
             asignList = new ArrayList<Assignment>();
             asignList.add(assignment);
-        } else if (assignment == null) {
+        } else if (assignment == null)
             asignList = assignmentService.getAssignmentsForPosition(approvalPosition, new Date());
-        }
         return !asignList.isEmpty() ? asignList.get(0).getEmployee().getName() : "";
     }
 
@@ -210,13 +204,11 @@ public class SewerageTaxUtils {
     }
 
     /**
-     * Getting User assignment based on designation ,department and zone
-     * boundary Reading Designation and Department from appconfig values and
-     * Values should be 'Senior Assistant,Junior Assistant' for designation and
+     * Getting User assignment based on designation ,department and zone boundary Reading Designation and Department from
+     * appconfig values and Values should be 'Senior Assistant,Junior Assistant' for designation and
      * 'Revenue,Accounts,Administration' for department
      *
-     * @param asessmentNumber
-     *            ,
+     * @param asessmentNumber ,
      * @Param assessmentDetails
      * @param boundaryObj
      * @return Assignment
@@ -388,7 +380,7 @@ public class SewerageTaxUtils {
             final User userObj = userService.getUserById(ApplicationThreadLocals.getUserId());
             if (userObj != null)
                 for (final Role role : userObj.getRoles())
-                    if (role != null && (role.getName().contains(SewerageTaxConstants.ROLE_COLLECTIONOPERATOR))) {
+                    if (role != null && role.getName().contains(SewerageTaxConstants.ROLE_COLLECTIONOPERATOR)) {
                         isCSCOperator = true;
                         break;
                     }
@@ -422,15 +414,13 @@ public class SewerageTaxUtils {
         return false;
     }
 
-    
     public List<Role> getLoginUserRoles() {
 
-        List<Role> roleList = new ArrayList<Role>();
+        final List<Role> roleList = new ArrayList<Role>();
         if (ApplicationThreadLocals.getUserId() != null) {
             final User currentUser = userService.getUserById(ApplicationThreadLocals.getUserId());
-            for (final Role userrole : currentUser.getRoles()) {
+            for (final Role userrole : currentUser.getRoles())
                 roleList.add(userrole);
-            }
         }
         return roleList;
     }
@@ -438,29 +428,33 @@ public class SewerageTaxUtils {
     public String getMunicipalityName() {
         return ApplicationThreadLocals.getMunicipalityName();
     }
-        
-    /*public SewerageDemandConnection getCurrentDemand(final SewerageApplicationDetails sewerageApplicationDetails) {
-        SewerageDemandConnection seweragedemandConnection = null;
-        for (final SewerageDemandConnection sdc : sewerageApplicationDetails.getDemandConnections())
-            if (sdc.getDemand().getIsHistory().equalsIgnoreCase(SewerageTaxConstants.DEMANDISHISTORY)) {
-                seweragedemandConnection = sdc;
-                break;
-            }
-        return seweragedemandConnection;
-    }*/
-    
+
+    /*
+     * public SewerageDemandConnection getCurrentDemand(final SewerageApplicationDetails sewerageApplicationDetails) {
+     * SewerageDemandConnection seweragedemandConnection = null; for (final SewerageDemandConnection sdc :
+     * sewerageApplicationDetails.getDemandConnections()) if
+     * (sdc.getDemand().getIsHistory().equalsIgnoreCase(SewerageTaxConstants.DEMANDISHISTORY)) { seweragedemandConnection = sdc;
+     * break; } return seweragedemandConnection; }
+     */
+
     /**
      * @description returns list of installments from the given date to till date
      * @param currDate
      * @return
      */
     public List<Installment> getInstallmentsForCurrYear(final Date currDate) {
-        final Module module = moduleService.getModuleByName(SewerageTaxConstants.MODULE_NAME); 
+        final Module module = moduleService.getModuleByName(SewerageTaxConstants.MODULE_NAME);
         final List<Installment> installments = installmentDao.getAllInstallmentsByModuleAndStartDate(module, currDate);
         return installments;
     }
-    
-    
+
+    public List<Installment> getInstallmentsByModuledescendingorder(final Module module, final int year) {
+        final List<Installment> installments = installmentDao
+                .getInstallmentsByModuleAndInstallmentYearOrderByInstallmentYearDescending(
+                        moduleService.getModuleByName(SewerageTaxConstants.MODULE_NAME), year);
+        return installments;
+    }
+
     public Set<FileStoreMapper> addToFileStore(final MultipartFile[] files) {
         if (ArrayUtils.isNotEmpty(files))
             return Arrays
@@ -478,7 +472,7 @@ public class SewerageTaxUtils {
         else
             return null;
     }
-    
+
     public boolean isDonationChargeCollectionRequiredForLegacy() {
         final AppConfigValues donationChargeConfig = appConfigValuesService.getConfigValuesByModuleAndKey(
                 SewerageTaxConstants.MODULE_NAME, SewerageTaxConstants.APPCONFIG_COLLECT_LEGACY_DONATIONCHARGE).get(0);

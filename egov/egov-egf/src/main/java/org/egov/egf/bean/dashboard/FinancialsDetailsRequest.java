@@ -53,6 +53,7 @@ public class FinancialsDetailsRequest {
     private String district;
     private String grade;
     private String ulbCode;
+    private String ulbName;
     private String fromDate;
     private String toDate;
     private String admZone;
@@ -67,6 +68,8 @@ public class FinancialsDetailsRequest {
     private String minorCode = "";
     private String detailedCode = "";
     private String aggregationLevel;
+    private String currentFinancialYear;
+    private String LastFinancialYear;
 
     public String getRegion() {
         return region;
@@ -210,6 +213,30 @@ public class FinancialsDetailsRequest {
 
     public void setAggregationLevel(final String aggregationLevel) {
         this.aggregationLevel = aggregationLevel;
+    }
+
+    public String getCurrentFinancialYear() {
+        return currentFinancialYear;
+    }
+
+    public void setCurrentFinancialYear(String currentFinancialYear) {
+        this.currentFinancialYear = currentFinancialYear;
+    }
+
+    public String getLastFinancialYear() {
+        return LastFinancialYear;
+    }
+
+    public void setLastFinancialYear(String lastFinancialYear) {
+        LastFinancialYear = lastFinancialYear;
+    }
+
+    public String getUlbName() {
+        return ulbName;
+    }
+
+    public void setUlbName(String ulbName) {
+        this.ulbName = ulbName;
     }
 
 }

@@ -129,5 +129,7 @@ public class AdvertisementTaxConstants {
     public static final String SLAFORRENEWADVERTISEMENT="SLAFORRENEWADVERTISEMENT";
     public static final String RENEW = "RENEW";
     public static final String NEW = "NEW";
-
+    
+    public static final String ANONYMOUS_USER= "Anonymous";
+    public static final String ONLINE_SOURCE="Online";
 }

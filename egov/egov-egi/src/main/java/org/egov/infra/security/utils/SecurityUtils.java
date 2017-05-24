@@ -57,6 +57,19 @@ public class SecurityUtils {
     @Autowired
     private UserService userService;
 
+    public static boolean isCurrentUserAuthenticated() {
+        final Optional<Authentication> authentication = getCurrentAuthentication();
+        return authentication.isPresent() && authentication.get().isAuthenticated();
+    }
+
+    public static boolean isCurrentUserAnonymous() {
+        return getCurrentAuthentication().get().getPrincipal() instanceof String;
+    }
+
+    public static Optional<Authentication> getCurrentAuthentication() {
+        return Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication());
+    }
+
     public User getCurrentUser() {
         if (isCurrentUserAuthenticated()) {
             if (isCurrentUserAnonymous())
@@ -69,27 +82,23 @@ public class SecurityUtils {
     }
 
     public UserType currentUserType() {
-        return ((SecureUser) getCurrentAuthentication().get().getPrincipal()).getUserType();
-    }
-
-    public static boolean isCurrentUserAuthenticated() {
-        final Optional<Authentication> authentication = getCurrentAuthentication();
-        return authentication.isPresent() &&  authentication.get().isAuthenticated();
-    }
-
-    public static boolean isCurrentUserAnonymous() {
-        return getCurrentAuthentication().get().getPrincipal() instanceof String;
-    }
-
-    public static Optional<Authentication> getCurrentAuthentication() {
-        return Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication());
+        return getCurrentAuthentication().isPresent() && !isCurrentUserAnonymous() ?
+                ((SecureUser) getCurrentAuthentication().get().getPrincipal()).getUserType() : UserType.SYSTEM;
     }
 
     public boolean hasRole(final String role) {
-        return getCurrentAuthentication().get()
+        return getCurrentAuthentication().isPresent() && getCurrentAuthentication().get()
                 .getAuthorities()
                 .parallelStream()
                 .map(grantedAuthority -> grantedAuthority.getAuthority().equals(role))
                 .findFirst().get();
+    }
+
+    public boolean currentUserIsCitizen() {
+        return currentUserType().equals(UserType.CITIZEN);
+    }
+
+    public boolean currentUserIsEmployee() {
+        return currentUserType().equals(UserType.EMPLOYEE);
     }
 }

@@ -107,7 +107,7 @@ $(document).ready(function()
 function callAlertForDepartment() {
     var value=$('#approvalDepartment').val();
 	if(value=="" ||  value=="-1") {
-		bootbox.alert("Please select the Approver Department");
+		bootbox.alert("Please select the Department");
 		return false;
 	}
 }
@@ -115,7 +115,7 @@ function callAlertForDepartment() {
 function callAlertForDesignation() {
 	var value=$('#approvalDesignation').val();
 	if(value=="" || value=="-1") {
-		bootbox.alert("Please select the approver designation");
+		bootbox.alert("Please select the Designation");
 		return false;
 	}
 }

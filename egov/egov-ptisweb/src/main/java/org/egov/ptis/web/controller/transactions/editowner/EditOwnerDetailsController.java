@@ -41,6 +41,7 @@
 package org.egov.ptis.web.controller.transactions.editowner;
 
 import java.util.List;
+import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.persistence.entity.enums.Gender;
 import org.egov.ptis.bean.PropertyOwner;
@@ -52,6 +53,7 @@ import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.domain.service.property.OwnerAuditService;
 import org.egov.ptis.domain.service.property.PropertyPersistenceService;
+import org.egov.ptis.domain.service.property.PropertyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -71,6 +73,7 @@ public class EditOwnerDetailsController {
 
     protected static final String OWNERDETAILS_FROM = "ownerdetails-form";
     protected static final String OWNERDETAILS_SUCCESS = "ownerdetails-success";
+    private static final String ERROR_MSG = "errorMsg";
 
     @Autowired
     private BasicPropertyDAO basicPropertyDAO;
@@ -80,6 +83,9 @@ public class EditOwnerDetailsController {
     
     @Autowired
     private OwnerAuditService ownerAuditService;
+
+    @Autowired
+    private PropertyService propertyService;
 
     @ModelAttribute
     public PropertyOwner getPropertyOwner(@PathVariable final String assessmentNo) {
@@ -105,12 +111,14 @@ public class EditOwnerDetailsController {
         for (PropertyOwnerInfo ownerInfo : basicProperty.getPropertyOwnerInfo()) {
             for (Address address : ownerInfo.getOwner().getAddress()) {
                 model.addAttribute("doorNumber", address.getHouseNoBldgApt());
+                model.addAttribute("existingDoorNumber", address.getHouseNoBldgApt());
                 model.addAttribute("pinCode", address.getPinCode());
             }
         }
         ownerAuditList = ownerAuditService.setOwnerAuditDetails(basicProperty);
         propertyOwner.setOwnerAudit(ownerAuditList);
         model.addAttribute("propertyOwner", propertyOwner);
+        model.addAttribute(ERROR_MSG, "");
         return OWNERDETAILS_FROM;
     }
 
@@ -118,13 +126,20 @@ public class EditOwnerDetailsController {
     public String updateOwnerDetails(@ModelAttribute final PropertyOwner propertyOwner,
             final RedirectAttributes redirectAttrs, final BindingResult errors, final Model model,
             final HttpServletRequest request, @RequestParam String doorNumber) {
+        String errMsg ;
         model.addAttribute("doorNumber", doorNumber);
         model.addAttribute("guardianRelationMap", PropertyTaxConstants.GUARDIAN_RELATION);
-        String errMsg = basicPropertyService.updateOwners(propertyOwner.getProperty(),
-                propertyOwner.getProperty().getBasicProperty(), doorNumber, errors);
+        for (PropertyOwnerInfo ownerInfo : propertyOwner.getPropertyOwnerInfo())
+            for (Address address : ownerInfo.getOwner().getAddress())
+                model.addAttribute("existingDoorNumber", address.getHouseNoBldgApt());
+        if ((!StringUtils.isBlank(doorNumber))
+                && (propertyService.isDuplicateDoorNumber(doorNumber, propertyOwner.getProperty().getBasicProperty())))
+            errMsg = "error.accept";
+        else
+            errMsg = basicPropertyService.updateOwners(propertyOwner.getProperty(),
+                    propertyOwner.getProperty().getBasicProperty(), doorNumber, errors);
         if (!errMsg.isEmpty()) {
-            model.addAttribute("errorMsg", errMsg);
-
+            model.addAttribute(ERROR_MSG, errMsg);
             return OWNERDETAILS_FROM;
         } else {
             ownerAuditService.saveOwnerDetails(propertyOwner.getOwnerAudit());

@@ -42,6 +42,7 @@ package org.egov.stms.utils;
 
 import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_SANCTIONED;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_SANCTIONED_WITH_DEMAND_NOT_PAID;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.MODIFYLEGACYCONNECTIONACTIONDROPDOWN;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.CHANGENOOFCLOSET;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.CHANGENOOFCLOSETURL;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.CLOSECONNECTION_ACTIONDROPDOWN;
@@ -63,6 +64,8 @@ import static org.egov.stms.utils.constants.SewerageTaxConstants.VIEW;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.VIEWDCB;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.VIEWDCBURL;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.VIEWURL;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.MODIFYLEGACYCONNECTIONURL;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.MODIFYLEGACYCONNECTION;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -74,7 +77,6 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.egov.stms.elasticSearch.entity.SewerageSearchResult;
 import org.egov.stms.transactions.entity.SewerageApplicationDetails;
-
 
 public class SewerageActionDropDownUtil {
 
@@ -96,7 +98,8 @@ public class SewerageActionDropDownUtil {
         STATUSACTIONMAP.put("WORK ORDER GENERATED", Arrays.asList(VIEW, VIEWDCB));
         STATUSACTIONMAP.put("FINAL APPROVED", Arrays.asList(VIEW, VIEWDCB));
         STATUSACTIONMAP.put("SANCTIONED",
-                Arrays.asList(VIEW, VIEWDCB, CHANGENOOFCLOSET, CLOSECONNECTION_ACTIONDROPDOWN, GENERATEBEMANDBILL));
+                Arrays.asList(VIEW, VIEWDCB, CHANGENOOFCLOSET, CLOSECONNECTION_ACTIONDROPDOWN, GENERATEBEMANDBILL,
+                        MODIFYLEGACYCONNECTIONACTIONDROPDOWN));
         STATUSACTIONMAP.put("SANCTIONEDWITHDEMAND", Arrays.asList(VIEW, VIEWDCB, CHANGENOOFCLOSET, COLLECTDONATIONCHARHGES));
 
         // Rolewise define action mappings
@@ -108,8 +111,9 @@ public class SewerageActionDropDownUtil {
         SEWERAGEROLEACTIONMAP.put(ROLE_ULBOPERATOR, Arrays.asList(VIEW, COLLECTDONATIONCHARHGES, VIEWDCB, CHANGENOOFCLOSET,
                 CLOSECONNECTION_ACTIONDROPDOWN, GENERATEBEMANDBILL));
         SEWERAGEROLEACTIONMAP.put(ROLE_COLLECTIONOPERATOR, Arrays.asList(VIEW, COLLECTDONATIONCHARHGES));
-        SEWERAGEROLEACTIONMAP.put(ROLE_SUPERUSER, Arrays.asList(VIEW, COLLECTDONATIONCHARHGES));
-        SEWERAGEROLEACTIONMAP.put(ROLE_SEWERAGETAX_REPORTVIEWER, Arrays.asList(VIEW, VIEWDCB)); 
+        SEWERAGEROLEACTIONMAP.put(ROLE_SUPERUSER,
+                Arrays.asList(VIEW, COLLECTDONATIONCHARHGES, MODIFYLEGACYCONNECTIONACTIONDROPDOWN));
+        SEWERAGEROLEACTIONMAP.put(ROLE_SEWERAGETAX_REPORTVIEWER, Arrays.asList(VIEW, VIEWDCB));
         SEWERAGEROLEACTIONMAP.put(ROLE_STMS_VIEW_ACCESS_ROLE, Arrays.asList(VIEW, VIEWDCB));
         SEWERAGEROLEACTIONMAP.put(DEFAULT, Arrays.asList(VIEW));
 
@@ -121,6 +125,8 @@ public class SewerageActionDropDownUtil {
         actionUrlMap.put(CLOSECONNECTION_ACTIONDROPDOWN,
                 getActionWithUrl(CLOSESEWERAGECONNECTIONURL, CLOSECONNECTION_ACTIONDROPDOWN));
         actionUrlMap.put(GENERATEBEMANDBILL, getActionWithUrl(GENERATEBEMANDBILLURL, GENERATEBEMANDBILL));
+        actionUrlMap.put(MODIFYLEGACYCONNECTIONACTIONDROPDOWN,
+                getActionWithUrl(MODIFYLEGACYCONNECTIONURL, MODIFYLEGACYCONNECTION));
 
     }
 
@@ -199,10 +205,11 @@ public class SewerageActionDropDownUtil {
         return filterActionsByStatus(actionList, collectionStatus, sewerageApplicationDetails);
     }
 
-    public static final SewerageSearchResult getSearchResultWithActions(List<String> roleName, final String status, final SewerageApplicationDetails sewerageApplicationDetails) {
+    public static final SewerageSearchResult getSearchResultWithActions(List<String> roleName, final String status,
+            final SewerageApplicationDetails sewerageApplicationDetails) {
         SewerageSearchResult searchActions = new SewerageSearchResult();
         if (status != null && sewerageApplicationDetails != null)
-            searchActions.setActions(getActionsByRoles(roleName, status,sewerageApplicationDetails));
+            searchActions.setActions(getActionsByRoles(roleName, status, sewerageApplicationDetails));
         return searchActions;
     }
 

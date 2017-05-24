@@ -173,6 +173,8 @@ public interface PropertyTaxConstants {
     public static final String GRP_INSPECTION_COMPLETE = "GRP:Inspection completed";
     public static final String GRP_REGISTRATION = "GRP:Registration";
     public static final String GRP_WF_REGISTERED = "GRP:Registered";
+    public static final String RP_NEW = "RP:NEW";
+    public static final String GRP_NEW = "GRP:NEW";
     public static final String GRP_CREATED = "GRP:CREATED";
     public static final String NATURE_OF_WORK_GRP = "GRP";
     public static final String NATURE_OF_WORK_RP = "RP";
@@ -392,6 +394,7 @@ public interface PropertyTaxConstants {
         }
     };
     // Un authorized penalty percentages on property tax
+    public static final BigDecimal DEVIATION_TAXPERC_10 = BigDecimal.valueOf(0.1);// 10%
     public static final BigDecimal BPA_DEVIATION_TAXPERC_1_10 = new BigDecimal(0.25);// 25%
     public static final BigDecimal BPA_DEVIATION_TAXPERC_ABOVE_11 = new BigDecimal(0.5);// 50%
     public static final BigDecimal BPA_DEVIATION_TAXPERC_NOT_DEFINED = new BigDecimal(1);// 100%
@@ -764,8 +767,8 @@ public interface PropertyTaxConstants {
     public static final String END_APPROVER_DESGN = "RO";
     public static final String JUNIOR_ASSISTANT = "Junior Assistant";
     public static final String SENIOR_ASSISTANT = "Senior Assistant";
-    public static final String ASSISTANT_COMMISSIONER_DESIGN = "Assistant commissioner";
-    public static final String DEPUTY_COMMISSIONER_DESIGN = "Deputy commissioner";
+    public static final String ASSISTANT_COMMISSIONER_DESIGN = "Assistant Commissioner";
+    public static final String DEPUTY_COMMISSIONER_DESIGN = "Deputy Commissioner";
     public static final String ADDITIONAL_COMMISSIONER_DESIGN = "Additional Commissioner";
     public static final String ZONAL_COMMISSIONER_DESIGN = "Zonal Commissioner";
     public static final String JUNIOR_OR_SENIOR_ASSISTANT_DESIGN = "Senior Assistant,Junior Assistant";
@@ -1428,6 +1431,7 @@ public interface PropertyTaxConstants {
     
     public static final String VACANTLAND_PROPERTY_CATEGORY = "VACANTLAND";
     public static final String MEESEVA_OPERATOR_ROLE = "MeeSeva Operator";
+    public static final String CITIZEN_ROLE = "CITIZEN";
 
     // Status for Meseva
     public static final String STATUS_REJECTED = "Rejected";

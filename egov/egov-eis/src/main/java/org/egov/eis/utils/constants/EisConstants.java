@@ -41,10 +41,8 @@ package org.egov.eis.utils.constants;
 
 public class EisConstants {
 
-	public static final String ROLE_EMPLOYEE = "Employee";
-	public static final String ANONYMOUS_EMPLOYEE = "anonymous";
+	public static final String ROLE_EMPLOYEE = "EMPLOYEE";
 	public static final String DEFAULT_EMPLOYEE_PWD = "12345678";
-	public static final String STATUS_TYPE_EMPLOYED = "Employed";
 	public static final String EMPLOYEE_TYPE_PERMANENT = "Permanent";
 	public static final Boolean ISACTIVE_TRUE = true;
 	public static final String FROM_DATE = "01/04/2015";

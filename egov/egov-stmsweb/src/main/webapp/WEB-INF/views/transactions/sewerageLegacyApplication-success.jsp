@@ -51,7 +51,7 @@
 		<div class="panel panel-primary" data-collapsed="0">
 			<div class="panel-heading">
 				<div class="panel-title text-center">
-					<span><spring:message code="msg.legacyconnection.ack.success" arguments="${sewerageApplicationDetails.applicationNumber}"/></span>
+					<span><spring:message code="msg.legacyconnection.ack.success" arguments="${sewerageApplicationDetails.connection.shscNumber}"/></span>
 				</div> 
 			</div>
 		</div>

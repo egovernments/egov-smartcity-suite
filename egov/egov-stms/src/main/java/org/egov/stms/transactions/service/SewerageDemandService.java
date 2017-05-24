@@ -40,6 +40,21 @@
 
 package org.egov.stms.transactions.service;
 
+import static org.egov.stms.utils.constants.SewerageTaxConstants.FEES_ADVANCE_CODE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.MODULE_NAME;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.log4j.Logger;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
@@ -58,26 +73,15 @@ import org.egov.stms.transactions.entity.SewerageConnectionFee;
 import org.egov.stms.transactions.entity.SewerageDemandConnection;
 import org.egov.stms.transactions.entity.SewerageDemandDetail;
 import org.egov.stms.transactions.repository.SewerageDemandGenerationLogRepository;
+import org.egov.stms.utils.SewerageTaxUtils;
 import org.egov.stms.utils.constants.SewerageTaxConstants;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import static org.egov.stms.utils.constants.SewerageTaxConstants.FEES_ADVANCE_CODE;
 
 @Service
 @Transactional(readOnly = true)
@@ -103,6 +107,9 @@ public class SewerageDemandService {
     @Autowired
     private SewerageDemandGenerationLogRepository demandGenerationLogRepository;
 
+    @Autowired
+    private SewerageTaxUtils sewerageTaxUtils;
+
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
@@ -126,7 +133,7 @@ public class SewerageDemandService {
      * @return
      */
     private EgDemand createDemand(final Set<EgDemandDetails> demandDetailSet, final Installment installment,
-                                  final BigDecimal totalDemandAmount) {
+            final BigDecimal totalDemandAmount) {
         final EgDemand egDemand = new EgDemand();
         egDemand.setEgInstallmentMaster(installment);
         egDemand.getEgDemandDetails().addAll(demandDetailSet);
@@ -185,8 +192,8 @@ public class SewerageDemandService {
      * @return
      */
     public EgDemandDetails createDemandDetails(final EgDemand demand, final BigDecimal dmdAmount,
-                                               final EgDemandReason egDemandReason,
-                                               final BigDecimal amtCollected) {
+            final EgDemandReason egDemandReason,
+            final BigDecimal amtCollected) {
         final EgDemandDetails demandDetail = EgDemandDetails.fromReasonAndAmounts(dmdAmount.setScale(0, BigDecimal.ROUND_HALF_UP),
                 egDemandReason,
                 amtCollected);
@@ -199,7 +206,7 @@ public class SewerageDemandService {
     }
 
     public EgDemandDetails createDemandDetails(final BigDecimal dmdAmount, final EgDemandReason egDemandReason,
-                                               final BigDecimal amtCollected) {
+            final BigDecimal amtCollected) {
         return EgDemandDetails.fromReasonAndAmounts(dmdAmount.setScale(0, BigDecimal.ROUND_HALF_UP), egDemandReason,
                 amtCollected);
     }
@@ -260,7 +267,7 @@ public class SewerageDemandService {
      * @return
      */
     public Boolean checkAnyTaxPendingForSelectedFinancialYear(final SewerageDemandConnection sewerageDemandConnection,
-                                                              final Installment installment) {
+            final Installment installment) {
         Boolean pendingTaxCollection = false;
 
         if (sewerageDemandConnection != null && sewerageDemandConnection.getDemand() != null)
@@ -285,7 +292,7 @@ public class SewerageDemandService {
     }
 
     public List<EgDemandDetails> getDemandDetailByPassingDemandDemandReason(final EgDemand demand,
-                                                                            final EgDemandReason demandReason) {
+            final EgDemandReason demandReason) {
 
         return demandGenericDao.getDemandDetailsForDemandAndReasons(demand, Arrays.asList(demandReason));
 
@@ -298,7 +305,7 @@ public class SewerageDemandService {
     }
 
     public EgDemand createDemandOnNewConnection(final List<SewerageConnectionFee> connectionFees,
-                                                final SewerageApplicationDetails sewerageApplicationDetail) {
+            final SewerageApplicationDetails sewerageApplicationDetail) {
         EgDemand demand = null;
         final Set<EgDemandDetails> demandDetailSet = new HashSet<>();
         BigDecimal totalDemandAmount = BigDecimal.ZERO;
@@ -332,14 +339,15 @@ public class SewerageDemandService {
      * @throws ApplicationRuntimeException
      */
     public EgDemand createDemandOnLegacyConnection(final List<SewerageDemandDetail> sewerageDemandDetail,
-                                                   final SewerageApplicationDetails sewerageApplicationDetail) {
+            final SewerageApplicationDetails sewerageApplicationDetail) {
 
         EgDemand demand = null;
         final Set<EgDemandDetails> demandDetailSet = new HashSet<>();
         BigDecimal totalDemandAmount = BigDecimal.ZERO;
         BigDecimal totalCollectedAmount = BigDecimal.ZERO;
         if (sewerageApplicationDetail != null && sewerageApplicationDetail.getCurrentDemand() == null) {
-            final Installment installment = getCurrentInstallment();
+            final List<Installment> installmentList = sewerageTaxUtils
+                    .getInstallmentsByModuledescendingorder(moduleService.getModuleByName(MODULE_NAME), new DateTime().getYear());
             for (final SewerageDemandDetail sdd : sewerageDemandDetail) {
                 final EgDemandReason pendingTaxReason = getDemandReasonByCodeAndInstallment(sdd.getReasonMaster(),
                         sdd.getInstallmentId());
@@ -355,10 +363,70 @@ public class SewerageDemandService {
                 } else
                     throw new ApplicationRuntimeException("SEWERAGE.001");
             }
-            demand = createDemand(demandDetailSet, installment, totalDemandAmount);
+
+            demand = createDemand(demandDetailSet, installmentList.get(0), totalDemandAmount);
             demand.setAmtCollected(totalCollectedAmount);
         }
         return demand;
+    }
+
+    /***
+     * Assumption: There is no fee collected for the selected demand.
+     * @param sewerageDemandDetail
+     * @param demand
+     * @return
+     */
+    public EgDemand updateLegacyDemand(final List<SewerageDemandDetail> sewerageDemandDetail, final EgDemand demand) {
+        BigDecimal totalDemandAmount = BigDecimal.ZERO;
+        BigDecimal totalCollectedAmount = BigDecimal.ZERO;
+        final List<EgDemandDetails> removableDemandDetailList = new ArrayList<>();
+        boolean demandDtlPresent;
+        for (final SewerageDemandDetail sdd : sewerageDemandDetail) {
+            demandDtlPresent = false;
+            if (sdd.getActualAmount() == null)
+                sdd.setActualAmount(BigDecimal.ZERO);
+            if (sdd.getActualCollection() == null)
+                sdd.setActualCollection(BigDecimal.ZERO);
+
+            for (final EgDemandDetails dmdDtl : demand.getEgDemandDetails())
+                if (sdd.getReasonMaster()
+                        .equalsIgnoreCase(dmdDtl.getEgDemandReason().getEgDemandReasonMaster().getCode())
+                        && sdd.getInstallmentId().equals(dmdDtl.getEgDemandReason().getEgInstallmentMaster().getId())) {
+                    demandDtlPresent = true;
+                    dmdDtl.setAmount(sdd.getActualAmount());
+                    dmdDtl.setAmtCollected(sdd.getActualCollection());
+                    totalDemandAmount = totalDemandAmount.add(sdd.getActualAmount());
+                    totalCollectedAmount = totalCollectedAmount.add(sdd.getActualCollection());
+
+                }
+            if (!demandDtlPresent) {
+                final EgDemandReason pendingTaxReason = getDemandReasonByCodeAndInstallment(sdd.getReasonMaster(),
+                        sdd.getInstallmentId());
+
+                demand.addEgDemandDetails(createDemandDetails(sdd.getActualAmount(), pendingTaxReason,
+                        sdd.getActualCollection()));
+                totalDemandAmount = totalDemandAmount.add(sdd.getActualAmount());
+                totalCollectedAmount = totalCollectedAmount.add(sdd.getActualCollection());
+            }
+        }
+        for (final EgDemandDetails dmdDtls : demand.getEgDemandDetails()) {
+            demandDtlPresent = false;
+            for (final SewerageDemandDetail sewDmdDtl : sewerageDemandDetail)
+                if (sewDmdDtl.getReasonMaster()
+                        .equalsIgnoreCase(dmdDtls.getEgDemandReason().getEgDemandReasonMaster().getCode())
+                        && sewDmdDtl.getInstallmentId().equals(dmdDtls.getEgDemandReason().getEgInstallmentMaster().getId()))
+                    demandDtlPresent = true;
+
+            if (!demandDtlPresent)
+                removableDemandDetailList.add(dmdDtls);
+        }
+        for (final EgDemandDetails removableDmdDtl : removableDemandDetailList)
+            demand.removeEgDemandDetails(removableDmdDtl);
+
+        demand.setBaseDemand(totalDemandAmount.setScale(0, BigDecimal.ROUND_HALF_UP));
+        demand.setAmtCollected(totalCollectedAmount.setScale(0, BigDecimal.ROUND_HALF_UP));
+        return demand;
+
     }
 
     /**
@@ -396,8 +464,8 @@ public class SewerageDemandService {
     }
 
     public EgDemand updateDemandOnChangeInClosets(final SewerageApplicationDetails oldSewerageApplicationDetails,
-                                                  final List<SewerageConnectionFee> connectionFees, final EgDemand demand,
-                                                  final Boolean updateOldSewerageApplicationAdvance) {
+            final List<SewerageConnectionFee> connectionFees, final EgDemand demand,
+            final Boolean updateOldSewerageApplicationAdvance) {
         final Installment installment = getCurrentInstallment();
         BigDecimal totalDemandAmount = BigDecimal.ZERO;// (demand.getBaseDemand()!=null?demand.getBaseDemand(): BigDecimal.ZERO);
         // //TODO : CHECK THIS VARIABLE.
@@ -557,19 +625,19 @@ public class SewerageDemandService {
                             // Eg: 500 diff, 100 advance present. adjust 100
                             // as collected.
                             if (differenceAmount.compareTo(oldApplicationAdvanceAmount) > 0) {
-                                amoountCollected = oldSewerageTax.add(oldApplicationAdvanceAmount);
-                                oldApplicationAdvanceAmount = BigDecimal.ZERO;
-                                oldAdvanceUsedInSewerageTaxOrAddedAsAdvance = true;
-                                createAdvanceDemandDetail(demand, oldApplicationAdvanceAmount);// reset advance as zero.
+                            amoountCollected = oldSewerageTax.add(oldApplicationAdvanceAmount);
+                            oldApplicationAdvanceAmount = BigDecimal.ZERO;
+                            oldAdvanceUsedInSewerageTaxOrAddedAsAdvance = true;
+                            createAdvanceDemandDetail(demand, oldApplicationAdvanceAmount);// reset advance as zero.
                             } else {
-                                // Eg: 500 diff, 600 advance present.
-                                // adjust 500 as collected.
-                                amoountCollected = oldSewerageTax.add(differenceAmount);
-                                oldApplicationAdvanceAmount = oldApplicationAdvanceAmount
-                                        .subtract(differenceAmount);
-                                // Add remaining amount as advance.
-                                createAdvanceDemandDetail(demand, oldApplicationAdvanceAmount);
-                                oldAdvanceUsedInSewerageTaxOrAddedAsAdvance = true;
+                            // Eg: 500 diff, 600 advance present.
+                            // adjust 500 as collected.
+                            amoountCollected = oldSewerageTax.add(differenceAmount);
+                            oldApplicationAdvanceAmount = oldApplicationAdvanceAmount
+                                    .subtract(differenceAmount);
+                            // Add remaining amount as advance.
+                            createAdvanceDemandDetail(demand, oldApplicationAdvanceAmount);
+                            oldAdvanceUsedInSewerageTaxOrAddedAsAdvance = true;
                             }
 
                         demand.addEgDemandDetails(createDemandDetails(currentSewerageTax,
@@ -617,7 +685,7 @@ public class SewerageDemandService {
             if (dmdDtl.getEgDemandReason().getEgDemandReasonMaster().getCode()
                     .equalsIgnoreCase(FEES_ADVANCE_CODE)
                     && nextInstallment != null && nextInstallment.getDescription()
-                    .equalsIgnoreCase(dmdDtl.getEgDemandReason().getEgInstallmentMaster().getDescription())) {
+                            .equalsIgnoreCase(dmdDtl.getEgDemandReason().getEgInstallmentMaster().getDescription())) {
                 dmdDtl.getEgDemand().getBaseDemand().subtract(dmdDtl.getAmtCollected());
                 dmdDtl.setAmtCollected(amount);
                 dmdDtl.getEgDemand().getBaseDemand().add(amount);
@@ -637,25 +705,23 @@ public class SewerageDemandService {
      * @param newtaxReasonInstallment
      * @return
      */
-    public EgDemand generateNextYearDemandForSewerage(SewerageApplicationDetails applicationDetails,
-                                                      EgDemandReason oldtaxReasonInstallment,
-                                                      EgDemandReason newtaxReasonInstallment) {
+    public EgDemand generateNextYearDemandForSewerage(final SewerageApplicationDetails applicationDetails,
+            final EgDemandReason oldtaxReasonInstallment,
+            final EgDemandReason newtaxReasonInstallment) {
 
         BigDecimal totalDemandAmount = BigDecimal.ZERO;
-        EgDemand demand = applicationDetails.getCurrentDemand();
+        final EgDemand demand = applicationDetails.getCurrentDemand();
 
         Boolean taxFeeAlreadyExistInDemand = false;
         EgDemandDetails oldTaxDemandDetail = null;
 
-        for (EgDemandDetails dmdDtl : demand.getEgDemandDetails()) {
+        for (final EgDemandDetails dmdDtl : demand.getEgDemandDetails()) {
             // Assumption: tax amount is mandatory.
-            if (dmdDtl.getEgDemandReason().getId() == oldtaxReasonInstallment.getId()) {
+            if (dmdDtl.getEgDemandReason().getId() == oldtaxReasonInstallment.getId())
                 oldTaxDemandDetail = dmdDtl;
-            }
 
-            if (dmdDtl.getEgDemandReason().getId() == newtaxReasonInstallment.getId()) {
+            if (dmdDtl.getEgDemandReason().getId() == newtaxReasonInstallment.getId())
                 taxFeeAlreadyExistInDemand = true;
-            }
         }
         // Copy last financial year sewerage tax
         // if sewerage tax already present in new installment, then
@@ -673,19 +739,18 @@ public class SewerageDemandService {
     }
 
     public Integer[] generateDemandForNextInstallment(final List<SewerageApplicationDetails> sewerageApplicationDetails,
-                                                      List<Installment> previousInstallment, Installment sewerageDmdGenerationInstallment) {
+            final List<Installment> previousInstallment, final Installment sewerageDmdGenerationInstallment) {
         Integer[] res;
         int totalNoOfRecords = 0;
         int noOfSuccessRecords = 0;
         int noOfFailureRecords = 0;
-        if (LOGGER.isInfoEnabled()) {
+        if (LOGGER.isInfoEnabled())
             LOGGER.info("*************************************** total records " + sewerageApplicationDetails.size());
-        }
         if (!sewerageApplicationDetails.isEmpty()) {
-            EgDemandReason taxReasonOldInstallment = getDemandReasonByCodeAndInstallment(
+            final EgDemandReason taxReasonOldInstallment = getDemandReasonByCodeAndInstallment(
                     SewerageTaxConstants.FEES_SEWERAGETAX_CODE, previousInstallment.get(0).getId());
 
-            EgDemandReason taxReasonNewInstallment = getDemandReasonByCodeAndInstallment(
+            final EgDemandReason taxReasonNewInstallment = getDemandReasonByCodeAndInstallment(
                     SewerageTaxConstants.FEES_SEWERAGETAX_CODE, sewerageDmdGenerationInstallment.getId());
 
             SewerageDemandGenerationLog demandGenerationLog;
@@ -694,11 +759,10 @@ public class SewerageDemandService {
                         .createDemandGenerationLog(sewerageDmdGenerationInstallment.getDescription());
             });
 
-            for (SewerageApplicationDetails applicationDetails : sewerageApplicationDetails) {
-                if (LOGGER.isInfoEnabled()) {
+            for (final SewerageApplicationDetails applicationDetails : sewerageApplicationDetails) {
+                if (LOGGER.isInfoEnabled())
                     LOGGER.info(
                             "*************************************** demand id " + applicationDetails.getCurrentDemand().getId());
-                }
                 Boolean status = false;
 
                 // get last year demand and add as current year.
@@ -706,9 +770,8 @@ public class SewerageDemandService {
                 try {
                     status = transactionTemplate.execute(result -> {
                         final SewerageDemandGenerationLog demandGenerationLogObj;
-                        if (LOGGER.isInfoEnabled()) {
+                        if (LOGGER.isInfoEnabled())
                             LOGGER.info("SHSC Number ---> " + applicationDetails.getConnection().getShscNumber());
-                        }
                         generateNextYearDemandForSewerage(applicationDetails, taxReasonOldInstallment,
                                 taxReasonNewInstallment);
                         sewerageApplicationDetailsService.updateSewerageApplicationDetails(applicationDetails);
@@ -741,7 +804,7 @@ public class SewerageDemandService {
                 totalNoOfRecords = noOfSuccessRecords + noOfFailureRecords;
             }
         }
-        res = new Integer[]{totalNoOfRecords, noOfSuccessRecords, noOfFailureRecords};
+        res = new Integer[] { totalNoOfRecords, noOfSuccessRecords, noOfFailureRecords };
         return res;
     }
 
@@ -749,9 +812,8 @@ public class SewerageDemandService {
         String error;
         if (exception instanceof ValidationException)
             error = ((ValidationException) exception).getErrors().get(0).getMessage();
-        else {
+        else
             error = "Error : " + exception;
-        }
         return error;
     }
 

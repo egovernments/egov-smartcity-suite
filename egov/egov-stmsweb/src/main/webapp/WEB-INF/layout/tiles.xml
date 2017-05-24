@@ -268,6 +268,14 @@
 		<put-attribute name="body" 
 			value="/WEB-INF/views/transactions/legacySewerageConnection-form.jsp" />	
 	</definition>
+	
+	<definition name="edit-legacySewerageConnection-form" extends="base_layout">
+		<put-attribute name="page-title" value="title.legacySewerageApplication" 
+			cascade="true"/>
+		<put-attribute name="body" 
+			value="/WEB-INF/views/transactions/edit-legacySewerageConnection-form.jsp" />	
+	</definition>
+
 	<definition name="sewerageLegacyApplication-success" extends="base_layout">
 		<put-attribute name="page-title" value="title.legacySewerageApplication"
 			cascade="true" />

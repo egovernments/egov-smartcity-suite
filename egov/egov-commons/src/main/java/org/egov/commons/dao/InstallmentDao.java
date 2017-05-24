@@ -72,6 +72,9 @@ public interface InstallmentDao {
             int noOfInstallmentToFetch);
 
     public Installment getInsatllmentByModuleAndDescription(Module moduleByName, String description);
-    
-     List<Installment> fetchNextInstallmentsByModuleAndDate(final Module module, final Date date);
+
+    List<Installment> fetchNextInstallmentsByModuleAndDate(final Module module, final Date date);
+
+    public List<Installment> getInstallmentsByModuleAndInstallmentYearOrderByInstallmentYearDescending(final Module module,
+            final int year);
 }

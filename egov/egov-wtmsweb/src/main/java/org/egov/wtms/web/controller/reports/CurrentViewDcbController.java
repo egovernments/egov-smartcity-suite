@@ -144,8 +144,7 @@ public class CurrentViewDcbController {
             @PathVariable final String applicationCode, final HttpServletRequest request) throws ParseException {
         List<WaterChargesReceiptInfo> waterChargesReceiptInfo;
         List<WaterChargesReceiptInfo> waterChargesReceiptInfoList;
-        final SQLQuery query = currentDcbService.getMigratedReceipttDetails(consumerNumber);
-        waterChargesReceiptInfo = query.list();
+        waterChargesReceiptInfo = currentDcbService.getMigratedReceipttDetails(consumerNumber);
         WaterConnectionDetails waterConnectionDetails;
         waterConnectionDetails = waterConnectionDetailsService.findByOldConsumerNumberAndConnectionStatus(consumerNumber,
                 ConnectionStatus.ACTIVE);
@@ -187,7 +186,7 @@ public class CurrentViewDcbController {
             dcbService.setBillable(waterConnectionBillable);
             dCBReport = dcbService.getCurrentDCBAndReceipts(dcbDispInfo);
             final EgDemand demand = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
-            final List<EgDemandDetails> egDemandDetailsList = new ArrayList<EgDemandDetails>(0);
+            final List<EgDemandDetails> egDemandDetailsList = new ArrayList<>(0);
             egDemandDetailsList.addAll(demand.getEgDemandDetails());
             Collections.sort(egDemandDetailsList, new DemandComparatorByInstallmentOrder());
             for (final EgDemandDetails demandDetails : egDemandDetailsList)

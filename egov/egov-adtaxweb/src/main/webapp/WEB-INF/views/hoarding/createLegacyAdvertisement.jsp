@@ -45,7 +45,10 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%> 
 	<div class="form-group">
 								<label class="col-sm-3 control-label text-right">
-								<spring:message code="lbl.category"/>
+							<input type="hidden" name="isEmployee" id="isEmployee" value="${isEmployee}" /> 
+							<input type="hidden" name="applicationSource" id="applicationSource" value="${applicationSource}" />
+								
+								 <spring:message code="lbl.category"/> 
 								<span class="mandatory"></span></label>
 								<div class="col-sm-3 add-margin">
 									<form:select path="advertisement.category" id="category" cssClass="form-control" cssErrorClass="form-control error" required="required">
@@ -124,13 +127,17 @@
 								<spring:message code="lbl.advertisement.permitDetail"/>
 								</div>
 							</div>
-							<div class="form-group">
-								<label class="col-sm-3 control-label text-right">
+							
+							<div  class="form-group">
+							<form:hidden path="advertisement.legacy" id="legacy" value="${advertisementPermitDetail.advertisement.legacy}" />
+								<form:hidden path="advertisement.status" id="advStatus" value="${advertisement.status}" />
+								<c:choose>
+								<c:when test="${applicationSource !='online' || advertisementPermitDetail.advertisement.legacy == 'true'}">
+								<label class="col-sm-3 control-label text-right ">
 								<spring:message code="lbl.advertisement.application.no"/>
 								</label>
 								<div class="col-sm-3 add-margin">
-								<form:hidden path="advertisement.legacy" id="legacy" value="${advertisementPermitDetail.advertisement.legacy}" />
-								<form:hidden path="advertisement.status" id="advStatus" value="${advertisement.status}" />
+								
 								 
 								<%-- 
 								<form:hidden path="status" id="status" value="${status.id}" /> 
@@ -139,7 +146,7 @@
                         	      data-pattern="alphanumerichyphenbackslash" path="applicationNumber" maxlength="25" id="applicationNumber" />
                                		<form:errors path="applicationNumber" cssClass="error-msg" />
 								</div>
-								<label class="col-sm-2 control-label text-right">
+								<label class="col-sm-2 control-label text-right">								
 								<spring:message code="lbl.application.date"/>
 								<span class="mandatory"></span>
 								</label>
@@ -149,7 +156,24 @@
                                 id="applicationDate" data-inputmask="'mask': 'd/m/y'"  required="required"/>
                                		<form:errors path="applicationDate" cssClass="error-msg" />
 								</div>
+								</c:when>
+								<c:otherwise>
+								<label class="col-sm-3 control-label text-left">								
+								<spring:message code="lbl.application.date"/>
+								<span class="mandatory"></span>
+								</label>
+								<div class="col-sm-3 add-margin">
+								<form:input  path="applicationDate"  type="text"
+                                class="form-control datepicker"   title="Please enter a valid date" pattern="\d{1,2}/\d{1,2}/\d{4}" data-date-end-date="0d" 
+                                id="applicationDate" data-inputmask="'mask': 'd/m/y'"  required="required"/>
+                               		<form:errors path="applicationDate" cssClass="error-msg" />
+                               		</div>
+                               		</c:otherwise>
+                               		</c:choose>
+								
 							</div>
+							
+							
 							<div class="form-group">
 							<c:choose>
 								<c:when test="${advertisementPermitDetail.advertisement.legacy == 'true'}">
@@ -169,16 +193,7 @@
 	                               		<form:errors path="advertisement.advertisementNumber" cssClass="error-msg" />
 									</div>
 								</c:when>
-								<c:otherwise>
-									<label class="col-sm-3 control-label text-right">
-									<spring:message code="lbl.advertisement.no"/></label>
-									<div class="col-sm-3 add-margin">
-										<form:input type="text" cssClass="form-control patternvalidation" 
-	                        	      data-pattern="alphanumericwithhyphen" maxlength="25"  path="advertisement.advertisementNumber" id="advertisementnumber" />
-	                               		<form:errors path="advertisement.advertisementNumber" cssClass="error-msg" />
-									</div>
-								</c:otherwise>
-							</c:choose>
+						</c:choose>
 							</div>
 							<div class="form-group">
 								<label class="col-sm-3 control-label text-right">
@@ -304,20 +319,25 @@
                                		<form:errors path="totalHeight" cssClass="error-msg" />
 								</div>
 							</div>
+							
+						<c:choose>
 						
+						<c:when test="${isEmployee == 'true' || advertisementPermitDetail.advertisement.legacy == 'true'}">
+							
 							<div class="panel-heading custom_form_panel_heading">
 								<div class="panel-title">
 								<spring:message code="lbl.advertisement.tax.feeDetails"/>
 								</div>
-							</div>
+							</div>							
 							<div class="form-group">
 								<label class="col-sm-3 control-label text-right">
 								<spring:message code="lbl.advertisement.currentYearTax"/>
 								<span class="mandatory"></span></label>
 								<div class="col-sm-3 add-margin">
-									<form:input type="text" class="form-control patternvalidation" data-pattern="decimalvalue"  maxlength="15"  path="taxAmount" id="taxAmount" required="required"/>
+									<form:input type="text" class="form-control patternvalidation" data-pattern="decimalvalue"  maxlength="15"  path="taxAmount" id="taxAmount" />
                                		<form:errors path="taxAmount" cssClass="error-msg" />
 								</div>
+
 								<label class="col-sm-2 control-label text-right">
 								<spring:message code="lbl.advertisement.enc.fee"/>
 								</label>
@@ -326,7 +346,21 @@
                                		<form:errors path="encroachmentFee" cssClass="error-msg" />
                                		
 								</div>
-							</div>
+								</div>
+									</c:when>
+								<c:otherwise>
+								<div class="form-group">
+								
+								<form:hidden path="taxAmount"  value="0"/>
+								</div>
+								</c:otherwise>
+							</c:choose>
+							
+								
+								
+								
+								
+							
 						<c:if test="${advertisementPermitDetail.advertisement.legacy == 'true'}">
 							<div class="form-group">
 								<label class="col-sm-3 control-label text-right">
@@ -360,6 +394,6 @@
 								</div>
 							</div>
 						</c:if>
-					</div>
+					
 					
 						

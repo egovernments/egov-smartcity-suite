@@ -1023,4 +1023,28 @@ public class SewerageApplicationDetailsService {
         final List<AppConfigValues> appConfigValues = appConfigValuesService.getConfigValuesByModuleAndKey(moduleName, keyName);
         return !appConfigValues.isEmpty() ? appConfigValues.get(0) : null;
     }
+    @Transactional
+    public SewerageApplicationDetails updateLegacySewerageConnection(
+            final SewerageApplicationDetails sewerageApplicationDetails, final HttpServletRequest request) {
+        if (sewerageTaxUtils.isDonationChargeCollectionRequiredForLegacy()) {
+            // Capturing pending Donation charge for legacy records
+            SewerageDemandDetail sewerageDemandDetail = new SewerageDemandDetail();
+            BigDecimal donationaAmtCollected = new BigDecimal(request.getParameter("amountCollected"));
+            sewerageDemandDetail.setActualCollection(donationaAmtCollected);
+            for (final SewerageConnectionFee fees : sewerageApplicationDetails.getConnectionFees()) {
+                if (FEES_DONATIONCHARGE_CODE.equals(fees.getFeesDetail().getCode())) {
+                    sewerageDemandDetail.setActualAmount(BigDecimal.valueOf(fees.getAmount()));
+                }
+            }
+            sewerageDemandDetail.setInstallmentId(sewerageDemandService.getCurrentInstallment().getId());
+            sewerageDemandDetail.setReasonMaster(FEES_DONATIONCHARGE_CODE);
+            sewerageApplicationDetails.getDemandDetailBeanList().add(sewerageDemandDetail);
+        }
+
+        sewerageDemandService.updateLegacyDemand(sewerageApplicationDetails.getDemandDetailBeanList(),
+                sewerageApplicationDetails.getCurrentDemand());
+        sewerageApplicationDetailsRepository.saveAndFlush(sewerageApplicationDetails);
+        updateIndexes(sewerageApplicationDetails);
+        return sewerageApplicationDetails;
+    }
 }

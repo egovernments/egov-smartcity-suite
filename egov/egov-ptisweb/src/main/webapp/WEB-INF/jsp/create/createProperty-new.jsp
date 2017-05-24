@@ -116,10 +116,12 @@
 					</s:if>
 					<s:if test="%{eligibleInitiator == true}">
 					<s:if test="%{propertyByEmployee == true}">
-						<tr>
-							<%@ include file="../workflow/commonWorkflowMatrix.jsp"%>
-						</tr>
-						<tr>
+							<s:if test="%{!isCitizenPortalUser}">
+								<tr>
+									<%@ include file="../workflow/commonWorkflowMatrix.jsp"%>
+								</tr>
+							</s:if>
+							<tr>
 							<font size="2"><div align="left" class="mandatory1">
 									&nbsp;&nbsp;
 									<s:text name="mandtryFlds" />

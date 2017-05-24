@@ -59,6 +59,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.admin.master.entity.Module;
@@ -94,11 +95,9 @@ public class PortalInbox extends AbstractAuditable {
     @Length(max = 50)
     private String applicationNumber;
 
-    @NotNull
     @Length(max = 50)
     private String entityRefNumber;
 
-    @NotNull
     private Long entityRefId;
 
     @Length(max = 256)
@@ -115,6 +114,8 @@ public class PortalInbox extends AbstractAuditable {
 
     private boolean resolved;
 
+    private Date resolvedDate;
+
     private Date slaEndDate;
 
     @Temporal(TemporalType.TIMESTAMP)
@@ -128,6 +129,9 @@ public class PortalInbox extends AbstractAuditable {
     @OrderBy("id")
     @OneToMany(mappedBy = "portalInbox", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private final List<PortalInboxUser> portalInboxUsers = new ArrayList<>(0);
+
+    @Transient
+    private List<PortalInboxUser> tempPortalInboxUser = new ArrayList<>(0);
 
     @Length(max = 20)
     private Priority priority;
@@ -267,6 +271,22 @@ public class PortalInbox extends AbstractAuditable {
 
     public void setApplicationDate(final Date applicationDate) {
         this.applicationDate = applicationDate;
+    }
+
+    public List<PortalInboxUser> getTempPortalInboxUser() {
+        return tempPortalInboxUser;
+    }
+
+    public void setTempPortalInboxUser(final List<PortalInboxUser> tempPortalInboxUser) {
+        this.tempPortalInboxUser = tempPortalInboxUser;
+    }
+
+    public Date getResolvedDate() {
+        return resolvedDate;
+    }
+
+    public void setResolvedDate(final Date resolvedDate) {
+        this.resolvedDate = resolvedDate;
     }
 
 }

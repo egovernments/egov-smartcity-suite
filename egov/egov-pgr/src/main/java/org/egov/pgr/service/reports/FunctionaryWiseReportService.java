@@ -1,5 +1,8 @@
 package org.egov.pgr.service.reports;
 
+import static org.egov.pgr.utils.constants.PGRConstants.FROMDATE;
+import static org.egov.pgr.utils.constants.PGRConstants.TODATE;
+
 import java.util.Date;
 
 import javax.persistence.EntityManager;
@@ -44,13 +47,13 @@ public class FunctionaryWiseReportService {
             final String complaintDateType, final StringBuilder query) {
 
         query.append(
-                " WHERE cd.status = cs.id and cd.complainttype= ctype.id  and cd.state_id = state.id and cd.assignee= usr.position ");
+                " WHERE cd.status = cs.id and cd.complainttype= ctype.id  and cd.state_id = state.id and cd.assignee= usr.position and usr.todate >= :currdate");
 
-        if (complaintDateType != null && complaintDateType.equals("lastsevendays"))
+        if (complaintDateType != null && "lastsevendays".equals(complaintDateType))
             query.append(" and cd.createddate >=   :fromDates ");
-        else if (complaintDateType != null && complaintDateType.equals("lastthirtydays"))
+        else if (complaintDateType != null && "lastthirtydays".equals(complaintDateType))
             query.append(" and cd.createddate >=   :fromDates ");
-        else if (complaintDateType != null && complaintDateType.equals("lastninetydays"))
+        else if (complaintDateType != null && "lastninetydays".equals(complaintDateType))
             query.append(" and cd.createddate >=   :fromDates ");
         else if (fromDate != null && toDate != null)
             query.append(" and ( cd.createddate BETWEEN :fromDates and :toDates) ");
@@ -70,19 +73,19 @@ public class FunctionaryWiseReportService {
         final SQLQuery qry = entityManager.unwrap(Session.class).createSQLQuery(querykey);
 
         if (complaintDateType != null && complaintDateType.equals("lastsevendays"))
-            qry.setParameter("fromDates", getCurrentDateWithOutTime().minusDays(7).toDate());
+            qry.setParameter(FROMDATE, getCurrentDateWithOutTime().minusDays(7).toDate());
         else if (complaintDateType != null && complaintDateType.equals("lastthirtydays"))
-            qry.setParameter("fromDates", getCurrentDateWithOutTime().minusDays(30).toDate());
+            qry.setParameter(FROMDATE, getCurrentDateWithOutTime().minusDays(30).toDate());
         else if (complaintDateType != null && complaintDateType.equals("lastninetydays"))
-            qry.setParameter("fromDates", getCurrentDateWithOutTime().minusDays(90).toDate());
+            qry.setParameter(FROMDATE, getCurrentDateWithOutTime().minusDays(90).toDate());
         else if (fromDate != null && toDate != null) {
-            qry.setParameter("fromDates", resetTimeByPassingDate(fromDate));
-            qry.setParameter("toDates", getEndOfDayByDate(toDate));
-
+            qry.setParameter(FROMDATE, resetTimeByPassingDate(fromDate));
+            qry.setParameter(TODATE, getEndOfDayByDate(toDate));
         } else if (fromDate != null)
-            qry.setParameter("fromDates", resetTimeByPassingDate(fromDate));
+            qry.setParameter(FROMDATE, resetTimeByPassingDate(fromDate));
         else if (toDate != null)
-            qry.setParameter("toDates", getEndOfDayByDate(toDate));
+            qry.setParameter(TODATE, getEndOfDayByDate(toDate));
+        qry.setParameter("currdate", getCurrentDateWithOutTime().toDate());
         return qry;
 
     }

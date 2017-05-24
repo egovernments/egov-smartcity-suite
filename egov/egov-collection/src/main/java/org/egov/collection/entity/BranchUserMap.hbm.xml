@@ -68,7 +68,7 @@
 		<property name="createdDate" column="CREATED_DATE" type="timestamp" />
 		<property name="modifiedDate" column="MODIFIED_DATE" type="timestamp" />
 	</class>
-	<query name="QUERY_ACTIVE_BRANCHUSER_BY_USESR">
+	<query name="QUERY_ACTIVE_BRANCHUSER_BY_USER">
 	<![CDATA[select bu from org.egov.collection.entity.BranchUserMap bu where bu.isActive=true and bu.bankuser.id=?]]>
 	</query>
 	<query name="QUERY_BRANCHUSER_BRANCH">

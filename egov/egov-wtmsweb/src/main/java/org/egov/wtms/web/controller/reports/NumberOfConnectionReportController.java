@@ -113,13 +113,12 @@ public class NumberOfConnectionReportController {
 
     @ExceptionHandler(Exception.class)
     @RequestMapping(value = "/connectionReportList", method = RequestMethod.GET)
-    public @ResponseBody void springPaginationDataTablesUpdate(@RequestParam final String ward,
+    @ResponseBody
+    public void springPaginationDataTablesUpdate(@RequestParam final String ward,
             @RequestParam final String block, final HttpServletRequest request, final HttpServletResponse response)
             throws IOException {
     
-        SQLQuery   drillDownreportQuery = boundaryWiseReportService.getDrillDownReportQuery(ward, block);
-        drillDownreportQuery.setResultTransformer(Transformers.aliasToBean(WaterConnectionReportResult.class));
-        final List<WaterConnectionReportResult> drillDownresult = drillDownreportQuery.list();
+        final List<WaterConnectionReportResult> drillDownresult = boundaryWiseReportService.getDrillDownReportResult(ward, block);
         String  result = new StringBuilder("{ \"data\":").append(toJSON(drillDownresult, WaterConnectionReportResult.class,
                 WaterConnectionHelperAdaptor.class)).append("}").toString();
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);

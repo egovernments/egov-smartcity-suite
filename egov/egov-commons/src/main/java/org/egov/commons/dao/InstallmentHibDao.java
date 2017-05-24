@@ -205,4 +205,18 @@ public class InstallmentHibDao<T, id extends Serializable> implements Installmen
         return qry.list();
 
     }
+    
+    @Override
+    public List<Installment> getInstallmentsByModuleAndInstallmentYearOrderByInstallmentYearDescending(final Module module,
+            final int year) {
+
+        final Query qry = getCurrentSession()
+                .createQuery(
+                        "from Installment I where I.module=:module and extract(year from I.installmentYear)=:year order by installment_year desc");
+        qry.setEntity("module", module);
+        qry.setInteger("year", year);
+
+        return qry.list();
+
+    }
 }

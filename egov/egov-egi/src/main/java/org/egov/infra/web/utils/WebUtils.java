@@ -40,6 +40,7 @@
 
 package org.egov.infra.web.utils;
 
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
@@ -47,9 +48,12 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.servlet.LocaleResolver;
+import org.springframework.web.servlet.support.RequestContextUtils;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
@@ -114,5 +118,10 @@ public class WebUtils {
             headers.setContentType(MediaType.parseMediaType("application/vnd.ms-excel"));
         headers.add("content-disposition", "inline;filename=" + reportRequest.reportOutputFileName());
         return new ResponseEntity<>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
+    }
+
+    public static void setUserLocale(User user, HttpServletRequest request, HttpServletResponse response) {
+        LocaleResolver localeResolver = RequestContextUtils.getLocaleResolver(request);
+        localeResolver.setLocale(request, response, user.locale());
     }
 }

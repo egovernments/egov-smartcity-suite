@@ -39,6 +39,21 @@
  */
 package org.egov.portal.service;
 
+import java.util.Date;
+import java.util.List;
+
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.persistence.entity.enums.UserType;
+import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.workflow.entity.State;
+import org.egov.portal.entity.PortalInbox;
+import org.egov.portal.entity.PortalInboxUser;
+import org.egov.portal.repository.PortalInboxRepository;
+import org.egov.portal.service.es.PortalInboxIndexService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,5 +61,98 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class PortalInboxService {
 
-    
+    private final PortalInboxRepository portalInboxRepository;
+
+    private final PortalInboxIndexService portalInboxIndexService;
+
+    private static final Logger LOG = LoggerFactory.getLogger(PortalInboxService.class);
+
+    @Autowired
+    private SecurityUtils securityUtils;
+
+    @Autowired
+    public PortalInboxService(final PortalInboxRepository portalInboxRepository,
+            final PortalInboxIndexService portalInboxIndexService) {
+        this.portalInboxRepository = portalInboxRepository;
+        this.portalInboxIndexService = portalInboxIndexService;
+    }
+
+    public Long getPortalInboxByStatus(final boolean resolved) {
+        return portalInboxRepository.getPortalInboxByStatus(resolved);
+    }
+
+    public Long getPortalInboxCount() {
+        return portalInboxRepository.getPortalInboxCount();
+    }
+
+    @Transactional
+    public void pushInboxMessage(final PortalInbox portalInbox) {
+        if (portalInbox.getTempPortalInboxUser().isEmpty()) {
+            final User user = getLoggedInUser();
+            if (user != null)
+                createPortalUser(portalInbox, user);
+        } else
+            portalInbox.getPortalInboxUsers().addAll(portalInbox.getTempPortalInboxUser());
+        portalInboxRepository.saveAndFlush(portalInbox);
+        portalInboxIndexService.createPortalInboxIndex(portalInbox);
+    }
+
+    private void createPortalUser(final PortalInbox portalInbox, final User user) {
+        if (UserType.BUSINESS.toString().equalsIgnoreCase(user.getType().toString())
+                || UserType.CITIZEN.toString().equalsIgnoreCase(user.getType().toString())) {
+            final PortalInboxUser portalInboxUser = new PortalInboxUser();
+            portalInboxUser.setUser(user);
+            portalInbox.getPortalInboxUsers().add(portalInboxUser);
+            portalInboxUser.setPortalInbox(portalInbox);
+        } else
+            throw new ApplicationRuntimeException("Logged in User must be a Citizen or Business User.");
+    }
+
+    @Transactional
+    public void updateInboxMessage(final String applicationNumber, final Long moduleId, final String status,
+            final Boolean isResolved, final Date slaEndDate, final State state, final User user,
+            final String entityRefNo, final String link) {
+        final PortalInbox portalInbox = getPortalInboxByApplicationNo(applicationNumber, moduleId);
+        if (portalInbox != null) {
+            portalInbox.setStatus(status);
+            portalInbox.setResolved(isResolved);
+            portalInbox.setState(state);
+            updatePortalInboxData(slaEndDate, entityRefNo, link, portalInbox);
+            if (user != null && !containsUser(portalInbox.getPortalInboxUsers(), user.getId()))
+                try {
+                    createPortalUser(portalInbox, user);
+                } catch (final ApplicationRuntimeException exception) {
+                    LOG.error("++++++++ updateInboxMessage ++++++++" + exception.getMessage());
+                }
+            portalInboxRepository.saveAndFlush(portalInbox);
+            portalInboxIndexService.createPortalInboxIndex(portalInbox);
+        }
+    }
+
+    private void updatePortalInboxData(final Date slaEndDate, final String entityRefNo, final String link,
+            final PortalInbox portalInbox) {
+        if (entityRefNo != null && !entityRefNo.isEmpty())
+            portalInbox.setEntityRefNumber(entityRefNo);
+        if (link != null && !link.isEmpty())
+            portalInbox.setLink(link);
+        if (slaEndDate != null)
+            portalInbox.setSlaEndDate(slaEndDate);
+    }
+
+    public boolean containsUser(final List<PortalInboxUser> list, final Long userId) {
+        return list.stream().anyMatch(item -> item.getUser().getId().equals(userId));
+    }
+
+    public PortalInbox getPortalInboxByApplicationNo(final String applicationNumber, final Long moduleId) {
+        return portalInboxRepository.findByApplicationNumberAndModule_Id(applicationNumber, moduleId);
+    }
+
+    /**
+     * This method returns the User instance associated with the logged in user
+     *
+     * @return the logged in user
+     */
+    public User getLoggedInUser() {
+        return securityUtils.getCurrentUser();
+    }
 }

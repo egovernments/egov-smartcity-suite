@@ -135,9 +135,11 @@
 	<div class="row text-center">
 		<div class="add-margin">
 			<%-- <a onclick="window.open('/adtax/hoarding/showack/${advertisementPermitDetail.id}','print','width=800, height=600,scrollbars=yes')">PrintAck</a> --%>
+		<c:if test="${Source != 'online' && advertisementPermitDetail.advertisement.legacy == 'true'}">
 			<input type="button" value="Print" name="PrintAck" id="PrintAck"
 				class="button"
 				onclick="window.open('/adtax/hoarding/printack/${advertisementPermitDetail.id}','_blank');" > 
+				</c:if>
 				<a href="javascript:void(0)" class="btn btn-default"
 				onclick="self.close()"><spring:message code="lbl.close" /></a>
 		</div>

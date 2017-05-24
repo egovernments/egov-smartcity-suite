@@ -598,7 +598,8 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
         final Assignment assignment = getApproverAssignment(property);
         if (assignment != null) {
             approverDesignation = assignment.getDesignation().getName();
-            if (!propertyByEmployee || ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName()))
+            if (!propertyByEmployee || ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName())
+                    || propertyService.isCitizenPortalUser(securityUtils.getCurrentUser()))
                 wfInitiator = assignment;
         }
         if (property.getId() != null)
@@ -628,7 +629,8 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
      */
     private Assignment getApproverAssignment(final PropertyImpl property) {
         Assignment assignment = null;
-        if (!propertyByEmployee || ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName())) {
+        if (!propertyByEmployee || ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName())
+                || propertyService.isCitizenPortalUser(securityUtils.getCurrentUser())) {
             currentState = "Created";
             if (propertyService.isCscOperator(securityUtils.getCurrentUser()))
                 assignment = propertyService.getMappedAssignmentForCscOperator(property.getBasicProperty());

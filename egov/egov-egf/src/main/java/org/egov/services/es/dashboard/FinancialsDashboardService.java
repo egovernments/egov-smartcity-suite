@@ -47,7 +47,7 @@
 
 package org.egov.services.es.dashboard;
 
-import org.egov.egf.bean.dashboard.FinancialsDetail;
+import org.egov.egf.bean.dashboard.FinancialsDetailResponse;
 import org.egov.egf.bean.dashboard.FinancialsDetailsRequest;
 import org.egov.egf.es.utils.FinancialsDashBoardUtils;
 import org.egov.infra.utils.StringUtils;
@@ -83,80 +83,114 @@ public class FinancialsDashboardService {
     private static final String ASSETS = "A";
     private static final String LIABILITIES = "L";
     private static final String DETAILED_CODE = "glcode";
-    private static final String FIN_RECORDS = "finRecords";
-    private static final String DISTRICT_NAME = "distname";
-    private static final String ULB_NAME = "ulbname";
     private static final String AGGRFIELD = "aggrField";
     private static final String OBAGGRFIELD = "obAggrField";
+    private static final String CURRENT_YEAR = "currentYear";
+    private static final String LAST_YEAR = "lastYear";
+    private static final String FINANCIALYEAR = "financialyear";
+    private static final String MAJOR_CODE = "majorcode";
+    private static final String MINOR_CODE = "minorcode";
+
 
     @Autowired
     private ElasticsearchTemplate elasticsearchTemplate;
 
-    public List<FinancialsDetail> getFinancialsData(final FinancialsDetailsRequest financialsDetailsRequest,
-                                                    final BoolQueryBuilder boolQuery, final String aggrField) {
+    public List<FinancialsDetailResponse> getFinancialsData(final FinancialsDetailsRequest financialsDetailsRequest,
+                                                            final BoolQueryBuilder boolQuery, final String aggrField) {
         return getfinDetails(financialsDetailsRequest, boolQuery, aggrField);
 
     }
 
-    private List<FinancialsDetail> getfinDetails(final FinancialsDetailsRequest financialsDetailsRequest,
-                                                 final BoolQueryBuilder boolQuery, final String aggrField) {
+    private List<FinancialsDetailResponse> getfinDetails(final FinancialsDetailsRequest financialsDetailsRequest,
+                                                         final BoolQueryBuilder boolQuery, final String aggrField) {
 
-        List<FinancialsDetail> result = new ArrayList<>();
-        SearchResponse finSearchResponse;
+        List<FinancialsDetailResponse> result = new ArrayList<>();
+        Map<String, FinancialsDetailResponse> resultMap;
+        Map<String, SearchResponse> finSearchResponse;
         String coaType;
         BoolQueryBuilder boolQry = boolQuery;
         if (StringUtils.isBlank(financialsDetailsRequest.getDetailedCode()) && StringUtils.isBlank(financialsDetailsRequest.getMajorCode())
                 && StringUtils.isBlank(financialsDetailsRequest.getMinorCode())) {
             // calculating income
             coaType = INCOME;
-            boolQry.filter(QueryBuilders.prefixQuery(DETAILED_CODE, "1"));
-            finSearchResponse = getVoucherSearchResponse(boolQry, aggrField);
-            result = getResponse(financialsDetailsRequest, finSearchResponse, coaType);
-            finSearchResponse = getVoucherSearchResponse(FinancialsDashBoardUtils.prepareWhereClause(financialsDetailsRequest).filter(QueryBuilders.prefixQuery(DETAILED_CODE, "2")), aggrField);
+            finSearchResponse = getVoucherSearchResponse(financialsDetailsRequest, boolQry, coaType, aggrField);
+            resultMap = getResponse(financialsDetailsRequest, finSearchResponse, coaType, aggrField);
             coaType = EXPENSE;
-            result = getFinalResponse(financialsDetailsRequest, finSearchResponse, result, coaType);
-            finSearchResponse = getVoucherSearchResponse(FinancialsDashBoardUtils.prepareWhereClause(financialsDetailsRequest).filter(QueryBuilders.prefixQuery(DETAILED_CODE, "3")), aggrField);
+            finSearchResponse = getVoucherSearchResponse(financialsDetailsRequest, boolQry, coaType, aggrField);
+            resultMap = getFinalResponse(financialsDetailsRequest, finSearchResponse, resultMap, coaType, aggrField);
             coaType = LIABILITIES;
-            result = getFinalResponse(financialsDetailsRequest, finSearchResponse, result, coaType);
-            finSearchResponse = getVoucherSearchResponse(FinancialsDashBoardUtils.prepareWhereClause(financialsDetailsRequest).filter(QueryBuilders.prefixQuery(DETAILED_CODE, "4")), aggrField);
+            finSearchResponse = getVoucherSearchResponse(financialsDetailsRequest, boolQry, coaType, aggrField);
+            resultMap = getFinalResponse(financialsDetailsRequest, finSearchResponse, resultMap, coaType, aggrField);
             coaType = ASSETS;
-            result = getFinalResponse(financialsDetailsRequest, finSearchResponse, result, coaType);
+            finSearchResponse = getVoucherSearchResponse(financialsDetailsRequest, boolQry, coaType, aggrField);
+            resultMap = getFinalResponse(financialsDetailsRequest, finSearchResponse, resultMap, coaType, aggrField);
+            result = getFinalListOfData(resultMap);
         } else if (financialsDetailsRequest.getDetailedCode().startsWith("1") || financialsDetailsRequest.getMajorCode().startsWith("1") || financialsDetailsRequest.getMinorCode()
                 .startsWith("1")) {
             coaType = INCOME;
-            finSearchResponse = getVoucherSearchResponse(boolQuery, aggrField);
-            result = getResponse(financialsDetailsRequest, finSearchResponse, coaType);
+            finSearchResponse = getVoucherSearchResponse(financialsDetailsRequest, boolQuery, coaType, aggrField);
+            resultMap = getResponse(financialsDetailsRequest, finSearchResponse, coaType, aggrField);
+            result = getFinalListOfData(resultMap);
         } else if (financialsDetailsRequest.getDetailedCode().startsWith("2") || financialsDetailsRequest.getMajorCode().startsWith("2") || financialsDetailsRequest.getMinorCode()
                 .startsWith("2")) {
             coaType = EXPENSE;
-            finSearchResponse = getVoucherSearchResponse(boolQuery, aggrField);
-            result = getResponse(financialsDetailsRequest, finSearchResponse, coaType);
+            finSearchResponse = getVoucherSearchResponse(financialsDetailsRequest, boolQuery, coaType, aggrField);
+            resultMap = getResponse(financialsDetailsRequest, finSearchResponse, coaType, aggrField);
+            result = getFinalListOfData(resultMap);
         } else if (financialsDetailsRequest.getDetailedCode().startsWith("3") || financialsDetailsRequest.getMajorCode().startsWith("3") || financialsDetailsRequest.getMinorCode()
                 .startsWith("3")) {
             coaType = LIABILITIES;
-            finSearchResponse = getVoucherSearchResponse(boolQuery, aggrField);
-            result = getResponse(financialsDetailsRequest, finSearchResponse, coaType);
+            finSearchResponse = getVoucherSearchResponse(financialsDetailsRequest, boolQuery, coaType, aggrField);
+            resultMap = getResponse(financialsDetailsRequest, finSearchResponse, coaType, aggrField);
+            result = getFinalListOfData(resultMap);
         } else if (financialsDetailsRequest.getDetailedCode().startsWith("4") || financialsDetailsRequest.getMajorCode().startsWith("4") || financialsDetailsRequest.getMinorCode()
                 .startsWith("4")) {
             coaType = ASSETS;
-            finSearchResponse = getVoucherSearchResponse(boolQuery, aggrField);
-            result = getResponse(financialsDetailsRequest, finSearchResponse, coaType);
+            finSearchResponse = getVoucherSearchResponse(financialsDetailsRequest, boolQuery, coaType, aggrField);
+            resultMap = getResponse(financialsDetailsRequest, finSearchResponse, coaType, aggrField);
+            result = getFinalListOfData(resultMap);
         }
 
         return result;
     }
 
 
-    private SearchResponse getVoucherSearchResponse(final BoolQueryBuilder boolQuery,
-                                                    final String aggrField) {
-        boolQuery.filter(QueryBuilders.matchQuery("voucherstatusid", FinancialConstants.CREATEDVOUCHERSTATUS));
-        return elasticsearchTemplate.getClient().prepareSearch(FinancialConstants.FINANCIAL_VOUCHER_INDEX_NAME).setQuery(boolQuery)
+    private Map<String, SearchResponse> getVoucherSearchResponse(FinancialsDetailsRequest financialsDetailsRequest, BoolQueryBuilder boolQuery, String coaType,
+                                                                 final String aggrField) {
+        Map<String, SearchResponse> response = new HashMap<>();
+        BoolQueryBuilder boolQry = boolQuery;
+        if (!aggrField.equalsIgnoreCase(DETAILED_CODE) && !aggrField.equalsIgnoreCase(MAJOR_CODE) && !aggrField.equalsIgnoreCase(MINOR_CODE))
+            if (StringUtils.isBlank(financialsDetailsRequest.getDetailedCode()) && StringUtils.isBlank(financialsDetailsRequest.getMajorCode())
+                    && StringUtils.isBlank(financialsDetailsRequest.getMinorCode()))
+                boolQry = prepareQuery(financialsDetailsRequest, coaType);
+        boolQry.filter(QueryBuilders.matchQuery("voucherstatusid", FinancialConstants.CREATEDVOUCHERSTATUS));
+        SearchResponse currentYearResponse = elasticsearchTemplate.getClient().prepareSearch(FinancialConstants.FINANCIAL_VOUCHER_INDEX_NAME).setQuery(boolQry)
                 .addAggregation(AggregationBuilders.terms(AGGRFIELD).field(aggrField)
                         .subAggregation(AggregationBuilders.sum(DEBITAMOUNT).field(DEBITAMOUNT))
                         .subAggregation(AggregationBuilders.sum(CREDITAMOUNT).field(CREDITAMOUNT))
-                        .subAggregation(
-                                AggregationBuilders.topHits(FIN_RECORDS).addField(DISTRICT_NAME).addField(ULB_NAME).setSize(1)))
+                        .subAggregation(AggregationBuilders.topHits("finRecordsCy").addField("distname").addField("ulbname")
+                                .addField("ulbgrade").addField("regname").setSize(1)))
                 .execute().actionGet();
+        response.put(CURRENT_YEAR, currentYearResponse);
+
+        financialsDetailsRequest.setFromDate("");
+        financialsDetailsRequest.setToDate("");
+        if (!aggrField.equalsIgnoreCase(DETAILED_CODE) && !aggrField.equalsIgnoreCase(MAJOR_CODE) && !aggrField.equalsIgnoreCase(MINOR_CODE))
+            if (StringUtils.isBlank(financialsDetailsRequest.getDetailedCode()) && StringUtils.isBlank(financialsDetailsRequest.getMajorCode())
+                    && StringUtils.isBlank(financialsDetailsRequest.getMinorCode())) {
+                boolQry = prepareQuery(financialsDetailsRequest, coaType);
+            }
+        boolQry = FinancialsDashBoardUtils.prepareWhereClause(financialsDetailsRequest).filter(QueryBuilders.matchQuery(FINANCIALYEAR, financialsDetailsRequest.getLastFinancialYear()));
+        boolQry.filter(QueryBuilders.matchQuery("voucherstatusid", FinancialConstants.CREATEDVOUCHERSTATUS));
+        SearchResponse lastYearResponse = elasticsearchTemplate.getClient().prepareSearch(FinancialConstants.FINANCIAL_VOUCHER_INDEX_NAME).setQuery(boolQry)
+                .addAggregation(AggregationBuilders.terms(AGGRFIELD).field(aggrField).subAggregation(AggregationBuilders.sum(DEBITAMOUNT).field(DEBITAMOUNT))
+                        .subAggregation(AggregationBuilders.sum(CREDITAMOUNT).field(CREDITAMOUNT))
+                        .subAggregation(AggregationBuilders.topHits("finRecordsLy").addField("distname").addField("ulbname")
+                                .addField("ulbgrade").addField("regname").setSize(1)))
+                .execute().actionGet();
+        response.put(LAST_YEAR, lastYearResponse);
+
+        return response;
     }
 
     private SearchResponse getOpeningBlncSearchResponse(final BoolQueryBuilder boolQuery,
@@ -164,197 +198,444 @@ public class FinancialsDashboardService {
         return elasticsearchTemplate.getClient().prepareSearch(FinancialConstants.FINANCIAL_OPENINGBALANCE_INDEX_NAME).setQuery(boolQuery)
                 .addAggregation(AggregationBuilders.terms(OBAGGRFIELD).field(aggrField)
                         .subAggregation(AggregationBuilders.sum(OBDEBITAMOUNT).field(OBDEBITAMOUNT))
-                        .subAggregation(AggregationBuilders.sum(OBCREDITAMOUNT).field(OBCREDITAMOUNT)).subAggregation(
-                                AggregationBuilders.topHits(FIN_RECORDS).addField(DISTRICT_NAME).addField(ULB_NAME).setSize(1)))
+                        .subAggregation(AggregationBuilders.sum(OBCREDITAMOUNT).field(OBCREDITAMOUNT)))
                 .execute().actionGet();
     }
 
-    private List<FinancialsDetail> getResponse(final FinancialsDetailsRequest financialsDetailsRequest,
-                                               final SearchResponse finSearchResponse, final String coaType) {
+    private BoolQueryBuilder prepareQuery(FinancialsDetailsRequest financialsDetailsRequest, String coaType) {
+        BoolQueryBuilder boolquery = new BoolQueryBuilder();
+        if (INCOME.equalsIgnoreCase(coaType))
+            boolquery = FinancialsDashBoardUtils.prepareWhereClause(financialsDetailsRequest).filter(QueryBuilders.prefixQuery(DETAILED_CODE, "1"));
+        if (EXPENSE.equalsIgnoreCase(coaType))
+            boolquery = FinancialsDashBoardUtils.prepareWhereClause(financialsDetailsRequest).filter(QueryBuilders.prefixQuery(DETAILED_CODE, "2"));
+
+        if (LIABILITIES.equalsIgnoreCase(coaType))
+            boolquery = FinancialsDashBoardUtils.prepareWhereClause(financialsDetailsRequest).filter(QueryBuilders.prefixQuery(DETAILED_CODE, "3"));
+        if (ASSETS.equalsIgnoreCase(coaType))
+            boolquery = FinancialsDashBoardUtils.prepareWhereClause(financialsDetailsRequest).filter(QueryBuilders.prefixQuery(DETAILED_CODE, "4"));
 
 
-        Map<String, FinancialsDetail> openingBalanceLiablity = new HashMap<>();
-        Map<String, FinancialsDetail> openingBalanceAssets = new HashMap<>();
-        String distName;
-        String ulbName;
-        if (ASSETS.equalsIgnoreCase(coaType) || LIABILITIES.equalsIgnoreCase(coaType)) {
-            openingBalanceLiablity = getOpeningBalance(financialsDetailsRequest, null, LIABILITIES);
-            openingBalanceAssets = getOpeningBalance(financialsDetailsRequest, null, ASSETS);
-        }
-        final StringTerms distAggr = finSearchResponse.getAggregations().get(AGGRFIELD);
-        final List<FinancialsDetail> finList = new ArrayList<>();
-        for (final Terms.Bucket entry : distAggr.getBuckets()) {
-            FinancialsDetail financialsDetail = new FinancialsDetail();
-            final Sum aggrDebit = entry.getAggregations().get(DEBITAMOUNT);
-            final Sum aggrCredit = entry.getAggregations().get(CREDITAMOUNT);
-            final TopHits topHits = entry.getAggregations().get(FIN_RECORDS);
-            final SearchHit[] hit = topHits.getHits().getHits();
-            distName = hit[0].field(DISTRICT_NAME).getValue();
-            ulbName = hit[0].field(ULB_NAME).getValue();
+        return boolquery;
 
-            if (INCOME.equalsIgnoreCase(coaType)) {
-                financialsDetail
-                        .setIncomeDebitAmount(BigDecimal.valueOf(aggrDebit.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
-                financialsDetail
-                        .setIncomeCreditAmount(BigDecimal.valueOf(aggrCredit.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
-                financialsDetail.setIncomeNetAmount(
-                        financialsDetail.getIncomeCreditAmount().subtract(financialsDetail.getIncomeDebitAmount()));
-
-            } else if (EXPENSE.equalsIgnoreCase(coaType)) {
-                financialsDetail
-                        .setExpenseDebitAmount(BigDecimal.valueOf(aggrDebit.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
-                financialsDetail
-                        .setExpenseCreditAmount(BigDecimal.valueOf(aggrCredit.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
-                financialsDetail.setExpenseNetAmount(
-                        financialsDetail.getExpenseDebitAmount().subtract(financialsDetail.getExpenseCreditAmount()));
-            }
-
-            if (LIABILITIES.equalsIgnoreCase(coaType)) {
-                calculateNetLiability(distName, ulbName, openingBalanceLiablity, aggrDebit, aggrCredit, financialsDetail);
-
-            } else if (ASSETS.equalsIgnoreCase(coaType)) {
-                calculateNetAsset(distName, ulbName, openingBalanceAssets, aggrDebit, aggrCredit, financialsDetail);
-            }
-            financialsDetail.setIeNetAmount(financialsDetail.getExpenseNetAmount().subtract(financialsDetail.getIncomeNetAmount()));
-            financialsDetail.setAlNetAmount(financialsDetail.getAssetsNetAmount().subtract(financialsDetail.getLiabilitiesNetAmount()));
-            financialsDetail.setDistrict(distName);
-            financialsDetail.setUlbName(ulbName);
-            setFinancialsDetails(financialsDetailsRequest, financialsDetail);
-            finList.add(financialsDetail);
-
-        }
-        return finList;
     }
 
-    private Map<String, FinancialsDetail> getOpeningBalance(FinancialsDetailsRequest financialsDetailsRequest, BoolQueryBuilder query, String coaType) {
+    private List<FinancialsDetailResponse> getFinalListOfData(Map<String, FinancialsDetailResponse> resultMap) {
 
 
-        BoolQueryBuilder boolquery = query;
-        if (query == null)
-            boolquery = FinancialsDashBoardUtils.prepareOpeningBlncWhereClause(financialsDetailsRequest);
+        List<FinancialsDetailResponse> list = new ArrayList<>();
+        if (!resultMap.isEmpty())
+            for (FinancialsDetailResponse response : resultMap.values())
+                list.add(response);
+
+        return list;
+    }
+
+
+    private Map<String, FinancialsDetailResponse> getResponse(final FinancialsDetailsRequest financialsDetailsRequest,
+                                                              final Map<String, SearchResponse> finSearchResponse, String coaType, String aggrField) {
+
+
+        Map<String, FinancialsDetailResponse> openingBalanceLiablity = new HashMap<>();
+        Map<String, FinancialsDetailResponse> openingBalanceAssets = new HashMap<>();
+        Map<String, FinancialsDetailResponse> finMap = new HashMap<>();
+        StringTerms aggr;
+
+        for (String key : finSearchResponse.keySet()) {
+            if (CURRENT_YEAR.equalsIgnoreCase(key)) {
+                if (ASSETS.equalsIgnoreCase(coaType) || LIABILITIES.equalsIgnoreCase(coaType)) {
+                    openingBalanceLiablity = getOpeningBalance(financialsDetailsRequest, null, LIABILITIES, CURRENT_YEAR);
+                    openingBalanceAssets = getOpeningBalance(financialsDetailsRequest, null, ASSETS, CURRENT_YEAR);
+                }
+                aggr = finSearchResponse.get(CURRENT_YEAR).getAggregations().get(AGGRFIELD);
+                for (final Terms.Bucket entry : aggr.getBuckets()) {
+                    final Sum aggrDebit = entry.getAggregations().get(DEBITAMOUNT);
+                    final Sum aggrCredit = entry.getAggregations().get(CREDITAMOUNT);
+                    final TopHits topHits = entry.getAggregations().get("finRecordsCy");
+
+                    if (!finMap.isEmpty()) {
+                        FinancialsDetailResponse financialsDetails = finMap.get(entry.getKeyAsString());
+                        if (financialsDetails == null)
+                            financialsDetails = new FinancialsDetailResponse();
+                        if (aggrField.equalsIgnoreCase(DETAILED_CODE) || aggrField.equalsIgnoreCase(MAJOR_CODE) || aggrField.equalsIgnoreCase(MINOR_CODE))
+                            coaType = verifyCoaType(entry.getKeyAsString());
+                        if (INCOME.equalsIgnoreCase(coaType)) {
+                            financialsDetails
+                                    .setCyIncomeDebitAmount(BigDecimal.valueOf(aggrDebit.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+                            financialsDetails
+                                    .setCyIncomeCreditAmount(BigDecimal.valueOf(aggrCredit.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+                            financialsDetails.setCyIncomeNetAmount(
+                                    financialsDetails.getCyIncomeCreditAmount().subtract(financialsDetails.getCyIncomeDebitAmount()));
+
+                        } else if (EXPENSE.equalsIgnoreCase(coaType)) {
+                            financialsDetails
+                                    .setCyExpenseDebitAmount(BigDecimal.valueOf(aggrDebit.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+                            financialsDetails
+                                    .setCyExpenseCreditAmount(BigDecimal.valueOf(aggrCredit.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+                            financialsDetails.setCyExpenseNetAmount(
+                                    financialsDetails.getCyExpenseDebitAmount().subtract(financialsDetails.getCyExpenseCreditAmount()));
+                        }
+
+                        if (LIABILITIES.equalsIgnoreCase(coaType)) {
+                            calculateNetLiabilityForCurrentYear(entry.getKeyAsString(), openingBalanceLiablity, aggrDebit, aggrCredit, financialsDetails);
+
+                        } else if (ASSETS.equalsIgnoreCase(coaType)) {
+                            calculateNetAssetForCurrentYear(entry.getKeyAsString(), openingBalanceAssets, aggrDebit, aggrCredit, financialsDetails);
+                        }
+
+                        financialsDetails.setCyIeNetAmount(financialsDetails.getCyIncomeNetAmount().subtract(financialsDetails.getCyExpenseNetAmount()));
+                        financialsDetails.setLyIeNetAmount(financialsDetails.getLyIncomeNetAmount().subtract(financialsDetails.getLyExpenseNetAmount()));
+                        financialsDetails.setCyAlNetAmount(financialsDetails.getCyLiabilitiesNetAmount().subtract(financialsDetails.getCyAssetsNetAmount()));
+                        financialsDetails.setLyAlNetAmount(financialsDetails.getLyLiabilitiesNetAmount().subtract(financialsDetails.getLyAssetsNetAmount()));
+                        FinancialsDashBoardUtils.setValues(entry.getKeyAsString(), financialsDetails, aggrField, setResponseDetails(topHits));
+
+                        if (finMap.containsKey(entry.getKeyAsString())) {
+                            finMap.remove(entry.getKeyAsString());
+                            finMap.put(entry.getKeyAsString(), financialsDetails);
+                        } else
+                            finMap.put(entry.getKeyAsString(), financialsDetails);
+
+                    }
+
+                }
+
+            } else if (LAST_YEAR.equalsIgnoreCase(key)) {
+                if (ASSETS.equalsIgnoreCase(coaType) || LIABILITIES.equalsIgnoreCase(coaType)) {
+                    openingBalanceLiablity = getOpeningBalance(financialsDetailsRequest, null, LIABILITIES, LAST_YEAR);
+                    openingBalanceAssets = getOpeningBalance(financialsDetailsRequest, null, ASSETS, LAST_YEAR);
+                }
+                aggr = finSearchResponse.get(LAST_YEAR).getAggregations().get(AGGRFIELD);
+                for (final Terms.Bucket entry : aggr.getBuckets()) {
+                    FinancialsDetailResponse financialsDetail = new FinancialsDetailResponse();
+                    final Sum aggrDebit = entry.getAggregations().get(DEBITAMOUNT);
+                    final Sum aggrCredit = entry.getAggregations().get(CREDITAMOUNT);
+                    String keyName = entry.getKeyAsString();
+                    final TopHits topHits = entry.getAggregations().get("finRecordsLy");
+
+                    if (aggrField.equalsIgnoreCase(DETAILED_CODE) || aggrField.equalsIgnoreCase(MAJOR_CODE) || aggrField.equalsIgnoreCase(MINOR_CODE))
+                        coaType = verifyCoaType(keyName);
+                    if (INCOME.equalsIgnoreCase(coaType)) {
+                        financialsDetail
+                                .setLyIncomeDebitAmount(BigDecimal.valueOf(aggrDebit.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+                        financialsDetail
+                                .setLyIncomeCreditAmount(BigDecimal.valueOf(aggrCredit.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+                        financialsDetail.setLyIncomeNetAmount(
+                                financialsDetail.getLyIncomeCreditAmount().subtract(financialsDetail.getLyIncomeDebitAmount()));
+
+                    } else if (EXPENSE.equalsIgnoreCase(coaType)) {
+                        financialsDetail
+                                .setLyExpenseDebitAmount(BigDecimal.valueOf(aggrDebit.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+                        financialsDetail
+                                .setLyExpenseCreditAmount(BigDecimal.valueOf(aggrCredit.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+                        financialsDetail.setLyExpenseNetAmount(
+                                financialsDetail.getLyExpenseDebitAmount().subtract(financialsDetail.getLyExpenseCreditAmount()));
+                    }
+
+                    if (LIABILITIES.equalsIgnoreCase(coaType)) {
+                        calculateNetLiabilityForLastYear(entry.getKeyAsString(), openingBalanceLiablity, aggrDebit, aggrCredit, financialsDetail);
+
+                    } else if (ASSETS.equalsIgnoreCase(coaType)) {
+                        calculateNetAssetForLastYear(entry.getKeyAsString(), openingBalanceAssets, aggrDebit, aggrCredit, financialsDetail);
+                    }
+
+                    FinancialsDashBoardUtils.setValues(keyName, financialsDetail, aggrField, setResponseDetails(topHits));
+                    setFinancialsDetails(financialsDetailsRequest, financialsDetail);
+                    finMap.put(entry.getKeyAsString(), financialsDetail);
+                }
+            }
+
+        }
+        return finMap;
+    }
+
+
+    private String verifyCoaType(String keyName) {
+        String coaType;
+        if (keyName.startsWith("1"))
+            coaType = INCOME;
+        else if (keyName.startsWith("2"))
+            coaType = EXPENSE;
+        else if (keyName.startsWith("3"))
+            coaType = LIABILITIES;
+        else
+            coaType = ASSETS;
+        return coaType;
+    }
+
+    private Map<String, FinancialsDetailResponse> getOpeningBalance(FinancialsDetailsRequest financialsDetailsRequest, BoolQueryBuilder query, String coaType, String financialYear) {
+
+
+        BoolQueryBuilder boolQuery = query;
         String aggrField = FinancialsDashBoardUtils.getOpeningBlncAggrGroupingField(financialsDetailsRequest);
-        SearchResponse openingBalncSearchResponse = getOpeningBlncSearchResponse(boolquery, aggrField);
-        final StringTerms distAggr = openingBalncSearchResponse.getAggregations().get(OBAGGRFIELD);
         final Map finList = new HashMap();
-        for (final Terms.Bucket entry : distAggr.getBuckets()) {
-            FinancialsDetail financialsDetail = new FinancialsDetail();
-            final Sum debit = entry.getAggregations().get(OBDEBITAMOUNT);
-            final Sum credit = entry.getAggregations().get(OBCREDITAMOUNT);
-            final TopHits topHits = entry.getAggregations().get(FIN_RECORDS);
-            final SearchHit[] hit = topHits.getHits().getHits();
-            financialsDetail.setDistrict(hit[0].field(DISTRICT_NAME).getValue());
-            financialsDetail.setUlbName(hit[0].field(ULB_NAME).getValue());
-            if (LIABILITIES.equalsIgnoreCase(coaType))
-                financialsDetail.setLiabilitiesOpbAmount(BigDecimal.valueOf(debit.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP).subtract(BigDecimal.valueOf(credit.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP)));
-            if (ASSETS.equalsIgnoreCase(coaType))
-                financialsDetail.setAssetsOpbAmount(BigDecimal.valueOf(debit.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP).subtract(BigDecimal.valueOf(credit.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP)));
-            finList.put(financialsDetail.getDistrict(), financialsDetail);
+        if (query == null)
+            boolQuery = FinancialsDashBoardUtils.prepareOpeningBlncWhereClause(financialsDetailsRequest);
+
+        if (CURRENT_YEAR.equalsIgnoreCase(financialYear)) {
+            boolQuery.filter(QueryBuilders.matchQuery(FINANCIALYEAR, financialsDetailsRequest.getCurrentFinancialYear()));
+
+            SearchResponse openingBalncSearchResponse = getOpeningBlncSearchResponse(boolQuery, aggrField);
+            final StringTerms distAggr = openingBalncSearchResponse.getAggregations().get(OBAGGRFIELD);
+
+            for (final Terms.Bucket entry : distAggr.getBuckets()) {
+                FinancialsDetailResponse financialsDetail = new FinancialsDetailResponse();
+                final Sum debit = entry.getAggregations().get(OBDEBITAMOUNT);
+                final Sum credit = entry.getAggregations().get(OBCREDITAMOUNT);
+
+                if (LIABILITIES.equalsIgnoreCase(coaType))
+                    financialsDetail.setCyLiabilitiesOpbAmount(BigDecimal.valueOf(debit.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP).subtract(BigDecimal.valueOf(credit.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP)));
+                if (ASSETS.equalsIgnoreCase(coaType))
+                    financialsDetail.setCyAssetsOpbAmount(BigDecimal.valueOf(debit.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP).subtract(BigDecimal.valueOf(credit.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP)));
+                finList.put(entry.getKeyAsString(), financialsDetail);
+            }
+        } else if (LAST_YEAR.equalsIgnoreCase(financialYear)) {
+            boolQuery.filter(QueryBuilders.matchQuery(FINANCIALYEAR, financialsDetailsRequest.getLastFinancialYear()));
+
+            SearchResponse openingBalncSearchResponse = getOpeningBlncSearchResponse(boolQuery, aggrField);
+            final StringTerms distAggr = openingBalncSearchResponse.getAggregations().get(OBAGGRFIELD);
+            for (final Terms.Bucket entry : distAggr.getBuckets()) {
+                FinancialsDetailResponse financialsDetail = new FinancialsDetailResponse();
+                final Sum debit = entry.getAggregations().get(OBDEBITAMOUNT);
+                final Sum credit = entry.getAggregations().get(OBCREDITAMOUNT);
+
+                if (LIABILITIES.equalsIgnoreCase(coaType))
+                    financialsDetail.setLyLiabilitiesOpbAmount(BigDecimal.valueOf(debit.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP).subtract(BigDecimal.valueOf(credit.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP)));
+                if (ASSETS.equalsIgnoreCase(coaType))
+                    financialsDetail.setLyAssetsOpbAmount(BigDecimal.valueOf(debit.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP).subtract(BigDecimal.valueOf(credit.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP)));
+                finList.put(entry.getKeyAsString(), financialsDetail);
+            }
         }
 
         return finList;
     }
 
-    private List<FinancialsDetail> getFinalResponse(final FinancialsDetailsRequest financialsDetailsRequest, final SearchResponse finSearchResponse, final List<FinancialsDetail> result, String coaType) {
+    private Map<String, FinancialsDetailResponse> getFinalResponse(final FinancialsDetailsRequest financialsDetailsRequest, final Map<String, SearchResponse> finSearchResponse, final Map<String, FinancialsDetailResponse> result, String coaType, String aggrField) {
 
-        final StringTerms distAggr = finSearchResponse.getAggregations().get(AGGRFIELD);
-        String distName;
-        String ulbName;
+        StringTerms aggr;
         Map openingBalanceLiability = new HashMap();
         Map openingBalanceAsset = new HashMap();
-        if (LIABILITIES.equalsIgnoreCase(coaType) || ASSETS.equalsIgnoreCase(coaType)) {
-            openingBalanceLiability = getOpeningBalance(financialsDetailsRequest, FinancialsDashBoardUtils.prepareOpeningBlncWhereClause(financialsDetailsRequest)
-                    .filter(QueryBuilders.prefixQuery(DETAILED_CODE, "3")), LIABILITIES);
-            openingBalanceAsset = getOpeningBalance(financialsDetailsRequest, FinancialsDashBoardUtils.prepareOpeningBlncWhereClause(financialsDetailsRequest)
-                    .filter(QueryBuilders.prefixQuery(DETAILED_CODE, "4")), ASSETS);
-        }
-        for (final Terms.Bucket entry : distAggr.getBuckets()) {
-            final Sum aggrDebit = entry.getAggregations().get(DEBITAMOUNT);
-            final Sum aggrCredit = entry.getAggregations().get(CREDITAMOUNT);
-            final TopHits topHits = entry.getAggregations().get(FIN_RECORDS);
-            final SearchHit[] hit = topHits.getHits().getHits();
-            distName = hit[0].field(DISTRICT_NAME).getValue();
-            ulbName = hit[0].field(ULB_NAME).getValue();
-
-            for (final FinancialsDetail finDetail : result) {
-                if (EXPENSE.equalsIgnoreCase(coaType) && finDetail.getUlbName().equalsIgnoreCase(ulbName) && finDetail.getDistrict().equalsIgnoreCase(distName)) {
-                    finDetail.setExpenseDebitAmount(
-                            BigDecimal.valueOf(aggrDebit.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
-                    finDetail.setExpenseCreditAmount(
-                            BigDecimal.valueOf(aggrCredit.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
-                    finDetail.setExpenseNetAmount(finDetail.getExpenseDebitAmount().subtract(finDetail.getExpenseCreditAmount()));
-                    finDetail.setIeNetAmount(finDetail.getExpenseNetAmount().subtract(finDetail.getIncomeNetAmount()));
-
-                } else if (LIABILITIES.equalsIgnoreCase(coaType) && finDetail.getUlbName().equalsIgnoreCase(ulbName) && finDetail.getDistrict().equalsIgnoreCase(distName)) {
-                    calculateNetLiability(distName, ulbName, openingBalanceLiability, aggrDebit, aggrCredit, finDetail);
-
-                } else if (ASSETS.equalsIgnoreCase(coaType) && finDetail.getUlbName().equalsIgnoreCase(ulbName) && finDetail.getDistrict().equalsIgnoreCase(distName)) {
-                    calculateNetAsset(distName, ulbName, openingBalanceAsset, aggrDebit, aggrCredit, finDetail);
+        Map<String, FinancialsDetailResponse> response = new HashMap<>();
+        for (String key : finSearchResponse.keySet()) {
+            if (CURRENT_YEAR.equalsIgnoreCase(key)) {
+                aggr = finSearchResponse.get(CURRENT_YEAR).getAggregations().get(AGGRFIELD);
+                if (LIABILITIES.equalsIgnoreCase(coaType) || ASSETS.equalsIgnoreCase(coaType)) {
+                    openingBalanceLiability = getOpeningBalance(financialsDetailsRequest, FinancialsDashBoardUtils.prepareOpeningBlncWhereClause(financialsDetailsRequest)
+                            .filter(QueryBuilders.prefixQuery(DETAILED_CODE, "3")), LIABILITIES, CURRENT_YEAR);
+                    openingBalanceAsset = getOpeningBalance(financialsDetailsRequest, FinancialsDashBoardUtils.prepareOpeningBlncWhereClause(financialsDetailsRequest)
+                            .filter(QueryBuilders.prefixQuery(DETAILED_CODE, "4")), ASSETS, CURRENT_YEAR);
                 }
+                for (final Terms.Bucket entry : aggr.getBuckets()) {
+                    final Sum aggrDebit = entry.getAggregations().get(DEBITAMOUNT);
+                    final Sum aggrCredit = entry.getAggregations().get(CREDITAMOUNT);
+                    final TopHits topHits = entry.getAggregations().get("finRecordsCy");
+                    if (!response.isEmpty()) {
+                        FinancialsDetailResponse finDetail = response.get(entry.getKeyAsString());
+                        if (aggrField.equalsIgnoreCase(DETAILED_CODE) || aggrField.equalsIgnoreCase(MAJOR_CODE) || aggrField.equalsIgnoreCase(MINOR_CODE))
+                            coaType = verifyCoaType(entry.getKeyAsString());
+                        if (finDetail == null) {
+                            finDetail = new FinancialsDetailResponse();
+                        }
+                        if (EXPENSE.equalsIgnoreCase(coaType)) {
+                            finDetail.setCyExpenseDebitAmount(
+                                    BigDecimal.valueOf(aggrDebit.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+                            finDetail.setCyExpenseCreditAmount(
+                                    BigDecimal.valueOf(aggrCredit.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+                            finDetail.setCyExpenseNetAmount(finDetail.getCyExpenseDebitAmount().subtract(finDetail.getCyExpenseCreditAmount()));
+                            finDetail.setCyIeNetAmount(finDetail.getCyIncomeNetAmount().subtract(finDetail.getCyExpenseNetAmount()));
 
 
+                        } else if (LIABILITIES.equalsIgnoreCase(coaType)) {
+                            calculateNetLiabilityForCurrentYear(entry.getKeyAsString(), openingBalanceLiability, aggrDebit, aggrCredit, finDetail);
+
+                        } else if (ASSETS.equalsIgnoreCase(coaType)) {
+                            calculateNetAssetForCurrentYear(entry.getKeyAsString(), openingBalanceAsset, aggrDebit, aggrCredit, finDetail);
+                        }
+                        FinancialsDashBoardUtils.setValues(entry.getKeyAsString(), finDetail, aggrField, setResponseDetails(topHits));
+                        if (response.containsKey(entry.getKeyAsString())) {
+                            response.remove(entry.getKeyAsString());
+                            response.put(entry.getKeyAsString(), finDetail);
+                        } else
+                            response.put(entry.getKeyAsString(), finDetail);
+                    }
+
+
+                }
+            } else if (LAST_YEAR.equalsIgnoreCase(key)) {
+                aggr = finSearchResponse.get(LAST_YEAR).getAggregations().get(AGGRFIELD);
+                if (LIABILITIES.equalsIgnoreCase(coaType) || ASSETS.equalsIgnoreCase(coaType)) {
+                    openingBalanceLiability = getOpeningBalance(financialsDetailsRequest, FinancialsDashBoardUtils.prepareOpeningBlncWhereClause(financialsDetailsRequest)
+                            .filter(QueryBuilders.prefixQuery(DETAILED_CODE, "3")), LIABILITIES, LAST_YEAR);
+                    openingBalanceAsset = getOpeningBalance(financialsDetailsRequest, FinancialsDashBoardUtils.prepareOpeningBlncWhereClause(financialsDetailsRequest)
+                            .filter(QueryBuilders.prefixQuery(DETAILED_CODE, "4")), ASSETS, LAST_YEAR);
+                }
+                for (final Terms.Bucket entry : aggr.getBuckets()) {
+                    final Sum aggrDebit = entry.getAggregations().get(DEBITAMOUNT);
+                    final Sum aggrCredit = entry.getAggregations().get(CREDITAMOUNT);
+                    final TopHits topHits = entry.getAggregations().get("finRecordsLy");
+
+
+                    if (!result.isEmpty()) {
+                        FinancialsDetailResponse finDetail = result.get(entry.getKeyAsString());
+                        if (finDetail == null) {
+                            finDetail = new FinancialsDetailResponse();
+                        }
+                        if (aggrField.equalsIgnoreCase(DETAILED_CODE) || aggrField.equalsIgnoreCase(MAJOR_CODE) || aggrField.equalsIgnoreCase(MINOR_CODE))
+                            coaType = verifyCoaType(entry.getKeyAsString());
+                        if (EXPENSE.equalsIgnoreCase(coaType)) {
+                            finDetail.setLyExpenseDebitAmount(
+                                    BigDecimal.valueOf(aggrDebit.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+                            finDetail.setLyExpenseCreditAmount(
+                                    BigDecimal.valueOf(aggrCredit.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+                            finDetail.setLyExpenseNetAmount(finDetail.getLyExpenseDebitAmount().subtract(finDetail.getLyExpenseCreditAmount()));
+                            finDetail.setLyIeNetAmount(finDetail.getLyIncomeNetAmount().subtract(finDetail.getLyExpenseNetAmount()));
+
+
+                        } else if (LIABILITIES.equalsIgnoreCase(coaType)) {
+                            calculateNetLiabilityForLastYear(entry.getKeyAsString(), openingBalanceLiability, aggrDebit, aggrCredit, finDetail);
+
+                        } else if (ASSETS.equalsIgnoreCase(coaType)) {
+                            calculateNetAssetForLastYear(entry.getKeyAsString(), openingBalanceAsset, aggrDebit, aggrCredit, finDetail);
+                        }
+                        FinancialsDashBoardUtils.setValues(entry.getKeyAsString(), finDetail, aggrField, setResponseDetails(topHits));
+                        if (response.containsKey(entry.getKeyAsString())) {
+                            response.remove(entry.getKeyAsString());
+                            response.put(entry.getKeyAsString(), finDetail);
+                        } else
+                            response.put(entry.getKeyAsString(), finDetail);
+
+                    }
+
+                }
             }
-
         }
-        return result;
+        return response;
     }
 
-    private void calculateNetAsset(String distName, String ulbName, Map<String, FinancialsDetail> openingBalanceAsset, Sum aggrDebit, Sum aggrCredit, FinancialsDetail finDetail) {
+    private FinancialsDetailResponse setResponseDetails(final TopHits topHits) {
+        FinancialsDetailResponse finResponse = new FinancialsDetailResponse();
+        final SearchHit[] hit = topHits.getHits().getHits();
+        String district = hit[0].field("distname").getValue();
+        String ulbName = hit[0].field("ulbname").getValue();
+        String region = hit[0].field("regname").getValue();
+        String grade = hit[0].field("ulbgrade").getValue();
+        finResponse.setRegion(region);
+        finResponse.setDistrict(district);
+        finResponse.setGrade(grade);
+        finResponse.setUlbName(ulbName);
+        return finResponse;
 
-        if (!openingBalanceAsset.isEmpty() && openingBalanceAsset.containsKey(distName))
-            for (FinancialsDetail f : openingBalanceAsset.values()) {
-                if (f.getUlbName().equalsIgnoreCase(ulbName) && f.getDistrict().equalsIgnoreCase(distName)) {
-                    finDetail
-                            .setAssetsDebitAmount(BigDecimal.valueOf(aggrDebit.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
-                    finDetail
-                            .setAssetsCreditAmount(BigDecimal.valueOf(aggrCredit.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
-                    finDetail.setAssetsNetAmount(
-                            (finDetail.getAssetsDebitAmount().subtract(finDetail.getAssetsCreditAmount())).add(f.getAssetsOpbAmount()));
-                    finDetail.setAlNetAmount(finDetail.getAssetsNetAmount().subtract(finDetail.getLiabilitiesNetAmount()));
-                    finDetail.setAssetsOpbAmount(f.getAssetsOpbAmount());
-                }
-            }
-        else {
+    }
+
+    private void calculateNetAssetForCurrentYear(String keyName, Map<String, FinancialsDetailResponse> openingBalanceAsset, Sum aggrDebit, Sum aggrCredit, FinancialsDetailResponse finDetail) {
+
+        FinancialsDetailResponse finDetails = openingBalanceAsset.get(keyName);
+        if (finDetail == null)
+            finDetail = new FinancialsDetailResponse();
+        if (finDetails != null) {
             finDetail
-                    .setAssetsDebitAmount(BigDecimal.valueOf(aggrDebit.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+                    .setCyAssetsDebitAmount(BigDecimal.valueOf(aggrDebit.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
             finDetail
-                    .setAssetsCreditAmount(BigDecimal.valueOf(aggrCredit.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
-            finDetail.setAssetsNetAmount(
-                    (finDetail.getAssetsDebitAmount().subtract(finDetail.getAssetsCreditAmount())).add(BigDecimal.ZERO));
-            finDetail.setAlNetAmount(finDetail.getAssetsNetAmount().subtract(finDetail.getLiabilitiesNetAmount()));
-            finDetail.setAssetsOpbAmount(BigDecimal.ZERO);
+                    .setCyAssetsCreditAmount(BigDecimal.valueOf(aggrCredit.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+            finDetail.setCyAssetsNetAmount(
+                    finDetail.getCyAssetsDebitAmount().subtract(finDetail.getCyAssetsCreditAmount()).add(finDetails.getCyAssetsOpbAmount()));
+            finDetail.setCyAlNetAmount(finDetail.getCyLiabilitiesNetAmount().subtract(finDetail.getCyAssetsNetAmount()));
+            finDetail.setCyAssetsOpbAmount(finDetails.getCyAssetsOpbAmount());
+
+        } else {
+            finDetail
+                    .setCyAssetsDebitAmount(BigDecimal.valueOf(aggrDebit.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+            finDetail
+                    .setCyAssetsCreditAmount(BigDecimal.valueOf(aggrCredit.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+            finDetail.setCyAssetsNetAmount(
+                    finDetail.getCyAssetsDebitAmount().subtract(finDetail.getCyAssetsCreditAmount()).add(BigDecimal.ZERO));
+            finDetail.setCyAlNetAmount(finDetail.getCyLiabilitiesNetAmount().subtract(finDetail.getCyAssetsNetAmount()));
+            finDetail.setCyAssetsOpbAmount(BigDecimal.ZERO);
         }
     }
 
-    private void calculateNetLiability(String distName, String ulbName, Map<String, FinancialsDetail> openingBalanceLiability, Sum aggrDebit, Sum aggrCredit, FinancialsDetail finDetail) {
-        if (!openingBalanceLiability.isEmpty() && openingBalanceLiability.containsKey(distName))
-            for (FinancialsDetail f : openingBalanceLiability.values()) {
-                if (f.getUlbName().equalsIgnoreCase(ulbName) && f.getDistrict().equalsIgnoreCase(distName)) {
-                    finDetail
-                            .setLiabilitiesDebitAmount(BigDecimal.valueOf(aggrDebit.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
-                    finDetail
-                            .setLiabilitiesCreditAmount(BigDecimal.valueOf(aggrCredit.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
-                    finDetail.setLiabilitiesNetAmount(
-                            (finDetail.getLiabilitiesCreditAmount().subtract(finDetail.getLiabilitiesDebitAmount()))
-                                    .add(f.getLiabilitiesOpbAmount()).add(finDetail.getIeNetAmount()));
-                    finDetail.setLiabilitiesOpbAmount(f.getLiabilitiesOpbAmount());
-                }
-            }
+    private void calculateNetLiabilityForCurrentYear(String keyName, Map<String, FinancialsDetailResponse> openingBalanceLiability, Sum aggrDebit, Sum aggrCredit, FinancialsDetailResponse finDetail) {
+        FinancialsDetailResponse finDetails = openingBalanceLiability.get(keyName);
+        if (finDetail == null)
+            finDetail = new FinancialsDetailResponse();
+        if (finDetails != null) {
 
-        else {
             finDetail
-                    .setLiabilitiesDebitAmount(BigDecimal.valueOf(aggrDebit.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+                    .setCyLiabilitiesDebitAmount(BigDecimal.valueOf(aggrDebit.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
             finDetail
-                    .setLiabilitiesCreditAmount(BigDecimal.valueOf(aggrCredit.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
-            finDetail.setLiabilitiesNetAmount(
-                    (finDetail.getLiabilitiesCreditAmount().subtract(finDetail.getLiabilitiesDebitAmount()))
-                            .add(BigDecimal.ZERO).add(finDetail.getIeNetAmount()));
-            finDetail.setLiabilitiesOpbAmount(BigDecimal.ZERO);
+                    .setCyLiabilitiesCreditAmount(BigDecimal.valueOf(aggrCredit.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+            finDetail.setCyLiabilitiesNetAmount(
+                    finDetail.getCyLiabilitiesCreditAmount().subtract(finDetail.getCyLiabilitiesDebitAmount())
+                            .add(finDetails.getCyLiabilitiesOpbAmount()).add(finDetail.getCyIeNetAmount()));
+            finDetail.setCyLiabilitiesOpbAmount(finDetails.getCyLiabilitiesOpbAmount());
+
+        } else {
+            finDetail
+                    .setCyLiabilitiesDebitAmount(BigDecimal.valueOf(aggrDebit.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+            finDetail
+                    .setCyLiabilitiesCreditAmount(BigDecimal.valueOf(aggrCredit.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+            finDetail.setCyLiabilitiesNetAmount(
+                    finDetail.getCyLiabilitiesCreditAmount().subtract(finDetail.getCyLiabilitiesDebitAmount())
+                            .add(BigDecimal.ZERO).add(finDetail.getCyIeNetAmount()));
+            finDetail.setCyLiabilitiesOpbAmount(BigDecimal.ZERO);
+        }
+
+    }
+
+    private void calculateNetAssetForLastYear(String keyName, Map<String, FinancialsDetailResponse> openingBalanceAsset, Sum aggrDebit, Sum aggrCredit, FinancialsDetailResponse finDetail) {
+
+        FinancialsDetailResponse finDetails = openingBalanceAsset.get(keyName);
+        if (finDetail == null)
+            finDetail = new FinancialsDetailResponse();
+        if (finDetails != null) {
+            finDetail
+                    .setLyAssetsDebitAmount(BigDecimal.valueOf(aggrDebit.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+            finDetail
+                    .setLyAssetsCreditAmount(BigDecimal.valueOf(aggrCredit.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+            finDetail.setLyAssetsNetAmount(
+                    (finDetail.getLyAssetsDebitAmount().subtract(finDetail.getLyAssetsCreditAmount())).add(finDetails.getLyAssetsOpbAmount()));
+            finDetail.setLyAlNetAmount(finDetail.getLyLiabilitiesNetAmount().subtract(finDetail.getLyAssetsNetAmount()));
+            finDetail.setLyAssetsOpbAmount(finDetails.getLyAssetsOpbAmount());
+
+        } else {
+            finDetail
+                    .setLyAssetsDebitAmount(BigDecimal.valueOf(aggrDebit.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+            finDetail
+                    .setLyAssetsCreditAmount(BigDecimal.valueOf(aggrCredit.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+            finDetail.setLyAssetsNetAmount(
+                    (finDetail.getLyAssetsDebitAmount().subtract(finDetail.getLyAssetsCreditAmount())).add(BigDecimal.ZERO));
+            finDetail.setLyAlNetAmount(finDetail.getLyLiabilitiesNetAmount().subtract(finDetail.getLyAssetsNetAmount()));
+            finDetail.setLyAssetsOpbAmount(BigDecimal.ZERO);
+        }
+    }
+
+    private void calculateNetLiabilityForLastYear(String keyName, Map<String, FinancialsDetailResponse> openingBalanceLiability, Sum aggrDebit, Sum aggrCredit, FinancialsDetailResponse finDetail) {
+        FinancialsDetailResponse finDetails = openingBalanceLiability.get(keyName);
+        if (finDetail == null)
+            finDetail = new FinancialsDetailResponse();
+        if (finDetails != null) {
+            finDetail
+                    .setLyLiabilitiesDebitAmount(BigDecimal.valueOf(aggrDebit.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+            finDetail
+                    .setLyLiabilitiesCreditAmount(BigDecimal.valueOf(aggrCredit.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+            finDetail.setLyLiabilitiesNetAmount(
+                    finDetail.getLyLiabilitiesCreditAmount().subtract(finDetail.getLyLiabilitiesDebitAmount())
+                            .add(finDetails.getLyLiabilitiesOpbAmount()).add(finDetail.getLyIeNetAmount()));
+            finDetail.setLyLiabilitiesOpbAmount(finDetails.getLyLiabilitiesOpbAmount());
+
+        } else {
+            finDetail
+                    .setLyLiabilitiesDebitAmount(BigDecimal.valueOf(aggrDebit.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+            finDetail
+                    .setLyLiabilitiesCreditAmount(BigDecimal.valueOf(aggrCredit.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+            finDetail.setLyLiabilitiesNetAmount(
+                    finDetail.getLyLiabilitiesCreditAmount().subtract(finDetail.getLyLiabilitiesDebitAmount())
+                            .add(BigDecimal.ZERO).add(finDetail.getLyIeNetAmount()));
+            finDetail.setLyLiabilitiesOpbAmount(BigDecimal.ZERO);
         }
 
     }
 
     private void setFinancialsDetails(final FinancialsDetailsRequest financialsDetailsRequest,
-                                      final FinancialsDetail financialsDetail) {
+                                      final FinancialsDetailResponse financialsDetail) {
 
         if (StringUtils.isNotBlank(financialsDetailsRequest.getRegion()))
             financialsDetail.setRegion(financialsDetailsRequest.getRegion());

@@ -39,7 +39,7 @@
  */
 
 $(document).ready(function(){
-	 
+	 var applicationSource=$('#applicationSource').val();
    var agency = new Bloodhound({
 		datumTokenizer: function (datum) {
 			return Bloodhound.tokenizers.whitespace(datum.value);
@@ -105,10 +105,25 @@ $(document).ready(function(){
    
    $('#locality').change(function() {
 	//	 alert('HI');
-		 populateBoundaries();
+	  
+	   var url;
+	   	if(applicationSource == "online")
+	  		url ="/egi/public/boundary/ajaxBoundary-blockByLocality";
+	  			else
+	  			url="/egi/boundary/ajaxBoundary-blockByLocality";
+		   populateBoundaries(url);
 	 });
    $('#ward').change(function() {
-		   populateBlock();
+		  
+	   var url;
+	   	if(applicationSource == "online")
+	   		url="/egi/public/boundary/ajaxBoundary-blockByWard.action";
+	   		else
+	   			url="/egi/boundary/ajaxBoundary-blockByWard.action";
+	   
+	   
+	   
+	   populateBlock(url);
 		 });
    
    $('#category').change(function(){
@@ -211,6 +226,9 @@ $(document).ready(function(){
 		
    }
    
+   
+
+   
    function callPropertyTaxRest(){
 	var propertyNo = jQuery("#propertyNumber").val();
    	if(propertyNo!="" && propertyNo!=null){
@@ -261,12 +279,13 @@ $(document).ready(function(){
    		resetOnPropertyNumChange();
        }
    }
-   function populateBoundaries() {
+   
+   function populateBoundaries(url) {
 		//alert('HI0000000000');
 		console.log("came jursidiction"+$('#locality').val());
 		$.ajax({
 			type: "GET",
-			url: "/egi/boundary/ajaxBoundary-blockByLocality",
+			url: url,
 			cache: true,
 			dataType: "json",
 			data:{
@@ -297,11 +316,13 @@ $(document).ready(function(){
 			
 	
    }
-   function populateBlock()
+   
+
+   function populateBlock(url)
    {
 	   	$.ajax({
 		type: "GET",
-		url: "/egi/boundary/ajaxBoundary-blockByWard.action",
+		url:url,
 		cache: true,
 		dataType: "json",
 		data:{
