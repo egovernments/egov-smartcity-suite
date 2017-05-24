@@ -181,7 +181,7 @@ public class ApplicationSewerageSearchController {
                         sewerageIndexObject.getApplicationStatus(),
                         sewerageApplicationDetails);
             if (searchActions != null && searchActions.getActions() != null)
-                getActions(searchActions, actionMap, sewerageIndexObject);
+                getActions(searchActions, actionMap, searchRequest);
             searchResultObject.setActions(actionMap);
             searchResultFomatted.add(searchResultObject);
         }
@@ -189,13 +189,12 @@ public class ApplicationSewerageSearchController {
     }
 
     private void getActions(final SewerageSearchResult searchActions, final Map<String, String> actionMap,
-            final SewerageIndex sewerageIndexObject) {
-        for (final Map.Entry<String, String> entry : searchActions.getActions().entrySet()) {
-            if (!entry.getValue().equals(COLLECTDONATIONCHARHGES))
-                actionMap.put(entry.getKey(), entry.getValue());
-            if (entry.getValue().equals(MODIFYLEGACYCONNECTION) && !sewerageIndexObject.getIslegacy())
+            final SewerageConnSearchRequest searchRequest) {
+        for (final Map.Entry<String, String> entry : searchActions.getActions().entrySet())
+            if (entry.getValue().equals(MODIFYLEGACYCONNECTION) && searchRequest.getLegacy() == null)
                 actionMap.remove(entry.getKey(), entry.getValue());
-        }
+            else if (!entry.getValue().equals(COLLECTDONATIONCHARHGES))
+                actionMap.put(entry.getKey(), entry.getValue());
 
     }
 
