@@ -348,8 +348,6 @@ public class PropertyService {
     @Autowired
     private PortalInboxService portalInboxService;
     
-   // Module module = moduleDao.getModuleByName(PropertyTaxConstants.PTMODULENAME);
-    
     /**
      * Creates a new property if property is in transient state else updates persisted property
      *
