@@ -8,10 +8,6 @@ insert into eg_roleaction (actionid,roleid) values((select id from eg_action whe
 
 insert into eg_roleaction (actionid,roleid) values((select id from eg_action where url ='/common/ajaxCommon-usageByPropType.action'),(select id from eg_role where name='CITIZEN'));
 
-insert into eg_roleaction (actionid,roleid) values((select id from eg_action where url ='/ptis/common/ajaxCommon-isAppurTenant.action'),(select id from eg_role where name='CITIZEN'));
-
-insert into eg_roleaction (actionid,roleid) values((select id from eg_action where url ='/ptis/common/ajaxCommon-getUserByMobileNo.action'),(select id from eg_role where name='CITIZEN'));
-
 insert into eg_roleaction (actionid,roleid) values((select id from eg_action where url ='/create/createProperty-create.action'),(select id from eg_role where name='CITIZEN'));
 
 insert into eg_roleaction (actionid,roleid) values((select id from eg_action where url ='/create/createProperty-createDataEntry.action'),(select id from eg_role where name='CITIZEN'));
