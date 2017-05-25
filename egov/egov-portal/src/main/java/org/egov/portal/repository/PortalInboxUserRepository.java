@@ -50,10 +50,10 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PortalInboxUserRepository extends JpaRepository<PortalInboxUser, Long> {
 
-    @Query("select distinct piu from PortalInboxUser as piu where piu.user.id = :userId and piu.portalInbox.resolved = :resolved")
+    @Query("select distinct piu from PortalInboxUser as piu where piu.user.id = :userId and piu.portalInbox.resolved = :resolved order by piu.id desc")
     List<PortalInboxUser> getPortalInboxByResolved(@Param("userId") Long userId, @Param("resolved") boolean resolved);
 
-    List<PortalInboxUser> findByUser_Id(Long userId);
+    List<PortalInboxUser> findByUser_IdOrderByIdDesc(Long userId);
 
     @Query("select count(*) from PortalInboxUser piu where piu.user.id=:userId")
     Long getPortalInboxUserCount(@Param("userId") Long userId);

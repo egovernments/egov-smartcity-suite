@@ -114,13 +114,8 @@ import org.egov.pgr.entity.enums.ComplaintStatus;
 import org.egov.pgr.repository.ComplaintRepository;
 import org.egov.pgr.service.es.ComplaintIndexService;
 import org.egov.pims.commons.Position;
-import org.egov.portal.entity.CitizenInbox;
-import org.egov.portal.entity.CitizenInboxBuilder;
 import org.egov.portal.entity.PortalInbox;
 import org.egov.portal.entity.PortalInboxBuilder;
-import org.egov.portal.entity.enums.MessageType;
-import org.egov.portal.entity.enums.Priority;
-import org.egov.portal.service.CitizenInboxService;
 import org.egov.portal.service.PortalInboxService;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -154,8 +149,6 @@ public class ComplaintService {
     private ComplaintRouterService complaintRouterService;
     @Autowired
     private EisCommonService eisCommonService;
-    @Autowired
-    private CitizenInboxService citizenInboxService;
     @Autowired
     private BoundaryService boundaryService;
     @Autowired
@@ -233,7 +226,6 @@ public class ComplaintService {
         if (complaint.getPriority() == null)
             complaint.setPriority(priorityService.getPriorityByCode(pgrApplicationProperties.defaultComplaintPriority()));
         complaintRepository.saveAndFlush(complaint);
-        citizenInboxMessage(complaint);
         if (securityUtils.currentUserIsCitizen())
             pushPortalInboxMessage(complaint);
         complaintCommunicationService.sendRegistrationMessage(complaint);
@@ -297,7 +289,6 @@ public class ComplaintService {
 
         complaintRepository.saveAndFlush(complaint);
         complaintIndexService.updateComplaintIndex(complaint, nextOwnerId, approvalComment);
-        citizenInboxMessage(complaint);
         pushUpdatePortalInboxMessage(complaint);
         complaintCommunicationService.sendUpdateMessage(complaint);
 
@@ -330,21 +321,6 @@ public class ComplaintService {
         return criteria.list();
     }
 
-    private void citizenInboxMessage(final Complaint savedComplaint) {
-
-        final CitizenInboxBuilder citizenInboxBuilder = new CitizenInboxBuilder(MessageType.USER_MESSAGE,
-                getHeaderMessage(savedComplaint), getDetailedMessage(savedComplaint),
-                savedComplaint.getLastModifiedDate(), savedComplaint.getCreatedBy(), Priority.High);
-        citizenInboxBuilder.module(moduleService.getModuleByName(MODULE_NAME));
-        citizenInboxBuilder.identifier(savedComplaint.getCrn());
-        citizenInboxBuilder.link("/pgr/complaint/update/" + savedComplaint.getCrn());
-        citizenInboxBuilder.state(savedComplaint.getState());
-        citizenInboxBuilder.status(savedComplaint.getStatus().getName());
-
-        final CitizenInbox citizenInbox = citizenInboxBuilder.build();
-        citizenInboxService.pushMessage(citizenInbox);
-    }
-
     private String getHeaderMessage(final Complaint savedComplaint) {
         final StringBuilder headerMessage = new StringBuilder();
         if (COMPLAINT_REGISTERED.equals(savedComplaint.getStatus().getName()))
@@ -352,14 +328,6 @@ public class ComplaintService {
         else
             headerMessage.append("Grievance Redressal");
         return headerMessage.toString();
-    }
-
-    private String getDetailedMessage(final Complaint savedComplaint) {
-        final StringBuilder detailedMessage = new StringBuilder();
-        detailedMessage.append("Grievance No. ").append(savedComplaint.getCrn()).append(" regarding ")
-                .append(savedComplaint.getComplaintType().getName()).append(" in ")
-                .append(savedComplaint.getStatus().getName()).append(" status.");
-        return detailedMessage.toString();
     }
 
     public List<HashMap<String, Object>> getHistory(final Complaint complaint) {

@@ -67,6 +67,7 @@ $(document).ready(function(){
       $('.inbox-modules').show();
       $('.action-bar').addClass('hide');
       $('#showServiceGroup').show();
+      location.reload();
     }
     else{
       $('.inbox-modules').hide();
