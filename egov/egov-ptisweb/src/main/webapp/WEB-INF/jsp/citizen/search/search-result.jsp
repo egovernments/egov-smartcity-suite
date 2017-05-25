@@ -127,11 +127,11 @@
 								title="Interest Due On Arrear Tax Due"
 								headerClass="bluebgheadtd" class="blueborderfortd"
 								style="width:6%;text-align:center" />
-							<display:column property="rebateAmt" title="Rebate Ammount"
+							<display:column property="rebateAmt" title="Rebate Amount"
 								headerClass="bluebgheadtd" class="blueborderfortd"
 								style="width:6%;text-align:center" />
 							<display:column property="netPayAmt" media="html"
-								title="Net Payable Ammount" headerClass="bluebgheadtd"
+								title="Net Payable Amount" headerClass="bluebgheadtd"
 								class="blueborderfortd" style="width:6%;text-align:center" />
 							<display:column title="Actions" headerClass="bluebgheadtd"
 								class="blueborderfortd" style="text-align:center">
