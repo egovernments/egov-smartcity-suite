@@ -978,6 +978,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             basicProp.setUnderWorkflow(true);
         propService.updateIndexes(property, APPLICATION_TYPE_NEW_ASSESSENT);
         basicPropertyService.persist(basicProp);
+        if (property.getSource().equalsIgnoreCase(Source.CITIZENPORTAL.toString()))
+            propService.updatePortalMessage(property, APPLICATION_TYPE_NEW_ASSESSENT);
         approverName = "";
         buildEmailandSms(property, APPLICATION_TYPE_NEW_ASSESSENT);
         Assignment assignment;
@@ -1048,7 +1050,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                 logger.debug("prepare: Property by ModelId: " + property + "BasicProperty on property: " + basicProp);
         }
         if (null != property && null != property.getId() && null != property.getState()) {
-            preparePropertyTaxDetails(property);
+            if (!(property.getStatus().toString().equalsIgnoreCase("C") && isCitizenPortalUser))
+                preparePropertyTaxDetails(property);
             historyMap = propService.populateHistory(property);
         }
 
