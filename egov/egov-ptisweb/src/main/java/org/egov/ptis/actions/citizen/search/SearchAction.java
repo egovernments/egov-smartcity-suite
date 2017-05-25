@@ -263,46 +263,46 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
     }
 
     public BigDecimal calculateRebateAmount(final BigDecimal currentFirstHalfDemand, final BigDecimal currentSecondHalfDemand) {
-        final BigDecimal tax = (currentFirstHalfDemand == null ? BigDecimal.ZERO : currentFirstHalfDemand)
-                .add(currentSecondHalfDemand == null ? BigDecimal.ZERO : currentSecondHalfDemand);
+        final BigDecimal tax = (currentFirstHalfDemand == null ? ZERO : currentFirstHalfDemand)
+                .add(currentSecondHalfDemand == null ? ZERO : currentSecondHalfDemand);
         return propertyService.calculateEarlyPayRebate(tax);
     }
 
     public BigDecimal getCurrFirstHalfDemand(final BigDecimal aggrCurrFirstHalfDmd) {
-        return aggrCurrFirstHalfDmd == null ? BigDecimal.ZERO : aggrCurrFirstHalfDmd;
+        return aggrCurrFirstHalfDmd == null ? ZERO : aggrCurrFirstHalfDmd;
     }
 
     public BigDecimal getCurrFirstHalfDemandDue(final BigDecimal currFirstHalfDemand, final BigDecimal aggrCurrFirstHalfColl) {
-        return (currFirstHalfDemand == null ? BigDecimal.ZERO : currFirstHalfDemand)
-                .subtract(aggrCurrFirstHalfColl == null ? BigDecimal.ZERO
+        return (currFirstHalfDemand == null ? ZERO : currFirstHalfDemand)
+                .subtract(aggrCurrFirstHalfColl == null ? ZERO
                         : aggrCurrFirstHalfColl);
     }
 
     public BigDecimal getIntrestDueOnCurrFirstHalfDemand(final BigDecimal intrestDueOnCurrFirstHalfDemand) {
-        return intrestDueOnCurrFirstHalfDemand == null ? BigDecimal.ZERO : intrestDueOnCurrFirstHalfDemand;
+        return intrestDueOnCurrFirstHalfDemand == null ? ZERO : intrestDueOnCurrFirstHalfDemand;
     }
 
     public BigDecimal getCurrSecondHalfDemand(final BigDecimal aggrCurrFirstHalfDmd) {
-        return aggrCurrFirstHalfDmd == null ? BigDecimal.ZERO : aggrCurrFirstHalfDmd;
+        return aggrCurrFirstHalfDmd == null ? ZERO : aggrCurrFirstHalfDmd;
     }
 
     public BigDecimal getCurrSecondHalfDemandDue(final BigDecimal currSecondHalfDemand, final BigDecimal aggrCurrSecondHalfColl) {
-        return (currSecondHalfDemand == null ? BigDecimal.ZERO : currSecondHalfDemand)
-                .subtract(aggrCurrSecondHalfColl == null ? BigDecimal.ZERO
+        return (currSecondHalfDemand == null ? ZERO : currSecondHalfDemand)
+                .subtract(aggrCurrSecondHalfColl == null ? ZERO
                         : aggrCurrSecondHalfColl);
     }
 
     public BigDecimal getIntrestDueOnCurrSecondHalfDemand(final BigDecimal intrestDueOnCurrFirstHalfDemand) {
-        return intrestDueOnCurrFirstHalfDemand == null ? BigDecimal.ZERO : intrestDueOnCurrFirstHalfDemand;
+        return intrestDueOnCurrFirstHalfDemand == null ? ZERO : intrestDueOnCurrFirstHalfDemand;
     }
 
     public BigDecimal getAggrArrDmd(final BigDecimal arrearDemandDue, final BigDecimal arrearDemandDueInterest) {
-        return (arrearDemandDue == null ? BigDecimal.ZERO : arrearDemandDue)
-                .subtract(arrearDemandDueInterest == null ? BigDecimal.ZERO : arrearDemandDueInterest);
+        return (arrearDemandDue == null ? ZERO : arrearDemandDue)
+                .subtract(arrearDemandDueInterest == null ? ZERO : arrearDemandDueInterest);
     }
 
     public BigDecimal getIntrestDueOnArrearDemandDue(final BigDecimal intrestDueOnArrearDemand) {
-        return intrestDueOnArrearDemand == null ? BigDecimal.ZERO : intrestDueOnArrearDemand;
+        return intrestDueOnArrearDemand == null ? ZERO : intrestDueOnArrearDemand;
     }
 
     public BigDecimal calculateNetPayableAmmount(final PropertyMaterlizeView pmv) {
