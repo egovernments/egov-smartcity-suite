@@ -983,6 +983,13 @@ public class CollectionsUtil {
         return false;
     }
 
+    public Boolean isBankCollectionRemitter(final User user) {
+        for (final Role role : user.getRoles())
+            if (role != null && role.getName().equals(CollectionConstants.BANK_COLLECTION_REMITTER))
+                return true;
+        return false;
+    }
+
     public Boolean isRoleToCreateReceiptApprovedStatus(final User user) {
         final List<AppConfigValues> appConfigValuesList = getAppConfigValues(
                 CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,

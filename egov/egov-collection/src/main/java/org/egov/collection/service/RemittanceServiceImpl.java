@@ -53,6 +53,7 @@ import java.util.Locale;
 import org.apache.log4j.Logger;
 import org.egov.billsaccounting.services.VoucherConstant;
 import org.egov.collection.constants.CollectionConstants;
+import org.egov.collection.entity.BranchUserMap;
 import org.egov.collection.entity.ReceiptHeader;
 import org.egov.collection.entity.Remittance;
 import org.egov.collection.entity.RemittanceDetail;
@@ -72,9 +73,9 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.models.ServiceDetails;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.model.instrument.InstrumentHeader;
-import org.egov.pims.commons.Position;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(readOnly = true)
@@ -93,10 +94,12 @@ public class RemittanceServiceImpl extends RemittanceService {
     @Autowired
     private ChartOfAccountsDAO chartOfAccountsDAO;
     private PersistenceService<Remittance, Long> remittancePersistService;
+    @Autowired
+    @Qualifier("branchUserMapService")
+    private PersistenceService<BranchUserMap, Long> branchUserMapService;
 
     /**
-     * Create Contra Vouchers for String array passed of serviceName,
-     * totalCashAmount, totalChequeAmount, totalCardAmount and
+     * Create Contra Vouchers for String array passed of serviceName, totalCashAmount, totalChequeAmount, totalCardAmount and
      *
      * @param serviceName
      * @param totalCashAmount
@@ -125,6 +128,14 @@ public class RemittanceServiceImpl extends RemittanceService {
         final String receiptFundCondition = "and receiptMisc.fund.code = ? ";
         final String receiptDepartmentCondition = "and receiptMisc.department.code = ? ";
         final String receiptSourceCondition = "and receipt.source = ? ";
+        String depositedBranchCondition = "";
+        if (collectionsUtil.isBankCollectionRemitter(collectionsUtil.getLoggedInUser())) {
+            BranchUserMap branchUserMap = branchUserMapService.findByNamedQuery(
+                    CollectionConstants.QUERY_ACTIVE_BRANCHUSER_BY_USER,
+                    collectionsUtil.getLoggedInUser().getId());
+            depositedBranchCondition = "and receiptMisc.depositedBranch.id=" + branchUserMap.getBankbranch().getId();
+        } else
+            depositedBranchCondition = "and receiptMisc.depositedBranch is null";
 
         final String cashInHandQueryString = instrumentGlCodeQueryString + "'" + CollectionConstants.INSTRUMENTTYPE_CASH
                 + "'";
@@ -204,6 +215,7 @@ public class RemittanceServiceImpl extends RemittanceService {
                     cashQueryBuilder.append(
                             "and receipt.status.id=(select id from org.egov.commons.EgwStatus where moduletype=? and code=?) ");
                     cashQueryBuilder.append(receiptSourceCondition);
+                    cashQueryBuilder.append(depositedBranchCondition);
                     final Object arguments[] = new Object[9];
                     arguments[0] = serviceName;
                     try {
@@ -241,6 +253,7 @@ public class RemittanceServiceImpl extends RemittanceService {
                     chequeQueryBuilder.append(receiptFundCondition);
                     chequeQueryBuilder.append(receiptDepartmentCondition);
                     chequeQueryBuilder.append(receiptSourceCondition);
+                    chequeQueryBuilder.append(depositedBranchCondition);
                     final Object arguments[] = new Object[10];
 
                     arguments[0] = serviceName;
@@ -427,8 +440,7 @@ public class RemittanceServiceImpl extends RemittanceService {
     }
 
     /**
-     * Method to find all the Cash,Cheque and DD type instruments with status as
-     * :new and
+     * Method to find all the Cash,Cheque and DD type instruments with status as :new and
      *
      * @return List of HashMap
      */
@@ -464,10 +476,9 @@ public class RemittanceServiceImpl extends RemittanceService {
         final String orderBy = " order by RECEIPTDATE";
 
         /**
-         * Query to get the collection of the instrument types Cash,Cheque,DD &
-         * Card for bank remittance
+         * Query to get the collection of the instrument types Cash,Cheque,DD & Card for bank remittance
          */
-        final StringBuilder queryStringForCashChequeDDCard = new StringBuilder(queryBuilder 
+        final StringBuilder queryStringForCashChequeDDCard = new StringBuilder(queryBuilder
                 + whereClauseBeforInstumentType + whereClauseForServiceAndFund + "it.TYPE in ");
         if (paymentMode.equals(CollectionConstants.INSTRUMENTTYPE_CASH))
             queryStringForCashChequeDDCard.append("('" + CollectionConstants.INSTRUMENTTYPE_CASH + "')");
@@ -478,9 +489,18 @@ public class RemittanceServiceImpl extends RemittanceService {
             queryStringForCashChequeDDCard.append(
                     "('" + CollectionConstants.INSTRUMENTTYPE_CASH + "','" + CollectionConstants.INSTRUMENTTYPE_CHEQUE
                             + "'," + "'" + CollectionConstants.INSTRUMENTTYPE_DD + "') ");
-        queryStringForCashChequeDDCard.append(whereClause + "AND ch.CREATEDBY in (select distinct ujl.employee from egeis_jurisdiction ujl where ujl.boundary in ("
-                + boundaryIdList + "))" + groupByClause);
+        if (collectionsUtil.isBankCollectionRemitter(collectionsUtil.getLoggedInUser())) {
+            BranchUserMap branchUserMap = branchUserMapService.findByNamedQuery(
+                    CollectionConstants.QUERY_ACTIVE_BRANCHUSER_BY_USER,
+                    collectionsUtil.getLoggedInUser().getId());
+            queryStringForCashChequeDDCard
+                    .append(whereClause + " AND cm.depositedbranch=" + branchUserMap.getBankbranch().getId());
+        } else
+            queryStringForCashChequeDDCard.append(whereClause
+                    + " AND cm.depositedbranch is null AND ch.CREATEDBY in (select distinct ujl.employee from egeis_jurisdiction ujl where ujl.boundary in ("
+                    + boundaryIdList + "))");
 
+        queryStringForCashChequeDDCard.append(groupByClause);
         collectionsUtil.getUserByUserName(CollectionConstants.CITIZEN_USER_NAME);
 
         final Query query = receiptHeaderService.getSession()

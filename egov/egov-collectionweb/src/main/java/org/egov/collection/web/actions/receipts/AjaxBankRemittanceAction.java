@@ -68,12 +68,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @ParentPackage("egov")
 @Results({
-    @Result(name = AjaxBankRemittanceAction.BANKBRANCHLIST, location = "ajaxBankRemittance-bankBranchList.jsp"),
+        @Result(name = AjaxBankRemittanceAction.BANKBRANCHLIST, location = "ajaxBankRemittance-bankBranchList.jsp"),
         @Result(name = AjaxBankRemittanceAction.ACCOUNTLIST, location = "ajaxBankRemittance-accountList.jsp"),
         @Result(name = AjaxBankRemittanceAction.USERLIST, location = "ajaxBankRemittance-userList.jsp"),
         @Result(name = AjaxBankRemittanceAction.DESIGNATIONLIST, location = "ajaxBankRemittance-designationList.jsp"),
         @Result(name = AjaxBankRemittanceAction.SERVICENAMELIST, location = "ajaxBankRemittance-serviceListOfAccount.jsp"),
-        @Result(name = AjaxBankRemittanceAction.BANKACCOUNTLIST, location = "ajaxBankRemittance-bankAccountList.jsp")})
+        @Result(name = AjaxBankRemittanceAction.BANKACCOUNTLIST, location = "ajaxBankRemittance-bankAccountList.jsp") })
 public class AjaxBankRemittanceAction extends BaseFormAction {
     private static final long serialVersionUID = 1L;
     protected static final String BANKBRANCHLIST = "bankBranchList";
@@ -96,8 +96,7 @@ public class AjaxBankRemittanceAction extends BaseFormAction {
     private PersistenceService<ServiceDetails, Long> serviceDetailsService;
 
     /**
-     * A <code>Long</code> representing the fund id. The fund id is arriving
-     * from the miscellanoeus receipt screen
+     * A <code>Long</code> representing the fund id. The fund id is arriving from the miscellanoeus receipt screen
      */
     private Integer fundId;
     private Integer branchId;
@@ -141,11 +140,36 @@ public class AjaxBankRemittanceAction extends BaseFormAction {
         return BANKBRANCHLIST;
     }
 
+    public void bankBranchForBankCollectionOperator() {
+        String bankBranchQueryString = "select distinct(bb.id) as branchid,b.NAME||'-'||bb.BRANCHNAME as branchname from BANK b,BANKBRANCH bb, BANKACCOUNT ba,"
+                + "EGCL_BANKACCOUNTSERVICEMAPPING asm,EGCL_SERVICEDETAILS sd,FUND fd,EGCL_BRANCHUSER_MAP bu where asm.bankaccount=ba.ID and asm.servicedetails=sd.ID and "
+                + "ba.BRANCHID=bb.ID and bb.BANKID=b.ID and  and bu.isActive=true and bb.id=bu.bankbranch and bu.bankuser="
+                + collectionsUtil.getLoggedInUser().getId();
+
+        final Query bankBranchQuery = persistenceService.getSession().createSQLQuery(bankBranchQueryString);
+        final List<Object[]> queryResults = bankBranchQuery.list();
+
+        for (int i = 0; i < queryResults.size(); i++) {
+            final Object[] arrayObjectInitialIndex = queryResults.get(i);
+            final Bankbranch newBankbranch = new Bankbranch();
+            newBankbranch.setId(Integer.valueOf(arrayObjectInitialIndex[0].toString()));
+            newBankbranch.setBranchname(arrayObjectInitialIndex[1].toString());
+            bankBranchArrayList.add(newBankbranch);
+        }
+    }
+
     @Action(value = "/receipts/ajaxBankRemittance-bankBranchListOfService")
     public String bankBranchListOfService() {
-        final String bankBranchQueryString = "select distinct(bb.id) as branchid,b.NAME||'-'||bb.BRANCHNAME as branchname from BANK b,BANKBRANCH bb, BANKACCOUNT ba,"
-                + "EGCL_BANKACCOUNTSERVICEMAPPING asm,EGCL_SERVICEDETAILS sd,FUND fd where asm.bankaccount=ba.ID and asm.servicedetails=sd.ID and "
-                + "ba.BRANCHID=bb.ID and bb.BANKID=b.ID";
+        String bankBranchQueryString;
+        if (collectionsUtil.isBankCollectionRemitter(collectionsUtil.getLoggedInUser()))
+            bankBranchQueryString = "select distinct(bb.id) as branchid,b.NAME||'-'||bb.BRANCHNAME as branchname from BANK b,BANKBRANCH bb, BANKACCOUNT ba,"
+                    + "EGCL_BANKACCOUNTSERVICEMAPPING asm,EGCL_SERVICEDETAILS sd,FUND fd,EGCL_BRANCHUSER_MAP bu where asm.bankaccount=ba.ID and asm.servicedetails=sd.ID and "
+                    + "ba.BRANCHID=bb.ID and bb.BANKID=b.ID and  bu.isActive=true and bb.id=bu.bankbranch and bu.bankuser="
+                    + collectionsUtil.getLoggedInUser().getId();
+        else
+            bankBranchQueryString = "select distinct(bb.id) as branchid,b.NAME||'-'||bb.BRANCHNAME as branchname from BANK b,BANKBRANCH bb, BANKACCOUNT ba,"
+                    + "EGCL_BANKACCOUNTSERVICEMAPPING asm,EGCL_SERVICEDETAILS sd,FUND fd where asm.bankaccount=ba.ID and asm.servicedetails=sd.ID and "
+                    + "ba.BRANCHID=bb.ID and bb.BANKID=b.ID";
 
         final Query bankBranchQuery = persistenceService.getSession().createSQLQuery(bankBranchQueryString);
         final List<Object[]> queryResults = bankBranchQuery.list();
@@ -274,22 +298,20 @@ public class AjaxBankRemittanceAction extends BaseFormAction {
         if (serviceId != -1) {
             ServiceDetails sd = serviceDetailsService.findById(serviceId, false);
             fundId = sd.getFund().getId();
-        }       
+        }
         bankAccountArrayList = bankaccountHibernateDAO.getBankAccountByBankBranchForReceiptsPayments(branchId, fundId);
         return BANKACCOUNTLIST;
     }
 
     /**
-     * @param serviceName
-     *            the serviceName to set
+     * @param serviceName the serviceName to set
      */
     public void setServiceName(final String serviceName) {
         this.serviceName = serviceName;
     }
 
     /**
-     * @param branchId
-     *            the branchId to set
+     * @param branchId the branchId to set
      */
     public void setBranchId(final Integer branchId) {
         this.branchId = branchId;
@@ -332,8 +354,7 @@ public class AjaxBankRemittanceAction extends BaseFormAction {
     }
 
     /**
-     * @param fundName
-     *            the fundName to set
+     * @param fundName the fundName to set
      */
     public void setFundName(final String fundName) {
         this.fundName = fundName;
@@ -348,8 +369,7 @@ public class AjaxBankRemittanceAction extends BaseFormAction {
     }
 
     /**
-     * @param designationId
-     *            the designationId to set
+     * @param designationId the designationId to set
      */
     public void setDesignationId(final Long designationId) {
         this.designationId = designationId;
@@ -363,8 +383,7 @@ public class AjaxBankRemittanceAction extends BaseFormAction {
     }
 
     /**
-     * @param approverDeptId
-     *            the approverDeptId to set
+     * @param approverDeptId the approverDeptId to set
      */
     public void setApproverDeptId(final Long approverDeptId) {
         this.approverDeptId = approverDeptId;
@@ -385,8 +404,7 @@ public class AjaxBankRemittanceAction extends BaseFormAction {
     }
 
     /**
-     * @param collectionsUtil
-     *            the collectionsUtil to set
+     * @param collectionsUtil the collectionsUtil to set
      */
     public void setCollectionsUtil(final CollectionsUtil collectionsUtil) {
         this.collectionsUtil = collectionsUtil;
@@ -415,7 +433,7 @@ public class AjaxBankRemittanceAction extends BaseFormAction {
     public void setBankId(final Integer bankId) {
         this.bankId = bankId;
     }
-    
+
     public void setServiceDetailsService(PersistenceService<ServiceDetails, Long> serviceDetailsService) {
         this.serviceDetailsService = serviceDetailsService;
     }
