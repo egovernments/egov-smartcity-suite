@@ -89,23 +89,25 @@ public class PortalInboxService {
     public void pushInboxMessage(final PortalInbox portalInbox) {
         if (portalInbox.getTempPortalInboxUser().isEmpty()) {
             final User user = getLoggedInUser();
-            if (user != null)
-                createPortalUser(portalInbox, user);
-        } else
+            if (user != null && (UserType.BUSINESS.toString().equalsIgnoreCase(user.getType().toString())
+                    || UserType.CITIZEN.toString().equalsIgnoreCase(user.getType().toString())))
+                if (createPortalUser(portalInbox, user) != null) {
+                    portalInboxRepository.saveAndFlush(portalInbox);
+                    portalInboxIndexService.createPortalInboxIndex(portalInbox);
+                }
+        } else {
             portalInbox.getPortalInboxUsers().addAll(portalInbox.getTempPortalInboxUser());
-        portalInboxRepository.saveAndFlush(portalInbox);
-        portalInboxIndexService.createPortalInboxIndex(portalInbox);
+            portalInboxRepository.saveAndFlush(portalInbox);
+            portalInboxIndexService.createPortalInboxIndex(portalInbox);
+        }
     }
 
-    private void createPortalUser(final PortalInbox portalInbox, final User user) {
-        if (UserType.BUSINESS.toString().equalsIgnoreCase(user.getType().toString())
-                || UserType.CITIZEN.toString().equalsIgnoreCase(user.getType().toString())) {
-            final PortalInboxUser portalInboxUser = new PortalInboxUser();
-            portalInboxUser.setUser(user);
-            portalInbox.getPortalInboxUsers().add(portalInboxUser);
-            portalInboxUser.setPortalInbox(portalInbox);
-        } else
-            throw new ApplicationRuntimeException("Logged in User must be a Citizen or Business User.");
+    private PortalInboxUser createPortalUser(final PortalInbox portalInbox, final User user) {
+        final PortalInboxUser portalInboxUser = new PortalInboxUser();
+        portalInboxUser.setUser(user);
+        portalInbox.getPortalInboxUsers().add(portalInboxUser);
+        portalInboxUser.setPortalInbox(portalInbox);
+        return portalInboxUser;
     }
 
     @Transactional
