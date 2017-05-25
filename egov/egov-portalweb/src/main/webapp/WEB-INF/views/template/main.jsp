@@ -139,7 +139,7 @@
 							</div>
 							<div class="form-group text-right">
 								<div class="col-md-12 add-margin">
-									<button type="submit" class="btn btn-primary">Change Password</button>
+									<button type="button" class="btn btn-primary" id="btnChangePwd">Change Password</button>
 									<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
 								</div>
 							</div>
