@@ -140,24 +140,6 @@ public class AjaxBankRemittanceAction extends BaseFormAction {
         return BANKBRANCHLIST;
     }
 
-    public void bankBranchForBankCollectionOperator() {
-        String bankBranchQueryString = "select distinct(bb.id) as branchid,b.NAME||'-'||bb.BRANCHNAME as branchname from BANK b,BANKBRANCH bb, BANKACCOUNT ba,"
-                + "EGCL_BANKACCOUNTSERVICEMAPPING asm,EGCL_SERVICEDETAILS sd,FUND fd,EGCL_BRANCHUSER_MAP bu where asm.bankaccount=ba.ID and asm.servicedetails=sd.ID and "
-                + "ba.BRANCHID=bb.ID and bb.BANKID=b.ID and  and bu.isActive=true and bb.id=bu.bankbranch and bu.bankuser="
-                + collectionsUtil.getLoggedInUser().getId();
-
-        final Query bankBranchQuery = persistenceService.getSession().createSQLQuery(bankBranchQueryString);
-        final List<Object[]> queryResults = bankBranchQuery.list();
-
-        for (int i = 0; i < queryResults.size(); i++) {
-            final Object[] arrayObjectInitialIndex = queryResults.get(i);
-            final Bankbranch newBankbranch = new Bankbranch();
-            newBankbranch.setId(Integer.valueOf(arrayObjectInitialIndex[0].toString()));
-            newBankbranch.setBranchname(arrayObjectInitialIndex[1].toString());
-            bankBranchArrayList.add(newBankbranch);
-        }
-    }
-
     @Action(value = "/receipts/ajaxBankRemittance-bankBranchListOfService")
     public String bankBranchListOfService() {
         String bankBranchQueryString;
