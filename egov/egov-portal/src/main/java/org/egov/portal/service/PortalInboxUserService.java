@@ -59,7 +59,7 @@ public class PortalInboxUserService {
     }
 
     public List<PortalInboxUser> getPortalInboxByUserId(final Long userId) {
-        return portalInboxUserRepository.findByUser_Id(userId);
+        return portalInboxUserRepository.findByUser_IdOrderByIdDesc(userId);
     }
 
     public Long getPortalInboxUserCount(final Long userId) {

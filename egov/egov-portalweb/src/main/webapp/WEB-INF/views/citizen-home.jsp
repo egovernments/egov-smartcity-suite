@@ -70,7 +70,7 @@
                 <span class="corporation-name"><spring:message code="lbl.citizenportalservices" /></span>
               </div>
               <div class="col-md-6 col-sm-3 col-xs-12 right-section">
-                <span class="pull-right profile-dd"><a href="/egi/logout"><i class="fa fa-sign-out" aria-hidden="true"></i></a></span>
+                <span class="pull-right profile-dd"><a href="/egi/logout"><i class="fa fa-sign-out" aria-hidden="true"></i> Sign Out</a></span>
                 <span class="pull-right profile-name">
                   <span class="text hidden-sm">${userName }</span> <span><i class="fa fa-caret-down" aria-hidden="true"></i></span>
                   <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
