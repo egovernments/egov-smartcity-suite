@@ -127,7 +127,7 @@ public class HomeController {
         modelData.addAttribute("totalServicesPendingSize", totalServicesPending.size());
         modelData.addAttribute("totalServicesAppliedSize", totalServicesApplied.size());
         modelData.addAttribute("totalServicesCompletedSize", totalServicesCompleted.size());
-        return "business-home";
+        return "citizen-home";
     }
 
     private List<CitizenInbox> getMyAccountMessages() {
