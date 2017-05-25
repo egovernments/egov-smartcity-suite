@@ -69,11 +69,13 @@ import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
+import org.egov.ptis.domain.service.property.RebateService;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class PropertyTaxBillableTest {
  
@@ -87,6 +89,8 @@ public class PropertyTaxBillableTest {
     private ModuleService moduleDao;
     @Mock
     private PropertyTaxUtil propertyTaxUtil; 
+    @Mock
+    private RebateService rebateService;
     private PropertyTaxBillable billable= new PropertyTaxBillable(); 
     private Boundary locality;
     private Module module;
@@ -120,6 +124,7 @@ public class PropertyTaxBillableTest {
         billable.setPenaltyCalculationService(penaltyCalculationService);
         billable.setModuleDao(moduleDao);
         billable.setPropertyTaxUtil(propertyTaxUtil);
+        billable.setRebateService(rebateService);
     }
     
     private void initBasicProperty(String assessmentEffectiveDate) {
@@ -202,7 +207,7 @@ public class PropertyTaxBillableTest {
         when(ptDemandDAO.getNonHistoryCurrDmdForProperty(Matchers.any())).thenReturn(egDemand);
         when(penaltyCalculationService.getInstallmentDemandAndCollection(Matchers.any(),Matchers.any())).thenReturn(installmentDemandAndCollection);
         when(installmentDao.getInsatllmentByModuleForGivenDate(Matchers.any(),Matchers.any())).thenReturn(currentInstallment);
-        when(penaltyCalculationService.isEarlyPayRebateActive()).thenReturn(false);
+        when(rebateService.isEarlyPayRebateActive()).thenReturn(false);
         
         installmentPenaltyAndRebate = billable.getCalculatedPenalty();
         if (installmentPenaltyAndRebate != null && !installmentPenaltyAndRebate.isEmpty()) {
@@ -249,7 +254,7 @@ public class PropertyTaxBillableTest {
         egDemand.setEgInstallmentMaster(currentInstallment);
         when(ptDemandDAO.getNonHistoryCurrDmdForProperty(Matchers.any())).thenReturn(egDemand);
         when(penaltyCalculationService.getInstallmentDemandAndCollection(Matchers.any(),Matchers.any())).thenReturn(installmentDemandAndCollection);
-        when(penaltyCalculationService.isEarlyPayRebateActive()).thenReturn(false);
+        when(rebateService.isEarlyPayRebateActive()).thenReturn(false);
         
         installmentPenaltyAndRebate = billable.getCalculatedPenalty();
         //assertTrue(!installmentPenaltyAndRebate.isEmpty());

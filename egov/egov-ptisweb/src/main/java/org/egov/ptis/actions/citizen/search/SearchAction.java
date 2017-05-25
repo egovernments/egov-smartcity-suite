@@ -90,13 +90,12 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
     private String ownerName;
     private String mode;
     private List<Map<String, String>> searchResultList;
-    private HttpServletRequest request;
     private String searchUri;
     private String searchCreteria;
     private String searchValue;
     private String searchUrl;
     private boolean isDemandActive;
-    
+
     List<Map<String, String>> searchList = new ArrayList<>();
     public static final String TARGET = "result";
     public static final String NEWFORM = "newForm";
@@ -171,10 +170,10 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
     public String srchByAssessmentNo() {
         try {
 
-            BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNum);
+            final BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNum);
             if (basicProperty != null) {
                 setSearchUrl("onlineSearch");
-                        checkIsDemandActive(basicProperty.getProperty());
+                checkIsDemandActive(basicProperty.getProperty());
                 if (isDemandActive == false) {
                     addActionError(getText("dmd.inactive"));
                     return NEWFORM;
@@ -199,11 +198,10 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
             LOGGER.debug("Entered into getSearchResults method");
             LOGGER.debug("Assessment Number : " + pmv.getPropertyId());
         }
-        BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(pmv.getPropertyId());
-        Property property = basicProperty.getProperty();
-        if (basicProperty != null) {
+        final BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(pmv.getPropertyId());
+        final Property property = basicProperty.getProperty();
+        if (basicProperty != null)
             checkIsDemandActive(basicProperty.getProperty());
-        }
         if (pmv.getPropertyId() != null || org.apache.commons.lang.StringUtils.isNotEmpty(pmv.getPropertyId()))
             if (pmv != null) {
                 final Map<String, String> searchResultMap = new HashMap<String, String>();
@@ -230,23 +228,30 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
                     searchResultMap.put("arrDemandDue", "0");
                 } else {
                     searchResultMap.put("currFirstHalfDemand",
-                            pmv.getAggrCurrFirstHalfDmd() == null ? "0" : pmv.getAggrCurrFirstHalfDmd().toString());
+                            getCurrFirstHalfDemand(pmv.getAggrCurrFirstHalfDmd()).toString());
                     searchResultMap.put("currFirstHalfDemandDue",
-                            (pmv.getAggrCurrFirstHalfDmd() == null ? BigDecimal.ZERO : pmv.getAggrCurrFirstHalfDmd())
-                                    .subtract(pmv.getAggrCurrFirstHalfColl() == null ? BigDecimal.ZERO
-                                            : pmv.getAggrCurrFirstHalfColl())
+                            getCurrFirstHalfDemandDue(pmv.getAggrCurrFirstHalfDmd(), pmv.getAggrCurrFirstHalfColl())
                                     .toString());
-                    searchResultMap.put("currSecondHalfDemand",
-                            pmv.getAggrCurrSecondHalfDmd() == null ? "0" : pmv.getAggrCurrSecondHalfDmd().toString());
+                    searchResultMap.put("interestDueOnCurrFirstHalfDemandDue",
+                            getIntrestDueOnCurrFirstHalfDemand(pmv.getAggrCurrFirstHalfPenaly()).toString());
+                    searchResultMap.put("currSecondHalfDemand", getCurrSecondHalfDemand(pmv.getAggrCurrSecondHalfDmd())
+                            .toString());
                     searchResultMap.put("currSecondHalfDemandDue",
-                            (pmv.getAggrCurrSecondHalfDmd() == null ? BigDecimal.ZERO : pmv.getAggrCurrSecondHalfDmd())
-                                    .subtract(pmv.getAggrCurrSecondHalfColl() == null ? BigDecimal.ZERO
-                                            : pmv.getAggrCurrSecondHalfColl())
+                            getCurrSecondHalfDemandDue(pmv.getAggrCurrSecondHalfDmd(), pmv.getAggrCurrSecondHalfColl())
                                     .toString());
-                    searchResultMap.put("arrDemandDue",
-                            (pmv.getAggrArrDmd() == null ? BigDecimal.ZERO : pmv.getAggrArrDmd())
-                                    .subtract(pmv.getAggrArrColl() == null ? BigDecimal.ZERO : pmv.getAggrArrColl())
+                    searchResultMap.put("interestDueOnCurrSecondHalfDemandDue",
+                            getIntrestDueOnCurrSecondHalfDemand(pmv.getAggrCurrSecondHalfPenaly())
                                     .toString());
+                    searchResultMap.put("arrDemandDue", getAggrArrDmd(pmv.getAggrArrDmd(), pmv.getAggrArrColl())
+                            .toString());
+                    searchResultMap.put("interestDueOnArrDemandDue",
+                            getIntrestDueOnArrearDemandDue(pmv.getAggrArrearPenaly())
+                                    .toString());
+                    searchResultMap.put("rebateAmt",
+                            calculateRebateAmount(getCurrFirstHalfDemand(pmv.getAggrCurrFirstHalfDmd()),
+                                    getCurrSecondHalfDemand(pmv.getAggrCurrSecondHalfDmd()))
+                                            .toString());
+                    searchResultMap.put("netPayAmt", calculateNetPayableAmmount(pmv).toString());
                 }
                 searchList.add(searchResultMap);
             }
@@ -255,6 +260,60 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
             LOGGER.debug("Exit from getSearchResults method");
         }
         return searchList;
+    }
+
+    public BigDecimal calculateRebateAmount(final BigDecimal currentFirstHalfDemand, final BigDecimal currentSecondHalfDemand) {
+        final BigDecimal tax = (currentFirstHalfDemand == null ? BigDecimal.ZERO : currentFirstHalfDemand)
+                .add(currentSecondHalfDemand == null ? BigDecimal.ZERO : currentSecondHalfDemand);
+        return propertyService.calculateEarlyPayRebate(tax);
+    }
+
+    public BigDecimal getCurrFirstHalfDemand(final BigDecimal aggrCurrFirstHalfDmd) {
+        return aggrCurrFirstHalfDmd == null ? BigDecimal.ZERO : aggrCurrFirstHalfDmd;
+    }
+
+    public BigDecimal getCurrFirstHalfDemandDue(final BigDecimal currFirstHalfDemand, final BigDecimal aggrCurrFirstHalfColl) {
+        return (currFirstHalfDemand == null ? BigDecimal.ZERO : currFirstHalfDemand)
+                .subtract(aggrCurrFirstHalfColl == null ? BigDecimal.ZERO
+                        : aggrCurrFirstHalfColl);
+    }
+
+    public BigDecimal getIntrestDueOnCurrFirstHalfDemand(final BigDecimal intrestDueOnCurrFirstHalfDemand) {
+        return intrestDueOnCurrFirstHalfDemand == null ? BigDecimal.ZERO : intrestDueOnCurrFirstHalfDemand;
+    }
+
+    public BigDecimal getCurrSecondHalfDemand(final BigDecimal aggrCurrFirstHalfDmd) {
+        return aggrCurrFirstHalfDmd == null ? BigDecimal.ZERO : aggrCurrFirstHalfDmd;
+    }
+
+    public BigDecimal getCurrSecondHalfDemandDue(final BigDecimal currSecondHalfDemand, final BigDecimal aggrCurrSecondHalfColl) {
+        return (currSecondHalfDemand == null ? BigDecimal.ZERO : currSecondHalfDemand)
+                .subtract(aggrCurrSecondHalfColl == null ? BigDecimal.ZERO
+                        : aggrCurrSecondHalfColl);
+    }
+
+    public BigDecimal getIntrestDueOnCurrSecondHalfDemand(final BigDecimal intrestDueOnCurrFirstHalfDemand) {
+        return intrestDueOnCurrFirstHalfDemand == null ? BigDecimal.ZERO : intrestDueOnCurrFirstHalfDemand;
+    }
+
+    public BigDecimal getAggrArrDmd(final BigDecimal arrearDemandDue, final BigDecimal arrearDemandDueInterest) {
+        return (arrearDemandDue == null ? BigDecimal.ZERO : arrearDemandDue)
+                .subtract(arrearDemandDueInterest == null ? BigDecimal.ZERO : arrearDemandDueInterest);
+    }
+
+    public BigDecimal getIntrestDueOnArrearDemandDue(final BigDecimal intrestDueOnArrearDemand) {
+        return intrestDueOnArrearDemand == null ? BigDecimal.ZERO : intrestDueOnArrearDemand;
+    }
+
+    public BigDecimal calculateNetPayableAmmount(final PropertyMaterlizeView pmv) {
+        return getCurrFirstHalfDemand(pmv.getAggrCurrFirstHalfDmd())
+                .add(getCurrFirstHalfDemandDue(pmv.getAggrCurrFirstHalfDmd(), pmv.getAggrCurrFirstHalfColl()))
+                .add(getIntrestDueOnCurrFirstHalfDemand(pmv.getAggrCurrFirstHalfPenaly()))
+                .add(getCurrSecondHalfDemand(pmv.getAggrCurrSecondHalfDmd()))
+                .add(getCurrSecondHalfDemandDue(pmv.getAggrCurrSecondHalfDmd(), pmv.getAggrCurrSecondHalfColl()))
+                .add(getIntrestDueOnCurrSecondHalfDemand(pmv.getAggrCurrSecondHalfPenaly()))
+                .add(getAggrArrDmd(pmv.getAggrArrDmd(), pmv.getAggrArrColl()))
+                .add(getIntrestDueOnArrearDemandDue(pmv.getAggrArrearPenaly()));
     }
 
     private void checkIsDemandActive(final Property property) {
@@ -312,8 +371,7 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
 
     @Override
     @SkipValidation
-    public void setServletRequest(HttpServletRequest arg0) {
-        this.request = arg0;
+    public void setServletRequest(final HttpServletRequest arg0) {
     }
 
     public String getAssessmentNum() {
@@ -344,7 +402,7 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
         return searchUrl;
     }
 
-    public void setSearchUrl(String searchUrl) {
+    public void setSearchUrl(final String searchUrl) {
         this.searchUrl = searchUrl;
     }
 

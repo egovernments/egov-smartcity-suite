@@ -60,7 +60,7 @@
 		}
 	}
 
-	function openNewWindow() {
+	function openShowReceipts() {
 		window.open('../view/viewDCBProperty-showMigData.action?'
 				+ 'propertyId=<s:property value="%{basicProperty.upicNo}"/>',
 				'_blank', 'width=650, height=500, scrollbars=yes', false);
@@ -248,22 +248,10 @@
 									</th>
 								</tr>
 								<tr>
-									<s:if test="%{viewMap.taxExempted == false}">
-										<td class="blueborderfortd">
-											<div align="center">
-												<a href="javascript:openHeadwiseDCBWindow();"><s:text
-														name="viewHeadwiseDCB" /></a>
-											</div> <br />
-											<div align="center">
-												<s:if test="%{basicProperty.source == 'M'}">
-													<a href="" onclick="openNewWindow();">Show Receipts</a>
-												</s:if>
-												<s:else>
-												&nbsp;
-											</s:else>
-											</div>
-										</td>
-									</s:if>
+
+									<td class="blueborderfortd">
+										<div align="center">&nbsp;</div>
+									</td>
 									<td class="blueborderfortd">
 										<div align="center">
 											<span class="bold"><s:text name="Tax" /> </span>
@@ -811,6 +799,17 @@
 					onclick="window.location='/ptis/citizen/search/search-searchForm.action';"
 					value="Search Property" name="SearchProperty">
 			</s:elseif>
+			<s:if test="%{viewMap.taxExempted == false}">
+				<input type="button" name="button3" id="button3"
+					value="Head Wise DCB" class="buttonsubmit"
+					onclick="openHeadwiseDCBWindow();" />
+				<s:if test="%{basicProperty.source == 'M'}">
+					<input type="button" name="button4" id="button4"
+						value="Show Receipts" class="buttonsubmit"
+						onclick="openShowReceipts();" />
+				</s:if>
+				<s:else></s:else>
+			</s:if>
 			<input type="button" name="button2" id="button2" value="Close"
 				class="button" onclick="return confirmClose();" />
 		</div>
