@@ -577,30 +577,32 @@
 									</td>
 									<td class="blueborderfortd">&nbsp;</td>
 								</tr>
-								<br />
-								<div align="center">
-									<s:if test="%{viewMap.taxExempted == false}">
-										<input type="button" name="button3" id="button3"
-											value="Head Wise DCB" class="buttonsubmit"
-											onclick="openHeadwiseDCBWindow();" />
-										<s:if test="%{basicProperty.source == 'M'}">
-											<input type="button" name="button4" id="button4"
-												value="Show Old Receipts" class="buttonsubmit"
-												onclick="openShowReceipts();" />
-										</s:if>
-										<s:else></s:else>
-									</s:if>
-								</div>
-								<br />
+
 								<s:if
 									test="%{getActiveRcpts() != null && !getActiveRcpts().isEmpty()}">
 									<table width="100%" border="0" align="center" cellpadding="0"
 										cellspacing="0" class="tablebottom">
 										<tr>
 											<td align="center">
+												<div align="center" style="padding-top:10px;">&nbsp;
+													<s:if test="%{viewMap.taxExempted == false}">
+														<input type="button" name="button3" id="button3"
+															value="Head Wise DCB" class="buttonsubmit"
+															onclick="openHeadwiseDCBWindow();" />
+														<s:if test="%{basicProperty.source == 'M'}">
+															<input type="button" name="button4" id="button4"
+																value="Show Old Receipts" class="buttonsubmit"
+																onclick="openShowReceipts();" />
+														</s:if>
+														<s:else></s:else>
+													</s:if>
+												</div>
+												
 												<div class="headingsmallbg">
 													<s:text name="propRcptDet" />
 												</div>
+												
+												
 											</td>
 										</tr>
 
@@ -655,6 +657,19 @@
 										cellspacing="0" class="tablebottom">
 										<tr>
 											<td align="center">
+											<div align="center" style="padding-top:10px;">&nbsp;
+													<s:if test="%{viewMap.taxExempted == false}">
+														<input type="button" name="button3" id="button3"
+															value="Head Wise DCB" class="buttonsubmit"
+															onclick="openHeadwiseDCBWindow();" />
+														<s:if test="%{basicProperty.source == 'M'}">
+															<input type="button" name="button4" id="button4"
+																value="Show Old Receipts" class="buttonsubmit"
+																onclick="openShowReceipts();" />
+														</s:if>
+														<s:else></s:else>
+													</s:if>
+												</div>
 												<div class="headingsmallbg">
 													<s:text name="rcptHeader" />
 												</div>
@@ -709,6 +724,19 @@
 										cellspacing="0" class="tablebottom">
 										<tr>
 											<td align="center">
+											<div align="center" style="padding-top:10px;">&nbsp;
+													<s:if test="%{viewMap.taxExempted == false}">
+														<input type="button" name="button3" id="button3"
+															value="Head Wise DCB" class="buttonsubmit"
+															onclick="openHeadwiseDCBWindow();" />
+														<s:if test="%{basicProperty.source == 'M'}">
+															<input type="button" name="button4" id="button4"
+																value="Show Old Receipts" class="buttonsubmit"
+																onclick="openShowReceipts();" />
+														</s:if>
+														<s:else></s:else>
+													</s:if>
+												</div>
 												<div class="headingsmallbg">
 													<s:text name="mutationFeeRcptHeader" />
 												</div>
