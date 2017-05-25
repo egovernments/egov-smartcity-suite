@@ -98,7 +98,7 @@ $(document).ready(function(){
   	}
   });
 
-  $('#passwordForm').on('submit', function(e){
+  $('#btnChangePwd').click(function(e){
          e.preventDefault();
          $.ajax({
              url: '/egi/home/password/update',
@@ -107,26 +107,21 @@ $(document).ready(function(){
              success: function(data) {
              	var msg = "";
              	if (data == "SUCCESS") {
-             		msg = "Your password has been updated."
+             		msg = "Your password has been updated.";
              	} else if (data == "NEWPWD_UNMATCH") {
-             		msg = "New password you have entered does not match with retyped password."
-             		$('#retype-pass').val('');
-             		$('#new-pass').val('');
-             		$('#old-pass').val('');
-             		$('.password-error').hide();
+             		msg = "New password you have entered does not match with retyped password.";
              	} else if (data == "CURRPWD_UNMATCH") {
-             		msg = "Old password you have entered is incorrect."
-             		$('#retype-pass').val('');
-             		$('#new-pass').val('');
-             		$('#old-pass').val('');
-             		$('.password-error').hide();
-             	} 
+             		msg = "Old password you have entered is incorrect.";
+             	}  else if (data = "NEWPWD_INVALID") {
+             		msg = $('#errorPwdInvalid').val() + "\"" + " ' / \ and space]";
+             	}
              	bootbox.alert(msg);
              },
              error: function() {
              	bootbox.alert("Internal server error occurred, please try after sometime.");
              }, complete : function() {
              	$('.change-password, .loader-class').modal('hide');
+             	resetValues();
              }
      }); 
   });
@@ -197,4 +192,11 @@ function generateSno(className)
 		$(this).text(idx);
 		idx++;
 	});
+}
+
+function resetValues() {
+		$('#retype-pass').val('');
+		$('#new-pass').val('');
+		$('#old-pass').val('');
+		$('.password-error').hide();
 }
