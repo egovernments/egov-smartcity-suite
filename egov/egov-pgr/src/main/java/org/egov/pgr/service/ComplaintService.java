@@ -234,7 +234,8 @@ public class ComplaintService {
             complaint.setPriority(priorityService.getPriorityByCode(pgrApplicationProperties.defaultComplaintPriority()));
         complaintRepository.saveAndFlush(complaint);
         citizenInboxMessage(complaint);
-        pushPortalInboxMessage(complaint);
+        if (securityUtils.currentUserIsCitizen())
+            pushPortalInboxMessage(complaint);
         complaintCommunicationService.sendRegistrationMessage(complaint);
 
         complaintIndexService.createComplaintIndex(complaint);
@@ -569,8 +570,9 @@ public class ComplaintService {
         final PortalInboxBuilder portalInboxBuilder = new PortalInboxBuilder(moduleService.getModuleByName(MODULE_NAME),
                 savedComplaint.getStateType(), savedComplaint.getCrn(), savedComplaint.getCrn(), savedComplaint.getId(),
                 getHeaderMessage(savedComplaint), detailedMessage.toString(), link,
-                false, savedComplaint.getStatus().getName(), DateUtils.addHours(new Date(), slaHours), savedComplaint.getState(),
-                savedComplaint.getCreatedBy());
+                false, savedComplaint.getStatus().getName(),
+                slaHours != null ? DateUtils.addHours(new Date(), slaHours) : null, savedComplaint.getState(),
+                securityUtils.getCurrentUser());
 
         final PortalInbox portalInbox = portalInboxBuilder.build();
 
