@@ -45,9 +45,7 @@
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 <form:form role="form" method="post"
 	cssClass="form-horizontal form-groups-bordered" id="usageform"
-	modelAttribute="registration">
-			<input type="hidden" name="applicationSource" id =app value="${applicationSource}" />
-	
+	modelAttribute="registration">	
 	<jsp:include page="registration-searchform.jsp"></jsp:include>
 </form:form>
 <br />

@@ -39,7 +39,6 @@
  */
 
 $(document).ready( function () {
-	var applicationSource = $('#app').val();
 
 $('.mobileno-field').blur( function () {
 	 var mobileno = $(this).val();
@@ -87,9 +86,6 @@ $('#txt-dateOfMarriage').datepicker()
     	var str=$('#txt-dateOfMarriage').val(); 
     	if(isValidDate(str)){
     		var url;
-    		if(applicationSource=='online')
-    			url = '/mrs/citizen/registration/calculatemarriagefee'
-    			else
     				url = '/mrs/registration/calculatemarriagefee'
     		showMarriageFee(url);
     	}
@@ -143,9 +139,6 @@ $('a[id^="signature"]').click( function () {
 
 	$('#select-registrationunit').change( function () {
 		var url;
-		if(applicationSource=='online')
-			url= '/mrs/citizen/registration/getmrregistrationunitzone'
-			else
 			url = '/mrs/registration/getmrregistrationunitzone'
 		showRegistrationUnit(url);
 	})

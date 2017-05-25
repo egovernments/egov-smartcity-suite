@@ -82,7 +82,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
  */
 
 @Controller
-@RequestMapping(value = { "/registration", "/citizen/registration" })
+@RequestMapping(value = { "/registration" })
 public class NewRegistrationController extends MarriageRegistrationController {
 
     private static final String ACKOWLEDGEMENT = "acknowledgement";
@@ -116,8 +116,6 @@ public class NewRegistrationController extends MarriageRegistrationController {
                 !ANONYMOUS_USER.equalsIgnoreCase(logedinUser.getName()) && registrationWorkFlowService.isEmployee(logedinUser));
         marriageRegistration.setFeePaid(calculateMarriageFee(new Date()));
         model.addAttribute(MARRIAGE_REGISTRATION, marriageRegistration);
-        model.addAttribute("applicationSource",
-                request.getParameter("applicationSource") != null ? request.getParameter("applicationSource").toLowerCase() : "");
         prepareWorkFlowForNewMarriageRegistration(marriageRegistration, model);
         return "registration-form";
     }
@@ -182,9 +180,6 @@ public class NewRegistrationController extends MarriageRegistrationController {
         model.addAttribute("isEmployee", isEmployee);
         if (!isEmployee) {
             redirectAttributes.addFlashAttribute(MESSAGE, message);
-            if (ANONYMOUS_USER.equalsIgnoreCase(logedinUser.getName()))
-                return "redirect:/citizen/registration/new-mrgregistration-ackowledgement/" + appNo;
-            else
                 return "redirect:/registration/new-mrgregistration-ackowledgement/" + appNo;
         } else
             return "registration-ack";
