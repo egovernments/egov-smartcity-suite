@@ -87,7 +87,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPERTYIMPL_BY
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_WORKFLOW_PROPERTYIMPL_BYID;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_INSPECTOR_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_OFFICER_DESGN;
-import static org.egov.ptis.constants.PropertyTaxConstants.ROLE_ULB_OPERATOR;
 import static org.egov.ptis.constants.PropertyTaxConstants.SENIOR_ASSISTANT;
 import static org.egov.ptis.constants.PropertyTaxConstants.SOURCEOFDATA_DATAENTRY;
 import static org.egov.ptis.constants.PropertyTaxConstants.SOURCEOFDATA_MIGRATION;
@@ -747,7 +746,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
             showAckBtn = Boolean.TRUE;
         if (!showAckBtn)
             for (final Role role : securityUtils.getCurrentUser().getRoles())
-                if (ROLE_ULB_OPERATOR.equalsIgnoreCase(role.getName()) && !rejected && getModel().getState() == null
+                if (propertyTaxCommonUtils.isEligibleInitiator(securityUtils.getCurrentUser().getId()) && !rejected && getModel().getState() == null
                         || CSC_OPERATOR_ROLE.equalsIgnoreCase(role.getName()))
                     showAckBtn = Boolean.TRUE;
     }
