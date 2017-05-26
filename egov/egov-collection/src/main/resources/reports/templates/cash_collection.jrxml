@@ -38,9 +38,9 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
-
+  
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2016-12-19T15:06:31 -->
+<!-- 2017-05-26T13:07:02 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cash_collection" pageWidth="595" pageHeight="842" whenNoDataType="NoDataSection" columnWidth="575" leftMargin="10" rightMargin="10" topMargin="20" bottomMargin="20" isSummaryNewPage="true" isFloatColumnFooter="true" uuid="83cd3eec-a13e-40e2-ab9e-a64ab5ca3d02">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<property name="ireport.zoom" value="1.0"/>
@@ -104,6 +104,13 @@
 		<parameterDescription><![CDATA[Where clause for receipt header ids]]></parameterDescription>
 		<defaultValueExpression><![CDATA[($P{EGOV_RECEIPT_IDS} == null || $P{EGOV_RECEIPT_IDS}.size() == 0) ? "" : "AND $X{IN, EGCL_COLLECTIONHEADER.ID, EGOV_RECEIPT_IDS}"]]></defaultValueExpression>
 	</parameter>
+	<parameter name="EGOV_SOURCE" class="java.lang.String">
+		<parameterDescription><![CDATA[The Source]]></parameterDescription>
+		<defaultValueExpression><![CDATA["ALL"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="Q_SOURCES" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{EGOV_SOURCE}.equals("ALL") ? "": " AND EGCL_COLLECTIONHEADER.SOURCE = '"+$P{EGOV_SOURCE}+"'"]]></defaultValueExpression>
+	</parameter>
 	<queryString>
 		<![CDATA[SELECT
      EGCL_COLLECTIONHEADER.PAYEENAME AS PAYEE_NAME,
@@ -139,6 +146,7 @@ WHERE
      AND EGF_INSTRUMENTTYPE.TYPE = $P{EGOV_INSTRUMENT_TYPE}
      AND EGCL_COLLECTIONHEADER.RECEIPTDATE >= $P{EGOV_FROM_DATE}
      AND EGCL_COLLECTIONHEADER.RECEIPTDATE < $P{EGOV_TO_DATE_PLUS_ONE}
+     $P!{Q_SOURCES}
      $P!{Q_COUNTER_ID}
      $P!{Q_COUNTER_OPERATOR_ID}
      $P!{Q_BOUNDARY_ID}
@@ -364,6 +372,30 @@ WHERE
 				<reportElement stretchType="RelativeToBandHeight" x="10" y="10" width="91" height="92" isRemoveLineWhenBlank="true" uuid="cd95adac-76d2-4e19-97d7-5fd9fbbe7867"/>
 				<imageExpression><![CDATA[ReportUtil.logoBasePath()]]></imageExpression>
 			</image>
+			<staticText>
+				<reportElement x="300" y="151" width="120" height="20" uuid="88daffbf-4492-4b89-9ec4-9a4bd1e43781">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+				<box leftPadding="5" rightPadding="5"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" pdfFontName="Times-Roman"/>
+				</textElement>
+				<text><![CDATA[ Source:]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy">
+				<reportElement stretchType="RelativeToTallestObject" x="420" y="151" width="130" height="20" uuid="f4d70cd4-a72c-4ac8-b21f-505dff0859b4">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+				<box leftPadding="5" rightPadding="5"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" pdfFontName="Times-Roman"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{EGOV_SOURCE}]]></textFieldExpression>
+			</textField>
 		</band>
 	</title>
 	<columnHeader>
@@ -1194,7 +1226,7 @@ WHERE
 		</band>
 	</summary>
 	<noData>
-		<band height="145">
+		<band height="171">
 			<staticText>
 				<reportElement x="103" y="114" width="368" height="31" uuid="fdb8c481-01c9-4f97-a8e2-b6e5fa8cb25b"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -1322,6 +1354,30 @@ WHERE
 					<font fontName="Times New Roman" pdfFontName="Times-Roman"/>
 				</textElement>
 				<text><![CDATA[Zone:]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy">
+				<reportElement stretchType="RelativeToTallestObject" x="428" y="90" width="130" height="20" uuid="22d6dab8-9bb4-450e-a707-d8113fd2d031">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+				<box leftPadding="5" rightPadding="5"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" pdfFontName="Times-Roman"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{EGOV_SOURCE}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="308" y="90" width="120" height="20" uuid="db62e60a-c3c1-4726-92b0-4bb2c8219e66">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+				<box leftPadding="5" rightPadding="5"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" pdfFontName="Times-Roman"/>
+				</textElement>
+				<text><![CDATA[   Source:]]></text>
 			</staticText>
 		</band>
 	</noData>
