@@ -53,17 +53,18 @@ import org.egov.infra.workflow.entity.State;
 public class PortalInboxBuilder {
 
     private final PortalInbox portalInbox;
+    
 
     public PortalInboxBuilder(final Module module, final String serviceType, final String applicationNumber,
-            final String entityRefNo, final Long entityRefId, final String headerMsg, final String detailedMessage,
+            final String consumerNumber, final Long entityId, final String headerMsg, final String detailedMessage,
             final String link, final boolean isResolved, final String status, final Date slaEndDate, final State state,
             final User user) {
         portalInbox = new PortalInbox();
         portalInbox.setModule(module);
         portalInbox.setServiceType(serviceType);
         portalInbox.setApplicationNumber(applicationNumber);
-        portalInbox.setEntityRefNumber(entityRefNo);
-        portalInbox.setEntityRefId(entityRefId);
+        portalInbox.setEntityRefNumber(consumerNumber);
+        portalInbox.setEntityRefId(entityId);
         portalInbox.setHeaderMessage(headerMsg);
         portalInbox.setResolved(isResolved);
         portalInbox.setDetailedMessage(detailedMessage);
@@ -73,6 +74,7 @@ public class PortalInboxBuilder {
         portalInbox.setSlaEndDate(slaEndDate);
         portalInbox.setState(state);
         portalInbox.setApplicationDate(DateUtils.now());
+        //TODO : Need to check this condition
         if (user != null
                 && (UserType.BUSINESS.toString().equalsIgnoreCase(user.getType().toString()) || UserType.CITIZEN
                         .toString().equalsIgnoreCase(user.getType().toString()))) {

@@ -48,9 +48,7 @@ import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.workflow.entity.State;
 import org.egov.portal.entity.PortalInbox;
 import org.egov.portal.entity.PortalInboxUser;
-import org.egov.portal.entity.PortalNotification;
 import org.egov.portal.repository.PortalInboxRepository;
-import org.egov.portal.repository.PortalNotificationRepository;
 import org.egov.portal.service.es.PortalInboxIndexService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -64,18 +62,14 @@ public class PortalInboxService {
 
     private final PortalInboxIndexService portalInboxIndexService;
 
-    private final PortalNotificationRepository portalNotificationRepository;
-
     @Autowired
     private SecurityUtils securityUtils;
 
     @Autowired
     public PortalInboxService(final PortalInboxRepository portalInboxRepository,
-            final PortalInboxIndexService portalInboxIndexService,
-            final PortalNotificationRepository portalNotificationRepository) {
+            final PortalInboxIndexService portalInboxIndexService) {
         this.portalInboxRepository = portalInboxRepository;
         this.portalInboxIndexService = portalInboxIndexService;
-        this.portalNotificationRepository = portalNotificationRepository;
     }
 
     public Long getPortalInboxByStatus(final boolean resolved) {
@@ -114,16 +108,16 @@ public class PortalInboxService {
 
     @Transactional
     public void updateInboxMessage(final String applicationNumber, final Long moduleId, final String status,
-            final Boolean isResolved, final Date slaEndDate, final State state, final User user,
-            final String entityRefNo, final String link) {
+            final Boolean isResolved, final Date slaEndDate, final State state, final User additionalUser,
+            final String consumerNumber, final String link) {
         final PortalInbox portalInbox = getPortalInboxByApplicationNo(applicationNumber, moduleId);
         if (portalInbox != null) {
             portalInbox.setStatus(status);
             portalInbox.setResolved(isResolved);
             portalInbox.setState(state);
-            updatePortalInboxData(slaEndDate, entityRefNo, link, portalInbox);
-            if (user != null && !containsUser(portalInbox.getPortalInboxUsers(), user.getId()))
-                createPortalUser(portalInbox, user);
+            updatePortalInboxData(slaEndDate, consumerNumber, link, portalInbox);
+            if (additionalUser != null && !containsUser(portalInbox.getPortalInboxUsers(), additionalUser.getId()))
+                createPortalUser(portalInbox, additionalUser);
             portalInboxRepository.saveAndFlush(portalInbox);
             portalInboxIndexService.createPortalInboxIndex(portalInbox);
         }
@@ -154,17 +148,6 @@ public class PortalInboxService {
      */
     public User getLoggedInUser() {
         return securityUtils.getCurrentUser();
-    }
-
-    @Transactional
-    public void pushNotificationMessage(final PortalNotification portalNotification) {
-        portalNotificationRepository.saveAndFlush(portalNotification);
-    }
-
-    @Transactional
-    public void updateNotificationMessage(final PortalNotification portalNotification) {
-        portalNotification.setReadStatus(true);
-        portalNotificationRepository.saveAndFlush(portalNotification);
     }
 
 }
