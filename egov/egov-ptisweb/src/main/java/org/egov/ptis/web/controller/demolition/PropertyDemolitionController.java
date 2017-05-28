@@ -39,26 +39,6 @@
  */
 package org.egov.ptis.web.controller.demolition;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.ANONYMOUS_USER;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_DEMOLITION;
-import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_COLL_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_COLL_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_DMD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMOLITION;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_VALIDATION;
-import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
-import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_TAX_DUES;
-import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_WORKFLOW_ERROR;
-
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.egov.commons.Installment;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.web.contract.WorkflowContainer;
@@ -71,7 +51,6 @@ import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.entity.property.BasicProperty;
-import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.service.demolition.PropertyDemolitionService;
 import org.egov.ptis.domain.service.property.PropertyService;
@@ -82,15 +61,18 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.Map;
+import java.util.Optional;
+
+import static org.egov.ptis.constants.PropertyTaxConstants.*;
 
 @Controller
-@RequestMapping(value = { "/property/demolition/{assessmentNo}/{applicationSource}" })
+@RequestMapping(value = {"/property/demolition/{assessmentNo}/{applicationSource}"})
 public class PropertyDemolitionController extends GenericWorkFlowController {
 
     protected static final String COMMON_FORM = "commonForm";
@@ -109,41 +91,37 @@ public class PropertyDemolitionController extends GenericWorkFlowController {
 
     @Autowired
     private PropertyDemolitionService propertyDemolitionService;
-    
+
     @Autowired
     private PropertyService propService;
-    
+
     @Autowired
     private SecurityUtils securityUtils;
-    
+
     @Autowired
     private PropertyTaxCommonUtils propertyTaxCommonUtils;
-    
-    BasicProperty basicProperty;
-    PropertyImpl propertyImpl = new PropertyImpl();
-    PropertyImpl oldProperty;
 
     @ModelAttribute
-    public Property propertyModel(@PathVariable("assessmentNo") String assessmentNo) {
-        basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
-        if (null != basicProperty) {
-            oldProperty = basicProperty.getActiveProperty();
-            propertyImpl = (PropertyImpl) basicProperty.getActiveProperty().createPropertyclone();
-        }
-        return propertyImpl;
+    public PropertyImpl property(@PathVariable("assessmentNo") String assessmentNo) {
+        Optional<BasicProperty> basicProperty = Optional.ofNullable(basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo));
+        if (basicProperty.isPresent())
+            return (PropertyImpl) basicProperty.get().getActiveProperty().createPropertyclone();
+        return null;
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public String newForm(final Model model, @PathVariable("assessmentNo") String assessmentNo , @PathVariable("applicationSource") String applicationSource) {
-        if (null != basicProperty && basicProperty.isUnderWorkflow()) {
+    public String newForm(@ModelAttribute PropertyImpl property, final Model model, @PathVariable("applicationSource") String applicationSource) {
+        BasicProperty basicProperty = property.getBasicProperty();
+        if (basicProperty.isUnderWorkflow()) {
             model.addAttribute("wfPendingMsg", "Could not do " + APPLICATION_TYPE_DEMOLITION
                     + " now, property is undergoing some work flow.");
             return TARGET_WORKFLOW_ERROR;
         }
+
         boolean hasChildPropertyUnderWorkflow = propertyTaxUtil.checkForParentUsedInBifurcation(basicProperty.getUpicNo());
         User loggedInUser = securityUtils.getCurrentUser();
-        if(hasChildPropertyUnderWorkflow){
-        	model.addAttribute(ERROR_MSG, "Cannot proceed as this property is used in Bifurcation, which is under workflow");
+        if (hasChildPropertyUnderWorkflow) {
+            model.addAttribute(ERROR_MSG, "Cannot proceed as this property is used in Bifurcation, which is under workflow");
             return PROPERTY_VALIDATION;
         }
         if (!ANONYMOUS_USER.equalsIgnoreCase(loggedInUser.getName())
@@ -155,8 +133,9 @@ public class PropertyDemolitionController extends GenericWorkFlowController {
             model.addAttribute(ERROR_MSG, "error.superstruc.prop.notallowed");
             return PROPERTY_VALIDATION;
         }
-        final Map<String, BigDecimal> propertyTaxDetails = ptDemandDAO.getDemandCollMap(basicProperty
-                .getActiveProperty());
+        model.addAttribute("property", property);
+        final Map<String, BigDecimal> propertyTaxDetails = ptDemandDAO.getDemandCollMap(property
+                .getBasicProperty().getActiveProperty());
         Map<String, Installment> installmentMap = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
         Installment installmentFirstHalf = installmentMap.get(PropertyTaxConstants.CURRENTYEAR_FIRST_HALF);
         BigDecimal currentPropertyTax;
@@ -186,16 +165,16 @@ public class PropertyDemolitionController extends GenericWorkFlowController {
         }
         model.addAttribute("isEmployee", !ANONYMOUS_USER.equalsIgnoreCase(loggedInUser.getName()) && propService.isEmployee(loggedInUser));
         propertyDemolitionService.addModelAttributes(model, basicProperty);
-        model.addAttribute("stateType", propertyImpl.getClass().getSimpleName());
-        prepareWorkflow(model, propertyImpl, new WorkflowContainer());
+        model.addAttribute("stateType", property.getClass().getSimpleName());
+        prepareWorkflow(model, property, new WorkflowContainer());
         return DEMOLITION_FORM;
     }
 
+
     @Transactional
     @RequestMapping(method = RequestMethod.POST)
-    public String demoltionFormSubmit(@ModelAttribute Property property, final BindingResult errors,
-            final RedirectAttributes redirectAttrs, final Model model, final HttpServletRequest request,
-            @RequestParam String workFlowAction) throws TaxCalculatorExeption {
+    public String demoltionFormSubmit(@ModelAttribute PropertyImpl property, final BindingResult errors, final Model model, final HttpServletRequest request,
+                                      @RequestParam String workFlowAction) throws TaxCalculatorExeption {
 
         User loggedInUser = securityUtils.getCurrentUser();
         propertyDemolitionService.validateProperty(property, errors, request);
@@ -204,7 +183,7 @@ public class PropertyDemolitionController extends GenericWorkFlowController {
             prepareWorkflow(model, (PropertyImpl) property, new WorkflowContainer());
             model.addAttribute("stateType", property.getClass().getSimpleName());
             model.addAttribute("isEmployee", !ANONYMOUS_USER.equalsIgnoreCase(loggedInUser.getName()) && propService.isEmployee(loggedInUser));
-            propertyDemolitionService.addModelAttributes(model, basicProperty);
+            propertyDemolitionService.addModelAttributes(model, property.getBasicProperty());
             return DEMOLITION_FORM;
         } else {
 
@@ -219,12 +198,12 @@ public class PropertyDemolitionController extends GenericWorkFlowController {
             if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
                 approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
 
-            propertyDemolitionService.saveProperty(oldProperty, property, status, approvalComent, workFlowAction,
+            propertyDemolitionService.saveProperty(property.getBasicProperty().getActiveProperty(), property, status, approvalComent, workFlowAction,
                     approvalPosition, DEMOLITION);
-            
-            if(!propService.isEmployee(loggedInUser) || ANONYMOUS_USER.equalsIgnoreCase(loggedInUser.getName())) {
-                Assignment assignment =  propertyDemolitionService.getUserAssignment(loggedInUser, property);
-                if(assignment != null)
+
+            if (!propService.isEmployee(loggedInUser) || ANONYMOUS_USER.equalsIgnoreCase(loggedInUser.getName())) {
+                Assignment assignment = propertyDemolitionService.getUserAssignment(loggedInUser, property);
+                if (assignment != null)
                     approvalPosition = assignment.getPosition().getId();
             }
             model.addAttribute("showAckBtn", Boolean.TRUE);
@@ -237,13 +216,4 @@ public class PropertyDemolitionController extends GenericWorkFlowController {
             return DEMOLITION_SUCCESS;
         }
     }
-
-    public BasicProperty getBasicProperty() {
-        return basicProperty;
-    }
-
-    public void setBasicProperty(BasicProperty basicProperty) {
-        this.basicProperty = basicProperty;
-    }
-
 }
