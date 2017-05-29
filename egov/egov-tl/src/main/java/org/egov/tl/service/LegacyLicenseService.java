@@ -69,6 +69,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Stream;
 
 import static java.math.BigDecimal.ZERO;
 import static org.egov.tl.utils.Constants.LICENSE_STATUS_ACTIVE;
@@ -144,7 +145,7 @@ public class LegacyLicenseService {
         for (final EgDemandDetails demandDetail : license.getCurrentDemand().getEgDemandDetails())
             legacyInstallmentwiseFees.put(demandDetail.getEgDemandReason().getEgInstallmentMaster().getInstallmentNumber(),
                     demandDetail.getAmount().intValue());
-        return legacyInstallmentwiseFees;
+        return sortByKey(legacyInstallmentwiseFees);
     }
 
     public Map<Integer, Boolean> legacyFeePayStatusForCreate() {
@@ -160,7 +161,7 @@ public class LegacyLicenseService {
             legacyFeePayStatus.put(demandDetail.getEgDemandReason().getEgInstallmentMaster().getInstallmentNumber(),
                     demandDetail.getAmtCollected().compareTo(ZERO) != 0 &&
                             demandDetail.getAmtCollected().compareTo(demandDetail.getAmount()) == 0);
-        return legacyFeePayStatus;
+        return sortByKey(legacyFeePayStatus);
     }
 
     private Map<Integer, Integer> legacyInstallmentfee(final TradeLicense license) {
@@ -259,7 +260,7 @@ public class LegacyLicenseService {
     }
 
     private void updateNewLegacyDemand(final Map<Integer, Integer> updatedInstallmentFees,
-                                       final Map<Integer, Boolean> legacyFeePayStatus, final LicenseDemand licenseDemand) {
+            final Map<Integer, Boolean> legacyFeePayStatus, final LicenseDemand licenseDemand) {
 
         final Module module = moduleService.getModuleByName("Trade License");
         for (final Entry<Integer, Integer> updatedInstallmentFee : updatedInstallmentFees.entrySet())
@@ -295,10 +296,23 @@ public class LegacyLicenseService {
                     documents.get(i).setEnclosed(true);
                 } else if (documents.get(i).getType().isMandatory() && files[i].isEmpty() && documents.isEmpty()) {
                     documents.get(i).getFiles().clear();
-                    throw new ValidationException("File should not be Empty", "File should not be Empty", documents.get(i).getType().getName());
+                    throw new ValidationException("File should not be Empty", "File should not be Empty",
+                            documents.get(i).getType().getName());
                 }
                 documents.get(i).setDocDate(license.getApplicationDate());
                 documents.get(i).setLicense(license);
             }
+    }
+
+    private static <K extends Comparable<? super K>, V> Map<K, V> sortByKey(Map<K, V> map) {
+
+        Map<K, V> result = new LinkedHashMap<>();
+        Stream<Map.Entry<K, V>> mapInStream = map.entrySet().stream();
+
+        mapInStream.sorted(Map.Entry.comparingByKey())
+                .forEachOrdered(x -> result.put(x.getKey(), x.getValue()));
+
+        return result;
+
     }
 }

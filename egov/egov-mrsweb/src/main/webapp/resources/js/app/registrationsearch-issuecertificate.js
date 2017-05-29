@@ -41,19 +41,12 @@
 
 $(document).ready( function () {
 	
-	var applicationSource = $('#app').val();
 	var updateurl;
-	if(applicationSource == 'online')
-		updateurl='/mrs/citizen/reissue/create/';
-	else
 	 updateurl='/mrs/reissue/create/';
 	
 
 	$('#btnregistrationsearch').click( function () {
 		var url;
-		if(applicationSource == 'online')
-			url= '/mrs/citizen/registration/searchregisteredrecord'
-			else
 				url = '/mrs/registration/searchregisteredrecord'
 		callAjaxSearch(url);
 	});

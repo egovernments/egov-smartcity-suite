@@ -2,15 +2,15 @@ $(document).ready(function(){
 	$('.password-error').hide();
 	$('.totalServicesAppliedHide').hide();
 	$('.totalServicesCompletedHide').hide();
-	$('#servicesCmpletedDiv').attr('style', 'opacity: 0.3;cursor: pointer');
-	$('#totalServicesAppliedDiv').attr('style', 'opacity: 0.3;cursor: pointer');
+	$('#servicesCmpletedDiv').attr('style', 'opacity: 0.7;cursor: pointer');
+	$('#totalServicesAppliedDiv').attr('style', 'opacity: 0.7;cursor: pointer');
 	$('#totalServicesAppliedDiv').click(function() {
 		$('.servicesUnderScrutinyHide').hide();
 		$('.totalServicesCompletedHide').hide();
 		$('.totalServicesAppliedHide').show();
 		$('#totalServicesAppliedDiv').attr('style', 'opacity: 1;cursor: pointer');
-		$('#servicesUnderScrutinyDiv').attr('style', 'opacity: 0.3;cursor: pointer');
-		$('#servicesCmpletedDiv').attr('style', 'opacity: 0.3;cursor: pointer');
+		$('#servicesUnderScrutinyDiv').attr('style', 'opacity: 0.7;cursor: pointer');
+		$('#servicesCmpletedDiv').attr('style', 'opacity: 0.7;cursor: pointer');
 	});
 	
 	$('#servicesUnderScrutinyDiv').click(function() {
@@ -18,8 +18,8 @@ $(document).ready(function(){
 		$('.totalServicesCompletedHide').hide();
 		$('.servicesUnderScrutinyHide').show();
 		$('#servicesUnderScrutinyDiv').attr('style', 'opacity: 1;cursor: pointer');
-		$('#servicesCmpletedDiv').attr('style', 'opacity: 0.3;cursor: pointer');
-		$('#totalServicesAppliedDiv').attr('style', 'opacity: 0.3;cursor: pointer');
+		$('#servicesCmpletedDiv').attr('style', 'opacity: 0.7;cursor: pointer');
+		$('#totalServicesAppliedDiv').attr('style', 'opacity: 0.7;cursor: pointer');
 	});
 	
 	$('#servicesCmpletedDiv').click(function() {
@@ -27,8 +27,8 @@ $(document).ready(function(){
 		$('.servicesUnderScrutinyHide').hide();
 		$('.totalServicesCompletedHide').show();
 		$('#servicesCmpletedDiv').attr('style', 'opacity: 1;cursor: pointer');
-		$('#totalServicesAppliedDiv').attr('style', 'opacity: 0.3;cursor: pointer');
-		$('#servicesUnderScrutinyDiv').attr('style', 'opacity: 0.3;cursor: pointer');
+		$('#totalServicesAppliedDiv').attr('style', 'opacity: 0.7;cursor: pointer');
+		$('#servicesUnderScrutinyDiv').attr('style', 'opacity: 0.7;cursor: pointer');
 
 	});
 	
@@ -67,6 +67,7 @@ $(document).ready(function(){
       $('.inbox-modules').show();
       $('.action-bar').addClass('hide');
       $('#showServiceGroup').show();
+      location.reload();
     }
     else{
       $('.inbox-modules').hide();
@@ -97,7 +98,7 @@ $(document).ready(function(){
   	}
   });
 
-  $('#passwordForm').on('submit', function(e){
+  $('#btnChangePwd').click(function(e){
          e.preventDefault();
          $.ajax({
              url: '/egi/home/password/update',
@@ -106,31 +107,27 @@ $(document).ready(function(){
              success: function(data) {
              	var msg = "";
              	if (data == "SUCCESS") {
-             		msg = "Your password has been updated."
+             		msg = "Your password has been updated.";
              	} else if (data == "NEWPWD_UNMATCH") {
-             		msg = "New password you have entered does not match with retyped password."
-             		$('#retype-pass').val('');
-             		$('#new-pass').val('');
-             		$('#old-pass').val('');
-             		$('.password-error').hide();
+             		msg = "New password you have entered does not match with retyped password.";
              	} else if (data == "CURRPWD_UNMATCH") {
-             		msg = "Old password you have entered is incorrect."
-             		$('#retype-pass').val('');
-             		$('#new-pass').val('');
-             		$('#old-pass').val('');
-             		$('.password-error').hide();
-             	} 
+             		msg = "Old password you have entered is incorrect.";
+             	}  else if (data = "NEWPWD_INVALID") {
+             		msg = $('#errorPwdInvalid').val() + "\"" + " ' / \ and space]";
+             	}
              	bootbox.alert(msg);
              },
              error: function() {
              	bootbox.alert("Internal server error occurred, please try after sometime.");
              }, complete : function() {
              	$('.change-password, .loader-class').modal('hide');
+             	resetValues();
              }
      }); 
   });
   
   $('#serviceGroup').change(function(){
+	  var selected = $(this).val();
 	  var total = $( "#totalServicesAppliedSize" ).html().trim();
 	  var length = document.getElementsByClassName($(this).val()).length / 2;
 	  if($(this).val() == "") {
@@ -138,17 +135,27 @@ $(document).ready(function(){
 		  $( "#totalServicesAppliedSize" ).html($( "#tabelPortal tbody.totalServicesAppliedHide tr.showAll" ).length);
 		  $( "#totalServicesCompletedSize" ).html($( "#tabelPortal tbody.totalServicesCompletedHide tr.showAll" ).length);
 		  $( "#totalServicesPendingSize" ).html($( "#tabelPortal tbody.servicesUnderScrutinyHide tr.showAll" ).length);
+		  var showAllClass ="#tabelPortal tbody.servicesUnderScrutinyHide tr.showAll td:first-child";
+		  generateSno(showAllClass);
+
 	  } else {
 		  $('.showAll').hide();
 		  $('.'+$(this).val()).show();
 		  $( "#totalServicesAppliedSize" ).html($( "#tabelPortal tbody.totalServicesAppliedHide tr."+$(this).val() ).length);
 		  $( "#totalServicesCompletedSize" ).html($( "#tabelPortal tbody.totalServicesCompletedHide tr."+$(this).val() ).length);
 		  $( "#totalServicesPendingSize" ).html($( "#tabelPortal tbody.servicesUnderScrutinyHide tr."+$(this).val() ).length);
-
-	  }
 		  
-	  
+		  var servicesUnderScrutinyHideClass ="#tabelPortal tbody.servicesUnderScrutinyHide tr."+ selected + " td:first-child";
+		  var totalServicesAppliedHideClass="#tabelPortal tbody.totalServicesAppliedHide tr."+ selected + " td:first-child";
+		  var totalServicesCompletedHideClass="#tabelPortal tbody.totalServicesCompletedHide tr."+ selected + " td:first-child";
+		  generateSno(servicesUnderScrutinyHideClass);
+		  generateSno(totalServicesAppliedHideClass);
+		  generateSno(totalServicesCompletedHideClass);
+	  }
   });
+  
+  
+  
 
 });
 
@@ -170,10 +177,26 @@ function rightcontentheight(){
 
 //Short code
 function matchRuleShort(str, rule) {
-  return new RegExp("^" + rule.split("*").join(".*") + "$").test(str);
+  return new RegExp("^" + rule.toLowerCase().split("*").join(".*") + "$").test(str.toLowerCase());
 }
 
 var url;
 function openPopUp(url) {
 	window.open(url, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+}
+
+function generateSno(className)
+{
+	var idx=1;
+	$(className).each(function(){
+		$(this).text(idx);
+		idx++;
+	});
+}
+
+function resetValues() {
+		$('#retype-pass').val('');
+		$('#new-pass').val('');
+		$('#old-pass').val('');
+		$('.password-error').hide();
 }

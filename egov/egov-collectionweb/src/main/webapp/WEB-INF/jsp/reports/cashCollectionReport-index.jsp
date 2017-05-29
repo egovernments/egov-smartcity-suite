@@ -156,8 +156,13 @@ function validate()
 	      <td class="bluebox">&nbsp;</td>
 	      <td class="bluebox"><s:text name="collectionReport.criteria.zone"/></td>
 	      <td class="bluebox"><s:select headerKey="-1" headerValue="%{getText('collectionReport.zone.all')}" name="boundaryId" id="boundaryId" cssClass="selectwk" list="dropdownData.activeZoneList" listKey="id" listValue="localName" value="%{boundaryId}" /> </td>
-		  <td class="bluebox">&nbsp;</td>
-	      <td class="bluebox">&nbsp;</td>
+		  <td class="bluebox"><s:text name="collectionReport.criteria.source" />
+		  </td>
+		  <td class="bluebox"><s:select headerKey="ALL"
+							headerValue="%{getText('collectionReport.sources.all')}"
+							name="source" id="source" cssClass="selectwk" list="sources"
+							value="%{source}" />
+		  </td>
 	    </tr>
 
 	</table>

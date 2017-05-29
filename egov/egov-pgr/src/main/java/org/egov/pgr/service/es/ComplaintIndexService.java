@@ -905,7 +905,7 @@ public class ComplaintIndexService {
 
     public Map<String, Object> getComplaintTypeReport(final ComplaintDashBoardRequest complaintDashBoardRequest) {
         final String groupByField = ComplaintElasticsearchUtils.getAggregationGroupingField(complaintDashBoardRequest);
-        final SearchResponse complaintTypeResponse = complaintIndexRepository.findAllGrievanceByComplaintType(
+        final Map<String,SearchResponse> complaintTypeResponse = complaintIndexRepository.findAllGrievanceByComplaintType(
                 complaintDashBoardRequest,
                 getFilterQuery(complaintDashBoardRequest),
                 groupByField);
@@ -923,7 +923,7 @@ public class ComplaintIndexService {
         final List<ComplaintDashBoardResponse> responseDetailsList = new ArrayList<>();
 
         // For Dynamic results based on grouping fields
-        final Terms terms = complaintTypeResponse.getAggregations().get(GROUP_BY_FIELD);
+        final Terms terms = complaintTypeResponse.get("tableResponse").getAggregations().get(GROUP_BY_FIELD);
         for (final Bucket bucket : terms.getBuckets()) {
 
             final ComplaintDashBoardResponse responseDetail = populateResponse(complaintDashBoardRequest, bucket, groupByField);
@@ -942,6 +942,27 @@ public class ComplaintIndexService {
                     responseDetail.setReOpenedComplaintCount(reOpenedCountbucket.getDocCount());
 
             responseDetailsList.add(responseDetail);
+        }
+
+        //For other localities in drill down
+        if (groupByField.equals(LOCALITY_NAME)) {
+            final SearchResponse localityMissingResponse = complaintTypeResponse.get("otherLocalities");
+            final Missing noLocalityTerms = localityMissingResponse.getAggregations().get("nolocality");
+            final ComplaintDashBoardResponse responseDetail = new ComplaintDashBoardResponse();
+            responseDetail.setTotalComplaintCount(noLocalityTerms.getDocCount());
+            responseDetail.setLocalityName("Others");
+            final Terms openAndClosedTerms = noLocalityTerms.getAggregations().get("closedComplaintCount");
+                for (final Bucket closedCountbucket : openAndClosedTerms.getBuckets())
+                    if (closedCountbucket.getKeyAsNumber().intValue() == 1)
+                        responseDetail.setClosedComplaintCount(closedCountbucket.getDocCount());
+                    else
+                        responseDetail.setOpenComplaintCount(closedCountbucket.getDocCount());
+            final Terms reOpenedComplaints = noLocalityTerms.getAggregations().get(RE_OPENED_COMPLAINT_COUNT);
+                for (final Bucket reOpenedCountbucket : reOpenedComplaints.getBuckets())
+                    if (reOpenedCountbucket.getKeyAsNumber().intValue() == 1)
+                        responseDetail.setReOpenedComplaintCount(reOpenedCountbucket.getDocCount());
+
+                responseDetailsList.add(responseDetail);
         }
         result.put("complaints", responseDetailsList);
         return result;

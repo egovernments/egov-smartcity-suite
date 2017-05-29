@@ -39,31 +39,28 @@
  */
 package org.egov.portal.service;
 
-import java.util.List;
-
-import org.egov.portal.entity.PortalInboxUser;
-import org.egov.portal.repository.PortalInboxUserRepository;
+import org.egov.portal.entity.PortalNotification;
+import org.egov.portal.repository.PortalNotificationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
-public class PortalInboxUserService {
+public class PortalNotificationService {
 
     @Autowired
-    private PortalInboxUserRepository portalInboxUserRepository;
+    private PortalNotificationRepository portalNotificationRepository;
 
-    public List<PortalInboxUser> getPortalInboxByResolved(final Long userId, final boolean resolved) {
-        return portalInboxUserRepository.getPortalInboxByResolved(userId, resolved);
+    @Transactional
+    public void pushNotificationMessage(final PortalNotification portalNotification) {
+        portalNotificationRepository.saveAndFlush(portalNotification);
     }
 
-    public List<PortalInboxUser> getPortalInboxByUserId(final Long userId) {
-        return portalInboxUserRepository.findByUser_IdOrderByIdDesc(userId);
-    }
-
-    public Long getPortalInboxUserCount(final Long userId) {
-        return portalInboxUserRepository.getPortalInboxUserCount(userId);
+    @Transactional
+    public void updateNotificationMessage(final PortalNotification portalNotification) {
+        portalNotification.setReadStatus(true);
+        portalNotificationRepository.saveAndFlush(portalNotification);
     }
 
 }

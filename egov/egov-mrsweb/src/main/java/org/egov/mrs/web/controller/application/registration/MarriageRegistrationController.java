@@ -168,14 +168,18 @@ public class MarriageRegistrationController extends GenericWorkFlowController {
         final AppConfigValues allowValidation = marriageFeeService.getDaysValidationAppConfValue(
                 MarriageConstants.MODULE_NAME, MarriageConstants.MARRIAGEREGISTRATION_DAYS_VALIDATION);
         if (allowValidation != null && !allowValidation.getValue().isEmpty()
-                && "YES".equalsIgnoreCase(allowValidation.getValue()))
+                && "YES".equalsIgnoreCase(allowValidation.getValue())) {
             if (registration.getDateOfMarriage() != null && !registration.isLegacy()) {
                 final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-                if (!new DateTime(new Date()).isBefore(new DateTime(registration.getDateOfMarriage()).plusDays(Integer
-                        .parseInt(REGISTER_NO_OF_DAYS) - 1)))
-                    errors.reject("err.validate.marriageRegistration.applicationDate",
-                            new String[] { sdf.format(registration.getDateOfMarriage()) }, null);
+                    if (registration.getApplicationDate() != null && !new DateTime(registration.getApplicationDate())
+                            .isBefore(new DateTime(registration.getDateOfMarriage()).plusDays(Integer
+                                    .parseInt(REGISTER_NO_OF_DAYS) - 1)) || !new DateTime(new Date()).isBefore(new DateTime(registration.getDateOfMarriage()).plusDays(Integer
+                                            .parseInt(REGISTER_NO_OF_DAYS) - 1))) {
+                        errors.reject("err.validate.marriageRegistration.applicationDate",
+                                new String[] { sdf.format(registration.getDateOfMarriage()) }, null);
+                } 
             }
+        }
     }
 
 }

@@ -37,33 +37,50 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.portal.service;
+package org.egov.ptis.domain.service.property;
 
-import java.util.List;
+import static org.egov.ptis.constants.PropertyTaxConstants.BIGDECIMAL_100;
 
-import org.egov.portal.entity.PortalInboxUser;
-import org.egov.portal.repository.PortalInboxUserRepository;
+import java.math.BigDecimal;
+import java.util.Date;
+
+import org.egov.commons.Installment;
+import org.egov.ptis.constants.PropertyTaxConstants;
+import org.egov.ptis.domain.entity.property.RebatePeriod;
+import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * Service class to perform services related to Rebate Amount
+ *
+ * @author neelam
+ */
 @Service
 @Transactional(readOnly = true)
-public class PortalInboxUserService {
+public class RebateService {
+    @Autowired
+    private PropertyTaxCommonUtils propertyTaxCommonUtils;
 
     @Autowired
-    private PortalInboxUserRepository portalInboxUserRepository;
+    private RebatePeriodService rebatePeriodService;
 
-    public List<PortalInboxUser> getPortalInboxByResolved(final Long userId, final boolean resolved) {
-        return portalInboxUserRepository.getPortalInboxByResolved(userId, resolved);
+    public BigDecimal calculateEarlyPayRebate(final BigDecimal tax) {
+        if (isEarlyPayRebateActive())
+            return tax.multiply(PropertyTaxConstants.ADVANCE_REBATE_PERCENTAGE).divide(BIGDECIMAL_100).setScale(0,
+                    BigDecimal.ROUND_HALF_UP);
+        else
+            return BigDecimal.ZERO;
     }
 
-    public List<PortalInboxUser> getPortalInboxByUserId(final Long userId) {
-        return portalInboxUserRepository.findByUser_IdOrderByIdDesc(userId);
-    }
-
-    public Long getPortalInboxUserCount(final Long userId) {
-        return portalInboxUserRepository.getPortalInboxUserCount(userId);
+    public boolean isEarlyPayRebateActive() {
+        boolean value = false;
+        final Installment currentInstallment = propertyTaxCommonUtils.getCurrentInstallment();
+        final RebatePeriod rebatePeriod = rebatePeriodService.getRebateForCurrInstallment(currentInstallment.getId());
+        if (rebatePeriod != null && rebatePeriod.getRebateDate().compareTo(new Date()) > 0)
+            value = true;
+        return value;
     }
 
 }

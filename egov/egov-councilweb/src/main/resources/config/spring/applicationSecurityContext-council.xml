@@ -52,10 +52,7 @@
 			<list>
 				<security:filter-chain pattern="/resources/**" filters="none" />
 				<security:filter-chain pattern="/index.jsp" filters="none" />
-				<security:filter-chain pattern="/error/**" filters="none" />
-			     <security:filter-chain pattern="/councilreports/meetingdetails/search" filters="none" />
-			     <security:filter-chain pattern="/councilmom/view/**" filters="none" />   	
-			     <security:filter-chain pattern="/councilmeeting/generateagenda/**" filters="none" />   			     
+				<security:filter-chain pattern="/error/**" filters="none" />			     
 				<security:filter-chain pattern="/**"  filters="concurrentSessionFilter,securityContextPersistenceFilter,logoutFilter,authenticationProcessingFilter,securityContextHolderAwareRequestFilter,rememberMeAuthenticationFilter,anonymousAuthenticationFilter,exceptionTranslationFilter,filterSecurityInterceptor" />
 			</list>
 		</constructor-arg>

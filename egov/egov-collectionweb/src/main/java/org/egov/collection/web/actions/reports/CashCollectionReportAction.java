@@ -39,21 +39,6 @@
  */
 package org.egov.collection.web.actions.reports;
 
-import org.apache.log4j.Logger;
-import org.apache.struts2.convention.annotation.Action;
-import org.apache.struts2.convention.annotation.ParentPackage;
-import org.apache.struts2.convention.annotation.Result;
-import org.apache.struts2.convention.annotation.Results;
-import org.egov.collection.constants.CollectionConstants;
-import org.egov.collection.utils.CollectionsUtil;
-import org.egov.infra.reporting.engine.ReportOutput;
-import org.egov.infra.reporting.engine.ReportRequest;
-import org.egov.infra.reporting.engine.ReportDataSourceType;
-import org.egov.infra.reporting.engine.ReportService;
-import org.egov.infra.reporting.viewer.ReportViewerUtil;
-import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -61,9 +46,25 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
+import org.egov.collection.constants.CollectionConstants;
+import org.egov.collection.utils.CollectionsUtil;
+import org.egov.commons.entity.Source;
+import org.egov.infra.reporting.engine.ReportDataSourceType;
+import org.egov.infra.reporting.engine.ReportOutput;
+import org.egov.infra.reporting.engine.ReportRequest;
+import org.egov.infra.reporting.engine.ReportService;
+import org.egov.infra.reporting.viewer.ReportViewerUtil;
+import org.egov.infra.web.struts.actions.BaseFormAction;
+import org.springframework.beans.factory.annotation.Autowired;
+
 @ParentPackage("egov")
 @Results({ @Result(name = CashCollectionReportAction.INDEX, location = "cashCollectionReport-index.jsp"),
-    @Result(name = CashCollectionReportAction.REPORT, location = "cashCollectionReport-report.jsp") })
+        @Result(name = CashCollectionReportAction.REPORT, location = "cashCollectionReport-report.jsp") })
 public class CashCollectionReportAction extends BaseFormAction {
 
     private static final long serialVersionUID = 1L;
@@ -83,7 +84,9 @@ public class CashCollectionReportAction extends BaseFormAction {
     private static final String EGOV_BOUNDARY_ID = "EGOV_BOUNDARY_ID";
     private static final String EGOV_RECEIPT_IDS = "EGOV_RECEIPT_IDS";
     private static final String CASH_COLLECTION_TEMPLATE = "cash_collection";
+    private static final String EGOV_SOURCE = "EGOV_SOURCE";
     private String receiptDate;
+    private final Map<String, String> sources = createSourceList();
 
     @Autowired
     private ReportViewerUtil reportViewerUtil;
@@ -201,6 +204,7 @@ public class CashCollectionReportAction extends BaseFormAction {
         critParams.put(EGOV_INSTRUMENT_STATUS, null);
         critParams.put(EGOV_BOUNDARY_ID, Long.valueOf(-1L));
         critParams.put(EGOV_RECEIPT_IDS, null);
+        critParams.put(EGOV_SOURCE, "ALL");
     }
 
     /**
@@ -234,8 +238,8 @@ public class CashCollectionReportAction extends BaseFormAction {
     public String submissionReport() {
         final Map<String, Object> session = getSession();
         collectionsUtil.getLoggedInUser();
-        
-       // final Date today = ReportUtil.today();
+
+        // final Date today = ReportUtil.today();
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         Date rcptDate = null;
         try {
@@ -279,6 +283,15 @@ public class CashCollectionReportAction extends BaseFormAction {
         return INDEX;
     }
 
+    private Map<String, String> createSourceList() {
+        final Map<String, String> sourcesMap = new HashMap<String, String>(0);
+        sourcesMap.put(Source.APONLINE.toString(), Source.APONLINE.toString());
+        sourcesMap.put(Source.ESEVA.toString(), Source.ESEVA.toString());
+        sourcesMap.put(Source.MEESEVA.toString(), Source.MEESEVA.toString());
+        sourcesMap.put(Source.SYSTEM.toString(), Source.SYSTEM.toString());
+        return sourcesMap;
+    }
+
     /**
      * @param reportService the reportService to set
      */
@@ -300,4 +313,17 @@ public class CashCollectionReportAction extends BaseFormAction {
     public void setReceiptDate(String receiptDate) {
         this.receiptDate = receiptDate;
     }
+
+    public Map<String, String> getSources() {
+        return sources;
+    }
+
+    public void setSource(final String source) {
+        critParams.put(EGOV_SOURCE, source);
+    }
+
+    public String getSource() {
+        return (String) critParams.get(EGOV_SOURCE);
+    }
+
 }

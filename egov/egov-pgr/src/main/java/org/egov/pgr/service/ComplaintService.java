@@ -88,6 +88,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.validation.ValidationException;
 
+import org.apache.commons.lang3.time.DateUtils;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.Employee;
 import org.egov.eis.service.AssignmentService;
@@ -113,11 +114,9 @@ import org.egov.pgr.entity.enums.ComplaintStatus;
 import org.egov.pgr.repository.ComplaintRepository;
 import org.egov.pgr.service.es.ComplaintIndexService;
 import org.egov.pims.commons.Position;
-import org.egov.portal.entity.CitizenInbox;
-import org.egov.portal.entity.CitizenInboxBuilder;
-import org.egov.portal.entity.enums.MessageType;
-import org.egov.portal.entity.enums.Priority;
-import org.egov.portal.service.CitizenInboxService;
+import org.egov.portal.entity.PortalInbox;
+import org.egov.portal.entity.PortalInboxBuilder;
+import org.egov.portal.service.PortalInboxService;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.CriteriaSpecification;
@@ -151,8 +150,6 @@ public class ComplaintService {
     @Autowired
     private EisCommonService eisCommonService;
     @Autowired
-    private CitizenInboxService citizenInboxService;
-    @Autowired
     private BoundaryService boundaryService;
     @Autowired
     private ApplicationNumberGenerator applicationNumberGenerator;
@@ -183,6 +180,9 @@ public class ComplaintService {
     
     @Autowired
     private ComplaintCommunicationService complaintCommunicationService;
+    
+    @Autowired
+    private PortalInboxService portalInboxService; 
 
     @Transactional
     public Complaint createComplaint(final Complaint complaint) {
@@ -226,7 +226,8 @@ public class ComplaintService {
         if (complaint.getPriority() == null)
             complaint.setPriority(priorityService.getPriorityByCode(pgrApplicationProperties.defaultComplaintPriority()));
         complaintRepository.saveAndFlush(complaint);
-        citizenInboxMessage(complaint);
+        if (securityUtils.currentUserIsCitizen())
+            pushPortalInboxMessage(complaint);
         complaintCommunicationService.sendRegistrationMessage(complaint);
 
         complaintIndexService.createComplaintIndex(complaint);
@@ -288,7 +289,7 @@ public class ComplaintService {
 
         complaintRepository.saveAndFlush(complaint);
         complaintIndexService.updateComplaintIndex(complaint, nextOwnerId, approvalComment);
-        citizenInboxMessage(complaint);
+        pushUpdatePortalInboxMessage(complaint);
         complaintCommunicationService.sendUpdateMessage(complaint);
 
         return complaint;
@@ -320,21 +321,6 @@ public class ComplaintService {
         return criteria.list();
     }
 
-    private void citizenInboxMessage(final Complaint savedComplaint) {
-
-        final CitizenInboxBuilder citizenInboxBuilder = new CitizenInboxBuilder(MessageType.USER_MESSAGE,
-                getHeaderMessage(savedComplaint), getDetailedMessage(savedComplaint),
-                savedComplaint.getLastModifiedDate(), savedComplaint.getCreatedBy(), Priority.High);
-        citizenInboxBuilder.module(moduleService.getModuleByName(MODULE_NAME));
-        citizenInboxBuilder.identifier(savedComplaint.getCrn());
-        citizenInboxBuilder.link("/pgr/complaint/update/" + savedComplaint.getCrn());
-        citizenInboxBuilder.state(savedComplaint.getState());
-        citizenInboxBuilder.status(savedComplaint.getStatus().getName());
-
-        final CitizenInbox citizenInbox = citizenInboxBuilder.build();
-        citizenInboxService.pushMessage(citizenInbox);
-    }
-
     private String getHeaderMessage(final Complaint savedComplaint) {
         final StringBuilder headerMessage = new StringBuilder();
         if (COMPLAINT_REGISTERED.equals(savedComplaint.getStatus().getName()))
@@ -342,14 +328,6 @@ public class ComplaintService {
         else
             headerMessage.append("Grievance Redressal");
         return headerMessage.toString();
-    }
-
-    private String getDetailedMessage(final Complaint savedComplaint) {
-        final StringBuilder detailedMessage = new StringBuilder();
-        detailedMessage.append("Grievance No. ").append(savedComplaint.getCrn()).append(" regarding ")
-                .append(savedComplaint.getComplaintType().getName()).append(" in ")
-                .append(savedComplaint.getStatus().getName()).append(" status.");
-        return detailedMessage.toString();
     }
 
     public List<HashMap<String, Object>> getHistory(final Complaint complaint) {
@@ -545,5 +523,42 @@ public class ComplaintService {
     public boolean canSendToPreviousAssignee(final Complaint complaint) {
         return complaint.hasState() && complaint.previousAssignee() != null &&
                 forwardSkippablePositionService.isSkippablePosition(complaint.currentAssignee());
+    }
+    
+    private void pushPortalInboxMessage(final Complaint savedComplaint) {
+
+        final String link = "/pgr/complaint/update/" + savedComplaint.getCrn();
+
+        final Integer slaHours = savedComplaint.getComplaintType().getSlaHours();
+
+        final StringBuilder detailedMessage = new StringBuilder();
+        detailedMessage.append("Complaint Type : ").append(savedComplaint.getComplaintType().getName());
+        if (savedComplaint.getLocation() != null && StringUtils.isNotBlank(savedComplaint.getLocation().getName()))
+            detailedMessage.append(" in ").append(savedComplaint.getLocation().getName());
+        final PortalInboxBuilder portalInboxBuilder = new PortalInboxBuilder(moduleService.getModuleByName(MODULE_NAME),
+                savedComplaint.getStateType(), savedComplaint.getCrn(), savedComplaint.getCrn(), savedComplaint.getId(),
+                getHeaderMessage(savedComplaint), detailedMessage.toString(), link,
+                false, savedComplaint.getStatus().getName(),
+                slaHours != null ? DateUtils.addHours(new Date(), slaHours) : null, savedComplaint.getState(),
+                securityUtils.getCurrentUser());
+
+        final PortalInbox portalInbox = portalInboxBuilder.build();
+
+        portalInboxService.pushInboxMessage(portalInbox);
+    }
+
+    private void pushUpdatePortalInboxMessage(final Complaint savedComplaint) {
+
+        final String link = "/pgr/complaint/update/" + savedComplaint.getCrn();
+
+        boolean resolved = false;
+        if (savedComplaint.getStatus().getName().equalsIgnoreCase("COMPLETED")
+                || savedComplaint.getStatus().getName().equalsIgnoreCase("REJECTED")
+                || savedComplaint.getStatus().getName().equalsIgnoreCase("WITHDRAWN"))
+            resolved = true;
+
+        portalInboxService.updateInboxMessage(savedComplaint.getCrn(), moduleService.getModuleByName(MODULE_NAME).getId(),
+                savedComplaint.getStatus().getName(), resolved, null, savedComplaint.getState(), savedComplaint.getCreatedBy(),
+                savedComplaint.getCrn(), link);
     }
 }

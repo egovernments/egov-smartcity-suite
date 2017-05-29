@@ -49,15 +49,15 @@
 
 <div class="form-group">	
 	<label class="col-sm-3 control-label text-right"><spring:message
-			code="lbl.monthlyfees" /><span id="spanmonthlymandatory" class="mandatory"></span></label>
+			code="lbl.monthlyfees" /></label>
 	<div class="col-sm-3 add-margin">
-		<form:input id="monthlyFee" path="existingConnection.monthlyFee" class="form-control text-right patternvalidation" maxlength="6" data-pattern="number" required="required" />  
-		<form:errors path="existingConnection.monthlyFee" cssClass="add-margin error-msg" />	
+		<form:input id="monthlyFee" path="existingConnection.monthlyFee" class="form-control text-right patternvalidation" maxlength="6" data-pattern="number"  disabled="true"/>  
+		<form:errors path="existingConnection.monthlyFee" cssClass="add-margin error-msg"/>	
 	</div>
 	<label class="col-sm-2 control-label text-right"><spring:message
-			code="lbl.donationcharges" /><span class="mandatory"></span></label>
+			code="lbl.donationcharges" /></label>
 	<div class="col-sm-3 add-margin">
-		<form:input path="existingConnection.donationCharges" class="form-control text-right patternvalidation" maxlength="6" data-pattern="number"  required="required"/>
+		<form:input path="existingConnection.donationCharges" class="form-control text-right patternvalidation" maxlength="6" data-pattern="number" />
 			<form:errors path="existingConnection.donationCharges" cssClass="add-margin error-msg" />	
 	</div>
 </div>
@@ -78,13 +78,13 @@
 
 <div class="form-group">	
 	<label class="col-sm-3 control-label text-right"><spring:message
-			code="lbl.metercost" /><span class="mandatory"></span></label>
+			code="lbl.metercost" /></label>
 	<div class="col-sm-3 add-margin">
 		<form:input id="existmeterCost" path="existingConnection.meterCost" class="form-control text-right patternvalidation" maxlength="6" data-pattern="number"  />
 			<form:errors path="existingConnection.meterCost" cssClass="add-margin error-msg" />	  
 	</div>
 	<label class="col-sm-2 control-label text-right"><spring:message
-			code="lbl.metername" /><span class="mandatory"></span></label>
+			code="lbl.metername" /></label>
 	<div class="col-sm-3 add-margin">
 		<form:input id="existmeterName" path="existingConnection.meterName" class="form-control text-left" maxlength="20"/> 
 			<form:errors path="existingConnection.meterName" cssClass="add-margin error-msg" />	

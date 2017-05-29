@@ -37,33 +37,13 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.portal.service;
+package org.egov.portal.repository;
 
-import java.util.List;
+import org.egov.portal.entity.PortalNotification;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-import org.egov.portal.entity.PortalInboxUser;
-import org.egov.portal.repository.PortalInboxUserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-@Service
-@Transactional(readOnly = true)
-public class PortalInboxUserService {
-
-    @Autowired
-    private PortalInboxUserRepository portalInboxUserRepository;
-
-    public List<PortalInboxUser> getPortalInboxByResolved(final Long userId, final boolean resolved) {
-        return portalInboxUserRepository.getPortalInboxByResolved(userId, resolved);
-    }
-
-    public List<PortalInboxUser> getPortalInboxByUserId(final Long userId) {
-        return portalInboxUserRepository.findByUser_IdOrderByIdDesc(userId);
-    }
-
-    public Long getPortalInboxUserCount(final Long userId) {
-        return portalInboxUserRepository.getPortalInboxUserCount(userId);
-    }
+@Repository
+public interface PortalNotificationRepository extends JpaRepository<PortalNotification, Long> {
 
 }

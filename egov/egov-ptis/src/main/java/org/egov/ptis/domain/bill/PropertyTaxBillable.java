@@ -82,6 +82,7 @@ import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.PropertyDAO;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
+import org.egov.ptis.domain.service.property.RebateService;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -142,6 +143,8 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
     private PropertyTaxCommonUtils propertyTaxCommonUtil;
     @Autowired
     private FinancialUtil financialUtil;
+    @Autowired
+    private RebateService rebateService;
 
     @Override
     public Boolean getOverrideAccountHeadsAllowed() {
@@ -520,7 +523,7 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
 
     @Override
     public boolean isEarlyPayRebateActive() {
-        return penaltyCalculationService.isEarlyPayRebateActive();
+        return rebateService.isEarlyPayRebateActive();
     }
 
     public void setUserId(final Long userId) {
@@ -602,6 +605,10 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
 
     public void setPenaltyCalculationService(PenaltyCalculationService penaltyCalculationService) {
         this.penaltyCalculationService = penaltyCalculationService;
+    }
+    
+    public void setRebateService(RebateService rebateService) {
+        this.rebateService = rebateService;
     }
 
     public void setModuleDao(ModuleService moduleDao) {

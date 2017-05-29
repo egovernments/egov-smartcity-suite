@@ -127,9 +127,6 @@
 									</thead>
 									<tbody>
 										<c:set value="" var="startfinyear" />
-										<input type="hidden" name="${legacyInstallmentwiseFees}"
-											id="legacyInstallmentwiseFees"
-											value="${legacyInstallmentwiseFees}" />
 										<c:forEach items="${legacyInstallmentwiseFees}" var="LIFee"
 											varStatus="stat">
 											<tr>

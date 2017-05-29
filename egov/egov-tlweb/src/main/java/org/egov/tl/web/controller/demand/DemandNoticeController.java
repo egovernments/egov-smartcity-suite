@@ -112,6 +112,8 @@ import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 @Controller
 @RequestMapping("/demand-notice")
 public class DemandNoticeController {
+    
+    private static final String WITH=" with ";
 
     @Autowired
     private TradeLicenseService tradeLicenseService;
@@ -337,25 +339,32 @@ public class DemandNoticeController {
         StringBuilder penaltylist = new StringBuilder();
         for (PenaltyRates penaltyRate : penaltyRates) {
             LocalDate currentinstStartdate = LocalDate.fromDateFields(currentInstallment.getFromDate());
-            if (penaltyRate.getRate() <= 0 || penaltyRate.getToRange() < -1) {
-                penaltylist.append("Before ").append(getDefaultFormattedDate(currentinstStartdate.
-                        plusDays(penaltyRate.getToRange().intValue()).toDate())).
-                        append(" without penalty\n");
+            if (penaltyRate.getRate() <= 0) {
+                penaltylist.append("Before ")
+                        .append(getDefaultFormattedDate(
+                                currentinstStartdate.plusDays(penaltyRate.getToRange().intValue()).toDate()))
+                        .append(" without penalty\n");
+
             }
-            if (penaltyRate.getToRange() >= -1) {
+            if (penaltyRate.getRate() > 0) {
                 if (penaltyRate.getToRange() >= 999) {
                     penaltylist.append("    After ").append(getDefaultFormattedDate(
-                            currentinstStartdate.plusDays(penaltyRate.getFromRange().intValue()).toDate())).append(" with ").
-                            append(penaltyRate.getRate().intValue()).append("% penalty");
+                            currentinstStartdate.plusDays(penaltyRate.getFromRange().intValue()).toDate())).append(WITH)
+                            .append(penaltyRate.getRate().intValue()).append("% penalty");
+                } else if (penaltyRate.getFromRange() <= -999) {
+                    penaltylist.append("Before ")
+                            .append(getDefaultFormattedDate(
+                                    currentinstStartdate.plusDays(penaltyRate.getToRange().intValue()).toDate()))
+                            .append(WITH)
+                            .append(penaltyRate.getRate().intValue()).append("% penalty\n");
                 } else {
                     penaltylist.append("    From ").append(getDefaultFormattedDate(currentinstStartdate
-                            .plusDays(penaltyRate.getFromRange().intValue()).toDate())).append(" to ").
-                            append(getDefaultFormattedDate(currentinstStartdate
-                                    .plusDays(penaltyRate.getToRange().intValue()).toDate())).append(" with ").
-                            append(penaltyRate.getRate().intValue()).append("% penalty\n");
+                            .plusDays(penaltyRate.getFromRange().intValue()).toDate())).append(" to ")
+                            .append(getDefaultFormattedDate(currentinstStartdate
+                                    .plusDays(penaltyRate.getToRange().intValue()).toDate()))
+                            .append(WITH).append(penaltyRate.getRate().intValue()).append("% penalty\n");
 
                 }
-
             }
         }
         return penaltylist.toString();
