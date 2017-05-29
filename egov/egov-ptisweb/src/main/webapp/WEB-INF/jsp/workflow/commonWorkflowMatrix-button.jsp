@@ -42,12 +42,10 @@
 jQuery.noConflict();
 jQuery(document).on('change', ".applicationcheckbox", function () {
 	var applicationCheckVal = jQuery('#applicationCheck').prop("checked");
-	 if(applicationCheckVal){
+	 if(applicationCheckVal)
 		 jQuery('#Forward').removeAttr("disabled");
-	 }
-	 else{
+	 else
 		 jQuery('#Forward').attr('disabled', 'disabled');
-	 }
 });
     
 	function validateWorkFlowApprover(name,errorDivId) {
@@ -84,14 +82,14 @@ jQuery(document).on('change', ".applicationcheckbox", function () {
 	}
 
 	jQuery(document).ready(function(e){
-		if(jQuery('#applicationCheck').length == 0){
+		if(jQuery('#applicationCheck').length == 0)
 			jQuery('#Forward').removeAttr('disabled');
-		}
 	});
     
 </script>
 <div class="buttonbottom" align="center">
 	<s:hidden id="workFlowAction" name="workFlowAction"/>
+	<s:hidden id="forwardExists" name="forwardExists" value="false"/>
 	<table style="width: 100%; text-align: center;">
 		<tr>
 			<td><s:iterator value="%{getValidActions()}" var="name">
