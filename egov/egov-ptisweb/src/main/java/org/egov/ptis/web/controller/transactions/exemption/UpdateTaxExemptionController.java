@@ -326,10 +326,11 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
             if (request.getParameter("mode").equalsIgnoreCase(VIEW))
                 taxExemptionService.updateProperty(property, approvalComent, workFlowAct, approvalPosition,
                         propertyByEmployee, EXEMPTION);
-            else
+            else{
                 taxExemptedReason = request.getParameter(TAXEXEMPTIONREASON);
             taxExemptionService.saveProperty(property, oldProperty, status, approvalComent, workFlowAct,
                     approvalPosition, taxExemptedReason, propertyByEmployee, EXEMPTION);
+            }
 
             successMessage = "Property Exemption rejected successfully and forwared to "
                     + assignment.getEmployee().getName().concat("~").concat(assignment.getPosition().getName())
