@@ -79,7 +79,7 @@ public class MutationFeeDetails extends AbstractAuditable {
     private BigDecimal percentage;
 
     @Column(name = "is_recursive")
-    private Character isRecursive;
+    private Character isRecursive='N';
 
     @Column(name = "recursive_factor")
     private BigDecimal recursiveFactor;
