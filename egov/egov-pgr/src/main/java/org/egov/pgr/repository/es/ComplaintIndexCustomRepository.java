@@ -53,8 +53,8 @@ public interface ComplaintIndexCustomRepository {
     Map<String, SearchResponse> findAllGrievanceByFilter(ComplaintDashBoardRequest complaintDashBoardRequest,
             BoolQueryBuilder query, String grouByField);
 
-    SearchResponse findAllGrievanceByComplaintType(ComplaintDashBoardRequest complaintDashBoardRequest, BoolQueryBuilder query,
-            String grouByField);
+    Map<String,SearchResponse> findAllGrievanceByComplaintType(ComplaintDashBoardRequest complaintDashBoardRequest,
+            BoolQueryBuilder query, String grouByField);
 
     String getWardName(String wardNo);
 
