@@ -51,11 +51,8 @@ function EnableForwardButton(){
 }
 
 jQuery(document).ready(function(e){
-
-	if(jQuery('#applicationCheck').length == 0){
+	if(jQuery('#applicationCheck').length == 0)
 		jQuery('#Forward').removeAttr('disabled');
-	}
-	
 });
 
 function validateWorkFlowApprover(name) {
