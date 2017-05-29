@@ -44,12 +44,16 @@
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 <c:if test="${nextAction !='END'}" > 
 		<div class="panel panel-primary" data-collapsed="0" >				
-			<div class="panel-heading">
-				<div class="panel-title">
-					<spring:message code="lbl.forwardto"/>
-				</div>					
-			</div>
 			<div class="panel-body">
+				</br> <input type="checkbox" id="applicationCheck" cssClass="applicationcheckbox" onchange="EnableForwardButton()"/>
+				<spring:message code="lbl.checkbox" />
+			</div>
+		<div class="panel-heading">
+			<div class="panel-title">
+				<spring:message code="lbl.forwardto" />
+			</div>
+		</div> 
+		<div class="panel-body">
 	
  <c:if test="${currentState!= 'null' && !'Closed'.equalsIgnoreCase(currentState)}">
 	<form:hidden path="" id="currentState" name="currentState" value="${currentState}"/>

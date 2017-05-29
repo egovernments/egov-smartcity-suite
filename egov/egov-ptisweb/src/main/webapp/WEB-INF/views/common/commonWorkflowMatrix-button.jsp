@@ -43,6 +43,21 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <script type="text/javascript">
 
+function EnableForwardButton(){
+	if(jQuery('#applicationCheck').prop("checked"))
+		jQuery('#Forward').removeAttr("disabled");
+	else
+		jQuery('#Forward').attr('disabled','disabled');
+}
+
+jQuery(document).ready(function(e){
+
+	if(jQuery('#applicationCheck').length == 0){
+		jQuery('#Forward').removeAttr('disabled');
+	}
+	
+});
+
 function validateWorkFlowApprover(name) {
 	document.getElementById("workFlowAction").value=name;
     var approverPosId = document.getElementById("approvalPosition");
@@ -66,9 +81,23 @@ function validateWorkFlowApprover(name) {
 		<tr>
 			<td>
 		<c:forEach items="${validActionList}" var="validButtons">
-				<form:button type="submit" id="${validButtons}" class="btn btn-primary"  value="${validButtons}" onclick="validateWorkFlowApprover('${validButtons}');">
-						<c:out value="${validButtons}" /> </form:button>
-			</c:forEach>
+					<c:choose>
+						<c:when test="${validButtons == 'Forward'}">
+							<form:button type="submit" disabled="true" id="${validButtons}"
+								class="btn btn-primary" value="${validButtons}"
+								onclick="validateWorkFlowApprover('${validButtons}');">
+								<c:out value="${validButtons}" />
+							</form:button>
+						</c:when>
+						<c:otherwise>
+							<form:button type="submit" disabled="false" id="${validButtons}"
+								class="btn btn-primary" value="${validButtons}"
+								onclick="validateWorkFlowApprover('${validButtons}');">
+								<c:out value="${validButtons}" />
+							</form:button>
+						</c:otherwise>
+					</c:choose>
+				</c:forEach>
 				<input type="button" name="button2" id="button2" value="Close"
 				class="btn btn-default" onclick="window.close();" /></td>
 		</tr>
