@@ -75,8 +75,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYP
 import static org.egov.ptis.constants.PropertyTaxConstants.SESSIONLOGINID;
 import static org.egov.ptis.constants.PropertyTaxConstants.SOURCEOFDATA_DATAENTRY;
 import static org.egov.ptis.constants.PropertyTaxConstants.SOURCEOFDATA_MIGRATION;
-import static org.egov.ptis.constants.PropertyTaxConstants.SOURCE_ONLINE;
-
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_OF_WORK_GRP;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -93,7 +92,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
-import org.apache.struts2.convention.annotation.Actions;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
@@ -114,11 +112,13 @@ import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
+import org.egov.ptis.domain.entity.objection.RevisionPetition;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyMaterlizeView;
 import org.egov.ptis.domain.entity.property.PropertyStatusValues;
 import org.egov.ptis.domain.service.property.PropertyService;
+import org.egov.ptis.domain.service.revisionPetition.RevisionPetitionService;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -261,7 +261,9 @@ public class SearchPropertyAction extends BaseFormAction {
 
     @Autowired
     private PropertyTaxCommonUtils propertyTaxCommonUtils;
-
+    
+    @Autowired
+    private RevisionPetitionService revisionPetitionService;
     @Override
     public Object getModel() {
         return null;
@@ -429,13 +431,28 @@ public class SearchPropertyAction extends BaseFormAction {
             else if (APPLICATION_TYPE_REVISION_PETITION.equals(applicationType))
                 return APPLICATION_TYPE_MEESEVA_RP;
 
-        if (APPLICATION_TYPE_EDIT_DEMAND.equals(applicationType)) {
-            if (!basicProperty.getSource().toString().equalsIgnoreCase(SOURCEOFDATA_DATAENTRY.toString())) {
-                addActionError(getText("edit.dataEntry.source.error"));
-                return COMMON_FORM;
-            }
-            return APPLICATION_TYPE_EDIT_DEMAND;
-        }
+		if (APPLICATION_TYPE_EDIT_DEMAND.equals(applicationType)) {
+			boolean grpDone = false;
+			RevisionPetition oldObjection = revisionPetitionService.getExistingGRP(basicProperty);
+			if (oldObjection != null || (oldObjection == null && NATURE_OF_WORK_GRP
+					.equalsIgnoreCase(basicProperty.getActiveProperty().getPropertyModifyReason()))) {
+				grpDone = true;
+			}
+			boolean dataEntryDone = false;
+			if ((SOURCEOFDATA_DATAENTRY.toString().equalsIgnoreCase(basicProperty.getSource().toString())
+					&& basicProperty.getPropertySet().size() == 1)
+					|| (SOURCEOFDATA_DATAENTRY.toString().equalsIgnoreCase(basicProperty.getSource().toString())
+							&& grpDone))
+				dataEntryDone = true;
+
+			if (!(dataEntryDone
+					|| (SOURCEOFDATA_MIGRATION.toString().equalsIgnoreCase(basicProperty.getSource().toString())
+							&& grpDone))) {
+
+				addActionError(getText("edit.dataEntry.source.error"));
+				return COMMON_FORM;
+			}
+		}
         if (APPLICATION_TYPE_ADD_DEMAND.equals(applicationType)) {
             if (!(basicProperty.getSource().toString().equalsIgnoreCase(SOURCEOFDATA_DATAENTRY.toString())
                     || basicProperty.getSource().toString().equalsIgnoreCase(SOURCEOFDATA_MIGRATION.toString()))) {

@@ -375,6 +375,9 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
     public RevisionPetition getExistingObjections(BasicProperty basicProperty){
             return find("from RevisionPetition rp where rp.basicProperty = ?" ,basicProperty);
     }
+    public RevisionPetition getExistingGRP(BasicProperty basicProperty){
+        return find("from RevisionPetition rp where rp.basicProperty = ? and rp.type = ?" ,basicProperty,PropertyTaxConstants.NATURE_OF_WORK_GRP);
+}
     
 
     /**

@@ -59,13 +59,14 @@ public class DemandDetail {
 	private BigDecimal revisedCollection;	
 	private Boolean isCollectionEditable;
 	private Boolean isNew;
+	private Boolean readOnly;
 
 	public DemandDetail() {
 	}
 
 	public DemandDetail(String reasonMaster, BigDecimal actualAmount, BigDecimal revisedAmount,
 			BigDecimal actualCollection, BigDecimal revisedCollection, Installment installment,
-			Boolean isCollectionEditable, Boolean isNew) {
+			Boolean isCollectionEditable, Boolean isNew, Boolean readOnly) {
 		this.reasonMaster = reasonMaster;
 		this.actualAmount = actualAmount;
 		this.revisedAmount = revisedAmount;
@@ -74,6 +75,7 @@ public class DemandDetail {
 		this.installment = installment;
 		this.isCollectionEditable = isCollectionEditable;
 		this.isNew = isNew;
+		this.readOnly= readOnly;
 	}
 
 	
@@ -141,6 +143,14 @@ public class DemandDetail {
 	public void setIsNew(Boolean isNew) {
 		this.isNew = isNew;
 	}
+	
+	public Boolean getReadOnly() {
+		return readOnly;
+	}
+
+	public void setReadOnly(Boolean readOnly) {
+		this.readOnly = readOnly;
+	}
 
 	@Override
 	public String toString() {
@@ -154,6 +164,7 @@ public class DemandDetail {
 				.append(", revisedCollection=").append(revisedCollection)
 				.append(", isCollectionEditable=").append(isCollectionEditable)
 				.append(", isNew=").append(isNew)
+				.append(",readOnly=").append(readOnly)
 				.append("]").toString();
 	}
 }
