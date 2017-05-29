@@ -115,7 +115,10 @@ function setApprover() {
 <s:hidden id="workFlowDepartment" name="workFlowDepartment" value="%{workFlowDepartment}"/>
 <s:hidden id="pendingActions" name="pendingActions" value="%{pendingActions}"/>
 <s:hidden id="approverName" name="approverName" />
-
+<br>
+	<s:checkbox name="applicationCheck" id="applicationCheck" value="%{applicationCheck}" cssClass="applicationcheckbox"/>
+			<span style="font-size: 15px; color: red"> <s:text
+					name="lbl.validation.checkbox" /> <br>
 <s:if test="%{#request.approverOddTextCss==null}">
       <c:set var="approverOddTextCss" value="greybox" scope="request"/>
        <c:set var="approverOddCSS" value="greybox" scope="request"/>

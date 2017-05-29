@@ -38,8 +38,18 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
-
 <script>
+jQuery.noConflict();
+jQuery(document).on('change', ".applicationcheckbox", function () {
+	var applicationCheckVal = jQuery('#applicationCheck').prop("checked");
+	 if(applicationCheckVal){
+		 jQuery('#Forward').removeAttr("disabled");
+	 }
+	 else{
+		 jQuery('#Forward').attr('disabled', 'disabled');
+	 }
+});
+    
 	function validateWorkFlowApprover(name,errorDivId) {
 		document.getElementById("workFlowAction").value=name;
 	    var approverPosId = document.getElementById("approverPositionId");
@@ -72,6 +82,13 @@
 	    </s:if>
 	    return  onSubmit();
 	}
+
+	jQuery(document).ready(function(e){
+		if(jQuery('#applicationCheck').length == 0){
+			jQuery('#Forward').removeAttr('disabled');
+		}
+	});
+    
 </script>
 <div class="buttonbottom" align="center">
 	<s:hidden id="workFlowAction" name="workFlowAction"/>
@@ -79,9 +96,14 @@
 		<tr>
 			<td><s:iterator value="%{getValidActions()}" var="name">
 					<s:if test="%{name!=''}">
-						<s:submit type="submit" cssClass="buttonsubmit" value="%{name}"
-							id="%{name}" name="%{name}"
-							onclick="return validateWorkFlowApprover('%{name}','jsValidationErrors');" />
+						<s:if test="%{#name.equalsIgnoreCase('Forward')}">
+							<s:submit type="submit" value="%{name}" cssClass="buttonsubmit"
+								id="%{name}" name="%{name}" disabled="true" onclick="return validateWorkFlowApprover('%{name}','jsValidationErrors');"/>
+					    </s:if>
+						<s:else>
+							<s:submit type="submit" cssClass="buttonsubmit" value="%{name}"
+							id="%{name}" name="%{name}" onclick="return validateWorkFlowApprover('%{name}','jsValidationErrors');" />
+						</s:else>
 					</s:if>
 				</s:iterator> <input type="button" name="button2" id="button2" value="Close"
 				class="button" onclick="window.close();" /></td>
