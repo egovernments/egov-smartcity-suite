@@ -444,7 +444,6 @@ public class SearchPropertyAction extends BaseFormAction {
 					|| (SOURCEOFDATA_DATAENTRY.toString().equalsIgnoreCase(basicProperty.getSource().toString())
 							&& grpDone))
 				dataEntryDone = true;
-
 			if (!(dataEntryDone
 					|| (SOURCEOFDATA_MIGRATION.toString().equalsIgnoreCase(basicProperty.getSource().toString())
 							&& grpDone))) {

@@ -75,7 +75,7 @@ public class DemandDetail {
 		this.installment = installment;
 		this.isCollectionEditable = isCollectionEditable;
 		this.isNew = isNew;
-		this.readOnly= readOnly;
+		this.readOnly = readOnly;
 	}
 
 	
@@ -164,7 +164,7 @@ public class DemandDetail {
 				.append(", revisedCollection=").append(revisedCollection)
 				.append(", isCollectionEditable=").append(isCollectionEditable)
 				.append(", isNew=").append(isNew)
-				.append(",readOnly=").append(readOnly)
+				.append(",readOnly=").append(readOnly)				
 				.append("]").toString();
 	}
 }
