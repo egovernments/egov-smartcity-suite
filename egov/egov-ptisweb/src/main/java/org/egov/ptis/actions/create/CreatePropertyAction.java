@@ -1482,18 +1482,22 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                 if (StringUtils.isNotBlank(parentIndex)) {
                     final BasicProperty basicProperty = basicPropertyService
                             .find("From BasicPropertyImpl where upicNo = ? ", parentIndex);
-                    if (areaOfPlot != null && !areaOfPlot.isEmpty()) {
-                        final Area area = new Area();
-                        area.setArea(new Float(areaOfPlot));
-                        property.getPropertyDetail().setSitalArea(area);
-                        if (basicProperty != null && basicProperty.getActiveProperty() != null) {
-                            property.getPropertyDetail().setPropertyTypeMaster(propTypeMstr);
-                            final String errorKey = propService.validationForBifurcation(property, basicProperty,
-                                    propertyMutationMaster.getCode());
-                            if (!isBlank(errorKey))
-                                addActionError(getText(errorKey));
-                        } else
-                            addActionError(getText("error.parent"));
+                    if (basicProperty != null && basicProperty.isUnderWorkflow())
+                        addActionError(getText("error.parent.underworkflow"));
+                    else {
+                        if (areaOfPlot != null && !areaOfPlot.isEmpty()) {
+                            final Area area = new Area();
+                            area.setArea(new Float(areaOfPlot));
+                            property.getPropertyDetail().setSitalArea(area);
+                            if (basicProperty != null && basicProperty.getActiveProperty() != null) {
+                                property.getPropertyDetail().setPropertyTypeMaster(propTypeMstr);
+                                final String errorKey = propService.validationForBifurcation(property, basicProperty,
+                                        propertyMutationMaster.getCode());
+                                if (!isBlank(errorKey))
+                                    addActionError(getText(errorKey));
+                            } else
+                                addActionError(getText("error.parent"));
+                        }
                     }
                 } else
                     addActionError(getText("error.parent.index"));
