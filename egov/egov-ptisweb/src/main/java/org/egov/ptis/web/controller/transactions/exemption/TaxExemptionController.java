@@ -60,6 +60,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -82,7 +83,6 @@ import org.egov.ptis.domain.entity.enums.TransactionType;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.DocumentType;
 import org.egov.ptis.domain.entity.property.Floor;
-import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.TaxExemptionReason;
 import org.egov.ptis.domain.service.exemption.TaxExemptionService;
@@ -136,28 +136,17 @@ public class TaxExemptionController extends GenericWorkFlowController {
     private PropertyService propertyService;
     @Autowired
     private TaxExemptionService taxExemptionService;
-    private Boolean loggedUserIsMeesevaUser = Boolean.FALSE;
-    private Boolean isExempted = Boolean.FALSE;
-    private Boolean isAlert = Boolean.FALSE;
-    private PropertyImpl property;
     @Autowired
     private SecurityUtils securityUtils;
-
-    BasicProperty basicProperty;
-    PropertyImpl propertyImpl = new PropertyImpl();
-    PropertyImpl oldProperty;
-    
     @Autowired
     private PropertyTaxCommonUtils propertyTaxCommonUtils;
 
     @ModelAttribute
-    public Property propertyModel(@PathVariable final String assessmentNo) {
-        basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
-        if (null != basicProperty) {
-            oldProperty = basicProperty.getActiveProperty();
-            propertyImpl = (PropertyImpl) basicProperty.getActiveProperty().createPropertyclone();
-        }
-        return propertyImpl;
+    public PropertyImpl property(@PathVariable("assessmentNo") String assessmentNo) {
+        Optional<BasicProperty> basicProperty = Optional.ofNullable(basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo));
+        if (basicProperty.isPresent())
+            return (PropertyImpl) basicProperty.get().getActiveProperty().createPropertyclone();
+        return null;
     }
 
     @SuppressWarnings("unchecked")
@@ -192,14 +181,14 @@ public class TaxExemptionController extends GenericWorkFlowController {
     }
 
     @RequestMapping(value = "/form/{assessmentNo}", method = RequestMethod.GET)
-    public String exemptionForm(final HttpServletRequest request, final Model model,
+    public String exemptionForm(@ModelAttribute PropertyImpl property, final HttpServletRequest request, final Model model,
             @RequestParam(required = false) final String meesevaApplicationNumber,
             @RequestParam(required = false) final String applicationSource,
             @PathVariable("assessmentNo") final String assessmentNo) {
-        isExempted = oldProperty.getIsExemptedFromTax();
-        isAlert = true;
-        basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
+        BasicProperty basicProperty = property.getBasicProperty();
+        boolean isExempted = basicProperty.getActiveProperty().getIsExemptedFromTax();
         User loggedInUser = securityUtils.getCurrentUser();
+        boolean loggedUserIsMeesevaUser = propertyService.isMeesevaUser(loggedInUser);
         if (!ANONYMOUS_USER.equalsIgnoreCase(loggedInUser.getName()) && propertyService.isEmployee(loggedInUser)
                 && !propertyTaxCommonUtils.isEligibleInitiator(loggedInUser.getId())) {
             model.addAttribute(ERROR_MSG, "msg.initiator.noteligible");
@@ -266,29 +255,30 @@ public class TaxExemptionController extends GenericWorkFlowController {
                 }
             }
         }
-        loggedUserIsMeesevaUser = propertyService.isMeesevaUser(loggedInUser);
         if (loggedUserIsMeesevaUser)
             if (meesevaApplicationNumber == null)
                 throw new ApplicationRuntimeException("MEESEVA.005");
             else
-                propertyImpl.setMeesevaApplicationNumber(meesevaApplicationNumber);
-        model.addAttribute("stateType", propertyImpl.getClass().getSimpleName());
+                property.setMeesevaApplicationNumber(meesevaApplicationNumber);
+
+        model.addAttribute("property", property);
+        model.addAttribute("stateType", property.getClass().getSimpleName());
         model.addAttribute("isExempted", isExempted);
         model.addAttribute(APPLICATION_SOURCE, applicationSource);
-        model.addAttribute("isAlert", isAlert);
+        model.addAttribute("isAlert", true);
         model.addAttribute(CHOULTRY_DOC, "");
         model.addAttribute(WORSHIP_DOC, "");
         model.addAttribute(EDUINST_DOC, "");
         model.addAttribute(EXSERVICE_DOC, "");
         model.addAttribute(NGO_DOC, "");
         taxExemptionService.addModelAttributes(model, basicProperty);
-        prepareWorkflow(model, propertyImpl, new WorkflowContainer());
+        prepareWorkflow(model, property, new WorkflowContainer());
         return TAX_EXEMPTION_FORM;
     }
 
     @Transactional
     @RequestMapping(value = "/form/{assessmentNo}", method = RequestMethod.POST)
-    public String exemptionFormSubmit(@ModelAttribute final Property property, final BindingResult errors,
+    public String exemptionFormSubmit(@ModelAttribute final PropertyImpl property, final BindingResult errors,
             final RedirectAttributes redirectAttrs, final Model model, final HttpServletRequest request,
             @RequestParam String workFlowAction) {
         final Character status = STATUS_WORKFLOW;
@@ -298,16 +288,17 @@ public class TaxExemptionController extends GenericWorkFlowController {
         final Boolean propertyByEmployee = Boolean.valueOf(request.getParameter("propertyByEmployee"));
         String target;
         User loggedInUser = securityUtils.getCurrentUser();
-        loggedUserIsMeesevaUser = propertyService.isMeesevaUser(loggedInUser);
+        boolean loggedUserIsMeesevaUser = propertyService.isMeesevaUser(loggedInUser);
+        PropertyImpl oldProperty = property.getBasicProperty().getActiveProperty();
         final Assignment assignment = propertyService.isCscOperator(loggedInUser)
                 ? propertyService.getAssignmentByDeptDesigElecWard(property.getBasicProperty())
                 : null;
         if ((!propertyByEmployee || loggedUserIsMeesevaUser) && assignment == null
                 && propertyService.getUserPositionByZone(property.getBasicProperty(), false) == null) {
             model.addAttribute(ERROR_MSG, "No Senior or Junior assistants exists,Please check");
-            model.addAttribute("stateType", propertyImpl.getClass().getSimpleName());
-            taxExemptionService.addModelAttributes(model, basicProperty);
-            prepareWorkflow(model, propertyImpl, new WorkflowContainer());
+            model.addAttribute("stateType", property.getClass().getSimpleName());
+            taxExemptionService.addModelAttributes(model, property.getBasicProperty());
+            prepareWorkflow(model, property, new WorkflowContainer());
             target = TAX_EXEMPTION_FORM;
         } else {
             if (StringUtils.isNotBlank(request.getParameter(APPLICATION_SOURCE))
