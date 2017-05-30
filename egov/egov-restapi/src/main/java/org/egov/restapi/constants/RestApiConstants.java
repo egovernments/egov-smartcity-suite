@@ -502,4 +502,19 @@ public class RestApiConstants {
     public static final String THIRD_PARTY_ERR_CONTRACTOR_EMAIL_INVALID = "EGWORKS-CONTRACTOR-20";
     public static final String THIRD_PARTY_ERR_MSG_CONTRACTOR_EMAIL_INVALID = "Email is not a valid";
 
+    public static final String THIRD_PARTY_ERR_CODE_JSON_REQUEST = "EGF-VOUCHER-1";
+    public static final String THIRD_PARTY_ERR_MSG_JSON_REQUEST = "Please send valid JSON request";
+
+    public static final String THIRD_PARTY_ERR_VOUCHER_HEADERDETAILS_CODE_JSON_REQUEST = "EGF-VOUCHER-2";
+    public static final String THIRD_PARTY_ERR_VOUCHER_HEADERDETAILS_MSG_JSON_REQUEST = "Please send valid Header Details in JSON request";
+
+    public static final String THIRD_PARTY_ERR_ACCOUNTCODEDETAILS_CODE_JSON_REQUEST = "EGF-VOUCHER-3";
+    public static final String THIRD_PARTY_ERR_ACCOUNTCODEDETAILS_MSG_JSON_REQUEST = "Please send valid Account Code Details in JSON request";
+
+    public static final String THIRD_PARTY_ERR_NO_VOUCHERDATE_CODE_JSON_REQUEST = "EGF-VOUCHER-4";
+    public static final String THIRD_PARTY_ERR_NO_VOUCHERDATE_MSG_JSON_REQUEST = "Please send Voucher Date in header deatils";
+
+    public static final String THIRD_PARTY_ERR_VOUCHERDATE_CODE_JSON_REQUEST = "EGF-VOUCHER-5";
+    public static final String THIRD_PARTY_ERR_VOUCHERDATE_MSG_JSON_REQUEST = "Voucher date cannot be future date";
+
 }
