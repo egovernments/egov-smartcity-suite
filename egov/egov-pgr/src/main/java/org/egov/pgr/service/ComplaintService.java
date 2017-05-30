@@ -177,12 +177,12 @@ public class ComplaintService {
 
     @Autowired
     private ForwardSkippablePositionService forwardSkippablePositionService;
-    
+
     @Autowired
     private ComplaintCommunicationService complaintCommunicationService;
-    
+
     @Autowired
-    private PortalInboxService portalInboxService; 
+    private PortalInboxService portalInboxService;
 
     @Transactional
     public Complaint createComplaint(final Complaint complaint) {
@@ -413,7 +413,6 @@ public class ComplaintService {
         return complaintHistory;
     }
 
-
     @ReadOnly
     public Page<Complaint> getLatest(final int page, final int pageSize) {
         final int offset = page - 1;
@@ -524,7 +523,7 @@ public class ComplaintService {
         return complaint.hasState() && complaint.previousAssignee() != null &&
                 forwardSkippablePositionService.isSkippablePosition(complaint.currentAssignee());
     }
-    
+
     private void pushPortalInboxMessage(final Complaint savedComplaint) {
 
         final String link = "/pgr/complaint/update/" + savedComplaint.getCrn();
@@ -540,7 +539,7 @@ public class ComplaintService {
                 getHeaderMessage(savedComplaint), detailedMessage.toString(), link,
                 false, savedComplaint.getStatus().getName(),
                 slaHours != null ? DateUtils.addHours(new Date(), slaHours) : null, savedComplaint.getState(),
-                securityUtils.getCurrentUser());
+                Arrays.asList(securityUtils.getCurrentUser()));
 
         final PortalInbox portalInbox = portalInboxBuilder.build();
 

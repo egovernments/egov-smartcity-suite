@@ -42,6 +42,7 @@ package org.egov.portal.entity;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.User;
@@ -53,12 +54,27 @@ import org.egov.infra.workflow.entity.State;
 public class PortalInboxBuilder {
 
     private final PortalInbox portalInbox;
-    
 
+    /***
+     * 
+     * @param module -- Mandatory. Module details.
+     * @param serviceType --Mandatory. Service type.
+     * @param applicationNumber -- Mandatory. Application number
+     * @param consumerNumber -- Non mandatory field. Individual object consumer number.
+     * @param entityId -- Main object reference id
+     * @param headerMsg -- Brief detail about application
+     * @param detailedMessage --Mandatory Detail about application
+     * @param link -- Mandatory. Url required to view application.
+     * @param isResolved -- true. If application processed completely.
+     * @param status -- Mandatory field. Current application status
+     * @param slaEndDate -- SLA end date
+     * @param state -- Workflow state 
+     * @param user -- List  Assignee user's
+     */
     public PortalInboxBuilder(final Module module, final String serviceType, final String applicationNumber,
             final String consumerNumber, final Long entityId, final String headerMsg, final String detailedMessage,
             final String link, final boolean isResolved, final String status, final Date slaEndDate, final State state,
-            final User user) {
+            final List<User> user) {
         portalInbox = new PortalInbox();
         portalInbox.setModule(module);
         portalInbox.setServiceType(serviceType);
@@ -74,14 +90,17 @@ public class PortalInboxBuilder {
         portalInbox.setSlaEndDate(slaEndDate);
         portalInbox.setState(state);
         portalInbox.setApplicationDate(DateUtils.now());
-        //TODO : Need to check this condition
-        if (user != null
-                && (UserType.BUSINESS.toString().equalsIgnoreCase(user.getType().toString()) || UserType.CITIZEN
-                        .toString().equalsIgnoreCase(user.getType().toString()))) {
-            PortalInboxUser portalInboxUser = new PortalInboxUser();
-            portalInboxUser.setUser(user);
-            portalInboxUser.setPortalInbox(portalInbox);
-            portalInbox.setTempPortalInboxUser(new ArrayList<PortalInboxUser>(Arrays.asList(portalInboxUser)));
+
+        if (user != null && !user.isEmpty()) {
+            for (User userObject : user) {
+                if (UserType.BUSINESS.toString().equalsIgnoreCase(userObject.getType().toString()) || UserType.CITIZEN
+                        .toString().equalsIgnoreCase(userObject.getType().toString())) {
+                    PortalInboxUser portalInboxUser = new PortalInboxUser();
+                    portalInboxUser.setUser(userObject);
+                    portalInboxUser.setPortalInbox(portalInbox);
+                    portalInbox.setTempPortalInboxUser(new ArrayList<PortalInboxUser>(Arrays.asList(portalInboxUser)));
+                }
+            }
         }
     }
 
@@ -97,15 +116,7 @@ public class PortalInboxBuilder {
             throw new ApplicationRuntimeException("Link is mandatory");
         if (portalInbox.getStatus() == null || portalInbox.getStatus().isEmpty())
             throw new ApplicationRuntimeException("Status is mandatory");
-        if (portalInbox.getTempPortalInboxUser() != null && !portalInbox.getTempPortalInboxUser().isEmpty()) {
-            User user = portalInbox.getTempPortalInboxUser().get(0).getUser();
-            if (user != null
-                    && !(UserType.BUSINESS.toString().equalsIgnoreCase(user.getType().toString()) || UserType.CITIZEN
-                            .toString().equalsIgnoreCase(user.getType().toString())))
-                throw new ApplicationRuntimeException("User must be a Citizen or Business User.");
         }
-
-    }
 
     private void validateParams() {
         if (portalInbox.getModule() == null)

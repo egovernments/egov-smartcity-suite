@@ -3823,7 +3823,7 @@ public class PropertyService {
         final PortalInboxBuilder portalInboxBuilder = new PortalInboxBuilder(module,property.getPropertyModifyReason()+" "+module.getDisplayName(),
                 property.getApplicationNo(),basicProperty.getUpicNo(),basicProperty.getId(),
                 property.getPropertyModifyReason(),getDetailedMessage(property),property.myLinkId(),
-                isResolved(property),basicProperty.getStatus().getName(),getSlaEndDate(applictionType),property.getState(),securityUtils.getCurrentUser());
+                isResolved(property),basicProperty.getStatus().getName(),getSlaEndDate(applictionType),property.getState(),Arrays.asList(securityUtils.getCurrentUser()));
         final PortalInbox portalInbox = portalInboxBuilder.build();
         portalInboxService.pushInboxMessage(portalInbox);
     }
