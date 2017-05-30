@@ -1,0 +1,1 @@
+update eg_action set displayname = 'Link H.S.C to Assessment(Vice Versa)' where name ='LinkActiveProperty' and parentmodule =(select id from eg_module where name='WaterTaxTransactions') and application =(select id from eg_module where name='Water Tax Management') and displayname ='Link Active Property';
