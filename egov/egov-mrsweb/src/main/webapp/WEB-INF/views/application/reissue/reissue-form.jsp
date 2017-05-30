@@ -49,15 +49,7 @@
  <div class="row" id="page-content">
 	<div class="col-md-12"> 
 		<div class="text-right error-msg" style="font-size:14px;"></div>
-		<input type="hidden" name="isOnline" id=isonline value="${isOnline}" />
-			<c:set value="/mrs/reissue/create" var="actionUrl" />
-				<c:if test="${isOnline}">
-		<c:set
-		value="/mrs/citizen/reissue/create" var="actionUrl" />
-		
-		
-		</c:if>
-			
+			<c:set value="/mrs/reissue/create" var="actionUrl" />		
 			<c:if test="${reIssue.status.code == 'REJECTED'}">
 				 <c:set value="/mrs/reissue/workflow" var="actionUrl" />
 			</c:if>
