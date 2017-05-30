@@ -62,229 +62,240 @@ import static org.egov.infra.workflow.matrix.entity.WorkFlowMatrix.SEQ_WF_MATRIX
 @SequenceGenerator(name = SEQ_WF_MATRIX, sequenceName = SEQ_WF_MATRIX, allocationSize = 1)
 public class WorkFlowMatrix extends AbstractPersistable<Long> implements Cloneable {
 
-    public static final String SEQ_WF_MATRIX = "SEQ_EG_WF_MATRIX";
-    private static final long serialVersionUID = 4954386159285858993L;
-    @Id
-    @GeneratedValue(generator = SEQ_WF_MATRIX, strategy = GenerationType.SEQUENCE)
-    private Long id;
+	public static final String SEQ_WF_MATRIX = "SEQ_EG_WF_MATRIX";
+	private static final long serialVersionUID = 4954386159285858993L;
+	@Id
+	@GeneratedValue(generator = SEQ_WF_MATRIX, strategy = GenerationType.SEQUENCE)
+	private Long id;
 
-    @SafeHtml
-    private String department;
+	@SafeHtml
+	private String department;
 
-    @NotNull
-    @SafeHtml
-    private String objectType;
+	@NotNull
+	@SafeHtml
+	private String objectType;
 
-    @SafeHtml
-    private String currentState;
+	@SafeHtml
+	private String currentState;
 
-    @SafeHtml
-    private String currentStatus;
+	@SafeHtml
+	private String currentStatus;
 
-    @SafeHtml
-    private String pendingActions;
+	@SafeHtml
+	private String pendingActions;
 
-    @SafeHtml
-    private String currentDesignation;
+	@SafeHtml
+	private String currentDesignation;
 
-    @SafeHtml
-    private String additionalRule;
+	@SafeHtml
+	private String additionalRule;
 
-    @SafeHtml
-    private String nextState;
+	@SafeHtml
+	private String nextState;
 
-    @SafeHtml
-    private String nextAction;
+	@SafeHtml
+	private String nextAction;
 
-    @SafeHtml
-    private String nextDesignation;
+	@SafeHtml
+	private String nextDesignation;
 
-    @SafeHtml
-    private String nextStatus;
+	@SafeHtml
+	private String nextStatus;
 
-    @SafeHtml
-    private String validActions;
+	@SafeHtml
+	private String validActions;
 
-    private BigDecimal fromQty;
+	private BigDecimal fromQty;
 
-    private BigDecimal toQty;
+	private BigDecimal toQty;
 
-    @Temporal(TemporalType.DATE)
-    private Date fromDate;
+	@Temporal(TemporalType.DATE)
+	private Date fromDate;
 
-    @Temporal(TemporalType.DATE)
-    private Date toDate;
+	@Temporal(TemporalType.DATE)
+	private Date toDate;
 
-    public WorkFlowMatrix() {
+	private String tenantId;
 
-    }
+	public WorkFlowMatrix() {
 
-    public WorkFlowMatrix(final String department, final String objectType, final String currentState, final String currentStatus,
-                          final String pendingActions, final String currentDesignation, final String additionalRule, final String nextState,
-                          final String nextAction, final String nextDesignation, final String nextStatus,
-                          final String validActions, final BigDecimal fromQty, final BigDecimal toQty, final Date fromDate, final Date toDate) {
-        super();
-        this.department = department;
-        this.objectType = objectType;
-        this.currentState = currentState;
-        this.currentStatus = currentStatus;
-        this.pendingActions = pendingActions;
-        this.currentDesignation = currentDesignation;
-        this.additionalRule = additionalRule;
-        this.nextState = nextState;
-        this.nextAction = nextAction;
-        this.nextDesignation = nextDesignation;
-        this.nextStatus = nextStatus;
-        this.validActions = validActions;
-        this.fromQty = fromQty;
-        this.toQty = toQty;
-        this.fromDate = fromDate;
-        this.toDate = toDate;
-    }
+	}
 
-    @Override
-    public WorkFlowMatrix clone() {
-        return new WorkFlowMatrix(department, objectType, currentState, currentStatus, pendingActions, currentDesignation, additionalRule, nextState,
-                nextAction, nextDesignation, nextStatus,
-                validActions, fromQty, toQty, fromDate, toDate);
-    }
+	public WorkFlowMatrix(final String department, final String objectType, final String currentState,
+			final String currentStatus, final String pendingActions, final String currentDesignation,
+			final String additionalRule, final String nextState, final String nextAction, final String nextDesignation,
+			final String nextStatus, final String validActions, final BigDecimal fromQty, final BigDecimal toQty,
+			final Date fromDate, final Date toDate) {
+		super();
+		this.department = department;
+		this.objectType = objectType;
+		this.currentState = currentState;
+		this.currentStatus = currentStatus;
+		this.pendingActions = pendingActions;
+		this.currentDesignation = currentDesignation;
+		this.additionalRule = additionalRule;
+		this.nextState = nextState;
+		this.nextAction = nextAction;
+		this.nextDesignation = nextDesignation;
+		this.nextStatus = nextStatus;
+		this.validActions = validActions;
+		this.fromQty = fromQty;
+		this.toQty = toQty;
+		this.fromDate = fromDate;
+		this.toDate = toDate;
+	}
 
-    @Override
-    public Long getId() {
-        return id;
-    }
+	@Override
+	public WorkFlowMatrix clone() {
+		return new WorkFlowMatrix(department, objectType, currentState, currentStatus, pendingActions,
+				currentDesignation, additionalRule, nextState, nextAction, nextDesignation, nextStatus, validActions,
+				fromQty, toQty, fromDate, toDate);
+	}
 
-    @Override
-    public void setId(final Long id) {
-        this.id = id;
-    }
+	@Override
+	public Long getId() {
+		return id;
+	}
 
-    public String getDepartment() {
-        return department;
-    }
+	@Override
+	public void setId(final Long id) {
+		this.id = id;
+	}
 
-    public void setDepartment(final String department) {
-        this.department = department;
-    }
+	public String getDepartment() {
+		return department;
+	}
 
-    public String getObjectType() {
-        return objectType;
-    }
+	public void setDepartment(final String department) {
+		this.department = department;
+	}
 
-    public void setObjectType(final String objectType) {
-        this.objectType = objectType;
-    }
+	public String getObjectType() {
+		return objectType;
+	}
 
-    public String getCurrentState() {
-        return currentState;
-    }
+	public void setObjectType(final String objectType) {
+		this.objectType = objectType;
+	}
 
-    public void setCurrentState(final String currentState) {
-        this.currentState = currentState;
-    }
+	public String getCurrentState() {
+		return currentState;
+	}
 
-    public String getCurrentStatus() {
-        return currentStatus;
-    }
+	public void setCurrentState(final String currentState) {
+		this.currentState = currentState;
+	}
 
-    public void setCurrentStatus(final String currentStatus) {
-        this.currentStatus = currentStatus;
-    }
+	public String getCurrentStatus() {
+		return currentStatus;
+	}
 
-    public String getPendingActions() {
-        return pendingActions;
-    }
+	public void setCurrentStatus(final String currentStatus) {
+		this.currentStatus = currentStatus;
+	}
 
-    public void setPendingActions(final String pendingActions) {
-        this.pendingActions = pendingActions;
-    }
+	public String getPendingActions() {
+		return pendingActions;
+	}
 
-    public String getCurrentDesignation() {
-        return currentDesignation;
-    }
+	public void setPendingActions(final String pendingActions) {
+		this.pendingActions = pendingActions;
+	}
 
-    public void setCurrentDesignation(final String currentDesignation) {
-        this.currentDesignation = currentDesignation;
-    }
+	public String getCurrentDesignation() {
+		return currentDesignation;
+	}
 
-    public String getAdditionalRule() {
-        return additionalRule;
-    }
+	public void setCurrentDesignation(final String currentDesignation) {
+		this.currentDesignation = currentDesignation;
+	}
 
-    public void setAdditionalRule(final String additionalRule) {
-        this.additionalRule = additionalRule;
-    }
+	public String getAdditionalRule() {
+		return additionalRule;
+	}
 
-    public String getNextState() {
-        return nextState;
-    }
+	public void setAdditionalRule(final String additionalRule) {
+		this.additionalRule = additionalRule;
+	}
 
-    public void setNextState(final String nextState) {
-        this.nextState = nextState;
-    }
+	public String getNextState() {
+		return nextState;
+	}
 
-    public String getNextAction() {
-        return nextAction;
-    }
+	public void setNextState(final String nextState) {
+		this.nextState = nextState;
+	}
 
-    public void setNextAction(final String nextAction) {
-        this.nextAction = nextAction;
-    }
+	public String getNextAction() {
+		return nextAction;
+	}
 
-    public String getNextDesignation() {
-        return nextDesignation;
-    }
+	public void setNextAction(final String nextAction) {
+		this.nextAction = nextAction;
+	}
 
-    public void setNextDesignation(final String nextDesignation) {
-        this.nextDesignation = nextDesignation;
-    }
+	public String getNextDesignation() {
+		return nextDesignation;
+	}
 
-    public String getNextStatus() {
-        return nextStatus;
-    }
+	public void setNextDesignation(final String nextDesignation) {
+		this.nextDesignation = nextDesignation;
+	}
 
-    public void setNextStatus(final String nextStatus) {
-        this.nextStatus = nextStatus;
-    }
+	public String getNextStatus() {
+		return nextStatus;
+	}
 
-    public String getValidActions() {
-        return validActions;
-    }
+	public void setNextStatus(final String nextStatus) {
+		this.nextStatus = nextStatus;
+	}
 
-    public void setValidActions(final String validActions) {
-        this.validActions = validActions;
-    }
+	public String getValidActions() {
+		return validActions;
+	}
 
-    public BigDecimal getFromQty() {
-        return fromQty;
-    }
+	public void setValidActions(final String validActions) {
+		this.validActions = validActions;
+	}
 
-    public void setFromQty(final BigDecimal fromQty) {
-        this.fromQty = fromQty;
-    }
+	public BigDecimal getFromQty() {
+		return fromQty;
+	}
 
-    public BigDecimal getToQty() {
-        return toQty;
-    }
+	public void setFromQty(final BigDecimal fromQty) {
+		this.fromQty = fromQty;
+	}
 
-    public void setToQty(final BigDecimal toQty) {
-        this.toQty = toQty;
-    }
+	public BigDecimal getToQty() {
+		return toQty;
+	}
 
-    public Date getFromDate() {
-        return fromDate;
-    }
+	public void setToQty(final BigDecimal toQty) {
+		this.toQty = toQty;
+	}
 
-    public void setFromDate(final Date fromDate) {
-        this.fromDate = fromDate;
-    }
+	public Date getFromDate() {
+		return fromDate;
+	}
 
-    public Date getToDate() {
-        return toDate;
-    }
+	public void setFromDate(final Date fromDate) {
+		this.fromDate = fromDate;
+	}
 
-    public void setToDate(final Date toDate) {
-        this.toDate = toDate;
-    }
+	public Date getToDate() {
+		return toDate;
+	}
+
+	public void setToDate(final Date toDate) {
+		this.toDate = toDate;
+	}
+
+	public String getTenantId() {
+		return tenantId;
+	}
+
+	public void setTenantId(String tenantId) {
+		this.tenantId = tenantId;
+	}
 
 }

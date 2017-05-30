@@ -52,6 +52,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.config.security.authentication.SecureUser;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.services.config.properties.ServicesApplicationProperties;
@@ -59,6 +60,7 @@ import org.egov.services.zuulproxy.models.Role;
 import org.egov.services.zuulproxy.models.UserInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.env.Environment;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.context.WebApplicationContext;
@@ -73,6 +75,7 @@ public class ZuulProxyFilter extends ZuulFilter {
 
     private static Logger log = LoggerFactory.getLogger(ZuulProxyFilter.class);
     private static final String USER_INFO = "x-user-info";
+    private static final String CLIENT_ID = "client.id";
 
     @Override
     public String filterType() {
@@ -164,8 +167,16 @@ public class ZuulProxyFilter extends ZuulFilter {
             final List<Role> roles = new ArrayList<Role>();
             userDetails.getUser().getRoles().forEach(authority -> roles.add(new Role(authority.getName())));
 
+            final Environment environment = (Environment) springContext.getBean("environment");
+            final String clientId = environment.getProperty(CLIENT_ID);
+
+            String tenantId = ApplicationThreadLocals.getTenantID();
+            if (StringUtils.isNoneBlank(clientId))
+                tenantId = clientId + "." + tenantId;
+
             final UserInfo userInfo = new UserInfo(roles, userDetails.getUserId(), userDetails.getUsername(), user.getName(),
-                    user.getEmailId(), user.getMobileNumber(), userDetails.getUserType().toString());
+                    user.getEmailId(), user.getMobileNumber(), userDetails.getUserType().toString(),
+                    tenantId);
             final ObjectMapper mapper = new ObjectMapper();
             try {
                 userInfoJson = mapper.writeValueAsString(userInfo);

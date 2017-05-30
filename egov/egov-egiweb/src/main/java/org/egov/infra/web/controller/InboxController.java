@@ -40,95 +40,162 @@
 
 package org.egov.infra.web.controller;
 
-import com.google.gson.GsonBuilder;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.egov.infra.utils.StringUtils.escapeSpecialChars;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.web.support.ui.Inbox;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infra.workflow.entity.WorkflowTypes;
+import org.egov.infra.workflow.entity.contract.StateHistoryModel;
 import org.egov.infra.workflow.inbox.InboxRenderServiceDeligate;
+import org.egov.infra.workflow.multitenant.model.ProcessInstance;
+import org.egov.infra.workflow.multitenant.model.Task;
+import org.egov.infra.workflow.multitenant.service.WorkflowInterface;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.LinkedList;
-import java.util.List;
-
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.egov.infra.utils.StringUtils.escapeSpecialChars;
-import static org.egov.infra.workflow.entity.StateAware.byCreatedDate;
+import com.google.gson.GsonBuilder;
 
 @Controller
 @RequestMapping("/inbox")
 public class InboxController {
 
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormat.forPattern("dd/MM/yyyy hh:mm a");
+	private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormat.forPattern("dd/MM/yyyy hh:mm a");
 
-    @Autowired
-    private InboxRenderServiceDeligate<StateAware> inboxRenderServiceDeligate;
+	@Autowired
+	private InboxRenderServiceDeligate<StateAware> inboxRenderServiceDeligate;
 
-    @Autowired
-    private SecurityUtils securityUtils;
+	@Autowired
+	private SecurityUtils securityUtils;
 
-    @RequestMapping(produces = MediaType.TEXT_PLAIN_VALUE)
-    public @ResponseBody String showInbox() {
-        return createInboxData(inboxRenderServiceDeligate.getInboxItems(securityUtils.getCurrentUser().getId()));
-    }
+	@Autowired
+	private ApplicationContext applicationContext;
 
-    @RequestMapping(value = "/draft", produces = MediaType.TEXT_PLAIN_VALUE)
-    public @ResponseBody String showInboxDraft() {
-        return createInboxData(inboxRenderServiceDeligate.getInboxDraftItems(securityUtils.getCurrentUser().getId()));
-    }
+	@RequestMapping(produces = MediaType.TEXT_PLAIN_VALUE)
+	public @ResponseBody String showInbox() {
+		return createInboxData(inboxRenderServiceDeligate.getInboxItems(securityUtils.getCurrentUser().getId()));
+	}
 
-    @RequestMapping(value = "/history", produces = MediaType.TEXT_PLAIN_VALUE)
-    public @ResponseBody String showInboxHistory(@RequestParam final Long stateId) {
-        return createInboxHistoryData(inboxRenderServiceDeligate.getWorkflowHistory(stateId));
-    }
+	@RequestMapping(value = "/draft", produces = MediaType.TEXT_PLAIN_VALUE)
+	public @ResponseBody String showInboxDraft() {
+		return createInboxData(inboxRenderServiceDeligate.getInboxDraftItems(securityUtils.getCurrentUser().getId()));
+	}
 
-    private String createInboxData(final List<StateAware> inboxStates) {
-        final List<Inbox> inboxItems = new LinkedList<>();
-        inboxStates.sort(byCreatedDate());
-        for (final StateAware stateAware : inboxStates) {
-            final State state = stateAware.getCurrentState();
-            final WorkflowTypes workflowTypes = inboxRenderServiceDeligate.getWorkflowType(stateAware.getStateType());
-            final Inbox inboxItem = new Inbox();
-            inboxItem.setId(workflowTypes.isGrouped() ? EMPTY : state.getId() + "#" + workflowTypes.getId());
-            inboxItem.setDate(DATE_FORMATTER.print(new DateTime(state.getCreatedDate())));
-            inboxItem.setSender(state.getSenderName());
-            inboxItem.setTask(isBlank(state.getNatureOfTask()) ? workflowTypes.getDisplayName() : state.getNatureOfTask());
-            final String nextAction = inboxRenderServiceDeligate.getNextAction(state);
-            inboxItem.setStatus(state.getValue() + (isBlank(nextAction) ? EMPTY : " - " + nextAction));
-            inboxItem.setDetails(isBlank(stateAware.getStateDetails()) ? EMPTY : stateAware.getStateDetails());
-            inboxItem.setLink(workflowTypes.getLink().replace(":ID", stateAware.myLinkId()));
-            inboxItems.add(inboxItem);
-        }
-        return "{ \"data\":" + new GsonBuilder().create().toJson(inboxItems) + "}";
-    }
+	@RequestMapping(value = "/history", produces = MediaType.TEXT_PLAIN_VALUE)
+	public @ResponseBody String showInboxHistory(@RequestParam final Long stateId) {
+		List<StateHistory> stateHistories = inboxRenderServiceDeligate.getWorkflowHistory(stateId);
+		if (stateHistories != null)
+			return createInboxHistoryData(stateHistories);
+		else {
+			List<StateHistoryModel> stateHistorieModels = inboxRenderServiceDeligate.getWorkflowHistoryForMS(stateId);
+			return createInboxHistoryDataForMS(stateHistorieModels);
+		}
 
-    private String createInboxHistoryData(final List<StateHistory> stateHistories) {
-        final List<Inbox> inboxHistoryItems = new LinkedList<>();
-        for (final StateHistory stateHistory : stateHistories) {
-            final WorkflowTypes workflowTypes = inboxRenderServiceDeligate.getWorkflowType(stateHistory.getState().getType());
-            final Inbox inboxHistoryItem = new Inbox();
-            inboxHistoryItem.setId(stateHistory.getState().getId().toString());
-            inboxHistoryItem.setDate(DATE_FORMATTER.print(new DateTime(stateHistory.getLastModifiedDate())));
-            inboxHistoryItem.setSender(stateHistory.getSenderName());
-            inboxHistoryItem.setTask(isBlank(stateHistory.getNatureOfTask()) ? workflowTypes.getDisplayName() : stateHistory.getNatureOfTask());
-            inboxHistoryItem
-                    .setStatus(stateHistory.getValue() + (isBlank(stateHistory.getNextAction()) ? EMPTY : "-" + stateHistory.getNextAction()));
-            inboxHistoryItem.setDetails(isBlank(stateHistory.getComments()) ? EMPTY : escapeSpecialChars(stateHistory.getComments()));
-            inboxHistoryItem.setLink(EMPTY);
-            inboxHistoryItems.add(inboxHistoryItem);
-        }
+	}
 
-        return "{ \"data\":" + new GsonBuilder().disableHtmlEscaping().create().toJson(inboxHistoryItems) + "}";
-    }
+	private String createInboxData(final List<StateAware> inboxStates) {
+		final List<Inbox> inboxItems = new ArrayList<Inbox>();
+		for (final StateAware stateAware : inboxStates) {
+			final State state = stateAware.getCurrentState();
+			final WorkflowTypes workflowTypes = inboxRenderServiceDeligate.getWorkflowType(stateAware.getStateType());
+			final Inbox inboxItem = new Inbox();
+			inboxItem.setId(workflowTypes.isGrouped() ? EMPTY : state.getId() + "#" + workflowTypes.getId());
+			inboxItem.setDate(DATE_FORMATTER.print(new DateTime(state.getCreatedDate())));
+			inboxItem.setSender(state.getSenderName());
+			inboxItem.setTask(
+					isBlank(state.getNatureOfTask()) ? workflowTypes.getDisplayName() : state.getNatureOfTask());
+			final String nextAction = inboxRenderServiceDeligate.getNextAction(state);
+			inboxItem.setStatus(state.getValue() + (isBlank(nextAction) ? EMPTY : " - " + nextAction));
+			inboxItem.setDetails(isBlank(stateAware.getStateDetails()) ? EMPTY : stateAware.getStateDetails());
+			inboxItem.setLink(workflowTypes.getLink().replace(":ID", stateAware.myLinkId()));
+			inboxItems.add(inboxItem);
+
+		}
+		WorkflowInterface wf = getWorkflowImplementation(null);
+		ProcessInstance processInstance = new ProcessInstance();
+		processInstance.setAsignee(securityUtils.getCurrentUser().getId().toString());
+		List<Task> tasks = wf.getTasks("jurisdiction", processInstance);
+		for (Task t : tasks) {
+
+			final Inbox inboxItem = new Inbox();
+			inboxItem.setId(t.getId());
+			inboxItem.setCreatedDate(t.getCreatedDate());
+			inboxItem.setDate(DATE_FORMATTER.print(new DateTime(t.getCreatedDate())));
+			inboxItem.setSender(t.getSender());
+			inboxItem.setTask(t.getNatureOfTask());
+			inboxItem.setStatus(t.getStatus());
+			inboxItem.setDetails(t.getDetails());
+			inboxItem.setLink(t.getUrl());
+			inboxItem.setSender(t.getSender());
+			inboxItems.add(inboxItem);
+		}
+		Collections.sort(inboxItems);
+		Collections.reverse(inboxItems);
+
+		return "{ \"data\":" + new GsonBuilder().create().toJson(inboxItems) + "}";
+	}
+
+	public WorkflowInterface getWorkflowImplementation(String type) {
+		return (WorkflowInterface) applicationContext.getBean("internalDefaultWorkflow");
+	}
+
+	private String createInboxHistoryData(final List<StateHistory> stateHistories) {
+		final List<Inbox> inboxHistoryItems = new LinkedList<>();
+		for (final StateHistory stateHistory : stateHistories) {
+			final WorkflowTypes workflowTypes = inboxRenderServiceDeligate
+					.getWorkflowType(stateHistory.getState().getType());
+			final Inbox inboxHistoryItem = new Inbox();
+			inboxHistoryItem.setId(stateHistory.getState().getId().toString());
+			inboxHistoryItem.setDate(DATE_FORMATTER.print(new DateTime(stateHistory.getLastModifiedDate())));
+			inboxHistoryItem.setSender(stateHistory.getSenderName());
+			inboxHistoryItem.setTask(isBlank(stateHistory.getNatureOfTask()) ? workflowTypes.getDisplayName()
+					: stateHistory.getNatureOfTask());
+			inboxHistoryItem.setStatus(stateHistory.getValue()
+					+ (isBlank(stateHistory.getNextAction()) ? EMPTY : "-" + stateHistory.getNextAction()));
+			inboxHistoryItem.setDetails(
+					isBlank(stateHistory.getComments()) ? EMPTY : escapeSpecialChars(stateHistory.getComments()));
+			inboxHistoryItem.setLink(EMPTY);
+			inboxHistoryItems.add(inboxHistoryItem);
+		}
+
+		return "{ \"data\":" + new GsonBuilder().disableHtmlEscaping().create().toJson(inboxHistoryItems) + "}";
+	}
+
+	private String createInboxHistoryDataForMS(final List<StateHistoryModel> stateHistories) {
+		final List<Inbox> inboxHistoryItems = new LinkedList<>();
+		for (final StateHistoryModel stateHistory : stateHistories) {
+			final WorkflowTypes workflowTypes = inboxRenderServiceDeligate.getWorkflowType(stateHistory.getStateType());
+			final Inbox inboxHistoryItem = new Inbox();
+			inboxHistoryItem.setId(stateHistory.getStateId().toString());
+			inboxHistoryItem.setDate(DATE_FORMATTER.print(new DateTime(stateHistory.getLastModifiedDate())));
+			inboxHistoryItem.setSender(stateHistory.getSenderName());
+			inboxHistoryItem.setTask(isBlank(stateHistory.getNatureOfTask()) ? workflowTypes.getDisplayName()
+					: stateHistory.getNatureOfTask());
+			inboxHistoryItem.setStatus(stateHistory.getValue()
+					+ (isBlank(stateHistory.getNextAction()) ? EMPTY : "-" + stateHistory.getNextAction()));
+			inboxHistoryItem.setDetails(
+					isBlank(stateHistory.getComments()) ? EMPTY : escapeSpecialChars(stateHistory.getComments()));
+			inboxHistoryItem.setLink(EMPTY);
+			inboxHistoryItems.add(inboxHistoryItem);
+		}
+
+		return "{ \"data\":" + new GsonBuilder().disableHtmlEscaping().create().toJson(inboxHistoryItems) + "}";
+	}
 }
