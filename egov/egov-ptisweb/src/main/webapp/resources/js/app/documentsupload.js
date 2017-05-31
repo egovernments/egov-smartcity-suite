@@ -58,8 +58,8 @@ jQuery(document)
 											return false;
 										}
 										var fileInput = jQuery(this);
-										var maxSize = 2097152; // file size in
-										// bytes(2MB)
+										var maxSize = 5242880; // file size in
+										// bytes(5MB)
 										var inMB = maxSize / 1024 / 1024;
 										if (fileInput.get(0).files.length) {
 											var fileSize = this.files[0].size; // in
