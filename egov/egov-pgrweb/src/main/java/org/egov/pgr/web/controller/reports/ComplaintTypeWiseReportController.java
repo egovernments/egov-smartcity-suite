@@ -41,7 +41,6 @@
 package org.egov.pgr.web.controller.reports;
 
 import org.apache.commons.io.IOUtils;
-import org.egov.pgr.service.ComplaintTypeService;
 import org.egov.pgr.service.reports.ComplaintTypeWiseReportService;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.Transformers;
@@ -50,14 +49,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
@@ -65,38 +62,32 @@ import java.util.List;
 import static org.egov.infra.utils.JsonUtils.toJSON;
 
 @Controller
-@RequestMapping(value = {"/report", "/public/report"})
+@RequestMapping("/report")
 public class ComplaintTypeWiseReportController {
 
-    private final ComplaintTypeWiseReportService complaintTypeReportService;
-
     @Autowired
-    public ComplaintTypeWiseReportController(final ComplaintTypeWiseReportService complaintTypeReportService,
-            final ComplaintTypeService complaintTypeService) {
-        this.complaintTypeReportService = complaintTypeReportService;
-    }
+    private ComplaintTypeWiseReportService complaintTypeReportService;
 
     @ModelAttribute
-    public void getReportHelper(final Model model) {
+    public void getReportHelper(Model model) {
         model.addAttribute("reportHelper", new ReportHelper());
-
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/complaintTypeReport")
-    public String searchAgeingReportByBoundaryForm(final Model model) {
+    @GetMapping("complaintTypeReport")
+    public String searchAgeingReportByBoundaryForm() {
         return "complaintTypeReport-search";
     }
 
-    @ExceptionHandler(Exception.class)
-    @RequestMapping(value = "/complaintTypeReport/resultList-update", method = RequestMethod.GET)
-    public @ResponseBody void springPaginationDataTablesUpdate(@RequestParam final String complaintType,
-            @RequestParam final String complaintTypeWithStatus, @RequestParam final String status,
-            @RequestParam final String complaintDateType, @RequestParam final DateTime fromDate,
-            @RequestParam final DateTime toDate, final HttpServletRequest request, final HttpServletResponse response)
-                    throws IOException {
-        SQLQuery complaintTypeReportQuery = null;
-        List<DrillDownReportResult> complaintTypeReportResult = null;
-        String result = null;
+    @GetMapping("complaintTypeReport/resultList-update")
+    @ResponseBody
+    public void springPaginationDataTablesUpdate(@RequestParam String complaintType,
+                                                 @RequestParam String complaintTypeWithStatus, @RequestParam String status,
+                                                 @RequestParam String complaintDateType, @RequestParam DateTime fromDate,
+                                                 @RequestParam DateTime toDate, HttpServletResponse response)
+            throws IOException {
+        SQLQuery complaintTypeReportQuery;
+        List<DrillDownReportResult> complaintTypeReportResult;
+        String result;
         if (complaintTypeWithStatus != null && status != null && !"".equals(complaintTypeWithStatus)
                 && !"".equals(status)) {
 
@@ -105,7 +96,7 @@ public class ComplaintTypeWiseReportController {
             complaintTypeReportQuery.setResultTransformer(Transformers.aliasToBean(DrillDownReportResult.class));
             complaintTypeReportResult = complaintTypeReportQuery.list();
             result = new StringBuilder("{ \"data\":").append(toJSON(complaintTypeReportResult, DrillDownReportResult.class,
-                     DrillDownReportWithcompTypeAdaptor.class)).append("}")
+                    DrillDownReportWithcompTypeAdaptor.class)).append("}")
                     .toString();
 
         } else {
@@ -114,7 +105,7 @@ public class ComplaintTypeWiseReportController {
             complaintTypeReportQuery.setResultTransformer(Transformers.aliasToBean(DrillDownReportResult.class));
             complaintTypeReportResult = complaintTypeReportQuery.list();
             result = new StringBuilder("{ \"data\":").append(toJSON(complaintTypeReportResult, DrillDownReportResult.class,
-                     DrillDownReportHelperAdaptor.class)).append("}")
+                    DrillDownReportHelperAdaptor.class)).append("}")
                     .toString();
         }
 
