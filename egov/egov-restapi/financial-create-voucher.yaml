@@ -94,6 +94,14 @@ definitions:
             fundsourcecode:
               type: string
               description: Fund Source code to create voucher
+          required:
+            - vouchername
+            - vouchertype
+            - voucherdate
+            - fundcode
+            - departmentcode
+            - functioncode
+            - moduleid
               
         accountCodeDetails:
           type:  array
