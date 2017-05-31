@@ -73,8 +73,8 @@ public class MicroserviceUtils {
 
     private static final Logger LOGGER = Logger.getLogger(MicroserviceUtils.class);
     private static final String CLIENT_ID = "client.id";
-    private static final String ROLE_EMPLOYEE = "Employee";
-    private static final String ROLE_CITIZEN = "Citizen";
+    private static final String ROLE_EMPLOYEE = "EMPLOYEE";
+    private static final String ROLE_CITIZEN = "CITIZEN";
 
     @Autowired
     private SecurityUtils securityUtils;
