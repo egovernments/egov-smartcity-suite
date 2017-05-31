@@ -68,18 +68,21 @@
 									<thead>
 										<tr>
 											<th>S.No</th>
-											<th class="text-left"><spring:message
-													code="lbl.isResidential" /></th>
-											<th class="text-left"><spring:message
-													code="lbl.percentage" /></th>
-											<!-- <th class="text-left">From Date</th>
-											<th class="text-left">To Date</th> -->
-											<th class="text-left"><spring:message
+											<th class="text-center" colspan="2"><spring:message
 													code="lbl.propertytype.resd" /></th>
-											<th class="text-left"><spring:message
+											<th class="text-center" colspan="2"><spring:message
+													code="lbl.isResidential" /></th>
+										</tr>
+										<tr>
+											<th></th>
+											<th class="text-center"><spring:message
+													code="lbl.component" /></th>
+											<th class="text-center"><spring:message
 													code="lbl.percentage" /></th>
-											<!-- <th class="text-left">From Date</th>
-											<th class="text-left">To Date</th> -->
+											<th class="text-center"><spring:message
+													code="lbl.component" /></th>
+											<th class="text-center"><spring:message
+													code="lbl.percentage" /></th>
 										</tr>
 									</thead>
 									<tbody>
@@ -118,13 +121,10 @@
 										</tr>
 										<tr>
 											<td></td>
-											<td><spring:message code="lbl.total.nresd" /></td>
-											<td class="text-right"><input name="genTaxNonResd" id="sum"
-												value="${genTaxNonResd}" readonly="true"></td>
-
 											<td><spring:message code="lbl.total.resd" /></td>
-											<td class="text-right"><input name="genTaxResd" id="sum"
-												value="${genTaxResd}" readonly="true"></td>
+											<td class="text-right"><c:out value="${genTaxResd}" /></td>
+											<td><spring:message code="lbl.total.nresd" /></td>
+											<td class="text-right"><c:out value="${genTaxNonResd}" /></td>
 
 										</tr>
 									</tbody>
