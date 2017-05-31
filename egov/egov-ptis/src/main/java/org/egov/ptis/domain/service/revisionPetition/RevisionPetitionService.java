@@ -451,7 +451,7 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
         if (objection != null) {
             final Map<String, BigDecimal> currentDemand = ptDemandDAO.getDemandCollMap(objection.getProperty());
             final Map<String, BigDecimal> earlierDemand = ptDemandDAO
-                    .getDemandCollMap(objection.getBasicProperty().getProperty());
+                    .getDemandCollMap(propertyService.getLatestHistoryProperty(objection.getBasicProperty().getUpicNo()));
             final HttpServletRequest request = ServletActionContext.getRequest();
             final String url = WebUtils.extractRequestDomainURL(request, false);
             final String cityLogo = url.concat(PropertyTaxConstants.IMAGE_CONTEXT_PATH)
