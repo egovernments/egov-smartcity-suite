@@ -46,10 +46,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class UserDetailResponse {
 
     @JsonProperty("responseInfo")
-    ResponseInfo responseInfo;
+    private ResponseInfo responseInfo;
 
     @JsonProperty("user")
-    List<UserRequest> user;
+    private List<UserRequest> user;
 
     public UserDetailResponse(final ResponseInfo responseInfo, final List<UserRequest> user) {
         this.responseInfo = responseInfo;

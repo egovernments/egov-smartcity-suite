@@ -45,6 +45,7 @@ import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.IOUtils;
+import org.egov.infra.exception.ApplicationRuntimeException;
 
 import com.netflix.zuul.http.HttpServletRequestWrapper;
 import com.netflix.zuul.http.ServletInputStreamWrapper;
@@ -62,7 +63,7 @@ public class CustomRequestWrapper extends HttpServletRequestWrapper {
         try {
             payload = IOUtils.toString(request.getInputStream());
         } catch (final IOException e) {
-            throw new RuntimeException(e);
+            throw new ApplicationRuntimeException(e.getMessage(), e);
         }
     }
 

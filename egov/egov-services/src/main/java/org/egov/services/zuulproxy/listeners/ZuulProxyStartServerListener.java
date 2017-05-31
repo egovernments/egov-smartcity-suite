@@ -94,7 +94,8 @@ public class ZuulProxyStartServerListener implements ServletContextListener {
             FilterFileManager.setFilenameFilter(new GroovyFileFilter());
             FilterFileManager.init(5, scriptRoot + "route", scriptRoot + "post");
         } catch (final Exception e) {
-            logger.error("Error reading Groovy filters for zuul proxy... " + e.getMessage());
+            if (logger.isErrorEnabled())
+                logger.error("Error reading Groovy filters for zuul proxy... " + e.getMessage());
             // throw new RuntimeException(e);
         }
     }
