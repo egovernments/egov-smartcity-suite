@@ -110,6 +110,18 @@ public class LegacyLicenseService {
     @Autowired
     private FileStoreService fileStoreService;
 
+    private static <K extends Comparable<? super K>, V> Map<K, V> sortByKey(Map<K, V> map) {
+
+        Map<K, V> result = new LinkedHashMap<>();
+        Stream<Map.Entry<K, V>> mapInStream = map.entrySet().stream();
+
+        mapInStream.sorted(Map.Entry.comparingByKey())
+                .forEachOrdered(x -> result.put(x.getKey(), x.getValue()));
+
+        return result;
+
+    }
+
     @Transactional
     public void createLegacy(final TradeLicense license) {
 
@@ -260,7 +272,7 @@ public class LegacyLicenseService {
     }
 
     private void updateNewLegacyDemand(final Map<Integer, Integer> updatedInstallmentFees,
-            final Map<Integer, Boolean> legacyFeePayStatus, final LicenseDemand licenseDemand) {
+                                       final Map<Integer, Boolean> legacyFeePayStatus, final LicenseDemand licenseDemand) {
 
         final Module module = moduleService.getModuleByName("Trade License");
         for (final Entry<Integer, Integer> updatedInstallmentFee : updatedInstallmentFees.entrySet())
@@ -296,23 +308,11 @@ public class LegacyLicenseService {
                     documents.get(i).setEnclosed(true);
                 } else if (documents.get(i).getType().isMandatory() && files[i].isEmpty() && documents.isEmpty()) {
                     documents.get(i).getFiles().clear();
-                    throw new ValidationException("File should not be Empty", "File should not be Empty",
+                    throw new ValidationException("TL-011", "File should not be Empty",
                             documents.get(i).getType().getName());
                 }
                 documents.get(i).setDocDate(license.getApplicationDate());
                 documents.get(i).setLicense(license);
             }
-    }
-
-    private static <K extends Comparable<? super K>, V> Map<K, V> sortByKey(Map<K, V> map) {
-
-        Map<K, V> result = new LinkedHashMap<>();
-        Stream<Map.Entry<K, V>> mapInStream = map.entrySet().stream();
-
-        mapInStream.sorted(Map.Entry.comparingByKey())
-                .forEachOrdered(x -> result.put(x.getKey(), x.getValue()));
-
-        return result;
-
     }
 }

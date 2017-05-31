@@ -48,6 +48,7 @@ import org.egov.tl.entity.view.DCBReportResult;
 import org.egov.tl.service.DCBReportService;
 import org.egov.tl.web.response.adaptor.DCBReportResponseAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -60,7 +61,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.egov.infra.web.utils.WebUtils.toReportResponseEntity;
+import static org.egov.infra.web.utils.WebUtils.reportToResponseEntity;
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 
 @Controller
@@ -103,12 +104,12 @@ public class DCBReportController {
 
     @GetMapping("download")
     @ResponseBody
-    public ResponseEntity<byte[]> dcbReportDownload(final DCBReportSearchRequest searchRequest) {
+    public ResponseEntity<InputStreamResource> dcbReportDownload(final DCBReportSearchRequest searchRequest) {
         final Map<String, Object> responseParams = new HashMap<>();
         final ReportRequest reportRequest = new ReportRequest("tl_dcb_report", dCBReportService.getAllDCBRecords(searchRequest),
                 responseParams);
         reportRequest.setReportFormat(searchRequest.getPrintFormat());
         reportRequest.setReportName("dcb_report");
-        return toReportResponseEntity(reportRequest, reportService.createReport(reportRequest));
+        return reportToResponseEntity(reportRequest, reportService.createReport(reportRequest));
     }
 }
