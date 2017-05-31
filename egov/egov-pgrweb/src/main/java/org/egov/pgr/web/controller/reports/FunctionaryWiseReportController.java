@@ -49,14 +49,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
@@ -67,34 +65,30 @@ import static org.egov.infra.utils.JsonUtils.toJSON;
 @RequestMapping(value = "/functionaryWiseReport")
 public class FunctionaryWiseReportController {
 
-    private final FunctionaryWiseReportService functionaryWiseReportService;
-
     @Autowired
-    public FunctionaryWiseReportController(final FunctionaryWiseReportService functionaryWiseReportService) {
-        this.functionaryWiseReportService = functionaryWiseReportService;
-    }
+    private FunctionaryWiseReportService functionaryWiseReportService;
 
     @ModelAttribute
-    public void getReportHelper(final Model model) {
+    public void getReportHelper(Model model) {
         model.addAttribute("reportHelper", new ReportHelper());
 
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/search")
-    public String searchAgeingReportByBoundaryForm(final Model model) {
+    @GetMapping("search")
+    public String searchAgeingReportByBoundaryForm() {
         return "functionaryWise-search";
     }
 
-    @ExceptionHandler(Exception.class)
-    @RequestMapping(value = "/result", method = RequestMethod.GET)
-    public @ResponseBody void result(@RequestParam final String usrid,
-            @RequestParam final String status, @RequestParam final String complaintDateType,
-            @RequestParam final DateTime fromDate,
-            @RequestParam final DateTime toDate, final HttpServletRequest request, final HttpServletResponse response)
+    @GetMapping("result")
+    @ResponseBody
+    public void result(@RequestParam String usrid,
+                       @RequestParam String status, @RequestParam String complaintDateType,
+                       @RequestParam DateTime fromDate,
+                       @RequestParam DateTime toDate, HttpServletResponse response)
             throws IOException {
-        SQLQuery functionaryReportQuery = null;
-        List<DrillDownReportResult> functionaryReportResult = null;
-        String result = null;
+        SQLQuery functionaryReportQuery;
+        List<DrillDownReportResult> functionaryReportResult;
+        String result;
         if (usrid != null && status != null && !"".equals(usrid)
                 && !"".equals(status)) {
             functionaryReportQuery = functionaryWiseReportService.getFunctionaryWiseReportQuery(fromDate,

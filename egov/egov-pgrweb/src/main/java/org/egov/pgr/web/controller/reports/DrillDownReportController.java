@@ -40,14 +40,6 @@
 
 package org.egov.pgr.web.controller.reports;
 
-import static org.egov.infra.utils.JsonUtils.toJSON;
-
-import java.io.IOException;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.egov.pgr.service.reports.DrillDownReportService;
@@ -58,56 +50,55 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.List;
+
+import static org.egov.infra.utils.JsonUtils.toJSON;
+
 @Controller
-@RequestMapping(value = { "/report", "/public/report" })
+@RequestMapping("/report")
 public class DrillDownReportController {
 
     @Autowired
-    private final DrillDownReportService drillDownReportService;
-
-    @Autowired
-    public DrillDownReportController(final DrillDownReportService drillDownReportService) {
-        this.drillDownReportService = drillDownReportService;
-    }
+    private DrillDownReportService drillDownReportService;
 
     @ModelAttribute
-    public void getReportHelper(final Model model) {
-        final ReportHelper reportHealperObj = new ReportHelper();
+    public void getReportHelper(Model model) {
+        ReportHelper reportHealperObj = new ReportHelper();
         model.addAttribute("reportHelper", reportHealperObj);
 
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/drillDownReportByBoundary")
-    public String searchAgeingReportByBoundaryForm(final Model model) {
+    @GetMapping("drillDownReportByBoundary")
+    public String searchAgeingReportByBoundaryForm(Model model) {
         model.addAttribute("mode", "ByBoundary");
         return "drillDown-search";
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/drillDownReportByDept")
-    public String searchAgeingReportByDepartmentForm(final Model model) {
+    @GetMapping("drillDownReportByDept")
+    public String searchAgeingReportByDepartmentForm(Model model) {
         model.addAttribute("mode", "ByDepartment");
         return "drillDown-search";
     }
 
-    @ExceptionHandler(Exception.class)
-    @RequestMapping(value = "/drillDown/resultList-update", method = RequestMethod.GET)
+    @GetMapping("drillDown/resultList-update")
     @ResponseBody
-    public void springPaginationDataTablesUpdate(@RequestParam final String groupBy,
-            @RequestParam final String deptid, @RequestParam final String complainttypeid,
-            @RequestParam final String selecteduserid, @RequestParam final String boundary,
-            @RequestParam final String type, @RequestParam final String complaintDateType,
-            @RequestParam final DateTime fromDate, @RequestParam final DateTime toDate, @RequestParam final String locality,
-            final HttpServletRequest request, final HttpServletResponse response) throws IOException {
+    public void springPaginationDataTablesUpdate(@RequestParam String groupBy,
+                                                 @RequestParam String deptid, @RequestParam String complainttypeid,
+                                                 @RequestParam String selecteduserid, @RequestParam String boundary,
+                                                 @RequestParam String complaintDateType, @RequestParam DateTime fromDate,
+                                                 @RequestParam DateTime toDate, @RequestParam String locality,
+                                                 HttpServletResponse response) throws IOException {
 
-        SQLQuery drillDownreportQuery ;
-        String result ;
+        SQLQuery drillDownreportQuery;
+        String result;
         if (StringUtils.isNotBlank(deptid) && StringUtils.isNotBlank(complainttypeid) && StringUtils.isNotBlank(selecteduserid)) {
             String userName = selecteduserid.split("~")[0];
             if ("".equals(userName))
@@ -116,7 +107,7 @@ public class DrillDownReportController {
                     deptid, boundary, complainttypeid, userName, locality);
             drillDownreportQuery.setResultTransformer(Transformers.aliasToBean(DrillDownReportResult.class));
 
-            final List<DrillDownReportResult> drillDownresult = drillDownreportQuery.list();
+            List<DrillDownReportResult> drillDownresult = drillDownreportQuery.list();
             result = new StringBuilder("{ \"data\":").append(toJSON(drillDownresult, DrillDownReportResult.class,
                     DrillDownReportWithcompTypeAdaptor.class)).append("}")
                     .toString();
@@ -126,7 +117,7 @@ public class DrillDownReportController {
                     groupBy, deptid, boundary, complainttypeid, selecteduserid, locality);
             drillDownreportQuery.setResultTransformer(Transformers.aliasToBean(DrillDownReportResult.class));
 
-            final List<DrillDownReportResult> drillDownresult = drillDownreportQuery.list();
+            List<DrillDownReportResult> drillDownresult = drillDownreportQuery.list();
             result = new StringBuilder("{ \"data\":").append(toJSON(drillDownresult, DrillDownReportResult.class,
                     DrillDownReportHelperAdaptor.class)).append("}").toString();
 

@@ -283,6 +283,14 @@ $(document).ready(function ($) {
 
 });
 
+function InvalidMsg(textbox) {
+    
+   if(textbox.validity.typeMismatch){
+        textbox.setCustomValidity('Please enter a valid email address');
+    }
+    return true;
+}
+
 $("#receivingCenter").change(function () {
     if (this.value === '') {
         disableCRN();

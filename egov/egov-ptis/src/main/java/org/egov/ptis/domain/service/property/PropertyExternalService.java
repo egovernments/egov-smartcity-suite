@@ -849,7 +849,7 @@ public class PropertyExternalService {
         if (bank == null)
             // Tries by name if code not found
             bank = bankHibernateDAO.getBankByCode(bankCodeOrName);
-        return new Long(bank.getId());
+        return Long.valueOf(bank.getId());
 
     }
 

@@ -304,7 +304,7 @@ public class RetentionMoneyRecoveryRegisterAction extends SearchFormAction {
 
         if (retentionMoneyRefPeriod != null && retentionMoneyRefPeriod != -1) {
             final Date currentDate = new Date();
-            final Long period = new Long(retentionMoneyRefPeriod) * new Long(24) * new Long(3600) * new Long(1000);
+            final Long period = retentionMoneyRefPeriod * 24 * 3600 * 1000L;
             final Date toDate = new Date(currentDate.getTime() + period.longValue());
             query1 = query1.concat(" and (br.billtype = ? OR pc.is_final_bill = 1) ");
             paramList.add(WorksConstants.FINAL_BILL);

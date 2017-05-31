@@ -150,7 +150,7 @@
 												data-gallery> <video class="img-width add-margin"controls="controls"
 													src="../downloadfile/${file.fileStoreId}">
 													<source	src="../downloadfile/${file.fileStoreId}"
-														type="video/mp4" /></video></a>
+														type="${file.contentType}" /></video></a>
 										</c:otherwise>
 									</c:choose>
 								</c:forEach>

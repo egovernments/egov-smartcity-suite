@@ -40,7 +40,7 @@
 
 $(document).ready(function(){
 	
-	var fileformats = ['jpg', 'jpeg', 'gif', 'png',  '3g2', '3gp', '3gp2', '3gpp', 'avi', 'divx', 'flv', 'mov', 'mp4', 'mpeg4', 'mpg4', 'mpeg', 'mpg', 'm4v', 'wmv' ];
+	var fileformats = ['jpg', 'jpeg', 'gif', 'png',  '3g2', '3gp', '3gp2', '3gpp', 'avi', 'divx', 'flv', 'mov', 'mp4', 'mpeg4', 'mpg4', 'mpeg', 'mpg', 'm4v', 'wmv','x-msvideo' ];
 	var myCenter;
 	
 	var fileinputid = ['file1','file2','file3'];//assigning file id
@@ -108,6 +108,17 @@ $(document).ready(function(){
 			}else{
 				bootbox.alert(ext+" file format is not allowed");
 			return;
+		}
+		
+		var fileInput = $(this);
+   		var maxSize = 10485760; //file size  in bytes(4MB)
+		if(fileInput.get(0).files.length){
+			var fileSize = this.files[0].size; // in bytes
+			if(fileSize > maxSize){
+				bootbox.alert('File size should not exceed 10 MB!');
+				fileInput.replaceWith(fileInput.val('').clone(true));
+				return false;
+			}	
 		}
 		
 		//bootbox.alert('ext'+ext);

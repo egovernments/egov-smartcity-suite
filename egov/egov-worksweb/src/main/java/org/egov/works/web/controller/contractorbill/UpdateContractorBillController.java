@@ -401,7 +401,7 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
         if (StringUtils.isNotBlank(netPayableAccountCodeId) && StringUtils.isNotBlank(netPayableAccountCodeId)
                 && StringUtils.isNotBlank(netPayableAmount)) {
             final EgBilldetails billdetails = new EgBilldetails();
-            billdetails.setId(new Integer(netPayableAccountId));
+            billdetails.setId(Integer.valueOf(netPayableAccountId));
             billdetails.setGlcodeid(new BigDecimal(netPayableAccountCodeId));
             billdetails.setCreditamount(new BigDecimal(netPayableAmount));
             contractorBillRegister.addEgBilldetailes(

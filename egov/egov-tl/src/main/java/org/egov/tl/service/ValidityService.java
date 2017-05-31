@@ -106,7 +106,7 @@ public class ValidityService {
     public void applyLicenseValidity(License license) {
         Validity validity = getApplicableLicenseValidity(license);
         if (validity == null)
-            throw new ValidationException("TL-001", "License validity not defined.");
+            throw new ValidationException("TL-010", "License validity not defined.");
         if (license.isLegacy()) {
             applyValidityToLegacyLicense(license, validity);
         } else {
