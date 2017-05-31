@@ -291,7 +291,7 @@ public class SewerageLegacyConnectionController extends GenericWorkFlowControlle
         if (sewerageApplicationDetails != null) {
             final List<BillReceipt> sewerageReceipts = sewerageDemandService
                     .getBilReceiptsByDemand(sewerageApplicationDetails.getCurrentDemand());
-            if (sewerageReceipts != null && sewerageReceipts.isEmpty()) {
+            if (sewerageReceipts != null && !sewerageReceipts.isEmpty()) {
                 model.addAttribute(MESSAGE, "msg.validate.modification.notallowed");
                 return new ModelAndView(COMMON_ERROR_PAGE, SEWERAGEAPPLICATIONDETAILS, sewerageApplicationDetails);
             }
