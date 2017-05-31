@@ -94,7 +94,7 @@ public class ZuulProxyFilter extends ZuulFilter {
     private static final String USER_SERVICE = "userService";
     private static final String ENVIRONMENT = "environment";
     private static final String TENANT_ID = "tenantId";
-    private ObjectMapper mapper = null;
+    private ObjectMapper mapper;
 
     @Override
     public String filterType() {
@@ -155,7 +155,11 @@ public class ZuulProxyFilter extends ZuulFilter {
                 log.info(String.format("%s request to the url %s", request.getMethod(), request.getRequestURL().toString()));
 
             final String tenantId = getTanentId(springContext);
-            endPointURI = endPointURI + "?" + updateQueryString(request.getQueryString(), TENANT_ID, tenantId);
+            final StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append(endPointURI);
+            stringBuilder.append("?");
+            stringBuilder.append(updateQueryString(request.getQueryString(), TENANT_ID, tenantId));
+            endPointURI = stringBuilder.toString();
 
             if (log.isInfoEnabled())
                 log.info("endPointURI  " + endPointURI);
@@ -257,8 +261,13 @@ public class ZuulProxyFilter extends ZuulFilter {
         final String clientId = environment.getProperty(CLIENT_ID);
 
         String tenantId = ApplicationThreadLocals.getTenantID();
-        if (StringUtils.isNotBlank(clientId))
-            tenantId = clientId + "." + tenantId;
+        if (StringUtils.isNotBlank(clientId)) {
+            final StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append(clientId);
+            stringBuilder.append(".");
+            stringBuilder.append(tenantId);
+            tenantId = stringBuilder.toString();
+        }
         return tenantId;
 
     }
