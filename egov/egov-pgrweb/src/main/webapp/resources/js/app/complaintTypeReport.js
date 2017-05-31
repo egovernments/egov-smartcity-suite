@@ -60,26 +60,36 @@ jQuery(document)
             });
 
             $('#complaintTypeReportSearch').click(function (e) {
-                var fromDate = $("#start_date").datepicker('getDate');
-                var toDate = $("#end_date").datepicker('getDate');
-                if ($("#end_date").datepicker('getDate') == null)
-                    toDate = Date();
-                validRange(fromDate, toDate);
+            	var fromDate=$("#start_date").val();
+				var toDate=$("#end_date").val();
+				if($("#end_date").val()==null)
+					toDate=new Date();
+				compareDate(fromDate,toDate);
+                if(compareDate){
                 callajaxdatatableForCompTypeReport();
-
+                }
                 $('#compTypeReport-table_wrapper').show();
                 $('#compReport-table_wrapper').hide();
             });
 
-            function validRange(start, end) {
-
-                if (start.getTime() > end.getTime()) {
-                    bootbox.alert("From date  should not be greater than the To Date.");
-                    $('#end_date').val('');
-                    return false;
-                } else
-                    return true;
-            }
+            function compareDate(dt1, dt2) {
+				var d1, m1, y1, d2, m2, y2, ret;
+				dt1 = dt1.split('/');
+				dt2 = dt2.split('/');
+				ret = (eval(dt2[2]) > eval(dt1[2])) ? 1
+				: (eval(dt2[2]) < eval(dt1[2])) ? -1
+				: (eval(dt2[1]) > eval(dt1[1])) ? 1
+				: (eval(dt2[1]) < eval(dt1[1])) ? -1	// decimal points
+				: (eval(dt2[0]) > eval(dt1[0])) ? 1
+				: (eval(dt2[0]) < eval(dt1[0])) ? -1
+				: 0;
+				if(ret>=0)
+				return true;
+				else 
+					bootbox.alert("From date  should not be greater than the To Date.");
+				$('#end_date').val('');
+				return false;
+				}
 
             function callajaxdatatableForCompTypeReport() {
                 var startDate = "";

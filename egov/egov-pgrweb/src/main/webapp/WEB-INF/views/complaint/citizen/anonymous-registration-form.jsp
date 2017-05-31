@@ -59,7 +59,7 @@
 					<div class="form-group">
 						<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.name"/><span class="mandatory"></span></label>
 						<div class="col-sm-6 add-margin">
-							<form:input  class="form-control patternvalidation" path="complainant.name" id="f-name" placeholder="Name" data-pattern="alphabetwithspace" required="required"/>
+							<form:input  class="form-control patternvalidation" path="complainant.name" id="f-name" maxlength="100" placeholder="Name" data-pattern="alphabetwithspace" required="required"/>
 							 <form:errors path="complainant.name" cssClass="add-margin error-msg"/>
 						</div>
 					</div>
@@ -76,7 +76,7 @@
 							<label for="field-1" class="control-label"><spring:message code="lbl.email"/></label>
 						</div>
 						<div class="col-sm-3">
-							<form:input  path="complainant.email" class="form-control" id="email" placeholder="abc@xyz.com" type="email"/>
+							<form:input  path="complainant.email" oninvalid="InvalidMsg(this);" oninput="InvalidMsg(this);" class="form-control" id="email" placeholder="abc@xyz.com" type="email"/>
 							<form:errors path="complainant.email" cssClass="add-margin error-msg"/>
 						</div>
 					</div>
