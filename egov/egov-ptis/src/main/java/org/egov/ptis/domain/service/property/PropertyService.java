@@ -1600,6 +1600,7 @@ public class PropertyService {
                 amalgPropStatVal.setReferenceBasicProperty(parentBasicProperty);
                 amalgBasicProp.setActive(FALSE);
                 amalgBasicProp.addPropertyStatusValues(amalgPropStatVal);
+                amalgBasicProp.setUnderWorkflow(FALSE);
                 // At final approval a new PropetyStatusValues has to created
                 // with status INACTIVE and set the amalgBasicProp status as
                 // INACTIVE and ISACTIVE as 'N'
@@ -3822,7 +3823,7 @@ public class PropertyService {
         final PortalInboxBuilder portalInboxBuilder = new PortalInboxBuilder(module,property.getPropertyModifyReason()+" "+module.getDisplayName(),
                 property.getApplicationNo(),basicProperty.getUpicNo(),basicProperty.getId(),
                 property.getPropertyModifyReason(),getDetailedMessage(property),property.myLinkId(),
-                isResolved(property),basicProperty.getStatus().getName(),getSlaEndDate(applictionType),property.getState(),securityUtils.getCurrentUser());
+                isResolved(property),basicProperty.getStatus().getName(),getSlaEndDate(applictionType),property.getState(),Arrays.asList(securityUtils.getCurrentUser()));
         final PortalInbox portalInbox = portalInboxBuilder.build();
         portalInboxService.pushInboxMessage(portalInbox);
     }

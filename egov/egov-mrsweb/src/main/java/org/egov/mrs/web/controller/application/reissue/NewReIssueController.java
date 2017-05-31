@@ -90,7 +90,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
  *
  */
 @Controller
-@RequestMapping(value = { "/reissue", "/citizen/reissue" })
+@RequestMapping(value = { "/reissue" })
 public class NewReIssueController extends GenericWorkFlowController {
 
     private static final String IS_EMPLOYEE = "isEmployee";
@@ -158,7 +158,6 @@ public class NewReIssueController extends GenericWorkFlowController {
         }
         model.addAttribute(IS_EMPLOYEE,
                 !ANONYMOUS_USER.equalsIgnoreCase(logedinUser.getName()) && registrationWorkFlowService.isEmployee(logedinUser));
-        model.addAttribute("isOnline", ANONYMOUS_USER.equalsIgnoreCase(logedinUser.getName()));
         final ReIssue reIssue = new ReIssue();
         reIssue.setRegistration(registration);
         prepareNewForm(model, reIssue);
@@ -225,9 +224,6 @@ public class NewReIssueController extends GenericWorkFlowController {
         model.addAttribute("feepaid", reIssue.getFeePaid().doubleValue());
         if (!isEmployee) {
             redirectAttributes.addFlashAttribute(MESSAGE, message);
-            if (ANONYMOUS_USER.equalsIgnoreCase(logedinUser.getName()))
-                return "redirect:/citizen/reissue/reissue-certificate-ackowledgement/" + appNo;
-            else
                 return "redirect:/reissue/reissue-certificate-ackowledgement/" + appNo;
 
         } else

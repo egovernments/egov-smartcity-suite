@@ -62,6 +62,7 @@ import org.egov.commons.CGeneralLedgerDetail;
 import org.egov.commons.EgfAccountcodePurpose;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.utils.DateUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
@@ -525,6 +526,7 @@ public class ChartOfAccountsAction extends BaseFormAction {
         model.setFunctionReqd(functionRequired);
         populateAccountDetailType();
         model.setMajorCode(model.getGlcode().substring(0, majorCodeLength));
+        model.setCreatedDate(DateUtils.now());
         chartOfAccountsService.persist(model);
         saveCoaDetails(model);
         addActionMessage(getText("chartOfAccount.saved.successfully"));

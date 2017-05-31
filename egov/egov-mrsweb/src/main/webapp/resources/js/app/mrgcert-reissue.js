@@ -93,9 +93,6 @@ $(document).ready( function () {
 	
 	$('#select-registrationunit').change( function () { 
 		var url;
-		if(isonline)
-			url ='/mrs/citizen/registration/getmrregistrationunitzone'
-			else
 			url='/mrs/registration/getmrregistrationunitzone'
 		showRegistrationUnit(url); 
 	})

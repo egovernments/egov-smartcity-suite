@@ -40,22 +40,24 @@
 
 package org.egov.ptis.bean;
 
+import org.apache.commons.lang3.StringUtils;
+
 public class FloorInfo {
-    private String floorNo;
-    private String buildClassification;
-    private String natureOfUsage;
-    private String firmName;
-    private String occupancy;
-    private String occupantName;
-    private String constructionDate;
-    private String occupancyDate;
-    private Float plinthArea;
-    private Float plinthLength;
-    private Float plinthBreadth;
+    private String floorNo=StringUtils.EMPTY;
+    private String buildClassification=StringUtils.EMPTY;
+    private String natureOfUsage=StringUtils.EMPTY;
+    private String firmName=StringUtils.EMPTY;
+    private String occupancy=StringUtils.EMPTY;
+    private String occupantName=StringUtils.EMPTY;
+    private String constructionDate=StringUtils.EMPTY;
+    private String occupancyDate=StringUtils.EMPTY;
+    private Float plinthArea=0.0f;
+    private Float plinthLength=0.0f;
+    private Float plinthBreadth=0.0f;
     private Boolean unstructuredLand;
-    private String buildingPermissionNo;
-    private String buildingPermissionDate;
-    private Float buildingPlanPlinthArea;
+    private String buildingPermissionNo=StringUtils.EMPTY;
+    private String buildingPermissionDate=StringUtils.EMPTY;
+    private Float buildingPlanPlinthArea=0.0f;
 
     public String getFloorNo() {
         return floorNo;

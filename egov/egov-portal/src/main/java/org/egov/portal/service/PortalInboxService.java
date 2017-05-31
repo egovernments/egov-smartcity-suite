@@ -86,11 +86,13 @@ public class PortalInboxService {
             final User user = getLoggedInUser();
             if (user != null
                     && (UserType.BUSINESS.toString().equalsIgnoreCase(user.getType().toString()) || UserType.CITIZEN
-                            .toString().equalsIgnoreCase(user.getType().toString())))
-                if (createPortalUser(portalInbox, user) != null) {
+                            .toString().equalsIgnoreCase(user.getType().toString()))) {
+                PortalInboxUser portalInboxUser = createPortalUser(portalInbox, user);
+                if (portalInboxUser != null) {
                     portalInboxRepository.saveAndFlush(portalInbox);
                     portalInboxIndexService.createPortalInboxIndex(portalInbox);
                 }
+            }
         } else {
             portalInbox.getPortalInboxUsers().addAll(portalInbox.getTempPortalInboxUser());
             portalInboxRepository.saveAndFlush(portalInbox);
@@ -99,27 +101,46 @@ public class PortalInboxService {
     }
 
     private PortalInboxUser createPortalUser(final PortalInbox portalInbox, final User user) {
-        final PortalInboxUser portalInboxUser = new PortalInboxUser();
-        portalInboxUser.setUser(user);
-        portalInbox.getPortalInboxUsers().add(portalInboxUser);
-        portalInboxUser.setPortalInbox(portalInbox);
+        PortalInboxUser portalInboxUser = null;
+        if (portalInbox != null && user!=null) {
+            portalInboxUser = new PortalInboxUser();
+            portalInboxUser.setUser(user);
+            portalInbox.getPortalInboxUsers().add(portalInboxUser);
+            portalInboxUser.setPortalInbox(portalInbox);
+        }
         return portalInboxUser;
     }
-
+/***
+ * 
+ * @param applicationNumber mandatory
+ * @param moduleId mandatory
+ * @param status mandatory status of object
+ * @param isResolved true if service resolved
+ * @param slaEndDate SLA end date
+ * @param state object workflow state
+ * @param additionalUser if any additional user to be added
+ * @param consumerNumber
+ * @param mandatory  link to view record
+ */
     @Transactional
     public void updateInboxMessage(final String applicationNumber, final Long moduleId, final String status,
             final Boolean isResolved, final Date slaEndDate, final State state, final User additionalUser,
             final String consumerNumber, final String link) {
-        final PortalInbox portalInbox = getPortalInboxByApplicationNo(applicationNumber, moduleId);
-        if (portalInbox != null) {
-            portalInbox.setStatus(status);
-            portalInbox.setResolved(isResolved);
-            portalInbox.setState(state);
-            updatePortalInboxData(slaEndDate, consumerNumber, link, portalInbox);
-            if (additionalUser != null && !containsUser(portalInbox.getPortalInboxUsers(), additionalUser.getId()))
-                createPortalUser(portalInbox, additionalUser);
-            portalInboxRepository.saveAndFlush(portalInbox);
-            portalInboxIndexService.createPortalInboxIndex(portalInbox);
+        if (applicationNumber != null && moduleId != null && status!=null && link!=null) {
+            final PortalInbox portalInbox = getPortalInboxByApplicationNo(applicationNumber, moduleId);
+            if (portalInbox != null) {
+                portalInbox.setStatus(status);
+                portalInbox.setResolved(isResolved);
+                portalInbox.setState(state);
+                updatePortalInboxData(slaEndDate, consumerNumber, link, portalInbox);
+                if (additionalUser != null
+                        && (UserType.BUSINESS.toString().equalsIgnoreCase(additionalUser.getType().toString()) || UserType.CITIZEN
+                                .toString().equalsIgnoreCase(additionalUser.getType().toString()))
+                        && !containsUser(portalInbox.getPortalInboxUsers(), additionalUser.getId()))
+                    createPortalUser(portalInbox, additionalUser);
+                portalInboxRepository.saveAndFlush(portalInbox);
+                portalInboxIndexService.createPortalInboxIndex(portalInbox);
+            }
         }
     }
 
