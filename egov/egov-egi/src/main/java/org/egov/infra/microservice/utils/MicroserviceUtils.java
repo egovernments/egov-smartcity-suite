@@ -112,9 +112,7 @@ public class MicroserviceUtils {
         String tenantId = ApplicationThreadLocals.getTenantID();
         if (StringUtils.isNotBlank(clientId)) {
             final StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.append(clientId);
-            stringBuilder.append(".");
-            stringBuilder.append(tenantId);
+            stringBuilder.append(clientId).append('.').append(tenantId);
             tenantId = stringBuilder.toString();
         }
         return tenantId;

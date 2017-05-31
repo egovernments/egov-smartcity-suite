@@ -156,9 +156,8 @@ public class ZuulProxyFilter extends ZuulFilter {
 
             final String tenantId = getTanentId(springContext);
             final StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.append(endPointURI);
-            stringBuilder.append("?");
-            stringBuilder.append(updateQueryString(request.getQueryString(), TENANT_ID, tenantId));
+            stringBuilder.append(endPointURI).append('?')
+                    .append(updateQueryString(request.getQueryString(), TENANT_ID, tenantId));
             endPointURI = stringBuilder.toString();
 
             if (log.isInfoEnabled())
@@ -263,9 +262,7 @@ public class ZuulProxyFilter extends ZuulFilter {
         String tenantId = ApplicationThreadLocals.getTenantID();
         if (StringUtils.isNotBlank(clientId)) {
             final StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.append(clientId);
-            stringBuilder.append(".");
-            stringBuilder.append(tenantId);
+            stringBuilder.append(clientId).append('.').append(tenantId);
             tenantId = stringBuilder.toString();
         }
         return tenantId;
