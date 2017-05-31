@@ -111,10 +111,6 @@ public class PropertyDeactivationController extends GenericWorkFlowController {
     @Autowired
     private PropertyService propertyService;
 
-    BasicProperty basicProperty;
-    PropertyImpl propertyImpl = new PropertyImpl();
-    PropertyImpl oldProperty;
-
     @Autowired
     @Qualifier("fileStoreService")
     protected FileStoreService fileStoreService;
@@ -151,7 +147,7 @@ public class PropertyDeactivationController extends GenericWorkFlowController {
         model.addAttribute(ORIGINAL_PROPERTY, propertyDeactivation.getOriginalAssessment());
         model.addAttribute(DEACTIVATE_REASONS, deactivationReasons);
 
-        basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
+        BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
         BasicProperty orgBasicProp = basicPropertyDAO
                 .getBasicPropertyByPropertyID(propertyDeactivation.getOriginalAssessment());
         if (basicProperty == null) {
@@ -192,7 +188,7 @@ public class PropertyDeactivationController extends GenericWorkFlowController {
     public String deactivationFormSubmit(@ModelAttribute final PropertyDeactivation propertyDeactivation,
             final BindingResult resultBinder, final RedirectAttributes redirectAttrs, final Model model,
             @PathVariable("assessmentNo") final String assessmentNo) {
-        basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
+        BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
         final List<Document> documents = new ArrayList<>();
         if (basicProperty == null) {
             resultBinder.rejectValue(BASIC_PROPERTY, NO_PROP_ERROR);
