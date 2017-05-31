@@ -39,14 +39,14 @@
  */
 
 var reportdatatable;
-jQuery(document).ready(function($) {
+jQuery(document).ready(function ($) {
 
     //tableContainer1 = $("#ageingReport-table");
     drillDowntableContainer = $("#drilldownReport-table");
     compwisedrilldowntbl = $("#drilldownReport-compwise");
     $('#report-backbutton').hide();
 
-    $('#backButton').click(function(e) {
+    $('#backButton').click(function (e) {
 
         if ($('#selecteduserid').val()) {
             console.log('true!')
@@ -76,7 +76,7 @@ jQuery(document).ready(function($) {
 
     });
 
-    $('#drilldownReportSearch').click(function(e) {
+    $('#drilldownReportSearch').click(function (e) {
         console.log('calling inside ajax');
 
         $('#locality').val();
@@ -121,70 +121,70 @@ function callajaxdatatableForDrilDownReport() {
     $('#report-backbutton').hide();
     reportdatatable = drillDowntableContainer
         .dataTable({
-            ajax : {
-                url : "drillDown/resultList-update",
-                data : {
-                    fromDate : startDate,
-                    toDate : endDate,
-                    groupBy : modeVal,
-                    deptid : $('#deptid').val(),
-                    boundary : $('#boundary').val(),
-                    locality : $('#locality').val(),
-                    complainttypeid : $('#complainttypeid').val(),
-                    selecteduserid : $('#selecteduserid').val(),
-                    type : $('#type').val(),
-                    complaintDateType : when_dateVal
+            ajax: {
+                url: "drillDown/resultList-update",
+                data: {
+                    fromDate: startDate,
+                    toDate: endDate,
+                    groupBy: modeVal,
+                    deptid: $('#deptid').val(),
+                    boundary: $('#boundary').val(),
+                    locality: $('#locality').val(),
+                    complainttypeid: $('#complainttypeid').val(),
+                    selecteduserid: $('#selecteduserid').val(),
+                    type: $('#type').val(),
+                    complaintDateType: when_dateVal
                 }
             },
-            "autoWidth" : false,
-            "bDestroy" : true,
-            "sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-3 col-xs-12'i><'col-md-3 col-xs-6 col-right'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-md-3 col-xs-6 text-right'p>>",
-            "aLengthMenu" : [ [ 10, 25, 50, -1 ], [ 10, 25, 50, "All" ] ],
-            "oTableTools" : {
-                "sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
-                "aButtons" : [ "xls", "pdf", "print" ]
+            "autoWidth": false,
+            "bDestroy": true,
+            "sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-3 col-xs-12'i><'col-md-3 col-xs-6 col-right'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-md-3 col-xs-6 text-right'p>>",
+            "aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+            "oTableTools": {
+                "sSwfPath": "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
+                "aButtons": ["xls", "pdf", "print"]
             },
-            columns : [
+            columns: [
                 {
-                    "data" : "name",
-                    "render" : function(data, type, row) {
+                    "data": "name",
+                    "render": function (data, type, row) {
                         return '<a href="javascript:void(0);" onclick="setHiddenValueByLink(this,\'Boundarywise\');" data-hiddenele="boundary" data-eleval="'
                             + data + '">' + data + '</a>';
                     },
-                    "sTitle" : "Boundary Name"
+                    "sTitle": "Boundary Name"
                 }, {
-                    "mData" : "registered",
-                    "sTitle" : "Registered",
-                    "sClass" : "text-right"
+                    "mData": "registered",
+                    "sTitle": "Registered",
+                    "sClass": "text-right"
 
                 }, {
-                    "data" : "inprocess",
-                    "sTitle" : "Inprocess",
-                    "sClass" : "text-right"
+                    "data": "inprocess",
+                    "sTitle": "Inprocess",
+                    "sClass": "text-right"
                 }, {
-                    "data" : "completed",
-                    "sTitle" : "Completed",
-                    "sClass" : "text-right"
+                    "data": "completed",
+                    "sTitle": "Completed",
+                    "sClass": "text-right"
                 }, {
-                    "data" : "rejected",
-                    "sTitle" : "Rejected",
-                    "sClass" : "text-right"
+                    "data": "rejected",
+                    "sTitle": "Rejected",
+                    "sClass": "text-right"
 
-                },{
-                    "data" : "withinsla",
-                    "sTitle" : "Within SLA",
-                    "sClass" : "text-right"
-                },{
-                    "data" : "beyondsla",
-                    "sTitle" : "Beyond SLA",
-                    "sClass" : "text-right"
-                },{
-                    "data" : "total",
-                    "sTitle" : "Total",
-                    "sClass" : "text-right"
+                }, {
+                    "data": "withinsla",
+                    "sTitle": "Within SLA",
+                    "sClass": "text-right"
+                }, {
+                    "data": "beyondsla",
+                    "sTitle": "Beyond SLA",
+                    "sClass": "text-right"
+                }, {
+                    "data": "total",
+                    "sTitle": "Total",
+                    "sClass": "text-right"
 
-                } ],
-            "footerCallback" : function(row, data, start, end, display) {
+                }],
+            "footerCallback": function (row, data, start, end, display) {
                 var api = this.api(), data;
                 if (data.length == 0) {
                     $('#report-footer').hide();
@@ -202,12 +202,12 @@ function callajaxdatatableForDrilDownReport() {
 
                 }
             },
-            "aoColumnDefs" : [ {
-                "aTargets" : [ 1, 2, 3, 4, 5 ],
-                "mRender" : function(data, type, full) {
+            "aoColumnDefs": [{
+                "aTargets": [1, 2, 3, 4, 5],
+                "mRender": function (data, type, full) {
                     return formatNumberInr(data);
                 }
-            } ]
+            }]
 
         });
 
@@ -215,20 +215,20 @@ function callajaxdatatableForDrilDownReport() {
 
 function updateTotalFooter(colidx, api) {
     // Remove the formatting to get integer data for summation
-    var intVal = function(i) {
+    var intVal = function (i) {
         return typeof i === 'string' ? i.replace(/[\$,]/g, '') * 1
             : typeof i === 'number' ? i : 0;
     };
 
     // Total over all pages
-    total = api.column(colidx).data().reduce(function(a, b) {
+    total = api.column(colidx).data().reduce(function (a, b) {
         return intVal(a) + intVal(b);
     });
 
     // Total over this page
     pageTotal = api.column(colidx, {
-        page : 'current'
-    }).data().reduce(function(a, b) {
+        page: 'current'
+    }).data().reduce(function (a, b) {
         return intVal(a) + intVal(b);
     }, 0);
 
@@ -285,73 +285,73 @@ function callAjaxByDepartment() {
 
     reportdatatable = drillDowntableContainer
         .dataTable({
-            ajax : {
-                url : "drillDown/resultList-update",
-                data : {
-                    fromDate : startDate,
-                    toDate : endDate,
-                    groupBy : modeVal,
-                    deptid : $('#deptid').val(),
-                    boundary : $('#boundary').val(),
-                    locality : $('#locality').val(),
-                    complainttypeid : $('#complainttypeid').val(),
-                    selecteduserid : $('#selecteduserid').val(),
-                    type : $('#type').val(),
-                    complaintDateType : when_dateVal
+            ajax: {
+                url: "drillDown/resultList-update",
+                data: {
+                    fromDate: startDate,
+                    toDate: endDate,
+                    groupBy: modeVal,
+                    deptid: $('#deptid').val(),
+                    boundary: $('#boundary').val(),
+                    locality: $('#locality').val(),
+                    complainttypeid: $('#complainttypeid').val(),
+                    selecteduserid: $('#selecteduserid').val(),
+                    type: $('#type').val(),
+                    complaintDateType: when_dateVal
                 }
             },
-            "autoWidth" : false,
-            "bDestroy" : true,
-            "sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-3 col-xs-12'i>" +
+            "autoWidth": false,
+            "bDestroy": true,
+            "sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-3 col-xs-12'i>" +
             "<'col-md-3 col-xs-6 col-right'l><'col-xs-12 col-md-3 col-right'<'export-data'T>>" +
             "<'col-md-3 col-xs-6 text-right'p>>",
-            "aLengthMenu" : [ [ 10, 25, 50, -1 ], [ 10, 25, 50, "All" ] ],
-            "oTableTools" : {
-                "sSwfPath" : "/egi/resources/global/swf/copy_csv_xls_pdf.swf",
-                "aButtons" : [ "xls", "pdf", "print" ]
+            "aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+            "oTableTools": {
+                "sSwfPath": "/egi/resources/global/swf/copy_csv_xls_pdf.swf",
+                "aButtons": ["xls", "pdf", "print"]
             },
-            columns : [
+            columns: [
                 {
-                    "data" : "name",
-                    "render" : function(data, type, row) {
+                    "data": "name",
+                    "render": function (data, type, row) {
                         return '<a href="javascript:void(0);" onclick="setHiddenValueByLink(this,\'Departmentwise\');" data-hiddenele="deptid" data-eleval="'
                             + data + '">' + data + '</a>';
                     },
-                    "sTitle" : "Department Name"
+                    "sTitle": "Department Name"
                 }, {
-                    "mData" : "registered",
-                    "sTitle" : "Registered",
-                    "sClass" : "text-right"
+                    "mData": "registered",
+                    "sTitle": "Registered",
+                    "sClass": "text-right"
 
                 }, {
-                    "data" : "inprocess",
-                    "sTitle" : "Inprocess",
-                    "sClass" : "text-right"
+                    "data": "inprocess",
+                    "sTitle": "Inprocess",
+                    "sClass": "text-right"
                 }, {
-                    "data" : "completed",
-                    "sTitle" : "Completed",
-                    "sClass" : "text-right"
+                    "data": "completed",
+                    "sTitle": "Completed",
+                    "sClass": "text-right"
                 }, {
-                    "data" : "rejected",
-                    "sTitle" : "Rejected",
-                    "sClass" : "text-right"
+                    "data": "rejected",
+                    "sTitle": "Rejected",
+                    "sClass": "text-right"
 
                 }, {
-                    "data" : "withinsla",
-                    "sTitle" : "Within SLA",
-                    "sClass" : "text-right"
+                    "data": "withinsla",
+                    "sTitle": "Within SLA",
+                    "sClass": "text-right"
 
                 }, {
-                    "data" : "beyondsla",
-                    "sTitle" : "Beyond SLA",
-                    "sClass" : "text-right"
-                },{
-                    "data" : "total",
-                    "sTitle" : "Total",
-                    "sClass" : "text-right"
+                    "data": "beyondsla",
+                    "sTitle": "Beyond SLA",
+                    "sClass": "text-right"
+                }, {
+                    "data": "total",
+                    "sTitle": "Total",
+                    "sClass": "text-right"
 
                 }],
-            "footerCallback" : function(row, data, start, end, display) {
+            "footerCallback": function (row, data, start, end, display) {
                 var api = this.api(), data;
                 if (data.length == 0) {
                     $('#report-footer').hide();
@@ -369,18 +369,18 @@ function callAjaxByDepartment() {
 
                 }
             },
-            "aoColumnDefs" : [ {
-                "aTargets" : [ 1, 2, 3, 4, 5 ],
-                "mRender" : function(data, type, full) {
+            "aoColumnDefs": [{
+                "aTargets": [1, 2, 3, 4, 5],
+                "mRender": function (data, type, full) {
                     return formatNumberInr(data);
                 }
-            } ]
+            }]
 
         });
     //e.stopPropagation();
 
 }
-function callAjaxByLocality(){
+function callAjaxByLocality() {
 
     var startDate = "";
     var endDate = "";
@@ -407,70 +407,70 @@ function callAjaxByLocality(){
 
     reportdatatable = drillDowntableContainer
         .dataTable({
-            ajax : {
-                url : "drillDown/resultList-update",
-                data : {
-                    fromDate : startDate,
-                    toDate : endDate,
-                    groupBy : modeVal,
-                    deptid : $('#deptid').val(),
-                    boundary : $('#boundary').val(),
-                    locality : $('#locality').val(),
-                    complainttypeid : $('#complainttypeid').val(),
-                    selecteduserid : $('#selecteduserid').val(),
-                    type : $('#type').val(),
-                    complaintDateType : when_dateVal
+            ajax: {
+                url: "drillDown/resultList-update",
+                data: {
+                    fromDate: startDate,
+                    toDate: endDate,
+                    groupBy: modeVal,
+                    deptid: $('#deptid').val(),
+                    boundary: $('#boundary').val(),
+                    locality: $('#locality').val(),
+                    complainttypeid: $('#complainttypeid').val(),
+                    selecteduserid: $('#selecteduserid').val(),
+                    type: $('#type').val(),
+                    complaintDateType: when_dateVal
                 }
             },
-            "autoWidth" : false,
-            "bDestroy" : true,
-            "sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-3 col-xs-12'i><'col-md-3 col-xs-6 col-right'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-md-3 col-xs-6 text-right'p>>",
-            "aLengthMenu" : [ [ 10, 25, 50, -1 ], [ 10, 25, 50, "All" ] ],
-            "oTableTools" : {
-                "sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
-                "aButtons" : [ "xls", "pdf", "print" ]
+            "autoWidth": false,
+            "bDestroy": true,
+            "sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-3 col-xs-12'i><'col-md-3 col-xs-6 col-right'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-md-3 col-xs-6 text-right'p>>",
+            "aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+            "oTableTools": {
+                "sSwfPath": "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
+                "aButtons": ["xls", "pdf", "print"]
             },
-            columns : [
+            columns: [
                 {
-                    "data" : "name",
-                    "render" : function(data, type, row) {
+                    "data": "name",
+                    "render": function (data, type, row) {
                         return '<a href="javascript:void(0);" onclick="setHiddenValueByLink(this,\'LocalityWise\');" data-hiddenele="locality" data-eleval="'
                             + data + '">' + data + '</a>';
                     },
-                    "sTitle" : "Locality"
+                    "sTitle": "Locality"
                 }, {
-                    "mData" : "registered",
-                    "sTitle" : "Registered",
-                    "sClass" : "text-right"
+                    "mData": "registered",
+                    "sTitle": "Registered",
+                    "sClass": "text-right"
 
                 }, {
-                    "data" : "inprocess",
-                    "sTitle" : "Inprocess",
-                    "sClass" : "text-right"
+                    "data": "inprocess",
+                    "sTitle": "Inprocess",
+                    "sClass": "text-right"
                 }, {
-                    "data" : "completed",
-                    "sTitle" : "Completed",
-                    "sClass" : "text-right"
+                    "data": "completed",
+                    "sTitle": "Completed",
+                    "sClass": "text-right"
                 }, {
-                    "data" : "rejected",
-                    "sTitle" : "Rejected",
-                    "sClass" : "text-right"
+                    "data": "rejected",
+                    "sTitle": "Rejected",
+                    "sClass": "text-right"
 
-                },{
-                    "data" : "withinsla",
-                    "sTitle" : "Within SLA",
-                    "sClass" : "text-right"
-                },{
-                    "data" : "beyondsla",
-                    "sTitle" : "Beyond SLA",
-                    "sClass" : "text-right"
-                },{
-                    "data" : "total",
-                    "sTitle" : "Total",
-                    "sClass" : "text-right"
+                }, {
+                    "data": "withinsla",
+                    "sTitle": "Within SLA",
+                    "sClass": "text-right"
+                }, {
+                    "data": "beyondsla",
+                    "sTitle": "Beyond SLA",
+                    "sClass": "text-right"
+                }, {
+                    "data": "total",
+                    "sTitle": "Total",
+                    "sClass": "text-right"
 
                 }],
-            "footerCallback" : function(row, data, start, end, display) {
+            "footerCallback": function (row, data, start, end, display) {
                 var api = this.api(), data;
                 if (data.length == 0) {
                     $('#report-footer').hide();
@@ -488,12 +488,12 @@ function callAjaxByLocality(){
 
                 }
             },
-            "aoColumnDefs" : [ {
-                "aTargets" : [ 1, 2, 3, 4, 5 ],
-                "mRender" : function(data, type, full) {
+            "aoColumnDefs": [{
+                "aTargets": [1, 2, 3, 4, 5],
+                "mRender": function (data, type, full) {
                     return formatNumberInr(data);
                 }
-            } ]
+            }]
 
         });
 }
@@ -523,71 +523,71 @@ function callAjaxByComplaintType() {
     $('#report-backbutton').show();
     reportdatatable = drillDowntableContainer
         .dataTable({
-            ajax : {
-                url : "drillDown/resultList-update",
-                data : {
-                    fromDate : startDate,
-                    toDate : endDate,
-                    groupBy : modeVal,
-                    deptid : $('#deptid').val(),
-                    boundary : $('#boundary').val(),
-                    locality : $('#locality').val(),
-                    complainttypeid : $('#complainttypeid').val(),
-                    selecteduserid : $('#selecteduserid').val(),
-                    type : $('#type').val(),
-                    complaintDateType : when_dateVal
+            ajax: {
+                url: "drillDown/resultList-update",
+                data: {
+                    fromDate: startDate,
+                    toDate: endDate,
+                    groupBy: modeVal,
+                    deptid: $('#deptid').val(),
+                    boundary: $('#boundary').val(),
+                    locality: $('#locality').val(),
+                    complainttypeid: $('#complainttypeid').val(),
+                    selecteduserid: $('#selecteduserid').val(),
+                    type: $('#type').val(),
+                    complaintDateType: when_dateVal
                 }
             },
-            "autoWidth" : false,
-            "bDestroy" : true,
-            "sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-3 col-xs-12'i><'col-md-3 col-xs-6 col-right'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-md-3 col-xs-6 text-right'p>>",
-            "aLengthMenu" : [ [ 10, 25, 50, -1 ], [ 10, 25, 50, "All" ] ],
-            "oTableTools" : {
-                "sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
-                "aButtons" : [ "xls", "pdf", "print" ]
+            "autoWidth": false,
+            "bDestroy": true,
+            "sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-3 col-xs-12'i><'col-md-3 col-xs-6 col-right'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-md-3 col-xs-6 text-right'p>>",
+            "aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+            "oTableTools": {
+                "sSwfPath": "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
+                "aButtons": ["xls", "pdf", "print"]
             },
-            columns : [
+            columns: [
                 {
-                    "data" : "name",
-                    "render" : function(data, type, row) {
+                    "data": "name",
+                    "render": function (data, type, row) {
                         return '<a href="javascript:void(0);" onclick="setHiddenValueByLink(this,\'ComplaintTypeWise\');" data-hiddenele="complainttypeid" data-eleval="'
                             + data + '">' + data + '</a>';
                     },
-                    "sTitle" : "Grievance Type Name"
+                    "sTitle": "Grievance Type Name"
                 }, {
-                    "mData" : "registered",
-                    "sTitle" : "Registered",
-                    "sClass" : "text-right"
+                    "mData": "registered",
+                    "sTitle": "Registered",
+                    "sClass": "text-right"
 
                 }, {
-                    "data" : "inprocess",
-                    "sTitle" : "Inprocess",
-                    "sClass" : "text-right"
+                    "data": "inprocess",
+                    "sTitle": "Inprocess",
+                    "sClass": "text-right"
                 }, {
-                    "data" : "completed",
-                    "sTitle" : "Completed",
-                    "sClass" : "text-right"
+                    "data": "completed",
+                    "sTitle": "Completed",
+                    "sClass": "text-right"
                 }, {
-                    "data" : "rejected",
-                    "sTitle" : "Rejected",
-                    "sClass" : "text-right"
+                    "data": "rejected",
+                    "sTitle": "Rejected",
+                    "sClass": "text-right"
 
-                },{
-                    "data" : "withinsla",
-                    "sTitle" : "Within SLA",
-                    "sClass" : "text-right"
-
-                },{
-                    "data" : "beyondsla",
-                    "sTitle" : "Beyond SLA",
-                    "sClass" : "text-right"
                 }, {
-                    "data" : "total",
-                    "sTitle" : "Total",
-                    "sClass" : "text-right"
+                    "data": "withinsla",
+                    "sTitle": "Within SLA",
+                    "sClass": "text-right"
+
+                }, {
+                    "data": "beyondsla",
+                    "sTitle": "Beyond SLA",
+                    "sClass": "text-right"
+                }, {
+                    "data": "total",
+                    "sTitle": "Total",
+                    "sClass": "text-right"
 
                 }],
-            "footerCallback" : function(row, data, start, end, display) {
+            "footerCallback": function (row, data, start, end, display) {
                 var api = this.api(), data;
                 if (data.length == 0) {
                     $('#report-footer').hide();
@@ -605,12 +605,12 @@ function callAjaxByComplaintType() {
 
                 }
             },
-            "aoColumnDefs" : [ {
-                "aTargets" : [ 1, 2, 3, 4, 5 ],
-                "mRender" : function(data, type, full) {
+            "aoColumnDefs": [{
+                "aTargets": [1, 2, 3, 4, 5],
+                "mRender": function (data, type, full) {
                     return formatNumberInr(data);
                 }
-            } ]
+            }]
 
         });
 }
@@ -640,71 +640,71 @@ function callAjaxByUserNameType() {
 
     reportdatatable = drillDowntableContainer
         .dataTable({
-            ajax : {
-                url : "drillDown/resultList-update",
-                data : {
-                    fromDate : startDate,
-                    toDate : endDate,
-                    groupBy : modeVal,
-                    deptid : $('#deptid').val(),
-                    boundary : $('#boundary').val(),
-                    locality : $('#locality').val(),
-                    complainttypeid : $('#complainttypeid').val(),
-                    selecteduserid : $('#selecteduserid').val(),
-                    type : $('#type').val(),
-                    complaintDateType : when_dateVal
+            ajax: {
+                url: "drillDown/resultList-update",
+                data: {
+                    fromDate: startDate,
+                    toDate: endDate,
+                    groupBy: modeVal,
+                    deptid: $('#deptid').val(),
+                    boundary: $('#boundary').val(),
+                    locality: $('#locality').val(),
+                    complainttypeid: $('#complainttypeid').val(),
+                    selecteduserid: $('#selecteduserid').val(),
+                    type: $('#type').val(),
+                    complaintDateType: when_dateVal
                 }
             },
-            "autoWidth" : false,
-            "bDestroy" : true,
-            "sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-3 col-xs-12'i><'col-md-3 col-xs-6 col-right'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-md-3 col-xs-6 text-right'p>>",
-            "aLengthMenu" : [ [ 10, 25, 50, -1 ], [ 10, 25, 50, "All" ] ],
-            "oTableTools" : {
-                "sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
-                "aButtons" : [ "xls", "pdf", "print" ]
+            "autoWidth": false,
+            "bDestroy": true,
+            "sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-3 col-xs-12'i><'col-md-3 col-xs-6 col-right'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-md-3 col-xs-6 text-right'p>>",
+            "aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+            "oTableTools": {
+                "sSwfPath": "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
+                "aButtons": ["xls", "pdf", "print"]
             },
-            columns : [
+            columns: [
                 {
-                    "data" : "name",
-                    "render" : function(data, type, row) {
+                    "data": "name",
+                    "render": function (data, type, row) {
                         return '<a href="javascript:void(0);" onclick="setHiddenValueByLink(this,\'UserNameWise\');" data-hiddenele="selecteduserid" data-eleval="'
                             + data + '">' + data + '</a>';
                     },
-                    "sTitle" : "User name-Position Name"
+                    "sTitle": "User name-Position Name"
                 }, {
-                    "mData" : "registered",
-                    "sTitle" : "Registered",
-                    "sClass" : "text-right"
+                    "mData": "registered",
+                    "sTitle": "Registered",
+                    "sClass": "text-right"
 
                 }, {
-                    "data" : "inprocess",
-                    "sTitle" : "Inprocess",
-                    "sClass" : "text-right"
+                    "data": "inprocess",
+                    "sTitle": "Inprocess",
+                    "sClass": "text-right"
                 }, {
-                    "data" : "completed",
-                    "sTitle" : "Completed",
-                    "sClass" : "text-right"
+                    "data": "completed",
+                    "sTitle": "Completed",
+                    "sClass": "text-right"
                 }, {
-                    "data" : "rejected",
-                    "sTitle" : "Rejected",
-                    "sClass" : "text-right"
+                    "data": "rejected",
+                    "sTitle": "Rejected",
+                    "sClass": "text-right"
 
-                },{
-                    "data" : "withinsla",
-                    "sTitle" : "Within SLA",
-                    "sClass" : "text-right"
-
-                },{
-                    "data" : "beyondsla",
-                    "sTitle" : "Beyond SLA",
-                    "sClass" : "text-right"
                 }, {
-                    "data" : "total",
-                    "sTitle" : "Total",
-                    "sClass" : "text-right"
+                    "data": "withinsla",
+                    "sTitle": "Within SLA",
+                    "sClass": "text-right"
+
+                }, {
+                    "data": "beyondsla",
+                    "sTitle": "Beyond SLA",
+                    "sClass": "text-right"
+                }, {
+                    "data": "total",
+                    "sTitle": "Total",
+                    "sClass": "text-right"
 
                 }],
-            "footerCallback" : function(row, data, start, end, display) {
+            "footerCallback": function (row, data, start, end, display) {
                 var api = this.api(), data;
                 if (data.length == 0) {
                     $('#report-footer').hide();
@@ -722,12 +722,12 @@ function callAjaxByUserNameType() {
 
                 }
             },
-            "aoColumnDefs" : [ {
-                "aTargets" : [ 1, 2, 3, 4, 5 ],
-                "mRender" : function(data, type, full) {
+            "aoColumnDefs": [{
+                "aTargets": [1, 2, 3, 4, 5],
+                "mRender": function (data, type, full) {
                     return formatNumberInr(data);
                 }
-            } ]
+            }]
 
         });
 }
@@ -757,63 +757,63 @@ function callAjaxByComplaintDetail() {
 
     reportdatatable = compwisedrilldowntbl
         .dataTable({
-            ajax : {
-                url : "drillDown/resultList-update",
-                data : {
-                    fromDate : startDate,
-                    toDate : endDate,
-                    groupBy : modeVal,
-                    deptid : $('#deptid').val(),
-                    boundary : $('#boundary').val(),
-                    locality : $('#locality').val(),
-                    complainttypeid : $('#complainttypeid').val(),
-                    selecteduserid : $('#selecteduserid').val(),
-                    type : $('#type').val(),
-                    complaintDateType : when_dateVal
+            ajax: {
+                url: "drillDown/resultList-update",
+                data: {
+                    fromDate: startDate,
+                    toDate: endDate,
+                    groupBy: modeVal,
+                    deptid: $('#deptid').val(),
+                    boundary: $('#boundary').val(),
+                    locality: $('#locality').val(),
+                    complainttypeid: $('#complainttypeid').val(),
+                    selecteduserid: $('#selecteduserid').val(),
+                    type: $('#type').val(),
+                    complaintDateType: when_dateVal
                 }
             },
-            "autoWidth" : false,
-            "bDestroy" : true,
-            "sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-3 col-xs-12'i><'col-md-3 col-xs-6 col-right'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-md-3 col-xs-6 text-right'p>>",
-            "aLengthMenu" : [ [ 10, 25, 50, -1 ], [ 10, 25, 50, "All" ] ],
-            "oTableTools" : {
-                "sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
-                "aButtons" : [ "xls", "pdf", "print" ]
+            "autoWidth": false,
+            "bDestroy": true,
+            "sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-3 col-xs-12'i><'col-md-3 col-xs-6 col-right'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-md-3 col-xs-6 text-right'p>>",
+            "aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+            "oTableTools": {
+                "sSwfPath": "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
+                "aButtons": ["xls", "pdf", "print"]
             },
-            columns : [
+            columns: [
                 {
-                    "data" : "crn",
-                    "sTitle" : "Complaint Number",
-                    "render" : function(data, type, row) {
-                        return '<a href="javascript:void(0);" onclick="window.open(\'/pgr/public/complaint/view/'
+                    "data": "crn",
+                    "sTitle": "Complaint Number",
+                    "render": function (data, type, row) {
+                        return '<a href="javascript:void(0);" onclick="window.open(\'/pgr/complaint/view/'
                             + data
                             + '\',\'\', \'width=800, height=600\');" data-hiddenele="selecteduserid" data-eleval="'
                             + data + '">' + data + '</a>';
                     },
                 }, {
-                    "mData" : "createddate",
-                    "sTitle" : "Grievance Date"
+                    "mData": "createddate",
+                    "sTitle": "Grievance Date"
 
                 }, {
-                    "data" : "complainantname",
-                    "sTitle" : "Complainant Name"
+                    "data": "complainantname",
+                    "sTitle": "Complainant Name"
                 }, {
-                    "data" : "boundaryname",
-                    "sTitle" : "Grievance Address"
+                    "data": "boundaryname",
+                    "sTitle": "Grievance Address"
                 }, {
-                    "data" : "details",
-                    "sTitle" : "Grievance Details"
+                    "data": "details",
+                    "sTitle": "Grievance Details"
                 }, {
-                    "data" : "status",
-                    "sTitle" : "Status"
+                    "data": "status",
+                    "sTitle": "Status"
 
                 }, {
-                    "data" : "feedback",
-                    "sTitle" : "Feedback"
+                    "data": "feedback",
+                    "sTitle": "Feedback"
 
                 }, {
-                    "data" : "issla",
-                    "sTitle" : "Within SLA(Yes or No)"
+                    "data": "issla",
+                    "sTitle": "Within SLA(Yes or No)"
 
                 }]
 

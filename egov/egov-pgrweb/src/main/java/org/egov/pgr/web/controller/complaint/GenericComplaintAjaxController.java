@@ -44,7 +44,6 @@ import org.egov.eis.service.DesignationService;
 import org.egov.eis.service.EmployeeViewService;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
-
 import org.egov.infra.admin.master.service.CrossHierarchyService;
 import org.egov.pgr.entity.ComplaintType;
 import org.egov.pgr.entity.ReceivingCenter;
@@ -53,26 +52,23 @@ import org.egov.pgr.service.ReceivingCenterService;
 import org.egov.pims.commons.Designation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @Controller
 public class GenericComplaintAjaxController {
 
     @Autowired
     private BoundaryService boundaryService;
-   
+
     @Autowired
     private DesignationService designationService;
 
@@ -88,49 +84,54 @@ public class GenericComplaintAjaxController {
     @Autowired
     private EmployeeViewService employeeViewService;
 
-    @RequestMapping(value = { "/complaint/citizen/complaintTypes", "/complaint/citizen/anonymous/complaintTypes",
-            "/complaint/officials/complaintTypes", "/complaint/router/complaintTypes", "/complaint/escalationTime/complaintTypes" },
-            method = GET, produces = APPLICATION_JSON_VALUE)
-    public @ResponseBody List<ComplaintType> getAllActiveComplaintTypesByNameLike(@RequestParam final String complaintTypeName) {
+    @GetMapping(value = {"/complaint/citizen/complaintTypes", "/complaint/citizen/anonymous/complaintTypes",
+            "/complaint/officials/complaintTypes", "/complaint/router/complaintTypes", "/complaint/escalationTime/complaintTypes"},
+            produces = APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<ComplaintType> getAllActiveComplaintTypesByNameLike(@RequestParam String complaintTypeName) {
         return complaintTypeService.findAllActiveByNameLike(complaintTypeName);
     }
 
-    @RequestMapping(value = { "/complaint/citizen/complainttypes-by-category", "/complaint/citizen/anonymous/complainttypes-by-category",
-            "/complaint/officials/complainttypes-by-category" }, method = GET, produces = APPLICATION_JSON_VALUE)
-    public @ResponseBody List<ComplaintType> complaintTypesByCategory(@RequestParam final Long categoryId) {
+    @GetMapping(value = {"/complaint/citizen/complainttypes-by-category", "/complaint/citizen/anonymous/complainttypes-by-category",
+            "/complaint/officials/complainttypes-by-category"}, produces = APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<ComplaintType> complaintTypesByCategory(@RequestParam Long categoryId) {
         return complaintTypeService.findActiveComplaintTypesByCategory(categoryId);
     }
 
-    @RequestMapping(value = { "/public/complaint/complaintTypes", "/complaint/search/complaintTypes",
-            "/complaint/search/complaintTypes" }, method = GET, produces = APPLICATION_JSON_VALUE)
-    public @ResponseBody List<ComplaintType> getAllComplaintTypesByNameLike(@RequestParam final String complaintTypeName) {
+    @GetMapping(value = "/complaint/complaintTypes", produces = APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<ComplaintType> getAllComplaintTypesByNameLike(@RequestParam String complaintTypeName) {
         return complaintTypeService.findAllActiveByNameLike(complaintTypeName);
     }
 
-    @RequestMapping(value = "/complaint/escalationTime/ajax-approvalDesignations", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
-    public @ResponseBody List<Designation> getAllDesignationsByName(@RequestParam final String designationName) {
+    @GetMapping(value = "/complaint/escalationTime/ajax-approvalDesignations", produces = APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<Designation> getAllDesignationsByName(@RequestParam String designationName) {
         return designationService.getAllDesignationsByNameLike(designationName);
     }
 
-    @RequestMapping(value = "/complaint/officials/isCrnRequired", method = GET)
-    public @ResponseBody boolean isCrnRequired(@RequestParam final Long receivingCenterId) {
-        final ReceivingCenter receivingCenter = receivingCenterService.findByRCenterId(receivingCenterId);
+    @GetMapping("/complaint/officials/isCrnRequired")
+    @ResponseBody
+    public boolean isCrnRequired(@RequestParam Long receivingCenterId) {
+        ReceivingCenter receivingCenter = receivingCenterService.findByRCenterId(receivingCenterId);
         return receivingCenter == null ? Boolean.TRUE : receivingCenter.isCrnRequired();
     }
 
-    @RequestMapping(value = { "/complaint/citizen/locations", "/complaint/citizen/anonymous/locations",
-            "/complaint/officials/locations" }, method = GET, produces = TEXT_PLAIN_VALUE)
-    public @ResponseBody String getAllLocationJSON(@RequestParam final String locationName) {
-        final StringBuilder locationJSONData = new StringBuilder("[");
-        final String locationNameLike = "%" + locationName + "%";
+    @GetMapping(value = {"/complaint/citizen/locations", "/complaint/citizen/anonymous/locations",
+            "/complaint/officials/locations"}, produces = TEXT_PLAIN_VALUE)
+    @ResponseBody
+    public String getAllLocationJSON(@RequestParam String locationName) {
+        StringBuilder locationJSONData = new StringBuilder("[");
+        String locationNameLike = "%" + locationName + "%";
         crossHierarchyService
                 .getChildBoundaryNameAndBndryTypeAndHierarchyType("Locality", "Location", "Administration", locationNameLike)
                 .stream().forEach(location -> {
-                    locationJSONData.append("{\"name\":\"");
+            locationJSONData.append("{\"name\":\"");
 
-                    locationJSONData.append(location.getChild().getName() + " - " + location.getParent().getName());
-                    locationJSONData.append("\",\"id\":").append(location.getId()).append("},");
-                });
+            locationJSONData.append(location.getChild().getName() + " - " + location.getParent().getName());
+            locationJSONData.append("\",\"id\":").append(location.getId()).append("},");
+        });
 
         if (locationJSONData.lastIndexOf(",") != -1)
             locationJSONData.deleteCharAt(locationJSONData.lastIndexOf(","));
@@ -139,18 +140,18 @@ public class GenericComplaintAjaxController {
         return locationJSONData.toString();
     }
 
-    @RequestMapping(value = { "/complaint/router/position", "/complaint/escalation/position" }, method = GET, produces = TEXT_PLAIN_VALUE)
-    public @ResponseBody String getAllPositionByNameLike(@RequestParam final String positionName,
-            final HttpServletResponse response) throws IOException {
-        final String likePositionName = "%" + positionName.toUpperCase() + "%";
-        final StringBuilder positionUser = new StringBuilder("[");
+    @GetMapping(value = {"/complaint/router/position", "/complaint/escalation/position"}, produces = TEXT_PLAIN_VALUE)
+    @ResponseBody
+    public String getAllPositionByNameLike(@RequestParam String positionName) throws IOException {
+        String likePositionName = "%" + positionName.toUpperCase() + "%";
+        StringBuilder positionUser = new StringBuilder("[");
         employeeViewService.findByUserNameLikeOrCodeLikeOrPosition_NameLike(likePositionName,
                 likePositionName, likePositionName, new Date()).stream().forEach(position -> {
-                    positionUser.append("{\"name\":\"");
-                    positionUser
-                            .append(position.getPosition().getName() + '-' + position.getName()+ '-' + position.getCode());
-                    positionUser.append("\",\"id\":").append(position.getPosition().getId()).append("},");
-                });
+            positionUser.append("{\"name\":\"");
+            positionUser
+                    .append(position.getPosition().getName() + '-' + position.getName() + '-' + position.getCode());
+            positionUser.append("\",\"id\":").append(position.getPosition().getId()).append("},");
+        });
         if (positionUser.lastIndexOf(",") != -1)
             positionUser.deleteCharAt(positionUser.lastIndexOf(","));
         positionUser.append("]");
@@ -158,12 +159,12 @@ public class GenericComplaintAjaxController {
 
     }
 
-    @RequestMapping(value = { "/complaint/router/boundaries-by-type",
-            "/complaint/escalation/boundaries-by-type" }, method = GET, produces = APPLICATION_JSON_VALUE)
-    public @ResponseBody List<Boundary> getBoundariesbyType(@RequestParam final String boundaryName,
-            @RequestParam final Long boundaryTypeId, final HttpServletResponse response) throws IOException {
-        final String likeBoundaryName = "%" + boundaryName + "%";
-        return boundaryService.getBondariesByNameAndTypeOrderByBoundaryNumAsc(likeBoundaryName, boundaryTypeId);
+    @GetMapping(value = {"/complaint/router/boundaries-by-type", "/complaint/escalation/boundaries-by-type"},
+            produces = APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<Boundary> getBoundariesbyType(@RequestParam String boundaryName,
+                                              @RequestParam Long boundaryTypeId) {
+        return boundaryService.getBondariesByNameAndTypeOrderByBoundaryNumAsc("%" + boundaryName + "%", boundaryTypeId);
     }
-   
+
 }
