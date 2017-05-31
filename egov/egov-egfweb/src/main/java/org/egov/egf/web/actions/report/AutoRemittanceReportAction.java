@@ -532,11 +532,11 @@ public class AutoRemittanceReportAction extends BaseFormAction {
         if (null != bank && null != bank.getId() && bank.getId() != -1)
             query.append("AND bank.id = " + bank.getId());
         if (null != supplierCode && !supplierCode.isEmpty())
-            query.append(" AND ( gld.DETAILKEYID = " + new Integer(supplierCode)
-                    + " AND gld.DETAILTYPEID=(SELECT id FROM accountdetailtype WHERE name='Creditor'))");
+            query.append(" AND ( gld.DETAILKEYID = ").append(supplierCode)
+                    .append(" AND gld.DETAILTYPEID=(SELECT id FROM accountdetailtype WHERE name='Creditor'))");
         if (null != contractorCode && !contractorCode.isEmpty())
-            query.append(" AND ( gld.DETAILKEYID = " + new Integer(contractorCode)
-                    + " AND gld.DETAILTYPEID=(SELECT id FROM accountdetailtype WHERE name='contractor'))");
+            query.append(" AND ( gld.DETAILKEYID = ").append(contractorCode)
+                    .append(" AND gld.DETAILTYPEID=(SELECT id FROM accountdetailtype WHERE name='contractor'))");
         if (null != bankbranch && null != bankbranch.getId() && bankbranch.getId() != -1)
             query.append("AND bnkacc.BRANCHID = " + bankbranch.getId());
         if (null != bankaccount && null != bankaccount.getId() && bankaccount.getId() != -1)
