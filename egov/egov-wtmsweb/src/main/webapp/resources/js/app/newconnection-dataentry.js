@@ -43,7 +43,8 @@ $(document).ready(function(){
 	$("#connectionType").change(function(){
 		if($('#legacy').val()){
 			if($('#connectionType').val() === "METERED")
-			{
+			{	
+				$('#monthlyFee').attr('disabled',true);
 				$('#metereddetails').show();
 				$('#spanmonthlymandatory').hide();
 				$('.showfields').show();
@@ -55,6 +56,7 @@ $(document).ready(function(){
 			    $('#metereddetails').hide();
 			    $('#spanmonthlymandatory').show();
 			    $('.showfields').hide();
+			    $('#monthlyFee').removeAttr('disabled');
 			    $('#waterSupplyType').removeAttr('required');
 			    $('#buildingName').removeAttr('required');
 			    $("#waterSupplyType").val('');
