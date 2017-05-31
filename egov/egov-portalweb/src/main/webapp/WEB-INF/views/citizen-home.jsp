@@ -39,6 +39,7 @@
   --%>
   <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
     <div class="container-fluid">
       <div class="">
@@ -158,7 +159,10 @@
 		                 <tr onclick="openPopUp('${inboxItem.portalInbox.link}');" class = "${inboxItem.portalInbox.module.contextRoot } showAll">
 		                   <td><span class="spansno">${item.index + 1}</span></td>
 		                   <td>${inboxItem.portalInbox.applicationNumber}</td>
-		                   <td>${inboxItem.portalInbox.applicationDate}</td>
+		                   <td>
+			                   <fmt:formatDate
+								value="${inboxItem.portalInbox.applicationDate}"
+								pattern="dd/MM/yyyy" /></td>
 		                   <td>${inboxItem.portalInbox.module.displayName}</td>
 		                   <td>${inboxItem.portalInbox.serviceType}</td>
 		                   <td>${inboxItem.portalInbox.status}</td>
@@ -176,7 +180,9 @@
 							</td>
 		                   <td>
 		 						<div class="text-center">
-								<c:out default="-" value="${inboxItem.portalInbox.slaEndDate}" ></c:out>
+									<fmt:formatDate
+										value="${inboxItem.portalInbox.slaEndDate}"
+										pattern="dd/MM/yyyy" />
 							</div>
 		 					</td>
 		 					<td>
@@ -190,7 +196,11 @@
 	                	<tr onclick="openPopUp('${inboxItem.portalInbox.link}');" class = "${inboxItem.portalInbox.module.contextRoot } showAll">
 	                    <td><span class="spansno">${item.index + 1}</span></td>
 	                    <td>${inboxItem.portalInbox.applicationNumber}</td>
-	                    <td>${inboxItem.portalInbox.applicationDate}</td>
+	                    <td>
+	                    	<fmt:formatDate
+								value="${inboxItem.portalInbox.applicationDate}"
+								pattern="dd/MM/yyyy" /></td>
+
 	                    <td>${inboxItem.portalInbox.module.displayName}</td>
 	                    <td>${inboxItem.portalInbox.serviceType}</td>
 	                    <td>${inboxItem.portalInbox.status}</td>
@@ -208,7 +218,9 @@
 	 					</td>
 	                    <td>
 	 						<div class="text-center">
-								<c:out default="-" value="${inboxItem.portalInbox.slaEndDate}" ></c:out>
+								<fmt:formatDate
+									value="${inboxItem.portalInbox.slaEndDate}"
+									pattern="dd/MM/yyyy" />
 							</div>
 	 					</td>
 	                    <td>
@@ -222,7 +234,10 @@
 	                  <tr onclick="openPopUp('${inboxItem.portalInbox.link}');" class = "${inboxItem.portalInbox.module.contextRoot } showAll">
 	                    <td><span class="spansno">${item.index + 1}</span></td>
 	                    <td>${inboxItem.portalInbox.applicationNumber}</td>
-	                    <td>${inboxItem.portalInbox.applicationDate}</td>
+	                    <td>
+		                   <fmt:formatDate
+							value="${inboxItem.portalInbox.applicationDate}"
+							pattern="dd/MM/yyyy" /></td>
 	                    <td>${inboxItem.portalInbox.module.displayName}</td>
 	                    <td>${inboxItem.portalInbox.serviceType}</td>
 	                    <td>${inboxItem.portalInbox.status}</td>
@@ -240,7 +255,9 @@
 	 					</td>
 	                    <td>
 							<div class="text-center">
-								<c:out default="-" value="${inboxItem.portalInbox.slaEndDate}" ></c:out>
+								<fmt:formatDate
+									value="${inboxItem.portalInbox.slaEndDate}"
+									pattern="dd/MM/yyyy" />
 							</div>
 	 					</td>
 	                    <td>
