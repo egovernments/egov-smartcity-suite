@@ -44,8 +44,8 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.CacheControl;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.servlet.LocaleResolver;
@@ -54,6 +54,7 @@ import org.springframework.web.servlet.support.RequestContextUtils;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayInputStream;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
@@ -110,14 +111,19 @@ public class WebUtils {
         return request.getServletContext().getContextPath().toUpperCase().replace("/", EMPTY);
     }
 
-    public static ResponseEntity<byte[]> toReportResponseEntity(ReportRequest reportRequest, ReportOutput reportOutput) {
-        HttpHeaders headers = new HttpHeaders();
+    public static ResponseEntity<InputStreamResource> reportToResponseEntity(ReportRequest reportRequest, ReportOutput reportOutput) {
+        MediaType mediaType = MediaType.TEXT_PLAIN;
         if (reportRequest.getReportFormat().equals(ReportFormat.PDF))
-            headers.setContentType(MediaType.parseMediaType("application/pdf"));
+            mediaType = MediaType.parseMediaType("application/pdf");
         else if (reportRequest.getReportFormat().equals(ReportFormat.XLS))
-            headers.setContentType(MediaType.parseMediaType("application/vnd.ms-excel"));
-        headers.add("content-disposition", "inline;filename=" + reportRequest.reportOutputFileName());
-        return new ResponseEntity<>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
+            mediaType = MediaType.parseMediaType("application/vnd.ms-excel");
+        return ResponseEntity.
+                ok().
+                contentType(mediaType).
+                cacheControl(CacheControl.noCache()).
+                contentLength(reportOutput.getReportOutputData().length).
+                header("content-disposition", "inline;filename=" + reportRequest.reportOutputFileName()).
+                body(new InputStreamResource(new ByteArrayInputStream(reportOutput.getReportOutputData())));
     }
 
     public static void setUserLocale(User user, HttpServletRequest request, HttpServletResponse response) {

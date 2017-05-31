@@ -295,6 +295,10 @@ public final class DateUtils extends org.apache.commons.lang3.time.DateUtils {
         return new SimpleDateFormat(pattern, locale());
     }
 
+    public static DateTimeFormatter defaultDateFormatter() {
+        return formatter(defaultDatePattern());
+    }
+
     public static DateTimeFormatter formatter(String pattern) {
         DateTimeFormatter formatter = DATE_FORMATTER_HOLDER.get(pattern);
         if (formatter == null) {

@@ -51,6 +51,7 @@ import org.egov.tl.service.LicenseCategoryService;
 import org.egov.tl.service.LicenseStatusService;
 import org.egov.tl.web.response.adaptor.BaseRegisterResponseAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -63,7 +64,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 
-import static org.egov.infra.web.utils.WebUtils.toReportResponseEntity;
+import static org.egov.infra.web.utils.WebUtils.reportToResponseEntity;
 import static org.egov.tl.utils.Constants.LOCALITY;
 import static org.egov.tl.utils.Constants.LOCATION_HIERARCHY_TYPE;
 import static org.egov.tl.utils.Constants.REVENUE_HIERARCHY_TYPE;
@@ -118,11 +119,11 @@ public class BaseRegisterController {
 
     @GetMapping("download")
     @ResponseBody
-    public ResponseEntity<byte[]> downloadReport(BaseRegisterRequest baseRegisterRequest) {
+    public ResponseEntity<InputStreamResource> downloadReport(BaseRegisterRequest baseRegisterRequest) {
         ReportRequest reportRequest = new ReportRequest("tl_baseregister_report",
                 baseRegisterService.getAllBaseRegisterRecords(baseRegisterRequest), new HashMap<>());
         reportRequest.setReportFormat(baseRegisterRequest.getPrintFormat());
         reportRequest.setReportName("base_register_report");
-        return toReportResponseEntity(reportRequest, reportService.createReport(reportRequest));
+        return reportToResponseEntity(reportRequest, reportService.createReport(reportRequest));
     }
 }
