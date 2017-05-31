@@ -122,16 +122,16 @@ public class GenericComplaintAjaxController {
             "/complaint/officials/locations"}, produces = TEXT_PLAIN_VALUE)
     @ResponseBody
     public String getAllLocationJSON(@RequestParam String locationName) {
-        StringBuilder locationJSONData = new StringBuilder("[");
-        String locationNameLike = "%" + locationName + "%";
+        StringBuilder locationJSONData = new StringBuilder();
+        locationJSONData.append("[");
         crossHierarchyService
-                .getChildBoundaryNameAndBndryTypeAndHierarchyType("Locality", "Location", "Administration", locationNameLike)
-                .stream().forEach(location -> {
-            locationJSONData.append("{\"name\":\"");
-
-            locationJSONData.append(location.getChild().getName() + " - " + location.getParent().getName());
-            locationJSONData.append("\",\"id\":").append(location.getId()).append("},");
-        });
+                .getChildBoundaryNameAndBndryTypeAndHierarchyType("Locality", "Location", "Administration", "%" + locationName + "%")
+                .stream()
+                .forEach(location -> {
+                    locationJSONData.append("{\"name\":\"")
+                            .append(location.getChild().getName()).append(" - ").append(location.getParent().getName())
+                            .append("\",\"id\":").append(location.getId()).append("},");
+                });
 
         if (locationJSONData.lastIndexOf(",") != -1)
             locationJSONData.deleteCharAt(locationJSONData.lastIndexOf(","));
@@ -143,15 +143,18 @@ public class GenericComplaintAjaxController {
     @GetMapping(value = {"/complaint/router/position", "/complaint/escalation/position"}, produces = TEXT_PLAIN_VALUE)
     @ResponseBody
     public String getAllPositionByNameLike(@RequestParam String positionName) throws IOException {
+        StringBuilder positionUser = new StringBuilder();
+        positionUser.append("[");
         String likePositionName = "%" + positionName.toUpperCase() + "%";
-        StringBuilder positionUser = new StringBuilder("[");
-        employeeViewService.findByUserNameLikeOrCodeLikeOrPosition_NameLike(likePositionName,
-                likePositionName, likePositionName, new Date()).stream().forEach(position -> {
-            positionUser.append("{\"name\":\"");
-            positionUser
-                    .append(position.getPosition().getName() + '-' + position.getName() + '-' + position.getCode());
-            positionUser.append("\",\"id\":").append(position.getPosition().getId()).append("},");
-        });
+        employeeViewService
+                .findByUserNameLikeOrCodeLikeOrPosition_NameLike(likePositionName, likePositionName, likePositionName, new Date())
+                .stream()
+                .forEach(position -> {
+                    positionUser.append("{\"name\":\"")
+                            .append(position.getPosition().getName()).append('-')
+                            .append(position.getName()).append('-').append(position.getCode())
+                            .append("\",\"id\":").append(position.getPosition().getId()).append("},");
+                });
         if (positionUser.lastIndexOf(",") != -1)
             positionUser.deleteCharAt(positionUser.lastIndexOf(","));
         positionUser.append("]");

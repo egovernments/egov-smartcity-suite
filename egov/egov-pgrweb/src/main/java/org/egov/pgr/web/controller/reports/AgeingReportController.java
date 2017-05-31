@@ -70,11 +70,6 @@ public class AgeingReportController {
     @Autowired
     private AgeingReportService ageingReportService;
 
-    @Autowired
-    public AgeingReportController(AgeingReportService ageingReportService) {
-        this.ageingReportService = ageingReportService;
-    }
-
     @ModelAttribute
     public void getReportHelper(Model model) {
         ReportHelper reportHealperObj = new ReportHelper();
