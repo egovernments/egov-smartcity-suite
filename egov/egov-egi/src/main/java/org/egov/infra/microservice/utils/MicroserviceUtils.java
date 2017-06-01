@@ -50,7 +50,6 @@ import javax.persistence.PersistenceContext;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.service.RoleService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.microservice.contract.CreateUserRequest;
@@ -58,7 +57,6 @@ import org.egov.infra.microservice.contract.UserDetailResponse;
 import org.egov.infra.microservice.contract.UserRequest;
 import org.egov.infra.microservice.models.RequestInfo;
 import org.egov.infra.microservice.models.UserInfo;
-import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -70,17 +68,12 @@ public class MicroserviceUtils {
 
     private static final Logger LOGGER = Logger.getLogger(MicroserviceUtils.class);
     private static final String CLIENT_ID = "client.id";
-    private static final String ROLE_EMPLOYEE = "EMPLOYEE";
-    private static final String ROLE_CITIZEN = "CITIZEN";
 
     @Autowired
     private SecurityUtils securityUtils;
 
     @Autowired
     private Environment environment;
-
-    @Autowired
-    private RoleService roleService;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -116,12 +109,6 @@ public class MicroserviceUtils {
     }
 
     public void createUserMicroservice(final User user, final String createUserServiceUrl) {
-
-        if (user.getRoles().isEmpty())
-            if (user.getType().equals(UserType.CITIZEN))
-                user.addRole(roleService.getRoleByName(ROLE_CITIZEN));
-            else if (user.getType().equals(UserType.EMPLOYEE))
-                user.addRole(roleService.getRoleByName(ROLE_EMPLOYEE));
 
         final CreateUserRequest createUserRequest = new CreateUserRequest();
         final UserRequest userRequest = new UserRequest(user, getTanentId());
