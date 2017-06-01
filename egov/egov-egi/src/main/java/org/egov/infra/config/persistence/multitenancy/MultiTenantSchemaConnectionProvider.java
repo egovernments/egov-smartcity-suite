@@ -93,7 +93,7 @@ public class MultiTenantSchemaConnectionProvider implements MultiTenantConnectio
 
     @Override
     public boolean supportsAggressiveRelease() {
-        return true;
+        return Boolean.TRUE;
     }
 
     @Override
