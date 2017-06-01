@@ -104,7 +104,7 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
     private boolean eligible;
     private List<Amalgamation> amalgamations = new ArrayList<>();
     private List<Amalgamation> amalgamationsProxy = new ArrayList<>();
-    private Character isIntgBillCreated;
+    private Character isIntgBillCreated = 'N';
 
     @Override
     public List<PropertyOwnerInfo> getPropertyOwnerInfo() {
