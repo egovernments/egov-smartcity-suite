@@ -42,5 +42,5 @@ package org.egov.infra.persistence.entity.enums;
 
 public enum AddressType {
     //This order should not be interrupted
-    PERMANENT, CORRESPONDENCE, USUALADDRESS, EVENTADDRESS, PRESENTADDRESS, PROPERTYADDRESS;
+    PERMANENT, CORRESPONDENCE, USUALADDRESS, EVENTADDRESS, PRESENTADDRESS, PROPERTYADDRESS
 }

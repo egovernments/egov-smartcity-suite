@@ -228,7 +228,7 @@ ResponsiveDatatablesHelper.prototype.setWindowsResizeHandler = function(bindFlag
     } else {
         jQuery(window).unbind("resize");
     }
-}
+};
 
 /**
  * Respond window size change.  This helps make datatables responsive.
@@ -495,7 +495,7 @@ ResponsiveDatatablesHelper.prototype.disable = function (disable) {
         // Add windows resize handler.
         this.setWindowsResizeHandler();
     }
-}
+};
 
 /**
  * Get an array of TD nodes from DataTables for a given row, including any column elements which are hidden.

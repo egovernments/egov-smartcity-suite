@@ -93,7 +93,7 @@ $(document).ready(function(){
 
 			            reader.onload = function (e) {
 			                $('#imglogo').attr('src', e.target.result);
-			            }
+			            };
 
 			            reader.readAsDataURL(this.files[0]);
 			        }

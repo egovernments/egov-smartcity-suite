@@ -600,7 +600,7 @@
                 if (numValues == 1) {
                     numerator = file.getUint32(valueOffset, !bigEnd);
                     denominator = file.getUint32(valueOffset+4, !bigEnd);
-                    val = new Number(numerator / denominator);
+                    val = Number(numerator / denominator);
                     val.numerator = numerator;
                     val.denominator = denominator;
                     return val;
@@ -609,7 +609,7 @@
                     for (n=0;n<numValues;n++) {
                         numerator = file.getUint32(valueOffset + 8*n, !bigEnd);
                         denominator = file.getUint32(valueOffset+4 + 8*n, !bigEnd);
-                        vals[n] = new Number(numerator / denominator);
+                        vals[n] = Number(numerator / denominator);
                         vals[n].numerator = numerator;
                         vals[n].denominator = denominator;
                     }
@@ -751,12 +751,12 @@
             }
         }
         return true;
-    }
+    };
 
     EXIF.getTag = function(img, tag) {
         if (!imageHasData(img)) return;
         return img.exifdata[tag];
-    }
+    };
 
     EXIF.getAllTags = function(img) {
         if (!imageHasData(img)) return {};
@@ -769,7 +769,7 @@
             }
         }
         return tags;
-    }
+    };
 
     EXIF.pretty = function(img) {
         if (!imageHasData(img)) return "";
@@ -790,11 +790,11 @@
             }
         }
         return strPretty;
-    }
+    };
 
     EXIF.readFromBinaryFile = function(file) {
         return findEXIFinJPEG(file);
-    }
+    };
 
     if (typeof define === 'function' && define.amd) {
         define('exif-js', [], function() {

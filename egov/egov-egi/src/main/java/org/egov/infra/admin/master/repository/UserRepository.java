@@ -88,7 +88,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     List<User> findUsersByUserAndRoleName(@Param("usrName") String userName, @Param("roleName") String roleName);
 
     @Query(" select count(*) from User usr where usr.username like :name||'%' ")
-    public Integer getUserSerialNumberByName(@Param("name") final String name);
+    Integer getUserSerialNumberByName(@Param("name") final String name);
     
-    public User findByNameAndMobileNumberAndGender(String name, String mobileNumber, Gender gender);
+    User findByNameAndMobileNumberAndGender(String name, String mobileNumber, Gender gender);
 }

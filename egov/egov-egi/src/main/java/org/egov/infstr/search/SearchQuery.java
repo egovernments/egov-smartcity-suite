@@ -53,11 +53,11 @@ public interface SearchQuery {
 	 * @param pageSize Page size
 	 * @return Page object created using results of the search query execution for given page number and page size
 	 */
-	public Page getPage(PersistenceService persistenceService, int pageNum, int pageSize);
+    Page getPage(PersistenceService persistenceService, int pageNum, int pageSize);
 
 	/**
 	 * @param persistenceService Persistence service that can be used for executing the query
 	 * @return Total number records that will be returned by the search query
 	 */
-	public int getCount(PersistenceService persistenceService);
+    int getCount(PersistenceService persistenceService);
 }
