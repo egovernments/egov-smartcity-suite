@@ -185,8 +185,7 @@ public class MicroserviceUtils {
         query.setParameter(24, userId);
         query.executeUpdate();
         final Query seqQuery = entityManager
-                .createNativeQuery("SELECT nextval (?)");
-        seqQuery.setParameter(1, "seq_eg_user");
+                .createNativeQuery("SELECT setval('seq_eg_user', (SELECT MAX(id)+1 FROM eg_user))");
         seqQuery.getSingleResult();
         insertUserRole(user, userId);
     }
