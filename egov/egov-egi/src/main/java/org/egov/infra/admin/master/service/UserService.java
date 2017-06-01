@@ -79,8 +79,9 @@ public class UserService {
         final String createUserServiceUrl = applicationProperties.getCreateUserServiceUrl();
 
         if (StringUtils.isNotBlank(createUserServiceUrl)) {
-            final Long userId = microserviceUtils.createUserMicroservice(user, createUserServiceUrl);
-            return getUserById(userId);
+            final User savedUser = userRepository.save(user);
+            microserviceUtils.createUserMicroservice(user, createUserServiceUrl);
+            return savedUser;
         } else
             return userRepository.save(user);
     }
