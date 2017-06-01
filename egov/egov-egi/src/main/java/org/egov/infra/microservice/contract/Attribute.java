@@ -1,15 +1,20 @@
-package org.egov.infra.workflow.multitenant.model;
+package org.egov.infra.microservice.contract;
 
 import java.util.List;
 
 public class Attribute {
 
     private Boolean variable;
+
     private String code;
+
     private String datatype;
+
     private Boolean required;
-    private String datatype_description;
-    private List values;
+
+    private String datatypeDescription;
+
+    private List<Value> values;
 
     public Boolean getVariable() {
         return variable;
@@ -43,21 +48,20 @@ public class Attribute {
         this.required = required;
     }
 
-    public String getDatatype_description() {
-        return datatype_description;
+    public String getDatatypeDescription() {
+        return datatypeDescription;
     }
 
-    public void setDatatype_description(String datatype_description) {
-        this.datatype_description = datatype_description;
+    public void setDatatypeDescription(String datatypeDescription) {
+        this.datatypeDescription = datatypeDescription;
     }
 
-    public List getValues() {
+    public List<Value> getValues() {
         return values;
     }
 
-    public void setValues(List values) {
+    public void setValues(List<Value> values) {
         this.values = values;
     }
 
-    
 }

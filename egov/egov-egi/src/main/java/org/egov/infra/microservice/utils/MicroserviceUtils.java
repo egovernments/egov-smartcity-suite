@@ -52,6 +52,9 @@ import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.config.properties.ApplicationProperties;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.microservice.contract.CreateUserRequest;
+import org.egov.infra.microservice.contract.RequestInfoWrapper;
+import org.egov.infra.microservice.contract.Task;
+import org.egov.infra.microservice.contract.TaskResponse;
 import org.egov.infra.microservice.contract.UserDetailResponse;
 import org.egov.infra.microservice.contract.UserRequest;
 import org.egov.infra.microservice.models.RequestInfo;
@@ -134,4 +137,24 @@ public class MicroserviceUtils {
             }
         }
     }
+    public List<Task> getTasks() {
+        
+        final String workflowUrl = applicationProperties.getServicesWorkflowUrl();
+        final RestTemplate restTemplate = new RestTemplate();
+        List<Task> tasks=new ArrayList<>();
+        TaskResponse tresp = null;
+        try {
+            RequestInfo createRequestInfo = createRequestInfo();
+            RequestInfoWrapper requestInfo=new RequestInfoWrapper();
+            requestInfo.setRequestInfo(createRequestInfo);
+            //createRequestInfo.getUserInfo().setId
+            tresp = restTemplate.postForObject(workflowUrl,requestInfo, TaskResponse.class);
+            tasks= tresp.getTasks();
+        } catch (final Exception e) {
+            final String errMsg = "Exception while getting inbox items from microservice ";
+            throw new ApplicationRuntimeException(errMsg, e);
+        }
+        return tasks;
+    }
+    
 }

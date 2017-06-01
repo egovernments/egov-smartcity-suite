@@ -109,6 +109,7 @@ public class ApplicationProperties {
     private static final String CDN_URL = "cdn.domain.url";
     private static final String SERVICES_USER_CREATE_URL = "egov.services.user.create.url";    
     private static final String STATE_WIDE_SCHEMA_NAME = "statewide.schema.name";
+    private static final String SERVICES_WORKFLOW_URL = "egov.services.workflow.url";
 
     @Autowired
     private Environment environment;
@@ -320,5 +321,9 @@ public class ApplicationProperties {
 
     public String statewideSchemaName() {
         return environment.getProperty(STATE_WIDE_SCHEMA_NAME);
+    }
+
+    public  String getServicesWorkflowUrl() {
+        return environment.getProperty(SERVICES_WORKFLOW_URL); 
     }
 }
