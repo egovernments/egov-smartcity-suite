@@ -6,8 +6,8 @@ import org.springframework.data.domain.Page;
 
 public class Pagination {
 
-    public static int DEFAULT_PAGE_SIZE = 20;
-    public static int DEFAULT_PAGE_OFFSET = 0;
+    public static final int DEFAULT_PAGE_SIZE = 20;
+    public static final int DEFAULT_PAGE_OFFSET = 0;
 
     private Integer totalResults;
 

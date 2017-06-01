@@ -52,239 +52,230 @@ import org.egov.pims.commons.Position;
 
 public class StateModel {
 
-	private Long id;
+    private Long id;
 
-	private String type;
+    private String type;
 
-	private String value;
+    private String value;
 
-	private Position ownerPosition;
+    private Position ownerPosition;
 
-	private User ownerUser;
+    private User ownerUser;
 
-	private Set<StateHistory> history = new HashSet<>();
+    private Set<StateHistory> history = new HashSet<>();
 
-	private String senderName;
+    private String senderName;
 
-	private String nextAction;
+    private String nextAction;
 
-	private String comments;
+    private String comments;
 
-	private String natureOfTask;
+    private String natureOfTask;
 
-	private String extraInfo;
+    private String extraInfo;
 
-	private Date dateInfo;
+    private Date dateInfo;
 
-	private Date extraDateInfo;
+    private Date extraDateInfo;
 
-	private StateStatus status;
+    private StateStatus status;
 
-	private Position initiatorPosition;
+    private Position initiatorPosition;
 
-	private State previousStateRef;
+    private State previousStateRef;
 
-	private String myLinkId;
+    private String myLinkId;
 
-	private String tenantId;
+    private String tenantId;
 
-	private User createdBy;
+    private User createdBy;
 
-	private Date createdDate;
+    private Date createdDate;
 
-	private User lastModifiedBy;
+    private User lastModifiedBy;
 
-	private Date lastModifiedDate;
-/*
-	public Task map() {
-		Task t = new Task();
-		t.setBusinessKey(this.type);
-		t.setComments(this.comments);
-		t.setCreatedDate(this.createdDate);
-		t.setId(this.id.toString());
-		t.setStatus(this.value);
-		t.setNatureOfTask(this.natureOfTask);
-		t.setDetails(this.extraInfo == null ? "" : this.extraInfo);
-		t.setSender(this.senderName);
-		t.setUrl(this.myLinkId);
-		return t;
+    private Date lastModifiedDate;
 
-	}
-*/
-	public Long getId() {
-		return id;
-	}
+    /*
+     * public Task map() { Task t = new Task(); t.setBusinessKey(this.type); t.setComments(this.comments);
+     * t.setCreatedDate(this.createdDate); t.setId(this.id.toString()); t.setStatus(this.value);
+     * t.setNatureOfTask(this.natureOfTask); t.setDetails(this.extraInfo == null ? "" : this.extraInfo);
+     * t.setSender(this.senderName); t.setUrl(this.myLinkId); return t; }
+     */
+    public Long getId() {
+        return id;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public String getType() {
-		return type;
-	}
+    public String getType() {
+        return type;
+    }
 
-	public void setType(String type) {
-		this.type = type;
-	}
+    public void setType(String type) {
+        this.type = type;
+    }
 
-	public String getValue() {
-		return value;
-	}
+    public String getValue() {
+        return value;
+    }
 
-	public void setValue(String value) {
-		this.value = value;
-	}
+    public void setValue(String value) {
+        this.value = value;
+    }
 
-	public Position getOwnerPosition() {
-		return ownerPosition;
-	}
+    public Position getOwnerPosition() {
+        return ownerPosition;
+    }
 
-	public void setOwnerPosition(Position ownerPosition) {
-		this.ownerPosition = ownerPosition;
-	}
+    public void setOwnerPosition(Position ownerPosition) {
+        this.ownerPosition = ownerPosition;
+    }
 
-	public User getOwnerUser() {
-		return ownerUser;
-	}
+    public User getOwnerUser() {
+        return ownerUser;
+    }
 
-	public void setOwnerUser(User ownerUser) {
-		this.ownerUser = ownerUser;
-	}
+    public void setOwnerUser(User ownerUser) {
+        this.ownerUser = ownerUser;
+    }
 
-	public Set<StateHistory> getHistory() {
-		return history;
-	}
-
-	public void setHistory(Set<StateHistory> history) {
-		this.history = history;
-	}
-
-	public String getSenderName() {
-		return senderName;
-	}
-
-	public void setSenderName(String senderName) {
-		this.senderName = senderName;
-	}
-
-	public String getNextAction() {
-		return nextAction;
-	}
-
-	public void setNextAction(String nextAction) {
-		this.nextAction = nextAction;
-	}
-
-	public String getComments() {
-		return comments;
-	}
-
-	public void setComments(String comments) {
-		this.comments = comments;
-	}
-
-	public String getNatureOfTask() {
-		return natureOfTask;
-	}
-
-	public void setNatureOfTask(String natureOfTask) {
-		this.natureOfTask = natureOfTask;
-	}
-
-	public String getExtraInfo() {
-		return extraInfo;
-	}
-
-	public void setExtraInfo(String extraInfo) {
-		this.extraInfo = extraInfo;
-	}
-
-	public Date getDateInfo() {
-		return dateInfo;
-	}
-
-	public void setDateInfo(Date dateInfo) {
-		this.dateInfo = dateInfo;
-	}
-
-	public Date getExtraDateInfo() {
-		return extraDateInfo;
-	}
-
-	public void setExtraDateInfo(Date extraDateInfo) {
-		this.extraDateInfo = extraDateInfo;
-	}
-
-	public StateStatus getStatus() {
-		return status;
-	}
-
-	public void setStatus(StateStatus status) {
-		this.status = status;
-	}
-
-	public Position getInitiatorPosition() {
-		return initiatorPosition;
-	}
-
-	public void setInitiatorPosition(Position initiatorPosition) {
-		this.initiatorPosition = initiatorPosition;
-	}
-
-	public State getPreviousStateRef() {
-		return previousStateRef;
-	}
-
-	public void setPreviousStateRef(State previousStateRef) {
-		this.previousStateRef = previousStateRef;
-	}
-
-	public String getMyLinkId() {
-		return myLinkId;
-	}
-
-	public void setMyLinkId(String myLinkId) {
-		this.myLinkId = myLinkId;
-	}
-
-	public String getTenantId() {
-		return tenantId;
-	}
-
-	public void setTenantId(String tenantId) {
-		this.tenantId = tenantId;
-	}
-
-	public User getCreatedBy() {
-		return createdBy;
-	}
-
-	public void setCreatedBy(User createdBy) {
-		this.createdBy = createdBy;
-	}
-
-	public Date getCreatedDate() {
-		return createdDate;
-	}
-
-	public void setCreatedDate(Date createdDate) {
-		this.createdDate = createdDate;
-	}
-
-	public User getLastModifiedBy() {
-		return lastModifiedBy;
-	}
-
-	public void setLastModifiedBy(User lastModifiedBy) {
-		this.lastModifiedBy = lastModifiedBy;
-	}
-
-	public Date getLastModifiedDate() {
-		return lastModifiedDate;
-	}
-
-	public void setLastModifiedDate(Date lastModifiedDate) {
-		this.lastModifiedDate = lastModifiedDate;
-	}
+    public Set<StateHistory> getHistory() {
+        return history;
+    }
+
+    public void setHistory(Set<StateHistory> history) {
+        this.history = history;
+    }
+
+    public String getSenderName() {
+        return senderName;
+    }
+
+    public void setSenderName(String senderName) {
+        this.senderName = senderName;
+    }
+
+    public String getNextAction() {
+        return nextAction;
+    }
+
+    public void setNextAction(String nextAction) {
+        this.nextAction = nextAction;
+    }
+
+    public String getComments() {
+        return comments;
+    }
+
+    public void setComments(String comments) {
+        this.comments = comments;
+    }
+
+    public String getNatureOfTask() {
+        return natureOfTask;
+    }
+
+    public void setNatureOfTask(String natureOfTask) {
+        this.natureOfTask = natureOfTask;
+    }
+
+    public String getExtraInfo() {
+        return extraInfo;
+    }
+
+    public void setExtraInfo(String extraInfo) {
+        this.extraInfo = extraInfo;
+    }
+
+    public Date getDateInfo() {
+        return dateInfo;
+    }
+
+    public void setDateInfo(Date dateInfo) {
+        this.dateInfo = dateInfo;
+    }
+
+    public Date getExtraDateInfo() {
+        return extraDateInfo;
+    }
+
+    public void setExtraDateInfo(Date extraDateInfo) {
+        this.extraDateInfo = extraDateInfo;
+    }
+
+    public StateStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(StateStatus status) {
+        this.status = status;
+    }
+
+    public Position getInitiatorPosition() {
+        return initiatorPosition;
+    }
+
+    public void setInitiatorPosition(Position initiatorPosition) {
+        this.initiatorPosition = initiatorPosition;
+    }
+
+    public State getPreviousStateRef() {
+        return previousStateRef;
+    }
+
+    public void setPreviousStateRef(State previousStateRef) {
+        this.previousStateRef = previousStateRef;
+    }
+
+    public String getMyLinkId() {
+        return myLinkId;
+    }
+
+    public void setMyLinkId(String myLinkId) {
+        this.myLinkId = myLinkId;
+    }
+
+    public String getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(String tenantId) {
+        this.tenantId = tenantId;
+    }
+
+    public User getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(User createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public Date getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(Date createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public User getLastModifiedBy() {
+        return lastModifiedBy;
+    }
+
+    public void setLastModifiedBy(User lastModifiedBy) {
+        this.lastModifiedBy = lastModifiedBy;
+    }
+
+    public Date getLastModifiedDate() {
+        return lastModifiedDate;
+    }
+
+    public void setLastModifiedDate(Date lastModifiedDate) {
+        this.lastModifiedDate = lastModifiedDate;
+    }
 
 }

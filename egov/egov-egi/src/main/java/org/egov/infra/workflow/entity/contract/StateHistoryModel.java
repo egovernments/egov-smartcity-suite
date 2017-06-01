@@ -43,127 +43,124 @@ package org.egov.infra.workflow.entity.contract;
 import java.util.Date;
 
 public class StateHistoryModel {
-	private Long id;
+    private Long id;
 
-	private Date lastModifiedDate;
+    private Date lastModifiedDate;
 
-	private Long stateId;
+    private Long stateId;
 
-	private String stateType;
+    private String stateType;
 
-	private String value;
+    private String value;
 
-	private String senderName;
+    private String senderName;
 
-	private String nextAction;
+    private String nextAction;
 
-	private String comments;
+    private String comments;
 
-	private String natureOfTask;
+    private String natureOfTask;
 
-	private String extraInfo;
+    private String extraInfo;
 
-	private Date dateInfo;
+    private Date dateInfo;
 
-	private Date extraDateInfo;
+    private Date extraDateInfo;
 
-	public StateHistoryModel() {
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public Long getId() {
-		return id;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public Date getLastModifiedDate() {
+        return lastModifiedDate;
+    }
 
-	public Date getLastModifiedDate() {
-		return lastModifiedDate;
-	}
+    public void setLastModifiedDate(Date lastModifiedDate) {
+        this.lastModifiedDate = lastModifiedDate;
+    }
 
-	public void setLastModifiedDate(Date lastModifiedDate) {
-		this.lastModifiedDate = lastModifiedDate;
-	}
+    public Long getStateId() {
+        return stateId;
+    }
 
-	public Long getStateId() {
-		return stateId;
-	}
+    public void setStateId(Long stateId) {
+        this.stateId = stateId;
+    }
 
-	public void setStateId(Long stateId) {
-		this.stateId = stateId;
-	}
+    public String getStateType() {
+        return stateType;
+    }
 
-	public String getStateType() {
-		return stateType;
-	}
+    public void setStateType(String stateType) {
+        this.stateType = stateType;
+    }
 
-	public void setStateType(String stateType) {
-		this.stateType = stateType;
-	}
+    public String getValue() {
+        return value;
+    }
 
-	public String getValue() {
-		return value;
-	}
+    public void setValue(String value) {
+        this.value = value;
+    }
 
-	public void setValue(String value) {
-		this.value = value;
-	}
+    public String getSenderName() {
+        return senderName;
+    }
 
-	public String getSenderName() {
-		return senderName;
-	}
+    public void setSenderName(String senderName) {
+        this.senderName = senderName;
+    }
 
-	public void setSenderName(String senderName) {
-		this.senderName = senderName;
-	}
+    public String getNextAction() {
+        return nextAction;
+    }
 
-	public String getNextAction() {
-		return nextAction;
-	}
+    public void setNextAction(String nextAction) {
+        this.nextAction = nextAction;
+    }
 
-	public void setNextAction(String nextAction) {
-		this.nextAction = nextAction;
-	}
+    public String getComments() {
+        return comments;
+    }
 
-	public String getComments() {
-		return comments;
-	}
+    public void setComments(String comments) {
+        this.comments = comments;
+    }
 
-	public void setComments(String comments) {
-		this.comments = comments;
-	}
+    public String getNatureOfTask() {
+        return natureOfTask;
+    }
 
-	public String getNatureOfTask() {
-		return natureOfTask;
-	}
+    public void setNatureOfTask(String natureOfTask) {
+        this.natureOfTask = natureOfTask;
+    }
 
-	public void setNatureOfTask(String natureOfTask) {
-		this.natureOfTask = natureOfTask;
-	}
+    public String getExtraInfo() {
+        return extraInfo;
+    }
 
-	public String getExtraInfo() {
-		return extraInfo;
-	}
+    public void setExtraInfo(String extraInfo) {
+        this.extraInfo = extraInfo;
+    }
 
-	public void setExtraInfo(String extraInfo) {
-		this.extraInfo = extraInfo;
-	}
+    public Date getDateInfo() {
+        return dateInfo;
+    }
 
-	public Date getDateInfo() {
-		return dateInfo;
-	}
+    public void setDateInfo(Date dateInfo) {
+        this.dateInfo = dateInfo;
+    }
 
-	public void setDateInfo(Date dateInfo) {
-		this.dateInfo = dateInfo;
-	}
+    public Date getExtraDateInfo() {
+        return extraDateInfo;
+    }
 
-	public Date getExtraDateInfo() {
-		return extraDateInfo;
-	}
-
-	public void setExtraDateInfo(Date extraDateInfo) {
-		this.extraDateInfo = extraDateInfo;
-	}
+    public void setExtraDateInfo(Date extraDateInfo) {
+        this.extraDateInfo = extraDateInfo;
+    }
 
 }
