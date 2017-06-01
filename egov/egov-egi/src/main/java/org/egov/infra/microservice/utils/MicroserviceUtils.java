@@ -44,9 +44,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.infra.admin.master.entity.User;
@@ -78,9 +75,6 @@ public class MicroserviceUtils {
 
     @Autowired
     private Environment environment;
-
-    @PersistenceContext
-    private EntityManager entityManager;
 
     @Autowired
     private RoleService roleService;
