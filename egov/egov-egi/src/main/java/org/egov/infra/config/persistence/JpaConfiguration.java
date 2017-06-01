@@ -97,7 +97,7 @@ public class JpaConfiguration {
         LocalContainerEntityManagerFactoryBean entityManagerFactory = new LocalContainerEntityManagerFactoryBean();
         entityManagerFactory.setJtaDataSource(dataSource);
         entityManagerFactory.setPersistenceUnitName("EgovPersistenceUnit");
-        entityManagerFactory.setPackagesToScan(new String[]{"org.egov.**.entity"});
+        entityManagerFactory.setPackagesToScan("org.egov.**.entity");
         entityManagerFactory.setJpaVendorAdapter(jpaVendorAdapter());
         entityManagerFactory.setJpaPropertyMap(additionalProperties());
         entityManagerFactory.setValidationMode(ValidationMode.NONE);
@@ -138,6 +138,7 @@ public class JpaConfiguration {
         properties.put(ORDER_INSERTS, true);
         properties.put(ORDER_UPDATES, true);
         properties.put(AUTOCOMMIT, false);
+        properties.put(RELEASE_CONNECTIONS, "after_transaction");
         properties.put("jadira.usertype.autoRegisterUserTypes", true);
         properties.put("jadira.usertype.databaseZone", "jvm");
 
