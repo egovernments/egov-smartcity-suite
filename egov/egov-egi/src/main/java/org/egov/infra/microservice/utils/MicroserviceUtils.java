@@ -46,12 +46,9 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import javax.persistence.TemporalType;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.RoleService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
@@ -118,7 +115,7 @@ public class MicroserviceUtils {
         return tenantId;
     }
 
-    public Long createUserMicroservice(final User user, final String createUserServiceUrl) {
+    public void createUserMicroservice(final User user, final String createUserServiceUrl) {
 
         if (user.getRoles().isEmpty())
             if (user.getType().equals(UserType.CITIZEN))
@@ -132,71 +129,12 @@ public class MicroserviceUtils {
         createUserRequest.setRequestInfo(createRequestInfo());
 
         final RestTemplate restTemplate = new RestTemplate();
-        UserDetailResponse udr = null;
         try {
-            udr = restTemplate.postForObject(createUserServiceUrl, createUserRequest, UserDetailResponse.class);
+            restTemplate.postForObject(createUserServiceUrl, createUserRequest, UserDetailResponse.class);
         } catch (final Exception e) {
             final String errMsg = "Exception while creating User in microservice ";
             LOGGER.error(errMsg, e);
             throw new ApplicationRuntimeException(errMsg, e);
         }
-        final Long userId = udr.getUser().get(0).getId();
-        insertUser(user, userId);
-        return userId;
     }
-
-    public void insertUser(final User user, final Long userId) {
-        final Query query = entityManager
-                .createNativeQuery("insert into eg_user (createdBy, createdDate, lastModifiedBy, lastModifiedDate, "
-                        + "aadhaarNumber, accountLocked, active, altContactNumber, dob, emailId, gender, guardian, guardianRelation, locale, "
-                        + "mobileNumber, name, pan, password, pwdExpiryDate, salutation, signature, type, username, id) "
-                        + "values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        query.setParameter(1, ApplicationThreadLocals.getUserId());
-        query.setParameter(2, new Date(), TemporalType.TIMESTAMP);
-        query.setParameter(3, ApplicationThreadLocals.getUserId());
-        query.setParameter(4, new Date(), TemporalType.TIMESTAMP);
-        query.setParameter(5, user.getAadhaarNumber());
-        query.setParameter(6, user.isAccountLocked());
-        query.setParameter(7, user.isActive());
-        query.setParameter(8, user.getAltContactNumber());
-
-        query.setParameter(9, user.getDob(), TemporalType.DATE);
-        query.setParameter(10, user.getEmailId());
-        if (user.getGender() != null)
-            query.setParameter(11, user.getGender().toString());
-        else
-            query.setParameter(11, null);
-        query.setParameter(11, user.getGender().ordinal());
-        query.setParameter(12, user.getGuardian());
-        query.setParameter(13, user.getGuardianRelation());
-        query.setParameter(14, user.getLocale());
-        query.setParameter(15, user.getMobileNumber());
-        query.setParameter(16, user.getName());
-        query.setParameter(17, user.getPan());
-        query.setParameter(18, user.getPassword());
-        query.setParameter(19, user.getPwdExpiryDate().toDate(), TemporalType.TIMESTAMP);
-        query.setParameter(20, user.getSalutation());
-        query.setParameter(21, user.getSignature());
-        if (user.getType() != null)
-            query.setParameter(22, user.getType().toString());
-        else
-            query.setParameter(22, null);
-        query.setParameter(23, user.getUsername());
-        query.setParameter(24, userId);
-        query.executeUpdate();
-        final Query seqQuery = entityManager
-                .createNativeQuery("SELECT setval('seq_eg_user', (SELECT MAX(id)+1 FROM eg_user))");
-        seqQuery.getSingleResult();
-        insertUserRole(user, userId);
-    }
-
-    public void insertUserRole(final User user, final Long userId) {
-        for (final Role role : user.getRoles()) {
-            final Query query = entityManager.createNativeQuery("insert into eg_userrole (userid, roleid) values (?, ?)");
-            query.setParameter(1, userId);
-            query.setParameter(2, role.getId());
-            query.executeUpdate();
-        }
-    }
-
 }
