@@ -122,7 +122,7 @@ public class StateService {
 			state.setComments(element[3] != null ? element[3].toString() : "");
 			if (element[4] != null){
 				try {
-					state.setCreatedDate(new SimpleDateFormat("yyyy-MM-dd HH:MI:SS").parse(element[4].toString()));
+					state.setCreatedDate(new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").parse(element[4].toString()));
 				} catch (ParseException e) {
 					e.printStackTrace();
 				}
