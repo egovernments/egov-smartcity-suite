@@ -137,26 +137,26 @@ public class MicroserviceUtils {
             }
         }
     }
+
     public List<Task> getTasks() {
-        
+
         final String workflowUrl = applicationProperties.getServicesWorkflowUrl();
-        List<Task> tasks=new ArrayList<>();
-        if (StringUtils.isNotBlank(workflowUrl))
-        {
-        final RestTemplate restTemplate = new RestTemplate();
-        TaskResponse tresp = null;
-        try {
-            RequestInfo createRequestInfo = createRequestInfo();
-            RequestInfoWrapper requestInfo=new RequestInfoWrapper();
-            requestInfo.setRequestInfo(createRequestInfo);
-            tresp = restTemplate.postForObject(workflowUrl,requestInfo, TaskResponse.class);
-            tasks= tresp.getTasks();
-        } catch (final Exception e) {
-            final String errMsg = "Exception while getting inbox items from microservice ";
-            throw new ApplicationRuntimeException(errMsg, e);
-        }
+        List<Task> tasks = new ArrayList<>();
+        if (StringUtils.isNotBlank(workflowUrl)) {
+            final RestTemplate restTemplate = new RestTemplate();
+            TaskResponse tresp = null;
+            try {
+                RequestInfo createRequestInfo = createRequestInfo();
+                RequestInfoWrapper requestInfo = new RequestInfoWrapper();
+                requestInfo.setRequestInfo(createRequestInfo);
+                tresp = restTemplate.postForObject(workflowUrl, requestInfo, TaskResponse.class);
+                tasks = tresp.getTasks();
+            } catch (final Exception e) {
+                final String errMsg = "Exception while getting inbox items from microservice ";
+                throw new ApplicationRuntimeException(errMsg, e);
+            }
         }
         return tasks;
     }
-    
+
 }
