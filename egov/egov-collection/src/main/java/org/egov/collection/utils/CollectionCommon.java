@@ -193,14 +193,14 @@ public class CollectionCommon {
                 && !otherInstrumenttotal.toString().trim().equals(CollectionConstants.ZERO_DOUBLE)) {
             if (instrumentType.equals(CollectionConstants.INSTRUMENTTYPE_CASH))
                 newReceiptDetail
-                        .setAccounthead((CChartOfAccounts) persistenceService.findByNamedQuery(
-                                CollectionConstants.QUERY_CHARTOFACCOUNT_BY_INSTRTYPE,
-                                CollectionConstants.INSTRUMENTTYPE_CASH));
+                .setAccounthead((CChartOfAccounts) persistenceService.findByNamedQuery(
+                        CollectionConstants.QUERY_CHARTOFACCOUNT_BY_INSTRTYPE,
+                        CollectionConstants.INSTRUMENTTYPE_CASH));
             else if (instrumentType.equals(CollectionConstants.INSTRUMENTTYPE_CARD))
                 newReceiptDetail
-                        .setAccounthead((CChartOfAccounts) persistenceService.findByNamedQuery(
-                                CollectionConstants.QUERY_CHARTOFACCOUNT_BY_INSTRTYPE,
-                                CollectionConstants.INSTRUMENTTYPE_CARD));
+                .setAccounthead((CChartOfAccounts) persistenceService.findByNamedQuery(
+                        CollectionConstants.QUERY_CHARTOFACCOUNT_BY_INSTRTYPE,
+                        CollectionConstants.INSTRUMENTTYPE_CARD));
             else if (instrumentType.equals(CollectionConstants.INSTRUMENTTYPE_BANK))
                 newReceiptDetail.setAccounthead(receiptHeader.getReceiptInstrument().iterator().next()
                         .getBankAccountId().getChartofaccounts());
@@ -208,7 +208,7 @@ public class CollectionCommon {
                 newReceiptDetail.setAccounthead((CChartOfAccounts) persistenceService.findByNamedQuery(
                         CollectionConstants.QUERY_CHARTOFACCOUNT_BY_INSTRTYPE_SERVICE,
                         CollectionConstants.INSTRUMENTTYPE_ONLINE, receiptHeader.getOnlinePayment().getService()
-                                .getId()));
+                        .getId()));
             newReceiptDetail.setDramount(debitAmount);
             newReceiptDetail.setCramount(BigDecimal.ZERO);
             newReceiptDetail.setReceiptHeader(receiptHeader);
@@ -267,12 +267,11 @@ public class CollectionCommon {
 
                 // For Bank Collection Operator set branchdeposited from
                 // branchuser map
-                User loggedInUser = collectionsUtil.getLoggedInUser();
+                final User loggedInUser = collectionsUtil.getLoggedInUser();
                 Bankbranch bankBranch = null;
                 if (collectionsUtil.isBankCollectionOperator(loggedInUser)) {
-                    BranchUserMap branchUserMap = branchUserMapService.findByNamedQuery(
-                            CollectionConstants.QUERY_ACTIVE_BRANCHUSER_BY_USER,
-                            loggedInUser.getId());
+                    final BranchUserMap branchUserMap = branchUserMapService.findByNamedQuery(
+                            CollectionConstants.QUERY_ACTIVE_BRANCHUSER_BY_USER, loggedInUser.getId());
                     if (branchUserMap != null && branchUserMap.getBankbranch() != null)
                         bankBranch = branchUserMap.getBankbranch();
                 }
@@ -350,18 +349,18 @@ public class CollectionCommon {
         } else
             for (final ReceiptHeader receiptHeader : receipts) {
                 String additionalMessage = null;
-                if (receiptType == CollectionConstants.RECEIPT_TYPE_BILL) 
-                    if (!receiptHeader.getService().getCode().equals(CollectionConstants.SERVICECODE_LAMS))
-                        additionalMessage = receiptHeaderService.getAdditionalInfoForReceipt(serviceCode,
-                                new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO, persistenceService,
-                                        null));
-                    if (additionalMessage != null)
-                        receiptList.add(new BillReceiptInfoImpl(receiptHeader, additionalMessage,
-                                chartOfAccountsHibernateDAO, persistenceService));
-                    else
-                        receiptList.add(new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO,
-                                persistenceService, null));
-                }
+                if (receiptType == CollectionConstants.RECEIPT_TYPE_BILL
+                        && !receiptHeader.getService().getCode().equals(CollectionConstants.SERVICECODE_LAMS))
+                    additionalMessage = receiptHeaderService.getAdditionalInfoForReceipt(serviceCode,
+                            new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO, persistenceService,
+                                    null));
+                if (additionalMessage != null)
+                    receiptList.add(new BillReceiptInfoImpl(receiptHeader, additionalMessage,
+                            chartOfAccountsHibernateDAO, persistenceService));
+                else
+                    receiptList.add(new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO,
+                            persistenceService, null));
+            }
         final ReportRequest reportInput = new ReportRequest(templateName, receiptList, reportParams);
 
         // Set the flag so that print dialog box is automatically opened
@@ -536,7 +535,7 @@ public class CollectionCommon {
 
         final ReceiptMisc receiptMisc = new ReceiptMisc(oldReceiptHeader.getReceiptMisc().getBoundary(),
                 oldReceiptHeader.getReceiptMisc().getFund(), null, null, oldReceiptHeader.getReceiptMisc()
-                        .getDepartment(), newReceiptHeader, null, null, null);
+                .getDepartment(), newReceiptHeader, null, null, null);
         newReceiptHeader.setReceiptMisc(receiptMisc);
         newReceiptHeader.setReceiptdate(new Date());
         final List<CChartOfAccounts> bankCOAList = chartOfAccountsHibernateDAO.getBankChartofAccountCodeList();
@@ -595,13 +594,10 @@ public class CollectionCommon {
         // scheduler
 
         if (cancelInstrument)
-            for (final InstrumentHeader instrumentHeader : receiptHeader.getReceiptInstrument()) {
-
+            for (final InstrumentHeader instrumentHeader : receiptHeader.getReceiptInstrument())
                 instrumentHeader.setStatusId(statusDAO.getStatusByModuleAndCode(
                         CollectionConstants.MODULE_NAME_INSTRUMENTHEADER,
                         CollectionConstants.INSTRUMENTHEADER_STATUS_CANCELLED));
-
-            }
 
         for (final ReceiptVoucher receiptVoucher : receiptHeader.getReceiptVoucher())
             receiptHeaderService.createReversalVoucher(receiptVoucher);
@@ -718,7 +714,7 @@ public class CollectionCommon {
         if (paytInfoBank.getTransactionNumber() == null || paytInfoBank.getTransactionNumber() < 0
                 || String.valueOf(paytInfoBank.getTransactionNumber()).length() != 6)
             invalidBankPaytMsg.append("Invalid Bank Transaction Number[").append(paytInfoBank.getInstrumentAmount())
-                    .append("] \n");
+            .append("] \n");
         if (paytInfoBank.getTransactionDate() == null)
             invalidBankPaytMsg.append("Missing Bank Transaction Date \n");
         if (new Date().compareTo(paytInfoBank.getTransactionDate()) == -1)
@@ -732,7 +728,7 @@ public class CollectionCommon {
 
             if (account == null)
                 invalidBankPaytMsg.append("No account found for bank account id[" + paytInfoBank.getBankAccountId())
-                        .append("] \n");
+                .append("] \n");
         }
 
         if (!CollectionConstants.BLANK.equals(invalidBankPaytMsg))
@@ -768,24 +764,24 @@ public class CollectionCommon {
         if (paytInfoChequeDD.getInstrumentAmount() == null
                 || paytInfoChequeDD.getInstrumentAmount().compareTo(BigDecimal.ZERO) <= 0)
             invalidChequeDDPaytMsg.append("Invalid cheque/DD Instrument Amount[")
-                    .append(paytInfoChequeDD.getInstrumentAmount()).append("] \n");
+            .append(paytInfoChequeDD.getInstrumentAmount()).append("] \n");
         if (paytInfoChequeDD.getInstrumentNumber() == null
                 || CollectionConstants.BLANK.equals(paytInfoChequeDD.getInstrumentNumber())
                 || !MoneyUtils.isInteger(paytInfoChequeDD.getInstrumentNumber())
                 || paytInfoChequeDD.getInstrumentNumber().length() != 6)
             invalidChequeDDPaytMsg.append("Invalid Cheque/DD Instrument Number[")
-                    .append(paytInfoChequeDD.getInstrumentNumber()).append("]. \n");
+            .append(paytInfoChequeDD.getInstrumentNumber()).append("]. \n");
         if (paytInfoChequeDD.getInstrumentDate() == null)
             invalidChequeDDPaytMsg.append("Missing Cheque/DD Transaction Date \n");
         if (new Date().compareTo(paytInfoChequeDD.getInstrumentDate()) == -1)
             invalidChequeDDPaytMsg.append("Cheque/DD Transaction Date[").append(paytInfoChequeDD.getInstrumentDate())
-                    .append("] cannot be a future date \n");
+            .append("] cannot be a future date \n");
         Bank bank = null;
         if (paytInfoChequeDD.getBankId() != null) {
             bank = bankDAO.findById(paytInfoChequeDD.getBankId().intValue(), false);
             if (bank == null)
                 invalidChequeDDPaytMsg.append("No bank present for bank id [").append(paytInfoChequeDD.getBankId())
-                        .append("] \n");
+                .append("] \n");
         }
 
         if (!invalidChequeDDPaytMsg.toString().isEmpty())
@@ -826,7 +822,7 @@ public class CollectionCommon {
         return branchUserMapService;
     }
 
-    public void setBranchUserMapService(PersistenceService<BranchUserMap, Long> branchUserMapService) {
+    public void setBranchUserMapService(final PersistenceService<BranchUserMap, Long> branchUserMapService) {
         this.branchUserMapService = branchUserMapService;
     }
 

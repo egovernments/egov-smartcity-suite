@@ -468,7 +468,7 @@ public class CollectionsUtil {
                 .createQuery(
                         "from CFinancialYear cfinancialyear where ? between "
                                 + "cfinancialyear.startingDate and cfinancialyear.endingDate").setDate(0, date).list()
-                .get(0);
+                                .get(0);
     }
 
     /**
@@ -799,10 +799,12 @@ public class CollectionsUtil {
         final BillReceiptInfoReq billReceiptInfoReq = new BillReceiptInfoReq();
         billReceiptInfoReq.setBillReceiptInfo(billReceipt);
         billReceiptInfoReq.setRequestInfo(microserviceUtils.createRequestInfo());
-        LOGGER.info("updateReceiptDetailsAndGetReceiptAmountInfo - before calling LAMS update");
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("updateReceiptDetailsAndGetReceiptAmountInfo - before calling LAMS update");
         final String url = collectionApplicationProperties.getLamsServiceUrl().concat(
                 collectionApplicationProperties.getUpdateDemandUrl(serviceCode.toLowerCase()));
-        LOGGER.info("updateReceiptDetailsAndGetReceiptAmountInfo - url" + url);
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("updateReceiptDetailsAndGetReceiptAmountInfo - url" + url);
         ReceiptAmountInfo receiptAmountInfo = null;
         try {
             receiptAmountInfo = restTemplate.postForObject(url, billReceiptInfoReq, ReceiptAmountInfo.class);
@@ -858,23 +860,23 @@ public class CollectionsUtil {
                 .withPaymentGateway(
                         receiptHeader.getOnlinePayment() != null ? receiptHeader.getOnlinePayment().getService()
                                 .getName() : "")
-                .withConsumerName(receiptHeader.getPayeeName() != null ? receiptHeader.getPayeeName() : "")
-                .withReceiptCreator(receiptHeader.getCreatedBy() != null ? receiptHeader.getCreatedBy().getName() : "")
-                .withArrearAmount(receiptAmountInfo.getArrearsAmount())
-                .withAdvanceAmount(receiptAmountInfo.getAdvanceAmount())
-                .withCurrentAmount(receiptAmountInfo.getCurrentInstallmentAmount())
-                .withPenaltyAmount(receiptAmountInfo.getPenaltyAmount())
-                .withArrearCess(receiptAmountInfo.getArrearCess())
-                .withLatePaymentChargesAmount(receiptAmountInfo.getLatePaymentCharges())
-                .withCurrentCess(receiptAmountInfo.getCurrentCess())
-                .withReductionAmount(receiptAmountInfo.getReductionAmount())
-                .withInstallmentFrom(
-                        receiptAmountInfo.getInstallmentFrom() != null ? receiptAmountInfo.getInstallmentFrom() : "")
-                .withInstallmentTo(
-                        receiptAmountInfo.getInstallmentTo() != null ? receiptAmountInfo.getInstallmentTo() : "")
-                .withRevenueWard(receiptAmountInfo.getRevenueWard())
-                .withConsumerType(receiptHeader.getConsumerType() != null ? receiptHeader.getConsumerType() : "")
-                .withConflict(receiptAmountInfo.getConflict() != null ? receiptAmountInfo.getConflict() : 0).build();
+                                .withConsumerName(receiptHeader.getPayeeName() != null ? receiptHeader.getPayeeName() : "")
+                                .withReceiptCreator(receiptHeader.getCreatedBy() != null ? receiptHeader.getCreatedBy().getName() : "")
+                                .withArrearAmount(receiptAmountInfo.getArrearsAmount())
+                                .withAdvanceAmount(receiptAmountInfo.getAdvanceAmount())
+                                .withCurrentAmount(receiptAmountInfo.getCurrentInstallmentAmount())
+                                .withPenaltyAmount(receiptAmountInfo.getPenaltyAmount())
+                                .withArrearCess(receiptAmountInfo.getArrearCess())
+                                .withLatePaymentChargesAmount(receiptAmountInfo.getLatePaymentCharges())
+                                .withCurrentCess(receiptAmountInfo.getCurrentCess())
+                                .withReductionAmount(receiptAmountInfo.getReductionAmount())
+                                .withInstallmentFrom(
+                                        receiptAmountInfo.getInstallmentFrom() != null ? receiptAmountInfo.getInstallmentFrom() : "")
+                                        .withInstallmentTo(
+                                                receiptAmountInfo.getInstallmentTo() != null ? receiptAmountInfo.getInstallmentTo() : "")
+                                                .withRevenueWard(receiptAmountInfo.getRevenueWard())
+                                                .withConsumerType(receiptHeader.getConsumerType() != null ? receiptHeader.getConsumerType() : "")
+                                                .withConflict(receiptAmountInfo.getConflict() != null ? receiptAmountInfo.getConflict() : 0).build();
         return collectionIndex;
     }
 
@@ -902,7 +904,7 @@ public class CollectionsUtil {
         for (final Assignment assignment : assignments)
             if (assignment.getPrimary())
                 approver = assignment.getEmployee().getName().concat("~").concat(assignment.getEmployee().getCode())
-                        .concat("~").concat(assignment.getPosition().getName());
+                .concat("~").concat(assignment.getPosition().getName());
         return approver;
     }
 
@@ -965,7 +967,7 @@ public class CollectionsUtil {
         switch (receiptType) {
         case CollectionConstants.RECEIPT_TYPE_BILL:
             templateName = serviceCode + CollectionConstants.SEPARATOR_UNDERSCORE
-                    + CollectionConstants.RECEIPT_TEMPLATE_NAME;// <servicecode>_collection_receipt
+            + CollectionConstants.RECEIPT_TEMPLATE_NAME;// <servicecode>_collection_receipt
             if (!isValidTemplate(templateName)) {
                 LOGGER.info("Billing system specific report template [" + templateName
                         + "] not available. Using the default template [" + CollectionConstants.RECEIPT_TEMPLATE_NAME
@@ -1029,7 +1031,7 @@ public class CollectionsUtil {
             serviceClassName = service.getSimpleName();
         if (serviceClassName != null)
             serviceClassName = Character.toLowerCase(serviceClassName.charAt(0))
-                    + serviceClassName.substring(1).substring(0, serviceClassName.length() - 5);
+            + serviceClassName.substring(1).substring(0, serviceClassName.length() - 5);
         return serviceClassName;
     }
 
