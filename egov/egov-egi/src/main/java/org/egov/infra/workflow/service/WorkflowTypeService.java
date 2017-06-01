@@ -40,8 +40,6 @@
 
 package org.egov.infra.workflow.service;
 
-import java.util.List;
-
 import org.egov.infra.workflow.entity.WorkflowTypes;
 import org.egov.infra.workflow.repository.WorkflowTypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,16 +47,14 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @Transactional(readOnly = true)
 public class WorkflowTypeService {
 
     @Autowired
     private WorkflowTypeRepository workflowTypeRepository;
-
-    public List<String> getEnabledWorkflowType(Boolean isEnabled) {
-        return workflowTypeRepository.findTypeEnabled(isEnabled);
-    }
 
     public WorkflowTypes getEnabledWorkflowTypeByType(String type) {
         return workflowTypeRepository.findByTypeAndEnabledIsTrue(type);
@@ -74,9 +70,5 @@ public class WorkflowTypeService {
 
     public WorkflowTypes getWorkflowTypeById(Long id) {
         return workflowTypeRepository.findOne(id);
-    }
-    
-    public List<String> getEnabledWorkflowTypeForMs() {
-        return workflowTypeRepository.findTypeEnabledAndEnabledInMs(false,true);
     }
 }

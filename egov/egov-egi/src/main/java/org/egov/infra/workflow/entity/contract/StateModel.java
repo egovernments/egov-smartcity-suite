@@ -48,7 +48,6 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.State.StateStatus;
 import org.egov.infra.workflow.entity.StateHistory;
-import org.egov.infra.workflow.multitenant.model.Task;
 import org.egov.pims.commons.Position;
 
 public class StateModel {
@@ -96,7 +95,7 @@ public class StateModel {
 	private User lastModifiedBy;
 
 	private Date lastModifiedDate;
-
+/*
 	public Task map() {
 		Task t = new Task();
 		t.setBusinessKey(this.type);
@@ -111,7 +110,7 @@ public class StateModel {
 		return t;
 
 	}
-
+*/
 	public Long getId() {
 		return id;
 	}

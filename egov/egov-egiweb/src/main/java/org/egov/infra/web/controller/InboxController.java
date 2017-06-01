@@ -49,17 +49,15 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.egov.infra.microservice.contract.Task;
+import org.egov.infra.microservice.utils.MicroserviceUtils;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.web.support.ui.Inbox;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infra.workflow.entity.WorkflowTypes;
-import org.egov.infra.workflow.entity.contract.StateHistoryModel;
 import org.egov.infra.workflow.inbox.InboxRenderServiceDeligate;
-import org.egov.infra.workflow.multitenant.model.ProcessInstance;
-import org.egov.infra.workflow.multitenant.model.Task;
-import org.egov.infra.workflow.multitenant.service.WorkflowInterface;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -87,6 +85,9 @@ public class InboxController {
 
 	@Autowired
 	private ApplicationContext applicationContext;
+	
+	@Autowired
+	private MicroserviceUtils microserviceUtils;
 
 	@RequestMapping(produces = MediaType.TEXT_PLAIN_VALUE)
 	public @ResponseBody String showInbox() {
@@ -103,10 +104,9 @@ public class InboxController {
 		List<StateHistory> stateHistories = inboxRenderServiceDeligate.getWorkflowHistory(stateId);
 		if (stateHistories != null)
 			return createInboxHistoryData(stateHistories);
-		else {
-			List<StateHistoryModel> stateHistorieModels = inboxRenderServiceDeligate.getWorkflowHistoryForMS(stateId);
-			return createInboxHistoryDataForMS(stateHistorieModels);
-		}
+		else return null;
+		 
+		 
 
 	}
 
@@ -128,22 +128,20 @@ public class InboxController {
 			inboxItems.add(inboxItem);
 
 		}
-		WorkflowInterface wf = getWorkflowImplementation(null);
-		ProcessInstance processInstance = new ProcessInstance();
-		processInstance.setAsignee(securityUtils.getCurrentUser().getId().toString());
-		List<Task> tasks = wf.getTasks("jurisdiction", processInstance);
+		
+		List<Task> tasks = microserviceUtils.getTasks();
 		for (Task t : tasks) {
 
 			final Inbox inboxItem = new Inbox();
 			inboxItem.setId(t.getId());
 			inboxItem.setCreatedDate(t.getCreatedDate());
 			inboxItem.setDate(DATE_FORMATTER.print(new DateTime(t.getCreatedDate())));
-			inboxItem.setSender(t.getSender());
+			inboxItem.setSender(t.getSenderName());
 			inboxItem.setTask(t.getNatureOfTask());
 			inboxItem.setStatus(t.getStatus());
 			inboxItem.setDetails(t.getDetails());
 			inboxItem.setLink(t.getUrl());
-			inboxItem.setSender(t.getSender());
+			inboxItem.setSender(t.getSenderName());
 			inboxItems.add(inboxItem);
 		}
 		Collections.sort(inboxItems);
@@ -152,9 +150,7 @@ public class InboxController {
 		return "{ \"data\":" + new GsonBuilder().create().toJson(inboxItems) + "}";
 	}
 
-	public WorkflowInterface getWorkflowImplementation(String type) {
-		return (WorkflowInterface) applicationContext.getBean("internalDefaultWorkflow");
-	}
+	 
 
 	private String createInboxHistoryData(final List<StateHistory> stateHistories) {
 		final List<Inbox> inboxHistoryItems = new LinkedList<>();
@@ -178,24 +174,4 @@ public class InboxController {
 		return "{ \"data\":" + new GsonBuilder().disableHtmlEscaping().create().toJson(inboxHistoryItems) + "}";
 	}
 
-	private String createInboxHistoryDataForMS(final List<StateHistoryModel> stateHistories) {
-		final List<Inbox> inboxHistoryItems = new LinkedList<>();
-		for (final StateHistoryModel stateHistory : stateHistories) {
-			final WorkflowTypes workflowTypes = inboxRenderServiceDeligate.getWorkflowType(stateHistory.getStateType());
-			final Inbox inboxHistoryItem = new Inbox();
-			inboxHistoryItem.setId(stateHistory.getStateId().toString());
-			inboxHistoryItem.setDate(DATE_FORMATTER.print(new DateTime(stateHistory.getLastModifiedDate())));
-			inboxHistoryItem.setSender(stateHistory.getSenderName());
-			inboxHistoryItem.setTask(isBlank(stateHistory.getNatureOfTask()) ? workflowTypes.getDisplayName()
-					: stateHistory.getNatureOfTask());
-			inboxHistoryItem.setStatus(stateHistory.getValue()
-					+ (isBlank(stateHistory.getNextAction()) ? EMPTY : "-" + stateHistory.getNextAction()));
-			inboxHistoryItem.setDetails(
-					isBlank(stateHistory.getComments()) ? EMPTY : escapeSpecialChars(stateHistory.getComments()));
-			inboxHistoryItem.setLink(EMPTY);
-			inboxHistoryItems.add(inboxHistoryItem);
-		}
-
-		return "{ \"data\":" + new GsonBuilder().disableHtmlEscaping().create().toJson(inboxHistoryItems) + "}";
-	}
 }
