@@ -1115,7 +1115,8 @@ public interface PropertyTaxConstants {
     public static final String MUTATIONRS_OTHERS = "OTHERS";
     public static final String MUTATIONRS_SALES_DEED = "Sale Deed";
     public static final String MUTATIONRS_COURT_ORDER = "Court Deed";
-
+    public static final String MUTATIONRS_DECREE_BY_CIVIL_COURT = "Decree by Civil Court";
+    
     @SuppressWarnings("serial")
     public static final Map<String, String> SALUTATION = new HashMap<String, String>() {
         {
