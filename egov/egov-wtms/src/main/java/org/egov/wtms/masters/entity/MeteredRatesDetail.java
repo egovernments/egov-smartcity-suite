@@ -91,7 +91,7 @@ public class MeteredRatesDetail extends AbstractAuditable {
     private Double flatAmount;
 
     @Audited
-    private boolean recursive = false;
+    private boolean recursive;
 
     @Audited
     private Double recursiveFactor;

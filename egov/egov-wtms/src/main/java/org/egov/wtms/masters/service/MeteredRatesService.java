@@ -42,9 +42,6 @@ package org.egov.wtms.masters.service;
 
 import java.util.Date;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.egov.wtms.masters.entity.MeteredRates;
 import org.egov.wtms.masters.entity.MeteredRatesDetail;
 import org.egov.wtms.masters.repository.MeteredRatesDetailRepository;
@@ -62,9 +59,6 @@ public class MeteredRatesService {
 
     @Autowired
     private MeteredRatesDetailRepository meteredRatesDtlRepository;
-
-    @PersistenceContext
-    private EntityManager entityManager;
 
     @Transactional
     public void save(final MeteredRates meteredRates) {
