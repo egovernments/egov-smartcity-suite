@@ -49,6 +49,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.egov.infra.microservice.contract.Task;
 import org.egov.infra.microservice.utils.MicroserviceUtils;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -76,6 +77,7 @@ import com.google.gson.GsonBuilder;
 public class InboxController {
 
 	private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormat.forPattern("dd/MM/yyyy hh:mm a");
+	private static Logger LOG=Logger.getLogger(InboxController.class);
 
 	@Autowired
 	private InboxRenderServiceDeligate<StateAware> inboxRenderServiceDeligate;
@@ -125,8 +127,10 @@ public class InboxController {
 			inboxItem.setStatus(state.getValue() + (isBlank(nextAction) ? EMPTY : " - " + nextAction));
 			inboxItem.setDetails(isBlank(stateAware.getStateDetails()) ? EMPTY : stateAware.getStateDetails());
 			inboxItem.setLink(workflowTypes.getLink().replace(":ID", stateAware.myLinkId()));
-			inboxItems.add(inboxItem);
+			inboxItem.setCreatedDate(state.getCreatedDate());
 
+			inboxItems.add(inboxItem);
+			
 		}
 		
 		List<Task> tasks = microserviceUtils.getTasks();
@@ -144,8 +148,18 @@ public class InboxController {
 			inboxItem.setSender(t.getSenderName());
 			inboxItems.add(inboxItem);
 		}
+		
 		Collections.sort(inboxItems);
+		for(Inbox b:inboxItems)
+		{
+		   LOG.info(DATE_FORMATTER.print(new DateTime(b.getCreatedDate()))+"  "+b.getId()+"-"+b.getLink()); 
+		}
 		Collections.reverse(inboxItems);
+		LOG.info("before reverse");
+		for(Inbox b:inboxItems)
+                {
+                   LOG.info(DATE_FORMATTER.print(new DateTime(b.getCreatedDate()))+"  "+b.getId()+"-"+b.getLink()); 
+                }
 
 		return "{ \"data\":" + new GsonBuilder().create().toJson(inboxItems) + "}";
 	}
