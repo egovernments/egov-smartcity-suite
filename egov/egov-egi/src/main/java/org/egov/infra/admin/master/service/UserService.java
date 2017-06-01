@@ -60,6 +60,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class UserService {
 
+    private static final String ROLE_EMPLOYEE = "EMPLOYEE";
+    private static final String ROLE_CITIZEN = "CITIZEN";
+
     @Autowired
     private UserRepository userRepository;
 
@@ -68,6 +71,9 @@ public class UserService {
 
     @Autowired
     private MicroserviceUtils microserviceUtils;
+
+    @Autowired
+    private RoleService roleService;
 
     @Transactional
     public User updateUser(final User user) {
@@ -79,6 +85,12 @@ public class UserService {
         final String createUserServiceUrl = applicationProperties.getCreateUserServiceUrl();
 
         if (StringUtils.isNotBlank(createUserServiceUrl)) {
+            if (user.getRoles().isEmpty())
+                if (user.getType().equals(UserType.CITIZEN))
+                    user.addRole(roleService.getRoleByName(ROLE_CITIZEN));
+                else if (user.getType().equals(UserType.EMPLOYEE))
+                    user.addRole(roleService.getRoleByName(ROLE_EMPLOYEE));
+
             final User savedUser = userRepository.save(user);
             microserviceUtils.createUserMicroservice(user, createUserServiceUrl);
             return savedUser;
