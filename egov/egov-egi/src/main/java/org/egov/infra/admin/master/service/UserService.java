@@ -44,11 +44,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.repository.UserRepository;
-import org.egov.infra.config.properties.ApplicationProperties;
 import org.egov.infra.microservice.utils.MicroserviceUtils;
 import org.egov.infra.persistence.entity.enums.Gender;
 import org.egov.infra.persistence.entity.enums.UserType;
@@ -60,20 +58,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class UserService {
 
-    private static final String ROLE_EMPLOYEE = "EMPLOYEE";
-    private static final String ROLE_CITIZEN = "CITIZEN";
-
     @Autowired
     private UserRepository userRepository;
 
     @Autowired
-    private ApplicationProperties applicationProperties;
-
-    @Autowired
     private MicroserviceUtils microserviceUtils;
-
-    @Autowired
-    private RoleService roleService;
 
     @Transactional
     public User updateUser(final User user) {
@@ -82,20 +71,9 @@ public class UserService {
 
     @Transactional
     public User createUser(final User user) {
-        final String createUserServiceUrl = applicationProperties.getCreateUserServiceUrl();
-
-        if (StringUtils.isNotBlank(createUserServiceUrl)) {
-            if (user.getRoles().isEmpty())
-                if (user.getType().equals(UserType.CITIZEN))
-                    user.addRole(roleService.getRoleByName(ROLE_CITIZEN));
-                else if (user.getType().equals(UserType.EMPLOYEE))
-                    user.addRole(roleService.getRoleByName(ROLE_EMPLOYEE));
-
-            final User savedUser = userRepository.save(user);
-            microserviceUtils.createUserMicroservice(user, createUserServiceUrl);
-            return savedUser;
-        } else
-            return userRepository.save(user);
+        final User savedUser = userRepository.save(user);
+        microserviceUtils.createUserMicroservice(user);
+        return savedUser;
     }
 
     public Set<User> getUsersByUsernameLike(final String userName) {
