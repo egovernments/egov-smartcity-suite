@@ -53,11 +53,11 @@ public class NumberUtil {
 
 	private static final int AMOUNT_PRECISION_DEFAULT = 2;
 
-	public static enum NumberFormatStyle {
+	public enum NumberFormatStyle {
 		CRORES, MILLIONS
-	};
+	}
 
-	/**
+    /**
 	 * Converts given amount to words with default decimal precision of 2.
 	 * @param amount Amount to be converted to words
 	 * @return The amount in words with default decimal precision of 2.

@@ -153,7 +153,7 @@
 							pageY: e.pageY
 						};
 						var next = document.elementFromPoint( ee.pageX , ee.pageY );
-						next = ( next.nodeType == 3 ) ? next.parentNode : next //Opera
+						next = ( next.nodeType == 3 ) ? next.parentNode : next; //Opera
 						$( next ).trigger( event , ee );
 					}
 					catch ( err ) {
@@ -476,8 +476,8 @@
 						if( ( $objects.width() == 0 || ( isValidDim( instance.settings.menuWidth ) && instance.settings.menuWidth.indexOf( '%' ) != -1 ) ) && forceWidth == undefined ) {
 							$objects.css( 'min-width' , '' );
 							$objects.width( parseInt( instance.settings.container.parent().width() * parseInt( instance.settings.menuWidth )/100 ) )
-						};
-						maxWidth = $objects.width() - ieShadowFilterDistortion;
+                        }
+                        maxWidth = $objects.width() - ieShadowFilterDistortion;
 						$objects.css( 'min-width' , $objects.width() - ieShadowFilterDistortion + 'px' );
 					}
 					var maxExtWidth = ( extWidth && forceWidth == undefined ) ? ( $objects.width() - ieShadowFilterDistortion + maxLevel * ( instance.settings.overlapWidth + ieShadowFilterDistortion ) ) : ( maxWidth + maxLevel * ( instance.settings.overlapWidth + ieShadowFilterDistortion ) ),
@@ -674,7 +674,7 @@
 					collapingObjects[ 'prevAnimEnded' ] = false;
 					$nextLevelHolders.each(function( key, val ){
 						ieShadowFilterDistortion = ($( val ).css('filter').match(/DXImageTransform\.Microsoft\.Shadow/)) ? $( val ).get(0).filters.item("DXImageTransform.Microsoft.Shadow").strength : 0;
-						lwidth = ( instance.settings.mode == 'overlap' ) ? $( val ).width() - ( $nextLevelHolders.length + $prevLevelHolders.length - $( val ).attr( 'data-level' ) - 1) * ( instance.settings.overlapWidth + ieShadowFilterDistortion ) - ieShadowFilterDistortion : $( val ).width() - ieShadowFilterDistortion
+						lwidth = ( instance.settings.mode == 'overlap' ) ? $( val ).width() - ( $nextLevelHolders.length + $prevLevelHolders.length - $( val ).attr( 'data-level' ) - 1) * ( instance.settings.overlapWidth + ieShadowFilterDistortion ) - ieShadowFilterDistortion : $( val ).width() - ieShadowFilterDistortion;
 						if( instance.settings.direction == 'rtl' ) {
 							$( val ).stop().animate({
 								marginRight : ( (-1) * lwidth ),
@@ -967,8 +967,8 @@
 				if( $selectedLevelHolder == undefined || $selectedLevelHolder.length != 1 ) {
 					returnValue = false;
 					return returnValue;
-				};
-				$parentLevelHolders = $selectedLevelHolder.parents( 'div.levelHolderClass' );
+                }
+                $parentLevelHolders = $selectedLevelHolder.parents( 'div.levelHolderClass' );
 				setToOpenHolders = $.merge( $parentLevelHolders.get().reverse(), $selectedLevelHolder.get() );
 				returnValue = setToOpenHolders;
 				return returnValue;
@@ -983,8 +983,8 @@
 				if( $levelHolder0 == undefined || $levelHolder1 == undefined ) {
 					returnValue = false;
 					return returnValue;
-				};
-				$parentLevelHolders0 = ( $levelHolder0.length == 1 ) ? $levelHolder0.parents( 'div.levelHolderClass' ) : null;
+                }
+                $parentLevelHolders0 = ( $levelHolder0.length == 1 ) ? $levelHolder0.parents( 'div.levelHolderClass' ) : null;
 				$parentLevelHolders1 = ( $levelHolder1.length == 1 ) ? $levelHolder1.parents( 'div.levelHolderClass' ) : null;
 				setParents0 = ( $parentLevelHolders0 != null ) ? $.merge( $parentLevelHolders0.get().reverse(), $levelHolder0.get() ) : [];
 				setParents1 = ( $parentLevelHolders1 != null ) ? $.merge( $parentLevelHolders1.get().reverse(), $levelHolder1.get() ) : [];

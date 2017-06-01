@@ -48,5 +48,5 @@ import org.egov.infra.admin.master.entity.User;
  */
 public interface AuthorizeRule {
 
-	public boolean isAuthorized(User user);
+	boolean isAuthorized(User user);
 }

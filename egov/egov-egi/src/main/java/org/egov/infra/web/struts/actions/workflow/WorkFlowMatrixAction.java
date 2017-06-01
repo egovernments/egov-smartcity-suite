@@ -252,16 +252,14 @@ public class WorkFlowMatrixAction extends BaseFormAction {
 		} else {
 			final StringBuffer departmentString = new StringBuffer();
 			for (final Long matrixid : (List<Long>) checkmatrixList) {
-				;
-				if (!new String(departmentString).contains(this.workFlowMatrixService.getWorkFlowObjectbyId(matrixid).getDepartment())) {
+                if (!new String(departmentString).contains(this.workFlowMatrixService.getWorkFlowObjectbyId(matrixid).getDepartment())) {
 					departmentString.append(" ");
 					departmentString.append(this.workFlowMatrixService.getWorkFlowObjectbyId(matrixid).getDepartment());
 					departmentString.append(",");
 				}
 
 			}
-			;
-			setDepartmentstring(departmentString.substring(0, departmentString.length() - 1));
+            setDepartmentstring(departmentString.substring(0, departmentString.length() - 1));
 			LOGGER.info("checkEistingMatrix Method is ended");
 			return false;
 		}
@@ -277,11 +275,7 @@ public class WorkFlowMatrixAction extends BaseFormAction {
 		final HashMap workflowheaderparams = getHeaderParams();
 		setLegacyDate(this.workFlowMatrixService.checkLegacyMatrix(workflowheaderparams));
 		LOGGER.info("checkExistingMatrixforLegacy Method is ended");
-		if (this.legacyDate == null) {
-			return true;
-		} else {
-			return false;
-		}
+        return this.legacyDate == null;
 
 	}
 
@@ -411,8 +405,7 @@ public class WorkFlowMatrixAction extends BaseFormAction {
 						RejectionList.add(wfMatrixObj);
 					}
 				}
-				;
-				ActualwfMatrixObjList.addAll(RejectionList);
+                ActualwfMatrixObjList.addAll(RejectionList);
 			}
 		}
 		LOGGER.info("createActualWorkFlowMatrixDetails Method is ended");

@@ -64,12 +64,12 @@ ${id}SuccessHandler=function(data, textStatus, xhr){
   $('#${dropdownId}').prop('selectedIndex', 0);
 
   <% if(afterSuccess != null && !afterSuccess.trim().equals("")) {%>
-     ${afterSuccess}(req,res)
+     ${afterSuccess}(req,res);
   <%}%>
-}
+};
 ${id}FailureHandler=function(){
   console.log('Unable to load ${dropdownId}');
-}
+};
 
 function populate${dropdownId}(params){
    <% if(contextToBeUsed != null && !contextToBeUsed.trim().equals("")) { %>

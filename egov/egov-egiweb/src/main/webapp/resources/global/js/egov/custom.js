@@ -218,7 +218,7 @@ $(document).ready(function()
 	        },
 	        error: function (xhr, ajaxOptions, thrownError) {
 	        	//generic error message with error code
-	            var errormsg = 'Error '+xhr.status+' '+ thrownError +'. please, try again!'
+	            var errormsg = 'Error '+xhr.status+' '+ thrownError +'. please, try again!';
 	            //add error alert in current page  
 	            $('.main-content').prepend('<div id="notifyerror" class="alert alert-danger" role="alert"> <div> <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> <span class="sr-only">Error:</span> '+ errormsg +' </div> ');	            
 	        },
