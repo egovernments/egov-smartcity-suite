@@ -53,9 +53,6 @@ public class ResponseInfo {
 
     private String status;
 
-    public ResponseInfo() {
-    }
-
     public String getApiId() {
         return apiId;
     }
