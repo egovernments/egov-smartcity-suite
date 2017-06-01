@@ -37,6 +37,7 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <footer class="main">
    <spring:message code='lbl.powerby'/>  <a href="http://egovernments.org/" target="_blank">
    <spring:message code='lbl.egov.foundation'/></a>
