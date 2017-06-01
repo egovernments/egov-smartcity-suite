@@ -71,7 +71,7 @@ public class UsageSlabService {
     }
 
     public Page<UsageSlab> search(final UsageSlabSearchRequest usageSlabSearchRequest) {
-        final StringBuilder queryString = new StringBuilder();
+        final StringBuilder queryString = new StringBuilder(512);
         queryString.append("from UsageSlab U where U.active=:active ");
         if (usageSlabSearchRequest.getUsage() != null)
             queryString.append(" and U.usage=:usage");

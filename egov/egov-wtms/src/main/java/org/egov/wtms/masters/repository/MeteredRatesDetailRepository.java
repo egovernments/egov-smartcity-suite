@@ -52,6 +52,6 @@ import org.springframework.stereotype.Repository;
 public interface MeteredRatesDetailRepository extends JpaRepository<MeteredRatesDetail, Long> {
 
     @Query("select mrd from MeteredRatesDetail mrd, MeteredRates mr where mr.slabName=:slabName and mr.id=mrd.meteredRate and ((mrd.fromDate<=:currentDate and mrd.toDate>=:currentDate) or (mrd.fromDate<=:currentDate and mrd.toDate is null))")
-    public MeteredRatesDetail getActiveRateforSlab(@Param("slabName") final String slabName,
-            @Param("currentDate") final Date date);
+    MeteredRatesDetail getActiveRateforSlab(@Param("slabName") String slabName,
+            @Param("currentDate") Date date);
 }

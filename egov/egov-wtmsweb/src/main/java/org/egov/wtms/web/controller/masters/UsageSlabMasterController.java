@@ -67,6 +67,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping(value = "/masters")
 public class UsageSlabMasterController {
 
+    private static final String MODE_VALUE = "mode";
+    private static final String USAGESLAB_SEARCH_REQUEST = "usageSlabSearchRequest";
+
     @Autowired
     private UsageSlabService usageSlabService;
 
@@ -86,16 +89,16 @@ public class UsageSlabMasterController {
     public String saveUsageSlab(@ModelAttribute final UsageSlab usageSlab, final BindingResult bindingResult,
             final RedirectAttributes redirectAttrs, final Model model) {
         usageSlabService.save(usageSlab);
-        model.addAttribute("mode", "create");
+        model.addAttribute(MODE_VALUE, "create");
         model.addAttribute("usageSlab", usageSlab);
         model.addAttribute("message", "Usage Slab Created Successfully");
         return "usageslab-success";
     }
 
     @RequestMapping(value = "usageslab-view", method = GET)
-    public String viewUsageSlab(@ModelAttribute("usageSlabSearchRequest") final UsageSlabSearchRequest usageSlabSearchRequest,
+    public String viewUsageSlab(@ModelAttribute(USAGESLAB_SEARCH_REQUEST) final UsageSlabSearchRequest usageSlabSearchRequest,
             final Model model) {
-        model.addAttribute("mode", "view");
+        model.addAttribute(MODE_VALUE, "view");
         model.addAttribute("usageType", usageTypeService.getActiveUsageTypes());
         model.addAttribute("slabNameList", usageSlabService.getActiveUsageSlabs());
         return "usageslab-search";
@@ -112,7 +115,7 @@ public class UsageSlabMasterController {
 
     @RequestMapping(value = "/usageslab-edit", method = GET)
     public String searchForModify(@ModelAttribute final UsageSlabSearchRequest usageSlabSearchRequest, final Model model) {
-        model.addAttribute("mode", "edit");
+        model.addAttribute(MODE_VALUE, "edit");
         model.addAttribute("usageType", usageTypeService.getActiveUsageTypes());
         model.addAttribute("slabNameList", usageSlabService.getActiveUsageSlabs());
         return "usageslab-search";
@@ -120,19 +123,19 @@ public class UsageSlabMasterController {
 
     @RequestMapping(value = "/usageslab-edit/{id}", method = GET)
     public String modifyUsageSlabRecord(
-            @ModelAttribute("usageSlabSearchRequest") final UsageSlabSearchRequest usageSlabSearchRequest,
+            @ModelAttribute(USAGESLAB_SEARCH_REQUEST) final UsageSlabSearchRequest usageSlabSearchRequest,
             @PathVariable("id") final String id,
             final Model model) {
         UsageSlab existingUsageSlab = null;
         if (id != null)
             existingUsageSlab = usageSlabService.findById(Long.valueOf(id));
-        model.addAttribute("mode", "edit");
-        model.addAttribute("usageSlabSearchRequest", existingUsageSlab);
+        model.addAttribute(MODE_VALUE, "edit");
+        model.addAttribute(USAGESLAB_SEARCH_REQUEST, existingUsageSlab);
         return "usageslab-edit";
     }
 
     @RequestMapping(value = "/usageslab-edit/{id}", method = POST)
-    public String updteUsageSlab(@ModelAttribute("usageSlabSearchRequest") final UsageSlabSearchRequest usageSlabSearchRequest,
+    public String updteUsageSlab(@ModelAttribute(USAGESLAB_SEARCH_REQUEST) final UsageSlabSearchRequest usageSlabSearchRequest,
             @PathVariable("id") final String id,
             final RedirectAttributes redirectAttrs, final Model model) {
         UsageSlab existingObject = null;
