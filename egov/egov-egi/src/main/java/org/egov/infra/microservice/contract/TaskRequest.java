@@ -5,12 +5,11 @@ import java.util.List;
 
 import org.egov.infra.microservice.models.RequestInfo;
 
-
-public  class TaskRequest {
-	private RequestInfo requestInfo = new RequestInfo();
-	private List<Task> tasks = new ArrayList<Task>();
-	private Task task = new Task();
-	private Pagination page = new Pagination();
+public class TaskRequest {
+    private RequestInfo requestInfo = new RequestInfo();
+    private List<Task> tasks = new ArrayList<Task>();
+    private Task task = new Task();
+    private Pagination page = new Pagination();
     public RequestInfo getRequestInfo() {
         return requestInfo;
     }
@@ -35,4 +34,5 @@ public  class TaskRequest {
     public void setPage(Pagination page) {
         this.page = page;
     }
+
 }

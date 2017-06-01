@@ -43,85 +43,85 @@ package org.egov.infra.web.support.ui;
 import java.util.Date;
 
 public class Inbox implements Comparable<Inbox> {
-	private String id;
-	private String sender;
-	private String date;
-	private String task;
-	private String status;
-	private String details;
-	private String link;
-	private Date createdDate;
+    private String id;
+    private String sender;
+    private String date;
+    private String task;
+    private String status;
+    private String details;
+    private String link;
+    private Date createdDate;
 
-	public String getId() {
-		return id;
-	}
+    public String getId() {
+        return id;
+    }
 
-	public void setId(final String id) {
-		this.id = id;
-	}
+    public void setId(final String id) {
+        this.id = id;
+    }
 
-	public String getSender() {
-		return sender;
-	}
+    public String getSender() {
+        return sender;
+    }
 
-	public void setSender(final String sender) {
-		this.sender = sender;
-	}
+    public void setSender(final String sender) {
+        this.sender = sender;
+    }
 
-	public String getDate() {
-		return date;
-	}
+    public String getDate() {
+        return date;
+    }
 
-	public void setDate(final String date) {
-		this.date = date;
-	}
+    public void setDate(final String date) {
+        this.date = date;
+    }
 
-	public String getTask() {
-		return task;
-	}
+    public String getTask() {
+        return task;
+    }
 
-	public void setTask(final String task) {
-		this.task = task;
-	}
+    public void setTask(final String task) {
+        this.task = task;
+    }
 
-	public String getStatus() {
-		return status;
-	}
+    public String getStatus() {
+        return status;
+    }
 
-	public void setStatus(final String status) {
-		this.status = status;
-	}
+    public void setStatus(final String status) {
+        this.status = status;
+    }
 
-	public String getDetails() {
-		return details;
-	}
+    public String getDetails() {
+        return details;
+    }
 
-	public void setDetails(final String details) {
-		this.details = details;
-	}
+    public void setDetails(final String details) {
+        this.details = details;
+    }
 
-	public String getLink() {
-		return link;
-	}
+    public String getLink() {
+        return link;
+    }
 
-	public void setLink(final String link) {
-		this.link = link;
-	}
+    public void setLink(final String link) {
+        this.link = link;
+    }
 
-	public Date getCreatedDate() {
-		return createdDate;
-	}
+    public Date getCreatedDate() {
+        return createdDate;
+    }
 
-	public void setCreatedDate(Date createdDate) {
-		this.createdDate = createdDate;
-	}
+    public void setCreatedDate(Date createdDate) {
+        this.createdDate = createdDate;
+    }
 
-	@Override
-	public int compareTo(Inbox o) {
-		if (this.createdDate != null && o.createdDate != null)
-			return o.createdDate.compareTo(this.createdDate);
-		else
-			return 0;
-	}
+    @Override
+    public int compareTo(Inbox o) {
+        if (this.createdDate != null && o.createdDate != null)
+            return this.createdDate.compareTo(o.createdDate);
+        else
+            return 0;
+    }
 
 }
