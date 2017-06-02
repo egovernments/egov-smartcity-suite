@@ -39,9 +39,21 @@
  */
 package org.egov.services.zuulproxy.models;
 
-public class Role {
+import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class Role implements Serializable {
+
+    private static final long serialVersionUID = 692503190320200067L;
+
+    @JsonProperty("name")
     private String name;
+
+    public Role() {
+    }
 
     public Role(final String name) {
         this.name = name;
@@ -49,10 +61,6 @@ public class Role {
 
     public String getName() {
         return name;
-    }
-
-    public void setName(final String name) {
-        this.name = name;
     }
 
 }

@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2017>  eGovernments Foundation
+ *     Copyright (C) <2015>  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -37,89 +37,32 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.services.zuulproxy.models;
+package org.egov.collection.integration.models;
 
-import java.io.Serializable;
-import java.util.List;
+import org.egov.infra.microservice.models.RequestInfo;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class UserInfo implements Serializable {
+public class BillReceiptInfoReq {
+    @JsonProperty("RequestInfo")
+    private RequestInfo requestInfo;
 
-    private static final long serialVersionUID = -5184742701167113678L;
+    private BillReceiptReq billReceiptInfo;
 
-    @JsonProperty("roles")
-    private List<Role> roles;
-
-    @JsonProperty("id")
-    private Long id;
-
-    @JsonProperty("userName")
-    private String userName;
-
-    @JsonProperty("name")
-    private String name;
-
-    @JsonProperty("emailId")
-    private String emailId;
-
-    @JsonProperty("mobileNumber")
-    private String mobileNumber;
-
-    @JsonProperty("type")
-    private String type;
-
-    @JsonProperty("tenantId")
-    private String tenantId;
-
-    public UserInfo(final List<Role> roles, final Long id, final String userName, final String name, final String emailId,
-            final String mobileNumber, final String type, final String tenantId) {
-        super();
-        this.roles = roles;
-        this.id = id;
-        this.userName = userName;
-        this.name = name;
-        this.emailId = emailId;
-        this.mobileNumber = mobileNumber;
-        this.type = type;
-        this.tenantId = tenantId;
+    public RequestInfo getRequestInfo() {
+        return requestInfo;
     }
 
-    public UserInfo() {
+    public void setRequestInfo(final RequestInfo requestInfo) {
+        this.requestInfo = requestInfo;
     }
 
-    public List<Role> getRoles() {
-        return roles;
+    public BillReceiptReq getBillReceiptInfo() {
+        return billReceiptInfo;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getEmailId() {
-        return emailId;
-    }
-
-    public String getMobileNumber() {
-        return mobileNumber;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public String getTenantId() {
-        return tenantId;
+    public void setBillReceiptInfo(final BillReceiptReq billReceiptInfo) {
+        this.billReceiptInfo = billReceiptInfo;
     }
 
 }

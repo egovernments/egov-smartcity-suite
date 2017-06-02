@@ -37,89 +37,43 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.services.zuulproxy.models;
+package org.egov.infra.microservice.contract;
 
-import java.io.Serializable;
-import java.util.List;
+public class ResponseInfo {
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
+    private String apiId;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class UserInfo implements Serializable {
+    private String ver;
 
-    private static final long serialVersionUID = -5184742701167113678L;
+    private String ts;
 
-    @JsonProperty("roles")
-    private List<Role> roles;
+    private String resMsgId;
 
-    @JsonProperty("id")
-    private Long id;
+    private String msgId;
 
-    @JsonProperty("userName")
-    private String userName;
+    private String status;
 
-    @JsonProperty("name")
-    private String name;
-
-    @JsonProperty("emailId")
-    private String emailId;
-
-    @JsonProperty("mobileNumber")
-    private String mobileNumber;
-
-    @JsonProperty("type")
-    private String type;
-
-    @JsonProperty("tenantId")
-    private String tenantId;
-
-    public UserInfo(final List<Role> roles, final Long id, final String userName, final String name, final String emailId,
-            final String mobileNumber, final String type, final String tenantId) {
-        super();
-        this.roles = roles;
-        this.id = id;
-        this.userName = userName;
-        this.name = name;
-        this.emailId = emailId;
-        this.mobileNumber = mobileNumber;
-        this.type = type;
-        this.tenantId = tenantId;
+    public String getApiId() {
+        return apiId;
     }
 
-    public UserInfo() {
+    public String getVer() {
+        return ver;
     }
 
-    public List<Role> getRoles() {
-        return roles;
+    public String getTs() {
+        return ts;
     }
 
-    public Long getId() {
-        return id;
+    public String getResMsgId() {
+        return resMsgId;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getMsgId() {
+        return msgId;
     }
 
-    public String getName() {
-        return name;
+    public String getStatus() {
+        return status;
     }
-
-    public String getEmailId() {
-        return emailId;
-    }
-
-    public String getMobileNumber() {
-        return mobileNumber;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public String getTenantId() {
-        return tenantId;
-    }
-
 }

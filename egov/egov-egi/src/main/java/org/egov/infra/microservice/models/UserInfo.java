@@ -37,44 +37,32 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.services.zuulproxy.models;
+package org.egov.infra.microservice.models;
 
 import java.io.Serializable;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class UserInfo implements Serializable {
 
-    private static final long serialVersionUID = -5184742701167113678L;
+    private static final long serialVersionUID = -6099520777478122089L;
 
-    @JsonProperty("roles")
-    private List<Role> roles;
-
-    @JsonProperty("id")
     private Long id;
 
-    @JsonProperty("userName")
     private String userName;
 
-    @JsonProperty("name")
     private String name;
 
-    @JsonProperty("emailId")
-    private String emailId;
-
-    @JsonProperty("mobileNumber")
-    private String mobileNumber;
-
-    @JsonProperty("type")
     private String type;
 
-    @JsonProperty("tenantId")
+    private String mobileNumber;
+
+    private String emailId;
+
+    private List<RoleInfo> roles;
+
     private String tenantId;
 
-    public UserInfo(final List<Role> roles, final Long id, final String userName, final String name, final String emailId,
+    public UserInfo(final List<RoleInfo> roles, final Long id, final String userName, final String name, final String emailId,
             final String mobileNumber, final String type, final String tenantId) {
         super();
         this.roles = roles;
@@ -90,10 +78,6 @@ public class UserInfo implements Serializable {
     public UserInfo() {
     }
 
-    public List<Role> getRoles() {
-        return roles;
-    }
-
     public Long getId() {
         return id;
     }
@@ -106,16 +90,20 @@ public class UserInfo implements Serializable {
         return name;
     }
 
-    public String getEmailId() {
-        return emailId;
+    public String getType() {
+        return type;
     }
 
     public String getMobileNumber() {
         return mobileNumber;
     }
 
-    public String getType() {
-        return type;
+    public String getEmailId() {
+        return emailId;
+    }
+
+    public List<RoleInfo> getRoles() {
+        return roles;
     }
 
     public String getTenantId() {
