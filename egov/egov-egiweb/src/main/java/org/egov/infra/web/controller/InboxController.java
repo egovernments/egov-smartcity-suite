@@ -76,7 +76,7 @@ import com.google.gson.GsonBuilder;
 public class InboxController {
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormat.forPattern("dd/MM/yyyy hh:mm a");
-    private static Logger LOG = Logger.getLogger(InboxController.class);
+    private static final Logger LOG = Logger.getLogger(InboxController.class);
 
     @Autowired
     private InboxRenderServiceDeligate<StateAware> inboxRenderServiceDeligate;
@@ -146,11 +146,14 @@ public class InboxController {
 
         Collections.sort(inboxItems);
         for (final Inbox b : inboxItems)
-            LOG.info(DATE_FORMATTER.print(new DateTime(b.getCreatedDate())) + "  " + b.getId() + "-" + b.getLink());
+            if (LOG.isInfoEnabled())
+                LOG.info(DATE_FORMATTER.print(new DateTime(b.getCreatedDate())) + "  " + b.getId() + "-" + b.getLink());
         Collections.reverse(inboxItems);
-        LOG.info("before reverse");
+        if (LOG.isInfoEnabled())
+            LOG.info("before reverse");
         for (final Inbox b : inboxItems)
-            LOG.info(DATE_FORMATTER.print(new DateTime(b.getCreatedDate())) + "  " + b.getId() + "-" + b.getLink());
+            if (LOG.isInfoEnabled())
+                LOG.info(DATE_FORMATTER.print(new DateTime(b.getCreatedDate())) + "  " + b.getId() + "-" + b.getLink());
 
         return "{ \"data\":" + new GsonBuilder().create().toJson(inboxItems) + "}";
     }

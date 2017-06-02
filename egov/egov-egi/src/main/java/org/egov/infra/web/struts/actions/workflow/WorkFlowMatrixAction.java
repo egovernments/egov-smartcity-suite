@@ -317,7 +317,7 @@ public class WorkFlowMatrixAction extends BaseFormAction {
                         final WorkFlowMatrix wfMatrixObj = new WorkFlowMatrix();
                         wfMatrixObj.setFromDate(getFromDate());
                         if (getLegacyDate() != null) {
-                                setToDate((getLegacyDate()));
+                                setToDate(getLegacyDate());
                         }
                         wfMatrixObj.setToDate(getToDate());
                         wfMatrixObj.setObjectType((this.workFlowMatrixService.getobjectTypebyId(getObjectType())).getType());
