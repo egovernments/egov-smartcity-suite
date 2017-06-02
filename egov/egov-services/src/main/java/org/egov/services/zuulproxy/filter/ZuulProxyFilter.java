@@ -269,10 +269,11 @@ public class ZuulProxyFilter extends ZuulFilter {
 
     }
 
-    private static String updateQueryString(String queryString, final String name, final String value) {
+    private static String updateQueryString(final String queryString, final String name, final String value) {
+        String updatedQueryString = null;
         if (queryString != null)
-            queryString = queryString.replaceAll(name + "=.*?($|&)", "").replaceFirst("&$", "");
-        return addParameter(queryString, name, value);
+            updatedQueryString = queryString.replaceAll(name + "=.*?($|&)", "").replaceFirst("&$", "");
+        return addParameter(updatedQueryString, name, value);
     }
 
     public static String addParameter(final String queryString, final String name, final String value) {
