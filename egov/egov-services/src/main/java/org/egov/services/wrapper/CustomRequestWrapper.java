@@ -37,89 +37,57 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.services.zuulproxy.models;
+package org.egov.services.wrapper;
 
-import java.io.Serializable;
-import java.util.List;
+import java.io.IOException;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.servlet.ServletInputStream;
+import javax.servlet.http.HttpServletRequest;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class UserInfo implements Serializable {
+import org.apache.commons.io.IOUtils;
+import org.egov.infra.exception.ApplicationRuntimeException;
 
-    private static final long serialVersionUID = -5184742701167113678L;
+import com.netflix.zuul.http.HttpServletRequestWrapper;
+import com.netflix.zuul.http.ServletInputStreamWrapper;
 
-    @JsonProperty("roles")
-    private List<Role> roles;
+public class CustomRequestWrapper extends HttpServletRequestWrapper {
 
-    @JsonProperty("id")
-    private Long id;
+    private String payload;
 
-    @JsonProperty("userName")
-    private String userName;
-
-    @JsonProperty("name")
-    private String name;
-
-    @JsonProperty("emailId")
-    private String emailId;
-
-    @JsonProperty("mobileNumber")
-    private String mobileNumber;
-
-    @JsonProperty("type")
-    private String type;
-
-    @JsonProperty("tenantId")
-    private String tenantId;
-
-    public UserInfo(final List<Role> roles, final Long id, final String userName, final String name, final String emailId,
-            final String mobileNumber, final String type, final String tenantId) {
-        super();
-        this.roles = roles;
-        this.id = id;
-        this.userName = userName;
-        this.name = name;
-        this.emailId = emailId;
-        this.mobileNumber = mobileNumber;
-        this.type = type;
-        this.tenantId = tenantId;
+    public CustomRequestWrapper(final HttpServletRequest request) {
+        super(request);
+        convertInputStreamToString(request);
     }
 
-    public UserInfo() {
+    private void convertInputStreamToString(final HttpServletRequest request) {
+        try {
+            payload = IOUtils.toString(request.getInputStream());
+        } catch (final IOException e) {
+            throw new ApplicationRuntimeException(e.getMessage(), e);
+        }
     }
 
-    public List<Role> getRoles() {
-        return roles;
+    public String getPayload() {
+        return payload;
     }
 
-    public Long getId() {
-        return id;
+    public void setPayload(final String payload) {
+        this.payload = payload;
     }
 
-    public String getUserName() {
-        return userName;
+    @Override
+    public int getContentLength() {
+        return payload.length();
     }
 
-    public String getName() {
-        return name;
+    @Override
+    public long getContentLengthLong() {
+        return payload.length();
     }
 
-    public String getEmailId() {
-        return emailId;
-    }
-
-    public String getMobileNumber() {
-        return mobileNumber;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public String getTenantId() {
-        return tenantId;
+    @Override
+    public ServletInputStream getInputStream() {
+        return new ServletInputStreamWrapper(payload.getBytes());
     }
 
 }

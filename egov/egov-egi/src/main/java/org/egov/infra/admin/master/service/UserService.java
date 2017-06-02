@@ -40,18 +40,19 @@
 
 package org.egov.infra.admin.master.service;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.repository.UserRepository;
+import org.egov.infra.microservice.utils.MicroserviceUtils;
 import org.egov.infra.persistence.entity.enums.Gender;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 
 @Service
 @Transactional(readOnly = true)
@@ -60,6 +61,9 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private MicroserviceUtils microserviceUtils;
+
     @Transactional
     public User updateUser(final User user) {
         return userRepository.saveAndFlush(user);
@@ -67,7 +71,9 @@ public class UserService {
 
     @Transactional
     public User createUser(final User user) {
-        return userRepository.save(user);
+        final User savedUser = userRepository.save(user);
+        microserviceUtils.createUserMicroservice(user);
+        return savedUser;
     }
 
     public Set<User> getUsersByUsernameLike(final String userName) {
@@ -109,7 +115,7 @@ public class UserService {
     public List<User> getUserByAadhaarNumberAndType(final String aadhaarNumber, final UserType type) {
         return userRepository.findByAadhaarNumberAndType(aadhaarNumber, type);
     }
-    
+
     public User getUserByMobileNumber(final String mobileNumber) {
         return userRepository.findByMobileNumber(mobileNumber);
     }
@@ -133,8 +139,9 @@ public class UserService {
     public List<User> getUsersByUsernameAndRolename(final String userName, final String roleName) {
         return userRepository.findUsersByUserAndRoleName(userName, roleName);
     }
-    
-    public User getUserByNameAndMobileNumberForGender(String name, String mobileNumber, Gender gender){
+
+    public User getUserByNameAndMobileNumberForGender(final String name, final String mobileNumber, final Gender gender) {
         return userRepository.findByNameAndMobileNumberAndGender(name, mobileNumber, gender);
     }
+
 }

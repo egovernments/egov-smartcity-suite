@@ -37,89 +37,34 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.services.zuulproxy.models;
+package org.egov.infra.microservice.contract;
 
-import java.io.Serializable;
-import java.util.List;
+import org.egov.infra.microservice.models.RequestInfo;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class UserInfo implements Serializable {
+public class CreateUserRequest {
 
-    private static final long serialVersionUID = -5184742701167113678L;
+    @JsonProperty("RequestInfo")
+    private RequestInfo requestInfo;
 
-    @JsonProperty("roles")
-    private List<Role> roles;
+    @JsonProperty("User")
+    private UserRequest userRequest;
 
-    @JsonProperty("id")
-    private Long id;
-
-    @JsonProperty("userName")
-    private String userName;
-
-    @JsonProperty("name")
-    private String name;
-
-    @JsonProperty("emailId")
-    private String emailId;
-
-    @JsonProperty("mobileNumber")
-    private String mobileNumber;
-
-    @JsonProperty("type")
-    private String type;
-
-    @JsonProperty("tenantId")
-    private String tenantId;
-
-    public UserInfo(final List<Role> roles, final Long id, final String userName, final String name, final String emailId,
-            final String mobileNumber, final String type, final String tenantId) {
-        super();
-        this.roles = roles;
-        this.id = id;
-        this.userName = userName;
-        this.name = name;
-        this.emailId = emailId;
-        this.mobileNumber = mobileNumber;
-        this.type = type;
-        this.tenantId = tenantId;
+    public RequestInfo getRequestInfo() {
+        return requestInfo;
     }
 
-    public UserInfo() {
+    public UserRequest getUserRequest() {
+        return userRequest;
     }
 
-    public List<Role> getRoles() {
-        return roles;
+    public void setRequestInfo(final RequestInfo requestInfo) {
+        this.requestInfo = requestInfo;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getEmailId() {
-        return emailId;
-    }
-
-    public String getMobileNumber() {
-        return mobileNumber;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public String getTenantId() {
-        return tenantId;
+    public void setUserRequest(final UserRequest userRequest) {
+        this.userRequest = userRequest;
     }
 
 }

@@ -37,89 +37,33 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.services.zuulproxy.models;
+package org.egov.infra.microservice.contract;
 
-import java.io.Serializable;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class UserInfo implements Serializable {
+public class UserDetailResponse {
 
-    private static final long serialVersionUID = -5184742701167113678L;
+    @JsonProperty("responseInfo")
+    private ResponseInfo responseInfo;
 
-    @JsonProperty("roles")
-    private List<Role> roles;
+    @JsonProperty("user")
+    private List<UserRequest> user;
 
-    @JsonProperty("id")
-    private Long id;
-
-    @JsonProperty("userName")
-    private String userName;
-
-    @JsonProperty("name")
-    private String name;
-
-    @JsonProperty("emailId")
-    private String emailId;
-
-    @JsonProperty("mobileNumber")
-    private String mobileNumber;
-
-    @JsonProperty("type")
-    private String type;
-
-    @JsonProperty("tenantId")
-    private String tenantId;
-
-    public UserInfo(final List<Role> roles, final Long id, final String userName, final String name, final String emailId,
-            final String mobileNumber, final String type, final String tenantId) {
-        super();
-        this.roles = roles;
-        this.id = id;
-        this.userName = userName;
-        this.name = name;
-        this.emailId = emailId;
-        this.mobileNumber = mobileNumber;
-        this.type = type;
-        this.tenantId = tenantId;
+    public UserDetailResponse(final ResponseInfo responseInfo, final List<UserRequest> user) {
+        this.responseInfo = responseInfo;
+        this.user = user;
     }
 
-    public UserInfo() {
+    public UserDetailResponse() {
     }
 
-    public List<Role> getRoles() {
-        return roles;
+    public ResponseInfo getResponseInfo() {
+        return responseInfo;
     }
 
-    public Long getId() {
-        return id;
+    public List<UserRequest> getUser() {
+        return user;
     }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getEmailId() {
-        return emailId;
-    }
-
-    public String getMobileNumber() {
-        return mobileNumber;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public String getTenantId() {
-        return tenantId;
-    }
-
 }
