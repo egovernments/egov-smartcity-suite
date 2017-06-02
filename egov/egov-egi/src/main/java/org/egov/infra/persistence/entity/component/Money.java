@@ -97,10 +97,8 @@ public class Money implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		final Money other = (Money) obj;
-		if (Double.doubleToLongBits(value) != Double.doubleToLongBits(other.value))
-			return false;
-		return true;
-	}
+        return Double.doubleToLongBits(value) == Double.doubleToLongBits(other.value);
+    }
 
 	public String getFormattedString() {
 		double rounded = Math.round(value * 100) / 100.0;

@@ -71,6 +71,9 @@
 		<property name="partialMutation" column="ISPARTIALMUTATION" type="boolean"/>
 		<property name="registrationDone" column="ISREGISTRATIONDONE" type="boolean"/>
 		<property name="type" column="type" type="java.lang.String"/>
+		<property name="decreeNumber" column="DECREE_NUMBER"/>
+		<property name="decreeDate" type="timestamp" column="DECREE_DATE"/>
+		<property name="courtName" column="COURT_NAME"/>
 		<many-to-one name="mutationRegistrationDetails" class="org.egov.ptis.domain.entity.property.MutationRegistrationDetails" column="id_registration_details" cascade="all"/>
 		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATEDBY"/>
 		<many-to-one name="lastModifiedBy" class="org.egov.infra.admin.master.entity.User" column="LASTMODIFIEDBY"/>

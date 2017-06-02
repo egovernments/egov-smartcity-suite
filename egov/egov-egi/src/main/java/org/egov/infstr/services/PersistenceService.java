@@ -134,7 +134,7 @@ public class PersistenceService<T, ID extends Serializable> {
     }
 
     protected T findById(final ID id) {
-        return (T) (id == null ? null : getSession().get(this.type, id));
+        return id == null ? null : getSession().get(this.type, id);
     }
 
     public List<T> findAllBy(final String query, final Object... params) {
@@ -220,7 +220,7 @@ public class PersistenceService<T, ID extends Serializable> {
     public T create(final T entity) {
         validate(entity);
         final Long id = (Long) getSession().save(entity);
-        return (T) getSession().load(this.type, id);
+        return getSession().load(this.type, id);
     }
 
     public T load(final Serializable id, Class cls) {

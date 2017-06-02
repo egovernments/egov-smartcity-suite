@@ -257,6 +257,30 @@
 									name="saleDetail" id="saleDetail"
 									onchange="return validateMaxLength(this);"
 									onblur="trim(this,this.value);"></s:textarea></td>
+									<td class="bluebox decreeDetailsRow"><s:text name="decreeNum" /><span
+								class="mandatory1">*</span> :</td>
+							<td class="bluebox decreeDetailsRow"><s:textfield name="decreeNumber" id="decreeNum"
+									maxlength="64" value="%{decreeNumber}"
+									 /></td>
+								</tr>
+								<tr>
+								
+							<td class="bluebox2">&nbsp;</td>
+							
+							<td class="bluebox decreeDetailsRow"><s:text name="decreeDate" /><span
+								class="mandatory1">*</span> :</td>
+							<td class="bluebox decreeDetailsRow"><s:date name="decreeDate" var="decreeDate"
+									format="dd/MM/yyyy" /> <s:textfield name="decreeDate"
+									id="decreeDate" maxlength="10" value="%{#decreeDate}"
+									onkeyup="DateFormat(this,this.value,event,false,'3')"
+									onblur="validateDateFormat(this);" cssClass="datepicker" /></td>
+							<td class="greybox decreeDetailsRow"><s:text name="courtName" /> <span
+								class="mandatory1">*</span> :</td>
+							<td class="greybox decreeDetailsRow"><s:textarea cols="30" rows="2"
+									name="courtName" id="courtName"
+									onchange="return validateMaxLength(this);"
+									onblur="trim(this,this.value);"></s:textarea></td>
+									</tr>
 						</tr>
 						<tr class="documentDetRow">
 							<td class="greybox2">&nbsp;</td>
@@ -361,7 +385,7 @@
 			}
 		}
 		function enableBlock() {
-			var obj = document.getElementById("transRsnId");
+		    var obj = document.getElementById("transRsnId");
 			if (obj != null || obj != "undefined") {
 				var selectedValue = obj.options[obj.selectedIndex].text;
 				if (selectedValue == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@MUTATIONRS_SALES_DEED}" />') {
@@ -370,6 +394,10 @@
 				} else {
 					jQuery("td.reasonRow").hide();
 				}
+				if (selectedValue == 'Decree by Civil Court')
+					jQuery("td.decreeDetailsRow").show();
+				else
+					jQuery("td.decreeDetailsRow").hide();
 			}
 		}
 

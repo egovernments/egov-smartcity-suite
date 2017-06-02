@@ -408,9 +408,33 @@
 							</tr>
 							<tr>
 								<td class="bluebox2">&nbsp;</td>
+								<td class="bluebox"><s:text name="decreeNum" />:</td>
+								<td class="bluebox"><span class="bold"> <s:if
+											test="%{decreeNumber == ''}">N/A</s:if> <s:else>
+											<s:property value="%{decreeNumber}" default="N/A" />
+										</s:else>
+								</span></td>
+								<td class="bluebox"><s:text name="decreeDate" />:</td>
+								<td class="bluebox"><span class="bold"><s:if
+											test="%{decreeDate == ''}">N/A</s:if> <s:else>
+											<s:date name="decreeDate"
+										var="decreeDate" format="dd/MM/yyyy"/> <s:property value="%{#decreeDate}" default="N/A" />
+										</s:else> </span></td> 
+							</tr>
+							<tr>
+								<td class="bluebox2">&nbsp;</td>
+								<td class="greybox"><s:text name="courtName" /> :</td>
+								<td class="bluebox"><span class="bold"> <s:if
+											test="%{courtName == ''}">N/A</s:if> <s:else>
+											<s:property value="%{courtName}" default="N/A" />
+										</s:else>
+								</span></td>
 								<td class="bluebox"><s:text name="docNum" />:</td>
 								<td class="bluebox"><span class="bold"><s:property
 											value="%{deedNo}" /></span></td>
+							</tr>
+							<tr>
+								<td class="bluebox2">&nbsp;</td>
 								<td class="bluebox"><s:text name="docDate" />:</td>
 								<td class="bluebox"><s:date name="deedDate" var="docDate"
 										format="dd/MM/yyyy" /> <span class="bold"><s:property

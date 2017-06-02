@@ -90,6 +90,9 @@ public class PropertyMutation extends StateAware {
     private boolean partialMutation;
     private boolean registrationDone;
     private String type;
+    private String decreeNumber;
+    private Date decreeDate;
+    private String courtName;
     private MutationRegistrationDetails mutationRegistrationDetails = new MutationRegistrationDetails();
 
     
@@ -448,6 +451,30 @@ public class PropertyMutation extends StateAware {
 
     public void setMutationRegistrationDetails(MutationRegistrationDetails mutationRegistrationDetails) {
         this.mutationRegistrationDetails = mutationRegistrationDetails;
+    }
+    
+    public String getDecreeNumber() {
+        return decreeNumber;
+    }
+
+    public void setDecreeNumber(String decreeNumber) {
+        this.decreeNumber = decreeNumber;
+    }
+
+    public Date getDecreeDate() {
+        return decreeDate;
+    }
+
+    public void setDecreeDate(Date decreeDate) {
+        this.decreeDate = decreeDate;
+    }
+
+    public String getCourtName() {
+        return courtName;
+    }
+
+    public void setCourtName(String courtName) {
+        this.courtName = courtName;
     }
    
 }

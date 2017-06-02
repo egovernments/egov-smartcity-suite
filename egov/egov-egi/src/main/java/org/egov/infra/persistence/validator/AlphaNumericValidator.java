@@ -57,6 +57,6 @@ public class AlphaNumericValidator implements ConstraintValidator<AlphaNumeric, 
 
     @Override
     public boolean isValid(final String value, final ConstraintValidatorContext constraintValidatorCtxt) {
-        return isBlank(value) ? true : value.trim().matches(Constants.ALPHANUMERIC_WITHSPACE);
+        return isBlank(value) || value.trim().matches(Constants.ALPHANUMERIC_WITHSPACE);
     }
 }

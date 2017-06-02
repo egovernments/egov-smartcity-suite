@@ -52,6 +52,8 @@ import static org.egov.ptis.constants.PropertyTaxConstants.TRANSFER;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_GENERATE_TRANSFER_NOTICE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SIGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_CLOSED;
+import static org.egov.ptis.constants.PropertyTaxConstants.MUTATIONRS_SALES_DEED;
+import static org.egov.ptis.constants.PropertyTaxConstants.MUTATIONRS_DECREE_BY_CIVIL_COURT;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -273,6 +275,7 @@ public class PropertyTransferService {
         defineDocumentValue(propertyMutation);
         createUserIfNotExist(propertyMutation, propertyMutation.getTransfereeInfosProxy());
         basicProperty.setUnderWorkflow(true);
+        updateMutationReason(propertyMutation);
         propertyService.updateIndexes(propertyMutation, APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP);
         mutationRegistrationService.persist(propertyMutation.getMutationRegistrationDetails());
         basicPropertyService.persist(basicProperty);
@@ -838,6 +841,22 @@ public class PropertyTransferService {
                 return propertyService.getUserPositionByZone(basicproperty, false);
         }
 
+    }
+    
+    public void updateMutationReason(PropertyMutation propertyMutation) {
+        String reasonForTransfer = propertyMutation.getMutationReason().getMutationDesc();
+        if (MUTATIONRS_DECREE_BY_CIVIL_COURT.equalsIgnoreCase(reasonForTransfer)) {
+            propertyMutation.setSaleDetail(null);
+        } else if (MUTATIONRS_SALES_DEED.equalsIgnoreCase(reasonForTransfer)) {
+            propertyMutation.setDecreeDate(null);
+            propertyMutation.setDecreeNumber(null);
+            propertyMutation.setCourtName(null);
+        } else {
+            propertyMutation.setSaleDetail(null);
+            propertyMutation.setDecreeDate(null);
+            propertyMutation.setDecreeNumber(null);
+            propertyMutation.setCourtName(null);
+        }
     }
 
 }

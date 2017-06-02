@@ -639,7 +639,6 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
 
     @Override
     public void prepare() {
-        super.prepare();
         final Long userId = securityUtils.getCurrentUser().getId();
         userDesignationList = propertyTaxCommonUtils.getAllDesignationsForUser(userId);
         propertyByEmployee = propertyService.isEmployee(transferOwnerService.getLoggedInUser());
@@ -654,6 +653,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                 basicproperty = propertyMutation.getBasicProperty();
                 historyMap = propertyService.populateHistory(propertyMutation);
             }
+            super.prepare();
             final Map<String, BigDecimal> propertyTaxDetails = propertyService
                     .getCurrentPropertyTaxDetails(basicproperty.getActiveProperty());
 
@@ -686,6 +686,10 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                     .equals(PropertyTaxConstants.MUTATIONRS_SALES_DEED)
                     && StringUtils.isBlank(propertyMutation.getSaleDetail()))
                 addActionError(getText("mandatory.saleDtl"));
+            else if (PropertyTaxConstants.MUTATIONRS_DECREE_BY_CIVIL_COURT
+                    .equals(propertyMutation.getMutationReason().getMutationName())) {
+                validateDecreeDetails();
+            }
             if (propertyMutation.getDeedDate() == null)
                 addActionError("Registration Document Date should not be empty");
             if (StringUtils.isBlank(propertyMutation.getDeedNo()))
@@ -756,6 +760,15 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                 addActionError(getText("notexists.position"));
         }
         super.validate();
+    }
+
+    private void validateDecreeDetails() {
+        if (StringUtils.isBlank(propertyMutation.getDecreeNumber()))
+            addActionError(getText("mandatory.decreeNum"));
+        if (propertyMutation.getDecreeDate() == null)
+            addActionError(getText("mandatory.decreeDate"));
+        if (StringUtils.isBlank(propertyMutation.getCourtName()))
+            addActionError(getText("mandatory.courtname"));
     }
 
     public void transitionWorkFlow(final PropertyMutation propertyMutation) {

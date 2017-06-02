@@ -181,7 +181,7 @@ $(document).ready(function () {
         if (jQuery(obj).val().match(regexp_alphanumericcomma)) {
             jQuery(obj).val(jQuery(obj).val().replace(regexp_alphanumericcomma, ''));
         }
-    })
+    });
 
     function dateinitialize() {
         $(".datepicker").datepicker({
