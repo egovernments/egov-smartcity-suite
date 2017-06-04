@@ -43,7 +43,7 @@
     <parent>
         <artifactId>egov-erp</artifactId>
         <groupId>org.egov</groupId>
-        <version>2.1.0-SNAPSHOT</version>
+        <version>2.1.0.RELEASE</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -54,19 +54,19 @@
         <dependency>
             <groupId>org.egov</groupId>
             <artifactId>egov-egi</artifactId>
-            <version>2.1.0-SNAPSHOT</version>
+            <version>2.1.0.RELEASE</version>
         </dependency>
         
 		<dependency>
             <groupId>org.egov</groupId>
             <artifactId>egov-config</artifactId>
-            <version>2.1.0-SNAPSHOT</version>
+            <version>2.1.0.RELEASE</version>
         </dependency>
         
 		<dependency>
             <groupId>org.egov</groupId>
             <artifactId>egov-egi</artifactId>
-            <version>2.1.0-SNAPSHOT</version>
+            <version>2.1.0.RELEASE</version>
             <classifier>tests</classifier>
             <scope>test</scope>
         </dependency>
@@ -74,7 +74,7 @@
         <dependency>
             <groupId>org.egov</groupId>
             <artifactId>egov-config</artifactId>
-            <version>2.1.0-SNAPSHOT</version>
+            <version>2.1.0.RELEASE</version>
             <classifier>tests</classifier>
             <scope>test</scope>
         </dependency>
