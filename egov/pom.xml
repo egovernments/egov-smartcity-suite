@@ -44,7 +44,7 @@
 
     <groupId>org.egov</groupId>
     <artifactId>egov-erp</artifactId>
-    <version>2.1.0.RELEASE</version>
+    <version>3.0.0-SNAPSHOT</version>
 
     <packaging>pom</packaging>
 
@@ -63,7 +63,7 @@
         <connection>scm:git:git://github.com/egovernments/eGov.git</connection>
         <developerConnection>scm:git:git@github.com:egovernments/eGov.git</developerConnection>
         <url>https://github.com/egovernments/eGov</url>
-        <tag>2.1.0.RELEASE</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <organization>

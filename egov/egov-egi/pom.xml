@@ -43,7 +43,7 @@
 	<parent>
 		<artifactId>egov-erp</artifactId>
 		<groupId>org.egov</groupId>
-		<version>2.1.0.RELEASE</version>
+		<version>3.0.0-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 
@@ -55,13 +55,13 @@
 		<dependency>
 			<groupId>org.egov</groupId>
 			<artifactId>egov-config</artifactId>
-			<version>2.1.0.RELEASE</version>
+			<version>3.0.0-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.egov</groupId>
 			<artifactId>egov-config</artifactId>
-			<version>2.1.0.RELEASE</version>
+			<version>3.0.0-SNAPSHOT</version>
 			<classifier>tests</classifier>
 			<scope>test</scope>
 		</dependency>
