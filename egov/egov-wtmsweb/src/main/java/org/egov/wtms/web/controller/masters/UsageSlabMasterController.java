@@ -117,7 +117,7 @@ public class UsageSlabMasterController {
     public String searchForModify(@ModelAttribute final UsageSlabSearchRequest usageSlabSearchRequest, final Model model) {
         model.addAttribute(MODE_VALUE, "edit");
         model.addAttribute("usageType", usageTypeService.getActiveUsageTypes());
-        model.addAttribute("slabNameList", usageSlabService.getActiveUsageSlabs());
+        model.addAttribute("slabNameList", usageSlabService.findAllUsageSlabs());
         return "usageslab-search";
     }
 
