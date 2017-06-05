@@ -106,6 +106,10 @@ public class UsageSlabService {
         return usageSlabRepository.findByActiveTrue();
     }
 
+    public List<UsageSlab> findAllUsageSlabs(){
+        return usageSlabRepository.findAll();
+    }
+
     public int getTotalRecords(final Query query) {
         return query.list().size();
     }
