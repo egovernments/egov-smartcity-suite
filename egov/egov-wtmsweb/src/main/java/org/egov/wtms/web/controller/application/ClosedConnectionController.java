@@ -44,10 +44,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.ValidationException;
 
+import org.egov.ptis.domain.model.AssessmentDetails;
+import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
+import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.wtms.application.entity.ClosedConnection;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
+import org.egov.wtms.utils.PropertyExtnUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -64,6 +68,9 @@ public class ClosedConnectionController {
 
     @Autowired
     private WaterConnectionDetailsService waterConnectionDetailsService;
+
+    @Autowired
+    private PropertyExtnUtils propertyExtnUtils;
 
     @RequestMapping(value = "/closedConsumerCode/{consumerCode}", method = RequestMethod.GET)
     public String view(final Model model, @PathVariable final String consumerCode, final HttpServletRequest request) {
@@ -86,6 +93,11 @@ public class ClosedConnectionController {
         waterConnectionDetails.setDeactivateReason(closedConnection.getDeactivateReason());
         waterConnectionDetails.setConnectionStatus(ConnectionStatus.INACTIVE);
         waterConnectionDetailsService.save(waterConnectionDetails);
+        final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
+                waterConnectionDetails.getConnection().getPropertyIdentifier(),
+                PropertyExternalService.FLAG_FULL_DETAILS, BasicPropertyStatus.ALL);
+        waterConnectionDetailsService.createWaterChargeIndex(waterConnectionDetails, assessmentDetails,
+                waterConnectionDetailsService.getTotalAmount(waterConnectionDetails));
         model.addAttribute("consumerCode", consumerCode);
         return "closedconnection-success";
     }

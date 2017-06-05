@@ -44,12 +44,16 @@ import java.util.List;
 
 import javax.validation.ValidationException;
 
+import org.egov.ptis.domain.model.AssessmentDetails;
+import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
+import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.wtms.application.entity.LinkedAssessment;
 import org.egov.wtms.application.entity.WaterConnection;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.masters.service.ApplicationTypeService;
+import org.egov.wtms.utils.PropertyExtnUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -71,6 +75,9 @@ public class LinkedAssessmentController {
 
     @Autowired
     private ApplicationTypeService applicationTypeService;
+
+    @Autowired
+    private PropertyExtnUtils propertyExtnUtils;
 
     @RequestMapping(value = "/linkedAssessment", method = RequestMethod.GET)
     public String viewForm(final Model model) {
@@ -111,6 +118,12 @@ public class LinkedAssessmentController {
                             .setApplicationType(applicationTypeService.findByCode(WaterTaxConstants.ADDNLCONNECTION));
                 }
                 waterConnectionDetailsService.save(waterconnectionDetails);
+                final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
+                        waterconnectionDetails.getConnection().getPropertyIdentifier(),
+                        PropertyExternalService.FLAG_FULL_DETAILS, BasicPropertyStatus.ALL);
+                waterConnectionDetailsService.createWaterChargeIndex(waterconnectionDetails, assessmentDetails,
+                        waterConnectionDetailsService.getTotalAmount(waterconnectionDetails));
+
             }
             model.addAttribute("propertyIdentifier",
                     linkedAssessment.getActiveAssessmentDetails().getAssessmentNumber());
