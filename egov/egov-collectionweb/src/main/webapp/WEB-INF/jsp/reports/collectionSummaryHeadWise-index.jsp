@@ -166,7 +166,30 @@ function validate()
 							cssClass="selectwk" list="dropdownData.receiptStatuses"
 							value="%{glCodeId}" listKey="id" listValue="description" /></td>
 				</tr>
+				<tr>
+					<td>
+						<div class="subheadsmallnew"><span class="subheadnew">
+											<s:text name="bankcollection.title" />
+						</span>		
+						</div>
+					</td>
+				</tr>
+				<tr>
+				<td class="bluebox">&nbsp;</td>
+				<td class="bluebox">
+					<s:text name="searchreceipts.criteria.bankbranch"/></td>
+		        <td class="bluebox"><s:select headerKey="-1"
+								headerValue="%{getText('collectionReport.bankbranch.select')}" name="branchId" id="branchId"
+								cssClass="selectwk" list="dropdownData.bankBranchList"
+								listKey="id" listValue="branchname"
+								value="%{branchId}" /> </td>   </td>
+				<td class="bluebox">&nbsp;</td>
+					<td class="bluebox">&nbsp;</td>
+				</tr>	
 	</table>
+		       <div align="left" class="mandatory1">
+		              <s:text name="report.bankbranch.note"/>
+		        </div>
 <div align="left" class="mandatorycoll"><s:text name="common.mandatoryfields"/></div>
     <br/>
 	</div>

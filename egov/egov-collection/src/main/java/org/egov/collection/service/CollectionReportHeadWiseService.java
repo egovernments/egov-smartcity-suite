@@ -69,7 +69,7 @@ public class CollectionReportHeadWiseService {
     }
 
     public CollectionSummaryHeadWiseReportResult getCollectionSummaryReport(final Date fromDate, final Date toDate,
-            final String paymentMode, final String source, final String glCode, final int status) {
+            final String paymentMode, final String source, final String glCode, final int status,final Integer branchId) {
         final SimpleDateFormat fromDateFormatter = new SimpleDateFormat("yyyy-MM-dd 00:00:00");
         final SimpleDateFormat toDateFormatter = new SimpleDateFormat("yyyy-MM-dd 23:59:59");
         final StringBuilder defaultQueryStr = new StringBuilder(500);
@@ -146,6 +146,11 @@ public class CollectionReportHeadWiseService {
             queryStr.append(onlineQueryStr);
         }
 
+        if(branchId != null && branchId != -1)
+        {
+            queryStr.append(" AND EGCL_COLLECTIONMIS.DEPOSITEDBRANCH=:branchId");
+            onlineQueryStr.append(" AND EGCL_COLLECTIONMIS.DEPOSITEDBRANCH=:branchId");
+        }
         if (status != -1) {
             queryStr.append(" AND EGCL_COLLECTIONHEADER.STATUS =:searchStatus");
             onlineQueryStr.append(" AND EGCL_COLLECTIONHEADER.STATUS =:searchStatus");
@@ -262,6 +267,11 @@ public class CollectionReportHeadWiseService {
                 query.setString("paymentMode", paymentMode);
                 aggrQuery.setString("paymentMode", paymentMode);
             }
+        if(branchId != null && branchId != -1)
+        {
+            query.setInteger("branchId",branchId);
+            aggrQuery.setInteger("branchId",branchId);
+        }
         final List<CollectionSummaryHeadWiseReport> reportResults = populateQueryResults(query.list());
         final List<CollectionSummaryHeadWiseReport> aggrReportResults = populateQueryResults(aggrQuery.list());
         final CollectionSummaryHeadWiseReportResult collResult = new CollectionSummaryHeadWiseReportResult();

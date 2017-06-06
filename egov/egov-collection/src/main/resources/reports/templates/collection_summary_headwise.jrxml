@@ -38,14 +38,12 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
-
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2016-12-19T15:12:04 -->
+<!-- 2017-06-01T17:48:12 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="collection_summary" pageWidth="800" pageHeight="842" whenNoDataType="NoDataSection" columnWidth="700" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="db7eaa32-622d-4fd8-a432-187d94fbaded">
 	<property name="ireport.zoom" value="0.9090909090909093"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
-	
 	<import value="org.egov.infra.reporting.util.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -82,13 +80,17 @@
 		<parameterDescription><![CDATA[Status]]></parameterDescription>
 		<defaultValueExpression><![CDATA["All Status"]]></defaultValueExpression>
 	</parameter>
+	<parameter name="EGOV_BRANCH_NAME" class="java.lang.String">
+		<parameterDescription><![CDATA[Bank Branch]]></parameterDescription>
+		<defaultValueExpression><![CDATA["All  Bank Branch"]]></defaultValueExpression>
+	</parameter>
 	<field name="aggrCollectionSummaryReportList" class="java.util.List"/>
 	<field name="collectionSummaryReportList" class="java.util.List"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="207" splitType="Stretch">
+		<band height="252" splitType="Stretch">
 			<staticText>
 				<reportElement style="Title" x="232" y="24" width="296" height="33" uuid="42a94452-059e-4811-b8f2-27821b015431"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -232,6 +234,24 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$P{EGOV_STATUS}]]></textFieldExpression>
 			</textField>
+			<staticText>
+				<reportElement x="13" y="185" width="98" height="25" uuid="af730c5e-6701-48a8-b28e-1be8b48c3f8d">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<box leftPadding="5" rightPadding="5"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" pdfFontName="Times-Roman"/>
+				</textElement>
+				<text><![CDATA[Bank Branch:]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy">
+				<reportElement x="111" y="185" width="162" height="25" uuid="b6ed7da0-1f38-4980-be34-e8b328426622"/>
+				<box leftPadding="5" rightPadding="5"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" pdfFontName="Times-Roman"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($P{EGOV_BRANCH_NAME})]]></textFieldExpression>
+			</textField>
 		</band>
 	</title>
 	<columnHeader>
@@ -240,7 +260,7 @@
 	<detail>
 		<band height="200">
 			<subreport>
-				<reportElement x="0" y="0" width="760" height="150" uuid="d394bf8d-54cc-4b0f-ab41-9cb6926c8d7e"/>
+				<reportElement x="0" y="28" width="760" height="150" uuid="d394bf8d-54cc-4b0f-ab41-9cb6926c8d7e"/>
 				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{aggrCollectionSummaryReportList}, false)]]></dataSourceExpression>
 				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("collection_summary_headwise_subreport_default.jasper")]]></subreportExpression>
 			</subreport>
