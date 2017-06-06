@@ -88,7 +88,7 @@
 								        </td>
 								        <td class="blueborderfortd" align="center">
 								        		 <s:select id="transfereeInfosProxy[0].transferee.guardianRelation" name="transfereeInfosProxy[0].transferee.guardianRelation" value="%{transfereeInfosProxy[0].transferee.guardianRelation}"
-				                                     headerValue="Choose" headerKey="" list="guardianRelationMap" data-optional="0" data-errormsg="Guardian relation is mandatory!"/>
+				                                     headerValue="Choose" headerKey="" list="guardianRelations" data-optional="0" data-errormsg="Guardian relation is mandatory!"/>
 								        </td>
 								         <td class="blueborderfortd" align="center">
 								        	<s:textfield name="transfereeInfosProxy[0].transferee.guardian" maxlength="100" size="20" 
@@ -136,7 +136,7 @@
 								        </td>
 								        <td class="blueborderfortd" align="center">
 								         <s:select id="transfereeInfosProxy[%{#status.index}].transferee.guardianRelation" name="transfereeInfosProxy[%{#status.index}].transferee.guardianRelation" value="%{transfereeInfosProxy[#status.index].transferee.guardianRelation}"
-				                              headerValue="Choose" headerKey="" list="guardianRelationMap" data-optional="0" data-errormsg="Guardian relation is mandatory!"/>
+				                              headerValue="Choose" headerKey="" list="guardianRelations" data-optional="0" data-errormsg="Guardian relation is mandatory!"/>
 								
 								        </td>
 								        <td class="blueborderfortd" align="center">

@@ -399,21 +399,6 @@ public interface PropertyTaxConstants {
     public static final BigDecimal BPA_DEVIATION_TAXPERC_ABOVE_11 = new BigDecimal(0.5);// 50%
     public static final BigDecimal BPA_DEVIATION_TAXPERC_NOT_DEFINED = new BigDecimal(1);// 100%
 
-    // TreeMap for Guardian Relation
-    public static final TreeMap<String, String> GUARDIAN_RELATION = new TreeMap<String, String>() {
-        /**
-         *
-         */
-        private static final long serialVersionUID = 1562775868931890565L;
-
-        {
-            put("FATHER", "Father");
-            put("MOTHER", "Mother");
-            put("HUSBAND", "Husband");
-            put("OTHERS", "Others");
-        }
-    };
-
     // Named Queries
     public static final String QUERY_DEPRECIATION_BY_YEAR = "DEPRECIATION_BY_YEAR";
     public static final String QUERY_BASERATE_BY_OCCUPANCY_ZONE = "BASERATE_BY_OCCUPANCY_ZONE";
@@ -1504,11 +1489,7 @@ public interface PropertyTaxConstants {
     public static final String STR_FOR_CASH = "We have received a property tax cash payment of Rs.";
     public static final String STR_FOR_CASH_ADJUSTMENT = "/- and it would be adjusted against your assessment no.";
 
-    public static final String GUARDIAN_RELATION_FATHER = "FATHER";
-    public static final String GUARDIAN_RELATION_MOTHER = "MOTHER";
-    public static final String GUARDIAN_RELATION_HUSBAND = "HUSBAND";
     public static final String GUARDIAN_RELATION_WIFE = "WIFE";
-    public static final String GUARDIAN_RELATION_OTHERS = "OTHERS";
 
     public static final String WRITEOFF_REASON_DEMOLITION = "Demolition";
     public static final String WRITEOFF_REASON_ROAD_WIDENING = "Road widening";

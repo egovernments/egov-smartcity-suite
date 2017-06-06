@@ -53,7 +53,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEPUTY_COMMISSIONER_DESIGN;
-import static org.egov.ptis.constants.PropertyTaxConstants.GUARDIAN_RELATION;
 import static org.egov.ptis.constants.PropertyTaxConstants.JUNIOR_ASSISTANT;
 import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_FULL_TRANSFER;
 import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_PARTIAL_TRANSFER;
@@ -262,6 +261,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     private boolean receiptCanceled = Boolean.FALSE;
     private boolean allowEditDocument = Boolean.FALSE;
     private String applicationSource;
+    private List<String> guardianRelations;
 
     public PropertyTransferAction() {
         addRelatedEntity("mutationReason", PropertyMutationMaster.class);
@@ -664,7 +664,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
             currentPropertyTaxSecondHalf = propertyTaxDetails.get(CURR_SECONDHALF_DMD_STR);
             documentTypes = transferOwnerService.getPropertyTransferDocumentTypes();
             addDropdownData("MutationReason", transferOwnerService.getPropertyTransferReasons());
-            setGuardianRelationMap(GUARDIAN_RELATION);
+            setGuardianRelations(propertyTaxCommonUtils.getGuardianRelations());
             if (propertyMutation.getReceiptNum() != null) {
                 final boolean isCanceled = propertyTaxCommonUtils.isReceiptCanceled(propertyMutation.getReceiptNum());
                 setReceiptCanceled(isCanceled);
@@ -1342,4 +1342,12 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     public void setApplicationSource(String applicationSource) {
         this.applicationSource = applicationSource;
     }
+
+	public List<String> getGuardianRelations() {
+		return guardianRelations;
+	}
+
+	public void setGuardianRelations(List<String> guardianRelations) {
+		this.guardianRelations = guardianRelations;
+	}
 }

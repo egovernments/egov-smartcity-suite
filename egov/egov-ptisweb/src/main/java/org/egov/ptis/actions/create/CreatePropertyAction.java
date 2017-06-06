@@ -55,7 +55,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DEVIATION_PERCENTAGE;
 import static org.egov.ptis.constants.PropertyTaxConstants.ELECTIONWARD_BNDRY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.ELECTION_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.FLOOR_MAP;
-import static org.egov.ptis.constants.PropertyTaxConstants.GUARDIAN_RELATION;
 import static org.egov.ptis.constants.PropertyTaxConstants.JUNIOR_ASSISTANT;
 import static org.egov.ptis.constants.PropertyTaxConstants.LOCALITY;
 import static org.egov.ptis.constants.PropertyTaxConstants.LOCATION_HIERARCHY_TYPE;
@@ -274,7 +273,6 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     private Map<String, String> propTypeCategoryMap;
     private SortedMap<Integer, String> floorNoMap;
     private Map<String, String> deviationPercentageMap;
-    private Map<String, String> guardianRelationMap;
     private List<DocumentType> documentTypes = new ArrayList<>();
 
     private String reportId;
@@ -316,6 +314,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     private boolean eligibleInitiator = Boolean.TRUE;
     private boolean dataEntry = Boolean.FALSE;
     private String applicationSource;
+	private List<String> guardianRelations;
 
     @Autowired
     private transient PropertyDepartmentRepository propertyDepartmentRepository;
@@ -1100,10 +1099,10 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
 
         addDropdownData("zones", zones);
         addDropdownData("wards", Collections.emptyList());
-        addDropdownData("blocks", Collections.emptyList());
         addDropdownData("streets", Collections.emptyList());
+        addDropdownData("blocks", Collections.emptyList());
+		setGuardianRelations(propertyTaxCommonUtils.getGuardianRelations());
         setDeviationPercentageMap(DEVIATION_PERCENTAGE);
-        setGuardianRelationMap(GUARDIAN_RELATION);
         addDropdownData("PropTypeMaster", propTypeList);
         addDropdownData("floorType", floorTypeList);
         addDropdownData("roofType", roofTypeList);
@@ -2147,14 +2146,6 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         this.deviationPercentageMap = deviationPercentageMap;
     }
 
-    public Map<String, String> getGuardianRelationMap() {
-        return guardianRelationMap;
-    }
-
-    public void setGuardianRelationMap(final Map<String, String> guardianRelationMap) {
-        this.guardianRelationMap = guardianRelationMap;
-    }
-
     public List<DocumentType> getDocumentTypes() {
         return documentTypes;
     }
@@ -2392,5 +2383,12 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     public void setIsCitizenPortalUser(final Boolean isCitizenPortalUser) {
         this.isCitizenPortalUser = isCitizenPortalUser;
     }
+    
+    public List<String> getGuardianRelations() {
+		return guardianRelations;
+	}
 
+	public void setGuardianRelations(List<String> guardianRelations) {
+		this.guardianRelations = guardianRelations;
+	} 
 }
