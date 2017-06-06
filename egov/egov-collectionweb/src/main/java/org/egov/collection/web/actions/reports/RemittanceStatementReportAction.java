@@ -101,6 +101,7 @@ public class RemittanceStatementReportAction extends ReportFormAction {
     private static final String EGOV_REMITTANCE_VOUCHER = "EGOV_REMITTANCE_VOUCHER";
     private static final String EGOV_REMITTANCE_DATE = "EGOV_REMITTANCE_DATE";
     private static final String PRINT_BANK_CHALLAN_TEMPLATE = "collection_remittance_bankchallan_report";
+    private static final String EGOV_BANKCOLL_BANKBRANCH_ID = "EGOV_BANKCOLL_BANKBRANCH_ID";
     private final Map<String, Object> critParams = new HashMap<String, Object>(0);
     @Autowired
     private EmployeeService employeeService;
@@ -119,11 +120,13 @@ public class RemittanceStatementReportAction extends ReportFormAction {
     private Date remittanceDate;
     private String voucherNumber;
     private RemittanceServiceImpl remittanceService;
+    private Integer branchId;
 
     @Override
     public void prepare() {
         setReportFormat(ReportFormat.PDF);
         setDataSourceType(ReportDataSourceType.SQL);
+        addDropdownData("bankBranchList", collectionsUtil.getBankCollectionBankBranchList());
     }
 
     @Override
@@ -299,6 +302,13 @@ public class RemittanceStatementReportAction extends ReportFormAction {
 
     public void setBankaccountId(final Integer bankAccountId) {
         critParams.put(EGOV_BANKACCOUNT_ID, bankAccountId);
+    }
+    public Integer getBankCollBankBranchId() {
+        return (Integer) getReportParam(EGOV_BANKCOLL_BANKBRANCH_ID);
+    }
+
+    public void setBankCollBankBranchId(final Integer bankCollBranchId) {
+        critParams.put(EGOV_BANKCOLL_BANKBRANCH_ID, bankCollBranchId);
     }
 
     public String getPaymentMode() {
