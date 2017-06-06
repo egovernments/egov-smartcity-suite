@@ -337,6 +337,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
     private boolean allowEditDocument = Boolean.FALSE;
     private Boolean showAckBtn = Boolean.FALSE;
     private String applicationSource;
+    private boolean isGenerateAck=true;
 
     @Autowired
     private transient VacantLandPlotAreaRepository vacantLandPlotAreaRepository;
@@ -450,6 +451,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         }
         odlObjection = revisionPetitionService.getExistingObjections(basicProperty);
         if (APPLICATION_TYPE_GRP.equalsIgnoreCase(wfType) && odlObjection != null) {
+            isGenerateAck=false;
             addActionError(getText("property.rp.exist"));
             return COMMON_FORM;
         }
@@ -2282,5 +2284,13 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 
     public void setApplicationSource(String applicationSource) {
         this.applicationSource = applicationSource;
+    }
+
+    public boolean isGenerateAck() {
+        return isGenerateAck;
+    }
+
+    public void setGenerateAck(boolean isGenerateAck) {
+        this.isGenerateAck = isGenerateAck;
     }
 }
