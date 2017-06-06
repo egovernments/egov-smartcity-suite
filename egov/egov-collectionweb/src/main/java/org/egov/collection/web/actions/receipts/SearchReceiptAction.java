@@ -53,6 +53,7 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.ReceiptHeader;
+import org.egov.collection.utils.CollectionsUtil;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.utils.DateUtils;
@@ -79,10 +80,12 @@ public class SearchReceiptAction extends SearchFormAction {
     private String manualReceiptNumber;
     private List resultList;
     private String serviceClass = "-1";
-    private TreeMap<String, String> serviceClassMap =  new TreeMap<String,String>();
-    
+    private TreeMap<String, String> serviceClassMap = new TreeMap<String, String>();
+    private CollectionsUtil collectionsUtil;
+    private Integer branchId;
+
     @Autowired
-    private EisCommonService eisCommonService; 
+    private EisCommonService eisCommonService;
 
     @Override
     public Object getModel() {
@@ -136,17 +139,17 @@ public class SearchReceiptAction extends SearchFormAction {
         userId = (long) -1;
         receiptNumber = "";
         fromDate = null;
-        toDate = null; 
+        toDate = null;
         instrumentType = "";
         searchStatus = -1;
-        manualReceiptNumber="";
-        serviceClass="-1";
+        manualReceiptNumber = "";
+        serviceClass = "-1";
+        branchId = -1;
         return SUCCESS;
     }
 
     @Override
-    public void prepare()
-    {
+    public void prepare() {
         super.prepare();
         setupDropdownDataExcluding();
         addDropdownData("instrumentTypeList",
@@ -155,7 +158,8 @@ public class SearchReceiptAction extends SearchFormAction {
                 getPersistenceService().findAllByNamedQuery(CollectionConstants.QUERY_CREATEDBYUSERS_OF_RECEIPTS));
         serviceClassMap.putAll(CollectionConstants.SERVICE_TYPE_CLASSIFICATION);
         serviceClassMap.remove(CollectionConstants.SERVICE_TYPE_PAYMENT);
-        addDropdownData("serviceTypeList",Collections.EMPTY_LIST);
+        addDropdownData("serviceTypeList", Collections.EMPTY_LIST);
+        addDropdownData("bankBranchList", collectionsUtil.getBankCollectionBankBranchList());
     }
 
     @Override
@@ -178,19 +182,19 @@ public class SearchReceiptAction extends SearchFormAction {
         ArrayList<ReceiptHeader> receiptList = new ArrayList<ReceiptHeader>();
         receiptList.addAll(searchResult.getList());
         searchResult.getList().clear();
-        if (getServiceClass()!= "-1") 
-        addDropdownData("serviceTypeList",
-                getPersistenceService().findAllByNamedQuery(CollectionConstants.QUERY_SERVICES_BY_TYPE,getServiceClass()));
+        if (getServiceClass() != "-1")
+            addDropdownData("serviceTypeList",
+                    getPersistenceService().findAllByNamedQuery(CollectionConstants.QUERY_SERVICES_BY_TYPE, getServiceClass()));
         Long posId = null;
 
         for (ReceiptHeader receiptHeader : receiptList) {
-                if (receiptHeader.getState() != null && receiptHeader.getState().getOwnerPosition() != null) {
-                        posId = receiptHeader.getState().getOwnerPosition().getId();
-                        User user = null;
-                        user = (User) eisCommonService.getUserForPosition(posId, receiptHeader.getCreatedDate());
-                        receiptHeader.setWorkflowUserName(user.getUsername());
-                }
-                searchResult.getList().add(receiptHeader);
+            if (receiptHeader.getState() != null && receiptHeader.getState().getOwnerPosition() != null) {
+                posId = receiptHeader.getState().getOwnerPosition().getId();
+                User user = null;
+                user = eisCommonService.getUserForPosition(posId, receiptHeader.getCreatedDate());
+                receiptHeader.setWorkflowUserName(user.getUsername());
+            }
+            searchResult.getList().add(receiptHeader);
         }
         resultList = searchResult.getList();
         return SUCCESS;
@@ -253,8 +257,8 @@ public class SearchReceiptAction extends SearchFormAction {
             criteriaString.append(" and receipt.service.id = ? ");
             params.add(Long.valueOf(getServiceTypeId()));
         }
-        
-        if (getServiceClass()!= "-1") {
+
+        if (getServiceClass() != "-1") {
             criteriaString.append(" and receipt.service.serviceType = ? ");
             params.add(getServiceClass());
         }
@@ -262,6 +266,10 @@ public class SearchReceiptAction extends SearchFormAction {
         if (getUserId() != -1) {
             criteriaString.append(" and receipt.createdBy.id = ? ");
             params.add(userId);
+        }
+        if (getBranchId() != -1) {
+            criteriaString.append(" and receipt.receiptMisc.depositedBranch.id = ? ");
+            params.add(getBranchId());
         }
 
         final String searchQuery = searchQueryString.append(fromString).append(criteriaString).append(orderByString).toString();
@@ -313,5 +321,20 @@ public class SearchReceiptAction extends SearchFormAction {
 
     public void setServiceClassMap(TreeMap<String, String> serviceClassMap) {
         this.serviceClassMap = serviceClassMap;
+    }
+
+    /**
+     * @param collectionsUtil the collectionsUtil to set
+     */
+    public void setCollectionsUtil(final CollectionsUtil collectionsUtil) {
+        this.collectionsUtil = collectionsUtil;
+    }
+
+    public Integer getBranchId() {
+        return branchId;
+    }
+
+    public void setBranchId(Integer branchId) {
+        this.branchId = branchId;
     }
 }
