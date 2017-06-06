@@ -55,7 +55,6 @@ import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.ReceiptHeader;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.eis.service.EisCommonService;
-import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.web.struts.actions.SearchFormAction;
 import org.egov.infstr.search.SearchQuery;
@@ -179,20 +178,18 @@ public class SearchReceiptAction extends SearchFormAction {
     public String search() {
         target = "searchresult";
         super.search();
-        ArrayList<ReceiptHeader> receiptList = new ArrayList<ReceiptHeader>();
+        ArrayList<ReceiptHeader> receiptList = new ArrayList<ReceiptHeader>(0);
         receiptList.addAll(searchResult.getList());
         searchResult.getList().clear();
         if (getServiceClass() != "-1")
             addDropdownData("serviceTypeList",
                     getPersistenceService().findAllByNamedQuery(CollectionConstants.QUERY_SERVICES_BY_TYPE, getServiceClass()));
-        Long posId = null;
 
         for (ReceiptHeader receiptHeader : receiptList) {
             if (receiptHeader.getState() != null && receiptHeader.getState().getOwnerPosition() != null) {
-                posId = receiptHeader.getState().getOwnerPosition().getId();
-                User user = null;
-                user = eisCommonService.getUserForPosition(posId, receiptHeader.getCreatedDate());
-                receiptHeader.setWorkflowUserName(user.getUsername());
+                Long posId = receiptHeader.getState().getOwnerPosition().getId();
+                receiptHeader.setWorkflowUserName(
+                        eisCommonService.getUserForPosition(posId, receiptHeader.getCreatedDate()).getUsername());
             }
             searchResult.getList().add(receiptHeader);
         }
