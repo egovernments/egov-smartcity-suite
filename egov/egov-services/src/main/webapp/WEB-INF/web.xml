@@ -121,11 +121,7 @@
 	<filter>
 	    <filter-name>springSessionRepositoryFilter</filter-name>
 	    <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
-	</filter>
- <filter>
-        <filter-name>ContextLifecycleFilter</filter-name>
-        <filter-class>com.netflix.zuul.context.ContextLifecycleFilter</filter-class>
-    </filter>
+	</filter> 
 	<!-- Filter Declaration Ends -->
 
 	<!-- Filter Mapping Starts -->
@@ -184,31 +180,6 @@
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 	
-    <filter-mapping>
-        <filter-name>ContextLifecycleFilter</filter-name>
-        <url-pattern>/egov-common-masters/*</url-pattern>
-        <url-pattern>/filestore/*</url-pattern>
-        <url-pattern>/localization/*</url-pattern>
-        <url-pattern>/egov-location/*</url-pattern>
-        <url-pattern>/egov-notification-mail/*</url-pattern>
-        <url-pattern>/egov-notification-sms/*</url-pattern>
-        <url-pattern>/user/*</url-pattern>
-        <url-pattern>/egf-masters/*</url-pattern>
-        <url-pattern>/demand-services/*</url-pattern>
-        <url-pattern>/asset-services/*</url-pattern>
- 		<url-pattern>/asset-web/*</url-pattern>
-        <url-pattern>/egov-common-workflows/*</url-pattern>
-        <url-pattern>/hr-attendance/*</url-pattern>
-        <url-pattern>/hr-employee/*</url-pattern>
-        <url-pattern>/hr-employee-indexer/*</url-pattern>
-        <url-pattern>/hr-employee-search-indexer/*</url-pattern>
-        <url-pattern>/hr-leave/*</url-pattern>
-        <url-pattern>/hr-masters/*</url-pattern>
-        <url-pattern>/hr-web/*</url-pattern>
-        <url-pattern>/lams-services/*</url-pattern>
-        <url-pattern>/lams-web/*</url-pattern>
-    </filter-mapping>
-
 	<!-- Filter Mapping Ends -->
 
 	<!-- Listeners Starts -->
@@ -260,7 +231,37 @@
 	</servlet-mapping>
 	
     <!-- Servlet Declaration Ends -->  
-      
+    
+     <filter>
+        <filter-name>ContextLifecycleFilter</filter-name>
+        <filter-class>com.netflix.zuul.context.ContextLifecycleFilter</filter-class>
+    </filter>    
+    
+    <filter-mapping>
+        <filter-name>ContextLifecycleFilter</filter-name>
+        <url-pattern>/egov-common-masters/*</url-pattern>
+        <url-pattern>/filestore/*</url-pattern>
+        <url-pattern>/localization/*</url-pattern>
+        <url-pattern>/egov-location/*</url-pattern>
+        <url-pattern>/egov-notification-mail/*</url-pattern>
+        <url-pattern>/egov-notification-sms/*</url-pattern>
+        <url-pattern>/user/*</url-pattern>
+        <url-pattern>/egf-masters/*</url-pattern>
+        <url-pattern>/demand-services/*</url-pattern>
+        <url-pattern>/asset-services/*</url-pattern>
+ 		<url-pattern>/asset-web/*</url-pattern>
+        <url-pattern>/egov-common-workflows/*</url-pattern>
+        <url-pattern>/hr-attendance/*</url-pattern>
+        <url-pattern>/hr-employee/*</url-pattern>
+        <url-pattern>/hr-employee-indexer/*</url-pattern>
+        <url-pattern>/hr-employee-search-indexer/*</url-pattern>
+        <url-pattern>/hr-leave/*</url-pattern>
+        <url-pattern>/hr-masters/*</url-pattern>
+        <url-pattern>/hr-web/*</url-pattern>
+        <url-pattern>/lams-services/*</url-pattern>
+        <url-pattern>/lams-web/*</url-pattern>
+    </filter-mapping>
+    
    <welcome-file-list> 
 		<welcome-file>/index.jsp</welcome-file>
 	</welcome-file-list>

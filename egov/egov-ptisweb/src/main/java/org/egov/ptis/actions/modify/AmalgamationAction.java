@@ -50,7 +50,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_NON_RESIDENT
 import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_RESIDENTIAL;
 import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.FLOOR_MAP;
-import static org.egov.ptis.constants.PropertyTaxConstants.GUARDIAN_RELATION;
 import static org.egov.ptis.constants.PropertyTaxConstants.JUNIOR_ASSISTANT;
 import static org.egov.ptis.constants.PropertyTaxConstants.NON_VAC_LAND_PROPERTY_TYPE_CATEGORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOT_AVAILABLE;
@@ -195,6 +194,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
     private String reportId;
     private Boolean showAckBtn = Boolean.FALSE;
     private String instStartDt;
+    private List<String> guardianRelations;
 
     @Autowired
     private transient PropertyPersistenceService basicPropertyService;
@@ -278,17 +278,17 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         documentTypes = propService.getDocumentTypesForTransactionType(TransactionType.OBJECTION);
         List<PropertyUsage> usageList = propertyUsageService.getAllActivePropertyUsages();
 
-        setFloorNoMap(FLOOR_MAP);
-        setGuardianRelationMap(GUARDIAN_RELATION);
-        addDropdownData("floorType", floorTypeService.getAllFloors());
-        addDropdownData("roofType", roofTypeService.getAllRoofTypes());
-        addDropdownData("wallType", wallTypeService.getAllWalls());
-        addDropdownData("woodType", woodTypeService.getAllWoodTypes());
-        addDropdownData("PropTypeMaster", propertyTypeMasterDAO.findAllExcludeEWSHS());
-        addDropdownData("OccupancyList", propertyOccupationService.getAllPropertyOccupations());
-        addDropdownData("StructureList", structureClassificationService.getAllActiveStructureTypes());
-        addDropdownData("apartments", apartmentService.getAllApartments());
-        populatePropertyTypeCategory();
+		setFloorNoMap(FLOOR_MAP);
+		setGuardianRelations(propertyTaxCommonUtils.getGuardianRelations());
+		addDropdownData("floorType", floorTypeService.getAllFloors());
+		addDropdownData("roofType", roofTypeService.getAllRoofTypes());
+		addDropdownData("wallType", wallTypeService.getAllWalls());
+		addDropdownData("woodType", woodTypeService.getAllWoodTypes());
+		addDropdownData("PropTypeMaster", propertyTypeMasterDAO.findAllExcludeEWSHS());
+		addDropdownData("OccupancyList", propertyOccupationService.getAllPropertyOccupations());
+		addDropdownData("StructureList", structureClassificationService.getAllActiveStructureTypes());
+		addDropdownData("apartments", apartmentService.getAllApartments());
+		populatePropertyTypeCategory();
 
         // Loading property usages based on property category
         if (StringUtils.isNoneBlank(propertyCategory))
@@ -1289,4 +1289,12 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
     public void setInstStartDt(final String instStartDt) {
         this.instStartDt = instStartDt;
     }
+
+	public List<String> getGuardianRelations() {
+		return guardianRelations;
+	}
+
+	public void setGuardianRelations(List<String> guardianRelations) {
+		this.guardianRelations = guardianRelations;
+	} 
 }

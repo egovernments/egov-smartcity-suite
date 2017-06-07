@@ -82,6 +82,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.TreeMap;
 
 import javax.persistence.EntityManager;
@@ -106,6 +108,7 @@ import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.persistence.entity.enums.GuardianRelation;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.utils.NumberUtil;
 import org.egov.pims.commons.Position;
@@ -601,4 +604,8 @@ public class PropertyTaxCommonUtils {
         designations.add(ZONAL_COMMISSIONER_DESIGN);
         return designations;
     }
+
+	public List<String> getGuardianRelations() {
+		return Stream.of(GuardianRelation.values()).map(GuardianRelation::name).collect(Collectors.toList());
+	}
 }

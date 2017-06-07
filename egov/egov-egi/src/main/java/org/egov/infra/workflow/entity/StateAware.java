@@ -224,6 +224,8 @@ public abstract class StateAware extends AbstractAuditable {
 
         public final Transition progressWithStateCopy() {
             checkinTransition();
+            if (transitionCompleted())
+                throw new ApplicationRuntimeException("Transition already ended");
             if (hasState()) {
                 state.addStateHistory(new StateHistory(state));
                 state.setPreviousOwner(state.getOwnerPosition());
@@ -249,11 +251,10 @@ public abstract class StateAware extends AbstractAuditable {
         public final Transition reopen() {
             checkinTransition();
             if (transitionCompleted()) {
-                StateHistory stateHistory = new StateHistory(state);
+                state.addStateHistory(new StateHistory(state));
                 state.setPreviousOwner(state.getOwnerPosition());
-                stateHistory.setValue(State.STATE_REOPENED);
+                state.setValue(State.STATE_REOPENED);
                 state.setStatus(StateStatus.INPROGRESS);
-                state.addStateHistory(stateHistory);
             } else
                 throw new ApplicationRuntimeException("Transition can not be reopened, end the current transition first");
             return this;

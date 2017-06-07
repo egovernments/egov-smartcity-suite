@@ -113,7 +113,7 @@
 						<td><s:select id="guardianRelation"
 								name="amalgamationOwnersProxy[%{#ownerStatus.index}].owner.guardianRelation"
 								value="%{amalgamationOwnersProxy[#ownerStatus.index].owner.guardianRelation}"
-								headerValue="Choose" list="guardianRelationMap"
+								headerValue="Choose" list="guardianRelations"
 								data-optional="0"
 								data-errormsg="Guardian relation is mandatory!" /></td>
 						<td><s:textfield
