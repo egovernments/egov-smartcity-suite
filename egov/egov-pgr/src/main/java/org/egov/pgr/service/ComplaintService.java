@@ -285,7 +285,7 @@ public class ComplaintService {
         } else if (complaint.getState().isEnded() && complaint.getStatus().getName().equalsIgnoreCase(ComplaintStatus.REOPENED.toString())) {
             complaint.transition().reopen().withComments(approvalComment).withSenderName(userName)
                     .withStateValue(complaint.getStatus().getName()).withDateInfo(new Date());
-        } else {
+        } else if (!complaint.getState().isEnded()) {
             complaint.transition().progressWithStateCopy().withComments(approvalComment).withSenderName(userName)
                     .withStateValue(complaint.getStatus().getName()).withDateInfo(new Date());
         }
