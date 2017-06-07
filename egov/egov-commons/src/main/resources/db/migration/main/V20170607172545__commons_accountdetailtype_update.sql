@@ -1,0 +1,1 @@
+update Accountdetailtype set name='EMPLOYEE' where name='Employee';
