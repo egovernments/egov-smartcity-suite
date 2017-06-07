@@ -39,23 +39,34 @@
  */
 package org.egov.restapi.web.rest;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
+import java.io.IOException;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.validation.Valid;
+
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 import org.codehaus.jackson.annotate.JsonMethod;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.domain.model.ErrorDetails;
 import org.egov.restapi.model.WaterConnectionInfo;
+import org.egov.restapi.util.JsonConvertor;
 import org.egov.wtms.application.entity.WaterConnection;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
+import org.egov.wtms.application.rest.WaterChargesDetails;
 import org.egov.wtms.application.service.ChangeOfUseService;
-import org.egov.wtms.application.service.NewConnectionService;
+import org.egov.wtms.application.service.ConnectionDetailService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.application.service.WaterConnectionService;
+import org.egov.wtms.masters.entity.WaterTaxDetailRequest;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.masters.entity.enums.ConnectionType;
 import org.egov.wtms.masters.service.ApplicationProcessTimeService;
@@ -74,11 +85,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
-import java.io.IOException;
-import java.text.ParseException;
-import java.util.Date;
-
 /**
  * Controller provides RESTful services to create new/additional/change of use water connection
  */
@@ -90,9 +96,6 @@ public class RestWaterConnectionController {
     /*
      * @Autowired private TokenService tokenService;
      */
-
-    @Autowired
-    private NewConnectionService newConnectionService;
 
     @Autowired
     private ApplicationTypeService applicationTypeService;
@@ -113,12 +116,6 @@ public class RestWaterConnectionController {
     private PipeSizeService pipeSizeService;
 
     @Autowired
-    private SecurityUtils securityUtils;
-
-    @Autowired
-    private UserService userService;
-
-    @Autowired
     private PropertyTypeService propertyTypeService;
 
     @Autowired
@@ -132,6 +129,9 @@ public class RestWaterConnectionController {
 
     @Autowired
     private ChangeOfUseService changeOfUseService;
+
+    @Autowired
+    private ConnectionDetailService connectionDetailService;
 
     /*
      * @PersistenceContext private EntityManager entityManager;
@@ -165,8 +165,8 @@ public class RestWaterConnectionController {
          * String httpStatus = HttpStatus.OK.getReasonPhrase(); try { final Boolean isAuthenticatedUser =
          * authenticateUser("mahesh", "demo"); final Token tokenObj = validateToken(token); if (tokenObj != null) { if
          * (isAuthenticatedUser) { tokenService.redeem(tokenObj); } else httpStatus = HttpStatus.UNAUTHORIZED.getReasonPhrase(); }
-         * else httpStatus = HttpStatus.PRECONDITION_FAILED.getReasonPhrase(); } catch (final Exception exp) {
-         *  } return httpStatus;
+         * else httpStatus = HttpStatus.PRECONDITION_FAILED.getReasonPhrase(); } catch (final Exception exp) { } return
+         * httpStatus;
          */
     }
 
@@ -243,10 +243,10 @@ public class RestWaterConnectionController {
 
         if (applicationCode.equals(WaterTaxConstants.CHANGEOFUSE))
             waterConnectionDetails = changeOfUseService.createChangeOfUseApplication(waterConnectionDetails,
-                    approvalPosition, "Rest Api", waterConnectionDetails.getApplicationType().getCode(), null,null);
+                    approvalPosition, "Rest Api", waterConnectionDetails.getApplicationType().getCode(), null, null);
         else
             waterConnectionDetails = waterConnectionDetailsService.createNewWaterConnection(waterConnectionDetails,
-                    approvalPosition, "Rest Api", waterConnectionDetails.getApplicationType().getCode(), null,null);
+                    approvalPosition, "Rest Api", waterConnectionDetails.getApplicationType().getCode(), null, null);
         return waterConnectionDetails;
 
     }
@@ -308,6 +308,18 @@ public class RestWaterConnectionController {
             waterConnectionDetails.setNumberOfPerson(WaterConnectionInfo.getNumberOfPersons());
 
         return waterConnectionDetails;
+    }
+
+    @RequestMapping(value = "/watertax/connectiondetails", method = RequestMethod.POST, consumes = APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public String getWaterConnectionDetailsByPropertyId(@Valid @RequestBody final WaterTaxDetailRequest waterTaxDetailRequest)
+            throws JsonGenerationException, JsonMappingException, IOException {
+
+        List<WaterChargesDetails> waterChargesDetailsList;
+        waterChargesDetailsList = connectionDetailService.getWaterTaxDetailsByPropertyId(
+                waterTaxDetailRequest.getAssessmentNumber(),
+                waterTaxDetailRequest.getUlbCode(), waterTaxDetailRequest.getConsumerNumber());
+
+        return JsonConvertor.convert(waterChargesDetailsList);
     }
 
     private String getJSONResponse(final Object obj) throws JsonGenerationException, JsonMappingException, IOException {
