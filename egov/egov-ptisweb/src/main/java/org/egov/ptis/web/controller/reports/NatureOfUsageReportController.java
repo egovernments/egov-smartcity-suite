@@ -80,23 +80,16 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WARD;
 public class NatureOfUsageReportController {
 
     private static final String NATURE_OF_USAGE_REPORT_FORM = "natureOfUsageReport-form";
-    private final NatureOfUsageResult natureOfUsageResult = new NatureOfUsageResult();
 
     @PersistenceContext
     EntityManager entityManager;
+
 
     @Autowired
     private PropertyUsageService propertyUsageService;
 
     @Autowired
     private BoundaryService boundaryService;
-
-    private String srchCriteria;
-
-    @ModelAttribute("natureOfUsageResult")
-    public NatureOfUsageResult natureOfUsageResultModel() {
-        return natureOfUsageResult;
-    }
 
     @ModelAttribute("natureOfUsages")
     public List<PropertyUsage> getNatureOfUsages() {
@@ -115,6 +108,7 @@ public class NatureOfUsageReportController {
 
     @RequestMapping(value = "/natureOfUsageReport-form", method = RequestMethod.GET)
     public String searchForm(final Model model) {
+        model.addAttribute("natureOfUsageResult", new NatureOfUsageResult());
         return NATURE_OF_USAGE_REPORT_FORM;
     }
 
@@ -134,7 +128,7 @@ public class NatureOfUsageReportController {
                 "select distinct pi.upicno \"assessmentNumber\", pi.ownersname \"ownerName\", pi.mobileno \"mobileNumber\", pi.houseno \"doorNumber\", pi.address \"address\", cast(pi.AGGREGATE_CURRENT_FIRSTHALF_DEMAND as numeric) \"halfYearTax\" "
                         + "from egpt_mv_propertyInfo pi ");
         final StringBuffer whereQuery = new StringBuffer(" where pi.upicno is not null and pi.isactive = true ");
-        
+
         final String natureOfUsage = request.getParameter("natureOfUsage");
         final String ward = request.getParameter("ward");
         final String block = request.getParameter("block");
@@ -144,7 +138,7 @@ public class NatureOfUsageReportController {
             final PropertyUsage propertyUsage = propertyUsageService.findById(Long.valueOf(natureOfUsage));
             srchCriteria.append(" Nature of usage : " + propertyUsage.getUsageName());
             query.append(",EGPT_MV_CURRENT_FLOOR_DETAIL fd ");
-            whereQuery.append(" and fd.basicpropertyid = pi.basicpropertyid and fd.natureofusage = :natureOfUsage"); 
+            whereQuery.append(" and fd.basicpropertyid = pi.basicpropertyid and fd.natureofusage = :natureOfUsage");
             params.put("natureOfUsage", propertyUsage.getUsageName());
         }
         if (!(null == ward || "-1".equals(ward) || "".equals(ward))) {
@@ -154,7 +148,7 @@ public class NatureOfUsageReportController {
             params.put("ward", Long.valueOf(ward));
         }
         if (!(null == block || "-1".equals(block) || "".equals(block))) {
-            final Boundary blockBndry = boundaryService.getBoundaryById(Long.valueOf(block)); 
+            final Boundary blockBndry = boundaryService.getBoundaryById(Long.valueOf(block));
             srchCriteria.append(" Block : " + blockBndry.getName());
             whereQuery.append(" and pi.blockid = :block");
             params.put("block", Long.valueOf(block));
@@ -167,20 +161,11 @@ public class NatureOfUsageReportController {
         sqlQuery.setResultTransformer(Transformers.aliasToBean(NatureOfUsageResult.class));
         final List<NatureOfUsageResult> results = sqlQuery.list();
         srchCriteria.append(" are : " + results.size());
-        setSrchCriteria(srchCriteria.toString());
         return results;
     }
 
     public Session getSession() {
         return entityManager.unwrap(Session.class);
-    }
-
-    public String getSrchCriteria() {
-        return srchCriteria;
-    }
-
-    public void setSrchCriteria(final String srchCriteria) {
-        this.srchCriteria = srchCriteria;
     }
 
 }

@@ -86,53 +86,48 @@ public class WriteOffController extends GenericWorkFlowController {
     private BasicPropertyDAO basicPropertyDAO;
     @Autowired
     private PtDemandDao ptDemandDAO;
-    private BasicProperty basicProperty;
-    private PropertyImpl propertyImpl;
     @Autowired
     private PropertyTaxUtil propertyTaxUtil;
     @Autowired
     @Qualifier("documentTypePersistenceService")
     private PersistenceService<DocumentType, Long> documentTypePersistenceService;
 
-    @ModelAttribute
-    public Property propertyModel(@PathVariable final String assessmentNo) {
-        basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
-        if (null != basicProperty) {
-            propertyImpl = basicProperty.getActiveProperty();
-        }
-        return propertyImpl;
-    }
-
     @RequestMapping(value = "/form/{assessmentNo}", method = RequestMethod.GET)
     public String form(@PathVariable("assessmentNo") String assessmentNo, Model model) {
-        basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
-        if (null != basicProperty && basicProperty.isUnderWorkflow()) {
-            model.addAttribute("wfPendingMsg", "Could not do Write Off now, property is undergoing some work flow.");
-            return TARGET_WORKFLOW_ERROR;
-        }
-        final Map<String, BigDecimal> propertyTaxDetails = ptDemandDAO.getDemandCollMap(basicProperty
-                .getActiveProperty());
-        final BigDecimal currTaxDue = propertyTaxDetails.get(CURR_FIRSTHALF_DMD_STR).subtract(
-                propertyTaxDetails.get(CURR_FIRSTHALF_COLL_STR));
-        final BigDecimal arrearTaxDue = propertyTaxDetails.get(ARR_DMD_STR).subtract(
-                propertyTaxDetails.get(ARR_COLL_STR));
-        final Map<String, BigDecimal> penaltyDetails = ptDemandDAO.getPenaltyDemandCollMap(basicProperty
-                .getActiveProperty());
-        final BigDecimal currPenaltyDue = penaltyDetails.get(CURR_PENALTY_DMD_STR).subtract(
-                penaltyDetails.get(CURR_PENALTY_COLL_STR));
-        final BigDecimal arrearPenaltyDue = penaltyDetails.get(ARR_PENALTY_DMD_STR).subtract(
-                penaltyDetails.get(ARR_PENALTY_COLL_STR));
+        PropertyImpl propertyImpl = null;
+        BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
+        if (basicProperty != null) {
+            propertyImpl = basicProperty.getActiveProperty();
+            if (null != basicProperty && basicProperty.isUnderWorkflow()) {
+                model.addAttribute("wfPendingMsg", "Could not do Write Off now, property is undergoing some work flow.");
+                return TARGET_WORKFLOW_ERROR;
+            }
+            final Map<String, BigDecimal> propertyTaxDetails = ptDemandDAO.getDemandCollMap(basicProperty
+                    .getActiveProperty());
+            final BigDecimal currTaxDue = propertyTaxDetails.get(CURR_FIRSTHALF_DMD_STR).subtract(
+                    propertyTaxDetails.get(CURR_FIRSTHALF_COLL_STR));
+            final BigDecimal arrearTaxDue = propertyTaxDetails.get(ARR_DMD_STR).subtract(
+                    propertyTaxDetails.get(ARR_COLL_STR));
+            final Map<String, BigDecimal> penaltyDetails = ptDemandDAO.getPenaltyDemandCollMap(basicProperty
+                    .getActiveProperty());
+            final BigDecimal currPenaltyDue = penaltyDetails.get(CURR_PENALTY_DMD_STR).subtract(
+                    penaltyDetails.get(CURR_PENALTY_COLL_STR));
+            final BigDecimal arrearPenaltyDue = penaltyDetails.get(ARR_PENALTY_DMD_STR).subtract(
+                    penaltyDetails.get(ARR_PENALTY_COLL_STR));
 
-        model.addAttribute("currTaxDue", currTaxDue);
-        model.addAttribute("arrearTaxDue", arrearTaxDue);
-        model.addAttribute("currPenaltyDue", currPenaltyDue);
-        model.addAttribute("arrearPenaltyDue", arrearPenaltyDue);
-        model.addAttribute("isCorporation", propertyTaxUtil.isCorporation());
-        model.addAttribute("writeOffReasons", PropertyTaxConstants.WRITEOFF_REASONS);
-        model.addAttribute("installments", propertyTaxUtil.getInstallments(propertyImpl));
-        model.addAttribute("documentTypes",
-                documentTypePersistenceService.findAllByNamedQuery(DocumentType.DOCUMENTTYPE_BY_TRANSACTION_TYPE,
-                        TransactionType.WRITEOFF));
+            model.addAttribute("property", propertyImpl);
+            model.addAttribute("basicProperty", basicProperty);
+            model.addAttribute("currTaxDue", currTaxDue);
+            model.addAttribute("arrearTaxDue", arrearTaxDue);
+            model.addAttribute("currPenaltyDue", currPenaltyDue);
+            model.addAttribute("arrearPenaltyDue", arrearPenaltyDue);
+            model.addAttribute("isCorporation", propertyTaxUtil.isCorporation());
+            model.addAttribute("writeOffReasons", PropertyTaxConstants.WRITEOFF_REASONS);
+            model.addAttribute("installments", propertyTaxUtil.getInstallments(propertyImpl));
+            model.addAttribute("documentTypes",
+                    documentTypePersistenceService.findAllByNamedQuery(DocumentType.DOCUMENTTYPE_BY_TRANSACTION_TYPE,
+                            TransactionType.WRITEOFF));
+        }
         return WRITE_OFF_FORM;
     }
 }

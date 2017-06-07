@@ -71,12 +71,6 @@ public class VacanyRemissionApprovalController extends GenericWorkFlowController
 
     private PropertyTaxUtil propertyTaxUtil;
 
-    private BasicProperty basicProperty;
-
-    private VacancyRemission vacancyRemission;
-
-    private VacancyRemissionApproval vacancyRemissionApproval;
-
     private VacancyRemissionService vacancyRemissionService;
     private static final String APPROVAL_POS = "approvalPosition";
 
@@ -89,8 +83,8 @@ public class VacanyRemissionApprovalController extends GenericWorkFlowController
 
     @ModelAttribute
     public VacancyRemissionApproval getVacancyRemissionApproval(@PathVariable final String assessmentNo) {
-        vacancyRemissionApproval = new VacancyRemissionApproval();
-        vacancyRemission = vacancyRemissionService.getApprovedVacancyRemissionForProperty(assessmentNo);
+        VacancyRemissionApproval vacancyRemissionApproval = new VacancyRemissionApproval();
+        VacancyRemission vacancyRemission = vacancyRemissionService.getApprovedVacancyRemissionForProperty(assessmentNo);
         if (vacancyRemission != null) {
             vacancyRemissionApproval.setVacancyRemission(vacancyRemission);
         }
@@ -98,7 +92,8 @@ public class VacanyRemissionApprovalController extends GenericWorkFlowController
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public String newform(final Model model, @PathVariable final String assessmentNo, final HttpServletRequest request) {
+    public String newform(final Model model,@ModelAttribute VacancyRemissionApproval vacancyRemissionApproval, @PathVariable final String assessmentNo, final HttpServletRequest request) {
+        VacancyRemission vacancyRemission=vacancyRemissionApproval.getVacancyRemission();
         if (vacancyRemission != null) {
             vacancyRemissionService.addModelAttributes(model, vacancyRemission.getBasicProperty());
             model.addAttribute("stateType", vacancyRemissionApproval.getClass().getSimpleName());
@@ -116,7 +111,8 @@ public class VacanyRemissionApprovalController extends GenericWorkFlowController
             @Valid @ModelAttribute VacancyRemissionApproval vacancyRemissionApproval, final BindingResult resultBinder,
             RedirectAttributes redirectAttributes, final Model model, final HttpServletRequest request,
             @RequestParam String workFlowAction) {
-
+        VacancyRemission vacancyRemission=vacancyRemissionApproval.getVacancyRemission();
+        BasicProperty basicProperty = vacancyRemissionApproval.getVacancyRemission().getBasicProperty();
         if (resultBinder.hasErrors()) {
             if (vacancyRemission != null) {
                 prepareWorkflow(model, vacancyRemissionApproval, new WorkflowContainer());

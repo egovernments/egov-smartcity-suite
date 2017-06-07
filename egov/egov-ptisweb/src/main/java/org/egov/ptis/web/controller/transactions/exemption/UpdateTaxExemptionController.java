@@ -115,9 +115,7 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
     private static final String EXSERVICE_DOC = "exserviceDocs";
     
     private final TaxExemptionService taxExemptionService;
-    private PropertyImpl property;
-    private Boolean isExempted = Boolean.FALSE;
-    
+
     @Autowired
     private PropertyTaxUtil propertyTaxUtil;
 
@@ -136,8 +134,8 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
     }
 
     @ModelAttribute
-    public Property propertyModel(@PathVariable final String id) {
-        property = taxExemptionService.findByNamedQuery(QUERY_WORKFLOW_PROPERTYIMPL_BYID, Long.valueOf(id));
+    public PropertyImpl property(@PathVariable final String id) {
+        PropertyImpl property = taxExemptionService.findByNamedQuery(QUERY_WORKFLOW_PROPERTYIMPL_BYID, Long.valueOf(id));
         if (property == null)
             property = taxExemptionService.findByNamedQuery(QUERY_PROPERTYIMPL_BYID, Long.valueOf(id));
         return property;
@@ -175,8 +173,8 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public String view(final Model model, @PathVariable final Long id, final HttpServletRequest request) {
-        isExempted = property.getBasicProperty().getActiveProperty().getIsExemptedFromTax();
+    public String view(@ModelAttribute PropertyImpl property, final Model model, @PathVariable final Long id, final HttpServletRequest request) {
+        boolean isExempted = property.getBasicProperty().getActiveProperty().getIsExemptedFromTax();
         String userDesignationList;
         final String currState = property.getState().getValue();
         final String nextAction = property.getState().getNextAction();
@@ -221,6 +219,7 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
                 model.addAttribute(NGO_DOC, property.getTaxExemptionDocumentsProxy());
             }
         }
+        model.addAttribute("property", property);
         if (currState.endsWith(WF_STATE_REJECTED) || nextAction.equalsIgnoreCase(WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING)
                 || currState.endsWith(WFLOW_ACTION_NEW)) {
             model.addAttribute("mode", EDIT);
@@ -234,7 +233,7 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public String update(@Valid @ModelAttribute final Property property, final BindingResult errors,
+    public String update(@Valid @ModelAttribute final PropertyImpl property, final BindingResult errors,
             final RedirectAttributes redirectAttributes, final HttpServletRequest request, final Model model,
             @RequestParam final String workFlowAction) {
 
