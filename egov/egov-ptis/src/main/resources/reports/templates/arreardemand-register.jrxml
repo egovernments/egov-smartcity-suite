@@ -39,7 +39,7 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 <!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
-<!-- 2017-05-23T14:01:12 -->
+<!-- 2017-06-07T15:04:18 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="arreardemand-register" pageWidth="695" pageHeight="852" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="0a0a6bfd-1cdf-4285-89bc-0be3643eba33">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="5"/>
@@ -74,7 +74,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="12" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{propertyType}.equals("PT") ? "Arrear Demand Register Report PT for the year " + $P{selectedYear} + " :: Revenue Ward No. " + $P{ward} : "Arrear Demand Register Report VLT for the year " + $P{selectedYear} + " :: Revenue Ward No. " + $P{ward}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{propertyType}.equals("PT") ? "Arrear Demand Register Report PT for the year " + $P{selectedYear} + " :: " + $P{ward} : "Arrear Demand Register Report VLT for the year " + $P{selectedYear} + " :: " + $P{ward}]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>

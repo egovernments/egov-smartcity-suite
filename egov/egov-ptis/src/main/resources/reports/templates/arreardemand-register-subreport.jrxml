@@ -39,7 +39,7 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 <!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
-<!-- 2017-05-23T13:55:06 -->
+<!-- 2017-06-07T14:04:55 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="arreardemand-register-subreport" pageWidth="655" pageHeight="1157" columnWidth="655" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="0bb0e5bf-8634-481a-b624-67c26bf93bf4">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -290,15 +290,16 @@
 	<detail>
 		<band height="46" splitType="Prevent">
 			<textField isStretchWithOverflow="true">
-				<reportElement x="100" y="0" width="95" height="32" isPrintWhenDetailOverflows="true" uuid="20a195b4-8157-4293-a3d7-79275a77668e"/>
+				<reportElement x="100" y="0" width="95" height="33" isPrintWhenDetailOverflows="true" uuid="20a195b4-8157-4293-a3d7-79275a77668e"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{ownerName}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="315" y="0" width="50" height="32" uuid="8bc2ee64-480f-4900-a285-07964f03846c">
+				<reportElement x="315" y="0" width="50" height="33" uuid="8bc2ee64-480f-4900-a285-07964f03846c">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8"/>
@@ -307,20 +308,20 @@
 			</textField>
 			<textField>
 				<reportElement x="365" y="0" width="60" height="33" uuid="93fcd1d6-0ad5-4469-9462-b1a90f30504c"/>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{collectedAmount}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="465" y="0" width="60" height="33" uuid="33f6096a-5776-4789-8957-09abbe8bc9e0"/>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{totalCollection}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="195" y="0" width="60" height="32" isPrintWhenDetailOverflows="true" uuid="6ffd2c9c-8ff5-41ab-b2ab-9450cbf08b4a">
+				<reportElement x="195" y="0" width="60" height="33" isPrintWhenDetailOverflows="true" uuid="6ffd2c9c-8ff5-41ab-b2ab-9450cbf08b4a">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -329,7 +330,7 @@
 				<textFieldExpression><![CDATA[$F{houseNo}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="40" y="0" width="60" height="32" isPrintWhenDetailOverflows="true" uuid="0c76dbf8-8081-4afd-8ece-916ae053a9c6">
+				<reportElement x="40" y="0" width="60" height="33" isPrintWhenDetailOverflows="true" uuid="0c76dbf8-8081-4afd-8ece-916ae053a9c6">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -342,9 +343,9 @@
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="8"/>
+					<font size="7"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{collectionMode}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[UPPER($F{collectionMode})]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="255" y="0" width="60" height="33" uuid="4861d7f5-57f7-46d3-b7d5-d939a8e26eed"/>
@@ -357,7 +358,7 @@
 				<reportElement x="525" y="0" width="36" height="33" uuid="07817981-28b6-4446-9e9e-21a8543758c9">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{writeOff}]]></textFieldExpression>
@@ -366,7 +367,7 @@
 				<reportElement x="561" y="0" width="50" height="33" uuid="ab9a2379-930e-42d9-9a7f-9889bb4d20be">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{balance}]]></textFieldExpression>
@@ -379,7 +380,9 @@
 				<textFieldExpression><![CDATA[$F{advanceAmount}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="0" y="0" width="40" height="32" uuid="aca40d65-5c6d-4690-8761-39a9612101e8"/>
+				<reportElement x="0" y="0" width="40" height="33" uuid="aca40d65-5c6d-4690-8761-39a9612101e8">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
