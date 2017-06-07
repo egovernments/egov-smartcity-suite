@@ -43,7 +43,6 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -58,7 +57,6 @@ import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.domain.model.ErrorDetails;
 import org.egov.restapi.model.WaterConnectionInfo;
-import org.egov.restapi.util.JsonConvertor;
 import org.egov.wtms.application.entity.WaterConnection;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.rest.WaterChargesDetails;
@@ -310,16 +308,16 @@ public class RestWaterConnectionController {
         return waterConnectionDetails;
     }
 
-    @RequestMapping(value = "/watertax/connectiondetails", method = RequestMethod.POST, consumes = APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public String getWaterConnectionDetailsByPropertyId(@Valid @RequestBody final WaterTaxDetailRequest waterTaxDetailRequest)
-            throws JsonGenerationException, JsonMappingException, IOException {
+    @RequestMapping(value = "/watertax/connectiondetails", method = RequestMethod.GET, consumes = APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<WaterChargesDetails> getWaterConnectionDetailsByPropertyId(final WaterTaxDetailRequest waterTaxDetailRequest)
+            throws IOException {
 
         List<WaterChargesDetails> waterChargesDetailsList;
         waterChargesDetailsList = connectionDetailService.getWaterTaxDetailsByPropertyId(
                 waterTaxDetailRequest.getAssessmentNumber(),
                 waterTaxDetailRequest.getUlbCode(), waterTaxDetailRequest.getConsumerNumber());
 
-        return JsonConvertor.convert(waterChargesDetailsList);
+        return waterChargesDetailsList;
     }
 
     private String getJSONResponse(final Object obj) throws JsonGenerationException, JsonMappingException, IOException {
