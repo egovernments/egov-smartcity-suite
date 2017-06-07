@@ -47,6 +47,13 @@
 
 package org.egov.services.es.dashboard;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.egov.egf.bean.dashboard.FinancialsBudgetDetailResponse;
 import org.egov.egf.bean.dashboard.FinancialsDetailResponse;
 import org.egov.egf.bean.dashboard.FinancialsDetailsRequest;
 import org.egov.egf.es.utils.FinancialsDashBoardUtils;
@@ -64,12 +71,6 @@ import org.elasticsearch.search.aggregations.metrics.tophits.TopHits;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.stereotype.Service;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @Service
 public class FinancialsDashboardService {
@@ -677,4 +678,142 @@ public class FinancialsDashboardService {
             financialsDetail.setMinorCode(financialsDetailsRequest.getMinorCode());
 
     }
+    
+    public List<FinancialsBudgetDetailResponse> getBudgetData(FinancialsDetailsRequest financialsDetailsRequest,
+            BoolQueryBuilder boolQuery, String aggrField) {
+
+        List<FinancialsBudgetDetailResponse> budgetDetailResponses = new ArrayList<>();
+        SearchResponse finSearchResponse = getResponseFromIndex(boolQuery, aggrField);
+        StringTerms aggr = finSearchResponse.getAggregations().get(AGGRFIELD);
+
+        for (final Terms.Bucket entry : aggr.getBuckets()) {
+            FinancialsBudgetDetailResponse financialsBudgetDetailResponse = populateBudgetDetailResponse(aggrField, entry);
+            setFinancialsDetailsForBudget(financialsDetailsRequest, financialsBudgetDetailResponse);
+            budgetDetailResponses.add(financialsBudgetDetailResponse);
+
+        }
+
+        return budgetDetailResponses;
+
+    }
+
+    private FinancialsBudgetDetailResponse populateBudgetDetailResponse(String aggrField, final Terms.Bucket entry) {
+        FinancialsBudgetDetailResponse financialsBudgetDetailResponse = new FinancialsBudgetDetailResponse();
+
+        final Sum aggrTotalBudget = entry.getAggregations().get(FinancialConstants.TOTALBUDGET);
+        final Sum aggrActualAmount = entry.getAggregations().get(FinancialConstants.ACTUALAMOUNT);
+        final Sum aggrPreviousYearActualAmount = entry.getAggregations().get(FinancialConstants.PREVIOUYEARACTUALAMOUNT);
+        final Sum aggrCommitedExpenditure = entry.getAggregations().get(FinancialConstants.COMMITTEDEXPENDITURE);
+        final Sum aggrBudgetVariance = entry.getAggregations().get(FinancialConstants.BUDGETVARIANCE);
+        final TopHits topHits = entry.getAggregations().get("finRecordsBudget");
+        financialsBudgetDetailResponse
+                .setTotalBudget(BigDecimal.valueOf(aggrTotalBudget.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+        financialsBudgetDetailResponse
+                .setActualAmount(BigDecimal.valueOf(aggrActualAmount.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+        financialsBudgetDetailResponse.setPreviouYearActualAmount(
+                BigDecimal.valueOf(aggrPreviousYearActualAmount.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+        financialsBudgetDetailResponse.setCommittedExpenditure(
+                BigDecimal.valueOf(aggrCommitedExpenditure.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+        financialsBudgetDetailResponse
+                .setBudgetVariance(BigDecimal.valueOf(aggrBudgetVariance.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+
+        FinancialsDashBoardUtils.setValuesForBudget(entry.getKeyAsString(), financialsBudgetDetailResponse, aggrField,
+                setBudgetResponseDetails(topHits));
+        return financialsBudgetDetailResponse;
+    }
+
+    public SearchResponse getResponseFromIndex(BoolQueryBuilder boolQuery, String aggrField) {
+        return elasticsearchTemplate.getClient()
+                .prepareSearch(FinancialConstants.FINANCIAL_BUDGET_INDEX_DATA).setQuery(boolQuery)
+                .addAggregation(AggregationBuilders.terms(AGGRFIELD).field(aggrField)
+                        .subAggregation(
+                                AggregationBuilders.sum(FinancialConstants.TOTALBUDGET).field(FinancialConstants.TOTALBUDGET))
+                        .subAggregation(
+                                AggregationBuilders.sum(FinancialConstants.ACTUALAMOUNT).field(FinancialConstants.ACTUALAMOUNT))
+                        .subAggregation(AggregationBuilders.sum(FinancialConstants.PREVIOUYEARACTUALAMOUNT)
+                                .field(FinancialConstants.PREVIOUYEARACTUALAMOUNT))
+                        .subAggregation(AggregationBuilders.sum(FinancialConstants.COMMITTEDEXPENDITURE)
+                                .field(FinancialConstants.COMMITTEDEXPENDITURE))
+                        .subAggregation(AggregationBuilders.sum(FinancialConstants.BUDGETVARIANCE)
+                                .field(FinancialConstants.BUDGETVARIANCE))
+                        .subAggregation(AggregationBuilders.topHits("finRecordsBudget").addField(FinancialConstants.DISTNAME)
+                                .addField(FinancialConstants.ULBNAME)
+                                .addField(FinancialConstants.ULBGRADE).addField(FinancialConstants.REGNAME).setSize(1)))
+                .execute().actionGet();
+    }
+
+    private FinancialsBudgetDetailResponse setBudgetResponseDetails(final TopHits topHits) {
+        FinancialsBudgetDetailResponse finBudgetResponse = new FinancialsBudgetDetailResponse();
+        final SearchHit[] hit = topHits.getHits().getHits();
+        String district = hit[0].field(FinancialConstants.DISTNAME).getValue();
+        String ulbName = hit[0].field(FinancialConstants.ULBNAME).getValue();
+        String region = hit[0].field(FinancialConstants.REGNAME).getValue();
+        String grade = hit[0].field(FinancialConstants.ULBGRADE).getValue();
+        finBudgetResponse.setRegion(region);
+        finBudgetResponse.setDistrict(district);
+        finBudgetResponse.setGrade(grade);
+        finBudgetResponse.setUlbName(ulbName);
+        return finBudgetResponse;
+
+    }
+
+    private void setFinancialsDetailsForBudget(final FinancialsDetailsRequest financialsDetailsRequest,
+            final FinancialsBudgetDetailResponse budgetDetailResponse) {
+
+        populateHeaderDataToResponse(financialsDetailsRequest, budgetDetailResponse);
+
+        populateFinancialDataToResponse(financialsDetailsRequest, budgetDetailResponse);
+
+        populateCOAToResponse(financialsDetailsRequest, budgetDetailResponse);
+
+        if (StringUtils.isNotBlank(financialsDetailsRequest.getFromDate()))
+            budgetDetailResponse.setFromDate(financialsDetailsRequest.getFromDate());
+
+        if (StringUtils.isNotBlank(financialsDetailsRequest.getToDate()))
+            budgetDetailResponse.setToDate(financialsDetailsRequest.getToDate());
+
+        if (StringUtils.isNotBlank(financialsDetailsRequest.getFunctionCode()))
+            budgetDetailResponse.setFunctionCode(financialsDetailsRequest.getFunctionCode());
+
+        if (StringUtils.isNotBlank(financialsDetailsRequest.getFundCode()))
+            budgetDetailResponse.setFundCode(financialsDetailsRequest.getFundCode());
+
+    }
+
+    private void populateHeaderDataToResponse(final FinancialsDetailsRequest financialsDetailsRequest,
+            final FinancialsBudgetDetailResponse budgetDetailResponse) {
+        if (StringUtils.isNotBlank(financialsDetailsRequest.getRegion()))
+            budgetDetailResponse.setRegion(financialsDetailsRequest.getRegion());
+
+        if (StringUtils.isNotBlank(financialsDetailsRequest.getGrade()))
+            budgetDetailResponse.setGrade(financialsDetailsRequest.getGrade());
+    }
+
+    private void populateFinancialDataToResponse(final FinancialsDetailsRequest financialsDetailsRequest,
+            final FinancialsBudgetDetailResponse budgetDetailResponse) {
+        if (StringUtils.isNotBlank(financialsDetailsRequest.getFundSource()))
+            budgetDetailResponse.setFundSource(financialsDetailsRequest.getFundSource());
+
+        if (StringUtils.isNotBlank(financialsDetailsRequest.getDepartmentCode()))
+            budgetDetailResponse.setDepartmentCode(financialsDetailsRequest.getDepartmentCode());
+
+        if (StringUtils.isNotBlank(financialsDetailsRequest.getSchemeCode()))
+            budgetDetailResponse.setSchemeCode(financialsDetailsRequest.getSchemeCode());
+
+        if (StringUtils.isNotBlank(financialsDetailsRequest.getSubschemeCode()))
+            budgetDetailResponse.setSubschemeCode(financialsDetailsRequest.getSubschemeCode());
+    }
+
+    private void populateCOAToResponse(final FinancialsDetailsRequest financialsDetailsRequest,
+            final FinancialsBudgetDetailResponse budgetDetailResponse) {
+        if (StringUtils.isNotBlank(financialsDetailsRequest.getDetailedCode()))
+            budgetDetailResponse.setDetailedCode(financialsDetailsRequest.getDetailedCode());
+
+        if (StringUtils.isNotBlank(financialsDetailsRequest.getMajorCode()))
+            budgetDetailResponse.setMajorCode(financialsDetailsRequest.getMajorCode());
+
+        if (StringUtils.isNotBlank(financialsDetailsRequest.getMinorCode()))
+            budgetDetailResponse.setMinorCode(financialsDetailsRequest.getMinorCode());
+    }
+
 }

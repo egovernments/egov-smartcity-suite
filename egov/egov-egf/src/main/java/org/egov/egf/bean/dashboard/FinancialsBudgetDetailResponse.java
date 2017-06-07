@@ -47,29 +47,37 @@
 
 package org.egov.egf.bean.dashboard;
 
-public class FinancialsDetailsRequest {
+import java.math.BigDecimal;
 
-    private String region;
-    private String district;
-    private String grade;
-    private String ulbCode;
-    private String ulbName;
-    private String fromDate;
-    private String toDate;
-    private String admZone;
-    private String admWard;
-    private String fundCode;
-    private String departmentCode;
-    private String functionCode;
-    private String fundSource;
-    private String schemeCode;
-    private String subschemeCode;
-    private String majorCode = "";
-    private String minorCode = "";
-    private String detailedCode = "";
-    private String aggregationLevel;
-    private String currentFinancialYear;
-    private String lastFinancialYear;
+import org.egov.infra.utils.StringUtils;
+
+public class FinancialsBudgetDetailResponse {
+
+    private String region = StringUtils.EMPTY;
+    private String district = StringUtils.EMPTY;
+    private String grade = StringUtils.EMPTY;
+    private String ulbCode = StringUtils.EMPTY;
+    private String ulbName = StringUtils.EMPTY;
+    private String fromDate = StringUtils.EMPTY;
+    private String toDate = StringUtils.EMPTY;
+    private String admZoneName = StringUtils.EMPTY;
+    private String admWardName = StringUtils.EMPTY;
+    private String fundCode = StringUtils.EMPTY;
+    private String departmentCode = StringUtils.EMPTY;
+    private String functionCode = StringUtils.EMPTY;
+    private String fundSource = StringUtils.EMPTY;
+    private String schemeCode = StringUtils.EMPTY;
+    private String subschemeCode = StringUtils.EMPTY;
+    private String majorCode = StringUtils.EMPTY;
+    private String minorCode = StringUtils.EMPTY;
+    private String detailedCode = StringUtils.EMPTY;
+    private BigDecimal reAppropriationAmount = BigDecimal.ZERO;
+    private BigDecimal totalBudget = BigDecimal.ZERO;
+    private BigDecimal actualAmount = BigDecimal.ZERO;
+    private BigDecimal previouYearActualAmount = BigDecimal.ZERO;
+    private BigDecimal committedExpenditure = BigDecimal.ZERO;
+    private BigDecimal budgetVariance = BigDecimal.ZERO;
+    private BigDecimal budgetApprovedAmount = BigDecimal.ZERO;
 
     public String getRegion() {
         return region;
@@ -95,12 +103,12 @@ public class FinancialsDetailsRequest {
         this.grade = grade;
     }
 
-    public String getUlbCode() {
-        return ulbCode;
+    public String getUlbName() {
+        return ulbName;
     }
 
-    public void setUlbCode(final String ulbCode) {
-        this.ulbCode = ulbCode;
+    public void setUlbName(final String ulbName) {
+        this.ulbName = ulbName;
     }
 
     public String getFromDate() {
@@ -119,20 +127,20 @@ public class FinancialsDetailsRequest {
         this.toDate = toDate;
     }
 
-    public String getAdmZone() {
-        return admZone;
+    public String getAdmZoneName() {
+        return admZoneName;
     }
 
-    public void setAdmZone(final String admZone) {
-        this.admZone = admZone;
+    public void setAdmZoneName(final String admZoneName) {
+        this.admZoneName = admZoneName;
     }
 
-    public String getAdmWard() {
-        return admWard;
+    public String getAdmWardName() {
+        return admWardName;
     }
 
-    public void setAdmWard(final String admWard) {
-        this.admWard = admWard;
+    public void setAdmWardName(final String admWardName) {
+        this.admWardName = admWardName;
     }
 
     public String getFundCode() {
@@ -207,36 +215,67 @@ public class FinancialsDetailsRequest {
         this.detailedCode = detailedCode;
     }
 
-    public String getAggregationLevel() {
-        return aggregationLevel;
+    public String getUlbCode() {
+        return ulbCode;
     }
 
-    public void setAggregationLevel(final String aggregationLevel) {
-        this.aggregationLevel = aggregationLevel;
+    public void setUlbCode(final String ulbCode) {
+        this.ulbCode = ulbCode;
     }
 
-    public String getCurrentFinancialYear() {
-        return currentFinancialYear;
+    public BigDecimal getReAppropriationAmount() {
+        return reAppropriationAmount;
     }
 
-    public void setCurrentFinancialYear(final String currentFinancialYear) {
-        this.currentFinancialYear = currentFinancialYear;
+    public void setReAppropriationAmount(final BigDecimal reAppropriationAmount) {
+        this.reAppropriationAmount = reAppropriationAmount;
     }
 
-    public String getUlbName() {
-        return ulbName;
+    public BigDecimal getTotalBudget() {
+        return totalBudget;
     }
 
-    public void setUlbName(final String ulbName) {
-        this.ulbName = ulbName;
+    public void setTotalBudget(final BigDecimal totalBudget) {
+        this.totalBudget = totalBudget;
     }
 
-    public String getLastFinancialYear() {
-        return lastFinancialYear;
+    public BigDecimal getActualAmount() {
+        return actualAmount;
     }
 
-    public void setLastFinancialYear(final String lastFinancialYear) {
-        this.lastFinancialYear = lastFinancialYear;
+    public void setActualAmount(final BigDecimal actualAmount) {
+        this.actualAmount = actualAmount;
     }
 
+    public BigDecimal getPreviouYearActualAmount() {
+        return previouYearActualAmount;
+    }
+
+    public void setPreviouYearActualAmount(final BigDecimal previouYearActualAmount) {
+        this.previouYearActualAmount = previouYearActualAmount;
+    }
+
+    public BigDecimal getCommittedExpenditure() {
+        return committedExpenditure;
+    }
+
+    public void setCommittedExpenditure(final BigDecimal committedExpenditure) {
+        this.committedExpenditure = committedExpenditure;
+    }
+
+    public BigDecimal getBudgetVariance() {
+        return budgetVariance;
+    }
+
+    public void setBudgetVariance(final BigDecimal budgetVariance) {
+        this.budgetVariance = budgetVariance;
+    }
+
+    public BigDecimal getBudgetApprovedAmount() {
+        return budgetApprovedAmount;
+    }
+
+    public void setBudgetApprovedAmount(final BigDecimal budgetApprovedAmount) {
+        this.budgetApprovedAmount = budgetApprovedAmount;
+    }
 }

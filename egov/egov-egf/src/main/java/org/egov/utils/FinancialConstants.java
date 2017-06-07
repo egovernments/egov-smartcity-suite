@@ -372,6 +372,25 @@ public interface FinancialConstants {
 
     public static final String FINANCIAL_VOUCHER_INDEX_NAME = "financialsvoucherdata";
     public static final String FINANCIAL_OPENINGBALANCE_INDEX_NAME = "financialsobdata";
+    public static final String FINANCIAL_BUDGET_INDEX_DATA = "financialsbudgetdata";
     public static final SimpleDateFormat DATEFORMATTER_YYYY_MM_DD = new SimpleDateFormat("yyyy-MM-dd");
+    
+    public static final String FUND_NAME = "fundName";
+    public static final String DEPARTMENT_NAME = "departmentName";
+    public static final String FUNCTION_NAME = "functionName";
+    public static final String SCHEME_NAME = "schemeName";
+    public static final String SUBSCHEME_NAME = "subSchemeName";
+
+    public static final String TOTALBUDGET = "totalbudget";
+    public static final String ACTUALAMOUNT = "actualamount";
+    public static final String PREVIOUYEARACTUALAMOUNT = "previouyearactualamount";
+    public static final String COMMITTEDEXPENDITURE = "committedexpenditure";
+    public static final String BUDGETVARIANCE = "budgetvariance";
+    public static final String BUDGETDETAILCREATEDDATE = "budgetdetailcreateddate";
+    
+    public static final String DISTNAME = "distname";
+    public static final String ULBNAME = "ulbname";
+    public static final String ULBGRADE = "ulbgrade";
+    public static final String REGNAME = "regname";
 
 }
