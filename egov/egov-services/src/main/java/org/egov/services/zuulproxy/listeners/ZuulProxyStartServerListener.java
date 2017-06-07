@@ -43,6 +43,7 @@ import java.io.File;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
+import javax.servlet.annotation.WebListener;
 
 import org.egov.services.zuulproxy.filter.ZuulProxyFilter;
 import org.slf4j.Logger;
@@ -55,14 +56,17 @@ import com.netflix.zuul.groovy.GroovyCompiler;
 import com.netflix.zuul.groovy.GroovyFileFilter;
 import com.netflix.zuul.monitoring.MonitoringHelper;
 
+@WebListener
 public class ZuulProxyStartServerListener implements ServletContextListener {
 
     private static final Logger logger = LoggerFactory.getLogger(ZuulProxyStartServerListener.class);
 
     @Override
     public void contextInitialized(final ServletContextEvent sce) {
-        if (logger.isInfoEnabled())
+        if (logger.isInfoEnabled()) {
+            logger.info("ServletContextEvent.. "+sce);
             logger.info("Starting Zuul Proxy server");
+        }
 
         // mocks monitoring infrastructure as we don't need it for this simple app
         MonitoringHelper.initMocks();
