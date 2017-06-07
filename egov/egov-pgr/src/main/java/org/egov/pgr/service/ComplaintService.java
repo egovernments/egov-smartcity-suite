@@ -73,6 +73,7 @@ import static org.egov.pgr.utils.constants.PGRConstants.UPDATEDBY;
 import static org.egov.pgr.utils.constants.PGRConstants.UPDATEDUSERTYPE;
 import static org.egov.pgr.utils.constants.PGRConstants.USER;
 import static org.egov.pgr.utils.constants.PGRConstants.USERTYPE;
+import static org.egov.pgr.utils.constants.PGRConstants.COMPLAINT_WITHDRAWN;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -246,7 +247,7 @@ public class ComplaintService {
 
     @Transactional
     public Complaint update(final Complaint complaint, final Long nextOwnerId, final String approvalComment,
-            final boolean sendToPrevAssignee) {
+                            final boolean sendToPrevAssignee) {
         final Role goRole = roleService.getRoleByName(GO_ROLE_NAME);
         String userName;
         if (securityUtils.getCurrentUser().getType().equals(UserType.CITIZEN))
@@ -255,8 +256,8 @@ public class ComplaintService {
             userName = securityUtils.getCurrentUser().getUsername() + DELIMITER_COLON + securityUtils.getCurrentUser().getName();
         if (!complaint.getState().isEnded()
                 && (complaint.getStatus().getName().equalsIgnoreCase(ComplaintStatus.COMPLETED.toString())
-                        || complaint.getStatus().getName().equalsIgnoreCase(ComplaintStatus.WITHDRAWN.toString())
-                        || complaint.getStatus().getName().equalsIgnoreCase(ComplaintStatus.REJECTED.toString()))) {
+                || complaint.getStatus().getName().equalsIgnoreCase(ComplaintStatus.WITHDRAWN.toString())
+                || complaint.getStatus().getName().equalsIgnoreCase(ComplaintStatus.REJECTED.toString()))) {
             complaint.setDepartment(complaint.getAssignee().getDeptDesig().getDepartment());
             LOG.debug("Terminating Grievance Workflow");
             if (!securityUtils.getCurrentUser().getRoles().contains(goRole))
@@ -281,8 +282,10 @@ public class ComplaintService {
             complaint.transition().progressWithStateCopy().withComments(approvalComment).withSenderName(userName)
                     .withStateValue(complaint.getStatus().getName()).withOwner(nextAssignee).withDateInfo(new Date());
 
+        } else if (complaint.getState().isEnded() && complaint.getStatus().getName().equalsIgnoreCase(ComplaintStatus.REOPENED.toString())) {
+            complaint.transition().reopen().withComments(approvalComment).withSenderName(userName)
+                    .withStateValue(complaint.getStatus().getName()).withDateInfo(new Date());
         } else {
-            complaint.setDepartment(complaint.getAssignee().getDeptDesig().getDepartment());
             complaint.transition().progressWithStateCopy().withComments(approvalComment).withSenderName(userName)
                     .withStateValue(complaint.getStatus().getName()).withDateInfo(new Date());
         }
@@ -363,10 +366,10 @@ public class ComplaintService {
                     : Optional.empty();
             map.put(USER, employee.isPresent()
                     ? new StringBuilder().append(employee.get().getUsername()).append(DELIMITER_COLON)
-                            .append(employee.get().getName()).append(DELIMITER_COLON)
-                            .append(ownerPosition.getDeptDesig().getDesignation().getName()).toString()
+                    .append(employee.get().getName()).append(DELIMITER_COLON)
+                    .append(ownerPosition.getDeptDesig().getDesignation().getName()).toString()
                     : new StringBuilder().append(NOASSIGNMENT).append(DELIMITER_COLON).append(ownerPosition.getName())
-                            .toString());
+                    .toString());
             map.put(USERTYPE, employee.isPresent() ? employee.get().getType() : EMPTY);
             map.put(DEPT, ownerPosition.getDeptDesig().getDepartment().getName());
         }
@@ -427,7 +430,7 @@ public class ComplaintService {
 
     @ReadOnly
     public List<Complaint> getNearByComplaint(final int page, final float lat, final float lng, final int distance,
-            final int pageSize) {
+                                              final int pageSize) {
         final Long offset = (page - 1L) * pageSize;
         final Long limit = pageSize + 1L;
         return complaintRepository.findByNearestComplaint(securityUtils.getCurrentUser().getId(), Float.valueOf(lat),
@@ -459,7 +462,7 @@ public class ComplaintService {
     @ReadOnly
     public List<Complaint> getPendingGrievances() {
         final User user = securityUtils.getCurrentUser();
-        final String[] pendingStatus = { COMPLAINT_REGISTERED, "FORWARDED", "PROCESSING", "NOTCOMPLETED", RE_OPENED };
+        final String[] pendingStatus = {COMPLAINT_REGISTERED, "FORWARDED", "PROCESSING", "NOTCOMPLETED", RE_OPENED};
         final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(Complaint.class, "complaint")
                 .createAlias("complaint.state", "state").createAlias("complaint.status", "status");
         criteria.add(Restrictions.in("status.name", pendingStatus));
@@ -551,9 +554,9 @@ public class ComplaintService {
         final String link = "/pgr/complaint/update/" + savedComplaint.getCrn();
 
         boolean resolved = false;
-        if (savedComplaint.getStatus().getName().equalsIgnoreCase("COMPLETED")
-                || savedComplaint.getStatus().getName().equalsIgnoreCase("REJECTED")
-                || savedComplaint.getStatus().getName().equalsIgnoreCase("WITHDRAWN"))
+        if (savedComplaint.getStatus().getName().equalsIgnoreCase(COMPLAINT_COMPLETED)
+                || savedComplaint.getStatus().getName().equalsIgnoreCase(COMPLAINT_REJECTED)
+                || savedComplaint.getStatus().getName().equalsIgnoreCase(COMPLAINT_WITHDRAWN))
             resolved = true;
 
         portalInboxService.updateInboxMessage(savedComplaint.getCrn(), moduleService.getModuleByName(MODULE_NAME).getId(),
