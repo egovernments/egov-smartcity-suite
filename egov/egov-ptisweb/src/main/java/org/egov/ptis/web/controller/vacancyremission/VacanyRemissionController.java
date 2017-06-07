@@ -120,10 +120,6 @@ public class VacanyRemissionController extends GenericWorkFlowController {
 
     private final PropertyTaxUtil propertyTaxUtil;
 
-    private BasicProperty basicProperty;
-
-    private VacancyRemission vacancyRemission;
-
     private final VacancyRemissionService vacancyRemissionService;
     private Boolean loggedUserIsMeesevaUser = Boolean.FALSE;
    
@@ -145,8 +141,8 @@ public class VacanyRemissionController extends GenericWorkFlowController {
 
     @ModelAttribute
     public VacancyRemission vacancyRemissionModel(@PathVariable final String assessmentNo) {
-        vacancyRemission = new VacancyRemission();
-        basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
+        VacancyRemission vacancyRemission = new VacancyRemission();
+        BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
         if (basicProperty != null)
             vacancyRemission.setBasicProperty((BasicPropertyImpl) basicProperty);
         return vacancyRemission;
@@ -157,9 +153,10 @@ public class VacanyRemissionController extends GenericWorkFlowController {
         return vacancyRemissionService.getDocuments(TransactionType.VACANCYREMISSION);
     }
     @RequestMapping(value = "/create/{assessmentNo},{mode}", method = RequestMethod.GET)
-    public String newForm(final Model model, @PathVariable final String assessmentNo, @PathVariable final String mode,
+    public String newForm(final Model model,@ModelAttribute VacancyRemission vacancyRemission, @PathVariable final String assessmentNo, @PathVariable final String mode,
             @RequestParam(required = false) final String meesevaApplicationNumber, final HttpServletRequest request,
             @RequestParam(required = false) final String applicationSource) {
+        BasicProperty basicProperty=vacancyRemission.getBasicProperty();
         if (basicProperty != null) {
             final Property property = basicProperty.getActiveProperty();
             List<DocumentType> documentTypes;
@@ -197,7 +194,7 @@ public class VacanyRemissionController extends GenericWorkFlowController {
                         final List<VacancyRemission> remissionList = vacancyRemissionService
                                 .getAllVacancyRemissionByUpicNo(basicProperty.getUpicNo());
                         if (!remissionList.isEmpty()) {
-                            final VacancyRemission vacancyRemission = remissionList.get(remissionList.size() - 1);
+                            vacancyRemission = remissionList.get(remissionList.size() - 1);
                             if (vacancyRemission != null)
                                 if (vacancyRemission.getStatus().equalsIgnoreCase(
                                         PropertyTaxConstants.VR_STATUS_APPROVED)) {
@@ -315,6 +312,7 @@ public class VacanyRemissionController extends GenericWorkFlowController {
             final HttpServletRequest request, @RequestParam String workFlowAction) {
 
         final Boolean propertyByEmployee = Boolean.valueOf(request.getParameter("propertyByEmployee"));
+        BasicProperty basicProperty=vacancyRemission.getBasicProperty();
         List<Document> documents = new ArrayList<>();
         loggedUserIsMeesevaUser = propertyService.isMeesevaUser(vacancyRemissionService.getLoggedInUser());
         validateDates(vacancyRemission, resultBinder, request);

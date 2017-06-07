@@ -87,8 +87,6 @@ public class UpdateVRApprovalController extends GenericWorkFlowController {
 
     private final PropertyTaxUtil propertyTaxUtil;
 
-    private Designation designation;
-
     @Autowired
     private AssignmentService assignmentService;
 
@@ -107,9 +105,7 @@ public class UpdateVRApprovalController extends GenericWorkFlowController {
 
     @ModelAttribute
     public VacancyRemissionApproval vacancyRemissionApprovalModel(@PathVariable final Long id) {
-        final VacancyRemissionApproval vacancyRemissionApproval = vacancyRemissionService.getVacancyRemissionApprovalById(id);
-        designation = propertyTaxUtil.getDesignationForUser(vacancyRemissionService.getLoggedInUser().getId());
-        return vacancyRemissionApproval;
+        return vacancyRemissionService.getVacancyRemissionApprovalById(id);
     }
 
     @RequestMapping(method = RequestMethod.GET)
@@ -117,6 +113,7 @@ public class UpdateVRApprovalController extends GenericWorkFlowController {
         final VacancyRemissionApproval vacancyRemissionApproval = vacancyRemissionService.getVacancyRemissionApprovalById(id);
         VacancyRemission vacancyRemission = null;
         String userDesgn = "";
+        Designation designation = propertyTaxUtil.getDesignationForUser(vacancyRemissionService.getLoggedInUser().getId());
         final String userDesignationList = propertyTaxCommonUtils
                 .getAllDesignationsForUser(securityUtils.getCurrentUser().getId());
         if (null != designation)
@@ -226,6 +223,7 @@ public class UpdateVRApprovalController extends GenericWorkFlowController {
         Assignment wfInitiator;
         final User user = securityUtils.getCurrentUser();
         List<Assignment> loggedInUserAssign;
+        Designation designation = propertyTaxUtil.getDesignationForUser(vacancyRemissionService.getLoggedInUser().getId());
         if (vacancyRemissionApproval.getState() != null) {
             loggedInUserAssign = assignmentService.getAssignmentByPositionAndUserAsOnDate(
                     vacancyRemissionApproval.getCurrentState().getOwnerPosition().getId(), user.getId(), new Date());
