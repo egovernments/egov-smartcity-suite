@@ -63,17 +63,24 @@
     </bean>
 
     <bean id="concurrentSessionFilter" class="org.springframework.security.web.session.ConcurrentSessionFilter">
-        <constructor-arg index="0" ref="sessionRegistry"/>
-        <constructor-arg index="1" value="/login/secure?sessionExpired=1"/>
+        <constructor-arg name="sessionRegistry" ref="springSessionBackedSessionRegistry"/>
+        <constructor-arg name="sessionInformationExpiredStrategy">
+            <bean class="org.springframework.security.web.session.SimpleRedirectSessionInformationExpiredStrategy">
+                <constructor-arg name="invalidSessionUrl" value="/login/secure?sessionExpired=1"/>
+            </bean>
+        </constructor-arg>
     </bean>
-
-    <bean id="sessionRegistry" class="org.springframework.security.core.session.SessionRegistryImpl"/>
 
     <bean id="concurrentSessionControlStrategy"
           class="org.springframework.security.web.authentication.session.ConcurrentSessionControlAuthenticationStrategy">
-        <constructor-arg index="0" ref="sessionRegistry"/>
+        <constructor-arg index="0" ref="springSessionBackedSessionRegistry"/>
         <property name="exceptionIfMaximumExceeded" value="false"/>
-        <property name="maximumSessions" value="-1"/>
+        <property name="maximumSessions" value="1"/>
+    </bean>
+
+    <bean id="registerSessionAuthenticationStrategy"
+          class="org.springframework.security.web.authentication.session.RegisterSessionAuthenticationStrategy">
+        <constructor-arg ref="springSessionBackedSessionRegistry"/>
     </bean>
 
     <bean id="securityContextPersistenceFilter"
@@ -141,6 +148,7 @@
             <list>
                 <ref bean="concurrentSessionControlStrategy"/>
                 <ref bean="sessionFixationProtectionStrategy"/>
+                <ref bean="registerSessionAuthenticationStrategy"/>
             </list>
         </constructor-arg>
     </bean>

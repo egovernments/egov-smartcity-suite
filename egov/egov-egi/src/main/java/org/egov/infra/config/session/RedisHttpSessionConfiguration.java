@@ -43,7 +43,9 @@ package org.egov.infra.config.session;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.session.FindByIndexNameSessionRepository;
 import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
+import org.springframework.session.security.SpringSessionBackedSessionRegistry;
 import org.springframework.session.web.http.CookieHttpSessionStrategy;
 import org.springframework.session.web.http.CookieSerializer;
 import org.springframework.session.web.http.DefaultCookieSerializer;
@@ -66,6 +68,11 @@ public class RedisHttpSessionConfiguration {
         final CookieHttpSessionStrategy cookieHttpSession = new CookieHttpSessionStrategy();
         cookieHttpSession.setCookieSerializer(cookieSerializer);
         return cookieHttpSession;
+    }
+
+    @Bean
+    public SpringSessionBackedSessionRegistry springSessionBackedSessionRegistry(FindByIndexNameSessionRepository sessionRepository) {
+        return new SpringSessionBackedSessionRegistry(sessionRepository);
     }
 
 }
