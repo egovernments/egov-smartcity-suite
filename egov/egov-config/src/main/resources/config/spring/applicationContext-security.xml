@@ -75,7 +75,7 @@
           class="org.springframework.security.web.authentication.session.ConcurrentSessionControlAuthenticationStrategy">
         <constructor-arg index="0" ref="springSessionBackedSessionRegistry"/>
         <property name="exceptionIfMaximumExceeded" value="false"/>
-        <property name="maximumSessions" value="1"/>
+        <property name="maximumSessions" value="${max.user.session}"/>
     </bean>
 
     <bean id="registerSessionAuthenticationStrategy"
