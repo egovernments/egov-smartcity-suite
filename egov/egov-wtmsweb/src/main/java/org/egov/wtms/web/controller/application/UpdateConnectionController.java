@@ -346,6 +346,7 @@ public class UpdateConnectionController extends GenericConnectionController {
         model.addAttribute("connectionCategories", connectionCategoryService.getAllActiveConnectionCategory());
         model.addAttribute("pipeSizes", pipeSizeService.getAllActivePipeSize());
         model.addAttribute("typeOfConnection", waterConnectionDetails.getApplicationType().getCode());
+        model.addAttribute("ownerPosition", waterConnectionDetails.getState().getOwnerPosition().getId());
         return "newconnection-edit";
     }
 
@@ -429,8 +430,16 @@ public class UpdateConnectionController extends GenericConnectionController {
 
     @RequestMapping(value = "/update/{applicationNumber}", method = RequestMethod.POST)
     public String update(@Valid @ModelAttribute WaterConnectionDetails waterConnectionDetails,
-            final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
+            final BindingResult resultBinder, @RequestParam("currentState") final String currentState,
+            final RedirectAttributes redirectAttributes, @RequestParam("ownerPosition") final String ownerPosition,
             final HttpServletRequest request, final Model model, @RequestParam("files") final MultipartFile[] files) {
+
+        if (APPLICATION_STATUS_DIGITALSIGNPENDING.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode()) ||
+                APPLICATION_STATUS_CLOSERDIGSIGNPENDING.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode()) ||
+                APPLICATION_STATUS_RECONNDIGSIGNPENDING.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode())
+                        && !waterConnectionDetails.getState().getValue().equals(currentState)
+                || waterConnectionDetails.getState().getOwnerPosition().getId() != Long.valueOf(ownerPosition))
+            throw new ValidationException("err.record.already.processed");
 
         String mode = "";
         String workFlowAction = "";
