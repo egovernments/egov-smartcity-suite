@@ -42,7 +42,6 @@ package org.egov.portal.web.controller.citizen;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.config.properties.ApplicationProperties;
-import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.portal.entity.CitizenInbox;
 import org.egov.portal.entity.PortalInboxUser;
@@ -57,11 +56,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.List;
-
-import static org.egov.infra.web.utils.WebUtils.setUserLocale;
 
 @Controller
 @RequestMapping(value = "/home")
@@ -86,11 +81,8 @@ public class HomeController {
     private CityService cityService;
 
     @RequestMapping(method = RequestMethod.GET)
-    public String LoginForm(HttpServletRequest request, HttpServletResponse response, ModelMap modelData) {
-        User user = securityUtils.getCurrentUser();
-        setUserLocale(user, request, response);
+    public String showHomePage(ModelMap modelData) {
         return setupHomePage(modelData);
-
     }
 
     @RequestMapping(value = "/refreshInbox", method = RequestMethod.GET)

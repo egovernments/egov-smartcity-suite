@@ -107,9 +107,10 @@ public class ApplicationProperties {
     private static final String SEARCH_PORT = "elasticsearch.port";
     private static final String SEARCH_CLUSTER_NAME = "elasticsearch.cluster.name";
     private static final String CDN_URL = "cdn.domain.url";
-    private static final String SERVICES_USER_CREATE_URL = "egov.services.user.create.url";    
+    private static final String SERVICES_USER_CREATE_URL = "egov.services.user.create.url";
     private static final String STATE_WIDE_SCHEMA_NAME = "statewide.schema.name";
     private static final String SERVICES_WORKFLOW_URL = "egov.services.workflow.url";
+    private static final String EMPLOYEE_PORTAL_ACCESS_ROLE = "employee.portal.access.role";
 
     @Autowired
     private Environment environment;
@@ -314,8 +315,8 @@ public class ApplicationProperties {
     public String cdnURL() {
         return environment.getProperty(CDN_URL, EMPTY);
     }
-    
-    public String getCreateUserServiceUrl() { 
+
+    public String getCreateUserServiceUrl() {
         return environment.getProperty(SERVICES_USER_CREATE_URL);
     }
 
@@ -323,7 +324,11 @@ public class ApplicationProperties {
         return environment.getProperty(STATE_WIDE_SCHEMA_NAME);
     }
 
-    public  String getServicesWorkflowUrl() {
-        return environment.getProperty(SERVICES_WORKFLOW_URL); 
+    public String getServicesWorkflowUrl() {
+        return environment.getProperty(SERVICES_WORKFLOW_URL);
+    }
+
+    public String portalAccessibleRole() {
+        return environment.getProperty(EMPLOYEE_PORTAL_ACCESS_ROLE, EMPTY);
     }
 }

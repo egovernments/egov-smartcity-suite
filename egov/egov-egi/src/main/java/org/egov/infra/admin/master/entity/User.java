@@ -363,4 +363,9 @@ public class User extends AbstractAuditable {
     public void updateNextPwdExpiryDate(Integer passwordExpireInDays) {
         this.setPwdExpiryDate(new DateTime().plusDays(passwordExpireInDays).toDate());
     }
+
+    public boolean hasRole(String roleName) {
+        return roles.parallelStream().map(Role::getName)
+                .anyMatch(roleName::equals);
+    }
 }

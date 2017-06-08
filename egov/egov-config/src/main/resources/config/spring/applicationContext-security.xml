@@ -117,18 +117,9 @@
         <property name="useForward" value="false"/>
     </bean>
 
-    <bean id="authenticationSuccessHandler" class="org.egov.infra.security.authentication.AuthenticationSuccessHandler">
+    <bean id="authenticationSuccessHandler" class="org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler">
         <property name="alwaysUseDefaultTargetUrl" value="false"/>
         <property name="defaultTargetUrl" value="/home"/>
-        <property name="roleTargetUrlMapping">
-            <map>
-                <entry key="EMPLOYEE" value="/home"/>
-                <entry key="SYSTEM" value="/home"/>
-                <entry key="CITIZEN" value="/../portal/home"/>
-                <entry key="BUSINESS" value="/../portal/home"/>
-                <entry key="CSC Operator" value="/home"/>
-            </map>
-        </property>
     </bean>
 
     <bean id="securityContextHolderAwareRequestFilter"
