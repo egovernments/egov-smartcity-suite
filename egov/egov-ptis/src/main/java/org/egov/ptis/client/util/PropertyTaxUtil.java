@@ -537,7 +537,7 @@ public class PropertyTaxUtil {
                 instReasonMap.put(key, dateTime.getMonthOfYear() + "/" + dateTime.getYear() + "-" + reasonMasterCode);
             }
         }
-        if (isRebatePeriodActive()) {
+        if (isRebatePeriodActive(new Date())) {
             final Installment currFirstHalf = currYearInstMap.get(CURRENTYEAR_FIRST_HALF);
             final DateTime dateTime = new DateTime(currFirstHalf.getInstallmentYear());
             key = getOrder(currFirstHalf.getInstallmentYear(), DEMAND_REASON_ORDER_MAP.get(DEMANDRSN_CODE_REBATE));
@@ -2420,12 +2420,11 @@ public class PropertyTaxUtil {
      *
      * @return
      */
-    public boolean isRebatePeriodActive() {
+    public boolean isRebatePeriodActive(Date date) {
         boolean isActive = false;
-        final Date today = new Date();
         final RebatePeriod rebatePeriod = rebatePeriodService.getRebateForCurrInstallment(propertyTaxCommonUtils
                 .getCurrentInstallment().getId());
-        if (rebatePeriod != null && today.before(rebatePeriod.getRebateDate()))
+        if (rebatePeriod != null && date.before(rebatePeriod.getRebateDate()))
             isActive = true;
         return isActive;
     }

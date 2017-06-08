@@ -148,7 +148,7 @@ public class CollectionApportioner {
         for (final EgBillDetails billDetail : billDetails) {
             final String glCode = billDetail.getGlcode();
             final ReceiptDetail receiptDetail = new ReceiptDetail();
-            receiptDetail.setPurpose(PURPOSE.OTHERS.toString());
+            receiptDetail.setPurpose(billDetail.getPurpose());
             receiptDetail.setOrdernumber(Long.valueOf(billDetail.getOrderNo()));
             receiptDetail.setDescription(billDetail.getDescription());
             receiptDetail.setIsActualDemand(true);

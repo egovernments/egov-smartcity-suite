@@ -529,7 +529,7 @@ public class PropertyTaxCollection extends TaxCollection {
         boolean isEligibleForCurrentRebate = false;
         final boolean isEligibleForAdvanceRebate = false;
 
-        if (propertyTaxUtil.isRebatePeriodActive())
+        if (propertyTaxUtil.isRebatePeriodActive(receiptDetails.get(0).getReceiptHeader().getReceiptDate()))
             isEligibleForCurrentRebate = true;
 
         final CollectionApportioner apportioner = new CollectionApportioner(isEligibleForCurrentRebate,
@@ -788,7 +788,7 @@ public class PropertyTaxCollection extends TaxCollection {
                 + billReferenceNumber + ", for Amount Paid :" + actualAmountPaid);
         boolean isEligibleForCurrentRebate = false;
         final boolean isEligibleForAdvanceRebate = false;
-        if (propertyTaxUtil.isRebatePeriodActive())
+        if (propertyTaxUtil.isRebatePeriodActive(receiptDetailList.get(0).getReceiptHeader().getReceiptDate()))
             isEligibleForCurrentRebate = true;
 
         final CollectionApportioner apportioner = new CollectionApportioner(isEligibleForCurrentRebate,
