@@ -67,6 +67,11 @@
         <constructor-arg name="sessionInformationExpiredStrategy">
             <bean class="org.springframework.security.web.session.SimpleRedirectSessionInformationExpiredStrategy">
                 <constructor-arg name="invalidSessionUrl" value="/login/secure?sessionExpired=1"/>
+                <constructor-arg name="redirectStrategy">
+                    <bean class="org.egov.infra.config.security.web.CustomRedirectStrategy">
+                        <property name="contextPath" value="/egi"/>
+                    </bean>
+                </constructor-arg>
             </bean>
         </constructor-arg>
     </bean>
