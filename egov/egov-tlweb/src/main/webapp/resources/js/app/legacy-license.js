@@ -39,6 +39,16 @@
  
 */
 $(document).ready(function() {
+	
+$("span.tradelicenceerror").each(function() {
+
+	if ($(this).html()) {
+		var validate = $(this).attr('id').split(".")[0];
+		$("*[name=" + validate + "]").focus();
+	}
+	return;
+
+})
 
 	 $('#startDate').change(function(){ 
 		 
@@ -117,8 +127,11 @@ function checkOldLicenseNumberUnique() {
 		cache : false,
 		dataType : "json",
 		success : function(response) {
-			if (response)
+			if (response){
 				bootbox.alert("Old License Number is Existing");
+				$('#oldLicenseNumber').val('');
+				return false;
+			}
 			else
 				return true;
 		}
@@ -302,7 +315,7 @@ function feedetails_checked(){
 
 function formsubmit() {
 	/* submit the form */
-	toggleFields(false, "");
+//	toggleFields(false, "");
 	$("#legacyLicenseForm").submit();
 }
 

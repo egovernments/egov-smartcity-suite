@@ -50,19 +50,6 @@
 <div id="enterLicense_error" class="error-msg" style="display: none;"></div>
 <div class="row">
 	<div class="col-md-12">
-		<div class="text-right error-msg" style="font-size: 14px;">
-			<spring:message code="dateofapplication.lbl" />
-			:
-			<fmt:formatDate type="date" value="${now}" pattern="dd/MM/yyyy" />
-		</div>
-		<c:if test="${tradeLicense.applicationNumber!=null}">
-			<div class="text-right error-msg" style="font-size: 14px;">
-				<spring:message code="license.applicationnumber" />
-				:
-				<c:out value="${tradeLicense.applicationNumber}" />
-			</div>
-		</c:if>
-
 		<form:form role="form" action="" modelAttribute="tradeLicense"
 			id="legacyLicenseForm" method="POST"
 			class="form-horizontal form-groups-bordered"
@@ -93,17 +80,31 @@
 
 				<div class="panel-body custom-form">
 					<div class="tab-content">
-						<div class="tab-pane fade active in" id="tradedetails">
-
+						<div class="tab-pane fade active in" id="tradedetails"><br/>
+							<div class="form-group add-margin">
+								<label class="col-sm-3 control-label text-right">
+									<spring:message code='license.applicationnumber' />
+								</label>
+								<div class="col-xs-3 add-margin view-content">
+									<c:out value="${tradeLicense.applicationNumber}" />
+								</div>
+								<label class="col-sm-2 control-label text-right">
+									<spring:message code='dateofapplication.lbl' />
+								</label>
+								<div class="col-xs-3 add-margin view-content">
+									<fmt:formatDate type="date" value="${now}" pattern="dd/MM/yyyy" />
+								</div>
+							</div><br/>
+							
 							<div class="form-group">
 								<label class="col-sm-3 control-label text-right"><spring:message
 										code='license.oldlicensenum' /><span class="mandatory"></span></label>
 								<div class="col-sm-3 add-margin">
 									<form:input type="text" path="oldLicenseNumber"
-										id="oldLicenseNumber" value="${oldLicenseNumber}"
-										class="form-control typeahead" placeholder=""
-										autocomplete="off" maxlength="50" required="true"
-										Class="form-control patternvalidation" readonly="true" />
+												id="oldLicenseNumber" value="${oldLicenseNumber}"
+												class="form-control typeahead" placeholder=""
+												autocomplete="off" maxlength="50" required="true"
+												Class="form-control patternvalidation" readonly="true" />
 								</div>
 							</div>
 							
@@ -124,61 +125,66 @@
 										<tr>
 											<th><spring:message code='license.fin.year' /></th>
 											<th><spring:message code='lbl.amount' /></th>
-											<th class="text-center"><spring:message
-													code='license.fee.paid.y.n' /></th>
+											<th class="text-center">
+											<spring:message code='license.fee.paid.y.n' /></th>
 										</tr>
 									</thead>
 									<tbody>
 										<c:set value="" var="startfinyear" />
 										<c:forEach items="${legacyInstallmentwiseFees}" var="LIFee"
-											varStatus="stat">
+												   varStatus="stat">
 											<tr>
-												<c:set
-													value="${fn:substring(LIFee.key,0, 4)}-${fn:substring(LIFee.key,2, 4)+1}"
+												<c:set value="${fn:substring(LIFee.key,0, 4)}-${fn:substring(LIFee.key,2, 4)+1}"
 													var="finyear" />
 
 												<c:if test="${stat.index == 0}">
 													<c:set value="${finyear}" var="startfinyear" />
 												</c:if>
-												<c:forEach items="${legacyFeePayStatus}" var="status"
-													varStatus="check">
-													<c:if test="${stat.index==check.index}">
-														<c:set value="${status.value}" var="checkbox">
-														</c:set>
-													</c:if>
-												</c:forEach>
 												<input type="hidden" name="financialyear[${stat.index}]"
-													value="${LIFee.key}">
+														value="${LIFee.key}">
 												<td><input type="text" class="form-control feeyear"
-													readonly="readonly" value="${finyear}" tabindex="-1" /></td>
+														   readonly="readonly" value="${finyear}" tabindex="-1" /></td>
 												<td><input type="text"
-													name="legacyInstallmentwiseFees[${stat.index}]"
-													id="amountpaid"
-													class="form-control patternvalidation feeamount"
-													value="${LIFee.value}" data-pattern="number"
-													<c:if test="${stat.index > 5}">
-                                                            readonly="readonly"
-													</c:if>/>
+															name="legacyInstallmentwiseFees[${stat.index}]"
+															id="amountpaid"
+															class="form-control patternvalidation feeamount"
+															value="${LIFee.value}" data-pattern="number" maxlength="7"
+															<c:if test="${stat.last}">
+		                                                            readonly="readonly"
+															</c:if>/>
 												</td>
-												<td><input type="checkbox"
-													name="legacyFeePayStatus[${stat.index}]" class="case"
-													id="feestatus" value="${legacyFeePayStatus}"
-													<c:if test="${checkbox}">
-													 checked="checked"</c:if> />
-												</td>
+												<c:forEach items="${legacyFeePayStatus}"
+																 begin="${stat.index}" 
+																 end="${stat.index}" 
+																 var="status"
+																 varStatus="check">
+												<td class="text-center">
+													<input type="checkbox"
+														   name="legacyFeePayStatus[${stat.index}]" 
+														   class="case"
+														   id="feestatus" 
+														   value="true"
+															<c:if test="${status.value==true}">
+															 checked="checked"</c:if> 
+															<c:if test="${stat.last}">
+	                                                        			readonly="readonly"
+	                                                        			onclick="return false;"
+															</c:if>/>
+												</td></c:forEach>
 											</tr>
 										</c:forEach>
 									</tbody>
 									<tfoot>
 										<tr>
-											<td class="error-msg" colspan="3"><spring:message
-													code="license.legacy.info" arguments="${startfinyear}">
-												</spring:message></td>
+											<td class="error-msg" colspan="3">
+												<spring:message code="license.legacy.info" 
+																arguments="${startfinyear}">
+												</spring:message>
+											</td>
 										</tr>
 									</tfoot>
 								</table>
 							</div>
-
 						</div>
 						<div class="tab-pane fade" id="tradeattachments">
 							<div>
@@ -196,7 +202,6 @@
 						onclick="window.close();"><spring:message code="lbl.close"/></button>
 				</div>
 			</div>
-			</push>
 		</form:form>
 	</div>
 </div>
