@@ -71,13 +71,14 @@ public class FinancialsBudgetDetailResponse {
     private String majorCode = StringUtils.EMPTY;
     private String minorCode = StringUtils.EMPTY;
     private String detailedCode = StringUtils.EMPTY;
+    private BigDecimal budgetApprovedAmount = BigDecimal.ZERO;
     private BigDecimal reAppropriationAmount = BigDecimal.ZERO;
-    private BigDecimal totalBudget = BigDecimal.ZERO;
+    private BigDecimal allocatedBudget = BigDecimal.ZERO;
     private BigDecimal actualAmount = BigDecimal.ZERO;
     private BigDecimal previouYearActualAmount = BigDecimal.ZERO;
     private BigDecimal committedExpenditure = BigDecimal.ZERO;
     private BigDecimal budgetVariance = BigDecimal.ZERO;
-    private BigDecimal budgetApprovedAmount = BigDecimal.ZERO;
+
 
     public String getRegion() {
         return region;
@@ -231,12 +232,12 @@ public class FinancialsBudgetDetailResponse {
         this.reAppropriationAmount = reAppropriationAmount;
     }
 
-    public BigDecimal getTotalBudget() {
-        return totalBudget;
+    public BigDecimal getAllocatedBudget() {
+        return allocatedBudget;
     }
 
-    public void setTotalBudget(final BigDecimal totalBudget) {
-        this.totalBudget = totalBudget;
+    public void setAllocatedBudget(BigDecimal allocatedBudget) {
+        this.allocatedBudget = allocatedBudget;
     }
 
     public BigDecimal getActualAmount() {

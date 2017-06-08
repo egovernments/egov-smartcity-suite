@@ -678,9 +678,9 @@ public class FinancialsDashboardService {
             financialsDetail.setMinorCode(financialsDetailsRequest.getMinorCode());
 
     }
-    
+
     public List<FinancialsBudgetDetailResponse> getBudgetData(FinancialsDetailsRequest financialsDetailsRequest,
-            BoolQueryBuilder boolQuery, String aggrField) {
+                                                              BoolQueryBuilder boolQuery, String aggrField) {
 
         List<FinancialsBudgetDetailResponse> budgetDetailResponses = new ArrayList<>();
         SearchResponse finSearchResponse = getResponseFromIndex(boolQuery, aggrField);
@@ -700,6 +700,8 @@ public class FinancialsDashboardService {
     private FinancialsBudgetDetailResponse populateBudgetDetailResponse(String aggrField, final Terms.Bucket entry) {
         FinancialsBudgetDetailResponse financialsBudgetDetailResponse = new FinancialsBudgetDetailResponse();
 
+        final Sum aggrBudgetApprovedAmount = entry.getAggregations().get(FinancialConstants.BUDGETAPPROVEDAMOUNT);
+        final Sum aggrReAppropriationAmount = entry.getAggregations().get(FinancialConstants.REAPPROPRIATIONAMOUNT);
         final Sum aggrTotalBudget = entry.getAggregations().get(FinancialConstants.TOTALBUDGET);
         final Sum aggrActualAmount = entry.getAggregations().get(FinancialConstants.ACTUALAMOUNT);
         final Sum aggrPreviousYearActualAmount = entry.getAggregations().get(FinancialConstants.PREVIOUYEARACTUALAMOUNT);
@@ -707,7 +709,11 @@ public class FinancialsDashboardService {
         final Sum aggrBudgetVariance = entry.getAggregations().get(FinancialConstants.BUDGETVARIANCE);
         final TopHits topHits = entry.getAggregations().get("finRecordsBudget");
         financialsBudgetDetailResponse
-                .setTotalBudget(BigDecimal.valueOf(aggrTotalBudget.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+                .setBudgetApprovedAmount(BigDecimal.valueOf(aggrBudgetApprovedAmount.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+        financialsBudgetDetailResponse
+                .setReAppropriationAmount(BigDecimal.valueOf(aggrReAppropriationAmount.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+        financialsBudgetDetailResponse
+                .setAllocatedBudget(BigDecimal.valueOf(aggrTotalBudget.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
         financialsBudgetDetailResponse
                 .setActualAmount(BigDecimal.valueOf(aggrActualAmount.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
         financialsBudgetDetailResponse.setPreviouYearActualAmount(
@@ -722,10 +728,14 @@ public class FinancialsDashboardService {
         return financialsBudgetDetailResponse;
     }
 
-    public SearchResponse getResponseFromIndex(BoolQueryBuilder boolQuery, String aggrField) {
+    private SearchResponse getResponseFromIndex(BoolQueryBuilder boolQuery, String aggrField) {
         return elasticsearchTemplate.getClient()
                 .prepareSearch(FinancialConstants.FINANCIAL_BUDGET_INDEX_DATA).setQuery(boolQuery)
                 .addAggregation(AggregationBuilders.terms(AGGRFIELD).field(aggrField)
+                        .subAggregation(
+                                AggregationBuilders.sum(FinancialConstants.BUDGETAPPROVEDAMOUNT).field(FinancialConstants.BUDGETAPPROVEDAMOUNT))
+                        .subAggregation(
+                                AggregationBuilders.sum(FinancialConstants.REAPPROPRIATIONAMOUNT).field(FinancialConstants.REAPPROPRIATIONAMOUNT))
                         .subAggregation(
                                 AggregationBuilders.sum(FinancialConstants.TOTALBUDGET).field(FinancialConstants.TOTALBUDGET))
                         .subAggregation(
@@ -758,7 +768,7 @@ public class FinancialsDashboardService {
     }
 
     private void setFinancialsDetailsForBudget(final FinancialsDetailsRequest financialsDetailsRequest,
-            final FinancialsBudgetDetailResponse budgetDetailResponse) {
+                                               final FinancialsBudgetDetailResponse budgetDetailResponse) {
 
         populateHeaderDataToResponse(financialsDetailsRequest, budgetDetailResponse);
 
@@ -781,7 +791,7 @@ public class FinancialsDashboardService {
     }
 
     private void populateHeaderDataToResponse(final FinancialsDetailsRequest financialsDetailsRequest,
-            final FinancialsBudgetDetailResponse budgetDetailResponse) {
+                                              final FinancialsBudgetDetailResponse budgetDetailResponse) {
         if (StringUtils.isNotBlank(financialsDetailsRequest.getRegion()))
             budgetDetailResponse.setRegion(financialsDetailsRequest.getRegion());
 
@@ -790,7 +800,7 @@ public class FinancialsDashboardService {
     }
 
     private void populateFinancialDataToResponse(final FinancialsDetailsRequest financialsDetailsRequest,
-            final FinancialsBudgetDetailResponse budgetDetailResponse) {
+                                                 final FinancialsBudgetDetailResponse budgetDetailResponse) {
         if (StringUtils.isNotBlank(financialsDetailsRequest.getFundSource()))
             budgetDetailResponse.setFundSource(financialsDetailsRequest.getFundSource());
 
@@ -805,7 +815,7 @@ public class FinancialsDashboardService {
     }
 
     private void populateCOAToResponse(final FinancialsDetailsRequest financialsDetailsRequest,
-            final FinancialsBudgetDetailResponse budgetDetailResponse) {
+                                       final FinancialsBudgetDetailResponse budgetDetailResponse) {
         if (StringUtils.isNotBlank(financialsDetailsRequest.getDetailedCode()))
             budgetDetailResponse.setDetailedCode(financialsDetailsRequest.getDetailedCode());
 

@@ -381,6 +381,8 @@ public interface FinancialConstants {
     public static final String SCHEME_NAME = "schemeName";
     public static final String SUBSCHEME_NAME = "subSchemeName";
 
+    public static final String BUDGETAPPROVEDAMOUNT = "budgetapprovedamount";
+    public static final String REAPPROPRIATIONAMOUNT = "reappropriationamount";
     public static final String TOTALBUDGET = "totalbudget";
     public static final String ACTUALAMOUNT = "actualamount";
     public static final String PREVIOUYEARACTUALAMOUNT = "previouyearactualamount";
