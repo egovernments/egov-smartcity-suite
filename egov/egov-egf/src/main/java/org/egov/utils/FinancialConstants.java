@@ -335,6 +335,8 @@ public interface FinancialConstants {
     public static final String WORKFLOW_STATE_CANCELLED = "Cancelled";
     public static final String WORKFLOW_STATE_CREATED = "Created";
 
+    
+    public static final String WF_STATE_FINAL_APPROVAL_PENDING = "Final Approval Pending";
     public static final String WF_STATE_EOA_Approval_Pending = "EOA Approval Pending";
     public static final String WF_STATE_COMM_Approval_Pending = "Commissioner Approval Pending";
 
