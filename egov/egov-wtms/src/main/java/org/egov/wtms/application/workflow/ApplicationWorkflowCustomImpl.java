@@ -291,7 +291,7 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                     wfmatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails.getStateType(), null, null,
                             additionalRule, null, null);
                 if (wfmatrix != null && !wfmatrix.getNextAction().equalsIgnoreCase("END"))
-                    waterConnectionDetails.transition().progressWithStateCopy()
+                    waterConnectionDetails.transition().reopen()
                             .withSenderName(user.getUsername() + "::" + user.getName())
                             .withComments(approvalComent).withStateValue(wfmatrix.getNextState())
                             .withDateInfo(currentDate.toDate()).withOwner(pos).withNextAction(wfmatrix.getNextAction())
