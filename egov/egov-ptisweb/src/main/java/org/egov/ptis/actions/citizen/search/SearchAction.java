@@ -67,6 +67,7 @@ import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyMaterlizeView;
 import org.egov.ptis.domain.service.property.PropertyService;
+import org.egov.ptis.domain.service.property.RebateService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.opensymphony.xwork2.validator.annotations.Validations;
@@ -107,6 +108,8 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
     private PropertyService propertyService;
     @Autowired
     private PropertyTaxUtil propertyTaxUtil;
+    @Autowired
+    private RebateService rebateService;
 
     @Override
     public Object getModel() {
@@ -265,7 +268,7 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
     public BigDecimal calculateRebateAmount(final BigDecimal currentFirstHalfDemand, final BigDecimal currentSecondHalfDemand) {
         final BigDecimal tax = (currentFirstHalfDemand == null ? ZERO : currentFirstHalfDemand)
                 .add(currentSecondHalfDemand == null ? ZERO : currentSecondHalfDemand);
-        return propertyService.calculateEarlyPayRebate(tax);
+        return rebateService.calculateEarlyPayRebate(tax);
     }
 
     public BigDecimal getCurrFirstHalfDemand(final BigDecimal aggrCurrFirstHalfDmd) {

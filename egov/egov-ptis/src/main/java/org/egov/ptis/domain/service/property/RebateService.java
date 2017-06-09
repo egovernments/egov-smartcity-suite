@@ -44,7 +44,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.BIGDECIMAL_100;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import org.egov.commons.Installment;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.RebatePeriod;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
@@ -67,20 +66,20 @@ public class RebateService {
     private RebatePeriodService rebatePeriodService;
 
     public BigDecimal calculateEarlyPayRebate(final BigDecimal tax) {
-        if (isEarlyPayRebateActive())
+        if (isEarlyPayRebateActive(new Date()))
             return tax.multiply(PropertyTaxConstants.ADVANCE_REBATE_PERCENTAGE).divide(BIGDECIMAL_100).setScale(0,
                     BigDecimal.ROUND_HALF_UP);
         else
             return BigDecimal.ZERO;
     }
 
-    public boolean isEarlyPayRebateActive() {
-        boolean value = false;
-        final Installment currentInstallment = propertyTaxCommonUtils.getCurrentInstallment();
-        final RebatePeriod rebatePeriod = rebatePeriodService.getRebateForCurrInstallment(currentInstallment.getId());
-        if (rebatePeriod != null && rebatePeriod.getRebateDate().compareTo(new Date()) > 0)
-            value = true;
-        return value;
+    public boolean isEarlyPayRebateActive(Date date) {
+        boolean isActive = false;
+        Date today = date != null ? date : new Date();
+        final RebatePeriod rebatePeriod = rebatePeriodService.getRebateForCurrInstallment(propertyTaxCommonUtils
+                .getCurrentInstallment().getId());
+        if (rebatePeriod != null && today.before(rebatePeriod.getRebateDate()))
+            isActive = true;
+        return isActive;
     }
-
 }

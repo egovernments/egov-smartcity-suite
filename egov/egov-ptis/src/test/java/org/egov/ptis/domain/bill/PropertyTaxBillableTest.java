@@ -206,7 +206,7 @@ public class PropertyTaxBillableTest {
         when(ptDemandDAO.getNonHistoryCurrDmdForProperty(Matchers.any())).thenReturn(egDemand);
         when(penaltyCalculationService.getInstallmentDemandAndCollection(Matchers.any(),Matchers.any())).thenReturn(installmentDemandAndCollection);
         when(installmentDao.getInsatllmentByModuleForGivenDate(Matchers.any(),Matchers.any())).thenReturn(currentInstallment);
-        when(rebateService.isEarlyPayRebateActive()).thenReturn(false);
+        when(rebateService.isEarlyPayRebateActive(new Date())).thenReturn(false);
         
         installmentPenaltyAndRebate = billable.getCalculatedPenalty();
         if (installmentPenaltyAndRebate != null && !installmentPenaltyAndRebate.isEmpty()) {
@@ -253,7 +253,7 @@ public class PropertyTaxBillableTest {
         egDemand.setEgInstallmentMaster(currentInstallment);
         when(ptDemandDAO.getNonHistoryCurrDmdForProperty(Matchers.any())).thenReturn(egDemand);
         when(penaltyCalculationService.getInstallmentDemandAndCollection(Matchers.any(),Matchers.any())).thenReturn(installmentDemandAndCollection);
-        when(rebateService.isEarlyPayRebateActive()).thenReturn(false);
+        when(rebateService.isEarlyPayRebateActive(new Date())).thenReturn(false);
         
         installmentPenaltyAndRebate = billable.getCalculatedPenalty();
         //assertTrue(!installmentPenaltyAndRebate.isEmpty());

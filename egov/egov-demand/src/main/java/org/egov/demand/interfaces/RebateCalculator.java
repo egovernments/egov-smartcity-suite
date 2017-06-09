@@ -41,6 +41,7 @@
 package org.egov.demand.interfaces;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 public interface RebateCalculator {
 
@@ -58,5 +59,5 @@ public interface RebateCalculator {
      *
      * @return boolean value
      */
-    public boolean isEarlyPayRebateActive();
+    public boolean isEarlyPayRebateActive(Date date);
 }

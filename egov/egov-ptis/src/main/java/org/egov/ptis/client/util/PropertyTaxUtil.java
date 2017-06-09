@@ -206,7 +206,6 @@ import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.domain.entity.property.PropertyStatusValues;
 import org.egov.ptis.domain.entity.property.PtApplicationType;
-import org.egov.ptis.domain.entity.property.RebatePeriod;
 import org.egov.ptis.domain.entity.property.VacancyRemission;
 import org.egov.ptis.domain.entity.property.VacancyRemissionDetails;
 import org.egov.ptis.domain.entity.property.WorkflowBean;
@@ -215,6 +214,7 @@ import org.egov.ptis.domain.model.calculator.MiscellaneousTaxDetail;
 import org.egov.ptis.domain.model.calculator.TaxCalculationInfo;
 import org.egov.ptis.domain.model.calculator.UnitTaxCalculationInfo;
 import org.egov.ptis.domain.service.property.RebatePeriodService;
+import org.egov.ptis.domain.service.property.RebateService;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.egov.ptis.wtms.ConsumerConsumption;
 import org.egov.ptis.wtms.PropertyWiseConsumptions;
@@ -296,6 +296,8 @@ public class PropertyTaxUtil {
     private ApplicationNumberGenerator applicationNumberGenerator;
     @PersistenceContext
     private EntityManager entityManager;
+    @Autowired
+    private RebateService rebateService;
 
     private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
@@ -537,7 +539,7 @@ public class PropertyTaxUtil {
                 instReasonMap.put(key, dateTime.getMonthOfYear() + "/" + dateTime.getYear() + "-" + reasonMasterCode);
             }
         }
-        if (isRebatePeriodActive(new Date())) {
+        if (rebateService.isEarlyPayRebateActive(new Date())) {
             final Installment currFirstHalf = currYearInstMap.get(CURRENTYEAR_FIRST_HALF);
             final DateTime dateTime = new DateTime(currFirstHalf.getInstallmentYear());
             key = getOrder(currFirstHalf.getInstallmentYear(), DEMAND_REASON_ORDER_MAP.get(DEMANDRSN_CODE_REBATE));
@@ -2413,20 +2415,6 @@ public class PropertyTaxUtil {
         currYearInstMap.put(CURRENTYEAR_FIRST_HALF, installments.get(0));
         currYearInstMap.put(CURRENTYEAR_SECOND_HALF, installments.get(1));
         return currYearInstMap;
-    }
-
-    /**
-     * Checks if we are within a rebate period.
-     *
-     * @return
-     */
-    public boolean isRebatePeriodActive(Date date) {
-        boolean isActive = false;
-        final RebatePeriod rebatePeriod = rebatePeriodService.getRebateForCurrInstallment(propertyTaxCommonUtils
-                .getCurrentInstallment().getId());
-        if (rebatePeriod != null && date.before(rebatePeriod.getRebateDate()))
-            isActive = true;
-        return isActive;
     }
 
     public Date getEffectiveDateForProperty() {

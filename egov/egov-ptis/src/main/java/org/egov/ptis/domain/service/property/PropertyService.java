@@ -347,8 +347,6 @@ public class PropertyService {
     
     @Autowired
     private PortalInboxService portalInboxService;
-    @Autowired 
-    private RebateService rebateService;
        
     /**
      * Creates a new property if property is in transient state else updates persisted property
@@ -3860,7 +3858,4 @@ public class PropertyService {
         return "CLOSED".equalsIgnoreCase(property.getState().getValue());
     }
 
-    public BigDecimal calculateEarlyPayRebate(BigDecimal tax) {
-            return rebateService.calculateEarlyPayRebate(tax);
-    }
 }

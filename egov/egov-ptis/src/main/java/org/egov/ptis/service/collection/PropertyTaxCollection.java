@@ -112,14 +112,14 @@ import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.property.Property;
+import org.egov.ptis.domain.service.property.RebateService;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * This class is used to persist Collections .This is used for the integration
- * of Collections and Bills and property tax.
+ * This class is used to persist Collections .This is used for the integration of Collections and Bills and property tax.
  */
 @Transactional
 public class PropertyTaxCollection extends TaxCollection {
@@ -160,9 +160,12 @@ public class PropertyTaxCollection extends TaxCollection {
 
     @Autowired
     private CollectionIntegrationService collectionService;
-    
+
     @Autowired
     private EgDemandDetailsDao demanddetailsDao;
+
+    @Autowired
+    private RebateService rebateService;
 
     @Override
     protected Module module() {
@@ -232,8 +235,7 @@ public class PropertyTaxCollection extends TaxCollection {
     }
 
     /**
-     * This method is invoked from Collections end when an event related to
-     * receipt in bill generation occurs.
+     * This method is invoked from Collections end when an event related to receipt in bill generation occurs.
      */
     @Override
     public void updateReceiptDetails(final Set<BillReceiptInfo> billReceipts) {
@@ -280,8 +282,7 @@ public class PropertyTaxCollection extends TaxCollection {
     }
 
     /**
-     * Deducts the collected amounts as per the amount of the bounced cheque,
-     * and also imposes a cheque-bounce penalty.
+     * Deducts the collected amounts as per the amount of the bounced cheque, and also imposes a cheque-bounce penalty.
      */
     private void updateCollForChequeBounce(final EgDemand demand, final BillReceiptInfo billRcptInfo) {
         LOGGER.debug("reconcileCollForChequeBounce : Updating Collection Started For Demand : " + demand
@@ -327,19 +328,17 @@ public class PropertyTaxCollection extends TaxCollection {
             final EgDemand demand, final BillReceiptInfo billRcptInfo) {
         LOGGER.debug("Entering method saveCollectionDetails");
         BigDecimal rebateAmount = BigDecimal.ZERO;
-        for (final ReceiptAccountInfo accInfo : accountDetails) {
-            if (accInfo.getDescription() != null) {
-                if (accInfo.getDescription().contains("REBATE")) {
+        for (final ReceiptAccountInfo accInfo : accountDetails)
+            if (accInfo.getDescription() != null)
+                if (accInfo.getDescription().contains("REBATE"))
                     rebateAmount = accInfo.getDrAmount();
-                }
-            }
-        }
         LOGGER.info("saveCollectionDetails : Start get demandDetailList");
 
         final List<EgDemandDetails> demandDetailList = persistenceService.findAllBy(
                 "select dmdet FROM EgDemandDetails dmdet " + "left join fetch dmdet.egDemandReason dmdRsn "
                         + "left join fetch dmdRsn.egDemandReasonMaster dmdRsnMstr "
-                        + "left join fetch dmdRsn.egInstallmentMaster installment WHERE dmdet.egDemand = ?", demand);
+                        + "left join fetch dmdRsn.egInstallmentMaster installment WHERE dmdet.egDemand = ?",
+                demand);
 
         LOGGER.info("saveCollectionDetails : End get demandDetailList");
 
@@ -351,7 +350,7 @@ public class PropertyTaxCollection extends TaxCollection {
         Map<String, Installment> currInstallments = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
         for (final EgDemandDetails dmdDtls : demandDetailList)
             if (dmdDtls.getAmount().compareTo(BigDecimal.ZERO) > 0
-            		|| dmdDtls.getEgDemandReason().getEgDemandReasonMaster().getCode().equalsIgnoreCase(DEMANDRSN_CODE_ADVANCE)) {
+                    || dmdDtls.getEgDemandReason().getEgDemandReasonMaster().getCode().equalsIgnoreCase(DEMANDRSN_CODE_ADVANCE)) {
 
                 dmdRsn = dmdDtls.getEgDemandReason();
                 installmentDesc = dmdRsn.getEgInstallmentMaster().getDescription();
@@ -377,14 +376,14 @@ public class PropertyTaxCollection extends TaxCollection {
                     final String[] desc = rcptAccInfo.getDescription().split("-", 2);
                     final String reason = desc[0].trim();
                     final String instDesc = desc[1].trim();
-                    
-                    if (reason.equalsIgnoreCase(DEMANDRSN_STR_ADVANCE)) {
-						demandDetail = installmentWiseDemandDetailsByReason.get(currInstallments.get(CURRENTYEAR_SECOND_HALF).getDescription())
-								.get(reason);
-					} else {
-						demandDetail = installmentWiseDemandDetailsByReason.get(instDesc).get(reason);
-					}
-                    
+
+                    if (reason.equalsIgnoreCase(DEMANDRSN_STR_ADVANCE))
+                        demandDetail = installmentWiseDemandDetailsByReason
+                                .get(currInstallments.get(CURRENTYEAR_SECOND_HALF).getDescription())
+                                .get(reason);
+                    else
+                        demandDetail = installmentWiseDemandDetailsByReason.get(instDesc).get(reason);
+
                     if (rcptAccInfo.getGlCode().equalsIgnoreCase(PropertyTaxConstants.GLCODE_FOR_PENALTY)) {
 
                         if (demandDetail == null)
@@ -393,26 +392,28 @@ public class PropertyTaxCollection extends TaxCollection {
                         else
                             demandDetail.addCollected(rcptAccInfo.getCrAmount());
 
-                    } else if(rcptAccInfo.getGlCode().equalsIgnoreCase(PropertyTaxConstants.GLCODE_FOR_ADVANCE)){
-                    	if (demandDetail != null) {
-							demandDetail.setAmtCollected(demandDetail.getAmtCollected().add(rcptAccInfo.getCrAmount()));
-						} else {
-							demandDetail = insertAdvanceCollection(DEMANDRSN_CODE_ADVANCE,rcptAccInfo.getCrAmount(), 
-									currInstallments.get(CURRENTYEAR_SECOND_HALF));
+                    } else if (rcptAccInfo.getGlCode().equalsIgnoreCase(PropertyTaxConstants.GLCODE_FOR_ADVANCE)) {
+                        if (demandDetail != null)
+                            demandDetail.setAmtCollected(demandDetail.getAmtCollected().add(rcptAccInfo.getCrAmount()));
+                        else {
+                            demandDetail = insertAdvanceCollection(DEMANDRSN_CODE_ADVANCE, rcptAccInfo.getCrAmount(),
+                                    currInstallments.get(CURRENTYEAR_SECOND_HALF));
 
-							demand.addEgDemandDetails(demandDetail);
-							persistenceService.getSession().flush();
+                            demand.addEgDemandDetails(demandDetail);
+                            persistenceService.getSession().flush();
 
-							if (installmentWiseDemandDetailsByReason.get(currInstallments.get(CURRENTYEAR_SECOND_HALF).getDescription()) == null) {
-								Map<String, EgDemandDetails> reasonAndDemandDetail = new HashMap<String, EgDemandDetails>();
-								reasonAndDemandDetail.put(DEMANDRSN_STR_ADVANCE, demandDetail);
-								installmentWiseDemandDetailsByReason.put(currInstallments.get(CURRENTYEAR_SECOND_HALF).getDescription(),
-										reasonAndDemandDetail);
-							} else {
-								installmentWiseDemandDetailsByReason.get(currInstallments.get(CURRENTYEAR_SECOND_HALF).getDescription()).put(
-										DEMANDRSN_STR_ADVANCE, demandDetail);
-							}
-						}
+                            if (installmentWiseDemandDetailsByReason
+                                    .get(currInstallments.get(CURRENTYEAR_SECOND_HALF).getDescription()) == null) {
+                                final Map<String, EgDemandDetails> reasonAndDemandDetail = new HashMap<String, EgDemandDetails>();
+                                reasonAndDemandDetail.put(DEMANDRSN_STR_ADVANCE, demandDetail);
+                                installmentWiseDemandDetailsByReason.put(
+                                        currInstallments.get(CURRENTYEAR_SECOND_HALF).getDescription(),
+                                        reasonAndDemandDetail);
+                            } else
+                                installmentWiseDemandDetailsByReason
+                                        .get(currInstallments.get(CURRENTYEAR_SECOND_HALF).getDescription()).put(
+                                                DEMANDRSN_STR_ADVANCE, demandDetail);
+                        }
                     } else {
                         demandDetail.addCollectedWithOnePaisaTolerance(rcptAccInfo.getCrAmount());
                         if (rebateAmount.compareTo(BigDecimal.ZERO) > 0
@@ -421,8 +422,8 @@ public class PropertyTaxCollection extends TaxCollection {
                                         .equals(DEMANDRSN_CODE_GENERAL_TAX)
                                         || demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
                                                 .equals(DEMANDRSN_CODE_VACANT_TAX))) {
-                                demandDetail.setAmtRebate(rebateAmount);
-                                rebateAmount = BigDecimal.ZERO;
+                            demandDetail.setAmtRebate(rebateAmount);
+                            rebateAmount = BigDecimal.ZERO;
                         }
                     }
 
@@ -432,24 +433,25 @@ public class PropertyTaxCollection extends TaxCollection {
                             + instDesc + " with receipt No : " + billRcptInfo.getReceiptNum() + " for Rs. "
                             + rcptAccInfo.getCrAmount());
                 }
-        if(rebateAmount.compareTo(BigDecimal.ZERO) > 0){
+        if (rebateAmount.compareTo(BigDecimal.ZERO) > 0) {
             demandDetail = installmentWiseDemandDetailsByReason.get(currInstallments.get(CURRENTYEAR_FIRST_HALF).getDescription())
                     .get(PropertyTaxConstants.DEMANDRSN_STR_GENERAL_TAX);
-            if(demandDetail == null)
-                demandDetail = installmentWiseDemandDetailsByReason.get(currInstallments.get(CURRENTYEAR_FIRST_HALF).getDescription())
-                    .get(PropertyTaxConstants.DEMANDRSN_STR_VACANT_TAX);
+            if (demandDetail == null)
+                demandDetail = installmentWiseDemandDetailsByReason
+                        .get(currInstallments.get(CURRENTYEAR_FIRST_HALF).getDescription())
+                        .get(PropertyTaxConstants.DEMANDRSN_STR_VACANT_TAX);
             demandDetail.setAmtRebate(rebateAmount);
             demanddetailsDao.update(demandDetail);
-           LOGGER.info("Persisted demand and receipt details for 2nd half tax : " + demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode() 
+            LOGGER.info("Persisted demand and receipt details for 2nd half tax : "
+                    + demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
                     + rebateAmount);
         }
-        
+
         LOGGER.debug("Exiting method saveCollectionDetails");
     }
 
     /**
-     * Reconciles the collection for respective account heads thats been paid
-     * with given cancel receipt
+     * Reconciles the collection for respective account heads thats been paid with given cancel receipt
      *
      * @param demand
      * @param billRcptInfo
@@ -458,7 +460,8 @@ public class PropertyTaxCollection extends TaxCollection {
         LOGGER.debug("Entering method updateDmdDetForRcptCancel");
         ReceiptAccountInfo rebateRcptAccInfo = null;
 
-        final Map<String, ReceiptAccountInfo> rebateReceiptAccInfoByInstallment = getRebteReceiptAccountInfosByInstallment(billRcptInfo);
+        final Map<String, ReceiptAccountInfo> rebateReceiptAccInfoByInstallment = getRebteReceiptAccountInfosByInstallment(
+                billRcptInfo);
 
         for (final ReceiptAccountInfo rcptAccInfo : billRcptInfo.getAccountDetails())
             if (rcptAccInfo.getCrAmount() != null && rcptAccInfo.getCrAmount().compareTo(BigDecimal.ZERO) == 1
@@ -529,7 +532,7 @@ public class PropertyTaxCollection extends TaxCollection {
         boolean isEligibleForCurrentRebate = false;
         final boolean isEligibleForAdvanceRebate = false;
 
-        if (propertyTaxUtil.isRebatePeriodActive(receiptDetails.get(0).getReceiptHeader().getReceiptDate()))
+        if (rebateService.isEarlyPayRebateActive(receiptDetails.get(0).getReceiptHeader().getReceiptDate()))
             isEligibleForCurrentRebate = true;
 
         final CollectionApportioner apportioner = new CollectionApportioner(isEligibleForCurrentRebate,
@@ -550,8 +553,7 @@ public class PropertyTaxCollection extends TaxCollection {
     /**
      * Calculates Early Payment Rebate for given Tax Amount
      *
-     * @param rebateApplTaxAmt
-     *            for which Rebate has to be calculated
+     * @param rebateApplTaxAmt for which Rebate has to be calculated
      * @return rebate amount.
      */
     public BigDecimal calcEarlyPayRebate(final BigDecimal instTaxAmount, final BigDecimal rebateApplTaxAmt,
@@ -603,8 +605,7 @@ public class PropertyTaxCollection extends TaxCollection {
     /**
      * Gives the tax amount of Account head for which Rebate applicable
      *
-     * @param List
-     *            of <code>ReceiptDetail</code>
+     * @param List of <code>ReceiptDetail</code>
      * @return rebate applicable tax amount.
      */
     public BigDecimal getRebateApplAmount(final List<ReceiptDetail> receiptDetails) {
@@ -612,9 +613,8 @@ public class PropertyTaxCollection extends TaxCollection {
         for (final ReceiptDetail rd : receiptDetails)
             if (rd.getAccounthead().getGlcode().equals(GLCODEMAP_FOR_CURRENTTAX.get(DEMANDRSN_CODE_GENERAL_TAX))) {
                 /*
-                 * getting rebate amount from getCramountToBePaid() because
-                 * before receipt created CrAmount is Zero and it will updated
-                 * as part of receipt creation.
+                 * getting rebate amount from getCramountToBePaid() because before receipt created CrAmount is Zero and it will
+                 * updated as part of receipt creation.
                  */
                 taxAmount = rd.getCramountToBePaid();
                 break;
@@ -661,8 +661,7 @@ public class PropertyTaxCollection extends TaxCollection {
     }
 
     /**
-     * Method used to calculate the Total Cheque amount from he BillreceiptInfo
-     * object which is received from Collections Module.
+     * Method used to calculate the Total Cheque amount from he BillreceiptInfo object which is received from Collections Module.
      *
      * @param billRcptInfo
      * @return Total Cheque amount
@@ -695,9 +694,8 @@ public class PropertyTaxCollection extends TaxCollection {
     }
 
     /**
-     * Method used to create new EgDemandDetail Object depending upon the
-     * EgDemandReason , Collected amount and Demand amount(which are
-     * compulsory),Other wise returns Empty EgDemandDetails Object.
+     * Method used to create new EgDemandDetail Object depending upon the EgDemandReason , Collected amount and Demand
+     * amount(which are compulsory),Other wise returns Empty EgDemandDetails Object.
      *
      * @param egDemandReason
      * @param amtCollected
@@ -788,7 +786,7 @@ public class PropertyTaxCollection extends TaxCollection {
                 + billReferenceNumber + ", for Amount Paid :" + actualAmountPaid);
         boolean isEligibleForCurrentRebate = false;
         final boolean isEligibleForAdvanceRebate = false;
-        if (propertyTaxUtil.isRebatePeriodActive(receiptDetailList.get(0).getReceiptHeader().getReceiptDate()))
+        if (rebateService.isEarlyPayRebateActive(receiptDetailList.get(0).getReceiptHeader().getReceiptDate()))
             isEligibleForCurrentRebate = true;
 
         final CollectionApportioner apportioner = new CollectionApportioner(isEligibleForCurrentRebate,
@@ -816,13 +814,13 @@ public class PropertyTaxCollection extends TaxCollection {
         final List<EgBillDetails> billDetails = new ArrayList<EgBillDetails>(egBill.getEgBillDetails());
         final List<ReceiptDetail> reciptDetailList = collectionService.getReceiptDetailListByReceiptNumber(billReceiptInfo
                 .getReceiptNum());
-        
+
         for (final ReceiptAccountInfo rcptAccInfo : billReceiptInfo.getAccountDetails())
             if (rcptAccInfo.getCrAmount() != null && rcptAccInfo.getCrAmount().compareTo(BigDecimal.ZERO) == 1) {
                 final String[] desc = rcptAccInfo.getDescription().split("-", 2);
                 final String reason = desc[0];
-                if ((rcptAccInfo.getPurpose().equals(PURPOSE.ARREAR_LATEPAYMENT_CHARGES.toString()) 
-                        || rcptAccInfo.getPurpose().equals(PURPOSE.CURRENT_LATEPAYMENT_CHARGES.toString())) 
+                if ((rcptAccInfo.getPurpose().equals(PURPOSE.ARREAR_LATEPAYMENT_CHARGES.toString())
+                        || rcptAccInfo.getPurpose().equals(PURPOSE.CURRENT_LATEPAYMENT_CHARGES.toString()))
                         && reason.equals(DEMANDRSN_STR_PENALTY_FINES))
                     latePaymentCharges = latePaymentCharges.add(rcptAccInfo.getCrAmount());
                 else if (rcptAccInfo.getPurpose().equals(PURPOSE.CURRENT_AMOUNT.toString())
@@ -850,18 +848,18 @@ public class PropertyTaxCollection extends TaxCollection {
             }
             if (billDetails.size() > 1)
                 if (billDet.getCrAmount().compareTo(BigDecimal.ZERO) == 1
-                        && reciptDetailList.get(0).getOrdernumber().equals(Long.valueOf(billDet.getOrderNo()))) {
+                        && reciptDetailList.get(0).getOrdernumber().equals(Long.valueOf(billDet.getOrderNo())))
                     receiptAmountInfo.setInstallmentTo(desc[1]);
-                }
         }
-        String revenueWard = (String) persistenceService.find("select bp.propertyID.ward.name from BasicPropertyImpl bp where bp.upicNo = ?",
+        String revenueWard = (String) persistenceService.find(
+                "select bp.propertyID.ward.name from BasicPropertyImpl bp where bp.upicNo = ?",
                 reciptDetailList.get(0).getReceiptHeader().getConsumerCode());
-        
+
         String courtCaseQuery = "select (case when exists (select assessmentno from egpt_courtcases where assessmentno=:assessmentNo) then 1 else 0 end)";
         final Query query = persistenceService.getSession().createSQLQuery(courtCaseQuery);
         query.setString("assessmentNo", reciptDetailList.get(0).getReceiptHeader().getConsumerCode());
         int courtcase = (int) query.uniqueResult();
-        
+
         receiptAmountInfo.setCurrentInstallmentAmount(currentInstallmentAmount);
         receiptAmountInfo.setLatePaymentCharges(latePaymentCharges);
         receiptAmountInfo.setArrearsAmount(arrearAmount);
