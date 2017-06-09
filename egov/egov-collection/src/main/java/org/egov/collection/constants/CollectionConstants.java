@@ -616,5 +616,7 @@ public final class CollectionConstants {
     public static final String QUERY_ACTIVE_BRANCHUSER_BY_USER = "QUERY_ACTIVE_BRANCHUSER_BY_USER";
     public static final String QUERY_BRANCHUSER_BRANCH = "QUERY_BRANCHUSER_BRANCH";
     public static final String QUERY_RECEIPT_BRANCH = "getAllReceiptBranch";
+    public static final String QUERY_ACTIVE_BRANCHUSER = "QUERY_ACTIVE_BRANCHUSER";
+    public static final String QUERY_ALL_BRANCHUSER = "QUERY_ALL_BRANCHUSER";
 
 }
