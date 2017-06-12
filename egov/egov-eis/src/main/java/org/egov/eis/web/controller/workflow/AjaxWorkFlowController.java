@@ -103,7 +103,62 @@ public class AjaxWorkFlowController {
         return designationList;
 
     }
+    
+    /**
+    *
+    * @param departmentRule
+    * @param currentState
+    * @param type
+    * @param amountRule
+    * @param additionalRule
+    * @param pendingAction
+    * @param approvalDepartment
+    * @return List of Designation
+    */
+   @RequestMapping(value = "/ajaxWorkFlow-getDesignationsForActiveAssignmentsByObjectType", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+   public @ResponseBody List<Designation> getDesignationsForActiveAssignmentsByObjectType(
+           @ModelAttribute("designations") @RequestParam final String departmentRule, @RequestParam final String currentState,
+           @RequestParam final String type,
+           @RequestParam final String amountRule, @RequestParam final String additionalRule,
+           @RequestParam final String pendingAction, @RequestParam final Long approvalDepartment) {
 
+       List<Designation> designationList = customizedWorkFlowService.getNextDesignationsForActiveAssignments(type,
+               departmentRule, null, additionalRule, currentState,
+               pendingAction, new Date());
+       if (designationList.isEmpty())
+           designationList = designationService.getAllDesignationByDepartment(approvalDepartment, new Date());
+       return designationList;
+
+   }
+
+   /**
+    * Temporary API to get next designations based on logged in user designation
+    * @param departmentRule
+    * @param currentState
+    * @param type
+    * @param amountRule
+    * @param additionalRule
+    * @param pendingAction
+    * @param approvalDepartment
+    * @return List of Designation
+    */
+   @RequestMapping(value = "/ajaxWorkFlow-getDesignationsForActiveAssignmentsByObjectTypeAndDesignation", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+   public @ResponseBody List<Designation> getDesignationsForActiveAssignmentsByObjectTypeAndDesignation(
+           @ModelAttribute("designations") @RequestParam final String departmentRule, @RequestParam final String currentState,
+           @RequestParam final String type,
+           @RequestParam final String amountRule, @RequestParam final String additionalRule,
+           @RequestParam final String pendingAction, @RequestParam final Long approvalDepartment,
+           @RequestParam final String currentDesignation) {
+
+       List<Designation> designationList = customizedWorkFlowService.getNextDesignationsForActiveAssignments(type,
+               departmentRule, null, additionalRule, currentState,
+               pendingAction, new Date(), currentDesignation);
+       if (designationList.isEmpty())
+           designationList = designationService.getAllDesignationByDepartment(approvalDepartment, new Date());
+       return designationList;
+
+   }
+   
     /**
      * Temporary API to get next designations based on logged in user designation
      * @param departmentRule

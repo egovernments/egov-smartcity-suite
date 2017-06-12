@@ -62,6 +62,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class CustomizedWorkFlowService {
 
     private static final String DESGQUERY = "getDesignationForListOfDesgNames";
+    private static final String DESGQUERYFORACTIVEASSIGNMENTS = "getDesignationForActiveAssignmentsByListOfDesgNames";
     @Autowired
     @Qualifier("entityQueryService")
     private PersistenceService entityQueryService;
@@ -69,6 +70,45 @@ public class CustomizedWorkFlowService {
     @Autowired
     @Qualifier("workflowService")
     private WorkflowService<? extends StateAware> workflowService;
+
+    public List<Designation> getNextDesignationsForActiveAssignments(final String type, final String department,
+            final BigDecimal businessRule,
+            final String additionalRule, final String currentState, final String pendingAction, final Date date) {
+
+        final WorkFlowMatrix wfMatrix = workflowService.getWfMatrix(type, department, businessRule, additionalRule, currentState,
+                pendingAction, date);
+        final List<String> designationNames = new ArrayList<String>();
+        if (wfMatrix != null && wfMatrix.getNextDesignation() != null) {
+            final List<String> tempDesignationName = Arrays.asList(wfMatrix.getNextDesignation().split(","));
+            for (final String desgName : tempDesignationName)
+                if (desgName != null && !"".equals(desgName.trim()))
+                    designationNames.add(desgName.toUpperCase());
+        }
+        List<Designation> designationList = Collections.EMPTY_LIST;
+        if (!designationNames.isEmpty())
+            designationList = entityQueryService.findAllByNamedQuery(DESGQUERYFORACTIVEASSIGNMENTS, designationNames);
+        return designationList;
+    }
+
+    public List<Designation> getNextDesignationsForActiveAssignments(final String type, final String department,
+            final BigDecimal businessRule,
+            final String additionalRule, final String currentState, final String pendingAction, final Date date,
+            final String designation) {
+
+        final WorkFlowMatrix wfMatrix = workflowService.getWfMatrix(type, department, businessRule, additionalRule, currentState,
+                pendingAction, date, designation);
+        final List<String> designationNames = new ArrayList<String>();
+        if (wfMatrix != null && wfMatrix.getNextDesignation() != null) {
+            final List<String> tempDesignationName = Arrays.asList(wfMatrix.getNextDesignation().split(","));
+            for (final String desgName : tempDesignationName)
+                if (desgName != null && !"".equals(desgName.trim()))
+                    designationNames.add(desgName.toUpperCase());
+        }
+        List<Designation> designationList = Collections.EMPTY_LIST;
+        if (!designationNames.isEmpty())
+            designationList = entityQueryService.findAllByNamedQuery(DESGQUERYFORACTIVEASSIGNMENTS, designationNames);
+        return designationList;
+    }
 
     public List<Designation> getNextDesignations(final String type, final String department, final BigDecimal businessRule,
             final String additionalRule, final String currentState, final String pendingAction, final Date date) {
@@ -130,13 +170,15 @@ public class CustomizedWorkFlowService {
             validActions = Arrays.asList(wfMatrix.getValidActions().split(","));
         return validActions;
     }
+
     public List<String> getNextValidActions(final String type, final String departmentName, final BigDecimal businessRule,
-            final String additionalRule, final String currentState, final String pendingAction, final Date date,final String currentDesignation) {
+            final String additionalRule, final String currentState, final String pendingAction, final Date date,
+            final String currentDesignation) {
 
         final WorkFlowMatrix wfMatrix = workflowService.getWfMatrix(type, departmentName, businessRule, additionalRule,
-                currentState, pendingAction, date,currentDesignation);
+                currentState, pendingAction, date, currentDesignation);
         List<String> validActions = Collections.EMPTY_LIST;
-        
+
         if (wfMatrix != null && wfMatrix.getValidActions() != null)
             validActions = Arrays.asList(wfMatrix.getValidActions().split(","));
         return validActions;
@@ -146,9 +188,12 @@ public class CustomizedWorkFlowService {
             final String additionalRule, final String currentState, final String pendingAction, final Date date) {
         return workflowService.getWfMatrix(type, department, businessRule, additionalRule, currentState, pendingAction, date);
     }
+
     public WorkFlowMatrix getWfMatrix(final String type, final String department, final BigDecimal businessRule,
-            final String additionalRule, final String currentState, final String pendingAction, final Date date,final String currentDesignation) {
-        return workflowService.getWfMatrix(type, department, businessRule, additionalRule, currentState, pendingAction, date,currentDesignation);
+            final String additionalRule, final String currentState, final String pendingAction, final Date date,
+            final String currentDesignation) {
+        return workflowService.getWfMatrix(type, department, businessRule, additionalRule, currentState, pendingAction, date,
+                currentDesignation);
     }
 
     public WorkFlowMatrix getWfMatrix(final String type, final String department, final BigDecimal businessRule,
