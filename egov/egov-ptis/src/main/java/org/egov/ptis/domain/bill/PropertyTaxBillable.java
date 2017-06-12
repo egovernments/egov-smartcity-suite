@@ -100,12 +100,12 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
         RebateCalculator {
 
     private static final String STRING_DEPARTMENT_CODE = "REV";
-    
+
     private Boolean isCallbackForApportion = Boolean.TRUE;
     private LPPenaltyCalcType penaltyCalcType = SIMPLE;
     private Boolean mutationFeePayment = Boolean.FALSE;
     private Boolean vacantLandTaxPayment = Boolean.FALSE;
-    
+
     private BasicProperty basicProperty;
     private Long userId;
     private String referenceNumber;
@@ -119,7 +119,8 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
     private String mutationApplicationNo;
     private String transanctionReferenceNumber;
     private Boolean isNagarPanchayat;
-    
+    private Date receiptDate;
+
     @Autowired
     private EgDemandDao egDemandDAO;
     @Autowired
@@ -156,10 +157,12 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
     public Long getUserId() {
         return userId;
     }
+
     @Override
     public String getConsumerType() {
         return getBasicProperty().getProperty().getPropertyDetail().getPropertyTypeMaster().getType();
     }
+
     /*
      * (non-Javadoc)
      * @see org.egov.demand.interfaces.Billable#getBillAddres()
@@ -369,7 +372,7 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
     public void setCallbackForApportion(final Boolean b) {
         isCallbackForApportion = b;
     }
-    
+
     @Override
     public String getEmailId() {
         return getBasicProperty().getPrimaryOwner().getEmailId();
@@ -485,30 +488,30 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
             /*
              * calculating early payment rebate if rebate period active and there is no partial payment for current installment
              */
-            calculateRebate(installmentPenaltyAndRebate, instWiseDmdMap, currentDemand);
+            calculateRebate(installmentPenaltyAndRebate, instWiseDmdMap, currentDemand, receiptDate);
         }
 
         return installmentPenaltyAndRebate;
     }
 
     private void calculateRebate(final Map<Installment, PenaltyAndRebate> installmentPenaltyAndRebate,
-            final Map<Installment, BigDecimal> instWiseDmdMap,EgDemand currentDemand) {
-        if (isEarlyPayRebateActive(new Date())) {
-            BigDecimal rebateAmount=propertyTaxUtil.getRebateAmount(currentDemand);
+                                 final Map<Installment, BigDecimal> instWiseDmdMap, EgDemand currentDemand, Date receiptDate) {
+        if (isEarlyPayRebateActive(receiptDate != null ? receiptDate : new Date())) {
+            BigDecimal rebateAmount = propertyTaxUtil.getRebateAmount(currentDemand);
             Map<String, Installment> currInstallments = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
-                BigDecimal currentannualtax = instWiseDmdMap.get(currInstallments.get(CURRENTYEAR_FIRST_HALF)).add(
-                        instWiseDmdMap.get(currInstallments.get(CURRENTYEAR_SECOND_HALF)));
-                if (rebateAmount.compareTo(BigDecimal.ZERO) == 0) {
-                    if (installmentPenaltyAndRebate.get(currInstallments.get(CURRENTYEAR_FIRST_HALF)) != null) {
-                        installmentPenaltyAndRebate.get(currInstallments.get(CURRENTYEAR_FIRST_HALF)).setRebate(
-                                calculateEarlyPayRebate(currentannualtax));
-                    } else {
-                        PenaltyAndRebate currentpenaltyAndRebate = new PenaltyAndRebate();
-                        currentpenaltyAndRebate.setRebate(calculateEarlyPayRebate(currentannualtax));
-                        installmentPenaltyAndRebate.put(currInstallments.get(CURRENTYEAR_FIRST_HALF),
-                                currentpenaltyAndRebate);
-                    }
-             }
+            BigDecimal currentannualtax = instWiseDmdMap.get(currInstallments.get(CURRENTYEAR_FIRST_HALF)).add(
+                    instWiseDmdMap.get(currInstallments.get(CURRENTYEAR_SECOND_HALF)));
+            if (rebateAmount.compareTo(BigDecimal.ZERO) == 0) {
+                if (installmentPenaltyAndRebate.get(currInstallments.get(CURRENTYEAR_FIRST_HALF)) != null) {
+                    installmentPenaltyAndRebate.get(currInstallments.get(CURRENTYEAR_FIRST_HALF)).setRebate(
+                            calculateEarlyPayRebate(currentannualtax));
+                } else {
+                    PenaltyAndRebate currentpenaltyAndRebate = new PenaltyAndRebate();
+                    currentpenaltyAndRebate.setRebate(calculateEarlyPayRebate(currentannualtax));
+                    installmentPenaltyAndRebate.put(currInstallments.get(CURRENTYEAR_FIRST_HALF),
+                            currentpenaltyAndRebate);
+                }
+            }
         }
     }
 
@@ -585,7 +588,7 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
     public void setMutationFeePayment(final boolean mutationFeePayment) {
         this.mutationFeePayment = mutationFeePayment;
     }
-    
+
     public void setMutationApplicationNo(final String mutationApplicationNo) {
         this.mutationApplicationNo = mutationApplicationNo;
     }
@@ -606,7 +609,7 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
     public void setPenaltyCalculationService(PenaltyCalculationService penaltyCalculationService) {
         this.penaltyCalculationService = penaltyCalculationService;
     }
-    
+
     public void setRebateService(RebateService rebateService) {
         this.rebateService = rebateService;
     }
@@ -634,5 +637,12 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
     public void setVacantLandTaxPayment(final boolean vacantLandTaxPayment) {
         this.vacantLandTaxPayment = vacantLandTaxPayment;
     }
-    
+
+    public Date getReceiptDate() {
+        return receiptDate;
+    }
+
+    public void setReceiptDate(Date receiptDate) {
+        this.receiptDate = receiptDate;
+    }
 }

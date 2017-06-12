@@ -782,7 +782,7 @@ public class PropertyTaxCollection extends TaxCollection {
             final BigDecimal actualAmountPaid, final List<ReceiptDetail> receiptDetailList) {
         final Long billID = Long.valueOf(billReferenceNumber);
         final List<EgBillDetails> billDetails = new ArrayList<EgBillDetails>(0);
-        final EgBill bill = ptBillServiceImpl.updateBillWithLatest(billID);
+        final EgBill bill = ptBillServiceImpl.updateBillWithLatest(billID, receiptDetailList.get(0).getReceiptHeader().getReceiptDate());
         LOGGER.debug("Reconstruct consumer code :" + bill.getConsumerId() + ", with bill reference number: "
                 + billReferenceNumber + ", for Amount Paid :" + actualAmountPaid);
         boolean isEligibleForCurrentRebate = false;
