@@ -62,4 +62,8 @@ public interface UsageSlabRepository extends JpaRepository<UsageSlab, Long> {
     @Query("from UsageSlab u where u.usage=:usage and u.fromVolume<=:fromVolume and (u.toVolume<=:fromVolume or u.toVolume is null)")
     List<UsageSlab> getActiveSlabLessThanGivenFromVolume(@Param("usage") String usage,
             @Param("fromVolume") Long fromVolume);
+
+    @Query("from UsageSlab u where u.usage=:usage and u.fromVolume<=:noOfUnitsPerMonth and (u.toVolume>=:noOfUnitsPerMonth or u.toVolume is null ) and u.active=true")
+    UsageSlab getUsageSlabForWaterVolumeConsumed(@Param("usage") final String usage,
+            @Param("noOfUnitsPerMonth") final Long noOfUnitsPerMonth);
 }

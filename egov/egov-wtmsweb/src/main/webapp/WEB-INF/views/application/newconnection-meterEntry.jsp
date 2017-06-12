@@ -40,10 +40,10 @@
 
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
 <div class="row">
 	<div class="col-md-12">
@@ -86,61 +86,52 @@
 							<spring:message code="lbl.meterbasicdetails" />
 						</div>
 						<c:if test="${!currentInstallmentExist}">
-							<table id="meterDetailprevioussid">
-								<tr>
+							<label class="col-sm-2 control-label text-right"><spring:message
+									code="lbl.meterread.previous" /></label>
+							<div class="col-sm-3 add-margin">
+								<c:if test="${meterReadingpriviousObj!=null}">
+									<input class="form-control" type="text" id="previousreading"
+										name="previousreading"
+										value="${meterReadingpriviousObj.currentReading}" min="3"
+										maxlength="50" readonly="readonly" required="required" />
+								</c:if>
+							</div>
 
-									<td class="col-sm-3 table-div-column"><spring:message
-											code="lbl.meterread.previous" /></td>
-									<td class="col-sm-3 add-margin"><c:if
-											test="${meterReadingpriviousObj!=null}">
-											<input class="form-control" type="" id="previousreading"
-												name="previousreading"
-												value="${meterReadingpriviousObj.currentReading}" min="3"
-												maxlength="50" readonly="readonly" required="required" />
-										</c:if></td>
-
-									<td><c:if
-											test="${meterReadingpriviousObj.currentReadingDate!=null}">
-											<fmt:formatDate
-												value="${meterReadingpriviousObj.currentReadingDate}"
-												var="historyDate" pattern="dd/MM/yyyy" />
-											<input type="hidden" id="previousreadingDate"
-												class="form-control" data-date-end-date="0d"
-												name="previousreadingDate" value="${historyDate}" />
-										</c:if></td>
-								</tr>
-							</table>
-
-
+							<c:if test="${meterReadingpriviousObj.currentReadingDate!=null}">
+								<fmt:formatDate
+									value="${meterReadingpriviousObj.currentReadingDate}"
+									var="historyDate" pattern="dd/MM/yyyy" />
+								<input type="hidden" id="previousreadingDate"
+									class="form-control" data-date-end-date="0d"
+									name="previousreadingDate" value="${historyDate}" />
+							</c:if>
 
 							<div class="form-group">
-								<table id="meterDetailsid">
-									<tr>
-										<td class="col-sm-3 table-div-column"><spring:message
-												code="lbl.meterread.currentReading" /> (<span
-											class="mandatory"></span> )</td>
-										<td class="col-sm-3 table-div-column"><spring:message
-												code="lbl.meterread.currentReadingdate" />(<span
-											class="mandatory"></span> )</td>
-									</tr>
-									<tr>
-										<td class="col-sm-3 add-margin"><form:input
-												class="form-control patternvalidation" id="metercurrentReading"
-												name="metercurrentReading"
-												path="${meterReadingCurrentObj.currentReading}" min="3"
-												maxlength="12" data-pattern="number" required="required" /> <form:errors path=""
-												cssClass="add-margin error-msg" /></td>
-										<td class="col-sm-3 add-margin"><form:input
-												class="form-control datepicker today"
-												data-date-end-date="0d" id="metercurrentReadingDate"
-												name="metercurrentReadingDate"
-												path="${meterReadingCurrentObj.currentReadingDate}"
-												required="required" /> <form:errors path=""
-												cssClass="add-margin error-msg" /></td>
-										<%-- <form:hidden id="meterConnectionid" path="" value="${meterConnection.id}" />  --%>
-									</tr>
-								</table>
-
+								<label class="col-sm-2 control-label text-right"><spring:message
+										code="lbl.meterread.currentReading" /><span class="mandatory"></span></label>
+								<div class="col-sm-3 add-margin">
+									<form:input class="form-control patternvalidation"
+										id="metercurrentReading" name="metercurrentReading"
+										path="${meterReadingCurrentObj.currentReading}" min="3"
+										maxlength="12" data-pattern="number" required="required" />
+									<form:errors path="" cssClass="add-margin error-msg" />
+								</div>
+								<label class="col-sm-2 control-label text-right"><spring:message
+										code="lbl.meterread.currentReadingdate" /><span class="mandatory"></span></label>
+								<div class="col-sm-3 add-margin">
+									<form:input class="form-control datepicker today"
+										data-date-end-date="0d" id="metercurrentReadingDate"
+										name="metercurrentReadingDate"
+										path="${meterReadingCurrentObj.currentReadingDate}"
+										required="required" />
+									<form:errors path="" cssClass="add-margin error-msg" />
+								</div>
+								<label class="col-sm-2 control-label text-right"><spring:message
+										code="lbl.ismeterdamaged" /></label>
+								<div class="col-sm-3 add-margin">
+									<input type="checkbox" name="waterConnectionDetails.meterConnection.isMeterDamaged" onchange="changeIsMeterDamaged();"
+									 id="isMeterDamaged"/> 
+								 </div>
 							</div>
 						</c:if>
 					</div>

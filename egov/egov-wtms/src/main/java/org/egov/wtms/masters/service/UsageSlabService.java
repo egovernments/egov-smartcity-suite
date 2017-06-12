@@ -106,7 +106,7 @@ public class UsageSlabService {
         return usageSlabRepository.findByActiveTrue();
     }
 
-    public List<UsageSlab> findAllUsageSlabs(){
+    public List<UsageSlab> findAllUsageSlabs() {
         return usageSlabRepository.findAll();
     }
 
@@ -158,6 +158,10 @@ public class UsageSlabService {
 
     public UsageSlab findBySlabName(final String slabName) {
         return usageSlabRepository.findBySlabName(slabName);
+    }
+
+    public UsageSlab getUsageSlabForWaterVolumeConsumed(final String usage, final Long noOfUnitsPerMonth) {
+        return usageSlabRepository.getUsageSlabForWaterVolumeConsumed(usage, noOfUnitsPerMonth);
     }
 
 }

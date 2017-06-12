@@ -38,8 +38,12 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
+jQuery(document).ready(function(){
+	changeIsMeterDamaged();
+});
+
+
 $('#metercurrentReadingDate').on('change', function(){
-	console.log('Got change event');
 		$.ajax({
 				url: "/wtms/ajax-meterReadingEntryExist",     
 					type: "GET",
@@ -50,7 +54,7 @@ $('#metercurrentReadingDate').on('change', function(){
 					},
 					dataType: "json",
 			}).done(function(value) {
-				 if(value == true) {
+				 if(value) {
 					 bootbox.alert('Entered Metered Reading Date Allready Exist');
 					 $('#metercurrentReadingDate').val('');
 					 return false;
@@ -92,12 +96,10 @@ $('#metercurrentReadingDate').on('change', function(){
 		return false;
 
 		}
-		if (currentMeterDate != undefined && previousMeterDate != undefined) {
-			if (!validateCurrentAndExecutionDateRange(previousMeterDate, currentMeterDate)) {
-				bootbox.alert("Current Meter Reading Date should not be less than Previous Meter Reading Date");
-				$('#metercurrentReadingDate').val('');
-				return false;
-			}
+		if (currentMeterDate != undefined && previousMeterDate != undefined && !validateCurrentAndExecutionDateRange(previousMeterDate, currentMeterDate)) {
+			bootbox.alert("Current Meter Reading Date should not be less than Previous Meter Reading Date");
+			$('#metercurrentReadingDate').val('');
+			return false;
 		}
 		document.forms[0].submit;
 		return true;
@@ -110,18 +112,18 @@ $('#metercurrentReadingDate').on('change', function(){
 			var stsplit = fromDate.split("/");
 			var ensplit = toDate.split("/");
 
-			startDate = Date.parse(stsplit[1] + "/" + stsplit[0] + "/"
+			var startDate = Date.parse(stsplit[1] + "/" + stsplit[0] + "/"
 					+ stsplit[2]);
-			endDate = Date.parse(ensplit[1] + "/" + ensplit[0] + "/"
+			var endDate = Date.parse(ensplit[1] + "/" + ensplit[0] + "/"
 					+ ensplit[2]);
 
 			// Check the date range, 86400000 is the number of milliseconds in one day
 			var difference = (endDate - startDate) / (86400000 * 7);
 			if (difference < 0) {
 				return false;
-			} else {
-				return true;
 			}
+			return true;
+			
 		}
 		return true;
 	}
@@ -130,13 +132,18 @@ $('#metercurrentReadingDate').on('change', function(){
 	function validateTapExecutionDate() {
 		var metercurrentdate = $('#metercurrentReadingDate').val();	 
 		var executionDate = $('#executionDate').val();
-		if(metercurrentdate !='' && executionDate != '') {
-			if(!validateCurrentAndExecutionDateRange(executionDate,metercurrentdate)) {
-				bootbox.alert("The Current Meter Reading Date can not be less than the Date of Execution.");
-				$('#metercurrentReadingDate').val('');
-				return false;			
-			}
-			
+		if(metercurrentdate !='' && executionDate != '' && !validateCurrentAndExecutionDateRange(executionDate,metercurrentdate)) {
+			bootbox.alert("The Current Meter Reading Date can not be less than the Date of Execution.");
+			$('#metercurrentReadingDate').val('');
+			return false;			
 		}
+	}
+	
+	function changeIsMeterDamaged(){
+		if($("#isMeterDamaged").is(":checked")){
+			$("#isMeterDamaged").val(true);
+		}
+		else
+			$("#isMeterDamaged").val(false);
 	}
 

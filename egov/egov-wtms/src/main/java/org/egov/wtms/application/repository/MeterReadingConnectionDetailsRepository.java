@@ -38,29 +38,22 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.wtms.masters.service;
+package org.egov.wtms.application.repository;
 
 import java.util.Date;
+import java.util.List;
 
-import org.egov.wtms.masters.entity.MeteredRatesDetail;
-import org.egov.wtms.masters.repository.MeteredRatesDetailRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.egov.wtms.application.entity.MeterReadingConnectionDetails;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
-@Service
-@Transactional(readOnly = true)
-public class MeteredRatesDetailService {
+@Repository
+public interface MeterReadingConnectionDetailsRepository extends JpaRepository<MeterReadingConnectionDetails, Long> {
 
-    @Autowired
-    private MeteredRatesDetailRepository meteredRatesDetailRepository;
-
-    @Transactional
-    public void save(final MeteredRatesDetail meteredRatesDetail) {
-        meteredRatesDetailRepository.save(meteredRatesDetail);
-    }
-
-    public MeteredRatesDetail getActiveRateforSlab(final String slabName, final Date currentDate) {
-        return meteredRatesDetailRepository.getActiveRateforSlab(slabName, currentDate);
-    }
+    @Query("select mrcd from MeterReadingConnectionDetails mrcd where mrcd.waterConnectionDetails.id=:connectionDetailId and mrcd.currentReadingDate>=:lastInstReadingStartDate and mrcd.currentReadingDate<=:currentDate order by mrcd.id desc")
+    List<MeterReadingConnectionDetails> getLastSixMonthsReadings(@Param("connectionDetailId") final Long id,
+            @Param("lastInstReadingStartDate") final Date lastInstReadingStartDate,
+            @Param("currentDate") final Date currentDate);
 }

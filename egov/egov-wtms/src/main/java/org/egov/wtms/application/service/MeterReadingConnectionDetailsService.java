@@ -38,29 +38,27 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.wtms.masters.service;
+package org.egov.wtms.application.service;
 
 import java.util.Date;
+import java.util.List;
 
-import org.egov.wtms.masters.entity.MeteredRatesDetail;
-import org.egov.wtms.masters.repository.MeteredRatesDetailRepository;
+import org.egov.wtms.application.entity.MeterReadingConnectionDetails;
+import org.egov.wtms.application.entity.WaterConnectionDetails;
+import org.egov.wtms.application.repository.MeterReadingConnectionDetailsRepository;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional(readOnly = true)
-public class MeteredRatesDetailService {
+public class MeterReadingConnectionDetailsService {
 
     @Autowired
-    private MeteredRatesDetailRepository meteredRatesDetailRepository;
+    private MeterReadingConnectionDetailsRepository meterReadingConnectionDetailsRepository;
 
-    @Transactional
-    public void save(final MeteredRatesDetail meteredRatesDetail) {
-        meteredRatesDetailRepository.save(meteredRatesDetail);
-    }
-
-    public MeteredRatesDetail getActiveRateforSlab(final String slabName, final Date currentDate) {
-        return meteredRatesDetailRepository.getActiveRateforSlab(slabName, currentDate);
+    public List<MeterReadingConnectionDetails> getLastSixMonthsMeterReadings(final WaterConnectionDetails waterConnectionDetails,
+            final DateTime lastInstReadingStartDate) {
+        return meterReadingConnectionDetailsRepository.getLastSixMonthsReadings(waterConnectionDetails.getId(),
+                lastInstReadingStartDate.toDate(), new Date());
     }
 }
