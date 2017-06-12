@@ -82,7 +82,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.context.MessageSource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -106,10 +106,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class SewerageConnectionController extends GenericWorkFlowController {
 
     private static final Logger LOG = LoggerFactory.getLogger(SewerageConnectionController.class);
-    @Autowired
-    private SewerageTaxUtils sewerageTaxUtils;
-    @Autowired
-    private SewerageApplicationDetailsService sewerageApplicationDetailsService;
+    private final SewerageTaxUtils sewerageTaxUtils;
+
+    private final SewerageApplicationDetailsService sewerageApplicationDetailsService;
 
     @Autowired
     private SewerageConnectionService sewerageConnectionService;
@@ -146,7 +145,14 @@ public class SewerageConnectionController extends GenericWorkFlowController {
     private SewerageWorkflowService sewerageWorkflowService;
 
     @Autowired
-    protected ResourceBundleMessageSource messageSource;
+    private MessageSource messageSource;
+
+    @Autowired
+    public SewerageConnectionController(final SewerageTaxUtils sewerageTaxUtils,
+            final SewerageApplicationDetailsService sewerageApplicationDetailsService) {
+        this.sewerageTaxUtils = sewerageTaxUtils;
+        this.sewerageApplicationDetailsService = sewerageApplicationDetailsService;
+    }
 
     @ModelAttribute("documentNamesList")
     public List<SewerageApplicationDetailsDocument> documentTypeMasterList(
@@ -252,7 +258,7 @@ public class SewerageConnectionController extends GenericWorkFlowController {
                 else
                     sewerageApplicationDetails.setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(
                             SewerageTaxConstants.APPLICATION_STATUS_CREATED, SewerageTaxConstants.MODULETYPE));
-            } else{
+            } else {
                 sewerageApplicationDetails.setSource(Source.CSC.name());
                 sewerageApplicationDetails.setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(
                         SewerageTaxConstants.APPLICATION_STATUS_CSCCREATED, SewerageTaxConstants.MODULETYPE));
