@@ -316,5 +316,15 @@ public class SewerageTaxConstants {
     public static final String EDIT_DONATION_CHARGE ="EDIT_DONATION_CHARGE";
     public static final String MODIFYLEGACYCONNECTIONACTIONDROPDOWN="MODIFYLEGACYCONNECTION";
     
+    //CSC operator related constants
+    public static final String CSC_OPERATOR_ROLE = "CSC Operator";
+    public static final String SEWERAGE_WORKFLOWDESIGNATION_FOR_CSCOPERATOR = "SEWERAGEDESIGNATIONFORCSCOPERATORWORKFLOW";
+    public static final String SEWERAGE_WORKFLOWDEPARTEMENT_FOR_CSCOPERATOR = "SEWERAGEDEPARTMENTFORCSCOPERATORWORKFLOW";
+    public static final String SEWERAGEROLEFORNONEMPLOYEE="SEWERAGEROLEFORNONEMPLOYEE";
+    public static final String APPLICATION_PDF = "application/pdf";
+    public static final String APPLICATION_STATUS_CSCCREATED = "CSCCREATED";
+
+
+    
     
 }

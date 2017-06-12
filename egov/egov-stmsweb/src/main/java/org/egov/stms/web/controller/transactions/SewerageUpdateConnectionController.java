@@ -87,6 +87,7 @@ import org.egov.stms.transactions.service.SewerageConnectionService;
 import org.egov.stms.transactions.service.SewerageEstimationDetailsService;
 import org.egov.stms.transactions.service.SewerageFieldInspectionDetailsService;
 import org.egov.stms.transactions.service.SewerageThirdPartyServices;
+import org.egov.stms.transactions.service.SewerageWorkflowService;
 import org.egov.stms.utils.SewerageInspectionDetailsComparatorById;
 import org.egov.stms.utils.SewerageTaxUtils;
 import org.egov.stms.utils.constants.SewerageTaxConstants;
@@ -163,6 +164,9 @@ public class SewerageUpdateConnectionController extends GenericWorkFlowControlle
 
     @Autowired
     private SewerageApplicationValidator sewerageApplicationValidator;
+
+    @Autowired
+    private SewerageWorkflowService sewerageWorkflowService;
 
     @Autowired
     public SewerageUpdateConnectionController(
@@ -271,7 +275,7 @@ public class SewerageUpdateConnectionController extends GenericWorkFlowControlle
                 }
 
         }
-        // TODO :To Support Documents Re-Attachment on Edit mode
+        // Pending: To Support Documents Re-Attachment on Edit mode
         if ("editOnReject".equals(modelParams.get("mode"))) {
             final List<SewerageApplicationDetailsDocument> docList = sewerageConnectionService
                     .getSewerageApplicationDoc(sewerageApplicationDetails);
@@ -326,7 +330,6 @@ public class SewerageUpdateConnectionController extends GenericWorkFlowControlle
 
         if (request.getParameter("workFlowAction") != null)
             workFlowAction = request.getParameter("workFlowAction");
-
         sewerageApplicationValidator.validateNewApplicationUpdate(sewerageApplicationDetails, resultBinder, workFlowAction);
 
         if (workFlowAction != null && WF_STATE_CONNECTION_EXECUTION_BUTTON.equalsIgnoreCase(workFlowAction)) {
@@ -356,7 +359,6 @@ public class SewerageUpdateConnectionController extends GenericWorkFlowControlle
         }
 
         request.getSession().setAttribute(SewerageTaxConstants.WORKFLOW_ACTION, workFlowAction);
-
         if ((sewerageApplicationDetails.getStatus().getCode()
                 .equalsIgnoreCase(SewerageTaxConstants.APPLICATION_STATUS_CREATED)
                 || sewerageApplicationDetails.getStatus().getCode()
@@ -433,9 +435,12 @@ public class SewerageUpdateConnectionController extends GenericWorkFlowControlle
             Assignment assignObj = null;
             List<Assignment> asignList = null;
 
-            if (approvalPosition == null || approvalPosition == 0)
-                approvalPosition = assignmentService
-                        .getPrimaryAssignmentForUser(sewerageApplicationDetails.getCreatedBy().getId()).getPosition().getId();
+            if (approvalPosition == null || approvalPosition == 0) {
+                Assignment workflowInitiatorAssignment = sewerageWorkflowService.getWorkFlowInitiator(sewerageApplicationDetails);
+                if (workflowInitiatorAssignment != null)
+                    approvalPosition = (workflowInitiatorAssignment).getPosition()
+                            .getId();
+            }
 
             if (approvalPosition != null)
                 assignObj = assignmentService.getPrimaryAssignmentForPositon(approvalPosition);

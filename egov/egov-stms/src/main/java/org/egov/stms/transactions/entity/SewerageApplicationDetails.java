@@ -148,6 +148,9 @@ public class SewerageApplicationDetails extends StateAware {
     @JoinColumn(name = "filestoreid") 
     private FileStoreMapper fileStore;
     
+   
+    private String source;
+    
     @OneToMany(mappedBy = "applicationDetails", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<SewerageApplicationDetailsDocument> appDetailsDocument = new ArrayList<SewerageApplicationDetailsDocument>(
             0);
@@ -471,5 +474,14 @@ public class SewerageApplicationDetails extends StateAware {
     public void setClosureNoticeDate(Date closureNoticeDate) {
         this.closureNoticeDate = closureNoticeDate;
     }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
+    
     
 }

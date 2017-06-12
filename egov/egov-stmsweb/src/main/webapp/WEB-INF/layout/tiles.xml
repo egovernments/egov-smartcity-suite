@@ -321,4 +321,8 @@
     	<put-attribute name="page-title" value="title.sewerage.viewdemandstatus" cascade="true"/>
     	<put-attribute name="body" value="/WEB-INF/views/transactions/sewerage-demand-status-view.jsp"/>
     </definition>
+    	    <definition name="sewerage-acknowledgement" extends="base_layout">
+    	<put-attribute name="page-title" value="title.newconnection" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/transactions/new-sewerage-ackowledgement.jsp"/>
+    </definition>
 </tiles-definitions>

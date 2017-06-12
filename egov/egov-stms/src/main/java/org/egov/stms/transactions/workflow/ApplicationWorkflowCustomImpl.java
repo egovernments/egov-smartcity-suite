@@ -42,17 +42,17 @@ package org.egov.stms.transactions.workflow;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import org.egov.commons.entity.Source;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
-import org.egov.eis.service.EisCommonService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.pims.commons.Position;
 import org.egov.stms.transactions.entity.SewerageApplicationDetails;
+import org.egov.stms.transactions.service.SewerageWorkflowService;
 import org.egov.stms.utils.SewerageTaxUtils;
 import org.egov.stms.utils.constants.SewerageTaxConstants;
 import org.joda.time.DateTime;
@@ -66,10 +66,11 @@ import org.springframework.beans.factory.annotation.Qualifier;
  */
 public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkflowCustom {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ApplicationWorkflowCustomImpl.class);
+    private static final String THIRD_PARTY_OPERATOR_CREATED = "Third Party operator created";
 
-    @Autowired
-    private EisCommonService eisCommonService;
+    private static final String NEW = "NEW";
+
+    private static final Logger LOG = LoggerFactory.getLogger(ApplicationWorkflowCustomImpl.class);
 
     @Autowired
     private SecurityUtils securityUtils;
@@ -82,9 +83,9 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
 
     @Autowired
     private SewerageTaxUtils sewerageTaxUtils;
-
+   
     @Autowired
-    private UserService userService;
+    private SewerageWorkflowService sewerageWorkflowService;
 
     @Autowired
     @Qualifier("workflowService")
@@ -111,7 +112,7 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
         String natureOfwork =  sewerageApplicationDetails.getApplicationType().getName();
 
         if (null != sewerageApplicationDetails.getId()) {
-            wfInitiator = assignmentService.getPrimaryAssignmentForUser(sewerageApplicationDetails.getCreatedBy().getId());
+            wfInitiator = sewerageWorkflowService.getWorkFlowInitiator(sewerageApplicationDetails);
         }
         if (SewerageTaxConstants.WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction)) {
             // rejection in b.w workflow, send application to the creator
@@ -140,9 +141,20 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                 pos = positionMasterService.getPositionById(approvalPosition);
             else
                 pos = wfInitiator.getPosition();
-            
-             // New Entry
-            if (null == sewerageApplicationDetails.getState()) { 
+
+            Boolean cscOperatorLoggedIn = sewerageWorkflowService.isCscOperator(user);
+
+            if (null == sewerageApplicationDetails.getState() && cscOperatorLoggedIn) {
+                currState = THIRD_PARTY_OPERATOR_CREATED;
+                wfmatrix = sewerageApplicationWorkflowService.getWfMatrix(sewerageApplicationDetails.getStateType(), null,
+                        null, additionalRule, currState, null);
+                sewerageApplicationDetails.transition().start()
+                        .withSenderName(user.getUsername() + "::" + user.getName()).withComments(approvalComent)
+                        .withComments(approvalComent).withInitiator(wfInitiator != null ? wfInitiator.getPosition() : null)
+                        .withStateValue(wfmatrix.getNextState()).withDateInfo(new Date()).withOwner(pos)
+                        .withNextAction(wfmatrix.getNextAction()).withNatureOfTask(natureOfwork);
+            } else if (null == sewerageApplicationDetails.getState() || (SewerageTaxConstants.APPLICATION_STATUS_CSCCREATED.equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode())
+                    && NEW.equalsIgnoreCase(sewerageApplicationDetails.getState().getValue()))){    // New Entry
                 // If Inspection is configured, pick with inspection fee workflowmatrix by passing pendingaction
                 if (sewerageTaxUtils.isInspectionFeeCollectionRequired()) {
                     wfmatrix = sewerageApplicationWorkflowService.getWfMatrix(
@@ -231,7 +243,7 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
         String natureOfwork =  sewerageApplicationDetails.getApplicationType().getName();
 
         if (null != sewerageApplicationDetails.getId()) {
-            wfInitiator = assignmentService.getPrimaryAssignmentForUser(sewerageApplicationDetails.getCreatedBy().getId());
+            wfInitiator = sewerageWorkflowService.getWorkFlowInitiator(sewerageApplicationDetails);
         }
             if (SewerageTaxConstants.WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction)) {
                 // rejection in b.w workflow, send application to the creator
