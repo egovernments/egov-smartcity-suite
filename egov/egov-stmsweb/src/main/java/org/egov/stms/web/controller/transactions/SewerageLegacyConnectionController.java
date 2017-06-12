@@ -53,6 +53,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.egov.commons.Installment;
+import org.egov.commons.entity.Source;
 import org.egov.demand.model.BillReceipt;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgDemandReason;
@@ -231,11 +232,14 @@ public class SewerageLegacyConnectionController extends GenericWorkFlowControlle
             model.addAttribute("demandDetailList", sewerageApplicationDetails.getDemandDetailBeanList());
             model.addAttribute(PROPERTYTYPES, PropertyType.values());
             model.addAttribute("executionDate", sewerageApplicationDetails.getConnection().getExecutionDate());
+            model.addAttribute("legacy", true);
+            model.addAttribute("isDonationChargeCollectionRequired", sewerageTaxUtils.isDonationChargeCollectionRequiredForLegacy());
             return "legacySewerageConnection-form";
         }
 
         sewerageApplicationDetails.setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(
                 SewerageTaxConstants.APPLICATION_STATUS_SANCTIONED, SewerageTaxConstants.MODULETYPE));
+        sewerageApplicationDetails.setSource(Source.SYSTEM.name());
         sewerageApplicationDetails.getAppDetailsDocument().clear();
         sewerageApplicationDetails.setAppDetailsDocument(applicationDocs);
         sewerageConnectionService.processAndStoreApplicationDocuments(sewerageApplicationDetails);
@@ -319,6 +323,7 @@ public class SewerageLegacyConnectionController extends GenericWorkFlowControlle
                 sewerageConnectionService.validateDocuments(applicationDocs, applicationDocument, i, resultBinder);
                 i++;
             }
+        sewerageApplicationDetails.setSource(Source.SYSTEM.name());
         sewerageApplicationDetails.getAppDetailsDocument().clear();
         sewerageApplicationDetails.setAppDetailsDocument(applicationDocs);
         sewerageConnectionService.processAndStoreApplicationDocuments(sewerageApplicationDetails);
