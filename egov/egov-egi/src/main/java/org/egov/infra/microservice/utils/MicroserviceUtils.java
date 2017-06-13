@@ -40,10 +40,6 @@
 
 package org.egov.infra.microservice.utils;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.infra.admin.master.entity.User;
@@ -61,10 +57,19 @@ import org.egov.infra.microservice.models.RequestInfo;
 import org.egov.infra.microservice.models.UserInfo;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.web.support.ui.Inbox;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.egov.infra.utils.DateUtils.toDefaultDateTimeFormat;
 
 @Service
 public class MicroserviceUtils {
@@ -142,9 +147,9 @@ public class MicroserviceUtils {
 
         final String workflowUrl = applicationProperties.getServicesWorkflowUrl();
         List<Task> tasks = new ArrayList<>();
-        if (StringUtils.isNotBlank(workflowUrl)) {
+        if (isNotBlank(workflowUrl)) {
             final RestTemplate restTemplate = new RestTemplate();
-            TaskResponse tresp = null;
+            TaskResponse tresp;
             try {
                 RequestInfo createRequestInfo = createRequestInfo();
                 RequestInfoWrapper requestInfo = new RequestInfoWrapper();
@@ -159,4 +164,27 @@ public class MicroserviceUtils {
         return tasks;
     }
 
+    public List<Inbox> getInboxItems() {
+        List<Inbox> inboxItems = new LinkedList<>();
+        if (hasWorkflowService()) {
+            for (Task t : getTasks()) {
+                Inbox inboxItem = new Inbox();
+                inboxItem.setId(t.getId());
+                inboxItem.setCreatedDate(t.getCreatedDate());
+                inboxItem.setDate(toDefaultDateTimeFormat(t.getCreatedDate()));
+                inboxItem.setSender(t.getSenderName());
+                inboxItem.setTask(t.getNatureOfTask());
+                inboxItem.setStatus(t.getStatus());
+                inboxItem.setDetails(t.getDetails());
+                inboxItem.setLink(t.getUrl());
+                inboxItem.setSender(t.getSenderName());
+                inboxItems.add(inboxItem);
+            }
+        }
+        return inboxItems;
+    }
+
+    public boolean hasWorkflowService() {
+        return isNotBlank(applicationProperties.getServicesWorkflowUrl());
+    }
 }

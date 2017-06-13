@@ -58,7 +58,6 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
 import java.io.Serializable;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -77,27 +76,9 @@ public abstract class StateAware extends AbstractAuditable {
     @JsonIgnore
     private Transition transition;
 
-    public static Comparator<StateAware> byCreatedDate() {
-        return (stateAware1, stateAware2) -> {
-            int returnVal = 1;
-            if (stateAware1 == null)
-                returnVal = stateAware2 == null ? 0 : -1;
-            else if (stateAware2 == null)
-                returnVal = 1;
-            else {
-                final Date createdDate1 = stateAware1.getState().getCreatedDate();
-                final Date createdDate2 = stateAware2.getState().getCreatedDate();
-                if (createdDate1.after(createdDate2))
-                    returnVal = -1;
-                else if (createdDate1.equals(createdDate2))
-                    returnVal = 0;
-            }
-            return returnVal;
-        };
-    }
-
     /**
-     * Need to overridden by the implementing class to give details about the State <I>Used by Inbox to fetch the State Detail at
+     * Need to overridden by the implementing class to give details about the State
+     * <I>Used by Inbox to fetch the State Detail at
      * runtime</I>
      *
      * @return String Detail

@@ -42,7 +42,7 @@ package org.egov.infra.web.support.ui;
 
 import java.util.Date;
 
-public class Inbox implements Comparable<Inbox> {
+public class Inbox {
     private String id;
     private String sender;
     private String date;
@@ -115,13 +115,4 @@ public class Inbox implements Comparable<Inbox> {
     public void setCreatedDate(Date createdDate) {
         this.createdDate = createdDate;
     }
-
-    @Override
-    public int compareTo(Inbox o) {
-        if (this.createdDate != null && o.createdDate != null)
-            return this.createdDate.compareTo(o.createdDate);
-        else
-            return 0;
-    }
-
 }
