@@ -52,7 +52,7 @@ public class Task {
      * createDate is the date on which the process is instantiated. This is set internally by the system . For clients it is read
      * only data
      */
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy hh:mm:ss a")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy hh:mm:ss a",timezone="IST")
     private Date createdDate;
 
     /**
