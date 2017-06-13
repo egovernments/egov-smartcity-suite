@@ -48,6 +48,7 @@ import org.egov.pgr.repository.EscalationRepository;
 import org.egov.pims.commons.Designation;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
 import static org.junit.Assert.assertEquals;
@@ -64,15 +65,14 @@ public class EscalationServiceTest {
     private Designation designation;
     private ComplaintType compType;
     private Escalation escalation;
-    @Mock
-    private EscalationService escalationService;
+    @InjectMocks
+    private ComplaintEscalationService escalationService;
     @Mock
     private EscalationRepository escalationRepository;
 
     @Before
     public void before() {
         initMocks(this);
-        escalationService = new EscalationService(escalationRepository);
         sampleEscalation();
     }
 

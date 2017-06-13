@@ -40,14 +40,6 @@
 
 package org.egov.pgr.service;
 
-import static org.egov.pgr.utils.constants.PGRConstants.EG_OBJECT_TYPE_COMPLAINT;
-import static org.egov.pgr.utils.constants.PGRConstants.MODULE_NAME;
-
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import org.apache.commons.lang.time.DateUtils;
 import org.egov.commons.ObjectType;
 import org.egov.commons.service.ObjectTypeService;
@@ -72,6 +64,11 @@ import org.egov.pgr.service.es.ComplaintIndexService;
 import org.egov.pgr.utils.constants.PGRConstants;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
+import org.hibernate.Criteria;
+import org.hibernate.Session;
+import org.hibernate.criterion.CriteriaSpecification;
+import org.hibernate.criterion.Restrictions;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,18 +78,34 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import static org.egov.pgr.entity.enums.ComplaintStatus.FORWARDED;
+import static org.egov.pgr.entity.enums.ComplaintStatus.PROCESSING;
+import static org.egov.pgr.entity.enums.ComplaintStatus.REGISTERED;
+import static org.egov.pgr.entity.enums.ComplaintStatus.REOPENED;
+import static org.egov.pgr.utils.constants.PGRConstants.EG_OBJECT_TYPE_COMPLAINT;
+import static org.egov.pgr.utils.constants.PGRConstants.MODULE_NAME;
+
 @Service
 @Transactional(readOnly = true)
-public class EscalationService {
-    private static final Logger LOG = LoggerFactory.getLogger(EscalationService.class);
+public class ComplaintEscalationService {
+    private static final Logger LOG = LoggerFactory.getLogger(ComplaintEscalationService.class);
+    private static final String COMPLAINT_STATUS_NAME = "complaintStatus.name";
 
-    private final EscalationRepository escalationRepository;
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    @Autowired
+    private EscalationRepository escalationRepository;
 
     @Autowired
     private AppConfigValueService appConfigValuesService;
-
-    @Autowired
-    private ComplaintService complaintService;
 
     @Autowired
     private ObjectTypeService objectTypeService;
@@ -120,31 +133,26 @@ public class EscalationService {
 
     @Autowired
     private ComplaintIndexService complaintIndexService;
-    
-    @Autowired
-    private ComplaintCommunicationService complaintCommunicationService;
 
     @Autowired
-    public EscalationService(final EscalationRepository escalationRepository) {
-        this.escalationRepository = escalationRepository;
-    }
+    private ComplaintMessagingService complaintCommunicationService;
 
     @Transactional
-    public void create(final Escalation escalation) {
+    public void create(Escalation escalation) {
         escalationRepository.save(escalation);
     }
 
     @Transactional
-    public void update(final Escalation escalation) {
+    public void update(Escalation escalation) {
         escalationRepository.save(escalation);
     }
 
     @Transactional
-    public void delete(final Escalation escalation) {
+    public void delete(Escalation escalation) {
         escalationRepository.delete(escalation);
     }
 
-    public List<Escalation> findAllBycomplaintTypeId(final Long complaintTypeId) {
+    public List<Escalation> findAllBycomplaintTypeId(Long complaintTypeId) {
         return escalationRepository.findEscalationByComplaintTypeId(complaintTypeId);
     }
 
@@ -152,41 +160,41 @@ public class EscalationService {
     public void escalateComplaint() {
         try {
 
-            final ObjectType objectType = objectTypeService.getObjectTypeByName(EG_OBJECT_TYPE_COMPLAINT);
+            ObjectType objectType = objectTypeService.getObjectTypeByName(EG_OBJECT_TYPE_COMPLAINT);
 
             if (objectType == null) {
                 LOG.warn("Escalation can't be done, Object Type {} not found", EG_OBJECT_TYPE_COMPLAINT);
                 return;
             }
 
-            final boolean sendMessage = "YES".equalsIgnoreCase(appConfigValuesService
+            boolean sendMessage = "YES".equalsIgnoreCase(appConfigValuesService
                     .getConfigValuesByModuleAndKey(MODULE_NAME, "SENDEMAILFORESCALATION").get(0).getValue());
 
-            complaintService.getComplaintsEligibleForEscalation()
+            getComplaintsEligibleForEscalation()
                     .forEach(complaint -> findNextOwnerAndEscalate(complaint, objectType, sendMessage));
 
-        } catch (final RuntimeException e) {
+        } catch (RuntimeException e) {
             // Ignoring and logging exception since exception will cause multi city scheduler to fail for all remaining cities.
             LOG.error("An error occurred, escalation can't be completed ", e);
         }
     }
 
-    private void findNextOwnerAndEscalate(final Complaint complaint, final ObjectType objectType, final boolean sendMessage) {
-        final PositionHierarchy positionHierarchy = positionHierarchyService.getPosHirByPosAndObjectTypeAndObjectSubType(
+    private void findNextOwnerAndEscalate(Complaint complaint, ObjectType objectType, boolean sendMessage) {
+        PositionHierarchy positionHierarchy = positionHierarchyService.getPosHirByPosAndObjectTypeAndObjectSubType(
                 complaint.getAssignee().getId(), objectType.getId(), complaint.getComplaintType().getCode());
         Position nextAssignee = null;
         User nextOwner = null;
         if (positionHierarchy != null) {
             nextAssignee = positionHierarchy.getToPosition();
-            final List<Assignment> superiorAssignments = assignmentService.getAssignmentsForPosition(nextAssignee.getId(),
+            List<Assignment> superiorAssignments = assignmentService.getAssignmentsForPosition(nextAssignee.getId(),
                     new Date());
             nextOwner = !superiorAssignments.isEmpty() ? superiorAssignments.get(0).getEmployee() : null;
         } else {
-            final Set<User> users = userService.getUsersByRoleName(PGRConstants.GRO_ROLE_NAME);
+            Set<User> users = userService.getUsersByRoleName(PGRConstants.GRO_ROLE_NAME);
             if (!users.isEmpty())
                 nextOwner = users.iterator().next();
             if (nextOwner != null) {
-                final List<Position> positionList = positionMasterService.getPositionsForEmployee(nextOwner.getId(), new Date());
+                List<Position> positionList = positionMasterService.getPositionsForEmployee(nextOwner.getId(), new Date());
                 if (!positionList.isEmpty())
                     nextAssignee = positionList.iterator().next();
                 else
@@ -198,10 +206,10 @@ public class EscalationService {
         updateComplaintEscalation(complaint, nextAssignee, nextOwner, sendMessage);
     }
 
-    private void updateComplaintEscalation(final Complaint complaint, final Position nextAssignee, final User nextOwner,
-            final boolean sendMessage) {
+    private void updateComplaintEscalation(Complaint complaint, Position nextAssignee, User nextOwner,
+                                           boolean sendMessage) {
         if (nextAssignee != null && nextOwner != null && !nextAssignee.equals(complaint.getAssignee())) {
-            final Position previousAssignee = complaint.getAssignee();
+            Position previousAssignee = complaint.getAssignee();
             complaint.setEscalationDate(getExpiryDate(complaint));
             complaint.setAssignee(nextAssignee);
             complaint.transition().progress()
@@ -217,43 +225,43 @@ public class EscalationService {
         }
     }
 
-    public Date getExpiryDate(final Complaint complaint) {
-        final Designation designation = complaint.getAssignee().getDeptDesig().getDesignation();
-        final Integer noOfhrs = getHrsToResolve(designation.getId(), complaint.getComplaintType().getId());
+    public Date getExpiryDate(Complaint complaint) {
+        Designation designation = complaint.getAssignee().getDeptDesig().getDesignation();
+        Integer noOfhrs = getHrsToResolve(designation.getId(), complaint.getComplaintType().getId());
 
         return DateUtils.addHours(new Date(), noOfhrs);
     }
 
-    public Integer getHrsToResolve(final Long designationId, final Long complaintTypeId) {
-        final Escalation escalation = escalationRepository.findByDesignationAndComplaintType(designationId, complaintTypeId);
+    public Integer getHrsToResolve(Long designationId, Long complaintTypeId) {
+        Escalation escalation = escalationRepository.findByDesignationAndComplaintType(designationId, complaintTypeId);
         return escalation != null ? escalation.getNoOfHrs() : pgrApplicationProperties.defaultResolutionTime();
     }
 
     @Transactional
-    public void deleteAllInBatch(final List<Escalation> entities) {
+    public void deleteAllInBatch(List<Escalation> entities) {
         escalationRepository.deleteInBatch(entities);
 
     }
 
-    public Page<Escalation> getEscalationsTime(final EscalationTimeSearchRequest escalationTimeSearchRequest) {
-        final Pageable pageable = new PageRequest(escalationTimeSearchRequest.pageNumber(),
+    public Page<Escalation> getEscalationsTime(EscalationTimeSearchRequest escalationTimeSearchRequest) {
+        Pageable pageable = new PageRequest(escalationTimeSearchRequest.pageNumber(),
                 escalationTimeSearchRequest.pageSize(),
                 escalationTimeSearchRequest.orderDir(), escalationTimeSearchRequest.orderBy());
         return escalationRepository.findAll(EscalationTimeSpec.search(escalationTimeSearchRequest),
                 pageable);
     }
 
-    public List<PositionHierarchy> getEscalationObjByComplaintTypeFromPosition(final List<ComplaintType> complaintTypes,
-            final Position fromPosition) {
-        final List<String> compTypeCodes = complaintTypes.parallelStream()
+    public List<PositionHierarchy> getEscalationObjByComplaintTypeFromPosition(List<ComplaintType> complaintTypes,
+                                                                               Position fromPosition) {
+        List<String> compTypeCodes = complaintTypes.parallelStream()
                 .map(ComplaintType::getCode)
                 .collect(Collectors.toList());
-        final ObjectType objectType = objectTypeService.getObjectTypeByName(EG_OBJECT_TYPE_COMPLAINT);
+        ObjectType objectType = objectTypeService.getObjectTypeByName(EG_OBJECT_TYPE_COMPLAINT);
         return positionHierarchyService.getListOfPositionHeirarchyByPositionObjectTypeSubType(objectType.getId(), compTypeCodes,
                 fromPosition);
     }
 
-    public PositionHierarchy getExistingEscalation(final PositionHierarchy positionHierarchy) {
+    public PositionHierarchy getExistingEscalation(PositionHierarchy positionHierarchy) {
         PositionHierarchy existingPosHierarchy = null;
         if (null != positionHierarchy.getObjectSubType() && null != positionHierarchy.getFromPosition()
                 && null != positionHierarchy.getToPosition())
@@ -264,7 +272,21 @@ public class EscalationService {
         return existingPosHierarchy != null ? existingPosHierarchy : null;
     }
 
-    public Escalation getEscalationBycomplaintTypeAndDesignation(final Long complaintTypeId, final Long designationId) {
+    public Escalation getEscalationBycomplaintTypeAndDesignation(Long complaintTypeId, Long designationId) {
         return escalationRepository.findByDesignationAndComplaintType(designationId, complaintTypeId);
+    }
+
+    public List<Complaint> getComplaintsEligibleForEscalation() {
+        Criteria criteria = entityManager.unwrap(Session.class).createCriteria(Complaint.class, "complaint")
+                .createAlias("complaint.status", "complaintStatus");
+
+        criteria.add(Restrictions.disjunction().add(Restrictions.eq(COMPLAINT_STATUS_NAME, REOPENED.name()))
+                .add(Restrictions.eq(COMPLAINT_STATUS_NAME, FORWARDED.name()))
+                .add(Restrictions.eq(COMPLAINT_STATUS_NAME, PROCESSING.name()))
+                .add(Restrictions.eq(COMPLAINT_STATUS_NAME, REGISTERED.name())))
+                .add(Restrictions.lt("complaint.escalationDate", new DateTime().toDate()))
+                .setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+
+        return criteria.list();
     }
 }

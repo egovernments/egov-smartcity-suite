@@ -54,13 +54,17 @@ import org.hibernate.validator.constraints.SafeHtml;
 import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-
 import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import static org.egov.pgr.entity.Complaint.SEQ_COMPLAINT;
+import static org.egov.pgr.entity.enums.ComplaintStatus.COMPLETED;
+import static org.egov.pgr.entity.enums.ComplaintStatus.REJECTED;
+import static org.egov.pgr.entity.enums.ComplaintStatus.REOPENED;
+import static org.egov.pgr.entity.enums.ComplaintStatus.WITHDRAWN;
 
 @Entity
 @Table(name = "egpgr_complaint")
@@ -143,17 +147,23 @@ public class Complaint extends StateAware {
     private CitizenFeedback citizenFeedback;
 
     @ManyToOne
-    @JoinColumn(name = "childLocation", nullable = true)
+    @JoinColumn(name = "childLocation")
     private Boundary childLocation;
 
     @Transient
     private String latlngAddress;
 
-    /*
-     * For indexing the below fields are kept. These will not be added to the database. This will be available only in index.
-     */
     @Transient
     private Long crossHierarchyId;
+
+    @Transient
+    private Long nextOwnerId;
+
+    @Transient
+    private String approverComment;
+
+    @Transient
+    private boolean sendToPreviousOwner;
 
     @Override
     public Long getId() {
@@ -325,6 +335,52 @@ public class Complaint extends StateAware {
         this.latlngAddress = latlngAddress;
     }
 
+    public Long nextOwnerId() {
+        return nextOwnerId;
+    }
+
+    public void nextOwnerId(Long nextOwnerId) {
+        this.nextOwnerId = nextOwnerId;
+    }
+
+    public String approverComment() {
+        return approverComment;
+    }
+
+    public void approverComment(String approverComment) {
+        this.approverComment = approverComment;
+    }
+
+    public boolean sendToPreviousOwner() {
+        return sendToPreviousOwner;
+    }
+
+    public void sendToPreviousOwner(boolean sendToPreviousOwner) {
+        this.sendToPreviousOwner = sendToPreviousOwner;
+    }
+
+    public boolean completed() {
+        return Stream
+                .of(WITHDRAWN, COMPLETED, REJECTED)
+                .anyMatch(status -> status.toString().equalsIgnoreCase(getStatus().getName()));
+    }
+
+    public boolean inprogress() {
+        return !transitionCompleted();
+    }
+
+    public boolean hasNextOwner() {
+        return nextOwnerId() != null && !nextOwnerId().equals(0L);
+    }
+
+    public boolean reopened() {
+        return transitionCompleted() && REOPENED.toString().equalsIgnoreCase(getStatus().getName());
+    }
+
+    public boolean hasGeoCoordinates() {
+        return getLat() > 0 && getLng() > 0;
+    }
+
     @Override
     public String myLinkId() {
         return this.crn;
@@ -335,7 +391,7 @@ public class Complaint extends StateAware {
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy hh:mm a");
         return String.format("Complaint Number %s for %s filed on %s. Date of resolution %s. Priority is %s", this.getCrn(),
                 this.getComplaintType().getName(), formatter.format(this.getCreatedDate()),
-                formatter.format(this.getEscalationDate()), this.getPriority()!=null?this.getPriority().getName():"-");
+                formatter.format(this.getEscalationDate()), this.getPriority() != null ? this.getPriority().getName() : "-");
     }
 
     @Override
