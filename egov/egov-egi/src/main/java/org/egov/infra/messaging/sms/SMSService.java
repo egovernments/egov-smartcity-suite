@@ -61,7 +61,7 @@ import java.util.List;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.egov.infra.config.core.GlobalSettings.countryCode;
-import static org.egov.infra.config.core.GlobalSettings.defaultEncoding;
+import static org.egov.infra.config.core.GlobalSettings.encoding;
 import static org.egov.infra.messaging.MessagePriority.MEDIUM;
 
 @Service
@@ -101,9 +101,9 @@ public class SMSService {
                         countryCode() + mobileNumber));
                 urlParameters.add(new BasicNameValuePair(applicationProperties.getProperty(DEST_MESSAGE_PARAM_NAME), message));
                 setAdditionalParameters(urlParameters, priority);
-                post.setEntity(new UrlEncodedFormEntity(urlParameters, defaultEncoding()));
+                post.setEntity(new UrlEncodedFormEntity(urlParameters, encoding()));
                 HttpResponse response = client.execute(post);
-                String responseCode = IOUtils.toString(response.getEntity().getContent(), defaultEncoding());
+                String responseCode = IOUtils.toString(response.getEntity().getContent(), encoding());
                 if (LOGGER.isInfoEnabled())
                     LOGGER.info("SMS sending completed with response code [{}] - [{}]", responseCode,
                             applicationProperties.smsResponseMessageForCode(responseCode));

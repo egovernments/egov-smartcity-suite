@@ -51,15 +51,15 @@ import org.springframework.web.bind.annotation.InitBinder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import static org.egov.infra.config.core.GlobalSettings.defaultDatePattern;
+import static org.egov.infra.config.core.GlobalSettings.datePattern;
 
 @ControllerAdvice
 public class GlobalInitBinderHandler {
 
     @InitBinder
     public void initBinder(final WebDataBinder binder) {
-        binder.registerCustomEditor(Date.class, new CustomDateEditor(new SimpleDateFormat(defaultDatePattern()), true));
-        binder.registerCustomEditor(DateTime.class, new JodaDateTimeEditor(defaultDatePattern(), true));
+        binder.registerCustomEditor(Date.class, new CustomDateEditor(new SimpleDateFormat(datePattern()), true));
+        binder.registerCustomEditor(DateTime.class, new JodaDateTimeEditor(datePattern(), true));
         binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
         binder.setDisallowedFields("id");
     }
