@@ -420,15 +420,16 @@ public class ExpenseBillService {
 
             if (null == egBillregister.getState()) {
 
-                if (wfInitiator.getDesignation()!=null && finalDesignationNames.get(wfInitiator.getDesignation().getName().toUpperCase()) != null)
+                if (wfInitiator.getDesignation() != null
+                        && finalDesignationNames.get(wfInitiator.getDesignation().getName().toUpperCase()) != null)
                     stateValue = FinancialConstants.WF_STATE_FINAL_APPROVAL_PENDING;
-                
+
                 wfmatrix = egBillregisterRegisterWorkflowService.getWfMatrix(egBillregister.getStateType(), null,
                         null, additionalRule, currState, null);
-                
+
                 if (stateValue.isEmpty())
                     stateValue = wfmatrix.getNextState();
-                
+
                 egBillregister.transition().start().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent)
                         .withStateValue(stateValue).withDateInfo(new Date()).withOwner(wfInitiator.getPosition())
@@ -443,16 +444,29 @@ public class ExpenseBillService {
                         .withStateValue(stateValue).withDateInfo(currentDate.toDate())
                         .withNextAction("")
                         .withNatureOfTask(FinancialConstants.WORKFLOWTYPE_EXPENSE_BILL_DISPLAYNAME);
-            } else {
-                if (wfInitiator.getDesignation()!=null &&  finalDesignationNames.get(wfInitiator.getDesignation().getName().toUpperCase()) != null)
-                    stateValue = FinancialConstants.WF_STATE_FINAL_APPROVAL_PENDING;
-                
+            } else if (FinancialConstants.BUTTONAPPROVE.toString().equalsIgnoreCase(workFlowAction)) {
                 wfmatrix = egBillregisterRegisterWorkflowService.getWfMatrix(egBillregister.getStateType(), null,
                         null, additionalRule, egBillregister.getCurrentState().getValue(), null);
-                
+
                 if (stateValue.isEmpty())
                     stateValue = wfmatrix.getNextState();
-                
+
+                egBillregister.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
+                        .withComments(approvalComent)
+                        .withStateValue(stateValue).withDateInfo(new Date())
+                        .withNextAction(wfmatrix.getNextAction())
+                        .withNatureOfTask(FinancialConstants.WORKFLOWTYPE_EXPENSE_BILL_DISPLAYNAME);
+            } else {
+                if (wfInitiator.getDesignation() != null
+                        && finalDesignationNames.get(wfInitiator.getDesignation().getName().toUpperCase()) != null)
+                    stateValue = FinancialConstants.WF_STATE_FINAL_APPROVAL_PENDING;
+
+                wfmatrix = egBillregisterRegisterWorkflowService.getWfMatrix(egBillregister.getStateType(), null,
+                        null, additionalRule, egBillregister.getCurrentState().getValue(), null);
+
+                if (stateValue.isEmpty())
+                    stateValue = wfmatrix.getNextState();
+
                 egBillregister.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent)
                         .withStateValue(stateValue).withDateInfo(new Date()).withOwner(wfInitiator.getPosition())
