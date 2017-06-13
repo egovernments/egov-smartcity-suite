@@ -57,10 +57,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
+import static java.util.Comparator.comparing;
+import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.egov.infra.utils.DateUtils.toDefaultDateTimeFormat;
@@ -112,7 +113,7 @@ public class InboxController {
             inboxItems.add(inboxItem);
         }
         inboxItems.addAll(microserviceUtils.getInboxItems());
-        inboxItems.stream().sorted(Comparator.comparing(Inbox::getCreatedDate).reversed());
+        inboxItems = inboxItems.stream().sorted(comparing(Inbox::getCreatedDate).reversed()).collect(toList());
         return "{ \"data\":" + new GsonBuilder().create().toJson(inboxItems) + "}";
     }
 
