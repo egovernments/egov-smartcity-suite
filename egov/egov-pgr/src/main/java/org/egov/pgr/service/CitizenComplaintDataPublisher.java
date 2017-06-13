@@ -57,7 +57,7 @@ import static org.egov.pgr.utils.constants.PGRConstants.COMPLAINT_REGISTERED;
 import static org.egov.pgr.utils.constants.PGRConstants.MODULE_NAME;
 
 @Service
-public class CitizenPortalDataPublisher {
+public class CitizenComplaintDataPublisher {
 
     private static final String COMPLAINT_UPDATE_URL = "/pgr/complaint/update/%s";
 

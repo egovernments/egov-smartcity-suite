@@ -124,7 +124,7 @@ public class ComplaintService {
     private ComplaintProcessFlowService complaintProcessFlowService;
 
     @Autowired
-    private CitizenPortalDataPublisher citizenPortalDataPublisher;
+    private CitizenComplaintDataPublisher citizenComplaintDataPublisher;
 
     @Transactional
     public Complaint createComplaint(Complaint complaint) {
@@ -156,7 +156,7 @@ public class ComplaintService {
         complaintRepository.saveAndFlush(complaint);
         complaintIndexService.createComplaintIndex(complaint);
         if (securityUtils.currentUserIsCitizen())
-            citizenPortalDataPublisher.onRegistration(complaint);
+            citizenComplaintDataPublisher.onRegistration(complaint);
         complaintMessagingService.sendRegistrationMessage(complaint);
         return complaint;
     }
@@ -166,7 +166,7 @@ public class ComplaintService {
         complaintProcessFlowService.onUpdation(complaint);
         complaintRepository.saveAndFlush(complaint);
         complaintIndexService.updateComplaintIndex(complaint);
-        citizenPortalDataPublisher.onUpdation(complaint);
+        citizenComplaintDataPublisher.onUpdation(complaint);
         complaintMessagingService.sendUpdateMessage(complaint);
         return complaint;
     }
