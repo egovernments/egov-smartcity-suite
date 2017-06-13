@@ -51,19 +51,16 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+import static org.egov.infra.utils.ApplicationConstant.ANONYMOUS_USERNAME;
+
 @Service
 public class SecurityUtils {
-    private static final long ANONYMOUS_USER_ID = 2L;
+
     @Autowired
     private UserService userService;
 
-    public static boolean isCurrentUserAuthenticated() {
-        final Optional<Authentication> authentication = getCurrentAuthentication();
-        return authentication.isPresent() && authentication.get().isAuthenticated();
-    }
-
-    public static boolean isCurrentUserAnonymous() {
-        return getCurrentAuthentication().get().getPrincipal() instanceof String;
+    public static boolean userAnonymouslyAuthenticated(Optional<Authentication> authentication) {
+        return authentication.isPresent() && authentication.get().getPrincipal() instanceof String;
     }
 
     public static Optional<Authentication> getCurrentAuthentication() {
@@ -71,34 +68,20 @@ public class SecurityUtils {
     }
 
     public User getCurrentUser() {
-        if (isCurrentUserAuthenticated()) {
-            if (isCurrentUserAnonymous())
-                return userService.getUserById(ANONYMOUS_USER_ID);
-            else
-                return userService.getUserById(((SecureUser) getCurrentAuthentication().get().getPrincipal()).getUserId());
-        } else
-            return userService.getUserById(ANONYMOUS_USER_ID);
-
+        Optional<Authentication> authentication = getCurrentAuthentication();
+        return !authentication.isPresent() || userAnonymouslyAuthenticated(authentication)
+                ? userService.getUserByUsername(ANONYMOUS_USERNAME) :
+                userService.getUserById(((SecureUser) authentication.get().getPrincipal()).getUserId());
     }
 
     public UserType currentUserType() {
-        return getCurrentAuthentication().isPresent() && !isCurrentUserAnonymous() ?
-                ((SecureUser) getCurrentAuthentication().get().getPrincipal()).getUserType() : UserType.SYSTEM;
-    }
-
-    public boolean hasRole(final String role) {
-        return getCurrentAuthentication().isPresent() && getCurrentAuthentication().get()
-                .getAuthorities()
-                .parallelStream()
-                .map(grantedAuthority -> grantedAuthority.getAuthority().equals(role))
-                .findFirst().get();
+        Optional<Authentication> authentication = getCurrentAuthentication();
+        return !userAnonymouslyAuthenticated(authentication) ?
+                ((SecureUser) authentication.get().getPrincipal()).getUserType() : UserType.SYSTEM;
     }
 
     public boolean currentUserIsCitizen() {
         return currentUserType().equals(UserType.CITIZEN);
     }
 
-    public boolean currentUserIsEmployee() {
-        return currentUserType().equals(UserType.EMPLOYEE);
-    }
 }

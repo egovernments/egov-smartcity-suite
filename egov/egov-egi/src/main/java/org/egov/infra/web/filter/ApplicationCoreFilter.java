@@ -42,8 +42,9 @@ package org.egov.infra.web.filter;
 
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.infra.config.properties.ApplicationProperties;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -69,36 +70,47 @@ public class ApplicationCoreFilter implements Filter {
     private CityService cityService;
 
     @Autowired
-    private ApplicationProperties applicationProperties;
+    private SecurityUtils securityUtils;
+
+    @Value("${cdn.domain.url}")
+    private String cdnURL;
+
+    @Value("${app.version}_${app.build.no}")
+    private String applicationRelease;
 
     @Override
-    public void doFilter(final ServletRequest req, final ServletResponse resp, final FilterChain chain) throws IOException, ServletException {
-        final HttpServletRequest request = (HttpServletRequest) req;
-        final HttpSession session = request.getSession();
+    public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) throws IOException, ServletException {
+        HttpServletRequest request = (HttpServletRequest) req;
+        HttpSession session = request.getSession();
         try {
             prepareUserSession(session);
-            prepareApplicationThreadLocal(session);
+            prepareApplicationThreadLocal(session, request);
             chain.doFilter(request, resp);
         } finally {
             ApplicationThreadLocals.clearValues();
         }
     }
 
-    private void prepareUserSession(final HttpSession session) {
+    private void prepareUserSession(HttpSession session) {
         if (session.getAttribute(CITY_CODE_KEY) == null)
             cityService.cityDataAsMap().forEach(session::setAttribute);
         if (session.getAttribute(APP_RELEASE_ATTRIB_NAME) == null)
-            session.setAttribute(APP_RELEASE_ATTRIB_NAME, applicationProperties.applicationReleaseNo());
+            session.setAttribute(APP_RELEASE_ATTRIB_NAME, applicationRelease);
         if (session.getServletContext().getAttribute(CDN_ATTRIB_NAME) == null)
-            session.getServletContext().setAttribute(CDN_ATTRIB_NAME, applicationProperties.cdnURL());
+            session.getServletContext().setAttribute(CDN_ATTRIB_NAME, cdnURL);
     }
 
-    private void prepareApplicationThreadLocal(final HttpSession session) {
+    private void prepareApplicationThreadLocal(HttpSession session, HttpServletRequest request) {
         ApplicationThreadLocals.setCityCode((String) session.getAttribute(CITY_CODE_KEY));
         ApplicationThreadLocals.setCityName((String) session.getAttribute(CITY_NAME_KEY));
         ApplicationThreadLocals.setMunicipalityName((String) session.getAttribute(CITY_CORP_NAME_KEY));
-        if (session.getAttribute(USERID_KEY) != null)
+        if (session.getAttribute(USERID_KEY) != null) {
             ApplicationThreadLocals.setUserId((Long) session.getAttribute(USERID_KEY));
+        } else if (request.getUserPrincipal() == null) {
+            Long anonymousUserId = securityUtils.getCurrentUser().getId();
+            ApplicationThreadLocals.setUserId(anonymousUserId);
+            session.setAttribute(USERID_KEY, anonymousUserId);
+        }
     }
 
     @Override
@@ -107,7 +119,7 @@ public class ApplicationCoreFilter implements Filter {
     }
 
     @Override
-    public void init(final FilterConfig filterConfig) throws ServletException {
+    public void init(FilterConfig filterConfig) throws ServletException {
         //Nothing to be initialized
     }
 }

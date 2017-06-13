@@ -59,9 +59,7 @@ import static org.hibernate.jpa.QueryHints.HINT_CACHEABLE;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    Set<User> findByUsernameContainingIgnoreCase(String userName);
-
-    @QueryHints({ @QueryHint(name = HINT_CACHEABLE, value = "true") })
+    @QueryHints({@QueryHint(name = HINT_CACHEABLE, value = "true")})
     User findByUsername(String userName);
 
     User findByEmailId(String emailId);
@@ -69,13 +67,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
     User findByAadhaarNumber(String aadhaarNumber);
 
     List<User> findByAadhaarNumberAndType(String aadhaarNumber, UserType type);
-    
-    User findByMobileNumber(String mobileNumber);
 
     @Query("select distinct usr.roles from User usr where usr.username = :usrName ")
     Set<Role> findUserRolesByUserName(@Param("usrName") String userName);
-
-    Set<User> findByActiveTrue();
 
     List<User> findByUsernameContainingIgnoreCaseAndTypeAndActiveTrue(String username, UserType type);
 
@@ -89,6 +83,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query(" select count(*) from User usr where usr.username like :name||'%' ")
     Integer getUserSerialNumberByName(@Param("name") final String name);
-    
+
     User findByNameAndMobileNumberAndGender(String name, String mobileNumber, Gender gender);
 }

@@ -69,7 +69,6 @@ public final class ApplicationConstant {
     public static final String CITY_LOGIN_URL = "%s/egi/login/secure";
 
     public static final String CDN_ATTRIB_NAME = "cdn";
-    public static final String USERID_KEY = "userid";
     public static final String APP_RELEASE_ATTRIB_NAME = "app_release_no";
 
     public static final Character Y = Character.valueOf('Y');
@@ -77,10 +76,14 @@ public final class ApplicationConstant {
 
     public static final String ES_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
     public static final String DEFAULT_TIMEZONE = "IST";
-    public static final String CITIZEN_ROLE_NAME = "CITIZEN";
     public static final String ES_DATE_FORMAT_WITHOUT_TS = "yyyy-MM-dd";
 
     public static final String DEFAULT_CHARACTER_ENCODING = "UTF-8";
+
+    public static final String USERID_KEY = "userid";
+    public static final String USERNAME_KEY = "username";
+    public static final String CITIZEN_ROLE_NAME = "CITIZEN";
+    public static final String ANONYMOUS_USERNAME = "anonymous";
 
     private ApplicationConstant() {
     }

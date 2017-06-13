@@ -49,6 +49,8 @@ import org.springframework.security.core.Authentication;
 import java.util.HashMap;
 import java.util.Optional;
 
+import static org.egov.infra.security.utils.SecurityUtils.userAnonymouslyAuthenticated;
+
 public class AuditableEntityListener implements RevisionListener {
 
     @Override
@@ -56,7 +58,7 @@ public class AuditableEntityListener implements RevisionListener {
         final BaseRevisionEntity revision = (BaseRevisionEntity) revisionEntity;
         revision.setUserId(ApplicationThreadLocals.getUserId());
         final Optional<Authentication> auth = SecurityUtils.getCurrentAuthentication();
-        if (auth.isPresent() && !SecurityUtils.isCurrentUserAnonymous())
+        if (!userAnonymouslyAuthenticated(auth))
             revision.setIpAddress(((HashMap<String, String>) auth.get().getCredentials()).get("ipAddress"));
         else
             revision.setIpAddress("unknown");

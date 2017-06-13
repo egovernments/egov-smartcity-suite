@@ -40,19 +40,20 @@
 
 package org.egov.infra.admin.master.service;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.repository.UserRepository;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.microservice.utils.MicroserviceUtils;
 import org.egov.infra.persistence.entity.enums.Gender;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 @Service
 @Transactional(readOnly = true)
@@ -76,10 +77,6 @@ public class UserService {
         return savedUser;
     }
 
-    public Set<User> getUsersByUsernameLike(final String userName) {
-        return userRepository.findByUsernameContainingIgnoreCase(userName);
-    }
-
     public Set<Role> getRolesByUsername(final String userName) {
         return userRepository.findUserRolesByUserName(userName);
     }
@@ -92,12 +89,8 @@ public class UserService {
         return userRepository.getOne(id);
     }
 
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
-    }
-
-    public Set<User> getActiveUsers() {
-        return userRepository.findByActiveTrue();
+    public User getCurrentUser() {
+        return userRepository.findOne(ApplicationThreadLocals.getUserId());
     }
 
     public User getUserByUsername(final String userName) {
@@ -114,10 +107,6 @@ public class UserService {
 
     public List<User> getUserByAadhaarNumberAndType(final String aadhaarNumber, final UserType type) {
         return userRepository.findByAadhaarNumberAndType(aadhaarNumber, type);
-    }
-
-    public User getUserByMobileNumber(final String mobileNumber) {
-        return userRepository.findByMobileNumber(mobileNumber);
     }
 
     public Optional<User> checkUserWithIdentity(final String identity) {
