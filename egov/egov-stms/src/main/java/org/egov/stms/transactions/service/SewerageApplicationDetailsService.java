@@ -613,6 +613,7 @@ public class SewerageApplicationDetailsService {
         if (sewerageApplicationDetails.getState() != null) {
             final String currentState = sewerageApplicationDetails.getState().getValue();
             if (currentState.equalsIgnoreCase(WF_STATE_INSPECTIONFEE_PENDING)
+                    || currentState.equalsIgnoreCase(WF_STATE_CLERK_APPROVED)
                     || currentState.equalsIgnoreCase(WF_STATE_ASSISTANT_APPROVED)
                     || currentState.equalsIgnoreCase(WF_STATE_DEPUTY_EXE_APPROVED)
                     || currentState.equalsIgnoreCase(WF_STATE_PAYMENTDONE))
@@ -625,7 +626,8 @@ public class SewerageApplicationDetailsService {
             else if (currentState.equalsIgnoreCase(WF_STATE_REJECTED))
                 modelParams.put("mode", "editOnReject");
             else if ("NEW".equalsIgnoreCase(currentState)
-                    && SewerageTaxConstants.APPLICATION_STATUS_CSCCREATED.equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode()))
+                    && SewerageTaxConstants.APPLICATION_STATUS_CSCCREATED
+                            .equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode()))
                 modelParams.put("mode", "closetview");
             else
                 modelParams.put("mode", "view");

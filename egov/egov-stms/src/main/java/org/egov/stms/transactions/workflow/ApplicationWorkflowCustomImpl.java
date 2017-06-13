@@ -153,8 +153,7 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                         .withComments(approvalComent).withInitiator(wfInitiator != null ? wfInitiator.getPosition() : null)
                         .withStateValue(wfmatrix.getNextState()).withDateInfo(new Date()).withOwner(pos)
                         .withNextAction(wfmatrix.getNextAction()).withNatureOfTask(natureOfwork);
-            } else if (null == sewerageApplicationDetails.getState() || (SewerageTaxConstants.APPLICATION_STATUS_CSCCREATED.equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode())
-                    && NEW.equalsIgnoreCase(sewerageApplicationDetails.getState().getValue()))){    // New Entry
+            } else if (null == sewerageApplicationDetails.getState()){    // New Entry
                 // If Inspection is configured, pick with inspection fee workflowmatrix by passing pendingaction
                 if (sewerageTaxUtils.isInspectionFeeCollectionRequired()) {
                     wfmatrix = sewerageApplicationWorkflowService.getWfMatrix(
