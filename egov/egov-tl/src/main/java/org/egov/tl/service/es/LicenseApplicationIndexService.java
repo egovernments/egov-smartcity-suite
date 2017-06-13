@@ -59,6 +59,7 @@ import java.util.Optional;
 
 import static java.lang.String.format;
 import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.egov.commons.entity.Source.CSC;
 import static org.egov.commons.entity.Source.SYSTEM;
 import static org.egov.infra.elasticsearch.entity.enums.ApprovalStatus.INPROGRESS;
 import static org.egov.infra.elasticsearch.entity.enums.ClosureStatus.NO;
@@ -68,6 +69,7 @@ import static org.egov.tl.utils.Constants.NEW_LIC_APPTYPE;
 import static org.egov.tl.utils.Constants.RENEWAL_LIC_APPTYPE;
 import static org.egov.tl.utils.Constants.STATUS_CANCELLED;
 import static org.egov.tl.utils.Constants.TRADE_LICENSE;
+import static org.egov.tl.utils.Constants.CSCOPERATOR;
 
 @Service
 public class LicenseApplicationIndexService {
@@ -101,13 +103,14 @@ public class LicenseApplicationIndexService {
         if (license.getApplicationDate() == null)
             license.setApplicationDate(new Date());
         Integer slaConfig = getSlaForAppType(license.getLicenseAppType());
+
         applicationIndexService.createApplicationIndex(ApplicationIndex.builder().withModuleName(TRADE_LICENSE)
                 .withApplicationNumber(license.getApplicationNumber()).withApplicationDate(license.getApplicationDate())
                 .withApplicationType(license.getLicenseAppType().getName()).withApplicantName(license.getLicensee().getApplicantName())
                 .withStatus(license.getEgwStatus().getDescription()).withUrl(format(APPLICATION_VIEW_URL, license.getApplicationNumber()))
                 .withApplicantAddress(license.getAddress()).withOwnername(user.isPresent() ?
                         user.get().getUsername() + DELIMITER_COLON + user.get().getName() : EMPTY)
-                .withChannel(SYSTEM.toString()).withMobileNumber(license.getLicensee().getMobilePhoneNumber())
+                .withChannel(securityUtils.getCurrentUser().hasRole(CSCOPERATOR) ? CSC.toString() : SYSTEM.toString()).withMobileNumber(license.getLicensee().getMobilePhoneNumber())
                 .withAadharNumber(license.getLicensee().getUid()).withClosed(NO).withApproved(INPROGRESS).withSla(slaConfig != null ? slaConfig : 0)
                 .build());
     }
