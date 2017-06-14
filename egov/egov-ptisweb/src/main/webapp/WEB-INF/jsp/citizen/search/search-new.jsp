@@ -101,7 +101,7 @@
 					<td class="bluebox"><s:text name="Old.assessmentno" /> :</td>
 
 					<td class="bluebox"><s:textfield name="oldMuncipalNum"
-							id="oldMuncipalNum" value="%{oldMuncipalNum}" maxlength="10" /></td>
+							id="oldMuncipalNum" value="%{oldMuncipalNum}" maxlength="20" /></td>
 					<td class="bluebox">&nbsp;</td>
 				</tr>
 							

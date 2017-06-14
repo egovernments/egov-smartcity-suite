@@ -233,7 +233,7 @@
 						class="mandatory1">*</span> :</td>
 
 					<td class="bluebox"><s:textfield name="oldMuncipalNum"
-							id="oldMuncipalNum" value="%{oldMuncipalNum}" maxlength="15" /></td>
+							id="oldMuncipalNum" value="%{oldMuncipalNum}" maxlength="20" /></td>
 					<td class="bluebox">&nbsp;</td>
 				</tr>
 
