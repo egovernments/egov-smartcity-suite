@@ -82,6 +82,7 @@ import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.SPACE;
 import static org.egov.infra.persistence.entity.enums.UserType.EMPLOYEE;
 import static org.egov.infra.persistence.entity.enums.UserType.SYSTEM;
+import static org.egov.infra.persistence.utils.PersistenceUtils.unproxy;
 import static org.egov.infra.web.support.ui.Menu.APP_MENU_ICON;
 import static org.egov.infra.web.support.ui.Menu.APP_MENU_MAIN_ICON;
 import static org.egov.infra.web.support.ui.Menu.APP_MENU_TITLE;
@@ -189,7 +190,7 @@ public class HomeController {
 
     @ModelAttribute("user")
     public User user() {
-        return userService.getCurrentUser();
+        return unproxy(userService.getCurrentUser());
     }
 
     @GetMapping("profile/edit")
