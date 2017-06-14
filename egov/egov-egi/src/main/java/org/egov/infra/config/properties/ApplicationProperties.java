@@ -45,6 +45,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
@@ -55,6 +56,7 @@ import static org.apache.commons.lang3.StringUtils.EMPTY;
         "classpath:config/egov-erp-${user.name}.properties",
         "classpath:config/application-config-${client.id}.properties",
         "classpath:config/egov-erp-override.properties"}, ignoreResourceNotFound = true)
+@Order
 public class ApplicationProperties {
 
     private static final String DEV_MODE = "dev.mode";
