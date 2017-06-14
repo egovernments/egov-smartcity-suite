@@ -158,7 +158,8 @@ public class MicroserviceUtils {
                 tasks = tresp.getTasks();
             } catch (final Exception e) {
                 final String errMsg = "Exception while getting inbox items from microservice ";
-                throw new ApplicationRuntimeException(errMsg, e);
+               // throw new ApplicationRuntimeException(errMsg, e);
+                LOGGER.fatal(errMsg,e);
             }
         }
         return tasks;
