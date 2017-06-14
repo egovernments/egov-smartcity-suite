@@ -1463,8 +1463,10 @@ public class ComplaintIndexService {
     }
 
     private void setComplaintViewURL(List<ComplaintIndex> complaints) {
-        String domainURL = ApplicationThreadLocals.getDomainURL();
         for (ComplaintIndex complaint : complaints)
-            complaint.setUrl(format(PGR_COMPLAINT_VIEW_URL, domainURL, complaint.getCrn()));
+            if (isNotBlank(complaint.getCityCode())) {
+                final CityIndex city = cityIndexService.findOne(complaint.getCityCode());
+                complaint.setUrl(format(PGR_COMPLAINT_VIEW_URL, city.getDomainurl(), complaint.getCrn()));
+            }
     }
 }
