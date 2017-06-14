@@ -112,6 +112,14 @@
 						</div>
 					</div>
 					</div>
+					<c:choose>
+						<c:when test="${mode=='ByBoundary'}">
+							<input type="hidden" id="byboundary" value="boundary"/>
+						</c:when>
+						<c:otherwise>
+							<input type="hidden" id="byboundary" value="department"/>
+						</c:otherwise>
+					</c:choose>
 				</form:form>
 			</div>
 			<div class="row display-hide report-section">
@@ -127,12 +135,12 @@
 									<th><spring:message code="lbl.ageingReport.department" /></th>
 								</c:otherwise>
 							</c:choose>
-							<th>><spring:message code="lbl.header.30"/></th>
-							<th><spring:message code="lbl.header.10to30"/></th>
-							<th><spring:message code="lbl.header.5to10"/></th>
-							<th><spring:message code="lbl.header.2to5"/></th>
-							<th><spring:message code="lbl.header.0to2"/></th>
-							<th><b><spring:message code="lbl.header.totaldays" /></b></th>
+							<th></th>
+							<th></th>
+							<th></th>
+							<th></th>
+							<th></th>
+							<th></th>
 						</thead>
 						<tfoot id="report-footer">
 							<tr>
@@ -152,10 +160,18 @@
 	</div>
 </div>
 
-<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>
-<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
-<script type="text/javascript" src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
-<script type="text/javascript" src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
+<link rel="stylesheet"
+      href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>
+<link rel="stylesheet"
+      href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
+<script type="text/javascript"
+        src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
+<script type="text/javascript"
+        src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
+<script
+        src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/dataTables.buttons.min.js' context='/egi'/>"></script>
+<script
+        src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/buttons.bootstrap.min.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"></script>

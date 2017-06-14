@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="pgr_ageing_report" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="8de2e3b3-fd4c-422f-8bdf-7cea79b665d3">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="AgeingReportForm" class="java.util.List"/>
+	<field name="department" class="java.lang.String"/>
+	<field name="boundary" class="java.lang.String"/>
+	<field name="greater30" class="java.math.BigInteger"/>
+	<field name="btw10to30" class="java.math.BigInteger"/>
+	<field name="btw5to10" class="java.math.BigInteger"/>
+	<field name="btw2to5" class="java.math.BigInteger"/>
+	<field name="lsthn2" class="java.math.BigInteger"/>
+	<variable name="total_greater30" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$F{greater30}]]></variableExpression>
+	</variable>
+	<variable name="total_btw10to30" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$F{btw10to30}]]></variableExpression>
+	</variable>
+	<variable name="total_btw5to10" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$F{btw5to10}]]></variableExpression>
+	</variable>
+	<variable name="total_btw2to5" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$F{btw2to5}]]></variableExpression>
+	</variable>
+	<variable name="total_lsthn2" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$F{lsthn2}]]></variableExpression>
+	</variable>
+	<variable name="row_sum" class="java.math.BigInteger">
+		<variableExpression><![CDATA[$F{greater30}+$F{btw10to30}+$F{btw5to10}+$F{btw2to5}+$F{lsthn2}]]></variableExpression>
+	</variable>
+	<variable name="total_sum" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$V{row_sum}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="45" splitType="Stretch">
+			<staticText>
+				<reportElement x="350" y="12" width="130" height="20" uuid="cf993897-da29-4318-b391-97e5b9c09207"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Ageing Report]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="21" splitType="Stretch">
+			<staticText>
+				<reportElement x="17" y="1" width="110" height="20" uuid="04c3e2cc-8c37-4113-ab31-0d77acb5bfa1"/>
+				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="127" y="1" width="110" height="20" uuid="f15be093-00a2-40d4-a496-7061280caf75"/>
+				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[>30(Days)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="237" y="1" width="110" height="20" uuid="4ee283f5-68aa-4aee-9453-9194df4681c3"/>
+				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[10-30 (Days)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="347" y="1" width="110" height="20" uuid="7aafe03d-8dc8-49ed-9422-bd82bbdee86c"/>
+				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[5-10 (Days)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="457" y="1" width="110" height="20" uuid="b011c57c-3af4-4e20-aa4e-1e1782154e37"/>
+				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[2-5 (Days)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="567" y="1" width="110" height="20" uuid="d34d16b9-19ad-4677-9a2a-db5a53ed5d39"/>
+				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[0-2 (Days)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="677" y="1" width="110" height="20" uuid="d178dce8-251b-48c5-beed-e39c61634dc1"/>
+				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total (Days)]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="21" splitType="Stretch">
+			<textField>
+				<reportElement x="17" y="0" width="110" height="20" uuid="1c80bb6d-444a-4f98-8595-af85b7ae6bf1"/>
+				<box topPadding="1" leftPadding="3" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{department}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="127" y="0" width="110" height="20" uuid="8c30b55a-08ae-4866-b2f1-269ffe36cd9a"/>
+				<box topPadding="1" leftPadding="3" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{greater30}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="237" y="0" width="110" height="20" uuid="b9db90f2-a164-467e-a7c0-fe3b99fa7d77"/>
+				<box topPadding="1" leftPadding="3" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{btw10to30}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="347" y="0" width="110" height="20" uuid="47a22568-265f-4c27-b026-f1c36f3be484"/>
+				<box topPadding="1" leftPadding="3" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{btw5to10}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="457" y="0" width="110" height="20" uuid="4d2fadc9-a8f0-4897-91ea-c93e979b2f00"/>
+				<box topPadding="1" leftPadding="3" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{btw2to5}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="567" y="0" width="110" height="20" uuid="a74cd10c-70da-4f01-b002-ede9c4d478ee"/>
+				<box topPadding="1" leftPadding="3" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{lsthn2}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="677" y="0" width="110" height="20" uuid="8f05a2d7-6b51-43b0-93eb-dd0f6fbf2110"/>
+				<box topPadding="1" leftPadding="3" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$V{row_sum}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="21" splitType="Stretch">
+			<textField>
+				<reportElement x="687" y="0" width="100" height="20" uuid="d4d16e05-d821-4f10-8492-658982cc43fb"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch">
+			<textField>
+				<reportElement x="127" y="0" width="110" height="20" uuid="b36f2b78-0048-46d6-8ffe-fc6ec3e231e8"/>
+				<box topPadding="1" leftPadding="3" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$V{total_greater30}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="237" y="0" width="110" height="20" uuid="6bd5c5b9-bf02-446b-9920-912941340482"/>
+				<box topPadding="1" leftPadding="3" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$V{total_btw10to30}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="347" y="0" width="110" height="20" uuid="36b8647f-33fa-4b8d-8016-eae2d8fb5afa"/>
+				<box topPadding="1" leftPadding="3" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$V{total_btw5to10}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="457" y="0" width="110" height="20" uuid="16beec23-b164-4ca2-8c97-46846b302298"/>
+				<box topPadding="1" leftPadding="3" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$V{total_btw2to5}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="567" y="0" width="110" height="20" uuid="10ee46cc-9952-4545-8a41-5c904d8a5bb9"/>
+				<box topPadding="1" leftPadding="3" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$V{total_lsthn2}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="677" y="0" width="110" height="20" uuid="c39ef1f7-57f3-4e48-85d0-c682a94ce348"/>
+				<box topPadding="1" leftPadding="3" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$V{total_sum}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="17" y="0" width="110" height="20" uuid="54b631a0-066b-40b2-bbcf-1ba53804326f"/>
+				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Total]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>

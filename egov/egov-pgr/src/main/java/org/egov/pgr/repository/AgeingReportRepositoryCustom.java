@@ -38,68 +38,20 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.pgr.web.controller.reports;
+package org.egov.pgr.repository;
 
-import java.math.BigInteger;
+import java.util.List;
 
-public class AgeingReportResult {
-    private BigInteger grtthn30 = BigInteger.ZERO;
-    private BigInteger btw10to30 = BigInteger.ZERO;
-    private BigInteger btw5to10 = BigInteger.ZERO;
-    private BigInteger btw2to5 = BigInteger.ZERO;
-    private BigInteger lsthn2 = BigInteger.ZERO;
-    private String name;
+import org.egov.infstr.services.Page;
+import org.egov.pgr.entity.dto.AgeingReportForm;
+import org.egov.pgr.entity.dto.AgeingReportRequest;
 
-    public BigInteger getGrtthn30() {
-        return grtthn30;
-    }
+public interface AgeingReportRepositoryCustom {
 
-    public void setGrtthn30(BigInteger grtthn30) {
-        this.grtthn30 = grtthn30;
-    }
+    Page<AgeingReportForm> findByAgeingReportResult(final AgeingReportRequest ageingReportRequest);
 
-    public BigInteger getBtw10to30() {
-        return btw10to30;
-    }
+    Object[] getGrandTotal(final AgeingReportRequest ageingReportRequest);
 
-    public void setBtw10to30(BigInteger btw10to30) {
-        this.btw10to30 = btw10to30;
-    }
-
-    public BigInteger getBtw5to10() {
-        return btw5to10;
-    }
-
-    public void setBtw5to10(BigInteger btw5to10) {
-        this.btw5to10 = btw5to10;
-    }
-
-    public BigInteger getBtw2to5() {
-        return btw2to5;
-    }
-
-    public void setBtw2to5(BigInteger btw2to5) {
-        this.btw2to5 = btw2to5;
-    }
-
-    public BigInteger getLsthn2() {
-        return lsthn2;
-    }
-
-    public void setLsthn2(BigInteger lsthn2) {
-        this.lsthn2 = lsthn2;
-    }
-
-    public BigInteger getTotal() {
-        return grtthn30.add(btw10to30).add(btw5to10).add(btw2to5).add(lsthn2);
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(final String name) {
-        this.name = name;
-    }
+    List<AgeingReportForm> getAgeingReportRecords(final AgeingReportRequest ageingReportRequest);
 
 }

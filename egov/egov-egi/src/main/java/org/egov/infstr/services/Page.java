@@ -45,6 +45,8 @@ import org.hibernate.Query;
 
 import java.util.List;
 
+import javax.persistence.TypedQuery;
+
 public class Page<T> {
 
     private final List<T> results;
@@ -90,6 +92,25 @@ public class Page<T> {
             this.pageSize = -1;
         }
         this.results = criteria.list();
+    }
+    
+    public Page(TypedQuery<T> query, int pageNumber, int pageSize,int recordTotal) {
+        int currentPageNo = pageNumber;
+        if (pageNumber < 1) {
+            currentPageNo = 1;
+        }
+
+        this.pageNumber = currentPageNo;
+
+        if (pageSize > 0) {
+            query.setFirstResult((currentPageNo - 1) * pageSize);
+            query.setMaxResults(pageSize + 1);
+            this.pageSize = pageSize;
+        } else {
+            this.pageSize = -1;
+        }
+        this.results = query.getResultList();
+        this.recordTotal=recordTotal;
     }
 
     public boolean isNextPage() {

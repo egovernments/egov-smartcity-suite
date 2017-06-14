@@ -38,38 +38,14 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.pgr.service.reports;
+package org.egov.pgr.repository;
 
-import java.util.List;
-
-import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
-import org.egov.infstr.services.Page;
 import org.egov.pgr.entity.dto.AgeingReportForm;
-import org.egov.pgr.entity.dto.AgeingReportRequest;
-import org.egov.pgr.repository.AgeingReportRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-@Service
-@Transactional(readOnly = true)
-public class AgeingReportService {
+@Repository
+public interface AgeingReportRepository
+        extends AgeingReportRepositoryCustom, JpaRepository<AgeingReportForm, Long> {
 
-    @Autowired
-    private AgeingReportRepository ageingReportRepository;
-
-    @ReadOnly
-    public Page<AgeingReportForm> pagedAgeingRecords(final AgeingReportRequest request) {
-        return ageingReportRepository.findByAgeingReportResult(request);
-    }
-
-    @ReadOnly
-    public Object[] ageingReportGrandTotal(final AgeingReportRequest request) {
-        return ageingReportRepository.getGrandTotal(request);
-    }
-
-    @ReadOnly
-    public List<AgeingReportForm> getAllAgeingReportRecords(final AgeingReportRequest request) {
-        return ageingReportRepository.getAgeingReportRecords(request);
-    }
 }
