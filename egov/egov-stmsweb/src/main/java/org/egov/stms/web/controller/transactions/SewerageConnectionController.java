@@ -388,7 +388,7 @@ public class SewerageConnectionController extends GenericWorkFlowController {
                 request);
         if (propertyOwnerDetails != null)
             modelMap.addAttribute("propertyOwnerDetails", propertyOwnerDetails);
-        final PropertyTaxDetails propertyTaxDetails = propertyExternalService.getPropertyTaxDetails(assessmentNumber, null);
+        final PropertyTaxDetails propertyTaxDetails = propertyExternalService.getPropertyTaxDetails(assessmentNumber, null, null);
         modelMap.addAttribute("propertyTax", propertyTaxDetails.getTotalTaxAmt());
     }
 

@@ -197,7 +197,7 @@ public class SewerageChangeInClosetsUpdateController extends GenericWorkFlowCont
                 request);
         if (propertyOwnerDetails != null)
             model.addAttribute("propertyOwnerDetails", propertyOwnerDetails);
-        final PropertyTaxDetails propertyTaxDetails = propertyExternalService.getPropertyTaxDetails(assessmentNumber, null);
+        final PropertyTaxDetails propertyTaxDetails = propertyExternalService.getPropertyTaxDetails(assessmentNumber, null, null);
         model.addAttribute("propertyTax", propertyTaxDetails.getTotalTaxAmt());
     }
 

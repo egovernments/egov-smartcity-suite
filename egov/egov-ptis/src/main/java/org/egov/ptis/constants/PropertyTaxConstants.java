@@ -1118,6 +1118,7 @@ public interface PropertyTaxConstants {
     public static final String PROPERTY_ACTIVE_ERR_CODE = "PTAX103";
     public static final String PROPERTY_INACTIVE_ERR_CODE = "PTAX104";
     public static final String PROPERTY_EXEMPTED_ERR_CODE = "PTAX105";
+    public static final String PROPERTY_DUPLICATE_ERR_CODE = "PTAX106";
 
     public static final String PROPERTY_NOT_EXIST_ERR_MSG_PREFIX = "Property with assessment no ";
     public static final String PROPERTY_NOT_EXIST_ERR_MSG_SUFFIX = " does not exist";
@@ -1126,6 +1127,7 @@ public interface PropertyTaxConstants {
     public static final String PROPERTY_ACTIVE_NOT_EXISTS = "Active property does not exists for the given assessment number";
     public static final String PROPERTY_INACTIVE_ERR_MSG = "Property is not active for the given assessment number";
     public static final String PROPERTY_EXEMPTED_ERR_MSG = "Property is exempted";
+    public static final String PROPERTY_DUPLICATE_ERR_MSG = "More than one assessment for the old assessment number: ";
 
     public static final String MARK_DEACTIVE = "MARK_DEACTIVE";
     public static final BigDecimal PENALTY_PERCENTAGE = new BigDecimal(2);
