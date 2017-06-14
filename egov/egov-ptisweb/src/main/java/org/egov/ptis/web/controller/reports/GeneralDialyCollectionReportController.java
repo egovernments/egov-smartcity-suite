@@ -39,7 +39,19 @@
  */
 package org.egov.ptis.web.controller.reports;
 
-import com.google.gson.GsonBuilder;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+
+import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.io.IOUtils;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.RegionalHeirarchy;
@@ -59,16 +71,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import com.google.gson.GsonBuilder;
 
 /**
  * @author Pradeep
@@ -81,9 +84,8 @@ public class GeneralDialyCollectionReportController {
     private static final String ULBWISE_COLL_REPORT_FORM = "ulbWiseCollectionReport-form";
     private static final String ULBWISE_DCB_REPORT_FORM = "ulbWiseDcbReport-form";
 
-    private String DISTRICT = "DISTRICT";
-    private String CITY = "CITY";
-    private BillCollectorDailyCollectionReportResult bcDailyCollectionReportResult = new BillCollectorDailyCollectionReportResult();
+    private String district = "DISTRICT";
+    private String city = "CITY";
 
     @Autowired
     private FinancialYearDAO financialYearDAO;
@@ -112,66 +114,66 @@ public class GeneralDialyCollectionReportController {
     @RequestMapping(value = "/getRegionHeirarchyByType", method = GET, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     public List<RegionalHeirarchy> getRegionHeirarchyByType(@RequestParam final String regionName,
-                                                            @RequestParam final String type) {
+            @RequestParam final String type) {
 
-        if (type != null && type.equalsIgnoreCase(DISTRICT))
+        if (type != null && type.equalsIgnoreCase(district))
             return regionalHeirarchyService.getActiveChildRegionHeirarchyByPassingParentNameAndType(
                     RegionalHeirarchyType.DISTRICT, regionName);
         else {
 
-            if (type != null && type.equalsIgnoreCase(CITY))
+            if (type != null && type.equalsIgnoreCase(city))
                 return regionalHeirarchyService.getActiveChildRegionHeirarchyByPassingParentNameAndType(
                         RegionalHeirarchyType.CITY, regionName);
         }
-        return null;
+        return Collections.emptyList();
     }
-
 
     @ModelAttribute("bcDailyCollectionReportResult")
     public BillCollectorDailyCollectionReportResult bcDailyCollectionReportResultModel() {
-        return bcDailyCollectionReportResult;
+        return new BillCollectorDailyCollectionReportResult();
     }
 
     @RequestMapping(value = "/billcollectorDailyCollectionReport-form", method = RequestMethod.GET)
-    public String searchForm() {
+    public String searchForm(final Model model) {
+        BillCollectorDailyCollectionReportResult bcDailyCollectionReportResult = new BillCollectorDailyCollectionReportResult();
+
         DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DATE, -1);
-        if (bcDailyCollectionReportResult != null)
-            bcDailyCollectionReportResult.setGeneratedDate(dateFormat.format(calendar.getTime()));
-
+        bcDailyCollectionReportResult.setGeneratedDate(dateFormat.format(calendar.getTime()));
+        model.addAttribute("bcDailyCollectionReportResult", bcDailyCollectionReportResult);
         return BILL_COLLECTOR_COLL_REPORT_FORM;
     }
 
     @RequestMapping(value = "/ulbWiseDcbReport-form", method = RequestMethod.GET)
     public String searchUlbWiseDcbForm(final Model model, @RequestParam final String type) {
+        BillCollectorDailyCollectionReportResult bcDailyCollectionReportResult = new BillCollectorDailyCollectionReportResult();
+
         DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
         Calendar calendar = Calendar.getInstance();
         model.addAttribute("typeValue", type);
         calendar.add(Calendar.DATE, -1);
-        if (bcDailyCollectionReportResult != null)
-            bcDailyCollectionReportResult.setGeneratedDate(dateFormat.format(calendar.getTime()));
-
+        bcDailyCollectionReportResult.setGeneratedDate(dateFormat.format(calendar.getTime()));
+        model.addAttribute("bcDailyCollectionReportResult", bcDailyCollectionReportResult);
         return ULBWISE_DCB_REPORT_FORM;
     }
-
 
     @RequestMapping(value = "/ulbWiseCollectionReport-form", method = RequestMethod.GET)
     public String searchUlbWiseForm() {
         return ULBWISE_COLL_REPORT_FORM;
     }
 
-
     @RequestMapping(value = "/ulbWiseDCBList", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public void searchUlbWiseDcb(final HttpServletResponse response, BillCollectorDailyCollectionReportResult bcDailyCollectionReportResult) throws IOException {
+    public void searchUlbWiseDcb(final HttpServletResponse response,
+            BillCollectorDailyCollectionReportResult bcDailyCollectionReportResult) throws IOException {
         IOUtils.write(
                 "{ \"data\":"
                         + new GsonBuilder().setDateFormat(GlobalSettings.datePattern()).create()
-                        .toJson(reportService.getUlbWiseDcbCollection(new Date(), bcDailyCollectionReportResult)) + "}",
+                                .toJson(reportService.getUlbWiseDcbCollection(new Date(), bcDailyCollectionReportResult))
+                        + "}",
                 response.getWriter());
     }
-
 
     @RequestMapping(value = "/ulbWiseCollectionList", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
@@ -179,18 +181,21 @@ public class GeneralDialyCollectionReportController {
         IOUtils.write(
                 "{ \"data\":"
                         + new GsonBuilder().setDateFormat(GlobalSettings.datePattern()).create()
-                        .toJson(reportService.getUlbWiseDailyCollection(new Date())) + "}",
+                                .toJson(reportService.getUlbWiseDailyCollection(new Date()))
+                        + "}",
                 response.getWriter());
     }
 
-
     @RequestMapping(value = "/billcollectorDailyCollectionReportList", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public void search(final HttpServletResponse response, BillCollectorDailyCollectionReportResult bcDailyCollectionReportResult) throws IOException {
+    public void search(final HttpServletResponse response, BillCollectorDailyCollectionReportResult bcDailyCollectionReportResult)
+            throws IOException {
         IOUtils.write(
                 "{ \"data\":"
                         + new GsonBuilder().setDateFormat(GlobalSettings.datePattern()).create()
-                        .toJson(reportService.getBillCollectorWiseDailyCollection(new Date(), bcDailyCollectionReportResult)) + "}",
+                                .toJson(reportService.getBillCollectorWiseDailyCollection(new Date(),
+                                        bcDailyCollectionReportResult))
+                        + "}",
                 response.getWriter());
     }
 
