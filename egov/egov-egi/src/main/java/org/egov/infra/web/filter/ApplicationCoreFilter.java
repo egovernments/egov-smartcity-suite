@@ -42,9 +42,12 @@ package org.egov.infra.web.filter;
 
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.config.security.authentication.SecureUser;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.User;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -55,7 +58,9 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.Optional;
 
+import static org.egov.infra.security.utils.SecurityUtils.getCurrentAuthentication;
 import static org.egov.infra.utils.ApplicationConstant.APP_RELEASE_ATTRIB_NAME;
 import static org.egov.infra.utils.ApplicationConstant.CDN_ATTRIB_NAME;
 import static org.egov.infra.utils.ApplicationConstant.CITY_CODE_KEY;
@@ -104,13 +109,22 @@ public class ApplicationCoreFilter implements Filter {
         ApplicationThreadLocals.setCityCode((String) session.getAttribute(CITY_CODE_KEY));
         ApplicationThreadLocals.setCityName((String) session.getAttribute(CITY_NAME_KEY));
         ApplicationThreadLocals.setMunicipalityName((String) session.getAttribute(CITY_CORP_NAME_KEY));
-        if (session.getAttribute(USERID_KEY) != null) {
-            ApplicationThreadLocals.setUserId((Long) session.getAttribute(USERID_KEY));
-        } else if (request.getUserPrincipal() == null) {
-            Long anonymousUserId = securityUtils.getCurrentUser().getId();
-            ApplicationThreadLocals.setUserId(anonymousUserId);
-            session.setAttribute(USERID_KEY, anonymousUserId);
+        ApplicationThreadLocals.setUserId(getUserIdFromAuthentication(session));
+    }
+
+    private Long getUserIdFromAuthentication(final HttpSession session) {
+        Long userId = (Long) session.getAttribute(USERID_KEY);
+        if (userId == null) {
+            Optional<Authentication> authentication = getCurrentAuthentication();
+            if (authentication.isPresent() && authentication.get().getPrincipal() instanceof SecureUser) {
+                userId = ((SecureUser) authentication.get().getPrincipal()).getUserId();
+                session.setAttribute(USERID_KEY, userId);
+            } else if (!authentication.isPresent() || (authentication.isPresent() && !(authentication.get().getPrincipal() instanceof User))) {
+                userId = securityUtils.getCurrentUser().getId();
+                session.setAttribute(USERID_KEY, userId);
+            }
         }
+        return userId;
     }
 
     @Override
