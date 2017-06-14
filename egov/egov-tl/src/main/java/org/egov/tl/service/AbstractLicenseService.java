@@ -367,13 +367,6 @@ public abstract class AbstractLicenseService<T extends License> {
         final String natureOfWork = license.isReNewApplication()
                 ? RENEWAL_NATUREOFWORK : NEW_NATUREOFWORK;
         final List<Assignment> assignments = assignmentService.getAllActiveEmployeeAssignmentsByEmpId(this.securityUtils.getCurrentUser().getId());
-        Position wfInitiator = null;
-        if (license.getState() == null || license.transitionCompleted()) {
-            if (!assignments.isEmpty())
-                wfInitiator = assignments.get(0).getPosition();
-            else
-                throw new ValidationException("wf.initiator.not.found", "No employee exist for creator's position");
-        }
         license.setApplicationNumber(licenseNumberUtils.generateApplicationNumber());
         recalculateDemand(this.feeMatrixService.getLicenseFeeDetails(license,
                 license.getLicenseDemand().getEgInstallmentMaster().getFromDate()), license);
@@ -383,6 +376,13 @@ public abstract class AbstractLicenseService<T extends License> {
         final User currentUser = this.securityUtils.getCurrentUser();
         final String currentUserRoles = securityUtils.getCurrentUser().getRoles().toString();
         if (!currentUserRoles.contains(CSCOPERATOR)) {
+            Position wfInitiator = null;
+            if (license.getState() == null || license.transitionCompleted()) {
+                if (!assignments.isEmpty())
+                    wfInitiator = assignments.get(0).getPosition();
+                else
+                    throw new ValidationException("wf.initiator.not.found", "No employee exist for creator's position");
+            }
             final WorkFlowMatrix wfmatrix = this.licenseWorkflowService.getWfMatrix(license.getStateType(), null,
                     null, workflowBean.getAdditionaRule(), workflowBean.getCurrentState(), null);
             if (!license.hasState())
@@ -727,14 +727,14 @@ public abstract class AbstractLicenseService<T extends License> {
             final WorkFlowMatrix wfmatrix = this.licenseWorkflowService.getWfMatrix(license.getStateType(), null,
                     null, workflowBean.getAdditionaRule(), "NEW", null);
             final List<Assignment> assignments = assignmentService.getAllActiveEmployeeAssignmentsByEmpId(this.securityUtils.getCurrentUser().getId());
-            Position wfInitiator = null;
-            if (license.getState() == null) {
-                if (!assignments.isEmpty())
-                    wfInitiator = assignments.get(0).getPosition();
-                else
-                    throw new ValidationException("wf.initiator.not.found", "No employee exist for creator's position");
-            }
             if (!currentUserRoles.contains(CSCOPERATOR)) {
+                Position wfInitiator = null;
+                if (license.getState() == null) {
+                    if (!assignments.isEmpty())
+                        wfInitiator = assignments.get(0).getPosition();
+                    else
+                        throw new ValidationException("wf.initiator.not.found", "No employee exist for creator's position");
+                }
                 if (!license.hasState())
                     license.transition().start();
                 else

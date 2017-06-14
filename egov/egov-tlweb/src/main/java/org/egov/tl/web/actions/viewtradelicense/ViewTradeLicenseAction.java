@@ -74,6 +74,7 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     private String applicationNo;
     private Long licenseid;
     private String url;
+    private Boolean enableState;
     @Autowired
     private TradeLicenseService tradeLicenseService;
 
@@ -180,6 +181,8 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     public void prepareClosureForm() {
         if (license() != null && license().getId() != null)
             tradeLicense = tradeLicenseService.getLicenseById(license().getId());
+        if (tradeLicense.getCurrentState().getValue().equalsIgnoreCase("SI/SS Approved"))
+            setEnableState(true);
     }
 
     @Action(value = "/viewtradelicense/viewTradeLicense-closure")
@@ -263,5 +266,13 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public Boolean getEnableState() {
+        return enableState;
+    }
+
+    public void setEnableState(Boolean enableState) {
+        this.enableState = enableState;
     }
 }
