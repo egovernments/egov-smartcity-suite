@@ -199,10 +199,8 @@ public class SearchPropertyAction extends BaseFormAction {
     private Long zoneId;
     private Long wardId;
     private Long propertyTypeMasterId;
-
     private Integer locationId;
     private Integer areaName;
-
     private String assessmentNum;
     private String houseNumBndry;
     private String ownerNameBndry;
@@ -225,7 +223,6 @@ public class SearchPropertyAction extends BaseFormAction {
     private String meesevaServiceCode;
     private String applicationSource;
     private String actionNamespace;
-
     private List<Map<String, String>> searchResultList;
     List<Map<String, String>> searchList = new ArrayList<Map<String, String>>();
     private Map<Long, String> ZoneBndryMap;
@@ -992,6 +989,17 @@ public class SearchPropertyAction extends BaseFormAction {
     @ValidationErrorPage(value = "new")
     @Action(value = "/search/searchProperty-searchOwnerDetails")
     public String searchOwnerDetails() {
+
+        if(basicProperty == null && StringUtils.isNotBlank(oldMuncipalNum)) {
+            final List<BasicProperty> properties = basicPropertyDAO.getBasicPropertyByOldMunipalNo(oldMuncipalNum);
+            if (properties.size() > 1) {
+                addActionError(getText("validation.multiple.oldassessmentno"));
+                return NEW;
+            } else if (properties.size() == 1){
+                basicProperty = properties.get(0);
+            }
+        }
+
         if (basicProperty == null) {
             addActionError(getText("validation.property.doesnot.exists"));
             return NEW;
