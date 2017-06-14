@@ -48,21 +48,21 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.admin.master.service.UserService;
-import org.egov.infra.config.properties.ApplicationProperties;
-import org.egov.infra.persistence.utils.PersistenceUtils;
-import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.validation.ValidatorUtils;
 import org.egov.infra.web.support.ui.Menu;
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -72,7 +72,6 @@ import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -93,18 +92,13 @@ import static org.egov.infra.web.support.ui.Menu.SELFSERVICE_MENU_ICON;
 import static org.egov.infra.web.support.ui.Menu.SELFSERVICE_MENU_TITLE;
 import static org.egov.infra.web.support.ui.Menu.SELFSERVICE_MODULE;
 import static org.egov.infra.web.utils.WebUtils.setUserLocale;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @Controller
 @RequestMapping(value = "/home")
 public class HomeController {
 
-    private static final String FEEDBACK_FORMAT = "%s\n\n%s\n%s";
+    private static final String FEEDBACK_MSG_FORMAT = "%s\n\n%s\n%s";
     private static final String NON_EMPLOYE_PORTAL_HOME = "/portal/home";
-
-    @Autowired
-    private SecurityUtils securityUtils;
 
     @Autowired
     private ModuleService moduleService;
@@ -119,46 +113,64 @@ public class HomeController {
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    private ApplicationProperties applicationProperties;
-
-    @Autowired
     private CityService cityService;
 
     @Autowired
     private ValidatorUtils validatorUtils;
 
-    @RequestMapping
+    @Value("${employee.portal.access.role}")
+    private String portalAccessibleRole;
+
+    @Value("${user.pwd.expiry.days}")
+    private Integer userPasswordExpiryInDays;
+
+    @Value("${app.version}")
+    private String appVersion;
+
+    @Value("${app.build.no}")
+    private String appBuild;
+
+    @Value("${app.core.build.no}")
+    private String appCoreBuild;
+
+    @Value("${issue.report.url}")
+    private String issueReportingUrl;
+
+    @Value("${dev.mode}")
+    private boolean devMode;
+
+    @GetMapping
     public ModelAndView showHome(HttpServletRequest request, HttpServletResponse response, ModelMap modelData) {
-        User user = securityUtils.getCurrentUser();
+        User user = userService.getCurrentUser();
         setUserLocale(user, request, response);
         if (user.getType().equals(EMPLOYEE) || user.getType().equals(SYSTEM)
-                || user.hasRole(applicationProperties.portalAccessibleRole()))
+                || user.hasRole(portalAccessibleRole))
             return new ModelAndView(prepareOfficialHomePage(user, modelData), modelData);
         return new ModelAndView(new RedirectView(NON_EMPLOYE_PORTAL_HOME, false));
     }
 
     @ResponseBody
-    @RequestMapping(value = "favourite/add", method = POST)
+    @PostMapping("favourite/add")
     public boolean addFavourite(@Valid @ModelAttribute Favourites favourites, BindingResult bindResult) {
         return !bindResult.hasErrors() && favouritesService.addToCurrentUserFavourite(favourites).getId() != null;
     }
 
     @ResponseBody
-    @RequestMapping(value = "favourite/remove")
+    @GetMapping("favourite/remove")
     public boolean removeFavourite(@RequestParam Integer actionId) {
         return favouritesService.removeFromCurrentUserFavourite(actionId);
     }
 
     @ResponseBody
-    @RequestMapping(value = "password/update")
+    @GetMapping("password/update")
     public String changePassword(@RequestParam String currentPwd, @RequestParam String newPwd, @RequestParam String retypeNewPwd) {
-        User user = securityUtils.getCurrentUser();
+        User user = userService.getCurrentUser();
         if (passwordEncoder.matches(currentPwd, user.getPassword())) {
             if (!validatorUtils.isValidPassword(newPwd))
                 return "NEWPWD_INVALID";
             if (newPwd.equals(retypeNewPwd)) {
                 user.setPassword(passwordEncoder.encode(newPwd));
-                user.updateNextPwdExpiryDate(applicationProperties.userPasswordExpiryInDays());
+                user.updateNextPwdExpiryDate(userPasswordExpiryInDays);
                 userService.updateUser(user);
                 return "SUCCESS";
             }
@@ -168,24 +180,24 @@ public class HomeController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "feedback/sent")
-    public boolean sendFeedback(@RequestParam String subject, @RequestParam String message, HttpSession session) {
-        cityService.sentFeedBackMail((String) session.getAttribute("corpContactEmail"), subject,
-                format(FEEDBACK_FORMAT, message, "Regards", user().getName()));
+    @GetMapping("feedback/sent")
+    public boolean sendFeedback(@RequestParam String subject, @RequestParam String message) {
+        cityService.sentFeedBackMail(cityService.getContactEmail(), subject,
+                format(FEEDBACK_MSG_FORMAT, message, "Regards", user().getName()));
         return true;
     }
 
     @ModelAttribute("user")
     public User user() {
-        return PersistenceUtils.unproxy(securityUtils.getCurrentUser());
+        return userService.getCurrentUser();
     }
 
-    @RequestMapping(value = "profile/edit", method = GET)
+    @GetMapping("profile/edit")
     public String editProfile() {
         return "profile-edit";
     }
 
-    @RequestMapping(value = "profile/edit", method = POST)
+    @PostMapping("profile/edit")
     public String saveProfile(@Valid @ModelAttribute User user, BindingResult binder, HttpServletRequest request,
                               HttpServletResponse response, RedirectAttributes redirAttrib) {
         if (binder.hasErrors())
@@ -197,23 +209,23 @@ public class HomeController {
     }
 
     @InitBinder
-    public void initBinder(final WebDataBinder binder) {
+    public void initBinder(WebDataBinder binder) {
         binder.setDisallowedFields("id", "username");
     }
 
     private String prepareOfficialHomePage(User user, ModelMap modelData) {
         modelData.addAttribute("menu", prepareApplicationMenu(moduleService.getMenuLinksForRoles(user.getRoles()), user));
         modelData.addAttribute("userName", user.getName() == null ? "Anonymous" : user.getName());
-        modelData.addAttribute("app_version", applicationProperties.appVersion());
-        modelData.addAttribute("app_buildno", applicationProperties.appBuildNo());
-        if (!applicationProperties.devMode()) {
-            modelData.addAttribute("app_core_build_no", applicationProperties.appCoreBuildNo());
+        modelData.addAttribute("app_version", appVersion);
+        modelData.addAttribute("app_buildno", appBuild);
+        if (!devMode) {
+            modelData.addAttribute("app_core_build_no", appCoreBuild);
             modelData.addAttribute("dflt_pwd_reset_req", checkDefaultPasswordResetRequired(user));
             int daysToExpirePwd = daysToExpirePassword(user);
             modelData.addAttribute("pwd_expire_in_days", daysToExpirePwd);
             modelData.addAttribute("warn_pwd_expire", daysToExpirePwd <= 5);
         }
-        modelData.addAttribute("issue_report_url", applicationProperties.issueReportingUrl());
+        modelData.addAttribute("issue_report_url", issueReportingUrl);
 
         return "home";
     }
@@ -308,7 +320,7 @@ public class HomeController {
 
         Menu submenu = new Menu();
         submenu.setTitle(title);
-        submenu.setIcon("");
+        submenu.setIcon(EMPTY);
         submenu.setItems(new LinkedList<>());
         submenuItem.getItems().add(submenu);
 

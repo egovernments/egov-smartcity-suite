@@ -40,19 +40,21 @@
 
 package org.egov.infra.config.core;
 
+import org.egov.infra.config.messaging.EmailConfiguration;
 import org.egov.infra.config.properties.ApplicationProperties;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.reporting.engine.jasper.JasperReportService;
 import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.MethodInvokingFactoryBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.springframework.context.annotation.Import;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
@@ -78,6 +80,7 @@ import static org.egov.infra.config.core.GlobalSettings.DEFAULT_TIME_ZONE_KEY;
 
 @Configuration
 @EnableAspectJAutoProxy(proxyTargetClass = true)
+@Import(EmailConfiguration.class)
 public class ApplicationConfiguration {
 
     @Resource(name = "tenants")
@@ -89,30 +92,17 @@ public class ApplicationConfiguration {
     @Autowired
     private ApplicationProperties applicationProperties;
 
+    @Value("${filestoreservice.beanname}")
+    private String fileStoreServiceBeanName;
+
     @Bean
     public FileStoreService fileStoreService() {
-        return (FileStoreService) context.getBean(applicationProperties.filestoreServiceBeanName());
+        return (FileStoreService) context.getBean(fileStoreServiceBeanName);
     }
 
     @Bean
     public LocaleResolver localeResolver() {
         return new SessionLocaleResolver();
-    }
-
-    @Bean
-    public JavaMailSenderImpl mailSender() {
-        final JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
-        mailSender.setPort(applicationProperties.mailPort());
-        mailSender.setHost(applicationProperties.mailHost());
-        mailSender.setProtocol(applicationProperties.mailProtocol());
-        mailSender.setUsername(applicationProperties.mailSenderUsername());
-        mailSender.setPassword(applicationProperties.mailSenderPassword());
-        final Properties mailProperties = new Properties();
-        mailProperties.setProperty("mail.smtps.auth", applicationProperties.mailSMTPSAuth());
-        mailProperties.setProperty("mail.smtps.starttls.enable", applicationProperties.mailStartTLSEnabled());
-        mailProperties.setProperty("mail.smtps.debug", applicationProperties.mailSMTPSDebug());
-        mailSender.setJavaMailProperties(mailProperties);
-        return mailSender;
     }
 
     @Bean(name = "cities", autowire = Autowire.BY_NAME)

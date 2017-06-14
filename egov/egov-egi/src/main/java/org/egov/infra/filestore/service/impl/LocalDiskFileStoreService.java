@@ -40,12 +40,12 @@
 
 package org.egov.infra.filestore.service.impl;
 
-import org.egov.infra.config.properties.ApplicationProperties;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -72,11 +72,11 @@ public class LocalDiskFileStoreService implements FileStoreService {
     private String fileStoreBaseDir;
 
     @Autowired
-    public LocalDiskFileStoreService(ApplicationProperties applicationProperties) {
-        if (applicationProperties.fileStoreBaseDir().isEmpty())
+    public LocalDiskFileStoreService(@Value("${filestore.base.dir}") String fileStoreBaseDir) {
+        if (fileStoreBaseDir.isEmpty())
             this.fileStoreBaseDir = getUserDirectoryPath() + separator + "egovfilestore";
         else
-            this.fileStoreBaseDir = applicationProperties.fileStoreBaseDir();
+            this.fileStoreBaseDir = fileStoreBaseDir;
     }
 
     @Override

@@ -41,7 +41,6 @@ package org.egov.portal.web.controller.citizen;
 
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.CityService;
-import org.egov.infra.config.properties.ApplicationProperties;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.portal.entity.CitizenInbox;
 import org.egov.portal.entity.PortalInboxUser;
@@ -67,9 +66,6 @@ public class HomeController {
 
     @Autowired
     private SecurityUtils securityUtils;
-
-    @Autowired
-    private ApplicationProperties applicationProperties;
 
     @Autowired
     private PortalInboxUserService portalInboxUserService;
@@ -101,7 +97,6 @@ public class HomeController {
         modelData.addAttribute("myAccountMessages", getMyAccountMessages());
         modelData.addAttribute("cityLogo", cityService.getCityLogoPath());
         modelData.addAttribute("cityName", cityService.getMunicipalityName());
-        modelData.addAttribute("enabledFeatures", applicationProperties.portalEnabledFeatures());
         modelData.addAttribute("userName", user.getName() == null ? "Anonymous" : user.getName());
 
         modelData.addAttribute("moduleNames", portalServiceTypeService.getDistinctModuleNames());

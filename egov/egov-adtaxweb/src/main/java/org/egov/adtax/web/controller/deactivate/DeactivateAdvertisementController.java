@@ -53,7 +53,7 @@ import org.egov.adtax.service.SubCategoryService;
 import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
 import org.egov.adtax.web.controller.GenericController;
 import org.egov.demand.model.EgDemandDetails;
-import org.egov.infra.config.properties.ApplicationProperties;
+import org.egov.infra.config.core.GlobalSettings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -69,10 +69,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.text.SimpleDateFormat;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
@@ -82,6 +82,12 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 public class DeactivateAdvertisementController extends GenericController {
 
     private final AgencyService agencyService;
+
+    @Autowired
+    private AdvertisementPermitDetailService advertisementPermitDetailService;
+
+    @Autowired
+    private SubCategoryService subCategoryService;
 
     @Autowired
     public DeactivateAdvertisementController(final AgencyService agencyService) {
@@ -97,15 +103,6 @@ public class DeactivateAdvertisementController extends GenericController {
     public List<Agency> getAgencies() {
         return agencyService.findAll();
     }
-
-    @Autowired
-    private AdvertisementPermitDetailService advertisementPermitDetailService;
-
-    @Autowired
-    private ApplicationProperties applicationProperties;
-
-    @Autowired
-    private SubCategoryService subCategoryService;
 
     @RequestMapping(value = "/result", method = GET)
     public String changeStatus(
@@ -123,11 +120,12 @@ public class DeactivateAdvertisementController extends GenericController {
     }
 
     @RequestMapping(value = "/activerecord-list-search", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
-    public @ResponseBody void searchResult(@ModelAttribute final AdvertisementPermitDetail advertisementPermitDetailRecord,
-            final HttpServletRequest request,
-            final HttpServletResponse response) throws IOException {
+    @ResponseBody
+    public void searchResult(@ModelAttribute final AdvertisementPermitDetail advertisementPermitDetailRecord,
+                             final HttpServletRequest request,
+                             final HttpServletResponse response) throws IOException {
         final String searchType = request.getParameter("searchType");
-        IOUtils.write("{ \"data\":" + new GsonBuilder().setDateFormat(applicationProperties.defaultDatePattern()).create()
+        IOUtils.write("{ \"data\":" + new GsonBuilder().setDateFormat(GlobalSettings.datePattern()).create()
                 .toJson(advertisementPermitDetailService.getActiveAdvertisementSearchResult(advertisementPermitDetailRecord,
                         searchType))
                 + "}", response.getWriter());
@@ -140,7 +138,8 @@ public class DeactivateAdvertisementController extends GenericController {
     }
 
     @RequestMapping(value = "/subcategories-by-categoryselect", method = GET, produces = APPLICATION_JSON_VALUE)
-    public @ResponseBody List<SubCategory> hoardingSubcategories(@RequestParam final Long categoryId) {
+    @ResponseBody
+    public List<SubCategory> hoardingSubcategories(@RequestParam final Long categoryId) {
         return subCategoryService.getAllActiveSubCategoryByCategoryId(categoryId);
     }
 
@@ -159,7 +158,7 @@ public class DeactivateAdvertisementController extends GenericController {
                 && advertisementPermitDetail.getAdvertisement().getStatus() != null
                 && advertisementPermitDetail.getAdvertisement().getStatus().equals(AdvertisementStatus.ACTIVE) &&
                 advertisementPermitDetail.getStatus() != null && advertisementPermitDetail.getStatus().getCode()
-                        .equalsIgnoreCase(AdvertisementTaxConstants.APPLICATION_STATUS_APPROVED)) {
+                .equalsIgnoreCase(AdvertisementTaxConstants.APPLICATION_STATUS_APPROVED)) {
             model.addAttribute("message", "msg.deactivate.paymentPending");
             return "deactive-error";
         }
@@ -185,7 +184,7 @@ public class DeactivateAdvertisementController extends GenericController {
 
     @RequestMapping(value = "/deactive/{id}", method = RequestMethod.POST)
     public String deactivate(@ModelAttribute AdvertisementPermitDetail advertisementPermitDetailStatus, final Model model,
-            @PathVariable final Long id) {
+                             @PathVariable final Long id) {
 
         AdvertisementPermitDetail existingRateObject = advertisementPermitDetailService
                 .findById(id);
@@ -201,7 +200,8 @@ public class DeactivateAdvertisementController extends GenericController {
     }
 
     @RequestMapping(value = "agencies", method = GET, produces = APPLICATION_JSON_VALUE)
-    public @ResponseBody List<Agency> findAgencies(@RequestParam final String name) {
+    @ResponseBody
+    public List<Agency> findAgencies(@RequestParam final String name) {
         return agencyService.findAllByNameLike(name);
     }
 }

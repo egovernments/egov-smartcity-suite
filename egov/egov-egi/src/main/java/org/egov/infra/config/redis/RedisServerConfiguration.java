@@ -40,7 +40,7 @@
 
 package org.egov.infra.config.redis;
 
-import org.egov.infra.config.properties.ApplicationProperties;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
@@ -51,9 +51,30 @@ import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import redis.clients.jedis.JedisPoolConfig;
 
+import java.util.List;
+
 @Configuration
 @Profile("production")
 public class RedisServerConfiguration {
+
+    @Value("${redis.enable.embedded}")
+    private boolean usingEmbeddedRedis;
+
+    @Value("${redis.enable.sentinel}")
+    private boolean sentinelEnabled;
+
+    @Value("${redis.host.name}")
+    private String redisHost;
+
+    @Value("${redis.host.port}")
+    private Integer redisPort;
+
+    @Value("${redis.sentinel.master.name}")
+    private String sentinelMasterName;
+
+    @Value("#{'${redis.sentinel.hosts}'.split(',')}")
+    private List<String> sentinelHosts;
+
 
     @Bean
     @Conditional(RedisServerConfigCondition.class)
@@ -62,20 +83,20 @@ public class RedisServerConfiguration {
     }
 
     @Bean
-    public JedisConnectionFactory redisConnectionFactory(final ApplicationProperties applicationProperties) {
+    public JedisConnectionFactory redisConnectionFactory() {
 
-        if (applicationProperties.sentinelEnabled() && !applicationProperties.usingEmbeddedRedis()) {
+        if (!usingEmbeddedRedis && sentinelEnabled) {
             RedisSentinelConfiguration sentinelConfig = new RedisSentinelConfiguration();
-            sentinelConfig.master(applicationProperties.sentinelMasterName());
-            for (String host : applicationProperties.sentinelHosts()) {
+            sentinelConfig.master(sentinelMasterName);
+            for (String host : sentinelHosts) {
                 String[] hostConfig = host.split(":");
                 sentinelConfig.sentinel(hostConfig[0].trim(), Integer.valueOf(hostConfig[1].trim()));
             }
             return new JedisConnectionFactory(sentinelConfig, redisPoolConfig());
         } else {
             final JedisConnectionFactory jedisConnectionFactory = new JedisConnectionFactory(redisPoolConfig());
-            jedisConnectionFactory.setHostName(applicationProperties.redisHost());
-            jedisConnectionFactory.setPort(applicationProperties.redisPort());
+            jedisConnectionFactory.setHostName(redisHost);
+            jedisConnectionFactory.setPort(redisPort);
             return jedisConnectionFactory;
         }
     }

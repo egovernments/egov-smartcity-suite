@@ -40,11 +40,11 @@
 
 package org.egov.infra.config.persistence.migration;
 
-import org.egov.infra.config.properties.ApplicationProperties;
 import org.flywaydb.core.Flyway;
 import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
@@ -60,8 +60,35 @@ import static java.lang.String.format;
 @Configuration
 public class DBMigrationConfiguration {
 
-    @Autowired
-    private ApplicationProperties applicationProperties;
+    @Value("${dev.mode}")
+    private boolean devMode;
+
+    @Value("${db.migration.enabled}")
+    private boolean dbMigrationEnabled;
+
+    @Value("${db.flyway.validateon.migrate}")
+    private boolean validateOnMigrate;
+
+    @Value("${db.flyway.migration.repair}")
+    private boolean repairMigration;
+
+    @Value("${statewide.migration.required}")
+    private boolean statewideMigrationRequired;
+
+    @Value("${db.flyway.main.migration.file.path}")
+    private String mainMigrationFilePath;
+
+    @Value("${db.flyway.sample.migration.file.path}")
+    private String sampleMigrationFilePath;
+
+    @Value("${db.flyway.tenant.migration.file.path}")
+    private String tenantMigrationFilePath;
+
+    @Value("${db.flyway.statewide.migration.file.path}")
+    private String statewideMigrationFilePath;
+
+    @Value("${statewide.schema.name}")
+    private String statewideSchemaName;
 
     @Autowired
     private ConfigurableEnvironment environment;
@@ -69,11 +96,7 @@ public class DBMigrationConfiguration {
     @Bean
     @DependsOn("dataSource")
     public Flyway flyway(DataSource dataSource, @Qualifier("cities") List<String> cities) {
-        if (applicationProperties.dbMigrationEnabled()) {
-            String mainMigrationFilePath = applicationProperties.getProperty("db.flyway.main.migration.file.path");
-            String sampleMigrationFilePath = applicationProperties.getProperty("db.flyway.sample.migration.file.path");
-            String tenantMigrationFilePath = applicationProperties.getProperty("db.flyway.tenant.migration.file.path");
-            boolean devMode = applicationProperties.devMode();
+        if (dbMigrationEnabled) {
             cities.stream().forEach(schema -> {
                 if (devMode)
                     migrateDatabase(dataSource, schema,
@@ -83,12 +106,9 @@ public class DBMigrationConfiguration {
                             mainMigrationFilePath, format(tenantMigrationFilePath, schema));
             });
 
-            if (applicationProperties.statewideMigrationRequired() && !devMode) {
-                String statewideMigrationFilePath = applicationProperties.getProperty("db.flyway.statewide.migration.file.path");
-                String statewideSchemaName = applicationProperties.getProperty("statewide.schema.name");
+            if (statewideMigrationRequired && !devMode) {
                 migrateDatabase(dataSource, statewideSchemaName, mainMigrationFilePath, statewideMigrationFilePath);
             } else if (!devMode) {
-                String statewideSchemaName = applicationProperties.getProperty("statewide.schema.name");
                 migrateDatabase(dataSource, statewideSchemaName, mainMigrationFilePath);
             }
         }
@@ -99,12 +119,12 @@ public class DBMigrationConfiguration {
     private void migrateDatabase(DataSource dataSource, String schema, String... locations) {
         Flyway flyway = new Flyway();
         flyway.setBaselineOnMigrate(true);
-        flyway.setValidateOnMigrate(applicationProperties.flywayValidateonMigrate());
+        flyway.setValidateOnMigrate(validateOnMigrate);
         flyway.setOutOfOrder(true);
         flyway.setLocations(locations);
         flyway.setDataSource(dataSource);
         flyway.setSchemas(schema);
-        if (applicationProperties.flywayRepair())
+        if (repairMigration)
             flyway.repair();
         flyway.migrate();
     }

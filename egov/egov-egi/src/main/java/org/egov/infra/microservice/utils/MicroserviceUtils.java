@@ -40,12 +40,10 @@
 
 package org.egov.infra.microservice.utils;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.RoleService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.infra.config.properties.ApplicationProperties;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.microservice.contract.CreateUserRequest;
 import org.egov.infra.microservice.contract.RequestInfoWrapper;
@@ -59,6 +57,7 @@ import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.web.support.ui.Inbox;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -69,6 +68,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.egov.infra.utils.ApplicationConstant.CITIZEN_ROLE_NAME;
 import static org.egov.infra.utils.DateUtils.toDefaultDateTimeFormat;
 
 @Service
@@ -76,7 +76,6 @@ public class MicroserviceUtils {
 
     private static final Logger LOGGER = Logger.getLogger(MicroserviceUtils.class);
     private static final String CLIENT_ID = "client.id";
-    private static final String ROLE_CITIZEN = "CITIZEN";
 
     @Autowired
     private SecurityUtils securityUtils;
@@ -87,8 +86,11 @@ public class MicroserviceUtils {
     @Autowired
     private RoleService roleService;
 
-    @Autowired
-    private ApplicationProperties applicationProperties;
+    @Value("${egov.services.workflow.url}")
+    private String workflowServiceUrl;
+
+    @Value("${egov.services.user.create.url}")
+    private String userServiceUrl;
 
     public RequestInfo createRequestInfo() {
         final RequestInfo requestInfo = new RequestInfo();
@@ -112,7 +114,7 @@ public class MicroserviceUtils {
     public String getTanentId() {
         final String clientId = environment.getProperty(CLIENT_ID);
         String tenantId = ApplicationThreadLocals.getTenantID();
-        if (StringUtils.isNotBlank(clientId)) {
+        if (isNotBlank(clientId)) {
             final StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append(clientId).append('.').append(tenantId);
             tenantId = stringBuilder.toString();
@@ -121,11 +123,10 @@ public class MicroserviceUtils {
     }
 
     public void createUserMicroservice(final User user) {
-        final String createUserServiceUrl = applicationProperties.getCreateUserServiceUrl();
-        if (StringUtils.isNotBlank(createUserServiceUrl)) {
+        if (isNotBlank(userServiceUrl)) {
 
             if (user.getRoles().isEmpty() && user.getType().equals(UserType.CITIZEN))
-                user.addRole(roleService.getRoleByName(ROLE_CITIZEN));
+                user.addRole(roleService.getRoleByName(CITIZEN_ROLE_NAME));
 
             final CreateUserRequest createUserRequest = new CreateUserRequest();
             final UserRequest userRequest = new UserRequest(user, getTanentId());
@@ -134,7 +135,7 @@ public class MicroserviceUtils {
 
             final RestTemplate restTemplate = new RestTemplate();
             try {
-                restTemplate.postForObject(createUserServiceUrl, createUserRequest, UserDetailResponse.class);
+                restTemplate.postForObject(userServiceUrl, createUserRequest, UserDetailResponse.class);
             } catch (final Exception e) {
                 final String errMsg = "Exception while creating User in microservice ";
                 LOGGER.error(errMsg, e);
@@ -145,16 +146,15 @@ public class MicroserviceUtils {
 
     public List<Task> getTasks() {
 
-        final String workflowUrl = applicationProperties.getServicesWorkflowUrl();
         List<Task> tasks = new ArrayList<>();
-        if (isNotBlank(workflowUrl)) {
+        if (isNotBlank(workflowServiceUrl)) {
             final RestTemplate restTemplate = new RestTemplate();
             TaskResponse tresp;
             try {
                 RequestInfo createRequestInfo = createRequestInfo();
                 RequestInfoWrapper requestInfo = new RequestInfoWrapper();
                 requestInfo.setRequestInfo(createRequestInfo);
-                tresp = restTemplate.postForObject(workflowUrl, requestInfo, TaskResponse.class);
+                tresp = restTemplate.postForObject(workflowServiceUrl, requestInfo, TaskResponse.class);
                 tasks = tresp.getTasks();
             } catch (final Exception e) {
                 final String errMsg = "Exception while getting inbox items from microservice ";
@@ -185,6 +185,6 @@ public class MicroserviceUtils {
     }
 
     public boolean hasWorkflowService() {
-        return isNotBlank(applicationProperties.getServicesWorkflowUrl());
+        return isNotBlank(workflowServiceUrl);
     }
 }
