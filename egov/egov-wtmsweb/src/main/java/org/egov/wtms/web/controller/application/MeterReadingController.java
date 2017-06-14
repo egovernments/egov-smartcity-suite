@@ -49,6 +49,7 @@ import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.utils.DateUtils;
 import org.egov.wtms.application.entity.MeterReadingConnectionDetails;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
@@ -237,10 +238,12 @@ public class MeterReadingController {
 
         final double finalAmountToBePaid = calculateAmountTobePaid(waterConnectionDetails, noofmonths,
                 noOfUnitsForPerMonth);
-        WaterConnectionDetails waterconnectionDetails = null;
+        WaterConnectionDetails waterconnectionDetails;
         if (BigDecimal.valueOf(finalAmountToBePaid).compareTo(BigDecimal.ZERO) > 0)
             waterconnectionDetails = connectionDemandService.updateDemandForMeteredConnection(waterConnectionDetails,
                     BigDecimal.valueOf(finalAmountToBePaid), currentDate);
+        else
+            throw new ApplicationRuntimeException("err.no.amount.due");
         return waterconnectionDetails;
     }
 
@@ -268,7 +271,8 @@ public class MeterReadingController {
                 }
                 if (count != 0)
                     averageUnitsPerMonth = noOfVolumeConsumed / count;
-            }
+            } else
+                averageUnitsPerMonth = noOfUnitsForPerMonth;
         } else
             averageUnitsPerMonth = noOfUnitsForPerMonth;
 
@@ -276,13 +280,19 @@ public class MeterReadingController {
                 .getUsageSlabForWaterVolumeConsumed(waterConnectionDetails.getUsageType().getName(), averageUnitsPerMonth);
         if (usageSlab != null && usageSlab.getSlabName() != null)
             meteredRates = meteredRatesService.findBySlabName(usageSlab.getSlabName());
+        else
+            throw new ApplicationRuntimeException("err.usageslab.not.present");
         if (meteredRates != null && meteredRates.getSlabName() != null) {
             meteredRatesDetail = meteredRatesDetailService.getActiveRateforSlab(meteredRates.getSlabName(), new Date());
-            if (meteredRatesDetail != null)
-                if (noofmonths > 0 && meteredRatesDetail.getRateAmount() != null)
+            if (meteredRatesDetail != null) {
+                if (meteredRatesDetail.getRateAmount() == null)
+                    throw new ApplicationRuntimeException("err.metered.rate.not.present");
+                else if (noofmonths > 0 && meteredRatesDetail.getRateAmount() != null)
                     amountToBeCollected = noofmonths * meteredRatesDetail.getRateAmount();
                 else
                     amountToBeCollected = meteredRatesDetail.getRateAmount();
+            } else
+                throw new ApplicationRuntimeException("err.metered.rate.not.present");
         }
         return amountToBeCollected;
     }
