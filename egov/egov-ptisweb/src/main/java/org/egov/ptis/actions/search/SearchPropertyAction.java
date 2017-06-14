@@ -995,7 +995,7 @@ public class SearchPropertyAction extends BaseFormAction {
             if (properties.size() > 1) {
                 addActionError(getText("validation.multiple.oldassessmentno"));
                 return NEW;
-            } else if (properties.size() == 1){
+            } else if (properties.size() == 1) {
                 basicProperty = properties.get(0);
             }
         }
@@ -1010,6 +1010,8 @@ public class SearchPropertyAction extends BaseFormAction {
                 propertyOwner.setMobileNumber("N/A");
             setDoorNo(basicProperty.getAddress().getHouseNoBldgApt() == null ? NOT_AVAILABLE
                     : basicProperty.getAddress().getHouseNoBldgApt());
+            if (StringUtils.isBlank(assessmentNum))
+                setAssessmentNum(basicProperty.getUpicNo());
             return USER_DETAILS;
         }
     }
