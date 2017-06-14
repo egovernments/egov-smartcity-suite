@@ -64,6 +64,7 @@ import org.egov.infra.utils.NumberToWord;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.entity.StateHistory;
+import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.pims.commons.Position;
 import org.egov.tl.entity.License;
 import org.egov.tl.entity.LicenseCategory;
@@ -186,6 +187,18 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
         if (SIGNWORKFLOWACTION.equals(workFlowAction))
             return digitalSignRedirection();
         tradeLicenseService.updateStatusInWorkFlowProgress((TradeLicense) license(), workFlowAction);
+        populateWorkflowBean();
+        if (!GENERATECERTIFICATE.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
+            WorkFlowMatrix wfmatrix = tradeLicenseService.getWorkFlowMatrixApi(license(), workflowBean);
+            if (!license().getCurrentState().getValue().equals(wfmatrix.getCurrentState())) {
+                addActionMessage(this.getText("wf.item.processed"));
+                return "message";
+            }
+        }
+        if (GENERATECERTIFICATE.equalsIgnoreCase(workflowBean.getWorkFlowAction()) && "END".equalsIgnoreCase(license().getCurrentState().getValue())) {
+            addActionMessage(this.getText("wf.item.processed"));
+            return "message";
+        }
         processWorkflow(NEW);
         tradeLicenseService.updateTradeLicense((TradeLicense) license(), workflowBean);
         if (GENERATECERTIFICATE.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
@@ -216,6 +229,18 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
 
     @SkipValidation
     public String approveRenew() {
+        populateWorkflowBean();
+        if (!GENERATECERTIFICATE.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
+            WorkFlowMatrix wfmatrix = tradeLicenseService.getWorkFlowMatrixApi(license(), workflowBean);
+            if (!license().getCurrentState().getValue().equals(wfmatrix.getCurrentState())) {
+                addActionMessage(this.getText("wf.item.processed"));
+                return "message";
+            }
+        }
+        if (GENERATECERTIFICATE.equalsIgnoreCase(workflowBean.getWorkFlowAction()) && "END".equalsIgnoreCase(license().getCurrentState().getValue())) {
+            addActionMessage(this.getText("wf.item.processed"));
+            return "message";
+        }
         processWorkflow(RENEWAL_LIC_APPTYPE);
         return "message";
     }
@@ -237,7 +262,7 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     public String renew() {
         populateWorkflowBean();
         licenseService().renew(license(), workflowBean);
-        addActionMessage(this.getText("license.renew.submission.succesful") + license().getApplicationNumber());
+        addActionMessage(this.getText("license.renew.submission.succesful") + " " + license().getApplicationNumber());
         setHasCscOperatorRole(
                 securityUtils.getCurrentUser().getRoles().toString().contains(CSCOPERATOR) ? true : false);
         return ACKNOWLEDGEMENT_RENEW;
@@ -306,7 +331,7 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
      * instead it sends to the creator in approved state
      */
     public void processWorkflow(final String processType) {
-        populateWorkflowBean();
+
         // Both New And Renew Workflow handling in same API(transitionWorkFlow)
         if (NEW.equalsIgnoreCase(processType) && !BUTTONSUBMIT.equals(workFlowAction))
             licenseService().transitionWorkFlow(license(), workflowBean);
@@ -322,6 +347,7 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
             rejectActionMessage();
         } else if (BUTTONGENERATEDCERTIFICATE.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
             addActionMessage(this.getText("license.certifiacte.print.complete.recorded"));
+
     }
 
     private void rejectActionMessage() {

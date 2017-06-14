@@ -63,11 +63,11 @@ public class LegacyLicenseValidator implements Validator {
 
         final TradeLicense license = (TradeLicense) target;
 
-        if(!license.getDocuments().isEmpty()){
-        for (int index = 0; index < license.getFiles().length; index++)
-            if (license.getDocuments().get(index).getType().isMandatory() && license.getFiles()[index].isEmpty()
-                    && license.getDocuments().isEmpty())
-                errors.rejectValue("documents[" + index + "].description", "TL-011");
+        if (!license.getDocuments().isEmpty()) {
+            for (int index = 0; index < license.getFiles().length; index++)
+                if (license.getDocuments().get(index).getType().isMandatory() && license.getFiles()[index].isEmpty()
+                        && license.getDocuments().isEmpty())
+                    errors.rejectValue("documents[" + index + "].description", "TL-011");
         }
         if (validityService.getApplicableLicenseValidity(license) == null)
             errors.rejectValue("category", "validate.license.validity");
@@ -75,6 +75,8 @@ public class LegacyLicenseValidator implements Validator {
         if (license.getTradeArea_weight().intValue() < 1)
             errors.rejectValue("tradeArea_weight", "validate.fee.range");
 
+        if (license.getCurrentState() != null)
+            errors.rejectValue("id", "validate.legacy.license.modify", new Object[]{license.getLicenseAppType().getName()}, "");
     }
 
 }

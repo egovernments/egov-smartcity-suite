@@ -68,6 +68,7 @@
 					<div class="panel-title" style="text-align: center">
 						<spring:message code="page.title.entertrade.update" />
 					</div>
+					<center><form:errors path="id"  cssClass="error-msg" /></center>
 					<ul class="nav nav-tabs" id="settingstab">
 						<li class="active"><a data-toggle="tab" href="#tradedetails"
 							data-tabidx="0" aria-expanded="true"><spring:message

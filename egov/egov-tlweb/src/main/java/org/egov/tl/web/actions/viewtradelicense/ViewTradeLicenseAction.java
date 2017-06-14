@@ -49,6 +49,7 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.eis.entity.Assignment;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.web.struts.annotation.ValidationErrorPageExt;
+import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.entity.WorkflowBean;
 import org.egov.tl.service.AbstractLicenseService;
@@ -72,6 +73,7 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     protected TradeLicense tradeLicense = new TradeLicense();
     private String applicationNo;
     private Long licenseid;
+    private String url;
     @Autowired
     private TradeLicenseService tradeLicenseService;
 
@@ -165,22 +167,46 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
 
     @Action(value = "/viewtradelicense/showclosureform")
     public String showClosureForm() throws IOException {
-        if (license() != null && license().getId() != null)
-            tradeLicense = tradeLicenseService.getLicenseById(license().getId());
+        prepareClosureForm();
+        setUrl("viewtradelicense/saveclosure.action?model.id=");
         if (tradeLicense.hasState() && !tradeLicense.transitionCompleted()) {
             ServletActionContext.getResponse().setContentType("text/html");
-            ServletActionContext.getResponse().getWriter().write("<center style='color:red;font-weight:bolder'>Closure License workflow is in progress !</center>");
+            ServletActionContext.getResponse().getWriter().write("<center style='color:red;font-weight:bolder'>" + tradeLicense.getLicenseAppType().getName() + " License workflow is in progress !</center>");
             return null;
         }
         return "closure";
     }
 
-    @Action(value = "/viewtradelicense/viewTradeLicense-closure")
-    public String viewClosure() {
+    public void prepareClosureForm() {
         if (license() != null && license().getId() != null)
             tradeLicense = tradeLicenseService.getLicenseById(license().getId());
+    }
+
+    @Action(value = "/viewtradelicense/viewTradeLicense-closure")
+    public String viewClosure() {
+        prepareClosureForm();
+        setUrl("viewtradelicense/viewTradeLicense-cancelLicense.action?model.id=");
         licenseHistory = tradeLicenseService.populateHistory(tradeLicense);
         return "closure";
+    }
+
+    @ValidationErrorPageExt(action = "closure", makeCall = true, toMethod = "prepareClosureForm")
+    @Action(value = "/viewtradelicense/saveclosure")
+    public String saveClosure() {
+        populateWorkflowBean();
+        if (getLicenseid() != null) {
+            tradeLicense = tradeLicenseService.getLicenseById(getLicenseid());
+            tradeLicenseService.saveClosure(tradeLicense, workflowBean);
+        }
+        if (hasCSCOperatorRole())
+            addActionMessage(this.getText("license.closure.initiated"));
+        if (workflowBean.getWorkFlowAction().contains(Constants.BUTTONFORWARD)) {
+            List<Assignment> assignments = assignmentService.getAssignmentsForPosition(workflowBean.getApproverPositionId());
+            String nextDesgn = !assignments.isEmpty() ? assignments.get(0).getDesignation().getName() : "";
+            final String userName = !assignments.isEmpty() ? assignments.get(0).getEmployee().getName() : "";
+            addActionMessage(this.getText("license.closure.sent") + " " + nextDesgn + " - " + userName);
+        }
+        return "message";
     }
 
     @Action(value = "/viewtradelicense/viewTradeLicense-cancelLicense")
@@ -188,6 +214,11 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
         populateWorkflowBean();
         if (getLicenseid() != null) {
             tradeLicense = tradeLicenseService.getLicenseById(getLicenseid());
+            WorkFlowMatrix wfmatrix = tradeLicenseService.getWorkFlowMatrixApi(license(), workflowBean);
+            if (!license().getCurrentState().getValue().equals(wfmatrix.getCurrentState())) {
+                addActionMessage(this.getText("wf.item.processed"));
+                return "message";
+            }
             tradeLicenseService.cancelLicenseWorkflow(tradeLicense, workflowBean);
             if (hasCSCOperatorRole())
                 addActionMessage(this.getText("license.closure.initiated"));
@@ -226,4 +257,11 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
         return currentUserRoles.contains(CSCOPERATOR) ? true : false;
     }
 
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
 }

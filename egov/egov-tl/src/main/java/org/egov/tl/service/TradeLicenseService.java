@@ -137,6 +137,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
     @Autowired
     private EisCommonService eisCommonService;
 
+
     @Override
     protected NatureOfBusiness getNatureOfBusiness() {
         return natureOfBusinessService.getNatureOfBusinessByName("Permanent");
@@ -177,7 +178,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
 
     public void updateStatusInWorkFlowProgress(TradeLicense license, final String workFlowAction) {
 
-        final Assignment userAssignment = assignmentService.getPrimaryAssignmentForUser(securityUtils.getCurrentUser().getId());
+        List<Position> userPositions = positionMasterService.getPositionsForEmployee(securityUtils.getCurrentUser().getId());
         final Position wfInitiator = getWorkflowInitiator(license);
         if (BUTTONAPPROVE.equals(workFlowAction)) {
             if (isEmpty(license.getLicenseNumber()) && license.isNewApplication())
@@ -212,7 +213,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
                     Constants.APPLICATION_STATUS_GENECERT_CODE);
         }
         if (BUTTONREJECT.equals(workFlowAction))
-            if (license.getLicenseAppType() != null && wfInitiator.equals(userAssignment.getPosition())
+            if (license.getLicenseAppType() != null && userPositions.contains(wfInitiator)
                     && ("Rejected".equals(license.getState().getValue()))
                     || "License Created".equals(license.getState().getValue())) {
                 license.setStatus(licenseStatusService.getLicenseStatusByCode(Constants.STATUS_CANCELLED));
