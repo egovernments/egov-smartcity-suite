@@ -153,7 +153,26 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                         .withComments(approvalComent).withInitiator(wfInitiator != null ? wfInitiator.getPosition() : null)
                         .withStateValue(wfmatrix.getNextState()).withDateInfo(new Date()).withOwner(pos)
                         .withNextAction(wfmatrix.getNextAction()).withNatureOfTask(natureOfwork);
-            } else if (null == sewerageApplicationDetails.getState()){    // New Entry
+            } else if ((NEW.equalsIgnoreCase(sewerageApplicationDetails.getState().getValue())
+                    && SewerageTaxConstants.APPLICATION_STATUS_COLLECTINSPECTIONFEE
+                            .equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode()))
+                    &&
+                    sewerageWorkflowService.isCscOperator(sewerageApplicationDetails.getCreatedBy())) {
+                  if (sewerageTaxUtils.isInspectionFeeCollectionRequired()) {
+                    wfmatrix = sewerageApplicationWorkflowService.getWfMatrix(
+                            sewerageApplicationDetails.getStateType(), null, null, additionalRule, NEW,
+                            SewerageTaxConstants.WF_INSPECTIONFEE_COLLECTION);
+                } else {    // pick workflowmatrix without inspecitonfee
+                    wfmatrix = sewerageApplicationWorkflowService.getWfMatrix(
+                            sewerageApplicationDetails.getStateType(), null, null, additionalRule, NEW, null);
+                }
+                sewerageApplicationDetails.transition().progressWithStateCopy()
+                        .withSenderName(user.getUsername() + "::" + user.getName())
+                        .withComments(approvalComent).withStateValue(wfmatrix.getNextState())
+                        .withDateInfo(currentDate.toDate()).withOwner(pos).withNextAction(wfmatrix.getNextAction())
+                        .withNatureOfTask(natureOfwork);
+
+            }else if (null == sewerageApplicationDetails.getState()){    // New Entry
                 // If Inspection is configured, pick with inspection fee workflowmatrix by passing pendingaction
                 if (sewerageTaxUtils.isInspectionFeeCollectionRequired()) {
                     wfmatrix = sewerageApplicationWorkflowService.getWfMatrix(

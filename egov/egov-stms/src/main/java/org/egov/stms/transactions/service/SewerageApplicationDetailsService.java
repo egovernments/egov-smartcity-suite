@@ -613,7 +613,6 @@ public class SewerageApplicationDetailsService {
         if (sewerageApplicationDetails.getState() != null) {
             final String currentState = sewerageApplicationDetails.getState().getValue();
             if (currentState.equalsIgnoreCase(WF_STATE_INSPECTIONFEE_PENDING)
-                    || currentState.equalsIgnoreCase(WF_STATE_CLERK_APPROVED)
                     || currentState.equalsIgnoreCase(WF_STATE_ASSISTANT_APPROVED)
                     || currentState.equalsIgnoreCase(WF_STATE_DEPUTY_EXE_APPROVED)
                     || currentState.equalsIgnoreCase(WF_STATE_PAYMENTDONE))
