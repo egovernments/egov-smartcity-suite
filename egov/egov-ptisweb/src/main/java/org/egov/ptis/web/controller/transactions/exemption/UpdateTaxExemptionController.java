@@ -331,7 +331,7 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
                     approvalPosition, taxExemptedReason, propertyByEmployee, EXEMPTION);
             }
 
-            successMessage = "Property Exemption rejected successfully and forwared to "
+            successMessage = "Property Exemption rejected successfully and forwarded to "
                     + assignment.getEmployee().getName().concat("~").concat(assignment.getPosition().getName())
                     + " with application number "
                     + property.getApplicationNo();
