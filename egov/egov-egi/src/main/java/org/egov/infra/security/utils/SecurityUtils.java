@@ -76,7 +76,7 @@ public class SecurityUtils {
 
     public UserType currentUserType() {
         Optional<Authentication> authentication = getCurrentAuthentication();
-        return !userAnonymouslyAuthenticated(authentication) ?
+        return authentication.isPresent() && !userAnonymouslyAuthenticated(authentication) ?
                 ((SecureUser) authentication.get().getPrincipal()).getUserType() : UserType.SYSTEM;
     }
 

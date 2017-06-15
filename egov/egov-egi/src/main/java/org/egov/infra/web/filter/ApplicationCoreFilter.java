@@ -89,7 +89,7 @@ public class ApplicationCoreFilter implements Filter {
         HttpSession session = request.getSession();
         try {
             prepareUserSession(session);
-            prepareApplicationThreadLocal(session, request);
+            prepareApplicationThreadLocal(session);
             chain.doFilter(request, resp);
         } finally {
             ApplicationThreadLocals.clearValues();
@@ -105,7 +105,7 @@ public class ApplicationCoreFilter implements Filter {
             session.getServletContext().setAttribute(CDN_ATTRIB_NAME, cdnURL);
     }
 
-    private void prepareApplicationThreadLocal(HttpSession session, HttpServletRequest request) {
+    private void prepareApplicationThreadLocal(HttpSession session) {
         ApplicationThreadLocals.setCityCode((String) session.getAttribute(CITY_CODE_KEY));
         ApplicationThreadLocals.setCityName((String) session.getAttribute(CITY_NAME_KEY));
         ApplicationThreadLocals.setMunicipalityName((String) session.getAttribute(CITY_CORP_NAME_KEY));
@@ -119,7 +119,8 @@ public class ApplicationCoreFilter implements Filter {
             if (authentication.isPresent() && authentication.get().getPrincipal() instanceof SecureUser) {
                 userId = ((SecureUser) authentication.get().getPrincipal()).getUserId();
                 session.setAttribute(USERID_KEY, userId);
-            } else if (!authentication.isPresent() || (authentication.isPresent() && !(authentication.get().getPrincipal() instanceof User))) {
+            } else if (!authentication.isPresent() ||
+                    (authentication.isPresent() && !(authentication.get().getPrincipal() instanceof User))) {
                 userId = securityUtils.getCurrentUser().getId();
                 session.setAttribute(USERID_KEY, userId);
             }

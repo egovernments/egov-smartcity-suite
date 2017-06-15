@@ -58,7 +58,7 @@ public class AuditableEntityListener implements RevisionListener {
         final BaseRevisionEntity revision = (BaseRevisionEntity) revisionEntity;
         revision.setUserId(ApplicationThreadLocals.getUserId());
         final Optional<Authentication> auth = SecurityUtils.getCurrentAuthentication();
-        if (!userAnonymouslyAuthenticated(auth))
+        if (auth.isPresent() && !userAnonymouslyAuthenticated(auth))
             revision.setIpAddress(((HashMap<String, String>) auth.get().getCredentials()).get("ipAddress"));
         else
             revision.setIpAddress("unknown");
