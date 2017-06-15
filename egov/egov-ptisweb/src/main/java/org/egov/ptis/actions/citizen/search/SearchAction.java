@@ -309,14 +309,14 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
     }
 
     public BigDecimal calculateNetPayableAmmount(final PropertyMaterlizeView pmv) {
-        return getCurrFirstHalfDemand(pmv.getAggrCurrFirstHalfDmd())
-                .add(getCurrFirstHalfDemandDue(pmv.getAggrCurrFirstHalfDmd(), pmv.getAggrCurrFirstHalfColl()))
+        return getCurrFirstHalfDemandDue(pmv.getAggrCurrFirstHalfDmd(), pmv.getAggrCurrFirstHalfColl())
                 .add(getIntrestDueOnCurrFirstHalfDemand(pmv.getAggrCurrFirstHalfPenaly()))
-                .add(getCurrSecondHalfDemand(pmv.getAggrCurrSecondHalfDmd()))
                 .add(getCurrSecondHalfDemandDue(pmv.getAggrCurrSecondHalfDmd(), pmv.getAggrCurrSecondHalfColl()))
                 .add(getIntrestDueOnCurrSecondHalfDemand(pmv.getAggrCurrSecondHalfPenaly()))
                 .add(getAggrArrDmd(pmv.getAggrArrDmd(), pmv.getAggrArrColl()))
-                .add(getIntrestDueOnArrearDemandDue(pmv.getAggrArrearPenaly()));
+                .add(getIntrestDueOnArrearDemandDue(pmv.getAggrArrearPenaly()))
+                .subtract(calculateRebateAmount(getCurrFirstHalfDemand(pmv.getAggrCurrFirstHalfDmd()),
+                        getCurrSecondHalfDemand(pmv.getAggrCurrSecondHalfDmd())));
     }
 
     private void checkIsDemandActive(final Property property) {
