@@ -44,11 +44,11 @@ $(document).ready(function (e) {
     drillDowntableContainer = $("#tbldcbdrilldown");
     $('#report-backbutton').hide();
     $('form').submit(function (e) {
-        searchDCBReport(e);
-        var table = $('#tbldcbdrilldown').DataTable();
-        var info = table.page.info();
-        if (info.start == 0)
-            getSumOfRecords();
+		var table = $('#tbldcbdrilldown').DataTable();
+		var info = table.page.info();
+		if (info.start == 0)
+			getSumOfRecords();
+		searchDCBReport(e);
     });
 
     $('#backButton').click(function (e) {
@@ -62,6 +62,7 @@ function getSumOfRecords() {
     $.ajax({
         url: "grand-total?licensenumber=" + $('#licensenumber').val(),
         type: 'GET',
+        async:false,
         success: function (data) {
             recordTotal = [];
             for (var i = 0; i < data.length; i++) {
