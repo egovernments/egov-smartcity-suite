@@ -287,7 +287,7 @@ public class MeterReadingController {
             if (meteredRatesDetail != null) {
                 if (meteredRatesDetail.getRateAmount() == null)
                     throw new ApplicationRuntimeException("err.metered.rate.not.present");
-                else if (noofmonths > 0 && meteredRatesDetail.getRateAmount() != null)
+                else if (noofmonths > 0 && meteredRatesDetail.getRateAmount() != null && meteredRatesDetail.getRateAmount() != 0)
                     amountToBeCollected = noofmonths * meteredRatesDetail.getRateAmount();
                 else
                     amountToBeCollected = meteredRatesDetail.getRateAmount();

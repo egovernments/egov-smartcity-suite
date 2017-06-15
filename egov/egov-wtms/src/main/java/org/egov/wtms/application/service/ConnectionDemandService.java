@@ -450,6 +450,8 @@ public class ConnectionDemandService {
                 WaterTaxConstants.MONTHLY, currentDate);
         if (installment != null) {
             final EgDemand demandObj = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
+            if (demandObj == null && waterConnectionDetails.getLegacy())
+                throw new ApplicationRuntimeException("err.legacy.demand.not.present");
             final Set<EgDemandDetails> dmdDetailSet = new HashSet<>();
             dmdDetailSet.add(createDemandDetails(Double.parseDouble(billAmount.toString()),
                     WATERTAXREASONCODE, installment));

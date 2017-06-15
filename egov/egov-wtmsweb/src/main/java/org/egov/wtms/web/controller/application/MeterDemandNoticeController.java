@@ -173,7 +173,7 @@ public class MeterDemandNoticeController {
             reportParams = prepareReportParams(waterConnectionDetails, session, formatter, assessmentDetails,
                     ownerName.toString(), billObj,
                     meterReadingpriviousObj, monthName, yearName);
-            reportInput = new ReportRequest(METERDEMAND_NOTICE, waterConnectionDetails.getEstimationDetails(),
+            reportInput = new ReportRequest(METERDEMAND_NOTICE, waterConnectionDetails,
                     reportParams);
             reportInput.setPrintDialogOnOpenReport(true);
         }
