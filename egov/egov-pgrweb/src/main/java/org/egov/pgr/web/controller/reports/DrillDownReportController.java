@@ -40,12 +40,19 @@
 
 package org.egov.pgr.web.controller.reports;
 
+import static org.egov.infra.utils.JsonUtils.toJSON;
+
+import java.io.IOException;
+import java.util.Date;
+import java.util.List;
+
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.egov.pgr.service.reports.DrillDownReportService;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.Transformers;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -55,12 +62,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.List;
-
-import static org.egov.infra.utils.JsonUtils.toJSON;
 
 @Controller
 @RequestMapping("/report")
@@ -93,8 +94,8 @@ public class DrillDownReportController {
     public void springPaginationDataTablesUpdate(@RequestParam String groupBy,
                                                  @RequestParam String deptid, @RequestParam String complainttypeid,
                                                  @RequestParam String selecteduserid, @RequestParam String boundary,
-                                                 @RequestParam String complaintDateType, @RequestParam DateTime fromDate,
-                                                 @RequestParam DateTime toDate, @RequestParam String locality,
+                                                 @RequestParam String complaintDateType, @RequestParam Date fromDate,
+                                                 @RequestParam Date toDate, @RequestParam String locality,
                                                  HttpServletResponse response) throws IOException {
 
         SQLQuery drillDownreportQuery;

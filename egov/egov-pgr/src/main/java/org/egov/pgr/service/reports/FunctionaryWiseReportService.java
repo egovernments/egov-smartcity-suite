@@ -9,10 +9,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
+import org.egov.infra.utils.DateUtils;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDateTime;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,7 +22,7 @@ public class FunctionaryWiseReportService {
     private EntityManager entityManager;
 
     @ReadOnly
-    public SQLQuery getFunctionaryWiseReportQuery(final DateTime fromDate, final DateTime toDate, final String usrid,
+    public SQLQuery getFunctionaryWiseReportQuery(final Date fromDate, final Date toDate, final String usrid,
             final String complaintDateType) {
 
         final StringBuilder query = new StringBuilder();
@@ -31,9 +30,9 @@ public class FunctionaryWiseReportService {
         query.append(
                 "SELECT cast(usr.employee as bigint) as  usrid, usr.name as name,COUNT(CASE WHEN cs.name IN ('REGISTERED') THEN 1 END) registered ,  COUNT(CASE WHEN cs.name IN ('FORWARDED','PROCESSING','NOTCOMPLETED') THEN 1 END) inprocess, COUNT(CASE WHEN cs.name IN ('COMPLETED','CLOSED') THEN 1 END) Completed, COUNT(CASE WHEN cs.name IN ('REOPENED') THEN 1 END) reopened, COUNT(CASE WHEN cs.name IN ('WITHDRAWN','REJECTED') THEN 1 END) Rejected ,");
         query.append(
-                "SUM(CASE WHEN state.value in ('COMPLETED','REJECTED','WITHDRAWN') AND (cd.createddate - state.lastmodifieddate) < (interval '1h' * ctype.slahours) THEN 1 WHEN (state.value not in ('COMPLETED','REJECTED','WITHDRAWN') AND (cd.createddate - CURRENT_DATE) < (interval '1h' * ctype.slahours)) THEN 1 else 0 END) withinsla, ");
+                "SUM(CASE WHEN state.value in ('COMPLETED','REJECTED','WITHDRAWN') AND (state.lastmodifieddate - cd.createddate) < (interval '1h' * ctype.slahours) THEN 1 WHEN (state.value not in ('COMPLETED','REJECTED','WITHDRAWN') AND (now() - cd.createddate) < (interval '1h' * ctype.slahours)) THEN 1 else 0 END) withinsla, ");
         query.append(
-                "SUM(CASE WHEN state.value in ('COMPLETED','REJECTED','WITHDRAWN') AND (cd.createddate - state.lastmodifieddate) > (interval '1h' * ctype.slahours) THEN 1 WHEN (state.value not in ('COMPLETED','REJECTED','WITHDRAWN') AND (cd.createddate - CURRENT_DATE ) > (interval '1h' * ctype.slahours)) THEN 1 ELSE 0 END) beyondsla ");
+                "SUM(CASE WHEN state.value in ('COMPLETED','REJECTED','WITHDRAWN') AND (state.lastmodifieddate - cd.createddate) > (interval '1h' * ctype.slahours) THEN 1 WHEN (state.value not in ('COMPLETED','REJECTED','WITHDRAWN') AND (now() - cd.createddate ) > (interval '1h' * ctype.slahours)) THEN 1 ELSE 0 END) beyondsla ");
         query.append(
                 " FROM egpgr_complaintstatus cs ,egpgr_complainttype ctype,view_egeis_employee usr ,egpgr_complaint cd ,eg_wf_states state ");
         buildWhereClause(fromDate, toDate, usrid, complaintDateType, query);
@@ -43,7 +42,7 @@ public class FunctionaryWiseReportService {
 
     }
 
-    private void buildWhereClause(final DateTime fromDate, final DateTime toDate, final String userid,
+    private void buildWhereClause(final Date fromDate, final Date toDate, final String userid,
             final String complaintDateType, final StringBuilder query) {
 
         query.append(
@@ -68,42 +67,30 @@ public class FunctionaryWiseReportService {
         }
     }
 
-    private SQLQuery setParameterForFunctionaryReportQuery(final String querykey, final DateTime fromDate,
-            final DateTime toDate, final String complaintDateType) {
+    private SQLQuery setParameterForFunctionaryReportQuery(final String querykey, final Date fromDate,
+            final Date toDate, final String complaintDateType) {
         final SQLQuery qry = entityManager.unwrap(Session.class).createSQLQuery(querykey);
 
-        if (complaintDateType != null && complaintDateType.equals("lastsevendays"))
-            qry.setParameter(FROMDATE, getCurrentDateWithOutTime().minusDays(7).toDate());
-        else if (complaintDateType != null && complaintDateType.equals("lastthirtydays"))
-            qry.setParameter(FROMDATE, getCurrentDateWithOutTime().minusDays(30).toDate());
-        else if (complaintDateType != null && complaintDateType.equals("lastninetydays"))
-            qry.setParameter(FROMDATE, getCurrentDateWithOutTime().minusDays(90).toDate());
+        if (complaintDateType != null && "lastsevendays".equals(complaintDateType))
+            qry.setParameter(FROMDATE, DateUtils.endOfToday().minusDays(8).toDate());
+        else if (complaintDateType != null && "lastthirtydays".equals(complaintDateType))
+            qry.setParameter(FROMDATE, DateUtils.endOfToday().minusDays(31).toDate());
+        else if (complaintDateType != null && "lastninetydays".equals(complaintDateType))
+            qry.setParameter(FROMDATE, DateUtils.endOfToday().minusDays(91).toDate());
         else if (fromDate != null && toDate != null) {
-            qry.setParameter(FROMDATE, resetTimeByPassingDate(fromDate));
-            qry.setParameter(TODATE, getEndOfDayByDate(toDate));
+            qry.setParameter(FROMDATE, DateUtils.startOfDay(fromDate));
+            qry.setParameter(TODATE, DateUtils.endOfDay(toDate));
         } else if (fromDate != null)
-            qry.setParameter(FROMDATE, resetTimeByPassingDate(fromDate));
+            qry.setParameter(FROMDATE, DateUtils.startOfDay(fromDate));
         else if (toDate != null)
-            qry.setParameter(TODATE, getEndOfDayByDate(toDate));
-        qry.setParameter("currdate", getCurrentDateWithOutTime().toDate());
+            qry.setParameter(TODATE, DateUtils.endOfDay(toDate));
+        qry.setParameter("currdate", DateUtils.endOfToday().minusDays(1).toDate());
         return qry;
 
     }
 
-    private Date getEndOfDayByDate(final DateTime fromDate) {
-        return fromDate.withTime(23, 59, 59, 999).toDate();
-    }
-
-    private Date resetTimeByPassingDate(final DateTime fromDate) {
-        return fromDate.withTime(0, 0, 0, 0).toDate();
-    }
-
-    private DateTime getCurrentDateWithOutTime() {
-        return new LocalDateTime().withTime(0, 0, 0, 0).toDateTime();
-    }
-
     @ReadOnly
-    public SQLQuery getFunctionaryWiseReportQuery(final DateTime fromDate, final DateTime toDate, final String usrid,
+    public SQLQuery getFunctionaryWiseReportQuery(final Date fromDate, final Date toDate, final String usrid,
             final String complaintDateType, final String status) {
 
         final StringBuilder query = new StringBuilder();
@@ -111,9 +98,9 @@ public class FunctionaryWiseReportService {
         query.append(
                 " SELECT  distinct complainant.id as complaintid, crn,cd.createddate,complainant.name as complaintname,cd.details,cs.name as status , bndry.name || ' - ' || childlocation.name as boundaryname, cd.citizenfeedback as feedback,");
         query.append(
-                "CASE WHEN state.value IN ('COMPLETED','REJECTED','WITHDRAWN') AND (cd.createddate - state.lastmodifieddate) < (interval '1h' * ctype.slahours) THEN 'Yes' WHEN (state.value NOT IN ('COMPLETED','REJECTED','WITHDRAWN') ");
+                "CASE WHEN state.value IN ('COMPLETED','REJECTED','WITHDRAWN') AND (state.lastmodifieddate - cd.createddate) < (interval '1h' * ctype.slahours) THEN 'Yes' WHEN (state.value NOT IN ('COMPLETED','REJECTED','WITHDRAWN') ");
         query.append(
-                "AND (cd.createddate - CURRENT_DATE) < (interval '1h' * ctype.slahours)) THEN 'Yes' ELSE 'No' END as issla  ");
+                "AND (now() - cd.createddate) < (interval '1h' * ctype.slahours)) THEN 'Yes' ELSE 'No' END as issla  ");
         query.append(
                 "FROM egpgr_complaintstatus cs ,egpgr_complainttype ctype ,eg_wf_states state, view_egeis_employee usr, egpgr_complaint cd left JOIN eg_boundary bndry ");
         query.append(
@@ -124,17 +111,26 @@ public class FunctionaryWiseReportService {
         buildWhereClause(fromDate, toDate, usrid, complaintDateType, query);
         query.append(" and complainant.id=cd.complainant   ");
         if (status != null && !"".equals(status))
-            if (status.equalsIgnoreCase("registered"))
+            if ("registered".equalsIgnoreCase(status))
                 query.append(" and cs.name in ('REGISTERED')");
-            else if (status.equalsIgnoreCase("inprocess"))
+            else if ("inprocess".equalsIgnoreCase(status))
                 query.append(" and cs.name in ('FORWARDED','PROCESSING','NOTCOMPLETED')");
-            else if (status.equalsIgnoreCase("rejected"))
+            else if ("rejected".equalsIgnoreCase(status))
                 query.append(" and cs.name in ('WITHDRAWN','REJECTED')");
-            else if (status.equalsIgnoreCase("completed"))
+            else if ("completed".equalsIgnoreCase(status))
                 query.append(" and cs.name in ('COMPLETED','CLOSED')");
-            else if (status.equalsIgnoreCase("reopened"))
+            else if ("reopened".equalsIgnoreCase(status))
                 query.append(" and cs.name in ('REOPENED')");
-
+            else if ("Within SLA".equalsIgnoreCase(status)) {
+                query.append(
+                        "and case when state.value IN ('COMPLETED','REJECTED','WITHDRAWN') then (state.lastmodifieddate - cd.createddate) < (interval '1h' * ctype.slahours)");
+                query.append(
+                        "when state.value NOT IN ('COMPLETED','REJECTED','WITHDRAWN') then (now() - cd.createddate) < (interval '1h' * ctype.slahours) end ");
+            } else if ("Beyond SLA".equalsIgnoreCase(status)) {
+                query.append(
+                        "and case when state.value IN ('COMPLETED','REJECTED','WITHDRAWN') then (state.lastmodifieddate - cd.createddate) > (interval '1h' * ctype.slahours)"
+                       + "when state.value NOT IN ('COMPLETED','REJECTED','WITHDRAWN') then (now() - cd.createddate) > (interval '1h' * ctype.slahours) end ");
+            }
         return setParameterForFunctionaryReportQuery(query.toString(), fromDate, toDate, complaintDateType);
 
     }

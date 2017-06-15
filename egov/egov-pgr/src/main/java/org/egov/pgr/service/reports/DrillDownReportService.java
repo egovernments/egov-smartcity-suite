@@ -52,10 +52,9 @@ import javax.persistence.PersistenceContext;
 
 import org.apache.commons.lang.StringUtils;
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
+import org.egov.infra.utils.DateUtils;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDateTime;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -70,7 +69,7 @@ public class DrillDownReportService {
     public static final String LOCALITY_SELECT_QRY = "select coalesce(cbndry.name,'GIS_LOCATION') as name, ";
 
     @ReadOnly
-    public SQLQuery getDrillDownReportQuery(final DateTime fromDate, final DateTime toDate,
+    public SQLQuery getDrillDownReportQuery(final Date fromDate, final Date toDate,
             final String complaintDateType, final String groupBy, final String department, final String boundary,
             final String complainttype, final String selecteduser, final String locality) {
 
@@ -111,13 +110,13 @@ public class DrillDownReportService {
                 + " COUNT(CASE WHEN cs.name IN ('COMPLETED','WITHDRAWN','CLOSED') THEN 1 END) Completed, "
                 + " COUNT(CASE WHEN cs.name IN ('REJECTED') THEN 1 END) Rejected ,");
         query.append("SUM(CASE WHEN state.value in ('COMPLETED','REJECTED','WITHDRAWN') AND "
-                + "(cd.createddate - state.lastmodifieddate) < (interval '1h' * ctype.slahours) THEN 1 "
+                + "(state.lastmodifieddate - cd.createddate) < (interval '1h' * ctype.slahours) THEN 1 "
                 + "WHEN (state.value not in ('COMPLETED','REJECTED','WITHDRAWN') AND "
-                + "(cd.createddate - CURRENT_DATE) < (interval '1h' * ctype.slahours)) THEN 1 else 0 END) withinsla, ");
+                + "(now() - cd.createddate) < (interval '1h' * ctype.slahours)) THEN 1 else 0 END) withinsla, ");
         query.append(" SUM(CASE WHEN state.value in ('COMPLETED','REJECTED','WITHDRAWN') AND "
-                + "(cd.createddate - state.lastmodifieddate) > (interval '1h' * ctype.slahours) THEN 1 "
+                + "(state.lastmodifieddate - cd.createddate) > (interval '1h' * ctype.slahours) THEN 1 "
                 + "WHEN (state.value not in ('COMPLETED','REJECTED','WITHDRAWN') AND "
-                + "(cd.createddate - CURRENT_DATE ) > (interval '1h' * ctype.slahours)) THEN 1 ELSE 0 END) beyondsla ");
+                + "(now() - cd.createddate ) > (interval '1h' * ctype.slahours)) THEN 1 ELSE 0 END) beyondsla ");
         query.append(
                 " FROM egpgr_complaintstatus cs ,egpgr_complainttype ctype , eg_wf_states state, egpgr_complaint cd "
                         + " left JOIN eg_boundary bndry on cd.location =bndry.id left JOIN eg_boundary cbndry on cd.childlocation=cbndry.id"
@@ -164,7 +163,7 @@ public class DrillDownReportService {
             query.append("  group by dept.name ");
     }
 
-    private void buildWhereClause(final DateTime fromDate, final DateTime toDate, final String complaintDateType,
+    private void buildWhereClause(final Date fromDate, final Date toDate, final String complaintDateType,
             final StringBuilder query, final String department, final String boundary, final String complainttype,
             final String locality) {
 
@@ -208,42 +207,30 @@ public class DrillDownReportService {
 
     }
 
-    private SQLQuery setParameterForDrillDownReportQuery(final String querykey, final DateTime fromDate,
-            final DateTime toDate, final String complaintDateType) {
+    private SQLQuery setParameterForDrillDownReportQuery(final String querykey, final Date fromDate,
+            final Date toDate, final String complaintDateType) {
         final SQLQuery qry = entityManager.unwrap(Session.class).createSQLQuery(querykey);
 
         if ("lastsevendays".equals(complaintDateType))
-            qry.setParameter(FROMDATE, getCurrentDateWithOutTime().minusDays(7).toDate());
+            qry.setParameter(FROMDATE, DateUtils.endOfToday().minusDays(8).toDate());
         else if ("lastthirtydays".equals(complaintDateType))
-            qry.setParameter(FROMDATE, getCurrentDateWithOutTime().minusDays(30).toDate());
+            qry.setParameter(FROMDATE, DateUtils.endOfToday().minusDays(31).toDate());
         else if ("lastninetydays".equals(complaintDateType))
-            qry.setParameter(FROMDATE, getCurrentDateWithOutTime().minusDays(90).toDate());
+            qry.setParameter(FROMDATE, DateUtils.endOfToday().minusDays(91).toDate());
         else if (fromDate != null && toDate != null) {
-            qry.setParameter(FROMDATE, resetTimeByPassingDate(fromDate));
-            qry.setParameter("toDates", getEndOfDayByDate(toDate));
+            qry.setParameter(FROMDATE, DateUtils.startOfDay(fromDate));
+            qry.setParameter("toDates", DateUtils.endOfDay(toDate));
         } else if (fromDate != null)
-            qry.setParameter(FROMDATE, resetTimeByPassingDate(fromDate));
+            qry.setParameter(FROMDATE, DateUtils.startOfDay(fromDate));
         else if (toDate != null)
-            qry.setParameter("toDates", getEndOfDayByDate(toDate));
-        qry.setParameter("currdate", getCurrentDateWithOutTime().toDate());
+            qry.setParameter("toDates", DateUtils.endOfDay(toDate));
+        qry.setParameter("currdate", DateUtils.endOfToday().minusDays(1).toDate());
         return qry;
 
     }
 
-    private Date getEndOfDayByDate(final DateTime fromDate) {
-        return fromDate.withTime(23, 59, 59, 999).toDate();
-    }
-
-    private Date resetTimeByPassingDate(final DateTime fromDate) {
-        return fromDate.withTime(0, 0, 0, 0).toDate();
-    }
-
-    private DateTime getCurrentDateWithOutTime() {
-        return new LocalDateTime().withTime(0, 0, 0, 0).toDateTime();
-    }
-
     @ReadOnly
-    public SQLQuery getDrillDownReportQuery(final DateTime fromDate, final DateTime toDate,
+    public SQLQuery getDrillDownReportQuery(final Date fromDate, final Date toDate,
             final String complaintDateType, final String department, final String boundary, final String complainttype,
             final String selecteduser, final String locality) {
         final StringBuilder query = new StringBuilder();
@@ -251,9 +238,9 @@ public class DrillDownReportService {
         query.append(
                 "SELECT distinct complainant.id as complaintid, crn,cd.createddate,complainant.name as complaintname,cd.details,cs.name as status , bndry.name || ' - ' || childlocation.name AS boundaryname , cd.citizenfeedback as feedback ,");
         query.append(
-                "CASE WHEN state.value IN ('COMPLETED','REJECTED','WITHDRAWN') AND (cd.createddate - state.lastmodifieddate) < (interval '1h' * ctype.slahours) THEN 'Yes' WHEN (state.value NOT IN ('COMPLETED','REJECTED','WITHDRAWN') ");
+                "CASE WHEN state.value IN ('COMPLETED','REJECTED','WITHDRAWN') AND (state.lastmodifieddate - cd.createddate) < (interval '1h' * ctype.slahours) THEN 'Yes' WHEN (state.value NOT IN ('COMPLETED','REJECTED','WITHDRAWN') ");
         query.append(
-                "AND (cd.createddate - CURRENT_DATE) < (interval '1h' * ctype.slahours)) THEN 'Yes' ELSE 'No' END as issla ");
+                "AND (now() - cd.createddate) < (interval '1h' * ctype.slahours)) THEN 'Yes' ELSE 'No' END as issla ");
         query.append(
                 "FROM egpgr_complaintstatus cs ,egpgr_complainttype ctype ,eg_wf_states state ,egpgr_complaint cd left JOIN eg_boundary bndry "
                         + "on cd.location =bndry.id left JOIN eg_boundary childlocation on cd.childlocation = childlocation.id  left JOIN eg_boundary cbndry on cd.childlocation=cbndry.id left JOIN eg_department dept "
