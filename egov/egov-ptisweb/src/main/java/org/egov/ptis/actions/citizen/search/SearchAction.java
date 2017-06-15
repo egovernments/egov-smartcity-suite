@@ -235,20 +235,20 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
                     searchResultMap.put("currFirstHalfDemandDue",
                             getCurrFirstHalfDemandDue(pmv.getAggrCurrFirstHalfDmd(), pmv.getAggrCurrFirstHalfColl())
                                     .toString());
-                    searchResultMap.put("interestDueOnCurrFirstHalfDemandDue",
-                            getIntrestDueOnCurrFirstHalfDemand(pmv.getAggrCurrFirstHalfPenaly()).toString());
+                    searchResultMap.put("currFirstHalfPenaltyDue",
+                            getIntrestDueOnCurrFirstHalfDemand(pmv.getAggrCurrFirstHalfPenaly(),pmv.getAggrCurrFirstHalfPenalyColl()).toString());
                     searchResultMap.put("currSecondHalfDemand", getCurrSecondHalfDemand(pmv.getAggrCurrSecondHalfDmd())
                             .toString());
                     searchResultMap.put("currSecondHalfDemandDue",
                             getCurrSecondHalfDemandDue(pmv.getAggrCurrSecondHalfDmd(), pmv.getAggrCurrSecondHalfColl())
                                     .toString());
-                    searchResultMap.put("interestDueOnCurrSecondHalfDemandDue",
-                            getIntrestDueOnCurrSecondHalfDemand(pmv.getAggrCurrSecondHalfPenaly())
+                    searchResultMap.put("currSecondHalfPenaltyDue",
+                            getIntrestDueOnCurrSecondHalfDemand(pmv.getAggrCurrSecondHalfPenaly(),pmv.getAggrCurrSecondHalfPenalyColl())
                                     .toString());
-                    searchResultMap.put("arrDemandDue", getAggrArrDmd(pmv.getAggrArrDmd(), pmv.getAggrArrColl())
+                    searchResultMap.put("arrDemandDue", getAggrArrDmdDue(pmv.getAggrArrDmd(), pmv.getAggrArrColl())
                             .toString());
-                    searchResultMap.put("interestDueOnArrDemandDue",
-                            getIntrestDueOnArrearDemandDue(pmv.getAggrArrearPenaly())
+                    searchResultMap.put("arrearPenaltyDue",
+                            getIntrestDueOnArrearDemandDue(pmv.getAggrArrearPenaly(), pmv.getAggrArrearPenalyColl())
                                     .toString());
                     searchResultMap.put("rebateAmt",
                             calculateRebateAmount(getCurrFirstHalfDemand(pmv.getAggrCurrFirstHalfDmd()),
@@ -281,8 +281,8 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
                         : aggrCurrFirstHalfColl);
     }
 
-    public BigDecimal getIntrestDueOnCurrFirstHalfDemand(final BigDecimal intrestDueOnCurrFirstHalfDemand) {
-        return intrestDueOnCurrFirstHalfDemand == null ? ZERO : intrestDueOnCurrFirstHalfDemand;
+    public BigDecimal getIntrestDueOnCurrFirstHalfDemand(final BigDecimal intrestDueOnCurrFirstHalfDemand,final BigDecimal aggrCurrFirstHalfPenalyColl) {
+        return (intrestDueOnCurrFirstHalfDemand == null ? ZERO : intrestDueOnCurrFirstHalfDemand).subtract(aggrCurrFirstHalfPenalyColl==null ? ZERO :aggrCurrFirstHalfPenalyColl);
     }
 
     public BigDecimal getCurrSecondHalfDemand(final BigDecimal aggrCurrFirstHalfDmd) {
@@ -295,26 +295,27 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
                         : aggrCurrSecondHalfColl);
     }
 
-    public BigDecimal getIntrestDueOnCurrSecondHalfDemand(final BigDecimal intrestDueOnCurrFirstHalfDemand) {
-        return intrestDueOnCurrFirstHalfDemand == null ? ZERO : intrestDueOnCurrFirstHalfDemand;
+    public BigDecimal getIntrestDueOnCurrSecondHalfDemand(final BigDecimal currSecondHalfPenalty,final BigDecimal currSecondHalfPenaltyColl) {
+        return (currSecondHalfPenalty == null ? ZERO : currSecondHalfPenalty).subtract(currSecondHalfPenaltyColl == null ? ZERO : currSecondHalfPenaltyColl);
     }
 
-    public BigDecimal getAggrArrDmd(final BigDecimal arrearDemandDue, final BigDecimal arrearDemandDueInterest) {
-        return (arrearDemandDue == null ? ZERO : arrearDemandDue)
-                .subtract(arrearDemandDueInterest == null ? ZERO : arrearDemandDueInterest);
+    public BigDecimal getAggrArrDmdDue(final BigDecimal arrearDemand, final BigDecimal arrearCollection) {
+        return (arrearDemand == null ? ZERO : arrearDemand)
+                .subtract(arrearCollection == null ? ZERO : arrearCollection);
     }
 
-    public BigDecimal getIntrestDueOnArrearDemandDue(final BigDecimal intrestDueOnArrearDemand) {
-        return intrestDueOnArrearDemand == null ? ZERO : intrestDueOnArrearDemand;
+    public BigDecimal getIntrestDueOnArrearDemandDue(final BigDecimal arrearPenalty, BigDecimal arrearPenaltyColl) {
+        return (arrearPenalty == null ? ZERO : arrearPenalty)
+                .subtract(arrearPenaltyColl == null ? ZERO : arrearPenaltyColl);
     }
 
     public BigDecimal calculateNetPayableAmmount(final PropertyMaterlizeView pmv) {
         return getCurrFirstHalfDemandDue(pmv.getAggrCurrFirstHalfDmd(), pmv.getAggrCurrFirstHalfColl())
-                .add(getIntrestDueOnCurrFirstHalfDemand(pmv.getAggrCurrFirstHalfPenaly()))
+                .add(getIntrestDueOnCurrFirstHalfDemand(pmv.getAggrCurrFirstHalfPenaly(),pmv.getAggrCurrFirstHalfPenalyColl()))
                 .add(getCurrSecondHalfDemandDue(pmv.getAggrCurrSecondHalfDmd(), pmv.getAggrCurrSecondHalfColl()))
-                .add(getIntrestDueOnCurrSecondHalfDemand(pmv.getAggrCurrSecondHalfPenaly()))
-                .add(getAggrArrDmd(pmv.getAggrArrDmd(), pmv.getAggrArrColl()))
-                .add(getIntrestDueOnArrearDemandDue(pmv.getAggrArrearPenaly()))
+                .add(getIntrestDueOnCurrSecondHalfDemand(pmv.getAggrCurrSecondHalfPenaly(),pmv.getAggrCurrSecondHalfPenalyColl()))
+                .add(getAggrArrDmdDue(pmv.getAggrArrDmd(), pmv.getAggrArrColl()))
+                .add(getIntrestDueOnArrearDemandDue(pmv.getAggrArrearPenaly(), pmv.getAggrArrearPenalyColl()))
                 .subtract(calculateRebateAmount(getCurrFirstHalfDemand(pmv.getAggrCurrFirstHalfDmd()),
                         getCurrSecondHalfDemand(pmv.getAggrCurrSecondHalfDmd())));
     }

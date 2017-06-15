@@ -106,7 +106,7 @@
 							<display:column property="currFirstHalfDemandDue"
 								title="Current First Half Tax Due" headerClass="bluebgheadtd"
 								class="blueborderfortd" style="width:5%;text-align:center" />
-							<display:column property="interestDueOnCurrFirstHalfDemandDue"
+							<display:column property="currFirstHalfPenaltyDue"
 								title="Interest Due on Current First Half Tax Due"
 								headerClass="bluebgheadtd" class="blueborderfortd"
 								style="width:6%;text-align:center" />
@@ -116,14 +116,14 @@
 							<display:column property="currSecondHalfDemandDue"
 								title="Current Second Half Tax Due" headerClass="bluebgheadtd"
 								class="blueborderfortd" style="width:6%;text-align:center" />
-							<display:column property="interestDueOnCurrSecondHalfDemandDue"
+							<display:column property="currSecondHalfPenaltyDue"
 								title="Interest Due on Current Second Half Tax Due"
 								headerClass="bluebgheadtd" class="blueborderfortd"
 								style="width:6%;text-align:center" />
 							<display:column property="arrDemandDue" title="Arrear Tax Due"
 								headerClass="bluebgheadtd" class="blueborderfortd"
 								style="width:6%;text-align:center" />
-							<display:column property="interestDueOnArrDemandDue"
+							<display:column property="arrearPenaltyDue"
 								title="Interest Due On Arrear Tax Due"
 								headerClass="bluebgheadtd" class="blueborderfortd"
 								style="width:6%;text-align:center" />
