@@ -729,7 +729,7 @@ public abstract class AbstractLicenseService<T extends License> {
             final List<Assignment> assignments = assignmentService.getAllActiveEmployeeAssignmentsByEmpId(this.securityUtils.getCurrentUser().getId());
             if (!currentUserRoles.contains(CSCOPERATOR)) {
                 Position wfInitiator = null;
-                if (license.getState() == null) {
+                if (license.getState() == null || license.transitionCompleted()) {
                     if (!assignments.isEmpty())
                         wfInitiator = assignments.get(0).getPosition();
                     else
