@@ -147,7 +147,7 @@ jQuery(document)
 											}, {
 												"mData" : getComplaintTypeIdWithDatakey,
 												"render" : function(data, type,row) {
-													return '<a href="javascript:void(0);" onclick="setHiddenValueByLink(this,\'Rejected\');" data-hiddenele="boundary" data-eleval="'+ data.reopened + '" data-complaintname="'+ data.usrid + '">'
+													return '<a href="javascript:void(0);" onclick="setHiddenValueByLink(this,\'Reopened\');" data-hiddenele="boundary" data-eleval="'+ data.reopened + '" data-complaintname="'+ data.usrid + '">'
 															+ data.reopened + '</a>';
 												},
 												"sTitle" : "Reopened","sClass" : "text-right"
