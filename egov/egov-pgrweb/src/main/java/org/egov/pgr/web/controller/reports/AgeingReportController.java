@@ -119,6 +119,9 @@ public class AgeingReportController {
     public ResponseEntity<InputStreamResource> downloadReport(final AgeingReportRequest request) {
         final ReportRequest reportRequest = new ReportRequest("pgr_ageing_report",
                 ageingReportService.getAllAgeingReportRecords(request), new HashMap<>());
+        final Map<String, Object> reportparam = new HashMap<>();
+        reportparam.put("status", request.getStatus());
+        reportRequest.setReportParams(reportparam);
         reportRequest.setReportFormat(request.getPrintFormat());
         reportRequest.setReportName("pgr_ageing_report");
         return reportToResponseEntity(reportRequest, reportService.createReport(reportRequest));

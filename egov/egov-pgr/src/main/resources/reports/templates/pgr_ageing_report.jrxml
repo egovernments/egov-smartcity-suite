@@ -4,6 +4,7 @@
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<parameter name="AgeingReportForm" class="java.util.List"/>
+	<parameter name="status" class="java.lang.String"/>
 	<field name="department" class="java.lang.String"/>
 	<field name="boundary" class="java.lang.String"/>
 	<field name="greater30" class="java.math.BigInteger"/>
@@ -37,13 +38,13 @@
 	</background>
 	<title>
 		<band height="45" splitType="Stretch">
-			<staticText>
-				<reportElement x="350" y="12" width="130" height="20" uuid="cf993897-da29-4318-b391-97e5b9c09207"/>
+			<textField>
+				<reportElement x="222" y="12" width="359" height="20" uuid="cf993897-da29-4318-b391-97e5b9c09207"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Arial" size="14" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Ageing Report]]></text>
-			</staticText>
+				<textFieldExpression><![CDATA["Ageing Report for " + $P{status} + " Complaints"]]></textFieldExpression>
+			</textField>
 		</band>
 	</title>
 	<pageHeader>
