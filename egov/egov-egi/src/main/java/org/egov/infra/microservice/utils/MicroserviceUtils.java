@@ -44,7 +44,6 @@ import org.apache.log4j.Logger;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.RoleService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.microservice.contract.CreateUserRequest;
 import org.egov.infra.microservice.contract.RequestInfoWrapper;
 import org.egov.infra.microservice.contract.Task;
@@ -137,9 +136,9 @@ public class MicroserviceUtils {
             try {
                 restTemplate.postForObject(userServiceUrl, createUserRequest, UserDetailResponse.class);
             } catch (final Exception e) {
-                final String errMsg = "Exception while creating User in microservice ";
-                LOGGER.error(errMsg, e);
-                throw new ApplicationRuntimeException(errMsg, e);
+                final String errMsg = "Exception while creating User in microservice ";                
+                //throw new ApplicationRuntimeException(errMsg, e);
+                LOGGER.fatal(errMsg, e);
             }
         }
     }
