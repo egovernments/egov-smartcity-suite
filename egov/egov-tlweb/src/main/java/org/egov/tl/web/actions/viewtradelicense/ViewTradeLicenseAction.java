@@ -61,7 +61,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.io.IOException;
 import java.util.List;
 
+import static org.egov.tl.utils.Constants.BUTTONREJECT;
 import static org.egov.tl.utils.Constants.CSCOPERATOR;
+import static org.egov.tl.utils.Constants.BUTTONFORWARD;
 
 @ParentPackage("egov")
 @Results({@Result(name = "report", location = "viewTradeLicense-report.jsp"),
@@ -181,7 +183,7 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     public void prepareClosureForm() {
         if (license() != null && license().getId() != null)
             tradeLicense = tradeLicenseService.getLicenseById(license().getId());
-        if (tradeLicense.getCurrentState().getValue().equalsIgnoreCase("SI/SS Approved"))
+        if (tradeLicense.hasState() && tradeLicense.getCurrentState().getValue().equalsIgnoreCase("SI/SS Approved"))
             setEnableState(true);
     }
 
@@ -203,7 +205,7 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
         }
         if (hasCSCOperatorRole())
             addActionMessage(this.getText("license.closure.initiated"));
-        if (workflowBean.getWorkFlowAction().contains(Constants.BUTTONFORWARD)) {
+        else if (BUTTONFORWARD.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
             List<Assignment> assignments = assignmentService.getAssignmentsForPosition(workflowBean.getApproverPositionId());
             String nextDesgn = !assignments.isEmpty() ? assignments.get(0).getDesignation().getName() : "";
             final String userName = !assignments.isEmpty() ? assignments.get(0).getEmployee().getName() : "";
@@ -223,14 +225,12 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
                 return "message";
             }
             tradeLicenseService.cancelLicenseWorkflow(tradeLicense, workflowBean);
-            if (hasCSCOperatorRole())
-                addActionMessage(this.getText("license.closure.initiated"));
-            else if (workflowBean.getWorkFlowAction().contains(Constants.BUTTONFORWARD)) {
+            if (BUTTONFORWARD.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
                 List<Assignment> assignments = assignmentService.getAssignmentsForPosition(workflowBean.getApproverPositionId());
                 String nextDesgn = !assignments.isEmpty() ? assignments.get(0).getDesignation().getName() : "";
                 final String userName = !assignments.isEmpty() ? assignments.get(0).getEmployee().getName() : "";
                 addActionMessage(this.getText("license.closure.sent") + " " + nextDesgn + " - " + userName);
-            } else if (workflowBean.getWorkFlowAction().contains(Constants.BUTTONREJECT)) {
+            } else if (BUTTONREJECT.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
                 if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_REJECTED)) {
                     List<Assignment> assignments = assignmentService.getAssignmentsForPosition(license().getState().getInitiatorPosition().getId());
                     final String userName = !assignments.isEmpty() ? assignments.get(0).getEmployee().getName() : "";
