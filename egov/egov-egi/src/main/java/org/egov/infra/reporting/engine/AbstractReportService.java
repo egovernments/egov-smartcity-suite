@@ -49,6 +49,7 @@ import org.hibernate.Session;
 import org.hibernate.jdbc.Work;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -74,6 +75,9 @@ public abstract class AbstractReportService<T> implements ReportService {
 
     @PersistenceContext
     private EntityManager entityManager;
+
+    @Value("${dev.mode}")
+    private boolean devMode;
 
     /**
      * @param templateCacheMinSize Minimum size of template cache
@@ -156,7 +160,7 @@ public abstract class AbstractReportService<T> implements ReportService {
 
         T reportTemplate = this.templateCache.get(ApplicationThreadLocals.getTenantID() + templateName);
 
-        if (reportTemplate == null) {
+        if (devMode || reportTemplate == null) {
             try {
                 reportTemplate = loadTemplate(ReportUtil.getTemplateAsStream(templateName + getTemplateExtension()));
                 this.templateCache.put(ApplicationThreadLocals.getTenantID() + templateName, reportTemplate);
