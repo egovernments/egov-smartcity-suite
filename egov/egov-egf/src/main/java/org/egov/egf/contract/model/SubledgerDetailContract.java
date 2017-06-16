@@ -1,3 +1,5 @@
+package org.egov.egf.contract.model;
+
 /*
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
@@ -37,40 +39,45 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+public class SubledgerDetailContract {
 
-package org.egov.services.voucher;
+    private Long id;
 
-import java.util.List;
+    private AccountDetailTypeContract accountDetailType;
 
-import org.egov.commons.CGeneralLedger;
-import org.egov.infstr.services.PersistenceService;
-import org.hibernate.Query;
-import org.springframework.transaction.annotation.Transactional;
+    private AccountDetailKeyContract accountDetailKey;
 
-@Transactional(readOnly = true)
-public class GeneralLedgerService extends PersistenceService<CGeneralLedger, Long> {
+    private Double amount;
 
-    public GeneralLedgerService() {
-        super(CGeneralLedger.class);
+    public Long getId() {
+        return id;
     }
 
-    public GeneralLedgerService(final Class<CGeneralLedger> type) {
-        super(type);
+    public void setId(final Long id) {
+        this.id = id;
     }
 
-    public List<CGeneralLedger> getGeneralLedgerByGlCode(final String glcode) {
-
-        final Query query = getSession()
-                .createQuery(" from CGeneralLedger gl where gl.glcodeId.glcode=:glcode and gl.voucherHeaderId.status not in (4)");
-        query.setString("glcode", glcode);
-        return query.list();
+    public AccountDetailTypeContract getAccountDetailType() {
+        return accountDetailType;
     }
 
-    public List<CGeneralLedger> findCGeneralLedgerByVoucherHeaderId(final Long voucherHeaderId) {
-        final Query qry = getSession().createQuery(
-                "from CGeneralLedger gen where gen.voucherHeaderId.id = :voucherHeaderId");
-        qry.setLong("voucherHeaderId", voucherHeaderId);
-        return qry.list();
+    public void setAccountDetailType(final AccountDetailTypeContract accountDetailType) {
+        this.accountDetailType = accountDetailType;
     }
 
+    public AccountDetailKeyContract getAccountDetailKey() {
+        return accountDetailKey;
+    }
+
+    public void setAccountDetailKey(final AccountDetailKeyContract accountDetailKey) {
+        this.accountDetailKey = accountDetailKey;
+    }
+
+    public Double getAmount() {
+        return amount;
+    }
+
+    public void setAmount(final Double amount) {
+        this.amount = amount;
+    }
 }

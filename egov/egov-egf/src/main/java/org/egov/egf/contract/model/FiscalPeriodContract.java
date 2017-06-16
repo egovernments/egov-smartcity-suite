@@ -37,40 +37,83 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+package org.egov.egf.contract.model;
 
-package org.egov.services.voucher;
+import java.util.Date;
 
-import java.util.List;
+public class FiscalPeriodContract {
 
-import org.egov.commons.CGeneralLedger;
-import org.egov.infstr.services.PersistenceService;
-import org.hibernate.Query;
-import org.springframework.transaction.annotation.Transactional;
+    private Long id;
+    private String name;
+    private FinancialYearContract financialYear;
+    private Date startingDate;
+    private Date endingDate;
+    private Boolean active;
+    private Boolean isActiveForPosting;
+    private Boolean isClosed;
 
-@Transactional(readOnly = true)
-public class GeneralLedgerService extends PersistenceService<CGeneralLedger, Long> {
-
-    public GeneralLedgerService() {
-        super(CGeneralLedger.class);
+    public Long getId() {
+        return id;
     }
 
-    public GeneralLedgerService(final Class<CGeneralLedger> type) {
-        super(type);
+    public void setId(final Long id) {
+        this.id = id;
     }
 
-    public List<CGeneralLedger> getGeneralLedgerByGlCode(final String glcode) {
-
-        final Query query = getSession()
-                .createQuery(" from CGeneralLedger gl where gl.glcodeId.glcode=:glcode and gl.voucherHeaderId.status not in (4)");
-        query.setString("glcode", glcode);
-        return query.list();
+    public String getName() {
+        return name;
     }
 
-    public List<CGeneralLedger> findCGeneralLedgerByVoucherHeaderId(final Long voucherHeaderId) {
-        final Query qry = getSession().createQuery(
-                "from CGeneralLedger gen where gen.voucherHeaderId.id = :voucherHeaderId");
-        qry.setLong("voucherHeaderId", voucherHeaderId);
-        return qry.list();
+    public void setName(final String name) {
+        this.name = name;
+    }
+
+    public FinancialYearContract getFinancialYear() {
+        return financialYear;
+    }
+
+    public void setFinancialYear(final FinancialYearContract financialYear) {
+        this.financialYear = financialYear;
+    }
+
+    public Date getStartingDate() {
+        return startingDate;
+    }
+
+    public void setStartingDate(final Date startingDate) {
+        this.startingDate = startingDate;
+    }
+
+    public Date getEndingDate() {
+        return endingDate;
+    }
+
+    public void setEndingDate(final Date endingDate) {
+        this.endingDate = endingDate;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(final Boolean active) {
+        this.active = active;
+    }
+
+    public Boolean getIsActiveForPosting() {
+        return isActiveForPosting;
+    }
+
+    public void setIsActiveForPosting(final Boolean isActiveForPosting) {
+        this.isActiveForPosting = isActiveForPosting;
+    }
+
+    public Boolean getIsClosed() {
+        return isClosed;
+    }
+
+    public void setIsClosed(final Boolean isClosed) {
+        this.isClosed = isClosed;
     }
 
 }

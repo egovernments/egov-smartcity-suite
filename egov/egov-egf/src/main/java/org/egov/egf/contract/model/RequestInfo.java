@@ -37,40 +37,111 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+package org.egov.egf.contract.model;
 
-package org.egov.services.voucher;
+import java.util.Date;
 
-import java.util.List;
+import org.egov.infra.admin.master.entity.User;
 
-import org.egov.commons.CGeneralLedger;
-import org.egov.infstr.services.PersistenceService;
-import org.hibernate.Query;
-import org.springframework.transaction.annotation.Transactional;
+public class RequestInfo {
 
-@Transactional(readOnly = true)
-public class GeneralLedgerService extends PersistenceService<CGeneralLedger, Long> {
+    private String apiId;
 
-    public GeneralLedgerService() {
-        super(CGeneralLedger.class);
+    private String ver;
+
+    private Date ts;
+
+    private String action;
+
+    private String did;
+
+    private String key;
+
+    private String msgId;
+
+    private String authToken;
+
+    private String correlationId;
+
+    private User userInfo;
+
+    public String getApiId() {
+        return apiId;
     }
 
-    public GeneralLedgerService(final Class<CGeneralLedger> type) {
-        super(type);
+    public void setApiId(final String apiId) {
+        this.apiId = apiId;
     }
 
-    public List<CGeneralLedger> getGeneralLedgerByGlCode(final String glcode) {
-
-        final Query query = getSession()
-                .createQuery(" from CGeneralLedger gl where gl.glcodeId.glcode=:glcode and gl.voucherHeaderId.status not in (4)");
-        query.setString("glcode", glcode);
-        return query.list();
+    public String getVer() {
+        return ver;
     }
 
-    public List<CGeneralLedger> findCGeneralLedgerByVoucherHeaderId(final Long voucherHeaderId) {
-        final Query qry = getSession().createQuery(
-                "from CGeneralLedger gen where gen.voucherHeaderId.id = :voucherHeaderId");
-        qry.setLong("voucherHeaderId", voucherHeaderId);
-        return qry.list();
+    public void setVer(final String ver) {
+        this.ver = ver;
     }
 
+    public Date getTs() {
+        return ts;
+    }
+
+    public void setTs(final Date ts) {
+        this.ts = ts;
+    }
+
+    public String getAction() {
+        return action;
+    }
+
+    public void setAction(final String action) {
+        this.action = action;
+    }
+
+    public String getDid() {
+        return did;
+    }
+
+    public void setDid(final String did) {
+        this.did = did;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(final String key) {
+        this.key = key;
+    }
+
+    public String getMsgId() {
+        return msgId;
+    }
+
+    public void setMsgId(final String msgId) {
+        this.msgId = msgId;
+    }
+
+    public String getAuthToken() {
+        return authToken;
+    }
+
+    public void setAuthToken(final String authToken) {
+        this.authToken = authToken;
+    }
+
+    public String getCorrelationId() {
+        return correlationId;
+    }
+
+    public void setCorrelationId(final String correlationId) {
+        this.correlationId = correlationId;
+    }
+
+    public User getUserInfo() {
+        return userInfo;
+    }
+
+    public void setUserInfo(final User userInfo) {
+        this.userInfo = userInfo;
+    }
 }

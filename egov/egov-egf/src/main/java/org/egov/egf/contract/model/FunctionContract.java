@@ -37,40 +37,72 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+package org.egov.egf.contract.model;
 
-package org.egov.services.voucher;
+public class FunctionContract {
 
-import java.util.List;
+    private Long id;
+    private String name;
+    private String code;
+    private Long level;
+    private Boolean active;
+    private Boolean isParent;
+    private Long parentId;
 
-import org.egov.commons.CGeneralLedger;
-import org.egov.infstr.services.PersistenceService;
-import org.hibernate.Query;
-import org.springframework.transaction.annotation.Transactional;
-
-@Transactional(readOnly = true)
-public class GeneralLedgerService extends PersistenceService<CGeneralLedger, Long> {
-
-    public GeneralLedgerService() {
-        super(CGeneralLedger.class);
+    public Long getId() {
+        return id;
     }
 
-    public GeneralLedgerService(final Class<CGeneralLedger> type) {
-        super(type);
+    public void setId(final Long id) {
+        this.id = id;
     }
 
-    public List<CGeneralLedger> getGeneralLedgerByGlCode(final String glcode) {
-
-        final Query query = getSession()
-                .createQuery(" from CGeneralLedger gl where gl.glcodeId.glcode=:glcode and gl.voucherHeaderId.status not in (4)");
-        query.setString("glcode", glcode);
-        return query.list();
+    public String getName() {
+        return name;
     }
 
-    public List<CGeneralLedger> findCGeneralLedgerByVoucherHeaderId(final Long voucherHeaderId) {
-        final Query qry = getSession().createQuery(
-                "from CGeneralLedger gen where gen.voucherHeaderId.id = :voucherHeaderId");
-        qry.setLong("voucherHeaderId", voucherHeaderId);
-        return qry.list();
+    public void setName(final String name) {
+        this.name = name;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(final String code) {
+        this.code = code;
+    }
+
+    public Long getLevel() {
+        return level;
+    }
+
+    public void setLevel(final Long level) {
+        this.level = level;
+    }
+
+    public Long getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(final Long parentId) {
+        this.parentId = parentId;
+    }
+
+    public Boolean getIsParent() {
+        return isParent;
+    }
+
+    public void setIsParent(final Boolean isParent) {
+        this.isParent = isParent;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(final Boolean active) {
+        this.active = active;
     }
 
 }

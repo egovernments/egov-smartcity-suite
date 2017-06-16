@@ -37,40 +37,38 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+package org.egov.egf.contract.model;
 
-package org.egov.services.voucher;
+public class AccountDetailKeyContract {
 
-import java.util.List;
+    private Long id;
 
-import org.egov.commons.CGeneralLedger;
-import org.egov.infstr.services.PersistenceService;
-import org.hibernate.Query;
-import org.springframework.transaction.annotation.Transactional;
+    private AccountDetailTypeContract accountDetailType;
 
-@Transactional(readOnly = true)
-public class GeneralLedgerService extends PersistenceService<CGeneralLedger, Long> {
+    private Long key;
 
-    public GeneralLedgerService() {
-        super(CGeneralLedger.class);
+    public Long getId() {
+        return id;
     }
 
-    public GeneralLedgerService(final Class<CGeneralLedger> type) {
-        super(type);
+    public void setId(final Long id) {
+        this.id = id;
     }
 
-    public List<CGeneralLedger> getGeneralLedgerByGlCode(final String glcode) {
-
-        final Query query = getSession()
-                .createQuery(" from CGeneralLedger gl where gl.glcodeId.glcode=:glcode and gl.voucherHeaderId.status not in (4)");
-        query.setString("glcode", glcode);
-        return query.list();
+    public AccountDetailTypeContract getAccountDetailType() {
+        return accountDetailType;
     }
 
-    public List<CGeneralLedger> findCGeneralLedgerByVoucherHeaderId(final Long voucherHeaderId) {
-        final Query qry = getSession().createQuery(
-                "from CGeneralLedger gen where gen.voucherHeaderId.id = :voucherHeaderId");
-        qry.setLong("voucherHeaderId", voucherHeaderId);
-        return qry.list();
+    public void setAccountDetailType(final AccountDetailTypeContract accountDetailType) {
+        this.accountDetailType = accountDetailType;
+    }
+
+    public Long getKey() {
+        return key;
+    }
+
+    public void setKey(final Long key) {
+        this.key = key;
     }
 
 }

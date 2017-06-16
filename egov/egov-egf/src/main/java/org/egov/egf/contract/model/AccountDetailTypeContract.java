@@ -37,40 +37,67 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+package org.egov.egf.contract.model;
 
-package org.egov.services.voucher;
+public class AccountDetailTypeContract {
 
-import java.util.List;
+    private Long id;
 
-import org.egov.commons.CGeneralLedger;
-import org.egov.infstr.services.PersistenceService;
-import org.hibernate.Query;
-import org.springframework.transaction.annotation.Transactional;
+    private String name;
 
-@Transactional(readOnly = true)
-public class GeneralLedgerService extends PersistenceService<CGeneralLedger, Long> {
+    private String description;
 
-    public GeneralLedgerService() {
-        super(CGeneralLedger.class);
+    private String tableName;
+
+    private Boolean active;
+
+    private String fullyQualifiedName;
+
+    public Long getId() {
+        return id;
     }
 
-    public GeneralLedgerService(final Class<CGeneralLedger> type) {
-        super(type);
+    public void setId(final Long id) {
+        this.id = id;
     }
 
-    public List<CGeneralLedger> getGeneralLedgerByGlCode(final String glcode) {
-
-        final Query query = getSession()
-                .createQuery(" from CGeneralLedger gl where gl.glcodeId.glcode=:glcode and gl.voucherHeaderId.status not in (4)");
-        query.setString("glcode", glcode);
-        return query.list();
+    public String getName() {
+        return name;
     }
 
-    public List<CGeneralLedger> findCGeneralLedgerByVoucherHeaderId(final Long voucherHeaderId) {
-        final Query qry = getSession().createQuery(
-                "from CGeneralLedger gen where gen.voucherHeaderId.id = :voucherHeaderId");
-        qry.setLong("voucherHeaderId", voucherHeaderId);
-        return qry.list();
+    public void setName(final String name) {
+        this.name = name;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(final String description) {
+        this.description = description;
+    }
+
+    public String getTableName() {
+        return tableName;
+    }
+
+    public void setTableName(final String tableName) {
+        this.tableName = tableName;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(final Boolean active) {
+        this.active = active;
+    }
+
+    public String getFullyQualifiedName() {
+        return fullyQualifiedName;
+    }
+
+    public void setFullyQualifiedName(final String fullyQualifiedName) {
+        this.fullyQualifiedName = fullyQualifiedName;
+    }
 }

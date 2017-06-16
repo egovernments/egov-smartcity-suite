@@ -37,40 +37,39 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+package org.egov.egf.contract.model;
 
-package org.egov.services.voucher;
-
+import java.util.ArrayList;
 import java.util.List;
 
-import org.egov.commons.CGeneralLedger;
-import org.egov.infstr.services.PersistenceService;
-import org.hibernate.Query;
-import org.springframework.transaction.annotation.Transactional;
+public class VoucherContractResponse {
 
-@Transactional(readOnly = true)
-public class GeneralLedgerService extends PersistenceService<CGeneralLedger, Long> {
+    private List<VoucherResponse> vouchers = new ArrayList<>(0);
+    private ResponseInfo responseInfo;
+    private PageContract page;
 
-    public GeneralLedgerService() {
-        super(CGeneralLedger.class);
+    public List<VoucherResponse> getVouchers() {
+        return vouchers;
     }
 
-    public GeneralLedgerService(final Class<CGeneralLedger> type) {
-        super(type);
+    public void setVouchers(final List<VoucherResponse> vouchers) {
+        this.vouchers = vouchers;
     }
 
-    public List<CGeneralLedger> getGeneralLedgerByGlCode(final String glcode) {
-
-        final Query query = getSession()
-                .createQuery(" from CGeneralLedger gl where gl.glcodeId.glcode=:glcode and gl.voucherHeaderId.status not in (4)");
-        query.setString("glcode", glcode);
-        return query.list();
+    public ResponseInfo getResponseInfo() {
+        return responseInfo;
     }
 
-    public List<CGeneralLedger> findCGeneralLedgerByVoucherHeaderId(final Long voucherHeaderId) {
-        final Query qry = getSession().createQuery(
-                "from CGeneralLedger gen where gen.voucherHeaderId.id = :voucherHeaderId");
-        qry.setLong("voucherHeaderId", voucherHeaderId);
-        return qry.list();
+    public void setResponseInfo(final ResponseInfo responseInfo) {
+        this.responseInfo = responseInfo;
+    }
+
+    public PageContract getPage() {
+        return page;
+    }
+
+    public void setPage(final PageContract page) {
+        this.page = page;
     }
 
 }

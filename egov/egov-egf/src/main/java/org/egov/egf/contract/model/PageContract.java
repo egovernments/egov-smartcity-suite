@@ -37,40 +37,53 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+package org.egov.egf.contract.model;
 
-package org.egov.services.voucher;
+public class PageContract {
 
-import java.util.List;
+    private Long totalResults;
+    private Long totalPages;
+    private Long pageSize;
+    private Long currentPage;
+    private Long offSet;
 
-import org.egov.commons.CGeneralLedger;
-import org.egov.infstr.services.PersistenceService;
-import org.hibernate.Query;
-import org.springframework.transaction.annotation.Transactional;
-
-@Transactional(readOnly = true)
-public class GeneralLedgerService extends PersistenceService<CGeneralLedger, Long> {
-
-    public GeneralLedgerService() {
-        super(CGeneralLedger.class);
+    public Long getTotalResults() {
+        return totalResults;
     }
 
-    public GeneralLedgerService(final Class<CGeneralLedger> type) {
-        super(type);
+    public void setTotalResults(final Long totalResults) {
+        this.totalResults = totalResults;
     }
 
-    public List<CGeneralLedger> getGeneralLedgerByGlCode(final String glcode) {
-
-        final Query query = getSession()
-                .createQuery(" from CGeneralLedger gl where gl.glcodeId.glcode=:glcode and gl.voucherHeaderId.status not in (4)");
-        query.setString("glcode", glcode);
-        return query.list();
+    public Long getTotalPages() {
+        return totalPages;
     }
 
-    public List<CGeneralLedger> findCGeneralLedgerByVoucherHeaderId(final Long voucherHeaderId) {
-        final Query qry = getSession().createQuery(
-                "from CGeneralLedger gen where gen.voucherHeaderId.id = :voucherHeaderId");
-        qry.setLong("voucherHeaderId", voucherHeaderId);
-        return qry.list();
+    public void setTotalPages(final Long totalPages) {
+        this.totalPages = totalPages;
     }
 
+    public Long getPageSize() {
+        return pageSize;
+    }
+
+    public void setPageSize(final Long pageSize) {
+        this.pageSize = pageSize;
+    }
+
+    public Long getCurrentPage() {
+        return currentPage;
+    }
+
+    public void setCurrentPage(final Long currentPage) {
+        this.currentPage = currentPage;
+    }
+
+    public Long getOffSet() {
+        return offSet;
+    }
+
+    public void setOffSet(final Long offSet) {
+        this.offSet = offSet;
+    }
 }
