@@ -78,7 +78,7 @@ public class RedisServerConfiguration {
 
     @Bean
     @Conditional(RedisServerConfigCondition.class)
-    public EmbeddedRedisServer redisServer() {
+    public static EmbeddedRedisServer redisServer() {
         return new EmbeddedRedisServer();
     }
 
