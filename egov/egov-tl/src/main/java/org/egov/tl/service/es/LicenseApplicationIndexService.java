@@ -110,9 +110,15 @@ public class LicenseApplicationIndexService {
                 .withStatus(license.getEgwStatus().getDescription()).withUrl(format(APPLICATION_VIEW_URL, license.getApplicationNumber()))
                 .withApplicantAddress(license.getAddress()).withOwnername(user.isPresent() ?
                         user.get().getUsername() + DELIMITER_COLON + user.get().getName() : EMPTY)
-                .withChannel(securityUtils.getCurrentUser().hasRole(CSCOPERATOR) ? CSC.toString() : SYSTEM.toString()).withMobileNumber(license.getLicensee().getMobilePhoneNumber())
-                .withAadharNumber(license.getLicensee().getUid()).withClosed(NO).withApproved(INPROGRESS).withSla(slaConfig != null ? slaConfig : 0)
+                .withChannel(getChannel())
+                .withMobileNumber(license.getLicensee().getMobilePhoneNumber())
+                .withAadharNumber(license.getLicensee().getUid()).withClosed(NO).withApproved(INPROGRESS)
+                .withSla(slaConfig != null ? slaConfig : 0)
                 .build());
+    }
+
+    private String getChannel() {
+        return securityUtils.currentUserIsEmployee() ? SYSTEM.toString() : securityUtils.getCurrentUser().getRoles().contains("CSC Operator") ? CSC.toString() : "ONLINE";
     }
 
     private Integer getSlaForAppType(LicenseAppType licenseAppType) {

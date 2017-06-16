@@ -84,4 +84,8 @@ public class SecurityUtils {
         return currentUserType().equals(UserType.CITIZEN);
     }
 
+    public boolean currentUserIsEmployee() {
+        return currentUserType().equals(UserType.EMPLOYEE);
+    }
+
 }

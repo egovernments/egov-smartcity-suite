@@ -221,9 +221,7 @@ public abstract class AbstractLicenseService<T extends License> {
         license.setStatus(licenseStatusService.getLicenseStatusByName(LICENSE_STATUS_ACKNOWLEDGED));
         license.setApplicationNumber(licenseNumberUtils.generateApplicationNumber());
         processAndStoreDocument(license.getDocuments(), license);
-        final String currentUserRoles = securityUtils.getCurrentUser().getRoles().toString();
-        if (!currentUserRoles.contains(CSCOPERATOR
-        ))
+        if (securityUtils.currentUserIsEmployee())
             transitionWorkFlow(license, workflowBean);
         else
             wfWithCscOperator(license, workflowBean);
