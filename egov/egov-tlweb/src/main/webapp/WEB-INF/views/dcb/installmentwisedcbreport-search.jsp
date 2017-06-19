@@ -67,7 +67,7 @@
                     <label class="col-sm-3 control-label text-right"> <spring:message
                             code="lbl.installmentyear"/></label>
                     <div class="col-sm-6 add-margin">
-                        <select name="financialYear" id="o" class="form-control" id="financialyear"
+                        <select name="financialYear" class="form-control" id="financialyear"
                                 required="required">
                             <c:forEach items="${financialYears}" var="finYear">
                                 <option value="${finYear.finYearRange}">${finYear.finYearRange}</option>

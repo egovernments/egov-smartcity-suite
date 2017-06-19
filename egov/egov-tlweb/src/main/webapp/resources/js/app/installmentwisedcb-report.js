@@ -39,24 +39,56 @@
  */
 
 var reportdatatable;
-
-$(document).ready(function (e) {
+var recordTotal=[];
+$(document).ready(function(e) {
     tableContainer = $("#tblinstallmentdcb");
     $('#report-backbutton').hide();
-    $('form').submit(function (e) {
+    $('form').submit(function(e) {
+        var table = $('#tblinstallmentdcb').DataTable();
+        var info = table.page.info();
+        if(info.start==0)
+            getSumOfRecords();
         searchInstallmentwiseDCB(e);
+
     });
 
-    $('#backButton').click(function (e) {
+    $('#backButton').click(function(e) {
         searchInstallmentwiseDCB(e);
     });
 
 });
+function getSumOfRecords(){
 
+    $.ajax({
+        url:"/tl/report/dcb/yearwise/grand-total",
+        type: 'GET',
+        async:false,
+        data: {
+            licensenumber: $('#licensenumber').val(),
+            installment: $('#financialyear').val()
+        },
+        success: function (data){
+            recordTotal=[];
+            for (var i = 0; i < data.length; i++){
+                recordTotal.push(data[i]);
+            }
+        }
+    })
+}
 function openTradeLicense(obj) {
     window.open("/tl/viewtradelicense/viewTradeLicense-view.action?id="
         + $(obj).data('eleval'), '',
         'scrollbars=yes,width=1000,height=700,status=yes');
+}
+
+function obj_to_query(obj) {
+    var parts = [];
+    for (var key in obj) {
+        if (obj.hasOwnProperty(key)) {
+            parts.push(encodeURIComponent(key) + '=' + encodeURIComponent(obj[key]));
+        }
+    }
+    return "?" + parts.join('&');
 }
 
 function searchInstallmentwiseDCB(event) {
@@ -65,128 +97,147 @@ function searchInstallmentwiseDCB(event) {
     $('.report-section').removeClass('display-hide');
     $('#report-footer').show();
     event.preventDefault();
-    reportdatatable = tableContainer.dataTable({
-        dom: "<'row'<'col-xs-4 pull-right'f>r>t<'row add-margin'<'col-md-3 col-xs-6'i><'col-md-2 col-xs-6'l><'col-md-3 col-xs-6 text-right'B><'col-md-4 col-xs-6 text-right'p>>",
-        "autoWidth": false,
-        "bDestroy": true,
-        buttons: [{
-            extend: 'pdf',
-            title: 'DCB Report By Installment',
-            filename: 'DCB Report By Installment',
-            orientation: 'landscape',
-            footer: true,
-            pageSize: 'A3',
-            exportOptions: {
-                columns: ':visible'
-            }
-        }, {
-            extend: 'excel',
-            filename: 'DCB Report By Installment',
-            footer: true,
-            exportOptions: {
-                columns: ':visible'
-            }
-        }, {
-            extend: 'print',
-            title: 'DCB Report By Installment',
-            filename: 'DCB Report By Installment',
-            footer: true,
-            exportOptions: {
-                columns: ':visible'
-            }
-        }],
-        responsive: true,
-        destroy: true,
-        ajax: {
-            type: 'POST',
-            url: "search?" + $("#installmentWiseDCBForm").serialize(),
-        },
-        columns: [
-            {
-                "data": function (row, type, set, meta) {
-                    return {
-                        name: row.licensenumber,
-                        id: row.licenseid
-                    };
+    $("#tblinstallmentdcb").dataTable().fnDestroy();
+    var reportdatatable = tableContainer.on('preXhr.dt', function ( e, settings, data ) {
+        pramdata=data;
+    })
+        .dataTable({
+            processing : true,
+            serverSide : true,
+            sort : true,
+            filter : true,
+            "searching":false,
+            dom : "<'row'<'col-xs-4 pull-right'f>r>t<'row add-margin'<'col-md-3 col-xs-6'i><'col-md-2 col-xs-6'l><'col-md-2 col-xs-6 text-right'B><'col-md-5 col-xs-6 text-right'p>>",
+            "autoWidth" : false,
+            "bDestroy" : true,
+            buttons : [
+                {
+                    text: 'PDF',
+                    action: function ( e, dt, node, config ) {
+                        window.open("/tl/report/dcb/yearwise/download"+obj_to_query(pramdata)+ "&printFormat=PDF",'','scrollbars=yes,width=1300,height=700,status=yes');
+                    }
                 },
-                "render": function (data, type, row) {
-                    return '<a href="javascript:void(0);" onclick="openTradeLicense(this);" data-hiddenele="id" data-eleval="'
-                        + data.id + '">' + data.name + '</a>';
-                },
-                "sTitle": "License No."
-            }, {
-                "data": "arr_demand",
-                "sTitle": "Arrears"
-            }, {
-                "data": "curr_demand",
-                "sTitle": "Current"
-            }, {
-                "data": "total_demand",
-                "sTitle": "Total"
-            }, {
-                "data": "arr_coll",
-                "sTitle": "Arrears"
-            }, {
-                "data": "curr_coll",
-                "sTitle": "Current"
-            }, {
-                "data": "total_coll",
-                "sTitle": "Total"
-            }, {
-                "data": "arr_balance",
-                "sTitle": "Arrears"
-            }, {
-                "data": "curr_balance",
-                "sTitle": "Current"
-            }, {
-                "data": "total_balance",
-                "sTitle": "Total"
-            }],
-        "footerCallback": function (row, data, start, end, display) {
-            var api = this.api(), data;
-            if (data.length == 0) {
-                $('#report-footer').hide();
-            } else {
-                $('#report-footer').show();
-            }
-            if (data.length > 0) {
-                updateTotalFooter(1, api);
-                updateTotalFooter(2, api);
-                updateTotalFooter(3, api);
-                updateTotalFooter(4, api);
-                updateTotalFooter(5, api);
-                updateTotalFooter(6, api);
-                updateTotalFooter(7, api);
-                updateTotalFooter(8, api);
-                updateTotalFooter(9, api);
-            }
-        },
-        "aoColumnDefs": [{
-            "aTargets": [1, 2, 3, 4, 5, 6, 7, 8, 9],
-            "mRender": function (data, type, full) {
-                return formatNumberInr(data);
-            }
-        }]
-    });
+                {
+                    text: 'XLS',
+                    action: function ( e, dt, node, config )
+                    {
+                        window.open("/tl/report/dcb/yearwise/download"+obj_to_query(pramdata)+ "&printFormat=XLS",'_self');
+                    }
+                }],
+            responsive : true,
+            destroy : true,
+            "order": [[0, 'asc']],
+            ajax : {
+                url : "search",
+                type:'POST',
+                data:function (args) {
+                    return {"args": JSON.stringify(args) ,
+                        "licensenumber":$('#licensenumber').val(),
+                        "installment":$('#financialyear').val()
+                    }
+                }
+            },
+            columns: [
+                {
+                    "data": function (row, type, set, meta) {
+                        return {
+                            name: row.licensenumber,
+                            id: row.licenseid
+                        };
+                    },
+                    "render": function (data, type, row) {
+                        return '<a href="javascript:void(0);" onclick="openTradeLicense(this);" data-hiddenele="id" data-eleval="'
+                            + data.id + '">' + data.name + '</a>';
+                    },
+                    "sTitle" : "License No.",
+                    "name":"licensenumber",
+                }, {
+                    "data" : "arr_demand",
+                    "orderable": false,
+                    "sortable": false,
+                    "sTitle" : "Arrears"
+                }, {
+                    "data" : "curr_demand",
+                    "orderable": false,
+                    "sortable": false,
+                    "sTitle" : "Current"
+                }, {
+                    "data" : "total_demand",
+                    "name":"currentdemand",
+                    "sTitle" : "Total"
+                }, {
+                    "data" : "arr_coll",
+                    "orderable": false,
+                    "sortable": false,
+                    "sTitle" : "Arrears"
+                }, {
+                    "data" : "curr_coll",
+                    "orderable": false,
+                    "sortable": false,
+                    "sTitle" : "Current"
+                }, {
+                    "data" : "total_coll",
+                    "name":"currentcollection",
+                    "sTitle" : "Total"
+                }, {
+                    "data" : "arr_balance",
+                    "orderable": false,
+                    "sortable": false,
+                    "sTitle" : "Arrears"
+                }, {
+                    "data" : "curr_balance",
+                    "orderable": false,
+                    "sortable": false,
+                    "sTitle" : "Current"
+                }, {
+                    "data" : "total_balance",
+                    "name":"currentbalance",
+                    "sTitle" : "Total"
+                } ],
+            "footerCallback": function (row, data, start, end, display) {
+                var api = this.api(), data;
+                if (data.length == 0) {
+                    $('#report-footer').hide();
+                } else {
+                    $('#report-footer').show();
+                }
+                if (data.length > 0) {
+                    updateTotalFooter(1, api);
+                    updateTotalFooter(2, api);
+                    updateTotalFooter(3, api);
+                    updateTotalFooter(4, api);
+                    updateTotalFooter(5, api);
+                    updateTotalFooter(6, api);
+                    updateTotalFooter(7, api);
+                    updateTotalFooter(8, api);
+                    updateTotalFooter(9, api);
+                }
+            },
+            /*"aoColumnDefs" : [ {
+             "aTargets" : [ 1, 2, 3, 4, 5, 6, 7, 8, 9 ],
+             "mRender" : function(data, type, full) {
+             return formatNumberInr(data);
+             }
+             } ]*/
+        });
     $('.loader-class').modal('hide');
 
 }
 function updateTotalFooter(colidx, api) {
     // Remove the formatting to get integer data for summation
-    var intVal = function (i) {
+    var intVal = function(i) {
         return typeof i === 'string' ? i.replace(/[\$,]/g, '') * 1
             : typeof i === 'number' ? i : 0;
     };
 
     // Total over all pages
-    total = api.column(colidx).data().reduce(function (a, b) {
-        return intVal(a) + intVal(b);
-    });
+    if(recordTotal!=null)
+        total= recordTotal[colidx-1];
 
     // Total over this page
     pageTotal = api.column(colidx, {
-        page: 'current'
-    }).data().reduce(function (a, b) {
+        page : 'current'
+    }).data().reduce(function(a, b) {
         return intVal(a) + intVal(b);
     }, 0);
 
