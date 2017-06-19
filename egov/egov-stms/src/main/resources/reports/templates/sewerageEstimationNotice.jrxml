@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-06-19T12:52:40 -->
+<!-- 2017-06-19T17:07:28 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="sewerageEstimationNotice" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isFloatColumnFooter="true" uuid="cee583e3-a0f8-4d29-92e7-b2c0afa5f324">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -25,6 +25,7 @@
 		<defaultValueExpression><![CDATA["/home/malathi/OpenSource/github checkout/develop/eGov/egov/egov-stms/src/main/resources/reports/templates/"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="inspectionDetails" class="java.util.List"/>
+	<field name="id" class="java.lang.Long"/>
 	<field name="quantity" class="java.lang.Double"/>
 	<field name="unitRate" class="java.lang.Double"/>
 	<field name="itemDescription" class="java.lang.String"/>
@@ -116,7 +117,7 @@
 			</textField>
 			<staticText>
 				<reportElement x="0" y="254" width="136" height="20" uuid="0d2a94e2-8a21-40b4-a00f-2a50f6a95853">
-					<printWhenExpression><![CDATA[$P{inspectionDetails}.isEmpty()==false]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$F{id}!=null]]></printWhenExpression>
 				</reportElement>
 				<textElement>
 					<font size="12" isBold="true"/>
@@ -127,10 +128,9 @@
 	</title>
 	<columnHeader>
 		<band height="30" splitType="Stretch">
+			<printWhenExpression><![CDATA[$F{id}!=null]]></printWhenExpression>
 			<staticText>
-				<reportElement x="344" y="0" width="93" height="30" isRemoveLineWhenBlank="true" uuid="0b106184-5310-4e3b-a9f1-7e85ddc9247e">
-					<printWhenExpression><![CDATA[$P{inspectionDetails}.isEmpty()==false]]></printWhenExpression>
-				</reportElement>
+				<reportElement x="344" y="0" width="93" height="30" isRemoveLineWhenBlank="true" uuid="0b106184-5310-4e3b-a9f1-7e85ddc9247e"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -144,9 +144,7 @@
 				<text><![CDATA[UOM]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="437" y="0" width="53" height="30" isRemoveLineWhenBlank="true" uuid="15a2e7c2-6c6b-4da8-b176-493b59e86bd0">
-					<printWhenExpression><![CDATA[$P{inspectionDetails}.isEmpty()==false]]></printWhenExpression>
-				</reportElement>
+				<reportElement x="437" y="0" width="53" height="30" isRemoveLineWhenBlank="true" uuid="15a2e7c2-6c6b-4da8-b176-493b59e86bd0"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -160,9 +158,7 @@
 				<text><![CDATA[Rate]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="490" y="0" width="65" height="30" isRemoveLineWhenBlank="true" uuid="aedf0432-8896-44c5-b69e-afee8f057072">
-					<printWhenExpression><![CDATA[$P{inspectionDetails}.isEmpty()==false]]></printWhenExpression>
-				</reportElement>
+				<reportElement x="490" y="0" width="65" height="30" isRemoveLineWhenBlank="true" uuid="aedf0432-8896-44c5-b69e-afee8f057072"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -176,9 +172,7 @@
 				<text><![CDATA[Amount]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="277" y="0" width="67" height="30" isRemoveLineWhenBlank="true" uuid="d408caaf-328e-4e26-8354-dd8ed5685cff">
-					<printWhenExpression><![CDATA[$P{inspectionDetails}.isEmpty()==false]]></printWhenExpression>
-				</reportElement>
+				<reportElement x="277" y="0" width="67" height="30" isRemoveLineWhenBlank="true" uuid="d408caaf-328e-4e26-8354-dd8ed5685cff"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -192,9 +186,7 @@
 				<text><![CDATA[Quantity]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="50" y="0" width="227" height="30" isRemoveLineWhenBlank="true" uuid="ff546fe8-46fc-44cb-871d-b96f80a6eaa6">
-					<printWhenExpression><![CDATA[$P{inspectionDetails}.isEmpty()==false]]></printWhenExpression>
-				</reportElement>
+				<reportElement x="50" y="0" width="227" height="30" isRemoveLineWhenBlank="true" uuid="ff546fe8-46fc-44cb-871d-b96f80a6eaa6"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -208,9 +200,7 @@
 				<text><![CDATA[Material]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="0" y="0" width="50" height="30" isRemoveLineWhenBlank="true" uuid="c80bf3ba-b31b-49a1-acd5-ace230cefdfe">
-					<printWhenExpression><![CDATA[$P{inspectionDetails}.isEmpty()==false]]></printWhenExpression>
-				</reportElement>
+				<reportElement x="0" y="0" width="50" height="30" isRemoveLineWhenBlank="true" uuid="c80bf3ba-b31b-49a1-acd5-ace230cefdfe"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -379,9 +369,7 @@
 		<band height="50">
 			<printWhenExpression><![CDATA[$P{inspectionDetails}.isEmpty()==false]]></printWhenExpression>
 			<subreport>
-				<reportElement x="0" y="0" width="555" height="50" uuid="ccd9465e-3883-4428-b16b-7fb9f5327db5">
-					<printWhenExpression><![CDATA[$P{inspectionDetails}.isEmpty()==false]]></printWhenExpression>
-				</reportElement>
+				<reportElement x="0" y="0" width="555" height="50" uuid="ccd9465e-3883-4428-b16b-7fb9f5327db5"/>
 				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{inspectionDetails}, false)]]></dataSourceExpression>
 				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("sewerageFieldInspectionDetails.jasper")]]></subreportExpression>
 			</subreport>
