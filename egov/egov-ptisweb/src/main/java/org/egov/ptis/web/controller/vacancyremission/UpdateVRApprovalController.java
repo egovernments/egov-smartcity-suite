@@ -39,6 +39,7 @@
  */
 package org.egov.ptis.web.controller.vacancyremission;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_VACANCY_REMISSION;
 import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_INSPECTOR_DESGN;
@@ -51,6 +52,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.egov.commons.entity.Source;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.web.contract.WorkflowContainer;
@@ -63,6 +65,7 @@ import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.VacancyRemission;
 import org.egov.ptis.domain.entity.property.VacancyRemissionApproval;
+import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.domain.service.property.VacancyRemissionService;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -95,6 +98,9 @@ public class UpdateVRApprovalController extends GenericWorkFlowController {
 
     @Autowired
     private SecurityUtils securityUtils;
+
+    @Autowired
+    private PropertyService propertyService;
 
     @Autowired
     public UpdateVRApprovalController(final VacancyRemissionService vacancyRemissionService,
@@ -184,6 +190,11 @@ public class UpdateVRApprovalController extends GenericWorkFlowController {
                 else
                     successMsg = "Vacancy Remission Saved Successfully in the System and forwarded to : "
                             + propertyTaxUtil.getApproverUserName(approvalPosition);
+                if (Source.CITIZENPORTAL.toString().equalsIgnoreCase(vacancyRemissionApproval.getVacancyRemission().getSource())
+                    && propertyService.getPortalInbox(vacancyRemissionApproval.getVacancyRemission().getApplicationNumber()) != null) {
+                        propertyService.updatePortal(vacancyRemissionApproval.getVacancyRemission(),
+                                APPLICATION_TYPE_VACANCY_REMISSION);
+                }
             }
 
             model.addAttribute("successMessage", successMsg);
@@ -227,7 +238,7 @@ public class UpdateVRApprovalController extends GenericWorkFlowController {
         if (vacancyRemissionApproval.getState() != null) {
             loggedInUserAssign = assignmentService.getAssignmentByPositionAndUserAsOnDate(
                     vacancyRemissionApproval.getCurrentState().getOwnerPosition().getId(), user.getId(), new Date());
-            if(!loggedInUserAssign.isEmpty())
+            if (!loggedInUserAssign.isEmpty())
                 loggedInUserDesignation = loggedInUserAssign.get(0).getDesignation().getName();
         }
 
@@ -242,12 +253,11 @@ public class UpdateVRApprovalController extends GenericWorkFlowController {
                     approvalComent, null, workFlowAction);
             if (designation.getName().equalsIgnoreCase(REVENUE_INSPECTOR_DESGN))
                 successMsg = "Vacancy Remission rejected successfully";
-            else {
+            else
                 successMsg = "Vacancy Remission rejected successfully and forwarded to : "
                         + (wfInitiator != null
                                 ? wfInitiator.getEmployee().getName().concat("~").concat(wfInitiator.getPosition().getName())
                                 : "");
-            }
         } else
             successMsg = PROPERTY_MODIFY_REJECT_FAILURE
                     + vacancyRemissionApproval.getVacancyRemission().getBasicProperty().getUpicNo();

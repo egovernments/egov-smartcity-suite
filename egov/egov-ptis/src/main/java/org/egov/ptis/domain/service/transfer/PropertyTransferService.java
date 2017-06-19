@@ -44,6 +44,8 @@ import static org.egov.ptis.constants.PropertyTaxConstants.ANONYMOUS_USER;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP;
 import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.MUTATIONRS_DECREE_BY_CIVIL_COURT;
+import static org.egov.ptis.constants.PropertyTaxConstants.MUTATIONRS_SALES_DEED;
 import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_TITLE_TRANSFER;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_MUTATION_CERTIFICATE;
 import static org.egov.ptis.constants.PropertyTaxConstants.SOURCE_ONLINE;
@@ -52,8 +54,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.TRANSFER;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_GENERATE_TRANSFER_NOTICE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SIGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_CLOSED;
-import static org.egov.ptis.constants.PropertyTaxConstants.MUTATIONRS_SALES_DEED;
-import static org.egov.ptis.constants.PropertyTaxConstants.MUTATIONRS_DECREE_BY_CIVIL_COURT;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -69,6 +69,7 @@ import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
+import org.egov.commons.entity.Source;
 import org.egov.demand.utils.DemandConstants;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
@@ -239,7 +240,7 @@ public class PropertyTransferService {
         propertyMutation.setMutationDate(new Date());
         if (propertyMutation.getApplicationNo() == null)
             propertyMutation.setApplicationNo(applicationNumberGenerator.generate());
-        if(SOURCE_ONLINE.equalsIgnoreCase(propertyMutation.getSource()) && ApplicationThreadLocals.getUserId() == null) 
+        if (SOURCE_ONLINE.equalsIgnoreCase(propertyMutation.getSource()) && ApplicationThreadLocals.getUserId() == null)
             ApplicationThreadLocals.setUserId(securityUtils.getCurrentUser().getId());
         createUserIfNotExist(propertyMutation, propertyMutation.getTransfereeInfosProxy());
         basicProperty.getPropertyMutations().add(propertyMutation);
@@ -247,6 +248,8 @@ public class PropertyTransferService {
         processAndStoreDocument(propertyMutation.getDocuments());
         propertyService.updateIndexes(propertyMutation, APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP);
         mutationRegistrationService.persist(propertyMutation.getMutationRegistrationDetails());
+        if (propertyService.isCitizenPortalUser(getLoggedInUser()))
+            propertyService.pushPropertyMutationPortalMessage(propertyMutation, APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP);
         basicPropertyService.persist(basicProperty);
     }
 
@@ -264,6 +267,8 @@ public class PropertyTransferService {
         propertyMutation.setMutationDate(new Date());
         propertyService.updateIndexes(propertyMutation, APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP);
         waterChargesIntegrationService.updateConsumerIndex(propertyService.loadAssessmentDetails(basicProperty));
+        if (Source.CITIZENPORTAL.toString().equalsIgnoreCase(propertyMutation.getSource()))
+            propertyService.updatePortal(propertyMutation, APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP);
         basicPropertyService.persist(basicProperty);
     }
 
@@ -279,12 +284,16 @@ public class PropertyTransferService {
         propertyService.updateIndexes(propertyMutation, APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP);
         mutationRegistrationService.persist(propertyMutation.getMutationRegistrationDetails());
         basicPropertyService.persist(basicProperty);
+        if (Source.CITIZENPORTAL.toString().equalsIgnoreCase(propertyMutation.getSource()))
+            propertyService.updatePortal(propertyMutation, APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP);
     }
 
     @Transactional
     public void viewPropertyTransfer(final BasicProperty basicProperty, final PropertyMutation propertyMutation) {
         updateMutationFee(propertyMutation);
         propertyService.updateIndexes(propertyMutation, APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP);
+        if (Source.CITIZENPORTAL.toString().equalsIgnoreCase(propertyMutation.getSource()))
+            propertyService.updatePortal(propertyMutation, APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP);
         basicPropertyService.persist(basicProperty);
     }
 
@@ -417,7 +426,7 @@ public class PropertyTransferService {
             }
             reportOutput.setReportOutputData(bFile);
             reportOutput.setReportFormat(ReportFormat.PDF);
-            propertyMutation.transition().end();
+            propertyMutation.transition().end().withNextAction(null);
             basicProperty.setUnderWorkflow(false);
         } else {
             final PropertyAckNoticeInfo noticeBean = new PropertyAckNoticeInfo();
@@ -479,6 +488,8 @@ public class PropertyTransferService {
                 noticeService.getSession().flush();
             }
         }
+        if (Source.CITIZENPORTAL.toString().equalsIgnoreCase(propertyMutation.getSource()))
+            propertyService.updatePortal(propertyMutation, APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP);
         return reportOutput;
     }
 
@@ -566,11 +577,10 @@ public class PropertyTransferService {
         propertyTaxBillable.setBasicProperty(propertyMutation.getBasicProperty());
         propertyTaxBillable.setMutationFeePayment(Boolean.TRUE);
         propertyTaxBillable.setMutationFee(propertyMutation.getMutationFee());
-        if (ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName())) {
+        if (ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName()))
             propertyTaxBillable.setCollectionType(DemandConstants.COLLECTIONTYPE_ONLINE);
-        } else {
+        else
             propertyTaxBillable.setCollectionType(DemandConstants.COLLECTIONTYPE_COUNTER);
-        }
         propertyTaxBillable.setCallbackForApportion(Boolean.FALSE);
         propertyTaxBillable.setMutationApplicationNo(propertyMutation.getApplicationNo());
         propertyTaxBillable.setUserId(ApplicationThreadLocals.getUserId());
@@ -772,8 +782,9 @@ public class PropertyTransferService {
     public Assignment getWorkflowInitiator(final PropertyMutation propertyMutation) {
         Assignment wfInitiator;
         List<Assignment> assignment;
-
-        if (propertyService.isEmployee(propertyMutation.getCreatedBy())) {
+        if (propertyService.isEmployee(propertyMutation.getCreatedBy())
+                && !ANONYMOUS_USER.equalsIgnoreCase(propertyMutation.getCreatedBy().getName())
+                && !propertyService.isCitizenPortalUser(propertyMutation.getCreatedBy())) {
             if (isStateNotNull(propertyMutation))
                 wfInitiator = wfInitiatorIfStateNotNull(propertyMutation);
             else
@@ -820,34 +831,31 @@ public class PropertyTransferService {
             }
         return wfInitor;
     }
-    
+
     /**
      * API to get Assignment for Third Party user based on mutation type
      * @param propertyMutation Object basicProperty Object
      * @return Assignment
      */
-    public Assignment getAssignmentForThirdPartyByMutationType(PropertyMutation propertyMutation,
-            BasicProperty basicproperty, User user) {
-        if (propertyService.isCscOperator(user)){
+    public Assignment getAssignmentForThirdPartyByMutationType(final PropertyMutation propertyMutation,
+            final BasicProperty basicproperty, final User user) {
+        if (propertyService.isCscOperator(user)) {
             if (propertyMutation.getType().equals(PropertyTaxConstants.ADDTIONAL_RULE_FULL_TRANSFER))
                 return propertyTaxCommonUtils.getCommissionerAsgnForFullTransfer();
             else
                 return propertyService.getMappedAssignmentForCscOperator(basicproperty);
-        }
-        else{
-            if (propertyMutation.getType().equals(PropertyTaxConstants.ADDTIONAL_RULE_FULL_TRANSFER))
-                return propertyTaxCommonUtils.getCommissionerAsgnForFullTransfer();
-            else
-                return propertyService.getUserPositionByZone(basicproperty, false);
-        }
+        } else if (propertyMutation.getType().equals(PropertyTaxConstants.ADDTIONAL_RULE_FULL_TRANSFER))
+            return propertyTaxCommonUtils.getCommissionerAsgnForFullTransfer();
+        else
+            return propertyService.getUserPositionByZone(basicproperty, false);
 
     }
-    
-    public void updateMutationReason(PropertyMutation propertyMutation) {
-        String reasonForTransfer = propertyMutation.getMutationReason().getMutationDesc();
-        if (MUTATIONRS_DECREE_BY_CIVIL_COURT.equalsIgnoreCase(reasonForTransfer)) {
+
+    public void updateMutationReason(final PropertyMutation propertyMutation) {
+        final String reasonForTransfer = propertyMutation.getMutationReason().getMutationDesc();
+        if (MUTATIONRS_DECREE_BY_CIVIL_COURT.equalsIgnoreCase(reasonForTransfer))
             propertyMutation.setSaleDetail(null);
-        } else if (MUTATIONRS_SALES_DEED.equalsIgnoreCase(reasonForTransfer)) {
+        else if (MUTATIONRS_SALES_DEED.equalsIgnoreCase(reasonForTransfer)) {
             propertyMutation.setDecreeDate(null);
             propertyMutation.setDecreeNumber(null);
             propertyMutation.setCourtName(null);

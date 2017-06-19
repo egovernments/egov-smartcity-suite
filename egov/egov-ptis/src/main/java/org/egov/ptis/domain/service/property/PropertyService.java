@@ -266,7 +266,11 @@ public class PropertyService {
 	private static final Logger LOGGER = Logger.getLogger(PropertyService.class);
 	public static final String APPLICATION_VIEW_URL = "/ptis/view/viewProperty-viewForm.action?applicationNo=%s&applicationType=%s";
 	private static final String PROPERTY_WORKFLOW_STARTED = "Property Workflow Started";
+	private static final String APPLICATION_NO = "Application no ";
+	private static final String REGARDING = " regarding ";
+	private static final String STATUS = " status ";
 	final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
+
 
 	@SuppressWarnings("rawtypes")
 	private PersistenceService propPerServ;
@@ -3862,56 +3866,6 @@ public class PropertyService {
 		this.totalAlv = totalAlv;
 	}
 
-	/**
-	 * Method to push data for citizen portal inbox
-	 */
-
-	@Transactional
-	public void pushPortalMessage(final PropertyImpl property, final String applictionType) {
-		final Module module = moduleDao.getModuleByName(PropertyTaxConstants.PTMODULENAME);
-		final BasicProperty basicProperty = property.getBasicProperty();
-		final PortalInboxBuilder portalInboxBuilder = new PortalInboxBuilder(module,
-				property.getPropertyModifyReason() + " " + module.getDisplayName(), property.getApplicationNo(),
-				basicProperty.getUpicNo(), basicProperty.getId(), property.getPropertyModifyReason(),
-				getDetailedMessage(property), property.myLinkId(), isResolved(property),
-				basicProperty.getStatus().getName(), getSlaEndDate(applictionType), property.getState(),
-				Arrays.asList(securityUtils.getCurrentUser()));
-		final PortalInbox portalInbox = portalInboxBuilder.build();
-		portalInboxService.pushInboxMessage(portalInbox);
-	}
-
-	/**
-	 * Method to update data for citizen portal inbox
-	 */
-	@Transactional
-	public void updatePortalMessage(final PropertyImpl property, final String applictionType) {
-		final Module module = moduleDao.getModuleByName(PropertyTaxConstants.PTMODULENAME);
-		final BasicProperty basicProperty = property.getBasicProperty();
-		portalInboxService.updateInboxMessage(property.getApplicationNo(), module.getId(),
-				basicProperty.getStatus().getName(), isResolved(property), getSlaEndDate(applictionType),
-				property.getState(), null, basicProperty.getUpicNo(), property.myLinkId());
-	}
-
-	private Date getSlaEndDate(final String applictionType) {
-		final Calendar c = Calendar.getInstance();
-		c.setTime(new Date());
-		c.add(Calendar.DATE, getSlaValue(applictionType));
-		return c.getTime();
-	}
-
-	private String getDetailedMessage(final PropertyImpl property) {
-		final Module module = moduleDao.getModuleByName(PropertyTaxConstants.PTMODULENAME);
-		final StringBuilder detailedMessage = new StringBuilder();
-		detailedMessage.append("Application No. ").append(property.getApplicationNo()).append(" regarding ")
-				.append(property.getPropertyModifyReason() + " " + module.getDisplayName()).append(" in ")
-				.append(property.getBasicProperty().getStatus().getName()).append(" status.");
-		return detailedMessage.toString();
-	}
-
-	private boolean isResolved(final PropertyImpl property) {
-		return "CLOSED".equalsIgnoreCase(property.getState().getValue());
-	}
-
 	public void adjustCollection(final PropertyImpl oldProperty, final PropertyImpl newProperty) {
 		BigDecimal totalColl = BigDecimal.ZERO;
 		final Installment currInstall = propertyTaxCommonUtils.getCurrentInstallment();
@@ -3949,6 +3903,200 @@ public class PropertyService {
 
 		}
 
+	}
+
+	/**
+	 * Method to push data for citizen portal inbox
+	 */
+
+	@Transactional
+	public void pushPortalMessage(final StateAware stateAware,final String applictionType) {
+		Module module = moduleDao.getModuleByName(PropertyTaxConstants.PTMODULENAME);
+		final PropertyImpl property = (PropertyImpl) stateAware;
+		BasicProperty basicProperty = property.getBasicProperty();
+		final PortalInboxBuilder portalInboxBuilder = new PortalInboxBuilder(module,property.getPropertyModifyReason()+" "+module.getDisplayName(),
+				property.getApplicationNo(),basicProperty.getUpicNo(),basicProperty.getId(),
+				property.getPropertyModifyReason(),getDetailedMessage(stateAware,applictionType),format(APPLICATION_VIEW_URL, property.getApplicationNo(), applictionType),
+				isResolved(property),basicProperty.getStatus().getName(),getSlaEndDate(applictionType),property.getState(),Arrays.asList(securityUtils.getCurrentUser()));
+		final PortalInbox portalInbox = portalInboxBuilder.build();
+		portalInboxService.pushInboxMessage(portalInbox);
+	}
+
+	/**
+	 * Method to update data for citizen portal inbox
+	 */
+	@Transactional
+	public void updatePortalMessage(final StateAware stateAware,final String applictionType){
+		final PropertyImpl property = (PropertyImpl) stateAware;
+		Module module = moduleDao.getModuleByName(PropertyTaxConstants.PTMODULENAME);
+		BasicProperty basicProperty = property.getBasicProperty();
+		portalInboxService.updateInboxMessage(property.getApplicationNo(), module.getId(),property.getState().getValue(),
+				isResolved(property), getSlaEndDate(applictionType), property.getState(), null,
+				basicProperty.getUpicNo(),format(APPLICATION_VIEW_URL, property.getApplicationNo(), applictionType));
+	}
+
+	private Date getSlaEndDate(final String applictionType){
+		DateTime dt = new DateTime(new Date());
+		return dt.plusDays(getSlaValue(applictionType)).toDate();
+	}
+
+	private String getDetailedMessage(final StateAware stateAware,final String applictionType) {
+		Module module = moduleDao.getModuleByName(PropertyTaxConstants.PTMODULENAME);
+		final StringBuilder detailedMessage = new StringBuilder();
+		if (!applictionType.isEmpty() && propertyApplicationTypes().contains(applictionType)) {
+			final PropertyImpl property = (PropertyImpl) stateAware;
+			detailedMessage.append(APPLICATION_NO).append(property.getApplicationNo()).append(REGARDING)
+					.append(property.getPropertyModifyReason()+" "+module.getDisplayName()).append(" in ")
+					.append(property.getBasicProperty().getStatus().getName()).append(STATUS);
+		} else if (!applictionType.isEmpty() && (applictionType.equalsIgnoreCase(APPLICATION_TYPE_REVISION_PETITION)
+				|| applictionType.equalsIgnoreCase(APPLICATION_TYPE_GRP))) {
+			final RevisionPetition revisionPetition = (RevisionPetition) stateAware;
+			detailedMessage.append(APPLICATION_NO).append(revisionPetition.getObjectionNumber()).append(REGARDING)
+					.append(revisionPetition.getType()+" "+module.getDisplayName()).append(" in ")
+					.append(revisionPetition.getBasicProperty().getStatus().getName()).append(STATUS);
+		}else if (!applictionType.isEmpty() && applictionType.equalsIgnoreCase(APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP)) {
+			final PropertyMutation propertyMutation = (PropertyMutation) stateAware;
+			detailedMessage.append(APPLICATION_NO).append(propertyMutation.getApplicationNo()).append(REGARDING)
+					.append(propertyMutation.getType()+" "+module.getDisplayName()).append(" in ")
+					.append(propertyMutation.getBasicProperty().getStatus().getName()).append(STATUS);
+		}else if (!applictionType.isEmpty() && applictionType.equalsIgnoreCase(APPLICATION_TYPE_VACANCY_REMISSION)) {
+			final VacancyRemission vacancyRemission = (VacancyRemission) stateAware;
+			detailedMessage.append(APPLICATION_NO).append(vacancyRemission.getApplicationNumber()).append(REGARDING)
+					.append(vacancyRemission.getStateType()+" "+module.getDisplayName()).append(" in ")
+					.append(vacancyRemission.getBasicProperty().getStatus().getName()).append(STATUS);
+		}
+
+		return detailedMessage.toString();
+	}
+
+	private boolean isResolved(final StateAware stateAware){
+		return "CLOSED".equalsIgnoreCase(stateAware.getState().getValue());
+	}
+
+	public PortalInbox getPortalInbox(final String applicationNumber){
+		Module module = moduleDao.getModuleByName(PropertyTaxConstants.PTMODULENAME);
+		return portalInboxService.getPortalInboxByApplicationNo(applicationNumber,module.getId());
+	}
+
+	/**
+	 * Creates or Updates Application index
+	 *
+	 * @param stateAware
+	 * @param applictionType
+	 */
+	@Transactional
+	public void updatePortal(final StateAware stateAware, final String applictionType) {
+		if (!applictionType.isEmpty() && propertyApplicationTypes().contains(applictionType)) {
+			updatePortalMessage(stateAware, applictionType);
+		} else if (!applictionType.isEmpty() && (applictionType.equalsIgnoreCase(APPLICATION_TYPE_REVISION_PETITION)
+				|| applictionType.equalsIgnoreCase(APPLICATION_TYPE_GRP))) {
+			updateRevisionPetitionPortalmessage(stateAware, applictionType);
+		} else if (!applictionType.isEmpty() && applictionType.equalsIgnoreCase(APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP)) {
+			updatePropertyMutationPortalmessage(stateAware, applictionType );
+		} else if (!applictionType.isEmpty() && applictionType.equalsIgnoreCase(APPLICATION_TYPE_VACANCY_REMISSION)) {
+			updateVacancyRemissionPortalmessage(stateAware, applictionType);
+		}
+
+	}
+
+	/**
+	 * Method to push Property Mutation data for citizen portal inbox
+	 */
+
+	@Transactional
+	public void pushPropertyMutationPortalMessage(final StateAware stateAware,final String applictionType) {
+		Module module = moduleDao.getModuleByName(PropertyTaxConstants.PTMODULENAME);
+		final PropertyMutation propertyMutation = (PropertyMutation) stateAware;
+		BasicProperty basicProperty = propertyMutation.getBasicProperty();
+		final PortalInboxBuilder portalInboxBuilder = new PortalInboxBuilder(module,propertyMutation.getType()+" "+module.getDisplayName(),
+				propertyMutation.getApplicationNo(),basicProperty.getUpicNo(),basicProperty.getId(),
+				propertyMutation.getType(),getDetailedMessage(stateAware,applictionType),format(APPLICATION_VIEW_URL, propertyMutation.getApplicationNo(), applictionType),
+				isResolved(propertyMutation),basicProperty.getStatus().getName(),getSlaEndDate(applictionType),propertyMutation.getState(),Arrays.asList(securityUtils.getCurrentUser()));
+		final PortalInbox portalInbox = portalInboxBuilder.build();
+		portalInboxService.pushInboxMessage(portalInbox);
+	}
+
+	/**
+	 * Method to update Property Mutation data for citizen portal inbox
+	 */
+	@Transactional
+	public void updatePropertyMutationPortalmessage(final StateAware stateAware,final String applictionType){
+		Module module = moduleDao.getModuleByName(PropertyTaxConstants.PTMODULENAME);
+		final PropertyMutation propertyMutation = (PropertyMutation) stateAware;
+		BasicProperty basicProperty = propertyMutation.getBasicProperty();
+		portalInboxService.updateInboxMessage(propertyMutation.getApplicationNo(), module.getId(),propertyMutation.getState().getValue(),
+				isResolved(propertyMutation), getSlaEndDate(applictionType), propertyMutation.getState(), null,
+				basicProperty.getUpicNo(),format(APPLICATION_VIEW_URL, propertyMutation.getApplicationNo(), applictionType));
+	}
+
+	/**
+	 * Method to push Vacancy Remission data for citizen portal inbox
+	 */
+
+	@Transactional
+	public void pushVacancyRemissionPortalMessage(final StateAware stateAware,final String applictionType) {
+		Module module = moduleDao.getModuleByName(PropertyTaxConstants.PTMODULENAME);
+		final VacancyRemission vacancyRemission = (VacancyRemission) stateAware;
+		BasicProperty basicProperty = vacancyRemission.getBasicProperty();
+		final PortalInboxBuilder portalInboxBuilder = new PortalInboxBuilder(module,vacancyRemission.getStateType()+" "+module.getDisplayName(),
+				vacancyRemission.getApplicationNumber(),basicProperty.getUpicNo(),basicProperty.getId(),
+				vacancyRemission.getStateType(),getDetailedMessage(stateAware,applictionType),format(APPLICATION_VIEW_URL, vacancyRemission.getApplicationNumber(), applictionType),
+				isResolved(stateAware),basicProperty.getStatus().getName(),getSlaEndDate(applictionType),vacancyRemission.getState(),Arrays.asList(securityUtils.getCurrentUser()));
+		final PortalInbox portalInbox = portalInboxBuilder.build();
+		portalInboxService.pushInboxMessage(portalInbox);
+	}
+
+	/**
+	 * Method to update Vacancy Remission data for citizen portal inbox
+	 */
+	@Transactional
+	public void updateVacancyRemissionPortalmessage(final StateAware stateAware,final String applictionType){
+		Module module = moduleDao.getModuleByName(PropertyTaxConstants.PTMODULENAME);
+		final VacancyRemission vacancyRemission = (VacancyRemission) stateAware;
+		BasicProperty basicProperty = vacancyRemission.getBasicProperty();
+		if("CLOSED".equalsIgnoreCase(vacancyRemission.getState().getValue())){
+			VacancyRemissionApproval vacancyRemissionApproval = vacancyRemission.getVacancyRemissionApproval().get(0);
+			String stateVal = vacancyRemissionApproval.getState().getValue()+" "+vacancyRemissionApproval.getStatus();
+			Boolean isResol = isResolved(vacancyRemissionApproval);
+			portalInboxService.updateInboxMessage(vacancyRemission.getApplicationNumber(), module.getId(),stateVal,
+					isResol, getSlaEndDate(applictionType), vacancyRemissionApproval.getState(), null,
+					basicProperty.getUpicNo(), format(APPLICATION_VIEW_URL, vacancyRemissionApproval.getVacancyRemission().getApplicationNumber(), applictionType));
+
+		}else{
+			portalInboxService.updateInboxMessage(vacancyRemission.getApplicationNumber(), module.getId(),vacancyRemission.getState().getValue(),
+					isResolved(stateAware), getSlaEndDate(applictionType), vacancyRemission.getState(), null,
+					basicProperty.getUpicNo(), format(APPLICATION_VIEW_URL, vacancyRemission.getApplicationNumber(), applictionType));
+		}
+	}
+
+	/**
+	 * Method to push revision petition data for citizen portal inbox
+	 */
+
+	@Transactional
+	public void pushRevisionPetitionPortalMessage(final StateAware stateAware,final String applictionType) {
+		Module module = moduleDao.getModuleByName(PropertyTaxConstants.PTMODULENAME);
+		final RevisionPetition revisionPetition = (RevisionPetition) stateAware;
+		BasicProperty basicProperty = revisionPetition.getBasicProperty();
+		final PortalInboxBuilder portalInboxBuilder = new PortalInboxBuilder(module,revisionPetition.getType()+" "+module.getDisplayName(),
+				revisionPetition.getObjectionNumber(),basicProperty.getUpicNo(),basicProperty.getId(),
+				revisionPetition.getType(),getDetailedMessage(stateAware,applictionType),format(APPLICATION_VIEW_URL, revisionPetition.getObjectionNumber(), applictionType),
+				isResolved(stateAware),basicProperty.getStatus().getName(),getSlaEndDate(applictionType),revisionPetition.getState(),Arrays.asList(securityUtils.getCurrentUser()));
+		final PortalInbox portalInbox = portalInboxBuilder.build();
+		portalInboxService.pushInboxMessage(portalInbox);
+	}
+
+	/**
+	 * Method to update revision petition data for citizen portal inbox
+	 */
+	@Transactional
+	public void updateRevisionPetitionPortalmessage(final StateAware stateAware,final String applictionType){
+		Module module = moduleDao.getModuleByName(PropertyTaxConstants.PTMODULENAME);
+		final RevisionPetition revisionPetition = (RevisionPetition) stateAware;
+		BasicProperty basicProperty = revisionPetition.getBasicProperty();
+		portalInboxService.updateInboxMessage(revisionPetition.getObjectionNumber(), module.getId(),revisionPetition.getState().getValue(),
+				isResolved(stateAware), getSlaEndDate(applictionType), revisionPetition.getState(), null,
+				basicProperty.getUpicNo(),format(APPLICATION_VIEW_URL, revisionPetition.getObjectionNumber(), applictionType));
 	}
 
 }

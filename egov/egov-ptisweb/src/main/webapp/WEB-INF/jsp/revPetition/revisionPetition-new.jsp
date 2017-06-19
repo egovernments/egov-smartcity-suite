@@ -136,7 +136,7 @@
             </div>
             </td>
           </tr>
-         <s:if test="%{loggedUserIsEmployee == true  && applicationSource != 'online'}">
+         <s:if test="%{loggedUserIsEmployee == true  && applicationSource != 'online' && !citizenPortalUser}">
           <tr>
             <td>
             <div class="formmainbox"> 

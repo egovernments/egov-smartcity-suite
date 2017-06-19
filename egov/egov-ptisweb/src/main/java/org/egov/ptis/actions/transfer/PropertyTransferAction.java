@@ -262,7 +262,8 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     private boolean allowEditDocument = Boolean.FALSE;
     private String applicationSource;
     private List<String> guardianRelations;
-
+    private Boolean citizenPortalUser = Boolean.FALSE;
+    
     public PropertyTransferAction() {
         addRelatedEntity("mutationReason", PropertyMutationMaster.class);
     }
@@ -318,7 +319,8 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                 return COMMON_FORM;
             }
             if (StringUtils.isBlank(applicationSource) && propertyService.isEmployee(transferOwnerService.getLoggedInUser())
-                    && !propertyTaxCommonUtils.isEligibleInitiator(transferOwnerService.getLoggedInUser().getId())) {
+                    && !propertyTaxCommonUtils.isEligibleInitiator(transferOwnerService.getLoggedInUser().getId())
+                    && !propertyService.isCitizenPortalUser(transferOwnerService.getLoggedInUser())) {
                 addActionError(getText("initiator.noteligible"));
                 return COMMON_FORM;
             }
@@ -372,8 +374,8 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         final String nextAction = propertyMutation.getState().getNextAction();
         propertyMutation.getTransfereeInfosProxy().addAll(propertyMutation.getTransfereeInfos());
         if (currState.endsWith(WF_STATE_REJECTED)
-                || nextAction != null && nextAction.equalsIgnoreCase(WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING)
-                || currState.equals(WFLOW_ACTION_NEW)) {
+                    || nextAction != null && nextAction.equalsIgnoreCase(WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING)
+                    || currState.equals(WFLOW_ACTION_NEW)){ 
             setAllowEditDocument(Boolean.TRUE);
             mode = EDIT;
         } else
@@ -642,6 +644,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         final Long userId = securityUtils.getCurrentUser().getId();
         userDesignationList = propertyTaxCommonUtils.getAllDesignationsForUser(userId);
         propertyByEmployee = propertyService.isEmployee(transferOwnerService.getLoggedInUser());
+        citizenPortalUser = propertyService.isCitizenPortalUser(securityUtils.getCurrentUser());
         final String actionInvoked = ActionContext.getContext().getActionInvocation().getProxy().getMethod();
         if (!(actionInvoked.equals("search") || actionInvoked.equals("collectFee"))) {
             if (StringUtils.isNotBlank(assessmentNo) && mutationId == null)
@@ -779,7 +782,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         String nextAction = "";
         Assignment assignment;
 
-        if (!propertyByEmployee || ANONYMOUS_USER.equalsIgnoreCase(transferOwnerService.getLoggedInUser().getName())) {
+        if (citizenPortalUser || !propertyByEmployee || ANONYMOUS_USER.equalsIgnoreCase(transferOwnerService.getLoggedInUser().getName())) {
             currentState = getCurrentStateForThirdPartyWF(propertyMutation);
             assignment = transferOwnerService.getAssignmentForThirdPartyByMutationType(propertyMutation, basicproperty, user);
             approverPositionId = assignment.getPosition().getId();
@@ -834,7 +837,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
             if (wfInitiator.getPosition().equals(propertyMutation.getState().getOwnerPosition())
                     || propertyMutation.getType().equalsIgnoreCase(ADDTIONAL_RULE_FULL_TRANSFER)) {
                 propertyMutation.transition().end().withSenderName(user.getUsername() + "::" + user.getName())
-                        .withComments(approverComments).withDateInfo(currentDate.toDate());
+                        .withComments(approverComments).withDateInfo(currentDate.toDate()).withNextAction(null);
                 propertyMutation.getBasicProperty().setUnderWorkflow(Boolean.FALSE);
             } else {
                 if (loggedInUserDesignation.equalsIgnoreCase(REVENUE_OFFICER_DESGN)
@@ -877,7 +880,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                         .withInitiator(wfInitiator != null ? wfInitiator.getPosition() : null);
             } else if (propertyMutation.getCurrentState().getNextAction().equalsIgnoreCase("END"))
                 propertyMutation.transition().end().withSenderName(user.getUsername() + "::" + user.getName())
-                        .withComments(approverComments).withDateInfo(currentDate.toDate());
+                        .withComments(approverComments).withDateInfo(currentDate.toDate()).withNextAction(null);
             else {
                 final WorkFlowMatrix wfmatrix = transferWorkflowService.getWfMatrix(propertyMutation.getStateType(), null, null,
                         getAdditionalRule(), propertyMutation.getCurrentState().getValue(),
@@ -1343,11 +1346,20 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         this.applicationSource = applicationSource;
     }
 
-	public List<String> getGuardianRelations() {
-		return guardianRelations;
-	}
+    public List<String> getGuardianRelations() {
+	return guardianRelations;
+    }
 
-	public void setGuardianRelations(List<String> guardianRelations) {
-		this.guardianRelations = guardianRelations;
-	}
+    public void setGuardianRelations(List<String> guardianRelations) {
+	this.guardianRelations = guardianRelations;
+    }
+
+    public Boolean getCitizenPortalUser() {
+        return citizenPortalUser;
+    }
+
+    public void setCitizenPortalUser(Boolean citizenPortalUser) {
+        this.citizenPortalUser = citizenPortalUser;
+    }
+	
 }

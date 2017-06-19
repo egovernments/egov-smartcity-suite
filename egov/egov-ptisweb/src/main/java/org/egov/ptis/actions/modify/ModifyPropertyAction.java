@@ -186,6 +186,8 @@ import org.egov.ptis.domain.repository.master.vacantland.VacantLandPlotAreaRepos
 import org.egov.ptis.domain.service.property.PropertyPersistenceService;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.exceptions.TaxCalculatorExeption;
+import org.egov.portal.entity.PortalInbox;
+import org.egov.commons.entity.Source;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -329,6 +331,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 	private boolean allowEditDocument = Boolean.FALSE;
 	private Boolean showAckBtn = Boolean.FALSE;
 	private String applicationSource;
+	private boolean citizenPortalUser;
 
 	@Autowired
 	transient PropertyPersistenceService basicPropertyService;
@@ -393,8 +396,8 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 		if (logger.isDebugEnabled())
 			logger.debug("Exiting from modifyForm");
 		showTaxCalculateButton();
-		if (isBlank(applicationSource) && propService.isEmployee(currentUser)
-				&& !propertyTaxCommonUtils.isEligibleInitiator(currentUser.getId())) {
+		if (isBlank(applicationSource) && !citizenPortalUser
+				&& propService.isEmployee(currentUser) && !propertyTaxCommonUtils.isEligibleInitiator(currentUser.getId())) {
 			addActionError(getText("initiator.noteligible"));
 			return COMMON_FORM;
 		}
@@ -694,7 +697,8 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 			if (propTypeMstr.getType().equals(OWNERSHIP_TYPE_VAC_LAND_STR))
 				addActionError(getText("error.nonVacantToVacant"));
 		if (hasErrors())
-			if (!propertyByEmployee || ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName())
+			if (citizenPortalUser || !propertyByEmployee
+					|| ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName())
 					|| isAssistantOrRIApprovalPending())
 				return NEW;
 			else if (isCommissionerRoOrBillCollector())
@@ -726,6 +730,13 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 			basicPropertyService.updateBasicProperty(basicProp, meesevaParams);
 		}
 		setModifyRsn(propertyModel.getPropertyDetail().getPropertyMutationMaster().getCode());
+		if (citizenPortalUser)
+			propService.pushPortalMessage(propertyModel,getApplicationType());
+		else if (Source.CITIZENPORTAL.toString().equalsIgnoreCase(propertyModel.getSource())){
+			final PortalInbox portalInbox = propService.getPortalInbox(propertyModel.getApplicationNo());
+			if (portalInbox != null)
+				propService.updatePortal(propertyModel,getApplicationType());
+		}
 		prepareAckMsg();
 		buildEmailandSms(propertyModel, getApplicationType());
 		addActionMessage(
@@ -740,7 +751,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 
 	private void checkToDisplayAckButton() {
 		final Boolean rejected = wfInitiatorRejected == null ? Boolean.FALSE : wfInitiatorRejected;
-		if (ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName()))
+		if (ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName()) || citizenPortalUser )
 			showAckBtn = Boolean.TRUE;
 		if (!showAckBtn)
 			for (final Role role : securityUtils.getCurrentUser().getRoles())
@@ -997,6 +1008,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 		setUserDesignations();
 		propertyByEmployee = propService.isEmployee(securityUtils.getCurrentUser())
 				&& !ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName());
+		citizenPortalUser = propService.isCitizenPortalUser(securityUtils.getCurrentUser());
 		if (getModelId() != null && !getModelId().isEmpty())
 			prepareWorkflowPropInfo();
 		else if (indexNumber != null && !indexNumber.trim().isEmpty()) {
@@ -1390,7 +1402,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 	}
 
 	private void validateInitiatorAssignment() {
-		if (!propertyByEmployee && null != basicProp) {
+		if ((!propertyByEmployee || citizenPortalUser) && null != basicProp) {
 			final Assignment assignment = propService.isCscOperator(securityUtils.getCurrentUser())
 					? propService.getAssignmentByDeptDesigElecWard(basicProp) : null;
 			if (assignment == null && propService.getUserPositionByZone(basicProp, false) == null)
@@ -2521,5 +2533,13 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 
 	public void setApplicationSource(final String applicationSource) {
 		this.applicationSource = applicationSource;
+	}
+
+	public boolean isCitizenPortalUser() {
+		return citizenPortalUser;
+	}
+
+	public void setCitizenPortalUser(boolean citizenPortalUser) {
+		this.citizenPortalUser = citizenPortalUser;
 	}
 }

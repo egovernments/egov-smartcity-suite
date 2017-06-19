@@ -212,19 +212,9 @@
 						</div> </font>
 				</tr>
 
-				<s:if test="%{!isCitizenPortalUser}">
 					<tr>
 						<%@ include file="../workflow/commonWorkflowMatrix-button.jsp"%>
 					</tr>
-				</s:if>
-				<s:if test="%{isCitizenPortalUser}">
-					<tr>
-						<td><div align="center">
-								<input type="button" name="button2" id="button2" value="Close"
-									class="button" onclick="window.close();" />
-							</div></td>
-					</tr>
-				</s:if>
 				</table>
 			</s:push>
 		</s:form>

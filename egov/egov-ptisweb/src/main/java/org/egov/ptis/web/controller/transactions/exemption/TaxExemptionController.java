@@ -125,6 +125,7 @@ public class TaxExemptionController extends GenericWorkFlowController {
     private static final String NGO_DOC = "ngoDocs";
     private static final String WORSHIP_DOC = "worshipDocs";
     private static final String EXSERVICE_DOC = "exserviceDocs";
+    private boolean citizenPortalUser;
     
     @Autowired
     private BasicPropertyDAO basicPropertyDAO;
@@ -188,9 +189,11 @@ public class TaxExemptionController extends GenericWorkFlowController {
         BasicProperty basicProperty = property.getBasicProperty();
         boolean isExempted = basicProperty.getActiveProperty().getIsExemptedFromTax();
         User loggedInUser = securityUtils.getCurrentUser();
+        citizenPortalUser = propertyService.isCitizenPortalUser(loggedInUser);
         boolean loggedUserIsMeesevaUser = propertyService.isMeesevaUser(loggedInUser);
         if (!ANONYMOUS_USER.equalsIgnoreCase(loggedInUser.getName()) && propertyService.isEmployee(loggedInUser)
-                && !propertyTaxCommonUtils.isEligibleInitiator(loggedInUser.getId())) {
+                && !propertyTaxCommonUtils.isEligibleInitiator(loggedInUser.getId())
+                && !citizenPortalUser) {
             model.addAttribute(ERROR_MSG, "msg.initiator.noteligible");
             return PROPERTY_VALIDATION;
         }
@@ -271,6 +274,7 @@ public class TaxExemptionController extends GenericWorkFlowController {
         model.addAttribute(EDUINST_DOC, "");
         model.addAttribute(EXSERVICE_DOC, "");
         model.addAttribute(NGO_DOC, "");
+        model.addAttribute("citizenPortalUser", citizenPortalUser);
         taxExemptionService.addModelAttributes(model, basicProperty);
         prepareWorkflow(model, property, new WorkflowContainer());
         return TAX_EXEMPTION_FORM;
@@ -401,5 +405,13 @@ public class TaxExemptionController extends GenericWorkFlowController {
                     return true;
         }
         return false;
+    }
+
+    public boolean isCitizenPortalUser() {
+        return citizenPortalUser;
+    }
+
+    public void setCitizenPortalUser(boolean citizenPortalUser) {
+        this.citizenPortalUser = citizenPortalUser;
     }
 }

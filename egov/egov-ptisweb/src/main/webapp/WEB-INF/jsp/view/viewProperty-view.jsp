@@ -109,7 +109,7 @@
 					<br />
 					<div class="buttonbottom no-print" align="center">
 						<!--From application index search same view page is given, if new property is under work flow and assessment no is not generated then all links are disabled  -->
-						<s:if test="%{basicProperty.upicNo!=null}">
+						<s:if test="%{basicProperty.upicNo!=null &&  !citizenPortalUser}">
 							<s:if
 								test="%{!property.getIsExemptedFromTax() && (isCitizen || roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@CSC_OPERATOR_ROLE.toUpperCase()) ||
 					roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@ROLE_COLLECTION_OPERATOR.toUpperCase()))}">
@@ -157,10 +157,12 @@
 									onclick="window.location='../citizen/search/search-searchForm.action';" />
 							</s:else>
 						</s:if>
+						<s:if test="%{!citizenPortalUser}">
 						<input type="button" name="btnPrint" id="btnPrint" value="Print"
 							class="buttonsubmit" onclick="window.print();" /> <input
 							type="button" name="button2" id="button2" value="Close"
 							class="button" onclick="window.close();" />
+						</s:if>
 						<s:hidden label="upicNo" id="upicNo" name="upicNo"
 							value="%{basicProperty.upicNo}" />
 						<!-- common buttons ends here -->
@@ -168,6 +170,14 @@
 			</div>
 			</s:else>
 		</s:push>
+		<s:if test="%{citizenPortalUser}">
+			<tr>
+				<td><div align="center">
+				<input type="button" name="button2" id="button2" value="Close"
+				class="button" onclick="window.close();" />
+				</div></td>
+			</tr>
+		</s:if>
 	</s:form>
 </body>
 </html>

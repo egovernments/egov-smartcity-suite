@@ -41,9 +41,12 @@ package org.egov.ptis.actions.view;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_BIFURCATE_ASSESSENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_GRP;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_NEW_ASSESSENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_REVISION_PETITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TAX_EXEMTION;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_VACANCY_REMISSION;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARREARS;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
@@ -93,6 +96,9 @@ import org.egov.ptis.domain.entity.property.Floor;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
+import org.egov.ptis.domain.entity.property.VacancyRemission;
+import org.egov.ptis.domain.service.property.PropertyService;
+import org.egov.ptis.domain.service.property.VacancyRemissionService;
 import org.egov.ptis.domain.service.transfer.PropertyTransferService;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -116,6 +122,7 @@ public class ViewPropertyAction extends BaseFormAction {
     private String[] floorNoStr = new String[100];
     private String errorMessage;
     private String isCitizen;
+    private boolean citizenPortalUser;
 
     @Autowired
     private BasicPropertyDAO basicPropertyDAO;
@@ -132,7 +139,11 @@ public class ViewPropertyAction extends BaseFormAction {
     private PropertyTransferService transferOwnerService;
     @Autowired
     private PropertyTaxCommonUtils propertyTaxCommonUtils;
-
+    @Autowired
+    private PersistenceService<VacancyRemission, Long> vacancyRemissionPersistenceService;
+    @Autowired
+    private PropertyService propService;
+    
     private Map<String, Map<String, BigDecimal>> demandCollMap = new TreeMap<String, Map<String, BigDecimal>>();
 
     @Override
@@ -142,6 +153,7 @@ public class ViewPropertyAction extends BaseFormAction {
 
     @Action(value = "/view/viewProperty-viewForm")
     public String viewForm() {
+      
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Entered into viewForm method, propertyId : " + propertyId);
         try {
@@ -243,12 +255,15 @@ public class ViewPropertyAction extends BaseFormAction {
                 viewMap.put("enableMonthlyUpdate", propertyTaxUtil.enableMonthlyUpdate(basicProperty.getUpicNo()));
             }
             final Long userId = (Long) session().get(SESSIONLOGINID);
-            if (userId != null)
+            if (userId != null){
                 setRoleName(getRolesForUserId(userId));
+                citizenPortalUser = propService.isCitizenPortalUser(UserService.getUserById(userId));
+            }
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("viewForm : viewMap : " + viewMap);
                 LOGGER.debug("Exit from method viewForm");
             }
+           
             return "view";
         } catch (final Exception e) {
             LOGGER.error("Exception in View Property: ", e);
@@ -291,10 +306,12 @@ public class ViewPropertyAction extends BaseFormAction {
         if (appType != null && !appType.isEmpty())
             if (appType.equalsIgnoreCase(APPLICATION_TYPE_NEW_ASSESSENT)
                     || appType.equalsIgnoreCase(APPLICATION_TYPE_ALTER_ASSESSENT)
-                    || appType.equalsIgnoreCase(APPLICATION_TYPE_BIFURCATE_ASSESSENT)) {
+                    || appType.equalsIgnoreCase(APPLICATION_TYPE_BIFURCATE_ASSESSENT)
+                    || appType.equals(APPLICATION_TYPE_TAX_EXEMTION)) {
                 property = (PropertyImpl) propertyImplService.find("from PropertyImpl where applicationNo=?", appNo);
                 setBasicProperty(property.getBasicProperty());
-            } else if (appType.equalsIgnoreCase(APPLICATION_TYPE_REVISION_PETITION)) {
+            } else if (appType.equalsIgnoreCase(APPLICATION_TYPE_REVISION_PETITION)
+                    || appType.equalsIgnoreCase(APPLICATION_TYPE_GRP)) {
                 final RevisionPetition rp = revisionPetitionPersistenceService.find(
                         "from RevisionPetition where objectionNumber=?", appNo);
                 setBasicProperty(rp.getBasicProperty());
@@ -302,6 +319,9 @@ public class ViewPropertyAction extends BaseFormAction {
                 final PropertyMutation propertyMutation = transferOwnerService
                         .getPropertyMutationByApplicationNo(appNo);
                 setBasicProperty(propertyMutation.getBasicProperty());
+            } else if (appType.equals(APPLICATION_TYPE_VACANCY_REMISSION)) {
+                final VacancyRemission vacancyRemission = vacancyRemissionPersistenceService.find("from VacancyRemission where applicationNumber=?",appNo);
+                setBasicProperty(vacancyRemission.getBasicProperty());
             }
     }
 
@@ -450,5 +470,18 @@ public class ViewPropertyAction extends BaseFormAction {
     public void setPropertyTaxCommonUtils(final PropertyTaxCommonUtils propertyTaxCommonUtils) {
         this.propertyTaxCommonUtils = propertyTaxCommonUtils;
     }
+
+    public boolean isCitizenPortalUser() {
+        return citizenPortalUser;
+    }
+
+    public void setCitizenPortalUser(boolean citizenPortalUser) {
+        this.citizenPortalUser = citizenPortalUser;
+    }
+
+    public void setPropService(PropertyService propService) {
+        this.propService = propService;
+    }
+    
 
 }

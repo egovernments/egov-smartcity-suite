@@ -95,7 +95,8 @@
 							<a href="/ptis/revPetition/revPetition-printAck.action?wfType=<s:property value='%{wfType}'/>&propertyId=<s:property value='%{propertyId}'/>" class="btn btn-default">Generate Acknowledgment</a>
 						</s:if>
 						<s:elseif test="%{((model.state.nextAction.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_ADDHEARING_DATE) && !model.state.createdBy.name.equals('CSCUSER'))
-			||	model.state.lastModifiedBy.name.equals('CSCUSER')) && !wfInitiatorRejected || applicationSource == 'online'}">
+			||	model.state.lastModifiedBy.name.equals('CSCUSER')) && !wfInitiatorRejected || applicationSource == 'online'
+			|| citizenPortalUser}">
 							<a href="/ptis/revPetition/revPetition-printAck.action?wfType=<s:property value='%{wfType}'/>&propertyId=<s:property value='%{propertyId}'/>" class="btn btn-default">Generate Acknowledgment</a>
 						</s:elseif>
 						<input type="button" name="button2" id="button2"

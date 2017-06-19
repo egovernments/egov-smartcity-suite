@@ -185,7 +185,6 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 	private RevisionPetitionService revisionPetitionService;
 	private String signedFileStoreId;
 	private boolean digitalSignEnabled;
-
 	@Autowired
 	private PtDemandDao ptDemandDAO;
 
@@ -415,8 +414,8 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 					setFileStoreIds(savedNotice.getFileStore().getFileStoreId());
 				}
 				noticeService.getSession().flush();
-				if (property.getSource().equalsIgnoreCase(Source.CITIZENPORTAL.toString()))
-					propService.updatePortalMessage(property, APPLICATION_TYPE_NEW_ASSESSENT);
+				if (Source.CITIZENPORTAL.toString().equalsIgnoreCase(property.getSource()))
+				    propService.updatePortalMessage(property, APPLICATION_TYPE_NEW_ASSESSENT);
 				return DIGITAL_SIGNATURE_REDIRECTION;
 			} else
 				reportId = reportViewerUtil.addReportToTempCache(reportOutput);
@@ -424,8 +423,8 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 		if (!PREVIEW.equals(actionType)) {
 			noticeService.getSession().flush();
 			propService.updateIndexes(property, APPLICATION_TYPE_ALTER_ASSESSENT);
-			if (property.getSource().equalsIgnoreCase(Source.CITIZENPORTAL.toString()))
-				propService.updatePortalMessage(property, APPLICATION_TYPE_NEW_ASSESSENT);
+			if (Source.CITIZENPORTAL.toString().equalsIgnoreCase(property.getSource()))
+			    propService.updatePortalMessage(property, APPLICATION_TYPE_NEW_ASSESSENT);
 			basicPropertyService.update(basicProperty);
 		}
 
@@ -479,12 +478,16 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 					setFileStoreIds(savedNotice.getFileStore().getFileStoreId());
 				}
 				noticeService.getSession().flush();
+				if (Source.CITIZENPORTAL.toString().equalsIgnoreCase(property.getSource()))
+				    propService.updatePortal(property, APPLICATION_TYPE_NEW_ASSESSENT);
 				return DIGITAL_SIGNATURE_REDIRECTION;
 			} else
 				reportId = reportViewerUtil.addReportToTempCache(reportOutput);
 		}
 		if (!PREVIEW.equals(actionType)) {
 			propService.updateIndexes(property, APPLICATION_TYPE_ALTER_ASSESSENT);
+			if (Source.CITIZENPORTAL.toString().equalsIgnoreCase(property.getSource()))
+			    propService.updatePortal(property, APPLICATION_TYPE_NEW_ASSESSENT);
 			basicPropertyService.update(basicProperty);
 		}
 		return NOTICE;
@@ -882,7 +885,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 	 */
 	private void endWorkFlow(final BasicPropertyImpl basicProperty) {
 		LOGGER.debug("endWorkFlow: Workflow will end for Property: " + property);
-		property.transition().end();
+		property.transition().end().withNextAction(null);
 		basicProperty.setUnderWorkflow(false);
 		LOGGER.debug("Exit method endWorkFlow, Workflow ended");
 	}

@@ -178,7 +178,9 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
         String userDesignationList;
         final String currState = property.getState().getValue();
         final String nextAction = property.getState().getNextAction();
-        userDesignationList = propertyTaxCommonUtils.getAllDesignationsForUser(securityUtils.getCurrentUser().getId());
+        User loggedInUser = securityUtils.getCurrentUser();
+        final boolean citizenPortalUser = propertyTaxCommonUtils.isCitizenPortalUser(loggedInUser);
+        userDesignationList = propertyTaxCommonUtils.getAllDesignationsForUser(loggedInUser.getId());
         model.addAttribute("stateType", property.getClass().getSimpleName());
         model.addAttribute("currentState", property.getCurrentState().getValue());
         final WorkflowContainer workflowContainer = new WorkflowContainer();
@@ -196,6 +198,7 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
         model.addAttribute(EDUINST_DOC, "");
         model.addAttribute(EXSERVICE_DOC, "");
         model.addAttribute(NGO_DOC, "");
+        model.addAttribute("citizenPortalUser", citizenPortalUser);
         final String currentDesignation = taxExemptionService.getLoggedInUserDesignation(
                 property.getCurrentState().getOwnerPosition().getId(),
                 securityUtils.getCurrentUser());
@@ -331,7 +334,7 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
                     approvalPosition, taxExemptedReason, propertyByEmployee, EXEMPTION);
             }
 
-            successMessage = "Property Exemption rejected successfully and forwarded to "
+            successMessage = "Property Exemption rejected successfully and forwared to "
                     + assignment.getEmployee().getName().concat("~").concat(assignment.getPosition().getName())
                     + " with application number "
                     + property.getApplicationNo();

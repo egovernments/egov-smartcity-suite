@@ -310,7 +310,7 @@
 					<s:if test="%{!documentTypes.isEmpty()}">
 						<%@ include file="../common/DocumentUploadForm.jsp"%>
 					</s:if>
-				<s:if test="%{propertyByEmployee == true && applicationSource != 'online'}">
+				<s:if test="%{propertyByEmployee == true && applicationSource != 'online' && !citizenPortalUser}">
 					<table width="100%" border="0" cellspacing="0" cellpadding="0">
 						<tr>
 							<%@ include file="../workflow/commonWorkflowMatrix.jsp"%>
