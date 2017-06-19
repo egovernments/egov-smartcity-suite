@@ -39,21 +39,6 @@
  */
 package org.egov.collection.web.actions.citizen;
 
-import java.io.UnsupportedEncodingException;
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
@@ -81,8 +66,6 @@ import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.commons.dao.FundHibernateDAO;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
-import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
@@ -92,24 +75,45 @@ import org.egov.infstr.models.ServiceDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
+import javax.servlet.http.HttpServletRequest;
+import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
 @ParentPackage("egov")
-@Results({ @Result(name = OnlineReceiptAction.NEW, location = "onlineReceipt-new.jsp"),
+@Results({@Result(name = OnlineReceiptAction.NEW, location = "onlineReceipt-new.jsp"),
         @Result(name = OnlineReceiptAction.REDIRECT, location = "onlineReceipt-redirect.jsp"),
         @Result(name = OnlineReceiptAction.RESULT, location = "onlineReceipt-result.jsp"),
         @Result(name = OnlineReceiptAction.RECONRESULT, location = "onlineReceipt-reconresult.jsp"),
-        @Result(name = CollectionConstants.REPORT, location = "onlineReceipt-report.jsp") })
+        @Result(name = CollectionConstants.REPORT, location = "onlineReceipt-report.jsp")})
 public class OnlineReceiptAction extends BaseFormAction {
 
-    private static final Logger LOGGER = Logger.getLogger(OnlineReceiptAction.class);
     public static final String REDIRECT = "redirect";
+    protected static final String RESULT = "result";
+    protected static final String RECONRESULT = "reconresult";
+    private static final Logger LOGGER = Logger.getLogger(OnlineReceiptAction.class);
     private static final long serialVersionUID = 1L;
-
+    private static final String BROKEN_TRANSACTION_ERROR_MESSAGE = new StringBuilder()
+            .append("If the amount has been deducted from ")
+            .append("your account, then no further action is required from you right now. Such transactions are normally ")
+            .append("resolved within 24 hours so you can check and download the receipt then.")
+            .append("\n \nIf the amount has not been deducted from your account, then please check your ")
+            .append("internet connection and try to pay again after some time. If the transaction fails again, ")
+            .append("please contact cell in Corporation.").toString();
+    private final List<ValidationError> errors = new ArrayList<>(0);
     private CollectionsUtil collectionsUtil;
     private ReceiptHeaderService receiptHeaderService;
     private CollectionService collectionService;
     private CollectionCommon collectionCommon;
-    private final List<ValidationError> errors = new ArrayList<>(0);
-
     private BigDecimal onlineInstrumenttotal = BigDecimal.ZERO;
     private List<ReceiptDetail> receiptDetailList = new ArrayList<>(0);
     private BillInfoImpl collDetails = new BillInfoImpl();
@@ -130,8 +134,6 @@ public class OnlineReceiptAction extends BaseFormAction {
     private PaymentRequest paymentRequest;
     private PaymentResponse paymentResponse;
     private String responseMsg = "";
-    protected static final String RESULT = "result";
-    protected static final String RECONRESULT = "reconresult";
     private Boolean callbackForApportioning;
     private String receiptNumber;
     private String consumerCode;
@@ -143,13 +145,6 @@ public class OnlineReceiptAction extends BaseFormAction {
     private FundHibernateDAO fundDAO;
     private List<OnlinePayment> lastThreeOnlinePayments = new ArrayList<>(0);
     private Boolean onlinePayPending = Boolean.FALSE;
-    private static final String BROKEN_TRANSACTION_ERROR_MESSAGE = "If the amount has been deducted from "
-            + "your account, then no further action is required from you right now. Such transactions are normally "
-            + "resolved within 24 hours so you can check and download the receipt then." + "\n \n"
-            + "If the amount has not been deducted from your account, then please check your "
-            + "internet connection and try to pay again after some time. If the transaction fails again, "
-            + "please contact cell in Corporation.";
-
     @Autowired
     private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
     private String[] transactionId;
@@ -220,7 +215,7 @@ public class OnlineReceiptAction extends BaseFormAction {
                 processSuccessMsg();
             else if (paymentService.getCode().equals(CollectionConstants.SERVICECODE_PGI_BILLDESK)
                     && CollectionConstants.PGI_AUTHORISATION_CODE_WAITINGFOR_PAY_GATEWAY_RESPONSE
-                            .equals(paymentResponse.getAuthStatus())) {
+                    .equals(paymentResponse.getAuthStatus())) {
                 final EgwStatus paymentStatus = collectionsUtil.getStatusForModuleAndCode(
                         CollectionConstants.MODULE_NAME_ONLINEPAYMENT,
                         CollectionConstants.ONLINEPAYMENT_STATUS_CODE_PENDING);
@@ -431,8 +426,6 @@ public class OnlineReceiptAction extends BaseFormAction {
     @Override
     public void prepare() {
         super.prepare();
-        final User user = collectionsUtil.getUserByUserName(CollectionConstants.CITIZEN_USER_NAME);
-        ApplicationThreadLocals.setUserId(user.getId());
         // populates model when request is from the billing system
         if (StringUtils.isNotBlank(getCollectXML())) {
             final String decodedCollectXml = decodeBillXML();
@@ -549,10 +542,6 @@ public class OnlineReceiptAction extends BaseFormAction {
         this.remarks = remarks;
     }
 
-    public void setTransactionId(final String[] transactionId) {
-        this.transactionId = transactionId;
-    }
-
     public String[] getTransactionDate() {
         return transactionDate;
     }
@@ -563,6 +552,10 @@ public class OnlineReceiptAction extends BaseFormAction {
 
     public String[] getTransactionId() {
         return transactionId;
+    }
+
+    public void setTransactionId(final String[] transactionId) {
+        this.transactionId = transactionId;
     }
 
     public Long[] getSelectedReceipts() {
@@ -646,8 +639,7 @@ public class OnlineReceiptAction extends BaseFormAction {
     }
 
     /**
-     * @param paymentAmount
-     *            the paymentAmount to set
+     * @param paymentAmount the paymentAmount to set
      */
     public void setPaymentAmount(final BigDecimal paymentAmount) {
         this.paymentAmount = paymentAmount;
@@ -661,8 +653,7 @@ public class OnlineReceiptAction extends BaseFormAction {
     }
 
     /**
-     * @param paymentRequest
-     *            the paymentRequest to set
+     * @param paymentRequest the paymentRequest to set
      */
     public void setPaymentRequest(final PaymentRequest paymentRequest) {
         this.paymentRequest = paymentRequest;
@@ -684,8 +675,7 @@ public class OnlineReceiptAction extends BaseFormAction {
     }
 
     /**
-     * @param paymentServiceId
-     *            the paymentServiceId to set
+     * @param paymentServiceId the paymentServiceId to set
      */
     public void setPaymentServiceId(final Integer paymentServiceId) {
         this.paymentServiceId = paymentServiceId;
@@ -724,8 +714,7 @@ public class OnlineReceiptAction extends BaseFormAction {
     }
 
     /**
-     * @param serviceName
-     *            the serviceName to set
+     * @param serviceName the serviceName to set
      */
     public void setServiceName(final String serviceName) {
         this.serviceName = serviceName;
@@ -739,8 +728,7 @@ public class OnlineReceiptAction extends BaseFormAction {
     }
 
     /**
-     * @param collectionModesNotAllowed
-     *            the collectionModesNotAllowed to set
+     * @param collectionModesNotAllowed the collectionModesNotAllowed to set
      */
     public void setCollectionModesNotAllowed(final List<String> collectionModesNotAllowed) {
         this.collectionModesNotAllowed = collectionModesNotAllowed;
@@ -754,8 +742,7 @@ public class OnlineReceiptAction extends BaseFormAction {
     }
 
     /**
-     * @param overrideAccountHeads
-     *            the overrideAccountHeads to set
+     * @param overrideAccountHeads the overrideAccountHeads to set
      */
     public void setOverrideAccountHeads(final Boolean overrideAccountHeads) {
         this.overrideAccountHeads = overrideAccountHeads;
@@ -769,16 +756,14 @@ public class OnlineReceiptAction extends BaseFormAction {
     }
 
     /**
-     * @param partPaymentAllowed
-     *            the partPaymentAllowed to set
+     * @param partPaymentAllowed the partPaymentAllowed to set
      */
     public void setPartPaymentAllowed(final Boolean partPaymentAllowed) {
         this.partPaymentAllowed = partPaymentAllowed;
     }
 
     /**
-     * @param xmlHandler
-     *            the xmlHandler to set
+     * @param xmlHandler the xmlHandler to set
      */
     public void setXmlHandler(final BillCollectXmlHandler xmlHandler) {
         this.xmlHandler = xmlHandler;
@@ -792,8 +777,7 @@ public class OnlineReceiptAction extends BaseFormAction {
     }
 
     /**
-     * @param collectXML
-     *            the collectXML to set
+     * @param collectXML the collectXML to set
      */
     public void setCollectXML(final String collectXML) {
         this.collectXML = collectXML;
@@ -807,8 +791,7 @@ public class OnlineReceiptAction extends BaseFormAction {
     }
 
     /**
-     * @param receiptDetailList
-     *            the receiptDetailList to set
+     * @param receiptDetailList the receiptDetailList to set
      */
     public void setReceiptDetailList(final List<ReceiptDetail> receiptDetailList) {
         this.receiptDetailList = receiptDetailList;
@@ -822,8 +805,7 @@ public class OnlineReceiptAction extends BaseFormAction {
     }
 
     /**
-     * @param onlineInstrumenttotal
-     *            the onlineInstrumenttotal to set
+     * @param onlineInstrumenttotal the onlineInstrumenttotal to set
      */
     public void setOnlineInstrumenttotal(final BigDecimal onlineInstrumenttotal) {
         this.onlineInstrumenttotal = onlineInstrumenttotal;
@@ -842,8 +824,7 @@ public class OnlineReceiptAction extends BaseFormAction {
     }
 
     /**
-     * @param callbackForApportioning
-     *            the callbackForApportioning to set
+     * @param callbackForApportioning the callbackForApportioning to set
      */
     public void setCallbackForApportioning(final Boolean callbackForApportioning) {
         this.callbackForApportioning = callbackForApportioning;
@@ -857,8 +838,7 @@ public class OnlineReceiptAction extends BaseFormAction {
     }
 
     /**
-     * @param receiptNumber
-     *            the receiptNumber to set
+     * @param receiptNumber the receiptNumber to set
      */
     public void setReceiptNumber(final String receiptNumber) {
         this.receiptNumber = receiptNumber;
@@ -872,8 +852,7 @@ public class OnlineReceiptAction extends BaseFormAction {
     }
 
     /**
-     * @param consumerCode
-     *            the consumerCode to set
+     * @param consumerCode the consumerCode to set
      */
     public void setConsumerCode(final String consumerCode) {
         this.consumerCode = consumerCode;
@@ -887,8 +866,7 @@ public class OnlineReceiptAction extends BaseFormAction {
     }
 
     /**
-     * @param receiptResponse
-     *            the receiptResponse to set
+     * @param receiptResponse the receiptResponse to set
      */
     public void setReceiptResponse(final String receiptResponse) {
         this.receiptResponse = receiptResponse;
