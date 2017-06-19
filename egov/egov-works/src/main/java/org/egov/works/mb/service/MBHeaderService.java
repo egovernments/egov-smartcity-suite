@@ -64,6 +64,9 @@ import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.CityService;
+import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.egov.infra.filestore.repository.FileStoreMapperRepository;
+import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationConstant;
@@ -157,7 +160,10 @@ public class MBHeaderService {
 
     @Autowired
     private ScriptService scriptService;
-
+    
+    @Autowired
+    private FileStoreMapperRepository fileStoreMapperRepository;
+    
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
@@ -245,6 +251,13 @@ public class MBHeaderService {
         if (!documentDetails.isEmpty()) {
             savedMBHeader.setDocumentDetails(documentDetails);
             worksUtils.persistDocuments(documentDetails);
+        } else if (!mbHeader.getDocumentDetails().isEmpty()) {
+            for (DocumentDetails details : mbHeader.getDocumentDetails()) {
+                details.setFileStore(fileStoreMapperRepository.findOne(details.getFileStore().getId()));
+                details.setObjectId(mbHeader.getId());
+                details.setObjectType(WorksConstants.MBHEADER);
+            }
+            worksUtils.persistDocuments(mbHeader.getDocumentDetails());
         }
 
         return savedMBHeader;
@@ -593,7 +606,7 @@ public class MBHeaderService {
             wfmatrix = mbHeaderWorkflowService.getWfMatrix(mbHeader.getStateType(), null, mbHeader.getMbAmount(),
                     additionalRule, WorksConstants.NEW, null);
             if (mbHeader.getState() == null)
-                mbHeader.transition().progressWithStateCopy().start().withSenderName(user.getUsername() + "::" + user.getName())
+                mbHeader.transition().start().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withStateValue(WorksConstants.NEW)
                         .withDateInfo(currentDate.toDate()).withOwner(wfInitiator.getPosition())
                         .withNextAction(WorksConstants.ESTIMATE_ONSAVE_NEXTACTION_VALUE).withNatureOfTask(natureOfwork);
@@ -1034,5 +1047,10 @@ public class MBHeaderService {
         }
         if (errors != null)
             errors.reject("workFlowError", message);
+    }
+    
+    @Transactional
+    public List<FileStoreMapper> saveDocuments(MultipartFile[] files) throws IOException {
+        return worksUtils.saveDocuments(files);
     }
 }

@@ -70,6 +70,7 @@ import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.egov.infra.filestore.repository.FileStoreMapperRepository;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.workflow.entity.State;
@@ -125,6 +126,9 @@ public class WorksUtils {
 
     @Autowired
     private DepartmentService departmentService;
+    
+    @Autowired
+    private FileStoreMapperRepository fileStoreMapperRepository;
 
     public void persistDocuments(final List<DocumentDetails> documentDetailsList) {
         if (documentDetailsList != null && !documentDetailsList.isEmpty())
@@ -430,5 +434,19 @@ public class WorksUtils {
             prevDepartment = assignment.getDepartment();
         }
         return uniqueDepartmentList;
+    }
+    
+    public List<FileStoreMapper> saveDocuments(MultipartFile[] files) throws IOException {
+        final List<FileStoreMapper> fileStoreMappers = new ArrayList<>();
+        if (files != null && files.length > 0)
+            for (int i = 0; i < files.length; i++)
+                if (!files[i].isEmpty()) {
+                    final FileStoreMapper fileStoreMapper = fileStoreService.store(files[i].getInputStream(),
+                            files[i].getOriginalFilename(),
+                            files[i].getContentType(), WorksConstants.FILESTORE_MODULECODE);
+                    fileStoreMapperRepository.save(fileStoreMapper);
+                    fileStoreMappers.add(fileStoreMapper);
+                }
+        return fileStoreMappers;
     }
 }

@@ -3,7 +3,9 @@ package org.egov.works.web.controller.mb;
 import java.io.IOException;
 import java.io.Writer;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -11,7 +13,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.exception.ApplicationException;
+import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
+import org.egov.works.mb.entity.FileStoreMapperWrapper;
 import org.egov.works.mb.entity.MBHeader;
 import org.egov.works.mb.service.MBHeaderService;
 import org.egov.works.utils.WorksConstants;
@@ -21,11 +25,14 @@ import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.egov.works.workorder.service.WorkOrderEstimateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -158,6 +165,29 @@ public class CreateMBController {
         }
 
         return jsonObject.toString();
+    }
+    
+    @RequestMapping(value = "/create-rest", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody String createFromApp(@RequestBody final MBHeader mbHeader, final Model model,
+            final BindingResult errors, final HttpServletRequest request, final BindingResult resultBinder,
+            final HttpServletResponse response)
+            throws ApplicationException, IOException {
+
+        final String jsonResponse = create(mbHeader, model, errors, request, resultBinder, response, null);
+        if (!jsonResponse.contains("stateType:MBHeader")) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        }
+        return jsonResponse.replace("\"", "");
+    }
+    
+    @RequestMapping(value = "/create-rest-documents", method = RequestMethod.POST)
+    public @ResponseBody ResponseEntity<?> saveDocuments(final Model model, final HttpServletRequest request,
+            final HttpServletResponse response, @RequestParam("files") final MultipartFile[] files)
+            throws ApplicationException, IOException {
+        final FileStoreMapperWrapper wrapper = new FileStoreMapperWrapper();
+        List<FileStoreMapper> fileStoreMappers = mbHeaderService.saveDocuments(files);
+        wrapper.setFileStoreMappers(fileStoreMappers);
+        return new ResponseEntity<FileStoreMapperWrapper>(wrapper, HttpStatus.OK);
     }
 
     protected void sendAJAXResponse(final String msg, final HttpServletResponse response) {
