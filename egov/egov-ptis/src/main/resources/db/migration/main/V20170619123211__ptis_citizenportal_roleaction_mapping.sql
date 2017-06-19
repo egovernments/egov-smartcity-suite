@@ -7,8 +7,6 @@ insert into eg_roleaction (actionid,roleid) values ((select id from eg_action wh
 -------------Add/ALt----------------
 insert into eg_roleaction (actionid,roleid) values ((select id from eg_action where name ='AlterAssessment-Form'),(select id from eg_role where name='CITIZEN'));
 
-insert into eg_roleaction (actionid,roleid) values ((select id from eg_action where name ='Assessment-commonSearch'),(select id from eg_role where name='CITIZEN'));
-
 insert into eg_roleaction (actionid,roleid) values ((select id from eg_action where name ='Modify Property Form'),(select id from eg_role where name='CITIZEN'));
 
 insert into eg_roleaction (actionid,roleid) values ((select id from eg_action where name ='Forward Modify Property'),(select id from eg_role where name='CITIZEN'));
