@@ -46,11 +46,15 @@ import java.util.List;
 
 import org.egov.billsaccounting.services.CreateVoucher;
 import org.egov.commons.CVoucherHeader;
+import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.StringUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
+import org.egov.infra.workflow.entity.State;
 import org.egov.model.voucher.WorkflowBean;
+import org.egov.pims.commons.Position;
 import org.egov.utils.FinancialConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -72,6 +76,11 @@ public class PreApprovedActionHelper {
     @Qualifier("createVoucher")
     private CreateVoucher createVoucher;
 
+    @Autowired
+    PositionMasterService positionMasterService;
+
+    @Autowired
+    SecurityUtils securityUtils;
     @Transactional
     public CVoucherHeader createVoucherFromBill(CVoucherHeader voucherHeader, WorkflowBean workflowBean, Long billId,
             String voucherNumber, Date voucherDate) throws ApplicationRuntimeException, SQLException, TaskFailedException {
@@ -88,7 +97,7 @@ public class PreApprovedActionHelper {
 
         } catch (final Exception e) {
 
-            final List<ValidationError> errors = new ArrayList<ValidationError>();
+            final List<ValidationError> errors = new ArrayList<>();
             errors.add(new ValidationError("exp", e.getMessage()));
             throw new ValidationException(errors);
         }
@@ -98,7 +107,11 @@ public class PreApprovedActionHelper {
     @Transactional
     public CVoucherHeader sendForApproval(CVoucherHeader voucherHeader, WorkflowBean workflowBean)
     {
+        if (!validateOwner(voucherHeader.getState())) {
+            throw new ValidationException("exp","Application does not belongs to this inbox");
+        }
         try {
+
             if (FinancialConstants.CREATEANDAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction())
                     && voucherHeader.getState() == null)
             {
@@ -113,16 +126,23 @@ public class PreApprovedActionHelper {
 
         } catch (final ValidationException e) {
 
-            final List<ValidationError> errors = new ArrayList<ValidationError>();
+            final List<ValidationError> errors = new ArrayList<>();
             errors.add(new ValidationError("exp", e.getErrors().get(0).getMessage()));
             throw new ValidationException(errors);
         } catch (final Exception e) {
 
-            final List<ValidationError> errors = new ArrayList<ValidationError>();
+            final List<ValidationError> errors = new ArrayList<>();
             errors.add(new ValidationError("exp", e.getMessage()));
             throw new ValidationException(errors);
         }
         return voucherHeader;
     }
+
+    private Boolean validateOwner(State state) {
+        List<Position> positionsForUser = positionMasterService.getPositionsForEmployee(securityUtils.getCurrentUser().getId());
+        return positionsForUser.contains(state.getOwnerPosition());
+
+    }
+
 
 }

@@ -71,6 +71,9 @@ public class FinancialsDetailResponse {
     private String majorCode = StringUtils.EMPTY;
     private String minorCode = StringUtils.EMPTY;
     private String detailedCode = StringUtils.EMPTY;
+    private String majorCodeDescription = StringUtils.EMPTY;
+    private String minorCodeDescription = StringUtils.EMPTY;
+    private String detailedCodeDescription = StringUtils.EMPTY;
     private BigDecimal cyIncomeDebitAmount = BigDecimal.ZERO;
     private BigDecimal lyIncomeDebitAmount = BigDecimal.ZERO;
     private BigDecimal cyIncomeCreditAmount = BigDecimal.ZERO;
@@ -503,5 +506,29 @@ public class FinancialsDetailResponse {
 
     public void setUlbCode(String ulbCode) {
         this.ulbCode = ulbCode;
+    }
+
+    public String getMajorCodeDescription() {
+        return majorCodeDescription;
+    }
+
+    public void setMajorCodeDescription(String majorCodeDescription) {
+        this.majorCodeDescription = majorCodeDescription;
+    }
+
+    public String getMinorCodeDescription() {
+        return minorCodeDescription;
+    }
+
+    public void setMinorCodeDescription(String minorCodeDescription) {
+        this.minorCodeDescription = minorCodeDescription;
+    }
+
+    public String getDetailedCodeDescription() {
+        return detailedCodeDescription;
+    }
+
+    public void setDetailedCodeDescription(String detailedCodeDescription) {
+        this.detailedCodeDescription = detailedCodeDescription;
     }
 }

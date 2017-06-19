@@ -47,9 +47,6 @@
 
 package org.egov.egf.web.controller.es.dashboard;
 
-import java.io.IOException;
-import java.util.List;
-
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.service.CFinancialYearService;
 import org.egov.egf.bean.dashboard.FinancialsBudgetDetailResponse;
@@ -68,8 +65,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
+import java.util.List;
+
 @RestController
-@RequestMapping(value = { "/public/findashboard", "/findashboard" })
+@RequestMapping(value = {"/public/findashboard", "/findashboard"})
 public class FinancialsDashboardController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FinancialsDashboardController.class);
@@ -107,12 +107,12 @@ public class FinancialsDashboardController {
         CFinancialYear financialYear;
         if (financialsDetailsRequest.getToDate() != null) {
             financialYear = cFinancialYearService
-                    .getFinancialYearByDate(DateUtils.toDateUsingDefaultPattern(financialsDetailsRequest.getToDate()));
+                    .getFinancialYearByDate(DateUtils.getDate(financialsDetailsRequest.getToDate(), "yyyy-MM-dd"));
             financialsDetailsRequest
                     .setFromDate(FinancialConstants.DATEFORMATTER_YYYY_MM_DD.format(financialYear.getStartingDate()));
             financialsDetailsRequest.setCurrentFinancialYear(financialYear.getFinYearRange());
             financialsDetailsRequest.setLastFinancialYear(cFinancialYearService
-                    .getPreviousFinancialYearForDate(DateUtils.toDateUsingDefaultPattern(financialsDetailsRequest.getToDate()))
+                    .getPreviousFinancialYearForDate(DateUtils.getDate(financialsDetailsRequest.getToDate(), "yyyy-MM-dd"))
                     .getFinYearRange());
         } else {
             financialYear = cFinancialYearService.getFinancialYearByDate(DateUtils.now());

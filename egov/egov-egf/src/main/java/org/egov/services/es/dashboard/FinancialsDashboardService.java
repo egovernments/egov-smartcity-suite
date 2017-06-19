@@ -47,16 +47,12 @@
 
 package org.egov.services.es.dashboard;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import org.egov.commons.service.ChartOfAccountsService;
 import org.egov.egf.bean.dashboard.FinancialsBudgetDetailResponse;
 import org.egov.egf.bean.dashboard.FinancialsDetailResponse;
 import org.egov.egf.bean.dashboard.FinancialsDetailsRequest;
 import org.egov.egf.es.utils.FinancialsDashBoardUtils;
+import org.egov.infra.utils.DateUtils;
 import org.egov.infra.utils.StringUtils;
 import org.egov.utils.FinancialConstants;
 import org.elasticsearch.action.search.SearchResponse;
@@ -71,6 +67,12 @@ import org.elasticsearch.search.aggregations.metrics.tophits.TopHits;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class FinancialsDashboardService {
@@ -91,10 +93,17 @@ public class FinancialsDashboardService {
     private static final String FINANCIALYEAR = "financialyear";
     private static final String MAJOR_CODE = "majorcode";
     private static final String MINOR_CODE = "minorcode";
+    private static final String OPENINGBALANCE = "openingbalance";
+    private static final String AGGRTYPE = "_type";
+    private static final String CY_RECOREDS = "finRecordsCy";
+    private static final String LY_RECORDS = "finRecordsLy";
 
 
     @Autowired
     private ElasticsearchTemplate elasticsearchTemplate;
+
+    @Autowired
+    private ChartOfAccountsService chartOfAccountsService;
 
     public List<FinancialsDetailResponse> getFinancialsData(final FinancialsDetailsRequest financialsDetailsRequest,
                                                             final BoolQueryBuilder boolQuery, final String aggrField) {
@@ -160,47 +169,89 @@ public class FinancialsDashboardService {
                                                                  final String aggrField) {
         Map<String, SearchResponse> response = new HashMap<>();
         BoolQueryBuilder boolQry = boolQuery;
-        if (!aggrField.equalsIgnoreCase(DETAILED_CODE) && !aggrField.equalsIgnoreCase(MAJOR_CODE) && !aggrField.equalsIgnoreCase(MINOR_CODE))
-            if (StringUtils.isBlank(financialsDetailsRequest.getDetailedCode()) && StringUtils.isBlank(financialsDetailsRequest.getMajorCode())
-                    && StringUtils.isBlank(financialsDetailsRequest.getMinorCode()))
-                boolQry = prepareQuery(financialsDetailsRequest, coaType);
+        SearchResponse currentYearResponse;
+        SearchResponse lastYearResponse;
+        String fromDate;
+        String toDate;
+        if (!aggrField.equalsIgnoreCase(DETAILED_CODE) && !aggrField.equalsIgnoreCase(MAJOR_CODE) && !aggrField.equalsIgnoreCase(MINOR_CODE)
+                && StringUtils.isBlank(financialsDetailsRequest.getDetailedCode()) && StringUtils.isBlank(financialsDetailsRequest.getMajorCode())
+                && StringUtils.isBlank(financialsDetailsRequest.getMinorCode()))
+            boolQry = prepareQuery(financialsDetailsRequest, coaType);
         boolQry.filter(QueryBuilders.matchQuery("voucherstatusid", FinancialConstants.CREATEDVOUCHERSTATUS));
-        SearchResponse currentYearResponse = elasticsearchTemplate.getClient().prepareSearch(FinancialConstants.FINANCIAL_VOUCHER_INDEX_NAME).setQuery(boolQry)
-                .addAggregation(AggregationBuilders.terms(AGGRFIELD).field(aggrField)
-                        .subAggregation(AggregationBuilders.sum(DEBITAMOUNT).field(DEBITAMOUNT))
-                        .subAggregation(AggregationBuilders.sum(CREDITAMOUNT).field(CREDITAMOUNT))
-                        .subAggregation(AggregationBuilders.topHits("finRecordsCy").addField("distname").addField("ulbname")
-                                .addField("ulbgrade").addField("regname").setSize(1)))
-                .execute().actionGet();
+        if (StringUtils.isNotBlank(aggrField)) {
+            currentYearResponse = elasticsearchTemplate.getClient().prepareSearch(FinancialConstants.FINANCIAL_VOUCHER_INDEX_NAME).setQuery(boolQry)
+                    .addAggregation(AggregationBuilders.terms(AGGRFIELD).field(aggrField)
+                            .subAggregation(AggregationBuilders.sum(DEBITAMOUNT).field(DEBITAMOUNT))
+                            .subAggregation(AggregationBuilders.sum(CREDITAMOUNT).field(CREDITAMOUNT))
+                            .subAggregation(AggregationBuilders.topHits(CY_RECOREDS).addField(FinancialConstants.DISTNAME)
+                                    .addField(FinancialConstants.ULBNAME)
+                                    .addField(FinancialConstants.ULBGRADE).addField(FinancialConstants.REGNAME).setSize(1)))
+                    .execute().actionGet();
+        } else {
+            currentYearResponse = elasticsearchTemplate.getClient().prepareSearch(FinancialConstants.FINANCIAL_VOUCHER_INDEX_NAME).setQuery(boolQry)
+                    .addAggregation(AggregationBuilders.terms(AGGRFIELD).field(AGGRTYPE)
+                            .subAggregation(AggregationBuilders.sum(DEBITAMOUNT).field(DEBITAMOUNT))
+                            .subAggregation(AggregationBuilders.sum(CREDITAMOUNT).field(CREDITAMOUNT))
+                            .subAggregation(AggregationBuilders.topHits(CY_RECOREDS).addField(FinancialConstants.DISTNAME)
+                                    .addField(FinancialConstants.ULBNAME)
+                                    .addField(FinancialConstants.ULBGRADE).addField(FinancialConstants.REGNAME).setSize(1)))
+                    .execute().actionGet();
+        }
         response.put(CURRENT_YEAR, currentYearResponse);
 
-        financialsDetailsRequest.setFromDate("");
-        financialsDetailsRequest.setToDate("");
-        if (!aggrField.equalsIgnoreCase(DETAILED_CODE) && !aggrField.equalsIgnoreCase(MAJOR_CODE) && !aggrField.equalsIgnoreCase(MINOR_CODE))
+        fromDate = financialsDetailsRequest.getFromDate();
+        toDate = financialsDetailsRequest.getToDate();
+        financialsDetailsRequest.setFromDate(FinancialConstants.DATEFORMATTER_YYYY_MM_DD.format(
+                DateUtils.addYears(DateUtils.getDate(financialsDetailsRequest.getFromDate(), "yyyy-MM-dd"), -1)));
+        financialsDetailsRequest.setToDate(FinancialConstants.DATEFORMATTER_YYYY_MM_DD.format(
+                DateUtils.addYears(DateUtils.getDate(financialsDetailsRequest.getToDate(), "yyyy-MM-dd"), -1)));
+
+        if (!aggrField.equalsIgnoreCase(DETAILED_CODE) && !aggrField.equalsIgnoreCase(MAJOR_CODE) && !aggrField.equalsIgnoreCase(MINOR_CODE)) {
             if (StringUtils.isBlank(financialsDetailsRequest.getDetailedCode()) && StringUtils.isBlank(financialsDetailsRequest.getMajorCode())
                     && StringUtils.isBlank(financialsDetailsRequest.getMinorCode())) {
                 boolQry = prepareQuery(financialsDetailsRequest, coaType);
             }
-        boolQry = FinancialsDashBoardUtils.prepareWhereClause(financialsDetailsRequest).filter(QueryBuilders.matchQuery(FINANCIALYEAR, financialsDetailsRequest.getLastFinancialYear()));
+        } else
+            boolQry = FinancialsDashBoardUtils.prepareWhereClause(financialsDetailsRequest);
         boolQry.filter(QueryBuilders.matchQuery("voucherstatusid", FinancialConstants.CREATEDVOUCHERSTATUS));
-        SearchResponse lastYearResponse = elasticsearchTemplate.getClient().prepareSearch(FinancialConstants.FINANCIAL_VOUCHER_INDEX_NAME).setQuery(boolQry)
-                .addAggregation(AggregationBuilders.terms(AGGRFIELD).field(aggrField).subAggregation(AggregationBuilders.sum(DEBITAMOUNT).field(DEBITAMOUNT))
-                        .subAggregation(AggregationBuilders.sum(CREDITAMOUNT).field(CREDITAMOUNT))
-                        .subAggregation(AggregationBuilders.topHits("finRecordsLy").addField("distname").addField("ulbname")
-                                .addField("ulbgrade").addField("regname").setSize(1)))
-                .execute().actionGet();
+        if (StringUtils.isNotBlank(aggrField)) {
+            lastYearResponse = elasticsearchTemplate.getClient().prepareSearch(FinancialConstants.FINANCIAL_VOUCHER_INDEX_NAME).setQuery(boolQry)
+                    .addAggregation(AggregationBuilders.terms(AGGRFIELD).field(aggrField).subAggregation(AggregationBuilders.sum(DEBITAMOUNT).field(DEBITAMOUNT))
+                            .subAggregation(AggregationBuilders.sum(CREDITAMOUNT).field(CREDITAMOUNT))
+                            .subAggregation(AggregationBuilders.topHits(LY_RECORDS).addField(FinancialConstants.DISTNAME)
+                                    .addField(FinancialConstants.ULBNAME)
+                                    .addField(FinancialConstants.ULBGRADE).addField(FinancialConstants.REGNAME).setSize(1)))
+                    .execute().actionGet();
+        } else {
+            lastYearResponse = elasticsearchTemplate.getClient().prepareSearch(FinancialConstants.FINANCIAL_VOUCHER_INDEX_NAME).setQuery(boolQry)
+                    .addAggregation(AggregationBuilders.terms(AGGRFIELD).field(AGGRTYPE).subAggregation(AggregationBuilders.sum(DEBITAMOUNT).field(DEBITAMOUNT))
+                            .subAggregation(AggregationBuilders.sum(CREDITAMOUNT).field(CREDITAMOUNT))
+                            .subAggregation(AggregationBuilders.topHits(LY_RECORDS).addField(FinancialConstants.DISTNAME)
+                                    .addField(FinancialConstants.ULBNAME)
+                                    .addField(FinancialConstants.ULBGRADE).addField(FinancialConstants.REGNAME).setSize(1)))
+                    .execute().actionGet();
+        }
         response.put(LAST_YEAR, lastYearResponse);
+        financialsDetailsRequest.setFromDate(fromDate);
+        financialsDetailsRequest.setToDate(toDate);
 
         return response;
     }
 
     private SearchResponse getOpeningBlncSearchResponse(final BoolQueryBuilder boolQuery,
                                                         final String aggrField) {
-        return elasticsearchTemplate.getClient().prepareSearch(FinancialConstants.FINANCIAL_OPENINGBALANCE_INDEX_NAME).setQuery(boolQuery)
-                .addAggregation(AggregationBuilders.terms(OBAGGRFIELD).field(aggrField)
-                        .subAggregation(AggregationBuilders.sum(OBDEBITAMOUNT).field(OBDEBITAMOUNT))
-                        .subAggregation(AggregationBuilders.sum(OBCREDITAMOUNT).field(OBCREDITAMOUNT)))
-                .execute().actionGet();
+        if (StringUtils.isNotBlank(aggrField))
+            return elasticsearchTemplate.getClient().prepareSearch(FinancialConstants.FINANCIAL_OPENINGBALANCE_INDEX_NAME).setQuery(boolQuery)
+                    .addAggregation(AggregationBuilders.terms(OBAGGRFIELD).field(aggrField)
+                            .subAggregation(AggregationBuilders.sum(OBDEBITAMOUNT).field(OBDEBITAMOUNT))
+                            .subAggregation(AggregationBuilders.sum(OBCREDITAMOUNT).field(OBCREDITAMOUNT)))
+                    .execute().actionGet();
+        else
+            return elasticsearchTemplate.getClient().prepareSearch(FinancialConstants.FINANCIAL_OPENINGBALANCE_INDEX_NAME).setQuery(boolQuery)
+                    .addAggregation(AggregationBuilders.terms(OBAGGRFIELD).field(AGGRTYPE)
+                            .subAggregation(AggregationBuilders.sum(OBDEBITAMOUNT).field(OBDEBITAMOUNT))
+                            .subAggregation(AggregationBuilders.sum(OBCREDITAMOUNT).field(OBCREDITAMOUNT)))
+                    .execute().actionGet();
     }
 
     private BoolQueryBuilder prepareQuery(FinancialsDetailsRequest financialsDetailsRequest, String coaType) {
@@ -251,7 +302,7 @@ public class FinancialsDashboardService {
                 for (final Terms.Bucket entry : aggr.getBuckets()) {
                     final Sum aggrDebit = entry.getAggregations().get(DEBITAMOUNT);
                     final Sum aggrCredit = entry.getAggregations().get(CREDITAMOUNT);
-                    final TopHits topHits = entry.getAggregations().get("finRecordsCy");
+                    final TopHits topHits = entry.getAggregations().get(CY_RECOREDS);
 
                     if (!finMap.isEmpty()) {
                         FinancialsDetailResponse financialsDetails = finMap.get(entry.getKeyAsString());
@@ -310,7 +361,7 @@ public class FinancialsDashboardService {
                     final Sum aggrDebit = entry.getAggregations().get(DEBITAMOUNT);
                     final Sum aggrCredit = entry.getAggregations().get(CREDITAMOUNT);
                     String keyName = entry.getKeyAsString();
-                    final TopHits topHits = entry.getAggregations().get("finRecordsLy");
+                    final TopHits topHits = entry.getAggregations().get(LY_RECORDS);
 
                     if (aggrField.equalsIgnoreCase(DETAILED_CODE) || aggrField.equalsIgnoreCase(MAJOR_CODE) || aggrField.equalsIgnoreCase(MINOR_CODE))
                         coaType = verifyCoaType(keyName);
@@ -427,7 +478,7 @@ public class FinancialsDashboardService {
                 for (final Terms.Bucket entry : aggr.getBuckets()) {
                     final Sum aggrDebit = entry.getAggregations().get(DEBITAMOUNT);
                     final Sum aggrCredit = entry.getAggregations().get(CREDITAMOUNT);
-                    final TopHits topHits = entry.getAggregations().get("finRecordsCy");
+                    final TopHits topHits = entry.getAggregations().get(CY_RECOREDS);
                     if (!response.isEmpty()) {
                         FinancialsDetailResponse finDetail = response.get(entry.getKeyAsString());
                         if (aggrField.equalsIgnoreCase(DETAILED_CODE) || aggrField.equalsIgnoreCase(MAJOR_CODE) || aggrField.equalsIgnoreCase(MINOR_CODE))
@@ -468,44 +519,47 @@ public class FinancialsDashboardService {
                     openingBalanceAsset = getOpeningBalance(financialsDetailsRequest, FinancialsDashBoardUtils.prepareOpeningBlncWhereClause(financialsDetailsRequest)
                             .filter(QueryBuilders.prefixQuery(DETAILED_CODE, "4")), ASSETS, LAST_YEAR);
                 }
-                for (final Terms.Bucket entry : aggr.getBuckets()) {
-                    final Sum aggrDebit = entry.getAggregations().get(DEBITAMOUNT);
-                    final Sum aggrCredit = entry.getAggregations().get(CREDITAMOUNT);
-                    final TopHits topHits = entry.getAggregations().get("finRecordsLy");
+                if (!aggr.getBuckets().isEmpty()) {
+                    for (final Terms.Bucket entry : aggr.getBuckets()) {
+                        final Sum aggrDebit = entry.getAggregations().get(DEBITAMOUNT);
+                        final Sum aggrCredit = entry.getAggregations().get(CREDITAMOUNT);
+                        final TopHits topHits = entry.getAggregations().get(LY_RECORDS);
 
 
-                    if (!result.isEmpty()) {
-                        FinancialsDetailResponse finDetail = result.get(entry.getKeyAsString());
-                        if (finDetail == null) {
-                            finDetail = new FinancialsDetailResponse();
+                        if (!result.isEmpty()) {
+                            FinancialsDetailResponse finDetail = result.get(entry.getKeyAsString());
+                            if (finDetail == null) {
+                                finDetail = new FinancialsDetailResponse();
+                            }
+                            if (aggrField.equalsIgnoreCase(DETAILED_CODE) || aggrField.equalsIgnoreCase(MAJOR_CODE) || aggrField.equalsIgnoreCase(MINOR_CODE))
+                                coaType = verifyCoaType(entry.getKeyAsString());
+                            if (EXPENSE.equalsIgnoreCase(coaType)) {
+                                finDetail.setLyExpenseDebitAmount(
+                                        BigDecimal.valueOf(aggrDebit.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+                                finDetail.setLyExpenseCreditAmount(
+                                        BigDecimal.valueOf(aggrCredit.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+                                finDetail.setLyExpenseNetAmount(finDetail.getLyExpenseDebitAmount().subtract(finDetail.getLyExpenseCreditAmount()));
+                                finDetail.setLyIeNetAmount(finDetail.getLyIncomeNetAmount().subtract(finDetail.getLyExpenseNetAmount()));
+
+
+                            } else if (LIABILITIES.equalsIgnoreCase(coaType)) {
+                                calculateNetLiabilityForLastYear(entry.getKeyAsString(), openingBalanceLiability, aggrDebit, aggrCredit, finDetail);
+
+                            } else if (ASSETS.equalsIgnoreCase(coaType)) {
+                                calculateNetAssetForLastYear(entry.getKeyAsString(), openingBalanceAsset, aggrDebit, aggrCredit, finDetail);
+                            }
+                            FinancialsDashBoardUtils.setValues(entry.getKeyAsString(), finDetail, aggrField, setResponseDetails(topHits));
+                            if (response.containsKey(entry.getKeyAsString())) {
+                                response.remove(entry.getKeyAsString());
+                                response.put(entry.getKeyAsString(), finDetail);
+                            } else
+                                response.put(entry.getKeyAsString(), finDetail);
+
                         }
-                        if (aggrField.equalsIgnoreCase(DETAILED_CODE) || aggrField.equalsIgnoreCase(MAJOR_CODE) || aggrField.equalsIgnoreCase(MINOR_CODE))
-                            coaType = verifyCoaType(entry.getKeyAsString());
-                        if (EXPENSE.equalsIgnoreCase(coaType)) {
-                            finDetail.setLyExpenseDebitAmount(
-                                    BigDecimal.valueOf(aggrDebit.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
-                            finDetail.setLyExpenseCreditAmount(
-                                    BigDecimal.valueOf(aggrCredit.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
-                            finDetail.setLyExpenseNetAmount(finDetail.getLyExpenseDebitAmount().subtract(finDetail.getLyExpenseCreditAmount()));
-                            finDetail.setLyIeNetAmount(finDetail.getLyIncomeNetAmount().subtract(finDetail.getLyExpenseNetAmount()));
-
-
-                        } else if (LIABILITIES.equalsIgnoreCase(coaType)) {
-                            calculateNetLiabilityForLastYear(entry.getKeyAsString(), openingBalanceLiability, aggrDebit, aggrCredit, finDetail);
-
-                        } else if (ASSETS.equalsIgnoreCase(coaType)) {
-                            calculateNetAssetForLastYear(entry.getKeyAsString(), openingBalanceAsset, aggrDebit, aggrCredit, finDetail);
-                        }
-                        FinancialsDashBoardUtils.setValues(entry.getKeyAsString(), finDetail, aggrField, setResponseDetails(topHits));
-                        if (response.containsKey(entry.getKeyAsString())) {
-                            response.remove(entry.getKeyAsString());
-                            response.put(entry.getKeyAsString(), finDetail);
-                        } else
-                            response.put(entry.getKeyAsString(), finDetail);
 
                     }
-
-                }
+                } else
+                    response = result;
             }
         }
         return response;
@@ -528,7 +582,10 @@ public class FinancialsDashboardService {
 
     private void calculateNetAssetForCurrentYear(String keyName, Map<String, FinancialsDetailResponse> openingBalanceAsset, Sum aggrDebit, Sum aggrCredit, FinancialsDetailResponse finDetail) {
 
-        FinancialsDetailResponse finDetails = openingBalanceAsset.get(keyName);
+        FinancialsDetailResponse finDetails;
+        if (openingBalanceAsset.keySet().contains(OPENINGBALANCE)) {
+            finDetails = openingBalanceAsset.get(OPENINGBALANCE);
+        } else finDetails = openingBalanceAsset.get(keyName);
         if (finDetail == null)
             finDetail = new FinancialsDetailResponse();
         if (finDetails != null) {
@@ -554,7 +611,10 @@ public class FinancialsDashboardService {
     }
 
     private void calculateNetLiabilityForCurrentYear(String keyName, Map<String, FinancialsDetailResponse> openingBalanceLiability, Sum aggrDebit, Sum aggrCredit, FinancialsDetailResponse finDetail) {
-        FinancialsDetailResponse finDetails = openingBalanceLiability.get(keyName);
+        FinancialsDetailResponse finDetails;
+        if (openingBalanceLiability.keySet().contains(OPENINGBALANCE)) {
+            finDetails = openingBalanceLiability.get(OPENINGBALANCE);
+        } else finDetails = openingBalanceLiability.get(keyName);
         if (finDetail == null)
             finDetail = new FinancialsDetailResponse();
         if (finDetails != null) {
@@ -583,7 +643,11 @@ public class FinancialsDashboardService {
 
     private void calculateNetAssetForLastYear(String keyName, Map<String, FinancialsDetailResponse> openingBalanceAsset, Sum aggrDebit, Sum aggrCredit, FinancialsDetailResponse finDetail) {
 
-        FinancialsDetailResponse finDetails = openingBalanceAsset.get(keyName);
+        FinancialsDetailResponse finDetails;
+        if (openingBalanceAsset.keySet().contains(OPENINGBALANCE)) {
+            finDetails = openingBalanceAsset.get(OPENINGBALANCE);
+        } else finDetails = openingBalanceAsset.get(keyName);
+
         if (finDetail == null)
             finDetail = new FinancialsDetailResponse();
         if (finDetails != null) {
@@ -609,7 +673,10 @@ public class FinancialsDashboardService {
     }
 
     private void calculateNetLiabilityForLastYear(String keyName, Map<String, FinancialsDetailResponse> openingBalanceLiability, Sum aggrDebit, Sum aggrCredit, FinancialsDetailResponse finDetail) {
-        FinancialsDetailResponse finDetails = openingBalanceLiability.get(keyName);
+        FinancialsDetailResponse finDetails;
+        if (openingBalanceLiability.keySet().contains(OPENINGBALANCE)) {
+            finDetails = openingBalanceLiability.get(OPENINGBALANCE);
+        } else finDetails = openingBalanceLiability.get(keyName);
         if (finDetail == null)
             finDetail = new FinancialsDetailResponse();
         if (finDetails != null) {
@@ -641,6 +708,15 @@ public class FinancialsDashboardService {
         if (StringUtils.isNotBlank(financialsDetailsRequest.getRegion()))
             financialsDetail.setRegion(financialsDetailsRequest.getRegion());
 
+        if (StringUtils.isNotBlank(financialsDetailsRequest.getDistrict()))
+            financialsDetail.setDistrict(financialsDetailsRequest.getDistrict());
+
+        if (StringUtils.isNotBlank(financialsDetailsRequest.getUlbCode()))
+            financialsDetail.setUlbCode(financialsDetailsRequest.getUlbCode());
+
+        if (StringUtils.isNotBlank(financialsDetailsRequest.getUlbName()))
+            financialsDetail.setUlbName(financialsDetailsRequest.getUlbName());
+
         if (StringUtils.isNotBlank(financialsDetailsRequest.getGrade()))
             financialsDetail.setGrade(financialsDetailsRequest.getGrade());
 
@@ -662,8 +738,11 @@ public class FinancialsDashboardService {
         if (StringUtils.isNotBlank(financialsDetailsRequest.getDepartmentCode()))
             financialsDetail.setDepartmentCode(financialsDetailsRequest.getDepartmentCode());
 
-        if (StringUtils.isNotBlank(financialsDetailsRequest.getDetailedCode()))
+        if (StringUtils.isNotBlank(financialsDetailsRequest.getDetailedCode())) {
             financialsDetail.setDetailedCode(financialsDetailsRequest.getDetailedCode());
+            financialsDetail.setDetailedCodeDescription(chartOfAccountsService.getByGlCode(financialsDetailsRequest.getDetailedCode())
+                    .getName());
+        }
 
         if (StringUtils.isNotBlank(financialsDetailsRequest.getSchemeCode()))
             financialsDetail.setSchemeCode(financialsDetailsRequest.getSchemeCode());
@@ -671,11 +750,17 @@ public class FinancialsDashboardService {
         if (StringUtils.isNotBlank(financialsDetailsRequest.getSubschemeCode()))
             financialsDetail.setSubschemeCode(financialsDetailsRequest.getSubschemeCode());
 
-        if (StringUtils.isNotBlank(financialsDetailsRequest.getMajorCode()))
+        if (StringUtils.isNotBlank(financialsDetailsRequest.getMajorCode())) {
             financialsDetail.setMajorCode(financialsDetailsRequest.getMajorCode());
+            financialsDetail.setMajorCodeDescription(chartOfAccountsService.getByGlCode(financialsDetailsRequest.getMajorCode())
+                    .getName());
+        }
 
-        if (StringUtils.isNotBlank(financialsDetailsRequest.getMinorCode()))
+        if (StringUtils.isNotBlank(financialsDetailsRequest.getMinorCode())) {
             financialsDetail.setMinorCode(financialsDetailsRequest.getMinorCode());
+            financialsDetail.setMinorCodeDescription(chartOfAccountsService.getByGlCode(financialsDetailsRequest.getMinorCode())
+                    .getName());
+        }
 
     }
 

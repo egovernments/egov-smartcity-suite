@@ -79,7 +79,7 @@ public class FinancialsDashBoardUtils {
     private static final String DEPARTMENT = "department";
 
     public static String getAggregationGroupingField(final FinancialsDetailsRequest financialsDetailsRequest) {
-        String aggregationField = DISTRICT;
+        String aggregationField = "";
 
         if (StringUtils.isNotBlank(financialsDetailsRequest.getAggregationLevel())) {
             aggregationField = setAggregateLevel(financialsDetailsRequest);
@@ -188,7 +188,7 @@ public class FinancialsDashBoardUtils {
     }
 
     public static String getOpeningBlncAggrGroupingField(final FinancialsDetailsRequest financialsDetailsRequest) {
-        String aggregationField = DISTRICT;
+        String aggregationField = "";
         if (StringUtils.isNotBlank(financialsDetailsRequest.getAggregationLevel())) {
             aggregationField = setAggregateLevel(financialsDetailsRequest);
             if (FUND.equalsIgnoreCase(financialsDetailsRequest.getAggregationLevel()))
@@ -205,7 +205,7 @@ public class FinancialsDashBoardUtils {
     }
 
     private static String setAggregateLevel(FinancialsDetailsRequest financialsDetailsRequest) {
-        String aggregationField = DISTRICT;
+        String aggregationField = "";
         if ("district".equalsIgnoreCase(financialsDetailsRequest.getAggregationLevel()))
             aggregationField = DISTRICT;
         if ("region".equalsIgnoreCase(financialsDetailsRequest.getAggregationLevel()))
@@ -269,7 +269,7 @@ public class FinancialsDashBoardUtils {
         if (SUBSCHEME_CODE.equalsIgnoreCase(aggrField))
             financialsDetail.setSubschemeCode(keyName);
     }
-    
+
     public static BoolQueryBuilder prepareWhereClauseForBudget(final FinancialsDetailsRequest financialsDetailsRequest) {
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
         boolQuery = prepareWhereCluase(financialsDetailsRequest, boolQuery);
@@ -297,7 +297,7 @@ public class FinancialsDashBoardUtils {
     }
 
     private static void prepairWhereClauseForScheme(final FinancialsDetailsRequest financialsDetailsRequest,
-            BoolQueryBuilder boolQuery) {
+                                                    BoolQueryBuilder boolQuery) {
         if (StringUtils.isNotBlank(financialsDetailsRequest.getSchemeCode()))
             boolQuery
                     .filter(QueryBuilders.matchQuery(FinancialConstants.SCHEME_NAME, financialsDetailsRequest.getSchemeCode()));
@@ -308,7 +308,7 @@ public class FinancialsDashBoardUtils {
     }
 
     public static void setValuesForBudget(final String keyName, FinancialsBudgetDetailResponse financialsBudgetDetailResponse,
-            final String aggrField, final FinancialsBudgetDetailResponse finResponse) {
+                                          final String aggrField, final FinancialsBudgetDetailResponse finResponse) {
 
         setCommonDataToResponse(keyName, financialsBudgetDetailResponse, aggrField, finResponse);
         setFinancialsDataToResponse(keyName, financialsBudgetDetailResponse, aggrField);
@@ -324,7 +324,7 @@ public class FinancialsDashBoardUtils {
     }
 
     private static void setFinancialsDataToResponse(final String keyName,
-            FinancialsBudgetDetailResponse financialsBudgetDetailResponse, final String aggrField) {
+                                                    FinancialsBudgetDetailResponse financialsBudgetDetailResponse, final String aggrField) {
         if (FUND_NAME.equalsIgnoreCase(aggrField))
             financialsBudgetDetailResponse.setFundCode(keyName);
         if (FUNCTION_CODE.equalsIgnoreCase(aggrField))
@@ -336,7 +336,7 @@ public class FinancialsDashBoardUtils {
     }
 
     private static void setChartOfAccountToResponse(final String keyName,
-            FinancialsBudgetDetailResponse financialsBudgetDetailResponse, final String aggrField) {
+                                                    FinancialsBudgetDetailResponse financialsBudgetDetailResponse, final String aggrField) {
         if (MAJOR_CODE.equalsIgnoreCase(aggrField))
             financialsBudgetDetailResponse.setMajorCode(keyName);
         if (MINOR_CODE.equalsIgnoreCase(aggrField))
@@ -346,8 +346,8 @@ public class FinancialsDashBoardUtils {
     }
 
     private static void setCommonDataToResponse(final String keyName,
-            FinancialsBudgetDetailResponse financialsBudgetDetailResponse, final String aggrField,
-            final FinancialsBudgetDetailResponse finResponse) {
+                                                FinancialsBudgetDetailResponse financialsBudgetDetailResponse, final String aggrField,
+                                                final FinancialsBudgetDetailResponse finResponse) {
         if (DISTRICT.equalsIgnoreCase(aggrField)) {
             financialsBudgetDetailResponse.setDistrict(keyName);
             financialsBudgetDetailResponse.setRegion(finResponse.getRegion());
@@ -368,7 +368,7 @@ public class FinancialsDashBoardUtils {
     }
 
     public static String getAggregationGroupingFieldForBudget(final FinancialsDetailsRequest financialsDetailsRequest) {
-        String aggregationField = DISTRICT;
+        String aggregationField = "";
         if (StringUtils.isNotBlank(financialsDetailsRequest.getAggregationLevel())) {
             aggregationField = setAggregateLevel(financialsDetailsRequest);
             if (FinancialConstants.DEPARTMENT_NAME.equalsIgnoreCase(financialsDetailsRequest.getAggregationLevel()))
@@ -380,7 +380,7 @@ public class FinancialsDashBoardUtils {
     }
 
     private static String aggregateFinancialFields(final FinancialsDetailsRequest financialsDetailsRequest,
-            String aggregationField) {
+                                                   String aggregationField) {
         if (FinancialConstants.FUND_NAME.equalsIgnoreCase(financialsDetailsRequest.getAggregationLevel()))
             aggregationField = FUND_NAME;
         if (FinancialConstants.FUNCTION_NAME.equalsIgnoreCase(financialsDetailsRequest.getAggregationLevel()))
@@ -391,5 +391,5 @@ public class FinancialsDashBoardUtils {
             aggregationField = SUBSCHEME_CODE;
         return aggregationField;
     }
-    
+
 }
