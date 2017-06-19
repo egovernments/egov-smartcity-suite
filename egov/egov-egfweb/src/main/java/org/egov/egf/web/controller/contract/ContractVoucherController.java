@@ -56,7 +56,6 @@ import org.codehaus.jackson.annotate.JsonMethod;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.egov.billsaccounting.services.CreateVoucher;
 import org.egov.billsaccounting.services.VoucherConstant;
-import org.egov.commons.Accountdetailkey;
 import org.egov.commons.CFiscalPeriod;
 import org.egov.commons.CFunction;
 import org.egov.commons.CGeneralLedger;
@@ -82,6 +81,7 @@ import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.validation.exception.ValidationException;
+import org.egov.services.voucher.GeneralLedgerDetailService;
 import org.egov.services.voucher.GeneralLedgerService;
 import org.egov.services.voucher.VoucherService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -94,7 +94,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
-@RequestMapping("/voucher")
+@RequestMapping("/vouchers")
 public class ContractVoucherController {
 
     @Autowired
@@ -121,6 +121,9 @@ public class ContractVoucherController {
     @Autowired
     @Qualifier("voucherService")
     private VoucherService voucherService;
+
+    @Autowired
+    private GeneralLedgerDetailService generalLedgerDetailService;
 
     @RequestMapping(value = "/_create", method = RequestMethod.POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public @ResponseBody String createVoucher(@RequestBody final VoucherContract voucherRequest,
@@ -197,6 +200,7 @@ public class ContractVoucherController {
         final VoucherResponse voucherResponse = prepairVoucherResponse(cVoucherHeader);
         final List<AccountDetailContract> accountDetailContracts = new ArrayList<>();
         final List<SubledgerDetailContract> subledgerDetailContracts = new ArrayList<>();
+        List<CGeneralLedgerDetail> cGeneralLedgerDetails = new ArrayList<>();
         for (final CGeneralLedger cGeneralLedger : generalLedgerService
                 .findCGeneralLedgerByVoucherHeaderId(cVoucherHeader.getId())) {
 
@@ -204,8 +208,9 @@ public class ContractVoucherController {
 
             accountDetailContracts.add(accountDetailContract);
 
-            if (!cGeneralLedger.getGeneralLedgerDetails().isEmpty()) {
-                for (final CGeneralLedgerDetail cGeneralLedgerDetail : cGeneralLedger.getGeneralLedgerDetails()) {
+            cGeneralLedgerDetails = generalLedgerDetailService.findCGeneralLedgerDetailByLedgerId(cGeneralLedger.getId());
+            if (!cGeneralLedgerDetails.isEmpty()) {
+                for (final CGeneralLedgerDetail cGeneralLedgerDetail : cGeneralLedgerDetails) {
                     final SubledgerDetailContract subledgerDetailContract1 = prepairSubledgerDetailResponse(cGeneralLedgerDetail);
                     subledgerDetailContracts.add(subledgerDetailContract1);
                 }
@@ -253,7 +258,6 @@ public class ContractVoucherController {
         subledgerDetailContract1.setId(cGeneralLedgerDetail.getId());
         subledgerDetailContract1.setAmount(cGeneralLedgerDetail.getAmount().doubleValue());
         final AccountDetailKeyContract accountDetailKeyContract = new AccountDetailKeyContract();
-        final Accountdetailkey accountDetailKey = new Accountdetailkey();
 
         final AccountDetailTypeContract accountDetailTypeContract = new AccountDetailTypeContract();
         if (cGeneralLedgerDetail.getDetailTypeId() != null)
@@ -267,7 +271,7 @@ public class ContractVoucherController {
         subledgerDetailContract1.setAccountDetailType(accountDetailTypeContract);
 
         accountDetailKeyContract.setAccountDetailType(accountDetailTypeContract);
-        accountDetailKeyContract.setId(Long.valueOf(accountDetailKey.getId()));
+        accountDetailKeyContract.setId(Long.valueOf(cGeneralLedgerDetail.getDetailKeyId()));
 
         subledgerDetailContract1.setAccountDetailKey(accountDetailKeyContract);
         return subledgerDetailContract1;
@@ -327,7 +331,8 @@ public class ContractVoucherController {
         voucherResponse.setCgvn(cVoucherHeader.getCgvn());
         voucherResponse.setVoucherNumber(cVoucherHeader.getVoucherNumber());
         voucherResponse.setDescription(cVoucherHeader.getDescription());
-        voucherResponse.setVoucherDate(org.egov.infra.utils.DateUtils.getFormattedDate(cVoucherHeader.getVoucherDate(), "dd-MM-yyyy"));
+        voucherResponse
+                .setVoucherDate(org.egov.infra.utils.DateUtils.getFormattedDate(cVoucherHeader.getVoucherDate(), "dd-MM-yyyy"));
         voucherResponse.setName(cVoucherHeader.getName());
         voucherResponse.setType(cVoucherHeader.getType());
         voucherResponse.setOriginalVhId(cVoucherHeader.getOriginalvcId());
