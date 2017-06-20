@@ -53,11 +53,11 @@ public class OnlineSearchForm {
     private String tradeOwnerName;
     private String propertyAssessmentNo;
     private String mobileNo;
-    private List<String> actions = new ArrayList<>() ;
+    private List<String> actions = new ArrayList<>();
     private BigDecimal arrDmd;
     private BigDecimal currDmd;
     private BigDecimal totColl;
-    
+
     public OnlineSearchForm() {
         // For form binding
     }
@@ -72,10 +72,14 @@ public class OnlineSearchForm {
         setArrDmd(dmdColl[0]);
         setCurrDmd(dmdColl[1]);
         setTotColl(dmdColl[2]);
-        if(license.canCollectFee())
-        	actions.add("Payment");
-        if(license.getIsActive())
-        	actions.add("View DCB");
+        if (license.canCollectFee())
+            actions.add("Payment");
+        if (license.getIsActive())
+            actions.add("View DCB");
+        if (license.isReadyForRenewal())
+            actions.add("Renew License");
+        if (license.isClosureApplicable())
+            actions.add("Closure");
     }
 
     public String getApplicationNumber() {

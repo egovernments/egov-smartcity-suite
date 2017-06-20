@@ -203,7 +203,7 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
             tradeLicense = tradeLicenseService.getLicenseById(getLicenseid());
             tradeLicenseService.saveClosure(tradeLicense, workflowBean);
         }
-        if (hasCSCOperatorRole())
+        if (hasCSCPublicRole())
             addActionMessage(this.getText("license.closure.initiated"));
         else if (BUTTONFORWARD.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
             List<Assignment> assignments = assignmentService.getAssignmentsForPosition(workflowBean.getApproverPositionId());
@@ -255,9 +255,9 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
         this.licenseid = licenseid;
     }
 
-    public Boolean hasCSCOperatorRole() {
+    public Boolean hasCSCPublicRole() {
         final String currentUserRoles = securityUtils.getCurrentUser().getRoles().toString();
-        return currentUserRoles.contains(CSCOPERATOR) ? true : false;
+        return currentUserRoles.contains(CSCOPERATOR) || currentUserRoles.contains("PUBLIC") ? true : false;
     }
 
     public String getUrl() {

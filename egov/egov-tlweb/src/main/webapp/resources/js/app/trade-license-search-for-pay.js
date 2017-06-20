@@ -143,7 +143,7 @@ $(document).ready(function () {
                             leftColumns: 1
                         },
                         ajax: {
-                            type:"POST",
+                            type: "POST",
                             data: {
                                 applicationNumber: applicationNumber,
                                 licenseNumber: licenseNumber,
@@ -211,4 +211,8 @@ function goToAction(obj, id) {
         window.open("/tl/pay/online/" + id);
     else if (obj.options[obj.selectedIndex].innerHTML == 'View DCB')
         window.open("/tl/dcb/view/" + id);
+    else if (obj.options[obj.selectedIndex].innerHTML == 'Renew License')
+        window.open("/tl/newtradelicense/newTradeLicense-beforeRenew.action?model.id=" + id);
+    else if (obj.options[obj.selectedIndex].innerHTML == 'Closure')
+        window.open("/tl/viewtradelicense/showclosureform.action?id=" + id);
 }

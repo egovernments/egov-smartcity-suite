@@ -372,8 +372,7 @@ public abstract class AbstractLicenseService<T extends License> {
         license.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(TRADELICENSEMODULE, APPLICATION_STATUS_CREATED_CODE));
         license.setLicenseAppType(this.getLicenseApplicationTypeForRenew());
         final User currentUser = this.securityUtils.getCurrentUser();
-        final String currentUserRoles = securityUtils.getCurrentUser().getRoles().toString();
-        if (!currentUserRoles.contains(CSCOPERATOR)) {
+        if (securityUtils.currentUserIsEmployee()) {
             Position wfInitiator = null;
             if (license.getState() == null || license.transitionCompleted()) {
                 if (!assignments.isEmpty())
@@ -712,7 +711,6 @@ public abstract class AbstractLicenseService<T extends License> {
     @Transactional
     public void saveClosure(final T license, final WorkflowBean workflowBean) {
         final User currentUser = this.securityUtils.getCurrentUser();
-        final String currentUserRoles = securityUtils.getCurrentUser().getRoles().toString();
         final String natureOfWork = CLOSURE_NATUREOFTASK;
         if (license.hasState() && license.getState().isInprogress())
             throw new ValidationException("lic.appl.wf.validation", "Cannot initiate Closure process, Application under processing");
@@ -725,7 +723,7 @@ public abstract class AbstractLicenseService<T extends License> {
             final WorkFlowMatrix wfmatrix = this.licenseWorkflowService.getWfMatrix(license.getStateType(), null,
                     null, workflowBean.getAdditionaRule(), "NEW", null);
             final List<Assignment> assignments = assignmentService.getAllActiveEmployeeAssignmentsByEmpId(this.securityUtils.getCurrentUser().getId());
-            if (!currentUserRoles.contains(CSCOPERATOR)) {
+            if (securityUtils.currentUserIsEmployee()) {
                 Position wfInitiator = null;
                 if (license.getState() == null || license.transitionCompleted()) {
                     if (!assignments.isEmpty())
@@ -827,6 +825,12 @@ public abstract class AbstractLicenseService<T extends License> {
 
     private void closureWfWithOperator(final T license) {
         final String natureOfWork = CLOSURE_NATUREOFTASK;
+        final String currentUserRoles = securityUtils.getCurrentUser().getRoles().toString();
+        String comment = "";
+        if (currentUserRoles.contains(CSCOPERATOR))
+            comment = "CSC Operator Initiated";
+        else if (currentUserRoles.contains("PUBLIC"))
+            comment = "Citizen applied for closure";
         List<Assignment> assignmentList = getAssignments();
         if (!assignmentList.isEmpty()) {
             final Assignment wfAssignment = assignmentList.get(0);
@@ -836,7 +840,7 @@ public abstract class AbstractLicenseService<T extends License> {
                 license.transition().startNext();
             license.transition().withSenderName(
                     wfAssignment.getEmployee().getUsername() + DELIMITER_COLON + wfAssignment.getEmployee().getName())
-                    .withComments("CSC Operator Initiated").withNatureOfTask(natureOfWork)
+                    .withComments(comment).withNatureOfTask(natureOfWork)
                     .withStateValue("NEW").withDateInfo(new Date()).withOwner(wfAssignment.getPosition())
                     .withNextAction("SI/SS Approval Pending").withInitiator(wfAssignment.getPosition());
             license.setEgwStatus(

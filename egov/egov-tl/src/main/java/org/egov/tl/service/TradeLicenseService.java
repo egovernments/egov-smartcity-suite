@@ -54,12 +54,12 @@ import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
+import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.entity.State;
-import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.pims.commons.Position;
 import org.egov.tl.entity.License;
@@ -435,13 +435,14 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
 
     }
 
-    public List<HashMap<String, Object>> populateHistory(final StateAware stateAware) {
+    public List<HashMap<String, Object>> populateHistory(final TradeLicense tradeLicense) {
         final List<HashMap<String, Object>> processHistoryDetails = new ArrayList<>();
-        if (stateAware.hasState()) {
-            State state = stateAware.getCurrentState();
+        if (tradeLicense.hasState()) {
+            State state = tradeLicense.getCurrentState();
+            User lastModifiedUser = state.getLastModifiedBy();
             final HashMap<String, Object> currentStateDetail = new HashMap<>();
             currentStateDetail.put("date", state.getLastModifiedDate());
-            currentStateDetail.put("updatedBy", state.getLastModifiedBy().getName());
+            currentStateDetail.put("updatedBy", !lastModifiedUser.getType().equals(UserType.EMPLOYEE) ? tradeLicense.getLicensee().getApplicantName() : lastModifiedUser.getName());
             currentStateDetail.put("status", "END".equals(state.getValue()) ? "Completed" : state.getValue());
             currentStateDetail.put("comments", defaultString(state.getComments()));
             User ownerUser = state.getOwnerUser();
@@ -454,15 +455,16 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
 
             processHistoryDetails.add(currentStateDetail);
             state.getHistory().stream().sorted(Comparator.comparing(StateHistory::getLastModifiedDate).reversed()).
-                    forEach(sh -> processHistoryDetails.add(constructHistory(sh)));
+                    forEach(sh -> processHistoryDetails.add(constructHistory(sh, tradeLicense)));
         }
         return processHistoryDetails;
     }
 
-    private HashMap<String, Object> constructHistory(StateHistory stateHistory) {
+    private HashMap<String, Object> constructHistory(StateHistory stateHistory, TradeLicense tradeLicense) {
         final HashMap<String, Object> processHistory = new HashMap<>();
+        User lastModifiedUser = stateHistory.getLastModifiedBy();
         processHistory.put("date", stateHistory.getLastModifiedDate());
-        processHistory.put("updatedBy", stateHistory.getLastModifiedBy().getName());
+        processHistory.put("updatedBy", !lastModifiedUser.getType().equals(UserType.EMPLOYEE) ? tradeLicense.getLicensee().getApplicantName() : lastModifiedUser.getName());
         processHistory.put("status", "END".equals(stateHistory.getValue()) ? "Completed" : stateHistory.getValue());
         processHistory.put("comments", defaultString(stateHistory.getComments()));
         Position ownerPosition = stateHistory.getOwnerPosition();

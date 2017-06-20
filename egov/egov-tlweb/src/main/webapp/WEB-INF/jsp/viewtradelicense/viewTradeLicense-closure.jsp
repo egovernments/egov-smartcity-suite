@@ -82,7 +82,7 @@
                 <%@ include file='../common/license-detail-view.jsp' %>
             </table>
             </div>
-            <s:if test="!hasCSCOperatorRole()">
+            <s:if test="!hasCSCPublicRole()">
                 <div class="panel panel-primary" id="workflowDiv">
                     <%@ include file='../common/license-workflow-dropdown.jsp' %>
                     <%@ include file='../common/license-workflow-button.jsp' %>
