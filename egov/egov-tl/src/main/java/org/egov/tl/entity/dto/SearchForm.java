@@ -40,6 +40,7 @@
 
 package org.egov.tl.entity.dto;
 
+import static org.egov.tl.utils.Constants.CLOSURE_LIC_APPTYPE;
 import static org.egov.tl.utils.Constants.CSCOPERATOR;
 
 import java.util.ArrayList;
@@ -120,7 +121,7 @@ public class SearchForm extends DataTableSearchRequest {
         else if (userRoles.contains(Constants.TL_CREATOR_ROLENAME) || userRoles.contains(Constants.TL_APPROVER_ROLENAME)) {
             if (license.isStatusActive() && !license.isLegacy())
                 licenseActions.add("Print Certificate");
-            if (license.getStatus().getStatusCode().equals(Constants.STATUS_UNDERWORKFLOW))
+            if (license.getStatus().getStatusCode().equals(Constants.STATUS_UNDERWORKFLOW) && !CLOSURE_LIC_APPTYPE.equals(license.getLicenseAppType().getName()))
                 licenseActions.add("Print Provisional Certificate");
             if (license.isReadyForRenewal())
                 licenseActions.add("Renew License");
