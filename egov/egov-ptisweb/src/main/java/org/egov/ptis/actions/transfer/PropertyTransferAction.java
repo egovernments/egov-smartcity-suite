@@ -83,6 +83,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REVENUE_OFFI
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONAL_COMMISSIONER_DESIGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.ANONYMOUS_USER;
+import static org.egov.ptis.constants.PropertyTaxConstants.TAX_COLLECTOR_DESGN;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -472,6 +473,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
             final Assignment assignmentOnreject = propertyService.getUserOnRejection(propertyMutation);
             wfInitiator = assignmentOnreject;
         } else if (BILL_COLLECTOR_DESGN.equalsIgnoreCase(loggedInUserDesignation)
+                || TAX_COLLECTOR_DESGN.equalsIgnoreCase(loggedInUserDesignation)
                 || REVENUE_INSPECTOR_DESGN.equalsIgnoreCase(loggedInUserDesignation))
             wfInitiator = transferOwnerService.getWorkflowInitiator(propertyMutation);
         if (propertyMutation.getType().equals(ADDTIONAL_RULE_FULL_TRANSFER) || (wfInitiator != null || JUNIOR_ASSISTANT.equalsIgnoreCase(loggedInUserDesignation)
@@ -851,8 +853,9 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                     wfInitiator = assignmentOnreject;
                     setMutationInitiatedBy(assignmentOnreject.getEmployee().getName().concat("~")
                             .concat(assignmentOnreject.getPosition().getName()));
-                } else if (loggedInUserDesignation.equalsIgnoreCase(BILL_COLLECTOR_DESGN)
-                        || loggedInUserDesignation.equalsIgnoreCase(REVENUE_INSPECTOR_DESGN)) {
+                } else if (BILL_COLLECTOR_DESGN.equalsIgnoreCase(loggedInUserDesignation)
+                        || TAX_COLLECTOR_DESGN.equalsIgnoreCase(loggedInUserDesignation)
+                        || REVENUE_INSPECTOR_DESGN.equalsIgnoreCase(loggedInUserDesignation)) {
                     nextAction = WF_STATE_ASSISTANT_APPROVAL_PENDING;
                     setMutationInitiatedBy(wfInitiator.getEmployee().getName().concat("~")
                             .concat(wfInitiator.getPosition().getName()));

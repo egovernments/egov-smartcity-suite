@@ -747,6 +747,7 @@ public interface PropertyTaxConstants {
     public static final String REVENUE_CLERK_DESGN = "Revenue Clerk";
     public static final String COMMISSIONER_DESGN = "Commissioner";
     public static final String BILL_COLLECTOR_DESGN = "Bill Collector";
+    public static final String TAX_COLLECTOR_DESGN = "Tax Collector";
     public static final String END_APPROVER_DESGN = "RO";
     public static final String JUNIOR_ASSISTANT = "Junior Assistant";
     public static final String SENIOR_ASSISTANT = "Senior Assistant";
