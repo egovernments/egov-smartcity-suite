@@ -45,6 +45,8 @@ import java.util.List;
 
 import org.egov.tl.entity.License;
 
+import static org.egov.tl.utils.Constants.CLOSURE_LIC_APPTYPE;
+
 public class OnlineSearchForm {
 
     private Long licenseId;
@@ -72,7 +74,7 @@ public class OnlineSearchForm {
         setArrDmd(dmdColl[0]);
         setCurrDmd(dmdColl[1]);
         setTotColl(dmdColl[2]);
-        if (license.canCollectFee())
+        if (!CLOSURE_LIC_APPTYPE.equals(license.getLicenseAppType().getName()) && license.canCollectFee())
             actions.add("Payment");
         if (license.getIsActive())
             actions.add("View DCB");
