@@ -157,7 +157,7 @@ import org.springframework.ui.Model;
 public class VacancyRemissionService {
 
     private static final Logger LOG = LoggerFactory.getLogger(VacancyRemissionService.class);
-    
+
     @Autowired
     private VacancyRemissionRepository vacancyRemissionRepository;
 
@@ -246,8 +246,8 @@ public class VacancyRemissionService {
 
     @Transactional
     public VacancyRemission saveVacancyRemission(final VacancyRemission vacancyRemission, Long approvalPosition,
-            final String approvalComent, final String additionalRule, final String workFlowAction,
-            final Boolean propertyByEmployee) {
+                                                 final String approvalComent, final String additionalRule, final String workFlowAction,
+                                                 final Boolean propertyByEmployee) {
         if (LOG.isDebugEnabled())
             LOG.debug(" Create WorkFlow Transition Started  ...");
         final User user = securityUtils.getCurrentUser();
@@ -286,10 +286,10 @@ public class VacancyRemissionService {
 
         if (WFLOW_ACTION_STEP_FORWARD.equalsIgnoreCase(workFlowAction) && vacancyRemission.getId() == null
                 && (approverDesignation.equalsIgnoreCase(ASSISTANT_COMMISSIONER_DESIGN) ||
-                        approverDesignation.equalsIgnoreCase(DEPUTY_COMMISSIONER_DESIGN)
-                        || approverDesignation.equalsIgnoreCase(ADDITIONAL_COMMISSIONER_DESIGN)
-                        || approverDesignation.equalsIgnoreCase(ZONAL_COMMISSIONER_DESIGN) ||
-                        approverDesignation.equalsIgnoreCase(COMMISSIONER_DESGN))) {
+                approverDesignation.equalsIgnoreCase(DEPUTY_COMMISSIONER_DESIGN)
+                || approverDesignation.equalsIgnoreCase(ADDITIONAL_COMMISSIONER_DESIGN)
+                || approverDesignation.equalsIgnoreCase(ZONAL_COMMISSIONER_DESIGN) ||
+                approverDesignation.equalsIgnoreCase(COMMISSIONER_DESGN))) {
 
             final String designation = approverDesignation.split(" ")[0];
             nextAction = getWorkflowNextAction(designation);
@@ -356,7 +356,7 @@ public class VacancyRemissionService {
             }
         }
         if (Source.CITIZENPORTAL.toString().equalsIgnoreCase(vacancyRemission.getSource()) && propertyService.getPortalInbox(vacancyRemission.getApplicationNumber()) != null) {
-                propertyService.updatePortal(vacancyRemission, APPLICATION_TYPE_VACANCY_REMISSION);
+            propertyService.updatePortal(vacancyRemission, APPLICATION_TYPE_VACANCY_REMISSION);
         }
         if (LOG.isDebugEnabled())
             LOG.debug(" WorkFlow Transition Completed  ...");
@@ -370,7 +370,7 @@ public class VacancyRemissionService {
      * @param effectiveInstallment
      */
     private void updateDemandDetailsWithRebate(final VacancyRemission vacancyRemission, final Installment demandInstallment,
-            final Installment effectiveInstallment) {
+                                               final Installment effectiveInstallment) {
         final Set<Ptdemand> activePropPtDemandSet = vacancyRemission.getBasicProperty().getActiveProperty().getPtDemandSet();
         Ptdemand currPtDemand = null;
         for (final Ptdemand ptDemand : activePropPtDemandSet)
@@ -459,7 +459,7 @@ public class VacancyRemissionService {
 
     @Transactional
     public void rejectVacancyRemission(final VacancyRemission vacancyRemission, final String commnets,
-            final HttpServletRequest request) {
+                                       final HttpServletRequest request) {
         final User user = securityUtils.getCurrentUser();
         Position wfInitiator;
         if (vacancyRemission != null) {
@@ -489,8 +489,8 @@ public class VacancyRemissionService {
 
     @Transactional
     public void saveVacancyRemissionApproval(final VacancyRemissionApproval vacancyRemissionApproval,
-            final Long approvalPosition, final String approvalComent, final String additionalRule,
-            final String workFlowAction) {
+                                             final Long approvalPosition, final String approvalComent, final String additionalRule,
+                                             final String workFlowAction) {
         if (LOG.isDebugEnabled())
             LOG.debug(" Create WorkFlow Transition Started  ...");
         final User user = securityUtils.getCurrentUser();
@@ -521,10 +521,10 @@ public class VacancyRemissionService {
 
         if (WFLOW_ACTION_STEP_FORWARD.equalsIgnoreCase(workFlowAction)
                 && (approverDesignation.equalsIgnoreCase(ASSISTANT_COMMISSIONER_DESIGN) ||
-                        approverDesignation.equalsIgnoreCase(DEPUTY_COMMISSIONER_DESIGN)
-                        || approverDesignation.equalsIgnoreCase(ADDITIONAL_COMMISSIONER_DESIGN)
-                        || approverDesignation.equalsIgnoreCase(ZONAL_COMMISSIONER_DESIGN) ||
-                        approverDesignation.equalsIgnoreCase(COMMISSIONER_DESGN)))
+                approverDesignation.equalsIgnoreCase(DEPUTY_COMMISSIONER_DESIGN)
+                || approverDesignation.equalsIgnoreCase(ADDITIONAL_COMMISSIONER_DESIGN)
+                || approverDesignation.equalsIgnoreCase(ZONAL_COMMISSIONER_DESIGN) ||
+                approverDesignation.equalsIgnoreCase(COMMISSIONER_DESGN)))
             if (vacancyRemissionApproval.getStatus().equals(VR_STATUS_APPROVED))
                 nextAction = DIGITAL_SIGNATURE_PENDING;
             else {
@@ -597,8 +597,8 @@ public class VacancyRemissionService {
         }
 
         if (Source.CITIZENPORTAL.toString().equalsIgnoreCase(vacancyRemissionApproval.getVacancyRemission().getSource())
-            && propertyService.getPortalInbox(vacancyRemissionApproval.getVacancyRemission().getApplicationNumber())!=null) {
-                 propertyService.updatePortal(vacancyRemissionApproval.getVacancyRemission(), APPLICATION_TYPE_VACANCY_REMISSION);
+                && propertyService.getPortalInbox(vacancyRemissionApproval.getVacancyRemission().getApplicationNumber())!=null) {
+            propertyService.updatePortal(vacancyRemissionApproval.getVacancyRemission(), APPLICATION_TYPE_VACANCY_REMISSION);
         }
         if (LOG.isDebugEnabled())
             LOG.debug(" WorkFlow Transition Completed  ...");
@@ -623,8 +623,8 @@ public class VacancyRemissionService {
     }
 
     public VacancyRemission saveVacancyRemission(final VacancyRemission vacancyRemission, final Long approvalPosition,
-            final String approvalComent, final String additionalRule, final String workFlowAction,
-            final Boolean propertyByEmployee, final HashMap<String, String> meesevaParams) {
+                                                 final String approvalComent, final String additionalRule, final String workFlowAction,
+                                                 final Boolean propertyByEmployee, final HashMap<String, String> meesevaParams) {
         return saveVacancyRemission(vacancyRemission, approvalPosition, approvalComent, additionalRule, workFlowAction,
                 propertyByEmployee);
 
@@ -668,7 +668,7 @@ public class VacancyRemissionService {
     }
 
     public ReportOutput generateReport(final VacancyRemission vacancyRemission, final HttpServletRequest request,
-            final String approvedUser, final String noticeNo) {
+                                       final String approvedUser, final String noticeNo) {
         ReportRequest reportInput;
         ReportOutput reportOutput = null;
         CFinancialYear financialYear;
@@ -821,9 +821,9 @@ public class VacancyRemissionService {
             vacancyRemission.setStatus(VR_STATUS_REJECTION_ACK_GENERATED);
             vacancyRemission.getBasicProperty().setUnderWorkflow(false);
         }
-        if (Source.CITIZENPORTAL.toString().equalsIgnoreCase(vacancyRemission.getSource()) 
-              && propertyService.getPortalInbox(vacancyRemission.getApplicationNumber()) !=null) {
-                    propertyService.updatePortal(vacancyRemission, APPLICATION_TYPE_VACANCY_REMISSION);
+        if (Source.CITIZENPORTAL.toString().equalsIgnoreCase(vacancyRemission.getSource())
+                && propertyService.getPortalInbox(vacancyRemission.getApplicationNumber()) !=null) {
+            propertyService.updatePortal(vacancyRemission, APPLICATION_TYPE_VACANCY_REMISSION);
         }
     }
 
@@ -865,7 +865,7 @@ public class VacancyRemissionService {
     }
 
     private Assignment getInitiatorOnWFAction(final VacancyRemissionApproval vacancyRemissionApproval,
-            final String wfAction) {
+                                              final String wfAction) {
         Assignment wfInitiator = null;
         if (vacancyRemissionApproval.getId() != null && WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(wfAction))
             wfInitiator = assignmentService
@@ -880,15 +880,15 @@ public class VacancyRemissionService {
     public BigDecimal getWaterTaxDues(final String assessmentNo, final HttpServletRequest request) {
         return propertyService.getWaterTaxDues(assessmentNo, request).get(PropertyTaxConstants.WATER_TAX_DUES) == null
                 ? BigDecimal.ZERO : new BigDecimal(
-                        Double.valueOf((Double) propertyService.getWaterTaxDues(assessmentNo, request)
-                                .get(PropertyTaxConstants.WATER_TAX_DUES)));
+                Double.valueOf((Double) propertyService.getWaterTaxDues(assessmentNo, request)
+                        .get(PropertyTaxConstants.WATER_TAX_DUES)));
     }
 
     public Boolean isUnderWtmsWF(final String assessmentNo, final HttpServletRequest request) {
         return propertyService.getWaterTaxDues(assessmentNo, request).get(PropertyTaxConstants.UNDER_WTMS_WF) == null
                 ? FALSE
                 : Boolean.valueOf((Boolean) propertyService.getWaterTaxDues(assessmentNo, request)
-                        .get(PropertyTaxConstants.UNDER_WTMS_WF));
+                .get(PropertyTaxConstants.UNDER_WTMS_WF));
     }
 
 }

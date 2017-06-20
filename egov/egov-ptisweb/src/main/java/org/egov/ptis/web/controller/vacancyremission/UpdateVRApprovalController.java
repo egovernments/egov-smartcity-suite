@@ -104,7 +104,7 @@ public class UpdateVRApprovalController extends GenericWorkFlowController {
 
     @Autowired
     public UpdateVRApprovalController(final VacancyRemissionService vacancyRemissionService,
-            final PropertyTaxUtil propertyTaxUtil) {
+                                      final PropertyTaxUtil propertyTaxUtil) {
         this.propertyTaxUtil = propertyTaxUtil;
         this.vacancyRemissionService = vacancyRemissionService;
     }
@@ -155,8 +155,8 @@ public class UpdateVRApprovalController extends GenericWorkFlowController {
 
     @RequestMapping(method = RequestMethod.POST)
     public String update(@Valid @ModelAttribute final VacancyRemissionApproval vacancyRemissionApproval,
-            final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
-            final HttpServletRequest request, final Model model) {
+                         final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
+                         final HttpServletRequest request, final Model model) {
 
         final String senderName = vacancyRemissionApproval.getCurrentState().getSenderName();
         if (!resultBinder.hasErrors()) {
@@ -191,9 +191,9 @@ public class UpdateVRApprovalController extends GenericWorkFlowController {
                     successMsg = "Vacancy Remission Saved Successfully in the System and forwarded to : "
                             + propertyTaxUtil.getApproverUserName(approvalPosition);
                 if (Source.CITIZENPORTAL.toString().equalsIgnoreCase(vacancyRemissionApproval.getVacancyRemission().getSource())
-                    && propertyService.getPortalInbox(vacancyRemissionApproval.getVacancyRemission().getApplicationNumber()) != null) {
-                        propertyService.updatePortal(vacancyRemissionApproval.getVacancyRemission(),
-                                APPLICATION_TYPE_VACANCY_REMISSION);
+                        && propertyService.getPortalInbox(vacancyRemissionApproval.getVacancyRemission().getApplicationNumber()) != null) {
+                    propertyService.updatePortal(vacancyRemissionApproval.getVacancyRemission(),
+                            APPLICATION_TYPE_VACANCY_REMISSION);
                 }
             }
 
@@ -227,8 +227,8 @@ public class UpdateVRApprovalController extends GenericWorkFlowController {
     }
 
     private String wfReject(final VacancyRemissionApproval vacancyRemissionApproval, final String workFlowAction,
-            final Long approvalPosition,
-            final String approvalComent) {
+                            final Long approvalPosition,
+                            final String approvalComent) {
         String successMsg;
         String loggedInUserDesignation = "";
         Assignment wfInitiator;
@@ -256,8 +256,8 @@ public class UpdateVRApprovalController extends GenericWorkFlowController {
             else
                 successMsg = "Vacancy Remission rejected successfully and forwarded to : "
                         + (wfInitiator != null
-                                ? wfInitiator.getEmployee().getName().concat("~").concat(wfInitiator.getPosition().getName())
-                                : "");
+                        ? wfInitiator.getEmployee().getName().concat("~").concat(wfInitiator.getPosition().getName())
+                        : "");
         } else
             successMsg = PROPERTY_MODIFY_REJECT_FAILURE
                     + vacancyRemissionApproval.getVacancyRemission().getBasicProperty().getUpicNo();

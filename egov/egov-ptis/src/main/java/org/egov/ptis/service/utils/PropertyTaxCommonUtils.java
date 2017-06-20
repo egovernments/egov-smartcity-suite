@@ -231,7 +231,7 @@ public class PropertyTaxCommonUtils {
                                 .put("firstHalfTaxDue",
                                         (reasonDmd.get(CURR_FIRSTHALF_DMD_STR) != null
                                                 ? reasonDmd.get(CURR_FIRSTHALF_DMD_STR) : BigDecimal.ZERO)
-                                                        .subtract(reasonDmd.get(CURR_FIRSTHALF_COLL_STR)));
+                                                .subtract(reasonDmd.get(CURR_FIRSTHALF_COLL_STR)));
 
                     } else if (key.equals(CURRENTYEAR_SECOND_HALF)) {
                         wfPropTaxDetailsMap.put("secondHalf", CURRENTYEAR_SECOND_HALF);
@@ -252,7 +252,7 @@ public class PropertyTaxCommonUtils {
                         wfPropTaxDetailsMap.put("secondHalfTaxDue",
                                 (reasonDmd.get(CURR_SECONDHALF_DMD_STR) != null
                                         ? reasonDmd.get(CURR_SECONDHALF_DMD_STR) : BigDecimal.ZERO)
-                                                .subtract(reasonDmd.get(CURR_SECONDHALF_COLL_STR)));
+                                        .subtract(reasonDmd.get(CURR_SECONDHALF_COLL_STR)));
 
                     } else {
                         wfPropTaxDetailsMap.put("arrears", ARREARS);
@@ -388,7 +388,7 @@ public class PropertyTaxCommonUtils {
     }
 
     public String getCurrentHalfyearTax(final HashMap<Installment, TaxCalculationInfo> instTaxMap,
-            final PropertyTypeMaster propTypeMstr) {
+                                        final PropertyTypeMaster propTypeMstr) {
         final Installment currentInstall = getCurrentPeriodInstallment();
         final TaxCalculationInfo calculationInfo = instTaxMap.get(currentInstall);
         final BigDecimal annualValue = calculationInfo.getTotalNetARV();
@@ -423,10 +423,10 @@ public class PropertyTaxCommonUtils {
     }
 
     private String preparResponeString(final PropertyTypeMaster propTypeMstr, final BigDecimal annualValue,
-            final BigDecimal totalPropertyTax,
-            final BigDecimal vacLandTax, final BigDecimal genTax, final BigDecimal unAuthPenalty, final BigDecimal eduTax,
-            final BigDecimal libCess,
-            final BigDecimal sewrageTax, final BigDecimal serviceCharges) {
+                                       final BigDecimal totalPropertyTax,
+                                       final BigDecimal vacLandTax, final BigDecimal genTax, final BigDecimal unAuthPenalty, final BigDecimal eduTax,
+                                       final BigDecimal libCess,
+                                       final BigDecimal sewrageTax, final BigDecimal serviceCharges) {
         final StringBuilder resultString = new StringBuilder(200);
         resultString.append(
                 "Annual Rental Value=" + formatAmount(annualValue) + "~Total Tax=" + formatAmount(totalPropertyTax));
@@ -538,7 +538,7 @@ public class PropertyTaxCommonUtils {
                 return true;
         return false;
     }
-    
+
     public Boolean isCitizenPortalUser(final User user) {
         for (final Role role : user.getRoles())
             if (role != null && role.getName().equalsIgnoreCase(CITIZEN_ROLE))
@@ -615,7 +615,7 @@ public class PropertyTaxCommonUtils {
         return designations;
     }
 
-	public List<String> getGuardianRelations() {
-		return Stream.of(GuardianRelation.values()).map(GuardianRelation::name).collect(Collectors.toList());
-	}
+    public List<String> getGuardianRelations() {
+        return Stream.of(GuardianRelation.values()).map(GuardianRelation::name).collect(Collectors.toList());
+    }
 }
