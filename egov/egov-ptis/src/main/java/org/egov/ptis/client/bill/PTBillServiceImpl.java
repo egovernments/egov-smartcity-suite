@@ -476,7 +476,7 @@ public class PTBillServiceImpl extends BillServiceInterface {
         return billdetail;
     }
 
-    public EgBill updateBillWithLatest(final Long billId, final Date receiptDate) {
+    public EgBill updateBillWithLatest(final Long billId) {
         LOGGER.debug("updateBillWithLatest billId " + billId);
         final EgBill bill = egBillDAO.findById(billId, false);
         LOGGER.debug("updateBillWithLatest old bill " + bill);
@@ -484,7 +484,7 @@ public class PTBillServiceImpl extends BillServiceInterface {
             throw new ApplicationRuntimeException("No bill found with bill reference no :" + billId);
         bill.getEgBillDetails().clear();
         final PropertyTaxBillable propertyTaxBillable = (PropertyTaxBillable) context.getBean("propertyTaxBillable");
-        propertyTaxBillable.setReceiptDate(receiptDate);
+        propertyTaxBillable.setReceiptDate(bill.getCreateDate());
         propertyTaxBillable.setLevyPenalty(true);
         propertyTaxBillable
                 .setBasicProperty(basicPropertyDAO.getBasicPropertyByPropertyID(bill.getConsumerId().trim()));
