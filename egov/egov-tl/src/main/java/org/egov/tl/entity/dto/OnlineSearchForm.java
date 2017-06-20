@@ -80,6 +80,8 @@ public class OnlineSearchForm {
             actions.add("Renew License");
         if (license.isClosureApplicable())
             actions.add("Closure");
+        if (license.isStatusActive() && !license.isLegacy())
+            actions.add("Print Certificate");
     }
 
     public String getApplicationNumber() {
