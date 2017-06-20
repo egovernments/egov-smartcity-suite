@@ -196,7 +196,6 @@ public class CreateMBController {
         mbHeader.setDocumentDetails(mbHeaderWrapper.getDocumentDetails());
         mbHeader.setIsLegacyMB(mbHeaderWrapper.getIsLegacyMB());
         mbHeader.setMbAmount(mbHeaderWrapper.getMbAmount());
-        mbHeader.setCreatedBy(mbHeaderWrapper.getCreatedBy());
 
         final String jsonResponse = create(mbHeader, model, errors, request, resultBinder, response, null);
         if (!jsonResponse.contains("\"stateType\":\"MBHeader\"")) {
