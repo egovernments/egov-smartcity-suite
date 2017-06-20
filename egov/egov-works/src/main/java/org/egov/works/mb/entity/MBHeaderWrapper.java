@@ -265,12 +265,4 @@ public class MBHeaderWrapper implements Serializable {
     public void setLumpSumMbDetails(final List<MBDetails> lumpSumMbDetails) {
         this.lumpSumMbDetails = lumpSumMbDetails;
     }
-
-    public User getCreatedBy() {
-        return createdBy;
-    }
-
-    public void setCreatedBy(User createdBy) {
-        this.createdBy = createdBy;
-    }
 }
