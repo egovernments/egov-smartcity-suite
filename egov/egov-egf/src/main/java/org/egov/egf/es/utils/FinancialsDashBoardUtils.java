@@ -246,12 +246,18 @@ public class FinancialsDashBoardUtils {
             financialsDetail.setGrade(finResponse.getGrade());
             financialsDetail.setRegion(finResponse.getRegion());
         }
-        if (MAJOR_CODE.equalsIgnoreCase(aggrField))
+        if (MAJOR_CODE.equalsIgnoreCase(aggrField)) {
             financialsDetail.setMajorCode(keyName);
-        if (MINOR_CODE.equalsIgnoreCase(aggrField))
+            financialsDetail.setMajorCodeDescription(finResponse.getMajorCodeDescription());
+        }
+        if (MINOR_CODE.equalsIgnoreCase(aggrField)) {
             financialsDetail.setMinorCode(keyName);
-        if (DETAILED_CODE.equalsIgnoreCase(aggrField))
+            financialsDetail.setMinorCodeDescription(finResponse.getMinorCodeDescription());
+        }
+        if (DETAILED_CODE.equalsIgnoreCase(aggrField)) {
             financialsDetail.setDetailedCode(keyName);
+            financialsDetail.setDetailedCodeDescription(finResponse.getDetailedCodeDescription());
+        }
         if (ADM_ZONE.equalsIgnoreCase(aggrField))
             financialsDetail.setAdmZoneName(keyName);
         if (ADM_WARD.equalsIgnoreCase(aggrField))
@@ -312,7 +318,7 @@ public class FinancialsDashBoardUtils {
 
         setCommonDataToResponse(keyName, financialsBudgetDetailResponse, aggrField, finResponse);
         setFinancialsDataToResponse(keyName, financialsBudgetDetailResponse, aggrField);
-        setChartOfAccountToResponse(keyName, financialsBudgetDetailResponse, aggrField);
+        setChartOfAccountToResponse(keyName, financialsBudgetDetailResponse, aggrField, finResponse);
         if (ADM_ZONE.equalsIgnoreCase(aggrField))
             financialsBudgetDetailResponse.setAdmZoneName(keyName);
         if (ADM_WARD.equalsIgnoreCase(aggrField))
@@ -336,13 +342,20 @@ public class FinancialsDashBoardUtils {
     }
 
     private static void setChartOfAccountToResponse(final String keyName,
-                                                    FinancialsBudgetDetailResponse financialsBudgetDetailResponse, final String aggrField) {
-        if (MAJOR_CODE.equalsIgnoreCase(aggrField))
+                                                    FinancialsBudgetDetailResponse financialsBudgetDetailResponse, final String aggrField
+            , final FinancialsBudgetDetailResponse finBudResponse) {
+        if (MAJOR_CODE.equalsIgnoreCase(aggrField)) {
             financialsBudgetDetailResponse.setMajorCode(keyName);
-        if (MINOR_CODE.equalsIgnoreCase(aggrField))
+            financialsBudgetDetailResponse.setMajorCodeDescription(finBudResponse.getMajorCodeDescription());
+        }
+        if (MINOR_CODE.equalsIgnoreCase(aggrField)) {
             financialsBudgetDetailResponse.setMinorCode(keyName);
-        if (DETAILED_CODE.equalsIgnoreCase(aggrField))
+            financialsBudgetDetailResponse.setMinorCodeDescription(finBudResponse.getMinorCodeDescription());
+        }
+        if (DETAILED_CODE.equalsIgnoreCase(aggrField)) {
             financialsBudgetDetailResponse.setDetailedCode(keyName);
+            financialsBudgetDetailResponse.setDetailedCodeDescription(finBudResponse.getDetailedCodeDescription());
+        }
     }
 
     private static void setCommonDataToResponse(final String keyName,

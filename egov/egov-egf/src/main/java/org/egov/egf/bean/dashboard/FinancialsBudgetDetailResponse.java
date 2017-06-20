@@ -47,9 +47,9 @@
 
 package org.egov.egf.bean.dashboard;
 
-import java.math.BigDecimal;
-
 import org.egov.infra.utils.StringUtils;
+
+import java.math.BigDecimal;
 
 public class FinancialsBudgetDetailResponse {
 
@@ -71,6 +71,9 @@ public class FinancialsBudgetDetailResponse {
     private String majorCode = StringUtils.EMPTY;
     private String minorCode = StringUtils.EMPTY;
     private String detailedCode = StringUtils.EMPTY;
+    private String majorCodeDescription = StringUtils.EMPTY;
+    private String minorCodeDescription = StringUtils.EMPTY;
+    private String detailedCodeDescription = StringUtils.EMPTY;
     private BigDecimal budgetApprovedAmount = BigDecimal.ZERO;
     private BigDecimal reAppropriationAmount = BigDecimal.ZERO;
     private BigDecimal allocatedBudget = BigDecimal.ZERO;
@@ -278,5 +281,29 @@ public class FinancialsBudgetDetailResponse {
 
     public void setBudgetApprovedAmount(final BigDecimal budgetApprovedAmount) {
         this.budgetApprovedAmount = budgetApprovedAmount;
+    }
+
+    public String getMajorCodeDescription() {
+        return majorCodeDescription;
+    }
+
+    public void setMajorCodeDescription(String majorCodeDescription) {
+        this.majorCodeDescription = majorCodeDescription;
+    }
+
+    public String getMinorCodeDescription() {
+        return minorCodeDescription;
+    }
+
+    public void setMinorCodeDescription(String minorCodeDescription) {
+        this.minorCodeDescription = minorCodeDescription;
+    }
+
+    public String getDetailedCodeDescription() {
+        return detailedCodeDescription;
+    }
+
+    public void setDetailedCodeDescription(String detailedCodeDescription) {
+        this.detailedCodeDescription = detailedCodeDescription;
     }
 }
