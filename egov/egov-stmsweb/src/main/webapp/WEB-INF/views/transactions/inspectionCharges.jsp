@@ -100,10 +100,10 @@
 							     	<c:otherwise>  
 							     	<c:choose> 
 							       <c:when test="${legacy && sewerageApplicationDetails.connectionFees[counter.index].feesDetail.code == 'DONATIONCHARGE' }">
-								     	     <input type="text" class="form-control table-input text-right patternvalidation" data-pattern="number" id="feesDetail${counter.index}amount" name="connectionFees[${counter.index}].amount" value="${fm.amount}"  required="required" /> 
+								     	     <input type="text" class="form-control table-input text-right patternvalidation" data-pattern="number" id="feesDetail${counter.index}amount" name="connectionFees[${counter.index}].amount" value="<fmt:formatNumber type="number" pattern="0" maxFractionDigits="0" value="${fm.amount}" />" required="required" /> 
 								     	 </c:when>
 								     	<c:otherwise>  
-							     	    <form:input type="text" class="form-control table-input text-right patternvalidation" data-pattern="decimalvalue" name="connectionFees[${counter.index}].amount" path="connectionFees[${counter.index}].amount" id="feesDetail${counter.index}amount"  value="${fm.amount}" /> 
+							     	    <input type="text" class="form-control table-input text-right patternvalidation" data-pattern="number" name="connectionFees[${counter.index}].amount" id="feesDetail${counter.index}amount"  value="<fmt:formatNumber type="number" pattern="0" maxFractionDigits="0" value="${fm.amount}" />" /> 
 							     	      </c:otherwise> 	
 								       </c:choose>
 							        </c:otherwise> 	
@@ -127,16 +127,16 @@
 						id="collectedDonationAmount">Collected Donation charges</span></td>
 					<td><input type="text"
 						class="form-control table-input text-right patternvalidation"
-						name="amountCollected" data-pattern="number"  maxlength="6" id="amountCollected"
+						name="amountCollected"  value="${amountCollected}" maxlength="6" id="amountCollected"
 						required="required" /></td>
 				</tr>
 				<tr>
 					<td class="text-right" colspan="2" id="BalanceAmount">Balance
 						Donation charges</td>
 
-					<td><input type="text" name="donationAmountForCollection" data-pattern="number" 
+					<td><input type="text" name="donationAmountForCollection" value="${pendingAmtForCollection}" data-pattern="number" 
 						class="form-control table-input text-right patternvalidation"
-						id="amountForCollection" readonly="true"  /></td>
+						id="pendingAmtForCollection" readonly="readonly"  /></td>
 				</tr>
 			</c:if>
 		</table>

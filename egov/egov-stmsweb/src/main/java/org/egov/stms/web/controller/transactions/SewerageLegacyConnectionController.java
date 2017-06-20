@@ -40,6 +40,7 @@
 package org.egov.stms.web.controller.transactions;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -300,12 +301,24 @@ public class SewerageLegacyConnectionController extends GenericWorkFlowControlle
                 return new ModelAndView(COMMON_ERROR_PAGE, SEWERAGEAPPLICATIONDETAILS, sewerageApplicationDetails);
             }
         }
+
+        for (final EgDemandDetails dd : sewerageApplicationDetails.getCurrentDemand()
+                .getEgDemandDetails()) {
+            if (dd.getEgDemandReason().getEgDemandReasonMaster().getCode()
+                    .equalsIgnoreCase(SewerageTaxConstants.FEES_DONATIONCHARGE_CODE)) {
+                BigInteger collectedAmt = dd.getAmtCollected().toBigInteger();
+                BigInteger pendingAmtForCollection = dd.getAmount().subtract(dd.getAmtCollected()).toBigInteger();
+                model.addAttribute("amountCollected", collectedAmt);
+                model.addAttribute("pendingAmtForCollection", pendingAmtForCollection);
+            }
+        }
+
         model.addAttribute(PROPERTYTYPES, PropertyType.values());
         model.addAttribute("legacy", true);
         model.addAttribute("isDonationChargeCollectionRequired", sewerageTaxUtils.isDonationChargeCollectionRequiredForLegacy());
         model.addAttribute("demandDetailList", loadDemandDetails(sewerageApplicationDetails));
         return new ModelAndView("edit-legacySewerageConnection-form", SEWERAGEAPPLICATIONDETAILS, sewerageApplicationDetails);
-
+    
     }
 
     @RequestMapping(value = "/sewerageLegacyApplication-update", method = RequestMethod.POST)
