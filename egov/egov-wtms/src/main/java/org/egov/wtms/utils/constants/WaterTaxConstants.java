@@ -130,7 +130,6 @@ public class WaterTaxConstants {
 
     public static final String BILLTYPE_AUTO = "AUTO";
     public static final String BILLTYPE_MANUAL = "MANUAL";
-    public static final String CITIZENUSER = "9999999999";
     public static final String BILLTYPE_ONLINE = "ONLINE";
     public static final String PERMENENTCLOSE = "Permanent";
     public static final String TEMPERARYCLOSE = "Temporary";

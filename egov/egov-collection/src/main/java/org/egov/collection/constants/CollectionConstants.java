@@ -284,8 +284,6 @@ public final class CollectionConstants {
     public static final String SUPER_USER_NAME = "egovernments";
     public static final String SESSION_VAR_LOGIN_USER_LOCATIONID = "locationId";
 
-    public static final String CITIZEN_USER_NAME = "9999999999";
-
     // Separators
     public static final String SEPARATOR_HYPHEN = "-";
     public static final String SEPARATOR_UNDERSCORE = "_";

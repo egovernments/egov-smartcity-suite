@@ -63,6 +63,11 @@ public class SecurityUtils {
         return authentication.isPresent() && authentication.get().getPrincipal() instanceof String;
     }
 
+    public static boolean userAnonymouslyAuthenticated() {
+        Optional<Authentication> authentication = getCurrentAuthentication();
+        return userAnonymouslyAuthenticated(authentication);
+    }
+
     public static Optional<Authentication> getCurrentAuthentication() {
         return Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication());
     }

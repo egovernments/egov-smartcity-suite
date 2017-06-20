@@ -39,24 +39,6 @@
  */
 package org.egov.ptis.domain.bill;
 
-import static org.egov.demand.interfaces.LatePayPenaltyCalculator.LPPenaltyCalcType.SIMPLE;
-import static org.egov.ptis.constants.PropertyTaxConstants.BIGDECIMAL_100;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_FIRST_HALF;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_SECOND_HALF;
-import static org.egov.ptis.constants.PropertyTaxConstants.SERVICE_CODE_MUTATION;
-import static org.egov.ptis.constants.PropertyTaxConstants.SERVICE_CODE_PROPERTYTAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.SERVICE_CODE_VACANTLANDTAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_CLOSED;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-
 import org.egov.commons.Installment;
 import org.egov.demand.dao.DemandGenericDao;
 import org.egov.demand.dao.EgBillDao;
@@ -70,8 +52,9 @@ import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.ModuleService;
-import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.MoneyUtils;
 import org.egov.ptis.client.model.PenaltyAndRebate;
 import org.egov.ptis.client.service.PenaltyCalculationService;
@@ -91,6 +74,24 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
+import static org.egov.demand.interfaces.LatePayPenaltyCalculator.LPPenaltyCalcType.SIMPLE;
+import static org.egov.ptis.constants.PropertyTaxConstants.BIGDECIMAL_100;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_FIRST_HALF;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_SECOND_HALF;
+import static org.egov.ptis.constants.PropertyTaxConstants.SERVICE_CODE_MUTATION;
+import static org.egov.ptis.constants.PropertyTaxConstants.SERVICE_CODE_PROPERTYTAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.SERVICE_CODE_VACANTLANDTAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_CLOSED;
+
 /**
  * @author satyam
  */
@@ -107,7 +108,6 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
     private Boolean vacantLandTaxPayment = Boolean.FALSE;
 
     private BasicProperty basicProperty;
-    private Long userId;
     private String referenceNumber;
     private EgBillType billType;
     private Boolean levyPenalty;
@@ -135,8 +135,6 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
     @Autowired
     private DemandGenericDao demandGenericDAO;
     @Autowired
-    private UserService userService;
-    @Autowired
     private PropertyTaxUtil propertyTaxUtil;
     @Autowired
     private PenaltyCalculationService penaltyCalculationService;
@@ -155,7 +153,7 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
 
     @Override
     public Long getUserId() {
-        return userId;
+        return ApplicationThreadLocals.getUserId();
     }
 
     @Override
@@ -237,13 +235,9 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
                 && currDemand.getMinAmtPayable().compareTo(BigDecimal.ZERO) > 0)
             chqBouncepenalty = getCurrentDemand().getMinAmtPayable();
         if (getUserId() != null && !getUserId().equals("")) {
-            final String loginUser = userService.getUserById(getUserId()).getName();
-            if (loginUser.equals(PropertyTaxConstants.CITIZENUSER))
-                // New Modes for the Client are to be added i.e BlackBerry
-                // payment etc.
+            if (SecurityUtils.userAnonymouslyAuthenticated())
                 modesNotAllowed = "cash,cheque";
-            else if (!loginUser.equals(PropertyTaxConstants.CITIZENUSER)
-                    && chqBouncepenalty.compareTo(BigDecimal.ZERO) > 0)
+            else if (chqBouncepenalty.compareTo(BigDecimal.ZERO) > 0)
                 modesNotAllowed = "cheque";
         }
         return modesNotAllowed;
@@ -421,8 +415,7 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
     public EgBillType getBillType() {
         if (billType == null)
             if (getUserId() != null && !getUserId().equals("")) {
-                final String loginUser = userService.getUserById(getUserId()).getName();
-                if (loginUser.equals(PropertyTaxConstants.CITIZENUSER))
+                if (SecurityUtils.userAnonymouslyAuthenticated())
                     billType = egBillDAO.getBillTypeByCode(PropertyTaxConstants.BILLTYPE_ONLINE);
                 else
                     billType = egBillDAO.getBillTypeByCode(PropertyTaxConstants.BILLTYPE_AUTO);
@@ -529,10 +522,6 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
         return rebateService.isEarlyPayRebateActive(date);
     }
 
-    public void setUserId(final Long userId) {
-        this.userId = userId;
-    }
-
     public BasicProperty getBasicProperty() {
         return basicProperty;
     }
@@ -557,20 +546,20 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
         this.instTaxBean = instTaxBean;
     }
 
-    public void setCollectionType(final String collType) {
-        this.collType = collType;
-    }
-
     public String getCollectionType() {
         return collType;
     }
 
-    public void setPaymentGatewayType(final String pgType) {
-        this.pgType = pgType;
+    public void setCollectionType(final String collType) {
+        this.collType = collType;
     }
 
     public String getPaymentGatewayType() {
         return pgType;
+    }
+
+    public void setPaymentGatewayType(final String pgType) {
+        this.pgType = pgType;
     }
 
     public BigDecimal getMutationFee() {
