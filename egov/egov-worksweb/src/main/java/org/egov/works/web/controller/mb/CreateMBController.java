@@ -3,7 +3,6 @@ package org.egov.works.web.controller.mb;
 import java.io.IOException;
 import java.io.Writer;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -14,9 +13,11 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.egov.works.contractorbill.service.ContractorBillRegisterService;
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
 import org.egov.works.mb.entity.FileStoreMapperWrapper;
 import org.egov.works.mb.entity.MBHeader;
+import org.egov.works.mb.entity.MBHeaderWrapper;
 import org.egov.works.mb.service.MBHeaderService;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
@@ -68,6 +69,9 @@ public class CreateMBController {
 
     @Autowired
     private WorksUtils worksUtils;
+    
+    @Autowired
+    private ContractorBillRegisterService contractorBillRegisterService;
 
     public WorkOrderEstimate getWorkOrderEstimate(final Long workOrderEstimateId) {
         final WorkOrderEstimate workOrderEstimate = workOrderEstimateService
@@ -168,13 +172,34 @@ public class CreateMBController {
     }
     
     @RequestMapping(value = "/rest-create", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody String createFromApp(@RequestBody final MBHeader mbHeader, final Model model,
+    public @ResponseBody String createFromApp(@RequestBody final MBHeaderWrapper mbHeaderWrapper, final Model model,
             final BindingResult errors, final HttpServletRequest request, final BindingResult resultBinder,
             final HttpServletResponse response)
             throws ApplicationException, IOException {
+        
+        final MBHeader mbHeader = new MBHeader();
+        mbHeader.setWorkOrder(letterOfAcceptanceService.getWorkOrderById(mbHeaderWrapper.getWorkOrder()));
+        mbHeader.setMbRefNo(mbHeaderWrapper.getMbRefNo());
+        mbHeader.setContractorComments(mbHeaderWrapper.getContractorComments());
+        mbHeader.setMbDate(mbHeaderWrapper.getMbDate());
+        mbHeader.setMbIssuedDate(mbHeaderWrapper.getMbIssuedDate());
+        mbHeader.setMbAbstract(mbHeaderWrapper.getMbAbstract());
+        mbHeader.setFromPageNo(mbHeaderWrapper.getFromPageNo());
+        mbHeader.setToPageNo(mbHeaderWrapper.getToPageNo());
+        mbHeader.setWorkOrderEstimate(workOrderEstimateService.getWorkOrderEstimateById(mbHeaderWrapper.getWorkOrderEstimate()));
+        if (mbHeaderWrapper.getEgBillregister() != null)
+            mbHeader.setEgBillregister(contractorBillRegisterService.getContractorBillById(mbHeaderWrapper.getEgBillregister()));
+        mbHeader.setSorMbDetails(mbHeaderWrapper.getSorMbDetails());
+        mbHeader.setNonSorMbDetails(mbHeaderWrapper.getNonSorMbDetails());
+        mbHeader.setNonTenderedMbDetails(mbHeaderWrapper.getNonTenderedMbDetails());
+        mbHeader.setLumpSumMbDetails(mbHeaderWrapper.getLumpSumMbDetails());
+        mbHeader.setDocumentDetails(mbHeaderWrapper.getDocumentDetails());
+        mbHeader.setIsLegacyMB(mbHeaderWrapper.getIsLegacyMB());
+        mbHeader.setMbAmount(mbHeaderWrapper.getMbAmount());
+        mbHeader.setCreatedBy(mbHeaderWrapper.getCreatedBy());
 
         final String jsonResponse = create(mbHeader, model, errors, request, resultBinder, response, null);
-        if (!jsonResponse.contains("stateType:MBHeader")) {
+        if (!jsonResponse.contains("\"stateType\":\"MBHeader\"")) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         }
         return jsonResponse.replace("\"", "");

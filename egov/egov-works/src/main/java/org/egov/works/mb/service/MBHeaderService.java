@@ -605,11 +605,19 @@ public class MBHeaderService {
         } else if (WorksConstants.SAVE_ACTION.toString().equalsIgnoreCase(workFlowAction)) {
             wfmatrix = mbHeaderWorkflowService.getWfMatrix(mbHeader.getStateType(), null, mbHeader.getMbAmount(),
                     additionalRule, WorksConstants.NEW, null);
-            if (mbHeader.getState() == null)
-                mbHeader.transition().start().withSenderName(user.getUsername() + "::" + user.getName())
-                        .withComments(approvalComent).withStateValue(WorksConstants.NEW)
-                        .withDateInfo(currentDate.toDate()).withOwner(wfInitiator.getPosition())
-                        .withNextAction(WorksConstants.ESTIMATE_ONSAVE_NEXTACTION_VALUE).withNatureOfTask(natureOfwork);
+            if (mbHeader.getState() == null) {
+                // TODO: Fix me to set position for anonymous user
+                if (wfInitiator != null)
+                    mbHeader.transition().start().withSenderName(user.getUsername() + "::" + user.getName())
+                            .withComments(approvalComent).withStateValue(WorksConstants.NEW)
+                            .withDateInfo(currentDate.toDate()).withOwner(wfInitiator.getPosition())
+                            .withNextAction(WorksConstants.ESTIMATE_ONSAVE_NEXTACTION_VALUE).withNatureOfTask(natureOfwork);
+                else
+                    mbHeader.transition().start().withSenderName(user.getUsername() + "::" + user.getName())
+                            .withComments(approvalComent).withStateValue(WorksConstants.NEW)
+                            .withDateInfo(currentDate.toDate())
+                            .withNextAction(WorksConstants.ESTIMATE_ONSAVE_NEXTACTION_VALUE).withNatureOfTask(natureOfwork);
+            }
         } else {
             if (null != approvalPosition && approvalPosition != -1 && !approvalPosition.equals(Long.valueOf(0))
                     && !WorksConstants.CANCEL_ACTION.toString().equalsIgnoreCase(workFlowAction)
