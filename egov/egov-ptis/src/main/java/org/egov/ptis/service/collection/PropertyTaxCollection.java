@@ -787,7 +787,7 @@ public class PropertyTaxCollection extends TaxCollection {
                 + billReferenceNumber + ", for Amount Paid :" + actualAmountPaid);
         boolean isEligibleForCurrentRebate = false;
         final boolean isEligibleForAdvanceRebate = false;
-        if (rebateService.isEarlyPayRebateActive(receiptDetailList.get(0).getReceiptHeader().getReceiptDate()))
+        if (rebateService.isEarlyPayRebateActive(bill.getCreateDate() != null ? bill.getCreateDate() : new Date()))
             isEligibleForCurrentRebate = true;
 
         final CollectionApportioner apportioner = new CollectionApportioner(isEligibleForCurrentRebate,

@@ -539,7 +539,7 @@ public class PropertyTaxUtil {
                 instReasonMap.put(key, dateTime.getMonthOfYear() + "/" + dateTime.getYear() + "-" + reasonMasterCode);
             }
         }
-        if (rebateService.isEarlyPayRebateActive(new Date())) {
+        if (rebateService.isEarlyPayRebateActive(billable.getReceiptDate() != null ? billable.getReceiptDate() : new Date())) {
             final Installment currFirstHalf = currYearInstMap.get(CURRENTYEAR_FIRST_HALF);
             final DateTime dateTime = new DateTime(currFirstHalf.getInstallmentYear());
             key = getOrder(currFirstHalf.getInstallmentYear(), DEMAND_REASON_ORDER_MAP.get(DEMANDRSN_CODE_REBATE));
