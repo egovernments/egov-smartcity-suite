@@ -96,6 +96,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_DIGITAL_SIGNATURE_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
+import static org.egov.ptis.constants.PropertyTaxConstants.TAX_COLLECTOR_DESGN;
 
 import java.io.File;
 import java.math.BigDecimal;
@@ -758,6 +759,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                 setInitiator(assignmentOnreject.getEmployee().getName().concat("~")
                         .concat(assignmentOnreject.getPosition().getName()));
             } else if (BILL_COLLECTOR_DESGN.equalsIgnoreCase(loggedInUserDesignation)
+                    || TAX_COLLECTOR_DESGN.equalsIgnoreCase(loggedInUserDesignation)
                     || REVENUE_INSPECTOR_DESGN.equalsIgnoreCase(loggedInUserDesignation)) {
                 nextAction = WF_STATE_ASSISTANT_APPROVAL_PENDING;
                 setInitiator(wfInitiator.getEmployee().getName().concat("~")
