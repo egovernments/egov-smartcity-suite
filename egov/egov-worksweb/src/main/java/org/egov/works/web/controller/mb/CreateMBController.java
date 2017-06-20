@@ -167,7 +167,7 @@ public class CreateMBController {
         return jsonObject.toString();
     }
     
-    @RequestMapping(value = "/create-rest", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/rest-create", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody String createFromApp(@RequestBody final MBHeader mbHeader, final Model model,
             final BindingResult errors, final HttpServletRequest request, final BindingResult resultBinder,
             final HttpServletResponse response)
@@ -180,7 +180,7 @@ public class CreateMBController {
         return jsonResponse.replace("\"", "");
     }
     
-    @RequestMapping(value = "/create-rest-documents", method = RequestMethod.POST)
+    @RequestMapping(value = "/rest-create-documents", method = RequestMethod.POST)
     public @ResponseBody ResponseEntity<?> saveDocuments(final Model model, final HttpServletRequest request,
             final HttpServletResponse response, @RequestParam("files") final MultipartFile[] files)
             throws ApplicationException, IOException {

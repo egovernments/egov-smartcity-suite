@@ -73,6 +73,15 @@
 				<security:filter-chain pattern="/estimatephotograph/update/**" filters="none" />
 				<security:filter-chain pattern="/estimatephotograph/view" filters="none" />
 				<security:filter-chain pattern="/estimatephotograph/downloadphotgraphs" filters="none" />
+				<security:filter-chain pattern="/letterofacceptance/ajaxworkorder-mbheader" filters="none" />
+				<security:filter-chain pattern="/letterofacceptance/ajaxestimatenumbers" filters="none" />
+				<security:filter-chain pattern="/letterofacceptance/ajaxsearchcontractors-loa" filters="none" />
+				<security:filter-chain pattern="/letterofacceptance/ajaxworkidentificationnumber-milestone" filters="none" />
+				<security:filter-chain pattern="/workorder/validatemb/**" filters="none" />
+				<security:filter-chain pattern="/measurementbook/ajax-searchreactivities" filters="none" />
+				<security:filter-chain pattern="/measurementbook/ajax-searchactivities" filters="none" />
+				<security:filter-chain pattern="/measurementbook/rest-create-documents" filters="none" />
+				<security:filter-chain pattern="/measurementbook/rest-create" filters="none" />
 				<security:filter-chain pattern="/**"  filters="concurrentSessionFilter,securityContextPersistenceFilter,logoutFilter,authenticationProcessingFilter,securityContextHolderAwareRequestFilter,rememberMeAuthenticationFilter,anonymousAuthenticationFilter,exceptionTranslationFilter,filterSecurityInterceptor" />
 			</list> 
 		</constructor-arg>
