@@ -39,34 +39,6 @@ l * eGov suite of products aim to improve the internal efficiency,transparency,
  */
 package org.egov.ptis.domain.service.transfer;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_REGISTERED_TRANSFER;
-import static org.egov.ptis.constants.PropertyTaxConstants.ANONYMOUS_USER;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP;
-import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
-import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
-import static org.egov.ptis.constants.PropertyTaxConstants.MUTATIONRS_DECREE_BY_CIVIL_COURT;
-import static org.egov.ptis.constants.PropertyTaxConstants.MUTATIONRS_SALES_DEED;
-import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_TITLE_TRANSFER;
-import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_MUTATION_CERTIFICATE;
-import static org.egov.ptis.constants.PropertyTaxConstants.SOURCE_ONLINE;
-import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
-import static org.egov.ptis.constants.PropertyTaxConstants.TRANSFER;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_GENERATE_TRANSFER_NOTICE;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SIGN;
-import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_CLOSED;
-
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.egov.commons.entity.Source;
@@ -136,6 +108,33 @@ import org.joda.time.Months;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_REGISTERED_TRANSFER;
+import static org.egov.ptis.constants.PropertyTaxConstants.ANONYMOUS_USER;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP;
+import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.MUTATIONRS_DECREE_BY_CIVIL_COURT;
+import static org.egov.ptis.constants.PropertyTaxConstants.MUTATIONRS_SALES_DEED;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_TITLE_TRANSFER;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_MUTATION_CERTIFICATE;
+import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
+import static org.egov.ptis.constants.PropertyTaxConstants.TRANSFER;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_GENERATE_TRANSFER_NOTICE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SIGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_CLOSED;
 
 public class PropertyTransferService {
 
@@ -240,8 +239,6 @@ public class PropertyTransferService {
         propertyMutation.setMutationDate(new Date());
         if (propertyMutation.getApplicationNo() == null)
             propertyMutation.setApplicationNo(applicationNumberGenerator.generate());
-        if (SOURCE_ONLINE.equalsIgnoreCase(propertyMutation.getSource()) && ApplicationThreadLocals.getUserId() == null)
-            ApplicationThreadLocals.setUserId(securityUtils.getCurrentUser().getId());
         createUserIfNotExist(propertyMutation, propertyMutation.getTransfereeInfosProxy());
         basicProperty.getPropertyMutations().add(propertyMutation);
         basicProperty.setUnderWorkflow(true);
@@ -308,7 +305,7 @@ public class PropertyTransferService {
     }
 
     public double calculateMutationFee(final double marketValue, final String transferReason,
-            final PropertyMutation propertyMutation) {
+                                       final PropertyMutation propertyMutation) {
         final int transferedInMonths = Months.monthsBetween(
                 new LocalDate(propertyMutation.getMutationDate()).withDayOfMonth(1),
                 new LocalDate(propertyMutation.getDeedDate()).withDayOfMonth(1)).getMonths();
@@ -362,7 +359,7 @@ public class PropertyTransferService {
     }
 
     public ReportOutput generateAcknowledgement(final BasicProperty basicProperty,
-            final PropertyMutation propertyMutation, final String cityName, final String cityLogo) {
+                                                final PropertyMutation propertyMutation, final String cityName, final String cityLogo) {
         final Map<String, Object> reportParams = new HashMap<String, Object>();
         final PropertyAckNoticeInfo ackBean = new PropertyAckNoticeInfo();
         ackBean.setUlbLogo(cityLogo);
@@ -407,8 +404,8 @@ public class PropertyTransferService {
 
     @Transactional
     public ReportOutput generateTransferNotice(final BasicProperty basicProperty,
-            final PropertyMutation propertyMutation, final String cityName, final String cityLogo, final String actionType,
-            final boolean isCorporation) {
+                                               final PropertyMutation propertyMutation, final String cityName, final String cityLogo, final String actionType,
+                                               final boolean isCorporation) {
         final PtNotice notice = noticeService.getNoticeByNoticeTypeAndApplicationNumber(NOTICE_TYPE_MUTATION_CERTIFICATE,
                 propertyMutation.getApplicationNo());
         ReportOutput reportOutput = new ReportOutput();
@@ -440,9 +437,8 @@ public class PropertyTransferService {
                     ? new ByteArrayInputStream(securityUtils.getCurrentUser().getSignature()) : "");
             reportParams.put("isCorporation", isCorporation);
 
-            final User user = securityUtils.getCurrentUser();
             loggedInUserAssignment = assignmentService.getAssignmentByPositionAndUserAsOnDate(
-                    propertyMutation.getCurrentState().getOwnerPosition().getId(), user.getId(), new Date());
+                    propertyMutation.getCurrentState().getOwnerPosition().getId(), ApplicationThreadLocals.getUserId(), new Date());
             loggedInUserDesignation = !loggedInUserAssignment.isEmpty() ? loggedInUserAssignment.get(0).getDesignation().getName()
                     : "";
             if (COMMISSIONER_DESGN.equalsIgnoreCase(loggedInUserDesignation))
@@ -501,7 +497,7 @@ public class PropertyTransferService {
     }
 
     private void createUserIfNotExist(final PropertyMutation propertyMutation,
-            final List<PropertyMutationTransferee> transferees) {
+                                      final List<PropertyMutationTransferee> transferees) {
         propertyMutation.getTransfereeInfos().clear();
         for (final PropertyMutationTransferee transferee : transferees) {
             if (transferee != null) {
@@ -577,20 +573,19 @@ public class PropertyTransferService {
         propertyTaxBillable.setBasicProperty(propertyMutation.getBasicProperty());
         propertyTaxBillable.setMutationFeePayment(Boolean.TRUE);
         propertyTaxBillable.setMutationFee(propertyMutation.getMutationFee());
-        if (ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName()))
+        if (SecurityUtils.userAnonymouslyAuthenticated())
             propertyTaxBillable.setCollectionType(DemandConstants.COLLECTIONTYPE_ONLINE);
         else
             propertyTaxBillable.setCollectionType(DemandConstants.COLLECTIONTYPE_COUNTER);
         propertyTaxBillable.setCallbackForApportion(Boolean.FALSE);
         propertyTaxBillable.setMutationApplicationNo(propertyMutation.getApplicationNo());
-        propertyTaxBillable.setUserId(ApplicationThreadLocals.getUserId());
         propertyTaxBillable.setReferenceNumber(propertyTaxNumberGenerator.generateManualBillNumber(propertyMutation
                 .getBasicProperty().getPropertyID()));
         return ptBillServiceImpl.getBillXML(propertyTaxBillable);
     }
 
     public String getLoggedInUserDesignation() {
-        final Designation designation = propertyTaxUtil.getDesignationForUser(securityUtils.getCurrentUser().getId());
+        final Designation designation = propertyTaxUtil.getDesignationForUser(ApplicationThreadLocals.getUserId());
         return designation.getName();
     }
 
@@ -608,19 +603,19 @@ public class PropertyTransferService {
     }
 
     public Designation getUserDesigantion() {
-        final Long userId = securityUtils.getCurrentUser().getId();
-        final Designation designation = propertyTaxUtil.getDesignationForUser(userId);
+        final Designation designation = propertyTaxUtil.getDesignationForUser(ApplicationThreadLocals.getUserId());
         return designation;
     }
 
     public PropertyMutation initiatePropertyTransfer(final BasicProperty basicproperty, final PropertyMutation propertyMutation,
-            final HashMap<String, String> meesevaParams) {
+                                                     final HashMap<String, String> meesevaParams) {
         initiatePropertyTransfer(basicproperty, propertyMutation);
         return propertyMutation;
     }
 
     /**
      * Used in REST API for initiating property transfer
+     *
      * @param propertyMutation
      * @return
      */
@@ -643,6 +638,7 @@ public class PropertyTransferService {
 
     /**
      * Creates PropertyMutation object for REST API
+     *
      * @param assessmentNumber
      * @param mutationReasonCode
      * @param saleDetails
@@ -653,7 +649,7 @@ public class PropertyTransferService {
      * @throws ParseException
      */
     public NewPropertyDetails createPropertyMutation(final String assessmentNumber, final String mutationReasonCode,
-            final String saleDetails, final String deedNo, final String deedDate, final List<OwnerDetails> ownerDetailsList)
+                                                     final String saleDetails, final String deedNo, final String deedDate, final List<OwnerDetails> ownerDetailsList)
             throws ParseException {
         PropertyMutation propertyMutation = new PropertyMutation();
         NewPropertyDetails newPropertyDetails = null;
@@ -695,12 +691,13 @@ public class PropertyTransferService {
 
     /**
      * Creates Transferee list, used in REST API
+     *
      * @param propertyMutation
      * @param ownerDetailsList
      * @return
      */
     private List<PropertyMutationTransferee> getTransfereesInfoList(final PropertyMutation propertyMutation,
-            final List<OwnerDetails> ownerDetailsList) {
+                                                                    final List<OwnerDetails> ownerDetailsList) {
         final List<PropertyMutationTransferee> transfereeInfoList = new ArrayList<PropertyMutationTransferee>(0);
         for (final OwnerDetails ownerDetais : ownerDetailsList) {
             final PropertyMutationTransferee transfereeInfo = new PropertyMutationTransferee();
@@ -723,6 +720,7 @@ public class PropertyTransferService {
 
     /**
      * API to calculate mutation fee
+     *
      * @param partyValue
      * @param departmentValue
      * @return MutationFee
@@ -763,6 +761,7 @@ public class PropertyTransferService {
 
     /**
      * API to set Document Value (Market Value)
+     *
      * @param propertyMutation Object
      * @return void
      */
@@ -834,11 +833,12 @@ public class PropertyTransferService {
 
     /**
      * API to get Assignment for Third Party user based on mutation type
+     *
      * @param propertyMutation Object basicProperty Object
      * @return Assignment
      */
     public Assignment getAssignmentForThirdPartyByMutationType(final PropertyMutation propertyMutation,
-            final BasicProperty basicproperty, final User user) {
+                                                               final BasicProperty basicproperty, final User user) {
         if (propertyService.isCscOperator(user)) {
             if (propertyMutation.getType().equals(PropertyTaxConstants.ADDTIONAL_RULE_FULL_TRANSFER))
                 return propertyTaxCommonUtils.getCommissionerAsgnForFullTransfer();

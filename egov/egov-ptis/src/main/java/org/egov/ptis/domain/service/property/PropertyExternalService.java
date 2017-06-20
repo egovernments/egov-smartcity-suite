@@ -749,8 +749,6 @@ public class PropertyExternalService {
         	propertyTaxBillable.setVacantLandTaxPayment(true);
         
         propertyTaxBillable.setBasicProperty(basicProperty);
-        propertyTaxBillable.setUserId(2L);
-        ApplicationThreadLocals.setUserId(2L);
         propertyTaxBillable.setReferenceNumber(propertyTaxNumberGenerator.generateBillNumber(basicProperty
                 .getPropertyID().getWard().getBoundaryNum().toString()));
         propertyTaxBillable.setBillType(egBillDAO.getBillTypeByCode(BILLTYPE_AUTO));
@@ -1785,14 +1783,12 @@ public class PropertyExternalService {
                 .getAssessmentNo());
         PropertyMutation propertyMutation = getLatestPropertyMutationByAssesmentNo(payPropertyTaxDetails.getAssessmentNo());
         propertyTaxBillable.setBasicProperty(basicProperty);
-        ApplicationThreadLocals.setUserId(2L);
         propertyTaxBillable.setTransanctionReferenceNumber(payPropertyTaxDetails.getTransactionId());
         propertyTaxBillable.setMutationFeePayment(Boolean.TRUE);
         propertyTaxBillable.setMutationFee(payPropertyTaxDetails.getPaymentAmount());
         propertyTaxBillable.setCallbackForApportion(Boolean.FALSE);
         if(propertyMutation != null)
         	propertyTaxBillable.setMutationApplicationNo(propertyMutation.getApplicationNo());
-        propertyTaxBillable.setUserId(ApplicationThreadLocals.getUserId());
         propertyTaxBillable.setReferenceNumber(propertyTaxNumberGenerator.generateManualBillNumber(basicProperty.getPropertyID()));
         
         final EgBill egBill = ptBillServiceImpl.generateBill(propertyTaxBillable);
