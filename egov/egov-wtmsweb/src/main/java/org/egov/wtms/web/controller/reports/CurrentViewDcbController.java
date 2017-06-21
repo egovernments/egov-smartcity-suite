@@ -107,8 +107,9 @@ public class CurrentViewDcbController {
     @Autowired
     private WaterTaxUtils waterTaxUtils;
 
-    @Autowired(required = true)
+    @Autowired
     protected WaterConnectionDetailsService waterConnectionDetailsService;
+
     @Autowired
     private PropertyExtnUtils propertyExtnUtils;
 
@@ -133,7 +134,6 @@ public class CurrentViewDcbController {
                 .findByConsumerCodeAndConnectionStatus(applicationCode, ConnectionStatus.ACTIVE);
     }
 
-    @Autowired
     @ModelAttribute("connectionTypes")
     public Map<String, String> connectionTypes() {
         return waterConnectionDetailsService.getConnectionTypesMap();
