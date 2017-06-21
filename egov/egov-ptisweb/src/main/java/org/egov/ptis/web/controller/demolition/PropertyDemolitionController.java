@@ -166,6 +166,7 @@ public class PropertyDemolitionController extends GenericWorkFlowController {
         model.addAttribute("isEmployee", !ANONYMOUS_USER.equalsIgnoreCase(loggedInUser.getName()) && propService.isEmployee(loggedInUser));
         propertyDemolitionService.addModelAttributes(model, basicProperty);
         model.addAttribute("stateType", property.getClass().getSimpleName());
+        model.addAttribute("additionalRule", DEMOLITION);
         prepareWorkflow(model, property, new WorkflowContainer());
         return DEMOLITION_FORM;
     }

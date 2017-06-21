@@ -266,6 +266,7 @@ public class TaxExemptionController extends GenericWorkFlowController {
 
         model.addAttribute("property", property);
         model.addAttribute("stateType", property.getClass().getSimpleName());
+        model.addAttribute("additionalRule", EXEMPTION);
         model.addAttribute("isExempted", isExempted);
         model.addAttribute(APPLICATION_SOURCE, applicationSource);
         model.addAttribute("isAlert", true);
