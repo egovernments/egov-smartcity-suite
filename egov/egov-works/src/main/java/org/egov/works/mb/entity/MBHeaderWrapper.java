@@ -50,6 +50,7 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.persistence.validator.annotation.DateFormat;
 import org.egov.infra.persistence.validator.annotation.GreaterThan;
 import org.egov.infra.persistence.validator.annotation.OptionalPattern;
@@ -66,7 +67,7 @@ public class MBHeaderWrapper implements Serializable {
     private static final long serialVersionUID = 121631467636260459L;
 
     @Required(message = "mbheader.workorder.null")
-    private Long workOrder;
+    private String workOrderNumber;
 
     @Required(message = "mbheader.mbrefno.null")
     private String mbRefNo;
@@ -85,6 +86,7 @@ public class MBHeaderWrapper implements Serializable {
     @JsonFormat(pattern = "dd/MM/yyyy")
     private Date mbIssuedDate;
 
+    @NotNull
     @Length(max = 400, message = "mbheader.mbabstract.length")
     @OptionalPattern(regex = WorksConstants.ALPHANUMERICWITHALLSPECIALCHAR, message = "mb.mbabstract.alphaNumeric")
     private String mbAbstract;
@@ -95,11 +97,6 @@ public class MBHeaderWrapper implements Serializable {
 
     @Min(value = 0, message = "mbheader.toPageNo.non.negative")
     private Integer toPageNo;
-
-    @NotNull
-    private Long workOrderEstimate;
-
-    private Long egBillregister;
 
     private transient List<MBDetails> sorMbDetails = new ArrayList<MBDetails>(0);
 
@@ -118,21 +115,13 @@ public class MBHeaderWrapper implements Serializable {
     
     public List<ValidationError> validate() {
         final List<ValidationError> validationErrors = new ArrayList<ValidationError>();
-        if (workOrder != null && (workOrder == 0 || workOrder == -1))
+        if (StringUtils.isEmpty(workOrderNumber))
             validationErrors.add(new ValidationError("workOrder", "mbheader.workorder.null"));
 
         if (fromPageNo != null && toPageNo != null && fromPageNo > toPageNo)
             validationErrors.add(new ValidationError("toPageNo", "mbheader.toPageNo.invalid"));
 
         return validationErrors;
-    }
-
-    public void setWorkOrder(final Long workOrder) {
-        this.workOrder = workOrder;
-    }
-
-    public Long getWorkOrder() {
-        return workOrder;
     }
 
     public void setMbRefNo(final String mbRefNo) {
@@ -175,28 +164,20 @@ public class MBHeaderWrapper implements Serializable {
         this.toPageNo = toPageNo;
     }
 
+    public String getWorkOrderNumber() {
+        return workOrderNumber;
+    }
+
+    public void setWorkOrderNumber(String workOrderNumber) {
+        this.workOrderNumber = workOrderNumber;
+    }
+
     public String getContractorComments() {
         return contractorComments;
     }
 
     public void setContractorComments(final String contractorComments) {
         this.contractorComments = contractorComments;
-    }
-
-    public Long getEgBillregister() {
-        return egBillregister;
-    }
-
-    public void setEgBillregister(final Long egBillregister) {
-        this.egBillregister = egBillregister;
-    }
-
-    public Long getWorkOrderEstimate() {
-        return workOrderEstimate;
-    }
-
-    public void setWorkOrderEstimate(final Long workOrderEstimate) {
-        this.workOrderEstimate = workOrderEstimate;
     }
 
     public boolean getIsLegacyMB() {

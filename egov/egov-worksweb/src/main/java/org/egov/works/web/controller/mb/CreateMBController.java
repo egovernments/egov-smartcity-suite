@@ -8,6 +8,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -22,6 +23,7 @@ import org.egov.works.mb.service.MBHeaderService;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
 import org.egov.works.web.adaptor.MeasurementBookJsonAdaptor;
+import org.egov.works.workorder.entity.WorkOrder;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.egov.works.workorder.service.WorkOrderEstimateService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -172,13 +174,15 @@ public class CreateMBController {
     }
     
     @RequestMapping(value = "/rest-create", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody String createFromApp(@RequestBody final MBHeaderWrapper mbHeaderWrapper, final Model model,
+    public @ResponseBody String createFromApp(@RequestBody @Valid final MBHeaderWrapper mbHeaderWrapper, final Model model,
             final BindingResult errors, final HttpServletRequest request, final BindingResult resultBinder,
             final HttpServletResponse response)
             throws ApplicationException, IOException {
         
         final MBHeader mbHeader = new MBHeader();
-        mbHeader.setWorkOrder(letterOfAcceptanceService.getWorkOrderById(mbHeaderWrapper.getWorkOrder()));
+        final WorkOrder workOrder = letterOfAcceptanceService.getWorkOrderByWorkOrderNumber(mbHeaderWrapper.getWorkOrderNumber());
+        final WorkOrderEstimate workOrderEstimate = workOrderEstimateService.getWorkOrderEstimateByWorkOrderId(workOrder.getId());
+        mbHeader.setWorkOrder(workOrder);
         mbHeader.setMbRefNo(mbHeaderWrapper.getMbRefNo());
         mbHeader.setContractorComments(mbHeaderWrapper.getContractorComments());
         mbHeader.setMbDate(mbHeaderWrapper.getMbDate());
@@ -186,9 +190,7 @@ public class CreateMBController {
         mbHeader.setMbAbstract(mbHeaderWrapper.getMbAbstract());
         mbHeader.setFromPageNo(mbHeaderWrapper.getFromPageNo());
         mbHeader.setToPageNo(mbHeaderWrapper.getToPageNo());
-        mbHeader.setWorkOrderEstimate(workOrderEstimateService.getWorkOrderEstimateById(mbHeaderWrapper.getWorkOrderEstimate()));
-        if (mbHeaderWrapper.getEgBillregister() != null)
-            mbHeader.setEgBillregister(contractorBillRegisterService.getContractorBillById(mbHeaderWrapper.getEgBillregister()));
+        mbHeader.setWorkOrderEstimate(workOrderEstimate);
         mbHeader.setSorMbDetails(mbHeaderWrapper.getSorMbDetails());
         mbHeader.setNonSorMbDetails(mbHeaderWrapper.getNonSorMbDetails());
         mbHeader.setNonTenderedMbDetails(mbHeaderWrapper.getNonTenderedMbDetails());

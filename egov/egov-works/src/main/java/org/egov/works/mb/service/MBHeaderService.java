@@ -64,15 +64,16 @@ import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.CityService;
+import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.repository.FileStoreMapperRepository;
-import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationConstant;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.pims.commons.Position;
+import org.egov.works.config.properties.WorksApplicationProperties;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.letterofacceptance.service.WorkOrderActivityService;
 import org.egov.works.lineestimate.entity.DocumentDetails;
@@ -163,6 +164,12 @@ public class MBHeaderService {
     
     @Autowired
     private FileStoreMapperRepository fileStoreMapperRepository;
+    
+    @Autowired
+    private UserService userService;
+    
+    @Autowired
+    private WorksApplicationProperties worksApplicationProperties;
     
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -612,11 +619,14 @@ public class MBHeaderService {
                             .withComments(approvalComent).withStateValue(WorksConstants.NEW)
                             .withDateInfo(currentDate.toDate()).withOwner(wfInitiator.getPosition())
                             .withNextAction(WorksConstants.ESTIMATE_ONSAVE_NEXTACTION_VALUE).withNatureOfTask(natureOfwork);
-                else
-                    mbHeader.transition().start().withSenderName(user.getUsername() + "::" + user.getName())
+                else {
+                    final User defaultUser = userService.getUserByUsername(worksApplicationProperties.defaultMBUser());
+                    wfInitiator = assignmentService.getPrimaryAssignmentForUser(defaultUser.getId());
+                    mbHeader.transition().start().withSenderName(defaultUser.getUsername() + "::" + defaultUser.getName())
                             .withComments(approvalComent).withStateValue(WorksConstants.NEW)
-                            .withDateInfo(currentDate.toDate())
+                            .withDateInfo(currentDate.toDate()).withOwner(wfInitiator.getPosition())
                             .withNextAction(WorksConstants.ESTIMATE_ONSAVE_NEXTACTION_VALUE).withNatureOfTask(natureOfwork);
+                }
             }
         } else {
             if (null != approvalPosition && approvalPosition != -1 && !approvalPosition.equals(Long.valueOf(0))

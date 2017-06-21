@@ -104,4 +104,8 @@ public class WorksApplicationProperties {
     public String getContractorBillCutOffDate() {
         return environment.getProperty("contractorbill.cutoff.date");
     }
+    
+    public String defaultMBUser() {
+        return environment.getProperty("mb.default.user", String.class);
+    }
 }
