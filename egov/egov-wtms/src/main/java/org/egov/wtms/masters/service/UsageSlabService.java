@@ -132,9 +132,9 @@ public class UsageSlabService {
         }
 
         final StringBuilder queryString = new StringBuilder();
-        queryString.append("from UsageSlab u where u.usage=:usage ");
+        queryString.append("from UsageSlab u where u.usage=:usage and u.active=true");
         if (fromVolume != null)
-            queryString.append(" and (u.fromVolume<=:fromVolume and u.toVolume<=:fromVolume) ");
+            queryString.append(" and (u.fromVolume<=:fromVolume and (u.toVolume<=:fromVolume or u.toVolume is null))");
         if (toVolume != null)
             queryString.append(" or (u.fromVolume>=:toVolume and u.toVolume>=:toVolume)");
         if (!slabList.isEmpty())

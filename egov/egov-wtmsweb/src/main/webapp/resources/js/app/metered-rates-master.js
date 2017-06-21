@@ -39,6 +39,16 @@
  */
 
 jQuery(document).ready(function($){
+	var rowLength = $('#new-row-table tr').length;
+	var toVolume = $('#toVolume').val();
+	for(var i = 0 ; i<=(rowLength-2); i++){
+		if(toVolume!="" && toVolume!=undefined) {
+			$('#ratesDetail\\['+(i)+'\\]\\.recursive').attr('disabled', true);
+			$('#ratesDetail\\['+(i)+'\\]\\.recursiveFactor').attr('disabled', true);
+			$('#ratesDetail\\['+(i)+'\\]\\.recursiveAmount').attr('disabled', true);
+		}
+	}
+		
 	var resultDataTable;
 	jQuery("#createSearch").click(function(e){
 		if($("form").valid()){
@@ -71,7 +81,7 @@ jQuery(document).ready(function($){
 				bootbox.alert("From Date is Mandatory");
 				return false;
 			}
-			else if(rowLength>2){
+			else if(rowLength>=2){
 				
 				var fromDateNewRow = $('#ratesDetail\\['+(i)+'\\]\\.fromDate').val();
 				var fromDatePrevRow = $('#ratesDetail\\['+(i-1)+'\\]\\.fromDate').val();
@@ -166,7 +176,7 @@ function checkAmountExists(){
 
 
 function addNewRowValue(obj){
-		
+	var toVolume = $('#toVolume').val();	
 	var rowLength = $('#new-row-table tr').length;
 	
 	for(var i = 0 ; i<=(rowLength-2); i++){
@@ -344,6 +354,12 @@ function addNewRowValue(obj){
 					
 			}
 		
+			if(toVolume!="" && toVolume!=undefined) {
+				$('#ratesDetail\\['+(i)+'\\]\\.recursive').attr('disabled', true);
+				$('#ratesDetail\\['+(i)+'\\]\\.recursiveFactor').attr('disabled', true);
+				$('#ratesDetail\\['+(i)+'\\]\\.recursiveAmount').attr('disabled', true);
+			}
+						
 			//reinitialise datepicker fields
 			jQuery(".datepicker").datepicker({
 				format : 'dd/mm/yyyy',

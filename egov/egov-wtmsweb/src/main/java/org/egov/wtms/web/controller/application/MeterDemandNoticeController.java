@@ -229,8 +229,11 @@ public class MeterDemandNoticeController {
         reportParams.put("currentReading", waterConnectionDetails.getMeterConnection().get(0).getCurrentReading());
         reportParams.put("currrentReadingDate",
                 formatter.format(waterConnectionDetails.getMeterConnection().get(0).getCurrentReadingDate()));
-        reportParams.put("noofunitsconsume", waterConnectionDetails.getMeterConnection().get(0).getCurrentReading()
-                - meterReadingpriviousObj.getCurrentReading());
+        if (meterReadingpriviousObj.getCurrentReading() != null
+                && !waterConnectionDetails.getMeterConnection().isEmpty()
+                && waterConnectionDetails.getMeterConnection().get(0).getCurrentReading() != null)
+            reportParams.put("noofunitsconsume", waterConnectionDetails.getMeterConnection().get(0).getCurrentReading()
+                    - meterReadingpriviousObj.getCurrentReading());
         reportParams.put("totalBilltoCollect", waterConnectionDetailsService.getTotalAmount(waterConnectionDetails));
         reportParams.put("currentMonthCharges", getCurrentMonthDemandAmount(waterConnectionDetails,
                 waterConnectionDetails.getMeterConnection().get(0).getCurrentReadingDate()));

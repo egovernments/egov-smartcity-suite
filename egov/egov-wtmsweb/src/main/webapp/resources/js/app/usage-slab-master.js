@@ -211,7 +211,7 @@ function validateUsageSlabGap(usage, slabName, fromVolume, toVolume){
 		dataType : "json",
 		success : function(response){
 				if(response.usage!=null && response.toVolume==null){
-					bootbox.alert("Usage slab creation not allowed");
+					bootbox.alert("Usage slab creation not allowed. Please deactivate current slab "+response.slabName+" and create new slab.");
 				}
 				else if (response.usage!=null && fromVolume>response.toVolume && response.toVolume!=(Number(fromVolume)-1)){
 					if((Number(response.toVolume)+1) === (Number(fromVolume)-1)){
@@ -221,11 +221,15 @@ function validateUsageSlabGap(usage, slabName, fromVolume, toVolume){
 						bootbox.alert("Slab not defined between volume "+(Number(response.toVolume)+1)+" and "+(Number(fromVolume)-1));
 					}
 				}
+				else if(toVolume==="" && response.toVolume===(Number(fromVolume)-1)){
+						isSlabGap = true;
+						return isSlabGap;
+				}
 				else if(response.usage!=null && toVolume<response.fromVolume && (Number(toVolume)+1)!=response.fromVolume){
 					if((Number(toVolume)+1) === (Number(response.fromVolume-1))){
 						bootbox.alert("Slab not defined for volume "+(Number(response.fromVolume-1)));
 					}
-					else{
+					else if (toVolume!=""){
 						bootbox.alert("Slab not defined between volume "+(Number(toVolume)+1)+" and "+(Number(response.fromVolume)-1));
 					}
 					

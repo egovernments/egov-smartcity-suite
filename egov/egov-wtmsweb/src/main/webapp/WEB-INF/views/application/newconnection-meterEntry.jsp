@@ -108,12 +108,12 @@
 
 							<div class="form-group">
 								<label class="col-sm-2 control-label text-right"><spring:message
-										code="lbl.meterread.currentReading" /><span class="mandatory"></span></label>
+										code="lbl.meterread.currentReading" /></label>
 								<div class="col-sm-3 add-margin">
 									<form:input class="form-control patternvalidation"
-										id="metercurrentReading" name="metercurrentReading"
+										id="metercurrentReading" name="metercurrentReading" onmouseout="currentReadingChange();"
 										path="${meterReadingCurrentObj.currentReading}" min="3"
-										maxlength="12" data-pattern="number" required="required" />
+										maxlength="12" data-pattern="number"/>
 									<form:errors path="" cssClass="add-margin error-msg" />
 								</div>
 								<label class="col-sm-2 control-label text-right"><spring:message

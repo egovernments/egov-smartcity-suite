@@ -445,13 +445,52 @@ public class ConnectionDemandService {
      */
     @Transactional
     public WaterConnectionDetails updateDemandForMeteredConnection(final WaterConnectionDetails waterConnectionDetails,
-            final BigDecimal billAmount, final Date currentDate) {
-        final Installment installment = getCurrentInstallment(WaterTaxConstants.EGMODULE_NAME,
+            final BigDecimal billAmount, final Date currentDate, final Date previousDate, final int noofmonths) {
+        Installment installment;
+        List<Installment> installmentList = new ArrayList<>();
+        if (noofmonths > 1 && !waterConnectionDetails.getMeterConnection().get(0).isMeterDamaged())
+            installmentList = installmentDao.getInstallmentsByModuleForGivenDateAndInstallmentType(
+                    moduleService.getModuleByName(WaterTaxConstants.MODULE_NAME),
+                    previousDate, WaterTaxConstants.MONTHLY);
+
+        installment = getCurrentInstallment(WaterTaxConstants.EGMODULE_NAME,
                 WaterTaxConstants.MONTHLY, currentDate);
-        if (installment != null) {
-            final EgDemand demandObj = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
-            if (demandObj == null && waterConnectionDetails.getLegacy())
-                throw new ApplicationRuntimeException("err.legacy.demand.not.present");
+
+        if (installmentList.isEmpty() || !installmentList.contains(installment))
+            installmentList.add(installment);
+
+        final EgDemand demandObj = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
+        if (demandObj == null && waterConnectionDetails.getLegacy())
+            throw new ApplicationRuntimeException("err.legacy.demand.not.present");
+        if (!installmentList.isEmpty()) {
+            for (final Installment installmentVal : installmentList)
+                createMeteredDemandDetails(demandObj, waterConnectionDetails, billAmount, installmentVal);
+
+            final List<EgBill> billlist = demandGenericDao.getAllBillsForDemand(demandObj, "N", "N");
+            if (!billlist.isEmpty()) {
+                final EgBill billObj = billlist.get(0);
+                billObj.setIs_History("Y");
+                billObj.setModifiedDate(new Date());
+                egBillDAO.create(billObj);
+            }
+            generateBillForMeterAndMonthly(waterConnectionDetails.getConnection().getConsumerCode());
+        }
+
+        else
+            throw new ValidationException("err.water.meteredinstallment.not.found");
+        waterConnectionDetails.getWaterDemandConnection().get(0).setDemand(demandObj);
+        return waterConnectionDetails;
+    }
+
+    public void createMeteredDemandDetails(final EgDemand demandObj, final WaterConnectionDetails waterConnectionDetails,
+            final BigDecimal billAmount, final Installment installment) {
+        Boolean isDemandDetailExist = false;
+        for (final EgDemandDetails demandDetails : demandObj.getEgDemandDetails())
+            if (demandDetails.getEgDemandReason().getEgInstallmentMaster().equals(installment)) {
+                isDemandDetailExist = true;
+                break;
+            }
+        if (!isDemandDetailExist) {
             final Set<EgDemandDetails> dmdDetailSet = new HashSet<>();
             dmdDetailSet.add(createDemandDetails(Double.parseDouble(billAmount.toString()),
                     WATERTAXREASONCODE, installment));
@@ -468,17 +507,9 @@ public class ConnectionDemandService {
                 waterConnectionDetails.addWaterDemandConnection(waterdemandConnection);
                 waterDemandConnectionService.createWaterDemandConnection(waterdemandConnection);
             }
-            final List<EgBill> billlist = demandGenericDao.getAllBillsForDemand(demandObj, "N", "N");
-            if (!billlist.isEmpty()) {
-                final EgBill billObj = billlist.get(0);
-                billObj.setIs_History("Y");
-                billObj.setModifiedDate(new Date());
-                egBillDAO.create(billObj);
-            }
-            generateBillForMeterAndMonthly(waterConnectionDetails.getConnection().getConsumerCode());
-        } else
-            throw new ValidationException("err.water.meteredinstallment.not.found");
-        return waterConnectionDetails;
+
+        }
+
     }
 
     /**

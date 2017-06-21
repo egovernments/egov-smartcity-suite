@@ -143,6 +143,18 @@ public class InstallmentHibDao<T, id extends Serializable> implements Installmen
     }
     
     @Override
+    public List<Installment> getInstallmentsByModuleBetweenFromDateAndToDateAndInstallmentType(final Module module,
+            final Date fromDate, final Date toDate, final String installmentType) {
+        final Query qry = getCurrentSession().createQuery(
+                "from Installment I where I.module=:module and I.toDate >=:fromDate and I.toDate<=:tillDate and I.installmentType = :installmentType");
+        qry.setEntity("module", module);
+        qry.setDate("fromDate", fromDate);
+        qry.setDate("tillDate", toDate);
+        qry.setString("installmentType", installmentType);
+        return qry.list();
+    }
+
+    @Override
     public List<Installment> fetchInstallments(final Module module, final Date toInstallmentDate, final int noOfInstallmentToFetch) {
         final Query qry = getCurrentSession()
                 .createQuery("from Installment I where I.module=:module and I.installmentYear<=:installmentYear order by installmentYear desc");

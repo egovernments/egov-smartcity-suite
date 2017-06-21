@@ -55,11 +55,11 @@ public interface UsageSlabRepository extends JpaRepository<UsageSlab, Long> {
 
     UsageSlab findBySlabName(final String slabName);
 
-    @Query("from UsageSlab u where u.usage=:usage and ((u.fromVolume>=:fromVolume and u.toVolume<=:toVolume) or (:fromVolume between u.fromVolume and u.toVolume) or (:toVolume between u.fromVolume and u.toVolume))")
+    @Query("from UsageSlab u where u.active=true and u.usage=:usage and ((u.fromVolume>=:fromVolume and u.toVolume<=:toVolume) or (:fromVolume between u.fromVolume and u.toVolume) or (:toVolume between u.fromVolume and u.toVolume))")
     List<UsageSlab> isSlabOverLap(@Param("usage") String usage,
             @Param("fromVolume") Long fromVolume, @Param("toVolume") Long toVolume);
 
-    @Query("from UsageSlab u where u.usage=:usage and u.fromVolume<=:fromVolume and (u.toVolume<=:fromVolume or u.toVolume is null)")
+    @Query("from UsageSlab u where u.active=true and u.usage=:usage and u.fromVolume<=:fromVolume and (u.toVolume<=:fromVolume or u.toVolume is null)")
     List<UsageSlab> getActiveSlabLessThanGivenFromVolume(@Param("usage") String usage,
             @Param("fromVolume") Long fromVolume);
 

@@ -42,6 +42,18 @@ jQuery(document).ready(function(){
 	changeIsMeterDamaged();
 });
 
+function currentReadingChange(){
+	var currentMeterReading = $('#metercurrentReading').val();
+	if(currentMeterReading==="") {
+		
+		$('#isMeterDamaged').attr('disabled', false);
+	}
+	else {
+		$("#isMeterDamaged").val(false);
+		$('#isMeterDamaged').prop('checked', false);
+		$('#isMeterDamaged').attr('disabled', true);
+	}
+}
 
 $('#metercurrentReadingDate').on('change', function(){
 		$.ajax({
@@ -78,15 +90,16 @@ $('#metercurrentReadingDate').on('change', function(){
 		window.location = url;
 	}
 	function valiateReading() {
+		var isMeterDamaged = $('#isMeterDamaged').val();
 		var previousReading = $('#previousreading').val();
 		var currentReading = $('#metercurrentReading').val();
 		var currentMeterDate = $('#metercurrentReadingDate').val();
 		var previousMeterDate = $('#previousreadingDate').val();
-		if ($('#metercurrentReading').val() == '') {
-			bootbox.alert('Current Meter Reading is required');
+		if ($('#metercurrentReading').val() === '' && isMeterDamaged==="false") {
+			bootbox.alert('Either Current Meter Reading or isMeterDamaged value is required');
 			return false;
 		}
-		else if ((currentReading - previousReading) < 0) {
+		else if (isMeterDamaged!="false" && currentReading!="" && (currentReading - previousReading) < 0) {
 			bootbox.alert('Current Meter Reading should not be less than Previous Meter Reading');
 			$('#metercurrentReading').val('');
 			return false;
