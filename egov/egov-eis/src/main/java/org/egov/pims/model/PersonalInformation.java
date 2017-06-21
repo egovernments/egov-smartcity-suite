@@ -278,11 +278,6 @@ public BloodGroupMaster getBloodGroupMstr()
 		return this.employeeCode;
 	}
 
-	public void setEmployeeCode(Integer employeeCode)
-	{
-		this.employeeCode = String.valueOf(employeeCode);
-	}
-
 	public void setEmployeeCode(String employeeCode)
 	{
 		this.employeeCode = employeeCode;

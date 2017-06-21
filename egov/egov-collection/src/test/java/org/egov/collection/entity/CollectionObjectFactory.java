@@ -1329,7 +1329,7 @@ public class CollectionObjectFactory {
 		PersonalInformation personalInformation = new PersonalInformation();
 		personalInformation.setEmployeeFirstName(user.getName());
 		Random ran = new Random();
-		personalInformation.setEmployeeCode(ran.nextInt());
+		personalInformation.setEmployeeCode(Integer.valueOf(ran.nextInt()).toString());
 		personalInformation.setUserMaster(user);
 		//personalInformation.setEgdeptMstr(dept);
 		session.saveOrUpdate(personalInformation);
