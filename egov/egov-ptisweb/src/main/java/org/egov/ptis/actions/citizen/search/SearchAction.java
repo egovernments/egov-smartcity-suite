@@ -115,17 +115,17 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
     public static final String TARGET = "result";
     public static final String NEWFORM = "newForm";
     public static final String TARGETFORM = "targetForm";
-    public static final String currFirstHalfDemand = "currFirstHalfDemand";
-    public static final String currSecondHalfDemand = "currSecondHalfDemand";
-    public static final String arrDemandDue = "arrDemandDue";
-    public static final String currFirstHalfDemandDue = "currFirstHalfDemandDue";
-    public static final String currSecondHalfDemandDue = "currSecondHalfDemandDue";
-    public static final String currFirstHalfPenaltyDue = "currFirstHalfPenaltyDue";
-    public static final String currSecondHalfPenaltyDue = "currSecondHalfPenaltyDue";
-    public static final String arrearPenaltyDue = "arrearPenaltyDue";
-    public static final String advance = "advance";
-    public static final String rebateAmt = "rebateAmt";
-    public static final String netPayAmt = "netPayAmt";
+    public static final String CURRENT_FIRST_HALF_DEMAND = "currFirstHalfDemand";
+    public static final String CURRENT_SECOND_HALF_DEMAND = "currSecondHalfDemand";
+    public static final String ARREAR_DEMAND_DUE = "arrDemandDue";
+    public static final String CURRENT_FIRST_HALF_DEMAND_DUE = "currFirstHalfDemandDue";
+    public static final String CURRENT_SECOND_HALF_DEMAND_DUE = "currSecondHalfDemandDue";
+    public static final String CURRENT_FIRST_HALF_PENALTY_DUE = "currFirstHalfPenaltyDue";
+    public static final String CURRENT_SECOND_HALF_PENALTY_DUE = "currSecondHalfPenaltyDue";
+    public static final String ARREAR_PENALTY_DUE = "arrearPenaltyDue";
+    public static final String ADVANCE = "advance";
+    public static final String REBATE_AMOUNT = "rebateAmt";
+    public static final String NET_PAYABLE_AMOUNT = "netPayAmt";
 
     @Autowired
     private BasicPropertyDAO basicPropertyDAO;
@@ -257,25 +257,25 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
         if (property.getIsExemptedFromTax())
             searchResultMap.putAll(getDemandDetailsForExemptedProperty());
         else {
-            searchResultMap.put(currFirstHalfDemand, demandCollMap.get(CURR_FIRSTHALF_DMD_STR).toString());
-            searchResultMap.put(currSecondHalfDemand, demandCollMap.get(CURR_SECONDHALF_DMD_STR).toString());
-            searchResultMap.put(arrDemandDue,
+            searchResultMap.put(CURRENT_FIRST_HALF_DEMAND, demandCollMap.get(CURR_FIRSTHALF_DMD_STR).toString());
+            searchResultMap.put(CURRENT_SECOND_HALF_DEMAND, demandCollMap.get(CURR_SECONDHALF_DMD_STR).toString());
+            searchResultMap.put(ARREAR_DEMAND_DUE,
                     demandCollMap.get(ARR_DMD_STR).subtract(demandCollMap.get(ARR_COLL_STR)).toString());
-            searchResultMap.put(currFirstHalfDemandDue, demandCollMap.get(CURR_FIRSTHALF_DMD_STR)
+            searchResultMap.put(CURRENT_FIRST_HALF_DEMAND_DUE, demandCollMap.get(CURR_FIRSTHALF_DMD_STR)
                     .subtract(demandCollMap.get(CURR_FIRSTHALF_COLL_STR)).toString());
-            searchResultMap.put(currSecondHalfDemandDue, demandCollMap.get(CURR_SECONDHALF_DMD_STR)
+            searchResultMap.put(CURRENT_SECOND_HALF_DEMAND_DUE, demandCollMap.get(CURR_SECONDHALF_DMD_STR)
                     .subtract(demandCollMap.get(CURR_SECONDHALF_COLL_STR)).toString());
-            searchResultMap.put(currFirstHalfPenaltyDue, demandCollMap.get(CURR_FIRSTHALF_PENALTY_DMD_STR)
+            searchResultMap.put(CURRENT_FIRST_HALF_PENALTY_DUE, demandCollMap.get(CURR_FIRSTHALF_PENALTY_DMD_STR)
                     .subtract(demandCollMap.get(CURR_FIRSTHALF_PENALTY_COLL_STR)).toString());
-            searchResultMap.put(currSecondHalfPenaltyDue, demandCollMap.get(CURR_SECONDHALF_PENALTY_DMD_STR)
+            searchResultMap.put(CURRENT_SECOND_HALF_PENALTY_DUE, demandCollMap.get(CURR_SECONDHALF_PENALTY_DMD_STR)
                     .subtract(demandCollMap.get(CURR_SECONDHALF_PENALTY_COLL_STR)).toString());
-            searchResultMap.put(arrearPenaltyDue, demandCollMap.get(ARR_PENALTY_DMD_STR)
+            searchResultMap.put(ARREAR_PENALTY_DUE, demandCollMap.get(ARR_PENALTY_DMD_STR)
                     .subtract(demandCollMap.get(ARR_PENALTY_COLL_STR)).toString());
-            searchResultMap.put(advance, demandCollMap.get(ADVANCE_DMD_RSN_CODE).toString());
-            searchResultMap.put(rebateAmt,
+            searchResultMap.put(ADVANCE, demandCollMap.get(ADVANCE_DMD_RSN_CODE).toString());
+            searchResultMap.put(REBATE_AMOUNT,
                     calculateRebateAmount(demandCollMap.get(CURR_FIRSTHALF_DMD_STR), demandCollMap.get(CURR_SECONDHALF_DMD_STR))
                             .toString());
-            searchResultMap.put(netPayAmt, calculateNetPayAmt(demandCollMap).toString());
+            searchResultMap.put(NET_PAYABLE_AMOUNT, calculateNetPayAmt(demandCollMap).toString());
 
         }
         searchList.add(searchResultMap);
@@ -289,15 +289,16 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
 
     public Map<String, String> getDemandDetailsForExemptedProperty() {
         final Map<String, String> searchMap = new HashMap<String, String>();
-        searchMap.put(currFirstHalfDemand, "0");
-        searchMap.put(currFirstHalfDemandDue, "0");
-        searchMap.put(currSecondHalfDemandDue, "0");
-        searchMap.put(arrDemandDue, "0");
-        searchMap.put(currFirstHalfPenaltyDue, "0");
-        searchMap.put(currSecondHalfPenaltyDue, "0");
-        searchMap.put(arrearPenaltyDue, "0");
-        searchMap.put(advance, "0");
-        searchMap.put(netPayAmt, "0");
+        searchMap.put(CURRENT_FIRST_HALF_DEMAND, "0");
+        searchMap.put(CURRENT_SECOND_HALF_DEMAND, "0");
+        searchMap.put(CURRENT_FIRST_HALF_DEMAND_DUE, "0");
+        searchMap.put(CURRENT_SECOND_HALF_DEMAND_DUE, "0");
+        searchMap.put(ARREAR_DEMAND_DUE, "0");
+        searchMap.put(CURRENT_FIRST_HALF_PENALTY_DUE, "0");
+        searchMap.put(CURRENT_SECOND_HALF_PENALTY_DUE, "0");
+        searchMap.put(ARREAR_PENALTY_DUE, "0");
+        searchMap.put(ADVANCE, "0");
+        searchMap.put(NET_PAYABLE_AMOUNT, "0");
         return searchMap;
     }
 
@@ -342,44 +343,36 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
                 searchResultMap.put("enableVRApproval",
                         String.valueOf(propertyTaxUtil.enableVRApproval(basicProperty.getUpicNo())));
                 if (pmv.getIsExempted()) {
-                    searchResultMap.put(currFirstHalfDemand, "0");
-                    searchResultMap.put(currFirstHalfDemandDue, "0");
-                    searchResultMap.put(currSecondHalfDemandDue, "0");
-                    searchResultMap.put(arrDemandDue, "0");
-                    searchResultMap.put(currFirstHalfPenaltyDue, "0");
-                    searchResultMap.put(currSecondHalfPenaltyDue, "0");
-                    searchResultMap.put(arrearPenaltyDue, "0");
-                    searchResultMap.put(advance, "0");
-                    searchResultMap.put(netPayAmt, "0");
+                    searchResultMap.putAll(getDemandDetailsForExemptedProperty());
                 } else {
-                    searchResultMap.put(currFirstHalfDemand,
+                    searchResultMap.put(CURRENT_FIRST_HALF_DEMAND,
                             getCurrFirstHalfDemand(pmv.getAggrCurrFirstHalfDmd()).toString());
-                    searchResultMap.put(currFirstHalfDemandDue,
+                    searchResultMap.put(CURRENT_FIRST_HALF_DEMAND_DUE,
                             getCurrFirstHalfDemandDue(pmv.getAggrCurrFirstHalfDmd(), pmv.getAggrCurrFirstHalfColl())
                                     .toString());
-                    searchResultMap.put(currFirstHalfPenaltyDue,
+                    searchResultMap.put(CURRENT_FIRST_HALF_PENALTY_DUE,
                             getIntrestDueOnCurrFirstHalfDemand(pmv.getAggrCurrFirstHalfPenaly(),
                                     pmv.getAggrCurrFirstHalfPenalyColl()).toString());
-                    searchResultMap.put(currSecondHalfDemand, getCurrSecondHalfDemand(pmv.getAggrCurrSecondHalfDmd())
+                    searchResultMap.put(CURRENT_SECOND_HALF_DEMAND, getCurrSecondHalfDemand(pmv.getAggrCurrSecondHalfDmd())
                             .toString());
-                    searchResultMap.put(currSecondHalfDemandDue,
+                    searchResultMap.put(CURRENT_SECOND_HALF_DEMAND_DUE,
                             getCurrSecondHalfDemandDue(pmv.getAggrCurrSecondHalfDmd(), pmv.getAggrCurrSecondHalfColl())
                                     .toString());
-                    searchResultMap.put(currSecondHalfPenaltyDue,
+                    searchResultMap.put(CURRENT_SECOND_HALF_PENALTY_DUE,
                             getIntrestDueOnCurrSecondHalfDemand(pmv.getAggrCurrSecondHalfPenaly(),
                                     pmv.getAggrCurrSecondHalfPenalyColl())
                                             .toString());
-                    searchResultMap.put(arrDemandDue, getAggrArrDmdDue(pmv.getAggrArrDmd(), pmv.getAggrArrColl())
+                    searchResultMap.put(ARREAR_DEMAND_DUE, getAggrArrDmdDue(pmv.getAggrArrDmd(), pmv.getAggrArrColl())
                             .toString());
-                    searchResultMap.put(arrearPenaltyDue,
+                    searchResultMap.put(ARREAR_PENALTY_DUE,
                             getIntrestDueOnArrearDemandDue(pmv.getAggrArrearPenaly(), pmv.getAggrArrearPenalyColl())
                                     .toString());
-                    searchResultMap.put(advance, pmv.getAdvance().toString());
-                    searchResultMap.put(rebateAmt,
+                    searchResultMap.put(ADVANCE, pmv.getAdvance().toString());
+                    searchResultMap.put(REBATE_AMOUNT,
                             calculateRebateAmount(getCurrFirstHalfDemand(pmv.getAggrCurrFirstHalfDmd()),
                                     getCurrSecondHalfDemand(pmv.getAggrCurrSecondHalfDmd()))
                                             .toString());
-                    searchResultMap.put(netPayAmt, calculateNetPayableAmmount(pmv).toString());
+                    searchResultMap.put(NET_PAYABLE_AMOUNT, calculateNetPayableAmmount(pmv).toString());
                 }
                 searchList.add(searchResultMap);
             }
