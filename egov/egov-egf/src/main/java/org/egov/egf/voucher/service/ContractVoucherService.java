@@ -97,10 +97,10 @@ public class ContractVoucherService {
                 voucherDate = (Date) formatter.parse(VoucherRequest.getVoucherDate());
             } catch (ParseException e) {
                 errorDetails.setErrorCode("EGF-VOUCHER-3");
-                errorDetails.setErrorMessage("Voucher Date cannot be empty");
+                errorDetails.setErrorMessage("Please send the Voucher Date in DD-MM-YYYY format");
                 errors.add(errorDetails);
             }
-            if (voucherDate.after(new Date())) {
+            if (voucherDate != null && voucherDate.after(new Date())) {
                 errorDetails.setErrorCode("EGF-VOUCHER-4");
                 errorDetails.setErrorMessage("Voucher date cannot be future date");
                 errors.add(errorDetails);

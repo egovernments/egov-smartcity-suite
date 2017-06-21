@@ -44,6 +44,7 @@ import java.util.List;
 
 public class VoucherRequest {
 
+    private Long id;
     private String name;
     private String type;
     private String voucherNumber;
@@ -169,6 +170,14 @@ public class VoucherRequest {
 
     public void setDepartment(final Long department) {
         this.department = department;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(final Long id) {
+        this.id = id;
     }
 
 }

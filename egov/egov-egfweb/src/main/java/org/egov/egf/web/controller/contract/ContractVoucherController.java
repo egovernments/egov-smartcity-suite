@@ -286,11 +286,11 @@ public class ContractVoucherController {
                     departmentService.getDepartmentById(request.getDepartment()).getCode());
         headerDetails.put(VoucherConstant.MODULEID, request.getModuleId());
         headerDetails.put(VoucherConstant.VOUCHERNUMBER, request.getVoucherNumber());
-        if (request.getFund().getId() != null)
+        if (request.getFund() != null && request.getFund().getId() != null)
             headerDetails.put(VoucherConstant.FUNDCODE, fundService.findOne(request.getFund().getId().intValue()).getCode());
-        else if (!request.getFund().getCode().isEmpty())
+        else if (request.getFund() != null && !request.getFund().getCode().isEmpty())
             headerDetails.put(VoucherConstant.FUNDCODE, request.getFund().getCode());
-        else if (!request.getFund().getName().isEmpty())
+        else if (request.getFund() != null && !request.getFund().getName().isEmpty())
             headerDetails.put(VoucherConstant.FUNDCODE, fundService.findByName(request.getFund().getName()).getCode());
     }
 
@@ -307,7 +307,7 @@ public class ContractVoucherController {
                     functionService.findOne(accountDetailContract.getFunction().getId()).getCode());
         else if (accountDetailContract.getFunction() != null && accountDetailContract.getFunction().getCode() != null)
             accountDetails1.put(VoucherConstant.FUNCTIONCODE, accountDetailContract.getFunction().getCode());
-        else if (accountDetailContract.getFunction() != null && accountDetailContract.getFunction().getCode() != null)
+        else if (accountDetailContract.getFunction() != null && accountDetailContract.getFunction().getName() != null)
             accountDetails1.put(VoucherConstant.FUNCTIONCODE,
                     functionService.findByName(accountDetailContract.getFunction().getName()).getCode());
         accountCodeDetails.add(accountDetails1);
