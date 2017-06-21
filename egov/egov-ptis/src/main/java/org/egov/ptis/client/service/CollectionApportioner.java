@@ -47,6 +47,7 @@ import org.egov.commons.dao.FunctionHibernateDAO;
 import org.egov.demand.model.EgBillDetails;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
+import org.egov.model.bills.EgBilldetails;
 import org.egov.ptis.constants.PropertyTaxConstants;
 
 import java.math.BigDecimal;
@@ -54,6 +55,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Collections;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.GLCODES_FOR_CURRENTTAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_TAXREBATE;
@@ -137,15 +139,21 @@ public class CollectionApportioner {
 
         if (isEligibleForCurrentRebate) {
             BigDecimal totalCrAmountToBePaid = BigDecimal.ZERO;
-            for (final ReceiptDetail receiptDetail : receiptDetails) {
-                totalCrAmountToBePaid = totalCrAmountToBePaid.add(receiptDetail.getCramountToBePaid());
+            for (final EgBillDetails billDetail : billDetails) {
+                if (PURPOSE.REBATE.toString().equals(billDetail.getPurpose()))
+                    totalCrAmountToBePaid = totalCrAmountToBePaid.subtract(billDetail.getDrAmount());
+                else if (!PURPOSE.ADVANCE_AMOUNT.toString().equals(billDetail.getPurpose()))
+                    totalCrAmountToBePaid = totalCrAmountToBePaid.add(billDetail.getCrAmount());
             }
             if (amountPaid.compareTo(totalCrAmountToBePaid) >= 0) {
                 isFullPayment = Boolean.TRUE;
             }
         }
 
+        Collections.sort(billDetails, (b1, b2) -> b1.getOrderNo().compareTo(b2.getOrderNo()));
+
         for (final EgBillDetails billDetail : billDetails) {
+            crAmountToBePaid = billDetail.getCrAmount().subtract(billDetail.getDrAmount());
             final String glCode = billDetail.getGlcode();
             final ReceiptDetail receiptDetail = new ReceiptDetail();
             receiptDetail.setPurpose(billDetail.getPurpose());
@@ -156,7 +164,7 @@ public class CollectionApportioner {
             receiptDetail.setFunction(functionDAO.getFunctionByCode(billDetail.getFunctionCode()));
             }
             receiptDetail.setAccounthead(chartOfAccountsDAO.getCChartOfAccountsByGlCode(glCode));
-            receiptDetail.setCramountToBePaid(balance.amount);
+            receiptDetail.setCramountToBePaid(crAmountToBePaid);
             if (billDetail.getDescription().contains(REBATE_STR)) {
                 receiptDetail.setDramount(billDetail.getDrAmount());
             } else {
@@ -169,7 +177,6 @@ public class CollectionApportioner {
                 receiptDetails.add(receiptDetail);
                 continue;
             }
-            crAmountToBePaid = billDetail.getCrAmount();
 
             if (receiptDetail.getDescription().contains(REBATE_STR)) {
                 if (isFullPayment) {
@@ -177,11 +184,12 @@ public class CollectionApportioner {
                 } else {
                     receiptDetail.setDramount(BigDecimal.ZERO);
                 }
+                receiptDetail.setCramount(BigDecimal.ZERO);
             } else {
                 if (balance.isLessThanOrEqualTo(crAmountToBePaid)) {
                     // partial or exact payment
                     receiptDetail.setCramount(balance.amount);
-                    receiptDetail.setCramountToBePaid(balance.amount);
+                    receiptDetail.setCramountToBePaid(crAmountToBePaid);
                     balance = Amount.ZERO;
                 } else { // excess payment
                     receiptDetail.setCramount(crAmountToBePaid);
