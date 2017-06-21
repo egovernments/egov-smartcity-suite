@@ -61,7 +61,9 @@ import org.egov.works.utils.WorksConstants;
 import org.hibernate.validator.constraints.Length;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class MBHeaderWrapper implements Serializable {
 
     private static final long serialVersionUID = 121631467636260459L;

@@ -17,8 +17,10 @@ import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.works.contractorbill.service.ContractorBillRegisterService;
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
 import org.egov.works.mb.entity.FileStoreMapperWrapper;
+import org.egov.works.mb.entity.MBDetails;
 import org.egov.works.mb.entity.MBHeader;
 import org.egov.works.mb.entity.MBHeaderWrapper;
+import org.egov.works.mb.entity.MBMeasurementSheet;
 import org.egov.works.mb.service.MBHeaderService;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
@@ -26,6 +28,7 @@ import org.egov.works.web.adaptor.MeasurementBookJsonAdaptor;
 import org.egov.works.workorder.entity.WorkOrder;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.egov.works.workorder.service.WorkOrderEstimateService;
+import org.egov.works.workorder.service.WorkOrderMeasurementSheetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
@@ -73,7 +76,7 @@ public class CreateMBController {
     private WorksUtils worksUtils;
     
     @Autowired
-    private ContractorBillRegisterService contractorBillRegisterService;
+    private WorkOrderMeasurementSheetService workOrderMeasurementSheetService;
 
     public WorkOrderEstimate getWorkOrderEstimate(final Long workOrderEstimateId) {
         final WorkOrderEstimate workOrderEstimate = workOrderEstimateService
@@ -198,6 +201,11 @@ public class CreateMBController {
         mbHeader.setDocumentDetails(mbHeaderWrapper.getDocumentDetails());
         mbHeader.setIsLegacyMB(mbHeaderWrapper.getIsLegacyMB());
         mbHeader.setMbAmount(mbHeaderWrapper.getMbAmount());
+        
+        setWOMeasurementSheet(mbHeader.getSorMbDetails());
+        setWOMeasurementSheet(mbHeader.getNonSorMbDetails());
+        setWOMeasurementSheet(mbHeader.getNonTenderedMbDetails());
+        setWOMeasurementSheet(mbHeader.getLumpSumMbDetails());
 
         final String jsonResponse = create(mbHeader, model, errors, request, resultBinder, response, null);
         if (!jsonResponse.contains("\"stateType\":\"MBHeader\"")) {
@@ -206,6 +214,12 @@ public class CreateMBController {
         return jsonResponse.replace("\"", "");
     }
     
+    private void setWOMeasurementSheet(List<MBDetails> mbDetails) {
+        for (final MBDetails details : mbDetails)
+            for (final MBMeasurementSheet sheet : details.getMeasurementSheets())
+                sheet.setWoMeasurementSheet(workOrderMeasurementSheetService.findOne(sheet.getWoMeasurementSheet().getId()));
+    }
+
     @RequestMapping(value = "/rest-create-documents", method = RequestMethod.POST)
     public @ResponseBody ResponseEntity<?> saveDocuments(final Model model, final HttpServletRequest request,
             final HttpServletResponse response, @RequestParam("files") final MultipartFile[] files)
