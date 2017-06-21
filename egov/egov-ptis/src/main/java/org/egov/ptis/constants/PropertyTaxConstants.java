@@ -116,6 +116,10 @@ public interface PropertyTaxConstants {
     public static final String ARREAR_REBATE_STR = "ARREAR_REBATE";
     public static final String CURR_FIRSTHALF_DMD_STR = "CURR_FIRSTHALF_DMD";
     public static final String CURR_FIRSTHALF_COLL_STR = "CURR_FIRSTHALF_COLL";
+    public static final String CURR_FIRSTHALF_PENALTY_DMD_STR = "CURR_FIRSTHALF_PENALTY_DMD";
+    public static final String CURR_FIRSTHALF_PENALTY_COLL_STR = "CURR_FIRSTHALF_PENALTY_COLL";
+    public static final String CURR_SECONDHALF_PENALTY_DMD_STR = "CURR_SECONDHALF_PENALTY_DMD";
+    public static final String CURR_SECONDHALF_PENALTY_COLL_STR = "CURR_SECONDHALF_PENALTY_COLL";
     public static final String CURR_SECONDHALF_DMD_STR = "CURR_SECONDHALF_DMD";
     public static final String CURR_SECONDHALF_COLL_STR = "CURR_SECONDHALF_COLL";
     public static final String ADVANCE_COLLECTION_STR = "ADVANCECOLLECTION";

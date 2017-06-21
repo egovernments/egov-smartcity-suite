@@ -130,6 +130,9 @@
 							<display:column property="rebateAmt" title="Rebate Amount"
 								headerClass="bluebgheadtd" class="blueborderfortd"
 								style="width:6%;text-align:center" />
+							<display:column property="advance" title="Advance"
+								headerClass="bluebgheadtd" class="blueborderfortd"
+								style="width:6%;text-align:center" />
 							<display:column property="netPayAmt" media="html"
 								title="Net Payable Amount" headerClass="bluebgheadtd"
 								class="blueborderfortd" style="width:6%;text-align:center" />

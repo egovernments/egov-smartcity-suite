@@ -41,6 +41,19 @@ package org.egov.ptis.actions.citizen.search;
 
 import static java.math.BigDecimal.ZERO;
 import static org.egov.infra.web.struts.actions.BaseFormAction.NEW;
+import static org.egov.ptis.constants.PropertyTaxConstants.ADVANCE_DMD_RSN_CODE;
+import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.ARR_PENALTY_COLL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.ARR_PENALTY_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_COLL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_PENALTY_COLL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_PENALTY_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_COLL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_PENALTY_COLL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_PENALTY_DMD_STR;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -62,6 +75,7 @@ import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
+import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
@@ -101,6 +115,17 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
     public static final String TARGET = "result";
     public static final String NEWFORM = "newForm";
     public static final String TARGETFORM = "targetForm";
+    public static final String currFirstHalfDemand = "currFirstHalfDemand";
+    public static final String currSecondHalfDemand = "currSecondHalfDemand";
+    public static final String arrDemandDue = "arrDemandDue";
+    public static final String currFirstHalfDemandDue = "currFirstHalfDemandDue";
+    public static final String currSecondHalfDemandDue = "currSecondHalfDemandDue";
+    public static final String currFirstHalfPenaltyDue = "currFirstHalfPenaltyDue";
+    public static final String currSecondHalfPenaltyDue = "currSecondHalfPenaltyDue";
+    public static final String arrearPenaltyDue = "arrearPenaltyDue";
+    public static final String advance = "advance";
+    public static final String rebateAmt = "rebateAmt";
+    public static final String netPayAmt = "netPayAmt";
 
     @Autowired
     private BasicPropertyDAO basicPropertyDAO;
@@ -110,6 +135,9 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
     private PropertyTaxUtil propertyTaxUtil;
     @Autowired
     private RebateService rebateService;
+
+    @Autowired
+    private PtDemandDao ptDemandDAO;
 
     @Override
     public Object getModel() {
@@ -134,23 +162,29 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
     @Action(value = "/citizen/search/search-srchByAssessmentAndOwnerDetail")
     public String srchByAssessmentAndOwnerDetail() {
         try {
-            final List<PropertyMaterlizeView> propertyList = propertyService
-                    .getPropertyByAssessmentAndOwnerDetails(assessmentNum, oldMuncipalNum, ownerName, doorNo);
-            for (final PropertyMaterlizeView propMatview : propertyList) {
+            if (assessmentNum != null && !"".equals(assessmentNum)) {
+                final BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNum);
                 if (LOGGER.isDebugEnabled())
-                    LOGGER.debug("srchByAssessmentAndOwner : Property : " + propMatview);
-                setSearchResultList(getResultsFromMv(propMatview));
-            }
-            if (assessmentNum != null && !assessmentNum.equals(""))
-                setSearchValue("Assessment Number : " + assessmentNum);
+                    LOGGER.debug("srchByAssessmentAndOwner : Property : " + basicProperty);
+                setSearchResultList(getResultFromDemandDetails(basicProperty));
+                setSearchValue("Assessment Num : " + assessmentNum);
+            } else {
+                final List<PropertyMaterlizeView> propertyList = propertyService
+                        .getPropertyByAssessmentAndOwnerDetails(null, oldMuncipalNum, ownerName, doorNo);
 
+                for (final PropertyMaterlizeView propMatview : propertyList) {
+                    if (LOGGER.isDebugEnabled())
+                        LOGGER.debug("srchByAssessmentAndOwner : Property : " + propMatview);
+                    setSearchResultList(getResultsFromMv(propMatview));
+                }
+                if (oldMuncipalNum != null && !oldMuncipalNum.equals(""))
+                    setSearchValue("Old Assesement Number:" + oldMuncipalNum);
+                if (ownerName != null && !ownerName.equals(""))
+                    setSearchValue("Owner name :" + ownerName);
+                if (doorNo != null && !doorNo.equals(""))
+                    setSearchValue("Door number :" + doorNo);
+            }
             setSearchCreteria("Search By Assessment and Owner detail");
-            if (oldMuncipalNum != null && !oldMuncipalNum.equals(""))
-                setSearchValue("Old Assesement Number:" + oldMuncipalNum);
-            if (ownerName != null && !ownerName.equals(""))
-                setSearchValue("Owner name :" + ownerName);
-            if (doorNo != null && !doorNo.equals(""))
-                setSearchValue("Door number :" + doorNo);
 
         } catch (final Exception e) {
             LOGGER.warn("Exception in Search Property By Door number ", e);
@@ -196,6 +230,90 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
         return TARGETFORM;
     }
 
+    private List<Map<String, String>> getResultFromDemandDetails(final BasicProperty basicProperty) {
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Entered into getSearchResults method");
+            LOGGER.debug("Assessment Number : " + basicProperty.getUpicNo());
+        }
+        final Property property = basicProperty.getProperty();
+        final Map<String, BigDecimal> demandCollMap = ptDemandDAO.getDemandCollMapIncludingPenaltyAndAdvance(property);
+
+        final Map<String, String> searchResultMap = new HashMap<String, String>();
+        searchResultMap.put("assessmentNum", basicProperty.getUpicNo());
+        searchResultMap.put("ownerName", basicProperty.getFullOwnerName());
+        /* searchResultMap.put("parcelId", pmv.getGisRefNo()); */
+        searchResultMap.put("address", basicProperty.getAddress().toString());
+        searchResultMap.put("source", basicProperty.getSource().toString());
+        searchResultMap.put("isDemandActive", String.valueOf(isDemandActive));
+        searchResultMap.put("propType", property.getPropertyDetail().getPropertyTypeMaster().getCode());
+        searchResultMap.put("isTaxExempted", String.valueOf(property.getIsExemptedFromTax()));
+        searchResultMap.put("isUnderWorkflow", String.valueOf(basicProperty.isUnderWorkflow()));
+        searchResultMap.put("enableVacancyRemission",
+                String.valueOf(propertyTaxUtil.enableVacancyRemission(basicProperty.getUpicNo())));
+        searchResultMap.put("enableMonthlyUpdate",
+                String.valueOf(propertyTaxUtil.enableMonthlyUpdate(basicProperty.getUpicNo())));
+        searchResultMap.put("enableVRApproval",
+                String.valueOf(propertyTaxUtil.enableVRApproval(basicProperty.getUpicNo())));
+        if (property.getIsExemptedFromTax())
+            searchResultMap.putAll(getDemandDetailsForExemptedProperty());
+        else {
+            searchResultMap.put(currFirstHalfDemand, demandCollMap.get(CURR_FIRSTHALF_DMD_STR).toString());
+            searchResultMap.put(currSecondHalfDemand, demandCollMap.get(CURR_SECONDHALF_DMD_STR).toString());
+            searchResultMap.put(arrDemandDue,
+                    demandCollMap.get(ARR_DMD_STR).subtract(demandCollMap.get(ARR_COLL_STR)).toString());
+            searchResultMap.put(currFirstHalfDemandDue, demandCollMap.get(CURR_FIRSTHALF_DMD_STR)
+                    .subtract(demandCollMap.get(CURR_FIRSTHALF_COLL_STR)).toString());
+            searchResultMap.put(currSecondHalfDemandDue, demandCollMap.get(CURR_SECONDHALF_DMD_STR)
+                    .subtract(demandCollMap.get(CURR_SECONDHALF_COLL_STR)).toString());
+            searchResultMap.put(currFirstHalfPenaltyDue, demandCollMap.get(CURR_FIRSTHALF_PENALTY_DMD_STR)
+                    .subtract(demandCollMap.get(CURR_FIRSTHALF_PENALTY_COLL_STR)).toString());
+            searchResultMap.put(currSecondHalfPenaltyDue, demandCollMap.get(CURR_SECONDHALF_PENALTY_DMD_STR)
+                    .subtract(demandCollMap.get(CURR_SECONDHALF_PENALTY_COLL_STR)).toString());
+            searchResultMap.put(arrearPenaltyDue, demandCollMap.get(ARR_PENALTY_DMD_STR)
+                    .subtract(demandCollMap.get(ARR_PENALTY_COLL_STR)).toString());
+            searchResultMap.put(advance, demandCollMap.get(ADVANCE_DMD_RSN_CODE).toString());
+            searchResultMap.put(rebateAmt,
+                    calculateRebateAmount(demandCollMap.get(CURR_FIRSTHALF_DMD_STR), demandCollMap.get(CURR_SECONDHALF_DMD_STR))
+                            .toString());
+            searchResultMap.put(netPayAmt, calculateNetPayAmt(demandCollMap).toString());
+
+        }
+        searchList.add(searchResultMap);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Search list : " + (searchList != null ? searchList : ZERO));
+            LOGGER.debug("Exit from getSearchResults method");
+        }
+
+        return searchList;
+    }
+
+    public Map<String, String> getDemandDetailsForExemptedProperty() {
+        final Map<String, String> searchMap = new HashMap<String, String>();
+        searchMap.put(currFirstHalfDemand, "0");
+        searchMap.put(currFirstHalfDemandDue, "0");
+        searchMap.put(currSecondHalfDemandDue, "0");
+        searchMap.put(arrDemandDue, "0");
+        searchMap.put(currFirstHalfPenaltyDue, "0");
+        searchMap.put(currSecondHalfPenaltyDue, "0");
+        searchMap.put(arrearPenaltyDue, "0");
+        searchMap.put(advance, "0");
+        searchMap.put(netPayAmt, "0");
+        return searchMap;
+    }
+
+    public BigDecimal calculateNetPayAmt(final Map<String, BigDecimal> demandCollMap) {
+        return demandCollMap.get(CURR_FIRSTHALF_DMD_STR).subtract(demandCollMap.get(CURR_FIRSTHALF_COLL_STR))
+                .add(demandCollMap.get(CURR_SECONDHALF_DMD_STR).subtract(demandCollMap.get(CURR_SECONDHALF_COLL_STR)))
+                .add(demandCollMap.get(ARR_DMD_STR).subtract(demandCollMap.get(ARR_COLL_STR)))
+                .add(demandCollMap.get(CURR_FIRSTHALF_PENALTY_DMD_STR)
+                        .subtract(demandCollMap.get(CURR_FIRSTHALF_PENALTY_COLL_STR)))
+                .add(demandCollMap.get(CURR_SECONDHALF_PENALTY_DMD_STR)
+                        .subtract(demandCollMap.get(CURR_SECONDHALF_PENALTY_COLL_STR)))
+                .add(demandCollMap.get(ARR_PENALTY_DMD_STR).subtract(demandCollMap.get(ARR_PENALTY_COLL_STR)))
+                .subtract(calculateRebateAmount(demandCollMap.get(CURR_FIRSTHALF_DMD_STR),
+                        demandCollMap.get(CURR_SECONDHALF_DMD_STR)));
+    }
+
     private List<Map<String, String>> getResultsFromMv(final PropertyMaterlizeView pmv) {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Entered into getSearchResults method");
@@ -224,37 +342,44 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
                 searchResultMap.put("enableVRApproval",
                         String.valueOf(propertyTaxUtil.enableVRApproval(basicProperty.getUpicNo())));
                 if (pmv.getIsExempted()) {
-                    searchResultMap.put("currFirstHalfDemand", "0");
-                    searchResultMap.put("currFirstHalfDemandDue", "0");
-                    searchResultMap.put("currSecondHalfDemand", "0");
-                    searchResultMap.put("currSecondHalfDemandDue", "0");
-                    searchResultMap.put("arrDemandDue", "0");
+                    searchResultMap.put(currFirstHalfDemand, "0");
+                    searchResultMap.put(currFirstHalfDemandDue, "0");
+                    searchResultMap.put(currSecondHalfDemandDue, "0");
+                    searchResultMap.put(arrDemandDue, "0");
+                    searchResultMap.put(currFirstHalfPenaltyDue, "0");
+                    searchResultMap.put(currSecondHalfPenaltyDue, "0");
+                    searchResultMap.put(arrearPenaltyDue, "0");
+                    searchResultMap.put(advance, "0");
+                    searchResultMap.put(netPayAmt, "0");
                 } else {
-                    searchResultMap.put("currFirstHalfDemand",
+                    searchResultMap.put(currFirstHalfDemand,
                             getCurrFirstHalfDemand(pmv.getAggrCurrFirstHalfDmd()).toString());
-                    searchResultMap.put("currFirstHalfDemandDue",
+                    searchResultMap.put(currFirstHalfDemandDue,
                             getCurrFirstHalfDemandDue(pmv.getAggrCurrFirstHalfDmd(), pmv.getAggrCurrFirstHalfColl())
                                     .toString());
-                    searchResultMap.put("currFirstHalfPenaltyDue",
-                            getIntrestDueOnCurrFirstHalfDemand(pmv.getAggrCurrFirstHalfPenaly(),pmv.getAggrCurrFirstHalfPenalyColl()).toString());
-                    searchResultMap.put("currSecondHalfDemand", getCurrSecondHalfDemand(pmv.getAggrCurrSecondHalfDmd())
+                    searchResultMap.put(currFirstHalfPenaltyDue,
+                            getIntrestDueOnCurrFirstHalfDemand(pmv.getAggrCurrFirstHalfPenaly(),
+                                    pmv.getAggrCurrFirstHalfPenalyColl()).toString());
+                    searchResultMap.put(currSecondHalfDemand, getCurrSecondHalfDemand(pmv.getAggrCurrSecondHalfDmd())
                             .toString());
-                    searchResultMap.put("currSecondHalfDemandDue",
+                    searchResultMap.put(currSecondHalfDemandDue,
                             getCurrSecondHalfDemandDue(pmv.getAggrCurrSecondHalfDmd(), pmv.getAggrCurrSecondHalfColl())
                                     .toString());
-                    searchResultMap.put("currSecondHalfPenaltyDue",
-                            getIntrestDueOnCurrSecondHalfDemand(pmv.getAggrCurrSecondHalfPenaly(),pmv.getAggrCurrSecondHalfPenalyColl())
-                                    .toString());
-                    searchResultMap.put("arrDemandDue", getAggrArrDmdDue(pmv.getAggrArrDmd(), pmv.getAggrArrColl())
+                    searchResultMap.put(currSecondHalfPenaltyDue,
+                            getIntrestDueOnCurrSecondHalfDemand(pmv.getAggrCurrSecondHalfPenaly(),
+                                    pmv.getAggrCurrSecondHalfPenalyColl())
+                                            .toString());
+                    searchResultMap.put(arrDemandDue, getAggrArrDmdDue(pmv.getAggrArrDmd(), pmv.getAggrArrColl())
                             .toString());
-                    searchResultMap.put("arrearPenaltyDue",
+                    searchResultMap.put(arrearPenaltyDue,
                             getIntrestDueOnArrearDemandDue(pmv.getAggrArrearPenaly(), pmv.getAggrArrearPenalyColl())
                                     .toString());
-                    searchResultMap.put("rebateAmt",
+                    searchResultMap.put(advance, pmv.getAdvance().toString());
+                    searchResultMap.put(rebateAmt,
                             calculateRebateAmount(getCurrFirstHalfDemand(pmv.getAggrCurrFirstHalfDmd()),
                                     getCurrSecondHalfDemand(pmv.getAggrCurrSecondHalfDmd()))
                                             .toString());
-                    searchResultMap.put("netPayAmt", calculateNetPayableAmmount(pmv).toString());
+                    searchResultMap.put(netPayAmt, calculateNetPayableAmmount(pmv).toString());
                 }
                 searchList.add(searchResultMap);
             }
@@ -281,8 +406,10 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
                         : aggrCurrFirstHalfColl);
     }
 
-    public BigDecimal getIntrestDueOnCurrFirstHalfDemand(final BigDecimal intrestDueOnCurrFirstHalfDemand,final BigDecimal aggrCurrFirstHalfPenalyColl) {
-        return (intrestDueOnCurrFirstHalfDemand == null ? ZERO : intrestDueOnCurrFirstHalfDemand).subtract(aggrCurrFirstHalfPenalyColl==null ? ZERO :aggrCurrFirstHalfPenalyColl);
+    public BigDecimal getIntrestDueOnCurrFirstHalfDemand(final BigDecimal intrestDueOnCurrFirstHalfDemand,
+            final BigDecimal aggrCurrFirstHalfPenalyColl) {
+        return (intrestDueOnCurrFirstHalfDemand == null ? ZERO : intrestDueOnCurrFirstHalfDemand)
+                .subtract(aggrCurrFirstHalfPenalyColl == null ? ZERO : aggrCurrFirstHalfPenalyColl);
     }
 
     public BigDecimal getCurrSecondHalfDemand(final BigDecimal aggrCurrFirstHalfDmd) {
@@ -295,8 +422,10 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
                         : aggrCurrSecondHalfColl);
     }
 
-    public BigDecimal getIntrestDueOnCurrSecondHalfDemand(final BigDecimal currSecondHalfPenalty,final BigDecimal currSecondHalfPenaltyColl) {
-        return (currSecondHalfPenalty == null ? ZERO : currSecondHalfPenalty).subtract(currSecondHalfPenaltyColl == null ? ZERO : currSecondHalfPenaltyColl);
+    public BigDecimal getIntrestDueOnCurrSecondHalfDemand(final BigDecimal currSecondHalfPenalty,
+            final BigDecimal currSecondHalfPenaltyColl) {
+        return (currSecondHalfPenalty == null ? ZERO : currSecondHalfPenalty)
+                .subtract(currSecondHalfPenaltyColl == null ? ZERO : currSecondHalfPenaltyColl);
     }
 
     public BigDecimal getAggrArrDmdDue(final BigDecimal arrearDemand, final BigDecimal arrearCollection) {
@@ -304,16 +433,17 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
                 .subtract(arrearCollection == null ? ZERO : arrearCollection);
     }
 
-    public BigDecimal getIntrestDueOnArrearDemandDue(final BigDecimal arrearPenalty, BigDecimal arrearPenaltyColl) {
+    public BigDecimal getIntrestDueOnArrearDemandDue(final BigDecimal arrearPenalty, final BigDecimal arrearPenaltyColl) {
         return (arrearPenalty == null ? ZERO : arrearPenalty)
                 .subtract(arrearPenaltyColl == null ? ZERO : arrearPenaltyColl);
     }
 
     public BigDecimal calculateNetPayableAmmount(final PropertyMaterlizeView pmv) {
         return getCurrFirstHalfDemandDue(pmv.getAggrCurrFirstHalfDmd(), pmv.getAggrCurrFirstHalfColl())
-                .add(getIntrestDueOnCurrFirstHalfDemand(pmv.getAggrCurrFirstHalfPenaly(),pmv.getAggrCurrFirstHalfPenalyColl()))
+                .add(getIntrestDueOnCurrFirstHalfDemand(pmv.getAggrCurrFirstHalfPenaly(), pmv.getAggrCurrFirstHalfPenalyColl()))
                 .add(getCurrSecondHalfDemandDue(pmv.getAggrCurrSecondHalfDmd(), pmv.getAggrCurrSecondHalfColl()))
-                .add(getIntrestDueOnCurrSecondHalfDemand(pmv.getAggrCurrSecondHalfPenaly(),pmv.getAggrCurrSecondHalfPenalyColl()))
+                .add(getIntrestDueOnCurrSecondHalfDemand(pmv.getAggrCurrSecondHalfPenaly(),
+                        pmv.getAggrCurrSecondHalfPenalyColl()))
                 .add(getAggrArrDmdDue(pmv.getAggrArrDmd(), pmv.getAggrArrColl()))
                 .add(getIntrestDueOnArrearDemandDue(pmv.getAggrArrearPenaly(), pmv.getAggrArrearPenalyColl()))
                 .subtract(calculateRebateAmount(getCurrFirstHalfDemand(pmv.getAggrCurrFirstHalfDmd()),
