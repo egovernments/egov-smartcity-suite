@@ -47,6 +47,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.web.support.search.DataTableSearchRequest;
 import org.egov.tl.entity.License;
 import org.egov.tl.utils.Constants;
@@ -82,7 +83,7 @@ public class SearchForm extends DataTableSearchRequest {
         setLicenseId(license.getId());
         setApplicationNumber(license.getApplicationNumber());
         setLicenseNumber(license.getLicenseNumber());
-        setOldLicenseNumber(license.getOldLicenseNumber());
+        setOldLicenseNumber(StringUtils.defaultIfEmpty(license.getOldLicenseNumber(), ""));
         setCategoryName(license.getCategory().getName());
         setSubCategoryName(license.getTradeName().getName());
         setTradeTitle(license.getNameOfEstablishment());

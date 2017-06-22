@@ -352,13 +352,13 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
 
     private void rejectActionMessage() {
         User user = getInitiatorUserObj();
-        if (user != null && user.getRoles().toString().contains(CSCOPERATOR)) {
+        if (user != null && (!UserType.EMPLOYEE.equals(user.getType()))) {
             List<Assignment> assignments = assignmentService.getAssignmentsForPosition(license().getState().getInitiatorPosition().getId());
             user = assignments.get(0).getEmployee();
         }
         if (license().getState().getValue().contains(WORKFLOW_STATE_REJECTED)) {
             Position creatorPosition = license().getState().getInitiatorPosition();
-            addActionMessage(this.getText("license.rejectedfirst") + (creatorPosition.getDeptDesig().getDesignation().getName() + " - ")
+            addActionMessage(this.getText("license.rejectedfirst") + " " + (creatorPosition.getDeptDesig().getDesignation().getName() + " - ")
                     + (user != null ? user.getName() : ""));
 
         } else

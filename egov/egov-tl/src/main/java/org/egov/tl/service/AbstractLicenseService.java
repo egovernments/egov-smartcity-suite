@@ -712,7 +712,7 @@ public abstract class AbstractLicenseService<T extends License> {
     public void saveClosure(final T license, final WorkflowBean workflowBean) {
         final User currentUser = this.securityUtils.getCurrentUser();
         final String natureOfWork = CLOSURE_NATUREOFTASK;
-        if (license.hasState() && license.getState().isInprogress())
+        if (license.hasState() && !license.getState().isEnded())
             throw new ValidationException("lic.appl.wf.validation", "Cannot initiate Closure process, Application under processing");
         Position position = null;
         if (workflowBean.getApproverPositionId() != null) {
