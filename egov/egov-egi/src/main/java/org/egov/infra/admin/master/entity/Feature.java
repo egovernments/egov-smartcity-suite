@@ -44,6 +44,9 @@ import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.envers.AuditJoinTable;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -60,11 +63,13 @@ import javax.persistence.Table;
 import java.util.Set;
 
 import static org.egov.infra.admin.master.entity.Feature.SEQ_FEATURE;
+import static org.hibernate.envers.RelationTargetAuditMode.NOT_AUDITED;
 
 @Entity
 @Table(name = "eg_feature")
 @SequenceGenerator(name = SEQ_FEATURE, sequenceName = SEQ_FEATURE, allocationSize = 1)
 @Unique(fields = "name", enableDfltMsg = true)
+@Audited
 public class Feature extends AbstractPersistable<Long> {
 
     public static final String SEQ_FEATURE = "SEQ_EG_FEATURE";
@@ -73,22 +78,28 @@ public class Feature extends AbstractPersistable<Long> {
     @GeneratedValue(generator = SEQ_FEATURE, strategy = GenerationType.SEQUENCE)
     private Long id;
 
+    @NotAudited
     private String name;
 
+    @NotAudited
     private String description;
 
     @ManyToOne
     @JoinColumn(name = "module")
+    @NotAudited
     private Module module;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(name = "eg_feature_action", joinColumns = @JoinColumn(name = "feature"), inverseJoinColumns = @JoinColumn(name = "action"))
     @Fetch(FetchMode.JOIN)
+    @NotAudited
     private Set<Action> actions;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(name = "eg_feature_role", joinColumns = @JoinColumn(name = "feature"), inverseJoinColumns = @JoinColumn(name = "role"))
     @Fetch(FetchMode.JOIN)
+    @Audited(targetAuditMode = NOT_AUDITED)
+    @AuditJoinTable
     private Set<Role> roles;
 
     @Override

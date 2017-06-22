@@ -91,6 +91,7 @@ public class User extends AbstractAuditable {
 
     @NotNull
     @Length(min = 4, max = 64)
+    @Audited
     private String password;
 
     private String salutation;
