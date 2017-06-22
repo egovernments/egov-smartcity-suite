@@ -93,12 +93,18 @@ public class WorkOrderActivityService {
     }
 
     public List<WorkOrderActivity> searchActivities(final Long workOrderEstimateId, final String description,
-            final String itemCode, final String sorType) {
+            final String itemCode, final String sorType, final String workOrderNumber) {
         final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(WorkOrderActivity.class, "woa")
                 .createAlias("woa.workOrderEstimate", "woe")
+                .createAlias("woe.workOrder", "wo")
+                .createAlias("wo.egwStatus", "status")
                 .createAlias("activity", "act");
         if (workOrderEstimateId != null)
             criteria.add(Restrictions.eq("woe.id", workOrderEstimateId));
+        if (workOrderNumber != null) {
+            criteria.add(Restrictions.eq("wo.workOrderNumber", workOrderNumber));
+            criteria.add(Restrictions.eq("status.code", WorksConstants.APPROVED));
+        }
 
         if (sorType != null && sorType.equalsIgnoreCase("SOR"))
             criteria.add(Restrictions.isNotNull("act.schedule"));
@@ -110,21 +116,29 @@ public class WorkOrderActivityService {
     }
 
     public List<WorkOrderActivity> searchREActivities(final Long workOrderEstimateId, final String description,
-            final String itemCode, final String nonTenderedType, final String mbDate) {
+            final String itemCode, final String nonTenderedType, final String mbDate, final String workOrderNumber) {
 
-        final WorkOrderEstimate workOrderEstimate = workOrderEstimateService.getWorkOrderEstimateById(workOrderEstimateId);
+        WorkOrderEstimate workOrderEstimate = null;
+        if (workOrderEstimateId != null)
+            workOrderEstimate = workOrderEstimateService.getWorkOrderEstimateById(workOrderEstimateId);
+        else if (workOrderNumber != null)
+            workOrderEstimate = workOrderEstimateService.getWorkOrderEstimateByWorkOrderNumber(workOrderNumber);
 
         final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(WorkOrderActivity.class, "woa")
                 .createAlias("woa.workOrderEstimate", "woe")
                 .createAlias("woe.workOrder", "workOrder")
+                .createAlias("workOrder.egwStatus", "status")
                 .createAlias("activity", "act")
                 .createAlias("act.abstractEstimate", "estimate")
                 .createAlias("woa.activity.schedule", "schedule", CriteriaSpecification.LEFT_JOIN)
                 .createAlias("woa.activity.nonSor", "nonSor", CriteriaSpecification.LEFT_JOIN);
 
-        if (workOrderEstimateId != null)
+        if (workOrderEstimateId != null || workOrderNumber != null)
             criteria.add(Restrictions.le("estimate.estimateDate", DateUtils.getDate(mbDate, "dd/MM/yyyy")));
-
+        
+        if (workOrderNumber != null)
+            criteria.add(Restrictions.eq("status.code", WorksConstants.APPROVED));
+        
         if (mbDate != null)
             criteria.add(Restrictions.eq("workOrder.parent.id", workOrderEstimate.getWorkOrder().getId()));
 

@@ -99,6 +99,10 @@ public class WorkOrderEstimateService {
     public WorkOrderEstimate getWorkOrderEstimateById(final Long id) {
         return workOrderEstimateRepository.findOne(id);
     }
+    
+    public WorkOrderEstimate getWorkOrderEstimateByWorkOrderNumber(final String workOrderNumber) {
+        return workOrderEstimateRepository.findByWorkOrder_WorkOrderNumber(workOrderNumber);
+    }
 
     public WorkOrderEstimate getWorkOrderEstimateByAbstractEstimateId(final Long estimateId) {
         return workOrderEstimateRepository.findByEstimate_IdAndWorkOrder_EgwStatus_Code(estimateId,

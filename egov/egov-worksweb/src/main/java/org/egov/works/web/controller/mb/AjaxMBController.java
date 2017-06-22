@@ -66,6 +66,7 @@ import org.egov.works.web.adaptor.SearchMBHeaderJsonAdaptor;
 import org.egov.works.web.adaptor.SearchMBToCancelJson;
 import org.egov.works.web.adaptor.SearchWorkOrderActivityJsonAdaptor;
 import org.egov.works.workorder.entity.WorkOrderActivity;
+import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.egov.works.workorder.service.WorkOrderEstimateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -121,6 +122,21 @@ public class AjaxMBController {
         }
         return null;
     }
+    
+    @RequestMapping(value = "/workorder/validatemb/byworkordernumber", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
+    public @ResponseBody String validateWorkOrderByWorkOrderNumber(@RequestParam final String workOrderNumber,
+            final HttpServletRequest request, final HttpServletResponse response) {
+        final JsonObject jsonObject = new JsonObject();
+        final WorkOrderEstimate workOrderEstimate = workOrderEstimateService
+                .getWorkOrderEstimateByWorkOrderNumber(workOrderNumber);
+        mBHeaderService.validateMBInDrafts(workOrderEstimate.getId(), jsonObject, null);
+        mBHeaderService.validateMBInWorkFlow(workOrderEstimate.getId(), jsonObject, null);
+        if (jsonObject.toString().length() > 2) {
+            sendAJAXResponse(jsonObject.toString(), response);
+            return "";
+        }
+        return null;
+    }
 
     protected void sendAJAXResponse(final String msg, final HttpServletResponse response) {
         try {
@@ -170,13 +186,15 @@ public class AjaxMBController {
 
     @RequestMapping(value = "/measurementbook/ajax-searchactivities", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String searchWorkOrderActivities(final HttpServletRequest request) {
-        final Long workOrderEstimateId = Long.parseLong(request.getParameter("workOrderEstimateId"));
-        final Long mbHeaderId = Long.parseLong(request.getParameter("id"));
+        final Long workOrderEstimateId = request.getParameter("workOrderEstimateId") != null
+                ? Long.parseLong(request.getParameter("workOrderEstimateId")) : null;
+        final Long mbHeaderId = request.getParameter("id") != null ? Long.parseLong(request.getParameter("id")) : -1;
         final String description = request.getParameter("description");
         final String itemCode = request.getParameter("itemCode");
         final String sorType = request.getParameter("sorType");
+        final String workOrderNumber = request.getParameter("workOrderNumber");
         final List<WorkOrderActivity> workOrderActivities = workOrderActivityService
-                .searchActivities(workOrderEstimateId, description, itemCode, sorType);
+                .searchActivities(workOrderEstimateId, description, itemCode, sorType, workOrderNumber);
         final List<WorkOrderActivity> activities = new ArrayList<WorkOrderActivity>();
         // TODO re factor this code to handle via criteria
         if (description != null && !description.equals(""))
@@ -216,14 +234,16 @@ public class AjaxMBController {
 
     @RequestMapping(value = "/measurementbook/ajax-searchreactivities", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String searchREWorkOrderActivities(final HttpServletRequest request) {
-        final Long workOrderEstimateId = Long.parseLong(request.getParameter("workOrderEstimateId"));
-        final Long mbHeaderId = Long.parseLong(request.getParameter("id"));
+        final Long workOrderEstimateId = request.getParameter("workOrderEstimateId") != null
+                ? Long.parseLong(request.getParameter("workOrderEstimateId")) : null;;
+        final Long mbHeaderId = request.getParameter("id") != null ? Long.parseLong(request.getParameter("id")) : -1;
         final String description = request.getParameter("description");
         final String itemCode = request.getParameter("itemCode");
         final String nonTenderedType = request.getParameter("nonTenderedType");
         final String mbDate = request.getParameter("mbDate");
+        final String workOrderNumber = request.getParameter("workOrderNumber");
         final List<WorkOrderActivity> workOrderActivities = workOrderActivityService
-                .searchREActivities(workOrderEstimateId, description, itemCode, nonTenderedType, mbDate);
+                .searchREActivities(workOrderEstimateId, description, itemCode, nonTenderedType, mbDate, workOrderNumber);
 
         for (final WorkOrderActivity woa : workOrderActivities)
             woa.setMbHeaderId(mbHeaderId);
