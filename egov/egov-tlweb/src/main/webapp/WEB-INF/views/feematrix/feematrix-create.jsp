@@ -204,7 +204,6 @@
                                                        maxlength="8" required="required"/>
                                             </td>
                                             <td>
-                                                gdfgdfgd
                                                 <input type="text" name="feeMatrixDetail[${vs.index}].amount" value="${feeMatrixDetail.amount}"
                                                        class="form-control patternvalidation" data-pattern="number" maxlength="8" required="required"/>
                                             </td>
