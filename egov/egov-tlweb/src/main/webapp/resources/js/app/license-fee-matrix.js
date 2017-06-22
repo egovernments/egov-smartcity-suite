@@ -47,6 +47,13 @@ $(document).ready(function () {
         }
     });
 
+    $('#licenseAppType').change(function(){
+        if($(this).find("option:selected").text() === "Renew")
+            $("#natureOfBusiness option:contains('Temporary')").hide();
+        else
+            $("#natureOfBusiness option:contains('Temporary')").show();
+    })
+
     $('#financialYear').change(function () {
         var finId = $(this).val();
         var finRange = $("#fin" + finId).val().split("-");

@@ -206,7 +206,7 @@
                                             <form:hidden path="feeMatrixDetail[${vs.index}].markedForRemoval" id="feeMatrixDetail[${vs.index}].markedForRemoval"
                                                          value="${detail.markedForRemoval}" cssClass="markedForRemoval"/>
                                         </td>
-                                        <td><span class="add-padding"><i class="fa fa-trash delete-row" aria-hidden="true"></i></span></td>
+                                        <td><span class="add-padding"><i class="fa fa-trash delete-row" data-func="add" aria-hidden="true"></i></span></td>
                                     </tr>
                                 </c:forEach>
                             </c:if>
