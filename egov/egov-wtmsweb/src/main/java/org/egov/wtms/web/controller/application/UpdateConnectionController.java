@@ -436,14 +436,6 @@ public class UpdateConnectionController extends GenericConnectionController {
         final String currentState = request.getParameter("currentState");
         final String ownerPosition = request.getParameter("ownerPosition");
 
-        if ((APPLICATION_STATUS_DIGITALSIGNPENDING.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode()) ||
-                APPLICATION_STATUS_CLOSERDIGSIGNPENDING.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode()) ||
-                APPLICATION_STATUS_RECONNDIGSIGNPENDING.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode()))
-                && currentState != null && !waterConnectionDetails.getState().getValue().equals(currentState)
-                || ownerPosition != null
-                        && waterConnectionDetails.getState().getOwnerPosition().getId() != Long.valueOf(ownerPosition))
-            throw new ValidationException("err.record.already.processed");
-
         String mode = "";
         String workFlowAction = "";
         Double donationCharges = 0d;
