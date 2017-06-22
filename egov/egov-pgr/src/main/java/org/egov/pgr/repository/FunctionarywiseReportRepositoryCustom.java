@@ -1,5 +1,5 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
  *     Copyright (C) <2015>  eGovernments Foundation
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *           Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *           Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *           derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ * 	       For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ * 	       For any further queries on attribution, including queries on brand guidelines,
+ *           please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -38,21 +45,24 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.pgr.entity.enums;
+package org.egov.pgr.repository;
 
-import org.apache.commons.lang3.StringUtils;
+import org.egov.infstr.services.Page;
+import org.egov.pgr.entity.dto.FunctionarywiseReportRequest;
+import org.egov.pgr.entity.view.FunctionarywiseReport;
 
-import static org.egov.infra.utils.ApplicationConstant.NA;
+import java.util.List;
 
-public enum CitizenFeedback {
-    UNSPECIFIED, ONE, TWO, THREE, FOUR, FIVE;
+public interface FunctionarywiseReportRepositoryCustom {
 
-    public static String value(Integer ordinal) {
-        return ordinal == null ? NA : values()[ordinal].toString();
-    }
+    Page<FunctionarywiseReport> findByFunctionarywiseRequest(FunctionarywiseReportRequest functionarywiseReportRequest);
 
-    @Override
-    public String toString() {
-        return StringUtils.capitalize(name());
-    }
+    Page<FunctionarywiseReport> findComplaintsByEmployeeId(FunctionarywiseReportRequest functionarywiseReportRequest);
+
+    Object[] findGrandTotalByRequest(FunctionarywiseReportRequest request);
+
+    List<FunctionarywiseReport> findFunctionarywiseReportByEmployeeId(FunctionarywiseReportRequest request);
+
+    List<FunctionarywiseReport> findFunctionarywiseReportByRequest(FunctionarywiseReportRequest request);
+
 }

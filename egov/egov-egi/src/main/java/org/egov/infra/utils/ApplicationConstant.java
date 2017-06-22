@@ -85,6 +85,8 @@ public final class ApplicationConstant {
     public static final String CITIZEN_ROLE_NAME = "CITIZEN";
     public static final String ANONYMOUS_USERNAME = "anonymous";
 
+    public static final String NA = "N/A";
+
     private ApplicationConstant() {
     }
 }

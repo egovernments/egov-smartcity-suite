@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="pgr_functionarywise_report" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="56571bd1-6db1-4d1e-af8d-8994751e2e2b">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="FunctionarywiseReport" class="java.util.List"/>
+	<field name="employeeName" class="java.lang.String"/>
+	<field name="registered" class="java.math.BigInteger"/>
+	<field name="inprocess" class="java.math.BigInteger"/>
+	<field name="completed" class="java.math.BigInteger"/>
+	<field name="rejected" class="java.math.BigInteger"/>
+	<field name="reopened" class="java.math.BigInteger"/>
+	<field name="withinSLA" class="java.math.BigInteger"/>
+	<field name="beyondSLA" class="java.math.BigInteger"/>
+	<variable name="totalregistered" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$F{registered}]]></variableExpression>
+	</variable>
+	<variable name="totalinprocess" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$F{inprocess}]]></variableExpression>
+	</variable>
+	<variable name="totalcompleted" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$F{completed}]]></variableExpression>
+	</variable>
+	<variable name="totalrejected" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$F{rejected}]]></variableExpression>
+	</variable>
+	<variable name="totalreopened" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$F{reopened}]]></variableExpression>
+	</variable>
+	<variable name="totalwithinSLA" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$F{withinSLA}]]></variableExpression>
+	</variable>
+	<variable name="totalbeyondSLA" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$F{beyondSLA}]]></variableExpression>
+	</variable>
+	<variable name="row_sum" class="java.math.BigInteger">
+		<variableExpression><![CDATA[$F{withinSLA}+$F{beyondSLA}]]></variableExpression>
+	</variable>
+	<variable name="total_sum" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$V{row_sum}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="21" splitType="Stretch">
+			<staticText>
+				<reportElement x="332" y="0" width="138" height="20" uuid="7ea8709c-b197-4ab3-b9d8-82ddd3b215b4"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Functionarywise Report]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="21" splitType="Stretch">
+			<staticText>
+				<reportElement x="128" y="1" width="80" height="20" uuid="ac4141d9-cd81-4aa7-b517-c0f3e43479b3"/>
+				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Registered]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="208" y="1" width="83" height="20" uuid="4a673b10-709f-408b-9fb7-9d5bced3caec"/>
+				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Inprocess]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="291" y="1" width="78" height="20" uuid="402b0080-d905-4f8a-9ff4-83ba8c9deee8"/>
+				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Completed]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="369" y="1" width="81" height="20" uuid="e33d5872-4bb6-46b0-971f-37944baf6aa0"/>
+				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Rejected]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="450" y="1" width="89" height="20" uuid="1c5f7b13-7fe3-40aa-a23d-d531d21a339d"/>
+				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Reopened]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="539" y="1" width="87" height="20" uuid="20dad520-beb4-48ef-b257-b158f726a8b8"/>
+				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[WithinSLA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="626" y="1" width="79" height="20" uuid="d5672361-367c-41b4-b6df-b89bdbad16eb"/>
+				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[BeyondSLA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="705" y="1" width="83" height="20" uuid="d23a0673-8216-4a11-861f-0a979cdf72fb"/>
+				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Total]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="28" y="1" width="100" height="20" uuid="4e405145-d1e2-40e5-b616-92e9b88235c2"/>
+				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Employee Name]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField>
+				<reportElement x="28" y="0" width="100" height="20" uuid="b3d1b7e2-7656-419a-b66b-55894729d005"/>
+				<box topPadding="1" leftPadding="3" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{employeeName}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="128" y="0" width="80" height="20" uuid="46231a00-b933-425e-a3e6-1031d73eabb7"/>
+				<box topPadding="1" leftPadding="3" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{registered}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="208" y="0" width="83" height="20" uuid="9a4f5d1b-ed61-4ad2-ac84-9ac95e957358"/>
+				<box topPadding="1" leftPadding="3" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{inprocess}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="291" y="0" width="78" height="20" uuid="75439393-53e3-45fc-a0eb-dd73fb8b106a"/>
+				<box topPadding="1" leftPadding="3" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{completed}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="370" y="0" width="80" height="20" uuid="da21de88-6a56-4425-abef-f87b8287fe91"/>
+				<box topPadding="1" leftPadding="3" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{rejected}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="450" y="0" width="89" height="20" uuid="98396d14-6d8c-4dd7-9bc6-bc7ec08344f2"/>
+				<box topPadding="1" leftPadding="3" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{reopened}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="539" y="0" width="87" height="20" uuid="835730ec-6f1c-4a8a-b836-0d66c9168a4b"/>
+				<box topPadding="1" leftPadding="3" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{withinSLA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="626" y="0" width="79" height="20" uuid="e817de42-bb1f-45e9-8975-e655f7defe39"/>
+				<box topPadding="1" leftPadding="3" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{beyondSLA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="705" y="0" width="83" height="20" uuid="d2ef80ac-1014-4e32-952c-8ce361ab5a41"/>
+				<box topPadding="1" leftPadding="3" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$V{row_sum}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="21" splitType="Stretch">
+			<textField>
+				<reportElement x="702" y="0" width="100" height="20" uuid="ed3aab7d-53ce-47ff-9b1b-0f622f8c345f"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch">
+			<textField>
+				<reportElement x="128" y="0" width="80" height="20" uuid="671b4aaf-17bd-47f1-855b-4273fb99b2e7"/>
+				<box topPadding="1" leftPadding="3" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$V{totalregistered}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="208" y="0" width="83" height="20" uuid="3ee6ab80-b2f5-4fb2-9d65-58964565686b"/>
+				<box topPadding="1" leftPadding="3" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$V{totalinprocess}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="291" y="0" width="78" height="20" uuid="cb27bdbe-04a0-4936-a5cf-d8d5dc1447e7"/>
+				<box topPadding="1" leftPadding="3" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$V{totalcompleted}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="370" y="0" width="80" height="20" uuid="907abf97-a58f-40bd-80af-c676ea3212a2"/>
+				<box topPadding="1" leftPadding="3" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$V{totalrejected}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="450" y="0" width="89" height="20" uuid="49081f74-0e85-4307-a1bc-bc642a665d87"/>
+				<box topPadding="1" leftPadding="3" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$V{totalreopened}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="539" y="0" width="87" height="20" uuid="a99f0196-55d4-49be-a386-161791d20c63"/>
+				<box topPadding="1" leftPadding="3" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$V{totalwithinSLA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="626" y="0" width="79" height="20" uuid="9f14c38b-7e64-4657-b998-281be451809a"/>
+				<box topPadding="1" leftPadding="3" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$V{totalbeyondSLA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="705" y="0" width="83" height="20" uuid="be5ad17b-6082-418f-9b5d-3344e19d582e"/>
+				<box topPadding="1" leftPadding="3" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$V{total_sum}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="28" y="0" width="100" height="20" uuid="21385e55-a977-4269-a58d-b7db3465c01e"/>
+				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Total]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>

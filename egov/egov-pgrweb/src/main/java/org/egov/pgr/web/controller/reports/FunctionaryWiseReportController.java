@@ -40,27 +40,28 @@
 
 package org.egov.pgr.web.controller.reports;
 
-import static org.egov.infra.utils.JsonUtils.toJSON;
-
-import java.io.IOException;
-import java.util.Date;
-import java.util.List;
-
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.io.IOUtils;
+import org.egov.infra.reporting.engine.ReportRequest;
+import org.egov.infra.reporting.engine.ReportService;
+import org.egov.infra.utils.StringUtils;
+import org.egov.infra.web.support.ui.DataTable;
+import org.egov.pgr.entity.dto.FunctionarywiseReportRequest;
 import org.egov.pgr.service.reports.FunctionaryWiseReportService;
-import org.hibernate.SQLQuery;
-import org.hibernate.transform.Transformers;
+import org.egov.pgr.web.controller.response.adaptor.FunctionarywiseCompTypeAdaptor;
+import org.egov.pgr.web.controller.response.adaptor.FunctionarywiseDrillDownAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.HashMap;
+
+import static org.egov.infra.web.utils.WebUtils.reportToResponseEntity;
+import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 
 @Controller
 @RequestMapping(value = "/functionaryWiseReport")
@@ -68,6 +69,9 @@ public class FunctionaryWiseReportController {
 
     @Autowired
     private FunctionaryWiseReportService functionaryWiseReportService;
+
+    @Autowired
+    private ReportService reportService;
 
     @ModelAttribute
     public void getReportHelper(Model model) {
@@ -80,38 +84,40 @@ public class FunctionaryWiseReportController {
         return "functionaryWise-search";
     }
 
-    @GetMapping("result")
+    @GetMapping(value = "result", produces = TEXT_PLAIN_VALUE)
     @ResponseBody
-    public void result(@RequestParam String usrid,
-                       @RequestParam String status, @RequestParam String complaintDateType,
-                       @RequestParam Date fromDate,
-                       @RequestParam Date toDate, HttpServletResponse response)
-            throws IOException {
-        SQLQuery functionaryReportQuery;
-        List<DrillDownReportResult> functionaryReportResult;
-        String result;
-        if (usrid != null && status != null && !"".equals(usrid)
-                && !"".equals(status)) {
-            functionaryReportQuery = functionaryWiseReportService.getFunctionaryWiseReportQuery(fromDate,
-                    toDate, usrid, complaintDateType, status);
-            functionaryReportQuery.setResultTransformer(Transformers.aliasToBean(DrillDownReportResult.class));
-            functionaryReportResult = functionaryReportQuery.list();
-            result = new StringBuilder("{ \"data\":").append(toJSON(functionaryReportResult, DrillDownReportResult.class,
-                    DrillDownReportWithcompTypeAdaptor.class)).append("}")
-                    .toString();
+    public String searchFunctionarywiseReport(FunctionarywiseReportRequest functionarywiseReportRequest) {
+        if (StringUtils.isNotBlank(functionarywiseReportRequest.getUsrid()) &&
+                StringUtils.isNotBlank(functionarywiseReportRequest.getStatus())) {
+            return new DataTable<>(functionaryWiseReportService.pagedFunctionarwiseReportByCompalints(functionarywiseReportRequest),
+                    functionarywiseReportRequest.draw())
+                    .toJson(FunctionarywiseCompTypeAdaptor.class);
 
-        } else {
-            functionaryReportQuery = functionaryWiseReportService.getFunctionaryWiseReportQuery(fromDate,
-                    toDate, usrid, complaintDateType);
-            functionaryReportQuery.setResultTransformer(Transformers.aliasToBean(DrillDownReportResult.class));
-            functionaryReportResult = functionaryReportQuery.list();
-            result = new StringBuilder("{ \"data\":").append(toJSON(functionaryReportResult, DrillDownReportResult.class,
-                    DrillDownReportHelperAdaptor.class)).append("}")
-                    .toString();
-        }
-
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        IOUtils.write(result, response.getWriter());
-
+        } else
+            return new DataTable<>(functionaryWiseReportService.pagedFunctionarwiseRecords(functionarywiseReportRequest),
+                    functionarywiseReportRequest.draw())
+                    .toJson(FunctionarywiseDrillDownAdaptor.class);
     }
+
+    @GetMapping("grand-total")
+    @ResponseBody
+    public Object[] functionarywiseGrandTotal(FunctionarywiseReportRequest request) {
+        return functionaryWiseReportService.functionarywiseReportGrandTotal(request);
+    }
+
+    @GetMapping("download")
+    @ResponseBody
+    public ResponseEntity<InputStreamResource> downloadReport(FunctionarywiseReportRequest request) {
+        final ReportRequest reportRequest;
+        if (StringUtils.isNotBlank(request.getUsrid()) && StringUtils.isNotBlank(request.getStatus())) {
+            reportRequest = new ReportRequest("pgr_functionarywise_report_comp",
+                    functionaryWiseReportService.getFunctionarywiseRecordsByEmployee(request), new HashMap<>());
+        } else
+            reportRequest = new ReportRequest("pgr_functionarywise_report",
+                    functionaryWiseReportService.getAllFunctionarywiseRecords(request), new HashMap<>());
+        reportRequest.setReportFormat(request.getPrintFormat());
+        reportRequest.setReportName("pgr_functionarywise_report");
+        return reportToResponseEntity(reportRequest, reportService.createReport(reportRequest));
+    }
+
 }
