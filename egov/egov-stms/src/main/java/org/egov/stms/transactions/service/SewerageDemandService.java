@@ -47,7 +47,9 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -66,7 +68,15 @@ import org.egov.demand.model.EgDemandReason;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.validation.exception.ValidationException;
+import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
+import org.egov.ptis.domain.entity.property.BasicProperty;
+import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
+import org.egov.ptis.domain.model.ErrorDetails;
+import org.egov.stms.entity.PaySewerageTaxDetails;
 import org.egov.stms.entity.SewerageDemandGenerationLog;
+import org.egov.stms.entity.SewerageTaxDetails;
+import org.egov.stms.entity.SewerageTaxPaidDetails;
+import org.egov.stms.masters.entity.enums.SewerageConnectionStatus;
 import org.egov.stms.masters.entity.enums.SewerageProcessStatus;
 import org.egov.stms.transactions.entity.SewerageApplicationDetails;
 import org.egov.stms.transactions.entity.SewerageConnectionFee;
@@ -96,6 +106,8 @@ public class SewerageDemandService {
     private InstallmentDao installmentDao;
     @Autowired
     private DemandGenericDao demandGenericDao;
+    @Autowired
+    private BasicPropertyDAO basicPropertyDAO;
     @Autowired
     private ModuleService moduleService;
     @PersistenceContext
@@ -815,6 +827,117 @@ public class SewerageDemandService {
         else
             error = "Error : " + exception;
         return error;
+    }
+
+    public SewerageTaxDetails getSeweragTaxeDemandDetails(PaySewerageTaxDetails paySewerageTaxDetails) {
+        SewerageTaxDetails sewerageTaxDetails = new SewerageTaxDetails();
+        SewerageApplicationDetails sewerageApplicationDetails = null;
+        ErrorDetails errorDetails = null;
+        if (paySewerageTaxDetails.getApplicaionNumber() != null && !"".equals(paySewerageTaxDetails.getApplicaionNumber()))
+            sewerageApplicationDetails = sewerageApplicationDetailsService
+                    .findByApplicationNumber(paySewerageTaxDetails.getApplicaionNumber());
+        else if (paySewerageTaxDetails.getConsumerNo() != null)
+            sewerageApplicationDetails = sewerageApplicationDetailsService.findByConnectionShscNumberAndConnectionStatus(
+                    paySewerageTaxDetails.getConsumerNo(), SewerageConnectionStatus.ACTIVE);
+        if (sewerageApplicationDetails == null) {
+            errorDetails = new ErrorDetails();
+            errorDetails.setErrorCode(SewerageTaxConstants.PROPERTYID_NOT_EXIST_ERR_CODE);
+            errorDetails.setErrorMessage(SewerageTaxConstants.STAXDETAILS_CONSUMER_CODE_NOT_EXIST_ERR_MSG_PREFIX
+                    + (paySewerageTaxDetails.getConsumerNo() != null ? paySewerageTaxDetails.getConsumerNo()
+                            : paySewerageTaxDetails.getApplicaionNumber())
+                    + SewerageTaxConstants.STAXDETAILS_NOT_EXIST_ERR_MSG_SUFFIX);
+            sewerageTaxDetails.setErrorDetails(errorDetails);
+        } else {
+            sewerageTaxDetails.setConsumerNo(sewerageApplicationDetails.getConnection().getShscNumber());
+            sewerageTaxDetails = buildSewerageTaxDetailsUsingDemand(sewerageTaxDetails, sewerageApplicationDetails);
+        }
+        return sewerageTaxDetails;
+
+    }
+
+    private SewerageTaxDetails buildSewerageTaxDetailsUsingDemand(SewerageTaxDetails sewerageTaxDetails,
+            SewerageApplicationDetails sewerageApplicationDetails) {
+
+        ErrorDetails errorDetails;
+        sewerageTaxDetails.setConsumerNo(sewerageApplicationDetails.getConnection().getShscNumber());
+
+        final String propertyIdentifier = sewerageApplicationDetails.getConnectionDetail().getPropertyIdentifier();
+        final BasicProperty basicProperty = basicPropertyDAO.getAllBasicPropertyByPropertyID(propertyIdentifier);
+        sewerageTaxDetails.setPropertyAddress(basicProperty.getAddress().toString());
+        sewerageTaxDetails.setLocalityName(basicProperty.getPropertyID().getLocality().getName());
+
+        final List<PropertyOwnerInfo> propOwnerInfos = basicProperty.getPropertyOwnerInfo();
+        if (!propOwnerInfos.isEmpty()) {
+            sewerageTaxDetails.setOwnerName(propOwnerInfos.get(0).getOwner().getName());
+            sewerageTaxDetails.setMobileNo(propOwnerInfos.get(0).getOwner().getMobileNumber());
+        }
+
+        BigDecimal amtCollected ;
+
+        final HashMap<String, SewerageTaxPaidDetails> sewerageReportMap = new HashMap<>();
+        SewerageTaxPaidDetails dcbResult;
+
+        EgDemand sewerageDemand = sewerageApplicationDetails.getCurrentDemand();
+        if (sewerageDemand != null)
+            for (final EgDemandDetails demandDtl : sewerageDemand.getEgDemandDetails()) {
+
+                if (demandDtl.getEgDemandReason().getEgDemandReasonMaster().getCode().equalsIgnoreCase(SewerageTaxConstants.FEES_SEWERAGETAX_CODE)
+                        && demandDtl.getAmount()
+                        .compareTo((demandDtl.getAmtCollected() == null) ? BigDecimal.ZERO : demandDtl.getAmtCollected()) > 0) {
+
+                    final SewerageTaxPaidDetails rateResult = sewerageReportMap
+                            .get(demandDtl.getEgDemandReason().getEgInstallmentMaster().getDescription());
+                    if (rateResult == null) {
+
+                        dcbResult = new SewerageTaxPaidDetails();
+                        dcbResult.setInstallment(
+                                demandDtl.getEgDemandReason().getEgInstallmentMaster().getDescription());
+                        amtCollected = (demandDtl.getAmtCollected() == null) ? BigDecimal.ZERO : demandDtl.getAmtCollected();
+                        if (demandDtl.getAmount().compareTo(amtCollected) > 0) {
+
+                            dcbResult.setTaxAmount(demandDtl.getAmount().subtract(amtCollected));
+                            dcbResult
+                                    .setTotalAmount(dcbResult.getTotalAmount().add(demandDtl.getAmount().subtract(amtCollected)));
+                        }
+                        sewerageReportMap.put(demandDtl.getEgDemandReason().getEgInstallmentMaster().getDescription(), dcbResult);
+                    } else {
+
+                        dcbResult = sewerageReportMap
+                                .get(demandDtl.getEgDemandReason().getEgInstallmentMaster().getDescription());
+
+                        amtCollected = (demandDtl.getAmtCollected() == null) ? BigDecimal.ZERO : demandDtl.getAmtCollected();
+
+                        if (demandDtl.getAmount().compareTo(amtCollected) > 0) {
+
+                            dcbResult.setTaxAmount(dcbResult.getTaxAmount().add(demandDtl.getAmount().subtract(amtCollected)));
+                            dcbResult
+                                    .setTotalAmount(dcbResult.getTotalAmount().add(demandDtl.getAmount().subtract(amtCollected)));
+                        }
+                        sewerageReportMap.put(demandDtl.getEgDemandReason().getEgInstallmentMaster().getDescription(), dcbResult);
+                    }
+                }
+            }
+
+        final List<SewerageTaxPaidDetails> rateResultList = new ArrayList<SewerageTaxPaidDetails>();
+        if (sewerageReportMap.size() > 0)
+            sewerageReportMap.forEach((key, value) -> {
+                rateResultList.add(value);
+            });
+
+        if (!rateResultList.isEmpty())
+            Collections.sort(rateResultList, (c1, c2) -> c1.getInstallment()
+                    .compareTo(c2.getInstallment()));
+
+        
+        sewerageTaxDetails.setTaxDetails(rateResultList);
+
+        errorDetails = new ErrorDetails();
+        errorDetails.setErrorCode(SewerageTaxConstants.THIRD_PARTY_ERR_CODE_SUCCESS);
+        errorDetails.setErrorMessage(SewerageTaxConstants.THIRD_PARTY_ERR_MSG_SUCCESS);
+
+        sewerageTaxDetails.setErrorDetails(errorDetails);
+        return sewerageTaxDetails;
+
     }
 
 }

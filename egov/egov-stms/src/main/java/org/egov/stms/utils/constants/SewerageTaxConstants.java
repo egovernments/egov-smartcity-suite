@@ -323,15 +323,20 @@ public class SewerageTaxConstants {
     public static final String SEWERAGEROLEFORNONEMPLOYEE="SEWERAGEROLEFORNONEMPLOYEE";
     public static final String APPLICATION_PDF = "application/pdf";
     public static final String APPLICATION_STATUS_CSCCREATED = "CSCCREATED";
-    
-    
+        
    //Online 
     public static final String Online = "Online";
     public static final String ANONYMOUS_USER = "Anonymous";
     public static final String APPLICATION_STATUS_ANONYMOUSCREATED = "ANONYMOUSCREATED";
 
-
-
-    
+    public static final String PROPERTYID_NOT_EXIST_ERR_CODE = "STAX101";
+    public static final String STAXDETAILS_CONSUMER_CODE_NOT_EXIST_ERR_MSG_PREFIX = "Sewerage Connection details with Consumer code ";
+    public static final String STAXDETAILS_NOT_EXIST_ERR_MSG_SUFFIX = " does not exist";
+    public static final String THIRD_PARTY_ERR_CODE_SUCCESS = "STAX-REST-0";
+    public static final String THIRD_PARTY_ERR_MSG_SUCCESS = "SUCCESS";
+    public static final String SEWERAGE_BILLNUMBER = "SEQ_SEWERAGEBILL_NUMBER";
+    public static final String BILLTYPE_MANUAL = "MANUAL";
+    public static final String PAYMENT_TYPE_PARTIALLY = "Partially";
+    public static final String PAYMENT_TYPE_FULLY = "Fully";
     
 }

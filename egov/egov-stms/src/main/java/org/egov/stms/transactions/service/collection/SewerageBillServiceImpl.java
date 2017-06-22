@@ -113,6 +113,39 @@ public class SewerageBillServiceImpl extends BillServiceInterface {
             return billDetailList;
     }   
     
+    public List<EgBillDetails> getSewerageTaxTypeBilldetails(final Billable billObj) {
+        final List<EgBillDetails> billDetailList = new ArrayList<EgBillDetails>();
+        int orderNo = 1;
+        final SewerageBillable advBillable = (SewerageBillable) billObj;
+        final EgDemand dmd = advBillable.getCurrentDemand();
+        final List<EgDemandDetails> details = new ArrayList<EgDemandDetails>(dmd.getEgDemandDetails());
+
+        if (!details.isEmpty())
+            Collections.sort(details, (c1, c2) -> c1.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster()
+                    .compareTo(c2.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster()));
+
+        for (final EgDemandDetails demandDetail : details)
+            if (demandDetail.getAmount().compareTo(BigDecimal.ZERO) > 0 && demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
+                    .equalsIgnoreCase(SewerageTaxConstants.FEES_SEWERAGETAX_CODE)) {
+                BigDecimal creaditAmt = demandDetail.getAmount().subtract(demandDetail.getAmtCollected());
+
+                // If Amount- collected amount greather than zero, then send
+                // these demand details to collection.
+                if (creaditAmt.compareTo(BigDecimal.ZERO) > 0
+                       ) {
+       
+                    final EgBillDetails billdetail = createBillDetailObject(orderNo, BigDecimal.ZERO, creaditAmt,
+                                demandDetail.getEgDemandReason().getGlcodeId().getGlcode(), getReceiptDetailDescription(demandDetail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster()
+                                        +" "+SewerageTaxConstants.COLL_RECEIPTDETAIL_DESC_PREFIX,demandDetail.getEgDemandReason().getEgInstallmentMaster()));
+                    billdetail.setEgDemandReason(demandDetail.getEgDemandReason());    
+                    orderNo++;
+                        billDetailList.add(billdetail);
+                }
+            
+                }
+            return billDetailList;
+    }  
+    
     private String getReceiptDetailDescription(String reasonType, Installment instlment) {
              return reasonType+(instlment!=null? " "+instlment.getDescription():"");
          

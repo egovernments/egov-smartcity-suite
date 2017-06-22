@@ -101,7 +101,11 @@
             <artifactId>egov-adtax</artifactId>
             <version>3.0.0-SNAPSHOT</version>
         </dependency>
-
+   		<dependency>
+            <groupId>org.egov</groupId>
+            <artifactId>egov-stms</artifactId>
+            <version>3.0.0-SNAPSHOT</version>
+        </dependency>
         <dependency>
             <groupId>org.egov</groupId>
             <artifactId>egov-config</artifactId>

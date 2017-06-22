@@ -61,4 +61,6 @@
     <bean id="seweargeApplicationWorkflowCustomDefaultImpl"
           class="org.egov.stms.transactions.workflow.ApplicationWorkflowCustomDefaultImpl" scope="prototype"/>
 
+	<bean id="sewerageBillable"	class="org.egov.stms.transactions.service.collection.SewerageBillable" scope="prototype" />
+		
 </beans>
