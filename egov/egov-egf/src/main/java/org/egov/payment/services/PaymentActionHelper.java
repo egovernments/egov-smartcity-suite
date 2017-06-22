@@ -269,7 +269,7 @@ public class PaymentActionHelper {
     @Transactional
     public Paymentheader sendForApproval(Paymentheader paymentheader, WorkflowBean workflowBean) {
 
-        if (!validateOwner(paymentheader.getState())) {
+        if (paymentheader.getState()!=null && !validateOwner(paymentheader.getState())) {
             throw new ValidationException("exp", "Application does not belongs to this inbox");
         }
         if (FinancialConstants.CREATEANDAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction())

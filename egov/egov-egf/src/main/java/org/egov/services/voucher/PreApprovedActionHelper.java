@@ -107,7 +107,7 @@ public class PreApprovedActionHelper {
     @Transactional
     public CVoucherHeader sendForApproval(CVoucherHeader voucherHeader, WorkflowBean workflowBean)
     {
-        if (!validateOwner(voucherHeader.getState())) {
+        if (voucherHeader.getState()!=null && !validateOwner(voucherHeader.getState())) {
             throw new ValidationException("exp","Application does not belongs to this inbox");
         }
         try {
