@@ -126,8 +126,8 @@
 					<td class="text-right" colspan="2"><span class="mandatory"
 						id="collectedDonationAmount">Collected Donation charges</span></td>
 					<td><input type="text"
-						class="form-control table-input text-right patternvalidation"
-						name="amountCollected"  value="${amountCollected}" maxlength="6" id="amountCollected"
+						class="form-control table-input text-right patternvalidation" data-pattern="number"
+						name="amountCollected" value="<fmt:formatNumber type="number" pattern="0" maxFractionDigits="0" value="${amountCollected}" />"  maxlength="6" id="amountCollected"
 						required="required" /></td>
 				</tr>
 				<tr>

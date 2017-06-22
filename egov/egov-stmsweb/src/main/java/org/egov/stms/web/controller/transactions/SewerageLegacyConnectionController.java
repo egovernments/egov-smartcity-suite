@@ -306,10 +306,9 @@ public class SewerageLegacyConnectionController extends GenericWorkFlowControlle
                 .getEgDemandDetails()) {
             if (dd.getEgDemandReason().getEgDemandReasonMaster().getCode()
                     .equalsIgnoreCase(SewerageTaxConstants.FEES_DONATIONCHARGE_CODE)) {
-                BigInteger collectedAmt = dd.getAmtCollected().toBigInteger();
-                BigInteger pendingAmtForCollection = dd.getAmount().subtract(dd.getAmtCollected()).toBigInteger();
-                model.addAttribute("amountCollected", collectedAmt);
-                model.addAttribute("pendingAmtForCollection", pendingAmtForCollection);
+                model.addAttribute("amountCollected", dd.getAmtCollected());
+                model.addAttribute("pendingAmtForCollection", dd.getAmount().subtract(dd.getAmtCollected()));
+                break;
             }
         }
 

@@ -63,6 +63,7 @@ import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.pims.commons.Position;
 import org.egov.stms.transactions.entity.SewerageApplicationDetails;
+import org.egov.stms.utils.constants.SewerageTaxConstants;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -168,7 +169,7 @@ public class SewerageWorkflowService {
                                     new Date());
                     wfInitiator = getActiveAssignment(assignment);
                 }
-            } else if (!isEmployee(sewerageApplicationDetails.getCreatedBy()))
+            } else if (!isEmployee(sewerageApplicationDetails.getCreatedBy()) || SewerageTaxConstants.ANONYMOUS_USER.equalsIgnoreCase(sewerageApplicationDetails.getCreatedBy().getUsername()))
                 wfInitiator = getUserAssignment(sewerageApplicationDetails.getCreatedBy(), sewerageApplicationDetails);
             else
                 wfInitiator = assignmentService.getPrimaryAssignmentForUser(sewerageApplicationDetails

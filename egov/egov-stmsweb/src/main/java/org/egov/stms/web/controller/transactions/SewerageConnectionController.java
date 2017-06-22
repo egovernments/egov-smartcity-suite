@@ -39,6 +39,7 @@
  */
 package org.egov.stms.web.controller.transactions;
 
+
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 import java.util.ArrayList;
@@ -105,6 +106,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping(value = "/transactions")
 public class SewerageConnectionController extends GenericWorkFlowController {
 
+    private static final String CSCUSER = "CSCUSER";
     private static final Logger LOG = LoggerFactory.getLogger(SewerageConnectionController.class);
     private final SewerageTaxUtils sewerageTaxUtils;
 
@@ -252,6 +254,7 @@ public class SewerageConnectionController extends GenericWorkFlowController {
 
         if (sewerageApplicationDetails.getState() == null)
             if (isEmployee) {
+                sewerageApplicationDetails.setSource(Source.SYSTEM.name());
                 if (sewerageTaxUtils.isInspectionFeeCollectionRequired())
                     sewerageApplicationDetails.setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(
                             SewerageTaxConstants.APPLICATION_STATUS_COLLECTINSPECTIONFEE, SewerageTaxConstants.MODULETYPE));
@@ -259,9 +262,16 @@ public class SewerageConnectionController extends GenericWorkFlowController {
                     sewerageApplicationDetails.setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(
                             SewerageTaxConstants.APPLICATION_STATUS_CREATED, SewerageTaxConstants.MODULETYPE));
             } else {
-                sewerageApplicationDetails.setSource(Source.CSC.name());
-                sewerageApplicationDetails.setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(
-                        SewerageTaxConstants.APPLICATION_STATUS_CSCCREATED, SewerageTaxConstants.MODULETYPE));
+                if (securityUtils.getCurrentUser().getUsername().equalsIgnoreCase(CSCUSER)) {
+                    sewerageApplicationDetails.setSource(Source.CSC.name());
+                    sewerageApplicationDetails.setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(
+                            SewerageTaxConstants.APPLICATION_STATUS_CSCCREATED, SewerageTaxConstants.MODULETYPE));
+                } else {
+                    sewerageApplicationDetails.setSource(SewerageTaxConstants.Online);
+                    sewerageApplicationDetails.setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(
+                            SewerageTaxConstants.APPLICATION_STATUS_ANONYMOUSCREATED, SewerageTaxConstants.MODULETYPE));
+
+                }
             }
 
         sewerageApplicationDetails.getAppDetailsDocument().clear();

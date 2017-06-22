@@ -323,6 +323,13 @@ public class SewerageTaxConstants {
     public static final String SEWERAGEROLEFORNONEMPLOYEE="SEWERAGEROLEFORNONEMPLOYEE";
     public static final String APPLICATION_PDF = "application/pdf";
     public static final String APPLICATION_STATUS_CSCCREATED = "CSCCREATED";
+    
+    
+   //Online 
+    public static final String Online = "Online";
+    public static final String ANONYMOUS_USER = "Anonymous";
+    public static final String APPLICATION_STATUS_ANONYMOUSCREATED = "ANONYMOUSCREATED";
+
 
 
     

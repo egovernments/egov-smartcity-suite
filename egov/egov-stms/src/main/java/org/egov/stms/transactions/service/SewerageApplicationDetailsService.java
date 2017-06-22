@@ -624,9 +624,9 @@ public class SewerageApplicationDetailsService {
                 modelParams.put("mode", "edit");
             else if (currentState.equalsIgnoreCase(WF_STATE_REJECTED))
                 modelParams.put("mode", "editOnReject");
-            else if ("NEW".equalsIgnoreCase(currentState)
-                    && SewerageTaxConstants.APPLICATION_STATUS_CSCCREATED
-                            .equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode()))
+            else if ("NEW".equalsIgnoreCase(currentState) && (SewerageTaxConstants.APPLICATION_STATUS_CSCCREATED
+                    .equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode())
+                    || SewerageTaxConstants.APPLICATION_STATUS_ANONYMOUSCREATED.equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode())))
                 modelParams.put("mode", "closetview");
             else
                 modelParams.put("mode", "view");
@@ -794,10 +794,12 @@ public class SewerageApplicationDetailsService {
                     sewerageApplicationDetails
                             .setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(APPLICATION_STATUS_CANCELLED, MODULETYPE));
                 }
-
+               
             } else if ("NEW".equalsIgnoreCase(sewerageApplicationDetails.getState().getValue())
-                    && SewerageTaxConstants.APPLICATION_STATUS_CSCCREATED
-                            .equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode())) {
+                    && (SewerageTaxConstants.APPLICATION_STATUS_CSCCREATED
+                            .equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode())
+                            || (SewerageTaxConstants.APPLICATION_STATUS_ANONYMOUSCREATED
+                                    .equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode())))) {
                 if (sewerageTaxUtils.isInspectionFeeCollectionRequired()) {
                     sewerageApplicationDetails.setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(
                             SewerageTaxConstants.APPLICATION_STATUS_COLLECTINSPECTIONFEE, SewerageTaxConstants.MODULETYPE));
