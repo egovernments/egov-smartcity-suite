@@ -77,6 +77,8 @@ import org.elasticsearch.search.aggregations.bucket.terms.Terms.Bucket;
 import org.elasticsearch.search.aggregations.metrics.avg.Avg;
 import org.elasticsearch.search.aggregations.metrics.tophits.TopHits;
 import org.elasticsearch.search.aggregations.metrics.valuecount.ValueCount;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
@@ -109,6 +111,8 @@ import static org.elasticsearch.index.query.QueryBuilders.termsQuery;
 @Service
 @Transactional(readOnly = true)
 public class ComplaintIndexService {
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(ComplaintIndexService.class);
 
     private static final String SOURCE = "source";
 
@@ -417,6 +421,8 @@ public class ComplaintIndexService {
         complaintIndex.setComplaintPeriod(days);
         Date lastDateToResolve = DateUtils.addHours(complaintIndex.getCreatedDate(), (int) complaintIndex.getComplaintSLADays());
         final Date currentDate = new Date();
+        //Temporary variable
+        long timeDifference = lastDateToResolve.getTime() - currentDate.getTime();
         // If difference is greater than 0 then complaint is within SLA
         if (lastDateToResolve.getTime() - currentDate.getTime() >= 0) {
             complaintIndex.setComplaintAgeingFromDue(0);
@@ -430,6 +436,13 @@ public class ComplaintIndexService {
             complaintIndex.setComplaintAgeingdaysFromDue(ageingDueDays);
             complaintIndex.setIsSLA("N");
             complaintIndex.setIfSLA(0);
+            
+            //Logger only for some time
+            LOGGER.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+            LOGGER.info("CRN -"+ complaintIndex.getCrn() + "created date -"+ complaintIndex.getCreatedDate() + 
+                    "SLA HOURS -" + complaintIndex.getComplaintSLADays() + "last date -" + lastDateToResolve +
+                    "current date " + currentDate + "Time Difference : " + timeDifference + "END");
+            LOGGER.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
         }
 
         // update the initial functionary level variables
