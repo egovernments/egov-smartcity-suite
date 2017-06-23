@@ -398,4 +398,10 @@ public interface FinancialConstants {
     public static final String MINORCODEDESCRIPTION = "minorCodeDescription";
     public static final String DETAILEDCODEDESCRIPTION = "glcodeDescription";
 
+    public static final String VOUCHERFUNDNAME = "voucherfundname";
+    public static final String VOUCHERMISDEPARTMENTNAME = "vouchermisdepartmentname";
+    public static final String VOUCHERMISSCHEMENAME = "vouchermisschemename";
+    public static final String VOUCHERMISSUBSCHEMENAME = "vouchermissubschemename";
+    public static final String VOUCHERMISFUNCTIONNAME = "vouchermisfunctionname";
+
 }

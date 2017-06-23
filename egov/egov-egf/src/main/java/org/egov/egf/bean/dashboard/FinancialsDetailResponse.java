@@ -58,16 +58,22 @@ public class FinancialsDetailResponse {
     private String grade = StringUtils.EMPTY;
     private String ulbCode = StringUtils.EMPTY;
     private String ulbName = StringUtils.EMPTY;
+    private String month = StringUtils.EMPTY;
     private String fromDate = StringUtils.EMPTY;
     private String toDate = StringUtils.EMPTY;
     private String admZoneName = StringUtils.EMPTY;
     private String admWardName = StringUtils.EMPTY;
     private String fundCode = StringUtils.EMPTY;
+    private String fundName = StringUtils.EMPTY;
     private String departmentCode = StringUtils.EMPTY;
+    private String departmentName = StringUtils.EMPTY;
     private String functionCode = StringUtils.EMPTY;
+    private String functionName = StringUtils.EMPTY;
     private String fundSource = StringUtils.EMPTY;
     private String schemeCode = StringUtils.EMPTY;
+    private String schemeName = StringUtils.EMPTY;
     private String subschemeCode = StringUtils.EMPTY;
+    private String subschemeName = StringUtils.EMPTY;
     private String majorCode = StringUtils.EMPTY;
     private String minorCode = StringUtils.EMPTY;
     private String detailedCode = StringUtils.EMPTY;
@@ -530,5 +536,53 @@ public class FinancialsDetailResponse {
 
     public void setDetailedCodeDescription(String detailedCodeDescription) {
         this.detailedCodeDescription = detailedCodeDescription;
+    }
+
+    public String getMonth() {
+        return month;
+    }
+
+    public void setMonth(String month) {
+        this.month = month;
+    }
+
+    public String getFundName() {
+        return fundName;
+    }
+
+    public void setFundName(String fundName) {
+        this.fundName = fundName;
+    }
+
+    public String getDepartmentName() {
+        return departmentName;
+    }
+
+    public void setDepartmentName(String departmentName) {
+        this.departmentName = departmentName;
+    }
+
+    public String getFunctionName() {
+        return functionName;
+    }
+
+    public void setFunctionName(String functionName) {
+        this.functionName = functionName;
+    }
+
+    public String getSchemeName() {
+        return schemeName;
+    }
+
+    public void setSchemeName(String schemeName) {
+        this.schemeName = schemeName;
+    }
+
+    public String getSubschemeName() {
+        return subschemeName;
+    }
+
+    public void setSubschemeName(String subschemeName) {
+        this.subschemeName = subschemeName;
     }
 }
