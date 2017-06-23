@@ -109,6 +109,7 @@ import static org.egov.tl.utils.Constants.LICENSE_FEE_TYPE;
 import static org.egov.tl.utils.Constants.NEW_LIC_APPTYPE;
 import static org.egov.tl.utils.Constants.RENEWAL_LIC_APPTYPE;
 import static org.egov.tl.utils.Constants.TRADE_LICENSE;
+import static org.egov.tl.utils.Constants.LICENSE_STATUS_UNDERWORKFLOW;
 
 @Transactional(readOnly = true)
 public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
@@ -260,7 +261,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         reportParams.put("category", license.getCategory().getName());
         reportParams.put("subCategory", license.getTradeName().getName());
 
-        if (license.getState() != null && license.getState().getValue().equals(Constants.WF_FIRST_LVL_FEECOLLECTED)) {
+        if (license.getStatus() != null && license.getStatus().getName().equals(LICENSE_STATUS_UNDERWORKFLOW)) {
             reportParams.put("certificateType", "provisional");
         }
 
@@ -472,7 +473,8 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
             User userPos = eisCommonService.getUserForPosition(ownerPosition.getId(), stateHistory.getLastModifiedDate());
             processHistory.put("user", userPos == null ? EMPTY : userPos.getName());
         } else
-            processHistory.put("user", ownerUser == null ? EMPTY : ownerUser.getName());
+            processHistory.put("user",
+                    ownerUser == null ? EMPTY : ownerUser.getName());
         return processHistory;
     }
 
