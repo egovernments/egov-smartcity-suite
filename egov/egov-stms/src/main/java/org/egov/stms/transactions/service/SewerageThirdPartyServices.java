@@ -241,16 +241,16 @@ public class SewerageThirdPartyServices {
             Collections.sort(receiptAccountsList, (rcptAcctInfo1, rcptAcctInfo2) -> {
                 if (rcptAcctInfo1.getOrderNumber() != null && rcptAcctInfo2.getOrderNumber() != null)
                     return rcptAcctInfo1.getOrderNumber().compareTo(rcptAcctInfo2.getOrderNumber());
-                return 0;
+                return 0; 
             });
             for (final ReceiptAccountInfo rcptAcctInfo : receiptAccountsList) {
                 if (rcptAcctInfo.getCrAmount().compareTo(BigDecimal.ZERO) > 0
                         && !rcptAcctInfo.getDescription().contains(SewerageTaxConstants.FEES_ADVANCE_CODE)) {
                     if (paidFrom == null) {
-                        paidFrom = rcptAcctInfo.getDescription().split("-", 2);
+                        paidFrom = rcptAcctInfo.getDescription().split("Sewerage Tax Collection ", 2);
                         paidFrom = paidFrom[1].split("#", 2);
                     }
-                    paidTo = rcptAcctInfo.getDescription().split("-", 2);
+                    paidTo = rcptAcctInfo.getDescription().split("Sewerage Tax Collection ", 2);
                     paidTo = paidTo[1].split("#", 2);
                 }
             }
@@ -268,7 +268,7 @@ public class SewerageThirdPartyServices {
             sewerageReceiptDetails.setPaymentType(SewerageTaxConstants.FEES_ADVANCE_CODE);
         } else {
             sewerageReceiptDetails.setPaymentPeriod(
-                    (fromInstallment != null) ? DateUtils.getDefaultFormattedDate(fromInstallment.getFromDate()) : ""
+                    ((fromInstallment != null) ? DateUtils.getDefaultFormattedDate(fromInstallment.getFromDate()) : "")
                             .concat(" to ").concat((toInstallment != null)
                                     ? DateUtils.getDefaultFormattedDate(toInstallment.getToDate()) : ""));
         }

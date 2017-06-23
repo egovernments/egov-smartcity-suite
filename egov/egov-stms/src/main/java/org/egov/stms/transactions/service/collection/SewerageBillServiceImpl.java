@@ -121,8 +121,8 @@ public class SewerageBillServiceImpl extends BillServiceInterface {
         final List<EgDemandDetails> details = new ArrayList<EgDemandDetails>(dmd.getEgDemandDetails());
 
         if (!details.isEmpty())
-            Collections.sort(details, (c1, c2) -> c1.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster()
-                    .compareTo(c2.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster()));
+            Collections.sort(details, (c1, c2) -> c1.getEgDemandReason().getEgInstallmentMaster().getFromDate()
+                    .compareTo(c2.getEgDemandReason().getEgInstallmentMaster().getFromDate()));
 
         for (final EgDemandDetails demandDetail : details)
             if (demandDetail.getAmount().compareTo(BigDecimal.ZERO) > 0 && demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
