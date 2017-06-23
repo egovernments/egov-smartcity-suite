@@ -404,4 +404,10 @@ public interface FinancialConstants {
     public static final String VOUCHERMISSUBSCHEMENAME = "vouchermissubschemename";
     public static final String VOUCHERMISFUNCTIONNAME = "vouchermisfunctionname";
 
+    public static final String FUND_CODE = "fundCode";
+    public static final String DEPARTMENT_CODE = "departmentCode";
+    public static final String FUNCTION_CODE = "functionCode";
+    public static final String SCHEME_CODE = "schemeCode";
+    public static final String SUBSCHEME_CODE = "subSchemeCode";
+
 }

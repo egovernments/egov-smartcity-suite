@@ -295,7 +295,7 @@ public class FinancialsDashBoardUtils {
         prepairWhereClauseForScheme(financialsDetailsRequest, boolQuery);
         if (StringUtils.isNotBlank(financialsDetailsRequest.getDepartmentCode()))
             boolQuery
-                    .filter(QueryBuilders.matchQuery(FinancialConstants.DEPARTMENT_NAME,
+                    .filter(QueryBuilders.matchQuery(FinancialConstants.DEPARTMENT_CODE,
                             financialsDetailsRequest.getDepartmentCode()));
 
         if (StringUtils.isNotBlank(financialsDetailsRequest.getFromDate())
@@ -306,11 +306,11 @@ public class FinancialsDashBoardUtils {
 
         if (StringUtils.isNotBlank(financialsDetailsRequest.getFunctionCode()))
             boolQuery
-                    .filter(QueryBuilders.matchQuery(FinancialConstants.FUNCTION_NAME,
+                    .filter(QueryBuilders.matchQuery(FinancialConstants.FUNCTION_CODE,
                             financialsDetailsRequest.getFunctionCode()));
         if (StringUtils.isNotBlank(financialsDetailsRequest.getFundCode()))
             boolQuery
-                    .filter(QueryBuilders.matchQuery(FinancialConstants.FUND_NAME, financialsDetailsRequest.getFundCode()));
+                    .filter(QueryBuilders.matchQuery(FinancialConstants.FUND_CODE, financialsDetailsRequest.getFundCode()));
 
         return boolQuery;
     }
@@ -319,10 +319,10 @@ public class FinancialsDashBoardUtils {
                                                     BoolQueryBuilder boolQuery) {
         if (StringUtils.isNotBlank(financialsDetailsRequest.getSchemeCode()))
             boolQuery
-                    .filter(QueryBuilders.matchQuery(FinancialConstants.SCHEME_NAME, financialsDetailsRequest.getSchemeCode()));
+                    .filter(QueryBuilders.matchQuery(FinancialConstants.SCHEME_CODE, financialsDetailsRequest.getSchemeCode()));
         if (StringUtils.isNotBlank(financialsDetailsRequest.getSubschemeCode()))
             boolQuery
-                    .filter(QueryBuilders.matchQuery(FinancialConstants.SUBSCHEME_NAME,
+                    .filter(QueryBuilders.matchQuery(FinancialConstants.SUBSCHEME_CODE,
                             financialsDetailsRequest.getSubschemeCode()));
     }
 
@@ -330,28 +330,37 @@ public class FinancialsDashBoardUtils {
                                           final String aggrField, final FinancialsBudgetDetailResponse finResponse) {
 
         setCommonDataToResponse(keyName, financialsBudgetDetailResponse, aggrField, finResponse);
-        setFinancialsDataToResponse(keyName, financialsBudgetDetailResponse, aggrField);
+        setFinancialsDataToResponse(keyName, financialsBudgetDetailResponse, aggrField, finResponse);
         setChartOfAccountToResponse(keyName, financialsBudgetDetailResponse, aggrField, finResponse);
         if (ADM_ZONE.equalsIgnoreCase(aggrField))
             financialsBudgetDetailResponse.setAdmZoneName(keyName);
         if (ADM_WARD.equalsIgnoreCase(aggrField))
             financialsBudgetDetailResponse.setAdmWardName(keyName);
-        if (DEPARTMENT_CODE.equalsIgnoreCase(aggrField))
+        if (FinancialConstants.DEPARTMENT_CODE.equalsIgnoreCase(aggrField)) {
             financialsBudgetDetailResponse.setDepartmentCode(keyName);
-        if (SCHEME_CODE.equalsIgnoreCase(aggrField))
+            financialsBudgetDetailResponse.setDepartmentName(finResponse.getDepartmentName());
+        }
+        if (FinancialConstants.SCHEME_CODE.equalsIgnoreCase(aggrField)) {
             financialsBudgetDetailResponse.setSchemeCode(keyName);
+            financialsBudgetDetailResponse.setSchemeName(finResponse.getSchemeName());
+        }
     }
 
     private static void setFinancialsDataToResponse(final String keyName,
-                                                    FinancialsBudgetDetailResponse financialsBudgetDetailResponse, final String aggrField) {
-        if (FUND_CODE.equalsIgnoreCase(aggrField))
+                                                    FinancialsBudgetDetailResponse financialsBudgetDetailResponse, final String aggrField,
+                                                    final FinancialsBudgetDetailResponse finResponse) {
+        if (FinancialConstants.FUND_CODE.equalsIgnoreCase(aggrField)) {
             financialsBudgetDetailResponse.setFundCode(keyName);
-        if (FUNCTION_CODE.equalsIgnoreCase(aggrField))
+            financialsBudgetDetailResponse.setFundName(finResponse.getFundName());
+        }
+        if (FinancialConstants.FUNCTION_CODE.equalsIgnoreCase(aggrField)) {
             financialsBudgetDetailResponse.setFunctionCode(keyName);
-        if (FUNDSOURCE_NAME.equalsIgnoreCase(aggrField))
-            financialsBudgetDetailResponse.setFundSource(keyName);
-        if (SUBSCHEME_CODE.equalsIgnoreCase(aggrField))
+            financialsBudgetDetailResponse.setFunctionName(finResponse.getFunctionName());
+        }
+        if (FinancialConstants.SUBSCHEME_CODE.equalsIgnoreCase(aggrField)) {
             financialsBudgetDetailResponse.setSubschemeCode(keyName);
+            financialsBudgetDetailResponse.setSubschemeName(finResponse.getSubschemeName());
+        }
     }
 
     private static void setChartOfAccountToResponse(final String keyName,
@@ -397,8 +406,8 @@ public class FinancialsDashBoardUtils {
         String aggregationField = "";
         if (StringUtils.isNotBlank(financialsDetailsRequest.getAggregationLevel())) {
             aggregationField = setAggregateLevel(financialsDetailsRequest);
-            if (FinancialConstants.DEPARTMENT_NAME.equalsIgnoreCase(financialsDetailsRequest.getAggregationLevel()))
-                aggregationField = DEPARTMENT_CODE;
+            if (DEPARTMENT.equalsIgnoreCase(financialsDetailsRequest.getAggregationLevel()))
+                aggregationField = FinancialConstants.DEPARTMENT_CODE;
             aggregationField = aggregateFinancialFields(financialsDetailsRequest, aggregationField);
 
         }
@@ -407,14 +416,14 @@ public class FinancialsDashBoardUtils {
 
     private static String aggregateFinancialFields(final FinancialsDetailsRequest financialsDetailsRequest,
                                                    String aggregationField) {
-        if (FinancialConstants.FUND_NAME.equalsIgnoreCase(financialsDetailsRequest.getAggregationLevel()))
-            aggregationField = FUND_CODE;
-        if (FinancialConstants.FUNCTION_NAME.equalsIgnoreCase(financialsDetailsRequest.getAggregationLevel()))
-            aggregationField = FUNCTION_CODE;
-        if (FinancialConstants.SCHEME_NAME.equalsIgnoreCase(financialsDetailsRequest.getAggregationLevel()))
-            aggregationField = SCHEME_CODE;
-        if (FinancialConstants.SUBSCHEME_NAME.equalsIgnoreCase(financialsDetailsRequest.getAggregationLevel()))
-            aggregationField = SUBSCHEME_CODE;
+        if (FUND.equalsIgnoreCase(financialsDetailsRequest.getAggregationLevel()))
+            aggregationField = FinancialConstants.FUND_CODE;
+        if (FUNCTION.equalsIgnoreCase(financialsDetailsRequest.getAggregationLevel()))
+            aggregationField = FinancialConstants.FUNCTION_CODE;
+        if ("scheme".equalsIgnoreCase(financialsDetailsRequest.getAggregationLevel()))
+            aggregationField = FinancialConstants.SCHEME_CODE;
+        if ("subscheme".equalsIgnoreCase(financialsDetailsRequest.getAggregationLevel()))
+            aggregationField = FinancialConstants.SUBSCHEME_CODE;
         return aggregationField;
     }
 

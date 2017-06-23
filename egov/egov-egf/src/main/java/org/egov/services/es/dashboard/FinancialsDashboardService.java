@@ -944,7 +944,11 @@ public class FinancialsDashboardService {
                         .subAggregation(AggregationBuilders.topHits("finRecordsBudget").addField(FinancialConstants.DISTNAME)
                                 .addField(FinancialConstants.ULBNAME)
                                 .addField(FinancialConstants.ULBGRADE).addField(FinancialConstants.REGNAME).addField(FinancialConstants.MAJORCODEDESCRIPTION.toLowerCase())
-                                .addField(FinancialConstants.MINORCODEDESCRIPTION.toLowerCase()).addField(FinancialConstants.DETAILEDCODEDESCRIPTION.toLowerCase()).setSize(1)))
+                                .addField(FinancialConstants.MINORCODEDESCRIPTION.toLowerCase()).addField(FinancialConstants.DETAILEDCODEDESCRIPTION.toLowerCase())
+                                .addField(FinancialConstants.FUND_NAME.toLowerCase()).addField(FinancialConstants.FUNCTION_NAME.toLowerCase())
+                                .addField(FinancialConstants.DEPARTMENT_NAME.toLowerCase()).addField(FinancialConstants.SCHEME_NAME.toLowerCase())
+                                .addField(FinancialConstants.SUBSCHEME_NAME.toLowerCase())
+                                .setSize(1)))
                 .execute().actionGet();
     }
 
@@ -958,6 +962,12 @@ public class FinancialsDashboardService {
         finBudgetResponse.setMajorCodeDescription(hit[0].field(FinancialConstants.MAJORCODEDESCRIPTION.toLowerCase()).getValue());
         finBudgetResponse.setMinorCodeDescription(hit[0].field(FinancialConstants.MINORCODEDESCRIPTION.toLowerCase()).getValue());
         finBudgetResponse.setDetailedCodeDescription(hit[0].field(FinancialConstants.DETAILEDCODEDESCRIPTION.toLowerCase()).getValue());
+        finBudgetResponse.setFundName(hit[0].field(FinancialConstants.FUND_NAME).getValue());
+        finBudgetResponse.setFunctionName(hit[0].field(FinancialConstants.FUNCTION_NAME).getValue());
+        finBudgetResponse.setDepartmentName(hit[0].field(FinancialConstants.DEPARTMENT_NAME).getValue());
+        finBudgetResponse.setSchemeName(hit[0].field(FinancialConstants.SCHEME_NAME).getValue());
+        finBudgetResponse.setSubschemeName(hit[0].field(FinancialConstants.SUBSCHEME_NAME).getValue());
+
         return finBudgetResponse;
 
     }
@@ -977,11 +987,15 @@ public class FinancialsDashboardService {
         if (StringUtils.isNotBlank(financialsDetailsRequest.getToDate()))
             budgetDetailResponse.setToDate(financialsDetailsRequest.getToDate());
 
-        if (StringUtils.isNotBlank(financialsDetailsRequest.getFunctionCode()))
+        if (StringUtils.isNotBlank(financialsDetailsRequest.getFunctionCode())) {
             budgetDetailResponse.setFunctionCode(financialsDetailsRequest.getFunctionCode());
+            budgetDetailResponse.setFunctionName(finBudgetResponse.getFunctionName());
+        }
 
-        if (StringUtils.isNotBlank(financialsDetailsRequest.getFundCode()))
+        if (StringUtils.isNotBlank(financialsDetailsRequest.getFundCode())) {
             budgetDetailResponse.setFundCode(financialsDetailsRequest.getFundCode());
+            budgetDetailResponse.setFundName(finBudgetResponse.getFundName());
+        }
 
     }
 
@@ -1009,14 +1023,20 @@ public class FinancialsDashboardService {
         if (StringUtils.isNotBlank(financialsDetailsRequest.getFundSource()))
             budgetDetailResponse.setFundSource(financialsDetailsRequest.getFundSource());
 
-        if (StringUtils.isNotBlank(financialsDetailsRequest.getDepartmentCode()))
+        if (StringUtils.isNotBlank(financialsDetailsRequest.getDepartmentCode())) {
             budgetDetailResponse.setDepartmentCode(financialsDetailsRequest.getDepartmentCode());
+            budgetDetailResponse.setDepartmentName(budgetDetailResponse.getDepartmentName());
+        }
 
-        if (StringUtils.isNotBlank(financialsDetailsRequest.getSchemeCode()))
+        if (StringUtils.isNotBlank(financialsDetailsRequest.getSchemeCode())) {
             budgetDetailResponse.setSchemeCode(financialsDetailsRequest.getSchemeCode());
+            budgetDetailResponse.setSchemeName(budgetDetailResponse.getSchemeName());
+        }
 
-        if (StringUtils.isNotBlank(financialsDetailsRequest.getSubschemeCode()))
+        if (StringUtils.isNotBlank(financialsDetailsRequest.getSubschemeCode())) {
             budgetDetailResponse.setSubschemeCode(financialsDetailsRequest.getSubschemeCode());
+            budgetDetailResponse.setSubschemeName(budgetDetailResponse.getSubschemeName());
+        }
     }
 
     private void populateCOAToResponse(final FinancialsDetailsRequest financialsDetailsRequest,
