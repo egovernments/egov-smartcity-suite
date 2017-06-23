@@ -94,6 +94,8 @@ import org.egov.infra.web.utils.WebUtils;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.ErrorDetails;
+import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
+import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.stms.entity.PaySewerageTaxDetails;
 import org.egov.stms.entity.SewerageReceiptDetails;
 import org.egov.stms.transactions.entity.SewerageApplicationDetails;
@@ -101,6 +103,7 @@ import org.egov.stms.transactions.service.collection.SewerageBillServiceImpl;
 import org.egov.stms.transactions.service.collection.SewerageBillable;
 import org.egov.stms.transactions.service.collection.SewerageTaxCollection;
 import org.egov.stms.utils.constants.SewerageTaxConstants;
+import org.egov.wtms.utils.PropertyExtnUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -130,6 +133,9 @@ public class SewerageThirdPartyServices {
     private ModuleService moduleService;
     @Autowired
     private FinancialYearDAO financialYearDAO;
+
+    @Autowired
+    private PropertyExtnUtils propertyExtnUtils;
 
     @Autowired
     private SewerageBillServiceImpl sewerageBillServiceImpl;
@@ -180,7 +186,7 @@ public class SewerageThirdPartyServices {
     public SewerageReceiptDetails paySewerageTax(PaySewerageTaxDetails paySewerageTaxDetails, final HttpServletRequest request) {
 
         SewerageReceiptDetails sewerageReceiptDetails = null;
-        
+
         BigDecimal totalAmountToBePaid = BigDecimal.ZERO;
         SewerageApplicationDetails sewerageApplicationDetails = null;
         if (paySewerageTaxDetails.getApplicaionNumber() != null && !"".equals(paySewerageTaxDetails.getApplicaionNumber()))
@@ -283,12 +289,12 @@ public class SewerageThirdPartyServices {
             final HttpServletRequest request, SewerageApplicationDetails sewerageApplicationDetails) {
         final SewerageBillable sewerageBillable = (SewerageBillable) context
                 .getBean("sewerageBillable");
-        final AssessmentDetails assessmentDetails = getPropertyDetails(
-                sewerageApplicationDetails.getConnectionDetail().getPropertyIdentifier(), request);
-
+        final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
+                sewerageApplicationDetails.getConnectionDetail().getPropertyIdentifier(),
+                PropertyExternalService.FLAG_FULL_DETAILS, BasicPropertyStatus.ALL);
         sewerageBillable.setSewerageApplicationDetails(sewerageApplicationDetails);
         sewerageBillable.setAssessmentDetails(assessmentDetails);
-        sewerageBillable.setUserId(2L);//FIX: Hardcoded to get ananymous user 
+        sewerageBillable.setUserId(2L);// FIX: Hardcoded to get ananymous user
         ApplicationThreadLocals.setUserId(2L);
 
         final Serializable referenceNumber = sequenceNumberGenerator.getNextSequence(SewerageTaxConstants.SEWERAGE_BILLNUMBER);
@@ -303,7 +309,7 @@ public class SewerageThirdPartyServices {
     public EgBill generateBillForConnection(final Billable billObj) {
         final EgBill bill = new EgBill();
         bill.setBillNo(billObj.getReferenceNumber());
-        bill.setBoundaryNum(billObj.getBoundaryNum().intValue());
+        bill.setBoundaryNum(billObj.getBoundaryNum()!=null?billObj.getBoundaryNum().intValue():null);
         bill.setTransanctionReferenceNumber(billObj.getTransanctionReferenceNumber());
         bill.setBoundaryType(billObj.getBoundaryType());
         bill.setCitizenAddress(billObj.getBillAddress());
