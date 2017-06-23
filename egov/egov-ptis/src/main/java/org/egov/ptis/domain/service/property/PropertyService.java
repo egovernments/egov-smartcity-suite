@@ -138,6 +138,7 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -269,6 +270,9 @@ public class PropertyService {
 	private static final String APPLICATION_NO = "Application no ";
 	private static final String REGARDING = " regarding ";
 	private static final String STATUS = " status ";
+	public static final String SEARCH = "search";
+	public static final String COUNT = "count";
+	public static final String PARAMS = "params";
 	final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
 
 
@@ -2966,6 +2970,129 @@ public class PropertyService {
 			query.setString("oldMuncipalNum", oldMuncipalNum);
 		final List<PropertyMaterlizeView> propertyList = query.list();
 		return propertyList;
+	}
+
+	public Map<String, Object> getOldMunicipalNumQuery(final String oldMuncipalNum) {
+		final Map<String, Object> map = new HashMap<>();
+		String from = "from PropertyMaterlizeView pmv ";
+		String where = "where pmv.isActive = true and pmv.oldMuncipalNum = ? ";
+		StringBuilder search = new StringBuilder("select distinct pmv ");
+		StringBuilder count = new StringBuilder("select count(distinct pmv) ");
+		map.put(SEARCH, search.append(from).append(where).toString());
+		map.put(COUNT, count.append(from).append(where).toString());
+		map.put(PARAMS, Arrays.asList(oldMuncipalNum));
+		return map;
+	}
+
+	public Map<String, Object> getAssessmentNumQuery(final String assessmentNumber) {
+		final Map<String, Object> map = new HashMap<>();
+		String from = "from BasicPropertyImpl bp ";
+		String where = "where bp.upicNo = ? and bp.active='Y' ";
+		StringBuilder search = new StringBuilder("select bp ");
+		StringBuilder count = new StringBuilder("select count(bp) ");
+		map.put(SEARCH, search.append(from).append(where).toString());
+		map.put(COUNT, count.append(from).append(where).toString());
+		map.put(PARAMS, Arrays.asList(assessmentNumber));
+		return map;
+	}
+
+	public Map<String, Object> getDoorNoQuery(final String doorNo) {
+		final Map<String, Object> map = new HashMap<>();
+		String from = "from PropertyMaterlizeView pmv ";
+		String where = "where pmv.isActive = true and pmv.houseNo like ? ";
+		StringBuilder search = new StringBuilder("select distinct pmv ");
+		StringBuilder count = new StringBuilder("select count(distinct pmv) ");
+		map.put(SEARCH, search.append(from).append(where).toString());
+		map.put(COUNT, count.append(from).append(where).toString());
+		map.put(PARAMS, Arrays.asList(doorNo + "%"));
+		return map;
+	}
+
+	public Map<String, Object> getMobileNumberQuery(final String mobileNumber) {
+		final Map<String, Object> map = new HashMap<>();
+		String from = "from PropertyMaterlizeView pmv ";
+		String where = "where pmv.isActive = true and pmv.mobileNumber = ? ";
+		StringBuilder search = new StringBuilder("select distinct pmv ");
+		StringBuilder count = new StringBuilder("select count(distinct pmv) ");
+		map.put(SEARCH, search.append(from).append(where).toString());
+		map.put(COUNT, count.append(from).append(where).toString());
+		map.put(PARAMS, Arrays.asList(mobileNumber));
+		return map;
+	}
+
+	public Map<String, Object> getBoundaryQuery(final Long zoneId, final Long wardId, final String  ownerName, final String houseNum) {
+
+		final Map<String, Object> map = new HashMap<>();
+		StringBuilder search = new StringBuilder("select distinct pmv ");
+		StringBuilder count = new StringBuilder("select count(distinct pmv) ");
+		String from = "from PropertyMaterlizeView pmv ";
+		StringBuilder where = new StringBuilder("where pmv.isActive = true ");
+
+		List params = new ArrayList();
+		if (null != zoneId && zoneId != -1) {
+			where.append(" and pmv.zone.id = ?");
+			params.add(zoneId);
+		}
+		if (null != wardId && wardId != -1) {
+			where.append(" and pmv.ward.id = ?");
+			params.add(wardId);
+		}
+		if (houseNum != null && !houseNum.trim().isEmpty()) {
+			where.append(" and pmv.houseNo like ? ");
+			params.add(houseNum + "%");
+		}
+		if (ownerName != null && !ownerName.trim().isEmpty()) {
+			where.append(" and upper(trim(pmv.ownerName)) like ?");
+			params.add(ownerName.toUpperCase() + "%");
+		}
+
+		map.put(SEARCH, search.append(from).append(where).toString());
+		map.put(COUNT, count.append(from).append(where).toString());
+		map.put(PARAMS, params);
+		return map;
+	}
+
+	public Map<String, Object> getLocationQuery(final Long locationId, final String houseNo, final String ownerName) {
+
+		final Map<String, Object> map = new HashMap<>();
+		StringBuilder search = new StringBuilder("select distinct pmv ");
+		StringBuilder count = new StringBuilder("select count(distinct pmv) ");
+		String from = "from PropertyMaterlizeView pmv ";
+		StringBuilder where = new StringBuilder("where pmv.isActive = true ");
+
+		List params = new ArrayList();
+		if (null != locationId && locationId != -1) {
+			where.append(" and pmv.locality.id = ?");
+			params.add(locationId);
+		}
+		if (houseNo != null && !houseNo.trim().isEmpty()) {
+			where.append(" and pmv.houseNo like ? ");
+			params.add(houseNo + "%");
+		}
+		if (ownerName != null && !ownerName.trim().isEmpty()) {
+			where.append(" and upper(trim(pmv.ownerName)) like ?");
+			params.add(ownerName.toUpperCase() + "%");
+		}
+
+		map.put(SEARCH, search.append(from).append(where).toString());
+		map.put(COUNT, count.append(from).append(where).toString());
+		map.put(PARAMS, params);
+		return map;
+	}
+
+	public Map<String, Object> getDemandQuery(final String fromDemand, final String toDemand) {
+
+		final Map<String, Object> map = new HashMap<>();
+		StringBuilder search = new StringBuilder("select distinct pmv ");
+		StringBuilder count = new StringBuilder("select count(distinct pmv) ");
+		String from = "from PropertyMaterlizeView pmv ";
+		StringBuilder where = new StringBuilder("where pmv.aggrCurrFirstHalfDmd is not null and pmv.aggrCurrFirstHalfDmd >= ? ")
+				.append("and pmv.aggrCurrFirstHalfDmd <= ? and pmv.isActive = true ");
+
+		map.put(SEARCH, search.append(from).append(where).toString());
+		map.put(COUNT, count.append(from).append(where).toString());
+		map.put(PARAMS, Arrays.asList(new BigDecimal(fromDemand), new BigDecimal(toDemand)));
+		return map;
 	}
 
 	@ReadOnly
