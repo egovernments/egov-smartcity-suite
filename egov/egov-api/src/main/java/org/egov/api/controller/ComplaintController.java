@@ -119,6 +119,8 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 @RequestMapping("/v1.0")
 public class ComplaintController extends ApiController {
 
+    public static final String COMPLAINT_TYPE_ID = "complaintTypeId";
+    public static final String COMPLAINT_DETAILS = "details";
     private static final Logger LOGGER = Logger.getLogger(ComplaintController.class);
     private static final String SATISFACTORY = "SATISFACTORY";
     private static final String UNSATISFACTORY = "UNSATISFACTORY";
@@ -130,7 +132,6 @@ public class ComplaintController extends ApiController {
     private static final String LOCATION_ID = "locationId";
     private static final String INVALID_PAGE_NUMBER_ERROR = "Invalid Page Number";
     private static final String HAS_NEXT_PAGE = "hasNextPage";
-
     @Autowired
     private ComplaintStatusService complaintStatusService;
 
@@ -298,7 +299,18 @@ public class ComplaintController extends ApiController {
                 } else
                     return getResponseHandler().error(getMessage("msg.complaint.reg.failed.user"));
 
-            final long complaintTypeId = (long) complaintRequest.get("complaintTypeId");
+            if (!complaintRequest.containsKey(COMPLAINT_TYPE_ID))
+                return getResponseHandler().error(getMessage("msg.complaint.type.required"));
+
+            if (!complaintRequest.containsKey(COMPLAINT_DETAILS) || StringUtils.isBlank(complaintRequest.get(COMPLAINT_DETAILS).toString()))
+                return getResponseHandler().error(getMessage("msg.complaint.desc.required"));
+            else if (complaintRequest.get(COMPLAINT_DETAILS).toString().length() < 10)
+                return getResponseHandler().error(getMessage("msg.complaint.desc.min.required"));
+            else if (complaintRequest.get(COMPLAINT_DETAILS).toString().length() > 500)
+                return getResponseHandler().error(getMessage("msg.complaint.desc.max.required"));
+
+
+            final long complaintTypeId = (long) complaintRequest.get(COMPLAINT_TYPE_ID);
             if (complaintRequest.get(LOCATION_ID) != null && (long) complaintRequest.get(LOCATION_ID) > 0) {
                 final long locationId = (long) complaintRequest.get(LOCATION_ID);
                 final CrossHierarchy crosshierarchy = crossHierarchyService.findById(locationId);
@@ -315,7 +327,7 @@ public class ComplaintController extends ApiController {
             }
             if (complaint.getLocation() == null && (complaint.getLat() <= 0D || complaint.getLng() <= 0D))
                 return getResponseHandler().error(getMessage("location.required"));
-            complaint.setDetails(complaintRequest.get("details").toString());
+            complaint.setDetails(complaintRequest.get(COMPLAINT_DETAILS).toString());
             complaint.setLandmarkDetails(complaintRequest.get("landmarkDetails").toString());
             if (complaintTypeId > 0) {
                 final ComplaintType complaintType = complaintTypeService.findBy(complaintTypeId);
