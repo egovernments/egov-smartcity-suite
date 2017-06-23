@@ -94,6 +94,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Arrays;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.defaultString;
@@ -352,33 +353,19 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
     }
 
     public BigDecimal[] getDemandColl(License license) {
-        Module module = moduleService.getModuleByName(TRADE_LICENSE);
-        final Installment currInstallment = getCurrentInstallment(module);
         BigDecimal[] dmdColl = new BigDecimal[3];
-        BigDecimal currDmd = BigDecimal.ZERO;
-        BigDecimal totColl = BigDecimal.ZERO;
-        BigDecimal arrDmd = BigDecimal.ZERO;
-        for (EgDemandDetails dmddtls : license.getCurrentDemand().getEgDemandDetails()) {
-            if (dmddtls.getInstallmentStartDate().before(currInstallment.getFromDate()) || dmddtls.getInstallmentStartDate().equals(currInstallment.getFromDate())) {
-                arrDmd = arrDmd.add(dmddtls.getAmount());
-                totColl = totColl.add(dmddtls.getAmtCollected());
-            } else {
-                currDmd = currDmd.add(dmddtls.getAmount());
-                totColl = totColl.add(dmddtls.getAmtCollected());
-            }
-        }
-        dmdColl[0] = arrDmd;
-        dmdColl[1] = currDmd;
-        dmdColl[2] = totColl;
+        Arrays.fill(dmdColl, BigDecimal.ZERO);
+        license.getCurrentDemand().getEgDemandDetails().stream().forEach(egDemandDetails -> {
+                    if (license.getCurrentDemand().getEgInstallmentMaster().equals(egDemandDetails.getEgDemandReason().getEgInstallmentMaster())) {
+                        dmdColl[1] = dmdColl[1].add(egDemandDetails.getAmount());
+                        dmdColl[2] = dmdColl[2].add(egDemandDetails.getAmtCollected());
+                    } else {
+                        dmdColl[0] = dmdColl[0].add(egDemandDetails.getAmount());
+                        dmdColl[2] = dmdColl[2].add(egDemandDetails.getAmtCollected());
+                    }
+                }
+        );
         return dmdColl;
-    }
-
-    public Installment getInstallmentForDate(final Date date, final Module module) {
-        return installmentDao.getInsatllmentByModuleForGivenDate(module, date);
-    }
-
-    public Installment getCurrentInstallment(final Module module) {
-        return getInstallmentForDate(new Date(), module);
     }
 
     @ReadOnly
