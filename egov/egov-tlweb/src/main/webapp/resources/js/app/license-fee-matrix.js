@@ -141,7 +141,7 @@ $(document).ready(function () {
         var obj = $(this);
         if (idx == 0) {
             bootbox.alert('Cannot delete first row!');
-        } else if ((idx < ($('#result tbody tr').length - 1))) {
+        } else if ((idx < ($('#result tbody tr:visible').length -1))) {
             bootbox.alert('Try to delete from last row!');
         } else {
             bootbox.confirm("Do you want to delete this fee data ? ", function (result) {
