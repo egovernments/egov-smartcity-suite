@@ -3095,6 +3095,34 @@ public class PropertyService {
 		return map;
 	}
 
+	public Map<String, Object> getAssessmentAndOwnerDetailsQuery(final String oldMuncipalNum, final String ownerName, final String doorNo) {
+
+		final Map<String, Object> map = new HashMap<>();
+		final List params = new ArrayList();
+		StringBuilder search = new StringBuilder("select distinct pmv ");
+		StringBuilder count = new StringBuilder("select count(distinct pmv) ");
+		String from = "from PropertyMaterlizeView pmv ";
+		StringBuilder where = new StringBuilder("where pmv.isActive = true ");
+
+		if (oldMuncipalNum != null && !oldMuncipalNum.trim().isEmpty()) {
+			where.append(" and pmv.oldMuncipalNum = ? ");
+			params.add(oldMuncipalNum);
+		}
+		if (ownerName != null && !ownerName.trim().isEmpty()) {
+			where.append(" and upper(trim(pmv.ownerName)) like ? ");
+			params.add(ownerName.toUpperCase() + "%");
+		}
+		if (doorNo != null && !doorNo.trim().isEmpty()) {
+			where.append(" and pmv.houseNo like ? ");
+			params.add(doorNo + "%");
+		}
+
+		map.put(SEARCH, search.append(from).append(where).toString());
+		map.put(COUNT, count.append(from).append(where).toString());
+		map.put(PARAMS, params);
+		return map;
+	}
+
 	@ReadOnly
 	@SuppressWarnings("unchecked")
 	public List<PropertyMaterlizeView> getPropertyByMobileNumber(final String MobileNo) {

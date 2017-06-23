@@ -72,7 +72,11 @@ import org.apache.struts2.interceptor.ServletRequestAware;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
+import org.egov.infra.web.struts.actions.SearchFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
+import org.egov.infra.web.utils.EgovPaginatedList;
+import org.egov.infstr.search.SearchQuery;
+import org.egov.infstr.search.SearchQueryHQL;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
@@ -94,7 +98,7 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
         @Result(name = SearchAction.NEWFORM, location = "onlinesearch-new.jsp"),
         @Result(name = SearchAction.TARGETFORM, type = "redirectAction", location = "viewDCBProperty-displayPropInfo", params = {
                 "namespace", "/view", "propertyId", "${assessmentNum}", "searchUrl", "${searchUrl}" }) })
-public class SearchAction extends BaseFormAction implements ServletRequestAware {
+public class SearchAction extends SearchFormAction implements ServletRequestAware {
     private static final long serialVersionUID = -7506891911359323204L;
 
     private final Logger LOGGER = Logger.getLogger(getClass());
@@ -110,6 +114,7 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
     private String searchValue;
     private String searchUrl;
     private boolean isDemandActive;
+    private Map<String, Object> queryMap;
 
     List<Map<String, String>> searchList = new ArrayList<>();
     public static final String TARGET = "result";
@@ -163,20 +168,24 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
     public String srchByAssessmentAndOwnerDetail() {
         try {
             if (assessmentNum != null && !"".equals(assessmentNum)) {
-                final BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNum);
-                if (LOGGER.isDebugEnabled())
-                    LOGGER.debug("srchByAssessmentAndOwner : Property : " + basicProperty);
-                setSearchResultList(getResultFromDemandDetails(basicProperty));
+                setQueryMap(propertyService.getAssessmentNumQuery(assessmentNum));
+                super.search();
+                for (final BasicProperty basicProperty : (List<BasicProperty>) searchResult.getList()) {
+                    setSearchResultList(getResultFromDemandDetails(basicProperty));
+                }
+                ((EgovPaginatedList) searchResult).setList(searchList);
+
                 setSearchValue("Assessment Num : " + assessmentNum);
             } else {
-                final List<PropertyMaterlizeView> propertyList = propertyService
-                        .getPropertyByAssessmentAndOwnerDetails(null, oldMuncipalNum, ownerName, doorNo);
-
-                for (final PropertyMaterlizeView propMatview : propertyList) {
+                setQueryMap(propertyService.getAssessmentAndOwnerDetailsQuery(oldMuncipalNum, ownerName, doorNo));
+                super.search();
+                for (final PropertyMaterlizeView propMatview : (List<PropertyMaterlizeView>) searchResult.getList()) {
                     if (LOGGER.isDebugEnabled())
                         LOGGER.debug("srchByAssessmentAndOwner : Property : " + propMatview);
                     setSearchResultList(getResultsFromMv(propMatview));
                 }
+                ((EgovPaginatedList) searchResult).setList(searchList);
+
                 if (oldMuncipalNum != null && !oldMuncipalNum.equals(""))
                     setSearchValue("Old Assesement Number:" + oldMuncipalNum);
                 if (ownerName != null && !ownerName.equals(""))
@@ -228,6 +237,12 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
             LOGGER.debug("Exit from srchByAssessment method ");
 
         return TARGETFORM;
+    }
+
+
+    @Override
+    public SearchQuery prepareQuery(String sortField, String sortOrder) {
+        return new SearchQueryHQL((String) queryMap.get("search"), (String) queryMap.get("count"), (List<Object>) queryMap.get("params"));
     }
 
     private List<Map<String, String>> getResultFromDemandDetails(final BasicProperty basicProperty) {
@@ -539,6 +554,14 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
 
     public void setOldMuncipalNum(final String oldMuncipalNum) {
         this.oldMuncipalNum = oldMuncipalNum;
+    }
+
+    public Map<String, Object> getQueryMap() {
+        return queryMap;
+    }
+
+    public void setQueryMap(Map<String, Object> queryMap) {
+        this.queryMap = queryMap;
     }
 
 }

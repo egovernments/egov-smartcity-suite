@@ -71,17 +71,17 @@
 							value="%{searchCreteria}" /> </span> /
 					<s:text name="totProp"></s:text>
 					<span class="mandatory"><s:property
-							value="%{searchResultList.size}" /> <s:text name="matchRecFound" />
+							value="%{searchResult.fullListSize}" /> <s:text name="matchRecFound" />
 					</span>
 					<div class="searchvalue1">
 						<s:text name="scrhVal"></s:text>
 						<s:property value="%{searchValue}" />
 					</div>
 				</div>
-				<s:if test="%{searchResultList != null && searchResultList.size >0}">
+				<s:if test="%{searchResult != null && searchResult.list.size > 0}">
 					<tr>
-						<display:table name="searchResultList" id="linksTables"
-							pagesize="10" requestURI="" class="tablebottom"
+						<display:table name="searchResult" id="linksTables"
+							pagesize="20" requestURI="" class="tablebottom"
 							style="width:100%" uid="currentRowObject">
 							<display:column title="Assessment Number"
 								headerClass="bluebgheadtd" media="html" class="blueborderfortd"
