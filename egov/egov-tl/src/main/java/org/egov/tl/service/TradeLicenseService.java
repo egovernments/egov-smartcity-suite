@@ -273,8 +273,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         Optional<EgDemandDetails> demandDetails = license.getCurrentDemand().getEgDemandDetails().stream()
                 .sorted(Comparator.comparing(EgDemandDetails::getInstallmentEndDate).reversed())
                 .filter(demandDetail -> demandDetail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster().equals(LICENSE_FEE_TYPE))
-                .filter(demandDetail -> demandDetail.getAmount().subtract(demandDetail.getAmtCollected())
-                        .doubleValue() <= 0)
+                .filter(demandDetail -> demandDetail.getAmtCollected().doubleValue() > 0)
                 .findFirst();
         if (demandDetails.isPresent()) {
             amtPaid = demandDetails.get().getAmtCollected();
