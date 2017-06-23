@@ -44,7 +44,7 @@
 
 <hibernate-mapping>
 	<class name="org.egov.ptis.domain.entity.property.PropertyMaterlizeView"
-		table="EGPT_MV_PROPERTYINFO" polymorphism="explicit">
+		table="EGPT_VIEW_PROPERTYINFO" polymorphism="explicit" mutable="false">
 
 		<composite-id>
 			<key-property name="basicPropertyID" column="BASICPROPERTYID" />
