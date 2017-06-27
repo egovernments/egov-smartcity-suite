@@ -39,7 +39,7 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-06-01T17:48:12 -->
+<!-- 2017-06-27T16:33:32 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="collection_summary" pageWidth="800" pageHeight="842" whenNoDataType="NoDataSection" columnWidth="700" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="db7eaa32-622d-4fd8-a432-187d94fbaded">
 	<property name="ireport.zoom" value="0.9090909090909093"/>
 	<property name="ireport.x" value="0"/>
@@ -85,18 +85,18 @@
 		<defaultValueExpression><![CDATA["All  Bank Branch"]]></defaultValueExpression>
 	</parameter>
 	<field name="aggrCollectionSummaryReportList" class="java.util.List"/>
-	<field name="collectionSummaryReportList" class="java.util.List"/>
+	<field name="rebateCollectionSummaryReportList" class="java.util.List"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
 	<title>
 		<band height="252" splitType="Stretch">
 			<staticText>
-				<reportElement style="Title" x="232" y="24" width="296" height="33" uuid="42a94452-059e-4811-b8f2-27821b015431"/>
+				<reportElement style="Title" x="120" y="24" width="450" height="33" uuid="42a94452-059e-4811-b8f2-27821b015431"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Times New Roman" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
 				</textElement>
-				<text><![CDATA[Collection Summary]]></text>
+				<text><![CDATA[Collection Summary - Head wise]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="13" y="110" width="98" height="25" uuid="9b5a8a61-0838-447e-b57c-b94699041a1c">
@@ -258,21 +258,18 @@
 		<band splitType="Stretch"/>
 	</columnHeader>
 	<detail>
-		<band height="200">
+		<band height="236">
 			<subreport>
 				<reportElement x="0" y="28" width="760" height="150" uuid="d394bf8d-54cc-4b0f-ab41-9cb6926c8d7e"/>
 				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{aggrCollectionSummaryReportList}, false)]]></dataSourceExpression>
 				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("collection_summary_headwise_subreport_default.jasper")]]></subreportExpression>
 			</subreport>
 		</band>
-		<band height="200">
-			<printWhenExpression><![CDATA[$P{EGOV_SOURCE}=="SYSTEM"]]></printWhenExpression>
+		<band height="224">
 			<subreport>
-				<reportElement x="0" y="0" width="760" height="150" uuid="d394bf8d-54cc-4b0f-ab41-9cb6926c8d7e">
-					<printWhenExpression><![CDATA[$P{EGOV_SOURCE}=="SYSTEM"]]></printWhenExpression>
-				</reportElement>
-				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{collectionSummaryReportList}, false)]]></dataSourceExpression>
-				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("collection_summary_subreport.jasper")]]></subreportExpression>
+				<reportElement x="0" y="0" width="760" height="150" uuid="d394bf8d-54cc-4b0f-ab41-9cb6926c8d7e"/>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{rebateCollectionSummaryReportList}, false)]]></dataSourceExpression>
+				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("collection_summary_headwise_rebate_subreport.jasper")]]></subreportExpression>
 			</subreport>
 		</band>
 	</detail>
@@ -302,27 +299,34 @@
 		</band>
 	</pageFooter>
 	<lastPageFooter>
-		<band height="20">
+		<band height="42">
 			<textField pattern="EEEEE dd MMMMM yyyy">
-				<reportElement style="Column header" x="0" y="0" width="197" height="20" uuid="bd979864-8d04-43b9-9975-99f5eca274f3"/>
+				<reportElement style="Column header" x="0" y="21" width="197" height="20" uuid="bd979864-8d04-43b9-9975-99f5eca274f3"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="10" isBold="false" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report">
-				<reportElement style="Column header" x="637" y="0" width="40" height="20" uuid="14b22e7d-c7df-44ea-9f09-3ade035d9a5f"/>
+				<reportElement style="Column header" x="637" y="21" width="40" height="20" uuid="14b22e7d-c7df-44ea-9f09-3ade035d9a5f"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="10" isBold="false" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="Column header" x="557" y="0" width="80" height="20" uuid="1e5b63e0-8754-42c8-8117-b87f3fca3077"/>
+				<reportElement style="Column header" x="557" y="21" width="80" height="20" uuid="1e5b63e0-8754-42c8-8117-b87f3fca3077"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="10" isBold="false" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="Column header" x="0" y="1" width="678" height="20" uuid="6a13c830-3997-4a94-ba22-eca017396d0e"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="10" isBold="false" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Note: There can be multiple revenue heads in a single receipt , so the receipt count may not match with your physical receipts."]]></textFieldExpression>
 			</textField>
 		</band>
 	</lastPageFooter>
@@ -339,11 +343,11 @@
 				<text><![CDATA[No data found!]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Title" x="232" y="25" width="296" height="33" uuid="faf30156-bb01-486f-acc2-6356199caa0d"/>
+				<reportElement style="Title" x="130" y="25" width="441" height="33" uuid="faf30156-bb01-486f-acc2-6356199caa0d"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Times New Roman" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
 				</textElement>
-				<text><![CDATA[Collection Summary]]></text>
+				<text><![CDATA[Collection Summary - Head wise]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="13" y="71" width="98" height="25" uuid="4fa40e43-4905-4fd1-8bcf-41fd068efcce">

@@ -56,6 +56,12 @@ public class CollectionSummaryHeadWiseReport {
     private Double cardAmount;
     private String cardCount;
 
+    private Double totalCashRebateAmount = new Double(0.0);
+    private Double totalChequeddRebateAmount = new Double(0.0);
+    private Double totalOnlineRebateAmount = new Double(0.0);
+    private Double totalCardRebateAmount = new Double(0.0);
+    private Double totalRebateAmount = new Double(0.0);
+
     public String getSource() {
         return source;
     }
@@ -166,5 +172,45 @@ public class CollectionSummaryHeadWiseReport {
 
     public void setCardAmount(final Double cardAmount) {
         this.cardAmount = cardAmount;
+    }
+
+    public Double getTotalCashRebateAmount() {
+        return totalCashRebateAmount;
+    }
+
+    public void setTotalCashRebateAmount(Double totalCashRebateAmount) {
+        this.totalCashRebateAmount = totalCashRebateAmount;
+    }
+
+    public Double getTotalChequeddRebateAmount() {
+        return totalChequeddRebateAmount;
+    }
+
+    public void setTotalChequeddRebateAmount(Double totalChequeddRebateAmount) {
+        this.totalChequeddRebateAmount = totalChequeddRebateAmount;
+    }
+
+    public Double getTotalOnlineRebateAmount() {
+        return totalOnlineRebateAmount;
+    }
+
+    public void setTotalOnlineRebateAmount(Double totalOnlineRebateAmount) {
+        this.totalOnlineRebateAmount = totalOnlineRebateAmount;
+    }
+
+    public Double getTotalCardRebateAmount() {
+        return totalCardRebateAmount;
+    }
+
+    public void setTotalCardRebateAmount(Double totalCardRebateAmount) {
+        this.totalCardRebateAmount = totalCardRebateAmount;
+    }
+
+    public Double getTotalRebateAmount() {
+        return totalRebateAmount;
+    }
+
+    public void setTotalRebateAmount(Double totalRebateAmount) {
+        this.totalRebateAmount = totalRebateAmount;
     }
 }
