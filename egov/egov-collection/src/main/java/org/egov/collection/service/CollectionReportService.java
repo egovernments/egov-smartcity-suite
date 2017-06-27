@@ -216,7 +216,8 @@ public class CollectionReportService {
         if (StringUtils.isNotBlank(paymentMode) && !paymentMode.equals(CollectionConstants.ALL)) {
             whereQuery.append(" AND EGF_INSTRUMENTTYPE.TYPE in (:paymentMode)");
             if (paymentMode.equals(CollectionConstants.INSTRUMENTTYPE_ONLINE)) {
-                userwiseQuery = aggregateQuery;
+                userwiseQuery.setLength(0);
+                userwiseQuery.append(aggregateQuery);
             }
             userwiseQuery.append(whereQuery).append(groupQuery);
             aggregateQuery.append(whereQuery).append(groupQuery);
