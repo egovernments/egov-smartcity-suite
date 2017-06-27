@@ -261,7 +261,7 @@ public class ComplaintController extends ApiController {
 
     @RequestMapping(value = ApiUrl.COMPLAINT_CREATE, method = RequestMethod.POST)
     public ResponseEntity<String> complaintCreate(
-            @RequestParam(value = "json_complaint", required = false) final String complaintJSON,
+            @RequestParam(value = "json_complaint") final String complaintJSON,
             @RequestParam("files") final MultipartFile[] files) {
         try {
 
