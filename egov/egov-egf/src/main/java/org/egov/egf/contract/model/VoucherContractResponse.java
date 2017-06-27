@@ -42,9 +42,13 @@ package org.egov.egf.contract.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class VoucherContractResponse {
 
+    @JsonProperty("Vouchers")
     private List<VoucherResponse> vouchers = new ArrayList<>(0);
+    @JsonProperty("ResponseInfo")
     private ResponseInfo responseInfo;
     private PageContract page;
 

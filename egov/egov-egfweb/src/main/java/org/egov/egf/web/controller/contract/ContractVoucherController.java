@@ -51,9 +51,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
-import org.codehaus.jackson.annotate.JsonMethod;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.egov.billsaccounting.services.CreateVoucher;
 import org.egov.billsaccounting.services.VoucherConstant;
 import org.egov.commons.CFiscalPeriod;
@@ -92,6 +89,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Controller
 @RequestMapping("/vouchers")
@@ -140,7 +139,7 @@ public class ContractVoucherController {
 
         if (!errorList.isEmpty()) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return getJSONResponse(errorList).replace("\"", "");
+            return getJSONResponse(errorList);
         }
 
         final HashMap<String, Object> headerDetails = new HashMap<String, Object>();
@@ -175,21 +174,21 @@ public class ContractVoucherController {
                 re.setErrorMessage(e.getMessage());
                 errorList.add(re);
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                return getJSONResponse(errorList).replace("\"", "");
+                return getJSONResponse(errorList);
 
             } catch (final ValidationException e) {
                 re.setErrorCode(e.getErrors().get(0).getKey());
                 re.setErrorMessage(e.getErrors().get(0).getMessage());
                 errorList.add(re);
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                return getJSONResponse(errorList).replace("\"", "");
+                return getJSONResponse(errorList);
 
             } catch (final Exception e) {
                 re.setErrorCode(e.getMessage());
                 re.setErrorMessage(e.getMessage());
                 errorList.add(re);
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                return getJSONResponse(errorList).replace("\"", "");
+                return getJSONResponse(errorList);
 
             }
 
@@ -226,7 +225,7 @@ public class ContractVoucherController {
         vouchers.add(voucherResponse);
         voucherContractResponse.setVouchers(vouchers);
         response.setStatus(HttpServletResponse.SC_CREATED);
-        return getJSONResponse(voucherContractResponse).replace("\"", "");
+        return getJSONResponse(voucherContractResponse);
     }
 
     private AccountDetailContract prepairAccountDetailResponse(final CGeneralLedger cGeneralLedger) {
@@ -363,7 +362,6 @@ public class ContractVoucherController {
 
     private String getJSONResponse(final Object obj) throws IOException {
         final ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.setVisibility(JsonMethod.FIELD, Visibility.ANY);
         objectMapper.setDateFormat(new SimpleDateFormat("dd-MM-yyyy"));
         final String jsonResponse = objectMapper.writeValueAsString(obj);
         return jsonResponse;
