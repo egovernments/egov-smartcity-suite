@@ -58,6 +58,7 @@ import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.SearchHitField;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.bucket.histogram.DateHistogramInterval;
 import org.elasticsearch.search.aggregations.bucket.histogram.Histogram;
@@ -955,6 +956,12 @@ public class FinancialsDashboardService {
     private FinancialsBudgetDetailResponse setBudgetResponseDetails(final TopHits topHits) {
         FinancialsBudgetDetailResponse finBudgetResponse = new FinancialsBudgetDetailResponse();
         final SearchHit[] hit = topHits.getHits().getHits();
+        SearchHitField fund = hit[0].field(FinancialConstants.FUND_NAME.toLowerCase());
+        SearchHitField function = hit[0].field(FinancialConstants.FUNCTION_NAME.toLowerCase());
+        SearchHitField department = hit[0].field(FinancialConstants.DEPARTMENT_NAME.toLowerCase());
+        SearchHitField scheme = hit[0].field(FinancialConstants.SCHEME_NAME.toLowerCase());
+        SearchHitField subScheme = hit[0].field(FinancialConstants.SUBSCHEME_NAME.toLowerCase());
+
         finBudgetResponse.setRegion(hit[0].field(FinancialConstants.REGNAME).getValue());
         finBudgetResponse.setDistrict(hit[0].field(FinancialConstants.DISTNAME).getValue());
         finBudgetResponse.setGrade(hit[0].field(FinancialConstants.ULBGRADE).getValue());
@@ -962,11 +969,11 @@ public class FinancialsDashboardService {
         finBudgetResponse.setMajorCodeDescription(hit[0].field(FinancialConstants.MAJORCODEDESCRIPTION.toLowerCase()).getValue());
         finBudgetResponse.setMinorCodeDescription(hit[0].field(FinancialConstants.MINORCODEDESCRIPTION.toLowerCase()).getValue());
         finBudgetResponse.setDetailedCodeDescription(hit[0].field(FinancialConstants.DETAILEDCODEDESCRIPTION.toLowerCase()).getValue());
-        finBudgetResponse.setFundName(hit[0].field(FinancialConstants.FUND_NAME).getValue());
-        finBudgetResponse.setFunctionName(hit[0].field(FinancialConstants.FUNCTION_NAME).getValue());
-        finBudgetResponse.setDepartmentName(hit[0].field(FinancialConstants.DEPARTMENT_NAME).getValue());
-        finBudgetResponse.setSchemeName(hit[0].field(FinancialConstants.SCHEME_NAME).getValue());
-        finBudgetResponse.setSubschemeName(hit[0].field(FinancialConstants.SUBSCHEME_NAME).getValue());
+        finBudgetResponse.setFundName(fund == null ? "" : fund.getValue());
+        finBudgetResponse.setFunctionName(function == null ? "" : function.getValue());
+        finBudgetResponse.setDepartmentName(department == null ? "" : department.getValue());
+        finBudgetResponse.setSchemeName(scheme == null ? "" : scheme.getValue());
+        finBudgetResponse.setSubschemeName(subScheme == null ? "" : subScheme.getValue());
 
         return finBudgetResponse;
 
