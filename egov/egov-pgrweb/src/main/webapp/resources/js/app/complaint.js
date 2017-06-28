@@ -209,7 +209,7 @@ $(document)
 										$('#receivingCenter').prop(
 												'selectedIndex', 0);
 										disableCRN();
-										if ($($(this).prop("labels")).text() == 'Manual') {
+										if ($(this).next().text() == 'Manual') {
 											enableRC();
 										} else {
 											disableRC();
