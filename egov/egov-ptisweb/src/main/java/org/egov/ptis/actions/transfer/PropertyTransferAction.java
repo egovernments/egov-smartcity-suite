@@ -459,6 +459,11 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
             else
                 return EDIT;
         }
+        if (mutationId != null) {
+            propertyMutation = (PropertyMutation) persistenceService.find("From PropertyMutation where id = ? ",
+                    mutationId);
+            persistenceService.getSession().refresh(propertyMutation);
+        }
 
         Assignment wfInitiator = null;
         String loggedInUserDesignation = "";
@@ -469,7 +474,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                     propertyMutation.getCurrentState().getOwnerPosition().getId(), user.getId(), new Date());
             loggedInUserDesignation = !loggedInUserAssign.isEmpty() ? loggedInUserAssign.get(0).getDesignation().getName() : null;
         }
-        if (isRoOrCommissioner(loggedInUserDesignation)) {
+        if (propertyTaxCommonUtils.isRoOrCommissioner(loggedInUserDesignation)) {
             final Assignment assignmentOnreject = propertyService.getUserOnRejection(propertyMutation);
             wfInitiator = assignmentOnreject;
         } else if (BILL_COLLECTOR_DESGN.equalsIgnoreCase(loggedInUserDesignation)
@@ -504,34 +509,6 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         return ("Rejected".equals(propertyMutation.getState().getValue())
                 || propertyMutation.getType().equalsIgnoreCase(ADDTIONAL_RULE_FULL_TRANSFER))
                 && propertyMutation.getReceiptNum() != null && !receiptCanceled;
-    }
-
-    private boolean isRoOrCommissioner(final String loggedInUserDesignation) {
-        boolean isany;
-        if (!REVENUE_OFFICER_DESGN.equalsIgnoreCase(loggedInUserDesignation))
-            isany = isCommissioner(loggedInUserDesignation);
-        else
-            isany = true;
-        return isany;
-    }
-
-    private boolean isCommissioner(final String loggedInUserDesignation) {
-        boolean isanyone;
-        if (!ASSISTANT_COMMISSIONER_DESIGN.equalsIgnoreCase(loggedInUserDesignation)
-                || !ADDITIONAL_COMMISSIONER_DESIGN.equalsIgnoreCase(loggedInUserDesignation))
-            isanyone = isDeputyOrAbove(loggedInUserDesignation);
-        else
-            isanyone = true;
-        return isanyone;
-    }
-
-    private boolean isDeputyOrAbove(final String loggedInUserDesignation) {
-        boolean isanyone = false;
-        if (DEPUTY_COMMISSIONER_DESIGN.equalsIgnoreCase(loggedInUserDesignation)
-                || COMMISSIONER_DESGN.equalsIgnoreCase(loggedInUserDesignation)
-                || ZONAL_COMMISSIONER_DESIGN.equalsIgnoreCase(loggedInUserDesignation))
-            isanyone = true;
-        return isanyone;
     }
 
     @ValidationErrorPage(value = EDIT)
