@@ -113,13 +113,8 @@ public class CollectionReportHeadWiseService {
         StringBuilder whereQueryStr = new StringBuilder(" WHERE EGW_STATUS.DESCRIPTION != 'Cancelled' ");
         StringBuilder creditWhereQueryStr = new StringBuilder("  AND EGCL_COLLECTIONDETAILS.CRAMOUNT>0 ");
         StringBuilder debitWhereQueryStr = new StringBuilder(
-                "  AND EGCL_COLLECTIONDETAILS.DRAMOUNT>0 AND CAO.type ='I' AND (CAO.purposeid is null or CAO.purposeid not in (select id from EGF_ACCOUNTCODE_PURPOSE where name in ('"
-                        + CollectionConstants.PURPOSE_NAME_CASH_IN_HAND + "','" + CollectionConstants.PURPOSE_NAME_CHEQUE_IN_HAND
-                        + "','"
-                        + CollectionConstants.PURPOSE_NAME_CASH_IN_TRANSIT + "','" + CollectionConstants.PURPOSE_NAME_CREDIT_CARD
-                        + "','"
-                        + CollectionConstants.PURPOSE_NAME_ATM_ACCOUNTCODE + "','"
-                        + CollectionConstants.PURPOSE_NAME_INTERUNITACCOUNT + "')))");
+                "  AND EGCL_COLLECTIONDETAILS.DRAMOUNT>0 AND CAO.purposeid in (select id from EGF_ACCOUNTCODE_PURPOSE where name ='"
+                        + CollectionConstants.PURPOSE_NAME_REBATE+ "')");    
         final StringBuilder queryStrGroup = new StringBuilder(" GROUP BY source,CAO.NAME,CAO.GLCODE,EGF_INSTRUMENTTYPE.TYPE ");
         final StringBuilder finalSelectQueryStr = new StringBuilder(
                 "SELECT sum(cashCount) AS cashCount,sum(chequeddCount) AS chequeddCount,sum(onlineCount) AS onlineCount,SOURCE,glCode,sum(cashAmount) AS cashAmount, sum(chequeddAmount) AS chequeddAmount,  "
