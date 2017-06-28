@@ -64,8 +64,7 @@ public class ReceivingCenterService {
     }
 
     public List<ReceivingCenter> findAll() {
-
-        return receivingCenterRepository.findByIsCrnRequiredTrueOrderByOrderNoAsc();
+        return receivingCenterRepository.findByOrderByOrderNoAsc();
     }
 
     public ReceivingCenter load(final Long receivingCenterId) {
