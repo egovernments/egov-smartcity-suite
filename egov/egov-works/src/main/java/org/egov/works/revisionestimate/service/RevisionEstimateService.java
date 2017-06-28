@@ -498,7 +498,7 @@ public class RevisionEstimateService {
                         .withNatureOfTask(WorksConstants.WORKFLOWTYPE_DISPLAYNAME_REVISION_ESTIMATE);
         } else if (WorksConstants.SAVE_ACTION.toString().equalsIgnoreCase(workFlowAction)) {
             if (revisionEstimate.getState() == null)
-                revisionEstimate.transition().progressWithStateCopy().start().withSenderName(user.getUsername() + "::" + user.getName())
+                revisionEstimate.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withStateValue(WorksConstants.NEW)
                         .withDateInfo(currentDate.toDate()).withOwner(wfInitiator.getPosition())
                         .withNextAction(WorksConstants.ESTIMATE_ONSAVE_NEXTACTION_VALUE)

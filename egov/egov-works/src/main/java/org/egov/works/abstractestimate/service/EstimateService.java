@@ -944,7 +944,7 @@ public class EstimateService {
             wfmatrix = abstractEstimateWorkflowService.getWfMatrix(abstractEstimate.getStateType(), null,
                     abstractEstimate.getEstimateValue(), additionalRule, WorksConstants.NEW, null);
             if (abstractEstimate.getState() == null)
-                abstractEstimate.transition().progressWithStateCopy().start()
+                abstractEstimate.transition().progressWithStateCopy()
                         .withSenderName(user.getUsername() + "::" + user.getName()).withComments(approvalComent)
                         .withStateValue(WorksConstants.NEW).withDateInfo(currentDate.toDate())
                         .withOwner(wfInitiator.getPosition())
