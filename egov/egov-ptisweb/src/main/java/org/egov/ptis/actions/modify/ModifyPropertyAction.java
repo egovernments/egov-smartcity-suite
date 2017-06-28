@@ -792,6 +792,8 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 		transitionWorkFlow(propertyModel);
 		propService.updateIndexes(propertyModel, getApplicationType());
 		basicPropertyService.update(basicProp);
+		if (propertyModel.getSource().equalsIgnoreCase(Source.CITIZENPORTAL.toString()))
+			propService.updatePortal(propertyModel, getApplicationType());
 		setModifyRsn(propertyModel.getPropertyDetail().getPropertyMutationMaster().getCode());
 		prepareAckMsg();
 		buildEmailandSms(propertyModel, APPLICATION_TYPE_ALTER_ASSESSENT);
@@ -840,6 +842,8 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 		propService.updateIndexes(propertyModel, getApplicationType());
 		basicPropertyService.update(basicProp);
 		setBasicProp(basicProp);
+		if (propertyModel.getSource().equalsIgnoreCase(Source.CITIZENPORTAL.toString()))
+			propService.updatePortal(propertyModel, getApplicationType());
 		setAckMessage(getText(PROPERTY_MODIFY_APPROVE_SUCCESS,
 				new String[] { getModifyReasonString(), propertyModel.getBasicProperty().getUpicNo() }));
 		buildEmailandSms(propertyModel, getApplicationType());
@@ -931,6 +935,8 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 			propService.updateIndexes(propertyModel, getApplicationType());
 			propertyImplService.update(propertyModel);
 			setModifyRsn(propertyModel.getPropertyDetail().getPropertyMutationMaster().getCode());
+			if (propertyModel.getSource().equalsIgnoreCase(Source.CITIZENPORTAL.toString()))
+				propService.updatePortal(propertyModel, getApplicationType());
 		}
 		final String username = getInitiator();
 

@@ -103,6 +103,10 @@ import org.egov.ptis.domain.service.transfer.PropertyTransferService;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import org.egov.ptis.domain.entity.document.DocumentTypeDetails;
 
 @ParentPackage("egov")
 @Results({ @Result(name = "view", location = "viewProperty-view.jsp") })
@@ -143,7 +147,9 @@ public class ViewPropertyAction extends BaseFormAction {
     private PersistenceService<VacancyRemission, Long> vacancyRemissionPersistenceService;
     @Autowired
     private PropertyService propService;
-    
+    @PersistenceContext
+    private transient EntityManager entityManager;
+
     private Map<String, Map<String, BigDecimal>> demandCollMap = new TreeMap<String, Map<String, BigDecimal>>();
 
     @Override
@@ -310,6 +316,15 @@ public class ViewPropertyAction extends BaseFormAction {
                     || appType.equals(APPLICATION_TYPE_TAX_EXEMTION)) {
                 property = (PropertyImpl) propertyImplService.find("from PropertyImpl where applicationNo=?", appNo);
                 setBasicProperty(property.getBasicProperty());
+                if (appType.equalsIgnoreCase(APPLICATION_TYPE_NEW_ASSESSENT)) {
+                    final Query query = entityManager.createNamedQuery("DOCUMENT_TYPE_DETAILS_BY_ID");
+                    query.setParameter(1, basicProperty.getId());
+                    DocumentTypeDetails documentTypeDetails = (DocumentTypeDetails) query.getSingleResult();
+                    viewMap.put("documentno", documentTypeDetails.getDocumentNo());
+                    viewMap.put("documentdate", documentTypeDetails.getDocumentDate());
+                    if (property.getStatus().equals('W'))
+                        viewMap.put("propertyWF", "WF");
+                }
             } else if (appType.equalsIgnoreCase(APPLICATION_TYPE_REVISION_PETITION)
                     || appType.equalsIgnoreCase(APPLICATION_TYPE_GRP)) {
                 final RevisionPetition rp = revisionPetitionPersistenceService.find(

@@ -658,7 +658,7 @@ public interface PropertyTaxConstants {
     public static final String WF_STATE_DEPUTY_COMMISSIONER_APPROVED = "Deputy Commissioner Approved";
     public static final String WF_STATE_ADDITIONAL_COMMISSIONER_APPROVED = "Additional Commissioner Approved";
     public static final String WF_STATE_TRANSFER_NOTICE_PRINT_PENDING = "Transfer Notice Print Pending";
-    
+    public static final String WF_STATE_ASSISTANT_FORWARD_PENDING = "Assistant Forward Pending";
 
     public static final String REPORT_TEMPLATENAME_BILL_GENERATION = "propertybill";
 
@@ -1705,6 +1705,8 @@ public interface PropertyTaxConstants {
     public static final String DOCUMENT_NAME_NOTARY_DOCUMENT = "Un-registered Document / Notary document";
     public static final List<String> COMMISSIONER_DESIGNATIONS = ImmutableList.of(ASSISTANT_COMMISSIONER_DESIGN,
             ZONAL_COMMISSIONER_DESIGN, DEPUTY_COMMISSIONER_DESIGN, ADDITIONAL_COMMISSIONER_DESIGN, COMMISSIONER_DESGN);
+    public static final List<String> ASSISTANT_DESIGNATIONS = ImmutableList.of(JUNIOR_ASSISTANT,
+            SENIOR_ASSISTANT);
     public static final String INTEGRATED_BILL = "Integrated Bill";
     
     //Source of Application

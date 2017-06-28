@@ -42,6 +42,7 @@ package org.egov.ptis.web.controller.vacancyremission;
 import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.VR_STATUS_ASSISTANT_FORWARDED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_ASSISTANT_APPROVAL_PENDING;
+import static org.egov.ptis.constants.PropertyTaxConstants.ANONYMOUS_USER;
 
 import java.util.Date;
 import java.util.List;
@@ -182,7 +183,7 @@ public class UpdateVacancyRemissionController extends GenericWorkFlowController 
                     successMsg = "Vacancy Remission Approved Successfully in the System";
                 else if (isWfReject(workFlowAction))
                     successMsg = wfReject(vacancyRemission, workFlowAction, approvalPosition, approvalComent, propertyByEmployee);
-                else if (isWfForwardOrApprovalPending(vacancyRemission, workFlowAction))
+                else if (isWfForwardOrApprovalPending(vacancyRemission, workFlowAction, propertyByEmployee))
                     successMsg = "Vacancy Remission Approved successfully and forwarded to : "
                             + vacancyRemissionService.getInitiatorName(vacancyRemission);
                 else
@@ -214,9 +215,10 @@ public class UpdateVacancyRemissionController extends GenericWorkFlowController 
                 && !workFlowAction.equalsIgnoreCase(PropertyTaxConstants.WFLOW_ACTION_STEP_NOTICE_GENERATE);
     }
 
-    private boolean isWfForwardOrApprovalPending(final VacancyRemission vacancyRemission, final String workFlowAction) {
-        return workFlowAction.equalsIgnoreCase(PropertyTaxConstants.WFLOW_ACTION_STEP_FORWARD)
-                && WF_STATE_ASSISTANT_APPROVAL_PENDING.equals(vacancyRemission.getCurrentState().getNextAction());
+    private boolean isWfForwardOrApprovalPending(final VacancyRemission vacancyRemission, final String workFlowAction, final Boolean propertyByEmployee) {
+        return PropertyTaxConstants.WFLOW_ACTION_STEP_FORWARD.equalsIgnoreCase(workFlowAction)
+                && (WF_STATE_ASSISTANT_APPROVAL_PENDING.equals(vacancyRemission.getCurrentState().getNextAction())
+                && (!vacancyRemission.getStateHistory().isEmpty()));
     }
 
     private String wfReject(final VacancyRemission vacancyRemission, final String workFlowAction, final Long approvalPosition,
@@ -241,4 +243,5 @@ public class UpdateVacancyRemissionController extends GenericWorkFlowController 
             successMsg = PROPERTY_MODIFY_REJECT_FAILURE+vacancyRemission.getBasicProperty().getUpicNo();
         return successMsg;
     }
+
 }

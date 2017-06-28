@@ -4205,23 +4205,32 @@ public class PropertyService {
 	 * Method to update Vacancy Remission data for citizen portal inbox
 	 */
 	@Transactional
-	public void updateVacancyRemissionPortalmessage(final StateAware stateAware,final String applictionType){
+	public void updateVacancyRemissionPortalmessage(final StateAware stateAware,final String applicationType){
+		String stateVal;
+		Boolean resolved;
+		VacancyRemissionApproval vacancyRemissionApproval;
+		State state;
+		String applicationNo;
 		Module module = moduleDao.getModuleByName(PropertyTaxConstants.PTMODULENAME);
 		final VacancyRemission vacancyRemission = (VacancyRemission) stateAware;
 		BasicProperty basicProperty = vacancyRemission.getBasicProperty();
-		if("CLOSED".equalsIgnoreCase(vacancyRemission.getState().getValue())){
-			VacancyRemissionApproval vacancyRemissionApproval = vacancyRemission.getVacancyRemissionApproval().get(0);
-			String stateVal = vacancyRemissionApproval.getState().getValue()+" "+vacancyRemissionApproval.getStatus();
-			Boolean isResol = isResolved(vacancyRemissionApproval);
-			portalInboxService.updateInboxMessage(vacancyRemission.getApplicationNumber(), module.getId(),stateVal,
-					isResol, getSlaEndDate(applictionType), vacancyRemissionApproval.getState(), null,
-					basicProperty.getUpicNo(), format(APPLICATION_VIEW_URL, vacancyRemissionApproval.getVacancyRemission().getApplicationNumber(), applictionType));
 
+		if("CLOSED".equalsIgnoreCase(vacancyRemission.getState().getValue()) && vacancyRemission.getVacancyRemissionApproval().size()>0){
+				vacancyRemissionApproval = vacancyRemission.getVacancyRemissionApproval().get(0);
+				stateVal = vacancyRemissionApproval.getState().getValue() + ": " + vacancyRemissionApproval.getStatus();
+            resolved = isResolved(vacancyRemissionApproval);
+				state = vacancyRemissionApproval.getState();
+				applicationNo = vacancyRemissionApproval.getVacancyRemission().getApplicationNumber();
 		}else{
-			portalInboxService.updateInboxMessage(vacancyRemission.getApplicationNumber(), module.getId(),vacancyRemission.getState().getValue(),
-					isResolved(stateAware), getSlaEndDate(applictionType), vacancyRemission.getState(), null,
-					basicProperty.getUpicNo(), format(APPLICATION_VIEW_URL, vacancyRemission.getApplicationNumber(), applictionType));
+				stateVal= vacancyRemission.getState().getValue()+ ": " + vacancyRemission.getStatus();;
+				resolved = isResolved(vacancyRemission);
+				state = vacancyRemission.getState();
+				applicationNo = vacancyRemission.getApplicationNumber();
 		}
+		portalInboxService.updateInboxMessage(applicationNo, module.getId(),stateVal,
+                resolved, getSlaEndDate(applicationType), state, null,
+					basicProperty.getUpicNo(), format(APPLICATION_VIEW_URL, applicationNo, applicationType));
+
 	}
 
 	/**

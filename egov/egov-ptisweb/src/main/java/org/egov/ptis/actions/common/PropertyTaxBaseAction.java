@@ -839,7 +839,8 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
         final Map<String, BigDecimal> demandCollMap = ptDemandDAO.getDemandCollMap(property);
         if (null != property && null != property.getState()) {
             final State propertyState = property.getState();
-            if (propertyState.getValue().endsWith(WF_STATE_ASSISTANT_APPROVED)) {
+            if (propertyState.getValue().endsWith(WF_STATE_ASSISTANT_APPROVED)
+                    || propertyState.getValue().endsWith("NEW")) {
                 args.add(property.getApplicationNo());
                 if (APPLICATION_TYPE_NEW_ASSESSENT.equals(applicationType)) {
                     if (mobileNumber != null)
