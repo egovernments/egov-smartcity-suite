@@ -54,6 +54,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_ROLE;
 import static org.egov.ptis.constants.PropertyTaxConstants.BIFURCATION_OF_ASSESSMENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.BILL_COLLECTOR_DESGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.TAX_COLLECTOR_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.BUILT_UP_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_MIXED;
 import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_NON_RESIDENTIAL;
@@ -974,11 +975,12 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 		return wfInitiator;
 	}
 
-	private boolean isCommissionerRoOrBillCollector() {
-		return StringUtils.containsIgnoreCase(userDesignationList, BILL_COLLECTOR_DESGN)
-				|| StringUtils.containsIgnoreCase(userDesignationList, COMMISSIONER_DESGN)
-				|| StringUtils.containsIgnoreCase(userDesignationList, REVENUE_OFFICER_DESGN);
-	}
+    private boolean isCommissionerRoOrBillCollector() {
+        return StringUtils.containsIgnoreCase(userDesignationList, BILL_COLLECTOR_DESGN)
+                || StringUtils.containsIgnoreCase(userDesignationList, TAX_COLLECTOR_DESGN)
+                || StringUtils.containsIgnoreCase(userDesignationList, COMMISSIONER_DESGN)
+                || StringUtils.containsIgnoreCase(userDesignationList, REVENUE_OFFICER_DESGN);
+    }
 
 	private void getAckMsg(final String username, final Assignment wfInitiator) {
 		if (wfInitiator != null) {
