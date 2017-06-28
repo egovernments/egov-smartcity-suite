@@ -142,8 +142,16 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
         if (recordCreatedBYNonEmployee) {
             currState = WFLOW_ACTION_STEP_THIRDPARTY_CREATED;
             if (!waterConnectionDetails.getStateHistory().isEmpty())
+            {
                 wfInitiator = assignmentService.getPrimaryAssignmentForPositon(
                         waterConnectionDetails.getStateHistory().get(0).getOwnerPosition().getId());
+                if (wfInitiator == null) {
+                    final List<Assignment> assignmentList = assignmentService
+                            .getAssignmentsForPosition(waterConnectionDetails.getStateHistory().get(0).getOwnerPosition().getId());
+                    if (!assignmentList.isEmpty())
+                        wfInitiator = assignmentList.get(0);
+                }
+            }
         } else if (null != waterConnectionDetails.getId()) {
             currentUser = userService.getUserById(waterConnectionDetails.getCreatedBy().getId());
             if (currentUser != null && waterConnectionDetails.getLegacy().equals(true)) {
