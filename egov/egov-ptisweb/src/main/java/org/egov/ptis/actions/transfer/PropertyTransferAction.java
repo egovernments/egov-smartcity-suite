@@ -264,7 +264,8 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     private String applicationSource;
     private List<String> guardianRelations;
     private Boolean citizenPortalUser = Boolean.FALSE;
-    
+    private Boolean showAckBtn = Boolean.FALSE;
+
     public PropertyTransferAction() {
         addRelatedEntity("mutationReason", PropertyMutationMaster.class);
     }
@@ -879,7 +880,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
             final String approvalmesg = " Succesfully Cancelled.";
             ackMessage = ackMessage == null ? approvalmesg : ackMessage + approvalmesg;
         }
-
+        checkToDisplayAckButton();
     }
 
     public void buildSMS(final PropertyMutation propertyMutation) {
@@ -1293,6 +1294,10 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                                 securityUtils.getCurrentUser().getId())
                         : null;
     }
+    private void checkToDisplayAckButton() {
+          if(getModel().getId() == null)
+            showAckBtn = Boolean.TRUE;
+    }
 
     public boolean isAllowEditDocument() {
         return allowEditDocument;
@@ -1341,5 +1346,12 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     public void setCitizenPortalUser(Boolean citizenPortalUser) {
         this.citizenPortalUser = citizenPortalUser;
     }
-	
+
+    public Boolean getShowAckBtn() {
+        return showAckBtn;
+    }
+
+    public void setShowAckBtn(final Boolean showAckBtn) {
+        this.showAckBtn = showAckBtn;
+    }
 }
