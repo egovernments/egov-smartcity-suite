@@ -2,8 +2,8 @@ package org.egov.pgr.service.reports;
 
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infstr.services.Page;
-import org.egov.pgr.entity.dto.FunctionarywiseReportRequest;
-import org.egov.pgr.entity.view.FunctionarywiseReport;
+import org.egov.pgr.entity.dto.DrillDownReportRequest;
+import org.egov.pgr.entity.view.DrillDownReports;
 import org.egov.pgr.repository.FunctionarywiseReportRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,27 +19,27 @@ public class FunctionaryWiseReportService {
     private FunctionarywiseReportRepository functionarywiseReportRepository;
 
     @ReadOnly
-    public Page<FunctionarywiseReport> pagedFunctionarwiseRecords(FunctionarywiseReportRequest request) {
+    public Page<DrillDownReports> pagedFunctionarwiseRecords(DrillDownReportRequest request) {
         return functionarywiseReportRepository.findByFunctionarywiseRequest(request);
     }
 
     @ReadOnly
-    public Page<FunctionarywiseReport> pagedFunctionarwiseReportByCompalints(FunctionarywiseReportRequest request) {
+    public Page<DrillDownReports> pagedFunctionarwiseReportByCompalints(DrillDownReportRequest request) {
         return functionarywiseReportRepository.findComplaintsByEmployeeId(request);
     }
 
     @ReadOnly
-    public Object[] functionarywiseReportGrandTotal(FunctionarywiseReportRequest request) {
+    public Object[] functionarywiseReportGrandTotal(DrillDownReportRequest request) {
         return functionarywiseReportRepository.findGrandTotalByRequest(request);
     }
 
     @ReadOnly
-    public List<FunctionarywiseReport> getAllFunctionarywiseRecords(FunctionarywiseReportRequest request) {
+    public List<DrillDownReports> getAllFunctionarywiseRecords(DrillDownReportRequest request) {
         return functionarywiseReportRepository.findFunctionarywiseReportByRequest(request);
     }
 
     @ReadOnly
-    public List<FunctionarywiseReport> getFunctionarywiseRecordsByEmployee(FunctionarywiseReportRequest request) {
+    public List<DrillDownReports> getFunctionarywiseRecordsByEmployee(DrillDownReportRequest request) {
         return functionarywiseReportRepository.findFunctionarywiseReportByEmployeeId(request);
     }
 }

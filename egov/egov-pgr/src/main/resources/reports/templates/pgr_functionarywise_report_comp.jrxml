@@ -4,6 +4,8 @@
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<parameter name="FunctionarywiseReport" class="java.util.List"/>
+	<parameter name="groupBy" class="java.lang.String"/>
+	<parameter name="type" class="java.lang.String"/>
 	<field name="crn" class="java.lang.String"/>
 	<field name="createdDate" class="java.util.Date"/>
 	<field name="complainantName" class="java.lang.String"/>
@@ -17,11 +19,11 @@
 	</background>
 	<title>
 		<band height="20" splitType="Stretch">
-			<staticText>
-				<reportElement x="320" y="0" width="162" height="20" uuid="5a24eb2c-816d-4fb3-ab1e-2c27222c4774"/>
+			<textField>
+				<reportElement x="110" y="0" width="583" height="20" uuid="5a24eb2c-816d-4fb3-ab1e-2c27222c4774"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<text><![CDATA[Functionarywise Report]]></text>
-			</staticText>
+				<textFieldExpression><![CDATA[$P{type} == null || $P{type}.isEmpty()? ($P{groupBy} == null || $P{groupBy}.isEmpty() ? "Functionarywise Report":"DrillDown Report" ): "ComplaintTypewise Report"]]></textFieldExpression>
+			</textField>
 		</band>
 	</title>
 	<pageHeader>

@@ -40,28 +40,29 @@
 
 package org.egov.pgr.web.controller.reports;
 
-import static org.egov.infra.utils.JsonUtils.toJSON;
-
-import java.io.IOException;
-import java.util.Date;
-import java.util.List;
-
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.egov.infra.reporting.engine.ReportRequest;
+import org.egov.infra.reporting.engine.ReportService;
+import org.egov.infra.web.support.ui.DataTable;
+import org.egov.pgr.entity.dto.DrillDownReportRequest;
 import org.egov.pgr.service.reports.DrillDownReportService;
-import org.hibernate.SQLQuery;
-import org.hibernate.transform.Transformers;
+import org.egov.pgr.web.controller.response.adaptor.ComplaintDrillDownHelperAdaptor;
+import org.egov.pgr.web.controller.response.adaptor.DrillDownComplaintTypeAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.egov.infra.web.utils.WebUtils.reportToResponseEntity;
+import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 
 @Controller
 @RequestMapping("/report")
@@ -69,6 +70,9 @@ public class DrillDownReportController {
 
     @Autowired
     private DrillDownReportService drillDownReportService;
+
+    @Autowired
+    private ReportService reportService;
 
     @ModelAttribute
     public void getReportHelper(Model model) {
@@ -89,43 +93,44 @@ public class DrillDownReportController {
         return "drillDown-search";
     }
 
-    @GetMapping("drillDown/resultList-update")
+    @GetMapping(value = "drillDown/resultList-update", produces = TEXT_PLAIN_VALUE)
     @ResponseBody
-    public void springPaginationDataTablesUpdate(@RequestParam String groupBy,
-                                                 @RequestParam String deptid, @RequestParam String complainttypeid,
-                                                 @RequestParam String selecteduserid, @RequestParam String boundary,
-                                                 @RequestParam String complaintDateType, @RequestParam Date fromDate,
-                                                 @RequestParam Date toDate, @RequestParam String locality,
-                                                 HttpServletResponse response) throws IOException {
+    public String searchDrillDownReport(DrillDownReportRequest reportRequest) {
+        if (StringUtils.isNotBlank(reportRequest.getDeptid()) &&
+                StringUtils.isNotBlank(reportRequest.getComplainttypeid()) && StringUtils.isNotBlank(reportRequest.getSelecteduserid())) {
+            return new DataTable<>(drillDownReportService.pagedDrillDownRecordsByCompalintId(reportRequest),
+                    reportRequest.draw())
+                    .toJson(DrillDownComplaintTypeAdaptor.class);
 
-        SQLQuery drillDownreportQuery;
-        String result;
-        if (StringUtils.isNotBlank(deptid) && StringUtils.isNotBlank(complainttypeid) && StringUtils.isNotBlank(selecteduserid)) {
-            String userName = selecteduserid.split("~")[0];
-            if ("".equals(userName))
-                userName = null;
-            drillDownreportQuery = drillDownReportService.getDrillDownReportQuery(fromDate, toDate, complaintDateType,
-                    deptid, boundary, complainttypeid, userName, locality);
-            drillDownreportQuery.setResultTransformer(Transformers.aliasToBean(DrillDownReportResult.class));
+        } else
+            return new DataTable<>(drillDownReportService.pagedDrillDownRecords(reportRequest),
+                    reportRequest.draw())
+                    .toJson(ComplaintDrillDownHelperAdaptor.class);
+    }
 
-            List<DrillDownReportResult> drillDownresult = drillDownreportQuery.list();
-            result = new StringBuilder("{ \"data\":").append(toJSON(drillDownresult, DrillDownReportResult.class,
-                    DrillDownReportWithcompTypeAdaptor.class)).append("}")
-                    .toString();
+    @GetMapping("/drilldown/grand-total")
+    @ResponseBody
+    public Object[] drillDownReportGrandTotal(DrillDownReportRequest reportRequest) {
+        return drillDownReportService.drillDownRecordsGrandTotal(reportRequest);
+    }
 
-        } else {
-            drillDownreportQuery = drillDownReportService.getDrillDownReportQuery(fromDate, toDate, complaintDateType,
-                    groupBy, deptid, boundary, complainttypeid, selecteduserid, locality);
-            drillDownreportQuery.setResultTransformer(Transformers.aliasToBean(DrillDownReportResult.class));
-
-            List<DrillDownReportResult> drillDownresult = drillDownreportQuery.list();
-            result = new StringBuilder("{ \"data\":").append(toJSON(drillDownresult, DrillDownReportResult.class,
-                    DrillDownReportHelperAdaptor.class)).append("}").toString();
-
-        }
-
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        IOUtils.write(result, response.getWriter());
-
+    @GetMapping("/drilldown/download")
+    @ResponseBody
+    public ResponseEntity<InputStreamResource> downloadReport(DrillDownReportRequest request) {
+        final ReportRequest reportRequest;
+        final Map<String, Object> reportparam = new HashMap<>();
+        if (StringUtils.isNotBlank(request.getDeptid()) &&
+                StringUtils.isNotBlank(request.getComplainttypeid()) && StringUtils.isNotBlank(request.getSelecteduserid())) {
+            reportRequest = new ReportRequest("pgr_functionarywise_report_comp",
+                    drillDownReportService.getDrillDownRecordsByComplaintId(request), new HashMap<>());
+        } else
+            reportRequest = new ReportRequest("pgr_functionarywise_report",
+                    drillDownReportService.getAllDrillDownRecords(request), new HashMap<>());
+        reportparam.put("groupBy", request.getGroupBy());
+        reportparam.put("reportTitle",request.getReportTitle());
+        reportRequest.setReportParams(reportparam);
+        reportRequest.setReportFormat(request.getPrintFormat());
+        reportRequest.setReportName("pgr_drillDown_report");
+        return reportToResponseEntity(reportRequest, reportService.createReport(reportRequest));
     }
 }

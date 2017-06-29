@@ -4,7 +4,11 @@
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<parameter name="FunctionarywiseReport" class="java.util.List"/>
+	<parameter name="groupBy" class="java.lang.String"/>
+	<parameter name="type" class="java.lang.String"/>
+	<parameter name="reportTitle" class="java.lang.String"/>
 	<field name="employeeName" class="java.lang.String"/>
+	<field name="complaintTypeName" class="java.lang.String"/>
 	<field name="registered" class="java.math.BigInteger"/>
 	<field name="inprocess" class="java.math.BigInteger"/>
 	<field name="completed" class="java.math.BigInteger"/>
@@ -44,11 +48,11 @@
 	</background>
 	<title>
 		<band height="21" splitType="Stretch">
-			<staticText>
-				<reportElement x="332" y="0" width="138" height="20" uuid="7ea8709c-b197-4ab3-b9d8-82ddd3b215b4"/>
+			<textField>
+				<reportElement x="48" y="0" width="706" height="20" uuid="7ea8709c-b197-4ab3-b9d8-82ddd3b215b4"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<text><![CDATA[Functionarywise Report]]></text>
-			</staticText>
+				<textFieldExpression><![CDATA[$P{type} == null || $P{type}.isEmpty()? ($P{groupBy} == null || $P{groupBy}.isEmpty() ? "Functionarywise Report":"DrillDown Report" ): "ComplaintTypewise Report"]]></textFieldExpression>
+			</textField>
 		</band>
 	</title>
 	<pageHeader>
@@ -120,14 +124,14 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<text><![CDATA[Total]]></text>
 			</staticText>
-			<staticText>
+			<textField>
 				<reportElement x="28" y="1" width="100" height="20" uuid="4e405145-d1e2-40e5-b616-92e9b88235c2"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<text><![CDATA[Employee Name]]></text>
-			</staticText>
+				<textFieldExpression><![CDATA[$P{type} == null || $P{type}.isEmpty()? ($P{groupBy} == null || $P{groupBy}.isEmpty() ? "Employee Name":$P{reportTitle} ): "Grievance Type Name"]]></textFieldExpression>
+			</textField>
 		</band>
 	</columnHeader>
 	<detail>
@@ -138,7 +142,7 @@
 					<pen lineWidth="0.5"/>
 				</box>
 				<textElement verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{employeeName}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{complaintTypeName} == null || $F{complaintTypeName}.isEmpty() ? $F{employeeName}: $F{complaintTypeName}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="128" y="0" width="80" height="20" uuid="46231a00-b933-425e-a3e6-1031d73eabb7"/>

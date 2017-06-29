@@ -45,74 +45,23 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.pgr.entity.dto;
+package org.egov.pgr.repository;
 
-import org.egov.infra.reporting.engine.ReportFormat;
-import org.egov.infra.web.support.search.DataTableSearchRequest;
+import org.egov.infstr.services.Page;
+import org.egov.pgr.entity.dto.DrillDownReportRequest;
+import org.egov.pgr.entity.view.DrillDownReports;
 
-import java.util.Date;
+import java.util.List;
 
-public class FunctionarywiseReportRequest extends DataTableSearchRequest {
+public interface DrillDownwiseReportRepositoryCustom {
 
-    private Date toDate;
+    Page<DrillDownReports> findDrillDownRecords(DrillDownReportRequest reportRequest);
 
-    private Date fromDate;
+    Page<DrillDownReports> findDrillDownRecordsByComplaintTypeId(DrillDownReportRequest reportRequest);
 
-    private String usrid;
+    Object[] findDrillDownGrandTotal(DrillDownReportRequest reportRequest);
 
-    private String status;
+    List<DrillDownReports> findDrillDownRecordList(DrillDownReportRequest reportRequest);
 
-    private String complaintDateType;
-
-    private ReportFormat printFormat;
-
-    public Date getToDate() {
-        return toDate;
-    }
-
-    public void setToDate(final Date toDate) {
-        this.toDate = toDate;
-    }
-
-    public Date getFromDate() {
-        return fromDate;
-    }
-
-    public void setFromDate(final Date fromDate) {
-        this.fromDate = fromDate;
-    }
-
-    public String getUsrid() {
-        return usrid;
-    }
-
-    public void setUsrid(String usrid) {
-        this.usrid = usrid;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(final String status) {
-        this.status = status;
-    }
-
-    public String getComplaintDateType() {
-        return complaintDateType;
-    }
-
-    public void setComplaintDateType(final String complaintDateType) {
-        this.complaintDateType = complaintDateType;
-    }
-
-    public ReportFormat getPrintFormat() {
-        return printFormat;
-    }
-
-    public void setPrintFormat(final ReportFormat printFormat) {
-        this.printFormat = printFormat;
-    }
-
-
+    List<DrillDownReports> findDrillDownRecordsByRequest(DrillDownReportRequest reportRequest);
 }

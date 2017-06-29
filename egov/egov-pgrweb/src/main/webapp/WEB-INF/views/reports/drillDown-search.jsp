@@ -72,8 +72,11 @@
 									<input type="hidden" id="deptid" name="deptid" value="${deptid}"/>
 									<input type="hidden" id="complainttypeid" name="complainttypeid" value="${complainttypeid}"/>
 									<input type="hidden" id="selecteduserid" name="selecteduserid" value="${selecteduserid}"/>
-									<input type="hidden" id="boundary" name="boundary" value="${boundary}"/>
-									<input type="hidden" id="locality" name="locality" value="${locality}"/>
+									<c:if test="${mode eq 'ByBoundary'}">
+										<input type="hidden" id="boundary" name="boundary" value="${boundary}"/>
+										<input type="hidden" id="locality" name="locality" value="${locality}"/>
+									</c:if>
+
 									<input type="hidden" id="type" name="type" value="${type}"/>
 									<select name="complaintDateType" id="when_date" class="form-control" data-first-option="false"
 											onchange="showChangeDropdown(this);">
@@ -120,11 +123,12 @@
 						<thead>
 						<tr>
                             <th rowspan="2" style="vertical-align: bottom"></th>
-                            <th colspan="4" style="text-align: center"><spring:message code="lbl.report.status"/></th>
+                            <th colspan="5" style="text-align: center"><spring:message code="lbl.report.status"/></th>
                             <th colspan="2" style="text-align: center"><spring:message code="lbl.report.sla"/></th>
                             <th rowspan="2" style="vertical-align: bottom"></th>
                         </tr>
 						<tr>
+							<th></th>
 							<th></th>
 							<th></th>
 							<th></th>
@@ -136,6 +140,7 @@
 						<tfoot id="report-footer">
 						<tr>
 							<td><b><spring:message code="lbl.pagetotal"/></b></td>
+							<td></td>
 							<td></td>
 							<td></td>
 							<td></td>
@@ -158,11 +163,18 @@
 	</div>
 </div>
 
-<link rel="stylesheet" href="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css' context='/egi'/>">
-<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>
-<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
-<script type="text/javascript" src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
-<script type="text/javascript" src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
+<link rel="stylesheet"
+	  href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>
+<link rel="stylesheet"
+	  href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
+<script type="text/javascript"
+		src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
+<script type="text/javascript"
+		src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
+<script
+		src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/dataTables.buttons.min.js' context='/egi'/>"></script>
+<script
+		src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/buttons.bootstrap.min.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"></script>

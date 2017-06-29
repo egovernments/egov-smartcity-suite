@@ -44,10 +44,10 @@ import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.utils.StringUtils;
 import org.egov.infra.web.support.ui.DataTable;
-import org.egov.pgr.entity.dto.FunctionarywiseReportRequest;
+import org.egov.pgr.entity.dto.DrillDownReportRequest;
 import org.egov.pgr.service.reports.FunctionaryWiseReportService;
-import org.egov.pgr.web.controller.response.adaptor.FunctionarywiseCompTypeAdaptor;
-import org.egov.pgr.web.controller.response.adaptor.FunctionarywiseDrillDownAdaptor;
+import org.egov.pgr.web.controller.response.adaptor.ComplaintDrillDownHelperAdaptor;
+import org.egov.pgr.web.controller.response.adaptor.DrillDownComplaintTypeAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
@@ -86,28 +86,27 @@ public class FunctionaryWiseReportController {
 
     @GetMapping(value = "result", produces = TEXT_PLAIN_VALUE)
     @ResponseBody
-    public String searchFunctionarywiseReport(FunctionarywiseReportRequest functionarywiseReportRequest) {
-        if (StringUtils.isNotBlank(functionarywiseReportRequest.getUsrid()) &&
-                StringUtils.isNotBlank(functionarywiseReportRequest.getStatus())) {
-            return new DataTable<>(functionaryWiseReportService.pagedFunctionarwiseReportByCompalints(functionarywiseReportRequest),
-                    functionarywiseReportRequest.draw())
-                    .toJson(FunctionarywiseCompTypeAdaptor.class);
+    public String searchFunctionarywiseReport(DrillDownReportRequest reportRequest) {
+        if (StringUtils.isNotBlank(reportRequest.getUsrid()) && StringUtils.isNotBlank(reportRequest.getStatus())) {
+            return new DataTable<>(functionaryWiseReportService.pagedFunctionarwiseReportByCompalints(reportRequest),
+                    reportRequest.draw())
+                    .toJson(DrillDownComplaintTypeAdaptor.class);
 
         } else
-            return new DataTable<>(functionaryWiseReportService.pagedFunctionarwiseRecords(functionarywiseReportRequest),
-                    functionarywiseReportRequest.draw())
-                    .toJson(FunctionarywiseDrillDownAdaptor.class);
+            return new DataTable<>(functionaryWiseReportService.pagedFunctionarwiseRecords(reportRequest),
+                    reportRequest.draw())
+                    .toJson(ComplaintDrillDownHelperAdaptor.class);
     }
 
     @GetMapping("grand-total")
     @ResponseBody
-    public Object[] functionarywiseGrandTotal(FunctionarywiseReportRequest request) {
+    public Object[] functionarywiseGrandTotal(DrillDownReportRequest request) {
         return functionaryWiseReportService.functionarywiseReportGrandTotal(request);
     }
 
     @GetMapping("download")
     @ResponseBody
-    public ResponseEntity<InputStreamResource> downloadReport(FunctionarywiseReportRequest request) {
+    public ResponseEntity<InputStreamResource> downloadReport(DrillDownReportRequest request) {
         final ReportRequest reportRequest;
         if (StringUtils.isNotBlank(request.getUsrid()) && StringUtils.isNotBlank(request.getStatus())) {
             reportRequest = new ReportRequest("pgr_functionarywise_report_comp",

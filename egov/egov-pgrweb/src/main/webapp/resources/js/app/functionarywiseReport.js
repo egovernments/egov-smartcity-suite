@@ -479,7 +479,7 @@ function updateTotalFooter(colidx, api, key) {
 
     if(colidx > recordTotal.length)
     {
-        total=recordTotal.splice(5, 7).reduce(add, 0);
+        total=recordTotal.concat().splice(5, 7).reduce(add, 0);
     }
     else{
         // Total over all pages

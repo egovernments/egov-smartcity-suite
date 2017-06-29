@@ -47,12 +47,12 @@
 
 package org.egov.pgr.repository;
 
-import org.egov.pgr.entity.view.FunctionarywiseReport;
+import org.egov.pgr.entity.view.DrillDownReports;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface FunctionarywiseReportRepository
-        extends FunctionarywiseReportRepositoryCustom, JpaRepository<FunctionarywiseReport, Long> {
+        extends FunctionarywiseReportRepositoryCustom, JpaRepository<DrillDownReports, Long> {
 
 }

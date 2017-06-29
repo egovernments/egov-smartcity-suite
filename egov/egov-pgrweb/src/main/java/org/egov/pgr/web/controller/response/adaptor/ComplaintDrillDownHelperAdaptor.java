@@ -54,35 +54,39 @@ import com.google.gson.JsonSerializationContext;
 import org.egov.infra.utils.StringUtils;
 import org.egov.infra.web.support.json.adapter.DataTableJsonAdapter;
 import org.egov.infra.web.support.ui.DataTable;
-import org.egov.pgr.entity.enums.CitizenFeedback;
-import org.egov.pgr.entity.view.FunctionarywiseReport;
+import org.egov.pgr.entity.view.DrillDownReports;
 
 import java.lang.reflect.Type;
 import java.util.List;
 
-import static org.egov.infra.utils.ApplicationConstant.NA;
-import static org.egov.infra.utils.DateUtils.getFormattedDate;
-
-public class FunctionarywiseCompTypeAdaptor implements DataTableJsonAdapter<FunctionarywiseReport> {
+public class ComplaintDrillDownHelperAdaptor implements DataTableJsonAdapter<DrillDownReports> {
 
     @Override
-    public JsonElement serialize(final DataTable<FunctionarywiseReport> functionarywiseReportResponse, final Type type,
+    public JsonElement serialize(DataTable<DrillDownReports> drillDownReportResponse, final Type type,
                                  final JsonSerializationContext jsc) {
-        final List<FunctionarywiseReport> functionarywiseResult = functionarywiseReportResponse.getData();
-        final JsonArray functionarywiseReportData = new JsonArray();
-        functionarywiseResult.forEach(functionarywiseReportObject -> {
+        final List<DrillDownReports> drillDownReportResult = drillDownReportResponse.getData();
+        final JsonArray reportData = new JsonArray();
+        drillDownReportResult.forEach(reportObject -> {
             final JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("crn", StringUtils.defaultIfBlank(functionarywiseReportObject.getCrn(), NA));
-            jsonObject.addProperty("createddate", StringUtils.defaultIfBlank(getFormattedDate(functionarywiseReportObject.getCreatedDate(), "dd-MM-yyyy hh:mm a"), NA));
-            jsonObject.addProperty("complainantname", StringUtils.defaultIfBlank(functionarywiseReportObject.getComplainantName(), NA));
-            jsonObject.addProperty("details", StringUtils.defaultIfBlank(functionarywiseReportObject.getComplaintDetail(), NA));
-            jsonObject.addProperty("boundaryname", StringUtils.defaultIfBlank(functionarywiseReportObject.getBoundaryName(), NA));
-            jsonObject.addProperty("status", StringUtils.defaultIfBlank(functionarywiseReportObject.getStatus(), NA));
-            jsonObject.addProperty("complaintId", StringUtils.defaultIfBlank(functionarywiseReportObject.getComplainantId().toString(), NA));
-            jsonObject.addProperty("feedback", CitizenFeedback.value(functionarywiseReportObject.getFeedback()));
-            jsonObject.addProperty("issla", StringUtils.defaultIfBlank(functionarywiseReportObject.getIsSLA(), NA));
-            functionarywiseReportData.add(jsonObject);
+            if (reportObject.getEmployeeName() != null)
+            jsonObject.addProperty("name", StringUtils.defaultIfBlank(reportObject.getEmployeeName(), "Not Available"));
+            if (reportObject.getComplaintTypeName() != null)
+            jsonObject.addProperty("name", StringUtils.defaultIfBlank(reportObject.getComplaintTypeName(), "Not Available"));
+            jsonObject.addProperty("completed", StringUtils.defaultIfBlank(reportObject.getCompleted().toString(), "0"));
+            jsonObject.addProperty("inprocess", StringUtils.defaultIfBlank(reportObject.getInprocess().toString(), "0"));
+            jsonObject.addProperty("registered", StringUtils.defaultIfBlank(reportObject.getRegistered().toString(), "0"));
+            jsonObject.addProperty("rejected", StringUtils.defaultIfBlank(reportObject.getRejected().toString(), "0"));
+            jsonObject.addProperty("withinsla", StringUtils.defaultIfBlank(reportObject.getWithinSLA().toString(), "0"));
+            jsonObject.addProperty("beyondsla", StringUtils.defaultIfBlank(reportObject.getBeyondSLA().toString(), "0"));
+            jsonObject.addProperty("total", StringUtils.defaultIfBlank(reportObject.getTotal().toString(), "0"));
+            jsonObject.addProperty("reopened", StringUtils.defaultIfBlank(reportObject.getReopened().toString(), "0"));
+            if (reportObject.getEmployeeId() != null)
+            jsonObject.addProperty("usrid", StringUtils.defaultIfBlank(reportObject.getEmployeeId().toString(), "0"));
+            if (reportObject.getComplaintTypeId() != null)
+            jsonObject.addProperty("complaintTyeId",StringUtils.defaultIfBlank(reportObject.getComplaintTypeId().toString(), "0"));
+            reportData.add(jsonObject);
         });
-        return enhance(functionarywiseReportData, functionarywiseReportResponse);
+        return enhance(reportData, drillDownReportResponse);
     }
+
 }

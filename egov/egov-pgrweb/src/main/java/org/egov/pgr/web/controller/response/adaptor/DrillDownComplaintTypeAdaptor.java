@@ -54,33 +54,35 @@ import com.google.gson.JsonSerializationContext;
 import org.egov.infra.utils.StringUtils;
 import org.egov.infra.web.support.json.adapter.DataTableJsonAdapter;
 import org.egov.infra.web.support.ui.DataTable;
-import org.egov.pgr.entity.view.FunctionarywiseReport;
+import org.egov.pgr.entity.enums.CitizenFeedback;
+import org.egov.pgr.entity.view.DrillDownReports;
 
 import java.lang.reflect.Type;
 import java.util.List;
 
-public class FunctionarywiseDrillDownAdaptor implements DataTableJsonAdapter<FunctionarywiseReport> {
+import static org.egov.infra.utils.ApplicationConstant.NA;
+import static org.egov.infra.utils.DateUtils.getFormattedDate;
+
+public class DrillDownComplaintTypeAdaptor implements DataTableJsonAdapter<DrillDownReports> {
 
     @Override
-    public JsonElement serialize(DataTable<FunctionarywiseReport> functionarywiseRespose, final Type type,
+    public JsonElement serialize(final DataTable<DrillDownReports> reportResponse, final Type type,
                                  final JsonSerializationContext jsc) {
-        final List<FunctionarywiseReport> functionarywisereportResult = functionarywiseRespose.getData();
-        final JsonArray functionarywiseReportData = new JsonArray();
-        functionarywisereportResult.forEach(functionarywiseReportObject -> {
+        final List<DrillDownReports> functionarywiseResult = reportResponse.getData();
+        final JsonArray drillDownReportData = new JsonArray();
+        functionarywiseResult.forEach(reportObject -> {
             final JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("name", StringUtils.defaultIfBlank(functionarywiseReportObject.getEmployeeName(), "Not Available"));
-            jsonObject.addProperty("completed", StringUtils.defaultIfBlank(functionarywiseReportObject.getCompleted().toString(), "0"));
-            jsonObject.addProperty("inprocess", StringUtils.defaultIfBlank(functionarywiseReportObject.getInprocess().toString(), "0"));
-            jsonObject.addProperty("registered", StringUtils.defaultIfBlank(functionarywiseReportObject.getRegistered().toString(), "0"));
-            jsonObject.addProperty("rejected", StringUtils.defaultIfBlank(functionarywiseReportObject.getRejected().toString(), "0"));
-            jsonObject.addProperty("withinsla", StringUtils.defaultIfBlank(functionarywiseReportObject.getWithinSLA().toString(), "0"));
-            jsonObject.addProperty("beyondsla", StringUtils.defaultIfBlank(functionarywiseReportObject.getBeyondSLA().toString(), "0"));
-            jsonObject.addProperty("total", StringUtils.defaultIfBlank(functionarywiseReportObject.getTotal().toString(), "0"));
-            jsonObject.addProperty("reopened", StringUtils.defaultIfBlank(functionarywiseReportObject.getReopened().toString(), "0"));
-            jsonObject.addProperty("usrid", StringUtils.defaultIfBlank(functionarywiseReportObject.getEmployeeId().toString(), "0"));
-            functionarywiseReportData.add(jsonObject);
+            jsonObject.addProperty("crn", StringUtils.defaultIfBlank(reportObject.getCrn(), NA));
+            jsonObject.addProperty("createddate", StringUtils.defaultIfBlank(getFormattedDate(reportObject.getCreatedDate(), "dd-MM-yyyy hh:mm a"), NA));
+            jsonObject.addProperty("complainantname", StringUtils.defaultIfBlank(reportObject.getComplainantName(), NA));
+            jsonObject.addProperty("details", StringUtils.defaultIfBlank(reportObject.getComplaintDetail(), NA));
+            jsonObject.addProperty("boundaryname", StringUtils.defaultIfBlank(reportObject.getBoundaryName(), NA));
+            jsonObject.addProperty("status", StringUtils.defaultIfBlank(reportObject.getStatus(), NA));
+            jsonObject.addProperty("complaintId", StringUtils.defaultIfBlank(reportObject.getComplainantId().toString(), NA));
+            jsonObject.addProperty("feedback", CitizenFeedback.value(reportObject.getFeedback()));
+            jsonObject.addProperty("issla", StringUtils.defaultIfBlank(reportObject.getIsSLA(), NA));
+            drillDownReportData.add(jsonObject);
         });
-        return enhance(functionarywiseReportData, functionarywiseRespose);
+        return enhance(drillDownReportData, reportResponse);
     }
-
 }

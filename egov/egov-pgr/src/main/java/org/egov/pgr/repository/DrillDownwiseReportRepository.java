@@ -1,5 +1,5 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
  *     Copyright (C) <2015>  eGovernments Foundation
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *           Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *           Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *           derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ * 	       For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ * 	       For any further queries on attribution, including queries on brand guidelines,
+ *           please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -38,48 +45,14 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.pgr.service.reports;
+package org.egov.pgr.repository;
 
-import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
-import org.egov.infstr.services.Page;
-import org.egov.pgr.entity.dto.DrillDownReportRequest;
 import org.egov.pgr.entity.view.DrillDownReports;
-import org.egov.pgr.repository.ComplainttypewiseReportRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-import java.util.List;
+@Repository
+public interface DrillDownwiseReportRepository
+        extends DrillDownwiseReportRepositoryCustom, JpaRepository<DrillDownReports, Long> {
 
-@Service
-@Transactional(readOnly = true)
-public class ComplaintTypeWiseReportService {
-
-    @Autowired
-    private ComplainttypewiseReportRepository complainttypewiseReportRepository;
-
-    @ReadOnly
-    public Page<DrillDownReports> pagedComplainttypewiseRecords(DrillDownReportRequest reportRequest) {
-        return complainttypewiseReportRepository.findComplainttypewiseRecord(reportRequest);
-    }
-
-    @ReadOnly
-    public Page<DrillDownReports> pagedComplainttypewiseRecordsByCompalintId(DrillDownReportRequest reportRequest) {
-        return complainttypewiseReportRepository.findComplainttypewiseRecordsByComplaintId(reportRequest);
-    }
-
-    @ReadOnly
-    public Object[] complaintwiseReportGrandTotal(DrillDownReportRequest reportRequest) {
-        return complainttypewiseReportRepository.findGrandTotal(reportRequest);
-    }
-
-    @ReadOnly
-    public List<DrillDownReports> getAllComplainttypewiseRecords(DrillDownReportRequest reportRequest) {
-        return complainttypewiseReportRepository.findComplainttypewiseRecordList(reportRequest);
-    }
-
-    @ReadOnly
-    public List<DrillDownReports> getComplainttypewiseRecordsByComplaintId(DrillDownReportRequest reportRequest) {
-        return complainttypewiseReportRepository.findComplainttypewiseRecordlistByComplaintId(reportRequest);
-    }
 }

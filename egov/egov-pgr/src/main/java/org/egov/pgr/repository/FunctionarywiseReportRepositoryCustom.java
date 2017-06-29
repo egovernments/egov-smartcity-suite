@@ -48,21 +48,21 @@
 package org.egov.pgr.repository;
 
 import org.egov.infstr.services.Page;
-import org.egov.pgr.entity.dto.FunctionarywiseReportRequest;
-import org.egov.pgr.entity.view.FunctionarywiseReport;
+import org.egov.pgr.entity.dto.DrillDownReportRequest;
+import org.egov.pgr.entity.view.DrillDownReports;
 
 import java.util.List;
 
 public interface FunctionarywiseReportRepositoryCustom {
 
-    Page<FunctionarywiseReport> findByFunctionarywiseRequest(FunctionarywiseReportRequest functionarywiseReportRequest);
+    Page<DrillDownReports> findByFunctionarywiseRequest(DrillDownReportRequest request);
 
-    Page<FunctionarywiseReport> findComplaintsByEmployeeId(FunctionarywiseReportRequest functionarywiseReportRequest);
+    Page<DrillDownReports> findComplaintsByEmployeeId(DrillDownReportRequest request);
 
-    Object[] findGrandTotalByRequest(FunctionarywiseReportRequest request);
+    Object[] findGrandTotalByRequest(DrillDownReportRequest request);
 
-    List<FunctionarywiseReport> findFunctionarywiseReportByEmployeeId(FunctionarywiseReportRequest request);
+    List<DrillDownReports> findFunctionarywiseReportByEmployeeId(DrillDownReportRequest request);
 
-    List<FunctionarywiseReport> findFunctionarywiseReportByRequest(FunctionarywiseReportRequest request);
+    List<DrillDownReports> findFunctionarywiseReportByRequest(DrillDownReportRequest request);
 
 }

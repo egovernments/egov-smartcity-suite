@@ -59,8 +59,8 @@ import java.util.Date;
 
 @Entity
 @Immutable
-@Table(name = "egpgr_mv_functionarywise_report_view")
-public class FunctionarywiseReport implements Serializable {
+@Table(name = "egpgr_mv_drilldown_report_view")
+public class DrillDownReports implements Serializable {
 
     private static final long serialVersionUID = 4573115438039131111L;
     @Id
@@ -76,6 +76,10 @@ public class FunctionarywiseReport implements Serializable {
 
     private String complainantName;
 
+    private Long complaintTypeId;
+
+    private String complaintTypeName;
+
     private Date createdDate;
 
     private String complaintDetail;
@@ -83,6 +87,14 @@ public class FunctionarywiseReport implements Serializable {
     private String status;
 
     private String boundaryName;
+
+    private String parentBoundary;
+
+    private String department;
+
+    private String employeePosition;
+
+    private String locality;
 
     private Integer feedback;
 
@@ -102,7 +114,7 @@ public class FunctionarywiseReport implements Serializable {
 
     private String isSLA;
 
-    public FunctionarywiseReport(Long employeeId, String employeeName, Long registered, Long inprocess, Long completed
+    public DrillDownReports(Long employeeId, String employeeName, Long registered, Long inprocess, Long completed
             , Long reopened, Long rejected, Long withinSLA, Long beyondSLA) {
 
         this.employeeId = employeeId;
@@ -116,7 +128,34 @@ public class FunctionarywiseReport implements Serializable {
         this.beyondSLA = beyondSLA;
     }
 
-    public FunctionarywiseReport(Long complainantId, String crn, Date createdDate, String complainantName, String complaintDetail
+    public DrillDownReports(String name, Long registered, Long inprocess, Long completed
+            , Long rejected, Long reopened, Long withinSLA, Long beyondSLA) {
+
+        this.complaintTypeName = name;
+        this.registered = registered;
+        this.inprocess = inprocess;
+        this.completed = completed;
+        this.rejected = rejected;
+        this.reopened = reopened;
+        this.withinSLA = withinSLA;
+        this.beyondSLA = beyondSLA;
+    }
+
+    public DrillDownReports(String complaintTypeName, Long complaintTypeId, Long registered, Long inprocess, Long completed
+            , Long rejected, Long reopened, Long withinSLA, Long beyondSLA) {
+
+        this.complaintTypeId = complaintTypeId;
+        this.complaintTypeName = complaintTypeName;
+        this.registered = registered;
+        this.inprocess = inprocess;
+        this.completed = completed;
+        this.rejected = rejected;
+        this.reopened = reopened;
+        this.withinSLA = withinSLA;
+        this.beyondSLA = beyondSLA;
+    }
+
+    public DrillDownReports(Long complainantId, String crn, Date createdDate, String complainantName, String complaintDetail
             , String status, String boundaryName, Integer feedback, String isSLA) {
 
         this.complainantId = complainantId;
@@ -132,7 +171,7 @@ public class FunctionarywiseReport implements Serializable {
     }
 
 
-    public FunctionarywiseReport(Long count) {
+    public DrillDownReports(Long count) {
 
     }
 
@@ -184,6 +223,22 @@ public class FunctionarywiseReport implements Serializable {
         this.complainantName = complainantName;
     }
 
+    public Long getComplaintTypeId() {
+        return complaintTypeId;
+    }
+
+    public void setComplaintTypeId(Long complaintTypeId) {
+        this.complaintTypeId = complaintTypeId;
+    }
+
+    public String getComplaintTypeName() {
+        return complaintTypeName;
+    }
+
+    public void setComplaintTypeName(String complaintTypeName) {
+        this.complaintTypeName = complaintTypeName;
+    }
+
     public Date getCreatedDate() {
         return createdDate;
     }
@@ -214,6 +269,39 @@ public class FunctionarywiseReport implements Serializable {
 
     public void setBoundaryName(String boundaryName) {
         this.boundaryName = boundaryName;
+    }
+
+
+    public String getParentBoundary() {
+        return parentBoundary;
+    }
+
+    public void setParentBoundary(String parentBoundary) {
+        this.parentBoundary = parentBoundary;
+    }
+
+    public String getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(String department) {
+        this.department = department;
+    }
+
+    public String getEmployeePosition() {
+        return employeePosition;
+    }
+
+    public void setEmployeePosition(String employeePosition) {
+        this.employeePosition = employeePosition;
+    }
+
+    public String getLocality() {
+        return locality;
+    }
+
+    public void setLocality(String locality) {
+        this.locality = locality;
     }
 
     public Integer getFeedback() {
