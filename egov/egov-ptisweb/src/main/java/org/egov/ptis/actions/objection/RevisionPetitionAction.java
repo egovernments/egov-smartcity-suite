@@ -381,7 +381,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
             objection.setRecievedOn(new Date());
             user = securityUtils.getCurrentUser();
             if (user != null)
-                objection.setRecievedBy(user.getUsername());
+                objection.setRecievedBy(user.getName());
         }
         if (null != objection && null != objection.getState())
             historyMap = propService.populateHistory(objection);
