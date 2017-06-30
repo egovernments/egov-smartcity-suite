@@ -325,4 +325,10 @@
     	<put-attribute name="page-title" value="title.newconnection" cascade="true"/>
     	<put-attribute name="body" value="/WEB-INF/views/transactions/new-sewerage-ackowledgement.jsp"/>
     </definition>
+    <definition name="baseRegisterSearch-form" extends="base_layout">
+		<put-attribute name="page-title" value="title.sewerage.BaseRegisterReport" 
+			cascade="true"/>
+		<put-attribute name="body" 
+			value="/WEB-INF/views/reports/baseRegisterSearch-form.jsp" />	
+	</definition>
 </tiles-definitions>

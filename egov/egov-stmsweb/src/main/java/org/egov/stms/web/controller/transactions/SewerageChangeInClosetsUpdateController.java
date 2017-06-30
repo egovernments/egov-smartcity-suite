@@ -455,6 +455,10 @@ public class SewerageChangeInClosetsUpdateController extends GenericWorkFlowCont
                     && workFlowAction.equalsIgnoreCase(SewerageTaxConstants.WF_CLOSERACKNOWLDGEENT_BUTTON))
                 return "redirect:/applications/acknowlgementNotice?pathVar="
                         + sewerageApplicationDetails.getApplicationNumber();
+            if (workFlowAction != null && !workFlowAction.isEmpty()
+                    && workFlowAction.equalsIgnoreCase(SewerageTaxConstants.WFLOW_ACTION_STEP_CANCEL))                
+                return "redirect:/transactions/rejectionnotice?pathVar="
+                        + sewerageApplicationDetails.getApplicationNumber()+"&" +"approvalComent="+request.getParameter("approvalComent");
             final Assignment currentUserAssignment = assignmentService.getPrimaryAssignmentForGivenRange(securityUtils
                     .getCurrentUser().getId(), new Date(), new Date());
             String nextDesign;

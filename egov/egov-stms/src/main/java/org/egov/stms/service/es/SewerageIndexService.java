@@ -44,11 +44,20 @@ import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_TYP
 import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_TYPE_NAME_CLOSECONNECTION;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_TYPE_NAME_NEWCONNECTION;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.CLOSESEWERAGECONNECTION;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.FEES_DONATIONCHARGE_CODE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.FEES_ESTIMATIONCHARGES_CODE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.FEES_SEWERAGETAX_CODE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.FEE_INSPECTIONCHARGE;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.GROUPBYFIELD;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.MODULE_NAME;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -57,8 +66,11 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.egov.collection.entity.es.CollectionDocument;
 import org.egov.collection.repository.es.CollectionDocumentRepository;
+import org.egov.commons.dao.InstallmentDao;
+import org.egov.commons.entity.Source;
 import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.service.CityService;
+import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.OwnerName;
@@ -67,10 +79,14 @@ import org.egov.stms.elasticSearch.entity.SewerageCollectFeeSearchRequest;
 import org.egov.stms.elasticSearch.entity.SewerageConnSearchRequest;
 import org.egov.stms.elasticSearch.entity.SewerageNoticeSearchRequest;
 import org.egov.stms.entity.es.SewerageIndex;
+import org.egov.stms.masters.pojo.SewerageRateDCBResult;
 import org.egov.stms.reports.entity.SewerageNoOfConnReportResult;
 import org.egov.stms.repository.es.SewerageIndexRepository;
 import org.egov.stms.transactions.entity.SewerageApplicationDetails;
+import org.egov.stms.transactions.entity.SewerageConnectionFee;
 import org.egov.stms.transactions.service.SewerageApplicationDetailsService;
+import org.egov.stms.transactions.service.SewerageDCBReporService;
+import org.egov.stms.transactions.service.SewerageDemandService;
 import org.egov.stms.utils.constants.SewerageTaxConstants;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.index.query.BoolQueryBuilder;
@@ -110,12 +126,28 @@ public class SewerageIndexService {
     @Autowired
     private SewerageApplicationDetailsService sewerageApplicationDetailsService;
 
+    @Autowired
+    private SewerageDemandService sewerageDemandService;
+
+    @Autowired
+    private SewerageDCBReporService sewerageDCBReporService;
+
+    @Autowired
+    private InstallmentDao installmentDao;
+
+    @Autowired
+    private ModuleService moduleDao;
+
     public SewerageIndex createSewarageIndex(final SewerageApplicationDetails sewerageApplicationDetails,
             final AssessmentDetails assessmentDetails) {
         final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
 
         final SewerageIndex sewarageIndex = new SewerageIndex();
         sewarageIndex.setUlbName(cityWebsite.getName());
+        sewarageIndex.setDistrictName(cityWebsite.getDistrictName());
+        sewarageIndex.setRegionName(cityWebsite.getRegionName());
+        sewarageIndex.setUlbGrade(cityWebsite.getGrade());
+        sewarageIndex.setUlbCode(cityWebsite.getCode());
         sewarageIndex.setApplicationCreatedBy(sewerageApplicationDetails.getCreatedBy().getName());
         sewarageIndex.setId(cityWebsite.getCode().concat("-").concat(sewerageApplicationDetails.getApplicationNumber()));
         sewarageIndex.setApplicationDate(sewerageApplicationDetails.getApplicationDate());
@@ -160,6 +192,13 @@ public class SewerageIndexService {
                 .setClosureNoticeNumber(
                         sewerageApplicationDetails.getClosureNoticeNumber() != null ? sewerageApplicationDetails
                                 .getClosureNoticeNumber() : "");
+        if (sewerageApplicationDetails.getRejectionDate() != null)
+            sewarageIndex
+                    .setRejectionNoticeDate(sewerageApplicationDetails.getRejectionDate());
+        sewarageIndex
+                .setRejectionNoticeNumber(
+                        sewerageApplicationDetails.getRejectionNumber() != null ? sewerageApplicationDetails
+                                .getRejectionNumber() : "");
         Iterator<OwnerName> ownerNameItr = null;
         if (null != assessmentDetails.getOwnerNames())
             ownerNameItr = assessmentDetails.getOwnerNames().iterator();
@@ -187,8 +226,65 @@ public class SewerageIndexService {
                 assessmentDetails.getBoundaryDetails() != null ? assessmentDetails.getBoundaryDetails().getLocalityName() : "");
         sewarageIndex
                 .setAddress(assessmentDetails.getPropertyAddress() != null ? assessmentDetails.getPropertyAddress() : "");
+        sewarageIndex.setSource(sewerageApplicationDetails.getSource() != null ? sewerageApplicationDetails.getSource()
+                : Source.SYSTEM.toString());
         // Setting application status is active or in-active
         sewarageIndex.setActive(sewerageApplicationDetails.isActive());
+
+        // setting connection fees details
+        for (final SewerageConnectionFee scf : sewerageApplicationDetails.getConnectionFees()) {
+
+            if (scf.getFeesDetail().getCode().equals(FEES_SEWERAGETAX_CODE))
+                sewarageIndex.setSewerageTax(BigDecimal.valueOf(scf.getAmount()));
+            if (scf.getFeesDetail().getCode().equals(FEES_DONATIONCHARGE_CODE))
+                sewarageIndex.setDonationAmount(BigDecimal.valueOf(scf.getAmount()));
+            if (scf.getFeesDetail().getCode().equals(FEE_INSPECTIONCHARGE))
+                sewarageIndex.setInspectionCharge(BigDecimal.valueOf(scf.getAmount()));
+            if (scf.getFeesDetail().getCode().equals(FEES_ESTIMATIONCHARGES_CODE))
+                sewarageIndex.setEstimationCharge(BigDecimal.valueOf(scf.getAmount()));
+        }
+
+        // setting demand details
+        final List<SewerageRateDCBResult> rateResultList = sewerageDCBReporService
+                .getSewerageRateDCBReport(sewerageApplicationDetails);
+        final Date currentInstallmentYear = sewerageDemandService.getCurrentInstallment().getInstallmentYear();
+        BigDecimal totalDemandAmount = BigDecimal.ZERO;
+        BigDecimal totalCollectedDemandamount = BigDecimal.ZERO;
+        BigDecimal totalArrearamount = BigDecimal.ZERO;
+        BigDecimal totalCollectedArearamount = BigDecimal.ZERO;
+        final Calendar calendar = new GregorianCalendar();
+
+        for (final SewerageRateDCBResult demand : rateResultList) {// FIXME: SORT BASED ON INSTALLMENT DESCRIPTION
+            final Date installmentYear = installmentDao
+                    .getInsatllmentByModuleAndDescription(moduleDao.getModuleByName(MODULE_NAME),
+                            demand.getInstallmentYearDescription())
+                    .getInstallmentYear();
+
+            String period = null;
+            if (sewerageApplicationDetails.getConnection().getExecutionDate() != null)
+                calendar.setTime(sewerageApplicationDetails.getConnection().getExecutionDate());
+            final int year = calendar.get(Calendar.YEAR);
+            period = year + "-" + demand.getInstallmentYearDescription().substring(5, 9);
+            sewarageIndex.setPeriod(period != null ? period : StringUtils.EMPTY);
+
+            if (installmentYear.equals(currentInstallmentYear) || installmentYear.after(currentInstallmentYear)) {
+                totalDemandAmount = totalDemandAmount.add(demand.getDemandAmount());
+                totalCollectedDemandamount = totalCollectedDemandamount.add(demand.getCollectedDemandAmount());
+
+            }
+            if (installmentYear.before(currentInstallmentYear)) {
+                totalArrearamount = totalArrearamount.add(demand.getDemandAmount());
+                totalCollectedArearamount = totalCollectedArearamount.add(demand.getCollectedDemandAmount());
+
+            }
+            if (demand.getCollectedAdvanceAmount() != null)
+                sewarageIndex.setExtraAdvanceAmount(demand.getCollectedAdvanceAmount());
+        }
+        sewarageIndex.setDemandAmount(totalDemandAmount != null ? totalDemandAmount : BigDecimal.ZERO);
+        sewarageIndex.setCollectedDemandAmount(totalCollectedDemandamount != null ? totalCollectedDemandamount : BigDecimal.ZERO);
+        sewarageIndex.setArrearAmount(totalArrearamount != null ? totalArrearamount : BigDecimal.ZERO);
+        sewarageIndex.setCollectedArrearAmount(totalCollectedArearamount != null ? totalCollectedArearamount : BigDecimal.ZERO);
+        sewarageIndex.setTotalAmount(totalDemandAmount.add(totalArrearamount));
         sewerageIndexRepository.save(sewarageIndex);
         return sewarageIndex;
     }
@@ -208,7 +304,7 @@ public class SewerageIndexService {
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("ward", searchRequest.getRevenueWard()));
         if (StringUtils.isNotBlank(searchRequest.getDoorNumber()))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("doorNo", searchRequest.getDoorNumber()));
-        if(searchRequest.getLegacy()!=null)
+        if (searchRequest.getLegacy() != null)
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("islegacy", searchRequest.getLegacy()));
         return boolQuery;
     }
@@ -335,6 +431,10 @@ public class SewerageIndexService {
                         .to(searchRequest.getNoticeGeneratedTo()));
             else if (searchRequest.getNoticeType().equals(SewerageTaxConstants.NOTICE_CLOSE_CONNECTION))
                 boolQuery = QueryBuilders.boolQuery().filter(QueryBuilders.rangeQuery("closureNoticeDate")
+                        .from(searchRequest.getNoticeGeneratedFrom())
+                        .to(searchRequest.getNoticeGeneratedTo()));
+            else if (searchRequest.getNoticeType().equals(SewerageTaxConstants.NOTICE_REJECTION))
+                boolQuery = QueryBuilders.boolQuery().filter(QueryBuilders.rangeQuery("rejectionNoticeDate")
                         .from(searchRequest.getNoticeGeneratedFrom())
                         .to(searchRequest.getNoticeGeneratedTo()));
         if (boolQuery != null) {
@@ -484,4 +584,20 @@ public class SewerageIndexService {
         }
         return aggregation;
     }
+
+    public List<SewerageIndex> wardwiseBaseRegisterQueryFilter(final String ulbName,
+            final List<String> wardList) {
+
+        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery().filter(QueryBuilders.matchQuery("ulbName", ulbName));
+        boolQuery = boolQuery.filter(QueryBuilders.termsQuery("ward", wardList));
+        boolQuery = boolQuery.filter(QueryBuilders.matchQuery("active", true));
+
+        final SearchQuery searchQuery = new NativeSearchQueryBuilder().withIndices("sewerage").withQuery(boolQuery)
+                .withPageable(new PageRequest(0, 250)).withSort(new FieldSortBuilder("shscNumber").order(SortOrder.DESC))
+                .build();
+        // FIXME: DONOT HARDCODE 250 ITEMS .
+        final List<SewerageIndex> searchResultList = elasticsearchTemplate.queryForList(searchQuery, SewerageIndex.class);
+        return searchResultList;
+    }
+
 }

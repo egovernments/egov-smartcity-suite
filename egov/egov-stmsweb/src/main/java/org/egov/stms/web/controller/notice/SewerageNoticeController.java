@@ -138,6 +138,9 @@ public class SewerageNoticeController {
                 } else if (searchRequest.getNoticeType().equals(SewerageTaxConstants.NOTICE_CLOSE_CONNECTION)) {
                     searchResultObject.setNoticeNumber(sewerageIndexObject.getClosureNoticeNumber());
                     searchResultObject.setNoticeDate(formatter.format(sewerageIndexObject.getClosureNoticeDate()));
+                } else if (searchRequest.getNoticeType().equals(SewerageTaxConstants.NOTICE_REJECTION)) {
+                    searchResultObject.setNoticeNumber(sewerageIndexObject.getRejectionNoticeNumber());
+                    searchResultObject.setNoticeDate(formatter.format(sewerageIndexObject.getRejectionNoticeDate()));
                 }
             searchResultObject.setShscNumber(sewerageIndexObject.getShscNumber());
             searchResultObject.setDoorNumber(sewerageIndexObject.getDoorNo());
@@ -171,6 +174,8 @@ public class SewerageNoticeController {
                     noticeNo = sewerageIndexObject.getEstimationNumber();
                 else if (searchRequest.getNoticeType().equals(SewerageTaxConstants.NOTICE_CLOSE_CONNECTION))
                     noticeNo = sewerageIndexObject.getClosureNoticeNumber();
+                else if (searchRequest.getNoticeType().equals(SewerageTaxConstants.NOTICE_REJECTION))
+                    noticeNo = sewerageIndexObject.getRejectionNoticeNumber();
             }
             if (noticeNo != null && !noticeNo.isEmpty()) {
                 noticeType = getSewerageNoticeType(noticeNo, noticeTypeInput);
@@ -296,6 +301,8 @@ public class SewerageNoticeController {
             noticeType = SewerageTaxConstants.NOTICE_TYPE_ESTIMATION_NOTICE;
         else if (noticeNo != null && noticeTypeInput.equals(SewerageTaxConstants.NOTICE_CLOSE_CONNECTION))
             noticeType = SewerageTaxConstants.NOTICE_TYPE_CLOSER_NOTICE;
+        else if (noticeNo != null && noticeTypeInput.equals(SewerageTaxConstants.NOTICE_REJECTION))
+            noticeType = SewerageTaxConstants.NOTICE_TYPE_REJECTION_NOTICE;
         return noticeType;
     }
 

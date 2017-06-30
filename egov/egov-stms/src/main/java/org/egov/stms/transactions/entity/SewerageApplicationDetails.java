@@ -129,6 +129,13 @@ public class SewerageApplicationDetails extends StateAware {
     private Date workOrderDate;
     
     @SafeHtml
+    @Length(min = 3, max = 50)
+    private String rejectionNumber;
+    
+    @Temporal(value = TemporalType.DATE)
+    private Date rejectionDate;
+    
+    @SafeHtml
     private String closureNoticeNumber;
     
     @Temporal (value=TemporalType.DATE)
@@ -481,6 +488,22 @@ public class SewerageApplicationDetails extends StateAware {
 
     public void setSource(String source) {
         this.source = source;
+    }
+
+    public String getRejectionNumber() {
+        return rejectionNumber;
+    }
+
+    public void setRejectionNumber(String rejectionNumber) {
+        this.rejectionNumber = rejectionNumber;
+    }
+
+    public Date getRejectionDate() {
+        return rejectionDate;
+    }
+
+    public void setRejectionDate(Date rejectionDate) {
+        this.rejectionDate = rejectionDate;
     }
     
     

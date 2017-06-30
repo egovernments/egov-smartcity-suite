@@ -148,6 +148,7 @@ public class SewerageTaxConstants {
 
     public static final String VIEW = "View";
     public static final String COLLECTDONATIONCHARHGES = "Collect Fee";
+    public static final String GENERATEREJECTIONNOTICE = "Generate Rejection Notice";
     public static final String VIEWURL = "/stms/existing/sewerage/view/{consumerno}/{assessmentno}";
     public static final String COLLECTDONATIONCHARHGESURL = "/stms/collection/generatebill/{consumerno}/{assessmentno}";
     public static final String VIEWDCBURL = "/stms/reports/sewerageRateReportView/{consumerno}/{assessmentno}";
@@ -284,9 +285,11 @@ public class SewerageTaxConstants {
     public static final String NOTICE_TYPE_ESTIMATION_NOTICE = "Estimation Notice";
     public static final String NOTICE_TYPE_WORK_ORDER_NOTICE = "Workorder Notice";
     public static final String NOTICE_TYPE_CLOSER_NOTICE = "Close Connection Notice";
+    public static final String NOTICE_TYPE_REJECTION_NOTICE = "Rejection Notice";
     public static final String NOTICE_TYPE_DEMAND_BILL_NOTICE = "Demand Bill";
     public static final String NOTICE_ESTIMATION = "EM";
     public static final String NOTICE_WORK_ORDER = "WO";
+    public static final String NOTICE_REJECTION = "RN";
     public static final String NOTICE_CLOSE_CONNECTION = "CC";
 
     public static final String DOCTYPE_OTHERS = "Others";

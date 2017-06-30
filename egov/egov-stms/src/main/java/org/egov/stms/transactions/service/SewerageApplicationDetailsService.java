@@ -69,6 +69,7 @@ import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.stms.autonumber.SewerageApplicationNumberGenerator;
 import org.egov.stms.autonumber.SewerageCloseConnectionNoticeNumberGenerator;
 import org.egov.stms.autonumber.SewerageEstimationNumberGenerator;
+import org.egov.stms.autonumber.SewerageRejectionNoticeNumberGenerator;
 import org.egov.stms.autonumber.SewerageSHSCNumberGenerator;
 import org.egov.stms.autonumber.SewerageWorkOrderNumberGenerator;
 import org.egov.stms.masters.entity.enums.SewerageConnectionStatus;
@@ -719,9 +720,9 @@ public class SewerageApplicationDetailsService {
                 }
             }
         if (additionalRule != null && additionalRule.equalsIgnoreCase(CHANGEINCLOSETS_NOCOLLECTION))
-            applicationStatusChange(sewerageApplicationDetails, workFlowAction, additionalRule);
+            applicationStatusChange(sewerageApplicationDetails, workFlowAction, additionalRule,request,session);
         else
-            applicationStatusChange(sewerageApplicationDetails, workFlowAction, mode);
+            applicationStatusChange(sewerageApplicationDetails, workFlowAction, mode,request,session);
 
         // Generate the sewerage notices based on type of notice and save into DB.
         if (sewerageApplicationDetails.getStatus().getCode()
@@ -776,7 +777,7 @@ public class SewerageApplicationDetailsService {
     // Pending : commented out code as statuses are changed. Need to correct
 
     public void applicationStatusChange(final SewerageApplicationDetails sewerageApplicationDetails,
-            final String workFlowAction, final String mode) {
+            final String workFlowAction, final String mode,final HttpServletRequest request, final HttpSession session) {
 
         if (null != sewerageApplicationDetails && null != sewerageApplicationDetails.getStatus()
                 && null != sewerageApplicationDetails.getStatus().getCode())
@@ -794,7 +795,19 @@ public class SewerageApplicationDetailsService {
                     sewerageApplicationDetails
                             .setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(APPLICATION_STATUS_CANCELLED, MODULETYPE));
                 }
-               
+                if (sewerageApplicationDetails.getRejectionNumber() == null) {
+                    final SewerageRejectionNoticeNumberGenerator rejectionNumberGenerator = beanResolver
+                            .getAutoNumberServiceFor(SewerageRejectionNoticeNumberGenerator.class);
+                    if (rejectionNumberGenerator != null) {
+                        sewerageApplicationDetails.setRejectionNumber(rejectionNumberGenerator.generateRejectionNoticeNumber());
+                        sewerageApplicationDetails.setRejectionDate(new Date());
+                    }
+                }
+                
+                final SewerageNotice sewerageNotice = sewerageNoticeService.generateReportForRejection(
+                        sewerageApplicationDetails, session, request);
+                if (sewerageNotice != null)
+                    sewerageApplicationDetails.addNotice(sewerageNotice);
             } else if ("NEW".equalsIgnoreCase(sewerageApplicationDetails.getState().getValue())
                     && (SewerageTaxConstants.APPLICATION_STATUS_CSCCREATED
                             .equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode())
