@@ -98,6 +98,7 @@
 		<property name="oldMuncipalNum" column="OLDMUNCIPALNUMBER" />
 		<property name="rebate" column="REBATE"/>
 		<property name="adjustment" column="ADJUSTMENT"/>
+		<property name="usage" column="usage"/>
 		
 		<set name="instDmdColl" table="EGPT_MV_INST_DEM_COLL" order-by="id_installment" >
             <key>
