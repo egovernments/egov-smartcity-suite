@@ -46,6 +46,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_INSPECTOR_DES
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_NOTICE_GENERATE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SIGN;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -243,8 +244,7 @@ public class UpdateVRApprovalController extends GenericWorkFlowController {
         }
 
         if (propertyTaxCommonUtils.isRoOrCommissioner(loggedInUserDesignation))
-            wfInitiator = assignmentService
-                    .getAllActiveEmployeeAssignmentsByEmpId(vacancyRemissionApproval.getCreatedBy().getId()).get(0);
+            wfInitiator = vacancyRemissionService.getWorkflowInitiatorAssignment(vacancyRemissionApproval.getCreatedBy().getId(), Arrays.asList(PropertyTaxConstants.REVENUE_INSPECTOR_DESGN));
         else
             wfInitiator = vacancyRemissionService.getWorkflowInitiator(vacancyRemissionApproval);
 
