@@ -4134,7 +4134,7 @@ public class PropertyService {
 	}
 
 	/**
-	 * Creates or Updates Application index
+	 * Updates Portal
 	 *
 	 * @param stateAware
 	 * @param applictionType

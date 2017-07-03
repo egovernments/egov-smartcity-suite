@@ -527,7 +527,6 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         objection.getBasicProperty().setUnderWorkflow(Boolean.TRUE);
         objection.setType(getWfType());
         propertyId = objection.getBasicProperty().getUpicNo();
-        showAckBtn = Boolean.TRUE;
         updateStateAndStatus(objection);
         if (NATURE_OF_WORK_RP.equalsIgnoreCase(wfType))
             addActionMessage(getText("objection.success") + objection.getObjectionNumber());
@@ -1184,12 +1183,14 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                 propService.updateIndexes(objection, APPLICATION_TYPE_REVISION_PETITION);
             else
                 propService.updateIndexes(objection, APPLICATION_TYPE_GRP);
-        }
-        if (objection.getSource()!=null && Source.CITIZENPORTAL.toString().equalsIgnoreCase(objection.getSource())) {
-                if (wfType.equalsIgnoreCase(NATURE_OF_WORK_RP))
+
+            if (objection.getSource()!=null && Source.CITIZENPORTAL.toString().equalsIgnoreCase(objection.getSource())) {
+                if (NATURE_OF_WORK_RP.equalsIgnoreCase(wfType))
                     propService.updatePortal(objection, APPLICATION_TYPE_REVISION_PETITION);
                 else
                     propService.updatePortal(objection, APPLICATION_TYPE_GRP);
+            }
+
         }
 
         return WFLOW_ACTION_STEP_SIGN.equals(actionType) ? DIGITAL_SIGNATURE_REDIRECTION : NOTICE;
@@ -1499,6 +1500,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         } else if (workFlowAction != null && !"".equals(workFlowAction)
                 && WFLOW_ACTION_STEP_SAVE.equalsIgnoreCase(workFlowAction))
             addActionMessage(getText("file.save"));
+        checkToDisplayAckButton();
 
     }
 
@@ -2332,4 +2334,8 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         this.citizenPortalUser = citizenPortalUser;
     }
 
+    private void checkToDisplayAckButton() {
+        if(getModel().getId() == null)
+            showAckBtn = Boolean.TRUE;
+    }
 }
