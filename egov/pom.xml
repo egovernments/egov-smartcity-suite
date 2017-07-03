@@ -39,7 +39,8 @@
   ~  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.egov</groupId>
@@ -140,11 +141,11 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <build.number>${timestamp}</build.number>
         <app.version>${project.version}</app.version>
-        <versioneye.key />
-        <db.driver />
-        <db.url />
-        <db.user />
-        <db.password />
+        <versioneye.key/>
+        <db.driver/>
+        <db.url/>
+        <db.user/>
+        <db.password/>
         <disable.drop.db>true</disable.drop.db>
         <!-- Sonar properties -->
         <sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
@@ -163,55 +164,54 @@
         <javax-mail-version>1.5.5</javax-mail-version>
         <javax-el-version>3.0.1-b08</javax-el-version>
         <xerces-version>2.11.0.SP4</xerces-version>
-        <postgres-version>42.0.0</postgres-version>
+        <postgres-version>42.1.1</postgres-version>
 
         <!-- Other application dependency versions -->
         <struts2-version>2.5.10.1</struts2-version>
         <struts2-jquery-version>4.0.2</struts2-jquery-version>
-        <xstream-version>1.4.9</xstream-version>
-        <xpp3-version>1.1.4c</xpp3-version>
-        <spring-version>4.3.8.RELEASE</spring-version>
+        <xstream-version>1.4.10</xstream-version>
+        <spring-version>4.3.9.RELEASE</spring-version>
         <spring-session-version>1.3.0.RELEASE</spring-session-version>
         <spring-data-jpa-version>1.10.6.RELEASE</spring-data-jpa-version>
         <spring-data-jpa-envers-version>1.0.6.RELEASE</spring-data-jpa-envers-version>
-        <spring-security-version>4.2.2.RELEASE</spring-security-version>
-        <spring-security-oauth2-version>2.1.0.RELEASE</spring-security-oauth2-version>
+        <spring-security-version>4.2.3.RELEASE</spring-security-version>
+        <spring-security-oauth2-version>2.1.1.RELEASE</spring-security-oauth2-version>
         <spring-data-elasticsearch>2.0.6.RELEASE</spring-data-elasticsearch>
         <elastic-search-version>2.4.1</elastic-search-version>
         <apache-tiles-version>3.0.7</apache-tiles-version>
         <embedded-redis-version>0.6</embedded-redis-version>
-        <quartz-version>2.2.3</quartz-version>
+        <quartz-version>2.3.0</quartz-version>
         <jasper-report-version>6.1.0</jasper-report-version>
         <json-simple-version>1.1.1</json-simple-version>
         <jackson-version>2.8.2</jackson-version>
-        <orika-core.version>1.4.6</orika-core.version>
-        <gson-version>2.8.0</gson-version>
+        <orika-core.version>1.5.1</orika-core.version>
+        <gson-version>2.8.1</gson-version>
         <antisamy-version>1.5.5</antisamy-version>
         <jasypt-version>1.9.2</jasypt-version>
         <display-tag-version>1.2</display-tag-version>
         <jfreechart-version>1.0.19</jfreechart-version>
-        <groovy-all-version>2.4.9</groovy-all-version>
+        <groovy-all-version>2.4.12</groovy-all-version>
         <itext-version>2.1.7</itext-version>
         <commons-javaflow-version>20060411</commons-javaflow-version>
         <jexcelapi-version>2.6.12</jexcelapi-version>
         <commons-beanutils-version>1.9.3</commons-beanutils-version>
         <commons-config-version>1.10</commons-config-version>
         <commons-lang-version>2.6</commons-lang-version>
-        <commons-lang3-version>3.5</commons-lang3-version>
+        <commons-lang3-version>3.6</commons-lang3-version>
         <commons-email-version>1.4</commons-email-version>
         <commons-collections-version>3.2.2</commons-collections-version>
         <commons-codec-version>1.10</commons-codec-version>
         <commons-dbcp-version>1.4</commons-dbcp-version>
         <commons-io-version>2.5</commons-io-version>
-        <commons-fileupload-version>1.3.2</commons-fileupload-version>
+        <commons-fileupload-version>1.3.3</commons-fileupload-version>
         <httpclient-version>4.5.3</httpclient-version>
         <sitemesh-version>2.4.2</sitemesh-version>
         <ehcache-web-version>2.0.4</ehcache-web-version>
         <joda-time-version>2.9.9</joda-time-version>
         <joda-time-jsptag-version>1.1.1</joda-time-jsptag-version>
-        <jsoup-version>1.10.2</jsoup-version>
+        <jsoup-version>1.10.3</jsoup-version>
         <jython-version>2.5.2</jython-version>
-        <flyway-core-version>4.1.2</flyway-core-version>
+        <flyway-core-version>4.2.0</flyway-core-version>
         <junit-version>4.12</junit-version>
         <mockito-all-version>1.10.19</mockito-all-version>
         <springockito-version>1.0.9</springockito-version>
@@ -220,7 +220,7 @@
         <hamcrest-all-version>1.3</hamcrest-all-version>
         <slf4j-version>1.7.25</slf4j-version>
         <log4j-version>1.2.17</log4j-version>
-        <google-guava-version>21.0</google-guava-version>
+        <google-guava-version>22.0</google-guava-version>
         <recaptcha.version>0.0.8</recaptcha.version>
         <javaxt.core.version>1.7.8</javaxt.core.version>
         <!-- Plugin dependency versions-->
@@ -228,14 +228,14 @@
         <mvn.release.plugin.version>2.5.3</mvn.release.plugin.version>
         <mvn.jacoco.plugin.version>0.7.9</mvn.jacoco.plugin.version>
         <mvn.ear.plugin.version>2.10.1</mvn.ear.plugin.version>
-        <mvn.war.plugin.version>3.0.0</mvn.war.plugin.version>
+        <mvn.war.plugin.version>3.1.0</mvn.war.plugin.version>
         <mvn.jar.plugin.version>3.0.2</mvn.jar.plugin.version>
         <mvn.compiler.plugin.version>3.6.1</mvn.compiler.plugin.version>
-        <mvn.dependency.plugin.version>3.0.0</mvn.dependency.plugin.version>
+        <mvn.dependency.plugin.version>3.0.1</mvn.dependency.plugin.version>
         <mvn.resource.plugin.version>3.0.1</mvn.resource.plugin.version>
         <mvn.sonar.plugin.version>3.3.0.603</mvn.sonar.plugin.version>
         <mvn.wildfly.plugin.version>1.1.0.Final</mvn.wildfly.plugin.version>
-        <mvn.versioneye.plugin.version>3.11.2</mvn.versioneye.plugin.version>
+        <mvn.versioneye.plugin.version>3.11.4</mvn.versioneye.plugin.version>
         <mvn.surefire.plugin.version>2.20</mvn.surefire.plugin.version>
         <mvn.eclipse.lifecycle.plugin.version>1.0.0</mvn.eclipse.lifecycle.plugin.version>
         <mvn.clean.plugin.version>3.0.0</mvn.clean.plugin.version>
@@ -415,11 +415,6 @@
                 <groupId>com.thoughtworks.xstream</groupId>
                 <artifactId>xstream</artifactId>
                 <version>${xstream-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>xpp3</groupId>
-                <artifactId>xpp3_min</artifactId>
-                <version>${xpp3-version}</version>
             </dependency>
             <!-- STRUTS2 DEPENDENCIES END -->
 
@@ -1007,6 +1002,10 @@
             <groupId>commons-fileupload</groupId>
             <artifactId>commons-fileupload</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
         <!-- COMMONS END -->
 
         <!-- SPRING DEPENDENCIES START -->
@@ -1246,7 +1245,7 @@
                                         </goals>
                                     </pluginExecutionFilter>
                                     <action>
-                                        <ignore />
+                                        <ignore/>
                                     </action>
                                 </pluginExecution>
                             </pluginExecutions>
