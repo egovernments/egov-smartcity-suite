@@ -42,191 +42,106 @@
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <html>
 <head>
+    <script src="<cdn:url  value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
     <title><s:text name="page.title.newtrade"/></title>
-
     <script>
 
         function validateLicenseForm() {
-            if (document.getElementById("mobilePhoneNumber").value.trim() == '' || document.getElementById("mobilePhoneNumber").value == null) {
-                showMessage('newLicense_error', '<s:text name="newlicense.mobilephonenumber.null" />');
-                window.scroll(0, 0);
-                return false;
-            } else if (document.getElementById("applicantName").value.trim() == '' || document.getElementById("applicantName").value == null) {
-                showMessage('newLicense_error', '<s:text name="newlicense.applicantname.null" />');
-                window.scroll(0, 0);
-                return false;
-            } else if (document.getElementById("fatherOrSpouseName").value.trim() == '' || document.getElementById("fatherOrSpouseName").value == null) {
-                showMessage('newLicense_error', '<s:text name="newlicense.fatherorspousename.null" />');
-                window.scroll(0, 0);
-                return false;
-            } else if (document.getElementById("emailId").value.trim() == '' || document.getElementById("emailId").value == null) {
-                showMessage('newLicense_error', '<s:text name="newlicense.email.null" />');
-                window.scroll(0, 0);
-                return false;
-            } else if (document.getElementById("licenseeAddress").value.trim() == '' || document.getElementById("licenseeAddress").value == null) {
-                showMessage('newLicense_error', '<s:text name="newlicense.licenseeaddress.null" />');
-                window.scroll(0, 0);
-                return false;
-            } else if (document.getElementById("boundary").value == '') {
-                showMessage('newLicense_error', '<s:text name="newlicense.locality.null" />');
-                window.scroll(0, 0);
-                return false;
-            } else if (document.getElementById("ownershipType").value == '-1') {
-                showMessage('newLicense_error', '<s:text name="newlicense.ownershiptype.null" />');
-                window.scroll(0, 0);
-                return false;
-            } else if (document.getElementById("nameOfEstablishment").value.trim() == '' || document.getElementById("nameOfEstablishment").value == null) {
-                showMessage('newLicense_error', '<s:text name="newlicense.tradeTitle.null" />');
-                window.scroll(0, 0);
-                return false;
-            }
-            else if (document.getElementById("address").value.trim() == '' || document.getElementById("address").value == null) {
-                showMessage('newLicense_error', '<s:text name="newlicense.licenseaddress.null" />');
-                window.scroll(0, 0);
-                return false;
-            } else if (document.getElementById("buildingType").value == '-1') {
-                showMessage('newLicense_error', '<s:text name="newlicense.buildingtype.null" />');
-                window.scroll(0, 0);
-                return false;
-            } else if (document.getElementById("category").value == '-1') {
-                showMessage('newLicense_error', '<s:text name="newlicense.category.null" />');
-                window.scroll(0, 0);
-                return false;
-            } else if (document.getElementById("subCategory").value == '-1') {
-                showMessage('newLicense_error', '<s:text name="newlicense.subcategory.null" />');
-                window.scroll(0, 0);
-                return false;
-            } else if (document.getElementById("tradeArea_weight").value == '' || document.getElementById("tradeArea_weight").value == null) {
-                showMessage('newLicense_error', '<s:text name="newlicense.tradeareaweight.null" />');
-                window.scroll(0, 0);
-                return false;
-            } else if (document.getElementById("uom").value == "") {
-                showMessage('newLicense_error', '<s:text name="newlicense.uom.null" />');
-                window.scroll(0, 0);
-                return false;
-            } else if (document.getElementById("startDate").value == '' || document.getElementById("startDate").value == null) {
-                showMessage('newLicense_error', '<s:text name="newlicense.startDate.null" />');
-                window.scroll(0, 0);
-                return false;
-            } else if (document.getElementById("showAgreementDtl").checked) {
-                if (document.getElementById("agreementDate").value == '' || document.getElementById("agreementDate").value == null) {
-                    showMessage('newLicense_error', '<s:text name="newlicense.agreementDate.null" />');
+            if ($('#licenseForm').valid()) {
+                if (document.getElementById("mobilePhoneNumber").value.trim() == '' || document.getElementById("mobilePhoneNumber").value == null) {
+                    showMessage('newLicense_error', '<s:text name="newlicense.mobilephonenumber.null" />');
                     window.scroll(0, 0);
                     return false;
-                } else if (document.getElementById("agreementDocNo").value.trim() == '' || document.getElementById("agreementDocNo").value == null) {
-                    showMessage('newLicense_error', '<s:text name="newlicense.agreementDocNo.null" />');
-                    window.scroll(0, 0);
+                } else if (document.getElementById("applicantName").value.trim() == '' || document.getElementById("applicantName").value == null) {
+                    showMessage('applicantname_error', '<s:text name="newlicense.applicantname.null" />');
+                    $( '#applicantName').focus();
+                    return false;
+                } else if (document.getElementById("fatherOrSpouseName").value.trim() == '' || document.getElementById("fatherOrSpouseName").value == null) {
+                    showMessage('fatherorSpouse_error', '<s:text name="newlicense.fatherorspousename.null" />');
+                    $( '#fatherOrSpouseName').focus();
+                    return false;
+                } else if (document.getElementById("emailId").value.trim() == '' || document.getElementById("emailId").value == null || !isValidEmailAddress(document.getElementById("emailId").value)) {
+                    showMessage('email_error', '<s:text name="newlicense.email.null" />');
+                    $( '#emailId').focus();
+                    return false;
+                } else if (document.getElementById("licenseeAddress").value.trim() == '' || document.getElementById("licenseeAddress").value == null) {
+                    showMessage('licenseeAddress_error', '<s:text name="newlicense.licenseeaddress.null" />');
+                    $( '#licenseeAddress').focus();
+                    return false;
+                } else if (document.getElementById("boundary").value == '') {
+                    showMessage('locality_error', '<s:text name="newlicense.locality.null" />');
+                    $( '#boundary').focus();
+                    return false;
+                } else if (document.getElementById("ownershipType").value == '-1') {
+                    showMessage('ownership_error', '<s:text name="newlicense.ownershiptype.null" />');
+                    $( '#ownershipType').focus();
+                    return false;
+                } else if (document.getElementById("nameOfEstablishment").value.trim() == '' || document.getElementById("nameOfEstablishment").value == null) {
+                    showMessage('nameOfEstablishment_error', '<s:text name="newlicense.tradeTitle.null" />');
+                    $( '#nameOfEstablishment').focus();
                     return false;
                 }
-            }
-
-            var adhaar = document.getElementById('adhaarId').value;
-            var mobileno = document.getElementById('mobilePhoneNumber').value;
-            if (adhaar.length > 0 && adhaar.length < 12) {
-                $('#adhaarError').removeClass("hide");
-                document.getElementById("adhaarId").focus();
-                return false;
-            }
-            if (mobileno.length > 0 && mobileno.length < 10) {
-                $('#mobileError').removeClass("hide");
-                document.getElementById("mobilePhoneNumber").focus();
-                return false;
-            }
-            else {
-                return true;
-            }
-        }
-
-        function onBodyLoad() {
-            var currentState = document.getElementById("currentWfstate").value;
-            showHideAgreement();
-            if (currentState == 'Second level fee collected') {
-                $("span").remove(".mandatory");
-            }
-            try {
-                if (document.getElementById("mode").value == 'disableApprover') {
-                    toggleFields(true, ['Submit', 'Reject', 'button2', 'Approve', 'approverComments', 'Sign', 'Preview', 'Generate Certificate']);
-                    $(".show-row").hide();
-                    $('#approverComments').removeAttr('<span class="mandatory"></span>');
-                    $('#approverDepartment').removeAttr('<span class="mandatory"></span>');
-                    $('#approverDesignation').removeAttr('<span class="mandatory"></span>');
-                    $('#approverPositionId').removeAttr('<span class="mandatory"></span>');
-                    $('#workflowCommentsDiv label').text('<s:text name="newlicense.fieldInspection.label" />');
-                }
-            } catch (e) {
-                console.error(e);
-            }
-
-            try {
-                if (document.getElementById("mode").value == 'ACK') {
-
-                    toggleFields(true, ['approverDepartment', 'approverDesignation', 'approverPositionId', 'approverComments', 'Generate Certificate',
-                        'Forward', 'Reject', 'button2', 'Approve', 'Sign', 'Preview', 'closeBtn', 'closeDiv', 'currentWfstate']);
-                    //remove onclick event for propertyno search button
-                    $("#searchImg").removeAttr("onclick");
-                    // remove onclick event for add and delete button having class = add-padding
-                    $('.add-padding').attr('onclick', '').unbind('click');
-                    // renaming approver remarks label for second level of workflow
-                    <s:if test="%{getNextAction()!='END'}">
-                    $('#workflowCommentsDiv label').text('<s:text name="newlicense.fieldInspection.label" />');
-                    $('#workflowCommentsDiv label').append('<span class="mandatory"></span>');
-                    </s:if>
-                    document.getElementById("btncancel").disabled = false;
-                    document.getElementById("closebn").disabled = false;
-                    document.getElementById('workflowDiv').style.visibility = 'hidden';
-
-                }
-            } catch (e) {
-                console.error(e);
-            }
-            try {
-                if (document.getElementById("mode").value == 'view' || document.getElementById("mode").value == 'editForReject') {
-
-                    toggleFields(true, ['approverDepartment', 'approverDesignation', 'approverPositionId', 'approverComments', 'Generate Certificate',
-                        'Forward', 'Reject', 'button2', 'Approve', 'Sign', 'Preview', 'currentWfstate']);
-                    //remove onclick event for propertyno search button
-                    $("#searchImg").removeAttr("onclick");
-                    // remove onclick event for add and delete button having class = add-padding
-                    $('.add-padding').attr('onclick', '').unbind('click');
-                    // renaming approver remarks label for second level of workflow
-                    <s:if test="%{getNextAction()!='END'}">
-                    $('#workflowCommentsDiv label').text('<s:text name="newlicense.fieldInspection.label" />');
-                    $('#workflowCommentsDiv label').append('<span class="mandatory"></span>');
-                    </s:if>
-                    if (currentState == 'SI/MHO approved') {
-                        document.getElementById('approverDetailHeading').hidden = true
+                else if (document.getElementById("address").value.trim() == '' || document.getElementById("address").value == null) {
+                    showMessage('address_error', '<s:text name="newlicense.licenseaddress.null" />');
+                    $( '#address').focus();
+                    return false;
+                } else if (document.getElementById("buildingType").value == '-1') {
+                    showMessage('natureOfBusiness_error', '<s:text name="newlicense.buildingtype.null" />');
+                    $( '#buildingType').focus();
+                    return false;
+                } else if (document.getElementById("category").value == '-1') {
+                    showMessage('category_error', '<s:text name="newlicense.category.null" />');
+                    $( '#category').focus();
+                    return false;
+                } else if (document.getElementById("subCategory").value == '-1') {
+                    showMessage('subCategory_error', '<s:text name="newlicense.subcategory.null" />');
+                    $( '#subCategory').focus();
+                    return false;
+                } else if (document.getElementById("tradeArea_weight").value == '' || document.getElementById("tradeArea_weight").value == null) {
+                    showMessage('tradeArea_weight_error', '<s:text name="newlicense.tradeareaweight.null" />');
+                    $( '#tradeArea_weight').focus();
+                    return false;
+                } else if (document.getElementById("uom").value == "") {
+                    showMessage('uom_error', '<s:text name="newlicense.uom.null" />');
+                    $( '#uom').focus();
+                    return false;
+                } else if (document.getElementById("startDate").value == '' || document.getElementById("startDate").value == null) {
+                    showMessage('newLicense_error', '<s:text name="newlicense.startDate.null" />');
+                    window.scroll(0, 0);
+                    return false;
+                } else if (document.getElementById("showAgreementDtl").checked) {
+                    if (document.getElementById("agreementDate").value == '' || document.getElementById("agreementDate").value == null) {
+                        showMessage('newLicense_error', '<s:text name="newlicense.agreementDate.null" />');
+                        window.scroll(0, 0);
+                        return false;
+                    } else if (document.getElementById("agreementDocNo").value.trim() == '' || document.getElementById("agreementDocNo").value == null) {
+                        showMessage('newLicense_error', '<s:text name="newlicense.agreementDocNo.null" />');
+                        window.scroll(0, 0);
+                        return false;
                     }
 
                 }
-            } catch (e) {
-                console.error(e);
-            }
-            try {
-                if (document.getElementById("mode").value == 'editForApproval') {
-                    toggleFields(true, ['approverDepartment', 'approverDesignation', 'approverPositionId', 'approverComments', 'Generate Certificate',
-                        'Forward', 'Reject', 'button2', 'Approve']);
-                    //remove onclick event for propertyno search button
-                    document.getElementById("tradeArea_weight").disabled = false;
-                    $("#searchImg").removeAttr("onclick");
-                    // remove onclick event for add and delete button having class = add-padding
-                    $('.add-padding').attr('onclick', '').unbind('click');
-                    // renaming approver remarks label for second level of workflow
-                    <s:if test="%{getNextAction()!='END'}">
-                    $('#workflowCommentsDiv label').text('<s:text name="newlicense.fieldInspection.label" />');
-                    $('#workflowCommentsDiv label').append('<span class="mandatory"></span>');
-                    </s:if>
+
+                var adhaar = document.getElementById('adhaarId').value;
+                var mobileno = document.getElementById('mobilePhoneNumber').value;
+                if (adhaar.length > 0 && adhaar.length < 12) {
+                    $('#adhaarError').removeClass("hide");
+                    document.getElementById("adhaarId").focus();
+                    return false;
                 }
-            } catch (e) {
-                console.error(e);
+                if (mobileno.length > 0 && mobileno.length < 10)
+                {
+                    $('#mobileError').removeClass("hide");
+                    $("#mobilePhoneNumber").focus();
+                    return false;
+                }
+                else {
+                    return true;
+                }
             }
-            if (currentState == 'First level fee collected')
-                document.getElementById('certificateDiv').hidden = false;
-            if ($('#boundary')) {
-                $('#boundary').attr('disabled', false);
-            }
-            if ($('#parentBoundary')) {
-                $('#parentBoundary').attr('disabled', false);
-            }
+            else
+
+                return false;
         }
 
         //This method will be called from included jsp
@@ -235,11 +150,37 @@
         }
 
         function formsubmit() {
+
             if (!validateLicenseForm()) {
                 return false;
             }
             return onSubmit();
+           // $("#licenseForm").submit();
         }
+
+        $(document).ready(function(){
+            $("#mobilePhoneNumber").change(function () {
+                var mobileno = document.getElementById('mobilePhoneNumber').value;
+                if (mobileno.length > 0 && mobileno.length < 10)
+                {
+                    $('#mobileError').removeClass("hide");
+                    $("#mobilePhoneNumber").focus();
+                    return false;
+                }
+                else if(mobileno.length==10)
+                    $('#mobileError').hide();
+            });
+            $("#emailId").change(function () {
+                if (document.getElementById("emailId").value.trim() == '' || document.getElementById("emailId").value == null || !isValidEmailAddress(document.getElementById("emailId").value))
+                {
+                    showMessage('email_error', '<s:text name="newlicense.email.null" />');
+                    $("#emailId").focus();
+                    return false;
+                }
+                else if(!document.getElementById("emailId").value.trim() == '' || !document.getElementById("emailId").value == null || isValidEmailAddress(document.getElementById("emailId").value))
+                    $('#email_error').hide();
+            });
+        })
 
         function onCancelSubmit() {
             clearMessage('newLicense_error');
@@ -282,7 +223,99 @@
 
             return true;
         }
-    </script>
+    </script><script>
+    function onBodyLoad() {
+        var currentState = document.getElementById("currentWfstate").value;
+        showHideAgreement();
+        if (currentState == 'Second level fee collected') {
+            $("span").remove(".mandatory");
+        }
+        try {
+            if (document.getElementById("mode").value == 'disableApprover') {
+                toggleFields(true, ['Submit', 'Reject', 'button2', 'Approve', 'approverComments', 'Sign', 'Preview', 'Generate Certificate']);
+                $(".show-row").hide();
+                $('#approverComments').removeAttr('<span class="mandatory"></span>');
+                $('#approverDepartment').removeAttr('<span class="mandatory"></span>');
+                $('#approverDesignation').removeAttr('<span class="mandatory"></span>');
+                $('#approverPositionId').removeAttr('<span class="mandatory"></span>');
+                $('#workflowCommentsDiv label').text('<s:text name="newlicense.fieldInspection.label" />');
+            }
+        } catch (e) {
+            console.error(e);
+        }
+
+        try {
+            if (document.getElementById("mode").value == 'ACK') {
+
+                toggleFields(true, ['approverDepartment', 'approverDesignation', 'approverPositionId', 'approverComments', 'Generate Certificate',
+                    'Forward', 'Reject', 'button2', 'Approve', 'Sign', 'Preview', 'closeBtn', 'closeDiv', 'currentWfstate']);
+                //remove onclick event for propertyno search button
+                $("#searchImg").removeAttr("onclick");
+                // remove onclick event for add and delete button having class = add-padding
+                $('.add-padding').attr('onclick', '').unbind('click');
+                // renaming approver remarks label for second level of workflow
+                <s:if test="%{getNextAction()!='END'}">
+                $('#workflowCommentsDiv label').text('<s:text name="newlicense.fieldInspection.label" />');
+                $('#workflowCommentsDiv label').append('<span class="mandatory"></span>');
+                </s:if>
+                document.getElementById("btncancel").disabled = false;
+                document.getElementById("closebn").disabled = false;
+                document.getElementById('workflowDiv').style.visibility = 'hidden';
+
+            }
+        } catch (e) {
+            console.error(e);
+        }
+        try {
+            if (document.getElementById("mode").value == 'view' || document.getElementById("mode").value == 'editForReject') {
+
+                toggleFields(true, ['approverDepartment', 'approverDesignation', 'approverPositionId', 'approverComments', 'Generate Certificate',
+                    'Forward', 'Reject', 'button2', 'Approve', 'Sign', 'Preview', 'currentWfstate']);
+                //remove onclick event for propertyno search button
+                $("#searchImg").removeAttr("onclick");
+                // remove onclick event for add and delete button having class = add-padding
+                $('.add-padding').attr('onclick', '').unbind('click');
+                // renaming approver remarks label for second level of workflow
+                <s:if test="%{getNextAction()!='END'}">
+                $('#workflowCommentsDiv label').text('<s:text name="newlicense.fieldInspection.label" />');
+                $('#workflowCommentsDiv label').append('<span class="mandatory"></span>');
+                </s:if>
+                if (currentState == 'SI/MHO approved') {
+                    document.getElementById('approverDetailHeading').hidden = true
+                }
+
+            }
+        } catch (e) {
+            console.error(e);
+        }
+        try {
+            if (document.getElementById("mode").value == 'editForApproval') {
+                toggleFields(true, ['approverDepartment', 'approverDesignation', 'approverPositionId', 'approverComments', 'Generate Certificate',
+                    'Forward', 'Reject', 'button2', 'Approve']);
+                //remove onclick event for propertyno search button
+                document.getElementById("tradeArea_weight").disabled = false;
+                $("#searchImg").removeAttr("onclick");
+                // remove onclick event for add and delete button having class = add-padding
+                $('.add-padding').attr('onclick', '').unbind('click');
+                // renaming approver remarks label for second level of workflow
+                <s:if test="%{getNextAction()!='END'}">
+                $('#workflowCommentsDiv label').text('<s:text name="newlicense.fieldInspection.label" />');
+                $('#workflowCommentsDiv label').append('<span class="mandatory"></span>');
+                </s:if>
+            }
+        } catch (e) {
+            console.error(e);
+        }
+        if (currentState == 'First level fee collected')
+            document.getElementById('certificateDiv').hidden = false;
+        if ($('#boundary')) {
+            $('#boundary').attr('disabled', false);
+        }
+        if ($('#parentBoundary')) {
+            $('#parentBoundary').attr('disabled', false);
+        }
+    }
+</script>
 
 </head>
 <body onload="onBodyLoad()">
@@ -310,7 +343,7 @@
             </div>
         </s:if>
 
-        <s:form name="newTradeLicense" action="newTradeLicense-create" theme="simple" enctype="multipart/form-data"
+        <s:form id="licenseForm" name="newTradeLicense" action="newTradeLicense-create" theme="simple" enctype="multipart/form-data"
                 cssClass="form-horizontal form-groups-bordered" validate="true">
             <s:push value="model">
                 <s:token/>
