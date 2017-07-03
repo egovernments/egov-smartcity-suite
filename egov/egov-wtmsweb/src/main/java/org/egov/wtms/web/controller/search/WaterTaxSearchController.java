@@ -114,7 +114,7 @@ public class WaterTaxSearchController {
     @ModelAttribute("cscUserRole")
     public String getCurrentUserRole() {
         String cscUserRole = "";
-        User currentUser = null;
+        User currentUser;
 
         if (ApplicationThreadLocals.getUserId() != null)
             currentUser = userService.getUserById(ApplicationThreadLocals.getUserId());
@@ -153,7 +153,7 @@ public class WaterTaxSearchController {
     @ModelAttribute("ulbUserRole")
     public String getUlbOperatorUserRole() {
         String userRole = "";
-        User currentUser = null;
+        User currentUser;
         if (ApplicationThreadLocals.getUserId() != null)
             currentUser = userService.getUserById(ApplicationThreadLocals.getUserId());
         else
@@ -172,7 +172,7 @@ public class WaterTaxSearchController {
     @ModelAttribute("superUserRole")
     public String getSuperUserRole() {
         String userRole = "";
-        User currentUser = null;
+        User currentUser;
 
         if (ApplicationThreadLocals.getUserId() != null)
             currentUser = userService.getUserById(ApplicationThreadLocals.getUserId());
@@ -193,7 +193,7 @@ public class WaterTaxSearchController {
     @ModelAttribute("administratorRole")
     public String getAdminstratorRole() {
         String userRole = "";
-        User currentUser = null;
+        User currentUser;
 
         if (ApplicationThreadLocals.getUserId() != null)
             currentUser = userService.getUserById(ApplicationThreadLocals.getUserId());
@@ -217,7 +217,7 @@ public class WaterTaxSearchController {
     @ModelAttribute("approverUserRole")
     public String getApproverUserRole() {
         String userRole = "";
-        User currentUser = null;
+        User currentUser;
         waterTaxUtils.getUserRolesForLoggedInUser();
 
         if (ApplicationThreadLocals.getUserId() != null)
@@ -240,7 +240,7 @@ public class WaterTaxSearchController {
     @ModelAttribute("operatorRole")
     public String getOperatorUserRole() {
         String userRole = "";
-        User currentUser = null;
+        User currentUser;
         if (ApplicationThreadLocals.getUserId() != null)
             currentUser = userService.getUserById(ApplicationThreadLocals.getUserId());
         else
@@ -256,7 +256,7 @@ public class WaterTaxSearchController {
     @ModelAttribute("billcollectionRole")
     public String getBillOperatorUserRole() {
         String userRole = "";
-        User currentUser = null;
+        User currentUser;
         if (ApplicationThreadLocals.getUserId() != null)
             currentUser = userService.getUserById(ApplicationThreadLocals.getUserId());
         else
@@ -269,7 +269,8 @@ public class WaterTaxSearchController {
         return userRole;
     }
 
-    public @ModelAttribute("revenueWards") List<Boundary> revenueWardList() {
+    @ModelAttribute("revenueWards")
+    public List<Boundary> revenueWardList() {
         return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(WaterTaxConstants.REVENUE_WARD,
                 REVENUE_HIERARCHY_TYPE);
     }
@@ -282,7 +283,7 @@ public class WaterTaxSearchController {
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
     public List<ConnectionSearchRequest> searchConnection(@ModelAttribute final ConnectionSearchRequest searchRequest) {
-        List<WaterChargeDocument> temList = new ArrayList<>();
+        List<WaterChargeDocument> temList;
         final List<ConnectionSearchRequest> finalResult = new ArrayList<>();
         temList = findAllWaterChargeIndexByFilter(searchRequest);
         for (final WaterChargeDocument waterChargeIndex : temList) {
@@ -290,6 +291,7 @@ public class WaterTaxSearchController {
             customerObj.setApplicantName(waterChargeIndex.getConsumerName());
             customerObj.setConsumerCode(waterChargeIndex.getConsumerCode());
             customerObj.setOldConsumerNumber(waterChargeIndex.getOldConsumerCode());
+            customerObj.setPropertyid(waterChargeIndex.getPropertyId());
             customerObj.setAddress(waterChargeIndex.getLocality());
             customerObj.setApplicationcode(waterChargeIndex.getApplicationCode());
             customerObj.setUsage(waterChargeIndex.getUsage());
@@ -314,6 +316,8 @@ public class WaterTaxSearchController {
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("consumerCode", searchRequest.getConsumerCode()));
         if (StringUtils.isNotBlank(searchRequest.getOldConsumerNumber()))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("oldConsumerCode", searchRequest.getOldConsumerNumber()));
+        if (StringUtils.isNotBlank(searchRequest.getPropertyid()))
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("propertyId", searchRequest.getPropertyid()));
         if (StringUtils.isNotBlank(searchRequest.getRevenueWard()))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("revenueWard", searchRequest.getRevenueWard()));
         if (StringUtils.isNotBlank(searchRequest.getMobileNumber()))

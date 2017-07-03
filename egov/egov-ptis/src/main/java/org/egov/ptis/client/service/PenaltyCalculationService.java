@@ -764,16 +764,6 @@ public class PenaltyCalculationService {
         return installmentWisePenaltyDemandDetails;
     }
 
-    public boolean isEarlyPayRebateActive() {
-        boolean value = false;
-        final Installment currentInstallment = propertyTaxCommonUtils.getCurrentInstallment();
-        final RebatePeriod rebatePeriod = rebatePeriodService.getRebateForCurrInstallment(currentInstallment.getId());
-        if (rebatePeriod != null)
-            if (rebatePeriod.getRebateDate().compareTo(new Date()) > 0)
-                value = true;
-        return value;
-    }
-
     public void setPropertyTaxUtil(PropertyTaxUtil propertyTaxUtil) {
         this.propertyTaxUtil = propertyTaxUtil;
     }

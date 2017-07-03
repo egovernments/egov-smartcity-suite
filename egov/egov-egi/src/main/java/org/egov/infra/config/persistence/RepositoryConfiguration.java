@@ -42,7 +42,7 @@ package org.egov.infra.config.persistence;
 
 
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.admin.master.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -63,11 +63,11 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 public class RepositoryConfiguration {
 
     @Autowired
-    private SecurityUtils securityUtils;
+    private UserService userService;
 
     @Bean
     @Profile("production")
     public AuditorAware<User> springSecurityAwareAuditor() {
-        return securityUtils::getCurrentUser;
+        return userService::getCurrentUser;
     }
 }

@@ -223,12 +223,12 @@
                                             <input type="text" name="feeMatrixDetail[0].uomTo"
                                                    class="form-control patternvalidation tovalue"
                                                    pattern="-?\d*" data-pattern="numerichyphen" data-fromto="to"
-                                                   required="required"/>
+                                                   maxlength="8" required="required"/>
                                         </td>
                                         <td>
                                             <input type="text" name="feeMatrixDetail[0].amount"
                                                    class="form-control patternvalidation"
-                                                   data-pattern="number" required="required"/>
+                                                   data-pattern="number" maxlength="8" required="required"/>
                                         </td>
                                         <td><span class="add-padding"><i class="fa fa-trash delete-row" data-func="add" aria-hidden="true"></i></span></td>
                                     </tr>

@@ -116,18 +116,12 @@
 				
 				if($('#connectionType').val() !='METERED')
 					{
-						$('#monthlyFee').attr('required', 'required');
-						$('#existmeterCost').removeAttr('required');
-						$('#existmeterName').removeAttr('required');
 						$('#existmeterNo').removeAttr('required');
 						$('#previousReading').removeAttr('required');
 						$('#currentcurrentReading').removeAttr('required');
 						$('#existreadingDate').removeAttr('required');
 					}
 				else {
-					$('#monthlyFee').removeAttr('required');
-					$('#existmeterCost').attr('required', 'required');
-					$('#existmeterName').attr('required', 'required');
 					$('#existmeterNo').attr('required', 'required');
 					$('#previousReading').attr('required', 'required');
 					$('#currentcurrentReading').attr('required', 'required');

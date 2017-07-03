@@ -47,7 +47,6 @@ import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -176,15 +175,14 @@ public class SewerageAjaxConnectionController {
             throw new ApplicationRuntimeException("Error while getting all installments from start date", e);
         }
         SewerageDemandDetail dmdDtl = null;
-        for (final Installment installObj : allInstallments)
+        for (final Installment installObj : allInstallments) {
             // check whether the from date of installment is less than current date. To eliminate future installments
-            if (installObj.getFromDate().compareTo(new Date()) < 0) {
-                final EgDemandReason demandReasonObj = sewerageDemandService
-                        .getDemandReasonByCodeAndInstallment(SewerageTaxConstants.FEES_SEWERAGETAX_CODE, installObj.getId());
-                if (demandReasonObj != null)
-                    dmdDtl = createDemandDetailBean(installObj, demandReasonObj);
-                tempDemandDetail.add(dmdDtl);
-            }
+            final EgDemandReason demandReasonObj = sewerageDemandService
+                    .getDemandReasonByCodeAndInstallment(SewerageTaxConstants.FEES_SEWERAGETAX_CODE, installObj.getId());
+            if (demandReasonObj != null)
+                dmdDtl = createDemandDetailBean(installObj, demandReasonObj);
+            tempDemandDetail.add(dmdDtl);
+        }
         for (final SewerageDemandDetail demandDetList : tempDemandDetail)
             if (demandDetList != null)
                 demandDetailBeanList.add(demandDetList);

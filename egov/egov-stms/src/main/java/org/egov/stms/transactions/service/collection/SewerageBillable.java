@@ -63,8 +63,8 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.BoundaryDetails;
 import org.egov.ptis.domain.model.OwnerName;
+import org.egov.stms.masters.entity.enums.SewerageConnectionStatus;
 import org.egov.stms.transactions.entity.SewerageApplicationDetails;
-import org.egov.stms.transactions.entity.SewerageDemandConnection;
 import org.egov.stms.utils.SewerageTaxUtils;
 import org.egov.stms.utils.constants.SewerageTaxConstants;
 import org.egov.wtms.utils.WaterTaxUtils;
@@ -208,7 +208,11 @@ public class SewerageBillable extends AbstractBillable implements Billable {
 
     @Override
     public Boolean getPartPaymentAllowed() {
-        return false;
+        if (getSewerageApplicationDetails()!=null && getSewerageApplicationDetails().getConnection().getStatus()!=null
+                && getSewerageApplicationDetails().getConnection().getStatus().equals(SewerageConnectionStatus.ACTIVE))
+            return true;
+        else
+            return false;
     }
 
     @Override
@@ -266,7 +270,11 @@ public class SewerageBillable extends AbstractBillable implements Billable {
 
     @Override
     public Boolean isCallbackForApportion() {
-        return isCallbackForApportion;
+        if (getSewerageApplicationDetails()!=null && getSewerageApplicationDetails().getConnection().getStatus()!=null
+                && getSewerageApplicationDetails().getConnection().getStatus().equals(SewerageConnectionStatus.ACTIVE))
+            return true;
+        else
+            return false;
     }
 
     @Override

@@ -51,21 +51,7 @@
 			<list>
 				<security:filter-chain pattern="/resources/**" filters="none" />
 				<security:filter-chain pattern="/error/**" filters="none" />
-				<security:filter-chain pattern="/index.jsp" filters="none" />
-				
-				<security:filter-chain pattern="/reports/search-for-dcbreport" filters="none" />
-				<security:filter-chain pattern="/reports/getHoardingDcb/**" filters="none" />
-				<security:filter-chain pattern="/reports/getHoardingDcb" filters="none" />
-				<security:filter-chain pattern="/reports/dcbreport-search" filters="none" />
-				<security:filter-chain pattern="/reports/report-view" filters="none" />
-				<security:filter-chain pattern="/agency/active-agencies" filters="none" />
-				<security:filter-chain pattern="/agency/agencies" filters="none" />
-				<security:filter-chain pattern="/reports/getAgencyWiseDcb" filters="none" />				
-				<security:filter-chain pattern="/hoarding/getsubcategories-by-category" filters="none" />
-				<security:filter-chain pattern="/citizen/search/**" filters="none" />
-				<security:filter-chain pattern="/citizen/collection/**" filters="none" />
-				<security:filter-chain pattern="/citizen/create/**" filters="none" />
-				
+				<security:filter-chain pattern="/index.jsp" filters="none" />								
 				<security:filter-chain pattern="/**"  filters="concurrentSessionFilter,securityContextPersistenceFilter,logoutFilter,authenticationProcessingFilter,securityContextHolderAwareRequestFilter,rememberMeAuthenticationFilter,anonymousAuthenticationFilter,exceptionTranslationFilter,filterSecurityInterceptor" />
 			</list>
 		</constructor-arg>

@@ -378,6 +378,7 @@
                 <s:elseif test="%{state!=null && (state.value=='License Created' || egwStatus.code=='SECONDLVLCOLLECTIONPENDING')}">
                     <div class="text-center">
                         <s:hidden id="workFlowAction" name="workFlowAction"/>
+                        <s:hidden name="currentState" value="%{state.value}"/>
                         <button type="submit" id="btncancel" class="btn btn-primary" onclick="return onCancelSubmit();">
                             Cancel
                         </button>

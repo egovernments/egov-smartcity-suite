@@ -70,11 +70,11 @@
 		<td class="greybox"><s:text
 				name="regst.details.registeredPlotArea" /> :</td>
 		<td class="greybox"><span class="bold"><s:textfield name="mutationRegistrationDetails.plotArea"
-					value="%{mutationRegistrationDetails.plotArea}" id="plotArea" /></span></td>
+					value="%{mutationRegistrationDetails.plotArea}" id="plotArea" onblur="trim(this,this.value);checkForTwoDecimals(this,'Registered Plot Area');checkZero(this,'Registered Plot Area');"/></span></td>
 		<td class="greybox"><s:text
 				name="regst.details.registeredPlinthArea" /> :</td>
 		<td class="greybox"><span class="bold"><s:textfield name="mutationRegistrationDetails.plinthArea"
-					value="%{mutationRegistrationDetails.plinthArea}" id="plinthArea" /></span></td>
+					value="%{mutationRegistrationDetails.plinthArea}" id="plinthArea" onblur="trim(this,this.value);checkForTwoDecimals(this,'Registered Plinth Area');checkZero(this,'Registered Plinth Area');"/></span></td>
 	</tr>
 
 	<tr>

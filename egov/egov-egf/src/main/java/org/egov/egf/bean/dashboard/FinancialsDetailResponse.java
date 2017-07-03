@@ -47,10 +47,39 @@
 
 package org.egov.egf.bean.dashboard;
 
+import org.egov.infra.utils.StringUtils;
+
 import java.math.BigDecimal;
 
 public class FinancialsDetailResponse {
 
+    private String region = StringUtils.EMPTY;
+    private String district = StringUtils.EMPTY;
+    private String grade = StringUtils.EMPTY;
+    private String ulbCode = StringUtils.EMPTY;
+    private String ulbName = StringUtils.EMPTY;
+    private String month = StringUtils.EMPTY;
+    private String fromDate = StringUtils.EMPTY;
+    private String toDate = StringUtils.EMPTY;
+    private String admZoneName = StringUtils.EMPTY;
+    private String admWardName = StringUtils.EMPTY;
+    private String fundCode = StringUtils.EMPTY;
+    private String fundName = StringUtils.EMPTY;
+    private String departmentCode = StringUtils.EMPTY;
+    private String departmentName = StringUtils.EMPTY;
+    private String functionCode = StringUtils.EMPTY;
+    private String functionName = StringUtils.EMPTY;
+    private String fundSource = StringUtils.EMPTY;
+    private String schemeCode = StringUtils.EMPTY;
+    private String schemeName = StringUtils.EMPTY;
+    private String subschemeCode = StringUtils.EMPTY;
+    private String subschemeName = StringUtils.EMPTY;
+    private String majorCode = StringUtils.EMPTY;
+    private String minorCode = StringUtils.EMPTY;
+    private String detailedCode = StringUtils.EMPTY;
+    private String majorCodeDescription = StringUtils.EMPTY;
+    private String minorCodeDescription = StringUtils.EMPTY;
+    private String detailedCodeDescription = StringUtils.EMPTY;
     private BigDecimal cyIncomeDebitAmount = BigDecimal.ZERO;
     private BigDecimal lyIncomeDebitAmount = BigDecimal.ZERO;
     private BigDecimal cyIncomeCreditAmount = BigDecimal.ZERO;
@@ -83,23 +112,6 @@ public class FinancialsDetailResponse {
     private BigDecimal lyLiabilitiesOpbAmount = BigDecimal.ZERO;
     private BigDecimal cyAssetsOpbAmount = BigDecimal.ZERO;
     private BigDecimal lyAssetsOpbAmount = BigDecimal.ZERO;
-    private String region;
-    private String district;
-    private String grade;
-    private String ulbName;
-    private String fromDate;
-    private String toDate;
-    private String admZoneName;
-    private String admWardName;
-    private String fundCode;
-    private String departmentCode;
-    private String functionCode;
-    private String fundSource;
-    private String schemeCode;
-    private String subschemeCode;
-    private String majorCode;
-    private String minorCode;
-    private String detailedCode;
 
 
     public BigDecimal getCyIncomeDebitAmount() {
@@ -492,5 +504,85 @@ public class FinancialsDetailResponse {
 
     public void setDetailedCode(String detailedCode) {
         this.detailedCode = detailedCode;
+    }
+
+    public String getUlbCode() {
+        return ulbCode;
+    }
+
+    public void setUlbCode(String ulbCode) {
+        this.ulbCode = ulbCode;
+    }
+
+    public String getMajorCodeDescription() {
+        return majorCodeDescription;
+    }
+
+    public void setMajorCodeDescription(String majorCodeDescription) {
+        this.majorCodeDescription = majorCodeDescription;
+    }
+
+    public String getMinorCodeDescription() {
+        return minorCodeDescription;
+    }
+
+    public void setMinorCodeDescription(String minorCodeDescription) {
+        this.minorCodeDescription = minorCodeDescription;
+    }
+
+    public String getDetailedCodeDescription() {
+        return detailedCodeDescription;
+    }
+
+    public void setDetailedCodeDescription(String detailedCodeDescription) {
+        this.detailedCodeDescription = detailedCodeDescription;
+    }
+
+    public String getMonth() {
+        return month;
+    }
+
+    public void setMonth(String month) {
+        this.month = month;
+    }
+
+    public String getFundName() {
+        return fundName;
+    }
+
+    public void setFundName(String fundName) {
+        this.fundName = fundName;
+    }
+
+    public String getDepartmentName() {
+        return departmentName;
+    }
+
+    public void setDepartmentName(String departmentName) {
+        this.departmentName = departmentName;
+    }
+
+    public String getFunctionName() {
+        return functionName;
+    }
+
+    public void setFunctionName(String functionName) {
+        this.functionName = functionName;
+    }
+
+    public String getSchemeName() {
+        return schemeName;
+    }
+
+    public void setSchemeName(String schemeName) {
+        this.schemeName = schemeName;
+    }
+
+    public String getSubschemeName() {
+        return subschemeName;
+    }
+
+    public void setSubschemeName(String subschemeName) {
+        this.subschemeName = subschemeName;
     }
 }

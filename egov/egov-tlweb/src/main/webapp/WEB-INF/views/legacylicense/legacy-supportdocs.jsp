@@ -93,8 +93,10 @@
 			<form:errors path="documents[${stat.index}].files" class="add-margin error-msg" />
 			</div>
 			<div class="col-sm-3 add-margin">
-				<form:textarea path="documents[${stat.index}].description"
-					class="form-control" />
+				<form:textarea path="documents[${stat.index}].description" class="form-control" />
+			<c:if test="${documentType.mandatory}">
+				<form:errors path="documents[${stat.index}].description" class="add-margin error-msg tradelicenceerror" />
+			</c:if>
 			</div>
 		</div>
 	</c:forEach>

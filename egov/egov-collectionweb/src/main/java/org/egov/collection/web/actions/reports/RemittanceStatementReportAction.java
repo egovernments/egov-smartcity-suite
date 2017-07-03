@@ -68,10 +68,10 @@ import org.egov.eis.entity.Jurisdiction;
 import org.egov.eis.service.EmployeeService;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.reporting.engine.ReportDataSourceType;
 import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
-import org.egov.infra.reporting.engine.ReportDataSourceType;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.web.struts.actions.ReportFormAction;
@@ -101,6 +101,7 @@ public class RemittanceStatementReportAction extends ReportFormAction {
     private static final String EGOV_REMITTANCE_VOUCHER = "EGOV_REMITTANCE_VOUCHER";
     private static final String EGOV_REMITTANCE_DATE = "EGOV_REMITTANCE_DATE";
     private static final String PRINT_BANK_CHALLAN_TEMPLATE = "collection_remittance_bankchallan_report";
+    private static final String EGOV_BANKCOLL_BANKBRANCH_ID = "EGOV_BANKCOLL_BANKBRANCH_ID";
     private final Map<String, Object> critParams = new HashMap<String, Object>(0);
     @Autowired
     private EmployeeService employeeService;
@@ -124,6 +125,7 @@ public class RemittanceStatementReportAction extends ReportFormAction {
     public void prepare() {
         setReportFormat(ReportFormat.PDF);
         setDataSourceType(ReportDataSourceType.SQL);
+        addDropdownData("bankBranchList", collectionsUtil.getBankCollectionBankBranchList());
     }
 
     @Override
@@ -301,14 +303,21 @@ public class RemittanceStatementReportAction extends ReportFormAction {
         critParams.put(EGOV_BANKACCOUNT_ID, bankAccountId);
     }
 
+    public Integer getBankCollBankBranchId() {
+        return (Integer) getReportParam(EGOV_BANKCOLL_BANKBRANCH_ID);
+    }
+
+    public void setBankCollBankBranchId(final Integer bankCollBranchId) {
+        critParams.put(EGOV_BANKCOLL_BANKBRANCH_ID, bankCollBranchId);
+    }
+
     public String getPaymentMode() {
         final String modeOfPayment = (String) getReportParam(EGOV_PAYMENT_MODE);
         return null == modeOfPayment ? "-1" : modeOfPayment;
     }
 
     /**
-     * @param paymentMode
-     *            the payment mode to set (cash/cheque)
+     * @param paymentMode the payment mode to set (cash/cheque)
      */
     public void setPaymentMode(final String paymentMode) {
         if (null != paymentMode && !"-1".equals(paymentMode))

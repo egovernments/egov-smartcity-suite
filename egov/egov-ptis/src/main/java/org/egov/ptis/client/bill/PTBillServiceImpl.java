@@ -484,6 +484,7 @@ public class PTBillServiceImpl extends BillServiceInterface {
             throw new ApplicationRuntimeException("No bill found with bill reference no :" + billId);
         bill.getEgBillDetails().clear();
         final PropertyTaxBillable propertyTaxBillable = (PropertyTaxBillable) context.getBean("propertyTaxBillable");
+        propertyTaxBillable.setReceiptDate(bill.getCreateDate());
         propertyTaxBillable.setLevyPenalty(true);
         propertyTaxBillable
                 .setBasicProperty(basicPropertyDAO.getBasicPropertyByPropertyID(bill.getConsumerId().trim()));

@@ -235,7 +235,7 @@
 					<input type="button" name="button2" id="button2" value="Close" class="btn btn-primary" onclick="window.close();" /></td>
 				</div>
 				</s:if>
-				<s:elseif test="%{propertyByEmployee == true && applicationSource != 'online'}">
+				<s:elseif test="%{propertyByEmployee == true && applicationSource != 'online' && citizenPortalUser == false}">
 				<%@ include file="../workflow/commonWorkflowMatrix.jsp"%>
 				<div class="buttonbottom" align="center">
 					<%@ include file="../workflow/commonWorkflowMatrix-button.jsp" %>

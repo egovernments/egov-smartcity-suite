@@ -40,12 +40,11 @@
 
 package org.egov.infra.config.elasticsearch;
 
-import org.egov.infra.config.properties.ApplicationProperties;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
@@ -53,21 +52,28 @@ import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
 
 import java.net.InetSocketAddress;
+import java.util.List;
 
 @Configuration
 @EnableElasticsearchRepositories(basePackages = "org.egov.**.repository.es")
 public class ElasticSearchConfiguration {
 
-    @Autowired
-    private ApplicationProperties applicationProperties;
+    @Value("${elasticsearch.cluster.name}")
+    private String clusterName;
+
+    @Value("#{'${elasticsearch.hosts}'.split(',')}")
+    private List<String> searchHosts;
+
+    @Value("${elasticsearch.port}")
+    private Integer searchPort;
 
     private Client transportClient() {
         Settings settings = Settings.settingsBuilder()
-                .put("cluster.name", applicationProperties.searchClusterName()).build();
+                .put("cluster.name", clusterName).build();
         Client client = TransportClient.builder().settings(settings).build();
-        applicationProperties.searchHosts().forEach(host ->
+        searchHosts.forEach(host ->
                 ((TransportClient) client).addTransportAddress(
-                        new InetSocketTransportAddress(new InetSocketAddress(host, applicationProperties.searchPort())))
+                        new InetSocketTransportAddress(new InetSocketAddress(host, searchPort)))
         );
         return client;
     }

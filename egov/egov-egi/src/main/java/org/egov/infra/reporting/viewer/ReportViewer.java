@@ -116,7 +116,7 @@ public class ReportViewer extends HttpServlet {
     }
 
     private void renderReport(HttpServletResponse resp, byte[] reportData, ReportFormat reportFormat) {
-        try (BufferedOutputStream outputStream = new BufferedOutputStream(resp.getOutputStream());) {
+        try (BufferedOutputStream outputStream = new BufferedOutputStream(resp.getOutputStream())) {
             resp.setHeader(ReportConstants.HTTP_HEADER_CONTENT_DISPOSITION, ReportViewerUtil.getContentDisposition(reportFormat));
             resp.setContentType(ReportViewerUtil.getContentType(reportFormat));
             resp.setContentLength(reportData.length);

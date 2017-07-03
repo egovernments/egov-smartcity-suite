@@ -62,6 +62,9 @@ public interface InstallmentDao {
     List<Installment> getInstallmentsByModuleForGivenDateAndInstallmentType(Module module, Date installmentDate,
             String installmentType);
 
+    List<Installment> getInstallmentsByModuleBetweenFromDateAndToDateAndInstallmentType(Module module, Date fromDate, Date toDate,
+            String installmentType);
+
     List<Installment> fetchInstallments(final Module module, final Date toInstallmentDate, final int noOfInstallments);
 
     List<Installment> getAllInstallmentsByModuleAndStartDate(final Module module, final Date installmentDate);
@@ -72,6 +75,9 @@ public interface InstallmentDao {
             int noOfInstallmentToFetch);
 
     public Installment getInsatllmentByModuleAndDescription(Module moduleByName, String description);
-    
-     List<Installment> fetchNextInstallmentsByModuleAndDate(final Module module, final Date date);
+
+    List<Installment> fetchNextInstallmentsByModuleAndDate(final Module module, final Date date);
+
+    public List<Installment> getInstallmentsByModuleAndInstallmentYearOrderByInstallmentYearDescending(final Module module,
+            final int year);
 }

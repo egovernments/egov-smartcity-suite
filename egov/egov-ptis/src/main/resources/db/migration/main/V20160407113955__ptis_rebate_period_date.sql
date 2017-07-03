@@ -1,2 +1,0 @@
-insert into egpt_rebate_period(id,installment,rebatedate,createdby,createddate,lastmodifieddate,lastmodifiedby,version)
- values (nextval('seq_egpt_rebate_period'), ( select id from eg_installment_master where id_module = (select id from eg_module where name = 'Property Tax') and installment_year::date = '2016-04-01'), '2016-04-30 23:59:59', 1, now(), now(),1,0);

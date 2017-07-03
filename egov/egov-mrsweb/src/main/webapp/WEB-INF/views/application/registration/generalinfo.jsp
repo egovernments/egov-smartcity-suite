@@ -52,6 +52,7 @@
 </div>
 <div class="panel-body custom-form">
 	<form:hidden path="id" />
+	
 	<c:if test="${marriageRegistration.id!=null}">
 		<div class="form-group">
 			<div class="col-sm-3 control-label">
@@ -71,6 +72,12 @@
 		</div>
 	</c:if>
 	<div class="form-group">
+		<c:if test="${marriageRegistration.applicationDate ne null}">
+			<fmt:formatDate  value="${marriageRegistration.applicationDate}"
+				pattern="dd/MM/yyyy" var="applicationDate"/>
+			<input id="applicationDate" type="hidden"
+				class="form-control datepicker" value="${applicationDate}" />
+		</c:if>
 		<label class="col-sm-3 control-label"> <spring:message
 				code="lbl.registrationunit" /><span class="mandatory"></span>
 		</label>
@@ -79,6 +86,7 @@
 				id="select-registrationunit" cssClass="form-control"
 				cssErrorClass="form-control error" required="required">
 				<form:option value="">
+				
 					<spring:message code="lbl.default.option" />
 				</form:option>
 				<form:options items="${marriageRegistrationUnit}" itemValue="id"

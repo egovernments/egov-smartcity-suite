@@ -46,10 +46,14 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ValidationException;
 
+import org.egov.ptis.domain.model.AssessmentDetails;
+import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
+import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.wtms.application.entity.DuplicateConnection;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
+import org.egov.wtms.utils.PropertyExtnUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -67,6 +71,9 @@ public class DuplicateConnectionController {
     @Autowired
     private WaterConnectionDetailsService waterConnectionDetailsService;
 
+    @Autowired
+    private PropertyExtnUtils propertyExtnUtils;
+
     @RequestMapping(value = "/duplicateConsumerCode/{consumerCode}", method = RequestMethod.GET)
     public String view(final Model model, @PathVariable final String consumerCode, final HttpServletRequest request) {
         final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
@@ -77,7 +84,7 @@ public class DuplicateConnectionController {
 
         final List<WaterConnectionDetails> waterConnectionDetailsList = waterConnectionDetailsService
                 .getAllConnectionDetailsByPropertyID(waterConnectionDetails.getConnection().getPropertyIdentifier());
-        final List<String> consumerCodes = new ArrayList<String>(0);
+        final List<String> consumerCodes = new ArrayList<>(0);
         for (final WaterConnectionDetails waterconnectionDetails : waterConnectionDetailsList)
             if (!waterconnectionDetails.getConnection().getConsumerCode().equalsIgnoreCase(consumerCode))
                 consumerCodes.add(waterconnectionDetails.getConnection().getConsumerCode());
@@ -105,6 +112,11 @@ public class DuplicateConnectionController {
         if (!duplicateConnection.getConsumerCodes().isEmpty())
             waterConnectionDetails.getConnection().setOldConsumerNumber(duplicateConnection.getConsumerCodes().get(0));
         waterConnectionDetailsService.save(waterConnectionDetails);
+        final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
+                waterConnectionDetails.getConnection().getPropertyIdentifier(),
+                PropertyExternalService.FLAG_FULL_DETAILS, BasicPropertyStatus.ALL);
+        waterConnectionDetailsService.createWaterChargeIndex(waterConnectionDetails, assessmentDetails,
+                waterConnectionDetailsService.getTotalAmount(waterConnectionDetails));
         model.addAttribute("consumerCode", consumerCode);
         return "duplicateconnection-success";
 

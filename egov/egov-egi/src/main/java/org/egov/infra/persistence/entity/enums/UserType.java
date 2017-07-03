@@ -41,5 +41,5 @@
 package org.egov.infra.persistence.entity.enums;
 
 public enum UserType {
-    CITIZEN, EMPLOYEE, SYSTEM, BUSINESS;
+    CITIZEN, EMPLOYEE, SYSTEM, BUSINESS
 }

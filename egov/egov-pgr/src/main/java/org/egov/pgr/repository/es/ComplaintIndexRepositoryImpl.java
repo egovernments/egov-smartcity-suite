@@ -462,15 +462,29 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
     }
 
     @Override
-    public SearchResponse findAllGrievanceByComplaintType(final ComplaintDashBoardRequest complaintDashBoardRequest,
+    public Map<String,SearchResponse> findAllGrievanceByComplaintType(final ComplaintDashBoardRequest complaintDashBoardRequest,
             final BoolQueryBuilder query, final String grouByField) {
 
-        return elasticsearchTemplate.getClient().prepareSearch(PGR_INDEX_NAME)
+        Map<String,SearchResponse> response = new HashMap<>();
+        SearchResponse tableResponse =  elasticsearchTemplate.getClient().prepareSearch(PGR_INDEX_NAME)
                 .setQuery(query).setSize(0)
                 .addAggregation(getCountWithGrouping(GROUP_BY_FIELD, grouByField, 120)
                         .subAggregation(getCountWithGrouping("closedComplaintCount", IF_CLOSED, 2))
                         .subAggregation(getCountWithGrouping(RE_OPENED_COMPLAINT_COUNT, RE_OPENED, 2)))
                 .execute().actionGet();
+        response.put("tableResponse", tableResponse);
+
+        //This is in case of drill down to show other localities information
+        if (grouByField.equals(LOCALITY_NAME)) {
+            SearchResponse otherLocalitiesResponse =  elasticsearchTemplate.getClient().prepareSearch(PGR_INDEX_NAME)
+                    .setQuery(query).setSize(0)
+                    .addAggregation(AggregationBuilders.missing("nolocality").field(LOCALITY_NAME)
+                            .subAggregation(getCountWithGrouping("closedComplaintCount", IF_CLOSED, 2))
+                            .subAggregation(getCountWithGrouping(RE_OPENED_COMPLAINT_COUNT, RE_OPENED, 2)))
+                    .execute().actionGet();
+            response.put("otherLocalities", otherLocalitiesResponse);
+        }
+        return response;
     }
 
     @Override

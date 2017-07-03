@@ -43,14 +43,14 @@
         "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
 <tiles-definitions>
 
-    <definition name="base_layout" template="/WEB-INF/views/template/main.jsp">
+	<definition name="error" template="/WEB-INF/views/template/error.jsp"/>
+	
+	<definition name="base_layout" template="/WEB-INF/views/template/main.jsp">
         <put-attribute name="title" value="eGov Urban Portal"/>
         <put-attribute name="header" value="/WEB-INF/views/template/header.jsp"/>
         <put-attribute name="body" value=""/>
         <put-attribute name="footer" value="/WEB-INF/views/template/footer.jsp"/>
     </definition>
-
-	<definition name="error" template="/WEB-INF/views/template/error.jsp"/>
 
     <definition name="citizen-home" extends="base_layout">
         <put-attribute name="page-title" value="title.citizenHome" cascade="true"/>
@@ -83,5 +83,19 @@
 		<put-attribute name="page-title" value="lbl.createfirm" cascade="true"/>
 		<put-attribute name="body" value="/WEB-INF/views/firm/firm-update.jsp"/>
 	</definition>
+    
+    <definition name="portalservicetype-search" extends="base_layout">
+      	<put-attribute name="page-title" value="title.servicetype" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/servicetype/portalservicetype-search.jsp"/>
+    </definition>
 	
+	 <definition name="portalservicetype-edit" extends="base_layout">
+      	<put-attribute name="page-title" value="title.servicetype" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/servicetype/portalservicetype-edit.jsp"/>
+    </definition>
+    
+    <definition name="portalservicetype-ack" extends="base_layout">
+      	<put-attribute name="page-title" value="title.servicetype" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/servicetype/portalservicetype-ack.jsp"/>
+    </definition>
 </tiles-definitions>

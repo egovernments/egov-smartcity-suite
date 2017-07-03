@@ -50,5 +50,5 @@ import java.util.List;
 public interface ReceivingCenterRepository extends JpaRepository<ReceivingCenter, Long> {
     ReceivingCenter findByName(String name);
 
-    List<ReceivingCenter> findByIsCrnRequiredTrueOrderByOrderNoAsc();
+    List<ReceivingCenter> findByOrderByOrderNoAsc();
 }

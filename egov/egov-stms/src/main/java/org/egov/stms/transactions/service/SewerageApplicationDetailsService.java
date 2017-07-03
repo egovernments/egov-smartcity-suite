@@ -1,87 +1,45 @@
-/**
- * eGov suite of products aim to improve the internal efficiency,transparency, accountability and the service delivery of the
- * government organizations.
+/*
+ * eGov suite of products aim to improve the internal efficiency,transparency,
+ * accountability and the service delivery of the government  organizations.
  *
- * Copyright (C) <2017> eGovernments Foundation
+ *  Copyright (C) 2017  eGovernments Foundation
  *
- * The updated version of eGov suite of products as by eGovernments Foundation is available at http://www.egovernments.org
+ *  The updated version of eGov suite of products as by eGovernments Foundation
+ *  is available at http://www.egovernments.org
  *
- * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation, either version 3 of the License, or any later version.
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  any later version.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License along with this program. If not, see
- * http://www.gnu.org/licenses/ or http://www.gnu.org/licenses/gpl.html .
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program. If not, see http://www.gnu.org/licenses/ or
+ *  http://www.gnu.org/licenses/gpl.html .
  *
- * In addition to the terms of the GPL license to be adhered to in using this program, the following additional terms are to be
- * complied with:
+ *  In addition to the terms of the GPL license to be adhered to in using this
+ *  program, the following additional terms are to be complied with:
  *
- * 1) All versions of this program, verbatim or modified must carry this Legal Notice.
+ *      1) All versions of this program, verbatim or modified must carry this
+ *         Legal Notice.
  *
- * 2) Any misrepresentation of the origin of the material is prohibited. It is required that all modified versions of this
- * material be marked in reasonable ways as different from the original version.
+ *      2) Any misrepresentation of the origin of the material is prohibited. It
+ *         is required that all modified versions of this material be marked in
+ *         reasonable ways as different from the original version.
  *
- * 3) This license does not grant any rights to any user of the program with regards to rights under trademark law for use of the
- * trade names or trademarks of eGovernments Foundation.
+ *      3) This license does not grant any rights to any user of the program
+ *         with regards to rights under trademark law for use of the trade names
+ *         or trademarks of eGovernments Foundation.
  *
- * In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 package org.egov.stms.transactions.service;
 
-import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_CANCELLED;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_CLOSERSANCTIONED;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_COLLECTINSPECTIONFEE;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_CREATED;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_DEEAPPROVED;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_FEEPAID;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_FINALAPPROVED;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_INITIALAPPROVED;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_INSPECTIONFEEPAID;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_REJECTED;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_SANCTIONED;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_WOGENERATED;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.APPL_INDEX_MODULE_NAME;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.APPROVEWORKFLOWACTION;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.CHANGEINCLOSETS;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.CHANGEINCLOSETS_NOCOLLECTION;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.CLOSESEWERAGECONNECTION;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.DOCTYPE_OTHERS;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.FEES_DONATIONCHARGE_CODE;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.MODULETYPE;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.NOTICE_TYPE_WORK_ORDER_NOTICE;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.WFLOW_ACTION_STEP_CANCEL;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.WFLOW_ACTION_STEP_REJECT;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_ASSISTANT_APPROVED;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_CLERK_APPROVED;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_DEPUTY_EXE_APPROVED;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_INSPECTIONFEE_COLLECTED;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_INSPECTIONFEE_PENDING;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_PAYMENTDONE;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_REJECTED;
-
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import javax.validation.ValidationException;
-
+import org.apache.commons.lang.WordUtils;
 import org.egov.commons.Installment;
 import org.egov.commons.entity.Source;
 import org.egov.demand.model.EgDemand;
@@ -98,6 +56,8 @@ import org.egov.infra.elasticsearch.entity.enums.ClosureStatus;
 import org.egov.infra.elasticsearch.service.ApplicationIndexService;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.reporting.engine.ReportOutput;
+import org.egov.infra.reporting.engine.ReportRequest;
+import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.infra.workflow.entity.State;
@@ -109,6 +69,7 @@ import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.stms.autonumber.SewerageApplicationNumberGenerator;
 import org.egov.stms.autonumber.SewerageCloseConnectionNoticeNumberGenerator;
 import org.egov.stms.autonumber.SewerageEstimationNumberGenerator;
+import org.egov.stms.autonumber.SewerageRejectionNoticeNumberGenerator;
 import org.egov.stms.autonumber.SewerageSHSCNumberGenerator;
 import org.egov.stms.autonumber.SewerageWorkOrderNumberGenerator;
 import org.egov.stms.masters.entity.enums.SewerageConnectionStatus;
@@ -137,24 +98,55 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import javax.validation.ValidationException;
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+
+import static org.egov.stms.utils.constants.SewerageTaxConstants.*;
+
 @Service
 @Transactional(readOnly = true)
 public class SewerageApplicationDetailsService {
+
+    private static final String ELECTION_WARD = "electionWard";
+    private static final String APPLICATION_CENTRE = "ApplicationCentre";
+    private static final String DUE_DATE = "dueDate";
+    private static final String ADDRESS = "address";
+    private static final String CURRENT_DATE = "currentDate";
+    private static final String ACKNOWLEDGEMENT_NO = "acknowledgementNo";
+    private static final String APPLICANT_NAME = "applicantName";
+    private static final String ZONE_NAME = "zoneName";
+    private static final String CITYNAME = "cityname";
+    private static final String MUNICIPALITY = "municipality";
+    private static final String OFFICE_S_COPY = "Office's Copy";
+    private static final String PARTY_S_COPY = "Party's Copy";
+    private static final String APP_TYPE = "appType";
 
     private static final Logger LOG = LoggerFactory.getLogger(SewerageApplicationDetailsService.class);
     private static final String STMS_APPLICATION_VIEW = "/stms/existing/sewerage/view/%s/%s";
     private static final String APPLICATION_WORKFLOW_INITIALIZATION_DONE = "applicationWorkflowCustomDefaultImpl initialization is done";
     private static final String DEPARTMENT = "department";
-
+    protected SewerageApplicationDetailsRepository sewerageApplicationDetailsRepository;
     @Autowired
     private SewerageTaxUtils sewerageTaxUtils;
-
     @Autowired
     @Qualifier("parentMessageSource")
     private MessageSource stmsMessageSource;
-
-    protected SewerageApplicationDetailsRepository sewerageApplicationDetailsRepository;
-
     @Autowired
     private AssignmentService assignmentService;
 
@@ -197,6 +189,9 @@ public class SewerageApplicationDetailsService {
 
     @Autowired
     private AppConfigValueService appConfigValuesService;
+
+    @Autowired
+    private ReportService reportService;
 
     @Autowired
     public SewerageApplicationDetailsService(
@@ -450,7 +445,7 @@ public class SewerageApplicationDetailsService {
             LOG.error("Exception parsing Date " + e.getMessage());
         }
 
-        // TODO : Need to make Rest API call to get assessmentdetails
+        // Pending : Need to make Rest API call to get assessmentdetails
         final AssessmentDetails assessmentDetails = sewerageTaxUtils.getAssessmentDetailsForFlag(
                 sewerageApplicationDetails.getConnectionDetail().getPropertyIdentifier(),
                 PropertyExternalService.FLAG_FULL_DETAILS);
@@ -573,7 +568,9 @@ public class SewerageApplicationDetailsService {
                                     sewerageApplicationDetails.getConnectionDetail().getPropertyIdentifier()))
                     .withApplicantAddress(assessmentDetails.getPropertyAddress())
                     .withOwnername(user.getUsername() + "::" + user.getName())
-                    .withChannel(Source.SYSTEM.toString()).withDisposalDate(sewerageApplicationDetails.getDisposalDate())
+                    .withChannel(sewerageApplicationDetails.getSource() == null ? Source.SYSTEM.toString()
+                            : sewerageApplicationDetails.getSource())
+                    .withDisposalDate(sewerageApplicationDetails.getDisposalDate())
                     .withMobileNumber(mobileNumber.toString()).withClosed(ClosureStatus.NO)
                     .withAadharNumber(aadharNumber.toString())
                     .withSla(slaForSewerageConn != null && slaForSewerageConn.getValue() != null
@@ -628,6 +625,10 @@ public class SewerageApplicationDetailsService {
                 modelParams.put("mode", "edit");
             else if (currentState.equalsIgnoreCase(WF_STATE_REJECTED))
                 modelParams.put("mode", "editOnReject");
+            else if ("NEW".equalsIgnoreCase(currentState) && (SewerageTaxConstants.APPLICATION_STATUS_CSCCREATED
+                    .equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode())
+                    || SewerageTaxConstants.APPLICATION_STATUS_ANONYMOUSCREATED.equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode())))
+                modelParams.put("mode", "closetview");
             else
                 modelParams.put("mode", "view");
         }
@@ -719,9 +720,9 @@ public class SewerageApplicationDetailsService {
                 }
             }
         if (additionalRule != null && additionalRule.equalsIgnoreCase(CHANGEINCLOSETS_NOCOLLECTION))
-            applicationStatusChange(sewerageApplicationDetails, workFlowAction, additionalRule);
+            applicationStatusChange(sewerageApplicationDetails, workFlowAction, additionalRule,request,session);
         else
-            applicationStatusChange(sewerageApplicationDetails, workFlowAction, mode);
+            applicationStatusChange(sewerageApplicationDetails, workFlowAction, mode,request,session);
 
         // Generate the sewerage notices based on type of notice and save into DB.
         if (sewerageApplicationDetails.getStatus().getCode()
@@ -773,10 +774,10 @@ public class SewerageApplicationDetailsService {
         return updatedSewerageApplicationDetails;
     }
 
-    // TODO : commented out code as statuses are changed. Need to correct
+    // Pending : commented out code as statuses are changed. Need to correct
 
     public void applicationStatusChange(final SewerageApplicationDetails sewerageApplicationDetails,
-            final String workFlowAction, final String mode) {
+            final String workFlowAction, final String mode,final HttpServletRequest request, final HttpSession session) {
 
         if (null != sewerageApplicationDetails && null != sewerageApplicationDetails.getStatus()
                 && null != sewerageApplicationDetails.getStatus().getCode())
@@ -794,8 +795,33 @@ public class SewerageApplicationDetailsService {
                     sewerageApplicationDetails
                             .setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(APPLICATION_STATUS_CANCELLED, MODULETYPE));
                 }
+                if (sewerageApplicationDetails.getRejectionNumber() == null) {
+                    final SewerageRejectionNoticeNumberGenerator rejectionNumberGenerator = beanResolver
+                            .getAutoNumberServiceFor(SewerageRejectionNoticeNumberGenerator.class);
+                    if (rejectionNumberGenerator != null) {
+                        sewerageApplicationDetails.setRejectionNumber(rejectionNumberGenerator.generateRejectionNoticeNumber());
+                        sewerageApplicationDetails.setRejectionDate(new Date());
+                    }
+                }
+                
+                final SewerageNotice sewerageNotice = sewerageNoticeService.generateReportForRejection(
+                        sewerageApplicationDetails, session, request);
+                if (sewerageNotice != null)
+                    sewerageApplicationDetails.addNotice(sewerageNotice);
+            } else if ("NEW".equalsIgnoreCase(sewerageApplicationDetails.getState().getValue())
+                    && (SewerageTaxConstants.APPLICATION_STATUS_CSCCREATED
+                            .equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode())
+                            || (SewerageTaxConstants.APPLICATION_STATUS_ANONYMOUSCREATED
+                                    .equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode())))) {
+                if (sewerageTaxUtils.isInspectionFeeCollectionRequired()) {
+                    sewerageApplicationDetails.setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(
+                            SewerageTaxConstants.APPLICATION_STATUS_COLLECTINSPECTIONFEE, SewerageTaxConstants.MODULETYPE));
+                } else {
+                    sewerageApplicationDetails.setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(
+                            SewerageTaxConstants.APPLICATION_STATUS_CREATED, SewerageTaxConstants.MODULETYPE));
+                }
 
-            } else if (sewerageApplicationDetails.getStatus().getCode().equals(APPLICATION_STATUS_CREATED)
+            } else if ((sewerageApplicationDetails.getStatus().getCode().equals(APPLICATION_STATUS_CREATED))
                     || sewerageApplicationDetails.getStatus().getCode().equals(APPLICATION_STATUS_INSPECTIONFEEPAID))
                 sewerageApplicationDetails
                         .setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(APPLICATION_STATUS_INITIALAPPROVED, MODULETYPE));
@@ -924,17 +950,17 @@ public class SewerageApplicationDetailsService {
         return updatedSewerageApplicationDetails;
     }
 
-    public List<Hashtable<String, Object>> getHistory(final SewerageApplicationDetails sewerageApplicationDetails) {
+    public List<HashMap<String, Object>> getHistory(final SewerageApplicationDetails sewerageApplicationDetails) {
         User user;
-        final List<Hashtable<String, Object>> historyTable = new ArrayList<>();
+        final List<HashMap<String, Object>> historyTable = new ArrayList<>();
         final State state = sewerageApplicationDetails.getState();
-        final Hashtable<String, Object> map = new Hashtable<>(0);
+        final HashMap<String, Object> map = new HashMap<>();
         if (null != state) {
             if (!sewerageApplicationDetails.getStateHistory().isEmpty()
                     && sewerageApplicationDetails.getStateHistory() != null)
                 Collections.reverse(sewerageApplicationDetails.getStateHistory());
             for (final StateHistory stateHistory : sewerageApplicationDetails.getStateHistory()) {
-                final Hashtable<String, Object> HistoryMap = new Hashtable<>(0);
+                final HashMap<String, Object> HistoryMap = new HashMap<>();
                 HistoryMap.put("date", stateHistory.getDateInfo());
                 HistoryMap.put("comments", stateHistory.getComments());
                 HistoryMap.put("updatedBy", stateHistory.getLastModifiedBy().getUsername() + "::"
@@ -985,7 +1011,7 @@ public class SewerageApplicationDetailsService {
                 && org.apache.commons.lang.StringUtils.isNotEmpty(workFlowAction))
             applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(sewerageApplicationDetails,
                     approvalPosition, approvalComent, additionalRule, workFlowAction);
-        // TODO : update index on collection
+        // update index on collection
     }
 
     public SewerageApplicationDetails isApplicationInProgress(final String shscNumber) {
@@ -1020,6 +1046,87 @@ public class SewerageApplicationDetailsService {
     }
 
     public AppConfigValues getAppConfigValuesForDonationCharge(final String moduleName, final String keyName) {
+        final List<AppConfigValues> appConfigValues = appConfigValuesService.getConfigValuesByModuleAndKey(moduleName, keyName);
+        return !appConfigValues.isEmpty() ? appConfigValues.get(0) : null;
+    }
+
+    @Transactional
+    public SewerageApplicationDetails updateLegacySewerageConnection(
+            final SewerageApplicationDetails sewerageApplicationDetails, final HttpServletRequest request) {
+        if (sewerageTaxUtils.isDonationChargeCollectionRequiredForLegacy()) {
+            // Capturing pending Donation charge for legacy records
+            SewerageDemandDetail sewerageDemandDetail = new SewerageDemandDetail();
+            BigDecimal donationaAmtCollected = new BigDecimal(request.getParameter("amountCollected"));
+            sewerageDemandDetail.setActualCollection(donationaAmtCollected);
+            for (final SewerageConnectionFee fees : sewerageApplicationDetails.getConnectionFees()) {
+                if (FEES_DONATIONCHARGE_CODE.equals(fees.getFeesDetail().getCode())) {
+                    sewerageDemandDetail.setActualAmount(BigDecimal.valueOf(fees.getAmount()));
+                }
+            }
+            sewerageDemandDetail.setInstallmentId(sewerageDemandService.getCurrentInstallment().getId());
+            sewerageDemandDetail.setReasonMaster(FEES_DONATIONCHARGE_CODE);
+            sewerageApplicationDetails.getDemandDetailBeanList().add(sewerageDemandDetail);
+        }
+
+        sewerageDemandService.updateLegacyDemand(sewerageApplicationDetails.getDemandDetailBeanList(),
+                sewerageApplicationDetails.getCurrentDemand());
+        sewerageApplicationDetailsRepository.saveAndFlush(sewerageApplicationDetails);
+        updateIndexes(sewerageApplicationDetails);
+        return sewerageApplicationDetails;
+    }
+
+    public ReportOutput getReportParamsForSewerageAcknowdgement(final SewerageApplicationDetails sewerageApplicationDetails,
+            final String municipalityName, final String cityName) {
+        final Map<String, Object> reportParams = new HashMap<>();
+        String ownerName = "";
+        reportParams.put(MUNICIPALITY, municipalityName);
+        reportParams.put(CITYNAME, cityName);
+        final AssessmentDetails assessmentDetails = sewerageTaxUtils.getAssessmentDetailsForFlag(
+                sewerageApplicationDetails.getConnectionDetail().getPropertyIdentifier(),
+                PropertyExternalService.FLAG_FULL_DETAILS);
+        if (null != assessmentDetails.getOwnerNames())
+            for (final OwnerName names : assessmentDetails.getOwnerNames()) {
+                ownerName = names.getOwnerName();
+                break;
+            }
+        reportParams.put(ZONE_NAME,
+                assessmentDetails.getBoundaryDetails() != null ? assessmentDetails.getBoundaryDetails().getZoneName() : "");
+        reportParams.put(ELECTION_WARD,
+                assessmentDetails.getBoundaryDetails() != null ? assessmentDetails.getBoundaryDetails().getWardName() : "");
+        reportParams.put(ADDRESS, assessmentDetails.getPropertyAddress());
+
+        reportParams.put(APPLICANT_NAME, ownerName);
+        reportParams.put(ACKNOWLEDGEMENT_NO, sewerageApplicationDetails.getApplicationNumber());
+        final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        reportParams.put(CURRENT_DATE, formatter.format(new Date()));
+
+        reportParams.put(DUE_DATE, formatter.format(calculateDueDate()));
+        reportParams.put(PARTY_S_COPY, PARTY_S_COPY);
+        reportParams.put(OFFICE_S_COPY, OFFICE_S_COPY);
+        reportParams.put(APPLICATION_CENTRE, stmsMessageSource.getMessage("msg.application.centre",
+                new String[] {}, Locale.getDefault()));
+        reportParams.put(APP_TYPE, WordUtils.capitalize(sewerageApplicationDetails.getApplicationType().getName()));
+
+        final ReportRequest reportInput = new ReportRequest("sewerageAcknowledgementReceipt", sewerageApplicationDetails,
+                reportParams);
+
+        return reportService.createReport(reportInput);
+
+    }
+
+    private Date calculateDueDate() {
+        Date dueDate;
+        final Date currentDate = new Date();
+        final AppConfigValues slaForSewerageConn = getSlaAppConfigValuesForSewerage(SewerageTaxConstants.MODULE_NAME,
+                SewerageTaxConstants.SLAFORNEWSEWERAGECONNECTION);
+        dueDate = org.apache.commons.lang3.time.DateUtils.addDays(currentDate,
+                (slaForSewerageConn != null && slaForSewerageConn.getValue() != null)
+                        ? Integer.valueOf(slaForSewerageConn.getValue()) : 0);
+        return dueDate;
+
+    }
+
+    public AppConfigValues getSlaAppConfigValuesForSewerage(final String moduleName, final String keyName) {
         final List<AppConfigValues> appConfigValues = appConfigValuesService.getConfigValuesByModuleAndKey(moduleName, keyName);
         return !appConfigValues.isEmpty() ? appConfigValues.get(0) : null;
     }

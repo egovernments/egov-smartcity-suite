@@ -45,52 +45,52 @@
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <div class="row" id="page-content">
-	<div class="col-md-12">
-				 <c:if test="${not empty message}">
-                    <div class="alert alert-success" role="alert"><spring:message code="${message}"/></div>
-                </c:if>
-                <c:if test="${not empty error}">
-                    <div class="alert alert-danger" role="alert"><spring:message code="${error}"/></div>
-                </c:if>
-		<form:form action="search" method ="get" class="form-horizontal form-groups-bordered"  id="userrolesearchform" >
-			<div class="panel panel-primary" data-collapsed="0">
-				<div class="panel-heading">
-					<div class="panel-title">
-						<strong><spring:message code="lbl.hdr.userrole.info"/></strong>
-					</div>
-				</div> 
-				<div class="panel-body custom-form">
-					<div class="form-group">
-						<label class="col-sm-3 control-label"><spring:message code="lbl.userName" />
-						<span class="mandatory"></span> 
-						</label>
-						<div class="col-sm-6">
-							<input id="user_name" type="text" class="form-control typeahead is_valid_alphanumeric" placeholder="Start typing and select it from below list" autocomplete="off" required="required"/>
-							<input type="hidden" name="userId" id="usernameId"/>
-						</div>
-					</div>
-					<div class="form-group">
-                   		<label class="col-sm-3 control-label">
-                        	<spring:message code="lbl.current.userRole"/>
-                   		</label>
-						<div class="col-sm-6 add-margin">
-							<egov:ajaxdropdown id="rolesAjax" fields="['Value','Text']"
-								dropdownId="rolesSelect" url="userRole/ajax/rolelist-for-user" />
-							<select id="rolesSelect" class="form-control"
-								multiple="multiple" size="10" readonly="readonly">
-							</select>
-						</div>
-					</div> 
-				</div>
-			</div>
-			<div class="row">
-				<div class="text-center">
-					<button type="submit" id="userroleUpdateBtn" class="btn btn-primary"><spring:message code="lbl.update"/></button>
-			        <button type="button" class="btn btn-default" data-dismiss="modal" onclick="window.close();"><spring:message code="lbl.close"/></button>
-				</div>
-			</div>
-				</form:form>
-			</div>
+    <div class="col-md-12">
+        <c:if test="${not empty message}">
+            <div class="alert alert-success" role="alert"><spring:message code="${message}"/></div>
+        </c:if>
+        <c:if test="${not empty error}">
+            <div class="alert alert-danger" role="alert"><spring:message code="${error}"/></div>
+        </c:if>
+        <form:form action="search" method="get" class="form-horizontal form-groups-bordered" id="userrolesearchform">
+            <div class="panel panel-primary" data-collapsed="0">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        <strong><spring:message code="lbl.hdr.userrole.info"/></strong>
+                    </div>
+                </div>
+                <div class="panel-body custom-form">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label"><spring:message code="lbl.userName"/>
+                            <span class="mandatory"></span>
+                        </label>
+                        <div class="col-sm-6">
+                            <input id="user_name" type="text" class="form-control typeahead is_valid_alphanumeric" placeholder="Start typing and select it from below list" autocomplete="off" required="required"/>
+                            <input type="hidden" name="userId" id="usernameId"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">
+                            <spring:message code="lbl.current.userRole"/>
+                        </label>
+                        <div class="col-sm-6 add-margin">
+                            <egov:ajaxdropdown id="rolesAjax" fields="['Value','Text']"
+                                               dropdownId="rolesSelect" url="userRole/ajax/rolelist-for-user"/>
+                            <select id="rolesSelect" class="form-control"
+                                    multiple="multiple" size="10" readonly="readonly">
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="text-center">
+                    <button type="submit" id="userroleUpdateBtn" class="btn btn-primary"><spring:message code="lbl.update"/></button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal" onclick="window.close();"><spring:message code="lbl.close"/></button>
+                </div>
+            </div>
+        </form:form>
+    </div>
 </div>
 
 <script src="<cdn:url  value='/resources/js/app/userrole.js?rnd=${app_release_no}'/>"></script>

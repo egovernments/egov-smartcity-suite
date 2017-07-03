@@ -1,0 +1,16 @@
+alter table fund alter column createddate type timestamp without time zone;
+alter table Accountdetailtype alter column createddate type timestamp without time zone ;
+alter table egf_accountcode_purpose alter column createddate type timestamp without time zone ;
+alter table function alter column createddate type timestamp without time zone ;
+alter table chartofaccounts alter column createddate type timestamp without time zone ;
+alter table Chartofaccountdetail alter column createddate type timestamp without time zone ;
+alter table Bank alter column createddate type timestamp without time zone ;
+alter table Bankbranch alter column createddate type timestamp without time zone;
+alter table  fund  alter column createddate set default now();
+alter table  Accountdetailtype  alter column createddate set default now();
+alter table  egf_accountcode_purpose  alter column createddate set default now();
+alter table  function  alter column createddate set default now();
+alter table  chartofaccounts  alter column createddate set default now();
+alter table  Chartofaccountdetail  alter column createddate set default now();
+alter table  Bank  alter column createddate set default now();
+alter table  Bankbranch  alter column createddate set default now();

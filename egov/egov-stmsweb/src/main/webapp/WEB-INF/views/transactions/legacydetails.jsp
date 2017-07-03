@@ -75,6 +75,9 @@
 			<c:when test="${not empty demandDetailList}">
 				<c:forEach var="demandDetail" items="${demandDetailList}" varStatus="status">
 					<tr>
+					<form:input type="hidden" class="form-control patternvalidation" style="text-align : left; font-size: 12px;"
+							id="demandDetailBeanList[${status.index}].installmentId" value="${demandDetail.installmentId}"
+							path="demandDetailBeanList[${status.index}].installmentId" readOnly="readOnly"/>
 						<td>
 							<form:input type="text" class="form-control patternvalidation" style="text-align : left; font-size: 12px;"
 							id="demandDetailBeanList[${status.index}].installment" value="${demandDetail.installment}"

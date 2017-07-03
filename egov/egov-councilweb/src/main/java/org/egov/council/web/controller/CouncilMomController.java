@@ -157,7 +157,6 @@ public class CouncilMomController {
     @Autowired
     private FileStoreService fileStoreService;
 
-    @Autowired
     @ModelAttribute("committeeType")
     public List<CommitteeType> getCommitteTypeList() {
         return committeeTypeService.getActiveCommiteeType();

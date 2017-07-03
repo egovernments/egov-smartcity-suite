@@ -39,6 +39,7 @@
  */
 package org.egov.adtax.web.controller.hoarding;
 
+import static org.egov.adtax.utils.constants.AdvertisementTaxConstants.ANONYMOUS_USER;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
@@ -51,7 +52,9 @@ import org.egov.adtax.web.controller.common.HoardingControllerSupport;
 import org.egov.adtax.workflow.AdvertisementWorkFlowService;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.web.contract.WorkflowContainer;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
@@ -81,6 +84,9 @@ public class UpdateHoardingController extends HoardingControllerSupport {
     private MessageSource messageSource;
 
     @Autowired
+    private SecurityUtils securityUtils;
+
+    @Autowired
     private AdvertisementWorkFlowService advertisementWorkFlowService;
 
     @ModelAttribute("advertisementPermitDetail")
@@ -90,11 +96,15 @@ public class UpdateHoardingController extends HoardingControllerSupport {
 
     @RequestMapping(value = "/update/{id}", method = GET)
     public String updateHoarding(@PathVariable final String id, final Model model) {
+        User currentUser = securityUtils.getCurrentUser();
+
         final WorkflowContainer workFlowContainer = new WorkflowContainer();
         final AdvertisementPermitDetail advertisementPermitDetail = advertisementPermitDetailService.findBy(Long.valueOf(id));
         model.addAttribute("dcPending", advertisementDemandService.anyDemandPendingForCollection(advertisementPermitDetail));
         model.addAttribute("advertisementPermitDetail", advertisementPermitDetail);
-       if (advertisementPermitDetail != null && advertisementPermitDetail.getPreviousapplicationid() != null) {
+        model.addAttribute("isEmployee",
+                advertisementWorkFlowService.isEmployee(currentUser) && !ANONYMOUS_USER.equalsIgnoreCase(currentUser.getName()));
+        if (advertisementPermitDetail != null && advertisementPermitDetail.getPreviousapplicationid() != null) {
             model.addAttribute(ADDITIONAL_RULE, AdvertisementTaxConstants.RENEWAL_ADDITIONAL_RULE);
             workFlowContainer.setAdditionalRule(AdvertisementTaxConstants.RENEWAL_ADDITIONAL_RULE);
         } else {
@@ -102,13 +112,13 @@ public class UpdateHoardingController extends HoardingControllerSupport {
             workFlowContainer.setAdditionalRule(AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE);
         }
 
-       if(advertisementPermitDetail!=null) {
-        model.addAttribute("stateType", advertisementPermitDetail.getClass().getSimpleName());
-        model.addAttribute("currentState", advertisementPermitDetail.getCurrentState().getValue());
-        model.addAttribute("agency", advertisementPermitDetail.getAgency());
-        model.addAttribute("advertisementDocuments", advertisementPermitDetail.getAdvertisement().getDocuments());
-        prepareWorkflow(model, advertisementPermitDetail, workFlowContainer);
-       }
+        if (advertisementPermitDetail != null) {
+            model.addAttribute("stateType", advertisementPermitDetail.getClass().getSimpleName());
+            model.addAttribute("currentState", advertisementPermitDetail.getCurrentState().getValue());
+            model.addAttribute("agency", advertisementPermitDetail.getAgency());
+            model.addAttribute("advertisementDocuments", advertisementPermitDetail.getAdvertisement().getDocuments());
+            prepareWorkflow(model, advertisementPermitDetail, workFlowContainer);
+        }
         return HOARDING_UPDATE;
     }
 
@@ -130,10 +140,10 @@ public class UpdateHoardingController extends HoardingControllerSupport {
                 model.addAttribute(ADDITIONAL_RULE, AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE);
                 workFlowContainer.setAdditionalRule(AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE);
             }
-            if (advertisementPermitDetail != null){
-            prepareWorkflow(model, advertisementPermitDetail, workFlowContainer);
-            model.addAttribute("stateType", advertisementPermitDetail.getClass().getSimpleName());
-            model.addAttribute("currentState", advertisementPermitDetail.getCurrentState().getValue());
+            if (advertisementPermitDetail != null) {
+                prepareWorkflow(model, advertisementPermitDetail, workFlowContainer);
+                model.addAttribute("stateType", advertisementPermitDetail.getClass().getSimpleName());
+                model.addAttribute("currentState", advertisementPermitDetail.getCurrentState().getValue());
             }
             return HOARDING_UPDATE;
         }

@@ -55,7 +55,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DEVIATION_PERCENTAGE;
 import static org.egov.ptis.constants.PropertyTaxConstants.ELECTIONWARD_BNDRY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.ELECTION_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.FLOOR_MAP;
-import static org.egov.ptis.constants.PropertyTaxConstants.GUARDIAN_RELATION;
 import static org.egov.ptis.constants.PropertyTaxConstants.JUNIOR_ASSISTANT;
 import static org.egov.ptis.constants.PropertyTaxConstants.LOCALITY;
 import static org.egov.ptis.constants.PropertyTaxConstants.LOCATION_HIERARCHY_TYPE;
@@ -119,6 +118,7 @@ import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.Area;
 import org.egov.commons.Installment;
+import org.egov.commons.entity.Source;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.EisCommonService;
@@ -216,7 +216,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     private static final String UNIT_RATE_ERROR = "unitrate.error";
     private static final String USAGE_LIST = "UsageList";
     private static final String EXEMPTED_REASON_LIST = "taxExemptedList";
-
+    private static final String NOTEXISTS_POSITION = "notexists.position";
     private transient Logger logger = Logger.getLogger(getClass());
     private PropertyImpl property = new PropertyImpl();
     @Autowired
@@ -273,7 +273,6 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     private Map<String, String> propTypeCategoryMap;
     private SortedMap<Integer, String> floorNoMap;
     private Map<String, String> deviationPercentageMap;
-    private Map<String, String> guardianRelationMap;
     private List<DocumentType> documentTypes = new ArrayList<>();
 
     private String reportId;
@@ -297,6 +296,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     private transient ReportViewerUtil reportViewerUtil;
 
     private Boolean loggedUserIsMeesevaUser = Boolean.FALSE;
+    private boolean citizenPortalUser;
     private Boolean isDataEntryOperator = Boolean.FALSE;
     private String indexNumber;
     private String modifyRsn;
@@ -314,6 +314,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     private boolean eligibleInitiator = Boolean.TRUE;
     private boolean dataEntry = Boolean.FALSE;
     private String applicationSource;
+	private List<String> guardianRelations;
 
     @Autowired
     private transient PropertyDepartmentRepository propertyDepartmentRepository;
@@ -445,6 +446,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             meesevaParams.put("APPLICATIONNUMBER", property.getMeesevaApplicationNumber());
             basicPropertyService.createBasicProperty(basicProperty, meesevaParams);
         }
+        if (citizenPortalUser)
+            propService.pushPortalMessage(property, APPLICATION_TYPE_NEW_ASSESSENT);
         buildEmailandSms(property, APPLICATION_TYPE_NEW_ASSESSENT);
         setBasicProp(basicProperty);
         propService.saveDocumentTypeDetails(basicProperty, getDocumentTypeDetails());
@@ -479,6 +482,11 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         }
 
         setBasicProp(nonVacantBasicProperty);
+        if (citizenPortalUser) {
+            nonVacantProperty.setSource(Source.CITIZENPORTAL.toString());
+            propService.pushPortalMessage(nonVacantProperty, APPLICATION_TYPE_NEW_ASSESSENT);
+        }
+
         setAckMessage("Property Created Successfully in the System and Forwarded to : ");
         setAssessmentNoMessage(" for Digital Signature with assessment number : ");
         property = nonVacantProperty;
@@ -820,6 +828,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         basicPropertyService.applyAuditing(property.getState());
         basicProp.addProperty(property);
         propService.updateIndexes(property, APPLICATION_TYPE_NEW_ASSESSENT);
+        if (Source.CITIZENPORTAL.toString().equalsIgnoreCase(property.getSource()))
+            propService.updatePortal(property, APPLICATION_TYPE_NEW_ASSESSENT);
         basicPropertyService.persist(basicProp);
         if (logger.isDebugEnabled())
             logger.debug("forward: Property forward started " + property);
@@ -933,7 +943,10 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         setWardId(basicProp.getPropertyID().getWard().getId());
         basicPropertyService.applyAuditing(property.getState());
         propService.updateIndexes(property, APPLICATION_TYPE_NEW_ASSESSENT);
+        if (Source.CITIZENPORTAL.toString().equalsIgnoreCase(property.getSource()))
+            propService.updatePortal(property, APPLICATION_TYPE_NEW_ASSESSENT);
         basicPropertyService.update(basicProp);
+
         buildEmailandSms(property, APPLICATION_TYPE_NEW_ASSESSENT);
         approverName = "";
         final Assignment userAssignment = assignmentService
@@ -962,6 +975,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             basicProp.setUnderWorkflow(true);
         propService.updateIndexes(property, APPLICATION_TYPE_NEW_ASSESSENT);
         basicPropertyService.persist(basicProp);
+        if (Source.CITIZENPORTAL.toString().equalsIgnoreCase(property.getSource()))
+            propService.updatePortal(property, APPLICATION_TYPE_NEW_ASSESSENT);
         approverName = "";
         buildEmailandSms(property, APPLICATION_TYPE_NEW_ASSESSENT);
         Assignment assignment;
@@ -1020,6 +1035,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         propertyByEmployee = propService.isEmployee(securityUtils.getCurrentUser())
                 && !ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName());
         loggedUserIsMeesevaUser = propService.isMeesevaUser(securityUtils.getCurrentUser());
+        citizenPortalUser = propService.isCitizenPortalUser(securityUtils.getCurrentUser());
         isDataEntryOperator = propService.isDataEntryOperator(securityUtils.getCurrentUser());
         if (isNotBlank(getModelId())) {
             property = (PropertyImpl) getPersistenceService().findByNamedQuery(QUERY_PROPERTYIMPL_BYID,
@@ -1031,7 +1047,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                 logger.debug("prepare: Property by ModelId: " + property + "BasicProperty on property: " + basicProp);
         }
         if (null != property && null != property.getId() && null != property.getState()) {
-            preparePropertyTaxDetails(property);
+            if (!(property.getStatus().toString().equalsIgnoreCase("C") && citizenPortalUser))
+                preparePropertyTaxDetails(property);
             historyMap = propService.populateHistory(property);
         }
 
@@ -1080,10 +1097,10 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
 
         addDropdownData("zones", zones);
         addDropdownData("wards", Collections.emptyList());
-        addDropdownData("blocks", Collections.emptyList());
         addDropdownData("streets", Collections.emptyList());
+        addDropdownData("blocks", Collections.emptyList());
+		setGuardianRelations(propertyTaxCommonUtils.getGuardianRelations());
         setDeviationPercentageMap(DEVIATION_PERCENTAGE);
-        setGuardianRelationMap(GUARDIAN_RELATION);
         addDropdownData("PropTypeMaster", propTypeList);
         addDropdownData("floorType", floorTypeList);
         addDropdownData("roofType", roofTypeList);
@@ -1228,7 +1245,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
      * Changes the property details from {@link BuiltUpProperty} to {@link VacantProperty}
      *
      * @return vacant property details
-     * @see org.egov.ptis.domain.entity.property.VacantProperty
+     * @see VacantProperty
      */
 
     private VacantProperty changePropertyDetail(final PropertyImpl property) {
@@ -1400,8 +1417,11 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         if (blockId == null || blockId == -1)
             addActionError(getText("mandatory.block"));
         else if (null != propTypeMstr && !propTypeMstr.getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
-            if (!StringUtils.isBlank(houseNumber))
-                validateHouseNumber(wardId, houseNumber, basicProp);
+            if (!StringUtils.isBlank(houseNumber)) {
+                if (propService.isDuplicateDoorNumber(houseNumber, basicProp))
+                    addActionError(getText("houseNo.duplicate"));
+            }
+
             else if (property != null && property.getState() != null && property.getState().getNextAction() != null
                     && property.getState().getNextAction()
                             .equalsIgnoreCase(WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING))
@@ -1459,7 +1479,9 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                 if (StringUtils.isNotBlank(parentIndex)) {
                     final BasicProperty basicProperty = basicPropertyService
                             .find("From BasicPropertyImpl where upicNo = ? ", parentIndex);
-                    if (areaOfPlot != null && !areaOfPlot.isEmpty()) {
+                    if (basicProperty != null && basicProperty.isUnderWorkflow())
+                        addActionError(getText("error.parent.underworkflow"));
+                    else if (areaOfPlot != null && !areaOfPlot.isEmpty()) {
                         final Area area = new Area();
                         area.setArea(new Float(areaOfPlot));
                         property.getPropertyDetail().setSitalArea(area);
@@ -1477,7 +1499,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         } else
             addActionError(getText("mandatory.createRsn"));
 
-        if (loggedUserIsMeesevaUser || !propertyByEmployee) {
+        if (loggedUserIsMeesevaUser || citizenPortalUser || !propertyByEmployee) {
             final PropertyID propertyid = new PropertyID();
             propertyid.setElectionBoundary(boundaryService.getBoundaryById(getElectionWardId()));
             property.getBasicProperty().setPropertyID(propertyid);
@@ -1486,14 +1508,14 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                 final Assignment assignment = propService.isCscOperator(securityUtils.getCurrentUser())
                         ? propService.getAssignmentByDeptDesigElecWard(property.getBasicProperty()) : null;
                 if (assignment == null && propService.getUserPositionByZone(property.getBasicProperty(), false) == null)
-                    addActionError(getText("notexists.position"));
+                    addActionError(getText(NOTEXISTS_POSITION));
             }
 
         } else if (property.getId() == null && !isDataEntryOperator) {
             final Assignment initiator = propertyTaxCommonUtils
                     .getWorkflowInitiatorAssignment(securityUtils.getCurrentUser().getId());
             if (initiator == null)
-                addActionError(getText("notexists.position"));
+                addActionError(getText(NOTEXISTS_POSITION));
         }
         validateApproverDetails();
         super.validate();
@@ -2120,14 +2142,6 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         this.deviationPercentageMap = deviationPercentageMap;
     }
 
-    public Map<String, String> getGuardianRelationMap() {
-        return guardianRelationMap;
-    }
-
-    public void setGuardianRelationMap(final Map<String, String> guardianRelationMap) {
-        this.guardianRelationMap = guardianRelationMap;
-    }
-
     public List<DocumentType> getDocumentTypes() {
         return documentTypes;
     }
@@ -2357,5 +2371,20 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     public void setApplicationSource(final String applicationSource) {
         this.applicationSource = applicationSource;
     }
+    
+    public boolean isCitizenPortalUser() {
+        return citizenPortalUser;
+    }
 
+    public void setCitizenPortalUser(boolean citizenPortalUser) {
+        this.citizenPortalUser = citizenPortalUser;
+    }
+
+    public List<String> getGuardianRelations() {
+		return guardianRelations;
+	}
+
+	public void setGuardianRelations(List<String> guardianRelations) {
+		this.guardianRelations = guardianRelations;
+	} 
 }

@@ -51,22 +51,24 @@ import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.ComplaintStatus;
 import org.egov.pgr.entity.ComplaintType;
+import org.egov.pgr.service.ComplaintHistoryService;
+import org.egov.pgr.service.ComplaintMessagingService;
+import org.egov.pgr.service.ComplaintProcessFlowService;
 import org.egov.pgr.service.ComplaintService;
 import org.egov.pgr.service.ComplaintStatusMappingService;
 import org.egov.pgr.service.ComplaintTypeService;
 import org.egov.pgr.web.controller.AbstractContextControllerTest;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Matchers;
 import org.mockito.Mock;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.context.MessageSource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.util.NestedServletException;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -84,56 +86,45 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class ComplaintUpdationControllerTest extends AbstractContextControllerTest<ComplaintUpdationController> {
     @Mock
-    ComplaintStatusMappingService complaintStatusMappingService;
+    private ComplaintStatusMappingService complaintStatusMappingService;
     @Mock
-    ComplaintTypeService complaintTypeService;
+    private ComplaintTypeService complaintTypeService;
     @Mock
-    Complaint complaint1;
+    private Complaint complaint1;
     @Mock
-    BindingResult errors;
+    private BindingResult errors;
     @Mock
-    UserService userService;
+    private UserService userService;
     @Mock
-    User user;
+    private User user;
     @Mock
-    SecurityUtils securityUtils;
+    private SecurityUtils securityUtils;
     @Mock
     private Complaint complaint;
     @Mock
     private ComplaintService complaintService;
     @Mock
     private BoundaryService boundaryService;
-    @Autowired
-    private ResourceBundleMessageSource messageSource;
+    @Mock
+    private MessageSource messageSource;
     @Mock
     private DepartmentService departmentService;
+    @Mock
+    private ComplaintHistoryService complaintHistoryService;
+    @Mock
+    private ComplaintProcessFlowService complaintProcessFlowService;
+    @Mock
+    private ComplaintMessagingService complaintMessagingService;
     private MockMvc mockMvc;
     private Long id;
     private ComplaintType complaintType;
 
+    @InjectMocks
+    private ComplaintUpdationController complaintUpdationController;
+
     @Override
     protected ComplaintUpdationController initController() {
         initMocks(this);
-
-        final ComplaintUpdationController complaintUpdationController = new ComplaintUpdationController(complaintService,
-                complaintTypeService, complaintStatusMappingService);
-        // when(complaintUpdationController.getStatus()).thenReturn(value,
-        // values);
-        try {
-            Field msgSrc = complaintUpdationController.getClass().getDeclaredField("messageSource");
-            Field secuUtil = complaintUpdationController.getClass().getDeclaredField("securityUtils");
-            Field deptService = complaintUpdationController.getClass().getDeclaredField("departmentService");
-            Field bndryService = complaintUpdationController.getClass().getDeclaredField("boundaryService");
-            deptService.setAccessible(true);
-            bndryService.setAccessible(true);
-            msgSrc.setAccessible(true);
-            secuUtil.setAccessible(true);
-            msgSrc.set(complaintUpdationController, messageSource);
-            secuUtil.set(complaintUpdationController, securityUtils);
-            deptService.set(complaintUpdationController, departmentService);
-            bndryService.set(complaintUpdationController, boundaryService);
-        } catch (NoSuchFieldException | SecurityException | IllegalAccessException e) {
-        }
         return complaintUpdationController;
     }
 
@@ -147,22 +138,22 @@ public class ComplaintUpdationControllerTest extends AbstractContextControllerTe
         // id = 2L;
         when(complaintService.getComplaintById(id)).thenReturn(complaint);
         complaintType = new ComplaintType();
-        final List ctList = new ArrayList<ComplaintType>();
+        final List<ComplaintType> ctList = new ArrayList<>();
         ctList.add(complaintType);
         when(complaintTypeService.findAll()).thenReturn(ctList);
         when(securityUtils.currentUserType()).thenReturn(UserType.CITIZEN);
         when(securityUtils.getCurrentUser()).thenReturn(new User());
-        final List<ComplaintStatus> csList = new ArrayList<ComplaintStatus>();
+        final List<ComplaintStatus> csList = new ArrayList<>();
         final ComplaintStatus cs = new ComplaintStatus();
 
         final Role r = new Role();
-        final Set<Role> roleList = new HashSet<Role>();
+        final Set<Role> roleList = new HashSet<>();
         roleList.add(r);
         ApplicationThreadLocals.setUserId(1l);
         when(userService.getUserById(Matchers.anyLong())).thenReturn(user);
         when(user.getRoles()).thenReturn(roleList);
         csList.add(cs);
-        final List<Department> departmentList = new ArrayList<Department>();
+        final List<Department> departmentList = new ArrayList<>();
         when(departmentService.getAllDepartments()).thenReturn(departmentList);
 
         when(complaintStatusMappingService.getStatusByRoleAndCurrentStatus(roleList, cs)).thenReturn(csList);
@@ -183,7 +174,7 @@ public class ComplaintUpdationControllerTest extends AbstractContextControllerTe
         complaint.setComplaintType(complaintType);
         complaint.setDetails("Already Registered complaint");
         when(complaintService.getComplaintByCRN("CRN-123")).thenReturn(complaint);
-
+        when(securityUtils.currentUserIsCitizen()).thenReturn(true);
         final MvcResult result = mockMvc.perform(get("/complaint/update/CRN-123")).andExpect(view().name("complaint-citizen-edit"))
                 .andExpect(model().attributeExists("complaint")).andReturn();
 
@@ -200,8 +191,7 @@ public class ComplaintUpdationControllerTest extends AbstractContextControllerTe
         complaint.setDetails("Already Registered complaint");
         id = 2L;
         when(complaintService.getComplaintByCRN("CRN-124")).thenReturn(complaint);
-
-
+        when(securityUtils.currentUserIsCitizen()).thenReturn(true);
         final MvcResult result = mockMvc.perform(get("/complaint/update/CRN-124")).andExpect(status().isOk())
                 .andExpect(view().name("complaint-citizen-edit")).andExpect(model().attributeExists("complaint")).andReturn();
 
@@ -218,25 +208,15 @@ public class ComplaintUpdationControllerTest extends AbstractContextControllerTe
         complaint.setDetails("Already Registered complaint");
         final Boundary ward = new Boundary();
         final Boundary zone = new Boundary();
-
-        try {
-            Field idField = ward.getClass().getDeclaredField("id");
-            idField.setAccessible(true);
-            idField.set(ward, id);
-            idField = zone.getClass().getDeclaredField("id");
-            idField.setAccessible(true);
-            idField.set(zone, id);
-        } catch (final Exception e) {
-            throw new RuntimeException(e);
-        }
+        ward.setId(id);
+        zone.setId(id);
         ward.setParent(zone);
-
         complaint.setLocation(ward);
         id = 2L;
         when(complaintService.getComplaintByCRN("CRN-124")).thenReturn(complaint);
         final List<Boundary> wards = new ArrayList<Boundary>();
         when(boundaryService.getChildBoundariesByBoundaryId(ward.getId())).thenReturn(wards);
-
+        when(securityUtils.currentUserIsCitizen()).thenReturn(true);
         final MvcResult result = mockMvc.perform(get("/complaint/update/CRN-124")).andExpect(status().isOk())
                 .andExpect(view().name("complaint-citizen-edit")).andExpect(model().attributeExists("complaint")).andReturn();
 

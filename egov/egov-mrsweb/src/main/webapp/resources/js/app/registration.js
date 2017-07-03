@@ -39,7 +39,9 @@
  */
 
 $(document).ready( function () {
-	
+	var applicationDate=$('#applicationDate').val();
+
+
 	// remove mandatory (*) on form load for serial no and page no
 	$('.validate-madatory').find("span").removeClass( "mandatory" );
 	
@@ -313,9 +315,18 @@ function removeMandatory() {
 
 function validateApplicationDate(){
 	var one_day=1000*60*60*24
-	var start = $('#txt-dateOfMarriage').datepicker('getDate'); // date of marriage
-	var end = new Date(); // current date
-	var days   = Math.round((end.getTime() - start.getTime())/one_day);
+	var start;
+	var end;
+	var days;
+	if(applicationDate){
+		start=$('#txt-dateOfMarriage').datepicker('getDate');
+		end = $('#applicationDate').datepicker('getDate'); // current date
+		days = (end.getTime() - start.getTime())/one_day;
+	} else {
+		 start = $('#txt-dateOfMarriage').datepicker('getDate'); // date of marriage
+		 end = new Date();
+		 days   = Math.round((end.getTime() - start.getTime())/one_day);
+	}// current date
 	return days;
 }
 

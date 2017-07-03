@@ -93,18 +93,15 @@ public class Money implements Serializable {
         return result;
     }
 
-    @Override
-    public boolean equals(final Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        final Money other = (Money) obj;
-        if (Double.doubleToLongBits(value) != Double.doubleToLongBits(other.value))
-            return false;
-        return true;
+    public boolean equals(Object obj) {
+	if (this == obj)
+	    return true;
+	if (obj == null)
+	    return false;
+	if (getClass() != obj.getClass())
+	    return false;
+	final Money other = (Money) obj;
+        return Double.doubleToLongBits(value) == Double.doubleToLongBits(other.value);
     }
 
     public String getFormattedString() {

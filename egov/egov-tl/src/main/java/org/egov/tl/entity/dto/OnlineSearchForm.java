@@ -45,6 +45,8 @@ import java.util.List;
 
 import org.egov.tl.entity.License;
 
+import static org.egov.tl.utils.Constants.CLOSURE_LIC_APPTYPE;
+
 public class OnlineSearchForm {
 
     private Long licenseId;
@@ -53,11 +55,11 @@ public class OnlineSearchForm {
     private String tradeOwnerName;
     private String propertyAssessmentNo;
     private String mobileNo;
-    private List<String> actions = new ArrayList<>() ;
+    private List<String> actions = new ArrayList<>();
     private BigDecimal arrDmd;
     private BigDecimal currDmd;
     private BigDecimal totColl;
-    
+
     public OnlineSearchForm() {
         // For form binding
     }
@@ -72,10 +74,16 @@ public class OnlineSearchForm {
         setArrDmd(dmdColl[0]);
         setCurrDmd(dmdColl[1]);
         setTotColl(dmdColl[2]);
-        if(license.canCollectFee())
-        	actions.add("Payment");
-        if(license.getIsActive())
-        	actions.add("View DCB");
+        if (!CLOSURE_LIC_APPTYPE.equals(license.getLicenseAppType().getName()) && license.canCollectFee())
+            actions.add("Payment");
+        if (license.getIsActive())
+            actions.add("View DCB");
+        if (license.isReadyForRenewal())
+            actions.add("Renew License");
+        if (license.isClosureApplicable())
+            actions.add("Closure");
+        if (license.isStatusActive() && !license.isLegacy())
+            actions.add("Print Certificate");
     }
 
     public String getApplicationNumber() {

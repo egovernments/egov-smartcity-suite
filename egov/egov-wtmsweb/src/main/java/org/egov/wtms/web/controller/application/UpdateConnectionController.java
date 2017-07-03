@@ -346,6 +346,7 @@ public class UpdateConnectionController extends GenericConnectionController {
         model.addAttribute("connectionCategories", connectionCategoryService.getAllActiveConnectionCategory());
         model.addAttribute("pipeSizes", pipeSizeService.getAllActivePipeSize());
         model.addAttribute("typeOfConnection", waterConnectionDetails.getApplicationType().getCode());
+        model.addAttribute("ownerPosition", waterConnectionDetails.getState().getOwnerPosition().getId());
         return "newconnection-edit";
     }
 
@@ -431,6 +432,9 @@ public class UpdateConnectionController extends GenericConnectionController {
     public String update(@Valid @ModelAttribute WaterConnectionDetails waterConnectionDetails,
             final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
             final HttpServletRequest request, final Model model, @RequestParam("files") final MultipartFile[] files) {
+
+        final String currentState = request.getParameter("currentState");
+        final String ownerPosition = request.getParameter("ownerPosition");
 
         String mode = "";
         String workFlowAction = "";

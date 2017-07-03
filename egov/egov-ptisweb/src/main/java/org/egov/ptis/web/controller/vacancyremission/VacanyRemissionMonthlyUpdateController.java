@@ -39,8 +39,17 @@
  */
 package org.egov.ptis.web.controller.vacancyremission;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_VACANCY_REMISSION;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+
+import org.egov.commons.entity.Source;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.entity.enums.TransactionType;
 import org.egov.ptis.domain.entity.property.Document;
@@ -59,34 +68,26 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 @Controller
 @RequestMapping(value = "/vacancyremission/")
 public class VacanyRemissionMonthlyUpdateController {
 
-    private VacancyRemissionService vacancyRemissionService;
-    
+    private final VacancyRemissionService vacancyRemissionService;
+
     @Autowired
     private PropertyService propertyService;
 
     @Autowired
-    public VacanyRemissionMonthlyUpdateController(VacancyRemissionService vacancyRemissionService,
-            PropertyTaxUtil propertyTaxUtil) {
+    public VacanyRemissionMonthlyUpdateController(final VacancyRemissionService vacancyRemissionService,
+            final PropertyTaxUtil propertyTaxUtil) {
         this.vacancyRemissionService = vacancyRemissionService;
     }
-     
+
     @ModelAttribute
     public VacancyRemission getVacancyRemission(@PathVariable final String assessmentNo) {
-        final VacancyRemission vacancyRemission = vacancyRemissionService
-                .getApprovedVacancyRemissionForProperty(assessmentNo);
-        return vacancyRemission;
+        return vacancyRemissionService.getApprovedVacancyRemissionForProperty(assessmentNo);
     }
-    
+
     @ModelAttribute("documentsList")
     public List<DocumentType> documentsList(@ModelAttribute final VacancyRemission vacancyRemission) {
         return vacancyRemissionService.getDocuments(TransactionType.VRMONTHLYUPDATE);
@@ -94,16 +95,15 @@ public class VacanyRemissionMonthlyUpdateController {
 
     @RequestMapping(value = "/monthlyupdate/{assessmentNo}", method = RequestMethod.GET)
     public String newform(final Model model, @PathVariable final String assessmentNo, final HttpServletRequest request) {
-        VacancyRemission vacancyRemission = vacancyRemissionService
+        final VacancyRemission vacancyRemission = vacancyRemissionService
                 .getApprovedVacancyRemissionForProperty(assessmentNo);
         List<DocumentType> documentTypes;
-        VacancyRemissionDetails remissionDetails = new VacancyRemissionDetails();
+        final VacancyRemissionDetails remissionDetails = new VacancyRemissionDetails();
         documentTypes = propertyService.getDocumentTypesForTransactionType(TransactionType.VRMONTHLYUPDATE);
         model.addAttribute("remissionDetailsObj", remissionDetails);
         model.addAttribute("documentTypes", documentTypes);
-        if (!vacancyRemission.getDocuments().isEmpty()) {
+        if (!vacancyRemission.getDocuments().isEmpty())
             model.addAttribute("attachedDocuments", vacancyRemission.getDocuments());
-        }
         vacancyRemissionService.addModelAttributes(model, vacancyRemission.getBasicProperty());
         return "vacancyRemissionDetails-form";
     }
@@ -114,9 +114,9 @@ public class VacanyRemissionMonthlyUpdateController {
         if (vacancyRemissionDetails != null) {
             vacancyRemissionDetails.setVacancyRemission(vacancyRemission);
             if (vacancyRemission.getVacancyRemissionDetails() == null
-                    || vacancyRemission.getVacancyRemissionDetails().isEmpty()) {
+                    || vacancyRemission.getVacancyRemissionDetails().isEmpty())
                 remissionDetailsList.add(vacancyRemissionDetails);
-            } else {
+            else {
                 remissionDetailsList = vacancyRemission.getVacancyRemissionDetails();
                 remissionDetailsList.add(vacancyRemissionDetails);
             }
@@ -125,12 +125,12 @@ public class VacanyRemissionMonthlyUpdateController {
     }
 
     @RequestMapping(value = "/monthlyupdate/{assessmentNo}", method = RequestMethod.POST)
-    public String saveRemissionDetails(@Valid @ModelAttribute VacancyRemission vacancyRemission,
-            final BindingResult errors, RedirectAttributes redirectAttrs, final Model model,
+    public String saveRemissionDetails(@Valid @ModelAttribute final VacancyRemission vacancyRemission,
+            final BindingResult errors, final RedirectAttributes redirectAttrs, final Model model,
             final HttpServletRequest request) {
         final String wfAction = request.getParameter("wfAction");
-        String comments = request.getParameter("remissionComments");
-        VacancyRemissionDetails remissionDetailsObj = new VacancyRemissionDetails();
+        final String comments = request.getParameter("remissionComments");
+        final VacancyRemissionDetails remissionDetailsObj = new VacancyRemissionDetails();
         final List<Document> documents = new ArrayList<>();
         remissionDetailsObj.setComments(comments);
         remissionDetailsObj.setCheckinDate(new Date());
@@ -138,23 +138,27 @@ public class VacanyRemissionMonthlyUpdateController {
         vacancyRemission.getDocuments().clear();
         vacancyRemission.getDocuments().addAll(documents);
         processAndStoreApplicationDocuments(vacancyRemission);
-        if(WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(wfAction)){
-            vacancyRemissionService.rejectVacancyRemission(vacancyRemission,comments,request);
-            model.addAttribute("successMessage", "Vacancy Remission application rejected !");   
-        }else{
-        populateRemissionDetails(remissionDetailsObj, vacancyRemission);
-        vacancyRemissionService.saveRemissionDetails(vacancyRemission);
-        model.addAttribute("successMessage", "Remission details saved successfully!!");
+        if (WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(wfAction)) {
+            vacancyRemissionService.rejectVacancyRemission(vacancyRemission, comments, request);
+            model.addAttribute("successMessage", "Vacancy Remission application rejected !");
+        } else {
+            populateRemissionDetails(remissionDetailsObj, vacancyRemission);
+            vacancyRemissionService.saveRemissionDetails(vacancyRemission);
+            model.addAttribute("successMessage", "Remission details saved successfully!!");
+        }
+        if (Source.CITIZENPORTAL.toString().equalsIgnoreCase(vacancyRemission.getSource())
+            && propertyService.getPortalInbox(vacancyRemission.getApplicationNumber()) !=null) {
+                propertyService.updatePortal(vacancyRemission, APPLICATION_TYPE_VACANCY_REMISSION);
         }
         return "vacancyRemission-success";
     }
+
     protected void processAndStoreApplicationDocuments(final VacancyRemission vacancyRemission) {
         if (!vacancyRemission.getDocuments().isEmpty())
-            for (final Document applicationDocument : vacancyRemission.getDocuments()) {
-                if(applicationDocument.getFile() != null) {
+            for (final Document applicationDocument : vacancyRemission.getDocuments())
+                if (applicationDocument.getFile() != null) {
                     applicationDocument.setType(vacancyRemissionService.getDocType(applicationDocument.getType().getName()));
                     applicationDocument.setFiles(propertyService.addToFileStore(applicationDocument.getFile()));
                 }
-            }
     }
 }

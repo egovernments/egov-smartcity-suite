@@ -1112,8 +1112,8 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
         billReceipts.add(new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO, persistenceService,
                 bouncedInstrumentInfo));
 
-        if (updateBillingSystem(receiptHeader.getService(), billReceipts, billingService)
-                || receiptHeader.getService().getCode().equals(CollectionConstants.SERVICECODE_LAMS)) {
+        if (receiptHeader.getService().getCode().equals(CollectionConstants.SERVICECODE_LAMS)
+                || updateBillingSystem(receiptHeader.getService(), billReceipts, billingService)) {
             receiptHeader.setIsReconciled(true);
             // the receipts should be persisted again
             super.persist(receiptHeader);
@@ -1153,7 +1153,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
     }
 
     public ReportRequest getReportRequest(final ReceiptHeader receiptHeader) {
-        String additionalMessage;
+        String additionalMessage = null;
         final List<BillReceiptInfo> receiptList = new ArrayList<>(0);
         final Map<String, Object> reportParams = new HashMap<>(0);
         final String serviceCode = receiptHeader.getService().getCode();
@@ -1162,8 +1162,9 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
         final String templateName = collectionsUtil.getReceiptTemplateName(receiptHeader.getReceipttype(), serviceCode);
 
         if (receiptHeader.getReceipttype() == CollectionConstants.RECEIPT_TYPE_BILL) {
-            additionalMessage = getAdditionalInfoForReceipt(serviceCode, new BillReceiptInfoImpl(receiptHeader,
-                    chartOfAccountsHibernateDAO, persistenceService, null));
+            if (!receiptHeader.getService().getCode().equals(CollectionConstants.SERVICECODE_LAMS))
+                additionalMessage = getAdditionalInfoForReceipt(serviceCode, new BillReceiptInfoImpl(receiptHeader,
+                        chartOfAccountsHibernateDAO, persistenceService, null));
             if (additionalMessage != null)
                 receiptList.add(new BillReceiptInfoImpl(receiptHeader, additionalMessage, chartOfAccountsHibernateDAO,
                         persistenceService));

@@ -91,7 +91,7 @@
 									<spring:message code="lbl.select" />
 								</form:option>
 								<form:options items="${functions}" itemValue="id"
-									itemLabel="name" />
+									itemLabel="name" disabled="true"/>
 							</form:select>
 							<form:errors path="parentId" cssClass="error-msg" />
 						</div>

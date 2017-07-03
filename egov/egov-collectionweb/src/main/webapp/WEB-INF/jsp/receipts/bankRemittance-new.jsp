@@ -284,16 +284,21 @@
 			}
 		}
 		</s:if>
-		
+
+		var flag=confirm('Receipts once remitted cannot be modified, please verify before you proceed.');
+        if(flag==false)
+        {
+         return false;
+        }
 		if (!isChecked(document.getElementsByName('receiptIds'))) {
 			dom.get("selectremittanceerror").style.display = "block";
 			window.scroll(0, 0);
 			return false;
 		} else {
-			doLoadingMask('#loadingMask');
-			jQuery('#finYearId').prop("disabled", false);
-			document.bankRemittanceForm.action = "bankRemittance-create.action";
-			return true;
+		       	doLoadingMask('#loadingMask');
+				jQuery('#finYearId').prop("disabled", false);
+				document.bankRemittanceForm.action = "bankRemittance-create.action";
+				return true;
 		}
 
 	}
@@ -415,9 +420,15 @@
 			deSelectAll();
 		}
 	}
+	function onBodyLoad()
+	{
+		<s:if test="%{isBankCollectionRemitter}">
+			document.getElementById('bankBranchMaster').disabled=true;
+		</s:if>
+	}
 </script>
 </head>
-<body>
+<body  onload="onBodyLoad();">
 	<div class="errorstyle" id="error_area" style="display: none;"></div>
 	<span align="center" style="display: none" id="selectremittanceerror">
 		<li><font size="2" color="red"><b><s:text
@@ -440,7 +451,7 @@
 		<li><font size="2" color="red"><b><s:text
 						name="bankremittance.error.noApproverselected" /> </b></font></li>
 	</span>
-	<s:form theme="simple" name="bankRemittanceForm">
+	<s:form theme="simple" name="bankRemittanceForm" >
 		<s:push value="model">
 			<s:token />
 			<s:if test="%{hasErrors()}">

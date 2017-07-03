@@ -73,7 +73,7 @@ jQuery(document).ready(function($) {
 	$('#roleNewBtn').click(function() {
 		$('#method').val("New");
 		$('#viewRoleForm').trigger('submit');
-	})
+	});
 
 	$('#roleEditBtn').click(function() {
 		$('#method').val("Edit");

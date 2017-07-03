@@ -66,6 +66,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.ZONAL_COMMISSIONER_DE
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -79,6 +80,7 @@ import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.client.util.PropertyTaxUtil;
+import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.service.demolition.PropertyDemolitionService;
@@ -109,7 +111,7 @@ public class UpdatePropertyDemolitionController extends GenericWorkFlowControlle
     private static final String APPROVAL_POSITION = "approvalPosition";
     private static final String SUCCESSMESSAGE = "successMessage";
     private static final String PROPERTY_MODIFY_REJECT_FAILURE = "Initiator is not active so can not do rejection with the Assessment number :";
-    
+
     PropertyDemolitionService propertyDemolitionService;
 
     @Autowired
@@ -129,8 +131,6 @@ public class UpdatePropertyDemolitionController extends GenericWorkFlowControlle
     @Autowired
     private SecurityUtils securityUtils;
 
-    private PropertyImpl property;
-
     @Autowired
     private PropertyTaxCommonUtils propertyTaxCommonUtils;
 
@@ -138,22 +138,23 @@ public class UpdatePropertyDemolitionController extends GenericWorkFlowControlle
     private transient PropertyService propService;
 
     @ModelAttribute
-    public Property propertyModel(@PathVariable final String id) {
-        property = propertyDemolitionService.findByNamedQuery(QUERY_WORKFLOW_PROPERTYIMPL_BYID, Long.valueOf(id));
-        if (null == property)
+    public PropertyImpl property(@PathVariable final String id) {
+        PropertyImpl property = propertyDemolitionService.findByNamedQuery(QUERY_WORKFLOW_PROPERTYIMPL_BYID, Long.valueOf(id));
+        if (property == null)
             property = propertyDemolitionService.findByNamedQuery(QUERY_PROPERTYIMPL_BYID, Long.valueOf(id));
         return property;
+
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public String view(final Model model, @PathVariable final Long id, final HttpServletRequest request) {
+    public String view(@ModelAttribute PropertyImpl property, final Model model, @PathVariable final Long id, final HttpServletRequest request) {
 
-        String userDesignationList = "";
         String currentDesignation = null;
         final String currState = property.getState().getValue();
         final String nextAction = property.getState().getNextAction();
 
-        userDesignationList = propertyTaxCommonUtils.getAllDesignationsForUser(securityUtils.getCurrentUser().getId());
+        String userDesignationList = propertyTaxCommonUtils.getAllDesignationsForUser(securityUtils.getCurrentUser().getId());
+        model.addAttribute("property", property);
         model.addAttribute("stateType", property.getClass().getSimpleName());
         model.addAttribute("currentState", property.getCurrentState().getValue());
         model.addAttribute("pendingActions", nextAction);
@@ -184,9 +185,9 @@ public class UpdatePropertyDemolitionController extends GenericWorkFlowControlle
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public String update(@Valid @ModelAttribute final Property property, final BindingResult errors,
-            final RedirectAttributes redirectAttributes, final HttpServletRequest request, final Model model,
-            @RequestParam final String workFlowAction) throws TaxCalculatorExeption {
+    public String update(@Valid @ModelAttribute final PropertyImpl property, final BindingResult errors,
+                         final RedirectAttributes redirectAttributes, final HttpServletRequest request, final Model model,
+                         @RequestParam final String workFlowAction) throws TaxCalculatorExeption {
         String workFlowAct = workFlowAction;
         propertyDemolitionService.validateProperty(property, errors, request);
         if (errors.hasErrors()) {
@@ -261,7 +262,7 @@ public class UpdatePropertyDemolitionController extends GenericWorkFlowControlle
     }
 
     private String ifNotNoticeGenAndModeViewOrSave(final Property property, final HttpServletRequest request, final Model model,
-            final String workFlowAction, final Character status, final Long approvalPosition, final String approvalComent)
+                                                   final String workFlowAction, final Character status, final Long approvalPosition, final String approvalComent)
             throws TaxCalculatorExeption {
         final Property oldProperty = property.getBasicProperty().getActiveProperty();
         Long approvalPos;
@@ -285,7 +286,7 @@ public class UpdatePropertyDemolitionController extends GenericWorkFlowControlle
     }
 
     private void wFReject(final Property property, final HttpServletRequest request, final Model model,
-            final String workFlowAction, final Character status, final Long approvalPosition, final String approvalComent)
+                          final String workFlowAction, final Character status, final Long approvalPosition, final String approvalComent)
             throws TaxCalculatorExeption {
         final Property oldProperty = property.getBasicProperty().getActiveProperty();
         Assignment assignment = null;
@@ -362,7 +363,7 @@ public class UpdatePropertyDemolitionController extends GenericWorkFlowControlle
     }
 
     private void ifNotRejectViewOrSave(final Property property, final HttpServletRequest request, final String workFlowAction,
-            final Character status, final Long approvalPosition, final String approvalComent, final Property oldProperty)
+                                       final Character status, final Long approvalPosition, final String approvalComent, final Property oldProperty)
             throws TaxCalculatorExeption {
         if (request.getParameter("mode").equalsIgnoreCase(VIEW)) {
             if (!workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_REJECT))

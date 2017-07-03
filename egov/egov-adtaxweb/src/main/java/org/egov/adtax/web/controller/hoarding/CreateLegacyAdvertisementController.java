@@ -53,6 +53,8 @@ import org.egov.adtax.entity.enums.AdvertisementStatus;
 import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
 import org.egov.adtax.web.controller.common.HoardingControllerSupport;
 import org.egov.commons.Installment;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -70,6 +72,9 @@ public class CreateLegacyAdvertisementController extends HoardingControllerSuppo
     @Autowired
     @Qualifier("messageSource")
     private MessageSource messageSource;
+
+    @Autowired
+    private SecurityUtils securityUtils;
 
     @RequestMapping(value = "adtaxCreateLegacy", method = GET)
     public String createLegacyHoardingForm(@ModelAttribute final AdvertisementPermitDetail advertisementPermitDetail) {
@@ -102,6 +107,7 @@ public class CreateLegacyAdvertisementController extends HoardingControllerSuppo
     @RequestMapping(value = "adtaxCreateLegacy", method = POST)
     public String createLegacyHoarding(@Valid @ModelAttribute final AdvertisementPermitDetail advertisementPermitDetail,
             final BindingResult resultBinder, final RedirectAttributes redirAttrib) {
+        User currentUser = securityUtils.getCurrentUser();
         final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         validateHoardingDocs(advertisementPermitDetail, resultBinder);
         validateAdvertisementDetails(advertisementPermitDetail, resultBinder);
@@ -121,7 +127,8 @@ public class CreateLegacyAdvertisementController extends HoardingControllerSuppo
                 // TODO: CHECK THIS CASE AGAIN.
             }
 
-        advertisementPermitDetailService.createAdvertisementPermitDetail(advertisementPermitDetail, null, null, null, null);
+        advertisementPermitDetailService.createAdvertisementPermitDetail(advertisementPermitDetail, null, null, null, null,
+                currentUser);
         final String message = messageSource.getMessage("hoarding.create.success",
                 new String[] { advertisementPermitDetail.getAdvertisement().getAdvertisementNumber(),
                         advertisementPermitDetail.getApplicationNumber(), advertisementPermitDetail.getPermissionNumber() },

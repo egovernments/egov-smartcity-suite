@@ -95,7 +95,7 @@
 			</form:option>
 			<form:options items="${category}" itemValue="id" itemLabel="name" />
 		</form:select>
-		<form:errors path="category" cssClass="error-msg" />
+		<form:errors path="category" cssClass="error-msg tradelicenceerror" />
 	</div>
 
 	<label class="col-sm-2 control-label text-right"><spring:message
@@ -109,7 +109,7 @@
 			</form:option>
 			<form:options items="${tradeName}" itemValue="id" itemLabel="name"/>
 		</form:select>
-		<form:errors path="tradeName" cssClass="error-msg" />
+		<form:errors path="tradeName" cssClass="error-msg tradelicenceerror"/>
 	</div>
 </div>
 
@@ -130,7 +130,7 @@
 			value="${tradeArea_weight}" maxlength="8"
 			class="form-control patternvalidation" required="true"
 			data-pattern="number" />
-		<form:errors path="tradeArea_weight" cssClass="error-msg" />
+		<form:errors path="tradeArea_weight" cssClass="error-msg tradelicenceerror" />
 	</div>
 </div>
 
@@ -157,33 +157,6 @@
 			<form:errors path="commencementDate" cssClass="error-msg" />
 		</div>
 </div>
-
-<c:set value="${outstandingFee}" var="feeInfo" target="stat" />
-<c:if test="${feeInfo.size() >= 0}">
-	<div class="panel-heading  custom_form_panel_heading subheadnew">
-		<div class="panel-title">
-			<spring:message code='license.title.feedetail' />
-		</div>
-	</div>
-	<table class="table table-bordered" style="width: 97%; margin: 0 auto;">
-		<thead>
-			<tr>
-				<th><spring:message code='lbl.feetype' /></th>
-				<th><spring:message code='lbl.current' /></th>
-				<th><spring:message code='license.fee.arrears' /></th>
-			</tr>
-		</thead>
-		<tbody>
-			<c:forEach items="${feeInfo}" var="fee" varStatus="status">
-				<tr>
-					<td>${fee.key}</td>
-					<td>${fee.value['current']}</td>
-					<td>${fee.value['arrear']}</td>
-				</tr>
-			</c:forEach>
-		</tbody>
-	</table>
-</c:if>
 <div class="form-group">
 	<label class="col-sm-3 control-label text-right">
 		<spring:message code='license.traderCheckbox.lbl' />

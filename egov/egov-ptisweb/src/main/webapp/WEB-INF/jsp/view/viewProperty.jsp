@@ -42,6 +42,12 @@
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ include file="/includes/taglibs.jsp"%>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<s:if test="%{(viewMap.propertyWF != null && viewMap.propertyWF != '' && viewMap.propertyWF == 'WF')}">
+<s:set var="prop" value="property"/>
+</s:if>
+<s:else>
+	<s:set var="prop" value="basicProperty.property"/>
+</s:else>
 
 <s:if test="%{basicProperty.property.getIsExemptedFromTax()}">
 	<div class="headermessage">
@@ -130,8 +136,8 @@
 				<s:text name="property.type"></s:text>
 			</div>
 			<div class="col-xs-3 add-margin view-content">
-				<s:property default="N/A"
-					value="%{@org.egov.ptis.constants.PropertyTaxConstants@PROPERTY_TYPE_CATEGORIES.get(basicProperty.property.propertyDetail.categoryType)}" />
+			   <s:property default="N/A"
+                                value="%{@org.egov.ptis.constants.PropertyTaxConstants@PROPERTY_TYPE_CATEGORIES.get(#prop.propertyDetail.categoryType)}" />
 			</div>
 			<div class="col-xs-3 add-margin">
 				<s:text name="apartcomplex.name"></s:text>
@@ -147,7 +153,7 @@
 			</div>
 			<div class="col-xs-3 add-margin view-content">
 				<s:property default="N/A"
-					value="%{basicProperty.property.propertyDetail.sitalArea.area}" />
+					value="#prop.propertyDetail.sitalArea.area" />
 			</div>
 			<div class="col-xs-3 add-margin">
 				<s:text name="label.property.department"></s:text>
@@ -181,9 +187,9 @@
 				<s:text name="reg.docno"></s:text>
 			</div>
 			<div class="col-xs-3 add-margin view-content">
-				<s:if test="%{(basicProperty.regdDocNo != null && basicProperty.regdDocNo != '')}" >
-					<s:property value="%{basicProperty.regdDocNo}" />
-				</s:if >
+				<s:if test="%{(viewMap.documentno != null && viewMap.documentno != '')}">
+                    <s:property value="%{viewMap.documentno}" />
+                </s:if>
 				<s:else>
 					N/A
 				</s:else>
@@ -192,9 +198,9 @@
 				<s:text name="reg.docdate"></s:text>
 			</div>
 			<div class="col-xs-3 add-margin view-content">
-				<s:if test="%{basicProperty.regdDocDate != null}">
-					<s:date name="%{basicProperty.regdDocDate}" format="dd/MM/yyyy" />
-				</s:if>
+				<s:if test="%{(viewMap.documentdate != null)}">
+                    <s:date name="%{viewMap.documentdate}" format="dd/MM/yyyy" />
+                </s:if>
 				<s:else>
 					N/A
 				</s:else>
@@ -354,31 +360,31 @@
 				</tr>
 
 				<tr>
-					<td class="blueborderfortd"><s:if
-							test="%{basicProperty.property.propertyDetail.lift}">Yes</s:if> <s:else>No</s:else>
-					</td>
-					<td class="blueborderfortd"><s:if
-							test="%{basicProperty.property.propertyDetail.toilets}">Yes</s:if>
-						<s:else>No</s:else></td>
-					<td class="blueborderfortd"><s:if
-							test="%{basicProperty.property.propertyDetail.waterTap}">Yes</s:if>
-						<s:else>No</s:else></td>
-					<%-- <td class="blueborderfortd"><s:if
-							test="%{basicProperty.property.propertyDetail.structure}">Yes</s:if>
-						<s:else>No</s:else></td> --%>
-					<td class="blueborderfortd"><s:if
-							test="%{basicProperty.property.propertyDetail.electricity}">Yes</s:if>
-						<s:else>No</s:else></td>
-					<td class="blueborderfortd"><s:if
-							test="%{basicProperty.property.propertyDetail.attachedBathRoom}">Yes</s:if>
-						<s:else>No</s:else></td>
-					<td class="blueborderfortd"><s:if
-							test="%{basicProperty.property.propertyDetail.waterHarvesting}">Yes</s:if>
-						<s:else>No</s:else></td>
-					<td class="blueborderfortd"><s:if
-							test="%{basicProperty.property.propertyDetail.cable}">Yes</s:if>
-						<s:else>No</s:else></td>
-				</tr>
+                        <td class="blueborderfortd"><s:if
+                                test="#prop.propertyDetail.lift">Yes</s:if> <s:else>No</s:else>
+                        </td>
+                        <td class="blueborderfortd"><s:if
+                                test="#prop.propertyDetail.toilets">Yes</s:if>
+                            <s:else>No</s:else></td>
+                        <td class="blueborderfortd"><s:if
+                                test="#prop.propertyDetail.waterTap">Yes</s:if>
+                            <s:else>No</s:else></td>
+                        <%-- <td class="blueborderfortd"><s:if
+                                test="%{basicProperty.property.propertyDetail.structure}">Yes</s:if>
+                            <s:else>No</s:else></td> --%>
+                        <td class="blueborderfortd"><s:if
+                                test="#prop.propertyDetail.electricity">Yes</s:if>
+                            <s:else>No</s:else></td>
+                        <td class="blueborderfortd"><s:if
+                                test="#prop.propertyDetail.attachedBathRoom">Yes</s:if>
+                            <s:else>No</s:else></td>
+                        <td class="blueborderfortd"><s:if
+                                test="#prop.propertyDetail.waterHarvesting">Yes</s:if>
+                            <s:else>No</s:else></td>
+                        <td class="blueborderfortd"><s:if
+                                test="#prop.propertyDetail.cable">Yes</s:if>
+                            <s:else>No</s:else></td>
+                 </tr>
 			</table>
 			<br />
 		<br />
@@ -400,16 +406,17 @@
 				<s:text name="floortype"></s:text>
 			</div>
 			<div class="col-xs-3 add-margin view-content">
-				<s:property default="N/A"
-					value="%{basicProperty.property.propertyDetail.floorType.name}" />
-			</div>
+                    <s:property default="N/A"
+                                value="#prop.propertyDetail.floorType.name" />
 
+			</div>
 			<div class="col-xs-3 add-margin">
 				<s:text name="rooftype"></s:text>
 			</div>
 			<div class="col-xs-3 add-margin view-content">
-				<s:property default="N/A"
-					value="%{basicProperty.property.propertyDetail.roofType.name}" />
+                  <s:property default="N/A"
+                                value="#prop.propertyDetail.roofType.name" />
+
 			</div>
 		</div>
 		<div class="row add-border">
@@ -417,16 +424,17 @@
 				<s:text name="walltype"></s:text>
 			</div>
 			<div class="col-xs-3 add-margin view-content">
-				<s:property default="N/A"
-					value="%{basicProperty.property.propertyDetail.wallType.name}" />
-			</div>
+                    <s:property default="N/A"
+                                value="#prop.propertyDetail.wallType.name" />
 
+			</div>
 			<div class="col-xs-3 add-margin">
 				<s:text name="woodtype"></s:text>
 			</div>
 			<div class="col-xs-3 add-margin view-content">
-				<s:property default="N/A"
-					value="%{basicProperty.property.propertyDetail.woodType.name}" />
+               <s:property default="N/A"
+                                value="#prop.propertyDetail.woodType.name" />
+
 			</div>
 		</div>
 	</div>

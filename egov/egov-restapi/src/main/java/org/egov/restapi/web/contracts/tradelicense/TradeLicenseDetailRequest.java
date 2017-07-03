@@ -44,6 +44,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.tl.entity.License;
 import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
@@ -86,6 +87,9 @@ public class TradeLicenseDetailRequest {
         ward.setBoundaryNum(wardNo);
         license.setParentBoundary(ward);
         license.setIsActive(true);
-        return Example.of(license);
+        ExampleMatcher matcher = ExampleMatcher.matching()
+                .withIgnorePaths("legacy");
+        return Example.of(license, matcher);
     }
 }
+

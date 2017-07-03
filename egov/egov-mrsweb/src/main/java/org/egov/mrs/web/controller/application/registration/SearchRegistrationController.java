@@ -85,7 +85,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
  *
  */
 @Controller
-@RequestMapping(value = { "/registration", "/citizen/registration" })
+@RequestMapping(value = { "/registration" })
 public class SearchRegistrationController {
 
     private static final String DATA = "{ \"data\":";
@@ -222,8 +222,6 @@ public class SearchRegistrationController {
     public String reissueCertificateSearch(final Model model, final HttpServletRequest request) {
         model.addAttribute(REGISTRATION, new MarriageRegistration());
         prepareSearchForm(model);
-        model.addAttribute("applicationSource",
-                request.getParameter("applicationSource") != null ? request.getParameter("applicationSource").toLowerCase() : "");
         return "registration-search-certificateissue";
     }
 

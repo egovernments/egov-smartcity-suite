@@ -41,6 +41,7 @@ package org.egov.wtms.web.controller.application;
 
 import java.io.ByteArrayInputStream;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -176,7 +177,12 @@ public class WorkOrderController {
             reportParams.put("purpose", connectionDetails.getUsageType().getName());
             final User user = securityUtils.getCurrentUser();
             Assignment assignment = assignmentService.getPrimaryAssignmentForUser(user.getId());
-            String userDesignation = assignment.getDesignation().getName();
+            if (assignment == null) {
+                final List<Assignment> assignmentList = assignmentService.findByEmployeeAndGivenDate(user.getId(), new Date());
+                if (!assignmentList.isEmpty())
+                    assignment = assignmentList.get(0);
+            }
+            final String userDesignation = assignment.getDesignation().getName();
             if (null != workFlowAction) {
                 if (workFlowAction.equalsIgnoreCase(WaterTaxConstants.WF_WORKORDER_BUTTON)) {
                     reportParams.put("workOrderDate", formatter.format(connectionDetails.getWorkOrderDate()));

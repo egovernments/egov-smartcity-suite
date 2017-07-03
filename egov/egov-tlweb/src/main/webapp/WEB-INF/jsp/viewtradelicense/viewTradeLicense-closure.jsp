@@ -42,14 +42,14 @@
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <html>
 <head>
-    <title><s:text name="page.title.viewtrade"/></title>
+    <title><s:text name="page.title.closuretrade"/></title>
 </head>
 <body>
 <div id="content" class="printable">
     <s:form action="viewTradeLicense-cancelLicense" theme="simple" name="viewForm" method="POST">
         <div class="formmainbox panel-primary">
         <div class="subheadnew text-center" id="headingdiv">
-            <s:text name="page.title.viewtrade"/>
+            <s:text name="page.title.closuretrade"/>
         </div>
         <table>
             <tr>
@@ -62,9 +62,13 @@
         </table>
 
         <s:push value="model">
+            <s:if test="%{enableState}">
+                <s:hidden name="currentState" value="%{state.value}"/>
+            </s:if>
             <s:hidden name="actionName" value="create"/>
             <s:hidden name="licenseid" id="licenseId" value="%{id}"/>
             <s:hidden id="detailChanged" name="detailChanged"></s:hidden>
+            <s:hidden id="url" name="url" value="%{url}"></s:hidden>
             <c:set var="trclass" value="greybox"/>
             <div class="text-right error-msg" style="font-size:14px;">
                 <s:text name="dateofapplication.lbl"/> : <s:date name="applicationDate"
@@ -78,7 +82,7 @@
                 <%@ include file='../common/license-detail-view.jsp' %>
             </table>
             </div>
-            <s:if test="!hasCSCOperatorRole()">
+            <s:if test="!hasCSCPublicRole()">
                 <div class="panel panel-primary" id="workflowDiv">
                     <%@ include file='../common/license-workflow-dropdown.jsp' %>
                     <%@ include file='../common/license-workflow-button.jsp' %>
@@ -108,7 +112,8 @@
 
     function onSubmit() {
         var licid = $('#licenseId').val();
-        document.viewForm.action = '${pageContext.request.contextPath}/viewtradelicense/viewTradeLicense-cancelLicense.action?model.id=' + licid;
+        var url = $('#url').val();
+        document.viewForm.action = '${pageContext.request.contextPath}/'+url+licid;
         return true;
     }
 

@@ -40,40 +40,24 @@
 
 package org.egov.infra.web.controller.admin.masters.userrole;
 
-import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import java.util.Set;
 
 @Controller
 @RequestMapping("/userrole/search")
 public class SearchUserRoleController {
-    private final UserService userService;
 
-    @Autowired
-    public SearchUserRoleController(final UserService userService) {
-        this.userService = userService;
-    }
-
-    @ModelAttribute("users")
-    public Set<User> users() {
-        return userService.getActiveUsers();
-    }
-
-    @RequestMapping
-    public String viewSearch(final Model model) {
+    @GetMapping
+    public String viewSearch() {
         return "userrole-search";
     }
 
-    @RequestMapping(params = { "userId" })
-    public String searchUserRole(@RequestParam final Long userId, final Model model) {
-        if (userId == null || userId < 1) {
+    @GetMapping(params = {"userId"})
+    public String searchUserRole(@RequestParam Long userId, Model model) {
+        if (userId < 1) {
             model.addAttribute("error", "invalid.user.entered");
             return "userrole-search";
         }

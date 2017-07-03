@@ -43,7 +43,6 @@ package org.egov.pgr.entity;
 import java.lang.reflect.Type;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.web.support.json.adapter.DataTableJsonAdapter;
 import org.egov.infra.web.support.ui.DataTable;
 
@@ -56,16 +55,16 @@ public class ComplaintRouterResponseAdaptor implements DataTableJsonAdapter<Comp
 
     @Override
     public JsonElement serialize(final DataTable<ComplaintRouter> complaintRouterResponse, final Type type,
-            final JsonSerializationContext jsc) {
+                                 final JsonSerializationContext jsc) {
         final List<ComplaintRouter> complaintRouterResult = complaintRouterResponse.getData();
         final JsonArray complaintRouterResultData = new JsonArray();
         complaintRouterResult.forEach(complaintRouter -> {
             final JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("boundaryType",
-                    StringUtils.defaultIfBlank(complaintRouter.getBoundary().getBoundaryType().getName(), "N/A"));
-            jsonObject.addProperty("boundary", StringUtils.defaultIfBlank(complaintRouter.getBoundary().getName(), "N/A"));
-            jsonObject.addProperty("complaintType",
-                    StringUtils.defaultIfBlank(complaintRouter.getComplaintType().getName(), "N/A"));
+            jsonObject.addProperty("boundaryType", complaintRouter.getBoundary() != null ? complaintRouter.getBoundary().getBoundaryType().getName() : "N/A");
+            jsonObject.addProperty("boundary", complaintRouter.getBoundary() != null ? complaintRouter.getBoundary()
+                    .getName() : "N/A");
+            jsonObject.addProperty("complaintType", complaintRouter.getComplaintType() != null ? complaintRouter
+                    .getComplaintType().getName() : "N/A");
             jsonObject.addProperty("position", complaintRouter.getPosition().getName());
             jsonObject.addProperty("routerId", complaintRouter.getId());
 

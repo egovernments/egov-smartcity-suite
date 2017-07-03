@@ -118,9 +118,9 @@ public class StateHistory implements Serializable {
     public StateHistory(final State state) {
         this.state = state;
         createdBy = state.getCreatedBy();
-        createdDate = state.getCreatedDate() != null ? state.getCreatedDate() : null;
+        createdDate = state.getCreatedDate();
         lastModifiedBy = state.getLastModifiedBy();
-        lastModifiedDate = state.getLastModifiedDate() != null ? state.getLastModifiedDate() : null;
+        lastModifiedDate = state.getLastModifiedDate();
         value = state.getValue();
         ownerPosition = state.getOwnerPosition();
         ownerUser = state.getOwnerUser();

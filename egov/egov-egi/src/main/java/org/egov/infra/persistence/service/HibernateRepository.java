@@ -85,11 +85,11 @@ public abstract class HibernateRepository<T> {
     }
 
     public T get(Long id) {
-        return (T) getCurrentSession().get(entityType, id);
+        return getCurrentSession().get(entityType, id);
     }
     
     public T load(Long id) {
-        return (T) getCurrentSession().load(entityType, id);
+        return getCurrentSession().load(entityType, id);
     }
     
     public Criteria createCriteria(Class<T> clazz) {

@@ -40,10 +40,9 @@
 
 package org.egov.infra.config.properties.messages;
 
-import org.egov.infra.config.properties.ApplicationProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
@@ -65,24 +64,27 @@ public class MessageSourceProperties {
 
     private static final Logger LOG = LoggerFactory.getLogger(MessageSourceProperties.class);
 
-    @Autowired
-    private ApplicationProperties applicationConfigProperties;
+    @Value("${dev.mode}")
+    private boolean devMode;
+
+    @Value("#{'${common.properties.files}'.split(',')}")
+    private List<String> commonMessageFiles;
 
     private ResourcePatternResolver resourcePatternResolver = new PathMatchingResourcePatternResolver();
 
     @Bean
     public ReloadableResourceBundleMessageSource parentMessageSource() {
         final ReloadableResourceBundleMessageSource resource = new ReloadableResourceBundleMessageSource();
-        resource.setBasenames(processResourceWithPattern(applicationConfigProperties.commonMessageFiles()));
+        resource.setBasenames(processResourceWithPattern(commonMessageFiles));
         resource.setDefaultEncoding(Charset.defaultCharset().name());
-        if (applicationConfigProperties.devMode()) {
+        if (devMode) {
             resource.setCacheSeconds(0);
             resource.setUseCodeAsDefaultMessage(true);
         }
         return resource;
     }
 
-    private String[] processResourceWithPattern(String... baseNames) {
+    private String[] processResourceWithPattern(List<String> baseNames) {
         List<String> resources = new ArrayList<>();
         for (String baseName : baseNames) {
             if (baseName.contains("*")) {

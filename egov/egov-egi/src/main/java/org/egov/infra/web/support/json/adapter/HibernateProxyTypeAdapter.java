@@ -82,7 +82,7 @@ public class HibernateProxyTypeAdapter extends TypeAdapter<HibernateProxy> {
             out.nullValue();
             return;
         }
-        delegate.write(out, ((HibernateProxy) value).getHibernateLazyInitializer().getImplementation());
+        delegate.write(out, value.getHibernateLazyInitializer().getImplementation());
     }
 
 }

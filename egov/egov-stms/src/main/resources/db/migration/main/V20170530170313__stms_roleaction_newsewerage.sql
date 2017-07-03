@@ -1,0 +1,4 @@
+ INSERT INTO EG_ROLEACTION (roleid, actionid) values ((select id from eg_role where name = 'Sewerage Tax Creator'),(select id from eg_action where name ='New Sewerage Connection' and contextroot = 'stms'));
+ INSERT INTO EG_ROLEACTION (roleid, actionid) values ((select id from eg_role where name = 'Sewerage Tax Creator'),(select id from eg_action where name ='AjaxCheckConnection' and contextroot = 'stms'));
+ INSERT INTO EG_ROLEACTION (roleid, actionid) values ((select id from eg_role where name = 'Sewerage Tax Creator'),(select id from eg_action where name ='AjaxCheckWaterTaxDue' and contextroot = 'stms'));
+ INSERT INTO EG_ROLEACTION (roleid, actionid) values ((select id from eg_role where name = 'Sewerage Tax Creator'),(select id from eg_action where name ='Create Sewerage Connection' and contextroot = 'stms'));

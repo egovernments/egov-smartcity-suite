@@ -202,10 +202,10 @@
 									<div class="text-center error-msg add-margin">
                                         <c:set var="security_message" value="${sessionScope.SPRING_SECURITY_LAST_EXCEPTION.message}" />
 										<c:choose>
-										<c:when test="${security_message == 'Maximum sessions of {0} for this principal exceeded'}">
+										<c:when test="${security_message.contains('Maximum sessions')}">
 											<spring:message code="msg.multiple.login"/>
 										</c:when>
-										<c:when test="${security_message == 'User account has expired'}">
+										<c:when test="${security_message.contains('expired')}">
 											<spring:message code="msg.cred.exprd1"/>
 											<a href="javascript:void(0);" data-toggle="modal"
 											   data-target="#fpassword" data-backdrop="static">

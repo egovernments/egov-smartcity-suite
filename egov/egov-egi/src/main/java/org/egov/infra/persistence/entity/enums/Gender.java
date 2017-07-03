@@ -42,5 +42,5 @@ package org.egov.infra.persistence.entity.enums;
 
 public enum Gender {
     //This order should not be interrupted
-    FEMALE, MALE, OTHERS;
+    FEMALE, MALE, OTHERS
 }

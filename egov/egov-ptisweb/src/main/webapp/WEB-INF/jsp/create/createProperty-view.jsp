@@ -212,10 +212,9 @@
 						</div> </font>
 				</tr>
 
-				<tr>
-					<%@ include file="../workflow/commonWorkflowMatrix-button.jsp"%>
-				</tr>
-
+					<tr>
+						<%@ include file="../workflow/commonWorkflowMatrix-button.jsp"%>
+					</tr>
 				</table>
 			</s:push>
 		</s:form>

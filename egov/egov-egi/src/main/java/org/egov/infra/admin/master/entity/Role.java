@@ -77,6 +77,8 @@ public class Role extends AbstractAuditable {
     @Length(max = 150)
     private String description;
 
+    private boolean internal;
+
     @Override
     public Long getId() {
         return id;
@@ -101,6 +103,14 @@ public class Role extends AbstractAuditable {
 
     public void setDescription(final String description) {
         this.description = description;
+    }
+
+    public boolean isInternal() {
+        return internal;
+    }
+
+    public void setInternal(final boolean internal) {
+        this.internal = internal;
     }
 
     @Override

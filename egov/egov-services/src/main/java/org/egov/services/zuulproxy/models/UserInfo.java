@@ -39,20 +39,43 @@
  */
 package org.egov.services.zuulproxy.models;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class UserInfo {
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-    private final List<Role> roles;
-    private final Long id;
-    private final String userName;
-    private final String name;
-    private final String emailId;
-    private final String mobileNumber;
-    private final String type;
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class UserInfo implements Serializable {
+
+    private static final long serialVersionUID = -5184742701167113678L;
+
+    @JsonProperty("roles")
+    private List<Role> roles;
+
+    @JsonProperty("id")
+    private Long id;
+
+    @JsonProperty("userName")
+    private String userName;
+
+    @JsonProperty("name")
+    private String name;
+
+    @JsonProperty("emailId")
+    private String emailId;
+
+    @JsonProperty("mobileNumber")
+    private String mobileNumber;
+
+    @JsonProperty("type")
+    private String type;
+
+    @JsonProperty("tenantId")
+    private String tenantId;
 
     public UserInfo(final List<Role> roles, final Long id, final String userName, final String name, final String emailId,
-            final String mobileNumber, final String type) {
+            final String mobileNumber, final String type, final String tenantId) {
         super();
         this.roles = roles;
         this.id = id;
@@ -61,6 +84,10 @@ public class UserInfo {
         this.emailId = emailId;
         this.mobileNumber = mobileNumber;
         this.type = type;
+        this.tenantId = tenantId;
+    }
+
+    public UserInfo() {
     }
 
     public List<Role> getRoles() {
@@ -89,6 +116,10 @@ public class UserInfo {
 
     public String getType() {
         return type;
+    }
+
+    public String getTenantId() {
+        return tenantId;
     }
 
 }

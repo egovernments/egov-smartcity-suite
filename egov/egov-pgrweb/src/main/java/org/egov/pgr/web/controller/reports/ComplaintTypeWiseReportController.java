@@ -40,86 +40,86 @@
 
 package org.egov.pgr.web.controller.reports;
 
-import org.apache.commons.io.IOUtils;
-import org.egov.pgr.service.ComplaintTypeService;
+import org.egov.infra.reporting.engine.ReportRequest;
+import org.egov.infra.reporting.engine.ReportService;
+import org.egov.infra.utils.StringUtils;
+import org.egov.infra.web.support.ui.DataTable;
+import org.egov.pgr.entity.dto.DrillDownReportRequest;
 import org.egov.pgr.service.reports.ComplaintTypeWiseReportService;
-import org.hibernate.SQLQuery;
-import org.hibernate.transform.Transformers;
-import org.joda.time.DateTime;
+import org.egov.pgr.web.controller.response.adaptor.ComplaintDrillDownHelperAdaptor;
+import org.egov.pgr.web.controller.response.adaptor.DrillDownComplaintTypeAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
-import static org.egov.infra.utils.JsonUtils.toJSON;
+import static org.egov.infra.web.utils.WebUtils.reportToResponseEntity;
+import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 
 @Controller
-@RequestMapping(value = {"/report", "/public/report"})
+@RequestMapping("/report")
 public class ComplaintTypeWiseReportController {
 
-    private final ComplaintTypeWiseReportService complaintTypeReportService;
+    @Autowired
+    private ComplaintTypeWiseReportService complaintTypeReportService;
 
     @Autowired
-    public ComplaintTypeWiseReportController(final ComplaintTypeWiseReportService complaintTypeReportService,
-            final ComplaintTypeService complaintTypeService) {
-        this.complaintTypeReportService = complaintTypeReportService;
-    }
+    private ReportService reportService;
 
     @ModelAttribute
-    public void getReportHelper(final Model model) {
+    public void getReportHelper(Model model) {
         model.addAttribute("reportHelper", new ReportHelper());
-
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/complaintTypeReport")
-    public String searchAgeingReportByBoundaryForm(final Model model) {
+    @GetMapping("complaintTypeReport")
+    public String searchAgeingReportByBoundaryForm() {
         return "complaintTypeReport-search";
     }
 
-    @ExceptionHandler(Exception.class)
-    @RequestMapping(value = "/complaintTypeReport/resultList-update", method = RequestMethod.GET)
-    public @ResponseBody void springPaginationDataTablesUpdate(@RequestParam final String complaintType,
-            @RequestParam final String complaintTypeWithStatus, @RequestParam final String status,
-            @RequestParam final String complaintDateType, @RequestParam final DateTime fromDate,
-            @RequestParam final DateTime toDate, final HttpServletRequest request, final HttpServletResponse response)
-                    throws IOException {
-        SQLQuery complaintTypeReportQuery = null;
-        List<DrillDownReportResult> complaintTypeReportResult = null;
-        String result = null;
-        if (complaintTypeWithStatus != null && status != null && !"".equals(complaintTypeWithStatus)
-                && !"".equals(status)) {
+    @GetMapping(value = "complaintTypeReport/resultList-update", produces = TEXT_PLAIN_VALUE)
+    @ResponseBody
+    public String searchComplaintwiseReport(DrillDownReportRequest reportRequest) {
+        if (StringUtils.isNotBlank(reportRequest.getComplaintDateType()) &&
+                StringUtils.isNotBlank(reportRequest.getStatus())) {
+            return new DataTable<>(complaintTypeReportService.pagedComplainttypewiseRecordsByCompalintId(reportRequest),
+                    reportRequest.draw())
+                    .toJson(DrillDownComplaintTypeAdaptor.class);
 
-            complaintTypeReportQuery = complaintTypeReportService.getComplaintTypeWiseReportQuery(fromDate,
-                    toDate, complaintDateType, complaintTypeWithStatus, status);
-            complaintTypeReportQuery.setResultTransformer(Transformers.aliasToBean(DrillDownReportResult.class));
-            complaintTypeReportResult = complaintTypeReportQuery.list();
-            result = new StringBuilder("{ \"data\":").append(toJSON(complaintTypeReportResult, DrillDownReportResult.class,
-                     DrillDownReportWithcompTypeAdaptor.class)).append("}")
-                    .toString();
+        } else
+            return new DataTable<>(complaintTypeReportService.pagedComplainttypewiseRecords(reportRequest),
+                    reportRequest.draw())
+                    .toJson(ComplaintDrillDownHelperAdaptor.class);
+    }
 
-        } else {
-            complaintTypeReportQuery = complaintTypeReportService.getComplaintTypeWiseReportQuery(fromDate,
-                    toDate, complaintType, complaintDateType);
-            complaintTypeReportQuery.setResultTransformer(Transformers.aliasToBean(DrillDownReportResult.class));
-            complaintTypeReportResult = complaintTypeReportQuery.list();
-            result = new StringBuilder("{ \"data\":").append(toJSON(complaintTypeReportResult, DrillDownReportResult.class,
-                     DrillDownReportHelperAdaptor.class)).append("}")
-                    .toString();
-        }
+    @GetMapping("grand-total")
+    @ResponseBody
+    public Object[] complaintwiseGrandTotal(DrillDownReportRequest reportRequest) {
+        return complaintTypeReportService.complaintwiseReportGrandTotal(reportRequest);
+    }
 
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        IOUtils.write(result, response.getWriter());
-
+    @GetMapping("download")
+    @ResponseBody
+    public ResponseEntity<InputStreamResource> downloadReport(DrillDownReportRequest request) {
+        final ReportRequest reportRequest;
+        final Map<String, Object> reportparam = new HashMap<>();
+        if (StringUtils.isNotBlank(request.getComplaintDateType()) && StringUtils.isNotBlank(request.getStatus())) {
+            reportRequest = new ReportRequest("pgr_functionarywise_report_comp",
+                    complaintTypeReportService.getComplainttypewiseRecordsByComplaintId(request), new HashMap<>());
+        } else
+            reportRequest = new ReportRequest("pgr_functionarywise_report",
+                    complaintTypeReportService.getAllComplainttypewiseRecords(request), new HashMap<>());
+        reportparam.put("type", "complaintwise");
+        reportRequest.setReportParams(reportparam);
+        reportRequest.setReportFormat(request.getPrintFormat());
+        reportRequest.setReportName("pgr_complainttypewise_report");
+        return reportToResponseEntity(reportRequest, reportService.createReport(reportRequest));
     }
 }

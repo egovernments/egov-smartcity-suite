@@ -40,17 +40,18 @@
 package org.egov.ptis.web.controller.vacancyremission;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.ANONYMOUS_USER;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_VACANCY_REMISSION;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_VACANCY_REMISSION;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_VALIDATION;
 import static org.egov.ptis.constants.PropertyTaxConstants.SOURCE_ONLINE;
 import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_TAX_DUES;
-import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_VACANCY_REMISSION;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -114,15 +115,12 @@ public class VacanyRemissionController extends GenericWorkFlowController {
     private static final String VACANCYREMISSION_SUCCESS = "vacancyRemission-success";
     private static final String ERROR_MSG = "errorMsg";
     private static final String APPLICATION_SOURCE = "applicationSource";
-
+    private boolean citizenPortalUser;
+    
     @Autowired
     private BasicPropertyDAO basicPropertyDAO;
 
     private final PropertyTaxUtil propertyTaxUtil;
-
-    private BasicProperty basicProperty;
-
-    private VacancyRemission vacancyRemission;
 
     private final VacancyRemissionService vacancyRemissionService;
     private Boolean loggedUserIsMeesevaUser = Boolean.FALSE;
@@ -145,8 +143,8 @@ public class VacanyRemissionController extends GenericWorkFlowController {
 
     @ModelAttribute
     public VacancyRemission vacancyRemissionModel(@PathVariable final String assessmentNo) {
-        vacancyRemission = new VacancyRemission();
-        basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
+        VacancyRemission vacancyRemission = new VacancyRemission();
+        BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
         if (basicProperty != null)
             vacancyRemission.setBasicProperty((BasicPropertyImpl) basicProperty);
         return vacancyRemission;
@@ -157,17 +155,21 @@ public class VacanyRemissionController extends GenericWorkFlowController {
         return vacancyRemissionService.getDocuments(TransactionType.VACANCYREMISSION);
     }
     @RequestMapping(value = "/create/{assessmentNo},{mode}", method = RequestMethod.GET)
-    public String newForm(final Model model, @PathVariable final String assessmentNo, @PathVariable final String mode,
+    public String newForm(final Model model,@ModelAttribute VacancyRemission vacancyRemission, @PathVariable final String assessmentNo, @PathVariable final String mode,
             @RequestParam(required = false) final String meesevaApplicationNumber, final HttpServletRequest request,
             @RequestParam(required = false) final String applicationSource) {
+        BasicProperty basicProperty=vacancyRemission.getBasicProperty();
         if (basicProperty != null) {
             final Property property = basicProperty.getActiveProperty();
             List<DocumentType> documentTypes;
             User loggedInUser = securityUtils.getCurrentUser();
             documentTypes = propertyService.getDocumentTypesForTransactionType(TransactionType.VACANCYREMISSION);
+            citizenPortalUser = propertyService.isCitizenPortalUser(loggedInUser);
+            model.addAttribute("citizenPortalUser", citizenPortalUser);
             if (!ANONYMOUS_USER.equalsIgnoreCase(loggedInUser.getName())
-                    && propertyService.isEmployee(loggedInUser)
-                    && !propertyTaxCommonUtils.isEligibleInitiator(loggedInUser.getId())) {
+                        && propertyService.isEmployee(loggedInUser)
+                        && !propertyTaxCommonUtils.isEligibleInitiator(loggedInUser.getId())
+                        && !citizenPortalUser) {
                 model.addAttribute(ERROR_MSG, "msg.initiator.noteligible");
                 return PROPERTY_VALIDATION;
             }
@@ -197,7 +199,7 @@ public class VacanyRemissionController extends GenericWorkFlowController {
                         final List<VacancyRemission> remissionList = vacancyRemissionService
                                 .getAllVacancyRemissionByUpicNo(basicProperty.getUpicNo());
                         if (!remissionList.isEmpty()) {
-                            final VacancyRemission vacancyRemission = remissionList.get(remissionList.size() - 1);
+                            vacancyRemission = remissionList.get(remissionList.size() - 1);
                             if (vacancyRemission != null)
                                 if (vacancyRemission.getStatus().equalsIgnoreCase(
                                         PropertyTaxConstants.VR_STATUS_APPROVED)) {
@@ -315,6 +317,7 @@ public class VacanyRemissionController extends GenericWorkFlowController {
             final HttpServletRequest request, @RequestParam String workFlowAction) {
 
         final Boolean propertyByEmployee = Boolean.valueOf(request.getParameter("propertyByEmployee"));
+        BasicProperty basicProperty=vacancyRemission.getBasicProperty();
         List<Document> documents = new ArrayList<>();
         loggedUserIsMeesevaUser = propertyService.isMeesevaUser(vacancyRemissionService.getLoggedInUser());
         validateDates(vacancyRemission, resultBinder, request);
@@ -366,6 +369,8 @@ public class VacanyRemissionController extends GenericWorkFlowController {
             } else
                 vacancyRemissionService.saveVacancyRemission(vacancyRemission, approvalPosition, approvalComent, null,
                         workFlowAction, propertyByEmployee);
+            if (propertyService.isCitizenPortalUser(securityUtils.getCurrentUser()))
+                propertyService.pushVacancyRemissionPortalMessage(vacancyRemission, APPLICATION_TYPE_VACANCY_REMISSION);
 
             final String successMsg = "Vacancy Remission Saved Successfully in the System and forwarded to : "
                     + propertyTaxUtil.getApproverUserName(vacancyRemission.getState().getOwnerPosition().getId())
@@ -433,6 +438,14 @@ public class VacanyRemissionController extends GenericWorkFlowController {
         headers.setContentType(MediaType.parseMediaType("application/pdf"));
         headers.add("content-disposition", "inline;filename=CitizenCharterAcknowledgement.pdf");
         return new ResponseEntity<>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
+    }
+
+    public boolean isCitizenPortalUser() {
+        return citizenPortalUser;
+    }
+
+    public void setCitizenPortalUser(boolean citizenPortalUser) {
+        this.citizenPortalUser = citizenPortalUser;
     }
 
 }

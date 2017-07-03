@@ -48,7 +48,7 @@
 			code='licensee.aadhaarNo' /></label>
 	<div class="col-sm-3 add-margin" style="margin-bottom: 15px;">
 		<form:input path="licensee.uid" id="adhaarId"
-			class="form-control typeahead" value="${licensee.uid}" maxlength="12"
+			Class="form-control patternvalidation" data-pattern="number" value="${licensee.uid}" maxlength="12"
 			placeholder="" autocomplete="off" />
 		<div class="error-msg hide" path="licensee.uid" id="adhaarError">Should be 12 digits</div>
 	</div>

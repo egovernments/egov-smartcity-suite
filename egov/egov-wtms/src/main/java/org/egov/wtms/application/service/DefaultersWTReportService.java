@@ -46,6 +46,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.wtms.application.entity.DefaultersReport;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.hibernate.SQLQuery;
@@ -65,6 +66,7 @@ public class DefaultersWTReportService {
         return entityManager.unwrap(Session.class);
     }
 
+    @ReadOnly
     public List<DefaultersReport> getDefaultersReportDetails(final String fromAmount, final String toAmount,
             final String ward, final String topDefaulters, final int startsFrom, final int maxResults)
             throws ParseException {

@@ -40,48 +40,45 @@
 
 package org.egov.pgr.web.controller.reports;
 
-import org.apache.commons.io.IOUtils;
-import org.egov.pgr.service.reports.AgeingReportService;
-import org.hibernate.SQLQuery;
-import org.hibernate.transform.Transformers;
-import org.joda.time.DateTime;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import static org.egov.infra.web.utils.WebUtils.reportToResponseEntity;
+import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
-import static org.egov.infra.utils.JsonUtils.toJSON;
+import org.egov.infra.reporting.engine.ReportRequest;
+import org.egov.infra.reporting.engine.ReportService;
+import org.egov.infra.web.support.ui.DataTable;
+import org.egov.infstr.services.Page;
+import org.egov.pgr.entity.dto.AgeingReportForm;
+import org.egov.pgr.entity.dto.AgeingReportRequest;
+import org.egov.pgr.service.reports.AgeingReportService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
-@RequestMapping(value = {"/report", "/public/report"})
+@RequestMapping("/report")
 public class AgeingReportController {
 
     @Autowired
-    private final AgeingReportService ageingReportService;
+    private AgeingReportService ageingReportService;
 
     @Autowired
-    public AgeingReportController(final AgeingReportService ageingReportService) {
-        this.ageingReportService = ageingReportService;
-    }
+    private ReportService reportService;
 
     @ModelAttribute
     public void getReportHelper(final Model model) {
         final ReportHelper reportHealperObj = new ReportHelper();
-
-        final Map<String, String> status = new LinkedHashMap<String, String>();
+        final Map<String, String> status = new LinkedHashMap<>();
         status.put("Completed", "Completed");
         status.put("Pending", "Pending");
         status.put("Rejected", "Rejected");
@@ -90,34 +87,43 @@ public class AgeingReportController {
 
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/ageingReportByBoundary")
+    @GetMapping("ageingReportByBoundary")
     public String searchAgeingReportByBoundaryForm(final Model model) {
         model.addAttribute("mode", "ByBoundary");
         return "ageing-search";
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/ageingReportByDept")
+    @GetMapping("ageingReportByDept")
     public String searchAgeingReportByDepartmentForm(final Model model) {
         model.addAttribute("mode", "ByDepartment");
         return "ageing-search";
     }
 
-    @ExceptionHandler(Exception.class)
-    @RequestMapping(value = "/ageing/resultList-update", method = RequestMethod.GET)
-    public @ResponseBody void springPaginationDataTablesUpdate(@RequestParam final String mode,
-            @RequestParam final String complaintDateType, @RequestParam final DateTime fromDate,
-            @RequestParam final String status, @RequestParam final DateTime toDate, final HttpServletRequest request,
-            final HttpServletResponse response) throws IOException {
+    @GetMapping(value = "/ageing/resultList-update", produces = TEXT_PLAIN_VALUE)
+    @ResponseBody
+    public String searchAgeingReport(final AgeingReportRequest request) throws IOException {
+        final Page<AgeingReportForm> ageingreport = ageingReportService.pagedAgeingRecords(request);
+        final long draw = request.draw();
+        return new DataTable<>(ageingreport, draw)
+                .toJson(AgeingReportHelperAdaptor.class);
+    }
 
-        final SQLQuery ageingreportQuery = ageingReportService.getageingReportQuery(fromDate, toDate, status,
-                complaintDateType, mode);
-        ageingreportQuery.setResultTransformer(Transformers.aliasToBean(AgeingReportResult.class));
-        final List<AgeingReportResult> ageingresult = ageingreportQuery.list();
+    @GetMapping("/ageing/grand-total")
+    @ResponseBody
+    public Object[] ageingReportGrandTotal(final AgeingReportRequest request) {
+        return ageingReportService.ageingReportGrandTotal(request);
+    }
 
-        final String result = new StringBuilder("{ \"data\":").append(toJSON(ageingresult, AgeingReportResult.class, AgeingReportHelperAdaptor.class)).append("}").toString();
-
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        IOUtils.write(result, response.getWriter());
-
+    @GetMapping("/ageing/download")
+    @ResponseBody
+    public ResponseEntity<InputStreamResource> downloadReport(final AgeingReportRequest request) {
+        final ReportRequest reportRequest = new ReportRequest("pgr_ageing_report",
+                ageingReportService.getAllAgeingReportRecords(request), new HashMap<>());
+        final Map<String, Object> reportparam = new HashMap<>();
+        reportparam.put("status", request.getStatus());
+        reportRequest.setReportParams(reportparam);
+        reportRequest.setReportFormat(request.getPrintFormat());
+        reportRequest.setReportName("pgr_ageing_report");
+        return reportToResponseEntity(reportRequest, reportService.createReport(reportRequest));
     }
 }

@@ -46,6 +46,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.ARREARS;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_COMMISSIONER_DESIGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.CITIZEN_ROLE;
 import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.CSC_OPERATOR_ROLE;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_FIRST_HALF;
@@ -82,6 +83,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.TreeMap;
 
 import javax.persistence.EntityManager;
@@ -93,6 +96,7 @@ import org.egov.collection.entity.ReceiptHeader;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
+import org.egov.commons.entity.Source;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.DesignationService;
@@ -106,6 +110,7 @@ import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.persistence.entity.enums.GuardianRelation;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.utils.NumberUtil;
 import org.egov.pims.commons.Position;
@@ -153,13 +158,13 @@ public class PropertyTaxCommonUtils {
 
     @Autowired
     private AssignmentService assignmentService;
-    
+
     @Autowired
     private DesignationService designationService;
-    
+
     @Autowired
     private DepartmentService departmentService;
-    
+
     /**
      * Gives the first half of the current financial year
      *
@@ -226,7 +231,7 @@ public class PropertyTaxCommonUtils {
                                 .put("firstHalfTaxDue",
                                         (reasonDmd.get(CURR_FIRSTHALF_DMD_STR) != null
                                                 ? reasonDmd.get(CURR_FIRSTHALF_DMD_STR) : BigDecimal.ZERO)
-                                                        .subtract(reasonDmd.get(CURR_FIRSTHALF_COLL_STR)));
+                                                .subtract(reasonDmd.get(CURR_FIRSTHALF_COLL_STR)));
 
                     } else if (key.equals(CURRENTYEAR_SECOND_HALF)) {
                         wfPropTaxDetailsMap.put("secondHalf", CURRENTYEAR_SECOND_HALF);
@@ -247,7 +252,7 @@ public class PropertyTaxCommonUtils {
                         wfPropTaxDetailsMap.put("secondHalfTaxDue",
                                 (reasonDmd.get(CURR_SECONDHALF_DMD_STR) != null
                                         ? reasonDmd.get(CURR_SECONDHALF_DMD_STR) : BigDecimal.ZERO)
-                                                .subtract(reasonDmd.get(CURR_SECONDHALF_COLL_STR)));
+                                        .subtract(reasonDmd.get(CURR_SECONDHALF_COLL_STR)));
 
                     } else {
                         wfPropTaxDetailsMap.put("arrears", ARREARS);
@@ -383,7 +388,7 @@ public class PropertyTaxCommonUtils {
     }
 
     public String getCurrentHalfyearTax(final HashMap<Installment, TaxCalculationInfo> instTaxMap,
-            final PropertyTypeMaster propTypeMstr) {
+                                        final PropertyTypeMaster propTypeMstr) {
         final Installment currentInstall = getCurrentPeriodInstallment();
         final TaxCalculationInfo calculationInfo = instTaxMap.get(currentInstall);
         final BigDecimal annualValue = calculationInfo.getTotalNetARV();
@@ -418,10 +423,10 @@ public class PropertyTaxCommonUtils {
     }
 
     private String preparResponeString(final PropertyTypeMaster propTypeMstr, final BigDecimal annualValue,
-            final BigDecimal totalPropertyTax,
-            final BigDecimal vacLandTax, final BigDecimal genTax, final BigDecimal unAuthPenalty, final BigDecimal eduTax,
-            final BigDecimal libCess,
-            final BigDecimal sewrageTax, final BigDecimal serviceCharges) {
+                                       final BigDecimal totalPropertyTax,
+                                       final BigDecimal vacLandTax, final BigDecimal genTax, final BigDecimal unAuthPenalty, final BigDecimal eduTax,
+                                       final BigDecimal libCess,
+                                       final BigDecimal sewrageTax, final BigDecimal serviceCharges) {
         final StringBuilder resultString = new StringBuilder(200);
         resultString.append(
                 "Annual Rental Value=" + formatAmount(annualValue) + "~Total Tax=" + formatAmount(totalPropertyTax));
@@ -470,33 +475,34 @@ public class PropertyTaxCommonUtils {
         final City city = (City) entityManager.createQuery("from City").getSingleResult();
         return city.getGrade().equals(PropertyTaxConstants.CITY_GRADE_CORPORATION) ? true : false;
     }
-    
+
     /**
-     * Returns whether the logged in User is eligible to initiate an application
-     * or not
+     * Returns whether the logged in User is eligible to initiate an application or not
      *
      * @return boolean
      */
-    public Boolean isEligibleInitiator(Long userId) {
-        return (getAllDesignationsForUser(userId).contains(PropertyTaxConstants.JUNIOR_ASSISTANT)
-                || getAllDesignationsForUser(userId).contains(PropertyTaxConstants.SENIOR_ASSISTANT)) ? true : false;
+    public Boolean isEligibleInitiator(final Long userId) {
+        return getAllDesignationsForUser(userId).contains(PropertyTaxConstants.JUNIOR_ASSISTANT)
+                || getAllDesignationsForUser(userId).contains(PropertyTaxConstants.SENIOR_ASSISTANT) ? true : false;
 
     }
-    
-    public String setSourceOfProperty(User user, Boolean isOnline) {
+
+    public String setSourceOfProperty(final User user, final Boolean isOnline) {
         String source;
         if (checkCscUserAndType(user))
             source = PropertyTaxConstants.SOURCE_CSC;
         else if (isMeesevaUser(user))
             source = PropertyTaxConstants.SOURCE_MEESEVA;
+        else if (isCitizenPortalUser(user))
+            source = Source.CITIZENPORTAL.toString();
         else if (isOnline)
             source = PropertyTaxConstants.SOURCE_ONLINE;
         else
             source = PropertyTaxConstants.SOURCE_SYSTEM;
         return source;
     }
-    
-    public Boolean checkCscUserAndType(User user){
+
+    public Boolean checkCscUserAndType(final User user) {
         if (user.getType() != null)
             return isCscOperator(user) && UserType.BUSINESS.equals(user.getType());
         else
@@ -518,21 +524,28 @@ public class PropertyTaxCommonUtils {
     public String getVRSource(final VacancyRemission vacancyRemission) {
         return vacancyRemission.getSource() != null ? vacancyRemission.getSource() : null;
     }
-    
+
     public Boolean isCscOperator(final User user) {
         for (final Role role : user.getRoles())
             if (role != null && role.getName().equalsIgnoreCase(CSC_OPERATOR_ROLE))
                 return true;
         return false;
     }
-    
+
     public Boolean isMeesevaUser(final User user) {
         for (final Role role : user.getRoles())
             if (role != null && role.getName().equalsIgnoreCase(MEESEVA_OPERATOR_ROLE))
                 return true;
         return false;
     }
-    
+
+    public Boolean isCitizenPortalUser(final User user) {
+        for (final Role role : user.getRoles())
+            if (role != null && role.getName().equalsIgnoreCase(CITIZEN_ROLE))
+                return true;
+        return false;
+    }
+
     public String getDesgnForThirdPartyFullTransferWF() {
         final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(PTMODULENAME,
                 PropertyTaxConstants.DESIGNATION_FOR_THIRDPARTY_FULLTRANSFER_WF);
@@ -555,8 +568,8 @@ public class PropertyTaxCommonUtils {
         List<Assignment> assignment = new ArrayList<>();
         for (final String dept : department) {
             for (final String desg : designation) {
-                Long deptId = departmentService.getDepartmentByName(dept).getId();
-                Long desgId = designationService.getDesignationByName(desg).getId();
+                final Long deptId = departmentService.getDepartmentByName(dept).getId();
+                final Long desgId = designationService.getDesignationByName(desg).getId();
                 assignment = assignmentService.findByDepartmentAndDesignation(deptId, desgId);
                 if (!assignment.isEmpty())
                     break;
@@ -566,32 +579,43 @@ public class PropertyTaxCommonUtils {
         }
         return !assignment.isEmpty() ? assignment.get(0) : null;
     }
-    
+
     public Session getSession() {
         return entityManager.unwrap(Session.class);
     }
-    
+
     @SuppressWarnings("unchecked")
-    public List<CFinancialYear> getAllFinancialYearsBetweenDates(Date fromDate, Date toDate) {
-        Query query = getSession().createQuery(
+    public List<CFinancialYear> getAllFinancialYearsBetweenDates(final Date fromDate, final Date toDate) {
+        final Query query = getSession().createQuery(
                 " from CFinancialYear cfinancialyear where cfinancialyear.startingDate <:eDate and cfinancialyear.endingDate >=:sDate order by finYearRange asc ");
         query.setDate("sDate", fromDate);
         query.setDate("eDate", toDate);
         return query.list();
     }
-    
+
     public boolean isRoOrCommissioner(final String designation) {
+        return isCommissioner(designation) || isRevenueOfficer(designation);
+    }
+
+    public boolean isRevenueOfficer(final String designation) {
+        return REVENUE_OFFICER_DESGN.equalsIgnoreCase(designation);
+    }
+
+    public boolean isCommissioner(final String designation) {
         return commissionerDesginations().contains(designation);
     }
 
     public List<String> commissionerDesginations() {
-        List<String> designations = new ArrayList<>();
-        designations.add(REVENUE_OFFICER_DESGN);
+        final List<String> designations = new ArrayList<>();
         designations.add(ASSISTANT_COMMISSIONER_DESIGN);
         designations.add(ADDITIONAL_COMMISSIONER_DESIGN);
         designations.add(DEPUTY_COMMISSIONER_DESIGN);
         designations.add(COMMISSIONER_DESGN);
         designations.add(ZONAL_COMMISSIONER_DESIGN);
         return designations;
+    }
+
+    public List<String> getGuardianRelations() {
+        return Stream.of(GuardianRelation.values()).map(GuardianRelation::name).collect(Collectors.toList());
     }
 }

@@ -180,7 +180,6 @@ public class CollectPropertyTaxAction extends BaseFormAction {
         }
         propertyTaxBillable.setLevyPenalty(true);
         propertyTaxBillable.setBasicProperty(basicProperty);
-        propertyTaxBillable.setUserId(Long.valueOf(getSession().get("userid").toString()));
         propertyTaxBillable.setReferenceNumber(propertyTaxNumberGenerator.generateBillNumber(basicProperty
                 .getPropertyID().getWard().getBoundaryNum().toString()));
         propertyTaxBillable.setBillType(propertyTaxUtil.getBillTypeByCode(BILLTYPE_AUTO));

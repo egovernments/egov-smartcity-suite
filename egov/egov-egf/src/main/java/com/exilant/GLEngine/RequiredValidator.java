@@ -89,7 +89,7 @@ public class RequiredValidator {
         if (empDetailId == 0)
         {
             final List list = persistenceService.getSession()
-                    .createQuery("select id From Accountdetailtype where name='Employee'")
+                    .createQuery("select id From Accountdetailtype where name='EMPLOYEE'")
                     .list();
             if (list != null && list.size() > 0)
                 empDetailId = (Integer) list.get(0);

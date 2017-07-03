@@ -87,7 +87,6 @@
 		</div>
 	</div>	
 	 </c:if>
-	
 	<c:choose>
 	<c:when test="${mode =='editOnReject'}">
 				<jsp:include page="applicantdetails.jsp"></jsp:include>
@@ -103,6 +102,10 @@
 					<jsp:include page="estimationdetails.jsp"></jsp:include>
 					<jsp:include page="documentdetails-view.jsp"></jsp:include> 
 					<jsp:include page="inspectionCharges.jsp"></jsp:include>
+			</c:when>
+			<c:when test="${mode =='closetview'}">
+			 		<jsp:include page="connectiondetails.jsp"></jsp:include> 
+					<jsp:include page="documentdetails-view.jsp"></jsp:include> 
 			</c:when>
 			<c:otherwise>
 				<jsp:include page="connectionDetails-view.jsp"></jsp:include> 

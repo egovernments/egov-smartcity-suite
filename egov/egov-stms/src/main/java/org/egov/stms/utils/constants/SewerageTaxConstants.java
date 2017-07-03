@@ -123,13 +123,13 @@ public class SewerageTaxConstants {
     public static final String DESIGNATION_COMMISSIONER = "Commissioner";
 
     // User roles
-    public static final String ROLE_SUPERUSER = "Super User";
+    public static final String ROLE_SUPERUSER = "SYSTEM";
     public static final String ROLE_EXECUTIVEDEPARTEMNT = "Engineering";
     public static final String ROLE_DEPUTYDEPARTEMNT = "Engineering";
     public static final String ROLE_CSCOPERTAOR = "CSC Operator";
     public static final String ROLE_ULBOPERATOR = "ULB Operator";
     public static final String ROLE_COLLECTIONOPERATOR = "Collection Operator";
-    public static final String ROLE_CITIZEN = "Citizen";
+    public static final String ROLE_CITIZEN = "CITIZEN";
     public static final String ROLE_SEWERAGETAX_CREATOR = "Sewerage Tax Creator";
     public static final String ROLE_SEWERAGETAX_ADMINISTRATOR = "Sewerage Tax Administrator";
     public static final String ROLE_SEWERAGETAX_APPROVER = "Sewerage Tax Approver";
@@ -148,13 +148,16 @@ public class SewerageTaxConstants {
 
     public static final String VIEW = "View";
     public static final String COLLECTDONATIONCHARHGES = "Collect Fee";
+    public static final String GENERATEREJECTIONNOTICE = "Generate Rejection Notice";
     public static final String VIEWURL = "/stms/existing/sewerage/view/{consumerno}/{assessmentno}";
     public static final String COLLECTDONATIONCHARHGESURL = "/stms/collection/generatebill/{consumerno}/{assessmentno}";
     public static final String VIEWDCBURL = "/stms/reports/sewerageRateReportView/{consumerno}/{assessmentno}";
     public static final String CLOSECONNECTION_ACTIONDROPDOWN = "Close Sewerage Connection";
     public static final String CLOSESEWERAGECONNECTIONURL = "/stms/transactions/closeConnection/{shscNumber}";
     public static final String GENERATEBEMANDBILL = "Generate Demand Bill";
+    public static final String MODIFYLEGACYCONNECTION = "Modify Legacy Connection";
     public static final String GENERATEBEMANDBILLURL = "/stms/reports/generate-sewerage-demand-bill/{consumerno}/{assessmentno}";
+    public static final String MODIFYLEGACYCONNECTIONURL = "/stms/transactions/sewerage/sewerageLegacyApplication-updateForm/{consumerno}/{assessmentno}";
     // Elastic Search Constants
     public static final String SEARCHABLE_SHSCNO = "searchable.shscnumber";
     public static final String CLAUSES_CITYNAME = "clauses.cityname";
@@ -282,9 +285,11 @@ public class SewerageTaxConstants {
     public static final String NOTICE_TYPE_ESTIMATION_NOTICE = "Estimation Notice";
     public static final String NOTICE_TYPE_WORK_ORDER_NOTICE = "Workorder Notice";
     public static final String NOTICE_TYPE_CLOSER_NOTICE = "Close Connection Notice";
+    public static final String NOTICE_TYPE_REJECTION_NOTICE = "Rejection Notice";
     public static final String NOTICE_TYPE_DEMAND_BILL_NOTICE = "Demand Bill";
     public static final String NOTICE_ESTIMATION = "EM";
     public static final String NOTICE_WORK_ORDER = "WO";
+    public static final String NOTICE_REJECTION = "RN";
     public static final String NOTICE_CLOSE_CONNECTION = "CC";
 
     public static final String DOCTYPE_OTHERS = "Others";
@@ -312,6 +317,29 @@ public class SewerageTaxConstants {
     public static final String SLAFORCHANGEINCLOSET = "SLAFORCHANGEINCLOSET";
     public static final String SEWERAGE_MONTHLY_RATES ="SEWERAGE MONTHLY RATES BY MULTIPLE CLOSETS";
     public static final String EDIT_DONATION_CHARGE ="EDIT_DONATION_CHARGE";
+    public static final String MODIFYLEGACYCONNECTIONACTIONDROPDOWN="MODIFYLEGACYCONNECTION";
     
+    //CSC operator related constants
+    public static final String CSC_OPERATOR_ROLE = "CSC Operator";
+    public static final String SEWERAGE_WORKFLOWDESIGNATION_FOR_CSCOPERATOR = "SEWERAGEDESIGNATIONFORCSCOPERATORWORKFLOW";
+    public static final String SEWERAGE_WORKFLOWDEPARTEMENT_FOR_CSCOPERATOR = "SEWERAGEDEPARTMENTFORCSCOPERATORWORKFLOW";
+    public static final String SEWERAGEROLEFORNONEMPLOYEE="SEWERAGEROLEFORNONEMPLOYEE";
+    public static final String APPLICATION_PDF = "application/pdf";
+    public static final String APPLICATION_STATUS_CSCCREATED = "CSCCREATED";
+        
+   //Online 
+    public static final String Online = "Online";
+    public static final String ANONYMOUS_USER = "Anonymous";
+    public static final String APPLICATION_STATUS_ANONYMOUSCREATED = "ANONYMOUSCREATED";
+
+    public static final String PROPERTYID_NOT_EXIST_ERR_CODE = "STAX101";
+    public static final String STAXDETAILS_CONSUMER_CODE_NOT_EXIST_ERR_MSG_PREFIX = "Sewerage Connection details with Consumer code ";
+    public static final String STAXDETAILS_NOT_EXIST_ERR_MSG_SUFFIX = " does not exist";
+    public static final String THIRD_PARTY_ERR_CODE_SUCCESS = "STAX-REST-0";
+    public static final String THIRD_PARTY_ERR_MSG_SUCCESS = "SUCCESS";
+    public static final String SEWERAGE_BILLNUMBER = "SEQ_SEWERAGEBILL_NUMBER";
+    public static final String BILLTYPE_MANUAL = "MANUAL";
+    public static final String PAYMENT_TYPE_PARTIALLY = "Partially";
+    public static final String PAYMENT_TYPE_FULLY = "Fully";
     
 }

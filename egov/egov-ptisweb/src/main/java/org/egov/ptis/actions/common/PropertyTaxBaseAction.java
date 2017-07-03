@@ -96,6 +96,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_DIGITAL_SIGNATURE_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
+import static org.egov.ptis.constants.PropertyTaxConstants.TAX_COLLECTOR_DESGN;
 
 import java.io.File;
 import java.math.BigDecimal;
@@ -598,7 +599,8 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
         final Assignment assignment = getApproverAssignment(property);
         if (assignment != null) {
             approverDesignation = assignment.getDesignation().getName();
-            if (!propertyByEmployee || ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName()))
+            if (!propertyByEmployee || ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName())
+                    || propertyService.isCitizenPortalUser(securityUtils.getCurrentUser()))
                 wfInitiator = assignment;
         }
         if (property.getId() != null)
@@ -628,7 +630,8 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
      */
     private Assignment getApproverAssignment(final PropertyImpl property) {
         Assignment assignment = null;
-        if (!propertyByEmployee || ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName())) {
+        if (!propertyByEmployee || ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName())
+                || propertyService.isCitizenPortalUser(securityUtils.getCurrentUser())) {
             currentState = "Created";
             if (propertyService.isCscOperator(securityUtils.getCurrentUser()))
                 assignment = propertyService.getMappedAssignmentForCscOperator(property.getBasicProperty());
@@ -703,7 +706,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                     .withNatureOfTask(nature).withInitiator(wfInitiator != null ? wfInitiator.getPosition() : null);
         } else if (property.getCurrentState().getNextAction().equalsIgnoreCase(END))
             property.transition().end().withSenderName(user.getUsername() + "::" + user.getName())
-                    .withComments(approverComments).withDateInfo(currentDate.toDate());
+                    .withComments(approverComments).withDateInfo(currentDate.toDate()).withNextAction(null);
         else {
             final String nextAction = getNextAction(property, approverDesignation);
             wfmatrix = propertyWorkflowService.getWfMatrix(property.getStateType(), null,
@@ -743,7 +746,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
         Position owner = null;
         if (wfInitiator.getPosition().equals(property.getState().getOwnerPosition())) {
             property.transition().end().withSenderName(user.getUsername() + "::" + user.getName())
-                    .withComments(approverComments).withDateInfo(currentDate.toDate());
+                    .withComments(approverComments).withDateInfo(currentDate.toDate()).withNextAction(null);
             property.setStatus(STATUS_CANCELLED);
             property.getBasicProperty().setUnderWorkflow(FALSE);
         } else {
@@ -756,6 +759,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                 setInitiator(assignmentOnreject.getEmployee().getName().concat("~")
                         .concat(assignmentOnreject.getPosition().getName()));
             } else if (BILL_COLLECTOR_DESGN.equalsIgnoreCase(loggedInUserDesignation)
+                    || TAX_COLLECTOR_DESGN.equalsIgnoreCase(loggedInUserDesignation)
                     || REVENUE_INSPECTOR_DESGN.equalsIgnoreCase(loggedInUserDesignation)) {
                 nextAction = WF_STATE_ASSISTANT_APPROVAL_PENDING;
                 setInitiator(wfInitiator.getEmployee().getName().concat("~")
@@ -835,7 +839,8 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
         final Map<String, BigDecimal> demandCollMap = ptDemandDAO.getDemandCollMap(property);
         if (null != property && null != property.getState()) {
             final State propertyState = property.getState();
-            if (propertyState.getValue().endsWith(WF_STATE_ASSISTANT_APPROVED)) {
+            if (propertyState.getValue().endsWith(WF_STATE_ASSISTANT_APPROVED)
+                    || propertyState.getValue().endsWith("NEW")) {
                 args.add(property.getApplicationNo());
                 if (APPLICATION_TYPE_NEW_ASSESSENT.equals(applicationType)) {
                     if (mobileNumber != null)

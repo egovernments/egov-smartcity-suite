@@ -42,6 +42,7 @@ package org.egov.stms.web.controller.elasticSearch;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.COLLECTDONATIONCHARHGES;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.MODIFYLEGACYCONNECTION;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.REVENUE_WARD;
 
 import java.util.ArrayList;
@@ -112,6 +113,12 @@ public class ApplicationSewerageSearchController {
         return "sewerageTaxSearch-form";
     }
 
+    @RequestMapping(value = "/legacysearch", method = RequestMethod.GET)
+    public String newLeagacySearchForm(final Model model) {
+        model.addAttribute("legacy", true);
+        return "sewerageTaxSearch-form";
+    }
+
     @ModelAttribute("revenueWards")
     public List<Boundary> revenueWardList() {
         return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
@@ -174,17 +181,21 @@ public class ApplicationSewerageSearchController {
                         sewerageIndexObject.getApplicationStatus(),
                         sewerageApplicationDetails);
             if (searchActions != null && searchActions.getActions() != null)
-                getActions(searchActions, actionMap);
+                getActions(searchActions, actionMap, searchRequest);
             searchResultObject.setActions(actionMap);
             searchResultFomatted.add(searchResultObject);
         }
         return searchResultFomatted;
     }
 
-    private void getActions(final SewerageSearchResult searchActions, final Map<String, String> actionMap) {
+    private void getActions(final SewerageSearchResult searchActions, final Map<String, String> actionMap,
+            final SewerageConnSearchRequest searchRequest) {
         for (final Map.Entry<String, String> entry : searchActions.getActions().entrySet())
-            if (!entry.getValue().equals(COLLECTDONATIONCHARHGES))
+            if (entry.getValue().equals(MODIFYLEGACYCONNECTION) && searchRequest.getLegacy() == null)
+                actionMap.remove(entry.getKey(), entry.getValue());
+            else if (!entry.getValue().equals(COLLECTDONATIONCHARHGES))
                 actionMap.put(entry.getKey(), entry.getValue());
+
     }
 
 }

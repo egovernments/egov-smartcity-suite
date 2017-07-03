@@ -50,6 +50,7 @@ import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.persistence.validator.annotation.CompositeUnique;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.validation.regex.Constants;
+import org.hibernate.envers.AuditJoinTable;
 import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
@@ -65,6 +66,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+
+import static org.hibernate.envers.RelationTargetAuditMode.NOT_AUDITED;
 
 @Entity
 @Table(name = "eg_user")
@@ -88,6 +91,7 @@ public class User extends AbstractAuditable {
 
     @NotNull
     @Length(min = 4, max = 64)
+    @Audited
     private String password;
 
     private String salutation;
@@ -139,6 +143,8 @@ public class User extends AbstractAuditable {
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(name = "eg_userrole", joinColumns = @JoinColumn(name = "userid"), inverseJoinColumns = @JoinColumn(name = "roleid"))
+    @Audited(targetAuditMode = NOT_AUDITED)
+    @AuditJoinTable
     private Set<Role> roles = new HashSet<>();
 
     @Temporal(TemporalType.DATE)
@@ -362,5 +368,10 @@ public class User extends AbstractAuditable {
 
     public void updateNextPwdExpiryDate(Integer passwordExpireInDays) {
         this.setPwdExpiryDate(new DateTime().plusDays(passwordExpireInDays).toDate());
+    }
+
+    public boolean hasRole(String roleName) {
+        return roles.parallelStream().map(Role::getName)
+                .anyMatch(roleName::equals);
     }
 }

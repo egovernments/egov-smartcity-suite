@@ -45,6 +45,7 @@ import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.service.ComplaintService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -54,7 +55,6 @@ import java.io.IOException;
 
 import static org.egov.infra.utils.JsonUtils.toJSON;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @Controller
 @RequestMapping("/pending")
@@ -72,16 +72,20 @@ public class PendingGrievanceController {
         return new Complaint();
     }
 
-    @RequestMapping(value = "/grievance-list", method = GET)
+    @GetMapping("grievance-list")
     public String complaintTypeViewForm() {
         return "grievance-list";
 
     }
 
-    @RequestMapping(value = "/ajax-grievancelist", method = GET, produces = APPLICATION_JSON_VALUE)
-    public @ResponseBody void getPendingGrievances(HttpServletResponse response) throws IOException {
+    @GetMapping(value = "ajax-grievancelist", produces = APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public void getPendingGrievances(HttpServletResponse response) throws IOException {
         IOUtils.write(
-                new StringBuilder("{ \"data\":").append(toJSON(complaintService.getPendingGrievances(), Complaint.class, PendingGrievanceAdaptor.class)).append("}").toString(),
+                new StringBuilder("{ \"data\":")
+                        .append(
+                                toJSON(complaintService.getPendingGrievances(), Complaint.class, PendingGrievanceAdaptor.class))
+                        .append("}").toString(),
                 response.getWriter());
     }
 }

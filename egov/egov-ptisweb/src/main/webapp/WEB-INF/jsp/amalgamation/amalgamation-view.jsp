@@ -138,6 +138,7 @@ function onSubmit() {
 								test="%{model.state.nextAction.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVAL_PENDING) ||
 					        model.state.value.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVED) ||
 							userDesignationList.toUpperCase().contains(@org.egov.ptis.constants.PropertyTaxConstants@REVENUE_OFFICER_DESGN.toUpperCase()) ||
+							userDesignationList.toUpperCase().contains(@org.egov.ptis.constants.PropertyTaxConstants@TAX_COLLECTOR_DESGN.toUpperCase()) ||
 							userDesignationList.toUpperCase().contains(@org.egov.ptis.constants.PropertyTaxConstants@BILL_COLLECTOR_DESGN.toUpperCase()) ||
 							((userDesignationList.toUpperCase().contains(@org.egov.ptis.constants.PropertyTaxConstants@JUNIOR_ASSISTANT.toUpperCase()) || 
 							userDesignationList.toUpperCase().contains(@org.egov.ptis.constants.PropertyTaxConstants@SENIOR_ASSISTANT.toUpperCase()))
@@ -169,7 +170,7 @@ function onSubmit() {
 										<tr>
 											<td width="10%" class="bluebox">&nbsp;</td>
 											<td width="20%" class="bluebox">&nbsp;</td>
-											<td class="bluebox" width="13%">Approver Remarks:</td>
+											<td class="bluebox" width="13%">Remarks:</td>
 											<td class="bluebox"><textarea id="approverComments" class="form-control"
 													name="approverComments" rows="2" cols="35"></textarea></td>
 											<td class="bluebox">&nbsp;</td>

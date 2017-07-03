@@ -138,7 +138,7 @@ public class EgovAuthorizeTag extends  RequestContextAwareTag {
 			action = rbacService.getActionByName(this.actionName);
 		}
 		if (this.actionId != null) {
-			action = (Action)rbacService.getActionById(this.actionId);
+			action = rbacService.getActionById(this.actionId);
 		}
 		if (action != null) {
 			// if user's role belongs to action roles

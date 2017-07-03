@@ -56,7 +56,7 @@
 			return false;
 		} else {
 			if (obj.value == 'Search') {
-				document.forms[0].action = '/ptis/public/reports/searchnotice-result.action?propertyId='
+				document.forms[0].action = '/ptis/reports/searchnotice-result.action?propertyId='
 						+ indexNumber +'applicationNo=' + applicationNo ;
 
 				document.forms[0].submit();
@@ -71,7 +71,7 @@
 			sUrl = "/egi/docmgmt/ajaxFileDownload.action?moduleName=PT&docNumber="
 					+ noticeNumber + "&fileName=" + noticeNumber + ".pdf";
 		} else {
-			sUrl = "/ptis/public/reports/searchNotices-showNotice.action?noticeNumber="
+			sUrl = "/ptis/reports/searchNotices-showNotice.action?noticeNumber="
 					+ noticeNumber;
 		}
 		window.open(sUrl, "_self");

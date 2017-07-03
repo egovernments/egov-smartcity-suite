@@ -416,4 +416,37 @@
     	<put-attribute name="page-title" value="title.chairpersonmaster" cascade="true"></put-attribute>
     	<put-attribute name="body" value="/WEB-INF/views/application/chairperson-success.jsp"></put-attribute>
     </definition>
+     <definition name="usageslab-create" extends="base_layout">
+    	<put-attribute name="page-title" value="title.usageslabmaster" cascade="true"></put-attribute>
+    	<put-attribute name="body" value="/WEB-INF/views/masters/usageslab-create.jsp"></put-attribute>
+    </definition>
+     <definition name="usageslab-success" extends="base_layout">
+    	<put-attribute name="page-title" value="title.usageslabmaster" cascade="true"></put-attribute>
+    	<put-attribute name="body" value="/WEB-INF/views/masters/usageslab-success.jsp"></put-attribute>
+    </definition>
+     <definition name="usageslab-search" extends="base_layout">
+    	<put-attribute name="page-title" value="title.usageslabmaster" cascade="true"></put-attribute>
+    	<put-attribute name="body" value="/WEB-INF/views/masters/usageslab-search.jsp"></put-attribute>
+    </definition>
+     <definition name="usageslab-edit" extends="base_layout">
+    	<put-attribute name="page-title" value="title.usageslabmaster" cascade="true"></put-attribute>
+    	<put-attribute name="body" value="/WEB-INF/views/masters/usageslab-edit.jsp"></put-attribute>
+    </definition>
+     <definition name="metered-rate-create" extends="base_layout">
+    	<put-attribute name="page-title" value="title.meteredrates" cascade="true"></put-attribute>
+    	<put-attribute name="body" value="/WEB-INF/views/masters/metered-rate-create.jsp"></put-attribute>
+    </definition>
+     <definition name="metered-rate-success" extends="base_layout">
+    	<put-attribute name="page-title" value="title.meteredrates" cascade="true"></put-attribute>
+    	<put-attribute name="body" value="/WEB-INF/views/masters/metered-rate-success.jsp"></put-attribute>
+    </definition>
+    <definition name="metered-rate-search" extends="base_layout">
+    	<put-attribute name="page-title" value="title.meteredrates" cascade="true"></put-attribute>
+    	<put-attribute name="body" value="/WEB-INF/views/masters/metered-rate-search.jsp"></put-attribute>
+    </definition>
+    <definition name="metered-rate-edit" extends="base_layout">
+    	<put-attribute name="page-title" value="title.meteredrates" cascade="true"></put-attribute>
+    	<put-attribute name="body" value="/WEB-INF/views/masters/metered-rate-edit.jsp"></put-attribute>
+    </definition>
+    
 </tiles-definitions>

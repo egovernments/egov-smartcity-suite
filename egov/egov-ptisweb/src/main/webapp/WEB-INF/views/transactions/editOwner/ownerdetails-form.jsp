@@ -52,10 +52,10 @@ body {
 </style>
 
 <c:if test="${errorMsg != ''}">
-	<div class="panel-heading">
-		<div class="add-margin error-msg" style="text-align: center;">
-			<strong><c:out value="${errorMsg}" /></strong>
-		</div>
+	<div class="panel-heading" style="text-align: center">
+				<div class="add-margin error-msg" style="text-align: center;">
+					<spring:message code="${errorMsg}" />
+				</div>
 	</div>
 </c:if>
 <div class="row">
@@ -244,7 +244,7 @@ body {
 
 									</div>
 									<div class="col-sm-3 add-margin view-content">
-										<c:out value="${doorNumber}" default="N/A" />
+										<c:out value="${existingDoorNumber}" default="N/A" />
 									</div>
 									<div class="col-sm-3 add-margin">
 										<spring:message code="lbl.pincode" />
@@ -385,7 +385,7 @@ body {
 													id="guardianRelation" name="guardianRelation"
 													data-first-option="false" cssClass="form-control">
 													<option value="">--select--</option>
-													<form:options items="${guardianRelationMap}" />
+													<form:options items="${guardianRelations}" />
 												</form:select>
 												<form:hidden path="ownerAudit[${status.index}].guardianRelation" /></td>
 											<td class="blueborderfortd" align="center"><form:input

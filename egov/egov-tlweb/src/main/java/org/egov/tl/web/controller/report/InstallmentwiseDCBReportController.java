@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) <2017>  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -40,36 +40,39 @@
 
 package org.egov.tl.web.controller.report;
 
-import org.egov.tl.entity.dto.InstallmentWiseDCBForm;
+import org.egov.infra.reporting.engine.ReportRequest;
+import org.egov.infra.reporting.engine.ReportService;
+import org.egov.infra.web.support.ui.DataTable;
+import org.egov.tl.entity.dto.InstallmentWiseDCBRequest;
+import org.egov.tl.entity.view.InstallmentWiseDCB;
 import org.egov.tl.service.InstallmentwiseDCBReportService;
 import org.egov.tl.web.response.adaptor.InstallmentWiseDCBResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
-import static org.apache.commons.lang3.StringUtils.defaultString;
-import static org.egov.infra.utils.JsonUtils.toJSON;
-
+import static org.egov.infra.web.utils.WebUtils.reportToResponseEntity;
 
 @Controller
 @RequestMapping("/report/dcb/yearwise")
 public class InstallmentwiseDCBReportController {
 
     @Autowired
+    private ReportService reportService;
+
+    @Autowired
     private InstallmentwiseDCBReportService installmentWiseDCBService;
 
     @ModelAttribute
-    public InstallmentWiseDCBForm installmentWiseDCBForm() {
-        return new InstallmentWiseDCBForm();
+    public InstallmentWiseDCB installmentWiseDCBForm() {
+        return new InstallmentWiseDCB();
     }
 
     @GetMapping("/search")
@@ -80,11 +83,28 @@ public class InstallmentwiseDCBReportController {
 
     @PostMapping(value = "/search", produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
-    public String result(HttpServletRequest request) throws IOException {
-        return new StringBuilder("{ \"data\":")
-                .append(toJSON(installmentWiseDCBService.getReportResult(
-                        defaultString(request.getParameter("licensenumber")),
-                        defaultString(request.getParameter("financialYear"))), InstallmentWiseDCBForm.class,
-                        InstallmentWiseDCBResponse.class)).append("}").toString();
+    public String result(final InstallmentWiseDCBRequest installmentWiseDCBRequest) {
+        return new DataTable<>(installmentWiseDCBService.getReportResult(installmentWiseDCBRequest),
+                installmentWiseDCBRequest.draw()).toJson(InstallmentWiseDCBResponse.class);
+    }
+
+    @GetMapping("/grand-total")
+    @ResponseBody
+    public Object[] yearWiseGrandTotal(final InstallmentWiseDCBRequest installmentWiseDCBRequest) {
+        return installmentWiseDCBService.reportGrandTotal(installmentWiseDCBRequest);
+    }
+
+    @GetMapping("/download")
+    @ResponseBody
+    public ResponseEntity<InputStreamResource> downloadYearWiseReport(final InstallmentWiseDCBRequest installmentWiseDCBRequest) {
+        final ReportRequest reportRequest = new ReportRequest("tl_dcb_report",
+                installmentWiseDCBService.prepareReport(installmentWiseDCBRequest), new HashMap<>());
+        final Map<String, Object> reportparam = new HashMap<>();
+        reportparam.put("year", installmentWiseDCBRequest.getInstallment());
+        reportRequest.setReportParams(reportparam);
+        reportRequest.setReportFormat(installmentWiseDCBRequest.getPrintFormat());
+        reportRequest.setReportName("tl_dcb_report");
+        return reportToResponseEntity(reportRequest, reportService.createReport(reportRequest));
+
     }
 }

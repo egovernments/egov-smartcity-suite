@@ -238,6 +238,9 @@ public class JournalVoucherActionHelper {
                         .withComments(workflowBean.getApproverComments())
                         .withDateInfo(currentDate.toDate());
             else {
+                if (!voucherHeader.getCurrentState().getValue().equalsIgnoreCase(workflowBean.getCurrentState())) {
+                    return voucherHeader;
+                }
                 final WorkFlowMatrix wfmatrix = voucherHeaderWorkflowService.getWfMatrix(voucherHeader.getStateType(), null,
                         null, null, voucherHeader.getCurrentState().getValue(), null);
                 voucherHeader.transition().progressWithStateCopy().withSenderName(user.getName()).withComments(workflowBean.getApproverComments())

@@ -40,6 +40,8 @@
 
 package org.egov.infra.config.core;
 
+import org.joda.time.DateTimeZone;
+
 import java.nio.charset.Charset;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -78,6 +80,10 @@ public final class GlobalSettings {
         //only static methods
     }
 
+    public static DateTimeZone jodaTimeZone() {
+        return DateTimeZone.forTimeZone(timeZone());
+    }
+
     public static TimeZone timeZone() {
         return TimeZone.getTimeZone(defaultIfBlank(getProperty(DEFAULT_TIME_ZONE_KEY), DEFAULT_TIME_ZONE));
     }
@@ -110,15 +116,15 @@ public final class GlobalSettings {
         return Locale.forLanguageTag(defaultIfBlank(getProperty(DEFAULT_LOCALE_KEY), DEFAULT_LOCALE));
     }
 
-    public static Charset defaultEncoding() {
+    public static Charset encoding() {
         return Charset.forName(defaultIfBlank(getProperty(DEFAULT_ENCODING_KEY), DEFAULT_ENCODING));
     }
 
-    public static String defaultDatePattern() {
+    public static String datePattern() {
         return defaultIfBlank(getProperty(DEFAULT_DATE_PATTERN_KEY), DEFAULT_DATE_PATTERN);
     }
 
-    public static String defaultDateTimePattern() {
+    public static String dateTimePattern() {
         return defaultIfBlank(getProperty(DEFAULT_DATE_TIME_PATTERN_KEY), DEFAULT_DATE_TIME_PATTERN);
     }
 }

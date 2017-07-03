@@ -55,9 +55,11 @@ import java.util.List;
 import java.util.Map;
 
 import static org.egov.infra.utils.ApplicationConstant.CITY_CODE_KEY;
+import static org.egov.infra.utils.ApplicationConstant.CITY_CORP_EMAIL_KEY;
 import static org.egov.infra.utils.ApplicationConstant.CITY_CORP_GRADE_KEY;
 import static org.egov.infra.utils.ApplicationConstant.CITY_CORP_NAME_KEY;
 import static org.egov.infra.utils.ApplicationConstant.CITY_DIST_NAME_KEY;
+import static org.egov.infra.utils.ApplicationConstant.CITY_LOGO_KEY;
 
 @Service
 @Transactional(readOnly = true)
@@ -128,8 +130,16 @@ public class CityService {
         return (String) cityDataForKey(CITY_CORP_GRADE_KEY);
     }
 
+    public String getContactEmail() {
+        return (String) cityDataForKey(CITY_CORP_EMAIL_KEY);
+    }
+
     public String getDistrictName() {
         return (String) cityDataForKey(CITY_DIST_NAME_KEY);
+    }
+
+    public String getCityLogoPath() {
+        return (String) cityDataForKey(CITY_LOGO_KEY);
     }
 
     public String cityPrefCacheKey() {

@@ -42,13 +42,13 @@ package org.egov.pgr.web.controller.complaint;
 
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.pgr.entity.Complaint;
+import org.egov.pgr.service.ComplaintHistoryService;
 import org.egov.pgr.service.ComplaintService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.util.HashMap;
 import java.util.List;
@@ -56,19 +56,18 @@ import java.util.List;
 @Controller
 public class ViewComplaintController {
 
+    @Autowired
     private ComplaintService complaintService;
 
     @Autowired
-    public ViewComplaintController(ComplaintService complaintService) {
-        this.complaintService = complaintService;
-    }
+    private ComplaintHistoryService complaintHistoryService;
 
-    @RequestMapping(value = {"/complaint/view/{crnNo}", "/public/complaint/view/{crnNo}"}, method = RequestMethod.GET)
+    @GetMapping("/complaint/view/{crnNo}")
     public String viewComplaints(@PathVariable String crnNo, Model model) {
         Complaint complaint = complaintService.getComplaintByCRN(crnNo);
         if (complaint == null)
             throw new ApplicationRuntimeException("PGR.002");
-        List<HashMap<String, Object>> historyTable = complaintService.getHistory(complaint);
+        List<HashMap<String, Object>> historyTable = complaintHistoryService.getHistory(complaint);
         model.addAttribute("complaintHistory", historyTable);
         model.addAttribute("complaint", complaint);
         return "view-complaint";

@@ -246,7 +246,7 @@ public class WorksConstants {
     public static final String MODULE_NAME_LINEESTIMATE = "LineEstimate";
 
     // User roles
-    public static final String ROLE_SUPERUSER = "Super User";
+    public static final String ROLE_SUPERUSER = "SYSTEM";
 
     public static final String LINEESTIMATE_CREATE = "create";
     public static final String LINEESTIMATE_UPDATE = "update";

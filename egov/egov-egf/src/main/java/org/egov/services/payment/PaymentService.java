@@ -541,6 +541,9 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
                         .withComments(workflowBean.getApproverComments())
                         .withDateInfo(currentDate.toDate());
             else {
+                if (!paymentheader.getCurrentState().getValue().equalsIgnoreCase(workflowBean.getCurrentState())) {
+                    return paymentheader;
+                }
                 final WorkFlowMatrix wfmatrix = paymentHeaderWorkflowService
                         .getWfMatrix(paymentheader.getStateType(), null, null,
                                 null, paymentheader.getCurrentState()

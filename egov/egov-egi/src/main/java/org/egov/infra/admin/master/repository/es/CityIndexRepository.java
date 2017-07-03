@@ -49,7 +49,7 @@ import java.util.List;
 @Repository
 public interface CityIndexRepository extends ElasticsearchRepository<CityIndex, String>,CityIndexCustomRepository {
 
-	public CityIndex findByCitycode(String code); 
+	CityIndex findByCitycode(String code);
 	
-	public List<CityIndex> findByDistrictcode(String districtCode);
+	List<CityIndex> findByDistrictcode(String districtCode);
 }

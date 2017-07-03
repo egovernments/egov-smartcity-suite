@@ -63,7 +63,7 @@
 									<form role="form" class="form-horizontal form-groups-bordered" method="POST">
 										<div class="form-group">
 											<label for="field-1" class="col-sm-4 control-label"><spring:message
-			code="lbl.assesmentnumber" />:<span class="mandatory"></span></label>
+			code="lbl.inactive.assessment" />:<span class="mandatory"></span></label>
 				
 											<div class="col-sm-4 add-margin">
 												<form:input class="form-control patternvalidation" data-pattern="number" maxlength="50" id="assessmentNo" path="assessmentNo" />
@@ -73,7 +73,7 @@
 										</div>
 										<div class="form-group">
 											<label for="field-1" class="col-sm-4 control-label"><spring:message
-			code="lbl1.consumer.number" />:<span class="mandatory"></span></label>
+			code="lbl.inactive.consumercode" />:<span class="mandatory"></span></label>
 				
 											<div class="col-sm-4 add-margin">
 												<form:input class="form-control patternvalidation" data-pattern="number" maxlength="50" id="consumerNo" path="consumerNo" />

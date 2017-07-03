@@ -43,6 +43,7 @@ package org.egov.tl.entity;
 import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.egov.infra.persistence.validator.annotation.CompositeUnique;
 import org.egov.tl.entity.enums.ApplicationType;
+import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -67,6 +68,7 @@ public class LicenseDocumentType extends AbstractPersistable<Long> {
     private Long id;
 
     @NotNull
+    @Length(max = 50)
     private String name;
     private boolean mandatory;
     private boolean enabled;

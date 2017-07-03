@@ -352,7 +352,7 @@
 								<tr>
 						        	<td width="10%" class="bluebox">&nbsp;</td>
 						           	<td width="20%" class="bluebox">&nbsp;</td>
-						           	<td class="bluebox" width="13%">Approver Remarks: </td>
+						           	<td class="bluebox" width="13%">Remarks: </td>
 						           	<td class="bluebox"> 
 						           		<textarea id="approverComments" name="approverComments" rows="2" cols="35" ></textarea>  
 						           	</td>

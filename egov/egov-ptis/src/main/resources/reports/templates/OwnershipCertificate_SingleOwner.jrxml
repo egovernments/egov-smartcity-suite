@@ -82,7 +82,6 @@
 				<textElement textAlignment="Center">
 					<font size="12"/>
 				</textElement>
-				<text><![CDATA[This Certificate is digitally signed.]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true">
 				<reportElement x="50" y="150" width="463" height="110" uuid="96c7ec4d-900f-4711-b3cc-da4e5e3a1d09"/>

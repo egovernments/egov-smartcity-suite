@@ -63,10 +63,10 @@
 					<input type="hidden"  id="citizenRole" value="${citizenRole}" />
 					<div class="form-group">
 					<label for="field-1" class="col-sm-3 control-label"> <spring:message
-										code="lbl.Service" /></label>
+										code="lbl.Service" /><span class="mandatory"/></label>
 						<div class="col-sm-3 add-margin">
 						<form:select name="moduleName" path="" data-first-option="false" id="moduleName"
-							cssClass="form-control" >
+							cssClass="form-control" required="required">
 							<form:option value="">
 								<spring:message code="lbl.select"/>
 							</form:option>

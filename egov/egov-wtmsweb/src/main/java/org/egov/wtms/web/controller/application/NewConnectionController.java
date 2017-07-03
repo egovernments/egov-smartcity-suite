@@ -477,8 +477,6 @@ public class NewConnectionController extends GenericConnectionController {
 
     private void validateExisting(final WaterConnectionDetails waterConnectionDetails, final BindingResult errors) {
 
-        if (waterConnectionDetails.getExistingConnection().getDonationCharges() == null)
-            errors.rejectValue("existingConnection.donationCharges", ERROR_REQUIRED);
         if (waterConnectionDetails.getConnection() != null) {
             WaterConnection validateWaterConnDet = null;
             if (waterConnectionDetails.getConnection().getOldConsumerNumber() != null)
@@ -490,8 +488,6 @@ public class NewConnectionController extends GenericConnectionController {
         }
         if (waterConnectionDetails.getConnectionType() != null
                 && waterConnectionDetails.getConnectionType() == ConnectionType.METERED) {
-            if (waterConnectionDetails.getExistingConnection().getMeterCost() == null)
-                errors.rejectValue("existingConnection.meterCost", ERROR_REQUIRED);
             if (waterConnectionDetails.getConnection().getOldConsumerNumber() == null)
                 errors.rejectValue("connection.oldConsumerNumber", ERROR_REQUIRED);
             if (waterConnectionDetails.getConnection().getConsumerCode() != null) {
@@ -504,8 +500,6 @@ public class NewConnectionController extends GenericConnectionController {
             }
             if (waterConnectionDetails.getExecutionDate() == null)
                 errors.rejectValue("executionDate", ERROR_REQUIRED);
-            if (waterConnectionDetails.getExistingConnection().getMeterName() == null)
-                errors.rejectValue("existingConnection.meterName", ERROR_REQUIRED);
             if (waterConnectionDetails.getExistingConnection().getMeterNo() == null)
                 errors.rejectValue("existingConnection.meterNo", ERROR_REQUIRED);
             if (waterConnectionDetails.getExistingConnection().getPreviousReading() == null)
@@ -515,8 +509,7 @@ public class NewConnectionController extends GenericConnectionController {
             if (waterConnectionDetails.getExistingConnection().getCurrentReading() == null)
                 errors.rejectValue("existingConnection.currentReading", ERROR_REQUIRED);
 
-        } else if (waterConnectionDetails.getExistingConnection().getMonthlyFee() == null)
-            errors.rejectValue("existingConnection.monthlyFee", ERROR_REQUIRED);
+        } 
     }
 
     @RequestMapping(value = "/newConnection-editExisting/{consumerCode}", method = GET)

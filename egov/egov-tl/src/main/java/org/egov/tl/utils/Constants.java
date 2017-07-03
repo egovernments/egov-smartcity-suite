@@ -199,6 +199,7 @@ public final class Constants {
     public static final String DMD_GENERATION_DATA = "demandgenerationdata";
     public static final String DMD_GEN_INSTALLMENT = "installmentYear";
     public static final String DMD_GEN_RETRY = "retry";
+    public static final String COMMISSIONER_DESGN = "Commissioner";
 
     static {
 

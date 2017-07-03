@@ -55,39 +55,14 @@
 <div class="buttonbottom" align="center">
 		<c:if test="${applnType=='NEW'}">
 		<input type="button" value="Print" name="PrintAck" id="PrintAck"
-				class="button"
-				<c:choose>
-				<c:when test="${isOnlineApplication}">
-				
-				onclick="window.open('/mrs/citizen/registration/printmarriageregistrationack?applnNo=${applicationNo}','_self');"
-				
-				</c:when>
-				<c:otherwise>
-				
-				onclick="window.open('/mrs/registration/printmarriageregistrationack?applnNo=${applicationNo}','_self');"
-				
-				</c:otherwise>
-				
-				
-				</c:choose>>
-				
-				
-				 
+				class="button"				
+				onclick="window.open('/mrs/registration/printmarriageregistrationack?applnNo=${applicationNo}','_self');">			 
 		</c:if>
 		<c:if test="${applnType=='REISSUE'}">
 		<input type="button" value="Print" name="PrintAck" id="PrintAck"
 				class="button"
-				<c:choose>
-				<c:when test="${isOnlineApplication}">
-				onclick="window.open('/mrs/citizen/reissue/printreissuecertificateack?applnNo=${applicationNo}','_self');" 
-				</c:when>
+				onclick="window.open('/mrs/reissue/printreissuecertificateack?applnNo=${applicationNo}','_self');" >
 				
-				<c:otherwise>
-				onclick="window.open('/mrs/reissue/printreissuecertificateack?applnNo=${applicationNo}','_self');" 
-				
-				</c:otherwise>
-				
-				</c:choose>>
 		</c:if>
 		<input type="button" name="button2" id="button2" value="Close" class="btn btn-default" onclick="window.close();" />
 </div>
