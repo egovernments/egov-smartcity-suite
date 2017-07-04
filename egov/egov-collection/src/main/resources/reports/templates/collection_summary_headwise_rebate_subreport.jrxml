@@ -39,7 +39,7 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-06-23T17:07:31 -->
+<!-- 2017-06-30T16:40:24 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="collection summary subreport" pageWidth="800" pageHeight="595" whenNoDataType="NoDataSection" columnWidth="700" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isSummaryWithPageHeaderAndFooter="true" uuid="45cae798-aa6d-4b62-a802-37fd9ecaa359">
 	<property name="ireport.zoom" value="1.0000000000000009"/>
 	<property name="ireport.x" value="0"/>
@@ -565,6 +565,17 @@
 	<background>
 		<band splitType="Stretch"/>
 	</background>
+	<title>
+		<band height="35">
+			<staticText>
+				<reportElement style="Title" x="120" y="2" width="450" height="33" uuid="bd4cd4ba-fae1-4cd4-8b65-9faab4d2ccee"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Rebate]]></text>
+			</staticText>
+		</band>
+	</title>
 	<pageHeader>
 		<band splitType="Stretch"/>
 	</pageHeader>
@@ -768,15 +779,4 @@
 			</textField>
 		</band>
 	</detail>
-	<noData>
-		<band height="41">
-			<staticText>
-				<reportElement x="200" y="5" width="368" height="31" uuid="1484180f-9f64-45f1-9b4d-433a7f186810"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="24" isBold="true" pdfFontName="Times-Bold"/>
-				</textElement>
-				<text><![CDATA[No data found!]]></text>
-			</staticText>
-		</band>
-	</noData>
 </jasperReport>
