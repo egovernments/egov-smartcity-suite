@@ -725,7 +725,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
                 for (final EgBillDetails billDet : billDetList) {
                     Boolean glCodeExist = false;
                     for (final ReceiptAccountInfo acctDet : bri.getAccountDetails())
-                        if (billDet.getGlcode().equals(acctDet.getGlCode())) {
+                        if (billDet.getGlcode().equals(acctDet.getGlCode()) && billDet.getDescription().equals(acctDet.getDescription())) {
                             glCodeExist = true;
                             totalCollAmt = totalCollAmt.add(acctDet.getCrAmount());
                         }
