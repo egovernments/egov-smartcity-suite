@@ -93,8 +93,10 @@ import java.util.Objects;
 
 import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.egov.infra.config.core.ApplicationThreadLocals.getCityCode;
+import static org.egov.infra.utils.ApplicationConstant.NA;
 import static org.egov.pgr.utils.constants.PGRConstants.CITY_CODE;
 import static org.egov.pgr.utils.constants.PGRConstants.COMPLAINT_REOPENED;
 import static org.egov.pgr.utils.constants.PGRConstants.DASHBOARD_GROUPING_ALL_FUNCTIONARY;
@@ -829,7 +831,7 @@ public class ComplaintIndexService {
             final SearchResponse localityMissingResponse = response.get("noLocality");
             final Missing noLocalityTerms = localityMissingResponse.getAggregations().get(NOLOCALITY);
             final ComplaintDashBoardResponse responseDetail = new ComplaintDashBoardResponse();
-            responseDetail.setLocalityName("N/A");
+            responseDetail.setLocalityName(NA);
             responseDetail.setTotalComplaintCount(noLocalityTerms.getDocCount());
             satisfactionAverage = noLocalityTerms.getAggregations().get(EXCLUDE_ZERO);
             final Avg groupByFieldAverageSatisfaction = satisfactionAverage.getBuckets().get(0).getAggregations()
@@ -1025,7 +1027,7 @@ public class ComplaintIndexService {
                     responseDetail.setDepartmentName(hit[0].field(DEPARTMENT_NAME).getValue());
                     String initialFunctionaryNumber;
                     if (hit[0].field(INITIAL_FUNCTIONARY_MOBILE_NUMBER) == null)
-                        initialFunctionaryNumber = "N/A";
+                        initialFunctionaryNumber = NA;
                     else
                         initialFunctionaryNumber = hit[0].field(INITIAL_FUNCTIONARY_MOBILE_NUMBER).getValue();
                     responseDetail.setFunctionaryMobileNumber(initialFunctionaryNumber);
@@ -1168,7 +1170,7 @@ public class ComplaintIndexService {
         final Missing noLocalityTerms = localityWiseResponse.getAggregations().get(NOLOCALITY);
         final ComplaintDashBoardResponse responseDetail = new ComplaintDashBoardResponse();
         responseDetail.setTotalComplaintCount(noLocalityTerms.getDocCount());
-        responseDetail.setLocalityName("N/A");
+        responseDetail.setLocalityName(NA);
         final Terms openAndClosedComplaintsCount = noLocalityTerms.getAggregations().get("noLocalityComplaintCount");
         for (final Bucket noLocalityCountBucket : openAndClosedComplaintsCount.getBuckets())
             if (noLocalityCountBucket.getKeyAsNumber().intValue() == 1)
@@ -1299,7 +1301,7 @@ public class ComplaintIndexService {
                     && !complaintDashBoardRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_ALL_FUNCTIONARY)) {
                 complaintSouce.setFunctionaryName(bucket.getKeyAsString());
                 final String mobileNumber = complaintIndexRepository.getFunctionryMobileNumber(bucket.getKeyAsString());
-                complaintSouce.setFunctionaryMobileNumber(mobileNumber);
+                complaintSouce.setFunctionaryMobileNumber(defaultString(mobileNumber,NA));
             }
             final List<HashMap<String, Long>> list = new ArrayList<>();
             final Terms sourceTerms = bucket.getAggregations().get("groupByFieldSource");
