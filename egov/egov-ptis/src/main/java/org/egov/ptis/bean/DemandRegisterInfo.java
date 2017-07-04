@@ -56,6 +56,7 @@ public class DemandRegisterInfo {
     private BigDecimal advanceAmount = BigDecimal.ZERO;
     private BigDecimal balanceAmount = BigDecimal.ZERO;
     private BigDecimal writeOff = BigDecimal.ZERO;
+    private int installment;
     private Integer serialNumber = 0;
 
     public String getAssessmentNo() {
@@ -160,6 +161,14 @@ public class DemandRegisterInfo {
 
     public void setSerialNumber(Integer serialNumber) {
         this.serialNumber = serialNumber;
+    }
+
+    public int getInstallment() {
+        return installment;
+    }
+
+    public void setInstallment(int installment) {
+        this.installment = installment;
     }
 
 }

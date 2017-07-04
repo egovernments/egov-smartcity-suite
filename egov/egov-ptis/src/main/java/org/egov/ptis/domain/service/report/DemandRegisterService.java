@@ -154,7 +154,7 @@ public class DemandRegisterService {
                 "select bp.propertyid \"assessmentNo\", at.ownersname \"ownerName\", at.doorno \"houseNo\", instm.financial_year \"financialYear\", cast(idi.demand as numeric) \"demand\", coalesce(cast(ici.collectiondate as character varying), '-') \"collectionDate\","
                         + "cast(coalesce(ici.amount, 0) as numeric) \"collectedAmount\", coalesce(ici.collectionmode, '-') \"collectionMode\", cast(idi.totalcollection as numeric) \"totalCollection\", cast(idi.writeoff as numeric) \"writeOff\", cast(idi.advance as numeric) \"advanceAmount\" "
                         + " from egpt_assessment_transactions at, egpt_basic_property bp, egpt_installment_demand_info idi left join egpt_installment_collection_info ici on idi.id=ici.installment_demand_info, eg_installment_master instm, egpt_property_type_master ptm where "
-                        + "idi.assessment_transactions=at.id and at.basicproperty=bp.id and idi.installment=instm.id and instm.financial_year=:finYear and at.ward =:ward and at.propertytype=ptm.id and ptm.code =:propertyType order by bp.propertyid, at.transaction_date");
+                        + "idi.assessment_transactions=at.id and at.basicproperty=bp.id and idi.installment=instm.id and instm.financial_year=:finYear and at.ward =:ward and at.propertytype=ptm.id and ptm.code =:propertyType and idi.demand > idi.totalCollection order by bp.propertyid, at.transaction_date");
         final SQLQuery sqlQuery = ptCommonUtils.getSession().createSQLQuery(query.toString());
         sqlQuery.setParameter("finYear", finYear);
         sqlQuery.setParameter("ward", ward);
@@ -163,19 +163,36 @@ public class DemandRegisterService {
         return filterDemandRegisterInfo(sqlQuery.list());
     }
 
+    @SuppressWarnings("unused")
     public List<DemandRegisterInfo> filterDemandRegisterInfo(final List<DemandRegisterInfo> demandRegisterInfoList) {
         List<DemandRegisterInfo> list = new ArrayList<>();
-        DemandRegisterInfo demandRegisterInfo = null;
+        DemandRegisterInfo current = null;
+        DemandRegisterInfo previous = null;
         for (DemandRegisterInfo registerInfo : demandRegisterInfoList) {
-            if (demandRegisterInfo != null
-                    && !demandRegisterInfo.getAssessmentNo().equals(registerInfo.getAssessmentNo()))
-                list.add(demandRegisterInfo);
-            demandRegisterInfo = registerInfo;
+            if (current != null && previous != null
+                    && !current.getAssessmentNo().equals(registerInfo.getAssessmentNo())) {
+                if (current.getInstallment() != previous.getInstallment()) {
+                    aggregateDemandInfo(current, previous);
+                }
+                list.add(previous);
 
+            }
+            previous = current;
+            current = registerInfo;
         }
-        if (demandRegisterInfo != null)
-            list.add(demandRegisterInfo);
+
+        if (current != null && previous != null && previous.getAssessmentNo().equals(current.getAssessmentNo())) {
+            aggregateDemandInfo(current, previous);
+            list.add(previous);
+        } else
+            list.add(current);
         return list;
+    }
+
+    private void aggregateDemandInfo(DemandRegisterInfo current, DemandRegisterInfo previous) {
+        previous.setDemand(previous.getDemand().add(current.getDemand()));
+        previous.setTotalCollection(previous.getTotalCollection().add(current.getTotalCollection()));
+        previous.setWriteOff(previous.getWriteOff().add(current.getWriteOff()));
     }
 
     public String getPropertyType(String mode) {

@@ -1,49 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  ~ eGov suite of products aim to improve the internal efficiency,transparency,
-  ~    accountability and the service delivery of the government  organizations.
-  ~
-  ~     Copyright (C) <2017>  eGovernments Foundation
-  ~
-  ~     The updated version of eGov suite of products as by eGovernments Foundation
-  ~     is available at http://www.egovernments.org
-  ~
-  ~     This program is free software: you can redistribute it and/or modify
-  ~     it under the terms of the GNU General Public License as published by
-  ~     the Free Software Foundation, either version 3 of the License, or
-  ~     any later version.
-  ~
-  ~     This program is distributed in the hope that it will be useful,
-  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~     GNU General Public License for more details.
-  ~
-  ~     You should have received a copy of the GNU General Public License
-  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
-  ~     http://www.gnu.org/licenses/gpl.html .
-  ~
-  ~     In addition to the terms of the GPL license to be adhered to in using this
-  ~     program, the following additional terms are to be complied with:
-  ~
-  ~         1) All versions of this program, verbatim or modified must carry this
-  ~            Legal Notice.
-  ~
-  ~         2) Any misrepresentation of the origin of the material is prohibited. It
-  ~            is required that all modified versions of this material be marked in
-  ~            reasonable ways as different from the original version.
-  ~
-  ~         3) This license does not grant any rights to any user of the program
-  ~            with regards to rights under trademark law for use of the trade names
-  ~            or trademarks of eGovernments Foundation.
-  ~
-  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  -->
 <!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
-<!-- 2017-06-07T15:04:18 -->
+<!-- 2017-07-04T18:55:12 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="arreardemand-register" pageWidth="695" pageHeight="852" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="0a0a6bfd-1cdf-4285-89bc-0be3643eba33">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="5"/>
 	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<import value="org.egov.infra.reporting.util.*"/>
 	<import value="org.egov.infstr.utils.*"/>
 	<import value="org.egov.ptis.domain.entity.property.*"/>
@@ -82,9 +44,9 @@
 		<band splitType="Stretch"/>
 	</pageHeader>
 	<columnHeader>
-		<band height="43" splitType="Stretch">
+		<band height="48" splitType="Stretch">
 			<staticText>
-				<reportElement x="40" y="0" width="60" height="38" uuid="e53d48ae-fe46-4395-a4be-9f36a52904d6">
+				<reportElement x="40" y="0" width="100" height="38" uuid="e53d48ae-fe46-4395-a4be-9f36a52904d6">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
 				<box leftPadding="0">
@@ -100,7 +62,7 @@
 				<text><![CDATA[Assessment Number]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="195" y="0" width="60" height="38" uuid="0a9dcd31-542b-4830-96ac-203ae5c5de16">
+				<reportElement x="235" y="0" width="80" height="38" uuid="0a9dcd31-542b-4830-96ac-203ae5c5de16">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
 				<box leftPadding="0">
@@ -116,7 +78,7 @@
 				<text><![CDATA[Door No. ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="100" y="0" width="95" height="38" uuid="39e1355e-a25b-418c-b7b0-9ed355f864e0"/>
+				<reportElement x="140" y="0" width="95" height="38" uuid="39e1355e-a25b-418c-b7b0-9ed355f864e0"/>
 				<box leftPadding="0">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -130,7 +92,7 @@
 				<text><![CDATA[Owner Name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="255" y="0" width="60" height="38" uuid="04e69349-335f-49c0-b23f-4a1f31c2e746"/>
+				<reportElement x="315" y="0" width="70" height="38" uuid="04e69349-335f-49c0-b23f-4a1f31c2e746"/>
 				<box leftPadding="0">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -144,55 +106,7 @@
 				<text><![CDATA[Demand]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="315" y="0" width="50" height="38" uuid="cfa97e38-685b-4003-80b9-c333fae65365">
-					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-				</reportElement>
-				<box leftPadding="0">
-					<pen lineWidth="1.0"/>
-					<topPen lineWidth="1.0"/>
-					<leftPen lineWidth="1.0"/>
-					<bottomPen lineWidth="1.0"/>
-					<rightPen lineWidth="1.0"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="10" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Collection Date]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="365" y="0" width="60" height="38" uuid="85e1d449-1630-4a63-9fc1-50285c63d8e1">
-					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-				</reportElement>
-				<box leftPadding="0">
-					<pen lineWidth="1.0"/>
-					<topPen lineWidth="1.0"/>
-					<leftPen lineWidth="1.0"/>
-					<bottomPen lineWidth="1.0"/>
-					<rightPen lineWidth="1.0"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="10" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Collected Amount]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="425" y="0" width="40" height="38" uuid="48cfda6b-a1d3-4b04-985f-a91ecddd79dc">
-					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-				</reportElement>
-				<box leftPadding="0">
-					<pen lineWidth="1.0"/>
-					<topPen lineWidth="1.0"/>
-					<leftPen lineWidth="1.0"/>
-					<bottomPen lineWidth="1.0"/>
-					<rightPen lineWidth="1.0"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="10" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Collection Mode]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="465" y="0" width="60" height="38" uuid="799fc1b0-f143-4c89-b761-297aebe56ab2"/>
+				<reportElement x="385" y="0" width="75" height="38" uuid="799fc1b0-f143-4c89-b761-297aebe56ab2"/>
 				<box leftPadding="0">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -206,7 +120,7 @@
 				<text><![CDATA[Total Collection]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="525" y="0" width="38" height="38" uuid="50451179-5289-43f2-aae1-9bbb3c8369b4">
+				<reportElement x="460" y="0" width="60" height="38" uuid="50451179-5289-43f2-aae1-9bbb3c8369b4">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
 				<box leftPadding="0">
@@ -222,7 +136,7 @@
 				<text><![CDATA[Write Off]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="613" y="0" width="41" height="38" uuid="149c4261-8b18-4b2a-9425-71acd267e4fe">
+				<reportElement x="590" y="0" width="65" height="38" uuid="149c4261-8b18-4b2a-9425-71acd267e4fe">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
 				<box leftPadding="0">
@@ -238,7 +152,7 @@
 				<text><![CDATA[Excess]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="563" y="0" width="50" height="38" uuid="87b7c955-8975-4c10-ad16-f04079a0824f">
+				<reportElement x="520" y="0" width="70" height="38" uuid="87b7c955-8975-4c10-ad16-f04079a0824f">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
 				<box leftPadding="0">
@@ -272,7 +186,7 @@
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="35">
+		<band height="115">
 			<subreport isUsingCache="false" runToBottom="false">
 				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="655" height="35" uuid="dc11171c-63a9-4f61-9eda-32075f9cc64d"/>
 				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{demandRegisterInfoList},false)]]></dataSourceExpression>

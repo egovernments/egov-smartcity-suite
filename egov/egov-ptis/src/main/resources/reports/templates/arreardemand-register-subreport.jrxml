@@ -1,49 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  ~ eGov suite of products aim to improve the internal efficiency,transparency,
-  ~    accountability and the service delivery of the government  organizations.
-  ~
-  ~     Copyright (C) <2017>  eGovernments Foundation
-  ~
-  ~     The updated version of eGov suite of products as by eGovernments Foundation
-  ~     is available at http://www.egovernments.org
-  ~
-  ~     This program is free software: you can redistribute it and/or modify
-  ~     it under the terms of the GNU General Public License as published by
-  ~     the Free Software Foundation, either version 3 of the License, or
-  ~     any later version.
-  ~
-  ~     This program is distributed in the hope that it will be useful,
-  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~     GNU General Public License for more details.
-  ~
-  ~     You should have received a copy of the GNU General Public License
-  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
-  ~     http://www.gnu.org/licenses/gpl.html .
-  ~
-  ~     In addition to the terms of the GPL license to be adhered to in using this
-  ~     program, the following additional terms are to be complied with:
-  ~
-  ~         1) All versions of this program, verbatim or modified must carry this
-  ~            Legal Notice.
-  ~
-  ~         2) Any misrepresentation of the origin of the material is prohibited. It
-  ~            is required that all modified versions of this material be marked in
-  ~            reasonable ways as different from the original version.
-  ~
-  ~         3) This license does not grant any rights to any user of the program
-  ~            with regards to rights under trademark law for use of the trade names
-  ~            or trademarks of eGovernments Foundation.
-  ~
-  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  -->
 <!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
-<!-- 2017-06-07T14:04:55 -->
+<!-- 2017-07-04T18:34:20 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="arreardemand-register-subreport" pageWidth="655" pageHeight="1157" columnWidth="655" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="0bb0e5bf-8634-481a-b624-67c26bf93bf4">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<import value="org.egov.infra.reporting.util.*"/>
 	<import value="org.egov.infstr.utils.*"/>
 	<import value="org.egov.ptis.bean.*"/>
@@ -51,9 +13,6 @@
 	<field name="houseNo" class="java.lang.String"/>
 	<field name="ownerName" class="java.lang.String"/>
 	<field name="demand" class="java.math.BigDecimal"/>
-	<field name="collectionDate" class="java.lang.String"/>
-	<field name="collectedAmount" class="java.math.BigDecimal"/>
-	<field name="collectionMode" class="java.lang.String"/>
 	<field name="totalCollection" class="java.math.BigDecimal"/>
 	<field name="advanceAmount" class="java.math.BigDecimal"/>
 	<field name="balanceAmount" class="java.math.BigDecimal"/>
@@ -61,9 +20,6 @@
 	<field name="financialYear" class="java.lang.String"/>
 	<variable name="balance" class="java.math.BigDecimal">
 		<variableExpression><![CDATA[($F{demand}.subtract($F{totalCollection})).setScale(2,BigDecimal.ROUND_HALF_DOWN)]]></variableExpression>
-	</variable>
-	<variable name="yearCollectedAmount" class="java.math.BigDecimal" resetType="Group" resetGroup="yearWiseTotalTax" calculation="Sum">
-		<variableExpression><![CDATA[$F{collectedAmount}.setScale(2,BigDecimal.ROUND_HALF_DOWN)]]></variableExpression>
 	</variable>
 	<variable name="yearTotalCollection" class="java.math.BigDecimal" resetType="Group" resetGroup="yearWiseTotalTax" calculation="Sum">
 		<variableExpression><![CDATA[$F{totalCollection}.setScale(2,BigDecimal.ROUND_HALF_DOWN)]]></variableExpression>
@@ -83,9 +39,6 @@
 	<variable name="yearAssessmentCount" class="java.lang.Integer" resetType="Group" resetGroup="yearWiseTotalTax" calculation="Count">
 		<variableExpression><![CDATA[$F{assessmentNo}]]></variableExpression>
 	</variable>
-	<variable name="pageCollectedAmount" class="java.math.BigDecimal" resetType="Page" calculation="Sum">
-		<variableExpression><![CDATA[$F{collectedAmount}.setScale(2,BigDecimal.ROUND_HALF_DOWN)]]></variableExpression>
-	</variable>
 	<variable name="pageTotalCollection" class="java.math.BigDecimal" resetType="Page" calculation="Sum">
 		<variableExpression><![CDATA[$F{totalCollection}.setScale(2,BigDecimal.ROUND_HALF_DOWN)]]></variableExpression>
 	</variable>
@@ -100,9 +53,6 @@
 	</variable>
 	<variable name="pageBalance" class="java.math.BigDecimal" resetType="Page">
 		<variableExpression><![CDATA[($V{pageDemand}.subtract($V{pageTotalCollection})).setScale(2,BigDecimal.ROUND_HALF_DOWN)]]></variableExpression>
-	</variable>
-	<variable name="reportCollectedAmount" class="java.math.BigDecimal" calculation="Sum">
-		<variableExpression><![CDATA[$F{collectedAmount}.setScale(2,BigDecimal.ROUND_HALF_DOWN)]]></variableExpression>
 	</variable>
 	<variable name="reportTotalCollection" class="java.math.BigDecimal" calculation="Sum">
 		<variableExpression><![CDATA[$F{totalCollection}.setScale(2,BigDecimal.ROUND_HALF_DOWN)]]></variableExpression>
@@ -168,7 +118,7 @@
 					<textFieldExpression><![CDATA[$V{yearDemand}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true">
-					<reportElement x="345" y="0" width="60" height="20" uuid="99ffec28-9472-46e9-a6a9-5ed4fc0e7059">
+					<reportElement x="396" y="0" width="64" height="20" uuid="0efaf72a-c0c2-4e6d-8c7a-2b3ec1b60588">
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					</reportElement>
 					<box rightPadding="2">
@@ -178,29 +128,13 @@
 						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
 						<rightPen lineWidth="0.0"/>
 					</box>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font size="8"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$V{yearCollectedAmount}]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="true">
-					<reportElement x="465" y="0" width="60" height="20" uuid="0efaf72a-c0c2-4e6d-8c7a-2b3ec1b60588">
-						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-					</reportElement>
-					<box rightPadding="2">
-						<pen lineWidth="0.25"/>
-						<topPen lineWidth="0.25" lineStyle="Dashed"/>
-						<leftPen lineWidth="0.0"/>
-						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
-						<rightPen lineWidth="0.0"/>
-					</box>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
+					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{yearTotalCollection}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true">
-					<reportElement x="561" y="0" width="60" height="20" uuid="db6cd591-cab5-409b-afac-eed84381d0e8">
+					<reportElement x="520" y="0" width="70" height="20" uuid="db6cd591-cab5-409b-afac-eed84381d0e8">
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					</reportElement>
 					<box rightPadding="2">
@@ -210,13 +144,13 @@
 						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
 						<rightPen lineWidth="0.0"/>
 					</box>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
+					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{yearBalance}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true">
-					<reportElement x="621" y="0" width="30" height="20" uuid="d6d0165f-124f-4ab7-a82e-db19127782ad">
+					<reportElement x="590" y="0" width="60" height="20" uuid="d6d0165f-124f-4ab7-a82e-db19127782ad">
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					</reportElement>
 					<box rightPadding="2">
@@ -226,13 +160,13 @@
 						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
 						<rightPen lineWidth="0.0"/>
 					</box>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
+					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{yearAdvance}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true">
-					<reportElement x="525" y="0" width="36" height="20" uuid="f6880a70-fb4f-4e25-8c28-01481dfa8689">
+					<reportElement x="460" y="0" width="60" height="20" uuid="f6880a70-fb4f-4e25-8c28-01481dfa8689">
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					</reportElement>
 					<box rightPadding="2">
@@ -242,7 +176,7 @@
 						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
 						<rightPen lineWidth="0.0"/>
 					</box>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
+					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{yearWriteOff}]]></textFieldExpression>
@@ -289,48 +223,17 @@
 	</columnHeader>
 	<detail>
 		<band height="46" splitType="Prevent">
-			<textField isStretchWithOverflow="true">
-				<reportElement x="100" y="0" width="95" height="33" isPrintWhenDetailOverflows="true" uuid="20a195b4-8157-4293-a3d7-79275a77668e"/>
-				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font size="8"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{ownerName}]]></textFieldExpression>
-			</textField>
 			<textField>
-				<reportElement x="315" y="0" width="50" height="33" uuid="8bc2ee64-480f-4900-a285-07964f03846c">
-					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				<reportElement x="0" y="0" width="40" height="33" uuid="1b02124f-bbf6-478a-8aa3-1c8a63d9fa1a">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
+				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{collectionDate}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="365" y="0" width="60" height="33" uuid="93fcd1d6-0ad5-4469-9462-b1a90f30504c"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="8"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{collectedAmount}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="465" y="0" width="60" height="33" uuid="33f6096a-5776-4789-8957-09abbe8bc9e0"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="8"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{totalCollection}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="195" y="0" width="60" height="33" isPrintWhenDetailOverflows="true" uuid="6ffd2c9c-8ff5-41ab-b2ab-9450cbf08b4a">
-					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="8"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{houseNo}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="40" y="0" width="60" height="33" isPrintWhenDetailOverflows="true" uuid="0c76dbf8-8081-4afd-8ece-916ae053a9c6">
+				<reportElement x="40" y="0" width="100" height="33" isPrintWhenDetailOverflows="true" uuid="77f7d5b4-92ca-45e6-8fe3-0276585acc8d">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -338,24 +241,38 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{assessmentNo}]]></textFieldExpression>
 			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="140" y="0" width="95" height="33" isPrintWhenDetailOverflows="true" uuid="5ed66c60-b138-49d2-a4fd-bfed601e3f37"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ownerName}]]></textFieldExpression>
+			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="425" y="0" width="40" height="33" uuid="95c3e789-736e-49aa-ac73-392e9a776d30">
+				<reportElement x="235" y="0" width="80" height="33" isPrintWhenDetailOverflows="true" uuid="ed3b1dfd-46d8-4839-805d-451dd2bd1569">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="7"/>
+					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[UPPER($F{collectionMode})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{houseNo}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="255" y="0" width="60" height="33" uuid="4861d7f5-57f7-46d3-b7d5-d939a8e26eed"/>
+				<reportElement x="315" y="0" width="70" height="33" uuid="f807e6c2-2588-4efa-9b2d-4771c7e6119b"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{demand}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="525" y="0" width="36" height="33" uuid="07817981-28b6-4446-9e9e-21a8543758c9">
+				<reportElement x="385" y="0" width="75" height="33" uuid="27e22db4-4b2a-4e54-b5c0-a35e5507e93b"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{totalCollection}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="460" y="0" width="60" height="33" uuid="399b739f-1834-4f9d-b9a6-50cdea3aabdd">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -364,7 +281,7 @@
 				<textFieldExpression><![CDATA[$F{writeOff}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="561" y="0" width="50" height="33" uuid="ab9a2379-930e-42d9-9a7f-9889bb4d20be">
+				<reportElement x="520" y="0" width="70" height="33" uuid="326a2edc-2570-4454-9950-4c3ac835e8f9">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -373,20 +290,13 @@
 				<textFieldExpression><![CDATA[$V{balance}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="611" y="0" width="40" height="33" uuid="1d9f6574-3d48-4691-8a08-5e800a55fc95"/>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
+				<reportElement x="590" y="0" width="65" height="33" uuid="9fc7aaaf-d589-4606-9b5c-54a3ba3f595b">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{advanceAmount}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="0" y="0" width="40" height="33" uuid="aca40d65-5c6d-4690-8761-39a9612101e8">
-					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-				</reportElement>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="8"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
@@ -423,7 +333,7 @@
 				<textFieldExpression><![CDATA[$V{pageDemand}]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Page" isBlankWhenNull="true">
-				<reportElement x="345" y="0" width="60" height="20" uuid="a5afb446-c5d7-4022-a3c4-fe9d34f82710"/>
+				<reportElement x="400" y="0" width="59" height="20" uuid="1cfbca7b-b50d-4bd4-a421-89502f394b4d"/>
 				<box rightPadding="2">
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25" lineStyle="Dashed"/>
@@ -431,27 +341,13 @@
 					<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
 					<rightPen lineWidth="0.0"/>
 				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="8"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$V{pageCollectedAmount}]]></textFieldExpression>
-			</textField>
-			<textField evaluationTime="Page" isBlankWhenNull="true">
-				<reportElement x="466" y="0" width="59" height="20" uuid="1cfbca7b-b50d-4bd4-a421-89502f394b4d"/>
-				<box rightPadding="2">
-					<pen lineWidth="0.25"/>
-					<topPen lineWidth="0.25" lineStyle="Dashed"/>
-					<leftPen lineWidth="0.0"/>
-					<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
-					<rightPen lineWidth="0.0"/>
-				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{pageTotalCollection}]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Page" isBlankWhenNull="true">
-				<reportElement x="562" y="0" width="59" height="20" uuid="d79b3fbd-f226-4dfd-9103-4c8eea639920"/>
+				<reportElement x="521" y="0" width="69" height="20" uuid="d79b3fbd-f226-4dfd-9103-4c8eea639920"/>
 				<box rightPadding="2">
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25" lineStyle="Dashed"/>
@@ -459,13 +355,13 @@
 					<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
 					<rightPen lineWidth="0.0"/>
 				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{pageBalance}]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Page" isBlankWhenNull="true">
-				<reportElement x="620" y="0" width="35" height="20" uuid="eb2f2164-46d4-4028-8d32-f1d7071b36ef"/>
+				<reportElement x="590" y="0" width="65" height="20" uuid="eb2f2164-46d4-4028-8d32-f1d7071b36ef"/>
 				<box rightPadding="2">
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25" lineStyle="Dashed"/>
@@ -473,13 +369,13 @@
 					<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
 					<rightPen lineWidth="0.0"/>
 				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{pageAdvance}]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Page" isBlankWhenNull="true">
-				<reportElement x="525" y="0" width="37" height="20" uuid="031ecb1a-f7e8-4493-a65d-4d6fb3304059"/>
+				<reportElement x="459" y="0" width="62" height="20" uuid="031ecb1a-f7e8-4493-a65d-4d6fb3304059"/>
 				<box rightPadding="2">
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25" lineStyle="Dashed"/>
@@ -487,7 +383,7 @@
 					<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
 					<rightPen lineWidth="0.0"/>
 				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{pageWriteOff}]]></textFieldExpression>
@@ -524,7 +420,7 @@
 				<text><![CDATA[Grand Total :]]></text>
 			</staticText>
 			<textField evaluationTime="Report">
-				<reportElement x="465" y="0" width="60" height="20" uuid="0e97e0fd-8f05-4ba9-8c46-be3d221995f1"/>
+				<reportElement x="402" y="0" width="60" height="20" uuid="0e97e0fd-8f05-4ba9-8c46-be3d221995f1"/>
 				<box rightPadding="2">
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25" lineStyle="Dashed"/>
@@ -532,13 +428,13 @@
 					<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
 					<rightPen lineWidth="0.0"/>
 				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{reportTotalCollection}]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report">
-				<reportElement x="345" y="0" width="60" height="20" uuid="83523241-c538-4939-9d10-5a04323203c9"/>
+				<reportElement x="463" y="0" width="58" height="20" uuid="d786544b-31ba-4e40-8de6-843b92edb2e2"/>
 				<box rightPadding="2">
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25" lineStyle="Dashed"/>
@@ -546,27 +442,13 @@
 					<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
 					<rightPen lineWidth="0.0"/>
 				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="8"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$V{reportCollectedAmount}]]></textFieldExpression>
-			</textField>
-			<textField evaluationTime="Report">
-				<reportElement x="525" y="0" width="37" height="20" uuid="d786544b-31ba-4e40-8de6-843b92edb2e2"/>
-				<box rightPadding="2">
-					<pen lineWidth="0.25"/>
-					<topPen lineWidth="0.25" lineStyle="Dashed"/>
-					<leftPen lineWidth="0.0"/>
-					<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
-					<rightPen lineWidth="0.0"/>
-				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{reportWriteOff}]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report">
-				<reportElement x="562" y="0" width="59" height="20" uuid="c9c0ce0f-1a71-44fa-90a6-47e5fc64e77d"/>
+				<reportElement x="521" y="0" width="69" height="20" uuid="c9c0ce0f-1a71-44fa-90a6-47e5fc64e77d"/>
 				<box rightPadding="2">
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25" lineStyle="Dashed"/>
@@ -574,13 +456,13 @@
 					<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
 					<rightPen lineWidth="0.0"/>
 				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{reportBalance}]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report">
-				<reportElement x="621" y="0" width="34" height="20" uuid="0e5a2f9b-6e51-40f4-8e83-822788af65ef"/>
+				<reportElement x="590" y="0" width="64" height="20" uuid="0e5a2f9b-6e51-40f4-8e83-822788af65ef"/>
 				<box rightPadding="2">
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25" lineStyle="Dashed"/>
@@ -588,7 +470,7 @@
 					<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
 					<rightPen lineWidth="0.0"/>
 				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{reportAdvance}]]></textFieldExpression>
