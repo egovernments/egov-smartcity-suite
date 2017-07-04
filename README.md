@@ -289,7 +289,7 @@ Browser:-
 [Maven]: http://maven.apache.org/download.cgi
 [GPL]: http://www.gnu.org/licenses/
 [FAQ]:http://confluence.egovernments.org/display/FAQ/FAQ
-[GHPAGE]:http://egovernments.github.io/eGov/
+[GHPAGE]:https://egovernments.org/solutions.php
 [versioneye]:https://www.versioneye.com/user/projects/57c7bed0968d640049e125d8
 [versioneye img]:https://www.versioneye.com/user/projects/57c7bed0968d640049e125d8/badge.svg
 [codacy]:https://www.codacy.com/app/egovernments/eGov
