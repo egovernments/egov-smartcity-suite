@@ -146,6 +146,7 @@
         </s:form>
     </div>
 </div>
+<script src="<cdn:url  value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
 <script>
     $('#subCategory').change(function () {
         $('#uom').val('');
