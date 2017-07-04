@@ -2417,15 +2417,14 @@ public class PropertyTaxUtil {
         return currYearInstMap;
     }
 
-    public Date getEffectiveDateForProperty() {
-        final Module module = moduleDao.getModuleByName(PTMODULENAME);
-        final Date currInstToDate = installmentDao.getInsatllmentByModuleForGivenDate(module, new Date()).getToDate();
-        final Date dateBefore6Installments = new Date();
-        dateBefore6Installments.setDate(1);
-        dateBefore6Installments.setMonth(currInstToDate.getMonth() + 1);
-        dateBefore6Installments.setYear(currInstToDate.getYear() - 3);
-        return dateBefore6Installments;
-    }
+	public Date getEffectiveDateForProperty() {
+		final Module module = moduleDao.getModuleByName(PTMODULENAME);
+		final Date currInstToDate = installmentDao.getInsatllmentByModuleForGivenDate(module, new Date()).getToDate();
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(currInstToDate);
+		calendar.set(calendar.get(calendar.YEAR) - 3, calendar.get(Calendar.MONTH) + 1, 1, 0, 0, 0);
+		return calendar.getTime();
+	}
 
     /**
      * Returns map containing tax amount for demand reasons other than Penalty and Advance
