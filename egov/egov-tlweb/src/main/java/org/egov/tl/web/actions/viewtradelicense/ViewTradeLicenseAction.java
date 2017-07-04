@@ -275,4 +275,8 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     public void setEnableState(Boolean enableState) {
         this.enableState = enableState;
     }
+
+    public Boolean enableViewDcb() {
+       return license().getIsActive();
+    }
 }

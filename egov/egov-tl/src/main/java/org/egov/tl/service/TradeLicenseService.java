@@ -45,6 +45,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.Installment;
 import org.egov.commons.service.CFinancialYearService;
+import org.egov.demand.model.BillReceipt;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.EisCommonService;
@@ -139,8 +140,6 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
     @Autowired
     private EisCommonService eisCommonService;
 
-
-    @Override
     protected NatureOfBusiness getNatureOfBusiness() {
         return natureOfBusinessService.getNatureOfBusinessByName("Permanent");
     }
@@ -469,4 +468,10 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
     public List<License> getLicenses(Example license) {
         return licenseRepository.findAll(license);
     }
+
+    public List<BillReceipt> getReceipts(License license) {
+        List<BillReceipt> billReceipts = demandGenericDao.getBillReceipts(license.getCurrentDemand());
+        return billReceipts;
+    }
+
 }

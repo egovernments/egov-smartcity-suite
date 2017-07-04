@@ -38,153 +38,196 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
-<%@ page contentType="text/html" language="java"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
-<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
+<%@ page contentType="text/html" language="java" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
-<div align="center" style='font-weight:bold'>View DCB</div>
+<div align="center" style='font-weight:bold'><spring:message code="lbl.dcb.view"/></div>
 <div>
-<table border="1" width="100%">
-	<tr>
-		<td>
-			<div align="left">
-				License No.: 
-			</div>
-		</td>
-		<td style='font-weight:bold'><c:out value="${license.licenseNumber}" /></td>
-		<td>
-			<div align="left">
-				Locality: 
-			</div>
-		</td>
-		<td style='font-weight:bold'><c:out value="${license.boundary.name}" /></td>
-	</tr>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	<tr>
-		<td>
-			<div align="left">
-				Ward: 
-			</div>
-		</td>
-		<td style='font-weight:bold'><c:out value="${license.parentBoundary.name}" /></td>
-		<td>
-			<div align="left">
-				Address: 
-			</div>
-		</td>
-		<td style='font-weight:bold'><c:out value="${license.address}" /></td>
-	</tr>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	<tr>
-		<td>
-			<div align="left">
-				Mobile No.: 
-			</div>
-		</td>
-		<td style='font-weight:bold'><c:out value="${license.licensee.mobilePhoneNumber}" /></td>
-		<td>
-			<div align="left">
-				Trade Owner Name: 
-			</div>
-		</td>
-		<td style='font-weight:bold'><c:out value="${license.licensee.applicantName}" /></td>
-	</tr>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	
-	<tr>
-		<td>
-			<div align="left">
-				Ownership Type: 
-			</div>
-		</td>
-		<td style='font-weight:bold'><c:out value="${license.ownershipType}" /></td>
-		<td>
-			<div align="left">
-				Trade Name: 
-			</div>
-		</td>
-		<td style='font-weight:bold'><c:out value="${license.tradeName.name}" /></td>
-	</tr>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-</table>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-</div>
+    <table border="1" width="100%">
+        <tr>
+            <td>
+                <div align="left">
+                    <spring:message code="lbl.license.no"/>:
+                </div>
+            </td>
+            <td style='font-weight:bold'><c:out value="${license.licenseNumber}"/></td>
+            <td>
+                <div align="left">
+                    <spring:message code="lbl.locality"/> :
+                </div>
+            </td>
+            <td style='font-weight:bold'><c:out value="${license.boundary.name}"/></td>
+        </tr>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <tr>
+            <td>
+                <div align="left">
+                    <spring:message code="baseregister.ward"/>:
+                </div>
+            </td>
+            <td style='font-weight:bold'><c:out value="${license.parentBoundary.name}"/></td>
+            <td>
+                <div align="left">
+                    <spring:message code="license.address"/>:
+                </div>
+            </td>
+            <td style='font-weight:bold'><c:out value="${license.address}"/></td>
+        </tr>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <tr>
+            <td>
+                <div align="left">
+                    Mobile No.:
+                </div>
+            </td>
+            <td style='font-weight:bold'><c:out value="${license.licensee.mobilePhoneNumber}"/></td>
+            <td>
+                <div align="left">
+                    <spring:message code="licensee.applicantname"/> :
+                </div>
+            </td>
+            <td style='font-weight:bold'><c:out value="${license.licensee.applicantName}"/></td>
+        </tr>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
+        <tr>
+            <td>
+                <div align="left">
+                    <spring:message code="license.ownerShipType.lbl"/>:
+                </div>
+            </td>
+            <td style='font-weight:bold'><c:out value="${license.ownershipType}"/></td>
+            <td>
+                <div align="left">
+                    <spring:message code="lbl.trade.name"/>:
+                </div>
+            </td>
+            <td style='font-weight:bold'><c:out value="${license.tradeName.name}"/></td>
+        </tr>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    </table>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</div>
 <div class="row display-hide report-section">
-	<div class="col-md-12 table-header text-left">
-		<spring:message code="lbl.drill.report" />
-		Report Details
-	</div>
-	<div class="col-md-12 form-group report-table-container">
-		<table
-			class="table table-bordered datatable dt-responsive table-hover multiheadertbl"
-			id="tbldcbdrilldown">
-			<thead>
-				<tr>
-					<th rowspan="2"></th>
-					<th colspan="4"><spring:message code="lbl.demand" /></th>
-					<th colspan="3"><spring:message code="lbl.collection" /></th>
-					<th colspan="3"><spring:message code="lbl.balance" /></th>
-				</tr>
-				<tr>
-					<th></th>
-					<th><spring:message code="lbl.arrear" /></th>
-					<th><spring:message code="lbl.current" /></th>
-					<th><spring:message code="lbl.total" /></th>
-					<th><spring:message code="lbl.arrear" /></th>
-					<th><spring:message code="lbl.current" /></th>
-					<th><spring:message code="lbl.total" /></th>
-					<th><spring:message code="lbl.arrear" /></th>
-					<th><spring:message code="lbl.current" /></th>
-					<th><spring:message code="lbl.total" /></th>
-				</tr>
-			</thead>
-			<tfoot id="report-footer">
-				<tr>
-					<td colspan="1" align="center"><spring:message
-							code="lbl.total" /></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-				</tr>
-			</tfoot>
-		</table>
-	</div>
+    <div class="col-md-12 table-header text-left">
+        <spring:message code="lbl.drill.report"/>
+        Report Details
+    </div>
+    <div class="col-md-12 form-group report-table-container">
+        <table
+                class="table table-bordered datatable dt-responsive table-hover multiheadertbl"
+                id="tbldcbdrilldown">
+            <thead>
+            <tr>
+                <th rowspan="2"></th>
+                <th colspan="4"><spring:message code="lbl.demand"/></th>
+                <th colspan="3"><spring:message code="lbl.collection"/></th>
+                <th colspan="3"><spring:message code="lbl.balance"/></th>
+            </tr>
+            <tr>
+                <th></th>
+                <th><spring:message code="lbl.arrear"/></th>
+                <th><spring:message code="lbl.current"/></th>
+                <th><spring:message code="lbl.total"/></th>
+                <th><spring:message code="lbl.arrear"/></th>
+                <th><spring:message code="lbl.current"/></th>
+                <th><spring:message code="lbl.total"/></th>
+                <th><spring:message code="lbl.arrear"/></th>
+                <th><spring:message code="lbl.current"/></th>
+                <th><spring:message code="lbl.total"/></th>
+            </tr>
+            </thead>
+            <tfoot id="report-footer">
+            <tr>
+                <td colspan="1" align="center"><spring:message
+                        code="lbl.total"/></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            </tfoot>
+        </table>
+    </div>
+    <c:if test="${not empty receipts}">
+        <div class="col-md-12 table-header text-left">
+            <spring:message code="lbl.receipt.details"/>
+            <table class="table table-bordered" style="width:97%;margin:0 auto;">
+                <thead>
+                <tr>
+                    <th class="bluebgheadtd"><spring:message code="lbl.receipt.number"/></th>
+                    <th class="bluebgheadtd"><spring:message code="lbl.receipt.date"/></th>
+                    <th class="bluebgheadtd"><spring:message code="lbl.receipt.amt"/></th>
+                </tr>
+                </thead>
+                <tbody>
+                <c:forEach items="${receipts}" var="receipts" varStatus="item">
+                    <tr>
+                        <td class="blueborderfortd">
+                            <div align="center">
+                                <a href="/../collection/citizen/onlineReceipt-viewReceipt.action?receiptNumber=${receipts.receiptNumber}&consumerCode=${receipts.billId.consumerId}&serviceCode=TL"
+                                   target="_blank"> ${receipts.receiptNumber}
+                                </a>
+                            </div>
+                        </td>
+                        <td class="blueborderfortd">
+                            <div align="center">
+                                <fmt:formatDate value="${receipts.receiptDate}" var="receiptDate" pattern="dd-MM-yyyy"/>
+                                    ${receiptDate}
+                            </div>
+                        </td>
+                        <td class="blueborderfortd">
+                            <div align="center">
+                                    ${receipts.receiptAmt}
+                            </div>
+                        </td>
+                    </tr>
+                </c:forEach>
+                </tbody>
+            </table>
+        </div>
+    </c:if>
 </div>
 <link rel="stylesheet"
-	href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>" />
+      href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>
 <link rel="stylesheet"
-	href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
+      href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
 <script type="text/javascript"
-	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
+        src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
 <script type="text/javascript"
-	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
+        src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
 <script
-	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/dataTables.buttons.min.js' context='/egi'/>"></script>
+        src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/dataTables.buttons.min.js' context='/egi'/>"></script>
 <script
-	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/buttons.bootstrap.min.js' context='/egi'/>"></script>
+        src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/buttons.bootstrap.min.js' context='/egi'/>"></script>
 <script
-	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/buttons.flash.min.js' context='/egi'/>"></script>
+        src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/buttons.flash.min.js' context='/egi'/>"></script>
 <script
-	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/jszip.min.js' context='/egi'/>"></script>
+        src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/jszip.min.js' context='/egi'/>"></script>
 <script
-	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/pdfmake.min.js' context='/egi'/>"></script>
+        src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/pdfmake.min.js' context='/egi'/>"></script>
 <script
-	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/vfs_fonts.js' context='/egi'/>"></script>
+        src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/vfs_fonts.js' context='/egi'/>"></script>
 <script
-	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/buttons.html5.min.js' context='/egi'/>"></script>
+        src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/buttons.html5.min.js' context='/egi'/>"></script>
 <script
-	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/buttons.print.min.js' context='/egi'/>"></script>
+        src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/buttons.print.min.js' context='/egi'/>"></script>
 <script type="text/javascript"
-	src="<cdn:url  value='/resources/js/app/dcb-report.js?rnd=${app_release_no}'/>"></script>
+        src="<cdn:url  value='/resources/js/app/dcb-report.js?rnd=${app_release_no}'/>"></script>
 <script type="text/javascript"
-	src="<cdn:url  value='/resources/js/app/online-dcb-report.js?rnd=${app_release_no}'/>"></script>
+        src="<cdn:url  value='/resources/js/app/online-dcb-report.js?rnd=${app_release_no}'/>"></script>
 <script>
-	var dcbreportdata = ${dcbreport};
-	populateData(dcbreportdata);
+    var dcbreportdata = ${dcbreport};
+    populateData(dcbreportdata);
 </script>
 

@@ -54,56 +54,56 @@
                     return false;
                 } else if (document.getElementById("applicantName").value.trim() == '' || document.getElementById("applicantName").value == null) {
                     showMessage('applicantname_error', '<s:text name="newlicense.applicantname.null" />');
-                    $( '#applicantName').focus();
+                    $('#applicantName').focus();
                     return false;
                 } else if (document.getElementById("fatherOrSpouseName").value.trim() == '' || document.getElementById("fatherOrSpouseName").value == null) {
                     showMessage('fatherorSpouse_error', '<s:text name="newlicense.fatherorspousename.null" />');
-                    $( '#fatherOrSpouseName').focus();
+                    $('#fatherOrSpouseName').focus();
                     return false;
                 } else if (document.getElementById("emailId").value.trim() == '' || document.getElementById("emailId").value == null || !isValidEmailAddress(document.getElementById("emailId").value)) {
                     showMessage('email_error', '<s:text name="newlicense.email.null" />');
-                    $( '#emailId').focus();
+                    $('#emailId').focus();
                     return false;
                 } else if (document.getElementById("licenseeAddress").value.trim() == '' || document.getElementById("licenseeAddress").value == null) {
                     showMessage('licenseeAddress_error', '<s:text name="newlicense.licenseeaddress.null" />');
-                    $( '#licenseeAddress').focus();
+                    $('#licenseeAddress').focus();
                     return false;
                 } else if (document.getElementById("boundary").value == '') {
                     showMessage('locality_error', '<s:text name="newlicense.locality.null" />');
-                    $( '#boundary').focus();
+                    $('#boundary').focus();
                     return false;
                 } else if (document.getElementById("ownershipType").value == '-1') {
                     showMessage('ownership_error', '<s:text name="newlicense.ownershiptype.null" />');
-                    $( '#ownershipType').focus();
+                    $('#ownershipType').focus();
                     return false;
                 } else if (document.getElementById("nameOfEstablishment").value.trim() == '' || document.getElementById("nameOfEstablishment").value == null) {
                     showMessage('nameOfEstablishment_error', '<s:text name="newlicense.tradeTitle.null" />');
-                    $( '#nameOfEstablishment').focus();
+                    $('#nameOfEstablishment').focus();
                     return false;
                 }
                 else if (document.getElementById("address").value.trim() == '' || document.getElementById("address").value == null) {
                     showMessage('address_error', '<s:text name="newlicense.licenseaddress.null" />');
-                    $( '#address').focus();
+                    $('#address').focus();
                     return false;
                 } else if (document.getElementById("buildingType").value == '-1') {
                     showMessage('natureOfBusiness_error', '<s:text name="newlicense.buildingtype.null" />');
-                    $( '#buildingType').focus();
+                    $('#buildingType').focus();
                     return false;
                 } else if (document.getElementById("category").value == '-1') {
                     showMessage('category_error', '<s:text name="newlicense.category.null" />');
-                    $( '#category').focus();
+                    $('#category').focus();
                     return false;
                 } else if (document.getElementById("subCategory").value == '-1') {
                     showMessage('subCategory_error', '<s:text name="newlicense.subcategory.null" />');
-                    $( '#subCategory').focus();
+                    $('#subCategory').focus();
                     return false;
                 } else if (document.getElementById("tradeArea_weight").value == '' || document.getElementById("tradeArea_weight").value == null) {
                     showMessage('tradeArea_weight_error', '<s:text name="newlicense.tradeareaweight.null" />');
-                    $( '#tradeArea_weight').focus();
+                    $('#tradeArea_weight').focus();
                     return false;
                 } else if (document.getElementById("uom").value == "") {
                     showMessage('uom_error', '<s:text name="newlicense.uom.null" />');
-                    $( '#uom').focus();
+                    $('#uom').focus();
                     return false;
                 } else if (document.getElementById("startDate").value == '' || document.getElementById("startDate").value == null) {
                     showMessage('newLicense_error', '<s:text name="newlicense.startDate.null" />');
@@ -129,8 +129,7 @@
                     document.getElementById("adhaarId").focus();
                     return false;
                 }
-                if (mobileno.length > 0 && mobileno.length < 10)
-                {
+                if (mobileno.length > 0 && mobileno.length < 10) {
                     $('#mobileError').removeClass("hide");
                     $("#mobilePhoneNumber").focus();
                     return false;
@@ -155,29 +154,27 @@
                 return false;
             }
             return onSubmit();
-           // $("#licenseForm").submit();
+            // $("#licenseForm").submit();
         }
 
-        $(document).ready(function(){
+        $(document).ready(function () {
             $("#mobilePhoneNumber").change(function () {
                 var mobileno = document.getElementById('mobilePhoneNumber').value;
-                if (mobileno.length > 0 && mobileno.length < 10)
-                {
+                if (mobileno.length > 0 && mobileno.length < 10) {
                     $('#mobileError').removeClass("hide");
                     $("#mobilePhoneNumber").focus();
                     return false;
                 }
-                else if(mobileno.length==10)
+                else if (mobileno.length == 10)
                     $('#mobileError').hide();
             });
             $("#emailId").change(function () {
-                if (document.getElementById("emailId").value.trim() == '' || document.getElementById("emailId").value == null || !isValidEmailAddress(document.getElementById("emailId").value))
-                {
+                if (document.getElementById("emailId").value.trim() == '' || document.getElementById("emailId").value == null || !isValidEmailAddress(document.getElementById("emailId").value)) {
                     showMessage('email_error', '<s:text name="newlicense.email.null" />');
                     $("#emailId").focus();
                     return false;
                 }
-                else if(!document.getElementById("emailId").value.trim() == '' || !document.getElementById("emailId").value == null || isValidEmailAddress(document.getElementById("emailId").value))
+                else if (!document.getElementById("emailId").value.trim() == '' || !document.getElementById("emailId").value == null || isValidEmailAddress(document.getElementById("emailId").value))
                     $('#email_error').hide();
             });
         })
@@ -223,108 +220,111 @@
 
             return true;
         }
-    </script><script>
-    function onBodyLoad() {
-        var currentState = document.getElementById("currentWfstate").value;
-        showHideAgreement();
-        if (currentState == 'Second level fee collected') {
-            $("span").remove(".mandatory");
-        }
-        try {
-            if (document.getElementById("mode").value == 'disableApprover') {
-                toggleFields(true, ['Submit', 'Reject', 'button2', 'Approve', 'approverComments', 'Sign', 'Preview', 'Generate Certificate']);
-                $(".show-row").hide();
-                $('#approverComments').removeAttr('<span class="mandatory"></span>');
-                $('#approverDepartment').removeAttr('<span class="mandatory"></span>');
-                $('#approverDesignation').removeAttr('<span class="mandatory"></span>');
-                $('#approverPositionId').removeAttr('<span class="mandatory"></span>');
-                $('#workflowCommentsDiv label').text('<s:text name="newlicense.fieldInspection.label" />');
+    </script>
+    <script>
+        function onBodyLoad() {
+            var currentState = document.getElementById("currentWfstate").value;
+            showHideAgreement();
+            if (currentState == 'Second level fee collected') {
+                $("span").remove(".mandatory");
             }
-        } catch (e) {
-            console.error(e);
-        }
-
-        try {
-            if (document.getElementById("mode").value == 'ACK') {
-
-                toggleFields(true, ['approverDepartment', 'approverDesignation', 'approverPositionId', 'approverComments', 'Generate Certificate',
-                    'Forward', 'Reject', 'button2', 'Approve', 'Sign', 'Preview', 'closeBtn', 'closeDiv', 'currentWfstate']);
-                //remove onclick event for propertyno search button
-                $("#searchImg").removeAttr("onclick");
-                // remove onclick event for add and delete button having class = add-padding
-                $('.add-padding').attr('onclick', '').unbind('click');
-                // renaming approver remarks label for second level of workflow
-                <s:if test="%{getNextAction()!='END'}">
-                $('#workflowCommentsDiv label').text('<s:text name="newlicense.fieldInspection.label" />');
-                $('#workflowCommentsDiv label').append('<span class="mandatory"></span>');
-                </s:if>
-                document.getElementById("btncancel").disabled = false;
-                document.getElementById("closebn").disabled = false;
-                document.getElementById('workflowDiv').style.visibility = 'hidden';
-
-            }
-        } catch (e) {
-            console.error(e);
-        }
-        try {
-            if (document.getElementById("mode").value == 'view' || document.getElementById("mode").value == 'editForReject') {
-
-                toggleFields(true, ['approverDepartment', 'approverDesignation', 'approverPositionId', 'approverComments', 'Generate Certificate',
-                    'Forward', 'Reject', 'button2', 'Approve', 'Sign', 'Preview', 'currentWfstate']);
-                //remove onclick event for propertyno search button
-                $("#searchImg").removeAttr("onclick");
-                // remove onclick event for add and delete button having class = add-padding
-                $('.add-padding').attr('onclick', '').unbind('click');
-                // renaming approver remarks label for second level of workflow
-                <s:if test="%{getNextAction()!='END'}">
-                $('#workflowCommentsDiv label').text('<s:text name="newlicense.fieldInspection.label" />');
-                $('#workflowCommentsDiv label').append('<span class="mandatory"></span>');
-                </s:if>
-                if (currentState == 'SI/MHO approved') {
-                    document.getElementById('approverDetailHeading').hidden = true
+            try {
+                if (document.getElementById("mode").value == 'disableApprover') {
+                    toggleFields(true, ['Submit', 'Reject', 'button2', 'Approve', 'approverComments', 'Sign', 'Preview', 'Generate Certificate']);
+                    $(".show-row").hide();
+                    $('#approverComments').removeAttr('<span class="mandatory"></span>');
+                    $('#approverDepartment').removeAttr('<span class="mandatory"></span>');
+                    $('#approverDesignation').removeAttr('<span class="mandatory"></span>');
+                    $('#approverPositionId').removeAttr('<span class="mandatory"></span>');
+                    $('#workflowCommentsDiv label').text('<s:text name="newlicense.fieldInspection.label" />');
                 }
+            } catch (e) {
+                console.error(e);
+            }
 
+            try {
+                if (document.getElementById("mode").value == 'ACK') {
+
+                    toggleFields(true, ['approverDepartment', 'approverDesignation', 'approverPositionId', 'approverComments', 'Generate Certificate',
+                        'Forward', 'Reject', 'button2', 'Approve', 'Sign', 'Preview', 'closeBtn', 'closeDiv', 'currentWfstate']);
+                    //remove onclick event for propertyno search button
+                    $("#searchImg").removeAttr("onclick");
+                    // remove onclick event for add and delete button having class = add-padding
+                    $('.add-padding').attr('onclick', '').unbind('click');
+                    // renaming approver remarks label for second level of workflow
+                    <s:if test="%{getNextAction()!='END'}">
+                    $('#workflowCommentsDiv label').text('<s:text name="newlicense.fieldInspection.label" />');
+                    $('#workflowCommentsDiv label').append('<span class="mandatory"></span>');
+                    </s:if>
+                    document.getElementById("btncancel").disabled = false;
+                    document.getElementById("closebn").disabled = false;
+                    document.getElementById('workflowDiv').style.visibility = 'hidden';
+
+                }
+            } catch (e) {
+                console.error(e);
             }
-        } catch (e) {
-            console.error(e);
-        }
-        try {
-            if (document.getElementById("mode").value == 'editForApproval') {
-                toggleFields(true, ['approverDepartment', 'approverDesignation', 'approverPositionId', 'approverComments', 'Generate Certificate',
-                    'Forward', 'Reject', 'button2', 'Approve']);
-                //remove onclick event for propertyno search button
-                document.getElementById("tradeArea_weight").disabled = false;
-                $("#searchImg").removeAttr("onclick");
-                // remove onclick event for add and delete button having class = add-padding
-                $('.add-padding').attr('onclick', '').unbind('click');
-                // renaming approver remarks label for second level of workflow
-                <s:if test="%{getNextAction()!='END'}">
-                $('#workflowCommentsDiv label').text('<s:text name="newlicense.fieldInspection.label" />');
-                $('#workflowCommentsDiv label').append('<span class="mandatory"></span>');
-                </s:if>
+            try {
+                if (document.getElementById("mode").value == 'view' || document.getElementById("mode").value == 'editForReject') {
+
+                    toggleFields(true, ['approverDepartment', 'approverDesignation', 'approverPositionId', 'approverComments', 'Generate Certificate',
+                        'Forward', 'Reject', 'button2', 'Approve', 'Sign', 'Preview', 'currentWfstate']);
+                    //remove onclick event for propertyno search button
+                    $("#searchImg").removeAttr("onclick");
+                    // remove onclick event for add and delete button having class = add-padding
+                    $('.add-padding').attr('onclick', '').unbind('click');
+                    // renaming approver remarks label for second level of workflow
+                    <s:if test="%{getNextAction()!='END'}">
+                    $('#workflowCommentsDiv label').text('<s:text name="newlicense.fieldInspection.label" />');
+                    $('#workflowCommentsDiv label').append('<span class="mandatory"></span>');
+                    </s:if>
+                    if (currentState == 'SI/MHO approved') {
+                        document.getElementById('approverDetailHeading').hidden = true
+                    }
+
+                }
+            } catch (e) {
+                console.error(e);
             }
-        } catch (e) {
-            console.error(e);
+            try {
+                if (document.getElementById("mode").value == 'editForApproval') {
+                    toggleFields(true, ['approverDepartment', 'approverDesignation', 'approverPositionId', 'approverComments', 'Generate Certificate',
+                        'Forward', 'Reject', 'button2', 'Approve']);
+                    //remove onclick event for propertyno search button
+                    document.getElementById("tradeArea_weight").disabled = false;
+                    $("#searchImg").removeAttr("onclick");
+                    // remove onclick event for add and delete button having class = add-padding
+                    $('.add-padding').attr('onclick', '').unbind('click');
+                    // renaming approver remarks label for second level of workflow
+                    <s:if test="%{getNextAction()!='END'}">
+                    $('#workflowCommentsDiv label').text('<s:text name="newlicense.fieldInspection.label" />');
+                    $('#workflowCommentsDiv label').append('<span class="mandatory"></span>');
+                    </s:if>
+                }
+            } catch (e) {
+                console.error(e);
+            }
+            if (currentState == 'First level fee collected')
+                $("#certificateDiv").show();
+            if ($('#boundary')) {
+                $('#boundary').attr('disabled', false);
+            }
+            if ($('#parentBoundary')) {
+                $('#parentBoundary').attr('disabled', false);
+            }
         }
-        if (currentState == 'First level fee collected')
-            document.getElementById('certificateDiv').hidden = false;
-        if ($('#boundary')) {
-            $('#boundary').attr('disabled', false);
-        }
-        if ($('#parentBoundary')) {
-            $('#parentBoundary').attr('disabled', false);
-        }
-    }
-</script>
+    </script>
 
 </head>
 <body onload="onBodyLoad()">
 <div id="newLicense_error" class="error-msg" style="display:none;" align="center"></div>
 <div class="row">
     <div class="col-md-12">
-        <div class="text-right error-msg" style="font-size:14px;"><s:text name="dateofapplication.lbl"/> : <s:date name="applicationDate" format="dd/MM/yyyy"/></div>
+        <div class="text-right error-msg" style="font-size:14px;"><s:text name="dateofapplication.lbl"/> : <s:date
+                name="applicationDate" format="dd/MM/yyyy"/></div>
         <s:if test="%{applicationNumber!=null}">
-            <div class="text-right error-msg" style="font-size:14px;"><s:text name="application.num"/> : <s:property value="%{applicationNumber}"/></div>
+            <div class="text-right error-msg" style="font-size:14px;"><s:text name="application.num"/> : <s:property
+                    value="%{applicationNumber}"/></div>
         </s:if>
         <s:if test="%{hasErrors()}">
             <div align="center">
@@ -343,7 +343,8 @@
             </div>
         </s:if>
 
-        <s:form id="licenseForm" name="newTradeLicense" action="newTradeLicense-create" theme="simple" enctype="multipart/form-data"
+        <s:form id="licenseForm" name="newTradeLicense" action="newTradeLicense-create" theme="simple"
+                enctype="multipart/form-data"
                 cssClass="form-horizontal form-groups-bordered" validate="true">
             <s:push value="model">
                 <s:token/>
@@ -377,8 +378,10 @@
                         </s:else>
 
                         <ul class="nav nav-tabs" id="settingstab">
-                            <li class="active"><a data-toggle="tab" href="#tradedetails" data-tabidx="0" aria-expanded="true"><s:text name="license.tradedetail"/></a></li>
-                            <li class=""><a data-toggle="tab" href="#tradeattachments" data-tabidx="1" aria-expanded="false"><s:text name="license.support.docs"/></a></li>
+                            <li class="active"><a data-toggle="tab" href="#tradedetails" data-tabidx="0"
+                                                  aria-expanded="true"><s:text name="license.tradedetail"/></a></li>
+                            <li class=""><a data-toggle="tab" href="#tradeattachments" data-tabidx="1"
+                                            aria-expanded="false"><s:text name="license.support.docs"/></a></li>
                         </ul>
                     </div>
 
@@ -408,7 +411,8 @@
                         <%@ include file='../common/license-workflow-button.jsp' %>
                     </div>
                 </s:if>
-                <s:elseif test="%{state!=null && (state.value=='License Created' || egwStatus.code=='SECONDLVLCOLLECTIONPENDING')}">
+                <s:elseif
+                        test="%{state!=null && (state.value=='License Created' || egwStatus.code=='SECONDLVLCOLLECTIONPENDING')}">
                     <div class="text-center">
                         <s:hidden id="workFlowAction" name="workFlowAction"/>
                         <s:hidden name="currentState" value="%{state.value}"/>
@@ -434,11 +438,20 @@
                 </s:else>
             </s:push>
         </s:form>
-        <div style="text-align: center;" hidden="true" id="certificateDiv">
-            <input type="button" class="btn btn-primary" id="GenerateProvisionalCertificate"
-                   value="Generate Provisional Certificate"
-                   onclick="window.open('/tl/viewtradelicense/viewTradeLicense-generateCertificate.action?model.id=<s:property value="%{id}"/>', '_blank', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');"/> &nbsp;
+        <div style="text-align: center;" id="btndiv">
+            <input type="button" class="btn btn-primary" id="certificateDiv" value="Generate Provisional Certificate"
+                   style="display: none;"
+                   onclick="window.open('/tl/viewtradelicense/viewTradeLicense-generateCertificate.action?model.id=
+                   <s:property
+                           value="%{id}"/>', '_blank', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');"/>
+            &nbsp;
+            <s:if test="%{isActive}">
+                <input name="viewdcb" type="button" class="buttonsubmit" id="viewdcb" value="View DCB"
+                       onclick="window.open('/tl/dcb/view/'+ <s:property
+                               value="%{id}"/>, '_blank', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');"/>
+            </s:if>
         </div>
+
     </div>
 </div>
 <script src="<cdn:url  value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
