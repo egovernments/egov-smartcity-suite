@@ -293,4 +293,4 @@ Browser:-
 [versioneye]:https://www.versioneye.com/user/projects/57c7bed0968d640049e125d8
 [versioneye img]:https://www.versioneye.com/user/projects/57c7bed0968d640049e125d8/badge.svg
 [codacy]:https://www.codacy.com/app/egovernments/eGov
-[codacy img]:https://api.codacy.com/project/badge/Grade/c72f46c08c49490ab22150d7c423316e
+[codacy img]:https://api.codacy.com/project/badge/Grade/8e3a009a64a44d1a9d75f78261272987
