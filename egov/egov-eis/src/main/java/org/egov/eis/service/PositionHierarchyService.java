@@ -102,9 +102,9 @@ public class PositionHierarchyService {
     }
 
     public List<PositionHierarchy> getListOfPositionHeirarchyByPositionObjectTypeSubType(final Integer objectType,
-                                                                                         final List<String> compTypeCodes,
+                                                                                         final List<String> objectSubTypes,
                                                                                          final Position fromPositionId) {
-        return positionHierarchyRepository.findPositionHierarchyByComplaintTypesAndFromPosition(objectType, compTypeCodes,
+        return positionHierarchyRepository.findPositionHierarchyByObjectSubTypeAndFromPosition(objectType, objectSubTypes,
                 fromPositionId);
     }
 
