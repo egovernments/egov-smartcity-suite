@@ -101,6 +101,7 @@ import org.egov.commons.dao.SubSchemeHibernateDAO;
 import org.egov.commons.entity.Source;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.utils.NumberUtil;
@@ -181,6 +182,7 @@ public class ReceiptAction extends BaseFormAction {
     private Boolean ddAllowed = Boolean.TRUE;
     private Boolean bankAllowed = Boolean.TRUE;
     private Boolean onlineAllowed = Boolean.TRUE;
+    private Boolean isReceiptCancelEnable = Boolean.TRUE;
 
     /**
      * An instance of <code>InstrumentHeader</code> representing the cash instrument details entered by the user during receipt
@@ -1148,11 +1150,27 @@ public class ReceiptAction extends BaseFormAction {
     @ValidationErrorPage(value = "error")
     @Action(value = "/receipts/receipt-cancel")
     public String cancel() {
+        final List<AppConfigValues> appConfigValuesList = collectionsUtil.getAppConfigValues(
+                CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
+                CollectionConstants.APPCONFIG_VALUE_COLLECTIONCREATORRECEIPTCANCELROLE);
+        String value;
+        Boolean isRoleToCheckCreator = Boolean.FALSE;
+        User user = collectionsUtil.getLoggedInUser();
+        for (final AppConfigValues appConfigVal : appConfigValuesList) {
+            value = appConfigVal.getValue();
+            for (final Role role : user.getRoles())
+                if (role != null && role.getName().equals(value))
+                    isRoleToCheckCreator = true;
+        }
+
         if (getSelectedReceipts() != null && getSelectedReceipts().length > 0) {
             receipts = new ReceiptHeader[selectedReceipts.length];
-            for (int i = 0; i < selectedReceipts.length; i++)
+            for (int i = 0; i < selectedReceipts.length; i++) {
                 receipts[i] = (ReceiptHeader) getPersistenceService().findByNamedQuery("getReceiptHeaderById",
                         Long.valueOf(selectedReceipts[i]));
+                if (isRoleToCheckCreator)
+                    isReceiptCancelEnable = (receipts[i].getCreatedBy().getId().compareTo(user.getId()) == 0) ? true : false;
+            }
         }
         return CANCEL;
     }
@@ -1933,6 +1951,14 @@ public class ReceiptAction extends BaseFormAction {
 
     public void setPaymentRequest(final PaymentRequest paymentRequest) {
         this.paymentRequest = paymentRequest;
+    }
+
+    public Boolean getIsReceiptCancelEnable() {
+        return isReceiptCancelEnable;
+    }
+
+    public void setIsReceiptCancelEnable(Boolean isReceiptCancelEnable) {
+        this.isReceiptCancelEnable = isReceiptCancelEnable;
     }
 
 }
