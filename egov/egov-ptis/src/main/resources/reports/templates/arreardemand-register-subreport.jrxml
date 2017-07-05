@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
-<!-- 2017-07-04T18:34:20 -->
+<!-- 2017-07-05T14:54:07 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="arreardemand-register-subreport" pageWidth="655" pageHeight="1157" columnWidth="655" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="0bb0e5bf-8634-481a-b624-67c26bf93bf4">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -89,7 +89,7 @@
 		<groupFooter>
 			<band height="44" splitType="Prevent">
 				<staticText>
-					<reportElement x="130" y="0" width="95" height="20" uuid="5fc0dcf8-c666-4dfa-9cc6-80864a57262c">
+					<reportElement x="214" y="0" width="95" height="20" uuid="5fc0dcf8-c666-4dfa-9cc6-80864a57262c">
 						<printWhenExpression><![CDATA[$V{indexNumCountYear} > 1]]></printWhenExpression>
 					</reportElement>
 					<box>
@@ -102,7 +102,7 @@
 					<text><![CDATA[Year Total :]]></text>
 				</staticText>
 				<textField isStretchWithOverflow="true">
-					<reportElement x="225" y="0" width="60" height="20" uuid="88db655a-ff2f-4055-a3e9-8d22482f99dc">
+					<reportElement x="320" y="0" width="65" height="20" uuid="88db655a-ff2f-4055-a3e9-8d22482f99dc">
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					</reportElement>
 					<box rightPadding="2">
@@ -112,7 +112,7 @@
 						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
 						<rightPen lineWidth="0.0"/>
 					</box>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
+					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{yearDemand}]]></textFieldExpression>
@@ -306,7 +306,7 @@
 	<pageFooter>
 		<band height="42" splitType="Stretch">
 			<staticText>
-				<reportElement x="130" y="0" width="95" height="20" uuid="cd1668e2-21bc-4039-9295-7486fcef5a54">
+				<reportElement x="214" y="0" width="95" height="20" uuid="cd1668e2-21bc-4039-9295-7486fcef5a54">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
 				<box>
@@ -319,7 +319,7 @@
 				<text><![CDATA[Page Total :]]></text>
 			</staticText>
 			<textField evaluationTime="Page" isBlankWhenNull="true">
-				<reportElement x="225" y="0" width="60" height="20" uuid="2ab5971e-6831-4965-bbe2-4e17f5d8f648"/>
+				<reportElement x="320" y="0" width="65" height="20" uuid="2ab5971e-6831-4965-bbe2-4e17f5d8f648"/>
 				<box rightPadding="2">
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25" lineStyle="Dashed"/>
@@ -327,7 +327,7 @@
 					<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
 					<rightPen lineWidth="0.0"/>
 				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{pageDemand}]]></textFieldExpression>
@@ -393,7 +393,7 @@
 	<summary>
 		<band height="35" splitType="Stretch">
 			<textField evaluationTime="Report">
-				<reportElement x="225" y="0" width="60" height="20" uuid="d3efaf93-af0c-4d0f-bf04-08942296953b">
+				<reportElement x="320" y="0" width="65" height="20" uuid="d3efaf93-af0c-4d0f-bf04-08942296953b">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
 				<box rightPadding="2">
@@ -403,13 +403,13 @@
 					<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
 					<rightPen lineWidth="0.0"/>
 				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{reportDemand}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="130" y="0" width="94" height="20" uuid="6ad9af0d-fe29-4b51-9fb8-4a0de2be01fc"/>
+				<reportElement x="214" y="0" width="95" height="20" uuid="6ad9af0d-fe29-4b51-9fb8-4a0de2be01fc"/>
 				<box>
 					<topPen lineWidth="0.25" lineStyle="Dashed"/>
 					<bottomPen lineWidth="0.25" lineStyle="Dashed"/>

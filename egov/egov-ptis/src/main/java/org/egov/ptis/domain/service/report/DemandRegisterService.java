@@ -152,7 +152,7 @@ public class DemandRegisterService {
         String propertyType = getPropertyType(mode);
         StringBuilder query = new StringBuilder(
                 "select bp.propertyid \"assessmentNo\", at.ownersname \"ownerName\", at.doorno \"houseNo\", instm.financial_year \"financialYear\", cast(idi.demand as numeric) \"demand\", coalesce(cast(ici.collectiondate as character varying), '-') \"collectionDate\","
-                        + "cast(coalesce(ici.amount, 0) as numeric) \"collectedAmount\", coalesce(ici.collectionmode, '-') \"collectionMode\", cast(idi.totalcollection as numeric) \"totalCollection\", cast(idi.writeoff as numeric) \"writeOff\", cast(idi.advance as numeric) \"advanceAmount\" "
+                        + "cast(coalesce(ici.amount, 0) as numeric) \"collectedAmount\", coalesce(ici.collectionmode, '-') \"collectionMode\", cast(idi.totalcollection as numeric) \"totalCollection\", cast(idi.writeoff as numeric) \"writeOff\", cast(idi.advance as numeric) \"advanceAmount\",cast(idi.installment as integer) \"installment\" "
                         + " from egpt_assessment_transactions at, egpt_basic_property bp, egpt_installment_demand_info idi left join egpt_installment_collection_info ici on idi.id=ici.installment_demand_info, eg_installment_master instm, egpt_property_type_master ptm where "
                         + "idi.assessment_transactions=at.id and at.basicproperty=bp.id and idi.installment=instm.id and instm.financial_year=:finYear and at.ward =:ward and at.propertytype=ptm.id and ptm.code =:propertyType and idi.demand > idi.totalCollection order by bp.propertyid, at.transaction_date");
         final SQLQuery sqlQuery = ptCommonUtils.getSession().createSQLQuery(query.toString());
@@ -175,12 +175,10 @@ public class DemandRegisterService {
                     aggregateDemandInfo(current, previous);
                 }
                 list.add(previous);
-
             }
             previous = current;
             current = registerInfo;
         }
-
         if (current != null && previous != null && previous.getAssessmentNo().equals(current.getAssessmentNo())) {
             aggregateDemandInfo(current, previous);
             list.add(previous);
