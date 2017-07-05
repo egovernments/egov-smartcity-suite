@@ -356,9 +356,8 @@ public class CollectionsUtil {
             throw new ValidationException(Arrays.asList(new ValidationError("Department",
                     "billreceipt.counter.deptcode.null")));
         if (isBankCollectionOperator(loggedInUser)) {
-            // Bank Collection Operator cash, cheque and dd collection modes are
+            // Bank Collection Operator cash, cheque, dd and card collection modes are
             // allowed.
-            collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_CARD);
             collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_BANK);
             collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_ONLINE);
         }
