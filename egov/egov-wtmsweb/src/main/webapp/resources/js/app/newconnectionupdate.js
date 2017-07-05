@@ -439,7 +439,7 @@ $(document)
 							if (validateDateRange(applicationDate,
 									executionDate)) {
 								validateWorkFlowApprover(action);
-								document.forms[0].submit();
+								
 							} else {
 								bootbox
 										.alert("The Execution Date can not be less than the Date of Application.");
