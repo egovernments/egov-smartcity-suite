@@ -135,7 +135,7 @@ public class WaterTaxSearchController {
         if (ApplicationThreadLocals.getUserId() != null) {
             final User currentUser = userService.getUserById(ApplicationThreadLocals.getUserId());
             for (final Role userrole : currentUser.getRoles())
-                if (userrole.getName().equals(WaterTaxConstants.ROLE_CITIZEN)) {
+                if (userrole.getName().equals(WaterTaxConstants.ROLE_PUBLIC)) {
                     citizenrole = Boolean.TRUE;
                     break;
                 }
