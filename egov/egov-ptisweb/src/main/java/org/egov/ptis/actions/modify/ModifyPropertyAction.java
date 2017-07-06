@@ -699,6 +699,8 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 		}
 		if (houseNo != null && !houseNo.isEmpty())
 			basicProp.getAddress().setHouseNoBldgApt(houseNo);
+		if(zoneId != null)
+			basicProp.getPropertyID().setZone(boundaryService.getBoundaryById(getZoneId()));
 		if (propTypeId != null && !propTypeId.trim().isEmpty() && !"-1".equals(propTypeId))
 			propTypeMstr = (PropertyTypeMaster) getPersistenceService().find(FROM_PROPERTY_TYPE_MASTER_WHERE_ID,
 					Long.valueOf(propTypeId));
@@ -1406,7 +1408,8 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 		}
 		validateProperty(propertyModel, areaOfPlot, dateOfCompletion, eastBoundary, westBoundary, southBoundary,
 				northBoundary, propTypeId,
-				null != basicProp.getPropertyID() ? String.valueOf(basicProp.getPropertyID().getZone().getId()) : "",
+				(null != basicProp.getPropertyID() && null != basicProp.getPropertyID().getZone())
+						? String.valueOf(basicProp.getPropertyID().getZone().getId()) : String.valueOf(zoneId),
 				propOccId, floorTypeId, roofTypeId, wallTypeId, woodTypeId, modifyRsn, propCompletionDate,
 				vacantLandPlotAreaId, layoutApprovalAuthorityId, null);
 		validateApproverDetails();
