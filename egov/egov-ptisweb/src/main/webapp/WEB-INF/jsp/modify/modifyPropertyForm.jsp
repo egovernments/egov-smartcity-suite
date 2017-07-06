@@ -149,22 +149,32 @@
 				id="certificationNumber"
 				value="%{propertyDetail.occupancyCertificationNo}" /></td>
 	</tr>
-	<s:if test="%{oldPropertyTypeCode==@org.egov.ptis.constants.PropertyTaxConstants@OWNERSHIP_TYPE_VAC_LAND && modifyRsn==@org.egov.ptis.constants.PropertyTaxConstants@PROPERTY_MODIFY_REASON_ADD_OR_ALTER}">
-		<tr> 
+	<tr>
 			<td class="greybox">&nbsp;</td>
-			<td class="greybox"><s:text name="Door No"></s:text> :</td>
-			<s:if test="%{houseNo!=null && !houseNo.isEmpty()}">
-				<td class="greybox"><s:textfield name="houseNo" id="houseNo" value="%{houseNo}" />
-				</td>
+			<td class="greybox"><s:text name="Zone No"></s:text> <span
+				class="mandatory1">*</span> :</td>
+			<s:if test="%{zoneName !=null && !zoneName.isEmpty()}">
+				<td class="greybox"><s:textfield name="zoneName" id="zoneName"
+						value="%{zoneName}" /></td>
 			</s:if>
 			<s:else>
-				<td class="greybox"><s:textfield name="houseNo" id="houseNo" size="12" maxlength="15" value="%{houseNo}" /></td>
+				<td class="bluebox"><s:select list="dropdownData.zones"
+						name="zoneId" value="%{zoneId}" headerKey="-1" id="zoneId"
+						headerValue="%{getText('default.select')}" listKey="id"
+						listValue="name" /></td>
 			</s:else>
-			<td class="greybox" width="25%"></td>
-			<td class="greybox"></td>
-		</tr>
-	</s:if>
-	
+			<s:if test="%{oldPropertyTypeCode==@org.egov.ptis.constants.PropertyTaxConstants@OWNERSHIP_TYPE_VAC_LAND && modifyRsn==@org.egov.ptis.constants.PropertyTaxConstants@PROPERTY_MODIFY_REASON_ADD_OR_ALTER}">
+			<td class="greybox"><s:text name="Door No"></s:text> :</td>
+			<s:if test="%{houseNo!=null && !houseNo.isEmpty()}">
+				<td class="greybox"><s:textfield name="houseNo" id="houseNo"
+						value="%{houseNo}" /></td>
+			</s:if>
+			<s:else>
+				<td class="greybox"><s:textfield name="houseNo" id="houseNo"
+						size="12" maxlength="15" value="%{houseNo}" /></td>
+			</s:else>
+			</s:if>
+	</tr>	
 	<!-- Amenities section -->
 
 	<tr id="amenitiesHeaderRow" class="amenities">
@@ -274,11 +284,15 @@
 	jQuery(document).ready(function() {
 		var propType = jQuery('#propTypeId :selected').text();
 		var doorno = jQuery("#houseNo").val() != '';
+		var zoneName= jQuery("#zoneName").val !='' ;
 		if(doorno && propType=='<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@OWNERSHIP_TYPE_VAC_LAND_STR}"/>'){
 			jQuery("#houseNo").prop("readonly", true);
 		}
 		else{
 			jQuery("#houseNo").prop("readonly", false);
+		}
+		if(zoneName){
+			jQuery("#zoneName").prop("readonly", true);
 		}
 	});
 	jQuery(function() {
