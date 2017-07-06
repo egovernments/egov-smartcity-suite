@@ -221,6 +221,7 @@
         <slf4j-version>1.7.25</slf4j-version>
         <log4j-version>1.2.17</log4j-version>
         <google-guava-version>22.0</google-guava-version>
+        <google.zxing.version>3.3.0</google.zxing.version>
         <recaptcha.version>0.0.8</recaptcha.version>
         <javaxt.core.version>1.7.8</javaxt.core.version>
         <!-- Plugin dependency versions-->
@@ -774,6 +775,11 @@
                 <version>${google-guava-version}</version>
             </dependency>
             <dependency>
+                <groupId>com.google.zxing</groupId>
+                <artifactId>core</artifactId>
+                <version>${google.zxing.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpclient</artifactId>
                 <version>${httpclient-version}</version>
@@ -1101,6 +1107,10 @@
                     <groupId>commons-logging</groupId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>core</artifactId>
         </dependency>
         <dependency>
             <groupId>joda-time</groupId>
