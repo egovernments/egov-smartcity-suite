@@ -171,10 +171,12 @@ public class DemandRegisterService {
         for (DemandRegisterInfo registerInfo : demandRegisterInfoList) {
             if (current != null && previous != null
                     && !current.getAssessmentNo().equals(registerInfo.getAssessmentNo())) {
-                if (current.getInstallment() != previous.getInstallment()) {
+                if (current.getInstallment() != previous.getInstallment() && previous.getAssessmentNo().equals(current.getAssessmentNo())) {
                     aggregateDemandInfo(current, previous);
+                    list.add(previous);
                 }
-                list.add(previous);
+                else
+                list.add(current);
             }
             previous = current;
             current = registerInfo;
