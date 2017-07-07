@@ -53,14 +53,14 @@ import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.DesignationService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.Department;
-import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.DepartmentService;
-import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.bean.ReassignInfo;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.service.reassign.ReassignService;
+import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -90,7 +90,7 @@ public class ReassignController {
     private PositionMasterService positionMasterService;
 
     @Autowired
-    private SecurityUtils securityUtils;
+    private PropertyTaxCommonUtils propertyTaxCommonUtils;
 
     private static final String SUCCESSMESSAGE = "successMessage";
 
@@ -98,13 +98,17 @@ public class ReassignController {
     public ReassignInfo reassign() {
         return new ReassignInfo();
     }
+    
+    public Long getLoggedInPositiontionId() {
+        final Position position = propertyTaxCommonUtils.getPositionForUser(ApplicationThreadLocals.getUserId());
+        return position.getId();
+    }
 
     @RequestMapping(method = RequestMethod.GET)
     public String getReassign(@ModelAttribute("reassign") final ReassignInfo reassignInfo, final Model model,
             @PathVariable final String modelIdAndApplicationType,
             final HttpServletRequest request) {
         Department department = departmentService.getDepartmentByCode("REV");
-        User loggedInUser = securityUtils.getCurrentUser();
         Map<Long, String> employeeWithPosition = new HashMap<>();
         for (String designationName : Arrays.asList(PropertyTaxConstants.JUNIOR_ASSISTANT,
                 PropertyTaxConstants.SENIOR_ASSISTANT)) {
@@ -113,7 +117,7 @@ public class ReassignController {
                 List<Assignment> assignments = assignmentService.findAllAssignmentsByDeptDesigAndDates(department.getId(),
                         designation.getId(), new Date());
                 for (Assignment assignment : assignments) {
-                    if (!(loggedInUser.getId()).equals(assignment.getPosition().getId())) {
+                    if (!(getLoggedInPositiontionId()).equals(assignment.getPosition().getId())) {
                         employeeWithPosition.put(assignment.getPosition().getId(), assignment.getEmployee().getName().concat("/")
                                 .concat(assignment.getPosition().getName()));
                         model.addAttribute("assignments", employeeWithPosition);
@@ -135,7 +139,7 @@ public class ReassignController {
         Assignment assignment = assignmentService.getAssignmentsForPosition(positionId).get(0);
         if (reassignService.getStateObject(reassignInfo, position)) {
             successMessage = "Reassigned successfully to "
-                    + assignment.getEmployee().getName() + "~" + position.getName();
+                    + assignment.getEmployee().getName();
             model.addAttribute(SUCCESSMESSAGE, successMessage);
         } else {
             model.addAttribute(SUCCESSMESSAGE, "Reassign Failed!");

@@ -618,4 +618,12 @@ public class PropertyTaxCommonUtils {
     public List<String> getGuardianRelations() {
         return Stream.of(GuardianRelation.values()).map(GuardianRelation::name).collect(Collectors.toList());
     }
+    
+    public Position getPositionForUser(final Long userId) {
+        Position position = null;
+        if (userId != null && userId.intValue() != 0) {
+            position = positionMasterService.getPositionByUserId(userId);
+        }
+        return position;
+    }
 }

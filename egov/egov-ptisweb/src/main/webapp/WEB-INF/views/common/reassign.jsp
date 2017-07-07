@@ -94,8 +94,8 @@
 			</div>
 		</div>
 		<form:button type="submit" disabled="false" id="ReassignSubmit"
-			class="btn btn-primary" value="ReAssignSubmit">
-			<c:out value="ReassignSubmit" />
+			class="btn btn-primary" value="ReassignSubmit">
+			<c:out value="Reassign" />
 		</form:button>
 
 		<a href="javascript:void(0)" class="btn btn-default"
