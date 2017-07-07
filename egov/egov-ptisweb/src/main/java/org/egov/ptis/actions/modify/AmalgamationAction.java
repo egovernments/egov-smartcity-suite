@@ -45,6 +45,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.AMALGAMATION_OF_ASSES
 import static org.egov.ptis.constants.PropertyTaxConstants.APPCONFIG_CLIENT_SPECIFIC_DMD_BILL;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_AMALGAMATION;
 import static org.egov.ptis.constants.PropertyTaxConstants.BILL_COLLECTOR_DESGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.TAX_COLLECTOR_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_MIXED;
 import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_NON_RESIDENTIAL;
 import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_RESIDENTIAL;
@@ -504,6 +505,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
 
     private boolean checkDesignationsForView() {
         return StringUtils.containsIgnoreCase(userDesignationList, BILL_COLLECTOR_DESGN)
+        		|| StringUtils.containsIgnoreCase(userDesignationList, TAX_COLLECTOR_DESGN)
                 || StringUtils.containsIgnoreCase(userDesignationList, COMMISSIONER_DESGN)
                 || StringUtils.containsIgnoreCase(userDesignationList, REVENUE_OFFICER_DESGN);
     }
