@@ -491,4 +491,15 @@
     	<put-attribute name="page-title" value="lbl.arrear.dmd.register" cascade="true"/>
     	<put-attribute name="body" value="/WEB-INF/views/reports/arreardmdregister-form.jsp"/>
     </definition>
+    
+    <definition name="reassign" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.reassign.title" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/common/reassign.jsp"/>
+    </definition>
+    
+     <definition name="reassign-success" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.reassign.title" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/common/reassign-success.jsp"/>
+    </definition> 
+    
 </tiles-definitions> 

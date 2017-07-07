@@ -63,6 +63,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONAL_COMMISSIONER_DESIGN;
 
+
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -85,6 +86,7 @@ import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.service.demolition.PropertyDemolitionService;
 import org.egov.ptis.domain.service.property.PropertyService;
+import org.egov.ptis.domain.service.reassign.ReassignService;
 import org.egov.ptis.exceptions.TaxCalculatorExeption;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -136,6 +138,9 @@ public class UpdatePropertyDemolitionController extends GenericWorkFlowControlle
 
     @Autowired
     private transient PropertyService propService;
+    
+    @Autowired
+    private ReassignService reassignService;
 
     @ModelAttribute
     public PropertyImpl property(@PathVariable final String id) {
@@ -154,6 +159,9 @@ public class UpdatePropertyDemolitionController extends GenericWorkFlowControlle
         final String nextAction = property.getState().getNextAction();
 
         String userDesignationList = propertyTaxCommonUtils.getAllDesignationsForUser(securityUtils.getCurrentUser().getId());
+        model.addAttribute("transactionType", APPLICATION_TYPE_DEMOLITION);
+        model.addAttribute("stateAwareId", property.getId());
+        model.addAttribute("isReassignEnabled", reassignService.isReassignEnabled());
         model.addAttribute("property", property);
         model.addAttribute("stateType", property.getClass().getSimpleName());
         model.addAttribute("currentState", property.getCurrentState().getValue());

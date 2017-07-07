@@ -43,6 +43,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.VR_STATUS_ASSISTANT_FORWARDED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_ASSISTANT_APPROVAL_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.ANONYMOUS_USER;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_VACANCY_REMISSION;
 
 import java.util.Date;
 import java.util.List;
@@ -63,6 +64,7 @@ import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.VacancyRemission;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.domain.service.property.VacancyRemissionService;
+import org.egov.ptis.domain.service.reassign.ReassignService;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -85,6 +87,9 @@ public class UpdateVacancyRemissionController extends GenericWorkFlowController 
     private final PropertyTaxUtil propertyTaxUtil;
     private static final String PROPERTY_MODIFY_REJECT_FAILURE = "Initiator is not active so can not do rejection with the Assessment number :";
 
+    @Autowired
+    private ReassignService reassignService;
+    
     @Autowired
     private PropertyService propertyService;
 
@@ -115,6 +120,9 @@ public class UpdateVacancyRemissionController extends GenericWorkFlowController 
         final String userDesignationList = propertyTaxCommonUtils
                 .getAllDesignationsForUser(securityUtils.getCurrentUser().getId());
         if (vacancyRemission != null) {
+            model.addAttribute("isReassignEnabled", reassignService.isReassignEnabled());
+            model.addAttribute("transactionType", APPLICATION_TYPE_VACANCY_REMISSION);
+            model.addAttribute("stateAwareId", vacancyRemission.getId());
             if (propertyTaxUtil.enableVRApproval(vacancyRemission.getBasicProperty().getUpicNo())) {
 
                 return "redirect:/vacancyremissionapproval/create/" + vacancyRemission.getBasicProperty().getUpicNo();

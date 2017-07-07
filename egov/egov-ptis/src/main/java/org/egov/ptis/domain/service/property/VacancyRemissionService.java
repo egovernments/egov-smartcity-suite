@@ -437,10 +437,14 @@ public class VacancyRemissionService {
         Assignment assignment = new Assignment();
         if (checkIfEmployee(vacancyRemission.getCreatedBy()))
             assignment = assignmentService.getPrimaryAssignmentForUser(vacancyRemission.getCreatedBy().getId());
-        else
-            assignment = assignmentService
-                    .getPrimaryAssignmentForPositon(
-                            vacancyRemission.getStateHistory().get(0).getOwnerPosition().getId());
+        else {
+            if (vacancyRemission.getState().getInitiatorPosition() == null)
+                assignment = assignmentService.getPrimaryAssignmentForPositon(
+                        vacancyRemission.getStateHistory().get(0).getOwnerPosition().getId());
+            else
+                assignment = assignmentService.getPrimaryAssignmentForPositon(
+                        vacancyRemission.getState().getInitiatorPosition().getId());
+        }
         initiatorName = assignment.getEmployee().getName().concat("~").concat(assignment.getPosition().getName());
         return initiatorName;
     }
@@ -453,9 +457,14 @@ public class VacancyRemissionService {
                         vacancyRemission.getCreatedBy(), vacancyRemission.getState().getInitiatorPosition());
             else
                 wfInitiator = assignmentService.getPrimaryAssignmentForUser(vacancyRemission.getCreatedBy().getId());
-        } else if (!vacancyRemission.getStateHistory().isEmpty())
-            wfInitiator = assignmentService.getPrimaryAssignmentForPositon(
-                    vacancyRemission.getStateHistory().get(0).getOwnerPosition().getId());
+        } else if (!vacancyRemission.getStateHistory().isEmpty()) {
+            if (vacancyRemission.getState().getInitiatorPosition() == null)
+                wfInitiator = assignmentService.getPrimaryAssignmentForPositon(
+                        vacancyRemission.getStateHistory().get(0).getOwnerPosition().getId());
+            else
+                wfInitiator = assignmentService.getPrimaryAssignmentForPositon(
+                        vacancyRemission.getState().getInitiatorPosition().getId());
+        }
         else
             wfInitiator = assignmentService
                     .getPrimaryAssignmentForPositon(vacancyRemission.getState().getOwnerPosition().getId());
@@ -516,7 +525,7 @@ public class VacancyRemissionService {
 
         wfInitiator = getInitiatorOnWFAction(vacancyRemissionApproval, workFlowAction);
         if (wfInitiator == null)
-            wfInitiator = getWorkflowInitiatorAssignment(user.getId(),Arrays.asList(PropertyTaxConstants.REVENUE_INSPECTOR_DESGN));
+            wfInitiator = getWorkflowInitiatorAssignment(user.getId(), Arrays.asList(PropertyTaxConstants.REVENUE_INSPECTOR_DESGN));
 
         if (null != approvalPosition && approvalPosition != 0) {
             assignment = assignmentService.getAssignmentsForPosition(approvalPosition, new Date())
