@@ -522,11 +522,6 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 				setHouseNo(propertyAddr.getHouseNoBldgApt().toString());
 			if (basicProp.getPropertyID().getZone() != null)
 				setZoneName(basicProp.getPropertyID().getZone().getName());
-			else {
-				final List<Boundary> zones = boundaryService
-						.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(ZONE, REVENUE_HIERARCHY_TYPE);
-				addDropdownData("zones", zones);
-			}
 			if (propertyModel.getPropertyDetail().getFloorType() != null)
 				floorTypeId = propertyModel.getPropertyDetail().getFloorType().getId();
 			if (propertyModel.getPropertyDetail().getRoofType() != null)
@@ -1109,6 +1104,8 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 		final List<RoofType> roofTypes = getPersistenceService().findAllBy("from RoofType order by name");
 		final List<WallType> wallTypes = getPersistenceService().findAllBy("from WallType order by name");
 		final List<WoodType> woodTypes = getPersistenceService().findAllBy("from WoodType order by name");
+		final List<Boundary> zones = boundaryService
+				.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(ZONE, REVENUE_HIERARCHY_TYPE);
 		setVacantLandPlotAreaList(vacantLandPlotAreaRepository.findAll());
 		setLayoutApprovalAuthorityList(layoutApprovalAuthorityRepository.findAll());
 		addDropdownData("vacantLandPlotAreaList", vacantLandPlotAreaList);
@@ -1123,6 +1120,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 		addDropdownData("AgeFactorList", ageFacList);
 		addDropdownData("apartments", apartmentsList);
 		addDropdownData("taxExemptionReasonList", taxExemptionReasonList);
+		addDropdownData("zones", zones);
 		populatePropertyTypeCategory();
 		setDeviationPercentageMap(DEVIATION_PERCENTAGE);
 	}
