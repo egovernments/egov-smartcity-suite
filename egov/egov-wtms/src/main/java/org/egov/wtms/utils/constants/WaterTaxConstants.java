@@ -389,4 +389,5 @@ public class WaterTaxConstants {
     
     public static final String INPROGRESS = "INPROGRESS";
     public static final String APPLICATIONINITIATORROLE = "WCMSDESIGNATIONFORINITIATOR";
+    public static final String PROCEEDWITHOUTDONATIONAMOUNTPAID="PROCEEDWITHOUTDONATIONAMOUNTPAID";
 }

@@ -636,6 +636,7 @@ public class WaterConnectionDetailsService {
                     updateIndexes(waterConnectionDetails, sourceChannel);
                 } else if (WaterTaxConstants.APPLICATION_STATUS_CLOSERSANCTIONED
                         .equalsIgnoreCase(waterConnectionDetails.getStatus().getCode())
+                        && waterConnectionDetails.getCloseConnectionType()!=null  
                         && waterConnectionDetails.getCloseConnectionType()
                                 .equals(WaterTaxConstants.TEMPERARYCLOSECODE)) {
                     waterConnectionDetails.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
