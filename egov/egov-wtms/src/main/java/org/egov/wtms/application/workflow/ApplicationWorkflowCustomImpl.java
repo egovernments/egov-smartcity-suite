@@ -42,6 +42,9 @@ package org.egov.wtms.application.workflow;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WFLOW_ACTION_STEP_REJECT;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WFLOW_ACTION_STEP_THIRDPARTY_CREATED;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_STATE_REJECTED;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.CLOSINGCONNECTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.RECONNECTIONCONNECTION;
+
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -134,7 +137,13 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
         final Assignment userAssignment = assignmentService.getPrimaryAssignmentForUser(user.getId());
         Position pos = null;
         Assignment wfInitiator = null;
-        final Boolean recordCreatedBYNonEmployee = waterTaxUtils
+        final Boolean recordCreatedBYNonEmployee;
+        if(user!=null && (CLOSINGCONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()) ||
+        		RECONNECTIONCONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()))){
+        	recordCreatedBYNonEmployee= waterTaxUtils.getCurrentUserRole(user);
+        }
+        else
+        	recordCreatedBYNonEmployee= waterTaxUtils
                 .getCurrentUserRole(waterConnectionDetails.getCreatedBy());
         String currState = "";
         final String loggedInUserDesignation = waterTaxUtils.loggedInUserDesignation(waterConnectionDetails);
@@ -152,7 +161,8 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                         wfInitiator = assignmentList.get(0);
                 }
             }
-        } else if (null != waterConnectionDetails.getId()) {
+        } 
+        else if (null != waterConnectionDetails.getId()) {
             currentUser = userService.getUserById(waterConnectionDetails.getCreatedBy().getId());
             if (currentUser != null && waterConnectionDetails.getLegacy().equals(true)) {
                 for (final Role userrole : currentUser.getRoles())
