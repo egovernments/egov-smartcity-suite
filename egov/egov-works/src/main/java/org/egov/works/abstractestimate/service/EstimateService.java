@@ -1256,10 +1256,8 @@ public class EstimateService {
                 WorksConstants.LOCATION_BOUNDARYTYPE, WorksConstants.LOCATION_HIERARCHYTYPE));
         model.addAttribute("scheduleCategories", scheduleCategoryService.getAllScheduleCategories());
         model.addAttribute("funds", fundHibernateDAO.findAllActiveFunds());
-        if (worksApplicationProperties.lineEstimateRequired()) {
-            model.addAttribute("functions", functionHibernateDAO.getAllActiveFunctions());
-            model.addAttribute("budgetHeads", budgetGroupDAO.getBudgetGroupList());
-        }
+        model.addAttribute("functions", functionHibernateDAO.getAllActiveFunctions());
+        model.addAttribute("budgetHeads", budgetGroupDAO.getBudgetGroupList());
         model.addAttribute("schemes", schemeService.findAll());
         model.addAttribute("departments", worksUtils.getUserDepartments(securityUtils.getCurrentUser()));
         model.addAttribute("typeOfWork",

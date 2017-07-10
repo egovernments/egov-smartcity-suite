@@ -42,9 +42,7 @@ $locationId = 0;
 $subTypeOfWorkId = 0;
 $schemeId = "";
 $subSchemeId = 0;
-$functionId = 0;
 $detailsRowCount = $('#detailsSize').val();
-$budgetHeadId=0;
 $(document).ready(function(){
 	$(".quantity").each(function() {
 		if (parseFloat($(this).val()) <= 0)
@@ -63,10 +61,6 @@ $(document).ready(function(){
 	$subTypeOfWorkId = $('#subTypeOfWorkValue').val();
 	$subSchemeId = $('#subSchemeValue').val();
 	$schemeId = $('#schemeValue').val();
-	$functionId = $('#functionId').val();
-	$budgetHeadId = $('#budgetHeadValue').val();
-	getFunctionsByFundAndDepartment();
-	getBudgetHeads();
 	$( "input[name$='estimateAmount']" ).each(function(){
 		var value = parseFloat(roundTo($(this).val()));
 		if(value != 0)
@@ -94,7 +88,6 @@ $(document).ready(function(){
 	//TODO : Need to remove trigger
 	$('#typeofwork').trigger('blur');
 	$('#fund').trigger('change');
-	$('#function').trigger('change');
 	
 	getSubSchemsBySchemeId($schemeId);
 	
@@ -639,75 +632,4 @@ function validateWorkFlowApprover(name) {
 
 	document.forms[0].submit;
 	return true;
-}
-function getBudgetHeads() {
-	if($('#function').val() != '')
-		$functionId = $('#function').val();
-	 if ($('#fund').val() === '' || $('#executingDepartments').val() === '' || ($('#function').val() === '' && $functionId == 0) || $('#natureOfWork').val() === '') {
-		   $('#budgetHead').empty();
-		   $('#budgetHead').append($('<option>').text('Select from below').attr('value', ''));
-			return;
-			} else {
-			$.ajax({
-				type: "GET",
-				url: "/egworks/lineestimate/getbudgethead",
-				cache: true,
-				dataType: "json",
-				data:{
-					'fundId' : $('#fund').val(),
-					'functionId' : $functionId,
-					'departmentId' : $('#executingDepartments').val(),
-					'natureOfWorkId' : $('#natureOfWork').val()
-					
-					}	
-			}).done(function(value) {
-				console.log(value);
-				$('#budgetHead').empty();
-				$('#budgetHead').append($("<option value=''>Select from below</option>"));
-				$.each(value, function(index, val) {
-					var selected="";
-					if($budgetHeadId)
-					{
-						if($budgetHeadId==val.id)
-						{
-							selected="selected";
-						}
-					}
-				     $('#budgetHead').append($('<option '+ selected +'>').text(val.name).attr('value', val.id));
-				});
-			});
-		}
-}
-function getFunctionsByFundAndDepartment() {
-	if ($('#fund').val() === '' || $('#executingDepartments').val() === '') {
-		   $('#function').empty();
-		   $('#function').append($('<option>').text('Select from below').attr('value', ''));
-			return;
-			} else {
-				$.ajax({
-					method : "GET",
-					url : "/egworks/lineestimate/getfunctionsbyfundidanddepartmentid",
-					data : {
-						fundId : $('#fund').val(),
-						departmentId : $('#executingDepartments').val()
-					},
-					async : true
-				}).done(
-						function(response) {
-							$('#function').empty();
-							$('#function').append($("<option value=''>Select from below</option>"));
-							var output = '<option value="">Select from below</option>';
-							$.each(response, function(index, value) {
-								var selected="";
-								if($functionId)
-								{
-									if($functionId==value.id)
-									{
-										selected="selected";
-									}
-								}
-								$('#function').append($('<option '+ selected +'>').text(value.code + ' - ' + value.name).attr('value', value.id));
-							});
-				});
-			}
 }

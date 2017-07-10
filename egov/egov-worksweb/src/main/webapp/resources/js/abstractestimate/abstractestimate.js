@@ -386,7 +386,6 @@ $(document).ready(function(){
 	});
 	replaceWorkCategoryChar();
 	replaceBeneficiaryChar();
-	getFunctionsByFundAndDepartment();
 	
 	var defaultDepartmentId = $("#defaultDepartmentId").val();
 	if(defaultDepartmentId != "") {
@@ -3708,77 +3707,4 @@ function replaceBeneficiaryChar() {
 	   var $this = $(this);
 	   $this.text($this.text().replace(/_C/g, '/C').replace(/_/g, ' '));
 	});
-}
-
-function getFunctionsByFundAndDepartment() {
-	if ($('#fund').val() === '' || $('#executingDepartment').val() === '') {
-		   $('#function').empty();
-		   $('#function').append($('<option>').text('Select from below').attr('value', ''));
-			return;
-			} else {
-				$.ajax({
-					method : "GET",
-					url : "/egworks/lineestimate/getfunctionsbyfundidanddepartmentid",
-					data : {
-						fundId : $('#fund').val(),
-						departmentId : $('#executingDepartment').val()
-					},
-					async : true
-				}).done(
-						function(response) {
-							$('#function').empty();
-							$('#function').append($("<option value=''>Select from below</option>"));
-							var output = '<option value="">Select from below</option>';
-							$.each(response, function(index, value) {
-								var selected="";
-								if($functionId)
-								{
-									if($functionId==value.id)
-									{
-										selected="selected";
-									}
-								}
-								$('#function').append($('<option '+ selected +'>').text(value.code + ' - ' + value.name).attr('value', value.id));
-							});
-				});
-			}
-}
-
-function getBudgetHeads() {
-	if($('#function').val() != '')
-		$functionId = $('#function').val();
-	 if ($('#fund').val() === '' || $('#executingDepartment').val() === '' || ($('#function').val() === '' && $functionId == 0) || $('#natureOfWork').val() === '') {
-		   $('#budgethead').empty();
-		   $('#budgethead').append($('<option>').text('Select from below').attr('value', ''));
-			return;
-			} else {
-			$.ajax({
-				type: "GET",
-				url: "/egworks/lineestimate/getbudgethead",
-				cache: true,
-				dataType: "json",
-				data:{
-					'fundId' : $('#fund').val(),
-					'functionId' : $functionId,
-					'departmentId' : $('#executingDepartment').val(),
-					'natureOfWorkId' : $('#natureOfWork').val()
-					
-					}	
-			}).done(function(value) {
-				console.log(value);
-				$('#budgethead').empty();
-				$('#budgethead').append($("<option value=''>Select from below</option>"));
-				$.each(value, function(index, val) {
-					var selected="";
-					if($budgetHeadId)
-					{
-						if($budgetHeadId==val.id)
-						{
-							selected="selected";
-						}
-					}
-				     $('#budgethead').append($('<option '+ selected +'>').text(val.name).attr('value', val.id));
-				});
-			});
-		}
 }

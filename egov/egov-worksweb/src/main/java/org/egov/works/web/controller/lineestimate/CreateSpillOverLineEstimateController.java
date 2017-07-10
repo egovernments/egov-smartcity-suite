@@ -50,9 +50,11 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.CChartOfAccountDetail;
+import org.egov.commons.dao.FunctionHibernateDAO;
 import org.egov.commons.dao.FundHibernateDAO;
 import org.egov.commons.service.TypeOfWorkService;
 import org.egov.dao.budget.BudgetDetailsDAO;
+import org.egov.dao.budget.BudgetGroupDAO;
 import org.egov.egf.budget.model.BudgetControlType;
 import org.egov.egf.budget.service.BudgetControlTypeService;
 import org.egov.eis.service.DesignationService;
@@ -144,6 +146,12 @@ public class CreateSpillOverLineEstimateController {
 
     @Autowired
     private TypeOfWorkService typeOfWorkService;
+
+    @Autowired
+    private FunctionHibernateDAO functionHibernateDAO;
+
+    @Autowired
+    private BudgetGroupDAO budgetGroupDAO;
 
     @RequestMapping(value = "/newspilloverform", method = RequestMethod.GET)
     public String showNewSpillOverLineEstimateForm(@ModelAttribute("lineEstimate") final LineEstimate lineEstimate,
@@ -292,6 +300,8 @@ public class CreateSpillOverLineEstimateController {
 
     private void setDropDownValues(final Model model) {
         model.addAttribute("funds", fundHibernateDAO.findAllActiveFunds());
+        model.addAttribute("functions", functionHibernateDAO.getAllActiveFunctions());
+        model.addAttribute("budgetHeads", budgetGroupDAO.getBudgetGroupList());
         model.addAttribute("departments", worksUtils.getUserDepartments(securityUtils.getCurrentUser()));
         model.addAttribute("workCategory", WorkCategory.values());
         model.addAttribute("beneficiary", Beneficiary.values());

@@ -46,14 +46,13 @@
 			<spring:message code="lbl.financialdetails" />
 		</div>
 	</div>
-
 	<div class="panel-body custom-form">
 		<div class="form-group">
 			<label class="col-sm-2 control-label text-right"> <spring:message
 					code="lbl.fund" /><c:if test="${abstractEstimate.lineEstimateDetails == null }"><span class="mandatory"></span></c:if>
 			</label>
 			<div class="col-sm-3 add-margin">
-				<form:select path="financialDetails[0].fund" data-first-option="false" id="fund"  class="form-control disablefield" onchange="getFunctionsByFundAndDepartment();getBudgetHeads();getSchemsByFundId(this.value);" required="required">
+				<form:select path="financialDetails[0].fund" data-first-option="false" id="fund"  class="form-control disablefield" onchange="getSchemsByFundId(this.value);" required="required">
 					<form:option value="">
 						<spring:message code="lbl.select" />
 					</form:option>
@@ -65,7 +64,7 @@
 
 			<label class="col-sm-2 control-label text-right"> <spring:message code="lbl.function" /><c:if test="${abstractEstimate.lineEstimateDetails == null }"><span class="mandatory"></span></c:if></label>
 			<div class="col-sm-3 add-margin">
-				<form:select path="financialDetails[0].function" data-first-option="false" id="function" class="form-control disablefield" onchange="getBudgetHeads();" required="required">
+				<form:select path="financialDetails[0].function" data-first-option="false" id="function" class="form-control disablefield" required="required">
 					<form:option value="">
 						<spring:message code="lbl.select" />
 					</form:option>

@@ -46,7 +46,7 @@
 			    <spring:message code="lbl.natureofwork" /><c:if test="${abstractEstimate.lineEstimateDetails == null }"><span class="mandatory"></span></c:if>
 			</label>
 			<div class="col-sm-3 add-margin ">
-			<form:select path="natureOfWork" data-first-option="false" id="natureOfWork" class="form-control disablefield" onchange="getBudgetHeads();" required="required">
+			<form:select path="natureOfWork" data-first-option="false" id="natureOfWork" class="form-control disablefield" required="required">
 					<form:option value="">
 						<spring:message code="lbl.select" />
 					</form:option>
