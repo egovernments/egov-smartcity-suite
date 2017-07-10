@@ -78,6 +78,7 @@ public class FinancialsDashBoardUtils {
     private static final String DETAILED_CODE = "glcode";
     private static final String DEPARTMENT = "department";
     private static final String MONTH = "month";
+    private static final String FINANCIALYEAR = "financialyear";
 
     public static String getAggregationGroupingField(final FinancialsDetailsRequest financialsDetailsRequest) {
         String aggregationField = "";
@@ -96,6 +97,10 @@ public class FinancialsDashBoardUtils {
                 aggregationField = SCHEME_CODE;
             if ("subscheme".equalsIgnoreCase(financialsDetailsRequest.getAggregationLevel()))
                 aggregationField = SUBSCHEME_CODE;
+            if ("month".equalsIgnoreCase(financialsDetailsRequest.getAggregationLevel()))
+                aggregationField = MONTH;
+            if ("financialyear".equalsIgnoreCase(financialsDetailsRequest.getAggregationLevel()))
+                aggregationField = FINANCIALYEAR;
 
 
         }
@@ -133,6 +138,9 @@ public class FinancialsDashBoardUtils {
         if (StringUtils.isNotBlank(financialsDetailsRequest.getSubschemeCode()))
             boolQuery
                     .filter(QueryBuilders.matchQuery(SUBSCHEME_CODE, financialsDetailsRequest.getSubschemeCode()));
+        if (StringUtils.isNotBlank(financialsDetailsRequest.getFinancialYear()))
+            boolQuery
+                    .filter(QueryBuilders.matchQuery(FINANCIALYEAR, financialsDetailsRequest.getFinancialYear()));
 
 
         return boolQuery;

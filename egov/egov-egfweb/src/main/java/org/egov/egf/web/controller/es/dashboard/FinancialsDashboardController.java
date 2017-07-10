@@ -49,12 +49,11 @@ package org.egov.egf.web.controller.es.dashboard;
 
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.service.CFinancialYearService;
-import org.egov.egf.bean.dashboard.FinancialsBudgetDetailResponse;
-import org.egov.egf.bean.dashboard.FinancialsDetailResponse;
-import org.egov.egf.bean.dashboard.FinancialsDetailsRequest;
+import org.egov.egf.bean.dashboard.*;
 import org.egov.egf.es.utils.FinancialsDashBoardUtils;
 import org.egov.infra.utils.DateUtils;
 import org.egov.services.es.dashboard.FinancialsDashboardService;
+import org.egov.services.es.dashboard.RatioAnalysisDashboardService;
 import org.egov.utils.FinancialConstants;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.slf4j.Logger;
@@ -79,6 +78,9 @@ public class FinancialsDashboardController {
 
     @Autowired
     private CFinancialYearService cFinancialYearService;
+
+    @Autowired
+    private RatioAnalysisDashboardService ratioAnalysisDashboardService;
 
     /**
      * Provides Financials voucher Index details across all ULBs
@@ -133,6 +135,15 @@ public class FinancialsDashboardController {
         final BoolQueryBuilder boolQuery = FinancialsDashBoardUtils.prepareWhereClauseForBudget(financialsDetailsRequest);
         final String aggrField = FinancialsDashBoardUtils.getAggregationGroupingFieldForBudget(financialsDetailsRequest);
         return financialsDashboardService.getBudgetData(financialsDetailsRequest, boolQuery, aggrField);
+    }
+
+    @RequestMapping(value = "/ratios", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<FinancialsRatioAnalysisResponse> getRatioAnalysisReport(final FinancialsDetailsRequest financialsDetailsRequest)
+            throws IOException {
+
+        final BoolQueryBuilder boolQuery = FinancialsDashBoardUtils.prepareWhereClause(financialsDetailsRequest);
+        final String aggrField = FinancialsDashBoardUtils.getAggregationGroupingField(financialsDetailsRequest);
+        return ratioAnalysisDashboardService.getRatios(new FinancialsRatioAnalysisRequest(financialsDetailsRequest), boolQuery, aggrField);
     }
 
 }

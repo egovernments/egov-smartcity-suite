@@ -202,7 +202,7 @@ public class FinancialsDashboardService {
     private SearchResponse getDateFromIndex(String aggrField, BoolQueryBuilder boolQry, String year) {
         if (!MONTH.equalsIgnoreCase(aggrField)) {
             return elasticsearchTemplate.getClient().prepareSearch(FinancialConstants.FINANCIAL_VOUCHER_INDEX_NAME).setQuery(boolQry)
-                    .addAggregation(AggregationBuilders.terms(AGGRFIELD).field(aggrField)
+                    .addAggregation(AggregationBuilders.terms(AGGRFIELD).field(aggrField).size(5000)
                             .subAggregation(AggregationBuilders.sum(DEBITAMOUNT).field(DEBITAMOUNT))
                             .subAggregation(AggregationBuilders.sum(CREDITAMOUNT).field(CREDITAMOUNT))
                             .subAggregation(AggregationBuilders.topHits(year).addField(FinancialConstants.DISTNAME)
@@ -237,7 +237,7 @@ public class FinancialsDashboardService {
         }
 
         return elasticsearchTemplate.getClient().prepareSearch(FinancialConstants.FINANCIAL_OPENINGBALANCE_INDEX_NAME).setQuery(boolQuery)
-                .addAggregation(AggregationBuilders.terms(OBAGGRFIELD).field(aggrField)
+                .addAggregation(AggregationBuilders.terms(OBAGGRFIELD).field(aggrField).size(5000)
                         .subAggregation(AggregationBuilders.sum(OBDEBITAMOUNT).field(OBDEBITAMOUNT))
                         .subAggregation(AggregationBuilders.sum(OBCREDITAMOUNT).field(OBCREDITAMOUNT)))
                 .execute().actionGet();
@@ -927,7 +927,7 @@ public class FinancialsDashboardService {
         }
         return elasticsearchTemplate.getClient()
                 .prepareSearch(FinancialConstants.FINANCIAL_BUDGET_INDEX_DATA).setQuery(boolQuery)
-                .addAggregation(AggregationBuilders.terms(AGGRFIELD).field(aggrField)
+                .addAggregation(AggregationBuilders.terms(AGGRFIELD).field(aggrField).size(5000)
                         .subAggregation(
                                 AggregationBuilders.sum(FinancialConstants.BUDGETAPPROVEDAMOUNT).field(FinancialConstants.BUDGETAPPROVEDAMOUNT))
                         .subAggregation(

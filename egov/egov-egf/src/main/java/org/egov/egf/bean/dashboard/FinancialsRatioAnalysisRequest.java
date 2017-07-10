@@ -47,36 +47,42 @@
 
 package org.egov.egf.bean.dashboard;
 
-public class FinancialsDetailsRequest {
+public class FinancialsRatioAnalysisRequest {
 
     private String region;
     private String district;
     private String grade;
     private String ulbCode;
     private String ulbName;
-    private String fromDate;
-    private String toDate;
     private String admZone;
     private String admWard;
     private String fundCode;
     private String departmentCode;
     private String functionCode;
-    private String fundSource;
-    private String schemeCode;
-    private String subschemeCode;
-    private String majorCode = "";
-    private String minorCode = "";
-    private String detailedCode = "";
     private String aggregationLevel;
-    private String currentFinancialYear;
-    private String lastFinancialYear;
     private String financialYear;
+
+    public FinancialsRatioAnalysisRequest(FinancialsDetailsRequest financialsDetailsRequest) {
+
+        this.region = financialsDetailsRequest.getRegion();
+        this.district = financialsDetailsRequest.getDistrict();
+        this.grade = financialsDetailsRequest.getGrade();
+        this.ulbCode = financialsDetailsRequest.getUlbCode();
+        this.ulbName = financialsDetailsRequest.getUlbName();
+        this.admWard = financialsDetailsRequest.getAdmWard();
+        this.admZone = financialsDetailsRequest.getAdmZone();
+        this.fundCode = financialsDetailsRequest.getFundCode();
+        this.functionCode = financialsDetailsRequest.getFunctionCode();
+        this.departmentCode = financialsDetailsRequest.getDepartmentCode();
+        this.aggregationLevel = financialsDetailsRequest.getAggregationLevel();
+        this.financialYear = financialsDetailsRequest.getFinancialYear();
+    }
 
     public String getRegion() {
         return region;
     }
 
-    public void setRegion(final String region) {
+    public void setRegion(String region) {
         this.region = region;
     }
 
@@ -84,7 +90,7 @@ public class FinancialsDetailsRequest {
         return district;
     }
 
-    public void setDistrict(final String district) {
+    public void setDistrict(String district) {
         this.district = district;
     }
 
@@ -92,7 +98,7 @@ public class FinancialsDetailsRequest {
         return grade;
     }
 
-    public void setGrade(final String grade) {
+    public void setGrade(String grade) {
         this.grade = grade;
     }
 
@@ -100,31 +106,23 @@ public class FinancialsDetailsRequest {
         return ulbCode;
     }
 
-    public void setUlbCode(final String ulbCode) {
+    public void setUlbCode(String ulbCode) {
         this.ulbCode = ulbCode;
     }
 
-    public String getFromDate() {
-        return fromDate;
+    public String getUlbName() {
+        return ulbName;
     }
 
-    public void setFromDate(final String fromDate) {
-        this.fromDate = fromDate;
-    }
-
-    public String getToDate() {
-        return toDate;
-    }
-
-    public void setToDate(final String toDate) {
-        this.toDate = toDate;
+    public void setUlbName(String ulbName) {
+        this.ulbName = ulbName;
     }
 
     public String getAdmZone() {
         return admZone;
     }
 
-    public void setAdmZone(final String admZone) {
+    public void setAdmZone(String admZone) {
         this.admZone = admZone;
     }
 
@@ -132,7 +130,7 @@ public class FinancialsDetailsRequest {
         return admWard;
     }
 
-    public void setAdmWard(final String admWard) {
+    public void setAdmWard(String admWard) {
         this.admWard = admWard;
     }
 
@@ -140,7 +138,7 @@ public class FinancialsDetailsRequest {
         return fundCode;
     }
 
-    public void setFundCode(final String fundCode) {
+    public void setFundCode(String fundCode) {
         this.fundCode = fundCode;
     }
 
@@ -148,7 +146,7 @@ public class FinancialsDetailsRequest {
         return departmentCode;
     }
 
-    public void setDepartmentCode(final String departmentCode) {
+    public void setDepartmentCode(String departmentCode) {
         this.departmentCode = departmentCode;
     }
 
@@ -156,88 +154,16 @@ public class FinancialsDetailsRequest {
         return functionCode;
     }
 
-    public void setFunctionCode(final String functionCode) {
+    public void setFunctionCode(String functionCode) {
         this.functionCode = functionCode;
-    }
-
-    public String getFundSource() {
-        return fundSource;
-    }
-
-    public void setFundSource(final String fundSource) {
-        this.fundSource = fundSource;
-    }
-
-    public String getSchemeCode() {
-        return schemeCode;
-    }
-
-    public void setSchemeCode(final String schemeCode) {
-        this.schemeCode = schemeCode;
-    }
-
-    public String getSubschemeCode() {
-        return subschemeCode;
-    }
-
-    public void setSubschemeCode(final String subschemeCode) {
-        this.subschemeCode = subschemeCode;
-    }
-
-    public String getMajorCode() {
-        return majorCode;
-    }
-
-    public void setMajorCode(final String majorCode) {
-        this.majorCode = majorCode;
-    }
-
-    public String getMinorCode() {
-        return minorCode;
-    }
-
-    public void setMinorCode(final String minorCode) {
-        this.minorCode = minorCode;
-    }
-
-    public String getDetailedCode() {
-        return detailedCode;
-    }
-
-    public void setDetailedCode(final String detailedCode) {
-        this.detailedCode = detailedCode;
     }
 
     public String getAggregationLevel() {
         return aggregationLevel;
     }
 
-    public void setAggregationLevel(final String aggregationLevel) {
+    public void setAggregationLevel(String aggregationLevel) {
         this.aggregationLevel = aggregationLevel;
-    }
-
-    public String getCurrentFinancialYear() {
-        return currentFinancialYear;
-    }
-
-    public void setCurrentFinancialYear(final String currentFinancialYear) {
-        this.currentFinancialYear = currentFinancialYear;
-    }
-
-    public String getUlbName() {
-        return ulbName;
-    }
-
-    public void setUlbName(final String ulbName) {
-        this.ulbName = ulbName;
-    }
-
-    public String getLastFinancialYear() {
-        return lastFinancialYear;
-    }
-
-    public void setLastFinancialYear(final String lastFinancialYear) {
-        this.lastFinancialYear = lastFinancialYear;
     }
 
     public String getFinancialYear() {
