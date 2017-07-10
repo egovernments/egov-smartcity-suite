@@ -92,7 +92,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SAV
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SIGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVAL_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONAL_COMMISSIONER_DESIGN;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_GRP;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -288,9 +287,6 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 	private Long vacantLandPlotAreaId;
 	private Long layoutApprovalAuthorityId;
 	private boolean citizenPortalUser;
-        private Boolean isReassignEnabled = Boolean.FALSE;
-        private Long stateAwareId;
-        private String transactionType;
         
 	@Autowired
 	private transient PropertyStatusValuesDAO propertyStatusValuesDAO;
@@ -2355,30 +2351,4 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 		if (getModel().getId() == null)
 			showAckBtn = Boolean.TRUE;
 	}
-
-    public Boolean getIsReassignEnabled() {
-        return isReassignEnabled;
-    }
-
-    public void setIsReassignEnabled(Boolean isReassignEnabled) {
-        this.isReassignEnabled = isReassignEnabled;
-    }
-
-    public Long getStateAwareId() {
-        return stateAwareId;
-    }
-
-    public void setStateAwareId(Long stateAwareId) {
-        this.stateAwareId = stateAwareId;
-    }
-
-    public String getTransactionType() {
-        return transactionType;
-    }
-
-    public void setTransactionType(String transactionType) {
-        this.transactionType = transactionType;
-    }
-	
-	
 }

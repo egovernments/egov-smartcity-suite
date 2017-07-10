@@ -168,6 +168,9 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
     private static final String END = "END";
     private static final String UNAUTHORISED_PENALTY = "unauthorisedPenalty";
     private static final String TOTAL_TAX = "totalTax";
+    protected Boolean isReassignEnabled = Boolean.FALSE;
+    protected Long stateAwareId;
+    protected String transactionType;
 
     protected Boolean isApprPageReq = Boolean.TRUE;
 
@@ -1203,4 +1206,27 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
         this.initiator = initiator;
     }
 
+    public Boolean getIsReassignEnabled() {
+        return isReassignEnabled;
+    }
+
+    public void setIsReassignEnabled(Boolean isReassignEnabled) {
+        this.isReassignEnabled = isReassignEnabled;
+    }
+
+    public Long getStateAwareId() {
+        return stateAwareId;
+    }
+
+    public void setStateAwareId(Long stateAwareId) {
+        this.stateAwareId = stateAwareId;
+    }
+
+    public String getTransactionType() {
+        return transactionType;
+    }
+
+    public void setTransactionType(String transactionType) {
+        this.transactionType = transactionType;
+    }
 }

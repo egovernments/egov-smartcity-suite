@@ -106,7 +106,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_ASSISTANT_AP
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_NEW_ASSESSENT;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -341,9 +340,6 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 	private boolean citizenPortalUser;
 	private Long zoneId;
 	private String zoneName;
-        private Boolean isReassignEnabled = Boolean.FALSE;
-        private Long stateAwareId;
-        private String transactionType;
 
 	@Autowired
 	transient PropertyPersistenceService basicPropertyService;
@@ -2594,28 +2590,4 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 	public void setZoneId(Long zoneId) {
 		this.zoneId = zoneId;
 	}
-
-         public Boolean getIsReassignEnabled() {
-                return isReassignEnabled;
-         }
-
-         public void setIsReassignEnabled(Boolean isReassignEnabled) {
-                this.isReassignEnabled = isReassignEnabled;
-         }
-
-         public Long getStateAwareId() {
-                return stateAwareId;
-         }
-         
-         public void setStateAwareId(Long stateAwareId) {
-            this.stateAwareId = stateAwareId;
-        }
-
-        public String getTransactionType() {
-                return transactionType;
-         }
-
-         public void setTransactionType(String transactionType) {
-                this.transactionType = transactionType;
-         }
 }

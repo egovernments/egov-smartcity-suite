@@ -197,9 +197,6 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
     private Boolean showAckBtn = Boolean.FALSE;
     private String instStartDt;
     private List<String> guardianRelations;
-    private Boolean isReassignEnabled = Boolean.FALSE;
-    private Long stateAwareId;
-    private String transactionType;
 
     @Autowired
     private transient PropertyPersistenceService basicPropertyService;
@@ -1308,29 +1305,4 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
     public void setGuardianRelations(List<String> guardianRelations) {
 	this.guardianRelations = guardianRelations;
     }
-
-    public Boolean getIsReassignEnabled() {
-        return isReassignEnabled;
-    }
-
-    public void setIsReassignEnabled(Boolean isReassignEnabled) {
-        this.isReassignEnabled = isReassignEnabled;
-    }
-
-    public Long getStateAwareId() {
-        return stateAwareId;
-    }
-
-    public void setStateAwareId(Long stateAwareId) {
-        this.stateAwareId = stateAwareId;
-    }
-
-    public String getTransactionType() {
-        return transactionType;
-    }
-
-    public void setTransactionType(String transactionType) {
-        this.transactionType = transactionType;
-    } 
-    
 }

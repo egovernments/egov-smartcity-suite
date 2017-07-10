@@ -316,9 +316,6 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     private boolean dataEntry = Boolean.FALSE;
     private String applicationSource;
     private List<String> guardianRelations;
-    private Boolean isReassignEnabled = Boolean.FALSE;
-    private Long stateAwareId;
-    private String transactionType;
 
     @Autowired
     private transient PropertyDepartmentRepository propertyDepartmentRepository;
@@ -2398,28 +2395,4 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         this.guardianRelations = guardianRelations;
     }
     
-
-    public Boolean getIsReassignEnabled() {
-        return isReassignEnabled;
-    }
-
-    public void setIsReassignEnabled(Boolean isReassignEnabled) {
-        this.isReassignEnabled = isReassignEnabled;
-    }
-
-    public Long getStateAwareId() {
-        return stateAwareId;
-    }
-
-    public void setStateAwareId(Long stateAwareId) {
-        this.stateAwareId = stateAwareId;
-    }
-
-    public String getTransactionType() {
-        return transactionType;
-    }
-
-    public void setTransactionType(String transactionType) {
-        this.transactionType = transactionType;
-    }
 }
