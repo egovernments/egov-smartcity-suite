@@ -132,6 +132,7 @@ import org.egov.ptis.domain.entity.property.PropertyUsage;
 import org.egov.ptis.domain.entity.property.VacantProperty;
 import org.egov.ptis.domain.service.property.PropertyPersistenceService;
 import org.egov.ptis.domain.service.property.PropertyService;
+import org.egov.ptis.domain.service.reassign.ReassignService;
 import org.egov.ptis.exceptions.TaxCalculatorExeption;
 import org.egov.ptis.master.service.ApartmentService;
 import org.egov.ptis.master.service.FloorTypeService;
@@ -196,6 +197,9 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
     private Boolean showAckBtn = Boolean.FALSE;
     private String instStartDt;
     private List<String> guardianRelations;
+    private Boolean isReassignEnabled = Boolean.FALSE;
+    private Long stateAwareId;
+    private String transactionType;
 
     @Autowired
     private transient PropertyPersistenceService basicPropertyService;
@@ -230,6 +234,8 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
     private ReportViewerUtil reportViewerUtil;
     @Autowired
     private transient PropertyService propertyService;
+    @Autowired
+    private ReassignService reassignService;
 
     public AmalgamationAction() {
         super();
@@ -554,6 +560,9 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
             propertyModel = (PropertyImpl) getPersistenceService().findByNamedQuery(QUERY_PROPERTYIMPL_BYID,
                     Long.valueOf(getModelId()));
             setModifyRsn(propertyModel.getPropertyDetail().getPropertyMutationMaster().getCode());
+            isReassignEnabled = reassignService.isReassignEnabled();
+            stateAwareId = propertyModel.getId();
+            transactionType = APPLICATION_TYPE_AMALGAMATION;
             if (logger.isDebugEnabled())
                 logger.debug("view: PropertyModel by model id: " + propertyModel);
         }
@@ -1292,11 +1301,36 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         this.instStartDt = instStartDt;
     }
 
-	public List<String> getGuardianRelations() {
-		return guardianRelations;
-	}
+    public List<String> getGuardianRelations() {
+	return guardianRelations;
+    }
 
-	public void setGuardianRelations(List<String> guardianRelations) {
-		this.guardianRelations = guardianRelations;
-	} 
+    public void setGuardianRelations(List<String> guardianRelations) {
+	this.guardianRelations = guardianRelations;
+    }
+
+    public Boolean getIsReassignEnabled() {
+        return isReassignEnabled;
+    }
+
+    public void setIsReassignEnabled(Boolean isReassignEnabled) {
+        this.isReassignEnabled = isReassignEnabled;
+    }
+
+    public Long getStateAwareId() {
+        return stateAwareId;
+    }
+
+    public void setStateAwareId(Long stateAwareId) {
+        this.stateAwareId = stateAwareId;
+    }
+
+    public String getTransactionType() {
+        return transactionType;
+    }
+
+    public void setTransactionType(String transactionType) {
+        this.transactionType = transactionType;
+    } 
+    
 }

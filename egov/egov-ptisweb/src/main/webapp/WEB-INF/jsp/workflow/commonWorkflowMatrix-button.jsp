@@ -1,4 +1,4 @@
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
@@ -85,25 +85,53 @@ jQuery(document).on('change', ".applicationcheckbox", function () {
 		if(jQuery('#applicationCheck').length == 0)
 			jQuery('#Forward').removeAttr('disabled');
 	});
-    
+	
+	var popupWindow=null;
+	
+	function openReassignWindow()
+	{ 
+		var modelIdAndAppTypeParam = '<s:property value="%{transactionType}"/>'+"&"+'<s:property value="%{stateAwareId}"/>';
+		popupWindow = window.open('/ptis/reassign/'
+				+ modelIdAndAppTypeParam,
+				'_blank', 'width=650, height=500, scrollbars=yes', false);
+		jQuery('.loader-class').modal('show', {backdrop: ''});
+	}
+	
+	function closeAllWindows(){
+		popupWindow.close();
+		self.close();
+	}
+
+	function closeChildWindow(){
+		jQuery('.loader-class').modal('hide');
+		popupWindow.close();
+	}
+	
 </script>
 <div class="buttonbottom" align="center">
-	<s:hidden id="workFlowAction" name="workFlowAction"/>
-	<s:hidden id="forwardExists" name="forwardExists" value="false"/>
+	<s:hidden id="workFlowAction" name="workFlowAction" />
 	<table style="width: 100%; text-align: center;">
 		<tr>
 			<td><s:iterator value="%{getValidActions()}" var="name">
 					<s:if test="%{name!=''}">
 						<s:if test="%{#name.equalsIgnoreCase('Forward')}">
 							<s:submit type="submit" value="%{name}" cssClass="buttonsubmit"
-								id="%{name}" name="%{name}" disabled="true" onclick="return validateWorkFlowApprover('%{name}','jsValidationErrors');"/>
-					    </s:if>
+								id="%{name}" name="%{name}" disabled="true"
+								onclick="return validateWorkFlowApprover('%{name}','jsValidationErrors');" />
+						</s:if>
 						<s:else>
 							<s:submit type="submit" cssClass="buttonsubmit" value="%{name}"
-							id="%{name}" name="%{name}" onclick="return validateWorkFlowApprover('%{name}','jsValidationErrors');" />
+								id="%{name}" name="%{name}"
+								onclick="return validateWorkFlowApprover('%{name}','jsValidationErrors');" />
 						</s:else>
 					</s:if>
-				</s:iterator> <input type="button" name="button2" id="button2" value="Close"
+				</s:iterator> <s:if test="%{(model.currentState.value).endsWith('NEW')}">
+					<s:if test="%{isReassignEnabled}">
+						<input type="button" value="Reassign" class="buttonsubmit"
+							id="Reassign" name="Reassign"
+							onclick="return openReassignWindow();" />
+					</s:if>
+				</s:if> <input type="button" name="button2" id="button2" value="Close"
 				class="button" onclick="window.close();" /></td>
 		</tr>
 	</table>

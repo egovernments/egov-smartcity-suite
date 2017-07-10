@@ -365,9 +365,14 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
                         .getCreatedBy(), objection.getState().getInitiatorPosition());
             else
                 wfInitiator = assignmentService.getAllActiveEmployeeAssignmentsByEmpId(objection.getCreatedBy().getId()).get(0);
-        } else if (!objection.getStateHistory().isEmpty())
-            wfInitiator = assignmentService.getAssignmentsForPosition(objection.getStateHistory().get(0)
-                    .getOwnerPosition().getId(), new Date()).get(0);
+        } else if (!objection.getStateHistory().isEmpty()){
+            if (objection.getState().getInitiatorPosition() == null)
+                wfInitiator = assignmentService.getAssignmentsForPosition(
+                        objection.getStateHistory().get(0).getOwnerPosition().getId(), new Date()).get(0);
+            else
+                wfInitiator = assignmentService.getAssignmentsForPosition(
+                        objection.getState().getInitiatorPosition().getId(), new Date()).get(0);
+        }
         else
             wfInitiator = assignmentService.getAssignmentsForPosition(objection.getState().getOwnerPosition()
                     .getId(), new Date()).get(0);

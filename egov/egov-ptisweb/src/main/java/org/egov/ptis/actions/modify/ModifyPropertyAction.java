@@ -106,6 +106,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_ASSISTANT_AP
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_NEW_ASSESSENT;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -190,6 +191,7 @@ import org.egov.ptis.domain.repository.master.vacantland.LayoutApprovalAuthority
 import org.egov.ptis.domain.repository.master.vacantland.VacantLandPlotAreaRepository;
 import org.egov.ptis.domain.service.property.PropertyPersistenceService;
 import org.egov.ptis.domain.service.property.PropertyService;
+import org.egov.ptis.domain.service.reassign.ReassignService;
 import org.egov.ptis.exceptions.TaxCalculatorExeption;
 import org.egov.portal.entity.PortalInbox;
 import org.egov.commons.entity.Source;
@@ -339,6 +341,9 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 	private boolean citizenPortalUser;
 	private Long zoneId;
 	private String zoneName;
+        private Boolean isReassignEnabled = Boolean.FALSE;
+        private Long stateAwareId;
+        private String transactionType;
 
 	@Autowired
 	transient PropertyPersistenceService basicPropertyService;
@@ -358,6 +363,9 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 
 	@Autowired
 	transient LayoutApprovalAuthorityRepository layoutApprovalAuthorityRepository;
+	
+	 @Autowired
+	 private ReassignService reassignmentservice;
 
 	@Autowired
 	@Qualifier("ptaxApplicationTypeService")
@@ -577,6 +585,9 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 			setModifyRsn(propertyModel.getPropertyDetail().getPropertyMutationMaster().getCode());
 			if (logger.isDebugEnabled())
 				logger.debug("view: PropertyModel by model id: " + propertyModel);
+			isReassignEnabled = reassignmentservice.isReassignEnabled();
+                        stateAwareId = propertyModel.getId();
+                        transactionType = APPLICATION_TYPE_ALTER_ASSESSENT;
 		}
 		showTaxCalculateButton();
 		final String currWfState = propertyModel.getState().getValue();
@@ -2583,4 +2594,28 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 	public void setZoneId(Long zoneId) {
 		this.zoneId = zoneId;
 	}
+
+         public Boolean getIsReassignEnabled() {
+                return isReassignEnabled;
+         }
+
+         public void setIsReassignEnabled(Boolean isReassignEnabled) {
+                this.isReassignEnabled = isReassignEnabled;
+         }
+
+         public Long getStateAwareId() {
+                return stateAwareId;
+         }
+         
+         public void setStateAwareId(Long stateAwareId) {
+            this.stateAwareId = stateAwareId;
+        }
+
+        public String getTransactionType() {
+                return transactionType;
+         }
+
+         public void setTransactionType(String transactionType) {
+                this.transactionType = transactionType;
+         }
 }

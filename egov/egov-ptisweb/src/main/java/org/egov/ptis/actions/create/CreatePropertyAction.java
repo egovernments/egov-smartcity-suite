@@ -175,6 +175,7 @@ import org.egov.ptis.domain.repository.master.vacantland.LayoutApprovalAuthority
 import org.egov.ptis.domain.repository.master.vacantland.VacantLandPlotAreaRepository;
 import org.egov.ptis.domain.service.property.PropertyPersistenceService;
 import org.egov.ptis.domain.service.property.PropertyService;
+import org.egov.ptis.domain.service.reassign.ReassignService;
 import org.egov.ptis.exceptions.TaxCalculatorExeption;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -314,7 +315,10 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     private boolean eligibleInitiator = Boolean.TRUE;
     private boolean dataEntry = Boolean.FALSE;
     private String applicationSource;
-	private List<String> guardianRelations;
+    private List<String> guardianRelations;
+    private Boolean isReassignEnabled = Boolean.FALSE;
+    private Long stateAwareId;
+    private String transactionType;
 
     @Autowired
     private transient PropertyDepartmentRepository propertyDepartmentRepository;
@@ -324,6 +328,9 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
 
     @Autowired
     private transient LayoutApprovalAuthorityRepository layoutApprovalAuthorityRepository;
+    
+    @Autowired
+    private ReassignService reassignmentservice;
 
     @PersistenceContext
     private transient EntityManager entityManager;
@@ -730,6 +737,9 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         if (logger.isDebugEnabled())
             logger.debug("Entered into view, BasicProperty: " + basicProp + ", Property: " + property + ", UserDesgn: "
                     + userDesgn);
+        isReassignEnabled = reassignmentservice.isReassignEnabled();
+        stateAwareId = property.getId();
+        transactionType = APPLICATION_TYPE_NEW_ASSESSENT;
         final String currState = property.getState().getValue();
         populateFormData();
         if (currState.endsWith(WF_STATE_REJECTED)
@@ -2381,10 +2391,35 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     }
 
     public List<String> getGuardianRelations() {
-		return guardianRelations;
-	}
+        return guardianRelations;
+    }
 
-	public void setGuardianRelations(List<String> guardianRelations) {
-		this.guardianRelations = guardianRelations;
-	} 
+    public void setGuardianRelations(List<String> guardianRelations) {
+        this.guardianRelations = guardianRelations;
+    }
+    
+
+    public Boolean getIsReassignEnabled() {
+        return isReassignEnabled;
+    }
+
+    public void setIsReassignEnabled(Boolean isReassignEnabled) {
+        this.isReassignEnabled = isReassignEnabled;
+    }
+
+    public Long getStateAwareId() {
+        return stateAwareId;
+    }
+
+    public void setStateAwareId(Long stateAwareId) {
+        this.stateAwareId = stateAwareId;
+    }
+
+    public String getTransactionType() {
+        return transactionType;
+    }
+
+    public void setTransactionType(String transactionType) {
+        this.transactionType = transactionType;
+    }
 }

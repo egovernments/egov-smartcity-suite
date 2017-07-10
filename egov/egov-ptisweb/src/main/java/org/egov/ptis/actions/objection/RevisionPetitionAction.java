@@ -92,6 +92,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SAV
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SIGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVAL_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONAL_COMMISSIONER_DESIGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_GRP;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -196,6 +197,7 @@ import org.egov.ptis.domain.repository.master.vacantland.VacantLandPlotAreaRepos
 import org.egov.ptis.domain.service.notice.NoticeService;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.domain.service.property.SMSEmailService;
+import org.egov.ptis.domain.service.reassign.ReassignService;
 import org.egov.ptis.domain.service.revisionPetition.RevisionPetitionService;
 import org.egov.ptis.exceptions.TaxCalculatorExeption;
 import org.egov.ptis.notice.PtNotice;
@@ -286,7 +288,10 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 	private Long vacantLandPlotAreaId;
 	private Long layoutApprovalAuthorityId;
 	private boolean citizenPortalUser;
-
+        private Boolean isReassignEnabled = Boolean.FALSE;
+        private Long stateAwareId;
+        private String transactionType;
+        
 	@Autowired
 	private transient PropertyStatusValuesDAO propertyStatusValuesDAO;
 	@Autowired
@@ -326,6 +331,9 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 	private transient PropertyTaxCommonUtils propertyTaxCommonUtils;
 	@Autowired
 	private transient ReportViewerUtil reportViewerUtil;
+	
+	@Autowired
+	private ReassignService reassignmentservice;
 
 	private transient SMSEmailService sMSEmailService;
 	private String actionType;
@@ -1287,6 +1295,9 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 			logger.debug("ObjectionAction | view | Start");
 		objection = revisionPetitionService.findById(Long.valueOf(parameters.get("objectionId")[0]), false);
 		getPropertyView(objection.getBasicProperty().getUpicNo());
+		isReassignEnabled = reassignmentservice.isReassignEnabled();
+                stateAwareId = objection.getId();
+                transactionType = APPLICATION_TYPE_GRP;
 
 		if (objection != null && objection.getBasicProperty() != null
 				&& objection.getBasicProperty().getPropertyID() != null) {
@@ -2344,4 +2355,30 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 		if (getModel().getId() == null)
 			showAckBtn = Boolean.TRUE;
 	}
+
+    public Boolean getIsReassignEnabled() {
+        return isReassignEnabled;
+    }
+
+    public void setIsReassignEnabled(Boolean isReassignEnabled) {
+        this.isReassignEnabled = isReassignEnabled;
+    }
+
+    public Long getStateAwareId() {
+        return stateAwareId;
+    }
+
+    public void setStateAwareId(Long stateAwareId) {
+        this.stateAwareId = stateAwareId;
+    }
+
+    public String getTransactionType() {
+        return transactionType;
+    }
+
+    public void setTransactionType(String transactionType) {
+        this.transactionType = transactionType;
+    }
+	
+	
 }

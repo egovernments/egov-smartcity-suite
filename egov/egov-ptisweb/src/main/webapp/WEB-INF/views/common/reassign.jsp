@@ -55,12 +55,15 @@
 	};
 
 	jQuery(document).ready(function(e) {
-
 		jQuery('form').submit(function(e) {
 			isSubmitForm = true;
 		});
 
 	});
+//this will close the child window when the parent window is closed
+	window.opener.onbeforeunload = function () {
+		window.opener.closeChildWindow();
+	}
 </script>
 
 
