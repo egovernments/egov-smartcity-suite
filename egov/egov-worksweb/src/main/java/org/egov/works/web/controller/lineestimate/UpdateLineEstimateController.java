@@ -431,7 +431,8 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
             final EstimateAppropriation lineEstimateAppropriation = estimateAppropriationService
                     .findLatestByLineEstimateDetails(
                             lineEstimate.getLineEstimateDetails().get(0));
-            model.addAttribute("budgetAppropriationDate", lineEstimateAppropriation.getBudgetUsage().getUpdatedTime());
+            if(lineEstimateAppropriation != null && lineEstimateAppropriation.getBudgetUsage() != null)
+                model.addAttribute("budgetAppropriationDate", lineEstimateAppropriation.getBudgetUsage().getUpdatedTime());
         }
 
         lineEstimateService.loadModelValues(lineEstimate, model);

@@ -53,7 +53,6 @@
 					<th><spring:message code="lbl.contractor.name" /></th>
 					<th><spring:message code="lbl.contractor.code" /></th>
 					<th><spring:message code="lbl.contractorclass" /></th>
-					<th><spring:message code="lbl.status" /></th>
 					<c:if test="${mode != 'view'}"> 
 						<th><spring:message code="lbl.modify" /></th>
 					</c:if>

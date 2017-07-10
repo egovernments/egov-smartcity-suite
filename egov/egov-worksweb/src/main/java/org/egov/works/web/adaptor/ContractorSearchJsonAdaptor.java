@@ -67,8 +67,6 @@ public class ContractorSearchJsonAdaptor implements JsonSerializer<Contractor> {
                         contractorDetails.get(contractorDetails.size() - 1).getGrade() != null
                                 ? contractorDetails.get(contractorDetails.size() - 1).getGrade().getGrade()
                                 : StringUtils.EMPTY);
-                jsonObject.addProperty("status",
-                        contractorDetails.get(contractorDetails.size() - 1).getStatus().getCode());
             }
             jsonObject.addProperty("contractorId", contractor.getId());
         }

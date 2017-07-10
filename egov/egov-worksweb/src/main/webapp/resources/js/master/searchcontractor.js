@@ -77,8 +77,6 @@ $('#btnsearch').click(function(e) {
 				"data" : "code",
 			}, {
 				"data" : "class",
-			},{
-				"data" : "status",
 			}]
 		});
 });
