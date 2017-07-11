@@ -300,8 +300,11 @@ public class CreateSpillOverLineEstimateController {
 
     private void setDropDownValues(final Model model) {
         model.addAttribute("funds", fundHibernateDAO.findAllActiveFunds());
-        model.addAttribute("functions", functionHibernateDAO.getAllActiveFunctions());
-        model.addAttribute("budgetHeads", budgetGroupDAO.getBudgetGroupList());
+        if (BudgetControlType.BudgetCheckOption.NONE.toString()
+                .equalsIgnoreCase(budgetControlTypeService.getConfigValue())) {
+            model.addAttribute("functions", functionHibernateDAO.getAllActiveFunctions());
+            model.addAttribute("budgetHeads", budgetGroupDAO.getBudgetGroupList());
+        }
         model.addAttribute("departments", worksUtils.getUserDepartments(securityUtils.getCurrentUser()));
         model.addAttribute("workCategory", WorkCategory.values());
         model.addAttribute("beneficiary", Beneficiary.values());
@@ -324,6 +327,7 @@ public class CreateSpillOverLineEstimateController {
 
         model.addAttribute("cuttOffDate", worksUtils.getCutOffDate());
         model.addAttribute("currFinDate", worksUtils.getFinancialYearByDate(new Date()).getStartingDate());
+        model.addAttribute("budgetControlType",budgetControlTypeService.getConfigValue());
 
     }
 

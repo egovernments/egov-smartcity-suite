@@ -98,6 +98,7 @@
 	<input type="hidden" id="nominationName" value="${nominationName}">
 	<input id="errorAmountRuleForward" type="hidden" value="<spring:message code="error.forward.approve" />" />
     <input id="errorAmountRuleApprove" type="hidden" value="<spring:message code="error.create.approve" />" />
+   	<input type="hidden" id="budgetControlType" value='${budgetControlType }'/>
 	<c:choose>
 		<c:when test="${abstractEstimate.lineEstimateDetails != null }">
 			<form:hidden path="estimateNumber" name="estimateNumber" value="${abstractEstimate.lineEstimateDetails.estimateNumber}"/>

@@ -55,6 +55,7 @@
 			<input type="hidden" id="nominationLimit" value="${nominationLimit}">
 			<input type="hidden" id="nominationName" value="${nominationName}">
 			<form:hidden id="hiddenfields" path="" value="${hiddenfields}" />
+		   	<input type="hidden" id="budgetControlType" value='${budgetControlType }'/>
 			<div class="row">
 				<div class="col-md-12">
 					<jsp:include page="lineestimateheader.jsp"/>

@@ -1256,8 +1256,9 @@ public class EstimateService {
                 WorksConstants.LOCATION_BOUNDARYTYPE, WorksConstants.LOCATION_HIERARCHYTYPE));
         model.addAttribute("scheduleCategories", scheduleCategoryService.getAllScheduleCategories());
         model.addAttribute("funds", fundHibernateDAO.findAllActiveFunds());
-        model.addAttribute("functions", functionHibernateDAO.getAllActiveFunctions());
-        model.addAttribute("budgetHeads", budgetGroupDAO.getBudgetGroupList());
+        if (worksApplicationProperties.lineEstimateRequired()) {
+            loadBudgetHeadAndFunction(model);
+        }
         model.addAttribute("schemes", schemeService.findAll());
         model.addAttribute("departments", worksUtils.getUserDepartments(securityUtils.getCurrentUser()));
         model.addAttribute("typeOfWork",
@@ -1279,7 +1280,16 @@ public class EstimateService {
         else
             model.addAttribute("isServiceVATRequired", false);
         loadLocationAppConfigValue(model);
+        if (BudgetControlType.BudgetCheckOption.NONE.toString()
+                .equalsIgnoreCase(budgetControlTypeService.getConfigValue())) {
+            loadBudgetHeadAndFunction(model);
+        }
 
+    }
+
+    private void loadBudgetHeadAndFunction(final Model model) {
+        model.addAttribute("functions", functionHibernateDAO.getAllActiveFunctions());
+        model.addAttribute("budgetHeads", budgetGroupDAO.getBudgetGroupList());
     }
 
     public void validateTechnicalSanctionDetail(final AbstractEstimate abstractEstimate, final BindingResult errors) {

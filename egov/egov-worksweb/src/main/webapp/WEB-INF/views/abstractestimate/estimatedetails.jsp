@@ -46,13 +46,24 @@
 			    <spring:message code="lbl.natureofwork" /><c:if test="${abstractEstimate.lineEstimateDetails == null }"><span class="mandatory"></span></c:if>
 			</label>
 			<div class="col-sm-3 add-margin ">
-			<form:select path="natureOfWork" data-first-option="false" id="natureOfWork" class="form-control disablefield" required="required">
+			<c:choose>
+				<c:when test="${budgetControlType != 'NONE' }">
+					<form:select path="natureOfWork" data-first-option="false" id="natureOfWork" class="form-control disablefield" onchange="getBudgetHeads();" required="required">
 					<form:option value="">
 						<spring:message code="lbl.select" />
 					</form:option>
 					<form:options items="${natureOfWork}" itemLabel="name" itemValue="id" />
 				</form:select>
-				
+				</c:when>
+				<c:otherwise>
+					<form:select path="natureOfWork" data-first-option="false" id="natureOfWork" class="form-control disablefield" required="required">
+					<form:option value="">
+						<spring:message code="lbl.select" />
+					</form:option>
+					<form:options items="${natureOfWork}" itemLabel="name" itemValue="id" />
+				</form:select>
+				</c:otherwise>
+			</c:choose>
 				<form:errors path="natureOfWork" cssClass="add-margin error-msg" /> 
 			</div>
 			<label class="col-sm-2 control-label text-right">

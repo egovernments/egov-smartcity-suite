@@ -38,7 +38,7 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
-
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <div class="panel panel-primary" data-collapsed="0"
 	style="text-align: left">
 	<div class="panel-heading">
@@ -52,24 +52,48 @@
 					code="lbl.fund" /><c:if test="${abstractEstimate.lineEstimateDetails == null }"><span class="mandatory"></span></c:if>
 			</label>
 			<div class="col-sm-3 add-margin">
-				<form:select path="financialDetails[0].fund" data-first-option="false" id="fund"  class="form-control disablefield" onchange="getSchemsByFundId(this.value);" required="required">
-					<form:option value="">
+					<c:choose>
+						<c:when test="${budgetControlType != 'NONE' }">
+							<form:select path="financialDetails[0].fund" data-first-option="false" id="fund"  class="form-control disablefield" onchange="getFunctionsByFundAndDepartment();getBudgetHeads();getSchemsByFundId(this.value);" required="required">
+							<form:option value="">
 						<spring:message code="lbl.select" />
 					</form:option>
 					<form:options items="${funds}" itemValue="id" itemLabel="name" />
 				</form:select>
+						</c:when>
+						<c:otherwise>
+							<form:select path="financialDetails[0].fund" data-first-option="false" id="fund"  class="form-control disablefield" onchange="getSchemsByFundId(this.value);" required="required">
+							<form:option value="">
+						<spring:message code="lbl.select" />
+					</form:option>
+					<form:options items="${funds}" itemValue="id" itemLabel="name" />
+				</form:select>
+						</c:otherwise>
+					</c:choose>
 				<form:errors path="financialDetails[0].fund"
 					cssClass="add-margin error-msg" />
 			</div>
 
 			<label class="col-sm-2 control-label text-right"> <spring:message code="lbl.function" /><c:if test="${abstractEstimate.lineEstimateDetails == null }"><span class="mandatory"></span></c:if></label>
 			<div class="col-sm-3 add-margin">
-				<form:select path="financialDetails[0].function" data-first-option="false" id="function" class="form-control disablefield" required="required">
-					<form:option value="">
+				<c:choose>
+					<c:when test="${budgetControlType != 'NONE' }">
+						<form:select path="financialDetails[0].function" data-first-option="false" id="function" class="form-control disablefield" onchange="getBudgetHeads();" required="required">
+						<form:option value="">
 						<spring:message code="lbl.select" />
 					</form:option>
 					<form:options items="${functions}" itemValue="id" itemLabel="name" />
-				</form:select>
+					</form:select>
+					</c:when>
+					<c:otherwise>
+						<form:select path="financialDetails[0].function" data-first-option="false" id="function" class="form-control disablefield" required="required">	
+						<form:option value="">
+						<spring:message code="lbl.select" />
+					</form:option>
+					<form:options items="${functions}" itemValue="id" itemLabel="name" />
+					</form:select>
+						</c:otherwise>
+				</c:choose>
 				<form:errors path="financialDetails[0].function" cssClass="add-margin error-msg" />
 			</div>
 			<input type="hidden" id="functionId" value="${abstractEstimate.financialDetails.get(0).function.id }" />

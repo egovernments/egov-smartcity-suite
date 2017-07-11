@@ -261,8 +261,11 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
 
     private void setDropDownValues(final Model model) {
         model.addAttribute("funds", fundHibernateDAO.findAllActiveFunds());
-        model.addAttribute("functions", functionHibernateDAO.getAllActiveFunctions());
-        model.addAttribute("budgetHeads", budgetGroupDAO.getBudgetGroupList());
+        if (BudgetControlType.BudgetCheckOption.NONE.toString()
+                .equalsIgnoreCase(budgetControlTypeService.getConfigValue())) {
+            model.addAttribute("functions", functionHibernateDAO.getAllActiveFunctions());
+            model.addAttribute("budgetHeads", budgetGroupDAO.getBudgetGroupList());
+        }
         model.addAttribute("departments", worksUtils.getUserDepartments(securityUtils.getCurrentUser()));
         model.addAttribute("workCategory", WorkCategory.values());
         model.addAttribute("beneficiary", Beneficiary.values());
@@ -273,6 +276,8 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
         model.addAttribute("natureOfWork", natureOfWorkService.findAll());
         model.addAttribute("locations", boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
                 WorksConstants.LOCATION_BOUNDARYTYPE, WorksConstants.LOCATION_HIERARCHYTYPE));
+        model.addAttribute("budgetControlType",budgetControlTypeService.getConfigValue());
+
 
     }
 

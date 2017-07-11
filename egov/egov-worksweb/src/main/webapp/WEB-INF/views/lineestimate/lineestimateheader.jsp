@@ -64,12 +64,25 @@
 			</div>
 			<label class="col-sm-2 control-label text-right" for="executingDepartments"><spring:message code="lbl.department" /><span class="mandatory"></span></label>
 			<div class="col-sm-3 add-margin">
-				<form:select path="executingDepartment" data-first-option="false" id="executingDepartments" class="form-control" required="required">
-					<form:option value="">
+				
+				<c:choose>
+					<c:when test="${budgetControlType != 'NONE' }">
+						<form:select path="executingDepartment" data-first-option="false" id="executingDepartments" class="form-control" required="required" onchange="getFunctionsByFundAndDepartment();getBudgetHeads();">
+						<form:option value="">
 						<spring:message code="lbl.select" />
 					</form:option>
 					<form:options items="${departments}" itemValue="id"	itemLabel="name" />
 				</form:select>
+					</c:when>
+					<c:otherwise>
+						<form:select path="executingDepartment" data-first-option="false" id="executingDepartments" class="form-control" required="required">
+						<form:option value="">
+						<spring:message code="lbl.select" />
+					</form:option>
+					<form:options items="${departments}" itemValue="id"	itemLabel="name" />
+				</form:select>
+					</c:otherwise>
+				</c:choose>
 				<form:errors path="executingDepartment" cssClass="add-margin error-msg" />
 			</div>
 		</div>
@@ -144,12 +157,24 @@
 		<div class="form-group">
 			<label class="col-sm-3 control-label text-right" for = "natureOfWork"><spring:message code="lbl.natureofwork" /><span class="mandatory"></span></label>
 			<div class="col-sm-3 add-margin">
-				<form:select path="natureOfWork" data-first-option="false" id="natureOfWork" class="form-control" required="required" >
-					<form:option value="">
+				<c:choose>
+					<c:when test="${budgetControlType != 'NONE' }">
+						<form:select path="natureOfWork" data-first-option="false" id="natureOfWork" class="form-control" required="required" onchange="getBudgetHeads();">
+						<form:option value="">
 						<spring:message code="lbl.select" />
 					</form:option>
 					<form:options items="${natureOfWork}" itemLabel="name" itemValue="id" />
 				</form:select>
+					</c:when>
+					<c:otherwise>
+						<form:select path="natureOfWork" data-first-option="false" id="natureOfWork" class="form-control" required="required" >
+						<form:option value="">
+						<spring:message code="lbl.select" />
+					</form:option>
+					<form:options items="${natureOfWork}" itemLabel="name" itemValue="id" />
+				</form:select>
+					</c:otherwise>
+				</c:choose>
 				<form:errors path="natureOfWork" cssClass="add-margin error-msg" /> 
 			</div>
 			<label class="col-sm-2 control-label text-right" for = "typeofwork"><spring:message code="lbl.typeofwork" /><span class="mandatory"></span></label>
@@ -192,23 +217,47 @@
 		<div class="form-group">
 			<label class="col-sm-3 control-label text-right" for = "fund"><spring:message code="lbl.fund" /><span class="mandatory"></span></label>
 			<div class="col-sm-3 add-margin">
-				<form:select path="fund" data-first-option="false"
-					class="form-control" id="fund" required="required" onchange="getSchemsByFundId(this.value);">
-					<form:option value="">
+				<c:choose>
+					<c:when test="${budgetControlType != 'NONE' }">
+						<form:select path="fund" data-first-option="false"
+ 							class="form-control" id="fund" required="required" onchange="getFunctionsByFundAndDepartment();getBudgetHeads();getSchemsByFundId(this.value);">
+ 						<form:option value="">
 						<spring:message code="lbl.select" />
 					</form:option>
 					<form:options items="${funds}" itemValue="id" itemLabel="name" />
 				</form:select>
+					</c:when>
+					<c:otherwise>
+						<form:select path="fund" data-first-option="false"
+							class="form-control" id="fund" required="required" onchange="getSchemsByFundId(this.value);">
+						<form:option value="">
+						<spring:message code="lbl.select" />
+					</form:option>
+					<form:options items="${funds}" itemValue="id" itemLabel="name" />
+				</form:select>
+					</c:otherwise>
+				</c:choose>
 				<form:errors path="fund" cssClass="add-margin error-msg" />
 			</div>
 			<label class="col-sm-2 control-label text-right" for = "function"><spring:message code="lbl.function" /><span class="mandatory"></span></label>
 			<div class="col-sm-3 add-margin">
-				<form:select path="function" data-first-option="false" name="function" class="form-control" id="function" required="required">
-					<form:option value="">
-						<spring:message code="lbl.select" />
-					</form:option>
-					<form:options items="${functions}" itemValue="id" itemLabel="name" />
-				</form:select>
+				<c:choose>
+					<c:when test="${budgetControlType != 'NONE' }">
+						<form:select path="function" data-first-option="false" name="function" class="form-control" id="function" required="required" onchange="getBudgetHeads();">
+							<form:option value="">
+								<spring:message code="lbl.select" />
+							</form:option>
+						</form:select>
+					</c:when>
+					<c:otherwise>
+						<form:select path="function" data-first-option="false" name="function" class="form-control" id="function" required="required">
+							<form:option value="">
+								<spring:message code="lbl.select" />
+							</form:option>
+							<form:options items="${functions}" itemValue="id" itemLabel="name" />
+						</form:select>
+					</c:otherwise>
+				</c:choose>
 				<form:errors path="function" cssClass="add-margin error-msg" />
 			</div>
 		</div>

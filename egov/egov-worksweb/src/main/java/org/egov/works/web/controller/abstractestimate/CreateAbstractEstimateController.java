@@ -231,6 +231,7 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
         final List<AppConfigValues> nominationName = appConfigValuesService.getConfigValuesByModuleAndKey(
                 WorksConstants.WORKS_MODULE_NAME, WorksConstants.NOMINATION_NAME);
         model.addAttribute("nominationName", !nominationName.isEmpty() ? nominationName.get(0).getValue() : "");
+        model.addAttribute("budgetControlType",budgetControlTypeService.getConfigValue());
     }
 
     @RequestMapping(value = { "/create", "/createspillover" }, method = RequestMethod.POST)
