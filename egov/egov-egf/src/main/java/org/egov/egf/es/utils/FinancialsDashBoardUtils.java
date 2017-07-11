@@ -48,8 +48,10 @@
 package org.egov.egf.es.utils;
 
 import org.apache.commons.lang3.StringUtils;
+import org.egov.egf.bean.dashboard.FinancialsBudgetDetailResponse;
 import org.egov.egf.bean.dashboard.FinancialsDetailResponse;
 import org.egov.egf.bean.dashboard.FinancialsDetailsRequest;
+import org.egov.utils.FinancialConstants;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 
@@ -63,36 +65,42 @@ public class FinancialsDashBoardUtils {
     private static final String GRADE = "ulbgrade";
     private static final String ULBCODE = "ulbcode";
     private static final String ULBNAME = "ulbname";
-    private static final String VOUCHER_DATE = "vouchereffectivedate";
+    private static final String VOUCHER_DATE = "voucherdate";
     private static final String ADM_ZONE = "admZone";
-    private static final String FUND_NAME = "voucherfundname";
-    private static final String DEPARTMENT_CODE = "vouchermisdepartmentname";
-    private static final String FUNCTION_CODE = "vouchermisfunctionname";
-    private static final String FUNDSOURCE_CODE = "vouchermisfundsourcename";
-    private static final String SCHEME_CODE = "vouchermisschemename";
-    private static final String SUBSCHEME_CODE = "vouchermissubschemename";
+    private static final String FUND_CODE = "voucherfundcode";
+    private static final String DEPARTMENT_CODE = "vouchermisdepartmentcode";
+    private static final String FUNCTION_CODE = "vouchermisfunctioncode";
+    private static final String FUNDSOURCE_NAME = "vouchermisfundsourcename";
+    private static final String SCHEME_CODE = "vouchermisschemecode";
+    private static final String SUBSCHEME_CODE = "vouchermissubschemecode";
     private static final String MAJOR_CODE = "majorcode";
     private static final String MINOR_CODE = "minorcode";
     private static final String DETAILED_CODE = "glcode";
     private static final String DEPARTMENT = "department";
+    private static final String MONTH = "month";
+    private static final String FINANCIALYEAR = "financialyear";
 
     public static String getAggregationGroupingField(final FinancialsDetailsRequest financialsDetailsRequest) {
-        String aggregationField = DISTRICT;
+        String aggregationField = "";
 
         if (StringUtils.isNotBlank(financialsDetailsRequest.getAggregationLevel())) {
             aggregationField = setAggregateLevel(financialsDetailsRequest);
             if (FUND.equalsIgnoreCase(financialsDetailsRequest.getAggregationLevel()))
-                aggregationField = FUND_NAME;
+                aggregationField = FUND_CODE;
             if (DEPARTMENT.equalsIgnoreCase(financialsDetailsRequest.getAggregationLevel()))
                 aggregationField = DEPARTMENT_CODE;
             if (FUNCTION.equalsIgnoreCase(financialsDetailsRequest.getAggregationLevel()))
                 aggregationField = FUNCTION_CODE;
             if ("fundsource".equalsIgnoreCase(financialsDetailsRequest.getAggregationLevel()))
-                aggregationField = FUNDSOURCE_CODE;
+                aggregationField = FUNDSOURCE_NAME;
             if ("scheme".equalsIgnoreCase(financialsDetailsRequest.getAggregationLevel()))
                 aggregationField = SCHEME_CODE;
             if ("subscheme".equalsIgnoreCase(financialsDetailsRequest.getAggregationLevel()))
                 aggregationField = SUBSCHEME_CODE;
+            if ("month".equalsIgnoreCase(financialsDetailsRequest.getAggregationLevel()))
+                aggregationField = MONTH;
+            if ("financialyear".equalsIgnoreCase(financialsDetailsRequest.getAggregationLevel()))
+                aggregationField = FINANCIALYEAR;
 
 
         }
@@ -118,11 +126,11 @@ public class FinancialsDashBoardUtils {
                     .filter(QueryBuilders.matchQuery(FUNCTION_CODE, financialsDetailsRequest.getFunctionCode()));
         if (StringUtils.isNotBlank(financialsDetailsRequest.getFundCode()))
             boolQuery
-                    .filter(QueryBuilders.matchQuery(FUND_NAME, financialsDetailsRequest.getFundCode()));
+                    .filter(QueryBuilders.matchQuery(FUND_CODE, financialsDetailsRequest.getFundCode()));
 
         if (StringUtils.isNotBlank(financialsDetailsRequest.getFundSource()))
             boolQuery
-                    .filter(QueryBuilders.matchQuery(FUNDSOURCE_CODE, financialsDetailsRequest.getFundSource()));
+                    .filter(QueryBuilders.matchQuery(FUNDSOURCE_NAME, financialsDetailsRequest.getFundSource()));
 
         if (StringUtils.isNotBlank(financialsDetailsRequest.getSchemeCode()))
             boolQuery
@@ -130,6 +138,9 @@ public class FinancialsDashBoardUtils {
         if (StringUtils.isNotBlank(financialsDetailsRequest.getSubschemeCode()))
             boolQuery
                     .filter(QueryBuilders.matchQuery(SUBSCHEME_CODE, financialsDetailsRequest.getSubschemeCode()));
+        if (StringUtils.isNotBlank(financialsDetailsRequest.getFinancialYear()))
+            boolQuery
+                    .filter(QueryBuilders.matchQuery(FINANCIALYEAR, financialsDetailsRequest.getFinancialYear()));
 
 
         return boolQuery;
@@ -171,10 +182,10 @@ public class FinancialsDashBoardUtils {
                     .filter(QueryBuilders.matchQuery(DETAILED_CODE, financialsDetailsRequest.getDetailedCode()));
         if (StringUtils.isNotBlank(financialsDetailsRequest.getMajorCode()))
             boolQuery
-                    .filter(QueryBuilders.matchQuery(MAJOR_CODE, financialsDetailsRequest.getMajorCode()));
+                    .filter(QueryBuilders.matchQuery(MAJOR_CODE, financialsDetailsRequest.getMajorCode().toLowerCase()));
         if (StringUtils.isNotBlank(financialsDetailsRequest.getMinorCode()))
             boolQuery
-                    .filter(QueryBuilders.matchQuery(MINOR_CODE, financialsDetailsRequest.getMinorCode()));
+                    .filter(QueryBuilders.matchQuery(MINOR_CODE, financialsDetailsRequest.getMinorCode().toLowerCase()));
         if (StringUtils.isNotBlank(financialsDetailsRequest.getAdmWard()))
             boolQuery
                     .filter(QueryBuilders.matchQuery(ADM_WARD, financialsDetailsRequest.getAdmWard()));
@@ -186,7 +197,7 @@ public class FinancialsDashBoardUtils {
     }
 
     public static String getOpeningBlncAggrGroupingField(final FinancialsDetailsRequest financialsDetailsRequest) {
-        String aggregationField = DISTRICT;
+        String aggregationField = "";
         if (StringUtils.isNotBlank(financialsDetailsRequest.getAggregationLevel())) {
             aggregationField = setAggregateLevel(financialsDetailsRequest);
             if (FUND.equalsIgnoreCase(financialsDetailsRequest.getAggregationLevel()))
@@ -203,7 +214,7 @@ public class FinancialsDashBoardUtils {
     }
 
     private static String setAggregateLevel(FinancialsDetailsRequest financialsDetailsRequest) {
-        String aggregationField = DISTRICT;
+        String aggregationField = "";
         if ("district".equalsIgnoreCase(financialsDetailsRequest.getAggregationLevel()))
             aggregationField = DISTRICT;
         if ("region".equalsIgnoreCase(financialsDetailsRequest.getAggregationLevel()))
@@ -222,6 +233,8 @@ public class FinancialsDashBoardUtils {
             aggregationField = ADM_ZONE;
         if ("admw".equalsIgnoreCase(financialsDetailsRequest.getAggregationLevel()))
             aggregationField = ADM_WARD;
+        if ("month".equalsIgnoreCase(financialsDetailsRequest.getAggregationLevel()))
+            aggregationField = MONTH;
         return aggregationField;
     }
 
@@ -244,27 +257,182 @@ public class FinancialsDashBoardUtils {
             financialsDetail.setGrade(finResponse.getGrade());
             financialsDetail.setRegion(finResponse.getRegion());
         }
-        if (MAJOR_CODE.equalsIgnoreCase(aggrField))
+        if (MAJOR_CODE.equalsIgnoreCase(aggrField)) {
             financialsDetail.setMajorCode(keyName);
-        if (MINOR_CODE.equalsIgnoreCase(aggrField))
+            financialsDetail.setMajorCodeDescription(finResponse.getMajorCodeDescription());
+        }
+        if (MINOR_CODE.equalsIgnoreCase(aggrField)) {
             financialsDetail.setMinorCode(keyName);
-        if (DETAILED_CODE.equalsIgnoreCase(aggrField))
+            financialsDetail.setMinorCodeDescription(finResponse.getMinorCodeDescription());
+        }
+        if (DETAILED_CODE.equalsIgnoreCase(aggrField)) {
             financialsDetail.setDetailedCode(keyName);
+            financialsDetail.setDetailedCodeDescription(finResponse.getDetailedCodeDescription());
+        }
         if (ADM_ZONE.equalsIgnoreCase(aggrField))
             financialsDetail.setAdmZoneName(keyName);
         if (ADM_WARD.equalsIgnoreCase(aggrField))
             financialsDetail.setAdmWardName(keyName);
-        if (FUND_NAME.equalsIgnoreCase(aggrField))
+        if (FUND_CODE.equalsIgnoreCase(aggrField)) {
             financialsDetail.setFundCode(keyName);
-        if (DEPARTMENT_CODE.equalsIgnoreCase(aggrField))
+            financialsDetail.setFundName(finResponse.getFundName());
+        }
+        if (DEPARTMENT_CODE.equalsIgnoreCase(aggrField)) {
             financialsDetail.setDepartmentCode(keyName);
-        if (FUNCTION_CODE.equalsIgnoreCase(aggrField))
+            financialsDetail.setDepartmentName(finResponse.getDepartmentName());
+        }
+        if (FUNCTION_CODE.equalsIgnoreCase(aggrField)) {
             financialsDetail.setFunctionCode(keyName);
-        if (FUNDSOURCE_CODE.equalsIgnoreCase(aggrField))
+            financialsDetail.setFunctionName(finResponse.getFunctionName());
+        }
+        if (FUNDSOURCE_NAME.equalsIgnoreCase(aggrField))
             financialsDetail.setFundSource(keyName);
-        if (SCHEME_CODE.equalsIgnoreCase(aggrField))
+        if (SCHEME_CODE.equalsIgnoreCase(aggrField)) {
             financialsDetail.setSchemeCode(keyName);
-        if (SUBSCHEME_CODE.equalsIgnoreCase(aggrField))
+            financialsDetail.setSchemeName(finResponse.getSchemeName());
+        }
+        if (SUBSCHEME_CODE.equalsIgnoreCase(aggrField)) {
             financialsDetail.setSubschemeCode(keyName);
+            financialsDetail.setSubschemeName(finResponse.getSubschemeName());
+        }
     }
+
+    public static BoolQueryBuilder prepareWhereClauseForBudget(final FinancialsDetailsRequest financialsDetailsRequest) {
+        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
+        boolQuery = prepareWhereCluase(financialsDetailsRequest, boolQuery);
+        prepairWhereClauseForScheme(financialsDetailsRequest, boolQuery);
+        if (StringUtils.isNotBlank(financialsDetailsRequest.getDepartmentCode()))
+            boolQuery
+                    .filter(QueryBuilders.matchQuery(FinancialConstants.DEPARTMENT_CODE,
+                            financialsDetailsRequest.getDepartmentCode()));
+
+        if (StringUtils.isNotBlank(financialsDetailsRequest.getFromDate())
+                || StringUtils.isNotBlank(financialsDetailsRequest.getToDate()))
+            boolQuery
+                    .filter(QueryBuilders.rangeQuery(FinancialConstants.BUDGETDETAILCREATEDDATE)
+                            .from(financialsDetailsRequest.getFromDate()).to(financialsDetailsRequest.getToDate()));
+
+        if (StringUtils.isNotBlank(financialsDetailsRequest.getFunctionCode()))
+            boolQuery
+                    .filter(QueryBuilders.matchQuery(FinancialConstants.FUNCTION_CODE,
+                            financialsDetailsRequest.getFunctionCode()));
+        if (StringUtils.isNotBlank(financialsDetailsRequest.getFundCode()))
+            boolQuery
+                    .filter(QueryBuilders.matchQuery(FinancialConstants.FUND_CODE, financialsDetailsRequest.getFundCode()));
+
+        return boolQuery;
+    }
+
+    private static void prepairWhereClauseForScheme(final FinancialsDetailsRequest financialsDetailsRequest,
+                                                    BoolQueryBuilder boolQuery) {
+        if (StringUtils.isNotBlank(financialsDetailsRequest.getSchemeCode()))
+            boolQuery
+                    .filter(QueryBuilders.matchQuery(FinancialConstants.SCHEME_CODE, financialsDetailsRequest.getSchemeCode()));
+        if (StringUtils.isNotBlank(financialsDetailsRequest.getSubschemeCode()))
+            boolQuery
+                    .filter(QueryBuilders.matchQuery(FinancialConstants.SUBSCHEME_CODE,
+                            financialsDetailsRequest.getSubschemeCode()));
+    }
+
+    public static void setValuesForBudget(final String keyName, FinancialsBudgetDetailResponse financialsBudgetDetailResponse,
+                                          final String aggrField, final FinancialsBudgetDetailResponse finResponse) {
+
+        setCommonDataToResponse(keyName, financialsBudgetDetailResponse, aggrField, finResponse);
+        setFinancialsDataToResponse(keyName, financialsBudgetDetailResponse, aggrField, finResponse);
+        setChartOfAccountToResponse(keyName, financialsBudgetDetailResponse, aggrField, finResponse);
+        if (ADM_ZONE.equalsIgnoreCase(aggrField))
+            financialsBudgetDetailResponse.setAdmZoneName(keyName);
+        if (ADM_WARD.equalsIgnoreCase(aggrField))
+            financialsBudgetDetailResponse.setAdmWardName(keyName);
+        if (FinancialConstants.DEPARTMENT_CODE.equalsIgnoreCase(aggrField)) {
+            financialsBudgetDetailResponse.setDepartmentCode(keyName);
+            financialsBudgetDetailResponse.setDepartmentName(finResponse.getDepartmentName());
+        }
+        if (FinancialConstants.SCHEME_CODE.equalsIgnoreCase(aggrField)) {
+            financialsBudgetDetailResponse.setSchemeCode(keyName);
+            financialsBudgetDetailResponse.setSchemeName(finResponse.getSchemeName());
+        }
+    }
+
+    private static void setFinancialsDataToResponse(final String keyName,
+                                                    FinancialsBudgetDetailResponse financialsBudgetDetailResponse, final String aggrField,
+                                                    final FinancialsBudgetDetailResponse finResponse) {
+        if (FinancialConstants.FUND_CODE.equalsIgnoreCase(aggrField)) {
+            financialsBudgetDetailResponse.setFundCode(keyName);
+            financialsBudgetDetailResponse.setFundName(finResponse.getFundName());
+        }
+        if (FinancialConstants.FUNCTION_CODE.equalsIgnoreCase(aggrField)) {
+            financialsBudgetDetailResponse.setFunctionCode(keyName);
+            financialsBudgetDetailResponse.setFunctionName(finResponse.getFunctionName());
+        }
+        if (FinancialConstants.SUBSCHEME_CODE.equalsIgnoreCase(aggrField)) {
+            financialsBudgetDetailResponse.setSubschemeCode(keyName);
+            financialsBudgetDetailResponse.setSubschemeName(finResponse.getSubschemeName());
+        }
+    }
+
+    private static void setChartOfAccountToResponse(final String keyName,
+                                                    FinancialsBudgetDetailResponse financialsBudgetDetailResponse, final String aggrField
+            , final FinancialsBudgetDetailResponse finBudResponse) {
+        if (MAJOR_CODE.equalsIgnoreCase(aggrField)) {
+            financialsBudgetDetailResponse.setMajorCode(keyName);
+            financialsBudgetDetailResponse.setMajorCodeDescription(finBudResponse.getMajorCodeDescription());
+        }
+        if (MINOR_CODE.equalsIgnoreCase(aggrField)) {
+            financialsBudgetDetailResponse.setMinorCode(keyName);
+            financialsBudgetDetailResponse.setMinorCodeDescription(finBudResponse.getMinorCodeDescription());
+        }
+        if (DETAILED_CODE.equalsIgnoreCase(aggrField)) {
+            financialsBudgetDetailResponse.setDetailedCode(keyName);
+            financialsBudgetDetailResponse.setDetailedCodeDescription(finBudResponse.getDetailedCodeDescription());
+        }
+    }
+
+    private static void setCommonDataToResponse(final String keyName,
+                                                FinancialsBudgetDetailResponse financialsBudgetDetailResponse, final String aggrField,
+                                                final FinancialsBudgetDetailResponse finResponse) {
+        if (DISTRICT.equalsIgnoreCase(aggrField)) {
+            financialsBudgetDetailResponse.setDistrict(keyName);
+            financialsBudgetDetailResponse.setRegion(finResponse.getRegion());
+        }
+        if (REGION.equalsIgnoreCase(aggrField)) {
+            financialsBudgetDetailResponse.setRegion(keyName);
+        }
+        if (GRADE.equalsIgnoreCase(aggrField)) {
+            financialsBudgetDetailResponse.setGrade(keyName);
+        }
+        if (ULBCODE.equalsIgnoreCase(aggrField)) {
+            financialsBudgetDetailResponse.setUlbCode(keyName);
+            financialsBudgetDetailResponse.setUlbName(finResponse.getUlbName());
+            financialsBudgetDetailResponse.setDistrict(finResponse.getDistrict());
+            financialsBudgetDetailResponse.setGrade(finResponse.getGrade());
+            financialsBudgetDetailResponse.setRegion(finResponse.getRegion());
+        }
+    }
+
+    public static String getAggregationGroupingFieldForBudget(final FinancialsDetailsRequest financialsDetailsRequest) {
+        String aggregationField = "";
+        if (StringUtils.isNotBlank(financialsDetailsRequest.getAggregationLevel())) {
+            aggregationField = setAggregateLevel(financialsDetailsRequest);
+            if (DEPARTMENT.equalsIgnoreCase(financialsDetailsRequest.getAggregationLevel()))
+                aggregationField = FinancialConstants.DEPARTMENT_CODE;
+            aggregationField = aggregateFinancialFields(financialsDetailsRequest, aggregationField);
+
+        }
+        return aggregationField;
+    }
+
+    private static String aggregateFinancialFields(final FinancialsDetailsRequest financialsDetailsRequest,
+                                                   String aggregationField) {
+        if (FUND.equalsIgnoreCase(financialsDetailsRequest.getAggregationLevel()))
+            aggregationField = FinancialConstants.FUND_CODE;
+        if (FUNCTION.equalsIgnoreCase(financialsDetailsRequest.getAggregationLevel()))
+            aggregationField = FinancialConstants.FUNCTION_CODE;
+        if ("scheme".equalsIgnoreCase(financialsDetailsRequest.getAggregationLevel()))
+            aggregationField = FinancialConstants.SCHEME_CODE;
+        if ("subscheme".equalsIgnoreCase(financialsDetailsRequest.getAggregationLevel()))
+            aggregationField = FinancialConstants.SUBSCHEME_CODE;
+        return aggregationField;
+    }
+
 }

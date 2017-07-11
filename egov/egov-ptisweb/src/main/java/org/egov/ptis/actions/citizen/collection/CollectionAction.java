@@ -57,7 +57,6 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.client.bill.PTBillServiceImpl;
 import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
 import org.egov.ptis.client.util.PropertyTaxUtil;
-import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.bill.PropertyTaxBillable;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
@@ -87,16 +86,14 @@ import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_BASICPROPERTY_B
         @Result(name = CollectionAction.RESULT_COLLECTTAX, location = "citizen/collection/collection-collectTax.jsp"),
         @Result(name = CollectionAction.RESULT_TAXPAID, location = "citizen/collection/collection-taxPaid.jsp"),
         @Result(name = CollectionAction.USER_DETAILS, location = "citizen/collection/collection-ownerDetails.jsp"),
-        @Result(name = CollectionAction.UPDATEMOBILE_FORM, location = "citizen/collection/collection-updateMobileNo.jsp") })
+        @Result(name = CollectionAction.UPDATEMOBILE_FORM, location = "citizen/collection/collection-updateMobileNo.jsp")})
 @SuppressWarnings("serial")
 @ParentPackage("egov")
 @Validations
 public class CollectionAction extends BaseFormAction {
-    /**
-     *
-     */
     private static final long serialVersionUID = -153634114075566642L;
-    private final Logger LOGGER = Logger.getLogger(getClass());
+    private static final Logger LOGGER = Logger.getLogger(CollectionAction.class);
+
     public static final String RESULT_COLLECTTAX = "collectTax";
     public static final String RESULT_TAXPAID = "taxPaid";
     protected static final String USER_DETAILS = "ownerDetails";
@@ -125,9 +122,7 @@ public class CollectionAction extends BaseFormAction {
     @Override
     public void prepare() {
         LOGGER.debug("Entered into prepare method");
-        final User usr = userService.getUserByUsername(PropertyTaxConstants.CITIZENUSER);
-        setUserId(usr.getId().longValue());
-        ApplicationThreadLocals.setUserId(usr.getId());
+        setUserId(ApplicationThreadLocals.getUserId());
         basicProperty = basicPropertyService.findByNamedQuery(QUERY_BASICPROPERTY_BY_UPICNO, assessmentNumber);
         LOGGER.debug("Exit from prepare method");
     }
@@ -163,7 +158,6 @@ public class CollectionAction extends BaseFormAction {
         }
         propertyTaxBillable.setBasicProperty(basicProperty);
         propertyTaxBillable.setLevyPenalty(true);
-        propertyTaxBillable.setUserId(userId);
         propertyTaxBillable.setReferenceNumber(propertyTaxNumberGenerator.generateBillNumber(basicProperty
                 .getPropertyID().getWard().getBoundaryNum().toString()));
         propertyTaxBillable.setBillType(propertyTaxUtil.getBillTypeByCode(BILLTYPE_AUTO));

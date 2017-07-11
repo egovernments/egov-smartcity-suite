@@ -40,9 +40,8 @@
 
 package org.egov.infra.validation;
 
-import org.egov.infra.config.properties.ApplicationProperties;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.regex.Pattern;
@@ -59,9 +58,7 @@ public class ValidatorUtils {
 
     private static Pattern passwordPattern;
 
-    @Autowired
-    public ValidatorUtils(ApplicationProperties applicationProperties) {
-        String passwordStrength = applicationProperties.passwordStrength();
+    public ValidatorUtils(@Value("${user.pwd.strength}") String passwordStrength) {
         if ("high".equals(passwordStrength))
             passwordPattern = Pattern.compile(STRONG_PASSWORD);
         else if ("medium".equals(passwordStrength))

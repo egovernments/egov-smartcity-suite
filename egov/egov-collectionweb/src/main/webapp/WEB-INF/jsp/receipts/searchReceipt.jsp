@@ -297,7 +297,6 @@ function onChangeServiceClass(obj)
     	populateserviceType({serviceClass:obj.value});
     }
 }
-
 </script> 
 </head>
 <body>
@@ -392,11 +391,33 @@ function onChangeServiceClass(obj)
 	      <td width="4%" class="bluebox">&nbsp;</td>
 	      <td width="21%" class="bluebox"><s:text name="searchreceipts.criteria.manual.receiptno"/></td>
 	      <td width="24%" class="bluebox"><s:textfield id="manualReceiptNumber" type="text" name="manualReceiptNumber"/></td>
-	      <td width="21%" class="bluebox">&nbsp;</td>
+	      <td width="21%" class="bluebox"> &nbsp; </td>
 	      <td width="30%" class="bluebox"> &nbsp; </td>   
-	   
+	    </tr>
+	    
+	    <tr>
+					<td>
+						<div class="subheadsmallnew"><span class="subheadnew">
+											<s:text name="bankcollection.title" />
+						</span>		
+						</div>
+					</td>
+		</tr>
+	     <tr>
+	      <td width="4%" class="bluebox">&nbsp;</td>
+	      <td width="21%" class="bluebox"><s:text name="searchreceipts.criteria.bankbranch"/></td>
+	      <td width="24%" class="bluebox"><s:select headerKey="-1"
+								headerValue="Select Bank Branch" name="branchId" id="branchId"
+								cssClass="selectwk" list="dropdownData.bankBranchList"
+								listKey="id" listValue="branchname"
+								value="%{branchId}" /> </td>
+	      <td width="21%" class="bluebox">&nbsp;</td>
+	      <td width="30%" class="bluebox">&nbsp;</td>
 	    </tr>
 	    </table>
+		<div align="left" class="mandatory1">
+		              <s:text name="report.bankbranch.note"/>
+		</div>
 </div>
 <div id="loadingMask" style="display: none; overflow: hidden; text-align: center"><img src="/collection/resources/images/bar_loader.gif"/> <span style="color: red">Please wait....</span></div>
     <div class="buttonbottom">

@@ -40,9 +40,6 @@
 
 package org.egov.pgr.repository;
 
-import java.util.List;
-
-import org.egov.infra.admin.master.entity.User;
 import org.egov.pgr.entity.Complaint;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -51,36 +48,31 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface ComplaintRepository extends JpaRepository<Complaint, Long> {
-    
-    Complaint findByCrn(String crn);     
-    
-    @Query("select complaint from Complaint complaint where createdBy =:createdBy order by createddate DESC")
-    Page<Complaint> findByMyComplaint(@Param("createdBy") User createdBy, Pageable pageable);
-    
-    @Query("select complaint from Complaint complaint where createdBy =:createdBy and status.name in (:statuses) order by createddate DESC")
-    Page<Complaint> findMyComplaintyByStatus(@Param("createdBy") User createdBy, @Param("statuses") String[] statuses, Pageable pageable);
-    
+
+    Complaint findByCrn(String crn);
+
+    Page<Complaint> findByCreatedByIdOrderByCreatedDateDesc(Long createdBy, Pageable pageable);
+
+    Page<Complaint> findByCreatedByIdAndStatusNameInOrderByCreatedDateDesc(Long createdBy, String[] statuses, Pageable pageable);
+
     List<Complaint> findByStatusNameIn(List<String> statusList);
-    
-    @Query("select count(*) from Complaint complaint where status.name in (:statuses)")
-    Long getComplaintsTotalCountByStatus(@Param("statuses") String[] statuses);
-    
-    @Query("select count(*) from Complaint")
-    Long getTotalComplaintsCount();
-    
-    @Query("select count(*) from Complaint complaint where createdBy =:createdBy and status.name in (:statuses)")
-    Long getMyComplaintCountByStatus(@Param("createdBy") User createdBy, @Param("statuses") String[] statuses);
-    
-    @Query("select count(*) from Complaint complaint where createdBy =:createdBy")
-    Long getMyComplaintsTotalCount(@Param("createdBy") User createdBy);
-    
-    
-    @Query("select complaint from Complaint complaint where createdBy <>:createdBy order by createddate DESC")
-    Page<Complaint> findByLatestComplaint(@Param("createdBy") User createdBy, Pageable pageable);
-    
-    @Query(value = "select * FROM egpgr_complaint WHERE createdBy<> :createdBy AND earth_box( ll_to_earth( :lat, :lng), :distance) @> ll_to_earth(egpgr_complaint.lat, egpgr_complaint.lng) order by createddate DESC limit :limit offset :offset", nativeQuery = true)
-    List<Complaint> findByNearestComplaint(@Param("createdBy") Long createdBy, @Param("lat") Float lat, @Param("lng") Float lng, @Param("distance") Long distance, @Param("limit") Long limit, @Param("offset") Long offset);
+
+    Long countByStatusNameIn(String[] statuses);
+
+    Long countByCreatedByIdAndStatusNameIn(Long createdBy, String[] statuses);
+
+    Long countByCreatedById(Long createdBy);
+
+    Page<Complaint> findByCreatedByIdNotOrderByCreatedDateDesc(Long createdBy, Pageable pageable);
+
+    @Query(value = "select * FROM egpgr_complaint WHERE createdBy<> :createdBy AND earth_box( ll_to_earth( :lat, :lng), :distance) @> " +
+            "ll_to_earth(egpgr_complaint.lat, egpgr_complaint.lng) order by createddate DESC limit :limit offset :offset", nativeQuery = true)
+    List<Complaint> findByNearestComplaint(@Param("createdBy") Long createdBy, @Param("lat") Float lat,
+                                           @Param("lng") Float lng, @Param("distance") Long distance,
+                                           @Param("limit") Long limit, @Param("offset") Long offset);
 
 }

@@ -53,6 +53,7 @@ public class AssessmentRequest {
     private String transactionType;
     private String fromDate;
     private String toDate;
+    private String oldAssessmentNo;
 
     public String getAssessmentNo() {
         return assessmentNo;
@@ -64,7 +65,7 @@ public class AssessmentRequest {
 
     @Override
     public String toString() {
-        return "AssessmentRequest [assessmentNo=" + assessmentNo + "ownerName=" + ownerName + "mobileNumber=" + mobileNumber
+        return "AssessmentRequest [assessmentNo=" + assessmentNo + "oldAssessmentNo=" + oldAssessmentNo + "ownerName=" + ownerName + "mobileNumber=" + mobileNumber
                 + "category=" + category
                 + "]";
     }
@@ -109,44 +110,51 @@ public class AssessmentRequest {
         this.category = category;
     }
 
-	public String getDoorNo() {
-		return doorNo;
-	}
+    public String getDoorNo() {
+        return doorNo;
+    }
 
-	public void setDoorNo(String doorNo) {
-		this.doorNo = doorNo;
-	}
+    public void setDoorNo(String doorNo) {
+        this.doorNo = doorNo;
+    }
 
-	public String getWardNum() {
-		return wardNum;
-	}
+    public String getWardNum() {
+        return wardNum;
+    }
 
-	public void setWardNum(String wardNum) {
-		this.wardNum = wardNum;
-	}
+    public void setWardNum(String wardNum) {
+        this.wardNum = wardNum;
+    }
 
-	public String getTransactionType() {
-		return transactionType;
-	}
+    public String getTransactionType() {
+        return transactionType;
+    }
 
-	public void setTransactionType(String transactionType) {
-		this.transactionType = transactionType;
-	}
+    public void setTransactionType(String transactionType) {
+        this.transactionType = transactionType;
+    }
 
-	public String getFromDate() {
-		return fromDate;
-	}
+    public String getFromDate() {
+        return fromDate;
+    }
 
-	public void setFromDate(String fromDate) {
-		this.fromDate = fromDate;
-	}
+    public void setFromDate(String fromDate) {
+        this.fromDate = fromDate;
+    }
 
-	public String getToDate() {
-		return toDate;
-	}
+    public String getToDate() {
+        return toDate;
+    }
 
-	public void setToDate(String toDate) {
-		this.toDate = toDate;
-	}
+    public void setToDate(String toDate) {
+        this.toDate = toDate;
+    }
 
+    public String getOldAssessmentNo() {
+        return oldAssessmentNo;
+    }
+
+    public void setOldAssessmentNo(String oldAssessmentNo) {
+        this.oldAssessmentNo = oldAssessmentNo;
+    }
 }

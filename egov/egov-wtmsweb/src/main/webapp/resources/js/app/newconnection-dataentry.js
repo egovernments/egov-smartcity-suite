@@ -45,6 +45,7 @@ $(document).ready(function(){
 			if($('#connectionType').val() === "METERED")
 			{	
 				$('#monthlyFee').attr('disabled',true);
+				$('#monthlyFee').val('');
 				$('#metereddetails').show();
 				$('#spanmonthlymandatory').hide();
 				$('.showfields').show();

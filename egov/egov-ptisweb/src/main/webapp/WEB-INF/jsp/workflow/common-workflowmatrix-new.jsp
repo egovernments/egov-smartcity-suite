@@ -68,6 +68,11 @@
 
  <table width="100%" border="0" cellspacing="0" cellpadding="0">
  <tr>
+ <s:checkbox name="applicationCheck" id="applicationCheck" value="%{applicationCheck}" cssClass="applicationcheckbox"/>
+			<span style="font-size: 15px; color: red"> <s:text
+					name="lbl.validation.checkbox" /> <br>
+ </tr>
+ <tr>
 			<div class="headingsmallbg">
 				<span class="bold"><s:text name="title.approval.information"/></span>
 			</div>

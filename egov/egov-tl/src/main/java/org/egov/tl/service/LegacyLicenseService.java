@@ -39,26 +39,8 @@
  */
 package org.egov.tl.service;
 
-import org.apache.commons.lang3.StringUtils;
-import org.egov.commons.Installment;
-import org.egov.commons.dao.InstallmentHibDao;
-import org.egov.demand.dao.DemandGenericHibDao;
-import org.egov.demand.model.EgDemandDetails;
-import org.egov.infra.admin.master.entity.Module;
-import org.egov.infra.admin.master.service.ModuleService;
-import org.egov.infra.filestore.service.FileStoreService;
-import org.egov.infra.validation.exception.ValidationException;
-import org.egov.tl.entity.License;
-import org.egov.tl.entity.LicenseDemand;
-import org.egov.tl.entity.LicenseDocument;
-import org.egov.tl.entity.TradeLicense;
-import org.egov.tl.repository.LicenseDocumentTypeRepository;
-import org.egov.tl.repository.LicenseRepository;
-import org.egov.tl.utils.LicenseNumberUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
+import static java.math.BigDecimal.ZERO;
+import static org.egov.tl.utils.Constants.LICENSE_STATUS_ACTIVE;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -71,8 +53,24 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Stream;
 
-import static java.math.BigDecimal.ZERO;
-import static org.egov.tl.utils.Constants.LICENSE_STATUS_ACTIVE;
+import org.egov.commons.Installment;
+import org.egov.commons.dao.InstallmentHibDao;
+import org.egov.demand.dao.DemandGenericHibDao;
+import org.egov.demand.model.EgDemandDetails;
+import org.egov.infra.admin.master.entity.Module;
+import org.egov.infra.admin.master.service.ModuleService;
+import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.infra.validation.exception.ValidationException;
+import org.egov.tl.entity.LicenseDemand;
+import org.egov.tl.entity.LicenseDocument;
+import org.egov.tl.entity.TradeLicense;
+import org.egov.tl.repository.LicenseDocumentTypeRepository;
+import org.egov.tl.repository.LicenseRepository;
+import org.egov.tl.utils.LicenseNumberUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class LegacyLicenseService {
@@ -87,9 +85,6 @@ public class LegacyLicenseService {
     private LicenseNumberUtils licenseNumberUtils;
 
     @Autowired
-    private ValidityService validityService;
-
-    @Autowired
     private DemandGenericHibDao demandGenericDao;
 
     @Autowired
@@ -97,9 +92,6 @@ public class LegacyLicenseService {
 
     @Autowired
     private ModuleService moduleService;
-
-    @Autowired
-    private LicenseAppTypeService licenseAppTypeService;
 
     @Autowired
     private LicenseDocumentTypeRepository licenseDocumentTypeRepository;
@@ -123,25 +115,24 @@ public class LegacyLicenseService {
     }
 
     @Transactional
-    public void createLegacy(final TradeLicense license) {
+    public void createLegacy(final TradeLicense license) throws IOException {
 
+        storeDocument(license);
         addLegacyDemand(license);
-        license.setLicenseAppType(licenseAppTypeService.getLicenseAppTypeByName("New"));
         license.getLicensee().setLicense(license);
         license.setStatus(licenseStatusService.getLicenseStatusByName(LICENSE_STATUS_ACTIVE));
         license.setApplicationNumber(licenseNumberUtils.generateApplicationNumber());
         license.setLegacy(true);
         license.setActive(true);
         license.setLicenseNumber(licenseNumberUtils.generateLicenseNumber());
-        validityService.applyLicenseValidity(license);
         licenseRepository.save(license);
     }
 
     @Transactional
-    public void updateLegacy(final TradeLicense license) {
+    public void updateLegacy(final TradeLicense license) throws IOException {
 
+        storeDocument(license);
         updateLegacyDemand(license);
-        validityService.applyLicenseValidity(license);
         licenseRepository.save(license);
     }
 
@@ -176,34 +167,48 @@ public class LegacyLicenseService {
         return sortByKey(legacyFeePayStatus);
     }
 
-    private Map<Integer, Integer> legacyInstallmentfee(final TradeLicense license) {
-        final List<String> installmentYears = license.getFinancialyear();
-        final List<String> installmentFees = license.getLegacyInstallmentwiseFees();
+    public Map<Integer, Integer> legacyInstallmentfee(final TradeLicense license) {
+        final List<Integer> installmentYears = license.getFinancialyear();
+        final List<Integer> installmentFees = license.getLegacyInstallmentwiseFees();
         final Map<Integer, Integer> legacyInstallmentwiseFees = new LinkedHashMap<>();
-        for (int i = 0; i < installmentYears.size(); i++) {
-            if (installmentFees.get(i) == null)
-                installmentFees.set(i, "0");
-            legacyInstallmentwiseFees.put(
-                    Integer.valueOf(installmentYears.get(i)),
-                    Integer.valueOf(installmentFees.get(i)));
+        for (int index = 0; index < installmentYears.size(); index++) {
+            if (installmentFees.get(index) == null)
+                installmentFees.set(index, 0);
+            legacyInstallmentwiseFees.put(installmentYears.get(index), installmentFees.get(index));
         }
         return legacyInstallmentwiseFees;
     }
 
-    private Map<Integer, Boolean> legacyFeeStatus(final TradeLicense license) {
-        final List<String> legacyFeePaymentStatus = license.getLegacyFeePayStatus();
-        final List<String> installmentYears = license.getFinancialyear();
+    public Map<Integer, Boolean> legacyFeeStatus(final TradeLicense license) {
+        final List<Boolean> legacyFeePaymentStatus = license.getLegacyFeePayStatus();
+        final List<Integer> installmentYears = license.getFinancialyear();
         final Map<Integer, Boolean> legacyFeePayStatus = new LinkedHashMap<>();
-        for (int i = 0; i < installmentYears.size(); i++) {
-            if (legacyFeePaymentStatus.size() - 1 < i)
-                legacyFeePaymentStatus.add("false");
-            else if (StringUtils.isNotBlank(legacyFeePaymentStatus.get(i)))
-                legacyFeePaymentStatus.set(i, "true");
+        for (int index = 0; index < installmentYears.size(); index++) {
+            if (legacyFeePaymentStatus.size() - 1 < index)
+                legacyFeePaymentStatus.add(false);
+            else if (legacyFeePaymentStatus.get(index) != null && legacyFeePaymentStatus.get(index).equals(true)
+                    && license.getLegacyInstallmentwiseFees().get(index) > 0)
+                legacyFeePaymentStatus.set(index, true);
             else
-                legacyFeePaymentStatus.set(i, "false");
-            legacyFeePayStatus.put(
-                    Integer.valueOf(installmentYears.get(i)),
-                    Boolean.valueOf(legacyFeePaymentStatus.get(i)));
+                legacyFeePaymentStatus.set(index, false);
+            legacyFeePayStatus.put(installmentYears.get(index), legacyFeePaymentStatus.get(index));
+        }
+        return legacyFeePayStatus;
+    }
+
+    public Map<Integer, Boolean> legacyInstallmentStatus(final TradeLicense tradeLicense) {
+        Map<Integer, Boolean> legacyFeePayStatus = new LinkedHashMap<>();
+        final List<Boolean> legacyFeePaymentStatus = tradeLicense.getLegacyFeePayStatus();
+        for (int index = 0; index < tradeLicense.getFinancialyear().size(); index++) {
+            if (legacyFeePaymentStatus.size() - 1 < index)
+                legacyFeePaymentStatus.add(false);
+            else if (legacyFeePaymentStatus.get(index) != null && legacyFeePaymentStatus.get(index).equals(true) &&
+                    tradeLicense.getLegacyInstallmentwiseFees().get(index) > 0)
+                legacyFeePaymentStatus.set(index, true);
+            else
+                legacyFeePaymentStatus.set(index, false);
+            legacyFeePayStatus.put(tradeLicense.getFinancialyear().get(index),
+                    legacyFeePaymentStatus.get(index));
         }
         return legacyFeePayStatus;
     }
@@ -272,7 +277,7 @@ public class LegacyLicenseService {
     }
 
     private void updateNewLegacyDemand(final Map<Integer, Integer> updatedInstallmentFees,
-                                       final Map<Integer, Boolean> legacyFeePayStatus, final LicenseDemand licenseDemand) {
+            final Map<Integer, Boolean> legacyFeePayStatus, final LicenseDemand licenseDemand) {
 
         final Module module = moduleService.getModuleByName("Trade License");
         for (final Entry<Integer, Integer> updatedInstallmentFee : updatedInstallmentFees.entrySet())
@@ -294,8 +299,9 @@ public class LegacyLicenseService {
         licenseDemand.recalculateBaseDemand();
     }
 
-    public void storeDocument(final License license, final MultipartFile[] files) throws IOException {
+    public void storeDocument(final TradeLicense license) throws IOException {
         final List<LicenseDocument> documents = license.getDocuments();
+        final MultipartFile[] files = license.getFiles();
         if (files != null)
             for (int i = 0; i < files.length; i++) {
                 documents.get(i).setType(licenseDocumentTypeRepository.findOne(documents.get(i).getType().getId()));

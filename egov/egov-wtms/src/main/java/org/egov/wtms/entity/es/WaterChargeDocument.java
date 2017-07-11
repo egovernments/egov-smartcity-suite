@@ -328,6 +328,7 @@ public class WaterChargeDocument {
     }
 
     public void setId() {
+    	if(consumerCode!=null)
         id = ApplicationThreadLocals.getCityCode().concat("-").concat(consumerCode);
     }
 

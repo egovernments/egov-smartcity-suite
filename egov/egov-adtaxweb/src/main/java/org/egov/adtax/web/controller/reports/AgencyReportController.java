@@ -50,7 +50,7 @@ import org.egov.adtax.service.AdvertisementPermitDetailService;
 import org.egov.adtax.service.HoardingCategoryService;
 import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
 import org.egov.adtax.web.controller.GenericController;
-import org.egov.infra.config.properties.ApplicationProperties;
+import org.egov.infra.config.core.GlobalSettings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -60,7 +60,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -81,16 +80,14 @@ public class AgencyReportController extends GenericController {
 
     @Autowired
     private AdvertisementPermitDetailService advertisementPermitDetailService;
-    
-    @Autowired
-    private ApplicationProperties applicationProperties;
 
     @ModelAttribute("advertisementPermitDetail")
     public AdvertisementPermitDetail advertisementPermitDetail() {
         return new AdvertisementPermitDetail();
     }
 
-    public @ModelAttribute("hoardingCategories") List<HoardingCategory> hoardingCategories() {
+    @ModelAttribute("hoardingCategories")
+    public List<HoardingCategory> hoardingCategories() {
         return hoardingCategoryService.getAllActiveHoardingCategory();
     }
 
@@ -100,26 +97,26 @@ public class AgencyReportController extends GenericController {
     }
 
     @RequestMapping(value = "/getAgencyWiseDcb", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody void agencyWiseViewHoarding(final Model model, final HttpServletRequest request,
-            @ModelAttribute final AdvertisementPermitDetail advertisementPermitDetail, @RequestParam String agency,
-            final HttpServletResponse response) throws IOException {
-        IOUtils.write("{ \"data\":" + new GsonBuilder().setDateFormat(applicationProperties.defaultDatePattern()).create()
+    @ResponseBody
+    public void agencyWiseViewHoarding(@ModelAttribute final AdvertisementPermitDetail advertisementPermitDetail, @RequestParam String agency,
+                                       final HttpServletResponse response) throws IOException {
+        IOUtils.write("{ \"data\":" + new GsonBuilder().setDateFormat(GlobalSettings.datePattern()).create()
                 .toJson(advertisementPermitDetailService.getAgencyWiseAdvertisementSearchResult(advertisementPermitDetail))
                 + "}", response.getWriter());
     }
 
     @RequestMapping(value = "/report-view", method = GET)
     public String agencywiseReport(@RequestParam("id") final String id, @RequestParam("category") final String category,
-            @RequestParam("subcategory") final String subcategory, @RequestParam("zone") final String zone,
-            @RequestParam("ward") final String ward,@RequestParam("ownerDetail") final String ownerDetail, final Model model) {
+                                   @RequestParam("subcategory") final String subcategory, @RequestParam("zone") final String zone,
+                                   @RequestParam("ward") final String ward, @RequestParam("ownerDetail") final String ownerDetail, final Model model) {
         Long categoryid = (category != null) ? Long.parseLong(category) : null;
         Long subcategoryid = (subcategory != null) ? Long.parseLong(subcategory) : null;
         Long zoneid = (zone != null) ? Long.parseLong(zone) : null;
         Long wardid = (ward != null) ? Long.parseLong(ward) : null;
         final List<AdvertisementPermitDetail> advertisementPermitDetail = advertisementPermitDetailService
-                .getAdvertisementPermitDetailBySearchParam(Long.parseLong(id), categoryid, subcategoryid, zoneid, wardid,ownerDetail);
-        if(advertisementPermitDetail!=null && !advertisementPermitDetail.isEmpty())
-        model.addAttribute("agency", advertisementPermitDetail.get(0).getAgency().getName());
+                .getAdvertisementPermitDetailBySearchParam(Long.parseLong(id), categoryid, subcategoryid, zoneid, wardid, ownerDetail);
+        if (advertisementPermitDetail != null && !advertisementPermitDetail.isEmpty())
+            model.addAttribute("agency", advertisementPermitDetail.get(0).getAgency().getName());
         else
             model.addAttribute("agency", "");
         model.addAttribute("dcbResult", getAgencyWiseDCBResult(advertisementPermitDetail));
@@ -128,7 +125,7 @@ public class AgencyReportController extends GenericController {
 
     private List<HoardingDcbReport> getAgencyWiseDCBResult(final List<AdvertisementPermitDetail> advertisementPermitDetail) {
         List<HoardingDcbReport> HoardingDcbReportResults = new ArrayList<>();
-        
+
         for (AdvertisementPermitDetail advpermitdetail : advertisementPermitDetail) {
             if (advpermitdetail.getAgency() != null && advpermitdetail.getAdvertisement() != null
                     && advpermitdetail.getAdvertisement().getDemandId() != null) {
@@ -147,7 +144,7 @@ public class AgencyReportController extends GenericController {
                 hoardingReport.setAgencyName(advpermitdetail.getAgency().getName());
                 hoardingReport.setCategory(advpermitdetail.getAdvertisement().getCategory().getName());
                 hoardingReport.setSubcategory(advpermitdetail.getAdvertisement().getSubCategory().getDescription());
-                hoardingReport.setOwnerDetail(advpermitdetail.getOwnerDetail() );
+                hoardingReport.setOwnerDetail(advpermitdetail.getOwnerDetail());
                 HoardingDcbReportResults.add(hoardingReport);
             }
         }

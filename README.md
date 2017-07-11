@@ -100,8 +100,10 @@ $ git checkout develop
 #eg:401=Invalid Username or Password
 
  ```
-One can override any default settings available in `/egov/egov-egi/src/main/resources/config/application-config.properties` by adding an entry in `egov-erp-<username>.properties`.
+ One can override any default settings available in `/egov/egov-egi/src/main/resources/config/application-config.properties` by adding an entry in `egov-erp-<username>.properties`.
+
 3. Change directory back to `<CLONED_REPO_DIR>/egov`
+
 4. Run the following commands, this will cleans, compiles, tests, migrates database and generates ear artifact along with jars and wars appropriately
 
  ```bash
@@ -289,8 +291,8 @@ Browser:-
 [Maven]: http://maven.apache.org/download.cgi
 [GPL]: http://www.gnu.org/licenses/
 [FAQ]:http://confluence.egovernments.org/display/FAQ/FAQ
-[GHPAGE]:http://egovernments.github.io/eGov/
+[GHPAGE]:https://egovernments.org/solutions.php
 [versioneye]:https://www.versioneye.com/user/projects/57c7bed0968d640049e125d8
 [versioneye img]:https://www.versioneye.com/user/projects/57c7bed0968d640049e125d8/badge.svg
 [codacy]:https://www.codacy.com/app/egovernments/eGov
-[codacy img]:https://api.codacy.com/project/badge/Grade/5415cc7717a349c3a72c349a24dace35
+[codacy img]:https://api.codacy.com/project/badge/Grade/8e3a009a64a44d1a9d75f78261272987

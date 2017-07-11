@@ -62,6 +62,9 @@ public interface InstallmentDao {
     List<Installment> getInstallmentsByModuleForGivenDateAndInstallmentType(Module module, Date installmentDate,
             String installmentType);
 
+    List<Installment> getInstallmentsByModuleBetweenFromDateAndToDateAndInstallmentType(Module module, Date fromDate, Date toDate,
+            String installmentType);
+
     List<Installment> fetchInstallments(final Module module, final Date toInstallmentDate, final int noOfInstallments);
 
     List<Installment> getAllInstallmentsByModuleAndStartDate(final Module module, final Date installmentDate);

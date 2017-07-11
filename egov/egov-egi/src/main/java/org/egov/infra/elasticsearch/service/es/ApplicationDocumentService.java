@@ -880,18 +880,20 @@ public class ApplicationDocumentService {
     private void prepareMonthwiseDetails(Map<Integer, String> monthValuesMap, Map<String, Long> applications,
             Histogram dateaggs) {
         String[] dateArr;
-        Integer month;
+        Integer month,year;
         ValueCount countAggr;
         String monthName;
+        Map <String,Long> map = new LinkedHashMap<>();
         for (Histogram.Bucket entry : dateaggs.getBuckets()) {
             dateArr = entry.getKeyAsString().split("T");
+            year = Integer.valueOf(dateArr[0].split("-", 3)[0]);
             month = Integer.valueOf(dateArr[0].split("-", 3)[1]);
             monthName = monthValuesMap.get(month);
             countAggr = entry.getAggregations().get(TOTAL_COUNT);
-            applications.put(monthName, countAggr.getValue());
+            map.put(monthName + " " + year, countAggr.getValue());
         }
+        applications.putAll(map);
     }
-
     private Aggregations getMonthwiseApplications(ApplicationIndexRequest applicationIndexRequest,
             Date fromDate, Date toDate, String status) {
         BoolQueryBuilder boolQuery = prepareWhereClause(applicationIndexRequest, fromDate, toDate);

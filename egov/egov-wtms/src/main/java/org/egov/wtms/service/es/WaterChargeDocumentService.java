@@ -50,6 +50,7 @@ import static org.egov.infra.utils.ApplicationConstant.ES_DATE_FORMAT;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -223,6 +224,7 @@ public class WaterChargeDocumentService {
             String consumername = "";
             String aadharNumber = "";
             String mobilNumber = "";
+            String createdDateStr = "";
             monthlyRate = monthlyRateFirld(waterConnectionDetails);
             if (ownerNameItr != null && ownerNameItr.hasNext())
                 ownerNameItr.next().getMobileNumber();
@@ -239,9 +241,9 @@ public class WaterChargeDocumentService {
                             .concat(multipleOwner.getAadhaarNumber() != null ? multipleOwner.getAadhaarNumber() : ""));
                 }
             }
-
-            final String createdDateStr = dateFormatter.format(waterConnectionDetails.getExecutionDate());
-
+            if(waterConnectionDetails.getExecutionDate()!=null){
+            	createdDateStr = dateFormatter.format(waterConnectionDetails.getExecutionDate());
+            }
             try {
                 waterChargeDocument = WaterChargeDocument.builder()
                         .withZone(assessmentDetails.getBoundaryDetails().getZoneName())
@@ -258,7 +260,7 @@ public class WaterChargeDocumentService {
                                 ? assessmentDetails.getBoundaryDetails().getLocalityName() : "")
                         .withPropertyid(waterConnectionDetails.getConnection().getPropertyIdentifier())
                         .withApplicationcode(waterConnectionDetails.getApplicationType().getCode())
-                        .withCreatedDate(dateFormatter.parse(createdDateStr)).withMobileNumber(mobilNumber)
+                        .withCreatedDate(createdDateStr!=""?dateFormatter.parse(createdDateStr): new Date()).withMobileNumber(mobilNumber)
                         .withStatus(waterConnectionDetails.getConnectionStatus().name())
                         .withDistrictName(defaultString((String) cityInfo.get(CITY_DIST_NAME_KEY)))
                         .withConnectiontype(waterConnectionDetails.getConnectionType().name())

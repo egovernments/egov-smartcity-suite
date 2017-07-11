@@ -39,7 +39,6 @@
  */
 package org.egov.ptis.web.controller.transactions.digitalsignature;
 
-import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.entity.WorkflowTypes;
 import org.egov.infra.workflow.inbox.InboxRenderServiceDeligate;
@@ -65,9 +64,6 @@ public class DigitalSignatureReportController {
     private static final String DIGITAL_SIGNATURE_REPORT_FORM = "digitalSignatureReport-form";
 
     @Autowired
-    private SecurityUtils securityUtils;
-
-    @Autowired
     private InboxRenderServiceDeligate<StateAware> inboxRenderServiceDeligate;
 
     @Autowired
@@ -90,31 +86,31 @@ public class DigitalSignatureReportController {
             HashMap<String, Object> tempMap;
             for (final StateAware record : stateAwareList)
                 if (record != null && record.getState() != null && record.getState().getNextAction() != null &&
-                    record.getState().getNextAction().equalsIgnoreCase(PropertyTaxConstants.DIGITAL_SIGNATURE_PENDING)) {
-                        tempMap = new HashMap<>();
-                        WorkflowTypes workflowTypes = workflowTypeService.getEnabledWorkflowTypeByType(record.getStateType());
-                        if (PTMODULENAME.equalsIgnoreCase(workflowTypes.getModule().getName())) {
-                            if (record.getState().getValue().startsWith("Create")
-                                    || record.getState().getValue().startsWith("Alter")
-                                    || record.getState().getValue().startsWith("Bifurcate")
-                                    ||record.getState().getValue().startsWith("Demolition")
-                                    || record.getState().getValue().startsWith("Exemption"))
-                                tempMap.put("objectId", ((PropertyImpl) record).getBasicProperty().getId());
-                            else
-                                tempMap.put("objectId", record.getId());
-                            tempMap.put("type", record.getState().getNatureOfTask());
-                            tempMap.put("module", workflowTypes.getModule().getDisplayName());
-                            tempMap.put("details", record.getStateDetails());
-                            tempMap.put("status", record.getCurrentState().getValue());
-                            resultList.add(tempMap);
-                        }
+                        record.getState().getNextAction().equalsIgnoreCase(PropertyTaxConstants.DIGITAL_SIGNATURE_PENDING)) {
+                    tempMap = new HashMap<>();
+                    WorkflowTypes workflowTypes = workflowTypeService.getEnabledWorkflowTypeByType(record.getStateType());
+                    if (PTMODULENAME.equalsIgnoreCase(workflowTypes.getModule().getName())) {
+                        if (record.getState().getValue().startsWith("Create")
+                                || record.getState().getValue().startsWith("Alter")
+                                || record.getState().getValue().startsWith("Bifurcate")
+                                || record.getState().getValue().startsWith("Demolition")
+                                || record.getState().getValue().startsWith("Exemption"))
+                            tempMap.put("objectId", ((PropertyImpl) record).getBasicProperty().getId());
+                        else
+                            tempMap.put("objectId", record.getId());
+                        tempMap.put("type", record.getState().getNatureOfTask());
+                        tempMap.put("module", workflowTypes.getModule().getDisplayName());
+                        tempMap.put("details", record.getStateDetails());
+                        tempMap.put("status", record.getCurrentState().getValue());
+                        resultList.add(tempMap);
                     }
+                }
         }
         return resultList;
     }
 
     public List<StateAware> fetchItems() {
-        return new ArrayList<>(inboxRenderServiceDeligate.getInboxItems(securityUtils.getCurrentUser().getId()));
+        return new ArrayList<>(inboxRenderServiceDeligate.getInboxItems());
     }
 
 }

@@ -39,12 +39,10 @@
  */
 package org.egov.pgr.web.controller;
 
-import org.egov.builder.entities.DepartmentBuilder;
-import org.egov.infra.admin.master.entity.Department;
-import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.pgr.entity.Complainant;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.ComplaintType;
+import org.egov.pgr.service.ComplaintHistoryService;
 import org.egov.pgr.service.ComplaintService;
 import org.egov.pgr.web.controller.complaint.ViewComplaintController;
 import org.junit.Before;
@@ -53,7 +51,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -68,7 +65,7 @@ public class ViewComplaintControllerTest extends AbstractContextControllerTest<V
     private ComplaintService complaintService;
 
     @Mock
-    private DepartmentService departmentService;
+    private ComplaintHistoryService complaintHistoryService;
 
     @InjectMocks
     private ViewComplaintController viewComplaintController;
@@ -76,13 +73,8 @@ public class ViewComplaintControllerTest extends AbstractContextControllerTest<V
     @Before
     public void before() {
         mockMvc = mvcBuilder.build();
-        Department department = new DepartmentBuilder().withCode("DC").build();
-        when(departmentService.getDepartmentByCode(anyString())).thenReturn(department);
-
         ComplaintType complaintType = new ComplaintType();
         complaintType.setName("existing");
-        complaintType.setDepartment(department);
-
         Complainant complainant = new Complainant();
         complainant.setEmail("abc@gmail.com");
         complainant.setName("xyz");

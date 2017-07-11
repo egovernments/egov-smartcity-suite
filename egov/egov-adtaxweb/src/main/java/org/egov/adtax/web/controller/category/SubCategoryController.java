@@ -46,7 +46,7 @@ import org.egov.adtax.entity.SubCategory;
 import org.egov.adtax.entity.SubCategorySearch;
 import org.egov.adtax.service.HoardingCategoryService;
 import org.egov.adtax.service.SubCategoryService;
-import org.egov.infra.config.properties.ApplicationProperties;
+import org.egov.infra.config.core.GlobalSettings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -74,11 +74,9 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 public class SubCategoryController {
 
     private final SubCategoryService subCategoryService;
+
     @Autowired
-    private  HoardingCategoryService hoardingCategoryService;
-    
-    @Autowired
-    private ApplicationProperties applicationProperties;
+    private HoardingCategoryService hoardingCategoryService;
 
     @Autowired
     public SubCategoryController(final SubCategoryService subCategoryService) {
@@ -86,7 +84,7 @@ public class SubCategoryController {
     }
 
     @ModelAttribute("subCategory")
-    public SubCategory subCategory() { 
+    public SubCategory subCategory() {
         return new SubCategory();
     }
 
@@ -94,25 +92,26 @@ public class SubCategoryController {
     public List<SubCategory> getAllSubCategory() {
         return subCategoryService.getAllSubCategory();
     }
-    
+
     @ModelAttribute(value = "hoardingCategories")
     public List<HoardingCategory> getAllHoardingCategory() {
         return hoardingCategoryService.getAllHoardingCategory();
     }
-    
-    
+
+
     @RequestMapping(value = "create", method = GET)
     public String create() {
         return "subcategory-form";
     }
-    
+
     @RequestMapping(value = "/search", method = RequestMethod.GET)
     public String search() {
         return "subcategory-search";
     }
+
     @RequestMapping(value = "create", method = POST)
     public String create(@Valid @ModelAttribute final SubCategory subCategory,
-            final BindingResult errors, final RedirectAttributes redirectAttrs) {
+                         final BindingResult errors, final RedirectAttributes redirectAttrs) {
         if (errors.hasErrors())
             return "subcategory-form";
         subCategoryService.createSubCategory(subCategory);
@@ -126,12 +125,13 @@ public class SubCategoryController {
         return new ModelAndView("subcategory/subcategory-success", "subCategory", subCategoryService.getSubCategoryById(id));
 
     }
-    
+
     @RequestMapping(value = "/searchSubCategory", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody void searchSubcategory(final Model model, @ModelAttribute final SubCategory subCategory, @RequestParam final String category, 
-             @RequestParam final String description,   final HttpServletResponse response) throws IOException{
-        List<SubCategorySearch> SubCategoryJson = subCategoryService.getSubcategory(Long.valueOf(category),description!=null ? Long.valueOf(description):null);
-        IOUtils.write("{ \"data\":" + new GsonBuilder().setDateFormat(applicationProperties.defaultDatePattern()).create()
+    @ResponseBody
+    public void searchSubcategory(final Model model, @ModelAttribute final SubCategory subCategory, @RequestParam final String category,
+                                  @RequestParam final String description, final HttpServletResponse response) throws IOException {
+        List<SubCategorySearch> SubCategoryJson = subCategoryService.getSubcategory(Long.valueOf(category), description != null ? Long.valueOf(description) : null);
+        IOUtils.write("{ \"data\":" + new GsonBuilder().setDateFormat(GlobalSettings.datePattern()).create()
                 .toJson(SubCategoryJson)
                 + "}", response.getWriter());
     }

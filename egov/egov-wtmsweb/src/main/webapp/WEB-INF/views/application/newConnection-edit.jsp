@@ -59,6 +59,7 @@ id="editWaterConnectionform" cssClass="form-horizontal form-groups-bordered" enc
 	<input type="hidden" id ="typeOfConnection"  value="${typeOfConnection}"/>
 	<input type="hidden" id="meterFocus" value="${meterFocus}"/>
 	<input type="hidden" id="isSanctionedDetailEnable" value="${isSanctionedDetailEnable}"/>
+	<input type="hidden" id="proceedWithoutDonation" value="${proceedWithoutDonation}"/>
 	<form:hidden path="" id="workFlowAction" name="workFlowAction"/>
 	<div class="panel panel-primary" data-collapsed="0">
 			<div class="panel-heading">

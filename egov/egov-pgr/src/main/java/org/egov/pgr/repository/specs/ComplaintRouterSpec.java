@@ -64,6 +64,7 @@ public final class ComplaintRouterSpec {
             if (routerSearchRequest.getComplaintTypeId() != null)
                 predicate.getExpressions()
                         .add(builder.equal(root.get("complaintType").get("id"), routerSearchRequest.getComplaintTypeId()));
+            predicate.getExpressions().add(builder.equal(root.get("complaintType").get("isActive"),true));
             return predicate;
         };
     }

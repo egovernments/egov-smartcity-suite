@@ -572,7 +572,7 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
 
         for (final SearchHit hit : response.getHits()) {
             final Map<String, Object> fields = hit.getSource();
-            return fields.get(INITIAL_FUNCTIONARY_MOBILE_NUMBER).toString();
+            return (String)fields.get(INITIAL_FUNCTIONARY_MOBILE_NUMBER);
         }
         return StringUtils.EMPTY;
     }

@@ -46,9 +46,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 /**
- *
  * @author Manikanta will have all statuses of bill
- *
  */
 public interface FinancialConstants {
 
@@ -335,6 +333,8 @@ public interface FinancialConstants {
     public static final String WORKFLOW_STATE_CANCELLED = "Cancelled";
     public static final String WORKFLOW_STATE_CREATED = "Created";
 
+
+    public static final String WF_STATE_FINAL_APPROVAL_PENDING = "Final Approval Pending";
     public static final String WF_STATE_EOA_Approval_Pending = "EOA Approval Pending";
     public static final String WF_STATE_COMM_Approval_Pending = "Commissioner Approval Pending";
 
@@ -372,6 +372,42 @@ public interface FinancialConstants {
 
     public static final String FINANCIAL_VOUCHER_INDEX_NAME = "financialsvoucherdata";
     public static final String FINANCIAL_OPENINGBALANCE_INDEX_NAME = "financialsobdata";
+    public static final String FINANCIAL_BUDGET_INDEX_DATA = "financialsbudgetdata";
     public static final SimpleDateFormat DATEFORMATTER_YYYY_MM_DD = new SimpleDateFormat("yyyy-MM-dd");
+
+    public static final String FUND_NAME = "fundName";
+    public static final String DEPARTMENT_NAME = "departmentName";
+    public static final String FUNCTION_NAME = "functionName";
+    public static final String SCHEME_NAME = "schemeName";
+    public static final String SUBSCHEME_NAME = "subSchemeName";
+
+    public static final String BUDGETAPPROVEDAMOUNT = "budgetapprovedamount";
+    public static final String REAPPROPRIATIONAMOUNT = "reappropriationamount";
+    public static final String TOTALBUDGET = "totalbudget";
+    public static final String ACTUALAMOUNT = "actualamount";
+    public static final String PREVIOUYEARACTUALAMOUNT = "previouyearactualamount";
+    public static final String COMMITTEDEXPENDITURE = "committedexpenditure";
+    public static final String BUDGETVARIANCE = "budgetvariance";
+    public static final String BUDGETDETAILCREATEDDATE = "budgetdetailcreateddate";
+
+    public static final String DISTNAME = "distname";
+    public static final String ULBNAME = "ulbname";
+    public static final String ULBGRADE = "ulbgrade";
+    public static final String REGNAME = "regname";
+    public static final String MAJORCODEDESCRIPTION = "majorCodeDescription";
+    public static final String MINORCODEDESCRIPTION = "minorCodeDescription";
+    public static final String DETAILEDCODEDESCRIPTION = "glcodeDescription";
+
+    public static final String VOUCHERFUNDNAME = "voucherfundname";
+    public static final String VOUCHERMISDEPARTMENTNAME = "vouchermisdepartmentname";
+    public static final String VOUCHERMISSCHEMENAME = "vouchermisschemename";
+    public static final String VOUCHERMISSUBSCHEMENAME = "vouchermissubschemename";
+    public static final String VOUCHERMISFUNCTIONNAME = "vouchermisfunctionname";
+
+    public static final String FUND_CODE = "fundCode";
+    public static final String DEPARTMENT_CODE = "departmentCode";
+    public static final String FUNCTION_CODE = "functionCode";
+    public static final String SCHEME_CODE = "schemeCode";
+    public static final String SUBSCHEME_CODE = "subSchemeCode";
 
 }

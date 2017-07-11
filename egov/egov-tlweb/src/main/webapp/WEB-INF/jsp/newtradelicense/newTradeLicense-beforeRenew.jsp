@@ -133,6 +133,10 @@
                 <s:else>
                     <div class="row">
                         <div class="text-center">
+                            <s:if test="%{isActive==true}">
+                                <input name="viewdcb" type="button" class="buttonsubmit" id="button" value="View DCB"
+                                       onclick="window.open('/tl/dcb/view/'+ <s:property value="%{id}"/>, '_blank', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');"/>
+                            </s:if>
                             <button type="submit" id="btnsave" class="btn btn-primary" onclick="return validateEditableFields();">
                                 Save
                             </button>
@@ -146,6 +150,7 @@
         </s:form>
     </div>
 </div>
+<script src="<cdn:url  value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
 <script>
     $('#subCategory').change(function () {
         $('#uom').val('');

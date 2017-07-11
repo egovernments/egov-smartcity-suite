@@ -116,7 +116,7 @@
 					</s:if>
 					<s:if test="%{eligibleInitiator == true}">
 					<s:if test="%{propertyByEmployee == true}">
-							<s:if test="%{!isCitizenPortalUser}">
+							<s:if test="%{!citizenPortalUser}">
 								<tr>
 									<%@ include file="../workflow/commonWorkflowMatrix.jsp"%>
 								</tr>

@@ -46,7 +46,7 @@
 <div class="row">
     <label class="col-sm-3 control-label text-right"><s:text name='licensee.aadhaarNo'/></label>
     <div class="col-sm-3 add-margin" style="margin-bottom:15px;">
-        <s:textfield name="licensee.uid" maxlength="12" cssClass="form-control" id="adhaarId"/>
+        <s:textfield name="licensee.uid" cssClass="form-control patternvalidation" data-pattern="number" maxlength="12" id="adhaarId"/>
         <div class="error-msg hide" id="adhaarError">Should be 12 digits</div>
     </div>
     <label class="col-sm-2 control-label text-right"><s:text name='licensee.mobileNo'/><span class="mandatory"></span></label>
@@ -65,21 +65,25 @@
     <div class="col-sm-3 add-margin">
         <s:textfield name="licensee.applicantName" id="applicantName" maxlength="250" cssClass="form-control patternvalidation"
                      required="true" data-pattern="alphabetwithspace"/>
+        <div id="applicantname_error" class="error-msg" style="display:none;" align="left"></div>
     </div>
     <label class="col-sm-2 control-label text-right"><s:text name='licensee.fatherorspousename'/><span class="mandatory"></span></label>
     <div class="col-sm-3 add-margin">
         <s:textfield name="licensee.fatherOrSpouseName" maxlength="250" id="fatherOrSpouseName" cssClass="form-control patternvalidation"
                      required="true" data-pattern="alphabetwithspace"/>
+        <div id="fatherorSpouse_error" class="error-msg" style="display:none;" align="left"></div>
     </div>
 </div>
 <div class="form-group">
     <label class="col-sm-3 control-label text-right"><s:text name='licensee.emailId'/><span class="mandatory"></span></label>
     <div class="col-sm-3 add-margin">
         <s:textfield name="licensee.emailId" id="emailId" maxlength="64" type="email" required="true" cssClass="form-control"/>
+        <div id="email_error" class="error-msg" style="display:none;" align="left"></div>
     </div>
     <label class="col-sm-2 control-label text-right"><s:text name='licensee.address'/><span class="mandatory"></span></label>
     <div class="col-sm-3 add-margin">
         <s:textarea name="licensee.address" id="licenseeAddress" required="true" maxlength="250" cssClass="form-control"/>
+        <div id="licenseeAddress_error" class="error-msg" style="display:none;" align="left"></div>
     </div>
 </div>
 

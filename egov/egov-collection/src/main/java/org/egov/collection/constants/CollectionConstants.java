@@ -155,6 +155,7 @@ public final class CollectionConstants {
     public static final String APPCONFIG_VALUE_COLLECTIONDATAENTRYCUTOFFDATE = "COLLECTIONDATAENTRYCUTOFFDATE";
     public static final String APPCONFIG_VALUE_COLLECTIONSOURCEDEBITACCOUNTHEAD = "COLLECTIONSOURCEDEBITACCOUNTHEAD";
     public static final String APPCONFIG_VALUE_ROLES_CREATERECEIPT_APPROVEDSTATUS = "ROLES_CREATERECEIPT_APPROVEDSTATUS";
+    public static final String APPCONFIG_VALUE_COLLECTIONCREATORRECEIPTCANCELROLE = "COLLECTIONCREATORRECEIPTCANCELROLE";
 
     // named queries (collections)
     public static final String QUERY_RECEIPTS_FOR_VOUCHERS = "RECEIPTS_FOR_VOUCHERS";
@@ -284,8 +285,6 @@ public final class CollectionConstants {
     public static final String SUPER_USER_NAME = "egovernments";
     public static final String SESSION_VAR_LOGIN_USER_LOCATIONID = "locationId";
 
-    public static final String CITIZEN_USER_NAME = "9999999999";
-
     // Separators
     public static final String SEPARATOR_HYPHEN = "-";
     public static final String SEPARATOR_UNDERSCORE = "_";
@@ -328,7 +327,8 @@ public final class CollectionConstants {
     public static final String PURPOSE_NAME_CREDIT_CARD = "Credit Card";
     public static final String PURPOSE_NAME_ATM_ACCOUNTCODE = "ATM ACCOUNT CODE";
     public static final String PURPOSE_NAME_INTERUNITACCOUNT = "Inter-Unit Transfer Account";
-
+    public static final String PURPOSE_NAME_REBATE = "REBATE";
+    
     // Bank Remittance
     public static final String BANKREMITTANCE_SERVICETOTALCASHAMOUNT = "SERVICETOTALCASHAMOUNT";
     public static final String BANKREMITTANCE_SERVICETOTALCHEQUEAMOUNT = "SERVICETOTALCHEQUEAMOUNT";
@@ -363,7 +363,7 @@ public final class CollectionConstants {
     public static final String SERVICECODE_PROFESSIONALTAX = "PRFT";
     public static final String SERVICECODE_AXIS = "AXIS";
     public static final String SERVICECODE_SBIMOPS = "SBIMOPS";
-
+    
     public static final String SERVICECODE_LAMS = "LAMS";
 
     // Online Payment Statuses
@@ -616,5 +616,7 @@ public final class CollectionConstants {
     public static final String QUERY_ACTIVE_BRANCHUSER_BY_USER = "QUERY_ACTIVE_BRANCHUSER_BY_USER";
     public static final String QUERY_BRANCHUSER_BRANCH = "QUERY_BRANCHUSER_BRANCH";
     public static final String QUERY_RECEIPT_BRANCH = "getAllReceiptBranch";
+    public static final String QUERY_ACTIVE_BRANCHUSER = "QUERY_ACTIVE_BRANCHUSER";
+    public static final String QUERY_ALL_BRANCHUSER = "QUERY_ALL_BRANCHUSER";
 
 }

@@ -70,6 +70,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.egov.infra.config.core.ApplicationThreadLocals.getUserId;
 
 @Service
 @Transactional(readOnly = true)
@@ -95,43 +96,35 @@ public class InboxRenderServiceDeligate<T extends StateAware> {
     private WorkflowActionService workflowActionService;
 
     @ReadOnly
-    public List<T> getInboxItems(final Long userId) {
-        return fetchInboxItems(userId, this.eisService.getPositionsForUser(userId, new Date()).parallelStream()
-                .map(Position::getId).collect(Collectors.toList()));
-    }
-
-    @ReadOnly
-    public List<T> getInboxDraftItems(final Long userId) {
-        return fetchInboxDraftItems(userId, this.eisService.getPositionsForUser(userId, new Date()).parallelStream()
-                .map(Position::getId).collect(Collectors.toList()));
-    }
-
-    @ReadOnly
     public List<StateHistory> getWorkflowHistory(final Long stateId) {
         return new LinkedList<>(stateService.getStateById(stateId).getHistory());
     }
 
-    public List<T> fetchInboxItems(final Long userId, final List<Long> owners) {
+    @ReadOnly
+    public List<T> getInboxItems() {
         final List<T> assignedWFItems = new ArrayList<>();
+        List<Long> owners = currentUserPositionIds();
         if (!owners.isEmpty()) {
             final List<String> wfTypes = stateService.getAssignedWorkflowTypeNames(owners);
             for (final String wfType : wfTypes) {
                 final Optional<InboxRenderService<T>> inboxRenderService = this.getInboxRenderService(wfType);
                 if (inboxRenderService.isPresent())
-                    assignedWFItems.addAll(inboxRenderService.get().getAssignedWorkflowItems(userId, owners));
+                    assignedWFItems.addAll(inboxRenderService.get().getAssignedWorkflowItems(getUserId(), owners));
             }
         }
         return assignedWFItems;
     }
 
-    public List<T> fetchInboxDraftItems(final Long userId, final List<Long> owners) {
+    @ReadOnly
+    public List<T> getInboxDraftItems() {
         final List<T> draftWfItems = new ArrayList<>();
+        List<Long> owners = currentUserPositionIds();
         if (!owners.isEmpty()) {
             final List<String> wfTypes = stateService.getAssignedWorkflowTypeNames(owners);
             for (final String wfType : wfTypes) {
                 final Optional<InboxRenderService<T>> inboxRenderService = getInboxRenderService(wfType);
                 if (inboxRenderService.isPresent())
-                    draftWfItems.addAll(inboxRenderService.get().getDraftWorkflowItems(userId, owners));
+                    draftWfItems.addAll(inboxRenderService.get().getDraftWorkflowItems(getUserId(), owners));
             }
         }
         return draftWfItems;
@@ -170,4 +163,8 @@ public class InboxRenderServiceDeligate<T extends StateAware> {
         return nextAction;
     }
 
+    private List<Long> currentUserPositionIds() {
+        return this.eisService.getPositionsForUser(getUserId(), new Date()).parallelStream()
+                .map(Position::getId).collect(Collectors.toList());
+    }
 }

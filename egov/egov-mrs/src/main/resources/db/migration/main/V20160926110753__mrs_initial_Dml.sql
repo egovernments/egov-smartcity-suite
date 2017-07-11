@@ -121,14 +121,14 @@ INSERT INTO egcl_servicecategory(id, name, code, isactive, version, createdby, c
 VALUES(nextval('seq_egcl_servicecategory'), 'Marriage Registration', 'MR', true, 0, 1, current_timestamp, 1, current_timestamp);
 
 Insert into egcl_servicedetails (id,name,serviceurl,isenabled,callbackurl,servicetype,code,fund,fundsource,functionary,vouchercreation,scheme,subscheme,servicecategory,isvoucherapproved,vouchercutoffdate,created_by,created_date,modified_by,modified_date,ordernumber) 
-values (nextval('seq_egcl_servicedetails'), 'MR Fee', '/../mrs/collection/bill', true, '/receipts/receipt-create.action', 'B', 'MRF', 1, null, null, false, null, null, (select id from egcl_servicecategory where code='MR'), false, now(), 1, now(), 1, now(),null);
+values (nextval('seq_egcl_servicedetails'), 'MR Fee', '/../mrs/collection/bill', true, '/receipts/receipt-create.action', 'B', 'MRF', null, null, null, false, null, null, (select id from egcl_servicecategory where code='MR'), false, now(), 1, now(), 1, now(),null);
 
 
 INSERT INTO egcl_servicecategory(id, name, code, isactive, version, createdby, createddate, lastmodifiedby, lastmodifieddate)
 VALUES(nextval('seq_egcl_servicecategory'), 'Marriage Registration ReIssue', 'MRR', true, 0, 1, current_timestamp, 1, current_timestamp);
 
 Insert into egcl_servicedetails (id,name,serviceurl,isenabled,callbackurl,servicetype,code,fund,fundsource,functionary,vouchercreation,scheme,subscheme,servicecategory,isvoucherapproved,vouchercutoffdate,created_by,created_date,modified_by,modified_date,ordernumber) 
-values (nextval('seq_egcl_servicedetails'), 'MRR Fee', '/../mrs/collection/bill', true, '/receipts/receipt-create.action', 'B', 'MRRF', 1, null, null, false, null, null, (select id from egcl_servicecategory where code='MRR'), false, now(), 1, now(), 1, now(),null);
+values (nextval('seq_egcl_servicedetails'), 'MRR Fee', '/../mrs/collection/bill', true, '/receipts/receipt-create.action', 'B', 'MRRF', null, null, null, false, null, null, (select id from egcl_servicecategory where code='MRR'), false, now(), 1, now(), 1, now(),null);
 
 --delete from egcl_servicedetails where name = 'MRR Fee';
 --delete from egcl_servicecategory wheRe code = 'MRR'

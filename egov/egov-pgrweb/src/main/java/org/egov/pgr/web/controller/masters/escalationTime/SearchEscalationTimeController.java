@@ -43,127 +43,115 @@ package org.egov.pgr.web.controller.masters.escalationTime;
 import org.egov.eis.service.DesignationService;
 import org.egov.pgr.entity.ComplaintType;
 import org.egov.pgr.entity.Escalation;
+import org.egov.pgr.service.ComplaintEscalationService;
 import org.egov.pgr.service.ComplaintTypeService;
-import org.egov.pgr.service.EscalationService;
 import org.egov.pims.commons.Designation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-
 @Controller
 @RequestMapping(value = "/escalationTime")
 public class SearchEscalationTimeController {
-	public static final String CONTENTTYPE_JSON = "application/json";
 
-	protected ComplaintTypeService complaintTypeService;
-	protected EscalationService escalationService;
-	protected DesignationService designationService;
-	@Autowired
-	public SearchEscalationTimeController(
-			final ComplaintTypeService complaintTypeService,
-			EscalationService escalationService,
-			DesignationService designationService) {
-		this.complaintTypeService = complaintTypeService;
-		this.escalationService = escalationService;
-		this.designationService = designationService;
-	}
+    @Autowired
+    private ComplaintTypeService complaintTypeService;
 
-	@ModelAttribute
-	public EscalationForm escalationForm() {
-		return new EscalationForm();
-	}
+    @Autowired
+    private ComplaintEscalationService escalationService;
 
-	@RequestMapping(value = "/search-view", method = RequestMethod.POST)
-	public String searchEscalationTimeForm(
-			@ModelAttribute EscalationForm escalationForm, final Model model) {
-		if (escalationForm.getComplaintType() != null) {
-			List<Escalation> escalationList = escalationService
-					.findAllBycomplaintTypeId(escalationForm.getComplaintType()
-							.getId());
+    @Autowired
+    private DesignationService designationService;
 
-			if (escalationList.size() > 0) {
-				escalationForm.setEscalationList((escalationList));
-				model.addAttribute("mode", "dataFound");
-			} else {
-				escalationForm.getEscalationList().clear();
-				escalationForm.addEscalationList(new Escalation());
-				model.addAttribute("mode", "noDataFound");
-			}
-		}
-		return "escalationTime-searchView";
-	}
+    @ModelAttribute
+    public EscalationForm escalationForm() {
+        return new EscalationForm();
+    }
 
-	@RequestMapping(value = "/search-view", method = GET)
-	public String searchForm(@ModelAttribute EscalationForm escalationForm,
-			final Model model) {
-		if (escalationForm.getComplaintType() != null) {
-			List<Escalation> escalationList = escalationService
-					.findAllBycomplaintTypeId(escalationForm.getComplaintType()
-							.getId());
+    @PostMapping("search-view")
+    public String searchEscalationTimeForm(@ModelAttribute EscalationForm escalationForm, Model model) {
+        if (escalationForm.getComplaintType() != null) {
+            List<Escalation> escalationList = escalationService
+                    .findAllBycomplaintTypeId(escalationForm.getComplaintType()
+                            .getId());
 
-			if (escalationList.size() > 0) {
-				escalationForm.setEscalationList((escalationList));
+            if (escalationList.size() > 0) {
+                escalationForm.setEscalationList((escalationList));
+                model.addAttribute("mode", "dataFound");
+            } else {
+                escalationForm.getEscalationList().clear();
+                escalationForm.addEscalationList(new Escalation());
+                model.addAttribute("mode", "noDataFound");
+            }
+        }
+        return "escalationTime-searchView";
+    }
 
-			} else {
-				escalationForm.addEscalationList(new Escalation());
-				model.addAttribute("mode", "noDataFound");
-			}
-		} else {
-			escalationForm.addEscalationList(new Escalation());
-		}
-		return "escalationTime-searchView";
-	}
+    @GetMapping("search-view")
+    public String searchForm(@ModelAttribute EscalationForm escalationForm, Model model) {
+        if (escalationForm.getComplaintType() != null) {
+            List<Escalation> escalationList = escalationService
+                    .findAllBycomplaintTypeId(escalationForm.getComplaintType()
+                            .getId());
 
-	@RequestMapping(value = "/save-escalationTime", method = GET)
-	public String saveEscalationTimeForm(
-			@ModelAttribute EscalationForm escalationForm, final Model model) {
-		return "escalationTime-searchView";
-	}
+            if (escalationList.size() > 0) {
+                escalationForm.setEscalationList((escalationList));
 
-	@RequestMapping(value = "/save-escalationTime", method = RequestMethod.POST)
-	public String saveEscalationTime(
-			@ModelAttribute EscalationForm escalationForm, final Model model,
-			final BindingResult errors, final RedirectAttributes redirectAttrs) {
+            } else {
+                escalationForm.addEscalationList(new Escalation());
+                model.addAttribute("mode", "noDataFound");
+            }
+        } else {
+            escalationForm.addEscalationList(new Escalation());
+        }
+        return "escalationTime-searchView";
+    }
 
-		ComplaintType compType = null;
-		if (escalationForm.getComplaintType() != null
-				&& escalationForm.getComplaintType().getId() != null) {
-			compType = complaintTypeService.findBy(escalationForm
-					.getComplaintType().getId());
+    @GetMapping("save-escalationTime")
+    public String saveEscalationTimeForm(@ModelAttribute EscalationForm escalationForm) {
+        return "escalationTime-searchView";
+    }
 
-			List<Escalation> escalationList = escalationService
-					.findAllBycomplaintTypeId(escalationForm.getComplaintType()
-							.getId());
+    @PostMapping("save-escalationTime")
+    public String saveEscalationTime(@ModelAttribute EscalationForm escalationForm, RedirectAttributes redirectAttrs) {
 
-			if (escalationList != null && escalationList.size() > 0)
-				escalationService.deleteAllInBatch(escalationList);
-		}
-		if (compType != null && escalationForm.getEscalationList() != null
-				&& escalationForm.getEscalationList().size() > 0) {
-			for (Escalation escalation : escalationForm.getEscalationList()) {
-				if (escalation.getDesignation().getId() != null) {
-					Designation desig = designationService
-							.getDesignationById(escalation.getDesignation()
-									.getId());
-					escalation.setComplaintType(compType);
-					escalation.setDesignation(desig);
-					escalation.setNoOfHrs(escalation.getNoOfHrs());
-					escalationService.create(escalation);
-				}
-			}
- 
-		}
-		redirectAttrs.addFlashAttribute("message", "msg.escalate.time.success");
-		return "escalationTime-searchView";
-	}
+        ComplaintType compType = null;
+        if (escalationForm.getComplaintType() != null
+                && escalationForm.getComplaintType().getId() != null) {
+            compType = complaintTypeService.findBy(escalationForm
+                    .getComplaintType().getId());
+
+            List<Escalation> escalationList = escalationService
+                    .findAllBycomplaintTypeId(escalationForm.getComplaintType()
+                            .getId());
+
+            if (escalationList != null && escalationList.size() > 0)
+                escalationService.deleteAllInBatch(escalationList);
+        }
+        if (compType != null && escalationForm.getEscalationList() != null
+                && escalationForm.getEscalationList().size() > 0) {
+            for (Escalation escalation : escalationForm.getEscalationList()) {
+                if (escalation.getDesignation().getId() != null) {
+                    Designation desig = designationService
+                            .getDesignationById(escalation.getDesignation()
+                                    .getId());
+                    escalation.setComplaintType(compType);
+                    escalation.setDesignation(desig);
+                    escalation.setNoOfHrs(escalation.getNoOfHrs());
+                    escalationService.create(escalation);
+                }
+            }
+
+        }
+        redirectAttrs.addFlashAttribute("message", "msg.escalate.time.success");
+        return "escalationTime-searchView";
+    }
 
 }

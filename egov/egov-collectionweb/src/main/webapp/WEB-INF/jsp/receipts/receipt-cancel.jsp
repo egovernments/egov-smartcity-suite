@@ -297,7 +297,9 @@ function warningInfo()
 		   
 		<div align="left" class="mandatorycoll"><s:text name="common.mandatoryfields"/></div>
 		<div class="buttonbottom">
+		<s:if test="isReceiptCancelEnable">
 		<input name="button32" type="button" class="buttonsubmit" id="button32"  value="Cancel Receipt" onclick="return warningInfo()"/>
+		</s:if>
 		<input name="button2" type="button" class="button" id="button" onclick="window.close()" value="Close"/>
 		<input name="buttonBack" type="button" class="button" id="buttonBack" value="Back" onclick="window.location='${pageContext.request.contextPath}/receipts/searchReceipt.action';"  /> 
 		</div>

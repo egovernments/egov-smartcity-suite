@@ -41,11 +41,11 @@
 package org.egov.ptis.web.controller.transactions.editowner;
 
 import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.persistence.entity.enums.Gender;
 import org.egov.ptis.bean.PropertyOwner;
-import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.OwnerAudit;
@@ -54,6 +54,7 @@ import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.domain.service.property.OwnerAuditService;
 import org.egov.ptis.domain.service.property.PropertyPersistenceService;
 import org.egov.ptis.domain.service.property.PropertyService;
+import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -86,7 +87,10 @@ public class EditOwnerDetailsController {
 
     @Autowired
     private PropertyService propertyService;
-
+    
+    @Autowired
+    private PropertyTaxCommonUtils propertyTaxCommonUtils; 
+    
     @ModelAttribute
     public PropertyOwner getPropertyOwner(@PathVariable final String assessmentNo) {
         PropertyOwner propertyOwner = new PropertyOwner();
@@ -106,7 +110,7 @@ public class EditOwnerDetailsController {
             @PathVariable String assessmentNo) {
         BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
         List<OwnerAudit> ownerAuditList;
-        model.addAttribute("guardianRelationMap", PropertyTaxConstants.GUARDIAN_RELATION);
+		model.addAttribute("guardianRelations", propertyTaxCommonUtils.getGuardianRelations());
         model.addAttribute("gender", Gender.values());
         for (PropertyOwnerInfo ownerInfo : basicProperty.getPropertyOwnerInfo()) {
             for (Address address : ownerInfo.getOwner().getAddress()) {
@@ -128,7 +132,7 @@ public class EditOwnerDetailsController {
             final HttpServletRequest request, @RequestParam String doorNumber) {
         String errMsg ;
         model.addAttribute("doorNumber", doorNumber);
-        model.addAttribute("guardianRelationMap", PropertyTaxConstants.GUARDIAN_RELATION);
+		model.addAttribute("guardianRelations", propertyTaxCommonUtils.getGuardianRelations());
         for (PropertyOwnerInfo ownerInfo : propertyOwner.getPropertyOwnerInfo())
             for (Address address : ownerInfo.getOwner().getAddress())
                 model.addAttribute("existingDoorNumber", address.getHouseNoBldgApt());

@@ -134,7 +134,7 @@
 		<div class="tab-pane fade" id="checklist">
 			<jsp:include page="expensebill-checklist.jsp" />
 		</div>
-		<jsp:include page="../common/commonworkflowmatrix.jsp" />
+		<jsp:include page="../common/commonworkflowmatrix-expensebill.jsp" />
 		<div class="buttonbottom" align="center">
 			<jsp:include page="../common/commonworkflowmatrix-button.jsp" />
 		</div>

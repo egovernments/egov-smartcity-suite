@@ -54,6 +54,13 @@
 			validateWorkFlowApprover('Forward');
 		}   */
 		var rejectbutton=document.getElementById("workFlowAction").value;
+		if(rejectbutton!=null && rejectbutton=='Proceed Without Donation') {
+			
+			$('#approvalDepartment').attr('required', 'required');
+			$('#approvalDesignation').attr('required', 'required');
+			$('#approvalPosition').attr('required', 'required');
+			$('#approvalComent').removeAttr('required');
+		}
 		if(rejectbutton!=null && rejectbutton=='Reject')
 			{
 			$('#approvalDepartment').removeAttr('required');
@@ -85,13 +92,15 @@
 	   return true;
 	}
 </script>
-
 <div class="buttonbottom" align="center">
 	<table>
 		<tr>
 			<td>
+				<c:if test="${proceedWithoutDonation==true && statuscode=='ESTIMATIONNOTICEGENERATED'}">
+					<form:button  type="submit" id="proceedwithoutdonation" class="btn btn-primary workAction" onclick="validateWorkFlowApprover('Proceed Without Donation');"><c:out value="Proceed Without Donation"/></form:button>
+				</c:if>
 		<c:forEach items="${validActionList}" var="validButtons">
-				<form:button type="submit" id="${validButtons}" class="btn btn-primary workAction"  value="${validButtons}" onclick="validateWorkFlowApprover('${validButtons}');">
+			<form:button type="submit" id="${validButtons}" class="btn btn-primary workAction"  value="${validButtons}" onclick="validateWorkFlowApprover('${validButtons}');">
 						<c:out value="${validButtons}" /> </form:button>
 			</c:forEach>
 				<input type="button" name="button2" id="button2" value="Close"

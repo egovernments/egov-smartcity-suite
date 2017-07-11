@@ -63,17 +63,19 @@
     </bean>
 
     <bean id="concurrentSessionFilter" class="org.springframework.security.web.session.ConcurrentSessionFilter">
-        <constructor-arg index="0" ref="sessionRegistry"/>
-        <constructor-arg index="1" value="/login/secure?sessionExpired=1"/>
+        <constructor-arg name="sessionRegistry" ref="springSessionBackedSessionRegistry"/>
     </bean>
-
-    <bean id="sessionRegistry" class="org.springframework.security.core.session.SessionRegistryImpl"/>
 
     <bean id="concurrentSessionControlStrategy"
           class="org.springframework.security.web.authentication.session.ConcurrentSessionControlAuthenticationStrategy">
-        <constructor-arg index="0" ref="sessionRegistry"/>
-        <property name="exceptionIfMaximumExceeded" value="false"/>
-        <property name="maximumSessions" value="-1"/>
+        <constructor-arg index="0" ref="springSessionBackedSessionRegistry"/>
+        <property name="exceptionIfMaximumExceeded" value="true"/>
+        <property name="maximumSessions" value="${max.user.session}"/>
+    </bean>
+
+    <bean id="registerSessionAuthenticationStrategy"
+          class="org.springframework.security.web.authentication.session.RegisterSessionAuthenticationStrategy">
+        <constructor-arg ref="springSessionBackedSessionRegistry"/>
     </bean>
 
     <bean id="securityContextPersistenceFilter"
@@ -115,18 +117,9 @@
         <property name="useForward" value="false"/>
     </bean>
 
-    <bean id="authenticationSuccessHandler" class="org.egov.infra.security.authentication.AuthenticationSuccessHandler">
+    <bean id="authenticationSuccessHandler" class="org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler">
         <property name="alwaysUseDefaultTargetUrl" value="false"/>
         <property name="defaultTargetUrl" value="/home"/>
-        <property name="roleTargetUrlMapping">
-            <map>
-                <entry key="EMPLOYEE" value="/home"/>
-                <entry key="SYSTEM" value="/home"/>
-                <entry key="CITIZEN" value="/../portal/home"/>
-                <entry key="BUSINESS" value="/../portal/home"/>
-                <entry key="CSC Operator" value="/home"/>
-            </map>
-        </property>
     </bean>
 
     <bean id="securityContextHolderAwareRequestFilter"
@@ -141,6 +134,7 @@
             <list>
                 <ref bean="concurrentSessionControlStrategy"/>
                 <ref bean="sessionFixationProtectionStrategy"/>
+                <ref bean="registerSessionAuthenticationStrategy"/>
             </list>
         </constructor-arg>
     </bean>

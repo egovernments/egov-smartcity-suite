@@ -39,26 +39,11 @@
  */
 package org.egov.wtms.web.controller.application;
 
-import static org.egov.infra.utils.ApplicationConstant.CITY_DIST_NAME_KEY;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import javax.validation.ValidationException;
-
+import com.lowagie.text.Document;
+import com.lowagie.text.pdf.PdfContentByte;
+import com.lowagie.text.pdf.PdfImportedPage;
+import com.lowagie.text.pdf.PdfReader;
+import com.lowagie.text.pdf.PdfWriter;
 import org.apache.commons.io.FileUtils;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
@@ -66,7 +51,6 @@ import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.repository.FileStoreMapperRepository;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.reporting.engine.ReportOutput;
-import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.entity.WorkflowTypes;
@@ -80,7 +64,6 @@ import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.ReportGenerationService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.autonumber.WorkOrderNumberGenerator;
-import org.egov.wtms.masters.service.UsageTypeService;
 import org.egov.wtms.utils.PropertyExtnUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,11 +73,24 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.lowagie.text.Document;
-import com.lowagie.text.pdf.PdfContentByte;
-import com.lowagie.text.pdf.PdfImportedPage;
-import com.lowagie.text.pdf.PdfReader;
-import com.lowagie.text.pdf.PdfWriter;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import javax.validation.ValidationException;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import static org.egov.infra.utils.ApplicationConstant.CITY_DIST_NAME_KEY;
 
 /**
  * @author ranjit
@@ -104,24 +100,14 @@ import com.lowagie.text.pdf.PdfWriter;
 public class DigitalSignatureConnectionController {
 
     @Autowired
-    private WaterConnectionDetailsService waterConnectionDetailsService;
-
-    @Autowired
     @Qualifier("fileStoreService")
-    protected FileStoreService fileStoreService;
-
+    private FileStoreService fileStoreService;
+    @Autowired
+    private WaterConnectionDetailsService waterConnectionDetailsService;
     @Autowired
     private InboxRenderServiceDeligate<StateAware> inboxRenderServiceDeligate;
-
-    @Autowired
-    private SecurityUtils securityUtils;
-
     @Autowired
     private WorkflowTypeService workflowTypeService;
-
-    @Autowired
-    protected UsageTypeService usageTypeService;
-
     @Autowired
     private PropertyExtnUtils propertyExtnUtils;
 
@@ -169,7 +155,7 @@ public class DigitalSignatureConnectionController {
 
     @RequestMapping(value = "/waterTax/downloadSignedWorkOrderConnection")
     public void downloadSignedWorkOrderConnection(final HttpServletRequest request,
-            final HttpServletResponse response) {
+                                                  final HttpServletResponse response) {
         final String signedFileStoreId = request.getParameter("signedFileStoreId");
         final File file = fileStoreService.fetch(signedFileStoreId, WaterTaxConstants.FILESTORE_MODULECODE);
         try {
@@ -186,7 +172,7 @@ public class DigitalSignatureConnectionController {
     }
 
     private HttpServletResponse getServletResponse(final HttpServletResponse response, final List<InputStream> pdfs,
-            final String filename) {
+                                                   final String filename) {
         try {
             final ByteArrayOutputStream output = new ByteArrayOutputStream();
             final byte[] data = concatPDFs(pdfs, output);
@@ -382,7 +368,7 @@ public class DigitalSignatureConnectionController {
 
     public List<StateAware> fetchItems() {
         final List<StateAware> digitalSignWFItems = new ArrayList<>();
-        digitalSignWFItems.addAll(inboxRenderServiceDeligate.getInboxItems(securityUtils.getCurrentUser().getId()));
+        digitalSignWFItems.addAll(inboxRenderServiceDeligate.getInboxItems());
         return digitalSignWFItems;
     }
 

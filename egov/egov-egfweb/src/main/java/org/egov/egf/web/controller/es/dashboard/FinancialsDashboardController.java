@@ -49,11 +49,11 @@ package org.egov.egf.web.controller.es.dashboard;
 
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.service.CFinancialYearService;
-import org.egov.egf.bean.dashboard.FinancialsDetailResponse;
-import org.egov.egf.bean.dashboard.FinancialsDetailsRequest;
+import org.egov.egf.bean.dashboard.*;
 import org.egov.egf.es.utils.FinancialsDashBoardUtils;
 import org.egov.infra.utils.DateUtils;
 import org.egov.services.es.dashboard.FinancialsDashboardService;
+import org.egov.services.es.dashboard.RatioAnalysisDashboardService;
 import org.egov.utils.FinancialConstants;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.slf4j.Logger;
@@ -79,6 +79,9 @@ public class FinancialsDashboardController {
     @Autowired
     private CFinancialYearService cFinancialYearService;
 
+    @Autowired
+    private RatioAnalysisDashboardService ratioAnalysisDashboardService;
+
     /**
      * Provides Financials voucher Index details across all ULBs
      *
@@ -86,7 +89,7 @@ public class FinancialsDashboardController {
      * @throws IOException
      */
     @RequestMapping(value = "/dashboard", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<FinancialsDetailResponse> getFinancialDetails(FinancialsDetailsRequest financialsDetailsRequest)
+    public List<FinancialsDetailResponse> getFinancialDetails(final FinancialsDetailsRequest financialsDetailsRequest)
             throws IOException {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("financialsDetailsRequest input : regionName = " + financialsDetailsRequest.getRegion()
@@ -96,30 +99,51 @@ public class FinancialsDashboardController {
                     + financialsDetailsRequest.getToDate() + ", aggregationlevel = "
                     + financialsDetailsRequest.getAggregationLevel());
         setAsOnDate(financialsDetailsRequest);
-        BoolQueryBuilder boolQuery = FinancialsDashBoardUtils.prepareWhereClause(financialsDetailsRequest);
-        String aggrField = FinancialsDashBoardUtils.getAggregationGroupingField(financialsDetailsRequest);
+        final BoolQueryBuilder boolQuery = FinancialsDashBoardUtils.prepareWhereClause(financialsDetailsRequest);
+        final String aggrField = FinancialsDashBoardUtils.getAggregationGroupingField(financialsDetailsRequest);
         return financialsDashboardService.getFinancialsData(financialsDetailsRequest, boolQuery, aggrField);
     }
 
-    private void setAsOnDate(FinancialsDetailsRequest financialsDetailsRequest) {
+    private void setAsOnDate(final FinancialsDetailsRequest financialsDetailsRequest) {
 
         CFinancialYear financialYear;
         if (financialsDetailsRequest.getToDate() != null) {
-            financialYear = cFinancialYearService.getFinancialYearByDate(DateUtils.toDateUsingDefaultPattern(financialsDetailsRequest.getToDate()));
-            financialsDetailsRequest.setFromDate(FinancialConstants.DATEFORMATTER_YYYY_MM_DD.format(financialYear.getStartingDate()));
+            financialYear = cFinancialYearService
+                    .getFinancialYearByDate(DateUtils.getDate(financialsDetailsRequest.getToDate(), "yyyy-MM-dd"));
+            financialsDetailsRequest
+                    .setFromDate(FinancialConstants.DATEFORMATTER_YYYY_MM_DD.format(financialYear.getStartingDate()));
             financialsDetailsRequest.setCurrentFinancialYear(financialYear.getFinYearRange());
             financialsDetailsRequest.setLastFinancialYear(cFinancialYearService
-                    .getPreviousFinancialYearForDate(DateUtils.toDateUsingDefaultPattern(financialsDetailsRequest.getToDate())).getFinYearRange());
+                    .getPreviousFinancialYearForDate(DateUtils.getDate(financialsDetailsRequest.getToDate(), "yyyy-MM-dd"))
+                    .getFinYearRange());
         } else {
             financialYear = cFinancialYearService.getFinancialYearByDate(DateUtils.now());
             financialsDetailsRequest.setToDate(FinancialConstants.DATEFORMATTER_YYYY_MM_DD.format(DateUtils.now()));
-            financialsDetailsRequest.setFromDate(FinancialConstants.DATEFORMATTER_YYYY_MM_DD.format(financialYear.getStartingDate()));
+            financialsDetailsRequest
+                    .setFromDate(FinancialConstants.DATEFORMATTER_YYYY_MM_DD.format(financialYear.getStartingDate()));
             financialsDetailsRequest.setCurrentFinancialYear(financialYear.getFinYearRange());
             financialsDetailsRequest.setLastFinancialYear(cFinancialYearService
                     .getPreviousFinancialYearForDate(DateUtils.now()).getFinYearRange());
         }
 
+    }
 
+    @RequestMapping(value = "/statewisebudget", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<FinancialsBudgetDetailResponse> getFinDetails(final FinancialsDetailsRequest financialsDetailsRequest)
+            throws IOException {
+        setAsOnDate(financialsDetailsRequest);
+        final BoolQueryBuilder boolQuery = FinancialsDashBoardUtils.prepareWhereClauseForBudget(financialsDetailsRequest);
+        final String aggrField = FinancialsDashBoardUtils.getAggregationGroupingFieldForBudget(financialsDetailsRequest);
+        return financialsDashboardService.getBudgetData(financialsDetailsRequest, boolQuery, aggrField);
+    }
+
+    @RequestMapping(value = "/ratios", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<FinancialsRatioAnalysisResponse> getRatioAnalysisReport(final FinancialsDetailsRequest financialsDetailsRequest)
+            throws IOException {
+
+        final BoolQueryBuilder boolQuery = FinancialsDashBoardUtils.prepareWhereClause(financialsDetailsRequest);
+        final String aggrField = FinancialsDashBoardUtils.getAggregationGroupingField(financialsDetailsRequest);
+        return ratioAnalysisDashboardService.getRatios(new FinancialsRatioAnalysisRequest(financialsDetailsRequest), boolQuery, aggrField);
     }
 
 }

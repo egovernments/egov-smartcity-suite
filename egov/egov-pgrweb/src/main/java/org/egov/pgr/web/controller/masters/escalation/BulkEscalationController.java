@@ -46,21 +46,21 @@ import org.egov.commons.service.ObjectTypeService;
 import org.egov.eis.entity.PositionHierarchy;
 import org.egov.eis.service.PositionHierarchyService;
 import org.egov.pgr.entity.ComplaintType;
+import org.egov.pgr.service.ComplaintEscalationService;
 import org.egov.pgr.service.ComplaintTypeService;
-import org.egov.pgr.service.EscalationService;
 import org.egov.pgr.utils.constants.PGRConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
@@ -68,26 +68,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.egov.infra.utils.JsonUtils.toJSON;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @Controller
 @RequestMapping("/bulkEscalation")
 public class BulkEscalationController {
 
-    private final EscalationService escalationService;
-    private final ComplaintTypeService complaintTypeService;
-    private final ObjectTypeService objectTypeService;
-    private final PositionHierarchyService positionHierarchyService;
+    @Autowired
+    private ComplaintEscalationService escalationService;
 
     @Autowired
-    public BulkEscalationController(final EscalationService escalationService, final ComplaintTypeService complaintTypeService,
-            final ObjectTypeService objectTypeService, final PositionHierarchyService positionHierarchyService) {
-        this.escalationService = escalationService;
-        this.complaintTypeService = complaintTypeService;
-        this.objectTypeService = objectTypeService;
-        this.positionHierarchyService = positionHierarchyService;
+    private ComplaintTypeService complaintTypeService;
 
-    }
+    @Autowired
+    private ObjectTypeService objectTypeService;
+
+    @Autowired
+    private PositionHierarchyService positionHierarchyService;
 
     @ModelAttribute("complainttypes")
     public List<ComplaintType> complaintTypes() {
@@ -99,14 +95,14 @@ public class BulkEscalationController {
         return new BulkEscalationGenerator();
     }
 
-    @RequestMapping(value = "/search", method = RequestMethod.GET)
+    @GetMapping("search")
     public String newform() {
         return "bulkEscalation-new";
     }
 
-    @RequestMapping(value = "/search-result", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody void search(final Model model, final HttpServletRequest request,
-            @ModelAttribute final BulkEscalationGenerator bulkEscalationGenerator, final HttpServletResponse response)
+    @GetMapping(value = "search-result", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public void search(@ModelAttribute BulkEscalationGenerator bulkEscalationGenerator, HttpServletResponse response)
             throws IOException {
         final List<EscalationHelper> escalationHelperList = new ArrayList<>();
         final List<PositionHierarchy> escalationRecords = escalationService
@@ -127,9 +123,9 @@ public class BulkEscalationController {
 
     }
 
-    @RequestMapping(value = "/save", method = RequestMethod.POST)
-    public String save(@Valid @ModelAttribute final BulkEscalationGenerator bulkEscalationGenerator, final BindingResult errors,
-            final RedirectAttributes redirectAttrs, final Model model) {
+    @PostMapping("save")
+    public String save(@Valid @ModelAttribute BulkEscalationGenerator bulkEscalationGenerator, BindingResult errors,
+                       final RedirectAttributes redirectAttrs, final Model model) {
         if (errors.hasErrors()) {
             model.addAttribute("message", "bulkescalation.unble.to.save");
             return "bulkEscalation-new";

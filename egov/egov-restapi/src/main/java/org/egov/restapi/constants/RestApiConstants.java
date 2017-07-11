@@ -517,4 +517,11 @@ public class RestApiConstants {
     public static final String THIRD_PARTY_ERR_VOUCHERDATE_CODE_JSON_REQUEST = "EGF-VOUCHER-5";
     public static final String THIRD_PARTY_ERR_VOUCHERDATE_MSG_JSON_REQUEST = "Voucher date cannot be future date";
 
+    public static final String THIRD_PARTY_ERR_CODE_NOPAYMENT_PENDING = "STMS-REST-1";
+    public static final String THIRD_PARTY_ERR_MSG_NOPAYMENT_PENDING = "There is no tax pending for selected ApplicationNumber";
+
+    public static final String THIRD_PARTY_ERR_CODE_ADVANCE_NOTALLOWED = "STMS-REST-2";
+    public static final String THIRD_PARTY_ERR_MSG_ADVANCE_NOTALLOWED="Payment amount should be less than demand amount";
+    public static final String THIRD_PARTY_ERR_CODE_WRONG_BANK_NAME_CODE = "STMS-REST-3";
+    public static final String THIRD_PARTY_ERR_MSG_WRONG_BANK_NAME_CODE = "Bank Name is not a valid.";
 }

@@ -51,7 +51,7 @@ import org.egov.adtax.service.HoardingCategoryService;
 import org.egov.adtax.service.RatesClassService;
 import org.egov.adtax.service.UnitOfMeasureService;
 import org.egov.commons.CFinancialYear;
-import org.egov.infra.config.properties.ApplicationProperties;
+import org.egov.infra.config.core.GlobalSettings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,8 +76,6 @@ import java.util.List;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
-//import org.egov.adtax.service.SubCategoryService;
-
 @Controller
 @RequestMapping(value = "/rates")
 public class ScheduleOfRateController {
@@ -90,32 +88,33 @@ public class ScheduleOfRateController {
     private HoardingCategoryService hoardingCategoryService;
 
     @Autowired
-    private ApplicationProperties applicationproperties;
-    
-    @Autowired
     private RatesClassService ratesClassService;
+
+    @Autowired
+    private UnitOfMeasureService unitOfMeasureService;
 
     @ModelAttribute("rate")
     public AdvertisementRate rate() {
         return new AdvertisementRate();
     }
 
-    @Autowired
-    private UnitOfMeasureService unitOfMeasureService;
-
-    public @ModelAttribute("hoardingCategories") List<HoardingCategory> hoardingCategories() {
+    @ModelAttribute("hoardingCategories")
+    public List<HoardingCategory> hoardingCategories() {
         return hoardingCategoryService.getAllActiveHoardingCategory();
     }
 
-    public @ModelAttribute("unitOfMeasures") List<UnitOfMeasure> unitOfMeasures() {
+    @ModelAttribute("unitOfMeasures")
+    public List<UnitOfMeasure> unitOfMeasures() {
         return unitOfMeasureService.getAllActiveUnitOfMeasure();
     }
 
-    public @ModelAttribute("ratesClasses") List<RatesClass> ratesClasses() {
+    @ModelAttribute("ratesClasses")
+    public List<RatesClass> ratesClasses() {
         return ratesClassService.getAllActiveRatesClass();
     }
-    
-    public @ModelAttribute("financialYears") List<CFinancialYear> financialyear() {
+
+    @ModelAttribute("financialYears")
+    public List<CFinancialYear> financialyear() {
 
         return advertisementRateService.getAllFinancialYears();
     }
@@ -141,10 +140,10 @@ public class ScheduleOfRateController {
      * @return
      */
     @RequestMapping(value = "/search", method = POST)
-    public String searchForm (@Valid @ModelAttribute AdvertisementRate rate, final BindingResult errors,
-            final RedirectAttributes redirectAttrs, final Model model) {
-        List<AdvertisementRatesDetails> advertisementRatesDetails = new ArrayList<AdvertisementRatesDetails>();
-       
+    public String searchForm(@Valid @ModelAttribute AdvertisementRate rate, final BindingResult errors,
+                             final RedirectAttributes redirectAttrs, final Model model) {
+        List<AdvertisementRatesDetails> advertisementRatesDetails;
+
         if (validateScheduleOfRateSearch(rate, model))
             return "scheduleOfRate-form";
 
@@ -169,7 +168,7 @@ public class ScheduleOfRateController {
     public String viewHoarding(@PathVariable final String category, final Model model) {
         return "report-dcbview";
     }
-    
+
     /**
      * @param rate
      * @param redirectAttrs
@@ -178,7 +177,7 @@ public class ScheduleOfRateController {
      */
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public String create(@ModelAttribute AdvertisementRate rate, final RedirectAttributes redirectAttrs,
-            final Model model) {
+                         final Model model) {
 
         AdvertisementRate existingRateobject = null;
         final List<AdvertisementRatesDetails> rateDetails = new ArrayList<AdvertisementRatesDetails>();
@@ -187,7 +186,7 @@ public class ScheduleOfRateController {
 
         existingRateobject = advertisementRateService.findScheduleOfRateByCategorySubcategoryUomAndClass(rate.getCategory(),
                 rate.getSubCategory(), rate.getUnitofmeasure(), rate.getClasstype(), rate.getFinancialyear());
-       
+
         for (final AdvertisementRatesDetails advDtl : rate.getAdvertisementRatesDetails()) {
             if (existingRateobject != null)
                 advDtl.setAdvertisementRate(existingRateobject);
@@ -209,7 +208,7 @@ public class ScheduleOfRateController {
         redirectAttrs.addFlashAttribute("agency", rate);
         redirectAttrs.addFlashAttribute("message", "message.scheduleofrate.create");
         return "redirect:/rates/success/" + rate.getId();
-      
+
     }
 
     /**
@@ -246,24 +245,25 @@ public class ScheduleOfRateController {
         }
         return validate;
     }
-    
+
     @RequestMapping(value = "/searchscheduleofrate", method = GET)
     public String newSearchScheduleOfRate() {
         return "scheduleOfRate-search";
     }
 
     @RequestMapping(value = "/searchscheduleofrate", method = POST, produces = MediaType.TEXT_PLAIN_VALUE)
-    public @ResponseBody String searchScheduleOfRate(final HttpServletRequest request,
-            final HttpServletResponse response) {
-        
+    @ResponseBody
+    public String searchScheduleOfRate(final HttpServletRequest request,
+                                       final HttpServletResponse response) {
+
         final String category = request.getParameter("category");
         final String subCategory = request.getParameter("subCategory");
         final String unitOfMeasure = request.getParameter("uom");
         final String classtype = request.getParameter("rateClass");
         final String finyear = request.getParameter("finyear");
-        return "{ \"data\":" + new GsonBuilder().setDateFormat(applicationproperties.defaultDatePattern()).create()
-                .toJson(advertisementRateService.getScheduleOfRateSearchResult(category,subCategory,unitOfMeasure,classtype,finyear)) + "}";
+        return "{ \"data\":" + new GsonBuilder().setDateFormat(GlobalSettings.datePattern()).create()
+                .toJson(advertisementRateService.getScheduleOfRateSearchResult(category, subCategory, unitOfMeasure, classtype, finyear)) + "}";
 
-    } 
+    }
 
 }

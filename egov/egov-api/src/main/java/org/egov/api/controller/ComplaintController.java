@@ -72,6 +72,8 @@ import org.egov.pgr.entity.ComplaintType;
 import org.egov.pgr.entity.ComplaintTypeCategory;
 import org.egov.pgr.entity.ReceivingMode;
 import org.egov.pgr.entity.enums.CitizenFeedback;
+import org.egov.pgr.service.ComplaintHistoryService;
+import org.egov.pgr.service.ComplaintProcessFlowService;
 import org.egov.pgr.service.ComplaintService;
 import org.egov.pgr.service.ComplaintStatusMappingService;
 import org.egov.pgr.service.ComplaintStatusService;
@@ -117,6 +119,8 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 @RequestMapping("/v1.0")
 public class ComplaintController extends ApiController {
 
+    public static final String COMPLAINT_TYPE_ID = "complaintTypeId";
+    public static final String COMPLAINT_DETAILS = "details";
     private static final Logger LOGGER = Logger.getLogger(ComplaintController.class);
     private static final String SATISFACTORY = "SATISFACTORY";
     private static final String UNSATISFACTORY = "UNSATISFACTORY";
@@ -128,21 +132,30 @@ public class ComplaintController extends ApiController {
     private static final String LOCATION_ID = "locationId";
     private static final String INVALID_PAGE_NUMBER_ERROR = "Invalid Page Number";
     private static final String HAS_NEXT_PAGE = "hasNextPage";
+    @Autowired
+    private ComplaintStatusService complaintStatusService;
 
     @Autowired
-    protected ComplaintStatusService complaintStatusService;
+    private ComplaintService complaintService;
+
     @Autowired
-    protected ComplaintService complaintService;
+    private ComplaintHistoryService complaintHistoryService;
+
     @Autowired
-    protected ComplaintTypeCategoryService complaintTypeCategoryService;
+    private ComplaintTypeCategoryService complaintTypeCategoryService;
+
     @Autowired
-    protected ComplaintTypeService complaintTypeService;
+    private ComplaintTypeService complaintTypeService;
+
     @Autowired
-    protected CrossHierarchyService crossHierarchyService;
+    private CrossHierarchyService crossHierarchyService;
+
     @Autowired
-    protected FileStoreUtils fileStoreUtils;
+    private FileStoreUtils fileStoreUtils;
+
     @Autowired
-    protected ComplaintStatusMappingService complaintStatusMappingService;
+    private ComplaintStatusMappingService complaintStatusMappingService;
+
     @Autowired
     private BoundaryService boundaryService;
     @Autowired
@@ -156,7 +169,9 @@ public class ComplaintController extends ApiController {
 
     @Autowired
     private PriorityService priorityService;
-    // --------------------------------------------------------------------------------//
+
+    @Autowired
+    private ComplaintProcessFlowService complaintProcessFlowService;
 
     /**
      * This will returns all complaint types
@@ -246,7 +261,7 @@ public class ComplaintController extends ApiController {
 
     @RequestMapping(value = ApiUrl.COMPLAINT_CREATE, method = RequestMethod.POST)
     public ResponseEntity<String> complaintCreate(
-            @RequestParam(value = "json_complaint", required = false) final String complaintJSON,
+            @RequestParam(value = "json_complaint") final String complaintJSON,
             @RequestParam("files") final MultipartFile[] files) {
         try {
 
@@ -284,7 +299,18 @@ public class ComplaintController extends ApiController {
                 } else
                     return getResponseHandler().error(getMessage("msg.complaint.reg.failed.user"));
 
-            final long complaintTypeId = (long) complaintRequest.get("complaintTypeId");
+            if (!complaintRequest.containsKey(COMPLAINT_TYPE_ID))
+                return getResponseHandler().error(getMessage("msg.complaint.type.required"));
+
+            if (!complaintRequest.containsKey(COMPLAINT_DETAILS) || StringUtils.isBlank(complaintRequest.get(COMPLAINT_DETAILS).toString()))
+                return getResponseHandler().error(getMessage("msg.complaint.desc.required"));
+            else if (complaintRequest.get(COMPLAINT_DETAILS).toString().length() < 10)
+                return getResponseHandler().error(getMessage("msg.complaint.desc.min.required"));
+            else if (complaintRequest.get(COMPLAINT_DETAILS).toString().length() > 500)
+                return getResponseHandler().error(getMessage("msg.complaint.desc.max.required"));
+
+
+            final long complaintTypeId = (long) complaintRequest.get(COMPLAINT_TYPE_ID);
             if (complaintRequest.get(LOCATION_ID) != null && (long) complaintRequest.get(LOCATION_ID) > 0) {
                 final long locationId = (long) complaintRequest.get(LOCATION_ID);
                 final CrossHierarchy crosshierarchy = crossHierarchyService.findById(locationId);
@@ -301,7 +327,7 @@ public class ComplaintController extends ApiController {
             }
             if (complaint.getLocation() == null && (complaint.getLat() <= 0D || complaint.getLng() <= 0D))
                 return getResponseHandler().error(getMessage("location.required"));
-            complaint.setDetails(complaintRequest.get("details").toString());
+            complaint.setDetails(complaintRequest.get(COMPLAINT_DETAILS).toString());
             complaint.setLandmarkDetails(complaintRequest.get("landmarkDetails").toString());
             if (complaintTypeId > 0) {
                 final ComplaintType complaintType = complaintTypeService.findBy(complaintTypeId);
@@ -378,7 +404,10 @@ public class ComplaintController extends ApiController {
                     file.getInputStream(), file.getOriginalFilename(),
                     file.getContentType(), PGRConstants.MODULE_NAME);
             complaint.getSupportDocs().add(uploadFile);
-            complaintService.update(complaint, null, null, false);
+            complaint.nextOwnerId(null);
+            complaint.approverComment(null);
+            complaint.sendToPreviousOwner(false);
+            complaintService.updateComplaint(complaint);
             return getResponseHandler().success("", getMessage("msg.complaint.update.success"));
         } catch (final Exception e) {
             LOGGER.error(EGOV_API_ERROR, e);
@@ -405,7 +434,7 @@ public class ComplaintController extends ApiController {
 
             //this condition is only applicable for employee
             if (securityUtils.getCurrentUser().getType().equals(UserType.EMPLOYEE))
-                isSkippableForward = complaintService.canSendToPreviousAssignee(complaint);
+                isSkippableForward = complaintProcessFlowService.canSendToPreviousAssignee(complaint);
 
             if (complaint == null)
                 return getResponseHandler().error("no complaint information");
@@ -594,13 +623,13 @@ public class ComplaintController extends ApiController {
      */
     @RequestMapping(value = ApiUrl.COMPLAINT_NEARBY, method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
     public ResponseEntity<String> getNearByComplaint(@PathVariable("page") final int page, @RequestParam("lat") final float lat,
-                                                     @RequestParam("lng") final float lng, @RequestParam("distance") final int distance,
+                                                     @RequestParam("lng") final float lng, @RequestParam("distance") final long distance,
                                                      @PathVariable("pageSize") final int pageSize) {
 
         if (page < 1)
             return getResponseHandler().error(INVALID_PAGE_NUMBER_ERROR);
         try {
-            final List<Complaint> list = complaintService.getNearByComplaint(page, lat, lng, distance, pageSize);
+            final List<Complaint> list = complaintService.getNearByComplaint(page, pageSize, lat, lng, distance);
             boolean hasNextPage = false;
             if (list.size() > pageSize) {
                 hasNextPage = true;
@@ -627,7 +656,7 @@ public class ComplaintController extends ApiController {
 
     @RequestMapping(value = ApiUrl.COMPLAINT_DOWNLOAD_SUPPORT_DOCUMENT, method = RequestMethod.GET)
     public void getComplaintDoc(@PathVariable final String complaintNo,
-                                @RequestParam(value = "fileNo", required = false) Long fileNo,
+                                @RequestParam(value = "fileNo", required = false) Integer fileNo,
                                 @RequestParam(value = "isThumbnail", required = false, defaultValue = "false") final boolean isThumbnail,
                                 final HttpServletResponse response) throws IOException {
         try {
@@ -635,12 +664,13 @@ public class ComplaintController extends ApiController {
             final Set<FileStoreMapper> files = complaint.getSupportDocs();
             int i = 1;
             final Iterator<FileStoreMapper> it = files.iterator();
-            if (fileNo == null)
-                fileNo = (long) files.size();
+            Integer noOfFiles = fileNo;
+            if (noOfFiles == null)
+                noOfFiles = files.size();
             File downloadFile;
             while (it.hasNext()) {
                 final FileStoreMapper fm = it.next();
-                if (i == fileNo) {
+                if (i == noOfFiles) {
                     downloadFile = fileStoreService.fetch(fm.getFileStoreId(), PGRConstants.MODULE_NAME);
                     final ByteArrayOutputStream thumbImg = new ByteArrayOutputStream();
                     long contentLength = downloadFile.length();
@@ -700,7 +730,10 @@ public class ComplaintController extends ApiController {
                 complaint.setCitizenFeedback(CitizenFeedback.valueOf(citizenfeedback));
             }
             complaint.setStatus(cmpStatus);
-            complaintService.update(complaint, Long.valueOf(0), jsonData.get("comment").toString(), false);
+            complaint.nextOwnerId(0L);
+            complaint.approverComment(jsonData.get("comment").toString());
+            complaint.sendToPreviousOwner(false);
+            complaintService.updateComplaint(complaint);
             return getResponseHandler().success("", getMessage("msg.complaint.status.update.success"));
         } catch (final Exception e) {
             LOGGER.error(EGOV_API_ERROR, e);
@@ -714,8 +747,7 @@ public class ComplaintController extends ApiController {
         try {
             final HashMap<String, Object> container = new HashMap<>();
             final Complaint complaint = complaintService.getComplaintByCRN(complaintNo);
-            final List<HashMap<String, Object>> list = complaintService.getHistory(complaint);
-            container.put("comments", list);
+            container.put("comments", complaintHistoryService.getHistory(complaint));
             return getResponseHandler().setDataAdapter(new ComplaintTypeAdapter()).success(container);
         } catch (final Exception e) {
             LOGGER.error(EGOV_API_ERROR, e);
@@ -757,22 +789,25 @@ public class ComplaintController extends ApiController {
             final Complaint complaint = complaintService.getComplaintByCRN(complaintNo);
             final ComplaintStatus cmpStatus = complaintStatusService.getByName(complaintJson.get("action").getAsString());
             final String keyApprovalPosition = "approvalposition";
-            final String keyIsSendBack="issendback";
+            final String keyIsSendBack = "issendback";
 
             complaint.setStatus(cmpStatus);
 
             Long approvalPosition = 0l;
-            Boolean isSendBack=false;
+            Boolean isSendBack = false;
 
             if (complaintJson.has(keyApprovalPosition))
                 approvalPosition = Long.valueOf(complaintJson.get(keyApprovalPosition).getAsString());
 
-            if(complaintJson.has(keyIsSendBack))
-                isSendBack=complaintJson.get(keyIsSendBack).getAsBoolean();
+            if (complaintJson.has(keyIsSendBack))
+                isSendBack = complaintJson.get(keyIsSendBack).getAsBoolean();
 
             if (files.length > 0)
                 complaint.getSupportDocs().addAll(addToFileStore(files));
-            complaintService.update(complaint, approvalPosition, complaintJson.get("comment").getAsString(), isSendBack);
+            complaint.nextOwnerId(approvalPosition);
+            complaint.approverComment(complaintJson.get("comment").getAsString());
+            complaint.sendToPreviousOwner(isSendBack);
+            complaintService.updateComplaint(complaint);
             return getResponseHandler().success("", getMessage("msg.complaint.status.update.success"));
         } catch (final Exception e) {
             LOGGER.error(EGOV_API_ERROR, e);

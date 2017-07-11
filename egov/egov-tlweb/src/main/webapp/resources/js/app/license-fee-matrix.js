@@ -47,6 +47,13 @@ $(document).ready(function () {
         }
     });
 
+    $('#licenseAppType').change(function(){
+        if($(this).find("option:selected").text() === "Renew")
+            $("#natureOfBusiness option:contains('Temporary')").hide();
+        else
+            $("#natureOfBusiness option:contains('Temporary')").show();
+    })
+
     $('#financialYear').change(function () {
         var finId = $(this).val();
         var finRange = $("#fin" + finId).val().split("-");
@@ -134,7 +141,7 @@ $(document).ready(function () {
         var obj = $(this);
         if (idx == 0) {
             bootbox.alert('Cannot delete first row!');
-        } else if ((idx < ($('#result tbody tr').length - 1))) {
+        } else if ((idx < ($('#result tbody tr:visible').length -1))) {
             bootbox.alert('Try to delete from last row!');
         } else {
             bootbox.confirm("Do you want to delete this fee data ? ", function (result) {

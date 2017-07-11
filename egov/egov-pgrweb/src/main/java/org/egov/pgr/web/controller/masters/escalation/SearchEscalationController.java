@@ -52,17 +52,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.egov.infra.utils.JsonUtils.toJSON;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
@@ -70,7 +67,8 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 @Controller
 @RequestMapping(value = "/escalation")
 public class SearchEscalationController {
-    public static final String CONTENTTYPE_JSON = "application/json";
+    private static final String POSITIONID="positionId";
+    private static final String COMPLAINTTYPEID="complaintTypeId";
 
     protected final ComplaintTypeService complaintTypeService;
 
@@ -79,16 +77,16 @@ public class SearchEscalationController {
     @Autowired
     private PositionHierarchyService positionHierarchyService;
 
+    @Autowired
+    public SearchEscalationController(final ComplaintTypeService complaintTypeService,
+                                      final ObjectTypeService objectTypeService) {
+        this.complaintTypeService = complaintTypeService;
+        this.objectTypeService = objectTypeService;
+    }
+
     @ModelAttribute
     public PositionHierarchy positionHierarchy() {
         return new PositionHierarchy();
-    }
-
-    @Autowired
-    public SearchEscalationController(final ComplaintTypeService complaintTypeService,
-            final ObjectTypeService objectTypeService) {
-        this.complaintTypeService = complaintTypeService;
-        this.objectTypeService = objectTypeService;
     }
 
     @RequestMapping(value = "/view", method = RequestMethod.POST)
@@ -104,24 +102,24 @@ public class SearchEscalationController {
 
     @ExceptionHandler(Exception.class)
     @RequestMapping(value = "resultList-update", method = RequestMethod.GET)
-    public @ResponseBody void springPaginationDataTablesUpdate(final HttpServletRequest request,
-            final HttpServletResponse response) throws IOException {
+    public @ResponseBody
+    void springPaginationDataTablesUpdate(final HttpServletRequest request,
+                                          final HttpServletResponse response) throws IOException {
         Long positionId = Long.valueOf(0);
-        Long complaintTypeId = Long.valueOf(0);
+        Long complaintTypeId;
         ComplaintType complaintType = null;
         String complaintTypeCode = null;
 
-        if (request.getParameter("positionId") != null && !"".equals(request.getParameter("positionId")))
-            positionId = Long.valueOf(request.getParameter("positionId"));
-        if (request.getParameter("complaintTypeId") != null && !"".equals(request.getParameter("complaintTypeId"))) {
-            complaintTypeId = Long.valueOf(request.getParameter("complaintTypeId"));
+        if (request.getParameter(POSITIONID) != null && !"".equals(request.getParameter(POSITIONID)))
+            positionId = Long.valueOf(request.getParameter(POSITIONID));
+        if (request.getParameter(COMPLAINTTYPEID) != null && !"".equals(request.getParameter(COMPLAINTTYPEID))) {
+            complaintTypeId = Long.valueOf(request.getParameter(COMPLAINTTYPEID));
             complaintType = complaintTypeService.findBy(complaintTypeId);
             if (complaintType != null)
                 complaintTypeCode = complaintType.getCode();
         }
 
         final ObjectType objectType = objectTypeService.getObjectTypeByName(PGRConstants.EG_OBJECT_TYPE_COMPLAINT);
-
         if (objectType != null) {
             final String escalationTimeRouterJSONData = commonSearchResult(positionId, complaintTypeCode,
                     objectType.getId());
@@ -130,22 +128,25 @@ public class SearchEscalationController {
         }
     }
 
-    // final Integer pageNumber, final Integer pageSize,
     public String commonSearchResult(final Long positionId, final String complaintTypeCode, final Integer objectId) {
-        final List<EscalationHelper> escalationHelperList = new ArrayList<EscalationHelper>();
-        final List<PositionHierarchy> pageOfEscalation = positionHierarchyService
-                .getListOfPositionHeirarchyByFromPositionAndObjectTypeAndSubType(positionId, objectId,
-                        complaintTypeCode);
 
-        for (final PositionHierarchy posHir : pageOfEscalation) {
+        List<String> activeComplaintTypeCodes = complaintTypeService.getActiveComplaintTypeCode();
+        List<PositionHierarchy> pageOfEscalationTemp = positionHierarchyService
+                .getListOfPositionHeirarchyByFromPositionAndObjectTypeAndSubType(positionId, objectId, complaintTypeCode)
+                .stream()
+                .filter(posHir -> activeComplaintTypeCodes.contains(posHir.getObjectSubType()))
+                .collect(Collectors.toList());
+
+        List<EscalationHelper> escalationHelpers = new ArrayList<>();
+        for (final PositionHierarchy posHir : pageOfEscalationTemp) {
             final EscalationHelper escalationHelper = new EscalationHelper();
             if (posHir.getObjectSubType() != null)
                 escalationHelper.setComplaintType(complaintTypeService.findByCode(posHir.getObjectSubType()));
 
             escalationHelper.setFromPosition(posHir.getFromPosition());
             escalationHelper.setToPosition(posHir.getToPosition());
-            escalationHelperList.add(escalationHelper);
+            escalationHelpers.add(escalationHelper);
         }
-        return new StringBuilder("{ \"data\":").append(toJSON(escalationHelperList, EscalationHelper.class, EscalationHelperAdaptor.class)).append("}").toString();
+        return new StringBuilder("{ \"data\":").append(toJSON(escalationHelpers, EscalationHelper.class, EscalationHelperAdaptor.class)).append("}").toString();
     }
 }

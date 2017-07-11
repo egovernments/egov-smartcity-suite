@@ -38,126 +38,124 @@
   ~  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<artifactId>egov-erp</artifactId>
-		<groupId>org.egov</groupId>
-		<version>3.0.0-SNAPSHOT</version>
-	</parent>
-	<name>e-governments trade license web</name>
-	<artifactId>egov-tlweb</artifactId>
-	<packaging>war</packaging>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>egov-erp</artifactId>
+        <groupId>org.egov</groupId>
+        <version>3.0.0-SNAPSHOT</version>
+    </parent>
+    <name>e-governments trade license web</name>
+    <artifactId>egov-tlweb</artifactId>
+    <packaging>war</packaging>
 
-	<dependencies>
-		<dependency>
-			<groupId>org.egov</groupId>
-			<artifactId>egov-egi</artifactId>
-			<version>3.0.0-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>org.egov</groupId>
-			<artifactId>egov-config</artifactId>
-			<version>3.0.0-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>org.egov</groupId>
-			<artifactId>egov-eis</artifactId>
-			<version>3.0.0-SNAPSHOT</version>
-		</dependency>
+    <dependencies>
+        <dependency>
+            <groupId>org.egov</groupId>
+            <artifactId>egov-egi</artifactId>
+            <version>3.0.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.egov</groupId>
+            <artifactId>egov-config</artifactId>
+            <version>3.0.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.egov</groupId>
+            <artifactId>egov-eis</artifactId>
+            <version>3.0.0-SNAPSHOT</version>
+        </dependency>
 
-		<dependency>
-			<groupId>org.egov</groupId>
-			<artifactId>egov-tl</artifactId>
-			<version>3.0.0-SNAPSHOT</version>
-		</dependency>
+        <dependency>
+            <groupId>org.egov</groupId>
+            <artifactId>egov-tl</artifactId>
+            <version>3.0.0-SNAPSHOT</version>
+        </dependency>
 
-		<!-- VIEWS RELATED END -->
-		<dependency>
-			<groupId>org.apache.tiles</groupId>
-			<artifactId>tiles-core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.tiles</groupId>
-			<artifactId>tiles-jsp</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.jsoup</groupId>
-			<artifactId>jsoup</artifactId>
-		</dependency>
-		<!-- VIEWS RELATED END -->
+        <!-- VIEWS RELATED END -->
+        <dependency>
+            <groupId>org.apache.tiles</groupId>
+            <artifactId>tiles-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tiles</groupId>
+            <artifactId>tiles-jsp</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+        </dependency>
+        <!-- VIEWS RELATED END -->
 
-		<!-- JBOSS START -->
-		<dependency>
-			<groupId>org.jboss.spec.javax.servlet</groupId>
-			<artifactId>jboss-servlet-api_3.1_spec</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.spec.javax.servlet.jstl</groupId>
-			<artifactId>jboss-jstl-api_1.2_spec</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.spec.javax.servlet.jsp</groupId>
-			<artifactId>jboss-jsp-api_2.3_spec</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.glassfish</groupId>
-			<artifactId>javax.el</artifactId>
-		</dependency>
-		<!-- JBOSS END -->
-		
-			<!-- STRUTS2 DEPENDENCIES START -->
-		<dependency>
-			<groupId>org.apache.struts</groupId>
-			<artifactId>struts2-core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.struts</groupId>
-			<artifactId>struts2-json-plugin</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.struts</groupId>
-			<artifactId>struts2-spring-plugin</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.struts</groupId>
-			<artifactId>struts2-convention-plugin</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.jgeppert.struts2.jquery</groupId>
-			<artifactId>struts2-jquery-plugin</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.thoughtworks.xstream</groupId>
-			<artifactId>xstream</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>xpp3</groupId>
-			<artifactId>xpp3_min</artifactId>
-		</dependency>
-				<!-- STRUTS2 DEPENDENCIES END -->
-		<!-- HIBERNATE START -->
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>javax.validation</groupId>
-			<artifactId>validation-api</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-validator</artifactId>
-		</dependency>
-		<!-- HIBERNATE END -->
+        <!-- JBOSS START -->
+        <dependency>
+            <groupId>org.jboss.spec.javax.servlet</groupId>
+            <artifactId>jboss-servlet-api_3.1_spec</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.spec.javax.servlet.jstl</groupId>
+            <artifactId>jboss-jstl-api_1.2_spec</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.spec.javax.servlet.jsp</groupId>
+            <artifactId>jboss-jsp-api_2.3_spec</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish</groupId>
+            <artifactId>javax.el</artifactId>
+        </dependency>
+        <!-- JBOSS END -->
 
-		<dependency>
-			<groupId>opensymphony</groupId>
-			<artifactId>sitemesh</artifactId>
-		</dependency>
-	</dependencies>
-	
-	  <build>
+        <!-- STRUTS2 DEPENDENCIES START -->
+        <dependency>
+            <groupId>org.apache.struts</groupId>
+            <artifactId>struts2-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.struts</groupId>
+            <artifactId>struts2-json-plugin</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.struts</groupId>
+            <artifactId>struts2-spring-plugin</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.struts</groupId>
+            <artifactId>struts2-convention-plugin</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.jgeppert.struts2.jquery</groupId>
+            <artifactId>struts2-jquery-plugin</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.thoughtworks.xstream</groupId>
+            <artifactId>xstream</artifactId>
+        </dependency>
+        <!-- STRUTS2 DEPENDENCIES END -->
+
+        <!-- HIBERNATE START -->
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.validation</groupId>
+            <artifactId>validation-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator</artifactId>
+        </dependency>
+        <!-- HIBERNATE END -->
+
+        <dependency>
+            <groupId>opensymphony</groupId>
+            <artifactId>sitemesh</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
         <resources>
             <resource>
                 <directory>src/main/java</directory>
@@ -172,6 +170,6 @@
                 </includes>
             </resource>
         </resources>
-        </build> 
-	
+    </build>
+
 </project>

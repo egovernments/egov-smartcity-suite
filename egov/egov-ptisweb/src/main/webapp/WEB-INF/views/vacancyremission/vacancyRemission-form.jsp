@@ -106,7 +106,7 @@ body
 						</div>
 					</div>
 				</div>
-				<c:if test="${propertyByEmployee == true}">
+				<c:if test="${propertyByEmployee == true && citizenPortalUser == false}">
 					<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
 				</c:if>
 				<div class="buttonbottom" align="center">

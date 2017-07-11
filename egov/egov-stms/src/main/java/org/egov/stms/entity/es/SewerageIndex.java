@@ -43,6 +43,7 @@ package org.egov.stms.entity.es;
 import static org.egov.infra.utils.ApplicationConstant.DEFAULT_TIMEZONE;
 import static org.egov.infra.utils.ApplicationConstant.ES_DATE_FORMAT;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import org.springframework.data.elasticsearch.annotations.DateFormat;
@@ -164,13 +165,56 @@ public class SewerageIndex {
     // isActive used for setting application status is active or not
     // on connection execution application is marked as active
     @Field(type = FieldType.Boolean)
-    private boolean isActive;
+    private boolean active;
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String revenueBlock;
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String locationName;
+
+    @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
+    private String period;
+
+    @Field(type = FieldType.Double)
+    private BigDecimal arrearAmount;
+
+    @Field(type = FieldType.Double)
+    private BigDecimal collectedArrearAmount;
+
+    @Field(type = FieldType.Double)
+    private BigDecimal totalAmount;
+
+    @Field(type = FieldType.Double)
+    private BigDecimal demandAmount;
+
+    @Field(type = FieldType.Double)
+    private BigDecimal collectedDemandAmount;
+
+    @Field(type = FieldType.Double)
+    private BigDecimal extraAdvanceAmount;
+
+    @Field(type = FieldType.Double)
+    private BigDecimal donationAmount;
+
+    @Field(type = FieldType.Double)
+    private BigDecimal inspectionCharge;
+
+    @Field(type = FieldType.Double)
+    private BigDecimal estimationCharge;
+
+    @Field(type = FieldType.Double)
+    private BigDecimal sewerageTax;
+
+    @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
+    private String source;
+
+    @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
+    private String rejectionNoticeNumber;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ES_DATE_FORMAT, timezone = DEFAULT_TIMEZONE)
+    @Field(type = FieldType.Date, format = DateFormat.date_optional_time, pattern = ES_DATE_FORMAT)
+    private Date rejectionNoticeDate;
 
     public String getRevenueBlock() {
         return revenueBlock;
@@ -444,14 +488,6 @@ public class SewerageIndex {
         this.doorNo = doorNo;
     }
 
-    public boolean isActive() {
-        return isActive;
-    }
-
-    public void setActive(final boolean isActive) {
-        this.isActive = isActive;
-    }
-
     public String getId() {
         return id;
     }
@@ -460,4 +496,123 @@ public class SewerageIndex {
         this.id = id;
     }
 
+    public BigDecimal getArrearAmount() {
+        return arrearAmount;
+    }
+
+    public void setArrearAmount(final BigDecimal arrearAmount) {
+        this.arrearAmount = arrearAmount;
+    }
+
+    public String getPeriod() {
+        return period;
+    }
+
+    public void setPeriod(final String period) {
+        this.period = period;
+    }
+
+    public BigDecimal getCollectedArrearAmount() {
+        return collectedArrearAmount;
+    }
+
+    public void setCollectedArrearAmount(final BigDecimal collectedArrearAmount) {
+        this.collectedArrearAmount = collectedArrearAmount;
+    }
+
+    public BigDecimal getDemandAmount() {
+        return demandAmount;
+    }
+
+    public void setDemandAmount(final BigDecimal demandAmount) {
+        this.demandAmount = demandAmount;
+    }
+
+    public BigDecimal getCollectedDemandAmount() {
+        return collectedDemandAmount;
+    }
+
+    public void setCollectedDemandAmount(final BigDecimal collectedDemandAmount) {
+        this.collectedDemandAmount = collectedDemandAmount;
+    }
+
+    public BigDecimal getExtraAdvanceAmount() {
+        return extraAdvanceAmount;
+    }
+
+    public void setExtraAdvanceAmount(final BigDecimal extraAdvanceAmount) {
+        this.extraAdvanceAmount = extraAdvanceAmount;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(final String source) {
+        this.source = source;
+    }
+
+    public BigDecimal getDonationAmount() {
+        return donationAmount;
+    }
+
+    public void setDonationAmount(final BigDecimal donationAmount) {
+        this.donationAmount = donationAmount;
+    }
+
+    public BigDecimal getEstimationCharge() {
+        return estimationCharge;
+    }
+
+    public void setEstimationCharge(final BigDecimal estimationCharge) {
+        this.estimationCharge = estimationCharge;
+    }
+
+    public BigDecimal getInspectionCharge() {
+        return inspectionCharge;
+    }
+
+    public void setInspectionCharge(final BigDecimal inspectionCharge) {
+        this.inspectionCharge = inspectionCharge;
+    }
+
+    public String getRejectionNoticeNumber() {
+        return rejectionNoticeNumber;
+    }
+
+    public void setRejectionNoticeNumber(final String rejectionNoticeNumber) {
+        this.rejectionNoticeNumber = rejectionNoticeNumber;
+    }
+
+    public Date getRejectionNoticeDate() {
+        return rejectionNoticeDate;
+    }
+
+    public void setRejectionNoticeDate(final Date rejectionNoticeDate) {
+        this.rejectionNoticeDate = rejectionNoticeDate;
+    }
+
+    public BigDecimal getSewerageTax() {
+        return sewerageTax;
+    }
+
+    public void setSewerageTax(final BigDecimal sewerageTax) {
+        this.sewerageTax = sewerageTax;
+    }
+
+    public boolean getActive() {
+        return active;
+    }
+
+    public void setActive(final boolean active) {
+        this.active = active;
+    }
+
+    public BigDecimal getTotalAmount() {
+        return totalAmount;
+    }
+
+    public void setTotalAmount(final BigDecimal totalAmount) {
+        this.totalAmount = totalAmount;
+    }
 }

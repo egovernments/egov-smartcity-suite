@@ -654,7 +654,7 @@ public class WaterTaxCollection extends TaxCollection {
                 if (waterConnectionDetails != null
                         && (waterConnectionDetails.getConnectionType().equals(ConnectionType.NON_METERED)
                                 || waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.INPROGRESS))) {
-                    if (installsplit1[0].trim()
+                    if (installsplit1!=null && installsplit1[0].trim()
                             .equals(financialyear != null ? financialyear.getFinYearRange().split("-")[0] : null))
                         currentInstallmentAmount = currentInstallmentAmount.add(rcptAccInfo.getCrAmount());
 
@@ -662,7 +662,7 @@ public class WaterTaxCollection extends TaxCollection {
                         advanceInstallmentAmount = advanceInstallmentAmount.add(rcptAccInfo.getCrAmount());
                     else
                         arrearAmount = arrearAmount.add(rcptAccInfo.getCrAmount());
-                } else if (installsplit[0].split("/")[1].split("-")[1].trim()
+                } else if (installsplit!=null && installsplit[0].split("-")[1].trim()
                         .equals(financialyear.getFinYearRange().split("-")[1].trim()))
                     currentInstallmentAmount = currentInstallmentAmount.add(rcptAccInfo.getCrAmount());
                 else if (rcptAccInfo.getDescription().contains("Advance"))

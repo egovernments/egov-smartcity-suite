@@ -52,7 +52,7 @@
 			</div>
 		</c:if>
 
-		<form:form class="form-horizontal form-groups-bordered"	id="baseregisterform" modelAttribute="baseRegisterResult" method="post">
+		<form:form class="form-horizontal form-groups-bordered"	id="baseregisterform" modelAttribute="propertyInfo" method="post">
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
 					<div class="panel-title">
@@ -91,7 +91,7 @@
 				<div class="form-group">
 					<label class="col-sm-3 control-label text-right"><spring:message code="lbl.only.exempted" /></label>
 					<div class="col-sm-3 add-margin" style="margin-bottom: 15px;">
-						<form:checkbox path="exemptedCase" id="exemptedCase"/>
+						<form:checkbox path="isExempted" id="exemptedCase"/>
 					</div>
 				</div>
 			</div>

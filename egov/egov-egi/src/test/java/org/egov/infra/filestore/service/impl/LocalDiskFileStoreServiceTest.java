@@ -40,13 +40,11 @@
 package org.egov.infra.filestore.service.impl;
 
 import org.apache.commons.io.FileUtils;
-import org.egov.infra.config.properties.ApplicationProperties;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -69,7 +67,6 @@ import static org.junit.Assert.assertTrue;
 public class LocalDiskFileStoreServiceTest {
     private static Path tempFilePath = Paths.get(System.getProperty("user.home") + File.separator + "testtmpr");
     private LocalDiskFileStoreService diskFileService;
-    private ApplicationProperties applicationProperties = Mockito.mock(ApplicationProperties.class);
 
     @AfterClass
     public static void afterTest() throws IOException {
@@ -116,8 +113,7 @@ public class LocalDiskFileStoreServiceTest {
     public void beforeTest() throws IOException {
         if (!Files.exists(tempFilePath))
             Files.createDirectories(tempFilePath);
-        Mockito.when(applicationProperties.fileStoreBaseDir()).thenReturn(System.getProperty("user.home") + File.separator + "testfilestore");
-        diskFileService = new LocalDiskFileStoreService(applicationProperties);
+        diskFileService = new LocalDiskFileStoreService(System.getProperty("user.home") + File.separator + "testfilestore");
     }
 
     @Test
@@ -144,13 +140,12 @@ public class LocalDiskFileStoreServiceTest {
 
     @Test
     public final void testUploadSetOfFile() throws IOException {
-        Set<File> files = new HashSet<File>();
+        Set<File> files = new HashSet<>();
         for (int no = 0; no < 10; no++) {
             final File newFile = Files.createTempFile(tempFilePath, "xyz" + no, "txt").toFile();
             FileUtils.write(newFile, "Test", UTF_8);
             files.add(newFile);
         }
-        //final Set<FileStoreMapper> maps = diskFileService.store(files, "testmodule");
         for (File file : files) {
             Files.deleteIfExists(file.toPath());
         }
@@ -158,14 +153,13 @@ public class LocalDiskFileStoreServiceTest {
 
     @Test
     public final void testUploadStreams() throws IOException {
-        Set<InputStream> files = new HashSet<InputStream>();
+        Set<InputStream> files = new HashSet<>();
         for (int no = 0; no < 10; no++) {
             final File newFile = Files.createTempFile(tempFilePath, "xyz" + no, "txt").toFile();
             FileUtils.write(newFile, "Test", UTF_8);
             FileInputStream fin = new FileInputStream(newFile);
             files.add(fin);
         }
-        //diskFileService.storeStreams(files, "testmodule");
         FileUtils.deleteDirectory(tempFilePath.toFile());
     }
 
@@ -187,7 +181,7 @@ public class LocalDiskFileStoreServiceTest {
 
     @Test
     public final void testFetchAll() throws IOException {
-        Set<File> files = new HashSet<File>();
+        Set<File> files = new HashSet<>();
         for (int no = 0; no < 10; no++) {
             final File newFile = Files.createTempFile(tempFilePath, "xyz" + no, "txt").toFile();
             FileUtils.write(newFile, "Test", UTF_8);

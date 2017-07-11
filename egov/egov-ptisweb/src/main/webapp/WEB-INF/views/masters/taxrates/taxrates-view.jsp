@@ -63,7 +63,7 @@
 
 						</div>
 						<div class="panel-body history-slide">
-							<div class="form-group col-sm-6 col-sm-offset-3">
+							<div class="form-group col-sm-7 col-sm-offset-3">
 								<table class="table table-bordered table-hover">
 									<thead>
 										<tr>
@@ -77,11 +77,11 @@
 											<th></th>
 											<th class="text-center"><spring:message
 													code="lbl.component" /></th>
-											<th class="text-center"><spring:message
+											<th class="text-center col-sm-3"><spring:message
 													code="lbl.percentage" /></th>
 											<th class="text-center"><spring:message
 													code="lbl.component" /></th>
-											<th class="text-center"><spring:message
+											<th class="text-center col-sm-3"><spring:message
 													code="lbl.percentage" /></th>
 										</tr>
 									</thead>

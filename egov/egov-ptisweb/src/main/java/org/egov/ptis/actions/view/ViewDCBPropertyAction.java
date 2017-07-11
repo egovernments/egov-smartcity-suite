@@ -39,48 +39,19 @@
  */
 package org.egov.ptis.actions.view;
 
-import static java.math.BigDecimal.ZERO;
-import static org.egov.demand.model.EgdmCollectedReceipt.RCPT_CANCEL_STATUS;
-import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.BEANNAME_PROPERTY_TAX_BILLABLE;
-import static org.egov.ptis.constants.PropertyTaxConstants.CANCELLED_RECEIPT_STATUS;
-import static org.egov.ptis.constants.PropertyTaxConstants.CITIZENUSER;
-import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
-import static org.egov.ptis.constants.PropertyTaxConstants.SERVICE_CODE_PROPERTYTAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.SERVICE_CODE_VACANTLANDTAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.SESSIONLOGINID;
-
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
-import org.apache.struts2.interceptor.ServletRequestAware;
-import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.DCBException;
 import org.egov.commons.Installment;
 import org.egov.dcb.bean.DCBDisplayInfo;
 import org.egov.dcb.bean.DCBReport;
 import org.egov.dcb.bean.Receipt;
 import org.egov.dcb.service.DCBService;
-import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.ptis.client.model.PropertyArrearBean;
@@ -99,30 +70,48 @@ import org.egov.ptis.exceptions.PropertyNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
+import javax.servlet.http.HttpSession;
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
+import static java.math.BigDecimal.ZERO;
+import static org.egov.demand.model.EgdmCollectedReceipt.RCPT_CANCEL_STATUS;
+import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.BEANNAME_PROPERTY_TAX_BILLABLE;
+import static org.egov.ptis.constants.PropertyTaxConstants.CANCELLED_RECEIPT_STATUS;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
+import static org.egov.ptis.constants.PropertyTaxConstants.SERVICE_CODE_PROPERTYTAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.SERVICE_CODE_VACANTLANDTAX;
+
 @SuppressWarnings("serial")
 @ParentPackage("egov")
-@Results({ @Result(name = ViewDCBPropertyAction.VIEW, location = "viewDCBProperty-view.jsp"),
+@Results({@Result(name = ViewDCBPropertyAction.VIEW, location = "viewDCBProperty-view.jsp"),
         @Result(name = ViewDCBPropertyAction.HEADWISE_DCB, location = "viewDCBProperty-headwiseDcb.jsp"),
-        @Result(name = ViewDCBPropertyAction.RESULT_MIGDATA, location = "viewDCBProperty-viewMigData.jsp") })
-public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequestAware {
-    private static final Logger LOGGER = Logger.getLogger(ViewDCBPropertyAction.class);
+        @Result(name = ViewDCBPropertyAction.RESULT_MIGDATA, location = "viewDCBProperty-viewMigData.jsp")})
+public class ViewDCBPropertyAction extends BaseFormAction {
     public static final String HEADWISE_DCB = "headwiseDcb";
     public static final String VIEW = "view";
     public static final String RESULT_MIGDATA = "viewMigData";
-
+    private static final Logger LOGGER = Logger.getLogger(ViewDCBPropertyAction.class);
+    private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
     private Map<String, BigDecimal> propertyArrearsMap = new TreeMap<String, BigDecimal>();
     private List<PropertyArrearBean> propertyArrearsList = new ArrayList<PropertyArrearBean>();
     private DCBReport dcbReport = new DCBReport();
-
     private String propertyId;
     private BasicProperty basicProperty;
     private DCBDisplayInfo dcbDispInfo;
     private HttpSession session = null;
-    private HttpServletRequest request;
-    private Long userId;
     private Boolean isCitizen = Boolean.FALSE;
     private List<PropertyReceipt> propReceiptList = new ArrayList<PropertyReceipt>();
-    private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
     private List<Receipt> cancelRcpt = new ArrayList<Receipt>();
     private List<Receipt> activeRcpts = new ArrayList<Receipt>();
     private List<Receipt> mutationRcpts = new ArrayList<Receipt>();
@@ -133,11 +122,8 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
     private String serviceCode;
     private Map<String, Object> viewMap;
     private String searchUrl;
-    
-    
 
-    @Autowired
-    private UserService userService;
+
     @Autowired
     private BasicPropertyDAO basicPropertyDAO;
     @Autowired
@@ -180,20 +166,11 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
         LOGGER.debug("Entered into method displayPropInfo");
         LOGGER.debug("displayPropInfo : propertyId : " + propertyId);
         DCBUtils dcbUtils = new DCBUtils();
-        session = request.getSession();
-        if (session.getAttribute(SESSIONLOGINID) == null) {
-            User user = userService.getUserByUsername(CITIZENUSER);
-            userId = user.getId();
-            ApplicationThreadLocals.setUserId(userId);
-            session.setAttribute("com.egov.user.LoginUserName", user.getUsername());
-            if (user != null)
-                setIsCitizen(Boolean.TRUE);
+        if (SecurityUtils.userAnonymouslyAuthenticated()) {
+            setIsCitizen(Boolean.TRUE);
         } else {
             setIsCitizen(Boolean.FALSE);
-            final Long userId = (Long) session().get(SESSIONLOGINID);
-            if (userId != null) {
-                setRoleName(propertyTaxUtil.getRolesForUserId(userId));
-            }
+            setRoleName(propertyTaxUtil.getRolesForUserId(ApplicationThreadLocals.getUserId()));
         }
 
         try {
@@ -265,15 +242,7 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
         LOGGER.debug("Entered into method displayHeadwiseDcb");
         LOGGER.debug("displayPropInfo : Index Number : " + propertyId);
         DCBUtils dcbUtils = new DCBUtils();
-        session = request.getSession();
-        if (session.getAttribute("com.egov.user.LoginUserId") == null) {
-            /*
-             * UserDAO userDao = new UserDAO(); User user =
-             * userDao.getUserByUserName(CITIZENUSER); userId = user.getId();
-             * EGOVThreadLocals.setUserId(userId.toString());
-             */
-            // EGOVThreadLocals.setUserId("27613");
-            session.setAttribute("com.egov.user.LoginUserName", CITIZENUSER);
+        if (SecurityUtils.userAnonymouslyAuthenticated()) {
             setIsCitizen(Boolean.TRUE);
         } else {
             setIsCitizen(Boolean.FALSE);
@@ -292,7 +261,6 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
         PropertyTaxBillable billable = (PropertyTaxBillable) beanProvider.getBean(BEANNAME_PROPERTY_TAX_BILLABLE);
         billable.setBasicProperty(basicProperty);
         dcbService.setBillable(billable);
-        // dcbDispInfo = dcbUtils.prepareDisplayInfo();
         dcbDispInfo = dcbUtils.prepareDisplayInfoHeadwise();
         dcbReport = dcbService.getCurrentDCBAndReceipts(dcbDispInfo);
         LOGGER.debug("Exit from method displayHeadwiseDcb");
@@ -342,7 +310,7 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
 
     /**
      * Called to get the cancelled receipts
-     * 
+     *
      * @return List of Receipts
      */
     public List<Receipt> getCancelledReceipts() {
@@ -368,12 +336,6 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
         return cancelledReceipts;
     }
 
-    @Override
-    @SkipValidation
-    public void setServletRequest(HttpServletRequest arg0) {
-        this.request = arg0;
-    }
-
     @SuppressWarnings("unchecked")
     @Action(value = "/view/viewDCBProperty-showMigData")
     public String getMigratedData() {
@@ -385,10 +347,10 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
         for (PropertyReceipt propReceipt : propReceiptList) {
             try {
                 propReceipt.setReceiptDate(sdf.parse(sdf.format(propReceipt.getReceiptDate())));
-                if(propReceipt.getFromDate()!=null)
-                propReceipt.setFromDate(sdf.parse(sdf.format(propReceipt.getFromDate())));
-                if(propReceipt.getToDate()!=null)
-                propReceipt.setToDate(sdf.parse(sdf.format(propReceipt.getToDate())));
+                if (propReceipt.getFromDate() != null)
+                    propReceipt.setFromDate(sdf.parse(sdf.format(propReceipt.getFromDate())));
+                if (propReceipt.getToDate() != null)
+                    propReceipt.setToDate(sdf.parse(sdf.format(propReceipt.getToDate())));
             } catch (ParseException e) {
                 LOGGER.error("ParseException in getPropertyArrears method for Property" + propertyId, e);
             }
@@ -459,7 +421,6 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
         this.propertyArrearsMap = propertyArrearsMap;
     }
 
-    
 
     public List<PropertyArrearBean> getPropertyArrearsList() {
         return propertyArrearsList;
@@ -521,16 +482,16 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
         return errorMessage;
     }
 
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
+    }
+
     public Map<String, Object> getViewMap() {
         return viewMap;
     }
 
     public void setViewMap(Map<String, Object> viewMap) {
         this.viewMap = viewMap;
-    }
-
-    public void setErrorMessage(String errorMessage) {
-        this.errorMessage = errorMessage;
     }
 
     public String getRoleName() {
@@ -565,6 +526,5 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
         this.searchUrl = searchUrl;
     }
 
-    
 
 }

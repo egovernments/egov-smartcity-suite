@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="dcbReport" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="4214ab10-a92b-4b7c-af63-0a719a4be2d7">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="dcbReport" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="4214ab10-a92b-4b7c-af63-0a719a4be2d7">
 	<property name="ireport.zoom" value="2.0"/>
-	<property name="ireport.x" value="0"/>
+	<property name="ireport.x" value="468"/>
 	<property name="ireport.y" value="0"/>
 	<parameter name="DCBReportResult" class="java.util.List"/>
+	<parameter name="year" class="java.lang.String"/>
 	<field name="licensenumber" class="java.lang.String"/>
 	<field name="arreardemand" class="java.math.BigInteger"/>
 	<field name="currentdemand" class="java.math.BigInteger"/>
@@ -46,13 +47,13 @@
 	</background>
 	<title>
 		<band height="21" splitType="Stretch">
-			<staticText>
-				<reportElement x="362" y="0" width="100" height="20" uuid="e53cf9f3-bb65-4b30-8647-c4ef19774b6e"/>
+			<textField>
+				<reportElement x="171" y="0" width="460" height="20" uuid="e53cf9f3-bb65-4b30-8647-c4ef19774b6e"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="12" isBold="true"/>
 				</textElement>
-				<text><![CDATA[DCB Report]]></text>
-			</staticText>
+				<textFieldExpression><![CDATA[$P{year} == null || $P{year}.isEmpty() ? "DCB Report" : "DCB Report for "+$P{year}]]></textFieldExpression>
+			</textField>
 		</band>
 	</title>
 	<pageHeader>

@@ -138,6 +138,7 @@ function onSubmit() {
 								test="%{model.state.nextAction.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVAL_PENDING) ||
 					        model.state.value.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVED) ||
 							userDesignationList.toUpperCase().contains(@org.egov.ptis.constants.PropertyTaxConstants@REVENUE_OFFICER_DESGN.toUpperCase()) ||
+							userDesignationList.toUpperCase().contains(@org.egov.ptis.constants.PropertyTaxConstants@TAX_COLLECTOR_DESGN.toUpperCase()) ||
 							userDesignationList.toUpperCase().contains(@org.egov.ptis.constants.PropertyTaxConstants@BILL_COLLECTOR_DESGN.toUpperCase()) ||
 							((userDesignationList.toUpperCase().contains(@org.egov.ptis.constants.PropertyTaxConstants@JUNIOR_ASSISTANT.toUpperCase()) || 
 							userDesignationList.toUpperCase().contains(@org.egov.ptis.constants.PropertyTaxConstants@SENIOR_ASSISTANT.toUpperCase()))

@@ -73,6 +73,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FileUtils;
+import org.egov.commons.entity.Source;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.entity.User;
@@ -243,6 +244,10 @@ public class DigitalSignatureWorkflowController {
         propertyService.updateIndexes(revisionPetition, "RP".equalsIgnoreCase(revisionPetition.getType())
                 ? PropertyTaxConstants.APPLICATION_TYPE_REVISION_PETITION : APPLICATION_TYPE_GRP);
         revisionPetitionService.updateRevisionPetition(revisionPetition);
+        if (Source.CITIZENPORTAL.toString().equalsIgnoreCase(revisionPetition.getSource())) {
+            propertyService.updatePortal(revisionPetition, "RP".equalsIgnoreCase(revisionPetition.getType())
+                        ? PropertyTaxConstants.APPLICATION_TYPE_REVISION_PETITION : APPLICATION_TYPE_GRP);
+        }
         return Boolean.TRUE;
     }
 
@@ -253,6 +258,8 @@ public class DigitalSignatureWorkflowController {
         if (assignments.isEmpty())
             return Boolean.FALSE;
         propertyService.updateIndexes(propertyMutation, APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP);
+        if (Source.CITIZENPORTAL.toString().equalsIgnoreCase(propertyMutation.getSource()))
+            propertyService.updatePortal(propertyMutation, APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP);
         basicPropertyService.persist(basicProperty);
         return Boolean.TRUE;
     }
@@ -267,6 +274,8 @@ public class DigitalSignatureWorkflowController {
                 return Boolean.FALSE;
             propertyService.updateIndexes(vacancyRemission, APPLICATION_TYPE_VACANCY_REMISSION);
             vacancyRemissionApprovalRepository.save(vacancyRemission.getVacancyRemissionApproval().get(0));
+            if (Source.CITIZENPORTAL.toString().equalsIgnoreCase(vacancyRemission.getSource()))
+                propertyService.updatePortal(vacancyRemission, APPLICATION_TYPE_VACANCY_REMISSION);
             basicPropertyService.persist(basicProperty);
         }
         return Boolean.TRUE;
@@ -363,7 +372,7 @@ public class DigitalSignatureWorkflowController {
     public void transition(final PropertyMutation propertyMutation) {
         if (propertyService.isMeesevaUser(propertyMutation.getCreatedBy())
                 || propertyMutation.getType().equals(PropertyTaxConstants.ADDTIONAL_RULE_FULL_TRANSFER)) {
-            propertyMutation.transition().end();
+            propertyMutation.transition().end().withNextAction(null);
             propertyMutation.getBasicProperty().setUnderWorkflow(false);
         } else {
             final DateTime currentDate = new DateTime();
@@ -408,7 +417,8 @@ public class DigitalSignatureWorkflowController {
                 wfInitiator = assignmentService.getAssignmentsForPosition(state.getStateHistory().get(0)
                         .getOwnerPosition().getId(), new Date()).get(0);
         } else if (propertyService.isEmployee(state.getCreatedBy())
-                && !ANONYMOUS_USER.equalsIgnoreCase(state.getCreatedBy().getName()))
+                && !ANONYMOUS_USER.equalsIgnoreCase(state.getCreatedBy().getName())
+                && !propertyService.isCitizenPortalUser(state.getCreatedBy()))
             wfInitiator = assignmentService.getAllActiveEmployeeAssignmentsByEmpId(state.getCreatedBy().getId()).get(0);
         else if (!state.getStateHistory().isEmpty())
             wfInitiator = assignmentService.getAssignmentsForPosition(

@@ -74,6 +74,7 @@ public class ViewDCBController {
         model.addAttribute("license", licenseObj);
         model.addAttribute("dcbreport", toJSON(dCBReportService.getAllDCBRecords(searchRequest), DCBReportResult.class,
                 OnlineDCBReportResponseAdaptor.class));
+        model.addAttribute("receipts",tradeLicenseService.getReceipts(licenseObj));
 
         return "view-license-dcb";
     }

@@ -52,6 +52,7 @@ import org.egov.stms.transactions.service.SewerageDemandService;
 import org.egov.stms.transactions.service.SewerageThirdPartyServices;
 import org.egov.stms.transactions.service.collection.SewerageBillServiceImpl;
 import org.egov.stms.transactions.service.collection.SewerageBillable;
+import org.egov.stms.utils.constants.SewerageTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -86,7 +87,7 @@ public class SewerageBillGeneratorController {
     public String payTax(@PathVariable final String consumernumber, @PathVariable final String assessmentnumber,
             final Model model, final ModelMap modelMap,
             @ModelAttribute SewerageApplicationDetails sewerageApplicationDetails, final HttpServletRequest request) {
-        String SEWERAGE_BILLNUMBER = "SEQ_SEWERAGEBILL_NUMBER";
+     
         if (consumernumber != null)
             sewerageApplicationDetails = sewerageApplicationDetailsService.findByApplicationNumber(consumernumber);
         if (sewerageApplicationDetails != null) {
@@ -99,7 +100,7 @@ public class SewerageBillGeneratorController {
             if (sewerageApplicationDetails.getCurrentDemand() != null && assessmentnumber != null) {
                 final AssessmentDetails assessmentDetails = sewerageThirdPartyServices.getPropertyDetails(
                         assessmentnumber, request);
-                final Serializable referenceNumber = sequenceNumberGenerator.getNextSequence(SEWERAGE_BILLNUMBER);
+                final Serializable referenceNumber = sequenceNumberGenerator.getNextSequence(SewerageTaxConstants.SEWERAGE_BILLNUMBER);
 
                 sewerageBillable.setSewerageApplicationDetails(sewerageApplicationDetails);
                 sewerageBillable.setAssessmentDetails(assessmentDetails);

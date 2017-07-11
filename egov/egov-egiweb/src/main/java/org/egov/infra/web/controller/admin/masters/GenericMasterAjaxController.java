@@ -40,6 +40,9 @@
 
 package org.egov.infra.web.controller.admin.masters;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import org.apache.commons.io.IOUtils;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
@@ -50,8 +53,6 @@ import org.egov.infra.admin.master.service.BoundaryTypeService;
 import org.egov.infra.admin.master.service.CrossHierarchyService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.persistence.entity.enums.UserType;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -105,11 +106,11 @@ public class GenericMasterAjaxController {
             throws IOException {
         BoundaryType boundaryType = boundaryTypeService.getBoundaryTypeById(boundaryTypeId);
         final List<Boundary> boundaries = boundaryService.getAllBoundariesOrderByBoundaryNumAsc(boundaryType);
-        final JSONArray jsonArray = new JSONArray();
+        final JsonArray jsonArray = new JsonArray();
         for (final Boundary boundary : boundaries) {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put(DISPLAY_KEY, boundary.getLocalName());
-            jsonObject.put(VALUE_KEY, boundary.getId());
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty(DISPLAY_KEY, boundary.getLocalName());
+            jsonObject.addProperty(VALUE_KEY, boundary.getId());
             jsonArray.add(jsonObject);
         }
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
@@ -125,11 +126,11 @@ public class GenericMasterAjaxController {
     }
 
     private String buildJSONString(List<BoundaryType> boundaryTypes) {
-        final JSONArray jsonArray = new JSONArray();
+        final JsonArray jsonArray = new JsonArray();
         for (final BoundaryType boundaryType : boundaryTypes) {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put(DISPLAY_KEY, boundaryType.getName());
-            jsonObject.put(VALUE_KEY, boundaryType.getId());
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty(DISPLAY_KEY, boundaryType.getName());
+            jsonObject.addProperty(VALUE_KEY, boundaryType.getId());
             jsonArray.add(jsonObject);
         }
 
@@ -159,11 +160,11 @@ public class GenericMasterAjaxController {
     }
 
     private String buildRoles(Set<Role> roles) {
-        final JSONArray jsonArray = new JSONArray();
+        final JsonArray jsonArray = new JsonArray();
         for (final Role role : roles) {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put(VALUE_KEY, role.getId());
-            jsonObject.put(DISPLAY_KEY, role.getName());
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty(VALUE_KEY, role.getId());
+            jsonObject.addProperty(DISPLAY_KEY, role.getName());
             jsonArray.add(jsonObject);
         }
         return jsonArray.toString();
@@ -178,11 +179,11 @@ public class GenericMasterAjaxController {
     }
 
     private String buildUser(List<User> users) {
-        final JSONArray jsonArray = new JSONArray();
+        final JsonArray jsonArray = new JsonArray();
         for (final User user : users) {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put(VALUE_KEY, user.getId());
-            jsonObject.put(DISPLAY_KEY, user.getUsername());
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty(VALUE_KEY, user.getId());
+            jsonObject.addProperty(DISPLAY_KEY, user.getUsername());
             jsonArray.add(jsonObject);
         }
         return jsonArray.toString();
@@ -193,44 +194,44 @@ public class GenericMasterAjaxController {
         BoundaryType blockType = boundaryTypeService.getBoundaryTypeByNameAndHierarchyTypeName(BLOCK, REVENUE_HIERARCHY_TYPE);
         final List<Boundary> blocks = crossHierarchyService.getParentBoundaryByChildBoundaryAndParentBoundaryType(locality, blockType.getId());
         List<Boundary> streets = boundaryService.getChildBoundariesByBoundaryId(locality);
-        final List<JSONObject> wardJsonObjs = new ArrayList<>();
+        final List<JsonObject> wardJsonObjs = new ArrayList<>();
         final List<Long> boundaries = new ArrayList<>();
         for (final Boundary block : blocks) {
             final Boundary ward = block.getParent();
-            final JSONObject jsonObject = new JSONObject();
+            final JsonObject jsonObject = new JsonObject();
             if (!boundaries.contains(ward.getId())) {
-                jsonObject.put("wardId", ward.getId());
-                jsonObject.put("wardName", ward.getName());
+                jsonObject.addProperty("wardId", ward.getId());
+                jsonObject.addProperty("wardName", ward.getName());
             }
-            jsonObject.put("blockId", block.getId());
-            jsonObject.put("blockName", block.getName());
+            jsonObject.addProperty("blockId", block.getId());
+            jsonObject.addProperty("blockName", block.getName());
             wardJsonObjs.add(jsonObject);
             boundaries.add(ward.getId());
         }
-        final List<JSONObject> streetJsonObjs = new ArrayList<>();
+        final List<JsonObject> streetJsonObjs = new ArrayList<>();
         for (final Boundary street : streets) {
-            final JSONObject streetObj = new JSONObject();
-            streetObj.put("streetId", street.getId());
-            streetObj.put("streetName", street.getName());
+            final JsonObject streetObj = new JsonObject();
+            streetObj.addProperty("streetId", street.getId());
+            streetObj.addProperty("streetName", street.getName());
             streetJsonObjs.add(streetObj);
         }
-        final Map<String, List<JSONObject>> map = new HashMap<>();
+        final Map<String, List<JsonObject>> map = new HashMap<>();
         map.put("boundaries", wardJsonObjs);
         map.put("streets", streetJsonObjs);
-        final JSONObject bj = new JSONObject();
-        bj.put("results", map);
+        final JsonObject bj = new JsonObject();
+        bj.add("results", new Gson().toJsonTree(map));
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         IOUtils.write(bj.toString(), response.getWriter());
     }
 
-    @RequestMapping(value = {"/boundary/ajaxBoundary-blockByWard","/public/boundary/ajaxBoundary-blockByWard"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"/boundary/ajaxBoundary-blockByWard", "/public/boundary/ajaxBoundary-blockByWard"}, method = RequestMethod.GET)
     public void blockByWard(@RequestParam Long wardId, HttpServletResponse response) throws IOException {
         List<Boundary> blocks = boundaryService.getActiveChildBoundariesByBoundaryId(wardId);
-        final List<JSONObject> jsonObjects = new ArrayList<>();
+        final List<JsonObject> jsonObjects = new ArrayList<>();
         for (final Boundary block : blocks) {
-            final JSONObject jsonObj = new JSONObject();
-            jsonObj.put("blockId", block.getId());
-            jsonObj.put("blockName", block.getName());
+            final JsonObject jsonObj = new JsonObject();
+            jsonObj.addProperty("blockId", block.getId());
+            jsonObj.addProperty("blockName", block.getName());
             jsonObjects.add(jsonObj);
         }
         IOUtils.write(jsonObjects.toString(), response.getWriter());

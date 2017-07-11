@@ -1,63 +1,49 @@
 /**
  * eGov suite of products aim to improve the internal efficiency,transparency,
-   accountability and the service delivery of the government  organizations.
-
-    Copyright (C) <2015>  eGovernments Foundation
-
-    The updated version of eGov suite of products as by eGovernments Foundation
-    is available at http://www.egovernments.org
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or
-    http://www.gnu.org/licenses/gpl.html .
-
-    In addition to the terms of the GPL license to be adhered to in using this
-    program, the following additional terms are to be complied with:
-
-        1) All versions of this program, verbatim or modified must carry this
-           Legal Notice.
-
-        2) Any misrepresentation of the origin of the material is prohibited. It
-           is required that all modified versions of this material be marked in
-           reasonable ways as different from the original version.
-
-        3) This license does not grant any rights to any user of the program
-           with regards to rights under trademark law for use of the trade names
-           or trademarks of eGovernments Foundation.
-
-  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ * accountability and the service delivery of the government  organizations.
+ * <p>
+ * Copyright (C) <2015>  eGovernments Foundation
+ * <p>
+ * The updated version of eGov suite of products as by eGovernments Foundation
+ * is available at http://www.egovernments.org
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
+ * <p>
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * <p>
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see http://www.gnu.org/licenses/ or
+ * http://www.gnu.org/licenses/gpl.html .
+ * <p>
+ * In addition to the terms of the GPL license to be adhered to in using this
+ * program, the following additional terms are to be complied with:
+ * <p>
+ * 1) All versions of this program, verbatim or modified must carry this
+ * Legal Notice.
+ * <p>
+ * 2) Any misrepresentation of the origin of the material is prohibited. It
+ * is required that all modified versions of this material be marked in
+ * reasonable ways as different from the original version.
+ * <p>
+ * 3) This license does not grant any rights to any user of the program
+ * with regards to rights under trademark law for use of the trade names
+ * or trademarks of eGovernments Foundation.
+ * <p>
+ * In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 package org.egov.stms.web.controller.masters;
 
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
-
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-
-import javax.servlet.http.HttpServletResponse;
-
+import com.google.gson.GsonBuilder;
 import org.apache.commons.io.IOUtils;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.service.FinancialYearService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
-import org.egov.infra.config.properties.ApplicationProperties;
+import org.egov.infra.config.core.GlobalSettings;
 import org.egov.infra.utils.DateUtils;
 import org.egov.stms.masters.entity.SewerageRatesMaster;
 import org.egov.stms.masters.entity.SewerageRatesMasterDetails;
@@ -84,7 +70,19 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.google.gson.GsonBuilder;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @Controller
 @RequestMapping(value = "/masters")
@@ -99,9 +97,6 @@ public class SewerageRateMasterController {
 
     @Autowired
     private FinancialYearService financialYearService;
-
-    @Autowired
-    private ApplicationProperties applicationProperties;
 
     @Autowired
     private SewerageMasterDataValidator sewerageMasterDataValidator;
@@ -217,7 +212,7 @@ public class SewerageRateMasterController {
     @RequestMapping(value = "/ajaxexistingseweragevalidate", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public double getSewerageRatesByAllCombinatons(@RequestParam("propertyType") final PropertyType propertyType,
-            @RequestParam("fromDate") final Date fromDate) {
+                                                   @RequestParam("fromDate") final Date fromDate) {
         SewerageRatesMaster sewerageRatesMasterExist;
         sewerageRatesMasterExist = sewerageRatesMasterService
                 .findByPropertyTypeAndFromDateAndActive(propertyType, fromDate, true);
@@ -230,7 +225,7 @@ public class SewerageRateMasterController {
     @RequestMapping(value = "/fromDateValidationWithLatestActiveRecord", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public String getLatestActiveFromDate(@RequestParam("propertyType") final PropertyType propertyType,
-            @RequestParam("fromDate") final Date fromDate) {
+                                          @RequestParam("fromDate") final Date fromDate) {
         final SimpleDateFormat newFormat = new SimpleDateFormat("dd-MM-yyyy");
 
         final List<SewerageRatesMaster> existingsewerageRatesMasterList = sewerageRatesMasterService
@@ -254,7 +249,7 @@ public class SewerageRateMasterController {
 
     @RequestMapping(value = "/rateView/{id}", method = RequestMethod.GET)
     public String view(@ModelAttribute final SewerageRatesSearch sewerageRatesSearch, final Model model,
-            @PathVariable("id") final Long id, final RedirectAttributes redirectAttrs) {
+                       @PathVariable("id") final Long id, final RedirectAttributes redirectAttrs) {
         final SewerageRatesMaster sewerageRatesMaster = sewerageRatesMasterService.findBy(id);
         model.addAttribute("sewerageRatesSearch", sewerageRatesMaster);
         return SEWERAGE_RATES_SUCCESS_PAGE + id;
@@ -263,7 +258,7 @@ public class SewerageRateMasterController {
     @RequestMapping(value = "/search-sewerage-rates", method = GET)
     @ResponseBody
     public void sewerageRatesSearch(final Model model,
-            @ModelAttribute final SewerageRatesSearch sewerageRatesSearch, final HttpServletResponse response)
+                                    @ModelAttribute final SewerageRatesSearch sewerageRatesSearch, final HttpServletResponse response)
             throws IOException {
         final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         final SimpleDateFormat newFormat = new SimpleDateFormat("dd-MM-yyyy");
@@ -287,14 +282,14 @@ public class SewerageRateMasterController {
                 displyalist.add(seRatesSearch);
             else if (!getAppconfigValue() && seRatesSearch.getMonthlyRate() == null)
                 displyalist.add(seRatesSearch);
-        IOUtils.write("{ \"data\":" + new GsonBuilder().setDateFormat(applicationProperties.defaultDatePattern()).create()
+        IOUtils.write("{ \"data\":" + new GsonBuilder().setDateFormat(GlobalSettings.datePattern()).create()
                 .toJson(displyalist)
                 + "}", response.getWriter());
     }
 
     @RequestMapping(value = "update/{id}", method = GET)
     public String updateSewerageRates(@ModelAttribute final SewerageRatesMaster sewerageRatesMaster, @PathVariable final Long id,
-            final Model model) {
+                                      final Model model) {
         final SewerageRatesMaster existingratesMaster = sewerageRatesMasterService.findBy(id);
         model.addAttribute(SEWERAGE_RATES_MASTER, existingratesMaster);
         if (getAppconfigValue())
@@ -309,7 +304,7 @@ public class SewerageRateMasterController {
 
     @RequestMapping(value = "update/{id}", method = POST)
     public String update(@ModelAttribute final SewerageRatesMaster sewerageRatesMaster, @PathVariable final Long id,
-            final Model model, final RedirectAttributes redirectAttrs, final BindingResult errors) throws ParseException {
+                         final Model model, final RedirectAttributes redirectAttrs, final BindingResult errors) throws ParseException {
         final SimpleDateFormat newFormat = new SimpleDateFormat("dd-MM-yyyy");
 
         final SewerageRatesMaster ratesMaster = sewerageRatesMasterService.findBy(id);

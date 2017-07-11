@@ -70,11 +70,35 @@ function validateWorkFlowApprover(name) {
    return true;
 }
 
+var popupWindow=null;
+
+function openReassignWindow()
+{ 
+	var modelIdAndAppTypeParam = '<c:out value="${transactionType}"/>'+"&"+'<c:out value="${stateAwareId}"/>';
+	popupWindow = window.open('/ptis/reassign/'
+			+ modelIdAndAppTypeParam,
+			'_blank', 'width=650, height=500, scrollbars=yes', false);
+	jQuery('.loader-class').modal('show', {backdrop: 'static'});
+}
+
+function closeAllWindows(){
+	popupWindow.close();
+	window.opener.inboxloadmethod();
+	self.close();
+}
+
+function closeChildWindow(){
+	jQuery('.loader-class').modal('hide');
+	popupWindow.close();
+}
+
+
+
 </script>
 
 <div class="buttonbottom" align="center">
 	<table>
-	<form:hidden path="" id="workFlowAction" name="workFlowAction"/>		
+	<form:hidden path="" id="workFlowAction" name="workFlowAction"/>
 		<tr>
 			<td>
 		<c:forEach items="${validActionList}" var="validButtons">
@@ -85,6 +109,15 @@ function validateWorkFlowApprover(name) {
 								onclick="validateWorkFlowApprover('${validButtons}');">
 								<c:out value="${validButtons}" />
 							</form:button>
+						</c:when>
+						<c:when test="${ validButtons.equalsIgnoreCase('Reassign')}">
+						<c:if test="${isReassignEnabled}">
+							<form:button type="button" disabled="false" id="${validButtons}"
+								class="btn btn-primary" value="${validButtons}"
+								onclick="openReassignWindow();">
+								<c:out value="${validButtons}" />
+							</form:button>
+							</c:if>
 						</c:when>
 						<c:otherwise>
 							<form:button type="submit" disabled="false" id="${validButtons}"

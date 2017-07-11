@@ -79,7 +79,6 @@
 	<div class="col-md-12 form-group report-table-container">
 		<table class="table table-bordered datatable dt-responsive table-hover multiheadertbl" id="metered-rate-result-table">
 			<thead>
-			<button type="button" id="addNewRowButton" class="btn btn-secondary pull-right display-hide"><i class="fa fa-plus-circle text-right"></i>&nbsp; <spring:message code="lbl.add.row"/></button>
 				<tr>
 					<th><spring:message code="lbl.slabname"/></th>
 					<th><spring:message code="lbl.usage" /></th>
@@ -117,23 +116,24 @@
 			</tr>
 		</thead>
 		<tbody>
-			<td><c:out value="${usageSlab.slabName}" /></td>
-			<td><c:out value="${usageSlab.usage}" /></td>
-			<td><c:out value="${usageSlab.fromVolume}" /></td>
-			<td><c:out value="${usageSlab.toVolume}" /></td>
-			<c:choose>
-				<c:when test="${usageSlab.active=='true'}">
-					<td><c:out value="ACTIVE" /></td>
-				</c:when>
-				<c:otherwise>
-					<td><c:out value="INACTIVE" /></td>
-				</c:otherwise>
-			</c:choose>
-			
+			<tr>
+				<td><c:out value="${usageSlab.slabName}" /></td>
+				<td><c:out value="${usageSlab.usage}" /></td>
+				<td><c:out value="${usageSlab.fromVolume}" /></td>
+				<td><c:out value="${usageSlab.toVolume}" /></td>
+				<c:choose>
+					<c:when test="${usageSlab.active=='true'}">
+						<td><c:out value="ACTIVE" /></td>
+					</c:when>
+					<c:otherwise>
+						<td><c:out value="INACTIVE" /></td>
+					</c:otherwise>
+				</c:choose>
+			</tr>
 		</tbody>
 	</table>
 </div>
-
+<input type="hidden" id="toVolume" value="${usageSlab.toVolume}"/>
 <div>
 	<div>
 		<table class="table table-bordered table-hover multiheadertbl tblmeteredrate" id="new-row-table">

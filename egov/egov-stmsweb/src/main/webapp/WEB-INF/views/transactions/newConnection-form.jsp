@@ -51,6 +51,7 @@
 			modelAttribute="sewerageApplicationDetails" id="newSewerageConnectionform"
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
+			<form:hidden path="" id="workFlowAction" name="workFlowAction"/>
 			<form:hidden path="applicationType" id="applicationType" value="${sewerageApplicationDetails.applicationType.id}"/>
 			<form:hidden path="" id="applicationCode" value="${sewerageApplicationDetails.applicationType.code}"/>
 			<form:hidden path="connection.status" id="connection.status" value="${sewerageApplicationDetails.connection.status}"/>
@@ -65,7 +66,9 @@
 					<jsp:include page="inspectionCharges.jsp"></jsp:include>
 				</c:if>
 				<jsp:include page="documentdetails.jsp"></jsp:include>	
+				<c:if test="${isEmployee}">
 				<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
+				</c:if>
 			<div class="buttonbottom" align="center">
 				<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />
 			</div>

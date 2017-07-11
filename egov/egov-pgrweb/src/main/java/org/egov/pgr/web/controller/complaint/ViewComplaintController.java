@@ -42,6 +42,7 @@ package org.egov.pgr.web.controller.complaint;
 
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.pgr.entity.Complaint;
+import org.egov.pgr.service.ComplaintHistoryService;
 import org.egov.pgr.service.ComplaintService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -58,12 +59,15 @@ public class ViewComplaintController {
     @Autowired
     private ComplaintService complaintService;
 
+    @Autowired
+    private ComplaintHistoryService complaintHistoryService;
+
     @GetMapping("/complaint/view/{crnNo}")
     public String viewComplaints(@PathVariable String crnNo, Model model) {
         Complaint complaint = complaintService.getComplaintByCRN(crnNo);
         if (complaint == null)
             throw new ApplicationRuntimeException("PGR.002");
-        List<HashMap<String, Object>> historyTable = complaintService.getHistory(complaint);
+        List<HashMap<String, Object>> historyTable = complaintHistoryService.getHistory(complaint);
         model.addAttribute("complaintHistory", historyTable);
         model.addAttribute("complaint", complaint);
         return "view-complaint";

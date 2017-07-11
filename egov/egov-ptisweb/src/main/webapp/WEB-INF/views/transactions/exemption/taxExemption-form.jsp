@@ -132,7 +132,7 @@ body
 						</div>
 					</div>
 				</div>
-			<c:if test="${propertyByEmployee == true}">
+			<c:if test="${propertyByEmployee == true  && citizenPortalUser == false}">
 			<jsp:include page="../../common/commonWorkflowMatrix.jsp" />
 			</c:if>
 			<jsp:include page="../../common/commonWorkflowMatrix-button.jsp" />
@@ -145,6 +145,7 @@ body
 function loadOnStartUp(exempted) {
 	var isAlert = ${isAlert};
 	var isExempted = exempted;
+	var citizenPortalUser = ${citizenPortalUser};
 	if(isExempted && isAlert){
 		bootbox.dialog({
 		    title: 'Property Tax Exemption',

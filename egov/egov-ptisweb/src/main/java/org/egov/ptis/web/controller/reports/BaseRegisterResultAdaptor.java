@@ -41,63 +41,182 @@ package org.egov.ptis.web.controller.reports;
 
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
-import org.egov.ptis.domain.entity.property.BaseRegisterResult;
+import org.egov.commons.Installment;
+import org.egov.infra.web.support.json.adapter.DataTableJsonAdapter;
+import org.egov.infra.web.support.ui.DataTable;
+import org.egov.ptis.client.util.PropertyTaxUtil;
+import org.egov.ptis.domain.entity.property.view.FloorDetailsInfo;
+import org.egov.ptis.domain.entity.property.view.InstDmdCollInfo;
+import org.egov.ptis.domain.entity.property.view.PropertyMVInfo;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
 
-public class BaseRegisterResultAdaptor implements JsonSerializer<BaseRegisterResult> {
+@Component
+public class BaseRegisterResultAdaptor implements DataTableJsonAdapter<PropertyMVInfo> {
 
-    @Override
-    public JsonElement serialize(final BaseRegisterResult baseRegisterResultObj, final Type type,
-            final JsonSerializationContext jsc) {
+	public static final String CURRENTYEAR_FIRST_HALF = "Current 1st Half";
+	public static final String CURRENTYEAR_SECOND_HALF = "Current 2nd Half";
+	
+	private static PropertyTaxUtil propertyTaxUtil;
 
-        final JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("assessmentNo", baseRegisterResultObj.getAssessmentNo());
-        jsonObject.addProperty("ownerName", baseRegisterResultObj.getOwnerName());
-        jsonObject.addProperty("doorNo", baseRegisterResultObj.getDoorNO());
-        jsonObject.addProperty("natureOfUsage", baseRegisterResultObj.getNatureOfUsage());
-        if (baseRegisterResultObj.getIsExempted() == null)
-            baseRegisterResultObj.setIsExempted("");
-        jsonObject.addProperty("exemption", baseRegisterResultObj.getIsExempted());
-        jsonObject.addProperty("courtCase", baseRegisterResultObj.getCourtCase());
-        jsonObject.addProperty("arrearPeriod", baseRegisterResultObj.getArrearPeriod());
-        jsonObject.addProperty("generalTax", baseRegisterResultObj.getPropertyTax() != null ? baseRegisterResultObj
-                .getPropertyTax().toString() : "");
-        jsonObject.addProperty("libraryCessTax",
-                baseRegisterResultObj.getLibraryCessTax() != null ? baseRegisterResultObj.getLibraryCessTax().toString() : "");
-        jsonObject.addProperty("eduCessTax",
-                baseRegisterResultObj.getEduCessTax() != null ? baseRegisterResultObj.getEduCessTax().toString() : "");
-        jsonObject.addProperty("penaltyFinesTax",
-                baseRegisterResultObj.getPenaltyFines() != null ? baseRegisterResultObj.getPenaltyFines().toString() : "");
-        jsonObject.addProperty("currTotal",
-                baseRegisterResultObj.getCurrTotal() != null ? baseRegisterResultObj.getCurrTotal().toString() : "");
-        jsonObject.addProperty("arrearPropertyTax", baseRegisterResultObj.getArrearPropertyTax() != null
-                ? baseRegisterResultObj.getArrearPropertyTax().toString() : "");
-        jsonObject.addProperty("arrearlibCess", baseRegisterResultObj.getArrearLibraryTax() != null
-                ? baseRegisterResultObj.getArrearLibraryTax().toString() : "");
-        jsonObject.addProperty("arrearEduCess",
-                baseRegisterResultObj.getArrearEduCess() != null ? baseRegisterResultObj.getArrearEduCess().toString() : "");
-        jsonObject.addProperty("arrearTotal",
-                baseRegisterResultObj.getArrearTotal() != null ? baseRegisterResultObj.getArrearTotal().toString() : "");
-        jsonObject.addProperty("arrearPenaltyFines", baseRegisterResultObj.getArrearPenaltyFines() != null
-                ? baseRegisterResultObj.getArrearPenaltyFines().toString() : "");
-        jsonObject.addProperty("arrearColl",
-                baseRegisterResultObj.getArrearColl() != null ? baseRegisterResultObj.getArrearColl().toString() : "");
-        jsonObject.addProperty("currentColl",
-                baseRegisterResultObj.getCurrentColl() != null ? baseRegisterResultObj.getCurrentColl().toString() : "");
-        jsonObject.addProperty("totalColl",
-                baseRegisterResultObj.getTotalColl() != null ? baseRegisterResultObj.getTotalColl().toString() : "");
-        jsonObject.addProperty("propertyUsage",
-                baseRegisterResultObj.getPropertyUsage() != null ? baseRegisterResultObj.getPropertyUsage().toString() : "");
-        jsonObject.addProperty("classification", baseRegisterResultObj.getClassificationOfBuilding() != null
-                ? baseRegisterResultObj.getClassificationOfBuilding().toString() : "");
-        jsonObject.addProperty("area", baseRegisterResultObj.getPlinthArea() != null ? baseRegisterResultObj
-                .getPlinthArea().setScale(2, BigDecimal.ROUND_HALF_UP).toString() : "");
-        return jsonObject;
-    }
+	public BaseRegisterResultAdaptor() {
+	}
 
+	@Autowired
+	public BaseRegisterResultAdaptor(final PropertyTaxUtil propertyTaxUtil) {
+		BaseRegisterResultAdaptor.propertyTaxUtil = propertyTaxUtil;
+	}
+
+	@Override
+	public JsonElement serialize(final DataTable<PropertyMVInfo> baseRegisterResponse, final Type type,
+			final JsonSerializationContext jsc) {
+		final List<PropertyMVInfo> baseRegisterResult = baseRegisterResponse.getData();
+		final JsonArray baseRegisterResultData = new JsonArray();
+		baseRegisterResult.forEach(baseRegisterResultObj -> {
+			final JsonObject jsonObject = new JsonObject();
+			final Map<String, BigDecimal> valuesMap = getTaxDetails(baseRegisterResultObj);
+			final Map<String, String> floorValuesMap = getFloorDetails(baseRegisterResultObj);
+
+			final BigDecimal currColl = baseRegisterResultObj.getAggrCurrFirstHalfColl() != null
+					? baseRegisterResultObj.getAggrCurrFirstHalfColl()
+					: BigDecimal.ZERO.add(baseRegisterResultObj.getAggrCurrSecondHalfColl() != null
+							? baseRegisterResultObj.getAggrCurrSecondHalfColl() : BigDecimal.ZERO);
+
+			final BigDecimal totalColl = currColl.add(baseRegisterResultObj.getArrearCollection() != null
+					? baseRegisterResultObj.getArrearCollection() : BigDecimal.ZERO);
+
+			final BigDecimal currTotal = valuesMap.get("totalCurrPropertyTax")
+					.add(valuesMap.get("totalCurrEduCess").add(valuesMap.get("totalCurrLibCess")));
+
+			jsonObject.addProperty("assessmentNo", baseRegisterResultObj.getPropertyId());
+			jsonObject.addProperty("ownerName", baseRegisterResultObj.getOwnerName());
+			jsonObject.addProperty("doorNo",
+					baseRegisterResultObj.getHouseNo() != null ? baseRegisterResultObj.getHouseNo().toString() : "");
+			jsonObject.addProperty("natureOfUsage", baseRegisterResultObj.getUsage());
+			jsonObject.addProperty("exemption", baseRegisterResultObj.getIsExempted() ? "Yes" : "No");
+			jsonObject.addProperty("courtCase", baseRegisterResultObj.getIsUnderCourtCase() ? "Yes" : "No");
+			jsonObject.addProperty("arrearPeriod",
+					baseRegisterResultObj.getDuePeriod() != null
+							&& org.apache.commons.lang.StringUtils.isNotBlank(baseRegisterResultObj.getDuePeriod())
+									? baseRegisterResultObj.getDuePeriod().toString() : "NA");
+			jsonObject.addProperty("currentColl", currColl);
+			jsonObject.addProperty("arrearTotal", baseRegisterResultObj.getArrearDemand() != null
+					? baseRegisterResultObj.getArrearDemand() : BigDecimal.ZERO);
+			jsonObject.addProperty("arrearPenaltyFines", baseRegisterResultObj.getAggrArrearPenaly() != null
+					? baseRegisterResultObj.getAggrArrearPenaly() : BigDecimal.ZERO);
+			jsonObject.addProperty("arrearColl", baseRegisterResultObj.getArrearCollection() != null
+					? baseRegisterResultObj.getArrearCollection() : BigDecimal.ZERO);
+			jsonObject.addProperty("totalColl", totalColl);
+
+			if (!valuesMap.isEmpty()) {
+				jsonObject.addProperty("generalTax", valuesMap.get("totalCurrPropertyTax"));
+				jsonObject.addProperty("libraryCessTax", valuesMap.get("totalCurrLibCess"));
+				jsonObject.addProperty("eduCessTax", valuesMap.get("totalCurrEduCess"));
+				jsonObject.addProperty("penaltyFinesTax", valuesMap.get("currPenaltyFine"));
+
+				jsonObject.addProperty("arrearPropertyTax", valuesMap.get("totalArrearPropertyTax"));
+				jsonObject.addProperty("arrearlibCess", valuesMap.get("totalArreaLibCess"));
+				jsonObject.addProperty("arrearEduCess", valuesMap.get("totalArrearEduCess"));
+				jsonObject.addProperty("currTotal", currTotal);
+			}
+			if (!floorValuesMap.isEmpty()) {
+				jsonObject.addProperty("propertyUsage", floorValuesMap.get("propertyUsage") != null
+						? floorValuesMap.get("propertyUsage").toString() : "");
+				jsonObject.addProperty("classification",
+						floorValuesMap.get("classification") != null ? floorValuesMap.get("classification") : "");
+				jsonObject.addProperty("area", floorValuesMap.get("area"));
+			}
+
+			baseRegisterResultData.add(jsonObject);
+		});
+		return enhance(baseRegisterResultData, baseRegisterResponse);
+	}
+
+	private Map<String, BigDecimal> getTaxDetails(final PropertyMVInfo propMatView) {
+
+		final BigDecimal totalArrearPropertyTax = BigDecimal.ZERO;
+		final BigDecimal totalArrearEduCess = BigDecimal.ZERO;
+		final BigDecimal totalArreaLibCess = BigDecimal.ZERO;
+		final BigDecimal arrearPenaltyFine = BigDecimal.ZERO;
+
+		final BigDecimal totalCurrPropertyTax = BigDecimal.ZERO;
+		final BigDecimal totalCurrEduCess = BigDecimal.ZERO;
+		final BigDecimal totalCurrLibCess = BigDecimal.ZERO;
+		final BigDecimal currPenaltyFine = BigDecimal.ZERO;
+
+		final List<InstDmdCollInfo> instDemandCollList = new LinkedList<>(propMatView.getInstDmdColl());
+		final Map<String, Installment> currYearInstMap = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
+		final Map<String, BigDecimal> values = new LinkedHashMap<>();
+		for (final InstDmdCollInfo instDmdCollObj : instDemandCollList)
+			if (instDmdCollObj.getInstallment().equals(currYearInstMap.get(CURRENTYEAR_FIRST_HALF).getId())) {
+				values.put("totalCurrPropertyTax", totalCurrPropertyTax.add(
+						instDmdCollObj.getGeneralTax() != null ? instDmdCollObj.getGeneralTax() : BigDecimal.ZERO));
+				values.put("totalCurrEduCess", totalCurrEduCess.add(
+						instDmdCollObj.getEduCessTax() != null ? instDmdCollObj.getEduCessTax() : BigDecimal.ZERO));
+				values.put("totalCurrLibCess", totalCurrLibCess.add(
+						instDmdCollObj.getLibCessTax() != null ? instDmdCollObj.getLibCessTax() : BigDecimal.ZERO));
+				values.put("currPenaltyFine", currPenaltyFine.add(instDmdCollObj.getPenaltyFinesTax() != null
+						? instDmdCollObj.getPenaltyFinesTax() : BigDecimal.ZERO));
+			} else if (instDmdCollObj.getInstallment().equals(currYearInstMap.get(CURRENTYEAR_SECOND_HALF).getId())) {
+				values.put("totalCurrPropertyTax", totalCurrPropertyTax.add(
+						instDmdCollObj.getGeneralTax() != null ? instDmdCollObj.getGeneralTax() : BigDecimal.ZERO));
+				values.put("totalCurrEduCess", totalCurrEduCess.add(
+						instDmdCollObj.getEduCessTax() != null ? instDmdCollObj.getEduCessTax() : BigDecimal.ZERO));
+				values.put("totalCurrLibCess", totalCurrLibCess.add(
+						instDmdCollObj.getLibCessTax() != null ? instDmdCollObj.getLibCessTax() : BigDecimal.ZERO));
+				values.put("currPenaltyFine", currPenaltyFine.add(instDmdCollObj.getPenaltyFinesTax() != null
+						? instDmdCollObj.getPenaltyFinesTax() : BigDecimal.ZERO));
+			} else {
+				values.put("totalArrearPropertyTax", totalArrearPropertyTax.add(
+						instDmdCollObj.getGeneralTax() != null ? instDmdCollObj.getGeneralTax() : BigDecimal.ZERO));
+				values.put("totalArrearEduCess", totalArrearEduCess.add(
+						instDmdCollObj.getEduCessTax() != null ? instDmdCollObj.getEduCessTax() : BigDecimal.ZERO));
+				values.put("totalArreaLibCess", totalArreaLibCess.add(
+						instDmdCollObj.getLibCessTax() != null ? instDmdCollObj.getLibCessTax() : BigDecimal.ZERO));
+				values.put("arrearPenaltyFine", arrearPenaltyFine.add(instDmdCollObj.getPenaltyFinesTax() != null
+						? instDmdCollObj.getPenaltyFinesTax() : BigDecimal.ZERO));
+			}
+		return values;
+	}
+
+	private Map<String, String> getFloorDetails(final PropertyMVInfo propMatView) {
+
+		final List<FloorDetailsInfo> floorDetailsList = new LinkedList<>(propMatView.getFloorDetails());
+		final Map<String, String> floorValues = new LinkedHashMap<>();
+
+		if (floorDetailsList.size() > 1) {
+			int count = 0;
+			for (final FloorDetailsInfo floorDetailsObj : floorDetailsList)
+				if (count == 0) {
+					floorValues.put("propertyUsage", floorDetailsObj.getPropertyUsage());
+					floorValues.put("classification", floorDetailsObj.getClassification());
+					floorValues.put("area",
+							floorDetailsObj.getBuiltUpArea().setScale(2, BigDecimal.ROUND_HALF_UP).toString());
+					count++;
+				} else {
+					floorValues.put("propertyUsage", floorDetailsObj.getPropertyUsage());
+					floorValues.put("classification", floorDetailsObj.getClassification());
+					floorValues.put("area",
+							floorDetailsObj.getBuiltUpArea().setScale(2, BigDecimal.ROUND_HALF_UP).toString());
+				}
+		} else
+			for (final FloorDetailsInfo floorDetailsObj : floorDetailsList) {
+				floorValues.put("propertyUsage", floorDetailsObj.getPropertyUsage());
+				floorValues.put("classification", floorDetailsObj.getClassification());
+				floorValues.put("area",
+						floorDetailsObj.getBuiltUpArea().setScale(2, BigDecimal.ROUND_HALF_UP).toString());
+			}
+		return floorValues;
+	}
 }

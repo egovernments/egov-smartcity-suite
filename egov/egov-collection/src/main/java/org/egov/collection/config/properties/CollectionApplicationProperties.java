@@ -121,4 +121,8 @@ public class CollectionApplicationProperties {
     public String getUpdateDemandUrl(final String serviceCode) { 
         return environment.getProperty(serviceCode.concat(".updatedemand.url"));
     }
+    
+    public String getLamsServiceUrl() { 
+        return environment.getProperty("egov.services.lams.hostname");
+    }
 }

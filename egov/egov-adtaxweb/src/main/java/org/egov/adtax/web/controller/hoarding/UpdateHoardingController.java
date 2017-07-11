@@ -107,9 +107,12 @@ public class UpdateHoardingController extends HoardingControllerSupport {
         if (advertisementPermitDetail != null && advertisementPermitDetail.getPreviousapplicationid() != null) {
             model.addAttribute(ADDITIONAL_RULE, AdvertisementTaxConstants.RENEWAL_ADDITIONAL_RULE);
             workFlowContainer.setAdditionalRule(AdvertisementTaxConstants.RENEWAL_ADDITIONAL_RULE);
+            workFlowContainer.setPendingActions(advertisementPermitDetail.getState().getNextAction());
         } else {
             model.addAttribute(ADDITIONAL_RULE, AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE);
             workFlowContainer.setAdditionalRule(AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE);
+            workFlowContainer.setPendingActions(advertisementPermitDetail.getState().getNextAction());
+
         }
 
         if (advertisementPermitDetail != null) {
@@ -136,9 +139,13 @@ public class UpdateHoardingController extends HoardingControllerSupport {
             if (advertisementPermitDetail != null && advertisementPermitDetail.getPreviousapplicationid() != null) {
                 model.addAttribute(ADDITIONAL_RULE, AdvertisementTaxConstants.RENEWAL_ADDITIONAL_RULE);
                 workFlowContainer.setAdditionalRule(AdvertisementTaxConstants.RENEWAL_ADDITIONAL_RULE);
+                workFlowContainer.setPendingActions(advertisementPermitDetail.getState().getNextAction());
+
             } else {
                 model.addAttribute(ADDITIONAL_RULE, AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE);
                 workFlowContainer.setAdditionalRule(AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE);
+                workFlowContainer.setPendingActions(advertisementPermitDetail.getState().getNextAction());
+
             }
             if (advertisementPermitDetail != null) {
                 prepareWorkflow(model, advertisementPermitDetail, workFlowContainer);

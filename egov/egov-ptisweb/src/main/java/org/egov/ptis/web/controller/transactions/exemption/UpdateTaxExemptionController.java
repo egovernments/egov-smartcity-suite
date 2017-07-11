@@ -62,6 +62,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SIG
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONAL_COMMISSIONER_DESIGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TAX_EXEMTION;
 
 import java.util.Date;
 import java.util.List;
@@ -83,6 +84,7 @@ import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.TaxExemptionReason;
 import org.egov.ptis.domain.service.exemption.TaxExemptionService;
+import org.egov.ptis.domain.service.reassign.ReassignService;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -115,9 +117,7 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
     private static final String EXSERVICE_DOC = "exserviceDocs";
     
     private final TaxExemptionService taxExemptionService;
-    private PropertyImpl property;
-    private Boolean isExempted = Boolean.FALSE;
-    
+
     @Autowired
     private PropertyTaxUtil propertyTaxUtil;
 
@@ -129,6 +129,9 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
 
     @Autowired
     private PropertyTaxCommonUtils propertyTaxCommonUtils;
+    
+    @Autowired
+    private ReassignService reassignService;
 
     @Autowired
     public UpdateTaxExemptionController(final TaxExemptionService taxExemptionService) {
@@ -136,8 +139,8 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
     }
 
     @ModelAttribute
-    public Property propertyModel(@PathVariable final String id) {
-        property = taxExemptionService.findByNamedQuery(QUERY_WORKFLOW_PROPERTYIMPL_BYID, Long.valueOf(id));
+    public PropertyImpl property(@PathVariable final String id) {
+        PropertyImpl property = taxExemptionService.findByNamedQuery(QUERY_WORKFLOW_PROPERTYIMPL_BYID, Long.valueOf(id));
         if (property == null)
             property = taxExemptionService.findByNamedQuery(QUERY_PROPERTYIMPL_BYID, Long.valueOf(id));
         return property;
@@ -175,12 +178,14 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public String view(final Model model, @PathVariable final Long id, final HttpServletRequest request) {
-        isExempted = property.getBasicProperty().getActiveProperty().getIsExemptedFromTax();
+    public String view(@ModelAttribute PropertyImpl property, final Model model, @PathVariable final Long id, final HttpServletRequest request) {
+        boolean isExempted = property.getBasicProperty().getActiveProperty().getIsExemptedFromTax();
         String userDesignationList;
         final String currState = property.getState().getValue();
         final String nextAction = property.getState().getNextAction();
-        userDesignationList = propertyTaxCommonUtils.getAllDesignationsForUser(securityUtils.getCurrentUser().getId());
+        User loggedInUser = securityUtils.getCurrentUser();
+        final boolean citizenPortalUser = propertyTaxCommonUtils.isCitizenPortalUser(loggedInUser);
+        userDesignationList = propertyTaxCommonUtils.getAllDesignationsForUser(loggedInUser.getId());
         model.addAttribute("stateType", property.getClass().getSimpleName());
         model.addAttribute("currentState", property.getCurrentState().getValue());
         final WorkflowContainer workflowContainer = new WorkflowContainer();
@@ -198,6 +203,10 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
         model.addAttribute(EDUINST_DOC, "");
         model.addAttribute(EXSERVICE_DOC, "");
         model.addAttribute(NGO_DOC, "");
+        model.addAttribute("citizenPortalUser", citizenPortalUser);
+        model.addAttribute("transactionType", APPLICATION_TYPE_TAX_EXEMTION);
+        model.addAttribute("stateAwareId", property.getId());
+        model.addAttribute("isReassignEnabled", reassignService.isReassignEnabled());
         final String currentDesignation = taxExemptionService.getLoggedInUserDesignation(
                 property.getCurrentState().getOwnerPosition().getId(),
                 securityUtils.getCurrentUser());
@@ -221,6 +230,7 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
                 model.addAttribute(NGO_DOC, property.getTaxExemptionDocumentsProxy());
             }
         }
+        model.addAttribute("property", property);
         if (currState.endsWith(WF_STATE_REJECTED) || nextAction.equalsIgnoreCase(WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING)
                 || currState.endsWith(WFLOW_ACTION_NEW)) {
             model.addAttribute("mode", EDIT);
@@ -234,7 +244,7 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public String update(@Valid @ModelAttribute final Property property, final BindingResult errors,
+    public String update(@Valid @ModelAttribute final PropertyImpl property, final BindingResult errors,
             final RedirectAttributes redirectAttributes, final HttpServletRequest request, final Model model,
             @RequestParam final String workFlowAction) {
 
@@ -332,7 +342,7 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
                     approvalPosition, taxExemptedReason, propertyByEmployee, EXEMPTION);
             }
 
-            successMessage = "Property Exemption rejected successfully and forwared to "
+            successMessage = "Property Exemption rejected successfully and forwarded to "
                     + assignment.getEmployee().getName().concat("~").concat(assignment.getPosition().getName())
                     + " with application number "
                     + property.getApplicationNo();

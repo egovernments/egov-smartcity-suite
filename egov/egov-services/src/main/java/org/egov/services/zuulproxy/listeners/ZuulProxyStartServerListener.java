@@ -61,7 +61,8 @@ public class ZuulProxyStartServerListener implements ServletContextListener {
 
     @Override
     public void contextInitialized(final ServletContextEvent sce) {
-        logger.info("Starting Zuul Proxy server");
+        if (logger.isInfoEnabled())
+            logger.info("Starting Zuul Proxy server");
 
         // mocks monitoring infrastructure as we don't need it for this simple app
         MonitoringHelper.initMocks();
@@ -75,22 +76,27 @@ public class ZuulProxyStartServerListener implements ServletContextListener {
 
     @Override
     public void contextDestroyed(final ServletContextEvent sce) {
-        logger.info("Stopping Zuul Proxy server");
+        if (logger.isInfoEnabled())
+            logger.info("Stopping Zuul Proxy server");
     }
 
     private void initGroovyFilterManager() {
         FilterLoader.getInstance().setCompiler(new GroovyCompiler());
-
-        String scriptRoot = System.getProperty("zuul.filter.root",
-                getClass().getClassLoader().getResource("/groovy/filters").getPath());
-
-        if (scriptRoot.length() > 0)
+        String scriptRoot = System.getProperty("zuul.filter.root", "groovy/filters");
+        /*
+         * String scriptRoot = System.getProperty("zuul.filter.root",
+         * getClass().getClassLoader().getResource("/groovy/filters").getPath()); if (scriptRoot.length() > 0 &&
+         * !scriptRoot.endsWith("/")) scriptRoot = scriptRoot + File.separator;
+         */
+        if (scriptRoot.length() > 0 && !scriptRoot.endsWith("/"))
             scriptRoot = scriptRoot + File.separator;
         try {
             FilterFileManager.setFilenameFilter(new GroovyFileFilter());
             FilterFileManager.init(5, scriptRoot + "route", scriptRoot + "post");
         } catch (final Exception e) {
-            throw new RuntimeException(e);
+            if (logger.isErrorEnabled())
+                logger.error("Error reading Groovy filters for zuul proxy... " + e.getMessage());
+            // throw new RuntimeException(e);
         }
     }
 

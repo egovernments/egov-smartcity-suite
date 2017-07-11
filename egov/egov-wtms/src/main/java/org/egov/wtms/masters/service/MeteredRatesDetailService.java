@@ -40,6 +40,8 @@
 
 package org.egov.wtms.masters.service;
 
+import java.util.Date;
+
 import org.egov.wtms.masters.entity.MeteredRatesDetail;
 import org.egov.wtms.masters.repository.MeteredRatesDetailRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,4 +60,7 @@ public class MeteredRatesDetailService {
         meteredRatesDetailRepository.save(meteredRatesDetail);
     }
 
+    public MeteredRatesDetail getActiveRateforSlab(final String slabName, final Date currentDate) {
+        return meteredRatesDetailRepository.getActiveRateforSlab(slabName, currentDate);
+    }
 }

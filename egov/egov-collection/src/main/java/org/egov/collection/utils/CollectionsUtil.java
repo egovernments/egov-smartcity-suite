@@ -45,6 +45,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -55,6 +56,7 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.egov.collection.config.properties.CollectionApplicationProperties;
 import org.egov.collection.constants.CollectionConstants;
+import org.egov.collection.entity.BranchUserMap;
 import org.egov.collection.entity.Challan;
 import org.egov.collection.entity.CollectionIndex;
 import org.egov.collection.entity.OnlinePayment;
@@ -62,9 +64,11 @@ import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.entity.ReceiptHeader;
 import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.collection.integration.models.BillReceiptInfoImpl;
+import org.egov.collection.integration.models.BillReceiptInfoReq;
 import org.egov.collection.integration.models.BillReceiptReq;
 import org.egov.collection.integration.models.ReceiptAmountInfo;
 import org.egov.collection.integration.services.BillingIntegrationService;
+import org.egov.commons.Bankbranch;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.Fund;
@@ -94,6 +98,7 @@ import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.config.properties.ApplicationProperties;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.messaging.MessagingService;
+import org.egov.infra.microservice.utils.MicroserviceUtils;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
@@ -113,15 +118,8 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 public class CollectionsUtil {
@@ -188,7 +186,14 @@ public class CollectionsUtil {
     private CollectionApplicationProperties collectionApplicationProperties;
 
     @Autowired
+    MicroserviceUtils microserviceUtils;
+
+    @Autowired
     private ApplicationProperties applicationProperties;
+
+    @Autowired
+    @Qualifier("branchUserMapService")
+    private PersistenceService<BranchUserMap, Long> branchUserMapService;
 
     /**
      * Returns the Status object for given status code for a receipt
@@ -351,8 +356,8 @@ public class CollectionsUtil {
             throw new ValidationException(Arrays.asList(new ValidationError("Department",
                     "billreceipt.counter.deptcode.null")));
         if (isBankCollectionOperator(loggedInUser)) {
-            // Bank Collection Operator cash, cheque and dd collection modes are allowed.
-            collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_CARD);
+            // Bank Collection Operator cash, cheque, dd and card collection modes are
+            // allowed.
             collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_BANK);
             collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_ONLINE);
         }
@@ -615,7 +620,7 @@ public class CollectionsUtil {
         try {
             final HashMap<String, String> paramMap = new HashMap<>();
             paramMap.put("code", EisManagersUtill.getEmployeeService().getEmpForUserId(user.getId()).getCode());
-            final List<EmployeeView> employeeViewList =(List<EmployeeView>)eisService.getEmployeeInfoList(paramMap);
+            final List<EmployeeView> employeeViewList = eisService.getEmployeeInfoList(paramMap);
             if (!employeeViewList.isEmpty())
                 for (final EmployeeView employeeView : employeeViewList)
                     if (!employeeView.getAssignment().getPrimary())
@@ -752,24 +757,31 @@ public class CollectionsUtil {
         return reportService.createReport(reportRequest);
     }
 
-    public ReceiptAmountInfo updateReceiptDetailsAndGetReceiptAmountInfo(BillReceiptReq billReceipt, String serviceCode) {
-        RestTemplate restTemplate = new RestTemplate();
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        String json = null;
+    public ReceiptAmountInfo updateReceiptDetailsAndGetReceiptAmountInfo(final BillReceiptReq billReceipt,
+            final String serviceCode) {
+        final RestTemplate restTemplate = new RestTemplate();
+        billReceipt.setTenantId(microserviceUtils.getTanentId());
+        final BillReceiptInfoReq billReceiptInfoReq = new BillReceiptInfoReq();
+        billReceiptInfoReq.setBillReceiptInfo(billReceipt);
+        billReceiptInfoReq.setRequestInfo(microserviceUtils.createRequestInfo());
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("updateReceiptDetailsAndGetReceiptAmountInfo - before calling LAMS update");
+        final String url = collectionApplicationProperties.getLamsServiceUrl().concat(
+                collectionApplicationProperties.getUpdateDemandUrl(serviceCode.toLowerCase()));
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("updateReceiptDetailsAndGetReceiptAmountInfo - url" + url);
+        ReceiptAmountInfo receiptAmountInfo = null;
         try {
-            json = new ObjectMapper().writeValueAsString(billReceipt);
-        } catch (JsonProcessingException e) {
-            final String errMsg = "Exception while updating receiptdetails through rest for receipt number ["
-                    + billReceipt.getReceiptNum() + "]!";
+            receiptAmountInfo = restTemplate.postForObject(url, billReceiptInfoReq, ReceiptAmountInfo.class);
+        } catch (final Exception e) {
+            final String errMsg = "Exception while updateReceiptDetailsAndGetReceiptAmountInfo for bill number  ["
+                    + billReceipt.getBillReferenceNum() + "]!";
             LOGGER.error(errMsg, e);
             throw new ApplicationRuntimeException(errMsg, e);
         }
-        HttpEntity<String> entity = new HttpEntity<>(json, headers);
-        String url = ApplicationThreadLocals.getDomainURL().concat(
-                collectionApplicationProperties.getUpdateDemandUrl(serviceCode.toLowerCase()));
-        ResponseEntity<ReceiptAmountInfo> response = restTemplate.postForEntity(url, entity, ReceiptAmountInfo.class);
-        return response.getBody();
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("updateReceiptDetailsAndGetReceiptAmountInfo - response" + receiptAmountInfo);
+        return receiptAmountInfo;
     }
 
     public CollectionIndex constructCollectionIndex(final ReceiptHeader receiptHeader) {
@@ -780,26 +792,26 @@ public class CollectionsUtil {
         if (!receiptHeader.getReceiptInstrument().isEmpty())
             instrumentType = receiptHeader.getReceiptInstrument().iterator().next().getInstrumentType().getType();
 
-        if (receiptHeader.getReceipttype() == CollectionConstants.RECEIPT_TYPE_BILL) {
-            final BillingIntegrationService billingServiceBean = (BillingIntegrationService) getBean(billingService
-                    .getCode() + CollectionConstants.COLLECTIONS_INTERFACE_SUFFIX);
+        if (receiptHeader.getReceipttype() == CollectionConstants.RECEIPT_TYPE_BILL)
             try {
                 final Set<BillReceiptInfo> billReceipts = new HashSet<>(0);
-                BillReceiptInfo billReceipt = new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO,
+                final BillReceiptInfo billReceipt = new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO,
                         persistenceService, null);
                 billReceipts.add(billReceipt);
                 if (billingService.getCode().equals(CollectionConstants.SERVICECODE_LAMS))
                     receiptAmountInfo = updateReceiptDetailsAndGetReceiptAmountInfo(new BillReceiptReq(billReceipt),
                             billingService.getCode());
-                else
+                else {
+                    final BillingIntegrationService billingServiceBean = (BillingIntegrationService) getBean(billingService
+                            .getCode() + CollectionConstants.COLLECTIONS_INTERFACE_SUFFIX);
                     receiptAmountInfo = billingServiceBean.receiptAmountBifurcation(billReceipt);
+                }
             } catch (final Exception e) {
                 final String errMsg = "Exception while constructing collection index for receipt number ["
                         + receiptHeader.getReceiptnumber() + "]!";
                 LOGGER.error(errMsg, e);
                 throw new ApplicationRuntimeException(errMsg, e);
             }
-        }
         final CollectionIndex collectionIndex = CollectionIndex
                 .builder()
                 .withReceiptDate(receiptHeader.getReceiptdate())
@@ -959,11 +971,23 @@ public class CollectionsUtil {
                 "application/pdf", "Receipt" + receiptHeader.getReceiptdate().toString(), attachment);
     }
 
+    public void setUserService(final UserService userService) {
+        this.userService = userService;
+    }
+
+    public void setPersistenceService(final PersistenceService persistenceService) {
+        this.persistenceService = persistenceService;
+    }
+
+    public void setReportService(final ReportService reportService) {
+        this.reportService = reportService;
+    }
+
     public String getBeanNameForDebitAccountHead() {
         Class<?> service = null;
         try {
             service = Class.forName(applicationProperties.getProperty("collection.debitaccounthead.client.impl.class"));
-        } catch (ClassNotFoundException e) {
+        } catch (final ClassNotFoundException e) {
             LOGGER.error("Error getting Class name for Debit Account Head" + e);
         }
         // getting the entity type service.
@@ -990,6 +1014,13 @@ public class CollectionsUtil {
         return false;
     }
 
+    public Boolean isUserRole(final User user, String roleName) {
+        for (final Role role : user.getRoles())
+            if (role != null && role.getName().equals(roleName))
+                return true;
+        return false;
+    }
+
     public Boolean isRoleToCreateReceiptApprovedStatus(final User user) {
         final List<AppConfigValues> appConfigValuesList = getAppConfigValues(
                 CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
@@ -997,11 +1028,30 @@ public class CollectionsUtil {
         String value;
         for (final AppConfigValues appConfigVal : appConfigValuesList) {
             value = appConfigVal.getValue();
-            for (final Role role : user.getRoles()) {
+            for (final Role role : user.getRoles())
                 if (role != null && role.getName().equals(value))
                     return true;
-            }
         }
         return false;
     }
+
+    public List<Bankbranch> getBankCollectionBankBranchList() {
+        List<Bankbranch> bankBranchArrayList = new ArrayList<Bankbranch>(0);
+        List<Object[]> queryResult = Collections.EMPTY_LIST;
+        User loggedInUser = getLoggedInUser();
+        StringBuilder queryString = new StringBuilder(
+                "select distinct(bb.id) as branchid,b.NAME||'-'||bb.BRANCHNAME as branchname from BANK b,BANKBRANCH bb,"
+                        + " EGCL_COLLECTIONMIS cmis where bb.BANKID=b.ID  and bb.id=cmis.depositedBranch ");
+        final Query query = persistenceService.getSession().createSQLQuery(queryString.toString());
+        queryResult = query.list();
+        for (int i = 0; i < queryResult.size(); i++) {
+            final Object[] arrayObjectInitialIndex = queryResult.get(i);
+            final Bankbranch newBankbranch = new Bankbranch();
+            newBankbranch.setId(Integer.valueOf(arrayObjectInitialIndex[0].toString()));
+            newBankbranch.setBranchname(arrayObjectInitialIndex[1].toString());
+            bankBranchArrayList.add(newBankbranch);
+        }
+        return bankBranchArrayList;
+    }
+
 }

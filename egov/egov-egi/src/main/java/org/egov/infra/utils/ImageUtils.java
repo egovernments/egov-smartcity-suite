@@ -70,6 +70,10 @@ import static org.apache.commons.lang3.StringUtils.defaultString;
 public final class ImageUtils {
     public static final String JPG_EXTN = ".jpg";
     public static final String JPG_FORMAT_NAME = "jpeg";
+    public static final String PNG_EXTN = ".png";
+    public static final String PNG_FORMAT_NAME = "png";
+    public static final String PNG_MIME_TYPE = "image/png";
+
     private static final Logger LOG = LoggerFactory.getLogger(ImageUtils.class);
 
     private ImageUtils() {

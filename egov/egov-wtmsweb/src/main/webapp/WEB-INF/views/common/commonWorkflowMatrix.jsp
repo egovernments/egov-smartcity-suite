@@ -58,7 +58,7 @@
 	<form:hidden path="" id="currentState" name="currentState" value=""/>
 </c:if> 
 																																																									
-
+<form:hidden path="" id="ownerPosition" name="ownerPosition" value="${ownerPosition}"/>
 <form:hidden path="" id="currentDesignation" name="currentDesignation" value="${currentDesignation}"/>
 <form:hidden path="" id="additionalRule" name="additionalRule" value="${additionalRule}"/>
 <form:hidden  path="" id="amountRule" name="amountRule" value="${amountRule}"/>

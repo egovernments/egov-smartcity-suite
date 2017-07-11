@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *     accountability and the service delivery of the government  organizations.
  *
- *      Copyright (C) 2016  eGovernments Foundation
+ *      Copyright (C) 2017  eGovernments Foundation
  *
  *      The updated version of eGov suite of products as by eGovernments Foundation
  *      is available at http://www.egovernments.org
@@ -40,33 +40,43 @@
 
 package org.egov.tl.web.response.adaptor;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
-import org.egov.tl.entity.dto.InstallmentWiseDCBForm;
+import org.apache.commons.lang3.StringUtils;
+import org.egov.infra.web.support.json.adapter.DataTableJsonAdapter;
+import org.egov.infra.web.support.ui.DataTable;
+import org.egov.tl.entity.view.InstallmentWiseDCB;
 
 import java.lang.reflect.Type;
+import java.util.List;
 
-public class InstallmentWiseDCBResponse implements JsonSerializer<InstallmentWiseDCBForm> {
+public class InstallmentWiseDCBResponse implements DataTableJsonAdapter<InstallmentWiseDCB> {
 
     @Override
-    public JsonElement serialize(InstallmentWiseDCBForm installmentWiseDCBForm, Type type, JsonSerializationContext jsc) {
-        JsonObject installmentWiseResponse = new JsonObject();
-        if (installmentWiseDCBForm != null) {
+    public JsonElement serialize(final DataTable<InstallmentWiseDCB> installmentWiseDCBResponse, final Type type,
+                                 final JsonSerializationContext jsc) {
+        final List<InstallmentWiseDCB> installmentWiseDCBFormResult = installmentWiseDCBResponse.getData();
+        final JsonArray installmentWiseDCBFormData = new JsonArray();
+        installmentWiseDCBFormResult.forEach(installmentWiseDCBForm -> {
+            final JsonObject installmentWiseResponse = new JsonObject();
             installmentWiseResponse.addProperty("licenseid", installmentWiseDCBForm.getLicenseid());
-            installmentWiseResponse.addProperty("licensenumber", installmentWiseDCBForm.getLicensenumber() != null ? installmentWiseDCBForm.getLicensenumber() : "N/A");
+            installmentWiseResponse.addProperty("licensenumber",
+                    StringUtils.defaultIfBlank(installmentWiseDCBForm.getLicensenumber(), "N/A"));
             installmentWiseResponse.addProperty("curr_demand", installmentWiseDCBForm.getCurrentdemand());
             installmentWiseResponse.addProperty("arr_demand", installmentWiseDCBForm.getArreardemand());
             installmentWiseResponse.addProperty("total_demand", installmentWiseDCBForm.getTotaldemand());
-            installmentWiseResponse.addProperty("curr_coll", installmentWiseDCBForm.getCurrentcoll());
-            installmentWiseResponse.addProperty("arr_coll", installmentWiseDCBForm.getArrearcoll());
-            installmentWiseResponse.addProperty("total_coll", installmentWiseDCBForm.getTotalcoll());
+            installmentWiseResponse.addProperty("curr_coll", installmentWiseDCBForm.getCurrentcollection());
+            installmentWiseResponse.addProperty("arr_coll", installmentWiseDCBForm.getArrearcollection());
+            installmentWiseResponse.addProperty("total_coll", installmentWiseDCBForm.getTotalcollection());
             installmentWiseResponse.addProperty("curr_balance", installmentWiseDCBForm.getCurrentbalance());
             installmentWiseResponse.addProperty("arr_balance", installmentWiseDCBForm.getArrearbalance());
             installmentWiseResponse.addProperty("total_balance", installmentWiseDCBForm.getTotalbalance());
-        }
-        return installmentWiseResponse;
+
+            installmentWiseDCBFormData.add(installmentWiseResponse);
+        });
+        return enhance(installmentWiseDCBFormData, installmentWiseDCBResponse);
     }
 
 }

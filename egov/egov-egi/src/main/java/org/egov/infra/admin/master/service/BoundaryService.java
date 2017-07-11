@@ -48,7 +48,6 @@ import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.entity.HierarchyType;
 import org.egov.infra.admin.master.repository.BoundaryRepository;
 import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.utils.StringUtils;
 import org.geotools.data.DataStore;
 import org.geotools.data.DataStoreFinder;
@@ -62,6 +61,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.validation.ValidationException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
@@ -77,6 +77,7 @@ import java.util.Set;
 public class BoundaryService {
 
     private static final Logger LOG = LoggerFactory.getLogger(BoundaryService.class);
+    private static final String GIS_SHAPE_FILE_LOCATION = "gis/%s/wards.shp";
 
     private final BoundaryRepository boundaryRepository;
 
@@ -234,9 +235,9 @@ public class BoundaryService {
         return mpath;
     }
 
-    public Long getBoundaryIdFromShapefile(final Double latitude, final Double longitude) {
-        Optional<Boundary> boundary = getBoundary(latitude, longitude);
-        return boundary.isPresent() ? boundary.get().getId() : 0;
+    public Boundary getBoundaryByGisCoordinates(final Double latitude, final Double longitude) {
+        return getBoundary(latitude, longitude)
+                .orElseThrow(() -> new ValidationException("gis.location.info.not.found"));
     }
 
     public Optional<Boundary> getBoundary(final Double latitude, final Double longitude) {
@@ -244,20 +245,18 @@ public class BoundaryService {
             if (latitude != null && longitude != null) {
                 final Map<String, URL> map = new HashMap<>();
                 map.put("url", Thread.currentThread().getContextClassLoader()
-                        .getResource("gis/" + ApplicationThreadLocals.getTenantID() + "/wards.shp"));
+                        .getResource(String.format(GIS_SHAPE_FILE_LOCATION, ApplicationThreadLocals.getTenantID())));
                 final DataStore dataStore = DataStoreFinder.getDataStore(map);
                 final FeatureCollection<SimpleFeatureType, SimpleFeature> collection = dataStore
                         .getFeatureSource(dataStore.getTypeNames()[0]).getFeatures();
                 final Iterator<SimpleFeature> iterator = collection.iterator();
                 final Point point = JTSFactoryFinder.getGeometryFactory(null)
                         .createPoint(new Coordinate(longitude, latitude));
-                LOG.debug("Fetching boundary data for coordinates lng {}, lat {}", longitude, latitude);
                 try {
                     while (iterator.hasNext()) {
                         final SimpleFeature feature = iterator.next();
                         final Geometry geom = (Geometry) feature.getDefaultGeometry();
                         if (geom.contains(point)) {
-                            LOG.debug("Found coordinates in shape file");
                             return getBoundaryByNumberAndType((Long) feature.getAttribute("bndrynum"), (String) feature.getAttribute("bndrytype"));
                         }
                     }
@@ -268,7 +267,8 @@ public class BoundaryService {
 
             return Optional.empty();
         } catch (final Exception e) {
-            throw new ApplicationRuntimeException("Error occurred while fetching boundary from GIS data", e);
+            LOG.error("Error occurred while fetching boundary from GIS data", e);
+            return Optional.empty();
         }
     }
 

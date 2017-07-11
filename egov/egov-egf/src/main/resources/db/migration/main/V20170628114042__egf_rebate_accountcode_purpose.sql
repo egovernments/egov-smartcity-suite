@@ -1,0 +1,1 @@
+Insert into egf_accountcode_purpose (ID,NAME,MODIFIEDDATE,MODIFIEDBY,CREATEDDATE,CREATEDBY) values ((select max(id)+1 from egf_accountcode_purpose),'REBATE',now(),1,now(),1);

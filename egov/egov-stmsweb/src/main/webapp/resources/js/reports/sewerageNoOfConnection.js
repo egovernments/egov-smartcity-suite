@@ -107,7 +107,7 @@ function callAjaxDataTableForReport(ward,block,locality){
 
 $('#ward').change(function(){
 	jQuery.ajax({
-		url: "/egi/boundary/ajaxBoundary-blockByWard.action",
+		url: "/egi/public/boundary/ajaxBoundary-blockByWard.action",
 		type: "GET",
 		data: {
 			wardId : jQuery('#ward').val()
