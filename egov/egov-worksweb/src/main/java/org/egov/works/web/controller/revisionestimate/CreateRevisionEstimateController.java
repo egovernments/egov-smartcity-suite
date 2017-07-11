@@ -360,8 +360,12 @@ public class CreateRevisionEstimateController extends GenericWorkFlowController 
         else if (RevisionEstimateStatus.APPROVED.toString().equalsIgnoreCase(revisionEstimate.getEgwStatus().getCode())) {
             final EstimateAppropriation lea = estimateAppropriationService
                     .findLatestByAbstractEstimate(revisionEstimate);
-            message = messageSource.getMessage("msg.revisionestimate.approved",
-                    new String[] { revisionEstimate.getEstimateNumber(), lea.getBudgetUsage().getAppropriationnumber() }, null);
+            if(lea != null && lea.getBudgetUsage() != null)
+                message = messageSource.getMessage("msg.revisionestimate.approved",
+                        new String[] { revisionEstimate.getEstimateNumber(), lea.getBudgetUsage().getAppropriationnumber() }, null);
+            else
+                message = messageSource.getMessage("msg.revisionestimate.approved.success",
+                        new String[] { revisionEstimate.getEstimateNumber() }, null);
         } else if (RevisionEstimateStatus.CHECKED.toString().equalsIgnoreCase(revisionEstimate.getEgwStatus().getCode()))
             message = messageSource.getMessage("msg.revisionestimate.checked",
                     new String[] { revisionEstimate.getEstimateNumber(), approverName, nextDesign }, null);
