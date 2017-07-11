@@ -44,6 +44,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.egov.tl.entity.License;
+import org.egov.tl.utils.Constants;
 
 import static org.egov.tl.utils.Constants.CLOSURE_LIC_APPTYPE;
 
@@ -84,6 +85,8 @@ public class OnlineSearchForm {
             actions.add("Closure");
         if (license.isStatusActive() && !license.isLegacy())
             actions.add("Print Certificate");
+        if (!CLOSURE_LIC_APPTYPE.equals(license.getLicenseAppType().getName()) && license.getStatus().getStatusCode().equals(Constants.STATUS_UNDERWORKFLOW))
+            actions.add("Print Provisional Certificate");
     }
 
     public String getApplicationNumber() {
