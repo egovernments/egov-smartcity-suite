@@ -81,10 +81,15 @@ public class CancelRevisionEstimateController {
         revisionEstimate = revisionEstimateService.cancelRevisionEstimate(revisionEstimate);
         final EstimateAppropriation estimateAppropriation = estimateAppropriationService
                 .findLatestByAbstractEstimate(revisionEstimate.getId());
-        message = messageSource.getMessage("msg.revisionestimate.cancelled",
-                new String[] { revisionEstimate.getEstimateNumber(),
-                        estimateAppropriation.getBudgetUsage().getAppropriationnumber() },
-                null);
+        if(estimateAppropriation != null && estimateAppropriation.getBudgetUsage() != null)
+            message = messageSource.getMessage("msg.revisionestimate.cancelled",
+                    new String[] { revisionEstimate.getEstimateNumber(),
+                            estimateAppropriation.getBudgetUsage().getAppropriationnumber() },
+                    null);
+        else
+            message = messageSource.getMessage("msg.revisionestimate.cancelled.success",
+                    new String[] { revisionEstimate.getEstimateNumber() },
+                    null);
         model.addAttribute("revisionEstimate", revisionEstimate);
         model.addAttribute("message", message);
         return REVISIONESTIMATE_SUCCESS;
