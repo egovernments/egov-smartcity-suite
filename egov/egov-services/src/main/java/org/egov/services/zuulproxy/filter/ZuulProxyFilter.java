@@ -179,6 +179,10 @@ public class ZuulProxyFilter extends ZuulFilter {
                 log.info("TenantId from getRequestQueryParams() " + ctx.getRequestQueryParams().get(TENANT_ID).toString());
 
             final String userInfo = getUserInfo(request, springContext, tenantId);
+            
+            //Adding userInfo to Response header - to show or hide some of the UI components based on user roles 
+            ctx.addZuulResponseHeader(USER_INFO_FIELD_NAME, userInfo);
+            
             if (shouldPutUserInfoOnHeaders(ctx))
                 ctx.addZuulRequestHeader(USER_INFO_FIELD_NAME, userInfo);
             else
