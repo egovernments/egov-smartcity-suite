@@ -39,6 +39,7 @@
  */
 package org.egov.wtms.web.controller.application;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -125,7 +126,9 @@ public class ChangeOfUseController extends GenericConnectionController {
             final HttpServletRequest request, final Model model, @RequestParam final String workFlowAction,
             final BindingResult errors) {
         final Boolean isCSCOperator = waterTaxUtils.isCSCoperator(securityUtils.getCurrentUser());
-        if (!isCSCOperator) {
+        final Boolean citizenPortalUser = waterTaxUtils.isCitizenPortalUser(securityUtils.getCurrentUser());
+        model.addAttribute("citizenPortalUser", citizenPortalUser);
+        if (!isCSCOperator && !citizenPortalUser) {
             final Boolean isJuniorAsstOrSeniorAsst = waterTaxUtils
                     .isLoggedInUserJuniorOrSeniorAssistant(securityUtils.getCurrentUser().getId());
             if (!isJuniorAsstOrSeniorAsst)
@@ -198,7 +201,7 @@ public class ChangeOfUseController extends GenericConnectionController {
             approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
         final Boolean applicationByOthers = waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser());
 
-        if (applicationByOthers != null && applicationByOthers.equals(true)) {
+        if (applicationByOthers != null && applicationByOthers.equals(true) || citizenPortalUser) {
             final Position userPosition = waterTaxUtils.getZonalLevelClerkForLoggedInUser(changeOfUse.getConnection()
                     .getPropertyIdentifier());
             if (userPosition != null) {
@@ -221,6 +224,11 @@ public class ChangeOfUseController extends GenericConnectionController {
         }
 
         changeOfUse.setApplicationDate(new Date());
+        if(citizenPortalUser){
+            if (changeOfUse.getSource() == null || StringUtils.isBlank(changeOfUse.getSource().toString()))
+                changeOfUse.setSource(waterTaxUtils.setSourceOfConnection(securityUtils.getCurrentUser()));
+        }
+
         changeOfUseService.createChangeOfUseApplication(changeOfUse, approvalPosition, approvalComent, changeOfUse
                 .getApplicationType().getCode(), workFlowAction,sourceChannel);
         final Assignment currentUserAssignment = assignmentService.getPrimaryAssignmentForGivenRange(securityUtils
@@ -273,6 +281,7 @@ public class ChangeOfUseController extends GenericConnectionController {
         model.addAttribute("usageTypes", usageTypeService.getActiveUsageTypes());
         model.addAttribute("connectionCategories", connectionCategoryService.getAllActiveConnectionCategory());
         model.addAttribute("pipeSizes", pipeSizeService.getAllActivePipeSize());
+        model.addAttribute("citizenPortalUser", waterTaxUtils.isCitizenPortalUser(securityUtils.getCurrentUser()));
     }
 
 }

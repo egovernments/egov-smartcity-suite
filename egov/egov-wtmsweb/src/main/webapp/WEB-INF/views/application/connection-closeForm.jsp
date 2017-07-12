@@ -61,6 +61,7 @@
 			<input type="hidden" id="waterTaxDueforParent" value="${waterTaxDueforParent}" name="waterTaxDueforParent"/>
 			<input type="hidden" name="validationMessage" id="validationMessage" value="${validationMessage}">
 			<input type="hidden" name="loggedInCSCUser" id="loggedInCSCUser" value="${loggedInCSCUser}">
+            <input type="hidden" name="citizenPortalUser" id="citizenPortalUser" value="${citizenPortalUser}">
 			<input type="hidden" name="noJAORSAMessage" id="noJAORSAMessage" value="${noJAORSAMessage}">
 			
 			<input type="hidden" id="previousApplicationType" value="${previousApplicationType}" name="previousApplicationType"/>
@@ -126,7 +127,7 @@
 </div>			
 				
 				<c:if test="${validationMessage==''}">
-				<c:if test="${!loggedInCSCUser || loggedInCSCUser=='false'}">
+				<c:if test="${(!loggedInCSCUser || loggedInCSCUser=='false') && (!citizenPortalUser || citizenPortalUser=='false')}">
 						<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
 						</c:if>
 					<div class="buttonbottom" align="center">

@@ -50,6 +50,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.ValidationException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -182,6 +183,8 @@ public class CloserConnectionController extends GenericConnectionController {
                 closerConnectionService.validateChangeOfUseConnection(waterConnectionDetails));
         final BigDecimal waterTaxDueforParent = waterConnectionDetailsService.getTotalAmount(waterConnectionDetails);
         model.addAttribute("waterTaxDueforParent", waterTaxDueforParent);
+        model.addAttribute("citizenPortalUser", waterTaxUtils.isCitizenPortalUser(securityUtils.getCurrentUser()));
+
         return "connection-closeForm";
     }
 
@@ -191,7 +194,9 @@ public class CloserConnectionController extends GenericConnectionController {
             final HttpServletRequest request, final Model model, final BindingResult errors,
             @RequestParam("files") final MultipartFile[] files) {
         final Boolean isCSCOperator = waterTaxUtils.isCSCoperator(securityUtils.getCurrentUser());
-        if (!isCSCOperator) {
+        final Boolean citizenPortalUser = waterTaxUtils.isCitizenPortalUser(securityUtils.getCurrentUser());
+        model.addAttribute("citizenPortalUser", citizenPortalUser);
+        if (!isCSCOperator && !citizenPortalUser) {
             final Boolean isJuniorAsstOrSeniorAsst = waterTaxUtils
                     .isLoggedInUserJuniorOrSeniorAssistant(securityUtils.getCurrentUser().getId());
             if (!isJuniorAsstOrSeniorAsst)
@@ -213,8 +218,7 @@ public class CloserConnectionController extends GenericConnectionController {
             approvalComent = request.getParameter("approvalComent");
 
         final Boolean applicationByOthers = waterTaxUtils.getCurrentUserRole();
-
-        if (applicationByOthers != null && applicationByOthers.equals(true)) {
+        if (applicationByOthers != null && applicationByOthers.equals(true) || citizenPortalUser) {
             final Position userPosition = waterTaxUtils
                     .getZonalLevelClerkForLoggedInUser(waterConnectionDetails.getConnection().getPropertyIdentifier());
             if (userPosition == null) {
@@ -251,6 +255,10 @@ public class CloserConnectionController extends GenericConnectionController {
         waterConnectionDetails.setConnectionStatus(ConnectionStatus.CLOSED);
         waterConnectionDetails
                 .setApplicationType(applicationTypeService.findByCode(WaterTaxConstants.CLOSINGCONNECTION));
+        if(citizenPortalUser){
+            if (waterConnectionDetails.getSource() == null || StringUtils.isBlank(waterConnectionDetails.getSource().toString()))
+                waterConnectionDetails.setSource(waterTaxUtils.setSourceOfConnection(securityUtils.getCurrentUser()));
+        }
         final WaterConnectionDetails savedWaterConnectionDetails = closerConnectionService.updatecloserConnection(
                 waterConnectionDetails, approvalPosition, approvalComent, addrule, workFlowAction, sourceChannel);
         model.addAttribute("waterConnectionDetails", savedWaterConnectionDetails);

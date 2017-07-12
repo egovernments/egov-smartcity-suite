@@ -54,8 +54,9 @@
 			<form:hidden path="applicationType" id="applicationType" value="${waterConnectionDetails.applicationType.id}"/>
 			<form:hidden path="connectionStatus" id="connectionStatus" value="${waterConnectionDetails.connectionStatus}"/> 
 			<form:hidden path="meesevaApplicationNumber" id="meesevaApplicationNumber" value="${waterConnectionDetails.meesevaApplicationNumber}" />
-			
-			<input type="hidden" id="currentUser" name="currentUser" value="${currentUser}"/>  
+
+			<input type="hidden" id="currentUser" name="currentUser" value="${currentUser}"/>
+			<input type="hidden" id="citizenPortalUser" name="citizenPortalUser" value="${citizenPortalUser}"/>
 			<form:hidden id="mode" path=""  value="${mode}"/>
 			<form:hidden path="legacy" id="legacy" value="false"/>
 			<input type="hidden" name="allowIfPTDueExists" id="allowIfPTDueExists" value="${allowIfPTDueExists}"> 
@@ -81,7 +82,7 @@
 				<div class="buttonbottom" align="center">
 					<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />
 				</div>
-		</form:form>
+         </form:form>
 	</div>
 </div>
 

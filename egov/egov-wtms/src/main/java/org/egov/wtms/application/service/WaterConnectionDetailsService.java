@@ -69,6 +69,8 @@ import org.egov.eis.entity.AssignmentAdaptor;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.entity.Module;
+import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
@@ -88,6 +90,9 @@ import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.pims.commons.Position;
+import org.egov.portal.entity.PortalInbox;
+import org.egov.portal.entity.PortalInboxBuilder;
+import org.egov.portal.service.PortalInboxService;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.OwnerName;
 import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
@@ -115,6 +120,7 @@ import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.jfree.util.Log;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -138,6 +144,9 @@ public class WaterConnectionDetailsService {
     private static final String WTMS_APPLICATION_VIEW = "/wtms/application/view/%s";
     protected WaterConnectionDetailsRepository waterConnectionDetailsRepository;
     private static final Logger LOG = LoggerFactory.getLogger(WaterConnectionDetailsService.class);
+    private static final String APPLICATION_NO = "Application no ";
+    private static final String REGARDING = " regarding ";
+    private static final String STATUS = " status ";
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -199,6 +208,12 @@ public class WaterConnectionDetailsService {
     protected FileStoreService fileStoreService;
 
     @Autowired
+    private ModuleService moduleDao;
+
+    @Autowired
+    private PortalInboxService portalInboxService;
+
+    @Autowired
     public WaterConnectionDetailsService(final WaterConnectionDetailsRepository waterConnectionDetailsRepository) {
         this.waterConnectionDetailsRepository = waterConnectionDetailsRepository;
     }
@@ -256,7 +271,9 @@ public class WaterConnectionDetailsService {
             LOG.debug("applicationWorkflowCustomDefaultImpl initialization is done");
         applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(savedWaterConnectionDetails,
                 approvalPosition, approvalComent, additionalRule, workFlowAction);
-
+        if(waterTaxUtils.isCitizenPortalUser(securityUtils.getCurrentUser())){
+            pushPortalMessage(savedWaterConnectionDetails);
+        }
         updateIndexes(savedWaterConnectionDetails, sourceChannel);
         waterConnectionSmsAndEmailService.sendSmsAndEmail(waterConnectionDetails, workFlowAction);
         if (LOG.isDebugEnabled())
@@ -537,6 +554,11 @@ public class WaterConnectionDetailsService {
             waterConnectionSmsAndEmailService.sendSmsAndEmail(waterConnectionDetails, workFlowAction);
 
         updateIndexes(waterConnectionDetails, sourceChannel);
+        if (waterConnectionDetails.getSource() != null
+                && Source.CITIZENPORTAL.toString().equalsIgnoreCase(waterConnectionDetails.getSource().toString())
+                && getPortalInbox(waterConnectionDetails.getApplicationNumber()) != null) {
+            updatePortalMessage(waterConnectionDetails);
+        }
 
         return updatedWaterConnectionDetails;
     }
@@ -880,6 +902,8 @@ public class WaterConnectionDetailsService {
                 if (waterTaxUtils.isCSCoperator(waterConnectionDetails.getCreatedBy())
                         && UserType.BUSINESS.equals(waterConnectionDetails.getCreatedBy().getType()))
                     applicationIndex.setChannel(Source.CSC.toString());
+                else if (waterTaxUtils.isCitizenPortalUser(waterConnectionDetails.getCreatedBy()))
+                    applicationIndex.setChannel(Source.CITIZENPORTAL.toString());
                 else if (sourceChannel == null)
                     applicationIndex.setChannel(WaterTaxConstants.SYSTEM);
                 else
@@ -1199,5 +1223,61 @@ public class WaterConnectionDetailsService {
 
     public List<WaterConnectionDetails> getAllConnectionDetailsByPropertyID(final String propertyId) {
         return waterConnectionDetailsRepository.getAllConnectionDetailsByPropertyID(propertyId);
+    }
+
+/**
+     * Method to push data for citizen portal inbox
+     */
+
+    @Transactional
+    public void pushPortalMessage(final WaterConnectionDetails waterConnectionDetails) {
+        Module module = moduleDao.getModuleByName(WaterTaxConstants.MODULE_NAME);
+        WaterConnection waterConnection = waterConnectionDetails.getConnection();
+        final PortalInboxBuilder portalInboxBuilder = new PortalInboxBuilder(module,waterConnectionDetails.getState().getNatureOfTask()+" : "+module.getDisplayName(),
+                waterConnectionDetails.getApplicationNumber(),waterConnection.getConsumerCode(),waterConnection.getId(),
+                waterConnectionDetails.getConnectionReason(),getDetailedMessage(waterConnectionDetails),String.format(WTMS_APPLICATION_VIEW, waterConnectionDetails.getApplicationNumber()),
+                isResolved(waterConnectionDetails),waterConnectionDetails.getStatus().getDescription(),getSlaEndDate(waterConnectionDetails),waterConnectionDetails.getState(),Arrays.asList(securityUtils.getCurrentUser()));
+        final PortalInbox portalInbox = portalInboxBuilder.build();
+        portalInboxService.pushInboxMessage(portalInbox);
+    }
+
+    private boolean isResolved(final WaterConnectionDetails waterConnectionDetails){
+        return "END".equalsIgnoreCase(waterConnectionDetails.getState().getValue())|| "CLOSED".equalsIgnoreCase(waterConnectionDetails.getState().getValue());
+    }
+
+    private Date getSlaEndDate(final WaterConnectionDetails waterConnectionDetails){
+        final Integer appProcessTime = applicationProcessTimeService.getApplicationProcessTime(
+                waterConnectionDetails.getApplicationType(),
+                waterConnectionDetails.getCategory());
+        DateTime dt = new DateTime(new Date());
+        return dt.plusDays(appProcessTime).toDate();
+    }
+
+    private String getDetailedMessage(final WaterConnectionDetails waterConnectionDetails) {
+        Module module = moduleDao.getModuleByName(WaterTaxConstants.MODULE_NAME);
+        final StringBuilder detailedMessage = new StringBuilder();
+        if (waterConnectionDetails.getApplicationType() != null) {
+            detailedMessage.append(APPLICATION_NO).append(waterConnectionDetails.getApplicationNumber()).append(REGARDING)
+                    .append(waterConnectionDetails.getState().getNatureOfTask() + " " + module.getDisplayName()).append(" in ")
+                    .append(waterConnectionDetails.getStatus().getDescription()).append(STATUS);
+        }
+        return detailedMessage.toString();
+    }
+
+    public PortalInbox getPortalInbox(final String applicationNumber){
+        Module module = moduleDao.getModuleByName(WaterTaxConstants.MODULE_NAME);
+        return portalInboxService.getPortalInboxByApplicationNo(applicationNumber,module.getId());
+    }
+
+     /**
+             * Method to update data for citizen portal inbox
+     */
+    @Transactional
+    public void updatePortalMessage(final WaterConnectionDetails waterConnectionDetails){
+        Module module = moduleDao.getModuleByName(WaterTaxConstants.MODULE_NAME);
+        WaterConnection waterConnection = waterConnectionDetails.getConnection();
+        portalInboxService.updateInboxMessage( waterConnectionDetails.getApplicationNumber(), module.getId(),waterConnectionDetails.getState().getValue(),
+                isResolved(waterConnectionDetails), getSlaEndDate(waterConnectionDetails), waterConnectionDetails.getState(), null,
+                waterConnection.getConsumerCode(),String.format(WTMS_APPLICATION_VIEW, waterConnectionDetails.getApplicationNumber()));
     }
 }

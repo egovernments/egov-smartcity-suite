@@ -56,6 +56,7 @@ import javax.validation.Valid;
 import javax.validation.ValidationException;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.entity.Source;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.exception.ApplicationRuntimeException;
@@ -103,6 +104,7 @@ public class NewConnectionController extends GenericConnectionController {
     private final WaterConnectionService waterConnectionService;
     private final NewConnectionService newConnectionService;
     private final WaterTaxUtils waterTaxUtils;
+
     @Autowired
     private SecurityUtils securityUtils;
 
@@ -142,6 +144,7 @@ public class NewConnectionController extends GenericConnectionController {
         model.addAttribute("stateType", waterConnectionDetails.getClass().getSimpleName());
         model.addAttribute("documentName", waterTaxUtils.documentRequiredForBPLCategory());
         model.addAttribute("typeOfConnection", WaterTaxConstants.NEWCONNECTION);
+        model.addAttribute("citizenPortalUser", waterTaxUtils.isCitizenPortalUser(securityUtils.getCurrentUser()));
 
         loggedUserIsMeesevaUser = waterTaxUtils.isMeesevaUser(securityUtils.getCurrentUser());
         if (loggedUserIsMeesevaUser)
@@ -188,7 +191,9 @@ public class NewConnectionController extends GenericConnectionController {
             final HttpServletRequest request, final Model model, @RequestParam String workFlowAction,
             final BindingResult errors) {
         final Boolean isCSCOperator = waterTaxUtils.isCSCoperator(securityUtils.getCurrentUser());
-        if (!isCSCOperator) {
+        final boolean citizenPortalUser = waterTaxUtils.isCitizenPortalUser(securityUtils.getCurrentUser());
+        model.addAttribute("citizenPortalUser", citizenPortalUser);
+        if (!isCSCOperator && !citizenPortalUser) {
             final Boolean isJuniorAsstOrSeniorAsst = waterTaxUtils
                     .isLoggedInUserJuniorOrSeniorAssistant(securityUtils.getCurrentUser().getId());
             if (!isJuniorAsstOrSeniorAsst)
@@ -197,7 +202,7 @@ public class NewConnectionController extends GenericConnectionController {
         final Boolean loggedUserIsMeesevaUser = waterTaxUtils.isMeesevaUser(securityUtils.getCurrentUser());
         final Boolean applicationByOthers = waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser());
 
-        final String sourceChannel = request.getParameter("Source");
+        String sourceChannel = request.getParameter("Source");
         validatePropertyID(waterConnectionDetails, resultBinder);
         waterConnectionDetailsService.validateWaterRateAndDonationHeader(waterConnectionDetails);
         final List<ApplicationDocuments> applicationDocs = new ArrayList<>();
@@ -243,7 +248,7 @@ public class NewConnectionController extends GenericConnectionController {
         if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
             approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
 
-        if (applicationByOthers != null && applicationByOthers.equals(true)) {
+        if (applicationByOthers != null && applicationByOthers.equals(true) || citizenPortalUser) {
             final Position userPosition = waterTaxUtils
                     .getZonalLevelClerkForLoggedInUser(waterConnectionDetails.getConnection().getPropertyIdentifier());
             if (userPosition != null)
@@ -264,6 +269,10 @@ public class NewConnectionController extends GenericConnectionController {
             }
 
         }
+        if(citizenPortalUser){
+            if (waterConnectionDetails.getSource() == null || StringUtils.isBlank(waterConnectionDetails.getSource().toString()))
+                waterConnectionDetails.setSource(waterTaxUtils.setSourceOfConnection(securityUtils.getCurrentUser()));
+        }
 
         if (loggedUserIsMeesevaUser) {
             final HashMap<String, String> meesevaParams = new HashMap<>();
@@ -279,6 +288,7 @@ public class NewConnectionController extends GenericConnectionController {
             waterConnectionDetailsService.createNewWaterConnection(waterConnectionDetails, approvalPosition,
                     approvalComent, waterConnectionDetails.getApplicationType().getCode(), workFlowAction,
                     sourceChannel);
+
         if (LOG.isDebugEnabled())
             LOG.debug("createNewWaterConnection is completed ");
 

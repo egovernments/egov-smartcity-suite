@@ -41,6 +41,8 @@ package org.egov.wtms.application.service;
 
 import java.math.BigDecimal;
 
+import org.egov.commons.entity.Source;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
@@ -76,6 +78,9 @@ public class CloserConnectionService {
 
     @Autowired
     private WaterConnectionDetailsService waterConnectionDetailsService;
+
+    @Autowired
+    private SecurityUtils securityUtils;
 
     public static final String CHANGEOFUSEALLOWEDIFWTDUE = "CHANGEOFUSEALLOWEDIFWTDUE";
 
@@ -143,6 +148,14 @@ public class CloserConnectionService {
         additionalRule=WaterTaxConstants.WORKFLOW_CLOSUREADDITIONALRULE;
         applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(savedwaterConnectionDetails,
                 approvalPosition, approvalComent, additionalRule, workFlowAction);
+
+        if (waterConnectionDetails.getSource() != null
+                && Source.CITIZENPORTAL.toString().equalsIgnoreCase(waterConnectionDetails.getSource().toString())
+                && waterConnectionDetailsService.getPortalInbox(waterConnectionDetails.getApplicationNumber()) != null) {
+            waterConnectionDetailsService.updatePortalMessage(waterConnectionDetails);
+        }else if(waterTaxUtils.isCitizenPortalUser(securityUtils.getCurrentUser())){
+            waterConnectionDetailsService.pushPortalMessage(savedwaterConnectionDetails);
+        }
         waterConnectionDetailsService.updateIndexes(savedwaterConnectionDetails, sourceChannel);
         return savedwaterConnectionDetails;
     }

@@ -355,23 +355,25 @@ public class UpdateConnectionController extends GenericConnectionController {
 			final WaterConnectionDetails waterConnectionDetails) {
 		final Boolean recordCreatedBYNonEmployee = waterTaxUtils
 				.getCurrentUserRole(waterConnectionDetails.getCreatedBy());
+		final Boolean recordCreatedBYCitizenPortal = waterTaxUtils.isCitizenPortalUser(userService.getUserById(waterConnectionDetails.getCreatedBy().getId()));
 		// if record from csc to Clerk
 		// TODO: as off now using anonymous created for MeeSeva after we need to
 		// craete role for this and add in appconfig for
 		// recordCreatedBYNonEmployee API
 		// so it will work as CSC Operator record
-		if ((recordCreatedBYNonEmployee || userService.getUserById(waterConnectionDetails.getCreatedBy().getId())
-				.getUsername().equals("anonymous")) && null == request.getAttribute("mode")
-				&& waterConnectionDetails.getState().getHistory().isEmpty()) {
+		if ((recordCreatedBYNonEmployee || recordCreatedBYCitizenPortal
+				|| userService.getUserById(waterConnectionDetails.getCreatedBy().getId())
+				.getUsername().equals("anonymous"))
+				&& null == request.getAttribute("mode") && waterConnectionDetails.getState().getHistory().isEmpty()) {
 			model.addAttribute("mode", "edit");
 			model.addAttribute("approvalPositionExist",
 					waterConnectionDetailsService.getApprovalPositionByMatrixDesignation(waterConnectionDetails, 0l,
 							waterConnectionDetails.getApplicationType().getCode(), "edit", ""));
 		}
 		// "edit" mode for AE inbox record FROM CSC and Record from Clerk
-		else if (recordCreatedBYNonEmployee && request.getAttribute("mode") == null
-				&& waterConnectionDetails.getState().getHistory() != null
-				&& waterConnectionDetails.getStatus() != null) {
+		else if ((recordCreatedBYNonEmployee || recordCreatedBYCitizenPortal)
+				&& request.getAttribute("mode") == null
+				&& waterConnectionDetails.getState().getHistory() != null && waterConnectionDetails.getStatus() != null) {
 			String additionalRule = "";
 			if (waterConnectionDetails.getStatus().getCode().equals(APPLICATION_STATUS_CLOSERINITIATED))
 				additionalRule = WORKFLOW_CLOSUREADDITIONALRULE;

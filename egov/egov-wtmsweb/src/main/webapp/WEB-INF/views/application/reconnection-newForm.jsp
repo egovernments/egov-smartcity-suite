@@ -102,7 +102,7 @@
 
 </div>			
 				
-				<c:if test="${!loggedInCSCUser || loggedInCSCUser=='false'}">
+				<c:if test="${(!loggedInCSCUser || loggedInCSCUser=='false') && (!citizenPortalUser || citizenPortalUser=='false')}">
 						<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
 						</c:if>
 						

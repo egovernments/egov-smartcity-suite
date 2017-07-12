@@ -51,6 +51,7 @@ import java.util.Locale;
 
 import org.egov.commons.EgwStatus;
 import org.egov.commons.Installment;
+import org.egov.commons.entity.Source;
 import org.egov.commons.dao.InstallmentDao;
 import org.egov.demand.model.EgDemand;
 import org.egov.eis.entity.Assignment;
@@ -687,4 +688,35 @@ public class WaterTaxUtils {
     }
 
 
+    public Boolean isCitizenPortalUser(final User user) {
+        for (final Role role : user.getRoles())
+            if (role != null && role.getName().equalsIgnoreCase(WaterTaxConstants.ROLE_CITIZEN))
+                return true;
+        return false;
+    }
+
+    public Source setSourceOfConnection(final User user) {
+        Source source=null;
+        if (isCitizenPortalUser(user))
+            source = Source.CITIZENPORTAL;
+
+        return source;
+    }
+
+    public Boolean isCurrentUserCitizenRole() {
+        Boolean citizenUserRole = Boolean.FALSE;
+        User currentUser = null;
+
+        if (ApplicationThreadLocals.getUserId() != null)
+            currentUser = userService.getUserById(ApplicationThreadLocals.getUserId());
+        else
+            currentUser = securityUtils.getCurrentUser();
+
+        for (final Role userrole : currentUser.getRoles())
+            if (userrole.getName().equals(WaterTaxConstants.ROLE_CITIZEN)) {
+                citizenUserRole = Boolean.TRUE;
+                break;
+            }
+        return citizenUserRole;
+    }
 }

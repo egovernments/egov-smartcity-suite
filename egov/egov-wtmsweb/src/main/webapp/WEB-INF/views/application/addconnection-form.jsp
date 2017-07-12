@@ -50,8 +50,8 @@
 			modelAttribute="addConnection" id="addWaterConnectionform"
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
-			<input type="hidden" name="validationMessage" id="validationMessage" value="${validationMessage}"> 
-			
+			<input type="hidden" name="validationMessage" id="validationMessage" value="${validationMessage}">
+			<input type="hidden" id="citizenPortalUser" name="citizenPortalUser" value="${citizenPortalUser}"/>
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
 					<div class="panel-title">

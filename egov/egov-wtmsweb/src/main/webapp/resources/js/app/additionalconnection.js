@@ -50,7 +50,9 @@ $(document).ready(function(){
 	var mode =$('#mode').val();
 	var validateIfPTDueExists=$('#validateIfPTDueExists').val();
 	var currentloggedInUser=$('#currentUser').val();
-	if((currentloggedInUser=='true' && mode=='addconnection' && validateIfPTDueExists=='') ||(currentloggedInUser=='true' && validateIfPTDueExists=='false'))
+    var citizenPortal=$('#citizenPortalUser').val();
+	if((currentloggedInUser=='true' && mode=='addconnection' && validateIfPTDueExists=='') ||(currentloggedInUser=='true' && validateIfPTDueExists=='false')
+	|| (citizenPortal=='true' && mode=='addconnection' && validateIfPTDueExists=='') ||(citizenPortal=='true' && validateIfPTDueExists=='false'))
 		{
 		$(".show-row").hide(); 
 		$('#approvalDepartment').removeAttr('required');

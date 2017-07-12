@@ -138,17 +138,22 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
         Position pos = null;
         Assignment wfInitiator = null;
         final Boolean recordCreatedBYNonEmployee;
+        final Boolean recordCreatedBYCitizenPortal;
+
         if(user!=null && (CLOSINGCONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()) ||
         		RECONNECTIONCONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()))){
         	recordCreatedBYNonEmployee= waterTaxUtils.getCurrentUserRole(user);
+            recordCreatedBYCitizenPortal = waterTaxUtils.isCitizenPortalUser(user);
         }
-        else
-        	recordCreatedBYNonEmployee= waterTaxUtils
-                .getCurrentUserRole(waterConnectionDetails.getCreatedBy());
+        else {
+            recordCreatedBYNonEmployee = waterTaxUtils
+                    .getCurrentUserRole(waterConnectionDetails.getCreatedBy());
+            recordCreatedBYCitizenPortal = waterTaxUtils.isCitizenPortalUser(userService.getUserById(waterConnectionDetails.getCreatedBy().getId()));
+        }
         String currState = "";
         final String loggedInUserDesignation = waterTaxUtils.loggedInUserDesignation(waterConnectionDetails);
         final String natureOfwork = getNatureOfTask(waterConnectionDetails);
-        if (recordCreatedBYNonEmployee) {
+        if (recordCreatedBYNonEmployee || recordCreatedBYCitizenPortal) {
             currState = WFLOW_ACTION_STEP_THIRDPARTY_CREATED;
             if (!waterConnectionDetails.getStateHistory().isEmpty())
             {
@@ -214,7 +219,7 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                 waterConnectionDetails.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
                         WaterTaxConstants.APPLICATION_STATUS_CANCELLED, WaterTaxConstants.MODULETYPE));
                 waterConnectionDetails.transition().end().withSenderName(user.getUsername() + "::" + user.getName())
-                        .withComments(approvalComent).withDateInfo(currentDate.toDate()).withNatureOfTask(natureOfwork);
+                        .withComments(approvalComent).withDateInfo(currentDate.toDate()).withNatureOfTask(natureOfwork).withNextAction("END");
                 waterConnectionSmsAndEmailService.sendSmsAndEmailOnRejection(waterConnectionDetails, approvalComent);
                 waterConnectionDetailsService.updateIndexes(waterConnectionDetails, null);
             }
@@ -236,7 +241,7 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                 waterConnectionDetails.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
                         WaterTaxConstants.APPLICATION_STATUS_CANCELLED, WaterTaxConstants.MODULETYPE));
                 waterConnectionDetails.transition().end().withSenderName(user.getUsername() + "::" + user.getName())
-                        .withComments(approvalComent).withDateInfo(currentDate.toDate()).withNatureOfTask(natureOfwork);
+                        .withComments(approvalComent).withDateInfo(currentDate.toDate()).withNatureOfTask(natureOfwork).withNextAction("END");
                 waterConnectionSmsAndEmailService.sendSmsAndEmailOnRejection(waterConnectionDetails, approvalComent);
                 waterConnectionDetailsService.updateIndexes(waterConnectionDetails, null);
             } else {
@@ -289,7 +294,7 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                 if (wfmatrix.getNextAction().equalsIgnoreCase("END"))
                     waterConnectionDetails.transition().end()
                             .withSenderName(user.getUsername() + "::" + user.getName()).withComments(approvalComent)
-                            .withDateInfo(currentDate.toDate()).withNatureOfTask(natureOfwork);
+                            .withDateInfo(currentDate.toDate()).withNatureOfTask(natureOfwork).withNextAction("END");
             } else if (null != approvalComent && "Receipt Cancelled".equalsIgnoreCase(approvalComent)) {
                 wfmatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails.getStateType(), null, null,
                         additionalRule, "Asst engg approved", null);
@@ -302,7 +307,7 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                     || additionalRule.equals(WaterTaxConstants.RECONNECTIONCONNECTION))
                     && (waterConnectionDetails.getCurrentState().getValue().equals("Closed")
                             || waterConnectionDetails.getCurrentState().getValue().equals("END"))) {
-                if (currState != null && waterTaxUtils.getCurrentUserRole())
+                if (currState != null && (waterTaxUtils.getCurrentUserRole() || waterTaxUtils.isCurrentUserCitizenRole()))
                     wfmatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails.getStateType(), null, null,
                             additionalRule, currState, null);
                 else
@@ -328,7 +333,7 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                         && wfmatrix.getNextAction().equalsIgnoreCase("END"))
                     waterConnectionDetails.transition().end()
                             .withSenderName(user.getUsername() + "::" + user.getName()).withComments(approvalComent)
-                            .withDateInfo(currentDate.toDate()).withNatureOfTask(natureOfwork);
+                            .withDateInfo(currentDate.toDate()).withNatureOfTask(natureOfwork).withNextAction("END");
                 else
                     waterConnectionDetails.transition().progressWithStateCopy()
                             .withSenderName(user.getUsername() + "::" + user.getName())

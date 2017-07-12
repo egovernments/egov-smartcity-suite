@@ -181,6 +181,9 @@ public class ChangeOfUseService {
                 .getInitialisedWorkFlowBean();
         applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(savedChangeOfUse, approvalPosition,
                 approvalComent, additionalRule, workFlowAction);
+        if(waterTaxUtils.isCitizenPortalUser(userService.getUserById(savedChangeOfUse.getCreatedBy().getId()))){
+            waterConnectionDetailsService.pushPortalMessage(savedChangeOfUse);
+        }
         waterConnectionDetailsService.updateIndexes(savedChangeOfUse, sourceChannel);
         waterConnectionSmsAndEmailService.sendSmsAndEmail(changeOfUse, workFlowAction);
         return savedChangeOfUse;

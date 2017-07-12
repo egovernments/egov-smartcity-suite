@@ -69,9 +69,9 @@
 			$('#approvalComent').attr('required', 'required');	
 			} 
 		 if(rejectbutton!=null && rejectbutton=='Forward'){
-			if($('#currentUser'))
+			if($('#currentUser') || $('#citizenPortalUser') )
 			{
-				if($('#currentUser').val()=="true")
+				if($('#currentUser').val()=="true" || $('#citizenPortalUser').val()=="true")
 				{
 					$('#approvalDepartment').removeAttr('required');
 					$('#approvalDesignation').removeAttr('required');
