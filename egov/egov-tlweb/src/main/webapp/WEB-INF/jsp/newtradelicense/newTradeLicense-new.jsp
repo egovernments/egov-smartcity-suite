@@ -440,12 +440,6 @@
         <div style="text-align: center;" id="btndiv">
             <input type="button" class="btn btn-primary" id="certificateDiv" value="Generate Provisional Certificate"
                    style="display: none;" onclick="window.open('/tl/viewtradelicense/viewTradeLicense-generateCertificate.action?model.id=<s:property value="%{id}"/>', '_blank', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');"/>
-            &nbsp;
-            <s:if test="%{isActive}">
-                <input name="viewdcb" type="button" class="btn btn-primary" id="viewdcb" value="View DCB"
-                       onclick="window.open('/tl/dcb/view/'+ <s:property
-                               value="%{id}"/>, '_blank', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');"/>
-            </s:if>
         </div>
 
     </div>

@@ -70,7 +70,7 @@ public class ViewDCBController {
     public String search(@PathVariable Long id, Model model, DCBReportSearchRequest searchRequest)
             throws IOException {
         License licenseObj = tradeLicenseService.getLicenseById(id);
-        searchRequest.setLicensenumber(licenseObj.getLicenseNumber());
+        searchRequest.setLicenseid(licenseObj.getId());
         model.addAttribute("license", licenseObj);
         model.addAttribute("dcbreport", toJSON(dCBReportService.getAllDCBRecords(searchRequest), DCBReportResult.class,
                 OnlineDCBReportResponseAdaptor.class));

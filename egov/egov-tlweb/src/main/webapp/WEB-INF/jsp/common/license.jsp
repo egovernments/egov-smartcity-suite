@@ -137,6 +137,14 @@
             </tr>
         </s:iterator>
         </tbody>
+        <tfoot>
+        <tr>
+            <td colspan="3">
+                <a name="viewdcb" class="btn btn-secondary" id="viewdcb-btn" onclick="window.open('/tl/dcb/view/'+ <s:property
+                        value="%{id}"/>, '_blank', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');">View DCB</a>
+            </td>
+        </tr>
+        </tfoot>
     </table>
 </s:if>
 <div class="form-group">
