@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2017>  eGovernments Foundation
+ *     Copyright (C) <2015>  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -44,26 +44,50 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.eis.repository;
 
-import org.egov.pims.commons.Designation;
+package org.egov.pgr.web.controller.complaint;
 
-import java.util.Date;
-import java.util.List;
+import org.egov.pgr.entity.Complaint;
+import org.springframework.stereotype.Component;
+import org.springframework.validation.Errors;
+import org.springframework.validation.Validator;
 
-public interface DesignationCustomRepository {
+import javax.servlet.http.HttpServletRequest;
 
-    /**
-     * Get all designations for a particular department as of given date. This API checks in all employee assignments
-     * who belongs to given department and are active as of given date and returns the distinct designations as result.
-     * If the given date is null it checks with the current date returns the result.
-     *
-     * @param id
-     * @param givenDate
-     * @return
-     */
-    List<Designation> getAllDesignationsByDepartment(Long id, Date givenDate);
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.egov.pgr.utils.constants.PGRConstants.APPROVAL_COMMENT_ATTRIB;
+import static org.egov.pgr.utils.constants.PGRConstants.LOCATION_ATTRIB;
 
-    Designation getEmployeeDesignation(final Long posId);
+@Component
+public class ComplaintValidator implements Validator {
+
+    @Override
+    public boolean supports(final Class<?> clazz) {
+        return Complaint.class.equals(clazz);
+    }
+
+    @Override
+    public void validate(final Object target, final Errors errors) {
+        //Override due to additional parameter
+    }
+
+    public void validate(final Object target, final Errors errors, HttpServletRequest request) {
+
+        final Complaint complaint = (Complaint) target;
+
+        if (complaint.getStatus() == null)
+            errors.rejectValue("status", "status.requried");
+
+        if (isBlank(request.getParameter(APPROVAL_COMMENT_ATTRIB)))
+            errors.reject("comment.not.null");
+
+        if (complaint.getLocation() == null && complaint.getLat() > 0D && complaint.getLng() > 0D)
+            errors.rejectValue(LOCATION_ATTRIB, "location.info.not.found");
+
+        if ((complaint.getLocation() == null || complaint.getChildLocation() == null)
+                && complaint.getLat() <= 0D && complaint.getLng() <= 0D)
+            errors.rejectValue(LOCATION_ATTRIB, "location.info.not.found");
+    }
+
 
 }

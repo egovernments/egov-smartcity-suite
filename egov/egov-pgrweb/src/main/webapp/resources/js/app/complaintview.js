@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) <2017>  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -38,107 +38,117 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-$(document).ready(function()
-{
-	$("#btn_submit").click(function(){
-		if($("#btn_submit").name=='Close')
-			{
-			return true;
-			}
-		if($('#inc_messge').val() == '')
-		{
-			$('#inc_messge').addClass('error');
-		}else
-		{
-			document.forms[0].submit();
-			$('#inc_messge').removeClass('error');
-		}
-		
-	});
-	
-	$('.slide-history-menu').click(function(){
-		$('.history-slide').slideToggle();
-		if($('#toggle-his-icon').hasClass('fa fa-angle-down'))
-		{
-			$('#toggle-his-icon').removeClass('fa fa-angle-down').addClass('fa fa-angle-up');
-			//$('#see-more-link').hide();
-			}else{
-			$('#toggle-his-icon').removeClass('fa fa-angle-up').addClass('fa fa-angle-down');
-			//$('#see-more-link').show();
-		}
-	});
-	
-	$('#ct-sel-jurisd').change(function(){
-		console.log("came jursidiction"+$('#ct-sel-jurisd').val());
-		$.ajax({
-			url: "/pgr/ajax-getChildLocation",
-			type: "GET",
-			data: {
-				id : $('#ct-sel-jurisd').val()
-			},
-			dataType: "json",
-			success: function (response) {
-				console.log("success"+response);
-				$('#location').empty();
-				
-				$('#location').append($("<option value=''>Select</option>"));
-				$.each(response, function(index, value) {
-					
-				     $('#location').append($('<option>').text(value.name).attr('value', value.id));
-				});
-				
-			}, 
-			error: function (response) {
-				console.log("failed");
-			}
-		});
-	});
-	
-	$('#approvalDepartment').change(function(){
-		$.ajax({
-			url: "/pgr/ajax-approvalDesignations",     
-			type: "GET",
-			data: {
-				approvalDepartment : $('#approvalDepartment').val()   
-			},
-			dataType: "json",
-			success: function (response) {
-				console.log("success"+response);
-				$('#approvalDesignation').empty();
-				$('#approvalDesignation').append($("<option value=''>Select</option>"));
-				$.each(response, function(index, value) {
-					$('#approvalDesignation').append($('<option>').text(value.name).attr('value', value.id));
-				});
-				
-			}, 
-			error: function (response) {
-				console.log("failed");
-			}
-		});
-	});
-	
-	$('#approvalDesignation').change(function(){
-		$.ajax({
-			url: "/pgr/ajax-approvalPositions",     
-			type: "GET",
-			data: {
-				approvalDesignation : $('#approvalDesignation').val(),
-				approvalDepartment : $('#approvalDepartment').val()    
-			},
-			dataType: "json",
-			success: function (response) {
-				console.log("success"+response);
-				$('#approvalPosition').empty();
-				$('#approvalPosition').append($("<option value=''>Select</option>"));
-				$.each(response, function(index, value) {
-					$('#approvalPosition').append($('<option>').text(value.name).attr('value', value.id));  
-				});
-				
-			}, 
-			error: function (response) {
-				console.log("failed");
-			}
-		});
-	});
-	
+$(document).ready(function () {
+    $("#btn_submit").click(function () {
+        if ($("#btn_submit").name == 'Close') {
+            return true;
+        }
+        if ($('#inc_messge').val() == '') {
+            $('#inc_messge').addClass('error');
+        } else {
+            document.forms[0].submit();
+            $('#inc_messge').removeClass('error');
+        }
+
+    });
+
+    $('.slide-history-menu').click(function () {
+        $('.history-slide').slideToggle();
+        if ($('#toggle-his-icon').hasClass('fa fa-angle-down')) {
+            $('#toggle-his-icon').removeClass('fa fa-angle-down').addClass('fa fa-angle-up');
+            //$('#see-more-link').hide();
+        } else {
+            $('#toggle-his-icon').removeClass('fa fa-angle-up').addClass('fa fa-angle-down');
+            //$('#see-more-link').show();
+        }
+    });
+
+    $('#ct-sel-jurisd').change(function () {
+        console.log("came jursidiction" + $('#ct-sel-jurisd').val());
+        $.ajax({
+            url: "/pgr/ajax-getChildLocation",
+            type: "GET",
+            data: {
+                id: $('#ct-sel-jurisd').val()
+            },
+            dataType: "json",
+            success: function (response) {
+                $('#location').empty();
+
+                $('#location').append($("<option value=''>Select</option>"));
+                $.each(response, function (index, value) {
+
+                    $('#location').append($('<option>').text(value.name).attr('value', value.id));
+                });
+
+            },
+            error: function (response) {
+                console.log("failed");
+            }
+        });
+    });
+
+    $('#approvalDepartment').change(function () {
+        resetCurrentOwner();
+        if ($('#approvalDepartment').val() != '') {
+            $.ajax({
+                url: "/pgr/ajax-approvalDesignations",
+                type: "GET",
+                data: {
+                    approvalDepartment: $('#approvalDepartment').val()
+                },
+                dataType: "json",
+                success: function (response) {
+                    $('#approvalDesignation').empty();
+                    $('#approvalDesignation').append($("<option value=''>Select</option>"));
+                    $.each(response, function (index, value) {
+                        $('#approvalDesignation').append($('<option>').text(value.name).attr('value', value.id));
+                    });
+
+                },
+                error: function (response) {
+                    console.log("failed");
+                }
+            });
+        }
+    });
+
+    $('#approvalDesignation').change(function () {
+        resetCurrentOwner();
+        if ($('#approvalDesignation').val() != '') {
+            $.ajax({
+                url: "/pgr/ajax-approvalPositions",
+                type: "GET",
+                data: {
+                    approvalDesignation: $('#approvalDesignation').val(),
+                    approvalDepartment: $('#approvalDepartment').val()
+                },
+                dataType: "json",
+                success: function (response) {
+                    $('#approvalPosition').empty();
+                    $('#approvalPosition').append($("<option value=''>Select</option>"));
+                    $.each(response, function (index, employee) {
+                        $('#approvalPosition').append($('<option>').text(employee.name)
+                            .attr('value', employee.positionId)
+                            .attr('data-employee-id', employee.empId));
+                    });
+                },
+                error: function (response) {
+                    console.log("failed");
+                }
+            });
+        }
+    });
+
+    $('#approvalPosition').change(function () {
+        var employeeId = $("#approvalPosition option:selected").data().employeeId;
+        if (employeeId)
+            $("#currentOwner").val(employeeId);
+        else
+            resetCurrentOwner();
+    });
+
+    var resetCurrentOwner = function () {
+        $("#currentOwner").val(currentOwner);
+    }
 });

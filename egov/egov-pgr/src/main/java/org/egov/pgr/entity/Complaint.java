@@ -40,8 +40,10 @@
 
 package org.egov.pgr.entity;
 
+
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.workflow.entity.StateAware;
@@ -97,6 +99,10 @@ public class Complaint extends StateAware {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "assignee")
     private Position assignee;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "currentOwner")
+    private User currentOwner;
 
     @ManyToOne
     @JoinColumn(name = "location")
@@ -205,6 +211,14 @@ public class Complaint extends StateAware {
 
     public void setAssignee(Position assignee) {
         this.assignee = assignee;
+    }
+
+    public User getCurrentOwner() {
+        return currentOwner;
+    }
+
+    public void setCurrentOwner(User currentOwner) {
+        this.currentOwner = currentOwner;
     }
 
     public ComplaintStatus getStatus() {

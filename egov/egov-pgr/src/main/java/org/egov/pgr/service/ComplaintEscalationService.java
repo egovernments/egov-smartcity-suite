@@ -212,6 +212,7 @@ public class ComplaintEscalationService {
             Position previousAssignee = complaint.getAssignee();
             complaint.setEscalationDate(getExpiryDate(complaint));
             complaint.setAssignee(nextAssignee);
+            complaint.setCurrentOwner(nextOwner);
             complaint.transition().progress()
                     .withOwner(nextAssignee).withComments("Complaint is escalated")
                     .withDateInfo(new Date())

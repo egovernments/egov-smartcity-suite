@@ -164,6 +164,10 @@ public class ComplaintService {
     @Transactional
     public Complaint updateComplaint(Complaint complaint) {
         complaintProcessFlowService.onUpdation(complaint);
+        if (complaint.getComplaintType().getDepartment() != null)
+            complaint.setDepartment(complaint.getComplaintType().getDepartment());
+        else
+            complaint.setDepartment(complaint.getAssignee().getDeptDesig().getDepartment());
         complaintRepository.saveAndFlush(complaint);
         complaintIndexService.updateComplaintIndex(complaint);
         citizenComplaintDataPublisher.onUpdation(complaint);

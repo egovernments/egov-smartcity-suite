@@ -55,11 +55,9 @@ import org.egov.pgr.service.ComplaintService;
 import org.egov.pgr.service.ComplaintStatusMappingService;
 import org.egov.pgr.service.ComplaintTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -74,6 +72,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.Collections;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.egov.pgr.utils.constants.PGRConstants.APPROVAL_COMMENT_ATTRIB;
 import static org.egov.pgr.utils.constants.PGRConstants.APPROVAL_POSITION_ATTRIB;
 import static org.egov.pgr.utils.constants.PGRConstants.CITIZEN_RATING_ATTRIB;
@@ -111,9 +110,6 @@ public class ComplaintUpdationController {
     private FileStoreUtils fileStoreUtils;
 
     @Autowired
-    private MessageSource messageSource;
-
-    @Autowired
     private CrossHierarchyService crossHierarchyService;
 
     @Autowired
@@ -125,15 +121,16 @@ public class ComplaintUpdationController {
     @Autowired
     private ComplaintProcessFlowService complaintProcessFlowService;
 
+    @Autowired
+    private ComplaintValidator complaintValidator;
+
     @ModelAttribute
     public void getComplaint(@PathVariable String crnNo, Model model) {
         Complaint complaint = complaintService.getComplaintByCRN(crnNo);
         model.addAttribute(COMPLAINT_ATTRIB, complaint);
         model.addAttribute("complaintHistory", complaintHistoryService.getHistory(complaint));
         model.addAttribute("skippableForward", complaintProcessFlowService.canSendToPreviousAssignee(complaint));
-        model.addAttribute("status",
-                complaintStatusMappingService.getStatusByRoleAndCurrentStatus(securityUtils.getCurrentUser().getRoles(),
-                        complaint.getStatus()));
+        model.addAttribute("status", complaintStatusMappingService.getStatusByRoleAndCurrentStatus(securityUtils.getCurrentUser().getRoles(), complaint.getStatus()));
         model.addAttribute("approvalDepartmentList", departmentService.getAllDepartments());
         model.addAttribute("complaintType", complaintTypeService.findActiveComplaintTypes());
         model.addAttribute("ward", Collections.emptyList());
@@ -172,16 +169,16 @@ public class ComplaintUpdationController {
     public String update(@Valid @ModelAttribute Complaint complaint, BindingResult errors,
                          RedirectAttributes redirectAttrs, HttpServletRequest request,
                          @RequestParam("files") MultipartFile[] files) {
-        validateUpdate(complaint, errors, request);
+        complaintValidator.validate(complaint, errors, request);
 
         Long approvalPosition = 0L;
         String approvalComent = "";
         String result;
-        if (request.getParameter(APPROVAL_COMMENT_ATTRIB) != null && !request.getParameter(APPROVAL_COMMENT_ATTRIB).trim().isEmpty())
+        if (isNotBlank(request.getParameter(APPROVAL_COMMENT_ATTRIB)))
             approvalComent = request.getParameter(APPROVAL_COMMENT_ATTRIB);
-        if (request.getParameter(APPROVAL_POSITION_ATTRIB) != null && !request.getParameter(APPROVAL_POSITION_ATTRIB).isEmpty())
+        if (isNotBlank(request.getParameter(APPROVAL_POSITION_ATTRIB)))
             approvalPosition = Long.valueOf(request.getParameter(APPROVAL_POSITION_ATTRIB));
-        if (request.getParameter(CITIZEN_RATING_ATTRIB) != null && !request.getParameter(CITIZEN_RATING_ATTRIB).isEmpty())
+        if (isNotBlank(request.getParameter(CITIZEN_RATING_ATTRIB)))
             complaint.setCitizenFeedback(CitizenFeedback.values()[Integer.valueOf(request.getParameter(CITIZEN_RATING_ATTRIB))]);
         if (!errors.hasErrors()) {
             if (!securityUtils.currentUserType().equals(UserType.CITIZEN) && files != null)
@@ -202,18 +199,4 @@ public class ComplaintUpdationController {
         return new ModelAndView("complaint/reg-success", COMPLAINT_ATTRIB, complaint);
     }
 
-    private void validateUpdate(Complaint complaint, BindingResult errors, HttpServletRequest request) {
-        if (complaint.getStatus() == null)
-            errors.rejectValue("status", "status.requried");
-
-        if (request.getParameter(APPROVAL_COMMENT_ATTRIB) == null || request.getParameter(APPROVAL_COMMENT_ATTRIB).trim().isEmpty())
-            errors.addError(new ObjectError(APPROVAL_COMMENT_ATTRIB, messageSource.getMessage("comment.not.null", null, null)));
-
-        if (complaint.getLocation() == null && complaint.getLat() > 0D && complaint.getLng() > 0D)
-            errors.rejectValue(LOCATION_ATTRIB, "location.info.not.found");
-
-        if ((complaint.getLocation() == null || complaint.getChildLocation() == null) && complaint.getLat() <= 0D
-                && complaint.getLng() <= 0D)
-            errors.rejectValue(LOCATION_ATTRIB, "location.info.not.found");
-    }
 }

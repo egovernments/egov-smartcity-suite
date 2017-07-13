@@ -1,5 +1,5 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
  *     Copyright (C) <2015>  eGovernments Foundation
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *           Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *           Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *           derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ * 	       For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ * 	       For any further queries on attribution, including queries on brand guidelines,
+ *           please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -40,6 +47,7 @@
 package org.egov.eis.repository;
 
 import org.egov.eis.entity.Assignment;
+import org.egov.infra.persistence.utils.PersistenceUtils;
 import org.egov.pims.commons.Designation;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -55,25 +63,17 @@ public class DesignationRepositoryImpl implements DesignationCustomRepository {
     private AssignmentRepository assignmentRepository;
 
     @Override
-    public List<Designation> getAllDesignationsByDepartment(final Long id, final Date givenDate) {
+    public List<Designation> getAllDesignationsByDepartment(Long id, Date givenDate) {
+        final Set<Designation> designations = new HashSet<>();
+        final List<Assignment> assignments = assignmentRepository.findAllByDepartmentAndDate(id, givenDate);
+        for (Assignment assign : assignments)
+            designations.add(PersistenceUtils.unproxy(assign.getDesignation()));
 
-        final Set<Designation> designations = new HashSet<Designation>();
-        final Date userGivenDate = null == givenDate ? new Date() : givenDate;
-        final List<Assignment> assignments = assignmentRepository.findAllByDepartmentAndDate(id, userGivenDate);
-        for (final Assignment assign : assignments)
-            designations.add(assign.getDesignation());
-
-        return new ArrayList<Designation>(designations);
+        return new ArrayList<>(designations);
     }
 
-    /**
-     * Returns employee designation for position
-     *
-     * @param posId
-     * @return Designation object
-     */
-    public Designation getEmployeeDesignation(final Long posId) {
-        return assignmentRepository.getPrimaryAssignmentForPosition(posId).getDesignation();
+    public Designation getEmployeeDesignation(Long positionId) {
+        return assignmentRepository.getPrimaryAssignmentForPosition(positionId).getDesignation();
     }
 
 }

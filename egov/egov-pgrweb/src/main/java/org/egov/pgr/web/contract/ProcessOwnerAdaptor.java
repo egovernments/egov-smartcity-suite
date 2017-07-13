@@ -1,5 +1,5 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
  *     Copyright (C) <2015>  eGovernments Foundation
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *           Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *           Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *           derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ * 	       For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ * 	       For any further queries on attribution, including queries on brand guidelines,
+ *           please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -38,22 +45,24 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.eis.entity;
-
-import java.lang.reflect.Type;
+package org.egov.pgr.web.contract;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import org.egov.eis.entity.EmployeeView;
 
-public class EmployeeViewAdaptor implements JsonSerializer<EmployeeView> {
+import java.lang.reflect.Type;
+
+public class ProcessOwnerAdaptor implements JsonSerializer<EmployeeView> {
 
     @Override
     public JsonElement serialize(final EmployeeView src, final Type typeOfSrc, final JsonSerializationContext context) {
         final JsonObject empJsonObject = new JsonObject();
         empJsonObject.addProperty("name", src.getName());
-        empJsonObject.addProperty("id", src.getPosition().getId());
+        empJsonObject.addProperty("positionId", src.getPosition().getId());
+        empJsonObject.addProperty("empId", src.getEmployee().getId());
         return empJsonObject;
 
     }

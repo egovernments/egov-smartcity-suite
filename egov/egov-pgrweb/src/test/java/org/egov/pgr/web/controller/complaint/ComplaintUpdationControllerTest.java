@@ -106,8 +106,6 @@ public class ComplaintUpdationControllerTest extends AbstractContextControllerTe
     @Mock
     private BoundaryService boundaryService;
     @Mock
-    private MessageSource messageSource;
-    @Mock
     private DepartmentService departmentService;
     @Mock
     private ComplaintHistoryService complaintHistoryService;
@@ -115,6 +113,8 @@ public class ComplaintUpdationControllerTest extends AbstractContextControllerTe
     private ComplaintProcessFlowService complaintProcessFlowService;
     @Mock
     private ComplaintMessagingService complaintMessagingService;
+    @Mock
+    private ComplaintValidator complaintValidator;
     private MockMvc mockMvc;
     private Long id;
     private ComplaintType complaintType;
