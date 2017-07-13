@@ -108,7 +108,9 @@ public class SewerageBaseRegisterReportService {
             searchResult.setCurrentDemand(
                     sewerageIndex.getDemandAmount().setScale(0, BigDecimal.ROUND_HALF_EVEN));
             searchResult.setAdvanceAmount(
-                    sewerageIndex.getExtraAdvanceAmount().setScale(0, BigDecimal.ROUND_HALF_EVEN));
+                    sewerageIndex.getExtraAdvanceAmount() != null
+                            ? sewerageIndex.getExtraAdvanceAmount().setScale(0, BigDecimal.ROUND_HALF_EVEN)
+                            : BigDecimal.ZERO);
             searchResult.setArrearsCollected(sewerageIndex.getCollectedArrearAmount().setScale(0, BigDecimal.ROUND_HALF_EVEN));
             searchResult.setCurrentTaxCollected(sewerageIndex.getCollectedDemandAmount().setScale(0, BigDecimal.ROUND_HALF_EVEN));
             searchResult
