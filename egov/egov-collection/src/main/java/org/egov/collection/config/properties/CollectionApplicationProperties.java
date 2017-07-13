@@ -45,10 +45,12 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 
 @Configuration
-@PropertySource(name = "collectionApplicationProperties", value = { "classpath:config/payment-gateway.properties",
+@PropertySource(name = "collectionApplicationProperties", value = {
+        "classpath:config/application-config-collection.properties",
+        "classpath:config/payment-gateway.properties",
         "classpath:config/egov-erp-${user.name}.properties",
         "classpath:config/application-config-${client.id}.properties",
-        "classpath:config/egov-erp-override.properties" }, ignoreResourceNotFound = true)
+        "classpath:config/egov-erp-override.properties"}, ignoreResourceNotFound = true)
 public class CollectionApplicationProperties {
 
     @Autowired
@@ -117,12 +119,12 @@ public class CollectionApplicationProperties {
     public String sbimopsHoa(final String cityCode) {
         return environment.getProperty(cityCode.concat(".sbimops.hoa"));
     }
-    
-    public String getUpdateDemandUrl(final String serviceCode) { 
+
+    public String getUpdateDemandUrl(final String serviceCode) {
         return environment.getProperty(serviceCode.concat(".updatedemand.url"));
     }
-    
-    public String getLamsServiceUrl() { 
+
+    public String getLamsServiceUrl() {
         return environment.getProperty("egov.services.lams.hostname");
     }
 }
