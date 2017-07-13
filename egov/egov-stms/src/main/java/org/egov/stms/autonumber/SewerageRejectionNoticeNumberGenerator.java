@@ -39,9 +39,6 @@
  */
 package org.egov.stms.autonumber;
 
-import org.springframework.stereotype.Service;
-
-@Service
 public interface SewerageRejectionNoticeNumberGenerator {
 
     public String generateRejectionNoticeNumber();

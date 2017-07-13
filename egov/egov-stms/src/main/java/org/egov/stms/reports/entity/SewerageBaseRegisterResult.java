@@ -44,8 +44,10 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.reporting.engine.ReportFormat;
+import org.egov.infra.web.support.search.DataTableSearchRequest;
 
-public class SewerageBaseRegisterResult {
+public class SewerageBaseRegisterResult extends DataTableSearchRequest {
 
     private String shscNumber;
     private String assementNo;
@@ -57,6 +59,7 @@ public class SewerageBaseRegisterResult {
     private Integer residentialClosets;
     private Integer nonResidentialClosets;
     private String period;
+    private String mode;
     private BigDecimal arrears = BigDecimal.ZERO;
     private BigDecimal currentDemand = BigDecimal.ZERO;
     private BigDecimal advanceAmount = BigDecimal.ZERO;
@@ -64,6 +67,7 @@ public class SewerageBaseRegisterResult {
     private BigDecimal currentTaxCollected = BigDecimal.ZERO;
     private BigDecimal totalTaxCollected = BigDecimal.ZERO;
     private BigDecimal totalDemand = BigDecimal.ZERO;
+    private ReportFormat printFormat;
 
     public String getShscNumber() {
         return shscNumber;
@@ -199,6 +203,22 @@ public class SewerageBaseRegisterResult {
 
     public void setTotalTaxCollected(final BigDecimal totalTaxCollected) {
         this.totalTaxCollected = totalTaxCollected;
+    }
+
+    public ReportFormat getPrintFormat() {
+        return printFormat;
+    }
+
+    public void setPrintFormat(final ReportFormat printFormat) {
+        this.printFormat = printFormat;
+    }
+
+    public String getMode() {
+        return mode;
+    }
+
+    public void setMode(final String mode) {
+        this.mode = mode;
     }
 
 }

@@ -68,6 +68,7 @@ import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
+import org.egov.infra.web.support.ui.DataTable;
 import org.egov.stms.elasticSearch.entity.SewerageNoticeSearchRequest;
 import org.egov.stms.elasticSearch.entity.SewerageSearchResult;
 import org.egov.stms.entity.es.SewerageIndex;
@@ -78,6 +79,10 @@ import org.egov.stms.utils.constants.SewerageTaxConstants;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -117,14 +122,22 @@ public class SewerageNoticeController {
         final BoolQueryBuilder boolQuery = sewerageIndexService.getQueryFilterForNotice(searchRequest);
         return sewerageIndexService.getNoticeSearchResultByBoolQuery(boolQuery);
     }
-
+    private Page<SewerageIndex> getNoticeSearchResult(final SewerageNoticeSearchRequest searchRequest) {
+        final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
+        if (cityWebsite != null)
+            searchRequest.setUlbName(cityWebsite.getName());
+        final BoolQueryBuilder boolQuery = sewerageIndexService.getQueryFilterForNotice(searchRequest);
+        return sewerageIndexService.getPagedNoticeSearchResultByBoolQuery(boolQuery,searchRequest);
+    }
     @RequestMapping(value = "/searchResult", method = RequestMethod.POST)
     @ResponseBody
-    public List<SewerageSearchResult> searchApplication(@ModelAttribute final SewerageNoticeSearchRequest searchRequest) {
+    public DataTable<SewerageSearchResult> searchApplication(@ModelAttribute final SewerageNoticeSearchRequest searchRequest) {
         final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         final List<SewerageSearchResult> searchResultFomatted = new ArrayList<>();
-        final List<SewerageIndex> searchResult = getSearchResult(searchRequest);
+        final Page<SewerageIndex> searchResult = getNoticeSearchResult(searchRequest);
         SewerageSearchResult searchResultObject ;
+        final Pageable pageable = new PageRequest(searchRequest.pageNumber(),
+                searchRequest.pageSize(), searchRequest.orderDir(), searchRequest.orderBy());
         for (final SewerageIndex sewerageIndexObject : searchResult) {
             searchResultObject = new SewerageSearchResult();
             searchResultObject.setApplicationNumber(sewerageIndexObject.getApplicationNumber());
@@ -148,8 +161,7 @@ public class SewerageNoticeController {
             searchResultObject.setApplicantName(sewerageIndexObject.getConsumerName());
             searchResultFomatted.add(searchResultObject);
         }
-        return searchResultFomatted;
-    }
+        return new DataTable<>(new PageImpl<>(searchResultFomatted, pageable, searchResult.getTotalElements()),searchRequest.draw()) ;  }
 
     @RequestMapping(value = "/search-NoticeResultSize", method = RequestMethod.GET)
     @ResponseBody

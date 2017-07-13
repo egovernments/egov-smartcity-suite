@@ -64,6 +64,23 @@ jQuery(document).ready(function($) {
 		}); 
 });
 
+var recordTotal = [];
+function getSumOfRecords() {
+
+    $.ajax({
+        url: "/stms/reports/seweragebaseregister/grand-total?" + $("#sewerageBaseRegisterForm").serialize(),
+        type: 'GET',
+        data : 
+        	$("#sewerageBaseRegisterForm").serialize(),
+       
+        success: function (data) {
+            recordTotal = [];
+            for (var i = 0; i < data.length; i++) {
+                recordTotal.push(data[i]);
+            }
+        }
+    })
+}
 
 $(".btn-primary").click(function(event){
 	
@@ -89,54 +106,133 @@ function submitButton() {
 	oTable = $("#aplicationSearchResults");
 	$("#report-footer").show();
 	$('#baseregisterheader').show();
+	
 	if(prevdatatable){
 		prevdatatable.fnClearTable();
 		$('#aplicationSearchResults thead tr').remove();
 	}
-	$.post("/stms/reports/baseregisterresult/",$('#sewerageBaseRegisterForm').serialize())
-	.done(function(baseRegisterResultList) {
+	
+	var wardsList = $('#ward').val();
+	var temp=null;
+	if(wardsList!=null && wardsList!="undefined"){
+		if(wardsList.length>0){
+			for(var i=0;i<wardsList.length;i++){
+				if(temp===null){
+					temp=wardsList[i];
+				}
+				else{
+					temp=temp+"~"+wardsList[i];
+				}
+			}
+		}
+	}
+	var wards = [];
+    $('#ward option').each(function(i) {
+            if (this.selected == true) {
+            	wards.push(this.value);
+            }
+    });
 	prevdatatable = oTable.dataTable({
-		"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-3 col-xs-12'i><'col-md-3 col-xs-6 col-right'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-md-3 col-xs-6 text-right'p>>",
-		"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
-		"autoWidth": false,
-		"bDestroy": true,
-		"type" : 'POST',
-		"oTableTools" : {
-			"sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
-			"aButtons" : [ 
-			               {
-				             "sExtends": "pdf",
-                             "sTitle": "Base Register Report",
-                             "sPdfOrientation": "landscape"
-			                },
-			                {
-					             "sExtends": "xls",
-                                 "sTitle": "Base Register Report"
-				             },{
-					             "sExtends": "print",
-                                 "sTitle": "Base Register Report"
-				               }],
-		},
+        dom: "<'row'<'col-xs-4 pull-right'f>r>t<'row add-margin'<'col-md-3 col-xs-6'i><'col-md-2 col-xs-6'l><'col-md-2 col-xs-6 text-right'B><'col-md-5 col-xs-6 text-right'p>>",
+		processing: true,
+        serverSide: true,
+        sort: true,
+        filter: true,
+        "searching": false,
+        "order": [[0, 'asc']],
+        "autoWidth": false,
+        "bDestroy": true,
+		 buttons: [
+		            {
+		                text: 'PDF',
+		                action: function (e, dt, node, config) {
+		                    window.open("seweragebaseregister/download?" + $("#sewerageBaseRegisterForm").serialize() + "&printFormat=PDF", '', 'scrollbars=yes,width=1300,height=700,status=yes');
+		                }
+		            },
+		            {
+		                text: 'XLS',
+		                action: function (e, dt, node, config) {
+		                    window.open("seweragebaseregister/download?" + $("#sewerageBaseRegisterForm").serialize() + "&printFormat=XLS", '_self');
+		                }
+		            }],
+		    
+		            ajax : {
 
-		data : baseRegisterResultList,
-		columns : [
-					  { title : "S.H.S.C Number",class : 'row-detail', data:"shscNumber"},
-					  { title : "assesmentno", data: "assementNo"},
-					  { title : 'ownerName', data : 'ownerName'},
-					  { title : "ward", data: "revenueWard"},
-					  { title : "doorNo", data: "doorNo"},
-					  { title : "Property type", data: "propertyType"},
-					  { title : "Residential closets", data:"residentialClosets"},
-					  { title : "Non-Residential closets", data:"nonResidentialClosets"},
-					  { title : "Period", data: "period"},
-					  { title : "Arrears Demand", data: "arrears"},
-					  { title : "Current Tax Demand", data: "currentDemand"},
-					  { title : "Total Demand", data: "totalDemand"},
-					  { title : "Arrears Collected", data: "arrearsCollected"},
-					  { title : "Current Tax Collected", data: "currentTaxCollected"},
-					  { title : "Total Tax Collected", data: "totalTaxCollected"},
-					  { title : "Advance amount Collected", data: "advanceAmount"},
-					  ],
+					url : "/stms/reports/baseregisterresult/",
+					type : 'POST',
+					data : function(args) {
+						return {
+							"args" : JSON.stringify(args),
+
+							"mode" : temp
+						};
+					},
+				},	
+		columns : [ {
+					"sTitle" : "S.H.S.C Number",
+					"name" : "shscNumber",
+					"data" : "shscNumber"
+				}, {
+					"sTitle" : "assesmentno",
+					"data" : "assementNo",
+					"name" : "assementNo"
+				}, {
+					"sTitle" : 'ownerName',
+					"data" : 'ownerName',
+					"name" : "ownerName"
+				}, {
+					"sTitle" : "ward",
+					"data" : "revenueWard",
+					"name" : "revenueWard"
+				}, {
+					"sTitle" : "doorNo",
+					"data" : "doorNo",
+					"name" : "doorNo"
+				}, {
+					"sTitle" : "Property type",
+					"data" : "propertyType",
+					"name" : "propertyType"
+				}, {
+					"sTitle" : "Residential closets",
+					"data" : "residentialClosets",
+					"name" : "residentialClosets"
+				}, {
+					"sTitle" : "Non-Residential closets",
+					"data" : "nonResidentialClosets",
+					"name" : "nonResidentialClosets"
+				}, {
+					"title" : "Period",
+					"data" : "period",
+					"name" : "period"
+				}, {
+					"sTitle" : "Arrears Demand",
+					"data" : "arrears",
+					"name" : "arrears"
+				}, {
+					"sTitle" : "Current Tax Demand",
+					"data" : "currentDemand",
+					"name" : "currentDemand"
+				}, {
+					"sTitle" : "Total Demand",
+					"data" : "totalDemand",
+					"name" : "totalDemand"
+				}, {
+					"sTitle" : "Arrears Collected",
+					"data" : "arrearsCollected",
+					"name" : "arrearsCollected"
+				}, {
+					"sTitle": "Current Tax Collected",
+					"data" : "currentTaxCollected",
+					"name" : "currentTaxCollected"
+				}, {
+					"sTitle" : "Total Tax Collected",
+					"data" : "totalTaxCollected",
+					"name" : "totalTaxCollected"
+				}, {
+					"sTitle" : "Advance amount Collected",
+					"data" : "advanceAmount",
+					"name" : "advanceAmount"
+				}, ],
 		
 		"footerCallback" : function(row, data, start, end, display) {
 			var api = this.api(), data;
@@ -164,7 +260,10 @@ function submitButton() {
 		} ]
 				});
 	
-	});
+	var table = $('#aplicationSearchResults').DataTable();
+    var info = table.page.info();
+    if (info.start == 0)
+        getSumOfRecords();
 }
 
 
@@ -176,9 +275,9 @@ function updateTotalFooter(colidx, api) {
 	};
 
 	// Total over all pages
-	total = api.column(colidx).data().reduce(function(a, b) {
-		return intVal(a) + intVal(b);
-	});
+    total = recordTotal[colidx - 9];
+
+	
 
 	// Total over this page
 	pageTotal = api.column(colidx, {

@@ -80,6 +80,7 @@ import org.egov.stms.elasticSearch.entity.SewerageConnSearchRequest;
 import org.egov.stms.elasticSearch.entity.SewerageNoticeSearchRequest;
 import org.egov.stms.entity.es.SewerageIndex;
 import org.egov.stms.masters.pojo.SewerageRateDCBResult;
+import org.egov.stms.reports.entity.SewerageBaseRegisterResult;
 import org.egov.stms.reports.entity.SewerageNoOfConnReportResult;
 import org.egov.stms.repository.es.SewerageIndexRepository;
 import org.egov.stms.transactions.entity.SewerageApplicationDetails;
@@ -88,18 +89,22 @@ import org.egov.stms.transactions.service.SewerageApplicationDetailsService;
 import org.egov.stms.transactions.service.SewerageDCBReporService;
 import org.egov.stms.transactions.service.SewerageDemandService;
 import org.egov.stms.utils.constants.SewerageTaxConstants;
+import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.aggregations.AggregationBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.aggregations.Aggregations;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms.Bucket;
 import org.elasticsearch.search.aggregations.bucket.terms.TermsBuilder;
+import org.elasticsearch.search.aggregations.metrics.sum.Sum;
 import org.elasticsearch.search.sort.FieldSortBuilder;
 import org.elasticsearch.search.sort.SortOrder;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
@@ -309,11 +314,14 @@ public class SewerageIndexService {
         return boolQuery;
     }
 
-    public List<SewerageIndex> getSearchResultByBoolQuery(final BoolQueryBuilder boolQuery, final FieldSortBuilder sort) {
-        List<SewerageIndex> resultList;
+    public Page<SewerageIndex> getSearchResultByBoolQuery(final BoolQueryBuilder boolQuery, final FieldSortBuilder sort,
+            final SewerageConnSearchRequest searchRequest) {
+        Page<SewerageIndex> resultList;
         final SearchQuery searchQuery = new NativeSearchQueryBuilder().withIndices("sewerage").withQuery(boolQuery)
+                .withPageable(new PageRequest(searchRequest.pageNumber(), searchRequest.pageSize(), searchRequest.orderDir(),
+                        searchRequest.orderBy()))
                 .withSort(sort).build();
-        resultList = elasticsearchTemplate.queryForList(searchQuery, SewerageIndex.class);
+        resultList = elasticsearchTemplate.queryForPage(searchQuery, SewerageIndex.class);
         return resultList;
     }
 
@@ -335,12 +343,15 @@ public class SewerageIndexService {
         return boolQuery;
     }
 
-    public List<SewerageIndex> getCollectSearchResult(final BoolQueryBuilder boolQuery, final FieldSortBuilder sort) {
-        List<SewerageIndex> resultList;
+    public Page<SewerageIndex> getCollectSearchResult(final BoolQueryBuilder boolQuery, final FieldSortBuilder sort,
+            final SewerageCollectFeeSearchRequest searchRequest) {
+        Page<SewerageIndex> resultList;
         final SearchQuery searchQuery = new NativeSearchQueryBuilder().withIndices("sewerage").withQuery(boolQuery)
+                .withPageable(new PageRequest(searchRequest.pageNumber(), searchRequest.pageSize(),
+                        searchRequest.orderDir(), searchRequest.orderBy()))
                 .withSort(sort).build();
 
-        resultList = elasticsearchTemplate.queryForList(searchQuery, SewerageIndex.class);
+        resultList = elasticsearchTemplate.queryForPage(searchQuery, SewerageIndex.class);
         return resultList;
     }
 
@@ -459,6 +470,17 @@ public class SewerageIndexService {
         final SearchQuery searchQuery = new NativeSearchQueryBuilder().withIndices("sewerage").withQuery(boolQuery)
                 .withSort(new FieldSortBuilder("consumerName").order(SortOrder.DESC)).build();
         resultList = elasticsearchTemplate.queryForList(searchQuery, SewerageIndex.class);
+        return resultList;
+    }
+
+    public Page<SewerageIndex> getPagedNoticeSearchResultByBoolQuery(final BoolQueryBuilder boolQuery,
+            final SewerageNoticeSearchRequest searchRequest) {
+        Page<SewerageIndex> resultList;
+        final SearchQuery searchQuery = new NativeSearchQueryBuilder().withIndices("sewerage").withQuery(boolQuery)
+                .withPageable(new PageRequest(searchRequest.pageNumber(), searchRequest.pageSize(), searchRequest.orderDir(),
+                        searchRequest.orderBy()))
+                .build();
+        resultList = elasticsearchTemplate.queryForPage(searchQuery, SewerageIndex.class);
         return resultList;
     }
 
@@ -585,19 +607,73 @@ public class SewerageIndexService {
         return aggregation;
     }
 
-    public List<SewerageIndex> wardwiseBaseRegisterQueryFilter(final String ulbName,
-            final List<String> wardList) {
+    public Page<SewerageIndex> wardwiseBaseRegisterQueryFilter(final String ulbName,
+            final List<String> wardList, final SewerageBaseRegisterResult sewerageBaseRegisterResult) {
 
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery().filter(QueryBuilders.matchQuery("ulbName", ulbName));
         boolQuery = boolQuery.filter(QueryBuilders.termsQuery("ward", wardList));
         boolQuery = boolQuery.filter(QueryBuilders.matchQuery("active", true));
 
         final SearchQuery searchQuery = new NativeSearchQueryBuilder().withIndices("sewerage").withQuery(boolQuery)
-                .withPageable(new PageRequest(0, 250)).withSort(new FieldSortBuilder("shscNumber").order(SortOrder.DESC))
+                .withPageable(new PageRequest(sewerageBaseRegisterResult.pageNumber(), sewerageBaseRegisterResult.pageSize(),
+                        sewerageBaseRegisterResult.orderDir(), sewerageBaseRegisterResult.orderBy()))
                 .build();
-        // FIXME: DONOT HARDCODE 250 ITEMS .
-        final List<SewerageIndex> searchResultList = elasticsearchTemplate.queryForList(searchQuery, SewerageIndex.class);
-        return searchResultList;
+        return elasticsearchTemplate.queryForPage(searchQuery, SewerageIndex.class);
+
+    }
+
+    public List<SewerageIndex> getAllwardwiseBaseRegisterOrderByShscNumberAsc(final String ulbName,
+            final List<String> wardList) {
+        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery().filter(QueryBuilders.matchQuery("ulbName", ulbName));
+        boolQuery = boolQuery.filter(QueryBuilders.termsQuery("ward", wardList));
+        boolQuery = boolQuery.filter(QueryBuilders.matchQuery("active", true));
+        final FieldSortBuilder sort = new FieldSortBuilder("shscNumber").order(SortOrder.ASC);
+
+        final SearchQuery countQuery = new NativeSearchQueryBuilder().withIndices("sewerage").withQuery(boolQuery).build();
+        final long count = elasticsearchTemplate.queryForPage(countQuery, SewerageIndex.class).getTotalElements();
+        final SearchQuery searchQuery = new NativeSearchQueryBuilder().withIndices("sewerage")
+                .withPageable(new PageRequest(0, (int) count)).withSort(sort).withQuery(boolQuery).build();
+        return elasticsearchTemplate.queryForList(searchQuery, SewerageIndex.class);
+
+    }
+
+    public List<BigDecimal> getGrandTotal(final String ulbName,
+            final List<String> wardList) {
+        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery().filter(QueryBuilders.matchQuery("ulbName", ulbName));
+        boolQuery = boolQuery.filter(QueryBuilders.termsQuery("ward", wardList));
+        final List<BigDecimal> totalValues = new ArrayList<>();
+
+        final SearchRequestBuilder searchRequestBuilder = elasticsearchTemplate.getClient()
+                .prepareSearch("sewerage").setQuery(boolQuery)
+                .addAggregation(AggregationBuilders.sum("arrearssum").field("arrearAmount"))
+                .addAggregation(AggregationBuilders.sum("demandAmountSum").field("demandAmount"))
+                .addAggregation(AggregationBuilders.sum("totaldemandAmountSum").field("totalAmount"))
+                .addAggregation(AggregationBuilders.sum("collectedArrearAmount").field("collectedArrearAmount"))
+                .addAggregation(AggregationBuilders.sum("collectedDemandAmount").field("collectedDemandAmount"))
+                .addAggregation(AggregationBuilders.sum("extraAdvanceAmount").field("extraAdvanceAmount"));
+
+        final SearchResponse searchResponse = searchRequestBuilder.execute().actionGet();
+        if (searchResponse != null && searchResponse.getAggregations() != null) {
+
+            final Aggregations collAggr = searchResponse.getAggregations();
+            final Sum arresrsaggr = collAggr.get("arrearssum");
+            final Sum demanAmountagr = collAggr.get("demandAmountSum");
+            final Sum totalDemandaggr = collAggr.get("totaldemandAmountSum");
+            final Sum collectedArrearAmount = collAggr.get("collectedArrearAmount");
+            final Sum collectedDemandAmount = collAggr.get("collectedDemandAmount");
+            final Sum extraAdvanceAmount = collAggr.get("extraAdvanceAmount");
+
+            totalValues.add(BigDecimal.valueOf(arresrsaggr.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+            totalValues.add(BigDecimal.valueOf(demanAmountagr.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+            totalValues.add(BigDecimal.valueOf(totalDemandaggr.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+            totalValues.add(BigDecimal.valueOf(collectedArrearAmount.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+            totalValues.add(BigDecimal.valueOf(collectedDemandAmount.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+            totalValues.add(BigDecimal.valueOf(collectedArrearAmount.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP)
+                    .add(BigDecimal.valueOf(collectedDemandAmount.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP)));
+            totalValues.add(BigDecimal.valueOf(extraAdvanceAmount.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+        }
+        return totalValues;
+
     }
 
 }

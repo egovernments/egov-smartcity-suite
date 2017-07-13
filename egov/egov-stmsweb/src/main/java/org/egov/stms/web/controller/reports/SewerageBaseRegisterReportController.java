@@ -40,28 +40,28 @@
 
 package org.egov.stms.web.controller.reports;
 
+import static org.egov.infra.web.utils.WebUtils.reportToResponseEntity;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.BOUNDARYTYPE_WARD;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.HIERARCHYTYPE_REVENUE;
+import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 
-import java.io.IOException;
-import java.util.ArrayList;
+import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.service.BoundaryService;
-import org.egov.infra.admin.master.service.CityService;
-import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.stms.entity.es.SewerageIndex;
+import org.egov.infra.reporting.engine.ReportRequest;
+import org.egov.infra.reporting.engine.ReportService;
+import org.egov.infra.web.support.ui.DataTable;
+import org.egov.stms.report.service.SewerageBaseRegisterReportService;
 import org.egov.stms.reports.entity.SewerageBaseRegisterResult;
-import org.egov.stms.service.es.SewerageIndexService;
+import org.egov.stms.web.adapter.SewerageBaseRegisterAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -75,10 +75,11 @@ public class SewerageBaseRegisterReportController {
     private BoundaryService boundaryService;
 
     @Autowired
-    private CityService cityService;
+    private SewerageBaseRegisterReportService sewerageBaseRegisterReportService;
+    private final String baseRegisterReport = "stms_base_register_report";
 
     @Autowired
-    private SewerageIndexService sewerageIndexService;
+    private ReportService reportService;
 
     @ModelAttribute
     public void getPropertyModel(final Model model) {
@@ -92,54 +93,32 @@ public class SewerageBaseRegisterReportController {
         return "baseRegisterSearch-form";
     }
 
-    @RequestMapping(value = "/baseregisterresult", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/baseregisterresult", method = RequestMethod.POST, produces = TEXT_PLAIN_VALUE)
     @ResponseBody
-    public List<SewerageBaseRegisterResult> springPaginationDataTableUpdate(
-            @ModelAttribute final SewerageBaseRegisterResult sewerageBaseRegisterResult, final Model model,
-            final HttpServletRequest request,
-            final HttpServletResponse response) throws IOException {
-        List<SewerageIndex> resultList;
-        final List<String> wardNames = new ArrayList<>();
-        final List<SewerageBaseRegisterResult> baseRegisterResultList = new ArrayList<>();
-        if (null != sewerageBaseRegisterResult.getWards() && !sewerageBaseRegisterResult.getWards().isEmpty())
-            for (final Boundary boundary : sewerageBaseRegisterResult.getWards())
-                if (boundary != null) {
-                    sewerageBaseRegisterResult.setRevenueWard(boundary.getLocalName());
-                    model.addAttribute("wardId", boundary.getId());
-                    if (boundary.getLocalName() != null)
-                        wardNames.add(boundary.getLocalName());
-                }
-        final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
-        if (cityWebsite != null) {
-            resultList = sewerageIndexService.wardwiseBaseRegisterQueryFilter(cityWebsite.getName(), wardNames);
+    public String springPaginationDataTableUpdate(
+            @ModelAttribute final SewerageBaseRegisterResult sewerageBaseRegisterResult, final Model model) {
+        return new DataTable<>(sewerageBaseRegisterReportService.getBaseRegisterDetails(sewerageBaseRegisterResult, model),
+                sewerageBaseRegisterResult.draw())
+                        .toJson(SewerageBaseRegisterAdaptor.class);
 
-            for (final SewerageIndex sewerageIndex : resultList) {
-                final SewerageBaseRegisterResult searchResult = new SewerageBaseRegisterResult();
-                searchResult.setShscNumber(sewerageIndex.getShscNumber());
-                searchResult.setRevenueWard(sewerageIndex.getWard());
-                searchResult.setAssementNo(sewerageIndex.getPropertyIdentifier());
-                searchResult.setOwnerName(sewerageIndex.getConsumerName());
-                searchResult.setDoorNo(sewerageIndex.getDoorNo());
-                searchResult.setPropertyType(sewerageIndex.getPropertyType());
-                searchResult.setResidentialClosets(sewerageIndex.getNoOfClosets_residential());
-                searchResult.setNonResidentialClosets(sewerageIndex.getNoOfClosets_nonResidential());
-                searchResult.setPeriod(
-                        sewerageIndex.getPeriod() != null ? sewerageIndex.getPeriod()
-                                : org.apache.commons.lang.StringUtils.EMPTY);
-                searchResult.setArrears(sewerageIndex.getArrearAmount());
-                searchResult.setCurrentDemand(
-                        sewerageIndex.getDemandAmount());
-                searchResult.setAdvanceAmount(
-                        sewerageIndex.getExtraAdvanceAmount());
-                searchResult.setArrearsCollected(sewerageIndex.getCollectedArrearAmount());
-                searchResult.setCurrentTaxCollected(sewerageIndex.getCollectedDemandAmount());
-                searchResult
-                        .setTotalTaxCollected(
-                                sewerageIndex.getCollectedArrearAmount().add(sewerageIndex.getCollectedDemandAmount()));
-                searchResult.setTotalDemand(sewerageIndex.getTotalAmount());
-                baseRegisterResultList.add(searchResult);
-            }
-        }
-        return baseRegisterResultList;
     }
+
+    @GetMapping("/seweragebaseregister/grand-total")
+    @ResponseBody
+    public List<BigDecimal> sewerageBaseRegisterGrandTotal(final SewerageBaseRegisterResult sewerageBaseRegisterResult,
+            final Model model) {
+        return sewerageBaseRegisterReportService.baseRegisterGrandTotal(sewerageBaseRegisterResult, model);
+    }
+
+    @GetMapping("/seweragebaseregister/download")
+    @ResponseBody
+    public ResponseEntity<InputStreamResource> downloadReport(final SewerageBaseRegisterResult sewerageBaseRegisterResult,
+            final Model model) {
+        final ReportRequest reportRequest = new ReportRequest(baseRegisterReport,
+                sewerageBaseRegisterReportService.getAllBaseRegisterRecords(sewerageBaseRegisterResult, model), new HashMap<>());
+        reportRequest.setReportFormat(sewerageBaseRegisterResult.getPrintFormat());
+        reportRequest.setReportName(baseRegisterReport);
+        return reportToResponseEntity(reportRequest, reportService.createReport(reportRequest));
+    }
+
 }

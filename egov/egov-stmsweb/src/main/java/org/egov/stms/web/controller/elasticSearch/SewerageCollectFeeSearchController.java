@@ -60,6 +60,7 @@ import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.web.support.ui.DataTable;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.stms.elasticSearch.entity.SewerageCollectFeeSearchRequest;
 import org.egov.stms.elasticSearch.entity.SewerageSearchResult;
@@ -75,6 +76,10 @@ import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.search.sort.FieldSortBuilder;
 import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -143,19 +148,22 @@ public class SewerageCollectFeeSearchController {
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
-    public List<SewerageSearchResult> searchApplication(@ModelAttribute final SewerageCollectFeeSearchRequest searchRequest) {
+    public DataTable<SewerageSearchResult> searchApplication(
+            @ModelAttribute final SewerageCollectFeeSearchRequest searchRequest) {
         final List<SewerageSearchResult> searchResultList = new ArrayList<>();
-        List<SewerageIndex> resultList;
+        Page<SewerageIndex> resultList;
         final List<String> roleList = new ArrayList<>();
         final Map<String, String> actionMap = new HashMap<>();
         SewerageApplicationDetails sewerageApplicationDetails = null;
         SewerageSearchResult searchActions;
+        final Pageable pageable = new PageRequest(searchRequest.pageNumber(),
+                searchRequest.pageSize(), searchRequest.orderDir(), searchRequest.orderBy());
         final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
         if (cityWebsite != null)
             searchRequest.setUlbName(cityWebsite.getName());
         final BoolQueryBuilder boolQuery = sewerageIndexService.getSearchQueryFilter(searchRequest);
         final FieldSortBuilder sort = new FieldSortBuilder("shscNumber").order(SortOrder.DESC);
-        resultList = sewerageIndexService.getCollectSearchResult(boolQuery, sort);
+        resultList = sewerageIndexService.getCollectSearchResult(boolQuery, sort, searchRequest);
         for (final SewerageIndex sewerageIndex : resultList) {
             final SewerageSearchResult searchResult = new SewerageSearchResult();
             searchResult.setApplicationNumber(sewerageIndex.getApplicationNumber());
@@ -188,6 +196,8 @@ public class SewerageCollectFeeSearchController {
             }
             searchResultList.add(searchResult);
         }
-        return searchResultList;
+        // return searchResultList;
+        return new DataTable<>(new PageImpl<>(searchResultList, pageable, resultList.getTotalElements()), searchRequest.draw());
+
     }
 }
