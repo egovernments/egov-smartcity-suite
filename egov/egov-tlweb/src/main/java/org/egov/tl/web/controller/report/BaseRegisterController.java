@@ -41,6 +41,7 @@
 package org.egov.tl.web.controller.report;
 
 import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.reporting.engine.ReportDisposition;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.web.support.ui.DataTable;
@@ -124,6 +125,7 @@ public class BaseRegisterController {
                 baseRegisterService.getAllBaseRegisterRecords(baseRegisterRequest), new HashMap<>());
         reportRequest.setReportFormat(baseRegisterRequest.getPrintFormat());
         reportRequest.setReportName("base_register_report");
+        reportRequest.setReportDisposition(ReportDisposition.ATTACHMENT);
         return reportToResponseEntity(reportRequest, reportService.createReport(reportRequest));
     }
 }
