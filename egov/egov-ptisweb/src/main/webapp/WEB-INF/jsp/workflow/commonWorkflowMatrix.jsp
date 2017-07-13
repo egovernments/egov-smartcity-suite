@@ -168,14 +168,26 @@ function setApprover() {
          <table width="100%">
          <tr>
            <td width="10%" class="${approverEvenCSS}">&nbsp;</td>
-           <td width="20%" class="${approverEvenCSS}">&nbsp;</td>
+           <td width="10%" class="${approverEvenCSS}">&nbsp;</td>
            <td class="${approverEvenCSS}" width="5%"><s:text name="wf.approver.remarks"/>: </td>
-           <td class="${approverEvenTextCSS}"> 
-           	<textarea id="approverComments" class="form-control" name="approverComments" rows="2" cols="35" ></textarea>  
+           <td style="width: 25%;" class="${approverEvenTextCSS}"> 
+           	<textarea id="approverComments" class="form-control" name="approverComments" maxlength="1024" rows="2" cols="70" ></textarea>  
            </td>
            <td class="${approverEvenCSS}">&nbsp;</td>
-           <td width="10%" class="${approverEvenCSS}">&nbsp;</td>
+           <td width="20%" class="${approverEvenCSS}">&nbsp;</td>
            <td  class="${approverEvenCSS}">&nbsp;</td>
            </tr>
          </table>
+         <table>
+         <tr>
+          <td>
+         <font size="1" color="red">
+         <div style="text-align: right;">
+         &nbsp;&nbsp;&nbsp;&nbsp;
+         <s:text name="commentsMaxLength" />
+         </div>
+         </td>
+         </tr>
+         </table>
+         
   </div>       
