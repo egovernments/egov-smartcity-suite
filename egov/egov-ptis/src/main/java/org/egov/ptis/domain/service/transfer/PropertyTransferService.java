@@ -136,6 +136,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.TRANSFER;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_GENERATE_TRANSFER_NOTICE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SIGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_CLOSED;
+import static org.egov.ptis.constants.PropertyTaxConstants.BILLTYPE_AUTO;
 
 public class PropertyTransferService {
 
@@ -583,6 +584,7 @@ public class PropertyTransferService {
             propertyTaxBillable.setCollectionType(DemandConstants.COLLECTIONTYPE_ONLINE);
         else
             propertyTaxBillable.setCollectionType(DemandConstants.COLLECTIONTYPE_COUNTER);
+        propertyTaxBillable.setBillType(propertyTaxUtil.getBillTypeByCode(BILLTYPE_AUTO));
         propertyTaxBillable.setCallbackForApportion(Boolean.FALSE);
         propertyTaxBillable.setMutationApplicationNo(propertyMutation.getApplicationNo());
         propertyTaxBillable.setReferenceNumber(propertyTaxNumberGenerator.generateManualBillNumber(propertyMutation

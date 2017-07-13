@@ -406,7 +406,9 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     @Action(value = "/collect-fee")
     public String collectFee() {
         String target = "";
-        if (StringUtils.isNotBlank(assessmentNo))
+        if (mutationId != null)
+            propertyMutation = (PropertyMutation) persistenceService.find("From PropertyMutation where id = ? ",mutationId);
+        else if (StringUtils.isNotBlank(assessmentNo))
             propertyMutation = transferOwnerService.getCurrentPropertyMutationByAssessmentNo(assessmentNo);
         else if (StringUtils.isNotBlank(applicationNo))
             propertyMutation = transferOwnerService.getPropertyMutationByApplicationNo(applicationNo);
@@ -427,10 +429,8 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
             addActionError(getText("mutationfee.notexists"));
             target = SEARCH;
         } else {
-            if (ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName())
-                    && ApplicationThreadLocals.getUserId() == null) {
-                ApplicationThreadLocals.setUserId(securityUtils.getCurrentUser().getId());
-                target = COLLECT_ONLINE_FEE;
+            if (ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName())){
+                  target = COLLECT_ONLINE_FEE;
             }
             collectXML = transferOwnerService.generateReceipt(propertyMutation);
             if (StringUtils.isBlank(target))
