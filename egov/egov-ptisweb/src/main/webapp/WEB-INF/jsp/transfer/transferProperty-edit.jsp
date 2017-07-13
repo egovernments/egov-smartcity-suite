@@ -284,14 +284,14 @@
 						</tr>
 						<tr class="documentDetRow">
 							<td class="greybox2">&nbsp;</td>
-							<td class="greybox"><s:text name="docNum" /><span
+							<td class="greybox deedDetailsRow"><s:text name="docNum" /><span
 								class="mandatory1">*</span> :</td>
-							<td class="greybox"><s:textfield name="deedNo" id="docNum"
+							<td class="greybox deedDetailsRow"><s:textfield name="deedNo" id="docNum"
 									maxlength="64"
 									onblur="checkZero(this);validateRegDocNumber(this,'Registration Document Number')" /></td>
-							<td class="greybox"><s:text name="docDate" /><span
+							<td class="greybox deedDetailsRow"><s:text name="docDate" /><span
 								class="mandatory1">*</span> :</td>
-							<td class="greybox"><s:date name="deedDate" var="docDate"
+							<td class="greybox deedDetailsRow"><s:date name="deedDate" var="docDate"
 									format="dd/MM/yyyy" /> <s:textfield name="deedDate"
 									id="deedDate" maxlength="10" value="%{docDate}"
 									onkeyup="DateFormat(this,this.value,event,false,'3')"
@@ -394,10 +394,13 @@
 				} else {
 					jQuery("td.reasonRow").hide();
 				}
-				if (selectedValue == 'Decree by Civil Court')
+				if (selectedValue == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@MUTATIONRS_DECREE_BY_CIVIL_COURT}" />') {
 					jQuery("td.decreeDetailsRow").show();
-				else
+					jQuery("td.deedDetailsRow").hide();
+				} else {
 					jQuery("td.decreeDetailsRow").hide();
+					jQuery("td.deedDetailsRow").show();
+				}
 			}
 		}
 

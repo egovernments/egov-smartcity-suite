@@ -64,6 +64,7 @@ import org.egov.infra.rest.client.SimpleRestClient;
 import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
+import org.egov.infra.utils.DateUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.services.PersistenceService;
@@ -364,7 +365,7 @@ public class PropertyTransferService {
         final PropertyAckNoticeInfo ackBean = new PropertyAckNoticeInfo();
         ackBean.setUlbLogo(cityLogo);
         ackBean.setMunicipalityName(cityName);
-        ackBean.setReceivedDate(new SimpleDateFormat("dd/MM/yyyy").format(propertyMutation.getMutationDate()));
+        ackBean.setReceivedDate(DateUtils.getDefaultFormattedDate(propertyMutation.getMutationDate()));
         if (propertyMutation.getType().equalsIgnoreCase(PropertyTaxConstants.ADDTIONAL_RULE_REGISTERED_TRANSFER)) {
             ackBean.setApplicationType(PropertyTaxConstants.ALL_READY_REGISTER);
             ackBean.setTransferpropertyText("");
@@ -385,7 +386,7 @@ public class PropertyTransferService {
                     .getResolutionTime().toString());
         }
         ackBean.setApplicationNo(propertyMutation.getApplicationNo());
-        ackBean.setApplicationDate(new SimpleDateFormat("dd/MM/yyyy").format(propertyMutation.getMutationDate()));
+        ackBean.setApplicationDate(DateUtils.getDefaultFormattedDate(propertyMutation.getMutationDate()));
         ackBean.setApplicationName(propertyMutation.getFullTranfereeName());
         if (propertyMutation.getTransfereeInfos() != null && propertyMutation.getTransfereeInfos().size() > 0) {
             String newOwnerName = "";
@@ -436,7 +437,6 @@ public class PropertyTransferService {
             reportParams.put("userSignature", securityUtils.getCurrentUser().getSignature() != null
                     ? new ByteArrayInputStream(securityUtils.getCurrentUser().getSignature()) : "");
             reportParams.put("isCorporation", isCorporation);
-
             loggedInUserAssignment = assignmentService.getAssignmentByPositionAndUserAsOnDate(
                     propertyMutation.getCurrentState().getOwnerPosition().getId(), ApplicationThreadLocals.getUserId(), new Date());
             loggedInUserDesignation = !loggedInUserAssignment.isEmpty() ? loggedInUserAssignment.get(0).getDesignation().getName()
@@ -451,11 +451,17 @@ public class PropertyTransferService {
             noticeBean.setOldOwnerParentName(propertyMutation.getFullTransferorGuardianName());
             noticeBean.setNewOwnerName(propertyMutation.getFullTranfereeName());
             noticeBean.setNewOwnerGuardianRelation(propertyMutation.getTransfereeGuardianRelation());
-            if (propertyMutation.getDeedDate() != null)
-                noticeBean.setRegDocDate(new SimpleDateFormat("dd/MM/yyyy").format(propertyMutation.getDeedDate()));
-            noticeBean.setRegDocNo(propertyMutation.getDeedNo());
+            if (!MUTATIONRS_DECREE_BY_CIVIL_COURT.equalsIgnoreCase(propertyMutation.getMutationReason().getMutationDesc())) {
+                if (propertyMutation.getDeedDate() != null)
+                    noticeBean.setRegDocDate(DateUtils.getDefaultFormattedDate(propertyMutation.getDeedDate()));
+                noticeBean.setRegDocNo(propertyMutation.getDeedNo());
+            } else {
+                if (propertyMutation.getDecreeDate() != null)
+                    noticeBean.setRegDocDate(DateUtils.getDefaultFormattedDate(propertyMutation.getDecreeDate()));
+                noticeBean.setRegDocNo(propertyMutation.getDecreeNumber());
+            }
             noticeBean.setAssessmentNo(basicProp.getUpicNo());
-            noticeBean.setApprovedDate(new SimpleDateFormat("dd/MM/yyyy").format(propertyMutation.getMutationDate()));
+            noticeBean.setApprovedDate(DateUtils.getDefaultFormattedDate(propertyMutation.getMutationDate()));
             if (basicProp.getAddress() != null) {
                 final PropertyAddress address = basicProp.getAddress();
                 noticeBean.setOwnerAddress(address.toString());
@@ -853,9 +859,11 @@ public class PropertyTransferService {
 
     public void updateMutationReason(final PropertyMutation propertyMutation) {
         final String reasonForTransfer = propertyMutation.getMutationReason().getMutationDesc();
-        if (MUTATIONRS_DECREE_BY_CIVIL_COURT.equalsIgnoreCase(reasonForTransfer))
+        if (MUTATIONRS_DECREE_BY_CIVIL_COURT.equalsIgnoreCase(reasonForTransfer)) {
             propertyMutation.setSaleDetail(null);
-        else if (MUTATIONRS_SALES_DEED.equalsIgnoreCase(reasonForTransfer)) {
+            propertyMutation.setDeedDate(null);
+            propertyMutation.setDeedNo(null);
+        } else if (MUTATIONRS_SALES_DEED.equalsIgnoreCase(reasonForTransfer)) {
             propertyMutation.setDecreeDate(null);
             propertyMutation.setDecreeNumber(null);
             propertyMutation.setCourtName(null);
