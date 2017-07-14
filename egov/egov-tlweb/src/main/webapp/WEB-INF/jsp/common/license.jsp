@@ -59,7 +59,7 @@
 <div class="form-group">
     <label class="col-sm-3 control-label text-right"><s:text name='license.establishmentname'/><span class="mandatory"></span></label>
     <div class="col-sm-3 add-margin">
-        <s:textfield name="nameOfEstablishment" cssClass="form-control patternvalidation" data-pattern="alphabetwithspace" id="nameOfEstablishment"
+        <s:textfield name="nameOfEstablishment" cssClass="form-control newpatternvalidation" id="nameOfEstablishment"
                      value="%{nameOfEstablishment}" maxlength="250" onBlur="checkLength(this,250)" required="true"/>
         <div id="nameOfEstablishment_error" class="error-msg" style="display:none;" align="left"></div>
     </div>

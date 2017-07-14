@@ -64,7 +64,7 @@
 			code='search.license.establishmentname' /> <span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin">
 		<form:input path="nameOfEstablishment" id="nameOfEstablishment"
-			value="${nameOfEstablishment}" class="form-control patternvalidation"
+			value="${nameOfEstablishment}" class="form-control newpatternvalidation"
 			maxlength="250" onBlur="checkLength(this,250)" required="true" />
 		<form:errors path="nameOfEstablishment" cssClass="error-msg" />
 	</div>

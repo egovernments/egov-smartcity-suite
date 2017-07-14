@@ -82,6 +82,16 @@ $(document).ready(function () {
             });
         }
     });
+
+    var patern = /[^a-zA-Z0-9 _./(),-]/g;
+
+    $('.newpatternvalidation').on("input", function () {
+
+        if ($(this).val().match(patern)) {
+            $(this).val($(this).val().replace(patern, ''));
+        }
+
+    });
 });
 
 function downloadDigisignedLicenseCertificate(signedFileStoreId) {

@@ -36,106 +36,107 @@
  *         or trademarks of eGovernments Foundation.
  *  
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
- 
-*/
-$(document).ready(function() {
-	
-$("span.tradelicenceerror").each(function() {
 
-	if ($(this).html()) {
-		var validate = $(this).attr('id').split(".")[0];
-		$("*[name=" + validate + "]").focus();
-	}
-	return;
+ */
+$(document).ready(function () {
 
-})
+    $("span.tradelicenceerror").each(function () {
 
-	 $('#startDate').change(function(){ 
-		 
-		 var dt =$("#startDate").datepicker('getDate');
-		 var agrementdate =new Date(dt.getFullYear(),dt.getMonth(),dt.getDate()-1);
-		 $("#agreementDate").datepicker('setEndDate', agrementdate);
-		 
-	 })
-		  
-	 $('#boundary').change(function() {
-		parentBoundary = '';
-	});
-	 
-	 if($('#category').val() != '') {
- 		$('#category').trigger('change');
-	 }
-	 
-     $('#subCategory').change(function () {
-     	getUom();
-     });
-     
-     if ($('#boundary').val() != '') {
-         $('#boundary').trigger('change');
-     }
+        if ($(this).html()) {
+            var validate = $(this).attr('id').split(".")[0];
+            $("*[name=" + validate + "]").focus();
+        }
+        return;
 
-     if ($("#propertyNo") && $("#propertyNo").val() !== "") {
-         getPropertyDetails();
-     }
+    })
 
-	showHideAgreement();
 
-	applicationdate();
+    $('#startDate').change(function () {
 
-	var showdetail = $("#agreementDate").val();
-	if (showdetail != "")
-		$("#showAgreementDtl").prop("checked", true);
-	
+        var dt = $("#startDate").datepicker('getDate');
+        var agrementdate = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate() - 1);
+        $("#agreementDate").datepicker('setEndDate', agrementdate);
+
+    })
+
+    $('#boundary').change(function () {
+        parentBoundary = '';
+    });
+
+    if ($('#category').val() != '') {
+        $('#category').trigger('change');
+    }
+
+    $('#subCategory').change(function () {
+        getUom();
+    });
+
+    if ($('#boundary').val() != '') {
+        $('#boundary').trigger('change');
+    }
+
+    if ($("#propertyNo") && $("#propertyNo").val() !== "") {
+        getPropertyDetails();
+    }
+
+    showHideAgreement();
+
+    applicationdate();
+
+    var showdetail = $("#agreementDate").val();
+    if (showdetail != "")
+        $("#showAgreementDtl").prop("checked", true);
+
 });
 
 $('form').validate({
     ignore: ".ignore",
-    invalidHandler: function(e, validator){
-        if(validator.errorList.length)
-          $('#settingstab a[href="#' + 
-        		  $(validator.errorList[0].element).closest(".tab-pane").attr('id') + '"]').tab('show');
-					validator.errorList[0].element.focus();
+    invalidHandler: function (e, validator) {
+        if (validator.errorList.length)
+            $('#settingstab a[href="#' +
+                $(validator.errorList[0].element).closest(".tab-pane").attr('id') + '"]').tab('show');
+        validator.errorList[0].element.focus();
     }
 });
 
 
-function applicationdate(){
-	
-	var today = new Date();
-	var dd = today.getDate();
-	var mm = today.getMonth() + 1; // January is 0!
+function applicationdate() {
 
-	var yyyy = today.getFullYear();
-	if (dd < 10) {
-		dd = '0' + dd;
-	}
-	if (mm < 10) {
-		mm = '0' + mm;
-	}
-	var currentdate = dd + '/' + mm + '/' + yyyy;
-	$("#DATE").val(currentdate);
-   
+    var today = new Date();
+    var dd = today.getDate();
+    var mm = today.getMonth() + 1; // January is 0!
+
+    var yyyy = today.getFullYear();
+    if (dd < 10) {
+        dd = '0' + dd;
+    }
+    if (mm < 10) {
+        mm = '0' + mm;
+    }
+    var currentdate = dd + '/' + mm + '/' + yyyy;
+    $("#DATE").val(currentdate);
+
 }
 
 function checkOldLicenseNumberUnique() {
-	    $.ajax({
-		url : "../legacylicense/old-licenseno-is-unique",
-		type : "GET",
-		data : {
-			oldLicenseNumber : $('#oldLicenseNumber').val(),
-		},
-		cache : false,
-		dataType : "json",
-		success : function(response) {
-			if (response){
-				bootbox.alert("Old License Number is Existing");
-				$('#oldLicenseNumber').val('');
-				return false;
-			}
-			else
-				return true;
-		}
-	});
+    $.ajax({
+        url: "../legacylicense/old-licenseno-is-unique",
+        type: "GET",
+        data: {
+            oldLicenseNumber: $('#oldLicenseNumber').val(),
+        },
+        cache: false,
+        dataType: "json",
+        success: function (response) {
+            if (response) {
+                bootbox.alert("Old License Number is Existing");
+                $('#oldLicenseNumber').val('');
+                return false;
+            }
+            else
+                return true;
+        }
+    });
 }
 
 $('#boundary').change(function () {
@@ -147,20 +148,18 @@ $('#boundary').change(function () {
             cache: true,
             dataType: "json",
             data: {'locality': this.value}
-        	}).done(function (response) {
-            if (response.results.boundaries.length < 1)
-            {
+        }).done(function (response) {
+            if (response.results.boundaries.length < 1) {
                 bootbox.alert("Could not find ward for Locality : " +
-                		$('#boundary').find(":selected").text());
+                    $('#boundary').find(":selected").text());
                 $('#boundary').val('');
                 return;
             }
-            $.each(response.results.boundaries, function (key, boundary)
-            	{
+            $.each(response.results.boundaries, function (key, boundary) {
                 $('#parentBoundary').append('<option '
-                		+ (boundary.wardId === $('#parentBoundary').data('selected-id')?'selected="selected"':"") 
-                    +'value="' + boundary.wardId + '">' + boundary.wardName + '</option>');
-            	});
+                    + (boundary.wardId === $('#parentBoundary').data('selected-id') ? 'selected="selected"' : "")
+                    + 'value="' + boundary.wardId + '">' + boundary.wardName + '</option>');
+            });
             $('#parentBoundary').removeAttr('data-selected-id');
         });
     }
@@ -180,10 +179,10 @@ $('#category').change(function () {
                     var obj = {};
                     obj['id'] = data[i]['id']
                     obj['text'] = data[i]['name'];
-                    results.push(obj); 
+                    results.push(obj);
                 });
                 select2initialize($("#subCategory"), results, false);
-                
+
                 $('[name="tradeName"]').val($('[name="tradeName"]').data('selected-id')).trigger('change');
             },
             error: function () {
@@ -194,128 +193,124 @@ $('#category').change(function () {
 });
 
 function validateForm() {
-	if ($('#legacyLicenseForm').valid()) {
-		var mobileno= $('#mobilePhoneNumber').val();
-		 if (mobileno.length > 0 && mobileno.length < 10)
-		 {
-			$('#mobileError').removeClass("hide");
-			$("#mobilePhoneNumber").focus();
-			return false;
-		 }
-		  else if ($("#showAgreementDtl").checked)
-		   {
-			if ($("#agreementDate").val() == ''
-					|| $("#agreementDate").val() == null)
-				{
-					showMessage('enterLicense_error', $("#agreementDateerror").val());
-					window.scroll(0, 0);
-					return false;
-				} 
-			 else if ($("#agreementDocNo").val().trim() == ''|| $("#agreementDocNo").val() == null) 
-				 {
-					showMessage('enterLicense_error',
-							$("#agreementDocNoerror").val());
-					window.scroll(0, 0);
-					return false;
-				  } else{
-					/*validate fee details*/
-					if(validate_feedetails()){
-						//checkbox checked
-						if(feedetails_checked()){
-							formsubmit();
-						}else{
-							return false;
-						}
-					}else{
-						return false;
-					}
-				}
-			} else{
-				/*validate fee details*/
-				if(validate_feedetails()){
-					//checkbox checked
-					if(feedetails_checked()){
-						formsubmit();
-					}else{
-						return false;
-					}
-				}else{
-					return false;
-				}
-			}
-	}
-	else 
-		return false;
-	
+    if ($('#legacyLicenseForm').valid()) {
+        var mobileno = $('#mobilePhoneNumber').val();
+        if (mobileno.length > 0 && mobileno.length < 10) {
+            $('#mobileError').removeClass("hide");
+            $("#mobilePhoneNumber").focus();
+            return false;
+        }
+        else if ($("#showAgreementDtl").checked) {
+            if ($("#agreementDate").val() == ''
+                || $("#agreementDate").val() == null) {
+                showMessage('enterLicense_error', $("#agreementDateerror").val());
+                window.scroll(0, 0);
+                return false;
+            }
+            else if ($("#agreementDocNo").val().trim() == '' || $("#agreementDocNo").val() == null) {
+                showMessage('enterLicense_error',
+                    $("#agreementDocNoerror").val());
+                window.scroll(0, 0);
+                return false;
+            } else {
+                /*validate fee details*/
+                if (validate_feedetails()) {
+                    //checkbox checked
+                    if (feedetails_checked()) {
+                        formsubmit();
+                    } else {
+                        return false;
+                    }
+                } else {
+                    return false;
+                }
+            }
+        } else {
+            /*validate fee details*/
+            if (validate_feedetails()) {
+                //checkbox checked
+                if (feedetails_checked()) {
+                    formsubmit();
+                } else {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+        }
+    }
+    else
+        return false;
+
 }
 
-function validate_feedetails(){
-	
-	var validated = false;
-	var globalindex;
-	
-	$("table.feedetails tbody tr").each(function (index) {
-		var rowval = $(this).find("input.feeamount").val();
-		if(parseFloat(rowval) > 0){
-			globalindex = index;
-			validated = true;					
-		}else{
-			if(index == (globalindex+1)){
-				bootbox.alert($(this).find("input.feeyear").val()+' financial year fee details amount is missing!');
-				validated = false;
-				return false;
-			}else{
-				if($(this).is(":last-child")){
-					bootbox.alert($(this).find("input.feeyear").val()+' financial year fee details amount is mandatory!');
-					validated = false;
-					return false;
-				}
-			}
-		}
-	});
-	return validated;
+function validate_feedetails() {
+
+    var validated = false;
+    var globalindex;
+
+    $("table.feedetails tbody tr").each(function (index) {
+        var rowval = $(this).find("input.feeamount").val();
+        if (parseFloat(rowval) > 0) {
+            globalindex = index;
+            validated = true;
+        } else {
+            if (index == (globalindex + 1)) {
+                bootbox.alert($(this).find("input.feeyear").val() + ' financial year fee details amount is missing!');
+                validated = false;
+                return false;
+            } else {
+                if ($(this).is(":last-child")) {
+                    bootbox.alert($(this).find("input.feeyear").val() + ' financial year fee details amount is mandatory!');
+                    validated = false;
+                    return false;
+                }
+            }
+        }
+    });
+    return validated;
 }
 
-function feedetails_checked(){
-	
-	var checkindex;
-	var validated = false;
-	
-	$('.case:checked').each(function () {
+function feedetails_checked() {
+
+    var checkindex;
+    var validated = false;
+
+    $('.case:checked').each(function () {
         checkindex = $(this).closest('tr').index();
     });
 
-	if(checkindex != undefined){
-		$("table.feedetails tbody tr").each(function (index) {
-			if(index > checkindex){
-				validated = true;
-				return;
-			}else{
-				var rowval = $(this).find("input.feeamount").val();
-				if(parseFloat(rowval) > 0){
-					if($(this).is(":last-child")){
-						//leave it
-						validated = true;
-					}else{
-						if($(this).find('input[type=checkbox]:checked').val() == undefined){
-							bootbox.alert($(this).find("input.feeyear").val()+' financial year fee details paid should be checked!');
-							validated = false;
-							return false;
-						}
-					}
-				}
-			}
-		});
-	}else{
-		validated = true;
-	}
-	return validated;
+    if (checkindex != undefined) {
+        $("table.feedetails tbody tr").each(function (index) {
+            if (index > checkindex) {
+                validated = true;
+                return;
+            } else {
+                var rowval = $(this).find("input.feeamount").val();
+                if (parseFloat(rowval) > 0) {
+                    if ($(this).is(":last-child")) {
+                        //leave it
+                        validated = true;
+                    } else {
+                        if ($(this).find('input[type=checkbox]:checked').val() == undefined) {
+                            bootbox.alert($(this).find("input.feeyear").val() + ' financial year fee details paid should be checked!');
+                            validated = false;
+                            return false;
+                        }
+                    }
+                }
+            }
+        });
+    } else {
+        validated = true;
+    }
+    return validated;
 }
 
 
 function formsubmit() {
-	/* submit the form */
+    /* submit the form */
 //	toggleFields(false, "");
-	$("#legacyLicenseForm").submit();
+    $("#legacyLicenseForm").submit();
 }
 
