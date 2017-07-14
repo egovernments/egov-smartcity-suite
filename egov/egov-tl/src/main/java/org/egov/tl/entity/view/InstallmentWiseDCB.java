@@ -1,53 +1,54 @@
 /*
- *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
- *    accountability and the service delivery of the government  organizations.
+ * eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ * accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *  Copyright (C) <2017>  eGovernments Foundation
  *
- *     The updated version of eGov suite of products as by eGovernments Foundation
- *     is available at http://www.egovernments.org
+ *  The updated version of eGov suite of products as by eGovernments Foundation
+ *  is available at http://www.egovernments.org
  *
- *     This program is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     any later version.
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  any later version.
  *
- *     This program is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU General Public License
- *     along with this program. If not, see http://www.gnu.org/licenses/ or
- *     http://www.gnu.org/licenses/gpl.html .
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program. If not, see http://www.gnu.org/licenses/ or
+ *  http://www.gnu.org/licenses/gpl.html .
  *
- *     In addition to the terms of the GPL license to be adhered to in using this
- *     program, the following additional terms are to be complied with:
+ *  In addition to the terms of the GPL license to be adhered to in using this
+ *  program, the following additional terms are to be complied with:
  *
- *         1) All versions of this program, verbatim or modified must carry this
- *            Legal Notice.
- *           Further, all user interfaces, including but not limited to citizen facing interfaces,
- *           Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
- *           derived works should carry eGovernments Foundation logo on the top right corner.
+ *      1) All versions of this program, verbatim or modified must carry this
+ *         Legal Notice.
+ * 	Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *         Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *         derived works should carry eGovernments Foundation logo on the top right corner.
  *
- * 	       For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
- * 	       For any further queries on attribution, including queries on brand guidelines,
- *           please contact contact@egovernments.org
+ * 	For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ * 	For any further queries on attribution, including queries on brand guidelines,
+ *         please contact contact@egovernments.org
  *
- *         2) Any misrepresentation of the origin of the material is prohibited. It
- *            is required that all modified versions of this material be marked in
- *            reasonable ways as different from the original version.
+ *      2) Any misrepresentation of the origin of the material is prohibited. It
+ *         is required that all modified versions of this material be marked in
+ *         reasonable ways as different from the original version.
  *
- *         3) This license does not grant any rights to any user of the program
- *            with regards to rights under trademark law for use of the trade names
- *            or trademarks of eGovernments Foundation.
+ *      3) This license does not grant any rights to any user of the program
+ *         with regards to rights under trademark law for use of the trade names
+ *         or trademarks of eGovernments Foundation.
  *
- *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
 package org.egov.tl.entity.view;
 
 import org.hibernate.annotations.Immutable;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.math.BigInteger;
@@ -82,13 +83,17 @@ public class InstallmentWiseDCB {
     @Transient
     private BigInteger arrearbalance;
 
+    @Type(type = "true_false")
+    private Boolean active;
+
     private Date installment;
 
-    public InstallmentWiseDCB(final long licenseid,final String licensenumber, final BigInteger currentdemand,
-                              final BigInteger currentcollection, final BigInteger currentbalance, final BigInteger arreardemand,
-                              final BigInteger arrearcollection, final BigInteger arrearbalance) {
-        this.licenseid=licenseid;
+    public InstallmentWiseDCB(long licenseid, String licensenumber, Boolean active, BigInteger currentdemand,
+                              BigInteger currentcollection, BigInteger currentbalance, BigInteger arreardemand,
+                              BigInteger arrearcollection, BigInteger arrearbalance) {
+        this.licenseid = licenseid;
         this.licensenumber = licensenumber;
+        this.active = active;
         this.currentdemand = currentdemand;
         this.currentcollection = currentcollection;
         this.currentbalance = currentbalance;
@@ -98,7 +103,7 @@ public class InstallmentWiseDCB {
 
     }
 
-    public InstallmentWiseDCB(final Long count) {
+    public InstallmentWiseDCB(Long count) {
 
     }
 
@@ -110,7 +115,7 @@ public class InstallmentWiseDCB {
         return licensenumber;
     }
 
-    public void setLicensenumber(final String licensenumber) {
+    public void setLicensenumber(String licensenumber) {
         this.licensenumber = licensenumber;
     }
 
@@ -118,7 +123,7 @@ public class InstallmentWiseDCB {
         return licenseid;
     }
 
-    public void setLicenseid(final Long licenseid) {
+    public void setLicenseid(Long licenseid) {
         this.licenseid = licenseid;
     }
 
@@ -126,7 +131,7 @@ public class InstallmentWiseDCB {
         return licaddress;
     }
 
-    public void setLicaddress(final String licaddress) {
+    public void setLicaddress(String licaddress) {
         this.licaddress = licaddress;
     }
 
@@ -134,7 +139,7 @@ public class InstallmentWiseDCB {
         return username;
     }
 
-    public void setUsername(final String username) {
+    public void setUsername(String username) {
         this.username = username;
     }
 
@@ -142,7 +147,7 @@ public class InstallmentWiseDCB {
         return wardid;
     }
 
-    public void setWardid(final Long wardid) {
+    public void setWardid(Long wardid) {
         this.wardid = wardid;
     }
 
@@ -150,7 +155,7 @@ public class InstallmentWiseDCB {
         return locality;
     }
 
-    public void setLocality(final Long locality) {
+    public void setLocality(Long locality) {
         this.locality = locality;
     }
 
@@ -158,7 +163,7 @@ public class InstallmentWiseDCB {
         return currentdemand;
     }
 
-    public void setCurrentdemand(final BigInteger currentdemand) {
+    public void setCurrentdemand(BigInteger currentdemand) {
         this.currentdemand = currentdemand;
     }
 
@@ -166,7 +171,7 @@ public class InstallmentWiseDCB {
         return currentcollection;
     }
 
-    public void setCurrentcollection(final BigInteger currentcollection) {
+    public void setCurrentcollection(BigInteger currentcollection) {
         this.currentcollection = currentcollection;
     }
 
@@ -174,7 +179,7 @@ public class InstallmentWiseDCB {
         return currentbalance;
     }
 
-    public void setCurrentbalance(final BigInteger currentbalance) {
+    public void setCurrentbalance(BigInteger currentbalance) {
         this.currentbalance = currentbalance;
     }
 
@@ -182,7 +187,7 @@ public class InstallmentWiseDCB {
         return arreardemand;
     }
 
-    public void setArreardemand(final BigInteger arreardemand) {
+    public void setArreardemand(BigInteger arreardemand) {
         this.arreardemand = arreardemand;
     }
 
@@ -190,7 +195,7 @@ public class InstallmentWiseDCB {
         return arrearcollection;
     }
 
-    public void setArrearcollection(final BigInteger arrearcollection) {
+    public void setArrearcollection(BigInteger arrearcollection) {
         this.arrearcollection = arrearcollection;
     }
 
@@ -198,7 +203,7 @@ public class InstallmentWiseDCB {
         return arrearbalance;
     }
 
-    public void setArrearbalance(final BigInteger arrearbalance) {
+    public void setArrearbalance(BigInteger arrearbalance) {
         this.arrearbalance = arrearbalance;
     }
 
@@ -206,7 +211,7 @@ public class InstallmentWiseDCB {
         return installment;
     }
 
-    public void setInstallment(final Date installment) {
+    public void setInstallment(Date installment) {
         this.installment = installment;
     }
 
@@ -224,5 +229,14 @@ public class InstallmentWiseDCB {
         return (currentbalance == null ? BigInteger.ZERO : currentbalance).add(arrearbalance == null ? BigInteger.ZERO
                 : arrearbalance);
     }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
+
 
 }

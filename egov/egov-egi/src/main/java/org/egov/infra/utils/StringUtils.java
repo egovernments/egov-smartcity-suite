@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ * eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) 2016  eGovernments Foundation
+ *  Copyright (C) <2017>  eGovernments Foundation
  *
  *  The updated version of eGov suite of products as by eGovernments Foundation
  *  is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *      1) All versions of this program, verbatim or modified must carry this
  *         Legal Notice.
+ * 	Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *         Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *         derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ * 	For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ * 	For any further queries on attribution, including queries on brand guidelines,
+ *         please contact contact@egovernments.org
  *
  *      2) Any misrepresentation of the origin of the material is prohibited. It
  *         is required that all modified versions of this material be marked in
@@ -49,58 +56,72 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static org.egov.infra.utils.ApplicationConstant.NA;
+import static org.egov.infra.utils.ApplicationConstant.NO;
+import static org.egov.infra.utils.ApplicationConstant.YES;
+
 public class StringUtils extends org.apache.commons.lang.StringUtils {
 
-	public static final Pattern SPL_CHAR_PATRN = Pattern.compile("([&;,+=\\[\\]\\{\\}><^\\(\\)#:~`/\\\\!\'\"])");
+    public static final Pattern SPL_CHAR_PATRN = Pattern.compile("([&;,+=\\[\\]\\{\\}><^\\(\\)#:~`/\\\\!\'\"])");
 
-	/**
-	 * Helper method to remove special characters like new line, space and single quote
-	 * @return String
-	 */
-	public static String escapeSpecialChars(final String str) {
-		return str.replaceAll("\\s\\s+|\\r\\n", "<br/>").replaceAll("\'", "\\\\'");
-	}
+    /**
+     * Helper method to remove special characters like new line, space and single quote
+     *
+     * @return String
+     */
+    public static String escapeSpecialChars(final String str) {
+        return str.replaceAll("\\s\\s+|\\r\\n", "<br/>").replaceAll("\'", "\\\\'");
+    }
 
-	/**
-	 * Escape the given string so that it can be safely used inside javascript
-	 * @return String the escaped string
-	 */
-	public static String escapeJavaScript(final String str) {
-		return StringEscapeUtils.escapeJavaScript(str);
-	}
+    /**
+     * Escape the given string so that it can be safely used inside javascript
+     *
+     * @return String the escaped string
+     */
+    public static String escapeJavaScript(final String str) {
+        return StringEscapeUtils.escapeJavaScript(str);
+    }
 
-	public static String escapeJSON(final String str) {
-		return JSONObject.escape(str);
-	}
+    public static String escapeJSON(final String str) {
+        return JSONObject.escape(str);
+    }
 
-	/**
-	 * Checks if the given String value contains special characters ([,&,;,,,+,=,{,},>,<,^,(,),#,:,~,`,/,\,!,',",])
-	 * @param str a String value
-	 * @return boolean hasSpecialChars
-	 */
-	public static boolean hasSpecialChars(final String str) {
-		final Matcher matcher = SPL_CHAR_PATRN.matcher(str);
-		return matcher.find();
-	}
+    /**
+     * Checks if the given String value contains special characters ([,&,;,,,+,=,{,},>,<,^,(,),#,:,~,`,/,\,!,',",])
+     *
+     * @param str a String value
+     * @return boolean hasSpecialChars
+     */
+    public static boolean hasSpecialChars(final String str) {
+        final Matcher matcher = SPL_CHAR_PATRN.matcher(str);
+        return matcher.find();
+    }
 
-	public static String emptyIfNull(final String value) {
-		return value == null ? EMPTY : value;
-	}
+    public static String emptyIfNull(final String value) {
+        return value == null ? EMPTY : value;
+    }
 
-	public static String[] toStringArray(final String... values) {
-		return values;
-	}
+    public static String[] toStringArray(final String... values) {
+        return values;
+    }
 
-	public static List<String> toList(final String... values) {
-		return Arrays.asList(values);
-	}
+    public static List<String> toList(final String... values) {
+        return Arrays.asList(values);
+    }
 
-	public static String encodeString(String string) {
-		return org.apache.commons.lang3.StringUtils.toEncodedString(string.getBytes(), Charset.forName("UTF-8"));
-	}
+    public static String encodeString(String string) {
+        return org.apache.commons.lang3.StringUtils.toEncodedString(string.getBytes(), Charset.forName("UTF-8"));
+    }
 
-	public static String [] listToStringArray(List<String> values) {
-		return values.stream().toArray(String[]::new);
-	}
+    public static String[] listToStringArray(List<String> values) {
+        return values.stream().toArray(String[]::new);
+    }
 
+    public static String toYesOrNo(boolean value) {
+        return value ? YES : NO;
+    }
+
+    public static String defaultIfBlank(String value) {
+        return defaultIfBlank(value, NA);
+    }
 }
