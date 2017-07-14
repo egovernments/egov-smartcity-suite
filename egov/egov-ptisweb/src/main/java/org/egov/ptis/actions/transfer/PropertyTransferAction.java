@@ -273,7 +273,8 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     private Boolean isReassignEnabled = Boolean.FALSE;
     private Long stateAwareId;
     private String transactionType;
-    
+    private Boolean showPayBtn = Boolean.FALSE;
+
     public PropertyTransferAction() {
         addRelatedEntity("mutationReason", PropertyMutationMaster.class);
     }
@@ -406,9 +407,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     @Action(value = "/collect-fee")
     public String collectFee() {
         String target = "";
-        if (mutationId != null)
-            propertyMutation = (PropertyMutation) persistenceService.find("From PropertyMutation where id = ? ",mutationId);
-        else if (StringUtils.isNotBlank(assessmentNo))
+        if (StringUtils.isNotBlank(assessmentNo))
             propertyMutation = transferOwnerService.getCurrentPropertyMutationByAssessmentNo(assessmentNo);
         else if (StringUtils.isNotBlank(applicationNo))
             propertyMutation = transferOwnerService.getPropertyMutationByApplicationNo(applicationNo);
@@ -429,7 +428,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
             addActionError(getText("mutationfee.notexists"));
             target = SEARCH;
         } else {
-            if (ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName())){
+            if (ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName()) || citizenPortalUser){
                   target = COLLECT_ONLINE_FEE;
             }
             collectXML = transferOwnerService.generateReceipt(propertyMutation);
@@ -669,6 +668,9 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
             }
         }
         digitalSignEnabled = propertyTaxCommonUtils.isDigitalSignatureEnabled();
+        if (propertyByEmployee || SecurityUtils.userAnonymouslyAuthenticated() || citizenPortalUser){
+            showPayBtn = Boolean.TRUE;
+        }
     }
 
     @Override
@@ -1392,7 +1394,14 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     public void setTransactionType(String transactionType) {
         this.transactionType = transactionType;
     }
-    
-    
-   
+
+    public Boolean getShowPayBtn() {
+        return showPayBtn;
+    }
+
+    public void setShowPayBtn(final Boolean showPayBtn) {
+        this.showPayBtn = showPayBtn;
+    }
+
+
 }
