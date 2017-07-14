@@ -84,9 +84,10 @@ public class InstallmentWiseDCB {
 
     private Date installment;
 
-    public InstallmentWiseDCB(final String licensenumber, final BigInteger currentdemand,
+    public InstallmentWiseDCB(final long licenseid,final String licensenumber, final BigInteger currentdemand,
                               final BigInteger currentcollection, final BigInteger currentbalance, final BigInteger arreardemand,
                               final BigInteger arrearcollection, final BigInteger arrearbalance) {
+        this.licenseid=licenseid;
         this.licensenumber = licensenumber;
         this.currentdemand = currentdemand;
         this.currentcollection = currentcollection;

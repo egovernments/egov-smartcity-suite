@@ -39,6 +39,7 @@
  */
 
 var reportdatatable;
+var param;
 var recordTotal = [];
 $(document).ready(function (e) {
     drillDowntableContainer = $("#tbldcbdrilldown");
@@ -60,7 +61,11 @@ $(document).ready(function (e) {
 function getSumOfRecords() {
 
     $.ajax({
-        url: "grand-total?licensenumber=" + $('#licensenumber').val(),
+        url: "grand-total",
+        data:{
+            'licensenumber': $('#licensenumber').val(),
+            'activeLicense': $('#activeLicense').val(),
+        },
         type: 'GET',
         async:false,
         success: function (data) {
@@ -77,6 +82,16 @@ function openTradeLicense(obj) {
         'scrollbars=yes,width=1000,height=700,status=yes');
 }
 
+function jasonParam(obj) {
+    var parts = [];
+    for (var key in obj) {
+        if (obj.hasOwnProperty(key)) {
+            parts.push(encodeURIComponent(key) + '=' + encodeURIComponent(obj[key]));
+        }
+    }
+    return "?" + parts.join('&');
+}
+
 function searchDCBReport(event) {
     $('#report-backbutton').show();
     var licenseNumbertemp = $('#licensenumber').val();
@@ -85,7 +100,10 @@ function searchDCBReport(event) {
     event.preventDefault();
     $("#tbldcbdrilldown").dataTable().fnDestroy();
 
-    reportdatatable = drillDowntableContainer.dataTable({
+    reportdatatable = drillDowntableContainer
+        .on('preXhr.dt', function ( e, settings, data ) {
+            param=data;
+        }).dataTable({
         processing: true,
         serverSide: true,
         sort: true,
@@ -98,26 +116,27 @@ function searchDCBReport(event) {
             {
                 text: 'PDF',
                 action: function (e, dt, node, config) {
-                    var url = "download?licensenumber=" + licenseNumbertemp + "&printFormat=PDF";
+                    var url = "download"+jasonParam(param)+ "&printFormat=PDF";
                     window.open(url, '', 'scrollbars=yes,width=1300,height=700,status=yes');
                 }
             },
             {
                 text: 'XLS',
                 action: function (e, dt, node, config) {
-                    var url = "download?licensenumber=" + licenseNumbertemp + "&printFormat=XLS";
+                    var url = "download"+jasonParam(param)+ "&printFormat=XLS";
                     window.open(url, '_self', 'scrollbars=yes,width=1300,height=700,status=yes');
                 }
             }],
         responsive: true,
         destroy: true,
-        "order": [[1, 'asc']],
+        "order": [[0, 'asc']],
         ajax: {
             url: "search",
             type: 'POST',
             data: function (args) {
                 return {
-                    "args": JSON.stringify(args), 'licensenumber': licenseNumbertemp
+                    "args": JSON.stringify(args), 'licensenumber': licenseNumbertemp,
+                    'activeLicense':$('#activeLicense').val()
                 }
             }
         },
@@ -136,6 +155,10 @@ function searchDCBReport(event) {
                 },
                 "sTitle": "License No.",
                 "name": "licensenumber",
+            }, {
+                "data": "active",
+                "name": "active",
+                "sTitle": "Active"
             }, {
                 "data": "arreardemand",
                 "name": "arreardemand",
@@ -184,7 +207,6 @@ function searchDCBReport(event) {
                 $('#report-footer').show();
             }
             if (data.length > 0) {
-                updateTotalFooter(1, api, true);
                 updateTotalFooter(2, api, true);
                 updateTotalFooter(3, api, true);
                 updateTotalFooter(4, api, true);
@@ -193,10 +215,11 @@ function searchDCBReport(event) {
                 updateTotalFooter(7, api, true);
                 updateTotalFooter(8, api, true);
                 updateTotalFooter(9, api, true);
+                updateTotalFooter(10, api, true);
             }
         },
         "aoColumnDefs": [{
-            "aTargets": [1, 2, 3, 4, 5, 6, 7, 8, 9],
+            "aTargets": [2, 3, 4, 5, 6, 7, 8, 9,10],
             "mRender": function (data, type, full) {
                 return formatNumberInr(data);
             }
@@ -219,7 +242,7 @@ function updateTotalFooter(colidx, api, isServerSide) {
 
     // Total over all pages
     if (isServerSide && recordTotal != null)
-        total = recordTotal[colidx - 1];
+        total = recordTotal[colidx - 2];
     else
         total = api.column(colidx).data().reduce(function (a, b) {
             return intVal(a) + intVal(b);

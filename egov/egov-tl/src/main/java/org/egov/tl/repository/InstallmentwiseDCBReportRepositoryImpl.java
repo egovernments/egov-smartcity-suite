@@ -41,8 +41,8 @@
 package org.egov.tl.repository;
 
 import org.egov.infstr.services.Page;
-import org.egov.tl.entity.view.InstallmentWiseDCB;
 import org.egov.tl.entity.dto.InstallmentWiseDCBRequest;
+import org.egov.tl.entity.view.InstallmentWiseDCB;
 import org.springframework.data.domain.Sort.Direction;
 
 import javax.persistence.EntityManager;
@@ -82,7 +82,7 @@ public class InstallmentwiseDCBReportRepositoryImpl implements InstallmentwiseDC
         countCriteriaQuery.multiselect(criteriaBuilder.count(countRoot))
                 .where(predicatecondition(criteriaBuilder, countRoot, installmentWiseDCBRequest, financialYearStartDate)
                         .toArray(new Predicate[]{}))
-                .groupBy(countRoot.get("licensenumber"));
+                .groupBy(countRoot.get("licenseid"));
 
         final TypedQuery<InstallmentWiseDCB> countquery = entityManager.createQuery(countCriteriaQuery);
         final int recordTotal = countquery.getResultList().size();
@@ -188,7 +188,7 @@ public class InstallmentwiseDCBReportRepositoryImpl implements InstallmentwiseDC
         final CriteriaQuery<InstallmentWiseDCB> criteriaQuery = criteriaBuilder.createQuery(InstallmentWiseDCB.class);
         final Root<InstallmentWiseDCB> root = criteriaQuery.from(InstallmentWiseDCB.class);
 
-        criteriaQuery.multiselect(root.get(LICENSENUMBER),
+        criteriaQuery.multiselect(root.get("licenseid"), root.get(LICENSENUMBER),
                 criteriaBuilder.coalesce(criteriaBuilder.sum(criteriaBuilder.<Number>selectCase()
                                 .when(criteriaBuilder.equal(root.get(INSTALLMENT), financialYearStartDate),
                                         root.get(CURRENTDEMAND))
@@ -221,7 +221,7 @@ public class InstallmentwiseDCBReportRepositoryImpl implements InstallmentwiseDC
                         0).alias("arrearbalance"))
                 .where(predicatecondition(criteriaBuilder, root, installmentWiseDCBRequest, financialYearStartDate)
                         .toArray(new Predicate[]{}))
-                .groupBy(root.get(LICENSENUMBER));
+                .groupBy(root.get("licenseid"), root.get(LICENSENUMBER));
         if (fuzzyLogic) {
             if (installmentWiseDCBRequest.orderBy().equals(LICENSENUMBER))
                 criteriaQuery.orderBy(installmentWiseDCBRequest.orderDir().equals(Direction.ASC)

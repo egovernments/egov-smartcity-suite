@@ -39,117 +39,128 @@
   --%>
 
 
-<%@ page contentType="text/html" language="java"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
-<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
+<%@ page contentType="text/html" language="java" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <div class="row">
-	<div class="col-md-12">
-		<form:form class="form-horizontal form-groups-bordered" action=""
-			id="dcbreportform" modelAttribute="dCBReportResult" method="get">
-			<div class="panel panel-primary" data-collapsed="0">
-				<div class="panel-heading">
-					<div class="panel-title">
-						<strong><spring:message code="title.licensewisedcbreport" /></strong>
-					</div>
-				</div><%-- 
-				<form:hidden path="mode" id="mode" value="${mode}" /> --%>
-				<div class="panel-body"></div>
-				<div class="form-group">
-					<label class="col-sm-3 control-label text-right"> License
-						Number</label>
-					<div class="col-sm-6 add-margin">
-						<input type="text" name="licensenumber" id="licensenumber"
-							class="form-control patternvalidation" maxlength="15" />
-					</div>
-				</div>
-			</div>
-			<div class="row">
-				<div class="text-center">
-					<button type="submit" id="btnsearch" class="btn btn-primary">
-						<spring:message code="lbl.search" />
-					</button>
-					<button type="button" class="btn btn-default" data-dismiss="modal"
-						onclick="window.close();">
-						<spring:message code="lbl.close" />
-					</button>
-				</div>
-			</div>
-		</form:form>
-	</div>
+    <div class="col-md-12">
+        <form:form class="form-horizontal form-groups-bordered" action=""
+                   id="dcbreportform" modelAttribute="dCBReportResult" method="get">
+            <div class="panel panel-primary" data-collapsed="0">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        <strong><spring:message code="title.licensewisedcbreport"/></strong>
+                    </div>
+                </div>
+                <div class="panel-body"></div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label text-right"> License
+                        Number</label>
+                    <div class="col-sm-6 add-margin">
+                        <input type="text" name="licensenumber" id="licensenumber"
+                               class="form-control patternvalidation" maxlength="15"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label text-right">Status</label>
+                    <div class="col-sm-6 add-margin">
+                        <select name="active" id="activeLicense" class="form-control">
+                            <option value="0">All</option>
+                            <option value="1">Active</option>
+                            <option value="2">Inactive</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="text-center">
+                    <button type="submit" id="btnsearch" class="btn btn-primary">
+                        <spring:message code="lbl.search"/>
+                    </button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal"
+                            onclick="window.close();">
+                        <spring:message code="lbl.close"/>
+                    </button>
+                </div>
+            </div>
+        </form:form>
+    </div>
 </div>
 
 <div class="row display-hide report-section">
-	<div class="col-md-12 table-header text-left">
-		<spring:message code="lbl.drill.report" />
-		Report Details
-	</div>
-	<div class="col-md-12 form-group report-table-container">
-		<table
-			class="table table-bordered datatable dt-responsive table-hover multiheadertbl"
-			id="tbldcbdrilldown">
-			<thead>
-				<tr>
-					<th rowspan="2"></th>
-					<th colspan="3"><spring:message code="lbl.demand" /></th>
-					<th colspan="3"><spring:message code="lbl.collection" /></th>
-					<th colspan="3"><spring:message code="lbl.balance" /></th>
-				</tr>
-				<tr>
-					<th><spring:message code="lbl.arrear" /></th>
-					<th><spring:message code="lbl.current" /></th>
-					<th><spring:message code="lbl.total" /></th>
-					<th><spring:message code="lbl.arrear" /></th>
-					<th><spring:message code="lbl.current" /></th>
-					<th><spring:message code="lbl.total" /></th>
-					<th><spring:message code="lbl.arrear" /></th>
-					<th><spring:message code="lbl.current" /></th>
-					<th><spring:message code="lbl.total" /></th>
-				</tr>
-			</thead>
-			<tfoot id="report-footer">
-				<tr>
-					<td colspan="1" align="center"><spring:message
-							code="lbl.total" /></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-				</tr>
-			</tfoot>
-		</table>
-	</div>
+    <div class="col-md-12 table-header text-left">
+        <spring:message code="lbl.drill.report"/>
+        Report Details
+    </div>
+    <div class="col-md-12 form-group report-table-container">
+        <table
+                class="table table-bordered datatable dt-responsive table-hover multiheadertbl"
+                id="tbldcbdrilldown">
+            <thead>
+            <tr>
+                <th rowspan="2"></th>
+                <th rowspan="2"></th>
+                <th colspan="3"><spring:message code="lbl.demand"/></th>
+                <th colspan="3"><spring:message code="lbl.collection"/></th>
+                <th colspan="3"><spring:message code="lbl.balance"/></th>
+            </tr>
+            <tr>
+                <th><spring:message code="lbl.arrear"/></th>
+                <th><spring:message code="lbl.current"/></th>
+                <th><spring:message code="lbl.total"/></th>
+                <th><spring:message code="lbl.arrear"/></th>
+                <th><spring:message code="lbl.current"/></th>
+                <th><spring:message code="lbl.total"/></th>
+                <th><spring:message code="lbl.arrear"/></th>
+                <th><spring:message code="lbl.current"/></th>
+                <th><spring:message code="lbl.total"/></th>
+            </tr>
+            </thead>
+            <tfoot id="report-footer">
+            <tr>
+                <td></td>
+                <td colspan="1" align="center"><spring:message
+                        code="lbl.total"/></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            </tfoot>
+        </table>
+    </div>
 </div>
 <div id="report-backbutton" class="col-xs-12 text-center"></div>
 <link rel="stylesheet"
-	href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>" />
+      href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>
 <link rel="stylesheet"
-	href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
+      href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
 <script type="text/javascript"
-	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
+        src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
 <script type="text/javascript"
-	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
+        src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
 <script
-	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/dataTables.buttons.min.js' context='/egi'/>"></script>
+        src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/dataTables.buttons.min.js' context='/egi'/>"></script>
 <script
-	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/buttons.bootstrap.min.js' context='/egi'/>"></script>
+        src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/buttons.bootstrap.min.js' context='/egi'/>"></script>
 <script
-	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/buttons.flash.min.js' context='/egi'/>"></script>
+        src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/buttons.flash.min.js' context='/egi'/>"></script>
 <script
-	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/jszip.min.js' context='/egi'/>"></script>
+        src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/jszip.min.js' context='/egi'/>"></script>
 <script
-	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/pdfmake.min.js' context='/egi'/>"></script>
+        src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/pdfmake.min.js' context='/egi'/>"></script>
 <script
-	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/vfs_fonts.js' context='/egi'/>"></script>
+        src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/vfs_fonts.js' context='/egi'/>"></script>
 <script
-	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/buttons.html5.min.js' context='/egi'/>"></script>
+        src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/buttons.html5.min.js' context='/egi'/>"></script>
 <script
-	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/buttons.print.min.js' context='/egi'/>"></script>
+        src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/buttons.print.min.js' context='/egi'/>"></script>
 <script type="text/javascript"
-	src="<cdn:url  value='/resources/js/app/dcb-report.js?rnd=${app_release_no}'/>"></script>
+        src="<cdn:url  value='/resources/js/app/dcb-report.js?rnd=${app_release_no}'/>"></script>
