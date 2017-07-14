@@ -124,14 +124,14 @@ function searchDCBReport(event) {
                 text: 'PDF',
                 action: function (e, dt, node, config) {
                     var url = "download"+jasonParam(param)+ "&printFormat=PDF";
-                    window.open(url, '', 'scrollbars=yes,width=1300,height=700,status=yes');
+                    window.open(url, '_self');
                 }
             },
             {
                 text: 'XLS',
                 action: function (e, dt, node, config) {
                     var url = "download"+jasonParam(param)+ "&printFormat=XLS";
-                    window.open(url, '_self', 'scrollbars=yes,width=1300,height=700,status=yes');
+                    window.open(url, '_self');
                 }
             }],
         responsive: true,

@@ -121,7 +121,7 @@ function searchInstallmentwiseDCB(event) {
                 {
                     text: 'PDF',
                     action: function (e, dt, node, config) {
-                        window.open("/tl/report/dcb/yearwise/download" + obj_to_query(pramdata) + "&printFormat=PDF", '', 'scrollbars=yes,width=1300,height=700,status=yes');
+                        window.open("/tl/report/dcb/yearwise/download" + obj_to_query(pramdata) + "&printFormat=PDF", '_self');
                     }
                 },
                 {

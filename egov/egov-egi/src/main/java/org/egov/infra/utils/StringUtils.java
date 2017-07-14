@@ -56,9 +56,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.egov.infra.utils.ApplicationConstant.NA;
-import static org.egov.infra.utils.ApplicationConstant.NO;
-import static org.egov.infra.utils.ApplicationConstant.YES;
+import static org.egov.infra.utils.ApplicationConstant.*;
+import static org.egov.infra.utils.DateUtils.currentDateToFileNameFormat;
 
 public class StringUtils extends org.apache.commons.lang.StringUtils {
 
@@ -123,5 +122,9 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
 
     public static String defaultIfBlank(String value) {
         return defaultIfBlank(value, NA);
+    }
+
+    public static String appendTimestamp(String name) {
+        return new StringBuilder().append(name).append(UNDERSCORE).append(currentDateToFileNameFormat()).toString();
     }
 }
