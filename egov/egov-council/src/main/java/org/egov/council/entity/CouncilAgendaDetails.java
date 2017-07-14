@@ -50,10 +50,23 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.envers.AuditOverride;
+import org.hibernate.envers.AuditOverrides;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.RelationTargetAuditMode;
+
 @Entity
 @Table(name = "egcncl_agenda_details")
 @SequenceGenerator(name = CouncilAgendaDetails.SEQ_AGENDADETAILS, sequenceName = CouncilAgendaDetails.SEQ_AGENDADETAILS, allocationSize = 1)
-public class CouncilAgendaDetails  {
+@AuditOverrides({ @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy"),
+        @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate") })
+public class CouncilAgendaDetails extends AbstractAuditable {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
 
     public static final String SEQ_AGENDADETAILS = "seq_egcncl_agenda_details";
 
@@ -63,16 +76,20 @@ public class CouncilAgendaDetails  {
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "agenda", nullable = false)
+    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     private CouncilAgenda agenda;
 
     @Column(name = "itemnumber")
+    @Audited
     private String itemNumber;
 
     @Column(name = "order_id")
+    @Audited
     private Long order;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "preamble", nullable = false)
+    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     private CouncilPreamble preamble;
 
     public Long getId() {

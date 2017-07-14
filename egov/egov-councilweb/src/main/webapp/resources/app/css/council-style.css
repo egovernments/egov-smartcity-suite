@@ -1,0 +1,51 @@
+
+
+.serialno {
+  font-size: 1.4em;
+}
+.dragging{
+  cursor: move !important;
+}
+
+.dragged {
+  position: absolute;
+  opacity: 0.5;
+  z-index: 2000;
+}
+
+table.sorted_table tr.placeholder {
+  position: relative;
+  /** More li styles **/
+}
+table.sorted_table tr.placeholder:before {
+  position: absolute;
+  /** Define arrowhead **/
+}
+
+
+/* multiple select tick box start */
+
+select.tick-indicator option:before{
+	font-family: FontAwesome;
+	content:"\f096";
+	padding-right:5px; 
+}
+
+select.tick-indicator option:checked:before{
+	font-family: FontAwesome;
+	content:"\f046";
+}
+
+
+select.tick-indicator[multiple] option:checked {
+  color:black;
+  font-weight:bold;
+  background: white linear-gradient(0deg, grey 0%, grey 100%);
+}
+
+/* multiple select tick box end */
+
+
+	.morecontent span {
+	    display: none;
+	}

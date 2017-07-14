@@ -182,15 +182,17 @@ public class CouncilAgendaController {
 
     private Long buildCouncilAgendaDetails(final CouncilAgenda councilAgenda,
             Long itemNumber, CouncilAgendaDetails councilAgendaDetails) {
+        if (councilAgendaDetails.getPreamble() != null) {
         councilAgendaDetails.setPreamble(councilPreambleService
                 .findOne(councilAgendaDetails.getPreamble().getId()));
         councilAgendaDetails.setAgenda(councilAgenda);
         councilAgendaDetails.setItemNumber(itemNumber.toString());
         councilAgendaDetails.setOrder(itemNumber);
         itemNumber++;
-        councilAgendaDetails.getPreamble().setStatus(
-                egwStatusHibernateDAO.getStatusByModuleAndCode(
-                        PREAMBLE_MODULENAME, PREAMBLEUSEDINAGENDA));
+            councilAgendaDetails.getPreamble().setStatus(
+                    egwStatusHibernateDAO.getStatusByModuleAndCode(
+                            PREAMBLE_MODULENAME, PREAMBLEUSEDINAGENDA));
+        }
         return itemNumber;
     }
 

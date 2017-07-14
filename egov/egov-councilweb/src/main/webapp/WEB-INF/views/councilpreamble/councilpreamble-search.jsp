@@ -42,13 +42,14 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
+
 <form:form role="form" action="search" modelAttribute="councilPreamble"
 	id="councilPreamblesearchform"
 	cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
-	
-	<jsp:include page="../councilpreamble/councilpreamble-search-form.jsp"/>
-			  
+
+	<jsp:include page="../councilpreamble/councilpreamble-search-form.jsp" />
+
 </form:form>
 <div class="row display-hide report-section">
 	<div class="col-md-12 table-header text-left">Council Preamble
@@ -58,19 +59,21 @@
 			id="resultTable">
 			<thead>
 				<tr>
+					<th><spring:message code="lbl.serial.no" /></th>
 					<th><spring:message code="lbl.department" /></th>
 					<th><spring:message code="lbl.ward.no" /></th>
 					<th><spring:message code="lbl.preamble.number" /></th>
 					<th><spring:message code="lbl.gistofpreamble" /></th>
-					<th><spring:message code="lbl.amount"/>
-					<th><spring:message code="lbl.status"/></th>
-					<th><spring:message code="lbl.view"/></th>
+					<th><spring:message code="lbl.amount" />
+					<th><spring:message code="lbl.status" /></th>
+					<th><spring:message code="lbl.view" /></th>
 					<th>&nbsp;</th>
 				</tr>
 			</thead>
 		</table>
 	</div>
 </div>
+
 <script>
 	$('#btnsearch').click(function(e) {
 		if ($('form').valid()) {
@@ -78,12 +81,14 @@
 			e.preventDefault();
 		}
 	});
-	
-	
 </script>
 
-	<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>
-<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
+<link rel="stylesheet"
+	href="<cdn:url value='/resources/app/css/council-style.css?rnd=${app_release_no}'/>" />
+<link rel="stylesheet"
+	href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>" />
+<link rel="stylesheet"
+	href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
 <script type="text/javascript"
 	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
 <script type="text/javascript"
@@ -93,13 +98,14 @@
 <script type="text/javascript"
 	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"></script>
 <script type="text/javascript"
-	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.columnFilter.js' context='/egi'/>"></script>
-<script type="text/javascript"
 	src="<cdn:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
 <script
 	src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>
 <script type="text/javascript"
 	src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
-<script src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/datetime-moment.js' context='/egi'/>"></script>
+<script
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/datetime-moment.js' context='/egi'/>"></script>
 <script type="text/javascript"
 	src="<cdn:url value='/resources/app/js/councilPreambleHelper.js?rnd=${app_release_no}'/>"></script>
+<script type="text/javascript"
+	src="<cdn:url value='/resources/app/js/common-util-helper.js?rnd=${app_release_no}'/>"></script>

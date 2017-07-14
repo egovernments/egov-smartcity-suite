@@ -44,81 +44,89 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
-	<div class="row">
-		<div class="col-md-12">
-			<div class="panel panel-primary"  data-collapsed="0">
-				<div class="panel-heading">
-					<div class="panel-title">Council Agenda</div>
-				</div>
-				<div class="panel-body custom">
-					<div class="row add-border">
-						<div class="col-xs-3 add-margin">
-							<spring:message code="lbl.status" />
-						</div>
-						<div class="col-sm-3 add-margin view-content">
-							${councilAgenda.status.code}</div>
-						<div class="col-xs-3 add-margin">
-							<spring:message code="lbl.committeetype" />
-						</div>
-						<div class="col-sm-3 add-margin view-content">
-							${councilAgenda.committeeType.name}</div>
-						<div class="col-xs-3 add-margin">
-							<spring:message code="lbl.agendaNumber" />
-						</div>
-						<div class="col-sm-3 add-margin view-content">
-							${councilAgenda.agendaNumber}</div>
+
+<div class="row">
+	<div class="col-md-12">
+		<div class="panel panel-primary" data-collapsed="0">
+			<div class="panel-heading">
+				<div class="panel-title">Council Agenda</div>
+			</div>
+			<div class="panel-body custom">
+				<div class="row add-border">
+					<div class="col-xs-3 add-margin">
+						<spring:message code="lbl.status" />
 					</div>
+					<div class="col-sm-3 add-margin view-content">
+						${councilAgenda.status.code}</div>
+					<div class="col-xs-3 add-margin">
+						<spring:message code="lbl.committeetype" />
+					</div>
+					<div class="col-sm-3 add-margin view-content">
+						${councilAgenda.committeeType.name}</div>
+					<div class="col-xs-3 add-margin">
+						<spring:message code="lbl.agendaNumber" />
+					</div>
+					<div class="col-sm-3 add-margin view-content">
+						${councilAgenda.agendaNumber}</div>
 				</div>
 			</div>
-			<div class="table-header">
-				<spring:message code="lbl.agenda.details" />
+		</div>
+		<div class="panel panel-primary" data-collapsed="0">
+			<div class="panel-heading">
+				<div class="panel-title">
+					<spring:message code="lbl.agenda.details" />
+				</div>
 			</div>
-			<table class="table table-bordered">
-				<thead>
-				<tr>
-					<th align="center"><spring:message code="lbl.serial.number" /></th>
-					<th><spring:message code="lbl.department" /></th>
-					<th><spring:message code="lbl.preamble.number" /></th>
-					<th><spring:message code="lbl.gistofpreamble" /></th>
-				</tr>
-				</thead>
-				<tbody>
-					<c:choose>
-						<c:when test="${!councilAgenda.agendaDetails.isEmpty()}">
-							<c:forEach items="${councilAgenda.agendaDetails}"
-								var="contact" varStatus="counter">
-								<tr>
+			<div class="panel-body custom">
+				<table class="table table-bordered">
+					<thead>
+						<tr>
+							<th align="center"><spring:message code="lbl.serial.number" /></th>
+							<th width="11%"><spring:message code="lbl.department" /></th>
+							<th width="8%"><spring:message code="lbl.preamble.number" /></th>
+							<th><spring:message code="lbl.gistofpreamble" /></th>
+						</tr>
+					</thead>
+					<tbody>
+						<c:choose>
+							<c:when test="${!councilAgenda.agendaDetails.isEmpty()}">
+								<c:forEach items="${councilAgenda.agendaDetails}" var="contact"
+									varStatus="counter">
+									<tr>
 										<td align="center">${counter.count}</td>
 										<td><c:out value="${contact.preamble.department.name}" /></td>
 										<td><c:out value="${contact.preamble.preambleNumber}" /></td>
-										<td><span class="more"><c:out value="${contact.preamble.gistOfPreamble}" /></span></td>
-								</tr>
-							</c:forEach>
-						</c:when>
-						<c:otherwise>
+										<td><span class="more"><c:out
+													value="${contact.preamble.gistOfPreamble}" /></span></td>
+									</tr>
+								</c:forEach>
+							</c:when>
+							<c:otherwise>
 
-							<div class="col-md-3 col-xs-6 add-margin">
-								<spring:message code="lbl.noAgenda.Detail" />
-							</div>
-						</c:otherwise>
-					</c:choose>
-				</tbody>
-			</table>
-		</div>
-	</div>
-		<div class="row text-center">
-			<div class="add-margin">
-				<input type="button" class="btn btn-primary" value="Print" onclick="window.print()">
-				<a href="javascript:void(0)" class="btn btn-default"
-					onclick="self.close()">Close</a>
+								<div class="col-md-3 col-xs-6 add-margin">
+									<spring:message code="lbl.noAgenda.Detail" />
+								</div>
+							</c:otherwise>
+						</c:choose>
+					</tbody>
+				</table>
 			</div>
 		</div>
-		
+	</div>
+</div>
+<div class="row text-center">
+	<div class="add-margin">
+		<input type="button" class="btn btn-primary" value="Print"
+			onclick="window.print()"> <a href="javascript:void(0)"
+			class="btn btn-default" onclick="self.close()">Close</a>
+	</div>
+</div>
+
 <script
 	src="<cdn:url value='/resources/app/js/showMoreorLessContent.js?rnd=${app_release_no}'/>"></script>
 
 <style>
-	.morecontent span {
-	    display: none;
-	}
+.morecontent span {
+	display: none;
+}
 </style>

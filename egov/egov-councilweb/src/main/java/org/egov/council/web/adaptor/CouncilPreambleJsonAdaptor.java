@@ -42,6 +42,7 @@ package org.egov.council.web.adaptor;
 import static org.egov.council.utils.constants.CouncilConstants.PREAMBLEUSEDINAGENDA;
 
 import java.lang.reflect.Type;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.egov.council.entity.CouncilPreamble;
@@ -61,16 +62,8 @@ public class CouncilPreambleJsonAdaptor implements JsonSerializer<CouncilPreambl
 		String meetingDate = StringUtils.EMPTY;
 		String meetingType = StringUtils.EMPTY;
 		final JsonObject jsonObject = new JsonObject();
-		StringBuilder bndryList = new StringBuilder();
 		if (councilPreamble != null) {
-
-			if (!councilPreamble.getWards().isEmpty()) {
-				for (Boundary ward : councilPreamble.getWards()) {
-					bndryList.append(ward.getName());
-					bndryList.append(',');
-				}
-			}
-			jsonObject.addProperty("ward", bndryList.toString());
+			jsonObject.addProperty("ward", councilPreamble.getWards().stream().map(Boundary::getName).collect(Collectors.joining(",")));
 			if (councilPreamble.getDepartment() != null)
 				jsonObject.addProperty("department", councilPreamble.getDepartment().getName());
 			else

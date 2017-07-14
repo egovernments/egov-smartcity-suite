@@ -92,18 +92,18 @@ function callAjaxSearch() {
 				},
 				aaSorting: [],				
 				columns : [ { 
-"data" : "agendaNumber", "sClass" : "text-left"} ,{ 
-"data" : "committeeType", "sClass" : "text-left"} ,{ 
-"data" : "status", "sClass" : "text-left"}
-,{ "data" : null, "target":-1,
+"data" : "agendaNumber", "sClass" : "text-center"} ,{ 
+"data" : "committeeType", "sClass" : "text-center"} ,{ 
+"data" : "status", "sClass" : "text-center"}
+,{ "data" : null, "sClass" : "text-center", "target":-1,
 	
     sortable: false,
     "render": function ( data, type, full, meta ) {
         var mode = $('#mode').val();
    	 if(mode == 'edit')
-       	 return '<button type="button" class="btn btn-xs btn-secondary edit"><span class="glyphicon glyphicon-edit"></span>&nbsp;Edit</button>';
+       	 return '<button type="button" class="btn btn-xs btn-secondary edit"><i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;Edit</button>';
         else
-       	return '<button type="button" class="btn btn-xs btn-secondary view"><span class="glyphicon glyphicon-tasks"></span>&nbsp;View</button>';
+       	return '<button type="button" class="btn btn-xs btn-secondary view"><i class="fa fa-eye" aria-hidden="true"></i>&nbsp;View</button>';
     }
 }
 ,{ "data": "id", "visible":false }

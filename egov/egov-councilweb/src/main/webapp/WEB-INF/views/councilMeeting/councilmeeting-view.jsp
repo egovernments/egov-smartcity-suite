@@ -86,83 +86,88 @@
 					<div class="col-sm-3 add-margin view-content">
 						${councilMeeting.meetingTime}</div>
 				</div>
-				<div class="panel-body">
-				<div class="panel-heading">
-						<div class="panel-title">
-							<spring:message code="lbl.committee.members" />
-						</div>
-					</div>
-					<table class="table table-bordered">
-						<thead>
-							<th align="center"><spring:message code="lbl.member.name" /></th>
-							<th><spring:message code="lbl.designation" /></th>
-						
-							
-						</thead>
-						<tbody>
-							<c:choose>
-								<c:when test="${!commiteemembelist.isEmpty()}">
-									<c:forEach items="${commiteemembelist}" var="mem"
-										varStatus="counter">
-										<tr>
-											<div class="row add-margin">
-												<td><c:out value="${mem.councilMember.name}" /></td>
-												<td align="center">${mem.councilMember.designation.name}</td>							
-											</div>
-										</tr>
-									</c:forEach>
-								</c:when>
-								<c:otherwise>
-									<div class="col-md-3 col-xs-6 add-margin">
-										<spring:message code="lbl.noAgenda.Detail" />
-									</div>
-								</c:otherwise>
-							</c:choose>
-						</tbody>
-					</table>
-					<div class="panel-heading">
-						<div class="panel-title">
-							<spring:message code="lbl.agenda.details" />
-						</div>
-					</div>
-					<table class="table table-bordered">
-						<thead>
-							<th align="center"><spring:message code="lbl.serial.number" /></th>
-							<th><spring:message code="lbl.department" /></th>
-							<th><spring:message code="lbl.agenda.number" /></th>
-							<th><spring:message code="lbl.preamble.number" /></th>
-							<th><spring:message code="lbl.gistofpreamble" /></th>
-						</thead>
-						<tbody>
-							<c:choose>
-								<c:when test="${!councilMeeting.meetingMOMs.isEmpty()}">
-									<c:forEach items="${councilMeeting.meetingMOMs}" var="mom"
-										varStatus="counter">
-										<tr>
-											<div class="row add-margin">
-												<td align="center">${mom.itemNumber}</td>
-												<td><c:out value="${mom.preamble.department.name}" /></td>
-												<td><c:out value="${mom.agenda.agendaNumber}" /></td>
-												<td><c:out value="${mom.preamble.preambleNumber}" /></td>
-												<td><span class="more"><c:out value="${mom.preamble.gistOfPreamble}" /></span></td>
-											</div>
-										</tr>
-									</c:forEach>
-								</c:when>
-								<c:otherwise>
-									<div class="col-md-3 col-xs-6 add-margin">
-										<spring:message code="lbl.noAgenda.Detail" />
-									</div>
-								</c:otherwise>
-							</c:choose>
-						</tbody>
-					</table>
-					
-					
-					
+			</div>
+		</div>
+		<div class="panel panel-primary" data-collapsed="0">
+			<div class="panel-heading">
+				<div class="panel-title">
+					<spring:message code="lbl.committee.members" />
 				</div>
 			</div>
+			<div class="panel-body custom">
 
+				<table class="table table-bordered">
+					<thead>
+						<tr>
+							<th class="text-center"><spring:message code="lbl.serial.no" /></th>
+							<th class="text-center"><spring:message code="lbl.member.name" /></th>
+							<th class="text-center"><spring:message code="lbl.designation" /></th>
+						</tr>
+					</thead>
+					<tbody>
+						<c:choose>
+							<c:when test="${!commiteemembelist.isEmpty()}">
+								<c:forEach items="${commiteemembelist}" var="mem"
+									varStatus="counter">
+									<tr>
+										<td class="text-center"><c:out value="${counter.index+1}" /></td>
+										<td class="text-center"><c:out value="${mem.councilMember.name}" /></td>
+										<td class="text-center">${mem.councilMember.designation.name}</td>
+									</tr>
+								</c:forEach>
+							</c:when>
+							<c:otherwise>
+								<div class="col-md-3 col-xs-6 add-margin">
+									<spring:message code="lbl.noAgenda.Detail" />
+								</div>
+							</c:otherwise>
+						</c:choose>
+					</tbody>
+				</table>
+			</div>
+		</div>
+
+		<div class="panel panel-primary" data-collapsed="0">
+			<div class="panel-heading">
+				<div class="panel-title">
+					<spring:message code="lbl.agenda.details" />
+				</div>
+			</div>
+			<div class="panel-body custom">
+				<table class="table table-bordered">
+					<thead>
+						<tr>
+							<th align="center"><spring:message code="lbl.serial.no" /></th>
+							<th width="14%"><spring:message code="lbl.department" /></th>
+							<th width="7%"><spring:message code="lbl.agenda.number" /></th>
+							<th width="9%"><spring:message code="lbl.preamble.number" /></th>
+							<th><spring:message code="lbl.gistofpreamble" /></th>
+						</tr>
+					</thead>
+					<tbody>
+						<c:choose>
+							<c:when test="${!councilMeeting.meetingMOMs.isEmpty()}">
+								<c:forEach items="${councilMeeting.meetingMOMs}" var="mom"
+									varStatus="counter">
+									<tr>
+										<td class="text-center">${mom.itemNumber}</td>
+										<td><c:out value="${mom.preamble.department.name}" /></td>
+										<td class="text-center"><c:out value="${mom.agenda.agendaNumber}" /></td>
+										<td><c:out value="${mom.preamble.preambleNumber}" /></td>
+										<td><span class="more"><c:out
+													value="${mom.preamble.gistOfPreamble}" /></span></td>
+									</tr>
+								</c:forEach>
+							</c:when>
+							<c:otherwise>
+								<div class="col-md-3 col-xs-6 add-margin">
+									<spring:message code="lbl.noAgenda.Detail" />
+								</div>
+							</c:otherwise>
+						</c:choose>
+					</tbody>
+				</table>
+			</div>
 		</div>
 	</div>
 </div>
@@ -178,7 +183,7 @@
 	src="<cdn:url value='/resources/app/js/showMoreorLessContent.js?rnd=${app_release_no}'/>"></script>
 
 <style>
-	.morecontent span {
-	    display: none;
-	}
+.morecontent span {
+	display: none;
+}
 </style>

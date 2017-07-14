@@ -53,6 +53,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -96,9 +97,11 @@ public class CouncilAgenda extends StateAware {
     private Date toDate;
 
     @OneToMany(mappedBy = "agenda", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OrderBy("order")
     private List<CouncilAgendaDetails> agendaDetails = new ArrayList<CouncilAgendaDetails>(0);
 
     @Transient
+    @OrderBy("order")
     private List<CouncilAgendaDetails> councilAgendaDetailsForUpdate = new ArrayList<CouncilAgendaDetails>(
             0);
   

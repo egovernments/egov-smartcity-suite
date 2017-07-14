@@ -156,6 +156,13 @@ function callAjaxSearch() {
 				aaSorting : [],
 				columns : [
 						{
+							 "data":null,
+							 "sClass" : "text-center",
+				        	   render: function (data, type, row, meta) {
+				        	        return meta.row + meta.settings._iDisplayStart + 1;
+			                },   
+				        },
+						{
 							"data" : "department",
 							"width" : "8%",
 							"sClass" : "text-left"
@@ -216,7 +223,7 @@ function callAjaxSearch() {
 											          });
 							     	        		  return type === 'display' && '<div><span>'+(str.length > 500 ? str.substr( 0, 500 )+'</span> <button class="details" data-text="'+escape(str)+'" class="btn-xs" style="font-size:10px;">More <i class="fa fa-angle-double-right" aria-hidden="true"></i></button></div>' : str+"</p>");;
 							     	        	  },
-						     	                   "targets": [3]
+						     	                   "targets": [4]
 							     	           }
 						     	          ] 
 			});
@@ -250,6 +257,13 @@ function callAjaxSearchForAgendaPreamble() {
 				},
 				aaSorting : [],
 				columns : [
+						{
+							 "data":null,
+							 "sClass" : "text-center",
+				        	   render: function (data, type, row, meta) {
+				        	        return meta.row + meta.settings._iDisplayStart + 1;
+			                },   
+				        },
 						{
 							"data" : "department",
 							"sClass" : "text-left"
@@ -290,7 +304,7 @@ function callAjaxSearchForAgendaPreamble() {
 											          });
 							     	        		  return type === 'display' && '<div><span>'+(str.length > 500 ? str.substr( 0, 500 )+'</span> <button class="details" data-text="'+escape(str)+'" class="btn-xs" style="font-size:10px;">More <i class="fa fa-angle-double-right" aria-hidden="true"></i></button></div>' : str+"</p>");
 							     	        	  },
-						     	                   "targets": [2]
+						     	                   "targets": [3]
 							     	           }
 						     	          ] 
 			});
@@ -315,7 +329,7 @@ $("#resultTable").on(
 		'click',
 		'tbody tr td  .view',
 		function(event) {
-			var id = reportdatatable.fnGetData($(this).parent().parent(), 7);
+			var id = reportdatatable.fnGetData($(this).parent().parent(), 8);
 			window.open('/council/councilpreamble/' + $('#mode').val() + '/'
 					+ id, '', 'width=800, height=600,scrollbars=yes');
 
@@ -325,16 +339,11 @@ $("#resultTable").on(
 		'click',
 		'tbody tr td  .changeStatus',
 		function(event) {
-			var id = reportdatatable.fnGetData($(this).parent().parent(), 7);
+			var id = reportdatatable.fnGetData($(this).parent().parent(), 8);
 			window.open('/council/councilpreamble/updateimplimentaionstatus' + '/'
 					+ id, '', 'width=800, height=600,scrollbars=yes');
 
 		});
-
-//To Select all wards
-$('#selectall').click( function() {
-    $('select#wards > option').prop('selected', 'selected');
-});
 
 $("#momdetails").on(
 		'click',

@@ -44,148 +44,153 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
-<div class="main-content">
-	<div class="row">
-		<div class="col-md-12">
-			<div class="panel panel-primary" data-collapsed="0">
-				<div class="panel-heading">
-					<div class="panel-title">
-						<spring:message code="title.councilmeeting" />
-					</div>
+
+<div class="row">
+	<div class="col-md-12">
+		<div class="panel panel-primary" data-collapsed="0">
+			<div class="panel-heading">
+				<div class="panel-title">
+					<spring:message code="title.councilmeeting" />
 				</div>
-				<div class="panel-body custom">
-					<div class="row add-border">
-						<div class="col-xs-3 add-margin">
-							<spring:message code="lbl.meeting.type" />
-						</div>
-						<div class="col-sm-3 add-margin view-content">
-							${councilMeeting.committeeType.name}
-						</div>
-						<div class="col-xs-3 add-margin">
-							<spring:message code="lbl.meeting.number" />
-						</div>
-						<div class="col-sm-3 add-margin view-content">
-							${councilMeeting.meetingNumber}</div>
+			</div>
+			<div class="panel-body custom">
+				<div class="row add-border">
+					<div class="col-xs-3 add-margin">
+						<spring:message code="lbl.meeting.type" />
 					</div>
-					<div class="row add-border">
-						<div class="col-xs-3 add-margin">
-							<spring:message code="lbl.meeting.date" />
-						</div>
-						<div class="col-sm-3 add-margin view-content">
-							<fmt:formatDate pattern="dd/MM/yyyy"
-								value="${councilMeeting.meetingDate}" />
-						</div>
-						<div class="col-xs-3 add-margin">
-							<spring:message code="lbl.meeting.place" />
-						</div>
-						<div class="col-sm-3 add-margin view-content">
-							${councilMeeting.meetingLocation}</div>
+					<div class="col-sm-3 add-margin view-content">
+						${councilMeeting.committeeType.name}</div>
+					<div class="col-xs-3 add-margin">
+						<spring:message code="lbl.meeting.number" />
 					</div>
-					<div class="row add-border">
-						<div class="col-xs-3 add-margin">
-							<spring:message code="lbl.meeting.time" />
-						</div>
-						<div class="col-sm-3 add-margin view-content">
-							${councilMeeting.meetingTime}</div>
+					<div class="col-sm-3 add-margin view-content">
+						${councilMeeting.meetingNumber}</div>
+				</div>
+				<div class="row add-border">
+					<div class="col-xs-3 add-margin">
+						<spring:message code="lbl.meeting.date" />
 					</div>
-					<div class="panel-body">
-						<div class="panel-heading">
-							<div class="panel-title">
-								<spring:message code="lbl.agenda.details" />
-							</div>
-						</div>
-						<table class="table table-bordered">
-							<thead>
-								<th align="center"><spring:message code="lbl.serial.number" /></th>
-								<th><spring:message code="lbl.department" /></th>
-								<th><spring:message code="lbl.agenda.number" /></th>
-								<th><spring:message code="lbl.preamble.number" /></th>
-								<th><spring:message code="lbl.resolution" /></th>
-								<th><spring:message code="lbl.status" /></th>
-								<th><spring:message code="lbl.resolutionNumber" /></th>
-								<th><spring:message code="lbl.gistofpreamble" /></th>
-							</thead>
-							<tbody>
-								<c:choose>
-									<c:when test="${!councilMeeting.meetingMOMs.isEmpty()}">
-										<c:forEach items="${councilMeeting.meetingMOMs}" var="mom"
-											varStatus="counter">
-											<tr>
-													<td align="center">${mom.itemNumber}
-													</td>
-													<td><c:out value="${mom.preamble.department.name}" /></td>
-													<td><c:out value="${mom.agenda.agendaNumber}" /></td>
-													<td><c:out value="${mom.preamble.preambleNumber}" /></td>
-													<td width="35%"><span class="more"><c:out value="${mom.resolutionDetail}"/></span></td>
-													<td><c:out value="${mom.resolutionStatus.code}" /></td>
-													<td><c:out value="${mom.resolutionNumber}"></c:out></td>
-													<td width="35%"><span class="more"><c:out value="${mom.preamble.gistOfPreamble}"/></span></td>
-													</td>
-											</tr>
-										</c:forEach>
-									</c:when>
-									<c:otherwise>
-										<div class="col-md-3 col-xs-6 add-margin">
-											<spring:message code="lbl.noAgenda.Detail" />
-										</div>
-									</c:otherwise>
-								</c:choose>
-							</tbody>
-						</table>
+					<div class="col-sm-3 add-margin view-content">
+						<fmt:formatDate pattern="dd/MM/yyyy"
+							value="${councilMeeting.meetingDate}" />
 					</div>
-					<c:choose>
-						<c:when test="${!councilMeeting.meetingAttendence.isEmpty()}">
-
-							<div class="panel-body">
-								<div class="panel-heading">
-									<div class="panel-title">
-										<spring:message code="lbl.mom.attendance" />
-									</div>
-								</div>
-								<table class="table table-bordered">
-									<thead>
-										<tr>
-											<th align="center"><spring:message
-													code="lbl.serial.number" /></th>
-											<th>Member Name</th>
-											<th>Election Ward</th>
-											<th>Designation</th>
-											<th>Qualification</th>
-											<th>Party Affiliation</th>
-											<th>Meeting Attend</th>
-										</tr>
-									</thead>
-									<tbody>
-										<c:forEach items="${councilMeeting.meetingAttendence}"
-											var="meetingAttend" varStatus="counter">
-											<tr>
-												<td>${counter.index+1}</td>
-												<td><c:out
-														value="${meetingAttend.councilMember.name}" /></td>
-												<td><c:out
-														value="${meetingAttend.councilMember.electionWard.name}" /></td>
-												<td><c:out
-														value="${meetingAttend.councilMember.designation.name}" /></td>
-												<td><c:out
-														value="${meetingAttend.councilMember.qualification.name}" /></td>
-												<td><c:out
-														value="${meetingAttend.councilMember.partyAffiliation.name}" /></td>
-												<td><c:out
-														value="${meetingAttend.attendedMeeting?'Yes':'No'}" /></td>
-											</tr>
-										</c:forEach>
-
-									</tbody>
-								</table>
-							</div>
-						</c:when>
-
-					</c:choose>
+					<div class="col-xs-3 add-margin">
+						<spring:message code="lbl.meeting.place" />
+					</div>
+					<div class="col-sm-3 add-margin view-content">
+						${councilMeeting.meetingLocation}</div>
+				</div>
+				<div class="row add-border">
+					<div class="col-xs-3 add-margin">
+						<spring:message code="lbl.meeting.time" />
+					</div>
+					<div class="col-sm-3 add-margin view-content">
+						${councilMeeting.meetingTime}</div>
 				</div>
 			</div>
 		</div>
+		<div class="panel panel-primary" data-collapsed="0">
+			<div class="panel-heading">
+				<div class="panel-title">
+					<spring:message code="lbl.agenda.details" />
+				</div>
+			</div>
+			<div class="panel-body">
+				<table class="table table-bordered">
+					<thead>
+						<tr>
+							<th align="center"><spring:message code="lbl.serial.no" /></th>
+							<th><spring:message code="lbl.department" /></th>
+							<th><spring:message code="lbl.agenda.number" /></th>
+							<th><spring:message code="lbl.preamble.number" /></th>
+							<th><spring:message code="lbl.resolution" /></th>
+							<th><spring:message code="lbl.status" /></th>
+							<th><spring:message code="lbl.resolutionNumber" /></th>
+							<th><spring:message code="lbl.gistofpreamble" /></th>
+						</tr>
+					</thead>
+					<tbody>
+						<c:choose>
+							<c:when test="${!councilMeeting.meetingMOMs.isEmpty()}">
+								<c:forEach items="${councilMeeting.meetingMOMs}" var="mom"
+									varStatus="counter">
+									<tr>
+										<td align="center">${mom.itemNumber}</td>
+										<td><c:out value="${mom.preamble.department.name}" /></td>
+										<td align="center"><c:out
+												value="${mom.agenda.agendaNumber}" /></td>
+										<td width="10%"><c:out
+												value="${mom.preamble.preambleNumber}" /></td>
+										<td width="30%"><span class="more"><c:out
+													value="${mom.resolutionDetail}" /></span></td>
+										<td width="10%"><c:out
+												value="${mom.resolutionStatus.code}" /></td>
+										<td><c:out value="${mom.resolutionNumber}"></c:out></td>
+										<td width="30%"><span class="more"><c:out
+													value="${mom.preamble.gistOfPreamble}" /></span></td>
+									</tr>
+								</c:forEach>
+							</c:when>
+							<c:otherwise>
+								<div class="col-md-3 col-xs-6 add-margin">
+									<spring:message code="lbl.noAgenda.Detail" />
+								</div>
+							</c:otherwise>
+						</c:choose>
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<c:choose>
+			<c:when test="${!councilMeeting.meetingAttendence.isEmpty()}">
+				<div class="panel panel-primary" data-collapsed="0">
+					<div class="panel-heading">
+						<div class="panel-title">
+							<spring:message code="lbl.mom.attendance" />
+						</div>
+					</div>
+					<div class="panel-body">
+						<table class="table table-bordered">
+							<thead>
+								<tr>
+									<th class="text-center"><spring:message
+											code="lbl.serial.no" /></th>
+									<th>Member Name</th>
+									<th>Election Ward</th>
+									<th>Designation</th>
+									<th>Qualification</th>
+									<th>Party Affiliation</th>
+									<th class="text-center">Meeting Attend</th>
+								</tr>
+							</thead>
+							<tbody>
+								<c:forEach items="${councilMeeting.meetingAttendence}"
+									var="meetingAttend" varStatus="counter">
+									<tr>
+										<td class="text-center">${counter.index+1}</td>
+										<td><c:out value="${meetingAttend.councilMember.name}" /></td>
+										<td><c:out
+												value="${meetingAttend.councilMember.electionWard.name}" /></td>
+										<td><c:out
+												value="${meetingAttend.councilMember.designation.name}" /></td>
+										<td><c:out
+												value="${meetingAttend.councilMember.qualification.name}" /></td>
+										<td><c:out
+												value="${meetingAttend.councilMember.partyAffiliation.name}" /></td>
+										<td class="text-center"><c:out
+												value="${meetingAttend.attendedMeeting?'Yes':'No'}" /></td>
+									</tr>
+								</c:forEach>
+
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</c:when>
+		</c:choose>
 	</div>
 </div>
+
 <div class="row text-center">
 	<div class="add-margin">
 		<a href="javascript:void(0)" class="btn btn-default"
@@ -197,32 +202,33 @@
 </div>
 
 <!-- Modal -->
-  <div class="modal fade" id="textarea-modal" role="dialog">
-    <div class="modal-dialog modal-lg">
-    
-      <!-- Modal content-->
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
-          <h4 class="modal-title" id="textarea-header"></h4>
-        </div>
-        <div class="modal-body">
-          <textarea class="form-control textarea-content-of-modal" id="textarea-updatedcontent" rows="10"></textarea>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-          
-        </div>
-      </div>
-      
-    </div>
-  </div>
+<div class="modal fade" id="textarea-modal" role="dialog">
+	<div class="modal-dialog modal-lg">
 
-  <script
+		<!-- Modal content-->
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title" id="textarea-header"></h4>
+			</div>
+			<div class="modal-body">
+				<textarea class="form-control textarea-content-of-modal"
+					id="textarea-updatedcontent" rows="10"></textarea>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+
+			</div>
+		</div>
+
+	</div>
+</div>
+
+<script
 	src="<cdn:url value='/resources/app/js/showMoreorLessContent.js?rnd=${app_release_no}'/>"></script>
 
 <style>
-	.morecontent span {
-	    display: none;
-	}
+.morecontent span {
+	display: none;
+}
 </style>

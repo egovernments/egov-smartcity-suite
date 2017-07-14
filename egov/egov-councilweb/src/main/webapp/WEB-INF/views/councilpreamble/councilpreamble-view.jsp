@@ -43,131 +43,135 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
-	<div class="row">
-		<div class="col-md-12">
-			<div class="panel panel-primary" data-collapsed="0">
-				<div class="panel-heading">
-					<div class="panel-title">Council Preamble</div>
-				</div>
-				<div class="panel-body custom">
-					<div class="row add-border">
-					<div class="col-xs-3 add-margin">
-							<spring:message code="lbl.preamble.number" />
-						</div>
-						<div class="col-sm-3 add-margin view-content">
-							${councilPreamble.preambleNumber}</div>
-						<div class="col-xs-3 add-margin">
-							<spring:message code="lbl.status" /> 
-						</div>
-						<div class="col-sm-3 add-margin view-content">
-							 ${councilPreamble.status.code}</div>
-					</div>
-					<div class="row add-border">
-						<div class="col-xs-3 add-margin">
-							<spring:message code="lbl.department" />
-						</div>
-						<div class="col-sm-3 add-margin view-content">
-							${councilPreamble.department.name}</div>
-						<div class="col-xs-3 add-margin">
-							<spring:message code="lbl.amount" />
-						</div>
-						<div class="col-sm-3 add-margin view-content">
-							${councilPreamble.sanctionAmount}</div>
-					</div>
-					<div class="row add-border">
-						<div class="col-xs-3 add-margin">
-							<spring:message code="lbl.gistofpreamble" />
-						</div>
-						<div class="col-sm-9 add-margin view-content">
-							${councilPreamble.gistOfPreamble}</div>
-					</div>
-					<div class="row add-border">
-						<div class="col-md-3 col-xs-6 add-margin">
-							<spring:message code="lbl.upload" />
-						</div>
-						<div class="col-md-3 col-xs-12 add-margin down-file view-content"
-							id="links">
-							<c:choose>
-								<c:when test="${councilPreamble.filestoreid != null}">
-									<a
-										href="/council/councilpreamble/downloadfile/${councilPreamble.filestoreid.fileStoreId}"
-										data-gallery target="_blank">${councilPreamble.filestoreid.fileName}</a>
 
-								</c:when>
-								<c:otherwise>
-									<spring:message code="msg.no.attach.found" />
-								</c:otherwise>
-							</c:choose>
-						</div>
-					</div>
-					<div class="row add-border">
-						<div class="col-xs-3 add-margin">
-							<spring:message code="lbl.ward" /> 
-						</div>
-						<div class="col-sm-9 add-margin view-content">
-						<c:forEach items="${councilPreamble.wards}" var="ward" varStatus="i"> 
-								<c:if test="${i.index ne 0}">, </c:if> ${ward.name}
-						</c:forEach>
-						</div>
-					</div>
+<div class="row">
+	<div class="col-md-12">
+		<div class="panel panel-primary" data-collapsed="0">
+			<div class="panel-heading">
+				<div class="panel-title">Council Preamble</div>
 			</div>
-			
+			<div class="panel-body custom">
+				<div class="row add-border">
+					<div class="col-xs-3 add-margin">
+						<spring:message code="lbl.preamble.number" />
+					</div>
+					<div class="col-sm-3 add-margin view-content">
+						${councilPreamble.preambleNumber}</div>
+					<div class="col-xs-3 add-margin">
+						<spring:message code="lbl.status" />
+					</div>
+					<div class="col-sm-3 add-margin view-content">
+						${councilPreamble.status.code}</div>
+				</div>
+				<div class="row add-border">
+					<div class="col-xs-3 add-margin">
+						<spring:message code="lbl.department" />
+					</div>
+					<div class="col-sm-3 add-margin view-content">
+						${councilPreamble.department.name}</div>
+					<div class="col-xs-3 add-margin">
+						<spring:message code="lbl.amount" />
+					</div>
+					<div class="col-sm-3 add-margin view-content">
+						${councilPreamble.sanctionAmount}</div>
+				</div>
+				<div class="row add-border">
+					<div class="col-xs-3 add-margin">
+						<spring:message code="lbl.gistofpreamble" />
+					</div>
+					<div class="col-sm-9 add-margin view-content">
+						${councilPreamble.gistOfPreamble}</div>
+				</div>
+				<div class="row add-border">
+					<div class="col-md-3 col-xs-6 add-margin">
+						<spring:message code="lbl.upload" />
+					</div>
+					<div class="col-md-3 col-xs-12 add-margin down-file view-content"
+						id="links">
+						<c:choose>
+							<c:when test="${councilPreamble.filestoreid != null}">
+								<a
+									href="/council/councilpreamble/downloadfile/${councilPreamble.filestoreid.fileStoreId}"
+									data-gallery target="_blank">${councilPreamble.filestoreid.fileName}</a>
+
+							</c:when>
+							<c:otherwise>
+								<spring:message code="msg.no.attach.found" />
+							</c:otherwise>
+						</c:choose>
+					</div>
+				</div>
+				<div class="row add-border">
+					<div class="col-xs-3 add-margin">
+						<spring:message code="lbl.ward" />
+					</div>
+					<div class="col-sm-9 add-margin view-content">
+						<c:forEach items="${councilPreamble.wards}" var="ward"
+							varStatus="i">
+							<c:if test="${i.index ne 0}">, </c:if> ${ward.name}
+						</c:forEach>
+					</div>
+				</div>
+			</div>
+
 		</div>
 		<div class="panel panel-primary" data-collapsed="0">
 			<jsp:include page="applicationhistory-view.jsp"></jsp:include>
-		</div> 
-		<c:if test="${not councilPreamble.meetingMOMs.isEmpty()}" > 
-		
-		<div class="panel-heading">
-			<div class="panel-title">Minutes of Meeting Details</div>
+		</div>
+		<c:if test="${not councilPreamble.meetingMOMs.isEmpty()}">
+
+			<div class="panel-heading">
+				<div class="panel-title">Minutes of Meeting Details</div>
 			</div>
 			<table class="table table-bordered" id="momdetails">
-							<thead>
-								<th><spring:message code="lbl.meeting.number" /></th>
-								<th><spring:message code="lbl.meeting.date" /></th>
-								<th><spring:message code="lbl.meeting.type" /></th>
-								<th><spring:message code="lbl.preamble.status" /></th>
-								<th><spring:message code="lbl.resolutionNumber" /></th>
-								<th><spring:message code="lbl.resolution" /></th>
-								<th><spring:message code="lbl.action" /></th>
-							</thead>
-							<tbody>
-								<c:choose>
-									<c:when test="${!councilPreamble.meetingMOMs.isEmpty()}">
-										<c:forEach items="${councilPreamble.meetingMOMs}" var="preamble"
-											varStatus="counter">
-											<tr>
-												<div class="row add-margin">
-												<td><c:out value="${preamble.meeting.meetingNumber}" /></td>
-												<td><c:out value="${preamble.meeting.meetingDate}" /></td>
-												<td><c:out value="${preamble.meeting.committeeType.name}" /></td>
-												<td><c:out value="${preamble.preamble.status.code}" /></td>
-												<td><c:out value="${preamble.resolutionNumber}" /></td>
-												<td><c:out value="${preamble.resolutionDetail}" /></td>
-												<td><button type="button" class="btn btn-xs btn-secondary view"><span class="glyphicon glyphicon-tasks"></span>&nbsp;View</button>
-												<input type="hidden" name="councilMeeting" value="${preamble.meeting.id}" id="test" />
-						
-												</div>
-												</tr>
-												</c:forEach>
-												</c:when>
+				<thead>
+					<tr>
+						<th><spring:message code="lbl.meeting.number" /></th>
+						<th><spring:message code="lbl.meeting.date" /></th>
+						<th><spring:message code="lbl.meeting.type" /></th>
+						<th><spring:message code="lbl.preamble.status" /></th>
+						<th><spring:message code="lbl.resolutionNumber" /></th>
+						<th><spring:message code="lbl.resolution" /></th>
+						<th><spring:message code="lbl.action" /></th>
+					</tr>
+				</thead>
+				<tbody>
+					<c:choose>
+						<c:when test="${!councilPreamble.meetingMOMs.isEmpty()}">
+							<c:forEach items="${councilPreamble.meetingMOMs}" var="preamble"
+								varStatus="counter">
+								<tr>
+									<td><c:out value="${preamble.meeting.meetingNumber}" /></td>
+									<td><c:out value="${preamble.meeting.meetingDate}" /></td>
+									<td><c:out value="${preamble.meeting.committeeType.name}" /></td>
+									<td><c:out value="${preamble.preamble.status.code}" /></td>
+									<td><c:out value="${preamble.resolutionNumber}" /></td>
+									<td><c:out value="${preamble.resolutionDetail}" /></td>
+									<td><button type="button"
+											class="btn btn-xs btn-secondary view">
+											<span class="glyphicon glyphicon-tasks"></span>&nbsp;View
+										</button> <input type="hidden" name="councilMeeting"
+										value="${preamble.meeting.id}" id="test" /></td>
+								</tr>
+							</c:forEach>
+						</c:when>
 						<%-- <c:otherwise>
 							<div class="col-md-3 col-xs-6 add-margin">
 								<spring:message code="lbl.noMeeting.Detail" />
 							</div>
 						</c:otherwise> --%>
-							</c:choose></tbody>
-												
-							</table>
-							</c:if>
+					</c:choose>
+				</tbody>
+
+			</table>
+		</c:if>
 		<div class="text-center">
-		<div class="add-margin">
-			<a href="javascript:void(0)" class="btn btn-default"
-				onclick="self.close()">Close</a>
-		</div>
+			<div class="add-margin">
+				<a href="javascript:void(0)" class="btn btn-default"
+					onclick="self.close()">Close</a>
+			</div>
 		</div>
 	</div>
-	</div>
-	<script
+</div>
+<script
 	src="<c:url value='/resources/app/js/councilPreambleHelper.js?rnd=${app_release_no}'/>"></script>
-	

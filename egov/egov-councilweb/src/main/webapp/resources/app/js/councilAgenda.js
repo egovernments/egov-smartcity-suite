@@ -47,71 +47,60 @@ String.prototype.compose = (function (){
 	   }
 }());
 
-var emptyRow = '<tr><td colspan="5" id="emptyRow" >No preamble item available</td></tr>';
+var emptyRow = '<tr><td colspan="6" id="emptyRow" class="text-center">No preamble item available</td></tr>';
 var tbody = $('#agendaTable').children('tbody');
 var table = tbody.find('tr').length == 0 ? $('#agendaTable tbody').append(emptyRow) : $('#agendaTable');
 
 var row = '<tr>'+
-/* '<td><span class="sno">{{sno}}</span></td>'+*/
- '<td><input type="text" class="form-control" data-unique name="councilAgendaDetailsForUpdate[{{idx}}].preamble.preambleNumber" {{readonly}} value="{{pnoTextBoxValue}}"/></td>'+
- '<td><input type="text" class="form-control" name="councilAgendaDetailsForUpdate[{{idx}}].preamble.department.name" {{readonly}} value="{{deptTextBoxValue}}"/></td>'+
- '<td><textarea class="form-control" name="councilAgendaDetailsForUpdate[{{idx}}].preamble.gistOfPreamble" rows="3" {{readonly}} maxlength="5000" >{{gistTextBoxValue}}</textarea></td>'+
- '<td><input type="text" class="form-control" name="councilAgendaDetailsForUpdate[{{idx}}].preamble.sanctionAmount" {{readonly}} value="{{amountTextBoxValue}}"/></td>'+
-//  '<td><input type="hidden" class="form-control" name="agendaDetails[{{idx}}].preamble.department.id" {{readonly}} value="{{departmentId}}"/>'+
- '<td><input type="hidden" class="form-control" name="councilAgendaDetailsForUpdate[{{idx}}].preamble.id" {{readonly}} value="{{preamableId}}"/>'+
-/* '<td><input type="hidden" class="form-control" name="agendaDetails[{{idx}}].markedForRemoval" {{readonly}} value="{{removevalue}}"/>'+*/
- '<button type="button" class="btn btn-xs btn-secondary delete"><span class="glyphicon glyphicon-trash"></span>&nbsp;Delete</button></td>'+
+'<td class="text-center"> <i class="fa fa-arrows serialno" aria-hidden="true"></i> &nbsp;&nbsp;<span class="sno serialno">{{sno}}</span> <input type="hidden" class="form-control" data-unique data-sno name="councilAgendaDetailsForUpdate[{{idx}}].order" value="{{order}}"/></td>'+
+ '<td><input type="hidden" class="form-control" data-unique name="councilAgendaDetailsForUpdate[{{idx}}].preamble.preambleNumber" value="{{pnoTextBoxValue}}" /><span>{{pnoTextBoxValue}}</span></td>'+
+ '<td><span>{{deptTextBoxValue}}</span></td>'+
+ '<td><span class="more">{{gistTextBoxValue}}</span></td>'+
+ '<td class="text-right"><span>{{amountTextBoxValue}}</span></td>'+
+ '<td><input type="hidden" class="form-control" name="councilAgendaDetailsForUpdate[{{idx}}].preamble.id" value="{{preamableId}}"/>'+
+ '<a class="btn btn-xs btn-secondary" href="/council/councilpreamble/view/{{preamableId}}"  target="popup"' +
+ 'onclick="window.open(\'/council/councilpreamble/view/{{preamableId}}\',\'popup\',\'width=600,height=600,scrollbars=no,resizable=no\'); return false;">'+
+ '<i class="fa fa-eye" aria-hidden="true"></i>View&nbsp;'+
+	'</a>&nbsp;<button type="button" class="btn btn-xs btn-secondary delete"><span class="glyphicon glyphicon-trash"></span>&nbsp;Delete</button></td>'+
 '</tr>';
 
 
-
-/*jQuery('#add-agenda').click(function(){
-   
-	var idx=$(tbody).find('tr').length;
-	alert("len : "+idx);
-	var sno=idx+1;
-   //Add row
-	var row={
-	       'sno': sno,
-	       'idx': idx
-	   };
-	addRowFromObject(row);
-   
-});*/
-
 function addRowFromObject(rowJsonObj)
 {
-	console.log("Row composed", row.compose(rowJsonObj));
 	table.append(row.compose(rowJsonObj));
+	generateOrderNo();
 }
 
 function regenerateIndexes()
 {
 	var idx=0;
-	jQuery(tbody).find("tr").each(function() {
+	$(tbody).find("tr").each(function() {
 		
-		console.log('TR ITERATION!');
-		
-		jQuery(this).find("input").each(function() {
+		$(this).find("input").each(function() {
 			
-			console.log('BEFORE INPUT ITERATION!', jQuery(this)[0].outerHTML);
+			console.log('BEFORE INPUT ITERATION!', $(this)[0].outerHTML);
 			
-			   jQuery(this).attr({
+			   $(this).attr({
 			      'name': function(_, name) {
+			    	  console.log('name', name);
 			    	  return name.replace(/\[.\]/g, '['+ idx +']'); 
 			      }
 			   });
-			   
-			   console.log('AFTER INPUT ITERATION!', jQuery(this)[0].outerHTML);
-			   
+			   console.log('AFTER INPUT ITERATION!', $(this)[0].outerHTML);
 	    });
 		idx++;
 	});
-	
+	generateOrderNo();
+}
+
+function generateOrderNo(){
 	$('span.sno').each(function(i){
-		$(this).html((i+1));
+		  $(this).html((i+1));    
 	});
 	
+	$('input[data-sno]').each(function(i){
+		$(this).val(i+1);;
+	});
 }
 
 
@@ -123,7 +112,7 @@ function addReadOnlyRow(btn)
 
 	var isDuplicate=false;
 	
-	$(tbody).find("input[data-unique][readonly]").each(function() {
+	$(tbody).find("input[data-unique]").each(function() {
 		
 		if($(this).val() === data.preambleNumber)
 		{
@@ -140,15 +129,11 @@ function addReadOnlyRow(btn)
 	
 	/*$('.agenda-section').show();*/
 	var idx=$(tbody).find('tr').length;
-	var sno=idx+1;
-	
-	
-	//console.log("Row : ", data);
 	
 	//Add row
 	var row={
-		  /* 'sno':sno,*/
 		   'idx':idx,
+		   'order':idx+1,
 	       'pnoTextBoxValue': data.preambleNumber,
 	       'deptTextBoxValue': data.department,
 	       'gistTextBoxValue': 
@@ -232,19 +217,26 @@ function callAjaxSearch() {
 				"aLengthMenu" : [ [ 10, 25, 50, -1 ], [ 10, 25, 50, "All" ] ],
 				
 				aaSorting: [],				
-
-								columns : [
+						columns : [
+						{
+							 "data":null,
+							 "sClass" : "text-center",
+							 'sTitle' : "S.No.", "width": "5%",
+				        	   render: function (data, type, row, meta) {
+				        	        return meta.row + meta.settings._iDisplayStart + 1;
+			                },   
+				        },
 						{
 							"data" : "preambleNumber",
-							'sTitle' : "Preamble Number"
+							'sTitle' : "Preamble Number", "width": "9%"
 						},
 						{
 							"data" : "department",
-							'sTitle' : "Department"
+							'sTitle' : "Department", "width": "9%"
 						},
 						{
 							"data" : "gistOfPreamble",
-							'sTitle' : "Gist of Preamble", "width": "58%",
+							'sTitle' : "Gist of Preamble", "width": "50%"
 						},
 						{
 							"data" : "sanctionAmount",
@@ -260,11 +252,11 @@ function callAjaxSearch() {
 							"data" : null,
 							"target" : -1,
 							"sortable" : false,
-							'sTitle' : "Action",
+							'sTitle' : "Action", "width": "10%",
 							"render" : function(data, type, full, meta) {
-								return '<button type="button" class="btn btn-xs btn-secondary add"  data-row=\''
+								return '<button type="button" class="btn btn-xs btn-secondary view"><i class="fa fa-eye" aria-hidden="true"></i>&nbsp;View</button>&nbsp;&nbsp;<button type="button" class="btn btn-xs btn-secondary add"  data-row=\''
 										+ escape(JSON.stringify(full))
-										+ '\' onclick="addReadOnlyRow(this)"><span class="glyphicon glyphicon-edit"></span>&nbsp;Add</button>';
+										+ '\' onclick="addReadOnlyRow(this)"><i class="fa fa-plus" aria-hidden="true"></i>&nbsp;Add</button>';
 							}
 						}, {
 							"data" : "id",
@@ -281,7 +273,7 @@ function callAjaxSearch() {
 									        });
 											  return type === 'display' && '<div><span>'+(str.length > 500 ? str.substr( 0, 500 )+'</span> <button class="details" data-text="'+escape(str)+'" class="btn-xs" style="font-size:10px;">More <i class="fa fa-angle-double-right" aria-hidden="true"></i></button></div>' : str+"</p>");;
 										  },
-									      "targets": [2]
+									      "targets": [3]
 									  }
 				     	          ]			
 			});
@@ -304,6 +296,15 @@ $(document).ready(function() {
 		e.preventDefault();
 	});
 	
+	$("#resultTable").on(
+			'click',
+			'tbody tr td  .view',
+			function(event) {
+				var id = reportdatatable.fnGetData($(this).parent().parent(), 7);
+				window.open('/council/councilpreamble/view/'
+						+ id, '', 'width=800, height=600,scrollbars=yes');
+
+			});
 	
 	$("#agendaTable tbody").on('click','tr td .delete',function(event) {
 		$(this).closest('tr').remove();
@@ -326,7 +327,6 @@ $(document).ready(function() {
 			// form submit happen
 		}
 		
-
 	});
 	
 	$( "#buttonSubmit" ).click(function(e){
@@ -344,9 +344,18 @@ $(document).ready(function() {
 
 	});
 	
-});
-
-//To Select all wards
-$('#selectall').click( function() {
-    $('select#wards > option').prop('selected', 'selected');
+	
+	// changing order of preambles while creating and upating agenda.
+    $('.sorted_table').sortable({
+    	containerSelector: 'table',
+		  itemPath: '> tbody',
+		  itemSelector: 'tr',
+		  placeholder: '<tr class="placeholder"/>',
+		  onDrop: function ($item, container, _super) {
+		    container.el.removeClass("active");
+		    _super($item, container);
+		    regenerateIndexes();
+		  }
+	});
+		   
 });
