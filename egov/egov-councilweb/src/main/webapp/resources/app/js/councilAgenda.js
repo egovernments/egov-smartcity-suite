@@ -59,7 +59,7 @@ var row = '<tr>'+
  '<td class="text-right"><span>{{amountTextBoxValue}}</span></td>'+
  '<td><input type="hidden" class="form-control" name="councilAgendaDetailsForUpdate[{{idx}}].preamble.id" value="{{preamableId}}"/>'+
  '<a class="btn btn-xs btn-secondary" href="/council/councilpreamble/view/{{preamableId}}"  target="popup"' +
- 'onclick="window.open(\'/council/councilpreamble/view/{{preamableId}}\',\'popup\',\'width=600,height=600,scrollbars=no,resizable=no\'); return false;">'+
+ 'onclick="window.open(\'/council/councilpreamble/view/{{preamableId}}\',\'popup\',\'width=600,height=600,resizable=no\'); return false;">'+
  '<i class="fa fa-eye" aria-hidden="true"></i>View&nbsp;'+
 	'</a>&nbsp;<button type="button" class="btn btn-xs btn-secondary delete"><span class="glyphicon glyphicon-trash"></span>&nbsp;Delete</button></td>'+
 '</tr>';

@@ -133,7 +133,7 @@
 										class="btn btn-xs btn-secondary"
 										href="/council/councilpreamble/view/${contact.preamble.id}"
 										target="popup"
-										onclick="window.open('/council/councilpreamble/view/${contact.preamble.id}','popup','width=600,height=600,scrollbars=no,resizable=no'); return false;">
+										onclick="window.open('/council/councilpreamble/view/${contact.preamble.id}','popup','width=600,height=600,resizable=no'); return false;">
 											<i class="fa fa-eye" aria-hidden="true"></i>&nbsp;View
 									</a>
 										<button type="button" class="btn btn-xs btn-secondary delete">
