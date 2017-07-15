@@ -279,7 +279,7 @@ function callAjaxSearch() {
 						},
 						{
 							"data" : "status",
-							"sClass" : "text-right",
+							"sClass" : "text-left",
 							'sTitle' : "Status"
 						},
 						{
@@ -288,9 +288,9 @@ function callAjaxSearch() {
 							"sortable" : false,
 							'sTitle' : "Action", "width": "10%",
 							"render" : function(data, type, full, meta) {
-								return '<button type="button" class="btn btn-xs btn-secondary view"><i class="fa fa-eye" aria-hidden="true"></i>&nbsp;View</button>&nbsp;&nbsp;<button type="button" class="btn btn-xs btn-secondary add"  data-row=\''
+								return '<button type="button" class="btn btn-xs btn-secondary view"><i class="fa fa-eye" aria-hidden="true"></i>&nbsp;&nbsp;View</button>&nbsp;&nbsp;<button type="button" class="btn btn-xs btn-secondary add"  data-row=\''
 										+ escape(JSON.stringify(full))
-										+ '\' onclick="addReadOnlyRow(this)"><i class="fa fa-plus" aria-hidden="true"></i>&nbsp;Add</button>';
+										+ '\' onclick="addReadOnlyRow(this)"><i class="fa fa-plus" aria-hidden="true"></i>&nbsp;&nbsp;Add</button>';
 							}
 						}, {
 							"data" : "id",

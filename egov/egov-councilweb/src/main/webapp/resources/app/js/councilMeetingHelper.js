@@ -92,15 +92,15 @@ function callAjaxSearch() {
 				},
 				aaSorting: [],				
 				columns : [ { 
-"data" : "agendaNumber", "sClass" : "text-left"} ,{ 
-"data" : "committeeType", "sClass" : "text-left"} ,{ 
-"data" : "status", "sClass" : "text-left"}
-,{ "data" : null, "target":-1,
+"data" : "agendaNumber", "sClass" : "text-center"} ,{ 
+"data" : "committeeType", "sClass" : "text-center"} ,{ 
+"data" : "status", "sClass" : "text-center"}
+,{ "data" : null, "sClass" : "text-center", "target":-1,
 	
     sortable: false,
     "render": function ( data, type, full, meta ) {
         var mode = $('#mode').val();
-       	return '<button type="button" class="btn btn-xs btn-secondary view"><span class="glyphicon glyphicon-tasks"></span>&nbsp;Create Meeting</button>';
+       	return '<button type="button" class="btn btn-xs btn-secondary view"><i class="fa fa-plus" aria-hidden="true"></i>&nbsp;&nbsp;Create Meeting</button>';
     }
 }
 ,{ "data": "id", "visible":false }

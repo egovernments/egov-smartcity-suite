@@ -91,12 +91,12 @@ function callAjaxSearch() {
 "data" : "meetingDate", "sClass" : "text-left"},{
 "data" : "meetingLocation", "sClass" : "text-left"},{
 "data" : "meetingTime", "sClass" : "text-left"}
-,{ "data" : null, "target":-1,
+,{ "data" : null, "sClass" : "text-center", "target":-1,
 	
     sortable: false,
     "render": function ( data, type, full, meta ) {
           	
-          	return '<button type="button" class="btn btn-xs btn-secondary view"><span class="glyphicon glyphicon-tasks"></span>&nbsp;Create MOM</button>';
+          	return '<button type="button" class="btn btn-xs btn-secondary view"><i class="fa fa-plus" aria-hidden="true"></i>&nbsp;&nbsp;Create MOM</button>';
     }
 }
 ,{ "data": "id", "visible":false }
@@ -299,6 +299,9 @@ $('#buttonSubmit').click(function(e) {
 	$('.addorremoverequired').removeAttr("required", "required");
 	$('.addorremoverequired').removeClass('error');
 	if ($('form').valid()) {
+		$('.loader-class').modal('show', {
+			backdrop : 'static'
+		});
 		document.forms["councilMomform"].submit();
 	} else {
 		e.preventDefault();

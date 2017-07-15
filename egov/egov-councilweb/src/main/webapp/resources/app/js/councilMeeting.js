@@ -98,18 +98,18 @@ function callAjaxSearch() {
 "data" : "meetingLocation", "sClass" : "text-left"},{
 "data" : "meetingTime", "sClass" : "text-left"},{
 "data" : "meetingStatus", "sClass" : "text-left", "title": "Meeting Status"}
-,{ "data" : null, "target":-1,
+,{ "data" : null, "target":-1, "sClass" : "text-center", "title": "Action",
 	
     sortable: false,
     "render": function ( data, type, row, meta ) {
         var mode = $('#mode').val();
         if(mode == 'edit'){
-          	 return '<button type="button" class="btn btn-xs btn-secondary edit"><span class="glyphicon glyphicon-edit"></span>&nbsp;Edit</button>';
+          	 return '<button type="button" class="btn btn-xs btn-secondary edit"><i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;&nbsp;Edit</button>';
         }else{
         	 if(row.meetingStatus=="MOM FINALISED"){
-        		 return '<button type="button" class="btn btn-xs btn-secondary generateMom"><span class="glyphicon glyphicon-tasks"></span>&nbsp;Print Resolution</button> &nbsp;<button type="button" class="btn btn-xs btn-secondary view"><span class="glyphicon glyphicon-tasks"></span>&nbsp;View</button>';
+        		 return '<button type="button" class="btn btn-xs btn-secondary generateMom"><i class="fa fa-print" aria-hidden="true"></i>&nbsp;&nbsp;Print Resolution</button> &nbsp;<button type="button" class="btn btn-xs btn-secondary view"><i class="fa fa-eye" aria-hidden="true"></i>&nbsp;&nbsp;View</button>';
         	 }else        	
-          	     return '<button type="button" class="btn btn-xs btn-secondary view"><span class="glyphicon glyphicon-tasks"></span>&nbsp;View</button>';
+          	     return '<button type="button" class="btn btn-xs btn-secondary view"><i class="fa fa-eye" aria-hidden="true"></i>&nbsp;&nbsp;View</button>';
          }
     }
 }

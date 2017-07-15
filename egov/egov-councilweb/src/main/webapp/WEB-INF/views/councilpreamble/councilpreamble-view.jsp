@@ -43,6 +43,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 
 <div class="row">
 	<div class="col-md-12">
@@ -118,54 +119,60 @@
 		<div class="panel panel-primary" data-collapsed="0">
 			<jsp:include page="applicationhistory-view.jsp"></jsp:include>
 		</div>
-		<c:if test="${not councilPreamble.meetingMOMs.isEmpty()}">
 
-			<div class="panel-heading">
-				<div class="panel-title">Minutes of Meeting Details</div>
-			</div>
-			<table class="table table-bordered" id="momdetails">
-				<thead>
-					<tr>
-						<th><spring:message code="lbl.meeting.number" /></th>
-						<th><spring:message code="lbl.meeting.date" /></th>
-						<th><spring:message code="lbl.meeting.type" /></th>
-						<th><spring:message code="lbl.preamble.status" /></th>
-						<th><spring:message code="lbl.resolutionNumber" /></th>
-						<th><spring:message code="lbl.resolution" /></th>
-						<th><spring:message code="lbl.action" /></th>
-					</tr>
-				</thead>
-				<tbody>
-					<c:choose>
-						<c:when test="${!councilPreamble.meetingMOMs.isEmpty()}">
-							<c:forEach items="${councilPreamble.meetingMOMs}" var="preamble"
-								varStatus="counter">
-								<tr>
-									<td><c:out value="${preamble.meeting.meetingNumber}" /></td>
-									<td><c:out value="${preamble.meeting.meetingDate}" /></td>
-									<td><c:out value="${preamble.meeting.committeeType.name}" /></td>
-									<td><c:out value="${preamble.preamble.status.code}" /></td>
-									<td><c:out value="${preamble.resolutionNumber}" /></td>
-									<td><c:out value="${preamble.resolutionDetail}" /></td>
-									<td><button type="button"
-											class="btn btn-xs btn-secondary view">
-											<span class="glyphicon glyphicon-tasks"></span>&nbsp;View
-										</button> <input type="hidden" name="councilMeeting"
-										value="${preamble.meeting.id}" id="test" /></td>
-								</tr>
-							</c:forEach>
-						</c:when>
-						<%-- <c:otherwise>
+		<c:if test="${not councilPreamble.meetingMOMs.isEmpty()}">
+			<div class="panel panel-primary" data-collapsed="0">
+				<div class="panel-heading">
+					<div class="panel-title">Minutes of Meeting Details</div>
+				</div>
+				<div class="panel-body">
+					<table class="table table-bordered" id="momdetails">
+						<thead>
+							<tr>
+								<th><spring:message code="lbl.meeting.number" /></th>
+								<th><spring:message code="lbl.meeting.date" /></th>
+								<th><spring:message code="lbl.meeting.type" /></th>
+								<th><spring:message code="lbl.preamble.status" /></th>
+								<th><spring:message code="lbl.resolutionNumber" /></th>
+								<th><spring:message code="lbl.resolution" /></th>
+								<th><spring:message code="lbl.action" /></th>
+							</tr>
+						</thead>
+						<tbody>
+							<c:choose>
+								<c:when test="${!councilPreamble.meetingMOMs.isEmpty()}">
+									<c:forEach items="${councilPreamble.meetingMOMs}"
+										var="preamble" varStatus="counter">
+										<tr>
+											<td><c:out value="${preamble.meeting.meetingNumber}" /></td>
+											<td width="8%"><c:out
+													value="${preamble.meeting.meetingDate}" /></td>
+											<td><c:out
+													value="${preamble.meeting.committeeType.name}" /></td>
+											<td><c:out value="${preamble.preamble.status.code}" /></td>
+											<td><c:out value="${preamble.resolutionNumber}" /></td>
+											<td><span class="more"><c:out
+														value="${preamble.resolutionDetail}" /></span></td>
+											<td><button type="button"
+													class="btn btn-xs btn-secondary view">
+													<i class="fa fa-eye" aria-hidden="true"></i>&nbsp;&nbsp;View
+												</button> <input type="hidden" name="councilMeeting"
+												value="${preamble.meeting.id}" id="test" /></td>
+										</tr>
+									</c:forEach>
+								</c:when>
+								<%-- <c:otherwise>
 							<div class="col-md-3 col-xs-6 add-margin">
 								<spring:message code="lbl.noMeeting.Detail" />
 							</div>
 						</c:otherwise> --%>
-					</c:choose>
-				</tbody>
-
-			</table>
+							</c:choose>
+						</tbody>
+					</table>
+				</div>
+			</div>
 		</c:if>
-		<div class="text-center">
+		<div class="text-center hide-close">
 			<div class="add-margin">
 				<a href="javascript:void(0)" class="btn btn-default"
 					onclick="self.close()">Close</a>
@@ -173,5 +180,15 @@
 		</div>
 	</div>
 </div>
+
+<style>
+.morecontent span {
+	display: none;
+}
+</style>
+
 <script
-	src="<c:url value='/resources/app/js/councilPreambleHelper.js?rnd=${app_release_no}'/>"></script>
+	src="<cdn:url value='/resources/app/js/councilPreambleHelper.js?rnd=${app_release_no}'/>"></script>
+<script
+	src="<cdn:url value='/resources/app/js/showMoreorLessContent.js?rnd=${app_release_no}'/>"></script>
+

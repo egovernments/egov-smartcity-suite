@@ -81,7 +81,7 @@
 				<table class="table table-bordered">
 					<thead>
 						<tr>
-							<th align="center"><spring:message code="lbl.serial.number" /></th>
+							<th class="text-center"><spring:message code="lbl.serial.no" /></th>
 							<th width="11%"><spring:message code="lbl.department" /></th>
 							<th width="8%"><spring:message code="lbl.preamble.number" /></th>
 							<th><spring:message code="lbl.gistofpreamble" /></th>
@@ -93,9 +93,9 @@
 								<c:forEach items="${councilAgenda.agendaDetails}" var="contact"
 									varStatus="counter">
 									<tr>
-										<td align="center">${counter.count}</td>
-										<td><c:out value="${contact.preamble.department.name}" /></td>
-										<td><c:out value="${contact.preamble.preambleNumber}" /></td>
+										<td align="center" width="5%">${counter.count}</td>
+										<td width="14%"><c:out value="${contact.preamble.department.name}" /></td>
+										<td width="10%"><c:out value="${contact.preamble.preambleNumber}" /></td>
 										<td><span class="more"><c:out
 													value="${contact.preamble.gistOfPreamble}" /></span></td>
 									</tr>

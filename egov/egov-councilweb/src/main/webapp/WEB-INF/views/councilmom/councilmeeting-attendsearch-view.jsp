@@ -42,39 +42,49 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 
-	<input type="hidden" id="councilId" name="id" value="${id}" />
-	<input type="hidden" id="currDate" name="currDate" value="${currDate}" />
-	<input type="hidden" id="cityName" name="cityName" value="${cityName}" />
-	<div class="row report-section">
-	<div class="col-md-12 table-header text-left"><spring:message code="label.attendance.result.title"/></div>
-	<div class="col-md-12 form-group report-table-container">
-		<table class="table table-bordered table-hover multiheadertbl"
-			id="attendanceResultTable">
-			<thead>
-				<tr>
-					<th>Member Name</th>
-					<th><spring:message code="lbl.electionward"/></th>
-					<th><spring:message code="lbl.designation"/></th>
-					<th><spring:message code="lbl.qualification"/></th>
-					<th><spring:message code="lbl.partyaffiliation"/></th>
-					<th><spring:message code="lbl.mobilenumber"/></th>
-					<th><spring:message code="lbl.residentialaddress"/></th>
-					<th><spring:message code="lbl.meeting.date"/></th>
-					<th><spring:message code="lbl.meeting.type"/></th>
-					<th><spring:message code="label.attendance"/></th>
-				</tr>
-			</thead>
-			<tbody></tbody>
-		</table>
-	</div>
-			<div class="text-center">
-				<a href='javascript:void(0)' class='btn btn-default'
-					onclick='self.close()'><spring:message code='lbl.close' /></a>
+<input type="hidden" id="councilId" name="id" value="${id}" />
+<input type="hidden" id="currDate" name="currDate" value="${currDate}" />
+<input type="hidden" id="cityName" name="cityName" value="${cityName}" />
+<div class="row">
+	<div class="col-md-12">
+		<div class="panel panel-primary" data-collapsed="0">
+			<div class="panel-heading">
+				<div class="panel-title">
+					<spring:message code="label.attendance.result.title" />
+				</div>
 			</div>
-</div>	
-<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>
-<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
-		<script type="text/javascript"
+			<div class="panel-body custom">
+				<table class="table table-bordered table-hover multiheadertbl"
+					id="attendanceResultTable">
+					<thead>
+						<tr>
+							<th>Member Name</th>
+							<th><spring:message code="lbl.electionward" /></th>
+							<th><spring:message code="lbl.designation" /></th>
+							<th><spring:message code="lbl.qualification" /></th>
+							<th><spring:message code="lbl.partyaffiliation" /></th>
+							<th><spring:message code="lbl.mobilenumber" /></th>
+							<th><spring:message code="lbl.residentialaddress" /></th>
+							<th><spring:message code="lbl.meeting.date" /></th>
+							<th><spring:message code="lbl.meeting.type" /></th>
+							<th><spring:message code="label.attendance" /></th>
+						</tr>
+					</thead>
+					<tbody></tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+	<div class="text-center">
+		<a href='javascript:void(0)' class='btn btn-default'
+			onclick='self.close()'><spring:message code='lbl.close' /></a>
+	</div>
+</div>
+<link rel="stylesheet"
+	href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>" />
+<link rel="stylesheet"
+	href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
+<script type="text/javascript"
 	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
 <script type="text/javascript"
 	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
@@ -82,4 +92,5 @@
 	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js' context='/egi'/>"></script>
 <script type="text/javascript"
 	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"></script>
-		<script src="<cdn:url value='/resources/app/js/councilAttendanceView.js?rnd=${app_release_no}'/>"></script>
+<script
+	src="<cdn:url value='/resources/app/js/councilAttendanceView.js?rnd=${app_release_no}'/>"></script>

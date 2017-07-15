@@ -223,6 +223,9 @@ public class CouncilMomController {
         councilMeeting
                 .setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(
                         MEETING_MODULENAME, MEETINGUSEDINRMOM));
+        if (councilMeeting.getFiles() != null && councilMeeting.getFiles().length > 0) {
+            councilMeeting.setSupportDocs(councilMeetingService.addToFileStore(councilMeeting.getFiles()));
+        }
         councilMeetingService.update(councilMeeting);
 
         redirectAttrs.addFlashAttribute(MESSAGE, messageSource.getMessage(

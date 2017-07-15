@@ -47,14 +47,17 @@ import static org.egov.council.utils.constants.CouncilConstants.MEETINGUSEDINRMO
 import static org.egov.council.utils.constants.CouncilConstants.PREAMBLE_MODULENAME;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.council.entity.CouncilAgendaDetails;
 import org.egov.council.entity.CouncilMeeting;
@@ -62,9 +65,13 @@ import org.egov.council.entity.MeetingAttendence;
 import org.egov.council.entity.MeetingMOM;
 import org.egov.council.repository.CouncilMeetingRepository;
 import org.egov.council.repository.MeetingAttendanceRepository;
+import org.egov.council.utils.constants.CouncilConstants;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.utils.DateUtils;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -73,6 +80,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @Transactional(readOnly = true)
@@ -89,6 +97,8 @@ public class CouncilMeetingService {
     private EisCommonService eisCommonService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private FileStoreService fileStoreService;
 
     @Autowired
     public CouncilMeetingService(CouncilMeetingRepository councilMeetingRepository,
@@ -207,4 +217,19 @@ public class CouncilMeetingService {
         usersListResult.add(userService.getUserById(councilMeeting.getCreatedBy().getId()));
         return new ArrayList<>(usersListResult);
     }
+    
+    public Set<FileStoreMapper> addToFileStore(final MultipartFile[] files) {
+        if (ArrayUtils.isNotEmpty(files))
+            return Arrays.asList(files).stream().filter(file -> !file.isEmpty()).map(file -> {
+                try {
+                    return fileStoreService.store(file.getInputStream(), file.getOriginalFilename(),
+                            file.getContentType(), CouncilConstants.MODULE_NAME);
+                } catch (final Exception e) {
+                    throw new ApplicationRuntimeException("Error occurred while getting inputstream", e);
+                }
+            }).collect(Collectors.toSet());
+        else
+            return null;
+}
+    
 }

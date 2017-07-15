@@ -64,8 +64,8 @@
 					<th><spring:message code="lbl.ward.no" /></th>
 					<th><spring:message code="lbl.preamble.number" /></th>
 					<th><spring:message code="lbl.gistofpreamble" /></th>
-					<th><spring:message code="lbl.amount" />
 					<th><spring:message code="lbl.status" /></th>
+					<th><spring:message code="lbl.amount" />
 					<th><spring:message code="lbl.view" /></th>
 					<th>&nbsp;</th>
 				</tr>

@@ -42,8 +42,8 @@ $(document).ready(function() {
     // Configure/customize these variables.
     var showChar = 500; // How many characters are shown by default
     var ellipsestext = "...";
-    var moretext = "Show more >";
-    var lesstext = "Show less";
+    var moretext = "More ";
+    var lesstext = " Less";
     
     $('.more').each(function() {
         var content = $(this).html();
@@ -53,20 +53,21 @@ $(document).ready(function() {
             var c = content.substr(0, showChar);
             var h = content.substr(showChar, content.length - showChar);
  
-            var html = c + '<span class="moreellipses">' + ellipsestext+ '&nbsp;</span><span class="morecontent"><span>' + h + '</span>&nbsp;&nbsp;<a href="" class="morelink">' + moretext + '</a></span>';
+            var html = c + '<span class="moreellipses">' + ellipsestext+ '&nbsp;</span><span class="morecontent"><span>' + h + '</span>&nbsp;&nbsp;<button class="btn-xs morelink" style="font-size:10px;">' + moretext + '<i class="fa fa-angle-double-right" aria-hidden="true"></i></button></span>';
  
             $(this).html(html);
         }
  
     });
+    
  
     $(".morelink").click(function(){
         if($(this).hasClass("less")) {
             $(this).removeClass("less");
-            $(this).html(moretext);
+            $(this).html(moretext+'<i class="fa fa-angle-double-right" aria-hidden="true"></i>');
         } else {
             $(this).addClass("less");
-            $(this).html(lesstext);
+            $(this).html('<i class="fa fa-angle-double-left" aria-hidden="true"></i>'+lesstext);
         }
         $(this).parent().prev().toggle();
         $(this).prev().toggle();
