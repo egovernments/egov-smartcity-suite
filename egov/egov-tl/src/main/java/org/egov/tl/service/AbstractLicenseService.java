@@ -439,9 +439,9 @@ public abstract class AbstractLicenseService<T extends License> {
 
 
     public void transitionWorkFlow(final T license, final WorkflowBean workflowBean) {
-        final DateTime currentDate = new DateTime();
-        final User user = this.securityUtils.getCurrentUser();
-        final List<Assignment> assignments = assignmentService.getAllActiveEmployeeAssignmentsByEmpId(user.getId());
+        DateTime currentDate = new DateTime();
+        User user = this.securityUtils.getCurrentUser();
+        List<Assignment> assignments = assignmentService.getAllActiveEmployeeAssignmentsByEmpId(user.getId());
         List<Position> userPositions = positionMasterService.getPositionsForEmployee(securityUtils.getCurrentUser().getId());
         Position pos = null;
         Position wfInitiator = null;
@@ -550,7 +550,8 @@ public abstract class AbstractLicenseService<T extends License> {
     protected Position getWorkflowInitiator(final T license) {
         List<Assignment> assignments = Collections.emptyList();
         if (license.getState().getInitiatorPosition() != null)
-            assignments = assignmentService.getAssignmentsForPosition(license.getState().getInitiatorPosition().getId());
+            assignments = assignmentService.getAssignmentsForPosition(license.getState().getInitiatorPosition().getId(),
+                    license.getState().getCreatedDate());
         if (assignments.isEmpty())
             throw new ValidationException("wf.initiator.not.found", "No employee exist for creator's position");
         else
